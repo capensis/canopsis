@@ -67,7 +67,7 @@ type Store interface {
 	EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error)
 	ConnectorCreate(ctx context.Context, r BulkConnectorCreateRequestItem) (*Response, error)
 	ConnectorDelete(ctx context.Context, r BulkConnectorDeleteRequestItem) (string, error)
-	ExecPatternAndUpdate(ctx context.Context, id string, pattern pattern.Entity) (*apipattern.CountResponse, error)
+	ExecPatternAndUpdate(ctx context.Context, r ExecPatternRequest) (*apipattern.CountResponse, error)
 	ExecPatternsAndUpdate(ctx context.Context) error
 }
 
@@ -1058,10 +1058,18 @@ func (s *store) ConnectorDelete(ctx context.Context, r BulkConnectorDeleteReques
 	return id, err
 }
 
-func (s *store) ExecPatternAndUpdate(ctx context.Context, id string, pattern pattern.Entity) (*apipattern.CountResponse, error) {
+func (s *store) ExecPatternAndUpdate(ctx context.Context, r ExecPatternRequest) (*apipattern.CountResponse, error) {
 	conf := s.userInterfaceConfigProvider.Get()
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
 	defer cancel()
+
+	id := r.ID
+	pattern := r.EntityPattern
+	pattern, _, err = s.transformer.TransformAliases(ctx, pattern, r)
+	if err != nil {
+		return nil, err
+	}
+
 	updateStats := false
 	if id != "" {
 		pbh, err := s.GetOneBy(ctx, id)
