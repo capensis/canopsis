@@ -41,6 +41,21 @@ func RegisterTranslations(v *validator.Validate, uniTrans *ut.UniversalTranslato
 		}
 	}
 
+	translations := getTranslations()
+	for k, t := range translations {
+		for locale, s := range t {
+			trans, ok := translators[locale]
+			if !ok {
+				continue
+			}
+
+			err := trans.Add(k, s, false)
+			if err != nil {
+				return fmt.Errorf("translation for %q key and %q translator cannot be registred: %w", k, locale, err)
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -51,6 +66,15 @@ var registerDefaultTranslations = map[string]func(v *validator.Validate, ut ut.T
 
 type tagTransConfig struct {
 	translations map[string]string
+}
+
+func getTranslations() map[string]map[string]string {
+	return map[string]map[string]string{
+		"field": {
+			types.LocaleEn: "The field",
+			types.LocaleFr: "Le champ",
+		},
+	}
 }
 
 func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
