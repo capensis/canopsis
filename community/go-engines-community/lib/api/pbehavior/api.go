@@ -717,7 +717,7 @@ func (a *api) ExecPattern(c *gin.Context) {
 		return
 	}
 
-	res, err := a.store.ExecPatternAndUpdate(c, request.ID, request.EntityPattern)
+	res, err := a.store.ExecPatternAndUpdate(c, request)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 

@@ -148,7 +148,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		if m.Method == statesetting.MethodDependencies || m.Method == statesetting.MethodInherited {
+		if model.Method == statesetting.MethodDependencies || model.Method == statesetting.MethodInherited {
 			err = s.updateNotify(ctx)
 			if err != nil {
 				return err
@@ -211,7 +211,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		if m.Method == statesetting.MethodDependencies || m.Method == statesetting.MethodInherited {
+		if model.Method == statesetting.MethodDependencies || model.Method == statesetting.MethodInherited {
 			err = s.updateNotify(ctx)
 			if err != nil {
 				return err
@@ -226,7 +226,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		return nil, err
 	}
 
-	if response != nil && (m.Method == statesetting.MethodDependencies || m.Method == statesetting.MethodInherited) {
+	if response != nil && (response.Method == statesetting.MethodDependencies || response.Method == statesetting.MethodInherited) {
 		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
 			ID:         response.ID,
 			NewPattern: response.EntityPattern,
