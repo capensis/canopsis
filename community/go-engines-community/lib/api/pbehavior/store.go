@@ -1064,8 +1064,7 @@ func (s *store) ExecPatternAndUpdate(ctx context.Context, r ExecPatternRequest) 
 	defer cancel()
 
 	id := r.ID
-	pattern := r.EntityPattern
-	pattern, _, err = s.transformer.TransformAliases(ctx, pattern, r)
+	entityPattern, _, err := s.transformer.TransformAliases(ctx, r.EntityPattern, r)
 	if err != nil {
 		return nil, err
 	}
@@ -1077,10 +1076,10 @@ func (s *store) ExecPatternAndUpdate(ctx context.Context, r ExecPatternRequest) 
 			return nil, err
 		}
 
-		updateStats = reflect.DeepEqual(pbh.EntityPattern, pattern)
+		updateStats = reflect.DeepEqual(pbh.EntityPattern, entityPattern)
 	}
 
-	count, ms, err := s.execPattern(ctx, pattern)
+	count, ms, err := s.execPattern(ctx, entityPattern)
 	if err != nil {
 		return nil, err
 	}
