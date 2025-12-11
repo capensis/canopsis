@@ -248,8 +248,9 @@ func processIdPMetadata(idpMetadata samltypes.EntityDescriptor) (string, string,
 	for _, kd := range idpMetadata.IDPSSODescriptor.KeyDescriptors {
 		for idx, xCert := range kd.KeyInfo.X509Data.X509Certificates {
 			if xCert.Data == "" {
-				panic(fmt.Errorf("metadata certificate(%d) must not be empty", idx))
+				return "", "", dsig.MemoryX509CertificateStore{}, fmt.Errorf("metadata certificate(%d) must not be empty", idx)
 			}
+
 			certData, err := base64.StdEncoding.DecodeString(xCert.Data)
 			if err != nil {
 				return "", "", dsig.MemoryX509CertificateStore{}, fmt.Errorf("failed to decode metadata certificate(%d) data: %w", idx, err)
@@ -301,7 +302,9 @@ func (p *provider) SamlMetadataHandler() gin.HandlerFunc {
 		meta, err := p.samlSP.MetadataWithSLO(0)
 		if err != nil {
 			p.logger.Err(err).Msg("samlMetadataHandler: MetadataWithSLO error")
-			panic(err)
+			p.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if len(meta.SPSSODescriptor.SingleLogoutServices) > 0 && p.config.CanopsisSSOBinding == BindingRedirect {
