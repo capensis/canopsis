@@ -51,8 +51,14 @@ func (t *errorTranslator) Translate(locale string, err *Error) (ErrorsTranslatio
 		}
 
 		m := fe.Translate(trans)
-		// remove field name from the beginning of the error manually because the lib doesn't allow to control it
-		m = strings.TrimPrefix(m, fe.Field()+" ")
+		// replace field name from the beginning of the error manually because the lib doesn't allow to control it
+		m = strings.TrimPrefix(m, fe.Field())
+		fieldStr, err := trans.T("field")
+		if err != nil {
+			fieldStr = "Field"
+		}
+
+		m = fieldStr + m
 		res[ns] = m
 	}
 
