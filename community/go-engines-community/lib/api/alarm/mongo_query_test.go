@@ -186,7 +186,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		Unit:  "m",
 	})
 	if err != nil {
-		panic(err)
+		t.Fatalf("unexpected error: %v", err)
 	}
 	filter := view.WidgetFilter{
 		ID: "test-filter",
@@ -628,7 +628,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 			Unit:  "m",
 		})
 		if err != nil {
-			panic(err)
+			t.Fatalf("unexpected error: %v", err)
 		}
 
 		*instruction = Instruction{
@@ -787,7 +787,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 			Unit:  "m",
 		})
 		if err != nil {
-			panic(err)
+			t.Fatalf("unexpected error: %v", err)
 		}
 
 		*instruction = Instruction{
@@ -1138,7 +1138,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 		Unit:  "m",
 	})
 	if err != nil {
-		panic(err)
+		t.Fatalf("unexpected error: %v", err)
 	}
 	filter := view.WidgetFilter{
 		ID: "test-filter",

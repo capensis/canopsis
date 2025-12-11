@@ -225,7 +225,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	if !tabInfo.IsPrivate {
 		ok, err := s.enforcer.Enforce(r.Author, tabInfo.View, model.PermissionUpdate)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
 		if !ok {
@@ -517,7 +517,7 @@ func (s *store) Copy(ctx context.Context, widgetID string, r CreateRequest) (*Re
 		if !tabInfo.IsPrivate {
 			ok, err := s.enforcer.Enforce(r.Author, tabInfo.View, model.PermissionUpdate)
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			if !ok {

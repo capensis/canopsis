@@ -148,10 +148,13 @@ func RegisterRoutes(
 	externalDataContainer *externaldata.GetterContainer,
 	tplTestTypePermMapping map[int][]any,
 	logger zerolog.Logger,
-) {
+) error {
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
-	security.RegisterCallbackRoutes(ctx, router, primaryDbClient, sessionStore)
+	err := security.RegisterCallbackRoutes(ctx, router, primaryDbClient, sessionStore)
+	if err != nil {
+		return err
+	}
 
 	maintenanceAdapter := config.NewMaintenanceAdapter(primaryDbClient)
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(primaryDbClient)
@@ -227,7 +230,7 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
 				userApi.Create,
-				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
 			userRouter.GET("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer, errorResponder),
@@ -241,13 +244,13 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
 				userApi.Update,
-				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
 			userRouter.PATCH("/:id",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
 				userApi.Patch,
-				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
 			userRouter.DELETE("/:id",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer, errorResponder),
@@ -274,7 +277,7 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
 				roleApi.Update,
-				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
 			roleRouter.DELETE("/:id",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer, errorResponder),
@@ -992,7 +995,7 @@ func RegisterRoutes(
 				}, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
 				viewAPI.Create,
-				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
 			viewRouter.GET(
 				"/:id",
@@ -1039,7 +1042,7 @@ func RegisterRoutes(
 				}, enforcer, errorResponder),
 				middleware.AuthorizeOwnership(apisecurity.NewViewOwnerStrategy(primaryDbClient, enforcer, model.PermissionDelete), errorResponder),
 				viewAPI.Delete,
-				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
 		}
 
@@ -1373,7 +1376,7 @@ func RegisterRoutes(
 			middleware.AuthorizeOwnership(apisecurity.NewViewOwnerStrategy(primaryDbClient, enforcer, model.PermissionRead), errorResponder),
 			middleware.SetAuthor(errorResponder),
 			viewAPI.Copy,
-			middleware.ReloadEnforcerPolicyOnChange(enforcer),
+			middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 		)
 
 		protected.PUT(
@@ -1395,7 +1398,7 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer, errorResponder),
 			middleware.Authorize(apisecurity.ObjViewGroup, model.PermissionUpdate, enforcer, errorResponder),
 			viewAPI.Import,
-			middleware.ReloadEnforcerPolicyOnChange(enforcer),
+			middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 		)
 
 		protected.POST(
@@ -1654,7 +1657,7 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionCreate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
 				playlistApi.Create,
-				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
 			playlistRouter.GET(
 				"",
@@ -1679,7 +1682,7 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionDelete, enforcer, errorResponder),
 				middleware.AuthorizeByID(model.PermissionDelete, enforcer, errorResponder),
 				playlistApi.Delete,
-				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
 		}
 
@@ -2149,7 +2152,7 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer, errorResponder),
 				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
 				roleApi.BulkUpdatePermissions,
-				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
 
 			userRouter := bulkRouter.Group("/users")
@@ -2159,21 +2162,21 @@ func RegisterRoutes(
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					userApi.BulkCreate,
-					middleware.ReloadEnforcerPolicyOnChange(enforcer),
+					middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 				)
 				userRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					userApi.BulkUpdate,
-					middleware.ReloadEnforcerPolicyOnChange(enforcer),
+					middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 				)
 				userRouter.PATCH(
 					"",
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					userApi.BulkPatch,
-					middleware.ReloadEnforcerPolicyOnChange(enforcer),
+					middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 				)
 				userRouter.DELETE(
 					"",
@@ -2411,13 +2414,13 @@ func RegisterRoutes(
 			)
 			iconRouter.GET(
 				"",
-				iconsCacheMiddlewareGetter.Cache(),
+				iconsCacheMiddlewareGetter.Cache(logger),
 				iconApi.List,
 			)
 			iconRouter.GET(
 				"/:id",
 				security.GetFileAuthMiddleware(),
-				iconsCacheMiddlewareGetter.Cache(),
+				iconsCacheMiddlewareGetter.Cache(logger),
 				iconApi.Get,
 			)
 			iconRouter.DELETE(
@@ -2691,4 +2694,6 @@ func RegisterRoutes(
 			)
 		}
 	}
+
+	return nil
 }
