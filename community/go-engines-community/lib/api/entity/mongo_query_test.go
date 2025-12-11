@@ -278,7 +278,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		Unit:  "m",
 	})
 	if err != nil {
-		panic(err)
+		t.Fatalf("unexpected error: %v", err)
 	}
 	filter := view.WidgetFilter{
 		ID: "test-filter",
