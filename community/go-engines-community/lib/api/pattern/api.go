@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -23,14 +24,15 @@ type API interface {
 	BulkDelete(c *gin.Context)
 	CountAlarms(c *gin.Context)
 	CountEntities(c *gin.Context)
+	GetPatternFields(collection string) func(c *gin.Context)
 }
 
 type api struct {
-	store          Store
-	enforcer       security.Enforcer
-	errorResponder httperror.Responder
-
-	configProvider config.UserInterfaceConfigProvider
+	store              Store
+	enforcer           security.Enforcer
+	errorResponder     httperror.Responder
+	patternFieldGetter patternfields.FieldGetter
+	configProvider     config.UserInterfaceConfigProvider
 }
 
 func NewApi(
@@ -38,13 +40,14 @@ func NewApi(
 	configProvider config.UserInterfaceConfigProvider,
 	enforcer security.Enforcer,
 	errorResponder httperror.Responder,
+	patternFieldGetter patternfields.FieldGetter,
 ) API {
 	return &api{
-		store:          store,
-		enforcer:       enforcer,
-		errorResponder: errorResponder,
-
-		configProvider: configProvider,
+		store:              store,
+		enforcer:           enforcer,
+		errorResponder:     errorResponder,
+		patternFieldGetter: patternFieldGetter,
+		configProvider:     configProvider,
 	}
 }
 
@@ -368,4 +371,19 @@ func (a *api) CountEntities(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+}
+
+// GetPatternFields
+// @Success 200 {array} patternfields.FieldsResponse
+func (a *api) GetPatternFields(collection string) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		res, err := a.patternFieldGetter.Get(c, collection)
+		if err != nil {
+			a.errorResponder.Respond(c, err)
+
+			return
+		}
+
+		c.JSON(http.StatusOK, res)
+	}
 }

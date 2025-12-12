@@ -2,9 +2,7 @@ package patternfields
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"github.com/go-playground/validator/v10"
 )
 
 type WeatherServiceRequest struct {
@@ -26,15 +24,4 @@ func (r WeatherServiceRequest) ToModel() savedpattern.WeatherServicePatternField
 		CorporateWeatherServicePattern:      r.CorporatePattern.ID,
 		CorporateWeatherServicePatternTitle: r.CorporatePattern.Title,
 	}
-}
-
-func ValidateWeatherServicePattern(fl validator.FieldLevel) bool {
-	i := fl.Field().Interface()
-	if i == nil {
-		return true
-	}
-
-	p, ok := i.(pattern.WeatherServicePattern)
-
-	return ok && match.ValidateWeatherServicePattern(p)
 }
