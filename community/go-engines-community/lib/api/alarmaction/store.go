@@ -468,7 +468,12 @@ func (s *store) AddBookmark(ctx context.Context, alarmID, userID string) (bool, 
 		err := s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{"_id": alarmID},
-			bson.M{"$addToSet": bson.M{"bookmarks": userID}},
+			[]bson.M{{"$set": bson.M{
+				"bookmarks": bson.M{"$setUnion": bson.A{
+					bson.M{"$ifNull": bson.A{"$bookmarks", bson.A{}}},
+					bson.A{userID},
+				}},
+			}}},
 			options.FindOneAndUpdate().SetProjection(bson.M{"resolved": "$v.resolved"}).SetReturnDocument(options.After),
 		).Decode(&doc)
 		if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
@@ -484,7 +489,12 @@ func (s *store) AddBookmark(ctx context.Context, alarmID, userID string) (bool, 
 		resolvedRes, err := s.resolvedDbCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": alarmID},
-			bson.M{"$addToSet": bson.M{"bookmarks": userID}},
+			[]bson.M{{"$set": bson.M{
+				"bookmarks": bson.M{"$setUnion": bson.A{
+					bson.M{"$ifNull": bson.A{"$bookmarks", bson.A{}}},
+					bson.A{userID},
+				}},
+			}}},
 		)
 		if err != nil {
 			return err
