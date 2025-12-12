@@ -7121,6 +7121,18 @@ definitions:
     required:
     - value
     type: object
+  view.WidgetSortColumn:
+    properties:
+      sort:
+        enum:
+        - asc
+        - desc
+        type: string
+      sort_by:
+        type: string
+    required:
+    - sort_by
+    type: object
   viewgroup.EditRequest:
     properties:
       title:
@@ -7411,6 +7423,10 @@ definitions:
         type: array
       content:
         type: string
+      sort_columns:
+        items:
+          $ref: '#/definitions/view.WidgetSortColumn'
+        type: array
       title:
         maxLength: 255
         type: string
@@ -7422,6 +7438,7 @@ definitions:
         - alarm_export_to_pdf
         - alarm_quick_actions
         - alarm_mass_quick_actions
+        - alarm_sort_columns
         - weather_item
         - weather_modal
         - weather_entity
@@ -7448,6 +7465,10 @@ definitions:
         type: string
       created:
         type: integer
+      sort_columns:
+        items:
+          $ref: '#/definitions/view.WidgetSortColumn'
+        type: array
       title:
         type: string
       type:

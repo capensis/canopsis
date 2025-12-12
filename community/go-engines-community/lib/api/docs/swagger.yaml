@@ -16240,6 +16240,23 @@ paths:
                   "type": "alarm_export_to_pdf",
                   "content": "Name: {{ alarm.v.display_name }}"
                 }
+              alarm_sort_columns:
+                summary: Alarm sort columns template
+                description: Create a template for alarms list.
+                value: {
+                  "title": "Template",
+                  "type": "alarm_sort_columns",
+                  "sort_columns": [
+                    {
+                      "sort_by": "v.resource",
+                      "sort": "asc"
+                    },
+                    {
+                      "sort_by": "v.component",
+                      "sort": "desc"
+                    }
+                  ]
+                }
         required: true
       responses:
         201:
