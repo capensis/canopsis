@@ -485,6 +485,46 @@ func RegisterRoutes(
 			)
 		}
 
+		patternAPI := pattern.NewApi(
+			pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger),
+			userInterfaceConfig, enforcer, errorResponder, patternfields.NewFieldGetter(secondaryDbClient))
+		patternRouter := protected.Group("/patterns")
+		{
+			patternRouter.Use(middleware.OnlyAuth(errorResponder))
+			patternRouter.POST(
+				"",
+				middleware.SetAuthor(errorResponder),
+				patternAPI.Create,
+			)
+			patternRouter.GET(
+				"",
+				patternAPI.List,
+			)
+			patternRouter.GET(
+				"/:id",
+				patternAPI.Get,
+			)
+			patternRouter.PUT(
+				"/:id",
+				middleware.SetAuthor(errorResponder),
+				patternAPI.Update,
+			)
+			patternRouter.DELETE(
+				"/:id",
+				patternAPI.Delete,
+			)
+		}
+		protected.POST(
+			"/patterns-alarms-count",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.CountAlarms,
+		)
+		protected.POST(
+			"/patterns-entities-count",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.CountEntities,
+		)
+
 		protected.POST(
 			"/pbehavior-timespans",
 			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer, errorResponder),
@@ -1576,6 +1616,10 @@ func RegisterRoutes(
 			"/scenario-template-vars",
 			middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer, errorResponder),
 			scenarioAPI.GetTemplateVars)
+		protected.GET(
+			"/scenario-pattern-fields",
+			middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer, errorResponder),
+			patternAPI.GetPatternFields(mongo.ScenarioCollection))
 
 		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(primaryDbClient),
 			workers.NewJobPublisher(jobKeyImport, amqpPublisher), conf.File.ImportMaxSize, errorResponder, logger)
@@ -1722,46 +1766,6 @@ func RegisterRoutes(
 			"idle-rules-db-export",
 			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer, errorResponder),
 			idleRuleAPI.DBExport)
-
-		patternAPI := pattern.NewApi(
-			pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger),
-			userInterfaceConfig, enforcer, errorResponder)
-		patternRouter := protected.Group("/patterns")
-		{
-			patternRouter.Use(middleware.OnlyAuth(errorResponder))
-			patternRouter.POST(
-				"",
-				middleware.SetAuthor(errorResponder),
-				patternAPI.Create,
-			)
-			patternRouter.GET(
-				"",
-				patternAPI.List,
-			)
-			patternRouter.GET(
-				"/:id",
-				patternAPI.Get,
-			)
-			patternRouter.PUT(
-				"/:id",
-				middleware.SetAuthor(errorResponder),
-				patternAPI.Update,
-			)
-			patternRouter.DELETE(
-				"/:id",
-				patternAPI.Delete,
-			)
-		}
-		protected.POST(
-			"/patterns-alarms-count",
-			middleware.OnlyAuth(errorResponder),
-			patternAPI.CountAlarms,
-		)
-		protected.POST(
-			"/patterns-entities-count",
-			middleware.OnlyAuth(errorResponder),
-			patternAPI.CountEntities,
-		)
 
 		linkRuleAPI := linkrule.NewApi(
 			linkrule.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient),
