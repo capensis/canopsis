@@ -72,6 +72,7 @@ export default {
       ticketNumber: 'Numéro de ticket',
       parents: 'Causes',
       children: 'Conséquences',
+      cannotUnsnoozeUntilPbehaviorInProgress: 'Impossible de réveiller jusqu\'à ce que le comportement périodique soit en cours',
     },
   },
   timeline: {
