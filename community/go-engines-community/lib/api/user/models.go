@@ -62,6 +62,11 @@ type PatchEditRequest struct {
 	Author                 string   `json:"author" swaggerignore:"true"`
 }
 
+type BulkToggleRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
+}
+
 func (r CreateRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
 	now := datetime.NewCpsTime()
 
@@ -233,7 +238,8 @@ type BulkPatchRequestItem struct {
 }
 
 type BulkDeleteRequestItem struct {
-	ID string `json:"_id" binding:"required"`
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
 }
 
 type AggregationResult struct {

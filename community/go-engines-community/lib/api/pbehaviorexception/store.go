@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"mime"
 	"mime/multipart"
@@ -38,6 +39,7 @@ type Store interface {
 	Delete(ctx context.Context, id, userID string) (bool, error)
 	IsLinked(ctx context.Context, id string) (bool, error)
 	Import(ctx context.Context, name, pbhType, userID string, f multipart.File, fh *multipart.FileHeader) (*Response, error)
+	ToggleVisibility(ctx context.Context, r BulkToggleVisibilityRequestItem, hidden bool) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider, authorProvider author.Provider) Store {
@@ -102,7 +104,16 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
+	match := bson.M{}
+	if !r.WithHidden {
+		match["hidden"] = bson.M{"$in": bson.A{false, nil}}
+	}
+
 	pipeline := make([]bson.M, 0)
+	if len(match) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": match})
+	}
+
 	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -416,6 +427,7 @@ func getNestedObjectsPipeline() []bson.M {
 			"created":     bson.M{"$first": "$created"},
 			"updated":     bson.M{"$first": "$updated"},
 			"deletable":   bson.M{"$first": "$deletable"},
+			"hidden":      bson.M{"$first": "$hidden"},
 			"exdates":     bson.M{"$push": "$exdates"},
 		}},
 	}
@@ -478,6 +490,7 @@ func (s *store) transformRequestToDoc(ctx context.Context, r EditRequest) (*pbeh
 	exception.Name = r.Name
 	exception.Description = r.Description
 	exception.Author = r.Author
+	exception.Hidden = r.Hidden
 	exception.Exdates, err = s.transformExdatesRequestToModel(ctx, r)
 	if err != nil {
 		return nil, err
@@ -531,4 +544,20 @@ func (s *store) transformExdatesRequestToModel(ctx context.Context, r EditReques
 	}
 
 	return exdates, nil
+}
+
+func (s *store) ToggleVisibility(ctx context.Context, r BulkToggleVisibilityRequestItem, hidden bool) (bool, error) {
+	res, err := s.dbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"hidden": hidden,
+			"author": r.Author,
+		}},
+	)
+	if err != nil {
+		return false, fmt.Errorf("failed to toggle pbehavior exception visibility: %w", err)
+	}
+
+	return res.MatchedCount != 0, nil
 }

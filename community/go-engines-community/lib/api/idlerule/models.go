@@ -48,10 +48,6 @@ type BulkUpdateRequestItem struct {
 	ID string `json:"_id" binding:"required"`
 }
 
-type BulkDeleteRequestItem struct {
-	ID string `json:"_id" binding:"required"`
-}
-
 type OperationRequest struct {
 	Type       string              `json:"type" binding:"required"`
 	Parameters idlerule.Parameters `json:"parameters,omitempty"`
@@ -118,4 +114,14 @@ func (r AggregationResult) GetTotal() int64 {
 
 func (r AggregationResult) GetData() interface{} {
 	return r.Data
+}
+
+type BulkDeleteRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
+}
+
+type BulkToggleRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
 }

@@ -2785,6 +2785,334 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/eventfilters/enable:
+    put:
+      tags:
+        - eventfilters
+      summary: Bulk enable eventfilters
+      description: |
+        Bulk enable eventfilters.
+        
+        -  PERMISSIONS: `api_eventfilter:update`
+      operationId: eventfilters-bulk-enable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/eventfilters/disable:
+    put:
+      tags:
+        - eventfilters
+      summary: Bulk disable eventfilters
+      description: |
+        Bulk disable eventfilters.
+        
+        -  PERMISSIONS: `api_eventfilter:update`
+      operationId: eventfilters-bulk-disable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/flapping-rules:
+    delete:
+      tags:
+        - flappingrules
+      summary: Bulk delete flapping rules
+      description: |
+        Bulk delete flapping rules.
+        
+        -  PERMISSIONS: `api_flapping_rule:delete`
+      operationId: flappingrules-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/flappingrule.BulkDeleteRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/flappingrule.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/flapping-rules/enable:
+    put:
+      tags:
+        - flappingrules
+      summary: Bulk enable flapping rules
+      description: |
+        Bulk enable flapping rules.
+        
+        -  PERMISSIONS: `api_flapping_rule:update`
+      operationId: flappingrules-bulk-enable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/flappingrule.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/flappingrule.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/flapping-rules/disable:
+    put:
+      tags:
+        - flappingrules
+      summary: Bulk disable flapping rules
+      description: |
+        Bulk disable flapping rules.
+        
+        -  PERMISSIONS: `api_flapping_rule:update`
+      operationId: flappingrules-bulk-disable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/flappingrule.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/flappingrule.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/resolve-rules:
+    delete:
+      tags:
+        - resolverules
+      summary: Bulk delete resolve rules
+      description: |
+        Bulk delete resolve rules.
+        
+        -  PERMISSIONS: `api_resolve_rule:delete`
+      operationId: resolverules-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/resolverule.BulkDeleteRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/resolverule.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/resolve-rules/enable:
+    put:
+      tags:
+        - resolverules
+      summary: Bulk enable resolve rules
+      description: |
+        Bulk enable resolve rules.
+        
+        -  PERMISSIONS: `api_resolve_rule:update`
+      operationId: resolverules-bulk-enable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/resolverule.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/resolverule.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/resolve-rules/disable:
+    put:
+      tags:
+        - resolverules
+      summary: Bulk disable resolve rules
+      description: |
+        Bulk disable resolve rules.
+        
+        -  PERMISSIONS: `api_resolve_rule:update`
+      operationId: resolverules-bulk-disable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/resolverule.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/resolverule.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/external-data-tables/{table}/data:
     delete:
       tags:
@@ -2940,6 +3268,13 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Bulk delete idle rules
+                value: [
+                  {"_id": "idle-rule-1"},
+                  {"_id": "idle-rule-2"}
+                ]
         required: true
       responses:
         207:
@@ -2957,6 +3292,88 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/idle-rules/enable:
+    put:
+      tags:
+        - idlerules
+      summary: Bulk enable idlerules
+      description: |
+        Bulk enable idlerules.
+        
+        -  PERMISSIONS: `api_idlerule:update`
+      operationId: idlerules-bulk-enable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/idle-rules/disable:
+    put:
+      tags:
+        - idlerules
+      summary: Bulk disable idlerules
+      description: |
+        Bulk disable idlerules.
+        
+        -  PERMISSIONS: `api_idlerule:update`
+      operationId: idlerules-bulk-disable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkToggleRequestItem'
         400:
           description: Bad Request
           content:
@@ -3007,6 +3424,211 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/linkrule.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/link-rules/enable:
+    put:
+      tags:
+        - linkrules
+      summary: Bulk enable link rules
+      description: |
+        Bulk enable link rules.
+        
+        -  PERMISSIONS: `api_link_rule:update`
+      operationId: linkrules-bulk-enable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/linkrule.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/linkrule.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/link-rules/disable:
+    put:
+      tags:
+        - linkrules
+      summary: Bulk disable link rules
+      description: |
+        Bulk disable link rules.
+        
+        -  PERMISSIONS: `api_link_rule:update`
+      operationId: linkrules-bulk-disable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/linkrule.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/linkrule.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/playlists:
+    delete:
+      tags:
+        - playlists
+      summary: Bulk delete playlists
+      description: |
+        Bulk delete playlists.
+        
+        -  PERMISSIONS: `api_playlist:delete`
+      operationId: playlists-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/playlist.BulkDeleteRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/playlist.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/playlists/enable:
+    put:
+      tags:
+        - playlists
+      summary: Bulk enable playlists
+      description: |
+        Bulk enable playlists.
+        
+        -  PERMISSIONS: `api_playlist:update`
+      operationId: playlists-bulk-enable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/playlist.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/playlist.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/playlists/disable:
+    put:
+      tags:
+        - playlists
+      summary: Bulk disable playlists
+      description: |
+        Bulk disable playlists.
+        
+        -  PERMISSIONS: `api_playlist:update`
+      operationId: playlists-bulk-disable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/playlist.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/playlist.BulkToggleRequestItem'
         400:
           description: Bad Request
           content:
@@ -3677,6 +4299,88 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/scenarios/enable:
+    put:
+      tags:
+        - scenarios
+      summary: Bulk enable scenarios
+      description: |
+        Bulk enable scenarios.
+        
+        -  PERMISSIONS: `api_action:update`
+      operationId: scenarios-bulk-enable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/scenarios/disable:
+    put:
+      tags:
+        - scenarios
+      summary: Bulk disable scenarios
+      description: |
+        Bulk disable scenarios.
+        
+        -  PERMISSIONS: `api_action:update`
+      operationId: scenarios-bulk-disable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/users:
     put:
       tags:
@@ -3832,6 +4536,88 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/user.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/users/enable:
+    put:
+      tags:
+        - users
+      summary: Bulk enable users
+      description: |
+        Bulk enable users.
+        
+        -  PERMISSIONS: `api_acl:update`
+      operationId: users-bulk-enable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/user.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/user.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/users/disable:
+    put:
+      tags:
+        - users
+      summary: Bulk disable users
+      description: |
+        Bulk disable users.
+        
+        -  PERMISSIONS: `api_acl:update`
+      operationId: users-bulk-disable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/user.BulkToggleRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/user.BulkToggleRequestItem'
         400:
           description: Bad Request
           content:
@@ -10202,6 +10988,375 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/pbehaviortimespan.ItemResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/pbehavior-types:
+    delete:
+      tags:
+        - pbehavior-types
+      summary: Bulk delete pbehavior types
+      description: |
+        Bulk delete pbehavior types.
+        
+        -  PERMISSIONS: `api_pbehaviortype:delete`
+      operationId: pbehaviortypes-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.BulkDeleteRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/pbehavior-types/hide:
+    put:
+      tags:
+        - pbehavior-types
+      summary: Bulk hide pbehavior types
+      description: |
+        Bulk hide pbehavior types.
+        
+        -  PERMISSIONS: `api_pbehaviortype:update`
+      operationId: pbehaviortypes-bulk-hide
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.BulkToggleVisibilityRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.BulkToggleVisibilityRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/pbehavior-types/unhide:
+    put:
+      tags:
+        - pbehavior-types
+      summary: Bulk unhide pbehavior types
+      description: |
+        Bulk unhide pbehavior types.
+        
+        -  PERMISSIONS: `api_pbehaviortype:update`
+      operationId: pbehaviortypes-bulk-unhide
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.BulkToggleVisibilityRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.BulkToggleVisibilityRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/pbehavior-reasons:
+    delete:
+      tags:
+        - pbehavior-reasons
+      summary: Bulk delete pbehavior reasons
+      description: |
+        Bulk delete pbehavior reasons.
+        
+        -  PERMISSIONS: `api_pbehaviorreason:delete`
+      operationId: pbehaviorreasons-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.BulkDeleteRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/pbehavior-reasons/hide:
+    put:
+      tags:
+        - pbehavior-reasons
+      summary: Bulk hide pbehavior reasons
+      description: |
+        Bulk hide pbehavior reasons.
+        
+        -  PERMISSIONS: `api_pbehaviorreason:update`
+      operationId: pbehaviorreasons-bulk-hide
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.BulkToggleVisibilityRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.BulkToggleVisibilityRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/pbehavior-reasons/unhide:
+    put:
+      tags:
+        - pbehavior-reasons
+      summary: Bulk unhide pbehavior reasons
+      description: |
+        Bulk unhide pbehavior reasons.
+        
+        -  PERMISSIONS: `api_pbehaviorreason:update`
+      operationId: pbehaviorreasons-bulk-unhide
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.BulkToggleVisibilityRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.BulkToggleVisibilityRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/pbehavior-exceptions:
+    delete:
+      tags:
+        - pbehavior-exceptions
+      summary: Bulk delete pbehavior exceptions
+      description: |
+        Bulk delete pbehavior exceptions.
+        
+        -  PERMISSIONS: `api_pbehaviorexception:delete`
+      operationId: pbehaviorexceptions-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.BulkDeleteRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/pbehavior-exceptions/hide:
+    put:
+      tags:
+        - pbehavior-exceptions
+      summary: Bulk hide pbehavior exceptions
+      description: |
+        Bulk hide pbehavior exceptions.
+        
+        -  PERMISSIONS: `api_pbehaviorexception:update`
+      operationId: pbehaviorexceptions-bulk-hide
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.BulkToggleVisibilityRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.BulkToggleVisibilityRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/pbehavior-exceptions/unhide:
+    put:
+      tags:
+        - pbehavior-exceptions
+      summary: Bulk unhide pbehavior exceptions
+      description: |
+        Bulk unhide pbehavior exceptions.
+        
+        -  PERMISSIONS: `api_pbehaviorexception:update`
+      operationId: pbehaviorexceptions-bulk-unhide
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.BulkToggleVisibilityRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.BulkToggleVisibilityRequestItem'
         400:
           description: Bad Request
           content:

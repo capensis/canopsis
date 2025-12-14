@@ -27,6 +27,7 @@ type Rule struct {
 	ID             string                      `bson:"_id,omitempty" json:"_id,omitempty"`
 	Type           string                      `bson:"type" json:"type"`
 	Name           string                      `bson:"name" json:"name"`
+	Enabled        bool                        `bson:"enabled" json:"enabled"`
 	Author         string                      `bson:"author" json:"author"`
 	OutputTemplate string                      `bson:"output_template" json:"output_template"`
 	Config         RuleConfig                  `bson:"config" json:"config"`

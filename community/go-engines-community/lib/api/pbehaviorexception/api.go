@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -19,6 +20,9 @@ import (
 type API interface {
 	crud.API
 	Import(c *gin.Context)
+	BulkDelete(c *gin.Context)
+	BulkHide(c *gin.Context)
+	BulkUnhide(c *gin.Context)
 }
 
 func NewApi(
@@ -236,4 +240,48 @@ func (a *api) Import(c *gin.Context) {
 
 func (a *api) sendComputeTask() {
 	a.computeChan <- rpc.PbehaviorRecomputeEvent{}
+}
+
+// BulkDelete
+// @Param body body []BulkDeleteRequestItem true "body"
+func (a *api) BulkDelete(c *gin.Context) {
+	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
+		ok, err := a.store.Delete(c, request.ID, request.Author)
+		if err != nil {
+			return "", err
+		}
+
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
+		return request.ID, nil
+	}, a.errorResponder)
+}
+
+// BulkHide
+// @Param body body []BulkToggleVisibilityRequestItem true "body"
+func (a *api) BulkHide(c *gin.Context) {
+	a.toggleVisibility(c, true)
+}
+
+// BulkUnhide
+// @Param body body []BulkToggleVisibilityRequestItem true "body"
+func (a *api) BulkUnhide(c *gin.Context) {
+	a.toggleVisibility(c, false)
+}
+
+func (a *api) toggleVisibility(c *gin.Context, hidden bool) {
+	bulk.Handler(c, func(request BulkToggleVisibilityRequestItem) (string, error) {
+		found, err := a.store.ToggleVisibility(c, request, hidden)
+		if err != nil {
+			return "", err
+		}
+
+		if !found {
+			return "", httperror.ErrNotFound
+		}
+
+		return request.ID, nil
+	}, a.errorResponder)
 }

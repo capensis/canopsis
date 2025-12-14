@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -11,9 +12,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type API interface {
+	crud.API
+	BulkDelete(c *gin.Context)
+	BulkEnable(c *gin.Context)
+	BulkDisable(c *gin.Context)
+}
+
 type api struct {
 	store          Store
 	errorResponder httperror.Responder
+}
+
+func NewApi(store Store, errorResponder httperror.Responder) API {
+	return &api{
+		store:          store,
+		errorResponder: errorResponder,
+	}
 }
 
 // Create
@@ -132,9 +147,46 @@ func (a *api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func NewApi(store Store, errorResponder httperror.Responder) crud.API {
-	return &api{
-		store:          store,
-		errorResponder: errorResponder,
-	}
+// BulkDelete
+// @Param body body []BulkDeleteRequestItem true "body"
+func (a *api) BulkDelete(c *gin.Context) {
+	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
+		ok, err := a.store.Delete(c, request.ID, request.Author)
+		if err != nil {
+			return "", err
+		}
+
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
+		return request.ID, nil
+	}, a.errorResponder)
+}
+
+// BulkEnable
+// @Param body body []BulkToggleRequestItem true "body"
+func (a *api) BulkEnable(c *gin.Context) {
+	a.toggle(c, true)
+}
+
+// BulkDisable
+// @Param body body []BulkToggleRequestItem true "body"
+func (a *api) BulkDisable(c *gin.Context) {
+	a.toggle(c, false)
+}
+
+func (a *api) toggle(c *gin.Context, enabled bool) {
+	bulk.Handler(c, func(request BulkToggleRequestItem) (string, error) {
+		found, err := a.store.Toggle(c, request, enabled)
+		if err != nil {
+			return "", err
+		}
+
+		if !found {
+			return "", httperror.ErrNotFound
+		}
+
+		return request.ID, nil
+	}, a.errorResponder)
 }
