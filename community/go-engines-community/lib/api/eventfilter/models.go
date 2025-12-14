@@ -83,7 +83,8 @@ type BulkUpdateRequestItem struct {
 }
 
 type BulkDeleteRequestItem struct {
-	ID string `json:"_id" binding:"required"`
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
 }
 
 type FilteredQuery struct {
@@ -169,4 +170,9 @@ type TemplateVarsResponse struct {
 
 type CopyVarsResponse struct {
 	Config []template.VarResponse `json:"config"`
+}
+
+type BulkToggleRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
 }

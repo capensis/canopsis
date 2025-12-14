@@ -52,6 +52,7 @@ type Store interface {
 	ValidateTemplates(ctx context.Context, request TemplateRequest) (map[string]template.ValidateResponse, error)
 	GetTemplateVars() TemplateVarsResponse
 	GetCopyVars() CopyVarsResponse
+	Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error)
 }
 
 type store struct {
@@ -503,6 +504,23 @@ func (s *store) GetCopyVars() CopyVarsResponse {
 	return CopyVarsResponse{
 		Config: s.configCopyVars,
 	}
+}
+
+func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error) {
+	res, err := s.dbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"enabled": enabled,
+			"author":  r.Author,
+			"updated": datetime.NewCpsTime(),
+		}},
+	)
+	if err != nil {
+		return false, fmt.Errorf("failed to toggle eventfilter rules: %w", err)
+	}
+
+	return res.MatchedCount != 0, nil
 }
 
 func (s *store) transformRequestToDocument(ctx context.Context, r EditRequest) (eventfilter.Rule, error) {

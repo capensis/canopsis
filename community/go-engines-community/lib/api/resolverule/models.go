@@ -11,6 +11,7 @@ import (
 type EditRequest struct {
 	Name        string                    `json:"name" binding:"required,max=255"`
 	Description string                    `json:"description" binding:"max=255"`
+	Enabled     *bool                     `json:"enabled" binding:"required"`
 	Duration    datetime.DurationWithUnit `json:"duration" binding:"required"`
 	Priority    int64                     `json:"priority" binding:"min=0"`
 	Author      string                    `json:"author" swaggerignore:"true"`
@@ -32,6 +33,7 @@ type UpdateRequest struct {
 type Response struct {
 	ID          string                    `bson:"_id" json:"_id"`
 	Name        string                    `bson:"name" json:"name"`
+	Enabled     bool                      `bson:"enabled" json:"enabled"`
 	Description string                    `bson:"description" json:"description"`
 	Duration    datetime.DurationWithUnit `bson:"duration" json:"duration"`
 	Priority    int64                     `bson:"priority" json:"priority"`
@@ -59,4 +61,14 @@ func (r *AggregationResult) GetTotal() int64 {
 type FilteredQuery struct {
 	pagination.FilteredQuery
 	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name description author.name author.display_name created updated priority"`
+}
+
+type BulkToggleRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
+}
+
+type BulkDeleteRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
 }

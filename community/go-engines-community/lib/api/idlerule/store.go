@@ -3,6 +3,7 @@ package idlerule
 import (
 	"cmp"
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
@@ -25,6 +26,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Rule, error)
 	Update(context.Context, UpdateRequest) (*Rule, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
+	Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error)
 }
 
 type store struct {
@@ -227,6 +229,23 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	})
 
 	return deleted > 0, err
+}
+
+func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error) {
+	res, err := s.collection.UpdateOne(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"enabled": enabled,
+			"author":  r.Author,
+			"updated": datetime.NewCpsTime(),
+		}},
+	)
+	if err != nil {
+		return false, fmt.Errorf("failed to toggle idle rule: %w", err)
+	}
+
+	return res.MatchedCount != 0, nil
 }
 
 func (s *store) getSort(r FilteredQuery) bson.M {

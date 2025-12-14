@@ -15,6 +15,7 @@ type EditRequest struct {
 	Duration    datetime.DurationWithUnit `json:"duration" binding:"required"`
 	Priority    int64                     `json:"priority" binding:"min=0"`
 	Author      string                    `json:"author" swaggerignore:"true"`
+	Enabled     *bool                     `json:"enabled" binding:"required"`
 
 	patternfields.AlarmRequest
 	patternfields.EntityRequest
@@ -33,6 +34,7 @@ type UpdateRequest struct {
 type Response struct {
 	ID          string                    `bson:"_id" json:"_id"`
 	Name        string                    `bson:"name" json:"name"`
+	Enabled     bool                      `bson:"enabled" json:"enabled"`
 	Description string                    `bson:"description" json:"description"`
 	FreqLimit   int                       `bson:"freq_limit" json:"freq_limit"`
 	Duration    datetime.DurationWithUnit `bson:"duration" json:"duration"`
@@ -61,4 +63,14 @@ func (r *AggregationResult) GetTotal() int64 {
 type FilteredQuery struct {
 	pagination.FilteredQuery
 	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name description freq_limit author.name author.display_name created updated priority"`
+}
+
+type BulkToggleRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
+}
+
+type BulkDeleteRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
 }

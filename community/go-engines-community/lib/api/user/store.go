@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"context"
 	"errors"
+	"fmt"
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -13,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
@@ -26,7 +28,8 @@ type Store interface {
 	Insert(ctx context.Context, r CreateRequest, requestRoles []string) (*User, error)
 	Update(ctx context.Context, r BulkUpdateRequestItem, userID string, requestRoles []string) (*User, error)
 	Patch(ctx context.Context, r BulkPatchRequestItem, userID string, requestRoles []string) (*User, error)
-	Delete(ctx context.Context, r BulkDeleteRequestItem, userID string, requestRoles []string) (bool, error)
+	Delete(ctx context.Context, r BulkDeleteRequestItem, requestRoles []string) (bool, error)
+	Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool, requestRoles []string) (bool, error)
 }
 
 func NewStore(
@@ -455,9 +458,9 @@ func (s *store) filterIdpFields(updateDoc bson.M, source string, requestRoles, i
 	}
 }
 
-func (s *store) Delete(ctx context.Context, r BulkDeleteRequestItem, userID string, requestRoles []string) (bool, error) {
+func (s *store) Delete(ctx context.Context, r BulkDeleteRequestItem, requestRoles []string) (bool, error) {
 	id := r.ID
-	if id == userID {
+	if id == r.Author {
 		return false, httperror.NewForbiddenError("You cannot delete your own account.")
 	}
 
@@ -470,7 +473,7 @@ func (s *store) Delete(ctx context.Context, r BulkDeleteRequestItem, userID stri
 		var prevUser security.User
 
 		// required to get the author in action log listener.
-		err := s.userCollection.FindOneAndUpdate(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}}).Decode(&prevUser)
+		err := s.userCollection.FindOneAndUpdate(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": r.Author}}).Decode(&prevUser)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
@@ -745,4 +748,50 @@ func getViewPipeline() []bson.M {
 		}},
 		{"$unwind": bson.M{"path": "$defaultview", "preserveNullAndEmptyArrays": true}},
 	}
+}
+
+func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool, requestRoles []string) (bool, error) {
+	if r.ID == r.Author && !enabled {
+		return false, httperror.NewForbiddenError("You cannot disable your own account.")
+	}
+
+	isAdminRequest := slices.Contains(requestRoles, security.RoleAdmin)
+	found := false
+
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		found = false
+
+		var targetUser security.User
+		err := s.userCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&targetUser)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return err
+		}
+
+		if !isAdminRequest && slices.Contains(targetUser.Roles, security.RoleAdmin) {
+			return httperror.NewForbiddenError("You do not have permission to enable/disable an admin user.")
+		}
+
+		_, err = s.userCollection.UpdateOne(
+			ctx,
+			bson.M{"_id": r.ID},
+			bson.M{"$set": bson.M{
+				"enable":  enabled,
+				"author":  r.Author,
+				"updated": datetime.NewCpsTime(),
+			}},
+		)
+		if err != nil {
+			return fmt.Errorf("failed to toggle user: %w", err)
+		}
+
+		found = true
+
+		return nil
+	})
+
+	return found, err
 }

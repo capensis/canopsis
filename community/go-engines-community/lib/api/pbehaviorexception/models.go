@@ -10,7 +10,8 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name created"`
+	SortBy     string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name created"`
+	WithHidden bool   `form:"with_hidden"`
 }
 
 type EditRequest struct {
@@ -18,6 +19,9 @@ type EditRequest struct {
 	Description string          `json:"description" binding:"required,max=255"`
 	Author      string          `json:"author" swaggerignore:"true"`
 	Exdates     []ExdateRequest `json:"exdates" binding:"required,notblank,dive"`
+
+	// Hidden is used in API to hide documents from the list response
+	Hidden bool `json:"hidden"`
 }
 
 type CreateRequest struct {
@@ -44,6 +48,7 @@ type Response struct {
 	Created     *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated     *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 	Deletable   *bool             `bson:"deletable,omitempty" json:"deletable,omitempty"`
+	Hidden      bool              `bson:"hidden" json:"hidden"`
 }
 
 type Exdate struct {
@@ -63,4 +68,14 @@ func (r *AggregationResult) GetData() interface{} {
 
 func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
+}
+
+type BulkToggleVisibilityRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
+}
+
+type BulkDeleteRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
 }

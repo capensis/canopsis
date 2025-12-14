@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"context"
 	"errors"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
@@ -27,6 +28,7 @@ type Store interface {
 	Update(ctx context.Context, model UpdateRequest) (*Response, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
 	IsLinkedToPbehavior(ctx context.Context, id string) (bool, error)
+	ToggleVisibility(ctx context.Context, r BulkToggleVisibilityRequestItem, hidden bool) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
@@ -290,4 +292,20 @@ func getDeletablePipeline() []bson.M {
 			"actions": 0,
 		}},
 	}
+}
+
+func (s *store) ToggleVisibility(ctx context.Context, r BulkToggleVisibilityRequestItem, hidden bool) (bool, error) {
+	res, err := s.dbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"hidden": hidden,
+			"author": r.Author,
+		}},
+	)
+	if err != nil {
+		return false, fmt.Errorf("failed to toggle pbehavior reason visibility: %w", err)
+	}
+
+	return res.MatchedCount != 0, nil
 }
