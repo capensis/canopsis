@@ -5826,6 +5826,8 @@ definitions:
             * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
             * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
             * `eventscount` - Alarm check events count
+            * `changedoutput` - Alarm output is changed
+            * `changedlongoutput` - Alarm long output is changed
         enum:
         - create
         - statedec
@@ -5854,6 +5856,8 @@ definitions:
         - autoinstructionresultok
         - autoinstructionresultfail
         - eventscount
+        - changedoutput
+        - changedlongoutput
         type: string
     required:
     - type
