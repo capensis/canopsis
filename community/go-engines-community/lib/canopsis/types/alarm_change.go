@@ -78,6 +78,9 @@ const (
 
 	AlarmChangeTypeMetaAlarmChildActivate   AlarmChangeType = "metaalarmchildactivate"
 	AlarmChangeTypeMetaAlarmChildDeactivate AlarmChangeType = "metaalarmchilddeactivate"
+
+	AlarmChangeTypeChangedOutput     AlarmChangeType = "changedoutput"
+	AlarmChangeTypeChangedLongOutput AlarmChangeType = "changedlongoutput"
 )
 
 const MinimalEventsCountThreshold = 2
@@ -96,6 +99,9 @@ type AlarmChange struct {
 	PreviousPbehaviorCannonicalType string            `json:"PreviousPbehaviorCannonicalType"`
 
 	EventsCount int `json:"EventsCount"`
+
+	ChangedOutput     bool `json:"ChangedOutput"`
+	ChangedLongOutput bool `json:"ChangedLongOutput"`
 }
 
 func NewAlarmChange() AlarmChange {
@@ -167,6 +173,14 @@ func (ac *AlarmChange) GetTriggers() []string {
 		if trigger != "" {
 			triggers = append(triggers, trigger)
 		}
+	}
+
+	if ac.ChangedOutput {
+		triggers = append(triggers, string(AlarmChangeTypeChangedOutput))
+	}
+
+	if ac.ChangedLongOutput {
+		triggers = append(triggers, string(AlarmChangeTypeChangedLongOutput))
 	}
 
 	return triggers

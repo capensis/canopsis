@@ -120,12 +120,17 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 			entity = v
 			result, err = p.createAlarm(ctx, entity, event.Parameters)
+			if err != nil {
+				return err
+			}
 		} else {
 			result, err = p.updateAlarm(ctx, alarm, entity, event.Parameters)
-		}
+			if err != nil {
+				return err
+			}
 
-		if err != nil {
-			return err
+			result.AlarmChange.ChangedOutput = result.Alarm.Value.Output != alarm.Value.Output
+			result.AlarmChange.ChangedLongOutput = result.Alarm.Value.LongOutput != alarm.Value.LongOutput
 		}
 
 		if result.Entity.ID != "" {

@@ -1513,6 +1513,18 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			} else {
 				out.EventsCount = int(in.Int())
 			}
+		case "ChangedOutput":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.ChangedOutput = bool(in.Bool())
+			}
+		case "ChangedLongOutput":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.ChangedLongOutput = bool(in.Bool())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -1584,6 +1596,16 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"EventsCount\":"
 		out.RawString(prefix)
 		out.Int(int(in.EventsCount))
+	}
+	{
+		const prefix string = ",\"ChangedOutput\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.ChangedOutput))
+	}
+	{
+		const prefix string = ",\"ChangedLongOutput\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.ChangedLongOutput))
 	}
 	out.RawByte('}')
 }

@@ -65,7 +65,9 @@ type Trigger struct {
 	//   * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
 	//   * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
 	//   * `eventscount` - Alarm check events count
-	Type      string `json:"type" binding:"required,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete autoinstructionresultok autoinstructionresultfail eventscount"`
+	//   * `changedoutput` - Alarm output is changed
+	//   * `changedlongoutput` - Alarm long output is changed
+	Type      string `json:"type" binding:"required,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete autoinstructionresultok autoinstructionresultfail eventscount changedoutput changedlongoutput"`
 	Threshold int    `json:"threshold,omitempty" binding:"required_if=Type eventscount,excluded_unless=Type eventscount,omitempty,gt=1"`
 }
 
