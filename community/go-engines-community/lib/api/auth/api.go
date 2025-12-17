@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -35,6 +36,7 @@ func NewApi(
 	enforcer security.Enforcer,
 	cookieName string,
 	cookieMaxAge int,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	return &api{
@@ -44,6 +46,7 @@ func NewApi(
 		websocketStore:     websocketStore,
 		maintenanceAdapter: maintenanceAdapter,
 		enforcer:           enforcer,
+		errorResponder:     errorResponder,
 		logger:             logger,
 
 		cookieName:     cookieName,
@@ -60,6 +63,7 @@ type api struct {
 	websocketStore     websocket.Store
 	maintenanceAdapter config.MaintenanceAdapter
 	enforcer           security.Enforcer
+	errorResponder     httperror.Responder
 	logger             zerolog.Logger
 
 	cookieName     string
@@ -74,8 +78,9 @@ type api struct {
 func (a *api) Login(c *gin.Context) {
 	var request LoginRequest
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -95,30 +100,38 @@ func (a *api) Login(c *gin.Context) {
 	}
 
 	if user == nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 		return
 	}
 
 	maintenanceConf, err := a.maintenanceAdapter.GetConfig(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if maintenanceConf.Enabled {
 		ok, err := a.enforcer.Enforce(user.ID, apisecurity.PermMaintenance, model.PermissionCan)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+			a.errorResponder.Respond(c, httperror.ErrMaintenance)
+
 			return
 		}
 	}
 
 	accessToken, err := a.tokenService.Create(c, *user, provider)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	response := LoginResponse{AccessToken: accessToken}
@@ -129,16 +142,20 @@ func (a *api) Login(c *gin.Context) {
 func (a *api) Logout(c *gin.Context) {
 	tokenString := getToken(c)
 	if tokenString == "" {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 		return
 	}
 	ok, err := a.tokenService.Delete(c, tokenString)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 		return
 	}
 
@@ -152,7 +169,9 @@ func (a *api) Logout(c *gin.Context) {
 func (a *api) GetLoggedUserCount(c *gin.Context) {
 	count, err := a.websocketStore.GetActiveConnections(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	c.JSON(http.StatusOK, LoggedUserCountResponse{
 		Count: count,
@@ -162,7 +181,8 @@ func (a *api) GetLoggedUserCount(c *gin.Context) {
 func (a *api) GetFileAccess(c *gin.Context) {
 	tokenString := getToken(c)
 	if tokenString == "" {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 		return
 	}
 
@@ -171,7 +191,9 @@ func (a *api) GetFileAccess(c *gin.Context) {
 	for _, provider := range a.tokenProviders {
 		user, err = provider.Auth(c, tokenString)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 		if user != nil {
 			break
@@ -179,7 +201,8 @@ func (a *api) GetFileAccess(c *gin.Context) {
 	}
 
 	if user == nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 		return
 	}
 

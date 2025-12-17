@@ -4,8 +4,9 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -23,6 +24,7 @@ type api struct {
 	store                Store
 	entityChangeListener chan<- entityservice.ChangeEntityMessage
 	metricMetaUpdater    metrics.MetaUpdater
+	errorResponder       httperror.Responder
 	logger               zerolog.Logger
 }
 
@@ -30,13 +32,15 @@ func NewApi(
 	store Store,
 	entityChangeListener chan<- entityservice.ChangeEntityMessage,
 	metricMetaUpdater metrics.MetaUpdater,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:                store,
 		entityChangeListener: entityChangeListener,
-		logger:               logger,
 		metricMetaUpdater:    metricMetaUpdater,
+		errorResponder:       errorResponder,
+		logger:               logger,
 	}
 }
 
@@ -44,17 +48,21 @@ func NewApi(
 // @Success 200 {object} Entity
 func (a *api) Get(c *gin.Context) {
 	var request IdRequest
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	entity, err := a.store.GetOneBy(c, request.ID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if entity == nil {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -66,26 +74,31 @@ func (a *api) Get(c *gin.Context) {
 // @Success 200 {object} Entity
 func (a *api) Update(c *gin.Context) {
 	idRequest := IdRequest{}
-	if err := c.ShouldBindQuery(&idRequest); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, idRequest))
+	if err := validation.BindQuery(c, &idRequest); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	request := EditRequest{}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	request.ID = idRequest.ID
 	entity, isToggled, err := a.store.Update(c, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if entity == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -116,25 +129,28 @@ func (a *api) Update(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	var request IdRequest
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
-	entity, err := a.store.Delete(c, request.ID, c.MustGet(auth.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
 	if err != nil {
-		if errors.Is(err, ErrLinkedEntityToAlarm) || errors.Is(err, ErrComponent) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
+		return
+	}
 
-		panic(err)
+	entity, err := a.store.Delete(c, request.ID, userID)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if entity == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}

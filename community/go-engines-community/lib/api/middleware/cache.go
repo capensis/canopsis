@@ -16,6 +16,7 @@ import (
 	cache "github.com/chenyahui/gin-cache"
 	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 )
 
 func NewCacheMiddlewareGetter(defaultExpire time.Duration, getExpire func() time.Duration) *CacheMiddlewareGetter {
@@ -32,7 +33,7 @@ type CacheMiddlewareGetter struct {
 	getExpire     func() time.Duration
 }
 
-func (g *CacheMiddlewareGetter) Cache() gin.HandlerFunc {
+func (g *CacheMiddlewareGetter) Cache(logger zerolog.Logger) gin.HandlerFunc {
 	return cache.Cache(g.memoryStore, g.defaultExpire, cache.WithPrefixKey(libredis.ApiCacheRequestKey), cache.WithCacheStrategyByRequest(func(c *gin.Context) (bool, cache.Strategy) {
 		buff := bytes.Buffer{}
 		getRequestQueryIgnoreOrder(&buff, c.Request.URL)
@@ -46,12 +47,16 @@ func (g *CacheMiddlewareGetter) Cache() gin.HandlerFunc {
 		if c.Request.Body != nil {
 			body, c.Request.Body, err = libhttp.DrainBody(c.Request.Body)
 			if err != nil {
-				panic(err)
+				logger.Err(err).Msg("cannot read request body")
+
+				return false, cache.Strategy{}
 			}
 
 			b, err := io.ReadAll(body)
 			if err != nil {
-				panic(err)
+				logger.Err(err).Msg("cannot read request body")
+
+				return false, cache.Strategy{}
 			}
 
 			buff.WriteRune('|')
