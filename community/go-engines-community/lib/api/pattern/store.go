@@ -1091,24 +1091,18 @@ func (s *store) GetLiteralsFieldStats(ctx context.Context, allLiterals []string)
 		return nil, fmt.Errorf("failed to get literals field stats: %w", err)
 	}
 
-	fieldStats := make(map[string][]LiteralFieldStats)
-
-	for cursor.Next(ctx) {
-		var doc struct {
-			ID     string              `bson:"_id"`
-			Counts []LiteralFieldStats `bson:"counts"`
-		}
-
-		err = cursor.Decode(&doc)
-		if err != nil {
-			return nil, fmt.Errorf("failed to decode literals field stats: %w", err)
-		}
-
-		fieldStats[doc.ID] = doc.Counts
+	var docs []struct {
+		ID     string              `bson:"_id"`
+		Counts []LiteralFieldStats `bson:"counts"`
 	}
 
-	if err = cursor.Err(); err != nil {
-		return nil, fmt.Errorf("failed to process literals field stats cursor correctly: %w", err)
+	if err := cursor.All(ctx, &docs); err != nil {
+		return nil, fmt.Errorf("failed to decode literals field stats: %w", err)
+	}
+
+	fieldStats := make(map[string][]LiteralFieldStats)
+	for _, doc := range docs {
+		fieldStats[doc.ID] = doc.Counts
 	}
 
 	return fieldStats, nil
@@ -1141,27 +1135,24 @@ func (s *store) GetEntityIDs(ctx context.Context, entityPattern pattern.Entity) 
 		return nil, 0, fmt.Errorf("failed to get entity ids: %w", err)
 	}
 
-	defer cursor.Close(ctx)
-
 	end := time.Since(start)
 
-	var entityIDs []string
-
-	for cursor.Next(ctx) {
-		var doc struct {
-			ID string `bson:"_id"`
-		}
-
-		err = cursor.Decode(&doc)
-		if err != nil {
-			return nil, 0, fmt.Errorf("failed to decode entity ids: %w", err)
-		}
-
-		entityIDs = append(entityIDs, doc.ID)
+	var docs []struct {
+		ID string `bson:"_id"`
 	}
 
-	if err = cursor.Err(); err != nil {
-		return nil, 0, fmt.Errorf("failed to process entity ids cursor correctly: %w", err)
+	err = cursor.All(ctx, &docs)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to decode entity ids: %w", err)
+	}
+
+	if len(docs) == 0 {
+		return nil, 0, nil
+	}
+
+	entityIDs := make([]string, len(docs))
+	for i := range docs {
+		entityIDs[i] = docs[i].ID
 	}
 
 	return entityIDs, max(end.Milliseconds(), 1), nil
