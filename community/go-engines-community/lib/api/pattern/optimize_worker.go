@@ -379,7 +379,7 @@ func (w *optimizeWorker) expandCurrentConditions(currentConditions [][]pattern.F
 			combined := make([]pattern.FieldCondition, len(currentCond)+len(alternative))
 			copy(combined, currentCond)
 			copy(combined[len(currentCond):], alternative)
-			expanded[i*len(suggestions)+j] = combined
+			expanded[idx] = combined
 		}
 	}
 
