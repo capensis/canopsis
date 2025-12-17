@@ -10,8 +10,8 @@ import (
 	"os"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -57,7 +57,7 @@ type worker struct {
 
 	connector string
 
-	transformer common.PatternFieldsTransformer
+	transformer patternfields.Transformer
 
 	logger zerolog.Logger
 }
@@ -73,7 +73,7 @@ func NewWorker(
 	publisher EventPublisher,
 	metricMetaUpdater metrics.MetaUpdater,
 	connector string,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	logger zerolog.Logger,
 ) Worker {
 	return &worker{
@@ -284,21 +284,16 @@ func (w *worker) parseEntities(
 		}
 
 		if ci.Type == types.EntityTypeService {
-			if !match.ValidateEntityPattern(ci.EntityPattern, common.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
+			if !match.ValidateEntityPattern(ci.EntityPattern, patternfields.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
 				w.logger.Warn().Str("entity_name", ci.Name).Msg("invalid entity pattern, skip")
 				continue
 			}
 
-			transformedEntityPatternRequest, err := w.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-				EntityPattern: ci.EntityPattern,
-			})
+			ci.EntityPattern, ci.Aliases, err = w.transformer.TransformAliases(ctx, ci.EntityPattern, ci)
 			if err != nil {
 				w.logger.Warn().Str("entity_name", ci.Name).Msgf("failed to transform entity pattern: %v, skip", err)
 				continue
 			}
-
-			ci.EntityPattern = transformedEntityPatternRequest.EntityPattern
-			ci.Aliases = transformedEntityPatternRequest.Aliases
 		}
 
 		categoryID := ""

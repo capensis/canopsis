@@ -7,8 +7,11 @@ import (
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -17,17 +20,13 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-var ErrNotAdminCreateAdmin = errors.New("cannot create a user with the admin role")
-var ErrNotAdminUpdateAdmin = errors.New("cannot update a user with the admin role")
-var ErrNotAdminDeleteAdmin = errors.New("cannot delete a user with the admin role")
-
 type Store interface {
 	Find(ctx context.Context, r ListRequest, userID string, requestRoles []string) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*User, error)
 	Insert(ctx context.Context, r CreateRequest, requestRoles []string) (*User, error)
-	Update(ctx context.Context, r UpdateRequest, userID string, requestRoles []string) (*User, error)
-	Patch(ctx context.Context, r PatchRequest, userID string, requestRoles []string) (*User, error)
-	Delete(ctx context.Context, id, userID string, requestRoles []string) (bool, error)
+	Update(ctx context.Context, r BulkUpdateRequestItem, userID string, requestRoles []string) (*User, error)
+	Patch(ctx context.Context, r BulkPatchRequestItem, userID string, requestRoles []string) (*User, error)
+	Delete(ctx context.Context, r BulkDeleteRequestItem, userID string, requestRoles []string) (bool, error)
 }
 
 func NewStore(
@@ -50,6 +49,8 @@ func NewStore(
 		shareTokenCollection:   dbClient.Collection(mongo.ShareTokenMongoCollection),
 		notificationCollection: dbClient.Collection(mongo.UserNotificationCollection),
 		tplTestCollection:      dbClient.Collection(mongo.TemplateTestCollection),
+		colorThemeCollection:   dbClient.Collection(mongo.ColorThemeCollection),
+		roleCollection:         dbClient.Collection(mongo.RoleCollection),
 
 		passwordEncoder: passwordEncoder,
 		websocketStore:  websocketStore,
@@ -58,6 +59,7 @@ func NewStore(
 
 		defaultSearchByFields: []string{"_id", "name", "firstname", "lastname", "roles.name"},
 		defaultSortBy:         "name",
+		dupErrorParser:        validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -74,6 +76,8 @@ type store struct {
 	shareTokenCollection   mongo.DbCollection
 	notificationCollection mongo.DbCollection
 	tplTestCollection      mongo.DbCollection
+	colorThemeCollection   mongo.DbCollection
+	roleCollection         mongo.DbCollection
 
 	passwordEncoder password.Encoder
 	websocketStore  websocket.Store
@@ -82,6 +86,7 @@ type store struct {
 
 	defaultSearchByFields []string
 	defaultSortBy         string
+	dupErrorParser        validation.DuplicateErrorParser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest, curUserID string, requestRoles []string) (*AggregationResult, error) {
@@ -96,7 +101,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string, reque
 	}
 	project = append(project, s.authorProvider.Pipeline()...)
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 || r.Permission != "" {
 		pipeline = append(pipeline, getRolePipeline()...)
 	} else {
@@ -117,7 +122,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string, reque
 
 	project = append(project, getViewPipeline()...)
 
-	sort := common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
+	sort := mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
 	project = append(project, sort)
 	cursor, err := s.userCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
@@ -216,14 +221,24 @@ func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []stri
 	}
 
 	if slices.Contains(r.Roles, security.RoleAdmin) && !slices.Contains(requestRoles, security.RoleAdmin) {
-		return nil, ErrNotAdminCreateAdmin
+		return nil, httperror.NewForbiddenError("You cannot assign yourself the admin role.")
 	}
 
 	var user *User
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
+
+		err = s.validateEditRequest(ctx, r.EditRequest, "")
+		if err != nil {
+			return err
+		}
+
 		_, err = s.userCollection.InsertOne(ctx, insertDoc)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, Role{})
+			}
+
 			return err
 		}
 
@@ -238,9 +253,9 @@ func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []stri
 	return user, nil
 }
 
-func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string, requestRoles []string) (*User, error) {
+func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID string, requestRoles []string) (*User, error) {
 	if r.ID == curUserID && r.IsEnabled != nil && !*r.IsEnabled {
-		return nil, common.NewValidationError("enable", "user cannot disable itself")
+		return nil, httperror.NewForbiddenError("You cannot disable your own account.")
 	}
 
 	updateDoc, err := r.getBson(s.passwordEncoder)
@@ -254,19 +269,21 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string, r
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 
+		err = s.validateEditRequest(ctx, r.EditRequest, r.ID)
+		if err != nil {
+			return err
+		}
+
 		onlyOneAdmin, lastAdminID, err := s.checkLastAdmin(ctx)
 		if err != nil {
 			return err
 		}
 
-		if onlyOneAdmin && lastAdminID == r.ID {
-			if !slices.Contains(r.Roles, security.RoleAdmin) {
-				return common.NewValidationError("roles", "last admin cannot be edited")
-			}
+		if onlyOneAdmin && lastAdminID == r.ID && !slices.Contains(r.Roles, security.RoleAdmin) {
+			return httperror.NewForbiddenError("You cannot remove the last admin role from yourself. At least one admin must remain.")
 		}
 
 		var prevUser security.User
-
 		err = s.userCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevUser)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -278,11 +295,11 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string, r
 
 		if !isAdminRequest {
 			if slices.Contains(prevUser.Roles, security.RoleAdmin) {
-				return ErrNotAdminUpdateAdmin
+				return httperror.NewForbiddenError("You do not have permission to update an admin user.")
 			}
 
 			if slices.Contains(r.Roles, security.RoleAdmin) {
-				return common.NewValidationError("roles", "cannot assign the admin role by a non-admin user.")
+				return httperror.NewForbiddenError("You cannot assign yourself the admin role.")
 			}
 		}
 
@@ -293,6 +310,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string, r
 			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, Role{})
+			}
+
 			return err
 		}
 
@@ -307,9 +328,9 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string, r
 	return user, nil
 }
 
-func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string, requestRoles []string) (*User, error) {
+func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID string, requestRoles []string) (*User, error) {
 	if r.ID == curUserID && r.IsEnabled != nil && !*r.IsEnabled {
-		return nil, common.NewValidationError("enable", "user cannot disable itself")
+		return nil, httperror.NewForbiddenError("You cannot disable your own account.")
 	}
 
 	updateDoc, err := r.getBson(s.passwordEncoder)
@@ -323,15 +344,35 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string, req
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 
+		err = dbvalidation.ValidateExist(ctx, s.viewCollection, r, "DefaultView", r.DefaultView)
+		if err != nil {
+			return err
+		}
+
+		err = dbvalidation.ValidateExist(ctx, s.colorThemeCollection, r, "UITheme", r.UITheme)
+		if err != nil {
+			return err
+		}
+
+		err = dbvalidation.ValidateExist(ctx, s.roleCollection, r, "Roles", r.Roles)
+		if err != nil {
+			return err
+		}
+
+		if r.Name != nil {
+			err = s.validateName(ctx, *r.Name, r.ID, r)
+			if err != nil {
+				return err
+			}
+		}
+
 		onlyOneAdmin, lastAdminID, err := s.checkLastAdmin(ctx)
 		if err != nil {
 			return err
 		}
 
-		if onlyOneAdmin && lastAdminID == r.ID {
-			if !slices.Contains(r.Roles, security.RoleAdmin) {
-				return common.NewValidationError("roles", "last admin cannot be edited")
-			}
+		if onlyOneAdmin && lastAdminID == r.ID && !slices.Contains(r.Roles, security.RoleAdmin) {
+			return httperror.NewForbiddenError("You cannot remove the last admin role from yourself. At least one admin must remain.")
 		}
 
 		var prevUser security.User
@@ -347,11 +388,11 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string, req
 
 		if !isAdminRequest {
 			if slices.Contains(prevUser.Roles, security.RoleAdmin) {
-				return ErrNotAdminUpdateAdmin
+				return httperror.NewForbiddenError("You do not have permission to update an admin user.")
 			}
 
 			if slices.Contains(r.Roles, security.RoleAdmin) {
-				return common.NewValidationError("roles", "cannot assign the admin role by a non-admin user.")
+				return httperror.NewForbiddenError("You cannot assign yourself the admin role.")
 			}
 		}
 
@@ -362,6 +403,10 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string, req
 			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, Role{})
+			}
+
 			return err
 		}
 
@@ -410,9 +455,10 @@ func (s *store) filterIdpFields(updateDoc bson.M, source string, requestRoles, i
 	}
 }
 
-func (s *store) Delete(ctx context.Context, id, userID string, requestRoles []string) (bool, error) {
+func (s *store) Delete(ctx context.Context, r BulkDeleteRequestItem, userID string, requestRoles []string) (bool, error) {
+	id := r.ID
 	if id == userID {
-		return false, common.NewValidationError("_id", "user cannot delete itself")
+		return false, httperror.NewForbiddenError("You cannot delete your own account.")
 	}
 
 	isAdminRequest := slices.Contains(requestRoles, security.RoleAdmin)
@@ -434,7 +480,7 @@ func (s *store) Delete(ctx context.Context, id, userID string, requestRoles []st
 		}
 
 		if slices.Contains(prevUser.Roles, security.RoleAdmin) && !isAdminRequest {
-			return ErrNotAdminDeleteAdmin
+			return httperror.NewForbiddenError("You do not have permission to delete an admin user.")
 		}
 
 		deleted, err = s.userCollection.DeleteOne(ctx, bson.M{"_id": id})
@@ -607,6 +653,46 @@ func (s *store) getNestedObjectsPipeline(authorProvider author.Provider) []bson.
 	pipeline = append(pipeline, authorProvider.Pipeline()...)
 
 	return pipeline
+}
+
+func (s *store) validateEditRequest(ctx context.Context, r EditRequest, id string) error {
+	err := dbvalidation.ValidateExist(ctx, s.viewCollection, r, "DefaultView", r.DefaultView)
+	if err != nil {
+		return err
+	}
+
+	err = dbvalidation.ValidateExist(ctx, s.colorThemeCollection, r, "UITheme", r.UITheme)
+	if err != nil {
+		return err
+	}
+
+	err = dbvalidation.ValidateExist(ctx, s.roleCollection, r, "Roles", r.Roles)
+	if err != nil {
+		return err
+	}
+
+	return s.validateName(ctx, r.Name, id, r)
+}
+
+func (s *store) validateName(ctx context.Context, name, id string, r any) error {
+	q := bson.M{"$or": []bson.M{
+		{"name": name},
+		{"_id": name},
+	}}
+	if id != "" {
+		q["_id"] = bson.M{"$ne": id}
+	}
+
+	err := s.userCollection.FindOne(ctx, q).Err()
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		return err
+	}
+
+	if err == nil {
+		return validation.NewSingleError("exist", "Name", "Name", r)
+	}
+
+	return nil
 }
 
 func getRolePipeline() []bson.M {
