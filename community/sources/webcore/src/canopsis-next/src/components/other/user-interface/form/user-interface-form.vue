@@ -9,16 +9,24 @@
         class="fill-width"
       />
     </v-layout>
-    <c-duration-field
-      v-field="form.popup_timeout.info"
+    <c-number-field
+      v-field="form.popup_timeout.info.value"
       :label="$t('userInterface.infoPopupTimeout')"
       name="popup_timeout.info"
-    />
-    <c-duration-field
-      v-field="form.popup_timeout.error"
+    >
+      <template #append>
+        {{ $tc('common.times.second', form.popup_timeout.info.value) }}
+      </template>
+    </c-number-field>
+    <c-number-field
+      v-field="form.popup_timeout.error.value"
       :label="$t('userInterface.errorPopupTimeout')"
       name="popup_timeout.error"
-    />
+    >
+      <template #append>
+        {{ $tc('common.times.second', form.popup_timeout.error.value) }}
+      </template>
+    </c-number-field>
     <v-layout>
       <c-language-field
         v-field="form.language"
