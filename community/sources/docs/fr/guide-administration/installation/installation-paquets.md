@@ -366,6 +366,12 @@ timescaledb-tune -yes --pg-config=/usr/pgsql-17/bin/pg_config
 echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/17/data/postgresql.conf
 ```
 
+Pour le bon fonctionnement de Canopsis, il est nécessaire que la base de donnée soit configurer sur la timezone `UTC` :
+```sh
+sed -i "s/^#\?timezone.*/timezone = 'UTC'/" /var/lib/pgsql/17/data/postgresql.conf
+sed -i "s/^#\?log_timezone.*/log_timezone = 'UTC'/" /var/lib/pgsql/17/data/postgresql.conf
+```
+
 Activer et démarrer le service :
 
 ```sh
