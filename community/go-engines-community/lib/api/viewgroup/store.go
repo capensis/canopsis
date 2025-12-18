@@ -5,8 +5,10 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -52,7 +54,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds, owne
 		pipeline = []bson.M{{"$match": bson.M{"is_private": false}}}
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -290,6 +292,16 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 	var response *ViewGroup
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
+		err := s.dbCollection.FindOne(ctx, bson.M{"title": r.Title, "is_private": false}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+
+		if err == nil {
+			return validation.NewSingleError("exist", "Title", "Title", r)
+		}
+
 		position, err := s.getNextPosition(ctx)
 		if err != nil {
 			return err
@@ -316,6 +328,19 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
+		err := s.dbCollection.FindOne(ctx, bson.M{
+			"_id":        bson.M{"$ne": r.ID},
+			"title":      r.Title,
+			"is_private": false,
+		}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+
+		if err == nil {
+			return validation.NewSingleError("exist", "Title", "Title", r)
+		}
+
 		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": bson.M{
 			"title":   r.Title,
 			"author":  r.Author,
@@ -336,13 +361,11 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	var deleted int64
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		err := s.dbViewCollection.FindOne(ctx, bson.M{"group_id": id}).Err()
+		err := dbvalidation.ValidateLinkedReference(ctx, s.dbViewCollection, bson.M{
+			"group_id": id,
+		}, "group", "a view")
 		if err != nil {
-			if !errors.Is(err, mongodriver.ErrNoDocuments) {
-				return err
-			}
-		} else {
-			return ErrLinkedToView
+			return err
 		}
 
 		// required to get the author in action log listener.

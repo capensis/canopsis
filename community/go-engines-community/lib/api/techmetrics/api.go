@@ -3,7 +3,8 @@ package techmetrics
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"github.com/gin-gonic/gin"
@@ -18,8 +19,9 @@ type API interface {
 }
 
 type api struct {
-	taskExecutor TaskExecutor
-	store        Store
+	taskExecutor   TaskExecutor
+	store          Store
+	errorResponder httperror.Responder
 
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
@@ -28,10 +30,12 @@ func NewApi(
 	taskExecutor TaskExecutor,
 	store Store,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	errorResponder httperror.Responder,
 ) API {
 	return &api{
-		taskExecutor: taskExecutor,
-		store:        store,
+		taskExecutor:   taskExecutor,
+		store:          store,
+		errorResponder: errorResponder,
 
 		timezoneConfigProvider: timezoneConfigProvider,
 	}
@@ -42,7 +46,9 @@ func NewApi(
 func (a *api) GetSettings(c *gin.Context) {
 	res, err := a.store.GetSettings(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -53,14 +59,17 @@ func (a *api) GetSettings(c *gin.Context) {
 // @Success 200 {object} Settings
 func (a *api) UpdateSettings(c *gin.Context) {
 	req := Settings{}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, req))
+	if err := validation.Bind(c, &req); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	err := a.store.UpdateSettings(c, req)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, req)
@@ -71,11 +80,14 @@ func (a *api) UpdateSettings(c *gin.Context) {
 func (a *api) StartExport(c *gin.Context) {
 	task, err := a.taskExecutor.StartExecute(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if task.ID == 0 {
-		c.JSON(http.StatusBadRequest, common.ErrorResponse{Error: "Already in progress"})
+		a.errorResponder.Respond(c, httperror.NewConflictError("The job is already running."))
+
 		return
 	}
 
@@ -91,7 +103,9 @@ func (a *api) StartExport(c *gin.Context) {
 func (a *api) GetExport(c *gin.Context) {
 	task, err := a.taskExecutor.GetStatus(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if task.ID == 0 {
@@ -116,11 +130,14 @@ func (a *api) GetExport(c *gin.Context) {
 func (a *api) DownloadExport(c *gin.Context) {
 	task, err := a.taskExecutor.GetStatus(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if task.ID == 0 || task.Status != TaskStatusSucceeded || task.Filepath == "" {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
