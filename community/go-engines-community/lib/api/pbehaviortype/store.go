@@ -31,7 +31,7 @@ type Store interface {
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
 	GetNextPriority(ctx context.Context) (int64, error)
-	ToggleVisibility(ctx context.Context, r BulkToggleVisibilityRequestItem, hidden bool) (bool, error)
+	ToggleHidden(ctx context.Context, r BulkToggleHiddenRequestItem, hidden bool) (bool, error)
 }
 
 type store struct {
@@ -489,7 +489,7 @@ func transformRequestToDocument(request EditRequest) *pbehavior.Type {
 	}
 }
 
-func (s *store) ToggleVisibility(ctx context.Context, r BulkToggleVisibilityRequestItem, hidden bool) (bool, error) {
+func (s *store) ToggleHidden(ctx context.Context, r BulkToggleHiddenRequestItem, hidden bool) (bool, error) {
 	res, err := s.dbCollection.UpdateOne(
 		ctx,
 		bson.M{"_id": r.ID},

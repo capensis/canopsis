@@ -260,20 +260,20 @@ func (a *api) BulkDelete(c *gin.Context) {
 }
 
 // BulkHide
-// @Param body body []BulkToggleVisibilityRequestItem true "body"
+// @Param body body []BulkToggleHiddenRequestItem true "body"
 func (a *api) BulkHide(c *gin.Context) {
-	a.toggleVisibility(c, true)
+	a.toggleHidden(c, true)
 }
 
 // BulkUnhide
-// @Param body body []BulkToggleVisibilityRequestItem true "body"
+// @Param body body []BulkToggleHiddenRequestItem true "body"
 func (a *api) BulkUnhide(c *gin.Context) {
-	a.toggleVisibility(c, false)
+	a.toggleHidden(c, false)
 }
 
-func (a *api) toggleVisibility(c *gin.Context, hidden bool) {
-	bulk.Handler(c, func(request BulkToggleVisibilityRequestItem) (string, error) {
-		found, err := a.store.ToggleVisibility(c, request, hidden)
+func (a *api) toggleHidden(c *gin.Context, hidden bool) {
+	bulk.Handler(c, func(request BulkToggleHiddenRequestItem) (string, error) {
+		found, err := a.store.ToggleHidden(c, request, hidden)
 		if err != nil {
 			return "", err
 		}

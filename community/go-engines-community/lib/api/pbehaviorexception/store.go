@@ -39,7 +39,7 @@ type Store interface {
 	Delete(ctx context.Context, id, userID string) (bool, error)
 	IsLinked(ctx context.Context, id string) (bool, error)
 	Import(ctx context.Context, name, pbhType, userID string, f multipart.File, fh *multipart.FileHeader) (*Response, error)
-	ToggleVisibility(ctx context.Context, r BulkToggleVisibilityRequestItem, hidden bool) (bool, error)
+	ToggleHidden(ctx context.Context, r BulkToggleHiddenRequestItem, hidden bool) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider, authorProvider author.Provider) Store {
@@ -546,7 +546,7 @@ func (s *store) transformExdatesRequestToModel(ctx context.Context, r EditReques
 	return exdates, nil
 }
 
-func (s *store) ToggleVisibility(ctx context.Context, r BulkToggleVisibilityRequestItem, hidden bool) (bool, error) {
+func (s *store) ToggleHidden(ctx context.Context, r BulkToggleHiddenRequestItem, hidden bool) (bool, error) {
 	res, err := s.dbCollection.UpdateOne(
 		ctx,
 		bson.M{"_id": r.ID},

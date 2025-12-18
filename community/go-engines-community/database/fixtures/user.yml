@@ -273,7 +273,7 @@ template:
   - &user {
     _id: <UUID()>,
     authkey: <UUID()>,
-    enable: true,
+    enabled: true,
     author: root,
     created: <NowUnix()>,
     updated: <Current().created>
