@@ -107,8 +107,8 @@ type Entity struct {
 }
 
 type StateInfo struct {
-	ID               string          `bson:"_id" json:"_id"`
-	InheritedPattern *pattern.Entity `bson:"inherited_pattern,omitempty" json:"inherited_pattern,omitempty"`
+	ID               string         `bson:"_id" json:"_id"`
+	InheritedPattern pattern.Entity `bson:"inherited_pattern,omitempty" json:"inherited_pattern,omitempty"`
 }
 
 type EntityComment struct {

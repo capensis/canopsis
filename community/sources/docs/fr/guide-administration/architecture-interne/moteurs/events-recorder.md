@@ -4,9 +4,7 @@
 
 Le service Recorder est responsable de l'enregistrement des événements dans Canopsis. Il lit les événements à partir d'un exchange RabbitMQ et les enregistre pour une utilisation ultérieure et pour l'historisation.
 
-Pour plus d'informations sur les fonctionnalités, consultez :  
-- [Documentation les enregistrements d'événements](../../../../guide-utilisation/menu-administration/enregistrements-d-evenements/)
-
+Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les enregistrements d'événements](../../../guide-utilisation/menu-administration/enregistrements-d-evenements.md).
 
 ## Options de démarrage
 

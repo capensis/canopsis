@@ -60,7 +60,7 @@ De plus, chaque consigne dispose désormais d'un onglet "Évaluation" directemen
 
 ### Échecs de filtres d'événements
 
-Cet onglet présente les erreurs détectées dans les [filtres d'événements](../../menu-exploitation/filtres-evenements/#gestion-des-erreurs).  
+Cet onglet présente les erreurs détectées dans les [filtres d'événements](../menu-exploitation/filtres-evenements.md#gestion-des-erreurs).  
 Chaque ligne correspond à une erreur non lue.
 
 Depuis le menu de notifications :
