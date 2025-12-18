@@ -18,7 +18,6 @@ import {
   EXPORT_CSV_DATETIME_FORMATS,
   CSV_SEPARATORS,
   GRID_SIZES,
-  SORT_ORDERS,
   TIME_UNITS,
   WIDGET_TYPES,
   DEFAULT_ALARM_MORE_INFO_TEMPLATE,
@@ -40,10 +39,16 @@ import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../templat
 import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
 import { widgetQuickActionsToForm, formToWidgetQuickActions } from '../quick-action/form';
+import { widgetSortColumnsToForm, formToWidgetSortColumns } from '../sort-column/form';
 
 import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
 import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from './line-chart';
 import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './numbers-chart';
+
+/**
+ * @typedef {WidgetSort[]} WidgetMultiSort
+ */
+
 /**
  * @typedef {'BarChart', 'LineChart', 'Numbers'} AlarmChartType
  */
@@ -139,7 +144,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
 
  * @typedef {Object} AlarmListBaseParameters
  * @property {number} itemsPerPage
- * @property {WidgetSort} sort
+ * @property {WidgetMultiSort} sortColumns
+ * @property {string} sortColumnsTemplate
  * @property {string} moreInfoTemplate
  * @property {string} moreInfoTemplateTemplate
  * @property {WidgetInfoPopup[]} infoPopups
@@ -203,7 +209,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} liveWatching
  * @property {string | null} mainFilter
  * @property {WidgetLiveReporting} liveReporting
- * @property {WidgetSort} sort
+ * @property {WidgetMultiSort} sortColumns
  * @property {boolean | null} opened
  * @property {number[]} expandGridRangeSize
  * @property {WidgetCsvSeparator} exportCsvSeparator
@@ -284,24 +290,14 @@ export const columnsParametersToForm = (columns = {}) => ({
 export const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({ ...infoPopup }));
 
 /**
- * Convert widget sort parameters to form
- *
- * @param {WidgetSort} [sort = {}]
- * @return {WidgetSort}
- */
-export const widgetSortToForm = (sort = {}) => ({
-  order: sort.order ?? SORT_ORDERS.asc,
-  column: sort.column ?? '',
-});
-
-/**
  * Convert alarm list base parameters (we are using it inside another widgets with alarmList) to form
  *
  * @param {AlarmListBaseParameters} [alarmListParameters = {}]
  * @return {AlarmListBaseParametersForm}
  */
 export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
-  sort: widgetSortToForm(alarmListParameters.sort),
+  sortColumns: widgetSortColumnsToForm(alarmListParameters.sortColumns),
+  sortColumnsTemplate: widgetTemplateValueToForm(alarmListParameters.sortColumnsTemplate),
   itemsPerPage: alarmListParameters.itemsPerPage ?? PAGINATION_LIMIT,
   moreInfoTemplate: alarmListParameters.moreInfoTemplate ?? DEFAULT_ALARM_MORE_INFO_TEMPLATE,
   moreInfoTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.moreInfoTemplateTemplate),
@@ -417,6 +413,8 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   quickActions: widgetQuickActionsToForm(parameters.quickActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   quickMassActions: widgetQuickActionsToForm(parameters.quickMassActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   hideMassActions: parameters.hideMassActions ?? false,
+  sortColumns: widgetSortColumnsToForm(parameters.sortColumns),
+  sortColumnsTemplate: widgetTemplateValueToForm(parameters.sortColumnsTemplate),
 });
 
 /**
@@ -436,7 +434,6 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   liveReporting: parameters.liveReporting
     ? cloneDeep(parameters.liveReporting)
     : {},
-  sort: widgetSortToForm(parameters.sort),
   opened: openedToForm(parameters.opened),
   expandGridRangeSize: parameters.expandGridRangeSize
     ? [...parameters.expandGridRangeSize]
@@ -511,6 +508,8 @@ export const formToAlarmListWidgetParameters = (form) => {
     quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
     quickActions: formToWidgetQuickActions(form.quickActions),
     quickMassActions: formToWidgetQuickActions(form.quickMassActions),
+    sortColumns: formToWidgetSortColumns(form.sortColumns),
+    sortColumnsTemplate: formToWidgetTemplateValue(form.sortColumnsTemplate),
   };
 
   parameters.usedAlarmProperties = convertAlarmWidgetParametersToActiveColumns(parameters);
