@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -24,8 +24,8 @@ type baseValidator struct {
 
 func NewValidator() Validator {
 	return &baseValidator{
-		invalidRulesPatternFields:           common.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection),
-		invalidInheritedEntityPatternFields: append(common.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection), "connector"),
+		invalidRulesPatternFields:           patternfields.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection),
+		invalidInheritedEntityPatternFields: append(patternfields.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection), "connector"),
 	}
 }
 
@@ -146,12 +146,12 @@ func (v *baseValidator) ValidateStateThreshold(sl validator.StructLevel) {
 
 	if r.Method == statesetting.CalculationMethodShare {
 		if r.Value > 99 {
-			sl.ReportError(r.Value, "Value", "Value", "ltfield", "100")
+			sl.ReportError(r.Value, "Value", "Value", "lt", "100")
 		}
 	}
 
 	if r.Value < 0 {
-		sl.ReportError(r.Value, "Value", "Value", "gtfield", "-1")
+		sl.ReportError(r.Value, "Value", "Value", "gt", "-1")
 	}
 }
 
