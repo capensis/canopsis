@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -24,13 +24,13 @@ type store struct {
 	dbClient       mongo.DbClient
 	dbCollection   mongo.DbCollection
 	authorProvider author.Provider
-	transformer    common.PatternFieldsTransformer
+	transformer    patternfields.Transformer
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 ) Store {
 	return &store{
 		dbClient:       dbClient,

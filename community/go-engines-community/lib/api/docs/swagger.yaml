@@ -6104,7 +6104,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -6116,7 +6116,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entity-upstream:
     get:
       tags:
@@ -6146,7 +6146,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /event:
     post:
       tags:

@@ -3,8 +3,9 @@ package entityupstream
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,14 +15,14 @@ type API interface {
 }
 
 type api struct {
-	store Store
+	store          Store
+	errorResponder httperror.Responder
 }
 
-func NewApi(
-	store Store,
-) API {
+func NewApi(store Store, errorResponder httperror.Responder) API {
 	return &api{
-		store: store,
+		store:          store,
+		errorResponder: errorResponder,
 	}
 }
 
@@ -30,30 +31,26 @@ func NewApi(
 func (a *api) GetDownstreams(c *gin.Context) {
 	var r DownstreamsRequest
 	r.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	aggregationResult, err := a.store.GetDownstreams(c, r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if aggregationResult == nil {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
 
-	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-
-		return
-	}
-
+	res := pagination.NewResponse(r.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -61,19 +58,21 @@ func (a *api) GetDownstreams(c *gin.Context) {
 // @Success 200 {object} Response
 func (a *api) GetUpstream(c *gin.Context) {
 	var r UpstreamRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	res, entityExists, err := a.store.GetUpstream(c, r.ID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !entityExists {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
