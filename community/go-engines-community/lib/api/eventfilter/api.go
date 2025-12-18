@@ -4,19 +4,20 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type API interface {
-	common.BulkCrudAPI
+	crud.BulkAPI
 	ListFailures(c *gin.Context)
 	ReadFailures(c *gin.Context)
 	DBExport(c *gin.Context)
@@ -26,20 +27,20 @@ type API interface {
 }
 
 type api struct {
-	store         Store
-	mongoExporter dbexport.Exporter
-	logger        zerolog.Logger
+	store          Store
+	mongoExporter  dbexport.Exporter
+	errorResponder httperror.Responder
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
-	logger zerolog.Logger,
+	errorResponder httperror.Responder,
 ) API {
 	return &api{
-		store:         store,
-		mongoExporter: mongoExporter,
-		logger:        logger,
+		store:          store,
+		mongoExporter:  mongoExporter,
+		errorResponder: errorResponder,
 	}
 }
 
@@ -50,48 +51,42 @@ func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 	var err error
 
-	if err = c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err = validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	eventfilter, err := a.store.Insert(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
-
-		panic(err)
+		return
 	}
 
 	c.JSON(http.StatusCreated, eventfilter)
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
+// @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+	if err := validation.Bind(c, &query); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	aggregationResult, err := a.store.Find(c, query)
 	if err != nil {
-		panic(err)
-	}
+		a.errorResponder.Respond(c, err)
 
-	res, err := common.NewPaginatedResponse(query.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
+	res := pagination.NewResponse(query.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -101,12 +96,15 @@ func (a *api) Get(c *gin.Context) {
 	evf, err := a.store.GetByID(c, c.Param("id"))
 
 	if errors.Is(err, mongodriver.ErrNoDocuments) || evf == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, evf)
@@ -120,26 +118,22 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	eventfilter, err := a.store.Update(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
-
-		panic(err)
+		return
 	}
 
 	if eventfilter == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -147,13 +141,23 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, c.Param("id"), userID)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -170,7 +174,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		}
 
 		return eventfilter.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkUpdate
@@ -178,66 +182,81 @@ func (a *api) BulkCreate(c *gin.Context) {
 func (a *api) BulkUpdate(c *gin.Context) {
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
 		eventfilter, err := a.store.Update(c, UpdateRequest(request))
-		if err != nil || eventfilter == nil {
+		if err != nil {
 			return "", err
 		}
 
+		if eventfilter == nil {
+			return "", httperror.ErrNotFound
+		}
+
 		return eventfilter.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
 		ok, err := a.store.Delete(c, request.ID, userID)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // ListFailures
-// @Success 200 {object} common.PaginatedListResponse{data=[]FailureResponse}
+// @Success 200 {object} pagination.ListResponse{data=[]FailureResponse}
 func (a *api) ListFailures(c *gin.Context) {
 	r := FailureRequest{}
 	r.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	aggregationResult, err := a.store.FindFailures(c, c.Param("id"), r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if aggregationResult == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
-	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(r.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
 func (a *api) ReadFailures(c *gin.Context) {
 	exists, err := a.store.ReadFailures(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !exists {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -249,14 +268,17 @@ func (a *api) ReadFailures(c *gin.Context) {
 func (a *api) DBExport(c *gin.Context) {
 	request := dbexport.Request{}
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	b, err := a.mongoExporter.Export(c, mongo.EventFilterRuleCollection, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	dbexport.AttachFile(c, mongo.EventFilterRuleCollection, b)
@@ -267,22 +289,17 @@ func (a *api) DBExport(c *gin.Context) {
 // @Success 200 {object} template.ValidateResponse
 func (a *api) ValidateTemplates(c *gin.Context) {
 	var request TemplateRequest
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	response, err := a.store.ValidateTemplates(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
-
-		panic(err)
+		return
 	}
 
 	c.JSON(http.StatusOK, response)

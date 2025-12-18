@@ -8,8 +8,9 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -56,7 +57,7 @@ type store struct {
 
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage
 
-	transformer common.PatternFieldsTransformer
+	transformer patternfields.Transformer
 
 	logger zerolog.Logger
 }
@@ -68,7 +69,7 @@ func NewStore(
 	serviceChangeChan chan<- entityservice.ChangeEntityMessage,
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
@@ -187,7 +188,7 @@ func (s *store) Find(ctx context.Context, request ListRequest, userID string) (*
 	}
 
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
-	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(request.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -200,7 +201,7 @@ func (s *store) Find(ctx context.Context, request ListRequest, userID string) (*
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, request.Sort),
+		mongoquery.GetSortQuery(sortBy, request.Sort),
 	))
 
 	if err != nil {
@@ -385,7 +386,7 @@ func (s *store) updateLinkedModelsOnEntityUpdate(ctx context.Context, pattern Re
 							"$$this",
 							bson.M{
 								"entity_pattern": pattern.EntityPattern.RemoveFields(
-									common.GetForbiddenFieldsInEntityPattern(collection),
+									patternfields.GetForbiddenFieldsInEntityPattern(collection),
 								),
 								"corporate_entity_pattern_title": pattern.Title,
 							},
@@ -421,7 +422,7 @@ func (s *store) updateLinkedModelsOnEntityUpdate(ctx context.Context, pattern Re
 				filter := bson.M{"corporate_" + f: pattern.ID}
 				set := bson.M{
 					f: pattern.EntityPattern.RemoveFields(
-						common.GetForbiddenFieldsInEntityPattern(collection),
+						patternfields.GetForbiddenFieldsInEntityPattern(collection),
 					),
 					"corporate_" + f + "_title": pattern.Title,
 					"updated":                   datetime.NewCpsTime(),
@@ -444,7 +445,7 @@ func (s *store) updateLinkedModelsOnEntityUpdate(ctx context.Context, pattern Re
 			filter := bson.M{"corporate_entity_pattern": pattern.ID}
 			update := bson.M{"$set": bson.M{
 				"entity_pattern": pattern.EntityPattern.RemoveFields(
-					common.GetForbiddenFieldsInEntityPattern(collection),
+					patternfields.GetForbiddenFieldsInEntityPattern(collection),
 				),
 				"corporate_entity_pattern_title": pattern.Title,
 				"aliases":                        newAliases, // can set newAliases because a document contains only one entity pattern
@@ -472,8 +473,8 @@ func (s *store) updateLinkedModelsOnAlarmUpdate(ctx context.Context, pattern Res
 			}
 			update = bson.M{"$set": bson.M{
 				"actions.$[action].alarm_pattern": pattern.AlarmPattern.RemoveFields(
-					common.GetForbiddenFieldsInAlarmPattern(collection),
-					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
+					patternfields.GetForbiddenFieldsInAlarmPattern(collection),
+					patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
 				),
 				"actions.$[action].corporate_alarm_pattern_title": pattern.Title,
 				"updated": datetime.NewCpsTime(),
@@ -488,8 +489,8 @@ func (s *store) updateLinkedModelsOnAlarmUpdate(ctx context.Context, pattern Res
 			}
 			update = bson.M{"$set": bson.M{
 				"alarm_pattern": pattern.AlarmPattern.RemoveFields(
-					common.GetForbiddenFieldsInAlarmPattern(collection),
-					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
+					patternfields.GetForbiddenFieldsInAlarmPattern(collection),
+					patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
 				),
 				"corporate_alarm_pattern_title": pattern.Title,
 				"updated":                       datetime.NewCpsTime(),
@@ -670,14 +671,12 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 		}
 	}
 	if len(r.EntityPattern) > 0 {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-			EntityPattern: r.EntityPattern,
-		})
+		r.EntityPattern, _, err = s.transformer.TransformAliases(ctx, r.EntityPattern, r)
 		if err != nil {
 			return res, err
 		}
 
-		entityPatternQuery, err = db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "entity")
+		entityPatternQuery, err = db.EntityPatternToMongoQuery(r.EntityPattern, "entity")
 		if err != nil {
 			return res, err
 		}
@@ -696,7 +695,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 			)
 		}
 
-		entityPatternQueryForEntities, err := db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "")
+		entityPatternQueryForEntities, err := db.EntityPatternToMongoQuery(r.EntityPattern, "")
 		if err != nil {
 			return res, err
 		}
@@ -805,14 +804,12 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 	entitiesPipeline := make([]bson.M, 0)
 	var alarmPatternCount, entityPatternCount, pbhPatternCount, entitiesCount CountResponse
 	if len(r.EntityPattern) > 0 {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-			EntityPattern: r.EntityPattern,
-		})
+		r.EntityPattern, _, err = s.transformer.TransformAliases(ctx, r.EntityPattern, r)
 		if err != nil {
 			return res, err
 		}
 
-		entityPatternQuery, err = db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "")
+		entityPatternQuery, err = db.EntityPatternToMongoQuery(r.EntityPattern, "")
 		if err != nil {
 			return res, err
 		}
@@ -1109,15 +1106,13 @@ func (s *store) transformEntityPatternToModel(
 	model *savedpattern.SavedPattern,
 ) error {
 	if r.Type == savedpattern.TypeEntity {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-			EntityPattern: r.EntityPattern,
-		})
+		var err error
+		r.EntityPattern, model.Aliases, err = s.transformer.TransformAliases(ctx, r.EntityPattern, r)
 		if err != nil {
 			return err
 		}
 
-		model.Aliases = transformedEntityPatternRequest.Aliases
-		model.EntityPattern = transformedEntityPatternRequest.EntityPattern
+		model.EntityPattern = r.EntityPattern
 	}
 
 	return nil

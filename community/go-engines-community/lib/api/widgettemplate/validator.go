@@ -19,7 +19,7 @@ func ValidateEditRequest(sl validator.StructLevel) {
 
 		for i, column := range r.Columns {
 			if column.Value != "" && !view.IsValidWidgetColumn(r.Type, column.Value) {
-				sl.ReportError(column, fmt.Sprintf("Columns.%d.Value", i), "Value", "invalid", "")
+				sl.ReportError(column.Value, "Value", fmt.Sprintf("Columns.%d.Value", i), "invalid", "")
 			}
 		}
 
@@ -78,7 +78,7 @@ func ValidateEditRequest(sl validator.StructLevel) {
 
 		for i, column := range r.SortColumns {
 			if column.SortBy != "" && !view.IsValidWidgetColumn(view.WidgetTemplateTypeAlarmColumns, column.SortBy) {
-				sl.ReportError(column, fmt.Sprintf("SortColumns.%d.SortBy", i), "SortBy", "invalid", "")
+				sl.ReportError(column.SortBy, "SortBy", fmt.Sprintf("SortColumns.%d.SortBy", i), "invalid", "")
 			}
 		}
 

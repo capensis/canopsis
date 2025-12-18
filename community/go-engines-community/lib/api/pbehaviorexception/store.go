@@ -8,10 +8,12 @@ import (
 	"io"
 	"mime"
 	"mime/multipart"
+	"strconv"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -49,10 +51,7 @@ func NewStore(dbClient mongo.DbClient, timezoneConfigProvider config.TimezoneCon
 		defaultSortBy:         "created",
 
 		timezoneConfigProvider: timezoneConfigProvider,
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id":  "ID already exists.",
-			"name": "Name already exists.",
-		}),
+		dupErrorParser:         validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -86,7 +85,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, doc)
 			}
 
 			return err
@@ -104,12 +103,12 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
 	pipeline := make([]bson.M, 0)
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sort := common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
+	sort := mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
 	project := getNestedObjectsPipeline()
 	project = append(project, s.authorProvider.Pipeline()...)
 	project = append(project, sort)
@@ -182,7 +181,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": doc.ID}, bson.M{"$set": doc})
 		if err != nil || result.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, doc)
 			}
 
 			return err
@@ -199,19 +198,16 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
-	isLinked, err := s.IsLinked(ctx, id)
-	if err != nil {
-		return false, err
-	}
-
-	if isLinked {
-		return false, ErrLinkedException
-	}
-
 	var deleted int64
-
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
+
+		err := dbvalidation.ValidateLinkedReference(ctx, s.pbehaviorDbCollection, bson.M{
+			"exceptions": id,
+		}, "exception", "a pbehavior")
+		if err != nil {
+			return err
+		}
 
 		// required to get the author in action log listener.
 		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
@@ -244,7 +240,7 @@ func (s *store) Import(ctx context.Context, name, pbhType, userID string, f mult
 	err := s.typeDbCollection.FindOne(ctx, bson.M{"_id": pbhType}).Err()
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, common.NewValidationError("type", "Type doesn't exist.")
+			return nil, validation.NewSingleError("not_exist", "type", "type", nil)
 		}
 		return nil, err
 	}
@@ -253,7 +249,7 @@ func (s *store) Import(ctx context.Context, name, pbhType, userID string, f mult
 		return nil, err
 	}
 	if err == nil {
-		return nil, common.NewValidationError("name", "Name already exists.")
+		return nil, validation.NewSingleError("exist", "name", "name", nil)
 	}
 
 	contentType := fh.Header.Get("Content-Type")
@@ -268,7 +264,7 @@ func (s *store) Import(ctx context.Context, name, pbhType, userID string, f mult
 	case "text/calendar":
 		return s.importICS(ctx, name, pbhType, userID, f)
 	default:
-		return nil, common.NewValidationError("file", "File is not supported.")
+		return nil, validation.NewSingleError("not_supported", "file", "file", nil)
 	}
 }
 
@@ -281,7 +277,7 @@ func (s *store) importJson(
 	d := json.NewDecoder(r)
 	err := d.Decode(&dates)
 	if err != nil {
-		return nil, common.NewValidationError("file", "File is not supported.")
+		return nil, validation.NewSingleError("not_supported", "file", "file", nil)
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
@@ -290,7 +286,7 @@ func (s *store) importJson(
 	for dateStr := range dates {
 		start, err := time.ParseInLocation(time.DateOnly, dateStr, location)
 		if err != nil {
-			return nil, common.NewValidationError("file", "File is not supported.")
+			return nil, validation.NewSingleError("not_supported", "file", "file", nil)
 		}
 		end := start.AddDate(0, 0, 1)
 		if end.Before(now.Time) {
@@ -307,7 +303,7 @@ func (s *store) importJson(
 	}
 
 	if len(exdates) == 0 {
-		return nil, common.NewValidationError("file", "File is empty.")
+		return nil, validation.NewSingleError("invalid", "file", "file", nil)
 	}
 
 	doc := pbehavior.Exception{
@@ -347,14 +343,14 @@ func (s *store) importICS(
 	cal.End = &intervalEnd
 	err := cal.Parse()
 	if err != nil {
-		return nil, common.NewValidationError("file", "File is not supported.")
+		return nil, validation.NewSingleError("not_supported", "file", "file", nil)
 	}
 
 	exdates := make([]pbehavior.Exdate, 0, len(cal.Events))
 	location := s.timezoneConfigProvider.Get().Location
 	for _, event := range cal.Events {
 		if event.Start == nil || event.End == nil {
-			return nil, common.NewValidationError("file", "File is not valid.")
+			return nil, validation.NewSingleError("invalid", "file", "file", nil)
 		}
 
 		start := adjustCalendarTime(*event.Start, location)
@@ -373,7 +369,7 @@ func (s *store) importICS(
 	}
 
 	if len(exdates) == 0 {
-		return nil, common.NewValidationError("file", "File is empty.")
+		return nil, validation.NewSingleError("invalid", "file", "file", nil)
 	}
 
 	doc := pbehavior.Exception{
@@ -482,7 +478,7 @@ func (s *store) transformRequestToDoc(ctx context.Context, r EditRequest) (*pbeh
 	exception.Name = r.Name
 	exception.Description = r.Description
 	exception.Author = r.Author
-	exception.Exdates, err = s.transformExdatesRequestToModel(ctx, r.Exdates)
+	exception.Exdates, err = s.transformExdatesRequestToModel(ctx, r)
 	if err != nil {
 		return nil, err
 	}
@@ -490,14 +486,14 @@ func (s *store) transformRequestToDoc(ctx context.Context, r EditRequest) (*pbeh
 	return &exception, nil
 }
 
-func (s *store) transformExdatesRequestToModel(ctx context.Context, r []ExdateRequest) ([]pbehavior.Exdate, error) {
-	if len(r) == 0 {
+func (s *store) transformExdatesRequestToModel(ctx context.Context, r EditRequest) ([]pbehavior.Exdate, error) {
+	if len(r.Exdates) == 0 {
 		return []pbehavior.Exdate{}, nil
 	}
 
-	pbhTypes := make([]string, len(r))
-	for i := range r {
-		pbhTypes[i] = r[i].Type
+	pbhTypes := make([]string, len(r.Exdates))
+	for i := range r.Exdates {
+		pbhTypes[i] = r.Exdates[i].Type
 	}
 
 	res, err := s.typeDbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": pbhTypes}})
@@ -518,17 +514,17 @@ func (s *store) transformExdatesRequestToModel(ctx context.Context, r []ExdateRe
 		}
 	}
 
-	exdates := make([]pbehavior.Exdate, len(r))
-	for i := range r {
-		t, ok := typesByID[r[i].Type]
+	exdates := make([]pbehavior.Exdate, len(r.Exdates))
+	for i := range r.Exdates {
+		t, ok := typesByID[r.Exdates[i].Type]
 		if !ok {
-			return nil, ErrTypeNotExists
+			return nil, validation.NewSingleError("not_exist", "Type", "Exdates."+strconv.Itoa(i)+".Type", r)
 		}
 
 		exdates[i] = pbehavior.Exdate{
 			Exdate: types.Exdate{
-				Begin: r[i].Begin,
-				End:   r[i].End,
+				Begin: r.Exdates[i].Begin,
+				End:   r.Exdates[i].End,
 			},
 			Type: t.ID,
 		}

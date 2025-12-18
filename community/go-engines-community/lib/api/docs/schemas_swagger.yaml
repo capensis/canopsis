@@ -405,7 +405,7 @@ definitions:
           $ref: '#/definitions/alarm.Alarm'
         type: array
       meta:
-        $ref: '#/definitions/common.PaginatedMeta'
+        $ref: '#/definitions/pagination.MetaResponse'
     type: object
   alarm.Count:
     properties:
@@ -723,7 +723,7 @@ definitions:
           $ref: '#/definitions/alarm.Step'
         type: array
       meta:
-        $ref: '#/definitions/common.PaginatedMeta'
+        $ref: '#/definitions/pagination.MetaResponse'
     type: object
   alarm.StepsRequest:
     properties:
@@ -1445,35 +1445,6 @@ definitions:
         type: string
       val:
         type: integer
-    type: object
-  common.ErrorResponse:
-    properties:
-      error:
-        type: string
-    type: object
-  common.PaginatedListResponse:
-    properties:
-      data: {}
-      meta:
-        $ref: '#/definitions/common.PaginatedMeta'
-    type: object
-  common.PaginatedMeta:
-    properties:
-      page:
-        type: integer
-      page_count:
-        type: integer
-      per_page:
-        type: integer
-      total_count:
-        type: integer
-    type: object
-  common.ValidationErrorResponse:
-    properties:
-      errors:
-        additionalProperties:
-          type: string
-        type: object
     type: object
   config.EngineParameters:
     properties:
@@ -4149,6 +4120,24 @@ definitions:
     properties:
       instruction:
         $ref: '#/definitions/notification.InstructionNotificationSettings'
+    type: object
+  pagination.ListResponse:
+    properties:
+      data:
+        type: any
+      meta:
+        $ref: '#/definitions/pagination.MetaResponse'
+    type: object
+  pagination.MetaResponse:
+    properties:
+      page:
+        type: integer
+      page_count:
+        type: integer
+      per_page:
+        type: integer
+      total_count:
+        type: integer
     type: object
   pattern.BulkDeleteRequestItem:
     properties:
