@@ -28,7 +28,7 @@ type Store interface {
 	Update(ctx context.Context, model UpdateRequest) (*Response, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
 	IsLinkedToPbehavior(ctx context.Context, id string) (bool, error)
-	ToggleVisibility(ctx context.Context, r BulkToggleVisibilityRequestItem, hidden bool) (bool, error)
+	ToggleHidden(ctx context.Context, r BulkToggleHiddenRequestItem, hidden bool) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
@@ -294,7 +294,7 @@ func getDeletablePipeline() []bson.M {
 	}
 }
 
-func (s *store) ToggleVisibility(ctx context.Context, r BulkToggleVisibilityRequestItem, hidden bool) (bool, error) {
+func (s *store) ToggleHidden(ctx context.Context, r BulkToggleHiddenRequestItem, hidden bool) (bool, error) {
 	res, err := s.dbCollection.UpdateOne(
 		ctx,
 		bson.M{"_id": r.ID},

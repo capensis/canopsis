@@ -36,7 +36,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       external_id:
         type: string
@@ -4848,7 +4848,7 @@ definitions:
     required:
     - _id
     type: object
-  pbehaviorexception.BulkToggleVisibilityRequestItem:
+  pbehaviorexception.BulkToggleHiddenRequestItem:
     properties:
       _id:
         type: string
@@ -4949,7 +4949,7 @@ definitions:
     required:
     - _id
     type: object
-  pbehaviorreason.BulkToggleVisibilityRequestItem:
+  pbehaviorreason.BulkToggleHiddenRequestItem:
     properties:
       _id:
         type: string
@@ -5053,7 +5053,7 @@ definitions:
     required:
     - _id
     type: object
-  pbehaviortype.BulkToggleVisibilityRequestItem:
+  pbehaviortype.BulkToggleHiddenRequestItem:
     properties:
       _id:
         type: string
@@ -6753,7 +6753,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       firstname:
         maxLength: 255
@@ -6797,7 +6797,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       firstname:
         maxLength: 255
@@ -6826,7 +6826,7 @@ definitions:
     required:
     - _id
     - email
-    - enable
+    - enabled
     - name
     - roles
     type: object
@@ -6836,7 +6836,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       external_id:
         type: string
@@ -6868,7 +6868,7 @@ definitions:
         type: string
     required:
     - email
-    - enable
+    - enabled
     - name
     - roles
     type: object
@@ -6878,7 +6878,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       firstname:
         maxLength: 255
@@ -6922,7 +6922,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       firstname:
         maxLength: 255
@@ -6950,7 +6950,7 @@ definitions:
         type: string
     required:
     - email
-    - enable
+    - enabled
     - name
     - roles
     type: object
@@ -6974,7 +6974,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       external_id:
         type: string

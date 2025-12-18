@@ -37,7 +37,7 @@ type EditRequest struct {
 	UILanguage             string   `json:"ui_language" binding:"max=255"`
 	UIGroupsNavigationType string   `json:"ui_groups_navigation_type" binding:"max=255"`
 	UITheme                string   `json:"ui_theme" binding:"max=255"`
-	IsEnabled              *bool    `json:"enable" binding:"required"`
+	IsEnabled              *bool    `json:"enabled" binding:"required"`
 	DefaultView            string   `json:"defaultview"`
 	Author                 string   `json:"author" swaggerignore:"true"`
 }
@@ -57,7 +57,7 @@ type PatchEditRequest struct {
 	UILanguage             *string  `json:"ui_language" binding:"omitempty,max=255"`
 	UIGroupsNavigationType *string  `json:"ui_groups_navigation_type" binding:"omitempty,max=255"`
 	UITheme                *string  `json:"ui_theme" binding:"omitempty,max=255"`
-	IsEnabled              *bool    `json:"enable"`
+	IsEnabled              *bool    `json:"enabled"`
 	DefaultView            *string  `json:"defaultview"`
 	Author                 string   `json:"author" swaggerignore:"true"`
 }
@@ -80,7 +80,7 @@ func (r CreateRequest) getBson(passwordEncoder password.Encoder) (bson.M, error)
 		"ui_language":               r.UILanguage,
 		"ui_theme":                  r.UITheme,
 		"ui_groups_navigation_type": r.UIGroupsNavigationType,
-		"enable":                    r.IsEnabled,
+		"enabled":                   r.IsEnabled,
 		"defaultview":               r.DefaultView,
 		"authkey":                   utils.NewID(),
 		"source":                    r.Source,
@@ -110,7 +110,7 @@ func (r EditRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
 		"ui_language":               r.UILanguage,
 		"ui_theme":                  r.UITheme,
 		"ui_groups_navigation_type": r.UIGroupsNavigationType,
-		"enable":                    r.IsEnabled,
+		"enabled":                   r.IsEnabled,
 		"defaultview":               r.DefaultView,
 		"author":                    r.Author,
 		"updated":                   datetime.NewCpsTime(),
@@ -166,7 +166,7 @@ func (r PatchEditRequest) getBson(passwordEncoder password.Encoder) (bson.M, err
 	}
 
 	if r.IsEnabled != nil {
-		bsonModel["enable"] = r.IsEnabled
+		bsonModel["enabled"] = r.IsEnabled
 	}
 
 	if r.DefaultView != nil {
@@ -196,7 +196,7 @@ type User struct {
 	UILanguage             string            `bson:"ui_language" json:"ui_language"`
 	UITheme                string            `bson:"ui_theme" json:"ui_theme"`
 	UIGroupsNavigationType string            `bson:"ui_groups_navigation_type" json:"ui_groups_navigation_type"`
-	Enabled                bool              `bson:"enable" json:"enable"`
+	Enabled                bool              `bson:"enabled" json:"enabled"`
 	DefaultView            *View             `bson:"defaultview" json:"defaultview"`
 	ExternalID             string            `bson:"external_id" json:"external_id"`
 	Source                 string            `bson:"source" json:"source"`

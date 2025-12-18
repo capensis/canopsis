@@ -615,7 +615,7 @@ func (s *store) clearTplTests(ctx context.Context, id string) error {
 
 func (s *store) checkLastAdmin(ctx context.Context) (bool, string, error) {
 	cursor, err := s.userCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"enable": true, "roles": security.RoleAdmin}},
+		{"$match": bson.M{"enabled": true, "roles": security.RoleAdmin}},
 		{"$group": bson.M{
 			"_id":     nil,
 			"count":   bson.M{"$sum": 1},
@@ -779,7 +779,7 @@ func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled boo
 			ctx,
 			bson.M{"_id": r.ID},
 			bson.M{"$set": bson.M{
-				"enable":  enabled,
+				"enabled": enabled,
 				"author":  r.Author,
 				"updated": datetime.NewCpsTime(),
 			}},

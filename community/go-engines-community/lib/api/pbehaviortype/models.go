@@ -61,7 +61,7 @@ type PriorityResponse struct {
 	Priority int64 `json:"priority"`
 }
 
-type BulkToggleVisibilityRequestItem struct {
+type BulkToggleHiddenRequestItem struct {
 	ID     string `json:"_id" binding:"required"`
 	Author string `json:"author" swaggerignore:"true"`
 }
