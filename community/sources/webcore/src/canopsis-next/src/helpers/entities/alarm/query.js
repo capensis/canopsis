@@ -100,10 +100,10 @@ export function convertAlarmWidgetToQuery(widget) {
     liveReporting = {},
     itemsPerPage = PAGINATION_LIMIT,
     opened = ALARMS_OPENED_VALUES.opened,
-    sort,
     mainFilter,
     usedAlarmProperties,
     isCorrelationEnabled,
+    sortColumns = [],
   } = widget.parameters;
 
   const query = {
@@ -137,9 +137,11 @@ export function convertAlarmWidgetToQuery(widget) {
     query.active_columns = activeColumns;
   }
 
-  if (sort?.column && sort?.order) {
-    query.sortBy = [sort.column];
-    query.sortDesc = [sort.order === SORT_ORDERS.desc];
+  if (sortColumns.length > 0) {
+    const lowerCasedDesc = SORT_ORDERS.desc.toLowerCase();
+
+    query.sortBy = sortColumns.map(column => column.sort_by).filter(Boolean);
+    query.sortDesc = sortColumns.map(column => column.sort === lowerCasedDesc);
   }
 
   if (!isUndefined(isCorrelationEnabled)) {
@@ -194,7 +196,12 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
  * @returns {Object}
  */
 export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
-  const { sort = {}, widgetGroupColumns = [], charts = [] } = widget.parameters;
+  const {
+    widgetGroupColumns = [],
+    charts = [],
+    sort_columns: sortColumns,
+  } = widget.parameters;
+
   const columns = widgetGroupColumns.length > 0
     ? widgetGroupColumns
     : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
@@ -222,8 +229,15 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
     },
   };
 
-  if (sort.column && sort.order && columns.some(({ value }) => value.endsWith(sort.column))) {
-    query.children.multiSortBy.push({ sortBy: sort.column, descending: sort.order === SORT_ORDERS.desc });
+  if (sortColumns && isArray(sortColumns) && sortColumns.length > 0) {
+    sortColumns.forEach((sortColumn) => {
+      if (sortColumn.sort_by && columns.some(({ value }) => value.endsWith(sortColumn.sort_by))) {
+        query.children.multiSortBy.push({
+          sortBy: sortColumn.sort_by,
+          descending: sortColumn.sort === SORT_ORDERS.desc.toLowerCase(),
+        });
+      }
+    });
   }
 
   return query;

@@ -36,6 +36,7 @@ export { default as CFileNameMaskField } from '@/components/forms/fields/c-file-
 export { default as CPercentsField } from '@/components/forms/fields/c-percents-field.vue';
 export { default as CColumnsField } from '@/components/forms/fields/column/c-columns-field.vue';
 export { default as CColumnsWithTemplateField } from '@/components/forms/fields/column/c-columns-with-template-field.vue';
+export { default as CSortColumnsField } from '@/components/forms/fields/sort-column/c-sort-columns-field.vue';
 export { default as CUserPickerField } from '@/components/forms/fields/c-user-picker-field.vue';
 export { default as CInstructionTypeField } from '@/components/forms/fields/c-instruction-type-field.vue';
 export { default as CItemsPerPageField } from '@/components/forms/fields/c-items-per-page-field.vue';

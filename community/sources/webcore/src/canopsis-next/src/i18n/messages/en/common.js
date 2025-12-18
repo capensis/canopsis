@@ -271,6 +271,7 @@ export default {
   countOfMax: '{count} of {total}',
   trigger: 'Trigger | Triggers',
   column: 'Column | Columns',
+  sort: 'Sort',
   countOfTotal: '{count} of {total}',
   deprecatedTrigger: 'This trigger is not supported anymore',
   initialLongOutput: 'Long initial output',

@@ -42,6 +42,10 @@ export const widgetTemplatesMixin = {
       return filter(this.preparedWidgetTemplates, { type: WIDGET_TEMPLATES_TYPES.alarmColumns });
     },
 
+    alarmSortColumnsWidgetTemplates() {
+      return filter(this.preparedWidgetTemplates, { type: WIDGET_TEMPLATES_TYPES.alarmSortColumns });
+    },
+
     entityColumnsWidgetTemplates() {
       return filter(this.preparedWidgetTemplates, { type: WIDGET_TEMPLATES_TYPES.entityColumns });
     },

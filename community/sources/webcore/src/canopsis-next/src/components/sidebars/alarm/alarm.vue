@@ -14,10 +14,12 @@
       <field-live-reporting v-model="form.parameters.liveReporting" />
     </widget-settings-group>
     <widget-settings-group :title="$tc('common.column', 2)">
-      <field-default-sort-column
-        v-model="form.parameters.sort"
+      <field-default-sort-columns-with-template
+        v-model="form.parameters.sortColumns"
         :columns="sortablePreparedWidgetColumns"
-        :columns-label="$t('settings.columnName')"
+        :template="form.parameters.sortColumnsTemplate"
+        :templates="alarmSortColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
       />
       <field-columns
         v-model="form.parameters.widgetColumns"
@@ -265,7 +267,7 @@ import FieldAvailabilityGraphSettings from '../availability/form/fields/availabi
 import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
 import WidgetSettings from '../partials/widget-settings.vue';
 import FieldTitle from '../form/fields/title.vue';
-import FieldDefaultSortColumn from '../form/fields/default-sort-column.vue';
+import FieldDefaultSortColumnsWithTemplate from '../form/fields/default-sort-columns-with-template.vue';
 import FieldColumns from '../form/fields/columns.vue';
 import FieldPeriodicRefresh from '../form/fields/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from '../form/fields/default-elements-per-page.vue';
@@ -297,7 +299,7 @@ export default {
     WidgetSettingsGroup,
     WidgetSettings,
     FieldTitle,
-    FieldDefaultSortColumn,
+    FieldDefaultSortColumnsWithTemplate,
     FieldColumns,
     FieldLiveReporting,
     FieldPeriodicRefresh,
@@ -354,6 +356,10 @@ export default {
       if (template && template !== this.form.parameters[field]) {
         this.$set(this.form.parameters, field, value);
       }
+    },
+
+    updateSortColumnsTemplate(template, sortColumns) {
+      this.updateTemplate('sortColumns', template, sortColumns);
     },
 
     updateMoreInfoTemplate(value, template) {
