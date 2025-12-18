@@ -773,16 +773,19 @@ func RegisterRoutes(
 				entityserviceAPI.GetTemplateVars)
 		}
 
-		entityupstreamAPI := entityupstream.NewApi(entityupstream.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)))
+		entityupstreamAPI := entityupstream.NewApi(
+			entityupstream.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient)),
+			errorResponder,
+		)
 		{
 			protected.GET(
 				"/entity-downstreams",
-				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer),
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer, errorResponder),
 				entityupstreamAPI.GetDownstreams,
 			)
 			protected.GET(
 				"/entity-upstream",
-				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer),
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer, errorResponder),
 				entityupstreamAPI.GetUpstream,
 			)
 		}
