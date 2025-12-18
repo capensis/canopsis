@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"net/url"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -14,18 +15,21 @@ import (
 )
 
 // LoginHandler redirects to CAS login url and saves referer url to service url.
-func LoginHandler(config libsecurity.CasConfig) gin.HandlerFunc {
+func LoginHandler(config libsecurity.CasConfig, errorResponder httperror.Responder) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		request := casLoginRequest{}
 
-		if err := c.ShouldBind(&request); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		if err := validation.Bind(c, &request); err != nil {
+			errorResponder.Respond(c, err)
+
 			return
 		}
 
 		casUrl, err := url.Parse(config.LoginUrl)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		service := fmt.Sprintf("%s?redirect=%s&service=%s",
@@ -39,18 +43,27 @@ func LoginHandler(config libsecurity.CasConfig) gin.HandlerFunc {
 }
 
 // CallbackHandler validates CAS ticket, creates access token and redirects to referer url.
-func CallbackHandler(p libsecurity.HttpProvider, enforcer libsecurity.Enforcer, tokenService security.TokenService, maintenanceAdapter config.MaintenanceAdapter) gin.HandlerFunc {
+func CallbackHandler(
+	p libsecurity.HttpProvider,
+	enforcer libsecurity.Enforcer,
+	tokenService security.TokenService,
+	maintenanceAdapter config.MaintenanceAdapter,
+	errorResponder httperror.Responder,
+) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		request := casLoginRequest{}
 
-		if err := c.ShouldBind(&request); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		if err := validation.Bind(c, &request); err != nil {
+			errorResponder.Respond(c, err)
+
 			return
 		}
 
 		redirectUrl, err := url.Parse(request.Redirect)
 		if err != nil {
-			panic(fmt.Errorf("parse redirect url error: %w", err))
+			errorResponder.Respond(c, fmt.Errorf("parse redirect url error: %w", err))
+
+			return
 		}
 
 		q := redirectUrl.Query()
@@ -64,35 +77,45 @@ func CallbackHandler(p libsecurity.HttpProvider, enforcer libsecurity.Enforcer, 
 		}
 
 		if !ok || user == nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+			errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 			return
 		}
 
 		err = enforcer.LoadPolicy()
 		if err != nil {
-			panic(fmt.Errorf("reload enforcer error: %w", err))
+			errorResponder.Respond(c, fmt.Errorf("reload enforcer error: %w", err))
+
+			return
 		}
 
 		maintenanceConf, err := maintenanceAdapter.GetConfig(c)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if maintenanceConf.Enabled {
 			ok, err = enforcer.Enforce(user.ID, security.PermMaintenance, model.PermissionCan)
 			if err != nil {
-				panic(err)
+				errorResponder.Respond(c, err)
+
+				return
 			}
 
 			if !ok {
-				c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+				errorResponder.Respond(c, httperror.ErrMaintenance)
+
 				return
 			}
 		}
 
 		accessToken, err := tokenService.Create(c, *user, libsecurity.AuthMethodCas)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		q.Set("access_token", accessToken)

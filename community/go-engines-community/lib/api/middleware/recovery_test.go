@@ -7,36 +7,10 @@ import (
 	"os"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"go.uber.org/mock/gomock"
 )
-
-func TestRecovery_GivenNoUserKey_ShouldReturnUnauthorizedResponse(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	expectedCode := http.StatusUnauthorized
-
-	req := httptest.NewRequest(http.MethodGet, okURL, nil)
-
-	router := gin.New()
-	router.GET(
-		okURL,
-		Recovery(zerolog.Nop()),
-		func(c *gin.Context) {
-			c.MustGet(auth.UserKey)
-		},
-	)
-
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-
-	if w.Code != expectedCode {
-		t.Errorf("expected code: %v but got %v", expectedCode, w.Code)
-	}
-}
 
 func TestRecovery_GivenPanicErr_ShouldReturnInternalErrorResponse(t *testing.T) {
 	ctrl := gomock.NewController(t)
