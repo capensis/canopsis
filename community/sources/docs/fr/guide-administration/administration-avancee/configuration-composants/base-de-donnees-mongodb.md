@@ -102,10 +102,10 @@ Il est nécessaire de toujours mettre une valeur inférieure au nombre de giga d
 
 #### Index et Collscan
 
-Au fur et à mesure de votre utilisation de Canopsis les requêtes seront de plus en plus gourmandes en ressources matérielles et pourraient ralentir votre Canopsis. De nombreux facteurs peuvent entraîner des ralentissements: 
+Au fur et à mesure de votre utilisation de Canopsis les requêtes seront de plus en plus gourmandes en ressources matérielles et pourraient ralentir votre Canopsis. De nombreux facteurs peuvent entraîner des ralentissements :
 
-- Les collections qui grossissent au fur et à mesure de l'utilisation de Canopsis.
-- L'enrichissement d'entitées et d'alarmes.
+- Les collections qui grossissent au fur et à mesure de l'utilisation de Canopsis ;
+- L'enrichissement d'entités et d'alarmes.
 
 Exemple de log collscan:
 
