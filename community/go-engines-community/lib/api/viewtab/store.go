@@ -3,10 +3,13 @@ package viewtab
 import (
 	"context"
 	"errors"
+	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -186,18 +189,22 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			return err
 		}
 
+		if viewInfo.ID == "" {
+			return validation.NewSingleError("not_exist", "View", "View", r)
+		}
+
 		if viewInfo.IsPrivate && viewInfo.Author != r.Author {
-			return common.NewValidationError("view", "View is private.")
+			return validation.NewSingleError("not_exist", "View", "View", r)
 		}
 
 		if !viewInfo.IsPrivate {
 			ok, err := s.enforcer.Enforce(r.Author, r.View, model.PermissionUpdate)
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			if !ok {
-				return common.NewValidationError("view", "Can't modify a view.")
+				return httperror.NewForbiddenError("")
 			}
 		}
 
@@ -266,12 +273,12 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	res := false
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
-		isLinked, err := s.isLinked(ctx, id)
+
+		err := dbvalidation.ValidateLinkedReference(ctx, s.playlistCollection, bson.M{
+			"tabs_list": id,
+		}, "tab", "a playlist")
 		if err != nil {
 			return err
-		}
-		if isLinked {
-			return ValidationError{err: errors.New("view tab is linked to playlist")}
 		}
 
 		// required to get the author in action log listener.
@@ -307,18 +314,22 @@ func (s *store) Copy(ctx context.Context, tabID string, r CreateRequest) (*Respo
 			return err
 		}
 
+		if viewInfo.ID == "" {
+			return validation.NewSingleError("not_exist", "View", "View", r)
+		}
+
 		if viewInfo.IsPrivate && viewInfo.Author != r.Author {
-			return common.NewValidationError("view", "View is private.")
+			return validation.NewSingleError("not_exist", "View", "View", r)
 		}
 
 		if !viewInfo.IsPrivate {
 			ok, err := s.enforcer.Enforce(r.Author, r.View, model.PermissionUpdate)
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			if !ok {
-				return common.NewValidationError("view", "Can't modify a view.")
+				return httperror.NewForbiddenError("")
 			}
 		}
 
@@ -395,7 +406,7 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 		if viewId == "" {
 			viewId = tab.View
 		} else if viewId != tab.View {
-			return false, ValidationError{err: errors.New("view tabs are related to different views")}
+			return false, validation.NewSingleError("not_applicable", "items", "items", nil)
 		}
 	}
 
@@ -407,7 +418,7 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 			return err
 		}
 		if count != int64(len(tabs)) {
-			return ValidationError{err: errors.New("view tabs are missing")}
+			return validation.NewSingleErrorWithParam("slicelen", "items", "items", strconv.FormatInt(count, 10), nil)
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(tabs))
@@ -427,18 +438,6 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 	})
 
 	return res, err
-}
-
-func (s *store) isLinked(ctx context.Context, id string) (bool, error) {
-	err := s.playlistCollection.FindOne(ctx, bson.M{"tabs_list": id}).Err()
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, nil
-		}
-		return false, err
-	}
-
-	return true, nil
 }
 
 func (s *store) deleteWidgets(ctx context.Context, id, userID string) error {
@@ -516,7 +515,7 @@ func (s *store) getViewPrivacySettings(ctx context.Context, viewID string) (apis
 
 	err := s.viewCollection.FindOne(ctx, bson.M{"_id": viewID}).Decode(&viewInfo)
 	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {
-		return viewInfo, common.NewValidationError("view", "View doesn't exist.")
+		return viewInfo, nil
 	}
 
 	return viewInfo, err

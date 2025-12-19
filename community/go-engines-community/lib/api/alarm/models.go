@@ -234,8 +234,8 @@ type Details struct {
 }
 
 type StepDetails struct {
-	Data []Step               `json:"data"`
-	Meta common.PaginatedMeta `json:"meta"`
+	Data []Step                  `json:"data"`
+	Meta pagination.MetaResponse `json:"meta"`
 }
 
 type Step struct {
@@ -248,8 +248,8 @@ type Step struct {
 }
 
 type ChildrenDetails struct {
-	Data []Alarm              `json:"data"`
-	Meta common.PaginatedMeta `json:"meta"`
+	Data []Alarm                 `json:"data"`
+	Meta pagination.MetaResponse `json:"meta"`
 }
 
 type ExportRequest struct {
