@@ -1,21 +1,21 @@
 package linkrule
 
 import (
-	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
-	common.CrudAPI
+	crud.API
 	GetCategories(*gin.Context)
 	BulkDelete(c *gin.Context)
 	DBExport(c *gin.Context)
@@ -24,20 +24,20 @@ type API interface {
 }
 
 type api struct {
-	store         Store
-	mongoExporter dbexport.Exporter
-	logger        zerolog.Logger
+	store          Store
+	mongoExporter  dbexport.Exporter
+	errorResponder httperror.Responder
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
-	logger zerolog.Logger,
+	errorResponder httperror.Responder,
 ) API {
 	return &api{
-		store:         store,
-		mongoExporter: mongoExporter,
-		logger:        logger,
+		store:          store,
+		mongoExporter:  mongoExporter,
+		errorResponder: errorResponder,
 	}
 }
 
@@ -46,48 +46,42 @@ func NewApi(
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	request := EditRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	rule, err := a.store.Insert(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
-
-		panic(err)
+		return
 	}
 
 	c.JSON(http.StatusCreated, rule)
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
+// @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var request ListRequest
 	request.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	aggregationResult, err := a.store.Find(c, request)
 	if err != nil {
-		panic(err)
-	}
+		a.errorResponder.Respond(c, err)
 
-	res, err := common.NewPaginatedResponse(request.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
+	res := pagination.NewResponse(request.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -96,11 +90,14 @@ func (a *api) List(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	rule, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if rule == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -111,19 +108,17 @@ func (a *api) Get(c *gin.Context) {
 // @Success 200 {object} CategoryResponse
 func (a *api) GetCategories(c *gin.Context) {
 	var r CategoriesRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	categories, err := a.store.GetCategories(c, r)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, categories)
@@ -136,25 +131,21 @@ func (a *api) Update(c *gin.Context) {
 	request := EditRequest{
 		ID: c.Param("id"),
 	}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	rule, err := a.store.Update(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
-
-		panic(err)
+		return
 	}
 
 	if rule == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -163,13 +154,23 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, c.Param("id"), userID)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -179,16 +180,25 @@ func (a *api) Delete(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
 		ok, err := a.store.Delete(c, request.ID, userID)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // DBExport
@@ -196,14 +206,17 @@ func (a *api) BulkDelete(c *gin.Context) {
 func (a *api) DBExport(c *gin.Context) {
 	request := dbexport.Request{}
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	b, err := a.mongoExporter.Export(c, mongo.LinkRuleMongoCollection, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	dbexport.AttachFile(c, mongo.LinkRuleMongoCollection, b)
@@ -214,22 +227,17 @@ func (a *api) DBExport(c *gin.Context) {
 // @Success 200 {object} template.ValidateResponse
 func (a *api) ValidateTemplates(c *gin.Context) {
 	request := TemplateRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	response, err := a.store.ValidateTemplates(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
-
-		panic(err)
+		return
 	}
 
 	c.JSON(http.StatusOK, response)
@@ -240,7 +248,9 @@ func (a *api) ValidateTemplates(c *gin.Context) {
 func (a *api) GetTemplateVars(c *gin.Context) {
 	vars, err := a.store.GetTemplateVars(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, vars)

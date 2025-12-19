@@ -1,11 +1,11 @@
 package maintenance
 
 import (
-	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,12 +13,16 @@ type API interface {
 	Maintenance(c *gin.Context)
 }
 
-func NewApi(store Store) API {
-	return &api{store: store}
+func NewApi(store Store, errorResponder httperror.Responder) API {
+	return &api{
+		store:          store,
+		errorResponder: errorResponder,
+	}
 }
 
 type api struct {
-	store Store
+	store          Store
+	errorResponder httperror.Responder
 }
 
 // Maintenance
@@ -28,17 +32,26 @@ func (a *api) Maintenance(c *gin.Context) {
 	var err error
 
 	r := Request{}
-	if err = c.ShouldBindJSON(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err = validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	// can be sure that enabled is not nil after ShouldBindJSON, because of binding=required
 	if *r.Enabled {
 		if r.Message == "" {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationError("message", "message is required").ValidationErrorResponse())
+			err = validation.NewSingleError("required", "Message", "Message", r)
+
+			a.errorResponder.Respond(c, err)
+
 			return
 		}
 
@@ -48,12 +61,9 @@ func (a *api) Maintenance(c *gin.Context) {
 	}
 
 	if err != nil {
-		if errors.Is(err, ErrEnabled) || errors.Is(err, ErrDisabled) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-			return
-		}
+		a.errorResponder.Respond(c, err)
 
-		panic(err)
+		return
 	}
 
 	c.Status(http.StatusNoContent)
