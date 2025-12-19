@@ -15,7 +15,7 @@
         :readonly="readonly"
         :name="alarmName"
         :attributes="alarmAttributes"
-        :counter="counters.alarm_pattern"
+        :alarm-counter="counters.alarm_pattern"
         with-type
         @input="errors.remove(alarmName)"
       />
@@ -33,7 +33,8 @@
         :name="entityName"
         :attributes="entityAttributes"
         :entity-types="entityTypes"
-        :counter="counters.entity_pattern"
+        :alarm-counter="counters.alarm_pattern"
+        :entity-counter="counters.entity_pattern"
         with-type
         @input="errors.remove(entityName)"
       />
@@ -49,7 +50,7 @@
         :disabled="disabled"
         :readonly="readonly"
         :name="pbehaviorName"
-        :counter="counters.pbehavior_pattern"
+        :alarm-counter="counters.alarm_pattern"
         with-type
         @input="errors.remove(pbehaviorName)"
       />

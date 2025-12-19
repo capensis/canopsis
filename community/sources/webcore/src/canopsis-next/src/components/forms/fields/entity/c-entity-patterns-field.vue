@@ -8,11 +8,20 @@
     :required="required"
     :attributes="availableEntityAttributes"
     :with-type="withType"
-    :counter="counter"
+    :alarm-counter="alarmCounter"
+    :entity-counter="entityCounter"
   >
     <template #append-count="">
       <v-btn
-        v-if="counter && counter.count"
+        v-if="alarmCounter && alarmCounter.count"
+        text
+        small
+        @click="showPatternAlarmsModal"
+      >
+        {{ $t('common.seeAlarms') }}
+      </v-btn>
+      <v-btn
+        v-if="entityCounter && entityCounter.count"
         text
         small
         @click="showPatternEntitiesModal"
@@ -96,7 +105,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    counter: {
+    alarmCounter: {
+      type: Object,
+      required: false,
+    },
+    entityCounter: {
       type: Object,
       required: false,
     },
