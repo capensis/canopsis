@@ -17,7 +17,9 @@ export default {
   searchTime: 'Search time: <strong>{duration}</strong>',
   patternAlarms: 'Pattern alarms',
   patternEntities: 'Pattern entities',
-  itemFound: 'Found: <strong>{count} item</strong> | Found: <strong>{count} items</strong>',
+  found: 'found: {message} / search time <strong>{searchTime}</strong>',
+  alarmFound: '<strong>{count} alarm</strong> | <strong>{count} alarms</strong>',
+  entityFound: '<strong>{count} entity</strong> | <strong>{count} entities</strong>',
   types: {
     [PATTERN_TYPES.alarm]: 'Alarm pattern',
     [PATTERN_TYPES.entity]: 'Entity pattern',

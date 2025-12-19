@@ -8,7 +8,7 @@
     :required="required"
     :attributes="availableAlarmAttributes"
     :with-type="withType"
-    :counter="counter"
+    :alarm-counter="alarmCounter"
   >
     <template #append-count="">
       <v-btn
@@ -98,7 +98,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    counter: {
+    alarmCounter: {
       type: Object,
       required: false,
     },

@@ -63,6 +63,7 @@
         </v-btn>
         <v-layout
           v-if="checked"
+          class="gap-2"
           align-center
           justify-end
         >
@@ -156,6 +157,14 @@ export default {
       type: Object,
       required: false,
     },
+    alarmCounter: {
+      type: Object,
+      required: false,
+    },
+    entityCounter: {
+      type: Object,
+      required: false,
+    },
   },
   data() {
     return {
@@ -193,23 +202,39 @@ export default {
     },
 
     checked() {
-      return !isEmpty(this.counter);
+      return !isEmpty(this.alarmCounter) || !isEmpty(this.entityCounter);
     },
 
     count() {
-      return this.counter?.count ?? 0;
+      return this.alarmCounter?.count ?? this.entityCounter?.count ?? 0;
     },
 
     overLimit() {
-      return this.counter?.over_limit ?? false;
+      return this.alarmCounter?.over_limit || this.entityCounter?.over_limit || false;
     },
 
     countMessage() {
-      const { ms = 0 } = this.counter ?? {};
-      const duration = convertDurationToString(ms, PATTERN_DURATION_FORMAT, TIME_UNITS.millisecond);
-      const durationMessage = this.$t('pattern.searchTime', { duration });
+      const messages = [];
 
-      return `${this.$tc('pattern.itemFound', this.count, { count: this.count })} / ${durationMessage}`;
+      if (this.alarmCounter) {
+        messages.push(this.$tc('pattern.alarmFound', this.alarmCounter?.count ?? 0, { count: this.alarmCounter?.count ?? 0 }));
+      }
+
+      if (this.entityCounter) {
+        messages.push(this.$tc('pattern.entityFound', this.entityCounter?.count ?? 0, { count: this.entityCounter?.count ?? 0 }));
+      }
+
+      if (!messages.length) {
+        return '';
+      }
+
+      const searchTime = convertDurationToString(
+        Math.max(this.alarmCounter?.ms ?? 0, this.entityCounter?.ms ?? 0),
+        PATTERN_DURATION_FORMAT,
+        TIME_UNITS.millisecond,
+      );
+
+      return this.$t('pattern.found', { message: messages.join(', '), searchTime });
     },
   },
   watch: {

@@ -8,7 +8,7 @@
     :required="required"
     :attributes="pbehaviorAttributes"
     :with-type="withType"
-    :counter="counter"
+    :alarm-counter="alarmCounter"
   />
 </template>
 
@@ -58,7 +58,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    counter: {
+    alarmCounter: {
       type: Object,
       required: false,
     },
