@@ -75,13 +75,11 @@ export default {
 
     const add = () => addItemIntoArray(widgetSortColumnToForm());
 
-    const remove = index => removeItemFromArray(index);
-
     return {
       dragItemHandleClass,
       isSortColumnsEmpty,
       add,
-      remove,
+      remove: removeItemFromArray,
     };
   },
 };

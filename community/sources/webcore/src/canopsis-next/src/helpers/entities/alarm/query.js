@@ -199,7 +199,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
   const {
     widgetGroupColumns = [],
     charts = [],
-    sort_columns: sortColumns,
+    sort,
   } = widget.parameters;
 
   const columns = widgetGroupColumns.length > 0
@@ -229,15 +229,11 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
     },
   };
 
-  if (sortColumns && isArray(sortColumns) && sortColumns.length > 0) {
-    sortColumns.forEach((sortColumn) => {
-      if (sortColumn.sort_by && columns.some(({ value }) => value.endsWith(sortColumn.sort_by))) {
-        query.children.multiSortBy.push({
-          sortBy: sortColumn.sort_by,
-          descending: sortColumn.sort === SORT_ORDERS.desc.toLowerCase(),
-        });
-      }
-    });
+  if (sort && isArray(sort) && sort.length > 0) {
+    query.children.multiSortBy = sort.map(sortColumn => ({
+      sortBy: sortColumn.sort_by,
+      descending: sortColumn.sort === SORT_ORDERS.desc.toLowerCase(),
+    }));
   }
 
   return query;
