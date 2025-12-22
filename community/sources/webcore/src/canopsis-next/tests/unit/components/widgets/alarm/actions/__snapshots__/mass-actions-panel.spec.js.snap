@@ -3,7 +3,7 @@
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] = `
 <div
   class="shared-actions-panel"
-  inline-count="3"
+  inline-count="5"
 >
   <button
     class="action-ack"
@@ -14,6 +14,16 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
     class="action-fastAck"
   >
     Fast ack|done_all|fastAck
+  </button>
+  <button
+    class="action-cancel"
+  >
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
   </button>
   <button
     class="action-linkToMetaAlarm"
