@@ -36,21 +36,14 @@ Un aperçu du résultat final de votre message est disponible en haut de la fen�
 
 Les options de configuration sont les suivantes :
 
-- Message : votre message à diffuser.
+* Message : votre message à diffuser.
+* Sélectionnez la couleur d'arrière plan
+* Début : permet la sélection de la date et de l'heure de démarrage de la diffusion.
+* Fin : indique la date et l'heure de fin de diffusion.
 
-- Sélectionnez la couleur d'arrière plan : plusieurs modes sont disponibles.
-
-    - Grâce à une palette de couleurs prédéfinies.
-
-    - En entrant le code hexadécimal de la couleur.
-
-    - En mode RBG et alpha (valeurs comprises entre 0 et 1).
-
-    - En mode HSL et alpha.
-
-- Début : permet la sélection de la date et de l'heure de démarrage de la diffusion.
-
-- Fin : indique la date et l'heure de fin de diffusion.
+!!! info "Information"
+    Par défaut, les messages de diffusion sont affichés sur toutes les pages de l'interface Canopsis.  
+    Vous pouvez toutefois restreindre leur affichage à certaines vues ou pages spécifiques en les sélectionnant dans l'onglet dédié lors de la création ou de la modification du message.
 
 En fonction des dates de début et de fin que vous aurez sélectionnées, 3 statuts de messages seront visibles dans l'interface.
 
