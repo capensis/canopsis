@@ -415,7 +415,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   quickMassActions: widgetQuickActionsToForm(parameters.quickMassActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   hideMassActions: parameters.hideMassActions ?? false,
   sort: widgetSortColumnsToForm(parameters.sort),
-  sortColumnsTemplate: widgetTemplateValueToForm(parameters.sortColumnsTemplate),
+  sortTemplate: widgetTemplateValueToForm(parameters.sortTemplate),
 });
 
 /**
