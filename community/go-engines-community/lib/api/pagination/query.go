@@ -1,7 +1,6 @@
 package pagination
 
 import (
-	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -9,6 +8,11 @@ const (
 	DefaultPage     = 1
 	DefaultLimit    = 10
 	DefaultPaginate = true
+)
+
+const (
+	SortAsc  = "asc"
+	SortDesc = "desc"
 )
 
 // Query is base request for pagination.
@@ -31,18 +35,6 @@ func GetDefaultQuery() Query {
 		Limit:    DefaultLimit,
 		Paginate: DefaultPaginate,
 	}
-}
-
-func BindQuery(c *gin.Context, query *Query) error {
-	*query = GetDefaultQuery()
-
-	return c.ShouldBindQuery(query)
-}
-
-func BindFilteredQuery(c *gin.Context, query *FilteredQuery) error {
-	query.Query = GetDefaultQuery()
-
-	return c.ShouldBindQuery(query)
 }
 
 func CreateAggregationPipeline(
