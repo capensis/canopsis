@@ -171,6 +171,7 @@ export default {
         enter: 'p',
         cleanHTML: {
           fillEmptyParagraph: false,
+          replaceNBSP: false,
         },
         toolbarSticky: false,
         addNewLine: false,
