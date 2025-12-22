@@ -8,8 +8,9 @@ import (
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -21,7 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	tplvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -55,11 +56,12 @@ type store struct {
 	entityCounters            mongo.DbCollection
 	userDbCollection          mongo.DbCollection
 	stateSettingDbCollection  mongo.DbCollection
-	transformer               common.PatternFieldsTransformer
+	categoryDbCollection      mongo.DbCollection
+	transformer               patternfields.Transformer
 	linkGenerator             link.Generator
 	enableSameServiceNames    bool
 	authorProvider            author.Provider
-	tplValidator              validator.Validator
+	tplValidator              tplvalidator.Validator
 	tplConfigProvider         config.TemplateConfigProvider
 	logger                    zerolog.Logger
 	tplVars                   []template.VarResponse
@@ -71,8 +73,8 @@ func NewStore(
 	linkGenerator link.Generator,
 	enableSameServiceNames bool,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
-	tplValidator validator.Validator,
+	transformer patternfields.Transformer,
+	tplValidator tplvalidator.Validator,
 	tplConfigProvider config.TemplateConfigProvider,
 	logger zerolog.Logger,
 ) Store {
@@ -84,6 +86,7 @@ func NewStore(
 		entityCounters:            db.Collection(mongo.EntityCountersCollection),
 		userDbCollection:          db.Collection(mongo.UserCollection),
 		stateSettingDbCollection:  db.Collection(mongo.StateSettingsMongoCollection),
+		categoryDbCollection:      db.Collection(mongo.EntityCategoryMongoCollection),
 		transformer:               transformer,
 		linkGenerator:             linkGenerator,
 		enableSameServiceNames:    enableSameServiceNames,
@@ -104,9 +107,7 @@ func NewStore(
 			{Name: "numberOfAlarmsUnderPbehavior", Value: "{{ .UnderPbehavior }}"},
 			{Name: "numberOfAcknowledgedAlarmsUnderPbehavior", Value: "{{ .AcknowledgedUnderPbh }}"},
 		},
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id": "ID already exists.",
-		}),
+		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -354,6 +355,11 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
+		err := dbvalidation.ValidateExist(ctx, s.categoryDbCollection, request, "Category", request.Category)
+		if err != nil {
+			return err
+		}
+
 		if !s.enableSameServiceNames {
 			err := s.dbCollection.FindOne(ctx, bson.M{
 				"name":         service.Name,
@@ -361,7 +367,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 				"soft_deleted": nil,
 			}).Err()
 			if err == nil {
-				return common.NewValidationError("name", "Name already exists.")
+				return validation.NewSingleError("exist", "Name", "Name", Response{})
 			}
 
 			if !errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -369,18 +375,15 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			}
 		}
 
-		transformedEntityPattern, aliases, err := s.transformEntityPatternRequest(ctx, request.EntityPatternFieldsRequest)
+		service.EntityPatternFields, service.Aliases, err = s.transformEntityPatternRequest(ctx, request.EntityRequest, request)
 		if err != nil {
 			return err
 		}
 
-		service.Aliases = aliases
-		service.EntityPatternFields = transformedEntityPattern
-
 		_, err = s.dbCollection.InsertOne(ctx, service)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -434,6 +437,11 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 		serviceChanges = ServiceChanges{}
 		oldValues := entityservice.EntityService{}
 
+		err := dbvalidation.ValidateExist(ctx, s.categoryDbCollection, request, "Category", request.Category)
+		if err != nil {
+			return err
+		}
+
 		if !s.enableSameServiceNames {
 			err := s.dbCollection.FindOne(ctx, bson.M{
 				"_id":          bson.M{"$ne": request.ID},
@@ -442,7 +450,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 				"soft_deleted": nil,
 			}).Err()
 			if err == nil {
-				return common.NewValidationError("name", "Name already exists.")
+				return validation.NewSingleError("exist", "Name", "Name", Response{})
 			}
 
 			if !errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -450,7 +458,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 			}
 		}
 
-		transformedEntityPattern, aliases, err := s.transformEntityPatternRequest(ctx, request.EntityPatternFieldsRequest)
+		transformedEntityPattern, aliases, err := s.transformEntityPatternRequest(ctx, request.EntityRequest, request)
 		if err != nil {
 			return err
 		}
@@ -588,15 +596,8 @@ func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
 	return user, errors.New("user not found")
 }
 
-func (s *store) transformEntityPatternRequest(ctx context.Context, r common.EntityPatternFieldsRequest) (savedpattern.EntityPatternFields, []string, error) {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r)
-	if err != nil {
-		return savedpattern.EntityPatternFields{}, nil, err
-	}
-
-	transformedPattern := transformedEntityPatternRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection))
-
-	return transformedPattern, transformedEntityPatternRequest.Aliases, nil
+func (s *store) transformEntityPatternRequest(ctx context.Context, er patternfields.EntityRequest, r any) (savedpattern.EntityPatternFields, []string, error) {
+	return s.transformer.TransformEntityRequest(ctx, er, r, s.dbCollection.Name())
 }
 
 func transformInfos(request EditRequest) map[string]types.Info {

@@ -11,7 +11,7 @@ import Handlebars from 'handlebars';
 
 import { registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
-import { entityHandlebarsTagsHelper } from '@/mixins/widget/handlebars/entity-tags-helper';
+import { handlebarsTagsHelperMixin } from '@/mixins/widget/handlebars/tags-helper';
 
 import ServiceEntitiesList from './service-entities-list.vue';
 
@@ -20,7 +20,7 @@ export default {
     // eslint-disable-next-line vue/no-unused-components
     ServiceEntitiesList,
   },
-  mixins: [entityHandlebarsTagsHelper],
+  mixins: [handlebarsTagsHelperMixin],
   props: {
     service: {
       type: Object,
