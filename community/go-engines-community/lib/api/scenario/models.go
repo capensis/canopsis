@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -133,8 +133,8 @@ type ActionRequest struct {
 	DropScenarioIfNotMatched *bool             `json:"drop_scenario_if_not_matched" binding:"required"`
 	EmitTrigger              *bool             `json:"emit_trigger" binding:"required"`
 
-	common.EntityPatternFieldsRequest `bson:",inline"`
-	common.AlarmPatternFieldsRequest  `bson:",inline"`
+	patternfields.EntityRequest `bson:",inline"`
+	patternfields.AlarmRequest  `bson:",inline"`
 }
 
 type Scenario struct {
@@ -203,12 +203,10 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-// GetTotal implementation PaginatedData interface
 func (r AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
 
-// GetData implementation PaginatedData interface
 func (r AggregationResult) GetData() interface{} {
 	return r.Data
 }
