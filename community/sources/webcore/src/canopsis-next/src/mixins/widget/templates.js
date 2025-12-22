@@ -10,6 +10,7 @@ import {
 
 import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
 import { widgetQuickActionsToForm } from '@/helpers/entities/widget/quick-action/form';
+import { widgetSortColumnsToForm } from '@/helpers/entities/widget/sort-column/form';
 
 const { mapActions } = createNamespacedHelpers('widgetTemplate');
 
@@ -32,6 +33,10 @@ export const widgetTemplatesMixin = {
 
         if (QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
           return { ...template, actions: widgetQuickActionsToForm(template.actions) };
+        }
+
+        if (WIDGET_TEMPLATES_TYPES.alarmSortColumns === template.type) {
+          return { ...template, sort_columns: widgetSortColumnsToForm(template.sort_columns) };
         }
 
         return template;

@@ -103,7 +103,7 @@ export function convertAlarmWidgetToQuery(widget) {
     mainFilter,
     usedAlarmProperties,
     isCorrelationEnabled,
-    sortColumns = [],
+    sort = [],
   } = widget.parameters;
 
   const query = {
@@ -137,11 +137,11 @@ export function convertAlarmWidgetToQuery(widget) {
     query.active_columns = activeColumns;
   }
 
-  if (sortColumns.length > 0) {
+  if (isArray(sort) && sort.length > 0) {
     const lowerCasedDesc = SORT_ORDERS.desc.toLowerCase();
 
-    query.sortBy = sortColumns.map(column => column.sort_by).filter(Boolean);
-    query.sortDesc = sortColumns.map(column => column.sort === lowerCasedDesc);
+    query.sortBy = sort.map(column => column.sort_by).filter(Boolean);
+    query.sortDesc = sort.map(column => column.sort === lowerCasedDesc);
   }
 
   if (!isUndefined(isCorrelationEnabled)) {

@@ -60,9 +60,9 @@ export const useAvailableColumns = ({
 
   const alarmListAvailableColumns = computed(() => {
     const columns = groupedColumnsToColumns(ALARM_LIST_WIDGET_GROUPED_COLUMNS, ALARM_FIELDS_TO_LABELS_KEYS);
-    const withInstructionsValue = unref(withInstructions);
+    const unwrappedWithInstructions = unref(withInstructions);
 
-    return withInstructionsValue
+    return unwrappedWithInstructions
       ? columns.filter(({ value }) => value !== ALARM_FIELDS.assignedInstructions)
       : columns;
   });
@@ -72,17 +72,17 @@ export const useAvailableColumns = ({
   ));
 
   const availableColumns = computed(() => {
-    const itemsValue = unref(items);
-    if (itemsValue) {
-      return itemsValue;
+    const unwrappedItems = unref(items);
+    if (unwrappedItems && unwrappedItems.length) {
+      return unwrappedItems;
     }
 
-    const excludedColumnsValue = unref(excludedColumns);
+    const unwrappedExcludedColumns = unref(excludedColumns);
     const columns = isAlarmType.value
       ? alarmListAvailableColumns.value
       : contextAvailableColumns.value;
 
-    return columns.filter(({ value }) => !excludedColumnsValue.includes(value));
+    return columns.filter(({ value }) => !unwrappedExcludedColumns.includes(value));
   });
 
   return {

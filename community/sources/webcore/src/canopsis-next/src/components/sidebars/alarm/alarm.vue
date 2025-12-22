@@ -15,11 +15,12 @@
     </widget-settings-group>
     <widget-settings-group :title="$tc('common.column', 2)">
       <field-default-sort-columns-with-template
-        v-model="form.parameters.sortColumns"
+        v-model="form.parameters.sort"
         :columns="sortablePreparedWidgetColumns"
-        :template="form.parameters.sortColumnsTemplate"
+        :template="form.parameters.sortTemplate"
         :templates="alarmSortColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
+        @update:template="updateSortTemplate"
       />
       <field-columns
         v-model="form.parameters.widgetColumns"
@@ -353,13 +354,13 @@ export default {
     updateTemplate(field, template, value) {
       this.$set(this.form.parameters, `${field}Template`, template);
 
-      if (template && template !== this.form.parameters[field]) {
+      if (template !== this.form.parameters[field]) {
         this.$set(this.form.parameters, field, value);
       }
     },
 
-    updateSortColumnsTemplate(template, sortColumns) {
-      this.updateTemplate('sortColumns', template, sortColumns);
+    updateSortTemplate(template = '', sort = []) {
+      this.updateTemplate('sort', template, sort);
     },
 
     updateMoreInfoTemplate(value, template) {
