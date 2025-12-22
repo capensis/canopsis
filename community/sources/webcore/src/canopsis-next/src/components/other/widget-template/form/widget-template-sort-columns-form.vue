@@ -9,7 +9,7 @@
         {{ $t('widgetTemplate.errors.sortColumnsRequired') }}
       </v-alert>
     </v-flex>
-    <sort-columns-field
+    <c-sort-columns-field
       v-field="value"
       :items="items"
       @input="validate"
@@ -22,13 +22,8 @@ import { watch, nextTick, onBeforeUnmount } from 'vue';
 
 import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
 
-import SortColumnsField from '@/components/forms/fields/sort-column/sort-columns-field.vue';
-
 export default {
   inject: ['$validator'],
-  components: {
-    SortColumnsField,
-  },
   model: {
     prop: 'value',
     event: 'input',
