@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -24,8 +24,8 @@ type baseValidator struct {
 
 func NewValidator() Validator {
 	return &baseValidator{
-		invalidRulesPatternFields:           common.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection),
-		invalidInheritedEntityPatternFields: append(common.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection), "connector"),
+		invalidRulesPatternFields:           patternfields.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection),
+		invalidInheritedEntityPatternFields: append(patternfields.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection), "connector"),
 	}
 }
 
@@ -33,21 +33,18 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditRequest)
 
 	if r.ID == statesetting.JUnitID {
-		v.validateJUnitSettings(sl, r.StateSetting)
+		v.validateJUnitSettings(sl, r)
+
 		return
 	}
 
-	v.validateStateSetting(sl, r.StateSetting)
-}
-
-func (v *baseValidator) validateStateSetting(sl validator.StructLevel, r StateSetting) {
 	switch r.Method {
 	case statesetting.MethodInherited:
-		if r.InheritedEntityPattern == nil {
+		if r.InheritedEntityPattern == nil && r.CorporateInheritedEntityPattern == "" {
 			sl.ReportError(r.InheritedEntityPattern, "InheritedEntityPattern", "InheritedEntityPattern", "required", "")
 		}
 
-		if r.InheritedEntityPattern != nil && !match.ValidateEntityPattern(*r.InheritedEntityPattern, v.invalidInheritedEntityPatternFields) {
+		if r.InheritedEntityPattern != nil && !match.ValidateEntityPattern(r.InheritedEntityPattern, v.invalidInheritedEntityPatternFields) {
 			sl.ReportError(r.InheritedEntityPattern, "InheritedEntityPattern", "InheritedEntityPattern", "entity_pattern", "")
 		}
 
@@ -57,6 +54,10 @@ func (v *baseValidator) validateStateSetting(sl validator.StructLevel, r StateSe
 	case statesetting.MethodDependencies:
 		if r.InheritedEntityPattern != nil {
 			sl.ReportError(r.InheritedEntityPattern, "InheritedEntityPattern", "InheritedEntityPattern", "must_be_empty", "")
+		}
+
+		if r.CorporateInheritedEntityPattern != "" {
+			sl.ReportError(r.CorporateInheritedEntityPattern, "CorporateInheritedEntityPattern", "CorporateInheritedEntityPattern", "must_be_empty", "")
 		}
 
 		if r.StateThresholds == nil {
@@ -77,11 +78,11 @@ func (v *baseValidator) validateStateSetting(sl validator.StructLevel, r StateSe
 		sl.ReportError(r.Enabled, "Enabled", "Enabled", "required", "")
 	}
 
-	if r.EntityPattern == nil {
+	if r.EntityPattern == nil && r.CorporateEntityPattern == "" {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "")
 	}
 
-	if r.EntityPattern != nil && !match.ValidateEntityPattern(*r.EntityPattern, v.invalidRulesPatternFields) {
+	if r.EntityPattern != nil && !match.ValidateEntityPattern(r.EntityPattern, v.invalidRulesPatternFields) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
@@ -90,7 +91,7 @@ func (v *baseValidator) validateStateSetting(sl validator.StructLevel, r StateSe
 	}
 }
 
-func (v *baseValidator) validateJUnitSettings(sl validator.StructLevel, r StateSetting) {
+func (v *baseValidator) validateJUnitSettings(sl validator.StructLevel, r EditRequest) {
 	switch r.Method {
 	case statesetting.MethodWorst:
 		if r.JUnitThresholds != nil {
@@ -115,8 +116,16 @@ func (v *baseValidator) validateJUnitSettings(sl validator.StructLevel, r StateS
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "must_be_empty", "")
 	}
 
+	if r.CorporateEntityPattern != "" {
+		sl.ReportError(r.CorporateEntityPattern, "CorporateEntityPattern", "CorporateEntityPattern", "must_be_empty", "")
+	}
+
 	if r.InheritedEntityPattern != nil {
 		sl.ReportError(r.InheritedEntityPattern, "InheritedEntityPattern", "InheritedEntityPattern", "must_be_empty", "")
+	}
+
+	if r.CorporateInheritedEntityPattern != "" {
+		sl.ReportError(r.CorporateInheritedEntityPattern, "CorporateInheritedEntityPattern", "CorporateInheritedEntityPattern", "must_be_empty", "")
 	}
 
 	if r.Enabled != nil {
@@ -137,12 +146,12 @@ func (v *baseValidator) ValidateStateThreshold(sl validator.StructLevel) {
 
 	if r.Method == statesetting.CalculationMethodShare {
 		if r.Value > 99 {
-			sl.ReportError(r.Value, "Value", "Value", "ltfield", "100")
+			sl.ReportError(r.Value, "Value", "Value", "lt", "100")
 		}
 	}
 
 	if r.Value < 0 {
-		sl.ReportError(r.Value, "Value", "Value", "gtfield", "-1")
+		sl.ReportError(r.Value, "Value", "Value", "gt", "-1")
 	}
 }
 

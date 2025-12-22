@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -73,7 +73,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -167,7 +167,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -186,7 +186,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		Unit:  "m",
 	})
 	if err != nil {
-		panic(err)
+		t.Fatalf("unexpected error: %v", err)
 	}
 	filter := view.WidgetFilter{
 		ID: "test-filter",
@@ -264,7 +264,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -352,7 +352,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -462,7 +462,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -530,7 +530,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -603,7 +603,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -628,7 +628,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 			Unit:  "m",
 		})
 		if err != nil {
-			panic(err)
+			t.Fatalf("unexpected error: %v", err)
 		}
 
 		*instruction = Instruction{
@@ -762,7 +762,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -787,7 +787,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 			Unit:  "m",
 		})
 		if err != nil {
-			panic(err)
+			t.Fatalf("unexpected error: %v", err)
 		}
 
 		*instruction = Instruction{
@@ -924,7 +924,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1021,7 +1021,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1119,7 +1119,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipelineForResolvedAlarms_GivenR
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1138,7 +1138,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 		Unit:  "m",
 	})
 	if err != nil {
-		panic(err)
+		t.Fatalf("unexpected error: %v", err)
 	}
 	filter := view.WidgetFilter{
 		ID: "test-filter",
@@ -1228,7 +1228,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1306,7 +1306,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1399,7 +1399,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1492,7 +1492,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1586,7 +1586,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1657,7 +1657,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1732,7 +1732,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		}},
 	}
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1810,7 +1810,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1882,7 +1882,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		}},
 	}
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1957,7 +1957,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -2106,7 +2106,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -2203,7 +2203,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepende
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.AlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.AlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -2303,7 +2303,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepende
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient), mongo.ResolvedAlarmMongoCollection)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)

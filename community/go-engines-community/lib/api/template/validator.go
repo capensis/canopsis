@@ -3,22 +3,11 @@ package template
 import (
 	"encoding/json"
 
-	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/go-playground/validator/v10"
 )
 
-type Validator struct {
-	enforcer security.Enforcer
-}
-
-func NewValidator(enforcer security.Enforcer) *Validator {
-	return &Validator{enforcer: enforcer}
-}
-
-func (v *Validator) ValidateEditDataRequest(sl validator.StructLevel) {
+func ValidateEditDataRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditDataRequest)
 	if r.Type != nil && *r.Type == TypeTestDataEvent && r.Body != nil {
 		b, err := json.Marshal(r.Body)
@@ -36,7 +25,7 @@ func (v *Validator) ValidateEditDataRequest(sl validator.StructLevel) {
 	}
 }
 
-func (v *Validator) ValidateEditTestRequest(sl validator.StructLevel) {
+func ValidateEditTestRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditTestRequest)
 
 	if r.Type != nil {
@@ -44,50 +33,39 @@ func (v *Validator) ValidateEditTestRequest(sl validator.StructLevel) {
 		case TypeTestEventFilterRule,
 			TypeTestActionScenario:
 			if r.Data.Event == "" {
-				sl.ReportError(r.Data.Event, "Data.Event", "Event", "required", "")
+				sl.ReportError(r.Data.Event, "Event", "Data.Event", "required", "")
 			}
 		case TypeTestLinkRule:
 			if r.Data.Alarm == "" && r.Data.Entity == "" {
-				sl.ReportError(r.Data.Alarm, "Data.Alarm", "Alarm", "required_or", "Entity")
-				sl.ReportError(r.Data.Entity, "Data.Entity", "Entity", "required_or", "Alarm")
+				sl.ReportError(r.Data.Alarm, "Alarm", "Data.Alarm", "required_or", "Entity")
+				sl.ReportError(r.Data.Entity, "Entity", "Data.Entity", "required_or", "Alarm")
 			}
 		case TypeTestDynamicInfosRule:
 			if r.Data.Alarm == "" && r.Data.Event == "" {
-				sl.ReportError(r.Data.Alarm, "Data.Alarm", "Alarm", "required_or", "Event")
-				sl.ReportError(r.Data.Event, "Data.Event", "Event", "required_or", "Alarm")
+				sl.ReportError(r.Data.Alarm, "Alarm", "Data.Alarm", "required_or", "Event")
+				sl.ReportError(r.Data.Event, "Event", "Data.Event", "required_or", "Alarm")
 			}
 		case TypeTestWidget,
 			TypeTestInstruction,
 			TypeTestJob,
 			TypeTestMetaAlarmRule:
 			if r.Data.Alarm == "" {
-				sl.ReportError(r.Data.Alarm, "Data.Alarm", "Alarm", "required", "")
+				sl.ReportError(r.Data.Alarm, "Alarm", "Data.Alarm", "required", "")
 			}
 		case TypeTestDeclareTicketRule:
 			if r.Data.Alarm == "" {
-				sl.ReportError(r.Data.Alarm, "Data.Alarm", "Alarm", "required", "")
+				sl.ReportError(r.Data.Alarm, "Alarm", "Data.Alarm", "required", "")
 			}
 
 			if len(r.Data.Responses) == 0 {
-				sl.ReportError(r.Data.Responses, "Data.Responses", "Responses", "required", "")
+				sl.ReportError(r.Data.Responses, "Responses", "Data.Responses", "required", "")
 			}
 		case TypeTestWebhookTokenRule:
 			if r.Data.Response == "" {
-				sl.ReportError(r.Data.Response, "Data.Response", "Response", "required", "")
+				sl.ReportError(r.Data.Response, "Response", "Data.Response", "required", "")
 			}
 		default:
 			sl.ReportError(r.Type, "Type", "Type", "invalid", "")
-		}
-	}
-
-	if r.Data.User != "" {
-		ok, err := v.enforcer.Enforce(r.Author, apisecurity.PermAcl, securitymodel.PermissionRead)
-		if err != nil {
-			panic(err)
-		}
-
-		if !ok {
-			sl.ReportError(r.Data.User, "Data.User", "User", "unauth", "")
 		}
 	}
 }

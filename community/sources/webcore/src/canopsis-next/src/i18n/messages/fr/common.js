@@ -376,7 +376,7 @@ export default {
     minutely: 'Par minute',
     hourly: 'Par heure',
     daily: 'Quotidien',
-    weekly: 'Hebdomadiare',
+    weekly: 'Hebdomadaire',
     monthly: 'Mensuel',
     yearly: 'Annuel',
   },
