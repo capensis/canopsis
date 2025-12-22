@@ -95,9 +95,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.sort-column-field .v-input {
-  min-width: 236px;
-}
-</style>
