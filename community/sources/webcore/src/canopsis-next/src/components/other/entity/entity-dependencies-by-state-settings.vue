@@ -8,7 +8,7 @@
     :color-indicator="colorIndicator"
     :meta-by-entity-id="metaByEntityId"
     :has-children="hasChildren"
-    :on-badge-click="toggleDependencies"
+    :on-badge-click="toggleChildren"
     :on-show-more-click="showMore"
   />
 </template>

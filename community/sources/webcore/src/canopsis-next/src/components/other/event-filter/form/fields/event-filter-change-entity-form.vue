@@ -24,6 +24,12 @@
       :name="`${name}.connector_name`"
       :variables="variables"
     />
+    <c-payload-text-field
+      v-field="form.upstream"
+      :label="$t('eventFilter.upstream')"
+      :name="`${name}.upstream`"
+      :variables="variables"
+    />
     <v-alert
       :value="errors.has(name)"
       type="error"
