@@ -5,6 +5,7 @@
         :value="template"
         :templates="templates"
         :pending="templatesPending"
+        clearable
         @input="updateTemplate"
       />
       <c-alert
@@ -24,7 +25,7 @@
           </ul>
         </div>
       </c-alert>
-      <widget-template-sort-columns-form v-field="sortColumns" :items="columns" />
+      <widget-template-sort-columns-form :value="sortColumns" :items="columns" @input="updateValue" />
     </v-layout>
   </widget-settings-item>
 </template>
@@ -35,6 +36,8 @@ import { computed } from 'vue';
 import { ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
 
 import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
+
+import { useWidgetTemplateField } from '@/hooks/widget/widget-template';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import WidgetTemplateSortColumnsForm from '@/components/other/widget-template/form/widget-template-sort-columns-form.vue';
@@ -67,7 +70,9 @@ export default {
       default: false,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
+    const { updateTemplate, updateValue } = useWidgetTemplateField(props, 'sort_columns', emit);
+
     const selectedTemplate = computed(() => {
       if (!props.template || !props.templates.length) {
         return null;
@@ -91,10 +96,9 @@ export default {
         }));
     });
 
-    const updateTemplate = () => {};
-
     return {
       missingColumns,
+      updateValue,
       updateTemplate,
     };
   },

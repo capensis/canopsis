@@ -22,12 +22,10 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
   <widget-settings-group-stub
     title="Columns"
   >
-    <field-default-sort-column-stub
+    <field-default-sort-columns-with-template-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      columnslabel="Column name"
-      itemtext="text"
-      itemvalue="value"
-      value="[object Object]"
+      sortcolumns=""
+      templates=""
     />
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -688,12 +686,10 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
   <widget-settings-group-stub
     title="Columns"
   >
-    <field-default-sort-column-stub
+    <field-default-sort-columns-with-template-stub
       columns="[object Object]"
-      columnslabel="Column name"
-      itemtext="text"
-      itemvalue="value"
-      value="[object Object]"
+      sortcolumns="[object Object]"
+      templates=""
     />
     <field-columns-stub
       columns="[object Object]"
@@ -1350,12 +1346,10 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
   <widget-settings-group-stub
     title="Columns"
   >
-    <field-default-sort-column-stub
+    <field-default-sort-columns-with-template-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      columnslabel="Column name"
-      itemtext="text"
-      itemvalue="value"
-      value="[object Object]"
+      sortcolumns=""
+      templates=""
     />
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -2009,12 +2003,10 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
   <widget-settings-group-stub
     title="Columns"
   >
-    <field-default-sort-column-stub
+    <field-default-sort-columns-with-template-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      columnslabel="Column name"
-      itemtext="text"
-      itemvalue="value"
-      value="[object Object]"
+      sortcolumns=""
+      templates=""
     />
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
