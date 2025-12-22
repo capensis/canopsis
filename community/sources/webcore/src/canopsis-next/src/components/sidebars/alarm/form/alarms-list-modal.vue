@@ -1,12 +1,12 @@
 <template>
   <widget-settings-group :title="$t(`settings.titles.${$constants.SIDE_BARS.alarmSettings}`)">
     <field-default-sort-columns-with-template
-      v-field="form.sortColumns"
+      v-field="form.sort"
       :columns="sortablePreparedWidgetColumns"
-      :template="form.widgetColumnsTemplate"
+      :template="form.sortTemplate"
       :templates="alarmSortColumnsWidgetTemplates"
       :templates-pending="templatesPending"
-      @update:template="updateSortColumnsTemplate"
+      @update:template="updateSortTemplate"
     />
     <field-columns
       v-field="form.widgetColumns"
@@ -140,12 +140,12 @@ export default {
     },
   },
   methods: {
-    updateSortColumnsTemplate(template, sortColumns) {
+    updateSortTemplate(template = '', sort = []) {
       this.updateModel({
         ...this.form,
 
-        sortColumns,
-        sortColumnsTemplate: template,
+        sort,
+        sortTemplate: template,
       });
     },
 
