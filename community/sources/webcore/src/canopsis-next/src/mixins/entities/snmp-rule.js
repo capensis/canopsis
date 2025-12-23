@@ -16,6 +16,8 @@ export const entitiesSnmpRuleMixin = {
       createSnmpRule: 'create',
       updateSnmpRule: 'update',
       removeSnmpRule: 'remove',
+      bulkEnableSnmpRules: 'bulkEnable',
+      bulkDisableSnmpRules: 'bulkDisable',
     }),
   },
 };

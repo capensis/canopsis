@@ -23,6 +23,8 @@ export const entitiesRemediationInstructionMixin = {
       updateRemediationInstruction: 'update',
       removeRemediationInstruction: 'remove',
       rateRemediationInstruction: 'rateInstruction',
+      bulkEnableRemediationInstructions: 'bulkEnable',
+      bulkDisableRemediationInstructions: 'bulkDisable',
     }),
   },
 };

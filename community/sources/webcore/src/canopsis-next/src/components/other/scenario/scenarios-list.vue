@@ -5,19 +5,21 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
-    :select-all="removable"
+    :select-all="removable || updatable"
     expand
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected, selectedKeys }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="updatable"
+        :disablable="updatable"
+        scenario
+        @clear:items="clearSelected"
       />
-      <c-db-export-btn :ids="selectedKeys" scenario />
     </template>
     <template #headerCell="{ header }">
       <span class="pre-line header-text">{{ header.text }}</span>
@@ -74,15 +76,18 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { isDeprecatedTrigger } from '@/helpers/entities/scenario/form';
 
-import { permissionsTechnicalExploitationScenarioMixin } from '@/mixins/permissions/technical/exploitation/scenario';
+import { useI18n } from '@/hooks/i18n';
 
 import ScenariosListExpandItem from './partials/scenarios-list-expand-item.vue';
 
 export default {
-  components: { ScenariosListExpandItem },
-  mixins: [permissionsTechnicalExploitationScenarioMixin],
+  components: {
+    ScenariosListExpandItem,
+  },
   props: {
     scenarios: {
       type: Array,
@@ -113,54 +118,27 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.id'),
-          value: '_id',
-        },
-        {
-          text: this.$t('common.name'),
-          value: 'name',
-        },
-        {
-          text: this.$t('common.delay'),
-          value: 'delay',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.priority'),
-          value: 'priority',
-        },
-        {
-          text: this.$t('common.enabled'),
-          value: 'enabled',
-        },
-        {
-          text: this.$t('common.author'),
-          value: 'author.display_name',
-        },
-        {
-          text: this.$t('common.created'),
-          value: 'created',
-        },
-        {
-          text: this.$t('common.updated'),
-          value: 'updated',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
-  },
-  methods: {
-    hasDeprecatedTrigger(item) {
-      return item.triggers.some(({ type }) => isDeprecatedTrigger(type));
-    },
+  setup() {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      { text: t('common.id'), value: '_id' },
+      { text: t('common.name'), value: 'name' },
+      { text: t('common.delay'), value: 'delay', sortable: false },
+      { text: t('common.priority'), value: 'priority' },
+      { text: t('common.enabled'), value: 'enabled' },
+      { text: t('common.author'), value: 'author.display_name' },
+      { text: t('common.created'), value: 'created' },
+      { text: t('common.updated'), value: 'updated' },
+      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+    ]);
+
+    const hasDeprecatedTrigger = item => item.triggers.some(({ type }) => isDeprecatedTrigger(type));
+
+    return {
+      headers,
+      hasDeprecatedTrigger,
+    };
   },
 };
 </script>

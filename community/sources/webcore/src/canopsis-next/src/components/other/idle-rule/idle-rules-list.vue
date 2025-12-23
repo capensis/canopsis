@@ -5,19 +5,21 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
-    :select-all="removable"
+    :select-all="removable || updatable"
     expand
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected, selectedKeys }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="updatable"
+        :disablable="updatable"
+        idle-rule
+        @clear:items="clearSelected"
       />
-      <c-db-export-btn :ids="selectedKeys" idle-rule />
     </template>
     <template #type="{ item }">
       {{ $t(`idleRules.types.${item.type}`) }}
@@ -61,10 +63,16 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 import IdleRulesListExpandItem from './partials/idle-rules-list-expand-item.vue';
 
 export default {
-  components: { IdleRulesListExpandItem },
+  components: {
+    IdleRulesListExpandItem,
+  },
   props: {
     idleRules: {
       type: Array,
@@ -95,23 +103,23 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.type'), value: 'type' },
-        { text: this.$t('common.enabled'), value: 'enabled', sortable: false },
-        { text: this.$tc('common.action'), value: 'operation.type', sortable: false },
-        { text: this.$t('idleRules.timeAwaiting'), value: 'duration', sortable: false },
-        { text: this.$t('common.priority'), value: 'priority' },
-        { text: this.$t('common.author'), value: 'author.display_name' },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
+  setup() {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      { text: t('common.name'), value: 'name' },
+      { text: t('common.type'), value: 'type' },
+      { text: t('common.enabled'), value: 'enabled', sortable: false },
+      { text: t('common.action'), value: 'operation.type', sortable: false },
+      { text: t('idleRules.timeAwaiting'), value: 'duration', sortable: false },
+      { text: t('common.priority'), value: 'priority' },
+      { text: t('common.author'), value: 'author.display_name' },
+      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+    ]);
+
+    return {
+      headers,
+    };
   },
 };
 </script>

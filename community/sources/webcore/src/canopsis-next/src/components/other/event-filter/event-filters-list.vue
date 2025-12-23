@@ -6,19 +6,21 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
-    :select-all="removable"
+    :select-all="removable || updatable"
     advanced-pagination
     search
     expand
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected, selectedKeys }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="updatable"
+        :disablable="updatable"
+        event-filter
+        @clear:items="clearSelected"
       />
-      <c-db-export-btn :ids="selectedKeys" event-filter />
     </template>
     <template #priority="{ item }">
       {{ item.priority || '-' }}
@@ -81,6 +83,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 import EventFiltersListExpandPanel from './partials/event-filters-list-expand-panel.vue';
 
 export default {
@@ -117,30 +123,41 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        { text: this.$t('common.id'), value: '_id' },
-        { text: this.$t('common.type'), value: 'type', sortable: false },
-        { text: this.$t('common.priority'), value: 'priority' },
-        { text: this.$t('common.enabled'), value: 'enabled', sortable: false },
-        { text: this.$tc('common.error', 2), value: 'unread_failures_count', sortable: false },
-        { text: this.$t('common.author'), value: 'author.display_name' },
-        { text: this.$t('common.created'), value: 'created' },
-        { text: this.$t('common.updated'), value: 'updated' },
-        { text: this.$t('common.calendar'), value: 'calendar', sortable: false },
-        { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
-      ];
-    },
-  },
+  setup() {
+    const { t, tc } = useI18n();
 
-  methods: {
-    isCalendarRule(item) {
-      return item.start
-        || item.rrule
-        || item.exdates?.length
-        || item.exceptions?.length;
-    },
+    const headers = computed(() => [
+      { text: t('common.id'), value: '_id' },
+      { text: t('common.type'), value: 'type', sortable: false },
+      { text: t('common.priority'), value: 'priority' },
+      { text: t('common.enabled'), value: 'enabled', sortable: false },
+      { text: tc('common.error', 2), value: 'unread_failures_count', sortable: false },
+      { text: t('common.author'), value: 'author.display_name' },
+      { text: t('common.created'), value: 'created' },
+      { text: t('common.updated'), value: 'updated' },
+      { text: t('common.calendar'), value: 'calendar', sortable: false },
+      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+    ]);
+
+    /**
+     * Check if event filter item has calendar rules configured
+     *
+     * @param {Object} item - Event filter item
+     * @param {*} [item.start] - Start date/time for calendar rule
+     * @param {*} [item.rrule] - Recurrence rule (RRULE)
+     * @param {Array} [item.exdates] - Array of excluded dates
+     * @param {Array} [item.exceptions] - Array of exception dates
+     * @return {boolean} True if item has any calendar-related properties configured
+     */
+    const isCalendarRule = item => item.start
+      || item.rrule
+      || item.exdates?.length
+      || item.exceptions?.length;
+
+    return {
+      headers,
+      isCalendarRule,
+    };
   },
 };
 </script>

@@ -31,6 +31,9 @@ export const useEventFilter = () => {
     createEventFilter: 'create',
     updateEventFilter: 'update',
     removeEventFilter: 'remove',
+    bulkEnableEventFilters: 'bulkEnable',
+    bulkDisableEventFilters: 'bulkDisable',
+    bulkRemoveEventFilters: 'bulkRemove',
   });
 
   return {

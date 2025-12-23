@@ -41,6 +41,9 @@ export default {
   filterByLabelEnabledTooltip: 'Some tags can be defined in the format Tag:Value, e.g. Env:Prod.\nWith filter by label, only tags with the defined label will be copied from children alarms to the meta alarm.',
   copyFromLastChild: 'Copy from last child',
   copyFromLastChildTooltip: 'When enabled, the infos value is copied from an infos of a last child alarm. The child alarm infos name shall be defined in this case.',
+  massRemove: 'Remove meta alarm rules',
+  massEnable: 'Enable meta alarm rules',
+  massDisable: 'Disable meta alarm rules',
   steps: {
     basics: 'Basics',
     defineType: 'Define type',

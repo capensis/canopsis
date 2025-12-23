@@ -19,6 +19,9 @@ export const entitiesScenarioMixin = {
       createTestScenarioExecution: 'createTestScenarioExecution',
       fetchTestScenarioExecutionWithoutStore: 'fetchTestScenarioExecutionWithoutStore',
       fetchTestScenarioExecutionWebhooksResponse: 'fetchTestScenarioExecutionWebhooksResponse',
+      bulkEnableScenarios: 'bulkEnable',
+      bulkDisableScenarios: 'bulkDisable',
+      bulkRemoveScenarios: 'bulkRemove',
     }),
   },
 };

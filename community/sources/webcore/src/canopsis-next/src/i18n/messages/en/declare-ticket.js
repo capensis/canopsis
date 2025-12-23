@@ -34,6 +34,9 @@ export default {
   checkSyntax: 'Check syntax',
   syntaxIsValid: 'Syntax is valid',
   ticketResources: 'Declare ticket for resources',
+  massRemove: 'Remove declare ticket rules',
+  massEnable: 'Enable declare ticket rules',
+  massDisable: 'Disable declare ticket rules',
   errors: {
     webhookRequired: 'The webhooks must be added',
     webhookTicketDeclarationRequired: 'Some one webhook ticket declaration must be set',

@@ -6,17 +6,20 @@
       :loading="pending"
       :total-items="totalItems"
       :options="options"
-      :select-all="removable"
+      :select-all="removable || updatable"
       class="v-table-small"
       advanced-pagination
       search
       @update:options="$emit('update:options', $event)"
     >
-      <template #mass-actions="{ selected }">
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove-selected', selected)"
+      <template #mass-actions="{ selected, clearSelected }">
+        <c-table-mass-actions-panel
+          :items="selected"
+          :removable="removable"
+          :enablable="updatable"
+          :disablable="updatable"
+          snmp-rule
+          @clear:items="clearSelected"
         />
       </template>
       <template #oid="{ item }">
@@ -88,9 +91,20 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
 
+import { useI18n } from '@/hooks/i18n';
+
 import SnmpRulesListItemCell from './partials/snmp-rules-list-item-cell.vue';
+
+const oidFields = ['mibName', 'moduleName'];
+const commonFields = ['value', 'regex'];
+const stateFields = ['state', 'type'];
+const templateStateFields = [...Object.keys(SNMP_TEMPLATE_STATE_STATES), 'type'];
+const stateOidFields = ['value'];
+const stateOidField = ['stateoid'];
 
 export default {
   components: {
@@ -126,70 +140,54 @@ export default {
       default: false,
     },
   },
-  computed: {
-    oidFields() {
-      return ['mibName', 'moduleName'];
-    },
+  setup() {
+    const { t } = useI18n();
 
-    commonFields() {
-      return ['value', 'regex'];
-    },
+    const headers = computed(() => [
+      {
+        text: t('snmpRule.oid'),
+        value: 'oid',
+        sortable: false,
+      },
+      {
+        text: t('snmpRule.output'),
+        value: 'output',
+        sortable: false,
+      },
+      {
+        text: t('snmpRule.resource'),
+        value: 'resource',
+        sortable: false,
+      },
+      {
+        text: t('snmpRule.component'),
+        value: 'component',
+        sortable: false,
+      },
+      {
+        text: t('snmpRule.state'),
+        value: 'state',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
 
-    stateFields() {
-      return ['state', 'type'];
-    },
+    const isTemplateStateType = rule => rule.state.type === SNMP_STATE_TYPES.template;
 
-    templateStateFields() {
-      return [...Object.keys(SNMP_TEMPLATE_STATE_STATES), 'type'];
-    },
-
-    stateOidFields() {
-      return ['value'];
-    },
-
-    stateOidField() {
-      return ['stateoid'];
-    },
-
-    headers() {
-      return [
-        {
-          text: this.$t('snmpRule.oid'),
-          value: 'oid',
-          sortable: false,
-        },
-        {
-          text: this.$t('snmpRule.output'),
-          value: 'output',
-          sortable: false,
-        },
-        {
-          text: this.$t('snmpRule.resource'),
-          value: 'resource',
-          sortable: false,
-        },
-        {
-          text: this.$t('snmpRule.component'),
-          value: 'component',
-          sortable: false,
-        },
-        {
-          text: this.$t('snmpRule.state'),
-          value: 'state',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
-  },
-  methods: {
-    isTemplateStateType(rule) {
-      return rule.state.type === SNMP_STATE_TYPES.template;
-    },
+    return {
+      oidFields,
+      commonFields,
+      stateFields,
+      templateStateFields,
+      stateOidFields,
+      stateOidField,
+      headers,
+      isTemplateStateType,
+    };
   },
 };
 </script>

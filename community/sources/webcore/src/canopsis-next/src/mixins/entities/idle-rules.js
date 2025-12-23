@@ -16,6 +16,9 @@ export const entitiesIdleRulesMixin = {
       createIdleRule: 'create',
       updateIdleRule: 'update',
       removeIdleRule: 'remove',
+      bulkEnableIdleRules: 'bulkEnable',
+      bulkDisableIdleRules: 'bulkDisable',
+      bulkRemoveIdleRules: 'bulkRemove',
     }),
   },
 };

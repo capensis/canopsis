@@ -5,19 +5,20 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
-    :select-all="removable"
+    :select-all="removable || updatable"
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected, selectedKeys }">
-      <c-action-btn
-        v-if="removable"
-        class="ml-3"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="updatable"
+        :disablable="updatable"
+        declare-ticket
+        @clear:items="clearSelected"
       />
-      <c-db-export-btn :ids="selectedKeys" declare-ticket />
     </template>
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
@@ -52,6 +53,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     declareTicketRules: {
@@ -83,22 +88,21 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.systemName'), value: 'system_name' },
-        { text: this.$t('common.enabled'), value: 'enabled' },
-        { text: this.$t('common.created'), value: 'created' },
-        { text: this.$t('common.lastModifiedOn'), value: 'updated' },
-        { text: this.$t('common.lastModifiedBy'), value: 'author.display_name' },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
+  setup() {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      { text: t('common.name'), value: 'name' },
+      { text: t('common.systemName'), value: 'system_name' },
+      { text: t('common.enabled'), value: 'enabled' },
+      { text: t('common.created'), value: 'created' },
+      { text: t('common.lastModifiedOn'), value: 'updated' },
+      { text: t('common.lastModifiedBy'), value: 'author.display_name' },
+    ]);
+
+    return {
+      headers,
+    };
   },
 };
 </script>

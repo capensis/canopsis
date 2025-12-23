@@ -17,6 +17,8 @@ export const entitiesLinkRuleMixin = {
       updateLinkRule: 'update',
       removeLinkRule: 'remove',
       bulkRemoveLinkRules: 'bulkRemove',
+      bulkEnableLinkRules: 'bulkEnable',
+      bulkDisableLinkRules: 'bulkDisable',
     }),
   },
 };

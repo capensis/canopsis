@@ -21,6 +21,9 @@ export const useMetaAlarmRule = () => {
     updateMetaAlarmRule: 'update',
     removeMetaAlarmRule: 'remove',
     fetchMetaAlarmRulesListWithoutStore: 'fetchListWithoutStore',
+    bulkEnableMetaAlarmRules: 'bulkEnable',
+    bulkDisableMetaAlarmRules: 'bulkDisable',
+    bulkRemoveMetaAlarmRules: 'bulkRemove', // TODO: check if available
   });
 
   return {

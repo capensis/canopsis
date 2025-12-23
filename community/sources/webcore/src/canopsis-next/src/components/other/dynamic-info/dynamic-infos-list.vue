@@ -5,20 +5,23 @@
     :loading="pending"
     :headers="headers"
     :total-items="totalItems"
-    :select-all="removable"
+    :select-all="removable || updatable"
     advanced-search
     advanced-pagination
     hide-actions
     expand
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected, selectedKeys }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="updatable"
+        :disablable="updatable"
+        dynamic-info
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
-      <c-db-export-btn :ids="selectedKeys" dynamic-info />
     </template>
     <template #created="{ item }">
       {{ item.created | date }}
@@ -56,6 +59,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 import DynamicInfosListExpandItem from './partials/dynamic-infos-expand-item.vue';
 
 export default {
@@ -92,19 +99,22 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        { text: this.$t('common.id'), value: '_id' },
-        { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.description'), value: 'description', sortable: false },
-        { text: this.$t('common.enabled'), value: 'enabled', sortable: false },
-        { text: this.$t('common.author'), value: 'author.display_name' },
-        { text: this.$t('common.created'), value: 'created' },
-        { text: this.$t('common.updated'), value: 'updated' },
-        { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
-      ];
-    },
+  setup() {
+    const { t } = useI18n();
+    const headers = computed(() => [
+      { text: t('common.id'), value: '_id' },
+      { text: t('common.name'), value: 'name' },
+      { text: t('common.description'), value: 'description', sortable: false },
+      { text: t('common.enabled'), value: 'enabled', sortable: false },
+      { text: t('common.author'), value: 'author.display_name' },
+      { text: t('common.created'), value: 'created' },
+      { text: t('common.updated'), value: 'updated' },
+      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+    ]);
+
+    return {
+      headers,
+    };
   },
 };
 </script>

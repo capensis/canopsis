@@ -8,6 +8,7 @@ export const useService = () => {
 
   const actions = useActions({
     fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore',
+    bulkRemoveServices: 'bulkRemove',
     // TODO: finish add another actions and getters
   });
 

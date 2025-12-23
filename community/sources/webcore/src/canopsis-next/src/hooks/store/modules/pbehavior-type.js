@@ -7,8 +7,17 @@ export const usePbehaviorType = () => {
   const { useActions } = usePbehaviorTypeStoreModule();
 
   const actions = useActions({
+    fetchPbehaviorTypesList: 'fetchList',
+    fetchPbehaviorTypesListWithPreviousParams: 'fetchListWithPreviousParams',
     fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
-    // TODO: finish add another actions and getters
+    createPbehaviorType: 'create',
+    updatePbehaviorType: 'update',
+    removePbehaviorType: 'remove',
+    fetchNextPbehaviorTypePriority: 'fetchNextPriority',
+    fetchPbehaviorTypesFieldList: 'fetchFieldList',
+    bulkHidePbehaviorTypes: 'bulkHide',
+    bulkUnhidePbehaviorTypes: 'bulkUnhide',
+    bulkRemovePbehaviorTypes: 'bulkRemove',
   });
 
   return {

@@ -19,5 +19,17 @@ export default createCRUDModule({
     fetchTestScenarioExecutionWebhooksResponse(context, { id }) {
       return request.get(`${API_ROUTES.scenario.testExecutionWebhooks}/${id}/response`);
     },
+
+    bulkEnable(context, { data }) {
+      return request.put(API_ROUTES.scenario.bulkEnable, data);
+    },
+
+    bulkDisable(context, { data }) {
+      return request.put(API_ROUTES.scenario.bulkDisable, data);
+    },
+
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.scenario.bulk, { data });
+    },
   },
 });
