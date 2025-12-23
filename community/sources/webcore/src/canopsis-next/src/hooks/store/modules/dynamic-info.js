@@ -22,6 +22,9 @@ export const useDynamicInfoStoreModule = () => useStoreModuleHooks('dynamicInfo'
  * @property {Function} updateDynamicInfo - Updates a dynamic info
  * @property {Function} removeDynamicInfo - Removes a dynamic info
  * @property {Function} fetchDynamicInfosKeysWithoutStore - Fetches dictionary keys without storing in Vuex
+ * @property {Function} bulkEnableDynamicInfos - Bulk enables dynamic infos
+ * @property {Function} bulkDisableDynamicInfos - Bulk disables dynamic infos
+ * @property {Function} bulkRemoveDynamicInfos - Bulk removes dynamic infos
  *
  * @returns {Object} Hook return object
  * @property {DynamicInfoGetters} getters - All available getters
@@ -42,6 +45,9 @@ export const useDynamicInfo = () => {
     updateDynamicInfo: 'update',
     removeDynamicInfo: 'remove',
     fetchDynamicInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore',
+    bulkEnableDynamicInfos: 'bulkEnable',
+    bulkDisableDynamicInfos: 'bulkDisable',
+    bulkRemoveDynamicInfos: 'bulkRemove',
   });
 
   return {

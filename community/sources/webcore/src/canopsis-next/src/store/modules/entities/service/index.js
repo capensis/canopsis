@@ -105,5 +105,9 @@ export default createEntityModule({
     fetchInfosKeysWithoutStore(context, { params }) {
       return request.get(API_ROUTES.entityInfosDictionaryKeys, { params });
     },
+
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.bulkService, { data });
+    },
   },
 });

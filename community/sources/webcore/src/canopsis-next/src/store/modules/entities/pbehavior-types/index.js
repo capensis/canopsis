@@ -53,5 +53,17 @@ export default createCRUDModule({
         commit(types.FETCH_FIELD_LIST_FAILED);
       }
     },
+
+    bulkHide(context, { data }) {
+      return request.put(API_ROUTES.pbehavior.bulkTypesHide, data);
+    },
+
+    bulkUnhide(context, { data }) {
+      return request.put(API_ROUTES.pbehavior.bulkTypesUnhide, data);
+    },
+
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.pbehavior.bulkTypes, { data });
+    },
   },
 });

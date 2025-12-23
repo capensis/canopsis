@@ -28,6 +28,9 @@ const usePlaylistStoreModule = () => useStoreModuleHooks('playlist');
  * @property {Function} fetchItemWithoutStore - Fetches a playlist without storing it
  * @property {Function} createPlaylistWithPopup - Creates playlist with success popup
  * @property {Function} updatePlaylistWithPopup - Updates playlist with success popup
+ * @property {Function} bulkEnablePlaylists - Bulk enables playlists
+ * @property {Function} bulkDisablePlaylists - Bulk disables playlists
+ * @property {Function} bulkRemovePlaylists - Bulk removes playlists
  * @property {Function} removePlaylistWithPopup - Removes playlist with success popup
  */
 export const usePlaylist = () => {
@@ -48,6 +51,9 @@ export const usePlaylist = () => {
     updatePlaylist: 'update',
     removePlaylist: 'remove',
     fetchItemWithoutStore: 'fetchItemWithoutStore',
+    bulkEnablePlaylists: 'bulkEnable',
+    bulkDisablePlaylists: 'bulkDisable',
+    bulkRemovePlaylists: 'bulkRemove',
   });
 
   /**

@@ -32,6 +32,8 @@ export const useRemdeitionInstruction = () => {
     removeRemediationInstruction: 'remove',
     rateRemediationInstruction: 'rateInstruction',
     updateRemediationInstructionApproval: 'updateApproval',
+    bulkEnableRemediationInstructions: 'bulkEnable',
+    bulkDisableRemediationInstructions: 'bulkDisable',
   });
 
   return {

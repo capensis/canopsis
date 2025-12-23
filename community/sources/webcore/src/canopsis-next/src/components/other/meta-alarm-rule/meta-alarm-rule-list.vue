@@ -6,19 +6,22 @@
     :total-items="totalItems"
     :options="options"
     :is-expandable-item="hasRulePatterns"
-    :select-all="removable"
+    :select-all="removable || updatable"
     expand
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected, selectedKeys }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="updatable"
+        :disablable="updatable"
+        meta-alarm-rule
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
-      <c-db-export-btn :ids="selectedKeys" meta-alarm-rule />
     </template>
     <template #auto_resolve="{ item }">
       <c-enabled :value="item.auto_resolve" />
@@ -65,7 +68,11 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { isMetaAlarmRuleTypeHasPatterns } from '@/helpers/entities/meta-alarm/rule/form';
+
+import { useI18n } from '@/hooks/i18n';
 
 import MetaAlarmRuleListExpandPanel from './partials/meta-alarm-rule-list-expand-panel.vue';
 
@@ -103,65 +110,29 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.id'),
-          value: '_id',
-        },
-        {
-          text: this.$t('common.name'),
-          value: 'name',
-        },
-        {
-          text: this.$t('common.type'),
-          value: 'type',
-        },
-        {
-          text: this.$t('metaAlarmRule.autoResolve'),
-          value: 'auto_resolve',
-          sortable: false,
-        },
-        {
-          text: this.$t('metaAlarmRule.thresholdRate'),
-          value: 'config.threshold_rate',
-          sortable: false,
-        },
-        {
-          text: this.$t('metaAlarmRule.thresholdCount'),
-          value: 'config.threshold_count',
-          sortable: false,
-        },
-        {
-          text: this.$t('metaAlarmRule.timeInterval'),
-          value: 'config.time_interval',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.author'),
-          value: 'author.display_name',
-        },
-        {
-          text: this.$t('common.created'),
-          value: 'created',
-        },
-        {
-          text: this.$t('common.updated'),
-          value: 'updated',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
-  },
-  methods: {
-    hasRulePatterns({ type }) {
-      return isMetaAlarmRuleTypeHasPatterns(type);
-    },
+  setup() {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      { text: t('common.id'), value: '_id' },
+      { text: t('common.name'), value: 'name' },
+      { text: t('common.type'), value: 'type' },
+      { text: t('metaAlarmRule.autoResolve'), value: 'auto_resolve', sortable: false },
+      { text: t('metaAlarmRule.thresholdRate'), value: 'config.threshold_rate', sortable: false },
+      { text: t('metaAlarmRule.thresholdCount'), value: 'config.threshold_count', sortable: false },
+      { text: t('metaAlarmRule.timeInterval'), value: 'config.time_interval', sortable: false },
+      { text: t('common.author'), value: 'author.display_name' },
+      { text: t('common.created'), value: 'created' },
+      { text: t('common.updated'), value: 'updated' },
+      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+    ]);
+
+    const hasRulePatterns = item => isMetaAlarmRuleTypeHasPatterns(item.type);
+
+    return {
+      headers,
+      hasRulePatterns,
+    };
   },
 };
 </script>
