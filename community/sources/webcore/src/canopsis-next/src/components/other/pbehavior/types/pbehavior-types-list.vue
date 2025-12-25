@@ -35,8 +35,8 @@
     <template #priority="{ item }">
       {{ item.priority || '-' }}
     </template>
-    <template #hidden="{ item }">
-      <c-enabled :value="item.hidden" />
+    <template #visible="{ item }">
+      <c-enabled :value="!item.hidden" />
     </template>
     <template #actions="{ item }">
       <v-layout>
@@ -106,8 +106,8 @@ export default {
           value: 'priority',
         },
         {
-          text: this.$t('common.hidden'),
-          value: 'hidden',
+          text: this.$t('pbehavior.types.visible'),
+          value: 'visible',
         },
         {
           text: this.$t('common.actionsLabel'),

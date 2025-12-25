@@ -48,7 +48,7 @@ export default {
   types: {
     usingType: 'Cannot be deleted since it is in use',
     defaultType: 'The type is default, you can edit only color field',
-    hidden: 'Hide this type on pbehavior form ?',
+    visible: 'Show on pbehavior form',
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',

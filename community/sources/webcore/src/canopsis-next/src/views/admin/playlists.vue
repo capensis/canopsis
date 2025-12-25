@@ -13,6 +13,7 @@
         @edit="showEditPlaylistModal"
         @remove="showRemovePlaylistModal"
         @duplicate="showDuplicatePlaylistModal"
+        @refresh="fetchList"
       />
     </v-card>
     <c-fab-btn

@@ -47,6 +47,7 @@ export const usePlaylist = () => {
 
   const actions = useActions({
     fetchList: 'fetchList',
+    fetchPlaylistsListWithPreviousParams: 'fetchListWithPreviousParams',
     createPlaylist: 'create',
     updatePlaylist: 'update',
     removePlaylist: 'remove',
