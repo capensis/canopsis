@@ -62,8 +62,8 @@
       </v-alert>
     </v-flex>
     <c-enabled-field
-      v-field="form.hidden"
-      :label="$t('pbehavior.types.hidden')"
+      v-field="form.visible"
+      :label="$t('pbehavior.types.visible')"
     />
     <c-color-picker-field
       v-field="form.color"

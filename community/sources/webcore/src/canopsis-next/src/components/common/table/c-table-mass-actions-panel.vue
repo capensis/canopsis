@@ -47,6 +47,7 @@ import { useSnmpRule } from '@/hooks/store/modules/snmp-rule';
 import { useScenario } from '@/hooks/store/modules/scenario';
 import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
 import { usePbehavior } from '@/hooks/store/modules/pbehavior';
+import { usePlaylist } from '@/hooks/store/modules/playlist';
 
 export default {
   props: {
@@ -107,6 +108,10 @@ export default {
       default: false,
     },
     declareTicket: {
+      type: Boolean,
+      default: false,
+    },
+    playlist: {
       type: Boolean,
       default: false,
     },
@@ -188,6 +193,13 @@ export default {
       bulkUpdatePbehaviors,
       bulkRemovePbehaviors,
     } = usePbehavior();
+
+    const {
+      fetchPlaylistsListWithPreviousParams,
+      bulkEnablePlaylists,
+      bulkDisablePlaylists,
+      bulkRemovePlaylists,
+    } = usePlaylist();
 
     const itemsIds = computed(() => mapIds(props.items));
     const enablableItems = computed(() => (
@@ -286,6 +298,13 @@ export default {
         disable: bulkDisableDeclareTicketRules,
         tooltipPrefix: 'declareTicket',
         exportProps: { declareTicket: true },
+      },
+      [props.playlist]: {
+        afterSubmit: fetchPlaylistsListWithPreviousParams,
+        remove: bulkRemovePlaylists,
+        enable: bulkEnablePlaylists,
+        disable: bulkDisablePlaylists,
+        tooltipPrefix: 'playlist',
       },
     }.true ?? {}));
 

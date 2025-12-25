@@ -15,7 +15,7 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -32,13 +32,16 @@
 </template>
 
 <script>
+import { ref, computed, onMounted } from 'vue';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { pbehaviorTypeToForm } from '@/helpers/entities/pbehavior/type/form';
+import { pbehaviorTypeToForm, formToPbehaviorType } from '@/helpers/entities/pbehavior/type/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
 import PbehaviorTypeForm from '@/components/other/pbehavior/types/form/pbehavior-type-form.vue';
 
@@ -54,61 +57,56 @@ export default {
     ModalWrapper,
     PbehaviorTypeForm,
   },
-  mixins: [
-    modalInnerMixin,
-    entitiesPbehaviorTypeMixin,
-    submittableMixinCreator(),
-  ],
-  data() {
-    return {
-      pendingPriority: false,
-      form: pbehaviorTypeToForm(this.modal.config.pbehaviorType),
-    };
-  },
-  computed: {
-    pbehaviorType() {
-      return this.modal.config.pbehaviorType;
-    },
-
-    onlyColor() {
-      return this.pbehaviorType?.default;
-    },
-
-    isNew() {
-      return !this.pbehaviorType?._id;
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
   },
-  mounted() {
-    if (this.isNew) {
-      this.setMinimalPriority();
-    }
-  },
-  methods: {
-    async setMinimalPriority() {
-      this.pendingPriority = true;
+  setup(props) {
+    const { close, config } = useInnerModal(props);
+    const { fetchNextPbehaviorTypePriority } = usePbehaviorType();
 
-      try {
-        const { priority } = await this.fetchNextPbehaviorTypePriority();
+    const form = ref(pbehaviorTypeToForm(config.value.pbehaviorType));
 
-        this.form.priority = priority;
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.pendingPriority = false;
-      }
-    },
+    const pbehaviorType = computed(() => config.value.pbehaviorType);
+    const onlyColor = computed(() => pbehaviorType.value?.default);
+    const isNew = computed(() => !pbehaviorType.value?._id);
 
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
+    const {
+      pending: pendingPriority,
+      handler: setMinimalPriority,
+    } = usePendingHandler(async () => {
+      const { priority } = await fetchNextPbehaviorTypePriority();
 
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(this.form);
+      form.value.priority = priority;
+    });
+
+    const { submit, isDisabled } = useSubmittableForm({
+      form,
+      method: async () => {
+        if (config.value.action) {
+          await config.value.action(formToPbehaviorType(form.value));
         }
 
-        this.$modals.hide();
+        close();
+      },
+    });
+
+    onMounted(() => {
+      if (isNew.value) {
+        setMinimalPriority();
       }
-    },
+    });
+
+    return {
+      close,
+      form,
+      pendingPriority,
+      onlyColor,
+      isDisabled,
+      submit,
+    };
   },
 };
 </script>
