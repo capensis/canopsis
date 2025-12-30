@@ -13,7 +13,7 @@ Il n'existe pas réellement de connecteur entre Dynatrace et Canopsis. Pour cré
 ### Canopsis
 
 Pour mettre en place la création d'alarme depuis Dynatrace, il va falloir créer un utilisateur avec un rôle contenant la permission de se connecter à l'API.
-Il faut dans un premier temps aller sur dans l'onglet `Administration > Rôles` puis créer un nouveau rôle avec les propriétés suivantes:
+Il faut dans un premier temps aller dans l'onglet `Administration > Rôles`, puis créer un nouveau rôle avec les propriétés suivantes:
 
 | Paramètre  | Valeur  |
 |-------------------------|----------------------------------------------------------------------------------------|
