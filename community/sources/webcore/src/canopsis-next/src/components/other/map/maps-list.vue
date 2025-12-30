@@ -5,16 +5,15 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
-    :select-all="removable"
+    :select-all="removable && hasAnyDeletableMap"
     :is-disabled-item="isDisabledMap"
     advanced-pagination
     expand
     search
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
+    <template v-if="removable && hasAnyDeletableMap" #mass-actions="{ selected }">
       <c-action-btn
-        v-show="removable"
         type="delete"
         @click="$emit('remove-selected', selected)"
       />
@@ -53,6 +52,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 import MapsListExpandItem from './partials/maps-list-expand-item.vue';
 
 export default {
@@ -89,37 +92,43 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.name'),
-          value: 'name',
-        },
-        {
-          text: this.$t('common.type'),
-          value: 'type',
-        },
-        {
-          text: this.$t('common.lastModifiedOn'),
-          value: 'updated',
-        },
-        {
-          text: this.$t('common.lastModifiedBy'),
-          value: 'author.display_name',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
-  },
-  methods: {
-    isDisabledMap({ deletable }) {
-      return !deletable;
-    },
+  setup(props) {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      {
+        text: t('common.name'),
+        value: 'name',
+      },
+      {
+        text: t('common.type'),
+        value: 'type',
+      },
+      {
+        text: t('common.lastModifiedOn'),
+        value: 'updated',
+      },
+      {
+        text: t('common.lastModifiedBy'),
+        value: 'author.display_name',
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
+
+    const hasAnyDeletableMap = props.maps.some(({ deletable }) => deletable);
+
+    const isDisabledMap = ({ deletable }) => !deletable;
+
+    return {
+      headers,
+      hasAnyDeletableMap,
+
+      isDisabledMap,
+    };
   },
 };
 </script>

@@ -19,6 +19,7 @@
         :disablable="updatable"
         idle-rule
         @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #type="{ item }">

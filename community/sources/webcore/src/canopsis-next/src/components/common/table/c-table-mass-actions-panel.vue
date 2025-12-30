@@ -20,6 +20,20 @@
       color="error"
       @click="showDisableModal"
     />
+    <c-action-btn
+      v-if="unhideable && someOneHidden && config.unhide"
+      :tooltip="$t(`${config.tooltipPrefix}.massUnhide`)"
+      icon="check_circle"
+      color="primary"
+      @click="showUnhideModal"
+    />
+    <c-action-btn
+      v-if="hideable && someOneVisible && config.hide"
+      :tooltip="$t(`${config.tooltipPrefix}.massHide`)"
+      icon="cancel"
+      color="error"
+      @click="showHideModal"
+    />
     <c-db-export-btn
       v-if="config.exportProps"
       :ids="itemsIds"
@@ -33,7 +47,7 @@ import { computed } from 'vue';
 
 import { MODALS } from '@/constants';
 
-import { mapIds } from '@/helpers/array';
+import { mapIds, pickIds } from '@/helpers/array';
 
 import { useModals } from '@/hooks/modals';
 import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
@@ -47,6 +61,9 @@ import { useSnmpRule } from '@/hooks/store/modules/snmp-rule';
 import { useScenario } from '@/hooks/store/modules/scenario';
 import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
 import { usePbehavior } from '@/hooks/store/modules/pbehavior';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
+import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
+import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
 import { usePlaylist } from '@/hooks/store/modules/playlist';
 
 export default {
@@ -67,7 +84,27 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideable: {
+      type: Boolean,
+      default: false,
+    },
+    unhideable: {
+      type: Boolean,
+      default: false,
+    },
     pbehavior: {
+      type: Boolean,
+      default: false,
+    },
+    pbehaviorType: {
+      type: Boolean,
+      default: false,
+    },
+    pbehaviorReason: {
+      type: Boolean,
+      default: false,
+    },
+    pbehaviorException: {
       type: Boolean,
       default: false,
     },
@@ -120,42 +157,36 @@ export default {
     const modals = useModals();
 
     const {
-      fetchDynamicInfosListWithPreviousParams,
       bulkEnableDynamicInfos,
       bulkDisableDynamicInfos,
       bulkRemoveDynamicInfos,
     } = useDynamicInfo();
 
     const {
-      fetchEventFiltersListWithPreviousParams,
       bulkEnableEventFilters,
       bulkDisableEventFilters,
       bulkRemoveEventFilters,
     } = useEventFilter();
 
     const {
-      fetchFlappingRulesListWithPreviousParams,
       bulkEnableFlappingRules,
       bulkDisableFlappingRules,
       bulkRemoveFlappingRules,
     } = useFlappingRules();
 
     const {
-      fetchResolveRulesListWithPreviousParams,
       bulkEnableResolveRules,
       bulkDisableResolveRules,
       bulkRemoveResolveRules,
     } = useResolveRules();
 
     const {
-      fetchIdleRulesListWithPreviousParams,
       bulkEnableIdleRules,
       bulkDisableIdleRules,
       bulkRemoveIdleRules,
     } = useIdleRules();
 
     const {
-      fetchLinkRulesListWithPreviousParams,
       bulkEnableLinkRules,
       bulkDisableLinkRules,
       bulkRemoveLinkRules,
@@ -168,52 +199,69 @@ export default {
     } = useMetaAlarmRule();
 
     const {
-      fetchSnmpRulesListWithPreviousParams,
       bulkEnableSnmpRules,
       bulkDisableSnmpRules,
       bulkRemoveSnmpRules,
     } = useSnmpRule();
 
     const {
-      fetchScenariosListWithPreviousParams,
       bulkEnableScenarios,
       bulkDisableScenarios,
       bulkRemoveScenarios,
     } = useScenario();
 
     const {
-      fetchDeclareTicketRulesListWithPreviousParams,
       bulkEnableDeclareTicketRules,
       bulkDisableDeclareTicketRules,
       bulkRemoveDeclareTicketRules,
     } = useDeclareTicketRule();
 
     const {
-      fetchPbehaviorsListWithPreviousParams,
       bulkUpdatePbehaviors,
       bulkRemovePbehaviors,
     } = usePbehavior();
 
     const {
-      fetchPlaylistsListWithPreviousParams,
       bulkEnablePlaylists,
       bulkDisablePlaylists,
       bulkRemovePlaylists,
     } = usePlaylist();
+
+    const {
+      bulkHidePbehaviorTypes,
+      bulkUnhidePbehaviorTypes,
+      bulkRemovePbehaviorTypes,
+    } = usePbehaviorType();
+
+    const {
+      bulkHidePbehaviorReasons,
+      bulkUnhidePbehaviorReasons,
+      bulkRemovePbehaviorReasons,
+    } = usePbehaviorReason();
+
+    const {
+      bulkHidePbehaviorExceptions,
+      bulkUnhidePbehaviorExceptions,
+      bulkRemovePbehaviorExceptions,
+    } = usePbehaviorException();
 
     const itemsIds = computed(() => mapIds(props.items));
     const enablableItems = computed(() => (
       props.pbehavior ? props.items.filter(({ editable }) => editable) : props.items
     ));
 
-    const enablableItemsIds = computed(() => mapIds(enablableItems.value));
+    const enablableItemsIds = computed(() => pickIds(enablableItems.value));
 
     const someOneEnable = computed(() => enablableItems.value.some(({ enabled }) => enabled));
     const someOneDisable = computed(() => enablableItems.value.some(({ enabled }) => !enabled));
 
+    const hideableItems = computed(() => props.items);
+    const hideableItemsIds = computed(() => pickIds(hideableItems.value));
+    const someOneVisible = computed(() => hideableItems.value.some(({ hidden }) => !hidden));
+    const someOneHidden = computed(() => hideableItems.value.some(({ hidden }) => hidden));
+
     const config = computed(() => ({
       [props.pbehavior]: {
-        afterSubmit: fetchPbehaviorsListWithPreviousParams,
         remove: bulkRemovePbehaviors,
         enable: bulkUpdatePbehaviors,
         disable: bulkUpdatePbehaviors,
@@ -221,7 +269,6 @@ export default {
         exportProps: { pbehavior: true },
       },
       [props.dynamicInfo]: {
-        afterSubmit: fetchDynamicInfosListWithPreviousParams,
         remove: bulkRemoveDynamicInfos,
         enable: bulkEnableDynamicInfos,
         disable: bulkDisableDynamicInfos,
@@ -229,7 +276,6 @@ export default {
         exportProps: { dynamicInfo: true },
       },
       [props.eventFilter]: {
-        afterSubmit: fetchEventFiltersListWithPreviousParams,
         remove: bulkRemoveEventFilters,
         enable: bulkEnableEventFilters,
         disable: bulkDisableEventFilters,
@@ -237,7 +283,6 @@ export default {
         exportProps: { eventFilter: true },
       },
       [props.flappingRule]: {
-        afterSubmit: fetchFlappingRulesListWithPreviousParams,
         remove: bulkRemoveFlappingRules,
         enable: bulkEnableFlappingRules,
         disable: bulkDisableFlappingRules,
@@ -245,7 +290,6 @@ export default {
         exportProps: { flappingRule: true },
       },
       [props.resolveRule]: {
-        afterSubmit: fetchResolveRulesListWithPreviousParams,
         remove: bulkRemoveResolveRules,
         enable: bulkEnableResolveRules,
         disable: bulkDisableResolveRules,
@@ -253,7 +297,6 @@ export default {
         exportProps: { resolveRule: true },
       },
       [props.idleRule]: {
-        afterSubmit: fetchIdleRulesListWithPreviousParams,
         remove: bulkRemoveIdleRules,
         enable: bulkEnableIdleRules,
         disable: bulkDisableIdleRules,
@@ -261,7 +304,6 @@ export default {
         exportProps: { idleRule: true },
       },
       [props.linkRule]: {
-        afterSubmit: fetchLinkRulesListWithPreviousParams,
         remove: bulkRemoveLinkRules,
         enable: bulkEnableLinkRules,
         disable: bulkDisableLinkRules,
@@ -269,7 +311,6 @@ export default {
         exportProps: { linkRule: true },
       },
       [props.metaAlarmRule]: {
-        afterSubmit: () => emit('refresh'), // TODO: rewrite fetching
         remove: bulkRemoveMetaAlarmRules,
         enable: bulkEnableMetaAlarmRules,
         disable: bulkDisableMetaAlarmRules,
@@ -277,14 +318,12 @@ export default {
         exportProps: { metaAlarmRule: true },
       },
       [props.snmpRule]: {
-        afterSubmit: fetchSnmpRulesListWithPreviousParams,
         remove: bulkRemoveSnmpRules,
         enable: bulkEnableSnmpRules,
         disable: bulkDisableSnmpRules,
         tooltipPrefix: 'snmpRule',
       },
       [props.scenario]: {
-        afterSubmit: fetchScenariosListWithPreviousParams,
         remove: bulkRemoveScenarios,
         enable: bulkEnableScenarios,
         disable: bulkDisableScenarios,
@@ -292,7 +331,6 @@ export default {
         exportProps: { scenario: true },
       },
       [props.declareTicket]: {
-        afterSubmit: fetchDeclareTicketRulesListWithPreviousParams,
         remove: bulkRemoveDeclareTicketRules,
         enable: bulkEnableDeclareTicketRules,
         disable: bulkDisableDeclareTicketRules,
@@ -300,18 +338,34 @@ export default {
         exportProps: { declareTicket: true },
       },
       [props.playlist]: {
-        afterSubmit: fetchPlaylistsListWithPreviousParams,
         remove: bulkRemovePlaylists,
         enable: bulkEnablePlaylists,
         disable: bulkDisablePlaylists,
         tooltipPrefix: 'playlist',
       },
+      [props.pbehaviorType]: {
+        remove: bulkRemovePbehaviorTypes,
+        hide: bulkHidePbehaviorTypes,
+        unhide: bulkUnhidePbehaviorTypes,
+        tooltipPrefix: 'pbehavior',
+      },
+      [props.pbehaviorReason]: {
+        remove: bulkRemovePbehaviorReasons,
+        hide: bulkHidePbehaviorReasons,
+        unhide: bulkUnhidePbehaviorReasons,
+        tooltipPrefix: 'pbehavior',
+      },
+      [props.pbehaviorException]: {
+        remove: bulkRemovePbehaviorExceptions,
+        hide: bulkHidePbehaviorExceptions,
+        unhide: bulkUnhidePbehaviorExceptions,
+        tooltipPrefix: 'pbehavior',
+      },
     }.true ?? {}));
 
     const afterSubmit = async () => {
       emit('clear:items');
-
-      return config.value.afterSubmit?.();
+      emit('refresh');
     };
 
     /**
@@ -322,7 +376,7 @@ export default {
       name: MODALS.confirmation,
       config: {
         action: async () => {
-          await config.value.remove({ data: itemsIds.value });
+          await config.value.remove({ data: pickIds(props.items) });
 
           return afterSubmit();
         },
@@ -359,15 +413,49 @@ export default {
       },
     });
 
+    /**
+     * Shows a confirmation modal for bulk hide operation.
+     * On confirmation, hides selected items and refreshes the list.
+     */
+    const showHideModal = () => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: async () => {
+          await config.value.hide({ data: hideableItemsIds.value });
+
+          return afterSubmit();
+        },
+      },
+    });
+
+    /**
+     * Shows a confirmation modal for bulk unhide operation.
+     * On confirmation, unhides selected items and refreshes the list.
+     */
+    const showUnhideModal = () => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: async () => {
+          await config.value.unhide({ data: hideableItemsIds.value });
+
+          return afterSubmit();
+        },
+      },
+    });
+
     return {
       config,
       itemsIds,
       someOneEnable,
       someOneDisable,
+      someOneVisible,
+      someOneHidden,
 
       showRemoveModal,
       showEnableModal,
       showDisableModal,
+      showHideModal,
+      showUnhideModal,
     };
   },
 };

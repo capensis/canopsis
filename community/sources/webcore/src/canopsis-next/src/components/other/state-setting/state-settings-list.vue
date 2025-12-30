@@ -8,6 +8,14 @@
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        state-setting
+        @clear:items="clearSelected"
+      />
+    </template>
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>

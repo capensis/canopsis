@@ -13,6 +13,7 @@
     @duplicate="showDuplicateRuleModal"
     @remove="showDeleteRuleModal"
     @edit="showEditRuleModal"
+    @refresh="refresh"
   />
 </template>
 

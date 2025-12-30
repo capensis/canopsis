@@ -1,5 +1,6 @@
 <template>
-  <v-layout column>
+  <v-layout class="gap-2" column>
+    <c-enabled-field v-field="form.enabled" hide-details />
     <c-name-field
       v-field="form.name"
       autofocus

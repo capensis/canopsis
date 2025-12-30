@@ -1,50 +1,57 @@
 <template>
-  <pbehavior-general-form
-    v-if="noPattern"
-    v-field="form"
-    :no-enabled="noEnabled"
-    :no-comments="noComments"
-    :no-timezone="noTimezone"
-    :with-start-on-trigger="withStartOnTrigger"
-    :with-inherited="withInherited"
-    :name-label="nameLabel"
-    :name-tooltip="nameTooltip"
-  />
+  <v-layout class="gap-2" column>
+    <c-enabled-field
+      v-if="!noEnabled"
+      v-field="form.enabled"
+      hide-details
+    />
+    <pbehavior-general-form
+      v-if="noPattern"
+      v-field="form"
+      :no-enabled="noEnabled"
+      :no-comments="noComments"
+      :no-timezone="noTimezone"
+      :with-start-on-trigger="withStartOnTrigger"
+      :with-inherited="withInherited"
+      :name-label="nameLabel"
+      :name-tooltip="nameTooltip"
+    />
 
-  <v-tabs
-    v-else
-    slider-color="primary"
-    centered
-  >
-    <v-tab :class="{ 'error--text': hasGeneralError }">
-      {{ $t('common.general') }}
-    </v-tab>
-    <v-tab :class="{ 'error--text': hasPatternsError }">
-      {{ $tc('common.pattern', 2) }}
-    </v-tab>
+    <v-tabs
+      v-else
+      slider-color="primary"
+      centered
+    >
+      <v-tab :class="{ 'error--text': hasGeneralError }">
+        {{ $t('common.general') }}
+      </v-tab>
+      <v-tab :class="{ 'error--text': hasPatternsError }">
+        {{ $tc('common.pattern', 2) }}
+      </v-tab>
 
-    <v-tab-item eager>
-      <pbehavior-general-form
-        v-field="form"
-        ref="general"
-        :no-enabled="noEnabled"
-        :no-comments="noComments"
-        :no-timezone="noTimezone"
-        :with-start-on-trigger="withStartOnTrigger"
-        :with-inherited="withInherited"
-        :name-label="nameLabel"
-        :name-tooltip="nameTooltip"
-      />
-    </v-tab-item>
-    <v-tab-item eager>
-      <pbehavior-patterns-form
-        v-field="form.patterns"
-        ref="patterns"
-        :pbehavior-id="pbehaviorId"
-        :pbehavior-counter-type="pbehaviorCounterType"
-      />
-    </v-tab-item>
-  </v-tabs>
+      <v-tab-item eager>
+        <pbehavior-general-form
+          v-field="form"
+          ref="general"
+          :no-enabled="noEnabled"
+          :no-comments="noComments"
+          :no-timezone="noTimezone"
+          :with-start-on-trigger="withStartOnTrigger"
+          :with-inherited="withInherited"
+          :name-label="nameLabel"
+          :name-tooltip="nameTooltip"
+        />
+      </v-tab-item>
+      <v-tab-item eager>
+        <pbehavior-patterns-form
+          v-field="form.patterns"
+          ref="patterns"
+          :pbehavior-id="pbehaviorId"
+          :pbehavior-counter-type="pbehaviorCounterType"
+        />
+      </v-tab-item>
+    </v-tabs>
+  </v-layout>
 </template>
 
 <script>

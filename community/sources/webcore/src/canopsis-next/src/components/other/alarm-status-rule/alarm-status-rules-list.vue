@@ -20,6 +20,7 @@
         :flapping-rule="flapping"
         :resolve-rule="!flapping"
         @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #duration="{ item }">

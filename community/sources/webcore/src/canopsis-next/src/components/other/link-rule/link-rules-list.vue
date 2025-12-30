@@ -18,6 +18,7 @@
         :disablable="updatable"
         link-rule
         @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #enabled="{ item }">

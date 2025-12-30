@@ -13,8 +13,8 @@
       name="description"
     />
     <c-enabled-field
-      v-field="form.hidden"
-      :label="$t('pbehavior.reasons.hidden')"
+      v-field="form.visible"
+      :label="$t('pbehavior.visible')"
     />
   </v-layout>
 </template>

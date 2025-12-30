@@ -34,6 +34,9 @@ export default {
   event: 'Evénement',
   eventCopied: 'Evénement copié dans le presse papier',
   syntaxIsValid: 'La syntaxe est valide',
+  massRemove: 'Supprimer les filtres d\'événements',
+  massEnable: 'Activer les filtres d\'événements',
+  massDisable: 'Désactiver les filtres d\'événements',
   types: {
     [EVENT_FILTER_TYPES.drop]: 'Suppression',
     [EVENT_FILTER_TYPES.break]: 'Break',

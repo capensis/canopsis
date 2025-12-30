@@ -5,23 +5,26 @@
         {{ title }}
       </template>
       <template #text="">
-        <template-testing-test-variables-wrapper
-          v-field="form"
-          :is-new="isNew"
-          :type="type"
-        >
-          <template #default="{ templateVars }">
-            <meta-alarm-rule-form
-              v-model="form"
-              ref="formElement"
-              :active-step.sync="activeStep"
-              :disabled-id-field="config.isDisabledIdField"
-              :alarm-infos="alarmInfos"
-              :entity-infos="entityInfos"
-              :template-vars="templateVars"
-            />
-          </template>
-        </template-testing-test-variables-wrapper>
+        <v-layout class="gap-2" column>
+          <c-enabled-field v-model="form.enabled" hide-details />
+          <template-testing-test-variables-wrapper
+            v-model="form"
+            :is-new="isNew"
+            :type="type"
+          >
+            <template #default="{ templateVars }">
+              <meta-alarm-rule-form
+                v-model="form"
+                ref="formElement"
+                :active-step.sync="activeStep"
+                :disabled-id-field="config.isDisabledIdField"
+                :alarm-infos="alarmInfos"
+                :entity-infos="entityInfos"
+                :template-vars="templateVars"
+              />
+            </template>
+          </template-testing-test-variables-wrapper>
+        </v-layout>
       </template>
       <template #actions="">
         <v-btn

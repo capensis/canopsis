@@ -20,6 +20,7 @@
           :disablable="updatable"
           snmp-rule
           @clear:items="clearSelected"
+          @refresh="$emit('refresh')"
         />
       </template>
       <template #oid="{ item }">
