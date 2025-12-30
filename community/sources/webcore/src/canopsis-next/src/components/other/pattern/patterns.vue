@@ -12,10 +12,7 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
 import { onMounted } from 'vue';
-
-import { PAGINATION_LIMIT } from '@/config';
 
 import { convertQueryToRequest } from '@/helpers/query';
 
@@ -36,28 +33,17 @@ export default {
       fetchPatternsList,
     } = usePattern();
 
-    const initialQuery = {
-      page: 1,
-      itemsPerPage: PAGINATION_LIMIT,
-      search: '',
-      sortBy: [],
-      sortDesc: [],
-    };
-
-    const fetchList = (fetchQuery = initialQuery) => fetchPatternsList({
-      params: {
-        ...convertQueryToRequest(fetchQuery),
-        corporate: false,
-      },
-    });
-
     const {
       options,
       updateOptions,
+      handler: fetchList,
     } = useLocalQueryWithOptions({
-      initialQuery,
-      comparator: isEqual,
-      onUpdate: fetchList,
+      onUpdate: fetchQuery => fetchPatternsList({
+        params: {
+          ...convertQueryToRequest(fetchQuery),
+          corporate: false,
+        },
+      }),
     });
 
     onMounted(fetchList);

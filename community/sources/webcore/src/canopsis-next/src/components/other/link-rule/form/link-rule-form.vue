@@ -1,6 +1,7 @@
 <template>
-  <div class="position-relative">
+  <v-layout class="position-relative gap-2" column>
     <c-progress-overlay :pending="templateVarsPending" />
+    <c-enabled-field v-field="form.enabled" />
     <v-tabs
       v-model="activeTab"
       slider-color="primary"
@@ -80,7 +81,7 @@
         />
       </v-tab-item>
     </v-tabs>
-  </div>
+  </v-layout>
 </template>
 
 <script>

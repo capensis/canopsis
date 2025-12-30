@@ -28,17 +28,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
     required=""
     value="event-filter-description"
   />
-  <div
-    class="layout justify-space-between"
-  >
-    <c-enabled-field-stub
-      class="mr-3"
-      value="true"
-    />
-    <c-priority-field-stub
-      value="2"
-    />
-  </div>
+  <c-priority-field-stub
+    value="2"
+  />
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -89,17 +81,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
     required=""
     value="event-filter-description"
   />
-  <div
-    class="layout justify-space-between"
-  >
-    <c-enabled-field-stub
-      class="mr-3"
-      value="true"
-    />
-    <c-priority-field-stub
-      value="2"
-    />
-  </div>
+  <c-priority-field-stub
+    value="2"
+  />
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -174,17 +158,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
     required=""
     value="event-filter-description"
   />
-  <div
-    class="layout justify-space-between"
-  >
-    <c-enabled-field-stub
-      class="mr-3"
-      value="true"
-    />
-    <c-priority-field-stub
-      value="2"
-    />
-  </div>
+  <c-priority-field-stub
+    value="2"
+  />
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -235,17 +211,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
     required=""
     value="event-filter-description"
   />
-  <div
-    class="layout justify-space-between"
-  >
-    <c-enabled-field-stub
-      class="mr-3"
-      value="true"
-    />
-    <c-priority-field-stub
-      value="2"
-    />
-  </div>
+  <c-priority-field-stub
+    value="2"
+  />
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -323,17 +291,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
     required=""
     value="event-filter-description"
   />
-  <div
-    class="layout justify-space-between"
-  >
-    <c-enabled-field-stub
-      class="mr-3"
-      value="true"
-    />
-    <c-priority-field-stub
-      value="2"
-    />
-  </div>
+  <c-priority-field-stub
+    value="2"
+  />
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -381,14 +341,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
   <c-description-field-stub
     required=""
   />
-  <div
-    class="layout justify-space-between"
-  >
-    <c-enabled-field-stub
-      class="mr-3"
-    />
-    <c-priority-field-stub />
-  </div>
+  <c-priority-field-stub />
   <c-information-block-stub
     title="Applied during this period only"
   >

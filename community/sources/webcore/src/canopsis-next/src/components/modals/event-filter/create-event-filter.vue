@@ -5,20 +5,23 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <template-testing-test-variables-wrapper
-          v-model="form"
-          :rule-id="ruleId"
-          :type="type"
-        >
-          <template #default="{ templateVars, copyVars }">
-            <event-filter-form
-              v-model="form"
-              :template-vars="templateVars"
-              :copy-vars="copyVars"
-              :is-disabled-id-field="config.isDisabledIdField"
-            />
-          </template>
-        </template-testing-test-variables-wrapper>
+        <v-layout class="gap-2" column>
+          <c-enabled-field v-model="form.enabled" />
+          <template-testing-test-variables-wrapper
+            v-model="form"
+            :rule-id="ruleId"
+            :type="type"
+          >
+            <template #default="{ templateVars, copyVars }">
+              <event-filter-form
+                v-model="form"
+                :template-vars="templateVars"
+                :copy-vars="copyVars"
+                :is-disabled-id-field="config.isDisabledIdField"
+              />
+            </template>
+          </template-testing-test-variables-wrapper>
+        </v-layout>
       </template>
       <template #actions="">
         <v-btn

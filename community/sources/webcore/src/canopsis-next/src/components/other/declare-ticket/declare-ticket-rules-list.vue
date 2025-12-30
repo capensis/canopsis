@@ -18,6 +18,7 @@
         :disablable="updatable"
         declare-ticket
         @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #enabled="{ item }">
@@ -98,6 +99,7 @@ export default {
       { text: t('common.created'), value: 'created' },
       { text: t('common.lastModifiedOn'), value: 'updated' },
       { text: t('common.lastModifiedBy'), value: 'author.display_name' },
+      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 
     return {

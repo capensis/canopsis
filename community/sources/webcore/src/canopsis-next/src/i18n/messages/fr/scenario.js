@@ -55,4 +55,7 @@ export default {
   },
   allowMultipleUrls: 'Autoriser plusieurs URLs',
   allowMultipleUrlsTooltip: 'Si activé, le champ URL peut contenir plusieurs URLs, elles seront analysées et la requête sera envoyée à toutes.\nLa virgule doit être utilisée comme délimiteur.\nPar exemple, l\'URL peut contenir : {{ range $link := .Alarm.Value.Infos }}{{ if (eq $link.type "webhook") }}{{ $link.webhookURL }},{{ end }}{{ end }}',
+  massRemove: 'Supprimer les scénarios',
+  massEnable: 'Activer les scénarios',
+  massDisable: 'Désactiver les scénarios',
 };

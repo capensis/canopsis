@@ -19,6 +19,9 @@ export default {
   uploadedMibPopup:
     'Le fichier a été téléchargé.\nNotifications: {notification}\nObjets: {object}'
     + '|Les fichiers ont été téléchargés.\nNotifications: {notification}\nObjets: {object}',
+  massRemove: 'Supprimer les règles SNMP',
+  massEnable: 'Activer les règles SNMP',
+  massDisable: 'Désactiver les règles SNMP',
   states: {
     [SNMP_TEMPLATE_STATE_STATES.info]: 'Info',
     [SNMP_TEMPLATE_STATE_STATES.minor]: 'Mineur',

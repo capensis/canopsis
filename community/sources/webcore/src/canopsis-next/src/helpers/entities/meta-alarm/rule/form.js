@@ -126,6 +126,7 @@ import { addKeyInEntity, removeKeyFromEntities } from '@/helpers/array';
  * @property {MetaAlarmRuleType} type
  * @property {string} name
  * @property {boolean} auto_resolve
+ * @property {boolean} enabled
  * @property {string} output_template
  * @property {MetaAlarmRuleTags} tags
  * @property {MetaAlarmRuleInfosItem[]} infos
@@ -269,6 +270,7 @@ export const metaAlarmRuleToForm = (rule = {}) => {
     type: rule.type ?? META_ALARMS_RULE_TYPES.attribute,
     name: rule.name ?? '',
     auto_resolve: !!rule.auto_resolve,
+    enabled: rule.enabled ?? true,
     output_template: rule.output_template ?? '{{ .LastChild.Alarm.Value.State.Message }}',
     patterns: metaAlarmFilterPatternsToForm(rule),
     tags: metaAlarmRuleTagsToForm(rule.tags || {}),

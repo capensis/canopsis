@@ -11,7 +11,7 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -27,12 +27,14 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { pbehaviorReasonToForm } from '@/helpers/entities/pbehavior/reason/form';
+import { pbehaviorReasonToForm, formToPbehaviorReason } from '@/helpers/entities/pbehavior/reason/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import PbehaviorReasonForm from '@/components/other/pbehavior/reasons/form/pbehavior-reason-form.vue';
 
@@ -48,27 +50,35 @@ export default {
     PbehaviorReasonForm,
     ModalWrapper,
   },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-  ],
-  data() {
-    return {
-      form: pbehaviorReasonToForm(this.modal.config.pbehaviorReason),
-    };
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
   },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
+  setup(props) {
+    const { config, close } = useInnerModal(props);
 
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(this.form);
+    const form = ref(pbehaviorReasonToForm(config.value.pbehaviorReason));
+
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        if (config.value.action) {
+          await config.value.action(formToPbehaviorReason(form.value));
         }
 
-        this.$modals.hide();
-      }
-    },
+        close();
+      },
+    });
+
+    return {
+      form,
+      isDisabled,
+      submitting,
+      close,
+      submit,
+    };
   },
 };
 </script>

@@ -22,6 +22,9 @@ export default {
   pbehaviorName: 'Pbehavior name',
   pbehaviorCanonicalType: 'Pbehavior canonical type',
   rruleEnd: 'End of recurrence',
+  visible: 'Show on pbehavior form',
+  massHide: 'Hide on pbehavior form',
+  massUnhide: '@:pbehavior.visible',
   defaultNameForSingleResourceEntity: '{component} - {name} - From {datetime}',
   defaultNameForSingleEntity: '{name} - From {datetime}',
   defaultNameForMultipleEntities: 'Periodical behavior - From {datetime}',
@@ -48,7 +51,6 @@ export default {
   types: {
     usingType: 'Cannot be deleted since it is in use',
     defaultType: 'The type is default, you can edit only color field',
-    visible: 'Show on pbehavior form',
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',

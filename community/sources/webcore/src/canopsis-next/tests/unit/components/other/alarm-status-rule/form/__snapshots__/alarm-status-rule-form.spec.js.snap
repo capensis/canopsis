@@ -2,8 +2,11 @@
 
 exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom props 1`] = `
 <div
-  class="layout column"
+  class="layout gap-2 column"
 >
+  <c-enabled-field
+    hide-details=""
+  />
   <c-name-field-stub
     autofocus=""
     required=""
@@ -35,8 +38,11 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom p
 
 exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with default props 1`] = `
 <div
-  class="layout column"
+  class="layout gap-2 column"
 >
+  <c-enabled-field
+    hide-details=""
+  />
   <c-name-field-stub
     autofocus=""
     required=""

@@ -17,8 +17,8 @@
         @click="$emit('remove-selected', selected)"
       />
     </template>
-    <template #enable="{ item }">
-      <c-enabled :value="item.enable" />
+    <template #enabled="{ item }">
+      <c-enabled :value="item.enabled" />
     </template>
     <template #active="{ item }">
       <c-enabled :value="item.active_connects > 0" />
@@ -118,7 +118,7 @@ export default {
       },
       {
         text: t('common.enabled'),
-        value: 'enable',
+        value: 'enabled',
       },
       {
         text: t('user.auth'),

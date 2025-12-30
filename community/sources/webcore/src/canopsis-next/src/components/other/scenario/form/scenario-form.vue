@@ -12,7 +12,6 @@
       name="delay"
       clearable
     />
-    <c-enabled-field v-field="form.enabled" />
     <c-triggers-field
       :value="form.triggers"
       with-additional-values

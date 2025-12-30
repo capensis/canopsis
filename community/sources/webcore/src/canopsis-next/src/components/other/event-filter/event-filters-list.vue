@@ -20,6 +20,7 @@
         :disablable="updatable"
         event-filter
         @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #priority="{ item }">

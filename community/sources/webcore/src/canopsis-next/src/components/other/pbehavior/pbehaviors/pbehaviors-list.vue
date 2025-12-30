@@ -32,6 +32,7 @@
         :disablable="updatable"
         pbehavior
         @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #name="{ item }">

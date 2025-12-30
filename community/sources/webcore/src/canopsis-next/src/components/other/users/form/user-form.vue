@@ -1,5 +1,10 @@
 <template>
-  <v-layout column>
+  <v-layout class="gap-2" column>
+    <c-enabled-field
+      v-field="form.enabled"
+      :disabled="onlyUserPrefs || isSelf"
+      hide-details
+    />
     <c-id-field
       v-field="form._id"
       :disabled="onlyUserPrefs || !isNew"
@@ -75,10 +80,6 @@
         @error="showCopyAuthKeyErrorPopup"
       />
     </v-layout>
-    <c-enabled-field
-      v-field="form.enable"
-      :disabled="onlyUserPrefs || isSelf"
-    />
     <view-selector v-field="form.defaultview" />
   </v-layout>
 </template>

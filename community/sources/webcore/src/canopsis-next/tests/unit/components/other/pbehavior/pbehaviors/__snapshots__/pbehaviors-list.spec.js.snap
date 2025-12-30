@@ -3,6 +3,8 @@
 exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
 <div
   class="c-advanced-data-table"
+  disablable="true"
+  enablable="true"
 >
   <div
     class="layout px-4 wrap"
@@ -2644,6 +2646,8 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
 exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with shownUserTimezone 1`] = `
 <div
   class="c-advanced-data-table"
+  disablable="true"
+  enablable="true"
 >
   <div
     class="layout px-4 wrap"

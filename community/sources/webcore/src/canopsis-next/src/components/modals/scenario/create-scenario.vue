@@ -5,18 +5,21 @@
         {{ title }}
       </template>
       <template #text="">
-        <template-testing-test-variables-wrapper
-          v-model="form"
-          :rule-id="scenarioId"
-          :type="type"
-        >
-          <template #default="{ templateVars }">
-            <scenario-form
-              v-model="form"
-              :template-vars="templateVars"
-            />
-          </template>
-        </template-testing-test-variables-wrapper>
+        <v-layout class="gap-2" column>
+          <c-enabled-field v-model="form.enabled" />
+          <template-testing-test-variables-wrapper
+            v-model="form"
+            :rule-id="scenarioId"
+            :type="type"
+          >
+            <template #default="{ templateVars }">
+              <scenario-form
+                v-model="form"
+                :template-vars="templateVars"
+              />
+            </template>
+          </template-testing-test-variables-wrapper>
+        </v-layout>
       </template>
       <template #actions="">
         <v-btn

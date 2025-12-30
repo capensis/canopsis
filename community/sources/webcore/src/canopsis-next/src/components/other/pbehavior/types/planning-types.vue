@@ -6,9 +6,11 @@
       :total-items="pbehaviorTypesMeta.total_count"
       :options.sync="options"
       :removable="hasDeleteAnyPbehaviorTypeAccess"
+      :updatable="hasUpdateAnyPbehaviorTypeAccess"
       @remove-selected="showRemoveSelectedPbehaviorTypeModal"
       @remove="showRemovePbehaviorTypeModal"
       @edit="showEditPbehaviorTypeModal"
+      @refresh="fetchList"
     />
   </v-card-text>
 </template>
