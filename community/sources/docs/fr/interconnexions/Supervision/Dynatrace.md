@@ -2,7 +2,7 @@
 
 ## Description
 
-Convertir des webhooks Dynatrace en alarme Canopsis.
+Convertir des webhooks Dynatrace en alarmes Canopsis.
 
 ## Fonctionnement
 
@@ -12,19 +12,18 @@ Il n'existe pas réellement de connecteur entre Dynatrace et Canopsis. Pour cré
 
 ### Canopsis
 
-Pour mettre en place la création d'alarme depuis Dynatrace, il va falloir créer un utilisateur qui aura un rôle ayant la permission de se connecter à l'API.
-
-Pour ce faire, il faut aller sur dans l'onglet `Administration > Rôles` puis créer un nouveau rôle avec les propriétés suivantes:
+Pour mettre en place la création d'alarme depuis Dynatrace, il va falloir créer un utilisateur avec un rôle contenant la permission de se connecter à l'API.
+Il faut dans un premier temps aller dans l'onglet `Administration > Rôles`, puis créer un nouveau rôle avec les propriétés suivantes:
 
 | Paramètre  | Valeur  |
 |-------------------------|----------------------------------------------------------------------------------------|
 | Nom | Connecteur API |
 
-Puis on lui donne les bon droits sur l'API dans `Administration > Droits`
+Puis on donne à ce rôle le droit adéquat sur l'API dans `Administration > Droits`.
+Dans l'onglet `API`, il faut sélectionner la permission pour `Événements` (uniquement pour le rôle `Connecteur API` ) puis sauvegarder la configuration.
 
-On va dans l'onglet `API` puis on cherche la permission pour `Événements`,  on la sélectionne uniquement pour le rôle `Connecteur API` et on sauvegarde.
-
-Une fois que le rôle et la permission a été configuré, on va créer notre utilisateur. Pour ça, il faut aller dans `Administration > Utilisateurs`
+Une fois cette configuration réalisée, il faut ensuite créer un utilisateur dédié à la communication Dynatrace / Canopsis.
+Pour cela, il faut aller dans `Administration > Utilisateurs`
 
 | Paramètre  | Valeur  |
 |-------------------------|----------------------------------------------------------------------------------------|
@@ -33,21 +32,22 @@ Une fois que le rôle et la permission a été configuré, on va créer notre ut
 | Mot de passe | `motdepassefort` |
 | Rôles | Connecteur API |
 
-On va ensuite appuyer sur l'icone de crayon à côté du nom de l'utilisateur et récupérer sa `Clé d'authentification`.
+On va ensuite appuyer sur l'icone de crayon à côté du nom de l'utilisateur pour afficher le profil et récupérer sa `Clé d'authentification` ( cette `authkey` servira ensuite dans la configuration côté Dynatrace ).
 
 ### Dynatrace
 
-Pour envoyer les webhooks depuis Dynatrace, il faut en premier lieu les configurer. Pour ce faire, depuis votre instance Dynatrace il faut se rendre dans :
+Pour envoyer les webhooks depuis Dynatrace, il faut dans un premier temps les configurer.
+Pour se faire, depuis votre instance Dynatrace il faut se rendre dans :
 
 `Settings > Analyze and alert > Notifications > Problem notifications`
 
-Puis remplir les champs comme suit:
+Puis remplir les champs suivants :
 
 | Option                  | Utilisation                                                                            |
 |-------------------------|----------------------------------------------------------------------------------------|
 | Notification type  | Le type de notification, dans notre cas nous utiliserons `Custom Integration`.              |
 | Display name       | Le nom de notre connecteur, dans notre cas nous utiliserons `Canopsis`                      |
-| Webhook url        | L'URL vers l'endpoint des événements, il doit avoir le format suivant: `https://url-de-canopsis/api/v4/events?authkey=[votreauthkey]`. La `authkey` doit être fournie dans l'URL. |
+| Webhook url        | L'URL vers le endpoint des événements Canopsis, il doit avoir le format suivant: `https://url-de-canopsis/api/v4/events?authkey=[votreauthkey]`. La `authkey` doit être fournie dans l'URL. |
 | Custom payload     | Le custom payload va nous permettre de donner toutes les informations dont nous avons besoin pour créer notre alarme dans Canopsis. |
 
 Exemple de payload:
