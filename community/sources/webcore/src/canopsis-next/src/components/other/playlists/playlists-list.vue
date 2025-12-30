@@ -72,6 +72,7 @@
     </template>
   </c-advanced-data-table>
 </template>
+
 <script>
 import { APP_HOST } from '@/config';
 import { ROUTES_NAMES } from '@/constants';
