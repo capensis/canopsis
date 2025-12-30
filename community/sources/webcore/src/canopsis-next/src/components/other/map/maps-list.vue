@@ -12,10 +12,13 @@
     search
     @update:options="$emit('update:options', $event)"
   >
-    <template v-if="removable && hasAnyDeletableMap" #mass-actions="{ selected }">
-      <c-action-btn
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template v-if="removable && hasAnyDeletableMap" #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        map
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #type="{ item }">
@@ -119,7 +122,7 @@ export default {
       },
     ]);
 
-    const hasAnyDeletableMap = props.maps.some(({ deletable }) => deletable);
+    const hasAnyDeletableMap = computed(() => props.maps.some(({ deletable }) => deletable));
 
     const isDisabledMap = ({ deletable }) => !deletable;
 

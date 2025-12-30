@@ -2,7 +2,7 @@
   <v-layout>
     <c-action-btn
       v-if="removable && config.remove"
-      :tooltip="$t(`${config.tooltipPrefix}.massRemove`)"
+      :tooltip="config.removeTooltip"
       type="delete"
       @click="showRemoveModal"
     />
@@ -49,6 +49,7 @@ import { MODALS } from '@/constants';
 
 import { mapIds, pickIds } from '@/helpers/array';
 
+import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
 import { useEventFilter } from '@/hooks/store/modules/event-filter';
@@ -65,6 +66,7 @@ import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
 import { usePlaylist } from '@/hooks/store/modules/playlist';
+import { useMaps } from '@/hooks/store/modules/maps';
 
 export default {
   props: {
@@ -152,8 +154,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    map: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
+    const { te, t } = useI18n();
     const modals = useModals();
 
     const {
@@ -245,6 +252,10 @@ export default {
       bulkRemovePbehaviorExceptions,
     } = usePbehaviorException();
 
+    const {
+      bulkRemoveMaps,
+    } = useMaps();
+
     const itemsIds = computed(() => mapIds(props.items));
     const enablableItems = computed(() => (
       props.pbehavior ? props.items.filter(({ editable }) => editable) : props.items
@@ -260,108 +271,122 @@ export default {
     const someOneVisible = computed(() => hideableItems.value.some(({ hidden }) => !hidden));
     const someOneHidden = computed(() => hideableItems.value.some(({ hidden }) => hidden));
 
-    const config = computed(() => ({
-      [props.pbehavior]: {
-        remove: bulkRemovePbehaviors,
-        enable: bulkUpdatePbehaviors,
-        disable: bulkUpdatePbehaviors,
-        tooltipPrefix: 'pbehavior',
-        exportProps: { pbehavior: true },
-      },
-      [props.dynamicInfo]: {
-        remove: bulkRemoveDynamicInfos,
-        enable: bulkEnableDynamicInfos,
-        disable: bulkDisableDynamicInfos,
-        tooltipPrefix: 'dynamicInfo',
-        exportProps: { dynamicInfo: true },
-      },
-      [props.eventFilter]: {
-        remove: bulkRemoveEventFilters,
-        enable: bulkEnableEventFilters,
-        disable: bulkDisableEventFilters,
-        tooltipPrefix: 'eventFilter',
-        exportProps: { eventFilter: true },
-      },
-      [props.flappingRule]: {
-        remove: bulkRemoveFlappingRules,
-        enable: bulkEnableFlappingRules,
-        disable: bulkDisableFlappingRules,
-        tooltipPrefix: 'flappingRule',
-        exportProps: { flappingRule: true },
-      },
-      [props.resolveRule]: {
-        remove: bulkRemoveResolveRules,
-        enable: bulkEnableResolveRules,
-        disable: bulkDisableResolveRules,
-        tooltipPrefix: 'resolveRule',
-        exportProps: { resolveRule: true },
-      },
-      [props.idleRule]: {
-        remove: bulkRemoveIdleRules,
-        enable: bulkEnableIdleRules,
-        disable: bulkDisableIdleRules,
-        tooltipPrefix: 'idleRule',
-        exportProps: { idleRule: true },
-      },
-      [props.linkRule]: {
-        remove: bulkRemoveLinkRules,
-        enable: bulkEnableLinkRules,
-        disable: bulkDisableLinkRules,
-        tooltipPrefix: 'linkRule',
-        exportProps: { linkRule: true },
-      },
-      [props.metaAlarmRule]: {
-        remove: bulkRemoveMetaAlarmRules,
-        enable: bulkEnableMetaAlarmRules,
-        disable: bulkDisableMetaAlarmRules,
-        tooltipPrefix: 'metaAlarmRule',
-        exportProps: { metaAlarmRule: true },
-      },
-      [props.snmpRule]: {
-        remove: bulkRemoveSnmpRules,
-        enable: bulkEnableSnmpRules,
-        disable: bulkDisableSnmpRules,
-        tooltipPrefix: 'snmpRule',
-      },
-      [props.scenario]: {
-        remove: bulkRemoveScenarios,
-        enable: bulkEnableScenarios,
-        disable: bulkDisableScenarios,
-        tooltipPrefix: 'scenario',
-        exportProps: { scenario: true },
-      },
-      [props.declareTicket]: {
-        remove: bulkRemoveDeclareTicketRules,
-        enable: bulkEnableDeclareTicketRules,
-        disable: bulkDisableDeclareTicketRules,
-        tooltipPrefix: 'declareTicket',
-        exportProps: { declareTicket: true },
-      },
-      [props.playlist]: {
-        remove: bulkRemovePlaylists,
-        enable: bulkEnablePlaylists,
-        disable: bulkDisablePlaylists,
-        tooltipPrefix: 'playlist',
-      },
-      [props.pbehaviorType]: {
-        remove: bulkRemovePbehaviorTypes,
-        hide: bulkHidePbehaviorTypes,
-        unhide: bulkUnhidePbehaviorTypes,
-        tooltipPrefix: 'pbehavior',
-      },
-      [props.pbehaviorReason]: {
-        remove: bulkRemovePbehaviorReasons,
-        hide: bulkHidePbehaviorReasons,
-        unhide: bulkUnhidePbehaviorReasons,
-        tooltipPrefix: 'pbehavior',
-      },
-      [props.pbehaviorException]: {
-        remove: bulkRemovePbehaviorExceptions,
-        hide: bulkHidePbehaviorExceptions,
-        unhide: bulkUnhidePbehaviorExceptions,
-        tooltipPrefix: 'pbehavior',
-      },
-    }.true ?? {}));
+    const config = computed(() => {
+      const activeConfig = {
+        [props.pbehavior]: {
+          remove: bulkRemovePbehaviors,
+          enable: bulkUpdatePbehaviors,
+          disable: bulkUpdatePbehaviors,
+          tooltipPrefix: 'pbehavior',
+          exportProps: { pbehavior: true },
+        },
+        [props.dynamicInfo]: {
+          remove: bulkRemoveDynamicInfos,
+          enable: bulkEnableDynamicInfos,
+          disable: bulkDisableDynamicInfos,
+          tooltipPrefix: 'dynamicInfo',
+          exportProps: { dynamicInfo: true },
+        },
+        [props.eventFilter]: {
+          remove: bulkRemoveEventFilters,
+          enable: bulkEnableEventFilters,
+          disable: bulkDisableEventFilters,
+          tooltipPrefix: 'eventFilter',
+          exportProps: { eventFilter: true },
+        },
+        [props.flappingRule]: {
+          remove: bulkRemoveFlappingRules,
+          enable: bulkEnableFlappingRules,
+          disable: bulkDisableFlappingRules,
+          tooltipPrefix: 'flappingRule',
+          exportProps: { flappingRule: true },
+        },
+        [props.resolveRule]: {
+          remove: bulkRemoveResolveRules,
+          enable: bulkEnableResolveRules,
+          disable: bulkDisableResolveRules,
+          tooltipPrefix: 'resolveRule',
+          exportProps: { resolveRule: true },
+        },
+        [props.idleRule]: {
+          remove: bulkRemoveIdleRules,
+          enable: bulkEnableIdleRules,
+          disable: bulkDisableIdleRules,
+          tooltipPrefix: 'idleRule',
+          exportProps: { idleRule: true },
+        },
+        [props.linkRule]: {
+          remove: bulkRemoveLinkRules,
+          enable: bulkEnableLinkRules,
+          disable: bulkDisableLinkRules,
+          tooltipPrefix: 'linkRule',
+          exportProps: { linkRule: true },
+        },
+        [props.metaAlarmRule]: {
+          remove: bulkRemoveMetaAlarmRules,
+          enable: bulkEnableMetaAlarmRules,
+          disable: bulkDisableMetaAlarmRules,
+          tooltipPrefix: 'metaAlarmRule',
+          exportProps: { metaAlarmRule: true },
+        },
+        [props.snmpRule]: {
+          remove: bulkRemoveSnmpRules,
+          enable: bulkEnableSnmpRules,
+          disable: bulkDisableSnmpRules,
+          tooltipPrefix: 'snmpRule',
+        },
+        [props.scenario]: {
+          remove: bulkRemoveScenarios,
+          enable: bulkEnableScenarios,
+          disable: bulkDisableScenarios,
+          tooltipPrefix: 'scenario',
+          exportProps: { scenario: true },
+        },
+        [props.declareTicket]: {
+          remove: bulkRemoveDeclareTicketRules,
+          enable: bulkEnableDeclareTicketRules,
+          disable: bulkDisableDeclareTicketRules,
+          tooltipPrefix: 'declareTicket',
+          exportProps: { declareTicket: true },
+        },
+        [props.playlist]: {
+          remove: bulkRemovePlaylists,
+          enable: bulkEnablePlaylists,
+          disable: bulkDisablePlaylists,
+          tooltipPrefix: 'playlist',
+        },
+        [props.pbehaviorType]: {
+          remove: bulkRemovePbehaviorTypes,
+          hide: bulkHidePbehaviorTypes,
+          unhide: bulkUnhidePbehaviorTypes,
+          tooltipPrefix: 'pbehavior',
+        },
+        [props.pbehaviorReason]: {
+          remove: bulkRemovePbehaviorReasons,
+          hide: bulkHidePbehaviorReasons,
+          unhide: bulkUnhidePbehaviorReasons,
+          tooltipPrefix: 'pbehavior',
+        },
+        [props.pbehaviorException]: {
+          remove: bulkRemovePbehaviorExceptions,
+          hide: bulkHidePbehaviorExceptions,
+          unhide: bulkUnhidePbehaviorExceptions,
+          tooltipPrefix: 'pbehavior',
+        },
+        [props.map]: {
+          remove: bulkRemoveMaps,
+          tooltipPrefix: 'map',
+        },
+      }.true ?? {};
+
+      const massRemoveTooltipKey = `${activeConfig.tooltipPrefix}.massRemove`;
+
+      if (te(massRemoveTooltipKey)) {
+        activeConfig.removeTooltip = t(massRemoveTooltipKey);
+      }
+
+      return activeConfig;
+    });
 
     const afterSubmit = async () => {
       emit('clear:items');

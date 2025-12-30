@@ -148,27 +148,6 @@ export default {
     const isExceptionTab = computed(() => activeTab.value === PLANNING_TABS.exceptions);
 
     /**
-     * Fetches the types list.
-     */
-    const fetchTypesList = () => {
-      fetchPbehaviorTypesListWithPreviousParams();
-    };
-
-    /**
-     * Fetches the reasons list.
-     */
-    const fetchReasonsList = () => {
-      fetchPbehaviorReasonsListWithPreviousParams();
-    };
-
-    /**
-     * Fetches the exceptions list.
-     */
-    const fetchExceptionsList = () => {
-      fetchPbehaviorExceptionsListWithPreviousParams();
-    };
-
-    /**
      * Shows the modal for creating a new pbehavior type.
      * After successful creation, refreshes the types list.
      */
@@ -178,7 +157,7 @@ export default {
         config: {
           action: async (data) => {
             await createPbehaviorType({ data });
-            await fetchTypesList();
+            await fetchPbehaviorTypesListWithPreviousParams();
           },
         },
       });
@@ -194,7 +173,7 @@ export default {
         config: {
           action: async (data) => {
             await createPbehaviorReason({ data });
-            await fetchReasonsList();
+            await fetchPbehaviorReasonsListWithPreviousParams();
           },
         },
       });
@@ -206,13 +185,13 @@ export default {
     const refresh = () => {
       switch (activeTab.value) {
         case PLANNING_TABS.types:
-          fetchTypesList();
+          fetchPbehaviorTypesListWithPreviousParams();
           break;
         case PLANNING_TABS.reasons:
-          fetchReasonsList();
+          fetchPbehaviorReasonsListWithPreviousParams();
           break;
         case PLANNING_TABS.exceptions:
-          fetchExceptionsList();
+          fetchPbehaviorExceptionsListWithPreviousParams();
           break;
       }
     };
@@ -241,7 +220,7 @@ export default {
         config: {
           action: async (data) => {
             await createPbehaviorException({ data });
-            await fetchExceptionsList();
+            await fetchPbehaviorExceptionsListWithPreviousParams();
           },
         },
       });
@@ -257,7 +236,7 @@ export default {
         config: {
           action: async (data) => {
             await importPbehaviorException({ data });
-            await fetchExceptionsList();
+            await fetchPbehaviorExceptionsListWithPreviousParams();
           },
         },
       });
