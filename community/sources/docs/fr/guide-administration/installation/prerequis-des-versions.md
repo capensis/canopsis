@@ -20,7 +20,7 @@ Pour rappel, SELinux n'est pas supporté.
 
 Composant   | Version (Pour Canopsis 25.10)         |
 ------------|------------------|
-MongoDB     | 8.0              |
+MongoDB     | 8.0.17              |
 Nginx       | >= 1.26 (uniquement pour l'installation via paquets RPM) |
 PostgreSQL  | >= 17               |
 TimescaleDB | 2.21.4           |
