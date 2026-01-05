@@ -4,54 +4,9 @@
 
 ### Nettoyage
 
-Cette section va lister différentes commandes pour purger des collections de la base de données. La connexion à la base et le nettoyage peuvent se faire via la ligne de commande (`mongosh canopsis -u cpsmongo -p MOT_DE_PASSE --host XXXX`) ou bien via [Robo3T](https://robomongo.org). Dans les sous-sections suivantes, les commandes ont été réalisées en ligne de commande.
-
-!!! attention
-    Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. **Avant toute opération, il est vivement conseillé de faire une [sauvegarde de la base MongoDB](#sauvegarde)**.
-
-Avant de supprimer des documents, vous pouvez toujours vérifier la liste des documents concernés avec `db.<nom de la collection>.find(<requête>)` et voir leur nombre `db.<nom de la collection>.countDocuments(<requête>)`. Ces fonctions prennent en paramètre une requête, qui va filtrer sur les documents de la collection.
-
-Une fois que vous avez vérifié que les documents correspondent à ce que vous voulez supprimer, vous pouvez utiliser la commande `db.<nom de la collection>.deleteMany(<requête>)`. Au moment de la suppression, un message va indiquer le nombre d'éléments supprimés.
-
-```js
-> db.periodical_alarm.deleteMany({"t" : 1537894605})
-WriteResult({ "nRemoved" : 3 })
-> db.entities.deleteMany({"name": "foldable"})
-WriteResult({ "nRemoved" : 17 })
-```
-
-!!! attention
-    La requête vide `{}` va s'appliquer à tous les documents de la collection. Par conséquent, **`db.<nom de la collection>.remove({})` va vider complètement la collection**. Pensez donc à ne jamais avoir `{}` comme paramètre, sauf si vous voulez vider complètement la collection.
-
-Le tableau suivant montre plusieurs examples de requêtes sur les collections d'objets Canopsis, avec la collection MongoDB en _italique_ et le filtre en **gras**. Pour rappel, les entités sont stockées dans la collection `default_entities` tandis que les alarmes sont stockées dans `periodical_alarm`, les comportements périodiques dans `default_pbehavior` et les vues dans `views`.
-
-| Type d'objets                                                             | Requête MongoDB                                                                               |
-|:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------|
-| Action de type `snooze`                                                   | `db.`_`default_action`_`.find(`**`{"type":"snooze"}`**`)`                                     |
-| Alarmes résolues                                                          | `db.`_`periodical_alarm`_`.find(`**`{"v.resolved":{$ne:null}}`**`)`                           |
-| Alarmes non résolues                                                      | `db.`_`periodical_alarm`_`.find(`**`{"v.resolved":null}`**`)`                                 |
-| Alarmes associées à l'entité `XXX/ZZZ`                                    | `db.`_`periodical_alarm`_`.find(`**`{"v.component" : "ZZZ", "v.resource" : "XXX"}`**`)`       |
-| Alarmes non mises à jour depuis le 1er janvier 2019 00:00:00 GMT          | `db.`_`periodical_alarm`_`.find(`**`{"v.last_update_date":{$lte:1546300800}}`**`)`            |
-| Expression régulière sur l'attribut `client` dans l'entité                | `db.`_`default_entities`_`.find(`**`{"infos.client.value":{$regex:'.*SSBU.*',$options:'i'}}`**`)`|
-| Comportements périodiques créés par `emile-zola`                                         | `db.`_`default_pbehavior`_`.find(`**`{"author":"emile-zola"}`**`)`                            |
-| Comoportements périodiques avec un `tstart` placé dans le futur                           | `db.`_`default_pbehavior`_`.find(`**`{"tstart" : {$gt : Math.floor(Date.now() / 1000)}})`**`)`|
-| Vues désactivées                                                          | `db.`_`views`_`.find(`**`{"enabled":false}`**`)`                                              |
-
-Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX. Le timestamp correspondant au temps courant est `Math.floor(Date.now() / 1000)`. Vous pouvez également vous servir des objets `Date()` pour les requêtes temporelles (voir la [documentation officielle de MongoDB sur `Date()`](https://docs.mongodb.com/manual/reference/method/Date/index.html)) qu'il faudra convertir en timestamp pour le filtrage. L'exemple suivant montre l'affichage des alarmes non mises à jour depuis un mois.
-
-```js
-> var d = new Date();
-> d.setMonth(d.getMonth() - 1);
-> oneMonthAgo = Math.floor(d / 1000);
-> db.periodical_alarm.find({"v.last_update_date":{$lte:oneMonthAgo}})
-```
-
-Il est également possible de filtrer grâce aux expressions régulières en utilisant l'opérateur `$regex` (voir la [documentation officielle de MongoDB sur `$regex`](https://docs.mongodb.com/manual/reference/operator/query/regex/index.html)). Les deux lignes ci-dessous sont équivalentes, elles vont afficher les alarmes dont la ressource correspond à la regex .`[0-9a-fA-F]+`.
-
-```js
-> db.periodical_alarm.find({"v.resource":{$regex:'[0-9a-f]+',$options:'i'}}) // L'option i rend la regex insensible à la casse
-> db.periodical_alarm.find({"v.resource":{$regex:/[0-9a-f]+/i}})             // On retrouve ici également l'option i
-```
+!!! note
+    Depuis la version `VERSION` de Canopsis, le nettoyage des bases de données `MongoDB` et `TimescaleDB` ne se réalise plus de manière manuel.  
+    Il faut pour cela utiliser la fonctionnalité [`Paramètres de stockage`](../../guide-utilisation/menu-administration/parametres-de-stockage.md) qui centralise toutes les politiques de rétention des données de Canopsis.
 
 ### Sauvegarde
 
@@ -61,7 +16,7 @@ Utilisez la commande `mongodump` via une tâche cron. De préférence, faites la
     Le mot de passe par défaut est `canopsis`, mais il peut être nécessaire d'adapter la commande selon votre contexte.
 
 ```sh
-mongodump --username cpsmongo --password canopsis --db canopsis --out /chemin/vers/sauvegarde
+mongodump --uri mongodb://cpsmongo:canopsis@mongodb/canopsis?replicaSet=rs0 --gzip --archive="/chemin/vers/sauvegarde/canopsis-$(date +"%Y-%m-%d-%H-%M").gz"
 ```
 
 ### Restauration
@@ -103,11 +58,8 @@ Avant de procéder à la restauration, arrêtez l'hyperviseur.
 Utilisez la commande `mongorestore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongorestore-operations).
 
 ```sh
-mongorestore --username cpsmongo --password canopsis --db canopsis /chemin/vers/sauvegarde
+mongorestore --uri mongodb://cpsmongo:canopsis@mongodb/canopsis?replicaSet=rs0 --db canopsis --gzip --archive="/chemin/vers/sauvegarde/canopsis-2026-01-05-09-06.gz"
 ```
-
-!!! note
-    Lors de la sauvegarde de la base, la commande crée un sous-dossier dans `/chemin/vers/sauvegarde` pour y stocker les fichiers. Ce sous-dossier doit être ajouté au chemin dans la commande `mongorestore`.
 
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.  
 
@@ -115,29 +67,30 @@ Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
 
     ```sh
     systemctl start --now canopsis-engine-go@engine-action.service \
-                           canopsis-engine-go@engine-axe.service \
-                           canopsis-engine-go@engine-che.service \
-                           canopsis-engine-go@engine-fifo.service \
-                           canopsis-engine-go@engine-pbehavior.service \
-                           canopsis-service@canopsis-api.service \
-                           canopsis.service
+                            canopsis-engine-go@engine-axe.service \
+                            canopsis-engine-go@engine-che.service \
+                            canopsis-engine-go@engine-fifo.service \
+                            canopsis-engine-go@engine-pbehavior.service \
+                            canopsis-service@canopsis-api.service \
+                            canopsis.service
     ```
 
 === "Canopsis Pro (souscription commerciale)"
 
     ```sh
     systemctl start --now canopsis-engine-go@engine-action.service \
-                           canopsis-engine-go@engine-axe.service \
-                           canopsis-engine-go@engine-che.service \
-                           canopsis-engine-go@engine-correlation.service \
-                           canopsis-engine-go@engine-dynamic-infos.service \
-                           canopsis-engine-go@engine-fifo.service \
-                           canopsis-engine-go@engine-pbehavior.service \
-                           canopsis-engine-go@engine-remediation.service \
-                           canopsis-engine-go@engine-webhook.service \
-                           canopsis-service@canopsis-api.service \
-                           canopsis-engine-python-snmp.service \
-                           canopsis.service
+                            canopsis-engine-go@engine-axe.service \
+                            canopsis-engine-go@engine-che.service \
+                            canopsis-engine-go@engine-correlation.service \
+                            canopsis-engine-go@engine-dynamic-infos.service \
+                            canopsis-engine-go@engine-fifo.service \
+                            canopsis-engine-go@engine-pbehavior.service \
+                            canopsis-engine-go@engine-remediation.service \
+                            canopsis-engine-go@engine-webhook.service \
+                            canopsis-engine-go@engine-events-recorder.service \
+                            canopsis-service@canopsis-api.service \
+                            canopsis-engine-python-snmp.service \
+                            canopsis.service
     ```
 
 ## PostgreSQL (TimescaleDB)
@@ -149,14 +102,23 @@ Utilisez la commande `pg_dump` via une tâche cron. De préférence, faites la s
 !!! note
     Le mot de passe par défaut est `canopsis`, mais il peut être nécessaire d'adapter la commande selon votre contexte.
 
+!!! attention
+    Il est nécessaire de réaliser cette action une fois pour chaque base de données, `canopsis` et `canopsis_tech_metrics`.
+
+Pour la base `canopsis`:
 ```sh
-pg_dump -d "postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis" -Fc -f canopsis.dump
+pg_dump postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis --no-owner -Fc -v -f /tmp/canopsis-$(date +"%Y-%m-%d-%H-%M")-canopsis-dump.sql.gz
+```
+
+Pour la base `canopsis_tech_metrics`:
+```sh
+pg_dump postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics --no-owner -Fc -v -f /tmp/canopsis-$(date +"%Y-%m-%d-%H-%M")-canopsis_tech_metrics-dump.sql.gz
 ```
 
 ### Restauration
 
 !!! attention
-    Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée, pour corriger l'incident.
+    Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration des bases de données ne doit être effectuée que si celles-ci sont endommagées, pour corriger l'incident.
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.  
 
@@ -164,29 +126,30 @@ Avant de procéder à la restauration, arrêtez l'hyperviseur.
 
     ```sh
     systemctl stop --now canopsis-engine-go@engine-action.service \
-                           canopsis-engine-go@engine-axe.service \
-                           canopsis-engine-go@engine-che.service \
-                           canopsis-engine-go@engine-fifo.service \
-                           canopsis-engine-go@engine-pbehavior.service \
-                           canopsis-service@canopsis-api.service \
-                           canopsis.service
+                            canopsis-engine-go@engine-axe.service \
+                            canopsis-engine-go@engine-che.service \
+                            canopsis-engine-go@engine-fifo.service \
+                            canopsis-engine-go@engine-pbehavior.service \
+                            canopsis-service@canopsis-api.service \
+                            canopsis.service
     ```
 
 === "Canopsis Pro (souscription commerciale)"
 
     ```sh
     systemctl stop --now canopsis-engine-go@engine-action.service \
-                           canopsis-engine-go@engine-axe.service \
-                           canopsis-engine-go@engine-che.service \
-                           canopsis-engine-go@engine-correlation.service \
-                           canopsis-engine-go@engine-dynamic-infos.service \
-                           canopsis-engine-go@engine-fifo.service \
-                           canopsis-engine-go@engine-pbehavior.service \
-                           canopsis-engine-go@engine-remediation.service \
-                           canopsis-engine-go@engine-webhook.service \
-                           canopsis-service@canopsis-api.service \
-                           canopsis-engine-python-snmp.service \
-                           canopsis.service
+                            canopsis-engine-go@engine-axe.service \
+                            canopsis-engine-go@engine-che.service \
+                            canopsis-engine-go@engine-correlation.service \
+                            canopsis-engine-go@engine-dynamic-infos.service \
+                            canopsis-engine-go@engine-fifo.service \
+                            canopsis-engine-go@engine-pbehavior.service \
+                            canopsis-engine-go@engine-remediation.service \
+                            canopsis-engine-go@engine-webhook.service \
+                            canopsis-engine-go@engine-events-recorder.service \
+                            canopsis-service@canopsis-api.service \
+                            canopsis-engine-python-snmp.service \
+                            canopsis.service
     ```
 
 Utilisez la commande `pg_restore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.timescale.com/self-hosted/latest/backup-and-restore/logical-backup/).
@@ -195,23 +158,47 @@ Tout d'abord, il vous faut vous connecter à la base postgresql
 ```sh
 sudo -u postgres psql
 ```
-Puis créer la base Canopsis
-```sql
-CREATE DATABASE canopsis;
-\c canopsis
-CREATE EXTENSION IF NOT EXISTS timescaledb;
-SET password_encryption = 'scram-sha-256';
-CREATE USER cpspostgres WITH PASSWORD 'canopsis';
+Puis créer les bases de Canopsis
+```sql 
+postgres=# CREATE database canopsis;
+postgres=# \c canopsis
+canopsis=# CREATE EXTENSION IF NOT EXISTS timescaledb;
+canopsis=# SET password_encryption = 'scram-sha-256';
+canopsis=# CREATE USER cpspostgres WITH PASSWORD 'canopsis';
+canopsis=# GRANT ALL ON DATABASE canopsis TO cpspostgres;
+canopsis=# ALTER DATABASE canopsis OWNER TO cpspostgres;
+canopsis=# exit
 ```
+
+```sql
+postgres=# CREATE database canopsis_tech_metrics;
+postgres=# \c canopsis_tech_metrics
+canopsis_tech_metrics=# CREATE EXTENSION IF NOT EXISTS timescaledb;
+canopsis_tech_metrics=# SET password_encryption = 'scram-sha-256';
+canopsis_tech_metrics=# CREATE USER cpspostgres_tech_metrics WITH PASSWORD 'canopsis';
+canopsis_tech_metrics=# GRANT ALL ON DATABASE canopsis_tech_metrics TO cpspostgres_tech_metrics;
+canopsis_tech_metrics=# ALTER DATABASE canopsis_tech_metrics OWNER TO cpspostgres_tech_metrics;
+canopsis_tech_metrics=# exit        
+```
+
 Vous devrez ensuite entrer votre base en mode restauration
 ```sql
 SELECT timescaledb_pre_restore();
 ```
-Une fois la base en mode restauration, vous pouvez importer votre dump
+
+Une fois la base en mode restauration, vous pouvez importer vos dumps
+
+Pour la base `canopsis`
 ```sh
-pg_restore -Fc -d "postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis" canopsis.dump
+pg_restore -Fc -d "postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis" canopsis-YYYY-mm-dd-HH-MM-canopsis-dump.sql.gz
 ```
-Une fois le dump importé, vous pouvez sortir du mode restauration
+
+Pour la base `canopsis_tech_metrics`:
+```sh
+pg_restore -Fc -d "postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics" canopsis-YYYY-mm-dd-HH-MM-canopsis_tech_metrics-dump.sql.gz
+```
+
+Une fois les dumps importés, vous pouvez sortir du mode restauration
 ```sql
 SELECT timescaledb_post_restore();
 ```
@@ -222,27 +209,28 @@ Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
 
     ```sh
     systemctl start --now canopsis-engine-go@engine-action.service \
-                           canopsis-engine-go@engine-axe.service \
-                           canopsis-engine-go@engine-che.service \
-                           canopsis-engine-go@engine-fifo.service \
-                           canopsis-engine-go@engine-pbehavior.service \
-                           canopsis-service@canopsis-api.service \
-                           canopsis.service
+                            canopsis-engine-go@engine-axe.service \
+                            canopsis-engine-go@engine-che.service \
+                            canopsis-engine-go@engine-fifo.service \
+                            canopsis-engine-go@engine-pbehavior.service \
+                            canopsis-service@canopsis-api.service \
+                            canopsis.service
     ```
 
 === "Canopsis Pro (souscription commerciale)"
 
     ```sh
     systemctl start --now canopsis-engine-go@engine-action.service \
-                           canopsis-engine-go@engine-axe.service \
-                           canopsis-engine-go@engine-che.service \
-                           canopsis-engine-go@engine-correlation.service \
-                           canopsis-engine-go@engine-dynamic-infos.service \
-                           canopsis-engine-go@engine-fifo.service \
-                           canopsis-engine-go@engine-pbehavior.service \
-                           canopsis-engine-go@engine-remediation.service \
-                           canopsis-engine-go@engine-webhook.service \
-                           canopsis-service@canopsis-api.service \
-                           canopsis-engine-python-snmp.service \
-                           canopsis.service
+                            canopsis-engine-go@engine-axe.service \
+                            canopsis-engine-go@engine-che.service \
+                            canopsis-engine-go@engine-correlation.service \
+                            canopsis-engine-go@engine-dynamic-infos.service \
+                            canopsis-engine-go@engine-fifo.service \
+                            canopsis-engine-go@engine-pbehavior.service \
+                            canopsis-engine-go@engine-remediation.service \
+                            canopsis-engine-go@engine-webhook.service \
+                            canopsis-engine-go@engine-events-recorder.service \
+                            canopsis-service@canopsis-api.service \
+                            canopsis-engine-python-snmp.service \
+                            canopsis.service
     ```
