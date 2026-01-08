@@ -29,30 +29,13 @@ Avant de procéder à la restauration, arrêtez l'hyperviseur.
 === "Canopsis Community (édition open-source)"
 
     ```sh
-    systemctl stop --now canopsis-engine-go@engine-action.service \
-                           canopsis-engine-go@engine-axe.service \
-                           canopsis-engine-go@engine-che.service \
-                           canopsis-engine-go@engine-fifo.service \
-                           canopsis-engine-go@engine-pbehavior.service \
-                           canopsis-service@canopsis-api.service \
-                           canopsis.service
+    systemctl stop --now canopsis.service
     ```
 
 === "Canopsis Pro (souscription commerciale)"
 
     ```sh
-    systemctl stop --now canopsis-engine-go@engine-action.service \
-                           canopsis-engine-go@engine-axe.service \
-                           canopsis-engine-go@engine-che.service \
-                           canopsis-engine-go@engine-correlation.service \
-                           canopsis-engine-go@engine-dynamic-infos.service \
-                           canopsis-engine-go@engine-fifo.service \
-                           canopsis-engine-go@engine-pbehavior.service \
-                           canopsis-engine-go@engine-remediation.service \
-                           canopsis-engine-go@engine-webhook.service \
-                           canopsis-service@canopsis-api.service \
-                           canopsis-engine-python-snmp.service \
-                           canopsis.service
+    systemctl stop --now canopsis.service
     ```
 
 Utilisez la commande `mongorestore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongorestore-operations).
@@ -66,31 +49,13 @@ Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
 === "Canopsis Community (édition open-source)"
 
     ```sh
-    systemctl start --now canopsis-engine-go@engine-action.service \
-                            canopsis-engine-go@engine-axe.service \
-                            canopsis-engine-go@engine-che.service \
-                            canopsis-engine-go@engine-fifo.service \
-                            canopsis-engine-go@engine-pbehavior.service \
-                            canopsis-service@canopsis-api.service \
-                            canopsis.service
+    systemctl start --now canopsis.service
     ```
 
 === "Canopsis Pro (souscription commerciale)"
 
     ```sh
-    systemctl start --now canopsis-engine-go@engine-action.service \
-                            canopsis-engine-go@engine-axe.service \
-                            canopsis-engine-go@engine-che.service \
-                            canopsis-engine-go@engine-correlation.service \
-                            canopsis-engine-go@engine-dynamic-infos.service \
-                            canopsis-engine-go@engine-fifo.service \
-                            canopsis-engine-go@engine-pbehavior.service \
-                            canopsis-engine-go@engine-remediation.service \
-                            canopsis-engine-go@engine-webhook.service \
-                            canopsis-engine-go@engine-events-recorder.service \
-                            canopsis-service@canopsis-api.service \
-                            canopsis-engine-python-snmp.service \
-                            canopsis.service
+    systemctl start --now canopsis.service
     ```
 
 ## PostgreSQL (TimescaleDB)
@@ -125,32 +90,26 @@ Avant de procéder à la restauration, arrêtez l'hyperviseur.
 === "Canopsis Community (édition open-source)"
 
     ```sh
-    systemctl stop --now canopsis-engine-go@engine-action.service \
-                            canopsis-engine-go@engine-axe.service \
-                            canopsis-engine-go@engine-che.service \
-                            canopsis-engine-go@engine-fifo.service \
-                            canopsis-engine-go@engine-pbehavior.service \
-                            canopsis-service@canopsis-api.service \
-                            canopsis.service
+    systemctl stop --now canopsis.service
     ```
 
 === "Canopsis Pro (souscription commerciale)"
 
     ```sh
-    systemctl stop --now canopsis-engine-go@engine-action.service \
-                            canopsis-engine-go@engine-axe.service \
-                            canopsis-engine-go@engine-che.service \
-                            canopsis-engine-go@engine-correlation.service \
-                            canopsis-engine-go@engine-dynamic-infos.service \
-                            canopsis-engine-go@engine-fifo.service \
-                            canopsis-engine-go@engine-pbehavior.service \
-                            canopsis-engine-go@engine-remediation.service \
-                            canopsis-engine-go@engine-webhook.service \
-                            canopsis-engine-go@engine-events-recorder.service \
-                            canopsis-service@canopsis-api.service \
-                            canopsis-engine-python-snmp.service \
-                            canopsis.service
+    systemctl stop --now canopsis.service
     ```
+
+Une fois Canopsis éteint, il est nécessaire de supprimer les bases `canopsis` et/ou `canopsis_tech_metrics` avant de lancer la restauration
+
+Pour la base `canopsis`:
+```sh
+echo "select 'drop table '||tablename||' cascade;' from pg_tables where schemaname = 'public'"  | psql postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis -t | psql postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis
+```
+
+Pour la base `canopsis_tech_metrics`:
+```sh
+echo "select 'drop table '||tablename||' cascade;' from pg_tables where schemaname = 'public'"  | psql postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics -t | psql postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics
+```
 
 Utilisez la commande `pg_restore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.timescale.com/self-hosted/latest/backup-and-restore/logical-backup/).
 
@@ -158,6 +117,7 @@ Tout d'abord, il vous faut vous connecter à la base postgresql
 ```sh
 sudo -u postgres psql
 ```
+
 Puis créer les bases de Canopsis
 ```sql 
 postgres=# CREATE database canopsis;
@@ -208,29 +168,19 @@ Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
 === "Canopsis Community (édition open-source)"
 
     ```sh
-    systemctl start --now canopsis-engine-go@engine-action.service \
-                            canopsis-engine-go@engine-axe.service \
-                            canopsis-engine-go@engine-che.service \
-                            canopsis-engine-go@engine-fifo.service \
-                            canopsis-engine-go@engine-pbehavior.service \
-                            canopsis-service@canopsis-api.service \
-                            canopsis.service
+    systemctl start --now canopsis.service
     ```
 
 === "Canopsis Pro (souscription commerciale)"
 
     ```sh
-    systemctl start --now canopsis-engine-go@engine-action.service \
-                            canopsis-engine-go@engine-axe.service \
-                            canopsis-engine-go@engine-che.service \
-                            canopsis-engine-go@engine-correlation.service \
-                            canopsis-engine-go@engine-dynamic-infos.service \
-                            canopsis-engine-go@engine-fifo.service \
-                            canopsis-engine-go@engine-pbehavior.service \
-                            canopsis-engine-go@engine-remediation.service \
-                            canopsis-engine-go@engine-webhook.service \
-                            canopsis-engine-go@engine-events-recorder.service \
-                            canopsis-service@canopsis-api.service \
-                            canopsis-engine-python-snmp.service \
-                            canopsis.service
+    systemctl start --now canopsis.service
     ```
+
+## Cas d'usage 
+
+### Rechercher les requêtes et les collections qui sont visés par des requêtes dont le temps d'exécution est supérieur à 10 secondes
+```sh
+grep "durationMillis" mongodb.log | jq -c 'select(.c == "COMMAND" and .attr.durationMillis > 10000) | {ns: .attr.ns, command: .attr.command, d: "\(.attr.durationMillis) ms"}' 
+```
+
