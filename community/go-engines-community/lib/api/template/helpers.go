@@ -60,6 +60,9 @@ var alarmVars = []tplVar{
 		PluralName: "stateMessages",
 		Value:      "%var%.Value.State.Message",
 	},
+}
+
+var alarmTplVars = []tplVar{
 	{
 		Name:       "stateValue",
 		PluralName: "stateValues",
@@ -105,9 +108,6 @@ var alarmVars = []tplVar{
 		PluralName: "lastCommentMessages",
 		Value:      "%var%.Value.LastComment.Message",
 	},
-}
-
-var alarmTplVars = []tplVar{
 	{
 		Name:       "infos",
 		PluralName: "infos",
