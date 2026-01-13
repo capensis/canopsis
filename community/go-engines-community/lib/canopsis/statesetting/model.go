@@ -1,7 +1,9 @@
 package statesetting
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -32,18 +34,24 @@ const (
 )
 
 type StateSetting struct {
-	ID       string `bson:"_id"`
-	Title    string `bson:"title"`
+	ID       string `bson:"_id,omitempty"`
+	Title    string `bson:"title,omitempty"`
 	Method   string `bson:"method"`
 	Enabled  *bool  `bson:"enabled,omitempty"`
 	Priority int64  `bson:"priority"`
-	Type     string `bson:"type,omitempty"`
 
-	EntityPattern          *pattern.Entity `bson:"entity_pattern,omitempty"`
-	InheritedEntityPattern *pattern.Entity `bson:"inherited_entity_pattern,omitempty"`
+	Type            string           `bson:"type"`
+	StateThresholds *StateThresholds `bson:"state_thresholds"`
 
 	JUnitThresholds *JUnitThresholds `bson:"junit_thresholds,omitempty"`
-	StateThresholds *StateThresholds `bson:"state_thresholds,omitempty"`
+
+	savedpattern.EntityPatternFields `bson:",inline"`
+	InheritedEntityPatternFields     `bson:",inline"`
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases"`
+
+	Created *datetime.CpsTime `bson:"created,omitempty"`
+	Updated *datetime.CpsTime `bson:"updated,omitempty"`
 }
 
 type StateThresholds struct {
@@ -168,4 +176,11 @@ func (s JUnitThresholds) GetState(skipped, errors, failures, total int64) int {
 	}
 
 	return worstState
+}
+
+type InheritedEntityPatternFields struct {
+	InheritedEntityPattern pattern.Entity `bson:"inherited_entity_pattern" json:"inherited_entity_pattern,omitempty"`
+
+	CorporateInheritedEntityPattern      string `bson:"corporate_inherited_entity_pattern" json:"corporate_inherited_entity_pattern,omitempty"`
+	CorporateInheritedEntityPatternTitle string `bson:"corporate_inherited_entity_pattern_title" json:"corporate_inherited_entity_pattern_title,omitempty"`
 }
