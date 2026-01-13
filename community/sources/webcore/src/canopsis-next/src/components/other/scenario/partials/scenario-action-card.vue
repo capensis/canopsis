@@ -2,7 +2,7 @@
   <v-card class="text-subtitle-1">
     <v-card-text>
       <v-layout wrap>
-        <v-flex xs1>
+        <v-flex class="pt-2" xs1>
           <v-avatar
             class="white--text mr-2"
             color="primary"
