@@ -179,8 +179,62 @@ Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
 
 ## Cas d'usage 
 
-### Rechercher les requêtes et les collections qui sont visés par des requêtes dont le temps d'exécution est supérieur à 10 secondes
+#### Trouver les alarmes qui correspondent à un connecteur particulier
+
+Pour récupérer l'entièreté des alarmes
+
+```js
+db.periodical_alarm.find({'v.connector':'connector_test_creation_alarmes'})
+```
+
+Pour récupérer uniquement le `display_name` des alarmes (Par exemple: Pour chercher les alarmes visuellements dans l'interface de Canopsis)
+
+```js
+db.periodical_alarm.find({'v.connector':'connector_test_creation_alarmes'})
+
+[
+  {
+    _id: '019bb12c-fc43-7ef9-b3a0-afb5841d3450',
+    v: { display_name: 'W0H-H09-X7U' }
+  }
+]
+```
+
+#### Trouver les entités qui ont beaucoup "d'Impacts" ou de "Dépendances"
+
+Trouver les 10 entités ayant le plus `d'Impacts`
+```js
+db.default_entities.aggregate([{$lookup:{from:"default_entities",let:{cid:"$_id"},pipeline:[{$match:{$expr:{$and:[{$eq:["$type","resource"]},{$eq:["$connector","$$cid"]}]}}}],as:"resources_of_connector"}},{$addFields:{impactCount:{$switch:{branches:[{case:{$eq:["$type","connector"]},then:{$size:"$resources_of_connector"}},{case:{$eq:["$type","component"]},then:{$cond:[{$ifNull:["$connector",false]},1,0]}},{case:{$eq:["$type","resource"]},then:{$cond:[{$ifNull:["$component",false]},1,0]}}],default:0}}}},{$sort:{impactCount:-1,_id:1}},{$limit:10},{$project:{_id:1,name:1,type:1,impactCount:1}}]);
+
+```
+
+Trouver les 10 entités ayant le plus de `Dépendances`
+
+```js
+db.default_entities.aggregate([{$lookup:{from:"default_entities",let:{cid:"$_id"},pipeline:[{$match:{$expr:{$and:[{$eq:["$type","component"]},{$eq:["$connector","$$cid"]}]}}}],as:"components_of_connector"}},{$lookup:{from:"default_entities",let:{compName:"$name",compConn:"$connector"},pipeline:[{$match:{$expr:{$and:[{$eq:["$type","resource"]},{$eq:["$component","$$compName"]},{$eq:["$connector","$$compConn"]}]}}}],as:"resources_of_component"}},{$addFields:{dependencyCount:{$switch:{branches:[{case:{$eq:["$type","connector"]},then:{$size:"$components_of_connector"}},{case:{$eq:["$type","component"]},then:{$size:"$resources_of_component"}},{case:{$eq:["$type","resource"]},then:{$cond:[{$ifNull:["$connector",false]},1,0]}}],default:0}}}},{$sort:{dependencyCount:-1,_id:1}},{$limit:10},{$project:{_id:1,name:1,type:1,dependencyCount:1}}]);
+```
+
+#### Trouver les comportements périodiques qui agissent sur un nombre important d'alarmes/entités
+
+```js
+db.periodical_alarm.aggregate([{ $match:{ "v.pbehavior_info.id":{ $exists:true } } },{ $group:{ _id:"$v.pbehavior_info.id", name:{ $first:"$v.pbehavior_info.name" }, alarm_count:{ $sum:1 } } },{ $project:{ _id:0, id:"$_id", name:1, alarm_count:1 } }])
+
+[
+  {
+    name: 'test',
+    alarm_count: 31,
+    id: '019bb14f-7eda-7dce-a3fa-d68ad3b26d11'
+  }
+]
+```
+
+
+#### Trouver les comportements périodiques qui se sont exécutés en retard
+```sh
+
+```
+
+#### Rechercher les requêtes et les collections qui sont visés par des requêtes dont le temps d'exécution est supérieur à 10 secondes
 ```sh
 grep "durationMillis" mongodb.log | jq -c 'select(.c == "COMMAND" and .attr.durationMillis > 10000) | {ns: .attr.ns, command: .attr.command, d: "\(.attr.durationMillis) ms"}' 
 ```
-
