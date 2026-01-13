@@ -100,14 +100,15 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 		oldEntity := Entity{}
 		cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
 			{"$match": bson.M{"_id": r.ID}},
-			{"$graphLookup": bson.M{
-				"from":                    mongo.EntityMongoCollection,
-				"startWith":               "$_id",
-				"connectFromField":        "_id",
-				"connectToField":          "component",
-				"as":                      "resources",
-				"restrictSearchWithMatch": bson.M{"type": types.EntityTypeResource},
-				"maxDepth":                0,
+			{"$lookup": bson.M{
+				"from":         mongo.EntityMongoCollection,
+				"localField":   "_id",
+				"foreignField": "component",
+				"as":           "resources",
+				"pipeline": []bson.M{
+					{"$match": bson.M{"type": types.EntityTypeResource}},
+					{"$project": bson.M{"_id": 1}},
+				},
 			}},
 			{"$project": bson.M{
 				"_id":       1,

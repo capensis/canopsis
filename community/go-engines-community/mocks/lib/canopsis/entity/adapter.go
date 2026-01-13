@@ -9,7 +9,6 @@ import (
 	reflect "reflect"
 
 	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	gomock "github.com/golang/mock/gomock"
 	mongo0 "go.mongodb.org/mongo-driver/mongo"
@@ -38,21 +37,6 @@ func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 	return m.recorder
 }
 
-// AddInfos mocks base method.
-func (m *MockAdapter) AddInfos(arg0 context.Context, arg1 string, arg2 map[string]types.Info) (bool, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddInfos", arg0, arg1, arg2)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// AddInfos indicates an expected call of AddInfos.
-func (mr *MockAdapterMockRecorder) AddInfos(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddInfos", reflect.TypeOf((*MockAdapter)(nil).AddInfos), arg0, arg1, arg2)
-}
-
 // Bulk mocks base method.
 func (m *MockAdapter) Bulk(arg0 context.Context, arg1 []mongo0.WriteModel) error {
 	m.ctrl.T.Helper()
@@ -65,66 +49,6 @@ func (m *MockAdapter) Bulk(arg0 context.Context, arg1 []mongo0.WriteModel) error
 func (mr *MockAdapterMockRecorder) Bulk(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Bulk", reflect.TypeOf((*MockAdapter)(nil).Bulk), arg0, arg1)
-}
-
-// Count mocks base method.
-func (m *MockAdapter) Count(arg0 context.Context) (int, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Count", arg0)
-	ret0, _ := ret[0].(int)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Count indicates an expected call of Count.
-func (mr *MockAdapterMockRecorder) Count(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockAdapter)(nil).Count), arg0)
-}
-
-// FindByIDs mocks base method.
-func (m *MockAdapter) FindByIDs(arg0 context.Context, arg1 []string) ([]types.Entity, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByIDs", arg0, arg1)
-	ret0, _ := ret[0].([]types.Entity)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// FindByIDs indicates an expected call of FindByIDs.
-func (mr *MockAdapterMockRecorder) FindByIDs(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByIDs", reflect.TypeOf((*MockAdapter)(nil).FindByIDs), arg0, arg1)
-}
-
-// FindComponent mocks base method.
-func (m *MockAdapter) FindComponent(arg0 context.Context, arg1 string) (*types.Entity, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindComponent", arg0, arg1)
-	ret0, _ := ret[0].(*types.Entity)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// FindComponent indicates an expected call of FindComponent.
-func (mr *MockAdapterMockRecorder) FindComponent(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindComponent", reflect.TypeOf((*MockAdapter)(nil).FindComponent), arg0, arg1)
-}
-
-// FindConnector mocks base method.
-func (m *MockAdapter) FindConnector(arg0 context.Context, arg1 string) (*types.Entity, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindConnector", arg0, arg1)
-	ret0, _ := ret[0].(*types.Entity)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// FindConnector indicates an expected call of FindConnector.
-func (mr *MockAdapterMockRecorder) FindConnector(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindConnector", reflect.TypeOf((*MockAdapter)(nil).FindConnector), arg0, arg1)
 }
 
 // FindToCheckPbehaviorInfo mocks base method.
@@ -142,21 +66,6 @@ func (mr *MockAdapterMockRecorder) FindToCheckPbehaviorInfo(arg0, arg1, arg2 int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindToCheckPbehaviorInfo", reflect.TypeOf((*MockAdapter)(nil).FindToCheckPbehaviorInfo), arg0, arg1, arg2)
 }
 
-// Get mocks base method.
-func (m *MockAdapter) Get(arg0 context.Context, arg1 string) (types.Entity, bool) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", arg0, arg1)
-	ret0, _ := ret[0].(types.Entity)
-	ret1, _ := ret[1].(bool)
-	return ret0, ret1
-}
-
-// Get indicates an expected call of Get.
-func (mr *MockAdapterMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockAdapter)(nil).Get), arg0, arg1)
-}
-
 // GetAllWithLastUpdateDateBefore mocks base method.
 func (m *MockAdapter) GetAllWithLastUpdateDateBefore(arg0 context.Context, arg1 datetime.CpsTime, arg2 []string) (mongo.Cursor, error) {
 	m.ctrl.T.Helper()
@@ -170,20 +79,6 @@ func (m *MockAdapter) GetAllWithLastUpdateDateBefore(arg0 context.Context, arg1 
 func (mr *MockAdapterMockRecorder) GetAllWithLastUpdateDateBefore(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllWithLastUpdateDateBefore", reflect.TypeOf((*MockAdapter)(nil).GetAllWithLastUpdateDateBefore), arg0, arg1, arg2)
-}
-
-// GetIDs mocks base method.
-func (m *MockAdapter) GetIDs(arg0 context.Context, arg1 map[string]interface{}, arg2 *[]interface{}) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetIDs", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// GetIDs indicates an expected call of GetIDs.
-func (mr *MockAdapterMockRecorder) GetIDs(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetIDs", reflect.TypeOf((*MockAdapter)(nil).GetIDs), arg0, arg1, arg2)
 }
 
 // GetWithIdleSince mocks base method.
@@ -201,64 +96,6 @@ func (mr *MockAdapterMockRecorder) GetWithIdleSince(arg0 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWithIdleSince", reflect.TypeOf((*MockAdapter)(nil).GetWithIdleSince), arg0)
 }
 
-// Insert mocks base method.
-func (m *MockAdapter) Insert(arg0 context.Context, arg1 types.Entity) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Insert", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Insert indicates an expected call of Insert.
-func (mr *MockAdapterMockRecorder) Insert(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockAdapter)(nil).Insert), arg0, arg1)
-}
-
-// Update mocks base method.
-func (m *MockAdapter) Update(arg0 context.Context, arg1 types.Entity) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Update indicates an expected call of Update.
-func (mr *MockAdapterMockRecorder) Update(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockAdapter)(nil).Update), arg0, arg1)
-}
-
-// UpdateComponentInfos mocks base method.
-func (m *MockAdapter) UpdateComponentInfos(arg0 context.Context, arg1, arg2 string) (map[string]types.Info, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateComponentInfos", arg0, arg1, arg2)
-	ret0, _ := ret[0].(map[string]types.Info)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// UpdateComponentInfos indicates an expected call of UpdateComponentInfos.
-func (mr *MockAdapterMockRecorder) UpdateComponentInfos(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateComponentInfos", reflect.TypeOf((*MockAdapter)(nil).UpdateComponentInfos), arg0, arg1, arg2)
-}
-
-// UpdateComponentInfosByComponent mocks base method.
-func (m *MockAdapter) UpdateComponentInfosByComponent(arg0 context.Context, arg1 string) ([]string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateComponentInfosByComponent", arg0, arg1)
-	ret0, _ := ret[0].([]string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// UpdateComponentInfosByComponent indicates an expected call of UpdateComponentInfosByComponent.
-func (mr *MockAdapterMockRecorder) UpdateComponentInfosByComponent(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateComponentInfosByComponent", reflect.TypeOf((*MockAdapter)(nil).UpdateComponentInfosByComponent), arg0, arg1)
-}
-
 // UpdateIdleFields mocks base method.
 func (m *MockAdapter) UpdateIdleFields(arg0 context.Context, arg1 string, arg2 *datetime.CpsTime, arg3 string) error {
 	m.ctrl.T.Helper()
@@ -271,47 +108,4 @@ func (m *MockAdapter) UpdateIdleFields(arg0 context.Context, arg1 string, arg2 *
 func (mr *MockAdapterMockRecorder) UpdateIdleFields(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateIdleFields", reflect.TypeOf((*MockAdapter)(nil).UpdateIdleFields), arg0, arg1, arg2, arg3)
-}
-
-// UpdateLastEventDate mocks base method.
-func (m *MockAdapter) UpdateLastEventDate(arg0 context.Context, arg1 []string, arg2 datetime.CpsTime) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateLastEventDate", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateLastEventDate indicates an expected call of UpdateLastEventDate.
-func (mr *MockAdapterMockRecorder) UpdateLastEventDate(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateLastEventDate", reflect.TypeOf((*MockAdapter)(nil).UpdateLastEventDate), arg0, arg1, arg2)
-}
-
-// UpdatePbehaviorInfo mocks base method.
-func (m *MockAdapter) UpdatePbehaviorInfo(arg0 context.Context, arg1 string, arg2 types.PbehaviorInfo) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdatePbehaviorInfo", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdatePbehaviorInfo indicates an expected call of UpdatePbehaviorInfo.
-func (mr *MockAdapterMockRecorder) UpdatePbehaviorInfo(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePbehaviorInfo", reflect.TypeOf((*MockAdapter)(nil).UpdatePbehaviorInfo), arg0, arg1, arg2)
-}
-
-// UpsertMany mocks base method.
-func (m *MockAdapter) UpsertMany(arg0 context.Context, arg1 []types.Entity) (map[string]bool, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpsertMany", arg0, arg1)
-	ret0, _ := ret[0].(map[string]bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// UpsertMany indicates an expected call of UpsertMany.
-func (mr *MockAdapterMockRecorder) UpsertMany(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertMany", reflect.TypeOf((*MockAdapter)(nil).UpsertMany), arg0, arg1)
 }
