@@ -601,7 +601,7 @@ Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas
 
 Il était précédemment possible lors de l'utilisation d'un IdP d'utiliser des rôles internes à Canopsis. Aujourd'hui le comportement par défaut est qu'il est nécessaire de définir les rôles de l'utilisation depuis l'IdP directement. Il faut donc créer les rôles correspondant à ceux de votre IdP dans Canopsis.
 
-Il est cependant possible à un comportement similaire aux anciennes versions en ajoutant l'option
+Il est cependant possible de garder le comportement similaire aux anciennes versions en ajoutant l'option ci-dessous :
 ```
 allow_extra_roles: true
 ```
