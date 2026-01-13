@@ -453,6 +453,7 @@ export default {
           'tstop',
           'only_bookmarks',
           'instructions',
+          'tags',
         ]),
 
         fields: widgetToExportQueryColumns(this.widget),
