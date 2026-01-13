@@ -120,8 +120,8 @@ const stateSettingThresholdsToForm = (thresholds = {}) => (
  * @param {PatternGroups} pattern
  * @return {FilterPatterns}
  */
-export const stateSettingPatternToForm = pattern => filterPatternsToForm(
-  { [PATTERNS_FIELDS.entity]: pattern },
+export const stateSettingPatternToForm = patterns => filterPatternsToForm(
+  patterns,
   [PATTERNS_FIELDS.entity],
 );
 
@@ -137,8 +137,14 @@ export const stateSettingToForm = (stateSetting = {}) => ({
   enabled: stateSetting.enabled ?? true,
   method: stateSetting.method ?? STATE_SETTING_METHODS.inherited,
   type: stateSetting.type ?? ENTITY_TYPES.component,
-  entity_pattern: stateSettingPatternToForm(stateSetting.entity_pattern),
-  inherited_entity_pattern: stateSettingPatternToForm(stateSetting.inherited_entity_pattern),
+  [PATTERNS_FIELDS.entity]: stateSettingPatternToForm({
+    [PATTERNS_FIELDS.entity]: stateSetting[PATTERNS_FIELDS.entity],
+    corporate_entity_pattern: stateSetting.corporate_entity_pattern,
+  }),
+  inherited_entity_pattern: stateSettingPatternToForm({
+    [PATTERNS_FIELDS.entity]: stateSetting.inherited_entity_pattern,
+    corporate_entity_pattern: stateSetting.corporate_inherited_entity_pattern,
+  }),
   state_thresholds: stateSettingThresholdsToForm(stateSetting.state_thresholds),
 });
 
@@ -167,14 +173,18 @@ export const formToStateSettingThresholds = form => (
  * @return {StateSetting}
  */
 export const formToStateSetting = (form) => {
-  const stateSetting = omit(form, ['entity_pattern', 'inherited_entity_pattern', 'state_thresholds']);
-
-  stateSetting.entity_pattern = formFilterToPatterns(form.entity_pattern)[PATTERNS_FIELDS.entity];
+  const stateSetting = {
+    ...omit(form, ['entity_pattern', 'inherited_entity_pattern', 'state_thresholds']),
+    ...formFilterToPatterns(form.entity_pattern, [PATTERNS_FIELDS.entity]),
+  };
 
   if (form.method === STATE_SETTING_METHODS.inherited) {
-    stateSetting.inherited_entity_pattern = (
-      formFilterToPatterns(form.inherited_entity_pattern)[PATTERNS_FIELDS.entity]
-    );
+    const {
+      [PATTERNS_FIELDS.entity]: inheritedEntityPattern,
+      corporate_entity_pattern: corporateInheritedEntityPattern,
+    } = formFilterToPatterns(form.inherited_entity_pattern, [PATTERNS_FIELDS.entity]);
+    stateSetting.inherited_entity_pattern = inheritedEntityPattern;
+    stateSetting.corporate_inherited_entity_pattern = corporateInheritedEntityPattern;
   } else {
     stateSetting.state_thresholds = formToStateSettingThresholds(form.state_thresholds);
   }
