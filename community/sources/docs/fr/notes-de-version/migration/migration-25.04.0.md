@@ -597,3 +597,15 @@ Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas
 
 ![Healthcheck](./img/25.04.0-healthcheck.png)
 
+### Mise à jour de la configuration de l'attribution des rôles lors de l'utilisation d'un Identity Provider (IdP).
+
+Il était précédemment possible lors de l'utilisation d'un IdP d'utiliser des rôles internes à Canopsis. Aujourd'hui le comportement par défaut est qu'il est nécessaire de définir les rôles de l'utilisation depuis l'IdP directement. Il faut donc créer les rôles correspondant à ceux de votre IdP dans Canopsis.
+
+Il est cependant possible à un comportement similaire aux anciennes versions en ajoutant l'option
+```
+allow_extra_roles: true
+```
+Dans la configuration de votre IdP. (Option disponible pour SAML, OAuth2/OpenID)
+
+
+
