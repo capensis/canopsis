@@ -27,10 +27,9 @@ type Service interface {
 
 // service uses TypeComputer to compute data and TypeResolver to resolve type by this data.
 type service struct {
-	dbClient       mongo.DbClient
-	computer       TypeComputer
-	store          Store
-	workerPoolSize int
+	dbClient mongo.DbClient
+	computer TypeComputer
+	store    Store
 
 	lockClient   redis.LockClient
 	lockKey      string
@@ -50,16 +49,15 @@ func NewService(
 	logger zerolog.Logger,
 ) Service {
 	return &service{
-		dbClient:       dbClient,
-		store:          store,
-		computer:       computer,
-		workerPoolSize: DefaultPoolSize,
-		lockClient:     lockClient,
-		lockKey:        redis.RecomputeLockKey,
-		lockDuration:   redis.RecomputeLockDuration,
-		lockBackoff:    time.Second,
-		lockRetries:    10,
-		logger:         logger,
+		dbClient:     dbClient,
+		store:        store,
+		computer:     computer,
+		lockClient:   lockClient,
+		lockKey:      redis.RecomputeLockKey,
+		lockDuration: redis.RecomputeLockDuration,
+		lockBackoff:  time.Second,
+		lockRetries:  10,
+		logger:       logger,
 	}
 }
 
