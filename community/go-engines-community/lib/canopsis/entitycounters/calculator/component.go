@@ -59,8 +59,8 @@ func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, com
 		{"$match": bson.M{"component": component.ID, "type": types.EntityTypeResource}},
 	}
 
-	if counters.Rule.InheritedEntityPattern != nil {
-		patternMongoQuery, err := db.EntityPatternToMongoQuery(*counters.Rule.InheritedEntityPattern, "")
+	if len(counters.Rule.InheritedEntityPattern) > 0 {
+		patternMongoQuery, err := db.EntityPatternToMongoQuery(counters.Rule.InheritedEntityPattern, "")
 		if err != nil {
 			return 0, err
 		}

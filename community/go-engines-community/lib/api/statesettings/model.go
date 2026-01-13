@@ -2,23 +2,29 @@ package statesettings
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 )
 
 type EditRequest struct {
-	ID           string `json:"-" bson:"_id"`
-	StateSetting `bson:"inline"`
+	ID string `json:"-"`
+	StateSetting
 
-	Author  string            `json:"author,omitempty" bson:"author,omitempty" swaggerignore:"true"`
-	Created *datetime.CpsTime `json:"-" bson:"created,omitempty"`
-	Updated *datetime.CpsTime `json:"-" bson:"updated,omitempty"`
+	common.EntityPatternFieldsRequest
+	common.InheritedEntityPatternFieldsRequest
+
+	Author string `json:"author,omitempty" swaggerignore:"true"`
 }
 
 type Response struct {
 	ID           string `json:"_id" bson:"_id"`
 	StateSetting `bson:"inline"`
+
+	savedpattern.EntityPatternFields          `bson:",inline"`
+	statesetting.InheritedEntityPatternFields `bson:",inline"`
 
 	Author    *author.Author    `json:"author,omitempty" bson:"author,omitempty"`
 	Created   *datetime.CpsTime `json:"created,omitempty" bson:"created,omitempty" swaggertype:"integer"`
@@ -36,19 +42,15 @@ type StateSetting struct {
 	Method string `json:"method" bson:"method" binding:"required"`
 
 	// Service and component state setting only fields
-	Title                  *string          `json:"title,omitempty" bson:"title,omitempty"`
-	Enabled                *bool            `json:"enabled,omitempty" bson:"enabled,omitempty"`
-	Priority               int64            `json:"priority" bson:"priority" binding:"min=0"`
-	EntityPattern          *pattern.Entity  `json:"entity_pattern,omitempty" bson:"entity_pattern,omitempty"`
-	InheritedEntityPattern *pattern.Entity  `json:"inherited_entity_pattern,omitempty" bson:"inherited_entity_pattern,omitempty"`
-	StateThresholds        *StateThresholds `json:"state_thresholds,omitempty" bson:"state_thresholds,omitempty"`
-	Type                   *string          `json:"type,omitempty" bson:"type,omitempty" binding:"required_if=Method inherited,required_if=Method dependencies,omitempty,oneof=component service"`
+	Title    *string `json:"title,omitempty" bson:"title,omitempty"`
+	Enabled  *bool   `json:"enabled,omitempty" bson:"enabled,omitempty"`
+	Priority int64   `json:"priority" bson:"priority" binding:"min=0"`
+
+	StateThresholds *StateThresholds `json:"state_thresholds,omitempty" bson:"state_thresholds,omitempty"`
+	Type            *string          `json:"type,omitempty" bson:"type,omitempty" binding:"required_if=Method inherited,required_if=Method dependencies,omitempty,oneof=component service"`
 
 	// JUnit state setting only field
 	JUnitThresholds *JUnitThresholds `json:"junit_thresholds,omitempty" bson:"junit_thresholds,omitempty"`
-
-	// Aliases is used to ease find by entity info property api.
-	Aliases []string `bson:"aliases" json:"-"`
 }
 
 type StateThresholds struct {
@@ -56,6 +58,19 @@ type StateThresholds struct {
 	Major    *StateThreshold `json:"major,omitempty" bson:"major,omitempty"`
 	Minor    *StateThreshold `json:"minor,omitempty" bson:"minor,omitempty"`
 	OK       *StateThreshold `json:"ok,omitempty" bson:"ok,omitempty"`
+}
+
+func (t *StateThresholds) ToModel() *statesetting.StateThresholds {
+	if t == nil {
+		return nil
+	}
+
+	return &statesetting.StateThresholds{
+		Critical: t.Critical.ToModel(),
+		Major:    t.Major.ToModel(),
+		Minor:    t.Minor.ToModel(),
+		OK:       t.OK.ToModel(),
+	}
 }
 
 type StateThreshold struct {
@@ -76,6 +91,19 @@ type StateThreshold struct {
 	Value int    `json:"value" bson:"value"`
 }
 
+func (t *StateThreshold) ToModel() *statesetting.StateThreshold {
+	if t == nil {
+		return nil
+	}
+
+	return &statesetting.StateThreshold{
+		Method: t.Method,
+		State:  t.State,
+		Cond:   t.Cond,
+		Value:  t.Value,
+	}
+}
+
 type JUnitThreshold struct {
 	Minor    *float64 `json:"minor" bson:"minor" binding:"required,numeric,gte=0,lte=100,ltefield=Major,ltefield=Critical"`
 	Major    *float64 `json:"major" bson:"major" binding:"required,numeric,gte=0,lte=100,ltefield=Critical"`
@@ -83,10 +111,59 @@ type JUnitThreshold struct {
 	Type     *int     `json:"type" bson:"type" binding:"required"`
 }
 
+func (t *JUnitThreshold) ToModel() *statesetting.JUnitThreshold {
+	if t == nil {
+		return nil
+	}
+
+	r := statesetting.JUnitThreshold{}
+	if t.Minor != nil {
+		r.Minor = *t.Minor
+	}
+
+	if t.Major != nil {
+		r.Major = *t.Major
+	}
+
+	if t.Critical != nil {
+		r.Critical = *t.Critical
+	}
+
+	if t.Type != nil {
+		r.Type = *t.Type
+	}
+
+	return &r
+}
+
 type JUnitThresholds struct {
-	Skipped  JUnitThreshold `json:"skipped" bson:"skipped" binding:"required"`
-	Errors   JUnitThreshold `json:"errors" bson:"errors" binding:"required"`
-	Failures JUnitThreshold `json:"failures" bson:"failures" binding:"required"`
+	Skipped  *JUnitThreshold `json:"skipped" bson:"skipped" binding:"required"`
+	Errors   *JUnitThreshold `json:"errors" bson:"errors" binding:"required"`
+	Failures *JUnitThreshold `json:"failures" bson:"failures" binding:"required"`
+}
+
+func (t *JUnitThresholds) ToModel() *statesetting.JUnitThresholds {
+	if t == nil {
+		return nil
+	}
+
+	r := statesetting.JUnitThresholds{}
+	s := t.Skipped.ToModel()
+	if s != nil {
+		r.Skipped = *s
+	}
+
+	e := t.Errors.ToModel()
+	if e != nil {
+		r.Errors = *e
+	}
+
+	f := t.Failures.ToModel()
+	if f != nil {
+		r.Failures = *f
+	}
+
+	return &r
 }
 
 type AggregationResult struct {
