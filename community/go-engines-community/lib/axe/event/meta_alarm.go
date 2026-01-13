@@ -143,7 +143,7 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 		metaAlarm = p.newMetaAlarm(event.Parameters, entity, p.alarmConfigProvider.Get())
 		metaAlarm.Value.Meta = event.Parameters.MetaAlarmRuleID
 		metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
-		metaAlarm.Value.LastEventDate = datetime.CpsTime{} // should be empty
+		metaAlarm.Value.LastEventDate = nil // should be empty
 
 		stateID := rule.GetStateID(event.Parameters.MetaAlarmValuePath)
 		var childEntityIDs []string
@@ -232,7 +232,7 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 					updatedChildrenAlarms = append(updatedChildrenAlarms, childAlarm.Alarm)
 					eventsCount += childAlarm.Alarm.Value.EventsCount
 					lastChild = childAlarm
-					if metaAlarm.Value.LastEventDate.Before(childAlarm.Alarm.Value.LastEventDate) {
+					if childAlarm.Alarm.Value.LastEventDate != nil && (metaAlarm.Value.LastEventDate == nil || metaAlarm.Value.LastEventDate.Before(*childAlarm.Alarm.Value.LastEventDate)) {
 						metaAlarm.Value.LastEventDate = childAlarm.Alarm.Value.LastEventDate
 					}
 				}
@@ -299,6 +299,8 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 			return err
 		}
 
+		metaAlarm.Value.InitialState = metaAlarm.Value.State.Value
+		metaAlarm.Value.InitialStatus = metaAlarm.Value.Status.Value
 		metaAlarm.Value.EventsCount = eventsCount
 
 		pbehaviorInfo, err := resolvePbehaviorInfo(ctx, entity, metaAlarm.Time, p.pbhTypeResolver)
@@ -410,7 +412,7 @@ func (p *metaAlarmProcessor) newMetaAlarm(
 			LongOutputHistory:           []string{params.LongOutput},
 			LastUpdateDate:              params.Timestamp,
 			LastStateOrStatusUpdateDate: params.Timestamp,
-			LastEventDate:               now,
+			LastEventDate:               &now,
 			Parents:                     []string{},
 			Children:                    []string{},
 			UnlinkedParents:             []string{},

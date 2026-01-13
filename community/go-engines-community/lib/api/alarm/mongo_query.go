@@ -272,6 +272,9 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	}
 	q.handleDependencies(r.WithDependencies)
 	q.handleTagColors(r.WithTagColors)
+	if r.WithDependencies {
+		q.lookups = append(q.lookups, lookupWithKey{key: entityDbPrefix + ".downstream_count", pipeline: dbquery.GetDownstreamCountPipeline(entityDbPrefix)})
+	}
 
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
@@ -309,6 +312,7 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	q.handleOpened(opened)
 	q.handleDependencies(true)
 	q.handleTagColors(true)
+	q.lookups = append(q.lookups, lookupWithKey{key: entityDbPrefix + ".downstream_count", pipeline: dbquery.GetDownstreamCountPipeline(entityDbPrefix)})
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
 
 	q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
