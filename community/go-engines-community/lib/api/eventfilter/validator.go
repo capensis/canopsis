@@ -30,7 +30,8 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 		if r.Config.Component == "" &&
 			r.Config.Resource == "" &&
 			r.Config.Connector == "" &&
-			r.Config.ConnectorName == "" {
+			r.Config.ConnectorName == "" &&
+			r.Config.Upstream == "" {
 			sl.ReportError(r.Config, "Config", "Config", "required", "")
 		}
 	case eventfilter.RuleTypeEnrichment:
