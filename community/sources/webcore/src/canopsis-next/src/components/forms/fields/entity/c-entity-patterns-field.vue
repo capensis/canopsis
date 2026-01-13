@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { isArray, mergeWith } from 'lodash';
+import { isArray, isUndefined, mergeWith } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -351,12 +351,12 @@ export default {
 
     availableEntityAttributes() {
       const mergedAttributes = [...this.entityAttributes];
-      const availableAttributesIndexesByValue = indexesByKey(this.attributes, 'value');
+      const mergedAttributesIndexesByValue = indexesByKey(this.entityAttributes, 'value');
 
       this.attributes.forEach((attribute) => {
-        const index = availableAttributesIndexesByValue[attribute.value];
+        const index = mergedAttributesIndexesByValue[attribute.value];
 
-        if (index !== -1) {
+        if (isUndefined(index)) {
           mergedAttributes.push(attribute);
 
           return;
