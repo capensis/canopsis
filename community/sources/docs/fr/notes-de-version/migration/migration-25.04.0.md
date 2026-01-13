@@ -605,7 +605,7 @@ Il est cependant possible de garder le comportement similaire aux anciennes vers
 ```
 allow_extra_roles: true
 ```
-Dans la configuration de votre IdP. (Option disponible pour SAML, OAuth2/OpenID)
+Dans la configuration de votre IdP (Option disponible pour SAML, OAuth2/OpenID) à l'intérieur du fichier `config.yml` ( ou autre nom de fichier lié à des montages de volume docker par exemple )
 
 
 
