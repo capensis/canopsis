@@ -597,3 +597,30 @@ Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas
 
 ![Healthcheck](./img/25.04.0-healthcheck.png)
 
+### Mise à jour de la configuration de l'attribution des rôles lors de l'utilisation d'un Identity Provider (IdP) via SAML ou OAuth2/OpenID
+
+Il était précédemment possible lors de l'utilisation d'un IdP d'utiliser des rôles internes à Canopsis. 
+
+Aujourd'hui le comportement par défaut consiste à définir les rôles directement depuis l'IdP. 
+Il faut donc au préalable que les rôles correspondant à ceux de votre IdP soient créés dans Canopsis.
+
+Il est cependant possible de garder le comportement similaire aux anciennes versions en ajoutant l'option ci-dessous ( notamment si votre IdP ne fourni pas de rôles ) :
+
+```yaml
+allow_extra_roles: true
+```
+
+dans le bloc de configuration lié à votre IdP à l'intérieur du fichier `config.yml` ( ou autre nom de fichier lié à des montages de volume docker par exemple )
+
+### Impact sur les rôles existants
+
+L'introduction de la séparation des droits API/UI dans cette version implique depuis la version [`25.04.2`]( https://doc.canopsis.net/25.04/notes-de-version/25.04.2/#ameliorations ) que chaque rôle créé ou migré depuis ou vers cette version ne sera plus modifiable
+
+![Rôle](./img/25.04.2-role-readonly.png)
+
+De ce fait, si ce rôle doit être modifié, il faudra au préalable en recréer un nouveau, l'attacher aux utilisateurs associés à ce rôle, et supprimer l'ancien rôle
+
+!!! Warning
+    Il est à noter l'apparition de nouveaux droits, liés à cette séparation API/UI et aux nouvelles fonctionnalités présentes dans cette version. Ces nouveaux droits devront être ajoutés dans les rôles associés. Il est donc fortement recommandé de retoucher et revalider lors de recettes métiers la matrice de droits pour chaque profil métier dans cette version.
+
+
