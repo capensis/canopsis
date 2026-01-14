@@ -33,7 +33,7 @@ const useExternalDataTableImportForm = () => {
   const validator = useValidator();
 
   const form = ref({});
-  const needPreview = ref(false);
+  const needPreview = ref(true);
 
   /**
    * Computed property that checks if the form has any validation errors.
