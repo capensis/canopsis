@@ -49,11 +49,9 @@ import {
   ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
 
-import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { getMapEntityText } from '@/helpers/entities/map/list';
 import { indexesByKey } from '@/helpers/array';
 
-import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
 import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
@@ -63,7 +61,7 @@ const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
 
 export default {
   components: { PatternEditorField },
-  mixins: [patternCountEntitiesModalMixin, entitiesEntityInfoPropertyMixin],
+  mixins: [entitiesEntityInfoPropertyMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -395,10 +393,12 @@ export default {
     ...mapEntityCategoryActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
     ...mapServiceActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
 
+    showPatternAlarmsModal() {
+      this.$emit('show:alarms');
+    },
+
     showPatternEntitiesModal() {
-      this.showEntitiesModalByPatterns({
-        entity_pattern: formGroupsToPatternRulesQuery(this.patterns.groups),
-      });
+      this.$emit('show:entities');
     },
 
     async fetchCategories() {

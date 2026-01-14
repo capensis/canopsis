@@ -88,13 +88,13 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
   <div
     class="layout justify-end align-center"
   >
-    <span
-      class="text-caption text--secondary error--text"
+    <pattern-count-message-stub
+      error="true"
     >
       <span>
         At least one pattern has to be defined. Please define filter patterns for rule
       </span>
-    </span>
+    </pattern-count-message-stub>
     <!---->
     <button
       class="mr-0 ml-4 v-btn v-btn--disabled v-btn--has-bg theme--light v-size--default"
@@ -132,11 +132,9 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = 
   <div
     class="layout justify-end align-center"
   >
-    <span
-      class="text-caption text--secondary"
-    >
+    <pattern-count-message-stub>
       <span />
-    </span>
+    </pattern-count-message-stub>
     <!---->
     <button
       class="mr-0 ml-4 v-btn v-btn--disabled v-btn--has-bg theme--light v-size--default"

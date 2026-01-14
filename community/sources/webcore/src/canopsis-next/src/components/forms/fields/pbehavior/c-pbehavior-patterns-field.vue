@@ -9,7 +9,18 @@
     :attributes="pbehaviorAttributes"
     :with-type="withType"
     :alarm-counter="alarmCounter"
-  />
+  >
+    <template #append-count="">
+      <v-btn
+        v-if="alarmCounter && alarmCounter.count"
+        text
+        small
+        @click="showPatternAlarmsModal"
+      >
+        {{ $t('common.seeAlarms') }}
+      </v-btn>
+    </template>
+  </pattern-editor-field>
 </template>
 
 <script>
@@ -177,6 +188,10 @@ export default {
     ...pbehaviorMapActions({ fetchPbehaviorsListWithoutStore: 'fetchListWithoutStore' }),
     ...pbehaviorReasonMapActions({ fetchPbehaviorReasonsListWithoutStore: 'fetchListWithoutStore' }),
     ...pbehaviorTypeMapActions({ fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore' }),
+
+    showPatternAlarmsModal() {
+      this.$emit('show:alarms');
+    },
 
     async fetchPbehaviors() {
       this.pbehaviorsPending = true;

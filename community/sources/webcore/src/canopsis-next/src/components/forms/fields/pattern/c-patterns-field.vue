@@ -18,6 +18,7 @@
         :alarm-counter="counters.alarm_pattern"
         with-type
         @input="errors.remove(alarmName)"
+        @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.alarm])"
       />
     </c-collapse-panel>
     <c-collapse-panel
@@ -27,16 +28,17 @@
     >
       <c-entity-patterns-field
         v-field="value.entity_pattern"
+        v-bind="entityPatternsCounters"
         :required="isPatternRequired"
         :disabled="disabled"
         :readonly="readonly"
         :name="entityName"
         :attributes="entityAttributes"
         :entity-types="entityTypes"
-        :alarm-counter="counters.alarm_pattern"
-        :entity-counter="counters.entity_pattern"
         with-type
         @input="errors.remove(entityName)"
+        @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.alarm])"
+        @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.entity])"
       />
     </c-collapse-panel>
     <c-collapse-panel
@@ -50,9 +52,10 @@
         :disabled="disabled"
         :readonly="readonly"
         :name="pbehaviorName"
-        :alarm-counter="counters.alarm_pattern"
+        :alarm-counter="counters.pbehavior_pattern"
         with-type
         @input="errors.remove(pbehaviorName)"
+        @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.pbehavior])"
       />
     </c-collapse-panel>
     <c-collapse-panel
@@ -66,8 +69,9 @@
         :disabled="disabled"
         :readonly="readonly"
         :name="eventName"
-        :counter="counters.event_pattern"
+        :entity-counter="counters.event_pattern"
         @input="errors.remove(eventName)"
+        @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.event])"
       />
     </c-collapse-panel>
     <c-collapse-panel
@@ -81,7 +85,7 @@
         :disabled="disabled"
         :readonly="readonly"
         :name="totalEntityName"
-        :counter="counters.total_entity_pattern"
+        :entity-counter="counters.total_entity_pattern"
         with-type
         @input="errors.remove(totalEntityName)"
       />
@@ -96,7 +100,7 @@
         :required="isPatternRequired"
         :disabled="disabled"
         :name="serviceWeatherName"
-        :counter="counters.weather_service_pattern"
+        :entity-counter="counters.weather_service_pattern"
         with-type
         @input="errors.remove(serviceWeatherName)"
       />
@@ -120,7 +124,7 @@
           v-if="entityCountersType"
           text
           small
-          @click="showPatternEntities"
+          @click="showPatternEntitiesModal"
         >
           {{ $t('common.seeEntities') }}
         </v-btn>
@@ -128,7 +132,7 @@
           v-else
           text
           small
-          @click="showPatternAlarms"
+          @click="showPatternAlarmsModal"
         >
           {{ $t('common.seeAlarms') }}
         </v-btn>
@@ -147,34 +151,39 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue';
 import { isString, isEmpty } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
 import { CSS_COLORS_VARS } from '@/config';
 import { PATTERNS_FIELDS, PATTERN_DURATION_FORMAT, TIME_UNITS } from '@/constants';
 
 import { sanitizeHtml } from '@/helpers/html';
-import {
-  isValidPatternRule,
-  formGroupsToPatternRules,
-  formGroupsToPatternRulesQuery,
-} from '@/helpers/entities/pattern/form';
+import { isValidPatternRule, formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { convertDurationToString } from '@/helpers/date/duration';
 
-import { patternCountAlarmsModalMixin } from '@/mixins/pattern/pattern-count-alarms-modal';
-import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
+import { useStoreModuleHooks } from '@/hooks/store';
+import { useI18n } from '@/hooks/i18n';
+import { useValidator } from '@/hooks/validator/validator';
+import { usePendingHandler } from '@/hooks/query/pending';
 
 import PatternCountMessage from '@/components/forms/fields/pattern/pattern-count-message.vue';
 
-const { mapActions: mapPatternActions } = createNamespacedHelpers('pattern');
+import { usePatternCountAlarmsModal } from './hooks/pattern-count-alarms-modal';
+import { usePatternCountEntitiesModal } from './hooks/pattern-count-entities-modal';
 
+/**
+ * Generates a field pattern name by combining component name and field name.
+ *
+ * @param {string} componentName - The name of the component.
+ * @param {string} fieldName - The name of the field.
+ * @returns {string} The combined field pattern name, or empty string if both are empty.
+ */
 const getFieldPatternName = (componentName, fieldName) => [componentName, fieldName].filter(Boolean).join('.');
 
 export default {
   inject: ['$validator'],
   components: { PatternCountMessage },
-  mixins: [patternCountAlarmsModalMixin, patternCountEntitiesModalMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -313,216 +322,202 @@ export default {
       },
     },
   },
-  data() {
-    return {
-      activePatternTab: 0,
-      counters: {},
-      countersPending: false,
+  setup(props) {
+    const validator = useValidator();
+    const { errors } = validator;
+    const { t } = useI18n();
+    const { useActions: usePatternActions } = useStoreModuleHooks('pattern');
+    const { checkPatternsEntitiesCount, checkPatternsAlarmsCount } = usePatternActions({
+      checkPatternsEntitiesCount: 'checkPatternsEntitiesCount',
+      checkPatternsAlarmsCount: 'checkPatternsAlarmsCount',
+    });
+
+    const counters = ref({});
+
+    const { showPatternAlarmsModal } = usePatternCountAlarmsModal(props);
+    const { showPatternEntitiesModal } = usePatternCountEntitiesModal(props);
+
+    const hasPatterns = computed(() => Object.values(PATTERNS_FIELDS).some(key => props.value[key]?.groups?.length));
+
+    const isPatternRequired = computed(() => (props.someRequired ? !hasPatterns.value : props.required));
+
+    const patternNamesToFields = computed(() => ({
+      [PATTERNS_FIELDS.alarm]: props.alarmName,
+      [PATTERNS_FIELDS.entity]: props.entityName,
+      [PATTERNS_FIELDS.event]: props.eventName,
+      [PATTERNS_FIELDS.totalEntity]: props.totalEntityName,
+      [PATTERNS_FIELDS.pbehavior]: props.pbehaviorName,
+      [PATTERNS_FIELDS.serviceWeather]: props.serviceWeatherName,
+    }));
+
+    /**
+     * Validates if pattern rules are valid.
+     *
+     * @param {Array<Array<Object>>} rules - Array of rule groups, where each group is an array of rule objects.
+     * @returns {boolean} True if all rules are valid, false otherwise.
+     */
+    const isValidPatternRules = rules => !!rules.length && rules.every(
+      group => group.every((rule) => {
+        if (!isValidPatternRule(rule)) {
+          return false;
+        }
+
+        if (isString(rule.cond.value)) {
+          return rule.cond.value.length > 0;
+        }
+
+        return true;
+      }),
+    );
+
+    /**
+     * Gets the outline color for a pattern field based on validation state and pattern rules.
+     *
+     * @param {string} name - The pattern field name (e.g., PATTERNS_FIELDS.alarm).
+     * @returns {string|undefined} CSS color variable for error, primary, or undefined if not required and empty.
+     */
+    const getPatternOutlineColor = (name) => {
+      const rules = formGroupsToPatternRules(props.value[name]?.groups ?? []);
+      const fieldName = patternNamesToFields.value[name];
+
+      if (errors.has(fieldName)) {
+        return CSS_COLORS_VARS.error;
+      }
+
+      if (!isPatternRequired.value && !rules.length) {
+        return undefined;
+      }
+
+      return isValidPatternRules(rules) ? CSS_COLORS_VARS.primary : CSS_COLORS_VARS.error;
     };
-  },
-  computed: {
-    hasPatterns() {
-      return Object.values(PATTERNS_FIELDS).some(key => this.value[key]?.groups?.length);
-    },
 
-    isPatternRequired() {
-      return this.someRequired ? !this.hasPatterns : this.required;
-    },
-
-    patternNamesToFields() {
-      return {
-        [PATTERNS_FIELDS.alarm]: this.alarmName,
-        [PATTERNS_FIELDS.entity]: this.entityName,
-        [PATTERNS_FIELDS.event]: this.eventName,
-        [PATTERNS_FIELDS.totalEntity]: this.totalEntityName,
-        [PATTERNS_FIELDS.pbehavior]: this.pbehaviorName,
-        [PATTERNS_FIELDS.serviceWeather]: this.serviceWeatherName,
-      };
-    },
-
-    alarmPatternOutlineColor() {
-      return this.getPatternOutlineColor(PATTERNS_FIELDS.alarm);
-    },
-
-    entityPatternOutlineColor() {
-      return this.getPatternOutlineColor(PATTERNS_FIELDS.entity);
-    },
-
-    eventPatternOutlineColor() {
-      return this.getPatternOutlineColor(PATTERNS_FIELDS.event);
-    },
-
-    totalEntityPatternOutlineColor() {
-      return this.getPatternOutlineColor(PATTERNS_FIELDS.totalEntity);
-    },
-
-    pbehaviorPatternOutlineColor() {
-      return this.getPatternOutlineColor(PATTERNS_FIELDS.pbehavior);
-    },
-
-    serviceWeatherPatternOutlineColor() {
-      return this.getPatternOutlineColor(PATTERNS_FIELDS.serviceWeather);
-    },
-
-    hasError() {
-      return this.isPatternRequired && !this.hasPatterns;
-    },
-
-    hasAllInCounter() {
-      return this.counters?.all?.count > 0;
-    },
-
-    checkFilterMessages() {
-      if (this.hasError) {
-        return this.$t('pattern.errors.required');
+    const entityPatternsCounters = computed(() => {
+      if (props.entityCountersType) {
+        return { entityCounter: counters.value?.entity_pattern };
       }
 
-      if (isEmpty(this.counters)) {
-        return '';
-      }
+      return { alarmCounter: counters.value?.entity_pattern, entityCounter: counters.value?.entities };
+    });
 
-      const alarmsCount = this.counters?.all?.count ?? 0;
-      const allDuration = convertDurationToString(
-        this.counters?.all?.ms,
-        PATTERN_DURATION_FORMAT,
-        TIME_UNITS.millisecond,
-      );
-      const durationMessage = this.$t('pattern.searchTime', { duration: allDuration });
+    const alarmPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.alarm));
 
-      let message = '';
+    const entityPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.entity));
 
-      if (this.entityCountersType) {
-        const entitiesCount = this.counters?.entity_pattern?.count ?? 0;
+    const eventPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.event));
 
-        message = this.$t('pattern.entitiesCount', { entitiesCount });
-      } else if (this.bothCounters) {
-        const entitiesCount = this.counters?.entities?.count ?? 0;
+    const totalEntityPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.totalEntity));
 
-        message = this.$t('pattern.alarmsEntitiesCount', {
-          alarmsCount,
-          entitiesCount,
-        });
-      } else {
-        message = this.$t('pattern.alarmsCount', { alarmsCount });
-      }
+    const pbehaviorPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.pbehavior));
 
-      return sanitizeHtml(`${message} / ${durationMessage}`);
-    },
+    const serviceWeatherPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.serviceWeather));
 
-    patternsFields() {
+    const hasError = computed(() => isPatternRequired.value && !hasPatterns.value);
+
+    const hasAllInCounter = computed(() => counters.value?.all?.count > 0);
+
+    const patternsFields = computed(() => {
       const FIELDS_TO_FLAGS = {
-        [PATTERNS_FIELDS.alarm]: this.withAlarm,
-        [PATTERNS_FIELDS.entity]: this.withEntity,
-        [PATTERNS_FIELDS.event]: this.withEvent,
-        [PATTERNS_FIELDS.pbehavior]: this.withPbehavior,
-        [PATTERNS_FIELDS.totalEntity]: this.withTotalEntity,
-        [PATTERNS_FIELDS.serviceWeather]: this.withServiceWeather,
+        [PATTERNS_FIELDS.alarm]: props.withAlarm,
+        [PATTERNS_FIELDS.entity]: props.withEntity,
+        [PATTERNS_FIELDS.event]: props.withEvent,
+        [PATTERNS_FIELDS.pbehavior]: props.withPbehavior,
+        [PATTERNS_FIELDS.totalEntity]: props.withTotalEntity,
+        [PATTERNS_FIELDS.serviceWeather]: props.withServiceWeather,
       };
 
       return Object.entries(FIELDS_TO_FLAGS)
         .filter(([, value]) => value)
         .map(([key]) => key);
-    },
+    });
 
-    patterns() {
-      return formFilterToPatterns(this.value, this.patternsFields);
-    },
+    const patterns = computed(() => formFilterToPatterns(props.value, patternsFields.value));
 
-    allOverLimit() {
-      return this.counters?.all?.over_limit ?? false;
-    },
+    const allOverLimit = computed(() => counters.value?.all?.over_limit ?? false);
 
-    allCount() {
-      return this.counters?.all?.count ?? 0;
-    },
-  },
-  methods: {
-    ...mapPatternActions({
-      checkPatternsEntitiesCount: 'checkPatternsEntitiesCount',
-      checkPatternsAlarmsCount: 'checkPatternsAlarmsCount',
-    }),
+    const allCount = computed(() => counters.value?.all?.count ?? 0);
 
-    showPatternAlarms() {
-      this.showAlarmsModalByPatterns({
-        alarm_pattern: formGroupsToPatternRulesQuery(this.value.alarm_pattern?.groups),
-        entity_pattern: formGroupsToPatternRulesQuery(this.value.entity_pattern?.groups),
-        pbehavior_pattern: formGroupsToPatternRulesQuery(this.value.pbehavior_pattern?.groups),
-      });
-    },
-
-    showPatternEntities() {
-      const patterns = {
-        entity_pattern: formGroupsToPatternRulesQuery(this.value.entity_pattern.groups),
-      };
-
-      if (this.withPbehavior) {
-        patterns.pbehavior_pattern = formGroupsToPatternRulesQuery(this.value.pbehavior_pattern.groups);
+    const checkFilterMessages = computed(() => {
+      if (hasError.value) {
+        return t('pattern.errors.required');
       }
 
-      if (this.withEvent) {
-        patterns.event_pattern = formGroupsToPatternRulesQuery(this.value.event_pattern.groups);
+      if (isEmpty(counters.value)) {
+        return '';
       }
 
-      if (this.withTotalEntity) {
-        patterns.total_entity_pattern = formGroupsToPatternRulesQuery(this.value.total_entity_pattern.groups);
+      const alarmsCount = counters.value?.all?.count ?? 0;
+      const allDuration = convertDurationToString(
+        counters.value?.all?.ms,
+        PATTERN_DURATION_FORMAT,
+        TIME_UNITS.millisecond,
+      );
+      const durationMessage = t('pattern.searchTime', { duration: allDuration });
+
+      let message = '';
+
+      if (props.entityCountersType) {
+        const entitiesCount = counters.value?.entity_pattern?.count ?? 0;
+
+        message = t('pattern.entitiesCount', { entitiesCount });
+      } else if (props.bothCounters) {
+        const entitiesCount = counters.value?.entities?.count ?? 0;
+
+        message = t('pattern.alarmsEntitiesCount', {
+          alarmsCount,
+          entitiesCount,
+        });
+      } else {
+        message = t('pattern.alarmsCount', { alarmsCount });
       }
 
-      if (this.withServiceWeather) {
-        patterns.weather_service_pattern = formGroupsToPatternRulesQuery(this.value.weather_service_pattern.groups);
-      }
+      return sanitizeHtml(`${message} / ${durationMessage}`);
+    });
 
-      this.showEntitiesModalByPatterns(patterns);
-    },
+    /**
+     * Function for checking filter patterns and updating counters.
+     *
+     * Determines the appropriate counter method based on props and executes it
+     * to fetch pattern counts. Updates counters state with results or empty object on error.
+     */
+    const checkFilterHandler = async () => {
+      const method = props.counterMethod ?? {
+        [true]: checkPatternsAlarmsCount,
+        [props.entityCountersType]: checkPatternsEntitiesCount,
+      }.true;
 
-    async checkFilter() {
       try {
-        this.countersPending = true;
-
-        const method = this.counterMethod ?? {
-          [true]: this.checkPatternsAlarmsCount,
-          [this.entityCountersType]: this.checkPatternsEntitiesCount,
-        }.true;
-
-        this.counters = await method({ data: this.patterns });
+        counters.value = await method({ data: patterns.value });
       } catch (err) {
         console.error(err);
 
-        this.counters = {};
-      } finally {
-        this.countersPending = false;
+        counters.value = {};
       }
-    },
+    };
 
-    isValidPatternRules(rules) {
-      return !!rules.length && rules.every(
-        group => group.every((rule) => {
-          if (!isValidPatternRule(rule)) {
-            return false;
-          }
+    const { pending: countersPending, handler: checkFilter } = usePendingHandler(checkFilterHandler);
 
-          if (isString(rule.cond.value)) {
-            return rule.cond.value.length > 0;
-          }
-
-          return true;
-        }),
-      );
-    },
-
-    getPatternOutlineColor(name) {
-      const rules = formGroupsToPatternRules(this.value[name]?.groups ?? []);
-      const fieldName = this.patternNamesToFields[name];
-
-      if (this.errors.has(fieldName)) {
-        return CSS_COLORS_VARS.error;
-      }
-
-      if (!this.isPatternRequired && !rules.length) {
-        return undefined;
-      }
-
-      return this.isValidPatternRules(rules) ? CSS_COLORS_VARS.primary : CSS_COLORS_VARS.error;
-    },
+    return {
+      PATTERNS_FIELDS,
+      counters,
+      countersPending,
+      hasPatterns,
+      isPatternRequired,
+      alarmPatternOutlineColor,
+      entityPatternOutlineColor,
+      eventPatternOutlineColor,
+      totalEntityPatternOutlineColor,
+      pbehaviorPatternOutlineColor,
+      serviceWeatherPatternOutlineColor,
+      hasError,
+      hasAllInCounter,
+      checkFilterMessages,
+      entityPatternsCounters,
+      allOverLimit,
+      allCount,
+      showPatternAlarmsModal,
+      showPatternEntitiesModal,
+      checkFilter,
+    };
   },
 };
 </script>
