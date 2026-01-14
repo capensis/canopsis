@@ -712,6 +712,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /alarm-tag-pattern-fields:
+    get:
+      tags:
+        - alarm-tags
+      summary: Get pattern fields for alarm tags
+      description: |
+        Get pattern fields for alarm tags.
+
+        -  PERMISSIONS: `api_alarm_tag:read`
+      operationId: alarm-tags-pattern-fields
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
   /alarms:
     get:
       tags:
@@ -6076,6 +6093,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /entityservice-pattern-fields:
+    get:
+      tags:
+        - entityservices
+      summary: Get pattern fields for entity services
+      description: |
+        Get pattern fields for entity services.
+
+        -  PERMISSIONS: `api_entityservice:read`
+      operationId: entityservices-pattern-fields
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
   /event:
     post:
       tags:
@@ -7004,6 +7038,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /eventfilter-pattern-fields:
+    get:
+      tags:
+        - eventfilters
+      summary: Get pattern fields for event filters
+      description: |
+        Get pattern fields for event filters.
+
+        -  PERMISSIONS: `api_eventfilter:read`
+      operationId: eventfilters-pattern-fields
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
   /export-configuration:
     post:
       tags:
@@ -8164,6 +8215,23 @@ paths:
               schema:
                 type: string
                 format: binary
+  /flapping-rule-pattern-fields:
+    get:
+      tags:
+        - flappingrules
+      summary: Get pattern fields for flapping rules
+      description: |
+        Get pattern fields for flapping rules.
+        
+        -  PERMISSIONS: `api_flapping_rule:read`
+      operationId: flappingrules-pattern-fields
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
   /healthcheck:
     get:
       tags:
@@ -8881,6 +8949,23 @@ paths:
               schema:
                 type: string
                 format: binary
+  /idle-rule-pattern-fields:
+    get:
+      tags:
+        - idlerules
+      summary: Get pattern fields for idle rules
+      description: |
+        Get pattern fields for idle rules.
+
+        -  PERMISSIONS: `api_idlerule:read`
+      operationId: idlerules-pattern-fields
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
   /internal/user_interface:
     put:
       tags:
@@ -10873,6 +10958,23 @@ paths:
               schema:
                 type: string
                 format: binary
+  /pbehavior-pattern-fields:
+    get:
+      tags:
+        - pbehaviors
+      summary: Get pattern fields for pbehaviors
+      description: |
+        Get pattern fields for pbehaviors.
+
+        -  PERMISSIONS: `api_pbehavior:read`
+      operationId: pbehaviors-pattern-fields
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
   /permissions:
     get:
       tags:
@@ -11279,6 +11381,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /resolve-rule-pattern-fields:
+    get:
+      tags:
+        - resolverules
+      summary: Get pattern fields for resolve rules
+      description: |
+        Get pattern fields for resolve rules.
+
+        -  PERMISSIONS: `api_resolve_rule:read`
+      operationId: resolverules-pattern-fields
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
   /resolved-alarms:
     get:
       tags:
@@ -12941,6 +13060,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /scenario-pattern-fields:
+    get:
+      tags:
+        - scenarios
+      summary: Get pattern fields for action scenarios
+      description: |
+        Get pattern fields for action scenarios.
+
+        -  PERMISSIONS: `api_action:read`
+      operationId: scenarios-pattern-fields
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
   /share-tokens:
     get:
       tags:
@@ -13381,6 +13517,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /state-setting-pattern-fields:
+    get:
+      tags:
+        - state-settings
+      summary: Get pattern fields for state settings
+      description: |
+        Get pattern fields for state settings.
+
+        -  PERMISSIONS: `api_state_settings:read`
+      operationId: state-settings-pattern-fields
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
   /tech-metrics-export:
     post:
       tags:
@@ -13952,6 +14105,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /link-rule-pattern-fields:
+    get:
+      tags:
+        - linkrules
+      summary: Get pattern fields for link rules
+      description: |
+        Get pattern fields for link rules.
+
+        -  PERMISSIONS: `api_link_rule:read`
+      operationId: linkrules-pattern-fields
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
   /template-data:
     get:
       tags:
@@ -16083,6 +16253,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /widget-filter-pattern-fields:
+    get:
+      tags:
+        - widgetfilters
+      summary: Get pattern fields for widget filters
+      description: |
+        Get pattern fields for widget filters.
+
+        -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
+      operationId: widgetfilters-pattern-fields
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
   /widget-grid-positions:
     put:
       tags:
