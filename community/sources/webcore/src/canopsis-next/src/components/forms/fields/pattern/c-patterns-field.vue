@@ -48,14 +48,15 @@
     >
       <c-pbehavior-patterns-field
         v-field="value.pbehavior_pattern"
+        v-bind="pbehaviorPatternsCounters"
         :required="isPatternRequired"
         :disabled="disabled"
         :readonly="readonly"
         :name="pbehaviorName"
-        :alarm-counter="counters.pbehavior_pattern"
         with-type
         @input="errors.remove(pbehaviorName)"
         @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.pbehavior])"
+        @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.pbehavior])"
       />
     </c-collapse-panel>
     <c-collapse-panel
@@ -69,7 +70,6 @@
         :disabled="disabled"
         :readonly="readonly"
         :name="eventName"
-        :entity-counter="counters.event_pattern"
         @input="errors.remove(eventName)"
         @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.event])"
       />
@@ -85,7 +85,6 @@
         :disabled="disabled"
         :readonly="readonly"
         :name="totalEntityName"
-        :entity-counter="counters.total_entity_pattern"
         with-type
         @input="errors.remove(totalEntityName)"
       />
@@ -100,7 +99,6 @@
         :required="isPatternRequired"
         :disabled="disabled"
         :name="serviceWeatherName"
-        :entity-counter="counters.weather_service_pattern"
         with-type
         @input="errors.remove(serviceWeatherName)"
       />
@@ -124,7 +122,7 @@
           v-if="entityCountersType"
           text
           small
-          @click="showPatternEntitiesModal"
+          @click="showPatternEntitiesModal()"
         >
           {{ $t('common.seeEntities') }}
         </v-btn>
@@ -132,7 +130,7 @@
           v-else
           text
           small
-          @click="showPatternAlarmsModal"
+          @click="showPatternAlarmsModal()"
         >
           {{ $t('common.seeAlarms') }}
         </v-btn>
@@ -399,6 +397,8 @@ export default {
       return { alarmCounter: counters.value?.entity_pattern, entityCounter: counters.value?.entities };
     });
 
+    const pbehaviorPatternsCounters = computed(() => ({ [props.entityCountersType ? 'entityCounter' : 'alarmCounter']: counters.value?.pbehavior_pattern }));
+
     const alarmPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.alarm));
 
     const entityPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.entity));
@@ -512,6 +512,7 @@ export default {
       hasAllInCounter,
       checkFilterMessages,
       entityPatternsCounters,
+      pbehaviorPatternsCounters,
       allOverLimit,
       allCount,
       showPatternAlarmsModal,
