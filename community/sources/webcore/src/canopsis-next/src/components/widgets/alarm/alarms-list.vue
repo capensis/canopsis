@@ -453,7 +453,6 @@ export default {
           'tstop',
           'only_bookmarks',
           'tags',
-          'instructions',
           'instruction_filter_type',
           'instruction_type',
           'instruction_statuses',
