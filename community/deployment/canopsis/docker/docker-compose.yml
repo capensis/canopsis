@@ -131,7 +131,7 @@ services:
       interval: 1s
       timeout: 3s
       retries: 5
-    command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD"
+    command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD --appendonly yes --dir /data"
 
   timescaledb:
     <<: *backend_base
