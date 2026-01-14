@@ -1,5 +1,12 @@
+import { Validator } from 'vee-validate';
+
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules, createPatternModule } from '@unit/utils/store';
+import {
+  createMockedStoreModules,
+  createPatternModule,
+  createAlarmModule,
+  createEntityModule,
+} from '@unit/utils/store';
 
 import {
   ALARM_PATTERN_FIELDS,
@@ -22,6 +29,7 @@ const stubs = {
   'c-pbehavior-patterns-field': true,
   'c-event-filter-patterns-field': true,
   'c-alert': true,
+  'pattern-count-message': true,
 };
 
 const selectAlarmPatternsField = wrapper => wrapper.find('c-alarm-patterns-field-stub');
@@ -32,10 +40,43 @@ const selectEventFilterPatternsField = wrapper => wrapper.find('c-event-filter-p
 describe('c-patterns-field', () => {
   const patterns = filterPatternsToForm();
   const { patternModule } = createPatternModule();
-  const store = createMockedStoreModules([patternModule]);
+  const { alarmModule } = createAlarmModule();
+  const { entityModule } = createEntityModule();
 
-  const factory = generateShallowRenderer(CPatternsField, { stubs });
-  const snapshotFactory = generateRenderer(CPatternsField, { stubs });
+  const alarmModuleWithFetchList = {
+    ...alarmModule,
+    actions: {
+      ...alarmModule.actions,
+      fetchListWithoutStore: jest.fn().mockResolvedValue({}),
+    },
+  };
+
+  const entityModuleWithFetchList = {
+    ...entityModule,
+    actions: {
+      ...entityModule.actions,
+      fetchListWithoutStore: jest.fn().mockResolvedValue({}),
+    },
+  };
+
+  const store = createMockedStoreModules([
+    patternModule,
+    alarmModuleWithFetchList,
+    entityModuleWithFetchList,
+  ]);
+
+  const factory = generateShallowRenderer(CPatternsField, {
+    stubs,
+    provide: {
+      $validator: new Validator(),
+    },
+  });
+  const snapshotFactory = generateRenderer(CPatternsField, {
+    stubs,
+    provide: {
+      $validator: new Validator(),
+    },
+  });
 
   test('Alarm pattern changed after trigger alarm patterns field', () => {
     const wrapper = factory({
@@ -109,7 +150,7 @@ describe('c-patterns-field', () => {
     });
 
     const pbehaviorPattern = patternToForm({
-      entity_pattern: [[
+      pbehavior_pattern: [[
         {
           field: PBEHAVIOR_PATTERN_FIELDS.name,
           cond: {
@@ -140,7 +181,7 @@ describe('c-patterns-field', () => {
     });
 
     const eventFilterPattern = patternToForm({
-      entity_pattern: [[
+      event_pattern: [[
         {
           field: EVENT_FILTER_PATTERN_FIELDS.output,
           cond: {
