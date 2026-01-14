@@ -9,6 +9,7 @@
     :attributes="pbehaviorAttributes"
     :with-type="withType"
     :alarm-counter="alarmCounter"
+    :entity-counter="entityCounter"
   >
     <template #append-count="">
       <v-btn
@@ -18,6 +19,14 @@
         @click="showPatternAlarmsModal"
       >
         {{ $t('common.seeAlarms') }}
+      </v-btn>
+      <v-btn
+        v-if="entityCounter && entityCounter.count"
+        text
+        small
+        @click="showPatternEntitiesModal"
+      >
+        {{ $t('common.seeEntities') }}
       </v-btn>
     </template>
   </pattern-editor-field>
@@ -70,6 +79,10 @@ export default {
       default: false,
     },
     alarmCounter: {
+      type: Object,
+      required: false,
+    },
+    entityCounter: {
       type: Object,
       required: false,
     },
@@ -191,6 +204,10 @@ export default {
 
     showPatternAlarmsModal() {
       this.$emit('show:alarms');
+    },
+
+    showPatternEntitiesModal() {
+      this.$emit('show:entities');
     },
 
     async fetchPbehaviors() {
