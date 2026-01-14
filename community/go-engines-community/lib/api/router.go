@@ -158,6 +158,7 @@ func RegisterRoutes(
 
 	maintenanceAdapter := config.NewMaintenanceAdapter(primaryDbClient)
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(primaryDbClient)
+	patternFieldGetter := patternfields.NewFieldGetter(secondaryDbClient)
 
 	authApi := auth.NewApi(
 		security.GetTokenService(),
@@ -485,9 +486,9 @@ func RegisterRoutes(
 			)
 		}
 
-		patternAPI := pattern.NewApi(
+		patternAPI := pattern.NewAPI(
 			pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger),
-			userInterfaceConfig, enforcer, errorResponder, patternfields.NewFieldGetter(secondaryDbClient))
+			userInterfaceConfig, enforcer, errorResponder)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth(errorResponder))
@@ -592,6 +593,10 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer, errorResponder),
 			eventFilterApi.GetTemplateVars)
 		protected.GET(
+			"/eventfilter-pattern-fields",
+			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.EventFilterRuleCollection))
+		protected.GET(
 			"/eventfilter-copy-vars",
 			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer, errorResponder),
 			eventFilterApi.GetCopyVars)
@@ -667,6 +672,10 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermPbhPatterns, model.PermissionCan, enforcer, errorResponder),
 			pbehaviorApi.ExecAllPatterns,
 		)
+		protected.GET(
+			"/pbehavior-pattern-fields",
+			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.PbehaviorMongoCollection))
 
 		pbehaviorCommentRouter := protected.Group("/pbehavior-comments")
 		{
@@ -810,6 +819,10 @@ func RegisterRoutes(
 				"/entityservice-template-vars",
 				middleware.Authorize(apisecurity.ObjEntityService, model.PermissionRead, enforcer, errorResponder),
 				entityserviceAPI.GetTemplateVars)
+			protected.GET(
+				"/entityservice-pattern-fields",
+				middleware.Authorize(apisecurity.ObjEntityService, model.PermissionRead, enforcer, errorResponder),
+				pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.EntityMongoCollection))
 		}
 
 		entityCommentRouter := protected.Group("/entity-comments")
@@ -1318,6 +1331,19 @@ func RegisterRoutes(
 			}, enforcer, errorResponder),
 			widgetFilterAPI.UpdatePositions,
 		)
+		protected.GET(
+			"/widget-filter-pattern-fields",
+			middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+				{
+					Obj: apisecurity.ObjView,
+					Act: model.PermissionRead,
+				},
+				{
+					Obj: apisecurity.PermPrivateViewGroups,
+					Act: model.PermissionCan,
+				},
+			}, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.WidgetFiltersMongoCollection))
 
 		widgetTemplateAPI := widgettemplate.NewApi(
 			widgettemplate.NewStore(primaryDbClient, authorProvider), errorResponder)
@@ -1619,7 +1645,7 @@ func RegisterRoutes(
 		protected.GET(
 			"/scenario-pattern-fields",
 			middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer, errorResponder),
-			patternAPI.GetPatternFields(mongo.ScenarioCollection))
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.ScenarioCollection))
 
 		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(primaryDbClient),
 			workers.NewJobPublisher(jobKeyImport, amqpPublisher), conf.File.ImportMaxSize, errorResponder, logger)
@@ -1672,6 +1698,10 @@ func RegisterRoutes(
 				stateSettingsApi.Delete,
 			)
 		}
+		protected.GET(
+			"/state-setting-pattern-fields",
+			middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.StateSettingsMongoCollection))
 
 		notificationAPI := notification.NewApi(notification.NewStore(primaryDbClient, authorProvider), errorResponder)
 		protected.GET("/notifications", notificationAPI.List)
@@ -1766,6 +1796,10 @@ func RegisterRoutes(
 			"idle-rules-db-export",
 			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer, errorResponder),
 			idleRuleAPI.DBExport)
+		protected.GET(
+			"/idle-rule-pattern-fields",
+			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.IdleRuleMongoCollection))
 
 		linkRuleAPI := linkrule.NewApi(
 			linkrule.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient),
@@ -1816,6 +1850,10 @@ func RegisterRoutes(
 			"/link-rule-template-vars",
 			middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer, errorResponder),
 			linkRuleAPI.GetTemplateVars)
+		protected.GET(
+			"/link-rule-pattern-fields",
+			middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.LinkRuleMongoCollection))
 
 		linkCategoryRouter := protected.Group("/link-categories")
 		{
@@ -1864,6 +1902,11 @@ func RegisterRoutes(
 			"alarm-tag-labels",
 			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer, errorResponder),
 			alarmTagAPI.ListLabels,
+		)
+		protected.GET(
+			"alarm-tag-pattern-fields",
+			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.AlarmTagCollection),
 		)
 
 		colorThemeApi := colortheme.NewApi(
@@ -2481,6 +2524,10 @@ func RegisterRoutes(
 				resolveRuleAPI.Delete,
 			)
 		}
+		protected.GET(
+			"/resolve-rule-pattern-fields",
+			middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.ResolveRuleMongoCollection))
 
 		flappingRuleAPI := flappingrule.NewApi(
 			flappingrule.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient)),
@@ -2520,6 +2567,10 @@ func RegisterRoutes(
 			"flapping-rules-db-export",
 			middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionRead, enforcer, errorResponder),
 			flappingRuleAPI.DBExport)
+		protected.GET(
+			"/flapping-rule-pattern-fields",
+			middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.FlappingRuleMongoCollection))
 
 		entityInfoDictionaryApi := entityinfodictionary.NewApi(
 			entityinfodictionary.NewStore(primaryDbClient), errorResponder, logger)

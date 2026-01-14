@@ -24,30 +24,26 @@ type API interface {
 	BulkDelete(c *gin.Context)
 	CountAlarms(c *gin.Context)
 	CountEntities(c *gin.Context)
-	GetPatternFields(collection string) func(c *gin.Context)
 }
 
 type api struct {
-	store              Store
-	enforcer           security.Enforcer
-	errorResponder     httperror.Responder
-	patternFieldGetter patternfields.FieldGetter
-	configProvider     config.UserInterfaceConfigProvider
+	store          Store
+	enforcer       security.Enforcer
+	errorResponder httperror.Responder
+	configProvider config.UserInterfaceConfigProvider
 }
 
-func NewApi(
+func NewAPI(
 	store Store,
 	configProvider config.UserInterfaceConfigProvider,
 	enforcer security.Enforcer,
 	errorResponder httperror.Responder,
-	patternFieldGetter patternfields.FieldGetter,
 ) API {
 	return &api{
-		store:              store,
-		enforcer:           enforcer,
-		errorResponder:     errorResponder,
-		patternFieldGetter: patternFieldGetter,
-		configProvider:     configProvider,
+		store:          store,
+		enforcer:       enforcer,
+		errorResponder: errorResponder,
+		configProvider: configProvider,
 	}
 }
 
@@ -373,13 +369,13 @@ func (a *api) CountEntities(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// GetPatternFields
+// GetPatternFieldsHandler
 // @Success 200 {array} patternfields.FieldsResponse
-func (a *api) GetPatternFields(collection string) func(c *gin.Context) {
+func GetPatternFieldsHandler(patternFieldGetter patternfields.FieldGetter, errorResponder httperror.Responder, collection string) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		res, err := a.patternFieldGetter.Get(c, collection)
+		res, err := patternFieldGetter.Get(c, collection)
 		if err != nil {
-			a.errorResponder.Respond(c, err)
+			errorResponder.Respond(c, err)
 
 			return
 		}

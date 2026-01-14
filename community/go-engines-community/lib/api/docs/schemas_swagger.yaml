@@ -4304,6 +4304,60 @@ definitions:
           type: array
         type: array
     type: object
+  patternfields.AlarmFieldResponse:
+    properties:
+      enabled:
+        type: boolean
+      name:
+        type: string
+      only_absolute_time_cond:
+        type: boolean
+      type:
+        type: string
+    type: object
+  patternfields.EntityFieldResponse:
+    properties:
+      alias:
+        type: boolean
+      enabled:
+        type: boolean
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  patternfields.FieldResponse:
+    properties:
+      enabled:
+        type: boolean
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  patternfields.FieldsResponse:
+    properties:
+      alarm_pattern:
+        items:
+          $ref: '#/definitions/patternfields.AlarmFieldResponse'
+        type: array
+      entity_pattern:
+        items:
+          $ref: '#/definitions/patternfields.EntityFieldResponse'
+        type: array
+      event_pattern:
+        items:
+          $ref: '#/definitions/patternfields.FieldResponse'
+        type: array
+      pbehavior_pattern:
+        items:
+          $ref: '#/definitions/patternfields.FieldResponse'
+        type: array
+      weather_service_pattern:
+        items:
+          $ref: '#/definitions/patternfields.FieldResponse'
+        type: array
+    type: object
   pbehavior.BulkConnectorCreateRequestItem:
     properties:
       color:
