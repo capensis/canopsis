@@ -389,6 +389,10 @@ export default {
       return isValidPatternRules(rules) ? CSS_COLORS_VARS.primary : CSS_COLORS_VARS.error;
     };
 
+    const allOverLimit = computed(() => counters.value?.all?.over_limit ?? false);
+    const allCount = computed(() => counters.value?.all?.count ?? 0);
+    const hasAllInCounter = computed(() => counters.value?.all?.count > 0);
+
     const entityPatternsCounters = computed(() => {
       if (props.entityCountersType) {
         return { entityCounter: counters.value?.entity_pattern };
@@ -400,20 +404,13 @@ export default {
     const pbehaviorPatternsCounters = computed(() => ({ [props.entityCountersType ? 'entityCounter' : 'alarmCounter']: counters.value?.pbehavior_pattern }));
 
     const alarmPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.alarm));
-
     const entityPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.entity));
-
     const eventPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.event));
-
     const totalEntityPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.totalEntity));
-
     const pbehaviorPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.pbehavior));
-
     const serviceWeatherPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.serviceWeather));
 
     const hasError = computed(() => isPatternRequired.value && !hasPatterns.value);
-
-    const hasAllInCounter = computed(() => counters.value?.all?.count > 0);
 
     const patternsFields = computed(() => {
       const FIELDS_TO_FLAGS = {
@@ -431,10 +428,6 @@ export default {
     });
 
     const patterns = computed(() => formFilterToPatterns(props.value, patternsFields.value));
-
-    const allOverLimit = computed(() => counters.value?.all?.over_limit ?? false);
-
-    const allCount = computed(() => counters.value?.all?.count ?? 0);
 
     const checkFilterMessages = computed(() => {
       if (hasError.value) {
