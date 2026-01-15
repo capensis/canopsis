@@ -446,6 +446,10 @@ export default {
           'tstop',
           'only_bookmarks',
           'instructions',
+          'tags',
+          'alarm_pattern',
+          'entity_pattern',
+          'pbehavior_pattern',
         ]),
 
         fields: widgetToExportQueryColumns(this.widget),
