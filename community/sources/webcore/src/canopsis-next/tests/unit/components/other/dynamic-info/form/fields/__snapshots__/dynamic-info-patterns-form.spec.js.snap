@@ -2,7 +2,7 @@
 
 exports[`dynamic-info-patterns-form Renders \`dynamic-info-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   both-counters=""
   entity-attributes="[object Object]"
   isentitytype="true"
@@ -15,7 +15,7 @@ exports[`dynamic-info-patterns-form Renders \`dynamic-info-patterns-form\` with 
 
 exports[`dynamic-info-patterns-form Renders \`dynamic-info-patterns-form\` with default props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   both-counters=""
   entity-attributes="[object Object]"
   some-required=""
