@@ -412,9 +412,9 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 	}
 
 	now := datetime.NewCpsTime()
-	lastEventDate := &now
-	if event.EventType == types.EventTypeContextUpdate {
-		lastEventDate = nil
+	var lastEventDate *datetime.CpsTime
+	if event.EventType == types.EventTypeCheck {
+		lastEventDate = &now
 	}
 
 	if resource == nil {
@@ -471,6 +471,9 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 			LastEventDate:  lastEventDate,
 			Healthcheck:    event.Healthcheck,
 		}
+		if resource.ID != event.Upstream {
+			resource.Upstream = event.Upstream
+		}
 
 		commRegister.RegisterInsert(resource)
 		report.CheckResource = true
@@ -509,6 +512,24 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 	} else if lastEventDate != nil {
 		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": *lastEventDate})
 		commRegister.RegisterUpdate(resourceID, bson.M{"last_event_date": *lastEventDate})
+	}
+
+	if resource.Upstream != event.Upstream {
+		if resourceID == event.Upstream {
+			commRegister.RegisterUpdate(resourceID, bson.M{
+				"upstream":            "",
+				"is_upstream_changed": true,
+			})
+			resource.IsUpstreamChanged = true
+			resource.Upstream = ""
+		} else {
+			commRegister.RegisterUpdate(resourceID, bson.M{
+				"upstream":            event.Upstream,
+				"is_upstream_changed": true,
+			})
+			resource.IsUpstreamChanged = true
+			resource.Upstream = event.Upstream
+		}
 	}
 
 	resource.LastEventDate = lastEventDate
@@ -560,9 +581,9 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 	}
 
 	now := datetime.NewCpsTime()
-	lastEventDate := &now
-	if event.EventType == types.EventTypeContextUpdate {
-		lastEventDate = nil
+	var lastEventDate *datetime.CpsTime
+	if event.EventType == types.EventTypeCheck {
+		lastEventDate = &now
 	}
 
 	if component == nil {
@@ -593,11 +614,15 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 			Type:          types.EntityTypeComponent,
 			Connector:     connectorID,
 			Component:     componentID,
+			Upstream:      event.Upstream,
 			Infos:         map[string]types.Info{},
 			ImpactLevel:   types.EntityDefaultImpactLevel,
 			Created:       now,
 			LastEventDate: lastEventDate,
 			Healthcheck:   event.Healthcheck,
+		}
+		if component.ID != event.Upstream {
+			component.Upstream = event.Upstream
 		}
 
 		commRegister.RegisterInsert(component)
@@ -639,6 +664,25 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 		commRegister.RegisterUpdate(componentID, bson.M{"last_event_date": *lastEventDate})
 	}
 
+	if component.Upstream != event.Upstream {
+		report.CheckComponent = true
+		if componentID == event.Upstream {
+			commRegister.RegisterUpdate(componentID, bson.M{
+				"upstream":            "",
+				"is_upstream_changed": true,
+			})
+			component.IsUpstreamChanged = true
+			component.Upstream = ""
+		} else {
+			commRegister.RegisterUpdate(componentID, bson.M{
+				"upstream":            event.Upstream,
+				"is_upstream_changed": true,
+			})
+			component.IsUpstreamChanged = true
+			component.Upstream = event.Upstream
+		}
+	}
+
 	component.LastEventDate = lastEventDate
 	event.Entity = component
 
@@ -662,7 +706,7 @@ func (m *manager) HandleService(ctx context.Context, event *types.Event, commReg
 		return Report{}, nil
 	}
 
-	if event.IsContextable() && !event.IsOnlyServiceUpdate() && event.EventType != types.EventTypeContextUpdate {
+	if event.IsContextable() && !event.IsOnlyServiceUpdate() && event.EventType == types.EventTypeCheck {
 		now := datetime.NewCpsTime()
 		commRegister.RegisterUpdate(serviceID, bson.M{"last_event_date": now})
 		service.LastEventDate = &now
@@ -685,7 +729,7 @@ func (m *manager) HandleConnector(ctx context.Context, event *types.Event, commR
 		return Report{}, fmt.Errorf("connector %s doesn't exist", connectorID)
 	}
 
-	if event.IsContextable() && !event.IsOnlyServiceUpdate() && event.EventType != types.EventTypeContextUpdate {
+	if event.IsContextable() && !event.IsOnlyServiceUpdate() && event.EventType == types.EventTypeCheck {
 		now := datetime.NewCpsTime()
 		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
 		connector.LastEventDate = &now
