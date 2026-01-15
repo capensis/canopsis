@@ -96,6 +96,10 @@ for (const ruleCollName of ["eventfilter", "link_rule"]) {
                         }
                     });
 
+                    d.table_type = 0;
+                    d.table_name = d.collection;
+                    d.table_columns = columns;
+
                     tables.push({
                         _id: tableID,
                         type: 0,
