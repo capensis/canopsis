@@ -202,6 +202,37 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(ctx context.Contex
 	return pipeline, nil
 }
 
+func (q *MongoQueryBuilder) CreateDownstreamAggregationPipeline(
+	match bson.M,
+	paginationQuery pagination.Query,
+	sortRequest SortRequest,
+	now datetime.CpsTime,
+) []bson.M {
+	q.clear(now)
+	q.entityMatch = append(q.entityMatch, bson.M{"$match": match})
+	q.handleSort(sortRequest)
+	q.lookups = append(q.lookups, lookupWithKey{key: "downstream_count", pipeline: dbquery.GetDownstreamCountPipeline()})
+	beforeLimit, afterLimit := q.createAggregationPipeline()
+
+	return pagination.CreateAggregationPipeline(
+		paginationQuery,
+		beforeLimit,
+		q.sort,
+		afterLimit,
+	)
+}
+
+func (q *MongoQueryBuilder) CreateUpstreamPipeline(
+	match bson.M,
+	now datetime.CpsTime,
+) []bson.M {
+	q.clear(now)
+	q.entityMatch = append(q.entityMatch, bson.M{"$match": match})
+	beforeLimit, afterLimit := q.createAggregationPipeline()
+
+	return append(beforeLimit, afterLimit...)
+}
+
 func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	addedLookups := make(map[string]bool)
 	addedComputedFields := make(map[string]bool)

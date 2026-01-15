@@ -6110,6 +6110,77 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
+  /entity-downstreams:
+    get:
+      tags:
+        - entityupstream
+      summary: Get entity's downstreams by id
+      description: |
+        Get entity's downstreams by id.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entityupstream-get-downstreams-by-id
+      parameters:
+        - name: _id
+          in: query
+          description: Entity id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entityupstream.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /entity-upstream:
+    get:
+      tags:
+        - entityupstream
+      summary: Get entity's upstream by id
+      description: |
+        Get entity's upstream by id.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entityupstream-get-upstream-by-id
+      parameters:
+        - name: _id
+          in: query
+          description: Entity id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/entityupstream.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /event:
     post:
       tags:
