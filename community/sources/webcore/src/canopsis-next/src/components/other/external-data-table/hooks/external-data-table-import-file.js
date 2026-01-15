@@ -33,7 +33,7 @@ const useExternalDataTableImportForm = () => {
   const validator = useValidator();
 
   const form = ref({});
-  const needPreview = ref(false);
+  const needPreview = ref(true);
 
   /**
    * Computed property that checks if the form has any validation errors.
@@ -153,13 +153,13 @@ const useExternalDataTableFileUpload = ({
 
       fetchList?.();
     } catch (err) {
-      if (!err.file) {
+      if (!err.file && !err.fail_reason) {
         throw err;
       }
 
       validator.errors.add({
         field: 'file',
-        msg: err.file,
+        msg: err.file ?? err.fail_reason,
       });
     }
   };
