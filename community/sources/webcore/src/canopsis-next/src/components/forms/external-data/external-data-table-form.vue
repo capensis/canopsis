@@ -153,7 +153,10 @@ export default {
        * Filter to string columns only to avoid compatibility issues with other data types in the form
        */
       const stringColumns = (table?.column_configs ?? [])
-        .filter(column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.string);
+        .filter(column => [
+          EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.string,
+          EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number,
+        ].includes(column.type));
 
       columns.value = mapIds(stringColumns, 'name');
     };
