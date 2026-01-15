@@ -94,7 +94,7 @@ import { getEntityColor } from '@/helpers/entities/entity/color';
 import { getMostReadableTextColor } from '@/helpers/color';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
-import { entityHandlebarsTagsHelper } from '@/mixins/widget/handlebars/entity-tags-helper';
+import { handlebarsTagsHelperMixin } from '@/mixins/widget/handlebars/tags-helper';
 
 import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 
@@ -109,7 +109,7 @@ export default {
     AlarmStateCounters,
     ImpactStateIndicator,
   },
-  mixins: [entityHandlebarsTagsHelper],
+  mixins: [handlebarsTagsHelperMixin],
   props: {
     service: {
       type: Object,
