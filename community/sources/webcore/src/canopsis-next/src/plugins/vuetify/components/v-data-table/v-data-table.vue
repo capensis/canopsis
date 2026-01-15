@@ -49,6 +49,7 @@ export default {
 
       for (let i = 0; i < items.length; i += 1) {
         const item = items[i];
+        const itemKey = getObjectValueByPath(item, this.itemKey);
         let children = [];
 
         rows.push(this.$scopedSlots.item({
@@ -59,7 +60,7 @@ export default {
         if (this.isExpanded(item)) {
           children = this.$createElement('div', {
             class: 'v-data-table__expanded__content',
-            key: `expand-${getObjectValueByPath(item, this.itemKey)}`,
+            key: `expand-${itemKey}`,
           }, this.$scopedSlots['expanded-item']({
             headers: this.computedHeaders,
             isMobile: this.isMobile,
@@ -77,7 +78,12 @@ export default {
           on: ExpandTransitionGenerator('v-data-table__expanded__col'),
         }, [children]);
 
-        rows.push(this.$createElement('tr', { class: 'v-data-table__expanded v-data-table__expanded__row' }, [transition]));
+        rows.push(
+          this.$createElement('tr', {
+            class: 'v-data-table__expanded v-data-table__expanded__row',
+            key: `expand-tr-${itemKey}`,
+          }, [transition]),
+        );
       }
 
       return rows;
@@ -85,6 +91,7 @@ export default {
 
     genDefaultExpandedRow(item, index) {
       const isExpanded = this.isExpanded(item);
+      const itemKey = getObjectValueByPath(item, this.itemKey);
       const classes = {
         'v-data-table__expanded v-data-table__expanded__row': isExpanded,
       };
@@ -95,7 +102,7 @@ export default {
       if (isExpanded) {
         children = this.$createElement('div', {
           class: 'v-data-table__expanded__content',
-          key: `expand-${getObjectValueByPath(item, this.itemKey)}`,
+          key: `expand-${itemKey}`,
         }, this.$scopedSlots['expanded-item']({
           headers: this.computedHeaders,
           isMobile: this.isMobile,
@@ -115,6 +122,7 @@ export default {
 
       const expandedRow = this.$createElement('tr', {
         staticClass: 'v-data-table__expanded v-data-table__expanded__content',
+        key: `expand-tr-${itemKey}`,
       }, [transition]);
 
       return [headerRow, expandedRow];
