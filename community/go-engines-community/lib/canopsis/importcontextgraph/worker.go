@@ -702,6 +702,11 @@ func (w *worker) mergeEntity(c EntityConfiguration, oldEntity Entity, id, catego
 		e.Component = e.ID
 	}
 
+	if c.Upstream != nil && (e.Type == types.EntityTypeResource || e.Type == types.EntityTypeComponent) {
+		e.Upstream = c.Upstream
+		e.IsUpstreamChanged = oldEntity.Upstream == nil || *oldEntity.Upstream != *c.Upstream
+	}
+
 	if oldEntity.EnableHistory != nil {
 		e.EnableHistory = oldEntity.EnableHistory
 	}
