@@ -4,7 +4,7 @@ import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
-import { ALARM_STATUSES, MODALS } from '@/constants';
+import { ALARM_STATES, ALARM_STATUSES, MODALS } from '@/constants';
 
 import AlarmStatusChipWithRelations from '@/components/widgets/alarm/partials/alarm-status-chip-with-relations.vue';
 
@@ -32,6 +32,7 @@ describe('alarm-status-chip-with-relations', () => {
       upstream: Faker.datatype.uuid(),
     };
     const status = ALARM_STATUSES.ongoing;
+    const state = ALARM_STATES.ok;
     const wrapper = factory({
       propsData: {
         alarm: {
@@ -39,6 +40,9 @@ describe('alarm-status-chip-with-relations', () => {
           v: {
             status: {
               val: status,
+            },
+            state: {
+              val: state,
             },
           },
         },
@@ -53,7 +57,7 @@ describe('alarm-status-chip-with-relations', () => {
     expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.entityUpstream,
       config: {
-        entity: { ...entity, status },
+        entity: { ...entity, status, state },
         title: expect.any(String),
       },
     });
@@ -64,6 +68,7 @@ describe('alarm-status-chip-with-relations', () => {
       _id: Faker.datatype.uuid(),
     };
     const status = ALARM_STATUSES.ongoing;
+    const state = ALARM_STATES.ok;
     const wrapper = factory({
       propsData: {
         alarm: {
@@ -71,6 +76,9 @@ describe('alarm-status-chip-with-relations', () => {
           v: {
             status: {
               val: status,
+            },
+            state: {
+              val: state,
             },
           },
         },
@@ -85,7 +93,7 @@ describe('alarm-status-chip-with-relations', () => {
     expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.entityUpstream,
       config: {
-        entity: { ...entity, status },
+        entity: { ...entity, status, state },
         title: expect.any(String),
       },
     });
@@ -99,6 +107,9 @@ describe('alarm-status-chip-with-relations', () => {
           v: {
             status: {
               val: ALARM_STATUSES.ongoing,
+            },
+            state: {
+              val: ALARM_STATES.ok,
             },
           },
         },
@@ -116,6 +127,9 @@ describe('alarm-status-chip-with-relations', () => {
           v: {
             status: {
               val: ALARM_STATUSES.ongoing,
+            },
+            state: {
+              val: ALARM_STATES.ok,
             },
           },
         },
@@ -135,6 +149,9 @@ describe('alarm-status-chip-with-relations', () => {
             status: {
               val: ALARM_STATUSES.ongoing,
             },
+            state: {
+              val: ALARM_STATES.ok,
+            },
           },
         },
         color: 'primary',
@@ -153,6 +170,9 @@ describe('alarm-status-chip-with-relations', () => {
             status: {
               val: ALARM_STATUSES.ongoing,
             },
+            state: {
+              val: ALARM_STATES.ok,
+            },
           },
         },
         iconColor: 'error',
@@ -170,6 +190,9 @@ describe('alarm-status-chip-with-relations', () => {
           v: {
             status: {
               val: ALARM_STATUSES.ongoing,
+            },
+            state: {
+              val: ALARM_STATES.ok,
             },
           },
         },
@@ -192,6 +215,9 @@ describe('alarm-status-chip-with-relations', () => {
             status: {
               val: ALARM_STATUSES.ongoing,
             },
+            state: {
+              val: ALARM_STATES.ok,
+            },
           },
         },
       },
@@ -210,6 +236,9 @@ describe('alarm-status-chip-with-relations', () => {
           v: {
             status: {
               val: ALARM_STATUSES.ongoing,
+            },
+            state: {
+              val: ALARM_STATES.ok,
             },
           },
         },
@@ -230,6 +259,9 @@ describe('alarm-status-chip-with-relations', () => {
           v: {
             status: {
               val: ALARM_STATUSES.ongoing,
+            },
+            state: {
+              val: ALARM_STATES.ok,
             },
           },
         },

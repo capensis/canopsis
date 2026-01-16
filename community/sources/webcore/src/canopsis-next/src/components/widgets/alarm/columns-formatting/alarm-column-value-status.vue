@@ -68,9 +68,13 @@
 <script>
 import { computed } from 'vue';
 
-import { ALARM_STATUSES } from '@/constants';
+import { ALARM_STATUSES, COLOR_INDICATOR_TYPES_WITH_STATUS } from '@/constants';
 
-import { formatAlarmState, formatAlarmStatus } from '@/helpers/entities/alarm/formatting';
+import {
+  formatAlarmState,
+  formatAlarmStatus,
+  getColorIndicatorByStatusAndState,
+} from '@/helpers/entities/alarm/formatting';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -100,7 +104,11 @@ export default {
     const resolved = computed(() => !!props.alarm.v.resolved);
     const status = computed(() => formatAlarmStatus(statusValue.value, resolved.value));
     const state = computed(() => formatAlarmState(props.alarm.v.state.val));
-    const statusColor = computed(() => (isOngoingStatus.value ? state.value.color : status.value.color));
+    const statusColor = computed(() => ({
+      [COLOR_INDICATOR_TYPES_WITH_STATUS.state]: state.value.color,
+      [COLOR_INDICATOR_TYPES_WITH_STATUS.status]: status.value.color,
+    }[getColorIndicatorByStatusAndState(statusValue.value)]));
+
     const iconSize = computed(() => (props.small ? 24 : undefined));
     const iconStyle = computed(() => ({ color: statusColor.value, caretColor: statusColor.value }));
     const chipStyle = computed(() => ({ backgroundColor: iconStyle.value.color }));
