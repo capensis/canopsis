@@ -84,19 +84,19 @@ func (c *jsDatabase) GetCollection(ctx context.Context, collectionName string) m
 	}).getMethods(ctx)
 }
 
-func (c *jsDatabase) RunCommand(ctx context.Context, command goja.Value) (map[string]any, error) {
+func (c *jsDatabase) RunCommand(ctx context.Context, command goja.Value) (any, error) {
 	dbCommand, err := transformValue(c.vm, command)
 	if err != nil {
 		return nil, fmt.Errorf("invalid command: %w", err)
 	}
 
-	res := make(map[string]any)
+	var res bson.M
 	err = c.dbClient.RunCommand(ctx, dbCommand).Decode(&res)
 	if err != nil {
 		return nil, fmt.Errorf("error running command: %w", err)
 	}
 
-	return res, nil
+	return bsonToInterface(res), nil
 }
 
 func (c *jsDatabase) getMethods(ctx context.Context, collectionNames []string) map[string]any {
@@ -110,7 +110,7 @@ func (c *jsDatabase) getMethods(ctx context.Context, collectionNames []string) m
 		"getCollection": func(collectionName string) map[string]any {
 			return c.GetCollection(ctx, collectionName)
 		},
-		"runCommand": func(command goja.Value) (map[string]any, error) {
+		"runCommand": func(command goja.Value) (any, error) {
 			return c.RunCommand(ctx, command)
 		},
 	}
