@@ -63,6 +63,10 @@ export default {
       type: String,
       default: COLOR_INDICATOR_TYPES_WITH_STATUS.state,
     },
+    withoutPauseColor: {
+      type: Boolean,
+      default: false,
+    },
     metaByEntityId: {
       type: Object,
       default: () => ({}),
@@ -96,11 +100,13 @@ export default {
      * @returns {string} HTML string representing the node content
      */
     const getNodeContent = (node) => {
-      const { entity, pending, opened, root } = node;
+      const { entity, pending, opened, root, colorIndicator } = node;
 
       const element = getEntityNodeElement(node);
 
-      element.classList.add(getEntityColorClass(entity, props.colorIndicator));
+      element.classList.add(
+        getEntityColorClass(entity, colorIndicator ?? props.colorIndicator, props.withoutPauseColor),
+      );
 
       if (pending || (!root && props.hasChildren?.(entity))) {
         const badge = getBadgeElement();

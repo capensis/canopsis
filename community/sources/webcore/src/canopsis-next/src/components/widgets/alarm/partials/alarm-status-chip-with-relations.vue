@@ -78,7 +78,7 @@ export default {
       modals.show({
         name: MODALS.entityUpstream,
         config: {
-          entity: { ...entity.value, status: props.alarm.v.status.val },
+          entity: { ...entity.value, status: props.alarm.v.status.val, state: props.alarm.v.state.val },
           title: title.value,
         },
       });
