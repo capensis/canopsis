@@ -49,6 +49,7 @@ Voici une liste des principales variables mises à disposition. De façon géné
     | Champs de dates                             | Valeur                              |
     |:--------------------------------------------|:----------------------------------- |
     | Création de l'alarme                        | `{{ .Alarm.Value.CreationDate }}`   |
+    | Création au format Unix (Epoch)             | `{{ .Alarm.Value.CreationDate.Unix }}`   |
     | Activation de l'alarme                      | `{{ .Alarm.Value.ActivationDate }}` |
     | Dernier changement de sévérité de l'alarme  | `{{ .Alarm.Value.LastUpdateDate }}` |
     | Dernier événement reçu (Voir Option [EnableLastEventDate](../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsisalarm)                                     | `{{ .Alarm.Value.LastEventDate }}`  |
