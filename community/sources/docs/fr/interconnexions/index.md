@@ -93,8 +93,8 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 | **Nom** | **Version Validée(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
 | [AWX](../guide-administration/remediation/index.md#configuration-awx) | 24.6.1 | Pro | Non | Version ≥ 4 (moteurs Go) |
-| [Rundeck](../guide-administration/remediation/index.md#configuration-pour-rundeck) | 5.18.0 | Pro | Non | Version ≥ 4 (moteurs Go) |
-| [Jenkins](../guide-administration/remediation/index.md#configuration-pour-jenkins) | 2.528.3 | Pro | Non | Version ≥ 4 (moteurs Go) |
+| [Rundeck](../guide-administration/remediation/index.md#configuration-pour-rundeck) | 5.13.0 | Pro | Non | Version ≥ 4 (moteurs Go) |
+| [Jenkins](../guide-administration/remediation/index.md#configuration-pour-jenkins) | 2.516.3 | Pro | Non | Version ≥ 4 (moteurs Go) |
 | [VTOM](../guide-administration/remediation/index.md#configuration-visualtom-vtom) | 7.3 | Pro | Non | Version ≥ 4 (moteurs Go) |
 
 
