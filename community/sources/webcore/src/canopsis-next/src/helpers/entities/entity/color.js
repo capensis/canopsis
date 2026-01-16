@@ -45,7 +45,7 @@ export const getEntityColorClass = (
   colorIndicator = COLOR_INDICATOR_TYPES_WITH_STATUS.state,
   withoutPauseColor = false,
 ) => {
-  if (isEntityPauseState(pbehaviorInfo, isGrey) && !withoutPauseColor) {
+  if (!withoutPauseColor && isEntityPauseState(pbehaviorInfo, isGrey)) {
     return 'state-pause';
   }
 

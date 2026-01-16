@@ -24,8 +24,9 @@ import {
   COLOR_INDICATOR_TYPES_WITH_STATUS,
   ENTITY_FIELDS,
   SORT_ORDERS,
-  ALARM_STATUSES,
 } from '@/constants';
+
+import { getColorIndicatorByStatusAndState } from '@/helpers/entities/alarm/formatting';
 
 import { useEntityNetworkGraph } from '@/hooks/charts/entity-network-graph';
 import { useService } from '@/hooks/store/modules/service';
@@ -123,9 +124,7 @@ export default {
             data: {
               ...element.data,
 
-              colorIndicator: entity.status === ALARM_STATUSES.ongoing
-                ? COLOR_INDICATOR_TYPES_WITH_STATUS.state
-                : COLOR_INDICATOR_TYPES_WITH_STATUS.status,
+              colorIndicator: getColorIndicatorByStatusAndState(entity.status),
             },
           };
         }
