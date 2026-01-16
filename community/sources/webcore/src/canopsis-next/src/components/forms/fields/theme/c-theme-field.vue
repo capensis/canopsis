@@ -16,11 +16,12 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { computed, onMounted, ref } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
 
-const { mapActions: mapThemeActions } = createNamespacedHelpers('theme');
+import { useTheme } from '@/hooks/store/modules/theme';
+import { usePendingHandler } from '@/hooks/query/pending';
 
 export default {
   inject: ['$validator'],
@@ -54,40 +55,34 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      pending: false,
-      themes: [],
-    };
-  },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-  },
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    ...mapThemeActions({
-      fetchThemesListWithoutStore: 'fetchListWithoutStore',
-    }),
+  setup(props) {
+    const themes = ref([]);
 
-    async fetchList() {
-      this.pending = true;
+    const { fetchThemesListWithoutStore } = useTheme();
 
+    const rules = computed(() => ({ required: props.required }));
+
+    const fetchListHandler = async () => {
       try {
-        const { data: themes } = await this.fetchThemesListWithoutStore({ params: { limit: MAX_LIMIT } });
+        const { data: themesData } = await fetchThemesListWithoutStore({ params: { limit: MAX_LIMIT } });
 
-        this.themes = themes;
+        themes.value = themesData;
       } catch (err) {
         console.error(err);
-      } finally {
-        this.pending = false;
       }
-    },
+    };
+
+    const { pending, handler: fetchList } = usePendingHandler(fetchListHandler);
+
+    onMounted(() => {
+      fetchList();
+    });
+
+    return {
+      pending,
+      themes,
+      rules,
+    };
   },
 };
 </script>
