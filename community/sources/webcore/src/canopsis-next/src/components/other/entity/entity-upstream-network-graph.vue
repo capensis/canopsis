@@ -9,6 +9,7 @@
     :has-children="hasChildren"
     :on-badge-click="toggleChildren"
     :on-show-more-click="showMore"
+    without-pause-color
   />
 </template>
 
@@ -23,6 +24,7 @@ import {
   COLOR_INDICATOR_TYPES_WITH_STATUS,
   ENTITY_FIELDS,
   SORT_ORDERS,
+  ALARM_STATUSES,
 } from '@/constants';
 
 import { useEntityNetworkGraph } from '@/hooks/charts/entity-network-graph';
@@ -113,6 +115,21 @@ export default {
       const elements = rawEntitiesElements.value;
 
       return elements.map((element) => {
+        if (element.group === 'nodes') {
+          const { entity } = element.data;
+
+          return {
+            ...element,
+            data: {
+              ...element.data,
+
+              colorIndicator: entity.status === ALARM_STATUSES.ongoing
+                ? COLOR_INDICATOR_TYPES_WITH_STATUS.state
+                : COLOR_INDICATOR_TYPES_WITH_STATUS.status,
+            },
+          };
+        }
+
         if (element.group === 'edges' && element.data) {
           const sourceEntity = elements.find(e => e.group === 'nodes' && e.data?.id === element.data.source);
           const targetEntity = elements.find(e => e.group === 'nodes' && e.data?.id === element.data.target);

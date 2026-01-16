@@ -31,6 +31,7 @@ const isEntityPauseState = (pbehaviorInfo, isGrey) => (
  *
  * @param {Service | Entity | {}} [entity = {}]
  * @param {string} [colorIndicator = COLOR_INDICATOR_TYPES_WITH_STATUS.state]
+ * @param {boolean} [withoutPauseColor = false]
  * @returns {string|*}
  */
 export const getEntityColorClass = (
@@ -42,8 +43,9 @@ export const getEntityColorClass = (
     impact_state: impactState,
   } = {},
   colorIndicator = COLOR_INDICATOR_TYPES_WITH_STATUS.state,
+  withoutPauseColor = false,
 ) => {
-  if (isEntityPauseState(pbehaviorInfo, isGrey)) {
+  if (isEntityPauseState(pbehaviorInfo, isGrey) && !withoutPauseColor) {
     return 'state-pause';
   }
 
