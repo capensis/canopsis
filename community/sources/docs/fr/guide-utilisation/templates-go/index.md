@@ -64,6 +64,7 @@ Les variables d'alarme sont accessibles via le préfixe `.Alarm`. Elles contienn
 
 // Dates importantes
 {{ .Alarm.Value.CreationDate }}   // Date de création
+{{ .Alarm.Value.CreationDate.Unix }}   // Date de création au format Unix (Epoch)
 {{ .Alarm.Value.ActivationDate }} // Date d'activation
 {{ .Alarm.Value.LastUpdateDate }} // Date du dernier changement de sévérité
 {{ .Alarm.Value.LastEventDate }}  // Date du dernier événement reçu
