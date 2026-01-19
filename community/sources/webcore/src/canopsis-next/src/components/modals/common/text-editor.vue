@@ -51,6 +51,8 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
+import { normalizeHandlebarsNbsp } from '@/helpers/handlebars/normalize';
+
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
@@ -100,7 +102,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form.text);
+          await this.config.action(normalizeHandlebarsNbsp(this.form.text));
         }
 
         this.$modals.hide();
