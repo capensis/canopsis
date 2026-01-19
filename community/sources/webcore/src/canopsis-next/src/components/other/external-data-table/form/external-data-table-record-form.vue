@@ -7,19 +7,27 @@
       disabled
     />
 
-    <v-text-field
-      v-for="column in externalDataTable.column_configs"
+    <component
+      v-for="component in components"
+      :is="component.is"
       v-validate="'required'"
-      v-field="form[column.name]"
-      :key="column.name"
-      :label="column.name"
-      :name="column.name"
-      :error-messages="errors.collect(column.name)"
+      v-bind="component.bind"
+      :key="component.key"
+      required
+      v-on="component.on"
     />
   </v-layout>
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES } from '@/constants';
+
+import { useValidator } from '@/hooks/validator/validator';
+import { useModelField } from '@/hooks/form/model-field';
+
+import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import ExternalDataTableGeneralInfoForm
   from '@/components/other/external-data-table/form/external-data-table-general-info-form.vue';
 
@@ -39,6 +47,62 @@ export default {
       type: Object,
       default: () => ({}),
     },
+  },
+  setup(props, { emit }) {
+    const { errors } = useValidator();
+    const { updateField } = useModelField(props, emit);
+
+    const componentsMap = {
+      [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.string]: 'v-text-field',
+      [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.boolean]: 'c-enabled-field',
+      [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number]: 'c-number-field',
+      [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray]: 'c-array-text-field',
+      [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.datetime]: DateTimePickerField,
+      [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.timestamp]: DateTimePickerField,
+      [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp]: 'v-text-field',
+    };
+
+    const components = computed(() => (
+      props.externalDataTable.column_configs.map((column) => {
+        const is = componentsMap[column.type];
+        const defaultBind = {
+          name: column.name,
+          label: column.name,
+          errorMessages: errors.collect(column.name),
+          required: true,
+        };
+
+        if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray) {
+          return {
+            is,
+            key: column.name,
+            bind: {
+              ...defaultBind,
+              values: props.form[column.name],
+            },
+            on: {
+              change: value => updateField(column.name, value),
+            },
+          };
+        }
+
+        return {
+          is,
+          key: column.name,
+          bind: {
+            ...defaultBind,
+            value: props.form[column.name],
+          },
+          on: {
+            input: value => updateField(column.name, value),
+          },
+        };
+      })
+    ));
+
+    return {
+      components,
+    };
   },
 };
 </script>
