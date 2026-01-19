@@ -126,7 +126,7 @@ func (c *checker) createEvent() types.Event {
 				LongOutput:                  output,
 				LastUpdateDate:              now,
 				LastStateOrStatusUpdateDate: now,
-				LastEventDate:               now,
+				LastEventDate:               &now,
 				Resource:                    event.Resource,
 			},
 			Healthcheck: true,
