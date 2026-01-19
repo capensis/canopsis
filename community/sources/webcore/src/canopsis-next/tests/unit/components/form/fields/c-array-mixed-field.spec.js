@@ -56,9 +56,9 @@ describe('c-array-text-field', () => {
         values: [mockData.string, mockData.number],
       },
     });
-    const secondFieldElement = wrapper.findAll('v-layout-stub').at(0);
+    const firstFieldElement = wrapper.findAll('v-layout-stub').at(1);
 
-    selectTextField(secondFieldElement).setValue(newFieldValue);
+    selectTextField(firstFieldElement).setValue(newFieldValue);
 
     expect(wrapper).toEmit('change', [newFieldValue, mockData.number]);
   });
@@ -69,7 +69,7 @@ describe('c-array-text-field', () => {
         values: [mockData.string, mockData.number],
       },
     });
-    const secondFieldElement = wrapper.findAll('v-layout-stub').at(1);
+    const secondFieldElement = wrapper.findAll('v-layout-stub').at(2);
 
     secondFieldElement.find('button.c-action-btn').trigger('click');
 
