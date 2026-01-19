@@ -134,13 +134,17 @@ export default {
 
     const stringArrayChip = computed(() => {
       const result = {
-        prefix: isCustomValueTypeSelected.value
-          ? t('externalData.tableColumnDataTypesAdditionalChips.stringArray.separator')
-          : t(`externalData.tableColumnDataTypesAdditionalChips.stringArray.types.${props.value.string_array_type}.text`),
+        prefix: '',
         color: 'grey',
         textColor: 'blue darken-1',
         prefixColorClass: 'grey--text',
       };
+
+      if (isCustomValueTypeSelected.value) {
+        result.prefix = t('externalData.tableColumnDataTypesAdditionalChips.stringArray.separator');
+      } else if (props.value.string_array_type) {
+        result.prefix = t(`externalData.tableColumnDataTypesAdditionalChips.stringArray.types.${props.value.string_array_type}.text`);
+      }
 
       if (validator.errors.has(props.value.name)) {
         result.color = 'error';
