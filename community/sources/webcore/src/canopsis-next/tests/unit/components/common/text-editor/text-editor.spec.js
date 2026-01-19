@@ -12,14 +12,12 @@ const stubs = {
   'variables-menu': true,
 };
 
-const selectEditor = wrapper => wrapper.find('.jodit_wysiwyg');
-const selectEditorImageControl = wrapper => wrapper.find('.jodit_toolbar_btn-image');
-const selectEditorDragAndDropFileInput = wrapper => wrapper.find('.jodit_draganddrop_file_box input');
-const selectEditorImageControlTabs = wrapper => selectEditorImageControl(wrapper)
-  .findAll('.jodit_tabs_buttons a');
+const selectEditor = wrapper => wrapper.find('.jodit-wysiwyg');
+const selectEditorImageControl = wrapper => wrapper.find('.jodit-toolbar-button_image button');
+const selectEditorDragAndDropFileInput = wrapper => wrapper.find('.jodit-drag-and-drop__file-box input');
+const selectEditorImageControlTabs = wrapper => wrapper.findAll('.jodit-tabs__buttons button');
 const selectEditorImageControlUrlTab = wrapper => selectEditorImageControlTabs(wrapper).at(1);
-const selectEditorTabsWrapper = wrapper => selectEditorImageControl(wrapper)
-  .find('.jodit_tabs_wrapper');
+const selectEditorTabsWrapper = wrapper => wrapper.find('.jodit-popup__content');
 const selectEditorImageUrlInput = wrapper => selectEditorTabsWrapper(wrapper)
   .find('input[name="url"]');
 const selectEditorImageTextInput = wrapper => selectEditorTabsWrapper(wrapper)
@@ -27,7 +25,7 @@ const selectEditorImageTextInput = wrapper => selectEditorTabsWrapper(wrapper)
 const selectEditorImageInsetButton = wrapper => selectEditorTabsWrapper(wrapper)
   .findAll('button');
 const selectVariablesMenu = wrapper => wrapper.find('variables-menu-stub');
-const selectVariablesButton = wrapper => wrapper.find('.text-editor__variables-button');
+const selectVariablesButton = wrapper => wrapper.find('.jodit-ui-group__variables button');
 
 describe('text-editor', () => {
   const XMLHttpRequest = mockXMLHttpRequest();
@@ -111,16 +109,15 @@ describe('text-editor', () => {
     const selection = window.getSelection();
 
     range.setStart(editor.element.firstChild, 0);
-    range.setEnd(editor.element.firstChild, initialValue.length);
+    range.setEnd(editor.element.firstChild, 1);
     selection.removeAllRanges();
     selection.addRange(range);
-
     const variablesMenu = selectVariablesMenu(wrapper);
 
     variablesMenu.triggerCustomEvent('input', variable);
 
-    expect(wrapper).toEmitInput(`{{ ${variable} }}`);
-    expect(focusSpy).toBeCalled();
+    expect(wrapper).toEmitInput(`<p>${variable}</p>`);
+    expect(focusSpy).toHaveBeenCalled();
   });
 
   test('Menu showed after trigger variables button', async () => {
@@ -135,6 +132,7 @@ describe('text-editor', () => {
     await flushPromises();
 
     const variablesButton = selectVariablesButton(wrapper);
+
     jest.spyOn(variablesButton.element, 'getBoundingClientRect').mockImplementation(() => ({
       top: 100,
       left: 100,
@@ -161,13 +159,13 @@ describe('text-editor', () => {
 
     await flushPromises();
 
-    const variable = Faker.lorem.word();
+    const variable = `{{ ${Faker.lorem.word()} }}`;
 
     const editor = selectEditor(wrapper);
     const range = document.createRange();
     const selection = window.getSelection();
 
-    range.setStart(editor.element.firstChild, 15);
+    range.setStart(editor.element.firstChild.firstChild, 15);
     selection.removeAllRanges();
     selection.addRange(range);
 
@@ -175,8 +173,10 @@ describe('text-editor', () => {
 
     variablesMenu.triggerCustomEvent('input', variable);
 
-    expect(wrapper).toEmitInput(`Variable: {{ ${variable} }}`);
-    expect(focusSpy).toBeCalled();
+    await flushPromises();
+
+    expect(wrapper.vm.editor.value).toEqual(`<p>Variable: ${variable}</p>`);
+    expect(focusSpy).toHaveBeenCalled();
   });
 
   test('Value changed after trigger variables with selected variable', async () => {
@@ -191,14 +191,14 @@ describe('text-editor', () => {
 
     await flushPromises();
 
-    const variable = Faker.lorem.word();
+    const variable = `{{ ${Faker.lorem.word()} }}`;
 
     const editor = selectEditor(wrapper);
     const range = document.createRange();
     const selection = window.getSelection();
 
-    range.setStart(editor.element.firstChild, initialValue.indexOf('{{'));
-    range.setEnd(editor.element.firstChild, initialValue.indexOf('}}') + 2);
+    range.setStart(editor.element.firstChild.firstChild, initialValue.indexOf('{{'));
+    range.setEnd(editor.element.firstChild.firstChild, initialValue.indexOf('}}') + 2);
     selection.removeAllRanges();
     selection.addRange(range);
 
@@ -206,8 +206,8 @@ describe('text-editor', () => {
 
     variablesMenu.triggerCustomEvent('input', variable);
 
-    expect(wrapper).toEmitInput(`Variable: {{ ${variable} }}`);
-    expect(focusSpy).toBeCalled();
+    expect(wrapper.vm.editor.value).toEqual(`<p>Variable: ${variable}</p>`);
+    expect(focusSpy).toHaveBeenCalled();
   });
 
   test('Image uploaded after trigger image control', async () => {
@@ -222,8 +222,7 @@ describe('text-editor', () => {
 
     const editorImageControl = selectEditorImageControl(wrapper);
 
-    await editorImageControl.trigger('mousedown');
-
+    await editorImageControl.trigger('click');
     const editorDragAndDropFileInput = selectEditorDragAndDropFileInput(wrapper);
     Object.defineProperty(editorDragAndDropFileInput.element, 'files', {
       value: [file],
@@ -232,12 +231,12 @@ describe('text-editor', () => {
 
     await flushPromises();
 
-    expect(XMLHttpRequest.open).toBeCalledWith('POST', `${API_HOST}${API_ROUTES.file}?public=false`, true);
+    expect(XMLHttpRequest.open).toHaveBeenCalledWith('post', `${API_HOST}${API_ROUTES.file}?public=false`, true);
 
     await flushPromises();
     jest.runAllTimers();
 
-    expect(XMLHttpRequest.send).toBeCalledWith(expect.any(FormData));
+    expect(XMLHttpRequest.send).toHaveBeenCalledWith(expect.any(FormData));
 
     const [fileResponse] = filesResponse;
 
@@ -248,10 +247,10 @@ describe('text-editor', () => {
 
     await flushPromises();
 
-    expect(focusSpy).toBeCalled();
+    expect(focusSpy).toHaveBeenCalled();
 
     expect(wrapper).toEmitInput(
-      `<img src="${API_HOST}${API_ROUTES.file}/${fileResponse._id}" style="width: 300px;">`,
+      `<p><img src="${API_HOST}${API_ROUTES.file}/${fileResponse._id}" width="300"></p><p><br></p>`,
     );
     jest.useRealTimers();
   });
@@ -266,7 +265,7 @@ describe('text-editor', () => {
 
     const editorImageControl = selectEditorImageControl(wrapper);
 
-    await editorImageControl.trigger('mousedown');
+    await editorImageControl.trigger('click');
 
     const editorImageControlUrlTab = selectEditorImageControlUrlTab(wrapper);
     editorImageControlUrlTab.trigger('click');
@@ -279,10 +278,10 @@ describe('text-editor', () => {
     editorImageTextInput.setValue(text);
     editorImageInsetButton.trigger('click');
 
-    expect(focusSpy).toBeCalled();
+    expect(focusSpy).toHaveBeenCalled();
 
     expect(wrapper).toEmitInput(
-      `<img src="${url}" alt="${text}" style="width: 300px;">`,
+      `<p><img src="${url}" alt="${text}" width="300"></p><p><br></p>`,
     );
   });
 
@@ -301,7 +300,7 @@ describe('text-editor', () => {
 
     const editorImageControl = selectEditorImageControl(wrapper);
 
-    await editorImageControl.trigger('mousedown');
+    await editorImageControl.trigger('click');
 
     const editorDragAndDropFileInput = selectEditorDragAndDropFileInput(wrapper);
     Object.defineProperty(editorDragAndDropFileInput.element, 'files', {
@@ -311,7 +310,7 @@ describe('text-editor', () => {
 
     await flushPromises();
 
-    expect(XMLHttpRequest.open).not.toBeCalled();
+    expect(XMLHttpRequest.open).not.toHaveBeenCalled();
   });
 
   test('Image not uploaded after trigger paste event', async () => {
@@ -333,12 +332,12 @@ describe('text-editor', () => {
 
     await flushPromises();
 
-    expect(XMLHttpRequest.open).toBeCalledWith('POST', `${API_HOST}${API_ROUTES.file}?public=false`, true);
+    expect(XMLHttpRequest.open).toHaveBeenCalledWith('post', `${API_HOST}${API_ROUTES.file}?public=false`, true);
 
     await flushPromises();
     jest.runAllTimers();
 
-    expect(XMLHttpRequest.send).toBeCalledWith(expect.any(FormData));
+    expect(XMLHttpRequest.send).toHaveBeenCalledWith(expect.any(FormData));
 
     XMLHttpRequest.responseText = JSON.stringify(filesResponse);
     XMLHttpRequest.status = 200;
@@ -347,14 +346,14 @@ describe('text-editor', () => {
 
     await flushPromises();
 
-    expect(focusSpy).toBeCalled();
+    expect(focusSpy).toHaveBeenCalled();
 
     const firstFile = filesResponse[0];
     const secondFile = filesResponse[1];
 
-    const firstEmitData = `<img src="${API_HOST}${API_ROUTES.file}/${firstFile._id}" style="width: 300px;">`;
+    const firstEmitData = `<p><img src="${API_HOST}${API_ROUTES.file}/${firstFile._id}" width="300"></p><p><br></p>`;
 
-    const secondEmitData = `${firstEmitData}<a href="${API_HOST}${API_ROUTES.file}/${secondFile._id}" target="_blank">${secondFile.filename}</a>`;
+    const secondEmitData = `<p><img src="${API_HOST}${API_ROUTES.file}/${firstFile._id}" width="300"><a href="${API_HOST}${API_ROUTES.file}/${secondFile._id}" target="_blank">${secondFile.filename}</a></p><p><br></p>`;
 
     expect(wrapper).toEmitInput(
       firstEmitData,
@@ -399,7 +398,6 @@ describe('text-editor', () => {
         config: {},
         errorMessages: ['Error'],
         maxFileSize: 1,
-        withDefaultVariables: true,
       },
       store,
     });
