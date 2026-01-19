@@ -366,6 +366,12 @@ timescaledb-tune -yes --pg-config=/usr/pgsql-17/bin/pg_config
 echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/17/data/postgresql.conf
 ```
 
+Pour le bon fonctionnement de Canopsis, il est nécessaire que la base de donnée soit configurer sur la timezone `UTC` :
+```sh
+sed -i "s/^#\?timezone.*/timezone = 'UTC'/" /var/lib/pgsql/17/data/postgresql.conf
+sed -i "s/^#\?log_timezone.*/log_timezone = 'UTC'/" /var/lib/pgsql/17/data/postgresql.conf
+```
+
 Activer et démarrer le service :
 
 ```sh
@@ -547,7 +553,7 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 !!! Warning
     Si votre mot de passe MongoDB contient des caractères spéciaux (par exemple `@`, `+`, `/`, `%`), vous devez les encoder avant de les utiliser dans l’URL de connexion.
     
-    Consultez la section [Limitations sur les caractères spéciaux dans l’URL MongoDB](../../../guide-utilisation/limitations/#limitation-des-caracteres-speciaux-dans-lurl-mongodb) pour plus de détails.
+    Consultez la section [Limitations sur les caractères spéciaux dans l’URL MongoDB](../../guide-utilisation/limitations/index.md#limitation-des-caracteres-speciaux-dans-lurl-mongodb) pour plus de détails.
 
 Le fichier de configuration est `/opt/canopsis/etc/go-engines-vars.conf`, qui
 est normalement dans l'état suivant :
@@ -610,6 +616,7 @@ l'édition choisie.
                            canopsis-engine-go@engine-pbehavior.service \
                            canopsis-engine-go@engine-remediation.service \
                            canopsis-engine-go@engine-webhook.service \
+                           canopsis-engine-go@engine-events-recorder.service \
                            canopsis-service@canopsis-api.service \
                            canopsis-engine-python-snmp.service \
                            canopsis.service

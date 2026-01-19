@@ -129,7 +129,7 @@ export default {
         refresh: this.refresh,
       };
 
-      if (this.activeTab !== REMEDIATION_TABS.statistics) {
+      if (![REMEDIATION_TABS.statistics, REMEDIATION_TABS.instructionStats].includes(this.activeTab)) {
         listeners.create = this.create;
       }
 

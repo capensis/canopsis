@@ -207,10 +207,13 @@ func (s *baseService) applyRules(
 					return nil, fmt.Errorf("cannot fetch alarm: %w", err)
 				}
 
-				// If some rule has already been applied on entity.
-				if lastAlarm != nil && !lastAlarm.IsResolved() &&
-					lastAlarm.Value.Status.Value == types.AlarmStatusNoEvents {
-					return nil, nil
+				if lastAlarm != nil && !lastAlarm.IsResolved() {
+					switch lastAlarm.Value.Status.Value {
+					case types.AlarmStatusNoEvents, types.AlarmStatusCancelled, types.AlarmStatusUnknown:
+						return nil, nil
+					default:
+						// do nothing
+					}
 				}
 			}
 
@@ -331,7 +334,7 @@ func (s *baseService) applyEntityRule(
 
 	event.EventType = types.EventTypeNoEvents
 	event.Timestamp = datetime.NewCpsTime()
-	event.State = types.AlarmStateCritical
+	event.State = types.AlarmStateForNoEvents
 	event.Output = s.getEventOutput(rule)
 	event.IdleRuleApply = rule.Type
 
