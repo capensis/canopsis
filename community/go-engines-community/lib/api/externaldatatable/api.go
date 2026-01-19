@@ -246,6 +246,7 @@ func (a *api) Import(c *gin.Context) {
 }
 
 // Preview
+// @Param body body PreviewRequest true "body"
 // @Success 200 {array} ImportJob
 func (a *api) Preview(c *gin.Context) {
 	id := c.Param("id")
