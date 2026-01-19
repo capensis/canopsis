@@ -96,7 +96,7 @@ DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
 define DOCKER_BUILD_ARGS
 --platform linux/amd64 \
---build-arg "NODE_VERSION=$(NODE_VERSION)-buster-slim" \
+--build-arg "NODE_VERSION=$(NODE_VERSION)-bullseye-slim" \
 --build-arg "NGINX_VERSION=$(NGINX_VERSION)"
 endef
 
