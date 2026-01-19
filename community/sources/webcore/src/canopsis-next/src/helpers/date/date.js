@@ -79,9 +79,10 @@ export const getDiffBetweenDates = (left, right, unit = TIME_UNITS.second) => co
  * Getting a now timestamp
  *
  * @param {LocalDate} [date]
+ * @param {string} [format]
  * @return {number}
  */
-export const convertDateToTimestamp = date => convertDateToMoment(date).unix();
+export const convertDateToTimestamp = (date, format) => convertDateToMoment(date, format).unix();
 
 /**
  * Getting a now timestamp

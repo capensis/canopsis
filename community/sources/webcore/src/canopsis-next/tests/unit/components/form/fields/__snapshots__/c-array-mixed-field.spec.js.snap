@@ -1,48 +1,47 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`c-array-text-field Renders \`c-array-text-field\` with all field types correctly 1`] = `
-<div>
+<div
+  class="layout column"
+>
+  <!---->
   <div
     class="layout align-center"
   >
     <div
-      class="flex"
+      class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
-        class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
+        class="v-input__control"
       >
         <div
-          class="v-input__control"
+          class="v-input__slot"
         >
           <div
-            class="v-input__slot"
+            class="v-text-field__slot"
           >
-            <div
-              class="v-text-field__slot"
+            <label
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
             >
-              <label
-                class="v-label v-label--active theme--light"
-                style="left: 0px; position: absolute;"
-              >
-                Value
-              </label>
-              <input
-                type="text"
-              />
-            </div>
+              Value
+            </label>
+            <input
+              type="text"
+            />
           </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
           <div
-            class="v-text-field__details"
+            class="v-messages theme--light"
           >
-            <div
-              class="v-messages theme--light"
-            >
-              <transition-group-stub
-                class="v-messages__wrapper"
-                name="message-transition"
-                tag="div"
-              />
-            </div>
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
           </div>
         </div>
       </div>
@@ -55,43 +54,39 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
     class="layout align-center"
   >
     <div
-      class="flex"
+      class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
-        class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
+        class="v-input__control"
       >
         <div
-          class="v-input__control"
+          class="v-input__slot"
         >
           <div
-            class="v-input__slot"
+            class="v-text-field__slot"
           >
-            <div
-              class="v-text-field__slot"
+            <label
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
             >
-              <label
-                class="v-label v-label--active theme--light"
-                style="left: 0px; position: absolute;"
-              >
-                Value
-              </label>
-              <input
-                type="text"
-              />
-            </div>
+              Value
+            </label>
+            <input
+              type="text"
+            />
           </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
           <div
-            class="v-text-field__details"
+            class="v-messages theme--light"
           >
-            <div
-              class="v-messages theme--light"
-            >
-              <transition-group-stub
-                class="v-messages__wrapper"
-                name="message-transition"
-                tag="div"
-              />
-            </div>
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
           </div>
         </div>
       </div>
@@ -104,43 +99,39 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
     class="layout align-center"
   >
     <div
-      class="flex"
+      class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
-        class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
+        class="v-input__control"
       >
         <div
-          class="v-input__control"
+          class="v-input__slot"
         >
           <div
-            class="v-input__slot"
+            class="v-text-field__slot"
           >
-            <div
-              class="v-text-field__slot"
+            <label
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
             >
-              <label
-                class="v-label v-label--active theme--light"
-                style="left: 0px; position: absolute;"
-              >
-                Value
-              </label>
-              <input
-                type="text"
-              />
-            </div>
+              Value
+            </label>
+            <input
+              type="text"
+            />
           </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
           <div
-            class="v-text-field__details"
+            class="v-messages theme--light"
           >
-            <div
-              class="v-messages theme--light"
-            >
-              <transition-group-stub
-                class="v-messages__wrapper"
-                name="message-transition"
-                tag="div"
-              />
-            </div>
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
           </div>
         </div>
       </div>
@@ -153,43 +144,39 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
     class="layout align-center"
   >
     <div
-      class="flex"
+      class="v-input theme--light v-text-field"
     >
       <div
-        class="v-input theme--light v-text-field"
+        class="v-input__control"
       >
         <div
-          class="v-input__control"
+          class="v-input__slot"
         >
           <div
-            class="v-input__slot"
+            class="v-text-field__slot"
           >
-            <div
-              class="v-text-field__slot"
+            <label
+              class="v-label theme--light"
+              style="left: 0px; position: absolute;"
             >
-              <label
-                class="v-label theme--light"
-                style="left: 0px; position: absolute;"
-              >
-                Value
-              </label>
-              <input
-                type="text"
-              />
-            </div>
+              Value
+            </label>
+            <input
+              type="text"
+            />
           </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
           <div
-            class="v-text-field__details"
+            class="v-messages theme--light"
           >
-            <div
-              class="v-messages theme--light"
-            >
-              <transition-group-stub
-                class="v-messages__wrapper"
-                name="message-transition"
-                tag="div"
-              />
-            </div>
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
           </div>
         </div>
       </div>
@@ -207,21 +194,28 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
       tag="div"
     />
   </div>
-  <button
-    class="v-btn-legacy-m--y v-btn v-btn--outlined theme--light v-size--default primary--text"
-    type="button"
+  <div
+    class="flex"
   >
-    <span
-      class="v-btn__content"
+    <button
+      class="v-btn v-btn--outlined theme--light v-size--default primary--text"
+      type="button"
     >
-    Add
-    </span>
-  </button>
+      <span
+        class="v-btn__content"
+      >
+      Add
+      </span>
+    </button>
+  </div>
 </div>
 `;
 
 exports[`c-array-text-field Renders \`c-array-text-field\` with default props correctly 1`] = `
-<div>
+<div
+  class="layout column"
+>
+  <!---->
   <div
     class="v-messages theme--light error--text"
   >
@@ -231,63 +225,66 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with default props co
       tag="div"
     />
   </div>
-  <button
-    class="v-btn-legacy-m--y v-btn v-btn--outlined theme--light v-size--default primary--text"
-    type="button"
+  <div
+    class="flex"
   >
-    <span
-      class="v-btn__content"
+    <button
+      class="v-btn v-btn--outlined theme--light v-size--default primary--text"
+      type="button"
     >
-    Add
-    </span>
-  </button>
+      <span
+        class="v-btn__content"
+      >
+      Add
+      </span>
+    </button>
+  </div>
 </div>
 `;
 
 exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`] = `
-<div>
+<div
+  class="layout column"
+>
+  <!---->
   <div
     class="layout align-center"
   >
     <div
-      class="flex"
+      class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field"
     >
       <div
-        class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field"
+        class="v-input__control"
       >
         <div
-          class="v-input__control"
+          class="v-input__slot"
         >
           <div
-            class="v-input__slot"
+            class="v-text-field__slot"
           >
-            <div
-              class="v-text-field__slot"
+            <label
+              class="v-label v-label--active v-label--is-disabled theme--light"
+              style="left: 0px; position: absolute;"
             >
-              <label
-                class="v-label v-label--active v-label--is-disabled theme--light"
-                style="left: 0px; position: absolute;"
-              >
-                Value
-              </label>
-              <input
-                disabled="disabled"
-                type="text"
-              />
-            </div>
+              Value
+            </label>
+            <input
+              disabled="disabled"
+              type="text"
+            />
           </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
           <div
-            class="v-text-field__details"
+            class="v-messages theme--light"
           >
-            <div
-              class="v-messages theme--light"
-            >
-              <transition-group-stub
-                class="v-messages__wrapper"
-                name="message-transition"
-                tag="div"
-              />
-            </div>
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
           </div>
         </div>
       </div>
@@ -298,44 +295,40 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
     class="layout align-center"
   >
     <div
-      class="flex"
+      class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field"
     >
       <div
-        class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field"
+        class="v-input__control"
       >
         <div
-          class="v-input__control"
+          class="v-input__slot"
         >
           <div
-            class="v-input__slot"
+            class="v-text-field__slot"
           >
-            <div
-              class="v-text-field__slot"
+            <label
+              class="v-label v-label--active v-label--is-disabled theme--light"
+              style="left: 0px; position: absolute;"
             >
-              <label
-                class="v-label v-label--active v-label--is-disabled theme--light"
-                style="left: 0px; position: absolute;"
-              >
-                Value
-              </label>
-              <input
-                disabled="disabled"
-                type="text"
-              />
-            </div>
+              Value
+            </label>
+            <input
+              disabled="disabled"
+              type="text"
+            />
           </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
           <div
-            class="v-text-field__details"
+            class="v-messages theme--light"
           >
-            <div
-              class="v-messages theme--light"
-            >
-              <transition-group-stub
-                class="v-messages__wrapper"
-                name="message-transition"
-                tag="div"
-              />
-            </div>
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
           </div>
         </div>
       </div>
@@ -351,16 +344,20 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
       tag="div"
     />
   </div>
-  <button
-    class="v-btn-legacy-m--y v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
-    disabled="disabled"
-    type="button"
+  <div
+    class="flex"
   >
-    <span
-      class="v-btn__content"
+    <button
+      class="v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
+      disabled="disabled"
+      type="button"
     >
-    Add
-    </span>
-  </button>
+      <span
+        class="v-btn__content"
+      >
+      Add
+      </span>
+    </button>
+  </div>
 </div>
 `;
