@@ -193,6 +193,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 				types.LocaleFr: "{0} doit être un modèle de météo de service valide",
 			},
 		},
+		"search_pattern": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a valid search pattern",
+				types.LocaleFr: "{0} doit être un modèle de recherche valide",
+			},
+		},
 		"id": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} cannot contain '" + invalidIDChars + "'",

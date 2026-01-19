@@ -337,10 +337,11 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (sta
 		return model, err
 	}
 
-	aliases, err := s.transformer.FetchAliases(ctx, append(
+	patternAliases := append(
 		patternfields.GetAliases(r.EntityPattern),
 		patternfields.GetAliases(r.InheritedEntityPattern)...,
-	))
+	)
+	aliases, err := s.transformer.FetchAliases(ctx, patternAliases)
 	if err != nil {
 		return model, err
 	}
@@ -350,7 +351,7 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (sta
 	var valErrs, applyErrs validator.ValidationErrors
 	if r.CorporateEntityPattern != "" {
 		r.EntityRequest, applyAliasPropIDs, applyErrs = s.transformer.ApplyEntityCorporatePattern(r.EntityRequest, patterns)
-	} else if r.EntityPattern != nil {
+	} else if r.EntityPattern != nil && len(patternAliases) != 0 {
 		r.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(r.EntityPattern, aliases)
 	}
 
@@ -365,7 +366,7 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (sta
 	}
 	if r.CorporateInheritedEntityPattern != "" {
 		inheritedEntityRequest, applyAliasPropIDs, applyErrs = s.transformer.ApplyEntityCorporatePattern(inheritedEntityRequest, patterns, "CorporateInheritedEntityPattern")
-	} else if r.InheritedEntityPattern != nil {
+	} else if r.InheritedEntityPattern != nil && len(patternAliases) != 0 {
 		inheritedEntityRequest.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(inheritedEntityRequest.EntityPattern, aliases, "InheritedEntityPattern")
 	}
 
