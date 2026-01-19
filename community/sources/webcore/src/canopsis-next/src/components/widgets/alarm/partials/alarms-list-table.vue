@@ -224,7 +224,7 @@ import { widgetRowsSelectingAlarmMixin } from '@/mixins/widget/rows/alarm-select
 import { widgetColumnResizingAlarmMixin } from '@/mixins/widget/columns/alarm-resizing';
 import { widgetColumnDraggingAlarmMixin } from '@/mixins/widget/columns/alarm-dragging';
 import { widgetHeaderStickyAlarmMixin } from '@/mixins/widget/rows/alarm-sticky-header';
-import { alarmHandlebarsTagsHelper } from '@/mixins/widget/handlebars/alarm-tags-helper';
+import { handlebarsTagsHelperMixin } from '@/mixins/widget/handlebars/tags-helper';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
@@ -257,7 +257,7 @@ export default {
     widgetRowsSelectingAlarmMixin,
     widgetColumnResizingAlarmMixin,
     widgetColumnDraggingAlarmMixin,
-    alarmHandlebarsTagsHelper,
+    handlebarsTagsHelperMixin,
 
     ...featuresService.get('components.alarmListTable.mixins', []),
   ],
