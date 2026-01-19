@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
 	"regexp"
 	"sort"
 	"strconv"
@@ -23,7 +22,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -427,68 +425,40 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	q.excludedFields = append(q.excludedFields, "resolved_parents", "resolved_meta_alarm_rules")
 
 	if search != "" {
-		p := parser.NewParser()
-		expr, err := p.Parse(search, nil)
-		if err == nil {
-			query := expr.MongoExprQuery()
-			resolvedQuery, ok := q.resolveAliasesInQuery(query).(bson.M)
-			if !ok {
-				return nil, ErrUnknownQuery
+		filteredSearchBy := make([]string, 0, len(searchBy))
+		for _, f := range searchBy {
+			if _, ok := q.availableSearchByFields[f]; ok {
+				filteredSearchBy = append(filteredSearchBy, f)
+				continue
 			}
 
-			b, err := json.Marshal(resolvedQuery)
-			if err != nil {
-				return nil, fmt.Errorf("cannot marshal search expression: %w", err)
-			}
-
-			resolvedSearch := string(b)
-			for field := range q.computedFields {
-				if strings.Contains(resolvedSearch, field) {
-					q.computedFieldsForAlarmMatch[field] = true
-				}
-			}
-
-			q.computedFields["filtered"] = bson.M{"$cond": bson.M{
-				"if":   resolvedQuery,
-				"then": true,
-				"else": false,
-			}}
-		} else {
-			filteredSearchBy := make([]string, 0, len(searchBy))
-			for _, f := range searchBy {
-				if _, ok := q.availableSearchByFields[f]; ok {
-					filteredSearchBy = append(filteredSearchBy, f)
+			if _, ok := q.availableSearchByEntityFields[f]; ok || strings.HasPrefix(f, entityInfosRequestPrefix) {
+				if v, ok := q.entityFieldToDbField(f); ok {
+					filteredSearchBy = append(filteredSearchBy, v)
 					continue
 				}
 
-				if _, ok := q.availableSearchByEntityFields[f]; ok || strings.HasPrefix(f, entityInfosRequestPrefix) {
-					if v, ok := q.entityFieldToDbField(f); ok {
-						filteredSearchBy = append(filteredSearchBy, v)
-						continue
-					}
-
-					return nil, fmt.Errorf("unknown entity field %q", f)
-				}
+				return nil, fmt.Errorf("unknown entity field %q", f)
 			}
+		}
 
-			if len(filteredSearchBy) == 0 {
-				filteredSearchBy = q.defaultSearchByFields
-			}
-			searchMatch := make([]bson.M, len(filteredSearchBy))
-			for i := range filteredSearchBy {
-				searchMatch[i] = bson.M{"$regexMatch": bson.M{
-					"input":   "$" + filteredSearchBy[i],
-					"regex":   fmt.Sprintf(".*%s.*", search),
-					"options": "i",
-				}}
-			}
-
-			q.computedFields["filtered"] = bson.M{"$cond": bson.M{
-				"if":   bson.M{"$or": searchMatch},
-				"then": true,
-				"else": false,
+		if len(filteredSearchBy) == 0 {
+			filteredSearchBy = q.defaultSearchByFields
+		}
+		searchMatch := make([]bson.M, len(filteredSearchBy))
+		for i := range filteredSearchBy {
+			searchMatch[i] = bson.M{"$regexMatch": bson.M{
+				"input":   "$" + filteredSearchBy[i],
+				"regex":   fmt.Sprintf(".*%s.*", search),
+				"options": "i",
 			}}
 		}
+
+		q.computedFields["filtered"] = bson.M{"$cond": bson.M{
+			"if":   bson.M{"$or": searchMatch},
+			"then": true,
+			"else": false,
+		}}
 	}
 
 	err := q.handleSort(r.SortRequest)
@@ -757,23 +727,26 @@ func (q *MongoQueryBuilder) handlePatterns(ctx context.Context, r FilterRequest)
 			return validation.NewSingleError("entity_pattern", "EntityPattern", "EntityPattern", r)
 		}
 
-		aliases, err := q.transformer.FetchAliases(ctx, patternfields.GetAliases(entityPattern))
-		if err != nil {
-			return err
-		}
-
-		var valErrs validator.ValidationErrors
-		entityPattern, _, valErrs = q.transformer.ApplyAliases(entityPattern, aliases)
-		if len(valErrs) > 0 {
-			// use anonymous struct to correctly transform validation error namespace
-			// because r.EntityPattern has string type
-			validatedStruct := struct {
-				EntityPattern pattern.Entity `json:"entity_pattern"`
-			}{
-				EntityPattern: entityPattern,
+		patternAliases := patternfields.GetAliases(entityPattern)
+		if len(patternAliases) != 0 {
+			aliases, err := q.transformer.FetchAliases(ctx, patternAliases)
+			if err != nil {
+				return err
 			}
 
-			return validation.NewError(valErrs, validatedStruct)
+			var valErrs validator.ValidationErrors
+			entityPattern, _, valErrs = q.transformer.ApplyAliases(entityPattern, aliases)
+			if len(valErrs) > 0 {
+				// use anonymous struct to correctly transform validation error namespace
+				// because r.EntityPattern has string type
+				validatedStruct := struct {
+					EntityPattern pattern.Entity `json:"entity_pattern"`
+				}{
+					EntityPattern: entityPattern,
+				}
+
+				return validation.NewError(valErrs, validatedStruct)
+			}
 		}
 
 		err = q.handleEntityPattern(entityPattern)
@@ -839,38 +812,6 @@ func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) er
 func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, error) {
 	if r.Search == "" {
 		return nil, false, nil
-	}
-
-	p := parser.NewParser()
-	expr, err := p.Parse(r.Search, nil)
-	if err == nil {
-		query := expr.MongoQuery()
-		resolvedQuery, ok := q.resolveAliasesInQuery(query).(bson.M)
-		if !ok {
-			return nil, false, ErrUnknownQuery
-		}
-
-		b, err := json.Marshal(resolvedQuery)
-		if err != nil {
-			return nil, false, fmt.Errorf("cannot marshal search expression: %w", err)
-		}
-		resolvedSearch := string(b)
-		extraLookups := false
-
-		for _, lookup := range q.lookups {
-			if strings.Contains(resolvedSearch, lookup.key+".") {
-				extraLookups = true
-				q.addLookupForAdditionalMatch(lookup.key)
-			}
-		}
-
-		for field := range q.computedFields {
-			if strings.Contains(resolvedSearch, field) {
-				q.computedFieldsForAlarmMatch[field] = true
-			}
-		}
-
-		return resolvedQuery, extraLookups, nil
 	}
 
 	searchRegexp := bson.Regex{
@@ -1239,80 +1180,6 @@ func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {
 	}
 }
 
-func (q *MongoQueryBuilder) resolveAliasesInQuery(query any) any {
-	res := query
-	val := reflect.ValueOf(res)
-
-	switch val.Kind() {
-	case reflect.Array, reflect.Slice:
-		for i := 0; i < val.Len(); i++ {
-			newVal := q.resolveAliasesInQuery(val.Index(i).Interface())
-			val.Index(i).Set(reflect.ValueOf(newVal))
-		}
-	case reflect.Map:
-		for _, key := range val.MapKeys() {
-			subquery := val.MapIndex(key).Interface()
-			switch key.String() {
-			case "$ne", "$eq", "$gt", "$gte", "$lt", "$lte", "$in", "$nin":
-				// subquery hasn't contain expression with alias and should remain as is
-			default:
-				newKey := q.resolveAlias(key.String())
-				newVal := q.resolveAliasesInQuery(subquery)
-
-				var mapVal reflect.Value
-				if newVal == nil {
-					mapVal = reflect.ValueOf(&newVal).Elem()
-				} else {
-					mapVal = reflect.ValueOf(newVal)
-				}
-
-				val.SetMapIndex(key, reflect.Value{})
-				val.SetMapIndex(reflect.ValueOf(newKey), mapVal)
-			}
-		}
-	case reflect.String:
-		if s, ok := val.Interface().(string); ok {
-			return q.resolveAlias(s)
-		}
-	}
-
-	return res
-}
-
-func (q *MongoQueryBuilder) resolveAlias(v string) string {
-	if v == "" {
-		return v
-	}
-
-	prefix := ""
-	if v[0] == '$' {
-		v = v[1:]
-		prefix = "$"
-	}
-
-	for alias, field := range q.fieldsAliases {
-		if alias == v {
-			return prefix + field
-		}
-	}
-
-	for expr, repl := range q.fieldsAliasesByRegex {
-		r, err := regexp.Compile(expr)
-		if err == nil {
-			replace := r.ReplaceAllString(v, repl)
-			if v != replace {
-				return prefix + replace
-			}
-		}
-	}
-
-	if ev, ok := q.entityFieldToDbField(v); ok {
-		return prefix + ev
-	}
-
-	return prefix + v
-}
-
 func (q *MongoQueryBuilder) handleOpened(opened int) {
 	alarmMatch := make([]bson.M, 0)
 	entityMatch := make([]bson.M, 0)
@@ -1334,7 +1201,7 @@ func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
 	}
 }
 
-func (q *MongoQueryBuilder) addLookupForAdditionalMatch(key string) {
+func (q *MongoQueryBuilder) addLookupForAdditionalMatch(key string) { // nolint:unparam
 	if key == entityDbPrefix {
 		if types.NeedEntityLookup(q.alarmCollectionName) {
 			q.lookupsForAdditionalMatch[entityDbPrefix] = true
@@ -1423,7 +1290,7 @@ func getPbehaviorTypeLookup() []bson.M {
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
 			"foreignField": "_id",
-			"localField":   "pbehavior.type_",
+			"localField":   "pbehavior.type",
 			"as":           "pbehavior.type",
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior.type", "preserveNullAndEmptyArrays": true}},

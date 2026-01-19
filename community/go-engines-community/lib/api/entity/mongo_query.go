@@ -16,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -108,7 +107,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleEntityPattern(ctx, r.ListRequest)
+	err = q.handleSearchPattern(ctx, r.ListRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -136,6 +135,7 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	paginationQuery pagination.Query,
 	sortRequest SortRequest,
 	category, search string,
+	searchPatternQuery bson.M,
 	withFlags bool,
 	withStateDependsCount bool,
 	now datetime.CpsTime,
@@ -148,6 +148,10 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 
 	if search != "" {
 		and = append(and, mongoquery.GetSearchQuery(search, q.defaultSearchByFields))
+	}
+
+	if searchPatternQuery != nil {
+		and = append(and, searchPatternQuery)
 	}
 
 	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{"$and": and}})
@@ -384,43 +388,54 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 	return nil
 }
 
-func (q *MongoQueryBuilder) handleEntityPattern(ctx context.Context, r ListRequest) error {
-	if r.EntityPattern == "" {
+func (q *MongoQueryBuilder) handleSearchPattern(ctx context.Context, r ListRequest) error {
+	if r.SearchPattern == "" {
 		return nil
 	}
 
-	var entityPattern pattern.Entity
-	err := json.Unmarshal([]byte(r.EntityPattern), &entityPattern)
+	var p searchPattern
+	err := json.Unmarshal([]byte(r.SearchPattern), &p)
 	if err != nil {
-		return validation.NewSingleError("entity_pattern", "EntityPattern", "EntityPattern", r)
+		return validation.NewSingleError("search_pattern", "SearchPattern", "SearchPattern", r)
 	}
 
-	aliases, err := q.transformer.FetchAliases(ctx, patternfields.GetAliases(entityPattern))
-	if err != nil {
-		return err
-	}
-
-	var valErrs validator.ValidationErrors
-	entityPattern, _, valErrs = q.transformer.ApplyAliases(entityPattern, aliases)
-	if len(valErrs) > 0 {
-		// use anonymous struct to correctly transform validation error namespace
-		// because r.EntityPattern has string type
-		validatedStruct := struct {
-			EntityPattern pattern.Entity `json:"entity_pattern"`
-		}{
-			EntityPattern: entityPattern,
+	patternAliases := patternfields.GetAliases(p)
+	if len(patternAliases) != 0 {
+		aliases, err := q.transformer.FetchAliases(ctx, patternAliases)
+		if err != nil {
+			return err
 		}
 
-		return validation.NewError(valErrs, validatedStruct)
+		var valErrs validator.ValidationErrors
+		p, _, valErrs = q.transformer.ApplyAliases(p, aliases, "SearchPattern")
+		if len(valErrs) > 0 {
+			// use anonymous struct to correctly transform validation error namespace
+			// because r.SearchPattern has string type
+			validatedStruct := struct {
+				SearchPattern searchPattern `json:"search_pattern"`
+			}{
+				SearchPattern: p,
+			}
+
+			return validation.NewError(valErrs, validatedStruct)
+		}
 	}
 
-	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, "")
+	searchPatternQuery, additionalMatchLookups, additionalMatchCompFields, err := p.ToMongoQuery()
 	if err != nil {
-		return validation.NewSingleError("entity_pattern", "EntityPattern", "EntityPattern", r)
+		return validation.NewSingleError("search_pattern", "SearchPattern", "SearchPattern", r)
 	}
 
-	if len(entityPatternQuery) > 0 {
-		q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
+	for k := range additionalMatchLookups {
+		q.lookupsForAdditionalMatch[k] = true
+	}
+
+	for k := range additionalMatchCompFields {
+		q.computedFieldsForAdditionalMatch[k] = true
+	}
+
+	if len(searchPatternQuery) > 0 {
+		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": searchPatternQuery})
 	}
 
 	return nil
