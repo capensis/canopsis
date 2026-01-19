@@ -7,8 +7,9 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -42,6 +43,7 @@ func NewStore(
 		authorProvider:        authorProvider,
 		defaultSortBy:         "_id",
 		defaultSearchByFields: []string{"_id", "message"},
+		dupErrorParser:        validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -53,11 +55,11 @@ type store struct {
 	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
+	dupErrorParser        validation.DuplicateErrorParser
 }
 
 func (s store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
-
 	r.ID = cmp.Or(r.ID, utils.NewID())
 	r.Created = &now
 	r.Updated = &now
@@ -69,10 +71,15 @@ func (s store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 
 		_, err := s.dbCollection.InsertOne(ctx, r)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, r)
+			}
+
 			return err
 		}
 
 		resp, err = s.GetByID(ctx, r.ID)
+
 		return err
 	})
 	if err != nil {
@@ -107,7 +114,7 @@ func (s store) GetByID(ctx context.Context, id string) (*Response, error) {
 
 func (s store) Find(ctx context.Context, query ListRequest) (*AggregationResult, error) {
 	pipeline := make([]bson.M, 0)
-	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -117,7 +124,7 @@ func (s store) Find(ctx context.Context, query ListRequest) (*AggregationResult,
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort),
+		mongoquery.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort),
 	))
 
 	if err != nil {
