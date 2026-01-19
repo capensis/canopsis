@@ -158,7 +158,6 @@
           :label="$t('userInterface.description')"
           :config="textEditorConfig"
           :variables="variables"
-          :max-file-size="123"
           public
         />
       </v-flex>
