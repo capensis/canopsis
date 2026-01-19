@@ -381,6 +381,7 @@ export default {
 
     getItemsProps(state) {
       return {
+        index: state.index,
         item: state.item,
         selected: state.selected,
         disabled: this.isDisabledItem(state.item),
