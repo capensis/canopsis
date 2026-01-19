@@ -6607,7 +6607,7 @@ paths:
       description: |
         Create external data import job.
         
-        -  PERMISSIONS: `api_external_data_table:create`
+        -  PERMISSIONS: `api_external_data_table:update`
       operationId: externaldataimport-create
       parameters:
         - name: id
@@ -6650,15 +6650,153 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-import/{id}/preview:
+    put:
+      tags:
+        - externaldata
+      summary: Preview external data import job with column configuration
+      description: |
+        Preview the imported data with the specified column configuration.
+        This allows validating and converting column types before completing the import.
+        
+        -  PERMISSIONS: `api_external_data_table:update`
+      operationId: externaldataimport-preview
+      parameters:
+        - name: id
+          in: path
+          description: external data import job id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.PreviewRequest'
+            examples:
+              simple_string_columns:
+                summary: Preview with string columns
+                description: Simple preview with all columns as strings
+                value: {
+                  "column_configs": [
+                    {
+                      "name": "host",
+                      "type": 1
+                    },
+                    {
+                      "name": "service",
+                      "type": 1
+                    },
+                    {
+                      "name": "oncall",
+                      "type": 1
+                    },
+                    {
+                      "name": "team",
+                      "type": 1
+                    }
+                  ]
+                }
+              mixed_types:
+                summary: Preview with mixed column types
+                description: Preview with various column types including boolean, number with thousands separator, string array, datetime and timestamp
+                value: {
+                  "column_configs": [
+                    {
+                      "name": "string",
+                      "type": 1
+                    },
+                    {
+                      "name": "bool",
+                      "type": 2
+                    },
+                    {
+                      "name": "number",
+                      "type": 3,
+                      "thousands_separator": "space"
+                    },
+                    {
+                      "name": "string_array",
+                      "type": 4,
+                      "string_array_type": 1
+                    },
+                    {
+                      "name": "datetime",
+                      "type": 5
+                    },
+                    {
+                      "name": "timestamp",
+                      "type": 6
+                    }
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ImportJob'
+              examples:
+                preview_succeeded:
+                  summary: Preview succeeded
+                  value: {
+                    "_id": "df0cfeec-fa53-4136-8b2c-77fb10398d72",
+                    "status": 4,
+                    "column_configs": [
+                      {
+                        "name": "host",
+                        "type": 1
+                      },
+                      {
+                        "name": "service",
+                        "type": 1
+                      }
+                    ]
+                  }
+                preview_failed:
+                  summary: Preview failed with validation errors
+                  value: {
+                    "_id": "df0cfeec-fa53-4136-8b2c-77fb10398d72",
+                    "status": 5,
+                    "fail_reason": "preview failed",
+                    "column_configs": [
+                      {
+                        "name": "number",
+                        "type": 3
+                      }
+                    ],
+                    "error_info": {
+                      "number": {
+                        "rows": [0, 2],
+                        "messages": ["string is not a valid number"]
+                      }
+                    }
+                  }
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /external-data-import/{id}/complete:
     put:
       tags:
         - externaldata
       summary: Complete external data import job
       description: |
-        Complete external data import job.
+        Complete the external data import job and persist the data to the external data table.
+        This should be called after a successful preview (status 4).
         
-        -  PERMISSIONS: `api_external_data_table:create`
+        -  PERMISSIONS: `api_external_data_table:update`
       operationId: externaldataimport-complete
       parameters:
         - name: id
@@ -6674,28 +6812,62 @@ paths:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ImportCompleteRequest'
             examples:
-              complete:
-                summary: Complete import job
-                description: Complete import job
+              complete_with_tags:
+                summary: Complete import with column tags
+                description: Complete import job with column tags specifying identifier and info columns
                 value: {
-                  "column_types": [
-                    0,
+                  "column_tags": [
                     1,
                     1,
-                    2
+                    2,
+                    0
                   ]
                 }
+              complete_all_no_tags:
+                summary: Complete import with no tags
+                description: Complete import job with all columns having no tags
+                value: {
+                  "column_tags": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                }
+        required: true
       responses:
         204:
-          description: OK
+          description: No Content - Import completed successfully
         400:
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+              examples:
+                missing_column_tags:
+                  summary: Missing column_tags
+                  value: {
+                    "errors": {
+                      "column_tags": "ColumnTags is missing."
+                    }
+                  }
+                wrong_count:
+                  summary: Wrong number of column tags
+                  value: {
+                    "errors": {
+                      "column_tags": "ColumnTags must contain 4 items."
+                    }
+                  }
+                invalid_tag_value:
+                  summary: Invalid tag value
+                  value: {
+                    "errors": {
+                      "column_tags.0": "ColumnTags[0] must be one of [0 1 2]."
+                    }
+                  }
         404:
-          description: Not Found
+          description: Not Found - Job not found or preview not completed
           content:
             application/json:
               schema:
@@ -6708,7 +6880,7 @@ paths:
       description: |
         Get data of external data import job.
         
-        -  PERMISSIONS: `api_external_data_table:create`
+        -  PERMISSIONS: `api_external_data_table:update`
       operationId: externaldataimport-data
       parameters:
         - name: id
@@ -6757,7 +6929,7 @@ paths:
       description: |
         Get status of external data import job.
         
-        -  PERMISSIONS: `api_external_data_table:create`
+        -  PERMISSIONS: `api_external_data_table:update`
       operationId: externaldataimport-status
       parameters:
         - name: id
@@ -6904,7 +7076,7 @@ paths:
                   "type": 0,
                   "name": "some_data",
                   "description": "Data for enrichment",
-                  "column_types": [0, 1, 1, 2]
+                  "column_tags": [1, 1, 2, 0]
                 }
         required: true
       responses:
