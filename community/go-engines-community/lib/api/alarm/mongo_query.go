@@ -1642,14 +1642,14 @@ func getOnlyParentsSearchPipeline(
 				"else": "$$ROOT",
 			}}},
 		}},
-		{"$graphLookup": bson.M{
-			"from":                    metaAlarmLookupCollection,
-			"startWith":               "$_id",
-			"connectFromField":        "_id",
-			"connectToField":          "d",
-			"restrictSearchWithMatch": metaAlarmLookupMatch,
-			"as":                      "meta_alarm",
-			"maxDepth":                0,
+		{"$lookup": bson.M{
+			"from":         metaAlarmLookupCollection,
+			"localField":   "_id",
+			"foreignField": "d",
+			"as":           "meta_alarm",
+			"pipeline": []bson.M{
+				{"$match": metaAlarmLookupMatch},
+			},
 		}},
 		{"$unwind": bson.M{"path": "$meta_alarm", "preserveNullAndEmptyArrays": true}},
 		{"$unwind": bson.M{"path": "$alarms", "preserveNullAndEmptyArrays": true}},
