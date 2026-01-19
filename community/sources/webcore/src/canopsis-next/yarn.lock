@@ -8843,9 +8843,10 @@ jest@29.7.0, jest@^27.1.0, jest@^29.7.0:
     import-local "^3.0.2"
     jest-cli "^29.7.0"
 
-jodit@^3.2.38:
-  version "3.2.38"
-  resolved "https://registry.yarnpkg.com/jodit/-/jodit-3.2.38.tgz#f2aee0c0f56c487ad3efd33d04ce7a45a72b9888"
+jodit@^4.7.9:
+  version "4.7.9"
+  resolved "https://registry.yarnpkg.com/jodit/-/jodit-4.7.9.tgz#168581750fffbbc34cddba72eeb08d911531ad34"
+  integrity sha512-dPlewnu2+vVXELh9BEJTNQoSBL3Cf2E0fNh30yjSEgUtJHYSUYToDjMDEqr0T/L9iNpqPTODy2b4pzyGpPRUog==
 
 joi@^17.4.0:
   version "17.10.2"
