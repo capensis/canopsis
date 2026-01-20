@@ -12,7 +12,11 @@
 </template>
 
 <script>
+import { onMounted } from 'vue';
+
 import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS } from '@/constants';
+
+import { usePatternsFields } from '@/hooks/store/modules/patterns-fields';
 
 export default {
   model: {
@@ -28,8 +32,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    flapping: {
+      type: Boolean,
+      default: false,
+    },
   },
-  setup() {
+  setup(props) {
+    const { fetchFlappingRulePatternFields } = usePatternsFields();
     const alarmAttributes = [
       {
         value: ALARM_PATTERN_FIELDS.creationDate,
@@ -62,6 +71,11 @@ export default {
       },
     ];
 
+    onMounted(async () => {
+      if (props.flapping) {
+        await fetchFlappingRulePatternFields({ params: {} });
+      }
+    });
     return {
       alarmAttributes,
       entityAttributes,

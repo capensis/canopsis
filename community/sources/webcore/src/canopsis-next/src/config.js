@@ -352,6 +352,29 @@ export const API_ROUTES = {
     jobConfigs: '/api/v4/cat/job-configs-db-export',
   },
 
+  patternFields: {
+    flappingRule: '/api/v4/flapping-rule-pattern-fields',
+    idleRule: '/api/v4/idle-rule-pattern-fields',
+    linkRule: '/api/v4/link-rule-pattern-fields',
+    rule: '/api/v4/rule-pattern-fields',
+    pbehavior: '/api/v4/pbehavior-pattern-fields',
+    alarmTag: '/api/v4/alarm-tag-pattern-fields',
+    widgetFilter: '/api/v4/widget-filter-pattern-fields',
+    entityservice: '/api/v4/entityservice-pattern-fields',
+    stateSetting: '/api/v4/state-setting-pattern-fields',
+    eventfilter: '/api/v4/eventfilter-pattern-fields',
+    scenario: '/api/v4/scenario-pattern-fields',
+
+    /**
+     * Cat routes for pattern fields
+     */
+    metaalarmrule: '/api/v4/cat/metaalarmrule-pattern-fields',
+    declareTicketRule: '/api/v4/cat/declare-ticket-rule-pattern-fields',
+    instruction: '/api/v4/cat/instruction-pattern-fields',
+    kpiFilter: '/api/v4/cat/kpi-filter-pattern-fields',
+    dynamicInfos: '/api/v4/cat/dynamic-infos-pattern-fields',
+  },
+
   /**
    * Cat routes
    */
