@@ -15,6 +15,7 @@ import {
 } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
 
+import { sanitizeHtml } from '@/helpers/html';
 import { isResolvedAlarm } from '@/helpers/entities/alarm/form';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
 import { convertSortToRequest } from '@/helpers/entities/shared/query';
@@ -43,7 +44,7 @@ export function convertAlarmStateFilterToQuery({ parameters }) {
  * @param {string} template
  * @returns {string[]}
  */
-export const getAlarmVariablesByTemplate = template => getTemplateVariables(template)
+export const getAlarmVariablesByTemplate = template => getTemplateVariables(sanitizeHtml(template))
   .reduce((acc, variable) => {
     if (variable.startsWith('alarm.') || variable.startsWith('entity.')) {
       acc.push(variable.replace(/^(alarm)\./, ''));

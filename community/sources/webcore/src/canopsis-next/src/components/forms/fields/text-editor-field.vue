@@ -7,16 +7,17 @@
     :config="config"
     :extra-buttons="extraButtons"
     :error-messages="errorMessages"
-    :max-file-size="maxFileSize"
+    :max-file-size="preparedMaxFileSize"
     :variables="variables"
     :dark="$system.dark"
-    :with-default-variables="withDefaultVariables"
     :autofocus="autofocus"
   />
 </template>
 
 <script>
-import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { computed } from 'vue';
+
+import { useInfo } from '@/hooks/store/modules/info';
 
 const TextEditor = () => import(/* webpackChunkName: "TextEditor" */ '@/components/common/text-editor/text-editor.vue');
 
@@ -34,7 +35,6 @@ export default {
   components: {
     TextEditor,
   },
-  mixins: [entitiesInfoMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -82,19 +82,25 @@ export default {
       type: Array,
       required: false,
     },
-    withDefaultVariables: {
-      type: Boolean,
-      default: false,
-    },
     autofocus: {
       type: Boolean,
       default: false,
     },
   },
-  computed: {
-    isPublic() {
-      return this.public;
-    },
+  setup(props) {
+    const { fileUploadMaxSize } = useInfo();
+
+    /**
+     * Defined it because public is reserved word in JS
+     */
+    const isPublic = computed(() => props.public);
+    const preparedMaxFileSize = computed(() => props.maxFileSize || fileUploadMaxSize.value);
+
+    return {
+      preparedMaxFileSize,
+
+      isPublic,
+    };
   },
 };
 </script>
