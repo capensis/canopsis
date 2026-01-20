@@ -40,12 +40,13 @@
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
-import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
+import { onBeforeUnmount, watch } from 'vue';
+
+import { useModelField } from '@/hooks/form/model-field';
+import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
 
 export default {
   inject: ['$validator'],
-  mixins: [formMixin, validationAttachRequiredMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -64,18 +65,28 @@ export default {
       default: () => [],
     },
   },
-  watch: {
-    form() {
-      this.validateRequiredRule();
-    },
-  },
-  created() {
-    this.attachRequiredRule(
-      () => this.form.resource || this.form.component || this.form.connector || this.form.connector_name,
+  setup(props, { emit }) {
+    useModelField(props, emit);
+
+    const {
+      attachRequiredRule,
+      detachRequiredRule,
+      validateRequiredRule,
+    } = useValidationAttachRequired(props.name);
+
+    const getRequiredValue = () => (
+      props.form.resource
+       || props.form.component
+       || props.form.connector
+       || props.form.connector_name
+       || props.form.upstream
     );
-  },
-  beforeDestroy() {
-    this.detachRequiredRule();
+
+    watch(() => props.form, validateRequiredRule);
+
+    attachRequiredRule(getRequiredValue);
+
+    onBeforeUnmount(detachRequiredRule);
   },
 };
 </script>
