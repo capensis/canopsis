@@ -372,6 +372,16 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 </div>
 `;
 
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`6\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="var(--v-status-unknown-base)"
+  >
+    $vuetify.icons.question_mark
+  </v-icon-stub>
+</div>
+`;
+
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` correctly 1`] = `
 <div>
   <v-icon-stub
