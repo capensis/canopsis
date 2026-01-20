@@ -1,6 +1,7 @@
 import store from '@/store';
 
 import { Handlebars } from './handlebars';
+import { normalizeHandlebarsNbsp } from './normalize';
 
 /**
  * Compile template
@@ -11,7 +12,7 @@ import { Handlebars } from './handlebars';
  * @returns {Promise<string>}
  */
 export async function compile(template, context = {}, instance = Handlebars) {
-  const handleBarFunction = instance.compile(template ?? '');
+  const handleBarFunction = instance.compile(normalizeHandlebarsNbsp(template ?? ''));
   const preparedContext = {
     env: store.getters['templateVars/items'] ?? {},
     user: store.getters['auth/currentUser'] ?? {},
