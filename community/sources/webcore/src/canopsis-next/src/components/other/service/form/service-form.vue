@@ -62,6 +62,7 @@
         <c-patterns-field
           v-field="form.patterns"
           :entity-attributes="entityAttributes"
+          :pending="pending"
           class="mt-2"
           with-entity
           entity-counters-type
@@ -78,7 +79,7 @@
 </template>
 
 <script>
-import { ENTITY_PATTERN_FIELDS } from '@/constants';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
@@ -110,22 +111,15 @@ export default {
     },
   },
   setup() {
-    const entityAttributes = [
-      {
-        value: ENTITY_PATTERN_FIELDS.lastEventDate,
-        options: { disabled: true },
-      },
-      {
-        value: ENTITY_PATTERN_FIELDS.connector,
-        options: { disabled: true },
-      },
-      {
-        value: ENTITY_PATTERN_FIELDS.componentInfos,
-        options: { disabled: true },
-      },
-    ];
+    const { fetchServicePatternFields } = usePatternsFields();
+
+    const {
+      pending,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchServicePatternFields);
 
     return {
+      pending,
       entityAttributes,
     };
   },

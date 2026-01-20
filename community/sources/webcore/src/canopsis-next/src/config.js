@@ -360,7 +360,7 @@ export const API_ROUTES = {
     pbehavior: '/api/v4/pbehavior-pattern-fields',
     alarmTag: '/api/v4/alarm-tag-pattern-fields',
     widgetFilter: '/api/v4/widget-filter-pattern-fields',
-    entityservice: '/api/v4/entityservice-pattern-fields',
+    service: '/api/v4/entityservice-pattern-fields',
     stateSetting: '/api/v4/state-setting-pattern-fields',
     eventfilter: '/api/v4/eventfilter-pattern-fields',
     scenario: '/api/v4/scenario-pattern-fields',

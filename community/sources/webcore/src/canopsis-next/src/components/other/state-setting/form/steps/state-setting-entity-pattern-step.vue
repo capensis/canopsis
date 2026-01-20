@@ -3,6 +3,7 @@
     v-field="patterns"
     :entity-attributes="entityAttributes"
     :entity-types="entityTypes"
+    :pending="pending"
     required
     with-entity
     entity-counters-type
@@ -10,13 +11,13 @@
 </template>
 
 <script>
-import { ENTITY_PATTERN_FIELDS, STATE_SETTING_ENTITY_TYPES } from '@/constants';
+import { STATE_SETTING_ENTITY_TYPES } from '@/constants';
 
-import { formValidationHeaderMixin } from '@/mixins/form';
+import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
   inject: ['$validator'],
-  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -31,31 +32,23 @@ export default {
       default: () => [...STATE_SETTING_ENTITY_TYPES],
     },
   },
-  computed: {
-    entityAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.component,
-          options: { disabled: true },
-        },
-        {
-          value: ENTITY_PATTERN_FIELDS.connector,
-          options: { disabled: true },
-        },
-        {
-          value: ENTITY_PATTERN_FIELDS.type,
-          options: { disabled: true },
-        },
-        {
-          value: ENTITY_PATTERN_FIELDS.componentInfos,
-          options: { disabled: true },
-        },
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-      ];
-    },
+  setup() {
+    const { fetchStateSettingPatternFields } = usePatternsFields();
+    const { hasAnyError } = useValidationHeader();
+
+    const {
+      pending,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchStateSettingPatternFields);
+
+    return {
+      /**
+       * It's using in the parent component to display the validation header color for tabs
+       */
+      hasAnyError,
+      pending,
+      entityAttributes,
+    };
   },
 };
 </script>

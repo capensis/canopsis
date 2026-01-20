@@ -33,8 +33,8 @@ export default {
       return request.get(API_ROUTES.patternFields.widgetFilter, { params });
     },
 
-    fetchEntityservicePatternFields(context, { params } = {}) {
-      return request.get(API_ROUTES.patternFields.entityservice, { params });
+    fetchServicePatternFields(context, { params } = {}) {
+      return request.get(API_ROUTES.patternFields.service, { params });
     },
 
     fetchStateSettingPatternFields(context, { params } = {}) {
