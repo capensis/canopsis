@@ -30,7 +30,8 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
     | Version      | Notes de version                                         | Date       | Remarques |
     | ------------ |:--------------------------------------------------------:| ---------- | --------- |
-    | **24.04.8**  | [:material-file-document:](notes-de-version/24.04.8.md)  | 7/07/2025 | |
+    | **24.04.9**  | [:material-file-document:](notes-de-version/24.04.9.md)  | 19/01/2026 | |
+    | 24.04.8      | [:material-file-document:](notes-de-version/24.04.8.md)  | 7/07/2025  | |
     | 24.04.7      | [:material-file-document:](notes-de-version/24.04.7.md)  | 18/03/2025 | Des changements importants sont présents dans cette version. Veuillez consulter la note de version pour plus de précisions. |
     | 24.04.6      | [:material-file-document:](notes-de-version/24.04.6.md)  | 03/02/2025 | Une erreur d'interprétation des temps de rétention de la politique de stockage est corrigée. Il est fortement recommandé d'installer cette version et de bien lire les notes de version.|
     | 24.04.5      | [:material-file-document:](notes-de-version/24.04.5.md)  | 11/12/2024 | |
