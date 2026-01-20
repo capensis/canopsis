@@ -48,6 +48,7 @@ import metricsModule from './metrics';
 import filterModule from './filter';
 import ratingSettingsModule from './rating-settings';
 import patternModule from './pattern';
+import patternsFieldsModule from './patterns-fields';
 import mapModule from './map';
 import alarmTagModule from './alarm-tag';
 import shareTokenModule from './share-token';
@@ -122,6 +123,7 @@ export default {
   filter: filterModule,
   ratingSettings: ratingSettingsModule,
   pattern: patternModule,
+  patternsFields: patternsFieldsModule,
   map: mapModule,
   alarmTag: alarmTagModule,
   shareToken: shareTokenModule,
