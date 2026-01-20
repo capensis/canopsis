@@ -3,6 +3,7 @@ export const MODALS = {
   createAckEvent: 'create-ack-event',
   confirmAckWithTicket: 'confirm-ack-with-ticket',
   createAssociateTicketEvent: 'create-associate-ticket-event',
+  removeAssociatedTicketEvent: 'remove-associated-ticket-event',
   createCommentEvent: 'create-comment-event',
   createChangeStateEvent: 'create-change-state-event',
   createSnoozeEvent: 'create-snooze-event',

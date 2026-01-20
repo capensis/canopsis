@@ -43,6 +43,7 @@ export default {
       snooze: 'Mettre en veille',
       declareTicket: 'Déclarer un incident',
       associateTicket: 'Associer un ticket',
+      removeAssociatedTicket: 'Retirer le ticket associé',
       cancel: 'Annuler l\'alarme',
       unCancel: 'Annuler l\'annulation de l\'alarme',
       fastCancel: 'Annulation rapide',

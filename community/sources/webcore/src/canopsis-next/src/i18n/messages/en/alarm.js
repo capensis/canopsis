@@ -43,6 +43,7 @@ export default {
       snooze: 'Snooze alarm',
       declareTicket: 'Declare ticket',
       associateTicket: 'Associate ticket',
+      removeAssociatedTicket: 'Remove associated ticket',
       cancel: 'Cancel alarm',
       unCancel: 'Uncancel alarm',
       fastCancel: 'Fast cancel',

@@ -394,6 +394,10 @@ export const CreateAssociateTicketEvent = () => ({
   component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-associate-ticket-event.vue'),
   loading: LoaderOverlay,
 });
+export const RemoveAssociatedTicketEvent = () => ({
+  component: import(/* webpackChunkName: "Events" */ './alarm/create-remove-associated-ticket-event.vue'),
+  loading: LoaderOverlay,
+});
 
 export const CreateLinkRule = () => ({
   component: import(/* webpackChunkName: "LinkRule" */ './link-rule/create-link-rule.vue'),

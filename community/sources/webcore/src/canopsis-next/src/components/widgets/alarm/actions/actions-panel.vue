@@ -228,6 +228,16 @@ export default {
         assigned_declare_ticket_rules: assignedDeclareTicketRules = [],
       } = this.item;
 
+      const hasAssociatedTickets = this.item.v?.tickets?.length > 0;
+
+      if (hasAssociatedTickets) {
+        actions.unshift({
+          type: ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket,
+          title: this.$t('alarm.actions.titles.removeAssociatedTicket'),
+          method: this.showRemoveAssociatedTicketModal,
+        });
+      }
+
       if (!this.item.v?.ticket || this.widget.parameters.isMultiDeclareTicketEnabled) {
         actions.unshift({
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
@@ -502,6 +512,10 @@ export default {
 
     showAssociateTicketModal() {
       this.showAssociateTicketModalByAlarms([this.item]);
+    },
+
+    showRemoveAssociatedTicketModal() {
+      this.showRemoveAssociatedTicketModalByAlarms([this.item]);
     },
 
     showDeclareTicketModal() {

@@ -95,6 +95,14 @@ export default {
       return difference(this.alarmsForActions, this.alarmsWithTickets);
     },
 
+    alarmsWithAssociatedTickets() {
+      return this.alarmsForActions.filter(item => item.v?.tickets?.length > 0);
+    },
+
+    hasAlarmsWithAssociatedTickets() {
+      return !!this.alarmsWithAssociatedTickets.length;
+    },
+
     alarmsWithAck() {
       return this.alarmsForActions.filter(item => item.v?.ack);
     },
@@ -211,6 +219,14 @@ export default {
           type: ALARM_LIST_ACTIONS_TYPES.comment,
           title: this.$t('alarm.actions.titles.comment'),
           method: this.showCreateCommentEventModal,
+        });
+      }
+
+      if (this.hasAlarmsWithAssociatedTickets) {
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket,
+          title: this.$t('alarm.actions.titles.removeAssociatedTicket'),
+          method: this.showRemoveAssociatedTicketModal,
         });
       }
 
@@ -361,6 +377,10 @@ export default {
           ? this.alarmsForActions
           : this.alarmsWithoutTickets,
       );
+    },
+
+    showRemoveAssociatedTicketModal() {
+      this.showRemoveAssociatedTicketModalByAlarms(this.alarmsWithAssociatedTickets);
     },
 
     showCreateDeclareTicketModal() {
