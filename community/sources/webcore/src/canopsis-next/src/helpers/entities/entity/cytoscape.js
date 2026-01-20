@@ -18,7 +18,6 @@ export const getIconElement = (name, color) => {
   badgeIconEl.classList.add(
     'v-icon',
     'material-icons',
-    'theme--light',
   );
 
   if (color) {
@@ -132,6 +131,7 @@ export const getEntityNodeElement = (node) => {
   const nodeLabelEl = document.createElement('div');
   nodeLabelEl.classList.add('position-absolute');
   nodeLabelEl.style.top = `${nodeSize}px`;
+  nodeLabelEl.style.color = '#000000';
 
   if (!isEvents) {
     nodeLabelEl.textContent = getMapEntityText(entity);
