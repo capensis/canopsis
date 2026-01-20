@@ -119,20 +119,22 @@ const MaxEventTimestampVariation = 24 * time.Hour
 //
 //easyjson:json
 type Event struct {
-	ID            *string    `bson:"_id" json:"_id"`
-	Connector     string     `bson:"connector" json:"connector"`
-	ConnectorName string     `bson:"connector_name" json:"connector_name"`
-	EventType     string     `bson:"event_type" json:"event_type"`
-	Component     string     `bson:"component" json:"component"`
-	Resource      string     `bson:"resource" json:"resource"`
-	PerfData      string     `bson:"perf_data" json:"perf_data"`
-	Status        *CpsNumber `bson:"status" json:"status"`
-	SourceType    string     `bson:"source_type" json:"source_type"`
-	LongOutput    string     `bson:"long_output" json:"long_output"`
-	State         CpsNumber  `bson:"state" json:"state"`
-	Output        string     `bson:"output" json:"output"`
-	Alarm         *Alarm     `bson:"current_alarm" json:"current_alarm"`
-	Entity        *Entity    `bson:"current_entity" json:"current_entity"`
+	EventType string `bson:"event_type" json:"event_type"`
+
+	Connector     string `bson:"connector" json:"connector"`
+	ConnectorName string `bson:"connector_name" json:"connector_name"`
+	Component     string `bson:"component,omitempty" json:"component,omitempty"`
+	Resource      string `bson:"resource,omitempty" json:"resource,omitempty"`
+	Upstream      string `bson:"upstream,omitempty" json:"upstream,omitempty"`
+
+	PerfData   string     `bson:"perf_data" json:"perf_data"`
+	Status     *CpsNumber `bson:"status" json:"status"`
+	SourceType string     `bson:"source_type" json:"source_type"`
+	LongOutput string     `bson:"long_output" json:"long_output"`
+	State      CpsNumber  `bson:"state" json:"state"`
+	Output     string     `bson:"output" json:"output"`
+	Alarm      *Alarm     `bson:"current_alarm" json:"current_alarm"`
+	Entity     *Entity    `bson:"current_entity" json:"current_entity"`
 
 	// AlarmID is used if an event is emitted for the specific alarm.
 	AlarmID string `bson:"aid,omitempty" json:"aid,omitempty"`

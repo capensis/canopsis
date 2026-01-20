@@ -2,9 +2,10 @@ package statesettings
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 )
@@ -13,8 +14,8 @@ type EditRequest struct {
 	ID string `json:"-"`
 	StateSetting
 
-	common.EntityPatternFieldsRequest
-	common.InheritedEntityPatternFieldsRequest
+	patternfields.EntityRequest
+	InheritedEntityPatternRequest
 
 	Author string `json:"author,omitempty" swaggerignore:"true"`
 }
@@ -164,6 +165,29 @@ func (t *JUnitThresholds) ToModel() *statesetting.JUnitThresholds {
 	}
 
 	return &r
+}
+
+type InheritedEntityPatternRequest struct {
+	InheritedEntityPattern          pattern.Entity `json:"inherited_entity_pattern" binding:"entity_pattern"`
+	CorporateInheritedEntityPattern string         `json:"corporate_inherited_entity_pattern"`
+
+	CorporatePattern savedpattern.SavedPattern `json:"-"`
+}
+
+func (r InheritedEntityPatternRequest) ToModelWithoutFields(collectionName string) statesetting.InheritedEntityPatternFields {
+	if r.CorporatePattern.ID == "" {
+		return statesetting.InheritedEntityPatternFields{
+			InheritedEntityPattern: r.InheritedEntityPattern,
+		}
+	}
+
+	forbiddenFields := patternfields.GetForbiddenFieldsInEntityPattern(collectionName)
+
+	return statesetting.InheritedEntityPatternFields{
+		InheritedEntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(forbiddenFields),
+		CorporateInheritedEntityPattern:      r.CorporatePattern.ID,
+		CorporateInheritedEntityPatternTitle: r.CorporatePattern.Title,
+	}
 }
 
 type AggregationResult struct {

@@ -199,3 +199,37 @@ func GetStateSettingPipeline() []bson.M {
 		{"$unwind": bson.M{"path": "$state_setting", "preserveNullAndEmptyArrays": true}},
 	}
 }
+
+func GetDownstreamCountPipeline(prefixArg ...string) []bson.M {
+	prefix := ""
+	if len(prefixArg) > 0 && prefixArg[0] != "" {
+		prefix = prefixArg[0] + "."
+	}
+
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   prefix + "_id",
+			"foreignField": "upstream",
+			"as":           prefix + "downstreams",
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"type":    bson.M{"$in": bson.A{types.EntityTypeResource, types.EntityTypeComponent}},
+					"enabled": true,
+				}},
+				{"$project": bson.M{"_id": 1}},
+			},
+		}},
+		{"$addFields": bson.M{
+			prefix + "downstream_count": bson.M{"$cond": bson.M{
+				"if": bson.M{"$and": []bson.M{
+					{"$in": bson.A{"$" + prefix + "type", bson.A{types.EntityTypeResource, types.EntityTypeComponent}}},
+					{"$eq": bson.A{"$" + prefix + "enabled", true}},
+				}},
+				"then": bson.M{"$size": "$" + prefix + "downstreams"},
+				"else": 0,
+			}},
+		}},
+		{"$project": bson.M{prefix + "downstreams": 0}},
+	}
+}
