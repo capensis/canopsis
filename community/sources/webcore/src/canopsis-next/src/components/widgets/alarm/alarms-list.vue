@@ -468,6 +468,7 @@ export default {
           'tstop',
           'only_bookmarks',
           'instructions',
+          'tags',
         ]),
 
         fields: this.getExportQueryColumns(),
