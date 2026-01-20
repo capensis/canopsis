@@ -1,5 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with downstream 1`] = `
+<alarm-status-chip-with-relations-stub
+  alarm="[object Object]"
+  iconcolor="white"
+>
+  <c-simple-tooltip-stub
+    content="Ongoing"
+    top=""
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon notranslate alarm-column-value-status__icon mr-2 material-icons theme--light white--text"
+      style="font-size: 16px;"
+    >
+      warning
+    </i>
+  </c-simple-tooltip-stub>
+</alarm-status-chip-with-relations-stub>
+`;
+
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: 0 1`] = `
 <c-simple-tooltip-stub
   content="Ongoing"
@@ -7,7 +27,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon material-icons theme--light"
     style="caret-color: var(--v-state-ok-base);"
   >
     warning
@@ -22,7 +42,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon material-icons theme--light"
     style="caret-color: var(--v-state-minor-base);"
   >
     warning
@@ -37,7 +57,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon material-icons theme--light"
     style="caret-color: var(--v-state-major-base);"
   >
     warning
@@ -52,7 +72,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon material-icons theme--light"
     style="caret-color: var(--v-state-critical-base);"
   >
     warning
@@ -67,7 +87,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 >
   <span
     aria-hidden="true"
-    class="v-icon notranslate theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon theme--light"
     style="caret-color: var(--v-status-closed-base);"
   >
     <svg
@@ -94,7 +114,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon material-icons theme--light"
     style="caret-color: var(--v-status-closed-base);"
   >
     check_circle
@@ -109,7 +129,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon material-icons theme--light"
     style="caret-color: var(--v-state-ok-base);"
   >
     warning
@@ -124,7 +144,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon material-icons theme--light"
     style="caret-color: var(--v-status-stealthy-base);"
   >
     swap_vert
@@ -139,7 +159,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon material-icons theme--light"
     style="caret-color: var(--v-status-stealthy-base);"
   >
     swap_vert
@@ -154,7 +174,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon material-icons theme--light"
     style="caret-color: var(--v-status-flapping-base);"
   >
     swap_vert
@@ -169,7 +189,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon material-icons theme--light"
     style="caret-color: var(--v-status-flapping-base);"
   >
     swap_vert
@@ -184,7 +204,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 >
   <span
     aria-hidden="true"
-    class="v-icon notranslate theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon theme--light"
     style="caret-color: var(--v-status-cancelled-base);"
   >
     <svg
@@ -211,7 +231,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
+    class="v-icon notranslate alarm-column-value-status__icon material-icons theme--light"
     style="caret-color: var(--v-status-cancelled-base);"
   >
     cancel
@@ -221,15 +241,89 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 5 and resolved: true 1`] = `
 <c-no-events-icon-stub
+  class="alarm-column-value-status__icon"
   color="error"
   top=""
 />
 `;
 
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 6 1`] = `
+<c-simple-tooltip-stub
+  content="Unknown"
+  top=""
+>
+  <span
+    aria-hidden="true"
+    class="v-icon notranslate alarm-column-value-status__icon theme--light"
+    style="caret-color: var(--v-status-unknown-base);"
+  >
+    <svg
+      class="v-icon__component theme--light"
+      fill="currentColor"
+      height="24px"
+      viewBox="0 -960 960 960"
+      width="24px"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M424-320q0-81 14.5-116.5T500-514q41-36 62.5-62.5T584-637q0-41-27.5-68T480-732q-51 0-77.5 31T365-638l-103-44q21-64 77-111t141-47q105 0 161.5 58.5T698-641q0 50-21.5 85.5T609-475q-49 47-59.5 71.5T539-320H424Zm56 240q-33 0-56.5-23.5T400-160q0-33 23.5-56.5T480-240q33 0 56.5 23.5T560-160q0 33-23.5 56.5T480-80Z"
+      />
+    </svg>
+  </span>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 6 and resolved: true 1`] = `
+<c-simple-tooltip-stub
+  content="Unknown"
+  top=""
+>
+  <span
+    aria-hidden="true"
+    class="v-icon notranslate alarm-column-value-status__icon theme--light"
+    style="caret-color: var(--v-status-unknown-base);"
+  >
+    <svg
+      class="v-icon__component theme--light"
+      fill="currentColor"
+      height="24px"
+      viewBox="0 -960 960 960"
+      width="24px"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M424-320q0-81 14.5-116.5T500-514q41-36 62.5-62.5T584-637q0-41-27.5-68T480-732q-51 0-77.5 31T365-638l-103-44q21-64 77-111t141-47q105 0 161.5 58.5T698-641q0 50-21.5 85.5T609-475q-49 47-59.5 71.5T539-320H424Zm56 240q-33 0-56.5-23.5T400-160q0-33 23.5-56.5T480-240q33 0 56.5 23.5T560-160q0 33-23.5 56.5T480-80Z"
+      />
+    </svg>
+  </span>
+</c-simple-tooltip-stub>
+`;
+
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: noEvents 1`] = `
 <c-no-events-icon-stub
+  class="alarm-column-value-status__icon"
   color="error"
   top=""
   value="1386435600000"
 />
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with upstream 1`] = `
+<alarm-status-chip-with-relations-stub
+  alarm="[object Object]"
+  iconcolor="white"
+>
+  <c-simple-tooltip-stub
+    content="Ongoing"
+    top=""
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon notranslate alarm-column-value-status__icon mr-2 material-icons theme--light white--text"
+      style="font-size: 16px;"
+    >
+      warning
+    </i>
+  </c-simple-tooltip-stub>
+</alarm-status-chip-with-relations-stub>
 `;

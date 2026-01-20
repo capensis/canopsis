@@ -24,6 +24,7 @@ export default {
   component: 'Component ID or template',
   connector: 'Connector ID or template',
   connectorName: 'Connector name or template',
+  upstream: 'Upstream ID or template',
   duringPeriod: 'Applied during this period only',
   enrichmentOptions: 'Enrichment options',
   changeEntityOptions: 'Change entity options',

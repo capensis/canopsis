@@ -188,6 +188,8 @@ export const API_ROUTES = {
   serviceDependencies: '/api/v4/entityservice-dependencies',
   serviceImpacts: '/api/v4/entityservice-impacts',
   serviceAlarms: '/api/v4/entityservice-alarms',
+  entityUpstream: '/api/v4/entity-upstream',
+  entityDownstreams: '/api/v4/entity-downstreams',
   entityInfosDictionaryKeys: '/api/v4/entity-infos-dictionary/keys',
   entityInfosProperties: '/api/v4/entity-infos-properties',
   bulkEntityInfosProperties: '/api/v4/bulk/entity-infos-properties',
@@ -491,7 +493,7 @@ export const COLORS = {
     ongoing: '#F9A825',
     cancelled: '#757575',
     noEvents: '#FF5252',
-    unknown: '#000',
+    unknown: '#808080',
   },
   alarmSteps: {
     ack: '#35485D',
@@ -738,6 +740,7 @@ export const CSS_COLORS_VARS = {
     ongoing: 'var(--v-status-ongoing-base)',
     cancelled: 'var(--v-status-cancelled-base)',
     noEvents: 'var(--v-status-noEvents-base)',
+    unknown: 'var(--v-status-unknown-base)',
   },
 };
 

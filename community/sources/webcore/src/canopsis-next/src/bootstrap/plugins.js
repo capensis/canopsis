@@ -92,6 +92,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createFlowchartMap]: { maxWidth: 1600 },
       [MODALS.entityDependenciesList]: { maxWidth: 1600 },
       [MODALS.entitiesRootCauseDiagram]: { maxWidth: 1600 },
+      [MODALS.entityUpstream]: { maxWidth: 1600 },
       [MODALS.createDeclareTicketRule]: { maxWidth: 1280 },
       [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
       [MODALS.executeDeclareTickets]: { maxWidth: 920 },
