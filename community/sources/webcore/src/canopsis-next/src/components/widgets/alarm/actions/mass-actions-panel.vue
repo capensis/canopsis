@@ -129,7 +129,7 @@ export default {
     },
 
     hasAlarmsWithoutUnknownStatus() {
-      return !this.alarmsForActionsWithoutUnknown.length;
+      return !!this.alarmsForActionsWithoutUnknown.length;
     },
 
     hasMetaAlarm() {
