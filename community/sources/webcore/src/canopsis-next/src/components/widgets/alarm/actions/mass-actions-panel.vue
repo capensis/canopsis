@@ -128,6 +128,10 @@ export default {
       return !!this.alarmsWithoutAck.length;
     },
 
+    hasAlarmsWithoutUnknownStatus() {
+      return !this.alarmsForActionsWithoutUnknown.length;
+    },
+
     hasMetaAlarm() {
       return this.alarmsForActions.some(item => item.is_meta_alarm);
     },
@@ -190,7 +194,7 @@ export default {
         );
       }
 
-      if (this.alarmsForActionsWithoutUnknown) {
+      if (this.hasAlarmsWithoutUnknownStatus) {
         actions.push(
           {
             type: ALARM_LIST_ACTIONS_TYPES.cancel,
