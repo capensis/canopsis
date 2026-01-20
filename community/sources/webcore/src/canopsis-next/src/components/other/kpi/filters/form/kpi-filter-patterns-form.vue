@@ -3,13 +3,14 @@
     v-field="form"
     :entity-attributes="entityAttributes"
     :readonly="readonly"
+    :pending="pending"
     required
     with-entity
   />
 </template>
 
 <script>
-import { ENTITY_PATTERN_FIELDS } from '@/constants';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
   model: {
@@ -26,15 +27,18 @@ export default {
       default: false,
     },
   },
-  computed: {
-    entityAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-      ];
-    },
+  setup() {
+    const { fetchKpiFilterPatternFields } = usePatternsFields();
+
+    const {
+      pending,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchKpiFilterPatternFields);
+
+    return {
+      pending,
+      entityAttributes,
+    };
   },
 };
 </script>

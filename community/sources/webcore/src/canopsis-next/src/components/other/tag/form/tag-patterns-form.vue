@@ -4,6 +4,7 @@
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
     :readonly="readonly"
+    :pending="pending"
     class="mt-2"
     with-alarm
     with-entity
@@ -12,13 +13,11 @@
 </template>
 
 <script>
-import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS } from '@/constants';
-
-import { formValidationHeaderMixin } from '@/mixins/form';
+import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
   inject: ['$validator'],
-  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -33,88 +32,25 @@ export default {
       default: false,
     },
   },
-  computed: {
-    alarmAttributes() {
-      return [
-        {
-          value: ALARM_PATTERN_FIELDS.creationDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.duration,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.activationDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.ackAt,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.ackBy,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.ackMessage,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.ackInitiator,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.resolved,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.canceled,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.longOutput,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.initialOutput,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.initialLongOutput,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.totalStateChanges,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.tags,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.activated,
-          options: { disabled: true },
-        },
-      ];
-    },
+  setup() {
+    const { fetchAlarmTagPatternFields } = usePatternsFields();
+    const { hasAnyError } = useValidationHeader();
 
-    entityAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-      ];
-    },
+    const {
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchAlarmTagPatternFields);
+
+    return {
+      /**
+       * It's using in the parent component to display the validation header color for tabs
+       */
+      hasAnyError,
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    };
   },
 };
 </script>

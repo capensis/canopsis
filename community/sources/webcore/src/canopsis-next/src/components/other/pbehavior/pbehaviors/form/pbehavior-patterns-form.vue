@@ -3,6 +3,7 @@
     v-field="form"
     :entity-attributes="entityAttributes"
     :readonly="readonly"
+    :pending="pending"
     :counter-method="counterMethod"
     entity-counters-type
     with-entity
@@ -11,17 +12,16 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { computed } from 'vue';
 
-import { ENTITY_PATTERN_FIELDS } from '@/constants';
+import { useStoreModuleHooks } from '@/hooks/store';
+import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
-import { formValidationHeaderMixin } from '@/mixins/form';
-
-const { mapActions: mapPbehaviorPatternActions } = createNamespacedHelpers('pbehaviorPatterns');
+const usePbehaviorPatternsStoreModule = () => useStoreModuleHooks('pbehaviorPatterns');
 
 export default {
   inject: ['$validator'],
-  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -44,37 +44,46 @@ export default {
       default: false,
     },
   },
-  computed: {
-    entityAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-      ];
-    },
+  setup(props) {
+    const { fetchPbehaviorPatternFields } = usePatternsFields();
+    const { hasAnyError } = useValidationHeader();
 
-    counterMethod() {
-      return this.pbehaviorCounterType
-        ? this.checkFilter
-        : undefined;
-    },
-  },
-  methods: {
-    ...mapPbehaviorPatternActions({
+    const {
+      pending,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchPbehaviorPatternFields);
+
+    const { useActions: usePbehaviorPatternActions } = usePbehaviorPatternsStoreModule();
+    const { checkPatternsPbehaviorsCount } = usePbehaviorPatternActions({
       checkPatternsPbehaviorsCount: 'checkPatternsPbehaviorsCount',
-    }),
+    });
 
-    async checkFilter({ data } = {}) {
-      const counter = await this.checkPatternsPbehaviorsCount({
-        data: { ...data, _id: this.pbehaviorId },
+    const checkFilter = async ({ data } = {}) => {
+      const counter = await checkPatternsPbehaviorsCount({
+        data: { ...data, _id: props.pbehaviorId },
       });
 
       return {
         entity_pattern: counter,
         all: counter,
       };
-    },
+    };
+
+    const counterMethod = computed(() => (
+      props.pbehaviorCounterType
+        ? checkFilter
+        : undefined
+    ));
+
+    return {
+      /**
+       * It's using in the parent component to display the validation header color for tabs
+       */
+      hasAnyError,
+      pending,
+      entityAttributes,
+      counterMethod,
+    };
   },
 };
 </script>

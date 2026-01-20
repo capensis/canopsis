@@ -4,6 +4,7 @@
     :with-alarm="!isEntityType"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
+    :pending="pending"
     :readonly="readonly"
     :entity-counters-type="isEntityType"
     :both-counters="!isEntityType"
@@ -13,15 +14,11 @@
 </template>
 
 <script>
-import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS } from '@/constants';
-
-import { formValidationHeaderMixin } from '@/mixins/form';
+import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
   inject: ['$validator'],
-  mixins: [
-    formValidationHeaderMixin,
-  ],
   model: {
     prop: 'form',
     event: 'input',
@@ -40,42 +37,25 @@ export default {
       default: false,
     },
   },
-  computed: {
-    alarmAttributes() {
-      return [
-        {
-          value: ALARM_PATTERN_FIELDS.creationDate,
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.ackAt,
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.resolved,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.activationDate,
-          options: { disabled: true },
-        },
-      ];
-    },
+  setup() {
+    const { fetchIdleRulePatternFields } = usePatternsFields();
+    const { hasAnyError } = useValidationHeader();
 
-    entityAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-      ];
-    },
+    const {
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchIdleRulePatternFields);
+
+    return {
+      /**
+       * It's using in the parent component to display the validation header color for tabs
+       */
+      hasAnyError,
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    };
   },
 };
 </script>

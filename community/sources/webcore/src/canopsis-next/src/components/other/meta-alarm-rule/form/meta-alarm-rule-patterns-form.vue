@@ -4,6 +4,7 @@
     :readonly="readonly"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
+    :pending="pending"
     :with-total-entity="withTotalEntity"
     :some-required="someRequired"
     with-alarm
@@ -13,10 +14,10 @@
 </template>
 
 <script>
-import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS } from '@/constants';
+import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
-  inject: ['$validator'],
   model: {
     prop: 'form',
     event: 'input',
@@ -39,42 +40,25 @@ export default {
       default: false,
     },
   },
-  computed: {
-    entityAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-      ];
-    },
+  setup() {
+    const { fetchMetaalarmrulePatternFields } = usePatternsFields();
+    const { hasAnyError } = useValidationHeader();
 
-    alarmAttributes() {
-      return [
-        {
-          value: ALARM_PATTERN_FIELDS.creationDate,
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.ackAt,
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.resolved,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.activationDate,
-          options: { disabled: true },
-        },
-      ];
-    },
+    const {
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchMetaalarmrulePatternFields);
+
+    return {
+      /**
+       * It's using in the parent component to display the validation header color for tabs
+       */
+      hasAnyError,
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    };
   },
 };
 </script>

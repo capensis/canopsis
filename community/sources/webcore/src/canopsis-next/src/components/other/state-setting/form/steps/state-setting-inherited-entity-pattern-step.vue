@@ -5,6 +5,7 @@
     :entity-types="entityTypes"
     :entity-title="$t('stateSetting.dependenciesEntityPattern')"
     :disabled="disabled"
+    :pending="pending"
     entity-name="inherited_entity_pattern"
     required
     with-entity
@@ -13,13 +14,15 @@
 </template>
 
 <script>
-import { ENTITY_PATTERN_FIELDS, STATE_SETTING_ENTITY_TYPES } from '@/constants';
+import { computed } from 'vue';
 
-import { formValidationHeaderMixin } from '@/mixins/form';
+import { STATE_SETTING_ENTITY_TYPES } from '@/constants';
+
+import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
   inject: ['$validator'],
-  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -34,31 +37,26 @@ export default {
       default: false,
     },
   },
-  computed: {
-    entityTypes() {
-      return [...STATE_SETTING_ENTITY_TYPES];
-    },
+  setup() {
+    const { fetchStateSettingPatternFields } = usePatternsFields();
+    const { hasAnyError } = useValidationHeader();
 
-    entityAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.connector,
-          options: { disabled: true },
-        },
-        {
-          value: ENTITY_PATTERN_FIELDS.component,
-          options: { disabled: true },
-        },
-        {
-          value: ENTITY_PATTERN_FIELDS.componentInfos,
-          options: { disabled: true },
-        },
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-      ];
-    },
+    const {
+      pending,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchStateSettingPatternFields);
+
+    const entityTypes = computed(() => [...STATE_SETTING_ENTITY_TYPES]);
+
+    return {
+      /**
+       * It's using in the parent component to display the validation header color for tabs
+       */
+      hasAnyError,
+      pending,
+      entityAttributes,
+      entityTypes,
+    };
   },
 };
 </script>

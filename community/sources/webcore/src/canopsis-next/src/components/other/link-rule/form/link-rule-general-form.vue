@@ -32,8 +32,9 @@
     />
     <c-patterns-field
       v-field="form.patterns"
-      :alarm-attributes="alarmPatternAttributes"
-      :entity-attributes="entityPatternAttributes"
+      :alarm-attributes="alarmAttributes"
+      :entity-attributes="entityAttributes"
+      :pending="pending"
       :with-alarm="isAlarmType"
       some-required
       with-entity
@@ -52,25 +53,19 @@
 </template>
 
 <script>
-import {
-  ALARM_PATTERN_FIELDS,
-  ENTITY_PATTERN_FIELDS,
-  EXTERNAL_DATA_TYPES,
-  LINK_RULE_TYPES,
-  LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES,
-} from '@/constants';
+import { computed } from 'vue';
 
-import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
+import { EXTERNAL_DATA_TYPES, LINK_RULE_TYPES, LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
+import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
 export default {
   inject: ['$validator'],
   components: { ExternalDataForm },
-  mixins: [
-    formMixin,
-    formValidationHeaderMixin,
-  ],
   model: {
     prop: 'form',
     event: 'input',
@@ -85,66 +80,48 @@ export default {
       default: () => ({}),
     },
   },
-  computed: {
-    isAlarmType() {
-      return this.form.type === LINK_RULE_TYPES.alarm;
-    },
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { fetchLinkRulePatternFields } = usePatternsFields();
+    const { hasAnyError } = useValidationHeader();
 
-    types() {
-      return Object.values(LINK_RULE_TYPES).map(type => ({
-        value: type,
-        label: this.$t(`linkRule.types.${type}`),
-      }));
-    },
+    const {
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchLinkRulePatternFields);
 
-    externalDataTypes() {
-      return [{
-        text: this.$t(`externalData.types.${EXTERNAL_DATA_TYPES.table}`),
-        value: EXTERNAL_DATA_TYPES.table,
-      }];
-    },
+    const isAlarmType = computed(() => props.form.type === LINK_RULE_TYPES.alarm);
 
-    alarmPatternAttributes() {
-      return [
-        {
-          value: ALARM_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.resolved,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.ackAt,
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.creationDate,
-        },
-      ];
-    },
+    const types = computed(() => Object.values(LINK_RULE_TYPES).map(type => ({
+      value: type,
+      label: t(`linkRule.types.${type}`),
+    })));
 
-    entityPatternAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-      ];
-    },
-  },
-  methods: {
-    updateType(type) {
-      this.updateModel({
-        ...this.form,
+    const externalDataTypes = computed(() => [{
+      text: t(`externalData.types.${EXTERNAL_DATA_TYPES.table}`),
+      value: EXTERNAL_DATA_TYPES.table,
+    }]);
 
-        type,
-        source_code: LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES[type] ?? '',
-      });
-    },
+    const updateType = type => emit('input', {
+      ...props.form,
+      type,
+      source_code: LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES[type] ?? '',
+    });
+
+    return {
+      /**
+       * It's using in the parent component to display the validation header color for tabs
+       */
+      hasAnyError,
+      pending,
+      alarmAttributes,
+      entityAttributes,
+      isAlarmType,
+      types,
+      externalDataTypes,
+      updateType,
+    };
   },
 };
 </script>

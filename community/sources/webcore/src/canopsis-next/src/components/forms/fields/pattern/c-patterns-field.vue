@@ -1,8 +1,9 @@
 <template>
   <v-layout
-    class="c-patterns-field"
+    class="position-relative gap-4"
     column
   >
+    <c-progress-overlay :pending="pending" />
     <c-collapse-panel
       v-if="withAlarm"
       :outline-color="alarmPatternOutlineColor"
@@ -49,6 +50,7 @@
         :disabled="disabled"
         :readonly="readonly"
         :name="pbehaviorName"
+        :attributes="pbehaviorAttributes"
         :counter="counters.pbehavior_pattern"
         with-type
         @input="errors.remove(pbehaviorName)"
@@ -65,6 +67,7 @@
         :disabled="disabled"
         :readonly="readonly"
         :name="eventName"
+        :attributes="eventAttributes"
         :counter="counters.event_pattern"
         @input="errors.remove(eventName)"
       />
@@ -80,6 +83,7 @@
         :disabled="disabled"
         :readonly="readonly"
         :name="totalEntityName"
+        :attributes="totalEntityAttributes"
         :counter="counters.total_entity_pattern"
         with-type
         @input="errors.remove(totalEntityName)"
@@ -95,6 +99,7 @@
         :required="isPatternRequired"
         :disabled="disabled"
         :name="serviceWeatherName"
+        :attributes="weatherServiceAttributes"
         :counter="counters.weather_service_pattern"
         with-type
         @input="errors.remove(serviceWeatherName)"
@@ -183,10 +188,6 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
     alarmAttributes: {
       type: Array,
       required: false,
@@ -194,6 +195,30 @@ export default {
     entityAttributes: {
       type: Array,
       required: false,
+    },
+    pbehaviorAttributes: {
+      type: Array,
+      required: false,
+    },
+    eventAttributes: {
+      type: Array,
+      required: false,
+    },
+    totalEntityAttributes: {
+      type: Array,
+      required: false,
+    },
+    weatherServiceAttributes: {
+      type: Array,
+      required: false,
+    },
+    pending: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     withAlarm: {
       type: Boolean,
@@ -507,9 +532,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.c-patterns-field {
-  gap: 16px;
-}
-</style>

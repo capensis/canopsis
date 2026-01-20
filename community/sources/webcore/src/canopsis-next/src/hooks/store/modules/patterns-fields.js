@@ -1,4 +1,9 @@
+import { ref, computed, onMounted } from 'vue';
+
+import { patternsFieldsToForm } from '@/helpers/entities/pattern/fields/form';
+
 import { useStoreModuleHooks } from '@/hooks/store';
+import { usePendingHandler } from '@/hooks/query/pending';
 
 /**
  * Creates hooks for accessing the patterns-fields Vuex store module.
@@ -24,7 +29,7 @@ const usePatternsFieldsStoreModule = () => useStoreModuleHooks('patternsFields')
  * @property {Function} fetchPbehaviorPatternFields - Fetches pattern fields for pbehaviors
  * @property {Function} fetchAlarmTagPatternFields - Fetches pattern fields for alarm tags
  * @property {Function} fetchWidgetFilterPatternFields - Fetches pattern fields for widget filters
- * @property {Function} fetchEntityservicePatternFields - Fetches pattern fields for entity services
+ * @property {Function} fetchServicePatternFields - Fetches pattern fields for entity services
  * @property {Function} fetchStateSettingPatternFields - Fetches pattern fields for state settings
  * @property {Function} fetchEventfilterPatternFields - Fetches pattern fields for event filters
  * @property {Function} fetchScenarioPatternFields - Fetches pattern fields for scenarios
@@ -50,7 +55,7 @@ export const usePatternsFields = () => {
     fetchPbehaviorPatternFields: 'fetchPbehaviorPatternFields',
     fetchAlarmTagPatternFields: 'fetchAlarmTagPatternFields',
     fetchWidgetFilterPatternFields: 'fetchWidgetFilterPatternFields',
-    fetchEntityservicePatternFields: 'fetchEntityservicePatternFields',
+    fetchServicePatternFields: 'fetchServicePatternFields',
     fetchStateSettingPatternFields: 'fetchStateSettingPatternFields',
     fetchEventfilterPatternFields: 'fetchEventfilterPatternFields',
     fetchScenarioPatternFields: 'fetchScenarioPatternFields',
@@ -63,5 +68,56 @@ export const usePatternsFields = () => {
 
   return {
     ...actions,
+  };
+};
+
+/**
+ * Hook for fetching and managing pattern fields with automatic loading on mount.
+ * Transforms fetched pattern fields data into form-ready format and provides
+ * computed properties for alarm and entity pattern fields.
+ *
+ * @param {Function} [fetchAction = () => ({})] - Async function that fetches pattern fields data.
+ *                                               Should return a promise resolving to pattern fields object.
+ * @returns {Object} An object containing pattern fields state and computed properties
+ *
+ * @example
+ * // Usage in a component
+ * import { usePatternsFields } from '@/hooks/store/modules/patterns-fields';
+ *
+ * export default {
+ *   setup() {
+ *     const { fetchFlappingRulePatternFields } = usePatternsFields();
+ *     const { pending, alarmAttributes, entityAttributes } = usePatternsFieldsFetching(
+ *       fetchFlappingRulePatternFields
+ *     );
+ *
+ *     return {
+ *       pending,
+ *       alarmPatternFields,
+ *       entityPatternFields,
+ *     };
+ *   },
+ * };
+ */
+export const usePatternsFieldsFetching = (fetchAction) => {
+  const patternsFields = ref({});
+
+  const {
+    pending,
+    handler: fetchPatternsFields,
+  } = usePendingHandler(async () => {
+    patternsFields.value = patternsFieldsToForm(await fetchAction());
+  });
+
+  const alarmAttributes = computed(() => patternsFields.value.alarm_pattern ?? []);
+  const entityAttributes = computed(() => patternsFields.value.entity_pattern ?? []);
+
+  onMounted(fetchPatternsFields);
+
+  return {
+    pending,
+    patternsFields,
+    alarmAttributes,
+    entityAttributes,
   };
 };
