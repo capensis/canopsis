@@ -331,6 +331,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   snooze: 'snooze',
   declareTicket: 'declareTicket',
   associateTicket: 'associateTicket',
+  removeAssociatedTicket: 'removeAssociatedTicket',
   changeState: 'changeState',
   variablesHelp: 'variablesHelp',
   history: 'history',
