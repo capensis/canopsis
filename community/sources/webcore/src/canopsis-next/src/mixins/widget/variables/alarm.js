@@ -20,19 +20,19 @@ export const alarmVariablesMixin = {
       return [
         {
           text: this.$t('pbehavior.pbehaviorType'),
-          value: PBEHAVIOR_INFO_FIELDS.typeName,
+          value: `{{ ${PBEHAVIOR_INFO_FIELDS.typeName} }}`,
         },
         {
           text: this.$tc('pbehavior.pbehaviorReason'),
-          value: PBEHAVIOR_INFO_FIELDS.reason,
+          value: `{{ ${PBEHAVIOR_INFO_FIELDS.reason} }}`,
         },
         {
           text: this.$t('pbehavior.pbehaviorName'),
-          value: PBEHAVIOR_INFO_FIELDS.name,
+          value: `{{ ${PBEHAVIOR_INFO_FIELDS.name} }}`,
         },
         {
           text: this.$t('pbehavior.pbehaviorCanonicalType'),
-          value: PBEHAVIOR_INFO_FIELDS.canonicalType,
+          value: `{{ ${PBEHAVIOR_INFO_FIELDS.canonicalType} }}`,
         },
       ];
     },
@@ -72,8 +72,7 @@ export const alarmVariablesMixin = {
         { value: ALARM_TEMPLATE_FIELDS.duration },
         { value: ALARM_TEMPLATE_FIELDS.eventsCount },
       ].map(variable => ({
-        ...variable,
-
+        value: `{{ ${variable.value} }}`,
         text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[variable.value.replace('alarm.', '')], 2),
       }));
     },
@@ -176,7 +175,7 @@ export const alarmVariablesMixin = {
           value: ALARM_EXPORT_PDF_FIELDS.links,
           text: this.$tc('common.link', 2),
         },
-      ].map(variable => ({ ...variable, value: ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS[variable.value] }));
+      ].map(variable => ({ ...variable, value: `{{ ${ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS[variable.value]} }}` }));
     },
   },
 };
