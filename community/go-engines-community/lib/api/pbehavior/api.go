@@ -1,25 +1,25 @@
 package pbehavior
 
 import (
-	"errors"
 	"net/http"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
-	common.BulkCrudAPI
+	crud.BulkAPI
 	Patch(c *gin.Context)
 	DeleteByName(c *gin.Context)
 	ListByEntityID(c *gin.Context)
@@ -36,11 +36,11 @@ type API interface {
 }
 
 type api struct {
-	store         Store
-	mongoExporter dbexport.Exporter
-	computeChan   chan<- rpc.PbehaviorRecomputeEvent
-	jobPublisher  workers.JobPublisher
-	logger        zerolog.Logger
+	store          Store
+	mongoExporter  dbexport.Exporter
+	computeChan    chan<- rpc.PbehaviorRecomputeEvent
+	jobPublisher   workers.JobPublisher
+	errorResponder httperror.Responder
 }
 
 func NewApi(
@@ -48,40 +48,37 @@ func NewApi(
 	mongoExporter dbexport.Exporter,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
 	jobPublisher workers.JobPublisher,
-	logger zerolog.Logger,
+	errorResponder httperror.Responder,
 ) API {
 	return &api{
-		store:         store,
-		mongoExporter: mongoExporter,
-		computeChan:   computeChan,
-		jobPublisher:  jobPublisher,
-		logger:        logger,
+		store:          store,
+		mongoExporter:  mongoExporter,
+		computeChan:    computeChan,
+		jobPublisher:   jobPublisher,
+		errorResponder: errorResponder,
 	}
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
+// @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	aggregationResult, err := a.store.Find(c, r)
 	if err != nil {
-		panic(err)
-	}
+		a.errorResponder.Respond(c, err)
 
-	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
+	res := pagination.NewResponse(r.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -89,24 +86,29 @@ func (a *api) List(c *gin.Context) {
 // @Success 200 {array} Response
 func (a *api) ListByEntityID(c *gin.Context) {
 	var r FindByEntityIDRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	entity, err := a.store.FindEntity(c, r.ID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if entity == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
 	res, err := a.store.FindByEntityID(c, *entity, r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -116,24 +118,29 @@ func (a *api) ListByEntityID(c *gin.Context) {
 // @Success 200 {array} CalendarResponse
 func (a *api) CalendarByEntityID(c *gin.Context) {
 	var r CalendarByEntityIDRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	entity, err := a.store.FindEntity(c, r.ID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if entity == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
 	res, err := a.store.CalendarByEntityID(c, *entity, r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -144,11 +151,14 @@ func (a *api) CalendarByEntityID(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	pbh, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if pbh == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -156,33 +166,31 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // ListEntities
-// @Success 200 {object} common.PaginatedListResponse{data=[]entity.Entity}
+// @Success 200 {object} pagination.ListResponse{data=[]entity.Entity}
 func (a *api) ListEntities(c *gin.Context) {
 	var r EntitiesListRequest
 	r.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	aggregationResult, err := a.store.FindEntities(c, c.Param("id"), r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if aggregationResult == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
-	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(r.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -192,21 +200,17 @@ func (a *api) ListEntities(c *gin.Context) {
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	pbh, err := a.store.Insert(c, request)
 	if err != nil {
-		validationErr := common.ValidationError{}
-		if errors.As(err, &validationErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
-			return
-		}
+		a.errorResponder.Respond(c, err)
 
-		panic(err)
+		return
 	}
 
 	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}, RecomputeInherited: pbh.Inherited})
@@ -222,25 +226,22 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	pbh, recomputeInherited, err := a.store.Update(c, request)
 	if err != nil {
-		validationErr := common.ValidationError{}
-		if errors.As(err, &validationErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
-			return
-		}
+		a.errorResponder.Respond(c, err)
 
-		panic(err)
+		return
 	}
 
 	if pbh == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -256,23 +257,21 @@ func (a *api) Patch(c *gin.Context) {
 	request := PatchRequest{
 		ID: c.Param("id"),
 	}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	pbh, recomputeInherited, err := a.store.UpdateByPatch(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
+		a.errorResponder.Respond(c, err)
 
-		panic(err)
+		return
 	}
 	if pbh == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -283,13 +282,23 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, recomputeInherited, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, recomputeInherited, err := a.store.Delete(c, id, userID)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -300,19 +309,29 @@ func (a *api) Delete(c *gin.Context) {
 func (a *api) DeleteByName(c *gin.Context) {
 	request := DeleteByNameRequest{}
 
-	if err := c.ShouldBindQuery(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
-	id, recomputeInherited, err := a.store.DeleteByName(c, request.Name, c.MustGet(auth.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	id, recomputeInherited, err := a.store.DeleteByName(c, request.Name, userID)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if id == "" {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -337,7 +356,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		recomputeInherited = recomputeInherited || pbh.Inherited
 
 		return pbh.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	if len(ids) > 0 {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids, RecomputeInherited: recomputeInherited})
@@ -353,8 +372,12 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
 		pbh, curRecomputeInherited, err := a.store.Update(c, UpdateRequest(request))
-		if err != nil || pbh == nil {
+		if err != nil {
 			return "", err
+		}
+
+		if pbh == nil {
+			return "", httperror.ErrNotFound
 		}
 
 		if _, ok := exists[pbh.ID]; !ok {
@@ -365,7 +388,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		recomputeInherited = recomputeInherited || curRecomputeInherited
 
 		return pbh.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	if len(ids) > 0 {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids, RecomputeInherited: recomputeInherited})
@@ -375,14 +398,23 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	recomputeInherited := false
 
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
 		ok, curRecomputeInherited, err := a.store.Delete(c, request.ID, userID)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
+		}
+
+		if !ok {
+			return "", httperror.ErrNotFound
 		}
 
 		ids = append(ids, request.ID)
@@ -390,7 +422,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		recomputeInherited = recomputeInherited || curRecomputeInherited
 
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	if len(ids) > 0 {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids, RecomputeInherited: recomputeInherited})
@@ -400,19 +432,33 @@ func (a *api) BulkDelete(c *gin.Context) {
 // BulkEntityCreate
 // @Param body body []BulkEntityCreateRequestItem true "body"
 func (a *api) BulkEntityCreate(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkEntityCreateRequestItem) (string, error) {
 		pbh, err := a.store.EntityInsert(c, request)
-		if err != nil || pbh == nil {
+		if err != nil {
 			return "", err
+		}
+
+		if pbh == nil {
+			return "", httperror.ErrNotFound
 		}
 
 		ids = append(ids, pbh.ID)
 
 		return pbh.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	if len(ids) > 0 {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
@@ -427,19 +473,33 @@ func (a *api) BulkEntityCreate(c *gin.Context) {
 // BulkEntityDelete
 // @Param body body []BulkEntityDeleteRequestItem true "body"
 func (a *api) BulkEntityDelete(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkEntityDeleteRequestItem) (string, error) {
 		id, err := a.store.EntityDelete(c, request)
-		if err != nil || id == "" {
+		if err != nil {
 			return "", err
+		}
+
+		if id == "" {
+			return "", httperror.ErrNotFound
 		}
 
 		ids = append(ids, id)
 
 		return id, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	if len(ids) > 0 {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
@@ -470,8 +530,12 @@ func (a *api) BulkConnectorCreate(c *gin.Context) {
 		},
 		func(request BulkConnectorCreateRequestItem) (string, error) {
 			pbh, err := a.store.ConnectorCreate(c, request)
-			if err != nil || pbh == nil {
+			if err != nil {
 				return "", err
+			}
+
+			if pbh == nil {
+				return "", httperror.ErrNotFound
 			}
 
 			if _, ok := exists[pbh.ID]; !ok {
@@ -484,7 +548,7 @@ func (a *api) BulkConnectorCreate(c *gin.Context) {
 
 			return pbh.ID, nil
 		},
-		a.logger,
+		a.errorResponder,
 	)
 
 	for origin, ids := range idsByOrigin {
@@ -515,8 +579,12 @@ func (a *api) BulkConnectorDelete(c *gin.Context) {
 		},
 		func(request BulkConnectorDeleteRequestItem) (string, error) {
 			id, err := a.store.ConnectorDelete(c, request)
-			if err != nil || id == "" {
+			if err != nil {
 				return "", err
+			}
+
+			if id == "" {
+				return "", httperror.ErrNotFound
 			}
 
 			if _, ok := exists[id]; !ok {
@@ -526,7 +594,7 @@ func (a *api) BulkConnectorDelete(c *gin.Context) {
 
 			return id, nil
 		},
-		a.logger,
+		a.errorResponder,
 	)
 
 	for origin, ids := range idsByOrigin {
@@ -587,11 +655,15 @@ func (a *api) BulkConnectorEdit(c *gin.Context) {
 					Comment:  request.Comment,
 				})
 			default:
-				return "", common.NewValidationError("action", "Action must be one of ["+BulkConnectorActionCreate+" "+BulkConnectorActionDelete+"].")
+				return "", validation.NewSingleErrorWithParam("oneof", "Action", "Action", BulkConnectorActionCreate+" "+BulkConnectorActionDelete, request)
 			}
 
-			if err != nil || id == "" {
+			if err != nil {
 				return "", err
+			}
+
+			if id == "" {
+				return "", httperror.ErrNotFound
 			}
 
 			if _, ok := exists[id]; !ok {
@@ -601,7 +673,7 @@ func (a *api) BulkConnectorEdit(c *gin.Context) {
 
 			return id, nil
 		},
-		a.logger,
+		a.errorResponder,
 	)
 
 	for origin, ids := range idsByOrigin {
@@ -618,14 +690,17 @@ func (a *api) BulkConnectorEdit(c *gin.Context) {
 func (a *api) DBExport(c *gin.Context) {
 	request := dbexport.Request{}
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	b, err := a.mongoExporter.Export(c, mongo.PbehaviorMongoCollection, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	dbexport.AttachFile(c, mongo.PbehaviorMongoCollection, b)
@@ -636,19 +711,21 @@ func (a *api) DBExport(c *gin.Context) {
 // @Success 200 {object} pattern.CountResponse
 func (a *api) ExecPattern(c *gin.Context) {
 	request := ExecPatternRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
-	res, err := a.store.ExecPatternAndUpdate(c, request.ID, request.EntityPattern)
+	res, err := a.store.ExecPatternAndUpdate(c, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -659,7 +736,9 @@ func (a *api) ExecPattern(c *gin.Context) {
 func (a *api) ExecAllPatterns(c *gin.Context) {
 	err := a.jobPublisher.Publish(c, "")
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.Status(http.StatusNoContent)

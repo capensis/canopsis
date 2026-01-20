@@ -2,8 +2,8 @@ package alarmtag
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 )
@@ -20,21 +20,21 @@ type ListLabelsRequest struct {
 }
 
 type CreateRequest struct {
-	Value  string `json:"value" binding:"required,max=255"`
-	Color  string `json:"color" binding:"required,iscolor"`
-	Author string `json:"author" swaggerignore:"true"`
-
-	common.AlarmPatternFieldsRequest
-	common.EntityPatternFieldsRequest
+	EditRequest
+	Value string `json:"value" binding:"required,max=255"`
 }
 
 type UpdateRequest struct {
-	ID     string `json:"-"`
+	EditRequest
+	ID string `json:"-"`
+}
+
+type EditRequest struct {
 	Color  string `json:"color" binding:"required,iscolor"`
 	Author string `json:"author" swaggerignore:"true"`
 
-	common.AlarmPatternFieldsRequest
-	common.EntityPatternFieldsRequest
+	patternfields.AlarmRequest
+	patternfields.EntityRequest
 }
 
 type Response struct {

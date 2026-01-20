@@ -66,7 +66,7 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 				if tpl != "" {
 					parsedValue := v.templateExecutor.Parse(tpl)
 					if parsedValue.Err != nil {
-						sl.ReportError(tpl, "Parameters."+WidgetExportColumnsParam+"."+strconv.Itoa(idx)+".template", "template", "template", "")
+						sl.ReportError(tpl, "template", "Parameters.RemainParameters."+WidgetExportColumnsParam+"."+strconv.Itoa(idx)+".template", "template", "")
 					}
 				}
 			}
@@ -84,51 +84,51 @@ func validateJunitParametersRequest(sl validator.StructLevel, r view.Parameters)
 
 	if r.Directory == "" {
 		if !isAPI {
-			sl.ReportError(r.Directory, "parameters.directory", "Directory", "required", "")
+			sl.ReportError(r.Directory, "Directory", "Parameters.Directory", "required", "")
 		}
 	} else if isAPI {
-		sl.ReportError(r.Directory, "parameters.directory", "Directory", "must_be_empty", "")
+		sl.ReportError(r.Directory, "Directory", "Parameters.Directory", "must_be_empty", "")
 	}
 
 	if len(r.ScreenshotDirectories) > 0 && isAPI {
-		sl.ReportError(r.ScreenshotDirectories, "parameters.screenshot_directories", "ScreenshotDirectories", "must_be_empty", "")
+		sl.ReportError(r.ScreenshotDirectories, "ScreenshotDirectories", "Parameters.ScreenshotDirectories", "must_be_empty", "")
 	}
 
 	if len(r.VideoDirectories) > 0 && isAPI {
-		sl.ReportError(r.VideoDirectories, "parameters.video_directories", "VideoDirectories", "must_be_empty", "")
+		sl.ReportError(r.VideoDirectories, "VideoDirectories", "Parameters.VideoDirectories", "must_be_empty", "")
 	}
 
 	if r.ScreenshotFilemask != "" {
 		_, err := filemask.NewFileMask(r.ScreenshotFilemask)
 		if err != nil {
-			sl.ReportError(r.ScreenshotFilemask, "parameters.screenshot_filemask", "ScreenshotFilemask", "filemask", "")
+			sl.ReportError(r.ScreenshotFilemask, "ScreenshotFilemask", "Parameters.ScreenshotFilemask", "filemask", "")
 		}
 	}
 
 	if r.VideoFilemask != "" {
 		_, err := filemask.NewFileMask(r.VideoFilemask)
 		if err != nil {
-			sl.ReportError(r.VideoFilemask, "parameters.video_filemask", "VideoFilemask", "filemask", "")
+			sl.ReportError(r.VideoFilemask, "VideoFilemask", "Parameters.VideoFilemask", "filemask", "")
 		}
 	}
 
 	if r.ReportFileRegexp != "" {
 		re, err := regexp.Compile(r.ReportFileRegexp)
 		if err != nil || re.SubexpIndex(view.JunitReportFileRegexpSubexpName) < 0 {
-			sl.ReportError(r.ReportFileRegexp, "parameters.report_fileregexp", "ReportFileRegexp", "regexp", "")
+			sl.ReportError(r.ReportFileRegexp, "ReportFileRegexp", "Parameters.ReportFileRegexp", "regexp", "")
 		}
 	}
 }
 
 func validateMapParametersRequest(sl validator.StructLevel, r view.Parameters) {
 	if r.Map == "" {
-		sl.ReportError(r.Map, "parameters.map", "Map", "required", "")
+		sl.ReportError(r.Map, "Map", "Parameters.Map", "required", "")
 	}
 }
 
 func validateExternalDataParametersRequest(sl validator.StructLevel, r view.Parameters) {
 	if r.Table == "" {
-		sl.ReportError(r.Table, "parameters.table", "Table", "required", "")
+		sl.ReportError(r.Table, "Table", "Parameters.Table", "required", "")
 	}
 }
 
@@ -173,9 +173,9 @@ func validateTemplateParametersRequest(sl validator.StructLevel, r EditRequest) 
 			for i, column := range columns {
 				if m, ok := column.(map[string]any); ok {
 					val, _ := m["value"].(string)
-					fieldName := fmt.Sprintf("Parameters.%s.%d.value", parameter, i)
+					structNs := fmt.Sprintf("Parameters.RemainParameters.%s.%d.value", parameter, i)
 					if val == "" {
-						sl.ReportError(column, fieldName, "Value", "required", "")
+						sl.ReportError(val, "value", structNs, "required", "")
 					}
 				}
 			}

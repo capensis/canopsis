@@ -79,7 +79,7 @@ export default {
 
     [HEALTHCHECK_ENGINES_NAMES.fifo]: {
       name: 'FIFO',
-      edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
+      edgeLabel: 'RabbitMQ status\nIncoming flow KPIs',
       description: 'Manages the queue of events and alarms',
     },
 

@@ -9,8 +9,9 @@ import (
 	"strconv"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/gin-gonic/gin"
@@ -25,17 +26,20 @@ type API interface {
 }
 
 type api struct {
-	publisher libamqp.Publisher
-	logger    zerolog.Logger
+	publisher      libamqp.Publisher
+	errorResponder httperror.Responder
+	logger         zerolog.Logger
 }
 
 func NewApi(
 	publisher libamqp.Publisher,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		publisher: publisher,
-		logger:    logger,
+		publisher:      publisher,
+		errorResponder: errorResponder,
+		logger:         logger,
 	}
 }
 
@@ -46,7 +50,8 @@ func (a *api) Send(c *gin.Context) {
 
 	if mediatype, _, err := mime.ParseMediaType(c.GetHeader("content-type")); err == nil && mediatype == binding.MIMEPOSTForm {
 		if err = c.Request.ParseForm(); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			a.errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
+
 			return
 		}
 
@@ -61,20 +66,23 @@ func (a *api) Send(c *gin.Context) {
 
 		raw, err = json.Marshal(formData)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			a.errorResponder.Respond(c, err)
+
 			return
 		}
 	} else {
 		raw, err = c.GetRawData()
 		if err != nil {
-			c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			a.errorResponder.Respond(c, err)
+
 			return
 		}
 	}
 
 	jsonValue, err := fastjson.ParseBytes(raw)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
+
 		return
 	}
 	response := fastjson.MustParse(`{}`)
@@ -86,9 +94,30 @@ func (a *api) Send(c *gin.Context) {
 	response.Set("failed_events", failedEvents)
 	response.Set("retry_events", retryEvents)
 
+	contextUser, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	contextAuthor, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	roles, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
 	switch jsonValue.Type() {
 	case fastjson.TypeObject:
-		if !a.processValue(c, jsonValue) {
+		if !a.processValue(c, jsonValue, contextUser, contextAuthor, roles) {
 			failedEvents.SetArrayItem(0, jsonValue)
 			break
 		}
@@ -97,13 +126,15 @@ func (a *api) Send(c *gin.Context) {
 	case fastjson.TypeArray:
 		values, err = jsonValue.Array()
 		if err != nil {
-			break
+			a.errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
+
+			return
 		}
 
 		var sentIdx, failedIdx int
 
 		for _, value := range values {
-			if !a.processValue(c, value) {
+			if !a.processValue(c, value, contextUser, contextAuthor, roles) {
 				failedEvents.SetArrayItem(failedIdx, value)
 				failedIdx++
 
@@ -114,18 +145,15 @@ func (a *api) Send(c *gin.Context) {
 			sentIdx++
 		}
 	default:
-		err = errors.New("the body should be an object or an array")
-	}
+		a.errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
 	c.Data(http.StatusOK, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
+func (a *api) processValue(c *gin.Context, value *fastjson.Value, contextUser, contextAuthor string, roles []string) bool {
 	eventType, err := getStringField(value, "event_type")
 	if err != nil {
 		a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg(err.Error())
@@ -157,18 +185,11 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		eventType == types.EventTypeChangestate ||
 		eventType == types.EventTypeSnooze {
 
-		roles, ok := c.Get(auth.RolesKey)
-		role := ""
-		if ok {
-			if s, ok := roles.([]string); ok && len(s) > 0 {
-				role = s[0]
-			}
-		} else {
-			a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg("Cannot retrieve role from user")
+		if len(roles) > 0 {
+			role := roles[0]
+			value.Set("role", fastjson.MustParse(fmt.Sprintf("%q", role)))
+			a.logger.Info().Str("event", string(value.MarshalTo(nil))).Msgf("Role added to the event. event_type = %s, role = %s", eventType, role)
 		}
-
-		value.Set("role", fastjson.MustParse(fmt.Sprintf("%q", role)))
-		a.logger.Info().Str("event", string(value.MarshalTo(nil))).Msgf("Role added to the event. event_type = %s, role = %s", eventType, role)
 	}
 
 	longOutputValue := value.Get("long_output")
@@ -184,7 +205,6 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	if author == "" {
-		contextAuthor := c.MustGet(auth.Username).(string)
 		value.Set("author", fastjson.MustParse(fmt.Sprintf("%q", contextAuthor)))
 	}
 
@@ -195,7 +215,6 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	if user == "" {
-		contextUser := c.MustGet(auth.UserKey).(string)
 		value.Set("user_id", fastjson.MustParse(fmt.Sprintf("%q", contextUser)))
 	}
 

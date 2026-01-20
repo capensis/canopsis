@@ -1,7 +1,7 @@
 package alarmtag
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -11,14 +11,14 @@ func ValidateCreateRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(CreateRequest)
 
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
-		!match.ValidateEntityPattern(r.EntityPattern, common.GetForbiddenFieldsInEntityPattern(mongo.AlarmTagCollection)) {
+		!match.ValidateEntityPattern(r.EntityPattern, patternfields.GetForbiddenFieldsInEntityPattern(mongo.AlarmTagCollection)) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
 	if r.CorporateAlarmPattern == "" && len(r.AlarmPattern) > 0 &&
 		!match.ValidateAlarmPattern(r.AlarmPattern,
-			common.GetForbiddenFieldsInAlarmPattern(mongo.AlarmTagCollection),
-			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.AlarmTagCollection),
+			patternfields.GetForbiddenFieldsInAlarmPattern(mongo.AlarmTagCollection),
+			patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.AlarmTagCollection),
 		) {
 		sl.ReportError(r.EntityPattern, "AlarmPattern", "AlarmPattern", "alarm_pattern", "")
 	}
@@ -34,14 +34,14 @@ func ValidateUpdateRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(UpdateRequest)
 
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
-		!match.ValidateEntityPattern(r.EntityPattern, common.GetForbiddenFieldsInEntityPattern(mongo.AlarmTagCollection)) {
+		!match.ValidateEntityPattern(r.EntityPattern, patternfields.GetForbiddenFieldsInEntityPattern(mongo.AlarmTagCollection)) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
 	if r.CorporateAlarmPattern == "" && len(r.AlarmPattern) > 0 &&
 		!match.ValidateAlarmPattern(r.AlarmPattern,
-			common.GetForbiddenFieldsInAlarmPattern(mongo.AlarmTagCollection),
-			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.AlarmTagCollection),
+			patternfields.GetForbiddenFieldsInAlarmPattern(mongo.AlarmTagCollection),
+			patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.AlarmTagCollection),
 		) {
 		sl.ReportError(r.EntityPattern, "AlarmPattern", "AlarmPattern", "alarm_pattern", "")
 	}

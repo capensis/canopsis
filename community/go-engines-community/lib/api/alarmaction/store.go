@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
@@ -119,7 +119,7 @@ func (s *store) AckRemove(ctx context.Context, id string, r Request, userID, use
 func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userID, username string) (bool, error) {
 	d, err := r.Duration.To(datetime.DurationUnitSecond)
 	if err != nil {
-		return false, common.NewValidationError("duration", "Duration is invalid.")
+		return false, validation.NewSingleError("invalid", "Duration", "Duration", r)
 	}
 
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id, "v.snooze": nil})
@@ -468,7 +468,12 @@ func (s *store) AddBookmark(ctx context.Context, alarmID, userID string) (bool, 
 		err := s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{"_id": alarmID},
-			bson.M{"$addToSet": bson.M{"bookmarks": userID}},
+			[]bson.M{{"$set": bson.M{
+				"bookmarks": bson.M{"$setUnion": bson.A{
+					bson.M{"$ifNull": bson.A{"$bookmarks", bson.A{}}},
+					bson.A{userID},
+				}},
+			}}},
 			options.FindOneAndUpdate().SetProjection(bson.M{"resolved": "$v.resolved"}).SetReturnDocument(options.After),
 		).Decode(&doc)
 		if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
@@ -484,7 +489,12 @@ func (s *store) AddBookmark(ctx context.Context, alarmID, userID string) (bool, 
 		resolvedRes, err := s.resolvedDbCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": alarmID},
-			bson.M{"$addToSet": bson.M{"bookmarks": userID}},
+			[]bson.M{{"$set": bson.M{
+				"bookmarks": bson.M{"$setUnion": bson.A{
+					bson.M{"$ifNull": bson.A{"$bookmarks", bson.A{}}},
+					bson.A{userID},
+				}},
+			}}},
 		)
 		if err != nil {
 			return err

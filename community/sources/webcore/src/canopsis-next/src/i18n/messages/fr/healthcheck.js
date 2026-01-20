@@ -6,7 +6,7 @@ export default {
   queueOverflow: 'Débordement de file d\'attente',
   lackOfInstances: 'Nombre d\'instances insuffisant',
   diffInstancesConfig: 'Configuration des instances non valide',
-  queueLength: 'Longueur de la file d\'attente {queueLength}/{maxQueueLength}',
+  queueLength: 'Longueur de la file\nd\'attente {queueLength}/{maxQueueLength}',
   instancesCount: 'Instances {instances}/{minInstances}',
   activeInstances: 'Seules {instances} sont actives sur {minInstances}. Le nombre optimal d\'instances est de {optimalInstances}.',
   queueOverflowed: 'La file d\'attente est saturée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
