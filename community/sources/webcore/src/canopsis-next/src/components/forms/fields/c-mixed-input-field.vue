@@ -1,7 +1,7 @@
 <template>
   <component
     :is="inputComponent.is"
-    v-validate="rules"
+    v-validate="inputComponent.rules"
     class="c-mixed-input-field"
     v-bind="inputComponent.bind"
     v-on="inputComponent.on"
@@ -91,6 +91,10 @@ export default {
     },
 
     inputComponent() {
+      const defaultRules = {
+        required: this.required,
+      };
+
       if (this.isInputTypeText) {
         const additionalProps = this.items.length
           ? { ...pick(this, ['items', 'itemText', 'itemValue']), returnObject: false, forceSearching: true }
@@ -98,6 +102,7 @@ export default {
 
         return {
           is: this.items.length ? 'v-combobox' : 'v-text-field',
+          rules: defaultRules,
           bind: {
             ...pick(this, [
               'value',
@@ -124,7 +129,7 @@ export default {
       if (this.inputType === PATTERN_FIELD_TYPES.boolean) {
         return {
           is: 'v-switch',
-
+          rules: defaultRules,
           bind: {
             class: 'ma-0 c-mixed-input-field__switch',
             name: this.name,
@@ -143,12 +148,12 @@ export default {
       if (this.inputType === PATTERN_FIELD_TYPES.stringArray) {
         return {
           is: 'c-array-text-field',
-
           bind: {
             name: this.name,
             values: this.value,
             disabled: this.disabled,
             errorMessages: this.errorMessages,
+            required: this.required,
           },
           on: {
             change: this.updateModel,
@@ -158,7 +163,7 @@ export default {
 
       return {
         is: 'v-text-field',
-
+        rules: defaultRules,
         bind: {
           name: this.name,
           errorMessages: this.errorMessages,

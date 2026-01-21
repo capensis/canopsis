@@ -442,7 +442,7 @@ html {
   }
 }
 
-*[aria-required="true"] label:before {
+label.label-required:before, *[aria-required="true"] label:before {
   content: '*' !important;
   padding-right: 4px !important;
   color: var(--v-error-base) !important;
