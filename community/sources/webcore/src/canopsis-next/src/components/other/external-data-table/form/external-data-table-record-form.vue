@@ -10,7 +10,7 @@
     <component
       v-for="component in components"
       :is="component.is"
-      v-validate="'required'"
+      v-validate="component.rules"
       v-bind="component.bind"
       :key="component.key"
       required
@@ -49,7 +49,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { errors } = useValidator();
+    const validator = useValidator();
     const { updateField } = useModelField(props, emit);
 
     const componentsMap = {
@@ -68,7 +68,11 @@ export default {
         const defaultBind = {
           name: column.name,
           label: column.name,
-          errorMessages: errors.collect(column.name),
+          errorMessages: validator.errors.collect(column.name),
+          required: true,
+        };
+
+        const rules = {
           required: true,
         };
 
@@ -79,6 +83,7 @@ export default {
             bind: {
               ...defaultBind,
               values: props.form[column.name],
+              class: 'mt-2',
             },
             on: {
               change: value => updateField(column.name, value),
@@ -86,8 +91,22 @@ export default {
           };
         }
 
+        if ([
+          EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.string,
+          EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp,
+        ].includes(column.type)
+        ) {
+          rules.max = 255; // TODO: move into constants
+        }
+
+        if (EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number) {
+          // defaultBind['data-vv-validate-on'] = 'blur';
+          defaultBind.inputmode = 'decimal';
+        }
+
         return {
           is,
+          rules,
           key: column.name,
           bind: {
             ...defaultBind,
