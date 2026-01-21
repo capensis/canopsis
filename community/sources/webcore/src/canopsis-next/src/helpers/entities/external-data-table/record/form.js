@@ -18,6 +18,8 @@ export const externalDataTableRecordToForm = (
 
   if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray) {
     acc[column.name] = acc[column.name]?.length ? [...acc[column.name]] : [];
+  } else if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.boolean) {
+    acc[column.name] = !!acc[column.name];
   }
 
   if (!acc[column.name] && [
