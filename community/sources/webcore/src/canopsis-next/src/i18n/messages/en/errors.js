@@ -16,4 +16,6 @@ export default {
   codeEditorProblem: 'Problem with code-editor',
   triggerMustNotUsed: '{field} trigger must not be used | {field} triggers must not be used',
   invalid: 'Invalid',
+  invalidNumberFormat: 'Invalid number format',
+  arrayAtLeastOneItem: 'Please add at least one item',
 };
