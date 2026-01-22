@@ -79,9 +79,11 @@ export default {
         if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray) {
           return {
             is,
+            rules,
             key: column.name,
             bind: {
               ...defaultBind,
+              maxLength: 255,
               values: props.form[column.name],
               class: 'mt-2',
             },
