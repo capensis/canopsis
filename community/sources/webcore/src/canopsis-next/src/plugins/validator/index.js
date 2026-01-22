@@ -64,11 +64,6 @@ export default {
 
     Validator.extend('url', { validate: isValidUrl });
 
-    Validator.extend('array_required', {
-      getMessage: () => i18n.t('errors.arrayAtLeastOneItem'),
-      validate: length => !!length,
-    });
-
     const sourceDirective = Vue.directive('validate');
 
     Vue.directive('validate', {
