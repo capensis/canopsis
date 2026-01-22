@@ -442,10 +442,14 @@ html {
   }
 }
 
-label.label-required:before, *[aria-required="true"] label:before {
+*[aria-required="true"] label:before {
   content: '*' !important;
   padding-right: 4px !important;
   color: var(--v-error-base) !important;
+}
+
+.not-required label:before {
+  content: none !important;
 }
 
 @for $i from 0 through 16 {

@@ -17,5 +17,4 @@ export default {
   triggerMustNotUsed: 'Le déclencheur {field} ne doit pas être utilisé | Les déclencheurs {field} ne doivent pas être utilisés',
   invalid: 'Invalide',
   invalidNumberFormat: 'Format de nombre invalide',
-  arrayAtLeastOneItem: 'Veuillez ajouter au moins un élément',
 };
