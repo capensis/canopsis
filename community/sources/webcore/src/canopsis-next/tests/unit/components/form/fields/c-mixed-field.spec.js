@@ -93,7 +93,7 @@ describe('c-mixed-field', () => {
 
     expect(wrapper).toEmitInput([
       expect.objectContaining({
-        key: expect.string(),
+        key: expect.any(String),
         value: '12',
       }),
     ]);
