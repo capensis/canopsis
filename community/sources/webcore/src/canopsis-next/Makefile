@@ -48,10 +48,8 @@ $(CURRENT_BUILD_OUTPUT_DIR)/www: jest.config.js package.json src/ vue.config.js
 	echo "ERROR: Couldn't find NodeJS $$(echo "$(NODE_VERSION)" |  sed -e 's/\..*//g').x on your system"; \
 	exit 1; \
 	fi
-	yarn install
-	yarn build \
-		--env production \
-		--dest "$@"
+  yarn workspaces focus --production
+  yarn build --dest "$@"
 
 #
 # INSTALLATION
