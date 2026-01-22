@@ -521,18 +521,32 @@ rabbitmqctl set_permissions --vhost canopsis cpsrabbit '.*' '.*' '.*'
 
 ### Démarrage de Redis
 
-Ajouter un mot de passe ( ici `canopsis`)
-
 === "RHEL 8"
+
+    Ajouter un mot de passe ( ici `canopsis`)
 
     ```sh
     sed -i 's/^# requirepass.*/requirepass canopsis/' /etc/redis.conf
     ```
 
+    Activer le stockage persistant 
+
+    ```sh
+    sed -i 's/^appendonly no$/appendonly yes/' /etc/redis.conf
+    ```
+
 === "RHEL 9"
+
+    Ajouter un mot de passe ( ici `canopsis`)
 
     ```sh
     sed -i 's/^# requirepass.*/requirepass canopsis/' /etc/redis/redis.conf
+    ```
+
+    Activer le stockage persistant 
+
+    ```sh
+    sed -i 's/^appendonly no$/appendonly yes/' /etc/redis.conf
     ```
 
 Activer et démarrer le service :
