@@ -445,6 +445,12 @@ Ajouter un mot de passe ( ici `canopsis`)
 sed -i 's/^# requirepass.*/requirepass canopsis/' /etc/valkey/valkey.conf
 ```
 
+Activer le stockage persistant 
+
+```sh
+sed -i 's/^appendonly no$/appendonly yes/' /etc/valkey/valkey.conf
+```
+
 Activer et démarrer le service :
 
 ```sh
