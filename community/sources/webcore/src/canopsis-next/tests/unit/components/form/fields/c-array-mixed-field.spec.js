@@ -55,7 +55,7 @@ describe('c-array-text-field', () => {
     expect(wrapper).toEmit('change', [
       initialValues[0],
       expect.objectContaining({
-        key: expect.string(),
+        key: expect.any(String),
         value: '',
       }),
     ]);
