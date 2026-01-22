@@ -9,7 +9,7 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
     class="layout align-center"
   >
     <div
-      class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
+      class="v-input not-required v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -27,6 +27,7 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
               Value
             </label>
             <input
+              name=".test-key-1.value"
               type="text"
             />
           </div>
@@ -54,7 +55,7 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
     class="layout align-center"
   >
     <div
-      class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
+      class="v-input not-required v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -72,6 +73,7 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
               Value
             </label>
             <input
+              name=".test-key-2.value"
               type="text"
             />
           </div>
@@ -99,7 +101,7 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
     class="layout align-center"
   >
     <div
-      class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
+      class="v-input not-required v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -117,6 +119,7 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
               Value
             </label>
             <input
+              name=".test-key-3.value"
               type="text"
             />
           </div>
@@ -141,55 +144,14 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
     />
   </div>
   <div
-    class="layout align-center"
+    class="v-messages theme--light error--text"
   >
-    <div
-      class="v-input theme--light v-text-field"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              class="v-label theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Value
-            </label>
-            <input
-              type="text"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <transition-group-stub
-              class="v-messages__wrapper"
-              name="message-transition"
-              tag="div"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-    <c-action-btn-stub
-      type="delete"
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
     />
   </div>
-  <c-alert
-    class="mb-2"
-    type="error"
-  >
-  </c-alert>
   <div
     class="flex"
   >
@@ -212,11 +174,15 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with default props co
   class="layout column"
 >
   <!---->
-  <c-alert
-    class="mb-2"
-    type="error"
+  <div
+    class="v-messages theme--light error--text"
   >
-  </c-alert>
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
+    />
+  </div>
   <div
     class="flex"
   >
@@ -243,7 +209,7 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
     class="layout align-center"
   >
     <div
-      class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field"
+      class="v-input not-required v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -262,6 +228,7 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
             </label>
             <input
               disabled="disabled"
+              name=".test-key-1.value"
               type="text"
             />
           </div>
@@ -287,7 +254,7 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
     class="layout align-center"
   >
     <div
-      class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field"
+      class="v-input not-required v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -306,6 +273,7 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
             </label>
             <input
               disabled="disabled"
+              name=".test-key-2.value"
               type="text"
             />
           </div>
@@ -327,11 +295,15 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
     </div>
     <!---->
   </div>
-  <c-alert
-    class="mb-2"
-    type="error"
+  <div
+    class="v-messages theme--light error--text"
   >
-  </c-alert>
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
+    />
+  </div>
   <div
     class="flex"
   >
