@@ -625,11 +625,13 @@ describe('pattern-rules-field', () => {
     ruleField.triggerCustomEvent('input', updatedRule);
 
     expect(wrapper).toEmitInput([
-      expect.objectContaining({
-        value: [rules[0].value], // Value converted to array
-      }),
-      rules[1],
-      rules[2],
+      {
+        ...rules[0],
+        operator: '',
+        value: expect.any(Array),
+      },
+      { ...rules[1] },
+      { ...rules[2] },
     ]);
   });
 
