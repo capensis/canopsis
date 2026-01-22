@@ -9,6 +9,8 @@ volumes:
     driver: local
   techmetricsdata:
     driver: local
+  redisdata:
+    driver: local
   nginxcerts:
     driver: local
   uploadfiles:
@@ -122,12 +124,14 @@ services:
       - "6379:6379"
     env_file:
       - redis.env
+    volumes:
+      - redisdata:/data
     healthcheck:
       test: ["CMD-SHELL", "redis-cli --no-auth-warning -a $$REDIS_PASSWORD ping | grep PONG"]
       interval: 1s
       timeout: 3s
       retries: 5
-    command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD"
+    command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD --appendonly yes --dir /data"
 
   timescaledb:
     <<: *backend_base
