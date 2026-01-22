@@ -17,5 +17,4 @@ export default {
   triggerMustNotUsed: '{field} trigger must not be used | {field} triggers must not be used',
   invalid: 'Invalid',
   invalidNumberFormat: 'Invalid number format',
-  arrayAtLeastOneItem: 'Please add at least one item',
 };

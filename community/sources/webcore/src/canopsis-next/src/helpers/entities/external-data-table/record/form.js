@@ -1,6 +1,9 @@
+import { isArray } from 'lodash';
+
 import { EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES } from '@/constants';
 
 import { convertDateToTimestamp } from '@/helpers/date/date';
+import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/shared/form';
 
 /**
  * Converts an external data table record to a form representation.
@@ -17,7 +20,9 @@ export const externalDataTableRecordToForm = (
   acc[column.name] = externalDataTableRecord[column.name] ?? '';
 
   if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray) {
-    acc[column.name] = acc[column.name]?.length ? [...acc[column.name]] : [];
+    const stringArray = acc[column.name];
+
+    acc[column.name] = (isArray(stringArray) ? primitiveArrayToForm(stringArray) : stringArray) || [];
   } else if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.boolean) {
     acc[column.name] = !!acc[column.name];
   }
@@ -41,7 +46,13 @@ export const externalDataTableRecordToForm = (
  *                              Timestamp and datetime values are converted to Unix timestamps.
  */
 export const formToExternalDataTableRecord = (form = {}, columnConfigs = []) => columnConfigs.reduce((acc, column) => {
-  acc[column.name] = form[column.name];
+  let value = form[column.name];
+
+  if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray) {
+    value = isArray(value) ? formToPrimitiveArray(value) : value;
+  }
+
+  acc[column.name] = value;
 
   if ([
     EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.timestamp,

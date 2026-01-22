@@ -44,6 +44,7 @@ import {
   getDiffBetweenStartAndStopQuickInterval,
   getQuickRangeByDiffBetweenStartAndStop,
 } from '@/helpers/date/date-intervals';
+import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef { 'string' | 'number' | 'infos' | 'date' | 'duration' } PatternRuleType
@@ -593,7 +594,7 @@ export const convertValueByType = (value, type, defaultValue) => {
     case PATTERN_FIELD_TYPES.null:
       return null;
     case PATTERN_FIELD_TYPES.stringArray:
-      return preparedValue ? [String(preparedValue)] : [];
+      return preparedValue ? primitiveArrayToForm([String(preparedValue)]) : [];
     default:
       return undefined;
   }
@@ -939,6 +940,15 @@ export const patternRuleToForm = (rule = {}) => {
     form.dictionary = rule.field.replace(`${patternObjectField}.`, '');
   }
 
+  if (
+    (isExtraInfos || isInfos)
+    && form.fieldType === PATTERN_FIELD_TYPES.stringArray
+    && isArray(form.value)
+    && (!form.value.length || !form.value[0]?.key)
+  ) {
+    form.value = primitiveArrayToForm(form.value);
+  }
+
   return form;
 };
 
@@ -1046,6 +1056,13 @@ export const formRuleToPatternRule = (rule) => {
 
   if ((isExtraInfos || isInfos) && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
     pattern.field_type = rule.fieldType;
+
+    if (
+      rule.fieldType === PATTERN_FIELD_TYPES.stringArray
+      && isArray(pattern.cond.value)
+    ) {
+      pattern.cond.value = formToPrimitiveArray(pattern.cond.value);
+    }
   }
 
   switch (rule.operator) {
