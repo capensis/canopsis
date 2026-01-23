@@ -365,6 +365,11 @@ func RegisterRoutes(
 				alarmActionAPI.AssocTicket,
 			)
 			alarmRouter.PUT(
+				"/:id/assocticketremove",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
+				alarmActionAPI.AssocTicketRemove,
+			)
+			alarmRouter.PUT(
 				"/:id/comment",
 				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
 				alarmActionAPI.Comment,
@@ -2322,6 +2327,11 @@ func RegisterRoutes(
 					"/assocticket",
 					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
 					alarmActionAPI.BulkAssocTicket,
+				)
+				alarmRouter.PUT(
+					"/assocticketremove",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
+					alarmActionAPI.BulkAssocTicketRemove,
 				)
 				alarmRouter.PUT(
 					"/comment",
