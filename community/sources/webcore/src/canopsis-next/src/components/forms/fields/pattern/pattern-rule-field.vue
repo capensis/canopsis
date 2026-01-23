@@ -14,7 +14,7 @@
               :value="rule.attribute"
               :items="attributes"
               :name="name"
-              :disabled="disabled"
+              :disabled="disabled || disabledField"
               return-object
               required
               @input="updateAttribute"
@@ -77,7 +77,7 @@
             <pattern-operator-field
               v-field="rule.operator"
               :operators="operators"
-              :disabled="disabled"
+              :disabled="disabled || disabledOperator"
               :name="operatorFieldName"
               required
             />
@@ -179,6 +179,14 @@ export default {
       default: PATTERN_RULE_TYPES.string,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    disabledField: {
+      type: Boolean,
+      default: false,
+    },
+    disabledOperator: {
       type: Boolean,
       default: false,
     },

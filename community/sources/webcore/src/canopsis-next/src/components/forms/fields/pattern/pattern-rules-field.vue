@@ -12,12 +12,14 @@
           :rule="rule"
           :name="rule.key"
           :attributes="attributes"
+          :disabled-field="rule.disabled?.field"
+          :disabled-operator="rule.disabled?.operator"
           @input="updateRule(index, $event)"
         />
       </v-flex>
       <c-action-btn
         :tooltip="$t('pattern.removeRule')"
-        :disabled="readonly || disabled"
+        :disabled="readonly || disabled || rule.disabled?.remove"
         type="delete"
         @click="removeItemFromArray(index)"
       />

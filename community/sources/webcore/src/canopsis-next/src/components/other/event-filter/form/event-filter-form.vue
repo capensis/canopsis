@@ -43,6 +43,7 @@
       :with-entity="!isChangeEntityType"
       with-event
       entity-counters-type
+      expanded-event
     />
     <template v-if="hasAdditionalOptions">
       <v-divider class="my-3" />
