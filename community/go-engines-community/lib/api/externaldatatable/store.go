@@ -607,10 +607,19 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 				continue
 			}
 		case externaldata.ColumnTypeStringArray:
-			val, ok = utils.IsStringSlice(rawVal)
+			sliceVal, ok := utils.IsStringSlice(rawVal)
 			if !ok {
 				valErrs = append(valErrs, validation.NewFieldError("value_string_array", columnName, columnName))
 				continue
+			}
+
+			val = sliceVal
+
+			for i, str := range sliceVal {
+				if len(str) > MaxStringLen {
+					columnName = columnName + "." + strconv.Itoa(i)
+					valErrs = append(valErrs, validation.NewFieldErrorWithParam("strmax", columnName, columnName, strconv.Itoa(MaxStringLen)))
+				}
 			}
 		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
 			val, ok = getIntValue(rawVal)
@@ -622,6 +631,11 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 			strVal, ok := rawVal.(string)
 			if !ok {
 				valErrs = append(valErrs, validation.NewFieldError("value_string", columnName, columnName))
+				continue
+			}
+
+			if len(strVal) > MaxStringLen {
+				valErrs = append(valErrs, validation.NewFieldErrorWithParam("strmax", columnName, columnName, strconv.Itoa(MaxStringLen)))
 				continue
 			}
 
@@ -741,10 +755,19 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 				continue
 			}
 		case externaldata.ColumnTypeStringArray:
-			val, ok = utils.IsStringSlice(rawVal)
+			sliceVal, ok := utils.IsStringSlice(rawVal)
 			if !ok {
 				valErrs = append(valErrs, validation.NewFieldError("value_string_array", columnName, columnName))
 				continue
+			}
+
+			val = sliceVal
+
+			for i, str := range sliceVal {
+				if len(str) > MaxStringLen {
+					columnName = columnName + "." + strconv.Itoa(i)
+					valErrs = append(valErrs, validation.NewFieldErrorWithParam("strmax", columnName, columnName, strconv.Itoa(MaxStringLen)))
+				}
 			}
 		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
 			val, ok = getIntValue(rawVal)
@@ -756,6 +779,11 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 			strVal, ok := rawVal.(string)
 			if !ok {
 				valErrs = append(valErrs, validation.NewFieldError("value_string", columnName, columnName))
+				continue
+			}
+
+			if len(strVal) > MaxStringLen {
+				valErrs = append(valErrs, validation.NewFieldErrorWithParam("strmax", columnName, columnName, strconv.Itoa(MaxStringLen)))
 				continue
 			}
 
