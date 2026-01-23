@@ -738,7 +738,8 @@ func (p *metaAlarmPostProcessor) getChildEventByMetaAlarmEvent(
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
 		output = event.Parameters.TicketInfo.GetStepMessage()
 		isTicket = true
-	case types.AlarmChangeTypeAssocTicket:
+	case types.AlarmChangeTypeAssocTicket,
+		types.AlarmChangeTypeAssocTicketRemove:
 		isTicket = true
 	}
 
@@ -788,6 +789,7 @@ func (p *metaAlarmPostProcessor) applyOnChild(changeType types.AlarmChangeType) 
 	case types.AlarmChangeTypeAck,
 		types.AlarmChangeTypeAckremove,
 		types.AlarmChangeTypeAssocTicket,
+		types.AlarmChangeTypeAssocTicketRemove,
 		types.AlarmChangeTypeCancel,
 		types.AlarmChangeTypeChangeState,
 		types.AlarmChangeTypeComment,

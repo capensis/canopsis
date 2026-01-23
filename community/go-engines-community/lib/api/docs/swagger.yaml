@@ -1075,6 +1075,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /alarms/{id}/assocticketremove:
+    put:
+      tags:
+        - alarms
+      summary: Remove associated alarm ticket
+      description: |
+        Remove associated alarm ticket.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-assocticketremove
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.AssocTicketRemoveRequest'
+            examples:
+              assocticketremove:
+                summary: Remove associated ticket
+                description: Remove associated ticket from an alarm.
+                value: {
+                  "ticket": "ENV-116",
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /alarms/{id}/bookmark:
     put:
       tags:
@@ -1803,6 +1845,57 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAssocTicketRequestItem'
+  /bulk/alarms/assocticketremove:
+    put:
+      tags:
+        - alarms
+      summary: Remove associated alarm tickets
+      description: |
+        Remove associated alarm tickets.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-assocticketremove
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAssocTicketRemoveRequestItem'
+            examples:
+              assocticketremove:
+                summary: Remove associated ticket
+                description: Remove associated tickets from alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "ticket": "ENV-116",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "ticket": "ENV-117",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAssocTicketRemoveRequestItem'
   /bulk/alarms/cancel:
     put:
       tags:

@@ -88,6 +88,9 @@ func (p *webhookCompleteProcessor) Process(ctx context.Context, event rpc.AxeEve
 				"v.steps":            addStepUpdateQuery(newStepQuery, newTicketStepQuery),
 				"v.last_update_date": event.Parameters.Timestamp,
 			}},
+			{"$unset": bson.A{
+				"v.failed_ticket",
+			}},
 		}
 		alarmChange.Type = types.AlarmChangeTypeDeclareTicketWebhook
 	}
