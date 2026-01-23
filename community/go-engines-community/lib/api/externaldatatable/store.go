@@ -593,10 +593,18 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 				continue
 			}
 		case externaldata.ColumnTypeStringArray:
-			val, ok = utils.IsStringSlice(rawVal)
+			sliceVal, ok := utils.IsStringSlice(rawVal)
 			if !ok {
 				valErrMsgs[columnName] = columnName + " is not a string array."
 				continue
+			}
+
+			val = sliceVal
+
+			for i, str := range sliceVal {
+				if len(str) > MaxStringLen {
+					valErrMsgs[columnName+"."+strconv.Itoa(i)] = maxStringLengthErrMsg
+				}
 			}
 		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
 			val, ok = getIntValue(rawVal)
@@ -688,10 +696,18 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 				continue
 			}
 		case externaldata.ColumnTypeStringArray:
-			val, ok = utils.IsStringSlice(rawVal)
+			sliceVal, ok := utils.IsStringSlice(rawVal)
 			if !ok {
 				valErrMsgs[columnName] = columnName + " is not a string array."
 				continue
+			}
+
+			val = sliceVal
+
+			for i, str := range sliceVal {
+				if len(str) > MaxStringLen {
+					valErrMsgs[columnName+"."+strconv.Itoa(i)] = maxStringLengthErrMsg
+				}
 			}
 		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
 			val, ok = getIntValue(rawVal)
