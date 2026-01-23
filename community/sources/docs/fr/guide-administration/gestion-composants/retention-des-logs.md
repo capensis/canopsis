@@ -1,28 +1,55 @@
 # Rétention des fichiers journaux
 
-## Rotation des logs de Canopsis
 
-Canopsis génère des fichiers journaux afin d'assurer la traçabilité des actions effectuées sur l'interface web ou par les moteurs.
 
-Par défaut, aucune limite de place n'est mise en œuvre sur ces journaux.
+## RPM (el8/el9)
 
-Pour mettre en place une stratégie de rétention, et ainsi éviter une saturation d'espace disque disponible, vous pouvez appliquer la configuration logrotate suivante :
+Les logs de Canopsis sont gérées par `journald`, la rotation des logs est donc gérée par journald et non par logrotate.
+
+Pour voir les logs de canopsis, il faut désormais passer par 
 
 ```sh
-cat > /etc/logrotate.d/canopsis.conf << EOF
-/opt/canopsis/var/log/*.log /opt/canopsis/var/log/engines/*.log {
-       daily
-       rotate 30
-       copytruncate
-       delaycompress
-       compress
-       notifempty
-       missingok
-}
-EOF
+journalctl -u 'canopsis*' -f
 ```
 
-Vous pouvez personnaliser les valeurs `daily` et `rotate` pour ajuster la fréquence et la durée de la rétention.
+!!! important
+
+       Si vous souhaitez avoir les logs d'un seul service, vous devez remplacer `canopsis*` par le nom d'un des services de Canopsis.  
+       Pour voir la liste des services de canopsis :
+       ```sh
+       systemctl list-dependencies canopsis.service --type=service --no-pager | grep -E 'canopsis'
+       ```
+
+## Docker Compose
+
+La mise en place d'une politique de rétention des logs nécessite la présence du logiciel `logrotate`.
+
+Une fois que `logrotate` est installé sur votre machine, créer le fichier `/etc/logrotate.d/docker-container` suivant :
+
+```
+/var/lib/docker/containers/*/*.log {
+  rotate 7
+  daily
+  compress
+  minsize 100M
+  notifempty
+  missingok
+  delaycompress
+  copytruncate
+}
+```
+
+Pour vérifier la validité de la configuration logrotate ajoutée, lancez la commande :
+
+```sh
+logrotate -dv /etc/logrotate.d/docker-container
+```
+
+Si vous souhaitez forcer une exécution manuelle de cette rotation sur-le-champ, vous pouvez éventuellement lancer la commande :
+
+```sh
+logrotate -fv /etc/logrotate.d/docker-container
+```
 
 ## Rotation des logs de MongoDB
 
