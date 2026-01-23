@@ -300,6 +300,8 @@ definitions:
         type: integer
       events_count:
         type: integer
+      failed_ticket:
+        $ref: '#/definitions/common.AlarmStep'
       infos:
         type: object
       initial_long_output:
@@ -755,6 +757,17 @@ definitions:
         maxLength: 255
         type: string
     type: object
+  alarmaction.AssocTicketRemoveRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+    required:
+    - comment
+    - ticket
+    type: object
   alarmaction.AssocTicketRequest:
     properties:
       comment:
@@ -791,6 +804,20 @@ definitions:
         type: string
     required:
     - _id
+    type: object
+  alarmaction.BulkAssocTicketRemoveRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+    required:
+    - _id
+    - comment
+    - ticket
     type: object
   alarmaction.BulkAssocTicketRequestItem:
     properties:

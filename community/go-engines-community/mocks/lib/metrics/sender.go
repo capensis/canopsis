@@ -426,6 +426,18 @@ func (mr *MockSenderMockRecorder) SendTicket(alarm, userID, timestamp any) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendTicket", reflect.TypeOf((*MockSender)(nil).SendTicket), alarm, userID, timestamp)
 }
 
+// SendTicketRemove mocks base method.
+func (m *MockSender) SendTicketRemove(alarm types.Alarm, timestamp time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendTicketRemove", alarm, timestamp)
+}
+
+// SendTicketRemove indicates an expected call of SendTicketRemove.
+func (mr *MockSenderMockRecorder) SendTicketRemove(alarm, timestamp any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendTicketRemove", reflect.TypeOf((*MockSender)(nil).SendTicketRemove), alarm, timestamp)
+}
+
 // SendUpdateState mocks base method.
 func (m *MockSender) SendUpdateState(alarm types.Alarm, entity types.Entity, previousState types.CpsNumber) {
 	m.ctrl.T.Helper()
