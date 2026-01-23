@@ -67,9 +67,10 @@
           align-center
           justify-end
         >
-          <pattern-count-message :error="count === 0">
-            <span v-html="countMessage" />
-          </pattern-count-message>
+          <pattern-count-message
+            :alarm-counter="alarmCounter"
+            :entity-counter="entityCounter"
+          />
           <slot name="append-count" />
         </v-layout>
       </v-layout>
@@ -112,7 +113,6 @@ import { useModelField } from '@/hooks/form/model-field';
 import { useValidator } from '@/hooks/validator/validator';
 import { useComponentInstance } from '@/hooks/vue';
 
-import { usePatternCountMessage } from './hooks/pattern-count-message';
 import PatternAdvancedEditorField from './pattern-advanced-editor-field.vue';
 import PatternGroupsField from './pattern-groups-field.vue';
 import PatternCountMessage from './pattern-count-message.vue';
@@ -179,7 +179,6 @@ export default {
     const { errors } = validator;
     const vm = useComponentInstance();
     const { updateModel, updateField } = useModelField(props, emit);
-    const { getCountMessage } = usePatternCountMessage();
 
     const activeTab = ref(PATTERN_EDITOR_TABS.simple);
     const patternsJson = ref([]);
@@ -197,7 +196,6 @@ export default {
     const checked = computed(() => !isEmpty(props.alarmCounter) || !isEmpty(props.entityCounter));
     const count = computed(() => props.alarmCounter?.count ?? props.entityCounter?.count ?? 0);
     const overLimit = computed(() => props.alarmCounter?.over_limit || props.entityCounter?.over_limit || false);
-    const countMessage = computed(() => getCountMessage(props.alarmCounter, props.entityCounter));
 
     /**
      * Watches for changes in pattern groups and removes validation errors when groups change.
@@ -273,7 +271,6 @@ export default {
       checked,
       count,
       overLimit,
-      countMessage,
       updatePattern,
       updatePatternToCustom,
       updateGroupsFromPatterns,
