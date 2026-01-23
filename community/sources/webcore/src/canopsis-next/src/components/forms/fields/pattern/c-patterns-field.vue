@@ -58,6 +58,7 @@
       v-if="withEvent"
       :outline-color="eventPatternOutlineColor"
       :title="eventTitle || $t('common.eventPatterns')"
+      :expanded="expandedEvent"
     >
       <c-event-filter-patterns-field
         v-field="value.event_pattern"
@@ -274,6 +275,10 @@ export default {
     serviceWeatherTitle: {
       type: String,
       default: '',
+    },
+    expandedEvent: {
+      type: Boolean,
+      default: false,
     },
     alarmName: {
       type: String,
