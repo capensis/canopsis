@@ -494,3 +494,13 @@ html {
     }
   }
 }
+
+.status {
+  $statuses: ok stealthy flapping ongoing cancelled noEvents unknown;
+
+  @each $status in $statuses {
+    &-#{$status} {
+      background-color: var(--v-status-#{$status}-base);
+    }
+  }
+}

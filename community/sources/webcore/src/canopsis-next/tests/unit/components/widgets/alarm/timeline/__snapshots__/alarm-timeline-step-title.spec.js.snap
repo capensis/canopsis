@@ -296,6 +296,14 @@ exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for ste
 </span>
 `;
 
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusdec\` and status \`6\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to Unknown by root
+</span>
+`;
+
 exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusinc\` and status \`0\` correctly 1`] = `
 <span
   class="text-subtitle-2"
@@ -341,6 +349,14 @@ exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for ste
   class="text-subtitle-2"
 >
   Status changed to No events by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusinc\` and status \`6\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to Unknown by root
 </span>
 `;
 
