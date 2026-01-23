@@ -37,7 +37,7 @@
         :entity-types="entityTypes"
         with-type
         @input="errors.remove(entityName)"
-        @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.alarm])"
+        @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.entity])"
         @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.entity])"
       />
     </c-collapse-panel>
@@ -153,12 +153,10 @@ import { ref, computed } from 'vue';
 import { isString, isEmpty } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
-import { PATTERNS_FIELDS, PATTERN_DURATION_FORMAT, TIME_UNITS } from '@/constants';
+import { PATTERNS_FIELDS } from '@/constants';
 
-import { sanitizeHtml } from '@/helpers/html';
 import { isValidPatternRule, formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
-import { convertDurationToString } from '@/helpers/date/duration';
 
 import { useStoreModuleHooks } from '@/hooks/store';
 import { useI18n } from '@/hooks/i18n';
@@ -169,6 +167,7 @@ import PatternCountMessage from '@/components/forms/fields/pattern/pattern-count
 
 import { usePatternCountAlarmsModal } from './hooks/pattern-count-alarms-modal';
 import { usePatternCountEntitiesModal } from './hooks/pattern-count-entities-modal';
+import { usePatternCountMessage } from './hooks/pattern-count-message';
 
 /**
  * Generates a field pattern name by combining component name and field name.
@@ -254,10 +253,6 @@ export default {
     counterMethod: {
       type: Function,
       required: false,
-    },
-    bothCounters: {
-      type: Boolean,
-      default: false,
     },
     alarmTitle: {
       type: String,
@@ -429,7 +424,12 @@ export default {
 
     const patterns = computed(() => formFilterToPatterns(props.value, patternsFields.value));
 
+    const { getCountMessage } = usePatternCountMessage();
+
     const checkFilterMessages = computed(() => {
+      let entityCounter;
+      let alarmCounter;
+
       if (hasError.value) {
         return t('pattern.errors.required');
       }
@@ -438,32 +438,14 @@ export default {
         return '';
       }
 
-      const alarmsCount = counters.value?.all?.count ?? 0;
-      const allDuration = convertDurationToString(
-        counters.value?.all?.ms,
-        PATTERN_DURATION_FORMAT,
-        TIME_UNITS.millisecond,
-      );
-      const durationMessage = t('pattern.searchTime', { duration: allDuration });
-
-      let message = '';
-
       if (props.entityCountersType) {
-        const entitiesCount = counters.value?.entity_pattern?.count ?? 0;
-
-        message = t('pattern.entitiesCount', { entitiesCount });
-      } else if (props.bothCounters) {
-        const entitiesCount = counters.value?.entities?.count ?? 0;
-
-        message = t('pattern.alarmsEntitiesCount', {
-          alarmsCount,
-          entitiesCount,
-        });
+        entityCounter = counters.value?.all;
       } else {
-        message = t('pattern.alarmsCount', { alarmsCount });
+        alarmCounter = counters.value?.all;
+        entityCounter = counters.value?.entities;
       }
 
-      return sanitizeHtml(`${message} / ${durationMessage}`);
+      return getCountMessage(alarmCounter, entityCounter);
     });
 
     /**

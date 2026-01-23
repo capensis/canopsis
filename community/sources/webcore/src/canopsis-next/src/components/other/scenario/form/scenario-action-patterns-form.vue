@@ -7,7 +7,6 @@
     some-required
     with-alarm
     with-entity
-    both-counters
   />
 </template>
 

@@ -6,7 +6,6 @@
     :entity-attributes="entityAttributes"
     with-alarm
     with-entity
-    both-counters
     some-required
   />
 </template>

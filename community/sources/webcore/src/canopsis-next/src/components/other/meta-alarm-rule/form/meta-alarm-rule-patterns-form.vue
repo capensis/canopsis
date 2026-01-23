@@ -8,7 +8,6 @@
     :some-required="someRequired"
     with-alarm
     with-entity
-    both-counters
   />
 </template>
 
