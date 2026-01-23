@@ -111,12 +111,11 @@
       <span>{{ $t('pattern.errors.countOverLimit', { count: allCount }) }}</span>
     </c-alert>
     <v-layout
+      class="gap-2"
       justify-end
       align-center
     >
-      <pattern-count-message :error="hasError">
-        <span v-html="checkFilterMessages" />
-      </pattern-count-message>
+      <pattern-count-message v-bind="patternsCountMessageBind" />
       <template v-if="hasAllInCounter">
         <v-btn
           v-if="entityCountersType"
@@ -150,7 +149,7 @@
 
 <script>
 import { ref, computed } from 'vue';
-import { isString, isEmpty } from 'lodash';
+import { isString } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
 import { PATTERNS_FIELDS } from '@/constants';
@@ -167,7 +166,6 @@ import PatternCountMessage from '@/components/forms/fields/pattern/pattern-count
 
 import { usePatternCountAlarmsModal } from './hooks/pattern-count-alarms-modal';
 import { usePatternCountEntitiesModal } from './hooks/pattern-count-entities-modal';
-import { usePatternCountMessage } from './hooks/pattern-count-message';
 
 /**
  * Generates a field pattern name by combining component name and field name.
@@ -424,18 +422,12 @@ export default {
 
     const patterns = computed(() => formFilterToPatterns(props.value, patternsFields.value));
 
-    const { getCountMessage } = usePatternCountMessage();
-
-    const checkFilterMessages = computed(() => {
+    const patternsCountMessageBind = computed(() => {
       let entityCounter;
       let alarmCounter;
 
       if (hasError.value) {
-        return t('pattern.errors.required');
-      }
-
-      if (isEmpty(counters.value)) {
-        return '';
+        return { errorMessage: t('pattern.errors.required') };
       }
 
       if (props.entityCountersType) {
@@ -445,7 +437,10 @@ export default {
         entityCounter = counters.value?.entities;
       }
 
-      return getCountMessage(alarmCounter, entityCounter);
+      return {
+        alarmCounter,
+        entityCounter,
+      };
     });
 
     /**
@@ -485,7 +480,7 @@ export default {
       serviceWeatherPatternOutlineColor,
       hasError,
       hasAllInCounter,
-      checkFilterMessages,
+      patternsCountMessageBind,
       entityPatternsCounters,
       pbehaviorPatternsCounters,
       allOverLimit,
