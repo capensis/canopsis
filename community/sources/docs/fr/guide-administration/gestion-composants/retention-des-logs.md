@@ -1,25 +1,5 @@
 # Rétention des fichiers journaux
 
-
-
-## RPM (el8/el9)
-
-Les logs de Canopsis sont gérées par `journald`, la rotation des logs est donc gérée par journald et non par logrotate.
-
-Pour voir les logs de canopsis, il faut désormais passer par 
-
-```sh
-journalctl -u 'canopsis*' -f
-```
-
-!!! important
-
-       Si vous souhaitez avoir les logs d'un seul service, vous devez remplacer `canopsis*` par le nom d'un des services de Canopsis.  
-       Pour voir la liste des services de canopsis :
-       ```sh
-       systemctl list-dependencies canopsis.service --type=service --no-pager | grep -E 'canopsis'
-       ```
-
 ## Docker Compose
 
 La mise en place d'une politique de rétention des logs nécessite la présence du logiciel `logrotate`.
@@ -51,7 +31,25 @@ Si vous souhaitez forcer une exécution manuelle de cette rotation sur-le-champ,
 logrotate -fv /etc/logrotate.d/docker-container
 ```
 
-## Rotation des logs de MongoDB
+## RPM (el8/el9)
+
+Les logs de Canopsis sont gérées par `journald`, la rotation des logs est donc gérée par journald et non par logrotate.
+
+Pour voir les logs de canopsis, il faut désormais passer par 
+
+```sh
+journalctl -u 'canopsis*' -f
+```
+
+!!! important
+
+       Si vous souhaitez avoir les logs d'un seul service, vous devez remplacer `canopsis*` par le nom d'un des services de Canopsis.  
+       Pour voir la liste des services de canopsis :
+       ```sh
+       systemctl list-dependencies canopsis.service --type=service --no-pager | grep -E 'canopsis'
+       ```
+
+### Rotation des logs de MongoDB
 
 MongoDB, la base de données utilisée par Canopsis produit également des fichiers journaux qu'il convient de limiter.
 
@@ -71,4 +69,40 @@ cat > /etc/logrotate.d/canopsis-mongodb.conf << EOF
 EOF
 ```
 
-De la même façon que pour la rétention des journaux de Canopsis, celle de MongoDB peut être personnalisée en fonction de vos ressources.
+### Rotation des logs de TimescaleDB
+
+TimescaleDB est la base utilisé pour logger les actions, les tech metrics, etc.. Elle produit également des fichiers journaux qu'il convient de limiter.
+
+Deux modes sont disponible, soit via Logrotate, soit via journald
+
+=== "Logrotate"
+
+       Configurer logrotate pour timescaledb :
+
+       ```sh
+       cat > /etc/logrotate.d/canopsis-timescaledb.conf << EOF
+       /var/lib/pgsql/17/data/log/*.log {
+              daily
+              rotate 30
+              copytruncate
+              delaycompress
+              compress
+              notifempty
+              missingok
+       }
+       EOF
+       ```
+
+=== "journald"
+
+    Configurer timescaledb pour envoyer les logs dans journald :
+
+    ```sh
+    sed -i "s/^#\?logging_collector.*/logging_collector = off/" /var/lib/pgsql/17/data/postgresql.conf
+    ```
+
+    puis on redémarre le service :
+
+    ```sh
+    systemctl restart postgresql-17.service
+    ```
