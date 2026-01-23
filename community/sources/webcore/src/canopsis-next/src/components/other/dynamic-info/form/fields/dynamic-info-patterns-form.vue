@@ -57,6 +57,14 @@ export default {
           value: ALARM_PATTERN_FIELDS.activationDate,
           options: { disabled: true },
         },
+        {
+          value: ALARM_PATTERN_FIELDS.duration,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.infos,
+          options: { disabled: true },
+        },
       ];
     },
 

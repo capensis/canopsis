@@ -53,6 +53,15 @@ type Entity struct {
 
 	Connector string `bson:"connector,omitempty" json:"connector,omitempty"`
 	Component string `bson:"component,omitempty" json:"component,omitempty"`
+	Upstream  string `bson:"upstream,omitempty" json:"upstream,omitempty"`
+
+	Services []string `bson:"services" json:"services,omitempty"`
+	// ServicesToAdd and ServicesToRemove are used to recompute dependencies counters.
+	ServicesToAdd    []string `bson:"services_to_add,omitempty" json:"services_to_add,omitempty"`
+	ServicesToRemove []string `bson:"services_to_remove,omitempty" json:"services_to_remove,omitempty"`
+	// IsUpstreamChanged is used to update corresponding alarm status.
+	IsUpstreamChanged bool `bson:"is_upstream_changed,omitempty" json:"is_upstream_changed,omitempty"`
+
 	// ImpactedServices field is only for connectors, see entity service RecomputeIdleSince method.
 	ImpactedServices []string `bson:"impacted_services" json:"-"`
 
@@ -69,10 +78,6 @@ type Entity struct {
 	LastPbehaviorDate *datetime.CpsTime `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty"`
 
 	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
-
-	Services         []string `bson:"services" json:"services,omitempty"`
-	ServicesToAdd    []string `bson:"services_to_add,omitempty" json:"services_to_add,omitempty"`
-	ServicesToRemove []string `bson:"services_to_remove,omitempty" json:"services_to_remove,omitempty"`
 
 	// Coordinates is used only in api, add json tag if it's required in an event.
 	Coordinates Coordinates `bson:"coordinates,omitempty" json:"-"`

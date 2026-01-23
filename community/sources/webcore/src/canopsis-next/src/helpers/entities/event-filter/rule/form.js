@@ -60,6 +60,7 @@ import { externalDataToForm, formToExternalData } from '@/helpers/entities/share
  * @property {string} component
  * @property {string} connector
  * @property {string} connector_name
+ * @property {string} upstream
  */
 
 /**
@@ -133,6 +134,7 @@ export const eventFilterConfigToForm = (eventFilterConfig = {}) => ({
   component: eventFilterConfig.component ?? '',
   connector: eventFilterConfig.connector ?? '',
   connector_name: eventFilterConfig.connector_name ?? '',
+  upstream: eventFilterConfig.upstream ?? '',
 });
 
 /**
@@ -211,7 +213,7 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
 
   switch (eventFilterForm.type) {
     case EVENT_FILTER_TYPES.changeEntity:
-      eventFilter.config = pick(config, ['resource', 'component', 'connector', 'connector_name']);
+      eventFilter.config = pick(config, ['resource', 'component', 'connector', 'connector_name', 'upstream']);
       break;
     case EVENT_FILTER_TYPES.enrichment:
       eventFilter.config = pick(config, ['on_success', 'on_failure']);

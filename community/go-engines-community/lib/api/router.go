@@ -26,6 +26,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfodictionary"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfosproperty"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityupstream"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
@@ -770,6 +771,23 @@ func RegisterRoutes(
 				"/entityservice-template-vars",
 				middleware.Authorize(apisecurity.ObjEntityService, model.PermissionRead, enforcer, errorResponder),
 				entityserviceAPI.GetTemplateVars)
+		}
+
+		entityupstreamAPI := entityupstream.NewApi(
+			entityupstream.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient)),
+			errorResponder,
+		)
+		{
+			protected.GET(
+				"/entity-downstreams",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer, errorResponder),
+				entityupstreamAPI.GetDownstreams,
+			)
+			protected.GET(
+				"/entity-upstream",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer, errorResponder),
+				entityupstreamAPI.GetUpstream,
+			)
 		}
 
 		entityCommentRouter := protected.Group("/entity-comments")

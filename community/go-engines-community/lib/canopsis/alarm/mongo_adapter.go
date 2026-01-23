@@ -105,10 +105,10 @@ func (a *mongoAdapter) GetOpenedAlarmsWithEntityByIDs(ctx context.Context, ids [
 	return err
 }
 
-func (a *mongoAdapter) GetOpenedOkAlarmsWithEntity(ctx context.Context) (libmongo.Cursor, error) {
+func (a *mongoAdapter) GetOpenedOffAlarmsWithEntity(ctx context.Context) (libmongo.Cursor, error) {
 	filter := bson.M{
-		"v.resolved":  nil,
-		"v.state.val": types.AlarmStateOK,
+		"v.resolved":   nil,
+		"v.status.val": types.AlarmStatusOff,
 	}
 
 	return a.entityAggregateCursor(ctx, filter)
@@ -151,7 +151,7 @@ func (a *mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 ) (libmongo.Cursor, error) {
 	return a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
-			"v.status.val": bson.M{"$ne": types.AlarmStatusNoEvents},
+			"v.status.val": bson.M{"$nin": bson.A{types.AlarmStatusNoEvents, types.AlarmStatusCancelled, types.AlarmStatusUnknown}},
 			"v.resolved":   nil,
 			"$or": []bson.M{
 				{"v.last_update_date": bson.M{"$lte": time}},
@@ -409,7 +409,7 @@ func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefo
 	})
 }
 
-func (a *mongoAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (int64, int64, error) {
+func (a *mongoAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (types.CpsNumber, *datetime.CpsTime, error) {
 	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"d":          bson.M{"$in": entityIds},
@@ -422,14 +422,14 @@ func (a *mongoAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context
 		}},
 	})
 	if err != nil {
-		return 0, 0, err
+		return 0, nil, err
 	}
 
 	defer cursor.Close(ctx)
 	for cursor.Next(ctx) {
 		res := struct {
-			State         int64 `bson:"state"`
-			LastEventDate int64 `bson:"last_event_date"`
+			State         types.CpsNumber   `bson:"state"`
+			LastEventDate *datetime.CpsTime `bson:"last_event_date"`
 		}{}
 
 		err := cursor.Decode(&res)
@@ -437,7 +437,7 @@ func (a *mongoAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context
 		return res.State, res.LastEventDate, err
 	}
 
-	return 0, 0, nil
+	return 0, nil, nil
 }
 
 func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, entityIds []string, t datetime.CpsTime) error {
