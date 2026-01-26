@@ -28,7 +28,7 @@ type Store interface {
 	Cancel(ctx context.Context, id string, r Request, userID, username string) error
 	Uncancel(ctx context.Context, id string, r Request, userID, username string) error
 	AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userID, username string) error
-	AssocTicketRemove(ctx context.Context, id string, r AssocTicketRemoveRequest, userID, username string) error
+	TicketRemove(ctx context.Context, id string, r TicketRemoveRequest, userID, username string) error
 	Comment(ctx context.Context, id string, r CommentRequest, userID, username string) error
 	ChangeState(ctx context.Context, id string, r ChangeStateRequest, userID, username string) error
 	AddBookmark(ctx context.Context, alarmID, userID string) error
@@ -199,7 +199,7 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 	return nil
 }
 
-func (s *store) AssocTicketRemove(ctx context.Context, id string, r AssocTicketRemoveRequest, userID, username string) error {
+func (s *store) TicketRemove(ctx context.Context, id string, r TicketRemoveRequest, userID, username string) error {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
 	if err != nil {
 		return err
@@ -207,7 +207,7 @@ func (s *store) AssocTicketRemove(ctx context.Context, id string, r AssocTicketR
 
 	ticket := types.AlarmStep{}
 	for _, v := range alarm.Alarm.Value.Tickets {
-		if v.Ticket == r.Ticket && v.Type == types.AlarmStepAssocTicket {
+		if v.Ticket == r.Ticket {
 			ticket = v
 
 			break
@@ -232,7 +232,7 @@ func (s *store) AssocTicketRemove(ctx context.Context, id string, r AssocTicketR
 		TicketSystemName: ticket.TicketSystemName,
 	}
 
-	event, err := s.genEvent(types.EventTypeAssocTicketRemove, alarm.Alarm, alarm.Entity, ob.String(), username, userID)
+	event, err := s.genEvent(types.EventTypeTicketRemove, alarm.Alarm, alarm.Entity, ob.String(), username, userID)
 	if err != nil {
 		return err
 	}

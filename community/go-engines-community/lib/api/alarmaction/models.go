@@ -26,7 +26,7 @@ type AssocTicketRequest struct {
 	TicketResources bool              `json:"ticket_resources"`
 }
 
-type AssocTicketRemoveRequest struct {
+type TicketRemoveRequest struct {
 	Ticket  string `json:"ticket" binding:"required"`
 	Comment string `json:"comment" binding:"required,max=255"`
 }
@@ -60,8 +60,8 @@ type BulkAssocTicketRequestItem struct {
 	ID string `json:"_id" binding:"required"`
 }
 
-type BulkAssocTicketRemoveRequestItem struct {
-	AssocTicketRemoveRequest
+type BulkTicketRemoveRequestItem struct {
+	TicketRemoveRequest
 	ID string `json:"_id" binding:"required"`
 }
 

@@ -1075,16 +1075,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /alarms/{id}/assocticketremove:
+  /alarms/{id}/ticketremove:
     put:
       tags:
         - alarms
-      summary: Remove associated alarm ticket
+      summary: Remove alarm ticket
       description: |
-        Remove associated alarm ticket.
+        Remove alarm ticket.
         
         -  PERMISSIONS: `api_alarm_update`
-      operationId: alarms-assocticketremove
+      operationId: alarms-ticketremove
       parameters:
         - $ref: '#/components/parameters/id'
       requestBody:
@@ -1092,11 +1092,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.AssocTicketRemoveRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.TicketRemoveRequest'
             examples:
-              assocticketremove:
-                summary: Remove associated ticket
-                description: Remove associated ticket from an alarm.
+              ticketremove:
+                summary: Remove ticket
+                description: Remove ticket from an alarm.
                 value: {
                   "ticket": "ENV-116",
                   "comment": "Lorem ipsum dolor sit amet"
@@ -1845,16 +1845,16 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAssocTicketRequestItem'
-  /bulk/alarms/assocticketremove:
+  /bulk/alarms/ticketremove:
     put:
       tags:
         - alarms
-      summary: Remove associated alarm tickets
+      summary: Remove alarm tickets
       description: |
-        Remove associated alarm tickets.
+        Remove alarm tickets.
 
         -  PERMISSIONS: `api_alarm_update`
-      operationId: alarms-bulk-assocticketremove
+      operationId: alarms-bulk-ticketremove
       requestBody:
         description: body
         content:
@@ -1862,11 +1862,11 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAssocTicketRemoveRequestItem'
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkTicketRemoveRequestItem'
             examples:
-              assocticketremove:
-                summary: Remove associated ticket
-                description: Remove associated tickets from alarms.
+              ticketremove:
+                summary: Remove ticket
+                description: Remove tickets from alarms.
                 value: [
                   {
                     "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
@@ -1895,7 +1895,7 @@ paths:
                       - type: object
                         properties:
                           item:
-                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAssocTicketRemoveRequestItem'
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkTicketRemoveRequestItem'
   /bulk/alarms/cancel:
     put:
       tags:
@@ -7365,13 +7365,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /external-data-import/{id}/preview:
     put:
       tags:
