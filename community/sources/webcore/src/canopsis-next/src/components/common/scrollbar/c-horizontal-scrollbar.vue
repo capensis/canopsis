@@ -59,6 +59,7 @@ export default {
   display: block;
   transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
   transition-property: opacity;
+  scrollbar-width: thick; // Only for firefox browsers
 
   &__content {
     height: 1px;
