@@ -414,8 +414,8 @@ func (p *metaAlarmAttachProcessor) getChildEventByStep(
 		childEvent.TicketInfo = metaAlarmStep.TicketInfo
 		childEvent.TicketInfo.TicketMetaAlarmID = metaAlarm.ID
 		isTicketStep = true
-	case types.AlarmStepAssocTicketRemove:
-		childEvent.EventType = types.EventTypeAssocTicketRemove
+	case types.AlarmStepTicketRemove:
+		childEvent.EventType = types.EventTypeTicketRemove
 		childEvent.TicketInfo = metaAlarmStep.TicketInfo
 		childEvent.TicketInfo.TicketMetaAlarmID = metaAlarm.ID
 		isTicketStep = true

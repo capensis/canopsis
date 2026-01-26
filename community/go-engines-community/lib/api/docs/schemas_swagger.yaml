@@ -757,7 +757,7 @@ definitions:
         maxLength: 255
         type: string
     type: object
-  alarmaction.AssocTicketRemoveRequest:
+  alarmaction.TicketRemoveRequest:
     properties:
       comment:
         maxLength: 255
@@ -805,7 +805,7 @@ definitions:
     required:
     - _id
     type: object
-  alarmaction.BulkAssocTicketRemoveRequestItem:
+  alarmaction.BulkTicketRemoveRequestItem:
     properties:
       _id:
         type: string

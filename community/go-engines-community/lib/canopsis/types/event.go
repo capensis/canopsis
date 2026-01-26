@@ -35,17 +35,17 @@ const (
 // Event types.
 // Add each new event type to isValidEventType func.
 const (
-	EventTypeAck               = "ack"
-	EventTypeAckremove         = "ackremove"
-	EventTypeAssocTicket       = "assocticket"
-	EventTypeAssocTicketRemove = "assocticketremove"
-	EventTypeCancel            = "cancel"
-	EventTypeCheck             = "check"
-	EventTypeComment           = "comment"
-	EventTypeChangestate       = "changestate"
-	EventTypeSnooze            = "snooze"
-	EventTypeUnsnooze          = "unsnooze"
-	EventTypeUncancel          = "uncancel"
+	EventTypeAck          = "ack"
+	EventTypeAckremove    = "ackremove"
+	EventTypeAssocTicket  = "assocticket"
+	EventTypeTicketRemove = "ticketremove"
+	EventTypeCancel       = "cancel"
+	EventTypeCheck        = "check"
+	EventTypeComment      = "comment"
+	EventTypeChangestate  = "changestate"
+	EventTypeSnooze       = "snooze"
+	EventTypeUnsnooze     = "unsnooze"
+	EventTypeUncancel     = "uncancel"
 
 	// EventTypeContextUpdate is used to send a context graph update event without counting it and updating LastEventDate
 	EventTypeContextUpdate = "contextupdate"
@@ -567,7 +567,7 @@ func isValidEventType(t string) bool {
 		EventTypeAck,
 		EventTypeAckremove,
 		EventTypeAssocTicket,
-		EventTypeAssocTicketRemove,
+		EventTypeTicketRemove,
 		EventTypeCancel,
 		EventTypeComment,
 		EventTypeDeclareTicketWebhook,

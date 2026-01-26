@@ -17,7 +17,7 @@ type API interface {
 	Cancel(c *gin.Context)
 	Uncancel(c *gin.Context)
 	AssocTicket(c *gin.Context)
-	AssocTicketRemove(c *gin.Context)
+	TicketRemove(c *gin.Context)
 	Comment(c *gin.Context)
 	ChangeState(c *gin.Context)
 	BulkAck(c *gin.Context)
@@ -26,7 +26,7 @@ type API interface {
 	BulkCancel(c *gin.Context)
 	BulkUncancel(c *gin.Context)
 	BulkAssocTicket(c *gin.Context)
-	BulkAssocTicketRemove(c *gin.Context)
+	BulkTicketRemove(c *gin.Context)
 	BulkComment(c *gin.Context)
 	BulkChangeState(c *gin.Context)
 	AddBookmark(c *gin.Context)
@@ -249,9 +249,9 @@ func (a *api) AssocTicket(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// AssocTicketRemove
-// @Param body body AssocTicketRemoveRequest true "body"
-func (a *api) AssocTicketRemove(c *gin.Context) {
+// TicketRemove
+// @Param body body TicketRemoveRequest true "body"
+func (a *api) TicketRemove(c *gin.Context) {
 	userID, err := authctx.GetUserKey(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
@@ -266,14 +266,14 @@ func (a *api) AssocTicketRemove(c *gin.Context) {
 		return
 	}
 
-	request := AssocTicketRemoveRequest{}
+	request := TicketRemoveRequest{}
 	if err = validation.Bind(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
-	err = a.store.AssocTicketRemove(c, c.Param("id"), request, userID, username)
+	err = a.store.TicketRemove(c, c.Param("id"), request, userID, username)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
@@ -483,9 +483,9 @@ func (a *api) BulkAssocTicket(c *gin.Context) {
 	}, a.errorResponder)
 }
 
-// BulkAssocTicketRemove
-// @Param body body []BulkAssocTicketRemoveRequestItem true "body"
-func (a *api) BulkAssocTicketRemove(c *gin.Context) {
+// BulkTicketRemove
+// @Param body body []BulTicketRemoveRequestItem true "body"
+func (a *api) BulkTicketRemove(c *gin.Context) {
 	userID, err := authctx.GetUserKey(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
@@ -500,8 +500,8 @@ func (a *api) BulkAssocTicketRemove(c *gin.Context) {
 		return
 	}
 
-	bulk.Handler(c, func(request BulkAssocTicketRemoveRequestItem) (string, error) {
-		return request.ID, a.store.AssocTicketRemove(c, request.ID, request.AssocTicketRemoveRequest, userID, username)
+	bulk.Handler(c, func(request BulkTicketRemoveRequestItem) (string, error) {
+		return request.ID, a.store.TicketRemove(c, request.ID, request.TicketRemoveRequest, userID, username)
 	}, a.errorResponder)
 }
 

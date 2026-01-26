@@ -72,9 +72,9 @@ const (
 	AlarmStepResolve         = "resolve"
 
 	AlarmStepAssocTicket       = "assocticket"
-	AlarmStepAssocTicketRemove = "assocticketremove"
 	AlarmStepDeclareTicket     = "declareticket"
 	AlarmStepDeclareTicketFail = "declareticketfail"
+	AlarmStepTicketRemove      = "ticketremove"
 	AlarmStepWebhookStart      = "webhookstart"
 	AlarmStepWebhookComplete   = "webhookcomplete"
 	AlarmStepWebhookFail       = "webhookfail"
@@ -117,7 +117,7 @@ func GetAlarmStepTypes() []string {
 		AlarmStepActivate,
 		AlarmStepResolve,
 		AlarmStepAssocTicket,
-		AlarmStepAssocTicketRemove,
+		AlarmStepTicketRemove,
 		AlarmStepDeclareTicket,
 		AlarmStepDeclareTicketFail,
 		AlarmStepWebhookStart,

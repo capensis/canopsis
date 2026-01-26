@@ -739,7 +739,7 @@ func (p *metaAlarmPostProcessor) getChildEventByMetaAlarmEvent(
 		output = event.Parameters.TicketInfo.GetStepMessage()
 		isTicket = true
 	case types.AlarmChangeTypeAssocTicket,
-		types.AlarmChangeTypeAssocTicketRemove:
+		types.AlarmChangeTypeTicketRemove:
 		isTicket = true
 	}
 
@@ -789,7 +789,7 @@ func (p *metaAlarmPostProcessor) applyOnChild(changeType types.AlarmChangeType) 
 	case types.AlarmChangeTypeAck,
 		types.AlarmChangeTypeAckremove,
 		types.AlarmChangeTypeAssocTicket,
-		types.AlarmChangeTypeAssocTicketRemove,
+		types.AlarmChangeTypeTicketRemove,
 		types.AlarmChangeTypeCancel,
 		types.AlarmChangeTypeChangeState,
 		types.AlarmChangeTypeComment,
