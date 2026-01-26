@@ -143,15 +143,7 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
       type="delete"
     />
   </div>
-  <div
-    class="v-messages theme--light error--text"
-  >
-    <transition-group-stub
-      class="v-messages__wrapper"
-      name="message-transition"
-      tag="div"
-    />
-  </div>
+  <!---->
   <div
     class="flex"
   >
@@ -174,15 +166,7 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with default props co
   class="layout column"
 >
   <!---->
-  <div
-    class="v-messages theme--light error--text"
-  >
-    <transition-group-stub
-      class="v-messages__wrapper"
-      name="message-transition"
-      tag="div"
-    />
-  </div>
+  <!---->
   <div
     class="flex"
   >
@@ -295,15 +279,7 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
     </div>
     <!---->
   </div>
-  <div
-    class="v-messages theme--light error--text"
-  >
-    <transition-group-stub
-      class="v-messages__wrapper"
-      name="message-transition"
-      tag="div"
-    />
-  </div>
+  <!---->
   <div
     class="flex"
   >
