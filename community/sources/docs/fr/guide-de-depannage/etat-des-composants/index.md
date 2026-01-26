@@ -26,14 +26,22 @@ systemctl status redis.service
 systemctl status nginx.service
 ```
 
+## PostgreSQL/TimescaleDB
+
+```sh
+systemctl status postgresql-13.service
+```
+
 ## Canopsis
 
 ### Gestion des moteurs et services internes
 
 ```sh
-canoctl status
+systemctl status canopsis*
 ```
 
 ## Gestion avancée des composants
 
 [Arrêt et relance des composants](../../guide-administration/gestion-composants/arret-relance-composants.md)
+
+
