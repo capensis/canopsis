@@ -23,7 +23,12 @@
         @click="removeItemFromArray(index)"
       />
     </v-layout>
-    <v-messages :value="errorMessages" color="error" />
+    <v-messages
+      v-if="errorMessages.length > 0"
+      :value="errorMessages"
+      color="error"
+      class="mb-2"
+    />
     <v-flex>
       <v-btn
         :disabled="disabled"
