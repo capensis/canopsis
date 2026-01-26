@@ -17,7 +17,7 @@ systemctl status rabbitmq-server.service
 ## Redis
 
 ```sh
-systemctl status redis.service
+systemctl status Redis.service
 ```
 
 ## Nginx
@@ -26,14 +26,22 @@ systemctl status redis.service
 systemctl status nginx.service
 ```
 
+## PostgreSQL/TimescaleDB
+
+```sh
+systemctl status postgresql-15.service
+```
+
 ## Canopsis
 
 ### Gestion des moteurs et services internes
 
 ```sh
-canoctl status
+systemctl status canopsis*
 ```
 
 ## Gestion avancée des composants
 
 [Arrêt et relance des composants](../../guide-administration/gestion-composants/arret-relance-composants.md)
+
+
