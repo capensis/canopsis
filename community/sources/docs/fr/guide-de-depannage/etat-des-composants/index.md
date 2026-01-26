@@ -14,7 +14,7 @@ systemctl status mongod.service
 systemctl status rabbitmq-server.service
 ```
 
-## Redis
+## Valkey
 
 ```sh
 systemctl status valkey.service
