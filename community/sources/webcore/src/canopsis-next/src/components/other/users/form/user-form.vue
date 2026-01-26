@@ -59,7 +59,7 @@
       :items="groupsNavigationItems"
       class="mt-0"
     />
-    <c-theme-field v-field="form.ui_theme" clearable />
+    <c-theme-field v-if="hasReadThemeAccess" v-field="form.ui_theme" clearable />
     <v-layout
       v-if="!isNew"
       align-center
@@ -86,11 +86,11 @@
 <script>
 import { computed } from 'vue';
 
-import { AUTH_SOURCES_WITH_PASSWORD_CHANGING, GROUPS_NAVIGATION_TYPES } from '@/constants';
+import { AUTH_SOURCES_WITH_PASSWORD_CHANGING, GROUPS_NAVIGATION_TYPES, USER_PERMISSIONS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
-import { useAuth } from '@/hooks/auth';
+import { useAuth, useCRUDPermissions } from '@/hooks/auth';
 
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
 
@@ -126,6 +126,8 @@ export default {
     const popups = usePopups();
     const { currentUser } = useAuth();
 
+    const { hasReadAccess: hasReadThemeAccess } = useCRUDPermissions(USER_PERMISSIONS.technical.profile.theme);
+
     const hasPassword = computed(() => (
       Object.values(AUTH_SOURCES_WITH_PASSWORD_CHANGING).includes(props.user?.source ?? '')
     ));
@@ -148,6 +150,7 @@ export default {
     const showCopyAuthKeyErrorPopup = () => popups.error({ text: t('errors.default') });
 
     return {
+      hasReadThemeAccess,
       hasPassword,
       groupsNavigationItems,
       idpFieldsMap,
