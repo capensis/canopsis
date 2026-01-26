@@ -26,6 +26,13 @@ systemctl status valkey.service
 systemctl status nginx.service
 ```
 
+## PostgreSQL/TimescaleDB
+
+```sh
+systemctl status postgresql-17.service
+```
+
+
 ## Canopsis
 
 ### Gestion des moteurs et services internes
