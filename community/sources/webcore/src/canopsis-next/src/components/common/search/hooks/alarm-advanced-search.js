@@ -26,6 +26,7 @@ import {
   ALARM_STATUSES,
   BASIC_ENTITY_TYPES,
   ENTITY_TYPES,
+  ENTITY_FIELDS,
   PATTERN_DURATION_OPERATORS,
   PATTERN_EXISTS_OPERATORS,
   PATTERN_FIELD_TYPES,
@@ -42,6 +43,11 @@ import {
 
 import { deepKeyBy } from '@/helpers/array';
 import { getOperatorsByFieldType } from '@/helpers/entities/pattern/form';
+import {
+  isAlarmPatternField,
+  isEntityPatternField,
+  isPbehaviorPatternField,
+} from '@/helpers/search/alarm-advanced-search';
 
 import { useI18n } from '@/hooks/i18n';
 import { useEntity } from '@/hooks/store/modules/entity';
@@ -422,7 +428,7 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
 };
 
 /**
- * Hook to manage advanced search attributes for entities.
+ * Hook to manage alarm advanced search attributes for entities.
  *
  * @param {Object} options - Options for configuring the advanced search attributes.
  * @param {Array} options.infosItems - An array of information items used in the search.
@@ -440,11 +446,11 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems }) => {
   const { getEntityOptions } = useGetEntityOptions();
 
   const attributesMap = computed(() => ({
-    [ALARM_FIELDS.entityId]: getEntityOptions(),
-    [ALARM_FIELDS.entityName]: {
+    [ENTITY_FIELDS.id]: getEntityOptions(),
+    [ENTITY_FIELDS.name]: {
       operators: ALARM_ADVANCED_SEARCH_ENTITY_OPERATORS,
     },
-    [ALARM_FIELDS.entityCategoryName]: {
+    [ENTITY_FIELDS.categoryName]: {
       operators: [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
@@ -455,7 +461,7 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems }) => {
       itemValue: '_id',
       itemText: 'name',
     },
-    [ALARM_FIELDS.entityType]: {
+    [ENTITY_FIELDS.type]: {
       operators: [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
@@ -466,15 +472,15 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems }) => {
       itemText: 'text',
       itemValue: 'value',
     },
-    [ALARM_FIELDS.entityComponent]: getEntityOptions([ENTITY_TYPES.component]),
-    [ALARM_FIELDS.entityConnector]: getEntityOptions([ENTITY_TYPES.connector]),
-    [ALARM_FIELDS.entityImpactLevel]: {
+    [ENTITY_FIELDS.component]: getEntityOptions([ENTITY_TYPES.component]),
+    [ENTITY_FIELDS.connector]: getEntityOptions([ENTITY_TYPES.connector]),
+    [ENTITY_FIELDS.impactLevel]: {
       operators: PATTERN_NUMBER_OPERATORS,
     },
-    [ALARM_FIELDS.entityInfos]: {
+    [ENTITY_FIELDS.infos]: {
       items: unref(infosItems),
     },
-    [ALARM_FIELDS.entityComponentInfos]: {
+    [ENTITY_FIELDS.componentInfos]: {
       items: unref(infosItems),
     },
   }));
@@ -539,18 +545,14 @@ export const useAdvancedSearchPbehaviorAttributes = () => {
 };
 
 /**
- * Hook to manage advanced search attributes for alarms, entities, and pbehaviors.
+ * Hook to manage advanced search attributes for alarms, entities, and pbehaviors for alarms list.
  *
  * @param {Object} options - Options for configuring the advanced search attributes.
- * @param {boolean} options.allowAlarmFields - Flag to allow alarm fields in the search.
- * @param {boolean} options.allowEntityFields - Flag to allow entity fields in the search.
- * @param {boolean} options.allowPbehaviorFields - Flag to allow pbehavior fields in the search.
- * @returns {Object} An object containing the pending state and the computed attributes.
+ * @param {Array} options.rules - The array of rules to be evaluated.
+ * @returns {Object} An object containing the pending state, the computed attributes, and the computed flags.
  */
-export const useAdvancedSearchAttributes = ({
-  allowAlarmFields,
-  allowEntityFields,
-  allowPbehaviorFields,
+export const useAlarmAdvancedSearchAttributes = ({
+  rules,
 }) => {
   const { t, tc } = useI18n();
 
@@ -571,9 +573,38 @@ export const useAdvancedSearchAttributes = ({
 
   const wholePending = computed(() => infosPending.value || entityInfoPropertyPending.value);
 
+  /**
+   * HAS FLAGS
+   */
+  const hasOr = computed(() => unref(rules).some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or));
+  const hasAlarmField = computed(() => unref(rules).some(({ attribute }) => isAlarmPatternField(attribute)));
+  const hasEntityField = computed(() => unref(rules).some(({ attribute }) => isEntityPatternField(attribute)));
+  const hasPbehaviorField = computed(() => unref(rules).some(({ attribute }) => isPbehaviorPatternField(attribute)));
+
+  /**
+   * ALLOW FLAGS
+   */
+  const allowOr = computed(() => [
+    hasEntityField.value,
+    hasPbehaviorField.value,
+    hasAlarmField.value,
+  ].filter(Boolean).length <= 1);
+
+  const allowAlarmFields = computed(() => !hasOr.value || (!hasEntityField.value && !hasPbehaviorField.value));
+  const allowEntityFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasPbehaviorField.value));
+  const allowPbehaviorFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasEntityField.value));
+
+  const entitiesAttributesMapWithPrefix = computed(() => (
+    Object.entries(entityAttributesMap.value).reduce((acc, [key, value]) => {
+      acc[`entity.${key}`] = value;
+
+      return acc;
+    }, {})
+  ));
+
   const attributesMap = computed(() => ({
     ...alarmAttributesMap.value,
-    ...entityAttributesMap.value,
+    ...entitiesAttributesMapWithPrefix.value,
     ...pbehaviorAttributesMap.value,
   }));
 
@@ -644,7 +675,27 @@ export const useAdvancedSearchAttributes = ({
   return {
     pending: wholePending,
     attributes,
+    hasOr,
+    hasAlarmField,
+    hasEntityField,
+    hasPbehaviorField,
+    allowOr,
+    allowAlarmFields,
+    allowEntityFields,
+    allowPbehaviorFields,
   };
+};
+
+/**
+ * Hook to manage advanced search attributes for entities, and pbehaviors for context explorer.
+ *
+ * @param {Object} options - Options for configuring the advanced search attributes.
+ * @param {boolean} options.allowEntityFields - Flag to allow entity fields in the search.
+ * @param {boolean} options.allowPbehaviorFields - Flag to allow pbehavior fields in the search.
+ * @returns {Object} An object containing the pending state and the computed attributes.
+ */
+export const useEntityAdvancedSearchAttributes = () => {
+
 };
 
 /**
