@@ -17,7 +17,7 @@ systemctl status rabbitmq-server.service
 ## Redis
 
 ```sh
-systemctl status redis.service
+systemctl status valkey.service
 ```
 
 ## Nginx
@@ -31,9 +31,11 @@ systemctl status nginx.service
 ### Gestion des moteurs et services internes
 
 ```sh
-canoctl status
+systemctl status canopsis*
 ```
 
 ## Gestion avancée des composants
 
 [Arrêt et relance des composants](../../guide-administration/gestion-composants/arret-relance-composants.md)
+
+
