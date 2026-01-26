@@ -370,7 +370,8 @@ var disabledFieldsInEntityPattern = map[string][]string{
 }
 
 var disabledFieldsInEventPattern = map[string][]string{
-	mongo.EventFilterRuleCollection: {},
+	mongo.EventFilterRuleCollection:   {},
+	mongo.EventRecordsMongoCollection: {},
 }
 
 var disabledFieldsInPbehaviorPattern = map[string][]string{
