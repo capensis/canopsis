@@ -32,9 +32,9 @@ L'agent de messages RabbitMQ peut être redémarré avec la commande suivante :
 systemctl restart rabbitmq-server.service
 ```
 
-### Redis
+### Valkey
 
-Le serveur de cache Redis peut être redémarré avec la commande suivante :
+Le serveur de cache Valkey peut être redémarré avec la commande suivante :
 
 ```sh
 systemctl restart valkey.service
