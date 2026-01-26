@@ -10,7 +10,7 @@ RabbitMQ      | Passage de messages                         | TCP/5672          
 RabbitMQ UI   | Interface web de RabbitMQ                   | TCP/15672             |
 API Canopsis  | API REST de Canopsis                        | TCP/8082              |
 Redis         | Serveur de cache                            | TCP/6739              |
-Redis Sentinel| Supervision et basculement de Valkey (optionnel) | TCP/26739         |
+Redis Sentinel| Supervision et basculement de Redis (optionnel) | TCP/26739         |
 SNMP          | Passage des traps SNMP                      | UDP/162               |
 PostgreSQL    | Base de données, métriques (TimescaleDB)    | TCP/5432              |
 
