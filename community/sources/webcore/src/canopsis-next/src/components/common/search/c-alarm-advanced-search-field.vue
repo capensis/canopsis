@@ -1,72 +1,28 @@
 <template>
-  <v-layout class="c-alarm-advanced-search__wrapper" align-end>
-    <div
-      :class="[themeClasses]"
-      class="c-alarm-advanced-search v-input v-input--hide-details theme--light
-    v-text-field v-text-field--single-line v-text-field--is-booted v-select v-autocomplete primary--text"
-    >
-      <div class="v-input__control">
-        <div class="v-input__slot pb-1">
-          <div class="v-text-field__slot">
-            <advanced-search-rules
-              v-model="rules"
-              :attributes="attributes"
-              :allow-or="allowOr"
-              :allow-focus-on-mount="allowFocusOnMount"
-              @input="inputSearch"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-    <v-layout>
-      <advanced-search-history-btn
-        :searches="searches"
-        :attributes="attributes"
-        @select="select"
-        @remove="removeSearch"
-        @toggle-pin="togglePinForSearch"
-      />
-      <c-action-btn
-        :tooltip="$t('common.search')"
-        icon="search"
-        @click="submit"
-      />
-      <c-action-btn
-        :tooltip="$t('common.clearSearch')"
-        icon="clear"
-        @click="reset"
-      />
-    </v-layout>
-  </v-layout>
+  <c-new-advanced-search-field
+    v-model="rules"
+    :searches="searches"
+    :attributes="attributes"
+    :allow-or="allowOr"
+    @submit="submit"
+    @reset="reset"
+    @remove:search="removeSearch"
+    @toggle-pin:search="togglePinForSearch"
+  />
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import Themeable from 'vuetify/lib/mixins/themeable';
 
-import { ADVANCED_SEARCH_UNION_CONDITIONS } from '@/constants';
+import { advancedSearchRuleItemToFormItem } from '@/helpers/search/alarm-advanced-search';
 
-import { uuid } from '@/helpers/uuid';
-import {
-  advancedSearchRuleItemToFormItem,
-  formToAdvancedSearch,
-  isAlarmPatternField,
-  isEntityPatternField,
-  isPbehaviorPatternField,
-} from '@/helpers/search/alarm-advanced-search';
-
-import { useComponentInstance } from '@/hooks/vue';
-
-import { useAdvancedSearchAttributes, useAdvancedSearchValidator } from './hooks/alarm-advanced-search';
-import AdvancedSearchRules from './partials/alarm-advanced-search-rules.vue';
-import AdvancedSearchHistoryBtn from './partials/alarm-advanced-search-history-btn.vue';
+import { useAlarmAdvancedSearchAttributes } from './hooks/alarm-advanced-search';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { AdvancedSearchHistoryBtn, AdvancedSearchRules },
   mixins: [Themeable],
   props: {
     searches: {
@@ -75,109 +31,21 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const instance = useComponentInstance();
     const rules = ref([advancedSearchRuleItemToFormItem()]);
-    const allowFocusOnMount = ref(true);
 
-    let activeSearch = null;
-
-    /**
-     * HAS FLAGS
-     */
-    const hasOr = computed(() => rules.value.some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or));
-    const hasAlarmField = computed(() => rules.value.some(({ attribute }) => isAlarmPatternField(attribute)));
-    const hasEntityField = computed(() => rules.value.some(({ attribute }) => isEntityPatternField(attribute)));
-    const hasPbehaviorField = computed(() => rules.value.some(({ attribute }) => isPbehaviorPatternField(attribute)));
-
-    /**
-     * ALLOW FLAGS
-     */
-    const allowOr = computed(() => [
-      hasEntityField.value,
-      hasPbehaviorField.value,
-      hasAlarmField.value,
-    ].filter(Boolean).length <= 1);
-
-    const allowAlarmFields = computed(() => !hasOr.value || (!hasEntityField.value && !hasPbehaviorField.value));
-    const allowEntityFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasPbehaviorField.value));
-    const allowPbehaviorFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasEntityField.value));
-
-    const { attributes } = useAdvancedSearchAttributes({
-      allowAlarmFields,
-      allowEntityFields,
-      allowPbehaviorFields,
-    });
-
-    /**
-     * Temporarily disables the allow focus on mount flag and re-enables it after a delay.
-     * This is used to prevent unwanted focus behavior during certain operations.
-     */
-    const runToggleAllowFocusOnMount = () => {
-      allowFocusOnMount.value = false;
-
-      setTimeout(() => allowFocusOnMount.value = true, 1000);
-    };
+    const { attributes, allowOr } = useAlarmAdvancedSearchAttributes({ rules });
 
     /**
      * Submits the current advanced search configuration.
      *
      * @returns {Promise<void>} A promise that resolves when the submission process is complete.
      */
-    const submit = async () => {
-      const isValid = await instance.$validator.validateAll();
-
-      if (isValid) {
-        const newSearch = formToAdvancedSearch(rules.value);
-
-        newSearch._id = activeSearch?._id ?? uuid();
-        newSearch.pinned = activeSearch?.pinned ?? false;
-
-        emit('submit', newSearch);
-      }
-    };
+    const submit = newSearch => emit('submit', newSearch);
 
     /**
-     * Resets the active search configuration to null.
+     * Emits an event to reset the advanced search configuration.
      */
-    const resetActiveSearch = () => activeSearch = null;
-
-    /**
-     * Input search handler
-     */
-    const inputSearch = (newRules) => {
-      resetActiveSearch();
-
-      if (newRules.length === 1 && newRules[0].text) {
-        submit();
-      }
-    };
-
-    /**
-     * Reset the current search field errors and resets the rules to their initial state.
-     */
-    const reset = () => {
-      instance.errors.clear();
-      rules.value = [advancedSearchRuleItemToFormItem()];
-
-      resetActiveSearch();
-
-      emit('reset');
-    };
-
-    /**
-     * Selects a search configuration and updates the active search variable.
-     *
-     * @param {Object} search - The search configuration object to be selected.
-     * @param {Array} search.rules - An array of rules associated with the search configuration.
-     */
-    const select = (search) => {
-      activeSearch = search;
-      rules.value = [...search.rules, advancedSearchRuleItemToFormItem()];
-
-      runToggleAllowFocusOnMount();
-
-      submit();
-    };
+    const reset = () => emit('reset');
 
     /**
      * Emits an event to remove a search configuration by its identifier.
@@ -193,20 +61,15 @@ export default {
      */
     const togglePinForSearch = id => emit('toggle-pin:search', id);
 
-    useAdvancedSearchValidator({ rules });
-
     return {
       rules,
       attributes,
-      allowFocusOnMount,
       allowOr,
 
-      select,
       reset,
       submit,
       removeSearch,
       togglePinForSearch,
-      inputSearch,
     };
   },
 };
