@@ -1,4 +1,4 @@
-# Rétention des fichiers journaux
+# Gestion des fichiers journaux
 
 ## Docker Compose
 
@@ -106,3 +106,34 @@ Deux modes sont disponible, soit via Logrotate, soit via journald
     ```sh
     systemctl restart postgresql-17.service
     ```
+
+### Rotation des logs de RabbitMQ
+```sh
+cat > /etc/logrotate.d/canopsis-rabbitmq.conf << EOF
+/var/log/rabbitmq/*.log {
+       daily
+       rotate 30
+       copytruncate
+       delaycompress
+       compress
+       notifempty
+       missingok
+}
+EOF
+```
+
+### Rotation des logs de Valkey
+
+```sh
+cat > /etc/logrotate.d/canopsis-valkey.conf << EOF
+/var/log/valkey/*.log {
+       daily
+       rotate 30
+       copytruncate
+       delaycompress
+       compress
+       notifempty
+       missingok
+}
+EOF
+```
