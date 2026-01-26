@@ -120,11 +120,11 @@ Cette liste précise vous permet ainsi d'anticiper :
 - La mise en place des bonnes règles de trafic sortant dans certains systèmes
   conteneurisés (Egress).
 
-[gu-eventfilter]: ../../../guide-utilisation/menu-exploitation/filtres-evenements/
-[gu-scenario]: ../../../guide-utilisation/menu-exploitation/scenarios/
-[gu-ticketrules]: ../../../guide-utilisation/menu-exploitation/regles-declaration-tickets/
-[gu-authtokens]: ../../../guide-utilisation/menu-administration/jetons-authentification-externe/
+[gu-eventfilter]: ../../guide-utilisation/menu-exploitation/filtres-evenements.md
+[gu-scenario]: ../../guide-utilisation/menu-exploitation/scenarios/
+[gu-ticketrules]: ../../guide-utilisation/menu-exploitation/regles-declaration-tickets/
+[gu-authtokens]: ../../guide-developpement/index.md#authentification-par-token
 [ga-remediation]: ../remediation/
-[ga-externalauth]: ../administration-avancee/methodes-authentification-avancees/
-[ga-envvars-proxy]: ../administration-avancee/variables-environnement/#utilisation-dun-proxy-http-ou-https
+[ga-externalauth]: ../administration-avancee/methodes-authentification-avancees.md
+[ga-envvars-proxy]: ../administration-avancee/variables-environnement.md#utilisation-dun-proxy-http-ou-https
 [rhel-ca-trust]: https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/securing_networks/using-shared-system-certificates_securing-networks#adding-new-certificates_using-shared-system-certificates
