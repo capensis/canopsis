@@ -85,7 +85,7 @@ export default {
               ...defaultBind,
               maxLength: 255,
               values: props.form[column.name],
-              class: 'mt-2',
+              class: 'mt-3',
             },
             on: {
               change: value => updateField(column.name, value),
@@ -98,11 +98,10 @@ export default {
           EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp,
         ].includes(column.type)
         ) {
-          rules.max = 255; // TODO: move into constants
+          rules.max = 255;
         }
 
         if (EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number) {
-          // defaultBind['data-vv-validate-on'] = 'blur';
           defaultBind.inputmode = 'decimal';
         }
 
