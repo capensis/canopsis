@@ -17,7 +17,7 @@ systemctl status rabbitmq-server.service
 ## Redis
 
 ```sh
-systemctl status Redis.service
+systemctl status redis.service
 ```
 
 ## Nginx
