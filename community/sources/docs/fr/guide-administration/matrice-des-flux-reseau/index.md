@@ -126,5 +126,5 @@ Cette liste précise vous permet ainsi d'anticiper :
 [gu-authtokens]: ../../guide-developpement/index.md#authentification-par-token
 [ga-remediation]: ../remediation/
 [ga-externalauth]: ../administration-avancee/methodes-authentification-avancees.md
-[ga-envvars-proxy]: ../administration-avancee/variables-environnement.md
+[ga-envvars-proxy]: ../administration-avancee/variables-environnement.md#utilisation-dun-proxy-http-ou-https
 [rhel-ca-trust]: https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/securing_networks/using-shared-system-certificates_securing-networks#adding-new-certificates_using-shared-system-certificates
