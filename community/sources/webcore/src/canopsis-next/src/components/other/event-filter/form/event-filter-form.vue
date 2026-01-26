@@ -41,9 +41,9 @@
       :some-required="!isChangeEntityType"
       :required="isChangeEntityType"
       :with-entity="!isChangeEntityType"
+      :expanded-event="isNew"
       with-event
       entity-counters-type
-      expanded-event
     />
     <template v-if="hasAdditionalOptions">
       <v-divider class="my-3" />
@@ -122,6 +122,10 @@ export default {
       default: () => ({}),
     },
     isDisabledIdField: {
+      type: Boolean,
+      default: false,
+    },
+    isNew: {
       type: Boolean,
       default: false,
     },

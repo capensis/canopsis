@@ -16,6 +16,7 @@
               :template-vars="templateVars"
               :copy-vars="copyVars"
               :is-disabled-id-field="config.isDisabledIdField"
+              :is-new="!ruleId"
             />
           </template>
         </template-testing-test-variables-wrapper>

@@ -145,21 +145,24 @@ export const eventFilterConfigToForm = (eventFilterConfig = {}) => ({
  * @returns {FilterPatterns}
  */
 export const eventFilterPatternToForm = (eventFilter) => {
+  const isNew = isEmpty(eventFilter);
   const patterns = filterPatternsToForm(
-    isEmpty(eventFilter) ? EVENT_FILTER_DEFAULT_PATTERN : eventFilter,
+    isNew ? EVENT_FILTER_DEFAULT_PATTERN : eventFilter,
     [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
   );
 
-  patterns[PATTERNS_FIELDS.event].groups.forEach((group) => {
-    group.rules.forEach((rule) => {
-      // eslint-disable-next-line no-param-reassign
-      rule.disabled = {
-        field: true,
-        operator: true,
-        remove: true,
-      };
+  if (isNew) {
+    patterns[PATTERNS_FIELDS.event].groups.forEach((group) => {
+      group.rules.forEach((rule) => {
+        // eslint-disable-next-line no-param-reassign
+        rule.disabled = {
+          field: true,
+          operator: true,
+          remove: true,
+        };
+      });
     });
-  });
+  }
 
   return patterns;
 };
