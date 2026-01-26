@@ -182,7 +182,7 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value, contextUser, c
 		eventType == types.EventTypeComment ||
 		eventType == types.EventTypeUncancel ||
 		eventType == types.EventTypeAssocTicket ||
-		eventType == types.EventTypeAssocTicketRemove ||
+		eventType == types.EventTypeTicketRemove ||
 		eventType == types.EventTypeChangestate ||
 		eventType == types.EventTypeSnooze {
 

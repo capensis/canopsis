@@ -86,7 +86,7 @@ func NewFifoMetrics() *Metrics {
 		types.EventTypeAck,
 		types.EventTypeAckremove,
 		types.EventTypeAssocTicket,
-		types.EventTypeAssocTicketRemove,
+		types.EventTypeTicketRemove,
 		types.EventTypeCancel,
 		types.EventTypeCheck,
 		types.EventTypeComment,

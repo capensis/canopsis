@@ -14,13 +14,13 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-func NewAssocTicketRemoveProcessor(
+func NewTicketRemoveProcessor(
 	client mongo.DbClient,
 	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) Processor {
-	return &assocTicketRemoveProcessor{
+	return &ticketRemoveProcessor{
 		client:                 client,
 		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
 		entityCollection:       client.Collection(mongo.EntityMongoCollection),
@@ -30,7 +30,7 @@ func NewAssocTicketRemoveProcessor(
 	}
 }
 
-type assocTicketRemoveProcessor struct {
+type ticketRemoveProcessor struct {
 	client                 mongo.DbClient
 	alarmCollection        mongo.DbCollection
 	entityCollection       mongo.DbCollection
@@ -39,27 +39,21 @@ type assocTicketRemoveProcessor struct {
 	logger                 zerolog.Logger
 }
 
-func (p *assocTicketRemoveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
+func (p *ticketRemoveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
 	if event.Entity == nil || !event.Entity.Enabled {
 		return result, nil
 	}
 
 	match := getOpenAlarmMatchWithStepsLimit(event)
-	match["v.tickets"] = bson.M{"$elemMatch": bson.M{
-		"_t":     types.EventTypeAssocTicket,
-		"ticket": event.Parameters.Ticket,
-	}}
-	newStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepAssocTicketRemove, "",
+	match["v.tickets.ticket"] = event.Parameters.Ticket
+	newStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepTicketRemove, "",
 		event.Parameters.Output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
 			"v.tickets": bson.M{"$filter": bson.M{
 				"input": "$v.tickets",
-				"cond": bson.M{"$or": []bson.M{
-					{"$ne": bson.A{"$$this.ticket", event.Parameters.Ticket}},
-					{"$ne": bson.A{"$$this._t", types.EventTypeAssocTicket}},
-				}},
+				"cond":  bson.M{"$ne": bson.A{"$$this.ticket", event.Parameters.Ticket}},
 			}},
 			"v.steps":            addStepUpdateQuery(newStepQuery),
 			"v.last_update_date": event.Parameters.Timestamp,
@@ -80,7 +74,7 @@ func (p *assocTicketRemoveProcessor) Process(ctx context.Context, event rpc.AxeE
 	}
 
 	alarmChange := types.NewAlarmChange()
-	alarmChange.Type = types.AlarmChangeTypeAssocTicketRemove
+	alarmChange.Type = types.AlarmChangeTypeTicketRemove
 	result.Forward = true
 	result.Alarm = alarm
 	result.AlarmChange = alarmChange
@@ -90,7 +84,7 @@ func (p *assocTicketRemoveProcessor) Process(ctx context.Context, event rpc.AxeE
 	return result, nil
 }
 
-func (p *assocTicketRemoveProcessor) postProcess(
+func (p *ticketRemoveProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
