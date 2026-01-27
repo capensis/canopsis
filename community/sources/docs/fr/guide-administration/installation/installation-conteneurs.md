@@ -152,7 +152,7 @@ docker compose down
 
 ## Rétention des logs
 
-Voir la page [Rétention des logs](../gestion-composants/retention-des-logs.md#docker-compose)
+Voir la page [Gestion des logs](../gestion-composants/gestion-des-logs.md#docker-compose)
 
 [prereq-versions]: https://doc.canopsis.net/latest/guide-administration/installation/prerequis-des-versions/#prerequis-systemes
 [compose-spec]: https://docs.docker.com/compose/compose-file/
