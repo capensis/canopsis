@@ -25,6 +25,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-default-sort-columns-with-template-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       sortcolumns=""
+      template="Symbol(custom)"
       templates=""
     />
     <field-columns-stub
@@ -689,6 +690,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <field-default-sort-columns-with-template-stub
       columns="[object Object]"
       sortcolumns="[object Object]"
+      template="Symbol(custom)"
       templates=""
     />
     <field-columns-stub
@@ -1349,6 +1351,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <field-default-sort-columns-with-template-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       sortcolumns=""
+      template="Symbol(custom)"
       templates=""
     />
     <field-columns-stub
@@ -2006,6 +2009,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     <field-default-sort-columns-with-template-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       sortcolumns=""
+      template="Symbol(custom)"
       templates=""
     />
     <field-columns-stub
