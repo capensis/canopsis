@@ -616,3 +616,7 @@ d'une mise à jour de routine de l'ensemble des paquets système.
     dnf versionlock add --raw 'canopsis-common-24.04.*'
     dnf versionlock add --raw 'canopsis-webui-24.04.*'
     ```
+
+## Gestion des logs
+
+Voir la page [Gestion des logs](../gestion-composants/gestion-des-logs.md#rpm-el8el9)
