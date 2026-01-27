@@ -150,7 +150,7 @@ Vous pouvez ensuite procéder à votre [première connexion à l'interface Canop
 docker compose down
 ```
 
-## Rétention des logs
+## Gestion des logs
 
 Voir la page [Gestion des logs](../gestion-composants/gestion-des-logs.md#docker-compose)
 
