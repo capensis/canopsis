@@ -28,7 +28,6 @@ import { isInstructionExecutionIconInProgress } from '@/helpers/entities/remedia
 import { isInstructionTypeManual } from '@/helpers/entities/remediation/instruction/form';
 import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
 import {
-  isCancelledAlarmStatus,
   isResolvedAlarm,
   isAlarmStateOk,
   isAlarmStatusCancelled,
@@ -36,6 +35,7 @@ import {
   isAlarmStatusFlapping,
   isAlarmStatusOngoing,
   isAlarmStatusNoEvents,
+  isAlarmStatusUnknown,
 } from '@/helpers/entities/alarm/form';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
@@ -100,7 +100,7 @@ export default {
     },
 
     isCancelledAlarm() {
-      return isCancelledAlarmStatus(this.item);
+      return isAlarmStatusCancelled(this.item);
     },
 
     isResolvedAlarm() {
@@ -125,6 +125,10 @@ export default {
 
     isAlarmStatusFlapping() {
       return isAlarmStatusFlapping(this.item);
+    },
+
+    isAlarmStatusUnknown() {
+      return isAlarmStatusUnknown(this.item);
     },
 
     isOpenedAlarm() {
@@ -312,7 +316,8 @@ export default {
       }
 
       if (
-        !this.isResolvedAlarm && (
+        !this.isAlarmStatusUnknown
+        && !this.isResolvedAlarm && (
           /**
            * Save previous behavior
            */

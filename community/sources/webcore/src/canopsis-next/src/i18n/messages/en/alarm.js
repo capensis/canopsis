@@ -79,7 +79,7 @@ export default {
     by: 'by',
     launched: 'launched',
     junit: 'JUnit',
-    groupItems: 'Group items',
+    groupItems: 'Group elements',
     steps: {
       [ALARM_LIST_STEPS.statedec]: 'State decreased',
       [ALARM_LIST_STEPS.stateinc]: 'State increased',

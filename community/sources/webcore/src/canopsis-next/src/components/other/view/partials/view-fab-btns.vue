@@ -5,7 +5,7 @@
   >
     <v-layout class="gap-3">
       <view-scroll-top-btn />
-      <view-executions-btn />
+      <view-executions-btn v-if="hasAccessToExecuteInstruction" />
       <view-periodic-refresh-btn />
       <view-screen-mode-btn
         v-if="isFullscreen"
@@ -91,6 +91,7 @@ import {
   KEYS_TO_VIEW_SCREEN_MODES,
   VIEW_SCREEN_MODES,
   FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES,
+  USER_PERMISSIONS,
 } from '@/constants';
 
 import { useActiveView } from '@/hooks/store/modules/active-view';
@@ -100,6 +101,7 @@ import { usePopups } from '@/hooks/popups';
 import { useFullscreen } from '@/hooks/fullscreen';
 import { useView } from '@/hooks/store/modules/view';
 import { useViewRouter } from '@/hooks/view/router';
+import { useCanPermission } from '@/hooks/auth';
 
 import ViewShareLinkBtn from './view-share-link-btn.vue';
 import ViewEditingBtn from './view-editing-btn.vue';
@@ -148,6 +150,10 @@ export default {
       toggleEditing,
       setActiveViewScreenMode,
     } = useActiveView();
+
+    const {
+      hasAccess: hasAccessToExecuteInstruction,
+    } = useCanPermission(USER_PERMISSIONS.business.alarmsList.actions.executeInstruction);
 
     const enterFullscreen = () => {
       if (!props.activeTab) {
@@ -266,6 +272,7 @@ export default {
     });
 
     return {
+      hasAccessToExecuteInstruction,
       isFullscreen,
       view,
       activeViewScreenMode,

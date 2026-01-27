@@ -3,11 +3,14 @@ package view
 import (
 	"context"
 	"errors"
-	"fmt"
+	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -16,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -114,19 +118,23 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 			return err
 		}
 
+		if group.ID == "" {
+			return validation.NewSingleError("not_exist", "Group", "Group", r)
+		}
+
 		if group.IsPrivate && group.Author != r.Author {
-			return common.NewValidationError("group", "Group is private.")
+			return validation.NewSingleError("not_exist", "Group", "Group", r)
 		}
 
 		if !group.IsPrivate {
 			// check the api_view create permission here, because user might not have it while having private views permission.
 			ok, err := s.enforcer.Enforce(r.Author, apisecurity.ObjView, securitymodel.PermissionCreate)
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			if !ok {
-				return common.NewValidationError("group", "Group is public.")
+				return httperror.NewForbiddenError("")
 			}
 		}
 
@@ -206,12 +214,20 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		if group.IsPrivate && (!oldView.IsPrivate || group.Author != r.Author) {
-			return common.NewValidationError("group", "Group is private.")
+		if group.ID == "" {
+			return validation.NewSingleError("not_exist", "Group", "Group", r)
+		}
+
+		if group.IsPrivate && group.Author != r.Author {
+			return validation.NewSingleError("not_exist", "Group", "Group", r)
+		}
+
+		if group.IsPrivate && !oldView.IsPrivate {
+			return httperror.NewForbiddenError("Public views are not allowed in private groups.")
 		}
 
 		if !group.IsPrivate && oldView.IsPrivate {
-			return common.NewValidationError("group", "Group is public.")
+			return httperror.NewForbiddenError("Private views are not allowed in public groups.")
 		}
 
 		now := datetime.NewCpsTime()
@@ -464,7 +480,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 	if len(r.Views) > 0 {
 		pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": r.Views}}}}
 		pipeline = append(pipeline, nestedObjectsPipeline...)
-		pipeline = append(pipeline, common.GetSortQuery("position", common.SortAsc))
+		pipeline = append(pipeline, mongoquery.GetSortQuery("position", pagination.SortAsc))
 		pipeline = append(pipeline, bson.M{"$project": bson.M{
 			"_id":      0,
 			"author":   0,
@@ -483,7 +499,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		}
 
 		if len(views) != len(r.Views) {
-			return ExportResponse{}, ValidationError{field: "views", error: errors.New("views not found")}
+			return ExportResponse{}, validation.NewSingleError("not_exist", "Views", "Views", r)
 		}
 	}
 	if len(r.Groups) > 0 {
@@ -512,7 +528,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			}}}},
 		}...)
 		pipeline = append(pipeline, nestedObjectsPipeline...)
-		pipeline = append(pipeline, common.GetSortQuery("position", common.SortAsc))
+		pipeline = append(pipeline, mongoquery.GetSortQuery("position", pagination.SortAsc))
 		pipeline = append(pipeline, []bson.M{
 			{"$project": bson.M{
 				"author":   0,
@@ -539,7 +555,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 				"position": 0,
 			}},
 		}...)
-		pipeline = append(pipeline, common.GetSortQuery("position", common.SortAsc))
+		pipeline = append(pipeline, mongoquery.GetSortQuery("position", pagination.SortAsc))
 		cursor, err := s.groupCollection.Aggregate(ctx, pipeline)
 		if err != nil {
 			return ExportResponse{}, err
@@ -551,7 +567,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		}
 
 		if len(groups) != len(r.Groups) {
-			return ExportResponse{}, ValidationError{field: "groups", error: errors.New("groups not found")}
+			return ExportResponse{}, validation.NewSingleError("not_exist", "Groups", "Groups", r)
 		}
 
 		for i, group := range groups {
@@ -564,7 +580,9 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			}
 			groups[i].Views = foundViews
 			if len(groups[i].Views) != len(viewsByGroup[group.ID]) {
-				return ExportResponse{}, ValidationError{field: fmt.Sprintf("groups.%d", i), error: ErrViewsNotFound}
+				iStr := strconv.Itoa(i)
+
+				return ExportResponse{}, validation.NewSingleError("not_applicable", iStr, "Groups."+iStr, r)
 			}
 
 			groups[i].ID = ""
@@ -655,10 +673,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 			if g.ID == "" || !existedGroupIds[g.ID] {
 				groupID = utils.NewID()
 				if g.Title == "" {
-					return ValidationError{
-						field: fmt.Sprintf("%d.title", gi),
-						error: ErrValueIsMissing,
-					}
+					return validation.NewSingleError("required", "Title", "Items."+strconv.Itoa(gi)+".Title", r)
 				}
 				newGroups = append(newGroups, libview.Group{
 					ID:       groupID,
@@ -681,10 +696,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 					}
 
 					if v.Title == "" {
-						return ValidationError{
-							field: fmt.Sprintf("%d.views.%d.title", gi, vi),
-							error: ErrValueIsMissing,
-						}
+						return validation.NewSingleError("required", "Title", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Title", r)
 					}
 
 					viewID := utils.NewID()
@@ -709,10 +721,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 					if v.Tabs != nil {
 						for ti, tab := range *v.Tabs {
 							if tab.Title == "" {
-								return ValidationError{
-									field: fmt.Sprintf("%d.views.%d.tabs.%d.title", gi, vi, ti),
-									error: ErrValueIsMissing,
-								}
+								return validation.NewSingleError("required", "Title", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Tabs."+strconv.Itoa(ti)+".Title", r)
 							}
 
 							tabId := utils.NewID()
@@ -729,10 +738,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 							if tab.Widgets != nil {
 								for wi, widget := range *tab.Widgets {
 									if widget.Type == "" {
-										return ValidationError{
-											field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.type", gi, vi, ti, wi),
-											error: ErrValueIsMissing,
-										}
+										return validation.NewSingleError("required", "Type", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Tabs."+strconv.Itoa(ti)+".Widgets."+strconv.Itoa(wi)+".Type", r)
 									}
 
 									widgetId := utils.NewID()
@@ -740,16 +746,19 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 
 									for fi, filter := range widget.Filters {
 										if filter.Title == "" {
-											return ValidationError{
-												field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.title", gi, vi, ti, wi, fi),
-												error: ErrValueIsMissing,
-											}
+											return validation.NewSingleError("required", "Title", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Tabs."+strconv.Itoa(ti)+".Widgets."+strconv.Itoa(wi)+".Filters."+strconv.Itoa(fi)+".Title", r)
 										}
 										if len(filter.AlarmPattern) == 0 && len(filter.EntityPattern) == 0 && len(filter.PbehaviorPattern) == 0 {
-											return ValidationError{
-												field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.alarm_pattern", gi, vi, ti, wi, fi),
-												error: ErrValueIsMissing,
-											}
+											ns := "Items." + strconv.Itoa(gi) + ".Views." + strconv.Itoa(vi) + ".Tabs." + strconv.Itoa(ti) + ".Widgets." + strconv.Itoa(wi) + ".Filters." + strconv.Itoa(fi)
+
+											return validation.NewError(
+												validator.ValidationErrors{
+													validation.NewFieldError("required", "AlarmPattern", ns+".AlarmPattern"),
+													validation.NewFieldError("required", "EntityPattern", ns+".EntityPattern"),
+													validation.NewFieldError("required", "PbehaviorPattern", ns+".PbehaviorPattern"),
+												},
+												r,
+											)
 										}
 
 										filterId := utils.NewID()
@@ -1190,7 +1199,7 @@ func (s *store) getGroupPrivacySettings(ctx context.Context, groupID string) (ap
 
 	err := s.groupCollection.FindOne(ctx, bson.M{"_id": groupID}).Decode(&group)
 	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {
-		return group, common.NewValidationError("group", "Group doesn't exist.")
+		return group, nil
 	}
 
 	return group, err

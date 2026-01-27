@@ -28,7 +28,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - account
@@ -54,7 +54,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /active-broadcast-message:
     get:
       tags:
@@ -189,7 +189,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /alarm-display-names:
     get:
       tags:
@@ -238,7 +238,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -250,7 +250,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /alarm-export:
     post:
       tags:
@@ -280,7 +280,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /alarm-export/{id}:
     get:
       tags:
@@ -305,13 +305,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarm-export/{id}/download:
     get:
       tags:
@@ -337,13 +337,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarm-details:
     post:
       tags:
@@ -406,7 +406,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /alarm-links/{id}:
     get:
       tags:
@@ -442,13 +442,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarm-tag-labels:
     get:
       tags:
@@ -478,7 +478,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -490,7 +490,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /alarm-tags:
     get:
       tags:
@@ -523,7 +523,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -535,7 +535,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - alarm-tags
@@ -594,7 +594,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /alarm-tags/{id}:
     get:
       tags:
@@ -619,7 +619,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - alarm-tags
@@ -685,13 +685,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - alarm-tags
@@ -711,7 +711,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarms:
     get:
       tags:
@@ -886,7 +886,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -898,7 +898,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /alarms/{id}:
     get:
       tags:
@@ -923,7 +923,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarms/{id}/ack:
     put:
       tags:
@@ -965,13 +965,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarms/{id}/ackremove:
     put:
       tags:
@@ -1006,13 +1006,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarms/{id}/assocticket:
     put:
       tags:
@@ -1068,13 +1068,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarms/{id}/bookmark:
     put:
       tags:
@@ -1095,7 +1095,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - alarms
@@ -1115,7 +1115,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarms/{id}/cancel:
     put:
       tags:
@@ -1150,13 +1150,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarms/{id}/changestate:
     put:
       tags:
@@ -1192,13 +1192,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarms/{id}/comment:
     put:
       tags:
@@ -1233,13 +1233,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarms/{id}/snooze:
     put:
       tags:
@@ -1278,13 +1278,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /alarms/{id}/uncancel:
     put:
       tags:
@@ -1319,13 +1319,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /app-info:
     get:
       tags:
@@ -1371,7 +1371,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - associativetables
@@ -1400,7 +1400,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     delete:
       tags:
         - associativetables
@@ -1425,7 +1425,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /broadcast-message:
     get:
       tags:
@@ -1447,7 +1447,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -1459,7 +1459,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - broadcast-messages
@@ -1488,7 +1488,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /broadcast-message/{id}:
     get:
       tags:
@@ -1513,7 +1513,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - broadcast-messages
@@ -1544,13 +1544,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - broadcast-messages
@@ -1570,7 +1570,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /broadcast-message/{id}/read:
     put:
       tags:
@@ -1589,7 +1589,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /bulk/alarm-tags:
     delete:
       tags:
@@ -1639,7 +1639,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/alarms/ack:
     put:
       tags:
@@ -2105,7 +2105,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/connector-pbehaviors:
     post:
       tags:
@@ -2162,7 +2162,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     delete:
       tags:
         - pbehaviors
@@ -2215,7 +2215,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     put:
       tags:
         - pbehaviors
@@ -2280,7 +2280,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/entities/disable:
     put:
       tags:
@@ -2333,7 +2333,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/entities/enable:
     put:
       tags:
@@ -2386,7 +2386,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/entity-infos-properties:
     delete:
       tags:
@@ -2436,7 +2436,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/entityservices:
     put:
       tags:
@@ -2527,7 +2527,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - entityservices
@@ -2616,7 +2616,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     delete:
       tags:
         - entityservices
@@ -2663,7 +2663,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/eventfilters:
     put:
       tags:
@@ -2704,7 +2704,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - eventfilters
@@ -2744,7 +2744,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     delete:
       tags:
         - eventfilters
@@ -2784,7 +2784,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/external-data-tables/{table}/data:
     delete:
       tags:
@@ -2841,7 +2841,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/idle-rules:
     put:
       tags:
@@ -2882,7 +2882,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - idlerules
@@ -2922,7 +2922,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     delete:
       tags:
         - idlerules
@@ -2962,7 +2962,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/link-rules:
     delete:
       tags:
@@ -3012,7 +3012,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/patterns:
     delete:
       tags:
@@ -3062,7 +3062,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/pbehaviors:
     put:
       tags:
@@ -3140,7 +3140,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - pbehaviors
@@ -3216,7 +3216,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     delete:
       tags:
         - pbehaviors
@@ -3265,7 +3265,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/entity-pbehaviors:
     post:
       tags:
@@ -3322,7 +3322,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     delete:
       tags:
         - pbehaviors
@@ -3372,7 +3372,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/role-permissions:
     put:
       tags:
@@ -3433,7 +3433,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/scenarios:
     put:
       tags:
@@ -3531,7 +3531,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - scenarios
@@ -3627,7 +3627,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     delete:
       tags:
         - scenarios
@@ -3676,7 +3676,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/users:
     put:
       tags:
@@ -3717,7 +3717,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - users
@@ -3757,7 +3757,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     patch:
       tags:
         - users
@@ -3797,7 +3797,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     delete:
       tags:
         - users
@@ -3837,7 +3837,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /color-themes:
     get:
       tags:
@@ -3859,7 +3859,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -3871,7 +3871,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - color-themes
@@ -3939,7 +3939,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /color-themes/{id}:
     get:
       tags:
@@ -3964,7 +3964,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - color-themes
@@ -4034,13 +4034,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - color-themes
@@ -4060,7 +4060,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /component-alarms:
     get:
       tags:
@@ -4092,7 +4092,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -4104,13 +4104,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /contextgraph-import:
     put:
       tags:
@@ -4265,7 +4265,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /contextgraph-import-partial:
     put:
       tags:
@@ -4420,7 +4420,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /contextgraph-import-status/{id}:
     get:
       tags:
@@ -4445,7 +4445,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /data-storage:
     get:
       tags:
@@ -4560,7 +4560,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -4572,7 +4572,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /entities/archive-disabled:
     post:
       tags:
@@ -4597,7 +4597,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entities/archive-unlinked:
     post:
       tags:
@@ -4622,7 +4622,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entities/check-state-setting:
     post:
       tags:
@@ -4668,7 +4668,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /entities/clean-archived:
     post:
       tags:
@@ -4712,7 +4712,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entities/pbehavior-calendar:
     get:
       tags:
@@ -4754,13 +4754,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entities/pbehaviors:
     get:
       tags:
@@ -4793,13 +4793,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entities/state-setting:
     get:
       tags:
@@ -4847,7 +4847,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -4859,7 +4859,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - entity-categories
@@ -4895,7 +4895,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /entity-categories/{id}:
     get:
       tags:
@@ -4920,7 +4920,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - entity-categories
@@ -4958,13 +4958,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - entity-categories
@@ -4984,7 +4984,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entity-comments:
     get:
       tags:
@@ -5011,7 +5011,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5023,13 +5023,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - entity-comments
@@ -5066,13 +5066,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entity-comments/{id}:
     put:
       tags:
@@ -5112,13 +5112,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entity-export:
     post:
       tags:
@@ -5148,7 +5148,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /entity-export/{id}:
     get:
       tags:
@@ -5173,13 +5173,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entity-export/{id}/download:
     get:
       tags:
@@ -5205,13 +5205,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entity-infos-dictionary/keys:
     get:
       tags:
@@ -5233,7 +5233,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5245,7 +5245,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /entity-infos-dictionary/values:
     get:
       tags:
@@ -5272,7 +5272,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5284,7 +5284,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /entity-infos-properties:
     get:
       tags:
@@ -5327,7 +5327,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5339,7 +5339,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - entityinfosproperties
@@ -5378,7 +5378,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /entity-infos-properties/{id}:
     get:
       tags:
@@ -5403,7 +5403,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - entityinfosproperties
@@ -5444,13 +5444,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - entityinfosproperties
@@ -5470,7 +5470,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entitybasics:
     get:
       tags:
@@ -5500,7 +5500,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - entitybasics
@@ -5588,13 +5588,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - entitybasics
@@ -5619,13 +5619,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entityservice-dependencies:
     get:
       tags:
@@ -5670,7 +5670,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5682,7 +5682,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entityservice-impacts:
     get:
       tags:
@@ -5722,7 +5722,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5734,7 +5734,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entityservice-alarms/{id}:
     get:
       tags:
@@ -5771,7 +5771,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5783,13 +5783,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entityservices:
     post:
       tags:
@@ -5866,7 +5866,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /entityservices/{id}:
     get:
       tags:
@@ -5891,7 +5891,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - entityservices
@@ -5969,13 +5969,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - entityservices
@@ -5995,7 +5995,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /entityservice-template-vars:
     get:
       tags:
@@ -6075,7 +6075,78 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /entity-downstreams:
+    get:
+      tags:
+        - entityupstream
+      summary: Get entity's downstreams by id
+      description: |
+        Get entity's downstreams by id.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entityupstream-get-downstreams-by-id
+      parameters:
+        - name: _id
+          in: query
+          description: Entity id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entityupstream.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /entity-upstream:
+    get:
+      tags:
+        - entityupstream
+      summary: Get entity's upstream by id
+      description: |
+        Get entity's upstream by id.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entityupstream-get-upstream-by-id
+      parameters:
+        - name: _id
+          in: query
+          description: Entity id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/entityupstream.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /event:
     post:
       tags:
@@ -6252,7 +6323,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /eventfilter/rules:
     get:
       tags:
@@ -6279,7 +6350,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -6291,7 +6362,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - eventfilters
@@ -6668,7 +6739,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /eventfilter/rules/{id}:
     get:
       tags:
@@ -6693,7 +6764,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - eventfilters
@@ -6756,13 +6827,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - eventfilters
@@ -6782,7 +6853,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /eventfilter/{id}/failures:
     get:
       tags:
@@ -6802,7 +6873,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -6814,13 +6885,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - eventfilters
@@ -6840,7 +6911,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /eventfilter-db-export:
     post:
       tags:
@@ -7003,7 +7074,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /export-configuration:
     post:
       tags:
@@ -7053,7 +7124,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /external-data-export/{id}:
     post:
       tags:
@@ -7090,13 +7161,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     get:
       tags:
         - externaldata
@@ -7125,7 +7196,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /external-data-export/{id}/download:
     get:
       tags:
@@ -7156,7 +7227,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /external-data-import/{id}:
     post:
       tags:
@@ -7165,7 +7236,7 @@ paths:
       description: |
         Create external data import job.
         
-        -  PERMISSIONS: `api_external_data_table:create`
+        -  PERMISSIONS: `api_external_data_table:update`
       operationId: externaldataimport-create
       parameters:
         - name: id
@@ -7208,15 +7279,157 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-import/{id}/preview:
+    put:
+      tags:
+        - externaldata
+      summary: Preview external data import job with column configuration
+      description: |
+        Preview the imported data with the specified column configuration.
+        This allows validating and converting column types before completing the import.
+        
+        -  PERMISSIONS: `api_external_data_table:update`
+      operationId: externaldataimport-preview
+      parameters:
+        - name: id
+          in: path
+          description: external data import job id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.PreviewRequest'
+            examples:
+              simple_string_columns:
+                summary: Preview with string columns
+                description: Simple preview with all columns as strings
+                value: {
+                  "column_configs": [
+                    {
+                      "name": "host",
+                      "type": 1
+                    },
+                    {
+                      "name": "service",
+                      "type": 1
+                    },
+                    {
+                      "name": "oncall",
+                      "type": 1
+                    },
+                    {
+                      "name": "team",
+                      "type": 1
+                    }
+                  ]
+                }
+              mixed_types:
+                summary: Preview with mixed column types
+                description: Preview with various column types including boolean, number with thousands separator, string array, datetime, timestamp and regexp
+                value: {
+                  "column_configs": [
+                    {
+                      "name": "string",
+                      "type": 1
+                    },
+                    {
+                      "name": "bool",
+                      "type": 2
+                    },
+                    {
+                      "name": "number",
+                      "type": 3,
+                      "thousands_separator": "space"
+                    },
+                    {
+                      "name": "string_array",
+                      "type": 4,
+                      "string_array_type": 1
+                    },
+                    {
+                      "name": "datetime",
+                      "type": 5
+                    },
+                    {
+                      "name": "timestamp",
+                      "type": 6
+                    },
+                    {
+                      "name": "pattern",
+                      "type": 7
+                    }
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ImportJob'
+              examples:
+                preview_succeeded:
+                  summary: Preview succeeded
+                  value: {
+                    "_id": "df0cfeec-fa53-4136-8b2c-77fb10398d72",
+                    "status": 4,
+                    "column_configs": [
+                      {
+                        "name": "host",
+                        "type": 1
+                      },
+                      {
+                        "name": "service",
+                        "type": 1
+                      }
+                    ]
+                  }
+                preview_failed:
+                  summary: Preview failed with validation errors
+                  value: {
+                    "_id": "df0cfeec-fa53-4136-8b2c-77fb10398d72",
+                    "status": 5,
+                    "fail_reason": "preview failed",
+                    "column_configs": [
+                      {
+                        "name": "number",
+                        "type": 3
+                      }
+                    ],
+                    "error_info": {
+                      "number": {
+                        "rows": [0, 2],
+                        "messages": ["string is not a valid number"]
+                      }
+                    }
+                  }
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /external-data-import/{id}/complete:
     put:
       tags:
         - externaldata
       summary: Complete external data import job
       description: |
-        Complete external data import job.
+        Complete the external data import job and persist the data to the external data table.
+        This should be called after a successful preview (status 4).
         
-        -  PERMISSIONS: `api_external_data_table:create`
+        -  PERMISSIONS: `api_external_data_table:update`
       operationId: externaldataimport-complete
       parameters:
         - name: id
@@ -7232,32 +7445,66 @@ paths:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ImportCompleteRequest'
             examples:
-              complete:
-                summary: Complete import job
-                description: Complete import job
+              complete_with_tags:
+                summary: Complete import with column tags
+                description: Complete import job with column tags specifying identifier and info columns
                 value: {
-                  "column_types": [
-                    0,
+                  "column_tags": [
                     1,
                     1,
-                    2
+                    2,
+                    0
                   ]
                 }
+              complete_all_no_tags:
+                summary: Complete import with no tags
+                description: Complete import job with all columns having no tags
+                value: {
+                  "column_tags": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                }
+        required: true
       responses:
         204:
-          description: OK
+          description: No Content - Import completed successfully
         400:
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                missing_column_tags:
+                  summary: Missing column_tags
+                  value: {
+                    "errors": {
+                      "column_tags": "ColumnTags is missing."
+                    }
+                  }
+                wrong_count:
+                  summary: Wrong number of column tags
+                  value: {
+                    "errors": {
+                      "column_tags": "ColumnTags must contain 4 items."
+                    }
+                  }
+                invalid_tag_value:
+                  summary: Invalid tag value
+                  value: {
+                    "errors": {
+                      "column_tags.0": "ColumnTags[0] must be one of [0 1 2]."
+                    }
+                  }
         404:
-          description: Not Found
+          description: Not Found - Job not found or preview not completed
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /external-data-import/{id}/data:
     get:
       tags:
@@ -7266,7 +7513,7 @@ paths:
       description: |
         Get data of external data import job.
         
-        -  PERMISSIONS: `api_external_data_table:create`
+        -  PERMISSIONS: `api_external_data_table:update`
       operationId: externaldataimport-data
       parameters:
         - name: id
@@ -7286,7 +7533,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -7300,13 +7547,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /external-data-import/{id}/status:
     get:
       tags:
@@ -7315,7 +7562,7 @@ paths:
       description: |
         Get status of external data import job.
         
-        -  PERMISSIONS: `api_external_data_table:create`
+        -  PERMISSIONS: `api_external_data_table:update`
       operationId: externaldataimport-status
       parameters:
         - name: id
@@ -7336,7 +7583,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /external-data-tables:
     get:
       tags:
@@ -7361,7 +7608,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -7373,7 +7620,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - externaldata
@@ -7411,7 +7658,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /external-data-tables/{id}:
     get:
       tags:
@@ -7436,7 +7683,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - externaldata
@@ -7462,7 +7709,7 @@ paths:
                   "type": 0,
                   "name": "some_data",
                   "description": "Data for enrichment",
-                  "column_types": [0, 1, 1, 2]
+                  "column_tags": [1, 1, 2, 0]
                 }
         required: true
       responses:
@@ -7477,13 +7724,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - externaldata
@@ -7503,13 +7750,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /external-data-tables/{table}/data:
     get:
       tags:
@@ -7541,7 +7788,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -7555,13 +7802,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - externaldata
@@ -7610,13 +7857,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /external-data-tables/{table}/schema:
     get:
       tags:
@@ -7647,7 +7894,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /external-data-tables/{table}/data/{id}:
     get:
       tags:
@@ -7680,7 +7927,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - externaldata
@@ -7730,13 +7977,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - externaldata
@@ -7762,7 +8009,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /file:
     get:
       tags:
@@ -7797,13 +8044,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - files
@@ -7847,7 +8094,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /file-access:
     get:
       tags:
@@ -7885,7 +8132,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - files
@@ -7905,13 +8152,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /flapping-rules:
     get:
       tags:
@@ -7933,7 +8180,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -7945,7 +8192,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - flappingrules
@@ -8010,7 +8257,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /flapping-rules/{id}:
     get:
       tags:
@@ -8035,7 +8282,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - flappingrules
@@ -8102,13 +8349,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - flappingrules
@@ -8128,7 +8375,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /flapping-rules-db-export:
     post:
       tags:
@@ -8300,7 +8547,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /healthcheck/live:
     get:
       tags:
@@ -8353,7 +8600,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -8365,7 +8612,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - icons
@@ -8404,7 +8651,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /icons/{id}:
     get:
       tags:
@@ -8427,7 +8674,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - icons
@@ -8447,7 +8694,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - icons
@@ -8488,13 +8735,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     patch:
       tags:
         - icons
@@ -8532,13 +8779,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /idle-rules:
     get:
       tags:
@@ -8566,7 +8813,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -8578,7 +8825,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - idlerules
@@ -8682,13 +8929,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /idle-rules/{id}:
     get:
       tags:
@@ -8713,7 +8960,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - idlerules
@@ -8819,13 +9066,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - idlerules
@@ -8845,7 +9092,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /idle-rules-db-export:
     post:
       tags:
@@ -8910,7 +9157,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     delete:
       tags:
         - internal
@@ -9011,7 +9258,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /message-rate-stats:
     get:
       tags:
@@ -9066,7 +9313,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /notification-settings:
     get:
       tags:
@@ -9112,13 +9359,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /notifications:
     get:
       tags:
@@ -9137,7 +9384,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -9175,7 +9422,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /patterns-alarms-count:
     post:
       tags:
@@ -9241,7 +9488,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /patterns-entities-count:
     post:
       tags:
@@ -9307,7 +9554,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /patterns:
     get:
       tags:
@@ -9343,7 +9590,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -9355,7 +9602,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - saved-patterns
@@ -9502,7 +9749,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /patterns/{id}:
     get:
       tags:
@@ -9527,7 +9774,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - saved-patterns
@@ -9595,13 +9842,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - saved-patterns
@@ -9621,7 +9868,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /pbehavior-comments:
     post:
       tags:
@@ -9659,7 +9906,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /pbehavior-comments/{id}:
     delete:
       tags:
@@ -9680,7 +9927,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /pbehavior-exception-import:
     post:
       tags:
@@ -9721,7 +9968,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /pbehavior-exceptions:
     get:
       tags:
@@ -9754,7 +10001,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -9766,7 +10013,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - pbehavior-exceptions
@@ -9820,7 +10067,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /pbehavior-exceptions/{id}:
     get:
       tags:
@@ -9845,7 +10092,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - pbehavior-exceptions
@@ -9901,13 +10148,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - pbehavior-exceptions
@@ -9927,13 +10174,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /pbehavior-ics/{id}:
     get:
       tags:
@@ -9959,7 +10206,7 @@ paths:
           content:
             application/octet-stream:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /all-pbehavior-patterns:
     put:
       tags:
@@ -10002,7 +10249,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /pbehavior-reasons:
     get:
       tags:
@@ -10028,7 +10275,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -10040,7 +10287,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - pbehavior-reasons
@@ -10077,7 +10324,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /pbehavior-reasons/{id}:
     get:
       tags:
@@ -10102,7 +10349,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - pbehavior-reasons
@@ -10141,13 +10388,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - pbehavior-reasons
@@ -10167,13 +10414,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /pbehavior-timespans:
     post:
       tags:
@@ -10207,7 +10454,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /pbehavior-types:
     get:
       tags:
@@ -10241,7 +10488,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -10253,7 +10500,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - pbehavior-types
@@ -10293,7 +10540,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /pbehavior-types/{id}:
     get:
       tags:
@@ -10318,7 +10565,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - pbehavior-types
@@ -10360,13 +10607,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - pbehavior-types
@@ -10386,13 +10633,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /pbehavior-types/next-priority:
     get:
       tags:
@@ -10435,13 +10682,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     get:
       tags:
         - pbehaviors
@@ -10465,7 +10712,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -10477,7 +10724,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - pbehaviors
@@ -10631,7 +10878,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /pbehaviors/{id}:
     get:
       tags:
@@ -10656,7 +10903,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - pbehaviors
@@ -10719,13 +10966,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - pbehaviors
@@ -10745,7 +10992,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     patch:
       tags:
         - pbehaviors
@@ -10784,13 +11031,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /pbehaviors/{id}/entities:
     get:
       tags:
@@ -10819,7 +11066,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -10831,13 +11078,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /pbehaviors-db-export:
     post:
       tags:
@@ -10900,7 +11147,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -10912,7 +11159,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /playlists:
     get:
       tags:
@@ -10940,7 +11187,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -10952,7 +11199,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - playlists
@@ -10981,7 +11228,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /playlists/{id}:
     get:
       tags:
@@ -11006,7 +11253,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - playlists
@@ -11037,13 +11284,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - playlists
@@ -11063,7 +11310,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /resolve-rules:
     get:
       tags:
@@ -11085,7 +11332,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -11097,7 +11344,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - resolverules
@@ -11161,7 +11408,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /resolve-rules/{id}:
     get:
       tags:
@@ -11186,7 +11433,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - resolverules
@@ -11252,13 +11499,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - resolverules
@@ -11278,7 +11525,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /resolved-alarms:
     get:
       tags:
@@ -11318,7 +11565,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -11330,13 +11577,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /role-templates:
     get:
       tags:
@@ -11382,7 +11629,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -11394,7 +11641,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - roles
@@ -11469,13 +11716,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /roles/{id}:
     get:
       tags:
@@ -11500,7 +11747,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - roles
@@ -11555,13 +11802,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - roles
@@ -11581,7 +11828,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /scenarios:
     get:
       tags:
@@ -11609,7 +11856,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -11621,7 +11868,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - scenarios
@@ -12150,13 +12397,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /scenarios/{id}:
     get:
       tags:
@@ -12181,7 +12428,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - scenarios
@@ -12712,13 +12959,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - scenarios
@@ -12738,7 +12985,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /scenarios-db-export:
     post:
       tags:
@@ -12940,7 +13187,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /share-tokens:
     get:
       tags:
@@ -12968,7 +13215,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -12980,7 +13227,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - share-tokens
@@ -13020,7 +13267,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /share-tokens/{id}:
     delete:
       tags:
@@ -13041,7 +13288,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /state-settings:
     get:
       tags:
@@ -13063,7 +13310,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -13075,7 +13322,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - state-settings
@@ -13182,7 +13429,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /state-settings/{id}:
     get:
       tags:
@@ -13207,7 +13454,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - state-settings
@@ -13348,13 +13595,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - state-settings
@@ -13374,13 +13621,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /tech-metrics-export:
     post:
       tags:
@@ -13403,7 +13650,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     get:
       tags:
         - tech-metrics
@@ -13425,7 +13672,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /tech-metrics-export/download:
     get:
       tags:
@@ -13449,7 +13696,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /tech-metrics-settings:
     get:
       tags:
@@ -13495,7 +13742,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /link-categories:
     get:
       tags:
@@ -13529,7 +13776,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /link-rules:
     get:
       tags:
@@ -13551,7 +13798,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -13563,7 +13810,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - linkrules
@@ -13662,7 +13909,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /link-rules/{id}:
     get:
       tags:
@@ -13687,7 +13934,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - linkrules
@@ -13760,13 +14007,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - linkrules
@@ -13786,7 +14033,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /link-rules-db-export:
     post:
       tags:
@@ -13951,7 +14198,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /template-data:
     get:
       tags:
@@ -13991,7 +14238,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -14003,7 +14250,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - tpldata
@@ -14065,7 +14312,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /template-data/{id}:
     get:
       tags:
@@ -14090,7 +14337,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - tpldata
@@ -14154,13 +14401,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - tpldata
@@ -14180,7 +14427,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /template-test:
     get:
       tags:
@@ -14240,7 +14487,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -14252,7 +14499,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - tpltest
@@ -14292,7 +14539,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /template-test/{id}:
     get:
       tags:
@@ -14315,7 +14562,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - tpltest
@@ -14357,13 +14604,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - tpltest
@@ -14381,7 +14628,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /template-vars:
     get:
       tags:
@@ -14429,13 +14676,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /user-preferences/{id}:
     get:
       tags:
@@ -14460,7 +14707,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /users:
     get:
       tags:
@@ -14491,7 +14738,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -14503,7 +14750,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - users
@@ -14532,7 +14779,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /users/{id}:
     get:
       tags:
@@ -14557,7 +14804,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     patch:
       tags:
         - users
@@ -14607,13 +14854,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - users
@@ -14644,13 +14891,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - users
@@ -14670,7 +14917,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /view-copy/{id}:
     post:
       tags:
@@ -14720,13 +14967,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /view-export:
     post:
       tags:
@@ -14804,7 +15051,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -14816,7 +15063,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - viewgroups
@@ -14852,7 +15099,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /view-groups/{id}:
     get:
       tags:
@@ -14877,7 +15124,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - viewgroups
@@ -14915,13 +15162,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - viewgroups
@@ -14941,13 +15188,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /view-import:
     post:
       tags:
@@ -15135,7 +15382,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /view-positions:
     put:
       tags:
@@ -15184,13 +15431,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /view-tab-copy/{id}:
     post:
       tags:
@@ -15230,13 +15477,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /view-tab-positions:
     put:
       tags:
@@ -15272,13 +15519,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /view-tabs:
     post:
       tags:
@@ -15316,7 +15563,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /view-tabs/{id}:
     get:
       tags:
@@ -15341,7 +15588,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - viewtabs
@@ -15379,13 +15626,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - viewtabs
@@ -15405,7 +15652,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /views:
     post:
       tags:
@@ -15453,7 +15700,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /views/{id}:
     get:
       tags:
@@ -15478,7 +15725,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - views
@@ -15527,13 +15774,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - views
@@ -15553,7 +15800,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /weather-services:
     get:
       tags:
@@ -15612,7 +15859,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -15624,7 +15871,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /weather-services/{id}:
     get:
       tags:
@@ -15667,7 +15914,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -15679,7 +15926,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /widget-copy/{id}:
     post:
       tags:
@@ -15787,13 +16034,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /widget-filters:
     get:
       tags:
@@ -15823,7 +16070,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -15835,7 +16082,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - widgetfilters
@@ -15917,7 +16164,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /widget-filters/{id}:
     get:
       tags:
@@ -15942,7 +16189,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - widgetfilters
@@ -16014,13 +16261,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - widgetfilters
@@ -16040,7 +16287,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /widget-filter-positions:
     put:
       tags:
@@ -16076,13 +16323,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /widget-grid-positions:
     put:
       tags:
@@ -16134,13 +16381,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /widget-templates:
     get:
       tags:
@@ -16165,7 +16412,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -16177,7 +16424,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
     post:
       tags:
         - widgettemplates
@@ -16253,7 +16500,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /widget-templates/{id}:
     get:
       tags:
@@ -16275,7 +16522,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - widgettemplates
@@ -16322,13 +16569,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - widgettemplates
@@ -16345,7 +16592,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /widget-template-vars:
     get:
       tags:
@@ -16362,7 +16609,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.TemplateVarsResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/widget.TemplateVarsResponse'
   /widget-template-validate:
     post:
       tags:
@@ -16378,7 +16625,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.TemplateRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/widget.TemplateRequest'
             examples:
               validate:
                 summary: Validate
@@ -16411,7 +16658,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /widgets:
     post:
       tags:
@@ -16559,7 +16806,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /widgets/{id}:
     get:
       tags:
@@ -16584,7 +16831,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - widgets
@@ -16690,13 +16937,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - widgets
@@ -16716,7 +16963,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   parameters:
     id:
@@ -16879,6 +17126,20 @@ components:
           type: object
           additionalProperties:
             type: string
+    ErrorResponse:
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      type: object
+    ValidationErrorResponse:
+      properties:
+        errors:
+          additionalProperties:
+            type: string
+          type: object
+      type: object
 
   securitySchemes:
     BasicAuth:
