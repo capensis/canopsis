@@ -440,6 +440,7 @@ export default {
     [ALARM_STATUSES.stealthy]: 'Furtive',
     [ALARM_STATUSES.cancelled]: 'Annulée',
     [ALARM_STATUSES.noEvents]: 'Pas d\'événements',
+    [ALARM_STATUSES.unknown]: 'Inconnu',
   },
   statusResolvedTypes: {
     [ALARM_STATUSES.closed]: 'Fermée et résolue',

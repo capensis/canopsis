@@ -37,6 +37,11 @@ import { computed, ref } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
+import {
+  externalDataTableRecordToForm,
+  formToExternalDataTableRecord,
+} from '@/helpers/entities/external-data-table/record/form';
+
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
@@ -66,12 +71,17 @@ export default {
     const { t } = useI18n();
     const { config, close } = useInnerModal(props);
 
-    const form = ref({ ...config.value.externalDataTableRecord });
+    const columnConfigs = computed(() => config.value.externalDataTable.column_configs ?? []);
+
+    const form = ref(externalDataTableRecordToForm(
+      config.value.externalDataTableRecord,
+      columnConfigs.value,
+    ));
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        await config.value.action?.(form.value);
+        await config.value.action?.(formToExternalDataTableRecord(form.value, columnConfigs.value));
 
         close();
       },
