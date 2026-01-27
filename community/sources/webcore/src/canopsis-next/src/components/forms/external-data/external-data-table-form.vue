@@ -19,7 +19,7 @@
       <v-flex xs6>
         <v-select
           v-field="form.sort_by"
-          :items="columns"
+          :items="preparedColumns"
           :label="$t('externalData.fields.sortBy')"
           :name="sortByFieldName"
           :error-messages="errors.collect(sortByFieldName)"
@@ -72,6 +72,7 @@ import { computed, ref } from 'vue';
 
 import { SORT_ORDERS } from '@/constants';
 
+import { addPriorityColumnToColumnsArray } from '@/helpers/entities/external-data-table/form';
 import { externalDataItemConditionAttributeToForm } from '@/helpers/entities/shared/external-data/form';
 
 import { useModelField } from '@/hooks/form/model-field';
@@ -121,6 +122,7 @@ export default {
     const sortFieldName = computed(() => `${props.name}.sort`);
     const sortByFieldName = computed(() => `${props.name}.sort_by`);
 
+    const preparedColumns = computed(() => addPriorityColumnToColumnsArray(columns.value));
     /**
      * Adds a new condition to the external data table form.
      */
@@ -153,6 +155,7 @@ export default {
 
     return {
       columns,
+      preparedColumns,
 
       sortOrders,
       hasOnlyOneCondition,
