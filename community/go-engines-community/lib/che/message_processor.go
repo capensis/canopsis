@@ -112,15 +112,8 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 	}
 
 	go p.postProcessUpdatedEntities(ctx, event, updatedEntitiesForEvent, updatedEntityIdsForMetrics)
-
 	p.handlePerfData(ctx, &event)
-
-	if event.EventType == types.EventTypeContextUpdate {
-		return nil, nil
-	}
-
 	event.Format()
-
 	body, err := p.Encoder.Encode(&event)
 	if err != nil {
 		p.logError(err, "cannot encode event", d.Body)

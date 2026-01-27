@@ -57,7 +57,7 @@ Si la version affichée est inférieure à 4.4, vous devez soit utiliser une dis
 !!! Warning
     Si votre mot de passe MongoDB contient des caractères spéciaux (par exemple `@`, `+`, `/`, `%`), vous devez les encoder avant de les utiliser dans l’URL de connexion.
     
-    Consultez la section [Limitations sur les caractères spéciaux dans l’URL MongoDB](../../../guide-utilisation/limitations/#limitation-des-caracteres-speciaux-dans-lurl-mongodb) pour plus de détails.
+    Consultez la section [Limitations sur les caractères spéciaux dans l’URL MongoDB](../../guide-utilisation/limitations/index.md#limitation-des-caracteres-speciaux-dans-lurl-mongodb) pour plus de détails.
 
 ## Installation de Docker et Docker Compose
 
