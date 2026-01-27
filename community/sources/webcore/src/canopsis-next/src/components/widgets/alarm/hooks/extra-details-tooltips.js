@@ -196,10 +196,14 @@ export const useExtraDetailsSnoozeTooltip = (props) => {
   const end = computed(() => convertDateToStringWithFormatForToday(props.snooze.val));
 
   const tooltipContent = computed(() => {
+    const endContent = props.hasInactivePbehavior
+      ? t('alarm.actions.iconsFields.cannotUnsnoozeUntilPbehaviorInProgress')
+      : `${t('common.end')} : ${end.value}`;
+
     let content = `<strong>${t('alarm.actions.iconsTitles.snooze')}</strong>
         <div>${t('common.by')} : ${escape(props.snooze.a)}</div>
         <div>${t('common.date')} : ${date.value}</div>
-        <div>${t('common.end')} : ${end.value}</div>`;
+        <div>${endContent}</div>`;
 
     if (props.snooze.initiator) {
       content += `<div>${t('common.initiator')} : ${escape(props.snooze.initiator)}</div>`;
