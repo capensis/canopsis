@@ -56,7 +56,7 @@ export const widgetActionsPanelAlarmMixin = {
       bulkCreateAlarmAckremoveEvent: 'bulkCreateAlarmAckremoveEvent',
       bulkCreateAlarmSnoozeEvent: 'bulkCreateAlarmSnoozeEvent',
       bulkCreateAlarmAssocticketEvent: 'bulkCreateAlarmAssocticketEvent',
-      bulkCreateAlarmRemoveAssocticketEvent: 'bulkCreateAlarmRemoveAssocticketEvent',
+      bulkCreateAlarmTicketremoveEvent: 'bulkCreateAlarmTicketremoveEvent',
       bulkCreateAlarmCommentEvent: 'bulkCreateAlarmCommentEvent',
       bulkCreateAlarmCancelEvent: 'bulkCreateAlarmCancelEvent',
       bulkCreateAlarmUnCancelEvent: 'bulkCreateAlarmUnCancelEvent',
@@ -286,7 +286,7 @@ export const widgetActionsPanelAlarmMixin = {
         config: {
           items: alarms,
           action: async (removeEvent) => {
-            await this.bulkCreateAlarmRemoveAssocticketEvent({
+            await this.bulkCreateAlarmTicketremoveEvent({
               data: alarms.map(alarm => ({
                 ...removeEvent,
                 _id: alarm._id,

@@ -6,13 +6,18 @@
       </template>
       <template #text="">
         <v-layout class="gap-4" column>
-          <template v-if="items.length">
-            <alarm-general-table :items="items" />
-          </template>
-          <remove-associated-ticket-event-form
-            v-model="form"
-            :items="items"
-          />
+          <alarm-general-table v-if="items.length" :items="items" />
+          <c-collapse-panel class="c-alternative-bg-panel" expanded disabled>
+            <template #header>
+              <span class="font-weight-medium text-uppercase">
+                {{ $t('modals.removeAssociatedTicketEvent.title') }}
+              </span>
+            </template>
+            <remove-associated-ticket-event-form
+              v-model="form"
+              :items="items"
+            />
+          </c-collapse-panel>
         </v-layout>
       </template>
       <template #actions="">

@@ -550,6 +550,9 @@ export default {
     [TRIGGERS_TYPES.assocticket]: {
       text: 'Ticket associé à une alarme',
     },
+    [TRIGGERS_TYPES.ticketremove]: {
+      text: 'Ticket retiré',
+    },
     [TRIGGERS_TYPES.snooze]: {
       text: 'Alarme mise en veille',
     },
