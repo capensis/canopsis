@@ -384,6 +384,7 @@ export const TRIGGERS_TYPES = {
   declareticket: 'declareticket',
   declareticketwebhook: 'declareticketwebhook',
   assocticket: 'assocticket',
+  ticketremove: 'ticketremove',
   snooze: 'snooze',
   unsnooze: 'unsnooze',
   resolve: 'resolve',

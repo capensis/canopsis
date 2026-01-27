@@ -390,6 +390,7 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
   [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm',
   [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'note_add',
   [ALARM_LIST_ACTIONS_TYPES.associateTicket]: '$vuetify.icons.sticky_note_2',
+  [ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket]: '$vuetify.icons.remove_note',
   [ALARM_LIST_ACTIONS_TYPES.changeState]: 'thumbs_up_down',
   [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: 'help',
   [ALARM_LIST_ACTIONS_TYPES.history]: 'history',
@@ -505,6 +506,7 @@ export const ALARM_LIST_STEPS = {
   pbhleave: 'pbhleave',
 
   assocTicket: 'assocticket',
+  ticketRemove: 'ticketremove',
 
   webhookStart: 'webhookstart',
   webhookInProgress: 'webhookinprogress',
@@ -544,6 +546,7 @@ export const ALARM_STEPS_ICONS = {
   [ALARM_LIST_STEPS.ack]: 'check',
   [ALARM_LIST_STEPS.ackRemove]: 'remove_done',
   [ALARM_LIST_STEPS.assocTicket]: '$vuetify.icons.sticky_note_2',
+  [ALARM_LIST_STEPS.ticketRemove]: '$vuetify.icons.remove_note',
   [ALARM_LIST_STEPS.changeState]: 'warining',
   [ALARM_LIST_STEPS.declareTicket]: 'note_add',
   [ALARM_LIST_STEPS.declareTicketFail]: 'note_add',

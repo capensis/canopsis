@@ -244,7 +244,7 @@ export const USER_PERMISSIONS = {
         snooze: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_snoozeAlarm`,
         declareTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_declareanIncident`,
         associateTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_assignTicketNumber`,
-        removeAssoiatedTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeAssoiatedTicket`,
+        removeAssoiatedTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_snoozeAlarm`,
         cancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeAlarm`,
         unCancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_unCancel`,
         fastCancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_fastRemoveAlarm`,
