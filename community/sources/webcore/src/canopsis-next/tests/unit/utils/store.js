@@ -879,6 +879,7 @@ export const createAlarmModule = () => {
   const bulkCreateAlarmAckremoveEvent = jest.fn();
   const bulkCreateAlarmSnoozeEvent = jest.fn();
   const bulkCreateAlarmAssocticketEvent = jest.fn();
+  const bulkCreateAlarmTicketremoveEvent = jest.fn();
   const bulkCreateAlarmCommentEvent = jest.fn();
   const bulkCreateAlarmCancelEvent = jest.fn();
   const bulkCreateAlarmUnCancelEvent = jest.fn();
@@ -895,6 +896,7 @@ export const createAlarmModule = () => {
     bulkCreateAlarmAckremoveEvent.mockClear();
     bulkCreateAlarmSnoozeEvent.mockClear();
     bulkCreateAlarmAssocticketEvent.mockClear();
+    bulkCreateAlarmTicketremoveEvent.mockClear();
     bulkCreateAlarmCommentEvent.mockClear();
     bulkCreateAlarmCancelEvent.mockClear();
     bulkCreateAlarmUnCancelEvent.mockClear();
@@ -914,6 +916,7 @@ export const createAlarmModule = () => {
       bulkCreateAlarmAckremoveEvent,
       bulkCreateAlarmSnoozeEvent,
       bulkCreateAlarmAssocticketEvent,
+      bulkCreateAlarmTicketremoveEvent,
       bulkCreateAlarmCommentEvent,
       bulkCreateAlarmCancelEvent,
       bulkCreateAlarmUnCancelEvent,
@@ -932,6 +935,7 @@ export const createAlarmModule = () => {
     bulkCreateAlarmAckremoveEvent,
     bulkCreateAlarmSnoozeEvent,
     bulkCreateAlarmAssocticketEvent,
+    bulkCreateAlarmTicketremoveEvent,
     bulkCreateAlarmCommentEvent,
     bulkCreateAlarmCancelEvent,
     bulkCreateAlarmUnCancelEvent,

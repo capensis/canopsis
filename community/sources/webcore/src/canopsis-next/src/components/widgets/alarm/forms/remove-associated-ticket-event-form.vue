@@ -1,13 +1,17 @@
 <template>
   <v-layout column>
-    <c-select-field
+    <c-lazy-search-field
       v-field="form.ticket"
       :items="associatedTicketsOptions"
       :label="$t('modals.removeAssociatedTicketEvent.associatedTicketLabel')"
       :hint="associatedTicketsOptions.length ? $t('modals.removeAssociatedTicketEvent.associatedTicketHint') : ''"
+      item-text="text"
+      item-value="value"
       name="ticket"
+      with-type
       persistent-hint
       required
+      autocomplete
     />
     <c-description-field
       v-field="form.reason"
@@ -43,20 +47,23 @@ export default {
         return [];
       }
 
-      const allTickets = [];
-      props.items.forEach((alarm) => {
+      const allTicketsMap = props.items.reduce((acc, alarm) => {
         const tickets = alarm.v?.tickets ?? [];
+
         tickets.forEach((ticket) => {
-          if (ticket.ticket && !allTickets.find(t => t.value === ticket.ticket)) {
-            allTickets.push({
+          if (ticket.ticket && !acc[ticket.ticket]) {
+            acc[ticket.ticket] = {
               text: ticket.ticket,
               value: ticket.ticket,
-            });
+              type: ticket.ticket_system_name,
+            };
           }
         });
-      });
 
-      return allTickets;
+        return acc;
+      }, {});
+
+      return Object.values(allTicketsMap);
     });
 
     return {

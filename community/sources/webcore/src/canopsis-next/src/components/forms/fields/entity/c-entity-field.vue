@@ -23,9 +23,6 @@
     <template v-if="$scopedSlots.selection" #selection="props">
       <slot v-bind="props" name="selection" />
     </template>
-    <template v-if="$scopedSlots.item" #item="props">
-      <slot v-bind="props" name="item" />
-    </template>
   </c-lazy-search-field>
 </template>
 
