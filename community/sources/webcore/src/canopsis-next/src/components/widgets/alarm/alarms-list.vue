@@ -292,13 +292,15 @@ export default {
   },
   methods: {
     refreshExpanded() {
-      if (this.$refs.alarmsTable?.expanded) {
-        Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
-          if (expanded && !this.alarms.some(alarm => alarm._id === id)) {
-            this.$set(this.$refs.alarmsTable.expanded, id, false);
-          }
-        });
+      if (!this.$refs.alarmsTable?.expanded?.length) {
+        return;
       }
+
+      this.$set(
+        this.$refs.alarmsTable,
+        'expanded',
+        this.$refs.alarmsTable.expanded.filter(({ _id: id }) => this.alarms.some(alarm => alarm._id === id)),
+      );
     },
 
     updateRemediationInstructionsFilters(instructionsFilter) {
@@ -450,7 +452,14 @@ export default {
           'tstart',
           'tstop',
           'only_bookmarks',
-          'instructions',
+          'tags',
+          'instruction_filter_type',
+          'instruction_type',
+          'instruction_statuses',
+          'instruction_ids',
+          'alarm_pattern',
+          'entity_pattern',
+          'pbehavior_pattern',
         ]),
 
         fields: widgetToExportQueryColumns(this.widget),

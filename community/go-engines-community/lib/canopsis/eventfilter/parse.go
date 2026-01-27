@@ -35,6 +35,7 @@ type ParsedRuleConfig struct {
 	Component     libtemplate.ParsedTemplate
 	Connector     libtemplate.ParsedTemplate
 	ConnectorName libtemplate.ParsedTemplate
+	Upstream      libtemplate.ParsedTemplate
 
 	Actions   []ParsedAction
 	OnSuccess string
@@ -82,6 +83,7 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 			Component:     tplExecutor.Parse(rule.Config.Component),
 			Connector:     tplExecutor.Parse(rule.Config.Connector),
 			ConnectorName: tplExecutor.Parse(rule.Config.ConnectorName),
+			Upstream:      tplExecutor.Parse(rule.Config.Upstream),
 			Actions:       parsedActions,
 			OnSuccess:     rule.Config.OnSuccess,
 			OnFailure:     rule.Config.OnFailure,

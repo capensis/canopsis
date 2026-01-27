@@ -82,6 +82,8 @@ export default {
   delete: 'Delete',
   show: 'Show',
   hide: 'Hide',
+  expandAll: 'Expand all',
+  collapseAll: 'Collapse all',
   edit: 'Edit',
   duplicate: 'Duplicate',
   play: 'Play',
@@ -440,6 +442,7 @@ export default {
     [ALARM_STATUSES.stealthy]: 'Stealth',
     [ALARM_STATUSES.cancelled]: 'Canceled',
     [ALARM_STATUSES.noEvents]: 'No events',
+    [ALARM_STATUSES.unknown]: 'Unknown',
   },
   statusResolvedTypes: {
     [ALARM_STATUSES.closed]: 'Closed and resolved',

@@ -48,6 +48,8 @@ func (s *service) Start(ctx context.Context, ch <-chan bool) {
 			}
 
 			s.check(ctx)
+		case <-ticker.C:
+			s.check(ctx)
 		}
 	}
 }
