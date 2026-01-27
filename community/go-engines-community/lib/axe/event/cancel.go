@@ -47,6 +47,7 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 	entity := *event.Entity
 	match := getOpenAlarmMatch(event)
 	match["v.canceled"] = nil
+	match["v.status.val"] = bson.M{"$ne": types.AlarmStatusUnknown}
 	newStatus := types.CpsNumber(types.AlarmStatusCancelled)
 	newIncStepStatusQuery := valStepUpdateQueryWithInPbhInterval(types.AlarmStepStatusIncrease, newStatus,
 		event.Parameters.Output, event.Parameters)

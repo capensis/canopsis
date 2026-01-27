@@ -14,8 +14,9 @@ import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
 import {
   isAlarmStateOk,
-  isCancelledAlarmStatus,
-  isClosedAlarmStatus,
+  isAlarmStatusCancelled,
+  isAlarmStatusClosed,
+  isAlarmStatusUnknown,
   isResolvedAlarm,
 } from '@/helpers/entities/alarm/form';
 import { sortActionsByQuickActions, getActionsInlineCount } from '@/helpers/actions-panel';
@@ -62,7 +63,7 @@ export default {
     },
 
     openedAlarms() {
-      return this.localItems.filter(item => !isCancelledAlarmStatus(item) && !isClosedAlarmStatus(item));
+      return this.localItems.filter(item => !isAlarmStatusCancelled(item) && !isAlarmStatusClosed(item));
     },
 
     alarmsForActions() {
@@ -71,8 +72,12 @@ export default {
           return true;
         }
 
-        return !isCancelledAlarmStatus(item) && !isClosedAlarmStatus(item);
+        return !isAlarmStatusCancelled(item) && !isAlarmStatusClosed(item);
       });
+    },
+
+    alarmsForActionsWithoutUnknown() {
+      return this.alarmsForActions.filter(item => !isAlarmStatusUnknown(item));
     },
 
     openedAndUnResolvedAlarms() {
@@ -80,7 +85,7 @@ export default {
     },
 
     cancelledAndUnResolvedAlarms() {
-      return this.localItems.filter(alarm => isCancelledAlarmStatus(alarm) && !isResolvedAlarm(alarm));
+      return this.localItems.filter(alarm => isAlarmStatusCancelled(alarm) && !isResolvedAlarm(alarm));
     },
 
     alarmsWithAssignedDeclareTicketRules() {
@@ -129,6 +134,10 @@ export default {
 
     hasAlarmsWithoutAck() {
       return !!this.alarmsWithoutAck.length;
+    },
+
+    hasAlarmsWithoutUnknownStatus() {
+      return !!this.alarmsForActionsWithoutUnknown.length;
     },
 
     hasMetaAlarm() {
@@ -193,7 +202,7 @@ export default {
         );
       }
 
-      if (this.hasOpenedAlarms) {
+      if (this.hasAlarmsWithoutUnknownStatus) {
         actions.push(
           {
             type: ALARM_LIST_ACTIONS_TYPES.cancel,
@@ -404,7 +413,7 @@ export default {
     },
 
     showCancelEventModal() {
-      this.showCancelModalByAlarms(this.alarmsForActions);
+      this.showCancelModalByAlarms(this.alarmsForActionsWithoutUnknown);
     },
 
     showUnCancelEventModal() {
@@ -424,7 +433,7 @@ export default {
     },
 
     createFastCancelEvent() {
-      this.createFastCancelActionByAlarms(this.alarmsForActions);
+      this.createFastCancelActionByAlarms(this.alarmsForActionsWithoutUnknown);
     },
 
     showCreateCommentEventModal() {

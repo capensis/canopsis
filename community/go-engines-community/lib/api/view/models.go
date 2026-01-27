@@ -67,7 +67,7 @@ type ImportItemRequest struct {
 }
 
 type ImportRequest struct {
-	Items []ImportItemRequest `json:"items" binding:"required,notblank,dive"`
+	Items []ImportItemRequest `json:"-" binding:"required,notblank,dive"`
 }
 
 func (r ImportRequest) MarshalJSON() ([]byte, error) {

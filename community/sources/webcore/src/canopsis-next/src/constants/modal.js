@@ -107,6 +107,7 @@ export const MODALS = {
   createService: 'create-service',
   entityDependenciesList: 'entity-dependencies-list',
   entitiesRootCauseDiagram: 'entities-root-cause-diagram',
+  entityUpstream: 'entity-upstream',
   createEntityInfoProperty: 'create-entity-info-property',
   createEntityInfo: 'create-entity-info',
   serviceEntities: 'service-entities',

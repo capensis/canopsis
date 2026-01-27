@@ -97,6 +97,7 @@ type RuleConfig struct {
 	Component     string `bson:"component,omitempty" json:"component,omitempty" binding:"template"`
 	Connector     string `bson:"connector,omitempty" json:"connector,omitempty" binding:"template"`
 	ConnectorName string `bson:"connector_name,omitempty" json:"connector_name,omitempty" binding:"template"`
+	Upstream      string `bson:"upstream,omitempty" json:"upstream,omitempty" binding:"template"`
 
 	// enrichment fields
 	Actions   []Action `bson:"actions,omitempty" json:"actions,omitempty" binding:"dive,required_if=Type enrichment"`

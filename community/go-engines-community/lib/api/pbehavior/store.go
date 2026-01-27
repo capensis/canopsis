@@ -7,13 +7,18 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strconv"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apipattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -28,6 +33,7 @@ import (
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/redis/go-redis/v9"
 	librrule "github.com/teambition/rrule-go"
@@ -61,16 +67,19 @@ type Store interface {
 	EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error)
 	ConnectorCreate(ctx context.Context, r BulkConnectorCreateRequestItem) (*Response, error)
 	ConnectorDelete(ctx context.Context, r BulkConnectorDeleteRequestItem) (string, error)
-	ExecPatternAndUpdate(ctx context.Context, id string, pattern pattern.Entity) (*apipattern.CountResponse, error)
+	ExecPatternAndUpdate(ctx context.Context, r ExecPatternRequest) (*apipattern.CountResponse, error)
 	ExecPatternsAndUpdate(ctx context.Context) error
 }
 
 type store struct {
-	dbClient           mongo.DbClient
-	readDbClient       mongo.DbClient
-	redisClient        redis.Cmdable
-	dbCollection       mongo.DbCollection
-	entityDbCollection mongo.DbCollection
+	dbClient              mongo.DbClient
+	readDbClient          mongo.DbClient
+	redisClient           redis.Cmdable
+	dbCollection          mongo.DbCollection
+	entityDbCollection    mongo.DbCollection
+	typeDbCollection      mongo.DbCollection
+	reasonDbCollection    mongo.DbCollection
+	exceptionDbCollection mongo.DbCollection
 
 	authorProvider         author.Provider
 	entityTypeResolver     pbehavior.EntityTypeResolver
@@ -83,7 +92,7 @@ type store struct {
 	entitiesDefaultSearchByFields []string
 	entitiesDefaultSortBy         string
 
-	transformer    common.PatternFieldsTransformer
+	transformer    patternfields.Transformer
 	dupErrorParser validation.DuplicateErrorParser
 
 	workers int
@@ -97,7 +106,7 @@ func NewStore(
 	pbhTypeComputer pbehavior.TypeComputer,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	websocketHub websocket.Hub,
 	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 ) Store {
@@ -105,6 +114,9 @@ func NewStore(
 		dbClient:                      dbClient,
 		dbCollection:                  dbClient.Collection(mongo.PbehaviorMongoCollection),
 		entityDbCollection:            dbClient.Collection(mongo.EntityMongoCollection),
+		typeDbCollection:              dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
+		reasonDbCollection:            dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
+		exceptionDbCollection:         dbClient.Collection(mongo.PbehaviorExceptionMongoCollection),
 		readDbClient:                  readDbClient,
 		redisClient:                   redisClient,
 		entityTypeResolver:            entityTypeResolver,
@@ -117,11 +129,8 @@ func NewStore(
 		defaultSortBy:                 "created",
 		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
 		entitiesDefaultSortBy:         "_id",
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id":  "ID already exists.",
-			"name": "Name already exists.",
-		}),
-		workers: 10,
+		dupErrorParser:                validation.NewDuplicateErrorParser(),
+		workers:                       10,
 	}
 }
 
@@ -148,7 +157,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	doc.Comments = make([]pbehavior.Comment, 0)
 	doc.RRuleEnd = rruleEnd
 	if r.ExecPattern {
-		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		doc.EntityPatternFields, doc.Aliases, err = s.transformPatternRequestToModel(ctx, r.EntityRequest, r)
 		if err != nil {
 			return nil, err
 		}
@@ -165,7 +174,12 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		err = s.validateEditRequest(ctx, r.EditRequest)
+		if err != nil {
+			return err
+		}
+
+		doc.EntityPatternFields, doc.Aliases, err = s.transformPatternRequestToModel(ctx, r.EntityRequest, r)
 		if err != nil {
 			return err
 		}
@@ -173,7 +187,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -225,7 +239,7 @@ func (s *store) FindByEntityID(ctx context.Context, entity libtypes.Entity, r Fi
 
 	pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": pbhIDs}}}}
 	pipeline = append(pipeline, GetNestedObjectsPipeline(s.authorProvider)...)
-	pipeline = append(pipeline, common.GetSortQuery("created", common.SortAsc))
+	pipeline = append(pipeline, mongoquery.GetSortQuery("created", pagination.SortAsc))
 	if r.WithFlags {
 		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
 			"editable": bson.M{"$cond": bson.M{
@@ -280,7 +294,7 @@ func (s *store) CalendarByEntityID(ctx context.Context, entity libtypes.Entity, 
 		}
 	}
 
-	sort.Slice(res, sortCalendarResponse(res))
+	sort.Slice(res, s.sortCalendarResponse(res))
 
 	return res, nil
 }
@@ -330,7 +344,7 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 	pipeline := []bson.M{
 		{"$match": match},
 	}
-	filter := common.GetSearchQuery(request.Search, s.entitiesDefaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(request.Search, s.entitiesDefaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -347,7 +361,7 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 	cursor, err := s.entityDbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(request.SortBy, s.entitiesDefaultSortBy), request.Sort),
+		mongoquery.GetSortQuery(cmp.Or(request.SortBy, s.entitiesDefaultSortBy), request.Sort),
 		project,
 	))
 
@@ -400,7 +414,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 	}
 
 	if r.ExecPattern {
-		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		doc.EntityPatternFields, doc.Aliases, err = s.transformPatternRequestToModel(ctx, r.EntityRequest, r)
 		if err != nil {
 			return nil, false, err
 		}
@@ -425,6 +439,11 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		pbh = nil
 		recomputeInherited = false
 
+		err = s.validateEditRequest(ctx, r.EditRequest)
+		if err != nil {
+			return err
+		}
+
 		prevPbh := pbehavior.PBehavior{}
 		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevPbh)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -432,23 +451,12 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		}
 
 		recomputeInherited = prevPbh.Inherited
-
-		if prevPbh.Origin != "" {
-			if len(prevPbh.Entities) > 0 {
-				return common.NewValidationError("_id", "Cannot update an external pbehavior.")
-			}
-
-			valErr := common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
-			if !*r.Enabled || r.RRule != "" || r.Timezone != "" || len(r.Exdates) > 0 || len(r.Exceptions) > 0 || r.CorporateEntityPattern != "" {
-				return valErr
-			}
-
-			if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
-				return valErr
-			}
+		err = s.validateUpdateRequest(r, prevPbh)
+		if err != nil {
+			return err
 		}
 
-		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		doc.EntityPatternFields, doc.Aliases, err = s.transformPatternRequestToModel(ctx, r.EntityRequest, r)
 		if err != nil {
 			return err
 		}
@@ -458,7 +466,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -546,58 +554,62 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		pbh = nil
 		recomputeInherited = false
 
-		prevPbh := pbehavior.PBehavior{}
-		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevPbh)
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return err
-		}
-
-		recomputeInherited = prevPbh.Inherited
-
-		if prevPbh.Origin != "" {
-			if len(prevPbh.Entities) > 0 {
-				return common.NewValidationError("_id", "Cannot update an external pbehavior.")
-			}
-
-			valErr := common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
-			if r.Enabled != nil && !*r.Enabled ||
-				r.RRule != nil && *r.RRule != "" ||
-				r.Timezone != nil && *r.Timezone != "" ||
-				len(r.Exdates) > 0 ||
-				len(r.Exceptions) > 0 ||
-				r.CorporateEntityPattern != nil && *r.CorporateEntityPattern != "" {
-
-				return valErr
-			}
-
-			if r.EntityPattern != nil {
-				if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
-					return valErr
-				}
-			}
-		}
-
-		corpPattern := ""
-		if r.CorporateEntityPattern != nil {
-			corpPattern = *r.CorporateEntityPattern
-		}
-
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-			CorporateEntityPattern: corpPattern,
-			EntityPattern:          r.EntityPattern,
+		prevPbh := struct {
+			pbehavior.PBehavior `bson:",inline"`
+			pbehavior.Type      `bson:"type"`
+		}{}
+		cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
+			{"$match": bson.M{"_id": r.ID}},
+			{"$lookup": bson.M{
+				"from":         mongo.PbehaviorTypeMongoCollection,
+				"localField":   "type_",
+				"foreignField": "_id",
+				"as":           "type",
+			}},
+			{"$unwind": "$type"},
 		})
 		if err != nil {
 			return err
 		}
 
-		if r.CorporateEntityPattern != nil {
-			set["entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
-			set["corporate_entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.ID
-			set["corporate_entity_pattern_title"] = transformedEntityPatternRequest.CorporatePattern.Title
-		} else if r.EntityPattern != nil {
-			set["entity_pattern"] = transformedEntityPatternRequest.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
-			unset["corporate_entity_pattern"] = ""
-			unset["corporate_entity_pattern_title"] = ""
+		defer cursor.Close(ctx)
+		if !cursor.Next(ctx) {
+			return nil
+		}
+
+		err = cursor.Decode(&prevPbh)
+		if err != nil {
+			return err
+		}
+
+		if err = cursor.Err(); err != nil {
+			return err
+		}
+
+		err = s.validatePatchRequest(ctx, r, prevPbh.PBehavior, prevPbh.Type)
+		if err != nil {
+			return err
+		}
+
+		recomputeInherited = prevPbh.Inherited
+		if r.CorporateEntityPattern != nil || r.EntityPattern != nil {
+			corpPattern := ""
+			if r.CorporateEntityPattern != nil {
+				corpPattern = *r.CorporateEntityPattern
+			}
+
+			epf, aliases, err := s.transformPatternRequestToModel(ctx, patternfields.EntityRequest{
+				CorporateEntityPattern: corpPattern,
+				EntityPattern:          r.EntityPattern,
+			}, r)
+			if err != nil {
+				return err
+			}
+
+			set["aliases"] = aliases
+			set["entity_pattern"] = epf.EntityPattern
+			set["corporate_entity_pattern"] = epf.CorporateEntityPattern
+			set["corporate_entity_pattern_title"] = epf.CorporateEntityPatternTitle
 		}
 
 		update := bson.M{"$set": set}
@@ -608,7 +620,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -780,6 +792,25 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 	var pbh *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
+
+		t, err := s.findType(ctx, r.Type)
+		if err != nil {
+			return err
+		}
+
+		if t.ID == "" {
+			return validation.NewSingleError("not_exist", "Type", "Type", r)
+		}
+
+		if r.Stop == nil && t.Type != pbehavior.TypePause {
+			return validation.NewSingleError("required", "Stop", "Stop", r)
+		}
+
+		err = dbvalidation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
+		if err != nil {
+			return err
+		}
+
 		updateRes, err := s.dbCollection.UpdateOne(ctx,
 			bson.M{
 				"origin": r.Origin,
@@ -794,14 +825,14 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 		)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
 		}
 
 		if updateRes.UpsertedCount == 0 {
-			return common.NewValidationError("entity", "Pbehavior for origin already exists.")
+			return validation.NewSingleError("exist", "Origin", "Origin", r)
 		}
 
 		pbh, err = s.GetOneBy(ctx, doc.ID)
@@ -897,8 +928,19 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 	var pbh *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
+
+		err := dbvalidation.ValidateExist(ctx, s.typeDbCollection, r, "Type", r.Type)
+		if err != nil {
+			return err
+		}
+
+		err = dbvalidation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
+		if err != nil {
+			return err
+		}
+
 		var findDoc pbehavior.PBehavior
-		err := s.dbCollection.FindOneAndUpdate(ctx,
+		err = s.dbCollection.FindOneAndUpdate(ctx,
 			bson.M{
 				"origin":           r.Origin,
 				"tstart":           r.Start,
@@ -955,7 +997,7 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 		).Decode(&findDoc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -1016,10 +1058,17 @@ func (s *store) ConnectorDelete(ctx context.Context, r BulkConnectorDeleteReques
 	return id, err
 }
 
-func (s *store) ExecPatternAndUpdate(ctx context.Context, id string, pattern pattern.Entity) (*apipattern.CountResponse, error) {
+func (s *store) ExecPatternAndUpdate(ctx context.Context, r ExecPatternRequest) (*apipattern.CountResponse, error) {
 	conf := s.userInterfaceConfigProvider.Get()
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
 	defer cancel()
+
+	id := r.ID
+	entityPattern, _, err := s.transformer.TransformAliases(ctx, r.EntityPattern, r)
+	if err != nil {
+		return nil, err
+	}
+
 	updateStats := false
 	if id != "" {
 		pbh, err := s.GetOneBy(ctx, id)
@@ -1027,10 +1076,10 @@ func (s *store) ExecPatternAndUpdate(ctx context.Context, id string, pattern pat
 			return nil, err
 		}
 
-		updateStats = reflect.DeepEqual(pbh.EntityPattern, pattern)
+		updateStats = reflect.DeepEqual(pbh.EntityPattern, entityPattern)
 	}
 
-	count, ms, err := s.execPattern(ctx, pattern)
+	count, ms, err := s.execPattern(ctx, entityPattern)
 	if err != nil {
 		return nil, err
 	}
@@ -1381,7 +1430,7 @@ func (s *store) execPattern(ctx context.Context, entityPattern pattern.Entity) (
 	return res.Count, max(time.Since(start).Milliseconds(), 1), nil
 }
 
-func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
+func (s *store) sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
 	return func(i, j int) bool {
 		if response[i].From.Before(response[j].From) {
 			return true
@@ -1411,16 +1460,219 @@ func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
 	}
 }
 
-func (s *store) transformPatternRequestToModel(ctx context.Context, r common.EntityPatternFieldsRequest, model *pbehavior.PBehavior) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r)
+func (s *store) transformPatternRequestToModel(ctx context.Context, er patternfields.EntityRequest, r any) (epf savedpattern.EntityPatternFields, aliasPropIDs []string, err error) {
+	return s.transformer.TransformEntityRequest(ctx, er, r, s.dbCollection.Name())
+}
+
+func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
+	t, err := s.findType(ctx, r.Type)
 	if err != nil {
 		return err
 	}
 
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection),
-	)
+	if t.ID == "" {
+		return validation.NewSingleError("not_exist", "Type", "Type", r)
+	}
+
+	if r.Stop == nil && t.Type != pbehavior.TypePause {
+		return validation.NewSingleError("required", "Stop", "Stop", r)
+	}
+
+	err = dbvalidation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
+	if err != nil {
+		return err
+	}
+
+	err = dbvalidation.ValidateExist(ctx, s.exceptionDbCollection, r, "Exceptions", r.Exceptions)
+	if err != nil {
+		return err
+	}
+
+	valErrs, err := s.validateExdates(ctx, r.Exdates)
+	if err != nil {
+		return err
+	}
+
+	if len(valErrs) > 0 {
+		return validation.NewError(valErrs, r)
+	}
 
 	return nil
+}
+
+func (s *store) validateUpdateRequest(r UpdateRequest, prevPbh pbehavior.PBehavior) error {
+	if prevPbh.Origin != "" {
+		if len(prevPbh.Entities) > 0 {
+			return httperror.NewForbiddenError("The external pbehavior cannot be modified.")
+		}
+
+		var fieldErrs validator.ValidationErrors
+		check := func(field string, cond bool) {
+			if cond {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", field, field))
+			}
+		}
+
+		check("Enabled", !*r.Enabled)
+		check("RRule", r.RRule != "")
+		check("Timezone", r.Timezone != "")
+		check("Exdates", len(r.Exdates) > 0)
+		check("Exceptions", len(r.Exceptions) > 0)
+		check("CorporateEntityPattern", r.CorporateEntityPattern != "")
+		if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
+			check("EntityPattern", true)
+		}
+
+		if len(fieldErrs) > 0 {
+			return validation.NewError(fieldErrs, r)
+		}
+	}
+
+	return nil
+}
+
+func (s *store) validatePatchRequest(ctx context.Context, r PatchRequest, prevPbh pbehavior.PBehavior, prevType pbehavior.Type) error {
+	var newType pbehavior.Type
+	var err error
+	if r.Type != nil {
+		newType, err = s.findType(ctx, *r.Type)
+		if err != nil {
+			return err
+		}
+
+		if newType.ID == "" {
+			return validation.NewSingleError("not_exist", "Type", "Type", r)
+		}
+	}
+
+	err = dbvalidation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
+	if err != nil {
+		return err
+	}
+
+	err = dbvalidation.ValidateExist(ctx, s.exceptionDbCollection, r, "Exceptions", r.Exceptions)
+	if err != nil {
+		return err
+	}
+
+	valErrs, err := s.validateExdates(ctx, r.Exdates)
+	if err != nil {
+		return err
+	}
+
+	if len(valErrs) > 0 {
+		return validation.NewError(valErrs, r)
+	}
+
+	stopValErr := validation.NewSingleError("required", "Stop", "Stop", r)
+	if r.Stop.isSet {
+		if r.Stop.val == nil {
+			cannonicalType := ""
+			if newType.ID != "" {
+				cannonicalType = newType.Type
+			} else {
+				cannonicalType = prevType.Type
+			}
+
+			if cannonicalType != pbehavior.TypePause {
+				return stopValErr
+			}
+		}
+	} else if newType.ID != "" && newType.Type != pbehavior.TypePause && prevPbh.Stop == nil {
+		return stopValErr
+	}
+
+	if r.Start != nil && !r.Stop.isSet && prevPbh.Stop != nil && *r.Start >= prevPbh.Stop.Unix() {
+		return validation.NewSingleErrorWithParam("ltfield", "Start", "Start", "Stop", r)
+	} else if r.Start == nil && r.Stop.isSet && r.Stop.val != nil && prevPbh.Start.Unix() >= *r.Stop.val {
+		return validation.NewSingleErrorWithParam("gtfield", "Stop", "Stop", "Start", r)
+	}
+
+	if prevPbh.Origin != "" {
+		if len(prevPbh.Entities) > 0 {
+			return httperror.NewForbiddenError("The external pbehavior cannot be modified.")
+		}
+
+		var fieldErrs validator.ValidationErrors
+		check := func(field string, cond bool) {
+			if cond {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", field, field))
+			}
+		}
+
+		check("Enabled", r.Enabled != nil && !*r.Enabled)
+		check("RRule", r.RRule != nil && *r.RRule != "")
+		check("Timezone", r.Timezone != nil && *r.Timezone != "")
+		check("Exdates", len(r.Exdates) > 0)
+		check("Exceptions", len(r.Exceptions) > 0)
+		check("CorporateEntityPattern", r.CorporateEntityPattern != nil && *r.CorporateEntityPattern != "")
+		if r.EntityPattern != nil {
+			if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
+				check("EntityPattern", true)
+			}
+		}
+
+		if len(fieldErrs) > 0 {
+			return validation.NewError(fieldErrs, r)
+		}
+	}
+
+	return nil
+}
+
+func (s *store) findType(ctx context.Context, id string) (pbehavior.Type, error) {
+	t := pbehavior.Type{}
+	err := s.typeDbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&t)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return t, nil
+		}
+
+		return t, err
+	}
+
+	return t, nil
+}
+
+func (s *store) validateExdates(ctx context.Context, exdates []pbehaviorexception.ExdateRequest) (validator.ValidationErrors, error) {
+	if len(exdates) == 0 {
+		return nil, nil
+	}
+
+	ids := make([]string, len(exdates))
+	for i, v := range exdates {
+		ids[i] = v.Type
+	}
+
+	cursor, err := s.typeDbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}}, options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		return nil, fmt.Errorf("cannot find types: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+	found := make(map[string]bool, len(ids))
+	for cursor.Next(ctx) {
+		t := struct {
+			ID string `bson:"_id"`
+		}{}
+		err = cursor.Decode(&t)
+		if err != nil {
+			return nil, fmt.Errorf("cannot decode type: %w", err)
+		}
+
+		found[t.ID] = true
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, fmt.Errorf("cannot fetch types: %w", err)
+	}
+
+	var fieldErrs validator.ValidationErrors
+	for i, v := range exdates {
+		if !found[v.Type] {
+			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Type", "Exdates."+strconv.Itoa(i)+".Type"))
+		}
+	}
+
+	return fieldErrs, nil
 }

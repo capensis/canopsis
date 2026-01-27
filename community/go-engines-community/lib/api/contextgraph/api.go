@@ -9,7 +9,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -24,12 +25,13 @@ const (
 )
 
 type api struct {
-	reporter      StatusReporter
-	jobPublisher  workers.JobPublisher
-	dir           string
-	filePattern   string
-	maxImportSize uint64
-	logger        zerolog.Logger
+	reporter       StatusReporter
+	jobPublisher   workers.JobPublisher
+	dir            string
+	filePattern    string
+	maxImportSize  uint64
+	errorResponder httperror.Responder
+	logger         zerolog.Logger
 }
 
 func NewApi(
@@ -37,18 +39,18 @@ func NewApi(
 	reporter StatusReporter,
 	jobPublisher workers.JobPublisher,
 	maxImportSize uint64,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
-	a := &api{
-		dir:           filepath.Join(conf.File.Dir, canopsis.SubDirImport),
-		filePattern:   filePattern,
-		reporter:      reporter,
-		jobPublisher:  jobPublisher,
-		maxImportSize: maxImportSize,
-		logger:        logger,
+	return &api{
+		dir:            filepath.Join(conf.File.Dir, canopsis.SubDirImport),
+		filePattern:    filePattern,
+		reporter:       reporter,
+		jobPublisher:   jobPublisher,
+		maxImportSize:  maxImportSize,
+		errorResponder: errorResponder,
+		logger:         logger,
 	}
-
-	return a
 }
 
 // ImportAll
@@ -56,8 +58,9 @@ func NewApi(
 // @Success 200 {object} contextgraph.ImportResponse
 func (a *api) ImportAll(c *gin.Context) {
 	query := ImportQuery{}
-	if err := c.BindQuery(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+	if err := validation.BindQuery(c, &query); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -69,18 +72,22 @@ func (a *api) ImportAll(c *gin.Context) {
 
 	raw, err := c.GetRawData()
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	if a.maxImportSize > 0 && uint64(len(raw)) > a.maxImportSize {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("request size %d exceeds limit %d", len(raw), a.maxImportSize)))
+		a.errorResponder.Respond(c, httperror.ErrRequestEntityTooLarge)
+
 		return
 	}
 
 	jobID, err := a.createImportJob(c, job, raw)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
@@ -91,8 +98,9 @@ func (a *api) ImportAll(c *gin.Context) {
 // @Success 200 {object} contextgraph.ImportResponse
 func (a *api) ImportPartial(c *gin.Context) {
 	query := ImportQuery{}
-	if err := c.BindQuery(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+	if err := validation.BindQuery(c, &query); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -105,18 +113,22 @@ func (a *api) ImportPartial(c *gin.Context) {
 
 	raw, err := c.GetRawData()
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	if a.maxImportSize > 0 && uint64(len(raw)) > a.maxImportSize {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("request size %d exceeds limit %d", len(raw), a.maxImportSize)))
+		a.errorResponder.Respond(c, httperror.ErrRequestEntityTooLarge)
+
 		return
 	}
 
 	jobID, err := a.createImportJob(c, job, raw)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
@@ -152,11 +164,14 @@ func (a *api) Status(c *gin.Context) {
 	status, err := a.reporter.GetStatus(c, c.Param("id"))
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
-			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, status)

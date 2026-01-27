@@ -1,6 +1,9 @@
+import { isArray } from 'lodash';
+
 import { PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
+import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef { 'maintenance' | 'pause' } DisableDuringPeriods
@@ -27,15 +30,29 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  * @param {DynamicInfo} dynamicInfo
  * @returns {DynamicInfoForm}
  */
-export const dynamicInfoToForm = (dynamicInfo = {}) => ({
-  _id: dynamicInfo._id ?? '',
-  name: dynamicInfo.name ?? '',
-  enabled: dynamicInfo.enabled ?? true,
-  description: dynamicInfo.description ?? '',
-  disable_during_periods: dynamicInfo.disable_during_periods ?? [],
-  infos: dynamicInfo.infos ? [...dynamicInfo.infos] : [],
-  patterns: filterPatternsToForm(dynamicInfo, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
-});
+export const dynamicInfoToForm = (dynamicInfo = {}) => {
+  const infos = (dynamicInfo.infos || []).map((info) => {
+    const value = isArray(info.value) && (!info.value.length || !info.value[0]?.key)
+      ? primitiveArrayToForm(info.value)
+      : info.value;
+
+    return {
+      ...info,
+      value,
+    };
+  });
+
+  return {
+    infos,
+
+    _id: dynamicInfo._id ?? '',
+    name: dynamicInfo.name ?? '',
+    enabled: dynamicInfo.enabled ?? true,
+    description: dynamicInfo.description ?? '',
+    disable_during_periods: dynamicInfo.disable_during_periods ?? [],
+    patterns: filterPatternsToForm(dynamicInfo, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+  };
+};
 
 /**
  * Convert a dynamic information's form object to a API compatible dynamic info object
@@ -44,10 +61,22 @@ export const dynamicInfoToForm = (dynamicInfo = {}) => ({
  * @returns {DynamicInfo}
  */
 export const formToDynamicInfo = (form) => {
-  const { patterns, ...dynamicInfo } = form;
+  const { patterns, infos, ...dynamicInfo } = form;
+
+  const convertedInfos = (infos || []).map((info) => {
+    const value = isArray(info.value) && info.value.length > 0 && info.value[0]?.key
+      ? formToPrimitiveArray(info.value)
+      : info.value;
+
+    return {
+      ...info,
+      value,
+    };
+  });
 
   return {
     ...dynamicInfo,
+    infos: convertedInfos,
     ...formFilterToPatterns(patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
   };
 };

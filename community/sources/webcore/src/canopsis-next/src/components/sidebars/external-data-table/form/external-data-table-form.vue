@@ -47,10 +47,9 @@
 <script>
 import { computed, onMounted } from 'vue';
 
-import { EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES, EXTERNAL_DATA_TABLE_PRIORITY_COLUMN } from '@/constants';
-
 import { setSeveralFields } from '@/helpers/immutable';
 import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
+import { addPriorityColumnToColumnsArray } from '@/helpers/entities/external-data-table/form';
 
 import { useModelField } from '@/hooks/form/model-field';
 
@@ -101,15 +100,12 @@ export default {
     const { updateModel } = useModelField(props, emit);
     const { pending, columns, fetchColumns } = useExternalDataTableColumns();
 
-    const preparedColumns = computed(() => columns.value.reduce((acc, column) => {
-      acc.push({ text: column.name, value: column.name });
+    const preparedColumns = computed(() => addPriorityColumnToColumnsArray(columns.value).map(column => ({
+      ...column,
 
-      if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp) {
-        acc.push({ text: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN, value: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN });
-      }
-
-      return acc;
-    }, []));
+      text: column.name,
+      value: column.name,
+    })));
 
     const updateTable = async (tableId) => {
       await fetchColumns(tableId);
