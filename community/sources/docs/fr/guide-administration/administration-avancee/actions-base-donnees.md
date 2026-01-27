@@ -5,7 +5,7 @@
 ### Nettoyage
 
 !!! note
-    Depuis la version `VERSION` de Canopsis, le nettoyage des bases de données `MongoDB` et `TimescaleDB` ne se réalise plus de manière manuel.  
+    Le nettoyage des bases de données `MongoDB` et `TimescaleDB` ne se réalise pas de manière manuel.  
     Il faut pour cela utiliser la fonctionnalité [`Paramètres de stockage`](../../guide-utilisation/menu-administration/parametres-de-stockage.md) qui centralise toutes les politiques de rétention des données de Canopsis.
 
 ### Sauvegarde
@@ -226,12 +226,6 @@ db.periodical_alarm.aggregate([{ $match:{ "v.pbehavior_info.id":{ $exists:true }
     id: '019bb14f-7eda-7dce-a3fa-d68ad3b26d11'
   }
 ]
-```
-
-
-#### Trouver les comportements périodiques qui se sont exécutés en retard
-```sh
-
 ```
 
 #### Rechercher les requêtes et les collections qui sont visés par des requêtes dont le temps d'exécution est supérieur à 10 secondes
