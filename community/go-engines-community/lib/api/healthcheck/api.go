@@ -3,7 +3,8 @@ package healthcheck
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 )
@@ -17,14 +18,16 @@ type API interface {
 	UpdateParameters(c *gin.Context)
 }
 
-func NewApi(store Store) API {
+func NewApi(store Store, errorResponder httperror.Responder) API {
 	return &api{
-		store: store,
+		store:          store,
+		errorResponder: errorResponder,
 	}
 }
 
 type api struct {
-	store Store
+	store          Store
+	errorResponder httperror.Responder
 }
 
 // Get
@@ -59,7 +62,9 @@ func (a *api) GetEnginesOrder(c *gin.Context) {
 func (a *api) GetParameters(c *gin.Context) {
 	data, err := a.store.GetParameters(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, data)
@@ -70,14 +75,17 @@ func (a *api) GetParameters(c *gin.Context) {
 // @Success 200 {object} config.HealthCheckParameters
 func (a *api) UpdateParameters(c *gin.Context) {
 	conf := config.HealthCheckParameters{}
-	if err := c.ShouldBind(&conf); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, conf))
+	if err := validation.Bind(c, &conf); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	data, err := a.store.UpdateParameters(c, conf)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, data)

@@ -50,33 +50,26 @@ describe('patterns', () => {
     fetchPatternsList.mockClear();
   });
 
-  it('Filters fetched after mount', async () => {
+  test('Filters fetched after mount', async () => {
     factory({ store, listeners });
 
     await flushPromises();
 
-    expect(fetchPatternsList).toBeCalledTimes(1);
-    expect(fetchPatternsList).toBeCalledWith(
+    expect(fetchPatternsList).toHaveBeenCalledTimes(1);
+    expect(fetchPatternsList).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {
-          limit: 10,
           page: 1,
+          limit: 10,
+          corporate: false,
         },
       },
     );
   });
 
-  it('Filters fetched after change query', async () => {
-    const initialItemsPerPage = Faker.datatype.number();
+  test('Filters fetched after change query', async () => {
     const wrapper = factory({
-      data() {
-        return {
-          query: {
-            itemsPerPage: initialItemsPerPage,
-          },
-        };
-      },
       store,
       listeners,
     });
@@ -86,30 +79,29 @@ describe('patterns', () => {
     fetchPatternsList.mockClear();
 
     const patternsListNode = selectPattersListNode(wrapper);
-
-    const itemsPerPage = Faker.datatype.number({ max: initialItemsPerPage });
-    const page = Faker.datatype.number();
+    const page = Faker.datatype.number({ min: 2 });
 
     patternsListNode.$emit('update:options', {
-      itemsPerPage,
       page,
+      itemsPerPage: 10,
     });
 
     await flushPromises();
 
-    expect(fetchPatternsList).toBeCalledTimes(1);
-    expect(fetchPatternsList).toBeCalledWith(
+    expect(fetchPatternsList).toHaveBeenCalledTimes(1);
+    expect(fetchPatternsList).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {
-          limit: itemsPerPage,
           page,
+          limit: 10,
+          corporate: false,
         },
       },
     );
   });
 
-  it('Edit event emitted after trigger edit event on patterns list', async () => {
+  test('Edit event emitted after trigger edit event on patterns list', async () => {
     const data = Faker.datatype.string();
     const wrapper = factory({
       store,
@@ -126,11 +118,11 @@ describe('patterns', () => {
 
     await flushPromises();
 
-    expect(edit).toBeCalledTimes(1);
-    expect(edit).toBeCalledWith(data);
+    expect(edit).toHaveBeenCalledTimes(1);
+    expect(edit).toHaveBeenCalledWith(data);
   });
 
-  it('Remove selected event emitted after trigger remove selected event on patterns list', async () => {
+  test('Remove selected event emitted after trigger remove selected event on patterns list', async () => {
     const data = [Faker.datatype.string()];
     const wrapper = factory({
       store,
@@ -147,11 +139,11 @@ describe('patterns', () => {
 
     await flushPromises();
 
-    expect(removeSelected).toBeCalledTimes(1);
-    expect(removeSelected).toBeCalledWith(data);
+    expect(removeSelected).toHaveBeenCalledTimes(1);
+    expect(removeSelected).toHaveBeenCalledWith(data);
   });
 
-  it('Remove event emitted after trigger remove event on patterns list', async () => {
+  test('Remove event emitted after trigger remove event on patterns list', async () => {
     const data = Faker.datatype.string();
     const wrapper = factory({
       store,
@@ -168,17 +160,17 @@ describe('patterns', () => {
 
     await flushPromises();
 
-    expect(remove).toBeCalledTimes(1);
-    expect(remove).toBeCalledWith(data);
+    expect(remove).toHaveBeenCalledTimes(1);
+    expect(remove).toHaveBeenCalledWith(data);
   });
 
-  it('Renders `patterns` without patterns', () => {
+  test('Renders `patterns` without patterns', () => {
     const wrapper = snapshotFactory({ store, listeners });
 
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `patterns` with patterns', () => {
+  test('Renders `patterns` with patterns', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         {

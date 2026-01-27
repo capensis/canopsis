@@ -166,8 +166,6 @@ export const USER_PERMISSIONS_GROUPS = {
   technicalToken: 'technical_token',
 };
 
-export const API_USER_PERMISSIONS_ROOT_GROUPS = [USER_PERMISSIONS_GROUPS.api];
-
 export const VIEW_USER_PERMISSIONS_NAMES = {
   general: 'view_general',
   actions: 'view_actions',

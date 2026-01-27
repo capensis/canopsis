@@ -989,6 +989,12 @@ export default {
   entityDependenciesList: {
     title: '{name} impacted entities',
   },
+  entityUpstream: {
+    entities: 'Entities',
+    topLevelEntities: 'Top level entities',
+    seeEntities: 'See entities',
+    seeTopEntities: 'See top entities',
+  },
   createDeclareTicketRule: {
     create: {
       title: 'Create a declare ticket rule',

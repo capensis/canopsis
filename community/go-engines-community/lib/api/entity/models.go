@@ -90,6 +90,7 @@ type Entity struct {
 
 	Connector string `bson:"connector,omitempty" json:"connector,omitempty"`
 	Component string `bson:"component,omitempty" json:"component,omitempty"`
+	Upstream  string `bson:"upstream,omitempty" json:"upstream,omitempty"`
 
 	// ConnectorType contains a part before "/" of connector id.
 	ConnectorType string `bson:"-" json:"connector_type,omitempty"`
@@ -116,6 +117,8 @@ type Entity struct {
 	DependsCount *int `bson:"depends_count" json:"depends_count,omitempty"`
 	// ImpactsCount contains only services
 	ImpactsCount *int `bson:"impacts_count" json:"impacts_count,omitempty"`
+
+	DownstreamCount *int `bson:"downstream_count" json:"downstream_count,omitempty"`
 
 	Coordinates *types.Coordinates `bson:"coordinates,omitempty" json:"coordinates,omitempty"`
 
@@ -283,7 +286,7 @@ type StateSettingResponse struct {
 	Title                  string                         `json:"title"`
 	Method                 string                         `json:"method"`
 	Type                   string                         `json:"type,omitempty"`
-	InheritedEntityPattern *pattern.Entity                `bson:"inherited_entity_pattern,omitempty" json:"inherited_entity_pattern,omitempty"`
+	InheritedEntityPattern pattern.Entity                 `bson:"inherited_entity_pattern,omitempty" json:"inherited_entity_pattern,omitempty"`
 	StateThresholds        *statesettings.StateThresholds `bson:"state_thresholds,omitempty" json:"state_thresholds,omitempty"`
 
 	DependsCount               int    `bson:"-" json:"depends_count,omitempty"`

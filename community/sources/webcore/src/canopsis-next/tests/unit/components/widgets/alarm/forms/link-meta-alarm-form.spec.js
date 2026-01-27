@@ -1,14 +1,13 @@
 import Faker from 'faker';
 import { Validator } from 'vee-validate';
 
-import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
-import { createMockedStoreModules, createMetaAlarmModule } from '@unit/utils/store';
 
 import LinkMetaAlarmForm from '@/components/widgets/alarm/forms/link-meta-alarm-form.vue';
 
 const stubs = {
-  'v-combobox': createInputStub('v-combobox'),
+  'c-meta-alarm-field': createInputStub('c-meta-alarm-field'),
   'v-text-field': createInputStub('v-text-field'),
   'meta-alarm-rule-tags-form': true,
   'meta-alarm-rule-infos-form': true,
@@ -18,6 +17,7 @@ const stubs = {
 };
 
 const snapshotStubs = {
+  'c-meta-alarm-field': true,
   'meta-alarm-rule-tags-form': true,
   'meta-alarm-rule-infos-form': true,
   'c-enabled-field': true,
@@ -26,15 +26,10 @@ const snapshotStubs = {
 };
 
 const selectTextField = wrapper => wrapper.find('.c-name-field');
-const selectComboboxField = wrapper => wrapper.find('.v-combobox');
+const selectMetaAlarmField = wrapper => wrapper.find('.c-meta-alarm-field');
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 
 describe('link-meta-alarm-form', () => {
-  const { metaAlarmModule, fetchMetaAlarmsListWithoutStore } = createMetaAlarmModule();
-  const store = createMockedStoreModules([
-    metaAlarmModule,
-  ]);
-
   const factory = generateShallowRenderer(LinkMetaAlarmForm, {
     stubs,
     provide: {
@@ -48,17 +43,6 @@ describe('link-meta-alarm-form', () => {
     },
   });
 
-  test('Alarms fetched after mount', () => {
-    factory({
-      store,
-      propsData: {
-        form: {},
-      },
-    });
-
-    expect(fetchMetaAlarmsListWithoutStore).toBeCalled();
-  });
-
   test('Meta alarm changed after trigger text field', () => {
     const form = {
       metaAlarm: Faker.datatype.string(),
@@ -66,7 +50,6 @@ describe('link-meta-alarm-form', () => {
       auto_resolve: false,
     };
     const wrapper = factory({
-      store,
       propsData: {
         form,
       },
@@ -74,7 +57,7 @@ describe('link-meta-alarm-form', () => {
 
     const metaAlarm = Faker.datatype.string();
 
-    const comboboxField = selectComboboxField(wrapper);
+    const comboboxField = selectMetaAlarmField(wrapper);
 
     comboboxField.setValue(metaAlarm);
 
@@ -88,7 +71,6 @@ describe('link-meta-alarm-form', () => {
       auto_resolve: false,
     };
     const wrapper = factory({
-      store,
       propsData: {
         form,
       },
@@ -107,7 +89,6 @@ describe('link-meta-alarm-form', () => {
       auto_resolve: false,
     };
     const wrapper = factory({
-      store,
       propsData: {
         form,
       },
@@ -124,7 +105,6 @@ describe('link-meta-alarm-form', () => {
 
   test('Renders `link-meta-alarm-form` with default props', async () => {
     const wrapper = snapshotFactory({
-      store,
       propsData: {
         form: {
           metaAlarm: 'metaAlarm',
@@ -135,25 +115,5 @@ describe('link-meta-alarm-form', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllMenus();
-    expect(wrapper).toMatchMenuSnapshot();
-  });
-
-  test('Renders `link-meta-alarm-form` with alarms', async () => {
-    fetchMetaAlarmsListWithoutStore.mockReturnValueOnce([
-      { _id: 'entity-id', name: 'alarm-display-name' },
-    ]);
-    const wrapper = snapshotFactory({
-      store: createMockedStoreModules([metaAlarmModule]),
-      propsData: {
-        form: {},
-      },
-    });
-
-    await flushPromises();
-
-    expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllMenus();
-    expect(wrapper).toMatchMenuSnapshot();
   });
 });

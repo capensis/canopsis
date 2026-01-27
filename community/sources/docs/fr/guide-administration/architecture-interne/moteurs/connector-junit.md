@@ -10,6 +10,7 @@ L'option `-h` permet d'afficher toutes les options disponibles au lancement du c
 
 | Option | Description |
 |--------|------------|
+| `-cps.logger string` | Destination de sortie du logger. Remplace le paramètre "Canopsis.logger.Writer" du fichier de configuration TOML |
 | `-d` | Active le mode debug |
 | `-periodicalWaitTime duration` | Durée d'attente entre deux exécutions du processus périodique (défaut : 1m0s) |
 | `-processArtifacts` | Active le traitement des artefacts de cas de test : captures d'écran et vidéos (défaut : true) |

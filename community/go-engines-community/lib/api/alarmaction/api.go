@@ -1,14 +1,13 @@
 package alarmaction
 
 import (
-	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -33,36 +32,50 @@ type API interface {
 }
 
 type api struct {
-	store  Store
-	logger zerolog.Logger
+	store          Store
+	errorResponder httperror.Responder
 }
 
-func NewApi(store Store, logger zerolog.Logger) API {
-	return &api{store: store, logger: logger}
+func NewApi(store Store, errorResponder httperror.Responder) API {
+	return &api{
+		store:          store,
+		errorResponder: errorResponder,
+	}
 }
 
 // Ack
 // @Param body body AckRequest true "body"
 func (a *api) Ack(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
 	request := AckRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	ok, err := a.store.Ack(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -72,25 +85,34 @@ func (a *api) Ack(c *gin.Context) {
 // AckRemove
 // @Param body body Request true "body"
 func (a *api) AckRemove(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	ok, err := a.store.AckRemove(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -100,25 +122,34 @@ func (a *api) AckRemove(c *gin.Context) {
 // Snooze
 // @Param body body SnoozeRequest true "body"
 func (a *api) Snooze(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := SnoozeRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	ok, err := a.store.Snooze(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -128,25 +159,34 @@ func (a *api) Snooze(c *gin.Context) {
 // Cancel
 // @Param body body Request true "body"
 func (a *api) Cancel(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	ok, err := a.store.Cancel(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -156,25 +196,34 @@ func (a *api) Cancel(c *gin.Context) {
 // Uncancel
 // @Param body body Request true "body"
 func (a *api) Uncancel(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	ok, err := a.store.Uncancel(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -184,25 +233,34 @@ func (a *api) Uncancel(c *gin.Context) {
 // AssocTicket
 // @Param body body AssocTicketRequest true "body"
 func (a *api) AssocTicket(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := AssocTicketRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	ok, err := a.store.AssocTicket(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -212,25 +270,34 @@ func (a *api) AssocTicket(c *gin.Context) {
 // Comment
 // @Param body body CommentRequest true "body"
 func (a *api) Comment(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := CommentRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	ok, err := a.store.Comment(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -240,25 +307,34 @@ func (a *api) Comment(c *gin.Context) {
 // ChangeState
 // @Param body body ChangeStateRequest true "body"
 func (a *api) ChangeState(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := ChangeStateRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	ok, err := a.store.ChangeState(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -268,131 +344,253 @@ func (a *api) ChangeState(c *gin.Context) {
 // BulkAck
 // @Param body body []BulkAckRequestItem true "body"
 func (a *api) BulkAck(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	bulk.Handler(c, func(request BulkAckRequestItem) (string, error) {
 		ok, err := a.store.Ack(c, request.ID, request.AckRequest, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkAckRemove
 // @Param body body []BulkRequestItem true "body"
 func (a *api) BulkAckRemove(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
 		ok, err := a.store.AckRemove(c, request.ID, request.Request, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkSnooze
 // @Param body body []BulkSnoozeRequestItem true "body"
 func (a *api) BulkSnooze(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	bulk.Handler(c, func(request BulkSnoozeRequestItem) (string, error) {
 		ok, err := a.store.Snooze(c, request.ID, request.SnoozeRequest, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkCancel
 // @Param body body []BulkRequestItem true "body"
 func (a *api) BulkCancel(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
 		ok, err := a.store.Cancel(c, request.ID, request.Request, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkUncancel
 // @Param body body []BulkRequestItem true "body"
 func (a *api) BulkUncancel(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
 		ok, err := a.store.Uncancel(c, request.ID, request.Request, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkAssocTicket
 // @Param body body []BulkAssocTicketRequestItem true "body"
 func (a *api) BulkAssocTicket(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	bulk.Handler(c, func(request BulkAssocTicketRequestItem) (string, error) {
 		ok, err := a.store.AssocTicket(c, request.ID, request.AssocTicketRequest, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkComment
 // @Param body body []BulkCommentRequestItem true "body"
 func (a *api) BulkComment(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	bulk.Handler(c, func(request BulkCommentRequestItem) (string, error) {
 		ok, err := a.store.Comment(c, request.ID, request.CommentRequest, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkChangeState
 // @Param body body []BulkChangeStateRequestItem true "body"
 func (a *api) BulkChangeState(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	bulk.Handler(c, func(request BulkChangeStateRequestItem) (string, error) {
 		ok, err := a.store.ChangeState(c, request.ID, request.ChangeStateRequest, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 func (a *api) AddBookmark(c *gin.Context) {
-	found, err := a.store.AddBookmark(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	found, err := a.store.AddBookmark(c, c.Param("id"), userID)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !found {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -400,13 +598,23 @@ func (a *api) AddBookmark(c *gin.Context) {
 }
 
 func (a *api) RemoveBookmark(c *gin.Context) {
-	found, err := a.store.RemoveBookmark(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	found, err := a.store.RemoveBookmark(c, c.Param("id"), userID)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !found {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 

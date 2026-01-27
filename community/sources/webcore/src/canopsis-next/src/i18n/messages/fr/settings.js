@@ -82,7 +82,7 @@ export default {
   isPriorityEnabled: 'Afficher la priorité',
   isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
   isSecondaryIconEnabled: 'Afficher l\'icône secondaire',
-  clearFilterEnabled: 'Effacement du filtre sélectionné autorisé',
+  clearFilterEnabled: 'Ne pas autoriser l\'effacement des filtres selectionés',
   showRootCauseByStateClick: 'Afficher le diagramme de cause racine à partir de la colonne Criticité',
   rootCauseSettings: 'Paramètres du diagramme de cause racine',
   entitiesColorIndicator: 'Indicateur de couleur des entités',
@@ -99,7 +99,7 @@ export default {
   liveWatchingTooltip: 'Si activé, les alarmes sont mises à jour en direct à l\'aide de websockets',
   defaultInheritedPbehavior: 'Appliquer pbehavior également aux dépendances',
   expandPanel: {
-    title: 'Agrandir le panneau',
+    title: 'Panneau dépliable',
   },
   exportCsv: {
     title: 'Exporter CSV',
@@ -180,7 +180,7 @@ export default {
     filterOnClick: 'Filtrer au clic',
   },
   liveReporting: {
-    title: 'Reportage en direct',
+    title: 'Filtre temporel',
     field: 'Définir un intervalle de dates',
   },
   counterLevels: {

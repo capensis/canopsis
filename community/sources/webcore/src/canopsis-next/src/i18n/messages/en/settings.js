@@ -99,7 +99,7 @@ export default {
   liveWatchingTooltip: 'If enabled, the information about changes in alarms are retrieved using websockets',
   defaultInheritedPbehavior: 'Apply pbehavior on dependencies too',
   expandPanel: {
-    title: 'Expand panel',
+    title: 'Expandable panel',
   },
   exportCsv: {
     title: 'Export CSV',
@@ -180,7 +180,7 @@ export default {
     filterOnClick: 'Filter on click',
   },
   liveReporting: {
-    title: 'Live reporting',
+    title: 'Time filter',
     field: 'Set a custom date range',
   },
   counterLevels: {

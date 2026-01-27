@@ -6,18 +6,25 @@
 Canopsis fournit des indicateurs statistiques et des indicateurs de performance (KPI).
 
 #### Table des matières
-1. [Utilisation](#utilisation)<br>
-2. [Graphiques](#graphiques)<br>
- A. [Métriques d’alarmes](#metriques-dalarmes)<br>
- B. [Evaluations](#Evaluations)<br>
- C. [SLI](#sli)<br>
-3. [Filtres](#filtres)<br>
-4. [Paramètres d’évaluation](#parametres-devaluation)<br>
-5. [Glossaire des paramètres de comparaison](#glossaire-des-parametres-de-comparaison)<br>
- A. [Compteurs](#compteurs)<br>
- B. [Taux](#taux)<br>
- C. [Temps](#temps)<br>
- D. [Criticité](#criticite)<br>
+
+1. [Utilisation](#utilisation)
+
+2. [Graphiques](#graphiques)
+
+    1. [Métriques d’alarmes](#metriques-dalarmes)
+    2. [Évaluations](#evaluations)
+    3. [SLI](#sli)
+
+3. [Filtres](#filtres)
+
+4. [Paramètres d’évaluation](#parametres-devaluation)
+
+5. [Glossaire des paramètres de comparaison](#glossaire-des-parametres-de-comparaison)
+
+    1. [Compteurs](#compteurs)
+    2. [Taux](#taux)
+    3. [Temps](#temps)
+    4. [Criticité](#criticite)
 
 ## Utilisation
 
@@ -49,7 +56,7 @@ Valeurs configurables :
 
 ![Métrique d’alarme](./img/kpi_alarmes.png)
 
-### Evaluations
+### Évaluations
 
 Permet d'aggréger les données sous forme de tableau de colonnes.
 
@@ -107,8 +114,9 @@ Ajouter ma règle de comparaison.
 
 ## Paramètres d’évaluation
 
-Les paramètres d’évaluation contrôlent les critères utilisables pour les [notations](#notations).
+Les paramètres d’évaluation contrôlent les critères utilisables pour les notations.
 <!--- TODO: étendre l’explication (l’actuelle renvoit aux notation, qui renvoit récursivement ici) --->
+<!-- FIXME: le lien vers l'ancre "notations" était cassé et la notion de notation n'est pas définie. -->
 
 *Paramètres par défaut :*
 
