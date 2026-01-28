@@ -37,6 +37,7 @@
               <v-card-text>
                 <alarm-status-rule-patterns-form
                   :form="patterns"
+                  :flapping="flapping"
                   readonly
                 />
               </v-card-text>
@@ -63,6 +64,10 @@ export default {
     rule: {
       type: Object,
       required: true,
+    },
+    flapping: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
