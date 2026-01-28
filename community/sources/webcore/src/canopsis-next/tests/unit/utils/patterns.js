@@ -1,15 +1,79 @@
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer, flushPromises } from '@unit/utils/vue';
+import { createMockedStoreModules, createPatternsFieldsModule, createPbehaviorPatternsModule } from '@unit/utils/store';
 
 export const generateEntityPatternsTests = (Component, name, customProps = {}) => {
   const stubs = {
     'c-patterns-field': true,
   };
 
+  const {
+    patternsFieldsModule,
+    fetchDeclareTicketRulePatternFields,
+    fetchFlappingRulePatternFields,
+    fetchIdleRulePatternFields,
+    fetchLinkRulePatternFields,
+    fetchRulePatternFields,
+    fetchPbehaviorPatternFields,
+    fetchAlarmTagPatternFields,
+    fetchWidgetFilterPatternFields,
+    fetchServicePatternFields,
+    fetchStateSettingPatternFields,
+    fetchEventFilterPatternFields,
+    fetchScenarioPatternFields,
+    fetchMetaalarmrulePatternFields,
+    fetchInstructionPatternFields,
+    fetchKpiFilterPatternFields,
+    fetchDynamicInfosPatternFields,
+    fetchEventRecordPatternFields,
+  } = createPatternsFieldsModule();
+
+  const mockPatternFieldsResponse = {
+    entity_pattern: [
+      { name: 'name', enabled: true, alias: false },
+      { name: 'category', enabled: true, alias: false },
+      { name: 'component', enabled: true, alias: false },
+    ],
+    alarm_pattern: [
+      { name: 'output', enabled: true, alias: false },
+      { name: 'component', enabled: true, alias: false },
+      { name: 'ack', enabled: true, alias: false },
+      { name: 'state', enabled: true, alias: false },
+    ],
+    event_pattern: [],
+    pbehavior_pattern: [],
+    weather_service_pattern: [],
+  };
+
+  fetchDeclareTicketRulePatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchFlappingRulePatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchIdleRulePatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchLinkRulePatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchRulePatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchPbehaviorPatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchAlarmTagPatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchWidgetFilterPatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchServicePatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchStateSettingPatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchEventFilterPatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchScenarioPatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchMetaalarmrulePatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchInstructionPatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchKpiFilterPatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchDynamicInfosPatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchEventRecordPatternFields.mockResolvedValue(mockPatternFieldsResponse);
+
+  const { pbehaviorPatternsModule } = createPbehaviorPatternsModule();
+
+  const store = createMockedStoreModules([
+    patternsFieldsModule,
+    pbehaviorPatternsModule,
+  ]);
+
   const selectPatternsField = wrapper => wrapper.find('c-patterns-field-stub');
 
   describe(name, () => {
-    const factory = generateShallowRenderer(Component, { stubs });
-    const snapshotFactory = generateRenderer(Component, { stubs });
+    const factory = generateShallowRenderer(Component, { stubs, store });
+    const snapshotFactory = generateRenderer(Component, { stubs, store });
 
     test('Patterns changed after trigger patterns field', () => {
       const wrapper = factory();
@@ -27,13 +91,15 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
       expect(wrapper).toEmitInput(newPatterns);
     });
 
-    test(`Renders \`${name}\` with default props`, () => {
+    test(`Renders \`${name}\` with default props`, async () => {
       const wrapper = snapshotFactory();
+
+      await flushPromises();
 
       expect(wrapper).toMatchSnapshot();
     });
 
-    test(`Renders \`${name}\` with custom props`, () => {
+    test(`Renders \`${name}\` with custom props`, async () => {
       const wrapper = snapshotFactory({
         propsData: {
           form: {
@@ -43,6 +109,8 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
           ...customProps,
         },
       });
+
+      await flushPromises();
 
       expect(wrapper).toMatchSnapshot();
     });

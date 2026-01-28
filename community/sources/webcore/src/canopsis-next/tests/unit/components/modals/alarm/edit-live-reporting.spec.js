@@ -114,12 +114,12 @@ describe('edit-live-reporting', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       tstart: config.tstart,
       tstop: config.tstop,
       time_field: config.time_field,
     });
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -175,7 +175,7 @@ describe('edit-live-reporting', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -209,12 +209,12 @@ describe('edit-live-reporting', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       tstart: '',
       tstop: '',
       time_field: '',
     });
-    expect($modals.hide).not.toBeCalledWith();
+    expect($modals.hide).not.toHaveBeenCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -243,16 +243,16 @@ describe('edit-live-reporting', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       tstart: '',
       tstop: '',
       time_field: '',
     });
-    expect($modals.hide).not.toBeCalledWith();
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     consoleErrorSpy.mockClear();
   });
@@ -286,7 +286,7 @@ describe('edit-live-reporting', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(newForm);
+    expect(action).toHaveBeenCalledWith(newForm);
     expect($modals.hide).toBeCalled();
   });
 

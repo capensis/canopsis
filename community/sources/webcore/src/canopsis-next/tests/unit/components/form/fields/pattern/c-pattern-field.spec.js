@@ -48,7 +48,7 @@ describe('c-pattern-field', () => {
 
     await flushPromises();
 
-    expect(fetchPatternsListWithoutStore).toBeCalledWith(
+    expect(fetchPatternsListWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: { limit: MAX_LIMIT },
@@ -66,7 +66,7 @@ describe('c-pattern-field', () => {
 
     await flushPromises();
 
-    expect(fetchPatternsListWithoutStore).toBeCalledWith(
+    expect(fetchPatternsListWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: { limit: MAX_LIMIT, type: PATTERN_TYPES.pbehavior },
