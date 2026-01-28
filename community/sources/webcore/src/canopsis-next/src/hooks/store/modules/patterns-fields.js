@@ -1,4 +1,10 @@
-import { ref, computed, onMounted } from 'vue';
+import {
+  ref,
+  unref,
+  computed,
+  watch,
+  onMounted,
+} from 'vue';
 
 import { patternsFieldsToForm } from '@/helpers/entities/pattern/fields/form';
 
@@ -25,7 +31,7 @@ const usePatternsFieldsStoreModule = () => useStoreModuleHooks('patternsFields')
  * @property {Function} fetchFlappingRulePatternFields - Fetches pattern fields for flapping rules
  * @property {Function} fetchIdleRulePatternFields - Fetches pattern fields for idle rules
  * @property {Function} fetchLinkRulePatternFields - Fetches pattern fields for link rules
- * @property {Function} fetchRulePatternFields - Fetches pattern fields for general rules
+ * @property {Function} fetchResolveRulePatternFields - Fetches pattern fields for resolve rules
  * @property {Function} fetchPbehaviorPatternFields - Fetches pattern fields for pbehaviors
  * @property {Function} fetchAlarmTagPatternFields - Fetches pattern fields for alarm tags
  * @property {Function} fetchWidgetFilterPatternFields - Fetches pattern fields for widget filters
@@ -52,7 +58,7 @@ export const usePatternsFields = () => {
     fetchFlappingRulePatternFields: 'fetchFlappingRulePatternFields',
     fetchIdleRulePatternFields: 'fetchIdleRulePatternFields',
     fetchLinkRulePatternFields: 'fetchLinkRulePatternFields',
-    fetchRulePatternFields: 'fetchRulePatternFields',
+    fetchResolveRulePatternFields: 'fetchResolveRulePatternFields',
     fetchPbehaviorPatternFields: 'fetchPbehaviorPatternFields',
     fetchAlarmTagPatternFields: 'fetchAlarmTagPatternFields',
     fetchWidgetFilterPatternFields: 'fetchWidgetFilterPatternFields',
@@ -107,13 +113,13 @@ export const usePatternsFieldsFetching = (fetchAction) => {
   const {
     pending,
     handler: fetchPatternsFields,
-  } = usePendingHandler(async () => {
-    patternsFields.value = patternsFieldsToForm(await fetchAction());
-  });
+  } = usePendingHandler(async () => patternsFields.value = patternsFieldsToForm(await unref(fetchAction)()));
 
   const alarmAttributes = computed(() => patternsFields.value.alarm_pattern ?? []);
   const entityAttributes = computed(() => patternsFields.value.entity_pattern ?? []);
   const eventAttributes = computed(() => patternsFields.value.event_pattern ?? []);
+
+  watch(fetchAction, () => fetchPatternsFields());
 
   onMounted(fetchPatternsFields);
 

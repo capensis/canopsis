@@ -1638,7 +1638,7 @@ export const createPatternsFieldsModule = () => {
     alarm_pattern: [],
     event_pattern: [],
   });
-  const fetchRulePatternFields = jest.fn().mockResolvedValue({
+  const fetchResolveRulePatternFields = jest.fn().mockResolvedValue({
     entity_pattern: [],
     alarm_pattern: [],
     event_pattern: [],
@@ -1715,7 +1715,7 @@ export const createPatternsFieldsModule = () => {
       fetchFlappingRulePatternFields,
       fetchIdleRulePatternFields,
       fetchLinkRulePatternFields,
-      fetchRulePatternFields,
+      fetchResolveRulePatternFields,
       fetchPbehaviorPatternFields,
       fetchAlarmTagPatternFields,
       fetchWidgetFilterPatternFields,
@@ -1736,7 +1736,7 @@ export const createPatternsFieldsModule = () => {
     fetchFlappingRulePatternFields.mockClear();
     fetchIdleRulePatternFields.mockClear();
     fetchLinkRulePatternFields.mockClear();
-    fetchRulePatternFields.mockClear();
+    fetchResolveRulePatternFields.mockClear();
     fetchPbehaviorPatternFields.mockClear();
     fetchAlarmTagPatternFields.mockClear();
     fetchWidgetFilterPatternFields.mockClear();
@@ -1757,7 +1757,7 @@ export const createPatternsFieldsModule = () => {
     fetchFlappingRulePatternFields,
     fetchIdleRulePatternFields,
     fetchLinkRulePatternFields,
-    fetchRulePatternFields,
+    fetchResolveRulePatternFields,
     fetchPbehaviorPatternFields,
     fetchAlarmTagPatternFields,
     fetchWidgetFilterPatternFields,

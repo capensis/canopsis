@@ -12,7 +12,7 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
     fetchFlappingRulePatternFields,
     fetchIdleRulePatternFields,
     fetchLinkRulePatternFields,
-    fetchRulePatternFields,
+    fetchResolveRulePatternFields,
     fetchPbehaviorPatternFields,
     fetchAlarmTagPatternFields,
     fetchWidgetFilterPatternFields,
@@ -48,7 +48,7 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
   fetchFlappingRulePatternFields.mockResolvedValue(mockPatternFieldsResponse);
   fetchIdleRulePatternFields.mockResolvedValue(mockPatternFieldsResponse);
   fetchLinkRulePatternFields.mockResolvedValue(mockPatternFieldsResponse);
-  fetchRulePatternFields.mockResolvedValue(mockPatternFieldsResponse);
+  fetchResolveRulePatternFields.mockResolvedValue(mockPatternFieldsResponse);
   fetchPbehaviorPatternFields.mockResolvedValue(mockPatternFieldsResponse);
   fetchAlarmTagPatternFields.mockResolvedValue(mockPatternFieldsResponse);
   fetchWidgetFilterPatternFields.mockResolvedValue(mockPatternFieldsResponse);

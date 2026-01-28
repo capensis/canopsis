@@ -17,8 +17,8 @@ export default {
       return request.get(API_ROUTES.patternFields.linkRule, { params });
     },
 
-    fetchRulePatternFields(context, { params } = {}) {
-      return request.get(API_ROUTES.patternFields.rule, { params });
+    fetchResolveRulePatternFields(context, { params } = {}) {
+      return request.get(API_ROUTES.patternFields.resolveRule, { params });
     },
 
     fetchPbehaviorPatternFields(context, { params } = {}) {

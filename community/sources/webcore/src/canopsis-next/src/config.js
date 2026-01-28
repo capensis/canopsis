@@ -356,7 +356,7 @@ export const API_ROUTES = {
     flappingRule: '/api/v4/flapping-rule-pattern-fields',
     idleRule: '/api/v4/idle-rule-pattern-fields',
     linkRule: '/api/v4/link-rule-pattern-fields',
-    rule: '/api/v4/rule-pattern-fields',
+    resolveRule: '/api/v4/resolve-rule-pattern-fields',
     pbehavior: '/api/v4/pbehavior-pattern-fields',
     alarmTag: '/api/v4/alarm-tag-pattern-fields',
     widgetFilter: '/api/v4/widget-filter-pattern-fields',

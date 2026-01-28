@@ -6,7 +6,6 @@ exports[`alarm-status-rule-patterns-form Renders \`alarm-status-rule-patterns-fo
   both-counters=""
   disabled="true"
   entity-attributes="[object Object],[object Object],[object Object]"
-  flapping="true"
   some-required=""
   value="[object Object]"
   with-alarm=""
