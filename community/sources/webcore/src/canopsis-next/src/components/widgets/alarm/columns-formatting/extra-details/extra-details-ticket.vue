@@ -6,7 +6,7 @@
     >
       <template #activator="{ on }">
         <v-badge
-          :value="isLastFailed"
+          :value="!!failedTicket"
           class="time-line-flag"
           color="transparent"
           offset-y="15px"
@@ -29,14 +29,10 @@
 </template>
 
 <script>
-import { last } from 'lodash';
-import { computed } from 'vue';
-
 import { COLORS } from '@/config';
 import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
-import { isSuccessTicketDeclaration } from '@/helpers/entities/declare-ticket/event/entity';
 
 import { useExtraDetailsTicketTooltip } from '../../hooks/extra-details-tooltips';
 
@@ -45,6 +41,10 @@ export default {
     tickets: {
       type: Array,
       required: true,
+    },
+    failedTicket: {
+      type: Object,
+      required: false,
     },
     limit: {
       type: Number,
@@ -57,11 +57,8 @@ export default {
     const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.declareTicket);
     const color = COLORS.alarmExtraDetails.ticket;
 
-    const isLastFailed = computed(() => !isSuccessTicketDeclaration(last(props.tickets)));
-
     return {
       tooltipContent,
-      isLastFailed,
       icon,
       color,
     };
