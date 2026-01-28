@@ -107,7 +107,7 @@ describe('Entities corporate pattern mixin', () => {
       expect(err).toEqual(error);
     }
 
-    expect(console.error).toBeCalledWith(error);
+    expect(console.error).toHaveBeenCalledWith(error);
 
     expect(wrapper.vm.corporatePatternsPending).toBe(false);
     expect(wrapper.vm.corporatePatternsMeta).toEqual(meta);

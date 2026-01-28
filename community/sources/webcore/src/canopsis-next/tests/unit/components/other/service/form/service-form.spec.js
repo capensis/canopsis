@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer, flushPromises } from '@unit/utils/vue';
+import { createMockedStoreModules, createPatternsFieldsModule } from '@unit/utils/store';
 
 import { ALARM_STATES, ENTITY_PATTERN_FIELDS, PATTERN_CONDITIONS } from '@/constants';
 
@@ -35,8 +36,24 @@ const selectManageInfosField = wrapper => wrapper.find('manage-infos-stub');
 const selectEntityStateSettingField = wrapper => wrapper.find('entity-state-setting-stub');
 
 describe('service-form', () => {
-  const factory = generateShallowRenderer(ServiceForm, { stubs });
-  const snapshotFactory = generateRenderer(ServiceForm, { stubs });
+  const { patternsFieldsModule, fetchServicePatternFields } = createPatternsFieldsModule();
+
+  fetchServicePatternFields.mockResolvedValue({
+    entity_pattern: [
+      { name: 'name', enabled: true, alias: false },
+      { name: 'category', enabled: true, alias: false },
+      { name: 'component', enabled: true, alias: false },
+    ],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+
+  const store = createMockedStoreModules([
+    patternsFieldsModule,
+  ]);
+
+  const factory = generateShallowRenderer(ServiceForm, { stubs, store });
+  const snapshotFactory = generateRenderer(ServiceForm, { stubs, store });
 
   const defaultServiceForm = serviceToForm();
 
@@ -227,13 +244,15 @@ describe('service-form', () => {
     });
   });
 
-  test('Renders `service-form` with default props', () => {
+  test('Renders `service-form` with default props', async () => {
     const wrapper = snapshotFactory();
+
+    await flushPromises();
 
     expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `service-form` with custom props', () => {
+  test('Renders `service-form` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         form: {
@@ -253,6 +272,8 @@ describe('service-form', () => {
         },
       },
     });
+
+    await flushPromises();
 
     expect(wrapper).toMatchSnapshot();
   });

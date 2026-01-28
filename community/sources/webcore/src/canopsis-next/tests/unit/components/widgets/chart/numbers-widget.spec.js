@@ -93,7 +93,7 @@ describe('numbers-widget', () => {
 
     await flushPromises();
 
-    expect(fetchUserPreference).toBeCalledWith(
+    expect(fetchUserPreference).toHaveBeenCalledWith(
       expect.any(Object),
       { id: widget._id },
     );
@@ -143,7 +143,7 @@ describe('numbers-widget', () => {
 
     await wrapper.vm.fetchList();
 
-    expect(fetchAggregatedMetricsList).toBeCalledWith(
+    expect(fetchAggregatedMetricsList).toHaveBeenCalledWith(
       expect.any(Object),
       {
         widgetId: widget._id,

@@ -59,7 +59,7 @@ describe('kpi-sli', () => {
     });
 
     expect(fetchSliMetrics).toBeCalledTimes(1);
-    expect(fetchSliMetrics).toBeCalledWith(
+    expect(fetchSliMetrics).toHaveBeenCalledWith(
       expect.any(Object),
       { params: expectedDefaultParams },
     );
@@ -104,7 +104,7 @@ describe('kpi-sli', () => {
     await flushPromises();
 
     expect(fetchSliMetrics).toBeCalledTimes(2);
-    expect(fetchSliMetrics).toBeCalledWith(
+    expect(fetchSliMetrics).toHaveBeenCalledWith(
       expect.any(Object),
       { params: expectedParamsAfterUpdate },
     );

@@ -22,6 +22,7 @@ const stubs = {
   'c-pbehavior-patterns-field': true,
   'c-event-filter-patterns-field': true,
   'c-alert': true,
+  'c-progress-overlay': true,
 };
 
 const selectAlarmPatternsField = wrapper => wrapper.find('c-alarm-patterns-field-stub');

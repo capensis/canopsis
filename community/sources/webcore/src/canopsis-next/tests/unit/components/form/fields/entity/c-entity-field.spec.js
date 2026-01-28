@@ -88,7 +88,7 @@ describe('c-entity-field', () => {
 
     await flushPromises();
 
-    expect(fetchListWithoutStore).toBeCalledWith(
+    expect(fetchListWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {

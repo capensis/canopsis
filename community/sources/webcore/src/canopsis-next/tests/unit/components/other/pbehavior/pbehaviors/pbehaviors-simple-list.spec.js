@@ -102,7 +102,7 @@ describe('pbehaviors-simple-list', () => {
 
     await flushPromises();
 
-    expect(fetchPbehaviorsByEntityIdWithoutStore).toBeCalledWith(
+    expect(fetchPbehaviorsByEntityIdWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       { id: entityId, params: { with_flags: true } },
     );
@@ -125,7 +125,7 @@ describe('pbehaviors-simple-list', () => {
 
     selectAddButton(wrapper).triggerCustomEvent('click');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.pbehaviorPlanning,
         config: {
@@ -141,7 +141,7 @@ describe('pbehaviors-simple-list', () => {
     const [{ config }] = $modals.show.mock.calls[0];
 
     await config.afterSubmit();
-    expect(fetchPbehaviorsByEntityIdWithoutStore).toBeCalledWith(
+    expect(fetchPbehaviorsByEntityIdWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       { id: entity._id, params: { with_flags: true } },
     );
@@ -165,7 +165,7 @@ describe('pbehaviors-simple-list', () => {
 
     selectCalendarButton(wrapper).triggerCustomEvent('click');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.pbehaviorsCalendar,
         config: {

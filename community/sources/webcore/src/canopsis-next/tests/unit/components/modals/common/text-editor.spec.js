@@ -73,8 +73,8 @@ describe('text-editor', () => {
 
     await flushPromises(true);
 
-    expect(action).toBeCalledWith('');
-    expect($modals.hide).toBeCalledWith();
+    expect(action).toHaveBeenCalledWith('');
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Form submitted with correct value after trigger submit button', async () => {
@@ -98,8 +98,8 @@ describe('text-editor', () => {
 
     await flushPromises(true);
 
-    expect(action).toBeCalledWith(text);
-    expect($modals.hide).toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(text);
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -144,7 +144,7 @@ describe('text-editor', () => {
 
     await flushPromises(true);
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Validation rules applied to form from config', async () => {
@@ -204,8 +204,8 @@ describe('text-editor', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledWith(text);
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(text);
+    expect($modals.hide).not.toHaveBeenCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -236,12 +236,12 @@ describe('text-editor', () => {
 
     await flushPromises(true);
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith(text);
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(text);
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     consoleErrorSpy.mockClear();
   });
@@ -274,7 +274,7 @@ describe('text-editor', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(newValue);
+    expect(action).toHaveBeenCalledWith(newValue);
     expect($modals.hide).toBeCalled();
 
     jest.useRealTimers();

@@ -101,7 +101,7 @@ describe('Entities event filter mixin', () => {
       expect(err).toEqual(error);
     }
 
-    expect(console.error).toBeCalledWith(error);
+    expect(console.error).toHaveBeenCalledWith(error);
 
     expect(wrapper.vm.eventFiltersPending).toBe(false);
     expect(wrapper.vm.eventFiltersMeta).toEqual(meta);

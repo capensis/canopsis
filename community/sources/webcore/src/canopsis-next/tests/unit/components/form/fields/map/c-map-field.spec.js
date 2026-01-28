@@ -48,7 +48,7 @@ describe('c-map-field', () => {
     await flushPromises();
 
     expect(fetchMapsListWithoutStore).toBeCalledTimes(1);
-    expect(fetchMapsListWithoutStore).toBeCalledWith(
+    expect(fetchMapsListWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       { params: { limit: MAX_LIMIT } },
     );

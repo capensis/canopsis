@@ -46,7 +46,7 @@ describe('pbehaviors-list-action-btn', () => {
 
     await selectActionButtonNode(wrapper).$emit('click');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.pbehaviorList,
         config: {

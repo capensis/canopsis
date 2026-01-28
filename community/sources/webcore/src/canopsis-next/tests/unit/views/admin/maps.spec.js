@@ -83,7 +83,7 @@ describe('maps', () => {
 
     await flushPromises();
 
-    expect(fetchMapsList).toBeCalledWith(
+    expect(fetchMapsList).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {
@@ -106,7 +106,7 @@ describe('maps', () => {
 
     fabButton.triggerCustomEvent('refresh');
 
-    expect(fetchMapsList).toBeCalledWith(
+    expect(fetchMapsList).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {
@@ -133,7 +133,7 @@ describe('maps', () => {
     fabButton.triggerCustomEvent('create');
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createMap,
         config: {
@@ -150,7 +150,7 @@ describe('maps', () => {
 
     modalArguments.config.action(newMap);
 
-    expect(createMap).toBeCalledWith(
+    expect(createMap).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: newMap,
@@ -181,7 +181,7 @@ describe('maps', () => {
 
     await mapsList.triggerCustomEvent('edit', { _id: map._id });
 
-    expect(fetchMapWithoutStore).toBeCalledWith(
+    expect(fetchMapWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       { id: map._id },
     );
@@ -201,7 +201,7 @@ describe('maps', () => {
     }[value];
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: modal,
         config: {
@@ -220,7 +220,7 @@ describe('maps', () => {
 
     modalArguments.config.action(newMap);
 
-    expect(updateMap).toBeCalledWith(
+    expect(updateMap).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: map._id,
@@ -252,7 +252,7 @@ describe('maps', () => {
 
     await mapsList.triggerCustomEvent('duplicate', { _id: map._id });
 
-    expect(fetchMapWithoutStore).toBeCalledWith(
+    expect(fetchMapWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       { id: map._id },
     );
@@ -272,7 +272,7 @@ describe('maps', () => {
     }[value];
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: modal,
         config: {
@@ -291,7 +291,7 @@ describe('maps', () => {
 
     modalArguments.config.action(newMap);
 
-    expect(createMap).toBeCalledWith(
+    expect(createMap).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: newMap,
@@ -319,7 +319,7 @@ describe('maps', () => {
     await mapsList.triggerCustomEvent('remove', map._id);
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {
@@ -331,7 +331,7 @@ describe('maps', () => {
 
     modalArguments.config.action();
 
-    expect(removeMap).toBeCalledWith(
+    expect(removeMap).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: map._id,
@@ -359,7 +359,7 @@ describe('maps', () => {
     await mapsList.triggerCustomEvent('remove-selected', [map]);
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {
@@ -371,7 +371,7 @@ describe('maps', () => {
 
     modalArguments.config.action();
 
-    expect(bulkRemoveMap).toBeCalledWith(
+    expect(bulkRemoveMap).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: [

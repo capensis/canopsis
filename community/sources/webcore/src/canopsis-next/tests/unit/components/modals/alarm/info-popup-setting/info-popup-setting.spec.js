@@ -81,8 +81,8 @@ describe('info-popup-setting', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(infoPopups);
-    expect($modals.hide).toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(infoPopups);
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -101,7 +101,7 @@ describe('info-popup-setting', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Popup added after trigger add button', async () => {
@@ -142,7 +142,7 @@ describe('info-popup-setting', () => {
     addPopupButton.trigger('click');
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.addInfoPopup,
         config: {
@@ -160,7 +160,7 @@ describe('info-popup-setting', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith([
+    expect(action).toHaveBeenCalledWith([
       ...infoPopups,
       newPopup,
     ]);
@@ -209,7 +209,7 @@ describe('info-popup-setting', () => {
     editPopupButton.trigger('click');
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.addInfoPopup,
         config: {
@@ -228,7 +228,7 @@ describe('info-popup-setting', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith([
+    expect(action).toHaveBeenCalledWith([
       infoPopups[0],
       newPopupData,
     ]);
@@ -269,7 +269,7 @@ describe('info-popup-setting', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith([infoPopups[0]]);
+    expect(action).toHaveBeenCalledWith([infoPopups[0]]);
     expect($modals.hide).toBeCalled();
   });
 

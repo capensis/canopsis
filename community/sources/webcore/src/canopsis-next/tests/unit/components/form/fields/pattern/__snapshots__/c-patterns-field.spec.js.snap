@@ -2,8 +2,9 @@
 
 exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
 <div
-  class="layout c-patterns-field column"
+  class="layout position-relative gap-4 column"
 >
+  <c-progress-overlay-stub />
   <c-collapse-panel-stub
     outline-color="var(--v-error-base)"
     title="Alarm patterns"
@@ -113,8 +114,9 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
 
 exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = `
 <div
-  class="layout c-patterns-field column"
+  class="layout position-relative gap-4 column"
 >
+  <c-progress-overlay-stub />
   <!---->
   <!---->
   <!---->

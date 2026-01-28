@@ -58,8 +58,8 @@ describe('time-picker-field', () => {
 
     selectCombobox(wrapper).setValue('');
 
-    expect(setValue).toBeCalledWith('12:00');
-    expect(setSearch).toBeCalledWith('');
+    expect(setValue).toHaveBeenCalledWith('12:00');
+    expect(setSearch).toHaveBeenCalledWith('');
     expect(wrapper).not.toHaveBeenEmit('input');
   });
 
@@ -134,8 +134,8 @@ describe('time-picker-field', () => {
 
     expect(wrapper).toEmitInput('13:00');
 
-    expect(setValue).toBeCalledWith('13:00');
-    expect(setSearch).toBeCalledWith('');
+    expect(setValue).toHaveBeenCalledWith('13:00');
+    expect(setSearch).toHaveBeenCalledWith('');
   });
 
   test('Renders `time-picker-field` with default props', () => {

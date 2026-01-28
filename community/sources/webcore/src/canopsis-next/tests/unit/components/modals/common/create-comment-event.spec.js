@@ -86,8 +86,8 @@ describe('create-comment-event', () => {
     await flushPromises();
 
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith({ comment });
-    expect($modals.hide).toBeCalledWith();
+    expect(action).toHaveBeenCalledWith({ comment });
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -118,8 +118,8 @@ describe('create-comment-event', () => {
 
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith({ comment });
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith({ comment });
+    expect($modals.hide).not.toHaveBeenCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -186,13 +186,13 @@ describe('create-comment-event', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith({ comment });
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith({ comment });
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     consoleErrorSpy.mockClear();
   });

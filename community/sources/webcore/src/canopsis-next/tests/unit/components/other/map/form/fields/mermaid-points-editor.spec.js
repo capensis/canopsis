@@ -284,7 +284,7 @@ describe('mermaid-points-editor', () => {
     await triggerPointEvent(wrapper, 0, 'contextmenu');
     await triggerContextMenuEvent(wrapper, 'remove:point');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {

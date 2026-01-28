@@ -101,7 +101,7 @@ describe('Entities pattern mixin', () => {
       expect(err).toEqual(error);
     }
 
-    expect(console.error).toBeCalledWith(error);
+    expect(console.error).toHaveBeenCalledWith(error);
 
     expect(wrapper.vm.patternsPending).toBe(false);
     expect(wrapper.vm.patternsMeta).toEqual(meta);

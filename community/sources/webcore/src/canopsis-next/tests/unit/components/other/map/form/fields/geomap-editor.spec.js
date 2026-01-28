@@ -340,7 +340,7 @@ describe('geomap-editor', () => {
 
     pointFormDialog.triggerCustomEvent('remove');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {
@@ -397,7 +397,7 @@ describe('geomap-editor', () => {
 
     await triggerItemContextMenuEvent(wrapper, 1, 'remove');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {

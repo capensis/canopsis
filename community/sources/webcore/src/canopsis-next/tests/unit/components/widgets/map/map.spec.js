@@ -124,7 +124,7 @@ describe('map', () => {
 
     await flushPromises();
 
-    expect(fetchMapStateWithoutStore).toBeCalledWith(
+    expect(fetchMapStateWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: mapId,
@@ -158,7 +158,7 @@ describe('map', () => {
 
     await flushPromises();
 
-    expect(fetchMapStateWithoutStore).toBeCalledWith(
+    expect(fetchMapStateWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: nextMap._id,
@@ -193,7 +193,7 @@ describe('map', () => {
 
     await flushPromises();
 
-    expect(fetchMapStateWithoutStore).toBeCalledWith(
+    expect(fetchMapStateWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: mapId,
@@ -229,7 +229,7 @@ describe('map', () => {
 
     await flushPromises();
 
-    expect(fetchMapStateWithoutStore).toBeCalledWith(
+    expect(fetchMapStateWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: mapId,
@@ -274,7 +274,7 @@ describe('map', () => {
 
     entityCategoryField.triggerCustomEvent('input', category);
 
-    expect(updateUserPreference).toBeCalledWith(
+    expect(updateUserPreference).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: {
@@ -286,7 +286,7 @@ describe('map', () => {
       },
     );
 
-    expect(updateQuery).toBeCalledWith(
+    expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: widgetId,
@@ -331,7 +331,7 @@ describe('map', () => {
 
     const alarmsListWidget = generatePreparedDefaultAlarmListWidget();
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.alarmsList,
       config: {
         widget: {
@@ -354,7 +354,7 @@ describe('map', () => {
 
     const response = await modalArguments.config.fetchList(params);
 
-    expect(fetchServiceAlarmsWithoutStore).toBeCalledWith(
+    expect(fetchServiceAlarmsWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: entityId,
@@ -400,7 +400,7 @@ describe('map', () => {
 
     const response = await modalArguments.config.fetchList(params);
 
-    expect(fetchOpenAlarmsListWithoutStore).toBeCalledWith(
+    expect(fetchOpenAlarmsListWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {

@@ -216,7 +216,7 @@ describe('point-form-dialog', () => {
 
     wrapper.clickOutside();
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         id: pointId,
         name: MODALS.clickOutsideConfirmation,
