@@ -1,0 +1,289 @@
+package colortheme
+
+import (
+	"context"
+	"fmt"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/mongoquery"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+)
+
+const (
+	Canopsis       = "canopsis"
+	CanopsisDark   = "canopsis_dark"
+	ColorBlind     = "color_blind"
+	ColorBlindDark = "color_blind_dark"
+)
+
+type Store interface {
+	Insert(ctx context.Context, r EditRequest) (*Response, error)
+	GetByID(ctx context.Context, id string) (*Response, error)
+	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
+	Update(ctx context.Context, r EditRequest) (*Response, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
+}
+
+type store struct {
+	dbClient             libmongo.DbClient
+	dbColorCollection    libmongo.DbCollection
+	dbUserCollection     libmongo.DbCollection
+	dbRoleCollection     libmongo.DbCollection
+	authorProvider       author.Provider
+	userInterfaceAdapter config.UserInterfaceAdapter
+
+	defaultSearchByFields   []string
+	defaultCanopsisThemeIDs map[string]struct{}
+
+	dupErrorParser validation.DuplicateErrorParser
+}
+
+func NewStore(
+	dbClient libmongo.DbClient,
+	authorProvider author.Provider,
+	userInterfaceAdapter config.UserInterfaceAdapter,
+) Store {
+	return &store{
+		dbClient:              dbClient,
+		dbColorCollection:     dbClient.Collection(libmongo.ColorThemeCollection),
+		dbUserCollection:      dbClient.Collection(libmongo.UserCollection),
+		dbRoleCollection:      dbClient.Collection(libmongo.RoleCollection),
+		authorProvider:        authorProvider,
+		userInterfaceAdapter:  userInterfaceAdapter,
+		defaultSearchByFields: []string{"_id", "name"},
+		defaultCanopsisThemeIDs: map[string]struct{}{
+			Canopsis:       {},
+			CanopsisDark:   {},
+			ColorBlind:     {},
+			ColorBlindDark: {},
+		},
+		dupErrorParser: validation.NewDuplicateErrorParser(),
+	}
+}
+
+func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
+	now := datetime.NewCpsTime()
+	doc := Document{
+		ID:        utils.NewID(),
+		Name:      r.Name,
+		Colors:    r.Colors,
+		FontSize:  r.FontSize,
+		Author:    r.Author,
+		Created:   now,
+		Updated:   now,
+		Deletable: true,
+	}
+	var response *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+
+		_, err := s.dbColorCollection.InsertOne(ctx, doc)
+		if err != nil {
+			if mongo.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, Response{})
+			}
+
+			return err
+		}
+
+		response, err = s.GetByID(ctx, doc.ID)
+		return err
+	})
+
+	return response, err
+}
+
+func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
+	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+
+	cursor, err := s.dbColorCollection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	if cursor.Next(ctx) {
+		var res Response
+		err = cursor.Decode(&res)
+		if err != nil {
+			return nil, err
+		}
+
+		return &res, nil
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	if err = cursor.Close(ctx); err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
+	var pipeline []bson.M
+
+	filter := mongoquery.GetSearchQuery(query.Search, s.defaultSearchByFields)
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
+	}
+
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+
+	sortBy := "name"
+	if query.SortBy != "" {
+		sortBy = query.SortBy
+	}
+
+	cursor, err := s.dbColorCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+		query.Query,
+		pipeline,
+		mongoquery.GetSortQuery(sortBy, query.Sort),
+	))
+	if err != nil {
+		return nil, err
+	}
+
+	var result AggregationResult
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&result)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	if err = cursor.Close(ctx); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
+	if s.isDefaultCanopsisTheme(r.ID) {
+		return nil, httperror.NewForbiddenError("The predefined theme cannot be modified.")
+	}
+
+	doc := Document{
+		Name:      r.Name,
+		Colors:    r.Colors,
+		FontSize:  r.FontSize,
+		Author:    r.Author,
+		Updated:   datetime.NewCpsTime(),
+		Deletable: true,
+	}
+	var response *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+
+		res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": doc})
+		if err != nil {
+			if mongo.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, Response{})
+			}
+
+			return err
+		}
+
+		if res.MatchedCount == 0 {
+			return nil
+		}
+
+		response, err = s.GetByID(ctx, r.ID)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
+	if s.isDefaultCanopsisTheme(id) {
+		return false, httperror.NewForbiddenError("The predefined theme cannot be deleted.")
+	}
+
+	cfg, err := s.userInterfaceAdapter.GetConfig(ctx)
+	if err != nil {
+		return false, fmt.Errorf("failed to get user interface config: %w", err)
+	}
+
+	var deleted int64
+
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		if cfg.DefaultColorTheme == id {
+			return httperror.NewForbiddenError("The default theme cannot be deleted.")
+		}
+
+		// required to get the author in action log listener.
+		res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.dbColorCollection.DeleteOne(ctx, bson.M{"_id": id})
+		if err != nil || deleted == 0 {
+			return err
+		}
+
+		_, err = s.dbUserCollection.UpdateMany(
+			ctx,
+			bson.M{"ui_theme": id},
+			bson.M{
+				"$set": bson.M{
+					"author":  userID,
+					"updated": datetime.NewCpsTime(),
+				},
+				"$unset": bson.M{
+					"ui_theme": "",
+				},
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.dbRoleCollection.UpdateMany(
+			ctx,
+			bson.M{"ui_theme": id},
+			bson.M{
+				"$set": bson.M{
+					"author":  userID,
+					"updated": datetime.NewCpsTime(),
+				},
+				"$unset": bson.M{
+					"ui_theme": "",
+				},
+			},
+		)
+		return err
+	})
+	if err != nil {
+		return false, err
+	}
+
+	return deleted > 0, nil
+}
+
+func (s *store) isDefaultCanopsisTheme(id string) bool {
+	_, ok := s.defaultCanopsisThemeIDs[id]
+	return ok
+}
