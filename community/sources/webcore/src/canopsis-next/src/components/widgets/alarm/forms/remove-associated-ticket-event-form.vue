@@ -4,7 +4,7 @@
       v-field="form.ticket"
       :items="associatedTicketsOptions"
       :label="$t('modals.removeAssociatedTicketEvent.associatedTicketLabel')"
-      :hint="associatedTicketsOptions.length ? $t('modals.removeAssociatedTicketEvent.associatedTicketHint') : ''"
+      :hint="$t('modals.removeAssociatedTicketEvent.associatedTicketHint')"
       item-text="text"
       item-value="value"
       name="ticket"
