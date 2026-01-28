@@ -14,8 +14,8 @@
       autocomplete
     />
     <c-description-field
-      v-field="form.reason"
-      :label="$t('modals.removeAssociatedTicketEvent.reasonLabel')"
+      v-field="form.comment"
+      :label="$t('common.reason')"
       :max-length="255"
       name="reason"
       required
