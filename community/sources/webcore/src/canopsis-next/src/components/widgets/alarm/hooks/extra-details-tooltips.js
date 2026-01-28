@@ -226,7 +226,9 @@ export const useExtraDetailsTicketTooltip = (props) => {
   const getTicketStatusText = () => t(`common.${props.failedTicket ? 'failed' : 'ok'}`);
   const convertDateWithToday = date => convertDateToStringWithFormatForToday(date);
 
-  const shownTickets = computed(() => props.tickets.slice(0, props.limit));
+  const shownTickets = computed(() => (
+    props.failedTicket ? [props.failedTicket] : props.tickets.slice(0, props.limit)
+  ));
 
   const tooltipContent = computed(() => {
     const content = shownTickets.value.reduce((acc, ticket) => {

@@ -73,7 +73,7 @@ export default {
   setup(props) {
     const form = ref({
       ticket: null,
-      reason: '',
+      comment: '',
     });
 
     const { config, close } = useInnerModal(props);
@@ -84,10 +84,7 @@ export default {
       form,
       method: async () => {
         if (config.value.action) {
-          await config.value.action({
-            ticket: form.value.ticket,
-            reason: form.value.reason,
-          });
+          await config.value.action(form.value);
           close();
         }
       },

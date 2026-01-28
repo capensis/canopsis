@@ -96,6 +96,7 @@ export default {
       [ALARM_LIST_STEPS.pbhenter]: 'Periodical behavior activated',
       [ALARM_LIST_STEPS.pbhleave]: 'Periodical behavior deactivated',
       [ALARM_LIST_STEPS.assocTicket]: 'Ticket associated',
+      [ALARM_LIST_STEPS.ticketRemove]: 'Ticket removed',
       [ALARM_LIST_STEPS.webhookStart]: 'Webhook is launched',
       [ALARM_LIST_STEPS.webhookInProgress]: 'Webhook launched by {author} in progress...',
       [ALARM_LIST_STEPS.webhookComplete]: 'Webhook is executed successfully',
