@@ -1,0 +1,179 @@
+package middleware
+
+import (
+	"fmt"
+	"net/http"
+	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	mock_sessions "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/gorilla/sessions"
+	mock_response "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/ui/response"
+	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/sessions"
+	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
+)
+
+func TestSessionAuth_GivenAuthUser_ShouldReturnResponseAndSetUserDataToContext(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	expectedCode := http.StatusOK
+	user := &security.User{
+		ID:         "testid",
+		AuthApiKey: "testkey",
+	}
+	mockStore := mock_sessions.NewMockStore(ctrl)
+	session := sessions.NewSession(mockStore, security.SessionKey)
+	session.Values["user"] = user.ID
+	mockStore.
+		EXPECT().
+		Get(gomock.Any(), security.SessionKey).
+		Return(session, nil)
+	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockDbCollection.
+		EXPECT().
+		Aggregate(gomock.Any(), gomock.Any()).
+		Return(mockUserCursor(ctrl, user), nil)
+	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
+	mockDbClient.
+		EXPECT().
+		Collection(gomock.Eq(libmongo.UserCollection)).
+		Return(mockDbCollection)
+	mockErrResponder := mock_response.NewMockErrorResponder(ctrl)
+	router := gin.New()
+	router.GET(
+		okURL,
+		SessionAuth(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()), mockStore, mockErrResponder),
+		func(c *gin.Context) {
+			userID, err := authctx.GetUserKey(c)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, err)
+
+				return
+			}
+
+			apiKey, err := authctx.GetAPIKey(c)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, err)
+
+				return
+			}
+
+			c.String(
+				expectedCode,
+				"test %v %v",
+				userID,
+				apiKey,
+			)
+		},
+	)
+
+	w := performRequest(router, "GET", okURL)
+
+	if w.Code != expectedCode {
+		t.Errorf("expected code: %v but got %v", expectedCode, w.Code)
+	}
+
+	expectedResponse := fmt.Sprintf("test %v %v", user.ID, user.AuthApiKey)
+
+	if w.Body.String() != expectedResponse {
+		t.Errorf("expected response: \"%v\" but got \"%v\"", expectedResponse, w.Body.String())
+	}
+}
+
+func TestSessionAuth_GivenNoSession_ShouldReturnResponse(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	expectedCode := http.StatusOK
+	mockStore := mock_sessions.NewMockStore(ctrl)
+	session := sessions.NewSession(mockStore, security.SessionKey)
+	mockStore.
+		EXPECT().
+		Get(gomock.Any(), security.SessionKey).
+		Return(session, nil)
+	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
+	mockDbClient.
+		EXPECT().
+		Collection(gomock.Any()).
+		Times(0)
+	mockErrResponder := mock_response.NewMockErrorResponder(ctrl)
+	router := gin.New()
+	router.GET(
+		okURL,
+		SessionAuth(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()), mockStore, mockErrResponder),
+		okHandler,
+	)
+
+	w := performRequest(router, "GET", okURL)
+
+	if w.Code != expectedCode {
+		t.Errorf("expected code: %v but got %v", expectedCode, w.Code)
+	}
+}
+
+func TestSessionAuth_GivenInvalidUserSession_ShouldReturnUnauthorizedError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	expectedCode := http.StatusUnauthorized
+	mockStore := mock_sessions.NewMockStore(ctrl)
+	session := sessions.NewSession(mockStore, security.SessionKey)
+	session.Values["user"] = "testid"
+	mockStore.
+		EXPECT().
+		Get(gomock.Any(), security.SessionKey).
+		Return(session, nil)
+	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockDbCollection.
+		EXPECT().
+		Aggregate(gomock.Any(), gomock.Any()).
+		Return(mockUserCursor(ctrl, nil), nil)
+	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
+	mockDbClient.
+		EXPECT().
+		Collection(gomock.Any()).
+		Return(mockDbCollection)
+	mockErrResponder := mock_response.NewMockErrorResponder(ctrl)
+	mockErrResponder.EXPECT().Respond(gomock.Any(), gomock.Eq(httperror.ErrUnauthorized)).Do(func(c *gin.Context, err error) {
+		c.AbortWithStatus(expectedCode)
+	})
+	router := gin.New()
+	router.GET(
+		okURL,
+		SessionAuth(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()), mockStore, mockErrResponder),
+		okHandler,
+	)
+
+	w := performRequest(router, "GET", okURL)
+
+	if w.Code != expectedCode {
+		t.Errorf("expected code: %v but got %v", expectedCode, w.Code)
+	}
+}
+
+func mockUserCursor(ctrl *gomock.Controller, user *security.User) libmongo.Cursor {
+	mockCursor := mock_mongo.NewMockCursor(ctrl)
+
+	if user != nil {
+		mockCursor.EXPECT().Next(gomock.Any()).Return(true)
+		mockCursor.
+			EXPECT().
+			Decode(gomock.Any()).
+			Do(func(val interface{}) {
+				if u, ok := val.(*security.User); ok {
+					*u = *user
+				}
+			}).
+			Return(nil)
+	} else {
+		mockCursor.EXPECT().Next(gomock.Any()).Return(false)
+	}
+
+	mockCursor.EXPECT().Close(gomock.Any())
+
+	return mockCursor
+}

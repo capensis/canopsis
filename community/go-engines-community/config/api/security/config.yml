@@ -37,7 +37,7 @@ security:
 #        client_id: your-client-id
 #        client_secret: your-client-secret
 #        # redirect_url defines an api callback route to the canopsis api, which should be added to your oauth2 provider.
-#        redirect_url: your-canopsis-api-url/api/v4/oauth/your-provider-name/callback
+#        redirect_url: your-canopsis-api-url/api/internal/oauth/your-provider-name/callback
 #        # PKCE is an extension to the Authorization Code flow to prevent CSRF and authorization code injection attacks,
 #        # some oauth2 provider might not support it, set it to false if it's your case.
 #        pkce: true
@@ -157,7 +157,7 @@ security:
 #      name: uid
 #      firstname: uid
 #      lastname: uid
-#    canopsis_saml_url: http://canopsis/api/v4/saml
+#    canopsis_saml_url: http://canopsis/api/internal/saml
 #    # default_role defines role of new users which are created on successful SAML login.
 #    default_role: Visualisation
 #    # allow_extra_roles if set to true allow modifying user roles via user API, e.g. adding more roles.

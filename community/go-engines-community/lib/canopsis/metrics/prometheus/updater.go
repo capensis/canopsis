@@ -5,7 +5,7 @@ import (
 	"errors"
 	"sync"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"

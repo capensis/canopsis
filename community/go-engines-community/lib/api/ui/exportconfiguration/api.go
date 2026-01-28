@@ -1,0 +1,198 @@
+package exportconfiguration
+
+import (
+	"os"
+	"strconv"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/binding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"github.com/goccy/go-yaml"
+	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/v2/bson"
+)
+
+const exportFileName = "export_configurations.yml"
+
+type API interface {
+	Export(c *gin.Context)
+}
+
+type api struct {
+	client          mongo.DbClient
+	errorResponder  response.ErrorResponder
+	logger          zerolog.Logger
+	collectionNames map[string]string
+}
+
+func NewApi(client mongo.DbClient, errorResponder response.ErrorResponder, logger zerolog.Logger) API {
+	return &api{
+		client:         client,
+		errorResponder: errorResponder,
+		logger:         logger,
+		collectionNames: map[string]string{
+			"configuration":              mongo.ConfigurationMongoCollection,
+			"user":                       mongo.UserCollection,
+			"role":                       mongo.RoleCollection,
+			"permission":                 mongo.PermissionCollection,
+			"pbehavior":                  mongo.PbehaviorMongoCollection,
+			"pbehavior_type":             mongo.PbehaviorTypeMongoCollection,
+			"pbehavior_reason":           mongo.PbehaviorReasonMongoCollection,
+			"pbehavior_exception":        mongo.PbehaviorExceptionMongoCollection,
+			"scenario":                   mongo.ScenarioCollection,
+			"metaalarm":                  mongo.MetaAlarmRulesMongoCollection,
+			"idle_rule":                  mongo.IdleRuleMongoCollection,
+			"eventfilter":                mongo.EventFilterRuleCollection,
+			"dynamic_infos":              mongo.DynamicInfosRulesMongoCollection,
+			"playlist":                   mongo.PlaylistMongoCollection,
+			"state_settings":             mongo.StateSettingsMongoCollection,
+			"broadcast":                  mongo.BroadcastMessageCollection,
+			"associative_table":          mongo.AssociativeTableCollection,
+			"user_notification_settings": mongo.UserNotificationSettingsCollection,
+			"view":                       mongo.ViewMongoCollection,
+			"view_tab":                   mongo.ViewTabMongoCollection,
+			"widget":                     mongo.WidgetMongoCollection,
+			"widget_filter":              mongo.WidgetFiltersMongoCollection,
+			"widget_template":            mongo.WidgetTemplateMongoCollection,
+			"view_group":                 mongo.ViewGroupMongoCollection,
+			"instruction":                mongo.InstructionMongoCollection,
+			"job_config":                 mongo.JobConfigMongoCollection,
+			"job":                        mongo.JobMongoCollection,
+			"resolve_rule":               mongo.ResolveRuleMongoCollection,
+			"flapping_rule":              mongo.FlappingRuleMongoCollection,
+			"user_preferences":           mongo.UserPreferencesMongoCollection,
+			"kpi_filter":                 mongo.KpiFilterMongoCollection,
+			"pattern":                    mongo.PatternMongoCollection,
+			"snmp_rule":                  mongo.SnmpRulesCollection,
+			"snmp_mib":                   mongo.MibCollection,
+			"declare_ticket_rule":        mongo.DeclareTicketRuleCollection,
+			"link_rule":                  mongo.LinkRuleMongoCollection,
+			"map":                        mongo.MapMongoCollection,
+			"entity_infos_property":      mongo.EntityInfosPropertyCollection,
+			"template_data":              mongo.TemplateTestDataCollection,
+			"template_test":              mongo.TemplateTestCollection,
+			"webhook_token_rule":         mongo.WebhookTokenHistoryCollection,
+		},
+	}
+}
+
+// Export
+// @Param body body Request true "body"
+func (a *api) Export(c *gin.Context) {
+	var r Request
+
+	if err := binding.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	err := a.transformRequest(r)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	file, err := os.CreateTemp("", "cps_export_configurations_*.yml")
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	filename := file.Name()
+
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			a.logger.Err(err).Str("filename", filename).Msg("failed to close the file")
+			return
+		}
+
+		err = os.Remove(file.Name())
+		if err != nil {
+			a.logger.Err(err).Str("filename", filename).Msg("failed to remove the file")
+		}
+	}()
+
+	contents := make(map[string]ExportDocuments)
+
+	for _, collection := range r.Exports {
+		err = a.addContents(c, contents, collection)
+		if err != nil {
+			a.errorResponder.Respond(c, err)
+
+			return
+		}
+	}
+
+	b, err := yaml.Marshal(contents)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	_, err = file.Write(b)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	c.FileAttachment(filename, exportFileName)
+}
+
+func (a *api) addContents(c *gin.Context, contents map[string]ExportDocuments, collectionName string) error {
+	cursor, err := a.client.Collection(collectionName).Find(c, bson.M{"soft_deleted": nil})
+	if err != nil {
+		return err
+	}
+
+	defer cursor.Close(c)
+
+	content := make(ExportDocuments)
+	i := 0
+
+	for cursor.Next(c) {
+		var model map[string]interface{}
+		err = cursor.Decode(&model)
+		if err != nil {
+			return err
+		}
+
+		content[i] = model
+		i++
+	}
+
+	if i != 0 {
+		contents[collectionName] = content
+	}
+
+	return nil
+}
+
+func (a *api) transformRequest(r Request) error {
+	var fieldErrs validator.ValidationErrors
+	for idx, export := range r.Exports {
+		collectionName, ok := a.collectionNames[export]
+		if !ok {
+			idxStr := strconv.Itoa(idx)
+			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", idxStr, "Exports."+idxStr))
+
+			continue
+		}
+
+		r.Exports[idx] = collectionName
+	}
+
+	if len(fieldErrs) != 0 {
+		return validation.NewError(fieldErrs, r)
+	}
+
+	return nil
+}

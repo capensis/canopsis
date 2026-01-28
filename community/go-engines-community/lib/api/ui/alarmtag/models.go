@@ -1,0 +1,87 @@
+package alarmtag
+
+import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+)
+
+type ListRequest struct {
+	pagination.FilteredQuery
+	SortBy string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=value created"`
+	Values []string `form:"values[]" json:"values"`
+}
+
+type ListLabelsRequest struct {
+	pagination.FilteredQuery
+	IDs []string `form:"ids[]" json:"ids"`
+}
+
+type CreateRequest struct {
+	EditRequest
+	Value string `json:"value" binding:"required,max=255"`
+}
+
+type UpdateRequest struct {
+	EditRequest
+	ID string `json:"-"`
+}
+
+type EditRequest struct {
+	Color  string `json:"color" binding:"required,iscolor"`
+	Author string `json:"author" swaggerignore:"true"`
+
+	patternfields.AlarmRequest
+	patternfields.EntityRequest
+}
+
+type Response struct {
+	ID        string           `bson:"_id" json:"_id"`
+	Type      int64            `bson:"type" json:"type"`
+	Value     string           `bson:"value" json:"value"`
+	Color     string           `bson:"color" json:"color"`
+	Author    *author.Author   `bson:"author" json:"author"`
+	Updated   datetime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+	Created   datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
+	Deletable *bool            `bson:"deletable,omitempty" json:"deletable,omitempty"`
+
+	savedpattern.EntityPatternFields `bson:",inline"`
+	savedpattern.AlarmPatternFields  `bson:",inline"`
+}
+
+type LabelResponse struct {
+	ID    string `bson:"_id" json:"_id"`
+	Color string `bson:"color" json:"color"`
+}
+
+type AggregationResult struct {
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
+}
+
+func (r *AggregationResult) GetData() interface{} {
+	return r.Data
+}
+
+func (r *AggregationResult) GetTotal() int64 {
+	return r.TotalCount
+}
+
+type AggregationLabelResult struct {
+	Data       []LabelResponse `bson:"data" json:"data"`
+	TotalCount int64           `bson:"total_count" json:"total_count"`
+}
+
+func (r *AggregationLabelResult) GetData() interface{} {
+	return r.Data
+}
+
+func (r *AggregationLabelResult) GetTotal() int64 {
+	return r.TotalCount
+}
+
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}

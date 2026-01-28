@@ -1,0 +1,114 @@
+package linkrule
+
+import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/externaldatatable"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+)
+
+type ListRequest struct {
+	pagination.FilteredQuery
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name author.display_name created updated"`
+}
+
+type EditRequest struct {
+	ID         string            `json:"-"`
+	Name       string            `json:"name" binding:"required,max=255"`
+	Type       string            `json:"type" binding:"required,oneof=alarm entity"`
+	Enabled    *bool             `json:"enabled" binding:"required"`
+	Links      []link.Parameters `json:"links" binding:"dive"`
+	SourceCode string            `json:"source_code"`
+	Author     string            `json:"author" swaggerignore:"true"`
+
+	ExternalData []externaldata.RefParameters `bson:"external_data" json:"external_data" binding:"dive"`
+
+	patternfields.AlarmRequest
+	patternfields.EntityRequest
+}
+
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
+type Response struct {
+	ID         string            `bson:"_id" json:"_id"`
+	Name       string            `bson:"name" json:"name"`
+	Type       string            `bson:"type" json:"type"`
+	Enabled    bool              `bson:"enabled" json:"enabled"`
+	Links      []link.Parameters `bson:"links" json:"links,omitempty"`
+	SourceCode string            `bson:"source_code" json:"source_code,omitempty"`
+	Author     *author.Author    `bson:"author" json:"author"`
+	Created    datetime.CpsTime  `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated    datetime.CpsTime  `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+
+	ExternalData []externaldatatable.RefResponse `bson:"external_data" json:"external_data"`
+
+	savedpattern.EntityPatternFields `bson:",inline"`
+	savedpattern.AlarmPatternFields  `bson:",inline"`
+}
+
+type AggregationResult struct {
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
+}
+
+func (r *AggregationResult) GetData() interface{} {
+	return r.Data
+}
+
+func (r *AggregationResult) GetTotal() int64 {
+	return r.TotalCount
+}
+
+type CategoriesRequest struct {
+	Limit  int64  `form:"limit" binding:"numeric,gte=0"`
+	Type   string `form:"type" binding:"oneoforempty=alarm entity"`
+	Search string `form:"search"`
+}
+
+type CategoryResponse struct {
+	Categories []string `json:"categories"`
+}
+
+type TemplateRequest struct {
+	Author string `json:"author" swaggerignore:"true"`
+	Rule   struct {
+		TemplateRuleRequest
+		ID string `json:"_id" binding:"id"`
+	} `json:"rule"`
+	TestData struct {
+		Test   string `json:"test"`
+		Alarm  string `json:"alarm"`
+		Entity string `json:"entity"`
+		User   string `json:"user"`
+	} `json:"testdata"`
+}
+
+type TemplateRuleRequest struct {
+	Type         string                           `json:"type" binding:"required,oneof=alarm entity"`
+	SourceCode   string                           `json:"source_code"`
+	Links        []TemplateRequestLink            `json:"links" binding:"dive"`
+	ExternalData []template.TemplateRefParameters `json:"external_data" binding:"dive"`
+}
+
+type TemplateRequestLink struct {
+	Label string `json:"label" binding:"required"`
+	URL   string `json:"url" binding:"required"`
+}
+
+type TemplateVarsResponse struct {
+	Alarm  TemplateVarsResponseItem `json:"alarm"`
+	Entity TemplateVarsResponseItem `json:"entity"`
+}
+
+type TemplateVarsResponseItem struct {
+	URL          []template.VarResponse `json:"url"`
+	Label        []template.VarResponse `json:"label"`
+	ExternalData []template.VarResponse `json:"external_data"`
+}

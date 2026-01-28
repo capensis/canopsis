@@ -1,0 +1,691 @@
+package oauth
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
+	"net/url"
+	"strconv"
+	"sync"
+	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/binding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/roleprovider"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/coreos/go-oidc/v3/oidc"
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/sessions"
+	"github.com/rs/zerolog"
+	"golang.org/x/oauth2"
+)
+
+const (
+	randomBytesNumber = 16
+)
+
+type Provider interface {
+	Login(c *gin.Context)
+	Callback(c *gin.Context)
+}
+
+type provider struct {
+	client             *http.Client
+	roleProvider       security.RoleProvider
+	userProvider       security.UserProvider
+	tokenService       apisecurity.TokenService
+	oauth2Config       oauth2.Config
+	config             security.OAuth2ProviderConfig
+	store              sessions.Store
+	maintenanceAdapter config.MaintenanceAdapter
+	enforcer           security.Enforcer
+	logger             zerolog.Logger
+	name               string
+	source             string
+	maxResponseSize    int64
+	errorResponder     response.ErrorResponder
+
+	// only for OpenID type of providers
+	oidcMx                 sync.Mutex
+	oidcVerifier           *oidc.IDTokenVerifier
+	oidcProvider           *oidc.Provider
+	oidcProviderValidUntil time.Time
+}
+
+func NewProvider(
+	ctx context.Context,
+	name string,
+	client *http.Client,
+	roleValidator security.RoleProvider,
+	config security.OAuth2ProviderConfig,
+	store sessions.Store,
+	userProvider security.UserProvider,
+	maintenanceAdapter config.MaintenanceAdapter,
+	enforcer security.Enforcer,
+	tokenService apisecurity.TokenService,
+	logger zerolog.Logger,
+	maxResponseSize int64,
+	errorResponder response.ErrorResponder,
+) Provider {
+	p := &provider{
+		name:               name,
+		client:             client,
+		roleProvider:       roleValidator,
+		userProvider:       userProvider,
+		maintenanceAdapter: maintenanceAdapter,
+		tokenService:       tokenService,
+		enforcer:           enforcer,
+		store:              store,
+		oauth2Config: oauth2.Config{
+			ClientID:     config.ClientID,
+			ClientSecret: config.ClientSecret,
+			RedirectURL:  config.RedirectURL,
+			Endpoint: oauth2.Endpoint{
+				AuthURL:   config.AuthURL,
+				TokenURL:  config.TokenURL,
+				AuthStyle: config.AuthStyle,
+			},
+			Scopes: config.Scopes,
+		},
+		config:          config,
+		source:          name,
+		maxResponseSize: maxResponseSize,
+		errorResponder:  errorResponder,
+		logger:          logger,
+	}
+
+	if config.OpenID {
+		err := p.loadOpenIDMetadata(ctx)
+		if err != nil {
+			p.logger.Warn().Err(err).Msg("failed to load openid metadata")
+		}
+	}
+
+	return p
+}
+
+func (p *provider) loadOpenIDMetadata(ctx context.Context) error {
+	var err error
+
+	ctx = oidc.ClientContext(ctx, p.client)
+	p.oidcProvider, err = oidc.NewProvider(ctx, p.config.Issuer)
+	if err != nil {
+		return fmt.Errorf("failed to connect to %s authentication provider: %w", p.source, err)
+	}
+
+	var claims oidcClaims
+	if err := p.oidcProvider.Claims(&claims); err != nil {
+		return fmt.Errorf("failed to decode %s provider claims: %w", p.source, err)
+	}
+
+	if !claims.ValidateScopes(p.config.Scopes) {
+		return fmt.Errorf("scopes are not supported for %s provider", p.source)
+	}
+
+	p.oidcVerifier = p.oidcProvider.Verifier(&oidc.Config{ClientID: p.config.ClientID})
+	p.oauth2Config.Endpoint = p.oidcProvider.Endpoint()
+	p.oauth2Config.Endpoint.AuthStyle = p.config.AuthStyle
+	p.oidcProviderValidUntil = time.Now().Add(auth.DefaultMetaValidDuration)
+
+	return nil
+}
+
+func (p *provider) isOpenIDProviderAvailable(c *gin.Context) bool {
+	if p.config.OpenID && (p.oidcProvider == nil || p.isOpenIDProviderExpired()) {
+		err := p.loadOpenIDMetadata(c)
+		if err != nil {
+			p.logger.Warn().Str("error", err.Error()).Msg("failed to load openid metadata")
+			p.errorResponder.Respond(c, httperror.ErrServiceUnavailable)
+
+			return false
+		}
+	}
+
+	return true
+}
+
+func (p *provider) isOpenIDProviderExpired() bool {
+	return time.Now().After(p.oidcProviderValidUntil)
+}
+
+func (p *provider) Login(c *gin.Context) {
+	p.oidcMx.Lock()
+	defer p.oidcMx.Unlock()
+
+	ok := p.isOpenIDProviderAvailable(c)
+	if !ok {
+		return
+	}
+
+	request := loginRequest{}
+	if err := binding.BindQuery(c, &request); err != nil {
+		p.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	session, err := p.store.Get(c.Request, oauthSessionPrefix+p.name)
+	if err != nil {
+		p.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	options := make([]oauth2.AuthCodeOption, 0, 2)
+
+	if p.config.PKCE {
+		verifier := oauth2.GenerateVerifier()
+		session.Values["pkce_verifier"] = verifier
+
+		options = append(options, oauth2.S256ChallengeOption(verifier))
+	}
+
+	if p.config.OpenID {
+		nonce, err := utils.RandBase64String(randomBytesNumber)
+		if err != nil {
+			p.errorResponder.Respond(c, fmt.Errorf("failed to generate nonce: %w", err))
+
+			return
+		}
+
+		session.Values["nonce"] = nonce
+		options = append(options, oidc.Nonce(nonce))
+	}
+
+	state, err := utils.RandBase64String(randomBytesNumber)
+	if err != nil {
+		p.errorResponder.Respond(c, fmt.Errorf("failed to generate state: %w", err))
+
+		return
+	}
+
+	session.Values["state"] = state
+	session.Values["redirect"] = request.Redirect
+	session.Options.MaxAge = 300
+
+	err = session.Save(c.Request, c.Writer)
+	if err != nil {
+		p.errorResponder.Respond(c, fmt.Errorf("failed to save session: %w", err))
+
+		return
+	}
+
+	c.Redirect(http.StatusPermanentRedirect, p.oauth2Config.AuthCodeURL(state, options...))
+}
+
+func (p *provider) Callback(c *gin.Context) {
+	p.oidcMx.Lock()
+	defer p.oidcMx.Unlock()
+
+	ok := p.isOpenIDProviderAvailable(c)
+	if !ok {
+		return
+	}
+
+	session, err := p.store.Get(c.Request, oauthSessionPrefix+p.name)
+	if err != nil {
+		p.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	if len(session.Values) == 0 {
+		p.errorResponder.Respond(c, errors.New("session is empty"))
+
+		return
+	}
+
+	// expire auth session
+	session.Options.MaxAge = -1
+	err = session.Save(c.Request, c.Writer)
+	if err != nil {
+		p.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	redirectRaw, ok := session.Values["redirect"]
+	if !ok {
+		p.errorResponder.Respond(c, errors.New("redirect url not found"))
+
+		return
+	}
+
+	redirectStr, ok := redirectRaw.(string)
+	if !ok {
+		p.errorResponder.Respond(c, errors.New("redirect url should be a string"))
+
+		return
+	}
+
+	redirectUrl, err := url.Parse(redirectStr)
+	if err != nil {
+		p.errorResponder.Respond(c, fmt.Errorf("redirect string is not an URL: %w", err))
+
+		return
+	}
+
+	stateRaw, ok := session.Values["state"]
+	if !ok {
+		p.errorResponder.Respond(c, errors.New("state not found"))
+
+		return
+	}
+
+	state, ok := stateRaw.(string)
+	if !ok {
+		p.errorResponder.Respond(c, errors.New("state should be a string"))
+
+		return
+	}
+
+	if c.Query("state") != state {
+		p.logger.Err(errors.New("state did not match")).Str("provider", p.name).Str("session_state", state).Str("query_state", c.Query("state")).Msg("oauth2 callback error")
+		p.errorRedirect(c, redirectUrl, "state did not match")
+
+		return
+	}
+
+	options := make([]oauth2.AuthCodeOption, 0, 1)
+
+	if p.config.PKCE {
+		verifierRaw, ok := session.Values["pkce_verifier"]
+		if !ok {
+			p.errorResponder.Respond(c, errors.New("pkce_verifier not found"))
+
+			return
+		}
+
+		verifier, ok := verifierRaw.(string)
+		if !ok {
+			p.errorResponder.Respond(c, errors.New("pkce_verifier should be a string"))
+
+			return
+		}
+
+		options = append(options, oauth2.VerifierOption(verifier))
+	}
+
+	if errorMsg, ok := c.GetQuery("error"); ok {
+		if errorDesc, ok := c.GetQuery("error_description"); ok {
+			errorMsg = errorDesc
+		}
+
+		p.errorRedirect(c, redirectUrl, errorMsg)
+		return
+	}
+
+	code, ok := c.GetQuery("code")
+	if !ok {
+		p.logger.Err(errors.New("code is empty")).Str("provider", p.name).Msg("oauth2 callback error")
+		p.errorRedirect(c, redirectUrl, "code is empty")
+
+		return
+	}
+
+	ctx := oidc.ClientContext(c, p.client)
+	oauth2Token, err := p.oauth2Config.Exchange(ctx, code, options...)
+	if err != nil {
+		p.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	var userID string
+	var userInfo map[string]any
+
+	if !p.config.OpenID {
+		userID, userInfo, err = p.getUserInfoOAuth2(ctx, oauth2Token)
+		if err != nil {
+			p.errorResponder.Respond(c, fmt.Errorf("failed to get user info: %w", err))
+
+			return
+		}
+	} else {
+		nonceRaw, ok := session.Values["nonce"]
+		if !ok {
+			p.errorResponder.Respond(c, errors.New("nonce not found"))
+
+			return
+		}
+
+		nonce, ok := nonceRaw.(string)
+		if !ok {
+			p.errorResponder.Respond(c, errors.New("nonce should be a string"))
+
+			return
+		}
+
+		rawIDToken, ok := oauth2Token.Extra("id_token").(string)
+		if !ok {
+			p.logger.Err(errors.New("id_token is not a string")).Str("provider", p.name).Interface("id_token", oauth2Token.Extra("id_token")).Msg("oauth2 callback error")
+			p.errorRedirect(c, redirectUrl, "id_token is not a string")
+
+			return
+		}
+
+		idToken, err := p.oidcVerifier.Verify(ctx, rawIDToken)
+		if err != nil {
+			p.logger.Err(fmt.Errorf("id_token is not valid: %w", err)).Str("provider", p.name).Str("id_token", rawIDToken).Msg("oauth2 callback error")
+			p.errorRedirect(c, redirectUrl, "id_token is not valid")
+
+			return
+		}
+
+		if idToken.Nonce != nonce {
+			p.logger.Err(errors.New("nonce did not match")).Str("provider", p.name).Str("session_nonce", nonce).Str("token_nonce", idToken.Nonce).Msg("oauth2 callback error")
+			p.errorRedirect(c, redirectUrl, "nonce did not match")
+
+			return
+		}
+
+		userID, userInfo, err = p.getUserInfoOpenID(ctx, oauth2Token, idToken)
+		if err != nil {
+			p.errorResponder.Respond(c, fmt.Errorf("failed to get user info: %w", err))
+
+			return
+		}
+	}
+
+	if userID == "" {
+		p.logger.Err(errors.New("userID cannot be empty")).Str("provider", p.name).Msg("oauth2 callback error")
+		p.errorRedirect(c, redirectUrl, "userID cannot be empty")
+
+		return
+	}
+
+	user, err := p.userProvider.FindByExternalSource(ctx, userID, p.source)
+	if err != nil {
+		p.errorResponder.Respond(c, fmt.Errorf("failed to get user by external source: %w", err))
+
+		return
+	}
+
+	if user == nil {
+		user, ok = p.createUser(c, redirectUrl, userID, userInfo)
+		if !ok {
+			return
+		}
+	} else if !user.IsEnabled {
+		p.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
+		return
+	} else if !p.updateUser(c, redirectUrl, user, userInfo) {
+		return
+	}
+
+	err = p.enforcer.LoadPolicy()
+	if err != nil {
+		p.errorResponder.Respond(c, fmt.Errorf("reload enforcer error: %w", err))
+
+		return
+	}
+
+	maintenanceConf, err := p.maintenanceAdapter.GetConfig(ctx)
+	if err != nil {
+		p.errorResponder.Respond(c, fmt.Errorf("failed to get maintenance config: %w", err))
+
+		return
+	}
+
+	if maintenanceConf.Enabled {
+		ok, err = p.enforcer.Enforce(user.ID, apisecurity.PermMaintenance, model.PermissionCan)
+		if err != nil {
+			p.errorResponder.Respond(c, fmt.Errorf("enforcer failed: %w", err))
+
+			return
+		}
+
+		if !ok {
+			p.errorResponder.Respond(c, httperror.ErrMaintenance)
+
+			return
+		}
+	}
+
+	var accessToken string
+	if p.config.ExpirationInterval != "" {
+		accessToken, err = p.tokenService.Create(ctx, *user, p.source)
+	} else {
+		accessToken, err = p.tokenService.CreateWithExpiration(ctx, *user, p.source, oauth2Token.Expiry)
+	}
+
+	if err != nil {
+		p.errorResponder.Respond(c, fmt.Errorf("failed to create token: %w", err))
+
+		return
+	}
+
+	query := redirectUrl.Query()
+	query.Set("access_token", accessToken)
+	redirectUrl.RawQuery = query.Encode()
+
+	c.Redirect(http.StatusPermanentRedirect, redirectUrl.String())
+}
+
+func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, externalID string, userInfo map[string]any) (*security.User, bool) {
+	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(userInfo, security.UserRole, []string{}), p.config.DefaultRole)
+	if err != nil {
+		roleNotFoundError := roleprovider.ProviderError{}
+		if errors.As(err, &roleNotFoundError) {
+			p.logger.Err(roleNotFoundError).Str("external_id", externalID).Msg("failed to get user roles from openid/oauth2 user info or token")
+			p.errorRedirect(c, redirectUrl, roleNotFoundError.Error())
+
+			return nil, false
+		}
+
+		p.errorResponder.Respond(c, err)
+
+		return nil, false
+	}
+
+	user := &security.User{
+		Name:       p.getAssocAttribute(userInfo, security.UserName, externalID),
+		Roles:      roles,
+		IsEnabled:  true,
+		ExternalID: externalID,
+		Source:     p.source,
+		Firstname:  p.getAssocAttribute(userInfo, security.UserFirstName, ""),
+		Lastname:   p.getAssocAttribute(userInfo, security.UserLastName, ""),
+		Email:      p.getAssocAttribute(userInfo, security.UserEmail, ""),
+		IdPRoles:   roles,
+	}
+
+	err = p.userProvider.Save(c, user)
+	if err != nil {
+		p.errorResponder.Respond(c, fmt.Errorf("failed to save openid/oauth2 user with external_id = %s: %w", user.ExternalID, err))
+
+		return nil, false
+	}
+
+	return user, true
+}
+
+func (p *provider) updateUser(c *gin.Context, redirectUrl *url.URL, user *security.User, userInfo map[string]any) bool {
+	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(userInfo, security.UserRole, []string{}), p.config.DefaultRole)
+	if err != nil {
+		roleNotFoundError := roleprovider.ProviderError{}
+		if errors.As(err, &roleNotFoundError) {
+			p.logger.Err(roleNotFoundError).Str("external_id", user.ExternalID).Msg("failed to get user roles from openid/oauth2 user info or token")
+			p.errorRedirect(c, redirectUrl, roleNotFoundError.Error())
+
+			return false
+		}
+
+		p.errorResponder.Respond(c, err)
+
+		return false
+	}
+
+	user.Name = p.getAssocAttribute(userInfo, security.UserName, user.Name)
+	user.Firstname = p.getAssocAttribute(userInfo, security.UserFirstName, user.Firstname)
+	user.Lastname = p.getAssocAttribute(userInfo, security.UserLastName, user.Lastname)
+	user.Email = p.getAssocAttribute(userInfo, security.UserEmail, user.Email)
+	user.SetRolesFromIdP(roles, p.config.AllowExtraRoles)
+
+	err = p.userProvider.Save(c, user)
+	if err != nil {
+		p.errorResponder.Respond(c, fmt.Errorf("failed to update openid/oauth2 user with external_id = %s: %w", user.ExternalID, err))
+
+		return false
+	}
+
+	return true
+}
+
+func (p *provider) getAssocAttribute(userInfo map[string]any, name, defaultValue string) string {
+	if path, ok := p.config.AttributesMap[name]; ok {
+		if valueRaw, ok := userInfo[path]; ok {
+			if value, ok := valueRaw.(string); ok {
+				return value
+			}
+		}
+	}
+
+	return defaultValue
+}
+
+func (p *provider) getAssocArrayAttribute(userInfo map[string]any, name string, defaultValue []string) []string {
+	if path, ok := p.config.AttributesMap[name]; ok {
+		if valueRaw, ok := userInfo[path]; ok {
+			switch value := valueRaw.(type) {
+			case []any:
+				if strSlice, ok := utils.InterfaceSliceToStringSlice(value); ok && len(strSlice) > 0 {
+					return strSlice
+				}
+			case []string:
+				if len(value) != 0 {
+					return value
+				}
+			case string:
+				if value != "" {
+					return []string{value}
+				}
+			}
+		}
+	}
+
+	return defaultValue
+}
+
+func (p *provider) getUserInfoOAuth2(ctx context.Context, token *oauth2.Token) (string, map[string]any, error) {
+	resp, err := p.oauth2Config.Client(ctx, token).Get(p.config.UserURL) //nolint:noctx
+	if err != nil {
+		return "", nil, errors.New("failed to get user request")
+	}
+
+	defer resp.Body.Close()
+
+	flatResp, _, err := libhttp.FlattenResponse(nil, resp, p.maxResponseSize)
+	if err != nil {
+		return "", nil, errors.New("failed to flatten response")
+	}
+
+	userInfo := make(map[string]any, len(flatResp))
+	for k, v := range flatResp {
+		userInfo["user."+k] = v
+	}
+
+	userIDRaw, ok := userInfo[p.config.UserID]
+	if !ok {
+		return "", userInfo, errors.New("can't find user_id")
+	}
+
+	var userID string
+
+	switch userIDRaw := userIDRaw.(type) {
+	case string:
+		userID = userIDRaw
+	case int:
+		userID = strconv.Itoa(userIDRaw)
+	default:
+		return "", userInfo, errors.New("user_id should be string or int")
+	}
+
+	return userID, userInfo, nil
+}
+
+func (p *provider) getUserInfoOpenID(ctx context.Context, token *oauth2.Token, idToken *oidc.IDToken) (string, map[string]any, error) {
+	userInfo := make(map[string]any)
+	tokenClaims := make(map[string]any)
+	userInfoClaims := make(map[string]any)
+
+	err := idToken.Claims(&tokenClaims)
+	if err != nil {
+		return "", userInfo, fmt.Errorf("failed to decode token claims: %w", err)
+	}
+
+	tokenClaimsBytes, err := json.Marshal(tokenClaims)
+	if err != nil {
+		return "", userInfo, fmt.Errorf("failed to json marshal token claims: %w", err)
+	}
+
+	tokenClaims, _, err = libhttp.FlattenJSON(tokenClaimsBytes)
+	if err != nil {
+		return "", userInfo, fmt.Errorf("failed to flatten json: %w", err)
+	}
+
+	if p.logger.GetLevel() == zerolog.DebugLevel {
+		p.logger.Debug().RawJSON("token_claims", tokenClaimsBytes).Msg("token claims")
+	}
+
+	for k, v := range tokenClaims {
+		userInfo["token."+k] = v
+	}
+
+	userInfoResp, err := p.oidcProvider.UserInfo(ctx, oauth2.StaticTokenSource(token))
+	if err != nil {
+		return "", userInfo, fmt.Errorf("failed to get userinfo: %w", err)
+	}
+
+	err = userInfoResp.Claims(&userInfoClaims)
+	if err != nil {
+		return "", userInfo, fmt.Errorf("failed to decode user info claims: %w", err)
+	}
+
+	userInfoClaimsBytes, err := json.Marshal(userInfoClaims)
+	if err != nil {
+		return "", userInfo, fmt.Errorf("failed to json marshal token claims: %w", err)
+	}
+
+	userInfoClaims, _, err = libhttp.FlattenJSON(userInfoClaimsBytes)
+	if err != nil {
+		return "", userInfo, fmt.Errorf("failed to flatten json: %w", err)
+	}
+
+	if p.logger.GetLevel() == zerolog.DebugLevel {
+		p.logger.Debug().RawJSON("user_info_response", userInfoClaimsBytes).Msg("user info response")
+	}
+
+	for k, v := range userInfoClaims {
+		userInfo["user."+k] = v
+	}
+
+	if p.logger.GetLevel() == zerolog.DebugLevel {
+		b, err := json.Marshal(userInfo)
+		if err != nil {
+			return "", userInfo, fmt.Errorf("failed to json marshal user info map: %w", err)
+		}
+
+		p.logger.Debug().RawJSON("user_info_map", b).Msg("user info map")
+	}
+
+	return idToken.Subject, userInfo, nil
+}
+
+func (p *provider) errorRedirect(c *gin.Context, relayUrl *url.URL, errorMessage string) {
+	query := relayUrl.Query()
+	query.Set("errorMessage", errorMessage)
+	relayUrl.RawQuery = query.Encode()
+
+	c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
+}
