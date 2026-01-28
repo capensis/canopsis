@@ -31,13 +31,14 @@ const usePatternsFieldsStoreModule = () => useStoreModuleHooks('patternsFields')
  * @property {Function} fetchWidgetFilterPatternFields - Fetches pattern fields for widget filters
  * @property {Function} fetchServicePatternFields - Fetches pattern fields for entity services
  * @property {Function} fetchStateSettingPatternFields - Fetches pattern fields for state settings
- * @property {Function} fetchEventfilterPatternFields - Fetches pattern fields for event filters
+ * @property {Function} fetchEventFilterPatternFields - Fetches pattern fields for event filters
  * @property {Function} fetchScenarioPatternFields - Fetches pattern fields for scenarios
  * @property {Function} fetchMetaalarmrulePatternFields - Fetches pattern fields for meta alarm rules
  * @property {Function} fetchDeclareTicketRulePatternFields - Fetches pattern fields for declare ticket rules
  * @property {Function} fetchInstructionPatternFields - Fetches pattern fields for instructions
  * @property {Function} fetchKpiFilterPatternFields - Fetches pattern fields for KPI filters
  * @property {Function} fetchDynamicInfosPatternFields - Fetches pattern fields for dynamic infos
+ * @property {Function} fetchEventRecordPatternFields - Fetches pattern fields for event records
  *
  * @example
  * // Usage in a component
@@ -57,13 +58,14 @@ export const usePatternsFields = () => {
     fetchWidgetFilterPatternFields: 'fetchWidgetFilterPatternFields',
     fetchServicePatternFields: 'fetchServicePatternFields',
     fetchStateSettingPatternFields: 'fetchStateSettingPatternFields',
-    fetchEventfilterPatternFields: 'fetchEventfilterPatternFields',
+    fetchEventFilterPatternFields: 'fetchEventFilterPatternFields',
     fetchScenarioPatternFields: 'fetchScenarioPatternFields',
     fetchMetaalarmrulePatternFields: 'fetchMetaalarmrulePatternFields',
     fetchDeclareTicketRulePatternFields: 'fetchDeclareTicketRulePatternFields',
     fetchInstructionPatternFields: 'fetchInstructionPatternFields',
     fetchKpiFilterPatternFields: 'fetchKpiFilterPatternFields',
     fetchDynamicInfosPatternFields: 'fetchDynamicInfosPatternFields',
+    fetchEventRecordPatternFields: 'fetchEventRecordPatternFields',
   });
 
   return {
@@ -111,6 +113,7 @@ export const usePatternsFieldsFetching = (fetchAction) => {
 
   const alarmAttributes = computed(() => patternsFields.value.alarm_pattern ?? []);
   const entityAttributes = computed(() => patternsFields.value.entity_pattern ?? []);
+  const eventAttributes = computed(() => patternsFields.value.event_pattern ?? []);
 
   onMounted(fetchPatternsFields);
 
@@ -119,5 +122,6 @@ export const usePatternsFieldsFetching = (fetchAction) => {
     patternsFields,
     alarmAttributes,
     entityAttributes,
+    eventAttributes,
   };
 };

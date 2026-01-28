@@ -41,8 +41,8 @@ export default {
       return request.get(API_ROUTES.patternFields.stateSetting, { params });
     },
 
-    fetchEventfilterPatternFields(context, { params } = {}) {
-      return request.get(API_ROUTES.patternFields.eventfilter, { params });
+    fetchEventFilterPatternFields(context, { params } = {}) {
+      return request.get(API_ROUTES.patternFields.eventFilter, { params });
     },
 
     fetchScenarioPatternFields(context, { params } = {}) {
@@ -67,6 +67,10 @@ export default {
 
     fetchDynamicInfosPatternFields(context, { params } = {}) {
       return request.get(API_ROUTES.patternFields.dynamicInfos, { params });
+    },
+
+    fetchEventRecordPatternFields(context, { params } = {}) {
+      return request.get(API_ROUTES.patternFields.eventRecord, { params });
     },
   },
 };

@@ -362,7 +362,7 @@ export const API_ROUTES = {
     widgetFilter: '/api/v4/widget-filter-pattern-fields',
     service: '/api/v4/entityservice-pattern-fields',
     stateSetting: '/api/v4/state-setting-pattern-fields',
-    eventfilter: '/api/v4/eventfilter-pattern-fields',
+    eventFilter: '/api/v4/eventfilter-pattern-fields',
     scenario: '/api/v4/scenario-pattern-fields',
 
     /**
@@ -373,6 +373,7 @@ export const API_ROUTES = {
     instruction: '/api/v4/cat/instruction-pattern-fields',
     kpiFilter: '/api/v4/cat/kpi-filter-pattern-fields',
     dynamicInfos: '/api/v4/cat/dynamic-infos-pattern-fields',
+    eventRecord: '/api/v4/cat/event-record-pattern-fields',
   },
 
   /**

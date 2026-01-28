@@ -1,6 +1,8 @@
-import { mapValues } from 'lodash';
+import { isArray, isUndefined, mapValues, mergeWith } from 'lodash';
 
 import { PATTERN_OPERATORS } from '@/constants';
+
+import { indexesByKey } from '@/helpers/array';
 
 /**
  * @typedef { 'string' | 'int' | 'timestamp' | 'duration' | 'reference' | 'object' | 'string_array' } PatternFieldType
@@ -64,3 +66,40 @@ export const patternsFieldsToForm = (patternsFields = {}) => mapValues(patternsF
     return formField;
   })
 ));
+
+/**
+ * Merge default pattern attributes with external attributes.
+ * Preserves order of default attributes, adds new external attributes, and merges existing ones.
+ * External attributes override default attributes with the same value, with arrays from external taking precedence.
+ *
+ * @param {Array} defaultAttributes - Default pattern attributes array
+ * @param {Array} [externalAttributes = []] - External pattern attributes array from API
+ * @returns {Array} Merged attributes array
+ */
+export const mergePatternAttributes = (defaultAttributes = [], externalAttributes = []) => {
+  if (!externalAttributes.length) {
+    return defaultAttributes;
+  }
+
+  const mergedAttributes = [...defaultAttributes];
+  const mergedAttributesIndexesByValue = indexesByKey(defaultAttributes, 'value');
+
+  externalAttributes.forEach((attribute) => {
+    const index = mergedAttributesIndexesByValue[attribute.value];
+
+    if (isUndefined(index)) {
+      mergedAttributes.push(attribute);
+
+      return;
+    }
+
+    mergedAttributes[index] = mergeWith(
+      {},
+      mergedAttributes[index],
+      attribute,
+      (a, b) => (isArray(b) ? b : undefined),
+    );
+  });
+
+  return mergedAttributes;
+};

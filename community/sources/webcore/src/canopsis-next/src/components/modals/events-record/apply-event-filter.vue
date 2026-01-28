@@ -5,13 +5,16 @@
         <span>{{ config.title ?? $t('modals.applyEventFilter.title') }}</span>
       </template>
       <template #text="">
-        <c-event-filter-patterns-field
-          v-model="form"
-          :excluded-attributes="config.excludedAttributes"
-          name="patterns"
-          required
-          @input="errors.remove('patterns')"
-        />
+        <div class="position-relative">
+          <c-progress-overlay :pending="patternsFieldsPending" />
+          <c-event-filter-patterns-field
+            v-model="form"
+            :attributes="eventPatternAttributes"
+            name="patterns"
+            required
+            @input="errors.remove('patterns')"
+          />
+        </div>
       </template>
       <template #actions="">
         <v-btn
@@ -35,7 +38,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -45,6 +48,7 @@ import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/patt
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -65,6 +69,15 @@ export default {
     const { config, close } = useInnerModal(props);
 
     const form = ref(patternToForm({ event_pattern: config.value.eventPattern }));
+
+    const { fetchEventRecordPatternFields } = usePatternsFields();
+
+    const {
+      pending: patternsFieldsPending,
+      patternsFields,
+    } = usePatternsFieldsFetching(fetchEventRecordPatternFields);
+
+    const eventPatternAttributes = computed(() => patternsFields.value.event_pattern ?? []);
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
@@ -87,6 +100,8 @@ export default {
       form,
       isDisabled,
       submitting,
+      eventPatternAttributes,
+      patternsFieldsPending,
 
       submit,
       close,
