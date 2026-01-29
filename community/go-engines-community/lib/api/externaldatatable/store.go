@@ -579,91 +579,20 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 			continue
 		}
 
-		var val any
-
-		switch cfg.Type {
-		case externaldata.ColumnTypeString:
-			strVal, ok := rawVal.(string)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a string."
-				continue
-			}
-
-			if len(strVal) > MaxStringLen {
-				valErrMsgs[columnName] = maxStringLengthErrMsg
-				continue
-			}
-
-			val = strVal
-		case externaldata.ColumnTypeNumber:
-			val, ok = rawVal.(float64)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a number."
-				continue
-			}
-		case externaldata.ColumnTypeBoolean:
-			val, ok = rawVal.(bool)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a boolean."
-				continue
-			}
-		case externaldata.ColumnTypeStringArray:
-			sliceVal, ok := utils.IsStringSlice(rawVal)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a string array."
-				continue
-			}
-
-			val = sliceVal
-
-			for i, str := range sliceVal {
-				if len(str) > MaxStringLen {
-					valErrMsgs[columnName+"."+strconv.Itoa(i)] = maxStringLengthErrMsg
-				}
-			}
-		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
-			val, ok = getIntValue(rawVal)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a timestamp."
-				continue
-			}
-		case externaldata.ColumnTypeRegexp:
-			strVal, ok := rawVal.(string)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a string."
-				continue
-			}
-
-			if len(strVal) > MaxStringLen {
-				valErrMsgs[columnName] = maxStringLengthErrMsg
-				continue
-			}
-
-			transformedVal, err := s.parser.Parse(ColumnConfig{
-				BaseColumnConfig: BaseColumnConfig{
-					Type: externaldata.ColumnTypeRegexp,
-				},
-			}, strVal)
-			if err != nil {
-				valErrMsgs[columnName] = err.Error()
-				continue
-			}
-
-			switch v := transformedVal.(type) {
-			case parsedRegexp:
-				priority += v.score
-				val = v.regexp
-			default:
-				return nil, fmt.Errorf("unexpected transformed value is not regexp: %T", v)
-			}
-
-			addPriorityColumn = true
-		default:
-			return nil, fmt.Errorf("unexpected column type: %d", cfg.Type)
+		res, err := s.transformRawData(cfg, rawVal, valErrMsgs)
+		if err != nil {
+			return nil, fmt.Errorf("failed to transform raw data: %w", err)
 		}
 
-		doc[columnName] = val
-		row[i+1] = val
+		if res.val == nil {
+			continue
+		}
+
+		doc[columnName] = res.val
+		row[i+1] = res.val
+
+		priority += res.priority
+		addPriorityColumn = addPriorityColumn || res.addPriorityColumn
 	}
 
 	if len(valErrMsgs) > 0 {
@@ -725,92 +654,21 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 			continue
 		}
 
-		var val any
-
-		switch cfg.Type {
-		case externaldata.ColumnTypeString:
-			strVal, ok := rawVal.(string)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a string."
-				continue
-			}
-
-			if len(strVal) > MaxStringLen {
-				valErrMsgs[columnName] = maxStringLengthErrMsg
-				continue
-			}
-
-			val = strVal
-		case externaldata.ColumnTypeNumber:
-			val, ok = rawVal.(float64)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a number."
-				continue
-			}
-		case externaldata.ColumnTypeBoolean:
-			val, ok = rawVal.(bool)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a boolean."
-				continue
-			}
-		case externaldata.ColumnTypeStringArray:
-			sliceVal, ok := utils.IsStringSlice(rawVal)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a string array."
-				continue
-			}
-
-			val = sliceVal
-
-			for i, str := range sliceVal {
-				if len(str) > MaxStringLen {
-					valErrMsgs[columnName+"."+strconv.Itoa(i)] = maxStringLengthErrMsg
-				}
-			}
-		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
-			val, ok = getIntValue(rawVal)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a timestamp."
-				continue
-			}
-		case externaldata.ColumnTypeRegexp:
-			strVal, ok := rawVal.(string)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a string."
-				continue
-			}
-
-			if len(strVal) > MaxStringLen {
-				valErrMsgs[columnName] = maxStringLengthErrMsg
-				continue
-			}
-
-			transformedVal, err := s.parser.Parse(ColumnConfig{
-				BaseColumnConfig: BaseColumnConfig{
-					Type: externaldata.ColumnTypeRegexp,
-				},
-			}, strVal)
-			if err != nil {
-				valErrMsgs[columnName] = err.Error()
-				continue
-			}
-
-			switch v := transformedVal.(type) {
-			case parsedRegexp:
-				priority += v.score
-				val = v.regexp
-			default:
-				return nil, fmt.Errorf("unexpected transformed value is not regexp: %T", v)
-			}
-
-			addPriorityColumn = true
-		default:
-			return nil, fmt.Errorf("unexpected column type: %d", cfg.Type)
+		res, err := s.transformRawData(cfg, rawVal, valErrMsgs)
+		if err != nil {
+			return nil, fmt.Errorf("failed to transform raw data: %w", err)
 		}
 
-		doc[columnName] = val
+		if res.val == nil {
+			continue
+		}
 
-		queryArgs[i] = val
+		doc[columnName] = res.val
+
+		priority += res.priority
+		addPriorityColumn = addPriorityColumn || res.addPriorityColumn
+
+		queryArgs[i] = res.val
 		querySql += pgx.Identifier{columnName}.Sanitize() + " = $" + strconv.Itoa(i+1)
 		if i < len(table.ColumnConfigs)-1 {
 			querySql += ", "
@@ -1594,6 +1452,102 @@ func GetRefParametersLookups() []bson.M {
 			bson.M{"external_data": "$external_data"},
 		}}}},
 	}
+}
+
+type transformRawDataResult struct {
+	val               any
+	priority          int
+	addPriorityColumn bool
+}
+
+func (s *store) transformRawData(cfg externaldata.ColumnConfig, rawData any, valErrMsgs map[string]string) (transformRawDataResult, error) {
+	var res transformRawDataResult
+	var ok bool
+
+	columnName := cfg.Name
+
+	switch cfg.Type {
+	case externaldata.ColumnTypeString:
+		strVal, ok := rawData.(string)
+		if !ok {
+			valErrMsgs[columnName] = columnName + " is not a string."
+			return transformRawDataResult{}, nil
+		}
+
+		if len(strVal) > MaxStringLen {
+			valErrMsgs[columnName] = maxStringLengthErrMsg
+			return transformRawDataResult{}, nil
+		}
+
+		res.val = strVal
+	case externaldata.ColumnTypeNumber:
+		res.val, ok = rawData.(float64)
+		if !ok {
+			valErrMsgs[columnName] = columnName + " is not a number."
+			return transformRawDataResult{}, nil
+		}
+	case externaldata.ColumnTypeBoolean:
+		res.val, ok = rawData.(bool)
+		if !ok {
+			valErrMsgs[columnName] = columnName + " is not a boolean."
+			return transformRawDataResult{}, nil
+		}
+	case externaldata.ColumnTypeStringArray:
+		sliceVal, ok := utils.IsStringSlice(rawData)
+		if !ok {
+			valErrMsgs[columnName] = columnName + " is not a string array."
+			return transformRawDataResult{}, nil
+		}
+
+		res.val = sliceVal
+
+		for i, str := range sliceVal {
+			if len(str) > MaxStringLen {
+				valErrMsgs[columnName+"."+strconv.Itoa(i)] = maxStringLengthErrMsg
+			}
+		}
+	case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
+		res.val, ok = getIntValue(rawData)
+		if !ok {
+			valErrMsgs[columnName] = columnName + " is not a timestamp."
+			return transformRawDataResult{}, nil
+		}
+	case externaldata.ColumnTypeRegexp:
+		strVal, ok := rawData.(string)
+		if !ok {
+			valErrMsgs[columnName] = columnName + " is not a string."
+			return transformRawDataResult{}, nil
+		}
+
+		if len(strVal) > MaxStringLen {
+			valErrMsgs[columnName] = maxStringLengthErrMsg
+			return transformRawDataResult{}, nil
+		}
+
+		transformedVal, err := s.parser.Parse(ColumnConfig{
+			BaseColumnConfig: BaseColumnConfig{
+				Type: externaldata.ColumnTypeRegexp,
+			},
+		}, strVal)
+		if err != nil {
+			valErrMsgs[columnName] = err.Error()
+			return transformRawDataResult{}, nil
+		}
+
+		switch v := transformedVal.(type) {
+		case parsedRegexp:
+			res.priority = v.score
+			res.val = v.regexp
+		default:
+			return transformRawDataResult{}, fmt.Errorf("unexpected transformed value is not regexp: %T", v)
+		}
+
+		res.addPriorityColumn = true
+	default:
+		return transformRawDataResult{}, fmt.Errorf("unexpected column type: %d", cfg.Type)
+	}
+
+	return res, nil
 }
 
 func isTableLinked(ctx context.Context, id string, dbWidgetCollection mongo.DbCollection, linkedDbCollections []mongo.DbCollection) (bool, error) {
