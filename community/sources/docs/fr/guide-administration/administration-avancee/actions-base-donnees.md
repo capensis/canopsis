@@ -1,4 +1,4 @@
-# Nettoyage, sauvegarde et restauration des bases de données
+# Nettoyage, sauvegarde, restauration et interractions avec les bases de données
 
 ## MongoDB
 
@@ -21,7 +21,7 @@ mongodump --uri mongodb://cpsmongo:canopsis@mongodb/canopsis?replicaSet=rs0 --gz
 
 ### Restauration
 
-!!! attention
+!!! Warning
     Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée, pour corriger l'incident.
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.  
@@ -67,7 +67,7 @@ Utilisez la commande `pg_dump` via une tâche cron. De préférence, faites la s
 !!! note
     Le mot de passe par défaut est `canopsis`, mais il peut être nécessaire d'adapter la commande selon votre contexte.
 
-!!! attention
+!!! Warning
     Il est nécessaire de réaliser cette action une fois pour chaque base de données, `canopsis` et `canopsis_tech_metrics`.
 
 Pour la base `canopsis`:
@@ -82,7 +82,7 @@ pg_dump postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis
 
 ### Restauration
 
-!!! attention
+!!! Warning
     Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration des bases de données ne doit être effectuée que si celles-ci sont endommagées, pour corriger l'incident.
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.  
@@ -179,40 +179,107 @@ Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
 
 ## Cas d'usage 
 
-#### Trouver les alarmes qui correspondent à un connecteur particulier
+#### Commandes de base pour récupérer des informations sur son Canopsis
 
-Pour récupérer l'entièreté des alarmes
-
-```js
-db.periodical_alarm.find({'v.connector':'connector_test_creation_alarmes'})
-```
-
-Pour récupérer uniquement le `display_name` des alarmes (Par exemple: Pour chercher les alarmes visuellements dans l'interface de Canopsis)
+Ces commandes seront utiles pour rapidement pouvoir récupérer des informations.
 
 ```js
-db.periodical_alarm.find({'v.connector':'connector_test_creation_alarmes'})
-
-[
-  {
-    _id: '019bb12c-fc43-7ef9-b3a0-afb5841d3450',
-    v: { display_name: 'W0H-H09-X7U' }
-  }
-]
+db.NOM_DE_LA_COLLECTION.find() # Permet de trouver une information
+db.NOM_DE_LA_COLLECTION.countDocuments() # Permet de compter le nombre de documents dans une collection
 ```
 
-#### Trouver les entités qui ont beaucoup "d'Impacts" ou de "Dépendances"
+Pour plus d'informations sur les commandes de l'utilitaire `mongosh`, référer à la documentation officiel : [Documentation Mongosh](https://www.mongodb.com/docs/mongodb-shell/run-commands/)
 
-Trouver les 10 entités ayant le plus `d'Impacts`
+Généralement, ces commandes sont utilisés avec par exemple sur les collections : `periodical_alarm`, `default_entities`, `alarm_tag`, `pbehavior`.
+
+#### Trouver les alarmes qui correspondent à un critère particulier
+
+Récupérer l'entièreté des alarmes actuellement ouvertes qui proviennent du même `connecteur`
 ```js
-db.default_entities.aggregate([{$lookup:{from:"default_entities",let:{cid:"$_id"},pipeline:[{$match:{$expr:{$and:[{$eq:["$type","resource"]},{$eq:["$connector","$$cid"]}]}}}],as:"resources_of_connector"}},{$addFields:{impactCount:{$switch:{branches:[{case:{$eq:["$type","connector"]},then:{$size:"$resources_of_connector"}},{case:{$eq:["$type","component"]},then:{$cond:[{$ifNull:["$connector",false]},1,0]}},{case:{$eq:["$type","resource"]},then:{$cond:[{$ifNull:["$component",false]},1,0]}}],default:0}}}},{$sort:{impactCount:-1,_id:1}},{$limit:10},{$project:{_id:1,name:1,type:1,impactCount:1}}]);
-
+db.periodical_alarm.find({'v.connector':'Nom du connecteur'})
 ```
 
-Trouver les 10 entités ayant le plus de `Dépendances`
-
+Récupérer l'entièreté des alarmes actuellement ouvertes qui proviennent du même `composant`
 ```js
-db.default_entities.aggregate([{$lookup:{from:"default_entities",let:{cid:"$_id"},pipeline:[{$match:{$expr:{$and:[{$eq:["$type","component"]},{$eq:["$connector","$$cid"]}]}}}],as:"components_of_connector"}},{$lookup:{from:"default_entities",let:{compName:"$name",compConn:"$connector"},pipeline:[{$match:{$expr:{$and:[{$eq:["$type","resource"]},{$eq:["$component","$$compName"]},{$eq:["$connector","$$compConn"]}]}}}],as:"resources_of_component"}},{$addFields:{dependencyCount:{$switch:{branches:[{case:{$eq:["$type","connector"]},then:{$size:"$components_of_connector"}},{case:{$eq:["$type","component"]},then:{$size:"$resources_of_component"}},{case:{$eq:["$type","resource"]},then:{$cond:[{$ifNull:["$connector",false]},1,0]}}],default:0}}}},{$sort:{dependencyCount:-1,_id:1}},{$limit:10},{$project:{_id:1,name:1,type:1,dependencyCount:1}}]);
+db.periodical_alarm.find({'v.component':'Nom du composant'})
 ```
+
+Récupérer l'entièreté des alarmes actuellement ouvertes qui possèdent une même `ressource`
+```js
+db.periodical_alarm.find({'v.resource':'Nom de la ressource'})
+```
+
+#### Trouver ou compter les entités liés à un tag
+
+Trouver les alarmes actuellement ouvertes qui correspondent à un/des tags
+```js
+db.periodical_alarm.find({tags: { $in: ["une", "liste", "de", "tags"] }}) # Cherche à un match un ou plusieurs tags dans la liste
+```
+
+Compter les alarmes actuellement ouvertes qui correspondent à un/des tags
+```js
+db.periodical_alarm.countDocuments({tags: { $in: ["une", "liste", "de", "tags"] }}) # Cherche à un match un ou plusieurs tags dans la liste
+```
+
+**Trouver les alarmes qui correspondent exactement à un/des tags :**
+
+Trouver les alarmes actuellement ouvertes qui correspondent exactement à une liste de tag:
+```js
+db.periodical_alarm.find({"tags": "tag" }}) # Match exactement un tag
+
+db.periodical_alarm.find({tags: { $all: ["une", "liste", "de", "tags"] }}) # Match exactement une liste de tags
+```
+
+Compter les alarmes actuellement ouvertes qui correspondent exactement à une liste tags
+```js
+db.periodical_alarm.countDocuments({"tags": "tag" }}) # Match exactement un tag
+
+db.periodical_alarm.countDocuments({tags: { $all: ["une", "liste", "de", "tags"] }}) # Match exactement une liste de tags
+```
+
+#### Trouver les connecteurs, composants, ressources ou entités qui ont le plus de dépendances
+
+Récupérer les 10 connecteurs avec le plus de dépendances :
+```js
+db.default_entities.aggregate([
+    {$match: {connector: {$ne: null}, type: "resource"}},
+    {$group: {_id: "$connector", depends: {$sum: 1}}},
+    {$sort: {depends: -1, _id: 1}},
+    {$limit: 10},
+]);
+```
+
+Récupérer les 10 composants avec le plus de dépendances :
+```js
+db.default_entities.aggregate([
+    {$match: {component: {$ne: null}, type: "resource"}},
+    {$group: {_id: "$component", depends: {$sum: 1}}},
+    {$sort: {depends: -1, _id: 1}},
+    {$limit: 10},
+]);
+```
+
+Récupérer les 10 entités avec le plus de dépendances :
+```js
+db.default_entities.aggregate([
+    {$match: {services: {$ne: null}}},
+    {$project: {services: {$size: "$services"}, type: 1}},
+    {$sort: {services: -1, _id: 1}},
+    {$limit: 10},
+]);
+```
+
+Récupérer les 10 services avec le plus de dépendances :
+```js
+db.default_entities.aggregate([
+    {$unwind: "$services"},
+    {$group: {_id: "$services", depends: {$sum: 1}}},
+    {$sort: {depends: -1, _id: 1}},
+    {$limit: 10},
+]);
+```
+
+
 
 #### Trouver les comportements périodiques qui agissent sur un nombre important d'alarmes/entités
 
@@ -228,7 +295,37 @@ db.periodical_alarm.aggregate([{ $match:{ "v.pbehavior_info.id":{ $exists:true }
 ]
 ```
 
-#### Rechercher les requêtes et les collections qui sont visés par des requêtes dont le temps d'exécution est supérieur à 10 secondes
+#### Rechercher les requêtes et les collections qui sont visés par des requêtes dont le temps d'exécution est supérieur à 1 secondes et appliquer des indexes pour les corriger.
+
+!!! note
+    Pour optimiser les temps de réponses de la base de données MongoDB, il est nécessaire d'analyser les logs du serveur mongodb pour y extraire des potentiels `COLLSCAN (Slow query)` qui pourrait ralentir votre Canopsis. Pour ce faire, il est recommandé de passer par le support Canopsis pour analyser ces logs et éventuellement ajouter des indexes permettant d'améliorer les temps de réponses.
+
+Trouver les requêtes dont le temps d'éxécution est supérieur à 1 seconde:
+
 ```sh
-grep "durationMillis" mongodb.log | jq -c 'select(.c == "COMMAND" and .attr.durationMillis > 10000) | {ns: .attr.ns, command: .attr.command, d: "\(.attr.durationMillis) ms"}' 
+grep "durationMillis" mongodb.log | jq -c 'select(.c == "COMMAND" and .attr.durationMillis > 1000) | {ns: .attr.ns, command: .attr.command, d: "\(.attr.durationMillis) ms"}' 
 ```
+
+Exemple d'une requête :
+
+```sh
+{"t":{"$date":"2024-09-23T16:15:33.418+02:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn431","msg":"Slow query","attr":{"type":"command","ns":"canopsis.default_entities","command":{"aggregate":"default_entities","pipeline":[{"$match":{"$or":[{"$and":[{"infos.customer.value":"CLIENT1"},{"component":{"$in":["COMPONENT1","COMPONENT2","COMPONENT3","COMPONENT4","COMPONENT5","COMPONENT6"]}}]}]}},{"$project":{"_id":1}}],"cursor":{},"lsid":{"id":{"$uuid":"ff7d8060-1f11-46bd-a186-75b2718b2277"}},"$clusterTime":{"clusterTime":{"$timestamp":{"t":1727100927,"i":3}},"signature":{"hash":{"$binary":{"base64":"81gp1Ydl+WkrIPK3eAedGx23erA=","subType":"0"}},"keyId":7414142034354634757}},"maxTimeMS":14999,"$db":"canopsis","$readPreference":{"mode":"primary"}},"planSummary":"COLLSCAN","numYields":381,"queryHash":"B0E2AF4B","planCacheKey":"589D5E1A","ok":0,"errMsg":"PlanExecutor error during aggregation :: caused by :: operation was interrupted because a client disconnected","errName":"ClientDisconnect","errCode":279,"reslen":326,"locks":{"FeatureCompatibilityVersion":{"acquireCount":{"r":382}},"Global":{"acquireCount":{"r":382}},"Mutex":{"acquireCount":{"r":1}}},"readConcern":{"level":"local","provenance":"implicitDefault"},"writeConcern":{"w":"majority","wtimeout":0,"provenance":"implicitDefault"},"remote":"IP:57832","protocol":"op_msg","durationMillis":4672}}
+```
+
+La requête a pris `4672 ms` soit environs `4.6 s` à s'exécuter ce qui occasionne des lenteurs dans l'utilisation de Canopsis.  
+Pour remédier à cette situation, il est pertinent d’ajouter des indexes sur les collections. Comme par exemple ici, sur les valeurs `infos.customer.value` et `component`
+
+Créer un index :
+```js
+db.default_entities.createIndex({"infos.customer.value" : 1, "component" : 1})
+```
+
+Pour visualiser les indexes qui ont été créer sur une collection, éxécuter la commande:
+
+```js
+db.NOM_DE_LA_COLLECTION.getIndexes()
+```
+
+
+
+
