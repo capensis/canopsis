@@ -26,16 +26,22 @@ mongodump --uri mongodb://cpsmongo:canopsis@mongodb/canopsis?replicaSet=rs0 --gz
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.  
 
-=== "Canopsis Community (édition open-source)"
+=== "RPM (EL8/EL9)"
 
     ```sh
-    systemctl stop --now canopsis.service
+    systemctl stop canopsis
+    ```
+       
+=== "Docker Compose"
+
+    ```sh
+    docker compose down
     ```
 
-=== "Canopsis Pro (souscription commerciale)"
+=== "Helm"
 
     ```sh
-    systemctl stop --now canopsis.service
+    kubectl delete deployments --all
     ```
 
 Utilisez la commande `mongorestore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongorestore-operations).
@@ -46,16 +52,23 @@ mongorestore --uri mongodb://cpsmongo:canopsis@mongodb/canopsis?replicaSet=rs0 -
 
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.  
 
-=== "Canopsis Community (édition open-source)"
+=== "RPM (EL8/EL9)"
 
     ```sh
-    systemctl start --now canopsis.service
+    systemctl start canopsis
+    ```
+       
+=== "Docker Compose"
+
+    ```sh
+    docker compose up -d
     ```
 
-=== "Canopsis Pro (souscription commerciale)"
+=== "Helm"
 
     ```sh
-    systemctl start --now canopsis.service
+    export RELEASE_NAME="canopsis-prod"
+    helm upgrade ${RELEASE_NAME} canopsis/canopsis-pro -f customer-values.yaml
     ```
 
 ## PostgreSQL (TimescaleDB)
@@ -87,16 +100,22 @@ pg_dump postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.  
 
-=== "Canopsis Community (édition open-source)"
+=== "RPM (EL8/EL9)"
 
     ```sh
-    systemctl stop --now canopsis.service
+    systemctl stop canopsis
+    ```
+       
+=== "Docker Compose"
+
+    ```sh
+    docker compose down
     ```
 
-=== "Canopsis Pro (souscription commerciale)"
+=== "Helm"
 
     ```sh
-    systemctl stop --now canopsis.service
+    kubectl delete deployments --all
     ```
 
 Une fois Canopsis éteint, il est nécessaire de supprimer les bases `canopsis` et/ou `canopsis_tech_metrics` avant de lancer la restauration
@@ -165,16 +184,23 @@ SELECT timescaledb_post_restore();
 
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.  
 
-=== "Canopsis Community (édition open-source)"
+=== "RPM (EL8/EL9)"
 
     ```sh
-    systemctl start --now canopsis.service
+    systemctl start canopsis
+    ```
+       
+=== "Docker Compose"
+
+    ```sh
+    docker compose up -d
     ```
 
-=== "Canopsis Pro (souscription commerciale)"
+=== "Helm"
 
     ```sh
-    systemctl start --now canopsis.service
+    export RELEASE_NAME="canopsis-prod"
+    helm upgrade ${RELEASE_NAME} canopsis/canopsis-pro -f customer-values.yaml
     ```
 
 ## Cas d'usage 
