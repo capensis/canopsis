@@ -27,13 +27,13 @@ export default {
       default: false,
     },
   },
-  setup() {
+  setup(props) {
     const { fetchKpiFilterPatternFields } = usePatternsFields();
 
     const {
       pending,
       entityAttributes,
-    } = usePatternsFieldsFetching(fetchKpiFilterPatternFields);
+    } = usePatternsFieldsFetching(fetchKpiFilterPatternFields, props.readonly);
 
     return {
       pending,

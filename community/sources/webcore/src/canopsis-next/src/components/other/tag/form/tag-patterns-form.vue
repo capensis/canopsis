@@ -32,7 +32,7 @@ export default {
       default: false,
     },
   },
-  setup() {
+  setup(props) {
     const { fetchAlarmTagPatternFields } = usePatternsFields();
     const { hasAnyError } = useValidationHeader();
 
@@ -40,7 +40,7 @@ export default {
       pending,
       alarmAttributes,
       entityAttributes,
-    } = usePatternsFieldsFetching(fetchAlarmTagPatternFields);
+    } = usePatternsFieldsFetching(fetchAlarmTagPatternFields, props.readonly);
 
     return {
       /**

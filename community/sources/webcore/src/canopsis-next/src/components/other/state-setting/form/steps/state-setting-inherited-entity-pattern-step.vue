@@ -37,14 +37,14 @@ export default {
       default: false,
     },
   },
-  setup() {
+  setup(props) {
     const { fetchStateSettingPatternFields } = usePatternsFields();
     const { hasAnyError } = useValidationHeader();
 
     const {
       pending,
       entityAttributes,
-    } = usePatternsFieldsFetching(fetchStateSettingPatternFields);
+    } = usePatternsFieldsFetching(fetchStateSettingPatternFields, props.disabled);
 
     const entityTypes = computed(() => [...STATE_SETTING_ENTITY_TYPES]);
 

@@ -37,7 +37,7 @@ export default {
       default: false,
     },
   },
-  setup() {
+  setup(props) {
     const { fetchIdleRulePatternFields } = usePatternsFields();
     const { hasAnyError } = useValidationHeader();
 
@@ -45,7 +45,7 @@ export default {
       pending,
       alarmAttributes,
       entityAttributes,
-    } = usePatternsFieldsFetching(fetchIdleRulePatternFields);
+    } = usePatternsFieldsFetching(fetchIdleRulePatternFields, props.readonly);
 
     return {
       /**

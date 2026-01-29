@@ -107,21 +107,27 @@ export const usePatternsFields = () => {
  *   },
  * };
  */
-export const usePatternsFieldsFetching = (fetchAction) => {
+export const usePatternsFieldsFetching = (fetchAction, readonly = false) => {
   const patternsFields = ref({});
 
   const {
     pending,
     handler: fetchPatternsFields,
-  } = usePendingHandler(async () => patternsFields.value = patternsFieldsToForm(await unref(fetchAction)()));
+  } = usePendingHandler(async () => {
+    patternsFields.value = patternsFieldsToForm(await unref(fetchAction)());
+  });
 
   const alarmAttributes = computed(() => patternsFields.value.alarm_pattern ?? []);
   const entityAttributes = computed(() => patternsFields.value.entity_pattern ?? []);
   const eventAttributes = computed(() => patternsFields.value.event_pattern ?? []);
 
-  watch(fetchAction, () => fetchPatternsFields());
+  watch(() => unref(fetchAction), () => fetchPatternsFields());
 
-  onMounted(fetchPatternsFields);
+  onMounted(() => {
+    if (!readonly) {
+      fetchPatternsFields();
+    }
+  });
 
   return {
     pending,
