@@ -120,6 +120,8 @@ export const usePatternsFieldsFetching = (fetchAction, readonly = false) => {
   const alarmAttributes = computed(() => patternsFields.value.alarm_pattern ?? []);
   const entityAttributes = computed(() => patternsFields.value.entity_pattern ?? []);
   const eventAttributes = computed(() => patternsFields.value.event_pattern ?? []);
+  const pbehaviorAttributes = computed(() => patternsFields.value.pbehavior_pattern ?? []);
+  const weatherServiceAttributes = computed(() => patternsFields.value.weather_service_pattern ?? []);
 
   watch(() => unref(fetchAction), () => fetchPatternsFields());
 
@@ -135,5 +137,8 @@ export const usePatternsFieldsFetching = (fetchAction, readonly = false) => {
     alarmAttributes,
     entityAttributes,
     eventAttributes,
+    pbehaviorAttributes,
+    weatherServiceAttributes,
+    fetchPatternsFields,
   };
 };

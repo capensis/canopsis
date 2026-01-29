@@ -6,7 +6,7 @@
       </template>
       <template #text="">
         <div class="position-relative">
-          <c-progress-overlay :pending="patternsFieldsPending" />
+          <c-progress-overlay :pending="eventPatternAttributesPending" />
           <c-event-filter-patterns-field
             v-model="form"
             :attributes="eventPatternAttributes"
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -73,11 +73,9 @@ export default {
     const { fetchEventRecordPatternFields } = usePatternsFields();
 
     const {
-      pending: patternsFieldsPending,
-      patternsFields,
+      pending: eventPatternAttributesPending,
+      eventPatternAttributes,
     } = usePatternsFieldsFetching(fetchEventRecordPatternFields);
-
-    const eventPatternAttributes = computed(() => patternsFields.value.event_pattern ?? []);
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
@@ -100,8 +98,9 @@ export default {
       form,
       isDisabled,
       submitting,
+
       eventPatternAttributes,
-      patternsFieldsPending,
+      eventPatternAttributesPending,
 
       submit,
       close,

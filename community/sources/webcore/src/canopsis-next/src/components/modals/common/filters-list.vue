@@ -4,10 +4,10 @@
       <span>{{ $t('common.filters') }}</span>
     </template>
     <template #text="">
-      <c-progress-overlay :pending="pending" />
+      <c-progress-overlay :pending="combinedPending" />
       <filters-list-component
         :filters="filters"
-        :pending="pending"
+        :pending="combinedPending"
         :addable="config.addable"
         :editable="config.editable"
         @input="updateFiltersPositions"
@@ -26,7 +26,6 @@ import { pick } from 'lodash';
 import { MODALS } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
-import { patternsFieldsToForm } from '@/helpers/entities/pattern/fields/form';
 
 import { useInnerModal, useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
@@ -34,7 +33,7 @@ import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useWidget } from '@/hooks/store/modules/widget';
 import { useUserPreference } from '@/hooks/store/modules/user-preference';
-import { usePatternsFields } from '@/hooks/store/modules/patterns-fields';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 import FiltersListComponent from '@/components/other/filter/filters-list.vue';
 
@@ -74,20 +73,15 @@ export default {
 
     const userPreference = computed(() => getUserPreferenceByWidgetId.value(widgetId.value));
 
-    const patternsFields = ref({});
     const { fetchWidgetFilterPatternFields } = usePatternsFields();
-
-    /**
-     * Fetches widget filter pattern fields and transforms them into form-ready format.
-     */
-    const fetchPatternsFields = async () => (
-      patternsFields.value = patternsFieldsToForm(await fetchWidgetFilterPatternFields())
-    );
-
-    const alarmAttributes = computed(() => patternsFields.value.alarm_pattern ?? []);
-    const entityAttributes = computed(() => patternsFields.value.entity_pattern ?? []);
-    const pbehaviorAttributes = computed(() => patternsFields.value.pbehavior_pattern ?? []);
-    const weatherServiceAttributes = computed(() => patternsFields.value.weather_service_pattern ?? []);
+    const {
+      pending: patternsFieldsPending,
+      alarmAttributes,
+      entityAttributes,
+      pbehaviorAttributes,
+      weatherServiceAttributes,
+      fetchPatternsFields,
+    } = usePatternsFieldsFetching(() => fetchWidgetFilterPatternFields(), true);
 
     const modalConfig = computed(() => ({
       ...pick(config.value, [
@@ -123,6 +117,8 @@ export default {
       fetchUserPreferenceItem({ id: config.value.widgetId }),
       fetchPatternsFields(),
     ]), true);
+
+    const combinedPending = computed(() => pending.value || patternsFieldsPending.value);
 
     /**
      * Shows modal for creating a new filter
@@ -230,7 +226,7 @@ export default {
     onMounted(refreshFilters);
 
     return {
-      pending,
+      pending: combinedPending,
       filters,
       config,
       modalConfig,
