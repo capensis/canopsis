@@ -51,7 +51,7 @@ export default {
       pending,
       alarmAttributes,
       entityAttributes,
-    } = usePatternsFieldsFetching(fetchAction);
+    } = usePatternsFieldsFetching(fetchAction, props.readonly);
 
     return {
       /**

@@ -51,7 +51,7 @@ export default {
     const {
       pending,
       entityAttributes,
-    } = usePatternsFieldsFetching(fetchPbehaviorPatternFields);
+    } = usePatternsFieldsFetching(fetchPbehaviorPatternFields, props.readonly);
 
     const { useActions: usePbehaviorPatternActions } = usePbehaviorPatternsStoreModule();
     const { checkPatternsPbehaviorsCount } = usePbehaviorPatternActions({

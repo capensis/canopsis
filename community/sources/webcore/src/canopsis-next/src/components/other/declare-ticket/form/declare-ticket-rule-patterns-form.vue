@@ -32,7 +32,7 @@ export default {
       default: false,
     },
   },
-  setup() {
+  setup(props) {
     const { fetchDeclareTicketRulePatternFields } = usePatternsFields();
     const { hasAnyError } = useValidationHeader();
 
@@ -40,7 +40,7 @@ export default {
       pending,
       alarmAttributes,
       entityAttributes,
-    } = usePatternsFieldsFetching(fetchDeclareTicketRulePatternFields);
+    } = usePatternsFieldsFetching(fetchDeclareTicketRulePatternFields, props.readonly);
 
     return {
       /**

@@ -2,7 +2,7 @@
 
 exports[`pbehavior-patterns-form Renders \`pbehavior-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
-  entity-attributes="[object Object],[object Object],[object Object]"
+  entity-attributes=""
   entity-counters-type=""
   readonly="true"
   required=""

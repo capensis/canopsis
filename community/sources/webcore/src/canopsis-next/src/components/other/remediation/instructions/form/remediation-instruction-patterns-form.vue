@@ -41,7 +41,7 @@ export default {
       default: false,
     },
   },
-  setup() {
+  setup(props) {
     const { fetchInstructionPatternFields } = usePatternsFields();
     const { hasAnyError } = useValidationHeader();
 
@@ -49,7 +49,7 @@ export default {
       pending,
       alarmAttributes,
       entityAttributes,
-    } = usePatternsFieldsFetching(fetchInstructionPatternFields);
+    } = usePatternsFieldsFetching(fetchInstructionPatternFields, props.readonly);
 
     return {
       /**

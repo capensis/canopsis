@@ -40,7 +40,7 @@ export default {
       default: false,
     },
   },
-  setup() {
+  setup(props) {
     const { fetchMetaalarmrulePatternFields } = usePatternsFields();
     const { hasAnyError } = useValidationHeader();
 
@@ -48,7 +48,7 @@ export default {
       pending,
       alarmAttributes,
       entityAttributes,
-    } = usePatternsFieldsFetching(fetchMetaalarmrulePatternFields);
+    } = usePatternsFieldsFetching(fetchMetaalarmrulePatternFields, props.readonly);
 
     return {
       /**

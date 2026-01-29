@@ -31,7 +31,7 @@ export default {
       default: false,
     },
   },
-  setup() {
+  setup(props) {
     const { fetchDynamicInfosPatternFields } = usePatternsFields();
     const { hasAnyError } = useValidationHeader();
 
@@ -39,7 +39,7 @@ export default {
       pending,
       alarmAttributes,
       entityAttributes,
-    } = usePatternsFieldsFetching(fetchDynamicInfosPatternFields);
+    } = usePatternsFieldsFetching(fetchDynamicInfosPatternFields, props.readonly);
 
     return {
       /**
