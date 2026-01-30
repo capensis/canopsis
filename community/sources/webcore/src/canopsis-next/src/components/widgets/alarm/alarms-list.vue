@@ -8,8 +8,8 @@
       align-end
     >
       <v-flex>
-        <c-alarm-advanced-search-field
-          ref="advancedSearchField"
+        <c-alarm-advanced-search
+          ref="alarmAdvancedSearch"
           :searches="searches"
           @submit="updateSearch"
           @reset="resetSearch"

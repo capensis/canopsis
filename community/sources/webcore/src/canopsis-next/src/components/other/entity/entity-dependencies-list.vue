@@ -11,7 +11,7 @@
     <template #toolbar="">
       <v-flex>
         <c-advanced-search
-          :fields="columns"
+          :attributes="advancedSearchAttributes"
           @submit="updateSearchInQuery"
         />
       </v-flex>

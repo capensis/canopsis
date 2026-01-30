@@ -12,10 +12,8 @@
     <template #toolbar="">
       <v-layout class="gap-4 py-4 pt-0" wrap align-end>
         <v-flex>
-          <c-advanced-search
-            :fields="advancedSearchFields"
-            :saved-items="searches"
-            combobox
+          <c-entity-advanced-search
+            :searches="searches"
             @submit="updateSearchInQuery"
             @add:item="addSearchIntoUserPreferences"
             @toggle-pin:item="togglePinSearchInUserPreferences"
@@ -90,10 +88,7 @@ import { USER_PERMISSIONS } from '@/constants';
 import { getContextExportDownloadFileUrl } from '@/helpers/entities/entity/url';
 
 import { authMixin } from '@/mixins/auth';
-import {
-  widgetAdvancedSearchSavedItemsMixin,
-  widgetAdvancedSearchEntityFieldsMixin,
-} from '@/mixins/widget/advanced-search';
+import { widgetAdvancedSearchSavedItemsMixin } from '@/mixins/widget/advanced-search';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -117,7 +112,6 @@ export default {
   mixins: [
     authMixin,
     widgetAdvancedSearchSavedItemsMixin,
-    widgetAdvancedSearchEntityFieldsMixin,
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,

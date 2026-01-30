@@ -33,11 +33,13 @@ export const PBEHAVIOR_TYPE_TYPES_ICONS = {
 
 export const WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE = 'downtime';
 
+export const PBEHAVIOR_PATTERN_PREFIX = 'pbehavior_info.';
+
 export const PBEHAVIOR_PATTERN_FIELDS = {
-  name: 'pbehavior_info.id',
-  reason: 'pbehavior_info.reason',
-  type: 'pbehavior_info.type',
-  canonicalType: 'pbehavior_info.canonical_type',
+  name: `${PBEHAVIOR_PATTERN_PREFIX}id`,
+  reason: `${PBEHAVIOR_PATTERN_PREFIX}reason`,
+  type: `${PBEHAVIOR_PATTERN_PREFIX}type`,
+  canonicalType: `${PBEHAVIOR_PATTERN_PREFIX}canonical_type`,
 };
 
 export const PBEHAVIOR_INFO_FIELDS = {

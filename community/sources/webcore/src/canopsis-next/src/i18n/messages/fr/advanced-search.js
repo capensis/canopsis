@@ -1,4 +1,4 @@
-import { ALARM_ADVANCED_SEARCH_GROUPS } from '@/constants';
+import { ADVANCED_SEARCH_GROUPS } from '@/constants';
 
 export default {
   title: 'Recherche Avancée',
@@ -11,14 +11,14 @@ export default {
   definedDifferent: 'La valeur diffère de celle définie',
 
   groups: {
-    [ALARM_ADVANCED_SEARCH_GROUPS.basic]: 'Basique',
-    [ALARM_ADVANCED_SEARCH_GROUPS.messages]: 'Messages',
-    [ALARM_ADVANCED_SEARCH_GROUPS.ticket]: 'Ticket',
-    [ALARM_ADVANCED_SEARCH_GROUPS.dates]: 'Dates',
-    [ALARM_ADVANCED_SEARCH_GROUPS.actions]: 'Actions',
-    [ALARM_ADVANCED_SEARCH_GROUPS.entity]: 'Entité',
-    [ALARM_ADVANCED_SEARCH_GROUPS.alias]: 'Alias',
-    [ALARM_ADVANCED_SEARCH_GROUPS.pbehavior]: 'Comportements périodiques',
+    [ADVANCED_SEARCH_GROUPS.basic]: 'Basique',
+    [ADVANCED_SEARCH_GROUPS.messages]: 'Messages',
+    [ADVANCED_SEARCH_GROUPS.ticket]: 'Ticket',
+    [ADVANCED_SEARCH_GROUPS.dates]: 'Dates',
+    [ADVANCED_SEARCH_GROUPS.actions]: 'Actions',
+    [ADVANCED_SEARCH_GROUPS.entity]: 'Entité',
+    [ADVANCED_SEARCH_GROUPS.alias]: 'Alias',
+    [ADVANCED_SEARCH_GROUPS.pbehavior]: 'Comportements périodiques',
   },
 
   searchForThisText: 'Appuyez sur <kbd>Entrée</kbd> pour rechercher ce texte',

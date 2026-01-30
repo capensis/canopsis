@@ -2,7 +2,7 @@
   <v-menu
     :nudge-bottom="1"
     :transition="false"
-    content-class="c-alarm-advanced-search__history-menu"
+    content-class="c-advanced-search__history-menu"
     bottom
     offset-y
   >
@@ -21,7 +21,7 @@
         @click="select(search)"
       >
         <v-list-item-content class="pa-0">
-          <alarm-advanced-search-rules
+          <advanced-search-rules
             :rules="search.rules"
             :attributes="attributes"
             disabled
@@ -42,13 +42,13 @@
 <script>
 import { computed, ref } from 'vue';
 
-import { advancedSearchToForm } from '@/helpers/search/alarm-advanced-search';
+import { advancedSearchToForm } from '@/helpers/search/advanced-search';
 
 import AdvancedSearchHistoryItemBtns from './advanced-search-history-item-btns.vue';
-import AlarmAdvancedSearchRules from './alarm-advanced-search-rules.vue';
+import AdvancedSearchRules from './advanced-search-rules.vue';
 
 export default {
-  components: { AdvancedSearchHistoryItemBtns, AlarmAdvancedSearchRules },
+  components: { AdvancedSearchHistoryItemBtns, AdvancedSearchRules },
   props: {
     searches: {
       type: Array,
@@ -102,7 +102,7 @@ export default {
 </script>
 
 <style lang="scss">
-.c-alarm-advanced-search__history-menu {
+.c-advanced-search__history-menu {
   max-height: 95vh;
 }
 </style>
