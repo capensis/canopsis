@@ -214,6 +214,9 @@ db.NOM_DE_LA_COLLECTION.find() # Permet de trouver une information
 db.NOM_DE_LA_COLLECTION.countDocuments() # Permet de compter le nombre de documents dans une collection
 ```
 
+Documentation de la commande `find()`: [db.collection.find() (mongosh method)](https://www.mongodb.com/docs/manual/reference/method/db.collection.find/)
+Documentation de la commande `countDocuments`: [db.collection.countDocuments() (mongosh method)](https://www.mongodb.com/docs/manual/reference/method/db.collection.countDocuments/) 
+
 Pour plus d'informations sur les commandes de l'utilitaire `mongosh`, référer à la documentation officiel : [Documentation Mongosh](https://www.mongodb.com/docs/mongodb-shell/run-commands/)
 
 Généralement, ces commandes sont utilisés avec par exemple sur les collections : `periodical_alarm`, `default_entities`, `alarm_tag`, `pbehavior`.
@@ -235,6 +238,22 @@ db.periodical_alarm.find({'v.component':'Nom du composant'})
 db.periodical_alarm.find({'v.resource':'Nom de la ressource'})
 ```
 
+- Récupérer l'entièreté des alarmes actuellement ouvertes portant sur une couple `composant`/`ressource`
+```js
+db.periodical_alarm.find({"v.component" : "Nom du composant", "v.resource" : "Nom de la ressource"})
+```
+
+- Récupérer l'entièreté des alarmes actuellement ouvertes qui n'ont pas été mise à jour depuis une date spécifiée
+```js
+db.periodical_alarm.find({"v.last_update_date":{$lte:1546300800}})
+```
+*Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.*
+
+- Récupérer l'entièreté des alarmes actuellement ouvertes qui ont été ouverte à une date spécifique
+```js
+db.periodical_alarm.find({created: { $gte: Long("1769644800"), $lte: Long("1769731199")}}) # Ici on cherche toutes les alarmes crées entre le 29 Janvier 2026 (soit du 29 Janvier 2026 00:00:00 au 29 Janvier 2026 23:59:59)
+```
+
 #### Rechercher des informations liées à un tag
 
 - Trouver les alarmes actuellement ouvertes qui correspondent à un/des tags
@@ -246,7 +265,6 @@ db.periodical_alarm.find({tags: { $in: ["une", "liste", "de", "tags"] }}) # Cher
 ```js
 db.periodical_alarm.countDocuments({tags: { $in: ["une", "liste", "de", "tags"] }}) # Cherche à matcher avec un ou plusieurs tags de la liste
 ```
-
 
 - Trouver les alarmes actuellement ouvertes qui correspondent exactement à un tag ou une liste de tags :
 ```js
@@ -304,8 +322,6 @@ db.default_entities.aggregate([
 ]);
 ```
 
-
-
 #### Trouver les comportements périodiques qui agissent sur un nombre important d'alarmes/entités
 
 ```js
@@ -319,6 +335,13 @@ db.periodical_alarm.aggregate([{ $match:{ "v.pbehavior_info.id":{ $exists:true }
   }
 ]
 ```
+
+#### Trouver les comportements périodiques qui ont été créé dans une date X et une date Y
+
+```js
+db.pbehavior.find({created: { $gte: Long("DATE_MIN"), $lte: Long("DATE_MAX")}})
+```
+*Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.*
 
 #### Rechercher les requêtes et les collections qui sont visées par des requêtes dont le temps d'exécution est supérieur à 1 seconde ( pour appliquer des indexes )
 
