@@ -108,8 +108,6 @@ Il faut ensuite procéder à la création d'un nouveau `scénario` de type `webh
     - Type: `Webhook`
     - Transmettre l'auteur à l'étape suivante : `Oui`
     - Comportement si le pattern ne matche pas : `Fin`
-    - Comportement en cas d'échec : `Fin`
-    - Comportement en cas de succès : `Fin`
     - Général :
         - Méthode: `POST`
         - URL: `https://URL-DU-CENTREON/centreon/api/latest/monitoring/hosts/{{ .Entity.Infos.host_id.Value }}/services/{{ .Entity.Infos.service_id.Value }}/acknowledgements`
