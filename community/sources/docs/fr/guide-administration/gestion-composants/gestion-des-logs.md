@@ -4,100 +4,103 @@
 
 === "RPM (EL8/EL9)"
 
-       L'écriture des logs de Canopsis est gérée par `journald`, la rotation des logs est donc gérée nativement sans devoir passer par logrotate.
-!!!Warning
-    Attention néanmoins à activer la persistance de journald pour garder les logs après un reboot du serveur ( cf : https://docs.redhat.com/fr/documentation/red_hat_enterprise_linux/7/html/system_administrators_guide/s1-using_the_journal#s2-Enabling_Persistent_Storage )
+    L'écriture des logs de Canopsis est gérée par `journald`, la rotation des logs est donc gérée nativement sans devoir passer par logrotate.
 
+    !!! warning "Vérification OS"
+
+        Attention néanmoins à activer la persistance de journald pour garder les logs après un reboot du serveur ( cf : [Activation de la persistance journald](https://docs.redhat.com/fr/documentation/red_hat_enterprise_linux/7/html/system_administrators_guide/s1-using_the_journal#s2-Enabling_Persistent_Storage) )
        
     * Pour visualiser les logs de Canopsis, il faut utiliser la commande suivante
 
-       ```sh
-       journalctl -u 'canopsis*' -f
-       ```
+    ```sh
+    journalctl -u 'canopsis*' -f
+    ```
 
-       Pour récupérer les logs d'un seul service, remplacer `canopsis*` par le nom d'un des services de Canopsis.  
-       Pour voir la liste des services de Canopsis :
-       
-       ```sh
-       systemctl list-dependencies canopsis.service --type=service --no-pager | grep -E 'canopsis'
-       ```
+    Pour récupérer les logs d'un seul service, remplacer `canopsis*` par le nom d'un des services de Canopsis.  
+      
+    * Pour voir la liste des services de Canopsis :
+      
+    ```sh
+    systemctl list-dependencies canopsis.service --type=service --no-pager | grep -E 'canopsis'
+    ```
        
 === "Docker Compose"
 
-       Pour voir les logs de Canopsis dans Docker Compose, il faut utiliser les commandes suivantes.
+    Pour voir les logs de Canopsis dans Docker Compose, il faut utiliser les commandes suivantes.
 
-       * Voir la liste des services de Canopsis : 
-       ```sh
-       docker compose config --services
-       ```
+    * Voir la liste des services de Canopsis : 
+    ```sh
+    docker compose config --services
+    ```
 
-       * Récupérer le nom du service et consulter les logs : 
-       ```sh
-       docker compose logs [service]
-       ```
+    * Récupérer le nom du service et consulter les logs : 
+    ```sh
+    docker compose logs [service]
+    ```
 
-       * Pour afficher les logs en temps réel :
-       ```sh
-       docker compose logs -f [service]
-       ```
+    * Pour afficher les logs en temps réel :
+    ```sh
+    docker compose logs -f [service]
+    ```
 
 === "Helm"
 
-       * Pour voir les logs de Canopsis dans Kubernetes utiliser la commande `kubectl`
+    * Pour voir les logs de Canopsis dans Kubernetes utiliser la commande `kubectl`
 
-       * Voir la liste des pods actifs de Canopsis : 
-       ```sh
-       kubectl get pods -n canopsis
-       ```
+    * Voir la liste des pods actifs de Canopsis : 
+    ```sh
+    kubectl get pods -n canopsis
+    ```
 
-       * Récupérer le nom du pod et consulter les logs : 
-       ```sh
-       kubectl logs -n canopsis [nom du pod]
-       ```
+    * Récupérer le nom du pod et consulter les logs : 
+    ```sh
+    kubectl logs -n canopsis [nom du pod]
+    ```
 
-       * Pour voir les logs en temps réel :
-       ```sh
-       kubectl logs -n canopsis -f [nom du pod]
-       ```
+    * Pour voir les logs en temps réel :
+    ```sh
+    kubectl logs -n canopsis -f [nom du pod]
+    ```
 
 ## Extraire les logs
 
 === "RPM (EL8/EL9)"
 
-       * Extraire les logs concernant des erreurs : 
-       ```sh
-       journalctl -u 'canopsis*' -f | grep -i "err" > canopsis-journald-$(date +%F_%H-%M).log
-       ```
+    * Extraire les logs concernant des erreurs : 
+    ```sh
+    journalctl -u 'canopsis*' -f | grep -i "err" > canopsis-journald-$(date +%F_%H-%M).log
+    ```
 
-       * Récupérer les logs à partir d'une date :
-       ```sh
-       journalctl -u 'canopsis*' --since "2026-01-28 10:00" -f > canopsis-journald-$(date +%F_%H-%M).log
-       ```
+    * Récupérer les logs à partir d'une date :
+    ```sh
+    journalctl -u 'canopsis*' --since "2026-01-28 10:00" -f > canopsis-journald-$(date +%F_%H-%M).log
+    ```
        
 === "Docker Compose"
 
-       * Extraire les logs concernant des erreurs :
-       ```sh
-       docker compose logs [service] | grep -i "err" > canopsis-dockercompose-$(date +%F_%H-%M).log
-       ```
+    * Extraire les logs concernant des erreurs :
+    ```sh
+    docker compose logs [service] | grep -i "err" > canopsis-dockercompose-$(date +%F_%H-%M).log
+    ```
 
-       * Récupérer les logs à partir d'une date :
-       ```sh
-       docker compose logs --since $(date -d "2026-01-28 10:00" +%s) [service] > canopsis-dockercompose-$(date +%F_%H-%M).log
-       ```
-       *Docker utilise les timestamp au format UNIX, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.*
+    * Récupérer les logs à partir d'une date :
+    ```sh
+    docker compose logs --since $(date -d "2026-01-28 10:00" +%s) [service] > canopsis-dockercompose-$(date +%F_%H-%M).log
+    ```
+
+    *Docker utilise les timestamp au format UNIX, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.*
 
 === "Helm"
 
-       * Extraire les logs concernant des erreurs :
-       ```sh
-       kubectl logs -n canopsis [nom du pod] | grep -i err > canopsis-helm-$(date +%F_%H-%M).log
-       ```
+    * Extraire les logs concernant des erreurs :
+    ```sh
+    kubectl logs -n canopsis [nom du pod] | grep -i err > canopsis-helm-$(date +%F_%H-%M).log
+    ```
 
-       * Récupérer les logs à partir d'une date :
-       ```sh
-       kubectl logs -n canopsis [nom-du-pod] --since-time="2026-01-28T10:00:00Z" > canopsis-helm-$(date +%F_%H-%M).log
-       ```
+    * Récupérer les logs à partir d'une date :
+    ```sh
+    kubectl logs -n canopsis [nom-du-pod] --since-time="2026-01-28T10:00:00Z" > canopsis-helm-$(date +%F_%H-%M).log
+    ```
 
 ## Rotation des logs
 
@@ -161,21 +164,21 @@ Deux modes sont disponible, soit via Logrotate, soit via journald
 
 === "Logrotate"
 
-       Configurer logrotate pour timescaledb :
+    Configurer logrotate pour timescaledb :
 
-       ```sh
-       cat > /etc/logrotate.d/canopsis-timescaledb.conf << EOF
-       /var/lib/pgsql/17/data/log/*.log {
-              daily
-              rotate 30
-              copytruncate
-              delaycompress
-              compress
-              notifempty
-              missingok
-       }
-       EOF
-       ```
+    ```sh
+    cat > /etc/logrotate.d/canopsis-timescaledb.conf << EOF
+    /var/lib/pgsql/17/data/log/*.log {
+            daily
+            rotate 30
+            copytruncate
+            delaycompress
+            compress
+            notifempty
+            missingok
+    }
+    EOF
+    ```
 
 === "journald"
 
