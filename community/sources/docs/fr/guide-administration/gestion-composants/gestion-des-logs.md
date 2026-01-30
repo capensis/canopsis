@@ -6,7 +6,7 @@
 
        L'écriture des logs de Canopsis est gérée par `journald`, la rotation des logs est donc gérée nativement sans devoir passer par logrotate.
 !!!Warning
-    Attention néanmoins à activer la persistance de journald pour garder les logs après un reboot du serveur
+    Attention néanmoins à activer la persistance de journald pour garder les logs après un reboot du serveur ( cf : https://docs.redhat.com/fr/documentation/red_hat_enterprise_linux/7/html/system_administrators_guide/s1-using_the_journal#s2-Enabling_Persistent_Storage )
 
        Pour visualiser les logs de Canopsis, il faut utiliser la commande suivante
 
