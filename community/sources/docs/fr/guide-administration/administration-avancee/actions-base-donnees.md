@@ -230,14 +230,14 @@ db.periodical_alarm.find({'v.connector':'Nom du connecteur'})
 db.periodical_alarm.find({'v.component':'Nom du composant'})
 ```
 
-Récupérer l'entièreté des alarmes actuellement ouvertes qui possèdent une même `ressource`
+- Récupérer l'entièreté des alarmes actuellement ouvertes portant sur une même `ressource`
 ```js
 db.periodical_alarm.find({'v.resource':'Nom de la ressource'})
 ```
 
 #### Rechercher des informations liées à un tag
 
-Trouver les alarmes actuellement ouvertes qui correspondent à un/des tags
+- Trouver les alarmes actuellement ouvertes qui correspondent à un/des tags
 ```js
 db.periodical_alarm.find({tags: { $in: ["une", "liste", "de", "tags"] }}) # Cherche à matcher avec un ou plusieurs tags de la liste
 ```
@@ -255,7 +255,7 @@ db.periodical_alarm.find({"tags": "tag" }}) # Match exactement un tag
 db.periodical_alarm.find({tags: { $all: ["une", "liste", "de", "tags"] }}) # Match exactement une liste de tags
 ```
 
-Compter les alarmes actuellement ouvertes qui correspondent exactement à une liste tags
+- Compter les alarmes actuellement ouvertes qui correspondent exactement à un tag ou une liste de tags
 ```js
 db.periodical_alarm.countDocuments({"tags": "tag" }}) # Match exactement un tag
 
