@@ -115,7 +115,7 @@ Avant de procéder à la restauration, arrêtez l'hyperviseur.
     kubectl delete deployments --all
     ```
 
-Une fois Canopsis éteint, il est nécessaire de supprimer les bases `canopsis` et/ou `canopsis_tech_metrics` avant de lancer la restauration
+Une fois Canopsis éteint, il est nécessaire de supprimer les tables des bases `canopsis` et/ou `canopsis_tech_metrics` avant de lancer la restauration
 
 Pour la base `canopsis`:
 ```sh
