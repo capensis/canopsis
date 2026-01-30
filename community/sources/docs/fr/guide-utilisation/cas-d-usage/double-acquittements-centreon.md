@@ -125,6 +125,11 @@ Il faut ensuite procéder à la création d'un nouveau `scénario` de type `webh
 "is_sticky": true
 }
 ```
+- Modèles des alarmes:
+    - Condition:
+        - Recherché par: `Origine de l'acquittement`
+        - Condition: `Egal`
+        - Valeur: `user`
 - Modèles des entités:
     - Condition:
         - Recherché par: `Type du connecteur`
