@@ -4,7 +4,7 @@
 
 === "RPM (EL8/EL9)"
 
-       L'écriture des logs de Canopsis est géré par `journald`, la rotation des logs est donc gérée nativement sans devoir passer par logrotate.
+       L'écriture des logs de Canopsis est gérée par `journald`, la rotation des logs est donc gérée nativement sans devoir passer par logrotate.
 !!!Warning
     Attention néanmoins à activer la persistance de journald pour garder les logs après un reboot du serveur
 
