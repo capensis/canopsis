@@ -1,10 +1,11 @@
 # Acquittement vers centreon
 
-Lorsqu'un acquittement est positionné chez Centreon, il est aussi positionné sur l'alarme dans Canopsis. Ce cas d'usage montre comment positionner un acquittement sur Canopsis et qu'il soit positionné en retour sur Centreon.
+Lorsqu'un acquittement est positionné du côté Centreon, il est nativement envoyé a Canopsis et positionné sur l'alarme ( si la configuration associée est activée ) par le Stream Connector.
+Ce cas d'usage montre comment faire suivre un acquittement réalisé sur Canopsis vers Centreon en se servant de l'API de celui-ci.
 
 ## Pré-requis:
-- Un Centreon avec le Stream Connector de configurer pour envoyer les événements de Centreon vers Canopsis : [Canopsis Events](https://docs.centreon.com/fr/docs/integrations/data-analytics/sc-canopsis-events/)
-- Avoir créer un utilisateur Canopsis avec les bonnes ACL pour réaliser les actions suivantes.
+- Une instance Centreon avec le Stream Connector de configuré pour envoyer des événements de Centreon vers Canopsis : [Canopsis Events](https://docs.centreon.com/fr/docs/integrations/data-analytics/sc-canopsis-events/)
+- Avoir créé un utilisateur Canopsis avec les bonnes ACL pour réaliser les actions suivantes :
     - Droits nécessaires:
         - Gestion des accès aux ressources :
             - Host Resources :
@@ -26,16 +27,16 @@ Lorsqu'un acquittement est positionné chez Centreon, il est aussi positionné s
 ## Centreon
 ### Créer un token API pour Canopsis
 
-Une fois l'utilisateur pour Canopsis créé et que les ACL sont bien configurées, se rendre sur la page `Administration > API Tokens` et créer un token pour l'utilistaeur Canopsis
+Une fois qu'un utilisateur dédié à Canopsis a été créé et que ses ACL ont bien été configurées, se rendre sur la page `Administration > API Tokens` et créer un token pour l'utilisateur Canopsis
 
 ![Centreon 1](./img/centreon-1.png)
 
-Récupérer et sauvegarder le token généré de côté pour le moment, il sera nécessaire plus tard.
+Récupérer et sauvegarder le token généré, il sera nécessaire pour plus tard.
 
 ## Canopsis
 ### Créer une règle d'enrichissement d'entité 
 
-Pour pouvoir faire la requête d'acquittement vers Centreon, deux éléments seront nécessaires, le `host_id` et le `service_id`. Ces deux éléments devront être enrichi pour être placer dans les informations de l'entité et permettre d'utiliser ces valeurs dans le scénario.
+Pour pouvoir faire la requête d'acquittement vers Centreon, deux éléments seront nécessaires : le `host_id` et le `service_id`. Ces deux éléments devront être enrichis pour être placés dans les informations de l'entité et permettre leur utilisation dans un webhook de scénario.
 
 Exemple d'un événement en sortie du Stream Connector : 
 ```json
@@ -99,7 +100,7 @@ Une fois qu'un événement est envoyé et que l'alarme est créée, vérifier qu
 
 ### Créer un scénario de type webhook
 
-Créer un nouveau scénario de type webhook : 
+Il faut ensuite procéder à la création d'un nouveau `scénario` de type `webhook` en s'inspirant de l'exemple ci-dessous ( celui-ci sera automatiquement déclenché lors d'un action d’acquittement réalisée sur Canopsis ) : 
 
 - Nom: `Acquittement Centreon`
 - Déclencheurs: `Alarme acquittée`
@@ -140,9 +141,9 @@ Créer un nouveau scénario de type webhook :
         - Champ: `Nom`
         - Condition: `Existe`
 
-## Tester un aquittement
+## Tester un acquittement
 
-Appliquer un acquittement côté Canopsis
+Poser un acquittement côté Canopsis
 
 ![Centreon 3](./img/centreon-3.png)
 
