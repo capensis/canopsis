@@ -24,12 +24,12 @@ import {
 } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
-import { formToAdvancedSearch } from '@/helpers/search/alarm-advanced-search';
+import { formToAdvancedSearch } from '@/helpers/search/advanced-search';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
 
 const stubs = {
-  'c-alarm-advanced-search-field': true,
+  'c-alarm-advanced-search': true,
   'c-entity-category-field': true,
   'v-switch': true,
   'filter-selector': true,
@@ -51,7 +51,7 @@ const stubs = {
 };
 
 const snapshotStubs = {
-  'c-alarm-advanced-search-field': true,
+  'c-alarm-advanced-search': true,
   'c-entity-category-field': true,
   'v-switch': true,
   'filter-selector': true,
@@ -74,7 +74,7 @@ const selectExportButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1)
 const selectLiveReportingButton = wrapper => wrapper.findAll('c-action-btn-stub').at(0);
 const selectInstructionsFiltersField = wrapper => wrapper.find('alarms-list-remediation-instructions-filter-stub');
 const selectRemoveHistoryButton = wrapper => wrapper.find('v-chip-stub');
-const selectAlarmAdvancedSearchField = wrapper => wrapper.find('c-alarm-advanced-search-field-stub');
+const selectAlarmAdvancedSearchField = wrapper => wrapper.find('c-alarm-advanced-search-stub');
 const selectAlarmsListTable = wrapper => wrapper.find('.alarms-list-table');
 
 describe('alarms-list', () => {

@@ -13,7 +13,7 @@
               <v-chip
                 :close="closable && !disabled"
                 :color="color"
-                class="c-alarm-advanced-search__chip c-alarm-advanced-search__array-chip"
+                class="c-advanced-search__chip c-advanced-search__array-chip"
                 v-on="multipleChipListeners"
               >
                 <v-progress-circular
@@ -63,7 +63,7 @@
                 v-if="!active && !alwaysActive"
                 :color="color"
                 :close="closable && !disabled"
-                class="c-alarm-advanced-search__chip"
+                class="c-advanced-search__chip"
                 v-on="chipListeners"
               >
                 <v-progress-circular

@@ -1,10 +1,12 @@
 <template>
   <div class="availability-widget-filters col-gap-6 row-gap-3">
-    <c-advanced-search
-      :tooltip="$t('availability.advancedSearch')"
-      :fields="columns"
-      class="pa-0 availability-widget-filters__search"
+    <c-availability-advanced-search
+      :searches="searches"
+      class="mt-0 availability-widget-filters__search"
       @submit="updateSearchInQuery"
+      @add:item="addSearchIntoUserPreferences"
+      @toggle-pin:item="togglePinSearchInUserPreferences"
+      @remove:item="removeSearchFromUserPreferences"
     />
     <c-quick-date-interval-field
       v-if="showInterval"
@@ -79,9 +81,11 @@
 
 <script>
 import { debounce } from 'lodash';
-import { ref, watch } from 'vue';
+import { ref, toRef, watch } from 'vue';
 
 import { AVAILABILITY_QUICK_RANGES } from '@/constants';
+
+import { useWidgetAdvancedSearchSavedItems } from '@/hooks/widget/advanced-search-saved-items';
 
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
@@ -175,6 +179,13 @@ export default {
     const localValueFilter = ref();
     const quickRanges = Object.values(AVAILABILITY_QUICK_RANGES);
 
+    const {
+      searches,
+      addSearchIntoUserPreferences,
+      togglePinSearchInUserPreferences,
+      removeSearchFromUserPreferences,
+    } = useWidgetAdvancedSearchSavedItems({ widgetId: toRef(props, 'widgetId') });
+
     watch(
       () => props.valueFilter,
       () => {
@@ -199,7 +210,11 @@ export default {
       localValueFilter,
       quickRanges,
 
+      searches,
       updateSearchInQuery,
+      addSearchIntoUserPreferences,
+      togglePinSearchInUserPreferences,
+      removeSearchFromUserPreferences,
       handleUpdateValueFilter,
     };
   },
