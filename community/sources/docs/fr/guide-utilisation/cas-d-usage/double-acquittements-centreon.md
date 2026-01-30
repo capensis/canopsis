@@ -16,7 +16,7 @@ Ce cas d'usage montre comment faire suivre un acquittement réalisé sur Canopsi
                 - `Disacknowledge a service`
             - Hosts Actions Access : 
                 - `Acknowledge a host`
-                - `Disaknowledge a host`
+                - `Disacknowledge a host`
 
 ## Documentation externe : 
 - [Canopsis Events](https://docs.centreon.com/fr/docs/integrations/data-analytics/sc-canopsis-events/)
