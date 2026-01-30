@@ -245,13 +245,60 @@ db.periodical_alarm.find({"v.component" : "Nom du composant", "v.resource" : "No
 
 - Récupérer l'entièreté des alarmes actuellement ouvertes qui n'ont pas été mise à jour depuis une date spécifiée
 ```js
-db.periodical_alarm.find({"v.last_update_date":{$lte:1546300800}})
+db.periodical_alarm.find({
+  $expr: {
+    $gt: [
+      "$v.last_update_date",
+      { $floor: { $divide: [ { $toLong: ISODate("2026-01-29T00:00:00Z") }, 1000 ] } }
+    ]
+  }
+})
 ```
-*Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.*
 
-- Récupérer l'entièreté des alarmes actuellement ouvertes qui ont été ouverte à une date spécifique
+- Récupérer l'entièreté des alarmes actuellement ouvertes qui ont été créée avant une date spécifique
 ```js
-db.periodical_alarm.find({created: { $gte: Long("1769644800"), $lte: Long("1769731199")}}) # Ici on cherche toutes les alarmes crées entre le 29 Janvier 2026 (soit du 29 Janvier 2026 00:00:00 au 29 Janvier 2026 23:59:59)
+db.periodical_alarm.find({
+  $expr: {
+    $lt: [
+      "$v.creation_date",
+      { $floor: { $divide: [ { $toLong: ISODate("2026-01-29T00:00:00Z") }, 1000 ] } }
+    ]
+  }
+})
+```
+
+- Récupérer l'entièreté des alarmes actuellement ouvertes qui ont été créée après une date spécifique
+```js
+db.periodical_alarm.find({
+  $expr: {
+    $gt: [
+      "$v.creation_date",
+      { $floor: { $divide: [ { $toLong: ISODate("2026-01-29T00:00:00Z") }, 1000 ] } }
+    ]
+  }
+})
+```
+
+- Récupérer l'entièreté des alarmes actuellement ouvertes qui ont été ouverte à une date spécifique ou entre une date X et Y
+```js
+db.periodical_alarm.find({
+  $expr: {
+    $and: [
+      {
+        $gte: [
+          "$v.creation_date",
+          { $floor: { $divide: [ { $toLong: ISODate("2026-01-28T00:00:00Z") }, 1000 ] } }
+        ]
+      },
+      {
+        $lte: [
+          "$v.creation_date",
+          { $floor: { $divide: [ { $toLong: ISODate("2026-01-28T23:59:59Z") }, 1000 ] } }
+        ]
+      }
+    ]
+  }
+})
 ```
 
 #### Rechercher des informations liées à un tag
@@ -338,10 +385,51 @@ db.periodical_alarm.aggregate([{ $match:{ "v.pbehavior_info.id":{ $exists:true }
 
 #### Trouver les comportements périodiques qui ont été créé dans une date X et une date Y
 
+- Récupérer les comportement périodiques qui ont été créé avant une date spécifique
 ```js
-db.pbehavior.find({created: { $gte: Long("DATE_MIN"), $lte: Long("DATE_MAX")}})
+db.pbehavior.find({
+  $expr: {
+    $lt: [
+      "$created",
+      { $floor: { $divide: [ { $toLong: ISODate("2026-01-29T00:00:00Z") }, 1000 ] } }
+    ]
+  }
+})
 ```
-*Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.*
+
+- Récupérer les comportement périodiques qui ont été créé avant une date spécifique
+```js
+db.pbehavior.find({
+  $expr: {
+    $gt: [
+      "$created",
+      { $floor: { $divide: [ { $toLong: ISODate("2026-01-29T00:00:00Z") }, 1000 ] } }
+    ]
+  }
+})
+```
+
+- Récupérer les comportement périodiques qui ont été créé à une date spécifique ou entre une date X et Y
+```js
+db.pbehavior.find({
+  $expr: {
+    $and: [
+      {
+        $gte: [
+          "$created",
+          { $floor: { $divide: [ { $toLong: ISODate("2026-01-28T00:00:00Z") }, 1000 ] } }
+        ]
+      },
+      {
+        $lte: [
+          "$created",
+          { $floor: { $divide: [ { $toLong: ISODate("2026-01-28T23:59:59Z") }, 1000 ] } }
+        ]
+      }
+    ]
+  }
+})
+```
 
 #### Rechercher les requêtes et les collections qui sont visées par des requêtes dont le temps d'exécution est supérieur à 1 seconde ( pour appliquer des indexes )
 
@@ -374,6 +462,9 @@ Pour visualiser les indexs qui ont été créés sur une collection, exécuter l
 db.NOM_DE_LA_COLLECTION.getIndexes()
 ```
 
+#### Date Unix
+
+Pour les requêtes sur les dates, si vous souhaitez utiliser les timestamp UNIX, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.
 
 
 
