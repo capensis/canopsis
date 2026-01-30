@@ -1,6 +1,104 @@
 # Gestion des fichiers journaux
 
-## Docker Compose
+## Consultation des logs
+
+=== "RPM (EL8/EL9)"
+
+       Les logs de Canopsis sont gérées par `journald`, la rotation des logs est donc gérée par journald et non par logrotate.
+
+       Pour voir les logs de canopsis, il faut désormais passer par 
+
+       ```sh
+       journalctl -u 'canopsis*' -f
+       ```
+
+       Pour récupérer les logs d'un seul service, remplacer `canopsis*` par le nom d'un des services de Canopsis.  
+       Pour voir la liste des services de canopsis :
+       
+       ```sh
+       systemctl list-dependencies canopsis.service --type=service --no-pager | grep -E 'canopsis'
+       ```
+       
+=== "Docker Compose"
+
+       Pour voir les logs de Canopsis dans Docker compose, utiliser le système de docker.
+
+       Voir la liste des services de Canopsis : 
+       ```sh
+       docker compose config --services
+       ```
+
+       Récupérer le nom du service et ouvrir les logs : 
+       ```sh
+       docker compose logs [service]
+       ```
+
+       Pour voir les logs en temps réel :
+       ```sh
+       docker compose logs -f [service]
+       ```
+
+=== "Helm"
+
+       Pour voir les logs de Canopsis dans Kubernetes utiliser le système de kubectl.
+
+       Voir la liste des pods actifs de Canopsis : 
+       ```sh
+       kubectl get pods -n canopsis
+       ```
+
+       Récupérer le nom du pod et ouvrir les logs : 
+       ```sh
+       kubectl logs -n canopsis [nom du pod]
+       ```
+
+       Pour voir les logs en temps réel :
+       ```sh
+       kubectl logs -n canopsis -f [nom du pod]
+       ```
+
+## Extraire les logs
+
+=== "RPM (EL8/EL9)"
+
+       Extraire les logs en erreur : 
+       ```sh
+       journalctl -u 'canopsis*' -f | grep -i "err" > canopsis-journald-$(date +%F_%H-%M).log
+       ```
+
+       Récupérer les logs depuis X temps :
+       ```sh
+       journalctl -u 'canopsis*' --since "2026-01-28 10:00" -f > canopsis-journald-$(date +%F_%H-%M).log
+       ```
+       
+=== "Docker Compose"
+
+       Récupérer les logs en erreur : 
+       ```sh
+       docker compose logs [service] | grep -i "err" > canopsis-dockercompose-$(date +%F_%H-%M).log
+       ```
+
+       Récupérer les logs depuis X temps : 
+       ```sh
+       docker compose logs --since $(date -d "2026-01-28 10:00" +%s) [service] > canopsis-dockercompose-$(date +%F_%H-%M).log
+       ```
+       *Docker utilise les timestamp au format UNIX, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.*
+
+=== "Helm"
+
+       Récupérer les logs en erreur : 
+       ```sh
+       kubectl logs -n canopsis [nom du pod] | grep -i err > canopsis-helm-$(date +%F_%H-%M).log
+       ```
+
+       Récupérer les logs depuis X temps :
+       ```sh
+       kubectl logs -n canopsis [nom-du-pod] --since-time="2026-01-28T10:00:00Z" > canopsis-helm-$(date +%F_%H-%M).log
+       ```
+
+## Rotation des logs
+
+### Docker Compose
 
 La mise en place d'une politique de rétention des logs nécessite la présence du logiciel `logrotate`.
 
@@ -30,26 +128,9 @@ Si vous souhaitez forcer une exécution manuelle de cette rotation sur-le-champ,
 ```sh
 logrotate -fv /etc/logrotate.d/docker-container
 ```
+### RPM (EL8, EL9)
 
-## RPM (el8/el9)
-
-Les logs de Canopsis sont gérées par `journald`, la rotation des logs est donc gérée par journald et non par logrotate.
-
-Pour voir les logs de canopsis, il faut désormais passer par 
-
-```sh
-journalctl -u 'canopsis*' -f
-```
-
-!!! important
-
-       Si vous souhaitez avoir les logs d'un seul service, vous devez remplacer `canopsis*` par le nom d'un des services de Canopsis.  
-       Pour voir la liste des services de canopsis :
-       ```sh
-       systemctl list-dependencies canopsis.service --type=service --no-pager | grep -E 'canopsis'
-       ```
-
-### Rotation des logs de MongoDB
+#### Rotation des logs de MongoDB
 
 MongoDB, la base de données utilisée par Canopsis produit également des fichiers journaux qu'il convient de limiter.
 
@@ -69,7 +150,7 @@ cat > /etc/logrotate.d/canopsis-mongodb.conf << EOF
 EOF
 ```
 
-### Rotation des logs de TimescaleDB
+#### Rotation des logs de TimescaleDB
 
 TimescaleDB est la base utilisé pour logger les actions, les tech metrics, etc.. Elle produit également des fichiers journaux qu'il convient de limiter.
 
@@ -107,7 +188,8 @@ Deux modes sont disponible, soit via Logrotate, soit via journald
     systemctl restart postgresql-17.service
     ```
 
-### Rotation des logs de RabbitMQ
+#### Rotation des logs de RabbitMQ
+
 ```sh
 cat > /etc/logrotate.d/canopsis-rabbitmq.conf << EOF
 /var/log/rabbitmq/*.log {
@@ -122,7 +204,7 @@ cat > /etc/logrotate.d/canopsis-rabbitmq.conf << EOF
 EOF
 ```
 
-### Rotation des logs de Valkey
+#### Rotation des logs de Valkey
 
 ```sh
 cat > /etc/logrotate.d/canopsis-valkey.conf << EOF
