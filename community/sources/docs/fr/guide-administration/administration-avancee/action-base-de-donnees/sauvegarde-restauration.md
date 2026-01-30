@@ -36,6 +36,11 @@ Avant de procéder à la restauration, arrêtez l'hyperviseur.
     kubectl delete deployments --all
     ```
 
+Avant de restaurer votre base de données, assurez-vous de la vider :
+```sh
+mongosh ${CPS_MONGO_URL} --eval 'db.getCollectionNames().forEach(c => db[c].drop())'
+```
+
 Utilisez la commande `mongorestore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongorestore-operations).
 
 ```sh
