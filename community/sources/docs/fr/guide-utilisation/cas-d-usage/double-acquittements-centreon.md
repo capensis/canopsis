@@ -4,7 +4,7 @@ Lorsqu'un acquittement est positionné du côté Centreon, il est nativement env
 Ce cas d'usage montre comment faire suivre un acquittement réalisé sur Canopsis vers Centreon en se servant de l'API de celui-ci.
 
 ## Pré-requis:
-- Une instance Centreon avec le Stream Connector de configuré pour envoyer des événements de Centreon vers Canopsis : [Canopsis Events](https://docs.centreon.com/fr/docs/integrations/data-analytics/sc-canopsis-events/)
+- Une instance Centreon avec le Stream Connector configuré pour envoyer des événements de Centreon vers Canopsis : [Canopsis Events](https://docs.centreon.com/fr/docs/integrations/data-analytics/sc-canopsis-events/)
 - Avoir créé un utilisateur Canopsis avec les bonnes ACL pour réaliser les actions suivantes :
     - Droits nécessaires:
         - Gestion des accès aux ressources :
