@@ -1,13 +1,13 @@
 <template>
   <v-layout
     ref="layoutElement"
-    :class="{ 'c-alarm-advanced-search__groups-wrapper--disabled': disabled }"
-    class="c-alarm-advanced-search__groups-wrapper gap-1"
+    :class="{ 'c-advanced-search__groups-wrapper--disabled': disabled }"
+    class="c-advanced-search__groups-wrapper gap-1"
     align-center
     wrap
     @mouseup="mouseupLayout"
   >
-    <alarm-advanced-search-rule
+    <advanced-search-rule
       v-for="(rule, index) in rules"
       :key="rule.key"
       :rule="rule"
@@ -30,18 +30,18 @@
 <script>
 import { ref, nextTick } from 'vue';
 
-import { advancedSearchRuleItemToFormItem } from '@/helpers/search/alarm-advanced-search';
+import { advancedSearchRuleItemToFormItem } from '@/helpers/search/advanced-search';
 import { isArrayOperator } from '@/helpers/entities/pattern/form';
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useActiveKey } from '@/hooks/active-key';
 import { useLastInputFocus } from '@/hooks/focus';
 
-import AlarmAdvancedSearchRule from './alarm-advanced-search-rule.vue';
+import AdvancedSearchRule from './advanced-search-rule.vue';
 
 export default {
   name: 'AlarmAdvancedSearchRules',
-  components: { AlarmAdvancedSearchRule },
+  components: { AdvancedSearchRule },
   model: {
     prop: 'rules',
     event: 'input',
@@ -165,7 +165,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.c-alarm-advanced-search__groups-wrapper {
+.c-advanced-search__groups-wrapper {
   > * {
     flex: 0 1 auto;
   }

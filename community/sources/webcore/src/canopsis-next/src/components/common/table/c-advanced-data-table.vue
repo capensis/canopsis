@@ -8,7 +8,7 @@
         />
         <c-advanced-search
           v-else-if="advancedSearch"
-          :fields="preparedAdvancedSearchFields"
+          :attributes="advancedSearchAttributes"
           @submit="updateSearchHandler"
         />
       </v-flex>
@@ -259,7 +259,7 @@ export default {
       type: String,
       default: '$expand',
     },
-    advancedSearchFields: {
+    advancedSearchAttributes: {
       type: Array,
       default: () => [],
     },
@@ -332,12 +332,6 @@ export default {
 
     shownSearch() {
       return this.search || this.advancedSearch;
-    },
-
-    preparedAdvancedSearchFields() {
-      return this.advancedSearchFields?.length
-        ? this.advancedSearchFields
-        : this.headers;
     },
   },
   watch: {

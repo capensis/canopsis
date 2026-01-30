@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    :class="{ 'c-alarm-advanced-search__rule--union': union }"
-    class="c-alarm-advanced-search__rule"
+    :class="{ 'c-advanced-search__rule--union': union }"
+    class="c-advanced-search__rule"
   >
     <component
       v-for="chip in chips"
@@ -34,22 +34,22 @@ import {
   isCustomRangeItem,
   isDurationItem,
   isNumberValueType,
-} from '@/helpers/search/alarm-advanced-search';
+} from '@/helpers/search/advanced-search';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
 
-import { useAdvancedSearchRuleActiveItems, useAttachAdvancedSearchRuleValidator } from '../hooks/alarm-advanced-search';
+import { useAdvancedSearchRuleActiveItems, useAttachAdvancedSearchRuleValidator } from '../hooks/advanced-search';
 
-import AlarmAdvancedSearchChip from './alarm-advanced-search-chip.vue';
-import AlarmAdvancedSearchRangeChip from './alarm-advanced-search-range-chip.vue';
-import AlarmAdvancedSearchDurationChip from './alarm-advanced-search-duration-chip.vue';
+import AdvancedSearchChip from './advanced-search-chip.vue';
+import AdvancedSearchRangeChip from './advanced-search-range-chip.vue';
+import AdvancedSearchDurationChip from './advanced-search-duration-chip.vue';
 
 export default {
   components: {
-    AlarmAdvancedSearchChip,
-    AlarmAdvancedSearchRangeChip,
-    AlarmAdvancedSearchDurationChip,
+    AdvancedSearchChip,
+    AdvancedSearchRangeChip,
+    AdvancedSearchDurationChip,
   },
   model: {
     prop: 'rule',
@@ -392,12 +392,12 @@ export default {
         };
       }
 
-      let component = 'alarm-advanced-search-chip';
+      let component = 'advanced-search-chip';
 
       if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue) {
-        component = 'alarm-advanced-search-range-chip';
+        component = 'advanced-search-range-chip';
       } else if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration) {
-        component = 'alarm-advanced-search-duration-chip';
+        component = 'advanced-search-duration-chip';
       }
 
       return {
@@ -436,7 +436,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.c-alarm-advanced-search__rule {
+.c-advanced-search__rule {
   &:hover ::v-deep {
     .theme--light.v-chip:before {
       opacity: 0.04;
