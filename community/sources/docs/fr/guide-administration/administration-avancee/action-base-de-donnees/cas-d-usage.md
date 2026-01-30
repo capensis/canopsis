@@ -1,6 +1,6 @@
 # Cas d'usage d'action sur les bases de données
 
-Son répertorier sur cette page des actions qui sont souvent utilisés lors de la recherche d'informations directement en base de données.
+Cette page regroupe des actions qui utiles lors de la recherche d'informations directement en base de données.
 
 #### Commandes usuelles pour récupérer des informations dans la base de données MongoDB de Canopsis
 
@@ -16,7 +16,7 @@ Documentation de la commande `countDocuments`: [db.collection.countDocuments() (
 
 Pour plus d'informations sur les commandes de l'utilitaire `mongosh`, référer à la documentation officiel : [Documentation Mongosh](https://www.mongodb.com/docs/mongodb-shell/run-commands/)
 
-Généralement, ces commandes sont utilisés avec par exemple sur les collections : `periodical_alarm`, `default_entities`, `alarm_tag`, `pbehavior`.
+Généralement, ces commandes sont utilisées pour requêter les collections : `periodical_alarm`, `default_entities`, `alarm_tag`, `pbehavior`.
 
 #### Trouver les alarmes qui correspondent à un critère particulier
 
@@ -40,7 +40,7 @@ db.periodical_alarm.find({'v.resource':'Nom de la ressource'})
 db.periodical_alarm.find({"v.component" : "Nom du composant", "v.resource" : "Nom de la ressource"})
 ```
 
-- Récupérer l'entièreté des alarmes actuellement ouvertes qui n'ont pas été mise à jour depuis une date spécifiée
+- Récupérer l'entièreté des alarmes actuellement ouvertes qui n'ont pas été mises à jour depuis une date spécifiée
 ```js
 db.periodical_alarm.find({
   $expr: {
@@ -52,7 +52,7 @@ db.periodical_alarm.find({
 })
 ```
 
-- Récupérer l'entièreté des alarmes actuellement ouvertes qui ont été créée avant une date spécifique
+- Récupérer l'entièreté des alarmes actuellement ouvertes qui ont été créées avant une date spécifique
 ```js
 db.periodical_alarm.find({
   $expr: {
@@ -64,7 +64,7 @@ db.periodical_alarm.find({
 })
 ```
 
-- Récupérer l'entièreté des alarmes actuellement ouvertes qui ont été créée après une date spécifique
+- Récupérer l'entièreté des alarmes actuellement ouvertes qui ont été créées après une date spécifique
 ```js
 db.periodical_alarm.find({
   $expr: {
@@ -76,7 +76,7 @@ db.periodical_alarm.find({
 })
 ```
 
-- Récupérer l'entièreté des alarmes actuellement ouvertes qui ont été ouverte à une date spécifique ou entre une date X et Y
+- Récupérer l'entièreté des alarmes actuellement ouvertes qui ont été crées entre une date X et une date Y
 ```js
 db.periodical_alarm.find({
   $expr: {
@@ -126,7 +126,7 @@ db.periodical_alarm.countDocuments({tags: { $all: ["une", "liste", "de", "tags"]
 
 #### Trouver les connecteurs, composants, ressources ou entités qui ont le plus de dépendances
 
-- Récupérer les 10 des connecteurs avec le plus de dépendances :
+- Récupérer les 10 connecteurs avec le plus de dépendances :
 ```js
 db.default_entities.aggregate([
     {$match: {connector: {$ne: null}, type: "resource"}},
@@ -166,7 +166,7 @@ db.default_entities.aggregate([
 ]);
 ```
 
-#### Trouver les comportements périodiques qui agissent sur un nombre important d'alarmes/entités
+#### Trouver les comportements périodiques qui agissent sur un nombre important d'alarmes
 
 ```js
 db.periodical_alarm.aggregate([{ $match:{ "v.pbehavior_info.id":{ $exists:true } } },{ $group:{ _id:"$v.pbehavior_info.id", name:{ $first:"$v.pbehavior_info.name" }, alarm_count:{ $sum:1 } } },{ $project:{ _id:0, id:"$_id", name:1, alarm_count:1 } }])
@@ -182,7 +182,7 @@ db.periodical_alarm.aggregate([{ $match:{ "v.pbehavior_info.id":{ $exists:true }
 
 #### Trouver les comportements périodiques qui ont été créé dans une date X et une date Y
 
-- Récupérer les comportement périodiques qui ont été créé avant une date spécifique
+- Récupérer les comportements périodiques qui ont été créés avant une date spécifique
 ```js
 db.pbehavior.find({
   $expr: {
@@ -194,7 +194,7 @@ db.pbehavior.find({
 })
 ```
 
-- Récupérer les comportement périodiques qui ont été créé avant une date spécifique
+- Récupérer les comportements périodiques qui ont été créés avant une date spécifique
 ```js
 db.pbehavior.find({
   $expr: {
@@ -206,7 +206,7 @@ db.pbehavior.find({
 })
 ```
 
-- Récupérer les comportement périodiques qui ont été créé à une date spécifique ou entre une date X et Y
+- Récupérer les comportements périodiques qui ont été créés à une date spécifique ou entre une date X et Y
 ```js
 db.pbehavior.find({
   $expr: {
@@ -228,10 +228,10 @@ db.pbehavior.find({
 })
 ```
 
-#### Rechercher les requêtes et les collections qui sont visées par des requêtes dont le temps d'exécution est supérieur à 1 seconde ( pour appliquer des indexes )
+#### Rechercher les requêtes et les collections qui sont visées par des requêtes dont le temps d'exécution est supérieur à 1 seconde ( pour appliquer des indexs )
 
 !!! note
-    Pour optimiser les temps de réponses de la base de données MongoDB, il est nécessaire d'analyser les logs du serveur mongodb pour y extraire des potentiels `COLLSCAN (Slow query)` qui pourrait ralentir Canopsis. Pour cela, il est recommandé de passer par le support Canopsis pour analyser ces logs et ajouter d'éventuels indexs permettant d'améliorer les temps de réponses.
+    Pour optimiser les temps de réponse de la base de données MongoDB, il est nécessaire d'analyser les logs du serveur mongodb pour y extraire des potentiels `COLLSCAN (Slow query)` qui pourraient ralentir Canopsis. Pour cela, il est recommandé de passer par le support Canopsis pour analyser ces logs et ajouter d'éventuels indexs permettant d'améliorer les temps de réponses.
 
 - Trouver les requêtes dont le temps d’exécution est supérieur à 1 seconde:
 
