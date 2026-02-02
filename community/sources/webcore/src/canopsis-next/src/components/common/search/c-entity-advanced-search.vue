@@ -14,7 +14,7 @@ import { ref } from 'vue';
 
 import { advancedSearchRuleItemToFormItem } from '@/helpers/search/advanced-search';
 
-import { useAlarmAdvancedSearchAttributes } from './hooks/advanced-search';
+import { useEntityAdvancedSearchAttributes } from './hooks/advanced-search';
 
 export default {
   props: {
@@ -26,7 +26,7 @@ export default {
   setup() {
     const rules = ref([advancedSearchRuleItemToFormItem()]);
 
-    const { attributes, allowOr } = useAlarmAdvancedSearchAttributes({ rules });
+    const { attributes, allowOr } = useEntityAdvancedSearchAttributes({ rules });
 
     return {
       rules,

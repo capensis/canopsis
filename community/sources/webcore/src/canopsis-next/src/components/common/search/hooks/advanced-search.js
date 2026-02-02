@@ -11,10 +11,11 @@ import {
 import { Validator } from 'vee-validate';
 
 import {
+  ADVANCED_SEARCH_GROUPS,
   ADVANCED_SEARCH_UNION_CONDITIONS,
+  ADVANCED_SEARCH_PBEHAVIOR_INFO_FIELDS,
   ALARM_ADVANCED_SEARCH_CHIP_TYPES,
   ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME,
-  ADVANCED_SEARCH_GROUPS,
   ALARM_ADVANCED_SEARCH_ENTITY_OPERATORS,
   ALARM_GROUPED_ADVANCED_SEARCH_FIELDS,
   ALARM_ADVANCED_SEARCH_ENTITY_FIELDS,
@@ -29,6 +30,8 @@ import {
   BASIC_ENTITY_TYPES,
   ENTITY_TYPES,
   ENTITY_FIELDS,
+  ENTITY_FIELDS_TO_LABELS_KEYS,
+  ENTITY_GROUPED_ADVANCED_SEARCH_FIELDS,
   PATTERN_DURATION_OPERATORS,
   PATTERN_EXISTS_OPERATORS,
   PATTERN_FIELD_TYPES,
@@ -531,6 +534,60 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems }) => {
 };
 
 /**
+ * Hook to manage advanced search attributes for pbehaviors.
+ *
+ * @returns {Object} An object containing the computed `attributesMap`.
+ * @property {Object} attributesMap - A map of attribute configurations for pbehaviors.
+ * @property {Function} attributesMap[].fetchValues - Function to fetch values for the attribute.
+ * @property {Array} attributesMap[].operators - Array of operators applicable to the attribute.
+ * @property {string} attributesMap[].text - Display text for the attribute.
+ * @property {Array} [attributesMap[].values] - Predefined values for the attribute, if applicable.
+ */
+export const useAdvancedSearchPbehaviorAttributes = () => {
+  const { t } = useI18n();
+  const { fetchPbehaviorsListWithoutStore } = usePbehavior();
+  const { fetchPbehaviorReasonsListWithoutStore } = usePbehaviorReason();
+  const { fetchPbehaviorTypesListWithoutStore } = usePbehaviorType();
+
+  const BASE_OPERATORS = [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual];
+  const BASE_OPTIONS = {
+    operators: BASE_OPERATORS,
+    itemValue: '_id',
+    itemText: 'name',
+  };
+
+  const attributesMap = computed(() => ({
+    [PBEHAVIOR_PATTERN_FIELDS.name]: {
+      ...BASE_OPTIONS,
+      text: t('pbehavior.pbehaviorName'),
+      fetchValues: fetchPbehaviorsListWithoutStore,
+    },
+    [PBEHAVIOR_PATTERN_FIELDS.reason]: {
+      ...BASE_OPTIONS,
+      text: t('pbehavior.pbehaviorReason'),
+      fetchValues: fetchPbehaviorReasonsListWithoutStore,
+    },
+    [PBEHAVIOR_PATTERN_FIELDS.type]: {
+      ...BASE_OPTIONS,
+      text: t('pbehavior.pbehaviorType'),
+      fetchValues: fetchPbehaviorTypesListWithoutStore,
+    },
+    [PBEHAVIOR_PATTERN_FIELDS.canonicalType]: {
+      operators: BASE_OPERATORS,
+      text: t('pbehavior.pbehaviorCanonicalType'),
+      values: Object.values(PBEHAVIOR_TYPE_TYPES).map(type => ({
+        value: type,
+        text: t(`pbehavior.types.types.${type}`),
+      })),
+    },
+  }));
+
+  return {
+    attributesMap,
+  };
+};
+
+/**
  * Hook to process grouped attributes into a flat list with headers.
  *
  * @param {Object} options - Options for processing grouped attributes.
@@ -594,69 +651,13 @@ export const useAdvancedSearchGroupedAttributes = ({
 };
 
 /**
- * Hook to manage advanced search attributes for pbehaviors.
- *
- * @returns {Object} An object containing the computed `attributesMap`.
- * @property {Object} attributesMap - A map of attribute configurations for pbehaviors.
- * @property {Function} attributesMap[].fetchValues - Function to fetch values for the attribute.
- * @property {Array} attributesMap[].operators - Array of operators applicable to the attribute.
- * @property {string} attributesMap[].text - Display text for the attribute.
- * @property {Array} [attributesMap[].values] - Predefined values for the attribute, if applicable.
- */
-export const useAdvancedSearchPbehaviorAttributes = () => {
-  const { t } = useI18n();
-  const { fetchPbehaviorsListWithoutStore } = usePbehavior();
-  const { fetchPbehaviorReasonsListWithoutStore } = usePbehaviorReason();
-  const { fetchPbehaviorTypesListWithoutStore } = usePbehaviorType();
-
-  const BASE_OPERATORS = [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual];
-  const BASE_OPTIONS = {
-    operators: BASE_OPERATORS,
-    itemValue: '_id',
-    itemText: 'name',
-  };
-
-  const attributesMap = computed(() => ({
-    [PBEHAVIOR_PATTERN_FIELDS.name]: {
-      ...BASE_OPTIONS,
-      text: t('pbehavior.pbehaviorName'),
-      fetchValues: fetchPbehaviorsListWithoutStore,
-    },
-    [PBEHAVIOR_PATTERN_FIELDS.reason]: {
-      ...BASE_OPTIONS,
-      text: t('pbehavior.pbehaviorReason'),
-      fetchValues: fetchPbehaviorReasonsListWithoutStore,
-    },
-    [PBEHAVIOR_PATTERN_FIELDS.type]: {
-      ...BASE_OPTIONS,
-      text: t('pbehavior.pbehaviorType'),
-      fetchValues: fetchPbehaviorTypesListWithoutStore,
-    },
-    [PBEHAVIOR_PATTERN_FIELDS.canonicalType]: {
-      operators: BASE_OPERATORS,
-      text: t('pbehavior.pbehaviorCanonicalType'),
-      values: Object.values(PBEHAVIOR_TYPE_TYPES).map(type => ({
-        value: type,
-        text: t(`pbehavior.types.types.${type}`),
-      })),
-    },
-  }));
-
-  return {
-    attributesMap,
-  };
-};
-
-/**
  * Hook to manage advanced search attributes for alarms, entities, and pbehaviors for alarms list.
  *
  * @param {Object} options - Options for configuring the advanced search attributes.
  * @param {Array} options.rules - The array of rules to be evaluated.
  * @returns {Object} An object containing the pending state, the computed attributes, and the computed flags.
  */
-export const useAlarmAdvancedSearchAttributes = ({
-  rules,
-}) => {
+export const useAlarmAdvancedSearchAttributes = ({ rules }) => {
   const { t, tc } = useI18n();
 
   const {
@@ -719,14 +720,16 @@ export const useAlarmAdvancedSearchAttributes = ({
     ...pbehaviorsAttributesMapWithPrefix.value,
   }));
 
-  const prepareItem = (field, allow) => {
+  const prepareItem = (field, disabled) => {
     const attributes = attributesMap.value[field];
 
     return {
       ...attributesMap.value[field],
+
+      disabled,
+
       value: field,
       text: attributes.text ?? tc(ALARM_FIELDS_TO_LABELS_KEYS[field], 2),
-      disabled: !allow,
     };
   };
 
@@ -741,9 +744,6 @@ export const useAlarmAdvancedSearchAttributes = ({
   });
 
   const attributes = computed(() => {
-    const unwrappedAllowEntityFields = unref(allowEntityFields);
-    const unwrappedAllowPbehaviorFields = unref(allowPbehaviorFields);
-
     const result = [...groupedItems.value];
 
     const entityHeader = t(`advancedSearch.groups.${ADVANCED_SEARCH_GROUPS.entity}`);
@@ -752,12 +752,12 @@ export const useAlarmAdvancedSearchAttributes = ({
     result.push(
       { header: entityHeader, value: entityHeader },
       ...ALARM_ADVANCED_SEARCH_ENTITY_FIELDS.map(field => (
-        prepareItem(field, unwrappedAllowEntityFields)
+        prepareItem(field, !allowEntityFields.value)
       )),
 
       { header: pbehaviorHeader, value: pbehaviorHeader },
       ...ALARM_ADVANCED_SEARCH_PBEHAVIOR_INFO_FIELDS.map(field => (
-        prepareItem(field, unwrappedAllowPbehaviorFields)
+        prepareItem(field, !allowPbehaviorFields.value)
       )),
     );
 
@@ -786,8 +786,99 @@ export const useAlarmAdvancedSearchAttributes = ({
  * @param {boolean} options.allowPbehaviorFields - Flag to allow pbehavior fields in the search.
  * @returns {Object} An object containing the pending state and the computed attributes.
  */
-export const useEntityAdvancedSearchAttributes = () => {
+export const useEntityAdvancedSearchAttributes = ({ rules }) => {
+  const { t, tc } = useI18n();
 
+  const {
+    pending: infosPending,
+    entityItems: entityInfosItems,
+  } = useEntityInfosKeys();
+
+  const {
+    entityInfoPropertiesWithAlias,
+    entityInfoPropertyPending,
+  } = useEntityInfoProperty();
+
+  const { attributesMap: entityAttributesMap } = useAdvancedSearchEntityAttributes({ infosItems: entityInfosItems });
+  const { attributesMap: pbehaviorAttributesMap } = useAdvancedSearchPbehaviorAttributes();
+
+  const wholePending = computed(() => infosPending.value || entityInfoPropertyPending.value);
+
+  /**
+   * HAS FLAGS
+   */
+  const hasOr = computed(() => unref(rules).some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or));
+  const hasEntityField = computed(() => unref(rules).some(({ attribute }) => isEntityPatternField(attribute)));
+  const hasPbehaviorField = computed(() => unref(rules).some(({ attribute }) => isPbehaviorPatternField(attribute)));
+
+  /**
+   * ALLOW FLAGS
+   */
+  const allowOr = computed(() => [
+    hasEntityField.value,
+    hasPbehaviorField.value,
+  ].filter(Boolean).length <= 1);
+
+  const allowEntityFields = computed(() => !hasOr.value || !hasPbehaviorField.value);
+  const allowPbehaviorFields = computed(() => !hasOr.value || !hasEntityField.value);
+
+  const attributesMap = computed(() => ({
+    ...entityAttributesMap.value,
+    ...pbehaviorAttributesMap.value,
+  }));
+
+  const prepareItem = (field, disabled) => {
+    const attributes = attributesMap.value[field];
+
+    if (!attributes) {
+      return null;
+    }
+
+    return {
+      ...attributesMap.value[field],
+
+      disabled,
+
+      value: field,
+      text: attributes.text ?? tc(ENTITY_FIELDS_TO_LABELS_KEYS[field], 2),
+    };
+  };
+
+  const disallowEntityFields = computed(() => !allowEntityFields.value);
+
+  const { items: groupedItems } = useAdvancedSearchGroupedAttributes({
+    prepareItem,
+
+    groups: ENTITY_GROUPED_ADVANCED_SEARCH_FIELDS,
+    aliases: entityInfoPropertiesWithAlias,
+    disabled: disallowEntityFields,
+  });
+
+  const attributes = computed(() => {
+    const result = [...groupedItems.value];
+
+    const pbehaviorHeader = t(`advancedSearch.groups.${ADVANCED_SEARCH_GROUPS.pbehavior}`);
+
+    result.push(
+      { header: pbehaviorHeader, value: pbehaviorHeader },
+      ...ADVANCED_SEARCH_PBEHAVIOR_INFO_FIELDS.map(field => (
+        prepareItem(field, !allowPbehaviorFields.value)
+      )).filter(Boolean),
+    );
+
+    return result;
+  });
+
+  return {
+    pending: wholePending,
+    attributes,
+    hasOr,
+    hasEntityField,
+    hasPbehaviorField,
+    allowOr,
+    allowEntityFields,
+    allowPbehaviorFields,
+  };
 };
 
 /**

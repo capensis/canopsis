@@ -1,11 +1,19 @@
 import { PATTERN_OPERATORS, PATTERN_STRING_OPERATORS, PATTERNS_FIELDS } from './pattern';
 import { ALARM_FIELDS } from './alarm';
-import { PBEHAVIOR_PATTERN_PREFIX } from './pbehavior';
+import { ENTITY_FIELDS } from './entity';
+import { PBEHAVIOR_PATTERN_PREFIX, PBEHAVIOR_PATTERN_FIELDS } from './pbehavior';
 
 export const ADVANCED_SEARCH_UNION_CONDITIONS = {
   and: 'AND',
   or: 'OR',
 };
+
+export const ADVANCED_SEARCH_PBEHAVIOR_INFO_FIELDS = [
+  PBEHAVIOR_PATTERN_FIELDS.id,
+  PBEHAVIOR_PATTERN_FIELDS.reason,
+  PBEHAVIOR_PATTERN_FIELDS.type,
+  PBEHAVIOR_PATTERN_FIELDS.canonicalType,
+];
 
 export const ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX = 'v.';
 
@@ -77,6 +85,7 @@ export const ADVANCED_SEARCH_GROUPS = {
   actions: 'actions',
   alias: 'alias',
   entity: 'entity',
+  events: 'events',
   pbehavior: 'pbehavior',
 };
 
@@ -132,7 +141,33 @@ export const ALARM_GROUPED_ADVANCED_SEARCH_FIELDS = {
 };
 
 export const ENTITY_GROUPED_ADVANCED_SEARCH_FIELDS = {
-  [ADVANCED_SEARCH_GROUPS.basic]: [],
+  [ADVANCED_SEARCH_GROUPS.entity]: [
+    ENTITY_FIELDS.id,
+    ENTITY_FIELDS.name,
+    ENTITY_FIELDS.type,
+    ENTITY_FIELDS.categoryName,
+    ENTITY_FIELDS.component,
+    ENTITY_FIELDS.connector,
+    ENTITY_FIELDS.resource,
+    ENTITY_FIELDS.impactLevel,
+    ENTITY_FIELDS.impactState,
+    ENTITY_FIELDS.state,
+    ENTITY_FIELDS.status,
+    ENTITY_FIELDS.infos,
+    ENTITY_FIELDS.componentInfos,
+  ],
+  [ADVANCED_SEARCH_GROUPS.alias]: [],
+  [ADVANCED_SEARCH_GROUPS.events]: [
+    ENTITY_FIELDS.koEvents,
+    ENTITY_FIELDS.okEvents,
+  ],
+  [ADVANCED_SEARCH_GROUPS.dates]: [
+    ENTITY_FIELDS.idleSince,
+    ENTITY_FIELDS.imported,
+    ENTITY_FIELDS.lastUpdateDate,
+    ENTITY_FIELDS.lastPbehaviorDate,
+    ENTITY_FIELDS.lastEventDate,
+  ],
 };
 
 export const ADVANCED_SEARCH_GROUPS_TO_PATTERNS = {
