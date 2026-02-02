@@ -4,11 +4,16 @@ import { Validator } from 'vee-validate';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 
+import { uid } from '@/helpers/uid';
+
 import CArrayTextField from '@/components/forms/fields/c-array-text-field.vue';
 
 const mockData = {
   string: Faker.datatype.string(),
   number: Faker.datatype.number(),
+  key1: uid(),
+  key2: uid(),
+  key3: uid(),
 };
 
 const stubs = {
@@ -38,42 +43,60 @@ describe('c-array-text-field', () => {
   const snapshotFactory = generateRenderer(CArrayTextField, { stubs: snapshotStubs });
 
   it('Empty string added after click on add button', () => {
+    const initialValues = [{ key: mockData.key1, value: mockData.string }];
     const wrapper = factory({
       propsData: {
-        values: [mockData.string],
+        values: initialValues,
       },
     });
 
     wrapper.find('button.v-btn').trigger('click');
 
-    expect(wrapper).toEmit('change', [mockData.string, '']);
+    expect(wrapper).toEmit('change', [
+      initialValues[0],
+      expect.objectContaining({
+        key: expect.any(String),
+        value: '',
+      }),
+    ]);
   });
 
   it('Value changed after trigger mixed field', () => {
     const newFieldValue = Faker.datatype.string();
+    const initialValues = [
+      { key: mockData.key1, value: mockData.string },
+      { key: mockData.key2, value: mockData.number },
+    ];
     const wrapper = factory({
       propsData: {
-        values: [mockData.string, mockData.number],
+        values: initialValues,
       },
     });
-    const secondFieldElement = wrapper.findAll('v-layout-stub').at(0);
+    const firstFieldElement = wrapper.findAll('v-layout-stub').at(1);
 
-    selectTextField(secondFieldElement).setValue(newFieldValue);
+    selectTextField(firstFieldElement).setValue(newFieldValue);
 
-    expect(wrapper).toEmit('change', [newFieldValue, mockData.number]);
+    expect(wrapper).toEmit('change', [
+      { key: mockData.key1, value: newFieldValue },
+      { key: mockData.key2, value: mockData.number },
+    ]);
   });
 
   it('Field removed after click on remove button', () => {
+    const initialValues = [
+      { key: mockData.key1, value: mockData.string },
+      { key: mockData.key2, value: mockData.number },
+    ];
     const wrapper = factory({
       propsData: {
-        values: [mockData.string, mockData.number],
+        values: initialValues,
       },
     });
-    const secondFieldElement = wrapper.findAll('v-layout-stub').at(1);
+    const secondFieldElement = wrapper.findAll('v-layout-stub').at(2);
 
     secondFieldElement.find('button.c-action-btn').trigger('click');
 
-    expect(wrapper).toEmit('change', [mockData.string]);
+    expect(wrapper).toEmit('change', [{ key: mockData.key1, value: mockData.string }]);
   });
 
   it('Renders `c-array-text-field` with default props correctly', () => {
@@ -89,10 +112,9 @@ describe('c-array-text-field', () => {
       },
       propsData: {
         values: [
-          'string',
-          123,
-          false,
-          null,
+          { key: 'test-key-1', value: 'string' },
+          { key: 'test-key-2', value: 123 },
+          { key: 'test-key-3', value: false },
         ],
       },
     });
@@ -106,7 +128,10 @@ describe('c-array-text-field', () => {
         $validator: new Validator(),
       },
       propsData: {
-        values: ['string', 123],
+        values: [
+          { key: 'test-key-1', value: 'string' },
+          { key: 'test-key-2', value: 123 },
+        ],
         disabled: true,
       },
     });
