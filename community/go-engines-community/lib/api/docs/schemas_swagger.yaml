@@ -3230,6 +3230,15 @@ definitions:
       status:
         type: integer
     type: object
+  externaldatatable.PreviewRequest:
+    properties:
+      column_configs:
+        items:
+          $ref: '#/definitions/externaldatatable.ColumnConfig'
+        type: array
+    required:
+    - column_configs
+    type: object
   externaldatatable.RefResponse:
     properties:
       optional:
