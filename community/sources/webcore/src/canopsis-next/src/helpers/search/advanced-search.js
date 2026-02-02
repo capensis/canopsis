@@ -310,7 +310,7 @@ export const isPbehaviorPatternField = (field = '') => field.startsWith(ALARM_AD
  * @param {string} [field = ''] - The field string to be checked.
  * @returns {boolean} - Returns true if the field is an entity pattern field, otherwise false.
  */
-export const isAlarmPatternField = (field = '') => !isEntityPatternField(field) && !isPbehaviorPatternField(field);
+export const isAlarmPatternField = (field = '') => field && !isEntityPatternField(field) && !isPbehaviorPatternField(field);
 
 /**
  * Transforms a form structure into an advanced search pattern structure.
