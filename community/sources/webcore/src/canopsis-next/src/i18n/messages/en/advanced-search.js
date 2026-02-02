@@ -18,6 +18,7 @@ export default {
     [ADVANCED_SEARCH_GROUPS.actions]: 'Actions',
     [ADVANCED_SEARCH_GROUPS.entity]: 'Entity',
     [ADVANCED_SEARCH_GROUPS.alias]: 'Aliases',
+    [ADVANCED_SEARCH_GROUPS.events]: 'Events',
     [ADVANCED_SEARCH_GROUPS.pbehavior]: 'Pbehavior',
   },
 
