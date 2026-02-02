@@ -10,7 +10,7 @@
     right
   >
     <template #activator="{ on }">
-      <div v-on="on">
+      <div :aria-required="isRequired" v-on="on">
         <v-text-field
           :label="label"
           :error-messages="errors.collect(name)"
@@ -35,9 +35,13 @@
 </template>
 
 <script>
+import { ref, computed, nextTick } from 'vue';
+
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
 import { convertDateToStartOfUnitDateObject, convertDateToString } from '@/helpers/date/date';
+
+import { useValidator } from '@/hooks/validator/validator';
 
 import DateTimePicker from './date-time-picker.vue';
 
@@ -104,32 +108,45 @@ export default {
       required: false,
     },
   },
-  data() {
-    return {
-      opened: false,
-    };
-  },
-  computed: {
-    dateTextValue() {
-      return convertDateToString(this.value, DATETIME_FORMATS.dateTimePicker);
-    },
-  },
-  methods: {
-    close() {
-      this.opened = false;
-    },
+  setup(props, { emit }) {
+    const validator = useValidator();
 
-    clear() {
-      this.$emit('input', null);
-    },
+    const opened = ref(false);
 
-    input(value) {
-      this.$emit('input', value);
+    const isRequired = computed(() => validator?.fields?.find?.({ name: props.name })?.isRequired);
+    const dateTextValue = computed(() => convertDateToString(props.value, DATETIME_FORMATS.dateTimePicker));
 
-      if (this.$validator && this.name) {
-        this.$nextTick(() => this.$validator.validate(this.name));
+    /**
+     * Closes the date time picker menu
+     */
+    const close = () => opened.value = false;
+
+    /**
+     * Clears the date time picker value
+     */
+    const clear = () => emit('input', null);
+
+    /**
+     * Handles input event from date time picker
+     *
+     * @param {Date|Number} value - Date value
+     */
+    const input = (value) => {
+      emit('input', value);
+
+      if (validator && props.name) {
+        nextTick(() => validator.validate(props.name));
       }
-    },
+    };
+
+    return {
+      opened,
+      isRequired,
+      dateTextValue,
+      close,
+      clear,
+      input,
+    };
   },
 };
 </script>
