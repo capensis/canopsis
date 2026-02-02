@@ -91,7 +91,12 @@ describe('c-mixed-field', () => {
 
     inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.stringArray);
 
-    expect(wrapper).toEmitInput(['12']);
+    expect(wrapper).toEmitInput([
+      expect.objectContaining({
+        key: expect.any(String),
+        value: '12',
+      }),
+    ]);
   });
 
   it('Value changed on the first field after remove selected type', async () => {
