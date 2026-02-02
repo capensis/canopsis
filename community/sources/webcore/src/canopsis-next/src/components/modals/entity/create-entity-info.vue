@@ -35,7 +35,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { entityInfoToForm } from '@/helpers/entities/entity-info/form';
+import { entityInfoToForm, formToEntityInfo } from '@/helpers/entities/entity-info/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -72,7 +72,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.config.action(this.form);
+        await this.config.action(formToEntityInfo(this.form));
 
         this.$modals.hide();
       }
