@@ -27,7 +27,7 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -44,11 +44,14 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue';
+
 import { MODALS, VALIDATION_DELAY, PATTERN_FIELD_TYPES } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -62,61 +65,61 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: { ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    const { info = {} } = this.modal.config;
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
 
-    return {
-      form: {
-        name: info.name ?? '',
-        value: info.value ?? '',
+    const fieldTypes = [
+      { value: PATTERN_FIELD_TYPES.string },
+      { value: PATTERN_FIELD_TYPES.number },
+      { value: PATTERN_FIELD_TYPES.boolean },
+      { value: PATTERN_FIELD_TYPES.stringArray },
+    ];
+
+    const form = ref({
+      name: config.value?.info?.name ?? '',
+      value: config.value?.info?.value ?? '',
+    });
+
+    const initialName = computed(() => config.value?.info?.name);
+    const existingNames = computed(() => config.value.existingNames);
+
+    const nameRules = computed(() => ({
+      required: true,
+      unique: {
+        values: existingNames.value,
+        initialValue: initialName.value,
       },
-    };
-  },
-  computed: {
-    initialName() {
-      return this.config.info && this.config.info.name;
-    },
+    }));
 
-    existingNames() {
-      return this.config.existingNames;
-    },
-
-    nameRules() {
-      return {
-        required: true,
-        unique: {
-          values: this.existingNames,
-          initialValue: this.initialName,
-        },
-      };
-    },
-
-    fieldTypes() {
-      return [
-        { value: PATTERN_FIELD_TYPES.string },
-        { value: PATTERN_FIELD_TYPES.number },
-        { value: PATTERN_FIELD_TYPES.boolean },
-        { value: PATTERN_FIELD_TYPES.stringArray },
-      ];
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(this.form);
+    const { submit, isDisabled } = useSubmittableForm({
+      form,
+      method: async () => {
+        if (config.value.action) {
+          await config.value.action(form.value);
         }
 
-        this.$modals.hide();
-      }
-    },
+        close();
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
+
+    return {
+      form,
+      nameRules,
+      fieldTypes,
+      isDisabled,
+      submit,
+      close,
+      t,
+    };
   },
 };
 </script>
