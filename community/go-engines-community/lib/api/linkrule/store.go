@@ -9,10 +9,11 @@ import (
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -22,7 +23,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	tplvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -61,8 +62,8 @@ type store struct {
 	tplTestCollection         mongo.DbCollection
 	entityInfosPropCollection mongo.DbCollection
 	authorProvider            author.Provider
-	transformer               common.PatternFieldsTransformer
-	tplValidator              validator.Validator
+	transformer               patternfields.Transformer
+	tplValidator              tplvalidator.Validator
 	tplExecutor               libtemplate.Executor
 	tplConfigProvider         config.TemplateConfigProvider
 	externalDataContainer     *externaldata.GetterContainer
@@ -80,8 +81,8 @@ type store struct {
 func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
-	tplValidator validator.Validator,
+	transformer patternfields.Transformer,
+	tplValidator tplvalidator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
 	externalDataContainer *externaldata.GetterContainer,
@@ -164,9 +165,7 @@ func NewStore(
 				Value: template.GetEntityVars("{{ ", " }}", "", false),
 			},
 		},
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"name": "Name already exists.",
-		}),
+		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -194,7 +193,7 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 		_, err = s.collection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -237,12 +236,12 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 
 func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResult, error) {
 	pipeline := s.authorProvider.Pipeline()
-	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(request.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sort := common.GetSortQuery(cmp.Or(request.SortBy, s.defaultSortBy), request.Sort)
+	sort := mongoquery.GetSortQuery(cmp.Or(request.SortBy, s.defaultSortBy), request.Sort)
 	project := apiexternaldata.GetRefParametersLookups()
 	project = append(project, sort)
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
@@ -299,7 +298,7 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 		)
 		if err != nil || res.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -487,7 +486,7 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (lin
 		return link.Rule{}, err
 	}
 
-	rule := link.Rule{
+	return link.Rule{
 		Name:         r.Name,
 		Type:         r.Type,
 		Enabled:      *r.Enabled,
@@ -495,44 +494,13 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (lin
 		SourceCode:   r.SourceCode,
 		ExternalData: externalData,
 		Author:       r.Author,
-		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
-			common.GetForbiddenFieldsInEntityPattern(mongo.LinkRuleMongoCollection),
-		),
-	}
-	if r.Type == link.TypeAlarm {
-		rule.AlarmPatternFields = r.AlarmPatternFieldsRequest.ToModelWithoutFields(
-			common.GetForbiddenFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-		)
-	}
-
-	return rule, nil
+	}, nil
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, req EditRequest, model *link.Rule) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, req.EntityPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *link.Rule) (err error) {
+	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.collection.Name())
 
-	if req.Type == link.TypeAlarm {
-		transformedAlarmPatternRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, req.AlarmPatternFieldsRequest)
-		if err != nil {
-			return err
-		}
-
-		model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-			common.GetForbiddenFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-		)
-	}
-
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInEntityPattern(mongo.LinkRuleMongoCollection),
-	)
-
-	return nil
+	return err
 }
 
 func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, []link.AlarmWithData, []link.EntityWithData, error) {
@@ -547,7 +515,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, [
 			Decode(&test)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return user, nil, nil, common.NewValidationError("testdata.test", "Test doesn't exist.")
+				return user, nil, nil, validation.NewSingleError("not_exist", "Test", "TestData.Test", r)
 			}
 
 			return user, nil, nil, err
@@ -583,7 +551,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, [
 		}
 
 		if !ok {
-			return user, nil, nil, common.NewValidationError("testdata.user", "User is not accessible.")
+			return user, nil, nil, validation.NewSingleError("not_accessible", "User", "TestData.User", r)
 		}
 	}
 
@@ -592,27 +560,39 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, [
 		return user, nil, nil, err
 	}
 
+	if user.Username == "" {
+		return user, nil, nil, validation.NewSingleError("not_exist", "User", "TestData.User", r)
+	}
+
 	switch r.Rule.Type {
 	case link.TypeAlarm:
 		if r.TestData.Alarm == "" {
 			if alarm.ID == "" {
-				return user, nil, nil, common.NewValidationError("testdata.alarm", "Alarm is missing.")
+				return user, nil, nil, validation.NewSingleError("required", "Alarm", "TestData.Alarm", r)
 			}
 		} else if r.TestData.Alarm != alarm.ID { // keep snapshot from the test
 			alarm, err = s.findAlarm(ctx, r.TestData.Alarm)
 			if err != nil {
 				return user, nil, nil, err
 			}
+
+			if alarm.ID == "" {
+				return user, nil, nil, validation.NewSingleError("not_exist", "Alarm", "TestData.Alarm", r)
+			}
 		}
 	case link.TypeEntity:
 		if r.TestData.Entity == "" {
 			if entity.ID == "" {
-				return user, nil, nil, common.NewValidationError("testdata.entity", "Entity is missing.")
+				return user, nil, nil, validation.NewSingleError("required", "Entity", "TestData.Entity", r)
 			}
 		} else if r.TestData.Entity != entity.ID { // keep snapshot from the test
 			entity, err = s.findEntity(ctx, r.TestData.Entity)
 			if err != nil {
 				return user, nil, nil, err
+			}
+
+			if entity.ID == "" {
+				return user, nil, nil, validation.NewSingleError("not_exist", "Entity", "TestData.Entity", r)
 			}
 		}
 	}
@@ -654,7 +634,7 @@ func (s *store) findAlarm(ctx context.Context, alarmID string) (link.AlarmWithDa
 
 	defer cursor.Close(ctx)
 	if !cursor.Next(ctx) {
-		return res, common.NewValidationError("testdata.alarm", "Alarm doesn't exist.")
+		return res, nil
 	}
 
 	err = cursor.Decode(&res)
@@ -674,7 +654,7 @@ func (s *store) findEntity(ctx context.Context, entityID string) (link.EntityWit
 	err := s.entityCollection.FindOne(ctx, bson.M{"_id": entityID}).Decode(&res)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return res, common.NewValidationError("testdata.entity", "Entity doesn't exist.")
+			return res, nil
 		}
 
 		return res, fmt.Errorf("cannot fetch entities: %w", err)
@@ -695,7 +675,7 @@ func (s *store) findUser(ctx context.Context, userID string) (link.User, error) 
 
 	defer cursor.Close(ctx)
 	if !cursor.Next(ctx) {
-		return user, common.NewValidationError("testdata.user", "User doesn't exist.")
+		return user, nil
 	}
 
 	err = cursor.Decode(&user)
@@ -804,7 +784,7 @@ func (s *store) validateExdataTpls(
 				alarms[j].ExternalData = make(map[string]any, len(r.Rule.ExternalData))
 			}
 
-			alarms[j].ExternalData[d.Reference], err = s.processTableExdata(ctx, d, alarms[j], "rule.external_data."+strconv.Itoa(i))
+			alarms[j].ExternalData[d.Reference], err = s.processTableExdata(ctx, d, alarms[j], i, r)
 			if err != nil {
 				return nil, nil, nil, err
 			}
@@ -815,7 +795,7 @@ func (s *store) validateExdataTpls(
 				entities[j].ExternalData = make(map[string]any, len(r.Rule.ExternalData))
 			}
 
-			entities[j].ExternalData[d.Reference], err = s.processTableExdata(ctx, d, entities[j], "rule.external_data."+strconv.Itoa(i))
+			entities[j].ExternalData[d.Reference], err = s.processTableExdata(ctx, d, entities[j], i, r)
 			if err != nil {
 				return nil, nil, nil, err
 			}
@@ -829,7 +809,8 @@ func (s *store) processTableExdata(
 	ctx context.Context,
 	d template.TemplateRefParameters,
 	tplData any,
-	field string,
+	idx int,
+	r TemplateRequest,
 ) (any, error) {
 	getter, ok := s.externalDataContainer.Get(d.Type)
 	if !ok {
@@ -869,7 +850,8 @@ func (s *store) processTableExdata(
 		getterTplErr := &externaldata.GetterTplError{}
 		getterErr := &externaldata.GetterError{}
 		if errors.As(err, &getterTplErr) || errors.As(err, &getterErr) {
-			return nil, common.NewValidationError(field, err.Error())
+			idxStr := strconv.Itoa(idx)
+			return nil, validation.NewSingleError("not_applicable", idxStr, "Rule.ExternalData."+idxStr, r)
 		}
 
 		return nil, err

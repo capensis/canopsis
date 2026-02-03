@@ -2,163 +2,162 @@ package bulk
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"github.com/rs/zerolog"
 	"github.com/valyala/fastjson"
 )
 
-var ErrUnauthorized = errors.New("unauthorized")
-
-type BadRequestError struct {
-	Err error
-}
-
-func (v BadRequestError) Error() string {
-	return v.Err.Error()
-}
-
+// Handler parses and validates a bulk request
+// and calls f for each item in the request payload.
+//
+// Example:
+//
+// Suppose you receive a bulk request body like:
+//
+// [ {"_id": "A", "amount": 10}, {"_id": "B", "amount": 20}, {"_id": "C", "amount": 5} ]
+//
+// And you want to process each item individually:
+//
+//	type RequestItem struct {
+//	    ID     string `json:"_id" binding:"required"`
+//	    Amount int    `json:"amount" binding:"required,gt=0"`
+//	}
+//
+//	f := func(i RequestItem) (string, error) {
+//	    // Do something with each item.
+//	    // Return ID and error.
+//	    err := saveItemToDB(i)
+//
+//	    return i.ID, err
+//	}
 func Handler[T any](
 	c *gin.Context,
 	f func(T) (string, error),
-	logger zerolog.Logger,
+	responder httperror.Responder,
 ) {
 	raw, err := c.GetRawData()
 	if err != nil {
-		panic(err)
-	}
+		responder.Respond(c, err)
 
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
-	rawObjects, err := jsonValue.Array()
+	parsed, err := fastjson.ParseBytes(raw)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		responder.Respond(c, validation.NewInvalidRequestBodyError(err))
+
 		return
 	}
 
-	var arena fastjson.Arena
-	response := arena.NewArray()
-	for idx, rawObject := range rawObjects {
-		object, err := rawObject.Object()
-		if err != nil {
-			response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, arena.NewString(err.Error())))
-			continue
-		}
+	items, err := parsed.Array()
+	if err != nil {
+		responder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
-		var request T
-		err = json.Unmarshal(object.MarshalTo(nil), &request)
-		if err != nil {
-			response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, arena.NewString(err.Error())))
-			continue
-		}
-
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&arena, err, request)))
-			continue
-		}
-
-		id, err := f(request)
-		if err != nil {
-			if errors.Is(err, ErrUnauthorized) {
-				response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusForbidden, rawObject, arena.NewString(common.ForbiddenResponse.Error)))
-				continue
-			}
-
-			valErr := common.ValidationError{}
-			if errors.As(err, &valErr) {
-				response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&arena, valErr, request)))
-				continue
-			}
-
-			badRequestError := BadRequestError{}
-			if errors.As(err, &badRequestError) {
-				response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, arena.NewString(err.Error())))
-				continue
-			}
-
-			logger.Err(err).Msg("cannot process bulk item")
-			response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusInternalServerError, rawObject, arena.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		if id == "" {
-			response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusNotFound, rawObject, arena.NewString(common.NotFoundResponse.Error)))
-			continue
-		}
-
-		response.SetArrayItem(idx, GetResponseItem(&arena, id, http.StatusOK, rawObject, nil))
+		return
 	}
 
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+	var ar fastjson.Arena
+	res := ar.NewArray()
+	for idx, item := range items {
+		req, err := validateItem[T](item)
+		if err != nil {
+			res.SetArrayItem(idx, getErrResponseItem(c, err, item, responder, &ar))
+			continue
+		}
+
+		id, err := f(req)
+		if err != nil {
+			res.SetArrayItem(idx, getErrResponseItem(c, err, item, responder, &ar))
+			continue
+		}
+
+		res.SetArrayItem(idx, getResponseItem(http.StatusOK, item, id, &ar))
+	}
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, res.MarshalTo(nil))
 }
 
+// HandlerWithGrouping parses and validates a bulk request,
+// groups items using mergeReqs after comparing them with compareWithPrev,
+// and then calls procReq for each resulting group.
+// Use this to reduce the number of database queries.
+//
+// Example:
+//
+// Suppose you receive a bulk request of items that look like this:
+//
+// [ {"_id": "A", "amount": 10}, {"_id": "A", "amount": 20}, {"_id": "B", "amount": 5} ]
+//
+// You can group consecutive items with the same _id and sum the amounts:
+//
+//	compareWithPrev := func(prev, cur RequestItem) bool {
+//	    return prev.ID == cur.ID
+//	}
+//
+//	mergeReqs := func(merged, cur RequestItem) RequestItem {
+//	    merged.Amount += cur.Amount
+//
+//	    return merged
+//	}
+//
+//	procReq := func(i RequestItem) (string, error) {
+//	    // Process each merged group (A:30 and B:5)
+//	    err := saveToDB(i)
+//
+//	    return i.ID, err
+//	}
 func HandlerWithGrouping[T any](
 	c *gin.Context,
 	compareWithPrev func(prev, cur T) bool,
 	mergeReqs func(merged, cur T) T,
 	procReq func(T) (id string, err error),
-	logger zerolog.Logger,
+	responder httperror.Responder,
 ) {
 	raw, err := c.GetRawData()
 	if err != nil {
-		panic(err)
-	}
+		responder.Respond(c, err)
 
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
-	rawObjects, err := jsonValue.Array()
+	parsed, err := fastjson.ParseBytes(raw)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		responder.Respond(c, validation.NewInvalidRequestBodyError(err))
+
 		return
 	}
 
-	var arena fastjson.Arena
-	response := arena.NewArray()
+	items, err := parsed.Array()
+	if err != nil {
+		responder.Respond(c, validation.NewInvalidRequestBodyError(err))
+
+		return
+	}
+
+	var ar fastjson.Arena
+	res := ar.NewArray()
 	type groupedRequest struct {
-		Req        T
-		RawObjects map[int]*fastjson.Value
+		Req   T
+		Items map[int]*fastjson.Value
 	}
 
 	groupedReqs := make([]groupedRequest, 0)
 	var prevReq T
-	for idx, rawObject := range rawObjects {
-		object, err := rawObject.Object()
+	for idx, item := range items {
+		req, err := validateItem[T](item)
 		if err != nil {
-			response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, arena.NewString(err.Error())))
-			continue
-		}
-
-		var req T
-		err = json.Unmarshal(object.MarshalTo(nil), &req)
-		if err != nil {
-			response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, arena.NewString(err.Error())))
-			continue
-		}
-
-		err = binding.Validator.ValidateStruct(req)
-		if err != nil {
-			response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&arena, err, req)))
+			res.SetArrayItem(idx, getErrResponseItem(c, err, item, responder, &ar))
 			continue
 		}
 
 		if idx > 0 && compareWithPrev(prevReq, req) {
 			groupedReqs[len(groupedReqs)-1].Req = mergeReqs(groupedReqs[len(groupedReqs)-1].Req, req)
-			groupedReqs[len(groupedReqs)-1].RawObjects[idx] = rawObject
+			groupedReqs[len(groupedReqs)-1].Items[idx] = item
 		} else {
-			groupedReqs = append(groupedReqs, groupedRequest{Req: req, RawObjects: map[int]*fastjson.Value{idx: rawObject}})
+			groupedReqs = append(groupedReqs, groupedRequest{Req: req, Items: map[int]*fastjson.Value{idx: item}})
 		}
 
 		prevReq = req
@@ -168,64 +167,51 @@ func HandlerWithGrouping[T any](
 		req := g.Req
 		id, err := procReq(req)
 		if err != nil {
-			for idx, rawObject := range g.RawObjects {
-				if errors.Is(err, ErrUnauthorized) {
-					response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusForbidden, rawObject, arena.NewString(common.ForbiddenResponse.Error)))
-					continue
-				}
-
-				valErr := common.ValidationError{}
-				if errors.As(err, &valErr) {
-					response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&arena, valErr, req)))
-					continue
-				}
-
-				badRequestError := BadRequestError{}
-				if errors.As(err, &badRequestError) {
-					response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, arena.NewString(err.Error())))
-					continue
-				}
-
-				logger.Err(err).Msg("cannot process bulk item")
-				response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusInternalServerError, rawObject, arena.NewString(common.InternalServerErrorResponse.Error)))
+			for idx, item := range g.Items {
+				res.SetArrayItem(idx, getErrResponseItem(c, err, item, responder, &ar))
 			}
 
 			continue
 		}
 
-		if id == "" {
-			for idx, rawObject := range g.RawObjects {
-				response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusNotFound, rawObject, arena.NewString(common.NotFoundResponse.Error)))
-			}
-
-			continue
-		}
-
-		for idx, rawObject := range g.RawObjects {
-			response.SetArrayItem(idx, GetResponseItem(&arena, id, http.StatusOK, rawObject, nil))
+		for idx, item := range g.Items {
+			res.SetArrayItem(idx, getResponseItem(http.StatusOK, item, id, &ar))
 		}
 	}
 
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, res.MarshalTo(nil))
 }
 
-func GetResponseItem(ar *fastjson.Arena, id string, status int, rawItem, err *fastjson.Value) *fastjson.Value {
-	item := ar.NewObject()
-	item.Set("status", ar.NewNumberInt(status))
-	item.Set("item", rawItem)
-
-	if err == nil {
-		item.Set("id", ar.NewString(id))
-		return item
+func validateItem[T any](item *fastjson.Value) (T, error) {
+	var r T
+	obj, err := item.Object()
+	if err != nil {
+		return r, validation.NewInvalidRequestBodyError(err)
 	}
 
-	if err.Type() == fastjson.TypeString {
-		item.Set("error", err)
+	err = json.Unmarshal(obj.MarshalTo(nil), &r)
+	if err != nil {
+		return r, validation.NewInvalidRequestBodyError(err)
 	}
 
-	if err.Type() == fastjson.TypeObject {
-		item.Set("errors", err)
-	}
+	err = validation.ValidateStruct(r)
 
-	return item
+	return r, err
+}
+
+func getResponseItem(statusCode int, item *fastjson.Value, id string, ar *fastjson.Arena) *fastjson.Value {
+	res := ar.NewObject()
+	res.Set("status", ar.NewNumberInt(statusCode))
+	res.Set("item", item)
+	res.Set("id", ar.NewString(id))
+
+	return res
+}
+
+func getErrResponseItem(c *gin.Context, err error, item *fastjson.Value, responder httperror.Responder, ar *fastjson.Arena) *fastjson.Value {
+	code, res := responder.GetResponse(c, err)
+	res.Set("status", ar.NewNumberInt(code))
+	res.Set("item", item)
+
+	return res
 }

@@ -57,7 +57,7 @@ Si la version affichée est inférieure à 4.4, vous devez soit utiliser une dis
 !!! Warning
     Si votre mot de passe MongoDB contient des caractères spéciaux (par exemple `@`, `+`, `/`, `%`), vous devez les encoder avant de les utiliser dans l’URL de connexion.
     
-    Consultez la section [Limitations sur les caractères spéciaux dans l’URL MongoDB](../../../guide-utilisation/limitations/#limitation-des-caracteres-speciaux-dans-lurl-mongodb) pour plus de détails.
+    Consultez la section [Limitations sur les caractères spéciaux dans l’URL MongoDB](../../guide-utilisation/limitations/index.md#limitation-des-caracteres-speciaux-dans-lurl-mongodb) pour plus de détails.
 
 ## Installation de Docker et Docker Compose
 
@@ -150,36 +150,9 @@ Vous pouvez ensuite procéder à votre [première connexion à l'interface Canop
 docker compose down
 ```
 
-## Rétention des logs
+## Gestion des logs
 
-La mise en place d'une politique de rétention des logs nécessite la présence du logiciel `logrotate`.
-
-Une fois que `logrotate` est installé sur votre machine, créer le fichier `/etc/logrotate.d/docker-container` suivant :
-
-```
-/var/lib/docker/containers/*/*.log {
-  rotate 7
-  daily
-  compress
-  minsize 100M
-  notifempty
-  missingok
-  delaycompress
-  copytruncate
-}
-```
-
-Pour vérifier la validité de la configuration logrotate ajoutée, lancez la commande :
-
-```sh
-logrotate -dv /etc/logrotate.d/docker-container
-```
-
-Si vous souhaitez forcer une exécution manuelle de cette rotation sur-le-champ, vous pouvez éventuellement lancer la commande :
-
-```sh
-logrotate -fv /etc/logrotate.d/docker-container
-```
+Voir la page [Gestion des logs](../gestion-composants/gestion-des-logs.md#docker-compose)
 
 [prereq-versions]: https://doc.canopsis.net/latest/guide-administration/installation/prerequis-des-versions/#prerequis-systemes
 [compose-spec]: https://docs.docker.com/compose/compose-file/
