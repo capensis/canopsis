@@ -1,10 +1,8 @@
 package middleware
 
 import (
-	"net/http"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
@@ -19,30 +17,32 @@ func ProvideAuthorizedIds(
 	act string,
 	enforcer security.Enforcer,
 	provider apisecurity.OwnedObjectsProvider,
+	errorResponder httperror.Responder,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		rawSubj, ok := c.Get(auth.UserKey)
-		if !ok {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-			return
-		}
+		subj, err := authctx.GetUserKey(c)
+		if err != nil {
+			errorResponder.Respond(c, err)
 
-		subj, ok := rawSubj.(string)
-		if !ok {
-			panic("user key is not a string")
+			return
 		}
 
 		roles, err := enforcer.GetRolesForUser(subj)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		ids := make([]string, 0)
 		for _, role := range roles {
 			perms, err := enforcer.GetPermissionsForUser(role)
 			if err != nil {
-				panic(err)
+				errorResponder.Respond(c, err)
+
+				return
 			}
+
 			for _, perm := range perms {
 				if len(perm) != 3 {
 					continue
@@ -57,8 +57,11 @@ func ProvideAuthorizedIds(
 		if provider != nil {
 			ownedIds, err := provider.GetOwnedIDs(c, subj)
 			if err != nil {
-				panic(err)
+				errorResponder.Respond(c, err)
+
+				return
 			}
+
 			c.Set(OwnedIds, ownedIds)
 		}
 

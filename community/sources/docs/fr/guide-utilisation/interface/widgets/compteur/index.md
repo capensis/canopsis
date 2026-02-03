@@ -1,7 +1,9 @@
 # Compteur
 
-Le widget "Compteur" permet d'afficher, sous forme de tuiles numériques, le nombre d’alarmes correspondant à un ou plusieurs filtres prédéfinis.  
-Chaque tuile représente un filtre et indique en temps réel le total d’alarmes qui lui sont associées (d'autres types de compteurs sont également disponibles).  
+Le widget "Compteur" permet d'afficher, sous forme de tuiles numériques, le nombre d’alarmes correspondant à un ou plusieurs filtres prédéfinis.
+
+Chaque tuile représente un filtre et indique en temps réel le total d’alarmes qui lui sont associées (d'autres types de compteurs sont également disponibles).
+
 Ce widget est particulièrement utile pour visualiser en un coup d’oeil l’état global d’un périmètre, d’un service ou d’une application. La couleur de chaque tuile est configurable en fonction de seuils, afin d’attirer rapidement l’attention sur les situations critiques.
 
 ![Compteur](./img/counter.png  "Compteur")
@@ -10,7 +12,7 @@ Ce widget est particulièrement utile pour visualiser en un coup d’oeil l’é
 
 ### Les compteurs
 
-Les compteurs sont relatifs à un [filtre d'alarmes](../../patterns/).  
+Les compteurs sont relatifs à un [filtre d'alarmes][patterns].
 
 | Compteur           | Variable                       | Signification |
 | ------------------ |------------------------------- |-------------- |
@@ -30,7 +32,7 @@ Exemple d'une tuile :
 
 ![Exemple d'une tuile - Compteur](./img/tuile-counter.png  "Exemple d'une tuile - Compteur")
 
-Chaque tuile est associée à un [filtre d'alarmes](../../patterns/) et met à disposition un ensemble de compteurs relatifs à ce filtre.  
+Chaque tuile est associée à un [filtre d'alarmes][patterns] et met à disposition un ensemble de compteurs relatifs à ce filtre.  
 Le contenu textuel de cette tuile est personnalisable grâce à un template. Il permet de présenter les compteurs sous la forme souhaitée.
 
 La couleur de la tuile et l'icône présente sur celle-ci représentent des dépassements de seuils.
@@ -66,17 +68,17 @@ Un champ de texte vous permet de définir ce titre.
 ### Filtres (*requis*)
 
 Ce paramètre permet de définir les filtres pour lesquels vous souhaitez des compteurs.  
-Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../patterns/).
+Pour plus de détails sur les filtres et leur création, voir la partie sur [les filtres][patterns].
 
 Pour créer un filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre alors.
-Vous avez la possibilité d'éditer ou de supprimer des filtres existants.  
+Vous avez la possibilité d'éditer ou de supprimer des filtres existants.
 
 ### Filtre sur Ouverte/Résolue (*requis*)
 
 Ce paramètre permet de choisir le contexte de calcul des filtres.
 
 * Alarmes ouvertes : les filtres sont appliqués sur les alarmes ouvertes uniquement.
-* Alarmes ouvertes et récemment résolues : les filtres s'appliquent sur les alarmes ouvertes ainsi que les alarmes résolues depuis moins de `TimeToKeepResolvedAlarms` (Voir [la documentation du fichier canopsis.toml](../../../../guide-administration/administration-avancee/modification-canopsis-toml/#section-canopsisalarm)).
+* Alarmes ouvertes et récemment résolues : les filtres s'appliquent sur les alarmes ouvertes ainsi que les alarmes résolues depuis moins de `TimeToKeepResolvedAlarms` (Voir [la documentation du fichier canopsis.toml](../../../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsisalarm)).
 * Alarmes résolues : les filtres s'appliquent sur les alarmes résolues uniquement.
 
 ### Paramètres du bac à alarmes
@@ -89,7 +91,7 @@ Vous trouvez ici tous les paramètres relatifs au bac à alarme qui s'ouvre sous
 
 Ce paramètre permet de personnaliser les informations affichées à l'intérieur des tuiles de Compteur.
 
-Le langage utilisé ici est le [Handlebars](../../../cas-d-usage/template_handlebars/).
+Le langage utilisé ici est le [Handlebars](../../../cas-d-usage/template_handlebars.md).
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entrez le texte souhaité pour le template des tuiles, puis cliquez sur 'Soumettre'.
 
@@ -132,7 +134,9 @@ Cet ensemble de paramètres permet de définir la couleur et l'icône qui seront
 #### Corrélation activée
 
 Il s'agit d'activer ou non le mécanisme de corrélation pour les compteurs.  
-Ex : Il existe une [méta alarme](../../../menu-exploitation/regles-metaalarme/) regroupant 4 alarmes de base.
+Exemple : il existe une [méta alarme](../../../menu-exploitation/regles-metaalarme.md) regroupant 4 alarmes de base.
 
 * Corrélation activée "Off" : le compteur `total_active` vaut 4
 * Corrélation activée "On" : le compteur `total_active` vaut 1
+
+[patterns]: ../../patterns/index.md
