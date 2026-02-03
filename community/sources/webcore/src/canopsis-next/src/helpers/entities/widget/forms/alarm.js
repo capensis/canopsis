@@ -460,6 +460,8 @@ export const formToAlarmListBaseParameters = (form = {}) => ({
   exportPdfTemplateTemplate: formToWidgetTemplateValue(form.exportPdfTemplateTemplate),
   widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
   widgetColumns: formToWidgetColumns(form.widgetColumns),
+  sort: formToWidgetSortColumns(form.sort),
+  sortTemplate: formToWidgetTemplateValue(form.sortTemplate),
 });
 
 /**
