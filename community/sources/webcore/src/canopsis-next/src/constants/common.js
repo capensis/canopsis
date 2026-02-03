@@ -20,12 +20,12 @@ export const ROUTES_NAMES = {
   adminStorageSettings: 'admin-storage-settings',
   adminStateSettings: 'admin-state-settings',
   adminEventsRecords: 'admin-events-records',
+  adminExternalAuthTokens: 'admin-external-auth-tokens',
   adminTemplateTesting: 'admin-template-testing',
   exploitationPbehaviors: 'exploitation-pbehaviors',
   exploitationEventFilters: 'exploitation-event-filters',
   exploitationSnmpRules: 'exploitation-snmp-rules',
   exploitationDynamicInfos: 'exploitation-dynamic-infos',
-  playlist: 'playlist',
   exploitationMetaAlarmRules: 'exploitation-meta-alarm-rules',
   exploitationScenarios: 'exploitation-scenarios',
   exploitationIdleRules: 'exploitation-idle-rules',
@@ -34,6 +34,7 @@ export const ROUTES_NAMES = {
   exploitationDeclareTicketRules: 'exploitation-declare-ticket-rules',
   exploitationLinkRules: 'exploitation-link-rules',
   exploitationExternalDataTables: 'exploitation-external-data-tables',
+  playlist: 'playlist',
   notifications: 'notifications',
   exploitationEntityInfosProperties: 'exploitation-entity-infos-properties',
   notificationInstructionStats: 'notification-instruction-stats',
@@ -63,12 +64,12 @@ export const ROUTES = {
   adminStorageSettings: '/admin/storage-settings',
   adminStateSettings: '/admin/state-settings',
   adminEventsRecords: '/admin/events-records',
+  adminExternalAuthTokens: '/admin/external-auth-tokens',
   adminTemplateTesting: '/admin/template-testing',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilters: '/exploitation/event-filters',
   exploitationSnmpRules: '/exploitation/snmp-rules',
   exploitationDynamicInfos: '/exploitation/dynamic-infos',
-  playlist: '/playlist/:id',
   exploitationMetaAlarmRules: '/exploitation/meta-alarm-rule',
   exploitationScenarios: '/exploitation/scenarios',
   exploitationIdleRules: '/exploitation/idle-rules',
@@ -77,6 +78,7 @@ export const ROUTES = {
   exploitationDeclareTicketRules: '/exploitation/declare-ticket-rules',
   exploitationLinkRules: '/exploitation/link-rules',
   exploitationExternalDataTables: '/exploitation/external-data-tables',
+  playlist: '/playlist/:id',
   notifications: '/notifications/:tabId',
   exploitationEntityInfosProperties: '/exploitation/entity-infos-properties',
   notificationInstructionStats: '/notification/instruction-stats',
@@ -508,6 +510,10 @@ export const DENSE_TYPES = {
   medium: 1,
   small: 2,
 };
+
+export const LINKED_RULES_TYPES = ['widget', 'eventfilter', 'linkrule', 'scenario', 'declareticketrule'];
+
+export const LINKED_RULES_COUNT = 5;
 
 export const INFOS_NAME_VARIABLE = '%infos_name%';
 

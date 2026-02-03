@@ -2,10 +2,10 @@ package eventfilter
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
@@ -24,7 +24,7 @@ type EditRequest struct {
 	Config       eventfilter.RuleConfig       `json:"config"`
 	ExternalData []externaldata.RefParameters `json:"external_data,omitempty" binding:"dive"`
 
-	common.EntityPatternFieldsRequest
+	patternfields.EntityRequest
 	EventPattern pattern.Event `json:"event_pattern" binding:"event_pattern"`
 
 	RRule      string            `json:"rrule,omitempty"`
@@ -150,7 +150,7 @@ type TemplateRuleRequest struct {
 	Config       TemplateRuleConfigRequest        `json:"config"`
 	ExternalData []template.TemplateRefParameters `json:"external_data" binding:"dive"`
 
-	common.EntityPatternFieldsRequest
+	patternfields.EntityRequest
 	EventPattern pattern.Event `json:"event_pattern" binding:"event_pattern"`
 }
 

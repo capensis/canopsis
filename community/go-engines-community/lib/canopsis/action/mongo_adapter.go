@@ -14,7 +14,7 @@ type mongoAdapter struct {
 
 func NewAdapter(dbClient mongo.DbClient) Adapter {
 	return &mongoAdapter{
-		dbCollection: dbClient.Collection(mongo.ScenarioMongoCollection),
+		dbCollection: dbClient.Collection(mongo.ScenarioCollection),
 	}
 }
 

@@ -169,12 +169,14 @@ export default {
     userID: 'ID utilisateur',
     username: 'Nom d\'utilisateur',
     environmentVariables: 'Env',
+    rawResponse: 'Réponse brute',
   },
   testDataLabels: {
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event]: 'Événement',
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm]: 'Alarme',
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user]: 'Utilisateur',
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity]: 'Entité',
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: 'Réponse',
   },
   testDataResponseLabels: {
     [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: 'Réponse (Données externes - {index} API)',

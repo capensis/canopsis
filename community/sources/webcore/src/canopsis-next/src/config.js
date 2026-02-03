@@ -188,6 +188,8 @@ export const API_ROUTES = {
   serviceDependencies: '/api/v4/entityservice-dependencies',
   serviceImpacts: '/api/v4/entityservice-impacts',
   serviceAlarms: '/api/v4/entityservice-alarms',
+  entityUpstream: '/api/v4/entity-upstream',
+  entityDownstreams: '/api/v4/entity-downstreams',
   entityInfosDictionaryKeys: '/api/v4/entity-infos-dictionary/keys',
   entityInfosProperties: '/api/v4/entity-infos-properties',
   bulkEntityInfosProperties: '/api/v4/bulk/entity-infos-properties',
@@ -412,6 +414,7 @@ export const API_ROUTES = {
   metaAlarm: '/api/v4/cat/meta-alarms',
   snmpRule: '/api/v4/cat/snmprules',
   snmpMib: '/api/v4/cat/snmpmibs',
+  webhookTokenRule: '/api/v4/cat/webhook-token-rules',
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
@@ -439,6 +442,7 @@ export const API_ROUTES = {
     instructions: '/api/v4/cat/instruction-template-vars',
     jobs: '/api/v4/cat/job-template-vars',
     metaAlarmRules: '/api/v4/cat/metaalarmrule-template-vars',
+    webhookTokenRules: '/api/v4/cat/webhook-token-rule-template-vars',
   },
   templateValidationCat: {
     declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-validate',
@@ -446,6 +450,7 @@ export const API_ROUTES = {
     instructions: '/api/v4/cat/instruction-template-validate',
     jobs: '/api/v4/cat/job-template-validate',
     metaAlarmRules: '/api/v4/cat/metaalarmrule-template-validate',
+    webhookTokenRules: '/api/v4/cat/webhook-token-rule-template-validate',
   },
   copyVarsCat: {
     dynamicInfos: '/api/v4/cat/dynamic-infos-copy-vars',
@@ -488,7 +493,7 @@ export const COLORS = {
     ongoing: '#F9A825',
     cancelled: '#757575',
     noEvents: '#FF5252',
-    unknown: '#000',
+    unknown: '#808080',
   },
   alarmSteps: {
     ack: '#35485D',
@@ -735,6 +740,7 @@ export const CSS_COLORS_VARS = {
     ongoing: 'var(--v-status-ongoing-base)',
     cancelled: 'var(--v-status-cancelled-base)',
     noEvents: 'var(--v-status-noEvents-base)',
+    unknown: 'var(--v-status-unknown-base)',
   },
 };
 

@@ -38,7 +38,7 @@ func (c *GetterContainer) Has(dataType string) bool {
 }
 
 type Getter interface {
-	Get(ctx context.Context, parameters ParsedRefParameters, templateParameters any) (map[string]any, error)
+	Get(ctx context.Context, parameters ParsedRefParameters, templateParameters any) (any, error)
 }
 
 type GetterError struct {

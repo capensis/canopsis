@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -40,7 +40,7 @@ func NewOptimizeWorker(
 	store Store,
 	dbClient mongo.DbClient,
 	jobPublisher workers.JobPublisher,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	logger zerolog.Logger,
 ) OptimizeWorker {
 	return &optimizeWorker{
@@ -58,16 +58,14 @@ type optimizeWorker struct {
 	store                   Store
 	dbCollection            mongo.DbCollection
 	jobPublisher            workers.JobPublisher
-	transformer             common.PatternFieldsTransformer
+	transformer             patternfields.Transformer
 	abandonedTickerInterval time.Duration
 	pingInterval            time.Duration
 	logger                  zerolog.Logger
 }
 
 func (w *optimizeWorker) CreateJob(ctx context.Context, r OptimizeRequest) (OptimizeJob, error) {
-	transformedEntityPatternRequest, err := w.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-		EntityPattern: r.EntityPattern,
-	})
+	entityPattern, _, err := w.transformer.TransformAliases(ctx, r.EntityPattern, r)
 	if err != nil {
 		return OptimizeJob{}, err
 	}
@@ -75,7 +73,7 @@ func (w *optimizeWorker) CreateJob(ctx context.Context, r OptimizeRequest) (Opti
 	job := OptimizeJob{
 		ID:                    utils.NewID(),
 		Status:                OptimizeStatusCreated,
-		EntityPattern:         transformedEntityPatternRequest.EntityPattern,
+		EntityPattern:         entityPattern,
 		Created:               datetime.NewCpsTime(),
 		Suggestions:           make([]Suggestion, 0),
 		OptimizedFieldRegexps: make([]OptimizedFieldRegexp, 0),

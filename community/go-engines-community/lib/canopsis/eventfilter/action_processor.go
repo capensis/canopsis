@@ -172,10 +172,7 @@ func (p *actionProcessor) copy(
 		return ErrShouldBeAString
 	}
 
-	value, err := utils.GetField(
-		tplData,
-		strValue,
-	)
+	value, err := utils.GetField(tplData, strValue)
 	if err != nil {
 		failReason := fmt.Sprintf("action %d cannot copy from %q to %q: %s", action.Index, strValue,
 			action.Name, err.Error())
@@ -212,10 +209,7 @@ func (p *actionProcessor) copyEntityInfo(
 		return updatedEntityInfos, ErrShouldBeAString
 	}
 
-	value, err := utils.GetField(
-		tplData,
-		strValue,
-	)
+	value, err := utils.GetField(tplData, strValue)
 	if err != nil {
 		failReason := fmt.Sprintf("action %d cannot copy from %q to %q entity info: %s", action.Index,
 			strValue, action.Name, err.Error())
@@ -405,6 +399,10 @@ func (p *actionProcessor) updateEntity(
 	name, description string,
 	changes map[string]UpdatedValue,
 ) map[string]UpdatedValue {
+	if entity.Infos == nil {
+		entity.Infos = make(map[string]types.Info)
+	}
+
 	enableSorting := p.configProvider.Get().EnableArraySortingInEntityInfos
 	if enableSorting {
 		if s, ok := utils.IsStringSlice(newValue); ok {
@@ -415,6 +413,8 @@ func (p *actionProcessor) updateEntity(
 
 	var oldValue any
 	if v, ok := changes[name]; ok {
+		// if some previous action changed an info and the current action changes the value back
+		// remove logged changes and revert entity.Infos
 		oldValue = v.OldValue
 		if reflect.DeepEqual(oldValue, newValue) {
 			delete(changes, name)
@@ -435,6 +435,8 @@ func (p *actionProcessor) updateEntity(
 			}
 		}
 
+		// if no previous action changed an info and the current action sets the same value as in entity.Infos
+		// do nothing
 		if reflect.DeepEqual(oldValue, newValue) {
 			return changes
 		}
@@ -448,10 +450,6 @@ func (p *actionProcessor) updateEntity(
 		RuleID:   ruleID,
 		OldValue: oldValue,
 		NewValue: newValue,
-	}
-
-	if entity.Infos == nil {
-		entity.Infos = make(map[string]types.Info, 1)
 	}
 
 	entity.Infos[name] = types.Info{

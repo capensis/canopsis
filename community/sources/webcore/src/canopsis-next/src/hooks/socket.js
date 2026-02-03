@@ -16,14 +16,17 @@ export const useSocket = () => {
 /**
  * Manages joining and leaving a socket room with a listener on component mount/unmount.
  *
- * @param {string} room - The name of the socket room to join.
- * @param {Function} listener - The event listener function to add and remove.
- * @returns {Object} The injected socket instance.
+ * @param {Object} options - Socket room configuration options
+ * @param {string} options.room - The name of the socket room to join
+ * @param {*} [options.data=null] - Optional data to pass when joining the room
+ * @param {boolean} [options.needAuth=true] - Whether authentication is needed for the room
+ * @param {Function} options.listener - The event listener function to add and remove
+ * @returns {Object} The injected socket instance
  */
-export const useSocketRoom = (room, listener) => {
+export const useSocketRoom = ({ room, data = null, needAuth = true, listener }) => {
   const socket = useSocket();
 
-  onMounted(() => socket.join(room).addListener(listener));
+  onMounted(() => socket.join(room, data, needAuth).addListener(listener));
   onBeforeUnmount(() => socket.leave(room).removeListener(listener));
 
   return socket;

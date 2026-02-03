@@ -9,15 +9,20 @@
 </template>
 
 <script>
+import { computed } from 'vue';
 import { isNull, pick } from 'lodash';
 
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
-import { formBaseMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form/model-field';
+import { useValidator } from '@/hooks/validator/validator';
 
 export default {
   inject: ['$validator'],
-  mixins: [formBaseMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: [String, Number, Boolean, Array],
@@ -68,120 +73,118 @@ export default {
       default: false,
     },
   },
-  computed: {
-    errorMessages() {
-      return this.errors.collect(this.name);
-    },
+  setup(props, { emit }) {
+    const { errors } = useValidator();
+    const { updateModel } = useModelField(props, emit);
 
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
+    const rules = computed(() => ({ required: props.required }));
+    const switchLabel = computed(() => String(props.value));
 
-    switchLabel() {
-      return String(this.value);
-    },
+    const isInputTypeText = computed(() => [
+      PATTERN_FIELD_TYPES.number,
+      PATTERN_FIELD_TYPES.string,
+    ].includes(props.inputType));
 
-    isInputTypeText() {
-      return [
-        PATTERN_FIELD_TYPES.number,
-        PATTERN_FIELD_TYPES.string,
-      ].includes(this.inputType);
-    },
+    const updateTextFieldValue = (value) => {
+      let preparedValue = value;
 
-    inputComponent() {
-      if (this.isInputTypeText) {
-        const additionalProps = this.items.length
-          ? { ...pick(this, ['items', 'itemText', 'itemValue']), returnObject: false, forceSearching: true }
+      if (isNull(value) && props.inputType !== PATTERN_FIELD_TYPES.null) {
+        preparedValue = '';
+      }
+
+      if (props.inputType === PATTERN_FIELD_TYPES.number) {
+        preparedValue = Number(value);
+      }
+
+      updateModel(preparedValue);
+    };
+
+    const inputComponent = computed(() => {
+      if (isInputTypeText.value) {
+        const name = `${props.name}.combobox`;
+        const additionalProps = props.items.length
+          ? { ...pick(props, ['items', 'itemText', 'itemValue']), returnObject: false, forceSearching: true }
           : {};
 
         return {
-          is: this.items.length ? 'v-combobox' : 'v-text-field',
+          is: props.items.length ? 'v-combobox' : 'v-text-field',
           bind: {
-            ...pick(this, [
+            ...pick(props, [
               'value',
-              'name',
               'disabled',
               'hideDetails',
               'flat',
-              'errorMessages',
             ]),
             ...additionalProps,
 
-            placeholder: this.label,
+            name,
+            errorMessages: errors.collect(name),
+            placeholder: props.label,
             class: 'c-mixed-input-field__text',
-            type: this.inputType === PATTERN_FIELD_TYPES.number ? 'number' : 'text',
+            type: props.inputType === PATTERN_FIELD_TYPES.number ? 'number' : 'text',
             singleLine: true,
           },
           on: {
-            input: this.updateTextFieldValue,
-            'update:search-input': this.updateTextFieldValue,
+            input: updateTextFieldValue,
+            'update:search-input': updateTextFieldValue,
           },
         };
       }
 
-      if (this.inputType === PATTERN_FIELD_TYPES.boolean) {
+      if (props.inputType === PATTERN_FIELD_TYPES.boolean) {
+        const name = `${props.name}.switch`;
+
         return {
           is: 'v-switch',
-
           bind: {
             class: 'ma-0 c-mixed-input-field__switch',
-            name: this.name,
-            inputValue: this.value,
-            label: this.switchLabel,
-            disabled: this.disabled,
+            name,
+            inputValue: props.value,
+            label: switchLabel.value,
+            disabled: props.disabled,
             color: 'primary',
             hideDetails: true,
           },
           on: {
-            change: this.updateModel,
+            change: updateModel,
           },
         };
       }
 
-      if (this.inputType === PATTERN_FIELD_TYPES.stringArray) {
+      if (props.inputType === PATTERN_FIELD_TYPES.stringArray) {
+        const name = `${props.name}.array_text_field`;
+
         return {
           is: 'c-array-text-field',
-
           bind: {
-            name: this.name,
-            values: this.value,
-            disabled: this.disabled,
-            errorMessages: this.errorMessages,
+            name,
+            values: props.value,
+            disabled: props.disabled,
+            errorMessages: errors.collect(name),
           },
           on: {
-            change: this.updateModel,
+            change: updateModel,
           },
         };
       }
+
+      const name = `${props.name}.text_field`;
 
       return {
         is: 'v-text-field',
-
         bind: {
-          name: this.name,
-          errorMessages: this.errorMessages,
+          name,
+          errorMessages: errors.collect(name),
           value: 'null',
           disabled: true,
         },
       };
-    },
-  },
-  methods: {
-    updateTextFieldValue(value) {
-      let preparedValue = value;
+    });
 
-      if (isNull(value) && this.inputType !== PATTERN_FIELD_TYPES.null) {
-        preparedValue = '';
-      }
-
-      if (this.inputType === PATTERN_FIELD_TYPES.number) {
-        preparedValue = Number(value);
-      }
-
-      this.updateModel(preparedValue);
-    },
+    return {
+      rules,
+      inputComponent,
+    };
   },
 };
 </script>

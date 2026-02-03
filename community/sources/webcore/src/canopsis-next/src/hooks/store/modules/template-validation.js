@@ -27,6 +27,7 @@ export const useTemplateValidation = () => {
     validateInstructions: 'validateInstructions',
     validateJobs: 'validateJobs',
     validateMetaAlarmRules: 'validateMetaAlarmRules',
+    validateWebhookTokenRules: 'validateWebhookTokenRules',
   });
 
   return {
