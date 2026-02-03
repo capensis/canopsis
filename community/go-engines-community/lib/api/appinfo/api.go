@@ -3,7 +3,8 @@ package appinfo
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 )
@@ -14,12 +15,14 @@ type API interface {
 }
 
 type api struct {
-	store Store
+	store          Store
+	errorResponder httperror.Responder
 }
 
-func NewApi(store Store) API {
+func NewApi(store Store, errorResponder httperror.Responder) API {
 	return &api{
-		store: store,
+		store:          store,
+		errorResponder: errorResponder,
 	}
 }
 
@@ -31,37 +34,51 @@ func (a *api) GetAppInfo(c *gin.Context) {
 
 	response.UserInterfaceConf, err = a.store.RetrieveUserInterfaceConfig(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	response.VersionConf, err = a.store.RetrieveVersionConfig(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	response.Login = a.store.RetrieveLoginConfig()
 	response.GlobalConf, err = a.store.RetrieveGlobalConfig(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	remediation, err := a.store.RetrieveRemediationConfig(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	response.Remediation = &remediation
 
 	response.Maintenance, err = a.store.RetrieveMaintenanceState(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	response.DefaultColorTheme, err = a.store.RetrieveDefaultColorTheme(c, response.UserInterfaceConf.DefaultColorTheme)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	response.SerialName, err = a.store.RetrieveSerialName(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, response)
@@ -75,14 +92,17 @@ func (a *api) UpdateUserInterface(c *gin.Context) {
 		CheckCountRequestTimeout: config.UserInterfaceCheckCountRequestTimeout,
 	}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	err := a.store.UpdateUserInterfaceConfig(c, &request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	c.JSON(http.StatusOK, request)
 }

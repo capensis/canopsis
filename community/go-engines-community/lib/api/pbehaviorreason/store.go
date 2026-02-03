@@ -6,7 +6,8 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -32,20 +33,21 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
+		dbPbhCollection:       dbClient.Collection(mongo.PbehaviorMongoCollection),
+		dbScenarioCollection:  dbClient.Collection(mongo.ScenarioCollection),
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name", "description"},
 		defaultSortBy:         "created",
 
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id":  "ID already exists.",
-			"name": "Name already exists.",
-		}),
+		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
 }
 
 type store struct {
 	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
+	dbPbhCollection       mongo.DbCollection
+	dbScenarioCollection  mongo.DbCollection
 	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -68,7 +70,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": match})
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -85,7 +87,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pagination.CreateAggregationPipeline(
 			r.Query,
 			pipeline,
-			common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
+			mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
 			project,
 		),
 		options.Aggregate().SetCollation(&options.Collation{Locale: "en"}),
@@ -122,7 +124,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, doc)
 			}
 
 			return err
@@ -175,7 +177,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": doc.ID}, bson.M{"$set": doc})
 		if err != nil || result.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, doc)
 			}
 
 			return err
@@ -192,28 +194,14 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
-	isLinkedToPbehavior, err := s.IsLinkedToPbehavior(ctx, id)
-	if err != nil {
-		return false, err
-	}
-
-	if isLinkedToPbehavior {
-		return false, ErrLinkedReasonToPbehavior
-	}
-
-	isLinkedToAction, err := s.isLinkedToAction(ctx, id)
-	if err != nil {
-		return false, err
-	}
-
-	if isLinkedToAction {
-		return false, ErrLinkedReasonToAction
-	}
-
 	var deleted int64
-
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
+
+		err := s.validateDeleteRequest(ctx, id)
+		if err != nil {
+			return err
+		}
 
 		// required to get the author in action log listener.
 		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
@@ -230,9 +218,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 
 // IsLinkedToPbehavior checks if there is pbehavior with linked reason.
 func (s *store) IsLinkedToPbehavior(ctx context.Context, id string) (bool, error) {
-	res := s.dbClient.
-		Collection(mongo.PbehaviorMongoCollection).
-		FindOne(ctx, bson.M{"reason": id})
+	res := s.dbPbhCollection.FindOne(ctx, bson.M{"reason": id})
 	if err := res.Err(); err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, nil
@@ -244,25 +230,22 @@ func (s *store) IsLinkedToPbehavior(ctx context.Context, id string) (bool, error
 	return true, nil
 }
 
-func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
-	res := s.dbClient.
-		Collection(mongo.ScenarioMongoCollection).
-		FindOne(ctx, bson.M{
-			"actions": bson.M{
-				"$elemMatch": bson.M{
-					"type":              types.ActionTypePbehavior,
-					"parameters.reason": id,
-				},
-			}})
-	if err := res.Err(); err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, nil
-		}
-
-		return false, err
+func (s *store) validateDeleteRequest(ctx context.Context, id string) error {
+	err := dbvalidation.ValidateLinkedReference(ctx, s.dbPbhCollection, bson.M{
+		"reason": id,
+	}, "reason", "a pbehavior")
+	if err != nil {
+		return err
 	}
 
-	return true, nil
+	return dbvalidation.ValidateLinkedReference(ctx, s.dbScenarioCollection, bson.M{
+		"actions": bson.M{
+			"$elemMatch": bson.M{
+				"type":              types.ActionTypePbehavior,
+				"parameters.reason": id,
+			},
+		},
+	}, "reason", "an action scenario")
 }
 
 func transformModelToDoc(r EditRequest) *pbehavior.Reason {
@@ -287,7 +270,7 @@ func getDeletablePipeline() []bson.M {
 			"as": "pbhs",
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.ScenarioMongoCollection,
+			"from": mongo.ScenarioCollection,
 			"let":  bson.M{"id": "$_id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$in": bson.A{"$$id", "$actions.parameters.reason"}}}},

@@ -72,13 +72,14 @@ export default {
       ticketNumber: 'Numéro de ticket',
       parents: 'Causes',
       children: 'Conséquences',
+      cannotUnsnoozeUntilPbehaviorInProgress: 'Impossible de réveiller jusqu\'à ce que le comportement périodique soit en cours',
     },
   },
   timeline: {
     by: 'par',
     launched: 'lancé',
     junit: 'JUnit',
-    groupItems: 'Éléments de groupe',
+    groupItems: 'Grouper les éléments',
     steps: {
       [ALARM_LIST_STEPS.statedec]: 'Sévérité diminuée',
       [ALARM_LIST_STEPS.stateinc]: 'Sévérité augmentée',

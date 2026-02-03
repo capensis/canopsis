@@ -58,7 +58,7 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Event, error) {
 		return nil, nil
 	}
 
-	cursor, err := s.adapter.GetOpenedOkAlarmsWithEntity(ctx)
+	cursor, err := s.adapter.GetOpenedOffAlarmsWithEntity(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("cannot fetch open alarms: %w", err)
 	}
@@ -161,7 +161,7 @@ func (s *service) UpdateFlappingAlarms(ctx context.Context) ([]types.Event, erro
 
 	for _, alarm := range flappingAlarms {
 		currentAlarmStatus := alarm.Alarm.Value.Status.Value
-		newStatus, _ := s.alarmStatusService.ComputeStatus(alarm.Alarm, alarm.Entity)
+		newStatus, _ := s.alarmStatusService.ComputeStatusOnStateChange(alarm.Alarm, alarm.Entity)
 		if newStatus != currentAlarmStatus {
 			event, err := s.eventGenerator.Generate(alarm.Entity)
 			if err != nil {

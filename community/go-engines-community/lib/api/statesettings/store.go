@@ -7,14 +7,17 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -38,14 +41,14 @@ type store struct {
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage
 	defaultSearchByFields    []string
 	dupErrorParser           validation.DuplicateErrorParser
-	transformer              common.PatternFieldsTransformer
+	transformer              patternfields.Transformer
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 ) Store {
 	return &store{
 		dbClient:                 dbClient,
@@ -54,10 +57,8 @@ func NewStore(
 		authorProvider:           authorProvider,
 		stateSettingsUpdatesChan: stateSettingsUpdatesChan,
 		defaultSearchByFields:    []string{"_id", "title"},
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"title": "Title already exists.",
-		}),
-		transformer: transformer,
+		dupErrorParser:           validation.NewDuplicateErrorParser(),
+		transformer:              transformer,
 	}
 }
 
@@ -89,7 +90,7 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
 	var pipeline []bson.M
 
-	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -121,43 +122,41 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
-
-	r.ID = utils.NewID()
-	r.Created = &now
-	r.Updated = &now
-
 	var response *Response
-
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r, &r.StateSetting)
+		model, err := s.transformRequestToModel(ctx, r)
 		if err != nil {
 			return err
 		}
 
-		_, err = s.dbCollection.InsertOne(ctx, r)
+		model.ID = utils.NewID()
+		model.Created = &now
+		model.Updated = &now
+		_, err = s.dbCollection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
 		}
 
-		err = priority.UpdateFollowing(ctx, s.dbCollection, r.ID, r.Priority)
+		err = priority.UpdateFollowing(ctx, s.dbCollection, model.ID, model.Priority)
 		if err != nil {
 			return err
 		}
 
-		if r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited {
+		if model.Method == statesetting.MethodDependencies || model.Method == statesetting.MethodInherited {
 			err = s.updateNotify(ctx)
 			if err != nil {
 				return err
 			}
 		}
 
-		response, err = s.GetByID(ctx, r.ID)
+		response, err = s.GetByID(ctx, model.ID)
+
 		return err
 	})
 	if err != nil {
@@ -180,34 +179,24 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
 	var response *Response
 	var oldVersion statesetting.StateSetting
-
-	r.Updated = &now
-
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r, &r.StateSetting)
+		model, err := s.transformRequestToModel(ctx, r)
 		if err != nil {
 			return err
 		}
 
-		unset := make(bson.M)
-		switch r.Method {
-		case statesetting.MethodDependencies:
-			unset["inherited_entity_pattern"] = 1
-		case statesetting.MethodInherited:
-			unset["state_thresholds"] = 1
-		}
-
+		model.Updated = &now
 		err = s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{"_id": r.ID},
-			bson.M{"$set": r, "$unset": unset},
+			bson.M{"$set": model},
 			options.FindOneAndUpdate().SetReturnDocument(options.Before),
 		).Decode(&oldVersion)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -217,12 +206,12 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		err = priority.UpdateFollowing(ctx, s.dbCollection, r.ID, r.Priority)
+		err = priority.UpdateFollowing(ctx, s.dbCollection, r.ID, model.Priority)
 		if err != nil {
 			return err
 		}
 
-		if r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited {
+		if model.Method == statesetting.MethodDependencies || model.Method == statesetting.MethodInherited {
 			err = s.updateNotify(ctx)
 			if err != nil {
 				return err
@@ -230,13 +219,14 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		}
 
 		response, err = s.GetByID(ctx, r.ID)
+
 		return err
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	if response != nil && (r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited) {
+	if response != nil && (response.Method == statesetting.MethodDependencies || response.Method == statesetting.MethodInherited) {
 		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
 			ID:         response.ID,
 			NewPattern: response.EntityPattern,
@@ -251,8 +241,12 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
-	if id == statesetting.JUnitID || id == statesetting.ServiceID {
-		return false, ErrDefaultRule
+	if id == statesetting.ServiceID {
+		return false, httperror.NewForbiddenError("The default service rule cannot be deleted.")
+	}
+
+	if id == statesetting.JUnitID {
+		return false, httperror.NewForbiddenError("The default junit rule cannot be deleted.")
 	}
 
 	var oldVersion statesetting.StateSetting
@@ -295,7 +289,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 
 func (s *store) getSortQuery(sortBy, sort string) bson.M {
 	sortDir := 1
-	if sort == common.SortDesc {
+	if sort == pagination.SortDesc {
 		sortDir = -1
 	}
 
@@ -319,49 +313,87 @@ func (s *store) updateNotify(ctx context.Context) error {
 	return err
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *StateSetting) error {
-	uniqueAliasesMap := make(map[string]bool)
-	uniqueAliases := make([]string, 0)
-
-	if r.EntityPattern != nil {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-			EntityPattern: *r.EntityPattern,
-		})
-		if err != nil {
-			return err
-		}
-
-		model.EntityPattern = &transformedEntityPatternRequest.EntityPattern
-
-		for _, alias := range transformedEntityPatternRequest.Aliases {
-			if !uniqueAliasesMap[alias] {
-				uniqueAliasesMap[alias] = true
-				uniqueAliases = append(uniqueAliases, alias)
-			}
-		}
+func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (statesetting.StateSetting, error) {
+	model := statesetting.StateSetting{
+		Method:          r.Method,
+		Enabled:         r.Enabled,
+		Priority:        r.Priority,
+		StateThresholds: r.StateThresholds.ToModel(),
+		JUnitThresholds: r.JUnitThresholds.ToModel(),
+	}
+	if r.Title != nil {
+		model.Title = *r.Title
 	}
 
-	if r.InheritedEntityPattern != nil {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-			EntityPattern: *r.InheritedEntityPattern,
-		})
-		if err != nil {
-			return err
-		}
-
-		model.InheritedEntityPattern = &transformedEntityPatternRequest.EntityPattern
-
-		for _, alias := range transformedEntityPatternRequest.Aliases {
-			if !uniqueAliasesMap[alias] {
-				uniqueAliasesMap[alias] = true
-				uniqueAliases = append(uniqueAliases, alias)
-			}
-		}
+	if r.Type != nil {
+		model.Type = *r.Type
 	}
 
-	model.Aliases = uniqueAliases
+	patterns, err := s.transformer.FetchCorporatePatterns(ctx,
+		r.CorporateEntityPattern,
+		r.CorporateInheritedEntityPattern,
+	)
+	if err != nil {
+		return model, err
+	}
 
-	return nil
+	aliases, err := s.transformer.FetchAliases(ctx, append(
+		patternfields.GetAliases(r.EntityPattern),
+		patternfields.GetAliases(r.InheritedEntityPattern)...,
+	))
+	if err != nil {
+		return model, err
+	}
+
+	aliasPropMap := make(map[string]bool)
+	var applyAliasPropIDs []string
+	var valErrs, applyErrs validator.ValidationErrors
+	if r.CorporateEntityPattern != "" {
+		r.EntityRequest, applyAliasPropIDs, applyErrs = s.transformer.ApplyEntityCorporatePattern(r.EntityRequest, patterns)
+	} else if r.EntityPattern != nil {
+		r.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(r.EntityPattern, aliases)
+	}
+
+	valErrs = append(valErrs, applyErrs...)
+	for _, id := range applyAliasPropIDs {
+		aliasPropMap[id] = true
+	}
+
+	inheritedEntityRequest := patternfields.EntityRequest{
+		EntityPattern:          r.InheritedEntityPattern,
+		CorporateEntityPattern: r.CorporateInheritedEntityPattern,
+	}
+	if r.CorporateInheritedEntityPattern != "" {
+		inheritedEntityRequest, applyAliasPropIDs, applyErrs = s.transformer.ApplyEntityCorporatePattern(inheritedEntityRequest, patterns, "CorporateInheritedEntityPattern")
+	} else if r.InheritedEntityPattern != nil {
+		inheritedEntityRequest.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(inheritedEntityRequest.EntityPattern, aliases, "InheritedEntityPattern")
+	}
+
+	valErrs = append(valErrs, applyErrs...)
+	for _, id := range applyAliasPropIDs {
+		aliasPropMap[id] = true
+	}
+
+	if len(valErrs) > 0 {
+		return model, validation.NewError(valErrs, r)
+	}
+
+	r.InheritedEntityPatternRequest = InheritedEntityPatternRequest{
+		InheritedEntityPattern:          inheritedEntityRequest.EntityPattern,
+		CorporateInheritedEntityPattern: inheritedEntityRequest.CorporateEntityPattern,
+		CorporatePattern:                inheritedEntityRequest.CorporatePattern,
+	}
+
+	aliasPropIDs := make([]string, 0, len(aliasPropMap))
+	for id := range aliasPropMap {
+		aliasPropIDs = append(aliasPropIDs, id)
+	}
+
+	model.Aliases = aliasPropIDs
+	model.EntityPatternFields = r.EntityRequest.ToModelWithoutFields(s.dbCollection.Name())
+	model.InheritedEntityPatternFields = r.InheritedEntityPatternRequest.ToModelWithoutFields(s.dbCollection.Name())
+
+	return model, nil
 }
 
 func addEditableAndDeletableFields() bson.M {

@@ -15,8 +15,8 @@ import { isDarkColor, getLightenOrDarkenColor } from '@/helpers/color';
 
 /**
  * @typedef {ThemeTableColors} ThemeTableColorsForm
- * @property {ThemeEnabledColor} shift_row_color
- * @property {ThemeEnabledColor} hover_row_color
+ * @property {ThemeEnabledColor} shift_row
+ * @property {ThemeEnabledColor} hover_row
  */
 
 /**
@@ -106,12 +106,12 @@ export const themeTableColorsToForm = (table = {}) => {
   return {
     background: table.background ?? COLORS.table.background,
     row_color: table.row_color ?? COLORS.table.rowColor,
-    shift_row_color: {
-      enabled: !!table.shift_row_color,
+    shift_row: {
+      enabled: !!table.shift_row,
       color: shiftRowColor,
     },
-    hover_row_color: {
-      enabled: !!table.hover_row_color,
+    hover_row: {
+      enabled: !!table.hover_row,
       color: hoverRowColor,
     },
   };
@@ -155,14 +155,6 @@ export const themeToForm = (theme = {}) => ({
 });
 
 /**
- * Convert theme enabled color to string
- *
- * @param {ThemeEnabledColor} value
- * @returns {string}
- */
-const themeEnabledColorToString = value => (value.enabled ? value.color : null);
-
-/**
  * Convert theme table colors form to API compatible object
  *
  * @param {ThemeTableColorsForm} table
@@ -170,8 +162,11 @@ const themeEnabledColorToString = value => (value.enabled ? value.color : null);
  */
 const formTableColorsToTheme = table => ({
   ...table,
-  shift_row_color: themeEnabledColorToString(table.shift_row_color),
-  hover_row_color: themeEnabledColorToString(table.hover_row_color),
+
+  shift_row: table.shift_row?.enabled ?? false,
+  shift_row_color: table.shift_row?.color ?? null,
+  hover_row: table.hover_row?.enabled ?? false,
+  hover_row_color: table.hover_row?.color ?? null,
 });
 
 /**

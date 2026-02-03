@@ -30,7 +30,7 @@
           class="top-bar-administration-menu-link"
         />
         <v-divider
-          v-if="index &lt; administrationGroupedLinks.length - 1"
+          v-if="index < administrationGroupedLinks.length - 1"
           :key="`${group.title}-divider`"
         />
       </template>
@@ -118,6 +118,11 @@ export default {
           route: { name: ROUTES_NAMES.adminEventsRecords },
           icon: '$vuetify.icons.mark_unread_chat_alt',
           permission: USER_PERMISSIONS.technical.eventsRecord,
+        },
+        {
+          route: { name: ROUTES_NAMES.adminExternalAuthTokens },
+          icon: 'security',
+          permission: USER_PERMISSIONS.technical.externalAuthTokens,
         },
         {
           route: { name: ROUTES_NAMES.adminParameters },

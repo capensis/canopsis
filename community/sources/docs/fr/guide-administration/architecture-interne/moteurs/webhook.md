@@ -4,7 +4,7 @@
 
 Le moteur WEBHOOK a pour objectif de gérer les appels externes via webhook. Ce moteur permet d'envoyer des notifications ou des informations à des systèmes externes via des appels HTTP. Ce moteur est disponible uniquement en édition Pro.
 
-Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les webhooks](../../../../guide-utilisation/menu-exploitation/scenarios/#webhook).
+Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les webhooks](../../../guide-utilisation/menu-exploitation/scenarios.md#webhook).
 
 ## Options de démarrage
 
@@ -13,6 +13,7 @@ L'option `-h` permet d'afficher toutes les options disponibles au lancement du m
 | Option | Description |
 |--------|------------|
 | `-configPath string` | Chemin du fichier de configuration du moteur Webhook (défaut : "/opt/canopsis/etc/webhook.conf.toml") |
+| `-cps.logger string` | Destination de sortie du logger. Remplace le paramètre "Canopsis.logger.Writer" du fichier de configuration TOML |
 | `-d` | Active le mode debug |
 | `-lastRetryInterval duration` | Intervalle de réessai pour l'exécution d'un webhook (défaut : 1m0s) |
 | `-periodicalWaitTime duration` | Durée d'attente entre deux exécutions du processus périodique (défaut : 1m0s) |
@@ -30,4 +31,4 @@ Cette commande lance le moteur WEBHOOK en mode debug, avec 15 workers pour trait
 ## Schéma d'interactions
 
 Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
-[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-webhook/)
+[EN - View Engine Interaction Schemas](../../../guide-developpement/schemas/engine-webhook.md)

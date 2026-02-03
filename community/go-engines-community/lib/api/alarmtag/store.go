@@ -7,8 +7,9 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -28,7 +29,7 @@ type Store interface {
 	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, transformer patternfields.Transformer) Store {
 	return &store{
 		client:          dbClient,
 		collection:      dbClient.Collection(mongo.AlarmTagCollection),
@@ -39,9 +40,7 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, transform
 		defaultSearchByFields: []string{"value"},
 		defaultSortBy:         "value",
 
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"value": "Value already exists.",
-		}),
+		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -50,7 +49,7 @@ type store struct {
 	collection      mongo.DbCollection
 	labelCollection mongo.DbCollection
 	authorProvider  author.Provider
-	transformer     common.PatternFieldsTransformer
+	transformer     patternfields.Transformer
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -65,7 +64,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		match = append(match, bson.M{"value": bson.M{"$in": r.Values}})
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		match = append(match, filter)
 	}
@@ -85,7 +84,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
+		mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
 		project,
 	))
 
@@ -114,7 +113,7 @@ func (s *store) FindLabels(ctx context.Context, r ListLabelsRequest) (*Aggregati
 		match = append(match, bson.M{"_id": bson.M{"$in": r.IDs}})
 	}
 
-	filter := common.GetSearchQuery(r.Search, []string{"_id"})
+	filter := mongoquery.GetSearchQuery(r.Search, []string{"_id"})
 	if len(filter) > 0 {
 		match = append(match, filter)
 	}
@@ -126,7 +125,7 @@ func (s *store) FindLabels(ctx context.Context, r ListLabelsRequest) (*Aggregati
 	cursor, err := s.labelCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery("_id", common.SortAsc),
+		mongoquery.GetSortQuery("_id", pagination.SortAsc),
 	))
 	if err != nil {
 		return nil, err
@@ -185,7 +184,7 @@ func (s *store) Create(ctx context.Context, r CreateRequest) (*Response, error) 
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r.EntityPatternFieldsRequest, r.AlarmPatternFieldsRequest, &tag)
+		err := s.transformPatternRequestsToModel(ctx, r.EditRequest, &tag)
 		if err != nil {
 			return err
 		}
@@ -193,7 +192,7 @@ func (s *store) Create(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err = s.collection.InsertOne(ctx, tag)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, tag)
 			}
 
 			return err
@@ -258,10 +257,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		case alarmtag.TypeInternal:
 			if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" &&
 				len(r.AlarmPattern) == 0 && r.CorporateAlarmPattern == "" {
-				return common.NewValidationError("alarm_pattern", "AlarmPattern or EntityPattern is required.")
+				return validation.NewSingleError("required", "AlarmPattern", "AlarmPattern", r)
 			}
 
-			err = s.transformPatternRequestsToModel(ctx, r.EntityPatternFieldsRequest, r.AlarmPatternFieldsRequest, &tag)
+			err = s.transformPatternRequestsToModel(ctx, r.EditRequest, &tag)
 			if err != nil {
 				return err
 			}
@@ -275,7 +274,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 
 		if err != nil || updateResult.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, tag)
 			}
 
 			return err
@@ -307,30 +306,8 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	return deleted > 0, err
 }
 
-func (s *store) transformPatternRequestsToModel(
-	ctx context.Context,
-	entityPatternReq common.EntityPatternFieldsRequest,
-	alarmPatternReq common.AlarmPatternFieldsRequest,
-	model *alarmtag.AlarmTag,
-) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, entityPatternReq)
-	if err != nil {
-		return err
-	}
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *alarmtag.AlarmTag) (err error) {
+	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.collection.Name())
 
-	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, alarmPatternReq)
-	if err != nil {
-		return err
-	}
-
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInEntityPattern(mongo.AlarmTagCollection),
-	)
-	model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInAlarmPattern(mongo.AlarmTagCollection),
-		common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.AlarmTagCollection),
-	)
-
-	return nil
+	return err
 }

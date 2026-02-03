@@ -23,7 +23,7 @@ exports[`service-form Renders \`service-form\` with custom props 1`] = `
       />
     </div>
     <div
-      class="flex pr-3 xs4"
+      class="flex pr-3 xs3"
     >
       <c-alarm-state-field-stub
         label="Hi availability state"
@@ -32,7 +32,7 @@ exports[`service-form Renders \`service-form\` with custom props 1`] = `
       />
     </div>
     <div
-      class="flex xs2"
+      class="flex xs3"
     >
       <c-impact-level-field-stub
         required=""
@@ -171,7 +171,7 @@ exports[`service-form Renders \`service-form\` with default props 1`] = `
       />
     </div>
     <div
-      class="flex pr-3 xs4"
+      class="flex pr-3 xs3"
     >
       <c-alarm-state-field-stub
         label="Hi availability state"
@@ -179,7 +179,7 @@ exports[`service-form Renders \`service-form\` with default props 1`] = `
       />
     </div>
     <div
-      class="flex xs2"
+      class="flex xs3"
     >
       <c-impact-level-field-stub
         required=""

@@ -306,7 +306,7 @@ func (c *jsCollection) FindOne(ctx context.Context, filter, opts goja.Value) (an
 		return 0, fmt.Errorf("invalid find one options: %w", err)
 	}
 
-	doc := make(map[string]any)
+	var doc bson.M
 	err = c.dbCollection.FindOne(ctx, dbFilter, dbOpts).Decode(&doc)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -316,7 +316,7 @@ func (c *jsCollection) FindOne(ctx context.Context, filter, opts goja.Value) (an
 		return nil, fmt.Errorf("error finding document: %w", err)
 	}
 
-	return doc, nil
+	return bsonToInterface(doc), nil
 }
 
 func (c *jsCollection) FindOneAndDelete(ctx context.Context, filter, opts goja.Value) (any, error) {
@@ -335,7 +335,7 @@ func (c *jsCollection) FindOneAndDelete(ctx context.Context, filter, opts goja.V
 		return 0, fmt.Errorf("invalid find one and delete options: %w", err)
 	}
 
-	doc := make(map[string]any)
+	var doc bson.M
 	err = c.dbCollection.FindOneAndDelete(ctx, dbFilter, dbOpts).Decode(&doc)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -345,7 +345,7 @@ func (c *jsCollection) FindOneAndDelete(ctx context.Context, filter, opts goja.V
 		return nil, fmt.Errorf("error finding and deleting document: %w", err)
 	}
 
-	return doc, nil
+	return bsonToInterface(doc), nil
 }
 
 func (c *jsCollection) FindOneAndReplace(ctx context.Context, filter, opts goja.Value) (any, error) {
@@ -368,7 +368,7 @@ func (c *jsCollection) FindOneAndReplace(ctx context.Context, filter, opts goja.
 		return 0, fmt.Errorf("invalid find one and replace options: %w", err)
 	}
 
-	doc := make(map[string]any)
+	var doc bson.M
 	err = c.dbCollection.FindOneAndReplace(ctx, dbFilter, dbOpts).Decode(&doc)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -378,7 +378,7 @@ func (c *jsCollection) FindOneAndReplace(ctx context.Context, filter, opts goja.
 		return nil, fmt.Errorf("error finding and replacing document: %w", err)
 	}
 
-	return doc, nil
+	return bsonToInterface(doc), nil
 }
 
 func (c *jsCollection) FindOneAndUpdate(ctx context.Context, filter, opts goja.Value) (any, error) {
@@ -404,7 +404,7 @@ func (c *jsCollection) FindOneAndUpdate(ctx context.Context, filter, opts goja.V
 		return 0, fmt.Errorf("invalid find one and update options: %w", err)
 	}
 
-	doc := make(map[string]any)
+	var doc bson.M
 	err = c.dbCollection.FindOneAndUpdate(ctx, dbFilter, dbOpts).Decode(&doc)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -414,7 +414,7 @@ func (c *jsCollection) FindOneAndUpdate(ctx context.Context, filter, opts goja.V
 		return nil, fmt.Errorf("error finding and updating document: %w", err)
 	}
 
-	return doc, nil
+	return bsonToInterface(doc), nil
 }
 
 func (c *jsCollection) InsertOne(ctx context.Context, doc, opts goja.Value) (map[string]any, error) {
@@ -702,7 +702,7 @@ func (c *jsCollection) BulkWrite(ctx context.Context, operations, opts goja.Valu
 	}, nil
 }
 
-func (c *jsCollection) Distinct(ctx context.Context, fieldName string, filter goja.Value) ([]any, error) {
+func (c *jsCollection) Distinct(ctx context.Context, fieldName string, filter goja.Value) (any, error) {
 	dbFilter, err := transformValue(c.vm, filter)
 	if err != nil {
 		return nil, fmt.Errorf("invalid filter: %w", err)
@@ -712,13 +712,13 @@ func (c *jsCollection) Distinct(ctx context.Context, fieldName string, filter go
 		dbFilter = bson.M{}
 	}
 
-	var res []any
+	var res bson.A
 	err = c.dbCollection.Distinct(ctx, fieldName, dbFilter).Decode(&res)
 	if err != nil {
 		return nil, fmt.Errorf("error distinct: %w", err)
 	}
 
-	return res, nil
+	return bsonToInterface(res), nil
 }
 
 func (c *jsCollection) getMethods(ctx context.Context) map[string]any {
@@ -783,7 +783,7 @@ func (c *jsCollection) getMethods(ctx context.Context) map[string]any {
 		"bulkWrite": func(operations, opts goja.Value) (map[string]any, error) {
 			return c.BulkWrite(ctx, operations, opts)
 		},
-		"distinct": func(fieldName string, filter goja.Value) ([]any, error) {
+		"distinct": func(fieldName string, filter goja.Value) (any, error) {
 			return c.Distinct(ctx, fieldName, filter)
 		},
 	}
