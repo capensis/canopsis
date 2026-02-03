@@ -129,7 +129,7 @@ export const usePollingWithPending = ({
  * @param {Object} options - Options for polling a file
  * @param {Function} options.createHandler - Function to create polling
  * @param {Function} options.fetchHandler - Function to fetch polling status
- * @param {Function} [options.failedHandler = () => {}] - Function to handle failed polling (default: () => {})
+ * @param {Function} [options.failedHandler = v => v] - Function to handle failed polling (default: v => v)
  * @param {Function} [options.endHandler = v => v] - Function to handle end of polling (default: v => v)
  * @param {number} [options.completedStatus = EXPORT_STATUSES.completed] - Status code for completed (default: 1)
  * @param {number} [options.failedStatus = EXPORT_STATUSES.failed] - Status code for failed (default: 2)
@@ -140,7 +140,7 @@ export const useFilePolling = ({
   createHandler,
   fetchHandler,
   endHandler = v => v,
-  failedHandler = () => {},
+  failedHandler = v => v,
   completedStatus = EXPORT_STATUSES.completed,
   failedStatus = EXPORT_STATUSES.failed,
   interval = EXPORT_FETCHING_INTERVAL,

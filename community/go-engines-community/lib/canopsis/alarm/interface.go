@@ -33,7 +33,7 @@ type Adapter interface {
 	GetOpenedAlarmsByIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
 	GetOpenedAlarmsWithEntityByIDs(ctx context.Context, ids []string, alarms *[]types.AlarmWithEntity) error
 	GetCountOpenedAlarmsByIDs(ctx context.Context, ids []string) (int64, error)
-	GetOpenedOkAlarmsWithEntity(ctx context.Context) (mongo.Cursor, error)
+	GetOpenedOffAlarmsWithEntity(ctx context.Context) (mongo.Cursor, error)
 
 	// GetOpenedAlarmsByAlarmIDs gets ongoing alarms related the provided alarm ids
 	GetOpenedAlarmsByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
@@ -55,7 +55,7 @@ type Adapter interface {
 
 	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore datetime.CpsTime, idsWithPbehaviors, serviceIDs []string) (mongo.Cursor, error)
 
-	GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (int64, int64, error)
+	GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (types.CpsNumber, *datetime.CpsTime, error)
 
 	UpdateLastEventDate(ctx context.Context, entityIds []string, t datetime.CpsTime) error
 }

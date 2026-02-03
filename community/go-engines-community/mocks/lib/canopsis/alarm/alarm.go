@@ -309,27 +309,27 @@ func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithLastDatesBefore(ctx, arg1 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarmsWithLastDatesBefore", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarmsWithLastDatesBefore), ctx, arg1)
 }
 
-// GetOpenedOkAlarmsWithEntity mocks base method.
-func (m *MockAdapter) GetOpenedOkAlarmsWithEntity(ctx context.Context) (mongo.Cursor, error) {
+// GetOpenedOffAlarmsWithEntity mocks base method.
+func (m *MockAdapter) GetOpenedOffAlarmsWithEntity(ctx context.Context) (mongo.Cursor, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOpenedOkAlarmsWithEntity", ctx)
+	ret := m.ctrl.Call(m, "GetOpenedOffAlarmsWithEntity", ctx)
 	ret0, _ := ret[0].(mongo.Cursor)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetOpenedOkAlarmsWithEntity indicates an expected call of GetOpenedOkAlarmsWithEntity.
-func (mr *MockAdapterMockRecorder) GetOpenedOkAlarmsWithEntity(ctx any) *gomock.Call {
+// GetOpenedOffAlarmsWithEntity indicates an expected call of GetOpenedOffAlarmsWithEntity.
+func (mr *MockAdapterMockRecorder) GetOpenedOffAlarmsWithEntity(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedOkAlarmsWithEntity", reflect.TypeOf((*MockAdapter)(nil).GetOpenedOkAlarmsWithEntity), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedOffAlarmsWithEntity", reflect.TypeOf((*MockAdapter)(nil).GetOpenedOffAlarmsWithEntity), ctx)
 }
 
 // GetWorstAlarmStateAndMaxLastEventDate mocks base method.
-func (m *MockAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (int64, int64, error) {
+func (m *MockAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (types.CpsNumber, *datetime.CpsTime, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetWorstAlarmStateAndMaxLastEventDate", ctx, entityIds)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(int64)
+	ret0, _ := ret[0].(types.CpsNumber)
+	ret1, _ := ret[1].(*datetime.CpsTime)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }
