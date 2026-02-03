@@ -17,8 +17,8 @@ type ParsedRule struct {
 	Type         string
 	Config       ParsedRuleConfig
 	ExternalData []externaldata.ParsedRefParameters
-	Created      *datetime.CpsTime
-	Updated      *datetime.CpsTime
+	Created      datetime.CpsTime
+	Updated      datetime.CpsTime
 
 	EventPattern pattern.Event
 	savedpattern.EntityPatternFields
@@ -74,7 +74,7 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 
 	parsedExternalData := externaldata.ParseRefParameters(rule.ExternalData, tplExecutor)
 
-	return ParsedRule{
+	r := ParsedRule{
 		ID:          rule.ID,
 		Description: rule.Description,
 		Type:        rule.Type,
@@ -89,8 +89,6 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 			OnFailure:     rule.Config.OnFailure,
 		},
 		ExternalData:        parsedExternalData,
-		Created:             rule.Created,
-		Updated:             rule.Updated,
 		EventPattern:        rule.EventPattern,
 		EntityPatternFields: rule.EntityPatternFields,
 		ResolvedStart:       rule.ResolvedStart,
@@ -99,10 +97,19 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 		NextResolvedStop:    rule.NextResolvedStop,
 		ResolvedExdates:     rule.ResolvedExdates,
 	}
+	if rule.Created != nil {
+		r.Created = *rule.Created
+	}
+
+	if rule.Updated != nil {
+		r.Updated = *rule.Updated
+	}
+
+	return r
 }
 
 func ExecuteParsedTemplate(
-	ruleID, ruleDesc string,
+	rule ParsedRule,
 	tplName string,
 	parsedTpl libtemplate.ParsedTemplate,
 	tplData any,
@@ -112,7 +119,7 @@ func ExecuteParsedTemplate(
 ) (string, error) {
 	if parsedTpl.Err != nil {
 		failReason := fmt.Sprintf("invalid template %q: %s", tplName, parsedTpl.Err)
-		failureService.Add(ruleID, ruleDesc, FailureTypeInvalidTemplate, failReason, nil)
+		failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidTemplate, failReason, nil)
 		return "", parsedTpl.Err
 	}
 
@@ -120,7 +127,7 @@ func ExecuteParsedTemplate(
 		res, err := templateExecutor.ExecuteByTpl(parsedTpl.Tpl, tplData)
 		if err != nil {
 			failReason := fmt.Sprintf("cannot execute template %q for event: %s", tplName, err)
-			failureService.Add(ruleID, ruleDesc, FailureTypeInvalidTemplate, failReason, event)
+			failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidTemplate, failReason, event)
 			return "", err
 		}
 
