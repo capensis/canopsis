@@ -1,3 +1,5 @@
+import { isArray, isEmpty } from 'lodash';
+
 import { SORT_ORDERS } from '@/constants';
 
 import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/array';
@@ -31,7 +33,17 @@ export const widgetSortColumnToForm = (sortColumn = {}) => addKeyInEntity({
  * @param {WidgetSortColumn[]} [sortColumns = []]
  * @returns {WidgetSortColumnForm[]}
  */
-export const widgetSortColumnsToForm = (sortColumns = []) => sortColumns.map(widgetSortColumnToForm);
+export const widgetSortColumnsToForm = (sortColumns = []) => {
+  if (isEmpty(sortColumns)) {
+    return [];
+  }
+
+  if (!isArray(sortColumns)) {
+    return [widgetSortColumnToForm(sortColumns)];
+  }
+
+  return sortColumns.map(widgetSortColumnToForm);
+};
 
 /**
  * Convert form array to widget sort columns array
