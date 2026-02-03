@@ -75,7 +75,6 @@ export default {
     const cancelled = ref(false);
 
     const title = computed(() => config.value.title ?? t('common.confirmation'));
-
     const sanitizedText = computed(() => (config.value.text ? sanitizeHtml(config.value.text) : ''));
     const sanitizedAlertText = computed(() => (config.value.alert ? sanitizeHtml(config.value.alert) : ''));
 

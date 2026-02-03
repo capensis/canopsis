@@ -4,7 +4,7 @@
 
 Le moteur REMEDIATION a pour objectif d'appliquer les remédiations associées aux alarmes. Il permet d'exécuter des actions correctives automatiques pour résoudre des problèmes identifiés par des alarmes, avec des jobs ordonnancés si nécessaire. Ce moteur est disponible uniquement en édition Pro.
 
-Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur la remédiation](../../../../guide-utilisation/remediation/).
+Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur la remédiation](../../../guide-utilisation/remediation/index.md).
 
 ## Options de démarrage
 
@@ -13,6 +13,7 @@ L'option `-h` permet d'afficher toutes les options disponibles au lancement du m
 | Option | Description |
 |--------|------------|
 | `-cleanUp` | Nettoie les données de remédiation |
+| `-cps.logger string` | Destination de sortie du logger. Remplace le paramètre "Canopsis.logger.Writer" du fichier de configuration TOML |
 | `-d` | Active le mode debug |
 | `-lastRetryInterval duration` | Intervalle de réessai du dernier job d'une instruction de remédiation en cours d'exécution (défaut : 1m0s) |
 | `-periodicalWaitTime duration` | Durée d'attente entre deux exécutions du processus périodique (défaut : 1m0s) |
@@ -31,4 +32,4 @@ Cette commande lance le moteur REMEDIATION en mode debug, avec 15 workers pour t
 ## Schéma d'interactions
 
 Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
-[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-remediation/)
+[EN - View Engine Interaction Schemas](../../../guide-developpement/schemas/engine-remediation.md)

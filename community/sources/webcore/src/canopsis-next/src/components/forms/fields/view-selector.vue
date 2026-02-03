@@ -44,7 +44,13 @@ export default {
         return null;
       }
 
-      const userDefaultView = this.getViewById(this.value);
+      let userDefaultView;
+
+      try {
+        userDefaultView = this.getViewById(this.value);
+      } catch (error) {
+        console.error(error);
+      }
 
       return userDefaultView?.title ?? null;
     },

@@ -20,6 +20,7 @@ export const TEMPLATE_TESTING_TEST_TYPES = {
   instruction: 6,
   job: 7,
   metaAlarmRule: 8,
+  externalAuthToken: 9,
 };
 
 export const TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS = {

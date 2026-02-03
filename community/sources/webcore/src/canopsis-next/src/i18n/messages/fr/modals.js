@@ -820,6 +820,12 @@ export default {
         + '<strong>Cette opération est irreversible.</strong>',
       phraseText: 'Veuillez saisir le nom de la Collection / Table pour confirmer:',
     },
+    deleteExternalAuthToken: {
+      title: 'Supprimer le jeton d\'authentification',
+      text: '<span class="font-weight-regular">Vous êtes sur le point de supprimer le jeton.</span>\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez saisir le nom du jeton pour confirmer :',
+    },
     templateTestingData: {
       title: 'Supprimer les données de test',
       text: 'Vous êtes sur le point de supprimer les données de test.\n'
@@ -975,6 +981,12 @@ export default {
   entityDependenciesList: {
     title: 'Diagramme de cause racine',
   },
+  entityUpstream: {
+    entities: 'Entités',
+    topLevelEntities: 'Entités de niveau supérieur',
+    seeEntities: 'Voir les entités',
+    seeTopEntities: 'Voir les entités principales',
+  },
   createDeclareTicketRule: {
     create: {
       title: 'Créer une règle de déclaration de ticket',
@@ -1090,7 +1102,7 @@ export default {
       title: 'Modifier le thème',
     },
     duplicate: {
-      title: 'Thème en double',
+      title: 'Dupliquer le thème',
     },
   },
   createIcon: {
@@ -1124,6 +1136,14 @@ export default {
     },
     duplicate: {
       title: 'Dupliquer',
+    },
+  },
+  createExternalAuthToken: {
+    create: {
+      title: 'Créer un jeton d\'authentification externe',
+    },
+    edit: {
+      title: 'Modifier le jeton d\'authentification externe',
     },
   },
   createTemplateTestingData: {

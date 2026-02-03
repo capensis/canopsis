@@ -386,6 +386,11 @@ html {
     & > .v-data-table__wrapper > table > tbody > tr > td:not(:last-of-type) {
       word-break: break-all;
       word-wrap: break-word;
+
+      .v-icon {
+        word-break: normal;
+        word-wrap: normal;
+      }
     }
   }
 
@@ -425,10 +430,26 @@ html {
   }
 }
 
+.v-list-item__mask {
+  .theme--light & {
+    color: var(--v-text-light-disabled, rgba(0, 0, 0, 0.38));
+    background: #eeeeee;
+  }
+
+  .theme--dark & {
+    color: var(--v-text-dark-disabled, rgba(255, 255, 255, 0.5));
+    background: #494949;
+  }
+}
+
 *[aria-required="true"] label:before {
-  content: '*';
-  padding-right: 4px;
-  color: var(--v-error-base);
+  content: '*' !important;
+  padding-right: 4px !important;
+  color: var(--v-error-base) !important;
+}
+
+.not-required label:before {
+  content: none !important;
 }
 
 @for $i from 0 through 16 {
@@ -458,6 +479,10 @@ html {
       color: white;
     }
   }
+
+  &-unknown {
+    color: white;
+  }
 }
 
 .impact-state {
@@ -470,6 +495,16 @@ html {
       &, & *:not(svg, g, path) {
         color: $color;
       }
+    }
+  }
+}
+
+.status {
+  $statuses: ok stealthy flapping ongoing cancelled noEvents unknown;
+
+  @each $status in $statuses {
+    &-#{$status} {
+      background-color: var(--v-status-#{$status}-base);
     }
   }
 }

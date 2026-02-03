@@ -176,8 +176,6 @@ consignes.
 Si vous devez passer des variables à votre job, suivez la section
 [Payload](#utilisation-des-payloads) qui vous explique comment faire.
 
-[doc-op]: ../../guide-utilisation/menu-administration/consignes.md#associer-un-job-à-une-opération
-
 ### Association de job AWX dans Canopsis
 
 Coté AWX, dans le menu « Job templates », créez ou sélectionnez un job et
@@ -213,8 +211,6 @@ consignes.
 Si vous devez passer des variables à votre job, suivez la section
 [Payload](#utilisation-des-payloads) qui vous explique comment faire.
 
-[doc-op]: ../../guide-utilisation/menu-administration/consignes.md#associer-un-job-à-une-opération
-
 ### Association de job VisualTom (vtom) dans Canopsis
 
 Coté VisualTom, pour trouver le Job ID, il faut récupérer le nom du « traitement » qui se trouve dans votre application :
@@ -232,8 +228,6 @@ Le job est maintenant prêt à être utilisé dans des [opérations][doc-op] de
 consignes.
 Si vous devez passer des variables à votre job, la section suivante,
 [Payload](#utilisation-des-payloads) vous explique comment faire.
-
-[doc-op]: ../../guide-utilisation/menu-administration/consignes.md#associer-un-job-à-une-opération
 
 ## Utilisation des `payloads`
 
@@ -564,4 +558,5 @@ paramètres avancés du [widget bac à alarmes][baa].
 
 [remed-index]: ../../guide-utilisation/remediation/index.md
 [mise-en-oeuvre]: ../../guide-utilisation/menu-administration/consignes.md
-[baa]: ../../guide-utilisation/interface/widgets/bac-a-alarmes/index.md#paramètres-du-widget
+[baa]: ../../guide-utilisation/interface/widgets/bac-a-alarmes/index.md#parametres-du-widget
+[doc-op]: ../../guide-utilisation/menu-administration/consignes.md#associer-un-job-a-une-operation

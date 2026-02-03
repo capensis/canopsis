@@ -197,6 +197,10 @@ export const EntitiesRootCauseDiagram = () => ({
   component: import(/* webpackChunkName: "Context" */ './entity/entities-root-cause-diagram.vue'),
   loading: LoaderOverlay,
 });
+export const EntityUpstream = () => ({
+  component: import(/* webpackChunkName: "Context" */ './entity/entity-upstream.vue'),
+  loading: LoaderOverlay,
+});
 export const SelectView = () => ({
   component: import(/* webpackChunkName: "View" */ './view/select-view.vue'),
   loading: LoaderOverlay,
@@ -438,6 +442,11 @@ export const CreateExternalDataTableRecord = () => ({
 
 export const ImportExternalDataTableRecords = () => ({
   component: import(/* webpackChunkName: "ExternalData" */ './external-data-table/import-external-data-table-records.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateExternalAuthToken = () => ({
+  component: import(/* webpackChunkName: "ExternalAuthToken" */ './external-auth-token/create-external-auth-token.vue'),
   loading: LoaderOverlay,
 });
 

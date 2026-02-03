@@ -2,7 +2,12 @@ import { range } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreGetters, createMockedStoreModules, createEntityInfoPropertyModule } from '@unit/utils/store';
+import {
+  createMockedStoreGetters,
+  createMockedStoreModules,
+  createEntityInfoPropertyModule,
+  createActiveViewModule,
+} from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
 import { mockModals } from '@unit/utils/mock-hooks';
@@ -100,10 +105,12 @@ describe('alarms-list-table', () => {
   };
 
   const { entityInfoPropertyModule } = createEntityInfoPropertyModule();
+  const { activeViewModule } = createActiveViewModule();
 
   const store = createMockedStoreModules([
     associativeTableModule,
     entityInfoPropertyModule,
+    activeViewModule,
     createMockedStoreGetters({ name: 'info', showHeaderOnKioskMode: false }),
   ]);
 
@@ -583,6 +590,7 @@ describe('alarms-list-table', () => {
     const customStore = createMockedStoreModules([
       associativeTableModule,
       customEntityInfoPropertyModule,
+      activeViewModule,
       createMockedStoreGetters({ name: 'info', showHeaderOnKioskMode: false }),
     ]);
 
@@ -622,6 +630,7 @@ describe('alarms-list-table', () => {
     const customStore = createMockedStoreModules([
       associativeTableModule,
       customEntityInfoPropertyModule,
+      activeViewModule,
       createMockedStoreGetters({ name: 'info', showHeaderOnKioskMode: false }),
     ]);
 

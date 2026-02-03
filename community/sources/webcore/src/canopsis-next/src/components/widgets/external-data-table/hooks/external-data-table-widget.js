@@ -60,6 +60,8 @@ export const useExternalDataTableWidgetTable = ({
       externalDataTable.value = await updateExternalDataTable({
         id: externalDataTable.value._id,
         data: {
+          ...pick(externalDataTable.value, ['type', 'name', 'description']),
+
           column_tags: formToExternalDataTableColumnTags(newColumns),
         },
       });

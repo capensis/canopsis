@@ -10,9 +10,11 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
@@ -20,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -51,7 +54,7 @@ type MongoQueryBuilder struct {
 	// excludedFields is used to remove redundant data from result
 	excludedFields []string
 
-	transformer common.PatternFieldsTransformer
+	transformer patternfields.Transformer
 }
 
 type lookupWithKey struct {
@@ -59,7 +62,7 @@ type lookupWithKey struct {
 	pipeline []bson.M
 }
 
-func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer) *MongoQueryBuilder {
+func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider, transformer patternfields.Transformer) *MongoQueryBuilder {
 	return &MongoQueryBuilder{
 		filterCollection: client.Collection(mongo.WidgetFiltersMongoCollection),
 		authorProvider:   authorProvider,
@@ -148,7 +151,7 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	}
 
 	if search != "" {
-		and = append(and, common.GetSearchQuery(search, q.defaultSearchByFields))
+		and = append(and, mongoquery.GetSearchQuery(search, q.defaultSearchByFields))
 	}
 
 	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{"$and": and}})
@@ -201,6 +204,37 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(ctx context.Contex
 	pipeline := append(beforeLimit, q.sort)
 	pipeline = append(pipeline, afterLimit...)
 	return pipeline, nil
+}
+
+func (q *MongoQueryBuilder) CreateDownstreamAggregationPipeline(
+	match bson.M,
+	paginationQuery pagination.Query,
+	sortRequest SortRequest,
+	now datetime.CpsTime,
+) []bson.M {
+	q.clear(now)
+	q.entityMatch = append(q.entityMatch, bson.M{"$match": match})
+	q.handleSort(sortRequest)
+	q.lookups = append(q.lookups, lookupWithKey{key: "downstream_count", pipeline: dbquery.GetDownstreamCountPipeline()})
+	beforeLimit, afterLimit := q.createAggregationPipeline()
+
+	return pagination.CreateAggregationPipeline(
+		paginationQuery,
+		beforeLimit,
+		q.sort,
+		afterLimit,
+	)
+}
+
+func (q *MongoQueryBuilder) CreateUpstreamPipeline(
+	match bson.M,
+	now datetime.CpsTime,
+) []bson.M {
+	q.clear(now)
+	q.entityMatch = append(q.entityMatch, bson.M{"$match": match})
+	beforeLimit, afterLimit := q.createAggregationPipeline()
+
+	return append(beforeLimit, afterLimit...)
 }
 
 func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
@@ -301,7 +335,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 		err := q.filterCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&filter)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return common.NewValidationError("filters."+strconv.Itoa(i), "Filter doesn't exist.")
+				return validation.NewSingleError("not_exist", strconv.Itoa(i), "Filters."+strconv.Itoa(i), r)
 			}
 
 			return fmt.Errorf("cannot fetch widget filter: %w", err)
@@ -309,7 +343,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 
 		if len(filter.EntityPattern) == 0 && len(filter.PbehaviorPattern) == 0 && len(filter.AlarmPattern) == 0 ||
 			len(filter.WeatherServicePattern) > 0 {
-			return common.NewValidationError("filters."+strconv.Itoa(i), "Filter cannot be applied.")
+			return validation.NewSingleError("not_applicable", strconv.Itoa(i), "Filters."+strconv.Itoa(i), r)
 		}
 
 		entityPatternQuery, err := db.EntityPatternToMongoQuery(filter.EntityPattern, "")
@@ -362,19 +396,31 @@ func (q *MongoQueryBuilder) handleEntityPattern(ctx context.Context, r ListReque
 	var entityPattern pattern.Entity
 	err := json.Unmarshal([]byte(r.EntityPattern), &entityPattern)
 	if err != nil {
-		return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+		return validation.NewSingleError("entity_pattern", "EntityPattern", "EntityPattern", r)
 	}
 
-	transformedEntityPattern, err := q.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-		EntityPattern: entityPattern,
-	})
+	aliases, err := q.transformer.FetchAliases(ctx, patternfields.GetAliases(entityPattern))
 	if err != nil {
 		return err
 	}
 
-	entityPatternQuery, err := db.EntityPatternToMongoQuery(transformedEntityPattern.EntityPattern, "")
+	var valErrs validator.ValidationErrors
+	entityPattern, _, valErrs = q.transformer.ApplyAliases(entityPattern, aliases)
+	if len(valErrs) > 0 {
+		// use anonymous struct to correctly transform validation error namespace
+		// because r.EntityPattern has string type
+		validatedStruct := struct {
+			EntityPattern pattern.Entity `json:"entity_pattern"`
+		}{
+			EntityPattern: entityPattern,
+		}
+
+		return validation.NewError(valErrs, validatedStruct)
+	}
+
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, "")
 	if err != nil {
-		return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+		return validation.NewSingleError("entity_pattern", "EntityPattern", "EntityPattern", r)
 	}
 
 	if len(entityPatternQuery) > 0 {
@@ -392,19 +438,31 @@ func (q *MongoQueryBuilder) handleNegativeEntityPattern(ctx context.Context, r L
 	var negativeEntityPattern pattern.Entity
 	err := json.Unmarshal([]byte(r.NegativeEntityPattern), &negativeEntityPattern)
 	if err != nil {
-		return common.NewValidationError("negate_entity_pattern", "NegativeEntityPattern is invalid.")
+		return validation.NewSingleError("negative_entity_pattern", "NegativeEntityPattern", "NegativeEntityPattern", r)
 	}
 
-	transformedNegativeEntityPattern, err := q.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-		EntityPattern: negativeEntityPattern,
-	})
+	aliases, err := q.transformer.FetchAliases(ctx, patternfields.GetAliases(negativeEntityPattern))
 	if err != nil {
 		return err
 	}
 
-	negativeEntityPatternQuery, err := db.EntityPatternToNegativeMongoQuery(transformedNegativeEntityPattern.EntityPattern, "")
+	var valErrs validator.ValidationErrors
+	negativeEntityPattern, _, valErrs = q.transformer.ApplyAliases(negativeEntityPattern, aliases, "NegativeEntityPattern")
+	if len(valErrs) > 0 {
+		// use anonymous struct to correctly transform validation error namespace
+		// because r.NegativeEntityPattern has string type
+		validatedStruct := struct {
+			NegativeEntityPattern pattern.Entity `json:"negative_entity_pattern"`
+		}{
+			NegativeEntityPattern: negativeEntityPattern,
+		}
+
+		return validation.NewError(valErrs, validatedStruct)
+	}
+
+	negativeEntityPatternQuery, err := db.EntityPatternToNegativeMongoQuery(negativeEntityPattern, "")
 	if err != nil {
-		return common.NewValidationError("negate_entity_pattern", "NegativeEntityPattern is invalid.")
+		return validation.NewSingleError("negative_entity_pattern", "NegativeEntityPattern", "NegativeEntityPattern", r)
 	}
 
 	if len(negativeEntityPatternQuery) > 0 {
@@ -424,7 +482,7 @@ func (q *MongoQueryBuilder) addSearchFilter(r ListRequest, match *[]bson.M) {
 		searchBy = q.defaultSearchByFields
 	}
 
-	*match = append(*match, common.GetSearchQuery(r.Search, searchBy))
+	*match = append(*match, mongoquery.GetSearchQuery(r.Search, searchBy))
 }
 
 func (q *MongoQueryBuilder) addCategoryFilter(r ListRequest, match *[]bson.M) {
@@ -466,11 +524,11 @@ func (q *MongoQueryBuilder) handleSort(r SortRequest) {
 	}
 	sort := r.Sort
 	if sort == "" {
-		sort = common.SortAsc
+		sort = pagination.SortAsc
 	}
 
 	q.adjustLookupsForSort([]string{sortBy})
-	q.sort = common.GetSortQuery(sortBy, sort)
+	q.sort = mongoquery.GetSortQuery(sortBy, sort)
 }
 
 func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {

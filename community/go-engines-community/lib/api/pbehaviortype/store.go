@@ -6,7 +6,9 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	libpriority "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -31,11 +33,14 @@ type Store interface {
 }
 
 type store struct {
-	dbClient              mongo.DbClient
-	dbCollection          mongo.DbCollection
-	authorProvider        author.Provider
-	defaultSearchByFields []string
-	defaultSortBy         string
+	dbClient                 mongo.DbClient
+	dbCollection             mongo.DbCollection
+	dbPbhCollection          mongo.DbCollection
+	dbPbhExceptionCollection mongo.DbCollection
+	dbScenarioCollection     mongo.DbCollection
+	authorProvider           author.Provider
+	defaultSearchByFields    []string
+	defaultSortBy            string
 
 	dupErrorParser validation.DuplicateErrorParser
 }
@@ -43,16 +48,16 @@ type store struct {
 // NewStore instantiates pbehavior type store.
 func NewStore(db mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
-		dbClient:              db,
-		dbCollection:          db.Collection(mongo.PbehaviorTypeMongoCollection),
-		authorProvider:        authorProvider,
-		defaultSearchByFields: []string{"_id", "name", "description", "type"},
-		defaultSortBy:         "name",
+		dbClient:                 db,
+		dbCollection:             db.Collection(mongo.PbehaviorTypeMongoCollection),
+		dbPbhCollection:          db.Collection(mongo.PbehaviorMongoCollection),
+		dbPbhExceptionCollection: db.Collection(mongo.PbehaviorExceptionMongoCollection),
+		dbScenarioCollection:     db.Collection(mongo.ScenarioCollection),
+		authorProvider:           authorProvider,
+		defaultSearchByFields:    []string{"_id", "name", "description", "type"},
+		defaultSortBy:            "name",
 
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id":  "ID already exists.",
-			"name": "Name already exists.",
-		}),
+		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -85,7 +90,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 		pipeline = append(pipeline, bson.M{"$match": match})
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -101,7 +106,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 		pagination.CreateAggregationPipeline(
 			r.Query,
 			pipeline,
-			common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
+			mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
 			project,
 		),
 		options.Aggregate().SetCollation(&options.Collation{Locale: "en"}),
@@ -161,7 +166,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 
 	for _, p := range prioritiesOfDefaultTypes {
 		if p == doc.Priority {
-			return nil, common.NewValidationError("priority", "Priority is taken by default type.")
+			return nil, validation.NewSingleError("not_applicable", "Priority", "Priority", r)
 		}
 	}
 
@@ -178,7 +183,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err = s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, doc)
 			}
 
 			return err
@@ -236,11 +241,11 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		}
 
 		if isTaken && !isDefault {
-			return common.NewValidationError("priority", "Priority is taken by default type.")
+			return validation.NewSingleError("not_applicable", "Priority", "Priority", r)
 		}
 
 		if doc.IconName == "" && (!isDefault || doc.Type != pbehavior.TypeActive) {
-			return common.NewValidationError("icon_name", "IconName is missing.")
+			return validation.NewSingleError("required", "IconName", "IconName", r)
 		}
 
 		if isDefault {
@@ -262,14 +267,14 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			}})
 			if err != nil {
 				if mongodriver.IsDuplicateKeyError(err) {
-					return s.dupErrorParser.Parse(err)
+					return s.dupErrorParser.Parse(err, doc)
 				}
 
 				return err
 			}
 
 			if result.MatchedCount == 0 {
-				return ErrDefaultType
+				return httperror.NewForbiddenError("The default type cannot be modified.")
 			}
 		} else {
 			err = libpriority.UpdateFollowing(ctx, s.dbCollection, doc.ID, doc.Priority)
@@ -280,7 +285,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": doc.ID}, bson.M{"$set": doc})
 			if err != nil || result.MatchedCount == 0 {
 				if mongodriver.IsDuplicateKeyError(err) {
-					return s.dupErrorParser.Parse(err)
+					return s.dupErrorParser.Parse(err, doc)
 				}
 
 				return err
@@ -296,39 +301,14 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 
 // Delete pbehavior type by id
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
-	isDefault, err := s.isDefault(ctx, id)
-	if err != nil {
-		return false, err
-	}
-	if isDefault {
-		return false, ErrDefaultType
-	}
-	isLinkedToPbh, err := s.isLinkedToPbehavior(ctx, id)
-	if err != nil {
-		return false, err
-	}
-	if isLinkedToPbh {
-		return false, ErrLinkedTypeToPbehavior
-	}
-	isLinkedToException, err := s.isLinkedToException(ctx, id)
-	if err != nil {
-		return false, err
-	}
-	if isLinkedToException {
-		return false, ErrLinkedTypeToException
-	}
-	isLinkedToAction, err := s.isLinkedToAction(ctx, id)
-	if err != nil {
-		return false, err
-	}
-	if isLinkedToAction {
-		return false, ErrLinkedToActionType
-	}
-
 	var deleted int64
-
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
+
+		err := s.validateDeleteRequest(ctx, id)
+		if err != nil {
+			return err
+		}
 
 		// required to get the author in action log listener.
 		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
@@ -337,6 +317,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		}
 
 		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+
 		return err
 	})
 
@@ -367,53 +348,41 @@ func (s *store) GetNextPriority(ctx context.Context) (int64, error) {
 	return res.Priority + 1, nil
 }
 
-// isLinkedToPbehavior checks if there is pbehavior with linked type.
-func (s *store) isLinkedToPbehavior(ctx context.Context, id string) (bool, error) {
-	pbhCollection := s.dbClient.Collection(mongo.PbehaviorMongoCollection)
-	res := pbhCollection.FindOne(ctx, bson.M{"$or": []bson.M{
-		{"type_": id},
-		{"exdates.type": id},
-	}})
-	if err := res.Err(); err == nil {
-		return true, nil
-	} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
-		return false, err
+func (s *store) validateDeleteRequest(ctx context.Context, id string) error {
+	isDefault, err := s.isDefault(ctx, id)
+	if err != nil {
+		return err
 	}
 
-	return false, nil
-}
-
-// isLinkedToException checks if there is exception with linked type.
-func (s *store) isLinkedToException(ctx context.Context, id string) (bool, error) {
-	exceptionCollection := s.dbClient.Collection(mongo.PbehaviorExceptionMongoCollection)
-	res := exceptionCollection.FindOne(ctx, bson.M{"exdates.type": id})
-	if err := res.Err(); err == nil {
-		return true, nil
-	} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
-		return false, err
+	if isDefault {
+		return httperror.NewForbiddenError("The default type cannot be deleted.")
 	}
 
-	return false, nil
-}
+	err = dbvalidation.ValidateLinkedReference(ctx, s.dbPbhCollection, bson.M{
+		"$or": []bson.M{
+			{"type_": id},
+			{"exdates.type": id},
+		},
+	}, "type", "a pbehavior")
+	if err != nil {
+		return err
+	}
 
-// isLinkedToAction checks if there is action with linked type.
-func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
-	actionCollection := s.dbClient.Collection(mongo.ScenarioMongoCollection)
-	res := actionCollection.FindOne(ctx, bson.M{
+	err = dbvalidation.ValidateLinkedReference(ctx, s.dbPbhExceptionCollection, bson.M{
+		"exdates.type": id,
+	}, "type", "an exception")
+	if err != nil {
+		return err
+	}
+
+	return dbvalidation.ValidateLinkedReference(ctx, s.dbScenarioCollection, bson.M{
 		"actions": bson.M{
 			"$elemMatch": bson.M{
 				"type":            types.ActionTypePbehavior,
 				"parameters.type": id,
 			},
 		},
-	})
-	if err := res.Err(); err == nil {
-		return true, nil
-	} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
-		return false, err
-	}
-
-	return false, nil
+	}, "type", "an action scenario")
 }
 
 func (s *store) isDefault(ctx context.Context, id string) (bool, error) {
@@ -482,7 +451,7 @@ func getDefaultAndDeletablePipeline(prioritiesOfDefaultTypes []int64) []bson.M {
 			"as": "pbhs",
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.ScenarioMongoCollection,
+			"from": mongo.ScenarioCollection,
 			"let":  bson.M{"type": "$_id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$actions.parameters.type", "$$type"}}}},

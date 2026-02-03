@@ -4,11 +4,12 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -43,6 +44,7 @@ type api struct {
 	entityChangeListener chan<- entityservice.ChangeEntityMessage
 	metricMetaUpdater    metrics.MetaUpdater
 	encoder              encoding.Encoder
+	errorResponder       httperror.Responder
 	logger               zerolog.Logger
 }
 
@@ -53,6 +55,7 @@ func NewApi(
 	entityChangeListener chan<- entityservice.ChangeEntityMessage,
 	metricMetaUpdater metrics.MetaUpdater,
 	encoder encoding.Encoder,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	fields := []string{"_id", "name", "type", "enabled", "connector", "component", "services"}
@@ -74,37 +77,30 @@ func NewApi(
 		entityChangeListener: entityChangeListener,
 		metricMetaUpdater:    metricMetaUpdater,
 		encoder:              encoder,
+		errorResponder:       errorResponder,
 		logger:               logger,
 	}
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Entity}
+// @Success 200 {object} pagination.ListResponse{data=[]Entity}
 func (a *api) List(c *gin.Context) {
 	var query ListRequestWithPagination
 	query.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+	if err := validation.Bind(c, &query); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	entities, err := a.store.Find(c, query)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
+		a.errorResponder.Respond(c, err)
 
-		panic(err)
-	}
-
-	res, err := common.NewPaginatedResponse(query.Query, entities)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
+	res := pagination.NewResponse(query.Query, entities)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -113,8 +109,9 @@ func (a *api) List(c *gin.Context) {
 // @Success 200 {object} ExportResponse
 func (a *api) StartExport(c *gin.Context) {
 	var r ExportRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -125,10 +122,17 @@ func (a *api) StartExport(c *gin.Context) {
 
 	params, err := a.encoder.Encode(r.BaseFilterRequest)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	task, err := a.taskCreator.Create(c, export.TaskParameters{
 		Type:           "entity",
 		Parameters:     string(params),
@@ -140,7 +144,9 @@ func (a *api) StartExport(c *gin.Context) {
 	})
 
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, ExportResponse{
@@ -155,11 +161,14 @@ func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
 	t, err := a.taskCreator.Get(c, id)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if t == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -173,11 +182,14 @@ func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
 	t, err := a.taskCreator.Get(c, id)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if t == nil || t.Status != export.TaskStatusSucceeded {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -190,8 +202,16 @@ func (a *api) DownloadExport(c *gin.Context) {
 // @Param body body ArchiveDisabledRequest true "body"
 func (a *api) ArchiveDisabled(c *gin.Context) {
 	var r ArchiveDisabledRequest
-	if err := c.ShouldBindJSON(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -199,7 +219,7 @@ func (a *api) ArchiveDisabled(c *gin.Context) {
 	case a.cleanTaskChan <- libentity.CleanTask{
 		Type:                    libentity.CleanTaskTypeArchiveDisabled,
 		ArchiveWithDependencies: r.WithDependencies,
-		UserID:                  c.MustGet(auth.UserKey).(string),
+		UserID:                  userID,
 	}:
 	default:
 		a.logger.Debug().Msg("cleaning in progress, skip")
@@ -212,8 +232,16 @@ func (a *api) ArchiveDisabled(c *gin.Context) {
 // @Param body body ArchiveUnlinkedRequest true "body"
 func (a *api) ArchiveUnlinked(c *gin.Context) {
 	var r ArchiveUnlinkedRequest
-	if err := c.ShouldBindJSON(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -221,7 +249,7 @@ func (a *api) ArchiveUnlinked(c *gin.Context) {
 	case a.cleanTaskChan <- libentity.CleanTask{
 		Type:          libentity.CleanTaskTypeArchiveUnlinked,
 		ArchiveBefore: r.ArchiveBefore.SubFrom(datetime.NewCpsTime()),
-		UserID:        c.MustGet(auth.UserKey).(string),
+		UserID:        userID,
 	}:
 	default:
 		a.logger.Debug().Msg("cleaning in progress, skip")
@@ -231,10 +259,17 @@ func (a *api) ArchiveUnlinked(c *gin.Context) {
 }
 
 func (a *api) CleanArchived(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
 	select {
 	case a.cleanTaskChan <- libentity.CleanTask{
 		Type:   libentity.CleanTaskTypeCleanArchived,
-		UserID: c.MustGet(auth.UserKey).(string),
+		UserID: userID,
 	}:
 	default:
 		a.logger.Debug().Msg("cleaning in progress, skip")
@@ -259,18 +294,22 @@ func (a *api) BulkDisable(c *gin.Context) {
 // @Success 200 {object} ContextGraphResponse
 func (a *api) GetContextGraph(c *gin.Context) {
 	var r ContextGraphRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	res, err := a.store.GetContextGraph(c, r.ID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -283,14 +322,17 @@ func (a *api) GetContextGraph(c *gin.Context) {
 func (a *api) CheckStateSetting(c *gin.Context) {
 	request := CheckStateSettingRequest{}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	response, err := a.store.CheckStateSetting(c, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, response)
@@ -300,8 +342,8 @@ func (a *api) CheckStateSetting(c *gin.Context) {
 // @Success 200 {object} StateSettingResponse
 func (a *api) GetStateSetting(c *gin.Context) {
 	request := ContextGraphRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -309,24 +351,35 @@ func (a *api) GetStateSetting(c *gin.Context) {
 	response, err := a.store.GetStateSetting(c, request.ID)
 	if err != nil {
 		if errors.Is(err, ErrNoFound) {
-			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, response)
 }
 
 func (a *api) toggle(c *gin.Context, enabled bool) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	bulk.Handler(c, func(request BulkToggleRequestItem) (string, error) {
 		isToggled, simplifiedEntity, err := a.store.Toggle(c, request.ID, userID, enabled)
-		if err != nil || simplifiedEntity.ID == "" {
+		if err != nil {
 			return "", err
+		}
+
+		if simplifiedEntity.ID == "" {
+			return "", httperror.ErrNotFound
 		}
 
 		if isToggled {
@@ -352,7 +405,7 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 		}
 
 		return simplifiedEntity.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 func (a *api) sendChangeMessage(msg entityservice.ChangeEntityMessage) {

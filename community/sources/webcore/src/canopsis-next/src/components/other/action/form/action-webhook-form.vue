@@ -1,14 +1,12 @@
 <template>
   <v-layout column>
-    <request-form
-      v-field="webhook.request"
+    <request-with-token-form
+      v-field="webhook"
       :name="`${name}.request`"
       :url-variables="templateVars[webhookTemplateVarsKey]"
       :headers-variables="templateVars[webhookTemplateVarsKey]"
       :payload-variables="templateVars[webhookTemplateVarsKey]"
-      :multiple="webhook.multiple_urls"
       with-multiple-urls
-      @update:multiple="updateMultiple"
     />
     <declare-ticket-rule-ticket-mapping-field
       v-field="webhook"
@@ -23,11 +21,11 @@ import { computed } from 'vue';
 
 import { useModelField } from '@/hooks/form/model-field';
 
-import RequestForm from '@/components/forms/request/request-form.vue';
+import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
 import DeclareTicketRuleTicketMappingField from '@/components/other/declare-ticket/form/fields/declare-ticket-rule-ticket-mapping-field.vue';
 
 export default {
-  components: { DeclareTicketRuleTicketMappingField, RequestForm },
+  components: { DeclareTicketRuleTicketMappingField, RequestWithTokenForm },
   model: {
     prop: 'webhook',
     event: 'input',

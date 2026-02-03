@@ -1,66 +1,76 @@
 package user
 
 import (
-	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
-	common.BulkCrudAPI
+	crud.BulkAPI
 	Patch(c *gin.Context)
 	BulkPatch(c *gin.Context)
 }
 
 type api struct {
-	store  Store
-	logger zerolog.Logger
-
+	store             Store
 	metricMetaUpdater metrics.MetaUpdater
+	errorResponder    httperror.Responder
 }
 
 func NewApi(
 	store Store,
-	logger zerolog.Logger,
 	metricMetaUpdater metrics.MetaUpdater,
+	errorResponder httperror.Responder,
 ) API {
 	return &api{
-		store:  store,
-		logger: logger,
-
+		store:             store,
 		metricMetaUpdater: metricMetaUpdater,
+		errorResponder:    errorResponder,
 	}
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]User}
+// @Success 200 {object} pagination.ListResponse{data=[]User}
 func (a *api) List(c *gin.Context) {
 	var query ListRequest
 	query.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+	if err := validation.Bind(c, &query); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
-	users, err := a.store.Find(c, query, c.MustGet(auth.UserKey).(string), c.MustGet(auth.RolesKey).([]string))
+	userID, err := authctx.GetUserKey(c)
 	if err != nil {
-		panic(err)
-	}
+		a.errorResponder.Respond(c, err)
 
-	res, err := common.NewPaginatedResponse(query.Query, users)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
+	roleIDs, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	users, err := a.store.Find(c, query, userID, roleIDs)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	res := pagination.NewResponse(query.Query, users)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -69,11 +79,14 @@ func (a *api) List(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	user, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if user == nil {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -85,23 +98,29 @@ func (a *api) Get(c *gin.Context) {
 // @Success 201 {object} User
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
-	user, err := a.store.Insert(c, request, c.MustGet(auth.RolesKey).([]string))
+	roleIDs, err := authctx.GetRoles(c)
 	if err != nil {
-		if errors.Is(err, ErrNotAdminCreateAdmin) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-			return
-		}
+		a.errorResponder.Respond(c, err)
 
-		panic(err)
+		return
+	}
+
+	user, err := a.store.Insert(c, request, roleIDs)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if user == nil {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -118,30 +137,36 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
-	user, err := a.store.Update(c, request, c.MustGet(auth.UserKey).(string), c.MustGet(auth.RolesKey).([]string))
+	userID, err := authctx.GetUserKey(c)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
+		return
+	}
 
-		if errors.Is(err, ErrNotAdminUpdateAdmin) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-			return
-		}
+	roleIDs, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
 
-		panic(err)
+		return
+	}
+
+	user, err := a.store.Update(c, BulkUpdateRequestItem(request), userID, roleIDs)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if user == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -158,30 +183,36 @@ func (a *api) Patch(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
-	user, err := a.store.Patch(c, request, c.MustGet(auth.UserKey).(string), c.MustGet(auth.RolesKey).([]string))
+	userID, err := authctx.GetUserKey(c)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
+		return
+	}
 
-		if errors.Is(err, ErrNotAdminUpdateAdmin) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-			return
-		}
+	roleIDs, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
 
-		panic(err)
+		return
+	}
+
+	user, err := a.store.Patch(c, BulkPatchRequestItem(request), userID, roleIDs)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if user == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -192,25 +223,30 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string), c.MustGet(auth.RolesKey).([]string))
+	userID, err := authctx.GetUserKey(c)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
+		return
+	}
 
-		if errors.Is(err, ErrNotAdminDeleteAdmin) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-			return
-		}
+	roleIDs, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
 
-		panic(err)
+		return
+	}
+
+	ok, err := a.store.Delete(c, BulkDeleteRequestItem{ID: id}, userID, roleIDs)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -223,67 +259,88 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
 	userIDs := make([]string, 0)
-	requestRoles := c.MustGet(auth.RolesKey).([]string)
+	requestRoles, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
 		user, err := a.store.Insert(c, request, requestRoles)
 		if err != nil {
-			if errors.Is(err, ErrNotAdminCreateAdmin) {
-				return "", bulk.BadRequestError{Err: err}
-			}
-
 			return "", err
 		}
 
 		userIDs = append(userIDs, user.ID)
 		return user.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 	a.metricMetaUpdater.UpdateById(c, userIDs...)
 }
 
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	userIDs := make([]string, 0)
-	requestRoles := c.MustGet(auth.RolesKey).([]string)
+	requestRoles, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
-		user, err := a.store.Update(c, UpdateRequest(request), userID, requestRoles)
-		if err != nil || user == nil {
-			if errors.Is(err, ErrNotAdminUpdateAdmin) {
-				return "", bulk.BadRequestError{Err: err}
-			}
-
+		user, err := a.store.Update(c, request, userID, requestRoles)
+		if err != nil {
 			return "", err
+		}
+
+		if user == nil {
+			return "", httperror.ErrNotFound
 		}
 
 		userIDs = append(userIDs, user.ID)
 
 		return user.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 	a.metricMetaUpdater.UpdateById(c, userIDs...)
 }
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	roles := c.MustGet(auth.RolesKey).([]string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	roles, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	userIDs := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID, userID, roles)
-		if err != nil || !ok {
-			if errors.Is(err, ErrNotAdminDeleteAdmin) {
-				return "", bulk.BadRequestError{Err: err}
-			}
-
+		ok, err := a.store.Delete(c, request, userID, roles)
+		if err != nil {
 			return "", err
+		}
+
+		if !ok {
+			return "", httperror.ErrNotFound
 		}
 
 		userIDs = append(userIDs, request.ID)
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	a.metricMetaUpdater.DeleteById(c, userIDs...)
 }
@@ -291,23 +348,33 @@ func (a *api) BulkDelete(c *gin.Context) {
 // BulkPatch
 // @Param body body []BulkPatchRequestItem true "body"
 func (a *api) BulkPatch(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	userIDs := make([]string, 0)
-	requestRoles := c.MustGet(auth.RolesKey).([]string)
+	requestRoles, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	bulk.Handler(c, func(request BulkPatchRequestItem) (string, error) {
-		user, err := a.store.Patch(c, PatchRequest(request), userID, requestRoles)
-		if err != nil || user == nil {
-			if errors.Is(err, ErrNotAdminUpdateAdmin) {
-				return "", bulk.BadRequestError{Err: err}
-			}
-
+		user, err := a.store.Patch(c, request, userID, requestRoles)
+		if err != nil {
 			return "", err
+		}
+
+		if user == nil {
+			return "", httperror.ErrNotFound
 		}
 
 		userIDs = append(userIDs, user.ID)
 
 		return user.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 	a.metricMetaUpdater.UpdateById(c, userIDs...)
 }

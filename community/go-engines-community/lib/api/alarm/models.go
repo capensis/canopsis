@@ -234,8 +234,8 @@ type Details struct {
 }
 
 type StepDetails struct {
-	Data []Step               `json:"data"`
-	Meta common.PaginatedMeta `json:"meta"`
+	Data []Step                  `json:"data"`
+	Meta pagination.MetaResponse `json:"meta"`
 }
 
 type Step struct {
@@ -248,8 +248,8 @@ type Step struct {
 }
 
 type ChildrenDetails struct {
-	Data []Alarm              `json:"data"`
-	Meta common.PaginatedMeta `json:"meta"`
+	Data []Alarm                 `json:"data"`
+	Meta pagination.MetaResponse `json:"meta"`
 }
 
 type ExportRequest struct {
@@ -348,7 +348,7 @@ type AlarmValue struct {
 	LongOutput                  string                `bson:"long_output" json:"long_output"`
 	LongOutputHistory           []string              `bson:"long_output_history" json:"long_output_history"`
 	LastUpdateDate              datetime.CpsTime      `bson:"last_update_date" json:"last_update_date" swaggertype:"integer"`
-	LastEventDate               datetime.CpsTime      `bson:"last_event_date" json:"last_event_date" swaggertype:"integer"`
+	LastEventDate               *datetime.CpsTime     `bson:"last_event_date" json:"last_event_date" swaggertype:"integer"`
 	LastStateOrStatusUpdateDate datetime.CpsTime      `bson:"last_st_upd_dt" json:"last_st_upd_dt" swaggertype:"integer"`
 	Resource                    string                `bson:"resource,omitempty" json:"resource,omitempty"`
 	Resolved                    *datetime.CpsTime     `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`

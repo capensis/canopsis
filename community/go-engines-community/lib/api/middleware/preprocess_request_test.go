@@ -9,8 +9,10 @@ import (
 	"strings"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	mock_httperror "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/httperror"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"go.uber.org/mock/gomock"
@@ -29,15 +31,15 @@ func TestSetAuthor_ShouldUpdateAuthor(t *testing.T) {
 
 	noAuthorEncodedBody, _ := json.Marshal(noAuthorBody)
 	req := httptest.NewRequest(http.MethodPost, okURL, bytes.NewReader(noAuthorEncodedBody))
-
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 	router := gin.New()
 	router.POST(
 		okURL,
 		// Mock UserKey in Context
 		func(c *gin.Context) {
-			c.Set(auth.UserKey, expectedAuthorValue)
+			authctx.SetUserKey(c, expectedAuthorValue)
 		},
-		SetAuthor(),
+		SetAuthor(mockErrResponder),
 		func(c *gin.Context) {
 			var body map[string]interface{}
 
@@ -87,15 +89,15 @@ func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 
 	noAuthorEncodedBody, _ := json.Marshal(noAuthorBody)
 	req := httptest.NewRequest(http.MethodPost, okURL, bytes.NewReader(noAuthorEncodedBody))
-
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 	router := gin.New()
 	router.POST(
 		okURL,
 		// Mock UserKey in Context
 		func(c *gin.Context) {
-			c.Set(auth.UserKey, author)
+			authctx.SetUserKey(c, author)
 		},
-		PreProcessBulk(config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 100}}, zerolog.Nop()), true),
+		PreProcessBulk(config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 100}}, zerolog.Nop()), mockErrResponder, true),
 		func(c *gin.Context) {
 			var body []map[string]interface{}
 
@@ -146,15 +148,18 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 
 	body, _ := json.Marshal(valid)
 	req := httptest.NewRequest(http.MethodPost, okURL, bytes.NewReader(body))
-
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
+	mockErrResponder.EXPECT().Respond(gomock.Any(), gomock.Eq(httperror.ErrRequestEntityTooLarge)).Do(func(c *gin.Context, err error) {
+		c.AbortWithStatus(http.StatusRequestEntityTooLarge)
+	})
 	router := gin.New()
 	router.POST(
 		okURL,
 		// Mock UserKey in Context
 		func(c *gin.Context) {
-			c.Set(auth.UserKey, "test-author")
+			authctx.SetUserKey(c, "test-author")
 		},
-		PreProcessBulk(config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 3}}, zerolog.Nop()), true),
+		PreProcessBulk(config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 3}}, zerolog.Nop()), mockErrResponder, true),
 	)
 
 	w := httptest.NewRecorder()
@@ -184,7 +189,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 
 	w = httptest.NewRecorder()
 	router.ServeHTTP(w, req)
-	if w.Code != http.StatusBadRequest {
-		t.Errorf("expected code: %v but got %v", http.StatusBadRequest, w.Code)
+	if w.Code != http.StatusRequestEntityTooLarge {
+		t.Errorf("expected code: %v but got %v", http.StatusRequestEntityTooLarge, w.Code)
 	}
 }

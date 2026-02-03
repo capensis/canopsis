@@ -12,7 +12,7 @@ func ValidateEditPositionRequest(sl validator.StructLevel) {
 		existsView := make(map[string]bool, len(r.Items))
 		for _, item := range r.Items {
 			if exists[item.ID] {
-				sl.ReportError(r.Items, "Items", "Item", "has_duplicates", "")
+				sl.ReportError(r.Items, "Items", "Items", "unique", "")
 				return
 			}
 
@@ -20,7 +20,7 @@ func ValidateEditPositionRequest(sl validator.StructLevel) {
 
 			for _, view := range item.Views {
 				if existsView[view] {
-					sl.ReportError(r.Items, "Items", "Item", "has_duplicates", "")
+					sl.ReportError(r.Items, "Items", "Items", "unique", "")
 					return
 				}
 

@@ -3,7 +3,7 @@ package alarm
 import (
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/go-playground/validator/v10"
 )
@@ -29,7 +29,7 @@ func ValidateListRequest(sl validator.StructLevel) {
 			return
 		}
 
-		if multiSortData[1] != common.SortAsc && multiSortData[1] != common.SortDesc {
+		if multiSortData[1] != pagination.SortAsc && multiSortData[1] != pagination.SortDesc {
 			sl.ReportError(r.MultiSort, "MultiSort", "MultiSort", "multi_sort_invalid", "MultiSort")
 			return
 		}

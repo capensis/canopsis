@@ -9,6 +9,7 @@ export default {
   errorPopupTimeout: 'Error popup timeout',
   allowChangeSeverityToInfo: 'Allow change severity to info',
   showHeaderOnKioskMode: 'Show header on kiosk mode',
+  showHeaderOnKioskModeTooltip: 'Header won\'t be available in Full screen kiosk mode',
   maxMatchedItems: 'Max matched items',
   checkCountRequestTimeout: 'Check max matched items request timeout (seconds)',
   requiredInstructionApprove: 'Required instruction approvement',
