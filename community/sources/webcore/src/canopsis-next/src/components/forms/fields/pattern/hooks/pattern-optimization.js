@@ -10,12 +10,13 @@ import {
 } from 'vue';
 
 import {
+  ENTITY_PATTERN_FIELDS,
   MODALS,
   PATTERN_OPERATORS,
   PATTERN_OPTIMIZATION_STATUSES,
   PATTERNS_FIELDS,
-  ENTITY_PATTERN_FIELDS,
   PATTERN_TYPES,
+  PATTERN_CUSTOM_ITEM_VALUE,
 } from '@/constants';
 
 import Observer from '@/services/observer';
@@ -58,7 +59,7 @@ import { usePatternEntitiesOptimize } from '@/hooks/store/modules/pattern-entiti
  * @returns {Function} returns.rejectAllSuggestions - Rejects all suggestions and resets optimization state
  * @returns {Function} returns.showEntitiesComparisonModal - Shows modal comparing current pattern with suggestion
  */
-export const usePatternOptimization = (value, emit) => {
+export const usePatternOptimization = ({ value, wrapperElement }, emit) => {
   const { t } = useI18n();
   const modals = useModals();
   const popups = usePopups();
@@ -94,7 +95,15 @@ export const usePatternOptimization = (value, emit) => {
 
   const originalValue = cloneDeep(unref(value));
 
-  const hasChanges = computed(() => !isOmitEqual(unref(value), originalValue, ['title']));
+  const hasChanges = computed(() => {
+    const uwrappedValue = unref(value);
+
+    const patternKeysWithTemplates = Object.keys(uwrappedValue).filter(key => (
+      uwrappedValue[key].id !== PATTERN_CUSTOM_ITEM_VALUE
+    ));
+
+    return !isOmitEqual(uwrappedValue, originalValue, ['title', ...patternKeysWithTemplates]);
+  });
 
   const hasRegexpInfos = computed(() => {
     const { [PATTERNS_FIELDS.entity]: entityPattern } = unref(value);
@@ -158,7 +167,12 @@ export const usePatternOptimization = (value, emit) => {
     try {
       rejectAllSuggestions();
 
-      const fieldsWithoutTitle = validator.fields.items.filter(({ name }) => name !== 'title');
+      const unwrappedWrapperElement = unref(wrapperElement);
+
+      const fieldsWithoutTitle = validator.fields.items.filter(({ name, el }) => (
+        name !== 'title' && unwrappedWrapperElement.contains(el)
+      ));
+
       const isValid = await validator.validateAll(fieldsWithoutTitle);
 
       if (!isValid) {
