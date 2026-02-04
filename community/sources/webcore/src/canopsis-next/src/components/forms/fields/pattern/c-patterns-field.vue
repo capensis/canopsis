@@ -1,5 +1,5 @@
 <template>
-  <div class="c-patterns-field__wrapper">
+  <div ref="wrapperElement" class="c-patterns-field__wrapper">
     <pattern-optimization-progress
       v-if="optimizationPending || optimizationFailedReason"
       :failed-reason="optimizationFailedReason"
@@ -354,6 +354,7 @@ export default {
     const { showAlarmsModalByPatterns } = usePatternCountAlarmsModal();
     const { showEntitiesModalByPatterns } = usePatternCountEntitiesModal();
 
+    const wrapperElement = ref(null);
     const expanded = ref({
       alarm: false,
       entity: false,
@@ -517,7 +518,10 @@ export default {
       applySuggestion,
       rejectAllSuggestions,
       showEntitiesComparisonModal,
-    } = usePatternOptimization(toRef(props, 'value'), emit);
+    } = usePatternOptimization({
+      wrapperElement,
+      value: toRef(props, 'value'),
+    }, emit);
 
     watch(optimizationSuggestions, (suggestions) => {
       if (suggestions.length) {
@@ -526,6 +530,7 @@ export default {
     });
 
     return {
+      wrapperElement,
       expanded,
       counters,
       countersPending,
