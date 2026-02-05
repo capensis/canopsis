@@ -64,7 +64,7 @@ func TestProcessEventSuccess(t *testing.T) {
 	mockEventCounter := mock_eventfilter.NewMockEventCounter(ctrl)
 	mockEventCounter.EXPECT().Add(gomock.Any(), gomock.Any()).AnyTimes()
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
-	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	ruleService := eventfilter.NewRuleService(adapter, container, mockEventCounter, mockFailureService, tplExecutor, zerolog.Logger{})
 	err := ruleService.LoadRules(ctx, []string{"rule-1", "rule-2"})
@@ -138,6 +138,7 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 	})
 
 	mockEventCounter := mock_eventfilter.NewMockEventCounter(ctrl)
+	mockEventCounter.EXPECT().Add(gomock.Any(), gomock.Any())
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	ruleService := eventfilter.NewRuleService(adapter, container, mockEventCounter, mockFailureService, tplExecutor, zerolog.Logger{})
@@ -213,6 +214,7 @@ func TestProcessEventDropOutcome(t *testing.T) {
 	})
 
 	mockEventCounter := mock_eventfilter.NewMockEventCounter(ctrl)
+	mockEventCounter.EXPECT().Add(gomock.Any(), gomock.Any())
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	ruleService := eventfilter.NewRuleService(adapter, container, mockEventCounter, mockFailureService, tplExecutor, zerolog.Logger{})

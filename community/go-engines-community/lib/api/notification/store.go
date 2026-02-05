@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -41,6 +42,24 @@ func (s *store) Find(ctx context.Context, r pagination.Query, userID string, rol
 			"$or": []bson.M{
 				{"user": userID},
 				{"roles": bson.M{"$in": roleIDs}},
+			},
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EventFilterRuleCollection,
+			"localField":   "rule._id",
+			"foreignField": "_id",
+			"let":          bson.M{"updated": "$rule.updated"},
+			"as":           "eventfilter",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$updated", "$$updated"}}}},
+				{"$limit": 1},
+			},
+		}},
+		{"$unwind": bson.M{"path": "$eventfilter", "preserveNullAndEmptyArrays": true}},
+		{"$match": bson.M{
+			"$or": []bson.M{
+				{"type": bson.M{"$ne": usernotification.TypeEventFilterFailure}},
+				{"eventfilter": bson.M{"$ne": nil}},
 			},
 		}},
 	}
