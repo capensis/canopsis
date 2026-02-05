@@ -52,6 +52,7 @@ export default {
     const suggestionPattern = computed(() => JSON.stringify(config.value.suggestionPattern));
 
     const currentOnlyTableInitialQuery = computed(() => ({
+      sort: [],
       page: 1,
       itemsPerPage: PAGINATION_LIMIT,
       entity_pattern: currentPattern.value,
@@ -59,6 +60,7 @@ export default {
     }));
 
     const suggestionOnlyTableInitialQuery = computed(() => ({
+      sort: [],
       page: 1,
       itemsPerPage: PAGINATION_LIMIT,
       entity_pattern: suggestionPattern.value,
