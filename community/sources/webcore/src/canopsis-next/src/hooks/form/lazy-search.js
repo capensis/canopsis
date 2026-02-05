@@ -268,16 +268,6 @@ export const useLazySearch = ({
       return;
     }
 
-    if (returnObject) {
-      updateModel(
-        unwrappedMultiple
-          ? selectedItems.value
-          : selectedItems.value[0],
-      );
-
-      return;
-    }
-
     updateModel(
       unwrappedMultiple
         ? mapIds(selectedItems.value, unwrappedIdKey)

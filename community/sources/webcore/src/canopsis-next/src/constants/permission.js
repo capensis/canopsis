@@ -244,7 +244,7 @@ export const USER_PERMISSIONS = {
         snooze: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_snoozeAlarm`,
         declareTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_declareanIncident`,
         associateTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_assignTicketNumber`,
-        removeAssoiatedTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeAssoiatedTicket`,
+        removeAssociatedTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeAssociatedTicket`,
         cancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeAlarm`,
         unCancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_unCancel`,
         fastCancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_fastRemoveAlarm`,
@@ -545,7 +545,7 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.declareTicket]: USER_PERMISSIONS.business.alarmsList.actions.declareTicket,
     [ALARM_LIST_ACTIONS_TYPES.associateTicket]: USER_PERMISSIONS.business.alarmsList.actions.associateTicket,
     [ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket]:
-      USER_PERMISSIONS.business.alarmsList.actions.removeAssoiatedTicket,
+      USER_PERMISSIONS.business.alarmsList.actions.removeAssociatedTicket,
     [ALARM_LIST_ACTIONS_TYPES.cancel]: USER_PERMISSIONS.business.alarmsList.actions.cancel,
     [ALARM_LIST_ACTIONS_TYPES.unCancel]: USER_PERMISSIONS.business.alarmsList.actions.unCancel,
     [ALARM_LIST_ACTIONS_TYPES.fastCancel]: USER_PERMISSIONS.business.alarmsList.actions.fastCancel,
