@@ -5,12 +5,12 @@ import request from '@/services/request';
 export default {
   namespaced: true,
   actions: {
-    optimize(context, { data }) {
-      return request.post(API_ROUTES.pattern.entitiesOptimize, data);
+    optimize(context, { data, cancelToken }) {
+      return request.post(API_ROUTES.pattern.entitiesOptimize, data, { cancelToken });
     },
 
-    fetchOptimizeStatus(context, { id }) {
-      return request.get(`${API_ROUTES.pattern.entitiesOptimize}/${id}`);
+    fetchOptimizeStatus(context, { id, cancelToken }) {
+      return request.get(`${API_ROUTES.pattern.entitiesOptimize}/${id}`, { cancelToken });
     },
 
     update(context, { id, data }) {

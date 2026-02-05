@@ -29,6 +29,7 @@
         v-for="(suggestion, index) in suggestions"
         :key="index"
         :value="index"
+        eager
       >
         <pattern-suggestion-content
           :suggestion="suggestion"

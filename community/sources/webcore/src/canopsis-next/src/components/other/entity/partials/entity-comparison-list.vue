@@ -22,6 +22,7 @@ import { computed, ref, onMounted } from 'vue';
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES, ENTITY_FIELDS } from '@/constants';
 
+import { convertQueryToRequest } from '@/helpers/query';
 import { formToWidget, widgetToForm } from '@/helpers/entities/widget/form';
 
 import { useI18n } from '@/hooks/i18n';
@@ -61,8 +62,8 @@ export default {
       fetchHandler: async (fetchQuery) => {
         const response = await fetchContextEntitiesListWithoutStore({
           params: {
-            limit: fetchQuery.itemsPerPage,
-            page: fetchQuery.page,
+            ...convertQueryToRequest(fetchQuery),
+
             entity_pattern: fetchQuery.entity_pattern,
             negative_entity_pattern: fetchQuery.negative_entity_pattern,
           },
