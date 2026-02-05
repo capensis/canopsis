@@ -119,20 +119,22 @@ export const usePatternOptimization = ({ value, wrapperElement }, emit) => {
   const mayHaveOptimizationSuggestions = computed(() => hasRegexpInfos.value && hasChanges.value);
 
   const { pending, poll, cancel } = usePollingWithPending({
-    startHandler: async () => {
+    startHandler: async (cancelToken) => {
       optimizationPattern.value = cloneDeep(currentPattern.value);
 
       const response = await optimizeEntities({
         data: currentPattern.value,
+        cancelToken,
       });
 
       optimization.value = response;
 
       return response;
     },
-    processHandler: async ({ _id: id }, resolve) => {
+    processHandler: async ({ _id: id }, resolve, reject, cancelToken) => {
       const response = await fetchOptimizeEntitiesStatus({
         id,
+        cancelToken,
       });
 
       optimization.value = response;

@@ -1,4 +1,5 @@
 import { unref } from 'vue';
+import axios from 'axios';
 
 import { EXPORT_FETCHING_INTERVAL } from '@/config';
 import { EXPORT_STATUSES } from '@/constants';
@@ -24,16 +25,15 @@ export const usePolling = ({ startHandler, processHandler, endHandler = v => v, 
    * Function to wait for the process to complete
    *
    * @param {Object} options - Options for the process
+   * @param {AbortSignal} cancelToken - Cancel token for the process
    * @returns {Promise} Promise that resolves when the process is completed
    */
-  const wait = options => new Promise((resolve, reject) => {
+  const wait = (options, cancelToken) => new Promise((resolve, reject) => {
     const customResolve = (...args) => {
       finished = true;
 
       return resolve(...args);
     };
-
-    cancelWait = () => cancelled = true;
 
     const customReject = (err) => {
       finished = true;
@@ -43,7 +43,7 @@ export const usePolling = ({ startHandler, processHandler, endHandler = v => v, 
 
     const callTimeout = async () => {
       try {
-        await processHandler(options, customResolve, customReject);
+        await processHandler(options, customResolve, customReject, cancelToken);
       } catch (err) {
         customReject(err);
 
@@ -71,16 +71,24 @@ export const usePolling = ({ startHandler, processHandler, endHandler = v => v, 
    * @returns {Promise} Promise that resolves when the polling process is completed
    */
   const poll = async (...args) => {
+    const source = axios.CancelToken.source();
+    const { token: cancelToken } = source;
+
     finished = false;
     cancelled = false;
 
-    const startResponse = await startHandler(...args);
+    cancelWait = () => {
+      cancelled = true;
+      source.cancel();
+    };
+
+    const startResponse = await startHandler(...args, cancelToken);
 
     if (cancelled) {
       return startResponse;
     }
 
-    const waitResponse = await wait({ ...startResponse, ...args });
+    const waitResponse = await wait({ ...startResponse, ...args }, cancelToken);
 
     return endHandler(waitResponse);
   };
