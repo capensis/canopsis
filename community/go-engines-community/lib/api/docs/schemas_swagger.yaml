@@ -3600,6 +3600,10 @@ definitions:
         type: boolean
       name:
         type: string
+      nodes:
+        type: integer
+      running_nodes:
+        type: integer
     type: object
   healthcheck.Status:
     properties:

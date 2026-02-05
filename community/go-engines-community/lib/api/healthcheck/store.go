@@ -2,8 +2,12 @@ package healthcheck
 
 import (
 	"context"
+	"crypto/tls"
+	"net/http"
+	"os"
 	"reflect"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -15,11 +19,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/jackc/pgx/v5"
+	rabbithole "github.com/michaelklishin/rabbit-hole/v3"
 	libredis "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
+
+const timeout = 2 * time.Second
 
 type Store interface {
 	Load(ctx context.Context)
@@ -60,11 +67,11 @@ type store struct {
 	configProvider *config.BaseHealthCheckConfigProvider
 	websocketHub   websocket.Hub
 
-	mxConn         sync.Mutex
-	mongoClient    mongo.DbClient
-	redisClient    libredis.UniversalClient
-	amqpConnection amqp.Connection
-	pgConn         *pgx.Conn
+	mxConn      sync.Mutex
+	mongoClient mongo.DbClient
+	redisClient libredis.UniversalClient
+	rmqClient   *rabbithole.Client
+	pgConn      *pgx.Conn
 
 	mxChangedParamsCh sync.RWMutex
 	changedParamsCh   chan<- bool
@@ -275,22 +282,10 @@ func (s *store) loadConfig(ctx context.Context) {
 func (s *store) loadServices(ctx context.Context) {
 	s.mxConn.Lock()
 	services := []Service{
-		{
-			Name:      ServiceMongoDB,
-			IsRunning: s.checkMongoDB(ctx),
-		},
-		{
-			Name:      ServiceRedis,
-			IsRunning: s.checkRedis(ctx),
-		},
-		{
-			Name:      ServiceRabbitMQ,
-			IsRunning: s.checkRabbitMQ(),
-		},
-		{
-			Name:      ServiceTimescaleDB,
-			IsRunning: s.checkTimescaleDB(ctx),
-		},
+		s.checkMongoDB(ctx),
+		s.checkRedis(ctx),
+		s.checkRabbitMQ(),
+		s.checkTimescaleDB(ctx),
 	}
 	s.mxConn.Unlock()
 
@@ -307,24 +302,21 @@ func (s *store) closeConnections(ctx context.Context) {
 		if err != nil {
 			s.logger.Err(err).Msg("cannot close mongo")
 		}
+
 		s.mongoClient = nil
 	}
+
 	if s.redisClient != nil {
 		err := s.redisClient.Close()
 		if err != nil {
 			s.logger.Err(err).Msg("cannot close redis")
 		}
+
 		s.redisClient = nil
 	}
-	if s.amqpConnection != nil {
-		if !s.amqpConnection.IsClosed() {
-			err := s.amqpConnection.Close()
-			if err != nil {
-				s.logger.Err(err).Msg("cannot close amqp")
-			}
-		}
-		s.amqpConnection = nil
-	}
+
+	s.rmqClient = nil
+
 	if s.pgConn != nil {
 		if !s.pgConn.IsClosed() {
 			err := s.pgConn.Close(ctx)
@@ -332,6 +324,7 @@ func (s *store) closeConnections(ctx context.Context) {
 				s.logger.Err(err).Msg("cannot close postgres")
 			}
 		}
+
 		s.pgConn = nil
 	}
 }
@@ -350,79 +343,145 @@ func (s *store) getServices() []Service {
 	return s.services
 }
 
-func (s *store) checkMongoDB(ctx context.Context) bool {
+func (s *store) checkMongoDB(ctx context.Context) Service {
+	res := Service{
+		Name: ServiceMongoDB,
+	}
 	if s.mongoClient == nil {
 		var err error
 		s.mongoClient, err = mongo.NewClient(ctx, mongo.ClientOptions{
-			ServerSelectionTimeout: time.Second,
-			ClientTimeout:          time.Second,
+			ServerSelectionTimeout: timeout,
+			ClientTimeout:          timeout,
 		})
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to mongo")
-			return false
+
+			return res
 		}
 	}
 
 	if err := s.mongoClient.Ping(ctx, nil); err != nil {
 		s.logger.Err(err).Msg("cannot ping mongo")
-		return false
+
+		return res
 	}
 
-	return true
+	res.IsRunning = true
+
+	return res
 }
 
-func (s *store) checkRedis(ctx context.Context) bool {
+func (s *store) checkRedis(ctx context.Context) Service {
+	res := Service{
+		Name: ServiceRedis,
+	}
+
 	if s.redisClient == nil {
 		var err error
 		s.redisClient, err = redis.NewSession(ctx, 0, s.logger, -1, -1)
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to redis")
-			return false
+
+			return res
 		}
 	}
 
 	if err := s.redisClient.Ping(ctx).Err(); err != nil {
 		s.logger.Err(err).Msg("cannot ping redis")
-		return false
+
+		return res
 	}
 
-	return true
+	res.IsRunning = true
+
+	return res
 }
 
-func (s *store) checkRabbitMQ() bool {
-	if s.amqpConnection == nil || s.amqpConnection.IsClosed() {
+func (s *store) checkRabbitMQ() Service {
+	res := Service{
+		Name: ServiceRabbitMQ,
+	}
+	if s.rmqClient == nil {
 		var err error
-		s.amqpConnection, err = amqp.NewConnection(s.logger, 0, 0)
+		url := os.Getenv(amqp.EnvHTTPURL)
+		username := os.Getenv(amqp.EnvHTTPUser)
+		pwd := os.Getenv(amqp.EnvHTTPPassword)
+		skipVerify := strings.ToLower(os.Getenv(amqp.EnvHTTPInsecureSkipVerify))
+		if skipVerify == "true" {
+			dt, ok := http.DefaultTransport.(*http.Transport)
+			if !ok {
+				s.logger.Error().Msg("unknown type of http.DefaultTransport")
+
+				return res
+			}
+
+			tr := dt.Clone()
+			tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} //nolint:gosec
+			s.rmqClient, err = rabbithole.NewTLSClient(url, username, pwd, tr)
+		} else {
+			s.rmqClient, err = rabbithole.NewClient(url, username, pwd)
+		}
+
 		if err != nil {
-			s.logger.Err(err).Msg("cannot connect to rabbitmq")
-			return false
+			s.logger.Err(err).Msg("cannot connect to rabbitmq api")
+
+			return res
+		}
+
+		s.rmqClient.SetTimeout(timeout)
+	}
+
+	nodes, err := s.rmqClient.ListNodes()
+	if err != nil {
+		s.logger.Err(err).Msg("cannot get list of rabbitmq nodes")
+
+		return res
+	}
+
+	runningCount := 0
+	for _, node := range nodes {
+		if node.IsRunning {
+			runningCount++
 		}
 	}
 
-	return true
+	count := len(nodes)
+	res.IsRunning = runningCount > 0
+	res.Nodes = &count
+	res.RunningNodes = &runningCount
+
+	return res
 }
 
-func (s *store) checkTimescaleDB(ctx context.Context) bool {
+func (s *store) checkTimescaleDB(ctx context.Context) Service {
+	res := Service{
+		Name: ServiceTimescaleDB,
+	}
 	if s.pgConn == nil || s.pgConn.IsClosed() {
 		connStr, err := postgres.GetConnStr()
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to postgres")
-			return false
+
+			return res
 		}
 
 		s.pgConn, err = pgx.Connect(ctx, connStr)
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to postgres")
-			return false
+
+			return res
 		}
 	}
 
 	if err := s.pgConn.Ping(ctx); err != nil {
 		s.logger.Err(err).Msg("cannot ping postgres")
-		return false
+
+		return res
 	}
 
-	return true
+	res.IsRunning = true
+
+	return res
 }
 
 func transformEngineInfoToGraph(engines map[string]engine.RunInfo, order []string, parameters config.HealthCheckParameters) Engines {
