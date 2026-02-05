@@ -23,6 +23,7 @@ type Notification struct {
 }
 
 type Rule struct {
-	ID   string `json:"_id" bson:"_id"`
-	Name string `json:"name" bson:"name"`
+	ID      string            `json:"_id" bson:"_id"`
+	Name    string            `json:"name" bson:"name"`
+	Updated *datetime.CpsTime `json:"-" bson:"updated,omitempty"`
 }

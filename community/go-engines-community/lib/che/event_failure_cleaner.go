@@ -49,9 +49,6 @@ func (c *eventFailureCleaner) IsEnabled(conf datastorage.Config) bool {
 
 func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient, conf datastorage.Config, t datetime.CpsTime, limit int) (datastorage.CleanResult, error) {
 	res := datastorage.CleanResult{}
-	if !c.IsEnabled(conf) {
-		return res, nil
-	}
 
 	defer func() {
 		if res.Deleted > 0 {
@@ -59,6 +56,39 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 		}
 	}()
 
+	var isUnreadDeleted bool
+	var err error
+	if c.IsEnabled(conf) {
+		res.Deleted, isUnreadDeleted, err = c.deleteFailures(ctx, dbClient, conf.EventFilterFailure.DeleteAfter.SubFrom(t), limit)
+		if err != nil {
+			return res, err
+		}
+	}
+
+	if limit == 0 || limit > int(res.Deleted) {
+		d, err := c.deleteUnlinkedFailures(ctx, dbClient, limit-int(res.Deleted))
+		res.Deleted += d
+		if err != nil {
+			return res, err
+		}
+	}
+
+	err = c.deleteUnlinkedNotifs(ctx, dbClient)
+	if err != nil {
+		return res, fmt.Errorf("failed to delete notifications: %w", err)
+	}
+
+	if isUnreadDeleted {
+		err = c.deleteUnreadNotifs(ctx, dbClient)
+		if err != nil {
+			return res, fmt.Errorf("failed to delete unread notifications: %w", err)
+		}
+	}
+
+	return res, nil
+}
+
+func (c *eventFailureCleaner) deleteFailures(ctx context.Context, dbClient mongo.DbClient, before datetime.CpsTime, limit int) (int64, bool, error) {
 	dbCollection := dbClient.Collection(mongo.EventFilterFailureCollection)
 	dbRuleCollection := dbClient.Collection(mongo.EventFilterRuleCollection)
 	opts := options.Find().SetProjection(bson.M{
@@ -70,11 +100,12 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 		opts.SetLimit(int64(limit))
 	}
 
+	var d int64
 	cursor, err := dbCollection.Find(ctx, bson.M{
-		"t": bson.M{"$lte": conf.EventFilterFailure.DeleteAfter.SubFrom(t)},
+		"t": bson.M{"$lte": before},
 	}, opts)
 	if err != nil {
-		return res, fmt.Errorf("failed to find failures: %w", err)
+		return d, false, fmt.Errorf("failed to find failures: %w", err)
 	}
 
 	defer cursor.Close(ctx)
@@ -85,9 +116,9 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 	isUnreadDeleted := false
 	for cursor.Next(ctx) {
 		var item eventfilter.Failure
-		err := cursor.Decode(&item)
+		err = cursor.Decode(&item)
 		if err != nil {
-			return res, fmt.Errorf("failed to decode failure: %w", err)
+			return d, false, fmt.Errorf("failed to decode failure: %w", err)
 		}
 
 		ids = append(ids, item.ID)
@@ -104,18 +135,18 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 
 			_, err = dbRuleCollection.BulkWrite(ctx, ruleWriteModels)
 			if err != nil {
-				return res, fmt.Errorf("failed to update event filter rules: %w", err)
+				return d, false, fmt.Errorf("failed to update event filter rules: %w", err)
 			}
 
-			d, err := dbCollection.DeleteMany(
+			chunkDeleted, err := dbCollection.DeleteMany(
 				ctx,
 				bson.M{"_id": bson.M{"$in": ids}},
 			)
 			if err != nil {
-				return res, fmt.Errorf("failed to delete failures: %w", err)
+				return d, false, fmt.Errorf("failed to delete failures: %w", err)
 			}
 
-			res.Deleted += d
+			d += chunkDeleted
 			ids = ids[:0]
 			clear(countsByRule)
 			clear(unreadCountsByRule)
@@ -124,7 +155,7 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 	}
 
 	if err = cursor.Err(); err != nil {
-		return res, fmt.Errorf("failed to fetch failures: %w", err)
+		return d, false, fmt.Errorf("failed to fetch failures: %w", err)
 	}
 
 	if len(ids) > 0 {
@@ -134,31 +165,144 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 
 		_, err = dbRuleCollection.BulkWrite(ctx, ruleWriteModels)
 		if err != nil {
-			return res, fmt.Errorf("failed to update event filter rules: %w", err)
+			return d, false, fmt.Errorf("failed to update event filter rules: %w", err)
 		}
 
-		d, err := dbCollection.DeleteMany(
+		chunkDeleted, err := dbCollection.DeleteMany(
 			ctx,
 			bson.M{"_id": bson.M{"$in": ids}},
 		)
 		if err != nil {
-			return res, fmt.Errorf("failed to delete failures: %w", err)
+			return d, false, fmt.Errorf("failed to delete failures: %w", err)
 		}
 
-		res.Deleted += d
+		d += chunkDeleted
 	}
 
-	if isUnreadDeleted {
-		err = c.deleteNotifications(ctx, dbClient)
-		if err != nil {
-			return res, fmt.Errorf("failed to delete notifications: %w", err)
-		}
-	}
-
-	return res, nil
+	return d, isUnreadDeleted, nil
 }
 
-func (c *eventFailureCleaner) deleteNotifications(ctx context.Context, dbClient mongo.DbClient) error {
+func (c *eventFailureCleaner) deleteUnlinkedFailures(ctx context.Context, dbClient mongo.DbClient, limit int) (int64, error) {
+	dbCollection := dbClient.Collection(mongo.EventFilterFailureCollection)
+	pipeline := []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.EventFilterRuleCollection,
+			"localField":   "rule",
+			"foreignField": "_id",
+			"as":           "rule",
+		}},
+		{"$unwind": bson.M{"path": "$rule", "preserveNullAndEmptyArrays": true}},
+		{"$match": bson.M{"rule": nil}},
+	}
+	if limit > 0 {
+		pipeline = append(pipeline, bson.M{"$limit": limit})
+	}
+
+	var d int64
+	cursor, err := dbCollection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return d, fmt.Errorf("failed to find failures: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+	ids := make([]string, 0, datastorage.BulkSize)
+	for cursor.Next(ctx) {
+		var item eventfilter.Failure
+		err = cursor.Decode(&item)
+		if err != nil {
+			return d, fmt.Errorf("failed to decode failure: %w", err)
+		}
+
+		ids = append(ids, item.ID)
+		if len(ids) >= datastorage.BulkSize {
+			chunkDeleted, err := dbCollection.DeleteMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": ids}},
+			)
+			if err != nil {
+				return d, fmt.Errorf("failed to delete failures: %w", err)
+			}
+
+			d += chunkDeleted
+			ids = ids[:0]
+		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		return d, fmt.Errorf("failed to fetch failures: %w", err)
+	}
+
+	if len(ids) > 0 {
+		chunkDeleted, err := dbCollection.DeleteMany(
+			ctx,
+			bson.M{"_id": bson.M{"$in": ids}},
+		)
+		if err != nil {
+			return d, fmt.Errorf("failed to delete failures: %w", err)
+		}
+
+		d += chunkDeleted
+	}
+
+	return d, nil
+}
+
+func (c *eventFailureCleaner) deleteUnlinkedNotifs(ctx context.Context, dbClient mongo.DbClient) error {
+	dbCollection := dbClient.Collection(mongo.UserNotificationCollection)
+	cursor, err := dbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"type": usernotification.TypeEventFilterFailure}},
+		{"$lookup": bson.M{
+			"from":         mongo.EventFilterRuleCollection,
+			"localField":   "rule._id",
+			"foreignField": "_id",
+			"let":          bson.M{"updated": "$rule.updated"},
+			"as":           "eventfilter",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$updated", "$$updated"}}}},
+			},
+		}},
+		{"$unwind": bson.M{"path": "$eventfilter", "preserveNullAndEmptyArrays": true}},
+		{"$match": bson.M{"eventfilter": nil}},
+	})
+	if err != nil {
+		return err
+	}
+
+	defer cursor.Close(ctx)
+	ids := make([]string, 0, datastorage.BulkSize)
+	for cursor.Next(ctx) {
+		n := usernotification.Notification{}
+		err = cursor.Decode(&n)
+		if err != nil {
+			return err
+		}
+
+		ids = append(ids, n.ID)
+		if len(ids) == datastorage.BulkSize {
+			_, err = dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+			if err != nil {
+				return err
+			}
+
+			ids = ids[:0]
+		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		return err
+	}
+
+	if len(ids) > 0 {
+		_, err = dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (c *eventFailureCleaner) deleteUnreadNotifs(ctx context.Context, dbClient mongo.DbClient) error {
 	dbCollection := dbClient.Collection(mongo.UserNotificationCollection)
 	cursor, err := dbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"type": usernotification.TypeEventFilterFailure}},
