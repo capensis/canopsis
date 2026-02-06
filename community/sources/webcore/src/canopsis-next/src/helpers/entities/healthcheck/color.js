@@ -16,7 +16,7 @@ export const getHealthcheckNodeColor = (node = {}) => {
     return COLORS.healthcheck.error;
   }
 
-  if (node.is_too_few_instances || node.is_diff_instances_config) {
+  if (node.is_too_few_instances || node.is_diff_instances_config || (node.nodes && node.nodes !== node.running_nodes)) {
     return COLORS.healthcheck.warning;
   }
 

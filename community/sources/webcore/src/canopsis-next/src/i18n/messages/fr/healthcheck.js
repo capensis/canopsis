@@ -8,6 +8,7 @@ export default {
   diffInstancesConfig: 'Configuration des instances non valide',
   queueLength: 'Longueur de la file\nd\'attente {queueLength}/{maxQueueLength}',
   instancesCount: 'Instances {instances}/{minInstances}',
+  runningNodes: 'Nodes en cours d\'exécution {runningNodes}/{nodes}',
   activeInstances: 'Seules {instances} sont actives sur {minInstances}. Le nombre optimal d\'instances est de {optimalInstances}.',
   queueOverflowed: 'La file d\'attente est saturée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
   engineDown: '{name} est en panne, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer le service.',
