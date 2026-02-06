@@ -87,9 +87,10 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
 === "Develop"
 
-    | Version      | Notes de version                                         | API | Date       | Remarques |
-    | ------------ |:--------------------------------------------------------:| --- | ---------- | --------- |
-    | **25.10.0**  | [📝](notes-de-version/25.10.0.md)  | 🔄 [Changelog](notes-de-version/api/changelog-25.10.0.md)<br>⚠️ [Breaking](notes-de-version/api/breaking-25.10.0.md) | 7/11/2025 | 🧭 [Guide de migration](notes-de-version/migration/migration-25.10.0.md) |
+    | Version      | Notes de version                   | API | Date       | Remarques |
+    | ------------ |:----------------------------------:| --- | ---------- | --------- |
+    | **25.10.1**  | [📝](notes-de-version/25.10.1.md)  |     | 6/02/2026  |           |
+    | 25.10.0      | [📝](notes-de-version/25.10.0.md)  | 🔄 [Changelog](notes-de-version/api/changelog-25.10.0.md)<br>⚠️ [Breaking](notes-de-version/api/breaking-25.10.0.md) | 7/11/2025 | 🧭 [Guide de migration](notes-de-version/migration/migration-25.10.0.md) |
 
 
 
