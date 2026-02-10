@@ -114,4 +114,6 @@ const (
 
 	TemplateTestDataCollection = "template_data"
 	TemplateTestCollection     = "template_test"
+
+	WebhookCheckTicketStatusCollection = "webhook_check_ticket_status"
 )

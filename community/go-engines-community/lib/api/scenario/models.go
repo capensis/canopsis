@@ -13,9 +13,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/x/bsonx/bsoncore"
 )
@@ -188,14 +188,9 @@ type Parameters struct {
 	Tstop          *int64            `json:"tstop,omitempty" bson:"tstop"`
 	StartOnTrigger *bool             `json:"start_on_trigger,omitempty" bson:"start_on_trigger"`
 	// Webhook
-	Request            *request.Parameters           `json:"request,omitempty" bson:"request"`
-	AuthToken          *request.WebhookAuthToken     `json:"auth_token,omitempty" bson:"auth_token,omitempty"`
-	SkipForChild       *bool                         `json:"skip_for_child,omitempty" bson:"skip_for_child"`
-	SkipForInstruction *bool                         `json:"skip_for_instruction,omitempty" bson:"skip_for_instruction,omitempty"`
-	DeclareTicket      *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket"`
-	StopOnFail         *bool                         `json:"stop_on_fail,omitempty" bson:"stop_on_fail,omitempty"`
-	StopOnSuccess      *bool                         `json:"stop_on_success,omitempty" bson:"stop_on_success,omitempty"`
-	MultipleURLs       *bool                         `json:"multiple_urls,omitempty" bson:"multiple_urls,omitempty"`
+	webhook.Webhook    `bson:",inline"`
+	SkipForChild       *bool `json:"skip_for_child,omitempty" bson:"skip_for_child"`
+	SkipForInstruction *bool `json:"skip_for_instruction,omitempty" bson:"skip_for_instruction,omitempty"`
 }
 
 type AggregationResult struct {

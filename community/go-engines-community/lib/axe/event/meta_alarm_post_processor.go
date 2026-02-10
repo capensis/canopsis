@@ -175,6 +175,7 @@ func (p *metaAlarmPostProcessor) processComponent(ctx context.Context, event rpc
 		resourceEvent.Author = event.Parameters.Author
 		resourceEvent.UserID = event.Parameters.User
 		resourceEvent.Initiator = event.Parameters.Initiator
+		resourceEvent.AlarmID = resource.Alarm.ID
 		err = p.sendToFifo(ctx, resourceEvent)
 		if err != nil {
 			return err
@@ -730,6 +731,7 @@ func (p *metaAlarmPostProcessor) getChildEventByMetaAlarmEvent(
 	childEvent.Initiator = event.Parameters.Initiator
 	childEvent.TicketInfo = event.Parameters.TicketInfo
 	childEvent.TicketInfo.TicketMetaAlarmID = eventRes.Alarm.ID
+	childEvent.AlarmID = childAlarm.Alarm.ID
 	output := event.Parameters.Output
 	isTicket := false
 	switch eventRes.AlarmChangeType {
