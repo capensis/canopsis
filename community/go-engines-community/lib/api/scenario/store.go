@@ -61,6 +61,7 @@ type store struct {
 	entityInfosPropCollection mongo.DbCollection
 	pbhTypeCollection         mongo.DbCollection
 	pbhReasonCollection       mongo.DbCollection
+	tokenRuleCollection       mongo.DbCollection
 	transformer               patternfields.Transformer
 	authorProvider            author.Provider
 	tplValidator              tplvalidator.Validator
@@ -143,6 +144,7 @@ func NewStore(
 		entityInfosPropCollection: db.Collection(mongo.EntityInfosPropertyCollection),
 		pbhTypeCollection:         db.Collection(mongo.PbehaviorTypeMongoCollection),
 		pbhReasonCollection:       db.Collection(mongo.PbehaviorReasonMongoCollection),
+		tokenRuleCollection:       db.Collection(mongo.WebhookTokenRuleCollection),
 		transformer:               transformer,
 		authorProvider:            authorProvider,
 		tplValidator:              tplValidator,
@@ -642,7 +644,12 @@ func (s *store) validateActionTpls(
 
 		switch a.Type {
 		case types.ActionTypeWebhook:
-			whTplData := webhook.NewTplData(false, []webhook.TplAlarm{alarm}, additionalData, whResponse, whResponseMap, whHeader)
+			whResponseTplVars := webhook.ResponseTplVars{
+				Header:      whHeader,
+				Response:    whResponse,
+				ResponseMap: whResponseMap,
+			}
+			whTplData := webhook.NewTplData(false, []webhook.TplAlarm{alarm}, additionalData, whResponseTplVars)
 			response[prefix+".request.url"], err = template.Validate(s.tplValidator, a.Parameters.Request.URL, whTplData)
 			if err != nil {
 				return nil, err
@@ -765,6 +772,7 @@ func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
 
 	pbhTypeIDs := make([]string, 0)
 	pbhReasonIDs := make([]string, 0)
+	tokenRuleIDs := make([]string, 0)
 	for _, a := range r.Actions {
 		if a.Parameters.Type != "" {
 			pbhTypeIDs = append(pbhTypeIDs, a.Parameters.Type)
@@ -772,6 +780,15 @@ func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
 
 		if a.Parameters.Reason != "" {
 			pbhReasonIDs = append(pbhReasonIDs, a.Parameters.Reason)
+		}
+
+		if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" {
+			tokenRuleIDs = append(tokenRuleIDs, a.Parameters.AuthToken.Rule)
+		}
+
+		if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
+			a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" {
+			tokenRuleIDs = append(tokenRuleIDs, a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule)
 		}
 	}
 
@@ -800,6 +817,19 @@ func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
 		}
 	}
 
+	var foundTokenRules map[string]bool
+	if len(tokenRuleIDs) > 0 {
+		cursor, err := s.tokenRuleCollection.Find(ctx, bson.M{"_id": bson.M{"$in": tokenRuleIDs}}, options.Find().SetProjection(bson.M{"_id": 1}))
+		if err != nil {
+			return fmt.Errorf("cannot find token rules: %w", err)
+		}
+
+		foundTokenRules, err = s.fetchIDs(ctx, cursor)
+		if err != nil {
+			return fmt.Errorf("cannot fetch token rules: %w", err)
+		}
+	}
+
 	for i, a := range r.Actions {
 		if a.Parameters.Type != "" && !foundTypes[a.Parameters.Type] {
 			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Type", "Actions."+strconv.Itoa(i)+".Parameters.Type"))
@@ -807,6 +837,16 @@ func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
 
 		if a.Parameters.Reason != "" && !foundReasons[a.Parameters.Reason] {
 			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Reason", "Actions."+strconv.Itoa(i)+".Parameters.Reason"))
+		}
+
+		if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" && !foundTokenRules[a.Parameters.AuthToken.Rule] {
+			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.AuthToken.Rule"))
+		}
+
+		if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
+			a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" &&
+			!foundTokenRules[a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule] {
+			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule"))
 		}
 	}
 

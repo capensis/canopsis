@@ -461,6 +461,10 @@ ActivateAlarmAfterAutoRemediation = false
 EnableArraySortingInEntityInfos = true
 # CropStepsNumber defines how many sequential stateinc and statedec steps after the current status should be replaced with a statecounter step.
 CropStepsNumber = 0
+# CheckTicketStatusInterval defines how often ticket status should be checked.
+CheckTicketStatusInterval = "1m"
+# CheckTicketStatusMaxPeriod defines how long ticket status should be checked.
+CheckTicketStatusMaxPeriod = "720h"
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.timezone]

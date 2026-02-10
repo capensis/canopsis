@@ -484,7 +484,7 @@ func (a *api) BulkAssocTicket(c *gin.Context) {
 }
 
 // BulkTicketRemove
-// @Param body body []BulTicketRemoveRequestItem true "body"
+// @Param body body []BulkTicketRemoveRequestItem true "body"
 func (a *api) BulkTicketRemove(c *gin.Context) {
 	userID, err := authctx.GetUserKey(c)
 	if err != nil {

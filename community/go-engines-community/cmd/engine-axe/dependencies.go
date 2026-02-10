@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"github.com/rs/zerolog"
@@ -34,7 +35,7 @@ func NewEngineAXE(ctx context.Context, options axe.Options, logger zerolog.Logge
 	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
 	metricsSender := metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, logger)
-	e := axe.NewEngine(ctx, options, dbClient, noTimeoutClient, amqpConnection, cfg, metricsSender, event.NewNullAutoInstructionMatcher(), nil, nil, nil, canopsis.ActionQueuePrefix, logger)
+	e := axe.NewEngine(ctx, options, dbClient, noTimeoutClient, amqpConnection, cfg, metricsSender, event.NewNullAutoInstructionMatcher(), nil, nil, webhook.NewNullJobStatusService(), nil, canopsis.ActionQueuePrefix, logger)
 	e.AddDeferFunc(func(ctx context.Context) {
 		err := dbClient.Disconnect(ctx)
 		if err != nil {

@@ -127,6 +127,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 				types.LocaleFr: "{0} est un champ obligatoire",
 			},
 		},
+		"required_closed_mapping": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must contain a closed status mapping",
+				types.LocaleFr: "{0} doit contenir un mapping de statut fermé",
+			},
+		},
 		"required_not_both": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} is an excluded field",

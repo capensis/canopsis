@@ -95,6 +95,8 @@ const (
 	// Following alarm steps are used for junit.
 	AlarmStepJunitTestSuiteUpdate = "junittestsuiteupdate"
 	AlarmStepJunitTestCaseUpdate  = "junittestcaseupdate"
+
+	AlarmStepChangeTicketStatus = "changeticketstatus"
 )
 
 func GetAlarmStepTypes() []string {
@@ -134,6 +136,7 @@ func GetAlarmStepTypes() []string {
 		AlarmStepAutoInstructionFail,
 		AlarmStepJunitTestSuiteUpdate,
 		AlarmStepJunitTestCaseUpdate,
+		AlarmStepChangeTicketStatus,
 	}
 }
 

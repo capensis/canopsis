@@ -28,6 +28,8 @@ type AxeEvent struct {
 
 	// Origin will be sent back after RPC is done.
 	Origin *types.Event `json:"origin,omitempty"`
+
+	AlarmIDs []string `json:"alarm_ids,omitempty"`
 }
 
 type AxeParameters struct {
@@ -92,6 +94,8 @@ type AxeParameters struct {
 	CloseDelayValue *int64 `json:"close_delay,omitempty"`
 	// IsCloseDelayJob shows if an event is triggered by a close delay job.
 	IsCloseDelayJob bool `json:"is_close_delay,omitempty"`
+	// CheckTicketStatus shows if an event processor should create a check ticket status job.
+	CheckTicketStatus bool `json:"check_ticket_status,omitempty"`
 }
 
 // AxeResultEvent

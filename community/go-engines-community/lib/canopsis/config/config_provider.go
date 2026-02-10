@@ -3,6 +3,7 @@ package config
 //go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/config/provider.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,TechMetricsConfigProvider,TemplateConfigProvider
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"os"
@@ -122,6 +123,9 @@ type AlarmConfig struct {
 	ActivateAlarmAfterAutoRemediation bool
 	EnableArraySortingInEntityInfos   bool
 	CropStepsNumber                   int
+
+	CheckTicketStatusInterval  time.Duration
+	CheckTicketStatusMaxPeriod time.Duration
 }
 
 type TimezoneConfig struct {
@@ -278,6 +282,8 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 		AllowDoubleAck:                    parseBool(cfg.Alarm.AllowDoubleAck, "AllowDoubleAck", sectionName, logger),
 		ActivateAlarmAfterAutoRemediation: parseBool(cfg.Alarm.ActivateAlarmAfterAutoRemediation, "ActivateAlarmAfterAutoRemediation", sectionName, logger),
 		EnableArraySortingInEntityInfos:   parseBool(cfg.Alarm.EnableArraySortingInEntityInfos, "EnableArraySortingInEntityInfos", sectionName, logger),
+		CheckTicketStatusInterval:         parseTimeDurationByStr(cfg.Alarm.CheckTicketStatusInterval, CheckTicketStatusInterval, "CheckTicketStatusInterval", sectionName, logger),
+		CheckTicketStatusMaxPeriod:        parseCheckTicketStatusMaxPeriod(cfg.Alarm.CheckTicketStatusMaxPeriod, CheckTicketStatusMaxPeriod, sectionName, logger),
 	}
 	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDisplayNameScheme, "DisplayNameScheme", sectionName, logger)
 
@@ -396,6 +402,16 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 				Int("new", cfg.Alarm.CropStepsNumber).
 				Msg("CropStepsNumber of alarm config section is loaded")
 		}
+	}
+
+	d, ok = parseUpdatedTimeDurationByStr(cfg.Alarm.CheckTicketStatusInterval, p.conf.CheckTicketStatusInterval, "CheckTicketStatusInterval", sectionName, p.logger)
+	if ok {
+		p.conf.CheckTicketStatusInterval = d
+	}
+
+	d, ok = parseUpdatedCheckTicketStatusMaxPeriod(cfg.Alarm.CheckTicketStatusMaxPeriod, p.conf.CheckTicketStatusMaxPeriod, sectionName, p.logger)
+	if ok {
+		p.conf.CheckTicketStatusMaxPeriod = d
 	}
 }
 
@@ -1209,6 +1225,75 @@ func parseUpdatedTimeDurationByStr(
 		if oldVal > 0 {
 			logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, err)
 		}
+		return 0, false
+	}
+
+	if d == oldVal {
+		return 0, false
+	}
+
+	logInfoNewValue(logger, name, sectionName, oldVal.String(), d.String())
+
+	return d, true
+}
+
+func parseCheckTicketStatusMaxPeriod(v string, defaultVal time.Duration, sectionName string, logger zerolog.Logger) time.Duration {
+	name := "CheckTicketStatusMaxPeriod"
+	if v == "" {
+		return defaultVal
+	}
+
+	d, err := time.ParseDuration(v)
+	if err != nil {
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal, v, err)
+		return defaultVal
+	}
+
+	if d < 0 {
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal, v, errors.New("value must be positive"))
+		return defaultVal
+	}
+
+	if d > CheckTicketStatusMaxPeriod {
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal, v, fmt.Errorf("value is greater than max (%s)", CheckTicketStatusMaxPeriod))
+		return defaultVal
+	}
+
+	logger.Info().
+		Str("value", d.String()).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return d
+}
+
+func parseUpdatedCheckTicketStatusMaxPeriod(v string, oldVal time.Duration, sectionName string, logger zerolog.Logger) (time.Duration, bool) {
+	name := "CheckTicketStatusMaxPeriod"
+	if v == "" {
+		if oldVal > 0 {
+			logger.Warn().
+				Str("previous", oldVal.String()).
+				Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
+		}
+
+		return 0, false
+	}
+
+	d, err := time.ParseDuration(v)
+	if err != nil {
+		if oldVal > 0 {
+			logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, err)
+		}
+
+		return 0, false
+	}
+
+	if d < 0 {
+		logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, errors.New("value must be positive"))
+		return 0, false
+	}
+
+	if d > CheckTicketStatusMaxPeriod {
+		logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, fmt.Errorf("value is greater than max (%s)", CheckTicketStatusMaxPeriod))
 		return 0, false
 	}
 

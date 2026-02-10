@@ -87,22 +87,19 @@ definitions:
     properties:
       auth_token:
         $ref: '#/definitions/request.WebhookAuthToken'
-        description: AuthToken is used in webhook action.
       author:
         type: string
       color:
         description: Color is used in pbehavior action.
         type: string
       declare_ticket:
-        $ref: '#/definitions/request.WebhookDeclareTicket'
-        description: DeclareTicket is used in webhook action.
+        $ref: '#/definitions/webhook.DeclareTicket'
       duration:
         $ref: '#/definitions/datetime.DurationWithUnit'
         description: Duration is used in snooze and pbehavior actions.
       forward_author:
         type: boolean
       multiple_urls:
-        description: MultipleURLs is used in webhook action.
         type: boolean
       name:
         description: Name is used in pbehavior action.
@@ -116,7 +113,6 @@ definitions:
         type: string
       request:
         $ref: '#/definitions/request.Parameters'
-        description: Request is used in webhook action.
       rrule:
         description: RRule is used in pbehavior action.
         type: string
@@ -138,10 +134,8 @@ definitions:
             * `3` - Critical
         type: integer
       stop_on_fail:
-        description: StopOnFail is used in webhook action.
         type: boolean
       stop_on_success:
-        description: StopOnSuccess is used in webhook action.
         type: boolean
       ticket:
         description: Ticket is used in assocticket action.
@@ -667,18 +661,30 @@ definitions:
               type: integer
             ticket:
               type: string
+            ticket_check_status_job_id:
+              type: string
             ticket_comment:
               type: string
             ticket_data:
               additionalProperties:
                 type: string
               type: object
+            ticket_last_check_time:
+              type: integer
             ticket_meta_alarm_id:
               type: string
+            ticket_prev_source_status:
+              type: string
+            ticket_prev_status:
+              type: integer
             ticket_rule_id:
               type: string
             ticket_rule_name:
               type: string
+            ticket_source_status:
+              type: string
+            ticket_status:
+              type: integer
             ticket_system_name:
               type: string
             ticket_url:
@@ -695,18 +701,30 @@ definitions:
         type: integer
       ticket:
         type: string
+      ticket_check_status_job_id:
+        type: string
       ticket_comment:
         type: string
       ticket_data:
         additionalProperties:
           type: string
         type: object
+      ticket_last_check_time:
+        type: integer
       ticket_meta_alarm_id:
         type: string
+      ticket_prev_source_status:
+        type: string
+      ticket_prev_status:
+        type: integer
       ticket_rule_id:
         type: string
       ticket_rule_name:
         type: string
+      ticket_source_status:
+        type: string
+      ticket_status:
+        type: integer
       ticket_system_name:
         type: string
       ticket_url:
@@ -757,17 +775,6 @@ definitions:
         maxLength: 255
         type: string
     type: object
-  alarmaction.TicketRemoveRequest:
-    properties:
-      comment:
-        maxLength: 255
-        type: string
-      ticket:
-        type: string
-    required:
-    - comment
-    - ticket
-    type: object
   alarmaction.AssocTicketRequest:
     properties:
       comment:
@@ -804,20 +811,6 @@ definitions:
         type: string
     required:
     - _id
-    type: object
-  alarmaction.BulkTicketRemoveRequestItem:
-    properties:
-      _id:
-        type: string
-      comment:
-        maxLength: 255
-        type: string
-      ticket:
-        type: string
-    required:
-    - _id
-    - comment
-    - ticket
     type: object
   alarmaction.BulkAssocTicketRequestItem:
     properties:
@@ -899,6 +892,20 @@ definitions:
     - _id
     - duration
     type: object
+  alarmaction.BulkTicketRemoveRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+    required:
+    - _id
+    - comment
+    - ticket
+    type: object
   alarmaction.ChangeStateRequest:
     properties:
       comment:
@@ -937,6 +944,17 @@ definitions:
         $ref: '#/definitions/datetime.DurationWithUnit'
     required:
     - duration
+    type: object
+  alarmaction.TicketRemoveRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+    required:
+    - comment
+    - ticket
     type: object
   alarmtag.BulkDeleteRequestItem:
     properties:
@@ -1450,18 +1468,30 @@ definitions:
         type: integer
       ticket:
         type: string
+      ticket_check_status_job_id:
+        type: string
       ticket_comment:
         type: string
       ticket_data:
         additionalProperties:
           type: string
         type: object
+      ticket_last_check_time:
+        type: integer
       ticket_meta_alarm_id:
         type: string
+      ticket_prev_source_status:
+        type: string
+      ticket_prev_status:
+        type: integer
       ticket_rule_id:
         type: string
       ticket_rule_name:
         type: string
+      ticket_source_status:
+        type: string
+      ticket_status:
+        type: integer
       ticket_system_name:
         type: string
       ticket_url:
@@ -5340,27 +5370,6 @@ definitions:
       rule:
         type: string
     type: object
-  request.WebhookDeclareTicket:
-    properties:
-      customFields:
-        additionalProperties:
-          type: string
-        type: object
-      empty_response:
-        type: boolean
-      is_regexp:
-        type: boolean
-      ticket_id:
-        type: string
-      ticket_id_tpl:
-        type: string
-      ticket_url:
-        type: string
-      ticket_url_title:
-        type: string
-      ticket_url_tpl:
-        type: string
-    type: object
   resolverule.CreateRequest:
     properties:
       _id:
@@ -5772,7 +5781,7 @@ definitions:
       author:
         type: string
       declare_ticket:
-        $ref: '#/definitions/request.WebhookDeclareTicket'
+        $ref: '#/definitions/webhook.DeclareTicket'
       duration:
         $ref: '#/definitions/datetime.DurationWithUnit'
         description: Snooze and Pbehavior
@@ -5789,7 +5798,6 @@ definitions:
         $ref: '#/definitions/pbehavior.Reason'
       request:
         $ref: '#/definitions/request.Parameters'
-        description: Webhook
       rrule:
         type: string
       skip_for_child:
@@ -7309,6 +7317,46 @@ definitions:
         items:
           $ref: '#/definitions/widget.Response'
         type: array
+    type: object
+  webhook.CheckTicketStatus:
+    properties:
+      auth_token:
+        $ref: '#/definitions/request.WebhookAuthToken'
+      request:
+        $ref: '#/definitions/request.Parameters'
+      reuse_headers_and_auth:
+        type: boolean
+      status_mapping:
+        additionalProperties:
+          type: integer
+        type: object
+      ticket_status:
+        type: string
+      ticket_status_tpl:
+        type: string
+    type: object
+  webhook.DeclareTicket:
+    properties:
+      check_ticket_status:
+        $ref: '#/definitions/webhook.CheckTicketStatus'
+      customFields:
+        additionalProperties:
+          type: string
+        type: object
+      empty_response:
+        type: boolean
+      is_regexp:
+        type: boolean
+      ticket_id:
+        type: string
+      ticket_id_tpl:
+        type: string
+      ticket_url:
+        type: string
+      ticket_url_title:
+        type: string
+      ticket_url_tpl:
+        type: string
     type: object
   widget.EditGridPositionItemRequest:
     properties:

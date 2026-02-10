@@ -112,6 +112,8 @@ const (
 
 	EventTypeMetaAlarmChildActivate   = "metaalarmchildactivate"
 	EventTypeMetaAlarmChildDeactivate = "metaalarmchilddeactivate"
+
+	EventTypeChangeTicketStatus = "changeticketstatus"
 )
 
 const MaxEventTimestampVariation = 24 * time.Hour

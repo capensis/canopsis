@@ -39,6 +39,9 @@ const (
 	DataStorageMaxUpdates = 100000
 
 	DefaultEventsCountThreshold = 10
+
+	CheckTicketStatusInterval  = 10 * time.Second
+	CheckTicketStatusMaxPeriod = 30 * 24 * time.Hour
 )
 
 var ApiAuthorScheme = []string{"$username"}
