@@ -125,9 +125,10 @@ import {
   toRef,
   inject,
   onMounted,
+  onBeforeUnmount,
 } from 'vue';
 
-import { KEY_CODES } from '@/constants';
+import { KEY_CODES, REGISTER_LAST_INPUT_FOCUS_KEY } from '@/constants';
 
 import { filterAdvancedSearchItems } from '@/helpers/search/advanced-search';
 
@@ -209,7 +210,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const registerLastInputFocus = inject('$registerLastInputFocus', () => {});
+    const focusRegister = inject(REGISTER_LAST_INPUT_FOCUS_KEY, {});
 
     const { t } = useI18n();
 
@@ -520,9 +521,13 @@ export default {
     onMounted(() => {
       if (props.focusOnMount) {
         callFocus();
-        registerLastInputFocus(callFocus);
+        focusRegister.register?.(callFocus);
+      } else if (props.first) {
+        focusRegister.register?.(callFocus);
       }
     });
+
+    onBeforeUnmount(() => focusRegister.unregister?.(callFocus));
 
     return {
       inputPlaceholder,

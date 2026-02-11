@@ -20,6 +20,7 @@ export default {
     [ADVANCED_SEARCH_GROUPS.alias]: 'Aliases',
     [ADVANCED_SEARCH_GROUPS.events]: 'Events',
     [ADVANCED_SEARCH_GROUPS.pbehavior]: 'Pbehavior',
+    [ADVANCED_SEARCH_GROUPS.alarms]: 'Alarms',
   },
 
   searchForThisText: 'Press <kbd>enter</kbd> to search for this text',

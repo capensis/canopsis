@@ -11,7 +11,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
       class="flex xs4"
     >
       <c-advanced-search-stub
-        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
     </div>
     <div
@@ -2652,7 +2652,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
       class="flex xs4"
     >
       <c-advanced-search-stub
-        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
     </div>
     <div
@@ -5301,7 +5301,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
       class="flex xs4"
     >
       <c-advanced-search-stub
-        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
     </div>
     <div
@@ -5858,7 +5858,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
       class="flex xs4"
     >
       <c-advanced-search-stub
-        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
     </div>
     <div

@@ -384,7 +384,7 @@ export default {
 
     showPatternEntitiesModal() {
       this.showEntitiesModalByPatterns({
-        entity_pattern: formGroupsToPatternRulesQuery(this.patterns.groups),
+        search_pattern: formGroupsToPatternRulesQuery(this.patterns.groups),
       });
     },
 

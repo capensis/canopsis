@@ -1718,9 +1718,6 @@ describe('alarms-list', () => {
 
           page: 1,
           search: advancedSearchValue.search,
-          alarm_pattern: JSON.stringify(advancedSearchValue.alarm_pattern),
-          entity_pattern: JSON.stringify(advancedSearchValue.entity_pattern),
-          pbehavior_pattern: JSON.stringify(advancedSearchValue.pbehavior_pattern),
         },
       },
     );
@@ -1771,7 +1768,6 @@ describe('alarms-list', () => {
           ...defaultQuery,
 
           page: 1,
-          search: '',
           alarm_pattern: JSON.stringify(advancedSearchValue.alarm_pattern),
           entity_pattern: JSON.stringify(advancedSearchValue.entity_pattern),
           pbehavior_pattern: JSON.stringify(advancedSearchValue.pbehavior_pattern),

@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-advanced-search-field Renders \`c-advanced-search-field\` correctly 1`] = `
+<div
+  class="layout c-advanced-search__wrapper align-end"
+>
+  <div
+    class="c-advanced-search mt-0 pt-2 v-input v-input--hide-details theme--light v-text-field v-text-field--single-line v-select v-autocomplete primary--text theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot pb-1"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <advanced-search-rules-stub
+            allowfocusonmount="true"
+            allowor="true"
+            attributes=""
+            rules="[object Object]"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout"
+  >
+    <!---->
+    <c-action-btn-stub
+      icon="search"
+      tooltip="Search"
+    />
+    <c-action-btn-stub
+      icon="clear"
+      tooltip="Clear search input"
+    />
+  </div>
+</div>
+`;
