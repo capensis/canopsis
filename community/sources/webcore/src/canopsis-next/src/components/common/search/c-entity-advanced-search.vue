@@ -1,19 +1,13 @@
 <template>
   <c-advanced-search
-    v-model="rules"
     :searches="searches"
     :attributes="attributes"
-    :allow-or="allowOr"
     with-history
     v-on="$listeners"
   />
 </template>
 
 <script>
-import { ref } from 'vue';
-
-import { advancedSearchRuleItemToFormItem } from '@/helpers/search/advanced-search';
-
 import { useEntityAdvancedSearchAttributes } from './hooks/advanced-search';
 
 export default {
@@ -24,14 +18,10 @@ export default {
     },
   },
   setup() {
-    const rules = ref([advancedSearchRuleItemToFormItem()]);
-
-    const { attributes, allowOr } = useEntityAdvancedSearchAttributes({ rules });
+    const { attributes } = useEntityAdvancedSearchAttributes();
 
     return {
-      rules,
       attributes,
-      allowOr,
     };
   },
 };

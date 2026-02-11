@@ -1,20 +1,35 @@
-import { cloneDeep, isEmpty, isUndefined, pick } from 'lodash';
+import {
+  cloneDeep,
+  isEmpty,
+  isString,
+  isUndefined,
+  mapKeys,
+  pick,
+  omit,
+} from 'lodash';
 
 import {
   ALARM_ADVANCED_SEARCH_CHIP_TYPES,
+  ALARM_ADVANCED_SEARCH_FIELDS_TO_PATTERNS,
   ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES,
   ADVANCED_SEARCH_UNION_CONDITIONS,
+  ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX,
   ALARM_PATTERN_FIELDS,
+  ENTITY_SEARCH_NUMBER_ATTRIBUTES,
+  PATTERN_CONDITIONS,
   PATTERN_FIELD_TYPES,
-  PATTERNS_FIELDS,
+  ADVANCED_SEARCH_FIELDS,
+  PBEHAVIOR_PATTERN_PREFIX,
   QUICK_RANGES,
   PATTERN_OPERATORS_WITHOUT_VALUE,
-  ALARM_SEARCH_FIELDS_TO_COMPARISON,
+  ADVANCED_SEARCH_FIELDS_TO_COMPARISON,
+  ADVANCED_SEARCH_QUERY_FIELDS,
   ALARM_SEARCH_NUMBER_ATTRIBUTES,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_DURATION_OPERATORS,
 } from '@/constants';
 
+import { uuid } from '@/helpers/uuid';
 import {
   formRuleToPatternRule,
   isArrayOperator,
@@ -25,6 +40,17 @@ import {
   patternRuleToForm,
 } from '@/helpers/entities/pattern/form';
 import { isPickEqual } from '@/helpers/collection';
+
+/**
+ * Adds prefix to all keys of an attributes map.
+ *
+ * @param {Object} [attributesMap = {}] - The attributes map to transform.
+ * @param {string} [prefix = ''] - The prefix to add to each key.
+ * @returns {Object} - New object with prefixed keys.
+ */
+export const addPrefixToAttributesMap = (attributesMap = {}, prefix = '') => (
+  mapKeys(attributesMap, (value, key) => `${prefix}${key}`)
+);
 
 /**
  * @typedef {'alarm_pattern' | 'entity_pattern' | 'pbehavior_pattern'} AdvancedSearchRuleItemPosition
@@ -276,10 +302,10 @@ export const advancedSearchToForm = ({ search = '', positions = [], ...patterns 
 
     const formItem = advancedSearchRuleItemToFormItem(clonedPatterns[key][0]?.pop?.());
 
-    if (key === PATTERNS_FIELDS.entity && !formItem.alias) {
-      formItem.attribute = ['entity', formItem.attribute].join('.');
-    } else if (key === PATTERNS_FIELDS.pbehavior) {
-      formItem.attribute = ['v', formItem.attribute].join('.');
+    if (key === ADVANCED_SEARCH_FIELDS.entity && !formItem.alias) {
+      formItem.attribute = `${ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.entity}${formItem.attribute}`;
+    } else if (key === ADVANCED_SEARCH_FIELDS.pbehavior) {
+      formItem.attribute = `${ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX}${formItem.attribute}`;
     }
 
     acc.push(formItem);
@@ -294,7 +320,7 @@ export const advancedSearchToForm = ({ search = '', positions = [], ...patterns 
  * @param {string} [field = ''] - The field string to be checked.
  * @returns {boolean} - Returns true if the field is an entity pattern field, otherwise false.
  */
-export const isEntityPatternField = (field = '') => field.startsWith(ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.entity);
+export const isAlarmEntityPatternField = (field = '') => field.startsWith(ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.entity);
 
 /**
  * Checks if a given field is a pbehavior pattern field.
@@ -302,7 +328,7 @@ export const isEntityPatternField = (field = '') => field.startsWith(ALARM_ADVAN
  * @param {string} [field = ''] - The field string to be checked.
  * @returns {boolean} - Returns true if the field is an entity pattern field, otherwise false.
  */
-export const isPbehaviorPatternField = (field = '') => field.startsWith(ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.pbehavior);
+export const isPbehaviorPatternField = (field = '', prefix = '') => field.startsWith(`${prefix}${PBEHAVIOR_PATTERN_PREFIX}`);
 
 /**
  * Checks if a given field is an alarm pattern field.
@@ -310,16 +336,17 @@ export const isPbehaviorPatternField = (field = '') => field.startsWith(ALARM_AD
  * @param {string} [field = ''] - The field string to be checked.
  * @returns {boolean} - Returns true if the field is an entity pattern field, otherwise false.
  */
-export const isAlarmPatternField = (field = '') => field && !isEntityPatternField(field) && !isPbehaviorPatternField(field);
+export const isAlarmPatternField = (field = '') => field && !isAlarmEntityPatternField(field) && !isPbehaviorPatternField(field);
 
 /**
  * Transforms a form structure into an advanced search pattern structure.
  *
  * @param {AdvancedSearchForm} [form = []] - The form array to be transformed.
+ * @param {string} [basicField = ADVANCED_SEARCH_FIELDS.alarm] - The basic field of the pattern.
  * @returns {AdvancedSearch} - The structured advanced search pattern object, including positions
  *                     and categorized pattern arrays (alarm, entity, pbehavior).
  */
-export const formToAdvancedSearch = (form = []) => {
+export const formToAdvancedSearch = (form = [], basicField = ADVANCED_SEARCH_FIELDS.alarm) => {
   let firstPatternKey = null;
 
   return form.reduce((acc, { union, rangeValue, range, filled, text, ...item }) => {
@@ -349,13 +376,15 @@ export const formToAdvancedSearch = (form = []) => {
       };
     }
 
-    let key = PATTERNS_FIELDS.alarm;
+    const pbehaviorPrefix = basicField === ADVANCED_SEARCH_FIELDS.alarm ? ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX : '';
 
-    if (isEntityPatternField(preparedItem.attribute) || item?.alias) {
-      key = PATTERNS_FIELDS.entity;
+    let key = basicField;
+
+    if (isAlarmEntityPatternField(preparedItem.attribute) || item?.alias) {
+      key = ADVANCED_SEARCH_FIELDS.entity;
       preparedItem.attribute = preparedItem.attribute.replace(/^entity\./, '');
-    } else if (isPbehaviorPatternField(preparedItem.attribute)) {
-      key = PATTERNS_FIELDS.pbehavior;
+    } else if (isPbehaviorPatternField(preparedItem.attribute, pbehaviorPrefix)) {
+      key = ADVANCED_SEARCH_FIELDS.pbehavior;
       preparedItem.attribute = preparedItem.attribute.replace(/^v\./, '');
     }
 
@@ -384,23 +413,72 @@ export const formToAdvancedSearch = (form = []) => {
   }, {
     search: '',
     positions: [],
-    [PATTERNS_FIELDS.alarm]: [],
-    [PATTERNS_FIELDS.entity]: [],
-    [PATTERNS_FIELDS.pbehavior]: [],
+    [ADVANCED_SEARCH_FIELDS.alarm]: [],
+    [ADVANCED_SEARCH_FIELDS.entity]: [],
+    [ADVANCED_SEARCH_FIELDS.pbehavior]: [],
+    [ADVANCED_SEARCH_FIELDS.search]: [],
   });
 };
 
 /**
- * Checks if an alarm search object is empty by evaluating specific fields.
+ * Checks if an advanced search object is empty by evaluating specific fields.
  *
  * @param {AdvancedSearch} [search = {}] - The alarm search object to evaluate.
  * @returns {boolean} - Returns true if all specified fields in the search object are empty, otherwise false.
  */
-export const isEmptyAlarmSearch = (search = {}) => (
-  Object.values(pick(search, ALARM_SEARCH_FIELDS_TO_COMPARISON))
+export const isEmptyAdvancedSearch = (search = {}) => (
+  Object.values(pick(search, ADVANCED_SEARCH_FIELDS_TO_COMPARISON))
     .map(isEmpty)
     .every(Boolean)
 );
+
+/**
+ * Checks if an advanced search pattern is empty.
+ *
+ * @param {Object|Array|string} [pattern = {}] - The pattern object, array, or JSON string to evaluate.
+ * @returns {boolean} - Returns true if the pattern is empty, otherwise false.
+ */
+export const isEmptyAdvancedSearchPattern = (pattern = {}) => isEmpty(pattern) || pattern === '[]';
+
+/**
+ * Prepares a query object from a base query and an advanced search object.
+ * Spreads the base query, sets search text and page to 1, and adds non-empty pattern fields as JSON strings.
+ * Accepts a string as search for plain text search (treated as { search }).
+ *
+ * @param {Object} query - The base query object to merge
+ * @param {AdvancedSearch|string} search - The advanced search object or plain search string
+ * @returns {Object} - The new query object ready to be applied
+ */
+export const prepareQueryFromAdvancedSearch = (query = {}, search = {}) => {
+  const newQuery = {
+    ...query,
+
+    page: 1,
+  };
+
+  ADVANCED_SEARCH_QUERY_FIELDS.forEach((field) => {
+    const value = search?.[field];
+
+    if (!isEmptyAdvancedSearchPattern(value)) {
+      newQuery[field] = isString(value) ? value : JSON.stringify(value);
+    }
+  });
+
+  return newQuery;
+};
+
+/**
+ * Prepares a query object with all advanced search fields removed and page reset to 1.
+ *
+ * @param {Object} [query = {}] - The source query object
+ * @returns {Object} - A new query object without search, alarm_pattern, entity_pattern, pbehavior_pattern,
+ *                    search_pattern, and with page set to 1
+ */
+export const prepareQueryWithoutAdvancedSearch = (query = {}) => ({
+  ...omit(query, ADVANCED_SEARCH_QUERY_FIELDS),
+
+  page: 1,
+});
 
 /**
  * Compares two alarm search objects for equality based on specific fields or their unique identifiers.
@@ -409,10 +487,58 @@ export const isEmptyAlarmSearch = (search = {}) => (
  * @param {AdvancedSearch & { _id: string }} secondSearch - The second alarm search object to compare.
  * @returns {boolean} - Returns true if the searches are equal based on their IDs or specified fields, otherwise false.
  */
-export const isEqualAlarmSearches = (firstSearch, secondSearch) => (
+export const isEqualAdvancedSearches = (firstSearch, secondSearch) => (
   firstSearch?._id === secondSearch?._id
-  || isPickEqual(firstSearch, secondSearch, ALARM_SEARCH_FIELDS_TO_COMPARISON)
+  || isPickEqual(firstSearch, secondSearch, ADVANCED_SEARCH_FIELDS_TO_COMPARISON)
 );
+
+/**
+ * Merges a search into the saved searches array: updates existing equal search or prepends the new one.
+ *
+ * @param {Array<AdvancedSearch & { _id: string }>} savedSearches - The current saved searches
+ * @param {AdvancedSearch & { _id: string }} search - The search to merge
+ * @returns {Array<AdvancedSearch & { _id: string }>} - The updated searches array
+ */
+export const mergeSearchIntoSavedSearches = (savedSearches, search) => {
+  let found = false;
+  const updatedSearches = savedSearches.map((value) => {
+    if (isEqualAdvancedSearches(value, search)) {
+      found = true;
+
+      return { ...search, pinned: value.pinned || search.pinned };
+    }
+
+    return value;
+  });
+
+  return found ? updatedSearches : [search, ...savedSearches];
+};
+
+/**
+ * Creates an advanced search object from a field/value pair.
+ * Used by alarm column cells to apply a filter from a chip click.
+ *
+ * @param {string} field - The advanced search field name (e.g. entity.component)
+ * @param {*} value - The value to filter by
+ * @returns {Object} Advanced search object with _id, pinned, and rules
+ */
+export const createAdvancedSearchFromFieldValue = (field, value) => {
+  const patternField = ALARM_ADVANCED_SEARCH_FIELDS_TO_PATTERNS[field];
+  const preparedField = field
+    .replace(ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.entity, '')
+    .replace(ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.pbehavior, '');
+
+  const pattern = [[{ field: preparedField, cond: { value, type: PATTERN_CONDITIONS.equal } }]];
+
+  return {
+    _id: uuid(),
+    pinned: false,
+    rules: advancedSearchToForm({
+      positions: [patternField],
+      [patternField]: pattern,
+    }),
+  };
+};
 
 /**
  * Determines if a rule is of a number value type based on its type and operator.
@@ -427,6 +553,7 @@ export const isNumberValueType = (rule, type) => (
   && (
     rule.fieldType === PATTERN_FIELD_TYPES.number
     || ALARM_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute)
+    || ENTITY_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute)
   )
 );
 

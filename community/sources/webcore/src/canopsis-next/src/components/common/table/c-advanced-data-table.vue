@@ -4,17 +4,20 @@
       <v-flex v-if="shownSearch" xs4>
         <c-search
           v-if="search"
-          @submit="updateSearchHandler"
+          @submit="updateSearch"
         />
         <c-advanced-search
           v-else-if="advancedSearch"
           :attributes="advancedSearchAttributes"
-          @submit="updateSearchHandler"
+          @submit="updateAdvancedSearch"
+          @reset="resetSearch"
         />
       </v-flex>
       <slot
         :selected="selected"
-        :update-search="updateSearchHandler"
+        :update-search="updateSearch"
+        :update-advanced-search="updateAdvancedSearch"
+        :reset-search="resetSearch"
         name="toolbar"
       />
       <v-flex
@@ -152,6 +155,7 @@
 
 <script>
 import { mapIds } from '@/helpers/array';
+import { prepareQueryFromAdvancedSearch, prepareQueryWithoutAdvancedSearch } from '@/helpers/search/advanced-search';
 
 export default {
   model: {
@@ -354,8 +358,16 @@ export default {
       this.$emit('update:options', options);
     },
 
-    updateSearchHandler(search) {
+    updateSearch(search) {
       this.updateOptions({ ...this.options, search, page: 1 });
+    },
+
+    updateAdvancedSearch(search) {
+      this.updateOptions(prepareQueryFromAdvancedSearch(this.options, search));
+    },
+
+    resetSearch() {
+      this.updateOptions(prepareQueryWithoutAdvancedSearch(this.options));
     },
 
     updateItemsPerPage(itemsPerPage) {

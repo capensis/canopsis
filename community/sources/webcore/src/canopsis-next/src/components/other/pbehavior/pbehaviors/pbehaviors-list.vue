@@ -6,7 +6,7 @@
     :headers="headers"
     :total-items="totalItems"
     :select-all="removable || enablable || disablable"
-    :advanced-search-attributes="[]"
+    :advanced-search-attributes="advancedSearchAttributes"
     advanced-search
     advanced-pagination
     expand
@@ -98,6 +98,7 @@ import { PBEHAVIOR_LIST_FIELDS, PATTERN_DURATION_FORMAT, TIME_UNITS } from '@/co
 
 import { useI18n } from '@/hooks/i18n';
 
+import { usePbehaviorAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
 import { usePbehaviorDateFormat } from '@/components/other/pbehavior/pbehaviors/hooks/pbehavior-date-format';
 
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
@@ -158,6 +159,8 @@ export default {
     const { t, tc } = useI18n();
     const { timezone, shownUserTimezone, formatIntervalDate, formatRruleEndDate } = usePbehaviorDateFormat();
 
+    const { attributes: advancedSearchAttributes } = usePbehaviorAdvancedSearchAttributes();
+
     const headers = computed(() => [
       { text: t('common.name'), value: PBEHAVIOR_LIST_FIELDS.name },
       { text: t('common.author'), value: PBEHAVIOR_LIST_FIELDS.author },
@@ -183,6 +186,7 @@ export default {
       durationFormat,
       millisecondUnit,
 
+      advancedSearchAttributes,
       timezone,
       shownUserTimezone,
       headers,
