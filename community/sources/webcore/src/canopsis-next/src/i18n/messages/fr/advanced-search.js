@@ -18,7 +18,9 @@ export default {
     [ADVANCED_SEARCH_GROUPS.actions]: 'Actions',
     [ADVANCED_SEARCH_GROUPS.entity]: 'Entité',
     [ADVANCED_SEARCH_GROUPS.alias]: 'Alias',
+    [ADVANCED_SEARCH_GROUPS.events]: 'Événements',
     [ADVANCED_SEARCH_GROUPS.pbehavior]: 'Comportements périodiques',
+    [ADVANCED_SEARCH_GROUPS.alarms]: 'Alarmes',
   },
 
   searchForThisText: 'Appuyez sur <kbd>Entrée</kbd> pour rechercher ce texte',

@@ -9,7 +9,6 @@
     >
       <v-flex>
         <c-alarm-advanced-search
-          ref="alarmAdvancedSearch"
           :searches="searches"
           @submit="updateSearch"
           @reset="resetSearch"
@@ -161,7 +160,7 @@ import { selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { exportMixinCreator } from '@/mixins/widget/export';
-import { widgetAlarmAdvancedSearchSavedItemsMixin } from '@/mixins/widget/advanced-search/alarm-saved-items';
+import { widgetAdvancedSearchSavedItemsMixin } from '@/mixins/widget/advanced-search/saved-items';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
@@ -203,7 +202,7 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetAlarmAdvancedSearchSavedItemsMixin,
+    widgetAdvancedSearchSavedItemsMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,

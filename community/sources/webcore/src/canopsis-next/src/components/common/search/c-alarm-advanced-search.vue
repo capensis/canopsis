@@ -1,10 +1,10 @@
 <template>
-  <c-advanced-search
+  <c-advanced-search-field
     v-model="rules"
-    ref="advancedSearchElement"
     :searches="searches"
     :attributes="attributes"
     :allow-or="allowOr"
+    :basic-field="basicField"
     with-history
     v-on="$listeners"
   />
@@ -12,6 +12,8 @@
 
 <script>
 import { ref } from 'vue';
+
+import { ADVANCED_SEARCH_FIELDS } from '@/constants';
 
 import { advancedSearchRuleItemToFormItem } from '@/helpers/search/advanced-search';
 
@@ -25,13 +27,14 @@ export default {
     },
   },
   setup() {
-    const advancedSearchElement = ref(null);
+    const basicField = ADVANCED_SEARCH_FIELDS.alarm;
+
     const rules = ref([advancedSearchRuleItemToFormItem()]);
 
     const { attributes, allowOr } = useAlarmAdvancedSearchAttributes({ rules });
 
     return {
-      advancedSearchElement,
+      basicField,
       rules,
       attributes,
       allowOr,

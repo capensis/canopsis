@@ -12,7 +12,8 @@
       <v-flex>
         <c-advanced-search
           :attributes="advancedSearchAttributes"
-          @submit="updateSearchInQuery"
+          @submit="updateSearch"
+          @reset="resetSearch"
         />
       </v-flex>
       <v-flex v-if="hasAccessToCategory">
@@ -27,17 +28,20 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
 import { ref, computed, onMounted } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
+import { USER_PERMISSIONS, ADVANCED_SEARCH_FIELDS_TO_COMPARISON } from '@/constants';
 
 import { getQueryForList } from '@/helpers/entities/shared/query';
+import { prepareQueryFromAdvancedSearch } from '@/helpers/search/advanced-search';
 
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useCurrentUserPermissions } from '@/hooks/auth';
 import { useService } from '@/hooks/store/modules/service';
 
-import { USER_PERMISSIONS } from '@/constants/permission';
+import { useEntityDependenciesAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
 
 import EntitiesListTableWithPagination from '../../widgets/context/partials/entities-list-table-with-pagination.vue';
 
@@ -70,6 +74,7 @@ export default {
       fetchServiceDependenciesWithoutStore,
       fetchServiceImpactsWithoutStore,
     } = useService();
+    const { attributes: advancedSearchAttributes } = useEntityDependenciesAdvancedSearchAttributes();
 
     const {
       pending,
@@ -105,15 +110,20 @@ export default {
     const hasAccessToCategory = computed(() => checkAccess(USER_PERMISSIONS.business.context.actions.category));
 
     /**
+     * Resets the search query by removing all search-related parameters and resetting pagination to the first page.
+     */
+    const resetSearch = () => updateQuery({
+      ...omit(query.value, [...ADVANCED_SEARCH_FIELDS_TO_COMPARISON]),
+
+      page: 1,
+    });
+
+    /**
      * Updates the search query parameter and resets pagination to the first page.
      *
      * @param {string} search - The search term to filter entities
      */
-    const updateSearchInQuery = search => updateQuery({
-      ...query.value,
-      search,
-      page: 1,
-    });
+    const updateSearch = (search = {}) => updateQuery(prepareQueryFromAdvancedSearch(query.value, search));
 
     /**
      * Updates the category filter in the query and resets pagination to the first page.
@@ -129,12 +139,14 @@ export default {
     onMounted(fetchList);
 
     return {
+      advancedSearchAttributes,
       pending,
       entities,
       meta,
       query,
       hasAccessToCategory,
-      updateSearchInQuery,
+      resetSearch,
+      updateSearch,
       updateCategory,
     };
   },

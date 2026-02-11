@@ -30,17 +30,19 @@
 <script>
 import { ref, nextTick } from 'vue';
 
+import { REGISTER_LAST_INPUT_FOCUS_KEY } from '@/constants';
+
 import { advancedSearchRuleItemToFormItem } from '@/helpers/search/advanced-search';
 import { isArrayOperator } from '@/helpers/entities/pattern/form';
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
-import { useActiveKey } from '@/hooks/active-key';
-import { useLastInputFocus } from '@/hooks/focus';
+
+import { useLastInputFocus } from '../hooks/focus';
+import { useActiveKey } from '../hooks/active-key';
 
 import AdvancedSearchRule from './advanced-search-rule.vue';
 
 export default {
-  name: 'AlarmAdvancedSearchRules',
   components: { AdvancedSearchRule },
   model: {
     prop: 'rules',
@@ -72,14 +74,15 @@ export default {
   },
   setup(props, { emit }) {
     const {
+      updateModel,
       addItemIntoArray,
       updateItemInArray,
-      removeItemFromArray,
+      removeItemsFromArray,
     } = useArrayModelField(props, emit);
 
     const layoutElement = ref(null);
     const { activeKey, makeActive, resetActive } = useActiveKey();
-    const { lastInputFocus } = useLastInputFocus();
+    const { focusRegister } = useLastInputFocus(REGISTER_LAST_INPUT_FOCUS_KEY);
 
     /**
      * Adds a new item into the array using a form item.
@@ -101,13 +104,44 @@ export default {
      * @param {number} index - The index of the rule to be removed or updated.
      */
     const remove = (index) => {
-      if (props.rules.length === 1) {
+      /**
+       * If we are removing pre last item we should remove only last and replace the prelast by empty rule
+       *
+       * @example
+       * We are removing the first item:
+       * [`_id` `equal` `someId`], [<empty rule>] => [<empty rule>]
+       */
+      if (index === props.rules.length - 2) {
+        const newRules = props.rules.reduce((acc, rule, ruleIndex) => {
+          if (ruleIndex === index) {
+            acc.push(advancedSearchRuleItemToFormItem());
+          } else if (ruleIndex !== index + 1) {
+            acc.push(rule);
+          }
+
+          return acc;
+        }, []);
+
+        updateModel(newRules);
+
+        return;
+      }
+
+      if (props.rules.length === 1 || index === props.rules.length - 1) {
         updateItemInArray(index, advancedSearchRuleItemToFormItem());
 
         return;
       }
 
-      removeItemFromArray(index);
+      /**
+       * If we are removing the item not from the end and we have more then 2 items
+       *
+       * @example
+       * We are removing the first item:
+       * [`_id` `equal` `someId1`], [`AND`], [`_id` `equal` `someId2`], [`OR`], [<empty rule>] =>
+       * [`_id` `equal` `someId2`], [`OR`], [<empty rule>]
+       */
+      removeItemsFromArray([index, index % 2 === 0 ? index + 1 : index - 1]);
     };
 
     /**
@@ -122,7 +156,7 @@ export default {
 
       add();
 
-      nextTick(() => lastInputFocus.value());
+      nextTick(() => focusRegister.call());
     };
 
     /**
@@ -130,7 +164,7 @@ export default {
      *
      * @param {Event} event - The mouseup event.
      */
-    const mouseupLayout = event => event.target === layoutElement.value && lastInputFocus.value();
+    const mouseupLayout = event => event.target === layoutElement.value && focusRegister.call();
 
     /**
      * Determines whether a rule should receive focus when mounted based on its position

@@ -65,6 +65,7 @@ This is a **Vue 2.7.14** application with:
 - Use **lowercase-with-dashes** for all file and directory names
 
 ### Import Order (ESLint enforced)
+- Combine constants to one import from the `@/constants`
 ```js
 // 1. External libraries
 import { isEmpty } from 'lodash';

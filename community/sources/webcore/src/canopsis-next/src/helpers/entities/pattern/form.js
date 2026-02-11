@@ -35,6 +35,9 @@ import {
   PATTERN_CUSTOM_ITEM_VALUE,
   PATTERN_TYPES,
   PATTERN_QUICK_RANGES_DURATIONS,
+  DYNAMIC_INFO_FIELDS,
+  PBEHAVIOR_FIELDS,
+  PBEHAVIOR_PATTERN_FIELDS,
 } from '@/constants';
 
 import { convertDateToDateObject, convertDateToTimestamp, isValidDateInterval } from '@/helpers/date/date';
@@ -301,7 +304,24 @@ export const isDatePatternRuleField = value => [
   ALARM_PATTERN_FIELDS.ackAt,
   ALARM_PATTERN_FIELDS.resolved,
   ALARM_PATTERN_FIELDS.activationDate,
+  ENTITY_PATTERN_FIELDS.idleSince,
+  ENTITY_PATTERN_FIELDS.imported,
+  ENTITY_PATTERN_FIELDS.lastUpdateDate,
+  ENTITY_PATTERN_FIELDS.lastPbehaviorDate,
   ENTITY_PATTERN_FIELDS.lastEventDate,
+  ENTITY_PATTERN_FIELDS.lastEventDate,
+  DYNAMIC_INFO_FIELDS.created,
+  DYNAMIC_INFO_FIELDS.updated,
+
+  /**
+   * Fields for advanced search
+   */
+  PBEHAVIOR_FIELDS.tstart,
+  PBEHAVIOR_FIELDS.tstop,
+  PBEHAVIOR_FIELDS.rruleEnd,
+  PBEHAVIOR_FIELDS.created,
+  PBEHAVIOR_FIELDS.updated,
+  PBEHAVIOR_FIELDS.lastAlarmDate,
 ].includes(value);
 
 /**
@@ -317,6 +337,11 @@ export const isNumberPatternRuleField = value => [
   EVENT_FILTER_PATTERN_FIELDS.state,
   ENTITY_PATTERN_FIELDS.impactLevel,
   SERVICE_WEATHER_PATTERN_FIELDS.state,
+
+  /**
+   * Fields for advanced search
+   */
+  PBEHAVIOR_FIELDS.alarmCount,
 ].includes(value);
 
 /**
@@ -364,6 +389,17 @@ export const isArrayPatternRuleField = value => [
   EVENT_FILTER_PATTERN_FIELDS.sourceType,
   EVENT_FILTER_PATTERN_FIELDS.initiator,
   EVENT_FILTER_PATTERN_FIELDS.author,
+  PBEHAVIOR_PATTERN_FIELDS.name,
+
+  /**
+   * Fields for advanced search
+   */
+  PBEHAVIOR_FIELDS.name,
+  PBEHAVIOR_FIELDS.author,
+  PBEHAVIOR_FIELDS.rrule,
+  PBEHAVIOR_FIELDS.reason,
+  PBEHAVIOR_FIELDS.type,
+  PBEHAVIOR_FIELDS.canonicalType,
 ].some((field) => {
   /**
    * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
@@ -890,6 +926,8 @@ export const patternRuleToForm = (rule = {}) => {
           form.operator = rule.cond.value ? PATTERN_OPERATORS.isGrey : PATTERN_OPERATORS.isNotGrey;
         } else if (rule.field === ALARM_PATTERN_FIELDS.meta) {
           form.operator = PATTERN_OPERATORS.ruleIs;
+        } else if (rule.field === ENTITY_PATTERN_FIELDS.enabled) {
+          form.operator = rule.cond.value ? PATTERN_OPERATORS.enabled : PATTERN_OPERATORS.disabled;
         }
       }
 
@@ -1327,6 +1365,11 @@ export const formRuleToPatternRule = (rule) => {
       break;
     case PATTERN_OPERATORS.withoutLabel:
       pattern.cond.type = PATTERN_CONDITIONS.hasNotLabels;
+      break;
+    case PATTERN_OPERATORS.enabled:
+    case PATTERN_OPERATORS.disabled:
+      pattern.cond.type = PATTERN_CONDITIONS.equal;
+      pattern.cond.value = rule.operator === PATTERN_OPERATORS.enabled;
       break;
   }
 

@@ -495,6 +495,9 @@ export default {
     [PATTERN_OPERATORS.activated]: 'Activated',
     [PATTERN_OPERATORS.inactive]: 'Inactive',
 
+    [PATTERN_OPERATORS.enabled]: 'True',
+    [PATTERN_OPERATORS.disabled]: 'False',
+
     [PATTERN_OPERATORS.isMetaAlarm]: 'Is meta alarm',
     [PATTERN_OPERATORS.isNotMetaAlarm]: 'Is not meta alarm',
     [PATTERN_OPERATORS.ruleIs]: 'Rule is',

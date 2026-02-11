@@ -24,6 +24,7 @@ export { default as CCalendar } from '@/components/common/calendar/c-calendar.vu
 export { default as CSearch } from '@/components/common/search/c-search.vue';
 export { default as CSearchField } from '@/components/common/search/c-search-field.vue';
 export { default as CAdvancedSearch } from '@/components/common/search/c-advanced-search.vue';
+export { default as CAdvancedSearchField } from '@/components/common/search/c-advanced-search-field.vue';
 export { default as CAlarmAdvancedSearch } from '@/components/common/search/c-alarm-advanced-search.vue';
 export { default as CAvailabilityAdvancedSearch } from '@/components/common/search/c-availability-advanced-search.vue';
 export { default as CEntityAdvancedSearch } from '@/components/common/search/c-entity-advanced-search.vue';

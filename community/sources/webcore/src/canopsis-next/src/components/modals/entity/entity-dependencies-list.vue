@@ -53,6 +53,7 @@ export default {
     const widget = computed(() => config.value.widget ?? generatePreparedDefaultContextWidget());
 
     return {
+      config,
       entity,
       title,
       widget,

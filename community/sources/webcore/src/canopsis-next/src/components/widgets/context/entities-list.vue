@@ -14,10 +14,10 @@
         <v-flex>
           <c-entity-advanced-search
             :searches="searches"
-            @submit="updateSearchInQuery"
-            @add:item="addSearchIntoUserPreferences"
-            @toggle-pin:item="togglePinSearchInUserPreferences"
-            @remove:item="removeSearchFromUserPreferences"
+            @submit="updateSearch"
+            @reset="resetSearch"
+            @toggle-pin:search="togglePinSearch"
+            @remove:search="removeSearch"
           />
         </v-flex>
         <v-flex v-if="hasAccessToCategory">
