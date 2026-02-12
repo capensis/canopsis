@@ -91,4 +91,16 @@ describe('c-advanced-search-field', () => {
 
     expect(wrapper).toMatchSnapshot();
   });
+
+  it('Renders `c-advanced-search-field` with pending state correctly', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        rules: [advancedSearchRuleItemToFormItem()],
+        attributes: [],
+        pending: true,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
 });

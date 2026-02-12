@@ -9,6 +9,7 @@
         <c-advanced-search
           v-else-if="advancedSearch"
           :attributes="advancedSearchAttributes"
+          :pending="advancedSearchLoading"
           @submit="updateAdvancedSearch"
           @reset="resetSearch"
         />
@@ -266,6 +267,10 @@ export default {
     advancedSearchAttributes: {
       type: Array,
       default: () => [],
+    },
+    advancedSearchLoading: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
