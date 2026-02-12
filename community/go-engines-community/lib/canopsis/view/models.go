@@ -90,6 +90,12 @@ type Widget struct {
 	IsPrivate bool `bson:"is_private" json:"is_private"`
 }
 
+type FastPbehavior struct {
+	NamePrefix string `bson:"name_prefix" json:"name_prefix" binding:"required,max=255"`
+	Reason     string `bson:"reason" json:"reason" binding:"required"`
+	Type       string `bson:"type" json:"type" binding:"required"`
+}
+
 type Parameters struct {
 	MainFilter string `bson:"mainFilter,omitempty" json:"mainFilter,omitempty"`
 
@@ -107,6 +113,8 @@ type Parameters struct {
 
 	// ExternalData
 	Table string `bson:"table,omitempty" json:"table,omitempty"`
+
+	FastPbehaviors []FastPbehavior `bson:"fast_pbehaviors,omitempty" json:"fast_pbehaviors,omitempty"`
 
 	RemainParameters map[string]any `bson:",inline" json:"-"`
 }
