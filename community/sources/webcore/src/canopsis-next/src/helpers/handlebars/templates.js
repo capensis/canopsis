@@ -1,6 +1,7 @@
 import store from '@/store';
 
-import { Handlebars } from '@/helpers/handlebars/handlebars';
+import { Handlebars } from './handlebars';
+import { normalizeHandlebarsNbsp } from './normalize';
 
 /**
  * Precompile and register template
@@ -11,7 +12,7 @@ import { Handlebars } from '@/helpers/handlebars/handlebars';
  * @returns {Function}
  */
 export function registerTemplate(id, template, instance = Handlebars) {
-  const precompiledTemplate = instance.precompile(template);
+  const precompiledTemplate = instance.precompile(normalizeHandlebarsNbsp(template));
 
   if (instance.registerPrecompiledTemplate) {
     return instance.registerPrecompiledTemplate(id, precompiledTemplate);

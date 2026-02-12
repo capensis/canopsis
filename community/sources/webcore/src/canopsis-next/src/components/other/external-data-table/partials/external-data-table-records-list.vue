@@ -120,8 +120,6 @@
               <external-data-table-column-data-type-field
                 v-field="columns[header.value]"
                 :table-separator="separator"
-                :disabled="disabledTypes"
-                :disabled-types="disabledTypesForTypeField"
               />
               <v-flex>
                 <external-data-table-column-tag-field
@@ -194,15 +192,15 @@
           @click.stop=""
         />
       </template>
-      <template #actions="{ item }">
+      <template #actions="{ item, index }">
         <v-layout>
           <c-action-btn
             type="edit"
-            @click="$emit('edit', item)"
+            @click="$emit('edit', records[index])"
           />
           <c-action-btn
             type="duplicate"
-            @click="$emit('duplicate', item)"
+            @click="$emit('duplicate', records[index])"
           />
           <c-action-btn
             type="delete"
@@ -353,10 +351,6 @@ export default {
       type: String,
       required: false,
     },
-    disabledTypes: {
-      type: Boolean,
-      default: false,
-    },
   },
   setup(props, { emit }) {
     const { t } = useI18n();
@@ -406,7 +400,7 @@ export default {
         value: column.name,
         text: column.name,
         class: DRAGGABLE_CLASS,
-        sortable: false,
+        sortable: column.name === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
         errors: column.messages,
       }));
 
@@ -424,13 +418,6 @@ export default {
 
     const isSmallDense = computed(() => props.dense === DENSE_TYPES.small);
     const isMediumDense = computed(() => props.dense === DENSE_TYPES.medium);
-
-    const disabledTypesForTypeField = computed(() => {
-      const hasRegexpField = Object.values(props.columns)
-        .some(({ type }) => type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp);
-
-      return hasRegexpField ? [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp] : [];
-    });
 
     const updatePage = page => emit('update:options', { ...props.options, page });
 
@@ -467,7 +454,6 @@ export default {
       headers,
       isSmallDense,
       isMediumDense,
-      disabledTypesForTypeField,
 
       updatePage,
 

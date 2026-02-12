@@ -11,7 +11,7 @@ L'erreur est alors visible en consultant les logs de Canopsis. Le détail du mes
 
 ## Cause
 
-Comme expliqué dans la documentation des [limitations des évènements](../../guide-utilisation/limitations/index.md#limitation-des-evenements), ceci est dû à la longueur de la clé de routage RabbitMQ générée par votre évènement.
+Comme expliqué dans la documentation des [limitations des évènements](../../guide-utilisation/limitations/index.md#limitations-des-evenements), ceci est dû à la longueur de la clé de routage RabbitMQ générée par votre évènement.
 
 ## Solution
 
