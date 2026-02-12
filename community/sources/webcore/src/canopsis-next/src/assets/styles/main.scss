@@ -448,6 +448,10 @@ html {
   color: var(--v-error-base) !important;
 }
 
+.not-required label:before {
+  content: none !important;
+}
+
 @for $i from 0 through 16 {
   .row-gap-#{$i}, .gap-#{$i} {
     row-gap: $i * 4px;
@@ -491,6 +495,16 @@ html {
       &, & *:not(svg, g, path) {
         color: $color;
       }
+    }
+  }
+}
+
+.status {
+  $statuses: ok stealthy flapping ongoing cancelled noEvents unknown;
+
+  @each $status in $statuses {
+    &-#{$status} {
+      background-color: var(--v-status-#{$status}-base);
     }
   }
 }
