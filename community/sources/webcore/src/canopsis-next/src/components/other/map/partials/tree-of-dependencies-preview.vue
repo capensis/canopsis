@@ -33,6 +33,7 @@ import {
 } from '@/constants';
 
 import { getEntityColorClass } from '@/helpers/entities/entity/color';
+import { getShowAllNodeId, getShowAllEdgeId } from '@/helpers/cytoscape/elements';
 import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/form';
 import { getMapEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
 
@@ -372,7 +373,7 @@ export default {
      * @returns {[Object, Object]}
      */
     getShowAllElements(entity) {
-      const showAllId = `show-all-${entity._id}`;
+      const showAllId = getShowAllNodeId(entity._id);
 
       return [
         {
@@ -386,7 +387,7 @@ export default {
         {
           group: 'edges',
           data: {
-            id: `show-all-edge-${entity._id}`,
+            id: getShowAllEdgeId(entity._id),
             source: entity._id,
             target: showAllId,
           },
@@ -444,7 +445,7 @@ export default {
      */
     removeDependenciesElements(elementsIds, sourceId) {
       const nodesForRemoveSelectors = elementsIds.map(id => `node[id = "${id}"]`);
-      nodesForRemoveSelectors.push(`node[id = "show-all-${sourceId}"]`);
+      nodesForRemoveSelectors.push(`node[id = "${getShowAllNodeId(sourceId)}"]`);
 
       const nodesForRemoveJoinedSelector = nodesForRemoveSelectors.join(',');
       const openedNodesForRemove = this.$refs.networkGraph.$cy.elements(nodesForRemoveJoinedSelector)
@@ -458,7 +459,7 @@ export default {
         .filter(node => node.connectedEdges().size() === 1);
 
       const edgesForRemoveSelectors = elementsIds.map(id => `edge[source = "${sourceId}"][target = "${id}"]`);
-      edgesForRemoveSelectors.push(`node[id = "show-all-edge-${sourceId}"]`);
+      edgesForRemoveSelectors.push(`node[id = "${getShowAllEdgeId(sourceId)}"]`);
 
       const edgesForRemove = this.$refs.networkGraph.$cy.elements(edgesForRemoveSelectors.join(','));
 

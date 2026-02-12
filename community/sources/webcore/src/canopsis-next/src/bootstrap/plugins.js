@@ -2,6 +2,7 @@ import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
 import VueClipboard from 'vue-clipboard2';
 import PortalVue from 'portal-vue';
+import { Plugin as VueFragment } from 'vue-fragment';
 
 import { MODALS } from '@/constants';
 import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
@@ -31,7 +32,7 @@ import * as sidebarsComponents from '@/components/sidebars';
 export const bootstrapApplicationPlugins = (Vue) => {
   Vue.use(PortalVue);
   Vue.use(Filters);
-
+  Vue.use(VueFragment);
   Vue.use(VueFullScreen);
 
   Vue.use(VueMq, {
@@ -92,6 +93,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createFlowchartMap]: { maxWidth: 1600 },
       [MODALS.entityDependenciesList]: { maxWidth: 1600 },
       [MODALS.entitiesRootCauseDiagram]: { maxWidth: 1600 },
+      [MODALS.entityUpstream]: { maxWidth: 1600 },
       [MODALS.createDeclareTicketRule]: { maxWidth: 1280 },
       [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
       [MODALS.executeDeclareTickets]: { maxWidth: 920 },
