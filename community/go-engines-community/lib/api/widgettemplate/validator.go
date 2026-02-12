@@ -19,7 +19,7 @@ func ValidateEditRequest(sl validator.StructLevel) {
 
 		for i, column := range r.Columns {
 			if column.Value != "" && !view.IsValidWidgetColumn(r.Type, column.Value) {
-				sl.ReportError(column, fmt.Sprintf("Columns.%d.Value", i), "Value", "invalid", "")
+				sl.ReportError(column.Value, "Value", fmt.Sprintf("Columns.%d.Value", i), "invalid", "")
 			}
 		}
 
@@ -28,7 +28,7 @@ func ValidateEditRequest(sl validator.StructLevel) {
 		}
 
 		if len(r.Actions) > 0 {
-			sl.ReportError(r.Columns, "Actions", "Actions", "must_be_empty", "")
+			sl.ReportError(r.Actions, "Actions", "Actions", "must_be_empty", "")
 		}
 	case view.WidgetTemplateTypeAlarmMoreInfos,
 		view.WidgetTemplateTypeAlarmExportToPDF,
@@ -44,7 +44,7 @@ func ValidateEditRequest(sl validator.StructLevel) {
 		}
 
 		if len(r.Actions) > 0 {
-			sl.ReportError(r.Columns, "Actions", "Actions", "must_be_empty", "")
+			sl.ReportError(r.Actions, "Actions", "Actions", "must_be_empty", "")
 		}
 	case view.WidgetTemplateTypeAlarmQuickActions,
 		view.WidgetTemplateTypeAlarmQuickMassActions:

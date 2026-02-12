@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -181,7 +182,7 @@ func (e *taskExecutor) ExecuteTask(ctx context.Context, id string) error {
 	}
 	fetch := e.fetches[t.Type]
 	if fetch == nil {
-		_, err := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
+		_, err = e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
 			"status":      TaskStatusFailed,
 			"completed":   datetime.NewCpsTime(),
 			"fail_reason": "unknown type: " + t.Type,
@@ -198,6 +199,11 @@ func (e *taskExecutor) ExecuteTask(ctx context.Context, id string) error {
 		}})
 		if updateErr != nil {
 			e.logger.Err(updateErr).Msg("cannot update export task")
+		}
+
+		valErr := &validation.Error{}
+		if errors.As(err, &valErr) {
+			err = fmt.Errorf("invalid params %s: %w", t.Parameters, err)
 		}
 
 		return err

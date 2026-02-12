@@ -366,6 +366,12 @@ timescaledb-tune -yes --pg-config=/usr/pgsql-17/bin/pg_config
 echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/17/data/postgresql.conf
 ```
 
+Pour le bon fonctionnement de Canopsis, il est nécessaire que la base de donnée soit configurer sur la timezone `UTC` :
+```sh
+sed -i "s/^#\?timezone.*/timezone = 'UTC'/" /var/lib/pgsql/17/data/postgresql.conf
+sed -i "s/^#\?log_timezone.*/log_timezone = 'UTC'/" /var/lib/pgsql/17/data/postgresql.conf
+```
+
 Activer et démarrer le service :
 
 ```sh
@@ -437,6 +443,12 @@ Ajouter un mot de passe ( ici `canopsis`)
 
 ```sh
 sed -i 's/^# requirepass.*/requirepass canopsis/' /etc/valkey/valkey.conf
+```
+
+Activer le stockage persistant 
+
+```sh
+sed -i 's/^appendonly no$/appendonly yes/' /etc/valkey/valkey.conf
 ```
 
 Activer et démarrer le service :
@@ -681,3 +693,7 @@ d'une mise à jour de routine de l'ensemble des paquets système.
     dnf versionlock add --raw 'canopsis-common-25.10.*'
     dnf versionlock add --raw 'canopsis-webui-25.10.*'
     ```
+
+## Gestion des logs
+
+Voir la page [Gestion des logs](../gestion-composants/gestion-des-logs.md#rpm-el8el9)

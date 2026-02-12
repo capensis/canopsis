@@ -161,13 +161,13 @@ const useExternalDataTableFileUpload = ({
 
       fetchList?.();
     } catch (err) {
-      if (!err.file) {
+      if (!err.file && !err.fail_reason) {
         throw err;
       }
 
       validator.errors.add({
         field: 'file',
-        msg: err.file,
+        msg: err.file ?? err.fail_reason,
       });
     }
   };

@@ -3,7 +3,8 @@ package messageratestats
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,14 +13,14 @@ type API interface {
 }
 
 type api struct {
-	store Store
+	store          Store
+	errorResponder httperror.Responder
 }
 
-func NewApi(
-	store Store,
-) API {
+func NewApi(store Store, errorResponder httperror.Responder) API {
 	return &api{
-		store: store,
+		store:          store,
+		errorResponder: errorResponder,
 	}
 }
 
@@ -28,14 +29,17 @@ func NewApi(
 func (a *api) List(c *gin.Context) {
 	var r = ListRequest{}
 
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	stats, err := a.store.Find(c, r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	response := StatsListResponse{
@@ -45,7 +49,9 @@ func (a *api) List(c *gin.Context) {
 	if r.Interval == IntervalHour {
 		response.Meta.DeletedBefore, err = a.store.GetDeletedBeforeForHours(c)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 	}
 
