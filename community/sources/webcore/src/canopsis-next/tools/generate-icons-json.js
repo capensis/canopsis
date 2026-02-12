@@ -6,8 +6,8 @@ const path = require('path');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const ts = require('typescript');
 
-const DTS_FILE = path.resolve(__dirname, '..', 'node_modules', '@material-design-icons', 'font', 'index.d.ts');
-const TYPE_NAME = 'MaterialIcons';
+const DTS_FILE = path.resolve(__dirname, '..', 'node_modules', 'material-symbols', 'index.d.ts');
+const TYPE_NAME = 'MaterialSymbols';
 const OUTPUT_FILE = path.resolve(__dirname, '..', 'src', 'assets', 'material-icons', 'MaterialIcons.json');
 
 const content = fs.readFileSync(DTS_FILE, 'utf8');

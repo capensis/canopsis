@@ -17,7 +17,6 @@
     "generate-icons-json": "node ./tools/generate-icons-json.js"
   },
   "dependencies": {
-    "@material-design-icons/font": "^0.14.15",
     "axios": "^0.18.0",
     "chart.js": "^3.5.1",
     "chartjs-adapter-moment": "^1.0.0",
@@ -43,6 +42,7 @@
     "linkify-html": "^4.1.1",
     "linkifyjs": "^4.1.1",
     "lodash": "^4.17.5",
+    "material-symbols": "^0.40.2",
     "mermaid": "^9.1.3",
     "moment": "^2.22.2",
     "moment-duration-format": "^2.2.2",
