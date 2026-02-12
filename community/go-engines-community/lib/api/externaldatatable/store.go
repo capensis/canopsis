@@ -11,8 +11,12 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
@@ -20,6 +24,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -30,13 +35,11 @@ import (
 const (
 	pgErrCodeDuplicateTable     = "42P07"
 	mongoErrCodeNamespaceExists = 48
-
-	maxStringLengthErrMsg = "string length must be less than " + MaxStringLenStr
 )
 
-var linkedCollections = []string{
-	mongo.EventFilterRuleCollection,
-	mongo.LinkRuleMongoCollection,
+var linkedCollections = map[string]string{
+	"an event filter": mongo.EventFilterRuleCollection,
+	"a link rule":     mongo.LinkRuleMongoCollection,
 }
 
 type Store interface {
@@ -55,9 +58,9 @@ type Store interface {
 }
 
 func NewStore(dbClient mongo.DbClient, pgPoolProvider postgres.PoolProvider, dbExportClient mongo.DbClient, exportDecoder encoding.Decoder) Store {
-	linkedDbCollections := make([]mongo.DbCollection, len(linkedCollections))
-	for i, c := range linkedCollections {
-		linkedDbCollections[i] = dbClient.Collection(c)
+	linkedDbCollections := make(map[string]mongo.DbCollection, len(linkedCollections))
+	for k, v := range linkedCollections {
+		linkedDbCollections[k] = dbClient.Collection(v)
 	}
 
 	return &store{
@@ -79,7 +82,7 @@ type store struct {
 	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
 	dbWidgetCollection    mongo.DbCollection
-	linkedDbCollections   []mongo.DbCollection
+	linkedDbCollections   map[string]mongo.DbCollection
 	pgPoolProvider        postgres.PoolProvider
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -95,7 +98,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"_id": bson.M{"$in": r.IDs}}})
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -177,7 +180,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		}
 	}
 
-	sort := common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
+	sort := mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
 	if len(project) > 0 {
 		project = append(project, sort)
 	}
@@ -228,9 +231,9 @@ func (s *store) Create(ctx context.Context, r EditRequest) (Table, error) {
 	var err error
 	switch *r.Type {
 	case externaldata.TypeMongoDB:
-		err = s.createMongoCollection(ctx, r.Name)
+		err = s.createMongoCollection(ctx, r.Name, r)
 	case externaldata.TypePostgreSQL:
-		err = s.createPostgresTable(ctx, r.Name)
+		err = s.createPostgresTable(ctx, r.Name, r)
 	default:
 		err = fmt.Errorf("unknown external data type %d", r.Type)
 	}
@@ -277,11 +280,11 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (Table, error) {
 	}
 
 	if oldTable.Type != *r.Type {
-		return res, common.NewValidationError("type", "Type cannot be changed.")
+		return res, validation.NewSingleError("unchangeable", "Type", "Type", r)
 	}
 
 	if len(oldTable.ColumnConfigs) != len(r.ColumnTags) {
-		return res, common.NewValidationError("column_tags", "ColumnTags must contain "+strconv.Itoa(len(oldTable.ColumnConfigs))+" items.")
+		return res, validation.NewSingleErrorWithParam("slicelen", "ColumnTags", "ColumnTags", strconv.Itoa(len(oldTable.ColumnConfigs)), r)
 	}
 
 	updatedColumnConfigs := make([]externaldata.ColumnConfig, 0, len(oldTable.ColumnConfigs))
@@ -292,7 +295,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (Table, error) {
 
 	if oldTable.Name != r.Name {
 		if oldTable.FromConfig {
-			return res, common.NewValidationError("name", "Name cannot be changed.")
+			return res, validation.NewSingleError("unchangeable", "Name", "Name", r)
 		}
 
 		switch oldTable.Type {
@@ -304,7 +307,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (Table, error) {
 			if err != nil {
 				commErr := mongodriver.CommandError{}
 				if errors.As(err, &commErr) && commErr.Code == mongoErrCodeNamespaceExists {
-					return res, common.NewValidationError("name", "MongoDB collection already exists.")
+					return res, validation.NewSingleError("exist", "Name", "Name", r)
 				}
 
 				return res, fmt.Errorf("failed to rename mongo collection: %w", err)
@@ -319,7 +322,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (Table, error) {
 			if err != nil {
 				pgErr := &pgconn.PgError{}
 				if errors.As(err, &pgErr) && pgErr.Code == pgErrCodeDuplicateTable {
-					return res, common.NewValidationError("name", "PostgreSQL table already exists.")
+					return res, validation.NewSingleError("exist", "Name", "Name", r)
 				}
 
 				return res, fmt.Errorf("failed to rename postgres table: %w", err)
@@ -376,16 +379,12 @@ func (s *store) Delete(ctx context.Context, id, author string) (bool, error) {
 		}
 
 		if table.FromConfig {
-			return ErrConfigNotDeletable
+			return httperror.NewForbiddenError("This table is defined in configuration and cannot be deleted.")
 		}
 
-		isLinked, err := isTableLinked(ctx, id, s.dbWidgetCollection, s.linkedDbCollections)
+		err = validateDeleteRequest(ctx, id, s.dbWidgetCollection, s.linkedDbCollections)
 		if err != nil {
 			return err
-		}
-
-		if isLinked {
-			return ErrLinkedNotDeletable
 		}
 
 		// required to get the author in action log listener.
@@ -448,7 +447,7 @@ func (s *store) FindData(ctx context.Context, tableName string, tableType int, c
 		columns = append(columns, priorityColumnName)
 	}
 
-	valErrMsgs := make(map[string]string)
+	valErrs := make(validator.ValidationErrors, 0)
 	if len(r.SearchBy) > 0 || r.SortBy != "" {
 		hasCol := make(map[string]bool, len(columns))
 		for _, c := range columns {
@@ -456,18 +455,18 @@ func (s *store) FindData(ctx context.Context, tableName string, tableType int, c
 		}
 
 		if r.SortBy != "" && !hasCol[r.SortBy] {
-			valErrMsgs["sort_by"] = "SortBy must be one of [" + strings.Join(columns, " ") + "]."
+			valErrs = append(valErrs, validation.NewFieldErrorWithParam("oneof", "sort_by", "sort_by", strings.Join(columns, " ")))
 		}
 
 		for i, v := range r.SearchBy {
 			if !hasCol[v] {
-				valErrMsgs["search_by."+strconv.Itoa(i)] = "SearchBy must be one of [" + strings.Join(columns, " ") + "]."
+				valErrs = append(valErrs, validation.NewFieldErrorWithParam("oneof", strconv.Itoa(i), "search_by."+strconv.Itoa(i), strings.Join(columns, " ")))
 			}
 		}
 	}
 
-	if len(valErrMsgs) > 0 {
-		return nil, common.NewValidationErrors(valErrMsgs)
+	if len(valErrs) > 0 {
+		return nil, validation.NewError(valErrs, nil)
 	}
 
 	searchBy := r.SearchBy
@@ -568,93 +567,35 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 	addPriorityColumn := false
 	priority := 0
 
-	valErrMsgs := make(map[string]string)
+	valErrs := make(validator.ValidationErrors, 0)
 	for i, cfg := range table.ColumnConfigs {
 		columnName := cfg.Name
 		columnsWithID[i+1] = columnName
 
 		rawVal, ok := r[columnName]
 		if !ok {
-			valErrMsgs[columnName] = columnName + " is missing."
+			valErrs = append(valErrs, validation.NewFieldError("required", columnName, columnName))
 			continue
 		}
 
-		var val any
-
-		switch cfg.Type {
-		case externaldata.ColumnTypeString:
-			strVal, ok := rawVal.(string)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a string."
-				continue
-			}
-
-			if len(strVal) > MaxStringLen {
-				valErrMsgs[columnName] = maxStringLengthErrMsg
-				continue
-			}
-
-			val = strVal
-		case externaldata.ColumnTypeNumber:
-			val, ok = rawVal.(float64)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a number."
-				continue
-			}
-		case externaldata.ColumnTypeBoolean:
-			val, ok = rawVal.(bool)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a boolean."
-				continue
-			}
-		case externaldata.ColumnTypeStringArray:
-			val, ok = utils.IsStringSlice(rawVal)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a string array."
-				continue
-			}
-		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
-			val, ok = getIntValue(rawVal)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a timestamp."
-				continue
-			}
-		case externaldata.ColumnTypeRegexp:
-			strVal, ok := rawVal.(string)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a string."
-				continue
-			}
-
-			transformedVal, err := s.parser.Parse(ColumnConfig{
-				BaseColumnConfig: BaseColumnConfig{
-					Type: externaldata.ColumnTypeRegexp,
-				},
-			}, strVal)
-			if err != nil {
-				valErrMsgs[columnName] = err.Error()
-				continue
-			}
-
-			switch v := transformedVal.(type) {
-			case parsedRegexp:
-				priority += v.score
-				val = v.regexp
-			default:
-				return nil, fmt.Errorf("unexpected transformed value is not regexp: %T", v)
-			}
-
-			addPriorityColumn = true
-		default:
-			return nil, fmt.Errorf("unexpected column type: %d", cfg.Type)
+		res, err := s.transformRawData(cfg, rawVal, &valErrs)
+		if err != nil {
+			return nil, fmt.Errorf("failed to transform raw data: %w", err)
 		}
 
-		doc[columnName] = val
-		row[i+1] = val
+		if res.val == nil {
+			continue
+		}
+
+		doc[columnName] = res.val
+		row[i+1] = res.val
+
+		priority += res.priority
+		addPriorityColumn = addPriorityColumn || res.addPriorityColumn
 	}
 
-	if len(valErrMsgs) > 0 {
-		return nil, common.NewValidationErrors(valErrMsgs)
+	if len(valErrs) > 0 {
+		return nil, validation.NewError(valErrs, nil)
 	}
 
 	if addPriorityColumn {
@@ -698,7 +639,7 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 	querySql := "UPDATE " + table.getDBTableName() + " SET "
 	queryArgs := make([]any, len(table.ColumnConfigs)+1)
 
-	valErrMsgs := make(map[string]string)
+	valErrs := make(validator.ValidationErrors, 0)
 
 	addPriorityColumn := false
 	priority := 0
@@ -708,91 +649,33 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 
 		rawVal, ok := r[columnName]
 		if !ok {
-			valErrMsgs[columnName] = columnName + " is missing."
+			valErrs = append(valErrs, validation.NewFieldError("required", columnName, columnName))
 			continue
 		}
 
-		var val any
-
-		switch cfg.Type {
-		case externaldata.ColumnTypeString:
-			strVal, ok := rawVal.(string)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a string."
-				continue
-			}
-
-			if len(strVal) > MaxStringLen {
-				valErrMsgs[columnName] = maxStringLengthErrMsg
-				continue
-			}
-
-			val = strVal
-		case externaldata.ColumnTypeNumber:
-			val, ok = rawVal.(float64)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a number."
-				continue
-			}
-		case externaldata.ColumnTypeBoolean:
-			val, ok = rawVal.(bool)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a boolean."
-				continue
-			}
-		case externaldata.ColumnTypeStringArray:
-			val, ok = utils.IsStringSlice(rawVal)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a string array."
-				continue
-			}
-		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
-			val, ok = getIntValue(rawVal)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a timestamp."
-				continue
-			}
-		case externaldata.ColumnTypeRegexp:
-			strVal, ok := rawVal.(string)
-			if !ok {
-				valErrMsgs[columnName] = columnName + " is not a string."
-				continue
-			}
-
-			transformedVal, err := s.parser.Parse(ColumnConfig{
-				BaseColumnConfig: BaseColumnConfig{
-					Type: externaldata.ColumnTypeRegexp,
-				},
-			}, strVal)
-			if err != nil {
-				valErrMsgs[columnName] = err.Error()
-				continue
-			}
-
-			switch v := transformedVal.(type) {
-			case parsedRegexp:
-				priority += v.score
-				val = v.regexp
-			default:
-				return nil, fmt.Errorf("unexpected transformed value is not regexp: %T", v)
-			}
-
-			addPriorityColumn = true
-		default:
-			return nil, fmt.Errorf("unexpected column type: %d", cfg.Type)
+		res, err := s.transformRawData(cfg, rawVal, &valErrs)
+		if err != nil {
+			return nil, fmt.Errorf("failed to transform raw data: %w", err)
 		}
 
-		doc[columnName] = val
+		if res.val == nil {
+			continue
+		}
 
-		queryArgs[i] = val
+		doc[columnName] = res.val
+
+		priority += res.priority
+		addPriorityColumn = addPriorityColumn || res.addPriorityColumn
+
+		queryArgs[i] = res.val
 		querySql += pgx.Identifier{columnName}.Sanitize() + " = $" + strconv.Itoa(i+1)
 		if i < len(table.ColumnConfigs)-1 {
 			querySql += ", "
 		}
 	}
 
-	if len(valErrMsgs) > 0 {
-		return nil, common.NewValidationErrors(valErrMsgs)
+	if len(valErrs) > 0 {
+		return nil, validation.NewError(valErrs, nil)
 	}
 
 	if addPriorityColumn {
@@ -892,7 +775,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	switch table.Type {
 	case externaldata.TypeMongoDB:
 		pipeline := make([]bson.M, 0)
-		filter := common.GetSearchQuery(r.Search, searchBy)
+		filter := mongoquery.GetSearchQuery(r.Search, searchBy)
 		if len(filter) > 0 {
 			pipeline = append(pipeline, bson.M{"$match": filter})
 		}
@@ -903,7 +786,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		}
 
 		pipeline = append(pipeline, bson.M{"$project": project})
-		pipeline = append(pipeline, common.GetSortQuery(externaldata.IDColumnName, mongo.SortAsc))
+		pipeline = append(pipeline, mongoquery.GetSortQuery(externaldata.IDColumnName, mongo.SortAsc))
 
 		cursor, err := s.dbExportClient.Collection(table.getDBTableName()).Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
 		if err != nil {
@@ -951,7 +834,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 }
 
-func (s *store) createMongoCollection(ctx context.Context, name string) error {
+func (s *store) createMongoCollection(ctx context.Context, name string, r EditRequest) error {
 	collName := externaldata.GetMongoCollectionName(name, false)
 	collections, err := s.dbClient.ListCollectionNames(ctx, bson.M{"name": collName})
 	if err != nil {
@@ -959,7 +842,7 @@ func (s *store) createMongoCollection(ctx context.Context, name string) error {
 	}
 
 	if len(collections) == 1 {
-		return common.NewValidationError("name", "MongoDB collection already exists.")
+		return validation.NewSingleError("exist", "Name", "Name", r)
 	}
 
 	err = s.dbClient.CreateCollection(ctx, collName)
@@ -979,7 +862,7 @@ func (s *store) deleteMongoCollection(ctx context.Context, name string) error {
 	return nil
 }
 
-func (s *store) createPostgresTable(ctx context.Context, name string) error {
+func (s *store) createPostgresTable(ctx context.Context, name string, r EditRequest) error {
 	pgPool, err := s.pgPoolProvider.Get(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to get postgres pool: %w", err)
@@ -991,7 +874,7 @@ func (s *store) createPostgresTable(ctx context.Context, name string) error {
 	if err != nil {
 		pgErr := &pgconn.PgError{}
 		if errors.As(err, &pgErr) && pgErr.Code == pgErrCodeDuplicateTable {
-			return common.NewValidationError("name", "PostgreSQL table already exists.")
+			return validation.NewSingleError("exist", "Name", "Name", r)
 		}
 
 		return fmt.Errorf("failed to create postgres table: %w", err)
@@ -1071,7 +954,7 @@ func (s *store) findPreviewDataFromMongo(ctx context.Context, job ImportJob, req
 
 func (s *store) findDataFromMongo(ctx context.Context, collectionName string, columns []string, request ListDataRequest) (*AggregationDataResult, error) {
 	pipeline := make([]bson.M, 0)
-	filter := common.GetSearchQuery(request.Search, columns)
+	filter := mongoquery.GetSearchQuery(request.Search, columns)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -1079,7 +962,7 @@ func (s *store) findDataFromMongo(ctx context.Context, collectionName string, co
 	cursor, err := s.dbClient.Collection(collectionName).Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(request.SortBy, externaldata.IDColumnName), request.Sort),
+		mongoquery.GetSortQuery(cmp.Or(request.SortBy, externaldata.IDColumnName), request.Sort),
 	))
 	if err != nil {
 		return nil, err
@@ -1470,7 +1353,7 @@ func TransformRefParameters(ctx context.Context, r []externaldata.RefParameters,
 	}
 
 	res := make([]externaldata.RefParameters, len(r))
-	valErrMsgs := make(map[string]string)
+	valErrs := make(validator.ValidationErrors, 0)
 	for i, params := range r {
 		if params.Type != externaldata.RefTypeTable {
 			res[i] = params
@@ -1479,39 +1362,50 @@ func TransformRefParameters(ctx context.Context, r []externaldata.RefParameters,
 
 		t, ok := tables[params.Table]
 		if !ok {
-			valErrMsgs["external_data."+strconv.Itoa(i)+".table"] = "Table doesn't exist."
+			valErrs = append(valErrs, validation.NewFieldError("not_exist", "table", "external_data."+strconv.Itoa(i)+".table"))
 			continue
 		}
 
 		if len(t.ColumnConfigs) == 0 {
-			valErrMsgs["external_data."+strconv.Itoa(i)+".table"] = "Table is empty."
+			valErrs = append(valErrs, validation.NewFieldError("not_applicable", "table", "external_data."+strconv.Itoa(i)+".table"))
 			continue
 		}
+
+		var addPriorityColumn bool
 
 		columns := make([]string, len(t.ColumnConfigs))
 		hasCol := make(map[string]bool, len(t.ColumnConfigs))
 		for i, c := range t.ColumnConfigs {
 			hasCol[c.Name] = true
 			columns[i] = c.Name
+
+			if c.Type == externaldata.ColumnTypeRegexp {
+				addPriorityColumn = true
+			}
+		}
+
+		if addPriorityColumn {
+			columns = append(columns, priorityColumnName)
+			hasCol[priorityColumnName] = true
 		}
 
 		if params.SortBy != "" && !hasCol[params.SortBy] {
-			valErrMsgs["external_data."+strconv.Itoa(i)+".sort_by"] = "SortBy must be one of [" + strings.Join(columns, " ") + "]."
+			valErrs = append(valErrs, validation.NewFieldErrorWithParam("oneof", "sort_by", "external_data."+strconv.Itoa(i)+".sort_by", strings.Join(columns, " ")))
 		}
 
 		for f := range params.Select {
 			if !hasCol[f] {
-				valErrMsgs["external_data."+strconv.Itoa(i)+".select."+f] = f + " must be one of [" + strings.Join(columns, " ") + "]."
+				valErrs = append(valErrs, validation.NewFieldErrorWithParam("oneof", f, "external_data."+strconv.Itoa(i)+".select."+f, strings.Join(columns, " ")))
 			}
 		}
 
 		for f := range params.Regexp {
 			if !hasCol[f] {
-				valErrMsgs["external_data."+strconv.Itoa(i)+".regexp."+f] = f + " must be one of [" + strings.Join(columns, " ") + "]."
+				valErrs = append(valErrs, validation.NewFieldErrorWithParam("oneof", f, "external_data."+strconv.Itoa(i)+".regexp."+f, strings.Join(columns, " ")))
 			}
 		}
 
-		if len(valErrMsgs) > 0 {
+		if len(valErrs) > 0 {
 			continue
 		}
 
@@ -1521,8 +1415,8 @@ func TransformRefParameters(ctx context.Context, r []externaldata.RefParameters,
 		res[i] = params
 	}
 
-	if len(valErrMsgs) > 0 {
-		return nil, common.NewValidationErrors(valErrMsgs)
+	if len(valErrs) > 0 {
+		return nil, validation.NewError(valErrs, nil)
 	}
 
 	return res, nil
@@ -1559,32 +1453,122 @@ func GetRefParametersLookups() []bson.M {
 	}
 }
 
-func isTableLinked(ctx context.Context, id string, dbWidgetCollection mongo.DbCollection, linkedDbCollections []mongo.DbCollection) (bool, error) {
-	err := dbWidgetCollection.
-		FindOne(ctx, bson.M{"type": view.WidgetTypeExternalData, "parameters.table": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).
-		Err()
-	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-		return false, err
-	}
+type transformRawDataResult struct {
+	val               any
+	priority          int
+	addPriorityColumn bool
+}
 
-	if err == nil {
-		return true, nil
-	}
+func (s *store) transformRawData(cfg externaldata.ColumnConfig, rawData any, valErrs *validator.ValidationErrors) (transformRawDataResult, error) {
+	var res transformRawDataResult
+	var ok bool
 
-	for _, c := range linkedDbCollections {
-		err = c.
-			FindOne(ctx, bson.M{"external_data.table": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).
-			Err()
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, err
+	columnName := cfg.Name
+
+	switch cfg.Type {
+	case externaldata.ColumnTypeString:
+		strVal, ok := rawData.(string)
+		if !ok {
+			*valErrs = append(*valErrs, validation.NewFieldError("value_string", columnName, columnName))
+			return transformRawDataResult{}, nil
 		}
 
-		if err == nil {
-			return true, nil
+		if len(strVal) > MaxStringLen {
+			*valErrs = append(*valErrs, validation.NewFieldErrorWithParam("strmax", columnName, columnName, strconv.Itoa(MaxStringLen)))
+			return transformRawDataResult{}, nil
+		}
+
+		res.val = strVal
+	case externaldata.ColumnTypeNumber:
+		res.val, ok = rawData.(float64)
+		if !ok {
+			*valErrs = append(*valErrs, validation.NewFieldError("value_number", columnName, columnName))
+			return transformRawDataResult{}, nil
+		}
+	case externaldata.ColumnTypeBoolean:
+		res.val, ok = rawData.(bool)
+		if !ok {
+			*valErrs = append(*valErrs, validation.NewFieldError("value_boolean", columnName, columnName))
+			return transformRawDataResult{}, nil
+		}
+	case externaldata.ColumnTypeStringArray:
+		sliceVal, ok := utils.IsStringSlice(rawData)
+		if !ok {
+			*valErrs = append(*valErrs, validation.NewFieldError("value_string_array", columnName, columnName))
+			return transformRawDataResult{}, nil
+		}
+
+		res.val = sliceVal
+
+		for i, str := range sliceVal {
+			if len(str) > MaxStringLen {
+				errColumnName := columnName + "." + strconv.Itoa(i)
+				*valErrs = append(*valErrs, validation.NewFieldErrorWithParam("strmax", errColumnName, errColumnName, strconv.Itoa(MaxStringLen)))
+			}
+		}
+	case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
+		res.val, ok = getIntValue(rawData)
+		if !ok {
+			*valErrs = append(*valErrs, validation.NewFieldError("value_timestamp", columnName, columnName))
+			return transformRawDataResult{}, nil
+		}
+	case externaldata.ColumnTypeRegexp:
+		strVal, ok := rawData.(string)
+		if !ok {
+			*valErrs = append(*valErrs, validation.NewFieldError("value_string", columnName, columnName))
+			return transformRawDataResult{}, nil
+		}
+
+		if len(strVal) > MaxStringLen {
+			*valErrs = append(*valErrs, validation.NewFieldErrorWithParam("strmax", columnName, columnName, strconv.Itoa(MaxStringLen)))
+			return transformRawDataResult{}, nil
+		}
+
+		transformedVal, err := s.parser.Parse(ColumnConfig{
+			BaseColumnConfig: BaseColumnConfig{
+				Type: externaldata.ColumnTypeRegexp,
+			},
+		}, strVal)
+		if err != nil {
+			*valErrs = append(*valErrs, validation.NewFieldError("regexp", columnName, columnName))
+			return transformRawDataResult{}, nil
+		}
+
+		switch v := transformedVal.(type) {
+		case parsedRegexp:
+			res.priority = v.score
+			res.val = v.regexp
+		default:
+			return transformRawDataResult{}, fmt.Errorf("unexpected transformed value is not regexp: %T", v)
+		}
+
+		res.addPriorityColumn = true
+	default:
+		return transformRawDataResult{}, fmt.Errorf("unexpected column type: %d", cfg.Type)
+	}
+
+	return res, nil
+}
+
+func validateDeleteRequest(ctx context.Context, id string, dbWidgetCollection mongo.DbCollection, linkedDbCollections map[string]mongo.DbCollection) error {
+	err := dbvalidation.ValidateLinkedReference(ctx, dbWidgetCollection, bson.M{
+		"type":             view.WidgetTypeExternalData,
+		"parameters.table": id,
+	}, "table", "a widget")
+	if err != nil {
+		return err
+	}
+
+	for k, c := range linkedDbCollections {
+		err = dbvalidation.ValidateLinkedReference(ctx, c, bson.M{
+			"external_data.table": id,
+		}, "table", k)
+		if err != nil {
+			return err
 		}
 	}
 
-	return false, nil
+	return nil
 }
 
 func getIntValue(v interface{}) (int64, bool) {

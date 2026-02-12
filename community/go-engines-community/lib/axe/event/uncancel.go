@@ -3,6 +3,7 @@ package event
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -60,7 +61,11 @@ func (p *uncancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		}
 
 		alarm.Value.Canceled = nil
-		newStatus, statusRuleName := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
+		newStatus, statusRuleName, err := p.alarmStatusService.ComputeStatusOnStatusChange(ctx, alarm, *event.Entity)
+		if err != nil {
+			return fmt.Errorf("cannot compute alarm status: %w", err)
+		}
+
 		alarmStepType := types.AlarmStepStatusIncrease
 		if alarm.Value.Status.Value > newStatus {
 			alarmStepType = types.AlarmStepStatusDecrease

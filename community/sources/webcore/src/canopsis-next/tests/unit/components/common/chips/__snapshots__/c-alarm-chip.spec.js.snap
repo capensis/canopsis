@@ -455,3 +455,41 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: stealthy 1`] = `
   </span>
 </div>
 `;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: unknown 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip"
+    >
+      unknown
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+            16
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;

@@ -343,27 +343,27 @@ func (mr *MockSenderMockRecorder) SendPbhEnter(alarm, entity any) *gomock.Call {
 }
 
 // SendPbhLeave mocks base method.
-func (m *MockSender) SendPbhLeave(entity types.Entity, timestamp time.Time, prevCanonicalType string, prevTimestamp time.Time) {
+func (m *MockSender) SendPbhLeave(entity types.Entity, timestamp time.Time, prevCanonicalType string, prevTime time.Time) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendPbhLeave", entity, timestamp, prevCanonicalType, prevTimestamp)
+	m.ctrl.Call(m, "SendPbhLeave", entity, timestamp, prevCanonicalType, prevTime)
 }
 
 // SendPbhLeave indicates an expected call of SendPbhLeave.
-func (mr *MockSenderMockRecorder) SendPbhLeave(entity, timestamp, prevCanonicalType, prevTimestamp any) *gomock.Call {
+func (mr *MockSenderMockRecorder) SendPbhLeave(entity, timestamp, prevCanonicalType, prevTime any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPbhLeave", reflect.TypeOf((*MockSender)(nil).SendPbhLeave), entity, timestamp, prevCanonicalType, prevTimestamp)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPbhLeave", reflect.TypeOf((*MockSender)(nil).SendPbhLeave), entity, timestamp, prevCanonicalType, prevTime)
 }
 
 // SendPbhLeaveAndEnter mocks base method.
-func (m *MockSender) SendPbhLeaveAndEnter(alarm types.Alarm, entity types.Entity, prevCanonicalType string, prevTimestamp time.Time) {
+func (m *MockSender) SendPbhLeaveAndEnter(alarm types.Alarm, entity types.Entity, prevCanonicalType string, prevTime time.Time) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendPbhLeaveAndEnter", alarm, entity, prevCanonicalType, prevTimestamp)
+	m.ctrl.Call(m, "SendPbhLeaveAndEnter", alarm, entity, prevCanonicalType, prevTime)
 }
 
 // SendPbhLeaveAndEnter indicates an expected call of SendPbhLeaveAndEnter.
-func (mr *MockSenderMockRecorder) SendPbhLeaveAndEnter(alarm, entity, prevCanonicalType, prevTimestamp any) *gomock.Call {
+func (mr *MockSenderMockRecorder) SendPbhLeaveAndEnter(alarm, entity, prevCanonicalType, prevTime any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPbhLeaveAndEnter", reflect.TypeOf((*MockSender)(nil).SendPbhLeaveAndEnter), alarm, entity, prevCanonicalType, prevTimestamp)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPbhLeaveAndEnter", reflect.TypeOf((*MockSender)(nil).SendPbhLeaveAndEnter), alarm, entity, prevCanonicalType, prevTime)
 }
 
 // SendPerfData mocks base method.

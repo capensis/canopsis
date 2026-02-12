@@ -28,6 +28,7 @@ const (
 	OutputStepPrefix       = "Step: "
 	OutputJobPrefix        = "Job: "
 	OutputFailReasonPrefix = "Fail reason: "
+	OutputUpstreamPrefix   = "Upstream: "
 )
 
 // PbhCanonicalTypeActive is duplicate of pbehavior.TypeActive because of package cycle.
@@ -512,6 +513,8 @@ type AlarmValue struct {
 	// Ticket contains the last created ticket
 	Ticket *AlarmStep `bson:"ticket,omitempty" json:"ticket,omitempty"`
 	Steps  AlarmSteps `bson:"steps" json:"steps"`
+	// NoEventsDate indicates if an alarm is under no events idle rule.
+	NoEventsDate *datetime.CpsTime `bson:"no_events_date,omitempty" json:"no_events_date,omitempty"`
 
 	Component                   string            `bson:"component" json:"component"`
 	Connector                   string            `bson:"connector" json:"connector"`
@@ -526,7 +529,7 @@ type AlarmValue struct {
 	LongOutput                  string            `bson:"long_output" json:"long_output"`
 	LongOutputHistory           []string          `bson:"long_output_history" json:"long_output_history"`
 	LastUpdateDate              datetime.CpsTime  `bson:"last_update_date" json:"last_update_date"`
-	LastEventDate               datetime.CpsTime  `bson:"last_event_date" json:"last_event_date"`
+	LastEventDate               *datetime.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 	LastStateOrStatusUpdateDate datetime.CpsTime  `bson:"last_st_upd_dt" json:"last_st_upd_dt"`
 	Resource                    string            `bson:"resource,omitempty" json:"resource,omitempty"`
 	Resolved                    *datetime.CpsTime `bson:"resolved,omitempty" json:"resolved,omitempty"`
@@ -569,8 +572,9 @@ type AlarmValue struct {
 	// CloseDelay should have a state step copy when alarm is closed by a close delay job.
 	CloseDelay *AlarmStep `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
 
-	MaxState     CpsNumber `bson:"max_state,omitempty" json:"max_state,omitempty"`
-	InitialState CpsNumber `bson:"initial_state,omitempty" json:"initial_state,omitempty"`
+	MaxState      CpsNumber `bson:"max_state,omitempty" json:"max_state,omitempty"`
+	InitialState  CpsNumber `bson:"initial_state,omitempty" json:"initial_state,omitempty"`
+	InitialStatus CpsNumber `bson:"initial_status,omitempty" json:"initial_status,omitempty"`
 }
 
 func (v *AlarmValue) Transform() {

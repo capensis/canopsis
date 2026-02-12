@@ -981,6 +981,12 @@ export default {
   entityDependenciesList: {
     title: 'Diagramme de cause racine',
   },
+  entityUpstream: {
+    entities: 'Entités',
+    topLevelEntities: 'Entités de niveau supérieur',
+    seeEntities: 'Voir les entités',
+    seeTopEntities: 'Voir les entités principales',
+  },
   createDeclareTicketRule: {
     create: {
       title: 'Créer une règle de déclaration de ticket',
@@ -1096,7 +1102,7 @@ export default {
       title: 'Modifier le thème',
     },
     duplicate: {
-      title: 'Thème en double',
+      title: 'Dupliquer le thème',
     },
   },
   createIcon: {

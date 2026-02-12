@@ -1,6 +1,6 @@
 # Guide pratique : Créer un template "Plus d'infos" avancé
 
-Cette page fournit un exemple complet et commenté d'un template Handlebars pour le popup ["Plus d'infos"](../../widgets/bac-a-alarmes/#plus-dinfos) de Canopsis. L'objectif est de créer une vue synthétique, riche et interactive d'une alarme, en exploitant de nombreux helpers et structures de données disponibles.
+Cette page fournit un exemple complet et commenté d'un template Handlebars pour le popup ["Plus d'infos"](../widgets/bac-a-alarmes/index.md#plus-dinfos) de Canopsis. L'objectif est de créer une vue synthétique, riche et interactive d'une alarme, en exploitant de nombreux helpers et structures de données disponibles.
 
 Pour une référence complète de tous les helpers disponibles, consultez la [documentation officielle des helpers Handlebars](../helpers/index.md).
 
@@ -314,7 +314,7 @@ Affiche l'historique des commentaires sur l'alarme ainsi que le comportement pé
 
 ### Carte 5 : Informations d'Enrichissement
 
-Cette dernière carte est cruciale pour afficher des données personnalisées issues des [règles d'enrichissement](../../../menu-exploitation/filtres-evenements/).
+Cette dernière carte est cruciale pour afficher des données personnalisées issues des [règles d'enrichissement](../../menu-exploitation/filtres-evenements.md).
 
 ```handlebars
 <strong>Infos Entité (Ressource)</strong>
@@ -337,6 +337,6 @@ Cette dernière carte est cruciale pour afficher des données personnalisées is
 ```
 
 * **{{#each alarm.entity.infos}}** : Boucle sur les "informations" définies sur l'entité. Chaque info est un objet avec une description et une value.
-* **{{#each alarm.v.infos}}** : Boucle sur un objet contenant des [informations dynamiques](../../../menu-exploitation/informations-dynamiques/) ajoutées à l'alarme.
-* **{{@key}}** : Variable spéciale disponible dans une boucle each sur un objet. Elle contient la clé de la propriété en cours. {{this}} contient sa valeur. 
+* **{{#each alarm.v.infos}}** : Boucle sur un objet contenant des [informations dynamiques](../../menu-exploitation/informations-dynamiques.md) ajoutées à l'alarme.
+* **{{@key}}** : Variable spéciale disponible dans une boucle each sur un objet. Elle contient la clé de la propriété en cours. {{this}} contient sa valeur.
 * **{{#if ...}} {{else}} ... {{/if}}** : Structure conditionnelle complète. Si alarm.v.infos existe et n'est pas vide, on affiche la liste. Sinon (else), on affiche le message "Aucune info dynamique.".

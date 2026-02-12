@@ -26,7 +26,8 @@ par l'*action* configurée.
 
 ### Importer le media type
 
-Selon votre version de Zabbix, récupérer le fichier XML ou YAML à partir du
+Selon votre version de Zabbix, récupérer le fichier XML (Zabbix 5.0) ou YAML
+(Zabbix 6.0 et 7.0) à partir du
 [dépôt connector-zabbix2canopsis][conn-z2c-webhook].
 
 Importer le média dans « Administration » > « Media types », bouton « Import ».
@@ -73,13 +74,12 @@ Dans Zabbix on créera alors (exemple) :
     - Membre du groupe « Canopsis »
     - Media : ajouter le média « Canopsis »
 
-        Dans le champ « Send to », renseigner une adresse email factice comme
-        « canopsis@localhost.localdomain ».
+        Dans le champ « Send to », saisir « . » (ou n'importe quel caractère).
 
         Il est possible de personnaliser les plages horaires ou les sévérités
         pour lesquelles le média est utilisé.
 
-    - Permissions – User type : Zabbix User
+    - Permissions – User type ou role : Zabbix User
 
 - Une *Action* (trigger action)
 
@@ -144,6 +144,30 @@ Ceci ajouterait les attributs suivants à vos évènements (exemples) :
 Rappel : pour être utiles, ces attributs « extra » doivent être exploités lors
 du traitement des évènements Canopsis via des
 [règles d'enrichissement][enrich].
+
+#### Gestion des tags
+
+Les tags des évènements Zabbix peuvent être transmis dans l'évènement Canopsis.
+
+Par défaut, c'est le cas, et tous les tags sont envoyés.
+
+Deux paramètres permettent de contrôler les tags envoyés :
+
+- `event_tags` :
+
+    Rempli par défaut avec `{EVENT.TAGSJSON}`.
+
+    En remplaçant la valeur de ce paramètre par une liste vide `[]` vous pouvez
+    désactiver complètement l'envoi des tags.
+
+- `interesting_tags` :
+
+    Par défaut à `null` pour ne réaliser aucun filtrage.
+
+    Pour envoyer seulement certains tags, écrivez une liste JSON des clefs de
+    tags qui vous intéressent. Par exemple, si vous indiquez
+    `["class", "target"]`, le connecteur ne passera que les tags « class » et
+    « target » dans les évènements Canopsis.
 
 [doc-zab-webhook]: https://www.zabbix.com/documentation/6.0/en/manual/config/notifications/media/webhook#user-media
 [zbx-macros]: https://www.zabbix.com/documentation/6.0/en/manual/appendix/macros/supported_by_location

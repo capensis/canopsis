@@ -6,10 +6,9 @@ import {
   cloneDeep,
   sortBy,
 } from 'lodash';
-import { computed, ref, unref, set } from 'vue';
+import { computed, ref, set } from 'vue';
 
 import {
-  API_USER_PERMISSIONS_ROOT_GROUPS,
   MAX_LIMIT,
   MODALS,
   ROLE_TYPES,
@@ -30,12 +29,10 @@ import { usePermissions } from '@/hooks/store/modules/permissions';
  * Hook for managing role permissions fetching and manipulation.
  * Provides functionality to fetch, update, and track changes to role permissions.
  *
- * @param {Object} [options = {}] - Configuration options for the hook
- * @param {Ref<string>} [options.activeTab] - Reference to the currently active permissions tab
- *
  * @returns {Object} An object containing:
  *   - pending {import('vue').Ref<boolean>} - Indicates if any async operation is in progress
- *   - roles {import('vue').ComputedRef<Array>} - Computed array of roles filtered by active tab
+ *   - uiRoles {import('vue').ComputedRef<Array>} - Computed array of UI roles
+ *   - apiRoles {import('vue').ComputedRef<Array>} - Computed array of API roles
  *   - treeviewPermissions {import('vue').ComputedRef<Array>} - Computed hierarchical permissions structure
  *   - hasChanges {import('vue').ComputedRef<boolean>} - Indicates if there are unsaved permission changes
  *   - resetRolesById {Function} - Resets roles to their original state
@@ -43,7 +40,7 @@ import { usePermissions } from '@/hooks/store/modules/permissions';
  *   - changeRole {Function} - Updates permissions for a specific role
  *   - fetchList {Function} - Fetches roles and permissions data
  */
-export const useRolePermissionFetching = ({ activeTab } = {}) => {
+export const useRolePermissionFetching = () => {
   const originalRolesById = ref({});
   const rolesById = ref({});
   const changedRoles = ref({});
@@ -74,10 +71,10 @@ export const useRolePermissionFetching = ({ activeTab } = {}) => {
   const treeviewPermissions = computed(() => (
     sortBy(Object.values(permissionsToTreeview(permissions.value)), 'position')
   ));
-  const isApiPermissionsTab = computed(() => API_USER_PERMISSIONS_ROOT_GROUPS.includes(unref(activeTab)));
+
   const uiRoles = computed(() => filter(Object.values(rolesById.value), ['type', ROLE_TYPES.ui]));
   const apiRoles = computed(() => filter(Object.values(rolesById.value), ['type', ROLE_TYPES.api]));
-  const roles = computed(() => (isApiPermissionsTab.value ? apiRoles.value : uiRoles.value));
+
   const hasChanges = computed(() => (
     Object.entries(changedRoles.value).some(([roleId, rolePermissions]) => (
       Object.keys(rolePermissions).some(permissionId => (
@@ -226,7 +223,8 @@ export const useRolePermissionFetching = ({ activeTab } = {}) => {
 
   return {
     pending,
-    roles,
+    uiRoles,
+    apiRoles,
     treeviewPermissions,
     hasChanges,
     resetRolesById,

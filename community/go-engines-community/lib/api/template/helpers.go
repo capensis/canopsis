@@ -7,11 +7,11 @@ import (
 	"slices"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	tplvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -60,6 +60,9 @@ var alarmVars = []tplVar{
 		PluralName: "stateMessages",
 		Value:      "%var%.Value.State.Message",
 	},
+}
+
+var alarmTplVars = []tplVar{
 	{
 		Name:       "stateValue",
 		PluralName: "stateValues",
@@ -105,9 +108,6 @@ var alarmVars = []tplVar{
 		PluralName: "lastCommentMessages",
 		Value:      "%var%.Value.LastComment.Message",
 	},
-}
-
-var alarmTplVars = []tplVar{
 	{
 		Name:       "infos",
 		PluralName: "infos",
@@ -209,7 +209,7 @@ type tplVar struct {
 	Value      string
 }
 
-func Validate(tplValidator validator.Validator, str string, data any) (ValidateResponse, error) {
+func Validate(tplValidator tplvalidator.Validator, str string, data any) (ValidateResponse, error) {
 	isValid, errReport, res, err := tplValidator.Validate(str, data)
 	if err != nil {
 		return ValidateResponse{}, err
@@ -504,7 +504,7 @@ func GetAlarmDataFromTest(ctx context.Context, collection mongo.DbCollection, te
 	err := collection.FindOne(ctx, bson.M{"_id": testID, "type": ruleType, "rule._id": ruleID}).Decode(&test)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return alarm, common.NewValidationError("testdata.test", "Test doesn't exist.")
+			return alarm, validation.NewSingleError("not_exist", "test", "testdata.test", nil)
 		}
 
 		return alarm, err

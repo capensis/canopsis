@@ -3,53 +3,58 @@ package middleware
 import (
 	"errors"
 	"fmt"
-	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"github.com/gin-gonic/gin"
 )
 
 // AuthorizeOwnership determines if current subject is the owner of an object.
-func AuthorizeOwnership(strategy security.OwnershipStrategy) gin.HandlerFunc {
+func AuthorizeOwnership(strategy security.OwnershipStrategy, errorResponder httperror.Responder) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		obj := c.Param("id")
 		if obj == "" {
-			panic(errors.New("missing id parameter"))
-		}
+			errorResponder.Respond(c, errors.New("missing id parameter"))
 
-		if strategy == nil {
-			panic(errors.New("missing ownership strategy"))
-		}
-
-		rawSubj, ok := c.Get(auth.UserKey)
-		if !ok {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 			return
 		}
 
-		subj, ok := rawSubj.(string)
-		if !ok {
-			panic("user key is not a string")
+		if strategy == nil {
+			errorResponder.Respond(c, errors.New("missing ownership strategy"))
+
+			return
+		}
+
+		subj, err := authctx.GetUserKey(c)
+		if err != nil {
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		ownership, err := strategy.IsOwner(c, obj, subj)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		switch ownership {
 		case security.OwnershipPublic, security.OwnershipOwner:
 			break
 		case security.OwnershipNotOwner:
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		case security.OwnershipNotFound:
-			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			errorResponder.Respond(c, httperror.ErrNotFound)
+
 			return
 		default:
-			panic(fmt.Errorf("unexpected ownership: %d", ownership))
+			errorResponder.Respond(c, fmt.Errorf("unexpected ownership: %d", ownership))
+
+			return
 		}
 
 		c.Next()
