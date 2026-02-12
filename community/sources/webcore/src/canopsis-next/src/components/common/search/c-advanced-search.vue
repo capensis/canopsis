@@ -3,6 +3,7 @@
     v-model="rules"
     :searches="searches"
     :attributes="attributes"
+    :pending="pending"
     :allow-or="allowOr"
     :basic-field="basicField"
     :with-history="withHistory"
@@ -22,6 +23,10 @@ export default {
     attributes: {
       type: Array,
       default: () => [],
+    },
+    pending: {
+      type: Boolean,
+      default: false,
     },
     searches: {
       type: Array,

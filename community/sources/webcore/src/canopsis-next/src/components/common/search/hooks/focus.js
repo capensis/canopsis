@@ -6,12 +6,12 @@ import { unref, provide } from 'vue';
  * @returns {Object} Object containing focus management methods
  */
 export const useLastInputFocus = (key) => {
-  let lastInputFocuses = [];
+  let inputFocuses = [];
 
   const focusRegister = {
-    register: focus => lastInputFocuses.push(focus),
-    unregister: focus => lastInputFocuses = lastInputFocuses.filter(f => f !== focus),
-    call: () => lastInputFocuses.at(-1)?.(),
+    register: focus => inputFocuses.push(focus),
+    unregister: focus => inputFocuses = inputFocuses.filter(f => f !== focus),
+    call: () => inputFocuses.at(-1)?.(),
   };
 
   provide(unref(key), focusRegister);

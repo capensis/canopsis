@@ -2,6 +2,7 @@
   <c-advanced-search
     :searches="searches"
     :attributes="attributes"
+    :pending="pending"
     allow-or
     with-history
     v-on="$listeners"
@@ -19,10 +20,11 @@ export default {
     },
   },
   setup() {
-    const { attributes } = useAvailabilityAdvancedSearchAttributes();
+    const { attributes, pending } = useAvailabilityAdvancedSearchAttributes();
 
     return {
       attributes,
+      pending,
     };
   },
 };
