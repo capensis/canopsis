@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
@@ -23,6 +24,11 @@ func TestActionProcessor(t *testing.T) {
 	defer ctrl.Finish()
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	ruleID := "test"
+	rule := eventfilter.ParsedRule{
+		ID:          ruleID,
+		Description: "test desc",
+		Updated:     datetime.NewCpsTime(),
+	}
 	dataSets := []struct {
 		testName             string
 		action               eventfilter.ParsedAction
@@ -2082,11 +2088,11 @@ func TestActionProcessor(t *testing.T) {
 		EnableArraySortingInEntityInfos: true,
 	}).AnyTimes()
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
-	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
 	processor := eventfilter.NewActionProcessor(mockAlarmConfigProvider, mockFailureService, tplExecutor)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			res, resultErr := processor.Process(t.Context(), ruleID, "", dataset.action, &dataset.event,
+			res, resultErr := processor.Process(t.Context(), rule, dataset.action, &dataset.event,
 				dataset.updatedInfos, dataset.regexMatches, dataset.externalData)
 			if diff := pretty.Compare(dataset.expectedEvent, dataset.event); diff != "" {
 				t.Fatalf("unexpected event (-want +got):\n%s", diff)
