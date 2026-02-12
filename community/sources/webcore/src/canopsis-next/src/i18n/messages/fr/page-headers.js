@@ -135,11 +135,11 @@ export default {
     message: 'Module permettant de définir et d\'afficher des cartes (géographiques, logiques, mermaid, etc.) via le widget "Map".',
   },
   [USER_PERMISSIONS.technical.maintenance]: {
-    title: 'Mode de Maintenance',
+    title: 'Mode de maintenance',
     message: 'Permet de basculer Canopsis en mode maintenance. Tous les utilisateurs, à l\'exception des administrateurs, seront déconnectés.',
   },
   [USER_PERMISSIONS.technical.tag]: {
-    title: 'Gestion des Tags',
+    title: 'Gestion des tags',
     message: 'Permet de définir des règles d\'attribution de tags aux alarmes',
   },
   [USER_PERMISSIONS.technical.storageSettings]: {
@@ -157,7 +157,7 @@ export default {
     message: 'Permet de définir et de déclencher l\'enregistrement des événements dès leur arrivée dans le bus de données Canopsis.',
   },
   [USER_PERMISSIONS.technical.templateTesting]: {
-    title: 'Studio Templates',
+    title: 'Studio templates',
   },
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'Jetons d\'authentification externes',
