@@ -2,6 +2,7 @@ import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
 import VueClipboard from 'vue-clipboard2';
 import PortalVue from 'portal-vue';
+import { Plugin as VueFragment } from 'vue-fragment';
 
 import { MODALS } from '@/constants';
 import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
@@ -31,7 +32,7 @@ import * as sidebarsComponents from '@/components/sidebars';
 export const bootstrapApplicationPlugins = (Vue) => {
   Vue.use(PortalVue);
   Vue.use(Filters);
-
+  Vue.use(VueFragment);
   Vue.use(VueFullScreen);
 
   Vue.use(VueMq, {
