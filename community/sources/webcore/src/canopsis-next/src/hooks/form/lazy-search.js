@@ -243,14 +243,30 @@ export const useLazySearch = ({
     if (!isArray(newSelectedItems)) {
       preparedNewSelectedItems = [newSelectedItems];
     } else {
-      preparedNewSelectedItems = unwrappedMultiple ? newSelectedItems : newSelectedItems.slice(1);
+      preparedNewSelectedItems = unwrappedMultiple ? newSelectedItems : newSelectedItems.slice(-1);
     }
 
-    selectedItems.value = uniqBy((
-      unwrappedAddable
-        ? preparedNewSelectedItems
-        : preparedNewSelectedItems.filter(item => !isString(item))
-    ).map(item => (isUndefined(item[unwrappedIdKey]) ? { [unwrappedIdKey]: item } : item)), unwrappedIdKey);
+    selectedItems.value = uniqBy(
+      (
+        unwrappedAddable
+          ? preparedNewSelectedItems
+          : preparedNewSelectedItems.filter(item => !isString(item))
+      ).map(item => (
+        isUndefined(item[unwrappedIdKey])
+          ? { [unwrappedIdKey]: item, noData: true }
+          : item)),
+      unwrappedIdKey,
+    );
+
+    if (returnObject) {
+      updateModel(
+        unwrappedMultiple
+          ? selectedItems.value
+          : selectedItems.value[0],
+      );
+
+      return;
+    }
 
     if (returnObject) {
       updateModel(

@@ -45,6 +45,7 @@ type Options struct {
 	PeriodicalWaitTime     time.Duration
 	ExternalDataApiTimeout time.Duration
 	Workers                int
+	DataStorageCleanUp     bool
 
 	PrometheusExporterPort   int
 	EnablePrometheusExporter bool
@@ -71,6 +72,7 @@ func ParseOptions() (Options, []string) {
 	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.IntVar(&opts.Workers, "workers", canopsis.DefaultEventWorkers, "Amount of workers to process fifo_ack events flow")
+	flag.BoolVar(&opts.DataStorageCleanUp, "cleanUp", false, "Immediately execute all data storage archive and delete and exit after.")
 	flag.BoolVar(&opts.EnablePrometheusExporter, "enablePrometheusExporter", false, "Enable prometheus exporter")
 	flag.IntVar(&opts.PrometheusExporterPort, "prometheusExporterPort", libprometheus.DefaultExporterPort, "Prometheus exporter port")
 
@@ -312,7 +314,7 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 		metricsEntityMetaUpdater,
 		logger,
 	)
-
+	s.DataStoragePeriodicalWorker.OnSchedule(true)
 	s.DataStoragePeriodicalWorker.AddCleaner("entity", disabledEntityCleaner)
 	s.DataStoragePeriodicalWorker.AddCleaner("alarm", alarm.NewCleaner(logger))
 	s.DataStoragePeriodicalWorker.AddCleaner("alarm_external_tag", axe.NewExternalTagCleaner(logger))

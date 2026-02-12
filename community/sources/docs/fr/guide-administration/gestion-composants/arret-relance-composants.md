@@ -4,15 +4,13 @@ L'ensemble des commandes suivantes doit être réalisées avec l'utilisateur `ro
 
 ## Gestion des composants Canopsis
 
-L'utilitaire `canoctl` permet, entre autres, de redémarrer Canopsis en lui-même. Il ne s'applique pas aux composants tiers, tels que RabbitMQ ou MongoDB.
-
 La commande suivante redémarrera Canopsis :
 
 ```sh
-canoctl restart
+systemctl restart canopsis
 ```
 
-Comme avec `systemctl`, les actions `start` et `stop` sont aussi disponibles, afin de respectivement démarrer et arrêter Canopsis.
+Les actions `start` et `stop` sont aussi disponibles, afin de respectivement démarrer et arrêter Canopsis.
 
 ## Gestion des composants liés à Canopsis
 
@@ -34,12 +32,20 @@ L'agent de messages RabbitMQ peut être redémarré avec la commande suivante :
 systemctl restart rabbitmq-server.service
 ```
 
-### Redis
+### Valkey
+
+Le serveur de cache Valkey peut être redémarré avec la commande suivante :
+
+```sh
+systemctl restart valkey.service
+```
+
+### PostgreSQL / TimescaleDB
 
 Le serveur de cache Redis peut être redémarré avec la commande suivante :
 
 ```sh
-systemctl restart redis.service
+systemctl restart postgresql-17.service
 ```
 
 Veuillez noter qu'un redémarrage du service n'occasionnera pas une purge du cache existant. Ce comportement est intentionnel.
