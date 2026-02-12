@@ -21,7 +21,9 @@ import { isString, kebabCase } from 'lodash';
  * @typedef {Object} ThemeTableColors
  * @property {string} background
  * @property {string} row_color
+ * @property {boolean} shift_row
  * @property {string} shift_row_color
+ * @property {boolean} hover_row
  * @property {string} hover_row_color
  */
 

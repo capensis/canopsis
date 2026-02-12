@@ -405,7 +405,7 @@ definitions:
           $ref: '#/definitions/alarm.Alarm'
         type: array
       meta:
-        $ref: '#/definitions/common.PaginatedMeta'
+        $ref: '#/definitions/pagination.MetaResponse'
     type: object
   alarm.Count:
     properties:
@@ -723,7 +723,7 @@ definitions:
           $ref: '#/definitions/alarm.Step'
         type: array
       meta:
-        $ref: '#/definitions/common.PaginatedMeta'
+        $ref: '#/definitions/pagination.MetaResponse'
     type: object
   alarm.StepsRequest:
     properties:
@@ -1446,35 +1446,6 @@ definitions:
       val:
         type: integer
     type: object
-  common.ErrorResponse:
-    properties:
-      error:
-        type: string
-    type: object
-  common.PaginatedListResponse:
-    properties:
-      data: {}
-      meta:
-        $ref: '#/definitions/common.PaginatedMeta'
-    type: object
-  common.PaginatedMeta:
-    properties:
-      page:
-        type: integer
-      page_count:
-        type: integer
-      per_page:
-        type: integer
-      total_count:
-        type: integer
-    type: object
-  common.ValidationErrorResponse:
-    properties:
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-    type: object
   config.EngineParameters:
     properties:
       enabled:
@@ -1779,6 +1750,8 @@ definitions:
       depends_count:
         description: DependsCount contains only service's dependencies
         type: integer
+      downstream_count:
+        type: integer
       enabled:
         type: boolean
       entity_pattern:
@@ -1830,6 +1803,8 @@ definitions:
       status:
         type: integer
       type:
+        type: string
+      upstream:
         type: string
     type: object
   entity.ExportRequest:
@@ -2046,6 +2021,8 @@ definitions:
         type: integer
       description:
         type: string
+      downstream_count:
+        type: integer
       enabled:
         type: boolean
       entity_pattern:
@@ -2099,6 +2076,8 @@ definitions:
       status:
         type: integer
       type:
+        type: string
+      upstream:
         type: string
     type: object
   entitycategory.Category:
@@ -2345,6 +2324,8 @@ definitions:
       depends_count:
         description: DependsCount contains only service's dependencies
         type: integer
+      downstream_count:
+        type: integer
       enabled:
         type: boolean
       entity_pattern:
@@ -2400,6 +2381,8 @@ definitions:
       status:
         type: integer
       type:
+        type: string
+      upstream:
         type: string
     type: object
   entityservice.CreateRequest:
@@ -2478,6 +2461,8 @@ definitions:
       depends_count:
         description: DependsCount contains only service's dependencies
         type: integer
+      downstream_count:
+        type: integer
       enabled:
         type: boolean
       entity_pattern:
@@ -2533,6 +2518,8 @@ definitions:
       status:
         type: integer
       type:
+        type: string
+      upstream:
         type: string
     type: object
   entityservice.StateSettingResponse:
@@ -2603,6 +2590,94 @@ definitions:
     - name
     - output_template
     - sli_avail_state
+    type: object
+  entityupstream.Response:
+    properties:
+      _id:
+        type: string
+      ack:
+        $ref: '#/definitions/common.AlarmStep'
+      alarm_last_update_date:
+        type: integer
+      category:
+        $ref: '#/definitions/entity.Category'
+      component:
+        type: string
+      component_infos:
+        $ref: '#/definitions/entity.Infos'
+      connector:
+        type: string
+      connector_type:
+        description: ConnectorType contains a part before "/" of connector id.
+        type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      deletable:
+        description: Flags
+        type: boolean
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
+      downstream_count:
+        type: integer
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      filtered_perf_data:
+        items:
+          type: string
+        type: array
+      idle_since:
+        type: integer
+      impact_level:
+        type: integer
+      impact_state:
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
+        type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
+      infos:
+        $ref: '#/definitions/entity.Infos'
+      ko_events:
+        type: integer
+      last_event_date:
+        type: integer
+      last_pbehavior_date:
+        type: integer
+      links:
+        $ref: '#/definitions/link.LinksByCategory'
+        description: Links
+      name:
+        type: string
+      ok_events:
+        description: Stats
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      snooze:
+        $ref: '#/definitions/common.AlarmStep'
+      state:
+        description: Alarm fields
+        type: integer
+      status:
+        type: integer
+      type:
+        type: string
+      upstream:
+        type: string
     type: object
   eventfilter.Action:
     properties:
@@ -2850,6 +2925,8 @@ definitions:
       on_success:
         type: string
       resource:
+        type: string
+      upstream:
         type: string
     type: object
   eventfilter.TemplateRequest:
@@ -3229,6 +3306,15 @@ definitions:
         type: string
       status:
         type: integer
+    type: object
+  externaldatatable.PreviewRequest:
+    properties:
+      column_configs:
+        items:
+          $ref: '#/definitions/externaldatatable.ColumnConfig'
+        type: array
+    required:
+    - column_configs
     type: object
   externaldatatable.RefResponse:
     properties:
@@ -3849,6 +3935,8 @@ definitions:
         type: object
       type:
         type: string
+      upstream:
+        type: string
     required:
     - name
     - type
@@ -4149,6 +4237,24 @@ definitions:
     properties:
       instruction:
         $ref: '#/definitions/notification.InstructionNotificationSettings'
+    type: object
+  pagination.ListResponse:
+    properties:
+      data:
+        type: any
+      meta:
+        $ref: '#/definitions/pagination.MetaResponse'
+    type: object
+  pagination.MetaResponse:
+    properties:
+      page:
+        type: integer
+      page_count:
+        type: integer
+      per_page:
+        type: integer
+      total_count:
+        type: integer
     type: object
   pattern.BulkDeleteRequestItem:
     properties:

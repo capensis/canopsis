@@ -19,8 +19,8 @@ exports[`text Renders \`text\` with request template 1`] = `
   class="position-relative"
 >
   <div>
-    <c-request-helper
-      helper-id="request-helper-696d5f1d19c"
+    <c-request-helper-stub
+      helper-id="request-helper-test-uid"
     />
   </div>
 </div>

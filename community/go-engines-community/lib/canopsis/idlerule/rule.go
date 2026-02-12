@@ -98,7 +98,7 @@ func (r *Rule) matchesByAlarmLastEventDate(alarm types.Alarm, now datetime.CpsTi
 	before := r.Duration.SubFrom(now)
 
 	return r.Type != RuleTypeAlarm || r.AlarmCondition != RuleAlarmConditionLastEvent ||
-		alarm.Value.LastEventDate.Before(before)
+		alarm.Value.LastEventDate != nil && alarm.Value.LastEventDate.Before(before)
 }
 
 func (r *Rule) matchesByAlarmLastUpdateDate(alarm types.Alarm, now datetime.CpsTime) bool {

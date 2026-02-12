@@ -14,10 +14,10 @@ systemctl status mongod.service
 systemctl status rabbitmq-server.service
 ```
 
-## Redis
+## Valkey
 
 ```sh
-systemctl status redis.service
+systemctl status valkey.service
 ```
 
 ## Nginx
@@ -26,12 +26,19 @@ systemctl status redis.service
 systemctl status nginx.service
 ```
 
+## PostgreSQL/TimescaleDB
+
+```sh
+systemctl status postgresql-17.service
+```
+
+
 ## Canopsis
 
 ### Gestion des moteurs et services internes
 
 ```sh
-canoctl status
+systemctl status canopsis*
 ```
 
 ## Gestion avancée des composants

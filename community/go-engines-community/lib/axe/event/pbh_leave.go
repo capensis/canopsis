@@ -31,34 +31,30 @@ func NewPbhLeaveProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &pbhLeaveProcessor{
-		client:                          client,
-		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                client.Collection(mongo.EntityMongoCollection),
-		pbehaviorCollection:             client.Collection(mongo.PbehaviorMongoCollection),
-		autoInstructionMatcher:          autoInstructionMatcher,
-		entityServiceCountersCalculator: entityServiceCountersCalculator,
-		componentCountersCalculator:     componentCountersCalculator,
-		eventsSender:                    eventsSender,
-		metricsSender:                   metricsSender,
-		remediationRpcClient:            remediationRpcClient,
-		encoder:                         encoder,
-		logger:                          logger,
+		client:                 client,
+		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       client.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:    client.Collection(mongo.PbehaviorMongoCollection),
+		autoInstructionMatcher: autoInstructionMatcher,
+		metricsSender:          metricsSender,
+		remediationRpcClient:   remediationRpcClient,
+		encoder:                encoder,
+		logger:                 logger,
+		countersHelper:         newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 	}
 }
 
 type pbhLeaveProcessor struct {
-	client                          mongo.DbClient
-	alarmCollection                 mongo.DbCollection
-	entityCollection                mongo.DbCollection
-	pbehaviorCollection             mongo.DbCollection
-	autoInstructionMatcher          AutoInstructionMatcher
-	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
-	componentCountersCalculator     calculator.ComponentCountersCalculator
-	eventsSender                    entitycounters.EventsSender
-	metricsSender                   metrics.Sender
-	remediationRpcClient            engine.RPCClient
-	encoder                         encoding.Encoder
-	logger                          zerolog.Logger
+	client                 mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
+	pbehaviorCollection    mongo.DbCollection
+	autoInstructionMatcher AutoInstructionMatcher
+	metricsSender          metrics.Sender
+	remediationRpcClient   engine.RPCClient
+	encoder                encoding.Encoder
+	logger                 zerolog.Logger
+	countersHelper         *countersHelper
 }
 
 func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -71,14 +67,11 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 	match["v.pbehavior_info.id"] = bson.M{"$nin": bson.A{nil, ""}}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 
-	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
+	countersRes := countersResult{}
 	var prevPbehaviorID string
-	var componentStateChanged bool
-	var newComponentState int
-
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		updatedServiceStates = nil
+		countersRes = countersResult{}
 		prevPbehaviorID = ""
 
 		alarm := types.Alarm{}
@@ -169,10 +162,8 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		result.Alarm = alarm
 		result.AlarmChange = alarmChange
 
-		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
-			p.entityServiceCountersCalculator,
-			p.componentCountersCalculator,
 			&result.Alarm,
 			&result.Entity,
 			result.AlarmChange,
@@ -189,7 +180,7 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
 	}
 
-	go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates, componentStateChanged, newComponentState, prevPbehaviorID)
+	go p.postProcess(context.WithoutCancel(ctx), event, result, countersRes, prevPbehaviorID)
 
 	return result, nil
 }
@@ -198,9 +189,7 @@ func (p *pbhLeaveProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
-	componentStateChanged bool,
-	newComponentState int,
+	countersRes countersResult,
 	prevPbehaviorID string,
 ) {
 	entity := *event.Entity
@@ -219,19 +208,7 @@ func (p *pbhLeaveProcessor) postProcess(
 		"",
 	)
 
-	for servID, servInfo := range updatedServiceStates {
-		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update service state")
-		}
-	}
-
-	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update component state")
-		}
-	}
+	p.countersHelper.UpdateStates(ctx, countersRes)
 
 	if result.Alarm.ID != "" {
 		err := sendRemediationEvent(ctx, event, result, p.remediationRpcClient, p.encoder)
