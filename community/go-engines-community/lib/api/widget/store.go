@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	tplvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -65,6 +66,8 @@ func NewStore(
 		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
 		tplTestCollection:         dbClient.Collection(mongo.TemplateTestCollection),
 		entityInfosPropCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		pbhTypeCollection:         dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
+		pbhReasonCollection:       dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
 		authorProvider:            authorProvider,
 		transformer:               transformer,
 		enforcer:                  enforcer,
@@ -93,6 +96,8 @@ type store struct {
 	alarmCollection           mongo.DbCollection
 	tplTestCollection         mongo.DbCollection
 	entityInfosPropCollection mongo.DbCollection
+	pbhTypeCollection         mongo.DbCollection
+	pbhReasonCollection       mongo.DbCollection
 	authorProvider            author.Provider
 	transformer               patternfields.Transformer
 	enforcer                  security.Enforcer
@@ -250,14 +255,21 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	var response *Response
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+		var valErrs validator.ValidationErrors
 
 		patterns, aliases, err := s.fetchPatterns(ctx, r.Filters)
 		if err != nil {
 			return err
 		}
 
+		pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
+		if err != nil {
+			return err
+		}
+
+		valErrs = append(valErrs, pbhValErrs...)
+
 		filters := make([]view.WidgetFilter, len(r.Filters))
-		var valErrs validator.ValidationErrors
 		for i, filterRequest := range r.Filters {
 			doc := view.WidgetFilter{
 				ID:               utils.NewID(),
@@ -307,6 +319,40 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	return response, err
 }
 
+func (s *store) validateFastPbehaviors(ctx context.Context, r EditRequest) (validator.ValidationErrors, error) {
+	var valErrs validator.ValidationErrors
+
+	for i, fastPbh := range r.Parameters.FastPbehaviors {
+		var typeDoc struct {
+			ID   string `bson:"_id"`
+			Type string `bson:"type"`
+		}
+		err := s.pbhTypeCollection.FindOne(ctx, bson.M{"_id": fastPbh.Type},
+			options.FindOne().SetProjection(bson.M{"_id": 1, "type": 1})).Decode(&typeDoc)
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, err
+		}
+
+		if typeDoc.ID == "" {
+			valErrs = append(valErrs, validation.NewFieldError("not_exist", "Type", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Type"))
+		} else if typeDoc.Type != pbehavior.TypePause {
+			valErrs = append(valErrs, validation.NewFieldError("pbh_type_not_pause", "Type", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Type"))
+		}
+
+		err = s.pbhReasonCollection.FindOne(ctx, bson.M{"_id": fastPbh.Reason},
+			options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				valErrs = append(valErrs, validation.NewFieldError("not_exist", "Reason", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Reason"))
+			} else {
+				return nil, err
+			}
+		}
+	}
+
+	return valErrs, nil
+}
+
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
 	oldWidget, err := s.GetOneBy(ctx, r.ID)
 	if err != nil || oldWidget == nil {
@@ -328,14 +374,21 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	var response *Response
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+		var valErrs validator.ValidationErrors
 
 		patterns, aliases, err := s.fetchPatterns(ctx, r.Filters)
 		if err != nil {
 			return err
 		}
 
+		pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
+		if err != nil {
+			return err
+		}
+
+		valErrs = append(valErrs, pbhValErrs...)
+
 		filters := make(map[string]view.WidgetFilter, len(r.Filters))
-		var valErrs validator.ValidationErrors
 		for i, filterRequest := range r.Filters {
 			doc := view.WidgetFilter{
 				Title:            filterRequest.Title,
@@ -523,6 +576,15 @@ func (s *store) Copy(ctx context.Context, widgetID string, r CreateRequest) (*Re
 			if !ok {
 				return httperror.NewForbiddenError("")
 			}
+		}
+
+		pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
+		if err != nil {
+			return err
+		}
+
+		if len(pbhValErrs) > 0 {
+			return validation.NewError(pbhValErrs, r)
 		}
 
 		response, err = s.copy(ctx, widgetID, tabInfo.IsPrivate, r)

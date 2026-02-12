@@ -275,6 +275,9 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if r.WithDependencies {
 		q.lookups = append(q.lookups, lookupWithKey{key: entityDbPrefix + ".downstream_count", pipeline: dbquery.GetDownstreamCountPipeline(entityDbPrefix)})
 	}
+	if r.PbhOrigin != "" {
+		q.lookups = append(q.lookups, lookupWithKey{key: "pbh_origin_icon", pipeline: getPbhOriginLookup(r.PbhOrigin, now)})
+	}
 
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
@@ -1766,5 +1769,35 @@ func GetTagColorsLookup() []bson.M {
 			"$doc",
 			bson.M{"tag_colors": "$tag_colors"},
 		}}}},
+	}
+}
+
+func getPbhOriginLookup(origin string, now datetime.CpsTime) []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorMongoCollection,
+			"localField":   "d",
+			"foreignField": "entity",
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"origin": origin,
+					"tstart": bson.M{"$lte": now},
+				}},
+				{"$limit": 1},
+			},
+			"as": "pbh_origin",
+		}},
+		{"$unwind": bson.M{"path": "$pbh_origin", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"localField":   "pbh_origin.type_",
+			"foreignField": "_id",
+			"as":           "pbh_origin.type",
+		}},
+		{"$unwind": bson.M{"path": "$pbh_origin.type", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"pbh_origin_icon": "$pbh_origin.type.icon_name",
+		}},
+		{"$project": bson.M{"pbh_origin": 0}},
 	}
 }

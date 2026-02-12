@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	libview "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -22,6 +23,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const (
@@ -56,6 +58,8 @@ func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store, authorProvider au
 		roleCollection:        dbClient.Collection(mongo.RoleCollection),
 		permissionCollection:  dbClient.Collection(mongo.PermissionCollection),
 		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		pbhTypeCollection:     dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
+		pbhReasonCollection:   dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "title", "description"},
 		defaultSortBy:         "position",
@@ -76,6 +80,8 @@ type store struct {
 	roleCollection        mongo.DbCollection
 	permissionCollection  mongo.DbCollection
 	userPrefCollection    mongo.DbCollection
+	pbhTypeCollection     mongo.DbCollection
+	pbhReasonCollection   mongo.DbCollection
 	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -788,6 +794,42 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 									}
 
 									widget.Parameters.MainFilter = mainFilterId
+
+									var fastPbhValErrs validator.ValidationErrors
+									for fi, fastPbh := range widget.Parameters.FastPbehaviors {
+										ns := "Items." + strconv.Itoa(gi) + ".Views." + strconv.Itoa(vi) + ".Tabs." + strconv.Itoa(ti) + ".Widgets." + strconv.Itoa(wi) + ".Parameters.FastPbehaviors." + strconv.Itoa(fi)
+
+										var typeDoc struct {
+											ID   string `bson:"_id"`
+											Type string `bson:"type"`
+										}
+										err := s.pbhTypeCollection.FindOne(ctx, bson.M{"_id": fastPbh.Type},
+											options.FindOne().SetProjection(bson.M{"_id": 1, "type": 1})).Decode(&typeDoc)
+										if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+											return err
+										}
+
+										if typeDoc.ID == "" {
+											fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("not_exist", "Type", ns+".Type"))
+										} else if typeDoc.Type != pbehavior.TypePause {
+											fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("pbh_type_not_pause", "Type", ns+".Type"))
+										}
+
+										err = s.pbhReasonCollection.FindOne(ctx, bson.M{"_id": fastPbh.Reason},
+											options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
+										if err != nil {
+											if errors.Is(err, mongodriver.ErrNoDocuments) {
+												fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("not_exist", "Reason", ns+".Reason"))
+											} else {
+												return err
+											}
+										}
+									}
+
+									if len(fastPbhValErrs) > 0 {
+										return validation.NewError(fastPbhValErrs, r)
+									}
+
 									newWidgets = append(newWidgets, libview.Widget{
 										ID:             widgetId,
 										Tab:            tabId,
