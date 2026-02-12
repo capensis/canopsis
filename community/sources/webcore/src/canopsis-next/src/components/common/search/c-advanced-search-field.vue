@@ -1,7 +1,7 @@
 <template>
   <v-layout class="c-advanced-search__wrapper" align-end>
     <div
-      :class="[themeClasses]"
+      :class="[themeClasses, { 'v-input--is-loading': pending }]"
       class="c-advanced-search mt-0 pt-2 v-input v-input--hide-details theme--light
     v-text-field v-text-field--single-line v-text-field--is-booted v-select v-autocomplete primary--text"
     >
@@ -17,6 +17,12 @@
             />
           </div>
         </div>
+        <v-progress-linear
+          v-if="pending"
+          height="2"
+          color="primary"
+          indeterminate
+        />
       </div>
     </div>
     <v-layout>
@@ -82,6 +88,10 @@ export default {
     attributes: {
       type: Array,
       default: () => [],
+    },
+    pending: {
+      type: Boolean,
+      default: false,
     },
     allowOr: {
       type: Boolean,

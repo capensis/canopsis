@@ -3,6 +3,7 @@
     v-model="rules"
     :searches="searches"
     :attributes="attributes"
+    :pending="pending"
     :allow-or="allowOr"
     :basic-field="basicField"
     with-history
@@ -31,12 +32,13 @@ export default {
 
     const rules = ref([advancedSearchRuleItemToFormItem()]);
 
-    const { attributes, allowOr } = useAlarmAdvancedSearchAttributes({ rules });
+    const { attributes, pending, allowOr } = useAlarmAdvancedSearchAttributes({ rules });
 
     return {
       basicField,
       rules,
       attributes,
+      pending,
       allowOr,
     };
   },

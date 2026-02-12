@@ -24,6 +24,78 @@ exports[`c-advanced-search-field Renders \`c-advanced-search-field\` correctly 1
           />
         </div>
       </div>
+      <!---->
+    </div>
+  </div>
+  <div
+    class="layout"
+  >
+    <!---->
+    <c-action-btn-stub
+      icon="search"
+      tooltip="Search"
+    />
+    <c-action-btn-stub
+      icon="clear"
+      tooltip="Clear search input"
+    />
+  </div>
+</div>
+`;
+
+exports[`c-advanced-search-field Renders \`c-advanced-search-field\` with pending state correctly 1`] = `
+<div
+  class="layout c-advanced-search__wrapper align-end"
+>
+  <div
+    class="c-advanced-search mt-0 pt-2 v-input v-input--hide-details theme--light v-text-field v-text-field--single-line v-select v-autocomplete primary--text theme--light v-input--is-loading"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot pb-1"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <advanced-search-rules-stub
+            allowfocusonmount="true"
+            allowor="true"
+            attributes=""
+            rules="[object Object]"
+          />
+        </div>
+      </div>
+      <div
+        aria-valuemax="100"
+        aria-valuemin="0"
+        class="v-progress-linear v-progress-linear--visible theme--light"
+        role="progressbar"
+        style="height: 2px;"
+      >
+        <div
+          class="v-progress-linear__background primary"
+          style="opacity: 0.3; left: 0%; width: 100%;"
+        />
+        <div
+          class="v-progress-linear__buffer"
+        />
+        <transition-stub
+          name="fade-transition"
+        >
+          <div
+            class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
+          >
+            <div
+              class="v-progress-linear__indeterminate long primary"
+            />
+            <div
+              class="v-progress-linear__indeterminate short primary"
+            />
+          </div>
+        </transition-stub>
+      </div>
     </div>
   </div>
   <div
