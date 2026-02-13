@@ -33,7 +33,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`assocticket\` correctly 1`] = `
 <div>
   <v-icon-stub>
-    $vuetify.icons.sticky_note_2
+    sticky_note_2
   </v-icon-stub>
 </div>
 `;
@@ -405,7 +405,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    $vuetify.icons.webhook
+    webhook
   </v-icon-stub>
 </div>
 `;
@@ -415,7 +415,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    $vuetify.icons.webhook
+    webhook
   </v-icon-stub>
 </div>
 `;
@@ -425,7 +425,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    $vuetify.icons.webhook
+    webhook
   </v-icon-stub>
 </div>
 `;
@@ -435,7 +435,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    $vuetify.icons.webhook
+    webhook
   </v-icon-stub>
 </div>
 `;
