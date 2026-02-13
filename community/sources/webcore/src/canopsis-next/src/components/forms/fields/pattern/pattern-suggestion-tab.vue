@@ -71,6 +71,7 @@ export default {
 .pattern-suggestions__tab {
   position: relative;
   min-width: 0;
+  max-width: 465px;
   padding: 0;
   overflow: hidden;
   border-bottom: 2px solid var(--v-primary-base) !important;
