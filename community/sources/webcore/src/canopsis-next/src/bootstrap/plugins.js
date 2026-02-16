@@ -58,6 +58,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createWidgetTemplate]: { maxWidth: 920 },
       [MODALS.alarmsList]: { maxWidth: '95%' },
       [MODALS.entitiesList]: { maxWidth: '95%' },
+      [MODALS.entitiesComparison]: { maxWidth: 1100 },
       [MODALS.createFilter]: { maxWidth: 1100 },
       [MODALS.textEditor]: { maxWidth: 900, persistent: true },
       [MODALS.textEditorWithTemplate]: { maxWidth: 900, persistent: true },
