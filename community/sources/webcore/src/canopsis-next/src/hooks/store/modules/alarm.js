@@ -27,6 +27,7 @@ export const useAlarmStoreModule = () => useStoreModuleHooks('alarm');
  * - `getAlarmsFetchingParamsByWidgetId`: A getter for retrieving fetching parameters by widget ID.
  * - `fetchAlarmItem`: An action to fetch a specific alarm item.
  * - `fetchAlarmsList`: An action to fetch a list of alarms.
+ * - `fetchAlarmsListWithoutStore`: An action to fetch a list of alarms without storing in the store.
  * - `createAlarmsListExport`: An action to create an alarm list export.
  * - `fetchAlarmsListExport`: An action to fetch an alarm list export.
  */
@@ -45,6 +46,7 @@ export const useAlarm = () => {
   const actions = useActions({
     fetchAlarmItem: 'fetchItem',
     fetchAlarmsList: 'fetchList',
+    fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
     createAlarmsListExport: 'createAlarmsListExport',
     fetchAlarmsListExport: 'fetchAlarmsListExport',
   });

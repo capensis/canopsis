@@ -65,6 +65,7 @@ export default {
     genCustomList() {
       return this.$scopedSlots.list?.(this.listData);
     },
+
     genMenu() {
       const props = this.$_menuProps;
       props.activator = this.$refs['input-slot'];
