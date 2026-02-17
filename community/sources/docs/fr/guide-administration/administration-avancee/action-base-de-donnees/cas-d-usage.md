@@ -194,7 +194,7 @@ db.pbehavior.find({
 })
 ```
 
-- Récupérer les comportements périodiques qui ont été créés avant une date spécifique
+- Récupérer les comportements périodiques qui ont été créés après une date spécifique
 ```js
 db.pbehavior.find({
   $expr: {
@@ -262,6 +262,15 @@ db.NOM_DE_LA_COLLECTION.getIndexes()
 #### Date Unix
 
 Pour les requêtes sur les dates, si vous souhaitez utiliser les timestamp UNIX, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.
+
+Pour récupérer la date et l'heure actuelle, exécuter la commande
+```sh
+date // date et heure actuelle
+mar. 17 févr. 2026 14:40:14 CET
+
+date +%s // date et heure au format epoch
+1771335614
+```
 
 
 
