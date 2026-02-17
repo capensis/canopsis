@@ -1,24 +1,24 @@
-# Cas d'usage d'action sur les bases de données
+# Cas d'usage d'actions avancées à réaliser sur les bases de données notamment dans le cadre d'opérations de debug ou d'incident
 
-Cette page regroupe des actions qui utiles lors de la recherche d'informations directement en base de données.
+Cette page regroupe des actions utiles lors de la recherche d'informations directement en base de données.
 
 #### Commandes usuelles pour récupérer des informations dans la base de données MongoDB de Canopsis
 
 Ces commandes seront utiles pour rapidement pouvoir récupérer des informations.
 
 ```js
-db.NOM_DE_LA_COLLECTION.find() # Permet de trouver une information
+db.NOM_DE_LA_COLLECTION.find() # Permet de rechercher une information provenant de document(s) dans une collection
 db.NOM_DE_LA_COLLECTION.countDocuments() # Permet de compter le nombre de documents dans une collection
 ```
 
 Documentation de la commande `find()`: [db.collection.find() (mongosh method)](https://www.mongodb.com/docs/manual/reference/method/db.collection.find/)
 Documentation de la commande `countDocuments`: [db.collection.countDocuments() (mongosh method)](https://www.mongodb.com/docs/manual/reference/method/db.collection.countDocuments/) 
 
-Pour plus d'informations sur les commandes de l'utilitaire `mongosh`, référer à la documentation officiel : [Documentation Mongosh](https://www.mongodb.com/docs/mongodb-shell/run-commands/)
+Pour plus d'informations sur les commandes de l'utilitaire `mongosh`, se référer à la documentation officielle : [Documentation Mongosh](https://www.mongodb.com/docs/mongodb-shell/run-commands/)
 
 Généralement, ces commandes sont utilisées pour requêter les collections : `periodical_alarm`, `default_entities`, `alarm_tag`, `pbehavior`.
 
-#### Trouver les alarmes qui correspondent à un critère particulier
+#### Rechercher les alarmes qui correspondent à un critère particulier
 
 - Récupérer l'entièreté des alarmes actuellement ouvertes qui proviennent d'un même `connecteur`
 ```js
@@ -35,7 +35,7 @@ db.periodical_alarm.find({'v.component':'Nom du composant'})
 db.periodical_alarm.find({'v.resource':'Nom de la ressource'})
 ```
 
-- Récupérer l'entièreté des alarmes actuellement ouvertes portant sur une couple `composant`/`ressource`
+- Récupérer l'entièreté des alarmes actuellement ouvertes portant sur un couple `composant`/`ressource`
 ```js
 db.periodical_alarm.find({"v.component" : "Nom du composant", "v.resource" : "Nom de la ressource"})
 ```
@@ -180,7 +180,7 @@ db.periodical_alarm.aggregate([{ $match:{ "v.pbehavior_info.id":{ $exists:true }
 ]
 ```
 
-#### Trouver les comportements périodiques qui ont été créé dans une date X et une date Y
+#### Trouver les comportements périodiques qui ont été créés entre une date X et une date Y
 
 - Récupérer les comportements périodiques qui ont été créés avant une date spécifique
 ```js
@@ -206,7 +206,7 @@ db.pbehavior.find({
 })
 ```
 
-- Récupérer les comportements périodiques qui ont été créés à une date spécifique ou entre une date X et Y
+- Récupérer les comportements périodiques qui ont été créés entre une date X et Y
 ```js
 db.pbehavior.find({
   $expr: {
