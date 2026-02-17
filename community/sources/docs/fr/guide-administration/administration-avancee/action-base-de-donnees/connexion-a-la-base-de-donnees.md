@@ -2,11 +2,16 @@
 
 ## Connexion à MongoDB en ligne de commande
 
-Depuis le nœud où est installé MongoDB, exécuter la commande shell suivante, pour se connecter avec les identifiants par défaut :
-
+Depuis un nœud où est installé MongoDB, exécuter la commande suivante, pour se connecter avec les identifiants par défaut :
 ```sh
 mongosh ${CPS_MONGO_URL}
 ```
+
+Pour définir la valeur de `${CPS_MONGO_URL}`  :
+```sh
+CPS_MONGO_URL = URI_MONGODB
+```
+*(Sur une installation docker compose, il est possible de sourcer le fichier `canopsis.env` avec la commande `source canopsis.env`)*
 
 On arrive alors dans le prompt de MongoDB, permettant d'exécuter des requêtes ou des fonctions.
 
@@ -33,5 +38,5 @@ MONGO_INITDB_ROOT_PASSWORD=root
 
 Ce qui donnera pour la connexion :
 ```sh
-mongosh -u root -p root
+mongosh -u root -p root admin
 ```
