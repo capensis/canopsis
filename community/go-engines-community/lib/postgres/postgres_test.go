@@ -18,7 +18,7 @@ func TestPool_Exec_GivenContextDone_ShouldAbortRetries(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	ctx, cancel := context.WithCancel(t.Context())
+	ctx, cancel := context.WithTimeout(t.Context(), time.Millisecond*100)
 	defer cancel()
 
 	sql := "test sql"
@@ -35,11 +35,6 @@ func TestPool_Exec_GivenContextDone_ShouldAbortRetries(t *testing.T) {
 		retryCount:      retryCount,
 		minRetryTimeout: minRetryTimeout,
 	}
-
-	go func() {
-		time.Sleep(time.Millisecond * 100)
-		cancel()
-	}()
 
 	start := time.Now()
 	commandTag, err := pool.Exec(ctx, sql)

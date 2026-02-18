@@ -3,6 +3,7 @@ package alarm_test
 import (
 	"errors"
 	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -13,10 +14,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_alarmstatus "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarmstatus"
 	mock_resolverule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/resolverule"
+	"github.com/rs/zerolog"
 	"go.uber.org/mock/gomock"
 )
 
@@ -102,6 +103,7 @@ func TestService_ResolveCancels(t *testing.T) {
 		},
 	}
 
+	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
 			ctx := t.Context()
@@ -119,7 +121,7 @@ func TestService_ResolveCancels(t *testing.T) {
 				mockResolveRuleAdapter,
 				mockAlarmStatusService,
 				event.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector),
-				log.NewLogger(ctx, log.Options{Debug: true}),
+				logger,
 			)
 
 			events, err := service.ResolveCancels(ctx, config.AlarmConfig{
@@ -219,6 +221,7 @@ func TestService_ResolveSnoozes(t *testing.T) {
 		},
 	}
 
+	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
 			ctx := t.Context()
@@ -236,7 +239,7 @@ func TestService_ResolveSnoozes(t *testing.T) {
 				mockResolveRuleAdapter,
 				mockAlarmStatusService,
 				event.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector),
-				log.NewLogger(ctx, log.Options{Debug: true}),
+				logger,
 			)
 
 			events, err := service.ResolveSnoozes(ctx, config.AlarmConfig{})
