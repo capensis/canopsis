@@ -6,7 +6,7 @@ export const permissionsTechnicalRemediationInstructionStatsMixin = {
   mixins: [authMixin],
   computed: {
     hasReadAnyRemediationInstructionStatsAccess() {
-      return this.checkAccess(USER_PERMISSIONS.technical.remediationinstructionStats);
+      return this.checkAccess(USER_PERMISSIONS.technical.exploitation.remediationinstructionStats);
     },
   },
 };

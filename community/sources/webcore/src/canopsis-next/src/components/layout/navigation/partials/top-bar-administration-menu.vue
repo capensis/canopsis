@@ -113,12 +113,12 @@ export default {
       {
         route: { name: ROUTES_NAMES.adminCustomObjectsExternalDataTables },
         icon: 'database',
-        permission: USER_PERMISSIONS.technical.exploitation.externalDataTable,
+        permission: USER_PERMISSIONS.technical.externalDataTable,
       },
       {
         route: { name: ROUTES_NAMES.adminCustomObjectsEntityInfosProperties },
         icon: 'info',
-        permission: USER_PERMISSIONS.technical.exploitation.entityInfoProperty,
+        permission: USER_PERMISSIONS.technical.entityInfoProperty,
       },
       {
         route: { name: ROUTES_NAMES.adminCustomObjectsIcons },
