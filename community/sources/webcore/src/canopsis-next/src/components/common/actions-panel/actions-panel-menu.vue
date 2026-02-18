@@ -67,22 +67,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.actions-panel {
-  &__menu-item-loader {
-    margin-right: 32px;
-  }
-
-  &--small {
-    .v-btn--icon {
-      width: 24px;
-      height: 24px;
-
-      .v-icon {
-        font-size: 20px;
-      }
-    }
-  }
-}
-</style>

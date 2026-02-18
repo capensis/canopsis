@@ -6,11 +6,14 @@ import {
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   LINK_RULE_ACTIONS,
   ALARM_LIST_ACTIONS_TYPES,
+  ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP,
+  ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT,
   ALARM_EXPORT_FILE_NAME_PREFIX,
   PBEHAVIOR_TYPE_TYPES,
   PBEHAVIOR_ORIGINS,
 } from '@/constants';
 
+import { promisedTimeout } from '@/helpers/async';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 import { mapIds } from '@/helpers/array';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
@@ -65,7 +68,8 @@ export const widgetActionsPanelAlarmMixin = {
     }),
 
     isActionTypeInPending(type) {
-      return !!this.pendingByActionsTypes[type];
+      return !!this.pendingByActionsTypes[type]
+       || !!this.pendingByActionsTypes[ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP[type]];
     },
 
     setActionPending(type, value) {
@@ -439,7 +443,11 @@ export const widgetActionsPanelAlarmMixin = {
             alarms.length === 1 ? alarms[0].entity?._id : alarms.map(item => item.entity._id),
           ),
           entities: mapAlarmsEntities(alarms),
-          afterSubmit: this.afterSubmit,
+          afterSubmit: async () => {
+            this.$popups.success({ text: this.$t('modals.pbehaviorPlanning.success.create') });
+
+            return promisedTimeout(this.afterSubmit, ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT);
+          },
         },
       });
     },
@@ -485,7 +493,7 @@ export const widgetActionsPanelAlarmMixin = {
           origin: PBEHAVIOR_ORIGINS.alarmList,
         });
 
-        await this.afterSubmit();
+        await promisedTimeout(this.afterSubmit, ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT);
       } catch (err) {
         console.error(err);
       } finally {
@@ -506,8 +514,9 @@ export const widgetActionsPanelAlarmMixin = {
           return acc;
         }, {});
 
-        await this.removeDowntimePbehavior(Object.values(entitiesMap));
-        await this.afterSubmit();
+        await this.removeDowntimePbehavior(Object.values(entitiesMap), PBEHAVIOR_ORIGINS.alarmList);
+
+        await promisedTimeout(this.afterSubmit, ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT);
       } catch (err) {
         console.error(err);
       } finally {
@@ -564,7 +573,10 @@ export const widgetActionsPanelAlarmMixin = {
 
     async removeBookmarkByAlarm(alarm) {
       try {
-        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.removeBookmark, true);
+        /**
+         * The same action type as add bookmark
+         */
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.addBookmark, true);
 
         await this.removeBookmarkFromAlarm({ id: alarm._id });
 
@@ -576,7 +588,7 @@ export const widgetActionsPanelAlarmMixin = {
 
         this.$popups.error({ text: this.$t('alarm.popups.removeBookmarkFailed') });
       } finally {
-        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.removeBookmark, false);
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.addBookmark, false);
       }
     },
   },

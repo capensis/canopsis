@@ -1,5 +1,12 @@
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { ackAction, deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
+import {
+  ackAction,
+  deleteAction,
+  editAction,
+  fakeAction,
+  fastPbehaviorAddAction,
+  fastPbehaviorRemoveAction,
+} from '@unit/data/actions-panel';
 
 import { MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP } from '@/constants';
 
@@ -64,6 +71,46 @@ describe('actions-panel', () => {
 
     const [, secondAction] = actions;
     expect(secondAction.method).toBeCalledTimes(1);
+  });
+
+  it('Fast pbehavior add action method called after trigger click', async () => {
+    const actions = [fastPbehaviorAddAction];
+
+    const wrapper = factory({
+      propsData: {
+        actions,
+      },
+      mocks: {
+        $mq: 'xl',
+      },
+    });
+
+    await flushPromises();
+
+    const addButton = wrapper.find('button.actions-panel-btn');
+    addButton.trigger('click');
+
+    expect(fastPbehaviorAddAction.method).toHaveBeenCalledTimes(1);
+  });
+
+  it('Fast pbehavior remove action method called after trigger click', async () => {
+    const actions = [fastPbehaviorRemoveAction];
+
+    const wrapper = factory({
+      propsData: {
+        actions,
+      },
+      mocks: {
+        $mq: 'xl',
+      },
+    });
+
+    await flushPromises();
+
+    const removeButton = wrapper.find('button.actions-panel-btn');
+    removeButton.trigger('click');
+
+    expect(fastPbehaviorRemoveAction.method).toHaveBeenCalledTimes(1);
   });
 
   it('Method into dropdown called after trigger click on action item button. Size \'xl\'', async () => {
