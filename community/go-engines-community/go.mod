@@ -61,7 +61,10 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-require github.com/go-chi/chi/v5 v5.2.4
+require (
+	github.com/go-chi/chi/v5 v5.2.4
+	github.com/gorilla/schema v1.4.1
+)
 
 require (
 	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect

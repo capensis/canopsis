@@ -11,7 +11,9 @@ import (
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	api "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/binding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/response"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -101,12 +103,15 @@ func main() {
 	}
 
 	s.APIConfigProvider = config.NewApiConfigProvider(s.Config, s.Logger)
-	_, uniTrans, err := api.RegisterValidators(s.SecurityConfig)
+	s.TimezoneConfigProvider = config.NewTimezoneConfigProvider(s.Config, s.Logger)
+	validator, uniTrans, err := api.RegisterValidators(s.SecurityConfig)
 	if err != nil {
 		s.Logger.Fatal().Err(err).Msg("cannot register validators")
 	}
 
+	s.Binder = binding.NewBinder(json.NewDecoder(), validator)
 	s.Responder = response.NewResponder(json.NewEncoder(), validation.NewErrorTranslator(uniTrans, s.Logger), s.Logger)
+	s.AuthorProvider = author.NewProvider(s.APIConfigProvider)
 	s.Enforcer, err = libsecurity.NewEnforcer(opts.ConfigDir, s.PrimaryDbClient)
 	if err != nil {
 		s.Logger.Fatal().Err(err).Msg("cannot create enforcer")
