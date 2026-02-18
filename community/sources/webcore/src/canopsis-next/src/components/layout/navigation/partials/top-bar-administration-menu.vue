@@ -57,7 +57,7 @@ export default {
 
     const maintenanceLinks = [
       {
-        icon: '$vuetify.icons.build_circle',
+        icon: 'build_circle',
         permission: USER_PERMISSIONS.technical.maintenance,
         handler: showToggleMaintenanceModeModal,
       },
@@ -71,7 +71,7 @@ export default {
     const communicationsLinks = [
       {
         route: { name: ROUTES_NAMES.adminBroadcastMessages },
-        icon: '$vuetify.icons.bullhorn',
+        icon: 'campaign',
         permission: USER_PERMISSIONS.technical.broadcastMessage,
       },
       {
@@ -82,10 +82,9 @@ export default {
     ];
 
     const generalLinks = [
-
       {
         route: { name: ROUTES_NAMES.adminHealthcheck },
-        icon: '$vuetify.icons.alt_route',
+        icon: 'alt_route',
         permission: USER_PERMISSIONS.technical.healthcheck,
       },
       {
@@ -95,12 +94,12 @@ export default {
       },
       {
         route: { name: ROUTES_NAMES.adminEventsRecords },
-        icon: '$vuetify.icons.mark_unread_chat_alt',
+        icon: 'mark_unread_chat_alt',
         permission: USER_PERMISSIONS.technical.eventsRecord,
       },
       {
         route: { name: ROUTES_NAMES.adminTemplateTesting },
-        icon: '$vuetify.icons.play_circle',
+        icon: 'play_circle',
         permission: USER_PERMISSIONS.technical.templateTesting,
       },
     ];
@@ -113,7 +112,7 @@ export default {
       },
       {
         route: { name: ROUTES_NAMES.adminCustomObjectsExternalDataTables },
-        icon: '$vuetify.icons.database_outlined',
+        icon: 'database',
         permission: USER_PERMISSIONS.technical.exploitation.externalDataTable,
       },
       {
@@ -123,7 +122,7 @@ export default {
       },
       {
         route: { name: ROUTES_NAMES.adminCustomObjectsIcons },
-        icon: '$vuetify.icons.square_circle',
+        icon: 'square_circle',
         title: tc('common.icon', 2),
         permission: USER_PERMISSIONS.technical.icon,
       },
@@ -167,7 +166,7 @@ export default {
       },
       {
         route: { name: ROUTES_NAMES.adminSettingsStorageSettings },
-        icon: '$vuetify.icons.storage',
+        icon: 'storage',
         permission: USER_PERMISSIONS.technical.storageSettings,
       },
     ]);
