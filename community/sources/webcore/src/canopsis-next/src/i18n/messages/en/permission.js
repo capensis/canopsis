@@ -66,6 +66,9 @@ export default {
     [USER_PERMISSIONS_GROUPS.technicalAdminCommunication]: 'Communication',
     [USER_PERMISSIONS_GROUPS.technicalAdminGeneral]: 'General',
     [USER_PERMISSIONS_GROUPS.technicalAdminAccess]: 'Access',
+    [USER_PERMISSIONS_GROUPS.technicalAdminMaintenance]: '@:common.maintenance',
+    [USER_PERMISSIONS_GROUPS.technicalAdminCustomObjects]: '@:layout.topbar.customObjects',
+    [USER_PERMISSIONS_GROUPS.technicalAdminSettings]: '@:common.settings',
     [USER_PERMISSIONS_GROUPS.technicalExploitation]: 'Exploitation',
     [USER_PERMISSIONS_GROUPS.technicalNotification]: 'Notifications',
     [USER_PERMISSIONS_GROUPS.technicalViewsandwidgets]: 'Views and widgets',
@@ -242,12 +245,6 @@ export default {
     [USER_PERMISSIONS.technical.planningExceptions]: 'Planning exceptions dates (Pbehavior)',
     [USER_PERMISSIONS.technical.planningReason]: 'Planning reason (Pbehavior)',
     [USER_PERMISSIONS.technical.planningType]: 'Planning type (Pbehavior)',
-    [USER_PERMISSIONS.technical.remediationConfiguration]: 'Instructions - configurations tab',
-    [USER_PERMISSIONS.technical.remediationInstruction]: 'Instructions - instructions tab',
-    [USER_PERMISSIONS.technical.remediationInstructionApprove]: 'Instructions - approve',
-    [USER_PERMISSIONS.technical.remediationJob]: 'Instructions - jobs tab',
-    [USER_PERMISSIONS.technical.remediationStatistic]: 'Instructions - remediation statistics tab',
-    [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Instructions - instructions stats tab',
     [USER_PERMISSIONS.technical.stateSetting]: 'State settings',
     [USER_PERMISSIONS.technical.storageSettings]: 'Storage settings',
     [USER_PERMISSIONS.technical.tag]: 'Tags management',
@@ -256,6 +253,8 @@ export default {
     [USER_PERMISSIONS.technical.viewImportExport]: 'Parameters - import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Template testing',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'External auth tokens',
+    [USER_PERMISSIONS.technical.externalDataTable]: 'External data',
+    [USER_PERMISSIONS.technical.entityInfoProperty]: 'Entity infos',
 
     /**
      * Technical Admin Access
@@ -267,6 +266,12 @@ export default {
     /**
      * Technical Admin Exploitation
      */
+    [USER_PERMISSIONS.technical.exploitation.remediationConfiguration]: 'Instructions - configurations tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstruction]: 'Instructions - instructions tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove]: 'Instructions - approve',
+    [USER_PERMISSIONS.technical.exploitation.remediationJob]: 'Instructions - jobs tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationStatistic]: 'Instructions - remediation statistics tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationinstructionStats]: 'Instructions - instructions stats tab',
     [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: 'Ticket declaration rules',
     [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: 'Dynamic information rules',
     [USER_PERMISSIONS.technical.exploitation.eventFilter]: 'Event filters',
@@ -278,8 +283,6 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.resolveRules]: 'Resolve rules',
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scenarios',
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Snmp rules',
-    [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'External data',
-    [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: 'Entity infos',
 
     /**
     * Technical Admin Notification

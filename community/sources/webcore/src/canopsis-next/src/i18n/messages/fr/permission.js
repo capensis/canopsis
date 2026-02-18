@@ -66,6 +66,9 @@ export default {
     [USER_PERMISSIONS_GROUPS.technicalAdminCommunication]: 'Communication',
     [USER_PERMISSIONS_GROUPS.technicalAdminGeneral]: 'Général',
     [USER_PERMISSIONS_GROUPS.technicalAdminAccess]: 'Accès',
+    [USER_PERMISSIONS_GROUPS.technicalAdminMaintenance]: '@:common.maintenance',
+    [USER_PERMISSIONS_GROUPS.technicalAdminCustomObjects]: '@:layout.topbar.customObjects',
+    [USER_PERMISSIONS_GROUPS.technicalAdminSettings]: '@:common.settings',
     [USER_PERMISSIONS_GROUPS.technicalExploitation]: 'Exploitation',
     [USER_PERMISSIONS_GROUPS.technicalNotification]: 'Notifications',
     [USER_PERMISSIONS_GROUPS.technicalViewsandwidgets]: 'Vues et widgets',
@@ -242,12 +245,6 @@ export default {
     [USER_PERMISSIONS.technical.planningExceptions]: 'Dates d\'exceptions de comportement périodique',
     [USER_PERMISSIONS.technical.planningReason]: 'Raisons de comportement périodique',
     [USER_PERMISSIONS.technical.planningType]: 'Type de comportement périodique',
-    [USER_PERMISSIONS.technical.remediationConfiguration]: 'Consignes - onglet consignes',
-    [USER_PERMISSIONS.technical.remediationInstruction]: 'Consignes - onglet instructions',
-    [USER_PERMISSIONS.technical.remediationInstructionApprove]: 'Consignes - approuver',
-    [USER_PERMISSIONS.technical.remediationJob]: 'Consignes - onglet tâches',
-    [USER_PERMISSIONS.technical.remediationStatistic]: 'Consignes - onglet statistiques de remédiation',
-    [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Consignes - onglet statistiques des consignes',
     [USER_PERMISSIONS.technical.stateSetting]: 'Paramètres de calcul d\'état/sévérité',
     [USER_PERMISSIONS.technical.storageSettings]: 'Paramètres de stockage',
     [USER_PERMISSIONS.technical.tag]: 'Gestion des tags',
@@ -256,6 +253,8 @@ export default {
     [USER_PERMISSIONS.technical.viewImportExport]: 'Paramètres - import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Test de modèle',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'Jetons d\'authentification externes',
+    [USER_PERMISSIONS.technical.externalDataTable]: 'Données externes',
+    [USER_PERMISSIONS.technical.entityInfoProperty]: 'Informations d\'entité',
 
     /**
      * Technical Admin Access
@@ -267,6 +266,12 @@ export default {
     /**
      * Technical Admin Exploitation
      */
+    [USER_PERMISSIONS.technical.exploitation.remediationConfiguration]: 'Consignes - onglet consignes',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstruction]: 'Consignes - onglet instructions',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove]: 'Consignes - approuver',
+    [USER_PERMISSIONS.technical.exploitation.remediationJob]: 'Consignes - onglet tâches',
+    [USER_PERMISSIONS.technical.exploitation.remediationStatistic]: 'Consignes - onglet statistiques de remédiation',
+    [USER_PERMISSIONS.technical.exploitation.remediationinstructionStats]: 'Consignes - onglet statistiques des consignes',
     [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: 'Règles de déclaration de ticket',
     [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: 'Règles d\'informations dynamiques',
     [USER_PERMISSIONS.technical.exploitation.eventFilter]: 'Filtres d\'événements',
@@ -278,8 +283,6 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.resolveRules]: 'Règles de résolution',
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scénarios',
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Règles SNMP',
-    [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'Données externes',
-    [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: 'Informations d\'entité',
 
     /**
      * Technical Admin Notification

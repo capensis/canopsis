@@ -247,7 +247,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USER_PERMISSIONS.technical.exploitation.externalDataTable,
+        id: USER_PERMISSIONS.technical.externalDataTable,
       },
     },
   },
@@ -258,7 +258,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USER_PERMISSIONS.technical.exploitation.entityInfoProperty,
+        id: USER_PERMISSIONS.technical.entityInfoProperty,
       },
     },
   },
