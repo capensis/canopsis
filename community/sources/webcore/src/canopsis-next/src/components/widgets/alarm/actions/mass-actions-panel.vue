@@ -76,6 +76,14 @@ export default {
       });
     },
 
+    alarmsForFastPbehavior() {
+      return this.alarmsForActions.filter(item => !!item.active_pbh_icon);
+    },
+
+    alarmsWithoutFastPbehavior() {
+      return this.alarmsForActions.filter(item => !item.active_pbh_icon);
+    },
+
     alarmsForActionsWithoutUnknown() {
       return this.alarmsForActions.filter(item => !isAlarmStatusUnknown(item));
     },
@@ -360,8 +368,12 @@ export default {
       this.showAddPbehaviorModalByAlarms(this.alarmsForActions);
     },
 
-    fastAddPbehavior() {
-      this.addFastPbehaviorByAlarms(this.alarmsForActions);
+    fastAddPbehavior(pbehaviorParameters = {}) {
+      this.addFastPbehaviorByAlarms(this.alarmsWithoutFastPbehavior, pbehaviorParameters);
+    },
+
+    fastRemovePbehavior() {
+      this.removeFastPbehaviorByAlarms(this.alarmsForFastPbehavior);
     },
 
     showCreateAssociateTicketModal() {

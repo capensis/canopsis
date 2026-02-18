@@ -157,7 +157,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       />
     </widget-settings-group-stub>
     <fast-pbehavior-form-stub
-      form="[object Object]"
+      form=""
     />
     <field-switcher-stub
       title="Snooze - note field required"
@@ -818,7 +818,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       />
     </widget-settings-group-stub>
     <fast-pbehavior-form-stub
-      form="[object Object]"
+      form=""
     />
     <field-switcher-stub
       title="Snooze - note field required"
@@ -1477,7 +1477,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       />
     </widget-settings-group-stub>
     <fast-pbehavior-form-stub
-      form="[object Object]"
+      form=""
     />
     <field-switcher-stub
       title="Snooze - note field required"
@@ -2136,7 +2136,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
       />
     </widget-settings-group-stub>
     <fast-pbehavior-form-stub
-      form="[object Object]"
+      form=""
     />
     <field-switcher-stub
       title="Snooze - note field required"
