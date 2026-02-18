@@ -4390,7 +4390,6 @@ definitions:
         type: integer
     required:
     - accept
-    - index
     type: object
   pattern.OptimizeJob:
     properties:
@@ -4400,7 +4399,23 @@ definitions:
         type: integer
       fail_reason:
         type: string
+      optimized_field_regexps:
+        items:
+          $ref: '#/definitions/pattern.OptimizedFieldRegexp'
+        type: array
+      original_pattern_count:
+        type: integer
+      original_pattern_ms:
+        type: integer
       status:
+        description: |-
+          Possible status values.
+            * `0` - Created
+            * `1` - Running
+            * `2` - Succeeded
+            * `3` - Failed
+            * `4` - Accepted
+            * `5` - Rejected
         type: integer
       suggestions:
         items:
@@ -4415,6 +4430,13 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+    type: object
+  pattern.OptimizedFieldRegexp:
+    properties:
+      field:
+        type: string
+      regexp:
+        type: string
     type: object
   pattern.Response:
     properties:

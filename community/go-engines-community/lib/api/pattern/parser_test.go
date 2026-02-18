@@ -262,6 +262,16 @@ func TestParseLiterals(t *testing.T) {
 			desc:          "Given two consecutive digit ranges - should return error due to group size limit",
 		},
 		{
+			pattern:       "^LOREM0.*IPSUM0$|^LOREM1_IPSUM1$|^LOREM2_IPSUM2$|^LOREM3_IPSUM3$|^LOREM4_IPSUM4$|^LOREM5_IPSUM5$|^LOREM6_IPSUM6$|^LOREM7_IPSUM7$|^LOREM8_IPSUM8$|^LOREM9_IPSUM9$|^LOREM10_IPSUM10$",
+			expectedError: true,
+			desc:          "Given anchored pattern with wildcard separator - should return error due to group size limit",
+		},
+		{
+			pattern:       "LOREM0.*LOREM1.*LOREM2.*LOREM3.*LOREM4.*LOREM5.*LOREM6.*LOREM7.*LOREM8.*LOREM9.*LOREM10",
+			expectedError: true,
+			desc:          "Given anchored pattern with wildcard separator - should return error due to group size limit",
+		},
+		{
 			pattern:  "\\.",
 			expected: [][]string{{"."}},
 			desc:     "Given escaped dot - should return dot as literal",
@@ -415,5 +425,33 @@ func TestParseLiterals(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func BenchmarkParseLiterals_10Groups_10Each(b *testing.B) {
+	pattern :=
+		"(G0_0|G0_1|G0_2|G0_3|G0_4|G0_5|G0_6|G0_7|G0_8|G0_9).*" +
+			"(G1_0|G1_1|G1_2|G1_3|G1_4|G1_5|G1_6|G1_7|G1_8|G1_9).*" +
+			"(G2_0|G2_1|G2_2|G2_3|G2_4|G2_5|G2_6|G2_7|G2_8|G2_9).*" +
+			"(G3_0|G3_1|G3_2|G3_3|G3_4|G3_5|G3_6|G3_7|G3_8|G3_9).*" +
+			"(G4_0|G4_1|G4_2|G4_3|G4_4|G4_5|G4_6|G4_7|G4_8|G4_9).*" +
+			"(G5_0|G5_1|G5_2|G5_3|G5_4|G5_5|G5_6|G5_7|G5_8|G5_9).*" +
+			"(G6_0|G6_1|G6_2|G6_3|G6_4|G6_5|G6_6|G6_7|G6_8|G6_9).*" +
+			"(G7_0|G7_1|G7_2|G7_3|G7_4|G7_5|G7_6|G7_7|G7_8|G7_9).*" +
+			"(G8_0|G8_1|G8_2|G8_3|G8_4|G8_5|G8_6|G8_7|G8_8|G8_9).*" +
+			"(G9_0|G9_1|G9_2|G9_3|G9_4|G9_5|G9_6|G9_7|G9_8|G9_9)"
+
+	tree, err := syntax.Parse(pattern, syntax.Perl)
+	if err != nil {
+		b.Fatalf("parse failed: %v", err)
+	}
+
+	b.ResetTimer()
+
+	for b.Loop() {
+		_, err = parseLiterals(tree)
+		if err != nil {
+			b.Fatalf("unexpected error: %v", err)
+		}
 	}
 }
