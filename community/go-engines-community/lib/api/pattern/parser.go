@@ -7,12 +7,14 @@ import (
 )
 
 const (
-	literalLenLimit = 255
-	groupSizeLimit  = 10
+	literalLenLimit  = 255
+	groupSizeLimit   = 10
+	groupNumberLimit = 10
 )
 
 var ErrTooLongLiteral = fmt.Errorf("literal is too long, max length is %d", literalLenLimit)
 var ErrTooLongGroup = fmt.Errorf("literal group is too long, max length is %d", groupSizeLimit)
+var ErrTooManyGroups = fmt.Errorf("too many literal groups, max number is %d", groupNumberLimit)
 var ErrRegexpNotSupported = errors.New("regexp is not supported")
 
 // parseLiterals extracts literal strings from a parsed regular expression syntax tree.
@@ -49,6 +51,10 @@ func parseLiterals(re *syntax.Regexp) ([][]string, error) {
 					// index = 0, because it seems not possible to have concatenations inside a concatenation,
 					// so there can't be more than a single group from concatenation's subexpressions.
 					literalGroups = append(literalGroups, subLiteralGroups[0])
+					if len(literalGroups) > groupNumberLimit {
+						return nil, ErrTooManyGroups
+					}
+
 					buildingGroup = true
 				} else {
 					var expandedGroup []string
@@ -99,6 +105,9 @@ func parseLiterals(re *syntax.Regexp) ([][]string, error) {
 
 			for i := len(literalGroups); i < len(subGroups); i++ {
 				literalGroups = append(literalGroups, []string{})
+				if len(literalGroups) > groupNumberLimit {
+					return nil, ErrTooManyGroups
+				}
 			}
 
 			for subGroupIdx, subGroup := range subGroups {
@@ -109,6 +118,9 @@ func parseLiterals(re *syntax.Regexp) ([][]string, error) {
 
 					uniqueLiteralsByGroup[subLiteral] = true
 					literalGroups[subGroupIdx] = append(literalGroups[subGroupIdx], subLiteral)
+					if len(literalGroups[subGroupIdx]) > groupSizeLimit {
+						return nil, ErrTooLongGroup
+					}
 				}
 			}
 		}

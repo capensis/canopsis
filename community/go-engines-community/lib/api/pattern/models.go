@@ -110,7 +110,14 @@ type Suggestion struct {
 }
 
 type OptimizeJob struct {
-	ID                    string                 `bson:"_id" json:"_id"`
+	ID string `bson:"_id" json:"_id"`
+	// Possible status values.
+	//   * `0` - Created
+	//   * `1` - Running
+	//   * `2` - Succeeded
+	//   * `3` - Failed
+	//   * `4` - Accepted
+	//   * `5` - Rejected
 	Status                int                    `bson:"status" json:"status"`
 	EntityPattern         pattern.Entity         `bson:"entity_pattern" json:"-"`
 	Created               datetime.CpsTime       `bson:"created" json:"-"`
