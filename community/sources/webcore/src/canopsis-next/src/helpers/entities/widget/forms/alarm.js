@@ -517,14 +517,6 @@ export const formToAlarmListChart = ({ type, title, parameters }) => {
 };
 
 /**
- * Convert form to alarm list fast pbehavior parameters
- *
- * @param {WidgetFastPbehaviorParametersForm[]} form
- * @return {WidgetFastPbehaviorParameters[]}
- */
-export const formToAlarmListFastPbehaviorParameters = (form = []) => removeKeyFromEntities(form);
-
-/**
  * Convert form parameters to alarm list widget parameters
  *
  * @param {AlarmListWidgetParametersForm} form
@@ -549,7 +541,7 @@ export const formToAlarmListWidgetParameters = (form) => {
     quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
     quickActions: formToWidgetQuickActions(form.quickActions),
     quickMassActions: formToWidgetQuickActions(form.quickMassActions),
-    fast_pbehaviors: formToAlarmListFastPbehaviorParameters(form.fast_pbehaviors),
+    fast_pbehaviors: removeKeyFromEntities(form.fast_pbehaviors),
   };
 
   parameters.usedAlarmProperties = convertAlarmWidgetParametersToActiveColumns(parameters);

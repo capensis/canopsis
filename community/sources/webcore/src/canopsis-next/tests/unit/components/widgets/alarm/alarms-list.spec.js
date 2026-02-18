@@ -21,6 +21,7 @@ import {
   LIVE_REPORTING_QUICK_RANGES,
   TIME_UNITS,
   USER_PERMISSIONS,
+  PBEHAVIOR_ORIGINS,
 } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
@@ -368,7 +369,7 @@ describe('alarms-list', () => {
           with_declare_tickets: true,
           with_links: true,
           opened: true,
-          pbh_origin: 'AlarmList',
+          pbh_origin: PBEHAVIOR_ORIGINS.alarmList,
         },
       },
     );
@@ -401,7 +402,7 @@ describe('alarms-list', () => {
           with_declare_tickets: true,
           with_links: true,
           opened: true,
-          pbh_origin: 'AlarmList',
+          pbh_origin: PBEHAVIOR_ORIGINS.alarmList,
         },
       },
     );
