@@ -9555,6 +9555,204 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /patterns-entities-optimize:
+    post:
+      tags:
+        - optimize-patterns
+      summary: Start entity pattern optimization
+      description: |
+        Start an asynchronous job that optimizes entity patterns by extracting literals
+        from regexp conditions on infos fields and suggesting faster exact match conditions
+        based on existing entity data.
+      operationId: optimize-patterns-optimize-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.OptimizeRequest'
+            examples:
+              optimize:
+                summary: Optimize a regexp condition
+                description: Optimize a regexp condition.
+                value: {
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "infos.environment",
+                        "field_type": "string",
+                        "cond": {
+                          "type": "regexp",
+                          "value": "prod|staging"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.OptimizeJob'
+              examples:
+                jobCreated:
+                  summary: Job created
+                  description: Optimization job has been created and is pending execution.
+                  value: {
+                    "_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                    "status": 0,
+                    "original_pattern_count": 0,
+                    "original_pattern_ms": 0
+                  }
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /patterns-entities-optimize/{id}:
+    get:
+      tags:
+        - optimize-patterns
+      summary: Get entity pattern optimization job status
+      description: |
+        Get the current status of an entity pattern optimization job by its ID.
+      operationId: optimize-patterns-optimize-status
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.OptimizeJob'
+              examples:
+                running:
+                  summary: Job running
+                  description: The optimization job is still in progress.
+                  value: {
+                    "_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                    "status": 1,
+                    "original_pattern_count": 0,
+                    "original_pattern_ms": 0
+                  }
+                completed:
+                  summary: Job completed with suggestions
+                  description: The optimization job completed and returned suggestions.
+                  value: {
+                    "_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                    "status": 2,
+                    "original_pattern_count": 1,
+                    "original_pattern_ms": 150,
+                    "suggestions": [
+                      {
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "infos.environment",
+                              "field_type": "string",
+                              "cond": {
+                                "type": "is_one_of",
+                                "value": ["prod", "staging"]
+                              }
+                            }
+                          ]
+                        ],
+                        "found_entities": 1,
+                        "difference": 0
+                      }
+                    ],
+                    "optimized_field_regexps": [
+                      {
+                        "field": "environment",
+                        "regexp": "prod|staging"
+                      }
+                    ]
+                  }
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - optimize-patterns
+      summary: Accept or reject an optimization suggestion
+      description: |
+        Accept or reject a suggestion from a completed entity pattern optimization job.
+        When accepting, provide the index of the suggestion to apply. When rejecting,
+        set accept to false.
+      operationId: optimize-patterns-optimize-accept
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.OptimizeAcceptRequest'
+            examples:
+              accept:
+                summary: Accept first suggestion
+                description: Accept the first suggestion (index 0) from the optimization job.
+                value: {
+                  "index": 0,
+                  "accept": true
+                }
+              acceptSecond:
+                summary: Accept second suggestion
+                description: Accept the second suggestion (index 1) from the optimization job.
+                value: {
+                  "index": 1,
+                  "accept": true
+                }
+              reject:
+                summary: Reject suggestions
+                description: Reject all suggestions from the optimization job.
+                value: {
+                  "accept": false
+                }
+        required: true
+      responses:
+        204:
+          description: No Content
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - optimize-patterns
+      summary: Cancel an optimization job
+      description: |
+        Cancel a running entity pattern optimization job.
+        Only jobs with status Created (0) or Running (1) can be cancelled.
+        Completed, accepted, or rejected jobs cannot be cancelled.
+      operationId: optimize-patterns-optimize-cancel
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: No Content
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /patterns:
     get:
       tags:

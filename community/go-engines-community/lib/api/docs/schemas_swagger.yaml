@@ -1825,6 +1825,8 @@ definitions:
         items:
           type: string
         type: array
+      negative_entity_pattern:
+        type: string
       no_events:
         type: boolean
       search:
@@ -4380,6 +4382,62 @@ definitions:
         description: 'FieldType is only defined for custom fields, ex: infos.'
         type: string
     type: object
+  pattern.OptimizeAcceptRequest:
+    properties:
+      accept:
+        type: boolean
+      index:
+        type: integer
+    required:
+    - accept
+    type: object
+  pattern.OptimizeJob:
+    properties:
+      _id:
+        type: string
+      accepted_suggestion:
+        type: integer
+      fail_reason:
+        type: string
+      optimized_field_regexps:
+        items:
+          $ref: '#/definitions/pattern.OptimizedFieldRegexp'
+        type: array
+      original_pattern_count:
+        type: integer
+      original_pattern_ms:
+        type: integer
+      status:
+        description: |-
+          Possible status values.
+            * `0` - Created
+            * `1` - Running
+            * `2` - Succeeded
+            * `3` - Failed
+            * `4` - Accepted
+            * `5` - Rejected
+        type: integer
+      suggestions:
+        items:
+          $ref: '#/definitions/pattern.Suggestion'
+        type: array
+    type: object
+  pattern.OptimizeRequest:
+    properties:
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+    type: object
+  pattern.OptimizedFieldRegexp:
+    properties:
+      field:
+        type: string
+      regexp:
+        type: string
+    type: object
   pattern.Response:
     properties:
       _id:
@@ -4420,6 +4478,19 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+    type: object
+  pattern.Suggestion:
+    properties:
+      difference:
+        type: integer
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      found_entities:
+        type: integer
     type: object
   pbehavior.BulkConnectorCreateRequestItem:
     properties:
