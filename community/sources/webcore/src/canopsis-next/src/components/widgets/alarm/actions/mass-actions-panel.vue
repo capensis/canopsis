@@ -172,9 +172,7 @@ export default {
             method: () => this.fastAddPbehavior(pbehaviorParameters),
           }));
         } else {
-          fastPbehaviorAction.method = () => (
-            this.addFastPbehaviorByAlarms(this.alarmsWithoutFastPbehavior, fastPbehaviorsParameters[0])
-          );
+          fastPbehaviorAction.method = () => this.fastAddPbehavior(fastPbehaviorsParameters[0]);
         }
 
         actions.push(fastPbehaviorAction);
