@@ -295,6 +295,8 @@ export default {
         return {
           is: this.valueField.is,
           props: {
+            disabled: this.disabled,
+
             ...valueProps,
             ...valueFieldProps,
           },
