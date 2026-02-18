@@ -1356,3 +1356,8 @@ export const DEFAULT_ALARM_MORE_INFO_TEMPLATE = '{{!--\n'
   + '    </tr>\n'
   + '  </tbody></table>\n'
   + '</div>\n';
+
+/**
+ * Timeout to wait for the pbehavior to be created or removed
+ */
+export const ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT = 1000;

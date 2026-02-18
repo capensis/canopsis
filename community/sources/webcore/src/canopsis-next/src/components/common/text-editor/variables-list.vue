@@ -86,32 +86,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.variables-list {
-  position: relative;
-
-  .v-subheader {
-    font-size: 16px;
-    font-weight: 700;
-    color: inherit;
-  }
-
-  &__progress {
-    position: sticky;
-    top: 0;
-    left: 0;
-    width: 100%;
-  }
-
-  &__append-item {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 48px;
-    pointer-events: none;
-  }
-}
-</style>

@@ -76,7 +76,7 @@ export default {
       });
     },
 
-    alarmsForFastPbehavior() {
+    alarmsWithFastPbehavior() {
       return this.alarmsForActions.filter(item => !!item.active_pbh_icon);
     },
 
@@ -148,6 +148,41 @@ export default {
       return this.widget.parameters.isActionsAllowWithOkState;
     },
 
+    fastPbehaviorActions() {
+      const actions = [];
+
+      if (this.alarmsWithFastPbehavior.length) {
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove,
+          title: this.$t('alarm.actions.titles.fastPbehaviorRemove'),
+          method: this.fastRemovePbehavior,
+        });
+      }
+
+      if (this.alarmsWithoutFastPbehavior.length) {
+        const fastPbehaviorsParameters = this.widget.parameters.fast_pbehaviors ?? [];
+        const fastPbehaviorAction = {
+          type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
+          title: this.$t('alarm.actions.titles.fastPbehaviorAdd'),
+        };
+
+        if (fastPbehaviorsParameters.length > 1) {
+          fastPbehaviorAction.items = fastPbehaviorsParameters.map(pbehaviorParameters => ({
+            title: pbehaviorParameters.name_prefix,
+            method: () => this.fastAddPbehavior(pbehaviorParameters),
+          }));
+        } else {
+          fastPbehaviorAction.method = () => (
+            this.addFastPbehaviorByAlarms(this.alarmsWithoutFastPbehavior, fastPbehaviorsParameters[0])
+          );
+        }
+
+        actions.push(fastPbehaviorAction);
+      }
+
+      return actions;
+    },
+
     actions() {
       const unCancelAction = {
         type: ALARM_LIST_ACTIONS_TYPES.unCancel,
@@ -159,11 +194,8 @@ export default {
 
       if (this.hasOpenedAlarms) {
         actions.push(
-          {
-            type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
-            title: this.$t('alarm.actions.titles.fastPbehaviorAdd'),
-            method: this.fastAddPbehavior,
-          },
+          ...this.fastPbehaviorActions,
+
           {
             type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
             title: this.$t('alarm.actions.titles.pbehavior'),
@@ -373,7 +405,7 @@ export default {
     },
 
     fastRemovePbehavior() {
-      this.removeFastPbehaviorByAlarms(this.alarmsForFastPbehavior);
+      this.removeFastPbehaviorByAlarms(this.alarmsWithFastPbehavior);
     },
 
     showCreateAssociateTicketModal() {
