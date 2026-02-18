@@ -68,12 +68,9 @@ export default {
     message: 'Allows you to define the rules for associating links with alarms',
   },
 
-  [USER_PERMISSIONS.technical.exploitation.externalDataTable]: {
-    title: 'External data',
-  },
-
-  [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: {
-    title: 'Entity infos',
+  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
+    title: 'Instructions',
+    message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
   },
 
   /**
@@ -164,6 +161,12 @@ export default {
   [USER_PERMISSIONS.technical.widgetTemplate]: {
     title: 'Widget templates',
   },
+  [USER_PERMISSIONS.technical.externalDataTable]: {
+    title: 'External data',
+  },
+  [USER_PERMISSIONS.technical.entityInfoProperty]: {
+    title: 'Entity infos',
+  },
 
   /**
    * Grouped admin
@@ -171,10 +174,6 @@ export default {
   [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
     title: 'Planning',
     message: 'The Canopsis Planning Administration functionality can be used for the periodic behavior types customization.',
-  },
-  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
-    title: 'Instructions',
-    message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
   },
 
   /**

@@ -69,12 +69,9 @@ export default {
     message: 'Permet de définir les règles d\'association de liens aux alarmes',
   },
 
-  [USER_PERMISSIONS.technical.exploitation.externalDataTable]: {
-    title: 'Données externes',
-  },
-
-  [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: {
-    title: 'Informations d\'entité',
+  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
+    title: 'Consignes',
+    message: 'Permet de créer des consignes de remédiation, avec ou sans job, pour corriger des situations.',
   },
 
   /**
@@ -165,6 +162,12 @@ export default {
   [USER_PERMISSIONS.technical.widgetTemplate]: {
     title: 'Modèles de widget',
   },
+  [USER_PERMISSIONS.technical.externalDataTable]: {
+    title: 'Données externes',
+  },
+  [USER_PERMISSIONS.technical.entityInfoProperty]: {
+    title: 'Informations d\'entité',
+  },
 
   /**
    * Grouped admin
@@ -172,10 +175,6 @@ export default {
   [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
     title: 'Planification',
     message: 'Permet d\'administrer la planification dans Canopsis et de personnaliser les types de comportements périodiques.',
-  },
-  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
-    title: 'Consignes',
-    message: 'Permet de créer des consignes de remédiation, avec ou sans job, pour corriger des situations.',
   },
 
   /**
