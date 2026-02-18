@@ -145,7 +145,7 @@
         />
       </widget-settings-group>
 
-      <fast-pbehavior-form v-model="form.parameters" />
+      <fast-pbehavior-form v-model="form.parameters.fast_pbehaviors" />
 
       <field-switcher
         v-model="form.parameters.isSnoozeNoteRequired"
