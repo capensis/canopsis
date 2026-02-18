@@ -121,7 +121,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top correctly 1`] = `
   class="container text-center py-1"
 >
   <ul
-    class="v-pagination"
+    class="v-pagination theme--light"
   >
     <li>
       <button
@@ -163,7 +163,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled buttons 
   class="container text-center py-1"
 >
   <ul
-    class="v-pagination"
+    class="v-pagination theme--light"
   >
     <li>
       <button
@@ -207,7 +207,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled next but
   class="container text-center py-1"
 >
   <ul
-    class="v-pagination"
+    class="v-pagination theme--light"
   >
     <li>
       <button
@@ -250,7 +250,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled prev but
   class="container text-center py-1"
 >
   <ul
-    class="v-pagination"
+    class="v-pagination theme--light"
   >
     <li>
       <button
@@ -425,7 +425,7 @@ exports[`c-pagination Renders \`c-pagination\` with default props on the top cor
   class="container text-center py-1"
 >
   <ul
-    class="v-pagination"
+    class="v-pagination theme--light"
   >
     <li>
       <button

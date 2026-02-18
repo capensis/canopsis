@@ -2,6 +2,7 @@ import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
 import VueClipboard from 'vue-clipboard2';
 import PortalVue from 'portal-vue';
+import { Plugin as VueFragment } from 'vue-fragment';
 
 import { MODALS } from '@/constants';
 import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
@@ -31,7 +32,7 @@ import * as sidebarsComponents from '@/components/sidebars';
 export const bootstrapApplicationPlugins = (Vue) => {
   Vue.use(PortalVue);
   Vue.use(Filters);
-
+  Vue.use(VueFragment);
   Vue.use(VueFullScreen);
 
   Vue.use(VueMq, {
@@ -57,6 +58,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createWidgetTemplate]: { maxWidth: 920 },
       [MODALS.alarmsList]: { maxWidth: '95%' },
       [MODALS.entitiesList]: { maxWidth: '95%' },
+      [MODALS.entitiesComparison]: { maxWidth: 1100 },
       [MODALS.createFilter]: { maxWidth: 1100 },
       [MODALS.textEditor]: { maxWidth: 900, persistent: true },
       [MODALS.textEditorWithTemplate]: { maxWidth: 900, persistent: true },

@@ -69,7 +69,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.serviceWeather]: 'view_module',
   [WIDGET_TYPES.statsCalendar]: 'calendar_today',
   [WIDGET_TYPES.text]: 'view_headline',
-  [WIDGET_TYPES.counter]: '$vuetify.icons.numbers',
+  [WIDGET_TYPES.counter]: 'numbers',
   [WIDGET_TYPES.testingWeather]: 'view_module',
   [WIDGET_TYPES.map]: 'location_on',
   [WIDGET_TYPES.barChart]: 'stacked_bar_chart',
@@ -79,8 +79,8 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.numbers]: 'functions',
   [WIDGET_TYPES.userStatistics]: 'perm_identity',
   [WIDGET_TYPES.alarmStatistics]: 'notification_important',
-  [WIDGET_TYPES.availability]: '$vuetify.icons.published_with_changes',
-  [WIDGET_TYPES.externalDataTable]: '$vuetify.icons.database_outlined',
+  [WIDGET_TYPES.availability]: 'published_with_changes',
+  [WIDGET_TYPES.externalDataTable]: 'database',
 
   ...featuresService.get('constants.WIDGET_ICONS'),
 };
