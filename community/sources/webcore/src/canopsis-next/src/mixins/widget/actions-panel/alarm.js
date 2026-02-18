@@ -444,7 +444,7 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
-    async addFastPbehaviorByAlarms(alarms) {
+    async addFastPbehaviorByAlarms(alarms, pbehaviorParameters = {}) {
       try {
         this.setActionPending(ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd, true);
 
@@ -454,8 +454,8 @@ export const widgetActionsPanelAlarmMixin = {
           return acc;
         }, {});
 
-        const { fastPbehaviorNamePrefix: namePrefix = '' } = this.widget.parameters;
-        let { fastPbehaviorType: type, fastPbehaviorReason: reason } = this.widget.parameters;
+        const { name_prefix: namePrefix = '' } = pbehaviorParameters;
+        let { type, reason } = pbehaviorParameters;
 
         /**
          * Select first pause default type if default type is empty
@@ -485,6 +485,28 @@ export const widgetActionsPanelAlarmMixin = {
           origin: PBEHAVIOR_ORIGINS.alarmList,
         });
 
+        await this.afterSubmit();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd, false);
+      }
+    },
+
+    async removeFastPbehaviorByAlarms(alarms) {
+      try {
+        /**
+         * The same action type as fast pbehavior add
+         */
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd, true);
+
+        const entitiesMap = alarms.reduce((acc, { entity }) => {
+          acc[entity._id] = entity;
+
+          return acc;
+        }, {});
+
+        await this.removeDowntimePbehavior(Object.values(entitiesMap));
         await this.afterSubmit();
       } catch (err) {
         console.error(err);

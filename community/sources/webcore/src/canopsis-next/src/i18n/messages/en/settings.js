@@ -67,6 +67,7 @@ export default {
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline',
   isCorrelationEnabled: 'Is correlation enabled?',
   fastPbehavior: 'Fast pbehavior',
+  fastPbehaviorDescription: 'User will be able to select from these types on click Fast pbehavior',
   duration: 'Duration',
   tstop: 'End date',
   periodsNumber: 'Number of steps',
