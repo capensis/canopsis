@@ -3,6 +3,7 @@ package che
 import (
 	"context"
 	"fmt"
+	"runtime/debug"
 	"testing"
 	"time"
 
@@ -215,6 +216,7 @@ func benchmarkMessageProcessorWithConfig(
 
 	defer func() {
 		if r := recover(); r != nil {
+			b.Log(debug.Stack())
 			b.Fatal("benchmark failed due to panic:", r)
 		}
 	}()
