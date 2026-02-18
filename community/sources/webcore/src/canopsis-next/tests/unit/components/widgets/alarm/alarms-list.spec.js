@@ -368,6 +368,7 @@ describe('alarms-list', () => {
           with_declare_tickets: true,
           with_links: true,
           opened: true,
+          pbh_origin: 'AlarmList',
         },
       },
     );
@@ -400,6 +401,7 @@ describe('alarms-list', () => {
           with_declare_tickets: true,
           with_links: true,
           opened: true,
+          pbh_origin: 'AlarmList',
         },
       },
     );
