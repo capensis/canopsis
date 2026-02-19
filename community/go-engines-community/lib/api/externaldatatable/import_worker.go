@@ -232,14 +232,8 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 	job := ImportJob{}
 	err := w.dbImportCollection.FindOneAndUpdate(ctx,
 		bson.M{
-			"_id": id,
-			"$or": []bson.M{
-				{"status": ImportStatusCreated},
-				{
-					"status":    ImportStatusRunning,
-					"last_ping": bson.M{"$lt": time.Now().Add(-2 * w.pingInterval).Unix()},
-				},
-			},
+			"_id":    id,
+			"status": bson.M{"$in": bson.A{ImportStatusCreated, ImportStatusRunning}},
 		},
 		bson.M{"$set": bson.M{
 			"status":    ImportStatusRunning,
@@ -732,7 +726,7 @@ func (w *importWorker) ProcessAbandonedJobs(ctx context.Context) {
 		case <-ticker.C:
 			now := datetime.NewCpsTime()
 			cursor, err := w.dbImportCollection.Find(ctx, bson.M{
-				"status":    ImportStatusRunning,
+				"status":    bson.M{"$in": bson.A{ImportStatusCreated, ImportStatusRunning}},
 				"last_ping": bson.M{"$lt": now.Time.Add(-2 * w.pingInterval).Unix()},
 			})
 			if err != nil {

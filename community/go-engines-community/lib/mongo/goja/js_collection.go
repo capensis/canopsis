@@ -43,6 +43,16 @@ func (c *jsCollection) CreateIndex(ctx context.Context, orderedKeys, opts, commi
 
 	dbIndexOpts := options.Index()
 	err := transformOptions(c.vm, opts, dbIndexOpts, map[string]mappingFunc{
+		"default_language": func(v any) error {
+			s, ok := v.(string)
+			if !ok {
+				return errors.New("invalid type for default_language")
+			}
+
+			dbIndexOpts.SetDefaultLanguage(s)
+
+			return nil
+		},
 		"expireAfterSeconds": func(v any) error {
 			i, ok := v.(int64)
 			if !ok {
