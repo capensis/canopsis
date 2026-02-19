@@ -1,8 +1,5 @@
 import { COLORS } from '@/config';
 
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
-
 import { WIDGET_COLUMNS_GROUPS, INFOS_NAME_VARIABLE } from './common';
 import { PBEHAVIOR_TYPE_TYPES } from './pbehavior';
 
@@ -170,7 +167,7 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = { // TODO: remove it
   [EVENT_ENTITY_TYPES.webhookStart]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookComplete]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookFail]: 'report_problem',
-  [EVENT_ENTITY_TYPES.assocTicket]: '$vuetify.icons.sticky_note_2',
+  [EVENT_ENTITY_TYPES.assocTicket]: 'sticky_note_2',
   [EVENT_ENTITY_TYPES.delete]: 'delete',
   [EVENT_ENTITY_TYPES.snooze]: 'alarm',
   [EVENT_ENTITY_TYPES.validate]: 'thumb_up',
@@ -556,11 +553,11 @@ export const ENTITY_TYPES_ICONS = {
   [ENTITY_TYPES.component]: 'developer_board',
   [ENTITY_TYPES.connector]: 'perm_identity',
   [ENTITY_TYPES.resource]: 'perm_identity',
-  [ENTITY_TYPES.service]: '$vuetify.icons.engineering',
+  [ENTITY_TYPES.service]: 'engineering',
 };
 
 export const ENTITY_TYPES_ICONS_FOR_CYTOSCAPE = {
   ...ENTITY_TYPES_ICONS,
 
-  [ENTITY_TYPES.service]: engineeringIcon,
+  [ENTITY_TYPES.service]: 'engineering',
 };

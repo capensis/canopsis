@@ -116,7 +116,7 @@ export default {
       return [
         {
           route: { name: ROUTES_NAMES.adminEventsRecords },
-          icon: '$vuetify.icons.mark_unread_chat_alt',
+          icon: 'mark_unread_chat_alt',
           permission: USER_PERMISSIONS.technical.eventsRecord,
         },
         {
@@ -150,7 +150,7 @@ export default {
           permission: USER_PERMISSIONS.technical.map,
         },
         {
-          icon: '$vuetify.icons.build_circle',
+          icon: 'build_circle',
           permission: USER_PERMISSIONS.technical.maintenance,
           handler: this.showToggleMaintenanceModeModal,
         },
@@ -161,12 +161,12 @@ export default {
         },
         {
           route: { name: ROUTES_NAMES.adminHealthcheck },
-          icon: '$vuetify.icons.alt_route',
+          icon: 'alt_route',
           permission: USER_PERMISSIONS.technical.healthcheck,
         },
         {
           route: { name: ROUTES_NAMES.adminStorageSettings },
-          icon: '$vuetify.icons.storage',
+          icon: 'storage',
           permission: USER_PERMISSIONS.technical.storageSettings,
         },
         {

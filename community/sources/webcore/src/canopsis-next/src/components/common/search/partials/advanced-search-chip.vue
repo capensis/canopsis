@@ -77,8 +77,8 @@
                 />
                 <span v-else>
                   <c-simple-tooltip v-if="icon" :content="icon.tooltip" top>
-                    <template #activator="{ on: iconActivatorOn }">
-                      <v-icon class="mr-2" small v-on="iconActivatorOn">{{ icon.icon }}</v-icon>
+                    <template #activator="{ on: secondTooltipOn }">
+                      <v-icon class="mr-2" small v-on="secondTooltipOn">{{ icon.icon }}</v-icon>
                     </template>
                   </c-simple-tooltip>
                   {{ chipText }}

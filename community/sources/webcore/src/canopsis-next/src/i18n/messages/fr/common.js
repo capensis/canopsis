@@ -28,6 +28,7 @@ export default {
   submit: 'Soumettre',
   cancel: 'Annuler',
   continue: 'Continuer',
+  tryAgain: 'Réessayer',
   stop: 'Fin',
   options: 'Options',
   type: 'Type',

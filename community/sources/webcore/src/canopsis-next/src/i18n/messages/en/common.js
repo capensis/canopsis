@@ -28,6 +28,7 @@ export default {
   submit: 'Submit',
   cancel: 'Cancel',
   continue: 'Continue',
+  tryAgain: 'Try again',
   stop: 'Stop',
   options: 'Options',
   type: 'Type',

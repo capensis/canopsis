@@ -25,6 +25,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
@@ -73,10 +74,11 @@ const (
 	websocketReadBufferSize  = 1024
 	websocketWriteBufferSize = 2048
 
-	jobKeyExport        = "export"
-	jobKeyImport        = "import"
-	jobKeyExtDataImport = "extdataimport"
-	jobKeyPbhPatterns   = "pbhpatterns"
+	jobKeyExport          = "export"
+	jobKeyImport          = "import"
+	jobKeyExtDataImport   = "extdataimport"
+	jobKeyPbhPatterns     = "pbhpatterns"
+	jobKeyPatternOptimize = "patternoptimize"
 )
 
 //go:embed swaggerui/*
@@ -326,6 +328,14 @@ func Default(
 	workersRunner.AddJobExecutor(jobKeyExtDataImport, func(ctx context.Context, id string) error {
 		return exdataImportWorker.ProcessJob(ctx, id)
 	})
+
+	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
+
+	patternStore := pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger)
+	patternOptimizeWorker := pattern.NewOptimizeWorker(patternStore, primaryDbClient, workers.NewJobPublisher(jobKeyPatternOptimize, amqpPublisher), patternfields.NewTransformer(primaryDbClient), logger)
+	workersRunner.AddJobExecutor(jobKeyPatternOptimize, func(ctx context.Context, id string) error {
+		return patternOptimizeWorker.ProcessJob(ctx, id)
+	})
 	apiPbhStore := pbehavior.NewStore(primaryDbClient, secondaryDbClient, lockRedisSession, pbhEntityTypeResolver,
 		libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
 		services.TimezoneConfigProvider, authorProvider, patternfields.NewTransformer(primaryDbClient),
@@ -416,8 +426,6 @@ func Default(
 		logger,
 	)
 
-	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
-
 	api.AddRouter(func(router *gin.Engine) error {
 		router.Use(middleware.Logger(services.ErrorResponder, logger, flags.LogBody, flags.LogBodyOnError))
 		router.Use(middleware.Recovery(logger))
@@ -472,6 +480,7 @@ func Default(
 			event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector),
 			securityConfig,
 			exdataImportWorker,
+			patternOptimizeWorker,
 			services.NotificationStore,
 			services.ExternalDataContainer,
 			tplTestTypePermMapping,
@@ -613,6 +622,9 @@ func Default(
 	})
 	api.AddWorker("data_extdata_import_delete_old", func(ctx context.Context) {
 		exdataImportWorker.DeleteOldJobs(ctx)
+	})
+	api.AddWorker("pattern_optimize_abandoned", func(ctx context.Context) {
+		patternOptimizeWorker.ProcessAbandonedJobs(ctx)
 	})
 	api.AddWorker("healthcheck", func(ctx context.Context) {
 		healthcheckStore.Load(ctx)

@@ -44,6 +44,7 @@ import {
   patternRuleToForm,
 } from '@/helpers/entities/pattern/form';
 import { isPickEqual } from '@/helpers/collection';
+import { formToPrimitiveArray } from '@/helpers/entities/shared/form';
 
 /**
  * Adds prefix to all keys of an attributes map.
@@ -251,6 +252,10 @@ export const advancedSearchRuleItemToFormItem = (advancedSearchRuleItem = {}) =>
       from: formItem.range.from,
       to: formItem.range.to,
     };
+  }
+
+  if (isArrayOperator(formItem.operator)) {
+    formItem.value = formToPrimitiveArray(formItem.value);
   }
 
   formItem.range = formItem.range.type;
