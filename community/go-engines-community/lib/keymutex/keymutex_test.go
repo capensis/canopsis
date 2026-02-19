@@ -53,13 +53,11 @@ func TestKeyMutex_Lock_GivenMultipleLocks_ShouldWaitUnlockBeforeNextLock(t *test
 	go func() {
 		mx.Lock(key)
 		wg := sync.WaitGroup{}
-		wg.Add(1)
 
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			mx.Lock(key)
 			lockTime = time.Now()
-		}()
+		})
 
 		time.Sleep(time.Millisecond * 100)
 		err = mx.Unlock(key)
@@ -203,10 +201,8 @@ func TestKeyMutex_Unlock_GivenMoreLocksThenUnlocks_ShouldReturnError(t *testing.
 		mx.Lock(key)
 
 		wg := sync.WaitGroup{}
-		wg.Add(1)
 
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			mx.Lock(key)
 			firstUnlockErr := mx.Unlock(key)
 			if firstUnlockErr == nil {
@@ -214,7 +210,7 @@ func TestKeyMutex_Unlock_GivenMoreLocksThenUnlocks_ShouldReturnError(t *testing.
 			} else {
 				t.Errorf("expected no error but got %v", firstUnlockErr)
 			}
-		}()
+		})
 
 		time.Sleep(time.Millisecond * 100)
 		unlockErr := mx.Unlock(key)

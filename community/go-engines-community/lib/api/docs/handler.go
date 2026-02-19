@@ -1,22 +1,23 @@
 package docs
 
 import (
+	"maps"
 	"net/http"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"github.com/gin-gonic/gin"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 func GetHandler(errorResponder httperror.Responder, generatedSchemasContent []byte, contents ...[]byte) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		var mergedContent map[string]interface{}
+		var mergedContent map[string]any
 
 		for _, content := range contents {
 			replacedSchemasContent := strings.ReplaceAll(string(content), "schemas_swagger.yaml#/definitions/", "#/components/schemas/")
-			var parsed map[string]interface{}
+			var parsed map[string]any
 			err := yaml.Unmarshal([]byte(replacedSchemasContent), &parsed)
 			if err != nil {
 				errorResponder.Respond(c, err)
@@ -28,23 +29,19 @@ func GetHandler(errorResponder httperror.Responder, generatedSchemasContent []by
 				continue
 			}
 
-			if paths, ok := parsed["paths"].(map[string]interface{}); ok {
-				if mergedPaths, ok := mergedContent["paths"].(map[string]interface{}); ok {
-					for k, v := range paths {
-						mergedPaths[k] = v
-					}
+			if paths, ok := parsed["paths"].(map[string]any); ok {
+				if mergedPaths, ok := mergedContent["paths"].(map[string]any); ok {
+					maps.Copy(mergedPaths, paths)
 				} else {
 					mergedContent["paths"] = paths
 				}
 			}
 
-			if components, ok := parsed["components"].(map[string]interface{}); ok {
-				if schemas, ok := components["schemas"].(map[string]interface{}); ok {
-					if mergedComponents, ok := mergedContent["components"].(map[string]interface{}); ok {
-						if mergedSchemas, ok := mergedComponents["schemas"].(map[string]interface{}); ok {
-							for k, v := range schemas {
-								mergedSchemas[k] = v
-							}
+			if components, ok := parsed["components"].(map[string]any); ok {
+				if schemas, ok := components["schemas"].(map[string]any); ok {
+					if mergedComponents, ok := mergedContent["components"].(map[string]any); ok {
+						if mergedSchemas, ok := mergedComponents["schemas"].(map[string]any); ok {
+							maps.Copy(mergedSchemas, schemas)
 						} else {
 							mergedComponents["schemas"] = schemas
 						}
@@ -54,26 +51,24 @@ func GetHandler(errorResponder httperror.Responder, generatedSchemasContent []by
 		}
 
 		replacedSchemasContent := strings.ReplaceAll(string(generatedSchemasContent), "#/definitions/", "#/components/schemas/")
-		var parsed map[string]interface{}
+		var parsed map[string]any
 		err := yaml.Unmarshal([]byte(replacedSchemasContent), &parsed)
 		if err != nil {
 			errorResponder.Respond(c, err)
 
 			return
 		}
-		if schemas, ok := parsed["definitions"].(map[string]interface{}); ok {
-			if mergedComponents, ok := mergedContent["components"].(map[string]interface{}); ok {
-				if mergedSchemas, ok := mergedComponents["schemas"].(map[string]interface{}); ok {
-					for k, v := range schemas {
-						mergedSchemas[k] = v
-					}
+		if schemas, ok := parsed["definitions"].(map[string]any); ok {
+			if mergedComponents, ok := mergedContent["components"].(map[string]any); ok {
+				if mergedSchemas, ok := mergedComponents["schemas"].(map[string]any); ok {
+					maps.Copy(mergedSchemas, schemas)
 				} else {
 					mergedComponents["schemas"] = schemas
 				}
 			}
 		}
 
-		if info, ok := mergedContent["info"].(map[string]interface{}); ok {
+		if info, ok := mergedContent["info"].(map[string]any); ok {
 			buildInfo := canopsis.GetBuildInfo()
 
 			info["version"] = buildInfo.Version

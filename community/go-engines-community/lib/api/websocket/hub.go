@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"reflect"
 	"runtime"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -148,9 +149,7 @@ type userConn struct {
 
 func (h *hub) Start(ctx context.Context) {
 	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		interval := h.configProvider.Get().WebsocketPingInterval
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
@@ -167,11 +166,9 @@ func (h *hub) Start(ctx context.Context) {
 				}
 			}
 		}
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		ticker := time.NewTicker(h.checkAuthTokenInterval)
 		defer ticker.Stop()
 
@@ -185,7 +182,7 @@ func (h *hub) Start(ctx context.Context) {
 				h.disconnectConnections(connsToDisconnect...)
 			}
 		}
-	}()
+	})
 
 	wg.Wait()
 	h.stop()
@@ -538,10 +535,8 @@ func (h *hub) join(ctx context.Context, connID, room string, data any) bool {
 	onJoin, id := h.getOnJoin(room)
 	h.roomsMx.Lock()
 	defer h.roomsMx.Unlock()
-	for _, v := range h.rooms[room] {
-		if v == connID {
-			return false
-		}
+	if slices.Contains(h.rooms[room], connID) {
+		return false
 	}
 
 	if onJoin != nil {
@@ -1173,15 +1168,7 @@ func (h *hub) removeConnsFromRooms(connIDs []string) {
 		filteredConns := make([]string, 0, len(conns))
 		onLeave, id := h.getOnLeave(room)
 		for _, connID := range conns {
-			found := false
-			for _, toRemove := range connIDs {
-				if connID == toRemove {
-					found = true
-					break
-				}
-			}
-
-			if found {
+			if slices.Contains(connIDs, connID) {
 				if onLeave != nil {
 					err := onLeave(connID, id)
 					if err != nil {

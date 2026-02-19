@@ -1858,7 +1858,8 @@ definitions:
         type: string
       name:
         type: string
-      value: {}
+      value:
+        type: any
     type: object
   entity.InfoRequest:
     properties:
@@ -1868,7 +1869,8 @@ definitions:
       name:
         maxLength: 255
         type: string
-      value: {}
+      value:
+        type: any
     required:
     - name
     type: object
@@ -2689,7 +2691,8 @@ definitions:
         type: string
       type:
         type: string
-      value: {}
+      value:
+        type: any
     type: object
   eventfilter.BulkDeleteRequestItem:
     properties:
@@ -6208,7 +6211,8 @@ definitions:
     properties:
       description:
         type: string
-      value: {}
+      value:
+        type: any
     type: object
   serviceweather.PbhTypeCounter:
     properties:
@@ -6788,7 +6792,8 @@ definitions:
         type: string
       name:
         type: string
-      value: {}
+      value:
+        type: any
     type: object
   user.BulkDeleteRequestItem:
     properties:
@@ -7073,7 +7078,8 @@ definitions:
   userpreferences.EditRequest:
     properties:
       content:
-        additionalProperties: true
+        additionalProperties:
+          type: any
         type: object
       widget:
         type: string
@@ -7084,7 +7090,8 @@ definitions:
   userpreferences.Response:
     properties:
       content:
-        additionalProperties: true
+        additionalProperties:
+          type: any
         type: object
       filters:
         items:
@@ -7359,7 +7366,8 @@ definitions:
       _id:
         type: string
       grid_parameters:
-        additionalProperties: true
+        additionalProperties:
+          type: any
         type: object
     type: object
   widget.EditRequest:
@@ -7369,7 +7377,8 @@ definitions:
           $ref: '#/definitions/widget.FilterRequest'
         type: array
       grid_parameters:
-        additionalProperties: true
+        additionalProperties:
+          type: any
         type: object
       parameters:
         $ref: '#/definitions/view.Parameters'
@@ -7437,7 +7446,8 @@ definitions:
           $ref: '#/definitions/widgetfilter.Response'
         type: array
       grid_parameters:
-        additionalProperties: true
+        additionalProperties:
+          type: any
         type: object
       is_private:
         type: boolean

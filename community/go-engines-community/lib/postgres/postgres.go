@@ -119,7 +119,7 @@ type poolWithRetries struct {
 	minRetryTimeout time.Duration
 }
 
-func (p *poolWithRetries) Exec(ctx context.Context, sql string, args ...interface{}) (pgconn.CommandTag, error) {
+func (p *poolWithRetries) Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error) {
 	var commandTag pgconn.CommandTag
 	var err error
 	p.retry(ctx, func() error {
@@ -130,7 +130,7 @@ func (p *poolWithRetries) Exec(ctx context.Context, sql string, args ...interfac
 	return commandTag, err
 }
 
-func (p *poolWithRetries) Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error) {
+func (p *poolWithRetries) Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error) {
 	var rows pgx.Rows
 	var err error
 	p.retry(ctx, func() error {
@@ -141,7 +141,7 @@ func (p *poolWithRetries) Query(ctx context.Context, sql string, args ...interfa
 	return rows, err
 }
 
-func (p *poolWithRetries) QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row {
+func (p *poolWithRetries) QueryRow(ctx context.Context, sql string, args ...any) pgx.Row {
 	rows, err := p.Query(ctx, sql, args...)
 
 	return &row{
@@ -241,7 +241,7 @@ type row struct {
 	rows pgx.Rows
 }
 
-func (r *row) Scan(dest ...interface{}) error {
+func (r *row) Scan(dest ...any) error {
 	if r.err != nil {
 		return r.err
 	}

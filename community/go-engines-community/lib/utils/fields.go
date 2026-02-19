@@ -17,7 +17,7 @@ var ErrFieldNotExist = errors.New("field does not exist")
 // An error is returned if the field does not exist.
 // If the field is a pointer, it will be dereferenced before being returned.
 // Note that GetField cannot return map keys that contain a dot.
-func GetField(object interface{}, fieldPath string) (interface{}, error) {
+func GetField(object any, fieldPath string) (any, error) {
 	fieldNames := strings.Split(fieldPath, ".")
 	value := reflect.ValueOf(object)
 

@@ -118,21 +118,21 @@ func TestTruncateString(t *testing.T) {
 
 func BenchmarkTruncateStringUnicode(b *testing.B) {
 	s := "こんにちは"
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		utils.TruncateString(s, 3)
 	}
 }
 
 func BenchmarkTruncateStringShort(b *testing.B) {
 	s := "string to truncate"
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		utils.TruncateString(s, 30)
 	}
 }
 
 func BenchmarkTruncateStringASCII(b *testing.B) {
 	s := "string to truncate"
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		utils.TruncateString(s, 6)
 	}
 }

@@ -134,7 +134,7 @@ func FindAllStringSubmatchMapWithRegexExpression(re RegexExpression, s string) [
 
 // AsString tries to convert an interface{} into a string, and returns its
 // value and an integer indicating whether it succeeded or not.
-func AsString(value interface{}) (string, bool) {
+func AsString(value any) (string, bool) {
 	switch typedValue := value.(type) {
 	case string:
 		return typedValue, true
