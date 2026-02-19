@@ -5,7 +5,7 @@ import { sortPinnedSearches } from '@/helpers/search/sorting';
 import {
   createAdvancedSearchFromFieldValue,
   mergeSearchIntoSavedSearches,
-  prepareQueryFromAdvancedSearch,
+  prepareQueryWithAdvancedSearch,
   prepareQueryWithoutAdvancedSearch,
   isEmptyAdvancedSearch,
 } from '@/helpers/search/advanced-search';
@@ -75,7 +75,7 @@ export const useWidgetAdvancedSearchSavedItems = (
       return;
     }
 
-    setQuery(prepareQueryFromAdvancedSearch(unref(query), search));
+    setQuery(prepareQueryWithAdvancedSearch(unref(query), search));
 
     updateContentInUserPreference({
       searches: sortPinnedSearches(mergeSearchIntoSavedSearches(searches.value, search), search._id, '_id'),

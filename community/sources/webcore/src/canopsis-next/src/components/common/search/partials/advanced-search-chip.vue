@@ -35,6 +35,7 @@
                   <input
                     v-model="inputValue"
                     ref="inputElement"
+                    v-bind="inputAttributes"
                     :type="inputType"
                     class="ml-1"
                     autocomplete="off"
@@ -49,6 +50,7 @@
               <input
                 v-show="active || alwaysActive"
                 ref="inputElement"
+                v-bind="inputAttributes"
                 :value="inputValue"
                 :placeholder="inputPlaceholder"
                 :type="inputType"
@@ -75,8 +77,8 @@
                 />
                 <span v-else>
                   <c-simple-tooltip v-if="icon" :content="icon.tooltip" top>
-                    <template #activator="{ on: tooltipOn }">
-                      <v-icon class="mr-2" small v-on="tooltipOn">{{ icon.icon }}</v-icon>
+                    <template #activator="{ on: iconActivatorOn }">
+                      <v-icon class="mr-2" small v-on="iconActivatorOn">{{ icon.icon }}</v-icon>
                     </template>
                   </c-simple-tooltip>
                   {{ chipText }}
@@ -118,6 +120,7 @@
 </template>
 
 <script>
+import { isArray } from 'lodash';
 import {
   computed,
   ref,
@@ -208,6 +211,14 @@ export default {
       type: String,
       default: '',
     },
+    inputAttributes: {
+      type: Object,
+      required: false,
+    },
+    inputPreparer: {
+      type: Function,
+      required: false,
+    },
   },
   setup(props, { emit }) {
     const focusRegister = inject(REGISTER_LAST_INPUT_FOCUS_KEY, {});
@@ -243,6 +254,8 @@ export default {
       };
     };
 
+    const fetchHandler = computed(() => props.fetchItems ?? defaultFetchItems);
+
     const {
       selectedItems,
       updateSearch,
@@ -250,16 +263,16 @@ export default {
       hasMoreItems,
       items: lazyItems,
       wholePending: pending,
-      fetchItems,
       fetchMoreItems,
       changeSelectedItems,
     } = useLazySearch({
-      value: toRef(props, 'value'),
-      addable: props.allowText,
-      idKey: toRef(props, 'itemValue'),
+      fetchHandler,
+
       idParamsKey: 'ids',
-      fetchHandler: props.fetchItems ?? defaultFetchItems,
-      multiple: props.multiple,
+      value: toRef(props, 'value'),
+      addable: toRef(props, 'allowText'),
+      idKey: toRef(props, 'itemValue'),
+      multiple: toRef(props, 'multiple'),
     }, emit);
 
     const itemWithAlias = computed(() => selectedItems.value.find(({ alias } = {}) => alias));
@@ -336,7 +349,9 @@ export default {
      *
      * @param {Event} event - The input event triggered by the user.
      */
-    const updateInputValue = event => setInputValue(event.target.value);
+    const updateInputValue = event => (
+      setInputValue(props.inputPreparer ? props.inputPreparer(event.target.value) : event.target.value)
+    );
 
     /**
      * Updates the state of the menu's open status and handles related actions.
@@ -433,7 +448,7 @@ export default {
       let newValue = value;
 
       if (props.multiple) {
-        const prevValue = props.value || [];
+        const prevValue = isArray(props.value) ? props.value : [props.value];
         const index = prevValue.findIndex(item => (
           (item?.[props.itemValue] && value?.[props.itemValue] && item?.[props.itemValue] === value?.[props.itemValue])
           || (item?.[props.itemValue] && item?.[props.itemValue] === value)
@@ -515,8 +530,6 @@ export default {
         focusInput();
       }
     });
-
-    watch(() => props.items, fetchItems);
 
     onMounted(() => {
       if (props.focusOnMount) {

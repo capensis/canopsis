@@ -25,6 +25,7 @@ import {
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
   PATTERN_CONDITIONS,
+  PATTERN_DATE_OPERATORS,
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
   EVENT_FILTER_PATTERN_FIELDS,
@@ -154,6 +155,17 @@ export const isOperatorForArray = operator => PATTERN_ARRAY_OPERATORS.includes(o
  * @return {boolean}
  */
 export const isOperatorForString = operator => PATTERN_STRING_OPERATORS.includes(operator);
+
+/**
+ * Check if operator is date interval type (within, olderThan)
+ *
+ * @param {string} operator
+ * @return {boolean}
+ */
+export const isIntervalDateOperator = operator => [
+  PATTERN_OPERATORS.within,
+  PATTERN_OPERATORS.olderThan,
+].includes(operator);
 
 /**
  * Check is operator for number
@@ -307,6 +319,7 @@ export const isDatePatternRuleField = value => [
   ENTITY_PATTERN_FIELDS.idleSince,
   ENTITY_PATTERN_FIELDS.imported,
   ENTITY_PATTERN_FIELDS.lastUpdateDate,
+  ENTITY_PATTERN_FIELDS.lastAlarmUpdateDate,
   ENTITY_PATTERN_FIELDS.lastPbehaviorDate,
   ENTITY_PATTERN_FIELDS.lastEventDate,
   ENTITY_PATTERN_FIELDS.lastEventDate,
@@ -658,12 +671,7 @@ export const getOperatorsByFieldType = (fieldType) => {
       return [PATTERN_OPERATORS.equal];
 
     case PATTERN_FIELD_TYPES.timestamp:
-      return [
-        PATTERN_OPERATORS.within,
-        PATTERN_OPERATORS.olderThan,
-        PATTERN_OPERATORS.inRangePeriod,
-        PATTERN_OPERATORS.inRangeDates,
-      ];
+      return PATTERN_DATE_OPERATORS;
 
     default:
       return PATTERN_STRING_OPERATORS;
@@ -699,12 +707,7 @@ export const getOperatorsByRule = (rule, ruleType) => {
   }
 
   if (isDateRuleType(ruleType)) {
-    operators = [
-      PATTERN_OPERATORS.within,
-      PATTERN_OPERATORS.olderThan,
-      PATTERN_OPERATORS.inRangePeriod,
-      PATTERN_OPERATORS.inRangeDates,
-    ];
+    operators = PATTERN_DATE_OPERATORS;
   }
 
   return operators;

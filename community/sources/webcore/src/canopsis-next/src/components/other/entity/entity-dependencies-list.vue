@@ -4,9 +4,10 @@
     :entities="entities"
     :pending="pending"
     :meta="meta"
-    :query.sync="query"
+    :query="query"
     :columns="columns"
     selectable
+    @update:query="updateQuery"
   >
     <template #toolbar="">
       <v-flex>
@@ -35,7 +36,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import { USER_PERMISSIONS, ADVANCED_SEARCH_FIELDS_TO_COMPARISON } from '@/constants';
 
 import { getQueryForList } from '@/helpers/entities/shared/query';
-import { prepareQueryFromAdvancedSearch } from '@/helpers/search/advanced-search';
+import { prepareQueryWithAdvancedSearch } from '@/helpers/search/advanced-search';
 
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useCurrentUserPermissions } from '@/hooks/auth';
@@ -123,7 +124,7 @@ export default {
      *
      * @param {string} search - The search term to filter entities
      */
-    const updateSearch = (search = {}) => updateQuery(prepareQueryFromAdvancedSearch(query.value, search));
+    const updateSearch = (search = {}) => updateQuery(prepareQueryWithAdvancedSearch(query.value, search));
 
     /**
      * Updates the category filter in the query and resets pagination to the first page.
@@ -146,6 +147,7 @@ export default {
       query,
       hasAccessToCategory,
       resetSearch,
+      updateQuery,
       updateSearch,
       updateCategory,
     };

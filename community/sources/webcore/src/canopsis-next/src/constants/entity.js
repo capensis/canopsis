@@ -8,8 +8,9 @@ import { PBEHAVIOR_TYPE_TYPES } from './pbehavior';
 
 export const ENTITY_FIELDS = {
   id: '_id',
+  customId: 'custom_id',
   name: 'name',
-  categoryName: 'category.name',
+  categoryName: 'category',
   type: 'type',
   component: 'component',
   connector: 'connector',
@@ -34,6 +35,7 @@ export const ENTITY_FIELDS = {
   links: 'links',
   alarmDisplayName: 'alarm_display_name',
   alarmCreationDate: 'alarm_creation_date',
+  lastAlarmUpdateDate: 'last_alarm_update_date',
   importSource: 'import_source',
   imported: 'imported',
   alarmLastComment: 'alarm_last_comment',
@@ -384,6 +386,7 @@ export const CONTEXT_WIDGET_GROUPED_COLUMNS = {
 
 export const ENTITY_PATTERN_FIELDS = {
   id: ENTITY_FIELDS.id,
+  customId: ENTITY_FIELDS.customId,
   name: ENTITY_FIELDS.name,
   type: ENTITY_FIELDS.type,
   categoryName: ENTITY_FIELDS.categoryName,
@@ -395,6 +398,7 @@ export const ENTITY_PATTERN_FIELDS = {
   category: ENTITY_FIELDS.category,
   impactLevel: ENTITY_FIELDS.impactLevel,
   impactState: ENTITY_FIELDS.impactState,
+  importSource: ENTITY_FIELDS.importSource,
   state: ENTITY_FIELDS.state,
   status: ENTITY_FIELDS.status,
   koEvents: ENTITY_FIELDS.koEvents,
@@ -404,6 +408,7 @@ export const ENTITY_PATTERN_FIELDS = {
   lastUpdateDate: ENTITY_FIELDS.lastUpdateDate,
   lastPbehaviorDate: ENTITY_FIELDS.lastPbehaviorDate,
   lastEventDate: ENTITY_FIELDS.lastEventDate,
+  lastAlarmUpdateDate: ENTITY_FIELDS.lastAlarmUpdateDate,
   enabled: ENTITY_FIELDS.enabled,
 };
 
@@ -438,6 +443,7 @@ export const ENTITY_TEMPLATE_FIELDS = {
 
 export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.id]: 'common.id',
+  [ENTITY_FIELDS.customId]: 'common.id',
   [ENTITY_FIELDS.name]: 'common.name',
   [ENTITY_FIELDS.categoryName]: 'entity.fields.categoryName',
   [ENTITY_FIELDS.type]: 'common.type',
@@ -464,6 +470,7 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.links]: 'common.link',
   [ENTITY_FIELDS.alarmDisplayName]: 'alarm.alarmDisplayName',
   [ENTITY_FIELDS.alarmCreationDate]: 'entity.fields.alarmCreationDate',
+  [ENTITY_FIELDS.lastAlarmUpdateDate]: 'entity.fields.lastAlarmUpdateDate',
   [ENTITY_FIELDS.importSource]: 'entity.fields.importSource',
   [ENTITY_FIELDS.imported]: 'entity.fields.imported',
   [ENTITY_FIELDS.alarmLastComment]: 'entity.fields.alarmLastComment',

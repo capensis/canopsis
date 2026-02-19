@@ -5,16 +5,14 @@
     :attributes="attributes"
     :pending="pending"
     :allow-or="allowOr"
-    :basic-field="basicField"
     with-history
+    alarm-pattern
     v-on="$listeners"
   />
 </template>
 
 <script>
 import { ref } from 'vue';
-
-import { ADVANCED_SEARCH_FIELDS } from '@/constants';
 
 import { advancedSearchRuleItemToFormItem } from '@/helpers/search/advanced-search';
 
@@ -28,14 +26,11 @@ export default {
     },
   },
   setup() {
-    const basicField = ADVANCED_SEARCH_FIELDS.alarm;
-
     const rules = ref([advancedSearchRuleItemToFormItem()]);
 
     const { attributes, pending, allowOr } = useAlarmAdvancedSearchAttributes({ rules });
 
     return {
-      basicField,
       rules,
       attributes,
       pending,

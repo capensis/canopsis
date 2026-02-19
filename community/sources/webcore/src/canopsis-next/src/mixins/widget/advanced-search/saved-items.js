@@ -3,7 +3,7 @@ import { keyBy } from 'lodash';
 import {
   createAdvancedSearchFromFieldValue,
   mergeSearchIntoSavedSearches,
-  prepareQueryFromAdvancedSearch,
+  prepareQueryWithAdvancedSearch,
   prepareQueryWithoutAdvancedSearch,
   isEmptyAdvancedSearch,
 } from '@/helpers/search/advanced-search';
@@ -44,8 +44,7 @@ export const widgetAdvancedSearchSavedItemsMixin = {
 
         return;
       }
-
-      this.query = prepareQueryFromAdvancedSearch(this.query, search);
+      this.query = prepareQueryWithAdvancedSearch(this.query, search);
 
       this.updateContentInUserPreference({
         searches: sortPinnedSearches(mergeSearchIntoSavedSearches(this.searches, search), search._id, '_id'),

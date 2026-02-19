@@ -4,23 +4,24 @@ import {
   ADVANCED_SEARCH_USER_OPERATORS,
   ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
   ALARM_EVENT_INITIATORS,
-  ALARM_FIELDS,
+  ALARM_PATTERN_FIELDS,
   ALARM_STATES,
   ALARM_STATUSES,
   BASIC_ENTITY_TYPES,
   ENTITY_TYPES,
-  ENTITY_FIELDS,
+  ENTITY_PATTERN_FIELDS,
   PATTERN_DURATION_OPERATORS,
   PATTERN_EXISTS_OPERATORS,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
+  PATTERN_DATE_OPERATORS,
   PBEHAVIOR_TYPE_TYPES,
   PBEHAVIOR_FIELDS,
   PATTERN_ALARM_TAG_LABEL_OPERATORS,
   DYNAMIC_INFO_FIELDS,
 } from '@/constants';
 
-import { addPrefixToAttributesMap } from '@/helpers/search/advanced-search';
+import { addPrefixToAttributesMap, getNumberMinValueAttributes } from '@/helpers/search/advanced-search';
 
 import { useI18n } from '@/hooks/i18n';
 import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
@@ -73,37 +74,37 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
     /**
      * Basic
      */
-    [ALARM_FIELDS.displayName]: {
+    [ALARM_PATTERN_FIELDS.displayName]: {
       operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
     },
-    [ALARM_FIELDS.connector]: {
+    [ALARM_PATTERN_FIELDS.connector]: {
       ...getEntityOptions([BASIC_ENTITY_TYPES.connector]),
 
       itemText: 'connector_type',
       itemValue: 'connector_type',
     },
-    [ALARM_FIELDS.connectorName]: {
+    [ALARM_PATTERN_FIELDS.connectorName]: {
       ...getEntityOptions([BASIC_ENTITY_TYPES.connector]),
 
       itemValue: 'name',
     },
-    [ALARM_FIELDS.component]: {
+    [ALARM_PATTERN_FIELDS.component]: {
       ...getEntityOptions([BASIC_ENTITY_TYPES.component]),
 
       itemText: 'component',
     },
-    [ALARM_FIELDS.resource]: {
+    [ALARM_PATTERN_FIELDS.resource]: {
       ...getEntityOptions([BASIC_ENTITY_TYPES.resource]),
 
       itemValue: 'name',
     },
-    [ALARM_FIELDS.state]: {
+    [ALARM_PATTERN_FIELDS.state]: {
       operators: PATTERN_NUMBER_OPERATORS,
       values: Object.values(ALARM_STATES).map(value => ({ value, text: t(`common.stateTypes.${value}`) })),
       itemText: 'text',
       itemValue: 'value',
     },
-    [ALARM_FIELDS.status]: {
+    [ALARM_PATTERN_FIELDS.status]: {
       operators: [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
@@ -112,7 +113,7 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
       itemText: 'text',
       itemValue: 'value',
     },
-    [ALARM_FIELDS.tags]: {
+    [ALARM_PATTERN_FIELDS.tags]: {
       operators: [
         PATTERN_OPERATORS.with,
         PATTERN_OPERATORS.without,
@@ -135,10 +136,10 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
           : 'value'
       ),
     },
-    [ALARM_FIELDS.infos]: {
+    [ALARM_PATTERN_FIELDS.infos]: {
       items: unref(infosItems),
     },
-    [ALARM_FIELDS.meta]: {
+    [ALARM_PATTERN_FIELDS.meta]: {
       operators: [
         PATTERN_OPERATORS.isMetaAlarm,
         PATTERN_OPERATORS.isNotMetaAlarm,
@@ -146,46 +147,46 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
       ],
       fetchValues: fetchMetaAlarmRulesListWithoutStore,
     },
-    [ALARM_FIELDS.changeState]: {
+    [ALARM_PATTERN_FIELDS.changeState]: {
       operators: PATTERN_EXISTS_OPERATORS,
     },
-    [ALARM_FIELDS.totalStateChanges]: {
+    [ALARM_PATTERN_FIELDS.totalStateChanges]: {
       operators: PATTERN_NUMBER_OPERATORS,
     },
 
     /**
      * Messages
      */
-    [ALARM_FIELDS.output]: {
+    [ALARM_PATTERN_FIELDS.output]: {
       operators: STRING_WITH_EXIST_AND_ONE_OF_OPERATORS,
     },
-    [ALARM_FIELDS.longOutput]: {
+    [ALARM_PATTERN_FIELDS.longOutput]: {
       operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
     },
-    [ALARM_FIELDS.initialOutput]: {
+    [ALARM_PATTERN_FIELDS.initialOutput]: {
       operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
     },
-    [ALARM_FIELDS.initialLongOutput]: {
+    [ALARM_PATTERN_FIELDS.initialLongOutput]: {
       operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
     },
-    [ALARM_FIELDS.lastComment]: {
+    [ALARM_PATTERN_FIELDS.lastComment]: {
       operators: STRING_WITH_EXIST_AND_ONE_OF_OPERATORS,
     },
-    [ALARM_FIELDS.lastCommentInitiator]: {
+    [ALARM_PATTERN_FIELDS.lastCommentInitiator]: {
       operators: STRING_WITH_EXIST_AND_ONE_OF_OPERATORS,
     },
 
     /**
      * Ticket
      */
-    [ALARM_FIELDS.ticketMessage]: {
+    [ALARM_PATTERN_FIELDS.ticketMessage]: {
       operators: STRING_WITH_EXIST_AND_ONE_OF_OPERATORS,
     },
-    [ALARM_FIELDS.ticketInitiator]: INITIATOR_OPTIONS,
-    [ALARM_FIELDS.ticketValue]: {
+    [ALARM_PATTERN_FIELDS.ticketInitiator]: INITIATOR_OPTIONS,
+    [ALARM_PATTERN_FIELDS.ticketValue]: {
       operators: STRING_WITH_EXIST_AND_ONE_OF_OPERATORS,
     },
-    [ALARM_FIELDS.ticket]: {
+    [ALARM_PATTERN_FIELDS.ticket]: {
       operators: [
         PATTERN_OPERATORS.ticketAssociated,
         PATTERN_OPERATORS.ticketNotAssociated,
@@ -195,47 +196,59 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
     /**
      * Date
      */
-    [ALARM_FIELDS.creationDate]: {},
-    [ALARM_FIELDS.lastUpdateDate]: {},
-    [ALARM_FIELDS.lastEventDate]: {},
-    [ALARM_FIELDS.ackAt]: {},
-    [ALARM_FIELDS.resolved]: {},
-    [ALARM_FIELDS.activationDate]: {},
-    [ALARM_FIELDS.duration]: DURATION_OPTIONS,
+    [ALARM_PATTERN_FIELDS.creationDate]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [ALARM_PATTERN_FIELDS.lastUpdateDate]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [ALARM_PATTERN_FIELDS.lastEventDate]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [ALARM_PATTERN_FIELDS.ackAt]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [ALARM_PATTERN_FIELDS.resolved]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [ALARM_PATTERN_FIELDS.activationDate]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [ALARM_PATTERN_FIELDS.duration]: DURATION_OPTIONS,
 
     /**
      * Actions
      */
-    [ALARM_FIELDS.ack]: {
+    [ALARM_PATTERN_FIELDS.ack]: {
       operators: [
         PATTERN_OPERATORS.acked,
         PATTERN_OPERATORS.notAcked,
       ],
     },
-    [ALARM_FIELDS.ackBy]: {
+    [ALARM_PATTERN_FIELDS.ackBy]: {
       operators: ADVANCED_SEARCH_USER_OPERATORS,
       fetchValues: fetchUsersListWithoutStore,
       itemValue: 'display_name',
       itemText: 'display_name',
     },
-    [ALARM_FIELDS.ackMessage]: {
+    [ALARM_PATTERN_FIELDS.ackMessage]: {
       operators: STRING_WITH_EXIST_AND_ONE_OF_OPERATORS,
     },
-    [ALARM_FIELDS.ackInitiator]: INITIATOR_OPTIONS,
-    [ALARM_FIELDS.canceled]: {
+    [ALARM_PATTERN_FIELDS.ackInitiator]: INITIATOR_OPTIONS,
+    [ALARM_PATTERN_FIELDS.canceled]: {
       operators: [
         PATTERN_OPERATORS.canceled,
         PATTERN_OPERATORS.notCanceled,
       ],
     },
-    [ALARM_FIELDS.canceledInitiator]: INITIATOR_OPTIONS,
-    [ALARM_FIELDS.activated]: {
+    [ALARM_PATTERN_FIELDS.canceledInitiator]: INITIATOR_OPTIONS,
+    [ALARM_PATTERN_FIELDS.activated]: {
       operators: [
         PATTERN_OPERATORS.activated,
         PATTERN_OPERATORS.inactive,
       ],
     },
-    [ALARM_FIELDS.snooze]: {
+    [ALARM_PATTERN_FIELDS.snooze]: {
       operators: [
         PATTERN_OPERATORS.snoozed,
         PATTERN_OPERATORS.notSnoozed,
@@ -271,11 +284,12 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
     /**
      * Basic
      */
-    [ENTITY_FIELDS.id]: getEntityOptions(),
-    [ENTITY_FIELDS.name]: {
+    [ENTITY_PATTERN_FIELDS.id]: getEntityOptions(),
+    [ENTITY_PATTERN_FIELDS.customId]: getEntityOptions(),
+    [ENTITY_PATTERN_FIELDS.name]: {
       operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
     },
-    [ENTITY_FIELDS.categoryName]: {
+    [ENTITY_PATTERN_FIELDS.categoryName]: {
       operators: [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
@@ -286,7 +300,7 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
       itemValue: '_id',
       itemText: 'name',
     },
-    [ENTITY_FIELDS.type]: {
+    [ENTITY_PATTERN_FIELDS.type]: {
       operators: [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
@@ -297,31 +311,27 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
       itemText: 'text',
       itemValue: 'value',
     },
-    [ENTITY_FIELDS.categoryName]: {
-      operators: [
-        PATTERN_OPERATORS.equal,
-        PATTERN_OPERATORS.notEqual,
-        PATTERN_OPERATORS.isOneOf,
-        PATTERN_OPERATORS.isNotOneOf,
-      ],
-      fetchValues: fetchCategoriesListWithoutStore,
-    },
-    [ENTITY_FIELDS.component]: getEntityOptions([ENTITY_TYPES.component]),
-    [ENTITY_FIELDS.connector]: getEntityOptions([ENTITY_TYPES.connector]),
-    [ENTITY_FIELDS.resource]: getEntityOptions([ENTITY_TYPES.resource]),
-    [ENTITY_FIELDS.impactLevel]: {
+    [ENTITY_PATTERN_FIELDS.component]: getEntityOptions([ENTITY_TYPES.component]),
+    [ENTITY_PATTERN_FIELDS.connector]: getEntityOptions([ENTITY_TYPES.connector]),
+    [ENTITY_PATTERN_FIELDS.resource]: getEntityOptions([ENTITY_TYPES.resource]),
+    [ENTITY_PATTERN_FIELDS.impactLevel]: {
       operators: PATTERN_NUMBER_OPERATORS,
+      ...getNumberMinValueAttributes(1),
     },
-    [ENTITY_FIELDS.impactState]: {
+    [ENTITY_PATTERN_FIELDS.impactState]: {
       operators: PATTERN_NUMBER_OPERATORS,
+      ...getNumberMinValueAttributes(0),
     },
-    [ENTITY_FIELDS.state]: {
+    [ENTITY_PATTERN_FIELDS.importSource]: {
+      operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
+    },
+    [ENTITY_PATTERN_FIELDS.state]: {
       operators: PATTERN_NUMBER_OPERATORS,
       values: Object.values(ALARM_STATES).map(value => ({ value, text: t(`common.stateTypes.${value}`) })),
       itemText: 'text',
       itemValue: 'value',
     },
-    [ENTITY_FIELDS.status]: {
+    [ENTITY_PATTERN_FIELDS.status]: {
       operators: [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
@@ -330,13 +340,13 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
       itemText: 'text',
       itemValue: 'value',
     },
-    [ENTITY_FIELDS.infos]: {
+    [ENTITY_PATTERN_FIELDS.infos]: {
       items: unref(infosItems) ?? [],
     },
-    [ENTITY_FIELDS.componentInfos]: {
+    [ENTITY_PATTERN_FIELDS.componentInfos]: {
       items: unref(infosItems) ?? [],
     },
-    [ENTITY_FIELDS.enabled]: {
+    [ENTITY_PATTERN_FIELDS.enabled]: {
       operators: [
         PATTERN_OPERATORS.enabled,
         PATTERN_OPERATORS.disabled,
@@ -346,21 +356,36 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
     /**
      * Events
      */
-    [ENTITY_FIELDS.koEvents]: {
+    [ENTITY_PATTERN_FIELDS.koEvents]: {
       operators: PATTERN_NUMBER_OPERATORS,
+      ...getNumberMinValueAttributes(0),
     },
-    [ENTITY_FIELDS.okEvents]: {
+    [ENTITY_PATTERN_FIELDS.okEvents]: {
       operators: PATTERN_NUMBER_OPERATORS,
+      ...getNumberMinValueAttributes(0),
     },
 
     /**
      * Dates
      */
-    [ENTITY_FIELDS.idleSince]: {},
-    [ENTITY_FIELDS.imported]: {},
-    [ENTITY_FIELDS.lastUpdateDate]: {},
-    [ENTITY_FIELDS.lastPbehaviorDate]: {},
-    [ENTITY_FIELDS.lastEventDate]: {},
+    [ENTITY_PATTERN_FIELDS.idleSince]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [ENTITY_PATTERN_FIELDS.imported]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [ENTITY_PATTERN_FIELDS.lastUpdateDate]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [ENTITY_PATTERN_FIELDS.lastPbehaviorDate]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [ENTITY_PATTERN_FIELDS.lastEventDate]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [ENTITY_PATTERN_FIELDS.lastAlarmUpdateDate]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
   }));
 
   const attributesMapWithPrefix = computed(() => {
@@ -407,6 +432,7 @@ export const useAdvancedSearchPbehaviorAttributes = ({ prefix = '' } = {}) => {
   const attributesMap = computed(() => ({
     [PBEHAVIOR_FIELDS.name]: {
       ...BASE_OPTIONS,
+      itemValue: 'name',
       text: t('pbehavior.pbehaviorName'),
       fetchValues: fetchPbehaviorsListWithoutStore,
     },
@@ -444,14 +470,27 @@ export const useAdvancedSearchPbehaviorAttributes = ({ prefix = '' } = {}) => {
         text: t(`pbehavior.types.types.${type}`),
       })),
     },
-    [PBEHAVIOR_FIELDS.tstart]: {},
-    [PBEHAVIOR_FIELDS.tstop]: {},
-    [PBEHAVIOR_FIELDS.rruleEnd]: {},
-    [PBEHAVIOR_FIELDS.created]: {},
-    [PBEHAVIOR_FIELDS.updated]: {},
-    [PBEHAVIOR_FIELDS.lastAlarmDate]: {},
+    [PBEHAVIOR_FIELDS.tstart]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [PBEHAVIOR_FIELDS.tstop]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [PBEHAVIOR_FIELDS.rruleEnd]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [PBEHAVIOR_FIELDS.created]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [PBEHAVIOR_FIELDS.updated]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [PBEHAVIOR_FIELDS.lastAlarmDate]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
     [PBEHAVIOR_FIELDS.alarmCount]: {
       operators: PATTERN_NUMBER_OPERATORS,
+      ...getNumberMinValueAttributes(0),
     },
   }));
 
@@ -499,8 +538,12 @@ export const useAdvancedSearchDynamicInfoAttributes = () => {
         PATTERN_OPERATORS.disabled,
       ],
     },
-    [DYNAMIC_INFO_FIELDS.created]: {},
-    [DYNAMIC_INFO_FIELDS.updated]: {},
+    [DYNAMIC_INFO_FIELDS.created]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
+    [DYNAMIC_INFO_FIELDS.updated]: {
+      operators: PATTERN_DATE_OPERATORS,
+    },
   }));
 
   return {

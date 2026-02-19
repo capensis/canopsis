@@ -34,8 +34,6 @@ export const localQueryMixin = {
       },
       set(value) {
         this.query = {
-          ...this.query,
-
           search: value.search || '',
           page: value.itemsPerPage <= this.query.itemsPerPage ? value.page : 1,
           itemsPerPage: value.itemsPerPage || PAGINATION_LIMIT,

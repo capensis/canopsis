@@ -156,7 +156,7 @@
 
 <script>
 import { mapIds } from '@/helpers/array';
-import { prepareQueryFromAdvancedSearch, prepareQueryWithoutAdvancedSearch } from '@/helpers/search/advanced-search';
+import { prepareQueryWithAdvancedSearch, prepareQueryWithoutAdvancedSearch } from '@/helpers/search/advanced-search';
 
 export default {
   model: {
@@ -368,7 +368,7 @@ export default {
     },
 
     updateAdvancedSearch(search) {
-      this.updateOptions(prepareQueryFromAdvancedSearch(this.options, search));
+      this.updateOptions(prepareQueryWithAdvancedSearch(this.options, search));
     },
 
     resetSearch() {
