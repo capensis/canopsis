@@ -58,8 +58,6 @@ import {
 } from 'vue';
 import Themeable from 'vuetify/lib/mixins/themeable';
 
-import { ADVANCED_SEARCH_FIELDS } from '@/constants';
-
 import { uuid } from '@/helpers/uuid';
 import { advancedSearchRuleItemToFormItem, formToAdvancedSearch } from '@/helpers/search/advanced-search';
 
@@ -105,9 +103,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    basicField: {
-      type: String,
-      default: ADVANCED_SEARCH_FIELDS.search,
+    alarmPattern: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {
@@ -133,7 +131,7 @@ export default {
       const isValid = await validator.validateAll();
 
       if (isValid) {
-        const newSearch = formToAdvancedSearch(props.rules, props.basicField);
+        const newSearch = formToAdvancedSearch(props.rules, props.alarmPattern);
 
         newSearch._id = activeSearch?._id ?? uuid();
         newSearch.pinned = activeSearch?.pinned ?? false;
