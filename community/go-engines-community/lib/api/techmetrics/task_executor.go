@@ -95,9 +95,7 @@ func (e *taskExecutor) Run(ctx context.Context) {
 
 	wg := sync.WaitGroup{}
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		for {
 			select {
 			case <-ctx.Done():
@@ -110,11 +108,9 @@ func (e *taskExecutor) Run(ctx context.Context) {
 				e.executeLastTask(ctx)
 			}
 		}
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		ticker := time.NewTicker(time.Minute)
 		defer ticker.Stop()
 
@@ -126,11 +122,9 @@ func (e *taskExecutor) Run(ctx context.Context) {
 				e.deleteTasks(ctx)
 			}
 		}
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		ticker := time.NewTicker(time.Minute)
 		defer ticker.Stop()
 
@@ -172,7 +166,7 @@ func (e *taskExecutor) Run(ctx context.Context) {
 				}
 			}
 		}
-	}()
+	})
 
 	wg.Wait()
 }

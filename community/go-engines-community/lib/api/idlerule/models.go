@@ -54,7 +54,7 @@ type BulkDeleteRequestItem struct {
 
 type OperationRequest struct {
 	Type       string              `json:"type" binding:"required"`
-	Parameters idlerule.Parameters `json:"parameters,omitempty"`
+	Parameters idlerule.Parameters `json:"parameters"`
 }
 
 type Rule struct {
@@ -116,6 +116,6 @@ func (r AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
 
-func (r AggregationResult) GetData() interface{} {
+func (r AggregationResult) GetData() any {
 	return r.Data
 }

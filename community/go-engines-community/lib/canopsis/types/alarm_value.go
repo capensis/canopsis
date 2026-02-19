@@ -3,6 +3,7 @@ package types
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -44,7 +45,7 @@ type AlarmStep struct {
 	Message                string           `bson:"m" json:"m"`
 	Role                   string           `bson:"role,omitempty" json:"role,omitempty"`
 	Value                  CpsNumber        `bson:"val" json:"val"`
-	StateCounter           CropCounter      `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
+	StateCounter           CropCounter      `bson:"statecounter,omitempty" json:"statecounter"`
 	PbehaviorCanonicalType string           `bson:"pbehavior_canonical_type,omitempty" json:"pbehavior_canonical_type,omitempty"`
 	IconName               string           `bson:"icon_name,omitempty" json:"icon_name,omitempty"`
 	Color                  string           `bson:"color,omitempty" json:"color,omitempty"`
@@ -443,13 +444,7 @@ func (i *PbehaviorInfo) Is(t string) bool {
 }
 
 func (i *PbehaviorInfo) OneOf(t []string) bool {
-	for _, v := range t {
-		if i.Is(v) {
-			return true
-		}
-	}
-
-	return false
+	return slices.ContainsFunc(t, i.Is)
 }
 
 func (i PbehaviorInfo) IsZero() bool {
@@ -533,7 +528,7 @@ type AlarmValue struct {
 	LastStateOrStatusUpdateDate datetime.CpsTime  `bson:"last_st_upd_dt" json:"last_st_upd_dt"`
 	Resource                    string            `bson:"resource,omitempty" json:"resource,omitempty"`
 	Resolved                    *datetime.CpsTime `bson:"resolved,omitempty" json:"resolved,omitempty"`
-	PbehaviorInfo               PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	PbehaviorInfo               PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info"`
 	Meta                        string            `bson:"meta,omitempty" json:"meta,omitempty"`
 	MetaValuePath               string            `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
 
@@ -546,8 +541,8 @@ type AlarmValue struct {
 	// EventsCount accumulates count of check events.
 	EventsCount CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	Infos           map[string]map[string]interface{} `bson:"infos" json:"infos"`
-	LastInfosUpdate datetime.MicroTime                `bson:"last_infos_update,omitempty" json:"last_infos_update,omitempty"`
+	Infos           map[string]map[string]any `bson:"infos" json:"infos"`
+	LastInfosUpdate datetime.MicroTime        `bson:"last_infos_update,omitempty" json:"last_infos_update,omitzero"`
 
 	// InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
 	// It's used only to compute InactiveDuration.

@@ -113,61 +113,75 @@ func NewOptions(surl string, db int, logger zerolog.Logger,
 // With this form "nouser" is ignored, and "password" extracted only.
 func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 	reconnectCount int, minReconnectTimeout time.Duration) (*redis.FailoverOptions, error) {
-	redisURL, err := url.ParseRequestURI(sURL)
+	failoverOptions, err := redis.ParseFailoverURL(strings.ReplaceAll(sURL, "redis-sentinel://", "redis://"))
 	if err != nil {
-		return nil, err
-	}
-
-	if redisURL.RawQuery == "" {
-		return nil, errors.New("no master specified in the url")
-	}
-
-	failoverOptions := redis.FailoverOptions{}
-
-	if redisURL.User != nil {
-		if password, passwordFound := redisURL.User.Password(); passwordFound {
-			if username := redisURL.User.Username(); username != "" {
-				failoverOptions.SentinelUsername = username
-				failoverOptions.SentinelPassword = password
-				if redisURL.Query().Has("redisPassword") {
-					failoverOptions.Password = redisURL.Query().Get("redisPassword")
-				}
-			} else {
-				failoverOptions.Password = password
-			}
-		} else if password := redisURL.User.Username(); password != "" {
-			failoverOptions.Password = password
+		if !strings.Contains(err.Error(), "invalid port") {
+			return nil, err
 		}
-	} else if redisURL.Query().Has("redisPassword") {
-		failoverOptions.Password = redisURL.Query().Get("redisPassword")
-	}
 
-	failoverOptions.SentinelAddrs = strings.Split(redisURL.Host, ",")
-
-	failoverOptions.DB = db
-	if db < 0 {
-		if len(redisURL.Path) < 2 {
-			return nil, errors.New("no database specified in url")
-		}
-		failoverOptions.DB, err = strconv.Atoi(redisURL.Path[1:])
+		// replace redis-sentinel:// with postgresql:// is a hack to avoid url parsing error due to golang 1.26 url parsing changes, which
+		// disallows multiple hosts in the url and only allow them for postgres.
+		// @todo: remove NewFailoverOptions in the next version and use redis.ParseFailoverURL()
+		redisURL, err := url.ParseRequestURI(strings.ReplaceAll(sURL, "redis-sentinel://", "postgresql://"))
 		if err != nil {
 			return nil, err
 		}
-	}
 
-	failoverOptions.MasterName = redisURL.Query().Get("sentinelMasterId")
+		logger.Warn().Str("url", sURL).Msg(`
+		DEPRECATED: redis-sentinel url with format like redis-sentinel://[password@]host1[:port1][,host2[:port2]][,hostN[:portN]][/database] is deprecated, 
+		please use redis-sentinel://<user>:<password>@<host>:<port>/<db_number>?addr=<host2>:<port2>&addr=<host3>:<port3> format instead`,
+		)
 
-	if redisIdleTimeoutStr := redisURL.Query().Get("timeout"); redisIdleTimeoutStr != "" {
-		if redisIdleTimeout, err := time.ParseDuration(redisIdleTimeoutStr); err == nil {
-			failoverOptions.ConnMaxIdleTime = redisIdleTimeout
-		} else {
-			return nil, fmt.Errorf("redis-sentinel timeout parameter error %w", err)
+		if redisURL.RawQuery == "" {
+			return nil, errors.New("no master specified in the url")
+		}
+
+		failoverOptions = &redis.FailoverOptions{}
+
+		if redisURL.User != nil {
+			if password, passwordFound := redisURL.User.Password(); passwordFound {
+				if username := redisURL.User.Username(); username != "" {
+					failoverOptions.SentinelUsername = username
+					failoverOptions.SentinelPassword = password
+					if redisURL.Query().Has("redisPassword") {
+						failoverOptions.Password = redisURL.Query().Get("redisPassword")
+					}
+				} else {
+					failoverOptions.Password = password
+				}
+			} else if password := redisURL.User.Username(); password != "" {
+				failoverOptions.Password = password
+			}
+		} else if redisURL.Query().Has("redisPassword") {
+			failoverOptions.Password = redisURL.Query().Get("redisPassword")
+		}
+
+		failoverOptions.SentinelAddrs = strings.Split(redisURL.Host, ",")
+
+		failoverOptions.DB = db
+		if db < 0 {
+			if len(redisURL.Path) < 2 {
+				return nil, errors.New("no database specified in url")
+			}
+			failoverOptions.DB, err = strconv.Atoi(redisURL.Path[1:])
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		failoverOptions.MasterName = redisURL.Query().Get("sentinelMasterId")
+
+		if redisIdleTimeoutStr := redisURL.Query().Get("timeout"); redisIdleTimeoutStr != "" {
+			if redisIdleTimeout, err := time.ParseDuration(redisIdleTimeoutStr); err == nil {
+				failoverOptions.ConnMaxIdleTime = redisIdleTimeout
+			} else {
+				return nil, fmt.Errorf("redis-sentinel timeout parameter error %w", err)
+			}
 		}
 	}
 
 	failoverOptions.OnConnect = func(ctx context.Context, cn *redis.Conn) error {
-		redisURL.User = url.User("") // hide password
-		logger.Debug().Str("Addr", redisURL.String()).Msg("New connection is established")
+		logger.Debug().Str("Addr", cn.String()).Msg("New connection is established")
 		return nil
 	}
 
@@ -177,7 +191,7 @@ func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 		failoverOptions.MaxRetryBackoff = failoverOptions.MinRetryBackoff << failoverOptions.MaxRetries
 	}
 
-	return &failoverOptions, nil
+	return failoverOptions, nil
 }
 
 // NewSession creates a new connection to a Redis database.

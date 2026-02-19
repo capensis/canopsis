@@ -1,7 +1,9 @@
 package scenario
 
 import (
+	"slices"
 	"strconv"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
@@ -66,24 +68,16 @@ func (v *Validator) validateActionParametersRequest(sl validator.StructLevel, t 
 				types.AlarmStateMajor,
 				types.AlarmStateCritical,
 			}
-			param := ""
+			var param strings.Builder
 			for i := range validTypes {
-				param += strconv.Itoa(int(validTypes[i]))
+				param.WriteString(strconv.Itoa(int(validTypes[i])))
 				if i < len(validTypes)-1 {
-					param += " "
+					param.WriteString(" ")
 				}
 			}
 
-			found := false
-			for _, v := range validTypes {
-				if v == *params.State {
-					found = true
-					break
-				}
-			}
-
-			if !found {
-				sl.ReportError(params.State, "State", "Parameters.State", "oneof", param)
+			if !slices.Contains(validTypes, *params.State) {
+				sl.ReportError(params.State, "State", "Parameters.State", "oneof", param.String())
 			}
 		}
 	case types.ActionTypeSnooze:

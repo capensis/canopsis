@@ -55,7 +55,7 @@ func (s *store) Create(ctx context.Context, isPublic bool, form *multipart.Form)
 	}
 
 	if len(models) > 0 {
-		docs := make([]interface{}, len(models))
+		docs := make([]any, len(models))
 		for i := range models {
 			docs[i] = models[i]
 		}

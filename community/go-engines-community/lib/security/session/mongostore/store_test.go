@@ -53,7 +53,7 @@ func TestMongoStore_New_GivenCookie_ShouldReturnSessionFromDB(t *testing.T) {
 	if err != nil {
 		t.Fatal("fail to create object id", err)
 	}
-	values := map[interface{}]interface{}{
+	values := map[any]any{
 		"test": "testvalue",
 	}
 	name := "testsession"
@@ -140,7 +140,7 @@ func TestMongoStore_Get_GivenCookie_ShouldReturnSessionFromDB(t *testing.T) {
 	if err != nil {
 		t.Fatal("fail to create object id", err)
 	}
-	values := map[interface{}]interface{}{
+	values := map[any]any{
 		"test": "testvalue",
 	}
 	name := "testsession"
@@ -316,7 +316,7 @@ func mockCursor(ctrl *gomock.Controller, data *sessionData) libmongo.Cursor {
 		mockCursor.
 			EXPECT().
 			Decode(gomock.Any()).
-			Do(func(val interface{}) {
+			Do(func(val any) {
 				if u, ok := val.(*sessionData); ok {
 					*u = *data
 				}

@@ -154,9 +154,9 @@ func GetImpactsCountPipeline(prefixArg ...string) []bson.M {
 			"pipeline": []bson.M{
 				{"$project": bson.M{
 					"hasStateSettings": bson.M{
-						"$cond": []interface{}{bson.M{
+						"$cond": []any{bson.M{
 							"$and": []bson.M{
-								{"$eq": []interface{}{
+								{"$eq": []any{
 									bson.M{"$type": "$state_info._id"},
 									"string",
 								}},
@@ -172,8 +172,8 @@ func GetImpactsCountPipeline(prefixArg ...string) []bson.M {
 		{"$unwind": bson.M{"path": "$" + prefix + "component_impacts", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
 			prefix + "impacts_count": bson.M{
-				"$cond": []interface{}{
-					bson.M{"$and": []interface{}{
+				"$cond": []any{
+					bson.M{"$and": []any{
 						bson.M{"$eq": []string{
 							"$" + prefix + "type", "resource"},
 						},
