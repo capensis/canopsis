@@ -41,9 +41,10 @@ import {
   PBEHAVIOR_PATTERN_FIELDS,
 } from '@/constants';
 
+import { uid } from '@/helpers/uid';
 import { convertDateToDateObject, convertDateToTimestamp, isValidDateInterval } from '@/helpers/date/date';
 import { durationToForm, isValidDuration, isValidRangeDuration } from '@/helpers/date/duration';
-import { uid } from '@/helpers/uid';
+import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef { 'string' | 'number' | 'infos' | 'date' | 'duration' } PatternRuleType
@@ -641,7 +642,7 @@ export const convertValueByType = (value, type, defaultValue) => {
     case PATTERN_FIELD_TYPES.null:
       return null;
     case PATTERN_FIELD_TYPES.stringArray:
-      return preparedValue ? [String(preparedValue)] : [];
+      return preparedValue ? primitiveArrayToForm([String(preparedValue)]) : [];
     default:
       return undefined;
   }
@@ -1102,6 +1103,14 @@ export const patternRuleToForm = (rule = {}) => {
     form.dictionary = rule.field.replace(`${patternObjectField}.`, '');
   }
 
+  if (
+    (form.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(form.operator))
+    && isArray(form.value)
+    && (!form.value.length || !form.value[0]?.key)
+  ) {
+    form.value = primitiveArrayToForm(form.value);
+  }
+
   return form;
 };
 
@@ -1251,6 +1260,17 @@ export const formRuleToPatternRule = (rule) => {
     pattern.cond = formDateIntervalConditionToPatternRuleCondition(rule);
 
     return pattern;
+  }
+
+  if ((isExtraInfos || isInfos) && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
+    pattern.field_type = rule.fieldType;
+  }
+
+  if (
+    (rule.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(rule.operator))
+    && isArray(pattern.cond.value)
+  ) {
+    pattern.cond.value = formToPrimitiveArray(pattern.cond.value);
   }
 
   switch (rule.operator) {

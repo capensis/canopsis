@@ -40,13 +40,14 @@ type SortRequest struct {
 // BaseFilterRequest
 // easyjson:json
 type BaseFilterRequest struct {
-	Search        string   `form:"search" json:"search"`
-	Filters       []string `form:"filters[]" json:"filters"`
-	Category      string   `form:"category" json:"category"`
-	Type          []string `form:"type[]" json:"type"`
-	NoEvents      bool     `form:"no_events" json:"no_events"`
-	EntityPattern string   `form:"entity_pattern" json:"entity_pattern"`
-	IDs           []string `form:"ids[]" json:"ids"`
+	Search                string   `form:"search" json:"search"`
+	Filters               []string `form:"filters[]" json:"filters"`
+	Category              string   `form:"category" json:"category"`
+	Type                  []string `form:"type[]" json:"type"`
+	NoEvents              bool     `form:"no_events" json:"no_events"`
+	EntityPattern         string   `form:"entity_pattern" json:"entity_pattern"`
+	NegativeEntityPattern string   `form:"negative_entity_pattern" json:"negative_entity_pattern"`
+	IDs                   []string `form:"ids[]" json:"ids"`
 }
 
 type ExportRequest struct {

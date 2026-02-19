@@ -65,9 +65,13 @@ describe('availability-widget', () => {
   const { activeViewModule } = createActiveViewModule();
   const { alarmModule } = createAlarmModule();
 
-  const { userPreferenceModule, updateUserPreference } = createUserPreferenceModule();
+  const { userPreferenceModule, updateUserPreference, fetchUserPreference } = createUserPreferenceModule();
   const { queryModule, updateQuery, getQueryById } = createQueryModule();
   const { availabilityModule, fetchAvailabilityList } = createAvailabilityModule();
+
+  beforeEach(() => {
+    fetchUserPreference.mockResolvedValue();
+  });
 
   currentUserPermissionsById.mockReturnValue({
     [USER_PERMISSIONS.business.availability.actions.userFilter]: { actions: [] },

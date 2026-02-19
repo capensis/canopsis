@@ -34,10 +34,9 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 		gomock.Any(),
 		gomock.Any(),
 		gomock.Any(),
-		gomock.Any(),
 	).DoAndReturn(func(
 		_ context.Context,
-		_, _ string,
+		_ eventfilter.ParsedRule,
 		_ eventfilter.ParsedAction,
 		event *types.Event,
 		_ map[string]eventfilter.UpdatedValue,
@@ -87,10 +86,9 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 		gomock.Any(),
 		gomock.Any(),
 		gomock.Any(),
-		gomock.Any(),
 	).DoAndReturn(func(
 		_ context.Context,
-		_, _ string,
+		_ eventfilter.ParsedRule,
 		_ eventfilter.ParsedAction,
 		_ *types.Event,
 		_ map[string]eventfilter.UpdatedValue,
