@@ -196,7 +196,6 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 		}
 	}()
 
-	writeModels := make([]mongo.WriteModel, 0)
 	var entityParseRes parseEntityResult
 	decoder := json.NewDecoder(file)
 
@@ -218,6 +217,7 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 		return res, err
 	}
 
+	writeModels := make([]mongo.WriteModel, 0, len(entityParseRes.writeModels))
 	writeModels = append(writeModels, entityParseRes.writeModels...)
 
 	res.writeModels = writeModels
