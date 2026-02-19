@@ -216,7 +216,7 @@ func benchmarkMessageProcessorWithConfig(
 
 	defer func() {
 		if r := recover(); r != nil {
-			b.Log(debug.Stack())
+			b.Log(string(debug.Stack()))
 			b.Fatal("benchmark failed due to panic:", r)
 		}
 	}()
