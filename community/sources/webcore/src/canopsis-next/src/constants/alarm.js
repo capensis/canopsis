@@ -785,6 +785,11 @@ export const ALARM_PATTERN_FIELDS = {
   changeState: ALARM_FIELDS.changeState,
   meta: ALARM_FIELDS.meta,
   entityInfos: ALARM_FIELDS.entityInfos,
+  pbehaviorInfoId: ALARM_FIELDS.pbehaviorInfoId,
+  pbehaviorInfoName: ALARM_FIELDS.pbehaviorInfoName,
+  pbehaviorInfoReason: ALARM_FIELDS.pbehaviorInfoReason,
+  pbehaviorInfoType: ALARM_FIELDS.pbehaviorInfoType,
+  pbehaviorInfoCanonicalType: ALARM_FIELDS.pbehaviorInfoCanonicalType,
 };
 
 export const ALARM_EVENT_INITIATORS = {

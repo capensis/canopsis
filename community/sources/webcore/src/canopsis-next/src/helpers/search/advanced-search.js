@@ -2,6 +2,7 @@ import {
   cloneDeep,
   isEmpty,
   isString,
+  isNaN,
   isUndefined,
   mapKeys,
   pick,
@@ -20,13 +21,15 @@ import {
   PATTERN_FIELD_TYPES,
   ADVANCED_SEARCH_FIELDS,
   PBEHAVIOR_PATTERN_PREFIX,
-  QUICK_RANGES,
   PATTERN_OPERATORS_WITHOUT_VALUE,
   ADVANCED_SEARCH_FIELDS_TO_COMPARISON,
   ADVANCED_SEARCH_QUERY_FIELDS,
   ALARM_SEARCH_NUMBER_ATTRIBUTES,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_DURATION_OPERATORS,
+  PATTERN_DATE_OPERATORS,
+  PATTERN_OPERATORS,
+  PBEHAVIOR_SEARCH_NUMBER_ATTRIBUTES,
 } from '@/constants';
 
 import { uuid } from '@/helpers/uuid';
@@ -36,6 +39,7 @@ import {
   isDatePatternRuleField,
   isDurationPatternRuleField,
   isInfosPatternRuleField,
+  isIntervalDateOperator,
   isValueInfosPatternRuleField,
   patternRuleToForm,
 } from '@/helpers/entities/pattern/form';
@@ -80,7 +84,8 @@ export const addPrefixToAttributesMap = (attributesMap = {}, prefix = '') => (
  * | 'fieldType'
  * | 'dictionary'
  * | 'range'
- * | 'rangeValue'
+ * | 'rangeValueDate'
+ * | 'rangeValuePeriod'
  * | 'value'
  * | 'duration'
  * | 'text'
@@ -96,7 +101,8 @@ export const addPrefixToAttributesMap = (attributesMap = {}, prefix = '') => (
  * @property {AdvancedSearchUnion} union
  * @property {string} range
  * @property {string} text
- * @property {{ from: number, to: number }} rangeValue
+ * @property {{ from: number, to: number }} rangeValueDate
+ * @property {{ from: string, to: string }} rangeValuePeriod
  * @property {AdvancedSearchChipType[]} filled
  */
 
@@ -120,6 +126,17 @@ export const getInitialFormItemType = (item, union = false) => {
 };
 
 /**
+ * Returns the type of range value item based on the operator.
+ *
+ * @param {string} value - The operator of the item.
+ * @returns {AdvancedSearchChipType} The type of range value item.
+ */
+export const getRangeValueItemType = value => ({
+  [PATTERN_OPERATORS.inRangeDates]: ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValueDate,
+  [PATTERN_OPERATORS.inRangePeriod]: ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValuePeriod,
+}[value]);
+
+/**
  * Determines the next chip type for an advanced search form item based on the current type and attributes.
  *
  * @param {Object} [params = {}] - The parameters for determining the next chip type.
@@ -133,7 +150,7 @@ export const getInitialFormItemType = (item, union = false) => {
  * @returns {AdvancedSearchChipType | null} - The next chip type, or null if there is no next type.
  */
 export const getNextForFormItemType = (
-  { attribute, fieldType, range, operator, text, alias } = {},
+  { attribute, fieldType, operator, text, alias } = {},
   type = null,
 ) => {
   if (text || [ALARM_ADVANCED_SEARCH_CHIP_TYPES.union, ALARM_ADVANCED_SEARCH_CHIP_TYPES.text].includes(type)) {
@@ -146,10 +163,6 @@ export const getNextForFormItemType = (
 
   switch (type) {
     case ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute:
-      if (isDatePatternRuleField(attribute)) {
-        return ALARM_ADVANCED_SEARCH_CHIP_TYPES.range;
-      }
-
       if (isValueInfosPatternRuleField(attribute) || alias) {
         return ALARM_ADVANCED_SEARCH_CHIP_TYPES.fieldType;
       }
@@ -175,6 +188,12 @@ export const getNextForFormItemType = (
       return ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator;
 
     case ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator:
+      if (isDatePatternRuleField(attribute)) {
+        return isIntervalDateOperator(operator)
+          ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.range
+          : getRangeValueItemType(operator);
+      }
+
       if (isDurationPatternRuleField(attribute)) {
         return ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration;
       }
@@ -184,13 +203,6 @@ export const getNextForFormItemType = (
       }
 
       return ALARM_ADVANCED_SEARCH_CHIP_TYPES.value;
-
-    case ALARM_ADVANCED_SEARCH_CHIP_TYPES.range:
-      if (range === QUICK_RANGES.custom.value) {
-        return ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue;
-      }
-
-      return null;
 
     default:
       return null;
@@ -232,11 +244,15 @@ export const getFilledArrayForAdvancedSearchFormItem = (formItem) => {
  */
 export const advancedSearchRuleItemToFormItem = (advancedSearchRuleItem = {}) => {
   const formItem = patternRuleToForm(advancedSearchRuleItem);
+  const rangeValueKey = getRangeValueItemType(formItem.operator);
 
-  formItem.rangeValue = {
-    from: formItem.range.from,
-    to: formItem.range.to,
-  };
+  if (rangeValueKey) {
+    formItem[rangeValueKey] = {
+      from: formItem.range.from,
+      to: formItem.range.to,
+    };
+  }
+
   formItem.range = formItem.range.type;
   formItem.union = null;
   formItem.text = '';
@@ -342,14 +358,14 @@ export const isAlarmPatternField = (field = '') => field && !isAlarmEntityPatter
  * Transforms a form structure into an advanced search pattern structure.
  *
  * @param {AdvancedSearchForm} [form = []] - The form array to be transformed.
- * @param {string} [basicField = ADVANCED_SEARCH_FIELDS.alarm] - The basic field of the pattern.
+ * @param {boolean} [alarmPattern = true] - Whether to include the alarm pattern.
  * @returns {AdvancedSearch} - The structured advanced search pattern object, including positions
  *                     and categorized pattern arrays (alarm, entity, pbehavior).
  */
-export const formToAdvancedSearch = (form = [], basicField = ADVANCED_SEARCH_FIELDS.alarm) => {
+export const formToAdvancedSearch = (form = [], alarmPattern = false) => {
   let firstPatternKey = null;
 
-  return form.reduce((acc, { union, rangeValue, range, filled, text, ...item }) => {
+  return form.reduce((acc, { union, range, filled, text, ...item }) => {
     if (text) {
       acc.search = text;
 
@@ -366,26 +382,30 @@ export const formToAdvancedSearch = (form = [], basicField = ADVANCED_SEARCH_FIE
       return acc;
     }
 
-    let preparedItem = { ...item };
+    let preparedItem = omit(item, ['rangeValueDate', 'rangeValuePeriod']);
 
     if (range) {
+      const rangeValueKey = getRangeValueItemType(item.operator);
+
       preparedItem.range = {
         type: range,
 
-        ...rangeValue,
+        ...item[rangeValueKey],
       };
     }
 
-    const pbehaviorPrefix = basicField === ADVANCED_SEARCH_FIELDS.alarm ? ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX : '';
+    const pbehaviorPrefix = alarmPattern ? ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX : '';
 
-    let key = basicField;
+    let key = alarmPattern ? ADVANCED_SEARCH_FIELDS.alarm : ADVANCED_SEARCH_FIELDS.search;
 
-    if (isAlarmEntityPatternField(preparedItem.attribute) || item?.alias) {
-      key = ADVANCED_SEARCH_FIELDS.entity;
-      preparedItem.attribute = preparedItem.attribute.replace(/^entity\./, '');
-    } else if (isPbehaviorPatternField(preparedItem.attribute, pbehaviorPrefix)) {
-      key = ADVANCED_SEARCH_FIELDS.pbehavior;
-      preparedItem.attribute = preparedItem.attribute.replace(/^v\./, '');
+    if (alarmPattern) {
+      if (isAlarmEntityPatternField(preparedItem.attribute) || item?.alias) {
+        key = ADVANCED_SEARCH_FIELDS.entity;
+        preparedItem.attribute = preparedItem.attribute.replace(/^entity\./, '');
+      } else if (isPbehaviorPatternField(preparedItem.attribute, pbehaviorPrefix)) {
+        key = ADVANCED_SEARCH_FIELDS.pbehavior;
+        preparedItem.attribute = preparedItem.attribute.replace(/^v\./, '');
+      }
     }
 
     if (isInfosPatternRuleField(preparedItem.attribute)) {
@@ -449,7 +469,7 @@ export const isEmptyAdvancedSearchPattern = (pattern = {}) => isEmpty(pattern) |
  * @param {AdvancedSearch|string} search - The advanced search object or plain search string
  * @returns {Object} - The new query object ready to be applied
  */
-export const prepareQueryFromAdvancedSearch = (query = {}, search = {}) => {
+export const prepareQueryWithAdvancedSearch = (query = {}, search = {}) => {
   const newQuery = {
     ...query,
 
@@ -554,6 +574,7 @@ export const isNumberValueType = (rule, type) => (
     rule.fieldType === PATTERN_FIELD_TYPES.number
     || ALARM_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute)
     || ENTITY_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute)
+    || PBEHAVIOR_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute)
   )
 );
 
@@ -569,14 +590,14 @@ export const isArrayItem = (type, value) => (
 );
 
 /**
- * Checks if the given type and value represent a custom range item.
+ * Checks if the given type and value represent a range for date item.
  *
  * @param {AdvancedSearchChipType} type - The type of the item.
  * @param {string} value - The value of the item.
- * @returns {boolean} True if the type is 'range' and the value is 'custom', otherwise false.
+ * @returns {boolean} True if the type is 'range' and the value is an interval date operator, otherwise false.
  */
-export const isCustomRangeItem = (type, value) => (
-  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.range && value === QUICK_RANGES.custom.value
+export const isRangeItem = (type, value) => (
+  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.range && PATTERN_DATE_OPERATORS.includes(value)
 );
 
 /**
@@ -620,3 +641,28 @@ export const filterAdvancedSearchItems = (items = [], condition = () => true) =>
     return acc;
   }, []);
 };
+
+/**
+ * Returns input attributes and preparer for number fields with a minimum value constraint.
+ *
+ * @param {number} [min = 0] - The minimum allowed value.
+ * @returns {Object} Object containing inputAttributes (min, step, inputmode) and inputPreparer function
+ *                  that normalizes the value to min when invalid or below minimum,
+ *                  or returns empty string when value is empty.
+ */
+export const getNumberMinValueAttributes = (min = 0) => ({
+  inputAttributes: {
+    min,
+    step: 1,
+    inputmode: 'numeric',
+  },
+  inputPreparer: (value) => {
+    if (!value && value !== min) {
+      return '';
+    }
+
+    const num = Number(value);
+
+    return (isNaN(num) || num < min) ? min : num;
+  },
+});

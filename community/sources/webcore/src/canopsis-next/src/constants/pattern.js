@@ -109,6 +109,13 @@ export const PATTERN_FIELD_TYPES = {
   timestamp: 'timestamp',
 };
 
+export const PATTERN_DATE_OPERATORS = [
+  PATTERN_OPERATORS.within,
+  PATTERN_OPERATORS.olderThan,
+  PATTERN_OPERATORS.inRangePeriod,
+  PATTERN_OPERATORS.inRangeDates,
+];
+
 export const DEFAULT_PATTERN_FIELD_TYPES = [
   { value: PATTERN_FIELD_TYPES.string },
   { value: PATTERN_FIELD_TYPES.number },
