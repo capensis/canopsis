@@ -194,11 +194,8 @@ export default {
 </script>
 
 <style lang="scss">
-:root {
-  --advanced-search-chip-gap: 4px;
-}
-
 .c-advanced-search {
+  --advanced-search-chip-gap: 4px;
   --input-min-inline-size: 30ch;
 
   & &__rule {
