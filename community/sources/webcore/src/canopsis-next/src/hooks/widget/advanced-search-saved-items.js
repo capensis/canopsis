@@ -3,7 +3,7 @@ import { keyBy } from 'lodash';
 
 import { sortPinnedSearches } from '@/helpers/search/sorting';
 import {
-  createAdvancedSearchFromFieldValue,
+  createAdvancedSearchFromAlarmFieldValue,
   mergeSearchIntoSavedSearches,
   prepareQueryWithAdvancedSearch,
   prepareQueryWithoutAdvancedSearch,
@@ -132,7 +132,7 @@ export const useWidgetAdvancedSearchSavedItems = (
    * @param {*} value - The value to filter by
    */
   const selectAdvancedSearchField = (field, value) => {
-    const search = createAdvancedSearchFromFieldValue(field, value);
+    const search = createAdvancedSearchFromAlarmFieldValue(field, value);
 
     selectAdvancedSearch?.(search);
   };

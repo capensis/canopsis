@@ -547,7 +547,7 @@ export const mergeSearchIntoSavedSearches = (savedSearches, search) => {
  * @param {*} value - The value to filter by
  * @returns {Object} Advanced search object with _id, pinned, and rules
  */
-export const createAdvancedSearchFromFieldValue = (field, value) => {
+export const createAdvancedSearchFromAlarmFieldValue = (field, value) => {
   const patternField = ALARM_ADVANCED_SEARCH_FIELDS_TO_PATTERNS[field];
   const preparedField = field
     .replace(ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.entity, '')
