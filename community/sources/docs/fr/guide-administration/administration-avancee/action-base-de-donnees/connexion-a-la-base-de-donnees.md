@@ -11,12 +11,9 @@ Pour définir la valeur de `${CPS_MONGO_URL}`  :
 ```sh
 CPS_MONGO_URL = URI_MONGODB
 ```
-*(Sur une installation docker compose, il est possible de sourcer le fichier `canopsis.env` avec la commande `source canopsis.env`)*
+*(Se référer au contenu du fichier `go-engines-vars.conf` sur une installation RPM, `canopsis.env` sur une installation docker-compose ou le fichier `values.yml` pour une installation helm.)*
 
 On arrive alors dans le prompt de MongoDB, permettant d'exécuter des requêtes ou des fonctions.
-
-!!! note
-    Dans le cadre d'une installation multi-nœuds avec un *Replica Set* MongoDB, veiller à se connecter au nœud primaire (`PRIMARY`).
 
 ## Connexion à MongoDB avec l'interface graphique MongoDB Compass
 
@@ -40,3 +37,6 @@ Ce qui donnera pour la connexion :
 ```sh
 mongosh -u root -p root admin
 ```
+
+!!! note
+    Dans le cadre d'une installation multi-nœuds avec un *Replica Set* MongoDB, veiller à bien être connecter au nœud primaire (`PRIMARY`).

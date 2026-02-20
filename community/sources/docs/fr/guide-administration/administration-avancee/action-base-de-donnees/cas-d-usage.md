@@ -22,17 +22,17 @@ Généralement, ces commandes sont utilisées pour requêter les collections : `
 
 - Récupérer l'entièreté des alarmes actuellement ouvertes qui proviennent d'un même `connecteur`
 ```js
-db.periodical_alarm.find({'v.connector':'Nom du connecteur'})
+db.periodical_alarm.find({"v.connector":"Nom du connecteur"})
 ```
 
 - Récupérer l'entièreté des alarmes actuellement ouvertes portant sur un même `composant`
 ```js
-db.periodical_alarm.find({'v.component':'Nom du composant'})
+db.periodical_alarm.find({"v.component":"Nom du composant"})
 ```
 
 - Récupérer l'entièreté des alarmes actuellement ouvertes portant sur une même `ressource`
 ```js
-db.periodical_alarm.find({'v.resource':'Nom de la ressource'})
+db.periodical_alarm.find({"v.resource":"Nom de la ressource"})
 ```
 
 - Récupérer l'entièreté des alarmes actuellement ouvertes portant sur un couple `composant`/`ressource`
@@ -44,7 +44,7 @@ db.periodical_alarm.find({"v.component" : "Nom du composant", "v.resource" : "No
 ```js
 db.periodical_alarm.find({
   $expr: {
-    $gt: [
+    $lt: [
       "$v.last_update_date",
       { $floor: { $divide: [ { $toLong: ISODate("2026-01-29T00:00:00Z") }, 1000 ] } }
     ]
@@ -110,14 +110,14 @@ db.periodical_alarm.find({tags: { $in: ["une", "liste", "de", "tags"] }}) # Cher
 db.periodical_alarm.countDocuments({tags: { $in: ["une", "liste", "de", "tags"] }}) # Cherche à matcher avec un ou plusieurs tags de la liste
 ```
 
-- Trouver les alarmes actuellement ouvertes qui correspondent exactement à un tag ou une liste de tags :
+- Trouver les alarmes actuellement ouvertes qui contiennent un tag précis ou une liste de tags :
 ```js
-db.periodical_alarm.find({"tags": "tag" }}) # Match exactement un tag
+db.periodical_alarm.find({"tags": "tag" }}) # Match avec un tag particulier
 
-db.periodical_alarm.find({tags: { $all: ["une", "liste", "de", "tags"] }}) # Match exactement une liste de tags
+db.periodical_alarm.find({tags: { $all: ["une", "liste", "de", "tags"] }}) # Match avec l'ensemble des tags d'une liste
 ```
 
-- Compter les alarmes actuellement ouvertes qui correspondent exactement à un tag ou une liste de tags
+- Compter les alarmes actuellement ouvertes qui sont associées à un tag ou à une liste de tags
 ```js
 db.periodical_alarm.countDocuments({"tags": "tag" }}) # Match exactement un tag
 
@@ -146,7 +146,7 @@ db.default_entities.aggregate([
 ]);
 ```
 
-- Récupérer les 10 entités avec le plus de dépendances :
+- Récupérer les 10 entités, et leur type, étant le plus représentées en tant que dépendances dans des services :
 ```js
 db.default_entities.aggregate([
     {$match: {services: {$ne: null}}},
@@ -166,7 +166,7 @@ db.default_entities.aggregate([
 ]);
 ```
 
-#### Trouver les comportements périodiques qui agissent sur un nombre important d'alarmes
+#### Trouver les comportements périodiques actifs à l'instant T et qui agissent sur un nombre important d'alarmes
 
 ```js
 db.periodical_alarm.aggregate([{ $match:{ "v.pbehavior_info.id":{ $exists:true } } },{ $group:{ _id:"$v.pbehavior_info.id", name:{ $first:"$v.pbehavior_info.name" }, alarm_count:{ $sum:1 } } },{ $project:{ _id:0, id:"$_id", name:1, alarm_count:1 } }])
@@ -263,13 +263,14 @@ db.NOM_DE_LA_COLLECTION.getIndexes()
 
 Pour les requêtes sur les dates, si vous souhaitez utiliser les timestamp UNIX, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.
 
-Pour récupérer la date et l'heure actuelle, exécuter la commande
+Il est aussi possible de manipuler les dates simplement en shell
 ```sh
-date // date et heure actuelle
-mar. 17 févr. 2026 14:40:14 CET
+Exemple avec la date "2026-02-19 07:10:59"
+$ date -d "2026-02-19 07:10:59" +%s
+1771485059
 
-date +%s // date et heure au format epoch
-1771335614
+$ date -d @1771485059 "+%Y-%m-%d %H:%M:%S"
+2026-02-19 07:10:59
 ```
 
 
