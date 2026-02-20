@@ -2,7 +2,7 @@ package file
 
 import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 
-type File struct {
+type Response struct {
 	ID        string           `bson:"_id" json:"_id"`
 	FileName  string           `bson:"filename" json:"filename"`
 	MediaType string           `bson:"mediatype" json:"mediatype"`
