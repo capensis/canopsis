@@ -1,7 +1,7 @@
 import { keyBy } from 'lodash';
 
 import {
-  createAdvancedSearchFromFieldValue,
+  createAdvancedSearchFromAlarmFieldValue,
   mergeSearchIntoSavedSearches,
   prepareQueryWithAdvancedSearch,
   prepareQueryWithoutAdvancedSearch,
@@ -16,8 +16,16 @@ export const widgetAdvancedSearchSavedItemsMixin = {
   provide() {
     return {
       $registerSelectAdvancedSearch: selectFunc => this.$selectAdvancedSearch = selectFunc,
+
+      /**
+       * Creates a search from a field/value pair and passes it to the registered select function.
+       * Used by ONLY alarm column cells to apply a filter from a chip click.
+       *
+       * @param {string} field - The advanced search field name (e.g. entity.component)
+       * @param {*} value - The value to filter by
+       */
       $selectAdvancedSearchField: (field, value) => {
-        const search = createAdvancedSearchFromFieldValue(field, value);
+        const search = createAdvancedSearchFromAlarmFieldValue(field, value);
 
         this.$selectAdvancedSearch?.(search);
       },

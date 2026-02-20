@@ -98,6 +98,7 @@ export default {
 
     /**
      * Returns quick ranges array, optionally including a custom range item
+     * We need it to support advanced editor values.
      *
      * @param {string} key - The key to check for custom range (default: 'type')
      * @returns {Array} Array of quick range objects. If the current value[key] is custom,
@@ -110,7 +111,7 @@ export default {
 
       return [
         ...props.intervalRanges,
-        getCustomRangeItem(props.value[`${key}Custom`]), // TODO: remove it inn the future. It doesn't work
+        getCustomRangeItem(props.value[`${key}Custom`]),
       ];
     };
 
