@@ -12,7 +12,7 @@ Group=canopsis
 WorkingDirectory=/opt/canopsis
 Environment=HOME=/opt/canopsis
 EnvironmentFile=/opt/canopsis/etc/go-engines-vars.conf
-ExecStart=/usr/bin/env /opt/canopsis/bin/engine-pbehavior
+ExecStart=/opt/canopsis/bin/engine-pbehavior
 PIDFile=/run/canopsis-engine-go-engine-pbehavior.pid
 Restart=always
 RestartSec=1
