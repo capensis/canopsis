@@ -27,7 +27,7 @@ Configurer l'interface MongoDB Compass avec les informations données précédem
 
 Il est aussi possible de se connecter à la base d'administrateur de MongoDB avec les identifiants suivants :
 
-Par exemple, dans docker compose les variables sont définis ainsi: 
+Par exemple, dans docker compose les variables sont définies ainsi: 
 ```sh
 MONGO_INITDB_ROOT_USERNAME=root
 MONGO_INITDB_ROOT_PASSWORD=root
@@ -39,4 +39,4 @@ mongosh -u root -p root admin
 ```
 
 !!! note
-    Dans le cadre d'une installation multi-nœuds avec un *Replica Set* MongoDB, veiller à bien être connecter au nœud primaire (`PRIMARY`).
+    Dans le cadre d'une installation multi-nœuds avec un *Replica Set* MongoDB, veiller à bien être connecté au nœud primaire (`PRIMARY`).
