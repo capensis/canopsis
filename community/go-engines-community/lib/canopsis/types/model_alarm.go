@@ -359,7 +359,7 @@ func (a *Alarm) AddChild(childEID string) {
 func (a *Alarm) RemoveChild(childEID string) {
 	for idx, child := range a.Value.Children {
 		if child == childEID {
-			a.Value.Children = append(a.Value.Children[:idx], a.Value.Children[idx+1:]...)
+			a.Value.Children = slices.Delete(a.Value.Children, idx, idx+1)
 
 			return
 		}
@@ -380,7 +380,7 @@ func (a *Alarm) RemoveParent(parentEID string) bool {
 	removed := false
 	for idx, parent := range a.Value.Parents {
 		if parent == parentEID {
-			a.Value.Parents = append(a.Value.Parents[:idx], a.Value.Parents[idx+1:]...)
+			a.Value.Parents = slices.Delete(a.Value.Parents, idx, idx+1)
 			removed = true
 
 			break

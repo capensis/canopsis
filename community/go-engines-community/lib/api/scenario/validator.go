@@ -69,6 +69,7 @@ func (v *Validator) validateActionParametersRequest(sl validator.StructLevel, t 
 				types.AlarmStateCritical,
 			}
 			var param strings.Builder
+			param.Grow(len(validTypes)*2 - 1)
 			for i := range validTypes {
 				param.WriteString(strconv.Itoa(int(validTypes[i])))
 				if i < len(validTypes)-1 {

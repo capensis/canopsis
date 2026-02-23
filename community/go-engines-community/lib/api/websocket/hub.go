@@ -598,16 +598,10 @@ func (h *hub) authorizeOnJoin(ctx context.Context, userID, room string) (bool, a
 
 func (h *hub) leave(connID, room string) {
 	h.roomsMx.Lock()
-	index := -1
-	for i, v := range h.rooms[room] {
-		if v == connID {
-			index = i
-			break
-		}
-	}
 
+	index := slices.Index(h.rooms[room], connID)
 	if index >= 0 {
-		h.rooms[room] = append(h.rooms[room][:index], h.rooms[room][index+1:]...)
+		h.rooms[room] = slices.Delete(h.rooms[room], index, index+1)
 	}
 
 	h.roomsMx.Unlock()

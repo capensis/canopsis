@@ -2,9 +2,11 @@ package utils
 
 import (
 	crand "crypto/rand"
+	"crypto/sha3"
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"hash"
 	"io"
 	"math/big"
 	"regexp"
@@ -12,7 +14,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/google/uuid"
-	"golang.org/x/crypto/sha3"
 )
 
 const NamingCharacterSet = "abcdefghijklmnopqrstuvwxyz1234567890"
@@ -132,22 +133,6 @@ func FindAllStringSubmatchMapWithRegexExpression(re RegexExpression, s string) [
 	return nil
 }
 
-// AsString tries to convert an interface{} into a string, and returns its
-// value and an integer indicating whether it succeeded or not.
-func AsString(value any) (string, bool) {
-	switch typedValue := value.(type) {
-	case string:
-		return typedValue, true
-	case *string:
-		if typedValue == nil {
-			return "", false
-		}
-		return *typedValue, true
-	default:
-		return "", false
-	}
-}
-
 func TruncateString(s string, chars int) string {
 	if chars < 1 || chars >= len(s) || chars >= utf8.RuneCountInString(s) {
 		return s
@@ -194,9 +179,9 @@ func ToObjectIDHex(s string) string {
 	const hexLen = 24
 	re := regexp.MustCompile(fmt.Sprintf(`^[0-9a-fA-F]{%d}$`, hexLen))
 	if len(s) != hexLen || !re.MatchString(s) {
-		hash := sha3.New384()
-		hash.Write([]byte(s))
-		s = hex.EncodeToString(hash.Sum(nil)[:hexLen/2])
+		h := hash.Hash(sha3.New384())
+		h.Write([]byte(s))
+		s = hex.EncodeToString(h.Sum(nil)[:hexLen/2])
 	}
 	return s
 }
