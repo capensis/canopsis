@@ -3,6 +3,7 @@ package view
 import (
 	"context"
 	"errors"
+	"slices"
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -971,14 +972,9 @@ func (s *store) normalizePositionsOnViewMove(ctx context.Context, viewID, groupI
 		return err
 	}
 
-	index := -1
-	for i, v := range viewPositionsByGroup[groupID] {
-		if v == viewID {
-			index = i
-		}
-	}
+	index := slices.Index(viewPositionsByGroup[groupID], viewID)
 
-	viewPositionsByGroup[groupID] = append(viewPositionsByGroup[groupID][:index], viewPositionsByGroup[groupID][index+1:]...)
+	viewPositionsByGroup[groupID] = slices.Delete(viewPositionsByGroup[groupID], index, index+1)
 	viewPositionsByGroup[groupID] = append(viewPositionsByGroup[groupID], viewID)
 
 	viewPositions := make([]string, 0)

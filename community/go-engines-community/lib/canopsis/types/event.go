@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 const (
@@ -399,7 +398,6 @@ var cpsNumberType = reflect.TypeFor[CpsNumber]()
 var cpsNumberPtrType = reflect.PointerTo(cpsNumberType)
 var cpsTimeType = reflect.TypeFor[datetime.CpsTime]()
 var stringType = reflect.TypeFor[string]()
-var stringPtrType = reflect.PointerTo(stringType)
 var boolType = reflect.TypeFor[bool]()
 var mapStringStringType = reflect.TypeFor[map[string]string]()
 
@@ -435,7 +433,6 @@ func (e *Event) SetField(name string, value any) (err error) {
 			return fmt.Errorf("%[1]T value cannot be converted to an integer: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(CpsNumber(integerValue)))
-
 	case cpsNumberPtrType:
 		integerValue, success := AsInteger(value)
 		if !success {
@@ -443,7 +440,6 @@ func (e *Event) SetField(name string, value any) (err error) {
 		}
 		cpsNumberValue := CpsNumber(integerValue)
 		field.Set(reflect.ValueOf(&cpsNumberValue))
-
 	case cpsTimeType:
 		integerValue, success := AsInteger(value)
 		if !success {
@@ -451,28 +447,18 @@ func (e *Event) SetField(name string, value any) (err error) {
 		}
 		cpsTimeValue := datetime.CpsTime{Time: time.Unix(integerValue, 0)}
 		field.Set(reflect.ValueOf(cpsTimeValue))
-
 	case stringType:
-		stringValue, success := utils.AsString(value)
-		if !success {
-			return fmt.Errorf("%[1]T value cannot be assigned to a string: %+[1]v", value)
+		stringValue, err := InterfaceToString(value)
+		if err != nil {
+			return fmt.Errorf("%[1]T value: %+[1]v cannot be assigned to a string: %w", value, err)
 		}
 		field.Set(reflect.ValueOf(stringValue))
-
-	case stringPtrType:
-		stringValue, success := utils.AsString(value)
-		if !success {
-			return fmt.Errorf("%[1]T value cannot be assigned to a string: %+[1]v", value)
-		}
-		field.Set(reflect.ValueOf(&stringValue))
-
 	case boolType:
 		boolValue, success := value.(bool)
 		if !success {
 			return fmt.Errorf("%[1]T value cannot be assigned to a bool: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(boolValue))
-
 	case mapStringStringType:
 		var err error
 		if m1, ok := value.(map[string]any); ok {
@@ -485,7 +471,6 @@ func (e *Event) SetField(name string, value any) (err error) {
 		if err != nil {
 			return err
 		}
-
 	default:
 		return fmt.Errorf("cannot set field %s of type %v", name, field.Type())
 	}
@@ -550,10 +535,11 @@ func setMapStringStringField[T any | string](field reflect.Value, value map[stri
 	}
 
 	for key, value := range value {
-		stringValue, success := utils.AsString(value)
-		if !success {
-			return fmt.Errorf("value cannot be assigned to a map[string]string under key %q: %+v", key, value)
+		stringValue, err := InterfaceToString(value)
+		if err != nil {
+			return fmt.Errorf("value: %+v cannot be assigned to a map[string]string under key %q: %w", value, key, err)
 		}
+
 		field.SetMapIndex(reflect.ValueOf(key), reflect.ValueOf(stringValue))
 	}
 	return nil

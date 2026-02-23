@@ -143,14 +143,16 @@ func (p *Parameters) UnmarshalJSON(b []byte) error {
 	}
 
 	val := reflect.TypeFor[Parameters]()
-	for i := 0; i < val.NumField(); i++ {
+	for field := range val.Fields() {
 		if len(m) == 0 {
 			break
 		}
-		f := val.Field(i)
-		tag := f.Tag.Get("json")
-		tag = strings.Split(tag, ",")[0]
-		delete(m, tag)
+
+		if tag, ok := field.Tag.Lookup("json"); ok {
+			if tag, _, ok = strings.Cut(tag, ","); ok {
+				delete(m, tag)
+			}
+		}
 	}
 
 	p.RemainParameters = m

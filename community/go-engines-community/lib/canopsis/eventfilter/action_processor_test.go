@@ -61,7 +61,7 @@ func TestActionProcessor(t *testing.T) {
 			action: eventfilter.ParsedAction{
 				Type:  eventfilter.ActionSetField,
 				Name:  "Output",
-				Value: 5,
+				Value: []int{1, 2, 3},
 			},
 			event:                types.Event{},
 			regexMatches:         eventfilter.RegexMatch{},
