@@ -127,7 +127,14 @@ func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 			return nil, err
 		}
 
-		logger.Warn().Str("url", sURL).Msg(`
+		logURL := *redisURL
+		q := logURL.Query()
+		if q.Has("redisPassword") {
+			q.Set("redisPassword", "xxxxx")
+			logURL.RawQuery = q.Encode()
+		}
+
+		logger.Warn().Str("url", logURL.Redacted()).Msg(`
 		DEPRECATED: redis-sentinel url with format like redis-sentinel://[password@]host1[:port1][,host2[:port2]][,hostN[:portN]][/database] is deprecated, 
 		please use redis-sentinel://<user>:<password>@<host>:<port>/<db_number>?addr=<host2>:<port2>&addr=<host3>:<port3> format instead`,
 		)

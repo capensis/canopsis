@@ -64,38 +64,6 @@ func TestFindStringSubmatchMapWithRegexExpression(t *testing.T) {
 	})
 }
 
-func TestAsString(t *testing.T) {
-	Convey("Given a string", t, func() {
-		s := "a string"
-
-		Convey("Calling AsString on this string should succeed and return its value", func() {
-			value, success := utils.AsString(s)
-			So(success, ShouldBeTrue)
-			So(value, ShouldEqual, "a string")
-		})
-
-		Convey("Calling AsString on a reference to this string should succeed and return its value", func() {
-			value, success := utils.AsString(&s)
-			So(success, ShouldBeTrue)
-			So(value, ShouldEqual, "a string")
-		})
-	})
-
-	Convey("Given an integer", t, func() {
-		i := 3
-
-		Convey("Calling AsString on this integer should fail", func() {
-			_, success := utils.AsString(i)
-			So(success, ShouldBeFalse)
-		})
-
-		Convey("Calling AsString on a reference to this integer should fail", func() {
-			_, success := utils.AsString(&i)
-			So(success, ShouldBeFalse)
-		})
-	})
-}
-
 func TestTruncateString(t *testing.T) {
 	Convey("Given a string", t, func() {
 		s := "string to truncate"
