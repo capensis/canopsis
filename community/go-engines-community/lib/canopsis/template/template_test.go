@@ -1121,7 +1121,7 @@ func BenchmarkContainsVariableRegexComplex(b *testing.B) {
 	}
 }
 
-func executeTemplate(tmpl *template.Template, payload interface{},
+func executeTemplate(tmpl *template.Template, payload any,
 ) (string, error) {
 	var b bytes.Buffer
 	err := tmpl.Execute(io.Writer(&b), payload)

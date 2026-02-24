@@ -10,13 +10,13 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/mongoadapter"
-	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v3"
 )
 
 // Enforcer is the API interface of casbin enforcer.
 // Interface casbin.IEnforcer is not used because if cannot be mocked by mockgen.
 type Enforcer interface {
-	Enforce(rvals ...interface{}) (bool, error)
+	Enforce(rvals ...any) (bool, error)
 	StartAutoLoadPolicy(context.Context, time.Duration)
 	LoadPolicy() error
 	GetRolesForUser(name string, domain ...string) ([]string, error)

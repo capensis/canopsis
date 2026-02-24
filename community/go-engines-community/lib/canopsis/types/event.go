@@ -6,11 +6,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 	"reflect"
+	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 const (
@@ -127,14 +128,14 @@ type Event struct {
 	Resource      string `bson:"resource,omitempty" json:"resource,omitempty"`
 	Upstream      string `bson:"upstream,omitempty" json:"upstream,omitempty"`
 
-	PerfData   string     `bson:"perf_data" json:"perf_data"`
-	Status     *CpsNumber `bson:"status" json:"status"`
+	PerfData   string     `bson:"perf_data,omitempty" json:"perf_data,omitempty"`
+	Status     *CpsNumber `bson:"status,omitempty" json:"status,omitempty"`
 	SourceType string     `bson:"source_type" json:"source_type"`
-	LongOutput string     `bson:"long_output" json:"long_output"`
+	LongOutput string     `bson:"long_output,omitempty" json:"long_output,omitempty"`
 	State      CpsNumber  `bson:"state" json:"state"`
-	Output     string     `bson:"output" json:"output"`
-	Alarm      *Alarm     `bson:"current_alarm" json:"current_alarm"`
-	Entity     *Entity    `bson:"current_entity" json:"current_entity"`
+	Output     string     `bson:"output,omitempty" json:"output,omitempty"`
+	Alarm      *Alarm     `bson:"current_alarm,omitempty" json:"current_alarm,omitempty"`
+	Entity     *Entity    `bson:"current_entity,omitempty" json:"current_entity,omitempty"`
 
 	// AlarmID is used if an event is emitted for the specific alarm.
 	AlarmID string `bson:"aid,omitempty" json:"aid,omitempty"`
@@ -145,13 +146,13 @@ type Event struct {
 	Timestamp         datetime.CpsTime   `bson:"timestamp" json:"timestamp"`
 	ReceivedTimestamp datetime.MicroTime `bson:"rt" json:"rt"`
 
-	RK          string                 `bson:"routing_key" json:"routing_key"`
-	Duration    CpsNumber              `bson:"duration,omitempty" json:"duration,omitempty"`
-	StatName    string                 `bson:"stat_name" json:"stat_name"`
-	Debug       bool                   `bson:"debug" json:"debug"`
-	Role        string                 `bson:"role,omitempty" json:"role,omitempty"`
-	ExtraInfos  map[string]interface{} `bson:"extra_infos" json:"extra"`
-	AlarmChange *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
+	RK          string         `bson:"routing_key,omitempty" json:"routing_key,omitempty"`
+	Duration    CpsNumber      `bson:"duration,omitempty" json:"duration,omitempty"`
+	StatName    string         `bson:"stat_name,omitempty" json:"stat_name,omitempty"`
+	Debug       bool           `bson:"debug,omitempty" json:"debug,omitempty"`
+	Role        string         `bson:"role,omitempty" json:"role,omitempty"`
+	ExtraInfos  map[string]any `bson:"extra_infos,omitempty" json:"extra,omitempty"`
+	AlarmChange *AlarmChange   `bson:"alarm_change,omitempty" json:"alarm_change,omitempty"`
 
 	// Ticket related fields
 	TicketInfo `bson:",inline"`
@@ -269,7 +270,7 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 		return nil
 	}
 
-	unmatchedParams := make(map[string]interface{})
+	unmatchedParams := make(map[string]any)
 	if err := json.Unmarshal(source, &unmatchedParams); err != nil {
 		return fmt.Errorf("Event.InjectExtraInfos json decode: %w", err)
 	}
@@ -279,12 +280,10 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 	}
 
 	if e.ExtraInfos == nil {
-		e.ExtraInfos = make(map[string]interface{})
+		e.ExtraInfos = make(map[string]any)
 	}
 
-	for k, v := range unmatchedParams {
-		e.ExtraInfos[k] = v
-	}
+	maps.Copy(e.ExtraInfos, unmatchedParams)
 
 	return nil
 }
@@ -344,7 +343,7 @@ func (e *Event) IsValid() error {
 // json.Unmarshal(body, &gevent.Content)
 // gevent.PartialID(<rules>)
 type GenericEvent struct {
-	Content interface{}
+	Content any
 }
 
 // JSONUnmarshal is a shortcut for this:
@@ -379,7 +378,7 @@ func (e *Event) GetCompatRK() string {
 
 // GetRequiredKeys read all declared json tags in the struct
 func (e *Event) GetRequiredKeys() []string {
-	typeof := reflect.TypeOf(e).Elem()
+	typeof := reflect.TypeFor[Event]()
 	n := typeof.NumField()
 	values := make([]string, 0, n)
 
@@ -387,6 +386,7 @@ func (e *Event) GetRequiredKeys() []string {
 		field := typeof.Field(i)
 		tag := field.Tag.Get("json")
 		if tag != "-" {
+			tag, _, _ = strings.Cut(tag, ",")
 			values = append(values, tag)
 		}
 	}
@@ -394,16 +394,15 @@ func (e *Event) GetRequiredKeys() []string {
 	return values
 }
 
-var cpsNumberType = reflect.TypeOf(CpsNumber(0))
+var cpsNumberType = reflect.TypeFor[CpsNumber]()
 var cpsNumberPtrType = reflect.PointerTo(cpsNumberType)
-var cpsTimeType = reflect.TypeOf(datetime.CpsTime{})
-var stringType = reflect.TypeOf("")
-var stringPtrType = reflect.PointerTo(stringType)
-var boolType = reflect.TypeOf(false)
-var mapStringStringType = reflect.TypeOf(map[string]string{})
+var cpsTimeType = reflect.TypeFor[datetime.CpsTime]()
+var stringType = reflect.TypeFor[string]()
+var boolType = reflect.TypeFor[bool]()
+var mapStringStringType = reflect.TypeFor[map[string]string]()
 
 // SetField sets the value of a field of an event given its name.
-func (e *Event) SetField(name string, value interface{}) (err error) {
+func (e *Event) SetField(name string, value any) (err error) {
 	// Recover from panics at the end of the function and returns an error
 	// instead. The code below should not panic, but this prevents the engines
 	// from crashing if there is a mistake in the use of the functions of the
@@ -434,7 +433,6 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 			return fmt.Errorf("%[1]T value cannot be converted to an integer: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(CpsNumber(integerValue)))
-
 	case cpsNumberPtrType:
 		integerValue, success := AsInteger(value)
 		if !success {
@@ -442,7 +440,6 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 		}
 		cpsNumberValue := CpsNumber(integerValue)
 		field.Set(reflect.ValueOf(&cpsNumberValue))
-
 	case cpsTimeType:
 		integerValue, success := AsInteger(value)
 		if !success {
@@ -450,28 +447,18 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 		}
 		cpsTimeValue := datetime.CpsTime{Time: time.Unix(integerValue, 0)}
 		field.Set(reflect.ValueOf(cpsTimeValue))
-
 	case stringType:
-		stringValue, success := utils.AsString(value)
-		if !success {
-			return fmt.Errorf("%[1]T value cannot be assigned to a string: %+[1]v", value)
+		stringValue, err := InterfaceToString(value)
+		if err != nil {
+			return fmt.Errorf("%[1]T value: %+[1]v cannot be assigned to a string: %w", value, err)
 		}
 		field.Set(reflect.ValueOf(stringValue))
-
-	case stringPtrType:
-		stringValue, success := utils.AsString(value)
-		if !success {
-			return fmt.Errorf("%[1]T value cannot be assigned to a string: %+[1]v", value)
-		}
-		field.Set(reflect.ValueOf(&stringValue))
-
 	case boolType:
 		boolValue, success := value.(bool)
 		if !success {
 			return fmt.Errorf("%[1]T value cannot be assigned to a bool: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(boolValue))
-
 	case mapStringStringType:
 		var err error
 		if m1, ok := value.(map[string]any); ok {
@@ -484,7 +471,6 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 		if err != nil {
 			return err
 		}
-
 	default:
 		return fmt.Errorf("cannot set field %s of type %v", name, field.Type())
 	}
@@ -537,7 +523,7 @@ func (e *Event) GetIntField(f string) (int64, bool) {
 }
 
 // GetExtraInfoVal is a magic getter for extra infos fields for easier field retrieving when matching event pattern
-func (e *Event) GetExtraInfoVal(f string) (interface{}, bool) {
+func (e *Event) GetExtraInfoVal(f string) (any, bool) {
 	v, ok := e.ExtraInfos[f]
 	return v, ok
 }
@@ -549,10 +535,11 @@ func setMapStringStringField[T any | string](field reflect.Value, value map[stri
 	}
 
 	for key, value := range value {
-		stringValue, success := utils.AsString(value)
-		if !success {
-			return fmt.Errorf("value cannot be assigned to a map[string]string under key %q: %+v", key, value)
+		stringValue, err := InterfaceToString(value)
+		if err != nil {
+			return fmt.Errorf("value: %+v cannot be assigned to a map[string]string under key %q: %w", value, key, err)
 		}
+
 		field.SetMapIndex(reflect.ValueOf(key), reflect.ValueOf(stringValue))
 	}
 	return nil

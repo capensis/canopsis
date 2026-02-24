@@ -8,8 +8,8 @@ import (
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"go.yaml.in/yaml/v3"
 	"golang.org/x/oauth2"
-	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -147,7 +147,7 @@ type OAuth2ProviderConfig struct {
 	ExpirationInterval    string            `yaml:"expiration_interval"`
 	Issuer                string            `yaml:"issuer"`
 	ClientID              string            `yaml:"client_id"`
-	ClientSecret          string            `yaml:"client_secret"`
+	ClientSecret          string            `yaml:"client_secret"` //nolint:gosec
 	RedirectURL           string            `yaml:"redirect_url"`
 	DefaultRole           string            `yaml:"default_role"`
 	AllowExtraRoles       bool              `yaml:"allow_extra_roles"`
