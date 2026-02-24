@@ -9,7 +9,7 @@ mongosh ${CPS_MONGO_URL}
 
 Pour définir la valeur de `${CPS_MONGO_URL}`  :
 ```sh
-CPS_MONGO_URL = URI_MONGODB
+CPS_MONGO_URL=URI_MONGODB
 ```
 *(Se référer au contenu du fichier `go-engines-vars.conf` sur une installation RPM, `canopsis.env` sur une installation docker-compose ou le fichier `values.yml` pour une installation helm.)*
 
