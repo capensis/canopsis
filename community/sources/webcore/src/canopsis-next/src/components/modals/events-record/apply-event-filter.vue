@@ -9,7 +9,6 @@
           v-model="form"
           :excluded-attributes="config.excludedAttributes"
           name="patterns"
-          required
           @input="errors.remove('patterns')"
         />
       </template>

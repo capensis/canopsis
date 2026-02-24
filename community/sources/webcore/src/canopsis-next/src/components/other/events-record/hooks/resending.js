@@ -2,6 +2,7 @@ import { MODALS, SINGLE_EVENT_RESEND_DELAY, TIME_UNITS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
 import { useEventsRecord } from '@/hooks/store/modules/events-record';
 import { useEventsRecordCurrent } from '@/hooks/store/modules/events-record-current';
 
@@ -14,6 +15,7 @@ import { useEventsRecordCurrent } from '@/hooks/store/modules/events-record-curr
 export const useEventsRecordResending = () => {
   const { t, tc } = useI18n();
   const modals = useModals();
+  const popups = usePopups();
 
   /**
    * STORE
@@ -34,6 +36,8 @@ export const useEventsRecordResending = () => {
       id: eventsRecordId,
       data: { delay, event_ids: eventIds },
     });
+
+    popups.info({ text: t('eventsRecord.selectedEventsAreResent') });
 
     return fetchEventsRecordCurrent();
   };

@@ -12,7 +12,7 @@
     <v-flex>
       <v-btn
         v-if="current.is_resending"
-        key="stop"
+        key="stop-resending"
         color="accent"
         @click="stopResending"
       >
@@ -20,7 +20,7 @@
       </v-btn>
       <v-btn
         v-else-if="current.is_recording"
-        key="stop"
+        key="stop-recording"
         color="accent"
         @click="stopRecording"
       >
@@ -29,12 +29,17 @@
       <v-btn
         v-else
         key="start"
+        :disabled="isLaunchDisabled"
         color="warning"
         @click="startRecording"
       >
         {{ $t('eventsRecord.launch') }}
       </v-btn>
     </v-flex>
+    <span class="text-caption grey--text text--darken-1">
+      <strong>{{ $t('common.limit') }}:</strong>&nbsp;
+      {{ $t('eventsRecord.concurrentRecordings', { limit: eventRecordsConcurrentLimit }) }}
+    </span>
   </v-layout>
 </template>
 
@@ -42,6 +47,7 @@
 import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
+import { useInfo } from '@/hooks/store/modules/info';
 
 export default {
   props: {
@@ -49,14 +55,25 @@ export default {
       type: Object,
       required: true,
     },
+    inProgressCount: {
+      type: Number,
+      default: 0,
+    },
   },
   setup(props, { emit }) {
     const { t } = useI18n();
+    const { eventRecordsConcurrentLimit } = useInfo();
 
     const message = computed(() => ({
       [props.current.is_recording]: t('eventsRecord.inProgress'),
       [props.current.is_resending]: t('eventsRecord.resendingInProgress'),
     }.true));
+
+    const isLaunchDisabled = computed(() => {
+      const limit = eventRecordsConcurrentLimit.value;
+
+      return limit != null && limit > 0 && props.inProgressCount >= limit;
+    });
 
     const startRecording = () => emit('start:recording');
     const stopRecording = () => emit('stop:recording');
@@ -65,6 +82,9 @@ export default {
 
     return {
       message,
+      eventRecordsConcurrentLimit,
+
+      isLaunchDisabled,
 
       startRecording,
       stopRecording,
