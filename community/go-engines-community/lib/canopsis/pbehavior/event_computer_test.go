@@ -119,6 +119,7 @@ func BenchmarkEventComputer_Compute(b *testing.B) {
 				Type: "test-maintenance",
 			},
 		},
+		Location: now.Location(),
 	}
 	computer := pbehavior.NewEventComputer(typesByID, defaultTypes)
 	span := timespan.New(now, now.Add(7*24*time.Hour))

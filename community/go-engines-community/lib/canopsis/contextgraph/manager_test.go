@@ -3,6 +3,7 @@ package contextgraph_test
 import (
 	"context"
 	"fmt"
+	"os"
 	"slices"
 	"testing"
 
@@ -12,11 +13,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_contextgraph "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/contextgraph"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	mock_statesetting "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/statesetting"
+	"github.com/rs/zerolog"
 	"go.uber.org/mock/gomock"
 )
 
@@ -415,7 +416,8 @@ func TestCheckServices(t *testing.T) {
 		},
 	}
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(t.Context(), log.Options{Debug: true}))
+	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
 
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
@@ -478,7 +480,7 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 	}).Return(nil).AnyTimes()
 
 	collection := mock_mongo.NewMockDbCollection(ctrl)
-	collection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
+	collection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
 
 	dbClient := mock_mongo.NewMockDbClient(ctrl)
 	dbClient.EXPECT().Collection(mongo.EntityMongoCollection).Return(collection).AnyTimes()
@@ -509,7 +511,8 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, log.Options{Debug: true}))
+	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
 	for b.Loop() {
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
 	}
@@ -542,7 +545,7 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 	}).Return(nil).AnyTimes()
 
 	collection := mock_mongo.NewMockDbCollection(ctrl)
-	collection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
+	collection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
 
 	dbClient := mock_mongo.NewMockDbClient(ctrl)
 	dbClient.EXPECT().Collection(mongo.EntityMongoCollection).Return(collection).AnyTimes()
@@ -573,7 +576,8 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, log.Options{Debug: true}))
+	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
 	for b.Loop() {
 		call = 0
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
@@ -623,7 +627,7 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 	}).Return(nil).AnyTimes()
 
 	collection := mock_mongo.NewMockDbCollection(ctrl)
-	collection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
+	collection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
 
 	dbClient := mock_mongo.NewMockDbClient(ctrl)
 	dbClient.EXPECT().Collection(mongo.EntityMongoCollection).Return(collection).AnyTimes()
@@ -654,7 +658,8 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, log.Options{Debug: true}))
+	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
 	for b.Loop() {
 		call = 0
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
