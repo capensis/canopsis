@@ -8,13 +8,25 @@
         @click="remove"
       />
     </v-layout>
-    <v-layout class="gap-3 my-4">
-      <v-btn
-        color="primary"
-        @click="applyEventFilter"
-      >
-        {{ $t('eventsRecord.applyEventFilter') }}
-      </v-btn>
+    <v-layout class="gap-3 my-4" justify-space-between align-center>
+      <v-layout class="gap-2" align-center>
+        <v-btn
+          v-if="!hideApplyFilter"
+          :color="hasFilterApplied ? 'primary' : undefined"
+          :outlined="!hasFilterApplied"
+          @click="applyEventFilter"
+        >
+          {{ hasFilterApplied ? $t('eventsRecord.eventFilterApplied') : $t('eventsRecord.applyEventFilter') }}
+        </v-btn>
+        <v-btn
+          v-if="!hideApplyFilter && hasFilterApplied"
+          outlined
+          @click="resetFilter"
+        >
+          {{ $t('common.reset') }}
+        </v-btn>
+      </v-layout>
+      <v-spacer />
       <events-record-download-btn :events-record-id="eventsRecordId" />
     </v-layout>
   </v-layout>
@@ -33,14 +45,24 @@ export default {
       type: Number,
       default: 0,
     },
+    hideApplyFilter: {
+      type: Boolean,
+      default: false,
+    },
+    hasFilterApplied: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const remove = () => emit('remove');
     const applyEventFilter = () => emit('apply:filter');
+    const resetFilter = () => emit('reset:filter');
 
     return {
       remove,
       applyEventFilter,
+      resetFilter,
     };
   },
 };

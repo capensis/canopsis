@@ -4,6 +4,7 @@
       <events-records-header
         v-if="!isCurrentEmpty"
         :current="current"
+        :in-progress-count="inProgressCount"
         @start:recording="startRecording"
         @stop:recording="stopRecording"
         @stop:resending="stopResending"
@@ -70,6 +71,10 @@ export default {
         : eventsRecords.value
     ));
 
+    const inProgressCount = computed(() => (
+      preparedEventsRecords.value.filter(r => r.is_recording).length
+    ));
+
     /**
      * QUERY
      */
@@ -131,6 +136,7 @@ export default {
       meta,
       current,
       isCurrentEmpty,
+      inProgressCount,
       pending,
       options,
 

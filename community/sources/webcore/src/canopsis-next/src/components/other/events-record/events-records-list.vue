@@ -26,27 +26,37 @@
     <template #t="{ item }">
       {{ item.t | date }}
     </template>
+    <template #recordingEnd="{ item }">
+      {{ item.is_recording ? $t('common.inProgress') : (item.t_end ? (item.t_end | date) : '—') }}
+    </template>
+    <template #duration="{ item }">
+      {{ item.is_recording ? $t('common.inProgress') : (item | duration) }}
+    </template>
+    <template #author="{ item }">
+      {{ item.author || '—' }}
+    </template>
     <template #actions="{ item }">
-      <v-layout v-if="item.is_recording">
+      <v-layout>
         <c-action-btn
+          v-if="item.is_recording"
           :tooltip="$t('eventsRecord.stop')"
           color="blue darken-3"
           icon="stop"
           @click="stop"
         />
-      </v-layout>
-      <v-layout v-else>
         <c-action-btn
-          :tooltip="$t('eventsRecord.viewEvents')"
+          :tooltip="item.is_recording ? $t('eventsRecord.viewPattern') : $t('eventsRecord.viewEventsAndPattern')"
           icon="pageview"
           color="#6A6A6A"
           @click="show(item)"
         />
-        <events-record-download-btn :events-record-id="item._id" icon />
-        <c-action-btn
-          type="delete"
-          @click="remove(item)"
-        />
+        <template v-if="!item.is_recording">
+          <events-record-download-btn :events-record-id="item._id" icon />
+          <c-action-btn
+            type="delete"
+            @click="remove(item)"
+          />
+        </template>
       </v-layout>
     </template>
   </c-advanced-data-table>
@@ -89,13 +99,28 @@ export default {
         sortable: false,
       },
       {
-        text: t('eventsRecord.recorded'),
+        text: t('eventsRecord.recordingStart'),
         value: 't',
+        sortable: false,
+      },
+      {
+        text: t('eventsRecord.recordingEnd'),
+        value: 'recordingEnd',
+        sortable: false,
+      },
+      {
+        text: t('eventsRecord.duration'),
+        value: 'duration',
         sortable: false,
       },
       {
         text: t('eventsRecord.eventsCount'),
         value: 'count',
+        sortable: false,
+      },
+      {
+        text: t('eventsRecord.launchedBy'),
+        value: 'author',
         sortable: false,
       },
       {
