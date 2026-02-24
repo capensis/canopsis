@@ -50,20 +50,33 @@ func TestKeyMutex_Lock_GivenMultipleLocks_ShouldWaitUnlockBeforeNextLock(t *test
 	var unlockTime, lockTime time.Time
 	var err error
 	mx := keymutex.New()
+
 	go func() {
 		mx.Lock(key)
-		wg := sync.WaitGroup{}
 
-		wg.Go(func() {
-			mx.Lock(key)
+		// readyToLock is closed by the second goroutine just before it calls
+		// Lock, guaranteeing the first lock is held when the second one tries.
+		// lockAcquired is closed after the second Lock returns.
+		readyToLock := make(chan struct{})
+		lockAcquired := make(chan struct{})
+
+		go func() {
+			close(readyToLock)
+			mx.Lock(key) // blocks until first lock is released
 			lockTime = time.Now()
-		})
+			close(lockAcquired)
+		}()
 
-		time.Sleep(time.Millisecond * 100)
-		err = mx.Unlock(key)
+		<-readyToLock
+
+		// Record unlockTime BEFORE calling Unlock so that the happens-before
+		// chain is strict: unlockTime -> Unlock() -> Lock() returns -> lockTime.
+		// Recording it after Unlock() races with the second goroutine recording
+		// lockTime on a different CPU, which can produce unlockTime > lockTime.
 		unlockTime = time.Now()
+		err = mx.Unlock(key)
 
-		wg.Wait()
+		<-lockAcquired
 		done <- true
 	}()
 
@@ -74,7 +87,7 @@ func TestKeyMutex_Lock_GivenMultipleLocks_ShouldWaitUnlockBeforeNextLock(t *test
 	}
 
 	if unlockTime.After(lockTime) {
-		t.Errorf("expected lock after unlock")
+		t.Errorf("expected lock after unlock: unlockTime=%v, lockTime=%v", unlockTime, lockTime)
 	}
 }
 
@@ -200,25 +213,31 @@ func TestKeyMutex_Unlock_GivenMoreLocksThenUnlocks_ShouldReturnError(t *testing.
 	go func() {
 		mx.Lock(key)
 
-		wg := sync.WaitGroup{}
+		// readyToLock is closed by the second goroutine just before it calls
+		// Lock, guaranteeing the first lock is held when the second one tries.
+		// lockAcquired is closed after the second Lock returns.
+		readyToLock := make(chan struct{})
+		lockAcquired := make(chan struct{})
 
-		wg.Go(func() {
-			mx.Lock(key)
+		go func() {
+			close(readyToLock)
+			mx.Lock(key) // blocks until first lock is released
 			firstUnlockErr := mx.Unlock(key)
 			if firstUnlockErr == nil {
 				err = mx.Unlock(key)
 			} else {
 				t.Errorf("expected no error but got %v", firstUnlockErr)
 			}
-		})
+			close(lockAcquired)
+		}()
 
-		time.Sleep(time.Millisecond * 100)
+		<-readyToLock
 		unlockErr := mx.Unlock(key)
 		if unlockErr != nil {
 			t.Errorf("expected no error but got %v", unlockErr)
 		}
 
-		wg.Wait()
+		<-lockAcquired
 		done <- true
 	}()
 
@@ -315,7 +334,7 @@ func BenchmarkKeyMutex_Lock_Unlock(b *testing.B) {
 		b.Run(name, func(b *testing.B) {
 			mx := keymutex.New()
 
-			for i := 0; i < b.N; i++ {
+			for b.Loop() {
 				for _, key := range keys {
 					mx.Lock(key)
 				}
@@ -330,7 +349,7 @@ func BenchmarkKeyMutex_Lock_Unlock(b *testing.B) {
 func BenchmarkKeyMutex_LockMultiple(b *testing.B) {
 	for name, keys := range genKeys(10, 10000, 10) {
 		b.Run(name, func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
+			for b.Loop() {
 				mx := keymutex.New()
 				mx.LockMultiple(keys...)
 			}
@@ -343,7 +362,7 @@ func BenchmarkKeyMutex_LockMultiple_UnlockMultiple(b *testing.B) {
 		b.Run(name, func(b *testing.B) {
 			mx := keymutex.New()
 
-			for i := 0; i < b.N; i++ {
+			for b.Loop() {
 				mx.LockMultiple(keys...)
 				_ = mx.UnlockMultiple(keys...)
 			}
