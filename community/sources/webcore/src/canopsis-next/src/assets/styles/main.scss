@@ -442,6 +442,10 @@ html {
   }
 }
 
+.v-autocomplete.v-select input {
+  min-width: 64px;
+}
+
 *[aria-required="true"] label:before {
   content: '*' !important;
   padding-right: 4px !important;
