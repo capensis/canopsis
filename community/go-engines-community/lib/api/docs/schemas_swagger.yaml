@@ -1864,8 +1864,7 @@ definitions:
         type: string
       name:
         type: string
-      value:
-        type: any
+      value: {}
     type: object
   entity.InfoRequest:
     properties:
@@ -1875,8 +1874,7 @@ definitions:
       name:
         maxLength: 255
         type: string
-      value:
-        type: any
+      value: {}
     required:
     - name
     type: object
@@ -6280,8 +6278,7 @@ definitions:
     properties:
       description:
         type: string
-      value:
-        type: any
+      value: {}
     type: object
   serviceweather.PbhTypeCounter:
     properties:
@@ -6860,8 +6857,7 @@ definitions:
         type: string
       name:
         type: string
-      value:
-        type: any
+      value: {}
     type: object
   user.BulkDeleteRequestItem:
     properties:
@@ -7146,8 +7142,7 @@ definitions:
   userpreferences.EditRequest:
     properties:
       content:
-        additionalProperties:
-          type: any
+        additionalProperties: {}
         type: object
       widget:
         type: string
@@ -7158,8 +7153,7 @@ definitions:
   userpreferences.Response:
     properties:
       content:
-        additionalProperties:
-          type: any
+        additionalProperties: {}
         type: object
       filters:
         items:
@@ -7434,8 +7428,7 @@ definitions:
       _id:
         type: string
       grid_parameters:
-        additionalProperties:
-          type: any
+        additionalProperties: {}
         type: object
     type: object
   widget.EditRequest:
@@ -7445,8 +7438,7 @@ definitions:
           $ref: '#/definitions/widget.FilterRequest'
         type: array
       grid_parameters:
-        additionalProperties:
-          type: any
+        additionalProperties: {}
         type: object
       parameters:
         $ref: '#/definitions/view.Parameters'
@@ -7514,8 +7506,7 @@ definitions:
           $ref: '#/definitions/widgetfilter.Response'
         type: array
       grid_parameters:
-        additionalProperties:
-          type: any
+        additionalProperties: {}
         type: object
       is_private:
         type: boolean
