@@ -79,7 +79,6 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/gabriel-vasile/mimetype v1.4.10 // indirect
-	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.8-0.20250403174932-29230038a667 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.3 // indirect
@@ -117,7 +116,7 @@ require (
 	github.com/prometheus/common v0.67.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/smarty/assertions v1.16.0 // indirect
-	github.com/swaggo/swag v1.8.3 // indirect
+	github.com/swaggo/swag v1.16.6 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/urfave/cli/v2 v2.3.0 // indirect
@@ -133,6 +132,7 @@ require (
 	golang.org/x/tools v0.38.0 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
 // No effect on the real canopsis-community repo, but necessary when it's part of the canopsis-pro monorepo

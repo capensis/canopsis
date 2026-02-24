@@ -86,7 +86,8 @@ definitions:
   action.Parameters:
     properties:
       auth_token:
-        $ref: '#/definitions/request.WebhookAuthToken'
+        allOf:
+        - $ref: '#/definitions/request.WebhookAuthToken'
         description: AuthToken is used in webhook action.
       author:
         type: string
@@ -94,10 +95,12 @@ definitions:
         description: Color is used in pbehavior action.
         type: string
       declare_ticket:
-        $ref: '#/definitions/request.WebhookDeclareTicket'
+        allOf:
+        - $ref: '#/definitions/request.WebhookDeclareTicket'
         description: DeclareTicket is used in webhook action.
       duration:
-        $ref: '#/definitions/datetime.DurationWithUnit'
+        allOf:
+        - $ref: '#/definitions/datetime.DurationWithUnit'
         description: Duration is used in snooze and pbehavior actions.
       forward_author:
         type: boolean
@@ -115,7 +118,8 @@ definitions:
         description: Reason is used in pbehavior action.
         type: string
       request:
-        $ref: '#/definitions/request.Parameters'
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
         description: Request is used in webhook action.
       rrule:
         description: RRule is used in pbehavior action.
@@ -218,7 +222,8 @@ definitions:
       links:
         $ref: '#/definitions/link.LinksByCategory'
       meta_alarm_rule:
-        $ref: '#/definitions/alarm.MetaAlarmRule'
+        allOf:
+        - $ref: '#/definitions/alarm.MetaAlarmRule'
         description: Meta alarm fields
       meta_alarm_rules:
         items:
@@ -1786,7 +1791,8 @@ definitions:
       last_pbehavior_date:
         type: integer
       links:
-        $ref: '#/definitions/link.LinksByCategory'
+        allOf:
+        - $ref: '#/definitions/link.LinksByCategory'
         description: Links
       name:
         type: string
@@ -2059,7 +2065,8 @@ definitions:
       last_pbehavior_date:
         type: integer
       links:
-        $ref: '#/definitions/link.LinksByCategory'
+        allOf:
+        - $ref: '#/definitions/link.LinksByCategory'
         description: Links
       name:
         type: string
@@ -2362,7 +2369,8 @@ definitions:
       last_pbehavior_date:
         type: integer
       links:
-        $ref: '#/definitions/link.LinksByCategory'
+        allOf:
+        - $ref: '#/definitions/link.LinksByCategory'
         description: Links
       name:
         type: string
@@ -2499,7 +2507,8 @@ definitions:
       last_pbehavior_date:
         type: integer
       links:
-        $ref: '#/definitions/link.LinksByCategory'
+        allOf:
+        - $ref: '#/definitions/link.LinksByCategory'
         description: Links
       name:
         type: string
@@ -2660,7 +2669,8 @@ definitions:
       last_pbehavior_date:
         type: integer
       links:
-        $ref: '#/definitions/link.LinksByCategory'
+        allOf:
+        - $ref: '#/definitions/link.LinksByCategory'
         description: Links
       name:
         type: string
@@ -3151,7 +3161,8 @@ definitions:
           Key contains field name of table with regexp, value contains template.
         type: object
       request:
-        $ref: '#/definitions/request.Parameters'
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
         description: are used in api external data
       select:
         additionalProperties:
@@ -3329,7 +3340,8 @@ definitions:
           type: string
         type: object
       request:
-        $ref: '#/definitions/request.Parameters'
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
         description: are used in api external data
       select:
         additionalProperties:
@@ -3340,7 +3352,8 @@ definitions:
       sort_by:
         type: string
       table:
-        $ref: '#/definitions/externaldatatable.Table'
+        allOf:
+        - $ref: '#/definitions/externaldatatable.Table'
         description: are used in db external data
       type:
         type: string
@@ -3400,7 +3413,7 @@ definitions:
     - name
     - type
     type: object
-  file.File:
+  file.Response:
     properties:
       _id:
         type: string
@@ -3525,6 +3538,108 @@ definitions:
     - duration
     - freq_limit
     - name
+    type: object
+  git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_idlerule.Operation:
+    properties:
+      parameters:
+        $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_idlerule.Parameters'
+      type:
+        type: string
+    type: object
+  git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_idlerule.Parameters:
+    properties:
+      duration:
+        allOf:
+        - $ref: '#/definitions/datetime.DurationWithUnit'
+        description: Snooze and Pbehavior
+      name:
+        description: Pbehavior
+        maxLength: 255
+        type: string
+      output:
+        type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
+      rrule:
+        type: string
+      start_on_trigger:
+        type: boolean
+      state:
+        description: ChangeState
+        type: integer
+      ticket:
+        description: AssocTicket
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
+      ticket_url_title:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+    type: object
+  git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_canopsis_idlerule.Parameters:
+    properties:
+      color:
+        type: string
+      duration:
+        allOf:
+        - $ref: '#/definitions/datetime.DurationWithUnit'
+        description: Snooze and Pbehavior
+      name:
+        description: Pbehavior
+        maxLength: 255
+        type: string
+      output:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      start_on_trigger:
+        type: boolean
+      state:
+        description: ChangeState
+        type: integer
+      ticket:
+        description: |-
+          AssocTicket
+          Ticket is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        description: TicketData is used in assocticket action.
+        type: object
+      ticket_system_name:
+        description: TicketSystemName is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_url:
+        description: TicketURL is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_url_title:
+        description: TicketURLTitle is used in assocticket action.
+        maxLength: 255
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
     type: object
   healthcheck.Edge:
     properties:
@@ -3792,63 +3907,16 @@ definitions:
     - name
     - type
     type: object
-  idlerule.Operation:
-    properties:
-      parameters:
-        $ref: '#/definitions/idlerule.Parameters'
-      type:
-        type: string
-    type: object
   idlerule.OperationRequest:
     properties:
       parameters:
-        $ref: '#/definitions/idlerule.Parameters'
+        $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_canopsis_idlerule.Parameters'
       type:
         type: string
     required:
     - type
     type: object
-  idlerule.Parameters:
-    properties:
-      duration:
-        $ref: '#/definitions/datetime.DurationWithUnit'
-        description: Snooze and Pbehavior
-      name:
-        description: Pbehavior
-        maxLength: 255
-        type: string
-      output:
-        type: string
-      reason:
-        $ref: '#/definitions/pbehavior.Reason'
-      rrule:
-        type: string
-      start_on_trigger:
-        type: boolean
-      state:
-        description: ChangeState
-        type: integer
-      ticket:
-        description: AssocTicket
-        type: string
-      ticket_data:
-        additionalProperties:
-          type: string
-        type: object
-      ticket_system_name:
-        type: string
-      ticket_url:
-        type: string
-      ticket_url_title:
-        type: string
-      tstart:
-        type: integer
-      tstop:
-        type: integer
-      type:
-        $ref: '#/definitions/pbehavior.Type'
-    type: object
-  idlerule.Rule:
+  idlerule.Response:
     properties:
       _id:
         type: string
@@ -3897,7 +3965,7 @@ definitions:
       name:
         type: string
       operation:
-        $ref: '#/definitions/idlerule.Operation'
+        $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_idlerule.Operation'
       priority:
         type: integer
       type:
@@ -4242,8 +4310,7 @@ definitions:
     type: object
   pagination.ListResponse:
     properties:
-      data:
-        type: any
+      data: {}
       meta:
         $ref: '#/definitions/pagination.MetaResponse'
     type: object
@@ -5818,7 +5885,8 @@ definitions:
       declare_ticket:
         $ref: '#/definitions/request.WebhookDeclareTicket'
       duration:
-        $ref: '#/definitions/datetime.DurationWithUnit'
+        allOf:
+        - $ref: '#/definitions/datetime.DurationWithUnit'
         description: Snooze and Pbehavior
       forward_author:
         type: boolean
@@ -5832,7 +5900,8 @@ definitions:
       reason:
         $ref: '#/definitions/pbehavior.Reason'
       request:
-        $ref: '#/definitions/request.Parameters'
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
         description: Webhook
       rrule:
         type: string
@@ -6334,7 +6403,8 @@ definitions:
           type: array
         type: array
       junit_thresholds:
-        $ref: '#/definitions/statesettings.JUnitThresholds'
+        allOf:
+        - $ref: '#/definitions/statesettings.JUnitThresholds'
         description: JUnit state setting only field
       method:
         description: |-
@@ -6430,7 +6500,8 @@ definitions:
           type: array
         type: array
       junit_thresholds:
-        $ref: '#/definitions/statesettings.JUnitThresholds'
+        allOf:
+        - $ref: '#/definitions/statesettings.JUnitThresholds'
         description: JUnit state setting only field
       method:
         description: |-
@@ -6541,8 +6612,7 @@ definitions:
     properties:
       _id:
         type: string
-      body:
-        type: any
+      body: {}
       created:
         type: integer
       description:
@@ -6560,8 +6630,7 @@ definitions:
     type: object
   template.EditDataRequest:
     properties:
-      body:
-        type: any
+      body: {}
       description:
         maxLength: 500
         type: string
@@ -6755,8 +6824,7 @@ definitions:
         type: boolean
       name:
         type: string
-      value:
-        type: any
+      value: {}
     type: object
   types.Author:
     properties:
