@@ -266,7 +266,7 @@ Pour les requêtes sur les dates, si vous souhaitez utiliser les timestamp UNIX,
 Il est aussi possible de manipuler les dates simplement en shell
 ```sh
 Exemple avec la date "2026-02-19 07:10:59" en UTC
-$ date -d "2026-02-19 07:10:59" +%s
+$ date -u -d "2026-02-19 07:10:59" +%s
 1771485059
 
 $ date -d @1771485059 "+%Y-%m-%d %H:%M:%S"
