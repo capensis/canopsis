@@ -26,7 +26,7 @@ func TestPool_Exec_GivenContextDone_ShouldAbortRetries(t *testing.T) {
 	minRetryTimeout := 2 * time.Second
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
-	mockPgxPool.EXPECT().Exec(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgconn.CommandTag, error) {
+	mockPgxPool.EXPECT().Exec(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...any) (pgconn.CommandTag, error) {
 		return pgconn.CommandTag{}, &net.OpError{Err: errors.New("test error")}
 	}).AnyTimes()
 
@@ -66,7 +66,7 @@ func TestPool_Exec_GivenConnectionError_ShouldRetryMaxTries(t *testing.T) {
 	minRetryTimeout := time.Millisecond
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
-	mockPgxPool.EXPECT().Exec(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgconn.CommandTag, error) {
+	mockPgxPool.EXPECT().Exec(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...any) (pgconn.CommandTag, error) {
 		return pgconn.CommandTag{}, &net.OpError{Err: errors.New("test error")}
 	}).Times(retryCount + 1)
 
@@ -96,7 +96,7 @@ func TestPool_Exec_GivenNotConnectionError_ShouldReturnError(t *testing.T) {
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
 	execCount := -1
-	mockPgxPool.EXPECT().Exec(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgconn.CommandTag, error) {
+	mockPgxPool.EXPECT().Exec(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...any) (pgconn.CommandTag, error) {
 		execCount++
 
 		if execCount == 0 {
@@ -132,7 +132,7 @@ func TestPool_Exec_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
 	execCount := -1
-	mockPgxPool.EXPECT().Exec(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgconn.CommandTag, error) {
+	mockPgxPool.EXPECT().Exec(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...any) (pgconn.CommandTag, error) {
 		execCount++
 		switch execCount {
 		case 0:
@@ -171,7 +171,7 @@ func TestPool_Query_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
 	minRetryTimeout := time.Millisecond
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
-	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgx.Rows, error) {
+	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...any) (pgx.Rows, error) {
 		return nil, &net.OpError{Err: errors.New("test error")}
 	}).Times(retryCount + 1)
 
@@ -201,7 +201,7 @@ func TestPool_Query_GivenConnectionError_ShouldReturnError(t *testing.T) {
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
 	execCount := -1
-	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgx.Rows, error) {
+	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...any) (pgx.Rows, error) {
 		execCount++
 
 		if execCount == 0 {
@@ -237,7 +237,7 @@ func TestPool_Query_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
 	execCount := -1
-	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgx.Rows, error) {
+	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...any) (pgx.Rows, error) {
 		execCount++
 		switch execCount {
 		case 0:
@@ -276,7 +276,7 @@ func TestPool_QueryRow_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T)
 	minRetryTimeout := time.Millisecond
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
-	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgx.Rows, error) {
+	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...any) (pgx.Rows, error) {
 		return nil, &net.OpError{Err: errors.New("test error")}
 	}).Times(retryCount + 1)
 
@@ -303,7 +303,7 @@ func TestPool_QueryRow_GivenConnectionError_ShouldReturnError(t *testing.T) {
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
 	execCount := -1
-	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgx.Rows, error) {
+	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...any) (pgx.Rows, error) {
 		execCount++
 
 		if execCount == 0 {
@@ -341,7 +341,7 @@ func TestPool_QueryRow_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T
 	mockRows.EXPECT().Next().Return(true)
 	mockRows.EXPECT().Close()
 	execCount := -1
-	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgx.Rows, error) {
+	mockPgxPool.EXPECT().Query(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...any) (pgx.Rows, error) {
 		execCount++
 		switch execCount {
 		case 0:

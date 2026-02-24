@@ -83,17 +83,14 @@ func (w *lockedPeriodicalWorker) Work(parentCtx context.Context) {
 	}()
 
 	wg := sync.WaitGroup{}
-	wg.Add(1)
+
 	done := make(chan struct{})
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		defer close(done)
 		w.worker.Work(ctx)
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		ticker := time.NewTicker(ttl / 2)
 		defer ticker.Stop()
 		for {
@@ -112,7 +109,7 @@ func (w *lockedPeriodicalWorker) Work(parentCtx context.Context) {
 				lockRefreshed = true
 			}
 		}
-	}()
+	})
 
 	wg.Wait()
 }

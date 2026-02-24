@@ -2699,7 +2699,8 @@ definitions:
         type: string
       type:
         type: string
-      value: {}
+      value:
+        type: any
     type: object
   eventfilter.BulkDeleteRequestItem:
     properties:
@@ -7141,7 +7142,7 @@ definitions:
   userpreferences.EditRequest:
     properties:
       content:
-        additionalProperties: true
+        additionalProperties: {}
         type: object
       widget:
         type: string
@@ -7152,7 +7153,7 @@ definitions:
   userpreferences.Response:
     properties:
       content:
-        additionalProperties: true
+        additionalProperties: {}
         type: object
       filters:
         items:
@@ -7427,7 +7428,7 @@ definitions:
       _id:
         type: string
       grid_parameters:
-        additionalProperties: true
+        additionalProperties: {}
         type: object
     type: object
   widget.EditRequest:
@@ -7437,7 +7438,7 @@ definitions:
           $ref: '#/definitions/widget.FilterRequest'
         type: array
       grid_parameters:
-        additionalProperties: true
+        additionalProperties: {}
         type: object
       parameters:
         $ref: '#/definitions/view.Parameters'
@@ -7505,7 +7506,7 @@ definitions:
           $ref: '#/definitions/widgetfilter.Response'
         type: array
       grid_parameters:
-        additionalProperties: true
+        additionalProperties: {}
         type: object
       is_private:
         type: boolean

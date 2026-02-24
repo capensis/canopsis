@@ -213,7 +213,7 @@ type ChildDetailsRequest struct {
 type DetailsResponse struct {
 	ID     string            `json:"_id"`
 	Status int               `json:"status"`
-	Data   Details           `json:"data,omitempty"`
+	Data   Details           `json:"data"`
 	Errors map[string]string `json:"errors,omitempty"`
 	Error  string            `json:"error,omitempty"`
 }

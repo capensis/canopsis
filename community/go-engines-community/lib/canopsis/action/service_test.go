@@ -477,15 +477,12 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 
 			var wg sync.WaitGroup
 			if dataset.expectExecute {
-				wg.Add(1)
-
-				go func() {
-					defer wg.Done()
+				wg.Go(func() {
 					scenarioExec := <-scenarioExecChan
 					if scenarioExec.AbandonedExecutionCacheKey != dataset.executionKey {
 						t.Errorf("Scenario exec task should be marked as 'abandoned' but got %+v", scenarioExec)
 					}
-				}()
+				})
 			}
 
 			err := actionService.ProcessAbandonedExecutions(t.Context())

@@ -9,7 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"github.com/gin-gonic/gin"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 func GetHandler(errorResponder httperror.Responder, generatedSchemasContents [][]byte, contents [][]byte) func(c *gin.Context) {

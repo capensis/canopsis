@@ -3,6 +3,7 @@ package parser
 
 import (
 	"fmt"
+	"maps"
 	"reflect"
 	"strings"
 
@@ -26,9 +27,7 @@ func (e *Expression) PostgresQuery(prefix string) (string, pgx.NamedArgs) {
 	for i, cond := range e.Or {
 		orQueries[i], args = cond.PostgresQuery(prefix)
 
-		for k, v := range args {
-			orArgs[k] = v
-		}
+		maps.Copy(orArgs, args)
 	}
 
 	if len(orQueries) == 1 {
@@ -85,9 +84,7 @@ func (c *OrCondition) PostgresQuery(prefix string) (string, pgx.NamedArgs) {
 	for i, v := range c.And {
 		andQueries[i], args = v.PostgresQuery(prefix)
 
-		for k, v := range args {
-			andArgs[k] = v
-		}
+		maps.Copy(andArgs, args)
 	}
 
 	if len(andQueries) == 1 {
