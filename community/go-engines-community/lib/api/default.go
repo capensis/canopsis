@@ -505,7 +505,11 @@ func Default(
 				return nil, services, fmt.Errorf("cannot read swagger: %w", err)
 			}
 			api.AddRouter(func(router *gin.Engine) error {
-				router.GET("/swagger.yaml", docs.GetHandler(services.ErrorResponder, schemasContent, content))
+				router.GET("/swagger.yaml", docs.GetHandler(
+					services.ErrorResponder,
+					[][]byte{schemasContent},
+					[][]byte{content},
+				))
 
 				return nil
 			})
