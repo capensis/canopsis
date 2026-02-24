@@ -1118,6 +1118,8 @@ export default {
     title: 'Events recording {date}',
     subtitle: '{count} events from RabbitMQ received',
     buttonTooltip: 'Delete received events',
+    eventsTab: 'Events',
+    patternTab: 'Pattern',
   },
   createExternalDataTable: {
     create: {
