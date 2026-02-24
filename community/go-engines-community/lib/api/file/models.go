@@ -6,7 +6,7 @@ type Response struct {
 	ID        string           `bson:"_id" json:"_id"`
 	FileName  string           `bson:"filename" json:"filename"`
 	MediaType string           `bson:"mediatype" json:"mediatype"`
-	Created   datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Created   datetime.CpsTime `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
 	Storage   string           `bson:"storage" json:"-"`
 	Etag      string           `bson:"etag" json:"-"`
 	IsPublic  bool             `bson:"is_public" json:"-"`

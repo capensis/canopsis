@@ -9,7 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libmodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	casbinmodel "github.com/casbin/casbin/v2/model"
+	casbinmodel "github.com/casbin/casbin/v3/model"
 	"go.uber.org/mock/gomock"
 )
 
