@@ -72,8 +72,8 @@ type Parameters struct {
 	Reason         string            `json:"reason" bson:"reason,omitempty"`
 	Type           string            `json:"type" bson:"type,omitempty"`
 	RRule          string            `json:"rrule" bson:"rrule,omitempty"`
-	Tstart         *datetime.CpsTime `json:"tstart" bson:"tstart,omitempty"`
-	Tstop          *datetime.CpsTime `json:"tstop" bson:"tstop,omitempty"`
+	Tstart         *datetime.CpsTime `json:"tstart" bson:"tstart,omitempty" swaggertype:"integer"`
+	Tstop          *datetime.CpsTime `json:"tstop" bson:"tstop,omitempty" swaggertype:"integer"`
 	StartOnTrigger *bool             `json:"start_on_trigger" bson:"start_on_trigger,omitempty"`
 	Color          string            `json:"color" bson:"color,omitempty"`
 }
