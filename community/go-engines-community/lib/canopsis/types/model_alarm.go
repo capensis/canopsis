@@ -75,6 +75,7 @@ const (
 	AlarmStepAssocTicket       = "assocticket"
 	AlarmStepDeclareTicket     = "declareticket"
 	AlarmStepDeclareTicketFail = "declareticketfail"
+	AlarmStepTicketRemove      = "ticketremove"
 	AlarmStepWebhookStart      = "webhookstart"
 	AlarmStepWebhookComplete   = "webhookcomplete"
 	AlarmStepWebhookFail       = "webhookfail"
@@ -117,6 +118,7 @@ func GetAlarmStepTypes() []string {
 		AlarmStepActivate,
 		AlarmStepResolve,
 		AlarmStepAssocTicket,
+		AlarmStepTicketRemove,
 		AlarmStepDeclareTicket,
 		AlarmStepDeclareTicketFail,
 		AlarmStepWebhookStart,
@@ -224,11 +226,7 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps) {
 		steps = append(steps, *a.Value.ACK)
 	}
 
-	for _, ticketStep := range a.Value.Tickets {
-		if ticketStep.Type == AlarmStepDeclareTicket || ticketStep.Type == AlarmStepAssocTicket {
-			steps = append(steps, ticketStep)
-		}
-	}
+	steps = append(steps, a.Value.Tickets...)
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)
 	}

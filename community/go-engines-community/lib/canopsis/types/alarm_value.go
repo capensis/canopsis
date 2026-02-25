@@ -505,9 +505,11 @@ type AlarmValue struct {
 	LastComment *AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
 	ChangeState *AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
 	Tickets     []AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
-	// Ticket contains the last created ticket
+	// Ticket contains the last created ticket.
 	Ticket *AlarmStep `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	Steps  AlarmSteps `bson:"steps" json:"steps"`
+	// FailedTicket contains the last ticket if it failed.
+	FailedTicket *AlarmStep `bson:"failed_ticket,omitempty" json:"failed_ticket,omitempty"`
+	Steps        AlarmSteps `bson:"steps" json:"steps"`
 	// NoEventsDate indicates if an alarm is under no events idle rule.
 	NoEventsDate *datetime.CpsTime `bson:"no_events_date,omitempty" json:"no_events_date,omitempty"`
 

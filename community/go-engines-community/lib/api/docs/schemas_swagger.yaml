@@ -305,6 +305,8 @@ definitions:
         type: integer
       events_count:
         type: integer
+      failed_ticket:
+        $ref: '#/definitions/common.AlarmStep'
       infos:
         type: object
       initial_long_output:
@@ -877,6 +879,20 @@ definitions:
     - _id
     - duration
     type: object
+  alarmaction.BulkTicketRemoveRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+    required:
+    - _id
+    - comment
+    - ticket
+    type: object
   alarmaction.ChangeStateRequest:
     properties:
       comment:
@@ -915,6 +931,17 @@ definitions:
         $ref: '#/definitions/datetime.DurationWithUnit'
     required:
     - duration
+    type: object
+  alarmaction.TicketRemoveRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+    required:
+    - comment
+    - ticket
     type: object
   alarmtag.BulkDeleteRequestItem:
     properties:
@@ -2699,8 +2726,7 @@ definitions:
         type: string
       type:
         type: string
-      value:
-        type: any
+      value: {}
     type: object
   eventfilter.BulkDeleteRequestItem:
     properties:
