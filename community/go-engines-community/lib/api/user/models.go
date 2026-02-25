@@ -28,7 +28,7 @@ type UpdateRequest struct {
 }
 
 type EditRequest struct {
-	Password               string   `json:"password"`
+	Password               string   `json:"password"` //nolint:gosec
 	Name                   string   `json:"name" binding:"required,max=255"`
 	Firstname              string   `json:"firstname" binding:"max=255"`
 	Lastname               string   `json:"lastname" binding:"max=255"`
@@ -48,7 +48,7 @@ type PatchRequest struct {
 }
 
 type PatchEditRequest struct {
-	Password               *string  `json:"password"`
+	Password               *string  `json:"password"` //nolint:gosec
 	Name                   *string  `json:"name" binding:"omitempty,max=255"`
 	Firstname              *string  `json:"firstname" binding:"omitempty,max=255"`
 	Lastname               *string  `json:"lastname" binding:"omitempty,max=255"`
@@ -195,7 +195,7 @@ type User struct {
 	DefaultView            *View             `bson:"defaultview" json:"defaultview"`
 	ExternalID             string            `bson:"external_id" json:"external_id"`
 	Source                 string            `bson:"source" json:"source"`
-	AuthApiKey             string            `bson:"authkey" json:"authkey"`
+	AuthApiKey             string            `bson:"authkey" json:"authkey"` //nolint:gosec
 	Author                 *author.Author    `bson:"author,omitempty" json:"author,omitempty"`
 	Created                *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated                *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
@@ -241,7 +241,7 @@ type AggregationResult struct {
 	TotalCount int64  `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 

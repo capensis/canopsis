@@ -21,7 +21,7 @@ type CpsNumber int64
 
 // MarshalJSON implements json.Encoder interface
 func (t CpsNumber) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprint(t)), nil
+	return fmt.Append(nil, t), nil
 }
 
 // UnmarshalJSON implements json.Decoder interface
@@ -41,7 +41,7 @@ func (t CpsNumber) CpsTimestamp() datetime.CpsTime {
 	return datetime.NewCpsTime(int64(t))
 }
 
-func listOfInterfaceToString(v []interface{}) (string, error) {
+func listOfInterfaceToString(v []any) (string, error) {
 	values := make([]string, len(v))
 	for i, vv := range v {
 		sval, err := InterfaceToString(vv)
@@ -54,7 +54,7 @@ func listOfInterfaceToString(v []interface{}) (string, error) {
 	return strings.Join(values, ","), nil
 }
 
-func listOfInterfaceToStringSlice(v []interface{}) ([]string, error) {
+func listOfInterfaceToStringSlice(v []any) ([]string, error) {
 	values := make([]string, len(v))
 	for i, vv := range v {
 		sval, err := InterfaceToString(vv)
@@ -78,7 +78,7 @@ func listOfInterfaceToStringSlice(v []interface{}) ([]string, error) {
 //
 // Any other type will return empty string and an error, like lists
 // or maps...
-func InterfaceToString(v interface{}) (string, error) {
+func InterfaceToString(v any) (string, error) {
 	switch vt := v.(type) {
 	case bool:
 		return strconv.FormatBool(vt), nil
@@ -94,16 +94,16 @@ func InterfaceToString(v interface{}) (string, error) {
 		return strconv.FormatUint(uint64(vt), 10), nil
 	case uint64:
 		return strconv.FormatUint(vt, 10), nil
-	case []interface{}:
+	case []any:
 		return listOfInterfaceToString(vt)
 	default:
 		return "", fmt.Errorf("unsupported type: %T", v)
 	}
 }
 
-func InterfaceToStringSlice(v interface{}) ([]string, error) {
+func InterfaceToStringSlice(v any) ([]string, error) {
 	switch vt := v.(type) {
-	case []interface{}:
+	case []any:
 		return listOfInterfaceToStringSlice(vt)
 	case []string:
 		return vt, nil
@@ -117,7 +117,7 @@ func InterfaceToStringSlice(v interface{}) ([]string, error) {
 //
 // It works with int, uint, int64, uint64, CpsNumber and CpsTime (in this case,
 // a unix timestamp is returned).
-func AsInteger(value interface{}) (int64, bool) {
+func AsInteger(value any) (int64, bool) {
 	switch typedValue := value.(type) {
 	case float32:
 		return int64(math.Round(float64(typedValue))), true

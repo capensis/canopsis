@@ -36,8 +36,8 @@ type Rule struct {
 	// DisableDuringPeriods is an option that allows to disable the rule
 	// when entity is in listed periods due pbehavior schedule.
 	DisableDuringPeriods []string         `bson:"disable_during_periods" json:"disable_during_periods"`
-	Created              datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty"`
-	Updated              datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty"`
+	Created              datetime.CpsTime `bson:"created,omitempty" json:"created,omitzero"`
+	Updated              datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitzero"`
 	// Only for Alarm rules
 	AlarmCondition string     `bson:"alarm_condition,omitempty" json:"alarm_condition,omitempty"`
 	Operation      *Operation `bson:"operation,omitempty" json:"operation,omitempty"`
@@ -72,8 +72,8 @@ type Parameters struct {
 	Reason         string            `json:"reason" bson:"reason,omitempty"`
 	Type           string            `json:"type" bson:"type,omitempty"`
 	RRule          string            `json:"rrule" bson:"rrule,omitempty"`
-	Tstart         *datetime.CpsTime `json:"tstart" bson:"tstart,omitempty"`
-	Tstop          *datetime.CpsTime `json:"tstop" bson:"tstop,omitempty"`
+	Tstart         *datetime.CpsTime `json:"tstart" bson:"tstart,omitempty" swaggertype:"integer"`
+	Tstop          *datetime.CpsTime `json:"tstop" bson:"tstop,omitempty" swaggertype:"integer"`
 	StartOnTrigger *bool             `json:"start_on_trigger" bson:"start_on_trigger,omitempty"`
 	Color          string            `json:"color" bson:"color,omitempty"`
 }

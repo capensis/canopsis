@@ -2,6 +2,7 @@ package view
 
 import (
 	"encoding/json"
+	"maps"
 	"reflect"
 	"strings"
 
@@ -84,8 +85,8 @@ type Widget struct {
 	Parameters         Parameters         `bson:"parameters" json:"parameters"`
 	InternalParameters InternalParameters `bson:"internal_parameters,omitempty" json:"-"`
 	Author             string             `bson:"author" json:"author,omitempty"`
-	Created            datetime.CpsTime   `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated            datetime.CpsTime   `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created            datetime.CpsTime   `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated            datetime.CpsTime   `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 
 	IsPrivate bool `bson:"is_private" json:"is_private"`
 }
@@ -124,9 +125,7 @@ func (p Parameters) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	for k, v := range p.RemainParameters {
-		m[k] = v
-	}
+	maps.Copy(m, p.RemainParameters)
 
 	return json.Marshal(m)
 }
@@ -143,15 +142,17 @@ func (p *Parameters) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	val := reflect.TypeOf(*p)
-	for i := 0; i < val.NumField(); i++ {
+	val := reflect.TypeFor[Parameters]()
+	for field := range val.Fields() {
 		if len(m) == 0 {
 			break
 		}
-		f := val.Field(i)
-		tag := f.Tag.Get("json")
-		tag = strings.Split(tag, ",")[0]
-		delete(m, tag)
+
+		if tag, ok := field.Tag.Lookup("json"); ok {
+			if tag, _, ok = strings.Cut(tag, ","); ok {
+				delete(m, tag)
+			}
+		}
 	}
 
 	p.RemainParameters = m
