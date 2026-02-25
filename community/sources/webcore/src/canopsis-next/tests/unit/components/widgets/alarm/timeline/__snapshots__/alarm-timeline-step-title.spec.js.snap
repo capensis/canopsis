@@ -364,7 +364,7 @@ exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for ste
 <span
   class="text-subtitle-2"
 >
-  Ticket removed
+  Ticket removed by root
 </span>
 `;
 
