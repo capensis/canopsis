@@ -195,27 +195,30 @@ type DeclareTicket struct {
 
 func (t *DeclareTicket) UnmarshalJSON(b []byte) error {
 	m := make(map[string]any)
+
 	err := json.Unmarshal(b, &m)
 	if err != nil {
 		return err
 	}
 
 	if emptyResponse, ok := m["empty_response"]; ok {
-		if boolVal, ok := emptyResponse.(bool); ok {
-			t.EmptyResponse = boolVal
-			delete(m, "empty_response")
-		} else {
+		boolVal, ok := emptyResponse.(bool)
+		if !ok {
 			return errors.New("invalid type of empty_response")
 		}
+
+		t.EmptyResponse = boolVal
+		delete(m, "empty_response")
 	}
 
 	if isRegexp, ok := m["is_regexp"]; ok {
-		if boolVal, ok := isRegexp.(bool); ok {
-			t.IsRegexp = boolVal
-			delete(m, "is_regexp")
-		} else {
+		boolVal, ok := isRegexp.(bool)
+		if !ok {
 			return errors.New("invalid type of is_regexp")
 		}
+
+		t.IsRegexp = boolVal
+		delete(m, "is_regexp")
 	}
 
 	if checkTicketStatus, ok := m["check_ticket_status"]; ok {
@@ -236,23 +239,24 @@ func (t *DeclareTicket) UnmarshalJSON(b []byte) error {
 
 	customFields := make(map[string]string)
 	for k, v := range m {
-		if strVal, ok := v.(string); ok {
-			switch k {
-			case "ticket_id":
-				t.TicketID = strVal
-			case "ticket_id_tpl":
-				t.TicketIDTpl = strVal
-			case "ticket_url":
-				t.TicketURL = strVal
-			case "ticket_url_tpl":
-				t.TicketURLTpl = strVal
-			case "ticket_url_title":
-				t.TicketURLTitle = strVal
-			default:
-				customFields[k] = strVal
-			}
-		} else {
+		strVal, ok := v.(string)
+		if !ok {
 			return fmt.Errorf("invalid type of %s", k)
+		}
+
+		switch k {
+		case "ticket_id":
+			t.TicketID = strVal
+		case "ticket_id_tpl":
+			t.TicketIDTpl = strVal
+		case "ticket_url":
+			t.TicketURL = strVal
+		case "ticket_url_tpl":
+			t.TicketURLTpl = strVal
+		case "ticket_url_title":
+			t.TicketURLTitle = strVal
+		default:
+			customFields[k] = strVal
 		}
 	}
 	t.CustomFields = customFields
