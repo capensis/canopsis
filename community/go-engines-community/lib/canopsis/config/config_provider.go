@@ -827,11 +827,8 @@ func (p *BaseTemplateConfigProvider) parseVariables(templateCfg SectionTemplate)
 		return
 	}
 
-	for _, prefix := range templateCfg.SystemEnvVarPrefixes {
-		if prefix == "" {
-			p.logger.Warn().Msg("system_env_var_prefixes contains an empty prefix, all system env variables are exposed to the UI")
-			break
-		}
+	if slices.Contains(templateCfg.SystemEnvVarPrefixes, "") {
+		p.logger.Warn().Msg("system_env_var_prefixes contains an empty prefix, all system env variables are exposed to the UI")
 	}
 
 	systemVars := make(map[string]string)

@@ -135,10 +135,7 @@ func (s *service) RecomputeIdleSince(parentCtx context.Context) error {
 	defer close(errCh)
 
 	for i := 0; i < maxWorkersCount; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
+		wg.Go(func() {
 			for {
 				select {
 				case <-ctx.Done():
@@ -161,7 +158,7 @@ func (s *service) RecomputeIdleSince(parentCtx context.Context) error {
 					}
 				}
 			}
-		}()
+		})
 	}
 
 	wg.Wait()

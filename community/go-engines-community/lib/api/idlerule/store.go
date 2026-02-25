@@ -20,10 +20,10 @@ import (
 )
 
 type Store interface {
-	Insert(context.Context, CreateRequest) (*Rule, error)
+	Insert(context.Context, CreateRequest) (*Response, error)
 	Find(context.Context, FilteredQuery) (*AggregationResult, error)
-	GetOneBy(ctx context.Context, id string) (*Rule, error)
-	Update(context.Context, UpdateRequest) (*Rule, error)
+	GetOneBy(ctx context.Context, id string) (*Response, error)
+	Update(context.Context, UpdateRequest) (*Response, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
@@ -84,7 +84,7 @@ func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, 
 	return &res, nil
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
+func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"_id": id}},
 	}
@@ -96,7 +96,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
 	}
 	defer cursor.Close(ctx)
 	if cursor.Next(ctx) {
-		rule := &Rule{}
+		rule := &Response{}
 		err = cursor.Decode(rule)
 		if err != nil {
 			return nil, err
@@ -108,7 +108,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
 	rule := transformRequestToModel(r.EditRequest)
 
@@ -116,7 +116,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 	rule.Created = now
 	rule.Updated = now
 
-	var idleRule *Rule
+	var idleRule *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
@@ -162,12 +162,12 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 	return idleRule, nil
 }
 
-func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
 	model := transformRequestToModel(r.EditRequest)
 	model.ID = r.ID
 	model.Updated = datetime.NewCpsTime()
 
-	var idleRule *Rule
+	var idleRule *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 

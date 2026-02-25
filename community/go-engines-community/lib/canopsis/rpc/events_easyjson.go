@@ -4,7 +4,6 @@ package rpc
 
 import (
 	json "encoding/json"
-
 	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	pattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -1121,7 +1120,7 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawByte(']')
 		}
 	}
-	if true {
+	{
 		const prefix string = ",\"pbehavior_info\":"
 		out.RawString(prefix)
 		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes4(out, in.PbehaviorInfo)
@@ -2579,16 +2578,6 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes10(in, out.Ticket)
 			}
-		case "failed_ticket":
-			if in.IsNull() {
-				in.Skip()
-				out.FailedTicket = nil
-			} else {
-				if out.FailedTicket == nil {
-					out.FailedTicket = new(types.AlarmStep)
-				}
-				easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes10(in, out.FailedTicket)
-			}
 		case "steps":
 			if in.IsNull() {
 				in.Skip()
@@ -3180,16 +3169,6 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		}
 		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes10(out, *in.Ticket)
 	}
-	if in.FailedTicket != nil {
-		const prefix string = ",\"failed_ticket\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes10(out, *in.FailedTicket)
-	}
 	{
 		const prefix string = ",\"steps\":"
 		if first {
@@ -3312,7 +3291,7 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.Raw((*in.Resolved).MarshalJSON())
 	}
-	if true {
+	{
 		const prefix string = ",\"pbehavior_info\":"
 		out.RawString(prefix)
 		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes4(out, in.PbehaviorInfo)
@@ -3433,7 +3412,7 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawByte('}')
 		}
 	}
-	if true {
+	{
 		const prefix string = ",\"last_infos_update\":"
 		out.RawString(prefix)
 		out.Raw((in.LastInfosUpdate).MarshalJSON())
@@ -3729,7 +3708,7 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.Raw((in.Value).MarshalJSON())
 	}
-	if true {
+	{
 		const prefix string = ",\"statecounter\":"
 		out.RawString(prefix)
 		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes11(out, in.StateCounter)
@@ -4960,7 +4939,7 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix[1:])
 		out.String(string(in.EventType))
 	}
-	if true {
+	{
 		const prefix string = ",\"parameters\":"
 		out.RawString(prefix)
 		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisRpc11(out, in.Parameters)
@@ -5570,7 +5549,7 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		}
 		out.String(string(in.Initiator))
 	}
-	if true {
+	{
 		const prefix string = ",\"timestamp\":"
 		if first {
 			first = false
@@ -5582,252 +5561,127 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	}
 	if in.State != nil {
 		const prefix string = ",\"state\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Raw((*in.State).MarshalJSON())
 	}
 	if in.TicketResources {
 		const prefix string = ",\"ticket_resources\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Bool(bool(in.TicketResources))
 	}
 	if in.WebhookRequest {
 		const prefix string = ",\"webhook_request\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Bool(bool(in.WebhookRequest))
 	}
 	if in.WebhookFailReason != "" {
 		const prefix string = ",\"webhook_fail_reason\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.WebhookFailReason))
 	}
 	if in.WebhookError != nil {
 		const prefix string = ",\"webhook_error\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Raw((*in.WebhookError).MarshalJSON())
 	}
 	if in.EmitTrigger {
 		const prefix string = ",\"emit_trigger\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Bool(bool(in.EmitTrigger))
 	}
 	if in.RuleExecution != "" {
 		const prefix string = ",\"rule_execution\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.RuleExecution))
 	}
 	if in.IsLastWebhook {
 		const prefix string = ",\"is_last_webhook\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Bool(bool(in.IsLastWebhook))
 	}
 	if in.Duration != nil {
 		const prefix string = ",\"duration\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisDatetime(out, *in.Duration)
 	}
-	if true {
+	{
 		const prefix string = ",\"pbehavior_info\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes4(out, in.PbehaviorInfo)
 	}
 	if in.Name != "" {
 		const prefix string = ",\"name\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Name))
 	}
 	if in.Reason != "" {
 		const prefix string = ",\"reason\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Reason))
 	}
 	if in.Type != "" {
 		const prefix string = ",\"type\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Type))
 	}
 	if in.RRule != "" {
 		const prefix string = ",\"rrule\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.RRule))
 	}
 	if in.Tstart != nil {
 		const prefix string = ",\"tstart\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Raw((*in.Tstart).MarshalJSON())
 	}
 	if in.Tstop != nil {
 		const prefix string = ",\"tstop\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Raw((*in.Tstop).MarshalJSON())
 	}
 	if in.StartOnTrigger != nil {
 		const prefix string = ",\"start_on_trigger\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Bool(bool(*in.StartOnTrigger))
 	}
 	if in.Color != "" {
 		const prefix string = ",\"color\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Color))
 	}
 	if in.Comment != "" {
 		const prefix string = ",\"comment\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Comment))
 	}
 	if in.Origin != "" {
 		const prefix string = ",\"origin\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Origin))
 	}
 	if in.Execution != "" {
 		const prefix string = ",\"execution\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Execution))
 	}
 	if in.Instruction != "" {
 		const prefix string = ",\"instruction\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Instruction))
 	}
 	if in.Trigger != "" {
 		const prefix string = ",\"trigger\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Trigger))
 	}
 	if in.LongOutput != "" {
 		const prefix string = ",\"long_output\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.LongOutput))
 	}
 	if len(in.Tags) != 0 {
 		const prefix string = ",\"tags\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		{
 			out.RawByte('{')
 			v97First := true
@@ -5846,12 +5700,7 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	}
 	if len(in.ImportTags) != 0 {
 		const prefix string = ",\"imtags\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		{
 			out.RawByte('{')
 			v98First := true
@@ -5870,82 +5719,42 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	}
 	if in.ImportSource != "" {
 		const prefix string = ",\"impsrc\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.ImportSource))
 	}
 	if in.Connector != "" {
 		const prefix string = ",\"connector\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Connector))
 	}
 	if in.ConnectorName != "" {
 		const prefix string = ",\"connector_name\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.ConnectorName))
 	}
 	if in.IdleRuleApply != "" {
 		const prefix string = ",\"idle_rule_apply\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.IdleRuleApply))
 	}
 	if in.MetaAlarmRuleID != "" {
 		const prefix string = ",\"meta_alarm_rule_id\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.MetaAlarmRuleID))
 	}
 	if in.MetaAlarmValuePath != "" {
 		const prefix string = ",\"meta_alarm_value_path\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.MetaAlarmValuePath))
 	}
 	if in.MetaAlarmTags != nil {
 		const prefix string = ",\"ma_tags\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes12(out, *in.MetaAlarmTags)
 	}
 	if len(in.MetaAlarmInfos) != 0 {
 		const prefix string = ",\"ma_infos\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		{
 			out.RawByte('[')
 			for v99, v100 := range in.MetaAlarmInfos {
@@ -5959,22 +5768,12 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	}
 	if in.DisplayName != "" {
 		const prefix string = ",\"display_name\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.DisplayName))
 	}
 	if len(in.MetaAlarmChildren) != 0 {
 		const prefix string = ",\"meta_alarm_children\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		{
 			out.RawByte('[')
 			for v101, v102 := range in.MetaAlarmChildren {
@@ -5988,122 +5787,62 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	}
 	if in.StateSettingUpdated {
 		const prefix string = ",\"state_setting_updated\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Bool(bool(in.StateSettingUpdated))
 	}
 	if in.CloseDelayValue != nil {
 		const prefix string = ",\"close_delay\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Int64(int64(*in.CloseDelayValue))
 	}
 	if in.IsCloseDelayJob {
 		const prefix string = ",\"is_close_delay\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Bool(bool(in.IsCloseDelayJob))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Ticket))
 	}
 	if in.TicketURL != "" {
 		const prefix string = ",\"ticket_url\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.TicketURL))
 	}
 	if in.TicketURLTitle != "" {
 		const prefix string = ",\"ticket_url_title\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.TicketURLTitle))
 	}
 	if in.TicketComment != "" {
 		const prefix string = ",\"ticket_comment\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.TicketComment))
 	}
 	if in.TicketSystemName != "" {
 		const prefix string = ",\"ticket_system_name\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.TicketSystemName))
 	}
 	if in.TicketMetaAlarmID != "" {
 		const prefix string = ",\"ticket_meta_alarm_id\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.TicketMetaAlarmID))
 	}
 	if in.TicketRuleID != "" {
 		const prefix string = ",\"ticket_rule_id\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.TicketRuleID))
 	}
 	if in.TicketRuleName != "" {
 		const prefix string = ",\"ticket_rule_name\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.TicketRuleName))
 	}
 	if len(in.TicketData) != 0 {
 		const prefix string = ",\"ticket_data\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		{
 			out.RawByte('{')
 			v103First := true

@@ -285,7 +285,7 @@ func (t *baseTransformer) ApplyAliases(p pattern.Entity, aliasProps Aliases, fie
 
 			n, ok := aliasProps[c.Alias]
 			if !ok {
-				aliasNs := make([]string, len(fieldNs))
+				aliasNs := make([]string, len(fieldNs), len(fieldNs)+3)
 				copy(aliasNs, fieldNs)
 				aliasNs = append(aliasNs, strconv.Itoa(gi), strconv.Itoa(ci), "Alias")
 				valErrs = append(valErrs, t.newNotExistErr(aliasNs))

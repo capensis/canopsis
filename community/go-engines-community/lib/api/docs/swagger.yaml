@@ -17,13 +17,13 @@ paths:
       description: Get account.
       operationId: account-get
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/account.User'
-        401:
+        '401':
           description: Unauthorized
           content:
             application/json:
@@ -43,13 +43,13 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/account.EditRequest'
         required: true
       responses:
-        200:
+        '200':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/account.User'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -63,7 +63,7 @@ paths:
       description: Get all active broadcast-message.
       operationId: broadcast-messages-get-active
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -178,13 +178,13 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/alarm.Count'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -232,7 +232,7 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/search'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -245,7 +245,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/alarm.DisplayNameData'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -269,13 +269,13 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/alarm.ExportRequest'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/alarm.ExportResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -294,19 +294,19 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/alarm.ExportResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -325,20 +325,20 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             text/csv:
               schema:
                 type: string
                 format: binary
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -395,13 +395,13 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/alarm.DetailsResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -429,7 +429,7 @@ paths:
             items:
               type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -437,13 +437,13 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/link.Link'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -472,7 +472,7 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/search'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -485,7 +485,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/alarmtag.LabelResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -517,7 +517,7 @@ paths:
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/sort_by'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -530,7 +530,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -583,13 +583,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -608,13 +608,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -674,19 +674,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -704,9 +704,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -880,7 +880,7 @@ paths:
           schema:
             type: boolean
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -893,7 +893,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -912,13 +912,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -958,15 +958,15 @@ paths:
                 }
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -999,15 +999,15 @@ paths:
                 }
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1103,15 +1103,15 @@ paths:
                 }
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1130,9 +1130,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1150,9 +1150,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1185,15 +1185,15 @@ paths:
                 }
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1227,15 +1227,15 @@ paths:
                 }
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1268,15 +1268,15 @@ paths:
                 }
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1313,15 +1313,15 @@ paths:
                 }
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1354,15 +1354,15 @@ paths:
                 }
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1376,7 +1376,7 @@ paths:
       description: Get application information.
       operationId: internal-get-app-info
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -1402,13 +1402,13 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/associativetable.AssociativeTable'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1431,13 +1431,13 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/associativetable.AssociativeTable'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/associativetable.AssociativeTable'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -1460,9 +1460,9 @@ paths:
           schema:
             type: string
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1483,7 +1483,7 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -1496,7 +1496,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -1519,13 +1519,13 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.CreateRequest'
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -1544,13 +1544,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1575,19 +1575,19 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.UpdateRequest'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1605,9 +1605,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1624,9 +1624,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -1661,7 +1661,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -1676,7 +1676,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/alarmtag.BulkDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -1717,7 +1717,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -1766,7 +1766,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -1830,7 +1830,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -1928,7 +1928,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -1979,7 +1979,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2028,7 +2028,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2085,7 +2085,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2134,7 +2134,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2178,7 +2178,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2193,7 +2193,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/colortheme.BulkDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2235,7 +2235,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2250,7 +2250,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorCreateRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2288,7 +2288,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2303,7 +2303,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2353,7 +2353,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2368,7 +2368,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorEditRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2406,7 +2406,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2421,7 +2421,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2459,7 +2459,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2474,7 +2474,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2509,7 +2509,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2524,7 +2524,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.BulkDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2600,7 +2600,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2615,7 +2615,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkUpdateRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2689,7 +2689,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2704,7 +2704,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/entityservice.CreateRequest'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2738,7 +2738,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2751,7 +2751,7 @@ paths:
                       properties:
                         item:
                           $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2777,7 +2777,7 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkUpdateRequestItem'
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2792,7 +2792,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkUpdateRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2817,7 +2817,7 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2832,7 +2832,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2857,7 +2857,7 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkDeleteRequestItem'
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2872,7 +2872,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2914,7 +2914,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2929,7 +2929,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.BulkDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2955,7 +2955,7 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkUpdateRequestItem'
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -2970,7 +2970,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkUpdateRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -2995,7 +2995,7 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/idlerule.CreateRequest'
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3010,7 +3010,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/idlerule.CreateRequest'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3035,7 +3035,7 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkDeleteRequestItem'
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3050,7 +3050,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3085,7 +3085,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3100,7 +3100,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/linkrule.BulkDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3135,7 +3135,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3150,7 +3150,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/pattern.BulkDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3213,7 +3213,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3228,7 +3228,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkUpdateRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3289,7 +3289,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3304,7 +3304,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/pbehavior.CreateRequest'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3338,7 +3338,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3353,7 +3353,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3395,7 +3395,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3410,7 +3410,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkEntityCreateRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3445,7 +3445,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3460,7 +3460,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkEntityDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3506,7 +3506,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3521,7 +3521,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/role.BulkUpdatePermissionsRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3604,7 +3604,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3619,7 +3619,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkUpdateRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3700,7 +3700,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3715,7 +3715,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/scenario.CreateRequest'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3749,7 +3749,7 @@ paths:
                 ]
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3764,7 +3764,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3790,7 +3790,7 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/user.BulkUpdateRequestItem'
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3805,7 +3805,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/user.BulkUpdateRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3830,7 +3830,7 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3845,7 +3845,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3870,7 +3870,7 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/user.BulkPatchRequestItem'
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3885,7 +3885,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/user.BulkPatchRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3910,7 +3910,7 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/user.BulkDeleteRequestItem'
         required: true
       responses:
-        207:
+        '207':
           description: Multi-Status
           content:
             application/json:
@@ -3925,7 +3925,7 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/user.BulkDeleteRequestItem'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -3946,7 +3946,7 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -3959,7 +3959,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/colortheme.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -4021,13 +4021,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/colortheme.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -4046,13 +4046,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/colortheme.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -4116,19 +4116,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/colortheme.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -4146,9 +4146,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -4179,7 +4179,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -4192,13 +4192,13 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -4347,13 +4347,13 @@ paths:
                 ]
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/contextgraph.ImportResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -4502,13 +4502,13 @@ paths:
                 ]
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/contextgraph.ImportResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -4527,13 +4527,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/contextgraph.ImportJob'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -4550,7 +4550,7 @@ paths:
         -  PERMISSIONS: `api_datastorage_read`
       operationId: datastorage-get
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -4573,7 +4573,7 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/datastorage.Config'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -4647,7 +4647,7 @@ paths:
             items:
               type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -4660,7 +4660,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/entity.Entity'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -4683,9 +4683,9 @@ paths:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/entity.ArchiveDisabledRequest'
       responses:
-        202:
+        '202':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -4708,9 +4708,9 @@ paths:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/entity.ArchiveUnlinkedRequest'
       responses:
-        202:
+        '202':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -4750,13 +4750,13 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entity.StateSettingResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -4773,7 +4773,7 @@ paths:
         -  PERMISSIONS: `api_entity:delete`
       operationId: entities-clean-archived
       responses:
-        202:
+        '202':
           description: OK
   /entities/context-graph:
     get:
@@ -4792,7 +4792,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -4800,7 +4800,7 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/entity.ContextGraphResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -4834,7 +4834,7 @@ paths:
           schema:
             type: integer
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -4842,13 +4842,13 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/pbehavior.CalendarResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -4873,7 +4873,7 @@ paths:
             type: string
         - $ref: '#/components/parameters/withFlags'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -4881,13 +4881,13 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -4910,7 +4910,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -4934,7 +4934,7 @@ paths:
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/sort_by'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -4947,7 +4947,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/entitycategory.Category'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -4977,13 +4977,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entitycategory.Category'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -5002,13 +5002,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entitycategory.Category'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5040,19 +5040,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entitycategory.Category'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5070,9 +5070,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5098,7 +5098,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -5111,13 +5111,13 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/entitycomment.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5148,19 +5148,19 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entitycomment.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5183,7 +5183,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/entitycomment.Request'
+              $ref: 'schemas_swagger.yaml#/definitions/entitycomment.UpdateRequest'
             examples:
               update:
                 summary: Update
@@ -5194,19 +5194,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entitycomment.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5230,13 +5230,13 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/entity.ExportRequest'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entity.ExportResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -5255,19 +5255,19 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entity.ExportResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5286,20 +5286,20 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             text/csv:
               schema:
                 type: string
                 format: binary
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5320,7 +5320,7 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -5333,7 +5333,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/entityinfodictionary.Result'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -5359,7 +5359,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -5372,7 +5372,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/entityinfodictionary.Result'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -5414,7 +5414,7 @@ paths:
               - string_array
               - timestamp
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -5427,7 +5427,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -5460,13 +5460,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -5485,13 +5485,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5526,19 +5526,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5556,9 +5556,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5582,13 +5582,13 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entitybasic.Entity'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5670,19 +5670,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entitybasic.Entity'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5705,15 +5705,15 @@ paths:
           schema:
             type: string
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5757,7 +5757,7 @@ paths:
           schema:
             type: boolean
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -5770,7 +5770,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/entityservice.ContextGraphEntity'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5809,7 +5809,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -5822,7 +5822,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/entityservice.ContextGraphEntity'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5858,7 +5858,7 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -5871,13 +5871,13 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -5948,13 +5948,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entityservice.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -5973,13 +5973,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entityservice.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -6051,19 +6051,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entityservice.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -6081,9 +6081,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -6100,7 +6100,7 @@ paths:
         -  PERMISSIONS: `api_entityservice:read`
       operationId: entityservice-tpl-vars
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -6155,7 +6155,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -6163,7 +6163,7 @@ paths:
                 type: object
                 additionalProperties:
                   $ref: 'schemas_swagger.yaml#/definitions/template.ValidateResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -6191,7 +6191,7 @@ paths:
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/sort_by'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -6204,7 +6204,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/entityupstream.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -6228,13 +6228,13 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/entityupstream.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -6405,13 +6405,13 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/event.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -6437,7 +6437,7 @@ paths:
           schema:
             type: boolean
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -6450,7 +6450,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -6470,7 +6470,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Response'
+              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
             examples:
               CreateDropRule:
                 summary: Create a drop rule
@@ -6821,13 +6821,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -6846,13 +6846,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -6874,7 +6874,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Response'
+              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.UpdateRequest'
             examples:
               Update:
                 summary: Update
@@ -6909,19 +6909,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -6939,9 +6939,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -6960,7 +6960,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -6973,13 +6973,13 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/eventfilter.FailureResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -6997,9 +6997,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7033,7 +7033,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             text/plain:
@@ -7051,7 +7051,7 @@ paths:
         -  PERMISSIONS: `api_eventfilter:read`
       operationId: eventfilter-copy-vars
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -7068,7 +7068,7 @@ paths:
         -  PERMISSIONS: `api_eventfilter:read`
       operationId: eventfilter-tpl-vars
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -7154,7 +7154,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -7162,7 +7162,7 @@ paths:
                 type: object
                 additionalProperties:
                   $ref: 'schemas_swagger.yaml#/definitions/template.ValidateResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -7205,14 +7205,14 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/x-yaml:
               schema:
                 type: string
                 format: binary
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -7243,19 +7243,19 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ExportRequest'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ExportResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7278,13 +7278,13 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ExportResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7308,14 +7308,14 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             text/csv:
               schema:
                 type: string
                 format: binary
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7354,19 +7354,19 @@ paths:
                   format: binary
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ImportJob'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7459,7 +7459,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -7501,13 +7501,13 @@ paths:
                       }
                     }
                   }
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7562,9 +7562,9 @@ paths:
                 }
         required: true
       responses:
-        204:
+        '204':
           description: No Content - Import completed successfully
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -7592,7 +7592,7 @@ paths:
                       "column_tags.0": "ColumnTags[0] must be one of [0 1 2]."
                     }
                   }
-        404:
+        '404':
           description: Not Found - Job not found or preview not completed
           content:
             application/json:
@@ -7620,7 +7620,7 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -7635,13 +7635,13 @@ paths:
                           type: object
                           additionalProperties:
                             type: string
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7665,13 +7665,13 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ImportJob'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7695,7 +7695,7 @@ paths:
         - $ref: '#/components/parameters/sort_by'
         - $ref: '#/components/parameters/ids'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -7708,7 +7708,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Table'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -7740,13 +7740,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Table'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -7765,13 +7765,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Table'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7806,19 +7806,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Table'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7836,15 +7836,15 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7875,7 +7875,7 @@ paths:
         - $ref: '#/components/parameters/sort_by'
         - $ref: '#/components/parameters/withFlags'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -7890,13 +7890,13 @@ paths:
                           type: object
                           additionalProperties:
                             type: string
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7937,7 +7937,7 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
@@ -7945,13 +7945,13 @@ paths:
                 type: object
                 additionalProperties:
                   type: string
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -7975,14 +7975,14 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             text/csv:
               schema:
                 type: string
                 format: binary
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8007,7 +8007,7 @@ paths:
             type: string
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8015,7 +8015,7 @@ paths:
                 type: object
                 additionalProperties:
                   type: string
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8057,7 +8057,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8065,13 +8065,13 @@ paths:
                 type: object
                 additionalProperties:
                   type: string
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8095,9 +8095,9 @@ paths:
             type: string
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8124,21 +8124,21 @@ paths:
             items:
               type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: 'schemas_swagger.yaml#/definitions/file.File'
-        400:
+                  $ref: 'schemas_swagger.yaml#/definitions/file.Response'
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8174,15 +8174,15 @@ paths:
                     format: binary
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: 'schemas_swagger.yaml#/definitions/file.File'
-        400:
+                  $ref: 'schemas_swagger.yaml#/definitions/file.Response'
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -8196,7 +8196,7 @@ paths:
       description: Get file access. Sets cookie with file access token. Need to be called before downloading file when it's impossible to pass token in header.
       operationId: auth-get-file-access
       responses:
-        204:
+        '204':
           description: OK
       security:
         - BearerAuth: [ ]
@@ -8213,14 +8213,14 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             '*/*':
               schema:
                 type: string
                 format: binary
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8238,15 +8238,15 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8267,7 +8267,7 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8280,7 +8280,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/flappingrule.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -8339,13 +8339,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/flappingrule.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -8364,13 +8364,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/flappingrule.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8431,19 +8431,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/flappingrule.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8461,9 +8461,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8497,7 +8497,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             text/plain:
@@ -8515,7 +8515,7 @@ paths:
         -  PERMISSIONS: `api_healthcheck`
       operationId: healthcheck-get
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8532,7 +8532,7 @@ paths:
         -  PERMISSIONS: `api_healthcheck`
       operationId: healthcheck-get-engines-order
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8549,7 +8549,7 @@ paths:
         -  PERMISSIONS: `api_healthcheck`
       operationId: healthcheck-get-parameters
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8629,13 +8629,13 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/config.HealthCheckParameters'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -8652,7 +8652,7 @@ paths:
         -  PERMISSIONS: `api_healthcheck`
       operationId: healthcheck-get-live
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8669,7 +8669,7 @@ paths:
         -  PERMISSIONS: `api_healthcheck`
       operationId: healthcheck-get-status
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8687,7 +8687,7 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8700,7 +8700,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/icon.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -8731,7 +8731,7 @@ paths:
                   format: binary
         required: true
       responses:
-        201:
+        '201':
           description: OK
           content:
             application/json:
@@ -8739,7 +8739,7 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/icon.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -8755,14 +8755,14 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             '*/*':
               schema:
                 type: string
                 format: binary
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8780,9 +8780,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8815,7 +8815,7 @@ paths:
                   format: binary
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8823,13 +8823,13 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/icon.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8859,7 +8859,7 @@ paths:
                   format: binary
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8867,13 +8867,13 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/icon.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -8900,7 +8900,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8912,8 +8912,8 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/idlerule.Rule'
-        400:
+                          $ref: 'schemas_swagger.yaml#/definitions/idlerule.Response'
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -9011,19 +9011,19 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/idlerule.Rule'
-        400:
+                $ref: 'schemas_swagger.yaml#/definitions/idlerule.Response'
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -9042,13 +9042,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/idlerule.Rule'
-        404:
+                $ref: 'schemas_swagger.yaml#/definitions/idlerule.Response'
+        '404':
           description: Not Found
           content:
             application/json:
@@ -9148,19 +9148,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/idlerule.Rule'
-        400:
+                $ref: 'schemas_swagger.yaml#/definitions/idlerule.Response'
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -9178,9 +9178,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -9214,7 +9214,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             text/plain:
@@ -9239,13 +9239,13 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/appinfo.UserInterfaceConf'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/appinfo.UserInterfaceConf'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -9261,7 +9261,7 @@ paths:
         -  PERMISSIONS: `api_acl_interface_delete`
       operationId: internal-delete-user-interface
       responses:
-        204:
+        '204':
           description: OK
   /logged-user-count:
     get:
@@ -9271,7 +9271,7 @@ paths:
       description: Get logged user count.
       operationId: auth-logged-user-count
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -9292,7 +9292,7 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/auth.LoginRequest'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -9308,7 +9308,7 @@ paths:
       description: Log out.
       operationId: auth-logout
       responses:
-        204:
+        '204':
           description: OK
       security:
         - BearerAuth: [ ]
@@ -9344,9 +9344,9 @@ paths:
                 }
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -9395,13 +9395,13 @@ paths:
             items:
               type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/messageratestats.StatsListResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -9418,7 +9418,7 @@ paths:
         -  PERMISSIONS: `api_notification`
       operationId: notification-settings-get
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -9441,19 +9441,19 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/notification.UpdateSettingsRequest'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/notification.SettingsResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -9471,7 +9471,7 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -9502,15 +9502,15 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -9570,13 +9570,13 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pattern.CountAlarmsResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -9636,18 +9636,216 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pattern.CountEntitiesResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /patterns-entities-optimize:
+    post:
+      tags:
+        - optimize-patterns
+      summary: Start entity pattern optimization
+      description: |
+        Start an asynchronous job that optimizes entity patterns by extracting literals
+        from regexp conditions on infos fields and suggesting faster exact match conditions
+        based on existing entity data.
+      operationId: optimize-patterns-optimize-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.OptimizeRequest'
+            examples:
+              optimize:
+                summary: Optimize a regexp condition
+                description: Optimize a regexp condition.
+                value: {
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "infos.environment",
+                        "field_type": "string",
+                        "cond": {
+                          "type": "regexp",
+                          "value": "prod|staging"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.OptimizeJob'
+              examples:
+                jobCreated:
+                  summary: Job created
+                  description: Optimization job has been created and is pending execution.
+                  value: {
+                    "_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                    "status": 0,
+                    "original_pattern_count": 0,
+                    "original_pattern_ms": 0
+                  }
         400:
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /patterns-entities-optimize/{id}:
+    get:
+      tags:
+        - optimize-patterns
+      summary: Get entity pattern optimization job status
+      description: |
+        Get the current status of an entity pattern optimization job by its ID.
+      operationId: optimize-patterns-optimize-status
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.OptimizeJob'
+              examples:
+                running:
+                  summary: Job running
+                  description: The optimization job is still in progress.
+                  value: {
+                    "_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                    "status": 1,
+                    "original_pattern_count": 0,
+                    "original_pattern_ms": 0
+                  }
+                completed:
+                  summary: Job completed with suggestions
+                  description: The optimization job completed and returned suggestions.
+                  value: {
+                    "_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                    "status": 2,
+                    "original_pattern_count": 1,
+                    "original_pattern_ms": 150,
+                    "suggestions": [
+                      {
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "infos.environment",
+                              "field_type": "string",
+                              "cond": {
+                                "type": "is_one_of",
+                                "value": ["prod", "staging"]
+                              }
+                            }
+                          ]
+                        ],
+                        "found_entities": 1,
+                        "difference": 0
+                      }
+                    ],
+                    "optimized_field_regexps": [
+                      {
+                        "field": "environment",
+                        "regexp": "prod|staging"
+                      }
+                    ]
+                  }
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - optimize-patterns
+      summary: Accept or reject an optimization suggestion
+      description: |
+        Accept or reject a suggestion from a completed entity pattern optimization job.
+        When accepting, provide the index of the suggestion to apply. When rejecting,
+        set accept to false.
+      operationId: optimize-patterns-optimize-accept
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.OptimizeAcceptRequest'
+            examples:
+              accept:
+                summary: Accept first suggestion
+                description: Accept the first suggestion (index 0) from the optimization job.
+                value: {
+                  "index": 0,
+                  "accept": true
+                }
+              acceptSecond:
+                summary: Accept second suggestion
+                description: Accept the second suggestion (index 1) from the optimization job.
+                value: {
+                  "index": 1,
+                  "accept": true
+                }
+              reject:
+                summary: Reject suggestions
+                description: Reject all suggestions from the optimization job.
+                value: {
+                  "accept": false
+                }
+        required: true
+      responses:
+        204:
+          description: No Content
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - optimize-patterns
+      summary: Cancel an optimization job
+      description: |
+        Cancel a running entity pattern optimization job.
+        Only jobs with status Created (0) or Running (1) can be cancelled.
+        Completed, accepted, or rejected jobs cannot be cancelled.
+      operationId: optimize-patterns-optimize-cancel
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: No Content
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /patterns:
     get:
       tags:
@@ -9677,7 +9875,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -9690,7 +9888,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/pattern.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -9831,13 +10029,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pattern.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -9856,13 +10054,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pattern.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -9924,19 +10122,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pattern.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -9954,9 +10152,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -9988,13 +10186,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorcomment.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -10013,9 +10211,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -10050,13 +10248,13 @@ paths:
                   format: binary
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -10088,7 +10286,7 @@ paths:
           schema:
             type: boolean
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -10101,7 +10299,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -10127,7 +10325,7 @@ paths:
                 summary: Create
                 description: Create an exception
                 value: {
-                  "name": "Public holidays 2022",
+                  "name": "Public holidays '202':2",
                   "description": "New Year, Easter, Christmas",
                   "exdates": [
                     {
@@ -10149,13 +10347,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -10174,13 +10372,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -10208,7 +10406,7 @@ paths:
                 summary: Update
                 description: Update an exception
                 value: {
-                  "name": "Public holidays 2022",
+                  "name": "Public holidays '202':2",
                   "description": "New Year, Easter, Christmas",
                   "exdates": [
                     {
@@ -10230,19 +10428,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -10260,15 +10458,15 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -10287,14 +10485,14 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             text/calendar:
               schema:
                 type: string
                 format: binary
-        404:
+        '404':
           description: Not Found
           content:
             application/octet-stream:
@@ -10311,7 +10509,7 @@ paths:
         -  PERMISSIONS: `api_pbehavior_patterns:update`
       operationId: pbehaviors-exec-patterns
       responses:
-        204:
+        '204':
           description: OK
   /pbehavior-patterns:
     put:
@@ -10331,13 +10529,13 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/pbehavior.ExecPatternRequest'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pattern.CountResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -10362,7 +10560,7 @@ paths:
         - $ref: '#/components/parameters/sort_by'
         - $ref: '#/components/parameters/withFlags'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -10375,7 +10573,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -10406,13 +10604,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -10431,13 +10629,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -10470,19 +10668,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -10500,15 +10698,15 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -10534,7 +10732,7 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/pbehaviortimespan.TimespansRequest'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -10542,7 +10740,7 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/pbehaviortimespan.ItemResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -10575,7 +10773,7 @@ paths:
         - $ref: '#/components/parameters/sort_by'
         - $ref: '#/components/parameters/withFlags'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -10588,7 +10786,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Type'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -10622,13 +10820,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Type'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -10647,13 +10845,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Type'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -10689,19 +10887,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Type'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -10719,15 +10917,15 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -10744,7 +10942,7 @@ paths:
         -  PERMISSIONS: `api_pbehaviortype:read`
       operationId: pbehavior-types-get-next-priority
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -10768,15 +10966,15 @@ paths:
           schema:
             type: string
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -10799,7 +10997,7 @@ paths:
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/sort_by'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -10812,7 +11010,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -10960,13 +11158,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -10985,13 +11183,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11048,19 +11246,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11078,9 +11276,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11113,19 +11311,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11153,7 +11351,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -11166,13 +11364,13 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/entity.Entity'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11206,7 +11404,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             text/plain:
@@ -11234,7 +11432,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -11247,7 +11445,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/permission.Permission'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -11274,7 +11472,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -11287,7 +11485,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/playlist.Playlist'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -11310,13 +11508,13 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/playlist.EditRequest'
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/playlist.Playlist'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -11335,13 +11533,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/playlist.Playlist'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11366,19 +11564,19 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/playlist.Playlist'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/playlist.Playlist'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11396,9 +11594,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11419,7 +11617,7 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -11432,7 +11630,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/resolverule.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -11490,13 +11688,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/resolverule.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -11515,13 +11713,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/resolverule.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11581,19 +11779,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/resolverule.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11611,9 +11809,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11652,7 +11850,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -11665,13 +11863,13 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11688,7 +11886,7 @@ paths:
         -  PERMISSIONS: `api_acl:read`
       operationId: roles-get-templates
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -11716,7 +11914,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -11729,7 +11927,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/role.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -11798,19 +11996,19 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/role.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11829,13 +12027,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/role.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11884,19 +12082,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/role.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11914,9 +12112,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -11943,7 +12141,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -11956,7 +12154,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/scenario.Scenario'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -12479,19 +12677,19 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/scenario.Scenario'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -12510,13 +12708,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/scenario.Scenario'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -13041,19 +13239,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/scenario.Scenario'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -13071,9 +13269,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -13107,7 +13305,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             text/plain:
@@ -13125,7 +13323,7 @@ paths:
         -  PERMISSIONS: `api_action:read`
       operationId: scenarios-tpl-vars
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -13267,7 +13465,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -13275,7 +13473,7 @@ paths:
                 type: object
                 additionalProperties:
                   $ref: 'schemas_swagger.yaml#/definitions/template.ValidateResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -13302,7 +13500,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -13315,7 +13513,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/sharetoken.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -13349,13 +13547,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/sharetoken.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -13374,9 +13572,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -13397,7 +13595,7 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -13410,7 +13608,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/statesettings.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -13511,13 +13709,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/statesettings.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -13536,13 +13734,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/statesettings.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -13677,19 +13875,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/statesettings.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -13707,15 +13905,15 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -13732,13 +13930,13 @@ paths:
         -  PERMISSIONS: `api_techmetrics`
       operationId: tech-metrics-export-start
       responses:
-        201:
+        '201':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/techmetrics.ExportResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -13754,13 +13952,13 @@ paths:
         -  PERMISSIONS: `api_techmetrics`
       operationId: tech-metrics-export-get
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/techmetrics.ExportResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -13777,14 +13975,14 @@ paths:
         -  PERMISSIONS: `api_techmetrics`
       operationId: tech-metrics-export-download
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/octet-stream:
               schema:
                 type: string
                 format: binary
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -13801,7 +13999,7 @@ paths:
         -  PERMISSIONS: `api_techmetrics_settings:read`
       operationId: tech-metrics-settings-get
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -13824,13 +14022,13 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/techmetrics.Settings'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/techmetrics.Settings'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -13858,13 +14056,13 @@ paths:
               - alarm
               - entity
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/linkrule.CategoryResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -13885,7 +14083,7 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -13898,7 +14096,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/linkrule.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -13991,13 +14189,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/linkrule.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -14016,13 +14214,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/linkrule.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14089,19 +14287,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/linkrule.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14119,9 +14317,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14155,7 +14353,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             text/plain:
@@ -14173,7 +14371,7 @@ paths:
         -  PERMISSIONS: `api_link_rule:read`
       operationId: linkrules-tpl-vars
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -14278,7 +14476,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -14286,7 +14484,7 @@ paths:
                 type: object
                 additionalProperties:
                   $ref: 'schemas_swagger.yaml#/definitions/template.ValidateResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -14325,7 +14523,7 @@ paths:
             type: string
             example: "[[{\"field\": \"event_type\", \"cond\": {\"type\": \"eq\", \"value\": \"check\"}}]]"
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -14338,7 +14536,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/template.DataResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -14394,13 +14592,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/template.DataResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -14419,13 +14617,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/template.DataResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14483,19 +14681,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/template.DataResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14513,9 +14711,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14574,7 +14772,7 @@ paths:
               - 7
               - 8
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -14587,7 +14785,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/template.TestResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -14621,13 +14819,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/template.TestResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -14644,13 +14842,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/template.TestResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14686,19 +14884,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/template.TestResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14714,9 +14912,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14730,7 +14928,7 @@ paths:
       description: Get template env vars.
       operationId: template-vars
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -14758,19 +14956,19 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/userpreferences.EditRequest'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/userpreferences.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14789,13 +14987,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/userpreferences.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14825,7 +15023,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -14838,7 +15036,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/user.User'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -14861,13 +15059,13 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/user.User'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -14886,13 +15084,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/user.User'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14936,19 +15134,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/user.User'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -14973,19 +15171,19 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/user.UpdateRequest'
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/user.User'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15003,9 +15201,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15049,19 +15247,19 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/view.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15101,7 +15299,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -15138,7 +15336,7 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -15151,7 +15349,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/viewgroup.ViewGroup'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -15181,13 +15379,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/viewgroup.ViewGroup'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -15206,13 +15404,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/viewgroup.ViewGroup'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15244,19 +15442,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/viewgroup.ViewGroup'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15274,15 +15472,15 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15468,9 +15666,9 @@ paths:
                 ]
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -15517,15 +15715,15 @@ paths:
                 ]
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15559,19 +15757,19 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/viewtab.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15605,15 +15803,15 @@ paths:
                 ]
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15645,13 +15843,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/viewtab.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -15670,13 +15868,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/viewtab.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15708,19 +15906,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/viewtab.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15738,9 +15936,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15782,13 +15980,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/view.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -15807,13 +16005,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/view.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15856,19 +16054,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/view.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15886,9 +16084,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -15946,7 +16144,7 @@ paths:
             type: string
           example: "[[{\"field\":\"icon\",\"cond\":{\"type\":\"neq\",\"value\":\"wb_sunny\"}}]]"
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -15959,7 +16157,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/serviceweather.Service'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -16001,7 +16199,7 @@ paths:
           schema:
             type: boolean
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -16014,7 +16212,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/serviceweather.Entity'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -16116,19 +16314,19 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/widget.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -16157,7 +16355,7 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -16170,7 +16368,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -16246,13 +16444,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -16271,13 +16469,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -16343,19 +16541,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -16373,9 +16571,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -16409,15 +16607,15 @@ paths:
                 ]
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -16467,15 +16665,15 @@ paths:
                 ]
         required: true
       responses:
-        204:
+        '204':
           description: OK
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -16499,7 +16697,7 @@ paths:
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/sort_by'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -16512,7 +16710,7 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -16582,13 +16780,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -16604,13 +16802,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -16651,19 +16849,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -16678,9 +16876,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -16697,7 +16895,7 @@ paths:
         -  PERMISSIONS: `api_view:read`
       operationId: widgettemplates-tpl-vars
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -16738,7 +16936,7 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -16746,7 +16944,7 @@ paths:
                 type: object
                 additionalProperties:
                   $ref: 'schemas_swagger.yaml#/definitions/template.ValidateResponse'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -16888,13 +17086,13 @@ paths:
                 }
         required: true
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/widget.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
@@ -16913,13 +17111,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/widget.Response'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -17019,19 +17217,19 @@ paths:
                 }
         required: true
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/widget.Response'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
@@ -17049,9 +17247,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        204:
+        '204':
           description: OK
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
