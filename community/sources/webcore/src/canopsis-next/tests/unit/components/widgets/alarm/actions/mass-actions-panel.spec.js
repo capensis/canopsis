@@ -287,8 +287,8 @@ describe('mass-actions-panel', () => {
 
   test('Fast pbehavior remove removes downtime pbehavior and emits clear:items', async () => {
     const alarmsWithFastPbehavior = [
-      { ...alarm, active_pbh_icon: true, entity: { ...alarm.entity, _id: 'entity-1' } },
-      { ...metaAlarm, active_pbh_icon: true, entity: { ...metaAlarm.entity, _id: 'entity-2' } },
+      { ...alarm, pbh_origin_icon: true, entity: { ...alarm.entity, _id: 'entity-1' } },
+      { ...metaAlarm, pbh_origin_icon: true, entity: { ...metaAlarm.entity, _id: 'entity-2' } },
     ];
 
     removeEntityPbehaviors.mockResolvedValue([{}]);

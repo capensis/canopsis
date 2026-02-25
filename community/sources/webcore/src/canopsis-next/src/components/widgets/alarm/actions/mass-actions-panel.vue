@@ -67,21 +67,18 @@ export default {
     },
 
     alarmsForActions() {
-      return this.localItems.filter((item) => {
-        if (this.widget.parameters.isActionsAllowWithOkState && isAlarmStateOk(item)) {
-          return true;
-        }
-
-        return !isAlarmStatusCancelled(item) && !isAlarmStatusClosed(item);
-      });
+      return this.localItems.filter(item => (
+        (this.widget.parameters.isActionsAllowWithOkState && isAlarmStateOk(item))
+          || (!isAlarmStatusCancelled(item) && !isAlarmStatusClosed(item))
+      ));
     },
 
     alarmsWithFastPbehavior() {
-      return this.alarmsForActions.filter(item => !!item.active_pbh_icon);
+      return this.alarmsForActions.filter(item => item.pbh_origin_icon);
     },
 
     alarmsWithoutFastPbehavior() {
-      return this.alarmsForActions.filter(item => !item.active_pbh_icon);
+      return this.alarmsForActions.filter(item => !item.pbh_origin_icon);
     },
 
     alarmsForActionsWithoutUnknown() {
