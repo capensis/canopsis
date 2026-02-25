@@ -7,6 +7,21 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 )
 
+const (
+	OptimizeStatusCreated = iota
+	OptimizeStatusRunning
+	OptimizeStatusSucceeded
+	OptimizeStatusFailed
+	OptimizeStatusAccepted
+	OptimizeStatusRejected
+)
+
+const (
+	EntityFieldComponent = "component"
+	EntityFieldName      = "name"
+	EntityInfosPrefix    = "infos."
+)
+
 type ListRequest struct {
 	pagination.FilteredQuery
 	SortBy    string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id title author.name author.display_name created updated"`
@@ -40,8 +55,8 @@ type Response struct {
 	PbehaviorPattern      pattern.PbehaviorInfo         `bson:"pbehavior_pattern" json:"pbehavior_pattern,omitempty"`
 	WeatherServicePattern pattern.WeatherServicePattern `bson:"weather_service_pattern" json:"weather_service_pattern,omitempty"`
 	Author                *author.Author                `bson:"author" json:"author"`
-	Created               datetime.CpsTime              `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated               datetime.CpsTime              `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created               datetime.CpsTime              `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated               datetime.CpsTime              `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 }
 
 type AggregationResult struct {
@@ -49,7 +64,7 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 
@@ -82,4 +97,59 @@ type CountResponse struct {
 	Count     int64 `bson:"count" json:"count"`
 	OverLimit bool  `bson:"-" json:"over_limit"`
 	Millisecs int64 `json:"ms"`
+}
+
+type OptimizeRequest struct {
+	EntityPattern pattern.Entity `json:"entity_pattern" binding:"entity_pattern"`
+}
+
+type Suggestion struct {
+	EntityPattern pattern.Entity `json:"entity_pattern"`
+	FoundEntities int            `json:"found_entities"`
+	Difference    int            `json:"difference"`
+}
+
+type OptimizeJob struct {
+	ID string `bson:"_id" json:"_id"`
+	// Possible status values.
+	//   * `0` - Created
+	//   * `1` - Running
+	//   * `2` - Succeeded
+	//   * `3` - Failed
+	//   * `4` - Accepted
+	//   * `5` - Rejected
+	Status                int                    `bson:"status" json:"status"`
+	EntityPattern         pattern.Entity         `bson:"entity_pattern" json:"-"`
+	Created               datetime.CpsTime       `bson:"created" json:"-"`
+	LastPing              *datetime.CpsTime      `bson:"last_ping" json:"-"`
+	Retries               int64                  `bson:"retries" json:"-"`
+	Suggestions           []Suggestion           `bson:"suggestions" json:"suggestions"`
+	OptimizedFieldRegexps []OptimizedFieldRegexp `bson:"optimized_field_regexps" json:"optimized_field_regexps"`
+	OriginalPatternMS     int64                  `bson:"original_pattern_ms" json:"original_pattern_ms"`
+	OriginalPatternCount  int                    `bson:"original_pattern_count" json:"original_pattern_count"`
+	FailReason            string                 `bson:"fail_reason,omitempty" json:"fail_reason,omitempty"`
+	AcceptedSuggestion    *int                   `bson:"accepted_suggestion,omitempty" json:"accepted_suggestion,omitempty"`
+}
+
+type OptimizeAcceptRequest struct {
+	ID     string `json:"-"`
+	Index  *int   `json:"index" binding:"required_if=Accept true"`
+	Accept *bool  `json:"accept" binding:"required"`
+}
+
+type LiteralFieldStats struct {
+	FieldName         string `bson:"k"`
+	LiteralFoundTimes int    `bson:"v"`
+}
+
+type OptimizedFieldRegexp struct {
+	Field  string `bson:"field" json:"field"`
+	Regexp string `bson:"regexp" json:"regexp"`
+}
+
+type OptimizeResult struct {
+	Suggestions           []Suggestion
+	OptimizedFieldRegexps []OptimizedFieldRegexp
+	OriginalPatternMS     int64
+	OriginalPatternCount  int
 }

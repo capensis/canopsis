@@ -411,24 +411,23 @@ func (p *metaAlarmAttachProcessor) getChildEventByStep(
 		}
 	case types.AlarmStepAssocTicket:
 		childEvent.EventType = types.EventTypeAssocTicket
-		childEvent.TicketInfo = metaAlarmStep.TicketInfo
-		childEvent.TicketInfo.TicketMetaAlarmID = metaAlarm.ID
 		isTicketStep = true
 	case types.AlarmStepTicketRemove:
 		childEvent.EventType = types.EventTypeTicketRemove
-		childEvent.TicketInfo = metaAlarmStep.TicketInfo
-		childEvent.TicketInfo.TicketMetaAlarmID = metaAlarm.ID
 		isTicketStep = true
 	case types.AlarmStepDeclareTicket:
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
-		childEvent.TicketInfo = metaAlarmStep.TicketInfo
-		childEvent.TicketInfo.TicketMetaAlarmID = metaAlarm.ID
 		childEvent.AlarmID = childAlarm.Alarm.ID
 		isTicketStep = true
 	case types.AlarmStepComment:
 		childEvent.EventType = types.EventTypeComment
 	default:
 		return types.Event{}, nil
+	}
+
+	if isTicketStep {
+		childEvent.TicketInfo = metaAlarmStep.TicketInfo
+		childEvent.TicketInfo.TicketMetaAlarmID = metaAlarm.ID
 	}
 
 	childEvent.Output = getMetaAlarmChildEventOutput(metaAlarm, metaAlarmStep.Message, metaAlarmStep.Initiator, isTicketStep)

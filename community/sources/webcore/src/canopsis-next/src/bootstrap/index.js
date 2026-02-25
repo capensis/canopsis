@@ -1,6 +1,8 @@
 import deepFreeze from 'deep-freeze';
 import WebFont from 'webfontloader';
 
+import 'material-symbols/outlined.css';
+
 import * as constants from '@/constants';
 import * as config from '@/config';
 
@@ -25,7 +27,7 @@ import App from '@/app.vue';
 export const bootstrapApplication = (Vue) => {
   WebFont.load({
     custom: {
-      families: ['Roboto:300,400,500,700', 'Material+Icons'],
+      families: ['Roboto:300,400,500,700', 'Material+Symbols+Outlined'],
       urls: ['/styles/fonts.css'],
     },
   });

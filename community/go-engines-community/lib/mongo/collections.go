@@ -116,4 +116,6 @@ const (
 	TemplateTestCollection     = "template_test"
 
 	WebhookCheckTicketStatusCollection = "webhook_check_ticket_status"
+
+	PatternOptimizeJobCollection = "pattern_optimize_job"
 )

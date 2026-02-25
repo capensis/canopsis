@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"maps"
 	"reflect"
 	"regexp"
 	"strings"
@@ -141,7 +142,7 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 		// ie ints will be returned as integers and strings returned as strings with quotes
 		// It is mostly used for the strings to preserve their content
 		// and avoid Go behavior to escape special characters strings by default
-		"json": func(v interface{}) string {
+		"json": func(v any) string {
 			b, err := json.Marshal(v)
 			if err != nil {
 				return err.Error()
@@ -150,7 +151,7 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 			return string(b)
 		},
 		// Same behavior as json but remove the quotes around the string.
-		"json_unquote": func(v interface{}) string {
+		"json_unquote": func(v any) string {
 			b, err := json.Marshal(v)
 			if err != nil {
 				return err.Error()
@@ -166,7 +167,7 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 			return jsonStr[1 : len(jsonStr)-1]
 		},
 		// split will split a string according a separator and returns the substring
-		"split": func(sep string, index int, v interface{}) string {
+		"split": func(sep string, index int, v any) string {
 			if s, ok := v.(string); ok {
 				stringSlice := strings.Split(s, sep)
 				if 0 <= index && index < len(stringSlice) {
@@ -179,7 +180,7 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 			return ""
 		},
 		// trim will return a string with all leading and trailing white space removed
-		"trim": func(v interface{}) string {
+		"trim": func(v any) string {
 			if s, ok := v.(string); ok {
 				return strings.TrimSpace(s)
 			}
@@ -187,7 +188,7 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 			return ""
 		},
 		// formattedDate will return a formatted string from a time type
-		"formattedDate": func(format string, v interface{}) string {
+		"formattedDate": func(format string, v any) string {
 			if t, ok := castTime(v); ok {
 				return t.Format(format)
 			}
@@ -195,7 +196,7 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 			return ""
 		},
 		// replace will replace a string, replacing matches of the regex with the replacement string
-		"replace": func(oldRegex string, newV string, v interface{}) string {
+		"replace": func(oldRegex string, newV string, v any) string {
 			if s, ok := v.(string); ok {
 				re, err := regexp.Compile(oldRegex)
 				if err != nil {
@@ -208,7 +209,7 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 			return ""
 		},
 		// upper string
-		"uppercase": func(v interface{}) string {
+		"uppercase": func(v any) string {
 			if s, ok := v.(string); ok {
 				return strings.ToUpper(s)
 			}
@@ -217,14 +218,14 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 		},
 
 		// upper string
-		"lowercase": func(v interface{}) string {
+		"lowercase": func(v any) string {
 			if s, ok := v.(string); ok {
 				return strings.ToLower(s)
 			}
 			log.Printf("trim : %+v is not a string", v)
 			return ""
 		},
-		"localtime": func(v ...interface{}) string {
+		"localtime": func(v ...any) string {
 			var value time.Time
 			var timezone string
 			var format string
@@ -278,7 +279,7 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 			return value.In(loc).Format(format)
 		},
 		// regex_map_key return map value if key match the regexp
-		"regex_map_key": func(m map[string]interface{}, regexpString string) interface{} {
+		"regex_map_key": func(m map[string]any, regexpString string) any {
 			re, err := regexp.Compile(regexpString)
 			if err != nil {
 				log.Printf("regex_map_key : failed to compile regexp %s, %v", regexpString, err)
@@ -368,12 +369,12 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 			return int64(len([]rune(str)))
 		},
 		"strpos": func(str, substr string) int64 {
-			idx := strings.Index(str, substr)
-			if idx < 0 {
+			before, _, ok := strings.Cut(str, substr)
+			if !ok {
 				return -1
 			}
 
-			return int64(len([]rune(str[:idx])))
+			return int64(len([]rune(before)))
 		},
 		"add": func(a, b any) (int64, error) {
 			return wrapInt64ArithmeticFunc(a, b, func(x, y int64) (int64, error) {
@@ -458,7 +459,7 @@ func toInt64(v any) (int64, bool) {
 	}
 }
 
-func castTime(v interface{}) (time.Time, bool) {
+func castTime(v any) (time.Time, bool) {
 	switch t := v.(type) {
 	case datetime.CpsTime:
 		return t.Time, true
@@ -493,9 +494,7 @@ func addDefaultTplVarsToData(data any, defaultVars map[string]any) any {
 		return data
 	}
 
-	for k, v := range defaultVars {
-		mapData[k] = v
-	}
+	maps.Copy(mapData, defaultVars)
 
 	return mapData
 }

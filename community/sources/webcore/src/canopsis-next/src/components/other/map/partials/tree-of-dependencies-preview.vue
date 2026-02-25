@@ -41,9 +41,6 @@ import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-depend
 
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
-
 export default {
   components: { NetworkGraph },
   mixins: [entitiesEntityDependenciesMixin],
@@ -173,7 +170,7 @@ export default {
         );
 
         el.innerHTML = entity.type === ENTITY_TYPES.service
-          ? engineeringIcon
+          ? 'engineering'
           : 'person';
 
         return el;

@@ -20,7 +20,7 @@ const (
 //easyjson:json
 type AxeEvent struct {
 	EventType   string        `json:"event_type"`
-	Parameters  AxeParameters `json:"parameters,omitempty"`
+	Parameters  AxeParameters `json:"parameters"`
 	Alarm       *types.Alarm  `json:"alarm,omitempty"`
 	AlarmID     string        `json:"alarm_id,omitempty"`
 	Entity      *types.Entity `json:"entity,omitempty"`
@@ -39,7 +39,7 @@ type AxeParameters struct {
 	User      string           `json:"user,omitempty"`
 	Role      string           `json:"role,omitempty"`
 	Initiator string           `json:"initiator,omitempty"`
-	Timestamp datetime.CpsTime `json:"timestamp,omitempty"`
+	Timestamp datetime.CpsTime `json:"timestamp"`
 	// ChangeState
 	State *types.CpsNumber `json:"state,omitempty"`
 	// AssocTicket and Webhook
@@ -55,7 +55,7 @@ type AxeParameters struct {
 	// Snooze and Pbehavior
 	Duration *datetime.DurationWithUnit `json:"duration,omitempty"`
 	// Pbehavior enter
-	PbehaviorInfo types.PbehaviorInfo `json:"pbehavior_info,omitempty"`
+	PbehaviorInfo types.PbehaviorInfo `json:"pbehavior_info"`
 	// Pbehavior create
 	Name           string            `json:"name,omitempty"`
 	Reason         string            `json:"reason,omitempty"`
