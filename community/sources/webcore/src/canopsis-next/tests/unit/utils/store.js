@@ -1615,3 +1615,28 @@ export const createPbehaviorPatternsModule = () => {
     pbehaviorPatternsModule,
   };
 };
+
+export const createPatternEntitiesOptimizeModule = () => {
+  const optimize = jest.fn().mockResolvedValue({});
+  const fetchOptimizeStatus = jest.fn().mockResolvedValue({});
+  const update = jest.fn().mockResolvedValue({});
+  const remove = jest.fn().mockResolvedValue({});
+
+  const patternEntitiesOptimizeModule = {
+    name: 'pattern/entitiesOptimize',
+    actions: {
+      optimize,
+      fetchOptimizeStatus,
+      update,
+      remove,
+    },
+  };
+
+  return {
+    patternEntitiesOptimizeModule,
+    optimize,
+    fetchOptimizeStatus,
+    update,
+    remove,
+  };
+};

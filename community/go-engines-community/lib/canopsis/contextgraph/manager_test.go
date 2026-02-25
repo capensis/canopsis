@@ -3,8 +3,8 @@ package contextgraph_test
 import (
 	"context"
 	"fmt"
+	"os"
 	"slices"
-	"sort"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
@@ -13,11 +13,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_contextgraph "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/contextgraph"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	mock_statesetting "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/statesetting"
+	"github.com/rs/zerolog"
 	"go.uber.org/mock/gomock"
 )
 
@@ -416,7 +416,8 @@ func TestCheckServices(t *testing.T) {
 		},
 	}
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(t.Context(), log.Options{Debug: true}))
+	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
 
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
@@ -434,29 +435,12 @@ func TestCheckServices(t *testing.T) {
 
 			manager.AssignServices(&dataset.entity, commRegister)
 
-			sort.Slice(dataset.entity.Services, func(i, j int) bool {
-				return dataset.entity.Services[i] < dataset.entity.Services[j]
-			})
-
-			sort.Slice(dataset.entity.ServicesToAdd, func(i, j int) bool {
-				return dataset.entity.ServicesToAdd[i] < dataset.entity.ServicesToAdd[j]
-			})
-
-			sort.Slice(dataset.entity.ServicesToRemove, func(i, j int) bool {
-				return dataset.entity.ServicesToRemove[i] < dataset.entity.ServicesToRemove[j]
-			})
-
-			sort.Slice(dataset.expectedEntity.Services, func(i, j int) bool {
-				return dataset.expectedEntity.Services[i] < dataset.expectedEntity.Services[j]
-			})
-
-			sort.Slice(dataset.expectedEntity.ServicesToAdd, func(i, j int) bool {
-				return dataset.expectedEntity.ServicesToAdd[i] < dataset.expectedEntity.ServicesToAdd[j]
-			})
-
-			sort.Slice(dataset.expectedEntity.ServicesToRemove, func(i, j int) bool {
-				return dataset.expectedEntity.ServicesToRemove[i] < dataset.expectedEntity.ServicesToRemove[j]
-			})
+			slices.Sort(dataset.entity.Services)
+			slices.Sort(dataset.entity.ServicesToAdd)
+			slices.Sort(dataset.entity.ServicesToRemove)
+			slices.Sort(dataset.expectedEntity.Services)
+			slices.Sort(dataset.expectedEntity.ServicesToAdd)
+			slices.Sort(dataset.expectedEntity.ServicesToRemove)
 
 			if slices.Compare(dataset.entity.Services, dataset.expectedEntity.Services) != 0 {
 				t.Errorf("expected Services to be %v, but got %v", dataset.expectedEntity.Services, dataset.entity.Services)
@@ -490,13 +474,13 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 	}
 
 	cursor := mock_mongo.NewMockCursor(ctrl)
-	cursor.EXPECT().All(gomock.Any(), gomock.Any()).Do(func(ctx context.Context, results interface{}) {
+	cursor.EXPECT().All(gomock.Any(), gomock.Any()).Do(func(ctx context.Context, results any) {
 		ents := results.(*[]types.Entity)
 		*ents = append(*ents, entities...)
 	}).Return(nil).AnyTimes()
 
 	collection := mock_mongo.NewMockDbCollection(ctrl)
-	collection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
+	collection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
 
 	dbClient := mock_mongo.NewMockDbClient(ctrl)
 	dbClient.EXPECT().Collection(mongo.EntityMongoCollection).Return(collection).AnyTimes()
@@ -527,8 +511,9 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, log.Options{Debug: true}))
-	for i := 0; i < b.N; i++ {
+	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
+	for b.Loop() {
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
 	}
 }
@@ -550,7 +535,7 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 
 	call := 0
 	cursor := mock_mongo.NewMockCursor(ctrl)
-	cursor.EXPECT().All(gomock.Any(), gomock.Any()).Do(func(ctx context.Context, results interface{}) {
+	cursor.EXPECT().All(gomock.Any(), gomock.Any()).Do(func(ctx context.Context, results any) {
 		if call == 1 {
 			ents := results.(*[]types.Entity)
 			*ents = append(*ents, entities...)
@@ -560,7 +545,7 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 	}).Return(nil).AnyTimes()
 
 	collection := mock_mongo.NewMockDbCollection(ctrl)
-	collection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
+	collection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
 
 	dbClient := mock_mongo.NewMockDbClient(ctrl)
 	dbClient.EXPECT().Collection(mongo.EntityMongoCollection).Return(collection).AnyTimes()
@@ -591,8 +576,9 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, log.Options{Debug: true}))
-	for i := 0; i < b.N; i++ {
+	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
+	for b.Loop() {
 		call = 0
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
 	}
@@ -626,7 +612,7 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 
 	call := 0
 	cursor := mock_mongo.NewMockCursor(ctrl)
-	cursor.EXPECT().All(gomock.Any(), gomock.Any()).Do(func(ctx context.Context, results interface{}) {
+	cursor.EXPECT().All(gomock.Any(), gomock.Any()).Do(func(ctx context.Context, results any) {
 		if call == 0 {
 			ents := results.(*[]types.Entity)
 			*ents = append(*ents, entitiesToRemove...)
@@ -641,7 +627,7 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 	}).Return(nil).AnyTimes()
 
 	collection := mock_mongo.NewMockDbCollection(ctrl)
-	collection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
+	collection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
 
 	dbClient := mock_mongo.NewMockDbClient(ctrl)
 	dbClient.EXPECT().Collection(mongo.EntityMongoCollection).Return(collection).AnyTimes()
@@ -672,8 +658,9 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, log.Options{Debug: true}))
-	for i := 0; i < b.N; i++ {
+	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
+	for b.Loop() {
 		call = 0
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
 	}
