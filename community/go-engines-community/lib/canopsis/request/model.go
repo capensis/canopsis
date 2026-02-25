@@ -25,20 +25,20 @@ func (p Parameters) GetRetryParams() (time.Duration, int64, time.Duration, error
 
 	if p.Timeout != nil && p.Timeout.Value > 0 {
 		d, err := p.Timeout.To(datetime.DurationUnitSecond)
-		if err == nil {
-			timeout = time.Duration(d.Value) * time.Second
-		} else {
+		if err != nil {
 			return 0, 0, 0, fmt.Errorf("invalid request timeout: %w", err)
 		}
+
+		timeout = time.Duration(d.Value) * time.Second
 	}
 
 	if p.RetryDelay != nil && p.RetryDelay.Value > 0 {
 		d, err := p.RetryDelay.To(datetime.DurationUnitSecond)
-		if err == nil {
-			retryDelay = time.Duration(d.Value) * time.Second
-		} else {
+		if err != nil {
 			return 0, 0, 0, fmt.Errorf("invalid request retry delay: %w", err)
 		}
+
+		retryDelay = time.Duration(d.Value) * time.Second
 	}
 
 	return timeout, p.RetryCount, retryDelay, nil

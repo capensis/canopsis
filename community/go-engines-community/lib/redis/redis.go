@@ -42,6 +42,8 @@ const (
 	EnvURL = "CPS_REDIS_URL"
 )
 
+var ErrFailedToRefreshLock = errors.New("failed to refresh lock")
+
 // NewOptions handles redis.Options creation based on
 // the surl, which must be on the following shape:
 //

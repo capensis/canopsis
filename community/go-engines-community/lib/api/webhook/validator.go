@@ -23,7 +23,7 @@ func NewCheckTicketStatusValidator(templateExecutor template.Executor) *CheckTic
 	}
 	return &CheckTicketStatusValidator{
 		templateExecutor: templateExecutor,
-		validStatuses:    strings.Join(validStatuses, ", "),
+		validStatuses:    strings.Join(validStatuses, " "),
 	}
 }
 
