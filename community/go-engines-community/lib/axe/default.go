@@ -521,6 +521,7 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypeCheck, event.NewCheckProcessor(dbClient, alarmConfigProvider, alarmStatusService,
 		pbhTypeResolver, autoInstructionMatcher, metaAlarmPostProcessor, metricsSender,
 		eventStatisticsSender, remediationRpcClient, externalTagUpdater, internalTagAlarmMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, json.NewEncoder(), logger))
+	container.Set(types.EventTypeContextUpdate, event.NewContextUpdateProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger))
 	container.Set(types.EventTypeNoEvents, event.NewNoEventsProcessor(dbClient, alarmConfigProvider, alarmStatusService,
 		pbhTypeResolver, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmPostProcessor, metricsSender,
 		remediationRpcClient, internalTagAlarmMatcher, json.NewEncoder(), logger))
