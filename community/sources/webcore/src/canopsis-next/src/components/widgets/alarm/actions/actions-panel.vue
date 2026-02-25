@@ -159,6 +159,13 @@ export default {
       return isAutoMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
 
+    isAckAndChangeStateAvailable() {
+      return (this.isAlarmStatusClosed && this.isActionsAllowWithOkState)
+        || this.isAlarmStatusOngoing
+        || this.isAlarmStatusNoEvents
+        || this.isAlarmStatusFlapping;
+    },
+
     hasBookmark() {
       return !!this.item.bookmark;
     },
@@ -242,6 +249,10 @@ export default {
         });
       }
 
+      if (this.isResolvedAlarm || !this.isAckAndChangeStateAvailable || !this.item.v.ack) {
+        return actions;
+      }
+
       if (!this.item.v?.ticket || this.widget.parameters.isMultiDeclareTicketEnabled) {
         actions.unshift({
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
@@ -263,11 +274,6 @@ export default {
 
     actions() {
       const actions = [];
-
-      const isAckAndChangeStateAvailable = (this.isAlarmStatusClosed && this.isActionsAllowWithOkState)
-        || this.isAlarmStatusOngoing
-        || this.isAlarmStatusNoEvents
-        || this.isAlarmStatusFlapping;
 
       const isNotResolvedOpenedAlarm = !this.isResolvedAlarm && this.isOpenedAlarm;
 
@@ -292,7 +298,7 @@ export default {
         method: this.createFastAckEvent,
       };
 
-      if (!this.isResolvedAlarm && isAckAndChangeStateAvailable) {
+      if (!this.isResolvedAlarm && this.isAckAndChangeStateAvailable) {
         if (this.item.v.ack) {
           actions.push(
             {
@@ -321,7 +327,7 @@ export default {
           /**
            * Save previous behavior
            */
-          isAckAndChangeStateAvailable
+          this.isAckAndChangeStateAvailable
           /**
            * Add behavior like in mass actions
            */
@@ -366,9 +372,7 @@ export default {
         );
       }
 
-      if (!this.isResolvedAlarm && isAckAndChangeStateAvailable && this.item.v.ack) {
-        actions.push(...this.ticketsActions);
-      }
+      actions.push(...this.ticketsActions);
 
       if (isNotResolvedOpenedAlarm) {
         actions.push(

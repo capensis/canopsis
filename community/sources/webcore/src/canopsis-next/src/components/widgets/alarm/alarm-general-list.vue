@@ -6,6 +6,7 @@
     <v-data-table
       :headers="headers"
       :items="items"
+      :item-class="itemClass"
     />
   </c-collapse-panel>
 </template>
@@ -20,6 +21,10 @@ export default {
     items: {
       type: Array,
       default: () => [],
+    },
+    itemClass: {
+      type: String,
+      required: false,
     },
   },
   setup(props) {

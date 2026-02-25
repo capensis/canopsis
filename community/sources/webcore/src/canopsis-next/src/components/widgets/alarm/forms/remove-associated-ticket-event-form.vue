@@ -2,7 +2,7 @@
   <v-layout column>
     <c-lazy-search-field
       v-field="form.ticket"
-      :items="associatedTicketsOptions"
+      :items="associatedTickets"
       :label="$t('modals.removeAssociatedTicketEvent.associatedTicketLabel')"
       :hint="$t('modals.removeAssociatedTicketEvent.associatedTicketHint')"
       item-text="text"
@@ -24,7 +24,9 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
+
+import { useModelField } from '@/hooks/form/model-field';
 
 export default {
   model: {
@@ -41,8 +43,10 @@ export default {
       default: () => [],
     },
   },
-  setup(props) {
-    const associatedTicketsOptions = computed(() => {
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
+
+    const associatedTickets = computed(() => {
       if (!props.items.length) {
         return [];
       }
@@ -66,8 +70,14 @@ export default {
       return Object.values(allTicketsMap);
     });
 
+    onMounted(() => {
+      if (associatedTickets.value.length === 1 && !props.form.ticket) {
+        updateField('ticket', associatedTickets.value[0].value);
+      }
+    });
+
     return {
-      associatedTicketsOptions,
+      associatedTickets,
     };
   },
 };
