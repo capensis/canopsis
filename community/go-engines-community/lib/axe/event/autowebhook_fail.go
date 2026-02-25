@@ -77,7 +77,7 @@ func (p *autoWebhookFailProcessor) Process(ctx context.Context, event rpc.AxeEve
 			event.Parameters.Execution, ticketOutput, event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
-				"v.tickets":          addTicketUpdateQuery(newTicketStepQuery),
+				"v.failed_ticket":    newTicketStepQuery,
 				"v.steps":            addStepUpdateQuery(newStepQuery, newTicketStepQuery),
 				"v.last_update_date": event.Parameters.Timestamp,
 			}},
