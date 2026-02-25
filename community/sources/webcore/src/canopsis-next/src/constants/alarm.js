@@ -622,6 +622,7 @@ export const ALARM_STEPS_WITH_AUTHOR_IN_TITLE = [
   ALARM_LIST_STEPS.pbhenter,
   ALARM_LIST_STEPS.pbhleave,
   ALARM_LIST_STEPS.assocTicket,
+  ALARM_LIST_STEPS.ticketRemove,
   ALARM_LIST_STEPS.webhookStart,
   ALARM_LIST_STEPS.webhookComplete,
   ALARM_LIST_STEPS.webhookFail,
