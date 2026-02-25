@@ -221,14 +221,3 @@ func IsValidWidgetColumn(t, column string) bool {
 
 	return false
 }
-
-func IsValidWidgetExportColumn(widgetType, param, column string) bool {
-	if columns, ok := widgetExportColumns[widgetType][param]; ok {
-		idx := sort.SearchStrings(columns, column)
-		if idx < len(columns) && columns[idx] == column {
-			return true
-		}
-	}
-
-	return false
-}

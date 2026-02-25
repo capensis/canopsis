@@ -21,8 +21,8 @@ func NewUpgrader(u websocket.Upgrader) Upgrader {
 
 type Connection interface {
 	WriteControl(messageType int, data []byte, deadline time.Time) error
-	WriteJSON(v interface{}) error
-	ReadJSON(v interface{}) error
+	WriteJSON(v any) error
+	ReadJSON(v any) error
 	Close() error
 	SetReadDeadline(t time.Time) error
 	SetPongHandler(h func(string) error)
@@ -53,14 +53,14 @@ func (c *connection) WriteControl(messageType int, data []byte, deadline time.Ti
 	return c.conn.WriteControl(messageType, data, deadline)
 }
 
-func (c *connection) WriteJSON(v interface{}) error {
+func (c *connection) WriteJSON(v any) error {
 	c.writeMx.Lock()
 	defer c.writeMx.Unlock()
 
 	return c.conn.WriteJSON(v)
 }
 
-func (c *connection) ReadJSON(v interface{}) error {
+func (c *connection) ReadJSON(v any) error {
 	c.readMx.Lock()
 	defer c.readMx.Unlock()
 

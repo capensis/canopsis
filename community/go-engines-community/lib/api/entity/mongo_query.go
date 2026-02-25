@@ -112,6 +112,10 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
+	err = q.handleNegativeEntityPattern(ctx, r.ListRequest)
+	if err != nil {
+		return nil, err
+	}
 	q.handleFilter(r.ListRequest)
 	q.handleSort(r.SortRequest)
 
@@ -421,6 +425,48 @@ func (q *MongoQueryBuilder) handleEntityPattern(ctx context.Context, r ListReque
 
 	if len(entityPatternQuery) > 0 {
 		q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handleNegativeEntityPattern(ctx context.Context, r ListRequest) error {
+	if r.NegativeEntityPattern == "" {
+		return nil
+	}
+
+	var negativeEntityPattern pattern.Entity
+	err := json.Unmarshal([]byte(r.NegativeEntityPattern), &negativeEntityPattern)
+	if err != nil {
+		return validation.NewSingleError("negative_entity_pattern", "NegativeEntityPattern", "NegativeEntityPattern", r)
+	}
+
+	aliases, err := q.transformer.FetchAliases(ctx, patternfields.GetAliases(negativeEntityPattern))
+	if err != nil {
+		return err
+	}
+
+	var valErrs validator.ValidationErrors
+	negativeEntityPattern, _, valErrs = q.transformer.ApplyAliases(negativeEntityPattern, aliases, "NegativeEntityPattern")
+	if len(valErrs) > 0 {
+		// use anonymous struct to correctly transform validation error namespace
+		// because r.NegativeEntityPattern has string type
+		validatedStruct := struct {
+			NegativeEntityPattern pattern.Entity `json:"negative_entity_pattern"`
+		}{
+			NegativeEntityPattern: negativeEntityPattern,
+		}
+
+		return validation.NewError(valErrs, validatedStruct)
+	}
+
+	negativeEntityPatternQuery, err := db.EntityPatternToNegativeMongoQuery(negativeEntityPattern, "")
+	if err != nil {
+		return validation.NewSingleError("negative_entity_pattern", "NegativeEntityPattern", "NegativeEntityPattern", r)
+	}
+
+	if len(negativeEntityPatternQuery) > 0 {
+		q.entityMatch = append(q.entityMatch, bson.M{"$match": negativeEntityPatternQuery})
 	}
 
 	return nil

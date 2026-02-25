@@ -1162,4 +1162,10 @@ export default {
   createTemplateData: {
     title: 'Créer des données de modèle',
   },
+  entitiesComparison: {
+    title: 'Comparaison des entités de motif',
+    infoMessage: 'Les comptages peuvent différer pour 2 raisons :\n<span class="font-weight-regular">1. des changements se sont produits dans Canopsis pendant la vérification (certaines entités initialement filtrées ont changé et ne correspondent plus au motif)</span>\n<span class="font-weight-regular">2. le motif suggéré n\'est pas correct</span>\n<span>Vous pouvez relancer la vérification pour être sûr.</span>',
+    foundInCurrent: 'TROUVÉ DANS LE MOTIF ACTUEL, NON TROUVÉ DANS LE MOTIF SUGGÉRÉ',
+    foundInSuggestion: 'TROUVÉ DANS LE MOTIF SUGGÉRÉ, NON TROUVÉ DANS LE MOTIF ACTUEL',
+  },
 };
