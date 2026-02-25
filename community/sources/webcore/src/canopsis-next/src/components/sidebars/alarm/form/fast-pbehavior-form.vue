@@ -17,12 +17,12 @@
         >
           <template #header>
             <v-layout class="gap-2" column>
-              <v-text-field
+              <c-name-field
                 v-field="form[index].name_prefix"
-                v-validate="'required'"
                 :label="$t('common.namePrefix')"
-                :error-messages="errors.collect(getName(form[index], 'name_prefix'))"
+                :max-length="255"
                 :name="getName(form[index], 'name_prefix')"
+                required
               />
               <c-pbehavior-type-field
                 v-field="form[index].type"
@@ -31,12 +31,14 @@
                 :name="getName(form[index], 'type')"
                 independent
                 clearable
+                required
               />
               <c-pbehavior-reason-field
                 v-field="form[index].reason"
                 :label="$t('common.reason')"
                 :name="getName(form[index], 'reason')"
                 clearable
+                required
               />
             </v-layout>
           </template>
