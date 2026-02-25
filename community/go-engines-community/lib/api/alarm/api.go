@@ -220,7 +220,6 @@ func (a *api) GetDetails(c *gin.Context) {
 		if err != nil {
 			response[idx] = a.getDetailErrRes(c, err)
 			response[idx].ID = request.ID
-			a.logger.Err(err).Str("ID", request.ID).Msg("cannot fetch alarm details")
 			continue
 		}
 

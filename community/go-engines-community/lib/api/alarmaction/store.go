@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -21,16 +22,17 @@ import (
 )
 
 type Store interface {
-	Ack(ctx context.Context, id string, r AckRequest, userID, username string) (bool, error)
-	AckRemove(ctx context.Context, id string, r Request, userID, username string) (bool, error)
-	Snooze(ctx context.Context, id string, r SnoozeRequest, userID, username string) (bool, error)
-	Cancel(ctx context.Context, id string, r Request, userID, username string) (bool, error)
-	Uncancel(ctx context.Context, id string, r Request, userID, username string) (bool, error)
-	AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userID, username string) (bool, error)
-	Comment(ctx context.Context, id string, r CommentRequest, userID, username string) (bool, error)
-	ChangeState(ctx context.Context, id string, r ChangeStateRequest, userID, username string) (bool, error)
-	AddBookmark(ctx context.Context, alarmID, userID string) (bool, error)
-	RemoveBookmark(ctx context.Context, alarmID, userID string) (bool, error)
+	Ack(ctx context.Context, id string, r AckRequest, userID, username string) error
+	AckRemove(ctx context.Context, id string, r Request, userID, username string) error
+	Snooze(ctx context.Context, id string, r SnoozeRequest, userID, username string) error
+	Cancel(ctx context.Context, id string, r Request, userID, username string) error
+	Uncancel(ctx context.Context, id string, r Request, userID, username string) error
+	AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userID, username string) error
+	TicketRemove(ctx context.Context, id string, r TicketRemoveRequest, userID, username string) error
+	Comment(ctx context.Context, id string, r CommentRequest, userID, username string) error
+	ChangeState(ctx context.Context, id string, r ChangeStateRequest, userID, username string) error
+	AddBookmark(ctx context.Context, alarmID, userID string) error
+	RemoveBookmark(ctx context.Context, alarmID, userID string) error
 }
 
 func NewStore(
@@ -68,21 +70,21 @@ type store struct {
 	logger               zerolog.Logger
 }
 
-func (s *store) Ack(ctx context.Context, id string, r AckRequest, userID, username string) (bool, error) {
+func (s *store) Ack(ctx context.Context, id string, r AckRequest, userID, username string) error {
 	// Double ack can be enabled. Check in engine-axe.
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
-	if err != nil || alarm.Alarm.ID == "" {
-		return false, err
+	if err != nil {
+		return err
 	}
 
-	event, err := s.genEvent(types.EventTypeAck, alarm.Entity, r.Comment, username, userID)
+	event, err := s.genEvent(types.EventTypeAck, alarm.Alarm, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	err = s.sendEvent(ctx, event)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	if r.AckResources && alarm.Entity.Type == types.EntityTypeComponent {
@@ -94,95 +96,76 @@ func (s *store) Ack(ctx context.Context, id string, r AckRequest, userID, userna
 		}()
 	}
 
-	return true, nil
+	return nil
 }
 
-func (s *store) AckRemove(ctx context.Context, id string, r Request, userID, username string) (bool, error) {
+func (s *store) AckRemove(ctx context.Context, id string, r Request, userID, username string) error {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id, "v.ack": bson.M{"$ne": nil}})
-	if err != nil || alarm.Alarm.ID == "" {
-		return false, err
-	}
-
-	event, err := s.genEvent(types.EventTypeAckremove, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	err = s.sendEvent(ctx, event)
+	event, err := s.genEvent(types.EventTypeAckremove, alarm.Alarm, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	return s.sendEvent(ctx, event)
 }
 
-func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userID, username string) (bool, error) {
+func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userID, username string) error {
 	d, err := r.Duration.To(datetime.DurationUnitSecond)
 	if err != nil {
-		return false, validation.NewSingleError("invalid", "Duration", "Duration", r)
+		return validation.NewSingleError("invalid", "Duration", "Duration", r)
 	}
 
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id, "v.snooze": nil})
-	if err != nil || alarm.Alarm.ID == "" {
-		return false, err
+	if err != nil {
+		return err
 	}
 
-	event, err := s.genEvent(types.EventTypeSnooze, alarm.Entity, r.Comment, username, userID)
+	event, err := s.genEvent(types.EventTypeSnooze, alarm.Alarm, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	event.Duration = types.CpsNumber(d.Value)
-	err = s.sendEvent(ctx, event)
-	if err != nil {
-		return false, err
-	}
 
-	return true, nil
+	return s.sendEvent(ctx, event)
 }
 
-func (s *store) Cancel(ctx context.Context, id string, r Request, userID, username string) (bool, error) {
+func (s *store) Cancel(ctx context.Context, id string, r Request, userID, username string) error {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id, "v.canceled": nil})
-	if err != nil || alarm.Alarm.ID == "" {
-		return false, err
-	}
-
-	event, err := s.genEvent(types.EventTypeCancel, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	err = s.sendEvent(ctx, event)
+	event, err := s.genEvent(types.EventTypeCancel, alarm.Alarm, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	return s.sendEvent(ctx, event)
 }
 
-func (s *store) Uncancel(ctx context.Context, id string, r Request, userID, username string) (bool, error) {
+func (s *store) Uncancel(ctx context.Context, id string, r Request, userID, username string) error {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id, "v.canceled": bson.M{"$ne": nil}})
-	if err != nil || alarm.Alarm.ID == "" {
-		return false, err
-	}
-
-	event, err := s.genEvent(types.EventTypeUncancel, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	err = s.sendEvent(ctx, event)
+	event, err := s.genEvent(types.EventTypeUncancel, alarm.Alarm, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	return s.sendEvent(ctx, event)
 }
 
-func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userID, username string) (bool, error) {
+func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userID, username string) error {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
-	if err != nil || alarm.Alarm.ID == "" {
-		return false, err
+	if err != nil {
+		return err
 	}
 
 	ticketInfo := types.TicketInfo{
@@ -193,15 +176,15 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 		TicketSystemName: r.SystemName,
 		TicketData:       r.Data,
 	}
-	event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Entity, ticketInfo.GetStepMessage(), username, userID)
+	event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Alarm, alarm.Entity, ticketInfo.GetStepMessage(), username, userID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	event.TicketInfo = ticketInfo
 	err = s.sendEvent(ctx, event)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	if r.TicketResources && alarm.Entity.Type == types.EntityTypeComponent {
@@ -213,78 +196,114 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 		}()
 	}
 
-	return true, nil
+	return nil
 }
 
-func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userID, username string) (bool, error) {
+func (s *store) TicketRemove(ctx context.Context, id string, r TicketRemoveRequest, userID, username string) error {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
-	if err != nil || alarm.Alarm.ID == "" {
-		return false, err
-	}
-
-	event, err := s.genEvent(types.EventTypeComment, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	err = s.sendEvent(ctx, event)
+	ticket := types.AlarmStep{}
+	for _, v := range alarm.Alarm.Value.Tickets {
+		if v.Ticket == r.Ticket {
+			ticket = v
+
+			break
+		}
+	}
+
+	if ticket.Type == "" {
+		return httperror.ErrNotFound
+	}
+
+	ob := strings.Builder{}
+	ob.WriteString("Ticket ID: ")
+	ob.WriteString(r.Ticket)
+	ob.WriteString(". ")
+	ob.WriteString("Reason: ")
+	ob.WriteString(r.Comment)
+	ob.WriteRune('.')
+
+	ticketInfo := types.TicketInfo{
+		Ticket:           r.Ticket,
+		TicketComment:    r.Comment,
+		TicketSystemName: ticket.TicketSystemName,
+	}
+
+	event, err := s.genEvent(types.EventTypeTicketRemove, alarm.Alarm, alarm.Entity, ob.String(), username, userID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	event.TicketInfo = ticketInfo
+
+	return s.sendEvent(ctx, event)
 }
 
-func (s *store) ChangeState(ctx context.Context, id string, r ChangeStateRequest, userID, username string) (bool, error) {
+func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userID, username string) error {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
-	if err != nil || alarm.Alarm.ID == "" {
-		return false, err
+	if err != nil {
+		return err
 	}
 
-	event, err := s.genEvent(types.EventTypeChangestate, alarm.Entity, r.Comment, username, userID)
+	event, err := s.genEvent(types.EventTypeComment, alarm.Alarm, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
-		return false, err
+		return err
+	}
+
+	return s.sendEvent(ctx, event)
+}
+
+func (s *store) ChangeState(ctx context.Context, id string, r ChangeStateRequest, userID, username string) error {
+	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
+	if err != nil {
+		return err
+	}
+
+	event, err := s.genEvent(types.EventTypeChangestate, alarm.Alarm, alarm.Entity, r.Comment, username, userID)
+	if err != nil {
+		return err
 	}
 
 	event.State = types.CpsNumber(*r.State)
-	err = s.sendEvent(ctx, event)
-	if err != nil {
-		return false, err
-	}
 
-	return true, nil
+	return s.sendEvent(ctx, event)
 }
 
 func (s *store) findAlarm(ctx context.Context, match bson.M) (types.AlarmWithEntity, error) {
 	if match == nil {
 		match = bson.M{}
 	}
+
 	match["v.resolved"] = nil
 	alarm := types.AlarmWithEntity{}
 	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
 		{"$match": match},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+		}},
 		{"$lookup": bson.M{
 			"from":         libmongo.EntityMongoCollection,
-			"localField":   "d",
+			"localField":   "alarm.d",
 			"foreignField": "_id",
 			"as":           "entity",
 		}},
 		{"$unwind": "$entity"},
-		{"$project": bson.M{
-			"alarm._id": "$_id",
-			"entity":    1,
-		}},
 	})
 	if err != nil {
 		return alarm, err
 	}
-	defer cursor.Close(ctx)
 
-	if cursor.Next(ctx) {
-		err = cursor.Decode(&alarm)
-		if err != nil {
-			return alarm, err
-		}
+	defer cursor.Close(ctx)
+	if !cursor.Next(ctx) {
+		return alarm, httperror.ErrNotFound
+	}
+
+	err = cursor.Decode(&alarm)
+	if err != nil {
+		return alarm, err
 	}
 
 	return alarm, nil
@@ -292,6 +311,7 @@ func (s *store) findAlarm(ctx context.Context, match bson.M) (types.AlarmWithEnt
 
 func (s *store) genEvent(
 	eventType string,
+	alarm types.Alarm,
 	entity types.Entity,
 	output string,
 	username, userID string,
@@ -301,6 +321,7 @@ func (s *store) genEvent(
 		return event, fmt.Errorf("cannot generate event: %w", err)
 	}
 
+	event.AlarmID = alarm.ID
 	event.EventType = eventType
 	event.Timestamp = datetime.NewCpsTime()
 	event.Output = output
@@ -381,7 +402,7 @@ func (s *store) ackResources(
 			return fmt.Errorf("cannot decode alarm: %w", err)
 		}
 
-		event, err := s.genEvent(types.EventTypeAck, alarm.Entity, output, username, userID)
+		event, err := s.genEvent(types.EventTypeAck, alarm.Alarm, alarm.Entity, output, username, userID)
 		if err != nil {
 			return err
 		}
@@ -442,7 +463,7 @@ func (s *store) ticketResources(
 			return fmt.Errorf("cannot decode alarm: %w", err)
 		}
 
-		event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Entity, output, username, userID)
+		event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Alarm, alarm.Entity, output, username, userID)
 		if err != nil {
 			return err
 		}
@@ -457,14 +478,9 @@ func (s *store) ticketResources(
 	return nil
 }
 
-func (s *store) AddBookmark(ctx context.Context, alarmID, userID string) (bool, error) {
-	found := false
-
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		found = false
-
+func (s *store) AddBookmark(ctx context.Context, alarmID, userID string) error {
+	return s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		var doc alarmResolvedField
-
 		err := s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{"_id": alarmID},
@@ -481,8 +497,6 @@ func (s *store) AddBookmark(ctx context.Context, alarmID, userID string) (bool, 
 		}
 
 		if doc.ID != "" && doc.Resolved == nil {
-			found = true
-
 			return nil
 		}
 
@@ -500,22 +514,17 @@ func (s *store) AddBookmark(ctx context.Context, alarmID, userID string) (bool, 
 			return err
 		}
 
-		found = resolvedRes.MatchedCount != 0
+		if resolvedRes.MatchedCount == 0 {
+			return httperror.ErrNotFound
+		}
 
 		return nil
 	})
-
-	return found, err
 }
 
-func (s *store) RemoveBookmark(ctx context.Context, alarmID, userID string) (bool, error) {
-	found := false
-
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		found = false
-
+func (s *store) RemoveBookmark(ctx context.Context, alarmID, userID string) error {
+	return s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		var doc alarmResolvedField
-
 		err := s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{"_id": alarmID},
@@ -527,8 +536,6 @@ func (s *store) RemoveBookmark(ctx context.Context, alarmID, userID string) (boo
 		}
 
 		if doc.ID != "" && doc.Resolved == nil {
-			found = true
-
 			return nil
 		}
 
@@ -541,10 +548,10 @@ func (s *store) RemoveBookmark(ctx context.Context, alarmID, userID string) (boo
 			return err
 		}
 
-		found = resolvedRes.MatchedCount != 0
+		if resolvedRes.MatchedCount == 0 {
+			return httperror.ErrNotFound
+		}
 
 		return nil
 	})
-
-	return found, err
 }

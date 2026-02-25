@@ -2391,6 +2391,17 @@ permission:
       - "@group_widgets_alarmslist_alarmactions"
     api_permissions:
       "@permission_api_alarm_update": 1
+  permission_listalarm_removeAssociatedTicket:
+    <<: *permission
+    _id: listalarm_removeAssociatedTicket
+    name: <Current()._id>
+    description: Remove associated ticket
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
   permission_listalarm_removeAlarm:
     <<: *permission
     _id: listalarm_removeAlarm
@@ -3677,6 +3688,7 @@ role:
       "@permission_listalarm_snoozeAlarm": 1
       "@permission_listalarm_declareanIncident": 1
       "@permission_listalarm_assignTicketNumber": 1
+      "@permission_listalarm_removeAssociatedTicket": 1
       "@permission_listalarm_removeAlarm": 1
       "@permission_listalarm_fastRemoveAlarm": 1
       "@permission_listalarm_unCancel": 1
@@ -3851,6 +3863,7 @@ role_template:
       "@permission_listalarm_snoozeAlarm": 1
       "@permission_listalarm_declareanIncident": 1
       "@permission_listalarm_assignTicketNumber": 1
+      "@permission_listalarm_removeAssociatedTicket": 1
       "@permission_listalarm_removeAlarm": 1
       "@permission_listalarm_fastRemoveAlarm": 1
       "@permission_listalarm_unCancel": 1
