@@ -81,7 +81,7 @@ export default {
       },
     ];
 
-    const generalLinks = [
+    const otherLinks = [
       {
         route: { name: ROUTES_NAMES.adminHealthcheck },
         icon: 'alt_route',
@@ -171,7 +171,7 @@ export default {
       },
     ]);
 
-    const generalLinksWithChildren = [
+    const otherLinksWithChildren = [
       {
         icon: 'local_offer',
         title: t('layout.topbar.customObjects'),
@@ -198,12 +198,17 @@ export default {
         links: communicationsLinks,
       },
       {
-        links: generalLinks,
+        title: t('common.other'),
+        links: otherLinks,
       },
       {
-        links: generalLinksWithChildren,
+        links: otherLinksWithChildren,
       },
     ].reduce((acc, group) => {
+      if (!group.links.length) {
+        return acc;
+      }
+
       if (group.title) {
         acc.push({ title: group.title, header: true });
       }
