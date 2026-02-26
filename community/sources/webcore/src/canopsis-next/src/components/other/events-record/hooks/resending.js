@@ -21,7 +21,7 @@ export const useEventsRecordResending = () => {
    * STORE
    */
   const { playbackEventsRecordEvents, stopPlaybackEventsRecordEvents } = useEventsRecord();
-  const { current, fetchEventsRecordCurrent } = useEventsRecordCurrent();
+  const { resendings, fetchEventsRecordCurrent } = useEventsRecordCurrent();
 
   /**
    * Resend events with a specified delay.
@@ -71,18 +71,30 @@ export const useEventsRecordResending = () => {
   /**
    * Stop resending events and confirm the action.
    *
+   * @param {string} [eventsRecordId] - ID of the events record to stop. If omitted, stops the first one in resendings.
    * @returns {Promise}
    */
-  const stopResending = () => modals.show({
-    name: MODALS.confirmation,
-    config: {
-      action: async () => {
-        await stopPlaybackEventsRecordEvents({ id: current.value._id });
+  const stopResending = (eventsRecordId) => {
+    const firstResending = resendings.value[0];
+    const idToStop = eventsRecordId ?? (typeof firstResending === 'object' && firstResending?._id
+      ? firstResending._id
+      : firstResending);
 
-        return fetchEventsRecordCurrent();
+    if (!idToStop) {
+      return Promise.resolve();
+    }
+
+    return modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: async () => {
+          await stopPlaybackEventsRecordEvents({ id: idToStop });
+
+          return fetchEventsRecordCurrent();
+        },
       },
-    },
-  });
+    });
+  };
 
   return {
     startResending,

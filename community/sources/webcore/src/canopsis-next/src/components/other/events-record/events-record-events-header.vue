@@ -11,15 +11,27 @@
     <v-layout class="gap-3 my-4" justify-space-between align-center>
       <v-layout class="gap-2" align-center>
         <v-btn
-          v-if="!hideApplyFilter"
-          :color="hasFilterApplied ? 'primary' : undefined"
-          :outlined="!hasFilterApplied"
+          v-if="hasFilterApplied"
+          color="secondary"
           @click="applyEventFilter"
         >
-          {{ hasFilterApplied ? $t('eventsRecord.eventFilterApplied') : $t('eventsRecord.applyEventFilter') }}
+          <v-icon class="mr-2">
+            filter_list
+          </v-icon>
+          {{ $t('eventsRecord.eventFilterApplied') }}
         </v-btn>
         <v-btn
-          v-if="!hideApplyFilter && hasFilterApplied"
+          v-else
+          color="secondary"
+          outlined
+          @click="applyEventFilter"
+        >
+          {{ $t('eventsRecord.applyEventFilter') }}
+        </v-btn>
+
+        <v-btn
+          v-if="hasFilterApplied"
+          color="secondary"
           outlined
           @click="resetFilter"
         >
@@ -44,10 +56,6 @@ export default {
     count: {
       type: Number,
       default: 0,
-    },
-    hideApplyFilter: {
-      type: Boolean,
-      default: false,
     },
     hasFilterApplied: {
       type: Boolean,
