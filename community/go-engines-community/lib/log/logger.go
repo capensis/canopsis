@@ -14,6 +14,11 @@ import (
 	"github.com/rs/zerolog/journald"
 )
 
+const (
+	Stderr   = "stderr"
+	Journald = "journald"
+)
+
 type Options struct {
 	Debug  bool
 	Writer string
@@ -59,9 +64,9 @@ func NewLogger(ctx context.Context, opts Options) zerolog.Logger {
 
 	if writerStr != "" {
 		switch writerStr {
-		case "stderr":
+		case Stderr:
 			writer = os.Stderr
-		case "journald":
+		case Journald:
 			writer = journald.NewJournalDWriter()
 		}
 		loggerWriter = writer
@@ -87,6 +92,13 @@ func NewLogger(ctx context.Context, opts Options) zerolog.Logger {
 	// https://godoc.org/github.com/rs/zerolog#SyncWriter
 	logger = zerolog.New(loggerWriter).Level(logLevel).With().Timestamp().Caller().Logger()
 	return logger
+}
+
+func Writers() []string {
+	return []string{
+		Stderr,
+		Journald,
+	}
 }
 
 func loadLoggerConfig(ctx context.Context) (*config.SectionLogger, error) {
