@@ -60,7 +60,6 @@ export default {
     versionUpdated: state => state.appInfo?.version_updated,
     versionDescription: state => state.appInfo?.version_description ?? '',
     notificationDisplayCount: state => state.appInfo?.notification_display_count ?? 0,
-    eventRecordsConcurrentLimit: state => state.appInfo?.event_records_concurrent_limit ?? 1,
   },
   mutations: {
     [types.FETCH_APP_INFO](state) {

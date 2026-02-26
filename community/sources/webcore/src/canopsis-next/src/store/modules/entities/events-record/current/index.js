@@ -1,71 +1,70 @@
-import Vue from 'vue';
-
 import { API_ROUTES } from '@/config';
 
 import request, { useRequestCancelling } from '@/services/request';
+
+const DEFAULT_STATUS = {
+  limit: 1,
+  recording: [],
+  resending: [],
+};
 
 const types = {
   FETCH_CURRENT: 'FETCH_CURRENT',
   FETCH_CURRENT_COMPLETED: 'FETCH_CURRENT_COMPLETED',
   FETCH_CURRENT_FAILED: 'FETCH_CURRENT_FAILED',
 
-  SET_RESENDING: 'SET_RESENDING',
-
-  RESET: 'RESET',
+  SET_STATUS: 'SET_STATUS',
 };
 
 export default {
   namespaced: true,
   state: {
     pending: false,
-    current: {},
+    status: { ...DEFAULT_STATUS },
   },
   getters: {
     pending: state => state.pending,
-    current: state => state.current,
+    status: state => state.status,
+    recordings: state => state.status?.recording ?? [],
+    resendings: state => state.status?.resending ?? [],
+    limit: state => state.status?.limit ?? 1,
+    recordingsById: (state, getters) => Object.fromEntries(
+      getters.recordings.map(item => [item._id, true]),
+    ),
+    resendingsById: (state, getters) => Object.fromEntries(
+      getters.resendings.map(item => [item._id, true]),
+    ),
   },
   mutations: {
     [types.FETCH_CURRENT]: (state) => {
       state.pending = true;
     },
-    [types.FETCH_CURRENT_COMPLETED]: (state, current) => {
-      state.current = current;
+    [types.FETCH_CURRENT_COMPLETED]: (state, status) => {
+      state.status = status ?? { ...DEFAULT_STATUS };
       state.pending = false;
     },
     [types.FETCH_CURRENT_FAILED]: (state) => {
       state.pending = false;
     },
-    [types.SET_RESENDING]: (state, isResending = false) => {
-      Vue.set(state.current, 'is_resending', isResending);
-    },
-    [types.RESET]: (state) => {
-      state.current = {
-        count: state.current.count ?? 0,
-        t: null,
-        is_resending: false,
-        is_recording: false,
-        _id: '',
-      };
+    [types.SET_STATUS]: (state, status) => {
+      state.status = status ?? { ...DEFAULT_STATUS };
     },
   },
   actions: {
     reset({ commit }) {
       commit(types.RESET);
     },
-    setCurrentResending({ commit }, isResending) {
-      commit(types.SET_RESENDING, isResending);
-    },
 
-    setCurrent({ commit }, current) {
-      commit(types.FETCH_CURRENT_COMPLETED, current);
+    setStatus({ commit }, status) {
+      commit(types.SET_STATUS, status);
     },
 
     async fetchCurrent({ commit }) {
       return useRequestCancelling(async (source) => {
         try {
-          const current = await request.get(API_ROUTES.eventsRecord.current, { cancelToken: source.token });
+          const status = await request.get(API_ROUTES.eventsRecord.current, { cancelToken: source.token });
 
-          commit(types.FETCH_CURRENT_COMPLETED, current);
+          commit(types.FETCH_CURRENT_COMPLETED, status);
         } catch (err) {
           console.warn(err);
 
@@ -78,12 +77,8 @@ export default {
       return request.post(API_ROUTES.eventsRecord.current, data);
     },
 
-    async stop({ commit }) {
-      const response = await request.delete(API_ROUTES.eventsRecord.current);
-
-      commit(types.RESET);
-
-      return response;
+    stop(context, { id } = {}) {
+      return request.delete(`${API_ROUTES.eventsRecord.current}/${id}`);
     },
   },
 };

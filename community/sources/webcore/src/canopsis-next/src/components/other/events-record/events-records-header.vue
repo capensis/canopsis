@@ -1,7 +1,12 @@
 <template>
   <v-layout class="pa-3 gap-3" column align-center>
     <h3>{{ $t('eventsRecord.subheader') }}</h3>
-    <v-layout v-if="message" class="gap-4" align-center>
+    <v-layout
+      v-for="message in messages"
+      :key="message"
+      class="gap-4"
+      align-center
+    >
       <span class="font-italic">{{ message }}</span>
       <v-progress-circular
         color="primary"
@@ -11,23 +16,6 @@
     </v-layout>
     <v-flex>
       <v-btn
-        v-if="current.is_resending"
-        key="stop-resending"
-        color="accent"
-        @click="stopResending"
-      >
-        {{ $t('eventsRecord.stopResending') }}
-      </v-btn>
-      <v-btn
-        v-else-if="current.is_recording"
-        key="stop-recording"
-        color="accent"
-        @click="stopRecording"
-      >
-        {{ $t('eventsRecord.stop') }}
-      </v-btn>
-      <v-btn
-        v-else
         key="start"
         :disabled="isLaunchDisabled"
         color="warning"
@@ -38,7 +26,7 @@
     </v-flex>
     <span class="text-caption grey--text text--darken-1">
       <strong>{{ $t('common.limit') }}:</strong>&nbsp;
-      {{ $t('eventsRecord.concurrentRecordings', { limit: eventRecordsConcurrentLimit }) }}
+      {{ $t('eventsRecord.concurrentRecordings', { limit }) }}
     </span>
   </v-layout>
 </template>
@@ -47,49 +35,47 @@
 import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
-import { useInfo } from '@/hooks/store/modules/info';
 
 export default {
   props: {
-    current: {
-      type: Object,
-      required: true,
+    recordings: {
+      type: Array,
+      default: () => [],
     },
-    inProgressCount: {
+    resendings: {
+      type: Array,
+      default: () => [],
+    },
+    limit: {
       type: Number,
-      default: 0,
+      default: 1,
     },
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const { eventRecordsConcurrentLimit } = useInfo();
 
-    const message = computed(() => ({
-      [props.current.is_recording]: t('eventsRecord.inProgress'),
-      [props.current.is_resending]: t('eventsRecord.resendingInProgress'),
-    }.true));
+    const messages = computed(() => {
+      const result = [];
 
-    const isLaunchDisabled = computed(() => {
-      const limit = eventRecordsConcurrentLimit.value;
+      if (props.recordings?.length) {
+        result.push(t('eventsRecord.inProgress'));
+      }
 
-      return limit != null && limit > 0 && props.inProgressCount >= limit;
+      if (props.resendings?.length) {
+        result.push(t('eventsRecord.resendingInProgress'));
+      }
+
+      return result;
     });
 
-    const startRecording = () => emit('start:recording');
-    const stopRecording = () => emit('stop:recording');
+    const isLaunchDisabled = computed(() => !props.limit || props.recordings?.length >= props.limit);
 
-    const stopResending = () => emit('stop:resending');
+    const startRecording = () => emit('start:recording');
 
     return {
-      message,
-      eventRecordsConcurrentLimit,
-
+      messages,
       isLaunchDisabled,
-
       startRecording,
-      stopRecording,
-
-      stopResending,
     };
   },
 };
