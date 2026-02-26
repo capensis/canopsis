@@ -17,10 +17,12 @@ export default {
   export: 'Exporter vers JSON',
   applyEventFilter: 'Appliquer le filtre d\'événement',
   eventFilterApplied: 'Filtre d\'événement appliqué',
+  filterPatternOptional: 'Le modèle de filtre est optionnel',
   delayBetweenEvents: 'Délai entre les événements',
   resendEvents: 'Renvoyer l\'événement | Renvoyer les événements',
   selectedEventsAreResent: 'Les événements sélectionnés ont été renvoyés',
   launchEventRecording: 'Lancement d\'un enregistrement d\'événements',
+  launchEventRecordingDescription: 'Appliquer le modèle de filtre pour les événements enregistrés',
   copyEvent: 'Copier l\'événement dans le presse-papiers',
   eventCopied: 'Événement copié dans le presse-papiers',
 };

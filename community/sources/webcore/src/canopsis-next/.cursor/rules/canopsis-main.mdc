@@ -191,6 +191,9 @@ const { t, tc, te, locale } = useI18n();
 
 ## Testing with Jest
 
+### Main test rules
+- Don’t check tests unless I explicitly ask you to.
+
 ### Test Structure
 - All tests are in `tests/unit/` and use `.spec.js` extension
 - Use custom matchers: `toMatchCanvasSnapshot`, `toMatchTooltipSnapshot`, `toMatchMenuSnapshot`, `toEmit`, `toEmitInput`, `toHaveBeenEmit`, `toStructureEqual`, `toBeDispatchedWith`

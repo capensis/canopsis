@@ -395,11 +395,11 @@ export default {
       const newRule = {
         ...this.rule,
 
-        attribute: attribute.value,
-        alias: attribute.alias ?? false,
+        attribute: attribute?.value,
+        alias: attribute?.alias ?? false,
       };
 
-      if (attribute.definedType) {
+      if (attribute?.definedType) {
         newRule.fieldType = attribute.definedType;
       }
 

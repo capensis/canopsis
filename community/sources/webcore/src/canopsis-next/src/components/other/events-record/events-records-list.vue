@@ -8,11 +8,11 @@
     advanced-pagination
     @update:options="updateOptions"
   >
-    <template #resending="{ item }">
+    <template #loader="{ item }">
       <v-tooltip right>
         <template #activator="{ on }">
           <v-icon
-            v-show="item.is_resending"
+            v-if="item.is_recording || item.is_resending"
             class="blinking"
             color="blue darken-3"
             v-on="on"
@@ -20,17 +20,25 @@
             play_arrow
           </v-icon>
         </template>
-        <span>{{ $t('eventsRecord.resendingInProgress') }}</span>
+        <span>{{ item.is_recording ? $t('eventsRecord.inProgress') : $t('eventsRecord.resendingInProgress') }}</span>
       </v-tooltip>
     </template>
     <template #t="{ item }">
       {{ item.t | date }}
     </template>
     <template #recordingEnd="{ item }">
-      {{ item.is_recording ? $t('common.inProgress') : (item.t_end ? (item.t_end | date) : '—') }}
+      <span v-if="item.is_recording">
+        {{ $t('common.inProgress') }}
+      </span>
+      <span v-else>{{ item.t_end | date('long', '-') }}</span>
     </template>
     <template #duration="{ item }">
-      {{ item.is_recording ? $t('common.inProgress') : (item | duration) }}
+      <span v-if="item.is_recording">
+        {{ $t('common.inProgress') }}
+      </span>
+      <span v-else>
+        {{ item.duration | duration }}
+      </span>
     </template>
     <template #author="{ item }">
       {{ item.author || '—' }}
@@ -42,7 +50,7 @@
           :tooltip="$t('eventsRecord.stop')"
           color="blue darken-3"
           icon="stop"
-          @click="stop"
+          @click="stop(item)"
         />
         <c-action-btn
           :tooltip="item.is_recording ? $t('eventsRecord.viewPattern') : $t('eventsRecord.viewEventsAndPattern')"
@@ -95,7 +103,7 @@ export default {
     const headers = computed(() => [
       {
         text: '',
-        value: 'resending',
+        value: 'loader',
         sortable: false,
       },
       {
@@ -130,7 +138,7 @@ export default {
       },
     ]);
 
-    const stop = () => emit('stop');
+    const stop = item => emit('stop', item);
     const show = eventsRecord => emit('show', eventsRecord);
     const remove = eventsRecord => emit('remove', eventsRecord._id);
     const updateOptions = options => emit('update:options', options);

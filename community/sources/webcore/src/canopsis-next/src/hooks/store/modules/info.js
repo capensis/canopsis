@@ -59,7 +59,6 @@ export const useInfoStoreModule = () => useStoreModuleHooks('info');
  * @property {Ref<string>} serialName - Build serial name
  * @property {Ref<number>} versionUpdated - Version updated timestamp
  * @property {Ref<string>} versionDescription - Version description template
- * @property {Ref<number>} eventRecordsConcurrentLimit - Max concurrent event recordings
  *
  * @returns {Object} Hook return object
  * @property {InfoGetters} getters - All available getters
@@ -111,7 +110,6 @@ export const useInfo = () => {
     versionUpdated: 'versionUpdated',
     versionDescription: 'versionDescription',
     notificationDisplayCount: 'notificationDisplayCount',
-    eventRecordsConcurrentLimit: 'eventRecordsConcurrentLimit',
   });
 
   const isProVersion = computed(() => getters.edition.value === CANOPSIS_EDITION.pro);

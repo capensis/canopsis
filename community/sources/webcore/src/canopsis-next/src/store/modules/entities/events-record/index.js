@@ -13,7 +13,7 @@ export default {
     async fetchListWithoutStore({ dispatch }, { params } = {}) {
       const response = await request.get(API_ROUTES.eventsRecord.list, { params });
 
-      dispatch('current/setCurrent', response.status);
+      dispatch('current/setStatus', response.status ?? {});
 
       return response;
     },
@@ -30,16 +30,8 @@ export default {
       return request.get(`${API_ROUTES.eventsRecord.export}/${id}`);
     },
 
-    playback({ dispatch }, { id, data } = {}) {
-      try {
-        dispatch('current/setCurrentResending', true);
-
-        return request.post(`${API_ROUTES.eventsRecord.list}/${id}/playback`, data);
-      } catch (err) {
-        dispatch('current/setCurrentResending', false);
-
-        throw err;
-      }
+    playback(context, { id, data } = {}) {
+      return request.post(`${API_ROUTES.eventsRecord.list}/${id}/playback`, data);
     },
 
     async stopPlayback({ dispatch }, { id } = {}) {

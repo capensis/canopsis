@@ -5,19 +5,21 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <v-tabs v-model="activeTab">
-          <v-tooltip bottom>
-            <template #activator="{ on }">
-              <v-tab
-                :href="`#${TABS.events}`"
-                :disabled="isRecording"
-                v-on="on"
-              >
-                {{ $t('modals.eventsRecord.eventsTab') }}
-              </v-tab>
-            </template>
-            <span v-if="isRecording">{{ $t('eventsRecord.eventsAreLoading') }}</span>
-          </v-tooltip>
+        <v-tabs v-model="activeTab" centered>
+          <v-tab
+            :href="`#${TABS.events}`"
+            :disabled="!isRecording"
+            class="v-tab--tooltip"
+          >
+            <v-tooltip :disabled="isRecording" bottom>
+              <template #activator="{ on }">
+                <span v-on="on">
+                  {{ $t('modals.eventsRecord.eventsTab') }}
+                </span>
+              </template>
+              <span>{{ $t('eventsRecord.eventsAreLoading') }}</span>
+            </v-tooltip>
+          </v-tab>
           <v-tab :href="`#${TABS.pattern}`">
             {{ $t('modals.eventsRecord.patternTab') }}
           </v-tab>
@@ -28,7 +30,6 @@
                   :events-record-id="eventsRecordId"
                   :count="config.eventsRecord.count"
                   :has-filter-applied="hasFilterApplied"
-                  :hide-apply-filter="isRecording"
                   @remove="remove"
                   @apply:filter="applyEventFilter"
                   @reset:filter="resetFilter"
@@ -37,14 +38,14 @@
                   :events-record-id="eventsRecordId"
                   :events="events"
                   :pending="pending"
-                  :resending="resending"
+                  :resending="isResending"
                   :resending-disabled="resendingDisabled"
                   :options="query"
                   :total-items="meta.total_count"
                   @remove="removeEvent"
                   @remove:selected="removeEvents"
                   @start:resending="startResending(eventsRecordId, $event)"
-                  @stop:resending="stopResending"
+                  @stop:resending="stopResending(eventsRecordId)"
                   @update:options="updateOptions"
                 />
               </div>
@@ -131,11 +132,10 @@ export default {
       fetchEventsRecordEventsListWithoutStore,
     } = useEventsRecord();
 
-    const { current } = useEventsRecordCurrent();
+    const { recordingsById, resendingsById } = useEventsRecordCurrent();
 
-    const isRecording = computed(() => (
-      current.value.is_recording && current.value._id === eventsRecordId.value
-    ));
+    const isRecording = computed(() => !recordingsById.value[eventsRecordId.value]);
+    const isResending = computed(() => !!resendingsById.value[eventsRecordId.value]);
 
     const patternForm = computed(() => (
       patternToForm({ event_pattern: eventsRecord.value.pattern })
@@ -145,8 +145,7 @@ export default {
       t('modals.eventsRecord.title', { date: convertDateToString(eventsRecord.value.t) })
     ));
 
-    const resending = computed(() => current.value.is_resending && current.value._id === eventsRecordId.value);
-    const resendingDisabled = computed(() => current.value.is_recording || current.value.is_resending);
+    const resendingDisabled = computed(() => isRecording.value || isResending.value);
 
     watch(isRecording, (recording) => {
       if (recording && activeTab.value === TABS.events) {
@@ -280,7 +279,7 @@ export default {
       isRecording,
       hasFilterApplied,
       patternForm,
-      resending,
+      isResending,
       resendingDisabled,
 
       close,
