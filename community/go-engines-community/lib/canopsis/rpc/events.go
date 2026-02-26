@@ -223,7 +223,6 @@ type ApiNotificationEvent struct {
 const (
 	RecorderCmdStart  = "start"
 	RecorderCmdStop   = "stop"
-	RecorderCmdStatus = "status"
 	RecorderCmdResend = "resend"
 	RecorderCmdHalt   = "halt"
 	RecorderCmdPing   = "ping"
