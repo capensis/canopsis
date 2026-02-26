@@ -259,6 +259,7 @@ export default {
   addMore: 'Ajouter plus',
   more: 'plus',
   all: 'Tous',
+  other: 'Autre',
   attribute: 'Attribut',
   timeTaken: 'Temps passé',
   enginesMetrics: 'Métriques des moteurs',
