@@ -9,19 +9,30 @@
     @update:options="updateOptions"
   >
     <template #loader="{ item }">
-      <v-tooltip right>
-        <template #activator="{ on }">
-          <v-icon
-            v-if="item.is_recording || item.is_resending"
-            class="blinking"
-            color="blue darken-3"
-            v-on="on"
-          >
-            play_arrow
-          </v-icon>
-        </template>
-        <span>{{ item.is_recording ? $t('eventsRecord.inProgress') : $t('eventsRecord.resendingInProgress') }}</span>
-      </v-tooltip>
+      <v-layout class="gap-2">
+        <v-tooltip v-if="item.is_recording" right>
+          <template #activator="{ on }">
+            <v-progress-circular
+              size="24"
+              width="2"
+              indeterminate
+              v-on="on"
+            />
+          </template>
+          <span>{{ $t('eventsRecord.inProgress') }}</span>
+        </v-tooltip>
+        <v-tooltip v-if="item.is_resending" right>
+          <template #activator="{ on }">
+            <v-icon
+              class="blinking"
+              v-on="on"
+            >
+              play_arrow
+            </v-icon>
+          </template>
+          <span>{{ $t('eventsRecord.resendingInProgress') }}</span>
+        </v-tooltip>
+      </v-layout>
     </template>
     <template #t="{ item }">
       {{ item.t | date }}
@@ -40,6 +51,10 @@
         {{ item.duration | duration }}
       </span>
     </template>
+    <template #count="{ item }">
+      <span>{{ item.count }}</span>
+      <span v-if="item.is_recording">...</span>
+    </template>
     <template #author="{ item }">
       {{ item.author || '—' }}
     </template>
@@ -50,7 +65,7 @@
           :tooltip="$t('eventsRecord.stop')"
           color="blue darken-3"
           icon="stop"
-          @click="stop(item)"
+          @click="stop(item._id)"
         />
         <c-action-btn
           :tooltip="item.is_recording ? $t('eventsRecord.viewPattern') : $t('eventsRecord.viewEventsAndPattern')"

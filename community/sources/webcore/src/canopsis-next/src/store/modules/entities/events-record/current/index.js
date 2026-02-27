@@ -29,10 +29,10 @@ export default {
     resendings: state => state.status?.resending ?? [],
     limit: state => state.status?.limit ?? 1,
     recordingsById: (state, getters) => Object.fromEntries(
-      getters.recordings.map(item => [item._id, true]),
+      getters.recordings.map(item => [item._id, item]),
     ),
     resendingsById: (state, getters) => Object.fromEntries(
-      getters.resendings.map(item => [item._id, true]),
+      getters.resendings.map(item => [item._id, item]),
     ),
   },
   mutations: {
