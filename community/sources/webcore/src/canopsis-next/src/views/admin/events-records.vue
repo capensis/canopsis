@@ -21,7 +21,13 @@
 </template>
 
 <script>
-import { computed, ref, watch, onMounted } from 'vue';
+import {
+  computed,
+  ref,
+  watch,
+  set,
+  onMounted,
+} from 'vue';
 
 import { MODALS } from '@/constants';
 
@@ -58,15 +64,19 @@ export default {
       const isRecording = !!recording;
       const isResending = !!resending;
 
-      if (eventRecord.is_recording !== isRecording || eventRecord.is_resending !== isResending) {
-        eventsRecords.value[index] = {
+      if (
+        !!eventRecord.is_recording !== isRecording
+         || !!eventRecord.is_resending !== isResending
+         || eventRecord.count < recording?.n
+      ) {
+        set(eventsRecords.value, index, {
 
           ...eventRecord,
 
-          count: recording?.count || 0,
+          count: recording?.n || eventRecord.count || 0,
           is_recording: isRecording,
           is_resending: isResending,
-        };
+        });
       }
     });
 
@@ -74,7 +84,7 @@ export default {
 
     const inProgressCount = computed(() => recordings.value.length);
 
-    watch(() => [resendings, recordings], prepareEventsRecords);
+    watch(() => [resendings.value, recordings.value], prepareEventsRecords);
 
     /**
      * QUERY

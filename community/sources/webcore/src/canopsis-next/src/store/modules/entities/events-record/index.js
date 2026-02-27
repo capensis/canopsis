@@ -34,12 +34,8 @@ export default {
       return request.post(`${API_ROUTES.eventsRecord.list}/${id}/playback`, data);
     },
 
-    async stopPlayback({ dispatch }, { id } = {}) {
-      const response = await request.delete(`${API_ROUTES.eventsRecord.list}/${id}/playback`);
-
-      dispatch('current/reset');
-
-      return response;
+    stopPlayback(context, { id } = {}) {
+      return request.delete(`${API_ROUTES.eventsRecord.list}/${id}/playback`);
     },
 
     remove(context, { id } = {}) {

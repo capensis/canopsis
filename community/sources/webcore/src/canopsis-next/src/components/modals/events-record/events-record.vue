@@ -8,10 +8,10 @@
         <v-tabs v-model="activeTab" centered>
           <v-tab
             :href="`#${TABS.events}`"
-            :disabled="!isRecording"
+            :disabled="isRecording"
             class="v-tab--tooltip"
           >
-            <v-tooltip :disabled="isRecording" bottom>
+            <v-tooltip :disabled="!isRecording" bottom>
               <template #activator="{ on }">
                 <span v-on="on">
                   {{ $t('modals.eventsRecord.eventsTab') }}
@@ -134,7 +134,7 @@ export default {
 
     const { recordingsById, resendingsById } = useEventsRecordCurrent();
 
-    const isRecording = computed(() => !recordingsById.value[eventsRecordId.value]);
+    const isRecording = computed(() => !!recordingsById.value[eventsRecordId.value]);
     const isResending = computed(() => !!resendingsById.value[eventsRecordId.value]);
 
     const patternForm = computed(() => (
