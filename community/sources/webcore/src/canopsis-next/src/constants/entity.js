@@ -7,7 +7,7 @@ export const ENTITY_FIELDS = {
   id: '_id',
   customId: 'custom_id',
   name: 'name',
-  categoryName: 'category',
+  categoryName: 'category.name',
   type: 'type',
   component: 'component',
   connector: 'connector',
@@ -32,7 +32,7 @@ export const ENTITY_FIELDS = {
   links: 'links',
   alarmDisplayName: 'alarm_display_name',
   alarmCreationDate: 'alarm_creation_date',
-  lastAlarmUpdateDate: 'last_alarm_update_date',
+  lastAlarmUpdateDate: 'alarm_last_update_date',
   importSource: 'import_source',
   imported: 'imported',
   alarmLastComment: 'alarm_last_comment',
@@ -48,42 +48,6 @@ export const ENTITY_FIELDS = {
   ticket: 'ticket',
   snooze: 'snooze',
 };
-
-export const ENTITY_ADVANCED_SEARCH_FIELDS = [
-  ENTITY_FIELDS.id,
-  ENTITY_FIELDS.name,
-  ENTITY_FIELDS.categoryName,
-  ENTITY_FIELDS.component,
-  ENTITY_FIELDS.connector,
-  ENTITY_FIELDS.connectorName,
-  ENTITY_FIELDS.resource,
-  ENTITY_FIELDS.impactLevel,
-  ENTITY_FIELDS.lastEventDate,
-  ENTITY_FIELDS.lastPbehaviorDate,
-  ENTITY_FIELDS.lastUpdateDate,
-  ENTITY_FIELDS.koEvents,
-  ENTITY_FIELDS.okEvents,
-  ENTITY_FIELDS.statsOk,
-  ENTITY_FIELDS.statsKo,
-  ENTITY_FIELDS.pbehaviorInfo,
-  ENTITY_FIELDS.impactState,
-  ENTITY_FIELDS.idleSince,
-  ENTITY_FIELDS.infos,
-  ENTITY_FIELDS.componentInfos,
-  ENTITY_FIELDS.alarmDisplayName,
-  ENTITY_FIELDS.alarmCreationDate,
-  ENTITY_FIELDS.importSource,
-  ENTITY_FIELDS.imported,
-  ENTITY_FIELDS.alarmLastComment,
-
-  /**
-   * OBJECTS
-   */
-  ENTITY_FIELDS.ack,
-  ENTITY_FIELDS.category,
-  ENTITY_FIELDS.ticket,
-  ENTITY_FIELDS.snooze,
-];
 
 export const EVENT_ENTITY_TYPES = { // TODO: remove it in the future
   ack: 'ack', // TODO: ServiceWeather
@@ -386,7 +350,6 @@ export const ENTITY_PATTERN_FIELDS = {
   customId: ENTITY_FIELDS.customId,
   name: ENTITY_FIELDS.name,
   type: ENTITY_FIELDS.type,
-  categoryName: ENTITY_FIELDS.categoryName,
   component: ENTITY_FIELDS.component,
   connector: ENTITY_FIELDS.connector,
   resource: ENTITY_FIELDS.resource,

@@ -15,7 +15,7 @@ exports[`availability-form Renders \`availability-form\` with custom props 1`] =
   />
   <field-columns-stub
     columns="[object Object],[object Object]"
-    excludedcolumns="custom_id,last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,last_alarm_update_date,import_source,imported,alarm_last_comment,tags,last_comment,source_type"
+    excludedcolumns="custom_id,last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,alarm_last_update_date,import_source,imported,alarm_last_comment,tags,last_comment,source_type"
     label="Column names"
     templates="[object Object]"
     templatespending="true"
@@ -58,7 +58,7 @@ exports[`availability-form Renders \`availability-form\` with custom props 1`] =
       withentity="true"
     />
     <export-csv-form-stub
-      excludedcolumns="custom_id,last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,last_alarm_update_date,import_source,imported,alarm_last_comment,tags,last_comment,source_type"
+      excludedcolumns="custom_id,last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,alarm_last_update_date,import_source,imported,alarm_last_comment,tags,last_comment,source_type"
       form="[object Object]"
       templates="[object Object]"
       templatespending="true"
@@ -82,7 +82,7 @@ exports[`availability-form Renders \`availability-form\` with required props 1`]
   />
   <field-columns-stub
     columns="[object Object],[object Object]"
-    excludedcolumns="custom_id,last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,last_alarm_update_date,import_source,imported,alarm_last_comment,tags,last_comment,source_type"
+    excludedcolumns="custom_id,last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,alarm_last_update_date,import_source,imported,alarm_last_comment,tags,last_comment,source_type"
     label="Column names"
     templates=""
     type="entity"
