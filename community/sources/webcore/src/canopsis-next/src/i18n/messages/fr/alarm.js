@@ -72,6 +72,7 @@ export default {
       ticketNumber: 'Numéro de ticket',
       parents: 'Causes',
       children: 'Conséquences',
+      cannotUnsnoozeUntilPbehaviorInProgress: 'Impossible de supprimer la veille tant que le comportement périodique est en cours',
     },
   },
   timeline: {

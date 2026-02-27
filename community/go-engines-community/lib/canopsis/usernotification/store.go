@@ -23,7 +23,7 @@ type Store interface {
 	AddForInstructionApprove(time datetime.CpsTime, id, name, author, comment, userID, roleID string)
 	AddForInstructionDismiss(time datetime.CpsTime, id, name, author, comment, userID string)
 	AddForInstructionRate(time datetime.CpsTime, id, name, userID string)
-	AddForEventFilterFailure(time datetime.CpsTime, id, description string, roleIDs []string)
+	AddForEventFilterFailure(time datetime.CpsTime, id, description string, updated datetime.CpsTime, roleIDs []string)
 
 	DeleteForInstructionApprove(ctx context.Context, id string) error
 	DeleteForInstructionDismiss(ctx context.Context, id string) error
@@ -204,7 +204,7 @@ func (s *store) AddForInstructionRate(time datetime.CpsTime, id, name, userID st
 	)
 }
 
-func (s *store) AddForEventFilterFailure(time datetime.CpsTime, id, description string, roleIDs []string) {
+func (s *store) AddForEventFilterFailure(time datetime.CpsTime, id, description string, updated datetime.CpsTime, roleIDs []string) {
 	s.dataMX.Lock()
 	defer s.dataMX.Unlock()
 
@@ -223,8 +223,9 @@ func (s *store) AddForEventFilterFailure(time datetime.CpsTime, id, description 
 				"time":  time,
 				"roles": roleIDs,
 				"rule": bson.M{
-					"_id":  id,
-					"name": description,
+					"_id":     id,
+					"name":    description,
+					"updated": updated,
 				},
 			},
 			"$setOnInsert": bson.M{

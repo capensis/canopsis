@@ -445,6 +445,12 @@ Ajouter un mot de passe ( ici `canopsis`)
 sed -i 's/^# requirepass.*/requirepass canopsis/' /etc/valkey/valkey.conf
 ```
 
+Activer le stockage persistant 
+
+```sh
+sed -i 's/^appendonly no$/appendonly yes/' /etc/valkey/valkey.conf
+```
+
 Activer et démarrer le service :
 
 ```sh
@@ -687,3 +693,7 @@ d'une mise à jour de routine de l'ensemble des paquets système.
     dnf versionlock add --raw 'canopsis-common-25.10.*'
     dnf versionlock add --raw 'canopsis-webui-25.10.*'
     ```
+
+## Gestion des logs
+
+Voir la page [Gestion des logs](../gestion-composants/gestion-des-logs.md#rpm-el8el9)

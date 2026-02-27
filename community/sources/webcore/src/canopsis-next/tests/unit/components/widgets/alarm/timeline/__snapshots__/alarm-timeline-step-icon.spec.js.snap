@@ -33,7 +33,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`assocticket\` correctly 1`] = `
 <div>
   <v-icon-stub>
-    $vuetify.icons.sticky_note_2
+    sticky_note_2
   </v-icon-stub>
 </div>
 `;
@@ -372,6 +372,16 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 </div>
 `;
 
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`6\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="var(--v-status-unknown-base)"
+  >
+    $vuetify.icons.question_mark
+  </v-icon-stub>
+</div>
+`;
+
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` correctly 1`] = `
 <div>
   <v-icon-stub
@@ -395,7 +405,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    $vuetify.icons.webhook
+    webhook
   </v-icon-stub>
 </div>
 `;
@@ -405,7 +415,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    $vuetify.icons.webhook
+    webhook
   </v-icon-stub>
 </div>
 `;
@@ -415,7 +425,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    $vuetify.icons.webhook
+    webhook
   </v-icon-stub>
 </div>
 `;
@@ -425,7 +435,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    $vuetify.icons.webhook
+    webhook
   </v-icon-stub>
 </div>
 `;

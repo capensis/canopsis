@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -236,7 +237,7 @@ func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(ctx context.Context, r
 	addedLookups := make(map[string]bool)
 	addedComputedFields := make(map[string]bool)
 
-	pipeline := make([]bson.M, 0)
+	pipeline := make([]bson.M, 0, len(q.alarmMatch)+len(q.additionalMatch))
 	q.addFieldsToPipeline(q.computedFieldsForAlarmMatch, addedComputedFields, &pipeline)
 	pipeline = append(pipeline, q.alarmMatch...)
 
@@ -272,6 +273,9 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	}
 	q.handleDependencies(r.WithDependencies)
 	q.handleTagColors(r.WithTagColors)
+	if r.WithDependencies {
+		q.lookups = append(q.lookups, lookupWithKey{key: entityDbPrefix + ".downstream_count", pipeline: dbquery.GetDownstreamCountPipeline(entityDbPrefix)})
+	}
 
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
@@ -309,6 +313,7 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	q.handleOpened(opened)
 	q.handleDependencies(true)
 	q.handleTagColors(true)
+	q.lookups = append(q.lookups, lookupWithKey{key: entityDbPrefix + ".downstream_count", pipeline: dbquery.GetDownstreamCountPipeline(entityDbPrefix)})
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
 
 	q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
@@ -1199,11 +1204,8 @@ func (q *MongoQueryBuilder) handleSort(r SortRequest) error {
 
 func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {
 	for field := range q.computedFields {
-		for _, sortField := range sortFields {
-			if sortField == field {
-				q.computedFieldsForSort[field] = true
-				break
-			}
+		if slices.Contains(sortFields, field) {
+			q.computedFieldsForSort[field] = true
 		}
 	}
 

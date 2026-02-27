@@ -18,7 +18,7 @@ const (
 type ActionProcessor interface {
 	Process(
 		ctx context.Context,
-		ruleID, ruleDesc string,
+		rule ParsedRule,
 		action ParsedAction,
 		event *types.Event,
 		updatedEntityInfos map[string]UpdatedValue,

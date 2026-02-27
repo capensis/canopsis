@@ -2167,6 +2167,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepende
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetImpactsCountPipeline("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetDependsCountPipeline("e")...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetDownstreamCountPipeline("e")...)
 	expectedDataPipeline = append(expectedDataPipeline,
 		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		bson.M{"$addFields": getComputedFields(now, "")},
@@ -2265,6 +2266,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepende
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetImpactsCountPipeline("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetDependsCountPipeline("e")...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetDownstreamCountPipeline("e")...)
 	expectedDataPipeline = append(expectedDataPipeline,
 		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		bson.M{"$addFields": getComputedFields(now, "")},

@@ -4,6 +4,7 @@
     <v-data-table
       :headers="headers"
       :items="items"
+      item-key="_id"
     >
       <template #item="{ item }">
         <tr>
