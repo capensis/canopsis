@@ -272,6 +272,7 @@ export default {
   countOfMax: '{count} sur {total}',
   trigger: 'Déclencheur | Déclencheurs',
   column: 'Colonne | Colonnes',
+  sort: 'Tri',
   countOfTotal: '{count} sur {total}',
   deprecatedTrigger: 'Ce déclencheur n\'est plus pris en charge',
   initialLongOutput: 'Sortie initiale longue',
