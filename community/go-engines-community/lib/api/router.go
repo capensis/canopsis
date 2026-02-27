@@ -26,6 +26,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfodictionary"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfosproperty"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityupstream"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
@@ -144,6 +145,7 @@ func RegisterRoutes(
 	eventGenerator libevent.Generator,
 	securityConfig libsecurity.Config,
 	exdataImportWorker externaldatatable.ImportWorker,
+	patternOptimizeWorker pattern.OptimizeWorker,
 	notifStore usernotification.Store,
 	externalDataContainer *externaldata.GetterContainer,
 	tplTestTypePermMapping map[int][]any,
@@ -362,6 +364,11 @@ func RegisterRoutes(
 				"/:id/assocticket",
 				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
 				alarmActionAPI.AssocTicket,
+			)
+			alarmRouter.PUT(
+				"/:id/ticketremove",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
+				alarmActionAPI.TicketRemove,
 			)
 			alarmRouter.PUT(
 				"/:id/comment",
@@ -770,6 +777,23 @@ func RegisterRoutes(
 				"/entityservice-template-vars",
 				middleware.Authorize(apisecurity.ObjEntityService, model.PermissionRead, enforcer, errorResponder),
 				entityserviceAPI.GetTemplateVars)
+		}
+
+		entityupstreamAPI := entityupstream.NewApi(
+			entityupstream.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient)),
+			errorResponder,
+		)
+		{
+			protected.GET(
+				"/entity-downstreams",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer, errorResponder),
+				entityupstreamAPI.GetDownstreams,
+			)
+			protected.GET(
+				"/entity-upstream",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer, errorResponder),
+				entityupstreamAPI.GetUpstream,
+			)
 		}
 
 		entityCommentRouter := protected.Group("/entity-comments")
@@ -1723,9 +1747,8 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer, errorResponder),
 			idleRuleAPI.DBExport)
 
-		patternAPI := pattern.NewApi(
-			pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger),
-			userInterfaceConfig, enforcer, errorResponder)
+		patternStore := pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger)
+		patternAPI := pattern.NewApi(patternStore, userInterfaceConfig, enforcer, patternOptimizeWorker, errorResponder, logger)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth(errorResponder))
@@ -1761,6 +1784,26 @@ func RegisterRoutes(
 			"/patterns-entities-count",
 			middleware.OnlyAuth(errorResponder),
 			patternAPI.CountEntities,
+		)
+		protected.POST(
+			"/patterns-entities-optimize",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.Optimize,
+		)
+		protected.GET(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.OptimizeStatus,
+		)
+		protected.PUT(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.OptimizeAccept,
+		)
+		protected.DELETE(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.OptimizeCancel,
 		)
 
 		linkRuleAPI := linkrule.NewApi(
@@ -2304,6 +2347,11 @@ func RegisterRoutes(
 					"/assocticket",
 					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
 					alarmActionAPI.BulkAssocTicket,
+				)
+				alarmRouter.PUT(
+					"/ticketremove",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
+					alarmActionAPI.BulkTicketRemove,
 				)
 				alarmRouter.PUT(
 					"/comment",

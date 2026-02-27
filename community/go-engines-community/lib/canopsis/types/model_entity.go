@@ -28,9 +28,9 @@ const EntityDefaultImpactLevel = 1
 
 // Info contain extra values for the entity
 type Info struct {
-	Name        string      `bson:"name,omitempty" json:"name"`
-	Description string      `bson:"description,omitempty" json:"description"`
-	Value       interface{} `bson:"value,omitempty" json:"value"`
+	Name        string `bson:"name,omitempty" json:"name"`
+	Description string `bson:"description,omitempty" json:"description"`
+	Value       any    `bson:"value,omitempty" json:"value"`
 }
 
 // Entity ...
@@ -40,7 +40,7 @@ type Entity struct {
 	Author         string             `bson:"author,omitempty" json:"author,omitempty"`
 	Description    string             `bson:"description" json:"description"`
 	EnableHistory  []datetime.CpsTime `bson:"enable_history" json:"enable_history"`
-	Measurements   interface{}        `bson:"measurements" json:"measurements"` // unused collection ids
+	Measurements   any                `bson:"measurements" json:"measurements"` // unused collection ids
 	Enabled        bool               `bson:"enabled" json:"enabled"`
 	Infos          map[string]Info    `bson:"infos" json:"infos"`
 	ComponentInfos map[string]Info    `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
@@ -53,6 +53,15 @@ type Entity struct {
 
 	Connector string `bson:"connector,omitempty" json:"connector,omitempty"`
 	Component string `bson:"component,omitempty" json:"component,omitempty"`
+	Upstream  string `bson:"upstream,omitempty" json:"upstream,omitempty"`
+
+	Services []string `bson:"services" json:"services,omitempty"`
+	// ServicesToAdd and ServicesToRemove are used to recompute dependencies counters.
+	ServicesToAdd    []string `bson:"services_to_add,omitempty" json:"services_to_add,omitempty"`
+	ServicesToRemove []string `bson:"services_to_remove,omitempty" json:"services_to_remove,omitempty"`
+	// IsUpstreamChanged is used to update corresponding alarm status.
+	IsUpstreamChanged bool `bson:"is_upstream_changed,omitempty" json:"is_upstream_changed,omitempty"`
+
 	// ImpactedServices field is only for connectors, see entity service RecomputeIdleSince method.
 	ImpactedServices []string `bson:"impacted_services" json:"-"`
 
@@ -65,14 +74,10 @@ type Entity struct {
 	Imported     *datetime.CpsTime `bson:"imported,omitempty" json:"imported"`
 	ImportTags   []string          `bson:"imtags,omitempty" json:"imtags,omitempty"`
 
-	PbehaviorInfo     PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	PbehaviorInfo     PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info"`
 	LastPbehaviorDate *datetime.CpsTime `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty"`
 
 	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
-
-	Services         []string `bson:"services" json:"services,omitempty"`
-	ServicesToAdd    []string `bson:"services_to_add,omitempty" json:"services_to_add,omitempty"`
-	ServicesToRemove []string `bson:"services_to_remove,omitempty" json:"services_to_remove,omitempty"`
 
 	// Coordinates is used only in api, add json tag if it's required in an event.
 	Coordinates Coordinates `bson:"coordinates,omitempty" json:"-"`

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -37,6 +38,8 @@ type Store interface {
 	Delete(ctx context.Context, pattern Response, userID string) (bool, error)
 	CountAlarms(ctx context.Context, r CountRequest, maxCount int64) (CountAlarmsResponse, error)
 	CountEntities(ctx context.Context, r CountRequest, maxCount int64) (CountEntitiesResponse, error)
+	GetLiteralsFieldStats(ctx context.Context, allLiterals []string) (map[string][]LiteralFieldStats, error)
+	GetEntityIDs(ctx context.Context, entityPattern pattern.Entity) ([]string, int64, error)
 }
 
 type store struct {
@@ -44,6 +47,7 @@ type store struct {
 	readClient                    mongo.DbClient
 	collection                    mongo.DbCollection
 	entityInfosPropertyCollection mongo.DbCollection
+	entityCollection              mongo.DbCollection
 	authorProvider                author.Provider
 
 	linkedCollections []string
@@ -77,6 +81,7 @@ func NewStore(
 		collection:                    dbClient.Collection(mongo.PatternMongoCollection),
 		readClient:                    readDbClient,
 		entityInfosPropertyCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		entityCollection:              dbClient.Collection(mongo.EntityMongoCollection),
 		authorProvider:                authorProvider,
 		defaultSearchByFields:         []string{"_id", "author.name", "title"},
 		defaultSortBy:                 "created",
@@ -1116,4 +1121,164 @@ func (s *store) transformEntityPatternToModel(
 	}
 
 	return nil
+}
+
+func (s *store) GetLiteralsFieldStats(ctx context.Context, allLiterals []string) (map[string][]LiteralFieldStats, error) {
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"$text": bson.M{
+					"$search": strings.Join(allLiterals, " "),
+				},
+			},
+		},
+		{
+			"$set": bson.M{
+				"infos": bson.M{
+					"$objectToArray": "$infos",
+				},
+			},
+		},
+		{
+			"$set": bson.M{
+				"fields": bson.M{
+					"$map": bson.M{
+						"input": bson.M{
+							"$filter": bson.M{
+								"input": bson.M{
+									"$concatArrays": bson.A{"$infos", bson.A{
+										bson.M{
+											"k": EntityFieldName,
+											"v": bson.M{
+												"value": "$name",
+											},
+										},
+										bson.M{
+											"k": EntityFieldComponent,
+											"v": bson.M{
+												"value": "$component",
+											},
+										},
+									}},
+								},
+								"cond": bson.M{
+									"$in": bson.A{"$$this.v.value", allLiterals},
+								},
+							},
+						},
+						"in": bson.M{
+							"field": "$$m.k",
+							"val":   "$$m.v.value",
+						},
+						"as": "m",
+					},
+				},
+			},
+		},
+		{
+			"$project": bson.M{
+				"_id":    0,
+				"fields": 1,
+			},
+		},
+		{
+			"$unwind": "$fields",
+		},
+		{
+			"$group": bson.M{
+				"_id": bson.M{
+					"val":   "$fields.val",
+					"field": "$fields.field",
+				},
+				"count": bson.M{
+					"$sum": 1,
+				},
+			},
+		},
+		{
+			"$group": bson.M{
+				"_id": "$_id.val",
+				"counts": bson.M{
+					"$push": bson.M{
+						"k": "$_id.field",
+						"v": "$count",
+					},
+				},
+			},
+		},
+		{
+			"$set": bson.M{
+				"counts": bson.M{
+					"$sortArray": bson.M{
+						"input":  "$counts",
+						"sortBy": bson.M{"v": -1, "k": 1},
+					},
+				},
+			},
+		},
+	}
+
+	cursor, err := s.readClient.Collection(mongo.EntityMongoCollection).Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get literals field stats: %w", err)
+	}
+
+	var docs []struct {
+		ID     string              `bson:"_id"`
+		Counts []LiteralFieldStats `bson:"counts"`
+	}
+
+	if err := cursor.All(ctx, &docs); err != nil {
+		return nil, fmt.Errorf("failed to decode literals field stats: %w", err)
+	}
+
+	fieldStats := make(map[string][]LiteralFieldStats)
+	for _, doc := range docs {
+		fieldStats[doc.ID] = doc.Counts
+	}
+
+	return fieldStats, nil
+}
+
+func (s *store) GetEntityIDs(ctx context.Context, entityPattern pattern.Entity) ([]string, int64, error) {
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, "")
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to transform entity pattern to mongo query: %w", err)
+	}
+
+	start := time.Now()
+
+	cursor, err := s.readClient.Collection(mongo.EntityMongoCollection).Aggregate(ctx, []bson.M{
+		{
+			"$match": entityPatternQuery,
+		},
+		{
+			"$project": bson.M{"_id": 1},
+		},
+	})
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to get entity ids: %w", err)
+	}
+
+	end := time.Since(start)
+
+	var docs []struct {
+		ID string `bson:"_id"`
+	}
+
+	err = cursor.All(ctx, &docs)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to decode entity ids: %w", err)
+	}
+
+	if len(docs) == 0 {
+		return nil, 0, nil
+	}
+
+	entityIDs := make([]string, len(docs))
+	for i := range docs {
+		entityIDs[i] = docs[i].ID
+	}
+
+	return entityIDs, max(end.Milliseconds(), 1), nil
 }

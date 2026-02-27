@@ -43,7 +43,7 @@ func CreateAggregationPipeline(
 	sort bson.M,
 	afterLimit ...[]bson.M,
 ) []bson.M {
-	result := make([]bson.M, len(beforeLimit))
+	result := make([]bson.M, len(beforeLimit), len(beforeLimit)+2)
 	copy(result, beforeLimit)
 
 	pipeline := make([]bson.M, 0, 4)
