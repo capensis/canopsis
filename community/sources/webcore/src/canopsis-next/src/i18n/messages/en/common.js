@@ -28,6 +28,7 @@ export default {
   submit: 'Submit',
   cancel: 'Cancel',
   continue: 'Continue',
+  tryAgain: 'Try again',
   stop: 'Stop',
   options: 'Options',
   type: 'Type',
@@ -271,6 +272,7 @@ export default {
   countOfMax: '{count} of {total}',
   trigger: 'Trigger | Triggers',
   column: 'Column | Columns',
+  sort: 'Sort',
   countOfTotal: '{count} of {total}',
   deprecatedTrigger: 'This trigger is not supported anymore',
   initialLongOutput: 'Long initial output',
@@ -439,6 +441,7 @@ export default {
     [ALARM_STATUSES.stealthy]: 'Stealth',
     [ALARM_STATUSES.cancelled]: 'Canceled',
     [ALARM_STATUSES.noEvents]: 'No events',
+    [ALARM_STATUSES.unknown]: 'Unknown',
   },
   statusResolvedTypes: {
     [ALARM_STATUSES.closed]: 'Closed and resolved',

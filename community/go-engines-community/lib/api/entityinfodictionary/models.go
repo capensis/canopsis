@@ -27,6 +27,6 @@ func (r AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
 
-func (r AggregationResult) GetData() interface{} {
+func (r AggregationResult) GetData() any {
 	return r.Data
 }

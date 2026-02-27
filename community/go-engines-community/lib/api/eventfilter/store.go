@@ -352,17 +352,11 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
-	_, err := s.dbFailureCollection.DeleteMany(ctx, bson.M{"rule": id})
-	if err != nil {
-		return false, err
-	}
-
 	var deleted int64
-
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
-		_, err = logger.DeleteByFilter(ctx, bson.M{"rule._id": id, "type": template.TypeTestEventFilterRule}, userID,
+		_, err := logger.DeleteByFilter(ctx, bson.M{"rule._id": id, "type": template.TypeTestEventFilterRule}, userID,
 			s.dbTplTestCollection)
 		if err != nil {
 			return err
@@ -385,23 +379,38 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 }
 
 func (s *store) FindFailures(ctx context.Context, id string, r FailureRequest) (*AggregationFailureResult, error) {
-	err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
+	rule := eventfilter.Rule{}
+	err := s.dbCollection.
+		FindOne(ctx, bson.M{"_id": id}).
+		Decode(&rule)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
 		}
+
 		return nil, err
 	}
 
-	match := bson.M{"rule": id}
+	m := bson.M{
+		"rule": id,
+	}
 	if r.Type != nil {
-		match["type"] = r.Type
+		m["type"] = r.Type
 	}
 
 	cursor, err := s.dbFailureCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
-		[]bson.M{{"$match": match}},
+		[]bson.M{{"$match": m}},
 		mongoquery.GetSortQuery("t", pagination.SortDesc),
+		[]bson.M{
+			{"$addFields": bson.M{
+				// check in case failure was created after filter had been updated
+				"unread": bson.M{"$and": bson.A{
+					"$unread",
+					bson.M{"$eq": bson.A{"$rule_updated", rule.Updated}},
+				}},
+			}},
+		},
 	))
 
 	if err != nil {

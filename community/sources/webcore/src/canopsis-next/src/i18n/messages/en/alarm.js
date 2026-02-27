@@ -72,6 +72,7 @@ export default {
       ticketNumber: 'Ticket number',
       parents: 'Causes',
       children: 'Consequences',
+      cannotUnsnoozeUntilPbehaviorInProgress: 'Cannot unsnooze until pbehavior is in progress',
     },
   },
   timeline: {

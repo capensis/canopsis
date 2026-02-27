@@ -70,7 +70,7 @@ func canonicalTypeToMongoQuery(c pattern.Condition, f string) (bson.M, bool) {
 		valueStrArray := c.GetValueStrArray()
 
 		if slices.Contains(valueStrArray, types.PbhCanonicalTypeActive) {
-			values := make([]interface{}, len(valueStrArray)+1)
+			values := make([]any, len(valueStrArray)+1)
 			for k, s := range valueStrArray {
 				values[k] = s
 			}
@@ -82,7 +82,7 @@ func canonicalTypeToMongoQuery(c pattern.Condition, f string) (bson.M, bool) {
 		valueStrArray := c.GetValueStrArray()
 
 		if slices.Contains(valueStrArray, types.PbhCanonicalTypeActive) {
-			values := make([]interface{}, len(valueStrArray)+1)
+			values := make([]any, len(valueStrArray)+1)
 			for k, s := range valueStrArray {
 				values[k] = s
 			}
