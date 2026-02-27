@@ -127,6 +127,7 @@ import {
   watch,
   toRef,
   inject,
+  nextTick,
   onMounted,
   onBeforeUnmount,
 } from 'vue';
@@ -441,10 +442,6 @@ export default {
     const selectItem = (value) => {
       opened.value = false;
 
-      if (props.number && !value) {
-        return;
-      }
-
       let newValue = value;
 
       if (props.multiple) {
@@ -474,7 +471,9 @@ export default {
         return;
       }
 
+      updateSearch('');
       updateMenuOpened(false);
+      nextTick(focusInput);
     };
 
     /**

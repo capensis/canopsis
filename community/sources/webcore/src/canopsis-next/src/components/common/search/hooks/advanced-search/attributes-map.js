@@ -289,7 +289,7 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
     [ENTITY_PATTERN_FIELDS.name]: {
       operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
     },
-    [ENTITY_PATTERN_FIELDS.categoryName]: {
+    [ENTITY_PATTERN_FIELDS.category]: {
       operators: [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
@@ -307,7 +307,7 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
       ],
-      values: Object.values(ENTITY_TYPES).map(type => ({ value: type, text: t(`entity.types.${type}`) })),
+      fetchValues: Object.values(ENTITY_TYPES).map(type => ({ value: type, text: t(`entity.types.${type}`) })),
       itemText: 'text',
       itemValue: 'value',
     },
@@ -440,7 +440,7 @@ export const useAdvancedSearchPbehaviorAttributes = ({ prefix = '' } = {}) => {
       operators: ADVANCED_SEARCH_USER_OPERATORS,
       text: t('common.author'),
       fetchValues: fetchUsersListWithoutStore,
-      itemValue: 'display_name',
+      itemValue: '_id',
       itemText: 'display_name',
     },
     [PBEHAVIOR_FIELDS.enabled]: {
