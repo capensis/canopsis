@@ -5,6 +5,12 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
+        <events-record-events-header
+          :count="count"
+          :is-recording="isRecording"
+          @remove="remove"
+          @stop:recording="stopRecording(eventsRecordId)"
+        />
         <v-tabs v-model="activeTab" centered>
           <v-tab
             :href="`#${TABS.events}`"
@@ -26,11 +32,10 @@
           <v-tabs-items v-model="activeTab">
             <v-tab-item :value="TABS.events">
               <div>
-                <events-record-events-header
+                <events-record-events-filter
                   :events-record-id="eventsRecordId"
                   :count="config.eventsRecord.count"
                   :has-filter-applied="hasFilterApplied"
-                  @remove="remove"
                   @apply:filter="applyEventFilter"
                   @reset:filter="resetFilter"
                 />
@@ -91,8 +96,10 @@ import { useEventsRecordCurrent } from '@/hooks/store/modules/events-record-curr
 import { useQueryOptions } from '@/hooks/query/options';
 
 import { useEventsRecordResending } from '@/components/other/events-record/hooks/resending';
+import { useEventsRecordRecording } from '@/components/other/events-record/hooks/recording';
 
 import EventsRecordEventsHeader from '@/components/other/events-record/events-record-events-header.vue';
+import EventsRecordEventsFilter from '@/components/other/events-record/events-record-events-filter.vue';
 import EventsRecordEventsList from '@/components/other/events-record/events-record-events-list.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -104,7 +111,12 @@ const TABS = {
 
 export default {
   name: MODALS.eventsRecord,
-  components: { EventsRecordEventsHeader, EventsRecordEventsList, ModalWrapper },
+  components: {
+    EventsRecordEventsHeader,
+    EventsRecordEventsFilter,
+    EventsRecordEventsList,
+    ModalWrapper,
+  },
   props: {
     modal: {
       type: Object,
@@ -133,8 +145,11 @@ export default {
     } = useEventsRecord();
 
     const { recordingsById, resendingsById } = useEventsRecordCurrent();
+    const { stopRecording } = useEventsRecordRecording(config.value.fetchList);
 
-    const isRecording = computed(() => !!recordingsById.value[eventsRecordId.value]);
+    const recording = computed(() => recordingsById.value[eventsRecordId.value]);
+    const count = computed(() => recording.value?.n || config.value.eventsRecord.n || 0);
+    const isRecording = computed(() => !!recording.value);
     const isResending = computed(() => !!resendingsById.value[eventsRecordId.value]);
 
     const patternForm = computed(() => (
@@ -147,8 +162,8 @@ export default {
 
     const resendingDisabled = computed(() => isRecording.value || isResending.value);
 
-    watch(isRecording, (recording) => {
-      if (recording && activeTab.value === TABS.events) {
+    watch(isRecording, (newIsRecording) => {
+      if (newIsRecording && activeTab.value === TABS.events) {
         activeTab.value = TABS.pattern;
       }
     }, { immediate: true });
@@ -276,6 +291,7 @@ export default {
       query,
       title,
       activeTab,
+      count,
       isRecording,
       hasFilterApplied,
       patternForm,
@@ -292,6 +308,7 @@ export default {
 
       startResending,
       stopResending,
+      stopRecording,
     };
   },
 };
