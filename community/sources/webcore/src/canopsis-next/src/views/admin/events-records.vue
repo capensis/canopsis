@@ -58,6 +58,10 @@ export default {
     const { removeEventsRecord, fetchEventsRecordsListWithoutStore } = useEventsRecord();
     const { resendings, recordings, limit, recordingsById, resendingsById } = useEventsRecordCurrent();
 
+    /**
+     * Syncs events records with current recording/resending state from recordingsById and resendingsById.
+     * Updates count, is_recording, and is_resending when they differ from the live state.
+     */
     const prepareEventsRecords = () => eventsRecords.value.forEach((eventRecord, index) => {
       const recording = recordingsById.value[eventRecord._id];
       const resending = resendingsById.value[eventRecord._id];

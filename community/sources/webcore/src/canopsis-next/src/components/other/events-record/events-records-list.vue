@@ -37,18 +37,18 @@
     <template #t="{ item }">
       {{ item.t | date }}
     </template>
-    <template #recordingEnd="{ item }">
+    <template #e="{ item }">
       <span v-if="item.is_recording">
         {{ $t('common.inProgress') }}
       </span>
-      <span v-else>{{ item.t_end | date('long', '-') }}</span>
+      <span v-else>{{ item.e | date('long', '-') }}</span>
     </template>
-    <template #duration="{ item }">
+    <template #d="{ item }">
       <span v-if="item.is_recording">
         {{ $t('common.inProgress') }}
       </span>
       <span v-else>
-        {{ item.duration | duration }}
+        {{ item.d | duration }}
       </span>
     </template>
     <template #count="{ item }">
@@ -128,12 +128,12 @@ export default {
       },
       {
         text: t('eventsRecord.recordingEnd'),
-        value: 'recordingEnd',
+        value: 'e',
         sortable: false,
       },
       {
         text: t('eventsRecord.duration'),
-        value: 'duration',
+        value: 'd',
         sortable: false,
       },
       {
@@ -143,7 +143,7 @@ export default {
       },
       {
         text: t('eventsRecord.launchedBy'),
-        value: 'author',
+        value: 'author.display_name',
         sortable: false,
       },
       {
