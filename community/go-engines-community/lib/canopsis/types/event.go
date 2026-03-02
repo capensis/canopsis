@@ -451,7 +451,7 @@ func (e *Event) SetField(name string, value any) (err error) {
 	case stringType:
 		stringValue, err := InterfaceToString(value)
 		if err != nil {
-			return fmt.Errorf("%[1]T value: %+[1]v cannot be assigned to a string: %w", value, err)
+			return fmt.Errorf("%[1]T value cannot be assigned to a string: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(stringValue))
 	case boolType:
