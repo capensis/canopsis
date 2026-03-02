@@ -36,6 +36,6 @@ export const useEventRecordCurrentPolling = (interval = 10000) => {
   onBeforeUnmount(stopPolling);
 
   return {
-    fetchEventsRecordCurrent: startPolling,
+    fetchEventsRecordCurrent,
   };
 };

@@ -153,7 +153,7 @@ export default {
       },
     ]);
 
-    const stop = item => emit('stop', item);
+    const stop = eventsRecord => emit('stop', eventsRecord);
     const show = eventsRecord => emit('show', eventsRecord);
     const remove = eventsRecord => emit('remove', eventsRecord._id);
     const updateOptions = options => emit('update:options', options);
