@@ -84,7 +84,7 @@ export default {
       }
     });
 
-    useEventRecordCurrentPolling();
+    const { fetchEventsRecordCurrent } = useEventRecordCurrentPolling();
 
     const inProgressCount = computed(() => recordings.value.length);
 
@@ -100,12 +100,15 @@ export default {
       handler: fetchList,
     } = usePendingWithLocalQuery({
       fetchHandler: async (fetchQuery) => {
-        const response = await fetchEventsRecordsListWithoutStore({
-          params: {
-            limit: fetchQuery.itemsPerPage,
-            page: fetchQuery.page,
-          },
-        });
+        const [response] = await Promise.all([
+          fetchEventsRecordsListWithoutStore({
+            params: {
+              limit: fetchQuery.itemsPerPage,
+              page: fetchQuery.page,
+            },
+          }),
+          fetchEventsRecordCurrent(),
+        ]);
 
         eventsRecords.value = response.data;
         meta.value = response.meta;
@@ -123,7 +126,9 @@ export default {
     const { stopResending } = useEventsRecordResending();
 
     /**
-     * METHODS
+     * Shows confirmation modal to remove an events record. On confirm, removes it and refetches the list.
+     *
+     * @param {string} id - Events record id to remove
      */
     const showRemoveEventsRecordModal = id => modals.show({
       name: MODALS.confirmation,
@@ -136,6 +141,11 @@ export default {
       },
     });
 
+    /**
+     * Shows events record modal with events record details and actions.
+     *
+     * @param {Object} eventsRecord - Events record to display
+     */
     const showEventsRecordModal = eventsRecord => modals.show({
       name: MODALS.eventsRecord,
       config: {
