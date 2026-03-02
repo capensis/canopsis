@@ -180,7 +180,7 @@ func (e *taskExecutor) ExecuteTask(ctx context.Context, id string) error {
 	}
 	fetch := e.fetches[t.Type]
 	if fetch == nil {
-		_, err := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
+		_, err = e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
 			"status":      TaskStatusFailed,
 			"completed":   datetime.NewCpsTime(),
 			"fail_reason": "unknown type: " + t.Type,
