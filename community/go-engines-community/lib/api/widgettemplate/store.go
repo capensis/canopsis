@@ -215,6 +215,8 @@ func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response, userID st
 			case view.WidgetTemplateTypeAlarmQuickActions,
 				view.WidgetTemplateTypeAlarmQuickMassActions:
 				val = tpl.Actions
+			case view.WidgetTemplateTypeAlarmSortColumns:
+				val = tpl.SortColumns
 			default:
 				return fmt.Errorf("unknown template type: %s", tpl.Type)
 			}
@@ -272,11 +274,12 @@ func (s *store) cleanLinkedWidgets(ctx context.Context, model view.WidgetTemplat
 
 func transformEditRequestToModel(r EditRequest) view.WidgetTemplate {
 	return view.WidgetTemplate{
-		Title:   r.Title,
-		Type:    r.Type,
-		Columns: r.Columns,
-		Content: r.Content,
-		Actions: r.Actions,
-		Author:  r.Author,
+		Title:       r.Title,
+		Type:        r.Type,
+		Columns:     r.Columns,
+		Content:     r.Content,
+		Actions:     r.Actions,
+		Author:      r.Author,
+		SortColumns: r.SortColumns,
 	}
 }
