@@ -105,6 +105,7 @@ export default {
       [ALARM_LIST_STEPS.declareTicketRuleInProgress]: 'Règle de déclaration de ticket exécutée par {author} en cours',
       [ALARM_LIST_STEPS.declareTicketRuleComplete]: 'Règle de déclaration du ticket terminée',
       [ALARM_LIST_STEPS.declareTicketRuleFail]: 'Règle de déclaration de ticket en échec',
+      [ALARM_LIST_STEPS.changeTicketStatus]: 'Statut du ticket modifié',
       [ALARM_LIST_STEPS.instructionStart]: 'Remédiation démarrée',
       [ALARM_LIST_STEPS.instructionPause]: 'Remédiation suspendue',
       [ALARM_LIST_STEPS.instructionResume]: 'Reprise de la remédiation',

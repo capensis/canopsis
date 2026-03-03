@@ -1,3 +1,5 @@
+import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
+
 export default {
   ticketUrlAndId: 'URL et identifiant du ticket',
   ticketUrlAndIdHelpText: 'L\'URL du ticket reçue de la réponse de l\'API peut être ajoutée aux informations dynamiques de l\'alarme.',
@@ -17,7 +19,7 @@ export default {
   addWebhook: 'Ajouter un webhook',
   emptyFields: 'Aucun champ ajouté pour le moment',
   emptyWebhooks: 'Aucun webhook ajouté pour le moment',
-  workflowIfStepFails: 'Si cette étape échoue :',
+  workflowIfStepFails: 'Si cette étape échoue',
   continueWithNextStep: 'Continuer avec les étapes suivantes',
   webhookTicketDeclarationExist: 'La déclaration de ticket Webhook existe déjà dans une autre étape',
   headerFieldFromPreviousSteps: 'Champ d\'en-tête des étapes précédentes',
@@ -34,9 +36,28 @@ export default {
   checkSyntax: 'Vérifier la syntaxe',
   syntaxIsValid: 'La syntaxe est valide',
   ticketResources: 'Déclarer un ticket pour les ressources',
+  checkTicketStatus: 'Vérifier le statut du ticket',
+  checkTicketStatusHelpText: 'Activer pour vérifier que le ticket existe dans le système de tickets avant d\'exécuter les étapes suivantes.',
+  ticketStatusMapping: 'Correspondance des statuts de ticket',
+  ticketStatusMappingHelpText: 'Au moins une valeur source doit être mappée vers la valeur Canopsis « Fermé ».',
+  ticketStatusMappingUnmappedToOpen: 'Toutes les valeurs sources non mappées seront mappées au statut Canopsis « Ouvert ».',
+  sourceValue: 'Valeur source',
+  canopsisValue: 'Valeur Canopsis',
+  addMappingPair: 'Ajouter une paire de correspondance',
+  ticketStatusSourceField: 'Champ source du statut du ticket',
+  allowTicketStatusSourceTemplate: 'Autoriser les variables dans le champ source du statut du ticket',
+  reuseHeadersAndAuthFromTicketDeclarationRule: 'Réutiliser les en-têtes et l\'authentification de la règle de déclaration de ticket',
+  status: {
+    [DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown]: 'Inconnu',
+    [DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.open]: 'Ouvert',
+    [DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.assigned]: 'Assigné',
+    [DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.inProgress]: 'En cours',
+    [DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.closed]: 'Fermé',
+  },
   errors: {
     webhookRequired: 'Les webhooks doivent être ajoutés',
     webhookTicketDeclarationRequired: 'Une déclaration de ticket webhook doit être définie',
     ticketRequired: 'Un ticket doit être ajouté',
+    statusMappingRequired: 'Au moins une paire de correspondance doit être ajoutée',
   },
 };

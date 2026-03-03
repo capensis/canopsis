@@ -543,6 +543,13 @@ export const COLORS = {
     edgeGray: '#979797',
     edgeBlack: '#000000',
   },
+  declareTicketRuleTicketStatusChip: {
+    unknown: '#E0E0E0',
+    open: '#BBDEFB',
+    assigned: '#FFC107',
+    inProgress: '#FFECB3',
+    closed: '#4CAF50',
+  },
   impactState: [
     '#2FAB63',
     '#7CB342',

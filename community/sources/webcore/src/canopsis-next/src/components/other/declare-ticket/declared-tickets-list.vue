@@ -9,7 +9,7 @@
     <template #ticket_url="{ item }">
       <template v-if="item.ticket_url">
         <a
-          v-if="isValidTicketUrl(item.ticket_url)"
+          v-if="isValidUrl(item.ticket_url)"
           :href="item.ticket_url"
           :title="item.ticket_url_title"
           target="_blank"
@@ -20,11 +20,8 @@
     <template #t="{ item }">
       {{ item.t | date }}
     </template>
-    <template #_t="{ item }">
-      <c-help-icon
-        v-bind="getIconProps(item)"
-        top
-      />
+    <template #ticket_status="{ item }">
+      <declare-ticket-rule-ticket-status-chip :value="item.ticket_status" />
     </template>
     <template #metaalarm="{ item }">
       <v-icon
@@ -38,11 +35,18 @@
 </template>
 
 <script>
-import { ALARM_LIST_STEPS } from '@/constants';
+import { computed } from 'vue';
 
 import { isValidUrl } from '@/plugins/validator/helpers/is-valid-url';
 
+import { useI18n } from '@/hooks/i18n';
+
+import DeclareTicketRuleTicketStatusChip from './declare-ticket-rule-ticket-status-chip.vue';
+
 export default {
+  components: {
+    DeclareTicketRuleTicketStatusChip,
+  },
   props: {
     tickets: {
       type: Array,
@@ -53,40 +57,26 @@ export default {
       required: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        { text: this.$t('declareTicket.ticketURL'), value: 'ticket_url' },
-        { text: this.$t('declareTicket.ticketID'), value: 'ticket' },
-        { text: this.$t('common.systemName'), value: 'ticket_system_name' },
-        { text: this.$t('declareTicket.ruleName'), value: 'ticket_rule_name' },
-        { text: this.$t('common.date'), value: 't' },
-        { text: this.$t('common.status'), value: '_t' },
-        this.parentAlarmId && { text: this.$t('alarm.metaAlarm'), value: 'metaalarm' },
-        { text: this.$t('common.author'), value: 'a' },
-        { text: this.$tc('common.comment'), value: 'ticket_comment' },
-      ].filter(Boolean);
-    },
-  },
-  methods: {
-    isValidTicketUrl(url) {
-      return isValidUrl(url);
-    },
+  setup(props) {
+    const { t, tc } = useI18n();
 
-    isSuccessTicket(ticket) {
-      return [ALARM_LIST_STEPS.declareTicket, ALARM_LIST_STEPS.assocTicket].includes(ticket._t);
-    },
+    const headers = computed(() => [
+      { text: t('declareTicket.ticketURL'), value: 'ticket_url' },
+      { text: t('declareTicket.ticketID'), value: 'ticket' },
+      { text: t('common.systemName'), value: 'ticket_system_name' },
+      { text: t('declareTicket.ruleName'), value: 'ticket_rule_name' },
+      { text: t('common.date'), value: 't' },
+      { text: t('common.status'), value: 'ticket_status' },
+      props.parentAlarmId && { text: t('alarm.metaAlarm'), value: 'metaalarm' },
+      { text: t('common.author'), value: 'a' },
+      { text: tc('common.comment'), value: 'ticket_comment' },
+    ].filter(Boolean));
 
-    getIconProps(item) {
-      const isSuccess = this.isSuccessTicket(item);
+    return {
+      headers,
 
-      return {
-        icon: isSuccess ? 'check_circle' : 'error',
-        color: isSuccess ? 'primary' : 'error',
-        text: item.m,
-        maxWidth: 400,
-      };
-    },
+      isValidUrl,
+    };
   },
 };
 </script>

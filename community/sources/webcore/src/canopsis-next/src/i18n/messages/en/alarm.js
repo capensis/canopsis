@@ -105,6 +105,7 @@ export default {
       [ALARM_LIST_STEPS.declareTicketRuleInProgress]: 'Ticket declaration rule launched by {author} in progress',
       [ALARM_LIST_STEPS.declareTicketRuleComplete]: 'Ticket declaration rule is complete',
       [ALARM_LIST_STEPS.declareTicketRuleFail]: 'Ticket declaration rule is failed',
+      [ALARM_LIST_STEPS.changeTicketStatus]: 'Ticket status changed',
       [ALARM_LIST_STEPS.instructionStart]: 'Instruction is launched',
       [ALARM_LIST_STEPS.instructionPause]: 'Instruction paused',
       [ALARM_LIST_STEPS.instructionResume]: 'Instruction resumed',

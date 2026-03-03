@@ -1,14 +1,14 @@
 <template>
-  <v-tooltip :disabled="!disabled" top>
-    <template #activator="{ on }">
-      <span class="test-variables-tab__wrapper" v-on="on">
-        <v-tab :disabled="disabled">
+  <v-tab :disabled="disabled" class="v-tab--tooltip">
+    <v-tooltip :disabled="!disabled" top>
+      <template #activator="{ on }">
+        <span class="test-variables-tab__wrapper" v-on="on">
           {{ $tc('templateTesting.testVariables') }}
-        </v-tab>
-      </span>
-    </template>
-    <span>{{ $t('templateTesting.testVariablesDisabledTooltip') }}</span>
-  </v-tooltip>
+        </span>
+      </template>
+      <span>{{ $t('templateTesting.testVariablesDisabledTooltip') }}</span>
+    </v-tooltip>
+  </v-tab>
 </template>
 
 <script>

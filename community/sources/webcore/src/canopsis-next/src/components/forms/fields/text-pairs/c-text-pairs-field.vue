@@ -30,6 +30,7 @@
         :item-value="itemValue"
         :name="item[itemKey]"
         :variables="variables"
+        :items="valueItems"
         @remove="removeItemFromArray(index)"
       >
         <template #append-value="">
@@ -61,11 +62,10 @@
 <script>
 import { textPairToForm } from '@/helpers/text-pairs';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 export default {
   inject: ['$validator'],
-  mixins: [formArrayMixin],
   model: {
     prop: 'items',
     event: 'input',
@@ -119,15 +119,24 @@ export default {
       type: Boolean,
       default: false,
     },
+    valueItems: {
+      type: Array,
+      default: () => [],
+    },
     variables: {
       type: Array,
       default: () => [],
     },
   },
-  methods: {
-    addItem() {
-      this.addItemIntoArray(textPairToForm());
-    },
+  setup(props, { emit }) {
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+
+    const addItem = () => addItemIntoArray(textPairToForm());
+
+    return {
+      addItem,
+      removeItemFromArray,
+    };
   },
 };
 </script>
