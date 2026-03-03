@@ -607,6 +607,7 @@ export default {
     timeout: 'Timeout',
     timeoutSettings: 'Timeout settings',
     repeatRequest: 'Repeat request',
+    repeatRequestInTomlFile: 'Repeat settings are configured in toml file',
     skipVerify: 'Ignore HTTPS certificate verification',
     headersHelpText: 'Select header key and value or type them manually',
     emptyHeaders: 'No headers added yet',

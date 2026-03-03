@@ -1,3 +1,5 @@
+import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
+
 export default {
   ticketUrlAndId: 'Ticket URL and ID',
   ticketUrlAndIdHelpText: 'The ticket URL received from the API response can be added to the alarm dynamic infos.',
@@ -17,7 +19,7 @@ export default {
   addWebhook: 'Add webhook',
   emptyFields: 'No fields added yet',
   emptyWebhooks: 'No webhooks added yet',
-  workflowIfStepFails: 'If this step fails:',
+  workflowIfStepFails: 'If this step fails',
   continueWithNextStep: 'Continue with next steps',
   webhookTicketDeclarationExist: 'Webhook ticket declaration already exist in another step',
   headerFieldFromPreviousSteps: 'Header field from previous steps',
@@ -34,9 +36,28 @@ export default {
   checkSyntax: 'Check syntax',
   syntaxIsValid: 'Syntax is valid',
   ticketResources: 'Declare ticket for resources',
+  checkTicketStatus: 'Check ticket status',
+  checkTicketStatusHelpText: 'Enable to verify that the ticket exists in the ticket system before performing the next steps.',
+  ticketStatusMapping: 'Ticket status mapping',
+  ticketStatusMappingHelpText: 'At least one source value must be mapped to Canopsis "Closed" value.',
+  ticketStatusMappingUnmappedToOpen: 'All unmapped source values will be mapped to Canopsis status "Open".',
+  sourceValue: 'Source value',
+  canopsisValue: 'Canopsis value',
+  addMappingPair: 'Add mapping pair',
+  ticketStatusSourceField: 'Ticket status source field',
+  allowTicketStatusSourceTemplate: 'Allow variables in the Ticket status source field',
+  reuseHeadersAndAuthFromTicketDeclarationRule: 'Reuse headers and auth from ticket declaration rule',
+  status: {
+    [DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown]: 'Unknown',
+    [DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.open]: 'Open',
+    [DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.assigned]: 'Assigned',
+    [DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.inProgress]: 'In progress',
+    [DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.closed]: 'Closed',
+  },
   errors: {
     webhookRequired: 'The webhooks must be added',
     webhookTicketDeclarationRequired: 'Some one webhook ticket declaration must be set',
     ticketRequired: 'Some one ticket must be add',
+    statusMappingRequired: 'At least one mapping pair must be added',
   },
 };

@@ -64,6 +64,14 @@ exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for ste
 </span>
 `;
 
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`changeticketstatus\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Ticket status changed by root
+</span>
+`;
+
 exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`comment\` correctly 1`] = `
 <span
   class="text-subtitle-2"

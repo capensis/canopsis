@@ -205,6 +205,15 @@ export const isDeclareTicketStepType = type => [
 ].includes(type);
 
 /**
+ * Checks if the provided type is a declare ticket rule ticket change status step type.
+ *
+ * @param {AlarmStepType} type - The step type to check.
+ * @returns {boolean} Returns `true` if the type is a declare ticket rule ticket change status step type,
+ *                    otherwise `false`.
+ */
+export const isDeclareTicketChangeTicketStatusStepType = type => type === ALARM_LIST_STEPS.changeTicketStatus;
+
+/**
  * Checks if the provided type is a webhook step type.
  *
  * @param {AlarmStepType} type - The step type to check.

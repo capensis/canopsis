@@ -395,6 +395,15 @@ export const convertDeclareTicketRuleToTemplateTestingTestValidateForm = (form =
         templateVarsKey: 'ticket',
       });
     }
+
+    if (webhook.declare_ticket.check_ticket_status.enabled) {
+      result.push({
+        key: `webhooks.${index}.declare_ticket.check_ticket_status.ticket_status.value`,
+        textKey: 'declareTicket.ticketStatusSourceField',
+        textArgs: { number: index + 1 },
+        templateVarsKey: 'ticket',
+      });
+    }
   });
 
   return result;

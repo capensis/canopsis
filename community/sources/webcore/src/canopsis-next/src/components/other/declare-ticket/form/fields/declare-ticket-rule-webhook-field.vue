@@ -12,29 +12,41 @@
         :url-variables="templateVars[webhookTemplateVarsKey]"
       />
     </template>
-    <request-with-token-form
-      v-field="form"
-      :name="requestFormName"
-      :headers-variables="templateVars[webhookTemplateVarsKey]"
-      :payload-variables="templateVars[webhookTemplateVarsKey]"
-      hide-url
-    />
-    <declare-ticket-rule-ticket-mapping-field
-      v-field="form"
-      :name="`${name}.declare_ticket`"
-      :is-declare-ticket-exist="isDeclareTicketExist"
-      :variables="templateVars.ticket"
-      class="mb-2"
-      hide-empty-response
-      ticket-id-required
-      only-one-ticket-id
-    />
-    <c-workflow-field
-      v-field="form.stop_on_fail"
-      :disabled="disabled"
-      :label="$t('declareTicket.workflowIfStepFails')"
-      :continue-label="$t('declareTicket.continueWithNextStep')"
-    />
+    <v-layout class="gap-3" column>
+      <request-with-token-form
+        v-field="form"
+        :name="requestFormName"
+        :headers-variables="templateVars[webhookTemplateVarsKey]"
+        :payload-variables="templateVars[webhookTemplateVarsKey]"
+        class="c-alternative-bg-panel pa-4"
+        hide-url
+      />
+      <declare-ticket-rule-ticket-mapping-field
+        v-field="form"
+        :name="`${name}.declare_ticket`"
+        :is-declare-ticket-exist="isDeclareTicketExist"
+        :variables="templateVars.ticket"
+        class="c-alternative-bg-panel pa-4"
+        hide-empty-response
+        ticket-id-required
+        only-one-ticket-id
+      />
+      <declare-ticket-rule-check-ticket-status-field
+        v-field="form.declare_ticket.check_ticket_status"
+        :name="`${name}.declare_ticket.check_ticket_status`"
+        :template-vars="templateVars"
+        :disabled="disabled"
+        class="c-alternative-bg-panel pa-4"
+      />
+      <c-information-block :title="$t('declareTicket.workflowIfStepFails')" class="c-alternative-bg-panel pa-4">
+        <c-workflow-field
+          v-field="form.stop_on_fail"
+          :disabled="disabled"
+          :continue-label="$t('declareTicket.continueWithNextStep')"
+          class="mt-3"
+        />
+      </c-information-block>
+    </v-layout>
   </c-card-iterator-item>
 </template>
 
@@ -47,9 +59,15 @@ import RequestWithTokenForm from '@/components/forms/request/request-with-token-
 import RequestUrlField from '@/components/forms/request/fields/request-url-field.vue';
 
 import DeclareTicketRuleTicketMappingField from './declare-ticket-rule-ticket-mapping-field.vue';
+import DeclareTicketRuleCheckTicketStatusField from './declare-ticket-rule-check-ticket-status-field.vue';
 
 export default {
-  components: { RequestUrlField, DeclareTicketRuleTicketMappingField, RequestWithTokenForm },
+  components: {
+    RequestUrlField,
+    RequestWithTokenForm,
+    DeclareTicketRuleTicketMappingField,
+    DeclareTicketRuleCheckTicketStatusField,
+  },
   model: {
     prop: 'form',
     event: 'input',
