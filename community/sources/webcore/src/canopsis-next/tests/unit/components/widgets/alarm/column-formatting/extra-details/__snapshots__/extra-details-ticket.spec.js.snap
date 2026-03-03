@@ -3,9 +3,9 @@
 exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets 1`] = `
 <div>
   <c-simple-tooltip-stub
-    content="<div class=\\"layout extra-details-ticket__list column\\"><div class=\\"text-md-center\\"><strong>ticket-rule-name-1 Ok</strong>
+    content="<div class=\\"layout extra-details-ticket__list column\\"><div class=\\"text-md-center\\"><strong>ticket-rule-name-1 - Open</strong>
           <div>By : ticket-author-1</div>
-          <div>Date : 6:00:00</div><div>Ticket number : ticket-1</div><div>Comment : ticket-comment-1</div></div><div class=\\"text-md-center\\"><strong>ticket-rule-name-2 Failed</strong>
+          <div>Date : 6:00:00</div><div>Ticket number : ticket-1</div><div>Comment : ticket-comment-1</div></div><div class=\\"text-md-center\\"><strong>ticket-rule-name-2 - Unknown</strong>
           <div>By : ticket-author-2</div>
           <div>Date : 07/08/2013 19:00:00</div></div></div>
               <div class=\\"mt-2\\"></div>"
@@ -50,9 +50,9 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
 exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets and without failed last ticket 1`] = `
 <div>
   <c-simple-tooltip-stub
-    content="<div class=\\"layout extra-details-ticket__list column\\"><div class=\\"text-md-center\\"><strong>ticket-rule-name-2 Failed</strong>
+    content="<div class=\\"layout extra-details-ticket__list column\\"><div class=\\"text-md-center\\"><strong>ticket-rule-name-2 - Unknown</strong>
           <div>By : ticket-author-2</div>
-          <div>Date : 07/08/2013 19:00:00</div></div><div class=\\"text-md-center\\"><strong>ticket-rule-name-1 Ok</strong>
+          <div>Date : 07/08/2013 19:00:00</div></div><div class=\\"text-md-center\\"><strong>ticket-rule-name-1 - Open</strong>
           <div>By : ticket-author-1</div>
           <div>Date : 6:00:00</div><div>Ticket number : ticket-1</div><div>Comment : ticket-comment-1</div></div></div>
               <div class=\\"mt-2\\"></div>"
@@ -77,7 +77,7 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
             aria-live="polite"
             class="v-badge__badge transparent"
             role="status"
-            style="bottom: calc(100% - 15px); left: calc(100% - 12px); display: none;"
+            style="bottom: calc(100% - 15px); left: calc(100% - 12px);"
           >
             <i
               aria-hidden="true"

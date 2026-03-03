@@ -1,7 +1,7 @@
 import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
-import { EVENT_ENTITY_TYPES } from '@/constants';
+import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
 
 import ExtraDetailsTicket from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-ticket.vue';
 
@@ -24,12 +24,13 @@ describe('extra-details-ticket', () => {
       ticket_rule_name: 'ticket-rule-name-1',
       ticket_comment: 'ticket-comment-1',
       ticket: 'ticket-1',
-      _t: EVENT_ENTITY_TYPES.declareTicket,
+      val: DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.open,
     },
     {
       a: 'ticket-author-2',
       t: prevMonthDateTimestamp,
       ticket_rule_name: 'ticket-rule-name-2',
+      val: DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown,
     },
   ];
 

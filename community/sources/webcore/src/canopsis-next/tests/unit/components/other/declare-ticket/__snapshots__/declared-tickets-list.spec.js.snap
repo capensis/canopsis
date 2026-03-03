@@ -181,7 +181,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
               aria-label="Status: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
-              data-value="_t"
+              data-value="ticket_status"
               role="columnheader"
               scope="col"
             >
@@ -475,7 +475,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               aria-label="Status: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
-              data-value="_t"
+              data-value="ticket_status"
               role="columnheader"
               scope="col"
             >
@@ -585,11 +585,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
             <td
               class="text-start"
             >
-              <c-help-icon-stub
-                color="primary"
-                icon="check_circle"
-                maxwidth="400"
-                top=""
+              <declare-ticket-rule-ticket-status-chip-stub
+                value="1"
               />
             </td>
             <td
@@ -636,11 +633,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
             <td
               class="text-start"
             >
-              <c-help-icon-stub
-                color="error"
-                icon="error"
-                maxwidth="400"
-                top=""
+              <declare-ticket-rule-ticket-status-chip-stub
+                value="0"
               />
             </td>
             <td
@@ -690,11 +684,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
             <td
               class="text-start"
             >
-              <c-help-icon-stub
-                color="primary"
-                icon="check_circle"
-                maxwidth="400"
-                top=""
+              <declare-ticket-rule-ticket-status-chip-stub
+                value="1"
               />
             </td>
             <td
@@ -741,11 +732,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
             <td
               class="text-start"
             >
-              <c-help-icon-stub
-                color="error"
-                icon="error"
-                maxwidth="400"
-                top=""
+              <declare-ticket-rule-ticket-status-chip-stub
+                value="0"
               />
             </td>
             <td
@@ -795,11 +783,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
             <td
               class="text-start"
             >
-              <c-help-icon-stub
-                color="primary"
-                icon="check_circle"
-                maxwidth="400"
-                top=""
+              <declare-ticket-rule-ticket-status-chip-stub
+                value="1"
               />
             </td>
             <td
@@ -846,11 +831,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
             <td
               class="text-start"
             >
-              <c-help-icon-stub
-                color="error"
-                icon="error"
-                maxwidth="400"
-                top=""
+              <declare-ticket-rule-ticket-status-chip-stub
+                value="0"
               />
             </td>
             <td
@@ -900,11 +882,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
             <td
               class="text-start"
             >
-              <c-help-icon-stub
-                color="primary"
-                icon="check_circle"
-                maxwidth="400"
-                top=""
+              <declare-ticket-rule-ticket-status-chip-stub
+                value="1"
               />
             </td>
             <td
@@ -951,11 +930,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
             <td
               class="text-start"
             >
-              <c-help-icon-stub
-                color="error"
-                icon="error"
-                maxwidth="400"
-                top=""
+              <declare-ticket-rule-ticket-status-chip-stub
+                value="0"
               />
             </td>
             <td
@@ -1005,11 +981,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
             <td
               class="text-start"
             >
-              <c-help-icon-stub
-                color="primary"
-                icon="check_circle"
-                maxwidth="400"
-                top=""
+              <declare-ticket-rule-ticket-status-chip-stub
+                value="1"
               />
             </td>
             <td
@@ -1056,11 +1029,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
             <td
               class="text-start"
             >
-              <c-help-icon-stub
-                color="error"
-                icon="error"
-                maxwidth="400"
-                top=""
+              <declare-ticket-rule-ticket-status-chip-stub
+                value="0"
               />
             </td>
             <td
@@ -1110,11 +1080,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
             <td
               class="text-start"
             >
-              <c-help-icon-stub
-                color="primary"
-                icon="check_circle"
-                maxwidth="400"
-                top=""
+              <declare-ticket-rule-ticket-status-chip-stub
+                value="1"
               />
             </td>
             <td
@@ -1314,7 +1281,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
               aria-label="Status: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
-              data-value="_t"
+              data-value="ticket_status"
               role="columnheader"
               scope="col"
             >

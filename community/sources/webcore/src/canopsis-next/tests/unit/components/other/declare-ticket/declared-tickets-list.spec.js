@@ -2,14 +2,14 @@ import { range } from 'lodash';
 
 import { generateRenderer } from '@unit/utils/vue';
 
-import { EVENT_ENTITY_TYPES } from '@/constants';
+import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
-  'c-help-icon': true,
+  'declare-ticket-rule-ticket-status-chip': true,
 };
 
 describe('declared-tickets-list', () => {
@@ -22,9 +22,9 @@ describe('declared-tickets-list', () => {
     ticket_system_name: `ticket-system-name-${index}`,
     ticket_rule_name: `ticket-rule-name-${index}`,
     t: 1614861888 + index,
-    _t: index % 2 === 0
-      ? EVENT_ENTITY_TYPES.declareTicket
-      : EVENT_ENTITY_TYPES.declareTicketFail,
+    ticket_status: index % 2 === 0
+      ? DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.open
+      : DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown,
     ticket_meta_alarm_id: index % 2 === 0
       ? `ticket-meta-alarm-id-${index}`
       : undefined,

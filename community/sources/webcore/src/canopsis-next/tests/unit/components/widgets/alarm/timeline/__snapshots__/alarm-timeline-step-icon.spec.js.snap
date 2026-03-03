@@ -79,11 +79,9 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`changeticketstatus\` correctly 1`] = `
 <div>
-  <v-icon-stub
-    color="#6A6A6A"
-  >
-    note_add
-  </v-icon-stub>
+  <declare-ticket-rule-ticket-status-chip-stub
+    value="1"
+  />
 </div>
 `;
 
