@@ -14,7 +14,7 @@ import { normalizeHandlebarsNbsp } from './normalize';
 export async function compile(template, context = {}, instance = Handlebars) {
   const handleBarFunction = instance.compile(normalizeHandlebarsNbsp(template ?? ''));
   const preparedContext = {
-    env: store.getters['templateVars/items'] ?? {},
+    env: store.getters['template/vars/items'] ?? {},
     user: store.getters['auth/currentUser'] ?? {},
 
     ...context,
