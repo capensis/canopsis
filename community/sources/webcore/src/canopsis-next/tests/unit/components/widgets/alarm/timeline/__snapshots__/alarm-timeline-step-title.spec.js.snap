@@ -68,7 +68,7 @@ exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for ste
 <span
   class="text-subtitle-2"
 >
-  Ticket status changed by root
+  Ticket status changed
 </span>
 `;
 
