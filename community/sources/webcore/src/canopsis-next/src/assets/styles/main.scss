@@ -538,7 +538,9 @@ html {
   }
 
   .theme--light & {
-    &,
+    background-color: var(--v-application-background-darken1) !important;
+    border: 1px solid var(--v-application-background-darken2) !important;
+
     .v-expansion-panel-header,
     .v-card,
     .v-data-table,
@@ -557,11 +559,15 @@ html {
   }
 
   .theme--dark & {
-    &,
+    color: var(--v-active-color-base) !important;
+    background-color: var(--v-application-background-lighten2) !important;
+    border: 1px solid var(--v-application-background-lighten3) !important;
+
     .v-expansion-panel-header,
     .v-card,
     .v-data-table,
-    .v-data-table tbody tr {
+    .v-data-table tbody tr,
+    .treeview-data-table {
       // For selictivity
       color: var(--v-active-color-base) !important;
       background-color: var(--v-application-background-lighten2) !important;
