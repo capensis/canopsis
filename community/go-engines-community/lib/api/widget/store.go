@@ -860,6 +860,8 @@ func (s *store) transformTemplateFields(ctx context.Context, r *EditRequest) err
 			case view.WidgetTemplateTypeAlarmQuickActions,
 				view.WidgetTemplateTypeAlarmQuickMassActions:
 				parameters[key] = tpl.Actions
+			case view.WidgetTemplateTypeAlarmSortColumns:
+				parameters[key] = tpl.SortColumns
 			}
 		}
 	}

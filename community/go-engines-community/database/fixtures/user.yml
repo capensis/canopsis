@@ -230,6 +230,9 @@ template:
           </tr>
         </tbody></table>
       </div>
+  - &widget_alarm_sort_columns [
+    {sort_by: "v.creation_date", sort: "desc"}
+  ]
   - &widget_entity_columns [
     { value: name },
     { value: type }
@@ -359,6 +362,11 @@ widget_templates:
     title: Default more infos
     type: alarm_more_infos
     content: *widget_alarm_more_infos
+  tpl_alarm_sort_columns:
+    <<: *widget_tpl
+    title: Default alarm sort columns
+    type: alarm_sort_columns
+    sort_columns: *widget_alarm_sort_columns
   tpl_entity_columns:
     <<: *widget_tpl
     title: Default columns
@@ -400,8 +408,9 @@ widgets:
       moreInfoTemplateTemplate: "@tpl_alarm_more_infos"
       moreInfoTemplateTemplateTitle: Default more infos
       moreInfoTemplate: *widget_alarm_more_infos
-      sort:
-        order: ASC
+      sortTemplate: "@tpl_alarm_sort_columns"
+      sortTemplateTitle: Default alarm sort columns
+      sort: *widget_alarm_sort_columns
       itemsPerPage: 10
       infoPopups: [ ]
       opened: true
@@ -441,8 +450,9 @@ widgets:
       moreInfoTemplateTemplate: "@tpl_alarm_more_infos"
       moreInfoTemplateTemplateTitle: Default more infos
       moreInfoTemplate: *widget_alarm_more_infos
-      sort:
-        order: ASC
+      sortTemplate: "@tpl_alarm_sort_columns"
+      sortTemplateTitle: Default alarm sort columns
+      sort: *widget_alarm_sort_columns
       itemsPerPage: 10
       infoPopups: [ ]
       opened: false

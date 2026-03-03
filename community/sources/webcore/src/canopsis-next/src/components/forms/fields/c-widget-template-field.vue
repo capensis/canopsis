@@ -4,6 +4,7 @@
     :items="templatesWithCustom"
     :label="$t('common.template')"
     :loading="pending"
+    :clearable="clearable"
     return-object
   />
 </template>
@@ -34,6 +35,10 @@ export default {
     valueKey: {
       type: String,
       default: 'value',
+    },
+    clearable: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props) {

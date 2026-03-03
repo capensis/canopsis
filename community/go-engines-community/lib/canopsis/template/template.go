@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"maps"
 	"reflect"
 	"regexp"
@@ -139,93 +138,91 @@ func (e *executor) GetDefaultTplVars() map[string]any {
 func GetFunctions(appLocation *time.Location) template.FuncMap {
 	return template.FuncMap{
 		// json will convert an item to an JSON-compatible element,
-		// ie ints will be returned as integers and strings returned as strings with quotes
+		// ie ints will be returned as integers and strings returned as strings with quotes.
 		// It is mostly used for the strings to preserve their content
-		// and avoid Go behavior to escape special characters strings by default
-		"json": func(v any) string {
+		// and avoid Go behavior to escape special characters strings by default.
+		"json": func(v any) (string, error) {
 			b, err := json.Marshal(v)
 			if err != nil {
-				return err.Error()
+				return "", err
 			}
 
-			return string(b)
+			return string(b), nil
 		},
-		// Same behavior as json but remove the quotes around the string.
-		"json_unquote": func(v any) string {
+		// same behavior as json but remove the quotes around the string
+		"json_unquote": func(v any) (string, error) {
 			b, err := json.Marshal(v)
 			if err != nil {
-				return err.Error()
+				return "", err
 			}
 
 			jsonStr := string(b)
-
 			if string(jsonStr[0]) != "\"" || string(jsonStr[len(jsonStr)-1]) != "\"" {
-				log.Printf("json_unquote : trying to unquote %+v. Returning value directly", jsonStr)
-				return jsonStr
+				return jsonStr, nil
 			}
 
-			return jsonStr[1 : len(jsonStr)-1]
+			return jsonStr[1 : len(jsonStr)-1], nil
 		},
 		// split will split a string according a separator and returns the substring
-		"split": func(sep string, index int, v any) string {
+		"split": func(sep string, index int, v any) (string, error) {
 			if s, ok := v.(string); ok {
 				stringSlice := strings.Split(s, sep)
 				if 0 <= index && index < len(stringSlice) {
-					return stringSlice[index]
+					return stringSlice[index], nil
 				}
-				log.Printf("split : index %+v out of bounds", index)
-			} else {
-				log.Printf("split : %+v is not a string", v)
+
+				return "", fmt.Errorf("index %d out of bounds", index)
 			}
-			return ""
+
+			return "", fmt.Errorf("%+v is not a string", v)
 		},
 		// trim will return a string with all leading and trailing white space removed
-		"trim": func(v any) string {
+		"trim": func(v any) (string, error) {
 			if s, ok := v.(string); ok {
-				return strings.TrimSpace(s)
+				return strings.TrimSpace(s), nil
 			}
-			log.Printf("trim : %+v is not a string", v)
-			return ""
+
+			return "", fmt.Errorf("%+v is not a string", v)
 		},
 		// formattedDate will return a formatted string from a time type
-		"formattedDate": func(format string, v any) string {
+		"formattedDate": func(format string, v any) (string, error) {
 			if t, ok := castTime(v); ok {
-				return t.Format(format)
+				return t.Format(format), nil
 			}
-			log.Printf("formattedDate : %+v is not a time type", v)
-			return ""
+
+			return "", fmt.Errorf("%+v %[1]T is not a time type", v)
 		},
 		// replace will replace a string, replacing matches of the regex with the replacement string
-		"replace": func(oldRegex string, newV string, v any) string {
+		"replace": func(oldRegex string, newV string, v any) (string, error) {
 			if s, ok := v.(string); ok {
 				re, err := regexp.Compile(oldRegex)
 				if err != nil {
-					log.Printf("replace : %+v cannot be parsed by regexp, %v", oldRegex, err)
-					return ""
+					return "", fmt.Errorf("%+v cannot be parsed by regexp, %w", oldRegex, err)
 				}
-				return re.ReplaceAllString(s, newV)
+
+				return re.ReplaceAllString(s, newV), nil
 			}
-			log.Printf("replace : %+v is not a string", v)
-			return ""
+
+			return "", fmt.Errorf("%+v is not a string", v)
 		},
 		// upper string
-		"uppercase": func(v any) string {
+		"uppercase": func(v any) (string, error) {
 			if s, ok := v.(string); ok {
-				return strings.ToUpper(s)
+				return strings.ToUpper(s), nil
 			}
-			log.Printf("trim : %+v is not a string", v)
-			return ""
+
+			return "", fmt.Errorf("%+v is not a string", v)
 		},
 
 		// upper string
-		"lowercase": func(v any) string {
+		"lowercase": func(v any) (string, error) {
 			if s, ok := v.(string); ok {
-				return strings.ToLower(s)
+				return strings.ToLower(s), nil
 			}
-			log.Printf("trim : %+v is not a string", v)
-			return ""
+
+			return "", fmt.Errorf("%+v is not a string", v)
 		},
-		"localtime": func(v ...any) string {
+		"localtime": func(v ...any) (string, error) {
 			var value time.Time
 			var timezone string
 			var format string
@@ -233,66 +230,58 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 
 			if len(v) == 3 {
 				if value, ok = castTime(v[2]); !ok {
-					log.Printf("localtime : %+v is not a CpsTime", v)
-					return ""
+					return "", fmt.Errorf("%+v is not a CpsTime", v)
 				}
 
 				if timezone, ok = v[1].(string); !ok {
-					log.Printf("localtime : %+v is not a string", v[1])
-					return ""
+					return "", fmt.Errorf("%+v is not a string", v[1])
 				}
 
 				if format, ok = v[0].(string); !ok {
-					log.Printf("localtime : %+v is not a string", v[0])
-					return ""
+					return "", fmt.Errorf("%+v is not a string", v[0])
 				}
 			} else if len(v) == 2 {
 				if value, ok = castTime(v[1]); !ok {
-					log.Printf("localtime : %+v is not a CpsTime", v)
-					return ""
+					return "", fmt.Errorf("%+v is not a CpsTime", v)
 				}
 
 				if format, ok = v[0].(string); !ok {
-					log.Printf("localtime : %+v is not a string", v[0])
-					return ""
+					return "", fmt.Errorf("%+v is not a string", v[0])
 				}
 			} else {
-				log.Print("localtime : must have 1 or 2 arguments")
-				return ""
+				return "", errors.New("must have 1 or 2 arguments")
 			}
 
 			var loc *time.Location
 			if timezone != "" {
 				var err error
 				if loc, err = time.LoadLocation(timezone); err != nil {
-					log.Print("localtime : invalid timezone")
-					return ""
+					return "", fmt.Errorf("invalid timezone: %w", err)
 				}
 			} else if appLocation != nil {
 				loc = appLocation
 			}
 
 			if loc == nil {
-				return value.Format(format)
+				return value.Format(format), nil
 			}
 
-			return value.In(loc).Format(format)
+			return value.In(loc).Format(format), nil
 		},
 		// regex_map_key return map value if key match the regexp
-		"regex_map_key": func(m map[string]any, regexpString string) any {
+		"regex_map_key": func(m map[string]any, regexpString string) (any, error) {
 			re, err := regexp.Compile(regexpString)
 			if err != nil {
-				log.Printf("regex_map_key : failed to compile regexp %s, %v", regexpString, err)
-				return ""
+				return nil, fmt.Errorf("failed to compile regexp %s: %w", regexpString, err)
 			}
 
 			for k, v := range m {
 				if re.MatchString(k) {
-					return v
+					return v, nil
 				}
 			}
 
-			return ""
+			return "", nil
 		},
 		"map_has_key": func(m any, key any) bool {
 			rv := reflect.ValueOf(m)
