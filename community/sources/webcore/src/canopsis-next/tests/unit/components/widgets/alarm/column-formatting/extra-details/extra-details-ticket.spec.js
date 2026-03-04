@@ -24,13 +24,13 @@ describe('extra-details-ticket', () => {
       ticket_rule_name: 'ticket-rule-name-1',
       ticket_comment: 'ticket-comment-1',
       ticket: 'ticket-1',
-      val: DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.open,
+      ticket_status: DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.open,
     },
     {
       a: 'ticket-author-2',
       t: prevMonthDateTimestamp,
       ticket_rule_name: 'ticket-rule-name-2',
-      val: DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown,
+      ticket_status: DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown,
     },
   ];
 

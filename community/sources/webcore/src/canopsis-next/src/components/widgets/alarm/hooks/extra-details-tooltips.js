@@ -229,14 +229,14 @@ export const useExtraDetailsSnoozeTooltip = (props) => {
 export const useExtraDetailsTicketTooltip = (props) => {
   const { t, tc } = useI18n();
 
-  const getTicketStatusText = ticket => t(`declareTicket.status.${ticket.val ?? DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown}`);
+  const getTicketStatusText = ticket => t(`declareTicket.status.${ticket.ticket_status ?? DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown}`);
   const convertDateWithToday = date => convertDateToStringWithFormatForToday(date);
 
   const shownTickets = computed(() => props.tickets.slice(0, props.limit));
 
   const tooltipContent = computed(() => {
     const content = shownTickets.value.reduce((acc, ticket) => {
-      let ticketContent = `<strong>${ticket.ticket_rule_name ? `${ticket.ticket_rule_name} -` : ''} ${getTicketStatusText(ticket)}</strong>
+      let ticketContent = `<strong>${ticket.ticket_rule_name ? `${ticket.ticket_rule_name} - ` : ''}${getTicketStatusText(ticket)}</strong>
           <div>${t('common.by')} : ${escape(ticket.a)}</div>
           <div>${t('common.date')} : ${convertDateWithToday(ticket.t)}</div>`;
 
