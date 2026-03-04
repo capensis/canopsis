@@ -71,7 +71,16 @@ export default {
       }))
     ));
 
+    /**
+     * Appends an empty mapping pair (text/value) to the ticket status mapping array.
+     */
     const addMappingPair = () => addItemIntoArray(textPairToForm());
+
+    /**
+     * Checks whether at least one mapping pair has the "closed" Canopsis status.
+     *
+     * @returns {boolean}
+     */
     const hasClosedItem = () => (
       props.value.some(item => item.value === DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES_WITHOUT_UNKNOWN.closed)
     );
