@@ -274,6 +274,8 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	unset := bson.M{
 		"events_count":          "",
 		"unread_failures_count": "",
+		"next_resolved_start":   "",
+		"next_resolved_stop":    "",
 	}
 
 	if model.Start == nil || model.Start.IsZero() || model.Stop == nil || model.Stop.IsZero() {
@@ -281,8 +283,6 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		unset["stop"] = ""
 		unset["resolved_start"] = ""
 		unset["resolved_stop"] = ""
-		unset["next_resolved_start"] = ""
-		unset["next_resolved_stop"] = ""
 	}
 
 	if len(unset) != 0 {
