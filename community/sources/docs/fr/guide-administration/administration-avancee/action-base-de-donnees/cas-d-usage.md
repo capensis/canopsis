@@ -1,41 +1,41 @@
-# Cas d'usage d'action sur les bases de données
+# Cas d'usage d'actions avancées à réaliser sur les bases de données notamment dans le cadre d'opérations de debug ou d'incident
 
-Cette page regroupe des actions qui utiles lors de la recherche d'informations directement en base de données.
+Cette page regroupe des actions utiles lors de la recherche d'informations directement en base de données.
 
 #### Commandes usuelles pour récupérer des informations dans la base de données MongoDB de Canopsis
 
 Ces commandes seront utiles pour rapidement pouvoir récupérer des informations.
 
 ```js
-db.NOM_DE_LA_COLLECTION.find() # Permet de trouver une information
+db.NOM_DE_LA_COLLECTION.find() # Permet de rechercher une information provenant de document(s) dans une collection
 db.NOM_DE_LA_COLLECTION.countDocuments() # Permet de compter le nombre de documents dans une collection
 ```
 
 Documentation de la commande `find()`: [db.collection.find() (mongosh method)](https://www.mongodb.com/docs/manual/reference/method/db.collection.find/)
 Documentation de la commande `countDocuments`: [db.collection.countDocuments() (mongosh method)](https://www.mongodb.com/docs/manual/reference/method/db.collection.countDocuments/) 
 
-Pour plus d'informations sur les commandes de l'utilitaire `mongosh`, référer à la documentation officiel : [Documentation Mongosh](https://www.mongodb.com/docs/mongodb-shell/run-commands/)
+Pour plus d'informations sur les commandes de l'utilitaire `mongosh`, se référer à la documentation officielle : [Documentation Mongosh](https://www.mongodb.com/docs/mongodb-shell/run-commands/)
 
 Généralement, ces commandes sont utilisées pour requêter les collections : `periodical_alarm`, `default_entities`, `alarm_tag`, `pbehavior`.
 
-#### Trouver les alarmes qui correspondent à un critère particulier
+#### Rechercher les alarmes qui correspondent à un critère particulier
 
 - Récupérer l'entièreté des alarmes actuellement ouvertes qui proviennent d'un même `connecteur`
 ```js
-db.periodical_alarm.find({'v.connector':'Nom du connecteur'})
+db.periodical_alarm.find({"v.connector":"Nom du connecteur"})
 ```
 
 - Récupérer l'entièreté des alarmes actuellement ouvertes portant sur un même `composant`
 ```js
-db.periodical_alarm.find({'v.component':'Nom du composant'})
+db.periodical_alarm.find({"v.component":"Nom du composant"})
 ```
 
 - Récupérer l'entièreté des alarmes actuellement ouvertes portant sur une même `ressource`
 ```js
-db.periodical_alarm.find({'v.resource':'Nom de la ressource'})
+db.periodical_alarm.find({"v.resource":"Nom de la ressource"})
 ```
 
-- Récupérer l'entièreté des alarmes actuellement ouvertes portant sur une couple `composant`/`ressource`
+- Récupérer l'entièreté des alarmes actuellement ouvertes portant sur un couple `composant`/`ressource`
 ```js
 db.periodical_alarm.find({"v.component" : "Nom du composant", "v.resource" : "Nom de la ressource"})
 ```
@@ -44,7 +44,7 @@ db.periodical_alarm.find({"v.component" : "Nom du composant", "v.resource" : "No
 ```js
 db.periodical_alarm.find({
   $expr: {
-    $gt: [
+    $lt: [
       "$v.last_update_date",
       { $floor: { $divide: [ { $toLong: ISODate("2026-01-29T00:00:00Z") }, 1000 ] } }
     ]
@@ -110,14 +110,14 @@ db.periodical_alarm.find({tags: { $in: ["une", "liste", "de", "tags"] }}) # Cher
 db.periodical_alarm.countDocuments({tags: { $in: ["une", "liste", "de", "tags"] }}) # Cherche à matcher avec un ou plusieurs tags de la liste
 ```
 
-- Trouver les alarmes actuellement ouvertes qui correspondent exactement à un tag ou une liste de tags :
+- Trouver les alarmes actuellement ouvertes qui contiennent un tag précis ou une liste de tags :
 ```js
-db.periodical_alarm.find({"tags": "tag" }}) # Match exactement un tag
+db.periodical_alarm.find({"tags": "tag" }}) # Match avec un tag particulier
 
-db.periodical_alarm.find({tags: { $all: ["une", "liste", "de", "tags"] }}) # Match exactement une liste de tags
+db.periodical_alarm.find({tags: { $all: ["une", "liste", "de", "tags"] }}) # Match avec l'ensemble des tags d'une liste
 ```
 
-- Compter les alarmes actuellement ouvertes qui correspondent exactement à un tag ou une liste de tags
+- Compter les alarmes actuellement ouvertes qui sont associées à un tag ou à une liste de tags
 ```js
 db.periodical_alarm.countDocuments({"tags": "tag" }}) # Match exactement un tag
 
@@ -146,7 +146,7 @@ db.default_entities.aggregate([
 ]);
 ```
 
-- Récupérer les 10 entités avec le plus de dépendances :
+- Récupérer les 10 entités, et leur type, étant le plus représentées en tant que dépendances dans des services :
 ```js
 db.default_entities.aggregate([
     {$match: {services: {$ne: null}}},
@@ -166,7 +166,7 @@ db.default_entities.aggregate([
 ]);
 ```
 
-#### Trouver les comportements périodiques qui agissent sur un nombre important d'alarmes
+#### Trouver les comportements périodiques actifs à l'instant T et qui agissent sur un nombre important d'alarmes
 
 ```js
 db.periodical_alarm.aggregate([{ $match:{ "v.pbehavior_info.id":{ $exists:true } } },{ $group:{ _id:"$v.pbehavior_info.id", name:{ $first:"$v.pbehavior_info.name" }, alarm_count:{ $sum:1 } } },{ $project:{ _id:0, id:"$_id", name:1, alarm_count:1 } }])
@@ -180,7 +180,7 @@ db.periodical_alarm.aggregate([{ $match:{ "v.pbehavior_info.id":{ $exists:true }
 ]
 ```
 
-#### Trouver les comportements périodiques qui ont été créé dans une date X et une date Y
+#### Trouver les comportements périodiques qui ont été créés entre une date X et une date Y
 
 - Récupérer les comportements périodiques qui ont été créés avant une date spécifique
 ```js
@@ -194,7 +194,7 @@ db.pbehavior.find({
 })
 ```
 
-- Récupérer les comportements périodiques qui ont été créés avant une date spécifique
+- Récupérer les comportements périodiques qui ont été créés après une date spécifique
 ```js
 db.pbehavior.find({
   $expr: {
@@ -206,7 +206,7 @@ db.pbehavior.find({
 })
 ```
 
-- Récupérer les comportements périodiques qui ont été créés à une date spécifique ou entre une date X et Y
+- Récupérer les comportements périodiques qui ont été créés entre une date X et Y
 ```js
 db.pbehavior.find({
   $expr: {
@@ -262,6 +262,16 @@ db.NOM_DE_LA_COLLECTION.getIndexes()
 #### Date Unix
 
 Pour les requêtes sur les dates, si vous souhaitez utiliser les timestamp UNIX, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.
+
+Il est aussi possible de manipuler les dates simplement en shell
+```sh
+Exemple avec la date "2026-02-19 07:10:59" en UTC
+$ date -u -d "2026-02-19 07:10:59" +%s
+1771485059
+
+$ date -u -d @1771485059 "+%Y-%m-%d %H:%M:%S"
+2026-02-19 07:10:59
+```
 
 
 
