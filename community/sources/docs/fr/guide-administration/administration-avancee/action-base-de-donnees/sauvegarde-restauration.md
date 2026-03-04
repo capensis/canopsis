@@ -5,16 +5,18 @@
 Utilisez la commande `mongodump` via une tâche cron. De préférence, faites la sauvegarde sur un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongodump-operation).
 
 !!! note
-    Le mot de passe par défaut est `canopsis`, mais il peut être nécessaire d'adapter la commande selon votre contexte.
+    Le mot de passe par défaut est `canopsis`, mais il peut-être nécessaire d'adapter la commande selon votre contexte.
 
 ```sh
-mongodump --uri mongodb://cpsmongo:canopsis@mongodb/canopsis?replicaSet=rs0 --gzip --archive="/chemin/vers/sauvegarde/canopsis-$(date +"%Y-%m-%d-%H-%M").gz"
+mongodump --uri ${CPS_MONGO_URL} --gzip --archive="/chemin/vers/sauvegarde/canopsis-$(date +"%Y-%m-%d-%H-%M").gz"
 ```
+
+La commande `mongodump` peut-être exécutée depuis un nœud ou toute machine possédant les [`database-tools`](https://www.mongodb.com/docs/database-tools/installation/) de la même version que le serveur MongoDB.
 
 ### Restauration
 
-!!! Warning
-    Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée, pour corriger l'incident.
+!!! warning
+    Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée.
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.  
 
@@ -41,11 +43,13 @@ Avant de restaurer votre base de données, assurez-vous de la vider :
 mongosh ${CPS_MONGO_URL} --eval 'db.getCollectionNames().forEach(c => db[c].drop())'
 ```
 
-Utilisez la commande `mongorestore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongorestore-operations).
+La commande `mongorestore` peut-être exécutée depuis un nœud ou toute machine possédant les [`database-tools`](https://www.mongodb.com/docs/database-tools/installation/) de la même version que le serveur MongoDB.
 
 ```sh
-mongorestore --uri mongodb://cpsmongo:canopsis@mongodb/canopsis?replicaSet=rs0 --db canopsis --gzip --archive="/chemin/vers/sauvegarde/canopsis-2026-01-05-09-06.gz"
+mongorestore --uri ${CPS_MONGO_URL} --db canopsis --gzip --archive="/chemin/vers/sauvegarde/canopsis-2026-01-05-09-06.gz"
 ```
+
+La commande `mongorestore` peut-être réaliser depuis un noeud ou un poste utilisateur à condition que les [`database-tools`](https://www.mongodb.com/docs/database-tools/installation/) soient installés.
 
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.  
 
@@ -82,18 +86,20 @@ Utilisez la commande `pg_dump` via une tâche cron. De préférence, faites la s
 
 Pour la base `canopsis`:
 ```sh
-pg_dump postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis --no-owner -Fc -v -f /tmp/canopsis-$(date +"%Y-%m-%d-%H-%M")-canopsis-dump.sql.gz
+pg_dump ${CPS_POSTGRES_URL} --no-owner -Fc -v -f /tmp/canopsis-$(date +"%Y-%m-%d-%H-%M")-canopsis-dump.sql.gz
 ```
 
 Pour la base `canopsis_tech_metrics`:
 ```sh
-pg_dump postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics --no-owner -Fc -v -f /tmp/canopsis-$(date +"%Y-%m-%d-%H-%M")-canopsis_tech_metrics-dump.sql.gz
+pg_dump ${CPS_POSTGRES_TECH_URL} --no-owner -Fc -v -f /tmp/canopsis-$(date +"%Y-%m-%d-%H-%M")-canopsis_tech_metrics-dump.sql.gz
 ```
+
+La commande `pg_dump` peut-être réaliser depuis un noeud ou un poste utilisateur à condition que les [`outils supplémentaires de PostgreSQL`](https://www.postgresql.org/download/) soient installés.
 
 ### Restauration
 
 !!! Warning
-    Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration des bases de données ne doit être effectuée que si celles-ci sont endommagées, pour corriger l'incident.
+    Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée.
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.  
 
@@ -119,15 +125,17 @@ Une fois Canopsis éteint, il est nécessaire de supprimer les tables des bases 
 
 Pour la base `canopsis`:
 ```sh
-echo "select 'drop table '||tablename||' cascade;' from pg_tables where schemaname = 'public'"  | psql postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis -t | psql postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis
+echo "select 'drop table '||tablename||' cascade;' from pg_tables where schemaname = 'public'"  | psql ${CPS_POSTGRES_URL} -t | psql ${CPS_POSTGRES_URL}
 ```
 
 Pour la base `canopsis_tech_metrics`:
 ```sh
-echo "select 'drop table '||tablename||' cascade;' from pg_tables where schemaname = 'public'"  | psql postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics -t | psql postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics
+echo "select 'drop table '||tablename||' cascade;' from pg_tables where schemaname = 'public'"  | psql ${CPS_POSTGRES_TECH_URL} -t | psql ${CPS_POSTGRES_TECH_URL}
 ```
 
-Utilisez la commande `pg_restore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.timescale.com/self-hosted/latest/backup-and-restore/logical-backup/).
+La commande `psql` peut être exécutée depuis un nœud ou un poste utilisateur à condition que les [`outils supplémentaires de PostgreSQL`](https://www.postgresql.org/download/) soient installés.
+
+La commande `pg_restore` peut être réalisée depuis un nœud ou un poste utilisateur à condition que les [`outils supplémentaires de PostgreSQL`](https://www.postgresql.org/download/) soient installés.
 
 Tout d'abord, il faut se connecter à la base postgresql
 ```sh
@@ -166,13 +174,15 @@ Une fois la base en mode restauration, vous pouvez importer vos dumps
 
 Pour la base `canopsis`
 ```sh
-pg_restore -Fc -d "postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis" canopsis-YYYY-mm-dd-HH-MM-canopsis-dump.sql.gz
+pg_restore -Fc -d ${CPS_POSTGRES_URL} canopsis-YYYY-mm-dd-HH-MM-canopsis-dump.sql.gz
 ```
 
 Pour la base `canopsis_tech_metrics`:
 ```sh
-pg_restore -Fc -d "postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics" canopsis-YYYY-mm-dd-HH-MM-canopsis_tech_metrics-dump.sql.gz
+pg_restore -Fc -d ${CPS_POSTGRES_TECH_URL} canopsis-YYYY-mm-dd-HH-MM-canopsis_tech_metrics-dump.sql.gz
 ```
+
+La commande `pg_restore` peut être réalisée depuis un nœud ou un poste utilisateur à condition que les [`outils supplémentaires de PostgreSQL`](https://www.postgresql.org/download/) soient installés.
 
 Une fois les dumps importés, vous pouvez sortir du mode restauration
 ```sql
