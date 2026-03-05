@@ -115,10 +115,6 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 
 	p.handlePerfData(ctx, &event)
 
-	if event.EventType == types.EventTypeContextUpdate {
-		return nil, nil
-	}
-
 	event.Format()
 
 	body, err := p.Encoder.Encode(&event)
