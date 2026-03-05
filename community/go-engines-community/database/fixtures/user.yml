@@ -1285,6 +1285,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_rules"
+  permission_api_llm_config:
+    <<: *permission_crud
+    _id: api_llm_config
+    name: <Current()._id>
+    description: LLM config
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
 
   # api -> remediation
   permission_api_job_config:
@@ -3832,6 +3840,7 @@ role:
       "@permission_api_external_data_table": 15
       "@permission_api_template_data": 15
       "@permission_api_webhook_token_rule": 15
+      "@permission_api_llm_config": 15
       "@permission_api_corporate_pattern": 1
       "@permission_api_map": 15
       "@permission_api_share_token": 15
