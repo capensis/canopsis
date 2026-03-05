@@ -58,8 +58,8 @@ const tagLabelSeparator = ":"
 type FieldCondition struct {
 	Field string `json:"field" bson:"field"`
 	// FieldType is only defined for custom fields, ex: infos.
-	FieldType string    `json:"field_type,omitempty" bson:"field_type,omitempty"`
-	Condition Condition `json:"cond" bson:"cond"`
+	FieldType string    `json:"field_type,omitempty" bson:"field_type,omitempty" mapstructure:"field_type,omitempty"`
+	Condition Condition `json:"cond" bson:"cond" mapstructure:"cond"`
 }
 
 // Condition represents an expression to decide if a value fits.
