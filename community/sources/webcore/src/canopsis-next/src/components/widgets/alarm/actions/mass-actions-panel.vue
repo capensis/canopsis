@@ -1,5 +1,5 @@
 <template>
-  <shared-mass-actions-panel :actions="preparedActions" :inline-count="inlineCount" />
+  <new-mass-actions-panel :actions="preparedActions" :inline-count="inlineCount" :small="small" />
 </template>
 
 <script>
@@ -24,7 +24,7 @@ import { sortActionsByQuickActions, getActionsInlineCount } from '@/helpers/acti
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
-import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
+import NewMassActionsPanel from '@/components/common/actions-panel/new-mass-actions-panel.vue'; // TODO: add condition for desplaying old mass actions
 /**
  * Panel regrouping mass actions icons
  *
@@ -33,7 +33,7 @@ import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actio
  * @prop {Array} [itemIds] - Items selected for the mass action
  */
 export default {
-  components: { SharedMassActionsPanel },
+  components: { NewMassActionsPanel },
   mixins: [
     widgetActionsPanelAlarmMixin,
     entitiesDeclareTicketRuleMixin,
@@ -50,6 +50,10 @@ export default {
     refreshAlarmsList: {
       type: Function,
       default: () => {},
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
