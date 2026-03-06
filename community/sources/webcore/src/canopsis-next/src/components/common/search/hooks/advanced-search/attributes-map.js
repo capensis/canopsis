@@ -307,7 +307,7 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
       ],
-      fetchValues: Object.values(ENTITY_TYPES).map(type => ({ value: type, text: t(`entity.types.${type}`) })),
+      values: Object.values(ENTITY_TYPES).map(type => ({ value: type, text: t(`entity.types.${type}`) })),
       itemText: 'text',
       itemValue: 'value',
     },
