@@ -142,6 +142,9 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeAlarmQuickMassActions: {
 				"quickMassActions",
 			},
+			WidgetTemplateTypeAlarmSortColumns: {
+				"sort",
+			},
 		},
 		WidgetTypeContextExplorer: {
 			WidgetTemplateTypeAlarmColumns: {
@@ -173,6 +176,9 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeAlarmMoreInfos: {
 				"alarmsList.moreInfoTemplate",
 			},
+			WidgetTemplateTypeAlarmSortColumns: {
+				"alarmsList.sort",
+			},
 		},
 		WidgetTypeAlarmsCounter: {
 			WidgetTemplateTypeAlarmColumns: {
@@ -188,6 +194,9 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			},
 			WidgetTemplateTypeAlarmMoreInfos: {
 				"alarmsList.moreInfoTemplate",
+			},
+			WidgetTemplateTypeAlarmSortColumns: {
+				"alarmsList.sort",
 			},
 		},
 		WidgetTypeMap: {
