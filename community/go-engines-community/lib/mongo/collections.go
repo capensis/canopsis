@@ -118,4 +118,6 @@ const (
 	WebhookCheckTicketStatusCollection = "webhook_check_ticket_status"
 
 	PatternOptimizeJobCollection = "pattern_optimize_job"
+
+	ChangeStreamTokenCollection = "change_stream_token"
 )

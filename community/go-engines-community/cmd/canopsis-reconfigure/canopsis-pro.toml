@@ -462,7 +462,7 @@ EnableArraySortingInEntityInfos = true
 # CropStepsNumber defines how many sequential stateinc and statedec steps after the current status should be replaced with a statecounter step.
 CropStepsNumber = 0
 # CheckTicketStatusInterval defines how often ticket status should be checked.
-CheckTicketStatusInterval = "1m"
+CheckTicketStatusInterval = "1h"
 # CheckTicketStatusMaxPeriod defines how long ticket status should be checked.
 CheckTicketStatusMaxPeriod = "720h"
 
