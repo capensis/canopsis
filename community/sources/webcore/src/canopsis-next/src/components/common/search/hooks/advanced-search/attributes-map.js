@@ -529,7 +529,7 @@ export const useAdvancedSearchDynamicInfoAttributes = () => {
     [DYNAMIC_INFO_FIELDS.author]: {
       operators: ADVANCED_SEARCH_USER_OPERATORS,
       fetchValues: fetchUsersListWithoutStore,
-      itemValue: 'display_name',
+      itemValue: '_id',
       itemText: 'display_name',
     },
     [DYNAMIC_INFO_FIELDS.enabled]: {

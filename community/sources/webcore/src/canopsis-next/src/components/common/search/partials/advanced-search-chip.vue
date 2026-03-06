@@ -96,6 +96,7 @@
       :pending="fetchItems && pending"
       :item-text="itemText"
       :item-value="itemValue"
+      :children-key="childrenKey"
       return-object
       @input="selectItem"
       @fetch:more="showMore"
@@ -171,6 +172,10 @@ export default {
     itemValue: {
       type: String,
       default: 'value',
+    },
+    childrenKey: {
+      type: String,
+      default: 'items',
     },
     multiple: {
       type: Boolean,
@@ -264,6 +269,7 @@ export default {
       hasMoreItems,
       items: lazyItems,
       wholePending: pending,
+      fetchItems,
       fetchMoreItems,
       changeSelectedItems,
     } = useLazySearch({
@@ -527,6 +533,18 @@ export default {
       if (active && prevActive !== active) {
         setInputValue(selectedItems.value[0]?.[props.itemText] ?? selectedItems.value[0]?.[props.itemValue] ?? '', false);
         focusInput();
+      }
+    });
+
+    /**
+     * We need to fetch items when the items list changes after fetching (example: infos)
+     */
+    watch(() => props.items, (newItems, oldItems) => {
+      const newItemsWithItemsValue = newItems.filter(item => item?.[props.childrenKey]?.length);
+      const oldItemsWithItemsValue = oldItems.filter(item => item?.[props.childrenKey]?.length);
+
+      if (newItemsWithItemsValue.length !== oldItemsWithItemsValue.length) {
+        fetchItems();
       }
     });
 

@@ -9,7 +9,7 @@ export const DYNAMIC_INFO_INFORMATION_TYPES = {
 export const DYNAMIC_INFO_FIELDS = {
   id: '_id',
   name: 'name',
-  author: 'author.display_name',
+  author: 'author',
   enabled: 'enabled',
   created: 'created',
   updated: 'updated',
