@@ -6,8 +6,10 @@ Cette section vous accompagne dans l'administration avancée des composants de C
 
 ### Actions avancées sur les bases de données
 
-- [Connexion à la base de données MongoDB](connexion-a-la-base-de-donnees.md)
-- [Nettoyage, sauvegarde et restauration des bases de données](actions-base-donnees.md)
+- [Connexion à la base de données MongoDB](./action-base-de-donnees/connexion-a-la-base-de-donnees.md)
+- [Nettoyage des bases de données](./action-base-de-donnees/nettoyage.md)
+- [Sauvegarde et restauration des bases de données](./action-base-de-donnees/sauvegarde-restauration.md)
+- [Cas d'usage d'action sur les bases de données](./action-base-de-donnees/cas-d-usage.md)
 
 ### Authentification
 
@@ -30,5 +32,4 @@ Cette section vous accompagne dans l'administration avancée des composants de C
 - [Activation d'HTTPS danx Nginx](configuration-composants/reverse-proxy-nginx-https.md)
 - [Liste des variables d'environnement liées à Canopsis](variables-environnement.md)
 - [Reconnexion automatique des services et des moteurs](reconnexion-automatique.md)
-- [Chargement de scripts externes dans l'interface graphique](scripts-externes.md)
 
