@@ -105,6 +105,7 @@ export const POPUP_TYPES = {
 
 export const PORTALS_NAMES = {
   additionalTopBarItems: 'additional-top-bar-items',
+  massActionsPanel: 'mass-actions-panel',
 };
 
 export const MAX_LIMIT = 10000;

@@ -640,4 +640,9 @@ export default {
       declareticketrule: '<strong>Declare ticket rules</strong>\n<ul>{rules}</ul>',
     },
   },
+
+  massActionsPanel: {
+    recordsSelected: '{count} record selected|{count} records selected',
+    clearSelection: 'Clear selection',
+  },
 };
