@@ -451,11 +451,11 @@ func (e *Event) SetField(name string, value any) (err error) {
 		cpsTimeValue := datetime.CpsTime{Time: time.Unix(integerValue, 0)}
 		field.Set(reflect.ValueOf(cpsTimeValue))
 	case stringType:
-		stringValue, err := InterfaceToString(value)
-		if err != nil {
-			return fmt.Errorf("%[1]T value: %+[1]v cannot be assigned to a string: %w", value, err)
+		strValue, success := value.(string)
+		if !success {
+			return fmt.Errorf("%[1]T value cannot be assigned to a string: %+[1]v", value)
 		}
-		field.Set(reflect.ValueOf(stringValue))
+		field.Set(reflect.ValueOf(strValue))
 	case boolType:
 		boolValue, success := value.(bool)
 		if !success {
