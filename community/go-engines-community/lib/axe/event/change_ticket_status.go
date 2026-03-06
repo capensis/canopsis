@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -33,8 +34,9 @@ func (p *changeTicketStatusProcessor) Process(ctx context.Context, event rpc.Axe
 		"_id": bson.M{"$in": event.AlarmIDs},
 		"v.tickets": bson.M{
 			"$elemMatch": bson.M{
-				"ticket":        event.Parameters.Ticket,
-				"ticket_status": bson.M{"$ne": event.Parameters.TicketStatus},
+				"ticket": event.Parameters.Ticket,
+				// to prevent status change after closed, closed should be the last status
+				"ticket_status": bson.M{"$nin": []int{event.Parameters.TicketStatus, webhook.TicketStatusClosed}},
 			},
 		},
 	}

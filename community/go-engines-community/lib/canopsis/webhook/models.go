@@ -298,30 +298,35 @@ type Webhook struct {
 type CheckTicketStatus struct {
 	Request             request.Parameters        `bson:"request" json:"request"`
 	AuthToken           *request.WebhookAuthToken `bson:"auth_token,omitempty" json:"auth_token,omitempty"`
-	ReuseHeadersAndAuth bool                      `bson:"reuse_headers_and_auth" json:"reuse_headers_and_auth"`
 	StatusMapping       map[string]int            `bson:"status_mapping" json:"status_mapping"`
 	TicketStatus        string                    `bson:"ticket_status" json:"ticket_status"`
 	TicketStatusTpl     string                    `bson:"ticket_status_tpl" json:"ticket_status_tpl"`
-
-	ResolvedRequest request.Parameters `bson:"resolved_request" json:"-" binding:"-"`
+	ReuseHeadersAndAuth bool                      `bson:"reuse_headers_and_auth" json:"reuse_headers_and_auth"`
 }
 
 type CheckTicketStatusJob struct {
-	ID                     string `bson:"_id"`
-	Status                 int    `bson:"status"`
-	HistoryID              string `bson:"history_id"`
-	TicketID               string `bson:"ticket_id"`
-	TicketSystemName       string `bson:"ticket_system_name"`
-	PrevTicketStatus       int    `bson:"prev_ticket_status"`
-	TicketStatus           int    `bson:"ticket_status"`
-	TicketSourceStatus     string `bson:"ticket_source_status"`
-	PrevTicketSourceStatus string `bson:"prev_ticket_source_status"`
-
-	AlarmIDs          []string          `bson:"alarm_ids"`
-	CheckTicketStatus CheckTicketStatus `bson:"check_ticket_status"`
-
-	CreatedAt datetime.CpsTime `bson:"created_at"`
-	CheckedAt datetime.CpsTime `bson:"checked_at,omitempty"`
+	ID                     string            `bson:"_id"`
+	RuleType               int               `bson:"rule_type"`
+	RuleName               string            `bson:"rule_name"`
+	Status                 int               `bson:"status"`
+	HistoryID              string            `bson:"history_id"`
+	TicketID               string            `bson:"ticket_id"`
+	TicketSystemName       string            `bson:"ticket_system_name"`
+	PrevTicketStatus       int               `bson:"prev_ticket_status"`
+	TicketStatus           int               `bson:"ticket_status"`
+	TicketSourceStatus     string            `bson:"ticket_source_status"`
+	PrevTicketSourceStatus string            `bson:"prev_ticket_source_status"`
+	FailReason             string            `bson:"fail_reason"`
+	AlarmIDs               []string          `bson:"alarm_ids"`
+	RawRequest             string            `bson:"raw_request,omitempty"`
+	RawResponse            string            `bson:"raw_response,omitempty"`
+	CheckTicketStatus      CheckTicketStatus `bson:"check_ticket_status"`
+	CreatedAt              datetime.CpsTime  `bson:"created_at"`
+	UpdatedAt              datetime.CpsTime  `bson:"updated_at"`
+	CheckedAt              datetime.CpsTime  `bson:"checked_at,omitempty"`
+	Cmd                    *int              `bson:"cmd,omitempty"`
+	CmdStatus              *int              `bson:"cmd_status,omitempty"`
+	CmdAt                  datetime.CpsTime  `bson:"cmd_at,omitempty"`
 }
 
 type ResponseTplVars struct {

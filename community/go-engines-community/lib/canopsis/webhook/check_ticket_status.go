@@ -29,10 +29,6 @@ func GetStatusName(status int) string {
 	}
 }
 
-type CheckTicketStatusWorker interface {
-	Run(ctx context.Context) error
-}
-
 type CheckTicketStatusService interface {
 	CreateCheckStatusJob(ctx context.Context, historyID string, ticketStatus int, ticketSourceStatus string) (CheckTicketStatusJob, error)
 	AddAlarmToCheckStatusJob(ctx context.Context, jobID, alarmID string) (CheckTicketStatusJob, error)
