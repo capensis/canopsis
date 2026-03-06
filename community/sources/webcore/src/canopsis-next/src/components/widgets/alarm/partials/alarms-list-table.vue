@@ -1,6 +1,7 @@
 <template>
   <v-flex
     v-resize="resizeHandler"
+    ref="tableWrapper"
     v-on="wrapperListeners"
   >
     <c-empty-data-table-columns v-if="!columns.length" />
@@ -27,15 +28,24 @@
             />
             <v-fade-transition v-if="selectable">
               <v-flex
-                v-show="unresolvedSelected.length"
+                v-if="unresolvedSelected.length"
                 class="px-1"
               >
-                <mass-actions-panel
-                  :items="unresolvedSelected"
-                  :widget="widget"
-                  :refresh-alarms-list="refreshAlarmsList"
-                  @clear:items="clearSelected"
-                />
+                <c-mass-actions-panel
+                  v-bind="widgetCurrentGridParameters"
+                  :selected="unresolvedSelected"
+                  @clear:selected="clearSelected"
+                >
+                  <template #actions>
+                    <mass-actions-panel
+                      :items="unresolvedSelected"
+                      :widget="widget"
+                      :refresh-alarms-list="refreshAlarmsList"
+                      small
+                      @clear:items="clearSelected"
+                    />
+                  </template>
+                </c-mass-actions-panel>
               </v-flex>
             </v-fade-transition>
           </v-layout>
@@ -196,6 +206,7 @@ import {
   RESIZING_CELLS_CONTENTS_BEHAVIORS,
   DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
   MODALS,
+  MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP,
 } from '@/constants';
 
 import { featuresService } from '@/services/features';
@@ -351,9 +362,14 @@ export default {
     return {
       bootedRows: {},
       expanded: [],
+      visibleMassActionsPanel: false,
     };
   },
   computed: {
+    widgetCurrentGridParameters() {
+      return this.widget.grid_parameters[MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq]];
+    },
+
     shownTopPagination() {
       return this.totalItems && (this.densable || this.selectable || !this.hidePagination);
     },
