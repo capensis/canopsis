@@ -21,16 +21,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           <transition-stub
             name="fade-transition"
           >
-            <div
-              class="flex px-1"
-              style="display: none;"
-            >
-              <mass-actions-panel-stub
-                items=""
-                refreshalarmslist="[Function]"
-                widget="[object Object]"
-              />
-            </div>
+            <!---->
           </transition-stub>
         </div>
       </div>

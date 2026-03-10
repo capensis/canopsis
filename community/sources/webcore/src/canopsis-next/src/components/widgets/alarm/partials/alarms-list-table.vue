@@ -32,6 +32,7 @@
                 class="px-1"
               >
                 <c-mass-actions-panel
+                  v-if="headerMassActions"
                   v-bind="widgetCurrentGridParameters"
                   :selected="unresolvedSelected"
                   @clear:selected="clearSelected"
@@ -46,6 +47,14 @@
                     />
                   </template>
                 </c-mass-actions-panel>
+                <mass-actions-panel
+                  v-else
+                  :items="unresolvedSelected"
+                  :widget="widget"
+                  :refresh-alarms-list="refreshAlarmsList"
+                  small
+                  @clear:items="clearSelected"
+                />
               </v-flex>
             </v-fade-transition>
           </v-layout>
@@ -354,6 +363,10 @@ export default {
       default: false,
     },
     stickyHorizontalScroll: {
+      type: Boolean,
+      default: false,
+    },
+    headerMassActions: {
       type: Boolean,
       default: false,
     },
