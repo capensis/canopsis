@@ -81,6 +81,13 @@ export default {
       if (['m', 't'].includes(instance.$mq)) {
         return {
           inline: [],
+          dropDown: props.actions,
+        };
+      }
+
+      if (!props.inlineCount || props.inlineCount >= props.actions.length) {
+        return {
+          inline: props.actions,
           dropDown: [],
         };
       }
