@@ -13,6 +13,7 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
 *  [Formats et syntaxe](formats-et-syntaxe/index.md)
 *  [Templates (GO)](templates-go/index.md)
 *  [Limitations de Canopsis](limitations/index.md)
+*  [Utilisation avancée](utilisation-avancee/index.md)
 
 
 ### Menu **Exploitation**
