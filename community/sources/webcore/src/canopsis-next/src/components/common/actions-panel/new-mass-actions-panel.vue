@@ -103,6 +103,13 @@ export default {
         };
       }
 
+      if (props.actions.length === localInlineCount.value) {
+        return {
+          inline: props.actions,
+          dropDown: [],
+        };
+      }
+
       const inlineCountWithoutMenu = localInlineCount.value - 1;
 
       return {
