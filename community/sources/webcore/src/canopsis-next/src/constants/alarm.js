@@ -342,6 +342,7 @@ export const ALARM_STATUSES_TEXTS = {
 export const ALARM_LIST_ACTIONS_TYPES = {
   pbehaviorAdd: 'pbehaviorAdd',
   fastPbehaviorAdd: 'fastPbehaviorAdd',
+  fastPbehaviorRemove: 'fastPbehaviorRemove',
   moreInfos: 'moreInfos',
   snooze: 'snooze',
   declareTicket: 'declareTicket',
@@ -386,6 +387,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
 export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
   [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: 'pause',
   [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: 'motion_photos_paused',
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove]: 'play_arrow',
   [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm',
   [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'note_add',
   [ALARM_LIST_ACTIONS_TYPES.associateTicket]: 'sticky_note_2',
@@ -414,6 +416,7 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
 
 export const ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP = {
   [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: ALARM_LIST_ACTIONS_TYPES.addBookmark,
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove]: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
 };
 
 export const UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS = {
@@ -1353,3 +1356,8 @@ export const DEFAULT_ALARM_MORE_INFO_TEMPLATE = '{{!--\n'
   + '    </tr>\n'
   + '  </tbody></table>\n'
   + '</div>\n';
+
+/**
+ * Timeout to wait for the pbehavior to be created or removed
+ */
+export const ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT = 1000;
