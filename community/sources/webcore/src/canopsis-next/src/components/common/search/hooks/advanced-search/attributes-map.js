@@ -417,6 +417,11 @@ export const useAdvancedSearchPbehaviorAttributes = ({ prefix = '' } = {}) => {
    * we are not using the pattern prefix in all places
    */
   const attributesMap = computed(() => ({
+    [PBEHAVIOR_FIELDS.id]: {
+      ...BASE_OPTIONS,
+      text: t('pbehavior.pbehaviorName'),
+      fetchValues: fetchPbehaviorsListWithoutStore,
+    },
     [PBEHAVIOR_FIELDS.name]: {
       ...BASE_OPTIONS,
       itemValue: 'name',

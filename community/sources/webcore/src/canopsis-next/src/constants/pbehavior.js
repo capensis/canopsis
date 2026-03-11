@@ -34,6 +34,7 @@ export const PBEHAVIOR_TYPE_TYPES_ICONS = {
 export const WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE = 'downtime';
 
 export const PBEHAVIOR_FIELDS = {
+  id: 'id',
   name: 'name',
   author: 'author',
   enabled: 'enabled',

@@ -72,7 +72,7 @@ export const ALARM_ADVANCED_SEARCH_ENTITY_FIELDS = [
 ];
 
 export const ALARM_ADVANCED_SEARCH_PBEHAVIOR_INFO_FIELDS = [
-  ALARM_PATTERN_FIELDS.pbehaviorInfoName,
+  ALARM_PATTERN_FIELDS.pbehaviorInfoId,
   ALARM_PATTERN_FIELDS.pbehaviorInfoReason,
   ALARM_PATTERN_FIELDS.pbehaviorInfoType,
   ALARM_PATTERN_FIELDS.pbehaviorInfoCanonicalType,
