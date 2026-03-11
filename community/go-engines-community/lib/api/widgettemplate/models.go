@@ -14,25 +14,27 @@ type ListRequest struct {
 }
 
 type EditRequest struct {
-	ID      string              `json:"-"`
-	Title   string              `json:"title" binding:"required,max=255"`
-	Type    string              `json:"type" binding:"required,oneof=alarm_columns entity_columns alarm_more_infos alarm_export_to_pdf alarm_quick_actions alarm_mass_quick_actions weather_item weather_modal weather_entity"`
-	Columns []view.WidgetColumn `json:"columns" binding:"dive"`
-	Content string              `json:"content"`
-	Actions []string            `json:"actions" binding:"omitempty,dive,notblank,max=255"`
-	Author  string              `json:"author" swaggerignore:"true"`
+	ID          string                  `json:"-"`
+	Title       string                  `json:"title" binding:"required,max=255"`
+	Type        string                  `json:"type" binding:"required,oneof=alarm_columns entity_columns alarm_more_infos alarm_export_to_pdf alarm_quick_actions alarm_mass_quick_actions alarm_sort_columns weather_item weather_modal weather_entity"`
+	Columns     []view.WidgetColumn     `json:"columns" binding:"dive"`
+	Content     string                  `json:"content"`
+	Actions     []string                `json:"actions" binding:"omitempty,dive,notblank,max=255"`
+	SortColumns []view.WidgetSortColumn `json:"sort_columns" binding:"dive"`
+	Author      string                  `json:"author" swaggerignore:"true"`
 }
 
 type Response struct {
-	ID      string              `bson:"_id" json:"_id"`
-	Title   string              `bson:"title" json:"title"`
-	Type    string              `bson:"type" json:"type"`
-	Columns []view.WidgetColumn `bson:"columns" json:"columns,omitempty"`
-	Content string              `bson:"content" json:"content,omitempty"`
-	Actions []string            `bson:"actions" json:"actions,omitempty"`
-	Author  *author.Author      `bson:"author" json:"author"`
-	Created *datetime.CpsTime   `bson:"created" json:"created" swaggertype:"integer"`
-	Updated *datetime.CpsTime   `bson:"updated" json:"updated" swaggertype:"integer"`
+	ID          string                  `bson:"_id" json:"_id"`
+	Title       string                  `bson:"title" json:"title"`
+	Type        string                  `bson:"type" json:"type"`
+	Columns     []view.WidgetColumn     `bson:"columns" json:"columns,omitempty"`
+	Content     string                  `bson:"content" json:"content,omitempty"`
+	Actions     []string                `bson:"actions" json:"actions,omitempty"`
+	SortColumns []view.WidgetSortColumn `bson:"sort_columns" json:"sort_columns,omitempty"`
+	Author      *author.Author          `bson:"author" json:"author"`
+	Created     *datetime.CpsTime       `bson:"created" json:"created" swaggertype:"integer"`
+	Updated     *datetime.CpsTime       `bson:"updated" json:"updated" swaggertype:"integer"`
 }
 
 type AggregationResult struct {
@@ -40,7 +42,7 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 

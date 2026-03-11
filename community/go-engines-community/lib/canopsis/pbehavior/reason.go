@@ -9,8 +9,8 @@ type Reason struct {
 	Name        string           `bson:"name" json:"name" binding:"required"`
 	Description string           `bson:"description" json:"description" binding:"required"`
 	Author      string           `bson:"author" json:"author"`
-	Created     datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated     datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created     datetime.CpsTime `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated     datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 
 	// Hidden is used in API to hide documents from the list response
 	Hidden bool `bson:"hidden" json:"hidden"`

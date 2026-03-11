@@ -32,8 +32,8 @@ var timeFormats = map[string]string{
 var tableNameRegex = regexp.MustCompile(tableNameRegexString)
 
 // ValidateCpsTimeType implements CustomTypeFunc and returns value to validate.
-func ValidateCpsTimeType(field reflect.Value) interface{} {
-	if field.Type() == reflect.TypeOf(datetime.CpsTime{}) {
+func ValidateCpsTimeType(field reflect.Value) any {
+	if field.Type() == reflect.TypeFor[datetime.CpsTime]() {
 		if t, ok := field.Interface().(datetime.CpsTime); ok {
 			val := t.Time
 			if val.IsZero() {

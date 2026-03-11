@@ -29,8 +29,8 @@ type Response struct {
 	Title  string `bson:"title" json:"title"`
 	Author string `bson:"author,omitempty" json:"author,omitempty"`
 
-	Created datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created datetime.CpsTime `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 
 	Storage  string `bson:"storage" json:"-"`
 	Etag     string `bson:"etag" json:"-"`
@@ -46,7 +46,7 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 

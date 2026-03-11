@@ -36,8 +36,8 @@ type Response struct {
 	Duration    datetime.DurationWithUnit `bson:"duration" json:"duration"`
 	Priority    int64                     `bson:"priority" json:"priority"`
 	Author      *author.Author            `bson:"author" json:"author"`
-	Created     datetime.CpsTime          `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated     datetime.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created     datetime.CpsTime          `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated     datetime.CpsTime          `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
@@ -48,7 +48,7 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 
