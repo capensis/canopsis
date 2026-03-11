@@ -259,6 +259,7 @@ export default {
   addMore: 'Add more',
   more: 'more',
   all: 'All',
+  other: 'Other',
   attribute: 'Attribute',
   timeTaken: 'Time taken',
   enginesMetrics: 'Engines` metrics',
