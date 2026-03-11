@@ -102,10 +102,10 @@ export function convertAlarmWidgetToQuery(widget) {
     liveReporting = {},
     itemsPerPage = PAGINATION_LIMIT,
     opened = ALARMS_OPENED_VALUES.opened,
-    sort,
     mainFilter,
     usedAlarmProperties,
     isCorrelationEnabled,
+    sort = [],
   } = widget.parameters;
 
   const query = {
@@ -140,9 +140,11 @@ export function convertAlarmWidgetToQuery(widget) {
     query.active_columns = activeColumns;
   }
 
-  if (sort?.column && sort?.order) {
-    query.sortBy = [sort.column];
-    query.sortDesc = [sort.order === SORT_ORDERS.desc];
+  if (isArray(sort) && sort.length > 0) {
+    const lowerCasedDesc = SORT_ORDERS.desc.toLowerCase();
+
+    query.sortBy = sort.map(column => column.sort_by).filter(Boolean);
+    query.sortDesc = sort.map(column => column.sort === lowerCasedDesc);
   }
 
   if (!isUndefined(isCorrelationEnabled)) {
@@ -197,7 +199,12 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
  * @returns {Object}
  */
 export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
-  const { sort = {}, widgetGroupColumns = [], charts = [] } = widget.parameters;
+  const {
+    widgetGroupColumns = [],
+    charts = [],
+    sort,
+  } = widget.parameters;
+
   const columns = widgetGroupColumns.length > 0
     ? widgetGroupColumns
     : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
@@ -225,8 +232,11 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
     },
   };
 
-  if (sort.column && sort.order && columns.some(({ value }) => value.endsWith(sort.column))) {
-    query.children.multiSortBy.push({ sortBy: sort.column, descending: sort.order === SORT_ORDERS.desc });
+  if (sort && isArray(sort) && sort.length > 0) {
+    query.children.multiSortBy = sort.map(sortColumn => ({
+      sortBy: sortColumn.sort_by,
+      descending: sortColumn.sort === SORT_ORDERS.desc.toLowerCase(),
+    }));
   }
 
   return query;

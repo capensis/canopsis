@@ -145,6 +145,7 @@ func RegisterRoutes(
 	eventGenerator libevent.Generator,
 	securityConfig libsecurity.Config,
 	exdataImportWorker externaldatatable.ImportWorker,
+	patternOptimizeWorker pattern.OptimizeWorker,
 	notifStore usernotification.Store,
 	externalDataContainer *externaldata.GetterContainer,
 	tplTestTypePermMapping map[int][]any,
@@ -363,6 +364,11 @@ func RegisterRoutes(
 				"/:id/assocticket",
 				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
 				alarmActionAPI.AssocTicket,
+			)
+			alarmRouter.PUT(
+				"/:id/ticketremove",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
+				alarmActionAPI.TicketRemove,
 			)
 			alarmRouter.PUT(
 				"/:id/comment",
@@ -1741,9 +1747,8 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer, errorResponder),
 			idleRuleAPI.DBExport)
 
-		patternAPI := pattern.NewApi(
-			pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger),
-			userInterfaceConfig, enforcer, errorResponder)
+		patternStore := pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger)
+		patternAPI := pattern.NewApi(patternStore, userInterfaceConfig, enforcer, patternOptimizeWorker, errorResponder, logger)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth(errorResponder))
@@ -1779,6 +1784,26 @@ func RegisterRoutes(
 			"/patterns-entities-count",
 			middleware.OnlyAuth(errorResponder),
 			patternAPI.CountEntities,
+		)
+		protected.POST(
+			"/patterns-entities-optimize",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.Optimize,
+		)
+		protected.GET(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.OptimizeStatus,
+		)
+		protected.PUT(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.OptimizeAccept,
+		)
+		protected.DELETE(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.OptimizeCancel,
 		)
 
 		linkRuleAPI := linkrule.NewApi(
@@ -2322,6 +2347,11 @@ func RegisterRoutes(
 					"/assocticket",
 					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
 					alarmActionAPI.BulkAssocTicket,
+				)
+				alarmRouter.PUT(
+					"/ticketremove",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
+					alarmActionAPI.BulkTicketRemove,
 				)
 				alarmRouter.PUT(
 					"/comment",

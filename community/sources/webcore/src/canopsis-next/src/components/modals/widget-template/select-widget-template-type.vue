@@ -35,7 +35,7 @@
 <script>
 import { computed } from 'vue';
 
-import { MODALS, WIDGET_TEMPLATES_TYPES, COLUMNS_WIDGET_TEMPLATES_TYPES } from '@/constants';
+import { MODALS, WIDGET_TEMPLATES_TYPES, WIDGET_TEMPLATE_TYPES_TO_ICONS } from '@/constants';
 
 import { useInnerModal, useModals } from '@/hooks/modals';
 import { useI18n } from '@/hooks/i18n';
@@ -65,7 +65,7 @@ export default {
 
     const availableTypes = computed(() => Object.values(WIDGET_TEMPLATES_TYPES).map(type => ({
       value: type,
-      icon: COLUMNS_WIDGET_TEMPLATES_TYPES.includes(type) ? 'view_week' : 'description',
+      icon: WIDGET_TEMPLATE_TYPES_TO_ICONS[type] ?? 'description',
       text: t(`widgetTemplate.types.${type}`),
     })));
 
