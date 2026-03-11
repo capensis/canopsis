@@ -80,7 +80,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.userStatistics]: 'perm_identity',
   [WIDGET_TYPES.alarmStatistics]: 'notification_important',
   [WIDGET_TYPES.availability]: 'published_with_changes',
-  [WIDGET_TYPES.externalDataTable]: '$vuetify.icons.database_outlined',
+  [WIDGET_TYPES.externalDataTable]: 'database',
 
   ...featuresService.get('constants.WIDGET_ICONS'),
 };
@@ -222,6 +222,7 @@ export const IMPORT_STATUSES = {
 
 export const WIDGET_TEMPLATES_TYPES = {
   alarmColumns: 'alarm_columns',
+  alarmSortColumns: 'alarm_sort_columns',
   entityColumns: 'entity_columns',
   alarmMoreInfos: 'alarm_more_infos',
   alarmExportToPdf: 'alarm_export_to_pdf',
@@ -236,6 +237,19 @@ export const COLUMNS_WIDGET_TEMPLATES_TYPES = [
   WIDGET_TEMPLATES_TYPES.alarmColumns,
   WIDGET_TEMPLATES_TYPES.entityColumns,
 ];
+
+export const WIDGET_TEMPLATE_TYPES_TO_ICONS = {
+  [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'view_week',
+  [WIDGET_TEMPLATES_TYPES.alarmSortColumns]: 'view_week',
+  [WIDGET_TEMPLATES_TYPES.entityColumns]: 'view_week',
+  [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'description',
+  [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'description',
+  [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'description',
+  [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'description',
+  [WIDGET_TEMPLATES_TYPES.weatherItem]: 'description',
+  [WIDGET_TEMPLATES_TYPES.weatherModal]: 'description',
+  [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'description',
+};
 
 export const QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES = [
   WIDGET_TEMPLATES_TYPES.alarmQuickActions,

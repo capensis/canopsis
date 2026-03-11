@@ -56,6 +56,9 @@ func (p *assocTicketProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			"v.tickets":          addTicketUpdateQuery(newStepQuery),
 			"v.last_update_date": event.Parameters.Timestamp,
 		}},
+		{"$unset": bson.A{
+			"v.failed_ticket",
+		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {

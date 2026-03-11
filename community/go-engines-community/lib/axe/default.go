@@ -530,6 +530,7 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypeAckremove, event.NewAckRemoveProcessor(dbClient, entityServiceCountersCalculator, eventsSender, metaAlarmPostProcessor, metricsSender, logger))
 	container.Set(types.EventTypeActivate, event.NewActivateProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeAssocTicket, event.NewAssocTicketProcessor(dbClient, metaAlarmPostProcessor, metricsSender, logger))
+	container.Set(types.EventTypeTicketRemove, event.NewTicketRemoveProcessor(dbClient, metaAlarmPostProcessor, metricsSender, logger))
 	container.Set(types.EventTypeCancel, event.NewCancelProcessor(dbClient, metaAlarmPostProcessor, logger))
 	container.Set(types.EventTypeChangestate, event.NewChangeStateProcessor(dbClient, userInterfaceConfigProvider, alarmConfigProvider, alarmStatusService, pbhTypeResolver,
 		autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmPostProcessor, metricsSender, remediationRpcClient, internalTagAlarmMatcher, json.NewEncoder(), eventGenerator, amqpPublisher, logger))

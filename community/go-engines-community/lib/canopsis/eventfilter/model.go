@@ -106,10 +106,10 @@ type RuleConfig struct {
 }
 
 type Action struct {
-	Type        string      `bson:"type" json:"type"`
-	Name        string      `bson:"name" json:"name"`
-	Description string      `bson:"description,omitempty" json:"description,omitempty"`
-	Value       interface{} `bson:"value" json:"value" binding:"info_value"`
+	Type        string `bson:"type" json:"type"`
+	Name        string `bson:"name" json:"name"`
+	Description string `bson:"description,omitempty" json:"description,omitempty"`
+	Value       any    `bson:"value" json:"value" binding:"info_value"`
 }
 
 type RegexMatch struct {
@@ -120,5 +120,5 @@ type RegexMatch struct {
 type Template struct {
 	Event        *types.Event
 	RegexMatch   RegexMatch
-	ExternalData map[string]interface{}
+	ExternalData map[string]any
 }
