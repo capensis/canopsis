@@ -326,7 +326,7 @@ export const advancedSearchToForm = ({ search = '', positions = [], ...patterns 
     if (key === ADVANCED_SEARCH_FIELDS.entity && !formItem.alias) {
       formItem.attribute = `${ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.entity}${formItem.attribute}`;
     } else if (key === ADVANCED_SEARCH_FIELDS.pbehavior) {
-      formItem.attribute = `${ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.pbehavior}${formItem.attribute}`;
+      formItem.attribute = `${ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX}${formItem.attribute}`;
     }
 
     acc.push(formItem);
@@ -409,7 +409,7 @@ export const formToAdvancedSearch = (form = [], alarmPattern = false) => {
         preparedItem.attribute = preparedItem.attribute.replace(/^entity\./, '');
       } else if (isPbehaviorPatternField(preparedItem.attribute, pbehaviorPrefix)) {
         key = ADVANCED_SEARCH_FIELDS.pbehavior;
-        preparedItem.attribute = preparedItem.attribute.replace(ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.pbehavior, '');
+        preparedItem.attribute = preparedItem.attribute.replace(pbehaviorPrefix, '');
       }
     }
 
