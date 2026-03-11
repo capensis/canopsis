@@ -115,6 +115,11 @@ export default {
     administrationGeneralLinks() {
       return [
         {
+          route: { name: ROUTES_NAMES.adminJobs },
+          icon: '$vuetify.icons.ticket_status_job',
+          permission: USER_PERMISSIONS.technical.ticketStatusJob,
+        },
+        {
           route: { name: ROUTES_NAMES.adminEventsRecords },
           icon: 'mark_unread_chat_alt',
           permission: USER_PERMISSIONS.technical.eventsRecord,

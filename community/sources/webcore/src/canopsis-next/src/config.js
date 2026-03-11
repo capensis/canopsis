@@ -431,6 +431,7 @@ export const API_ROUTES = {
   privateView: {
     groups: '/api/v4/cat/private-view-groups',
   },
+  ticketStatusJobs: '/api/v4/ticket-status-jobs',
   eventsRecord: {
     list: '/api/v4/cat/event-records',
     export: '/api/v4/cat/event-records/exports',

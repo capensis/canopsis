@@ -51,6 +51,7 @@ export const ROUTES_NAMES_TO_BROADCAST_MESSAGES = {
   [ROUTES_NAMES.adminStorageSettings]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminStateSettings]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminEventsRecords]: BROADCAST_MESSAGE_VIEWS.administration,
+  [ROUTES_NAMES.adminJobs]: BROADCAST_MESSAGE_VIEWS.administration,
 
   [ROUTES_NAMES.notifications]: BROADCAST_MESSAGE_VIEWS.notifications,
 

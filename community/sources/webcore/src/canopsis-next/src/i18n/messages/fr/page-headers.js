@@ -148,6 +148,10 @@ export default {
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'Jetons d\'authentification externes',
   },
+  [USER_PERMISSIONS.technical.ticketStatusJob]: {
+    title: 'Jobs',
+    message: 'Gérer les jobs pour les consignes, webhooks, statut des tickets et jetons d\'authentification.',
+  },
 
   /**
    * Grouped admin

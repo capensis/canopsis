@@ -147,6 +147,10 @@ export default {
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'External auth tokens',
   },
+  [USER_PERMISSIONS.technical.ticketStatusJob]: {
+    title: 'Jobs',
+    message: 'Manage jobs for instructions, webhooks, ticket status, and auth tokens.',
+  },
 
   /**
    * Grouped admin
