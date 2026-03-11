@@ -256,6 +256,7 @@ export default {
     [USER_PERMISSIONS.technical.viewImportExport]: 'Paramètres - import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Test de modèle',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'Jetons d\'authentification externes',
+    [USER_PERMISSIONS.technical.ticketStatusJob]: 'Jobs',
 
     /**
      * Technical Admin Access

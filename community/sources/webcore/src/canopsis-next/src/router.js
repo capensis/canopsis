@@ -38,6 +38,7 @@ const AdminStateSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/
 const AdminEventsRecords = () => import(/* webpackChunkName: "EventsRecords" */ '@/views/admin/events-records.vue');
 const AdminTemplateTesting = () => import(/* webpackChunkName: "TemplateTesting" */ '@/views/admin/template-testing.vue');
 const AdminExternalAuthTokens = () => import(/* webpackChunkName: "ExternalAuthTokens" */ '@/views/admin/external-auth-tokens.vue');
+const AdminJobs = () => import(/* webpackChunkName: "Jobs" */ '@/views/admin/jobs.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
@@ -298,6 +299,17 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USER_PERMISSIONS.technical.externalAuthTokens,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminJobs,
+    name: ROUTES_NAMES.adminJobs,
+    component: AdminJobs,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.ticketStatusJob,
       },
     },
   },
