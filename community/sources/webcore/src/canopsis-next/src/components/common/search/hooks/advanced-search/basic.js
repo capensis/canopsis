@@ -199,7 +199,6 @@ export const useAdvancedSearchGroupedAttributes = ({
   extraGroups = [],
 }) => {
   const { t } = useI18n();
-
   /**
    * Builds an attribute item from the map for the advanced search dropdown.
    *

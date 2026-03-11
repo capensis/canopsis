@@ -96,6 +96,7 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
     [ALARM_PATTERN_FIELDS.resource]: {
       ...getEntityOptions([BASIC_ENTITY_TYPES.resource]),
 
+      itemText: 'name',
       itemValue: 'name',
     },
     [ALARM_PATTERN_FIELDS.state]: {
@@ -146,13 +147,13 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
         PATTERN_OPERATORS.ruleIs,
       ],
       fetchValues: fetchMetaAlarmRulesListWithoutStore,
+      itemText: 'name',
+      itemValue: '_id',
     },
     [ALARM_PATTERN_FIELDS.changeState]: {
       operators: PATTERN_EXISTS_OPERATORS,
     },
-    [ALARM_PATTERN_FIELDS.totalStateChanges]: {
-      operators: PATTERN_NUMBER_OPERATORS,
-    },
+    [ALARM_PATTERN_FIELDS.totalStateChanges]: getNumberMinValueAttributes(1),
 
     /**
      * Messages
@@ -172,9 +173,7 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
     [ALARM_PATTERN_FIELDS.lastComment]: {
       operators: STRING_WITH_EXIST_AND_ONE_OF_OPERATORS,
     },
-    [ALARM_PATTERN_FIELDS.lastCommentInitiator]: {
-      operators: STRING_WITH_EXIST_AND_ONE_OF_OPERATORS,
-    },
+    [ALARM_PATTERN_FIELDS.lastCommentInitiator]: INITIATOR_OPTIONS,
 
     /**
      * Ticket
@@ -314,14 +313,8 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
     [ENTITY_PATTERN_FIELDS.component]: getEntityOptions([ENTITY_TYPES.component]),
     [ENTITY_PATTERN_FIELDS.connector]: getEntityOptions([ENTITY_TYPES.connector]),
     [ENTITY_PATTERN_FIELDS.resource]: getEntityOptions([ENTITY_TYPES.resource]),
-    [ENTITY_PATTERN_FIELDS.impactLevel]: {
-      operators: PATTERN_NUMBER_OPERATORS,
-      ...getNumberMinValueAttributes(1),
-    },
-    [ENTITY_PATTERN_FIELDS.impactState]: {
-      operators: PATTERN_NUMBER_OPERATORS,
-      ...getNumberMinValueAttributes(0),
-    },
+    [ENTITY_PATTERN_FIELDS.impactLevel]: getNumberMinValueAttributes(1),
+    [ENTITY_PATTERN_FIELDS.impactState]: getNumberMinValueAttributes(0),
     [ENTITY_PATTERN_FIELDS.importSource]: {
       operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
     },
@@ -356,14 +349,8 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
     /**
      * Events
      */
-    [ENTITY_PATTERN_FIELDS.koEvents]: {
-      operators: PATTERN_NUMBER_OPERATORS,
-      ...getNumberMinValueAttributes(0),
-    },
-    [ENTITY_PATTERN_FIELDS.okEvents]: {
-      operators: PATTERN_NUMBER_OPERATORS,
-      ...getNumberMinValueAttributes(0),
-    },
+    [ENTITY_PATTERN_FIELDS.koEvents]: getNumberMinValueAttributes(0),
+    [ENTITY_PATTERN_FIELDS.okEvents]: getNumberMinValueAttributes(0),
 
     /**
      * Dates
@@ -488,10 +475,7 @@ export const useAdvancedSearchPbehaviorAttributes = ({ prefix = '' } = {}) => {
     [PBEHAVIOR_FIELDS.lastAlarmDate]: {
       operators: PATTERN_DATE_OPERATORS,
     },
-    [PBEHAVIOR_FIELDS.alarmCount]: {
-      operators: PATTERN_NUMBER_OPERATORS,
-      ...getNumberMinValueAttributes(0),
-    },
+    [PBEHAVIOR_FIELDS.alarmCount]: getNumberMinValueAttributes(0),
   }));
 
   const attributesMapWithPrefix = computed(() => {
