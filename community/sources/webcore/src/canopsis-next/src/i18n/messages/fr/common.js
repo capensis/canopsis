@@ -76,6 +76,7 @@ export default {
   value: 'Valeur',
   limit: 'Limite',
   add: 'Ajouter',
+  addAtLeastOneItem: 'Ajouter au moins un élément.',
   create: 'Créer',
   delete: 'Supprimer',
   show: 'Afficher',
