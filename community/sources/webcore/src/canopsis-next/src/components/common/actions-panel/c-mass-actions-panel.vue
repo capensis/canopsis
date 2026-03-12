@@ -1,11 +1,18 @@
 <template>
-  <portal :to="$constants.PORTALS_NAMES.massActionsPanel">
+  <portal :to="target">
     <div :style="style" class="c-mass-actions-panel">
       <v-layout align-center justify-center>
         <v-card class="c-mass-actions-panel__card">
           <v-card-text class="pa-1">
-            <v-layout class="gap-3 pa-3" align-center>
+            <v-layout class="gap-4 pa-3" align-center>
               <span class="c-mass-actions-panel__message mr-1">{{ message }}</span>
+              <v-divider vertical />
+              <c-enabled-field
+                v-field="value"
+                :label="$t('common.massActionsPanel.keepSelectedAfterAction')"
+                class="ma-0"
+                hide-details
+              />
               <v-divider vertical />
               <slot name="actions" />
               <v-divider vertical />
@@ -24,12 +31,22 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
 
+import { PORTALS_NAMES } from '@/constants/common';
+
 export default {
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
+    value: {
+      type: Boolean,
+      default: false,
+    },
     selected: {
       type: Array,
       default: () => [],
@@ -53,6 +70,9 @@ export default {
   },
   setup(props, { emit }) {
     const { tc } = useI18n();
+    const modal = inject('$modal', null);
+
+    const target = computed(() => `${PORTALS_NAMES.massActionsPanel}${modal?.id ? `-${modal.id}` : ''}`);
 
     const message = computed(() => (
       tc('common.massActionsPanel.recordsSelected', props.selected.length, { count: props.selected.length })
@@ -72,11 +92,20 @@ export default {
      */
     const clearSelected = () => emit('clear:selected');
 
+    /**
+     * Emits 'update:keep-selected' to notify the parent to update the keep selected after action.
+     *
+     * @param {boolean} value
+     */
+    const updateKeepSelected = value => emit('update:keep-selected', value);
+
     return {
+      target,
       message,
       style,
 
       clearSelected,
+      updateKeepSelected,
     };
   },
 };
