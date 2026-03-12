@@ -1863,6 +1863,7 @@ definitions:
       search:
         type: string
       search_pattern:
+        example: '[[{"field":"name","cond":{"type":"eq","value":"cps_name"}}]]'
         type: string
       separator:
         type: string
