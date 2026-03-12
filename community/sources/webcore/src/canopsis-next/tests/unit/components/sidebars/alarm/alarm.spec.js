@@ -138,6 +138,10 @@ const selectFieldActionsAllowWithOkState = wrapper => selectSwitcherFieldByTitle
   wrapper,
   'Actions allowed when state OK',
 );
+const selectFieldKeepSelectedAfterAction = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Keep selected after action',
+);
 const selectFieldCorrelationEnabled = wrapper => selectSwitcherFieldByTitle(
   wrapper,
   'Correlation',
@@ -1355,6 +1359,32 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'isActionsAllowWithOkState', isActionsAllowWithOkState),
+      },
+    });
+  });
+
+  test('Keep selected after action changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const keepSelectedAfterAction = Faker.datatype.boolean();
+
+    selectFieldKeepSelectedAfterAction(wrapper).triggerCustomEvent('input', keepSelectedAfterAction);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'keepSelectedAfterAction', keepSelectedAfterAction),
       },
     });
   });

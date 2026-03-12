@@ -171,6 +171,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-switcher-stub
       title="Actions allowed when state OK"
     />
+    <field-switcher-stub
+      title="Keep selected after action"
+    />
     <field-text-editor-with-template-stub
       addable="true"
       defaultvalue="<div style=\\"width: 1000px; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; overflow-wrap: break-word;\\">
@@ -832,6 +835,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <field-switcher-stub
       title="Actions allowed when state OK"
     />
+    <field-switcher-stub
+      title="Keep selected after action"
+    />
     <field-text-editor-with-template-stub
       addable="true"
       defaultvalue="<div style=\\"width: 1000px; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; overflow-wrap: break-word;\\">
@@ -1488,6 +1494,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     />
     <field-switcher-stub
       title="Actions allowed when state OK"
+    />
+    <field-switcher-stub
+      title="Keep selected after action"
     />
     <field-text-editor-with-template-stub
       addable="true"
@@ -2146,6 +2155,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     />
     <field-switcher-stub
       title="Actions allowed when state OK"
+    />
+    <field-switcher-stub
+      title="Keep selected after action"
     />
     <field-text-editor-with-template-stub
       addable="true"

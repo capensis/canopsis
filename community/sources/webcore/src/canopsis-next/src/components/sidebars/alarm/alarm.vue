@@ -166,6 +166,10 @@
         v-model="form.parameters.isActionsAllowWithOkState"
         :title="$t('settings.isActionsAllowWithOkState')"
       />
+      <field-switcher
+        v-model="form.parameters.keepSelectedAfterAction"
+        :title="$t('common.massActionsPanel.keepSelectedAfterAction')"
+      />
       <field-text-editor-with-template
         :value="form.parameters.exportPdfTemplate"
         :template="form.parameters.exportPdfTemplateTemplate"

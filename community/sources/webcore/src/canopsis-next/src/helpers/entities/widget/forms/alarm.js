@@ -185,6 +185,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isHtmlEnabledOnTimeLine
  * @property {boolean} pausePeriodicRefreshOnExpandPanel
  * @property {boolean} isActionsAllowWithOkState
+ * @property {boolean} keepSelectedAfterAction
  * @property {boolean} isVirtualScrollEnabled
  * @property {boolean} isCorrelationEnabled
  * @property {string} fastPbehaviorNamePrefix
@@ -371,6 +372,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
   pausePeriodicRefreshOnExpandPanel: parameters.pausePeriodicRefreshOnExpandPanel ?? false,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
+  keepSelectedAfterAction: !!parameters.keepSelectedAfterAction,
   isVirtualScrollEnabled: !!parameters.isVirtualScrollEnabled,
   isCorrelationEnabled: !!parameters.isCorrelationEnabled,
   fastPbehaviorNamePrefix: parameters.fastPbehaviorNamePrefix ?? '',

@@ -643,6 +643,7 @@ export default {
 
   massActionsPanel: {
     recordsSelected: '{count} record selected|{count} records selected',
+    keepSelectedAfterAction: 'Keep selected after action',
     clearSelection: 'Clear selection',
   },
 };

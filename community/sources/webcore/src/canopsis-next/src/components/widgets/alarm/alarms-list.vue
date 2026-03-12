@@ -135,7 +135,6 @@
       :columns-settings="columnsSettings"
       :parent-alarm="parentAlarm"
       class="mt-2"
-      header-mass-actions
       expandable
       densable
       @select:tag="selectTag"
