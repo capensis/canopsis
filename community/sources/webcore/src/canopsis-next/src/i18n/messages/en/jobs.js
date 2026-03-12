@@ -13,6 +13,7 @@ export default {
   failReason: 'Fail reason',
   expirationDate: 'Expiration date',
   searchByRuleName: 'Search by rule name',
+  webhookFailedPrefix: 'Webhook is failed',
   status: {
     [JOB_STATE.running]: 'Running',
     [JOB_STATE.paused]: 'Paused',

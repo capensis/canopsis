@@ -5,7 +5,7 @@
         {{ label }}
       </h4>
     </v-flex>
-    <v-flex>
+    <v-flex class="text-break">
       <slot>{{ value }}</slot>
     </v-flex>
   </v-layout>
