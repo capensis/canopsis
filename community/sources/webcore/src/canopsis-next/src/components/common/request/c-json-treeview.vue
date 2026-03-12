@@ -28,12 +28,16 @@ export default {
   props: {
     json: {
       type: String,
-      required: true,
+      required: false,
+    },
+    jsonObject: {
+      type: Object,
+      required: false,
     },
   },
   computed: {
     parsedJson() {
-      return JSON.parse(this.json);
+      return this.json ? JSON.parse(this.json) : this.jsonObject;
     },
 
     isArray() {

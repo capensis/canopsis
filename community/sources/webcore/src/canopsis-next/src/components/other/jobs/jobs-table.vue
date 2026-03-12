@@ -5,13 +5,14 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
+    expand
     search
     advanced-pagination
-    @update:options="handleUpdateOptions"
+    @update:options="updateOptions"
   >
     <template #toolbar>
       <v-flex xs4>
-        <v-select
+        <c-select-field
           :value="options.status"
           :label="$t('jobs.filterByStatus')"
           :items="statusItems"
@@ -19,7 +20,7 @@
           item-text="text"
           clearable
           hide-details
-          @input="onStatusChange"
+          @input="updateStatus"
         />
       </v-flex>
     </template>
@@ -79,6 +80,9 @@
         -
       </template>
     </template>
+    <template #expand="{ item }">
+      <jobs-details-expand-panel :item="item" />
+    </template>
     <template #actions="{ item }">
       <v-layout>
         <c-action-btn
@@ -127,7 +131,10 @@ import { JOB_STATE, JOB_RUN_STATUS, JOB_RULE_TYPE } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
+import JobsDetailsExpandPanel from './partials/jobs-details-expand-panel.vue';
+
 export default {
+  components: { JobsDetailsExpandPanel },
   props: {
     columns: {
       type: Array,
@@ -246,9 +253,9 @@ export default {
     const canResume = item => item.status === JOB_STATE.paused;
     const canPause = item => item.status === JOB_STATE.running;
 
-    const handleUpdateOptions = newOptions => emit('update:options', newOptions);
+    const updateOptions = newOptions => emit('update:options', newOptions);
 
-    const onStatusChange = status => handleUpdateOptions({
+    const updateStatus = status => updateOptions({
       ...props.options,
       status: status ?? undefined,
       page: 1,
@@ -273,8 +280,8 @@ export default {
       canStop,
       canResume,
       canPause,
-      handleUpdateOptions,
-      onStatusChange,
+      updateOptions,
+      updateStatus,
       emitAction,
     };
   },

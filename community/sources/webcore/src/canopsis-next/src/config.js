@@ -418,6 +418,7 @@ export const API_ROUTES = {
   snmpRule: '/api/v4/cat/snmprules',
   snmpMib: '/api/v4/cat/snmpmibs',
   webhookTokenRule: '/api/v4/cat/webhook-token-rules',
+  ticketStatusJobs: '/api/v4/cat/ticket-status-jobs',
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
@@ -431,7 +432,6 @@ export const API_ROUTES = {
   privateView: {
     groups: '/api/v4/cat/private-view-groups',
   },
-  ticketStatusJobs: '/api/v4/ticket-status-jobs',
   eventsRecord: {
     list: '/api/v4/cat/event-records',
     export: '/api/v4/cat/event-records/exports',
