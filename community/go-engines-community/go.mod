@@ -51,7 +51,7 @@ require (
 	github.com/russellhaering/goxmldsig v1.5.0
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/teambition/rrule-go v1.8.2
-	github.com/valyala/fastjson v1.6.9
+	github.com/valyala/fastjson v1.6.10
 	go.mongodb.org/mongo-driver/v2 v2.5.0
 	go.uber.org/mock v0.6.0
 	go.yaml.in/yaml/v3 v3.0.4
