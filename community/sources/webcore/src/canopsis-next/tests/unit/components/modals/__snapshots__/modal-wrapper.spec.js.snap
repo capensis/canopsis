@@ -23,6 +23,9 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with custom props and slots 1`]
         />
       </div>
     </div>
+    <modal-mass-actions-panel-stub
+      id="modal-wrapper-test"
+    />
   </div>
   <div
     class="v-card__text"
@@ -71,6 +74,9 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with minimized modal 1`] = `
         <modal-title-buttons-stub />
       </div>
     </div>
+    <modal-mass-actions-panel-stub
+      id="modal-wrapper-test"
+    />
   </div>
   <!---->
 </div>

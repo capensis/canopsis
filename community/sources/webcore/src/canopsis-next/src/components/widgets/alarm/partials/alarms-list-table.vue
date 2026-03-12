@@ -32,10 +32,11 @@
                 class="px-1"
               >
                 <c-mass-actions-panel
-                  v-if="headerMassActions"
+                  v-model="keepSelectedAfterAction"
                   v-bind="widgetCurrentGridParameters"
                   :selected="unresolvedSelected"
-                  @clear:selected="clearSelected"
+                  :keep-selected="keepSelectedAfterAction"
+                  @clear:selected="clearSelected(true)"
                 >
                   <template #actions>
                     <mass-actions-panel
@@ -47,14 +48,6 @@
                     />
                   </template>
                 </c-mass-actions-panel>
-                <mass-actions-panel
-                  v-else
-                  :items="unresolvedSelected"
-                  :widget="widget"
-                  :refresh-alarms-list="refreshAlarmsList"
-                  small
-                  @clear:items="clearSelected"
-                />
               </v-flex>
             </v-fade-transition>
           </v-layout>
@@ -366,16 +359,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    headerMassActions: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
       bootedRows: {},
       expanded: [],
       visibleMassActionsPanel: false,
+      keepSelectedAfterAction: this.widget.parameters.keepSelectedAfterAction ?? false,
     };
   },
   computed: {
@@ -648,6 +638,12 @@ export default {
   },
 
   methods: {
+    clearSelected(force = false) {
+      if (force || !this.keepSelectedAfterAction) {
+        this.selected = [];
+      }
+    },
+
     setBootedRows(items, itemsPerRender = 10) {
       if (!this.$tbodyEl || !items.length) {
         return;
@@ -762,6 +758,10 @@ export default {
 
     updatePaginationOptions(query) {
       this.$emit('update:pagination-options', query);
+    },
+
+    updateKeepSelectedAfterAction(value) {
+      this.keepSelectedAfterAction = value;
     },
 
     openRootCauseDiagram(entity) {

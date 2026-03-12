@@ -20,6 +20,7 @@ import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-tab
 
 const stubs = {
   'mass-actions-panel': true,
+  'c-mass-actions-panel': true,
   'c-empty-data-table-columns': true,
   'alarm-header-cell': true,
   'alarms-list-row': true,
@@ -34,6 +35,7 @@ const selectAlarmsListRow = wrapper => wrapper.findAll('alarms-list-row-stub');
 const selectTableHead = wrapper => wrapper.find('thead');
 const selectTableBody = wrapper => wrapper.find('tbody');
 const selectTablePagination = wrapper => wrapper.find('c-table-pagination-stub');
+const selectMassActionsPanel = wrapper => wrapper.find('c-mass-actions-panel-stub');
 
 describe('alarms-list-table', () => {
   const $modals = mockModals();
@@ -647,6 +649,149 @@ describe('alarms-list-table', () => {
     const table = selectTable(wrapper);
 
     expect(table.vm.loading).toBe(true);
+  });
+
+  test('clearSelected with force=true clears selection regardless of keepSelectedAfterAction', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        alarms,
+        columns,
+        widget: defaultWidget,
+        totalItems,
+        selectable: true,
+      },
+    });
+
+    selectTable(wrapper).triggerCustomEvent('input', alarms);
+    await flushPromises();
+
+    wrapper.vm.keepSelectedAfterAction = true;
+    wrapper.vm.clearSelected(true);
+
+    expect(wrapper.vm.selected).toEqual([]);
+  });
+
+  test('clearSelected with force=false clears selection when keepSelectedAfterAction is false', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        alarms,
+        columns,
+        widget: defaultWidget,
+        totalItems,
+        selectable: true,
+      },
+    });
+
+    selectTable(wrapper).triggerCustomEvent('input', alarms);
+    await flushPromises();
+
+    wrapper.vm.keepSelectedAfterAction = false;
+    wrapper.vm.clearSelected(false);
+
+    expect(wrapper.vm.selected).toEqual([]);
+  });
+
+  test('clearSelected with force=false does not clear selection when keepSelectedAfterAction is true', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        alarms,
+        columns,
+        widget: defaultWidget,
+        totalItems,
+        selectable: true,
+      },
+    });
+
+    selectTable(wrapper).triggerCustomEvent('input', alarms);
+    await flushPromises();
+
+    wrapper.vm.keepSelectedAfterAction = true;
+    wrapper.vm.clearSelected(false);
+
+    expect(wrapper.vm.selected).toEqual(alarms);
+  });
+
+  test('keepSelectedAfterAction initialized from widget.parameters.keepSelectedAfterAction', () => {
+    const wrapperWithKeepSelected = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        alarms: [],
+        columns,
+        widget: {
+          ...defaultWidget,
+          parameters: {
+            ...defaultWidget.parameters,
+            keepSelectedAfterAction: true,
+          },
+        },
+      },
+    });
+
+    expect(wrapperWithKeepSelected.vm.keepSelectedAfterAction).toBe(true);
+
+    const wrapperWithoutKeepSelected = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        alarms: [],
+        columns,
+        widget: defaultWidget,
+      },
+    });
+
+    expect(wrapperWithoutKeepSelected.vm.keepSelectedAfterAction).toBe(false);
+  });
+
+  test('updateKeepSelectedAfterAction updates keepSelectedAfterAction value', () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        alarms: [],
+        columns,
+        widget: defaultWidget,
+      },
+    });
+
+    expect(wrapper.vm.keepSelectedAfterAction).toBe(false);
+
+    wrapper.vm.updateKeepSelectedAfterAction(true);
+
+    expect(wrapper.vm.keepSelectedAfterAction).toBe(true);
+
+    wrapper.vm.updateKeepSelectedAfterAction(false);
+
+    expect(wrapper.vm.keepSelectedAfterAction).toBe(false);
+  });
+
+  test('c-mass-actions-panel clear:selected clears selection', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        alarms,
+        columns,
+        widget: defaultWidget,
+        totalItems,
+        selectable: true,
+      },
+    });
+
+    selectTable(wrapper).triggerCustomEvent('input', alarms);
+    await flushPromises();
+
+    const massActionsPanel = selectMassActionsPanel(wrapper);
+
+    massActionsPanel.triggerCustomEvent('clear:selected');
+
+    expect(wrapper.vm.selected).toEqual([]);
   });
 
   test('Renders `alarms-list-table` with default and required props', () => {
