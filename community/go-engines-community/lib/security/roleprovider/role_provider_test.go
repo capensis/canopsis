@@ -25,7 +25,7 @@ func TestRoleProvider_GetValidRoles(t *testing.T) {
 	}
 
 	dbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	dbCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, rawPipeline interface{}, _ ...*options.AggregateOptions) (mongo.Cursor, error) {
+	dbCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, rawPipeline any, _ ...*options.AggregateOptions) (mongo.Cursor, error) {
 		pipeline, ok := rawPipeline.([]bson.M)
 		if !ok || len(pipeline) == 0 {
 			t.Fatal("invalid Aggregate pipeline")
@@ -64,7 +64,7 @@ func TestRoleProvider_GetValidRoles(t *testing.T) {
 
 		return cursor, nil
 	}).AnyTimes()
-	dbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, rawFilter interface{}, _ ...*options.FindOneOptionsBuilder) mongo.SingleResultHelper {
+	dbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, rawFilter any, _ ...*options.FindOneOptionsBuilder) mongo.SingleResultHelper {
 		filter, ok := rawFilter.(bson.M)
 		if !ok || len(filter) == 0 {
 			t.Fatal("invalid FindOne filter")

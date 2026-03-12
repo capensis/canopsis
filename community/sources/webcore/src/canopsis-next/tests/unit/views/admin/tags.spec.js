@@ -7,7 +7,7 @@ import { mockModals } from '@unit/utils/mock-hooks';
 
 import { CRUD_ACTIONS, MODALS, TAG_TYPES, USER_PERMISSIONS } from '@/constants';
 
-import Tags from '@/views/admin/tags.vue';
+import Tags from '@/views/admin/custom-objects/tags.vue';
 
 const stubs = {
   'c-page': true,

@@ -16,4 +16,7 @@ export default {
       },
     },
   },
+  topbar: {
+    customObjects: 'Objets personnalisés',
+  },
 };

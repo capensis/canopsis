@@ -1,5 +1,6 @@
 <template>
   <v-expansion-panels
+    v-model="localExpanded"
     :style="panelStyle"
     class="c-collapse-panel elevation-2"
     accordion
@@ -35,9 +36,10 @@
 </template>
 
 <script>
+import { ref, computed, watch } from 'vue';
 import { Validator } from 'vee-validate';
 
-import { validationChildrenMixin } from '@/mixins/form';
+import { useValidationChildren } from '@/hooks/validator/validation-children';
 
 export default {
   inject: {
@@ -45,7 +47,6 @@ export default {
       default: new Validator(),
     },
   },
-  mixins: [validationChildrenMixin],
   props: {
     title: {
       type: String,
@@ -67,23 +68,30 @@ export default {
       type: Boolean,
       default: false,
     },
+    expanded: {
+      type: Boolean,
+      default: false,
+    },
   },
-  computed: {
-    panelStyle() {
-      return { outlineColor: this.outlineColor };
-    },
+  setup(props) {
+    const localExpanded = ref(props.expanded ? 0 : null);
 
-    headerColor() {
-      return this.hasError ? 'error' : this.color;
-    },
+    const { hasChildrenError } = useValidationChildren();
 
-    panelContentStyle() {
-      return { backgroundColor: this.color };
-    },
+    const panelStyle = computed(() => ({ outlineColor: props.outlineColor }));
+    const panelContentStyle = computed(() => ({ backgroundColor: props.color }));
+    const hasError = computed(() => props.error || hasChildrenError.value);
+    const headerColor = computed(() => (hasError.value ? 'error' : props.color));
 
-    hasError() {
-      return this.error || this.hasChildrenError;
-    },
+    watch(() => props.expanded, expanded => localExpanded.value = expanded ? 0 : null);
+
+    return {
+      localExpanded,
+      panelStyle,
+      headerColor,
+      panelContentStyle,
+      hasError,
+    };
   },
 };
 </script>

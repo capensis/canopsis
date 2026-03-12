@@ -9,7 +9,7 @@ import (
 
 var ErrInvalidInfoType = errors.New("info value should be int, string, bool or array of strings")
 
-func IsInfoValueValid(value interface{}) bool {
+func IsInfoValueValid(value any) bool {
 	switch val := value.(type) {
 	case int, int32, int64, string, bool, []string:
 	// must support this special case for floats, because api saves json numbers as double in mongo for interface{} fields
@@ -25,7 +25,7 @@ func IsInfoValueValid(value interface{}) bool {
 				return false
 			}
 		}
-	case []interface{}:
+	case []any:
 		for _, v := range val {
 			_, ok := v.(string)
 			if !ok {
