@@ -42,6 +42,7 @@ theme:
     - search.highlight
     - toc.follow
     - toc.integrate
+    - content.tabs.link
     # still a bit buggy (e.g. Mermaid loading)
     #- navigation.instant
     - navigation.top
