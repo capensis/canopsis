@@ -42,10 +42,10 @@ export const EXPLOITATION_PAGES_RULES = {
   dynamicInfo: { edition: CANOPSIS_EDITION.pro },
   metaAlarmRule: { edition: CANOPSIS_EDITION.pro },
   declareTicketRule: { edition: CANOPSIS_EDITION.pro },
+  remediation: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const ADMIN_PAGES_RULES = {
-  remediation: { edition: CANOPSIS_EDITION.pro },
   kpi: { edition: CANOPSIS_EDITION.pro },
   tag: { edition: CANOPSIS_EDITION.pro },
   map: { edition: CANOPSIS_EDITION.pro },
@@ -158,6 +158,9 @@ export const USER_PERMISSIONS_GROUPS = {
   technicalAdminCommunication: 'technical_admin_communication',
   technicalAdminGeneral: 'technical_admin_general',
   technicalAdminAccess: 'technical_admin_access',
+  technicalAdminMaintenance: 'technical_admin_maintenance',
+  technicalAdminCustomObjects: 'technical_admin_customobjects',
+  technicalAdminSettings: 'technical_admin_settings',
 
   technicalExploitation: 'technical_exploitation',
   technicalNotification: 'technical_notification',
@@ -184,12 +187,6 @@ export const USER_PERMISSIONS = {
     planningType: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
     planningReason: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningReason`,
     planningExceptions: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningExceptions`,
-    remediationInstruction: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstruction`,
-    remediationInstructionApprove: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstructionApprove`,
-    remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
-    remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
-    remediationStatistic: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationStatistic`,
-    remediationinstructionStats: `${USER_PERMISSIONS_PREFIXES.technical.admin}_instructionStats`, // TODO: rename it to admin
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     techmetrics: `${USER_PERMISSIONS_PREFIXES.technical.admin}_techmetrics`,
     healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
@@ -209,6 +206,8 @@ export const USER_PERMISSIONS = {
     externalAuthTokens: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalAuthTokens`,
     viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
     templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateTesting`,
+    externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalData`,
+    entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.technical.admin}_entityInfoProperty`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -221,8 +220,12 @@ export const USER_PERMISSIONS = {
       resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
       declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
       linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
-      externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_externalData`,
-      entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_entityInfoProperty`,
+      remediationInstruction: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_remediationInstruction`,
+      remediationInstructionApprove: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_remediationInstructionApprove`,
+      remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_remediationJob`,
+      remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_remediationConfiguration`,
+      remediationStatistic: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_remediationStatistic`,
+      remediationinstructionStats: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_instructionStats`,
     },
     notification: {
       common: `${USER_PERMISSIONS_PREFIXES.technical.notification}_common`,
@@ -520,10 +523,10 @@ export const GROUPED_USER_PERMISSIONS = {
     USER_PERMISSIONS.technical.planningExceptions,
   ],
   remediation: [
-    USER_PERMISSIONS.technical.remediationInstruction,
-    USER_PERMISSIONS.technical.remediationJob,
-    USER_PERMISSIONS.technical.remediationConfiguration,
-    USER_PERMISSIONS.technical.remediationStatistic,
+    USER_PERMISSIONS.technical.exploitation.remediationInstruction,
+    USER_PERMISSIONS.technical.exploitation.remediationJob,
+    USER_PERMISSIONS.technical.exploitation.remediationConfiguration,
+    USER_PERMISSIONS.technical.exploitation.remediationStatistic,
   ],
 };
 
@@ -539,6 +542,7 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.ackRemove]: USER_PERMISSIONS.business.alarmsList.actions.ackRemove,
     [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd,
     [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd,
+    [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove]: USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd,
     [ALARM_LIST_ACTIONS_TYPES.snooze]: USER_PERMISSIONS.business.alarmsList.actions.snooze,
     [ALARM_LIST_ACTIONS_TYPES.declareTicket]: USER_PERMISSIONS.business.alarmsList.actions.declareTicket,
     [ALARM_LIST_ACTIONS_TYPES.associateTicket]: USER_PERMISSIONS.business.alarmsList.actions.associateTicket,
@@ -616,13 +620,9 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USER_PERMISSIONS.technical.eventsRecord]: ADMIN_PAGES_RULES.eventsRecord,
 
   /**
-   * Grouped
+   * Exploitation pages (including grouped remediation)
    */
-  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: ADMIN_PAGES_RULES.remediation,
-
-  /**
-   * Exploitation pages
-   */
+  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: EXPLOITATION_PAGES_RULES.remediation,
   [USER_PERMISSIONS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
   [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
@@ -646,15 +646,15 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
  * ],
  */
 export const CONDITIONAL_PERMISSIONS_MAP = {
-  [USER_PERMISSIONS.technical.remediationInstructionApprove]: [
+  [USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove]: [
     {
-      dependentPermission: USER_PERMISSIONS.technical.remediationInstruction,
+      dependentPermission: USER_PERMISSIONS.technical.exploitation.remediationInstruction,
       tooltipKey: 'permission.conditionalTooltips.approveInstructions',
     },
   ],
   [USER_PERMISSIONS.business.alarmsList.actions.executeInstruction]: [
     {
-      dependentPermission: USER_PERMISSIONS.technical.remediationinstructionStats,
+      dependentPermission: USER_PERMISSIONS.technical.exploitation.remediationinstructionStats,
       tooltipKey: 'permission.conditionalTooltips.executeManualInstructions',
     },
   ],
@@ -698,6 +698,8 @@ export const DOCUMENTATION_LINKS = {
   [USER_PERMISSIONS.technical.exploitation.linkRule]: 'latest/guide-utilisation/menu-exploitation/generateur-liens/',
   [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: 'latest/guide-utilisation/menu-exploitation/regles-declaration-tickets/',
 
+  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: 'latest/guide-utilisation/remediation/',
+
   /**
    * Admin
    */
@@ -718,8 +720,7 @@ export const DOCUMENTATION_LINKS = {
   [USER_PERMISSIONS.technical.eventsRecord]: 'latest/guide-utilisation/menu-administration/enregistrements-d-evenements/',
 
   /**
-   * Grouped
+   * Grouped admin
    */
   [GROUPED_USER_PERMISSIONS_KEYS.planning]: 'latest/guide-utilisation/menu-administration/planification/',
-  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: 'latest/guide-utilisation/remediation/',
 };

@@ -197,6 +197,10 @@ export const EntitiesRootCauseDiagram = () => ({
   component: import(/* webpackChunkName: "Context" */ './entity/entities-root-cause-diagram.vue'),
   loading: LoaderOverlay,
 });
+export const EntityUpstream = () => ({
+  component: import(/* webpackChunkName: "Context" */ './entity/entity-upstream.vue'),
+  loading: LoaderOverlay,
+});
 export const SelectView = () => ({
   component: import(/* webpackChunkName: "View" */ './view/select-view.vue'),
   loading: LoaderOverlay,
@@ -247,6 +251,10 @@ export const CreateEventFilter = () => ({
 });
 export const CreatePattern = () => ({
   component: import(/* webpackChunkName: "Pattern" */ './pattern/create-pattern.vue'),
+  loading: LoaderOverlay,
+});
+export const EntitiesComparison = () => ({
+  component: import(/* webpackChunkName: "Pattern" */ './entity/entities-comparison.vue'),
   loading: LoaderOverlay,
 });
 export const CreateSnmpRule = () => ({

@@ -263,3 +263,10 @@ export const PATTERNS_FIELDS = {
   totalEntity: 'total_entity_pattern',
   serviceWeather: 'weather_service_pattern',
 };
+
+export const PATTERN_OPTIMIZATION_STATUSES = {
+  created: 0,
+  running: 1,
+  success: 2,
+  failed: 3,
+};

@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
@@ -100,8 +101,6 @@ func TestService_Process(t *testing.T) {
 				}
 			}()
 
-			time.Sleep(time.Millisecond * 150)
-
 			select {
 			case scenarioExec := <-scenarioExecChan:
 				if dataset.event.Alarm.ID != scenarioExec.Alarm.ID {
@@ -113,8 +112,9 @@ func TestService_Process(t *testing.T) {
 				if !reflect.DeepEqual(dataset.triggers, scenarioExec.Triggers) {
 					t.Errorf("ScenarioExec message should have an triggers %+v, got %+v", dataset.triggers, scenarioExec.Triggers)
 				}
-			default:
-				t.Error("ScenarioExec message is expected")
+			case <-time.After(150 * time.Millisecond):
+				t.Error("ScenarioExec message is expected but got timeout")
+				return
 			}
 		})
 	}
@@ -200,7 +200,16 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 			storage := mock_action.NewMockScenarioExecutionStorage(ctrl)
 			activationService := mock_alarm.NewMockActivationService(ctrl)
 			mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
-			mockTechMetricsSender.EXPECT().SendActionEvent(gomock.Any()).Times(len(dataset.scenarioInfos))
+
+			metricsSent := make(chan struct{})
+			i := 0
+			mockTechMetricsSender.EXPECT().SendActionEvent(gomock.Any()).Do(func(event techmetrics.ActionEventMetric) {
+				i++
+				if i == len(dataset.scenarioInfos) {
+					close(metricsSent)
+				}
+
+			}).Times(len(dataset.scenarioInfos))
 			actionService := action.NewService(alarmAdapter, scenarioExecChan, delayedScenarioManager,
 				storage, encoderMock, decoderMock, amqpChannelMock, canopsis.DefaultExchangeName,
 				canopsis.FIFOAckQueueName, activationService, mockTechMetricsSender, logger)
@@ -265,8 +274,15 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 					}
 				}
 			}()
-
-			time.Sleep(time.Millisecond * 150)
+			select {
+			case <-ctx.Done():
+				if err := ctx.Err(); err != nil && !errors.Is(err, context.Canceled) {
+					t.Errorf("expected context to be canceled but got error %v", err)
+					return
+				}
+			case <-time.After(150 * time.Millisecond):
+			case <-metricsSent:
+			}
 		})
 	}
 }
@@ -477,15 +493,12 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 
 			var wg sync.WaitGroup
 			if dataset.expectExecute {
-				wg.Add(1)
-
-				go func() {
-					defer wg.Done()
+				wg.Go(func() {
 					scenarioExec := <-scenarioExecChan
 					if scenarioExec.AbandonedExecutionCacheKey != dataset.executionKey {
 						t.Errorf("Scenario exec task should be marked as 'abandoned' but got %+v", scenarioExec)
 					}
-				}()
+				})
 			}
 
 			err := actionService.ProcessAbandonedExecutions(t.Context())

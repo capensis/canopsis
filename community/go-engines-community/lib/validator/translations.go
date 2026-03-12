@@ -175,6 +175,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 				types.LocaleFr: "{0} doit être un modèle d'entité valide",
 			},
 		},
+		"negative_entity_pattern": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a valid negative entity pattern",
+				types.LocaleFr: "{0} doit être un modèle d'entité négatif valide",
+			},
+		},
 		"pbehavior_pattern": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be a valid pbehavior pattern",

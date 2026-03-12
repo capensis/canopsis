@@ -157,7 +157,7 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 
@@ -170,7 +170,7 @@ type AggregationEntitiesResult struct {
 	TotalCount int64           `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationEntitiesResult) GetData() interface{} {
+func (r *AggregationEntitiesResult) GetData() any {
 	return r.Data
 }
 

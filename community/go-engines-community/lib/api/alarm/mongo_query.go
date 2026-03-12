@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -234,7 +235,7 @@ func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(ctx context.Context, r
 	addedLookups := make(map[string]bool)
 	addedComputedFields := make(map[string]bool)
 
-	pipeline := make([]bson.M, 0)
+	pipeline := make([]bson.M, 0, len(q.alarmMatch)+len(q.additionalMatch))
 	q.addFieldsToPipeline(q.computedFieldsForAlarmMatch, addedComputedFields, &pipeline)
 	pipeline = append(pipeline, q.alarmMatch...)
 
@@ -1144,11 +1145,8 @@ func (q *MongoQueryBuilder) handleSort(r SortRequest) error {
 
 func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {
 	for field := range q.computedFields {
-		for _, sortField := range sortFields {
-			if sortField == field {
-				q.computedFieldsForSort[field] = true
-				break
-			}
+		if slices.Contains(sortFields, field) {
+			q.computedFieldsForSort[field] = true
 		}
 	}
 

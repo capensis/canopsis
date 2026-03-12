@@ -1,6 +1,6 @@
 package exportconfiguration
 
-type ExportDocuments map[int]map[string]interface{}
+type ExportDocuments map[int]map[string]any
 
 type Request struct {
 	// Possible export values.

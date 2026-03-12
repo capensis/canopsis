@@ -3,6 +3,7 @@ package alarmtag
 import (
 	"context"
 	"errors"
+	"slices"
 	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -112,7 +113,7 @@ func (u *externalUpdater) update(ctx context.Context, tags map[string]string) er
 			return err
 		}
 
-		models := make([]interface{}, 0, len(tags))
+		models := make([]any, 0, len(tags))
 		k := 0
 		for t, label := range tags {
 			color := labelColors[label]
@@ -292,14 +293,7 @@ func (u *externalUpdater) removeInternalTags(ctx context.Context, tags []string)
 
 		internalTags := make([]string, 0, len(tags))
 		for _, tag := range tags {
-			found := false
-			for _, externalTag := range alarm.ExternalTags {
-				if tag == externalTag {
-					found = true
-					break
-				}
-			}
-			if !found {
+			if !slices.Contains(alarm.ExternalTags, tag) {
 				internalTags = append(internalTags, tag)
 			}
 		}
