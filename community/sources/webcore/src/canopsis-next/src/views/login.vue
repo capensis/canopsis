@@ -11,7 +11,7 @@
         size="120"
         color="white"
       >
-        $vuetify.icons.miscellaneous_services
+        manufacturing
       </v-icon>
     </div>
     <div class="login__description">

@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"slices"
 	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
@@ -275,20 +276,12 @@ func (w *watcher) StopWatch(connId, roomId string) error {
 
 	for k, v := range w.streams[roomId] {
 		for userID, connIds := range v.connIdsByUserId {
-			index := -1
-
-			for i, streamConnId := range connIds {
-				if streamConnId == connId {
-					index = i
-					break
-				}
-			}
-
+			index := slices.Index(connIds, connId)
 			if index < 0 {
 				continue
 			}
 
-			w.streams[roomId][k].connIdsByUserId[userID] = append(connIds[:index], connIds[index+1:]...)
+			w.streams[roomId][k].connIdsByUserId[userID] = slices.Delete(connIds, index, index+1)
 			if len(w.streams[roomId][k].connIdsByUserId[userID]) == 0 {
 				delete(w.streams[roomId][k].connIdsByUserId, userID)
 

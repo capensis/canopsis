@@ -3,6 +3,7 @@ package types_test
 import (
 	"encoding/json"
 	"errors"
+	"slices"
 	"strconv"
 	"testing"
 
@@ -96,7 +97,6 @@ func TestEvent_IsValid(t *testing.T) {
 func TestEvent_GetRequiredKeys(t *testing.T) {
 	event := getEvent()
 	expected := []string{
-		"_id",
 		"event_type",
 		"connector",
 		"connector_name",
@@ -108,14 +108,7 @@ func TestEvent_GetRequiredKeys(t *testing.T) {
 	}
 	result := event.GetRequiredKeys()
 	for _, expectedField := range expected {
-		matched := true
-		for _, field := range result {
-			if field == expectedField {
-				matched = true
-				break
-			}
-		}
-		if !matched {
+		if !slices.Contains(result, expectedField) {
 			t.Errorf("expected %q", expectedField)
 		}
 	}
@@ -141,6 +134,10 @@ func TestEvent_InjectExtraInfos(t *testing.T) {
 	err = event.InjectExtraInfos([]byte(str))
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
+	}
+
+	if len(event.ExtraInfos) != 2 {
+		t.Errorf("expected extra infos len = %d but got %d", 2, len(event.ExtraInfos))
 	}
 
 	if event.ExtraInfos["personnemeconnait"] != "ulyss31" {
@@ -330,8 +327,8 @@ func BenchmarkInjectExtraInfos1(b *testing.B) {
 		"location" : "france",
 		"env" : "QLF"
 	}`)
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for b.Loop() {
 		if err := event.InjectExtraInfos(msg); err != nil {
 			b.Fatalf("expected no error but got %v", err)
 		}

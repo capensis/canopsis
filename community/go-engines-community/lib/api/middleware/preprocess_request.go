@@ -17,7 +17,7 @@ import (
 // SetAuthor middleware sets authorized user id to author field to request body. Use it for create and update model endpoints.
 func SetAuthor(errorResponder httperror.Responder) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		var body map[string]interface{}
+		var body map[string]any
 
 		encodedBody := json.NewDecoder(c.Request.Body)
 		err := encodedBody.Decode(&body)

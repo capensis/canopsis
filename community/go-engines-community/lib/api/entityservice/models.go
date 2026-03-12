@@ -78,7 +78,7 @@ type ContextGraphAggregationResult struct {
 	TotalCount int64                `bson:"total_count" json:"total_count"`
 }
 
-func (r *ContextGraphAggregationResult) GetData() interface{} {
+func (r *ContextGraphAggregationResult) GetData() any {
 	return r.Data
 }
 

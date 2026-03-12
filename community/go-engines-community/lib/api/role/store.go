@@ -410,7 +410,7 @@ func (s *store) GetTemplates(ctx context.Context) ([]Template, error) {
 }
 
 func (s *store) getPermissions(ctx context.Context, rolePermissions map[string][]string) (map[string]Permission, map[string][]Permission, error) {
-	ids := make([]string, 0)
+	ids := make([]string, 0, len(rolePermissions))
 	for id := range rolePermissions {
 		ids = append(ids, id)
 	}

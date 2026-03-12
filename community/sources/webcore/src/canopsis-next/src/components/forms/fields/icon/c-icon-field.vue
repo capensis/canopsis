@@ -25,17 +25,15 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { computed, watch } from 'vue';
 
-import { formBaseMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form';
+import { useStoreModuleHooks } from '@/hooks/store';
 
-import materialIconNameByCode from '@/assets/material-icons/MaterialIcons-Regular.json';
-
-const { mapGetters } = createNamespacedHelpers('icon');
+import materialIconsNames from '@/assets/material-icons/MaterialIcons.json';
 
 export default {
   inject: ['$validator'],
-  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -66,42 +64,48 @@ export default {
       default: false,
     },
   },
-  computed: {
-    ...mapGetters(['registeredIconsById']),
+  setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
+    const { useGetters } = useStoreModuleHooks('icon');
+    const { registeredIconsById } = useGetters(['registeredIconsById']);
 
-    registeredIconsItems() {
-      return Object.values(this.registeredIconsById)
-        .map(({ title }) => ({ text: title, value: `$vuetify.icon.${title}` }));
-    },
+    const registeredIconsItems = computed(() => (
+      Object.values(registeredIconsById.value)
+        .map(({ title }) => ({ text: title, value: `$vuetify.icon.${title}` }))
+    ));
 
-    materialIconsItems() {
-      return Object.keys(materialIconNameByCode).map(name => ({ text: name, value: name }));
-    },
+    const materialIconsItems = computed(() => (
+      materialIconsNames.map(name => ({ text: name, value: name }))
+    ));
 
-    allIcons() {
-      if (!this.registeredIconsItems.length) {
-        return this.materialIconsItems;
+    const allIcons = computed(() => {
+      if (!registeredIconsItems.value.length) {
+        return materialIconsItems.value;
       }
 
       return [
-        ...this.registeredIconsItems,
+        ...registeredIconsItems.value,
         { divider: true },
-        ...this.materialIconsItems,
+        ...materialIconsItems.value,
       ];
-    },
+    });
 
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-  },
-  watch: {
-    registeredIconsItems(items) {
-      if (!items.some(({ value }) => value === this.value)) {
-        this.updateModel('');
+    const rules = computed(() => ({
+      required: props.required,
+    }));
+
+    watch(registeredIconsItems, (items) => {
+      if (!items.some(({ value }) => value === props.value)) {
+        updateModel('');
       }
-    },
+    });
+
+    return {
+      registeredIconsItems,
+      materialIconsItems,
+      allIcons,
+      rules,
+    };
   },
 };
 </script>

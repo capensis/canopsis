@@ -1,9 +1,12 @@
 <template>
   <widget-settings-group :title="$t(`settings.titles.${$constants.SIDE_BARS.alarmSettings}`)">
-    <field-default-sort-column
+    <field-default-sort-columns-with-template
       v-field="form.sort"
       :columns="sortablePreparedWidgetColumns"
-      :columns-label="$t('settings.columnName')"
+      :template="form.sortTemplate"
+      :templates="alarmSortColumnsWidgetTemplates"
+      :templates-pending="templatesPending"
+      @update:template="updateSortTemplate"
     />
     <field-columns
       v-field="form.widgetColumns"
@@ -57,7 +60,7 @@ import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entitie
 import { formBaseMixin } from '@/mixins/form';
 import { alarmVariablesMixin } from '@/mixins/widget/variables/alarm';
 
-import FieldDefaultSortColumn from '@/components/sidebars/form/fields/default-sort-column.vue';
+import FieldDefaultSortColumnsWithTemplate from '@/components/sidebars/form/fields/default-sort-columns-with-template.vue';
 import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
 import FieldInfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.vue';
 import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-editor-with-template.vue';
@@ -71,7 +74,7 @@ export default {
   components: {
     FieldRootCauseSettings,
     WidgetSettingsGroup,
-    FieldDefaultSortColumn,
+    FieldDefaultSortColumnsWithTemplate,
     FieldColumns,
     FieldInfoPopup,
     FieldTextEditorWithTemplate,
@@ -108,6 +111,10 @@ export default {
       return ALARM_EXPORT_PDF_TEMPLATE;
     },
 
+    alarmSortColumnsWidgetTemplates() {
+      return filter(this.templates, { type: WIDGET_TEMPLATES_TYPES.alarmSortColumns });
+    },
+
     alarmColumnsWidgetTemplates() {
       return filter(this.templates, { type: WIDGET_TEMPLATES_TYPES.alarmColumns });
     },
@@ -133,6 +140,15 @@ export default {
     },
   },
   methods: {
+    updateSortTemplate(template = '', sort = []) {
+      this.updateModel({
+        ...this.form,
+
+        sort,
+        sortTemplate: template,
+      });
+    },
+
     updateColumnsTemplate(template, columns) {
       this.updateModel({
         ...this.form,

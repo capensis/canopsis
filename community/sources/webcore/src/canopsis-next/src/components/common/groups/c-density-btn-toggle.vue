@@ -82,15 +82,15 @@ export default {
     types() {
       return [{
         value: DENSE_TYPES.large,
-        icon: '$vuetify.icons.density_large',
+        icon: 'density_large',
         text: this.$t('settings.density.comfort'),
       }, {
         value: DENSE_TYPES.medium,
-        icon: '$vuetify.icons.density_medium',
+        icon: 'density_medium',
         text: this.$t('settings.density.compact'),
       }, {
         value: DENSE_TYPES.small,
-        icon: '$vuetify.icons.density_small',
+        icon: 'density_small',
         text: this.$t('settings.density.ultraCompact'),
       }];
     },
