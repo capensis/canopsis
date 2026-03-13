@@ -46,3 +46,4 @@ export * from './template-testing';
 export * from './request';
 export * from './entity-info-property';
 export * from './jobs';
+export * from './ticket-status-job';

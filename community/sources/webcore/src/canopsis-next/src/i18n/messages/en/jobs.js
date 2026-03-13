@@ -1,4 +1,4 @@
-import { JOB_STATE, JOB_RUN_STATUS, JOB_RULE_TYPE } from '@/constants/jobs';
+import { JOB_STATE, JOB_RUN_STATUS, JOB_RULE_TYPE, TICKET_STATUS_JOBS_TABS } from '@/constants';
 
 export default {
   filterByStatus: 'Filter by status',
@@ -35,10 +35,10 @@ export default {
     [JOB_RULE_TYPE.scenario]: 'Scenario',
   },
   tabs: {
-    instructions: 'Instructions',
-    webhooks: 'Webhooks',
-    ticketStatus: 'Ticket status',
-    authToken: 'Auth token',
+    [TICKET_STATUS_JOBS_TABS.instructions]: 'Instructions',
+    [TICKET_STATUS_JOBS_TABS.webhooks]: 'Webhooks',
+    [TICKET_STATUS_JOBS_TABS.ticketStatus]: 'Ticket status',
+    [TICKET_STATUS_JOBS_TABS.authToken]: 'Auth token',
   },
   actions: {
     start: 'Start',

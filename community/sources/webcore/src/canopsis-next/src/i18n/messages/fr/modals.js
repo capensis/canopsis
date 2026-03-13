@@ -623,6 +623,14 @@ export default {
       },
     },
   },
+  createTicketStatusJob: {
+    create: {
+      title: 'Créer une tâche de statut de ticket',
+    },
+    edit: {
+      title: 'Éditer la tâche : {jobName}',
+    },
+  },
   clickOutsideConfirmation: {
     title: 'Êtes-vous sûr(e) ?',
     text: 'Les modifications ne seront pas enregistrées. Êtes-vous sûr(e) ?',

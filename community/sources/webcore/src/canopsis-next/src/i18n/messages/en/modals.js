@@ -623,6 +623,14 @@ export default {
       },
     },
   },
+  createTicketStatusJob: {
+    create: {
+      title: 'Create ticket status job',
+    },
+    edit: {
+      title: 'Edit job : {jobName}',
+    },
+  },
   clickOutsideConfirmation: {
     title: 'Are you sure?',
     text: 'Changes will not be saved. Are you sure?',

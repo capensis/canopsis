@@ -74,7 +74,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.jobs-http-data-collapse-panel__data {
+.ticket-status-jobs-http-data-collapse-panel__data {
   white-space: pre-wrap;
   word-break: break-word;
   font-size: 0.875rem;

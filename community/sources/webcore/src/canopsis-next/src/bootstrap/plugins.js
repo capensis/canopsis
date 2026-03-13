@@ -72,6 +72,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.pbehaviorRecurrenceRule]: { maxWidth: '95%', persistent: true },
       [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
       [MODALS.createRemediationInstruction]: { maxWidth: 960 },
+      [MODALS.createTicketStatusJob]: { maxWidth: 1200 },
       [MODALS.remediationInstructionApproval]: { maxWidth: 960 },
       [MODALS.executeRemediationInstruction]: { maxWidth: 960 },
       [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
