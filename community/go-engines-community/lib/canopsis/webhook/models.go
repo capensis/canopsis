@@ -159,7 +159,7 @@ type TokenHistory struct {
 	Template           string                    `bson:"template,omitempty" json:"template,omitempty"`
 	ExpirationDuration datetime.DurationWithUnit `bson:"expiration_duration" json:"expiration_duration"`
 	Token              string                    `bson:"token,omitempty" json:"token,omitempty"`
-	ExpiredAt          datetime.MicroTime        `bson:"expired_at,omitempty" json:"expired_at,omitempty"`
+	ExpiredAt          datetime.MicroTime        `bson:"expired_at,omitempty" json:"expired_at,omitzero"`
 }
 
 type BaseHistory struct {
@@ -173,7 +173,7 @@ type BaseHistory struct {
 	RawResponse string             `bson:"raw_response,omitempty" json:"raw_response,omitempty"`
 
 	CreatedAt   datetime.MicroTime `bson:"created_at" json:"created_at"`
-	LaunchedAt  datetime.MicroTime `bson:"launched_at,omitempty" json:"launched_at,omitempty"`
-	CompletedAt datetime.MicroTime `bson:"completed_at,omitempty" json:"completed_at,omitempty"`
-	LastPing    datetime.MicroTime `bson:"last_ping,omitempty" json:"last_ping,omitempty"`
+	LaunchedAt  datetime.MicroTime `bson:"launched_at,omitempty" json:"launched_at,omitzero"`
+	CompletedAt datetime.MicroTime `bson:"completed_at,omitempty" json:"completed_at,omitzero"`
+	LastPing    datetime.MicroTime `bson:"last_ping,omitempty" json:"last_ping,omitzero"`
 }

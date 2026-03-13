@@ -5692,9 +5692,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30000921, caniuse-lite@npm:^1.0.30001254, caniuse-lite@npm:^1.0.30001517, caniuse-lite@npm:^1.0.30001520, caniuse-lite@npm:^1.0.30001565":
-  version: 1.0.30001741
-  resolution: "caniuse-lite@npm:1.0.30001741"
-  checksum: 10c0/45746f896205a61a8eeb85a32aeca243ebce640cd6eb80d04949d9389a13f4659c737860300d7b988057599f0958c55eeab74ec02ce9ef137feb7d006e75fec1
+  version: 1.0.30001777
+  resolution: "caniuse-lite@npm:1.0.30001777"
+  checksum: 10c0/e35443fa7c470edc06e315297cca706790840e96983fff12dfe502a4b123d6e4a64b9b4e8e35fb2f5bb60c31b24fbda93d76b2f700ce183df474671236fa7a4a
   languageName: node
   linkType: hard
 
@@ -5770,6 +5770,7 @@ __metadata:
     linkifyjs: "npm:^4.1.1"
     lint-staged: "npm:^14.0.1"
     lodash: "npm:^4.17.5"
+    material-symbols: "npm:^0.40.2"
     mermaid: "npm:^9.1.3"
     moment: "npm:^2.22.2"
     moment-duration-format: "npm:^2.2.2"
@@ -5801,6 +5802,7 @@ __metadata:
     string_decoder: "npm:^1.2.0"
     svg-inline-loader: "npm:^0.8.2"
     tinycolor2: "npm:^1.1.2"
+    typescript: "npm:^5.9.3"
     uid: "npm:^2.0.2"
     url: "npm:^0.11.3"
     uuid: "npm:^9.0.1"
@@ -5809,6 +5811,7 @@ __metadata:
     vue-cli-plugin-test-attrs: "npm:^0.1.5"
     vue-clipboard2: "npm:^0.3.0"
     vue-color: "npm:^2.6.0"
+    vue-fragment: "npm:^1.6.0"
     vue-fullscreen: "npm:^2.6.2"
     vue-i18n: "npm:^7.6.0"
     vue-loader: "npm:^17.2.2"
@@ -13542,6 +13545,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"material-symbols@npm:^0.40.2":
+  version: 0.40.2
+  resolution: "material-symbols@npm:0.40.2"
+  checksum: 10c0/0cf46db70081ed270e08f2352e86c92e0ea2e50416e95d364f17148995051e50c42e9dcbe6a39db0cd2b03dba43655b6a706961b593e6d84c9c33d78b8a7bb03
+  languageName: node
+  linkType: hard
+
 "mdn-data@npm:2.0.14":
   version: 2.0.14
   resolution: "mdn-data@npm:2.0.14"
@@ -18777,6 +18787,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^5.9.3":
+  version: 5.9.3
+  resolution: "typescript@npm:5.9.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/6bd7552ce39f97e711db5aa048f6f9995b53f1c52f7d8667c1abdc1700c68a76a308f579cd309ce6b53646deb4e9a1be7c813a93baaf0a28ccd536a30270e1c5
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^5.9.3#optional!builtin<compat/typescript>":
+  version: 5.9.3
+  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/ad09fdf7a756814dce65bc60c1657b40d44451346858eea230e10f2e95a289d9183b6e32e5c11e95acc0ccc214b4f36289dcad4bf1886b0adb84d711d336a430
+  languageName: node
+  linkType: hard
+
 "uglify-js@npm:3.4.x":
   version: 3.4.9
   resolution: "uglify-js@npm:3.4.9"
@@ -19146,6 +19176,15 @@ __metadata:
   peerDependencies:
     eslint: ">=6.0.0"
   checksum: 10c0/2495cd855b8a0969e1d1a109762e54d4302429ebd87c21212de38fc60ea774be1bc001dc86338d3f78e17ae79d80fa633a8c409d7a65990cde9bc04484dac933
+  languageName: node
+  linkType: hard
+
+"vue-fragment@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "vue-fragment@npm:1.6.0"
+  peerDependencies:
+    vue: ^2.5.16
+  checksum: 10c0/45e4c05d366782dd0ddb3bee9279951c7d9e8bc50c361213dbfe2d50438a850232d687c998eeac5fbd234e8963e6f949a6346b17cfbc7286a503b0ac3bf72217
   languageName: node
   linkType: hard
 
