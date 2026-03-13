@@ -55,6 +55,7 @@ var columnsByType = map[string][]string{
 		"entity.type",
 		"entity.component",
 		"entity.connector",
+		"entity.upstream",
 		"entity.impact_level",
 		"entity.ko_events",
 		"entity.ok_events",
@@ -67,6 +68,7 @@ var columnsByType = map[string][]string{
 		"type",
 		"component",
 		"connector",
+		"upstream",
 		"impact_level",
 		"last_event_date",
 		"last_pbehavior_date",
@@ -140,6 +142,9 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeAlarmQuickMassActions: {
 				"quickMassActions",
 			},
+			WidgetTemplateTypeAlarmSortColumns: {
+				"sort",
+			},
 		},
 		WidgetTypeContextExplorer: {
 			WidgetTemplateTypeAlarmColumns: {
@@ -171,6 +176,9 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeAlarmMoreInfos: {
 				"alarmsList.moreInfoTemplate",
 			},
+			WidgetTemplateTypeAlarmSortColumns: {
+				"alarmsList.sort",
+			},
 		},
 		WidgetTypeAlarmsCounter: {
 			WidgetTemplateTypeAlarmColumns: {
@@ -186,6 +194,9 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			},
 			WidgetTemplateTypeAlarmMoreInfos: {
 				"alarmsList.moreInfoTemplate",
+			},
+			WidgetTemplateTypeAlarmSortColumns: {
+				"alarmsList.sort",
 			},
 		},
 		WidgetTypeMap: {
@@ -213,17 +224,6 @@ func IsValidWidgetColumn(t, column string) bool {
 	prefixes := columnsPrefixByType[t]
 	for _, prefix := range prefixes {
 		if column == prefix || strings.HasPrefix(column, prefix+".") {
-			return true
-		}
-	}
-
-	return false
-}
-
-func IsValidWidgetExportColumn(widgetType, param, column string) bool {
-	if columns, ok := widgetExportColumns[widgetType][param]; ok {
-		idx := sort.SearchStrings(columns, column)
-		if idx < len(columns) && columns[idx] == column {
 			return true
 		}
 	}

@@ -4,7 +4,7 @@
 
 Le moteur PBEHAVIOR (Periodic Behavior) a pour objectif de gérer les changements de comportements en fonction de périodes temporelles. Il permet de gérer les maintenances, les mises en production, les périodes de service ou de non-service, etc. Ce moteur est disponible en édition Community.
 
-Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les comportements périodiques](../../../../guide-utilisation/menu-exploitation/comportements-periodiques/).
+Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les comportements périodiques](../../../guide-utilisation/menu-exploitation/comportements-periodiques.md).
 
 ## Options de démarrage
 
@@ -32,4 +32,4 @@ Cette commande lance le moteur PBEHAVIOR en mode debug, avec un intervalle de ca
 ## Schéma d'interactions
 
 Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
-[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-pbehavior/)
+[EN - View Engine Interaction Schemas](../../../guide-developpement/schemas/engine-pbehavior.md)

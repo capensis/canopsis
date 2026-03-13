@@ -8,10 +8,11 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -57,7 +58,7 @@ type worker struct {
 
 	connector string
 
-	transformer common.PatternFieldsTransformer
+	transformer patternfields.Transformer
 
 	logger zerolog.Logger
 }
@@ -73,7 +74,7 @@ func NewWorker(
 	publisher EventPublisher,
 	metricMetaUpdater metrics.MetaUpdater,
 	connector string,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	logger zerolog.Logger,
 ) Worker {
 	return &worker{
@@ -175,8 +176,7 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 	return stats, nil
 }
 
-func (w *worker) parseFile(ctx context.Context, filename, source string, withEvents bool) (_ parseResult, resErr error) {
-	res := parseResult{}
+func (w *worker) parseFile(ctx context.Context, filename, source string, withEvents bool) (res parseResult, resErr error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return res, err
@@ -196,7 +196,6 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 		}
 	}()
 
-	writeModels := make([]mongo.WriteModel, 0)
 	var entityParseRes parseEntityResult
 	decoder := json.NewDecoder(file)
 
@@ -218,9 +217,7 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 		return res, err
 	}
 
-	writeModels = append(writeModels, entityParseRes.writeModels...)
-
-	res.writeModels = writeModels
+	res.writeModels = slices.Clone(entityParseRes.writeModels)
 	res.updatedIds = entityParseRes.updatedIds
 	res.removedIds = entityParseRes.removedIds
 	res.serviceEvents = entityParseRes.serviceEvents
@@ -284,21 +281,16 @@ func (w *worker) parseEntities(
 		}
 
 		if ci.Type == types.EntityTypeService {
-			if !match.ValidateEntityPattern(ci.EntityPattern, common.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
+			if !match.ValidateEntityPattern(ci.EntityPattern, patternfields.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
 				w.logger.Warn().Str("entity_name", ci.Name).Msg("invalid entity pattern, skip")
 				continue
 			}
 
-			transformedEntityPatternRequest, err := w.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-				EntityPattern: ci.EntityPattern,
-			})
+			ci.EntityPattern, ci.Aliases, err = w.transformer.TransformAliases(ctx, ci.EntityPattern, ci)
 			if err != nil {
 				w.logger.Warn().Str("entity_name", ci.Name).Msgf("failed to transform entity pattern: %v, skip", err)
 				continue
 			}
-
-			ci.EntityPattern = transformedEntityPatternRequest.EntityPattern
-			ci.Aliases = transformedEntityPatternRequest.Aliases
 		}
 
 		categoryID := ""
@@ -342,29 +334,40 @@ func (w *worker) parseEntities(
 
 		cursor, err := w.entityCollection.Aggregate(ctx, []bson.M{
 			{"$match": findCriteria},
-			{"$graphLookup": bson.M{
-				"from":                    libmongo.EntityMongoCollection,
-				"startWith":               "$_id",
-				"connectFromField":        "_id",
-				"connectToField":          "component",
-				"as":                      "resources",
-				"restrictSearchWithMatch": bson.M{"type": types.EntityTypeResource},
-				"maxDepth":                0,
+			{"$lookup": bson.M{
+				"from":         libmongo.EntityMongoCollection,
+				"localField":   "_id",
+				"foreignField": "component",
+				"as":           "resources",
+				"pipeline": []bson.M{
+					{"$match": bson.M{
+						"type":         types.EntityTypeResource,
+						"enabled":      true,
+						"soft_deleted": bson.M{"$exists": false},
+					}},
+					{"$project": bson.M{"_id": 1}},
+				},
 			}},
 			{"$addFields": bson.M{
 				"resources": bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},
 			}},
 		})
 		if err != nil {
-			return res, err
+			return res, fmt.Errorf("failed to find an existing entity %+v: %w", findCriteria, err)
 		}
 		if cursor.Next(ctx) {
 			err = cursor.Decode(&oldEntity)
 			if err != nil {
 				_ = cursor.Close(ctx)
-				return res, err
+				return res, fmt.Errorf("failed to decode an existing entity %+v: %w", findCriteria, err)
 			}
 		}
+
+		if err = cursor.Err(); err != nil {
+			_ = cursor.Close(ctx)
+			return res, fmt.Errorf("cursor error when finding an existing entity %+v: %w", findCriteria, err)
+		}
+
 		err = cursor.Close(ctx)
 		if err != nil {
 			return res, err
@@ -694,6 +697,11 @@ func (w *worker) mergeEntity(c EntityConfiguration, oldEntity Entity, id, catego
 
 	if e.Type == types.EntityTypeComponent {
 		e.Component = e.ID
+	}
+
+	if c.Upstream != nil && (e.Type == types.EntityTypeResource || e.Type == types.EntityTypeComponent) {
+		e.Upstream = c.Upstream
+		e.IsUpstreamChanged = oldEntity.Upstream == nil || *oldEntity.Upstream != *c.Upstream
 	}
 
 	if oldEntity.EnableHistory != nil {

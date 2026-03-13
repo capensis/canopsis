@@ -19,7 +19,7 @@ Plus types de widgets sont disponibles dans Canopsis, pour en connaitre le fonct
 
 Les patterns permettent de filtrer dynamiquement les alarmes, les entités, les événements.  
 Ils sont utiles pour paramétrer le comportement de Canopsis attendu.  
-Cette [page de documentation](./patterns/) vous donne tous les détails.
+Cette [page de documentation](patterns/index.md) vous donne tous les détails.
 
 ## Thèmes
 

@@ -2,9 +2,9 @@ package entityservice
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -62,7 +62,7 @@ type EditRequest struct {
 
 	Coordinates *types.Coordinates `json:"coordinates"`
 
-	common.EntityPatternFieldsRequest
+	patternfields.EntityRequest
 }
 
 type ContextGraphEntity struct {
@@ -76,7 +76,7 @@ type ContextGraphAggregationResult struct {
 	TotalCount int64                `bson:"total_count" json:"total_count"`
 }
 
-func (r *ContextGraphAggregationResult) GetData() interface{} {
+func (r *ContextGraphAggregationResult) GetData() any {
 	return r.Data
 }
 

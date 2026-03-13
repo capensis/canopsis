@@ -155,6 +155,7 @@ export default {
     },
     success: {
       create: 'Comportement périodique créé avec succès !',
+      remove: 'Comportement périodique supprimé avec succès ! Vous devrez peut-être attendre 60 s pour le voir dans l\'interface.',
     },
     cancelConfirmation: 'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
   },
@@ -981,6 +982,12 @@ export default {
   entityDependenciesList: {
     title: 'Diagramme de cause racine',
   },
+  entityUpstream: {
+    entities: 'Entités',
+    topLevelEntities: 'Entités de niveau supérieur',
+    seeEntities: 'Voir les entités',
+    seeTopEntities: 'Voir les entités principales',
+  },
   createDeclareTicketRule: {
     create: {
       title: 'Créer une règle de déclaration de ticket',
@@ -1096,7 +1103,7 @@ export default {
       title: 'Modifier le thème',
     },
     duplicate: {
-      title: 'Thème en double',
+      title: 'Dupliquer le thème',
     },
   },
   createIcon: {
@@ -1155,5 +1162,11 @@ export default {
   },
   createTemplateData: {
     title: 'Créer des données de modèle',
+  },
+  entitiesComparison: {
+    title: 'Comparaison des entités de motif',
+    infoMessage: 'Les comptages peuvent différer pour 2 raisons :\n<span class="font-weight-regular">1. des changements se sont produits dans Canopsis pendant la vérification (certaines entités initialement filtrées ont changé et ne correspondent plus au motif)</span>\n<span class="font-weight-regular">2. le motif suggéré n\'est pas correct</span>\n<span>Vous pouvez relancer la vérification pour être sûr.</span>',
+    foundInCurrent: 'TROUVÉ DANS LE MOTIF ACTUEL, NON TROUVÉ DANS LE MOTIF SUGGÉRÉ',
+    foundInSuggestion: 'TROUVÉ DANS LE MOTIF SUGGÉRÉ, NON TROUVÉ DANS LE MOTIF ACTUEL',
   },
 };

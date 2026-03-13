@@ -10,7 +10,7 @@
 
 ## Structure basique d'un événement
 
-Voici la structure de base d'un [événement](../../guide-utilisation/vocabulaire/index.md#evenement), commune à tous les [types d'événements](#liste-des-types-devénements).
+Voici la structure de base d'un [événement](../../guide-utilisation/vocabulaire/index.md#evenement), commune à tous les [types d'événements](#liste-des-types-devenements).
 
 ```json
 {
@@ -102,7 +102,7 @@ Champs additionnels :
 * `output` : Message court - Optionnel
 * `long_output` : Message détaillé - Optionnel
 * `close_delay` : Délai de résolution automatique en secondes - Optionnel 
-* `perf_data` : [Métrique de performance](../../guide-utilisation/interface/widgets/graphiques/)
+* `perf_data` : [Métrique de performance](../../guide-utilisation/interface/widgets/graphiques/index.md)
 
 ```json
 {

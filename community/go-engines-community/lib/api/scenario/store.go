@@ -8,9 +8,10 @@ import (
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -20,12 +21,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	tplvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -57,9 +59,11 @@ type store struct {
 	tplDataCollection         mongo.DbCollection
 	tplTestCollection         mongo.DbCollection
 	entityInfosPropCollection mongo.DbCollection
-	transformer               common.PatternFieldsTransformer
+	pbhTypeCollection         mongo.DbCollection
+	pbhReasonCollection       mongo.DbCollection
+	transformer               patternfields.Transformer
 	authorProvider            author.Provider
-	tplValidator              validator.Validator
+	tplValidator              tplvalidator.Validator
 	tplExecutor               libtemplate.Executor
 	tplConfigProvider         config.TemplateConfigProvider
 	encoder                   encoding.Encoder
@@ -78,8 +82,8 @@ type store struct {
 func NewStore(
 	db mongo.DbClient,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
-	tplValidator validator.Validator,
+	transformer patternfields.Transformer,
+	tplValidator tplvalidator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
 	encoder encoding.Encoder,
@@ -95,7 +99,7 @@ func NewStore(
 			Value: template.GetEntityVars("{{ ", " }}", ".Entity", false),
 		},
 	}
-	outputTplVars := make([]template.VarResponse, len(authorTplVars))
+	outputTplVars := make([]template.VarResponse, len(authorTplVars), len(authorTplVars)+6)
 	copy(outputTplVars, authorTplVars)
 	outputTplVars = append(outputTplVars,
 		template.VarResponse{Name: "trigger", Value: "{{ .AdditionalData.Trigger }}"},
@@ -110,7 +114,7 @@ func NewStore(
 		{Name: "responseField", Value: "{{ index .Response \"%field_name%\" }}"},
 		{Name: "responseFieldFromStep", Value: "{{ index .ResponseMap \"%N%.%field_name%\" }}"},
 	}
-	firstWhTplVars := make([]template.VarResponse, len(outputTplVars))
+	firstWhTplVars := make([]template.VarResponse, len(outputTplVars), len(outputTplVars)+2)
 	copy(firstWhTplVars, outputTplVars)
 	firstWhTplVars = append(firstWhTplVars,
 		template.VarResponse{
@@ -137,6 +141,8 @@ func NewStore(
 		tplDataCollection:         db.Collection(mongo.TemplateTestDataCollection),
 		tplTestCollection:         db.Collection(mongo.TemplateTestCollection),
 		entityInfosPropCollection: db.Collection(mongo.EntityInfosPropertyCollection),
+		pbhTypeCollection:         db.Collection(mongo.PbehaviorTypeMongoCollection),
+		pbhReasonCollection:       db.Collection(mongo.PbehaviorReasonMongoCollection),
 		transformer:               transformer,
 		authorProvider:            authorProvider,
 		tplValidator:              tplValidator,
@@ -151,16 +157,13 @@ func NewStore(
 		firstWhTplVars:            firstWhTplVars,
 		whTplVars:                 whTplVars,
 		ticketTplVars:             ticketTplVars,
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id":  "ID already exists.",
-			"name": "Name already exists.",
-		}),
+		dupErrorParser:            validation.NewDuplicateErrorParser(),
 	}
 }
 
 func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, error) {
 	pipeline := s.authorProvider.Pipeline()
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -230,7 +233,12 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = nil
 
-		model.Actions, model.Aliases, err = s.transformActionRequestToModel(ctx, r.Actions)
+		err = s.validateEditRequest(ctx, r.EditRequest)
+		if err != nil {
+			return err
+		}
+
+		model.Actions, model.Aliases, err = s.transformActionRequestToModel(ctx, r.EditRequest)
 		if err != nil {
 			return err
 		}
@@ -238,7 +246,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 		_, err := s.collection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, model)
 			}
 
 			return err
@@ -271,7 +279,12 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = nil
 
-		model.Actions, model.Aliases, err = s.transformActionRequestToModel(ctx, r.Actions)
+		err = s.validateEditRequest(ctx, r.EditRequest)
+		if err != nil {
+			return err
+		}
+
+		model.Actions, model.Aliases, err = s.transformActionRequestToModel(ctx, r.EditRequest)
 		if err != nil {
 			return err
 		}
@@ -279,7 +292,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) 
 		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
 		if err != nil || res.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, model)
 			}
 
 			return err
@@ -399,7 +412,7 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 		sortBy = "delay.value"
 	}
 
-	return common.GetSortQuery(sortBy, r.Sort)
+	return mongoquery.GetSortQuery(sortBy, r.Sort)
 }
 
 func (s *store) transformEditRequestToModel(r EditRequest) libaction.Scenario {
@@ -419,58 +432,74 @@ func (s *store) transformEditRequestToModel(r EditRequest) libaction.Scenario {
 	}
 }
 
-func (s *store) transformActionRequestToModel(ctx context.Context, r []ActionRequest) ([]libaction.Action, []string, error) {
+func (s *store) transformActionRequestToModel(ctx context.Context, r EditRequest) ([]libaction.Action, []string, error) {
 	var err error
-	var valErr common.ValidationError
+	patternIDs := make([]string, 0, len(r.Actions)*2)
+	aliases := make([]string, 0, len(r.Actions))
+	for _, ar := range r.Actions {
+		patternIDs = append(patternIDs,
+			ar.CorporateAlarmPattern,
+			ar.CorporateEntityPattern,
+		)
+		aliases = append(aliases, patternfields.GetAliases(ar.EntityPattern)...)
+	}
 
-	actions := make([]libaction.Action, len(r))
+	patterns, err := s.transformer.FetchCorporatePatterns(ctx, patternIDs...)
+	if err != nil {
+		return nil, nil, err
+	}
 
-	uniqueAliasesMap := make(map[string]bool)
-	uniqueAliases := make([]string, 0)
+	aliasProps, err := s.transformer.FetchAliases(ctx, aliases)
+	if err != nil {
+		return nil, nil, err
+	}
 
-	for idx, actionRequest := range r {
-		transformedAlarmPatternFieldsRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, actionRequest.AlarmPatternFieldsRequest)
-		if err != nil {
-			if errors.As(err, &valErr) {
-				return nil, nil, valErr.AddFieldPrefix("actions." + strconv.Itoa(idx))
-			}
-
-			return nil, nil, err
+	actions := make([]libaction.Action, len(r.Actions))
+	aliasPropMap := make(map[string]bool)
+	var applyAliasPropIDs []string
+	var valErrs, applyErrs validator.ValidationErrors
+	actionsFieldName := "Actions"
+	for idx, ar := range r.Actions {
+		sIdx := strconv.Itoa(idx)
+		ar.AlarmRequest, applyErrs = s.transformer.ApplyAlarmCorporatePattern(ar.AlarmRequest, patterns, actionsFieldName, sIdx, "CorporateAlarmPattern")
+		valErrs = append(valErrs, applyErrs...)
+		ar.EntityRequest, applyAliasPropIDs, applyErrs = s.transformer.ApplyEntityCorporatePattern(ar.EntityRequest, patterns, actionsFieldName, sIdx, "CorporateEntityPattern")
+		valErrs = append(valErrs, applyErrs...)
+		for _, id := range applyAliasPropIDs {
+			aliasPropMap[id] = true
 		}
 
-		transformEntityPatternFieldsRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, actionRequest.EntityPatternFieldsRequest)
-		if err != nil {
-			if errors.As(err, &valErr) {
-				return nil, nil, valErr.AddFieldPrefix("actions." + strconv.Itoa(idx))
-			}
-
-			return nil, nil, err
+		ar.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(ar.EntityPattern, aliasProps, actionsFieldName, sIdx, "EntityPattern")
+		valErrs = append(valErrs, applyErrs...)
+		for _, id := range applyAliasPropIDs {
+			aliasPropMap[id] = true
 		}
 
-		for _, alias := range transformEntityPatternFieldsRequest.Aliases {
-			if !uniqueAliasesMap[alias] {
-				uniqueAliasesMap[alias] = true
-				uniqueAliases = append(uniqueAliases, alias)
-			}
+		if len(valErrs) > 0 {
+			continue
 		}
 
 		actions[idx] = libaction.Action{
-			Type:       r[idx].Type,
-			Comment:    r[idx].Comment,
-			Parameters: r[idx].Parameters,
-			EntityPatternFields: transformEntityPatternFieldsRequest.ToModelWithoutFields(
-				common.GetForbiddenFieldsInEntityPattern(mongo.ScenarioCollection),
-			),
-			AlarmPatternFields: transformedAlarmPatternFieldsRequest.ToModelWithoutFields(
-				common.GetForbiddenFieldsInAlarmPattern(mongo.ScenarioCollection),
-				common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ScenarioCollection),
-			),
-			DropScenarioIfNotMatched: *r[idx].DropScenarioIfNotMatched,
-			EmitTrigger:              *r[idx].EmitTrigger,
+			Type:                     ar.Type,
+			Comment:                  ar.Comment,
+			Parameters:               ar.Parameters,
+			EntityPatternFields:      ar.EntityRequest.ToModelWithoutFields(s.collection.Name()),
+			AlarmPatternFields:       ar.AlarmRequest.ToModelWithoutFields(s.collection.Name()),
+			DropScenarioIfNotMatched: *ar.DropScenarioIfNotMatched,
+			EmitTrigger:              *ar.EmitTrigger,
 		}
 	}
 
-	return actions, uniqueAliases, err
+	if len(valErrs) > 0 {
+		return nil, nil, validation.NewError(valErrs, r)
+	}
+
+	aliasPropIDs := make([]string, 0, len(aliasPropMap))
+	for id := range aliasPropMap {
+		aliasPropIDs = append(aliasPropIDs, id)
+	}
+
+	return actions, aliasPropIDs, err
 }
 
 func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event, *webhook.TplAlarm, map[int]template.ResponseTestData, error) {
@@ -483,7 +512,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 			Decode(&test)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, nil, nil, common.NewValidationError("testdata.test", "Test doesn't exist.")
+				return nil, nil, nil, validation.NewSingleError("not_exist", "Test", "TestData.Test", r)
 			}
 
 			return nil, nil, nil, err
@@ -499,7 +528,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 	}
 
 	if eventDataID == "" {
-		return nil, nil, nil, common.NewValidationError("testdata.event", "Event is missing.")
+		return nil, nil, nil, validation.NewSingleError("required", "Event", "TestData.Event", r)
 	}
 
 	event, err := template.GetEventData(ctx, s.tplDataCollection, eventDataID, s.encoder, s.decoder)
@@ -508,13 +537,15 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 	}
 
 	if event == nil {
-		return nil, nil, nil, common.NewValidationError("testdata.event", "Event doesn't exist.")
+		return nil, nil, nil, validation.NewSingleError("not_exist", "Event", "TestData.Event", r)
 	}
 
 	var whTestData map[int]template.ResponseTestData
 	if len(whTestDataIDs) > 0 {
 		if len(whTestDataIDs) > len(r.Rule.Actions) {
-			return nil, nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(len(r.Rule.Actions)), "Response is redundant.")
+			iStr := strconv.Itoa(len(r.Rule.Actions))
+
+			return nil, nil, nil, validation.NewSingleError("must_be_empty", iStr, "TestData.Responses."+iStr, r)
 		}
 
 		whTestData, err = template.GetResponseData(ctx, s.tplDataCollection, whTestDataIDs)
@@ -523,13 +554,22 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 		}
 
 		if len(whTestData) == 0 {
-			return nil, nil, nil, common.NewValidationError("testdata.responses", "Responses don't exist.")
+			return nil, nil, nil, validation.NewSingleError("not_exist", "Responses", "TestData.Responses", r)
 		}
 	}
 
-	alarm, err := s.findAlarm(ctx, event.GetEID())
+	entityID := event.GetEID()
+	if entityID == "" {
+		return nil, nil, nil, validation.NewSingleError("entity_not_exist", "Event", "TestData.Event", r)
+	}
+
+	alarm, err := s.findAlarm(ctx, entityID)
 	if err != nil {
 		return nil, nil, nil, err
+	}
+
+	if alarm.ID == "" {
+		return nil, nil, nil, validation.NewSingleError("alarm_not_exist", "Event", "TestData.Event", r)
 	}
 
 	return event, &alarm, whTestData, nil
@@ -537,17 +577,13 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 
 // findAlarm fetches alarm with meta-alarm children and related entities.
 func (s *store) findAlarm(ctx context.Context, entityID string) (webhook.TplAlarm, error) {
-	if entityID == "" {
-		return webhook.TplAlarm{}, common.NewValidationError("testdata.event", "Corresponding entity cannot be found.")
-	}
-
 	id := struct {
 		ID string `bson:"_id"`
 	}{}
 	err := s.alarmCollection.FindOne(ctx, bson.M{"d": entityID}, options.FindOne().SetSort(bson.M{"t": -1}).SetProjection(bson.M{"_id": 1})).Decode(&id)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return webhook.TplAlarm{}, common.NewValidationError("testdata.event", "Corresponding alarm doesn't exist.")
+			return webhook.TplAlarm{}, nil
 		}
 
 		return webhook.TplAlarm{}, err
@@ -560,7 +596,7 @@ func (s *store) findAlarm(ctx context.Context, entityID string) (webhook.TplAlar
 
 	defer cursor.Close(ctx)
 	if !cursor.Next(ctx) {
-		return webhook.TplAlarm{}, common.NewValidationError("testdata.alarm", "Alarm doesn't exist.")
+		return webhook.TplAlarm{}, nil
 	}
 
 	var alarm webhook.TplAlarm
@@ -628,12 +664,12 @@ func (s *store) validateActionTpls(
 			if td, ok := whTestData[i]; ok {
 				b, err := s.encoder.Encode(td.Body)
 				if err != nil {
-					return nil, common.NewValidationError("testdata.responses."+iStr, "Response is not a JSON.")
+					return nil, validation.NewSingleError("not_json", iStr, "TestData.Responses."+iStr, r)
 				}
 
 				flatten, _, err := http.FlattenJSON(b)
 				if err != nil {
-					return nil, common.NewValidationError("testdata.responses."+iStr, "Response is not JSON.")
+					return nil, validation.NewSingleError("not_json", iStr, "TestData.Responses."+iStr, r)
 				}
 
 				whHeader = td.Headers
@@ -642,7 +678,7 @@ func (s *store) validateActionTpls(
 					whResponseMap[iStr+"."+k] = v
 				}
 			} else {
-				return nil, common.NewValidationError("testdata.responses."+iStr, "Response is missing.")
+				return nil, validation.NewSingleError("required", iStr, "TestData.Responses."+iStr, r)
 			}
 
 			if a.Parameters.DeclareTicket != nil {
@@ -677,7 +713,9 @@ func (s *store) validateActionTpls(
 			}
 
 			if _, ok := whTestData[i]; ok {
-				return nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is redundant.")
+				iStr := strconv.Itoa(i)
+
+				return nil, validation.NewSingleError("must_be_empty", iStr, "TestData.Responses."+iStr, r)
 			}
 		}
 	}
@@ -720,6 +758,85 @@ func (s *store) validateAuthorTpl(
 	}
 
 	return &res, additionalData, nil
+}
+
+func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
+	var fieldErrs validator.ValidationErrors
+
+	pbhTypeIDs := make([]string, 0)
+	pbhReasonIDs := make([]string, 0)
+	for _, a := range r.Actions {
+		if a.Parameters.Type != "" {
+			pbhTypeIDs = append(pbhTypeIDs, a.Parameters.Type)
+		}
+
+		if a.Parameters.Reason != "" {
+			pbhReasonIDs = append(pbhReasonIDs, a.Parameters.Reason)
+		}
+	}
+
+	var foundTypes, foundReasons map[string]bool
+	if len(pbhTypeIDs) > 0 {
+		cursor, err := s.pbhTypeCollection.Find(ctx, bson.M{"_id": bson.M{"$in": pbhTypeIDs}}, options.Find().SetProjection(bson.M{"_id": 1}))
+		if err != nil {
+			return fmt.Errorf("cannot find types: %w", err)
+		}
+
+		foundTypes, err = s.fetchIDs(ctx, cursor)
+		if err != nil {
+			return fmt.Errorf("cannot fetch types: %w", err)
+		}
+	}
+
+	if len(pbhReasonIDs) > 0 {
+		cursor, err := s.pbhReasonCollection.Find(ctx, bson.M{"_id": bson.M{"$in": pbhReasonIDs}}, options.Find().SetProjection(bson.M{"_id": 1}))
+		if err != nil {
+			return fmt.Errorf("cannot find reasons: %w", err)
+		}
+
+		foundReasons, err = s.fetchIDs(ctx, cursor)
+		if err != nil {
+			return fmt.Errorf("cannot fetch reasons: %w", err)
+		}
+	}
+
+	for i, a := range r.Actions {
+		if a.Parameters.Type != "" && !foundTypes[a.Parameters.Type] {
+			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Type", "Actions."+strconv.Itoa(i)+".Parameters.Type"))
+		}
+
+		if a.Parameters.Reason != "" && !foundReasons[a.Parameters.Reason] {
+			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Reason", "Actions."+strconv.Itoa(i)+".Parameters.Reason"))
+		}
+	}
+
+	if len(fieldErrs) != 0 {
+		return validation.NewError(fieldErrs, r)
+	}
+
+	return nil
+}
+
+func (s *store) fetchIDs(ctx context.Context, cursor mongo.Cursor) (map[string]bool, error) {
+	found := make(map[string]bool)
+	defer cursor.Close(ctx)
+	for cursor.Next(ctx) {
+		v := struct {
+			ID string `bson:"_id"`
+		}{}
+		err := cursor.Decode(&v)
+		if err != nil {
+			return nil, err
+		}
+
+		found[v.ID] = true
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return found, nil
 }
 
 func getNestedObjectsPipeline() []bson.M {

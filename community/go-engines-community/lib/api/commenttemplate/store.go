@@ -3,12 +3,11 @@ package commenttemplate
 import (
 	"cmp"
 	"context"
-	"fmt"
-	"regexp"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -31,7 +30,7 @@ type store struct {
 	authorProvider   author.Provider
 
 	defaultSearchByFields []string
-	dupErrorRegexp        *regexp.Regexp
+	dupErrorParser        validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -45,7 +44,7 @@ func NewStore(
 		authorProvider:   authorProvider,
 
 		defaultSearchByFields: []string{"_id", "name"},
-		dupErrorRegexp:        regexp.MustCompile(`{ ([^:]+)`),
+		dupErrorParser:        validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -69,7 +68,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -117,7 +116,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	match := make([]bson.M, 0)
 	pipeline := make([]bson.M, 0)
 
-	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		match = append(match, filter)
 	}
@@ -133,7 +132,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(query.SortBy, "_id"), query.Sort),
+		mongoquery.GetSortQuery(cmp.Or(query.SortBy, "_id"), query.Sort),
 		s.authorProvider.Pipeline(),
 	))
 	if err != nil {
@@ -178,7 +177,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		)
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -217,20 +216,4 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	})
 
 	return deleted > 0, err
-}
-
-func (s *store) parseDupError(err error) error {
-	match := s.dupErrorRegexp.FindStringSubmatch(err.Error())
-	if len(match) > 1 {
-		matchedStr := match[1]
-
-		switch matchedStr {
-		case "name":
-			return common.NewValidationError("name", "Name already exists.")
-		default:
-			return common.NewValidationError(matchedStr, matchedStr+" already exists.")
-		}
-	}
-
-	return fmt.Errorf("can't parse duplication error: %w", err)
 }

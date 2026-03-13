@@ -15,7 +15,7 @@ Les Templates Go sont un puissant système de génération de texte utilisé dan
 
 Cette documentation vous guidera pas à pas dans l'utilisation des Templates Go, des concepts fondamentaux aux cas d'usage avancés.
 
-Des exemples avancés sont disponible sur [cette page dédiée](./templates-go-casdusage/)
+Des exemples avancés sont disponible sur [cette page dédiée][casdusage].
 
 ## Concepts fondamentaux
 
@@ -64,6 +64,7 @@ Les variables d'alarme sont accessibles via le préfixe `.Alarm`. Elles contienn
 
 // Dates importantes
 {{ .Alarm.Value.CreationDate }}   // Date de création
+{{ .Alarm.Value.CreationDate.Unix }}   // Date de création au format Unix (Epoch)
 {{ .Alarm.Value.ActivationDate }} // Date d'activation
 {{ .Alarm.Value.LastUpdateDate }} // Date du dernier changement de sévérité
 {{ .Alarm.Value.LastEventDate }}  // Date du dernier événement reçu
@@ -126,7 +127,7 @@ Les événements sont les données brutes envoyées à Canopsis par les système
 
 ### Variables d'environnement
 
-Vos propres variables définies dans le fichier [Canopsis.toml](../../../guide-administration/administration-avancee/modification-canopsis-toml/#section-canopsistemplatevars).
+Vos propres variables définies dans le fichier [Canopsis.toml](../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsistemplatevars).
 
 ```go
 {{ .Env.nom_variable }} // Accès à une variable d'environnement
@@ -310,7 +311,7 @@ Canopsis fournit de nombreuses fonctions pour transformer les données dans vos 
 ## Exemples de cas d'usage concrets
 
 Voici quelques exemples d'usages simples et concrets utilisant des templates GO.  
-Si vous souhaitez rédiger des templates plus complexes, n'hésitez pas à consulter [cette page dédiée](./templates-go-casdusage/).
+Si vous souhaitez rédiger des templates plus complexes, n'hésitez pas à consulter [cette page dédiée][casdusage].
 
 ### Cas #1: Notification personnalisée selon la criticité
 
@@ -426,3 +427,5 @@ Si une fonction ne fonctionne pas comme prévu :
 Les Templates Go dans Canopsis sont un outil puissant pour personnaliser vos messages et automatiser vos processus de supervision. En maîtrisant leur utilisation, vous pouvez créer des notifications précises et contextuelles, générer des payloads adaptés pour vos intégrations, et faciliter le travail de vos équipes de supervision.
 
 N'hésitez pas à commencer avec des templates simples et à les enrichir progressivement en fonction de vos besoins spécifiques.
+
+[casdusage]: templates-go-casdusage.md

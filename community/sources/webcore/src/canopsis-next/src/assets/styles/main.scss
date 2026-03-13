@@ -300,6 +300,7 @@ html {
   top: 2px;
   right: 2px;
   margin: 0 !important;
+  height: auto;
 }
 
 .text-ucfirst {
@@ -430,10 +431,26 @@ html {
   }
 }
 
+.v-list-item__mask {
+  .theme--light & {
+    color: var(--v-text-light-disabled, rgba(0, 0, 0, 0.38));
+    background: #eeeeee;
+  }
+
+  .theme--dark & {
+    color: var(--v-text-dark-disabled, rgba(255, 255, 255, 0.5));
+    background: #494949;
+  }
+}
+
 *[aria-required="true"] label:before {
   content: '*' !important;
   padding-right: 4px !important;
   color: var(--v-error-base) !important;
+}
+
+.not-required label:before {
+  content: none !important;
 }
 
 @for $i from 0 through 16 {
@@ -463,6 +480,10 @@ html {
       color: white;
     }
   }
+
+  &-unknown {
+    color: white;
+  }
 }
 
 .impact-state {
@@ -475,6 +496,66 @@ html {
       &, & *:not(svg, g, path) {
         color: $color;
       }
+    }
+  }
+}
+
+.c-alternative-bg-panel {
+  border-radius: 8px !important;
+
+  .v-expansion-panel-header {
+    flex-direction: row-reverse;
+    color: grey;
+
+    .v-icon {
+      margin-right: 8px;
+    }
+  }
+
+  .theme--light & {
+    &,
+    .v-expansion-panel-header,
+    .v-card,
+    .v-data-table,
+    .v-data-table tbody tr,
+    .treeview-data-table {
+      // For selictivity
+      background-color: var(--v-application-background-darken1) !important;
+      border-color: var(--v-application-background-darken1) !important;
+    }
+
+    .v-expansion-panel-header,
+        :not(.v-btn__content:has(.v-icon), .v-pagination__navigation:has(.v-icon),
+          .v-input--selection-controls__input:has(.v-icon)) > .v-icon:not(button, .success--text, .primary--text, .error--text) {
+      color: var(--v-application-background-darken4) !important;
+    }
+  }
+
+  .theme--dark & {
+    &,
+    .v-expansion-panel-header,
+    .v-card,
+    .v-data-table,
+    .v-data-table tbody tr {
+      // For selictivity
+      color: var(--v-active-color-base) !important;
+      background-color: var(--v-application-background-lighten2) !important;
+      border-color: var(--v-application-background-lighten2) !important;
+    }
+
+    .v-expansion-panel-header,
+    .v-icon {
+      color: var(--v-application-background-lighten5) !important;
+    }
+  }
+}
+
+.status {
+  $statuses: ok stealthy flapping ongoing cancelled noEvents unknown;
+
+  @each $status in $statuses {
+    &-#{$status} {
+      background-color: var(--v-status-#{$status}-base);
     }
   }
 }

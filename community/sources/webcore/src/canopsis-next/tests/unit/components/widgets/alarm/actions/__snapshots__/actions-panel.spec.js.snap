@@ -48,7 +48,7 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
   <button
     class="action-associateTicket"
   >
-    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
+    Associate ticket|sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -58,7 +58,7 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
   <button
     class="action-fastPbehaviorAdd"
   >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+    Fast periodical behavior|motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -68,7 +68,7 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-history"
@@ -154,7 +154,7 @@ exports[`actions-panel Renders \`actions-panel\` with custom quickActions order 
   <button
     class="action-associateTicket"
   >
-    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
+    Associate ticket|sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -164,7 +164,7 @@ exports[`actions-panel Renders \`actions-panel\` with custom quickActions order 
   <button
     class="action-fastPbehaviorAdd"
   >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+    Fast periodical behavior|motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -174,7 +174,7 @@ exports[`actions-panel Renders \`actions-panel\` with custom quickActions order 
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-history"
@@ -270,7 +270,7 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
   <button
     class="action-associateTicket"
   >
-    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
+    Associate ticket|sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -280,7 +280,7 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
   <button
     class="action-fastPbehaviorAdd"
   >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+    Fast periodical behavior|motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -290,7 +290,7 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-history"
@@ -339,7 +339,7 @@ exports[`actions-panel Renders \`actions-panel\` with links in resolved alarm 1`
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-RuleId.icon.Label"
@@ -407,7 +407,7 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
   <button
     class="action-associateTicket"
   >
-    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
+    Associate ticket|sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -417,7 +417,7 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
   <button
     class="action-fastPbehaviorAdd"
   >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+    Fast periodical behavior|motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -427,7 +427,7 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-history"
@@ -513,7 +513,7 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
   <button
     class="action-associateTicket"
   >
-    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
+    Associate ticket|sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -523,7 +523,7 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
   <button
     class="action-fastPbehaviorAdd"
   >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+    Fast periodical behavior|motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -533,7 +533,7 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-history"
@@ -619,7 +619,7 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
   <button
     class="action-associateTicket"
   >
-    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
+    Associate ticket|sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -629,7 +629,7 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
   <button
     class="action-fastPbehaviorAdd"
   >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+    Fast periodical behavior|motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -639,7 +639,7 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-history"
@@ -728,7 +728,7 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
   <button
     class="action-associateTicket"
   >
-    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
+    Associate ticket|sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -738,7 +738,7 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
   <button
     class="action-fastPbehaviorAdd"
   >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+    Fast periodical behavior|motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -748,7 +748,7 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-history"
@@ -787,7 +787,7 @@ exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-removeAlarmsFromManualMetaAlarm"
@@ -855,7 +855,7 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
   <button
     class="action-associateTicket"
   >
-    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
+    Associate ticket|sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -865,7 +865,7 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
   <button
     class="action-fastPbehaviorAdd"
   >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+    Fast periodical behavior|motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -875,7 +875,7 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-history"
@@ -967,7 +967,7 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
   <button
     class="action-associateTicket"
   >
-    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
+    Associate ticket|sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -977,7 +977,7 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
   <button
     class="action-fastPbehaviorAdd"
   >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+    Fast periodical behavior|motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -987,7 +987,7 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-history"
@@ -1066,7 +1066,7 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
   <button
     class="action-fastPbehaviorAdd"
   >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+    Fast periodical behavior|motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -1076,7 +1076,7 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-history"
@@ -1160,7 +1160,7 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
   <button
     class="action-associateTicket"
   >
-    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
+    Associate ticket|sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -1170,7 +1170,7 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
   <button
     class="action-fastPbehaviorAdd"
   >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+    Fast periodical behavior|motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -1180,7 +1180,7 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-history"
@@ -1249,7 +1249,7 @@ exports[`actions-panel Renders \`actions-panel\` without entity, instructions, b
   <button
     class="action-fastPbehaviorAdd"
   >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+    Fast periodical behavior|motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -1259,7 +1259,7 @@ exports[`actions-panel Renders \`actions-panel\` without entity, instructions, b
   <button
     class="action-addBookmark"
   >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+    Add bookmark|bookmark_add|addBookmark
   </button>
   <button
     class="action-variablesHelp"

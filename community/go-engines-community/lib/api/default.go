@@ -15,20 +15,23 @@ import (
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	libcommtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -71,10 +74,11 @@ const (
 	websocketReadBufferSize  = 1024
 	websocketWriteBufferSize = 2048
 
-	jobKeyExport        = "export"
-	jobKeyImport        = "import"
-	jobKeyExtDataImport = "extdataimport"
-	jobKeyPbhPatterns   = "pbhpatterns"
+	jobKeyExport          = "export"
+	jobKeyImport          = "import"
+	jobKeyExtDataImport   = "extdataimport"
+	jobKeyPbhPatterns     = "pbhpatterns"
+	jobKeyPatternOptimize = "patternoptimize"
 )
 
 //go:embed swaggerui/*
@@ -96,6 +100,7 @@ type Services struct {
 	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
 	ExternalDataContainer       *externaldata.GetterContainer
 	NotificationStore           usernotification.Store
+	ErrorResponder              httperror.Responder
 }
 
 func Default(
@@ -190,7 +195,16 @@ func Default(
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
 	services.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
-	security := NewSecurity(securityConfig, cfg, primaryDbClient, sessionStore, services.Enforcer, services.ApiConfigProvider, config.NewMaintenanceAdapter(primaryDbClient), cookieOptions, logger)
+	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
+	uniTrans, err := RegisterValidators(securityConfig, tplExecutor)
+	if err != nil {
+		return nil, services, fmt.Errorf("cannot register request validators: %w", err)
+	}
+
+	services.ErrorResponder = httperror.NewResponder(validation.NewErrorTranslator(uniTrans, logger), logger)
+	security := NewSecurity(securityConfig, cfg, primaryDbClient, sessionStore, services.Enforcer,
+		services.ApiConfigProvider, config.NewMaintenanceAdapter(primaryDbClient), cookieOptions,
+		services.ErrorResponder, logger)
 
 	if flags.EnableSameServiceNames {
 		logger.Info().Msg("Non-unique names for services ENABLED")
@@ -245,7 +259,7 @@ func Default(
 			importcontextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpPublisher),
 			metricsEntityMetaUpdater,
 			canopsis.ApiConnector,
-			common.NewPatternFieldsTransformer(primaryDbClient),
+			patternfields.NewTransformer(primaryDbClient),
 			logger,
 		),
 		workers.NewJobPublisher(jobKeyImport, amqpPublisher),
@@ -254,7 +268,6 @@ func Default(
 	workersRunner.AddJobExecutor(jobKeyImport, func(ctx context.Context, _ string) error {
 		return importWorker.ProcessFirstJob(ctx)
 	})
-	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
 	websocketStore := websocket.NewStore(primaryDbClient, flags.IntegrationPeriodicalWaitTime)
 	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
 		ReadBufferSize:  websocketReadBufferSize,
@@ -274,7 +287,7 @@ func Default(
 	services.ExternalDataContainer = externaldata.NewGetterContainer()
 	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, services.ExternalDataContainer, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)
-	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, common.NewPatternFieldsTransformer(primaryDbClient),
+	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, patternfields.NewTransformer(primaryDbClient),
 		services.TimezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
 	alarmWatcher := alarmapi.NewWatcher(noTimeoutClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
@@ -286,7 +299,7 @@ func Default(
 		return nil, services, fmt.Errorf("cannot register websocket groups: %w", err)
 	}
 
-	broadcastMessageChan := make(chan bool)
+	broadcastMessageChan := make(chan bool, chanBuf)
 
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
@@ -315,9 +328,17 @@ func Default(
 	workersRunner.AddJobExecutor(jobKeyExtDataImport, func(ctx context.Context, id string) error {
 		return exdataImportWorker.ProcessJob(ctx, id)
 	})
+
+	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
+
+	patternStore := pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger)
+	patternOptimizeWorker := pattern.NewOptimizeWorker(patternStore, primaryDbClient, workers.NewJobPublisher(jobKeyPatternOptimize, amqpPublisher), patternfields.NewTransformer(primaryDbClient), logger)
+	workersRunner.AddJobExecutor(jobKeyPatternOptimize, func(ctx context.Context, id string) error {
+		return patternOptimizeWorker.ProcessJob(ctx, id)
+	})
 	apiPbhStore := pbehavior.NewStore(primaryDbClient, secondaryDbClient, lockRedisSession, pbhEntityTypeResolver,
 		libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
-		services.TimezoneConfigProvider, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient),
+		services.TimezoneConfigProvider, authorProvider, patternfields.NewTransformer(primaryDbClient),
 		websocketHub, services.UserInterfaceConfigProvider)
 	workersRunner.AddJobExecutor(jobKeyPbhPatterns, func(ctx context.Context, _ string) error {
 		return apiPbhStore.ExecPatternsAndUpdate(ctx)
@@ -405,10 +426,8 @@ func Default(
 		logger,
 	)
 
-	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
-
-	api.AddRouter(func(router *gin.Engine) {
-		router.Use(middleware.Logger(logger, flags.LogBody, flags.LogBodyOnError))
+	api.AddRouter(func(router *gin.Engine) error {
+		router.Use(middleware.Logger(services.ErrorResponder, logger, flags.LogBody, flags.LogBodyOnError))
 		router.Use(middleware.Recovery(logger))
 		router.Use(middleware.CacheControl())
 
@@ -424,13 +443,13 @@ func Default(
 			})
 		})
 
-		RegisterValidators(primaryDbClient, security.GetConfig(), services.Enforcer, tplExecutor)
-		RegisterRoutes(
+		return RegisterRoutes(
 			ctx,
 			cfg,
 			router,
 			security,
 			services.Enforcer,
+			services.ErrorResponder,
 			services.LinkGenerator,
 			primaryDbClient,
 			secondaryDbClient,
@@ -461,18 +480,20 @@ func Default(
 			event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector),
 			securityConfig,
 			exdataImportWorker,
+			patternOptimizeWorker,
 			services.NotificationStore,
 			services.ExternalDataContainer,
-			workersRunner,
 			tplTestTypePermMapping,
 			logger,
 		)
 	})
 	if flags.EnableDocs {
-		api.AddRouter(func(router *gin.Engine) {
+		api.AddRouter(func(router *gin.Engine) error {
 			router.GET("/swagger/*filepath", func(c *gin.Context) {
 				c.FileFromFS("swaggerui/"+c.Param("filepath"), http.FS(docsUiFile))
 			})
+
+			return nil
 		})
 		if !overrideDocs {
 			content, err := docsFile.ReadFile("docs/swagger.yaml")
@@ -483,17 +504,23 @@ func Default(
 			if err != nil {
 				return nil, services, fmt.Errorf("cannot read swagger: %w", err)
 			}
-			api.AddRouter(func(router *gin.Engine) {
-				router.GET("/swagger.yaml", docs.GetHandler(schemasContent, content))
+			api.AddRouter(func(router *gin.Engine) error {
+				router.GET("/swagger.yaml", docs.GetHandler(
+					services.ErrorResponder,
+					[][]byte{schemasContent},
+					[][]byte{content},
+				))
+
+				return nil
 			})
 		}
 	}
 
 	api.AddNoRoute(func(c *gin.Context) {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		services.ErrorResponder.Respond(c, httperror.ErrNotFound)
 	})
 	api.AddNoMethod(func(c *gin.Context) {
-		c.AbortWithStatusJSON(http.StatusMethodNotAllowed, common.MethodNotAllowedResponse)
+		services.ErrorResponder.Respond(c, httperror.ErrMethodNotAllowed)
 	})
 	api.SetWebsocketHub(websocketHub)
 
@@ -572,7 +599,9 @@ func Default(
 	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, websocketHub, websocketStore, logger))
 
 	maintenanceAdapter := config.NewMaintenanceAdapter(primaryDbClient)
-	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(primaryDbClient, maintenanceAdapter, authorProvider), websocketHub, canopsis.PeriodicalWaitTime, logger)
+	broadcastMessageService := broadcastmessage.NewService(
+		broadcastmessage.NewStore(primaryDbClient, maintenanceAdapter, authorProvider), websocketHub,
+		flags.BroadcastMessagePeriodicalWaitTime, logger)
 	api.AddWorker("broadcast_message", func(ctx context.Context) {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
 	})
@@ -597,6 +626,9 @@ func Default(
 	})
 	api.AddWorker("data_extdata_import_delete_old", func(ctx context.Context) {
 		exdataImportWorker.DeleteOldJobs(ctx)
+	})
+	api.AddWorker("pattern_optimize_abandoned", func(ctx context.Context) {
+		patternOptimizeWorker.ProcessAbandonedJobs(ctx)
 	})
 	api.AddWorker("healthcheck", func(ctx context.Context) {
 		healthcheckStore.Load(ctx)

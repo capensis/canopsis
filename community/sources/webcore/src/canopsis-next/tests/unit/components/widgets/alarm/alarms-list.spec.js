@@ -21,6 +21,7 @@ import {
   LIVE_REPORTING_QUICK_RANGES,
   TIME_UNITS,
   USER_PERMISSIONS,
+  PBEHAVIOR_ORIGINS,
 } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
@@ -368,6 +369,7 @@ describe('alarms-list', () => {
           with_declare_tickets: true,
           with_links: true,
           opened: true,
+          pbh_origin: PBEHAVIOR_ORIGINS.alarmList,
         },
       },
     );
@@ -400,6 +402,7 @@ describe('alarms-list', () => {
           with_declare_tickets: true,
           with_links: true,
           opened: true,
+          pbh_origin: PBEHAVIOR_ORIGINS.alarmList,
         },
       },
     );
@@ -1482,10 +1485,7 @@ describe('alarms-list', () => {
   it('Alarms fetched after change query nonce', async () => {
     const firstAlarmId = alarms[0]._id;
 
-    const expanded = {
-      'non-exist-id': true,
-      [firstAlarmId]: true,
-    };
+    const expanded = [{ _id: 'non-exist-id' }, { _id: firstAlarmId }];
     const wrapper = factory({
       store,
       data: () => ({
@@ -1528,10 +1528,10 @@ describe('alarms-list', () => {
         },
       },
     );
-    expect(expanded).toEqual({
-      'non-exist-id': false,
-      [firstAlarmId]: true,
-    });
+    expect(expanded).toEqual([
+      { _id: 'non-exist-id' },
+      { _id: firstAlarmId },
+    ]);
   });
 
   it('Periodic started after mount with enabled value', async () => {
