@@ -28,6 +28,7 @@ export default {
   runStatus: {
     [JOB_RUN_STATUS.succeed]: 'Succeed',
     [JOB_RUN_STATUS.failed]: 'Failed',
+    [JOB_RUN_STATUS.aborted]: 'Aborted',
     inProgress: 'In progress',
   },
   ruleTypeValues: {

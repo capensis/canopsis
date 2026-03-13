@@ -28,6 +28,7 @@ export default {
   runStatus: {
     [JOB_RUN_STATUS.succeed]: 'Réussi',
     [JOB_RUN_STATUS.failed]: 'Échoué',
+    [JOB_RUN_STATUS.aborted]: 'Abandonné',
     inProgress: 'En cours',
   },
   ruleTypeValues: {
