@@ -6,8 +6,9 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -28,6 +29,7 @@ func NewApi(
 	providers []security.Provider,
 	maintenanceAdapter config.MaintenanceAdapter,
 	enforcer security.Enforcer,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	return &api{
@@ -35,6 +37,7 @@ func NewApi(
 		providers:          providers,
 		maintenanceAdapter: maintenanceAdapter,
 		enforcer:           enforcer,
+		errorResponder:     errorResponder,
 		logger:             logger,
 	}
 }
@@ -44,22 +47,28 @@ type api struct {
 	providers          []security.Provider
 	maintenanceAdapter config.MaintenanceAdapter
 	enforcer           security.Enforcer
+	errorResponder     httperror.Responder
 	logger             zerolog.Logger
 }
 
 // LoginHandler authenticates user and starts sessions.
 func (a *api) LoginHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		session := a.getSession(c)
-		var request loginRequest
+		session, err := a.getSession(c)
+		if err != nil {
+			a.errorResponder.Respond(c, err)
 
-		if err := c.ShouldBind(&request); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+			return
+		}
+
+		var request loginRequest
+		if err = validation.Bind(c, &request); err != nil {
+			a.errorResponder.Respond(c, err)
+
 			return
 		}
 
 		var user *security.User
-		var err error
 		for _, p := range a.providers {
 			user, err = p.Auth(c, request.Username, request.Password)
 			if err != nil {
@@ -72,23 +81,29 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 		}
 
 		if user == nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+			a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 			return
 		}
 
 		maintenanceConf, err := a.maintenanceAdapter.GetConfig(c)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if maintenanceConf.Enabled {
 			ok, err := a.enforcer.Enforce(user.ID, apisecurity.PermMaintenance, model.PermissionCan)
 			if err != nil {
-				panic(err)
+				a.errorResponder.Respond(c, err)
+
+				return
 			}
 
 			if !ok {
-				c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+				a.errorResponder.Respond(c, httperror.ErrMaintenance)
+
 				return
 			}
 		}
@@ -105,7 +120,9 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 		err = session.Save(c.Request, c.Writer)
 
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		c.JSON(http.StatusOK, response)
@@ -115,32 +132,36 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 // LogoutHandler deletes session.
 func (a *api) LogoutHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		session := a.getSession(c)
-		session.Options.MaxAge = -1
-		err := session.Save(c.Request, c.Writer)
-
+		session, err := a.getSession(c)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
+		}
+
+		session.Options.MaxAge = -1
+		err = session.Save(c.Request, c.Writer)
+		if err != nil {
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		c.Next()
 	}
 }
 
-func (a *api) getSession(c *gin.Context) *sessions.Session {
+func (a *api) getSession(c *gin.Context) (*sessions.Session, error) {
 	session, err := a.sessionStore.Get(c.Request, security.SessionKey)
-
-	if err == nil {
-		return session
-	}
-
-	var securecookieError securecookie.Error
-	if errors.As(err, &securecookieError) {
-		// if securecookie decode failed (for example due changed key), then it's a new session
-		session, err = a.sessionStore.New(c.Request, security.SessionKey)
-	}
 	if err != nil {
-		panic(err)
+		var securecookieError securecookie.Error
+		if errors.As(err, &securecookieError) {
+			// if securecookie decode failed (for example due changed key), then it's a new session
+			return a.sessionStore.New(c.Request, security.SessionKey)
+		}
+
+		return nil, err
 	}
-	return session
+
+	return session, nil
 }

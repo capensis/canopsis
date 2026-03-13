@@ -6,6 +6,13 @@ import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 export default {
   extends: VTabs,
+  watch: {
+    '$i18n.locale': {
+      handler() {
+        this.$nextTick(this.onResize);
+      },
+    },
+  },
   created() {
     this.onResize = throttle(this.onResizeOriginal, VUETIFY_ANIMATION_DELAY);
   },

@@ -3,6 +3,7 @@ package alarm
 //go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/api/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm Store
 
 import (
+	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
@@ -10,9 +11,11 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -75,7 +78,7 @@ type store struct {
 	dbUserCollection                 mongo.DbCollection
 	authorProvider                   author.Provider
 	linkGenerator                    link.Generator
-	transformer                      common.PatternFieldsTransformer
+	transformer                      patternfields.Transformer
 
 	timezoneConfigProvider config.TimezoneConfigProvider
 
@@ -92,7 +95,7 @@ func NewStore(
 	dbClient,
 	dbExportClient mongo.DbClient,
 	linkGenerator link.Generator,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	authorProvider author.Provider,
 	tplExecutor template.Executor,
@@ -500,10 +503,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userID string)
 	}
 
 	if r.Steps != nil {
-		details.Steps.Meta, err = common.NewPaginatedMeta(r.Steps.Query, details.StepsCount)
-		if err != nil {
-			return nil, err
-		}
+		details.Steps.Meta = pagination.NewMeta(r.Steps.Query, details.StepsCount)
 	}
 
 	if r.Children != nil {
@@ -536,10 +536,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userID string)
 			}
 		}
 
-		meta, err := common.NewPaginatedMeta(r.Children.Query, children.TotalCount)
-		if err != nil {
-			return nil, err
-		}
+		meta := pagination.NewMeta(r.Children.Query, children.TotalCount)
 		details.Children = &ChildrenDetails{
 			Data: children.Data,
 			Meta: meta,
@@ -761,7 +758,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			return nil, err
 		}
 	}
-	exportCursor := newExportCursor(cursor, t.Fields, common.GetRealFormatTime(r.TimeFormat), location,
+	exportCursor := newExportCursor(cursor, t.Fields, validation.GetRealFormatTime(cmp.Or(r.TimeFormat, validation.DefaultTimeFormat)), location,
 		instructions, linkGenerator, user, s.tplExecutor, withModel, s.dbClient.Collection(mongo.EntityInfosPropertyCollection), s.logger)
 	return exportCursor, nil
 }
@@ -778,7 +775,7 @@ func (s *store) GetLinks(ctx context.Context, ruleId string, alarmIds []string, 
 			return nil, false, nil
 		}
 		if errors.Is(err, link.ErrNotMatchedAlarm) {
-			return nil, false, common.NewValidationError("ids", "Alarms aren't matched to rule.")
+			return nil, false, validation.NewSingleError("rulematch", "ids", "ids", nil)
 		}
 		return nil, false, err
 	}

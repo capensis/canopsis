@@ -9,6 +9,7 @@ import AlarmColumnValueStatus from '@/components/widgets/alarm/columns-formattin
 const stubs = {
   'c-no-events-icon': true,
   'c-simple-tooltip': true,
+  'alarm-status-chip-with-relations': true,
 };
 
 describe('alarm-column-value-status', () => {
@@ -90,6 +91,50 @@ describe('alarm-column-value-status', () => {
           v: {
             status: {
               val: ALARM_STATUSES.noEvents,
+            },
+          },
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `alarm-column-value-status` with upstream', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        alarm: {
+          entity: {
+            upstream: {},
+          },
+          v: {
+            state: {
+              val: ALARM_STATES.ok,
+            },
+            status: {
+              val: ALARM_STATUSES.ongoing,
+            },
+          },
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `alarm-column-value-status` with downstream', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        alarm: {
+          entity: {
+            downstream_count: 5,
+          },
+          v: {
+            state: {
+              val: ALARM_STATES.ok,
+            },
+            status: {
+              val: ALARM_STATUSES.ongoing,
             },
           },
         },

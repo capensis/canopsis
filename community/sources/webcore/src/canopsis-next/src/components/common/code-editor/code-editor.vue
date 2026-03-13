@@ -4,7 +4,7 @@
       v-if="resettable"
       :disabled="!wasChanged"
       :tooltip="$t('common.reset')"
-      icon="$vuetify.icons.restart_alt"
+      icon="restart_alt"
       color="white"
       btn-color="grey darken-1"
       left
@@ -23,6 +23,7 @@ import initEditor from 'monaco-mermaid';
 import iPlasticTheme from 'monaco-themes/themes/iPlastic.json';
 
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution';
+import 'monaco-editor/esm/vs/basic-languages/html/html.contribution';
 import 'monaco-editor/esm/vs/language/json/monaco.contribution';
 
 import { promisedWait } from '@/helpers/async';

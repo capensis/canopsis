@@ -3,6 +3,7 @@ package types
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -28,6 +29,7 @@ const (
 	OutputStepPrefix       = "Step: "
 	OutputJobPrefix        = "Job: "
 	OutputFailReasonPrefix = "Fail reason: "
+	OutputUpstreamPrefix   = "Upstream: "
 )
 
 // PbhCanonicalTypeActive is duplicate of pbehavior.TypeActive because of package cycle.
@@ -43,7 +45,7 @@ type AlarmStep struct {
 	Message                string           `bson:"m" json:"m"`
 	Role                   string           `bson:"role,omitempty" json:"role,omitempty"`
 	Value                  CpsNumber        `bson:"val" json:"val"`
-	StateCounter           CropCounter      `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
+	StateCounter           CropCounter      `bson:"statecounter,omitempty" json:"statecounter"`
 	PbehaviorCanonicalType string           `bson:"pbehavior_canonical_type,omitempty" json:"pbehavior_canonical_type,omitempty"`
 	IconName               string           `bson:"icon_name,omitempty" json:"icon_name,omitempty"`
 	Color                  string           `bson:"color,omitempty" json:"color,omitempty"`
@@ -444,13 +446,7 @@ func (i *PbehaviorInfo) Is(t string) bool {
 }
 
 func (i *PbehaviorInfo) OneOf(t []string) bool {
-	for _, v := range t {
-		if i.Is(v) {
-			return true
-		}
-	}
-
-	return false
+	return slices.ContainsFunc(t, i.Is)
 }
 
 func (i PbehaviorInfo) IsZero() bool {
@@ -511,9 +507,13 @@ type AlarmValue struct {
 	LastComment *AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
 	ChangeState *AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
 	Tickets     []AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
-	// Ticket contains the last created ticket
+	// Ticket contains the last created ticket.
 	Ticket *AlarmStep `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	Steps  AlarmSteps `bson:"steps" json:"steps"`
+	// FailedTicket contains the last ticket if it failed.
+	FailedTicket *AlarmStep `bson:"failed_ticket,omitempty" json:"failed_ticket,omitempty"`
+	Steps        AlarmSteps `bson:"steps" json:"steps"`
+	// NoEventsDate indicates if an alarm is under no events idle rule.
+	NoEventsDate *datetime.CpsTime `bson:"no_events_date,omitempty" json:"no_events_date,omitempty"`
 
 	Component                   string            `bson:"component" json:"component"`
 	Connector                   string            `bson:"connector" json:"connector"`
@@ -528,11 +528,11 @@ type AlarmValue struct {
 	LongOutput                  string            `bson:"long_output" json:"long_output"`
 	LongOutputHistory           []string          `bson:"long_output_history" json:"long_output_history"`
 	LastUpdateDate              datetime.CpsTime  `bson:"last_update_date" json:"last_update_date"`
-	LastEventDate               datetime.CpsTime  `bson:"last_event_date" json:"last_event_date"`
+	LastEventDate               *datetime.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 	LastStateOrStatusUpdateDate datetime.CpsTime  `bson:"last_st_upd_dt" json:"last_st_upd_dt"`
 	Resource                    string            `bson:"resource,omitempty" json:"resource,omitempty"`
 	Resolved                    *datetime.CpsTime `bson:"resolved,omitempty" json:"resolved,omitempty"`
-	PbehaviorInfo               PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	PbehaviorInfo               PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info"`
 	Meta                        string            `bson:"meta,omitempty" json:"meta,omitempty"`
 	MetaValuePath               string            `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
 
@@ -545,8 +545,8 @@ type AlarmValue struct {
 	// EventsCount accumulates count of check events.
 	EventsCount CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	Infos           map[string]map[string]interface{} `bson:"infos" json:"infos"`
-	LastInfosUpdate datetime.MicroTime                `bson:"last_infos_update,omitempty" json:"last_infos_update,omitempty"`
+	Infos           map[string]map[string]any `bson:"infos" json:"infos"`
+	LastInfosUpdate datetime.MicroTime        `bson:"last_infos_update,omitempty" json:"last_infos_update,omitzero"`
 
 	// InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
 	// It's used only to compute InactiveDuration.
@@ -571,8 +571,9 @@ type AlarmValue struct {
 	// CloseDelay should have a state step copy when alarm is closed by a close delay job.
 	CloseDelay *AlarmStep `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
 
-	MaxState     CpsNumber `bson:"max_state,omitempty" json:"max_state,omitempty"`
-	InitialState CpsNumber `bson:"initial_state,omitempty" json:"initial_state,omitempty"`
+	MaxState      CpsNumber `bson:"max_state,omitempty" json:"max_state,omitempty"`
+	InitialState  CpsNumber `bson:"initial_state,omitempty" json:"initial_state,omitempty"`
+	InitialStatus CpsNumber `bson:"initial_status,omitempty" json:"initial_status,omitempty"`
 }
 
 func (v *AlarmValue) Transform() {

@@ -3,10 +3,10 @@ package file
 import (
 	"context"
 	"errors"
-	"fmt"
 	"mime/multipart"
+	"strconv"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -21,11 +21,11 @@ const (
 
 // Store interface consists of helpers for api handlers
 type Store interface {
-	Create(context.Context, bool, *multipart.Form) ([]File, error)
+	Create(context.Context, bool, *multipart.Form) ([]Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
-	List(ctx context.Context, ids []string) ([]File, error)
-	Get(ctx context.Context, id string) (*File, error)
-	GetFilepath(model File) string
+	List(ctx context.Context, ids []string) ([]Response, error)
+	Get(ctx context.Context, id string) (*Response, error)
+	GetFilepath(model Response) string
 }
 
 type store struct {
@@ -44,7 +44,7 @@ func NewStore(dbClient mongo.DbClient, storage file.Storage, maxSize uint64) Sto
 }
 
 // Create parses form data from request and stores files and linked database records
-func (s *store) Create(ctx context.Context, isPublic bool, form *multipart.Form) ([]File, error) {
+func (s *store) Create(ctx context.Context, isPublic bool, form *multipart.Form) ([]Response, error) {
 	files, err := s.validateFormRequest(form)
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (s *store) Create(ctx context.Context, isPublic bool, form *multipart.Form)
 	}
 
 	if len(models) > 0 {
-		docs := make([]interface{}, len(models))
+		docs := make([]any, len(models))
 		for i := range models {
 			docs[i] = models[i]
 		}
@@ -70,7 +70,7 @@ func (s *store) Create(ctx context.Context, isPublic bool, form *multipart.Form)
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	f := File{}
+	f := Response{}
 	err := s.dbCollection.FindOneAndDelete(ctx, bson.M{"_id": id}).Decode(&f)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -88,13 +88,13 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 }
 
 // List files
-func (s *store) List(ctx context.Context, ids []string) ([]File, error) {
+func (s *store) List(ctx context.Context, ids []string) ([]Response, error) {
 	cursor, err := s.dbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
 	if err != nil {
 		return nil, err
 	}
 
-	files := make([]File, 0)
+	files := make([]Response, 0)
 	err = cursor.All(ctx, &files)
 	if err != nil {
 		return nil, err
@@ -103,8 +103,8 @@ func (s *store) List(ctx context.Context, ids []string) ([]File, error) {
 	return files, nil
 }
 
-func (s *store) Get(ctx context.Context, id string) (*File, error) {
-	f := File{}
+func (s *store) Get(ctx context.Context, id string) (*Response, error) {
+	f := Response{}
 	err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&f)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -117,12 +117,12 @@ func (s *store) Get(ctx context.Context, id string) (*File, error) {
 	return &f, nil
 }
 
-func (s *store) GetFilepath(model File) string {
+func (s *store) GetFilepath(model Response) string {
 	return s.storage.GetFilepath(model.ID, model.Storage)
 }
 
-func (s *store) storeFiles(isPublic bool, files []*multipart.FileHeader) ([]File, error) {
-	models := make([]File, len(files))
+func (s *store) storeFiles(isPublic bool, files []*multipart.FileHeader) ([]Response, error) {
+	models := make([]Response, len(files))
 
 	for i, f := range files {
 		id := utils.NewID()
@@ -146,7 +146,7 @@ func (s *store) storeFiles(isPublic bool, files []*multipart.FileHeader) ([]File
 			return nil, err
 		}
 
-		models[i] = File{
+		models[i] = Response{
 			ID:        id,
 			FileName:  f.Filename,
 			MediaType: f.Header.Get(contentType),
@@ -164,9 +164,9 @@ func (s *store) validateFormRequest(form *multipart.Form) ([]*multipart.FileHead
 	files := make([]*multipart.FileHeader, 0)
 
 	for field, headers := range form.File {
-		for i, header := range headers {
+		for _, header := range headers {
 			if s.maxSize > 0 && uint64(header.Size) > s.maxSize {
-				return nil, common.NewValidationError(fmt.Sprintf("%s[%d]", field, i), fmt.Sprintf("file size %d exceeds limit %d", header.Size, s.maxSize))
+				return nil, validation.NewSingleErrorWithParam("filesize", field, field, strconv.FormatUint(s.maxSize, 10), nil)
 			}
 
 			files = append(files, header)

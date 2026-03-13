@@ -1,197 +1,248 @@
 <template>
-  <v-menu
-    v-if="administrationGroupedLinks.length"
-    content-class="top-bar-menu__content"
-    bottom
-    offset-y
-  >
-    <template #activator="{ on }">
-      <v-btn
-        class="white--text"
-        text
-        v-on="on"
-      >
-        {{ $t('common.administration') }}
-      </v-btn>
-    </template>
-    <v-list class="py-0">
-      <template v-for="(group, index) in administrationGroupedLinks">
-        <v-subheader
-          :key="`${group.title}-title`"
-          class="text-subtitle-1"
-          @click.stop=""
-        >
-          {{ group.title }}
-        </v-subheader>
-        <top-bar-menu-link
-          v-for="link in group.links"
-          :key="link.title"
-          :link="link"
-          class="top-bar-administration-menu-link"
-        />
-        <v-divider
-          v-if="index < administrationGroupedLinks.length - 1"
-          :key="`${group.title}-divider`"
-        />
-      </template>
-    </v-list>
-  </v-menu>
+  <top-bar-menu
+    :title="$t('common.administration')"
+    :links="administrationLinks"
+    :permissions-with-default-type="permissionsWithDefaultType"
+    content-class="topbar-menu-administration__content"
+    without-sort
+  />
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { USER_PERMISSIONS, ROUTES_NAMES, GROUPED_USER_PERMISSIONS } from '@/constants';
 
-import { layoutNavigationTopBarMenuMixin } from '@/mixins/layout/navigation/top-bar-menu';
-import { maintenanceActionsMixin } from '@/mixins/maintenance/maintenance-actions';
+import { uid } from '@/helpers/uid';
 
-import TopBarMenuLink from './top-bar-menu-link.vue';
+import { useI18n } from '@/hooks/i18n';
+
+import { useMaintenanceActions } from './hooks/maintenance-actions';
+import TopBarMenu from './top-bar-menu.vue';
 
 export default {
-  components: { TopBarMenuLink },
-  mixins: [layoutNavigationTopBarMenuMixin, maintenanceActionsMixin],
-  computed: {
-    administrationGroupedLinks() {
-      const groupedLinks = [
-        {
-          title: this.$t('common.access'),
-          links: this.administrationAccessLinks,
-        },
-        {
-          title: this.$tc('common.communication', 2),
-          links: this.administrationCommunicationsLinks,
-        },
-        {
-          title: this.$t('common.general'),
-          links: this.administrationGeneralLinks,
-        },
-      ];
+  components: { TopBarMenu },
+  setup() {
+    const { t, tc } = useI18n();
+    const { showToggleMaintenanceModeModal } = useMaintenanceActions();
 
-      return groupedLinks.reduce((acc, group) => {
-        const links = this.prepareLinks(group.links);
+    const permissionsWithDefaultType = [
+      USER_PERMISSIONS.technical.engine,
+      USER_PERMISSIONS.technical.healthcheck,
+      USER_PERMISSIONS.technical.kpi,
+      USER_PERMISSIONS.technical.maintenance,
+      USER_PERMISSIONS.technical.eventsRecord,
+      USER_PERMISSIONS.technical.templateTesting,
+      USER_PERMISSIONS.technical.viewImportExport,
+      USER_PERMISSIONS.technical.notification.common,
+    ];
 
-        if (links.length) {
-          acc.push({ links, title: group.title });
-        }
+    const accessLinks = [
+      {
+        route: { name: ROUTES_NAMES.adminRights },
+        icon: 'verified_user',
+        permission: USER_PERMISSIONS.technical.permission,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminRoles },
+        icon: 'supervised_user_circle',
+        permission: USER_PERMISSIONS.technical.role,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminUsers },
+        icon: 'people',
+        permission: USER_PERMISSIONS.technical.user,
+      },
+    ];
 
+    const maintenanceLinks = [
+      {
+        icon: 'build_circle',
+        permission: USER_PERMISSIONS.technical.maintenance,
+        handler: showToggleMaintenanceModeModal,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminPlanning },
+        icon: 'event_note',
+        permission: GROUPED_USER_PERMISSIONS.planning,
+      },
+    ];
+
+    const communicationsLinks = [
+      {
+        route: { name: ROUTES_NAMES.adminBroadcastMessages },
+        icon: 'campaign',
+        permission: USER_PERMISSIONS.technical.broadcastMessage,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminPlaylists },
+        icon: 'playlist_play',
+        permission: USER_PERMISSIONS.technical.playlist,
+      },
+    ];
+
+    const otherLinks = [
+      {
+        route: { name: ROUTES_NAMES.adminHealthcheck },
+        icon: 'alt_route',
+        permission: USER_PERMISSIONS.technical.healthcheck,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminKPI },
+        icon: 'stacked_bar_chart',
+        permission: USER_PERMISSIONS.technical.kpi,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminEventsRecords },
+        icon: 'mark_unread_chat_alt',
+        permission: USER_PERMISSIONS.technical.eventsRecord,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminTemplateTesting },
+        icon: 'play_circle',
+        permission: USER_PERMISSIONS.technical.templateTesting,
+      },
+    ];
+
+    const customObjectsLinks = computed(() => [
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsExternalAuthTokens },
+        icon: 'security',
+        permission: USER_PERMISSIONS.technical.externalAuthTokens,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsExternalDataTables },
+        icon: 'database',
+        permission: USER_PERMISSIONS.technical.externalDataTable,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsEntityInfosProperties },
+        icon: 'info',
+        permission: USER_PERMISSIONS.technical.entityInfoProperty,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsIcons },
+        icon: 'square_circle',
+        title: tc('common.icon', 2),
+        permission: USER_PERMISSIONS.technical.icon,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsMaps },
+        icon: 'edit_location',
+        permission: USER_PERMISSIONS.technical.map,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsTags },
+        icon: 'local_offer',
+        permission: USER_PERMISSIONS.technical.tag,
+      },
+    ]);
+
+    const settingsLinks = computed(() => [
+      {
+        route: { name: ROUTES_NAMES.adminSettingsUserInterface },
+        icon: 'computer',
+        permission: USER_PERMISSIONS.technical.parameters,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsViewsImportExport },
+        icon: 'import_export',
+        permission: USER_PERMISSIONS.technical.viewImportExport,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsNotifications },
+        icon: 'notifications',
+        permission: USER_PERMISSIONS.technical.notification.common,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsWidgetTemplates },
+        icon: 'widgets',
+        permission: USER_PERMISSIONS.technical.widgetTemplate,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsStateSettings },
+        icon: 'add_alert',
+        permission: USER_PERMISSIONS.technical.stateSetting,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsStorageSettings },
+        icon: 'storage',
+        permission: USER_PERMISSIONS.technical.storageSettings,
+      },
+    ]);
+
+    const otherLinksWithChildren = [
+      {
+        icon: 'local_offer',
+        title: t('layout.topbar.customObjects'),
+        links: customObjectsLinks.value,
+      },
+      {
+        icon: 'settings',
+        title: t('common.settings'),
+        links: settingsLinks.value,
+      },
+    ];
+
+    const administrationLinks = computed(() => [
+      {
+        title: t('common.access'),
+        links: accessLinks,
+      },
+      {
+        title: t('common.maintenance'),
+        links: maintenanceLinks,
+      },
+      {
+        title: tc('common.communication', 2),
+        links: communicationsLinks,
+      },
+      {
+        title: t('common.other'),
+        links: otherLinks,
+      },
+      {
+        links: otherLinksWithChildren,
+      },
+    ].reduce((acc, group) => {
+      if (!group.links.length) {
         return acc;
-      }, []);
-    },
+      }
 
-    administrationAccessLinks() {
-      return [
-        {
-          route: { name: ROUTES_NAMES.adminRights },
-          icon: 'verified_user',
-          permission: USER_PERMISSIONS.technical.permission,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminRoles },
-          icon: 'supervised_user_circle',
-          permission: USER_PERMISSIONS.technical.role,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminUsers },
-          icon: 'people',
-          permission: USER_PERMISSIONS.technical.user,
-        },
-      ];
-    },
+      if (group.title) {
+        acc.push({ title: group.title, header: true });
+      }
 
-    administrationCommunicationsLinks() {
-      return [
-        {
-          route: { name: ROUTES_NAMES.adminBroadcastMessages },
-          icon: '$vuetify.icons.bullhorn',
-          permission: USER_PERMISSIONS.technical.broadcastMessage,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminPlaylists },
-          icon: 'playlist_play',
-          permission: USER_PERMISSIONS.technical.playlist,
-        },
-      ];
-    },
+      acc.push(
+        ...group.links,
 
-    administrationGeneralLinks() {
-      return [
-        {
-          route: { name: ROUTES_NAMES.adminEventsRecords },
-          icon: '$vuetify.icons.mark_unread_chat_alt',
-          permission: USER_PERMISSIONS.technical.eventsRecord,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminExternalAuthTokens },
-          icon: 'security',
-          permission: USER_PERMISSIONS.technical.externalAuthTokens,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminParameters },
-          icon: 'settings',
-          permission: USER_PERMISSIONS.technical.parameters,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminPlanning },
-          icon: 'event_note',
-          permission: GROUPED_USER_PERMISSIONS.planning,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminRemediation },
-          icon: 'assignment',
-          permission: GROUPED_USER_PERMISSIONS.remediation,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminKPI },
-          icon: 'stacked_bar_chart',
-          permission: USER_PERMISSIONS.technical.kpi,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminMaps },
-          icon: 'edit_location',
-          permission: USER_PERMISSIONS.technical.map,
-        },
-        {
-          icon: '$vuetify.icons.build_circle',
-          permission: USER_PERMISSIONS.technical.maintenance,
-          handler: this.showToggleMaintenanceModeModal,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminTags },
-          icon: 'local_offer',
-          permission: USER_PERMISSIONS.technical.tag,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminHealthcheck },
-          icon: '$vuetify.icons.alt_route',
-          permission: USER_PERMISSIONS.technical.healthcheck,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminStorageSettings },
-          icon: '$vuetify.icons.storage',
-          permission: USER_PERMISSIONS.technical.storageSettings,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminStateSettings },
-          icon: 'add_alert',
-          permission: USER_PERMISSIONS.technical.stateSetting,
-        },
-        {
-          route: { name: ROUTES_NAMES.adminTemplateTesting },
-          icon: 'code',
-          permission: USER_PERMISSIONS.technical.templateTesting,
-        },
-      ];
-    },
+        { divider: true, key: uid() },
+      );
 
-    permissionsWithDefaultType() {
-      return [
-        USER_PERMISSIONS.technical.engine,
-        USER_PERMISSIONS.technical.healthcheck,
-        USER_PERMISSIONS.technical.kpi,
-        USER_PERMISSIONS.technical.maintenance,
-        USER_PERMISSIONS.technical.eventsRecord,
-        USER_PERMISSIONS.technical.templateTesting,
-      ];
-    },
+      return acc;
+    }, []));
+
+    return {
+      permissionsWithDefaultType,
+
+      administrationLinks,
+    };
   },
 };
 </script>
+
+<style lang="scss">
+.topbar-menu-administration__content {
+  .v-subheader {
+    text-transform: uppercase;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+    line-height: 1rem !important;
+    height: 40px;
+  }
+
+  .v-list-item {
+    padding-left: 24px;
+  }
+}
+</style>

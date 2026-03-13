@@ -14,7 +14,8 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -61,9 +62,9 @@ func NewImportWorker(
 	jobPublisher workers.JobPublisher,
 	logger zerolog.Logger,
 ) ImportWorker {
-	linkedDbCollections := make([]mongo.DbCollection, len(linkedCollections))
-	for i, c := range linkedCollections {
-		linkedDbCollections[i] = dbClient.Collection(c)
+	linkedDbCollections := make(map[string]mongo.DbCollection, len(linkedCollections))
+	for k, v := range linkedCollections {
+		linkedDbCollections[k] = dbClient.Collection(v)
 	}
 
 	return &importWorker{
@@ -90,7 +91,7 @@ type importWorker struct {
 	dbCollection            mongo.DbCollection
 	dbImportCollection      mongo.DbCollection
 	dbWidgetCollection      mongo.DbCollection
-	linkedDbCollections     []mongo.DbCollection
+	linkedDbCollections     map[string]mongo.DbCollection
 	pgPoolProvider          postgres.PoolProvider
 	tmpImportDir            string
 	jobPublisher            workers.JobPublisher
@@ -126,7 +127,7 @@ func (w *importWorker) CreateImportJob(ctx context.Context, id string, separator
 	err := w.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&externalDataTable)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return job, common.NewValidationError("_id", "ID doesn't exist.")
+			return job, httperror.ErrNotFound
 		}
 
 		return job, err
@@ -231,14 +232,8 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 	job := ImportJob{}
 	err := w.dbImportCollection.FindOneAndUpdate(ctx,
 		bson.M{
-			"_id": id,
-			"$or": []bson.M{
-				{"status": ImportStatusCreated},
-				{
-					"status":    ImportStatusRunning,
-					"last_ping": bson.M{"$lt": time.Now().Add(-2 * w.pingInterval).Unix()},
-				},
-			},
+			"_id":    id,
+			"status": bson.M{"$in": bson.A{ImportStatusCreated, ImportStatusRunning}},
 		},
 		bson.M{"$set": bson.M{
 			"status":    ImportStatusRunning,
@@ -542,7 +537,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 	}
 
 	if len(columnTags) != len(job.ColumnConfigs) {
-		return false, common.NewValidationError("column_tags", "ColumnTags must contain "+strconv.Itoa(len(job.ColumnConfigs))+" items.")
+		return false, validation.NewSingleErrorWithParam("slicelen", "column_tags", "column_tags", strconv.Itoa(len(job.ColumnConfigs)), nil)
 	}
 
 	for i, columnTag := range columnTags {
@@ -639,7 +634,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 			case externaldata.ColumnTypeStringArray:
 				columnType = "VARCHAR(" + MaxStringLenStr + ")[]"
 			default:
-				return false, fmt.Errorf("unsupported column type %q", c.Type)
+				return false, fmt.Errorf("unsupported column type %d", c.Type)
 			}
 
 			sql := ""
@@ -705,7 +700,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 			return false, fmt.Errorf("failed to copy to postgres table: %w", err)
 		}
 	default:
-		return false, fmt.Errorf("invalid table type: %q", table.Type)
+		return false, fmt.Errorf("invalid table type: %d", table.Type)
 	}
 
 	err = w.deleteTable(ctx, job)
@@ -731,7 +726,7 @@ func (w *importWorker) ProcessAbandonedJobs(ctx context.Context) {
 		case <-ticker.C:
 			now := datetime.NewCpsTime()
 			cursor, err := w.dbImportCollection.Find(ctx, bson.M{
-				"status":    ImportStatusRunning,
+				"status":    bson.M{"$in": bson.A{ImportStatusCreated, ImportStatusRunning}},
 				"last_ping": bson.M{"$lt": now.Time.Add(-2 * w.pingInterval).Unix()},
 			})
 			if err != nil {
@@ -1305,13 +1300,17 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 	return errorInfo, nil
 }
 
-func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table, f multipart.File, separator rune) error {
+func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table, f io.ReadSeeker, separator rune) error {
 	isLinked := false
 	var err error
 	if len(t.ColumnConfigs) > 0 {
-		isLinked, err = isTableLinked(ctx, t.ID, w.dbWidgetCollection, w.linkedDbCollections)
+		err = validateDeleteRequest(ctx, t.ID, w.dbWidgetCollection, w.linkedDbCollections)
 		if err != nil {
-			return err
+			var confErr *httperror.ConflictError
+			isLinked = errors.As(err, &confErr)
+			if !isLinked {
+				return err
+			}
 		}
 	}
 
@@ -1323,23 +1322,23 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	columns, err := r.Read()
 	if err != nil {
 		if errors.Is(err, io.EOF) {
-			return common.NewValidationError("file", "File is empty.")
+			return validation.NewSingleError("required", "file", "file", nil)
 		}
 
-		return common.NewValidationError("file", "File is invalid.")
+		return validation.NewSingleError("invalid", "file", "file", nil)
 	}
 
 	invalidCols := make([]string, 0)
 	existColumns := make(map[string]bool, len(columns))
 	for _, c := range columns {
 		existColumns[c] = true
-		if !common.IsTableName(c) || c == externaldata.IDColumnName {
+		if !validation.IsTableName(c) || c == externaldata.IDColumnName {
 			invalidCols = append(invalidCols, strconv.Quote(c))
 		}
 	}
 
 	if len(invalidCols) > 0 {
-		return common.NewValidationError("file", "Fields ["+strings.Join(invalidCols, ",")+"] in file are invalid.")
+		return validation.NewSingleErrorWithParam("invalidcols", "file", "file", strings.Join(invalidCols, " "), nil)
 	}
 
 	missingCols := make([]string, 0)
@@ -1352,7 +1351,7 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	}
 
 	if len(missingCols) > 0 {
-		return common.NewValidationError("file", "Fields ["+strings.Join(missingCols, ",")+"] in file are missing.")
+		return validation.NewSingleErrorWithParam("missingcols", "file", "file", strings.Join(missingCols, " "), nil)
 	}
 
 	_, err = f.Seek(0, io.SeekStart)
@@ -1374,22 +1373,23 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 
 		return nil
 	case externaldata.TypePostgreSQL:
-		sql := "CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
-			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, "
+		var sql strings.Builder
+		sql.WriteString("CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
+			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, ")
 		for i, field := range columns {
-			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") "
+			sql.WriteString(pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") ")
 			if i != len(columns)-1 {
-				sql += ","
+				sql.WriteString(",")
 			}
 		}
 
-		sql += ")"
+		sql.WriteString(")")
 		pgPool, err := w.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		_, err = pgPool.Exec(ctx, sql)
+		_, err = pgPool.Exec(ctx, sql.String())
 		if err != nil {
 			return fmt.Errorf("failed to create postgres table: %w", err)
 		}
@@ -1402,7 +1402,7 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 
 		return nil
 	default:
-		return fmt.Errorf("invalid job type: %q", job.Type)
+		return fmt.Errorf("invalid job type: %d", job.Type)
 	}
 }
 
@@ -1428,6 +1428,6 @@ func (w *importWorker) deleteTable(ctx context.Context, job ImportJob) error {
 
 		return nil
 	default:
-		return fmt.Errorf("invalid job type: %q", job.Type)
+		return fmt.Errorf("invalid job type: %d", job.Type)
 	}
 }

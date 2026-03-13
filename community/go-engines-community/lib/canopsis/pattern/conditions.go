@@ -59,8 +59,8 @@ const tagLabelSeparator = ":"
 type FieldCondition struct {
 	Field string `json:"field" bson:"field"`
 	// FieldType is only defined for custom fields, ex: infos.
-	FieldType string    `json:"field_type,omitempty" bson:"field_type,omitempty"`
-	Condition Condition `json:"cond" bson:"cond"`
+	FieldType string    `json:"field_type,omitempty" bson:"field_type,omitempty" mapstructure:"field_type,omitempty"`
+	Condition Condition `json:"cond" bson:"cond" mapstructure:"cond"`
 	// Alias can only be defined for entity infos.
 	Alias string `json:"alias,omitempty" bson:"alias,omitempty"`
 }
@@ -335,7 +335,7 @@ func (c *Condition) MatchBool(value bool) (bool, error) {
 	return false, ErrUnsupportedConditionType
 }
 
-func (c *Condition) MatchRef(value interface{}) (bool, error) {
+func (c *Condition) MatchRef(value any) (bool, error) {
 	if c.valueBool == nil {
 		return false, ErrWrongConditionValue
 	}
@@ -1460,7 +1460,7 @@ func (c *Condition) GetRegexp() utils.RegexExpression {
 	return c.valueRegexp
 }
 
-func GetStringValue(v interface{}) (string, error) {
+func GetStringValue(v any) (string, error) {
 	if s, ok := v.(string); ok {
 		return s, nil
 	}
@@ -1468,7 +1468,7 @@ func GetStringValue(v interface{}) (string, error) {
 	return "", ErrWrongConditionValue
 }
 
-func GetIntValue(v interface{}) (int64, error) {
+func GetIntValue(v any) (int64, error) {
 	switch i := v.(type) {
 	case int:
 		return int64(i), nil
@@ -1497,7 +1497,7 @@ func GetIntValue(v interface{}) (int64, error) {
 	return 0, ErrWrongConditionValue
 }
 
-func GetBoolValue(v interface{}) (bool, error) {
+func GetBoolValue(v any) (bool, error) {
 	if b, ok := v.(bool); ok {
 		return b, nil
 	}
@@ -1505,13 +1505,13 @@ func GetBoolValue(v interface{}) (bool, error) {
 	return false, ErrWrongConditionValue
 }
 
-func GetStringArrayValue(v interface{}) ([]string, error) {
-	var interfaceArr []interface{}
+func GetStringArrayValue(v any) ([]string, error) {
+	var interfaceArr []any
 
 	switch a := v.(type) {
 	case []string:
 		return a, nil
-	case []interface{}:
+	case []any:
 		interfaceArr = a
 	case bson.A:
 		interfaceArr = a
@@ -1532,7 +1532,7 @@ func GetStringArrayValue(v interface{}) ([]string, error) {
 	return strArr, nil
 }
 
-func GetTimeValue(v interface{}) (time.Time, error) {
+func GetTimeValue(v any) (time.Time, error) {
 	intVal, err := GetIntValue(v)
 	if err != nil {
 		return time.Time{}, err
@@ -1541,7 +1541,7 @@ func GetTimeValue(v interface{}) (time.Time, error) {
 	return time.Unix(intVal, 0), nil
 }
 
-func getTimeIntervalValue(v interface{}) (int64, int64, error) {
+func getTimeIntervalValue(v any) (int64, int64, error) {
 	mapVal, err := parseMapVal(v)
 	if err != nil {
 		return 0, 0, err

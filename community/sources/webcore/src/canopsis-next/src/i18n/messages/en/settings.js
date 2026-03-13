@@ -38,6 +38,9 @@ export default {
   widgetTitle: 'Widget title',
   columnName: 'Column name',
   defaultSortColumn: 'Default sort column',
+  defaultSortColumns: 'Default sort columns',
+  defaultSortColumnsHasAnotherColumns: 'The selected template contains sort columns that are not present in the current table columns. You will not be able to change sorting on these fields.',
+  missingColumns: 'Missing columns',
   sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
   columnNames: 'Column names',
   exportColumnNames: 'Export column names',
@@ -67,6 +70,7 @@ export default {
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline',
   isCorrelationEnabled: 'Is correlation enabled?',
   fastPbehavior: 'Fast pbehavior',
+  fastPbehaviorDescription: 'User will be able to select from these types on click Fast pbehavior',
   duration: 'Duration',
   tstop: 'End date',
   periodsNumber: 'Number of steps',
@@ -95,7 +99,7 @@ export default {
   liveWatchingTooltip: 'If enabled, the information about changes in alarms are retrieved using websockets',
   defaultInheritedPbehavior: 'Apply pbehavior on dependencies too',
   expandPanel: {
-    title: 'Expand panel',
+    title: 'Expandable panel',
   },
   exportCsv: {
     title: 'Export CSV',
@@ -176,7 +180,7 @@ export default {
     filterOnClick: 'Filter on click',
   },
   liveReporting: {
-    title: 'Live reporting',
+    title: 'Time filter',
     field: 'Set a custom date range',
   },
   counterLevels: {
