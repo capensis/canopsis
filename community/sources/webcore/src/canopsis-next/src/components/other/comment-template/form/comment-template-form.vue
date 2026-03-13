@@ -3,6 +3,7 @@
     <c-name-field
       v-field="form.name"
       :label="$t('common.name')"
+      :max-length="255"
       name="name"
       required
     />
