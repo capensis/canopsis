@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 	"strconv"
 	"time"
 
@@ -158,7 +159,7 @@ func (q *MongoQueryBuilder) createPaginationAggregationPipeline(query pagination
 
 func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	addedLookups := make(map[string]bool)
-	beforeLimit := make([]bson.M, len(q.entityMatch))
+	beforeLimit := make([]bson.M, len(q.entityMatch), len(q.entityMatch)+len(q.additionalMatch))
 	copy(beforeLimit, q.entityMatch)
 
 	q.addLookupsToPipeline(q.lookupsForAdditionalMatch, addedLookups, &beforeLimit)
@@ -174,9 +175,7 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	}
 
 	addFields := bson.M{}
-	for field, v := range q.computedFields {
-		addFields[field] = v
-	}
+	maps.Copy(addFields, q.computedFields)
 
 	if len(addFields) > 0 {
 		afterLimit = append(afterLimit, bson.M{"$addFields": addFields})

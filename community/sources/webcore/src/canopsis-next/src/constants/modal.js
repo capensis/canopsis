@@ -111,6 +111,7 @@ export const MODALS = {
   createEntityInfo: 'create-entity-info',
   serviceEntities: 'service-entities',
   entitiesList: 'entities-list',
+  entitiesComparison: 'entities-comparison',
 
   createTheme: 'create-theme',
 

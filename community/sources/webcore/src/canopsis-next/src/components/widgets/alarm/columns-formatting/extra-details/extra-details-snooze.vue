@@ -5,7 +5,12 @@
       top
     >
       <template #activator="{ on }">
-        <c-alarm-extra-details-chip :color="color" :icon="icon" v-on="on" />
+        <c-alarm-extra-details-chip :color="color" :icon="icon" v-on="on">
+          <v-icon color="white" small>
+            {{ icon }}
+          </v-icon>
+          <strong v-if="hasInactivePbehavior" class="ml-2 white--text">!</strong>
+        </c-alarm-extra-details-chip>
       </template>
     </c-simple-tooltip>
   </div>
@@ -24,6 +29,10 @@ export default {
     snooze: {
       type: Object,
       required: true,
+    },
+    hasInactivePbehavior: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props) {

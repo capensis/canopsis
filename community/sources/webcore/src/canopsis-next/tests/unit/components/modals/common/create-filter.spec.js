@@ -66,13 +66,14 @@ describe('create-filter', () => {
 
   test('Form submitted without fields after trigger submit button', async () => {
     const action = jest.fn();
+    const modal = {
+      config: {
+        action,
+      },
+    };
     const wrapper = factory({
       propsData: {
-        modal: {
-          config: {
-            action,
-          },
-        },
+        modal,
       },
       mocks: {
         $modals,
@@ -83,27 +84,28 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       is_user_preference: false,
       title: '',
     });
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith(modal);
   });
 
   test('Form submitted with all fields after trigger submit button', async () => {
     const action = jest.fn();
+    const modal = {
+      config: {
+        withTitle: true,
+        withEntity: true,
+        withPbehavior: true,
+        withAlarm: true,
+        withEvent: true,
+        action,
+      },
+    };
     const wrapper = factory({
       propsData: {
-        modal: {
-          config: {
-            withTitle: true,
-            withEntity: true,
-            withPbehavior: true,
-            withAlarm: true,
-            withEvent: true,
-            action,
-          },
-        },
+        modal,
       },
       mocks: {
         $modals,
@@ -114,7 +116,7 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       is_user_preference: false,
       title: '',
       alarm_pattern: [],
@@ -122,7 +124,7 @@ describe('create-filter', () => {
       event_pattern: [],
       pbehavior_pattern: [],
     });
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith(modal);
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -156,18 +158,19 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect(action).not.toBeCalled();
-    expect($modals.hide).not.toBeCalled();
+    expect(action).not.toHaveBeenCalled();
+    expect($modals.hide).not.toHaveBeenCalled();
 
     validator.detach('name');
   });
 
   test('Form submitted after trigger submit button without action', async () => {
+    const modal = {
+      config: {},
+    };
     const wrapper = factory({
       propsData: {
-        modal: {
-          config: {},
-        },
+        modal,
       },
       mocks: {
         $modals,
@@ -178,7 +181,7 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith(modal);
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -218,7 +221,7 @@ describe('create-filter', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(addedErrors).toEqual(formErrors);
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       is_user_preference: false,
       alarm_pattern: [],
       entity_pattern: [],
@@ -226,7 +229,7 @@ describe('create-filter', () => {
       weather_service_pattern: [],
       title: '',
     });
-    expect($modals.hide).not.toBeCalledWith();
+    expect($modals.hide).not.toHaveBeenCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -264,12 +267,12 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith(customFilter);
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(customFilter);
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     consoleErrorSpy.mockClear();
   });
@@ -330,7 +333,7 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       alarm_pattern: [
         [
           {
@@ -346,7 +349,7 @@ describe('create-filter', () => {
       is_user_preference: filter.is_user_preference,
       title: filter.title,
     });
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalled();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -365,7 +368,7 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalled();
   });
 
   test('Renders `create-filter` with empty modal', () => {

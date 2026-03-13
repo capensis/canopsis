@@ -19,7 +19,7 @@ type AlarmTag struct {
 	Author        string           `bson:"author" json:"author"`
 	Created       datetime.CpsTime `bson:"created" json:"created"`
 	Updated       datetime.CpsTime `bson:"updated" json:"updated"`
-	LastEventDate datetime.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
+	LastEventDate datetime.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date"`
 
 	// Aliases is used to ease find by entity info property api.
 	Aliases []string `bson:"aliases" json:"-"`
