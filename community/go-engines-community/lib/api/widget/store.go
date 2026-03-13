@@ -922,6 +922,8 @@ func (s *store) transformTemplateFields(ctx context.Context, r *EditRequest) err
 			case view.WidgetTemplateTypeAlarmQuickActions,
 				view.WidgetTemplateTypeAlarmQuickMassActions:
 				parameters[key] = tpl.Actions
+			case view.WidgetTemplateTypeAlarmSortColumns:
+				parameters[key] = tpl.SortColumns
 			}
 		}
 	}
@@ -966,8 +968,8 @@ func (s *store) findAlarm(ctx context.Context, alarmID string) (types.AlarmWithE
 }
 
 func (s *store) fetchPatterns(ctx context.Context, filters []FilterRequest) (patternfields.Patterns, patternfields.Aliases, error) {
-	patternIDs := make([]string, 0)
-	aliases := make([]string, 0)
+	patternIDs := make([]string, 0, len(filters)*4)
+	aliases := make([]string, 0, len(filters))
 	for _, fr := range filters {
 		patternIDs = append(patternIDs,
 			fr.CorporateEntityPattern,

@@ -88,7 +88,7 @@ export default {
 
     const {
       hasAccess: hasInstructionApprovalAccess,
-    } = useCanPermission(USER_PERMISSIONS.technical.remediationInstructionApprove);
+    } = useCanPermission(USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove);
 
     const {
       hasAccess: hasExecuteManualInstructionsAccess,

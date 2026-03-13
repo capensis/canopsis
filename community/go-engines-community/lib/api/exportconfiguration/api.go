@@ -158,7 +158,7 @@ func (a *api) addContents(c *gin.Context, contents map[string]ExportDocuments, c
 	i := 0
 
 	for cursor.Next(c) {
-		var model map[string]interface{}
+		var model map[string]any
 		err = cursor.Decode(&model)
 		if err != nil {
 			return err
