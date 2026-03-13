@@ -4,7 +4,7 @@
       v-if="resettable"
       :disabled="!wasChanged"
       :tooltip="$t('common.reset')"
-      icon="$vuetify.icons.restart_alt"
+      icon="restart_alt"
       color="white"
       btn-color="grey darken-1"
       left

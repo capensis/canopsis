@@ -15,7 +15,7 @@ type MetaResponse struct {
 }
 
 type Data interface {
-	GetData() interface{}
+	GetData() any
 	GetTotal() int64
 }
 

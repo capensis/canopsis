@@ -6,7 +6,7 @@ export default {
      * VIEWS PERMISSIONS
      */
     [USER_VIEWS_PERMISSIONS.viewActions]: 'Vue : actions',
-    [USER_VIEWS_PERMISSIONS.viewGeneral]: 'Vue : général',
+    [USER_VIEWS_PERMISSIONS.viewGeneral]: 'Vue : autre',
 
     /**
      * GROUPS
@@ -64,8 +64,11 @@ export default {
     [USER_PERMISSIONS_GROUPS.technical]: 'Technique',
     [USER_PERMISSIONS_GROUPS.technicalAdmin]: 'Admin',
     [USER_PERMISSIONS_GROUPS.technicalAdminCommunication]: 'Communication',
-    [USER_PERMISSIONS_GROUPS.technicalAdminGeneral]: 'Général',
+    [USER_PERMISSIONS_GROUPS.technicalAdminGeneral]: 'Autre',
     [USER_PERMISSIONS_GROUPS.technicalAdminAccess]: 'Accès',
+    [USER_PERMISSIONS_GROUPS.technicalAdminMaintenance]: '@:common.maintenance',
+    [USER_PERMISSIONS_GROUPS.technicalAdminCustomObjects]: '@:layout.topbar.customObjects',
+    [USER_PERMISSIONS_GROUPS.technicalAdminSettings]: '@:common.settings',
     [USER_PERMISSIONS_GROUPS.technicalExploitation]: 'Exploitation',
     [USER_PERMISSIONS_GROUPS.technicalNotification]: 'Notifications',
     [USER_PERMISSIONS_GROUPS.technicalViewsandwidgets]: 'Vues et widgets',
@@ -231,32 +234,28 @@ export default {
     [USER_PERMISSIONS.technical.eventsRecord]: 'Enregistrements d\'événements',
     [USER_PERMISSIONS.technical.healthcheck]: 'Bilan de santé',
     [USER_PERMISSIONS.technical.healthcheckStatus]: 'Statut du bilan de santé',
-    [USER_PERMISSIONS.technical.icon]: 'Paramètres - icônes',
+    [USER_PERMISSIONS.technical.icon]: 'Icônes',
     [USER_PERMISSIONS.technical.kpi]: 'Graphiques KPI',
     [USER_PERMISSIONS.technical.kpiCollectionSettings]: 'Paramètres de collecte des KPI',
     [USER_PERMISSIONS.technical.kpiFilters]: 'Filtres KPI',
     [USER_PERMISSIONS.technical.kpiRatingSettings]: 'Paramètres de notation des KPI',
     [USER_PERMISSIONS.technical.maintenance]: 'Mode maintenance',
     [USER_PERMISSIONS.technical.map]: 'Cartographie',
-    [USER_PERMISSIONS.technical.parameters]: 'Paramètres - onglet paramètres',
+    [USER_PERMISSIONS.technical.parameters]: 'Interface utilisateur',
     [USER_PERMISSIONS.technical.planningExceptions]: 'Dates d\'exceptions de comportement périodique',
     [USER_PERMISSIONS.technical.planningReason]: 'Raisons de comportement périodique',
     [USER_PERMISSIONS.technical.planningType]: 'Type de comportement périodique',
-    [USER_PERMISSIONS.technical.remediationConfiguration]: 'Consignes - onglet consignes',
-    [USER_PERMISSIONS.technical.remediationInstruction]: 'Consignes - onglet instructions',
-    [USER_PERMISSIONS.technical.remediationInstructionApprove]: 'Consignes - approuver',
-    [USER_PERMISSIONS.technical.remediationJob]: 'Consignes - onglet tâches',
-    [USER_PERMISSIONS.technical.remediationStatistic]: 'Consignes - onglet statistiques de remédiation',
-    [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Consignes - onglet statistiques des consignes',
-    [USER_PERMISSIONS.technical.stateSetting]: 'Paramètres de calcul d\'état/sévérité',
-    [USER_PERMISSIONS.technical.storageSettings]: 'Paramètres de stockage',
+    [USER_PERMISSIONS.technical.stateSetting]: 'État',
+    [USER_PERMISSIONS.technical.storageSettings]: 'Stockage',
     [USER_PERMISSIONS.technical.tag]: 'Gestion des tags',
     [USER_PERMISSIONS.technical.techmetrics]: 'Bilan de santé - métriques des moteurs',
-    [USER_PERMISSIONS.technical.widgetTemplate]: 'Paramètres - modèles de widgets',
-    [USER_PERMISSIONS.technical.viewImportExport]: 'Paramètres - import / export',
+    [USER_PERMISSIONS.technical.widgetTemplate]: 'Modèles de widget',
+    [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Test de modèle',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'Jetons d\'authentification externes',
     [USER_PERMISSIONS.technical.commentTemplate]: 'Modèles de commentaires',
+    [USER_PERMISSIONS.technical.externalDataTable]: 'Données externes',
+    [USER_PERMISSIONS.technical.entityInfoProperty]: 'Informations d\'entité',
 
     /**
      * Technical Admin Access
@@ -268,6 +267,12 @@ export default {
     /**
      * Technical Admin Exploitation
      */
+    [USER_PERMISSIONS.technical.exploitation.remediationConfiguration]: 'Consignes - onglet consignes',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstruction]: 'Consignes - onglet instructions',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove]: 'Consignes - approuver',
+    [USER_PERMISSIONS.technical.exploitation.remediationJob]: 'Consignes - onglet tâches',
+    [USER_PERMISSIONS.technical.exploitation.remediationStatistic]: 'Consignes - onglet statistiques de remédiation',
+    [USER_PERMISSIONS.technical.exploitation.remediationinstructionStats]: 'Consignes - onglet statistiques des consignes',
     [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: 'Règles de déclaration de ticket',
     [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: 'Règles d\'informations dynamiques',
     [USER_PERMISSIONS.technical.exploitation.eventFilter]: 'Filtres d\'événements',
@@ -279,13 +284,11 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.resolveRules]: 'Règles de résolution',
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scénarios',
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Règles SNMP',
-    [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'Données externes',
-    [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: 'Informations d\'entité',
 
     /**
      * Technical Admin Notification
      */
-    [USER_PERMISSIONS.technical.notification.common]: 'Paramètres - paramètres de notification',
+    [USER_PERMISSIONS.technical.notification.common]: 'Notifications',
 
     /**
      * Technical Admin Views and widgets

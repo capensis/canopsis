@@ -68,12 +68,9 @@ export default {
     message: 'Allows you to define the rules for associating links with alarms',
   },
 
-  [USER_PERMISSIONS.technical.exploitation.externalDataTable]: {
-    title: 'External data',
-  },
-
-  [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: {
-    title: 'Entity infos',
+  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
+    title: 'Instructions',
+    message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
   },
 
   /**
@@ -123,13 +120,6 @@ export default {
     title: 'KPI',
     message: 'Allows you to present indicators in the form of graphs',
   },
-  [USER_PERMISSIONS.technical.eventsRecord]: {
-    title: 'Events records',
-    message: 'Allows you to define and trigger the recording of events as soon as they arrive in the Canopsis data bus.',
-  },
-  [USER_PERMISSIONS.technical.templateTesting]: {
-    title: 'Templates Studio',
-  },
 
   /**
    * Administration - Custom objects
@@ -174,19 +164,32 @@ export default {
     topbarTitle: 'State',
     message: 'Allows you to define methods for calculating the state/severity of components and/or services.\nUseful for modeling dependency trees.',
   },
+  [USER_PERMISSIONS.technical.eventsRecord]: {
+    title: 'Events records',
+    message: 'Allows you to define and trigger the recording of events as soon as they arrive in the Canopsis data bus.',
+  },
+  [USER_PERMISSIONS.technical.templateTesting]: {
+    title: 'Templates studio',
+  },
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'External auth tokens',
   },
   [USER_PERMISSIONS.technical.widgetTemplate]: {
     title: 'Widget templates',
   },
+  [USER_PERMISSIONS.technical.externalDataTable]: {
+    title: 'External data',
+  },
+  [USER_PERMISSIONS.technical.entityInfoProperty]: {
+    title: 'Entity infos',
+  },
 
   /**
    * Administration - Remediation
    */
-  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
-    title: 'Instructions',
-    message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
+  [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
+    title: 'Planning',
+    message: 'The Canopsis Planning Administration functionality can be used for the periodic behavior types customization.',
   },
 
   /**

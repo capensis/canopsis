@@ -75,6 +75,10 @@ export const useTopBarMenu = ({ permissionsWithDefaultType = [], withoutSort = t
           };
         }
 
+        if (link.divider) {
+          return link;
+        }
+
         const permissionName = isArray(link.permission)
           ? groupedPermissionToPermission(link.permission)
           : link.permission;
@@ -86,7 +90,22 @@ export const useTopBarMenu = ({ permissionsWithDefaultType = [], withoutSort = t
           title: link.title || topbarTitle || title,
         };
       })
-      .filter(Boolean);
+      .filter(Boolean)
+      .filter((link, index, currentLinks) => { // Remove headers and dividers that are adjacent to each other
+        if (link.header) {
+          const nextLink = currentLinks[index + 1];
+
+          return !nextLink?.divider;
+        }
+
+        if (link.divider) {
+          const prevLink = currentLinks[index - 1];
+
+          return !prevLink?.header && !prevLink?.divider;
+        }
+
+        return link;
+      });
 
     return unref(withoutSort) ? preparedLinks : sortBy(preparedLinks, 'title');
   };

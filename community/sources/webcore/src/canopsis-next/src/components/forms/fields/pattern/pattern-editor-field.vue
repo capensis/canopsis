@@ -63,6 +63,7 @@
         </v-btn>
         <v-layout
           v-if="checked"
+          class="gap-2"
           align-center
           justify-end
         >

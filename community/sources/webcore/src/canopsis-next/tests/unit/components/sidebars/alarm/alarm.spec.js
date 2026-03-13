@@ -44,6 +44,7 @@ import {
   formToWidgetParameters,
 } from '@/helpers/entities/widget/form';
 import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/entities/widget/column/form';
+import { formToWidgetSortColumns } from '@/helpers/entities/widget/sort-column/form';
 import { availabilityFieldToForm } from '@/helpers/entities/widget/forms/availability';
 
 import AlarmSettings from '@/components/sidebars/alarm/alarm.vue';
@@ -54,7 +55,7 @@ const stubs = {
   'widget-settings-group': true,
   'field-title': createInputStub('field-title'),
   'field-periodic-refresh': createInputStub('field-periodic-refresh'),
-  'field-default-sort-column': createInputStub('field-default-sort-column'),
+  'field-default-sort-columns-with-template': createInputStub('field-default-sort-columns-with-template'),
   'field-columns': createInputStub('field-columns'),
   'field-default-elements-per-page': createInputStub('field-default-elements-per-page'),
   'field-opened-resolved-filter': createInputStub('field-opened-resolved-filter'),
@@ -82,7 +83,7 @@ const snapshotStubs = {
   'widget-settings-group': true,
   'field-title': true,
   'field-periodic-refresh': true,
-  'field-default-sort-column': true,
+  'field-default-sort-columns-with-template': true,
   'field-columns': true,
   'field-default-elements-per-page': true,
   'field-opened-resolved-filter': true,
@@ -108,7 +109,7 @@ const snapshotStubs = {
 const selectSwitcherFieldByTitle = (wrapper, title) => wrapper.find(`input.field-switcher[title="${title}"]`);
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');
 const selectFieldPeriodicRefresh = wrapper => wrapper.find('input.field-periodic-refresh');
-const selectFieldDefaultSortColumn = wrapper => wrapper.find('input.field-default-sort-column');
+const selectFieldDefaultSortColumnsWithTemplate = wrapper => wrapper.find('input.field-default-sort-columns-with-template');
 const selectFieldWidgetColumns = wrapper => wrapper.findAll('input.field-columns').at(0);
 const selectFieldWidgetGroupColumns = wrapper => wrapper.findAll('input.field-columns').at(1);
 const selectFieldServiceDependenciesColumns = wrapper => wrapper.findAll('input.field-columns').at(2);
@@ -410,14 +411,16 @@ describe('alarm', () => {
       },
     });
 
-    const fieldDefaultSortColumn = selectFieldDefaultSortColumn(wrapper);
+    const fieldDefaultSortColumnsWithTemplate = selectFieldDefaultSortColumnsWithTemplate(wrapper);
 
-    const sort = {
-      order: SORT_ORDERS.desc,
-      column: Faker.datatype.string(),
-    };
+    const sort = [
+      {
+        sort_by: Faker.datatype.string(),
+        sort: SORT_ORDERS.desc,
+      },
+    ];
 
-    fieldDefaultSortColumn.triggerCustomEvent('input', sort);
+    fieldDefaultSortColumnsWithTemplate.triggerCustomEvent('input', sort);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -425,7 +428,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'sort', sort),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'sort', formToWidgetSortColumns(sort)),
       },
     });
   });
@@ -1675,7 +1678,7 @@ describe('alarm', () => {
                 viewFilters: [],
                 mainFilter: null,
                 liveReporting: {},
-                sort: { order: SORT_ORDERS.desc, column: 'connector' },
+                sort: [{ sort_by: 'connector', sort: SORT_ORDERS.desc.toLowerCase() }],
                 opened: true,
                 expandGridRangeSize: [1, 11],
                 exportCsvSeparator: 'comma',

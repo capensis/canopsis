@@ -33,7 +33,7 @@
           @click.prevent.stop="showCreateServiceModal"
         >
           <v-icon size="24">
-            $vuetify.icons.engineering
+            engineering
           </v-icon>
         </v-btn>
       </template>

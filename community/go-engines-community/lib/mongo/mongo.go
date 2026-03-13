@@ -6,9 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/url"
 	"os"
-	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -37,14 +35,14 @@ const (
 type contextKey string
 
 type SingleResultHelper interface {
-	Decode(v interface{}) error
+	Decode(v any) error
 	Raw() (bson.Raw, error)
 	Err() error
 }
 
 type ChangeStream interface {
 	ID() int64
-	Decode(val interface{}) error
+	Decode(val any) error
 	Err() error
 	Close(ctx context.Context) error
 	ResumeToken() bson.Raw
@@ -54,49 +52,49 @@ type ChangeStream interface {
 
 type DbCollection interface {
 	Name() string
-	Aggregate(ctx context.Context, pipeline interface{}, opts ...options.Lister[options.AggregateOptions]) (Cursor, error)
+	Aggregate(ctx context.Context, pipeline any, opts ...options.Lister[options.AggregateOptions]) (Cursor, error)
 	BulkWrite(ctx context.Context, models []mongo.WriteModel, opts ...options.Lister[options.BulkWriteOptions]) (*mongo.BulkWriteResult, error)
-	CountDocuments(ctx context.Context, filter interface{}, opts ...options.Lister[options.CountOptions]) (int64, error)
-	DeleteOne(ctx context.Context, filter interface{}, opts ...options.Lister[options.DeleteOneOptions]) (int64, error)
-	DeleteMany(ctx context.Context, filter interface{}, opts ...options.Lister[options.DeleteManyOptions]) (int64, error)
-	Distinct(ctx context.Context, fieldName string, filter interface{},
+	CountDocuments(ctx context.Context, filter any, opts ...options.Lister[options.CountOptions]) (int64, error)
+	DeleteOne(ctx context.Context, filter any, opts ...options.Lister[options.DeleteOneOptions]) (int64, error)
+	DeleteMany(ctx context.Context, filter any, opts ...options.Lister[options.DeleteManyOptions]) (int64, error)
+	Distinct(ctx context.Context, fieldName string, filter any,
 		opts ...options.Lister[options.DistinctOptions]) *mongo.DistinctResult
 	Drop(ctx context.Context) error
-	Find(ctx context.Context, filter interface{},
+	Find(ctx context.Context, filter any,
 		opts ...options.Lister[options.FindOptions]) (Cursor, error)
-	FindOne(ctx context.Context, filter interface{}, opts ...options.Lister[options.FindOneOptions]) SingleResultHelper
-	FindOneAndDelete(ctx context.Context, filter interface{},
+	FindOne(ctx context.Context, filter any, opts ...options.Lister[options.FindOneOptions]) SingleResultHelper
+	FindOneAndDelete(ctx context.Context, filter any,
 		opts ...options.Lister[options.FindOneAndDeleteOptions]) SingleResultHelper
-	FindOneAndReplace(ctx context.Context, filter interface{}, replacement interface{},
+	FindOneAndReplace(ctx context.Context, filter any, replacement any,
 		opts ...options.Lister[options.FindOneAndReplaceOptions]) SingleResultHelper
-	FindOneAndUpdate(ctx context.Context, filter interface{}, update interface{},
+	FindOneAndUpdate(ctx context.Context, filter any, update any,
 		opts ...options.Lister[options.FindOneAndUpdateOptions]) SingleResultHelper
 	Indexes() mongo.IndexView
-	InsertOne(ctx context.Context, document interface{},
-		opts ...options.Lister[options.InsertOneOptions]) (interface{}, error)
-	InsertMany(ctx context.Context, documents interface{},
-		opts ...options.Lister[options.InsertManyOptions]) ([]interface{}, error)
-	ReplaceOne(ctx context.Context, filter interface{},
-		replacement interface{}, opts ...options.Lister[options.ReplaceOptions]) (*mongo.UpdateResult, error)
-	UpdateMany(ctx context.Context, filter interface{}, update interface{},
+	InsertOne(ctx context.Context, document any,
+		opts ...options.Lister[options.InsertOneOptions]) (any, error)
+	InsertMany(ctx context.Context, documents any,
+		opts ...options.Lister[options.InsertManyOptions]) ([]any, error)
+	ReplaceOne(ctx context.Context, filter any,
+		replacement any, opts ...options.Lister[options.ReplaceOptions]) (*mongo.UpdateResult, error)
+	UpdateMany(ctx context.Context, filter any, update any,
 		opts ...options.Lister[options.UpdateManyOptions]) (*mongo.UpdateResult, error)
-	UpdateOne(ctx context.Context, filter interface{}, update interface{},
+	UpdateOne(ctx context.Context, filter any, update any,
 		opts ...options.Lister[options.UpdateOneOptions]) (*mongo.UpdateResult, error)
-	Watch(ctx context.Context, pipeline interface{},
+	Watch(ctx context.Context, pipeline any,
 		opts ...options.Lister[options.ChangeStreamOptions]) (ChangeStream, error)
 }
 
 // DbClient connected MongoDB client settings
 type DbClient interface {
 	Name() string
-	Watch(ctx context.Context, pipeline interface{}, opts ...options.Lister[options.ChangeStreamOptions]) (*mongo.ChangeStream, error)
+	Watch(ctx context.Context, pipeline any, opts ...options.Lister[options.ChangeStreamOptions]) (*mongo.ChangeStream, error)
 	Collection(string) DbCollection
 	CreateCollection(ctx context.Context, name string, opts ...options.Lister[options.CreateCollectionOptions]) error
 	Disconnect(ctx context.Context) error
 	SetRetry(count int, timeout time.Duration)
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
 	WithTransaction(ctx context.Context, f func(context.Context) error) error
-	ListCollectionNames(ctx context.Context, filter interface{}, opts ...options.Lister[options.ListCollectionsOptions]) ([]string, error)
+	ListCollectionNames(ctx context.Context, filter any, opts ...options.Lister[options.ListCollectionsOptions]) ([]string, error)
 	RunCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper
 	RunAdminCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper
 	BulkWrite(ctx context.Context, writes []mongo.ClientBulkWrite,
@@ -133,7 +131,7 @@ func (c *dbCollection) Name() string {
 	return c.mongoCollection.Name()
 }
 
-func (c *dbCollection) Aggregate(ctx context.Context, pipeline interface{},
+func (c *dbCollection) Aggregate(ctx context.Context, pipeline any,
 	opts ...options.Lister[options.AggregateOptions]) (Cursor, error) {
 	var mongoCursor *mongo.Cursor
 	var err error
@@ -162,7 +160,7 @@ func (c *dbCollection) BulkWrite(ctx context.Context, models []mongo.WriteModel,
 	return res, err
 }
 
-func (c *dbCollection) CountDocuments(ctx context.Context, filter interface{},
+func (c *dbCollection) CountDocuments(ctx context.Context, filter any,
 	opts ...options.Lister[options.CountOptions]) (int64, error) {
 	var res int64
 	var err error
@@ -174,7 +172,7 @@ func (c *dbCollection) CountDocuments(ctx context.Context, filter interface{},
 	return res, err
 }
 
-func (c *dbCollection) DeleteMany(ctx context.Context, filter interface{},
+func (c *dbCollection) DeleteMany(ctx context.Context, filter any,
 	opts ...options.Lister[options.DeleteManyOptions]) (int64, error) {
 	var res *mongo.DeleteResult
 	var err error
@@ -189,7 +187,7 @@ func (c *dbCollection) DeleteMany(ctx context.Context, filter interface{},
 	return res.DeletedCount, nil
 }
 
-func (c *dbCollection) Distinct(ctx context.Context, fieldName string, filter interface{},
+func (c *dbCollection) Distinct(ctx context.Context, fieldName string, filter any,
 	opts ...options.Lister[options.DistinctOptions]) *mongo.DistinctResult {
 	var res *mongo.DistinctResult
 
@@ -211,7 +209,7 @@ func (c *dbCollection) Drop(ctx context.Context) error {
 	return err
 }
 
-func (c *dbCollection) Find(ctx context.Context, filter interface{},
+func (c *dbCollection) Find(ctx context.Context, filter any,
 	opts ...options.Lister[options.FindOptions]) (Cursor, error) {
 	var mongoCursor *mongo.Cursor
 	var err error
@@ -228,7 +226,7 @@ func (c *dbCollection) Find(ctx context.Context, filter interface{},
 	return &cursor{mongoCursor: mongoCursor}, nil
 }
 
-func (c *dbCollection) FindOne(ctx context.Context, filter interface{},
+func (c *dbCollection) FindOne(ctx context.Context, filter any,
 	opts ...options.Lister[options.FindOneOptions]) SingleResultHelper {
 	var res *mongo.SingleResult
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -239,7 +237,7 @@ func (c *dbCollection) FindOne(ctx context.Context, filter interface{},
 	return res
 }
 
-func (c *dbCollection) FindOneAndDelete(ctx context.Context, filter interface{},
+func (c *dbCollection) FindOneAndDelete(ctx context.Context, filter any,
 	opts ...options.Lister[options.FindOneAndDeleteOptions]) SingleResultHelper {
 	var res *mongo.SingleResult
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -250,7 +248,7 @@ func (c *dbCollection) FindOneAndDelete(ctx context.Context, filter interface{},
 	return res
 }
 
-func (c *dbCollection) FindOneAndReplace(ctx context.Context, filter, replacement interface{},
+func (c *dbCollection) FindOneAndReplace(ctx context.Context, filter, replacement any,
 	opts ...options.Lister[options.FindOneAndReplaceOptions]) SingleResultHelper {
 	var res *mongo.SingleResult
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -261,7 +259,7 @@ func (c *dbCollection) FindOneAndReplace(ctx context.Context, filter, replacemen
 	return res
 }
 
-func (c *dbCollection) FindOneAndUpdate(ctx context.Context, filter, update interface{},
+func (c *dbCollection) FindOneAndUpdate(ctx context.Context, filter, update any,
 	opts ...options.Lister[options.FindOneAndUpdateOptions]) SingleResultHelper {
 	var res *mongo.SingleResult
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -272,7 +270,7 @@ func (c *dbCollection) FindOneAndUpdate(ctx context.Context, filter, update inte
 	return res
 }
 
-func (c *dbCollection) DeleteOne(ctx context.Context, filter interface{},
+func (c *dbCollection) DeleteOne(ctx context.Context, filter any,
 	opts ...options.Lister[options.DeleteOneOptions]) (int64, error) {
 	var res *mongo.DeleteResult
 	var err error
@@ -291,8 +289,8 @@ func (c *dbCollection) Indexes() mongo.IndexView {
 	return c.mongoCollection.Indexes()
 }
 
-func (c *dbCollection) InsertOne(ctx context.Context, document interface{},
-	opts ...options.Lister[options.InsertOneOptions]) (interface{}, error) {
+func (c *dbCollection) InsertOne(ctx context.Context, document any,
+	opts ...options.Lister[options.InsertOneOptions]) (any, error) {
 	var res *mongo.InsertOneResult
 	var err error
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -307,8 +305,8 @@ func (c *dbCollection) InsertOne(ctx context.Context, document interface{},
 	return res.InsertedID, nil
 }
 
-func (c *dbCollection) InsertMany(ctx context.Context, documents interface{},
-	opts ...options.Lister[options.InsertManyOptions]) ([]interface{}, error) {
+func (c *dbCollection) InsertMany(ctx context.Context, documents any,
+	opts ...options.Lister[options.InsertManyOptions]) ([]any, error) {
 	var res *mongo.InsertManyResult
 	var err error
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -322,7 +320,7 @@ func (c *dbCollection) InsertMany(ctx context.Context, documents interface{},
 	return res.InsertedIDs, nil
 }
 
-func (c *dbCollection) ReplaceOne(ctx context.Context, filter, replacement interface{},
+func (c *dbCollection) ReplaceOne(ctx context.Context, filter, replacement any,
 	opts ...options.Lister[options.ReplaceOptions]) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
@@ -337,7 +335,7 @@ func (c *dbCollection) ReplaceOne(ctx context.Context, filter, replacement inter
 	return res, nil
 }
 
-func (c *dbCollection) UpdateMany(ctx context.Context, filter interface{}, update interface{},
+func (c *dbCollection) UpdateMany(ctx context.Context, filter any, update any,
 	opts ...options.Lister[options.UpdateManyOptions]) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
@@ -352,12 +350,12 @@ func (c *dbCollection) UpdateMany(ctx context.Context, filter interface{}, updat
 	return res, nil
 }
 
-func (c *dbCollection) Watch(ctx context.Context, pipeline interface{},
+func (c *dbCollection) Watch(ctx context.Context, pipeline any,
 	opts ...options.Lister[options.ChangeStreamOptions]) (ChangeStream, error) {
 	return c.mongoCollection.Watch(ctx, pipeline, opts...)
 }
 
-func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update interface{},
+func (c *dbCollection) UpdateOne(ctx context.Context, filter any, update any,
 	opts ...options.Lister[options.UpdateOneOptions]) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
@@ -380,13 +378,9 @@ func NewClient(ctx context.Context, opts ...ClientOptions) (DbClient, error) {
 		return nil, errors.New("only one ClientOptions is allowed")
 	}
 
-	mongoURL, dbName, err := getURL()
+	mongoURL, err := getURL()
 	if err != nil {
 		return nil, err
-	}
-
-	if dbName == "*" {
-		dbName = DB
 	}
 
 	bsonOpts := &options.BSONOptions{
@@ -443,7 +437,7 @@ func NewClient(ctx context.Context, opts ...ClientOptions) (DbClient, error) {
 
 	return &dbClient{
 		Client:          mongoClient,
-		Database:        mongoClient.Database(dbName),
+		Database:        mongoClient.Database(DB),
 		RetryCount:      clientOptions.RetryCount,
 		MinRetryTimeout: clientOptions.MinRetryTimeout,
 	}, nil
@@ -453,7 +447,7 @@ func (c *dbClient) Name() string {
 	return c.Database.Name()
 }
 
-func (c *dbClient) Watch(ctx context.Context, pipeline interface{},
+func (c *dbClient) Watch(ctx context.Context, pipeline any,
 	opts ...options.Lister[options.ChangeStreamOptions]) (*mongo.ChangeStream, error) {
 	return c.Database.Watch(ctx, pipeline, opts...)
 }
@@ -478,7 +472,7 @@ func (c *dbClient) Ping(ctx context.Context, rp *readpref.ReadPref) error {
 	return c.Client.Ping(ctx, rp)
 }
 
-func (c *dbClient) ListCollectionNames(ctx context.Context, filter interface{}, opts ...options.Lister[options.ListCollectionsOptions]) ([]string, error) {
+func (c *dbClient) ListCollectionNames(ctx context.Context, filter any, opts ...options.Lister[options.ListCollectionsOptions]) ([]string, error) {
 	return c.Database.ListCollectionNames(ctx, filter, opts...)
 }
 
@@ -502,7 +496,7 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 
 		defer session.EndSession(ctx)
 
-		_, err = session.WithTransaction(ctx, func(sessCtx context.Context) (interface{}, error) {
+		_, err = session.WithTransaction(ctx, func(sessCtx context.Context) (any, error) {
 			return nil, f(context.WithValue(sessCtx, disableRetries, true))
 		})
 
@@ -589,17 +583,13 @@ func isMongoReplicaSetEnabled(ctx context.Context, clientOptions *options.Client
 }
 
 // getURL parses URL value in EnvURL environment variable
-func getURL() (mongoURL, dbName string, err error) {
-	mongoURL = os.Getenv(EnvURL)
+func getURL() (string, error) {
+	mongoURL := os.Getenv(EnvURL)
 	if mongoURL == "" {
-		return "", "", fmt.Errorf("environment variable %s empty", EnvURL)
+		return "", fmt.Errorf("environment variable %s empty", EnvURL)
 	}
-	parsed, err := url.ParseRequestURI(mongoURL)
-	if err != nil {
-		return "", "", err
-	}
-	dbName = strings.TrimPrefix(parsed.EscapedPath(), "/")
-	return mongoURL, dbName, nil
+
+	return mongoURL, nil
 }
 
 func retry(ctx context.Context, retryCount int, retryTimeout time.Duration, f func(context.Context) error) {
