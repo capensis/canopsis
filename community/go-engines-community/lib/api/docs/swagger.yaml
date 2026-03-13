@@ -2248,7 +2248,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /bulk/connector-pbehaviors:
     post:
       tags:
@@ -4203,7 +4203,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /comment-templates:
     get:
       tags:
@@ -4236,7 +4236,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -4248,7 +4248,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - comment-templates
@@ -4294,7 +4294,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /comment-templates/{id}:
     get:
       tags:
@@ -4319,7 +4319,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - comment-templates
@@ -4367,13 +4367,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - comment-templates
