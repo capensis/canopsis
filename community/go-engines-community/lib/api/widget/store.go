@@ -262,12 +262,14 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			return err
 		}
 
-		pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
-		if err != nil {
-			return err
-		}
+		if len(r.EditRequest.Parameters.FastPbehaviors) > 0 {
+			pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
+			if err != nil {
+				return err
+			}
 
-		valErrs = append(valErrs, pbhValErrs...)
+			valErrs = append(valErrs, pbhValErrs...)
+		}
 
 		filters := make([]view.WidgetFilter, len(r.Filters))
 		for i, filterRequest := range r.Filters {
@@ -320,33 +322,28 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 }
 
 func (s *store) validateFastPbehaviors(ctx context.Context, r EditRequest) (validator.ValidationErrors, error) {
+	pbhTypesMap, err := GetPbehaviorTypesMap(ctx, s.pbhTypeCollection)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get pbh types map: %w", err)
+	}
+
+	pbhReasonsMap, err := GetPbehaviorReasonsMap(ctx, s.pbhReasonCollection)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get pbh reasons map: %w", err)
+	}
+
 	var valErrs validator.ValidationErrors
 
 	for i, fastPbh := range r.Parameters.FastPbehaviors {
-		var typeDoc struct {
-			ID   string `bson:"_id"`
-			Type string `bson:"type"`
-		}
-		err := s.pbhTypeCollection.FindOne(ctx, bson.M{"_id": fastPbh.Type},
-			options.FindOne().SetProjection(bson.M{"_id": 1, "type": 1})).Decode(&typeDoc)
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, err
-		}
-
-		if typeDoc.ID == "" {
+		t, ok := pbhTypesMap[fastPbh.Type]
+		if !ok {
 			valErrs = append(valErrs, validation.NewFieldError("not_exist", "Type", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Type"))
-		} else if typeDoc.Type != pbehavior.TypePause {
+		} else if t != pbehavior.TypePause {
 			valErrs = append(valErrs, validation.NewFieldError("pbh_type_not_pause", "Type", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Type"))
 		}
 
-		err = s.pbhReasonCollection.FindOne(ctx, bson.M{"_id": fastPbh.Reason},
-			options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				valErrs = append(valErrs, validation.NewFieldError("not_exist", "Reason", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Reason"))
-			} else {
-				return nil, err
-			}
+		if !pbhReasonsMap[fastPbh.Reason] {
+			valErrs = append(valErrs, validation.NewFieldError("not_exist", "Reason", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Reason"))
 		}
 	}
 
@@ -381,12 +378,14 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			return err
 		}
 
-		pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
-		if err != nil {
-			return err
-		}
+		if len(r.EditRequest.Parameters.FastPbehaviors) > 0 {
+			pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
+			if err != nil {
+				return err
+			}
 
-		valErrs = append(valErrs, pbhValErrs...)
+			valErrs = append(valErrs, pbhValErrs...)
+		}
 
 		filters := make(map[string]view.WidgetFilter, len(r.Filters))
 		for i, filterRequest := range r.Filters {
@@ -578,13 +577,15 @@ func (s *store) Copy(ctx context.Context, widgetID string, r CreateRequest) (*Re
 			}
 		}
 
-		pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
-		if err != nil {
-			return err
-		}
+		if len(r.EditRequest.Parameters.FastPbehaviors) > 0 {
+			pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
+			if err != nil {
+				return err
+			}
 
-		if len(pbhValErrs) > 0 {
-			return validation.NewError(pbhValErrs, r)
+			if len(pbhValErrs) > 0 {
+				return validation.NewError(pbhValErrs, r)
+			}
 		}
 
 		response, err = s.copy(ctx, widgetID, tabInfo.IsPrivate, r)
@@ -1001,4 +1002,65 @@ func transformEditRequestToModel(r EditRequest) view.Widget {
 		Parameters:     r.Parameters,
 		Author:         r.Author,
 	}
+}
+
+func GetPbehaviorTypesMap(ctx context.Context, coll mongo.DbCollection) (map[string]string, error) {
+	m := make(map[string]string)
+
+	cursor, err := coll.Find(ctx, bson.M{}, options.Find().SetProjection(bson.M{"_id": 1, "type": 1}))
+	if err != nil {
+		return nil, fmt.Errorf("failed to find pbh types: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var doc struct {
+			ID   string `bson:"_id"`
+			Type string `bson:"type"`
+		}
+
+		err = cursor.Decode(&doc)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode pbh type: %w", err)
+		}
+
+		m[doc.ID] = doc.Type
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, fmt.Errorf("failed to process pbh types mongodb cursor correctly: %w", err)
+	}
+
+	return m, nil
+}
+
+func GetPbehaviorReasonsMap(ctx context.Context, coll mongo.DbCollection) (map[string]bool, error) {
+	m := make(map[string]bool)
+
+	cursor, err := coll.Find(ctx, bson.M{}, options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		return nil, fmt.Errorf("failed to find pbh reasons: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var doc struct {
+			ID string `bson:"_id"`
+		}
+
+		err = cursor.Decode(&doc)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode pbh reason: %w", err)
+		}
+
+		m[doc.ID] = true
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, fmt.Errorf("failed to process pbh reason mongodb cursor correctly: %w", err)
+	}
+
+	return m, nil
 }
