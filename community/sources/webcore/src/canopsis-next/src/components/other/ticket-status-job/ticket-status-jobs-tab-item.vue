@@ -52,15 +52,15 @@ export default {
 
       return [
         isAuthTokenTab && { value: 'authTokenName', text: t('jobs.authTokenName'), sortable: true },
-        isTicketStatusTab && { value: 'ticketSystemName', text: t('jobs.ticketSystemName'), sortable: true },
+        isTicketStatusTab && { value: 'ticket_system_name', text: t('jobs.ticketSystemName'), sortable: true },
         isTicketStatusTab && { value: 'active', sortable: true },
-        (isInstructionsTab || isWebhooksTab) && { value: 'ruleName', text: t('jobs.ruleName'), sortable: true },
+        (isInstructionsTab || isWebhooksTab) && { value: 'rule_name', text: t('jobs.ruleName'), sortable: true },
         isWebhooksTab && { value: 'ruleType', text: t('jobs.ruleType'), sortable: true },
         { value: 'status', text: t('jobs.statusLabel'), sortable: true },
-        { value: 'startDate', text: t('jobs.startDate'), sortable: true },
-        { value: 'finishDate', text: t('jobs.finishDate'), sortable: true },
-        { value: 'failReason', text: t('jobs.failReason'), sortable: false },
-        isAuthTokenTab && { value: 'expirationDate', text: t('jobs.expirationDate'), sortable: true },
+        { value: 'created_at', text: t('jobs.startDate'), sortable: true },
+        { value: 'checked_at', text: t('jobs.finishDate'), sortable: true },
+        { value: 'fail_reason', text: t('jobs.failReason'), sortable: false },
+        isAuthTokenTab && { value: 'next_check_at', text: t('jobs.expirationDate'), sortable: true },
         { value: 'actions', text: t('common.actionsLabel'), sortable: false },
       ].filter(Boolean);
     });

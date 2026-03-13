@@ -7,6 +7,7 @@ export const JOB_STATE = {
 export const JOB_RUN_STATUS = {
   succeed: 0,
   failed: 1,
+  aborted: 2,
 };
 
 export const JOB_RULE_TYPE = {
