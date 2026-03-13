@@ -3,6 +3,7 @@ package view
 import (
 	"context"
 	"errors"
+	"slices"
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -664,11 +665,11 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 			}
 		}
 
-		newGroups := make([]interface{}, 0, len(r.Items))
-		newViews := make([]interface{}, 0, len(r.Items))
-		newTabs := make([]interface{}, 0, len(r.Items))
-		newWidgets := make([]interface{}, 0, len(r.Items))
-		newWidgetFilters := make([]interface{}, 0, len(r.Items))
+		newGroups := make([]any, 0, len(r.Items))
+		newViews := make([]any, 0, len(r.Items))
+		newTabs := make([]any, 0, len(r.Items))
+		newWidgets := make([]any, 0, len(r.Items))
+		newWidgetFilters := make([]any, 0, len(r.Items))
 		newViewTitles := make(map[string]string, len(r.Items))
 		newViewGroups := make(map[string]string, len(r.Items))
 		positionItems := make([]EditPositionItemRequest, 0, len(r.Items))
@@ -901,7 +902,7 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 		return nil
 	}
 
-	newPermissions := make([]interface{}, 0, len(views))
+	newPermissions := make([]any, 0, len(views))
 	setRole := bson.M{}
 	for viewID, viewTitle := range views {
 		newPermActionsID := utils.NewID()
@@ -1013,14 +1014,9 @@ func (s *store) normalizePositionsOnViewMove(ctx context.Context, viewID, groupI
 		return err
 	}
 
-	index := -1
-	for i, v := range viewPositionsByGroup[groupID] {
-		if v == viewID {
-			index = i
-		}
-	}
+	index := slices.Index(viewPositionsByGroup[groupID], viewID)
 
-	viewPositionsByGroup[groupID] = append(viewPositionsByGroup[groupID][:index], viewPositionsByGroup[groupID][index+1:]...)
+	viewPositionsByGroup[groupID] = slices.Delete(viewPositionsByGroup[groupID], index, index+1)
 	viewPositionsByGroup[groupID] = append(viewPositionsByGroup[groupID], viewID)
 
 	viewPositions := make([]string, 0)

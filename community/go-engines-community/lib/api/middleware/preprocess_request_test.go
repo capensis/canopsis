@@ -25,7 +25,7 @@ func TestSetAuthor_ShouldUpdateAuthor(t *testing.T) {
 	expectedCode := http.StatusOK
 	expectedAuthorValue := "test-author"
 
-	noAuthorBody := map[string]interface{}{
+	noAuthorBody := map[string]any{
 		"test_key": "test_value",
 	}
 
@@ -41,7 +41,7 @@ func TestSetAuthor_ShouldUpdateAuthor(t *testing.T) {
 		},
 		SetAuthor(mockErrResponder),
 		func(c *gin.Context) {
-			var body map[string]interface{}
+			var body map[string]any
 
 			encodedBody := json.NewDecoder(c.Request.Body)
 			err := encodedBody.Decode(&body)
@@ -75,7 +75,7 @@ func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 	author := "test-author"
 	expectedAuthorValue := "test-author test-author test-author"
 
-	noAuthorBody := []map[string]interface{}{
+	noAuthorBody := []map[string]any{
 		{
 			"test_key-1": "test_value-1",
 		},
@@ -99,7 +99,7 @@ func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 		},
 		PreProcessBulk(config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 100}}, zerolog.Nop()), mockErrResponder, true),
 		func(c *gin.Context) {
-			var body []map[string]interface{}
+			var body []map[string]any
 
 			encodedBody := json.NewDecoder(c.Request.Body)
 			err := encodedBody.Decode(&body)
@@ -107,9 +107,9 @@ func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 				c.String(http.StatusInternalServerError, "%s", err)
 			}
 
-			var authorValues []string
-			for _, item := range body {
-				authorValues = append(authorValues, item["author"].(string))
+			authorValues := make([]string, len(body))
+			for i := range body {
+				authorValues[i] = body[i]["author"].(string)
 			}
 
 			c.String(expectedCode, "author %v", strings.Join(authorValues, " "))
@@ -134,7 +134,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	valid := []map[string]interface{}{
+	valid := []map[string]any{
 		{
 			"test_key-1": "test_value-1",
 		},
@@ -169,7 +169,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 		t.Errorf("expected code: %v but got %v", http.StatusOK, w.Code)
 	}
 
-	invalid := []map[string]interface{}{
+	invalid := []map[string]any{
 		{
 			"test_key-1": "test_value-1",
 		},

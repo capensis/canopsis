@@ -5,6 +5,7 @@ import request from '@/services/request';
 import { createCRUDModule } from '@/store/plugins/entities';
 
 import corporatePatternModule from './corporate';
+import entitiesOptimizePatternModule from './entities-optimize';
 
 export default createCRUDModule({
   route: API_ROUTES.pattern.list,
@@ -14,6 +15,7 @@ export default createCRUDModule({
 }, {
   modules: {
     corporate: corporatePatternModule,
+    entitiesOptimize: entitiesOptimizePatternModule,
   },
   actions: {
     checkPatternsEntitiesCount(context, { data }) {

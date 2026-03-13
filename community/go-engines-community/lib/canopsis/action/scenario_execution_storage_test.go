@@ -2,6 +2,7 @@ package action_test
 
 import (
 	"context"
+	"os"
 	"testing"
 	"time"
 
@@ -9,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	redislib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
@@ -122,14 +122,15 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenExecutionWithMaxRetries
 }
 
 func createTestStorage(ctx context.Context) action.ScenarioExecutionStorage {
-	session, err := redislib.NewSession(ctx, redislib.ActionScenarioStorage, log.NewLogger(ctx, log.Options{Debug: true}), 0, 0)
+	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
+	session, err := redislib.NewSession(ctx, redislib.ActionScenarioStorage, logger, 0, 0)
 	if err != nil {
 		panic(err)
 	}
 
 	cmdRes := session.FlushDB(ctx)
 	if cmdRes.Err() != nil {
-		panic(err)
+		panic(cmdRes.Err())
 	}
 
 	key := "test-scenario-execution-key"

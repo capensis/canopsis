@@ -342,6 +342,7 @@ export const ALARM_STATUSES_TEXTS = {
 export const ALARM_LIST_ACTIONS_TYPES = {
   pbehaviorAdd: 'pbehaviorAdd',
   fastPbehaviorAdd: 'fastPbehaviorAdd',
+  fastPbehaviorRemove: 'fastPbehaviorRemove',
   moreInfos: 'moreInfos',
   snooze: 'snooze',
   declareTicket: 'declareTicket',
@@ -385,10 +386,11 @@ export const ALARM_LIST_ACTIONS_TYPES = {
 
 export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
   [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: 'pause',
-  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: '$vuetify.icons.motion_photos_paused',
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: 'motion_photos_paused',
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove]: 'play_arrow',
   [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm',
   [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'note_add',
-  [ALARM_LIST_ACTIONS_TYPES.associateTicket]: '$vuetify.icons.sticky_note_2',
+  [ALARM_LIST_ACTIONS_TYPES.associateTicket]: 'sticky_note_2',
   [ALARM_LIST_ACTIONS_TYPES.changeState]: 'thumbs_up_down',
   [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: 'help',
   [ALARM_LIST_ACTIONS_TYPES.history]: 'history',
@@ -408,12 +410,13 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
 
   [ALARM_LIST_ACTIONS_TYPES.executeInstruction]: 'assignment',
 
-  [ALARM_LIST_ACTIONS_TYPES.addBookmark]: '$vuetify.icons.bookmark_add',
-  [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: '$vuetify.icons.bookmark_remove',
+  [ALARM_LIST_ACTIONS_TYPES.addBookmark]: 'bookmark_add',
+  [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: 'bookmark_remove',
 };
 
 export const ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP = {
   [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: ALARM_LIST_ACTIONS_TYPES.addBookmark,
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove]: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
 };
 
 export const UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS = {
@@ -542,14 +545,14 @@ export const ALARM_LIST_STEPS = {
 export const ALARM_STEPS_ICONS = {
   [ALARM_LIST_STEPS.ack]: 'check',
   [ALARM_LIST_STEPS.ackRemove]: 'remove_done',
-  [ALARM_LIST_STEPS.assocTicket]: '$vuetify.icons.sticky_note_2',
+  [ALARM_LIST_STEPS.assocTicket]: 'sticky_note_2',
   [ALARM_LIST_STEPS.changeState]: 'warining',
   [ALARM_LIST_STEPS.declareTicket]: 'note_add',
   [ALARM_LIST_STEPS.declareTicketFail]: 'note_add',
-  [ALARM_LIST_STEPS.webhookStart]: '$vuetify.icons.webhook',
-  [ALARM_LIST_STEPS.webhookInProgress]: '$vuetify.icons.webhook',
-  [ALARM_LIST_STEPS.webhookComplete]: '$vuetify.icons.webhook',
-  [ALARM_LIST_STEPS.webhookFail]: '$vuetify.icons.webhook',
+  [ALARM_LIST_STEPS.webhookStart]: 'webhook',
+  [ALARM_LIST_STEPS.webhookInProgress]: 'webhook',
+  [ALARM_LIST_STEPS.webhookComplete]: 'webhook',
+  [ALARM_LIST_STEPS.webhookFail]: 'webhook',
   [ALARM_LIST_STEPS.declareTicketRuleInProgress]: 'note_add',
   [ALARM_LIST_STEPS.declareTicketRuleComplete]: 'note_add',
   [ALARM_LIST_STEPS.declareTicketRuleFail]: 'note_add',
@@ -1353,3 +1356,8 @@ export const DEFAULT_ALARM_MORE_INFO_TEMPLATE = '{{!--\n'
   + '    </tr>\n'
   + '  </tbody></table>\n'
   + '</div>\n';
+
+/**
+ * Timeout to wait for the pbehavior to be created or removed
+ */
+export const ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT = 1000;

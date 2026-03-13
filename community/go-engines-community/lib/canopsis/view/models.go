@@ -2,6 +2,7 @@ package view
 
 import (
 	"encoding/json"
+	"maps"
 	"reflect"
 	"strings"
 
@@ -31,6 +32,7 @@ const (
 	WidgetTemplateTypeAlarmExportToPDF      = "alarm_export_to_pdf"
 	WidgetTemplateTypeAlarmQuickActions     = "alarm_quick_actions"
 	WidgetTemplateTypeAlarmQuickMassActions = "alarm_mass_quick_actions"
+	WidgetTemplateTypeAlarmSortColumns      = "alarm_sort_columns"
 	WidgetTemplateTypeServiceWeatherItem    = "weather_item"
 	WidgetTemplateTypeServiceWeatherModal   = "weather_modal"
 	WidgetTemplateTypeServiceWeatherEntity  = "weather_entity"
@@ -84,8 +86,8 @@ type Widget struct {
 	Parameters         Parameters         `bson:"parameters" json:"parameters"`
 	InternalParameters InternalParameters `bson:"internal_parameters,omitempty" json:"-"`
 	Author             string             `bson:"author" json:"author,omitempty"`
-	Created            datetime.CpsTime   `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated            datetime.CpsTime   `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created            datetime.CpsTime   `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated            datetime.CpsTime   `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 
 	IsPrivate bool `bson:"is_private" json:"is_private"`
 }
@@ -132,9 +134,7 @@ func (p Parameters) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	for k, v := range p.RemainParameters {
-		m[k] = v
-	}
+	maps.Copy(m, p.RemainParameters)
 
 	return json.Marshal(m)
 }
@@ -151,15 +151,17 @@ func (p *Parameters) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	val := reflect.TypeOf(*p)
-	for i := 0; i < val.NumField(); i++ {
+	val := reflect.TypeFor[Parameters]()
+	for field := range val.Fields() {
 		if len(m) == 0 {
 			break
 		}
-		f := val.Field(i)
-		tag := f.Tag.Get("json")
-		tag = strings.Split(tag, ",")[0]
-		delete(m, tag)
+
+		if tag, ok := field.Tag.Lookup("json"); ok {
+			if tag, _, ok = strings.Cut(tag, ","); ok {
+				delete(m, tag)
+			}
+		}
 	}
 
 	p.RemainParameters = m
@@ -200,15 +202,16 @@ type WidgetFilter struct {
 }
 
 type WidgetTemplate struct {
-	ID      string           `bson:"_id,omitempty"`
-	Title   string           `bson:"title"`
-	Type    string           `bson:"type"`
-	Columns []WidgetColumn   `bson:"columns,omitempty"`
-	Content string           `bson:"content,omitempty"`
-	Actions []string         `bson:"actions,omitempty"`
-	Author  string           `bson:"author"`
-	Created datetime.CpsTime `bson:"created,omitempty"`
-	Updated datetime.CpsTime `bson:"updated,omitempty"`
+	ID          string             `bson:"_id,omitempty"`
+	Title       string             `bson:"title"`
+	Type        string             `bson:"type"`
+	Columns     []WidgetColumn     `bson:"columns,omitempty"`
+	Content     string             `bson:"content,omitempty"`
+	Actions     []string           `bson:"actions,omitempty"`
+	SortColumns []WidgetSortColumn `bson:"sort_columns,omitempty"`
+	Author      string             `bson:"author"`
+	Created     datetime.CpsTime   `bson:"created,omitempty"`
+	Updated     datetime.CpsTime   `bson:"updated,omitempty"`
 }
 
 type WidgetColumn struct {
@@ -221,4 +224,9 @@ type WidgetColumn struct {
 	InlineLinksCount int64  `bson:"inlineLinksCount,omitempty" json:"inlineLinksCount,omitempty"`
 	LinksInRowCount  int64  `bson:"linksInRowCount,omitempty" json:"linksInRowCount,omitempty"`
 	IsFilter         bool   `bson:"isFilter,omitempty" json:"isFilter,omitempty"`
+}
+
+type WidgetSortColumn struct {
+	SortBy string `bson:"sort_by" json:"sort_by" binding:"required"`
+	Sort   string `bson:"sort" json:"sort" binding:"oneof=asc desc"`
 }

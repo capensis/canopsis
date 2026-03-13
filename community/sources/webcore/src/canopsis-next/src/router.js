@@ -6,6 +6,7 @@ import {
   CRUD_ACTIONS,
   ROUTES_NAMES,
   ROUTES,
+  OLD_ROUTES,
   USER_PERMISSIONS,
   GROUPED_USER_PERMISSIONS,
 } from '@/constants';
@@ -24,20 +25,25 @@ const Alarm = () => import(/* webpackChunkName: "Alarm" */ '@/views/alarm.vue');
 const AdminPermissions = () => import(/* webpackChunkName: "Permission" */ '@/views/admin/permissions.vue');
 const AdminUsers = () => import(/* webpackChunkName: "User" */ '@/views/admin/users.vue');
 const AdminRoles = () => import(/* webpackChunkName: "Role" */ '@/views/admin/roles.vue');
-const AdminParameters = () => import(/* webpackChunkName: "Parameters" */ '@/views/admin/parameters.vue');
 const AdminBroadcastMessages = () => import(/* webpackChunkName: "BroadcastMessage" */ '@/views/admin/broadcast-messages.vue');
 const AdminPlaylists = () => import(/* webpackChunkName: "Playlist" */ '@/views/admin/playlists.vue');
 const AdminPlanning = () => import(/* webpackChunkName: "Planning" */ '@/views/admin/planning.vue');
-const AdminRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/views/admin/remediation.vue');
 const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
 const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
-const AdminMaps = () => import(/* webpackChunkName: "Maps" */ '@/views/admin/maps.vue');
-const AdminTags = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/tags.vue');
-const AdminStorageSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/storage-settings.vue');
-const AdminStateSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/state-settings.vue');
 const AdminEventsRecords = () => import(/* webpackChunkName: "EventsRecords" */ '@/views/admin/events-records.vue');
 const AdminTemplateTesting = () => import(/* webpackChunkName: "TemplateTesting" */ '@/views/admin/template-testing.vue');
-const AdminExternalAuthTokens = () => import(/* webpackChunkName: "ExternalAuthTokens" */ '@/views/admin/external-auth-tokens.vue');
+const AdminCustomObjectsExternalAuthTokens = () => import(/* webpackChunkName: "ExternalAuthTokens" */ '@/views/admin/custom-objects/external-auth-tokens.vue');
+const AdminCustomObjectsEntityInfosProperties = () => import(/* webpackChunkName: "EntityInfosProperties" */ '@/views/admin/custom-objects/entity-infos-properties.vue');
+const AdminCustomObjectsExternalDataTables = () => import(/* webpackChunkName: "ExternalDataTables" */ '@/views/admin/custom-objects/external-data-tables.vue');
+const AdminCustomObjectsIcons = () => import(/* webpackChunkName: "Icons" */ '@/views/admin/custom-objects/icons.vue');
+const AdminCustomObjectsMaps = () => import(/* webpackChunkName: "Maps" */ '@/views/admin/custom-objects/maps.vue');
+const AdminCustomObjectsTags = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/custom-objects/tags.vue');
+const AdminSettingsUserInterface = () => import(/* webpackChunkName: "UserInterface" */ '@/views/admin/settings/user-interface.vue');
+const AdminSettingsViewsImportExport = () => import(/* webpackChunkName: "ViewsImportExport" */ '@/views/admin/settings/views-import-export.vue');
+const AdminSettingsNotifications = () => import(/* webpackChunkName: "NotificationsSettings" */ '@/views/admin/settings/notifications-settings.vue');
+const AdminSettingsWidgetTemplates = () => import(/* webpackChunkName: "WidgetTemplates" */ '@/views/admin/settings/widget-templates.vue');
+const AdminSettingsStorageSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/settings/storage-settings.vue');
+const AdminSettingsStateSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/settings/state-settings.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
@@ -49,8 +55,7 @@ const ExploitationFlappingRules = () => import(/* webpackChunkName: "AlarmStatus
 const ExploitationResolveRules = () => import(/* webpackChunkName: "AlarmStatusRule" */ '@/views/exploitation/resolve-rules.vue');
 const ExploitationDeclareTicketRules = () => import(/* webpackChunkName: "DeclareTicketRule" */ '@/views/exploitation/declare-ticket-rules.vue');
 const ExploitationLinkRules = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/link-rules.vue');
-const ExploitationExternalDataTables = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/external-data-tables.vue');
-const ExploitationEntityInfosProperties = () => import(/* webpackChunkName: "EntityInfosProperties" */ '@/views/exploitation/entity-infos-properties.vue');
+const ExploitationRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/views/exploitation/remediation.vue');
 const ProfilePatterns = () => import(/* webpackChunkName: "Pattern" */ '@/views/profile/patterns.vue');
 const ProfileThemes = () => import(/* webpackChunkName: "Theme" */ '@/views/profile/themes.vue');
 const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
@@ -144,17 +149,6 @@ const routes = [
     },
   },
   {
-    path: ROUTES.adminParameters,
-    name: ROUTES_NAMES.adminParameters,
-    component: AdminParameters,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: USER_PERMISSIONS.technical.parameters,
-      },
-    },
-  },
-  {
     path: ROUTES.adminBroadcastMessages,
     name: ROUTES_NAMES.adminBroadcastMessages,
     component: AdminBroadcastMessages,
@@ -188,17 +182,6 @@ const routes = [
     },
   },
   {
-    path: ROUTES.adminRemediation,
-    name: ROUTES_NAMES.adminRemediation,
-    component: AdminRemediation,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: GROUPED_USER_PERMISSIONS.remediation,
-      },
-    },
-  },
-  {
     path: ROUTES.adminHealthcheck,
     name: ROUTES_NAMES.adminHealthcheck,
     component: AdminHealthcheck,
@@ -219,50 +202,6 @@ const routes = [
       requiresPermission: {
         action: CRUD_ACTIONS.can,
         id: USER_PERMISSIONS.technical.kpi,
-      },
-    },
-  },
-  {
-    path: ROUTES.adminMaps,
-    name: ROUTES_NAMES.adminMaps,
-    component: AdminMaps,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: USER_PERMISSIONS.technical.map,
-      },
-    },
-  },
-  {
-    path: ROUTES.adminTags,
-    name: ROUTES_NAMES.adminTags,
-    component: AdminTags,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: USER_PERMISSIONS.technical.tag,
-      },
-    },
-  },
-  {
-    path: ROUTES.adminStorageSettings,
-    name: ROUTES_NAMES.adminStorageSettings,
-    component: AdminStorageSettings,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: USER_PERMISSIONS.technical.storageSettings,
-      },
-    },
-  },
-  {
-    path: ROUTES.adminStateSettings,
-    name: ROUTES_NAMES.adminStateSettings,
-    component: AdminStateSettings,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: USER_PERMISSIONS.technical.stateSetting,
       },
     },
   },
@@ -291,13 +230,136 @@ const routes = [
     },
   },
   {
-    path: ROUTES.adminExternalAuthTokens,
-    name: ROUTES_NAMES.adminExternalAuthTokens,
-    component: AdminExternalAuthTokens,
+    path: ROUTES.adminCustomObjectsExternalAuthTokens,
+    name: ROUTES_NAMES.adminCustomObjectsExternalAuthTokens,
+    component: AdminCustomObjectsExternalAuthTokens,
     meta: {
       requiresLogin: true,
       requiresPermission: {
         id: USER_PERMISSIONS.technical.externalAuthTokens,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminCustomObjectsExternalDataTables,
+    name: ROUTES_NAMES.adminCustomObjectsExternalDataTables,
+    component: AdminCustomObjectsExternalDataTables,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.externalDataTable,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminCustomObjectsEntityInfosProperties,
+    name: ROUTES_NAMES.adminCustomObjectsEntityInfosProperties,
+    component: AdminCustomObjectsEntityInfosProperties,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.entityInfoProperty,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminCustomObjectsIcons,
+    name: ROUTES_NAMES.adminCustomObjectsIcons,
+    component: AdminCustomObjectsIcons,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.icon,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminCustomObjectsMaps,
+    name: ROUTES_NAMES.adminCustomObjectsMaps,
+    component: AdminCustomObjectsMaps,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.map,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminCustomObjectsTags,
+    name: ROUTES_NAMES.adminCustomObjectsTags,
+    component: AdminCustomObjectsTags,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.tag,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminSettingsUserInterface,
+    name: ROUTES_NAMES.adminSettingsUserInterface,
+    component: AdminSettingsUserInterface,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.parameters,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminSettingsViewsImportExport,
+    name: ROUTES_NAMES.adminSettingsViewsImportExport,
+    component: AdminSettingsViewsImportExport,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        action: CRUD_ACTIONS.can,
+        id: USER_PERMISSIONS.technical.viewImportExport,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminSettingsNotifications,
+    name: ROUTES_NAMES.adminSettingsNotifications,
+    component: AdminSettingsNotifications,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        action: CRUD_ACTIONS.can,
+        id: USER_PERMISSIONS.technical.notification.common,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminSettingsWidgetTemplates,
+    name: ROUTES_NAMES.adminSettingsWidgetTemplates,
+    component: AdminSettingsWidgetTemplates,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.widgetTemplate,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminSettingsStorageSettings,
+    name: ROUTES_NAMES.adminSettingsStorageSettings,
+    component: AdminSettingsStorageSettings,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.storageSettings,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminSettingsStateSettings,
+    name: ROUTES_NAMES.adminSettingsStateSettings,
+    component: AdminSettingsStateSettings,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.stateSetting,
       },
     },
   },
@@ -423,24 +485,13 @@ const routes = [
     },
   },
   {
-    path: ROUTES.exploitationExternalDataTables,
-    name: ROUTES_NAMES.exploitationExternalDataTables,
-    component: ExploitationExternalDataTables,
+    path: ROUTES.exploitationRemediation,
+    name: ROUTES_NAMES.exploitationRemediation,
+    component: ExploitationRemediation,
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USER_PERMISSIONS.technical.exploitation.externalDataTable,
-      },
-    },
-  },
-  {
-    path: ROUTES.exploitationEntityInfosProperties,
-    name: ROUTES_NAMES.exploitationEntityInfosProperties,
-    component: ExploitationEntityInfosProperties,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: USER_PERMISSIONS.technical.exploitation.entityInfoProperty,
+        id: GROUPED_USER_PERMISSIONS.remediation,
       },
     },
   },
@@ -494,11 +545,30 @@ const routes = [
     },
     props: route => ({ message: route.query.message, redirect: route.query.redirect }),
   },
+
+  /**
+   * REDIRECTS FOR OLD ROUTES
+   */
+  {
+    path: OLD_ROUTES.remediation,
+    redirect: { name: ROUTES_NAMES.exploitationRemediation },
+  },
+  {
+    path: OLD_ROUTES.externalDataTables,
+    redirect: { name: ROUTES_NAMES.adminCustomObjectsExternalDataTables },
+  },
+  {
+    path: OLD_ROUTES.entityInfosProperties,
+    redirect: { name: ROUTES_NAMES.adminCustomObjectsEntityInfosProperties },
+  },
+  {
+    path: OLD_ROUTES.parameters,
+    redirect: { name: ROUTES_NAMES.adminSettingsUserInterface },
+  },
+
   {
     path: '*',
-    redirect: {
-      name: ROUTES_NAMES.home,
-    },
+    redirect: { name: ROUTES_NAMES.home },
   },
 ];
 
