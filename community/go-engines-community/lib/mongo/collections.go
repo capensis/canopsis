@@ -116,4 +116,6 @@ const (
 	TemplateTestCollection     = "template_test"
 
 	CommentTemplateMongoCollection = "comment_template"
+
+	PatternOptimizeJobCollection = "pattern_optimize_job"
 )

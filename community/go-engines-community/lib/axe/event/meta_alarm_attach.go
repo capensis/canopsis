@@ -176,7 +176,7 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 			metaAlarm.AddChild(childAlarm.Entity.ID)
 			childrenIds = append(childrenIds, childAlarm.Entity.ID)
 			eventsCount += childAlarm.Alarm.Value.EventsCount
-			if lastEventDate.Before(childAlarm.Alarm.Value.LastEventDate) {
+			if childAlarm.Alarm.Value.LastEventDate != nil && (lastEventDate == nil || lastEventDate.Before(*childAlarm.Alarm.Value.LastEventDate)) {
 				lastEventDate = childAlarm.Alarm.Value.LastEventDate
 			}
 
@@ -289,7 +289,7 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 			}
 		}
 
-		if metaAlarm.Value.LastEventDate.Unix() != lastEventDate.Unix() {
+		if lastEventDate != nil && (metaAlarm.Value.LastEventDate == nil || metaAlarm.Value.LastEventDate.Unix() != lastEventDate.Unix()) {
 			metaAlarm.Value.LastEventDate = lastEventDate
 			setUpdate["v.last_event_date"] = lastEventDate
 		}
@@ -411,18 +411,22 @@ func (p *metaAlarmAttachProcessor) getChildEventByStep(
 		}
 	case types.AlarmStepAssocTicket:
 		childEvent.EventType = types.EventTypeAssocTicket
-		childEvent.TicketInfo = metaAlarmStep.TicketInfo
-		childEvent.TicketInfo.TicketMetaAlarmID = metaAlarm.ID
+		isTicketStep = true
+	case types.AlarmStepTicketRemove:
+		childEvent.EventType = types.EventTypeTicketRemove
 		isTicketStep = true
 	case types.AlarmStepDeclareTicket:
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
-		childEvent.TicketInfo = metaAlarmStep.TicketInfo
-		childEvent.TicketInfo.TicketMetaAlarmID = metaAlarm.ID
 		isTicketStep = true
 	case types.AlarmStepComment:
 		childEvent.EventType = types.EventTypeComment
 	default:
 		return types.Event{}, nil
+	}
+
+	if isTicketStep {
+		childEvent.TicketInfo = metaAlarmStep.TicketInfo
+		childEvent.TicketInfo.TicketMetaAlarmID = metaAlarm.ID
 	}
 
 	childEvent.Output = getMetaAlarmChildEventOutput(metaAlarm, metaAlarmStep.Message, metaAlarmStep.Initiator, isTicketStep)

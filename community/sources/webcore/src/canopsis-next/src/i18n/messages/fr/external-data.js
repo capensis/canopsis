@@ -15,7 +15,6 @@ export default {
   fields: {
     reference: 'Référence',
     collection: 'Collection',
-    sort: 'Trier',
     sortBy: 'Trier par',
   },
   tooltips: {

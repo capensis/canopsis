@@ -72,7 +72,7 @@ func (p *mongoProvider) FindByAuthApiKey(ctx context.Context, apiKey string) (*s
 }
 
 func (p *mongoProvider) FindByID(ctx context.Context, id string) (*security.User, error) {
-	var objID interface{}
+	var objID any
 	var err error
 	objID, err = bson.ObjectIDFromHex(id)
 	if err != nil {
@@ -151,6 +151,7 @@ func (p *mongoProvider) findByFilter(ctx context.Context, match bson.M) (*securi
 		{"$match": match},
 		{"$addFields": bson.M{
 			"username": "$name",
+			"language": "$ui_language",
 		}},
 		{"$addFields": bson.M{
 			"display_name": p.getDisplayNameQuery(),

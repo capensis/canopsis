@@ -2,9 +2,9 @@ package linkrule
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
@@ -28,8 +28,8 @@ type EditRequest struct {
 
 	ExternalData []externaldata.RefParameters `bson:"external_data" json:"external_data" binding:"dive"`
 
-	common.AlarmPatternFieldsRequest
-	common.EntityPatternFieldsRequest
+	patternfields.AlarmRequest
+	patternfields.EntityRequest
 }
 
 type BulkDeleteRequestItem struct {
@@ -44,8 +44,8 @@ type Response struct {
 	Links      []link.Parameters `bson:"links" json:"links,omitempty"`
 	SourceCode string            `bson:"source_code" json:"source_code,omitempty"`
 	Author     *author.Author    `bson:"author" json:"author"`
-	Created    datetime.CpsTime  `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated    datetime.CpsTime  `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created    datetime.CpsTime  `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated    datetime.CpsTime  `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 
 	ExternalData []externaldatatable.RefResponse `bson:"external_data" json:"external_data"`
 
@@ -58,7 +58,7 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 

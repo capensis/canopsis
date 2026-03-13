@@ -40,6 +40,7 @@ export default {
       ackRemove: 'Cancel ack',
       pbehavior: 'Periodical behavior',
       fastPbehaviorAdd: 'Fast periodical behavior',
+      fastPbehaviorRemove: 'Play',
       snooze: 'Snooze alarm',
       declareTicket: 'Declare ticket',
       associateTicket: 'Associate ticket',
@@ -72,13 +73,14 @@ export default {
       ticketNumber: 'Ticket number',
       parents: 'Causes',
       children: 'Consequences',
+      cannotUnsnoozeUntilPbehaviorInProgress: 'Cannot unsnooze until pbehavior is in progress',
     },
   },
   timeline: {
     by: 'by',
     launched: 'launched',
     junit: 'JUnit',
-    groupItems: 'Group items',
+    groupItems: 'Group elements',
     steps: {
       [ALARM_LIST_STEPS.statedec]: 'State decreased',
       [ALARM_LIST_STEPS.stateinc]: 'State increased',

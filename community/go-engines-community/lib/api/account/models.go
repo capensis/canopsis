@@ -18,7 +18,7 @@ type User struct {
 
 type EditRequest struct {
 	ID                     string          `json:"-"`
-	Password               string          `json:"password"`
+	Password               string          `json:"password"` //nolint:gosec
 	UILanguage             string          `json:"ui_language"`
 	UIGroupsNavigationType string          `json:"ui_groups_navigation_type"`
 	UITheme                string          `json:"ui_theme"`

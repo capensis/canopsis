@@ -5,8 +5,10 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -18,41 +20,42 @@ import (
 )
 
 type Store interface {
-	Insert(context.Context, CreateRequest) (*Rule, error)
+	Insert(context.Context, CreateRequest) (*Response, error)
 	Find(context.Context, FilteredQuery) (*AggregationResult, error)
-	GetOneBy(ctx context.Context, id string) (*Rule, error)
-	Update(context.Context, UpdateRequest) (*Rule, error)
+	GetOneBy(ctx context.Context, id string) (*Response, error)
+	Update(context.Context, UpdateRequest) (*Response, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 type store struct {
 	dbClient              mongo.DbClient
 	collection            mongo.DbCollection
+	pbhTypeCollection     mongo.DbCollection
+	pbhReasonCollection   mongo.DbCollection
 	authorProvider        author.Provider
-	transformer           common.PatternFieldsTransformer
+	transformer           patternfields.Transformer
 	defaultSearchByFields []string
 	defaultSortBy         string
 	dupErrorParser        validation.DuplicateErrorParser
 }
 
-func NewStore(db mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer) Store {
+func NewStore(db mongo.DbClient, authorProvider author.Provider, transformer patternfields.Transformer) Store {
 	return &store{
 		dbClient:              db,
 		collection:            db.Collection(mongo.IdleRuleMongoCollection),
+		pbhTypeCollection:     db.Collection(mongo.PbehaviorTypeMongoCollection),
+		pbhReasonCollection:   db.Collection(mongo.PbehaviorReasonMongoCollection),
 		authorProvider:        authorProvider,
 		transformer:           transformer,
 		defaultSearchByFields: []string{"_id", "name", "description", "author.name"},
 		defaultSortBy:         "created",
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id":  "ID already exists.",
-			"name": "Name already exists.",
-		}),
+		dupErrorParser:        validation.NewDuplicateErrorParser(),
 	}
 }
 
 func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, error) {
 	pipeline := s.authorProvider.Pipeline()
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -81,7 +84,7 @@ func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, 
 	return &res, nil
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
+func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"_id": id}},
 	}
@@ -93,7 +96,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
 	}
 	defer cursor.Close(ctx)
 	if cursor.Next(ctx) {
-		rule := &Rule{}
+		rule := &Response{}
 		err = cursor.Decode(rule)
 		if err != nil {
 			return nil, err
@@ -105,7 +108,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
 	rule := transformRequestToModel(r.EditRequest)
 
@@ -113,9 +116,21 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 	rule.Created = now
 	rule.Updated = now
 
-	var idleRule *Rule
+	var idleRule *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
+
+		if r.Operation != nil {
+			err := dbvalidation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
+			if err != nil {
+				return err
+			}
+
+			err = dbvalidation.ValidateExist(ctx, s.pbhReasonCollection, r, "Operation.Parameters.Reason", r.Operation.Parameters.Reason)
+			if err != nil {
+				return err
+			}
+		}
 
 		err := s.transformPatternRequestsToModel(ctx, r.EditRequest, &rule)
 		if err != nil {
@@ -125,7 +140,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 		_, err = s.collection.InsertOne(ctx, rule)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, rule)
 			}
 
 			return err
@@ -147,16 +162,26 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 	return idleRule, nil
 }
 
-func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
 	model := transformRequestToModel(r.EditRequest)
 	model.ID = r.ID
 	model.Updated = datetime.NewCpsTime()
 
-	var idleRule *Rule
+	var idleRule *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r.EditRequest, &model)
+		err := dbvalidation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
+		if err != nil {
+			return err
+		}
+
+		err = dbvalidation.ValidateExist(ctx, s.pbhReasonCollection, r, "Operation.Parameters.Reason", r.Operation.Parameters.Reason)
+		if err != nil {
+			return err
+		}
+
+		err = s.transformPatternRequestsToModel(ctx, r.EditRequest, &model)
 		if err != nil {
 			return err
 		}
@@ -164,7 +189,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, bson.M{"$set": model})
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, model)
 			}
 
 			return err
@@ -210,30 +235,13 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 		sortBy = "duration.value"
 	}
 
-	return common.GetSortQuery(sortBy, r.Sort)
+	return mongoquery.GetSortQuery(sortBy, r.Sort)
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *idlerule.Rule) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r.EntityPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *idlerule.Rule) (err error) {
+	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.collection.Name())
 
-	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, r.AlarmPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
-
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInEntityPattern(mongo.IdleRuleMongoCollection),
-	)
-	model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
-		common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
-	)
-
-	return nil
+	return err
 }
 
 func transformRequestToModel(r EditRequest) idlerule.Rule {

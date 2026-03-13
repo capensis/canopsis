@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -54,7 +54,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"type": r.Type}})
 	}
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -67,7 +67,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, r.Sort),
+		mongoquery.GetSortQuery(sortBy, r.Sort),
 	))
 
 	if err != nil {
@@ -215,6 +215,8 @@ func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response, userID st
 			case view.WidgetTemplateTypeAlarmQuickActions,
 				view.WidgetTemplateTypeAlarmQuickMassActions:
 				val = tpl.Actions
+			case view.WidgetTemplateTypeAlarmSortColumns:
+				val = tpl.SortColumns
 			default:
 				return fmt.Errorf("unknown template type: %s", tpl.Type)
 			}
@@ -272,11 +274,12 @@ func (s *store) cleanLinkedWidgets(ctx context.Context, model view.WidgetTemplat
 
 func transformEditRequestToModel(r EditRequest) view.WidgetTemplate {
 	return view.WidgetTemplate{
-		Title:   r.Title,
-		Type:    r.Type,
-		Columns: r.Columns,
-		Content: r.Content,
-		Actions: r.Actions,
-		Author:  r.Author,
+		Title:       r.Title,
+		Type:        r.Type,
+		Columns:     r.Columns,
+		Content:     r.Content,
+		Actions:     r.Actions,
+		Author:      r.Author,
+		SortColumns: r.SortColumns,
 	}
 }

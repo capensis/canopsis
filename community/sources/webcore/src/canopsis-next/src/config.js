@@ -47,6 +47,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-entity-tags-chips', 'c-copy-wrapper', 'c-links-list',
     'service-entities-list', 'v-icon', 'v-row', 'v-chip', 'c-remediation-instruction-execution-see-details',
+    'c-request-helper',
   ]),
   allowedAttributes: {
     '*': [
@@ -75,6 +76,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     ],
     'v-chip': ['color', 'text-color'],
     'c-remediation-instruction-execution-see-details': [':execution'],
+    'c-request-helper': ['helper-id', 'key'],
   },
   allowedSchemes: sanitizeHtml.defaults.allowedSchemes.concat(['data']),
   disallowedTagsMode: 'escape',
@@ -188,6 +190,8 @@ export const API_ROUTES = {
   serviceDependencies: '/api/v4/entityservice-dependencies',
   serviceImpacts: '/api/v4/entityservice-impacts',
   serviceAlarms: '/api/v4/entityservice-alarms',
+  entityUpstream: '/api/v4/entity-upstream',
+  entityDownstreams: '/api/v4/entity-downstreams',
   entityInfosDictionaryKeys: '/api/v4/entity-infos-dictionary/keys',
   entityInfosProperties: '/api/v4/entity-infos-properties',
   bulkEntityInfosProperties: '/api/v4/bulk/entity-infos-properties',
@@ -291,6 +295,7 @@ export const API_ROUTES = {
     bulkList: '/api/v4/bulk/patterns',
     entitiesCount: '/api/v4/patterns-entities-count',
     alarmsCount: '/api/v4/patterns-alarms-count',
+    entitiesOptimize: '/api/v4/patterns-entities-optimize',
   },
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
@@ -491,7 +496,7 @@ export const COLORS = {
     ongoing: '#F9A825',
     cancelled: '#757575',
     noEvents: '#FF5252',
-    unknown: '#000',
+    unknown: '#808080',
   },
   alarmSteps: {
     ack: '#35485D',
@@ -738,6 +743,7 @@ export const CSS_COLORS_VARS = {
     ongoing: 'var(--v-status-ongoing-base)',
     cancelled: 'var(--v-status-cancelled-base)',
     noEvents: 'var(--v-status-noEvents-base)',
+    unknown: 'var(--v-status-unknown-base)',
   },
 };
 

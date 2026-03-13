@@ -94,7 +94,7 @@ export default {
 
     const needApprove = ref(!!(props.approval && props.approval.comment) || props.required);
 
-    const approvePermission = computed(() => USER_PERMISSIONS.technical.remediationInstructionApprove);
+    const approvePermission = computed(() => USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove);
 
     const isRoleType = computed(() => (
       props.approval

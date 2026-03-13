@@ -28,13 +28,11 @@
 import { toRef } from 'vue';
 
 import { useSearchLocalValue, useSearchSavedItems } from './hooks/search';
-import CSearchField from './c-search-field.vue';
 
 /**
  * Search component
  */
 export default {
-  components: { CSearchField },
   props: {
     value: {
       type: String,
