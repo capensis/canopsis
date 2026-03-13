@@ -286,8 +286,8 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Règles SNMP',
 
     /**
-     * Technical Admin Notification
-     */
+    * Technical Admin Notification
+    */
     [USER_PERMISSIONS.technical.notification.common]: 'Notifications',
 
     /**
