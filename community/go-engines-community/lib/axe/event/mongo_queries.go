@@ -1,6 +1,8 @@
 package event
 
 import (
+	"strings"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -61,7 +63,15 @@ func getExactAlarmMatchWithStepsLimit(event rpc.AxeEvent) bson.M {
 
 func stepUpdateQueryWithInPbhInterval(stepType, msg string, params rpc.AxeParameters) bson.M {
 	newStep := NewAlarmStep(stepType, params, false)
-	newStep.Message = msg
+	if len(params.StructuredMessage) > 0 {
+		parts := make([]string, len(params.StructuredMessage))
+		for i, sm := range params.StructuredMessage {
+			parts[i] = sm.Field + ": " + sm.Message
+		}
+		newStep.Message = strings.Join(parts, "\n")
+	} else {
+		newStep.Message = msg
+	}
 	newStep.StructuredMessage = params.StructuredMessage
 
 	return stepUpdateQueryWithInPbhIntervalByStep(newStep)
