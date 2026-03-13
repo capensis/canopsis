@@ -3,6 +3,7 @@ package view
 import (
 	"context"
 	"errors"
+	"fmt"
 	"slices"
 	"strconv"
 
@@ -13,6 +14,7 @@ import (
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
+	libwidget "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -24,7 +26,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const (
@@ -674,6 +675,10 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 		newViewGroups := make(map[string]string, len(r.Items))
 		positionItems := make([]EditPositionItemRequest, 0, len(r.Items))
 		now := datetime.NewCpsTime()
+
+		var pbhTypesMap map[string]string
+		var pbhReasonsMap map[string]bool
+
 		for gi, g := range r.Items {
 			groupID := g.ID
 
@@ -796,34 +801,31 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 
 									widget.Parameters.MainFilter = mainFilterId
 
+									if len(widget.Parameters.FastPbehaviors) > 0 && (pbhTypesMap == nil || pbhReasonsMap == nil) {
+										pbhTypesMap, err = libwidget.GetPbehaviorTypesMap(ctx, s.pbhTypeCollection)
+										if err != nil {
+											return fmt.Errorf("failed to get pbh types map: %w", err)
+										}
+
+										pbhReasonsMap, err = libwidget.GetPbehaviorReasonsMap(ctx, s.pbhReasonCollection)
+										if err != nil {
+											return fmt.Errorf("failed to get pbh reasons map: %w", err)
+										}
+									}
+
 									var fastPbhValErrs validator.ValidationErrors
 									for fi, fastPbh := range widget.Parameters.FastPbehaviors {
 										ns := "Items." + strconv.Itoa(gi) + ".Views." + strconv.Itoa(vi) + ".Tabs." + strconv.Itoa(ti) + ".Widgets." + strconv.Itoa(wi) + ".Parameters.FastPbehaviors." + strconv.Itoa(fi)
 
-										var typeDoc struct {
-											ID   string `bson:"_id"`
-											Type string `bson:"type"`
-										}
-										err := s.pbhTypeCollection.FindOne(ctx, bson.M{"_id": fastPbh.Type},
-											options.FindOne().SetProjection(bson.M{"_id": 1, "type": 1})).Decode(&typeDoc)
-										if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-											return err
-										}
-
-										if typeDoc.ID == "" {
+										t, ok := pbhTypesMap[fastPbh.Type]
+										if !ok {
 											fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("not_exist", "Type", ns+".Type"))
-										} else if typeDoc.Type != pbehavior.TypePause {
+										} else if t != pbehavior.TypePause {
 											fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("pbh_type_not_pause", "Type", ns+".Type"))
 										}
 
-										err = s.pbhReasonCollection.FindOne(ctx, bson.M{"_id": fastPbh.Reason},
-											options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
-										if err != nil {
-											if errors.Is(err, mongodriver.ErrNoDocuments) {
-												fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("not_exist", "Reason", ns+".Reason"))
-											} else {
-												return err
-											}
+										if !pbhReasonsMap[fastPbh.Reason] {
+											fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("not_exist", "Reason", ns+".Reason"))
 										}
 									}
 
