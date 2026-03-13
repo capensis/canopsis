@@ -1,5 +1,11 @@
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules, createPatternModule } from '@unit/utils/store';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import {
+  createMockedStoreModules,
+  createPatternModule,
+  createAlarmModule,
+  createEntityModule,
+  createPatternEntitiesOptimizeModule,
+} from '@unit/utils/store';
 
 import {
   ALARM_PATTERN_FIELDS,
@@ -7,6 +13,7 @@ import {
   PBEHAVIOR_PATTERN_FIELDS,
   EVENT_FILTER_PATTERN_FIELDS,
   PATTERN_CONDITIONS,
+  PATTERN_OPTIMIZATION_STATUSES,
 } from '@/constants';
 
 import { patternToForm } from '@/helpers/entities/pattern/form';
@@ -22,20 +29,69 @@ const stubs = {
   'c-pbehavior-patterns-field': true,
   'c-event-filter-patterns-field': true,
   'c-alert': true,
+  'pattern-try-optimization': true,
+  'pattern-optimization-progress': true,
+  'pattern-suggestions': true,
+  'pattern-field-suggestions-wrapper': true,
 };
 
 const selectAlarmPatternsField = wrapper => wrapper.find('c-alarm-patterns-field-stub');
 const selectEntityPatternsField = wrapper => wrapper.find('c-entity-patterns-field-stub');
 const selectPbehaviorPatternsField = wrapper => wrapper.find('c-pbehavior-patterns-field-stub');
 const selectEventFilterPatternsField = wrapper => wrapper.find('c-event-filter-patterns-field-stub');
+const selectTryOptimization = wrapper => wrapper.find('pattern-try-optimization-stub');
+const selectOptimizationProgress = wrapper => wrapper.find('pattern-optimization-progress-stub');
+const selectPatternFieldSuggestionsWrapper = wrapper => wrapper.find('pattern-field-suggestions-wrapper-stub');
+
+const createPatternWithRegexpInfos = () => {
+  const entityPattern = patternToForm({
+    entity_pattern: [[
+      {
+        field: ENTITY_PATTERN_FIELDS.infos,
+        cond: {
+          type: PATTERN_CONDITIONS.regexp,
+          value: 'test.*pattern',
+        },
+      },
+    ]],
+  });
+
+  return {
+    ...filterPatternsToForm(),
+    entity_pattern: entityPattern,
+  };
+};
 
 describe('c-patterns-field', () => {
   const patterns = filterPatternsToForm();
   const { patternModule } = createPatternModule();
-  const store = createMockedStoreModules([patternModule]);
+  const { alarmModule } = createAlarmModule();
+  const { entityModule } = createEntityModule();
+  const { patternEntitiesOptimizeModule } = createPatternEntitiesOptimizeModule();
+  const store = createMockedStoreModules([
+    patternModule,
+    alarmModule,
+    entityModule,
+    patternEntitiesOptimizeModule,
+  ]);
 
-  const factory = generateShallowRenderer(CPatternsField, { stubs });
-  const snapshotFactory = generateRenderer(CPatternsField, { stubs });
+  const popupInfoFn = jest.fn();
+  const factory = generateShallowRenderer(CPatternsField, {
+    stubs,
+    mocks: {
+      $popups: {
+        info: popupInfoFn,
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CPatternsField, {
+    stubs,
+    mocks: {
+      $popups: {
+        info: popupInfoFn,
+      },
+    },
+  });
 
   test('Alarm pattern changed after trigger alarm patterns field', () => {
     const wrapper = factory({
@@ -159,6 +215,406 @@ describe('c-patterns-field', () => {
       ...patterns,
       event_pattern: eventFilterPattern,
     });
+  });
+
+  test('Shows try optimization button when pattern has regexp infos and form has changes', async () => {
+    const initialPatterns = filterPatternsToForm();
+    const wrapper = factory({
+      propsData: {
+        value: initialPatterns,
+        withEntity: true,
+      },
+      store,
+    });
+
+    await flushPromises();
+
+    const patternsWithRegexp = createPatternWithRegexpInfos();
+    wrapper.setProps({ value: patternsWithRegexp });
+
+    await flushPromises();
+
+    const tryOptimizationComponent = selectTryOptimization(wrapper);
+
+    expect(tryOptimizationComponent.exists()).toBe(true);
+  });
+
+  test('Triggers optimization when try optimization button is clicked', async () => {
+    const {
+      patternEntitiesOptimizeModule: optimizeModule,
+      optimize,
+      fetchOptimizeStatus,
+    } = createPatternEntitiesOptimizeModule();
+    const testStore = createMockedStoreModules([
+      patternModule,
+      alarmModule,
+      entityModule,
+      optimizeModule,
+    ]);
+
+    const optimizationId = 'test-optimization-id';
+    const optimizationResponse = {
+      _id: optimizationId,
+      status: PATTERN_OPTIMIZATION_STATUSES.running,
+    };
+    const successResponse = {
+      _id: optimizationId,
+      status: PATTERN_OPTIMIZATION_STATUSES.success,
+      suggestions: [],
+    };
+
+    optimize.mockResolvedValue(optimizationResponse);
+    fetchOptimizeStatus.mockResolvedValue(successResponse);
+
+    const initialPatterns = filterPatternsToForm();
+    const wrapper = factory({
+      propsData: {
+        value: initialPatterns,
+        withEntity: true,
+      },
+      store: testStore,
+    });
+
+    await flushPromises();
+
+    const patternsWithRegexp = createPatternWithRegexpInfos();
+    wrapper.setProps({ value: patternsWithRegexp });
+
+    await flushPromises();
+
+    const tryOptimizationComponent = selectTryOptimization(wrapper);
+
+    expect(tryOptimizationComponent.exists()).toBe(true);
+    tryOptimizationComponent.triggerCustomEvent('try:optimization');
+
+    await flushPromises();
+
+    expect(optimize).toHaveBeenCalled();
+  });
+
+  test('Shows optimization suggestions when optimization succeeds with suggestions', async () => {
+    const {
+      patternEntitiesOptimizeModule: optimizeModule,
+      optimize,
+      fetchOptimizeStatus,
+    } = createPatternEntitiesOptimizeModule();
+    const testStore = createMockedStoreModules([
+      patternModule,
+      alarmModule,
+      entityModule,
+      optimizeModule,
+    ]);
+
+    const optimizationId = 'test-optimization-id';
+    const optimizationResponse = {
+      _id: optimizationId,
+      status: PATTERN_OPTIMIZATION_STATUSES.running,
+    };
+    const successResponse = {
+      _id: optimizationId,
+      status: PATTERN_OPTIMIZATION_STATUSES.success,
+      suggestions: [
+        {
+          groups: [[
+            {
+              field: ENTITY_PATTERN_FIELDS.id,
+              cond: {
+                type: PATTERN_CONDITIONS.equal,
+                value: 'optimized-id',
+              },
+            },
+          ]],
+        },
+      ],
+      optimized_field_regexps: ['infos'],
+    };
+
+    optimize.mockResolvedValue(optimizationResponse);
+    fetchOptimizeStatus.mockResolvedValue(successResponse);
+
+    const initialPatterns = filterPatternsToForm();
+    const wrapper = factory({
+      propsData: {
+        value: initialPatterns,
+        withEntity: true,
+      },
+      store: testStore,
+    });
+
+    await flushPromises();
+
+    const patternsWithRegexp = createPatternWithRegexpInfos();
+    wrapper.setProps({ value: patternsWithRegexp });
+
+    await flushPromises();
+
+    const tryOptimizationComponent = selectTryOptimization(wrapper);
+
+    expect(tryOptimizationComponent.exists()).toBe(true);
+    tryOptimizationComponent.triggerCustomEvent('try:optimization');
+
+    await flushPromises();
+
+    const suggestionsWrapper = selectPatternFieldSuggestionsWrapper(wrapper);
+
+    expect(suggestionsWrapper.exists()).toBe(true);
+    expect(suggestionsWrapper.props('suggestions')).toHaveLength(1);
+  });
+
+  test('Applies suggestion when apply suggestion event is triggered', async () => {
+    const {
+      patternEntitiesOptimizeModule: optimizeModule,
+      optimize,
+      fetchOptimizeStatus,
+    } = createPatternEntitiesOptimizeModule();
+    const testStore = createMockedStoreModules([
+      patternModule,
+      alarmModule,
+      entityModule,
+      optimizeModule,
+    ]);
+
+    const optimizationId = 'test-optimization-id';
+    const optimizationResponse = {
+      _id: optimizationId,
+      status: PATTERN_OPTIMIZATION_STATUSES.running,
+    };
+    const successResponse = {
+      _id: optimizationId,
+      status: PATTERN_OPTIMIZATION_STATUSES.success,
+      suggestions: [
+        {
+          groups: [[
+            {
+              field: ENTITY_PATTERN_FIELDS.id,
+              cond: {
+                type: PATTERN_CONDITIONS.equal,
+                value: 'optimized-id',
+              },
+            },
+          ]],
+        },
+      ],
+      optimized_field_regexps: ['infos'],
+    };
+
+    optimize.mockResolvedValue(optimizationResponse);
+    fetchOptimizeStatus.mockResolvedValue(successResponse);
+
+    const initialPatterns = filterPatternsToForm();
+    const wrapper = factory({
+      propsData: {
+        value: initialPatterns,
+        withEntity: true,
+      },
+      store: testStore,
+    });
+
+    await flushPromises();
+
+    const patternsWithRegexp = createPatternWithRegexpInfos();
+    wrapper.setProps({ value: patternsWithRegexp });
+
+    await flushPromises();
+
+    const tryOptimizationComponent = selectTryOptimization(wrapper);
+
+    expect(tryOptimizationComponent.exists()).toBe(true);
+    tryOptimizationComponent.triggerCustomEvent('try:optimization');
+
+    await flushPromises();
+
+    const suggestionsWrapper = selectPatternFieldSuggestionsWrapper(wrapper);
+
+    expect(suggestionsWrapper.exists()).toBe(true);
+    expect(suggestionsWrapper.props('suggestions')).toHaveLength(1);
+    suggestionsWrapper.triggerCustomEvent('apply:suggestion', 0);
+
+    await flushPromises();
+
+    expect(wrapper).toEmitInput();
+  });
+
+  test('Cancels optimization when cancel optimization event is triggered', async () => {
+    const {
+      patternEntitiesOptimizeModule: optimizeModule,
+      optimize,
+      fetchOptimizeStatus,
+      remove,
+    } = createPatternEntitiesOptimizeModule();
+    const testStore = createMockedStoreModules([
+      patternModule,
+      alarmModule,
+      entityModule,
+      optimizeModule,
+    ]);
+
+    const optimizationId = 'test-optimization-id';
+    const optimizationResponse = {
+      _id: optimizationId,
+      status: PATTERN_OPTIMIZATION_STATUSES.running,
+    };
+
+    optimize.mockResolvedValue(optimizationResponse);
+    fetchOptimizeStatus.mockResolvedValue(optimizationResponse);
+    remove.mockResolvedValue({});
+
+    const initialPatterns = filterPatternsToForm();
+    const wrapper = factory({
+      propsData: {
+        value: initialPatterns,
+        withEntity: true,
+      },
+      store: testStore,
+    });
+
+    await flushPromises();
+
+    const patternsWithRegexp = createPatternWithRegexpInfos();
+    wrapper.setProps({ value: patternsWithRegexp });
+
+    await flushPromises();
+
+    const tryOptimizationComponent = selectTryOptimization(wrapper);
+
+    expect(tryOptimizationComponent.exists()).toBe(true);
+    tryOptimizationComponent.triggerCustomEvent('try:optimization');
+
+    await flushPromises();
+
+    const progressComponent = selectOptimizationProgress(wrapper);
+
+    expect(progressComponent.exists()).toBe(true);
+
+    progressComponent.triggerCustomEvent('cancel:optimization');
+
+    await flushPromises();
+
+    expect(remove).toHaveBeenCalledWith(expect.any(Object), { id: optimizationId });
+  });
+
+  test('Expands entity panel when optimization suggestions are received', async () => {
+    const {
+      patternEntitiesOptimizeModule: optimizeModule,
+      optimize,
+      fetchOptimizeStatus,
+    } = createPatternEntitiesOptimizeModule();
+    const testStore = createMockedStoreModules([
+      patternModule,
+      alarmModule,
+      entityModule,
+      optimizeModule,
+    ]);
+
+    const optimizationId = 'test-optimization-id';
+    const optimizationResponse = {
+      _id: optimizationId,
+      status: PATTERN_OPTIMIZATION_STATUSES.running,
+    };
+    const successResponse = {
+      _id: optimizationId,
+      status: PATTERN_OPTIMIZATION_STATUSES.success,
+      suggestions: [
+        {
+          groups: [[
+            {
+              field: ENTITY_PATTERN_FIELDS.id,
+              cond: {
+                type: PATTERN_CONDITIONS.equal,
+                value: 'optimized-id',
+              },
+            },
+          ]],
+        },
+      ],
+      optimized_field_regexps: ['infos'],
+    };
+
+    optimize.mockResolvedValue(optimizationResponse);
+    fetchOptimizeStatus.mockResolvedValue(successResponse);
+
+    const initialPatterns = filterPatternsToForm();
+    const wrapper = factory({
+      propsData: {
+        value: initialPatterns,
+        withEntity: true,
+      },
+      store: testStore,
+    });
+
+    await flushPromises();
+
+    expect(wrapper.vm.expanded.entity).toBe(false);
+
+    const patternsWithRegexp = createPatternWithRegexpInfos();
+    wrapper.setProps({ value: patternsWithRegexp });
+
+    await flushPromises();
+
+    const tryOptimizationComponent = selectTryOptimization(wrapper);
+
+    expect(tryOptimizationComponent.exists()).toBe(true);
+    tryOptimizationComponent.triggerCustomEvent('try:optimization');
+
+    await flushPromises();
+
+    expect(wrapper.vm.expanded.entity).toBe(true);
+  });
+
+  test('Does not expand entity panel when optimization suggestions are empty', async () => {
+    const {
+      patternEntitiesOptimizeModule: optimizeModule,
+      optimize,
+      fetchOptimizeStatus,
+    } = createPatternEntitiesOptimizeModule();
+    const testStore = createMockedStoreModules([
+      patternModule,
+      alarmModule,
+      entityModule,
+      optimizeModule,
+    ]);
+
+    const optimizationId = 'test-optimization-id';
+    const optimizationResponse = {
+      _id: optimizationId,
+      status: PATTERN_OPTIMIZATION_STATUSES.running,
+    };
+    const successResponse = {
+      _id: optimizationId,
+      status: PATTERN_OPTIMIZATION_STATUSES.success,
+      suggestions: [],
+      optimized_field_regexps: [],
+    };
+
+    optimize.mockResolvedValue(optimizationResponse);
+    fetchOptimizeStatus.mockResolvedValue(successResponse);
+
+    const initialPatterns = filterPatternsToForm();
+    const wrapper = factory({
+      propsData: {
+        value: initialPatterns,
+        withEntity: true,
+      },
+      store: testStore,
+    });
+
+    await flushPromises();
+
+    expect(wrapper.vm.expanded.entity).toBe(false);
+
+    const patternsWithRegexp = createPatternWithRegexpInfos();
+    wrapper.setProps({ value: patternsWithRegexp });
+
+    await flushPromises();
+
+    const tryOptimizationComponent = selectTryOptimization(wrapper);
+
+    expect(tryOptimizationComponent.exists()).toBe(true);
+    tryOptimizationComponent.triggerCustomEvent('try:optimization');
+
+    await flushPromises();
+
+    expect(wrapper.vm.expanded.entity).toBe(false);
   });
 
   test('Renders `c-patterns-field` with default props', () => {

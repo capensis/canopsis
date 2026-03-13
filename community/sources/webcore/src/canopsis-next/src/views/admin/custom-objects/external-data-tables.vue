@@ -45,7 +45,7 @@ export default {
       hasCreateAccess: hasCreateExternalDataTableAccess,
       hasUpdateAccess: hasUpdateExternalDataTableAccess,
       hasDeleteAccess: hasDeleteExternalDataTableAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.externalDataTable);
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.externalDataTable);
 
     /**
      * STORE

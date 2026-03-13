@@ -3,6 +3,7 @@
     v-if="preparedLinks.length"
     v-model="openedMenu"
     v-bind="$attrs"
+    offset-y
   >
     <template #activator="{ on }">
       <v-btn

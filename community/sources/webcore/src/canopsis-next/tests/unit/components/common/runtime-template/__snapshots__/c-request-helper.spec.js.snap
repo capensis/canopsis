@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-request-helper Renders \`c-request-helper\` after successful request 1`] = `
+<c-runtime-template-stub
+  template="<fragment><div>{\\"data\\":\\"test\\"}</div></fragment>"
+/>
+`;
+
+exports[`c-request-helper Renders \`c-request-helper\` with default props 1`] = `
+<c-runtime-template-stub
+  template=""
+/>
+`;

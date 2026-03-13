@@ -14,10 +14,13 @@
       <field-live-reporting v-model="form.parameters.liveReporting" />
     </widget-settings-group>
     <widget-settings-group :title="$tc('common.column', 2)">
-      <field-default-sort-column
+      <field-default-sort-columns-with-template
         v-model="form.parameters.sort"
         :columns="sortablePreparedWidgetColumns"
-        :columns-label="$t('settings.columnName')"
+        :template="form.parameters.sortTemplate"
+        :templates="alarmSortColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        @update:template="updateSortTemplate"
       />
       <field-columns
         v-model="form.parameters.widgetColumns"
@@ -147,7 +150,7 @@
 
       <field-comment-templates v-model="form.parameters.comment_templates" />
 
-      <fast-pbehavior-form v-model="form.parameters" />
+      <fast-pbehavior-form v-model="form.parameters.fast_pbehaviors" />
 
       <field-switcher
         v-model="form.parameters.isSnoozeNoteRequired"
@@ -267,7 +270,7 @@ import FieldAvailabilityGraphSettings from '../availability/form/fields/availabi
 import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
 import WidgetSettings from '../partials/widget-settings.vue';
 import FieldTitle from '../form/fields/title.vue';
-import FieldDefaultSortColumn from '../form/fields/default-sort-column.vue';
+import FieldDefaultSortColumnsWithTemplate from '../form/fields/default-sort-columns-with-template.vue';
 import FieldColumns from '../form/fields/columns.vue';
 import FieldPeriodicRefresh from '../form/fields/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from '../form/fields/default-elements-per-page.vue';
@@ -300,7 +303,7 @@ export default {
     WidgetSettingsGroup,
     WidgetSettings,
     FieldTitle,
-    FieldDefaultSortColumn,
+    FieldDefaultSortColumnsWithTemplate,
     FieldColumns,
     FieldLiveReporting,
     FieldPeriodicRefresh,
@@ -355,9 +358,13 @@ export default {
     updateTemplate(field, template, value) {
       this.$set(this.form.parameters, `${field}Template`, template);
 
-      if (template && template !== this.form.parameters[field]) {
+      if (template !== this.form.parameters[field]) {
         this.$set(this.form.parameters, field, value);
       }
+    },
+
+    updateSortTemplate(template = '', sort = []) {
+      this.updateTemplate('sort', template, sort);
     },
 
     updateMoreInfoTemplate(value, template) {

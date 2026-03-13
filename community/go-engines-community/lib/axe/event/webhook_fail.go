@@ -79,7 +79,7 @@ func (p *webhookFailProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		update = []bson.M{
 			{"$set": bson.M{
 				"v.steps":            addStepUpdateQuery(newStepQuery, newTicketStepQuery),
-				"v.tickets":          addTicketUpdateQuery(newTicketStepQuery),
+				"v.failed_ticket":    newTicketStepQuery,
 				"v.last_update_date": event.Parameters.Timestamp,
 			}},
 		}

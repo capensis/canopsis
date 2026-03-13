@@ -3,17 +3,14 @@ import {
   isFunction,
   isNumber,
   isObject,
-  unescape,
   isString,
   pick,
 } from 'lodash';
 import Handlebars from 'handlebars';
-import axios from 'axios';
 
-import { DATETIME_FORMATS, RESPONSE_STATUSES } from '@/constants';
+import { DATETIME_FORMATS } from '@/constants';
 
-import i18n from '@/i18n';
-
+import { uid } from '@/helpers/uid';
 import { convertDurationToString } from '@/helpers/date/duration';
 import { convertDateToStringWithFormatForToday, convertDateToString } from '@/helpers/date/date';
 
@@ -103,72 +100,39 @@ export function alarmStateHelper(state) {
  *  variable="post"
  *  headers='{ "Content-Type": "application/json" }'
  *  data='{ "userId": "1", "title": "test", "completed": false }'}}
+ *   <ul>
  *   {{#each post}}
  *       <li><strong>{{@key}}</strong>: {{this}}</li>
  *   {{/each}}
+ *   </ul>
  * {{/request}}
  *
  * @param {Object} options
  * @returns {Promise<string|*>}
  */
 export async function requestHelper(options) {
-  const {
-    method = 'get',
-    url,
-    headers,
-    path,
-    data,
-    variable,
-    username,
-    password,
-  } = options.hash;
+  const { url } = options.hash;
 
   if (!url) {
     throw new Error('helper {{request}}: \'url\' is required');
   }
 
-  try {
-    const axiosOptions = {
-      method,
-      url: unescape(url),
-    };
-
-    if (headers) {
-      axiosOptions.headers = JSON.parse(headers);
-    }
-
-    if (username || password) {
-      axiosOptions.auth = { username, password };
-    }
-
-    if (data) {
-      axiosOptions.data = JSON.parse(data);
-    }
-
-    const { data: responseData } = await axios(axiosOptions);
-
-    if (isFunction(options.fn)) {
-      const value = path ? get(responseData, path) : responseData;
-      const context = variable ? { [variable]: value } : value;
-
-      return options.fn(context);
-    }
-
+  if (!isFunction(options.fn)) {
     return '';
-  } catch (err) {
-    console.error(err);
-
-    const { status } = err.response || {};
-
-    switch (status) {
-      case RESPONSE_STATUSES.unauthorized:
-        return i18n.t('handlebars.requestHelper.errors.unauthorized');
-      case RESPONSE_STATUSES.timeout:
-        return i18n.t('handlebars.requestHelper.errors.timeout');
-      default:
-        return i18n.t('handlebars.requestHelper.errors.other');
-    }
   }
+
+  if (!window._handlebarsRequestHelper) {
+    window._handlebarsRequestHelper = {};
+  }
+
+  const helperId = uid('request-helper');
+
+  window._handlebarsRequestHelper[helperId] = {
+    context: this,
+    options,
+  };
+
+  return new Handlebars.SafeString(`<c-request-helper key="${helperId}" helper-id="${helperId}"></c-request-helper>`);
 }
 
 /**
