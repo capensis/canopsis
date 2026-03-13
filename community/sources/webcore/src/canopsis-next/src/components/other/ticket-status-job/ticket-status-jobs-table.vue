@@ -81,7 +81,7 @@
       </template>
     </template>
     <template #expand="{ item }">
-      <jobs-details-expand-panel :item="item" />
+      <ticket-status-jobs-details-expand-panel :item="item" />
     </template>
     <template #actions="{ item }">
       <v-layout>
@@ -131,12 +131,12 @@ import { JOB_STATE, JOB_RUN_STATUS, JOB_RULE_TYPE } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
-import JobsDetailsExpandPanel from './partials/jobs-details-expand-panel.vue';
+import TicketStatusJobsDetailsExpandPanel from './partials/ticket-status-jobs-details-expand-panel.vue';
 
 export default {
-  components: { JobsDetailsExpandPanel },
+  components: { TicketStatusJobsDetailsExpandPanel },
   props: {
-    columns: {
+    headers: {
       type: Array,
       required: true,
     },
@@ -170,26 +170,6 @@ export default {
         text: t(`${i18nBase}.${value}`),
       }));
     });
-
-    const columnLabels = {
-      ruleName: () => t('jobs.ruleName'),
-      authTokenName: () => t('jobs.authTokenName'),
-      ticketSystemName: () => t('jobs.ticketSystemName'),
-      ruleType: () => t('jobs.ruleType'),
-      active: () => t('jobs.active'),
-      status: () => t('jobs.statusLabel'),
-      startDate: () => t('jobs.startDate'),
-      finishDate: () => t('jobs.finishDate'),
-      failReason: () => t('jobs.failReason'),
-      expirationDate: () => t('jobs.expirationDate'),
-      actions: () => t('common.actionsLabel'),
-    };
-
-    const headers = computed(() => props.columns.map(col => ({
-      text: (columnLabels[col.value] && columnLabels[col.value]()) ?? col.value,
-      value: col.value,
-      sortable: col.sortable,
-    })));
 
     const getRuleName = item => item.rule_name ?? ((`${item.ticket_system_name || ''} - ${item.ticket_id || ''}`.trim() || '-'));
     const getAuthTokenName = item => item.auth_token_name ?? item.rule_name ?? '-';
@@ -264,7 +244,6 @@ export default {
     const emitAction = (action, item) => emit('action', { action, item });
 
     return {
-      headers,
       statusItems,
       getRuleName,
       getAuthTokenName,

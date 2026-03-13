@@ -17,12 +17,12 @@
                     <strong>{{ $t('jobs.data.webhookFailedPrefix') }} : </strong>
                     {{ item.fail_reason }}
                   </span>
-                  <jobs-http-data-collapse-panel
+                  <ticket-status-jobs-http-data-collapse-panel
                     v-if="item.raw_request"
                     :title-prefix="$t('jobs.data.request')"
                     :raw="item.raw_request"
                   />
-                  <jobs-http-data-collapse-panel
+                  <ticket-status-jobs-http-data-collapse-panel
                     v-if="item.raw_response"
                     :title-prefix="$t('jobs.data.response')"
                     :raw="item.raw_response"
@@ -38,10 +38,10 @@
 </template>
 
 <script>
-import JobsHttpDataCollapsePanel from './jobs-http-data-collapse-panel.vue';
+import TicketStatusJobsHttpDataCollapsePanel from './ticket-status-jobs-http-data-collapse-panel.vue';
 
 export default {
-  components: { JobsHttpDataCollapsePanel },
+  components: { TicketStatusJobsHttpDataCollapsePanel },
   props: {
     item: {
       type: Object,

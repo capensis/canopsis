@@ -297,6 +297,10 @@ export const CreateRemediationJob = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/create-remediation-job.vue'),
   loading: LoaderOverlay,
 });
+export const CreateTicketStatusJob = () => ({
+  component: import(/* webpackChunkName: "TicketStatusJob" */ './ticket-status-job/create-ticket-status-job.vue'),
+  loading: LoaderOverlay,
+});
 export const ExecuteRemediationInstruction = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/execute-remediation-instruction.vue'),
   loading: LoaderOverlay,
