@@ -81,6 +81,7 @@ export default {
     launched: 'lancé',
     junit: 'JUnit',
     groupItems: 'Grouper les éléments',
+    onlyComments: 'Commentaires uniquement',
     steps: {
       [ALARM_LIST_STEPS.statedec]: 'Sévérité diminuée',
       [ALARM_LIST_STEPS.stateinc]: 'Sévérité augmentée',
