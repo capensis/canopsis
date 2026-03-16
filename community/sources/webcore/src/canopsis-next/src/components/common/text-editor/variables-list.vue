@@ -55,7 +55,7 @@ export default {
       default: () => [],
     },
     search: {
-      type: String,
+      type: [String, Number],
       default: '',
     },
     items: {
