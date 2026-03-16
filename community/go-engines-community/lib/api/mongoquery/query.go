@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -29,12 +28,6 @@ func GetSortQuery(sortBy, sort string) bson.M {
 func GetSearchQuery(search string, searchBy []string) bson.M {
 	if search == "" {
 		return nil
-	}
-
-	p := parser.NewParser()
-	expr, err := p.Parse(search, nil)
-	if err == nil {
-		return expr.MongoQuery()
 	}
 
 	searchRegexp := bson.Regex{

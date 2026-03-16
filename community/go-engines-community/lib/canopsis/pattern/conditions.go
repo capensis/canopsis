@@ -884,7 +884,7 @@ func (c *Condition) StringToSql(f string) (string, error) {
 		}
 
 		// "IS NULL" is mandatory
-		return fmt.Sprintf("(%[1]s IS NULL OR NOT (%[1]s = ANY (ARRAY [%s]))", f, strings.Join(values, ",")), nil
+		return fmt.Sprintf("(%[1]s IS NULL OR NOT (%[1]s = ANY (ARRAY [%s])))", f, strings.Join(values, ",")), nil
 	case ConditionRegexp,
 		ConditionContain,
 		ConditionNotContain,
@@ -966,7 +966,7 @@ func (c *Condition) DurationToSql(f string) (string, error) {
 
 		return fmt.Sprintf("%s > %d", f, *c.valueDuration), nil
 	case ConditionLT:
-		if c.valueDuration != nil {
+		if c.valueDuration == nil {
 			return "", ErrWrongConditionValue
 		}
 
@@ -1083,14 +1083,14 @@ func (c *Condition) IntToSqlJson(field, key string) (string, error) {
 
 func (c *Condition) BoolToSqlJson(field, key string) (string, error) {
 	checkType := fmt.Sprintf("jsonb_typeof(%s->%s) = 'boolean'", field, sqlQuoteString(key))
-	cast := fmt.Sprintf("%s AND %s->%s", checkType, field, sqlQuoteString(key))
+	operand := fmt.Sprintf("(CASE WHEN %s THEN (%s->%s)::boolean END)", checkType, field, sqlQuoteString(key))
+	cast := fmt.Sprintf("%s AND %s", checkType, operand)
 
 	switch c.Type {
 	case ConditionEqual:
-		if c.valueBool != nil {
+		if c.valueBool == nil {
 			return "", ErrWrongConditionValue
 		}
-
 		return fmt.Sprintf("(%s = %t)", cast, *c.valueBool), nil
 	default:
 		return "", ErrUnsupportedConditionType
@@ -1180,6 +1180,9 @@ func (c *Condition) TimeToSqlJson(field, key string) (string, error) {
 	case ConditionTimeRelative:
 		if c.valueDuration == nil && c.valueDurationTo == nil {
 			return "", ErrWrongConditionValue
+		}
+		if c.valueDuration != nil && c.valueDurationTo != nil && *c.valueDuration < *c.valueDurationTo {
+			return "", fmt.Errorf("duration from (%d) < to (%d)", *c.valueDuration, *c.valueDurationTo)
 		}
 		var conditions []string
 		if c.valueDuration != nil {
