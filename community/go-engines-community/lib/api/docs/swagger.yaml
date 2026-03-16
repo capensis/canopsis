@@ -4610,11 +4610,7 @@ paths:
             type: array
             items:
               type: string
-        - name: entity_pattern
-          in: query
-          schema:
-            type: string
-          example: "[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_resource\"}}]]"
+        - $ref: '#/components/parameters/search_pattern'
         - name: no_events
           in: query
           schema:
@@ -5742,6 +5738,7 @@ paths:
           schema:
             type: string
         - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/search_pattern'
         - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
@@ -10994,6 +10991,7 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/search_pattern'
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/sort_by'
       responses:
@@ -17303,6 +17301,13 @@ components:
       description: search query
       schema:
         type: string
+    search_pattern:
+      name: search pattern
+      in: query
+      description: search pattern
+      schema:
+        type: string
+      example: "[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_name\"}}]]"
     search_by:
       name: search_by[]
       in: query

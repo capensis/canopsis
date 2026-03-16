@@ -45,7 +45,7 @@ type BaseFilterRequest struct {
 	Category              string   `form:"category" json:"category"`
 	Type                  []string `form:"type[]" json:"type"`
 	NoEvents              bool     `form:"no_events" json:"no_events"`
-	EntityPattern         string   `form:"entity_pattern" json:"entity_pattern"`
+	SearchPattern         string   `form:"search_pattern" json:"search_pattern" example:"[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_name\"}}]]"`
 	NegativeEntityPattern string   `form:"negative_entity_pattern" json:"negative_entity_pattern"`
 	IDs                   []string `form:"ids[]" json:"ids"`
 }

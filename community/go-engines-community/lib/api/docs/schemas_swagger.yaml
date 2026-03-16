@@ -1844,8 +1844,6 @@ definitions:
     properties:
       category:
         type: string
-      entity_pattern:
-        type: string
       fields:
         items:
           $ref: '#/definitions/export.Field'
@@ -1863,6 +1861,9 @@ definitions:
       no_events:
         type: boolean
       search:
+        type: string
+      search_pattern:
+        example: '[[{"field":"name","cond":{"type":"eq","value":"cps_name"}}]]'
         type: string
       separator:
         type: string
