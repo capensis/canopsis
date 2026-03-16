@@ -1055,13 +1055,13 @@ export const formRuleToPatternRule = (rule) => {
 
   if ((isExtraInfos || isInfos) && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
     pattern.field_type = rule.fieldType;
+  }
 
-    if (
-      (rule.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(rule.operator))
-      && isArray(pattern.cond.value)
-    ) {
-      pattern.cond.value = formToPrimitiveArray(pattern.cond.value);
-    }
+  if (
+    (rule.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(rule.operator))
+    && isArray(pattern.cond.value)
+  ) {
+    pattern.cond.value = formToPrimitiveArray(pattern.cond.value);
   }
 
   switch (rule.operator) {
