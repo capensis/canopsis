@@ -236,6 +236,8 @@ definitions:
         type: integer
       pbehavior:
         $ref: '#/definitions/alarm.Pbehavior'
+      pbh_origin_icon:
+        type: string
       running_auto_instructions:
         items:
           type: string
@@ -4701,10 +4703,6 @@ definitions:
         type: string
       reason:
         type: string
-      tstart:
-        type: integer
-      tstop:
-        type: integer
       type:
         type: string
     required:
@@ -4712,7 +4710,6 @@ definitions:
     - name
     - origin
     - reason
-    - tstart
     - type
     type: object
   pbehavior.BulkEntityDeleteRequestItem:
@@ -7279,6 +7276,20 @@ definitions:
           $ref: '#/definitions/view.Response'
         type: array
     type: object
+  view.FastPbehavior:
+    properties:
+      name_prefix:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      type:
+        type: string
+    required:
+    - name_prefix
+    - reason
+    - type
+    type: object
   view.ImportItemRequest:
     properties:
       _id:
@@ -7300,6 +7311,10 @@ definitions:
     properties:
       directory:
         type: string
+      fast_pbehaviors:
+        items:
+          $ref: '#/definitions/view.FastPbehavior'
+        type: array
       is_api:
         description: Junit
         type: boolean

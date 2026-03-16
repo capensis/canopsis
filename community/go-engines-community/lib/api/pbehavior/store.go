@@ -757,8 +757,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 		Enabled:  true,
 		Name:     r.Name,
 		Reason:   r.Reason,
-		Start:    r.Start,
-		Stop:     r.Stop,
+		Start:    &now,
 		Type:     r.Type,
 		Created:  &now,
 		Updated:  &now,
@@ -802,8 +801,8 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 			return validation.NewSingleError("not_exist", "Type", "Type", r)
 		}
 
-		if r.Stop == nil && t.Type != pbehavior.TypePause {
-			return validation.NewSingleError("required", "Stop", "Stop", r)
+		if t.Type != pbehavior.TypePause {
+			return validation.NewSingleError("pbh_type_not_pause", "Type", "Type", r)
 		}
 
 		err = dbvalidation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
@@ -815,8 +814,6 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 			bson.M{
 				"origin": r.Origin,
 				"entity": r.Entity,
-				"tstart": bson.M{"$lte": now},
-				"tstop":  bson.M{"$gte": now},
 			},
 			bson.M{
 				"$setOnInsert": doc,
@@ -844,7 +841,6 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 }
 
 func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error) {
-	now := datetime.NewCpsTime()
 	id := ""
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		id = ""
@@ -853,11 +849,6 @@ func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem)
 			FindOneAndDelete(ctx, bson.M{
 				"entity": r.Entity,
 				"origin": r.Origin,
-				"tstart": bson.M{"$lte": now},
-				"$or": bson.A{
-					bson.M{"tstop": nil},
-					bson.M{"tstop": bson.M{"$gte": now}},
-				},
 			}, options.FindOneAndDelete().SetProjection(bson.M{"_id": 1})).
 			Decode(&pbh)
 		if err != nil {

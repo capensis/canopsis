@@ -3386,8 +3386,6 @@ paths:
                     "entity": "cps_resource/cps_component",
                     "origin": "centreon",
                     "name": "Downtime",
-                    "tstart": 1650855600,
-                    "tstop": 1650891600,
                     "type": "53010391-8f34-4e00-a493-0264431eddd6",
                     "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
                     "comment": "Downtime by centreon"
