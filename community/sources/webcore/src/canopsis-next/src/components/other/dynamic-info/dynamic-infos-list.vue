@@ -6,6 +6,7 @@
     :headers="headers"
     :total-items="totalItems"
     :select-all="removable"
+    :advanced-search-attributes="advancedSearchAttributes"
     advanced-search
     advanced-pagination
     hide-actions
@@ -56,6 +57,12 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
+import { useDynamicInfoAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
+
 import DynamicInfosListExpandItem from './partials/dynamic-infos-expand-item.vue';
 
 export default {
@@ -92,19 +99,26 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        { text: this.$t('common.id'), value: '_id' },
-        { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.description'), value: 'description', sortable: false },
-        { text: this.$t('common.enabled'), value: 'enabled', sortable: false },
-        { text: this.$t('common.author'), value: 'author.display_name' },
-        { text: this.$t('common.created'), value: 'created' },
-        { text: this.$t('common.updated'), value: 'updated' },
-        { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
-      ];
-    },
+  setup() {
+    const { t } = useI18n();
+
+    const { attributes: advancedSearchAttributes } = useDynamicInfoAdvancedSearchAttributes();
+
+    const headers = computed(() => [
+      { text: t('common.id'), value: '_id' },
+      { text: t('common.name'), value: 'name' },
+      { text: t('common.description'), value: 'description', sortable: false },
+      { text: t('common.enabled'), value: 'enabled', sortable: false },
+      { text: t('common.author'), value: 'author.display_name' },
+      { text: t('common.created'), value: 'created' },
+      { text: t('common.updated'), value: 'updated' },
+      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+    ]);
+
+    return {
+      headers,
+      advancedSearchAttributes,
+    };
   },
 };
 </script>
