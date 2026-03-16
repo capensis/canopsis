@@ -1765,7 +1765,7 @@ describe('alarms-list', () => {
       {
         id: widget._id,
         query: {
-          ...defaultQuery,
+          ...omit(defaultQuery, ['search']),
 
           page: 1,
           alarm_pattern: JSON.stringify(advancedSearchValue.alarm_pattern),

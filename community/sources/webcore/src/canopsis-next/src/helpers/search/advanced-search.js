@@ -475,11 +475,9 @@ export const isEmptyAdvancedSearchPattern = (pattern = {}) => isEmpty(pattern) |
  * @returns {Object} - The new query object ready to be applied
  */
 export const prepareQueryWithAdvancedSearch = (query = {}, search = {}) => {
-  const newQuery = {
-    ...query,
+  const newQuery = omit(query, ADVANCED_SEARCH_QUERY_FIELDS);
 
-    page: 1,
-  };
+  newQuery.page = 1;
 
   ADVANCED_SEARCH_QUERY_FIELDS.forEach((field) => {
     const value = search?.[field];
