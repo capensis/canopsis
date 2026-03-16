@@ -941,8 +941,7 @@ export const patternRuleToForm = (rule = {}) => {
   }
 
   if (
-    (isExtraInfos || isInfos)
-    && form.fieldType === PATTERN_FIELD_TYPES.stringArray
+    (form.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(form.operator))
     && isArray(form.value)
     && (!form.value.length || !form.value[0]?.key)
   ) {
