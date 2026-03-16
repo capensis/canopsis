@@ -28,7 +28,7 @@
       <ticket-status-jobs-active-state-icon :status="item.status" />
     </template>
     <template #status="{ item }">
-      <ticket-status-jobs-run-status-icon :status="item.last_run_status ?? item.lastRunStatus" />
+      <ticket-status-jobs-run-status-icon :status="item.last_run_status" />
     </template>
     <template #created_at="{ item }">
       {{ item.created_at | date }}

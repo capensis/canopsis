@@ -2,6 +2,8 @@
   <div>
     <c-page-header />
     <ticket-status-jobs-tabs />
+
+    <c-fab-btn />
   </div>
 </template>
 
