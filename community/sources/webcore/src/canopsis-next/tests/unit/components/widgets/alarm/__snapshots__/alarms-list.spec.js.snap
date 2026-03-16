@@ -10,8 +10,8 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
     <div
       class="flex"
     >
-      <c-alarm-advanced-search-field-stub
-        searches="item 1,item 2"
+      <c-alarm-advanced-search-stub
+        searches="[object Object],[object Object]"
       />
     </div>
     <!---->
@@ -116,7 +116,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     <div
       class="flex"
     >
-      <c-alarm-advanced-search-field-stub
+      <c-alarm-advanced-search-stub
         searches=""
       />
     </div>
@@ -201,7 +201,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
     <div
       class="flex"
     >
-      <c-alarm-advanced-search-field-stub
+      <c-alarm-advanced-search-stub
         searches=""
       />
     </div>
