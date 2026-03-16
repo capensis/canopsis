@@ -650,6 +650,10 @@ export const ALARM_STEPS_WITH_CONDITION_FOR_AUTHOR_IN_TITLE = [
   ALARM_LIST_STEPS.webhookFail,
 ];
 
+export const ALARM_STEPS_TYPES = {
+  comment: 'comment',
+};
+
 export const ALARM_UNKNOWN_VALUE = {
   color: COLORS.status.unknown,
   text: 'Invalid val',
