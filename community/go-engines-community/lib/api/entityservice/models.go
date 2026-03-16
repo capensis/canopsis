@@ -47,6 +47,8 @@ type ContextGraphRequest struct {
 	WithFlags bool   `form:"with_flags" json:"with_flags"`
 	// Show dependencies defining the state of the entity
 	DefineState bool `form:"define_state" json:"define_state"`
+
+	SearchPattern string `form:"search_pattern" json:"search_pattern"`
 }
 
 type EditRequest struct {

@@ -501,7 +501,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		set["reason"] = *r.Reason
 	}
 	if r.Type != nil {
-		set["type_"] = *r.Type
+		set["type"] = *r.Type
 	}
 	if r.RRule != nil {
 		set["rrule"] = *r.RRule
@@ -562,7 +562,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 			{"$match": bson.M{"_id": r.ID}},
 			{"$lookup": bson.M{
 				"from":         mongo.PbehaviorTypeMongoCollection,
-				"localField":   "type_",
+				"localField":   "type",
 				"foreignField": "_id",
 				"as":           "type",
 			}},
