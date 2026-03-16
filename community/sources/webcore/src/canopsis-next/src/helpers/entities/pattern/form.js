@@ -1226,7 +1226,7 @@ export const formRuleToPatternRule = (rule) => {
     pattern.field_type = rule.fieldType;
 
     if (
-      rule.fieldType === PATTERN_FIELD_TYPES.stringArray
+      (rule.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(rule.operator))
       && isArray(pattern.cond.value)
     ) {
       pattern.cond.value = formToPrimitiveArray(pattern.cond.value);
