@@ -1,10 +1,12 @@
-import { JOB_STATE, JOB_RUN_STATUS, JOB_RULE_TYPE, TICKET_STATUS_JOBS_TABS } from '@/constants';
+import { JOB_STATUS, JOB_LAST_RUN_STATUS, JOB_RULE_TYPE, TICKET_STATUS_JOBS_TABS } from '@/constants';
 
 export default {
   filterByStatus: 'Filter by status',
+  filterByActiveState: 'Filter by active state',
   ruleName: 'Rule name',
   authTokenName: 'Auth token name',
   ticketSystemName: 'Ticket system name',
+  ticketNumber: 'Ticket number',
   ruleType: 'Rule type',
   active: 'Active',
   statusLabel: 'Status',
@@ -15,37 +17,29 @@ export default {
   searchByRuleName: 'Search by rule name',
   webhookFailedPrefix: 'Webhook is failed',
   status: {
-    [JOB_STATE.running]: 'Running',
-    [JOB_STATE.paused]: 'Paused',
-    [JOB_STATE.stopped]: 'Stopped',
-    unknown: 'Unknown',
+    [JOB_STATUS.running]: 'Running',
+    [JOB_STATUS.paused]: 'Paused',
+    [JOB_STATUS.stopped]: 'Stopped',
   },
-  activeState: {
-    [JOB_STATE.running]: 'Active',
-    [JOB_STATE.paused]: 'Paused',
-    [JOB_STATE.stopped]: 'Stopped',
-  },
-  runStatus: {
-    [JOB_RUN_STATUS.succeed]: 'Succeed',
-    [JOB_RUN_STATUS.failed]: 'Failed',
-    [JOB_RUN_STATUS.aborted]: 'Aborted',
-    inProgress: 'In progress',
+  lastRunStatus: {
+    [JOB_LAST_RUN_STATUS.succeed]: 'Succeed',
+    [JOB_LAST_RUN_STATUS.failed]: 'Failed',
   },
   ruleTypeValues: {
     [JOB_RULE_TYPE.ticketDeclarationRule]: 'Ticket declaration rule',
     [JOB_RULE_TYPE.scenario]: 'Scenario',
+  },
+  actions: {
+    editJob: 'Edit job',
+    repeatJob: 'Repeat job',
+    pauseJob: 'Pause job',
+    startJob: 'Start job',
+    stopJob: 'Stop job',
   },
   tabs: {
     [TICKET_STATUS_JOBS_TABS.instructions]: 'Instructions',
     [TICKET_STATUS_JOBS_TABS.webhooks]: 'Webhooks',
     [TICKET_STATUS_JOBS_TABS.ticketStatus]: 'Ticket status',
     [TICKET_STATUS_JOBS_TABS.authToken]: 'Auth token',
-  },
-  actions: {
-    start: 'Start',
-    stop: 'Stop',
-    resume: 'Resume',
-    pause: 'Pause',
-    edit: 'Edit',
   },
 };

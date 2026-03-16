@@ -53,7 +53,8 @@ export default {
       return [
         isAuthTokenTab && { value: 'authTokenName', text: t('jobs.authTokenName'), sortable: true },
         isTicketStatusTab && { value: 'ticket_system_name', text: t('jobs.ticketSystemName'), sortable: true },
-        isTicketStatusTab && { value: 'active', sortable: true },
+        isTicketStatusTab && { value: 'ticket_id', text: t('jobs.ticketNumber'), sortable: true },
+        isTicketStatusTab && { value: 'active', text: t('jobs.active'), sortable: true },
         (isInstructionsTab || isWebhooksTab) && { value: 'rule_name', text: t('jobs.ruleName'), sortable: true },
         isWebhooksTab && { value: 'ruleType', text: t('jobs.ruleType'), sortable: true },
         { value: 'status', text: t('jobs.statusLabel'), sortable: true },
@@ -78,6 +79,7 @@ export default {
         itemsPerPage: 10,
         search: '',
         status: undefined,
+        last_run_status: undefined,
       },
       fetchListHandler: fetchTicketStatusJobsListWithoutStore,
     });

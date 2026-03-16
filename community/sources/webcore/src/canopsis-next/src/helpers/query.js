@@ -23,6 +23,7 @@ export const convertQueryToRequest = ({
   search,
   type,
   status,
+  last_run_status: lastRunStatus,
   interval,
   itemsPerPage,
   sortBy = [],
@@ -45,6 +46,10 @@ export const convertQueryToRequest = ({
 
   if (!isNil(status)) {
     query.status = status;
+  }
+
+  if (!isNil(lastRunStatus)) {
+    query.last_run_status = lastRunStatus;
   }
 
   if (interval?.from) {
