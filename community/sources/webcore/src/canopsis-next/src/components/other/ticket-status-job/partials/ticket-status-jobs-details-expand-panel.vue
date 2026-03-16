@@ -5,7 +5,7 @@
     dark
     centered
   >
-    <v-tab>{{ $t('jobs.tabs.data') }}</v-tab>
+    <v-tab>{{ $t('common.data') }}</v-tab>
     <v-tabs-items mandatory>
       <v-tab-item>
         <v-layout class="pa-3">

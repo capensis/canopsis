@@ -15,7 +15,7 @@
 <script>
 import { computed } from 'vue';
 
-import { JOB_STATE } from '@/constants';
+import { JOB_STATUS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -31,17 +31,13 @@ export default {
 
     const label = computed(() => t(`jobs.activeState.${props.status}`) || t('jobs.status.unknown'));
 
-    const statusColor = computed(() => ({
-      [JOB_STATE.running]: 'primary',
-      [JOB_STATE.paused]: 'warning',
-      [JOB_STATE.stopped]: 'error',
-    }[props.status] ?? 'grey'));
+    const statusColor = computed(() => (props.status === JOB_STATUS.running ? 'primary' : 'grey darken-1'));
 
     const statusIcon = computed(() => ({
-      [JOB_STATE.running]: 'play_arrow',
-      [JOB_STATE.paused]: 'pause',
-      [JOB_STATE.stopped]: 'close',
-    }[props.status] ?? 'help_outline'));
+      [JOB_STATUS.running]: 'play_arrow_circle',
+      [JOB_STATUS.paused]: 'pause_circle',
+      [JOB_STATUS.stopped]: 'stop_circle',
+    }[props.status] ?? 'stop_circle'));
 
     return {
       label,

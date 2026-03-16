@@ -526,7 +526,7 @@ export default {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
-      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.pause]: '@:common.pause',
     },
   },
   pbehaviorRecurrentChangesConfirmation: {

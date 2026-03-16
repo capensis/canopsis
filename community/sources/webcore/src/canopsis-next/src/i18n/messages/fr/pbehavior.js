@@ -52,7 +52,7 @@ export default {
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
-      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.pause]: '@:common.pause',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
     },
   },

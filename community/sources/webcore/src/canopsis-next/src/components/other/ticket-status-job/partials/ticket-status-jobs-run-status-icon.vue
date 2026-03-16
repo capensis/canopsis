@@ -15,7 +15,7 @@
 <script>
 import { computed } from 'vue';
 
-import { JOB_RUN_STATUS } from '@/constants';
+import { JOB_LAST_RUN_STATUS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -35,17 +35,17 @@ export default {
 
     const statusColor = computed(() => (
       {
-        [JOB_RUN_STATUS.succeed]: 'success',
-        [JOB_RUN_STATUS.failed]: 'error',
-        [JOB_RUN_STATUS.aborted]: 'grey',
+        [JOB_LAST_RUN_STATUS.succeed]: 'success',
+        [JOB_LAST_RUN_STATUS.failed]: 'error',
+        [JOB_LAST_RUN_STATUS.aborted]: 'grey',
       }[props.status] ?? 'grey'
     ));
 
     const statusIcon = computed(() => (
       {
-        [JOB_RUN_STATUS.succeed]: 'check',
-        [JOB_RUN_STATUS.failed]: 'close',
-        [JOB_RUN_STATUS.aborted]: 'close',
+        [JOB_LAST_RUN_STATUS.succeed]: 'check_circle',
+        [JOB_LAST_RUN_STATUS.failed]: 'close_circle',
+        [JOB_LAST_RUN_STATUS.aborted]: 'close_circle',
       }[props.status] ?? 'help_outline'
     ));
 
