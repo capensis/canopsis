@@ -1,8 +1,8 @@
 <template>
   <v-menu
     v-if="preparedLinks.length"
+    v-model="openedMenu"
     v-bind="$attrs"
-    bottom
     offset-y
   >
     <template #activator="{ on }">
@@ -16,26 +16,33 @@
         </slot>
       </v-btn>
     </template>
-    <v-list class="py-0">
-      <top-bar-menu-link
-        v-for="link in preparedLinks"
-        :key="link.title"
-        :link="link"
-      />
-    </v-list>
+    <top-bar-menu-list
+      :links="preparedLinks"
+      :permissions-with-default-type="permissionsWithDefaultType"
+      :without-sort="withoutSort"
+      @click="handleClick"
+    />
   </v-menu>
 </template>
 
 <script>
-import { layoutNavigationTopBarMenuMixin } from '@/mixins/layout/navigation/top-bar-menu';
+import { computed, ref, toRef } from 'vue';
 
-import TopBarMenuLink from './top-bar-menu-link.vue';
+import { useTopBarMenu } from './hooks/top-bar-menu';
+import TopBarMenuList from './top-bar-menu-list.vue';
 
 export default {
-  components: { TopBarMenuLink },
-  mixins: [layoutNavigationTopBarMenuMixin],
+  components: { TopBarMenuList },
   inheritAttrs: false,
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
+    value: {
+      type: Boolean,
+      default: false,
+    },
     title: {
       type: String,
       default: '',
@@ -44,11 +51,34 @@ export default {
       type: Array,
       default: () => [],
     },
-  },
-  computed: {
-    preparedLinks() {
-      return this.prepareLinks(this.links);
+    permissionsWithDefaultType: {
+      type: Array,
+      default: () => [],
     },
+    withoutSort: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props) {
+    const openedMenu = ref(false);
+
+    const { prepareLinks } = useTopBarMenu({
+      withoutSort: toRef(props, 'withoutSort'),
+      permissionsWithDefaultType: toRef(props, 'permissionsWithDefaultType'),
+    });
+
+    const preparedLinks = computed(() => prepareLinks(props.links));
+
+    const handleClick = () => openedMenu.value = false;
+
+    return {
+      openedMenu,
+
+      preparedLinks,
+
+      handleClick,
+    };
   },
 };
 </script>

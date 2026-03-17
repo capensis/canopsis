@@ -45,7 +45,7 @@ type BaseFilterRequest struct {
 	Category              string   `form:"category" json:"category"`
 	Type                  []string `form:"type[]" json:"type"`
 	NoEvents              bool     `form:"no_events" json:"no_events"`
-	EntityPattern         string   `form:"entity_pattern" json:"entity_pattern"`
+	SearchPattern         string   `form:"search_pattern" json:"search_pattern" example:"[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_name\"}}]]"`
 	NegativeEntityPattern string   `form:"negative_entity_pattern" json:"negative_entity_pattern"`
 	IDs                   []string `form:"ids[]" json:"ids"`
 }
@@ -148,9 +148,9 @@ type Category struct {
 type Infos map[string]Info
 
 type Info struct {
-	Name        string      `bson:"name" json:"name"`
-	Description string      `bson:"description" json:"description"`
-	Value       interface{} `bson:"value" json:"value"`
+	Name        string `bson:"name" json:"name"`
+	Description string `bson:"description" json:"description"`
+	Value       any    `bson:"value" json:"value"`
 }
 
 func (i *Infos) UnmarshalBSONValue(_ byte, b []byte) error {
@@ -192,7 +192,7 @@ func (r AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
 
-func (r AggregationResult) GetData() interface{} {
+func (r AggregationResult) GetData() any {
 	return r.Data
 }
 
@@ -219,9 +219,9 @@ type ContextGraphResponse struct {
 }
 
 type InfoRequest struct {
-	Name        string      `json:"name" binding:"required,max=255"`
-	Description string      `json:"description" binding:"max=255"`
-	Value       interface{} `json:"value"`
+	Name        string `json:"name" binding:"required,max=255"`
+	Description string `json:"description" binding:"max=255"`
+	Value       any    `json:"value"`
 }
 
 func (r *InfoRequest) UnmarshalJSON(b []byte) error {
@@ -238,7 +238,7 @@ func (r *InfoRequest) UnmarshalJSON(b []byte) error {
 		switch v := r.Value.(type) {
 		case float64, float32, int, int64, int32, bool, string:
 			// do nothing
-		case []interface{}:
+		case []any:
 			for _, item := range v {
 				if item != nil {
 					switch item.(type) {

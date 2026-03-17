@@ -3,6 +3,8 @@ package view
 import (
 	"context"
 	"errors"
+	"fmt"
+	"slices"
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -12,7 +14,9 @@ import (
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
+	libwidget "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	libview "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -56,6 +60,8 @@ func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store, authorProvider au
 		roleCollection:        dbClient.Collection(mongo.RoleCollection),
 		permissionCollection:  dbClient.Collection(mongo.PermissionCollection),
 		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		pbhTypeCollection:     dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
+		pbhReasonCollection:   dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "title", "description"},
 		defaultSortBy:         "position",
@@ -76,6 +82,8 @@ type store struct {
 	roleCollection        mongo.DbCollection
 	permissionCollection  mongo.DbCollection
 	userPrefCollection    mongo.DbCollection
+	pbhTypeCollection     mongo.DbCollection
+	pbhReasonCollection   mongo.DbCollection
 	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -658,15 +666,19 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 			}
 		}
 
-		newGroups := make([]interface{}, 0, len(r.Items))
-		newViews := make([]interface{}, 0, len(r.Items))
-		newTabs := make([]interface{}, 0, len(r.Items))
-		newWidgets := make([]interface{}, 0, len(r.Items))
-		newWidgetFilters := make([]interface{}, 0, len(r.Items))
+		newGroups := make([]any, 0, len(r.Items))
+		newViews := make([]any, 0, len(r.Items))
+		newTabs := make([]any, 0, len(r.Items))
+		newWidgets := make([]any, 0, len(r.Items))
+		newWidgetFilters := make([]any, 0, len(r.Items))
 		newViewTitles := make(map[string]string, len(r.Items))
 		newViewGroups := make(map[string]string, len(r.Items))
 		positionItems := make([]EditPositionItemRequest, 0, len(r.Items))
 		now := datetime.NewCpsTime()
+
+		var pbhTypesMap map[string]string
+		var pbhReasonsMap map[string]bool
+
 		for gi, g := range r.Items {
 			groupID := g.ID
 
@@ -788,6 +800,39 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 									}
 
 									widget.Parameters.MainFilter = mainFilterId
+
+									if len(widget.Parameters.FastPbehaviors) > 0 && (pbhTypesMap == nil || pbhReasonsMap == nil) {
+										pbhTypesMap, err = libwidget.GetPbehaviorTypesMap(ctx, s.pbhTypeCollection)
+										if err != nil {
+											return fmt.Errorf("failed to get pbh types map: %w", err)
+										}
+
+										pbhReasonsMap, err = libwidget.GetPbehaviorReasonsMap(ctx, s.pbhReasonCollection)
+										if err != nil {
+											return fmt.Errorf("failed to get pbh reasons map: %w", err)
+										}
+									}
+
+									var fastPbhValErrs validator.ValidationErrors
+									for fi, fastPbh := range widget.Parameters.FastPbehaviors {
+										ns := "Items." + strconv.Itoa(gi) + ".Views." + strconv.Itoa(vi) + ".Tabs." + strconv.Itoa(ti) + ".Widgets." + strconv.Itoa(wi) + ".Parameters.FastPbehaviors." + strconv.Itoa(fi)
+
+										t, ok := pbhTypesMap[fastPbh.Type]
+										if !ok {
+											fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("not_exist", "Type", ns+".Type"))
+										} else if t != pbehavior.TypePause {
+											fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("pbh_type_not_pause", "Type", ns+".Type"))
+										}
+
+										if !pbhReasonsMap[fastPbh.Reason] {
+											fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("not_exist", "Reason", ns+".Reason"))
+										}
+									}
+
+									if len(fastPbhValErrs) > 0 {
+										return validation.NewError(fastPbhValErrs, r)
+									}
+
 									newWidgets = append(newWidgets, libview.Widget{
 										ID:             widgetId,
 										Tab:            tabId,
@@ -859,7 +904,7 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 		return nil
 	}
 
-	newPermissions := make([]interface{}, 0, len(views))
+	newPermissions := make([]any, 0, len(views))
 	setRole := bson.M{}
 	for viewID, viewTitle := range views {
 		newPermActionsID := utils.NewID()
@@ -971,14 +1016,9 @@ func (s *store) normalizePositionsOnViewMove(ctx context.Context, viewID, groupI
 		return err
 	}
 
-	index := -1
-	for i, v := range viewPositionsByGroup[groupID] {
-		if v == viewID {
-			index = i
-		}
-	}
+	index := slices.Index(viewPositionsByGroup[groupID], viewID)
 
-	viewPositionsByGroup[groupID] = append(viewPositionsByGroup[groupID][:index], viewPositionsByGroup[groupID][index+1:]...)
+	viewPositionsByGroup[groupID] = slices.Delete(viewPositionsByGroup[groupID], index, index+1)
 	viewPositionsByGroup[groupID] = append(viewPositionsByGroup[groupID], viewID)
 
 	viewPositions := make([]string, 0)
