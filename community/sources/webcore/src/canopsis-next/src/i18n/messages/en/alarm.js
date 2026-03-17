@@ -40,6 +40,7 @@ export default {
       ackRemove: 'Cancel ack',
       pbehavior: 'Periodical behavior',
       fastPbehaviorAdd: 'Fast periodical behavior',
+      fastPbehaviorRemove: 'Play',
       snooze: 'Snooze alarm',
       declareTicket: 'Declare ticket',
       associateTicket: 'Associate ticket',

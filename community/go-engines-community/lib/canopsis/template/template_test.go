@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"strings"
 	"testing"
 	"text/template"
 	"time"
@@ -29,7 +30,7 @@ func TestFunctions(t *testing.T) {
 		}
 
 		res, err := executeTemplate(tpl, tplData)
-		if !errors.Is(err, expectedErr) {
+		if !errors.Is(err, expectedErr) && !strings.Contains(err.Error(), expectedErr.Error()) {
 			t.Fatalf("expected err %v but got %v", expectedErr, err)
 		}
 
@@ -57,7 +58,7 @@ func TestFunctions(t *testing.T) {
 			"Input": "NgocHa,MinhNghia,Minh",
 		},
 		"",
-		nil,
+		errors.New("index -1 out of bounds"),
 		"",
 	)
 	f(

@@ -441,6 +441,7 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r EditRequest
 			ar.CorporateAlarmPattern,
 			ar.CorporateEntityPattern,
 		)
+
 		aliases = append(aliases, patternfields.GetAliases(ar.EntityPattern)...)
 	}
 
@@ -469,10 +470,12 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r EditRequest
 			aliasPropMap[id] = true
 		}
 
-		ar.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(ar.EntityPattern, aliasProps, actionsFieldName, sIdx, "EntityPattern")
-		valErrs = append(valErrs, applyErrs...)
-		for _, id := range applyAliasPropIDs {
-			aliasPropMap[id] = true
+		if len(aliases) != 0 {
+			ar.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(ar.EntityPattern, aliasProps, actionsFieldName, sIdx, "EntityPattern")
+			valErrs = append(valErrs, applyErrs...)
+			for _, id := range applyAliasPropIDs {
+				aliasPropMap[id] = true
+			}
 		}
 
 		if len(valErrs) > 0 {

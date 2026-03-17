@@ -1,38 +1,27 @@
 <template>
-  <v-layout column>
-    <c-alert
-      :value="!steps.length"
-      type="info"
-    >
-      {{ $t('remediation.instruction.emptySteps') }}
-    </c-alert>
-    <c-card-iterator-field
-      v-field="steps"
-      :disabled="disabled"
-      :draggable-group="draggableGroup"
-      class="mb-2"
-      item-key="key"
-    >
-      <template #item="{ index }">
-        <remediation-instruction-step-field
-          v-field="steps[index]"
-          :step-number="index + 1"
-          :disabled="disabled"
-          :template-vars="templateVars"
-          @remove="removeStep(index)"
-        />
-      </template>
-    </c-card-iterator-field>
-
-    <c-btn-with-error
-      :error="hasStepsErrors ? $t('remediation.instruction.errors.stepRequired') : ''"
-      :disabled="disabled"
-      outlined
-      @click="addStep"
-    >
-      {{ $t('remediation.instruction.addStep') }}
-    </c-btn-with-error>
-  </v-layout>
+  <c-card-iterator-form
+    v-field="steps"
+    :disabled="disabled"
+    :draggable-group="draggableGroup"
+    :required-error-message="$t('remediation.instruction.errors.stepRequired')"
+    :empty-message="$t('remediation.instruction.emptySteps')"
+    :add-button-label="$t('remediation.instruction.addStep')"
+    :name="name"
+    item-key="key"
+    iterator-class="mb-2"
+    required
+    @add="addStep"
+  >
+    <template #item="{ index }">
+      <remediation-instruction-step-field
+        v-field="steps[index]"
+        :step-number="index + 1"
+        :disabled="disabled"
+        :template-vars="templateVars"
+        @remove="removeStep(index)"
+      />
+    </template>
+  </c-card-iterator-form>
 </template>
 
 <script>
@@ -85,22 +74,6 @@ export default {
         name: 'remediation-instruction-steps',
       };
     },
-  },
-  watch: {
-    steps() {
-      this.$validator.validate(this.name);
-    },
-  },
-  created() {
-    this.$validator.attach({
-      name: this.name,
-      rules: 'min_value:1',
-      getter: () => this.steps.length,
-      vm: this,
-    });
-  },
-  beforeDestroy() {
-    this.$validator.detach(this.name);
   },
   methods: {
     addStep() {
