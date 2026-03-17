@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -64,24 +65,37 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithTheSameRequest_ShouldCreateOne
 	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userID1)).Return(alarmResForUserId1, nil)
 	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userID2)).Return(alarmResForUserId2, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId1}), gomock.Any(),
-		gomock.Eq(roomId), gomock.Eq(alarmResForUserId1))
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId2, connId3}), gomock.Any(),
-		gomock.Eq(roomId), gomock.Eq(alarmResForUserId2))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForUserId1), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomId), connId1)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForUserId2), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomId), connId2, connId3)))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
 	data := []string{alarmId}
-	err := w.StartWatch(ctx, connId1, userID1, roomId, data)
+	err := w.StartWatch(ctx, websocket.JoinOptions{
+		ConnID:  connId1,
+		UserID:  userID1,
+		RoomID:  roomId,
+		Payload: data,
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
 
-	err = w.StartWatch(ctx, connId2, userID2, roomId, data)
+	err = w.StartWatch(ctx, websocket.JoinOptions{
+		ConnID:  connId2,
+		UserID:  userID2,
+		RoomID:  roomId,
+		Payload: data,
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
 
-	err = w.StartWatch(ctx, connId3, userID2, roomId, data)
+	err = w.StartWatch(ctx, websocket.JoinOptions{
+		ConnID:  connId3,
+		UserID:  userID2,
+		RoomID:  roomId,
+		Payload: data,
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
@@ -169,18 +183,26 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithDiffRequest_ShouldCreateMultip
 	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId1), gomock.Eq(userID)).Return(alarmResForConnId1, nil)
 	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId2), gomock.Eq(userID)).Return(alarmResForConnId2, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId1}), gomock.Any(),
-		gomock.Eq(roomId), gomock.Eq(alarmResForConnId1))
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId2}), gomock.Any(),
-		gomock.Eq(roomId), gomock.Eq(alarmResForConnId2))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForConnId1), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomId), connId1)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForConnId2), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomId), connId2)))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
-	err := w.StartWatch(ctx, connId1, userID, roomId, []string{alarmId1})
+	err := w.StartWatch(ctx, websocket.JoinOptions{
+		ConnID:  connId1,
+		UserID:  userID,
+		RoomID:  roomId,
+		Payload: []string{alarmId1},
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
 
-	err = w.StartWatch(ctx, connId2, userID, roomId, []string{alarmId2})
+	err = w.StartWatch(ctx, websocket.JoinOptions{
+		ConnID:  connId2,
+		UserID:  userID,
+		RoomID:  roomId,
+		Payload: []string{alarmId2},
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
@@ -256,24 +278,37 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithTheSameRequest_ShouldCr
 	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Any(), gomock.Eq(userID1)).Return(alarmResForUserId1, nil)
 	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Any(), gomock.Eq(userID2)).Return(alarmResForUserId2, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId1}), gomock.Any(),
-		gomock.Eq(roomId), gomock.Eq(alarmResForUserId1))
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId2, connId3}), gomock.Any(),
-		gomock.Eq(roomId), gomock.Eq(alarmResForUserId2))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForUserId1), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId1)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForUserId2), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId2, connId3)))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
 	data := []alarm.DetailsRequest{{ID: alarmId}}
-	err := w.StartWatchDetails(ctx, connId1, userID1, roomId, data)
+	err := w.StartWatchDetails(ctx, websocket.JoinOptions{
+		ConnID:  connId1,
+		UserID:  userID1,
+		RoomID:  roomId,
+		Payload: data,
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
 
-	err = w.StartWatchDetails(ctx, connId2, userID2, roomId, data)
+	err = w.StartWatchDetails(ctx, websocket.JoinOptions{
+		ConnID:  connId2,
+		UserID:  userID2,
+		RoomID:  roomId,
+		Payload: data,
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
 
-	err = w.StartWatchDetails(ctx, connId3, userID2, roomId, data)
+	err = w.StartWatchDetails(ctx, websocket.JoinOptions{
+		ConnID:  connId3,
+		UserID:  userID2,
+		RoomID:  roomId,
+		Payload: data,
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
@@ -365,18 +400,26 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreat
 	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Eq(alarm.DetailsRequest{ID: alarmId1}), gomock.Eq(userID)).Return(alarmResForConnId1, nil)
 	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Eq(alarm.DetailsRequest{ID: alarmId2}), gomock.Eq(userID)).Return(alarmResForConnId2, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId1}), gomock.Any(),
-		gomock.Eq(roomId), gomock.Eq(alarmResForConnId1))
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId2}), gomock.Any(),
-		gomock.Eq(roomId), gomock.Eq(alarmResForConnId2))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForConnId1), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId1)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForConnId2), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId2)))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
-	err := w.StartWatchDetails(ctx, connId1, userID, roomId, []alarm.DetailsRequest{{ID: alarmId1}})
+	err := w.StartWatchDetails(ctx, websocket.JoinOptions{
+		ConnID:  connId1,
+		UserID:  userID,
+		RoomID:  roomId,
+		Payload: []alarm.DetailsRequest{{ID: alarmId1}},
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
 
-	err = w.StartWatchDetails(ctx, connId2, userID, roomId, []alarm.DetailsRequest{{ID: alarmId2}})
+	err = w.StartWatchDetails(ctx, websocket.JoinOptions{
+		ConnID:  connId2,
+		UserID:  userID,
+		RoomID:  roomId,
+		Payload: []alarm.DetailsRequest{{ID: alarmId2}},
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
@@ -433,12 +476,21 @@ func TestWatcher_StopWatch_GivenStartWatch_ShouldCloseChangeStream(t *testing.T)
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
 	data := []string{alarmId}
-	err := w.StartWatch(t.Context(), connId, userID, roomId, data)
+	err := w.StartWatch(t.Context(), websocket.JoinOptions{
+		ConnID:  connId,
+		UserID:  userID,
+		RoomID:  roomId,
+		Payload: data,
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
 
-	err = w.StopWatch(connId, roomId)
+	err = w.StopWatch(t.Context(), websocket.LeaveOptions{
+		ConnID: connId,
+		UserID: userID,
+		RoomID: roomId,
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
@@ -481,12 +533,21 @@ func TestWatcher_StopWatch_GivenStartWatchDetails_ShouldCloseChangeStream(t *tes
 	mockHub := mock_websocket.NewMockHub(ctrl)
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
-	err := w.StartWatchDetails(t.Context(), connId, userID, roomId, []alarm.DetailsRequest{{ID: alarmId}})
+	err := w.StartWatchDetails(t.Context(), websocket.JoinOptions{
+		ConnID:  connId,
+		UserID:  userID,
+		RoomID:  roomId,
+		Payload: []alarm.DetailsRequest{{ID: alarmId}},
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
 
-	err = w.StopWatch(connId, roomId)
+	err = w.StopWatch(t.Context(), websocket.LeaveOptions{
+		ConnID: connId,
+		UserID: userID,
+		RoomID: roomId,
+	})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
