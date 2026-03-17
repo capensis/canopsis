@@ -15,11 +15,14 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { MODALS } from '@/constants';
 
 import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
 
 import EntityDependenciesListComponent from '@/components/other/entity/entity-dependencies-list.vue';
 
@@ -31,21 +34,30 @@ export default {
     ModalWrapper,
     EntityDependenciesListComponent,
   },
-  mixins: [modalInnerMixin],
-  computed: {
-    entity() {
-      return this.config.entity ?? {};
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
+  },
+  setup(props) {
+    const { t } = useI18n();
+    const { config } = useInnerModal(props);
 
-    title() {
-      return this.config.title ?? this.$t('modals.entityDependenciesList.title', {
-        name: this.entity.name,
-      });
-    },
+    const entity = computed(() => config.value.entity ?? {});
 
-    widget() {
-      return this.config.widget ?? generatePreparedDefaultContextWidget();
-    },
+    const title = computed(() => config.value.title ?? t('modals.entityDependenciesList.title', {
+      name: entity.value.name,
+    }));
+
+    const widget = computed(() => config.value.widget ?? generatePreparedDefaultContextWidget());
+
+    return {
+      config,
+      entity,
+      title,
+      widget,
+    };
   },
 };
 </script>

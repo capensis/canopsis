@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    :class="{ 'c-alarm-advanced-search__rule--union': union }"
-    class="c-alarm-advanced-search__rule"
+    :class="{ 'c-advanced-search__rule--union': union }"
+    class="c-advanced-search__rule"
   >
     <component
       v-for="chip in chips"
@@ -23,33 +23,40 @@ import {
   toRef,
 } from 'vue';
 
-import { ALARM_ADVANCED_SEARCH_CHIP_TYPES, PATTERN_QUICK_RANGES, PATTERN_OPERATORS_WITHOUT_VALUE } from '@/constants';
+import {
+  ALARM_ADVANCED_SEARCH_CHIP_TYPES,
+  PATTERN_QUICK_RANGES_WITHOUT_CUSTOM,
+  PATTERN_OPERATORS_WITHOUT_VALUE,
+} from '@/constants';
 
-import { isArrayOperator } from '@/helpers/entities/pattern/form';
+import { isArrayOperator, isIntervalDateOperator } from '@/helpers/entities/pattern/form';
 import {
   advancedSearchRuleItemToFormItem,
   getInitialFormItemType,
   getNextForFormItemType,
   isArrayItem,
-  isCustomRangeItem,
+  isRangeItem,
   isDurationItem,
   isNumberValueType,
-} from '@/helpers/search/alarm-advanced-search';
+  getRangeValueItemType,
+} from '@/helpers/search/advanced-search';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
 
-import { useAdvancedSearchRuleActiveItems, useAttachAdvancedSearchRuleValidator } from '../hooks/alarm-advanced-search';
+import { useAdvancedSearchRuleActiveItems, useAttachAdvancedSearchRuleValidator } from '../hooks/advanced-search';
 
-import AlarmAdvancedSearchChip from './alarm-advanced-search-chip.vue';
-import AlarmAdvancedSearchRangeChip from './alarm-advanced-search-range-chip.vue';
-import AlarmAdvancedSearchDurationChip from './alarm-advanced-search-duration-chip.vue';
+import AdvancedSearchChip from './advanced-search-chip.vue';
+import AdvancedSearchRangeValueDateChip from './advanced-search-range-value-date-chip.vue';
+import AdvancedSearchRangeValuePeriodChip from './advanced-search-range-value-period-chip.vue';
+import AdvancedSearchDurationChip from './advanced-search-duration-chip.vue';
 
 export default {
   components: {
-    AlarmAdvancedSearchChip,
-    AlarmAdvancedSearchRangeChip,
-    AlarmAdvancedSearchDurationChip,
+    AdvancedSearchChip,
+    AdvancedSearchRangeValueDateChip,
+    AdvancedSearchRangeValuePeriodChip,
+    AdvancedSearchDurationChip,
   },
   model: {
     prop: 'rule',
@@ -74,7 +81,7 @@ export default {
     },
     intervalRanges: {
       type: Array,
-      default: () => PATTERN_QUICK_RANGES,
+      default: () => PATTERN_QUICK_RANGES_WITHOUT_CUSTOM,
     },
     allowOr: {
       type: Boolean,
@@ -181,8 +188,8 @@ export default {
         skipType = true;
       }
 
-      if (isCustomRangeItem(type, value)) {
-        filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue);
+      if (isRangeItem(type, value) && !isIntervalDateOperator(value)) {
+        filled.push(getRangeValueItemType(value));
         skipType = true;
       }
 
@@ -212,7 +219,8 @@ export default {
 
       if (
         [
-          ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue,
+          ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValuePeriod,
+          ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValueDate,
           ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration,
           ALARM_ADVANCED_SEARCH_CHIP_TYPES.value,
         ].includes(type)
@@ -247,8 +255,8 @@ export default {
         skipType = true;
       }
 
-      if (isCustomRangeItem(inputType.value, value)) {
-        filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue);
+      if (isRangeItem(inputType.value, value) && !isIntervalDateOperator(value)) {
+        filled.push(getRangeValueItemType(value));
         skipType = true;
       }
 
@@ -329,6 +337,8 @@ export default {
       let itemText;
       let itemValue;
       let fetchItems;
+      let inputAttributes;
+      let inputPreparer;
 
       if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.value) {
         multiple = isArrayOperator(props.rule.operator);
@@ -340,6 +350,9 @@ export default {
         itemValue = isFunction(currentAttribute.value?.itemValue)
           ? currentAttribute.value?.itemValue(props.rule)
           : currentAttribute.value?.itemValue;
+
+        inputAttributes = currentAttribute.value?.inputAttributes;
+        inputPreparer = currentAttribute.value?.inputPreparer;
 
         if (currentAttribute.value?.fetchValues) {
           fetchItems = (...args) => currentAttribute.value?.fetchValues(...args, props.rule);
@@ -355,6 +368,8 @@ export default {
         number: isNumberValueType(props.rule, type),
         fetchItems,
         first,
+        inputAttributes,
+        inputPreparer,
         focusOnMount: props.focusOnMount,
       };
 
@@ -385,19 +400,22 @@ export default {
         bind.multiple = multiple;
 
         on = {
-          input: newVlaue => updateChipItem(newVlaue, isText(newVlaue) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type),
+          input: newValue => updateChipItem(newValue, isText(newValue) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type),
           click: () => clickChip(type),
           focusout: () => focusOutChip(type),
           close: remove,
         };
       }
 
-      let component = 'alarm-advanced-search-chip';
+      let component = 'advanced-search-chip';
 
-      if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue) {
-        component = 'alarm-advanced-search-range-chip';
+      if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValuePeriod) {
+        component = 'advanced-search-range-value-period-chip';
+        bind.intervalRanges = itemsByType.value[ALARM_ADVANCED_SEARCH_CHIP_TYPES.range] ?? [];
+      } else if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValueDate) {
+        component = 'advanced-search-range-value-date-chip';
       } else if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration) {
-        component = 'alarm-advanced-search-duration-chip';
+        component = 'advanced-search-duration-chip';
       }
 
       return {
@@ -436,7 +454,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.c-alarm-advanced-search__rule {
+.c-advanced-search__rule {
   &:hover ::v-deep {
     .theme--light.v-chip:before {
       opacity: 0.04;

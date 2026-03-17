@@ -14,7 +14,6 @@ toolchain go1.26.0
 // https://git.canopsis.net/canopsis/canopsis-pro/-/issues/590
 
 require (
-	github.com/alecthomas/participle v0.7.1
 	github.com/apognu/gocal v0.9.1
 	github.com/beevik/etree v1.6.0
 	github.com/brianvoe/gofakeit/v7 v7.14.0
