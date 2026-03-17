@@ -13,7 +13,7 @@
               <v-chip
                 :close="closable && !disabled"
                 :color="color"
-                class="c-alarm-advanced-search__chip c-alarm-advanced-search__array-chip"
+                class="c-advanced-search__chip c-advanced-search__array-chip"
                 v-on="multipleChipListeners"
               >
                 <v-progress-circular
@@ -35,6 +35,7 @@
                   <input
                     v-model="inputValue"
                     ref="inputElement"
+                    v-bind="inputAttributes"
                     :type="inputType"
                     class="ml-1"
                     autocomplete="off"
@@ -49,6 +50,7 @@
               <input
                 v-show="active || alwaysActive"
                 ref="inputElement"
+                v-bind="inputAttributes"
                 :value="inputValue"
                 :placeholder="inputPlaceholder"
                 :type="inputType"
@@ -63,7 +65,7 @@
                 v-if="!active && !alwaysActive"
                 :color="color"
                 :close="closable && !disabled"
-                class="c-alarm-advanced-search__chip"
+                class="c-advanced-search__chip"
                 v-on="chipListeners"
               >
                 <v-progress-circular
@@ -94,6 +96,7 @@
       :pending="fetchItems && pending"
       :item-text="itemText"
       :item-value="itemValue"
+      :children-key="childrenKey"
       return-object
       @input="selectItem"
       @fetch:more="showMore"
@@ -118,16 +121,19 @@
 </template>
 
 <script>
+import { isArray } from 'lodash';
 import {
   computed,
   ref,
   watch,
   toRef,
   inject,
+  nextTick,
   onMounted,
+  onBeforeUnmount,
 } from 'vue';
 
-import { KEY_CODES } from '@/constants';
+import { KEY_CODES, REGISTER_LAST_INPUT_FOCUS_KEY } from '@/constants';
 
 import { filterAdvancedSearchItems } from '@/helpers/search/advanced-search';
 
@@ -166,6 +172,10 @@ export default {
     itemValue: {
       type: String,
       default: 'value',
+    },
+    childrenKey: {
+      type: String,
+      default: 'items',
     },
     multiple: {
       type: Boolean,
@@ -207,9 +217,17 @@ export default {
       type: String,
       default: '',
     },
+    inputAttributes: {
+      type: Object,
+      required: false,
+    },
+    inputPreparer: {
+      type: Function,
+      required: false,
+    },
   },
   setup(props, { emit }) {
-    const registerLastInputFocus = inject('$registerLastInputFocus', () => {});
+    const focusRegister = inject(REGISTER_LAST_INPUT_FOCUS_KEY, {});
 
     const { t } = useI18n();
 
@@ -242,6 +260,8 @@ export default {
       };
     };
 
+    const fetchHandler = computed(() => props.fetchItems ?? defaultFetchItems);
+
     const {
       selectedItems,
       updateSearch,
@@ -253,12 +273,13 @@ export default {
       fetchMoreItems,
       changeSelectedItems,
     } = useLazySearch({
-      value: toRef(props, 'value'),
-      addable: props.allowText,
-      idKey: toRef(props, 'itemValue'),
+      fetchHandler,
+
       idParamsKey: 'ids',
-      fetchHandler: props.fetchItems ?? defaultFetchItems,
-      multiple: props.multiple,
+      value: toRef(props, 'value'),
+      addable: toRef(props, 'allowText'),
+      idKey: toRef(props, 'itemValue'),
+      multiple: toRef(props, 'multiple'),
     }, emit);
 
     const itemWithAlias = computed(() => selectedItems.value.find(({ alias } = {}) => alias));
@@ -335,7 +356,9 @@ export default {
      *
      * @param {Event} event - The input event triggered by the user.
      */
-    const updateInputValue = event => setInputValue(event.target.value);
+    const updateInputValue = event => (
+      setInputValue(props.inputPreparer ? props.inputPreparer(event.target.value) : event.target.value)
+    );
 
     /**
      * Updates the state of the menu's open status and handles related actions.
@@ -425,14 +448,10 @@ export default {
     const selectItem = (value) => {
       opened.value = false;
 
-      if (props.number && !value) {
-        return;
-      }
-
       let newValue = value;
 
       if (props.multiple) {
-        const prevValue = props.value || [];
+        const prevValue = isArray(props.value) ? props.value : [props.value];
         const index = prevValue.findIndex(item => (
           (item?.[props.itemValue] && value?.[props.itemValue] && item?.[props.itemValue] === value?.[props.itemValue])
           || (item?.[props.itemValue] && item?.[props.itemValue] === value)
@@ -458,7 +477,9 @@ export default {
         return;
       }
 
+      updateSearch('');
       updateMenuOpened(false);
+      nextTick(focusInput);
     };
 
     /**
@@ -515,14 +536,28 @@ export default {
       }
     });
 
-    watch(() => props.items, fetchItems);
+    /**
+     * We need to fetch items when the items list changes after fetching (example: infos)
+     */
+    watch(() => props.items, (newItems, oldItems) => {
+      const newItemsWithItemsValue = newItems.filter(item => item?.[props.childrenKey]?.length);
+      const oldItemsWithItemsValue = oldItems.filter(item => item?.[props.childrenKey]?.length);
+
+      if (newItemsWithItemsValue.length !== oldItemsWithItemsValue.length) {
+        fetchItems();
+      }
+    });
 
     onMounted(() => {
       if (props.focusOnMount) {
         callFocus();
-        registerLastInputFocus(callFocus);
+        focusRegister.register?.(callFocus);
+      } else if (props.first) {
+        focusRegister.register?.(callFocus);
       }
     });
+
+    onBeforeUnmount(() => focusRegister.unregister?.(callFocus));
 
     return {
       inputPlaceholder,

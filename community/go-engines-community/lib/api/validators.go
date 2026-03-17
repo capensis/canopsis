@@ -109,7 +109,6 @@ func registerStructValidations(
 	v.RegisterStructValidation(pbhValidator.ValidateEditRequest, pbehavior.EditRequest{})
 	v.RegisterStructValidation(pbhValidator.ValidatePatchRequest, pbehavior.PatchRequest{})
 	v.RegisterStructValidation(pbhValidator.ValidateCalendarRequest, pbehavior.CalendarByEntityIDRequest{})
-	v.RegisterStructValidation(pbhValidator.ValidateEntityCreateRequest, pbehavior.BulkEntityCreateRequestItem{})
 	v.RegisterStructValidation(pbhValidator.ValidateConnectorCreateRequest, pbehavior.BulkConnectorCreateRequestItem{})
 	v.RegisterStructValidation(pbhValidator.ValidateConnectorEditRequest, pbehavior.BulkConnectorEditRequestItem{})
 

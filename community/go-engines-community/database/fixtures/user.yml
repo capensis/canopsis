@@ -1936,7 +1936,7 @@ permission:
     groups:
       - "@group_technical"
       - "@group_technical_admin"
-      - "@group_technical_admin_general"
+      - "@group_technical_admin_settings"
     api_permissions:
       "@permission_api_comment_template": 0
 

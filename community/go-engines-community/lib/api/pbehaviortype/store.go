@@ -359,7 +359,7 @@ func (s *store) validateDeleteRequest(ctx context.Context, id string) error {
 
 	err = dbvalidation.ValidateLinkedReference(ctx, s.dbPbhCollection, bson.M{
 		"$or": []bson.M{
-			{"type_": id},
+			{"type": id},
 			{"exdates.type": id},
 		},
 	}, "type", "a pbehavior")
