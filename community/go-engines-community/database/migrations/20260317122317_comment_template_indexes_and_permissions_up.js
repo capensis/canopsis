@@ -27,7 +27,7 @@ if (!db.permission.findOne({_id: "models_commentTemplate"})) {
         name: "models_commentTemplate",
         type: "CRUD",
         description: "Comment template",
-        groups: ["technical", "technical_admin", "technical_admin_general"],
+        groups: ["technical", "technical_admin", "technical_admin_settings"],
         api_permissions: {
             api_comment_template: 0
         }

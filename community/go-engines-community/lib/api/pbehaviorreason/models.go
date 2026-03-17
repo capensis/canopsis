@@ -8,9 +8,9 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	WithHidden bool   `form:"with_hidden"`
-	SortBy     string `form:"sort_by" binding:"oneoforempty=name created"`
-	IDs        []int  `form:"ids[]"`
+	WithHidden bool     `form:"with_hidden"`
+	SortBy     string   `form:"sort_by" binding:"oneoforempty=name created"`
+	IDs        []string `form:"ids[]"`
 }
 
 type EditRequest struct {
