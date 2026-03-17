@@ -87,7 +87,7 @@ export default {
      * @return {boolean} True if item should be disabled
      */
     const isDisabledItem = (item, ticketValue) => (
-      ticketValue && !item.v.tickets.find(ticket => ticket.ticket === ticketValue)
+      ticketValue && !item.v.tickets?.find?.(ticket => ticket.ticket === ticketValue)
     );
 
     const items = computed(() => (config.value.items ?? []).map(item => ({
