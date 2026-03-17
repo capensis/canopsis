@@ -24,6 +24,8 @@ import { ref, onMounted } from 'vue';
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
 
+import { convertQueryToRequest } from '@/helpers/query';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useCommentTemplates } from '@/hooks/store/modules/comment-template';
@@ -74,12 +76,7 @@ export default {
     } = usePendingWithLocalQuery({
       initialQuery: { page: 1, itemsPerPage: PAGINATION_LIMIT },
       fetchHandler: async (fetchQuery) => {
-        const response = await fetchCommentTemplatesListWithoutStore({
-          params: {
-            limit: fetchQuery.itemsPerPage,
-            page: fetchQuery.page,
-          },
-        });
+        const response = await fetchCommentTemplatesListWithoutStore({ params: convertQueryToRequest(fetchQuery) });
 
         commentTemplates.value = response.data;
         meta.value = response.meta;

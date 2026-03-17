@@ -65,12 +65,12 @@ export default {
     },
   },
   setup(props) {
+    const { config, close } = useInnerModal(props);
+
     const form = ref({
-      template: null,
+      template: config.value.templates?.length ? config.value.templates[0] : null,
       comment: '',
     });
-
-    const { config, close } = useInnerModal(props);
 
     const items = computed(() => config.value.items ?? []);
     const templates = computed(() => config.value.templates ?? []);
