@@ -45,7 +45,7 @@ export default {
       hasCreateAccess: hasCreateEntityInfoAccess,
       hasUpdateAccess: hasUpdateEntityInfoAccess,
       hasDeleteAccess: hasDeleteEntityInfoAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.entityInfoProperty);
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.entityInfoProperty);
 
     /**
      * STORE

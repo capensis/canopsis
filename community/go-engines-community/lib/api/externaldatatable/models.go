@@ -174,7 +174,7 @@ type AggregationResult struct {
 	TotalCount int64   `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 
@@ -187,7 +187,7 @@ type AggregationDataResult struct {
 	TotalCount int64            `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationDataResult) GetData() interface{} {
+func (r *AggregationDataResult) GetData() any {
 	return r.Data
 }
 
@@ -234,7 +234,7 @@ type RefResponse struct {
 	Type      string `json:"type" bson:"type"`
 
 	// are used in db external data
-	Table    Table             `json:"table,omitempty" bson:"table,omitempty"`
+	Table    Table             `json:"table" bson:"table,omitempty"`
 	Select   map[string]string `json:"select,omitempty" bson:"select,omitempty"`
 	Regexp   map[string]string `json:"regexp,omitempty" bson:"regexp,omitempty"`
 	SortBy   string            `json:"sort_by,omitempty" bson:"sort_by,omitempty"`

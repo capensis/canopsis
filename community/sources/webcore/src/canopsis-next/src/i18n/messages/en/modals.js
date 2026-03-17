@@ -171,6 +171,7 @@ export default {
     },
     success: {
       create: 'Pbehavior successfully created! You may need to wait 60 sec to see it in interface',
+      remove: 'Pbehavior successfully removed! You may need to wait 60 sec to see it in interface',
     },
     cancelConfirmation: 'Some data has been modified and will not be saved. Do you really want to close this menu?',
   },
@@ -1174,5 +1175,11 @@ export default {
   },
   createTemplateData: {
     title: 'Create template data',
+  },
+  entitiesComparison: {
+    title: 'Pattern entities comparison',
+    infoMessage: 'Counts may differ because of 2 reasons :\n<span class="font-weight-regular">1. changes happened in Canopsis during the check (some if initially filtered entity changed and do not fit the pattern anymore)</span>\n<span class="font-weight-regular">2. suggested pattern isn\'t correct</span>\n<span>You can run the check again to be sure.</span>',
+    foundInCurrent: 'FOUND IN CURRENT, NOT FOUND IN SUGGESTION PATTERN',
+    foundInSuggestion: 'FOUND IN SUGGESTION, NOT FOUND IN CURRENT PATTERN',
   },
 };

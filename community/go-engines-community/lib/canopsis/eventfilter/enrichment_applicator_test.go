@@ -34,15 +34,14 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 		gomock.Any(),
 		gomock.Any(),
 		gomock.Any(),
-		gomock.Any(),
 	).DoAndReturn(func(
 		_ context.Context,
-		_, _ string,
+		_ eventfilter.ParsedRule,
 		_ eventfilter.ParsedAction,
 		event *types.Event,
 		_ map[string]eventfilter.UpdatedValue,
 		_ eventfilter.RegexMatch,
-		_ map[string]interface{},
+		_ map[string]any,
 	) (bool, error) {
 		event.Resource = "updated"
 		return false, nil
@@ -87,15 +86,14 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 		gomock.Any(),
 		gomock.Any(),
 		gomock.Any(),
-		gomock.Any(),
 	).DoAndReturn(func(
 		_ context.Context,
-		_, _ string,
+		_ eventfilter.ParsedRule,
 		_ eventfilter.ParsedAction,
 		_ *types.Event,
 		_ map[string]eventfilter.UpdatedValue,
 		_ eventfilter.RegexMatch,
-		_ map[string]interface{},
+		_ map[string]any,
 	) (map[string]eventfilter.UpdatedValue, error) {
 		return nil, errors.New("error")
 	})

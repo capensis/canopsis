@@ -157,70 +157,52 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 		}()
 	}
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		count, err := u.entityMongoCollection.CountDocuments(ctx, bson.M{"enabled": false})
 		if err != nil {
 			u.logger.Err(err).Msg("failed to count number of disabled entities from db")
 		}
 
 		metricsValues.SetGauge(DisabledEntitiesGauge, float64(count))
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		count, err := u.userCollection.CountDocuments(ctx, bson.M{"enable": true})
 		if err != nil {
 			u.logger.Err(err).Msg("failed to count number of active users from db")
 		}
 
 		metricsValues.SetGauge(EnabledUsersGauge, float64(count))
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		count, err := u.eventfilterCollection.CountDocuments(ctx, bson.M{"enabled": true})
 		if err != nil {
 			u.logger.Err(err).Msg("failed to count number of event filter rules from db")
 		}
 
 		metricsValues.SetGauge(EventFiltersGauge, float64(count))
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		count, err := u.metaAlarmRulesCollection.CountDocuments(ctx, bson.M{})
 		if err != nil {
 			u.logger.Err(err).Msg("failed to count number of meta alarm rules from db")
 		}
 
 		metricsValues.SetGauge(MetaAlarmsRulesGauge, float64(count))
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		count, err := u.dynamicInfosCollection.CountDocuments(ctx, bson.M{"enabled": true})
 		if err != nil {
 			u.logger.Err(err).Msg("failed to count number of dynamic infos rules from db")
 		}
 
 		metricsValues.SetGauge(DynamicInfosRulesGauge, float64(count))
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		countActive, err := u.alarmCollection.CountDocuments(ctx, bson.M{"v.resolved": nil, "v.activation_date": bson.M{"$exists": true}})
 		if err != nil {
 			u.logger.Err(err).Msg("failed to count number of active alarms from db")
@@ -233,48 +215,36 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 		metricsValues.SetGaugeVector(OpenedAlarmsGaugeVector, "true", float64(countActive))
 		metricsValues.SetGaugeVector(OpenedAlarmsGaugeVector, "false", float64(countInactive))
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		count, err := u.resolvedAlarmCollection.CountDocuments(ctx, bson.M{})
 		if err != nil {
 			u.logger.Err(err).Msg("failed to count number of closed alarms from db")
 		}
 
 		metricsValues.SetGauge(ResolvedAlarmsGauge, float64(count))
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		count, err := u.eventfilterFailureCollection.CountDocuments(ctx, bson.M{})
 		if err != nil {
 			u.logger.Err(err).Msg("failed to get event filter failures from db")
 		}
 
 		metricsValues.SetGauge(EventfilterErrorsGauge, float64(count))
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		count, err := u.websocketStore.GetActiveConnections(ctx)
 		if err != nil {
 			u.logger.Err(err).Msg("failed to get active connections")
 		}
 
 		metricsValues.SetGauge(UserConnectionsGauge, float64(count))
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		cfg, err := u.healthCheckAdapter.GetConfig(ctx)
 		if err != nil {
 			u.logger.Err(err).Msg("failed to get healthcheck config")
@@ -312,12 +282,9 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 				}
 			}
 		}
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		var cursor uint64
 		var activePbh int
 
@@ -339,7 +306,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 		}
 
 		metricsValues.SetGauge(ActivePBehaviorsGauge, float64(activePbh))
-	}()
+	})
 
 	opts := options.FindOne().SetSort(bson.M{"updated": -1}).SetProjection(bson.M{"updated": 1})
 
