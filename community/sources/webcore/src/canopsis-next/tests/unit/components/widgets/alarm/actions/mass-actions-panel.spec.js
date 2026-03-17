@@ -7,8 +7,11 @@ import {
   createAuthModule,
   createMetaAlarmModule,
   createMockedStoreModules,
+  createPbehaviorModule,
+  createPbehaviorTypesModule,
+  createPbehaviorReasonModule,
 } from '@unit/utils/store';
-import { mockModals } from '@unit/utils/mock-hooks';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 
 import {
   ALARM_LIST_ACTIONS_TYPES,
@@ -19,10 +22,15 @@ import {
   META_ALARMS_RULE_TYPES,
   MODALS,
   PATTERN_CONDITIONS,
+  PBEHAVIOR_ORIGINS,
   TIME_UNITS,
 } from '@/constants';
 
 import MassActionsPanel from '@/components/widgets/alarm/actions/mass-actions-panel.vue';
+
+jest.mock('@/helpers/async', () => ({
+  promisedTimeout: callback => (callback ? Promise.resolve(callback()) : Promise.resolve()),
+}));
 
 const stubs = {
   'shared-mass-actions-panel': {
@@ -46,6 +54,7 @@ describe('mass-actions-panel', () => {
   jest.useFakeTimers({ now: timestamp });
 
   const $modals = mockModals();
+  const $popups = mockPopups();
 
   const alarm = {
     _id: 'alarm-id',
@@ -135,10 +144,24 @@ describe('mass-actions-panel', () => {
     bulkCreateAlarmChangestateEvent,
   } = createAlarmModule();
   const { metaAlarmModule, addAlarmsIntoMetaAlarm, createMetaAlarm } = createMetaAlarmModule();
+  const {
+    pbehaviorModule,
+    createEntityPbehaviors,
+    removeEntityPbehaviors,
+  } = createPbehaviorModule();
+  const { pbehaviorTypesModule } = createPbehaviorTypesModule();
+  const { pbehaviorReasonModule } = createPbehaviorReasonModule();
 
   const items = [alarm, metaAlarm];
 
-  const store = createMockedStoreModules([authModuleWithAccess, alarmModule, metaAlarmModule]);
+  const store = createMockedStoreModules([
+    authModuleWithAccess,
+    alarmModule,
+    metaAlarmModule,
+    pbehaviorModule,
+    pbehaviorTypesModule,
+    pbehaviorReasonModule,
+  ]);
 
   const widget = {
     parameters: {
@@ -167,7 +190,7 @@ describe('mass-actions-panel', () => {
     jest.clearAllMocks();
   });
 
-  test('Create pbehavior modal showed after trigger pbehavior add action', () => {
+  test('Create pbehavior modal showed after trigger pbehavior add action', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -177,6 +200,7 @@ describe('mass-actions-panel', () => {
       },
       mocks: {
         $modals,
+        $popups,
       },
     });
 
@@ -203,9 +227,103 @@ describe('mass-actions-panel', () => {
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    await config.afterSubmit();
 
     expect(wrapper).toHaveBeenEmit('clear:items');
+  });
+
+  test('Fast pbehavior add creates downtime pbehavior and emits clear:items', async () => {
+    const typeId = Faker.datatype.string();
+    const reasonId = Faker.datatype.string();
+    const widgetWithFastPbehavior = {
+      parameters: {
+        isMultiAckEnabled: true,
+        fast_pbehaviors: [{ type: typeId, reason: reasonId, name_prefix: 'Test' }],
+      },
+    };
+
+    createEntityPbehaviors.mockResolvedValue([{}]);
+
+    const wrapper = factory({
+      store,
+      propsData: {
+        items,
+        refreshAlarmsList,
+        widget: widgetWithFastPbehavior,
+      },
+      mocks: {
+        $modals,
+        $popups,
+      },
+    });
+
+    const fastPbehaviorAddAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd);
+
+    fastPbehaviorAddAction.trigger('click');
+
+    await flushPromises();
+
+    expect(createEntityPbehaviors).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        data: expect.arrayContaining([
+          expect.objectContaining({
+            entity: alarm.entity._id,
+            type: typeId,
+            reason: reasonId,
+            origin: PBEHAVIOR_ORIGINS.alarmList,
+          }),
+          expect.objectContaining({
+            entity: metaAlarm.entity._id,
+            type: typeId,
+            reason: reasonId,
+            origin: PBEHAVIOR_ORIGINS.alarmList,
+          }),
+        ]),
+      }),
+    );
+    expect(wrapper).toHaveBeenEmit('clear:items');
+    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+  });
+
+  test('Fast pbehavior remove removes downtime pbehavior and emits clear:items', async () => {
+    const alarmsWithFastPbehavior = [
+      { ...alarm, pbh_origin_icon: true, entity: { ...alarm.entity, _id: 'entity-1' } },
+      { ...metaAlarm, pbh_origin_icon: true, entity: { ...metaAlarm.entity, _id: 'entity-2' } },
+    ];
+
+    removeEntityPbehaviors.mockResolvedValue([{}]);
+
+    const wrapper = factory({
+      store,
+      propsData: {
+        items: alarmsWithFastPbehavior,
+        refreshAlarmsList,
+        widget,
+      },
+      mocks: {
+        $modals,
+        $popups,
+      },
+    });
+
+    const fastPbehaviorRemoveAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove);
+
+    fastPbehaviorRemoveAction.trigger('click');
+
+    await flushPromises();
+
+    expect(removeEntityPbehaviors).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: [
+          { origin: PBEHAVIOR_ORIGINS.alarmList, entity: 'entity-1' },
+          { origin: PBEHAVIOR_ORIGINS.alarmList, entity: 'entity-2' },
+        ],
+      },
+    );
+    expect(wrapper).toHaveBeenEmit('clear:items');
+    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
   });
 
   test('Ack modal showed after trigger ack action', async () => {
@@ -226,6 +344,7 @@ describe('mass-actions-panel', () => {
       },
       mocks: {
         $modals,
+        $popups,
       },
     });
 
