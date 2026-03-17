@@ -2,13 +2,14 @@ package pbehavior
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -56,10 +57,28 @@ func CreateMongoQuery(client mongo.DbClient, authorProvider author.Provider) Mon
 }
 
 func (q *MongoQuery) CreateAggregationPipeline(ctx context.Context, r ListRequest) ([]bson.M, error) {
+	beforeLimit := make([]bson.M, 0)
+
+	if r.SearchPattern != "" {
+		var p searchPattern
+		err := json.Unmarshal([]byte(r.SearchPattern), &p)
+		if err != nil {
+			return nil, validation.NewSingleError("search_pattern", "SearchPattern", "SearchPattern", r)
+		}
+
+		filterQuery, err := p.ToMongoQuery()
+		if err != nil {
+			return nil, validation.NewSingleError("search_pattern", "SearchPattern", "SearchPattern", r)
+		}
+
+		beforeLimit = append(beforeLimit, bson.M{"$match": filterQuery})
+	}
+
 	err := q.handleFilter(ctx, r)
 	if err != nil {
 		return nil, err
 	}
+
 	q.handleSort(r)
 	if r.WithFlags {
 		q.project = append(q.project, bson.M{"$addFields": bson.M{
@@ -71,7 +90,6 @@ func (q *MongoQuery) CreateAggregationPipeline(ctx context.Context, r ListReques
 		}})
 	}
 
-	beforeLimit := make([]bson.M, 0)
 	for _, m := range q.lookupBeforeMatch {
 		beforeLimit = append(beforeLimit, m...)
 	}
@@ -99,6 +117,7 @@ func (q *MongoQuery) CreateAggregationPipeline(ctx context.Context, r ListReques
 
 func (q *MongoQuery) handleFilter(ctx context.Context, r ListRequest) error {
 	andCond := make([]bson.M, 0)
+
 	filter, err := q.getSearchFilter(ctx, r.Search)
 	if err != nil {
 		return err
@@ -135,14 +154,6 @@ func (q *MongoQuery) handleSort(r ListRequest) {
 func (q *MongoQuery) getSearchFilter(ctx context.Context, search string) (bson.M, error) {
 	if search == "" {
 		return bson.M{}, nil
-	}
-
-	p := parser.NewParser()
-	expr, err := p.Parse(search, nil)
-	if err == nil {
-		q.adjustLookupsForFilter(expr.GetFields())
-
-		return expr.MongoQuery(), nil
 	}
 
 	searchRegexp := bson.Regex{
@@ -188,7 +199,7 @@ func (q *MongoQuery) getSearchFilter(ctx context.Context, search string) (bson.M
 		for i := range ids {
 			ids[i] = types[i].ID
 		}
-		conditions = append(conditions, bson.M{"type_": bson.M{"$in": ids}})
+		conditions = append(conditions, bson.M{"type": bson.M{"$in": ids}})
 	}
 
 	if len(reasons) > 0 {
@@ -259,7 +270,7 @@ func GetNestedTypePipeline(authorProvider author.Provider) []bson.M {
 	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
-			"localField":   "type_",
+			"localField":   "type",
 			"foreignField": "_id",
 			"as":           "type",
 		}},

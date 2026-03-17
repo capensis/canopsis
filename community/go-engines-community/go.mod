@@ -14,7 +14,6 @@ toolchain go1.26.0
 // https://git.canopsis.net/canopsis/canopsis-pro/-/issues/590
 
 require (
-	github.com/alecthomas/participle v0.7.1
 	github.com/apognu/gocal v0.9.1
 	github.com/beevik/etree v1.6.0
 	github.com/brianvoe/gofakeit/v7 v7.14.0
@@ -51,7 +50,7 @@ require (
 	github.com/russellhaering/goxmldsig v1.5.0
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/teambition/rrule-go v1.8.2
-	github.com/valyala/fastjson v1.6.9
+	github.com/valyala/fastjson v1.6.10
 	go.mongodb.org/mongo-driver/v2 v2.5.0
 	go.uber.org/mock v0.6.0
 	go.yaml.in/yaml/v3 v3.0.4
