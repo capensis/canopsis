@@ -6,7 +6,7 @@ export default {
      * VIEWS PERMISSIONS
      */
     [USER_VIEWS_PERMISSIONS.viewActions]: 'View: actions',
-    [USER_VIEWS_PERMISSIONS.viewGeneral]: 'View: general',
+    [USER_VIEWS_PERMISSIONS.viewGeneral]: 'View: other',
 
     /**
      * GROUPS
@@ -64,8 +64,11 @@ export default {
     [USER_PERMISSIONS_GROUPS.technical]: 'Technical',
     [USER_PERMISSIONS_GROUPS.technicalAdmin]: 'Admin',
     [USER_PERMISSIONS_GROUPS.technicalAdminCommunication]: 'Communication',
-    [USER_PERMISSIONS_GROUPS.technicalAdminGeneral]: 'General',
+    [USER_PERMISSIONS_GROUPS.technicalAdminGeneral]: 'Other',
     [USER_PERMISSIONS_GROUPS.technicalAdminAccess]: 'Access',
+    [USER_PERMISSIONS_GROUPS.technicalAdminMaintenance]: '@:common.maintenance',
+    [USER_PERMISSIONS_GROUPS.technicalAdminCustomObjects]: '@:layout.topbar.customObjects',
+    [USER_PERMISSIONS_GROUPS.technicalAdminSettings]: '@:common.settings',
     [USER_PERMISSIONS_GROUPS.technicalExploitation]: 'Exploitation',
     [USER_PERMISSIONS_GROUPS.technicalNotification]: 'Notifications',
     [USER_PERMISSIONS_GROUPS.technicalViewsandwidgets]: 'Views and widgets',
@@ -231,32 +234,28 @@ export default {
     [USER_PERMISSIONS.technical.eventsRecord]: 'Events records',
     [USER_PERMISSIONS.technical.healthcheck]: 'Healthcheck',
     [USER_PERMISSIONS.technical.healthcheckStatus]: 'Healthcheck status',
-    [USER_PERMISSIONS.technical.icon]: 'Parameters - icons',
+    [USER_PERMISSIONS.technical.icon]: 'Icons',
     [USER_PERMISSIONS.technical.kpi]: 'KPI Graphs',
     [USER_PERMISSIONS.technical.kpiCollectionSettings]: 'KPI Collection settings',
     [USER_PERMISSIONS.technical.kpiFilters]: 'KPI Filters',
     [USER_PERMISSIONS.technical.kpiRatingSettings]: 'KPI Rating settings',
     [USER_PERMISSIONS.technical.maintenance]: 'Maintenance mode',
     [USER_PERMISSIONS.technical.map]: 'Maps',
-    [USER_PERMISSIONS.technical.parameters]: 'Parameters - parameters tab',
+    [USER_PERMISSIONS.technical.parameters]: 'User interface',
     [USER_PERMISSIONS.technical.planningExceptions]: 'Planning exceptions dates (Pbehavior)',
     [USER_PERMISSIONS.technical.planningReason]: 'Planning reason (Pbehavior)',
     [USER_PERMISSIONS.technical.planningType]: 'Planning type (Pbehavior)',
-    [USER_PERMISSIONS.technical.remediationConfiguration]: 'Instructions - configurations tab',
-    [USER_PERMISSIONS.technical.remediationInstruction]: 'Instructions - instructions tab',
-    [USER_PERMISSIONS.technical.remediationInstructionApprove]: 'Instructions - approve',
-    [USER_PERMISSIONS.technical.remediationJob]: 'Instructions - jobs tab',
-    [USER_PERMISSIONS.technical.remediationStatistic]: 'Instructions - remediation statistics tab',
-    [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Instructions - instructions stats tab',
-    [USER_PERMISSIONS.technical.stateSetting]: 'State settings',
-    [USER_PERMISSIONS.technical.storageSettings]: 'Storage settings',
+    [USER_PERMISSIONS.technical.stateSetting]: 'State',
+    [USER_PERMISSIONS.technical.storageSettings]: 'Storage',
     [USER_PERMISSIONS.technical.tag]: 'Tags management',
     [USER_PERMISSIONS.technical.techmetrics]: 'Healthcheck - engines\' metrics',
-    [USER_PERMISSIONS.technical.widgetTemplate]: 'Parameters - widget templates',
-    [USER_PERMISSIONS.technical.viewImportExport]: 'Parameters - import / export',
+    [USER_PERMISSIONS.technical.widgetTemplate]: 'Widget templates',
+    [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Template testing',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'External auth tokens',
     [USER_PERMISSIONS.technical.ticketStatusJob]: 'Jobs',
+    [USER_PERMISSIONS.technical.externalDataTable]: 'External data',
+    [USER_PERMISSIONS.technical.entityInfoProperty]: 'Entity infos',
 
     /**
      * Technical Admin Access
@@ -268,6 +267,12 @@ export default {
     /**
      * Technical Admin Exploitation
      */
+    [USER_PERMISSIONS.technical.exploitation.remediationConfiguration]: 'Instructions - configurations tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstruction]: 'Instructions - instructions tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove]: 'Instructions - approve',
+    [USER_PERMISSIONS.technical.exploitation.remediationJob]: 'Instructions - jobs tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationStatistic]: 'Instructions - remediation statistics tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationinstructionStats]: 'Instructions - instructions stats tab',
     [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: 'Ticket declaration rules',
     [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: 'Dynamic information rules',
     [USER_PERMISSIONS.technical.exploitation.eventFilter]: 'Event filters',
@@ -279,13 +284,11 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.resolveRules]: 'Resolve rules',
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scenarios',
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Snmp rules',
-    [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'External data',
-    [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: 'Entity infos',
 
     /**
     * Technical Admin Notification
     */
-    [USER_PERMISSIONS.technical.notification.common]: 'Parameters - notification settings ',
+    [USER_PERMISSIONS.technical.notification.common]: 'Notifications',
 
     /**
      * Technical Admin Views and widgets

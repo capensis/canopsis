@@ -18,6 +18,7 @@ import { useModelField } from './model-field';
  *   updateItemInArray: (index: number, value: *) => Array,
  *   updateFieldInArrayItem: (index: number, fieldName: string, value: *) => Array,
  *   removeItemFromArray: (index: number) => Array
+ *   removeItemsFromArray: (indexes: number[]) => Array
  * }}
  */
 export const useArrayModelField = (props, emit) => {
@@ -67,6 +68,14 @@ export const useArrayModelField = (props, emit) => {
    */
   const removeItemFromArray = index => updateModel(props[modelProp].filter((v, i) => i !== index));
 
+  /**
+   * Emit event to parent with new array without array items
+   *
+   * @param {number} index
+   * @return {Array}
+   */
+  const removeItemsFromArray = (indexes = []) => updateModel(props[modelProp].filter((v, i) => !indexes.includes(i)));
+
   return {
     modelEvent,
     modelProp,
@@ -76,5 +85,6 @@ export const useArrayModelField = (props, emit) => {
     updateItemInArray,
     updateFieldInArrayItem,
     removeItemFromArray,
+    removeItemsFromArray,
   };
 };

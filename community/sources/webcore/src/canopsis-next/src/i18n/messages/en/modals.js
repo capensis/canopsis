@@ -171,6 +171,7 @@ export default {
     },
     success: {
       create: 'Pbehavior successfully created! You may need to wait 60 sec to see it in interface',
+      remove: 'Pbehavior successfully removed! You may need to wait 60 sec to see it in interface',
     },
     cancelConfirmation: 'Some data has been modified and will not be saved. Do you really want to close this menu?',
   },

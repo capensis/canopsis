@@ -19,21 +19,25 @@ export default {
 
   [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
     title: 'Règles de méta-alarme',
+    topbarTitle: 'Méta-alarmes',
     message: 'Module de corrélation permettant de regrouper des alarmes en méta-alarmes selon des critères (relation parent/enfant, intervalle de temps, etc).',
   },
 
   [USER_PERMISSIONS.technical.exploitation.idleRules]: {
     title: 'Règles d\'inactivité',
+    topbarTitle: 'Inactivité',
     message: 'Règles permettant de réagir en cas de "non événement". Utile pour gérer les lignes de vie des sources de données par exemple.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.flappingRules]: {
     title: 'Règles de bagot',
+    topbarTitle: 'Bagot',
     message: 'Une alarme hérite du statut bagot lorsqu\'elle oscille d\'une criticité d\'alerte à un état stable un certain nombre de fois sur une période donnée.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.resolveRules]: {
     title: 'Règles de résolution',
+    topbarTitle: 'Résolution',
     message: 'Lorsqu\'une alarme reçoit un événement de type contre alarme, elle passe dans le statut fermée.\nAvant de considérer cette alarme comme définitivement résolue, Canopsis peut attendre un délai.\nCe délai peut être utile si l\'alarme bagotte ou si l\'utilisateur souhaite conserver l\'alarme ouverte en cas d\'erreur.',
   },
 
@@ -49,11 +53,13 @@ export default {
 
   [USER_PERMISSIONS.technical.exploitation.snmpRule]: {
     title: 'Règles SNMP',
+    topbarTitle: 'SNMP',
     message: 'Les règles SNMP peuvent être utilisées pour traiter les traps SNMP remontées par le connecteur snmp2canopsis au travers du moteur SNMP.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: {
     title: 'Règles de déclaration des tickets',
+    topbarTitle: 'Déclaration de tickets',
     message: 'Permet de définir les règles de création de tickets d\'incidents à destination de plusieurs outils de gestion d\'incidents. Ces tickets sont créés par un pilote depuis la WebUI, et Canopsis se charge ensuite de contacter l\'outil de gestion d\'incident pour l\'enregistrement du ticket.',
 
   },
@@ -63,12 +69,9 @@ export default {
     message: 'Permet de définir les règles d\'association de liens aux alarmes',
   },
 
-  [USER_PERMISSIONS.technical.exploitation.externalDataTable]: {
-    title: 'Données externes',
-  },
-
-  [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: {
-    title: 'Informations d\'entité',
+  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
+    title: 'Consignes',
+    message: 'Permet de créer des consignes de remédiation, avec ou sans job, pour corriger des situations.',
   },
 
   /**
@@ -103,8 +106,14 @@ export default {
    * Admin general
    */
   [USER_PERMISSIONS.technical.parameters]: {
-    title: 'Paramètres',
-    message: 'Paramètres divers et variés de l\'interface de Canopsis',
+    title: 'Interface utilisateur',
+  },
+  [USER_PERMISSIONS.technical.viewImportExport]: {
+    title: 'Import / export',
+  },
+  [USER_PERMISSIONS.technical.notification.common]: {
+    title: 'Paramètres de notification',
+    topbarTitle: 'Notifications',
   },
   [USER_PERMISSIONS.technical.healthcheck]: {
     title: 'Bilan de santé',
@@ -123,19 +132,21 @@ export default {
     message: 'Module permettant de définir et d\'afficher des cartes (géographiques, logiques, mermaid, etc.) via le widget "Map".',
   },
   [USER_PERMISSIONS.technical.maintenance]: {
-    title: 'Mode de Maintenance',
+    title: 'Mode de maintenance',
     message: 'Permet de basculer Canopsis en mode maintenance. Tous les utilisateurs, à l\'exception des administrateurs, seront déconnectés.',
   },
   [USER_PERMISSIONS.technical.tag]: {
-    title: 'Gestion des Tags',
+    title: 'Gestion des tags',
     message: 'Permet de définir des règles d\'attribution de tags aux alarmes',
   },
   [USER_PERMISSIONS.technical.storageSettings]: {
     title: 'Paramètres de stockage',
+    topbarTitle: 'Stockage',
     message: 'Permet de définir les politiques de rétention des données.',
   },
   [USER_PERMISSIONS.technical.stateSetting]: {
     title: 'Paramètres de calcul d\'état/sévérité',
+    topbarTitle: 'État',
     message: 'Permet de définir des méthodes de calcul d\'état/sévérité de composants et/ou de services.\nUtile pour modéliser des arbres de dépendances.',
   },
   [USER_PERMISSIONS.technical.eventsRecord]: {
@@ -143,14 +154,23 @@ export default {
     message: 'Permet de définir et de déclencher l\'enregistrement des événements dès leur arrivée dans le bus de données Canopsis.',
   },
   [USER_PERMISSIONS.technical.templateTesting]: {
-    title: 'Studio Templates',
+    title: 'Studio templates',
   },
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'Jetons d\'authentification externes',
   },
   [USER_PERMISSIONS.technical.ticketStatusJob]: {
     title: 'Jobs',
-    message: 'Gérer les jobs pour les consignes, webhooks, statut des tickets et jetons d\'authentification.',
+    message: 'Gérer les jobs pour le statut des tickets.',
+  },
+  [USER_PERMISSIONS.technical.widgetTemplate]: {
+    title: 'Modèles de widget',
+  },
+  [USER_PERMISSIONS.technical.externalDataTable]: {
+    title: 'Données externes',
+  },
+  [USER_PERMISSIONS.technical.entityInfoProperty]: {
+    title: 'Informations d\'entité',
   },
 
   /**
@@ -159,10 +179,6 @@ export default {
   [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
     title: 'Planification',
     message: 'Permet d\'administrer la planification dans Canopsis et de personnaliser les types de comportements périodiques.',
-  },
-  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
-    title: 'Consignes',
-    message: 'Permet de créer des consignes de remédiation, avec ou sans job, pour corriger des situations.',
   },
 
   /**

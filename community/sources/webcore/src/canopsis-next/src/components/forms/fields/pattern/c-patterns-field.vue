@@ -502,7 +502,7 @@ export default {
      * Shows entities modal filtered by current patterns
      */
     const showPatternEntities = () => showEntitiesModalByPatterns({
-      entity_pattern: formGroupsToPatternRulesQuery(props.value.entity_pattern.groups),
+      search_pattern: formGroupsToPatternRulesQuery(props.value.entity_pattern.groups),
     });
 
     const {

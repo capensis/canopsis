@@ -4,17 +4,21 @@
       <v-flex v-if="shownSearch" xs4>
         <c-search
           v-if="search"
-          @submit="updateSearchHandler"
+          @submit="updateSearch"
         />
         <c-advanced-search
           v-else-if="advancedSearch"
-          :fields="preparedAdvancedSearchFields"
-          @submit="updateSearchHandler"
+          :attributes="advancedSearchAttributes"
+          :pending="advancedSearchLoading"
+          @submit="updateAdvancedSearch"
+          @reset="resetSearch"
         />
       </v-flex>
       <slot
         :selected="selected"
-        :update-search="updateSearchHandler"
+        :update-search="updateSearch"
+        :update-advanced-search="updateAdvancedSearch"
+        :reset-search="resetSearch"
         name="toolbar"
       />
       <v-flex
@@ -156,6 +160,7 @@
 
 <script>
 import { mapIds } from '@/helpers/array';
+import { prepareQueryWithAdvancedSearch, prepareQueryWithoutAdvancedSearch } from '@/helpers/search/advanced-search';
 
 export default {
   model: {
@@ -263,9 +268,13 @@ export default {
       type: String,
       default: '$expand',
     },
-    advancedSearchFields: {
+    advancedSearchAttributes: {
       type: Array,
       default: () => [],
+    },
+    advancedSearchLoading: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -341,12 +350,6 @@ export default {
     shownSearch() {
       return this.search || this.advancedSearch;
     },
-
-    preparedAdvancedSearchFields() {
-      return this.advancedSearchFields?.length
-        ? this.advancedSearchFields
-        : this.headers;
-    },
   },
   watch: {
     items(items) {
@@ -368,8 +371,16 @@ export default {
       this.$emit('update:options', options);
     },
 
-    updateSearchHandler(search) {
+    updateSearch(search) {
       this.updateOptions({ ...this.options, search, page: 1 });
+    },
+
+    updateAdvancedSearch(search) {
+      this.updateOptions(prepareQueryWithAdvancedSearch(this.options, search));
+    },
+
+    resetSearch() {
+      this.updateOptions(prepareQueryWithoutAdvancedSearch(this.options));
     },
 
     updateItemsPerPage(itemsPerPage) {
