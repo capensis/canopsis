@@ -7,7 +7,13 @@
       :total-items="totalItems"
       :options="options"
       @update:options="updateOptions"
-      @action="handleAction"
+      @edit="edit"
+      @play="play"
+      @pause="pause"
+      @stop="stop"
+      @play:selected="playSelected"
+      @pause:selected="pauseSelected"
+      @stop:selected="stopSelected"
     />
   </v-card-text>
 </template>
@@ -35,7 +41,13 @@ export default {
   setup(props) {
     const { t } = useI18n();
     const modals = useModals();
-    const { fetchTicketStatusJobsListWithoutStore } = useTicketStatusJob();
+    const {
+      fetchTicketStatusJobsListWithoutStore,
+      updateTicketStatusJob,
+      playTicketStatusJob,
+      pauseTicketStatusJob,
+      stopTicketStatusJob,
+    } = useTicketStatusJob();
 
     const label = computed(() => ({
       [TICKET_STATUS_JOBS_TABS.instructions]: t('jobs.tabs.instructions'),
@@ -86,21 +98,34 @@ export default {
 
     const totalItems = computed(() => meta.value?.total_count ?? 0);
 
-    const handleAction = ({ action, item }) => {
-      if (action === 'edit' && props.tabId === TICKET_STATUS_JOBS_TABS.ticketStatus) {
-        modals.show({
-          name: MODALS.createTicketStatusJob,
-          config: {
-            ticketStatusJob: item,
-            title: undefined,
-            action: async () => {
-              // TODO: Implement update API call when endpoint is available
-              await fetchList();
-            },
-          },
-        });
-      }
-      // TODO: Implement start, stop, resume, pause API calls when endpoints are available
+    const edit = ticketStatusJob => modals.show({
+      name: MODALS.createTicketStatusJob,
+      config: {
+        ticketStatusJob,
+        action: async (newTicketStatusJob) => {
+          await updateTicketStatusJob({ id: ticketStatusJob._id, data: newTicketStatusJob });
+          await fetchList();
+        },
+      },
+    });
+    const play = (item) => {
+      playTicketStatusJob(item);
+    };
+    const pause = (item) => {
+      pauseTicketStatusJob(item);
+    };
+    const stop = (item) => {
+      stopTicketStatusJob(item);
+    };
+
+    const playSelected = (selected) => {
+      playTicketStatusJob(selected);
+    };
+    const pauseSelected = (selected) => {
+      pauseTicketStatusJob(selected);
+    };
+    const stopSelected = (selected) => {
+      stopTicketStatusJob(selected);
     };
 
     onMounted(fetchList);
@@ -113,7 +138,13 @@ export default {
       label,
       headers,
       updateOptions,
-      handleAction,
+      edit,
+      play,
+      pause,
+      stop,
+      playSelected,
+      pauseSelected,
+      stopSelected,
     };
   },
 };

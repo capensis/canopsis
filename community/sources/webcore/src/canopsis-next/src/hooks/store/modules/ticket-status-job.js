@@ -12,6 +12,10 @@ export const useTicketStatusJob = () => {
 
   const actions = useActions({
     fetchTicketStatusJobsListWithoutStore: 'fetchListWithoutStore',
+    updateTicketStatusJob: 'update',
+    playTicketStatusJob: 'play',
+    pauseTicketStatusJob: 'pause',
+    stopTicketStatusJob: 'stop',
   });
 
   return {

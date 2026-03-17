@@ -419,6 +419,11 @@ export const API_ROUTES = {
   snmpMib: '/api/v4/cat/snmpmibs',
   webhookTokenRule: '/api/v4/cat/webhook-token-rules',
   ticketStatusJobs: '/api/v4/cat/ticket-status-jobs',
+  bulkTicketStatusJobs: {
+    play: '/api/v4/cat/bulk/ticket-status-jobs/sync',
+    pause: '/api/v4/cat/bulk/ticket-status-jobs/pause',
+    stop: '/api/v4/cat/bulk/ticket-status-jobs/stop',
+  },
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',

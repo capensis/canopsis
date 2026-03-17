@@ -15,7 +15,11 @@ export default {
   failReason: 'Raison de l\'échec',
   expirationDate: 'Date d\'expiration',
   searchByRuleName: 'Rechercher par nom de règle',
-  webhookFailedPrefix: 'Webhook a échoué',
+  data: {
+    request: 'Requête',
+    response: 'Réponse',
+    webhookFailedPrefix: 'Webhook a échoué',
+  },
   status: {
     [JOB_STATUS.running]: 'En cours',
     [JOB_STATUS.paused]: 'En pause',

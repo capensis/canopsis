@@ -1,10 +1,12 @@
 <template>
   <c-advanced-data-table
+    ref="tableElement"
     :headers="headers"
     :items="items"
     :loading="pending"
     :total-items="totalItems"
     :options="options"
+    :is-disabled-item="isDisabledItem"
     expand
     search
     select-all
@@ -17,13 +19,17 @@
         @update:options="updateOptions"
       />
     </template>
-    <template #mass-actions="{ selected }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected: slotSelected }">
+      <ticket-status-job-table-actions
+        :items="slotSelected"
+        @edit="$emit('edit', $event)"
+        @play="$emit('play', $event)"
+        @stop="$emit('stop', $event)"
+        @retry="$emit('retry', $event)"
+        @pause="$emit('pause', $event)"
       />
     </template>
+    <template #header.data-table-select />
     <template #active="{ item }">
       <ticket-status-jobs-active-state-icon :status="item.status" />
     </template>
@@ -46,48 +52,27 @@
       <ticket-status-jobs-details-expand-panel :item="item" />
     </template>
     <template #actions="{ item }">
-      <v-layout>
-        <c-action-btn
-          :tooltip="$t('jobs.actions.editJob')"
-          icon="edit"
-          @click="emitAction('edit', item)"
-        />
-        <c-action-btn
-          v-if="canStart(item)"
-          :tooltip="$t('jobs.actions.startJob')"
-          icon="play_arrow"
-          @click="emitAction('start', item)"
-        />
-        <c-action-btn
-          v-if="canStop(item)"
-          :tooltip="$t('jobs.actions.stopJob')"
-          icon="stop"
-          @click="emitAction('stop', item)"
-        />
-        <c-action-btn
-          v-if="canResume(item)"
-          :tooltip="$t('jobs.actions.repeatJob')"
-          icon="refresh"
-          @click="emitAction('retry', item)"
-        />
-        <c-action-btn
-          v-if="canPause(item)"
-          :tooltip="$t('jobs.actions.pauseJob')"
-          icon="pause"
-          @click="emitAction('pause', item)"
-        />
-      </v-layout>
+      <ticket-status-job-table-actions
+        :item="item"
+        @edit="$emit('edit', $event)"
+        @play="$emit('play', $event)"
+        @stop="$emit('stop', $event)"
+        @retry="$emit('retry', $event)"
+        @pause="$emit('pause', $event)"
+      />
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
-import { JOB_STATUS } from '@/constants';
+import { isUndefined } from 'lodash';
+import { ref, computed } from 'vue';
 
 import TicketStatusJobsActiveStateIcon from './partials/ticket-status-jobs-active-state-icon.vue';
 import TicketStatusJobsDetailsExpandPanel from './partials/ticket-status-jobs-details-expand-panel.vue';
 import TicketStatusJobsRunStatusIcon from './partials/ticket-status-jobs-run-status-icon.vue';
 import TicketStatusJobsTableFilters from './partials/ticket-status-jobs-table-filters.vue';
+import TicketStatusJobTableActions from './partials/ticket-status-job-table-actions.vue';
 
 export default {
   components: {
@@ -95,6 +80,7 @@ export default {
     TicketStatusJobsDetailsExpandPanel,
     TicketStatusJobsRunStatusIcon,
     TicketStatusJobsTableFilters,
+    TicketStatusJobTableActions,
   },
   props: {
     headers: {
@@ -119,22 +105,25 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const canStart = item => true || item.status === JOB_STATUS.stopped;
-    const canStop = item => true || item.status === JOB_STATUS.running;
-    const canResume = item => true || item.status === JOB_STATUS.paused;
-    const canPause = item => true || item.status === JOB_STATUS.running;
+    const tableElement = ref(null);
+
+    const firstSelectedStatus = computed(() => tableElement.value?.selectedItems?.[0]?.status);
+
+    const isDisabledItem = item => !isUndefined(firstSelectedStatus.value) && item.status !== firstSelectedStatus.value;
+
+    const itemsWithSelectable = computed(() => (
+      firstSelectedStatus.value
+        ? props.items.map(item => ({ ...item, isSelectable: item.status === firstSelectedStatus.value }))
+        : props.items
+    ));
 
     const updateOptions = newOptions => emit('update:options', newOptions);
 
-    const emitAction = (action, item) => emit('action', { action, item });
-
     return {
-      canStart,
-      canStop,
-      canResume,
-      canPause,
+      tableElement,
+      isDisabledItem,
+      itemsWithSelectable,
       updateOptions,
-      emitAction,
     };
   },
 };
