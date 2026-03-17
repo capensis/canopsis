@@ -5,49 +5,7 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <v-layout class="gap-3" column>
-          <v-layout class="gap-3" wrap>
-            <v-flex md4 xs12>
-              <v-text-field
-                :value="ruleTypeDisplay"
-                :label="$t('jobs.ruleType')"
-                readonly
-                outlined
-                dense
-              />
-            </v-flex>
-            <v-flex xs12 md4>
-              <v-text-field
-                :value="form.rule_name"
-                :label="$t('jobs.ruleName')"
-                readonly
-                outlined
-                dense
-              />
-            </v-flex>
-            <v-flex xs12 md4>
-              <v-text-field
-                :value="form.ticket_system_name"
-                :label="$t('jobs.ticketSystemName')"
-                readonly
-                outlined
-                dense
-              />
-            </v-flex>
-          </v-layout>
-          <v-flex xs12>
-            <v-text-field
-              v-field="form.ticket_id"
-              v-validate="ticketRules"
-              :label="$tc('common.ticket')"
-              :error-messages="errors.collect('ticket')"
-              name="ticket"
-              required
-              outlined
-              dense
-            />
-          </v-flex>
-        </v-layout>
+        <ticket-status-job-form v-model="form" />
       </template>
       <template #actions="">
         <v-btn
@@ -72,7 +30,7 @@
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -83,9 +41,9 @@ import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
 
-import ModalWrapper from '../modal-wrapper.vue';
+import TicketStatusJobForm from '@/components/other/ticket-status-job/ticket-status-job-form.vue';
 
-const ticketRules = { required: true };
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createTicketStatusJob,
@@ -94,6 +52,7 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: {
+    TicketStatusJobForm,
     ModalWrapper,
   },
   props: {
@@ -105,26 +64,10 @@ export default {
   setup(props) {
     const { config, close } = useInnerModal(props);
     const { t } = useI18n();
-
-    const job = computed(() => config.value.ticketStatusJob ?? {});
-    const form = ref(ticketStatusJobToForm(job.value));
-
-    const ruleTypeDisplay = computed(() => {
-      const ruleType = form.value.rule_type;
-      if (!ruleType) return '';
-
-      return t(`jobs.ruleTypeValues.${ruleType}`) || ruleType;
-    });
-
-    const jobName = computed(() => {
-      const j = job.value;
-      const fallback = `${j?.ticket_system_name || ''} - ${j?.ticket_id ?? ''}`.trim() || '-';
-
-      return (j?.rule_name ?? fallback);
-    });
+    const form = ref(ticketStatusJobToForm(config.value.ticketStatusJob ?? {}));
 
     const title = computed(
-      () => config.value.title ?? t('modals.createTicketStatusJob.edit.title', { jobName: jobName.value }),
+      () => config.value.title ?? t('modals.createTicketStatusJob.edit.title', { jobName: form.value.ticket_system_name }),
     );
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
@@ -138,14 +81,8 @@ export default {
 
     useFormConfirmableCloseModal({ form, submit, close });
 
-    watch(job, (newJob) => {
-      form.value = ticketStatusJobToForm(newJob);
-    }, { immediate: true });
-
     return {
       form,
-      ruleTypeDisplay,
-      ticketRules,
       title,
       isDisabled,
       submitting,
@@ -154,3 +91,4 @@ export default {
     };
   },
 };
+</script>

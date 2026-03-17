@@ -31,10 +31,10 @@ export default {
 
     const label = computed(() => t(`jobs.activeState.${props.status}`) || t('jobs.status.unknown'));
 
-    const statusColor = computed(() => (props.status === JOB_STATUS.running ? 'primary' : 'grey darken-1'));
+    const statusColor = computed(() => (props.status === JOB_STATUS.running ? 'success' : 'grey darken-1'));
 
     const statusIcon = computed(() => ({
-      [JOB_STATUS.running]: 'play_arrow_circle',
+      [JOB_STATUS.running]: 'play_circle',
       [JOB_STATUS.paused]: 'pause_circle',
       [JOB_STATUS.stopped]: 'stop_circle',
     }[props.status] ?? 'stop_circle'));
