@@ -272,6 +272,36 @@ export default {
       return actions;
     },
 
+    fastPbehaviorAction() {
+      /**
+       * If we have `pbh_origin_icon` it means that the alarm has a fast pbehavior and
+       * we should have possibility to remove it
+       */
+      if (this.item.pbh_origin_icon) {
+        return {
+          type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove,
+          title: this.$t('alarm.actions.titles.fastPbehaviorRemove'),
+          method: this.fastRemovePbehavior,
+        };
+      }
+
+      const fastPbehaviorsParameters = this.widget.parameters.fast_pbehaviors ?? [];
+      const fastPbehaviorAction = {
+        type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
+        title: this.$t('alarm.actions.titles.fastPbehaviorAdd'),
+      };
+
+      if (fastPbehaviorsParameters.length > 1) {
+        fastPbehaviorAction.items = fastPbehaviorsParameters.map(pbehaviorParameters => ({
+          title: pbehaviorParameters.name_prefix,
+          method: () => this.fastAddPbehavior(pbehaviorParameters),
+        }));
+      } else {
+        fastPbehaviorAction.method = () => this.fastAddPbehavior(fastPbehaviorsParameters[0]);
+      }
+
+      return fastPbehaviorAction;
+    },
     actions() {
       const actions = [];
 
@@ -381,11 +411,7 @@ export default {
             title: this.$t('alarm.actions.titles.snooze'),
             method: this.showSnoozeModal,
           },
-          {
-            type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
-            title: this.$t('alarm.actions.titles.fastPbehaviorAdd'),
-            method: this.fastAddPbehavior,
-          },
+          this.fastPbehaviorAction,
           {
             type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
             title: this.$t('alarm.actions.titles.pbehavior'),
@@ -567,8 +593,12 @@ export default {
       this.showAddPbehaviorModalByAlarms([this.item]);
     },
 
-    fastAddPbehavior() {
-      this.addFastPbehaviorByAlarms([this.item]);
+    fastAddPbehavior(pbehaviorParameters = {}) {
+      this.addFastPbehaviorByAlarms([this.item], pbehaviorParameters);
+    },
+
+    fastRemovePbehavior() {
+      this.removeFastPbehaviorByAlarms([this.item]);
     },
 
     showHistoryModal() {

@@ -8,7 +8,7 @@
       :ack="alarm.v.ack"
     />
     <extra-details-last-comment
-      v-if="alarm.v.last_comment && alarm.v.last_comment.m"
+      v-if="alarm.v.last_comment && (alarm.v.last_comment.m || alarm.v.last_comment.struct_m?.length)"
       :last-comment="alarm.v.last_comment"
     />
     <extra-details-ticket
@@ -23,6 +23,7 @@
     <extra-details-snooze
       v-if="alarm.v.snooze"
       :snooze="alarm.v.snooze"
+      :has-inactive-pbehavior="hasInactivePbehavior"
     />
     <extra-details-pbehavior
       v-if="alarm.v.pbehavior_info"
@@ -52,6 +53,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';
+
 import ExtraDetailsAck from './extra-details/extra-details-ack.vue';
 import ExtraDetailsLastComment from './extra-details/extra-details-last-comment.vue';
 import ExtraDetailsTicket from './extra-details/extra-details-ticket.vue';
@@ -89,10 +94,14 @@ export default {
       required: true,
     },
   },
-  computed: {
-    hasTickets() {
-      return this.alarm.v.tickets?.length;
-    },
+  setup(props) {
+    const hasTickets = computed(() => !!props.alarm.v.tickets?.length);
+    const hasInactivePbehavior = computed(() => isNotActivePbehaviorType(props.alarm.v.pbehavior_info?.canonical_type));
+
+    return {
+      hasTickets,
+      hasInactivePbehavior,
+    };
   },
 };
 </script>

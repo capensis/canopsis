@@ -114,4 +114,6 @@ const (
 
 	TemplateTestDataCollection = "template_data"
 	TemplateTestCollection     = "template_test"
+
+	PatternOptimizeJobCollection = "pattern_optimize_job"
 )

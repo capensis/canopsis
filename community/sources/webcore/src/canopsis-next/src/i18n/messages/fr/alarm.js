@@ -40,6 +40,7 @@ export default {
       ackRemove: 'Annuler l\'acquittement',
       pbehavior: 'Définir un comportement périodique',
       fastPbehaviorAdd: 'Définir un comportement périodique rapidemment',
+      fastPbehaviorRemove: 'Jouer',
       snooze: 'Mettre en veille',
       declareTicket: 'Déclarer un incident',
       associateTicket: 'Associer un ticket',
@@ -73,6 +74,7 @@ export default {
       ticketNumber: 'Numéro de ticket',
       parents: 'Causes',
       children: 'Conséquences',
+      cannotUnsnoozeUntilPbehaviorInProgress: 'Impossible de supprimer la veille tant que le comportement périodique est en cours',
     },
   },
   timeline: {
@@ -80,6 +82,7 @@ export default {
     launched: 'lancé',
     junit: 'JUnit',
     groupItems: 'Grouper les éléments',
+    onlyComments: 'Commentaires uniquement',
     steps: {
       [ALARM_LIST_STEPS.statedec]: 'Sévérité diminuée',
       [ALARM_LIST_STEPS.stateinc]: 'Sévérité augmentée',

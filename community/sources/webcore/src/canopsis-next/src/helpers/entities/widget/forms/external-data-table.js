@@ -1,8 +1,14 @@
 import { PAGINATION_LIMIT } from '@/config';
-import { DENSE_TYPES, CSV_SEPARATORS, DEFAULT_PERIODIC_REFRESH, EXPORT_CSV_DATETIME_FORMATS } from '@/constants';
+import {
+  DENSE_TYPES,
+  CSV_SEPARATORS,
+  DEFAULT_PERIODIC_REFRESH,
+  EXPORT_CSV_DATETIME_FORMATS,
+  SORT_ORDERS,
+} from '@/constants';
 
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
-import { columnsParametersToForm, widgetSortToForm } from '@/helpers/entities/widget/forms/alarm';
+import { columnsParametersToForm } from '@/helpers/entities/widget/forms/alarm';
 import { formToWidgetColumns, widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
 
 /**
@@ -24,6 +30,17 @@ import { formToWidgetColumns, widgetColumnsToForm } from '@/helpers/entities/wid
  * @property {WidgetColumnForm[]} widgetColumns
  * @property {WidgetColumnForm[]} widgetExportColumns
  */
+
+/**
+ * Convert widget sort parameters to form
+ *
+ * @param {WidgetSort} [sort = {}]
+ * @return {WidgetSort}
+ */
+export const widgetSortToForm = (sort = {}) => ({
+  order: sort.order ?? SORT_ORDERS.asc,
+  column: sort.column ?? '',
+});
 
 /**
  * Convert external data table widget parameters to form

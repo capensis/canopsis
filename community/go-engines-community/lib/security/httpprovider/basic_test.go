@@ -28,7 +28,7 @@ func TestBasicProvider_Auth_GivenAuthorizationHeader_ShouldAuthUser(t *testing.T
 
 	p := NewBasicProvider(mockProvider)
 	r := newRequest()
-	base := []byte(fmt.Sprintf("%s:%v", username, password))
+	base := fmt.Appendf(nil, "%s:%v", username, password)
 	r.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString(base))
 	user, err, ok := p.Auth(r)
 
@@ -84,7 +84,7 @@ func TestBasicProvider_Auth_GivenInvalidCredentials_ShouldReturnNil(t *testing.T
 
 	p := NewBasicProvider(mockProvider)
 	r := newRequest()
-	base := []byte(fmt.Sprintf("%s:%v", username, password))
+	base := fmt.Appendf(nil, "%s:%v", username, password)
 	r.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString(base))
 	user, err, ok := p.Auth(r)
 

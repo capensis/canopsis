@@ -2,8 +2,10 @@
 
 exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
 <div
-  class="v-list pa-0 variables-list v-sheet theme--light"
+  childrenkey="variables"
+  class="v-list pa-0 c-list v-sheet theme--light"
   role="list"
+  zindex="2"
 >
   <transition-stub
     name="fade-transition"
@@ -27,12 +29,10 @@ exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
           <div
             class="layout align-center"
           >
-            <span>
-              Entity
-              <span
-                class="v-list-item__mask"
-              />
-            </span>
+            <v-list-item-mask-stub
+              mask=""
+              text="Entity"
+            />
             <!---->
           </div>
           <!---->
@@ -40,10 +40,19 @@ exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
         </div>
       </div>
     </div>
-    <!---->
+    <div
+      class="v-list-item__action"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        arrow_right
+      </i>
+    </div>
   </div>
   <div
-    class="variables-list__append-item"
+    class="c-list__append-item"
   />
   <!---->
   <!---->
@@ -52,7 +61,7 @@ exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
 
 exports[`variables-list Renders \`variables-list\` with default props 1`] = `
 <div
-  class="v-list pa-0 variables-list v-sheet theme--light"
+  class="v-list pa-0 c-list v-sheet theme--light"
   role="list"
 >
   <transition-stub
@@ -61,7 +70,7 @@ exports[`variables-list Renders \`variables-list\` with default props 1`] = `
     <!---->
   </transition-stub>
   <div
-    class="variables-list__append-item"
+    class="c-list__append-item"
   />
   <!---->
 </div>
