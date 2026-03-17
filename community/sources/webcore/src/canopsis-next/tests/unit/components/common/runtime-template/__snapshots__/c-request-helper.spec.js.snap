@@ -2,7 +2,7 @@
 
 exports[`c-request-helper Renders \`c-request-helper\` after successful request 1`] = `
 <c-runtime-template-stub
-  template="<fragment><div>{\\"data\\":\\"test\\"}</div></fragment>"
+  template="<div class=\\"all-inherit\\"><div>{\\"data\\":\\"test\\"}</div></div>"
 />
 `;
 
