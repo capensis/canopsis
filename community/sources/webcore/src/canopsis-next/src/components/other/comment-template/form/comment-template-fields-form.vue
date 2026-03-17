@@ -27,12 +27,12 @@
                 :label="$t('common.fieldName')"
                 :name="`fields[${index}].name`"
                 :max-length="255"
-                hide-details
                 required
               />
               <c-enabled-field
                 v-field="form[index].required"
                 :label="$t('common.required')"
+                class="mt-0"
                 hide-details
               />
             </v-layout>

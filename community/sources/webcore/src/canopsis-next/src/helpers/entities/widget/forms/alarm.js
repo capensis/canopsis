@@ -818,6 +818,6 @@ export const createCommentFormToCreateCommentEvent = (form) => {
     struct_comment: (form.template?.fields ?? []).map(({ name: field }) => ({
       field,
       message: form[field],
-    })),
+    })).filter(({ message }) => message),
   };
 };
