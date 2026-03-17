@@ -155,6 +155,7 @@ export default {
     },
     success: {
       create: 'Comportement périodique créé avec succès !',
+      remove: 'Comportement périodique supprimé avec succès ! Vous devrez peut-être attendre 60 s pour le voir dans l\'interface.',
     },
     cancelConfirmation: 'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
   },

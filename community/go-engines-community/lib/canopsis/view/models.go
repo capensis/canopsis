@@ -32,6 +32,7 @@ const (
 	WidgetTemplateTypeAlarmExportToPDF      = "alarm_export_to_pdf"
 	WidgetTemplateTypeAlarmQuickActions     = "alarm_quick_actions"
 	WidgetTemplateTypeAlarmQuickMassActions = "alarm_mass_quick_actions"
+	WidgetTemplateTypeAlarmSortColumns      = "alarm_sort_columns"
 	WidgetTemplateTypeServiceWeatherItem    = "weather_item"
 	WidgetTemplateTypeServiceWeatherModal   = "weather_modal"
 	WidgetTemplateTypeServiceWeatherEntity  = "weather_entity"
@@ -91,6 +92,12 @@ type Widget struct {
 	IsPrivate bool `bson:"is_private" json:"is_private"`
 }
 
+type FastPbehavior struct {
+	NamePrefix string `bson:"name_prefix" json:"name_prefix" binding:"required,max=255"`
+	Reason     string `bson:"reason" json:"reason" binding:"required"`
+	Type       string `bson:"type" json:"type" binding:"required"`
+}
+
 type Parameters struct {
 	MainFilter string `bson:"mainFilter,omitempty" json:"mainFilter,omitempty"`
 
@@ -108,6 +115,8 @@ type Parameters struct {
 
 	// ExternalData
 	Table string `bson:"table,omitempty" json:"table,omitempty"`
+
+	FastPbehaviors []FastPbehavior `bson:"fast_pbehaviors,omitempty" json:"fast_pbehaviors,omitempty"`
 
 	RemainParameters map[string]any `bson:",inline" json:"-"`
 }
@@ -193,15 +202,16 @@ type WidgetFilter struct {
 }
 
 type WidgetTemplate struct {
-	ID      string           `bson:"_id,omitempty"`
-	Title   string           `bson:"title"`
-	Type    string           `bson:"type"`
-	Columns []WidgetColumn   `bson:"columns,omitempty"`
-	Content string           `bson:"content,omitempty"`
-	Actions []string         `bson:"actions,omitempty"`
-	Author  string           `bson:"author"`
-	Created datetime.CpsTime `bson:"created,omitempty"`
-	Updated datetime.CpsTime `bson:"updated,omitempty"`
+	ID          string             `bson:"_id,omitempty"`
+	Title       string             `bson:"title"`
+	Type        string             `bson:"type"`
+	Columns     []WidgetColumn     `bson:"columns,omitempty"`
+	Content     string             `bson:"content,omitempty"`
+	Actions     []string           `bson:"actions,omitempty"`
+	SortColumns []WidgetSortColumn `bson:"sort_columns,omitempty"`
+	Author      string             `bson:"author"`
+	Created     datetime.CpsTime   `bson:"created,omitempty"`
+	Updated     datetime.CpsTime   `bson:"updated,omitempty"`
 }
 
 type WidgetColumn struct {
@@ -214,4 +224,9 @@ type WidgetColumn struct {
 	InlineLinksCount int64  `bson:"inlineLinksCount,omitempty" json:"inlineLinksCount,omitempty"`
 	LinksInRowCount  int64  `bson:"linksInRowCount,omitempty" json:"linksInRowCount,omitempty"`
 	IsFilter         bool   `bson:"isFilter,omitempty" json:"isFilter,omitempty"`
+}
+
+type WidgetSortColumn struct {
+	SortBy string `bson:"sort_by" json:"sort_by" binding:"required"`
+	Sort   string `bson:"sort" json:"sort" binding:"oneof=asc desc"`
 }

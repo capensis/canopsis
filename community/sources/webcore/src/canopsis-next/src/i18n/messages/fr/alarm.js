@@ -40,6 +40,7 @@ export default {
       ackRemove: 'Annuler l\'acquittement',
       pbehavior: 'Définir un comportement périodique',
       fastPbehaviorAdd: 'Définir un comportement périodique rapidemment',
+      fastPbehaviorRemove: 'Jouer',
       snooze: 'Mettre en veille',
       declareTicket: 'Déclarer un incident',
       associateTicket: 'Associer un ticket',
