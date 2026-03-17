@@ -343,7 +343,11 @@ func (w *optimizeWorker) suggestFieldConditions(ctx context.Context, initConditi
 			return nil, nil, fmt.Errorf("failed to count literals field stats: %w", err)
 		}
 
-		suggestions := suggestConditions(literalStats, literalGroups, takenFields)
+		suggestions, err := suggestConditions(literalStats, literalGroups, takenFields)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to suggest conditions: %w", err)
+		}
+
 		if len(suggestions) == 0 {
 			w.appendCurrentConditions(initCondition, infoField, takenFields, &currentConditions)
 			continue
@@ -502,7 +506,7 @@ func (w *optimizeWorker) ProcessAbandonedJobs(ctx context.Context) {
 	}
 }
 
-func suggestConditions(literalFieldStats map[string][]LiteralFieldStats, literalGroups [][]string, takenFields map[string]bool) [][]pattern.FieldCondition {
+func suggestConditions(literalFieldStats map[string][]LiteralFieldStats, literalGroups [][]string, takenFields map[string]bool) ([][]pattern.FieldCondition, error) {
 	var alternatives [][]pattern.FieldCondition
 	uniqueConditions := make(map[string]bool)
 
@@ -572,7 +576,11 @@ func suggestConditions(literalFieldStats map[string][]LiteralFieldStats, literal
 		// Convert field->literals mappings to FieldConditions
 		for _, fieldLiterals := range literalsByField {
 			conditions := buildFieldConditions(fieldLiterals, takenFields)
-			key := conditionsKey(conditions)
+			key, err := conditionsKey(conditions)
+			if err != nil {
+				return nil, fmt.Errorf("failed to build conditions key: %w", err)
+			}
+
 			if !uniqueConditions[key] {
 				uniqueConditions[key] = true
 				alternatives = append(alternatives, conditions)
@@ -580,10 +588,10 @@ func suggestConditions(literalFieldStats map[string][]LiteralFieldStats, literal
 		}
 	}
 
-	return alternatives
+	return alternatives, nil
 }
 
-func conditionsKey(conditions []pattern.FieldCondition) string {
+func conditionsKey(conditions []pattern.FieldCondition) (string, error) {
 	var sb strings.Builder
 	for i, c := range conditions {
 		if i > 0 {
@@ -593,9 +601,13 @@ func conditionsKey(conditions []pattern.FieldCondition) string {
 		sb.WriteByte(':')
 		sb.WriteString(c.Condition.Type)
 		sb.WriteByte(':')
-		sb.WriteString(fmt.Sprintf("%v", c.Condition.Value))
+		_, err := fmt.Fprintf(&sb, "%v", c.Condition.Value)
+		if err != nil {
+			return "", fmt.Errorf("failed to format condition value: %w", err)
+		}
 	}
-	return sb.String()
+
+	return sb.String(), nil
 }
 
 func buildFieldConditions(fieldLiterals map[string][]string, takenFields map[string]bool) []pattern.FieldCondition {

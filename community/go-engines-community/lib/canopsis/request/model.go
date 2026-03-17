@@ -19,7 +19,7 @@ type Parameters struct {
 
 type BasicAuth struct {
 	Username string `bson:"username" json:"username"`
-	Password string `bson:"password" json:"password"`
+	Password string `bson:"password" json:"password"` //nolint:gosec
 }
 
 type ParsedParameters struct {

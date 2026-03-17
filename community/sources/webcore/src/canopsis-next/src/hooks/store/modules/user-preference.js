@@ -31,6 +31,7 @@ export const useUserPreference = () => {
     fetchUserPreferenceItem: 'fetchItem',
     fetchUserPreferenceWithoutStore: 'fetchItemWithoutStore',
     updateUserPreference: 'update',
+    updateLocalUserPreference: 'updateLocal',
   });
 
   return {
@@ -44,26 +45,38 @@ export const useUserPreference = () => {
  *
  * @param {Object} options - Options object
  * @param {string|Ref<string>} options.widgetId - ID of the widget to get preferences for
+ * @param {boolean} [options.localWidget=false] - When true, updates are stored locally only (no API request)
  * @returns {Object} Object containing widget-specific user preference data and methods
  * @property {ComputedRef<Object>} userPreference - Computed reference to the user preference for the widget
  * @property {Function} fetchUserPreference - Function to fetch user preference for the widget
  * @property {Function} updateContentInUserPreference - Function to update content in the user preference
  */
-export const useWidgetUserPreference = ({ widgetId }) => {
+export const useWidgetUserPreference = ({ widgetId, localWidget = false }) => {
   const {
     getUserPreferenceByWidgetId,
 
     fetchUserPreferenceItem,
     updateUserPreference,
+    updateLocalUserPreference,
   } = useUserPreference();
 
   const userPreference = computed(() => getUserPreferenceByWidgetId.value(unref(widgetId)));
 
-  const fetchUserPreference = () => fetchUserPreferenceItem({ id: unref(widgetId) });
+  const fetchUserPreference = () => {
+    if (unref(localWidget)) {
+      return Promise.resolve();
+    }
 
-  const updateContentInUserPreference = (content = {}) => updateUserPreference({
-    data: setField(userPreference.value, 'content', prevContent => ({ ...prevContent, ...content })),
-  });
+    return fetchUserPreferenceItem({ id: unref(widgetId) });
+  };
+
+  const updateContentInUserPreference = (content = {}) => {
+    const method = unref(localWidget) ? updateLocalUserPreference : updateUserPreference;
+
+    return method({
+      data: setField(userPreference.value, 'content', prevContent => ({ ...prevContent, ...content })),
+    });
+  };
 
   return {
     userPreference,

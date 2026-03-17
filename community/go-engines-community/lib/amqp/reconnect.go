@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
@@ -161,6 +162,7 @@ func (c *baseConnection) Close() error {
 func (c *baseConnection) addListener(listener chan<- bool) {
 	c.listenersM.Lock()
 	defer c.listenersM.Unlock()
+
 	c.listeners = append(c.listeners, listener)
 }
 
@@ -168,15 +170,10 @@ func (c *baseConnection) addListener(listener chan<- bool) {
 func (c *baseConnection) removeListener(listener chan<- bool) {
 	c.listenersM.Lock()
 	defer c.listenersM.Unlock()
-	removeIndex := -1
-	for i := range c.listeners {
-		if c.listeners[i] == listener {
-			removeIndex = i
-		}
-	}
 
+	removeIndex := slices.Index(c.listeners, listener)
 	if removeIndex >= 0 {
-		c.listeners = append(c.listeners[:removeIndex], c.listeners[removeIndex+1:]...)
+		c.listeners = slices.Delete(c.listeners, removeIndex, removeIndex+1)
 	}
 }
 
@@ -443,15 +440,10 @@ func (ch *baseChannel) addListener(listener chan<- bool) {
 func (ch *baseChannel) removeListener(listener chan<- bool) {
 	ch.listenersM.Lock()
 	defer ch.listenersM.Unlock()
-	removeIndex := -1
-	for i := range ch.listeners {
-		if ch.listeners[i] == listener {
-			removeIndex = i
-		}
-	}
 
+	removeIndex := slices.Index(ch.listeners, listener)
 	if removeIndex >= 0 {
-		ch.listeners = append(ch.listeners[:removeIndex], ch.listeners[removeIndex+1:]...)
+		ch.listeners = slices.Delete(ch.listeners, removeIndex, removeIndex+1)
 	}
 }
 

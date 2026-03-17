@@ -13,7 +13,6 @@ import { sanitizeHtml } from '@/helpers/html';
 
 import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
-import { usePeriodicRefreshChild } from '@/hooks/periodic-refresh';
 
 export default {
   props: {
@@ -87,9 +86,9 @@ export default {
         const html = await fn(context);
 
         /**
-         * We need to use vue-fragment here because we may have multiple root elements in the response html
+         * We need to use `all-inherit` class here because we may have multiple root elements in the response html
          */
-        template.value = `<fragment>${sanitizeHtml(html)}</fragment>`;
+        template.value = `<div class="all-inherit">${sanitizeHtml(html)}</div>`;
       } catch (err) {
         /**
          * Ignore cancelled requests
@@ -104,20 +103,18 @@ export default {
 
         switch (status) {
           case RESPONSE_STATUSES.unauthorized:
-            template.value = `<fragment>${t('handlebars.requestHelper.errors.unauthorized')}</fragment>`;
+            template.value = `<div class="all-inherit">${t('handlebars.requestHelper.errors.unauthorized')}</div>`;
             break;
           case RESPONSE_STATUSES.timeout:
-            template.value = `<fragment>${t('handlebars.requestHelper.errors.timeout')}</fragment>`;
+            template.value = `<div class="all-inherit">${t('handlebars.requestHelper.errors.timeout')}</div>`;
             break;
           default:
-            template.value = `<fragment>${t('handlebars.requestHelper.errors.other')}</fragment>`;
+            template.value = `<div class="all-inherit">${t('handlebars.requestHelper.errors.other')}</div>`;
         }
       } finally {
         cancelTokenSource = null;
       }
     });
-
-    usePeriodicRefreshChild({ handler: sendRequest });
 
     onMounted(sendRequest);
 

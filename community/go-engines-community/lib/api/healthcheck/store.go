@@ -3,6 +3,7 @@ package healthcheck
 import (
 	"context"
 	"reflect"
+	"slices"
 	"sort"
 	"sync"
 	"time"
@@ -481,10 +482,8 @@ func transformEngineInfoToGraph(engines map[string]engine.RunInfo, order []strin
 
 func isIntersected(l, r []string) bool {
 	for _, lv := range l {
-		for _, rv := range r {
-			if lv == rv {
-				return true
-			}
+		if slices.Contains(r, lv) {
+			return true
 		}
 	}
 
