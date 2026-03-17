@@ -231,7 +231,7 @@ export const useLazySearch = ({
    * @param {Array} newSelectedItems - The new list of selected items.
    */
   const changeSelectedItems = (newSelectedItems) => {
-    if (!newSelectedItems) {
+    if (!newSelectedItems && newSelectedItems !== 0) {
       selectedItems.value = [];
 
       updateModel('');
@@ -255,7 +255,7 @@ export const useLazySearch = ({
       (
         unwrappedAddable
           ? preparedNewSelectedItems
-          : preparedNewSelectedItems.filter(item => !isString(item))
+          : preparedNewSelectedItems.filter(item => !(isString(item) && !itemsByValue.value[item]))
       ).map(item => (
         isUndefined(item[unwrappedIdKey])
           ? { [unwrappedIdKey]: item, noData: true }

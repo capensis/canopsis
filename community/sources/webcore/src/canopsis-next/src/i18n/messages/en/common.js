@@ -76,6 +76,7 @@ export default {
   value: 'Value',
   limit: 'Limit',
   add: 'Add',
+  addAtLeastOneItem: 'Add at least one item.',
   create: 'Create',
   delete: 'Delete',
   show: 'Show',
@@ -259,6 +260,7 @@ export default {
   addMore: 'Add more',
   more: 'more',
   all: 'All',
+  other: 'Other',
   attribute: 'Attribute',
   timeTaken: 'Time taken',
   enginesMetrics: 'Engines` metrics',
@@ -496,6 +498,9 @@ export default {
 
     [PATTERN_OPERATORS.activated]: 'Activated',
     [PATTERN_OPERATORS.inactive]: 'Inactive',
+
+    [PATTERN_OPERATORS.enabled]: 'True',
+    [PATTERN_OPERATORS.disabled]: 'False',
 
     [PATTERN_OPERATORS.isMetaAlarm]: 'Is meta alarm',
     [PATTERN_OPERATORS.isNotMetaAlarm]: 'Is not meta alarm',
