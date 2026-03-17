@@ -163,7 +163,7 @@ func mockUserCursor(ctrl *gomock.Controller, user *security.User) libmongo.Curso
 		mockCursor.
 			EXPECT().
 			Decode(gomock.Any()).
-			Do(func(val interface{}) {
+			Do(func(val any) {
 				if u, ok := val.(*security.User); ok {
 					*u = *user
 				}

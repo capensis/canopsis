@@ -66,7 +66,7 @@ func TestInterfaceToString(t *testing.T) {
 		})
 
 		Convey("I can convert a list of int", func() {
-			values := make([]interface{}, 2)
+			values := make([]any, 2)
 			values[0] = 1
 			values[1] = 2
 			val, err := types.InterfaceToString(values)

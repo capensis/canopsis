@@ -82,7 +82,7 @@ describe('c-request-helper', () => {
 
     expect(axiosMockAdapter.history.get).toHaveLength(1);
     expect(mockFn).toHaveBeenCalledWith(responseData);
-    expect(wrapper.vm.template).toContain('<fragment>');
+    expect(wrapper.vm.template).toContain('<div class="all-inherit">');
   });
 
   test('Sends request with custom method and options', async () => {

@@ -6,7 +6,7 @@
       </v-flex>
       <v-btn color="info" @click="tryOptimization">
         <v-icon class="mr-2" color="white">
-          $vuetify.icons.wand_shine
+          wand_shine
         </v-icon>
         {{ $t('pattern.tryOptimization') }}
       </v-btn>

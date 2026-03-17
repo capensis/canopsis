@@ -789,7 +789,12 @@ func TestSuggestConditions(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			patterns := suggestConditions(tc.counts, tc.groups, tc.takenFields)
+			patterns, err := suggestConditions(tc.counts, tc.groups, tc.takenFields)
+			if err != nil {
+				t.Errorf("unexpected error: %v", err)
+				return
+			}
+
 			if len(patterns) != len(tc.expectedConditions) {
 				t.Errorf("expected %d, got %d.", len(tc.expectedConditions), len(patterns))
 				return

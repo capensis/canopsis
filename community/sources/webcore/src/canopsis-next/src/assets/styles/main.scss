@@ -300,6 +300,7 @@ html {
   top: 2px;
   right: 2px;
   margin: 0 !important;
+  height: auto;
 }
 
 .text-ucfirst {
@@ -561,4 +562,9 @@ html {
       background-color: var(--v-status-#{$status}-base);
     }
   }
+}
+
+
+.all-inherit {
+  all: inherit;
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"strings"
 
@@ -188,9 +189,7 @@ func flatten(in *fastjson.Value, prevKey string) map[string]any {
 			}
 
 			nm := flatten(v, newPrevKey)
-			for nk, nv := range nm {
-				out[nk] = nv
-			}
+			maps.Copy(out, nm)
 		})
 	case fastjson.TypeArray:
 		arr := in.GetArray()
@@ -222,9 +221,7 @@ func flatten(in *fastjson.Value, prevKey string) map[string]any {
 				arrValues = append(arrValues, out[newPrevKey])
 			default:
 				nm := flatten(v, newPrevKey)
-				for nk, nv := range nm {
-					out[nk] = nv
-				}
+				maps.Copy(out, nm)
 			}
 		}
 
