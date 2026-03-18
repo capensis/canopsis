@@ -129,11 +129,12 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": match}})
 	}
 
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
 		mongoquery.GetSortQuery(cmp.Or(query.SortBy, "_id"), query.Sort),
-		s.authorProvider.Pipeline(),
 	))
 	if err != nil {
 		return nil, err
