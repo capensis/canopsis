@@ -45,6 +45,9 @@ const (
 	MessageRateHourly = "message_rate_hourly"
 
 	EntityInfosUpdate = "entity_infos_update"
+
+	EventsAnomaly              = "event_anomaly"
+	AnomalyMonitoredConnectors = "anomaly_monitored_connectors"
 )
 
 // criteria type
