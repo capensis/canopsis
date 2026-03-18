@@ -1196,7 +1196,10 @@ describe('actions-panel', () => {
     };
     const widgetData = {
       _id: Faker.datatype.string(),
-      parameters: {},
+      comment_templates: [],
+      parameters: {
+        comment_templates: [],
+      },
     };
 
     const wrapper = factory({
@@ -1219,6 +1222,7 @@ describe('actions-panel', () => {
         name: MODALS.createCommentEvent,
         config: {
           items: [commentAlarm],
+          templates: [],
           action: expect.any(Function),
         },
       },
