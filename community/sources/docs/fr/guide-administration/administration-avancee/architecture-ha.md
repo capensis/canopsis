@@ -22,13 +22,14 @@ L’objectif est d’éviter tout point de défaillance unique (SPOF) et d’ass
 === "MongoDB"
 
     !!! info "Information"
-        Replicaset : Pré-requis pour le bon fonctionnement de l'applicatif
+        Mode Replicaset : Pré-requis pour le bon fonctionnement de l'applicatif
     
     - Déployé en ReplicaSet avec un **nombre impair de nœuds**, 3 minimum ;
     - Permet la réplication des données et la bascule automatique en cas de panne d’un nœud ;
     
     !!! warning "Attention"
         **Cette configuration permet uniquement la tolérance à la panne d’un seul nœud.**
+
         **Chaque nœud doit être hébergé sur une machine distincte.**
 
 === "RabbitMQ"
@@ -40,7 +41,7 @@ L’objectif est d’éviter tout point de défaillance unique (SPOF) et d’ass
     - Il est recommandé d’avoir **au minimum 3 nœuds** RabbitMQ pour garantir la redondance et éviter tout point de défaillance ;
     - Avec une configuration à 3 nœuds, le cluster permet uniquement la tolérance à la panne d’un seul nœud simultanément ;
     - Les files (queues) doivent être configurées en mode “quorum queues” pour assurer la réplication des messages entre les nœuds du cluster ;
-    - Tous les nœuds RabbitMQ doivent partager la même configuration et être répartis sur des machines distinctes.
+    - Tous les nœuds RabbitMQ doivent partager la même configuration et être **répartis sur des machines distinctes**.
 
 === "Valkey/Sentinel"
 
@@ -48,7 +49,8 @@ L’objectif est d’éviter tout point de défaillance unique (SPOF) et d’ass
     - Ajout de 3 sentinels pour la supervision et la gestion automatique du failover ;
 
     !!! warning "Attention"
-        Cette architecture tolère la perte d’un seul nœud à la fois.  
+        Cette architecture tolère la perte d’un seul nœud à la fois.
+
         Les nœuds Redis et les sentinels doivent être répartis sur des machines différentes pour garantir la tolérance aux pannes.
 
 === "TimescaleDB/PostgreSQL"
@@ -56,6 +58,11 @@ L’objectif est d’éviter tout point de défaillance unique (SPOF) et d’ass
     - Utiliser une [solution de HA pour PostgreSQL](https://patroni.readthedocs.io/en/latest/) comme [Patroni](https://patroni.readthedocs.io/en/latest/) pour mettre en place un cluster haute disponibilité (1 primaire + 1 secondaire) ; 
     - Patroni gère automatiquement les bascules (failover) en coordination avec un Distributed Config Store (DCS), comme par exemple **Etcd** ou **Consul** ;
     - Les deux instances de TimescaleDB/PostgreSQL doivent être sur des machines séparées.
+
+    !!! warning "Attention"
+        Cette architecture tolère la perte d’un seul nœud à la fois.
+
+        Si 3 nœuds Patroni présents, il est possible de tolérer la perte de 2 nœuds.
 
 ===! "Distributed Config Store (DCS)"
 
@@ -66,6 +73,9 @@ L’objectif est d’éviter tout point de défaillance unique (SPOF) et d’ass
     - Le DCS est utilisé par Patroni pour gérer l’élection du primaire et les opérations de bascule (failover) du cluster PostgreSQL ;
     - Les nœuds du DCS doivent être répartis sur 3 machines distinctes ;
 
+    !!! warning "Attention"
+        Cette architecture tolère la perte d’un seul nœud à la fois.
+
 === "Load Balancer"
 
     - Placé en frontal des serveurs web Canopsis (Nginx).
@@ -73,6 +83,13 @@ L’objectif est d’éviter tout point de défaillance unique (SPOF) et d’ass
 
     !!! info "Information"
         Vous pouvez prévoir plusieurs Load Balancer en mode actif/passif (keepalived ou VRRP) pour supprimer ce point de défaillance.
+    
+    !!! info "Information"
+        Nous garantissons le support pour les configurations basées sur Keepalived et HAProxy.
+        
+        L'utilisation de solutions de Load Balancing tierces (internes au client) est techniquement possible.
+        
+        Toutefois, bien que ces alternatives puissent être compatibles, elles ne sont pas couvertes par notre périmètre de support standard.
 
 ## Zoom sur les types d'installation
 
@@ -133,33 +150,33 @@ L’objectif est d’éviter tout point de défaillance unique (SPOF) et d’ass
 
     ![ha docker install](./img/ha_docker_install.png)
 
-    <h4>FIFO</h4>
+    <h4>Moteur FIFO et Haute Disponibilité</h4>
 
-    Le moteur FIFO doit impérativement être déployé en une seule instance, c’est-à-dire avec un seul conteneur actif.
+    Le moteur **FIFO** doit impérativement être déployé en une seule instance active (un seul conteneur). 
 
-    Dans un environnement Docker, cette unicité doit être garantie manuellement ou via l’orchestrateur utilisé (Docker Compose, Swarm, ou tout système externe).
+    Dans un environnement Docker, cette unicité doit être garantie manuellement ou via l’orchestrateur utilisé (Docker Compose, Swarm, ou tout système externe). En cas d’arrêt inopiné, il appartient à l’orchestrateur de relancer l’unique instance.
 
-    En cas d’arrêt inopiné ou de redémarrage du conteneur, il appartient à l’orchestrateur mise en place de relancer automatiquement l’unique instance.
+    **Mode Hot Standby & PRA :**
+
+    Pour répondre aux besoins de **Haute Disponibilité** ou de **Plan de Reprise d’Activité (PRA)** entre deux datacenters, un mode "Hot Standby" peut être mis en œuvre :
+
+      - L'utilisation de **Keepalived** est recommandée pour gérer une IP flottante (VIP) et assurer la bascule entre un nœud primaire et un nœud secondaire.
+    
+      - Notre support technique se limite officiellement aux configurations basées sur **Keepalived** et **HAProxy**. Toute autre solution de Load Balancing interne au client reste techniquement envisageable, mais n'est pas couverte par notre périmètre de support.
 
     <h4>Volume partagé</h4>
 
-    Dans une installation Docker en mode multi-instance, il est indispensable d’utiliser un volume partagé pour le répertoire équivalent à `/opt/canopsis/var/lib`.
+    Dans une installation Docker en mode multi-instance ou en architecture PRA, il est indispensable d’utiliser un **volume partagé** pour le répertoire `/opt/canopsis/var/lib`.
 
-    Ce volume doit être accessible en lecture/écriture par l’ensemble des conteneurs.
-
-    Ce stockage commun est nécessaire car le répertoire contient des fichiers qui doivent être partagés et synchronisés entre toutes les instances de l’API.
-
-    Les droits d’accès sur ce volume doivent être configurés pour l’utilisateur **canopsis**, afin de garantir un accès en lecture/écriture depuis toutes les instances.
+    Ce stockage commun est nécessaire car il contient des fichiers qui doivent être synchronisés entre toutes les instances de l’API. Le volume doit être accessible en lecture/écriture par l’ensemble des conteneurs, avec les droits configurés pour l’utilisateur **canopsis**.
 
     <h4>Backends</h4>
 
-    Pour rappel, tout comme une installation Helm, en Docker il est recommandé d’héberger les différents backends utilisés par Canopsis :
+    Pour rappel, tout comme pour une installation Helm, il est fortement recommandé d’héberger les différents backends utilisés par Canopsis sur des **machines dédiées** (hors Docker Compose applicatif) :
 
     - **MongoDB** ;
     - **TimescaleDB** ;
     - **RabbitMQ** ;
     - **Valkey**.
 
-    sur des **machines dédiées**.
-
-    Cette approche garantit une meilleure stabilité, facilite la gestion des données persistantes et permet d’appliquer plus finement les bonnes pratiques propres à chaque backend (haute disponibilité, réplication, sauvegardes, montée en charge, etc.).
+    Cette approche garantit une meilleure stabilité, facilite la gestion de la persistance des données et permet d’appliquer les bonnes pratiques de haute disponibilité et de sauvegarde propres à chaque base de données.
