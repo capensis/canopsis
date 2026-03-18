@@ -13,3 +13,8 @@ export const JOB_RULE_TYPE = {
   ticketDeclarationRule: 'ticket_declaration_rule',
   scenario: 'scenario',
 };
+
+export const JOB_RULE_TYPES = {
+  scenario: 0,
+  declareTicket: 1,
+};

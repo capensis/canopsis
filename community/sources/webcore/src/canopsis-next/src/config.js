@@ -422,7 +422,6 @@ export const API_ROUTES = {
   bulkTicketStatusJobs: {
     play: '/api/v4/cat/bulk/ticket-status-jobs/sync',
     pause: '/api/v4/cat/bulk/ticket-status-jobs/pause',
-    stop: '/api/v4/cat/bulk/ticket-status-jobs/stop',
   },
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',

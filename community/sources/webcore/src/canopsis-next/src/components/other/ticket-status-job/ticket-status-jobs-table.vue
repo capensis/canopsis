@@ -24,16 +24,18 @@
         :items="slotSelected"
         @edit="$emit('edit', $event)"
         @play="$emit('play', $event)"
-        @stop="$emit('stop', $event)"
         @retry="$emit('retry', $event)"
         @pause="$emit('pause', $event)"
       />
     </template>
     <template #header.data-table-select />
-    <template #active="{ item }">
-      <ticket-status-jobs-active-state-icon :status="item.status" />
+    <template #rule_type="{ item }">
+      {{ $t(`jobs.types.${item.rule_type}`) }}
     </template>
     <template #status="{ item }">
+      <ticket-status-jobs-active-state-icon :status="item.status" />
+    </template>
+    <template #last_run_status="{ item }">
       <ticket-status-jobs-run-status-icon :status="item.last_run_status" />
     </template>
     <template #created_at="{ item }">
@@ -48,18 +50,17 @@
     <template #fail_reason="{ item }">
       {{ item.fail_reason || '-' }}
     </template>
-    <template #expand="{ item }">
-      <ticket-status-jobs-details-expand-panel :item="item" />
-    </template>
     <template #actions="{ item }">
       <ticket-status-job-table-actions
         :item="item"
         @edit="$emit('edit', $event)"
         @play="$emit('play', $event)"
-        @stop="$emit('stop', $event)"
         @retry="$emit('retry', $event)"
         @pause="$emit('pause', $event)"
       />
+    </template>
+    <template #expand="{ item }">
+      <ticket-status-jobs-details-expand-panel :item="item" />
     </template>
   </c-advanced-data-table>
 </template>

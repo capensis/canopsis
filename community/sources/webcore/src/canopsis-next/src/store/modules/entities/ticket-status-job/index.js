@@ -20,9 +20,5 @@ export default {
     pause() {
       return request.post(API_ROUTES.bulkTicketStatusJobs.pause);
     },
-
-    stop() {
-      return request.post(API_ROUTES.bulkTicketStatusJobs.stop);
-    },
   },
 };

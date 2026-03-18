@@ -6,12 +6,6 @@
       icon="edit"
       @click="$emit('edit', item)"
     />
-    <c-action-btn
-      v-if="itemsForStop.length"
-      :tooltip="$t('jobs.actions.stopJob')"
-      icon="stop"
-      @click="$emit('stop', item)"
-    />
     <template v-if="itemsForStart.length">
       <c-action-btn
         v-if="shownPlay"
@@ -54,14 +48,12 @@ export default {
   setup(props) {
     const itemsForStart = computed(() => props.items.filter(item => item.status === JOB_STATUS.stopped));
     const itemsForPause = computed(() => props.items.filter(item => item.status === JOB_STATUS.stopped));
-    const itemsForStop = computed(() => props.items.filter(item => item.status === JOB_STATUS.stopped));
     const shownPlay = computed(() => itemsForStart.value.length > 0);
 
     return {
       shownPlay,
       itemsForStart,
       itemsForPause,
-      itemsForStop,
     };
   },
 };

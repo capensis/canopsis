@@ -9,7 +9,7 @@ export default {
   ticketNumber: 'Numéro de ticket',
   ruleType: 'Type de règle',
   active: 'Actif',
-  statusLabel: 'Statut',
+  lastStatus: 'Dernier statut',
   startDate: 'Date de début',
   finishDate: 'Date de fin',
   failReason: 'Raison de l\'échec',
@@ -39,7 +39,6 @@ export default {
     repeatJob: 'Répéter le job',
     pauseJob: 'Mettre le job en pause',
     startJob: 'Démarrer le job',
-    stopJob: 'Arrêter le job',
   },
   tabs: {
     instructions: 'Consignes',

@@ -248,7 +248,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USER_PERMISSIONS.technical.ticketStatusJob,
+        id: USER_PERMISSIONS.technical.job,
       },
     },
   },

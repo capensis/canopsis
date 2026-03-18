@@ -253,7 +253,7 @@ export default {
     [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Test de modèle',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'Jetons d\'authentification externes',
-    [USER_PERMISSIONS.technical.ticketStatusJob]: 'Jobs',
+    [USER_PERMISSIONS.technical.job]: 'Jobs',
     [USER_PERMISSIONS.technical.externalDataTable]: 'Données externes',
     [USER_PERMISSIONS.technical.entityInfoProperty]: 'Informations d\'entité',
 
