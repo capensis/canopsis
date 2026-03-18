@@ -32,6 +32,7 @@
         only-one-ticket-id
       />
       <declare-ticket-rule-check-ticket-status-field
+        v-if="form.declare_ticket.enabled"
         v-field="form.declare_ticket.check_ticket_status"
         :name="`${name}.declare_ticket.check_ticket_status`"
         :template-vars="templateVars"
