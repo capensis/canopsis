@@ -105,7 +105,7 @@ export default {
       {
         route: { name: ROUTES_NAMES.adminJobs },
         icon: '$vuetify.icons.ticket_status_job',
-        permission: USER_PERMISSIONS.technical.ticketStatusJob,
+        permission: USER_PERMISSIONS.technical.job,
       },
     ];
 

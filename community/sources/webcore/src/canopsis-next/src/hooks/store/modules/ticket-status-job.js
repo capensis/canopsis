@@ -15,7 +15,6 @@ export const useTicketStatusJob = () => {
     updateTicketStatusJob: 'update',
     playTicketStatusJob: 'play',
     pauseTicketStatusJob: 'pause',
-    stopTicketStatusJob: 'stop',
   });
 
   return {

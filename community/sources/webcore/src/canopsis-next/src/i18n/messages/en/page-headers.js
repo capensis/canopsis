@@ -158,7 +158,7 @@ export default {
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'External auth tokens',
   },
-  [USER_PERMISSIONS.technical.ticketStatusJob]: {
+  [USER_PERMISSIONS.technical.job]: {
     title: 'Jobs',
     message: 'Manage jobs for ticket status.',
   },

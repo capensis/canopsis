@@ -1,4 +1,10 @@
-import { JOB_STATUS, JOB_LAST_RUN_STATUS, JOB_RULE_TYPE, TICKET_STATUS_JOBS_TABS } from '@/constants';
+import {
+  JOB_STATUS,
+  JOB_LAST_RUN_STATUS,
+  JOB_RULE_TYPE,
+  JOB_RULE_TYPES,
+  TICKET_STATUS_JOBS_TABS,
+} from '@/constants';
 
 export default {
   filterByStatus: 'Filter by status',
@@ -9,7 +15,7 @@ export default {
   ticketNumber: 'Ticket number',
   ruleType: 'Rule type',
   active: 'Active',
-  statusLabel: 'Status',
+  lastStatus: 'Last status',
   startDate: 'Start date',
   finishDate: 'Finish date',
   failReason: 'Fail reason',
@@ -33,12 +39,15 @@ export default {
     [JOB_RULE_TYPE.ticketDeclarationRule]: 'Ticket declaration rule',
     [JOB_RULE_TYPE.scenario]: 'Scenario',
   },
+  types: {
+    [JOB_RULE_TYPES.scenario]: 'Scenario',
+    [JOB_RULE_TYPES.declareTicket]: 'Ticket declaration rules',
+  },
   actions: {
     editJob: 'Edit job',
     repeatJob: 'Repeat job',
     pauseJob: 'Pause job',
     startJob: 'Start job',
-    stopJob: 'Stop job',
   },
   tabs: {
     [TICKET_STATUS_JOBS_TABS.instructions]: 'Instructions',

@@ -10,10 +10,8 @@
       @edit="edit"
       @play="play"
       @pause="pause"
-      @stop="stop"
       @play:selected="playSelected"
       @pause:selected="pauseSelected"
-      @stop:selected="stopSelected"
     />
   </v-card-text>
 </template>
@@ -57,19 +55,17 @@ export default {
     })[props.tabId] ?? '');
 
     const headers = computed(() => {
-      const isInstructionsTab = props.tabId === TICKET_STATUS_JOBS_TABS.instructions;
-      const isWebhooksTab = props.tabId === TICKET_STATUS_JOBS_TABS.webhooks;
       const isTicketStatusTab = props.tabId === TICKET_STATUS_JOBS_TABS.ticketStatus;
       const isAuthTokenTab = props.tabId === TICKET_STATUS_JOBS_TABS.authToken;
 
       return [
+        !isAuthTokenTab && { value: 'rule_name', text: t('jobs.ruleName'), sortable: true },
+        !isAuthTokenTab && { value: 'rule_type', text: t('jobs.ruleType'), sortable: true },
         isAuthTokenTab && { value: 'authTokenName', text: t('jobs.authTokenName'), sortable: true },
         isTicketStatusTab && { value: 'ticket_system_name', text: t('jobs.ticketSystemName'), sortable: true },
         isTicketStatusTab && { value: 'ticket_id', text: t('jobs.ticketNumber'), sortable: true },
-        isTicketStatusTab && { value: 'active', text: t('jobs.active'), sortable: true },
-        (isInstructionsTab || isWebhooksTab) && { value: 'rule_name', text: t('jobs.ruleName'), sortable: true },
-        isWebhooksTab && { value: 'ruleType', text: t('jobs.ruleType'), sortable: true },
-        { value: 'status', text: t('jobs.statusLabel'), sortable: true },
+        isTicketStatusTab && { value: 'status', text: t('jobs.active'), sortable: true },
+        { value: 'last_run_status', text: t('jobs.lastStatus'), sortable: true },
         { value: 'created_at', text: t('jobs.startDate'), sortable: true },
         { value: 'checked_at', text: t('jobs.finishDate'), sortable: true },
         { value: 'fail_reason', text: t('jobs.failReason'), sortable: false },
@@ -114,9 +110,6 @@ export default {
     const pause = (item) => {
       pauseTicketStatusJob(item);
     };
-    const stop = (item) => {
-      stopTicketStatusJob(item);
-    };
 
     const playSelected = (selected) => {
       playTicketStatusJob(selected);
@@ -141,7 +134,6 @@ export default {
       edit,
       play,
       pause,
-      stop,
       playSelected,
       pauseSelected,
       stopSelected,

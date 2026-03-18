@@ -207,7 +207,7 @@ export const USER_PERMISSIONS = {
     externalAuthTokens: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalAuthTokens`,
     viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
     templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateTesting`,
-    ticketStatusJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_widgetTemplate`, // TODO: rename it to _ticketStatusJob
+    job: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`, // TODO: rename it to _job
     externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalData`,
     entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.technical.admin}_entityInfoProperty`,
     exploitation: {
@@ -620,7 +620,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USER_PERMISSIONS.technical.tag]: ADMIN_PAGES_RULES.tag,
   [USER_PERMISSIONS.technical.map]: ADMIN_PAGES_RULES.map,
   [USER_PERMISSIONS.technical.eventsRecord]: ADMIN_PAGES_RULES.eventsRecord,
-  [USER_PERMISSIONS.technical.ticketStatusJob]: ADMIN_PAGES_RULES.jobs,
+  [USER_PERMISSIONS.technical.job]: ADMIN_PAGES_RULES.jobs,
 
   /**
    * Exploitation pages (including grouped remediation)
