@@ -488,7 +488,6 @@ func TestWatcher_StopWatch_GivenStartWatch_ShouldCloseChangeStream(t *testing.T)
 
 	err = w.StopWatch(t.Context(), websocket.LeaveOptions{
 		ConnID: connId,
-		UserID: userID,
 		RoomID: roomId,
 	})
 	if err != nil {
@@ -545,7 +544,6 @@ func TestWatcher_StopWatch_GivenStartWatchDetails_ShouldCloseChangeStream(t *tes
 
 	err = w.StopWatch(t.Context(), websocket.LeaveOptions{
 		ConnID: connId,
-		UserID: userID,
 		RoomID: roomId,
 	})
 	if err != nil {
