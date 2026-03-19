@@ -28,11 +28,11 @@ export default {
   props: {
     json: {
       type: String,
-      required: false,
+      default: '',
     },
     jsonObject: {
       type: Object,
-      required: false,
+      default: () => ({}),
     },
   },
   computed: {

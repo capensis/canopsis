@@ -19,7 +19,7 @@
 <script>
 import { computed } from 'vue';
 
-import { TICKET_STATUS_JOBS_TABS } from '@/constants';
+import { JOBS_TABS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -30,7 +30,7 @@ export default {
   setup() {
     const { t } = useI18n();
 
-    const tabs = computed(() => Object.values(TICKET_STATUS_JOBS_TABS).map(tab => ({
+    const tabs = computed(() => Object.values(JOBS_TABS).map(tab => ({
       id: tab,
       label: t(`jobs.tabs.${tab}`),
     })));
