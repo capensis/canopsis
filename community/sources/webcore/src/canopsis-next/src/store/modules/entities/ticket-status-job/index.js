@@ -2,23 +2,19 @@ import { API_ROUTES } from '@/config';
 
 import request from '@/services/request';
 
-export default {
-  namespaced: true,
+import { createCRUDModule } from '@/store/plugins/entities';
+
+export default createCRUDModule({
+  route: API_ROUTES.ticketStatusJobs,
+  withFetchingParams: true,
+}, {
   actions: {
-    fetchListWithoutStore(context, { params } = {}) {
-      return request.get(API_ROUTES.ticketStatusJobs, { params });
+    play(context, { data } = {}) {
+      return request.post(API_ROUTES.bulkTicketStatusJobs.play, data);
     },
 
-    update(context, { id, data } = {}) {
-      return request.put(`${API_ROUTES.ticketStatusJobs}/${id}`, data);
-    },
-
-    play() {
-      return request.post(API_ROUTES.bulkTicketStatusJobs.play);
-    },
-
-    pause() {
-      return request.post(API_ROUTES.bulkTicketStatusJobs.pause);
+    pause(context, { data } = {}) {
+      return request.post(API_ROUTES.bulkTicketStatusJobs.pause, data);
     },
   },
-};
+});

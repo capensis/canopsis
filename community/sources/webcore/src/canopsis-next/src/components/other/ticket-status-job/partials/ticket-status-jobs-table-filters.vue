@@ -2,18 +2,6 @@
   <v-layout class="gap-4">
     <v-flex md3 xs6>
       <c-select-field
-        :value="options.last_run_status"
-        :label="$t('jobs.filterByStatus')"
-        :items="statusItems"
-        item-value="value"
-        item-text="text"
-        clearable
-        hide-details
-        @input="updateLastRunStatus"
-      />
-    </v-flex>
-    <v-flex md3 xs6>
-      <c-select-field
         :value="options.status"
         :label="$t('jobs.filterByActiveState')"
         :items="activeStateItems"
@@ -22,6 +10,18 @@
         clearable
         hide-details
         @input="updateStatus"
+      />
+    </v-flex>
+    <v-flex md3 xs6>
+      <c-select-field
+        :value="options.last_run_status"
+        :label="$t('jobs.filterByLastStatus')"
+        :items="statusItems"
+        item-value="value"
+        item-text="text"
+        clearable
+        hide-details
+        @input="updateLastRunStatus"
       />
     </v-flex>
   </v-layout>

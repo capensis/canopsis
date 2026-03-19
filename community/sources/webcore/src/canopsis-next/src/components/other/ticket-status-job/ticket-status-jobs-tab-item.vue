@@ -2,16 +2,11 @@
   <v-card-text>
     <ticket-status-jobs-table
       :headers="headers"
-      :items="items"
-      :pending="pending"
-      :total-items="totalItems"
+      :items="ticketStatusJobs"
+      :pending="ticketStatusJobsPending"
+      :total-items="ticketStatusJobsMeta.total_count"
       :options="options"
       @update:options="updateOptions"
-      @edit="edit"
-      @play="play"
-      @pause="pause"
-      @play:selected="playSelected"
-      @pause:selected="pauseSelected"
     />
   </v-card-text>
 </template>
@@ -19,12 +14,14 @@
 <script>
 import { computed, onMounted } from 'vue';
 
-import { MODALS, TICKET_STATUS_JOBS_TABS } from '@/constants';
+import { PAGINATION_LIMIT } from '@/config';
+import { TICKET_STATUS_JOBS_TABS } from '@/constants';
+
+import { convertQueryToRequest } from '@/helpers/query';
 
 import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { useTicketStatusJob } from '@/hooks/store/modules/ticket-status-job';
-import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 
 import TicketStatusJobsTable from '@/components/other/ticket-status-job/ticket-status-jobs-table.vue';
 
@@ -38,13 +35,11 @@ export default {
   },
   setup(props) {
     const { t } = useI18n();
-    const modals = useModals();
     const {
-      fetchTicketStatusJobsListWithoutStore,
-      updateTicketStatusJob,
-      playTicketStatusJob,
-      pauseTicketStatusJob,
-      stopTicketStatusJob,
+      ticketStatusJobs,
+      ticketStatusJobsMeta,
+      ticketStatusJobsPending,
+      fetchTicketStatusJobsList,
     } = useTicketStatusJob();
 
     const label = computed(() => ({
@@ -64,7 +59,7 @@ export default {
         isAuthTokenTab && { value: 'authTokenName', text: t('jobs.authTokenName'), sortable: true },
         isTicketStatusTab && { value: 'ticket_system_name', text: t('jobs.ticketSystemName'), sortable: true },
         isTicketStatusTab && { value: 'ticket_id', text: t('jobs.ticketNumber'), sortable: true },
-        isTicketStatusTab && { value: 'status', text: t('jobs.active'), sortable: true },
+        isTicketStatusTab && { value: 'status', text: t('jobs.activeState'), sortable: true },
         { value: 'last_run_status', text: t('jobs.lastStatus'), sortable: true },
         { value: 'created_at', text: t('jobs.startDate'), sortable: true },
         { value: 'checked_at', text: t('jobs.finishDate'), sortable: true },
@@ -74,69 +69,36 @@ export default {
       ].filter(Boolean);
     });
 
+    const initialQuery = {
+      page: 1,
+      itemsPerPage: PAGINATION_LIMIT,
+      search: '',
+      sortBy: [],
+      sortDesc: [],
+    };
+
+    const fetchList = (fetchQuery = initialQuery) => fetchTicketStatusJobsList({
+      params: convertQueryToRequest(fetchQuery),
+    });
+
     const {
-      data: items,
-      meta,
-      pending,
       options,
       updateOptions,
-      fetchList,
-    } = useFetchListWithoutStoreWithOptions({
-      initialQuery: {
-        page: 1,
-        itemsPerPage: 10,
-        search: '',
-        status: undefined,
-        last_run_status: undefined,
-      },
-      fetchListHandler: fetchTicketStatusJobsListWithoutStore,
+    } = useLocalQueryWithOptions({
+      initialQuery,
+      onUpdate: fetchList,
     });
-
-    const totalItems = computed(() => meta.value?.total_count ?? 0);
-
-    const edit = ticketStatusJob => modals.show({
-      name: MODALS.createTicketStatusJob,
-      config: {
-        ticketStatusJob,
-        action: async (newTicketStatusJob) => {
-          await updateTicketStatusJob({ id: ticketStatusJob._id, data: newTicketStatusJob });
-          await fetchList();
-        },
-      },
-    });
-    const play = (item) => {
-      playTicketStatusJob(item);
-    };
-    const pause = (item) => {
-      pauseTicketStatusJob(item);
-    };
-
-    const playSelected = (selected) => {
-      playTicketStatusJob(selected);
-    };
-    const pauseSelected = (selected) => {
-      pauseTicketStatusJob(selected);
-    };
-    const stopSelected = (selected) => {
-      stopTicketStatusJob(selected);
-    };
 
     onMounted(fetchList);
 
     return {
-      items,
-      pending,
-      totalItems,
+      ticketStatusJobs,
+      ticketStatusJobsMeta,
+      ticketStatusJobsPending,
       options,
       label,
       headers,
       updateOptions,
-      edit,
-      play,
-      pause,
-      playSelected,
-      pauseSelected,
-      stopSelected,
     };
   },
 };

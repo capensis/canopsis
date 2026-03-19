@@ -625,9 +625,6 @@ export default {
     },
   },
   createTicketStatusJob: {
-    create: {
-      title: 'Créer une tâche de statut de ticket',
-    },
     edit: {
       title: 'Éditer la tâche : {jobName}',
     },

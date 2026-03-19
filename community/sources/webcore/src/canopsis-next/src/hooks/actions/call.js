@@ -7,9 +7,10 @@ import { usePopups } from '@/hooks/popups';
  * and `usePopups` for displaying success or error messages in popup format.
  *
  * @param {boolean} throwOnError - Whether to throw the error if it occurs.
+ * @param {string} [successPopupType='success'] - The type of popup to display for success messages.
  * @returns {Object} An object containing the `callActionWithPopup` method.
  */
-export const useCallActionWithPopup = (throwOnError = false) => {
+export const useCallActionWithPopup = (throwOnError = false, successPopupType = 'success') => {
   const { t } = useI18n();
   const popups = usePopups();
 
@@ -20,7 +21,7 @@ export const useCallActionWithPopup = (throwOnError = false) => {
     try {
       await action();
 
-      popups.success({ text: callSuccessText });
+      popups[successPopupType]({ text: callSuccessText });
 
       return afterAction?.();
     } catch (err) {

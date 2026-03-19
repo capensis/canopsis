@@ -4,6 +4,7 @@
       <v-flex v-if="shownSearch" xs4>
         <c-search
           v-if="search"
+          :label="searchLabel"
           @submit="updateSearch"
         />
         <c-advanced-search
@@ -267,6 +268,10 @@ export default {
     expandIcon: {
       type: String,
       default: '$expand',
+    },
+    searchLabel: {
+      type: String,
+      default: '',
     },
     advancedSearchAttributes: {
       type: Array,

@@ -625,11 +625,8 @@ export default {
     },
   },
   createTicketStatusJob: {
-    create: {
-      title: 'Create ticket status job',
-    },
     edit: {
-      title: 'Edit job : {jobName}',
+      title: 'Edit job : check ticket status',
     },
   },
   clickOutsideConfirmation: {

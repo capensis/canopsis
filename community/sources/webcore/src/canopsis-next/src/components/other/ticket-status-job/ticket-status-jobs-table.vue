@@ -7,6 +7,7 @@
     :total-items="totalItems"
     :options="options"
     :is-disabled-item="isDisabledItem"
+    :search-label="$t('jobs.searchByRuleName')"
     expand
     search
     select-all
@@ -22,10 +23,7 @@
     <template #mass-actions="{ selected: slotSelected }">
       <ticket-status-job-table-actions
         :items="slotSelected"
-        @edit="$emit('edit', $event)"
-        @play="$emit('play', $event)"
-        @retry="$emit('retry', $event)"
-        @pause="$emit('pause', $event)"
+        class="mt-2"
       />
     </template>
     <template #header.data-table-select />
@@ -36,7 +34,7 @@
       <ticket-status-jobs-active-state-icon :status="item.status" />
     </template>
     <template #last_run_status="{ item }">
-      <ticket-status-jobs-run-status-icon :status="item.last_run_status" />
+      <ticket-status-jobs-last-run-status-icon :status="item.last_run_status" />
     </template>
     <template #created_at="{ item }">
       {{ item.created_at | date }}
@@ -51,13 +49,7 @@
       {{ item.fail_reason || '-' }}
     </template>
     <template #actions="{ item }">
-      <ticket-status-job-table-actions
-        :item="item"
-        @edit="$emit('edit', $event)"
-        @play="$emit('play', $event)"
-        @retry="$emit('retry', $event)"
-        @pause="$emit('pause', $event)"
-      />
+      <ticket-status-job-table-actions :item="item" />
     </template>
     <template #expand="{ item }">
       <ticket-status-jobs-details-expand-panel :item="item" />
@@ -71,7 +63,7 @@ import { ref, computed } from 'vue';
 
 import TicketStatusJobsActiveStateIcon from './partials/ticket-status-jobs-active-state-icon.vue';
 import TicketStatusJobsDetailsExpandPanel from './partials/ticket-status-jobs-details-expand-panel.vue';
-import TicketStatusJobsRunStatusIcon from './partials/ticket-status-jobs-run-status-icon.vue';
+import TicketStatusJobsLastRunStatusIcon from './partials/ticket-status-jobs-last-run-status-icon.vue';
 import TicketStatusJobsTableFilters from './partials/ticket-status-jobs-table-filters.vue';
 import TicketStatusJobTableActions from './partials/ticket-status-job-table-actions.vue';
 
@@ -79,7 +71,7 @@ export default {
   components: {
     TicketStatusJobsActiveStateIcon,
     TicketStatusJobsDetailsExpandPanel,
-    TicketStatusJobsRunStatusIcon,
+    TicketStatusJobsLastRunStatusIcon,
     TicketStatusJobsTableFilters,
     TicketStatusJobTableActions,
   },
@@ -110,20 +102,25 @@ export default {
 
     const firstSelectedStatus = computed(() => tableElement.value?.selectedItems?.[0]?.status);
 
+    /**
+     * Disables table items that have a different status than the first selected item.
+     * Ensures batch actions apply only to items with the same active state.
+     *
+     * @param {Object} item - Ticket status job entity
+     * @returns {boolean} True if the item should be disabled for selection
+     */
     const isDisabledItem = item => !isUndefined(firstSelectedStatus.value) && item.status !== firstSelectedStatus.value;
 
-    const itemsWithSelectable = computed(() => (
-      firstSelectedStatus.value
-        ? props.items.map(item => ({ ...item, isSelectable: item.status === firstSelectedStatus.value }))
-        : props.items
-    ));
-
+    /**
+     * Emits options update to the parent.
+     *
+     * @param {Object} newOptions - New table options (pagination, sort, filters, etc.)
+     */
     const updateOptions = newOptions => emit('update:options', newOptions);
 
     return {
       tableElement,
       isDisabledItem,
-      itemsWithSelectable,
       updateOptions,
     };
   },

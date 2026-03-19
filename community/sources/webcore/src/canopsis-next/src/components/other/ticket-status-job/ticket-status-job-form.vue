@@ -1,11 +1,34 @@
 <template>
   <v-layout class="gap-3" column>
-    <v-text-field
-      :value="form.ticket_system_name"
-      :label="$t('jobs.ticketSystemName')"
-      readonly
-      disabled
-    />
+    <v-layout class="gap-3" wrap>
+      <v-text-field
+        :value="ruleType"
+        :label="$t('jobs.ruleType')"
+        readonly
+        disabled
+      />
+      <v-text-field
+        :value="form.rule_name"
+        :label="$t('jobs.ruleName')"
+        readonly
+        disabled
+      >
+        <template #append>
+          <c-help-icon
+            :text="$t('jobs.ruleNameTooltip')"
+            icon="help"
+            icon-class="grey--text"
+            left
+          />
+        </template>
+      </v-text-field>
+      <v-text-field
+        :value="form.ticket_system_name"
+        :label="$t('jobs.ticketSystemName')"
+        readonly
+        disabled
+      />
+    </v-layout>
     <v-text-field
       v-field="form.ticket_id"
       v-validate="'required'"
@@ -22,10 +45,11 @@
 </template>
 
 <script>
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
+import { useI18n } from '@/hooks/i18n';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
 import DeclareTicketRuleCheckTicketStatusField from '@/components/other/declare-ticket/form/fields/declare-ticket-rule-check-ticket-status-field.vue';
@@ -45,8 +69,12 @@ export default {
       default: () => ({}),
     },
   },
-  setup() {
+  setup(props) {
     const type = TEMPLATE_TESTING_TEST_TYPES.declareTicketRule;
+
+    const { t } = useI18n();
+
+    const ruleType = computed(() => t(`jobs.types.${props.form.rule_type}`));
 
     const {
       vars: templateVars,
@@ -56,6 +84,7 @@ export default {
     onMounted(fetchTemplateVarsList);
 
     return {
+      ruleType,
       templateVars,
     };
   },

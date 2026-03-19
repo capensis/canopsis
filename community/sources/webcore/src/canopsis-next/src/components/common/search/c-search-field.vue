@@ -3,7 +3,7 @@
     v-if="combobox"
     v-field="value"
     ref="comboboxElement"
-    :label="$t('common.search')"
+    :label="label || $t('common.search')"
     :items="items"
     :menu-props="comboboxMenuProps"
     :return-object="false"
@@ -36,7 +36,7 @@
   <v-text-field
     v-else
     v-field="value"
-    :label="$t('common.search')"
+    :label="label || $t('common.search')"
     hide-details
     single-line
     @keydown.enter.prevent="submit(value)"
@@ -55,6 +55,10 @@ export default {
   components: { AdvancedSearchHistoryItemBtns },
   props: {
     value: {
+      type: String,
+      default: '',
+    },
+    label: {
       type: String,
       default: '',
     },
