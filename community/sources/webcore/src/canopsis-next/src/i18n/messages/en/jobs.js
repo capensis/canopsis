@@ -8,19 +8,21 @@ import {
 
 export default {
   filterByStatus: 'Filter by status',
+  filterByLastStatus: 'Filter by last status',
   filterByActiveState: 'Filter by active state',
   ruleName: 'Rule name',
+  ruleNameTooltip: 'Rule name at the time of job creation',
   authTokenName: 'Auth token name',
   ticketSystemName: 'Ticket system name',
   ticketNumber: 'Ticket number',
   ruleType: 'Rule type',
-  active: 'Active',
+  activeState: 'Active state',
   lastStatus: 'Last status',
   startDate: 'Start date',
   finishDate: 'Finish date',
   failReason: 'Fail reason',
   expirationDate: 'Expiration date',
-  searchByRuleName: 'Search by rule name',
+  searchByRuleName: 'Search by rule name, ticket system name or ticket number',
   data: {
     request: 'Request',
     response: 'Response',
@@ -50,9 +52,15 @@ export default {
     startJob: 'Start job',
   },
   tabs: {
-    [TICKET_STATUS_JOBS_TABS.instructions]: 'Instructions',
-    [TICKET_STATUS_JOBS_TABS.webhooks]: 'Webhooks',
     [TICKET_STATUS_JOBS_TABS.ticketStatus]: 'Ticket status',
-    [TICKET_STATUS_JOBS_TABS.authToken]: 'Auth token',
+  },
+  popups: {
+    updated: 'Job updated',
+    repeated: 'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> repeated | {count} jobs repeated',
+    restarted: 'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> restarted | {count} jobs restarted',
+    repeatFailed: 'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> failed to repeat | {count} jobs failed to repeat',
+    restartFailed: 'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> failed to restart | {count} jobs failed to restart',
+    paused: 'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> paused | {count} jobs paused',
+    pauseFailed: 'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> failed to pause | {count} jobs failed to pause',
   },
 };

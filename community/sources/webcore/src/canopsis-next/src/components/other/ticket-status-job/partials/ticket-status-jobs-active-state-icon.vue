@@ -29,7 +29,7 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
-    const label = computed(() => t(`jobs.activeState.${props.status}`) || t('jobs.status.unknown'));
+    const label = computed(() => t(`jobs.status.${props.status}`));
 
     const statusColor = computed(() => (props.status === JOB_STATUS.running ? 'success' : 'grey darken-1'));
 

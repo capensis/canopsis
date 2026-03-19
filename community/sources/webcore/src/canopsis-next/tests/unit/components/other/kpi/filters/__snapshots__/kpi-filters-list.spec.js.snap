@@ -10,7 +10,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
     <!---->
   </div>
@@ -756,7 +758,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
     <!---->
   </div>
@@ -927,7 +931,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
     <!---->
   </div>
@@ -1573,7 +1579,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
     <!---->
   </div>

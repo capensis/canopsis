@@ -29,9 +29,7 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
-    const label = computed(() => (
-      t(`jobs.runStatus.${props.status}`) ? t(`jobs.runStatus.${props.status}`) : t('jobs.runStatus.inProgress')
-    ));
+    const label = computed(() => t(`jobs.lastRunStatus.${props.status}`));
 
     const statusColor = computed(() => (
       {

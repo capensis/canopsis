@@ -191,7 +191,9 @@ export default {
 
     const activatorListeners = computed(() => (
       props.disabled
-        ? {}
+        ? {
+          mouseleave: onMouseLeave,
+        }
         : {
           ...listeners,
           mouseenter: onMouseEnter,
