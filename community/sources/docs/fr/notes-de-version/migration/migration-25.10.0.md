@@ -23,6 +23,33 @@ Les fichiers de référence qui sont mentionnés dans ce guide sont disponibles 
 
 Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lors de modifications importantes.
 
+## Arrêt de l'environnement en cours d'exécution
+
+=== "RPM"
+
+    Vous devez prévoir une interruption du service afin de procéder à la mise à jour qui va suivre.
+
+    ```sh
+    systemctl stop canopsis.service
+    ```
+
+=== "Docker Compose"
+
+    Vous devez prévoir une interruption du service afin de procéder à la mise à jour qui va suivre.
+
+    ```sh
+    CPS_EDITION=pro docker compose down
+    ```
+
+=== "Helm"
+
+    Vous devez prévoir une interruption du service afin de procéder à la mise à jour qui va suivre.
+
+    ```sh
+    kubectl delete deployments --all
+    ```
+
+
 ## Mise à jour de MongoDB
 
 ### Vérifications MongoDB
