@@ -36,8 +36,8 @@ type JoinOptions struct {
 }
 
 type LeaveOptions struct {
-	ConnID, UserID string
-	RoomID         string
+	ConnID string
+	RoomID string
 }
 
 type MessageOptions struct {
@@ -46,6 +46,12 @@ type MessageOptions struct {
 	Payload        any
 }
 
+// JoinError is returned by OnJoin when the room should be closed immediately
+// after joining — for example, when the entity being watched has already
+// reached a terminal state and no further updates will arrive.
+// Payload (e.g. the last known status) is sent to the client as ServerMessageInfo,
+// followed by ServerMessageCloseRoom to close the room.
+// Use plain errors for internal failures instead.
 type JoinError struct {
 	Err     error
 	Payload any

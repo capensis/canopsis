@@ -1322,7 +1322,11 @@ func TestHub_Connect_GivenOnJoinReturnsJoinError_ShouldSendInfoMessage(t *testin
 			Room:    room,
 			Payload: joinErrPayload,
 		}))
-		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
+		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageCloseRoom,
+			Room: room,
+		}))
+		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().RemoteAddr().Return(&net.IPAddr{}).AnyTimes()
