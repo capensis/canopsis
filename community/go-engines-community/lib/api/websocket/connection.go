@@ -50,9 +50,9 @@ type connection struct {
 	closeOnce      sync.Once
 	writeCh        chan ServerMessage
 	done           chan struct{}
-	roomsMu        sync.RWMutex
+	roomsMx        sync.RWMutex
 	rooms          map[string]bool
-	userIDMu       sync.RWMutex
+	userIDMx       sync.RWMutex
 	userID         string
 	userToken      string
 }
@@ -65,10 +65,10 @@ func (c *connection) close(ctx context.Context) error {
 		err = c.conn.Close()
 		close(c.done)
 
-		c.roomsMu.Lock()
+		c.roomsMx.Lock()
 		rooms := c.rooms
 		c.rooms = make(map[string]bool)
-		c.roomsMu.Unlock()
+		c.roomsMx.Unlock()
 
 		userID := c.getUserID()
 		c.logger.Debug().Str("conn", c.id).Str("user", userID).Msg("connection closed")
@@ -281,10 +281,10 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 		}
 	}
 
-	c.roomsMu.Lock()
+	c.roomsMx.Lock()
 	exists := c.rooms[msg.Room]
 	c.rooms[msg.Room] = true
-	c.roomsMu.Unlock()
+	c.roomsMx.Unlock()
 	if exists {
 		return
 	}
@@ -296,9 +296,9 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 			Payload: msg.Payload,
 		})
 		if err != nil {
-			c.roomsMu.Lock()
+			c.roomsMx.Lock()
 			delete(c.rooms, msg.Room)
-			c.roomsMu.Unlock()
+			c.roomsMx.Unlock()
 
 			if jerr, ok := errors.AsType[*JoinError](err); ok {
 				c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", userID).Msg("cannot join to room")
@@ -337,13 +337,13 @@ func (c *connection) leave(ctx context.Context, msg ClientMessage) {
 		return
 	}
 
-	c.roomsMu.Lock()
+	c.roomsMx.Lock()
 	exists := c.rooms[room]
 	if exists {
 		delete(c.rooms, room)
 	}
 
-	c.roomsMu.Unlock()
+	c.roomsMx.Unlock()
 	if !exists {
 		return
 	}
@@ -383,18 +383,14 @@ func (c *connection) auth(ctx context.Context, msg ClientMessage) {
 		return
 	}
 
-	c.userIDMu.Lock()
-	exists := c.userID != ""
-	c.userID = userID
-	c.userToken = msg.Token
-	c.userIDMu.Unlock()
+	changed := c.setAuth(userID, msg.Token)
 
 	c.logger.Debug().Str("conn", c.id).Str("user", userID).Msg("user authenticated")
 	c.write(ctx, ServerMessage{
 		Type: ServerMessageAuthSuccess,
 	})
 
-	if exists {
+	if changed {
 		c.checkRooms(ctx)
 	}
 }
@@ -442,9 +438,9 @@ func (c *connection) msg(ctx context.Context, msg ClientMessage) {
 }
 
 func (c *connection) checkAuth(ctx context.Context) {
-	c.userIDMu.RLock()
+	c.userIDMx.RLock()
 	token := c.userToken
-	c.userIDMu.RUnlock()
+	c.userIDMx.RUnlock()
 
 	if token == "" {
 		return
@@ -452,16 +448,14 @@ func (c *connection) checkAuth(ctx context.Context) {
 
 	_, err := c.authenticate(ctx, token)
 	if err != nil {
-		c.userIDMu.Lock()
-		c.userID = ""
-		c.userToken = ""
-		c.userIDMu.Unlock()
+		c.setAuth("", "")
 
-		c.logger.Err(err).Msg("cannot authenticate token")
+		c.logger.Debug().Err(err).Msg("cannot authenticate token")
 		c.writeError(ctx, "", http.StatusUnauthorized, nil)
-
 	}
 
+	// checkRooms is called even on auth failure: after clearing credentials above,
+	// it evicts the connection from any rooms that require authorization.
 	c.checkRooms(ctx)
 }
 
@@ -469,14 +463,14 @@ func (c *connection) checkRooms(ctx context.Context) {
 	userID := c.getUserID()
 	removedRooms := make([]string, 0)
 
-	c.roomsMu.RLock()
+	c.roomsMx.RLock()
 	rooms := make(map[string]bool, len(c.rooms))
 	maps.Copy(rooms, c.rooms)
-	c.roomsMu.RUnlock()
+	c.roomsMx.RUnlock()
 
 	for room := range rooms {
-		h, _ := c.roomRegistry.Get(room)
-		if h.Authorize != nil {
+		h, ok := c.roomRegistry.Get(room)
+		if ok && h.Authorize != nil {
 			ok, err := h.Authorize(ctx, userID)
 			if err != nil {
 				c.logger.Err(err).Str("room", room).Str("user", userID).Msg("cannot authorize user")
@@ -489,16 +483,16 @@ func (c *connection) checkRooms(ctx context.Context) {
 		}
 	}
 
-	c.roomsMu.Lock()
+	c.roomsMx.Lock()
 	for _, room := range removedRooms {
 		delete(c.rooms, room)
 	}
 
-	c.roomsMu.Unlock()
+	c.roomsMx.Unlock()
 
 	for _, room := range removedRooms {
-		h, _ := c.roomRegistry.Get(room)
-		if h.OnLeave != nil {
+		h, ok := c.roomRegistry.Get(room)
+		if ok && h.OnLeave != nil {
 			err := h.OnLeave(ctx, LeaveOptions{
 				ConnID: c.id,
 				UserID: userID,
@@ -513,13 +507,13 @@ func (c *connection) checkRooms(ctx context.Context) {
 }
 
 func (c *connection) leaveRoom(ctx context.Context, room string) {
-	c.roomsMu.Lock()
+	c.roomsMx.Lock()
 	exists := c.rooms[room]
 	if exists {
 		delete(c.rooms, room)
 	}
 
-	c.roomsMu.Unlock()
+	c.roomsMx.Unlock()
 	if !exists {
 		return
 	}
@@ -543,31 +537,43 @@ func (c *connection) leaveRoom(ctx context.Context, room string) {
 }
 
 func (c *connection) inRoom(room string) bool {
-	c.roomsMu.RLock()
-	defer c.roomsMu.RUnlock()
+	c.roomsMx.RLock()
+	defer c.roomsMx.RUnlock()
 
 	return c.rooms[room]
 }
 
 func (c *connection) getUserID() string {
-	c.userIDMu.RLock()
-	defer c.userIDMu.RUnlock()
+	c.userIDMx.RLock()
+	defer c.userIDMx.RUnlock()
 
 	return c.userID
 }
 
 func (c *connection) getAuth() (userID, token string) {
-	c.userIDMu.RLock()
-	defer c.userIDMu.RUnlock()
+	c.userIDMx.RLock()
+	defer c.userIDMx.RUnlock()
 
 	return c.userID, c.userToken
+}
+
+func (c *connection) setAuth(userID, token string) bool {
+	c.userIDMx.Lock()
+	defer c.userIDMx.Unlock()
+
+	changes := c.userID != userID || c.userToken != token
+
+	c.userID = userID
+	c.userToken = token
+
+	return changes
 }
 
 func (c *connection) getRoomsForGroup(group string) []string {
 	prefix := group + groupDelimiter
 
-	c.roomsMu.RLock()
-	defer c.roomsMu.RUnlock()
+	c.roomsMx.RLock()
+	defer c.roomsMx.RUnlock()
 
 	ids := make([]string, 0)
 	for room := range c.rooms {

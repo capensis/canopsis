@@ -12,7 +12,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// Lock ordering to prevent deadlocks: connsMu → roomsMu → userIDMu.
+// Lock ordering to prevent deadlocks: connsMx → roomsMx → userIDMx.
 // Never acquire an outer lock while holding an inner one.
 
 const (
@@ -67,7 +67,7 @@ type hub struct {
 	configProvider         config.ApiConfigProvider
 	checkAuthTokenInterval time.Duration
 	logger                 zerolog.Logger
-	connsMu                sync.RWMutex
+	connsMx                sync.RWMutex
 	conns                  map[string]*connection
 	registerCh             chan *connection
 }
@@ -96,9 +96,7 @@ func (h *hub) Run(ctx context.Context) {
 	defer cancel()
 	wg := sync.WaitGroup{}
 	// check auth for connections
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		t := time.NewTicker(h.checkAuthTokenInterval)
 		defer t.Stop()
 
@@ -107,17 +105,17 @@ func (h *hub) Run(ctx context.Context) {
 			case <-ctx.Done():
 				return
 			case <-t.C:
-				h.connsMu.RLock()
+				h.connsMx.RLock()
 				conns := make(map[string]*connection, len(h.conns))
 				maps.Copy(conns, h.conns)
-				h.connsMu.RUnlock()
+				h.connsMx.RUnlock()
 
 				for _, c := range conns {
 					c.checkAuth(ctx)
 				}
 			}
 		}
-	}()
+	})
 
 	// register connections
 loop:
@@ -127,28 +125,25 @@ loop:
 			break loop
 		case c := <-h.registerCh:
 			h.logger.Debug().Str("conn", c.id).Str("addr", c.conn.RemoteAddr().String()).Msg("connection registered")
-			h.connsMu.Lock()
+			h.connsMx.Lock()
 			h.conns[c.id] = c
-			h.connsMu.Unlock()
-			wg.Add(2)
-			go func() {
-				defer wg.Done()
+			h.connsMx.Unlock()
+			wg.Go(func() {
 				defer h.closeAndRmConn(ctx, c.id)
 				c.runRead(ctx)
-			}()
-			go func() {
-				defer wg.Done()
+			})
+			wg.Go(func() {
 				defer h.closeConn(ctx, c.id)
 				c.runWrite(ctx)
-			}()
+			})
 		}
 	}
 
 	// close all connections
-	h.connsMu.Lock()
+	h.connsMx.Lock()
 	conns := h.conns
 	h.conns = make(map[string]*connection)
-	h.connsMu.Unlock()
+	h.connsMx.Unlock()
 	closeCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
 	defer cancel()
 	for _, c := range conns {
@@ -184,8 +179,8 @@ func (h *hub) SendMessageToUser(ctx context.Context, payload any, room, userID s
 }
 
 func (h *hub) ConnectedUserIDs() []string {
-	h.connsMu.RLock()
-	defer h.connsMu.RUnlock()
+	h.connsMx.RLock()
+	defer h.connsMx.RUnlock()
 
 	seen := make(map[string]bool, len(h.conns))
 	ids := make([]string, 0, len(h.conns))
@@ -202,8 +197,8 @@ func (h *hub) ConnectedUserIDs() []string {
 }
 
 func (h *hub) ConnectionsInRoom(room string) []ConnectionInfo {
-	h.connsMu.RLock()
-	defer h.connsMu.RUnlock()
+	h.connsMx.RLock()
+	defer h.connsMx.RUnlock()
 
 	conns := make([]ConnectionInfo, 0)
 	for _, c := range h.conns {
@@ -219,7 +214,7 @@ func (h *hub) ConnectionsInRoom(room string) []ConnectionInfo {
 }
 
 func (h *hub) LeaveRoom(ctx context.Context, room string) {
-	h.connsMu.RLock()
+	h.connsMx.RLock()
 	conns := make([]*connection, 0, len(h.conns))
 	for _, c := range h.conns {
 		if c.inRoom(room) {
@@ -227,15 +222,15 @@ func (h *hub) LeaveRoom(ctx context.Context, room string) {
 		}
 	}
 
-	h.connsMu.RUnlock()
+	h.connsMx.RUnlock()
 	for _, c := range conns {
 		c.leaveRoom(ctx, room)
 	}
 }
 
 func (h *hub) Connections() []ConnectionAuthInfo {
-	h.connsMu.RLock()
-	defer h.connsMu.RUnlock()
+	h.connsMx.RLock()
+	defer h.connsMx.RUnlock()
 
 	conns := make([]ConnectionAuthInfo, 0, len(h.conns))
 	for _, c := range h.conns {
@@ -251,8 +246,8 @@ func (h *hub) Connections() []ConnectionAuthInfo {
 }
 
 func (h *hub) ConnectedGroupRoomIDs(group string) []string {
-	h.connsMu.RLock()
-	defer h.connsMu.RUnlock()
+	h.connsMx.RLock()
+	defer h.connsMx.RUnlock()
 
 	seen := make(map[string]bool)
 	ids := make([]string, 0)
@@ -269,7 +264,7 @@ func (h *hub) ConnectedGroupRoomIDs(group string) []string {
 }
 
 func (h *hub) sendToConns(ctx context.Context, msg ServerMessage, filter func(c *connection) bool) bool {
-	h.connsMu.RLock()
+	h.connsMx.RLock()
 	conns := make([]*connection, 0)
 	for _, c := range h.conns {
 		if filter(c) {
@@ -277,7 +272,7 @@ func (h *hub) sendToConns(ctx context.Context, msg ServerMessage, filter func(c 
 		}
 	}
 
-	h.connsMu.RUnlock()
+	h.connsMx.RUnlock()
 	for _, c := range conns {
 		c.write(ctx, msg)
 	}
@@ -286,13 +281,13 @@ func (h *hub) sendToConns(ctx context.Context, msg ServerMessage, filter func(c 
 }
 
 func (h *hub) closeAndRmConn(ctx context.Context, connID string) {
-	h.connsMu.Lock()
+	h.connsMx.Lock()
 	c, ok := h.conns[connID]
 	if ok {
 		delete(h.conns, connID)
 	}
 
-	h.connsMu.Unlock()
+	h.connsMx.Unlock()
 
 	if ok {
 		err := c.close(ctx)
@@ -303,9 +298,9 @@ func (h *hub) closeAndRmConn(ctx context.Context, connID string) {
 }
 
 func (h *hub) closeConn(ctx context.Context, connID string) {
-	h.connsMu.RLock()
+	h.connsMx.RLock()
 	c, ok := h.conns[connID]
-	h.connsMu.RUnlock()
+	h.connsMx.RUnlock()
 
 	if ok {
 		err := c.close(ctx)
