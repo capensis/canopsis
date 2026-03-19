@@ -20,3 +20,30 @@ if (!db.permission.findOne({_id: "api_llm_config"})) {
         }
     });
 }
+
+if (db.configuration.findOne({_id: "data_storage"})) {
+    db.configuration.updateOne(
+        {
+            _id: "data_storage",
+            "config.llm_chat.delete_after": null
+        },
+        {
+            $set: {
+                "config.llm_chat.delete_after": {
+                    "value": 1,
+                    "unit": "M",
+                    "enabled": true,
+                },
+            }
+        },
+    );
+} else {
+    db.configuration.insertOne({
+        _id: "data_storage",
+        "config.llm_chat.delete_after": {
+            "value": 1,
+            "unit": "M",
+            "enabled": true,
+        },
+    });
+}
