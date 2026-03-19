@@ -731,6 +731,7 @@ func registerWebsocketRooms(
 	if err != nil {
 		return fmt.Errorf("fail to register websocket group: %w", err)
 	}
+	// TODO: add handlers for anomaly monitored connector state
 
 	return nil
 }
