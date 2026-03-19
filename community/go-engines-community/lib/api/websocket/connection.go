@@ -74,7 +74,6 @@ func (c *connection) close(ctx context.Context) error {
 		c.logger.Debug().Str("conn", c.id).Str("user", userID).Msg("connection closed")
 		opts := LeaveOptions{
 			ConnID: c.id,
-			UserID: userID,
 		}
 		for room := range rooms {
 			h, ok := c.roomRegistry.Get(room)
@@ -307,6 +306,10 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 					Room:    msg.Room,
 					Payload: jerr.Payload,
 				})
+				c.write(ctx, ServerMessage{
+					Type: ServerMessageCloseRoom,
+					Room: msg.Room,
+				})
 
 				return
 			}
@@ -353,7 +356,6 @@ func (c *connection) leave(ctx context.Context, msg ClientMessage) {
 	if ok && h.OnLeave != nil {
 		err := h.OnLeave(ctx, LeaveOptions{
 			ConnID: c.id,
-			UserID: userID,
 		})
 		if err != nil {
 			c.logger.Err(err).Str("room", room).Str("user", userID).Msg("cannot leave from room")
@@ -471,13 +473,16 @@ func (c *connection) checkRooms(ctx context.Context) {
 	for room := range rooms {
 		h, ok := c.roomRegistry.Get(room)
 		if ok && h.Authorize != nil {
-			ok, err := h.Authorize(ctx, userID)
-			if err != nil {
+			var granted bool
+			var err error
+			if userID == "" {
+				granted = false
+			} else if granted, err = h.Authorize(ctx, userID); err != nil {
 				c.logger.Err(err).Str("room", room).Str("user", userID).Msg("cannot authorize user")
 				continue
 			}
 
-			if !ok {
+			if !granted {
 				removedRooms = append(removedRooms, room)
 			}
 		}
@@ -495,7 +500,6 @@ func (c *connection) checkRooms(ctx context.Context) {
 		if ok && h.OnLeave != nil {
 			err := h.OnLeave(ctx, LeaveOptions{
 				ConnID: c.id,
-				UserID: userID,
 			})
 			if err != nil {
 				c.logger.Err(err).Str("room", room).Str("user", userID).Msg("cannot leave from room")
@@ -523,7 +527,6 @@ func (c *connection) leaveRoom(ctx context.Context, room string) {
 		userID := c.getUserID()
 		err := h.OnLeave(ctx, LeaveOptions{
 			ConnID: c.id,
-			UserID: userID,
 		})
 		if err != nil {
 			c.logger.Err(err).Str("room", room).Str("user", userID).Msg("cannot leave from room")
