@@ -314,6 +314,13 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 				return
 			}
 
+			if verr, ok := errors.AsType[*ValidationError](err); ok {
+				c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", userID).Msg("cannot join to room")
+				c.writeError(ctx, msg.Room, http.StatusBadRequest, verr.Payload)
+
+				return
+			}
+
 			if errors.Is(err, ErrRoomNotFound) {
 				c.writeError(ctx, msg.Room, http.StatusNotFound, nil)
 
@@ -432,6 +439,21 @@ func (c *connection) msg(ctx context.Context, msg ClientMessage) {
 		Payload: msg.Payload,
 	})
 	if err != nil {
+		if verr, ok := errors.AsType[*ValidationError](err); ok {
+			c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", userID).Msg("cannot handle message from room")
+			c.writeError(ctx, msg.Room, http.StatusBadRequest, verr.Payload)
+
+			return
+		}
+
+		if cerr, ok := errors.AsType[*CloseRoomError](err); ok {
+			c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", userID).Msg("cannot handle message from room")
+			c.writeError(ctx, msg.Room, http.StatusGone, cerr.Payload)
+			c.leaveRoom(ctx, msg.Room)
+
+			return
+		}
+
 		c.logger.Err(err).Str("room", msg.Room).Str("user", userID).Msg("cannot handle message from room")
 		c.writeError(ctx, msg.Room, http.StatusInternalServerError, nil)
 

@@ -311,6 +311,18 @@ func (mr *MockHubMockRecorder) Run(ctx any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockHub)(nil).Run), ctx)
 }
 
+// SendError mocks base method.
+func (m *MockHub) SendError(ctx context.Context, status int, payload any, f websocket.Filter) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendError", ctx, status, payload, f)
+}
+
+// SendError indicates an expected call of SendError.
+func (mr *MockHubMockRecorder) SendError(ctx, status, payload, f any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendError", reflect.TypeOf((*MockHub)(nil).SendError), ctx, status, payload, f)
+}
+
 // SendMessage mocks base method.
 func (m *MockHub) SendMessage(ctx context.Context, payload any, f websocket.Filter) {
 	m.ctrl.T.Helper()
