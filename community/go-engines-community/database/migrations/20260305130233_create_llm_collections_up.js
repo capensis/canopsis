@@ -21,6 +21,20 @@ if (!db.permission.findOne({_id: "api_llm_config"})) {
     });
 }
 
+if (!db.permission.findOne({_id: "api_llm_chat"})) {
+    db.permission.insertOne({
+        _id: "api_llm_chat",
+        name: "api_llm_chat",
+        description: "LLM chat",
+        groups: ["api", "api_general"]
+    });
+    db.role.updateOne({name: "admin"}, {
+        $set: {
+            "permissions.api_llm_chat": 1
+        }
+    });
+}
+
 if (db.configuration.findOne({_id: "data_storage"})) {
     db.configuration.updateOne(
         {

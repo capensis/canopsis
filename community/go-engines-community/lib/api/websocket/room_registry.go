@@ -65,6 +65,40 @@ func NewJoinError(err error, payload any) *JoinError {
 	return &JoinError{Err: err, Payload: payload}
 }
 
+// ValidationError is returned by OnJoin or OnMessage to signal invalid client input.
+// Payload is sent to the client as ServerMessageError with HTTP 400.
+// Use plain errors for internal failures instead.
+type ValidationError struct {
+	Err     error
+	Payload any
+}
+
+func (e *ValidationError) Error() string {
+	return e.Err.Error()
+}
+
+func NewValidationError(err error, payload any) *ValidationError {
+	return &ValidationError{Err: err, Payload: payload}
+}
+
+// CloseRoomError is returned by OnMessage when the room should be closed —
+// for example, when the resource being watched is no longer available.
+// Payload is sent to the client as ServerMessageError with HTTP 410,
+// followed by ServerMessageCloseRoom to close the room.
+// Use plain errors for internal failures instead.
+type CloseRoomError struct {
+	Err     error
+	Payload any
+}
+
+func (e *CloseRoomError) Error() string {
+	return e.Err.Error()
+}
+
+func NewCloseRoomError(err error, payload any) *CloseRoomError {
+	return &CloseRoomError{Err: err, Payload: payload}
+}
+
 func NewRoomRegistry() RoomRegistry {
 	return &roomRegistry{
 		rooms:  make(map[string]RoomHandlers),

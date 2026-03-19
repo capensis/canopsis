@@ -30,6 +30,7 @@ type Hub interface {
 	Connect(w http.ResponseWriter, r *http.Request) error
 	Run(ctx context.Context)
 	SendMessage(ctx context.Context, payload any, f Filter)
+	SendError(ctx context.Context, status int, payload any, f Filter)
 	ConnectedUserIDs() []string
 	ConnectedGroupRoomIDs(group string) []string
 	ConnectionsInRoom(room string) []ConnectionInfo
@@ -162,6 +163,16 @@ func (h *hub) SendMessage(ctx context.Context, payload any, f Filter) {
 	msg := ServerMessage{
 		Type:    ServerMessageInfo,
 		Room:    f.room(),
+		Payload: payload,
+	}
+	h.sendToConns(ctx, msg, f.match)
+}
+
+func (h *hub) SendError(ctx context.Context, status int, payload any, f Filter) {
+	msg := ServerMessage{
+		Type:    ServerMessageError,
+		Room:    f.room(),
+		Error:   status,
 		Payload: payload,
 	}
 	h.sendToConns(ctx, msg, f.match)
