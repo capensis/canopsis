@@ -1,4 +1,4 @@
-import { zipObjectDeep } from 'lodash';
+import { isArray, isObject, zipObjectDeep } from 'lodash';
 import flatten from 'flat';
 
 import { uid } from '@/helpers/uid';
@@ -58,7 +58,7 @@ export function primitiveArrayToForm(array, valueKey = 'value') {
  * @returns {Array}
  */
 export function formToPrimitiveArray(array, valueKey = 'value') {
-  return array.map(item => item[valueKey]);
+  return (isArray(array) ? array : [array]).map(item => (isObject(item) ? item[valueKey] : item));
 }
 
 /**

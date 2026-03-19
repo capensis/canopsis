@@ -76,6 +76,7 @@ export default {
   value: 'Valeur',
   limit: 'Limite',
   add: 'Ajouter',
+  addAtLeastOneItem: 'Ajouter au moins un élément.',
   create: 'Créer',
   delete: 'Supprimer',
   show: 'Afficher',
@@ -259,6 +260,7 @@ export default {
   addMore: 'Ajouter plus',
   more: 'plus',
   all: 'Tous',
+  other: 'Autre',
   attribute: 'Attribut',
   timeTaken: 'Temps passé',
   enginesMetrics: 'Métriques des moteurs',
@@ -496,6 +498,9 @@ export default {
 
     [PATTERN_OPERATORS.activated]: 'Activé',
     [PATTERN_OPERATORS.inactive]: 'Inactif',
+
+    [PATTERN_OPERATORS.enabled]: 'Vrai',
+    [PATTERN_OPERATORS.disabled]: 'Faux',
 
     [PATTERN_OPERATORS.isMetaAlarm]: 'Est-ce une méta-alarme',
     [PATTERN_OPERATORS.isNotMetaAlarm]: 'Ce n\'est pas une méta-alarme',

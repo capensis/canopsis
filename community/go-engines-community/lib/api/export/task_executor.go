@@ -19,7 +19,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-const fileNameTimeLayout = "2006-01-02T15-04-05-MST"
+const FileNameTimeLayout = "2006-01-02T15-04-05-MST"
 
 // TaskCreator is used to create export task.
 type TaskCreator interface {
@@ -117,7 +117,7 @@ func (e *taskExecutor) Create(ctx context.Context, params TaskParameters) (*Task
 		Parameters: params.Parameters,
 		Fields:     params.Fields,
 		Separator:  params.Separator,
-		Filename: params.FilenamePrefix + "-" + now.Time.Format(fileNameTimeLayout) +
+		Filename: params.FilenamePrefix + "-" + now.Time.Format(FileNameTimeLayout) +
 			e.GetFormatter(params.Type).GetFileExtension(),
 		User:       params.UserID,
 		TimeFormat: params.TimeFormat,

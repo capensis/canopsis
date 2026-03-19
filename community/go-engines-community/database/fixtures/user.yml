@@ -769,12 +769,24 @@ permission_group:
     _id: technical_admin_access
     name: <Current()._id>
     position: <Index()>
+  group_technical_admin_maintenance:
+    _id: technical_admin_maintenance
+    name: <Current()._id>
+    position: <Index()>
   group_technical_admin_communication:
     _id: technical_admin_communication
     name: <Current()._id>
     position: <Index()>
   group_technical_admin_general:
     _id: technical_admin_general
+    name: <Current()._id>
+    position: <Index()>
+  group_technical_admin_customobjects:
+    _id: technical_admin_customobjects
+    name: <Current()._id>
+    position: <Index()>
+  group_technical_admin_settings:
+    _id: technical_admin_settings
     name: <Current()._id>
     position: <Index()>
   group_technical_viewsandwidgets:
@@ -1586,6 +1598,52 @@ permission:
     api_permissions:
       "@permission_api_acl": 0
 
+  # technical -> admin -> maintenance
+  permission_models_maintenance:
+    <<: *permission
+    _id: models_maintenance
+    name: <Current()._id>
+    description: Maintenance
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_maintenance"
+    api_permissions:
+      "@permission_api_maintenance": 1
+  permission_models_planningType:
+    <<: *permission_crud
+    _id: models_planningType
+    name: <Current()._id>
+    description: Planning - types
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_maintenance"
+    api_permissions:
+      "@permission_api_pbehaviortype": 0
+  permission_models_planningReason:
+    <<: *permission_crud
+    _id: models_planningReason
+    name: <Current()._id>
+    description: Planning - reasons
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_maintenance"
+    api_permissions:
+      "@permission_api_pbehaviorreason": 0
+  permission_models_planningExceptions:
+    <<: *permission_crud
+    _id: models_planningExceptions
+    name: <Current()._id>
+    description: Planning - exception dates
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_maintenance"
+    api_permissions:
+      "@permission_api_pbehaviorexception": 0
+
   # technical -> admin -> communication
   permission_models_broadcastMessage:
     <<: *permission_crud
@@ -1645,78 +1703,6 @@ permission:
       - "@group_technical_admin_general"
     api_permissions:
       "@permission_api_techmetrics": 1
-  permission_models_remediationInstruction:
-    <<: *permission_crud
-    _id: models_remediationInstruction
-    name: <Current()._id>
-    description: Instructions - instructions tab
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_instruction": 0
-      <<: [
-        *api_permissions_alarm_pattern,
-        *api_permissions_entity_pattern
-      ]
-  permission_models_remediationInstructionApprove:
-    <<: *permission
-    _id: models_remediationInstructionApprove
-    name: <Current()._id>
-    description: Instructions - instruction approve
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_instruction_approve": 1
-  permission_models_remediationJob:
-    <<: *permission_crud
-    _id: models_remediationJob
-    name: <Current()._id>
-    description: Instructions - jobs tab
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_job": 0
-  permission_models_remediationConfiguration:
-    <<: *permission_crud
-    _id: models_remediationConfiguration
-    name: <Current()._id>
-    description: Instructions - configurations tab
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_job_config": 0
-  permission_models_remediation_statistics:
-    <<: *permission
-    _id: models_remediationStatistic
-    name: <Current()._id>
-    description: Instructions - remediation statistics tab
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_instruction": 4
-      "@permission_api_metrics": 1
-  permission_models_instructionStats:
-    <<: *permission_crud
-    _id: models_instructionStats
-    name: <Current()._id>
-    description: Instructions - instructions stats tab
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions_bitmask:
-      4:
-        "@permission_api_instruction": 4
   permission_models_kpi:
     <<: *permission
     _id: models_kpi
@@ -1765,174 +1751,11 @@ permission:
       - "@group_technical_admin_general"
     api_permissions:
       "@permission_api_metrics_settings": 0
-  permission_models_maintenance:
-    <<: *permission
-    _id: models_maintenance
-    name: <Current()._id>
-    description: Maintenance
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_maintenance": 1
-  permission_models_map:
-    <<: *permission_crud
-    _id: models_map
-    name: <Current()._id>
-    description: Maps
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_map": 0
-      "@permission_api_entity": 4
-  permission_models_parameters:
-    <<: *permission_rw
-    _id: models_parameters
-    name: <Current()._id>
-    description: Parameters - parameters tab
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions_bitmask:
-      2:
-        "@permission_api_user_interface_update": 1
-      1:
-        "@permission_api_user_interface_delete": 1
-  permission_models_widgetTemplate:
-    <<: *permission_crud
-    _id: models_widgetTemplate
-    name: <Current()._id>
-    description: Parameters - widget templates
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_widgettemplate": 0
-      "@permission_api_alarm_read": 1
-      "@permission_api_entity": 4
-      "@permission_api_dynamicinfos": 4
-  permission_models_icon:
-    <<: *permission_crud
-    _id: models_icon
-    name: <Current()._id>
-    description: Parameters - icons
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions_bitmask:
-      8:
-        "@permission_api_icon": 1
-      2:
-        "@permission_api_icon": 1
-      1:
-        "@permission_api_icon": 1
-  permission_models_view_import_export:
-    <<: *permission
-    _id: models_view_import_export
-    name: <Current()._id>
-    description: Parameters - import / export
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_viewgroup": 3
-      "@permission_api_view": 3
-  permission_models_notification_common:
-    <<: *permission
-    _id: models_notification_common
-    name: <Current()._id>
-    description: Parameters - notification settings
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_notification": 1
-  permission_models_planningType:
-    <<: *permission_crud
-    _id: models_planningType
-    name: <Current()._id>
-    description: Planning type (Pbehavior)
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_pbehaviortype": 0
-  permission_models_planningReason:
-    <<: *permission_crud
-    _id: models_planningReason
-    name: <Current()._id>
-    description: Planning reason (Pbehavior)
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_pbehaviorreason": 0
-  permission_models_planningExceptions:
-    <<: *permission_crud
-    _id: models_planningExceptions
-    name: <Current()._id>
-    description: Planning exceptions dates (Pbehavior)
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_pbehaviorexception": 0
-  permission_models_stateSetting:
-    <<: *permission_crud
-    _id: models_stateSetting
-    name: <Current()._id>
-    description: State settings
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_state_settings": 0
-  permission_models_storageSettings:
-    <<: *permission_rw
-    _id: models_storageSettings
-    name: <Current()._id>
-    description: Storage settings
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions_bitmask:
-      4:
-        "@permission_api_datastorage_read": 1
-      2:
-        "@permission_api_datastorage_update": 1
-  permission_models_tag:
-    <<: *permission_crud
-    _id: models_tag
-    name: <Current()._id>
-    description: Tags management
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_alarm_tag": 0
-      <<: [
-        *api_permissions_alarm_pattern,
-        *api_permissions_entity_pattern
-      ]
   permission_models_eventsRecord:
     <<: *permission
     _id: models_eventsRecord
     name: <Current()._id>
-    description: Events recording
+    description: Event records
     groups:
       - "@group_technical"
       - "@group_technical_admin"
@@ -1944,22 +1767,167 @@ permission:
     <<: *permission
     _id: models_templateTesting
     name: <Current()._id>
-    description: Models template testing
+    description: Go templates
     groups:
       - "@group_technical"
       - "@group_technical_admin"
       - "@group_technical_admin_general"
+
+  # technical -> admin -> customobjects
+  permission_models_entityInfoProperty:
+    <<: *permission_crud
+    _id: models_entityInfoProperty
+    name: <Current()._id>
+    description: Entity infos
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_customobjects"
+    api_permissions:
+      "@permission_api_entity_info_property": 0
+  permission_models_externalData:
+    <<: *permission_crud
+    _id: models_externalData
+    name: <Current()._id>
+    description: External data
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_customobjects"
+    api_permissions:
+      "@permission_api_external_data_table": 0
   permission_models_externalAuthTokens:
     <<: *permission_crud
     _id: models_externalAuthTokens
     name: <Current()._id>
-    description: Webhook token rule
+    description: External auth tokens
     groups:
       - "@group_technical"
       - "@group_technical_admin"
-      - "@group_technical_admin_general"
+      - "@group_technical_admin_customobjects"
     api_permissions:
       "@permission_api_webhook_token_rule": 0
+  permission_models_icon:
+    <<: *permission_crud
+    _id: models_icon
+    name: <Current()._id>
+    description: Icons
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_customobjects"
+    api_permissions_bitmask:
+      8:
+        "@permission_api_icon": 1
+      2:
+        "@permission_api_icon": 1
+      1:
+        "@permission_api_icon": 1
+  permission_models_map:
+    <<: *permission_crud
+    _id: models_map
+    name: <Current()._id>
+    description: Maps
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_customobjects"
+    api_permissions:
+      "@permission_api_map": 0
+      "@permission_api_entity": 4
+  permission_models_tag:
+    <<: *permission_crud
+    _id: models_tag
+    name: <Current()._id>
+    description: Tags
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_customobjects"
+    api_permissions:
+      "@permission_api_alarm_tag": 0
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
+
+  # technical -> admin -> settings
+  permission_models_view_import_export:
+    <<: *permission
+    _id: models_view_import_export
+    name: <Current()._id>
+    description: Import / export
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_settings"
+    api_permissions:
+      "@permission_api_viewgroup": 3
+      "@permission_api_view": 3
+  permission_models_notification_common:
+    <<: *permission
+    _id: models_notification_common
+    name: <Current()._id>
+    description: Notification
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_settings"
+    api_permissions:
+      "@permission_api_notification": 1
+  permission_models_stateSetting:
+    <<: *permission_crud
+    _id: models_stateSetting
+    name: <Current()._id>
+    description: State
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_settings"
+    api_permissions:
+      "@permission_api_state_settings": 0
+  permission_models_storageSettings:
+    <<: *permission_rw
+    _id: models_storageSettings
+    name: <Current()._id>
+    description: Storage
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_settings"
+    api_permissions_bitmask:
+      4:
+        "@permission_api_datastorage_read": 1
+      2:
+        "@permission_api_datastorage_update": 1
+  permission_models_parameters:
+    <<: *permission_rw
+    _id: models_parameters
+    name: <Current()._id>
+    description: User interface
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_settings"
+    api_permissions_bitmask:
+      2:
+        "@permission_api_user_interface_update": 1
+      1:
+        "@permission_api_user_interface_delete": 1
+  permission_models_widgetTemplate:
+    <<: *permission_crud
+    _id: models_widgetTemplate
+    name: <Current()._id>
+    description: Widget templates
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_settings"
+    api_permissions:
+      "@permission_api_widgettemplate": 0
+      "@permission_api_alarm_read": 1
+      "@permission_api_entity": 4
+      "@permission_api_dynamicinfos": 4
 
   # technical -> viewsandwidgets
   permission_models_privateView:
@@ -2115,6 +2083,72 @@ permission:
         *api_permissions_alarm_pattern,
         *api_permissions_entity_pattern
       ]
+  permission_models_exploitation_remediationInstruction:
+    <<: *permission_crud
+    _id: models_exploitation_remediationInstruction
+    name: <Current()._id>
+    description: Instructions - instructions
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_instruction": 0
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
+  permission_models_exploitation_remediationInstructionApprove:
+    <<: *permission
+    _id: models_exploitation_remediationInstructionApprove
+    name: <Current()._id>
+    description: Instructions - instruction approve
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_instruction_approve": 1
+  permission_models_exploitation_remediationJob:
+    <<: *permission_crud
+    _id: models_exploitation_remediationJob
+    name: <Current()._id>
+    description: Instructions - jobs
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_job": 0
+  permission_models_exploitation_remediationConfiguration:
+    <<: *permission_crud
+    _id: models_exploitation_remediationConfiguration
+    name: <Current()._id>
+    description: Instructions - configurations
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_job_config": 0
+  permission_models_exploitation_remediationStatistics:
+    <<: *permission
+    _id: models_exploitation_remediationStatistic
+    name: <Current()._id>
+    description: Instructions - remediation statistics
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_instruction": 4
+      "@permission_api_metrics": 1
+  permission_models_exploitation_instructionStats:
+    <<: *permission_crud
+    _id: models_exploitation_instructionStats
+    name: <Current()._id>
+    description: Instructions - instruction rating
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions_bitmask:
+      4:
+        "@permission_api_instruction": 4
   permission_models_exploitation_flappingRules:
     <<: *permission_crud
     _id: models_exploitation_flappingRules
@@ -2174,26 +2208,6 @@ permission:
         *api_permissions_alarm_pattern,
         *api_permissions_entity_pattern
       ]
-  permission_models_exploitation_externalData:
-    <<: *permission_crud
-    _id: models_exploitation_externalData
-    name: <Current()._id>
-    description: External data
-    groups:
-      - "@group_technical"
-      - "@group_technical_exploitation"
-    api_permissions:
-      "@permission_api_external_data_table": 0
-  permission_models_exploitation_entity_info_property:
-    <<: *permission_crud
-    _id: models_exploitation_entityInfoProperty
-    name: <Current()._id>
-    description: Entity info properties
-    groups:
-      - "@group_technical"
-      - "@group_technical_exploitation"
-    api_permissions:
-      "@permission_api_entity_info_property": 0
 
   # technical -> profile
   permission_models_profile_corporatePattern:
@@ -3655,10 +3669,12 @@ role:
       "@permission_models_planningType": 15
       "@permission_models_planningReason": 15
       "@permission_models_planningExceptions": 15
-      "@permission_models_remediationInstruction": 15
-      "@permission_models_remediationInstructionApprove": 1
-      "@permission_models_remediationJob": 15
-      "@permission_models_remediationConfiguration": 15
+      "@permission_models_exploitation_remediationInstruction": 15
+      "@permission_models_exploitation_remediationInstructionApprove": 1
+      "@permission_models_exploitation_remediationJob": 15
+      "@permission_models_exploitation_remediationConfiguration": 15
+      "@permission_models_exploitation_remediationStatistics": 1
+      "@permission_models_exploitation_instructionStats": 15
       "@permission_models_exploitation_eventFilter": 15
       "@permission_models_exploitation_pbehavior": 15
       "@permission_models_exploitation_snmpRule": 15
@@ -3670,14 +3686,14 @@ role:
       "@permission_models_exploitation_resolveRules": 15
       "@permission_models_exploitation_declareTicketRule": 15
       "@permission_models_exploitation_linkRule": 15
-      "@permission_models_exploitation_externalData": 15
+      "@permission_models_entityInfoProperty": 15
+      "@permission_models_externalData": 15
       "@permission_models_healthcheck": 1
       "@permission_models_healthcheckStatus": 1
       "@permission_models_kpi": 1
       "@permission_models_kpiFilters": 15
       "@permission_models_kpiRatingSettings": 15
       "@permission_models_kpiCollectionSettings": 15
-      "@permission_models_instructionStats": 15
       "@permission_models_profile_corporatePattern": 15
       "@permission_models_map": 15
       "@permission_models_shareToken": 15
@@ -3769,7 +3785,6 @@ role:
       "@permission_alarmStatistics_interval": 1
       "@permission_alarmStatistics_filter": 1
       "@permission_alarmStatistics_userFilter": 1
-      "@permission_models_remediation_statistics": 1
       "@permission_barchart_interval": 1
       "@permission_barchart_sampling": 1
       "@permission_barchart_filter": 1
@@ -3787,7 +3802,6 @@ role:
       "@permission_numbers_filter": 1
       "@permission_numbers_userFilter": 1
       "@permission_models_maintenance": 1
-      "@permission_models_exploitation_entity_info_property": 15
       # API permissions
       "@permission_api_alarm_read": 1
       "@permission_api_alarm_update": 1
@@ -3874,6 +3888,7 @@ role_template:
     description: Profil de pilotage
     permissions:
       # UI permissions
+      "@permission_models_exploitation_remediationStatistics": 1
       "@permission_listalarm_ack": 1
       "@permission_listalarm_fastAck": 1
       "@permission_listalarm_cancelAck": 1
@@ -3944,7 +3959,6 @@ role_template:
       "@permission_alarmStatistics_interval": 1
       "@permission_alarmStatistics_filter": 1
       "@permission_alarmStatistics_userFilter": 1
-      "@permission_models_remediation_statistics": 1
       "@permission_barchart_interval": 1
       "@permission_barchart_sampling": 1
       "@permission_barchart_filter": 1

@@ -1,3 +1,5 @@
+import { isString } from 'lodash';
+
 /**
  * Normalize handlebars NBSP
  *
@@ -7,4 +9,6 @@
  * @param {string} [html = '']
  * @returns {string}
  */
-export const normalizeHandlebarsNbsp = (html = '') => html.replace(/{{{[\s\S]*?}}}|{{[\s\S]*?}}/g, block => block.replace(/&nbsp;|\u00A0/g, ' '));
+export const normalizeHandlebarsNbsp = (html = '') => (
+  isString(html) ? html.replace(/{{{[\s\S]*?}}}|{{[\s\S]*?}}/g, block => block.replace(/&nbsp;|\u00A0/g, ' ')) : html
+);

@@ -1,7 +1,6 @@
 import { COLORS } from '@/config';
 
 import { DENSE_TYPES, WIDGET_COLUMNS_GROUPS, INFOS_NAME_VARIABLE, INFOS_VARIABLE_PREFIX } from './common';
-import { PATTERNS_FIELDS } from './pattern';
 
 export const ALARM_FIELDS = {
   id: '_id',
@@ -149,101 +148,6 @@ export const ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK = [
   ALARM_FIELDS.ticketData,
 ];
 
-export const ALARM_ADVANCED_SEARCH_GROUPS = {
-  basic: 'basic',
-  messages: 'messages',
-  ticket: 'ticket',
-  dates: 'dates',
-  actions: 'actions',
-  alias: 'alias',
-  entity: 'entity',
-  pbehavior: 'pbehavior',
-};
-
-export const ALARM_GROUPED_ADVANCED_SEARCH_FIELDS = {
-  [ALARM_ADVANCED_SEARCH_GROUPS.basic]: [
-    ALARM_FIELDS.displayName,
-    ALARM_FIELDS.connector,
-    ALARM_FIELDS.connectorName,
-    ALARM_FIELDS.component,
-    ALARM_FIELDS.resource,
-    ALARM_FIELDS.state,
-    ALARM_FIELDS.status,
-    ALARM_FIELDS.tags,
-    ALARM_FIELDS.infos,
-    ALARM_FIELDS.meta,
-    ALARM_FIELDS.changeState,
-    ALARM_FIELDS.totalStateChanges,
-  ],
-  [ALARM_ADVANCED_SEARCH_GROUPS.messages]: [
-    ALARM_FIELDS.output,
-    ALARM_FIELDS.longOutput,
-    ALARM_FIELDS.initialOutput,
-    ALARM_FIELDS.initialLongOutput,
-    ALARM_FIELDS.lastComment,
-    ALARM_FIELDS.lastCommentInitiator,
-  ],
-  [ALARM_ADVANCED_SEARCH_GROUPS.ticket]: [
-    ALARM_FIELDS.ticketMessage,
-    ALARM_FIELDS.ticketInitiator,
-    ALARM_FIELDS.ticketValue,
-    ALARM_FIELDS.ticket,
-  ],
-  [ALARM_ADVANCED_SEARCH_GROUPS.dates]: [
-    ALARM_FIELDS.creationDate,
-    ALARM_FIELDS.lastUpdateDate,
-    ALARM_FIELDS.lastEventDate,
-    ALARM_FIELDS.ackAt,
-    ALARM_FIELDS.resolved,
-    ALARM_FIELDS.activationDate,
-    ALARM_FIELDS.duration,
-  ],
-  [ALARM_ADVANCED_SEARCH_GROUPS.actions]: [
-    ALARM_FIELDS.ack,
-    ALARM_FIELDS.ackBy,
-    ALARM_FIELDS.ackMessage,
-    ALARM_FIELDS.ackInitiator,
-    ALARM_FIELDS.canceled,
-    ALARM_FIELDS.canceledInitiator,
-    ALARM_FIELDS.activated,
-    ALARM_FIELDS.snooze,
-  ],
-  [ALARM_ADVANCED_SEARCH_GROUPS.entity]: [
-    ALARM_FIELDS.entityId,
-    ALARM_FIELDS.entityName,
-    ALARM_FIELDS.entityCategoryName,
-    ALARM_FIELDS.entityType,
-    ALARM_FIELDS.entityComponent,
-    ALARM_FIELDS.entityConnector,
-    ALARM_FIELDS.entityImpactLevel,
-    ALARM_FIELDS.entityInfos,
-    ALARM_FIELDS.entityComponentInfos,
-  ],
-  [ALARM_ADVANCED_SEARCH_GROUPS.pbehavior]: [
-    ALARM_FIELDS.pbehaviorInfoName,
-    ALARM_FIELDS.pbehaviorInfoReason,
-    ALARM_FIELDS.pbehaviorInfoType,
-    ALARM_FIELDS.pbehaviorInfoCanonicalType,
-  ],
-};
-
-export const ALARM_ADVANCED_SEARCH_GROUPS_TO_PATTERNS = {
-  [ALARM_ADVANCED_SEARCH_GROUPS.basic]: PATTERNS_FIELDS.alarm,
-  [ALARM_ADVANCED_SEARCH_GROUPS.messages]: PATTERNS_FIELDS.alarm,
-  [ALARM_ADVANCED_SEARCH_GROUPS.ticket]: PATTERNS_FIELDS.alarm,
-  [ALARM_ADVANCED_SEARCH_GROUPS.dates]: PATTERNS_FIELDS.alarm,
-  [ALARM_ADVANCED_SEARCH_GROUPS.actions]: PATTERNS_FIELDS.alarm,
-  [ALARM_ADVANCED_SEARCH_GROUPS.entity]: PATTERNS_FIELDS.entity,
-  [ALARM_ADVANCED_SEARCH_GROUPS.pbehavior]: PATTERNS_FIELDS.pbehavior,
-};
-
-export const ALARM_ADVANCED_SEARCH_FIELDS_TO_PATTERNS = Object.entries(ALARM_ADVANCED_SEARCH_GROUPS_TO_PATTERNS)
-  .reduce((acc, [group, patternField]) => {
-    ALARM_GROUPED_ADVANCED_SEARCH_FIELDS[group].forEach(field => acc[field] = patternField);
-
-    return acc;
-  }, {});
-
 export const ALARM_LEVELS = {
   minor: 20,
   major: 30,
@@ -342,6 +246,7 @@ export const ALARM_STATUSES_TEXTS = {
 export const ALARM_LIST_ACTIONS_TYPES = {
   pbehaviorAdd: 'pbehaviorAdd',
   fastPbehaviorAdd: 'fastPbehaviorAdd',
+  fastPbehaviorRemove: 'fastPbehaviorRemove',
   moreInfos: 'moreInfos',
   snooze: 'snooze',
   declareTicket: 'declareTicket',
@@ -386,6 +291,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
 export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
   [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: 'pause',
   [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: 'motion_photos_paused',
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove]: 'play_arrow',
   [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm',
   [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'note_add',
   [ALARM_LIST_ACTIONS_TYPES.associateTicket]: 'sticky_note_2',
@@ -414,6 +320,7 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
 
 export const ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP = {
   [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: ALARM_LIST_ACTIONS_TYPES.addBookmark,
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove]: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
 };
 
 export const UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS = {
@@ -880,7 +787,20 @@ export const ALARM_PATTERN_FIELDS = {
   ticketData: ALARM_FIELDS.ticketData,
   changeState: ALARM_FIELDS.changeState,
   meta: ALARM_FIELDS.meta,
+  entityId: ALARM_FIELDS.entityId,
+  entityName: ALARM_FIELDS.entityName,
+  entityCategoryName: ALARM_FIELDS.entityCategoryName,
+  entityType: ALARM_FIELDS.entityType,
+  entityComponent: ALARM_FIELDS.entityComponent,
+  entityConnector: ALARM_FIELDS.entityConnector,
+  entityImpactLevel: ALARM_FIELDS.entityImpactLevel,
   entityInfos: ALARM_FIELDS.entityInfos,
+  entityComponentInfos: ALARM_FIELDS.entityComponentInfos,
+  pbehaviorInfoId: ALARM_FIELDS.pbehaviorInfoId,
+  pbehaviorInfoName: ALARM_FIELDS.pbehaviorInfoName,
+  pbehaviorInfoReason: ALARM_FIELDS.pbehaviorInfoReason,
+  pbehaviorInfoType: ALARM_FIELDS.pbehaviorInfoType,
+  pbehaviorInfoCanonicalType: ALARM_FIELDS.pbehaviorInfoCanonicalType,
 };
 
 export const ALARM_EVENT_INITIATORS = {
@@ -1353,3 +1273,8 @@ export const DEFAULT_ALARM_MORE_INFO_TEMPLATE = '{{!--\n'
   + '    </tr>\n'
   + '  </tbody></table>\n'
   + '</div>\n';
+
+/**
+ * Timeout to wait for the pbehavior to be created or removed
+ */
+export const ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT = 1000;

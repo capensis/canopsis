@@ -67,6 +67,8 @@ type ListRequest struct {
 	WithDependencies   bool `form:"with_dependencies" json:"with_dependencies"`
 	WithTagColors      bool `form:"with_tag_colors" json:"with_tag_colors"`
 	QueryLog           bool `form:"query_log" json:"query_log"`
+
+	PbhOrigin string `form:"pbh_origin" json:"pbh_origin"`
 }
 
 type FilterRequest struct {
@@ -315,6 +317,8 @@ type Alarm struct {
 	Filtered *bool `bson:"filtered" json:"filtered,omitempty"`
 
 	Bookmark bool `bson:"bookmark" json:"bookmark"`
+
+	PbhOriginIcon string `json:"pbh_origin_icon" bson:"pbh_origin_icon"`
 }
 
 type MetaAlarmRule struct {
