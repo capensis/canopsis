@@ -46,7 +46,8 @@ const (
 
 	EntityInfosUpdate = "entity_infos_update"
 
-	EventsAnomaly              = "event_anomaly"
+	EventAnomaly               = "event_anomaly"
+	EventAnomalyHourly         = "event_anomaly_hourly"
 	AnomalyMonitoredConnectors = "anomaly_monitored_connectors"
 )
 
