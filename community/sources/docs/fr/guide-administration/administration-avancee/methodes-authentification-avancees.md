@@ -24,7 +24,7 @@
 
 ## Authentification LDAP
 
-Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC 4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons.
+Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC 4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons. 
 
 
 ### Configuration de LDAP
@@ -46,35 +46,54 @@ Puis vous devez renseigner les différents paramètres d'authentification LDAP.
   ldap:
     inactivity_interval: 24h
     expiration_interval: 1M
+    # url defines LDAP url.
     url: ldap://ldap.local
     admin_dn: uid=svccanopsis,ou=Special,dc=example,dc=com
     admin_passwd:
     user_dn: ou=People,dc=example,dc=com
     ufilter: uid=%s
+    # username_attr defines attribute which is used to set username.
     username_attr: uid
+    # attrs defines extra user's attributes.
     attrs:
-      mail: mail
+      email: mail
       firstname: givenName
       lastname: sn
+    # default_role defines role of new users which are created on successful LDAP login.
     default_role: Visualisation
+    # insecure_skip_verify and insecure_verify_any_cert control whether a client verifies
+    #   the server's certificate chain and host name.
+    #   Cases:
+    #     1. insecure_skip_verify = true, insecure_verify_any_cert = false
+    #       - Accepts only self-signed certificates.
+    #     2. insecure_skip_verify = true, insecure_verify_any_cert = true
+    #       - Accepts any certificate presented by the server and any host name in that certificate.
+    #     3. insecure_skip_verify = false, insecure_verify_any_cert = true
+    #       - Invalid config
+    #
+    #   WARNING: Both modes make TLS susceptible to machine-in-the-middle attacks.
     insecure_skip_verify: false
-    max_tls_ver:
-    min_tls_ver:
+    insecure_verify_any_cert: false
+    min_tls_ver: tls12
+    max_tls_ver: tls13
 ```
 
 Définition des paramètres :
 
 | Attribut        | Description                                        | Exemple                                                         |
 |-----------------|----------------------------------------------------|-----------------------------------------------------------------|
-| `url`        | Chaîne de connexion LDAP                                | `ldaps://ldap.example.com`                                      |
-| `admin_dn`        | Bind DN : DN du compte utilisé pour lire l'annuaire | `uid=svccanopsis,ou=Special,dc=example,dc=com`                 |
-| `admin_passwd`    | Bind password : mot de passe pour authentifier le Bind DN sur l'annuaire  |                                          |
-| `user_dn`         | DN de base où rechercher les utilisateurs          | `ou=People,dc=example,dc=com`                                   |
+| `inactivity_interval`        | Délai de session utilisateur avant expiration sur inactivité     | `24h`                                |
+| `expiration_interval`        | Délai de session utilisateur avant expiration                    | `1M`                                 |
+| `url`        | Chaîne de connexion LDAP                                | `ldaps://ldap.example.com`                                    |
+| `admin_dn`        | Bind DN : DN du compte utilisé pour lire l'annuaire | `uid=svccanopsis,ou=Special,dc=example,dc=com`               |
+| `admin_passwd`    | Bind password : mot de passe pour authentifier le Bind DN sur l'annuaire  |                                        |
+| `user_dn`         | DN de base où rechercher les utilisateurs          | `ou=People,dc=example,dc=com`                                 |
 | `ufilter`         | Filtre de recherche pour les utilisateurs <br> La valeur de l'utilisateur est présentée dans une variable notée `%s` | `uid=%s`    |
 | `username_attr`   | Attribut portant l'identifiant utilisateur dans l'objet de l'annuaire  | `uid`                                       |
 | `attrs`           | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
 | `default_role`    | Rôle Canopsis par défaut au moment de la première connexion   | `Visualisation`                                      |
 | `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
+| `insecure_verify_any_cert` | Permet d'accepter n'importe quel certificat peu importe le domaine utilisé. (Nécessite que `insecure_skip_verify` soit défini à `true`)   | `true`   |
 | `max_tls_ver` (optionnel) | La version maximale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
 | `min_tls_ver` (optionnel) | La version minimale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
 
@@ -133,16 +152,33 @@ Puis vous devez renseigner les différents paramètres d'authentification CAS.
     validate_url: http://cas.local/serviceValidate
     # default_role defines role of new users which are created on successful CAS login.
     default_role: Visualisation
+    # insecure_skip_verify and insecure_verify_any_cert control whether a client verifies
+    #   the server's certificate chain and host name.
+    #   Cases:
+    #     1. insecure_skip_verify = true, insecure_verify_any_cert = false
+    #       - Accepts only self-signed certificates.
+    #     2. insecure_skip_verify = true, insecure_verify_any_cert = true
+    #       - Accepts any certificate presented by the server and any host name in that certificate.
+    #     3. insecure_skip_verify = false, insecure_verify_any_cert = true
+    #       - Invalid config
+    #
+    #   WARNING: Both modes make TLS susceptible to machine-in-the-middle attacks.
+    insecure_skip_verify: false
+    insecure_verify_any_cert: false
 ```
 
 Définition des paramètres :
 
 | Attribut       |                    Description                               |            Exemple             |
 | -------------- | ------------------------------------------------------------ | ------------------------------ |
-| `login_url`    | URL du serveur CAS sur laquelle le navigateur web va être redirigé pour s'authentifier        |   http://canopsis.info.local/  |
-| `default_role` | Rôle par défaut au moment de la première connexion           | Visualisation                  |
-| `title`        | Label sur le formulaire de connexion                         | Connexion                      |
-| `validate_url`  | URL de validation du serveur CAS à laquelle l'API va accéder | https://cas.info.local/websso/ |
+| `inactivity_interval`        | Délai de session utilisateur avant expiration sur inactivité     | `24h`        |
+| `expiration_interval`        | Délai de session utilisateur avant expiration                    | `1M`         |
+| `title`        | Label sur le formulaire de connexion                         | `Connexion`                      |
+| `login_url`    | URL du serveur CAS sur laquelle le navigateur web va être redirigé pour s'authentifier        |   `http://cas.local/login`  |
+| `validate_url`  | URL de validation du serveur CAS à laquelle l'API va accéder | `http://cas.local/serviceValidate` |
+| `default_role` | Rôle par défaut au moment de la première connexion           | `Visualisation`                  |
+| `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
+| `insecure_verify_any_cert` | Permet d'accepter n'importe quel certificat peu importe le domaine utilisé. (Nécessite que `insecure_skip_verify` soit défini à `true`)   | `true`   |
 
 Vous devez ensuite **obligatoirement** redémarrer le service API.
 
@@ -174,7 +210,7 @@ Le profil d'affectation sera celui spécifié dans la configuration.
 
 Intégration de l’authentification avec le protocole SAMLV2
 
-### Configuration et Paramétrage en lien avec l'Identity Provider (IDP )
+### Configuration et Paramétrage en lien avec l'Identity Provider (IDP)
 
 La configuration de l'authentification se fait au travers du fichier de configuration de l'API `/opt/canopsis/share/config/api/security/config.yml`.  
 
@@ -191,31 +227,46 @@ Puis vous devez renseigner les différents paramètres d'authentification SAML.
 
 ```yaml
   saml:
+    inactivity_interval: 24h
+    expiration_interval: 1M
+    title: Connexion
     x509_cert: /certs/saml.cert
-    x509_key:  /certs/saml.key
-    idp_metadata_url: <http(s)://IDP_METADATA_URL>
-  # idp_metadata_xml: </path/to/xml>
+    x509_key: /certs/saml.key
+    # sample with SimpleSamlPHP server
+    idp_metadata_url: http://saml-server:8090/simplesaml/saml2/idp/metadata.php
+    # other option with plain XML file
+    # idp_metadata_xml: /path/to/xml
     idp_attributes_map:
-       # Type: string
-       email: email
-       # Type: string
-       name: uid
-       # Type: string
-       firstname: uid
-       # Type: string
-       lastname: uid
-       # Type: string or array
-       role: role
-    canopsis_saml_url: http(s)://<IP_MACHINE>/api/v4/saml
-    default_role: "admin" 
+      email: email
+      name: uid
+      firstname: uid
+      lastname: uid
+    canopsis_saml_url: http://canopsis/api/v4/saml
+    # default_role defines role of new users which are created on successful SAML login.
+    default_role: Visualisation
+    # allow_extra_roles if set to true allow modifying user roles via user API, e.g. adding more roles.
+    allow_extra_roles: false
+    # insecure_skip_verify and insecure_verify_any_cert control whether a client verifies
+    #   the server's certificate chain and host name.
+    #   Cases:
+    #     1. insecure_skip_verify = true, insecure_verify_any_cert = false
+    #       - Accepts only self-signed certificates.
+    #     2. insecure_skip_verify = true, insecure_verify_any_cert = true
+    #       - Accepts any certificate presented by the server and any host name in that certificate.
+    #     3. insecure_skip_verify = false, insecure_verify_any_cert = true
+    #       - Invalid config
+    #
+    #   WARNING: Both modes make TLS susceptible to machine-in-the-middle attacks.
     insecure_skip_verify: false
+    insecure_verify_any_cert: false
     canopsis_sso_binding: redirect
     canopsis_acs_binding: redirect
     sign_auth_request: false
     name_id_format: urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
-    skip_signature_validation: true
+#    skip_signature_validation: true
     acs_index: 1
     auto_user_registration: true
+
 ```
 
 La paire de certificats relatifs aux directives `x509_cert` et `x509_key` doit être générée en amont.
@@ -228,22 +279,28 @@ $ openssl req -x509 -newkey rsa:2048 -keyout saml.key -out saml.cert -days 365 -
 
 Définition des paramètres :
 
-| Directive                   | Définition                                                   |
-| --------------------------- | ------------------------------------------------------------ |
-| `idp_metadata_url`          | URL permettant de récupérer les Metadatas XML de l'IDP ( si les metadatas XML sont fournies via un service accessible ) |
-| `idp_metadata_xml`          | Fichier XML contenant les Metadatas XML de l'IDP ( si les metadatas XML ne sont pas fournies via un service accessible ) |
-| `idp_attributes_map`        | Tableau de correspondance entre les attributs utilisateurs de Canopsis ( colonne de gauche ) et les attributs fournis par l'IDP ( colonne de droite ) |
-| `canopsis_saml_url`         | URL du service SAML fourni par Canopsis qui sera configuré côté IDP |
-| `insecure_skip_verify`      | Permet de bypasser la vérification du certification de l'IDP si configuré à `true` |
-| `canopsis_sso_binding`      | Type de binding HTTP pour le service SSO parmi `redirect` ou `post` |
-| `canopsis_acs_binding`      | Type de binding HTTP pour le service ACS parmi `redirect` ou `post` |
-| `sign_auth_request`         | Permet de signer les requêtes authentification si positionné à `true` |
-| `name_id_format`            | Format du `NameIDPolicy`                                     |
-| `skip_signature_validation` | Permet de bypasser la validation de la signature de l'idp lors du décodage des réponses envoyées par l'idp si positionné à `true` |
-| `acs_index`                 | Valeur entière à utiliser lorsque l'on configure le service ACS Index dans les Metadata XML |
-| `auto_user_registration`    | Permet de créer automatiquement les utilisateurs dans Canopsis ( s'ils n'existent pas déjà ) si cette valeur est mise à `true`|
-| [`default_role`](#multi-role)              | Rôle Canopsis par défaut à attribuer pour l'utilisateur à sa création |
-| `insecure_skip_verify`      | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `false`   |
+| Attribut       |                    Description                               |            Exemple             |
+| -------------- | ------------------------------------------------------------ | ------------------------------ |
+| `inactivity_interval`       | Délai de session utilisateur avant expiration sur inactivité | `24h`        |
+| `expiration_interval`       | Délai de session utilisateur avant expiration                | `1M`         |
+| `title`                     | Label sur le formulaire de connexion                         | `Connexion`                      |
+| `x509_cert`                 | Certificat pour le chiffrement des requêtes SAML                         | `/certs/saml.cert`                      |
+| `x509_key`                  | Clé du certificat pour le chiffrement des requêtes SAML                         | `/certs/saml.key`                      |
+| `idp_metadata_url`          | URL permettant de récupérer les Metadatas XML de l'IDP ( si les metadatas XML sont fournies via un service accessible ) | `http://saml-server:8090/simplesaml/saml2/idp/metadata.php` |
+| `idp_metadata_xml`          | Fichier XML contenant les Metadatas XML de l'IDP ( si les metadatas XML ne sont pas fournies via un service accessible ) | `/files-pro/api/security/saml-metadata.xml` |
+| `idp_attributes_map`        | Tableau de correspondance entre les attributs utilisateurs de Canopsis ( colonne de gauche ) et les attributs fournis par l'IDP ( colonne de droite ) |`{"mail": "email", "name": "uid", "firstname": "uid", "lastname": "uid"}` |
+| `canopsis_saml_url`         | URL du service SAML fourni par Canopsis qui sera configuré côté IDP | `http://canopsis/api/v4/saml` |
+| [`default_role`](#multi-role)              | Rôle Canopsis par défaut à attribuer pour l'utilisateur à sa création | `Visualisation` |
+| `allow_extra_roles`              | Permet d'utiliser des rôles locaux de Canopsis en plus des rôles mapper avec le SAML | `true` |
+| `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
+| `insecure_verify_any_cert` | Permet d'accepter n'importe quel certificat peu importe le domaine utilisé. (Nécessite que `insecure_skip_verify` soit défini à `true`)   | `true`   |
+| `canopsis_sso_binding`      | Type de binding HTTP pour le service SSO parmi `redirect` ou `post` | `redirect` |
+| `canopsis_acs_binding`      | Type de binding HTTP pour le service ACS parmi `redirect` ou `post` | `redirect` |
+| `sign_auth_request`         | Permet de signer les requêtes authentification si positionné à `true` | `false` |
+| `name_id_format`            | Format du `NameIDPolicy`                                    | `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent` |
+| `skip_signature_validation` | Permet de bypasser la validation de la signature de l'idp lors du décodage des réponses envoyées par l'idp si positionné à `true` | `false` |
+| `acs_index`                 | Valeur entière à utiliser lorsque l'on configure le service ACS Index dans les Metadata XML | `1` |
+| `auto_user_registration`    | Permet de créer automatiquement les utilisateurs dans Canopsis ( s'ils n'existent pas déjà ) si cette valeur est mise à `true`| `true` |
 
 
 Vous devez ensuite **obligatoirement** redémarrer le service API.
@@ -299,6 +356,9 @@ Puis vous devez renseigner les différents paramètres d'authentification oauth2
       votre-nom-de-provider:
         # if open_id is set to true, then the provider is considered as OpenID connect provider and requires the issuer field to be set.
         open_id: true
+        # auth_style determines how client_id and client_secret are sent to the server.
+        # please choose from: 0 - autodetect by the api(default), 1 - in urlencoded params, 2 - in headers.
+        auth_style: 0
         # issuer field defines OpenID url for a discovery mechanism, if open_id is set to false, the issuer is ignored.
         issuer: your-openid-provider-url
         # fields to setup inactivity interval for canopsis api tokens.
@@ -346,6 +406,7 @@ Définition des paramètres :
 | Attribut       |                    Description                               |            Valeur             |
 | -------------- | ------------------------------------------------------------ | ------------------------------ |
 | `open_id`    | Définit si le provider est de type open_id ou non        |   true / false  |
+| `auth_style` | Permet de définir comment le `client_id` et le `client_secret` doivent être envoyés au serveur. | `0`: Comportement par défaut (autodetect), `1`: dans un paramètre (urlencoded), `2:` Dans l'entête de la requête (headers) |
 | `issuer` | Doit être définie dans le cas où le champ `open_id` est à `true`. Permet de vérifier l'identité du provider; elle est fournie par votre provider            | URL                  |
 | `auth_url`  | Adresse d'authentification. A definir uniquement si `open_id` est à `false`; elle est fournie par votre provider  | URL |
 | `token_url`  | Adresse de gestion de token. A definir uniquement si `open_id` est à `false`; elle est fournie par votre provider | URL |
@@ -358,6 +419,8 @@ Définition des paramètres :
 | `user_id`  | Permet de définir l'identifiant dans Canopsis. A definir uniquement si `open_id` est à `false` | users.votre_champs_id |
 | `attributes_map`  | Permet de remplir les champs d'informations utilisateurs sur votre Canopsis avec les informations fournies par le provider. Récupérer des informations depuis le token OpenID n'est possible que si `open_id` est défini à `true` (Exemple plus bas) | Liste au format `champ: valeur` |
 | `scopes`  | Les scopes sont utiliséés par une application lors de l'authentification pour autoriser l'accès à certaines données. Ces accès sont à définir côté provider. Doit être défini dans le cas où le champ `open_id` est à `true` (Ex: Le scope `openid` indique au serveur d’interpréter les requêtes faites aux points d’entrée selon les spécifications d’OpenID Connect.) | Liste |
+| `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
+| `insecure_verify_any_cert` | Permet d'accepter n'importe quel certificat peu importe le domaine utilisé. (Nécessite que `insecure_skip_verify` soit défini à `true`)   | `true`   |
 
 
 Vous devez ensuite **obligatoirement** redémarrer le service API.
