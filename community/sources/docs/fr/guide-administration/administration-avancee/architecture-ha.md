@@ -162,7 +162,7 @@ L’objectif est d’éviter tout point de défaillance unique (SPOF) et d’ass
 
       - L'utilisation de **Keepalived** est recommandée pour gérer une IP flottante (VIP) et assurer la bascule entre un nœud primaire et un nœud secondaire.
     
-      - Notre support technique se limite officiellement aux configurations basées sur **Keepalived** et **HAProxy**. Toute autre solution de Load Balancing interne au client reste techniquement envisageable, mais n'est pas couverte par notre périmètre de support.
+      - Notre support technique se limite officiellement à **Keepalived**. Toute autre solution de Load Balancing interne au client reste techniquement envisageable, mais n'est pas couverte par notre périmètre de support.
 
     <h4>Volume partagé</h4>
 
