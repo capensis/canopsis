@@ -1596,7 +1596,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 	}
 }
 
-func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchExpression_ShouldBuildQuery(t *testing.T) {
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPatterns_ShouldBuildQuery(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -1607,7 +1607,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Search: "connector LIKE \"test name\" AND state = 3",
+					AlarmPattern: `[[
+						{"field": "v.connector", "cond": {"type": "regexp", "value": "test name"}},
+						{"field": "v.state.val", "cond": {"type": "eq", "value": 3}}
+					]]`,
 				},
 			},
 		},
@@ -1638,12 +1641,16 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	)
 	expected := []bson.M{
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
+		{"$match": bson.M{"$or": []bson.M{
+			{
+				"$and": []bson.M{
+					{"v.connector": bson.M{"$regex": "test name"}},
+					{"v.state.val": bson.M{"$eq": 3}},
+				},
+			},
+		}}},
 		{"$match": bson.M{"$and": []bson.M{
 			{"v.meta": nil},
-			{"$and": []bson.M{
-				{"v.connector": bson.M{"$regex": "test name"}},
-				{"v.state.val": bson.M{"$eq": 3}},
-			}},
 		}}},
 	}
 	expected = append(expected, []bson.M{
@@ -1667,7 +1674,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 }
 
-func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchExpression_ShouldBuildQueryWithLookupsBeforeMatch(t *testing.T) {
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPatterns_ShouldBuildQueryWithLookupsBeforeMatch(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -1678,7 +1685,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Search: "entity.name LIKE \"test name\" AND v.duration > 100",
+					EntityPattern: `[[
+						{"field": "name", "cond": {"type": "regexp", "value": "test name"}}
+					]]`,
+					AlarmPattern: `[[
+						{"field": "v.duration", "cond": {"type": "gt", "value": {"value": 100, "unit": "s"}}}
+					]]`,
 				},
 			},
 		},
@@ -1715,12 +1727,22 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			"v.duration": durationField,
 		}},
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
+		{"$match": bson.M{"$or": []bson.M{
+			{
+				"$and": []bson.M{
+					{"v.duration": bson.M{"$gt": 100}},
+				},
+			},
+		}}},
 		{"$match": bson.M{"$and": []bson.M{
 			{"v.meta": nil},
-			{"$and": []bson.M{
-				{"e.name": bson.M{"$regex": "test name"}},
-				{"v.duration": bson.M{"$gt": 100}},
-			}},
+		}}},
+		{"$match": bson.M{"$or": []bson.M{
+			{
+				"$and": []bson.M{
+					{"e.name": bson.M{"$regex": "test name"}},
+				},
+			},
 		}}},
 		{"$match": bson.M{"$and": []bson.M{{"e.enabled": true}}}},
 		{"$facet": bson.M{
@@ -1742,7 +1764,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 }
 
-func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchExpressionForResolvedAlarms_ShouldBuildQueryWithLookupsBeforeMatch(t *testing.T) {
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPatternsForResolvedAlarms_ShouldBuildQueryWithLookupsBeforeMatch(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -1753,7 +1775,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Search: "entity.name LIKE \"test name\" AND v.duration > 100",
+					EntityPattern: `[[
+						{"field": "name", "cond": {"type": "regexp", "value": "test name"}}
+					]]`,
+					AlarmPattern: `[[
+						{"field": "v.duration", "cond": {"type": "gt", "value": {"value": 100, "unit": "s"}}}
+					]]`,
 				},
 			},
 		},
@@ -1791,13 +1818,23 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			"v.duration": durationField,
 		}},
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
+		{"$match": bson.M{"$or": []bson.M{
+			{
+				"$and": []bson.M{
+					{"v.duration": bson.M{"$gt": 100}},
+				},
+			},
+		}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{"$and": []bson.M{
-			{"e.name": bson.M{"$regex": "test name"}},
-			{"v.duration": bson.M{"$gt": 100}},
+		{"$match": bson.M{"$or": []bson.M{
+			{
+				"$and": []bson.M{
+					{"e.name": bson.M{"$regex": "test name"}},
+				},
+			},
 		}}},
 		{"$match": bson.M{"$and": []bson.M{{"e.enabled": true}}}},
 		{"$project": bson.M{"e": 0}},
@@ -1820,7 +1857,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 }
 
-func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchExpression_ShouldBuildQueryWithReplaceInfosAlias(t *testing.T) {
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPattern_ShouldBuildQueryWithReplaceInfosAlias(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -1831,7 +1868,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Search: "infos.test1.value LIKE \"test val\"",
+					EntityPattern: `[[{"field": "infos.test1", "field_type": "string", "cond": {"type": "regexp", "value": "test val"}}]]`,
 				},
 			},
 		},
@@ -1846,8 +1883,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	fields := getComputedFields(now, "")
-	infosField := fields["infos"]
-	delete(fields, "infos")
 	expectedDataPipeline = append(expectedDataPipeline,
 		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		bson.M{"$addFields": fields},
@@ -1864,13 +1899,14 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		bson.M{"$project": bson.M{"e": 0}},
 	)
 	expected := []bson.M{
-		{"$addFields": bson.M{
-			"infos": infosField,
-		}},
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{
 			{"v.meta": nil},
-			{"e.infos.test1.value": bson.M{"$regex": "test val"}},
+		}}},
+		{"$match": bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"e.infos.test1.value": bson.M{"$regex": "test val"}},
+			}},
 		}}},
 		{"$match": bson.M{"$and": []bson.M{{"e.enabled": true}}}},
 		{"$facet": bson.M{
@@ -1892,7 +1928,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 }
 
-func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchExpressionForResolvedAlarms_ShouldBuildQueryWithReplaceInfosAlias(t *testing.T) {
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPatternsForResolvedAlarms_ShouldBuildQueryWithReplaceInfosAlias(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -1903,7 +1939,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Search: "infos.test1.value LIKE \"test val\"",
+					EntityPattern: `[[{"field": "infos.test1", "field_type": "string", "cond": {"type": "regexp", "value": "test val"}}]]`,
 				},
 			},
 		},
@@ -1919,8 +1955,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	fields := getComputedFields(now, "")
-	infosField := fields["infos"]
-	delete(fields, "infos")
 	expectedDataPipeline = append(expectedDataPipeline,
 		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		bson.M{"$addFields": fields},
@@ -1937,15 +1971,16 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		bson.M{"$project": bson.M{"e": 0}},
 	)
 	expected := []bson.M{
-		{"$addFields": bson.M{
-			"infos": infosField,
-		}},
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{"e.infos.test1.value": bson.M{"$regex": "test val"}}},
+		{"$match": bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"e.infos.test1.value": bson.M{"$regex": "test val"}},
+			}},
+		}}},
 		{"$match": bson.M{"$and": []bson.M{{"e.enabled": true}}}},
 		{"$project": bson.M{"e": 0}},
 		{"$facet": bson.M{

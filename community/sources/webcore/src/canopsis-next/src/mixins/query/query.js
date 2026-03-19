@@ -2,7 +2,7 @@ import { isEqual, omit } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { convertSortToRequest } from '@/helpers/entities/shared/query';
+import { getQueryForList } from '@/helpers/entities/shared/query';
 
 export const localQueryMixin = {
   data() {
@@ -34,8 +34,6 @@ export const localQueryMixin = {
       },
       set(value) {
         this.query = {
-          ...this.query,
-
           search: value.search || '',
           page: value.itemsPerPage <= this.query.itemsPerPage ? value.page : 1,
           itemsPerPage: value.itemsPerPage || PAGINATION_LIMIT,
@@ -69,25 +67,8 @@ export const localQueryMixin = {
       return !isEqual(query, oldQuery);
     },
 
-    getQuery({
-      page,
-      search,
-      itemsPerPage,
-      sortBy = [],
-      sortDesc = [],
-    } = this.query) {
-      const query = {
-        page,
-        limit: itemsPerPage,
-
-        ...convertSortToRequest(sortBy, sortDesc),
-      };
-
-      if (search) {
-        query.search = search;
-      }
-
-      return query;
+    getQuery(queryParams = this.query) {
+      return getQueryForList(queryParams);
     },
   },
 
