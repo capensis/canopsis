@@ -28,9 +28,6 @@ export default {
 
 <style lang="scss" scoped>
 .test-variables-tab__wrapper {
-  display: flex;
-  flex: 1 1 auto;
-  width: 100%;
   max-width: 360px;
 }
 </style>
