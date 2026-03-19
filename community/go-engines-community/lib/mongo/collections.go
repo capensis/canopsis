@@ -116,4 +116,6 @@ const (
 	TemplateTestCollection     = "template_test"
 
 	PatternOptimizeJobCollection = "pattern_optimize_job"
+
+	LLMConfigMongoCollection = "llm_config"
 )
