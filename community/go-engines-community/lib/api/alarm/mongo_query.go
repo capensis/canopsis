@@ -1655,7 +1655,7 @@ func getPbhOriginLookup(origin string, now datetime.CpsTime) []bson.M {
 		{"$unwind": bson.M{"path": "$pbh_origin", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
-			"localField":   "pbh_origin.type_",
+			"localField":   "pbh_origin.type",
 			"foreignField": "_id",
 			"as":           "pbh_origin.type",
 		}},
