@@ -297,10 +297,6 @@ func Default(
 		return "", errors.New("invalid token")
 	}
 	services.WebsocketHub = websocket.NewHub(websocketUpgrader, services.WebsocketRoomRegistry, wsRoomAuthenticate, services.ApiConfigProvider, flags.IntegrationPeriodicalWaitTime, logger)
-	if err != nil {
-		return nil, services, fmt.Errorf("cannot register websocket rooms: %w", err)
-	}
-
 	services.ExternalDataContainer = externaldata.NewGetterContainer()
 	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, services.ExternalDataContainer, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)

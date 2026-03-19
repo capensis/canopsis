@@ -67,7 +67,7 @@ func NewRoomRegistry() RoomRegistry {
 }
 
 type roomRegistry struct {
-	mu     sync.RWMutex
+	mx     sync.RWMutex
 	rooms  map[string]RoomHandlers
 	groups map[string]RoomHandlers
 }
@@ -77,8 +77,8 @@ func (r *roomRegistry) Register(room string, handlers RoomHandlers) error {
 		return errors.New("room name cannot be empty")
 	}
 
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	r.mx.Lock()
+	defer r.mx.Unlock()
 
 	if _, exists := r.rooms[room]; exists {
 		return fmt.Errorf("room %q already registered", room)
@@ -97,8 +97,8 @@ func (r *roomRegistry) RegisterGroup(group string, handlers RoomHandlers) error 
 		return errors.New("group name cannot be empty")
 	}
 
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	r.mx.Lock()
+	defer r.mx.Unlock()
 
 	if _, exists := r.groups[group]; exists {
 		return fmt.Errorf("group %q already registered", group)
@@ -110,8 +110,8 @@ func (r *roomRegistry) RegisterGroup(group string, handlers RoomHandlers) error 
 }
 
 func (r *roomRegistry) Get(room string) (RoomHandlers, bool) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
+	r.mx.RLock()
+	defer r.mx.RUnlock()
 	h, ok := r.rooms[room]
 	if ok {
 		return h, true
