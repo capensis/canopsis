@@ -2,7 +2,7 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ title }}</span>
+        <span>{{ $t('modals.createTicketStatusJob.edit.title') }}</span>
       </template>
       <template #text="">
         <ticket-status-job-form v-model="form" />
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -39,7 +39,6 @@ import { ticketStatusJobToForm, formToTicketStatusJob } from '@/helpers/entities
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useI18n } from '@/hooks/i18n';
 
 import TicketStatusJobForm from '@/components/other/ticket-status-job/ticket-status-job-form.vue';
 
@@ -63,12 +62,8 @@ export default {
   },
   setup(props) {
     const { config, close } = useInnerModal(props);
-    const { t } = useI18n();
-    const form = ref(ticketStatusJobToForm(config.value.ticketStatusJob ?? {}));
 
-    const title = computed(
-      () => config.value.title ?? t('modals.createTicketStatusJob.edit.title', { jobName: form.value.ticket_system_name }),
-    );
+    const form = ref(ticketStatusJobToForm(config.value.ticketStatusJob ?? {}));
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
@@ -83,7 +78,6 @@ export default {
 
     return {
       form,
-      title,
       isDisabled,
       submitting,
       submit,

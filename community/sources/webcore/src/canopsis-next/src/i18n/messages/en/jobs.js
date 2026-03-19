@@ -3,7 +3,7 @@ import {
   JOB_LAST_RUN_STATUS,
   JOB_RULE_TYPE,
   JOB_RULE_TYPES,
-  TICKET_STATUS_JOBS_TABS,
+  JOBS_TABS,
 } from '@/constants';
 
 export default {
@@ -52,7 +52,7 @@ export default {
     startJob: 'Start job',
   },
   tabs: {
-    [TICKET_STATUS_JOBS_TABS.ticketStatus]: 'Ticket status',
+    [JOBS_TABS.ticketStatus]: 'Ticket status',
   },
   popups: {
     updated: 'Job updated',

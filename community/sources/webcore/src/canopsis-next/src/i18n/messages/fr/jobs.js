@@ -3,7 +3,7 @@ import {
   JOB_LAST_RUN_STATUS,
   JOB_RULE_TYPE,
   JOB_RULE_TYPES,
-  TICKET_STATUS_JOBS_TABS,
+  JOBS_TABS,
 } from '@/constants';
 
 export default {
@@ -52,7 +52,7 @@ export default {
     [JOB_RULE_TYPES.declareTicket]: 'Règles de déclaration de ticket',
   },
   tabs: {
-    [TICKET_STATUS_JOBS_TABS.ticketStatus]: 'Statut des tickets',
+    [JOBS_TABS.ticketStatus]: 'Statut des tickets',
   },
   popups: {
     updated: 'Job mis à jour',

@@ -19,4 +19,8 @@ export const JOB_RULE_TYPES = {
   declareTicket: 1,
 };
 
+export const JOBS_TABS = {
+  ticketStatus: 'ticketStatus',
+};
+
 export const JOB_ACTION_REFETCH_DELAY = 3000;

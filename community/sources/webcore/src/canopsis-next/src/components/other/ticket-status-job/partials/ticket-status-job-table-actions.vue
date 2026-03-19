@@ -16,10 +16,10 @@
       />
       <c-action-btn
         :tooltip="$t('jobs.actions.repeatJob')"
-        :disabled="playPending"
-        :loading="playPending"
+        :disabled="repeatPending"
+        :loading="repeatPending"
         icon="refresh"
-        @click="play"
+        @click="repeat"
       />
     </template>
     <c-action-btn
@@ -132,12 +132,27 @@ export default {
       }
     };
 
+    /**
+     * Starts or restarts the ticket status job(s).
+     */
     const { pending: playPending, handler: play } = usePendingHandler(() => callTicketStatusJobActionWithPopups({
       action: () => playTicketStatusJob({ data: pickIds(preparedItems.value) }),
-      successTextKey: isRunning.value ? 'jobs.popups.repeated' : 'jobs.popups.restarted',
-      errorTextKey: isRunning.value ? 'jobs.popups.repeatFailed' : 'jobs.popups.restartFailed',
+      successTextKey: 'jobs.popups.restarted',
+      errorTextKey: 'jobs.popups.restartFailed',
     }));
 
+    /**
+     * Repeats the ticket status job(s) (when running).
+     */
+    const { pending: repeatPending, handler: repeat } = usePendingHandler(() => callTicketStatusJobActionWithPopups({
+      action: () => playTicketStatusJob({ data: pickIds(preparedItems.value) }),
+      successTextKey: 'jobs.popups.repeated',
+      errorTextKey: 'jobs.popups.repeatFailed',
+    }));
+
+    /**
+     * Pauses the ticket status job(s).
+     */
     const { pending: pausePending, handler: pause } = usePendingHandler(() => callTicketStatusJobActionWithPopups({
       action: () => pauseTicketStatusJob({ data: pickIds(preparedItems.value) }),
       successTextKey: 'jobs.popups.paused',
@@ -165,10 +180,12 @@ export default {
       preparedItems,
       isRunning,
       playPending,
+      repeatPending,
       pausePending,
-      edit,
       play,
+      repeat,
       pause,
+      edit,
     };
   },
 };
