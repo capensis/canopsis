@@ -35,6 +35,7 @@ export default {
       USER_PERMISSIONS.technical.templateTesting,
       USER_PERMISSIONS.technical.viewImportExport,
       USER_PERMISSIONS.technical.notification.common,
+      USER_PERMISSIONS.technical.job,
     ];
 
     const accessLinks = [
