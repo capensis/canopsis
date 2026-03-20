@@ -242,13 +242,14 @@ const routes = [
     },
   },
   {
-    path: ROUTES.adminJobs,
-    name: ROUTES_NAMES.adminJobs,
+    path: ROUTES.adminJobsManagement,
+    name: ROUTES_NAMES.adminJobsManagement,
     component: AdminJobs,
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USER_PERMISSIONS.technical.job,
+        action: CRUD_ACTIONS.can,
+        id: USER_PERMISSIONS.technical.jobManagement,
       },
     },
   },

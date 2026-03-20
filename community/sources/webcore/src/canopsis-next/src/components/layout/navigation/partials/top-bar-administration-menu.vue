@@ -35,7 +35,7 @@ export default {
       USER_PERMISSIONS.technical.templateTesting,
       USER_PERMISSIONS.technical.viewImportExport,
       USER_PERMISSIONS.technical.notification.common,
-      USER_PERMISSIONS.technical.job,
+      USER_PERMISSIONS.technical.jobManagement,
     ];
 
     const accessLinks = [
@@ -104,9 +104,9 @@ export default {
         permission: USER_PERMISSIONS.technical.templateTesting,
       },
       {
-        route: { name: ROUTES_NAMES.adminJobs },
+        route: { name: ROUTES_NAMES.adminJobsManagement },
         icon: '$vuetify.icons.ticket_status_job',
-        permission: USER_PERMISSIONS.technical.job,
+        permission: USER_PERMISSIONS.technical.jobManagement,
       },
     ];
 

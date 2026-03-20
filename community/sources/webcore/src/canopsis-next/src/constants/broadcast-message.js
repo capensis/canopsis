@@ -46,7 +46,7 @@ export const ROUTES_NAMES_TO_BROADCAST_MESSAGES = {
   [ROUTES_NAMES.adminHealthcheck]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminKPI]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminEventsRecords]: BROADCAST_MESSAGE_VIEWS.administration,
-  [ROUTES_NAMES.adminJobs]: BROADCAST_MESSAGE_VIEWS.administration,
+  [ROUTES_NAMES.adminJobsManagement]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminTemplateTesting]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminCustomObjectsExternalAuthTokens]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminCustomObjectsExternalDataTables]: BROADCAST_MESSAGE_VIEWS.administration,
