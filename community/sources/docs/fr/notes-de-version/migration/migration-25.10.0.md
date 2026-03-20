@@ -159,7 +159,7 @@ mongosh -u root -p root
 
     Arrêt des pods MongoDB :
     ```sh
-    kubectl get statefulset --no-headers=true |grep mongodb| awk {'print $1'}| xargs kubectl delete statefulset
+    kubectl get statefulset --no-headers=true | grep mongodb | awk '{print $1}' | xargs kubectl delete statefulset
     ```
 
     Suppression des PVCs MongoDB :
