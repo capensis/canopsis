@@ -24,7 +24,7 @@
 
 ## Authentification LDAP
 
-Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC 4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons. 
+Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC 4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons.
 
 
 ### Configuration de LDAP
@@ -90,7 +90,7 @@ Définition des paramètres :
 | `user_dn`         | DN de base où rechercher les utilisateurs          | `ou=People,dc=example,dc=com`                                 |
 | `ufilter`         | Filtre de recherche pour les utilisateurs <br> La valeur de l'utilisateur est présentée dans une variable notée `%s` | `uid=%s`    |
 | `username_attr`   | Attribut portant l'identifiant utilisateur dans l'objet de l'annuaire  | `uid`                                       |
-| `attrs`           | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
+| `attrs`           | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `email` | `{"email": "mail", "firstname": "givenName", "lastname": "sn"}` |
 | `default_role`    | Rôle Canopsis par défaut au moment de la première connexion   | `Visualisation`                                      |
 | `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
 | `insecure_verify_any_cert` | Permet d'accepter n'importe quel certificat peu importe le domaine utilisé. (Nécessite que `insecure_skip_verify` soit défini à `true`)   | `true`   |
@@ -263,7 +263,7 @@ Puis vous devez renseigner les différents paramètres d'authentification SAML.
     canopsis_acs_binding: redirect
     sign_auth_request: false
     name_id_format: urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
-#    skip_signature_validation: true
+    skip_signature_validation: true
     acs_index: 1
     auto_user_registration: true
 
@@ -288,10 +288,10 @@ Définition des paramètres :
 | `x509_key`                  | Clé du certificat pour le chiffrement des requêtes SAML                         | `/certs/saml.key`                      |
 | `idp_metadata_url`          | URL permettant de récupérer les Metadatas XML de l'IDP ( si les metadatas XML sont fournies via un service accessible ) | `http://saml-server:8090/simplesaml/saml2/idp/metadata.php` |
 | `idp_metadata_xml`          | Fichier XML contenant les Metadatas XML de l'IDP ( si les metadatas XML ne sont pas fournies via un service accessible ) | `/files-pro/api/security/saml-metadata.xml` |
-| `idp_attributes_map`        | Tableau de correspondance entre les attributs utilisateurs de Canopsis ( colonne de gauche ) et les attributs fournis par l'IDP ( colonne de droite ) |`{"mail": "email", "name": "uid", "firstname": "uid", "lastname": "uid"}` |
-| `canopsis_saml_url`         | URL du service SAML fourni par Canopsis qui sera configuré côté IDP | `http://canopsis/api/v4/saml` |
+| `idp_attributes_map`        | Tableau de correspondance entre les attributs utilisateurs de Canopsis ( colonne de gauche ) et les attributs fournis par l'IDP ( colonne de droite ) |`{"email": "email", "name": "uid", "firstname": "uid", "lastname": "uid"}` |
+| `canopsis_saml_url`         | URL du service SAML fourni par Canopsis qui sera configurée côté IDP | `http://canopsis/api/v4/saml` |
 | [`default_role`](#multi-role)              | Rôle Canopsis par défaut à attribuer pour l'utilisateur à sa création | `Visualisation` |
-| `allow_extra_roles`              | Permet d'utiliser des rôles locaux de Canopsis en plus des rôles mapper avec le SAML | `true` |
+| `allow_extra_roles`              | Permet d'utiliser des rôles locaux de Canopsis en plus des rôles mappés avec le SAML | `true` |
 | `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
 | `insecure_verify_any_cert` | Permet d'accepter n'importe quel certificat peu importe le domaine utilisé. (Nécessite que `insecure_skip_verify` soit défini à `true`)   | `true`   |
 | `canopsis_sso_binding`      | Type de binding HTTP pour le service SSO parmi `redirect` ou `post` | `redirect` |
