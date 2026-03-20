@@ -54,6 +54,7 @@ const (
 	ValueTypeTplTestData             = "tpltestdata"
 	ValueTypeTplTest                 = "tpltest"
 	ValueTypeWebhookTokenRule        = "webhooktokenrule"
+	ValueTypeLLMConfig               = "llmconfig"
 )
 
 type ActionLogEvent struct {
