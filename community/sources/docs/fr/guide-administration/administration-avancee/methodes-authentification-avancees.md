@@ -24,7 +24,7 @@
 
 ## Authentification LDAP
 
-Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC 4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons. 
+Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC 4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons.
 
 
 ### Configuration de LDAP
@@ -56,26 +56,20 @@ Puis vous devez renseigner les différents paramètres d'authentification LDAP.
     username_attr: uid
     # attrs defines extra user's attributes.
     attrs:
-      email: mail
+      mail: mail
       firstname: givenName
       lastname: sn
     # default_role defines role of new users which are created on successful LDAP login.
     default_role: Visualisation
-    # insecure_skip_verify and insecure_verify_any_cert control whether a client verifies
-    #   the server's certificate chain and host name.
-    #   Cases:
-    #     1. insecure_skip_verify = true, insecure_verify_any_cert = false
-    #       - Accepts only self-signed certificates.
-    #     2. insecure_skip_verify = true, insecure_verify_any_cert = true
-    #       - Accepts any certificate presented by the server and any host name in that certificate.
-    #     3. insecure_skip_verify = false, insecure_verify_any_cert = true
-    #       - Invalid config
-    #
-    #   WARNING: Both modes make TLS susceptible to machine-in-the-middle attacks.
+    # insecure_skip_verify controls whether a client verifies the server's
+    #	certificate chain and host name. If true, crypto/tls
+    #	accepts any certificate presented by the server and any host name in that
+    #	certificate. In this mode, TLS is susceptible to machine-in-the-middle
+    #	attacks unless custom verification is used.
     insecure_skip_verify: false
-    insecure_verify_any_cert: false
     min_tls_ver: tls12
     max_tls_ver: tls13
+
 ```
 
 Définition des paramètres :
@@ -93,7 +87,6 @@ Définition des paramètres :
 | `attrs`           | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
 | `default_role`    | Rôle Canopsis par défaut au moment de la première connexion   | `Visualisation`                                      |
 | `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
-| `insecure_verify_any_cert` | Permet d'accepter n'importe quel certificat peu importe le domaine utilisé. (Nécessite que `insecure_skip_verify` soit défini à `true`)   | `true`   |
 | `max_tls_ver` (optionnel) | La version maximale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
 | `min_tls_ver` (optionnel) | La version minimale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
 
@@ -152,19 +145,6 @@ Puis vous devez renseigner les différents paramètres d'authentification CAS.
     validate_url: http://cas.local/serviceValidate
     # default_role defines role of new users which are created on successful CAS login.
     default_role: Visualisation
-    # insecure_skip_verify and insecure_verify_any_cert control whether a client verifies
-    #   the server's certificate chain and host name.
-    #   Cases:
-    #     1. insecure_skip_verify = true, insecure_verify_any_cert = false
-    #       - Accepts only self-signed certificates.
-    #     2. insecure_skip_verify = true, insecure_verify_any_cert = true
-    #       - Accepts any certificate presented by the server and any host name in that certificate.
-    #     3. insecure_skip_verify = false, insecure_verify_any_cert = true
-    #       - Invalid config
-    #
-    #   WARNING: Both modes make TLS susceptible to machine-in-the-middle attacks.
-    insecure_skip_verify: false
-    insecure_verify_any_cert: false
 ```
 
 Définition des paramètres :
@@ -177,8 +157,6 @@ Définition des paramètres :
 | `login_url`    | URL du serveur CAS sur laquelle le navigateur web va être redirigé pour s'authentifier        |   `http://cas.local/login`  |
 | `validate_url`  | URL de validation du serveur CAS à laquelle l'API va accéder | `http://cas.local/serviceValidate` |
 | `default_role` | Rôle par défaut au moment de la première connexion           | `Visualisation`                  |
-| `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
-| `insecure_verify_any_cert` | Permet d'accepter n'importe quel certificat peu importe le domaine utilisé. (Nécessite que `insecure_skip_verify` soit défini à `true`)   | `true`   |
 
 Vous devez ensuite **obligatoirement** redémarrer le service API.
 
@@ -231,42 +209,32 @@ Puis vous devez renseigner les différents paramètres d'authentification SAML.
     expiration_interval: 1M
     title: Connexion
     x509_cert: /certs/saml.cert
-    x509_key: /certs/saml.key
+    x509_key:  /certs/saml.key
     # sample with SimpleSamlPHP server
     idp_metadata_url: http://saml-server:8090/simplesaml/saml2/idp/metadata.php
     # other option with plain XML file
     # idp_metadata_xml: /path/to/xml
     idp_attributes_map:
-      email: email
-      name: uid
-      firstname: uid
-      lastname: uid
+       email: email
+       name: uid
+       firstname: uid
+       lastname: uid
     canopsis_saml_url: http://canopsis/api/v4/saml
     # default_role defines role of new users which are created on successful SAML login.
     default_role: Visualisation
-    # allow_extra_roles if set to true allow modifying user roles via user API, e.g. adding more roles.
-    allow_extra_roles: false
-    # insecure_skip_verify and insecure_verify_any_cert control whether a client verifies
-    #   the server's certificate chain and host name.
-    #   Cases:
-    #     1. insecure_skip_verify = true, insecure_verify_any_cert = false
-    #       - Accepts only self-signed certificates.
-    #     2. insecure_skip_verify = true, insecure_verify_any_cert = true
-    #       - Accepts any certificate presented by the server and any host name in that certificate.
-    #     3. insecure_skip_verify = false, insecure_verify_any_cert = true
-    #       - Invalid config
-    #
-    #   WARNING: Both modes make TLS susceptible to machine-in-the-middle attacks.
+    # insecure_skip_verify controls whether a client verifies the server's
+    #	certificate chain and host name. If true, crypto/tls
+    #	accepts any certificate presented by the server and any host name in that
+    #	certificate. In this mode, TLS is susceptible to machine-in-the-middle
+    #	attacks unless custom verification is used.
     insecure_skip_verify: false
-    insecure_verify_any_cert: false
     canopsis_sso_binding: redirect
     canopsis_acs_binding: redirect
     sign_auth_request: false
     name_id_format: urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
-#    skip_signature_validation: true
+    skip_signature_validation: true
     acs_index: 1
     auto_user_registration: true
-
 ```
 
 La paire de certificats relatifs aux directives `x509_cert` et `x509_key` doit être générée en amont.
@@ -291,9 +259,7 @@ Définition des paramètres :
 | `idp_attributes_map`        | Tableau de correspondance entre les attributs utilisateurs de Canopsis ( colonne de gauche ) et les attributs fournis par l'IDP ( colonne de droite ) |`{"mail": "email", "name": "uid", "firstname": "uid", "lastname": "uid"}` |
 | `canopsis_saml_url`         | URL du service SAML fourni par Canopsis qui sera configuré côté IDP | `http://canopsis/api/v4/saml` |
 | [`default_role`](#multi-role)              | Rôle Canopsis par défaut à attribuer pour l'utilisateur à sa création | `Visualisation` |
-| `allow_extra_roles`              | Permet d'utiliser des rôles locaux de Canopsis en plus des rôles mapper avec le SAML | `true` |
 | `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
-| `insecure_verify_any_cert` | Permet d'accepter n'importe quel certificat peu importe le domaine utilisé. (Nécessite que `insecure_skip_verify` soit défini à `true`)   | `true`   |
 | `canopsis_sso_binding`      | Type de binding HTTP pour le service SSO parmi `redirect` ou `post` | `redirect` |
 | `canopsis_acs_binding`      | Type de binding HTTP pour le service ACS parmi `redirect` ou `post` | `redirect` |
 | `sign_auth_request`         | Permet de signer les requêtes authentification si positionné à `true` | `false` |
