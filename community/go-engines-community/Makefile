@@ -137,7 +137,6 @@ docker-check-version:
 
 docker-go-builder: $(MONOREPO_ROOT)/.dockerignore docker-check-version
 	docker build \
-		--debug \
 		-t "$(DOCKER_IMAGE_BASE_PATH)/canopsis-go-builder:latest" \
 		--target builder \
 		$(if $(DOCKER_NO_CACHE),,--cache-from "$(DOCKER_IMAGE_BASE_PATH)/canopsis-go-builder:latest") \
@@ -148,7 +147,6 @@ docker-go-builder: $(MONOREPO_ROOT)/.dockerignore docker-check-version
 $(DOCKER_CMD_TARGETS): TARGET=final-container
 $(DOCKER_CMD_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker-go-builder
 	docker build \
-		--debug \
 		-t "$(DOCKER_IMAGE_BASE_PATH)/$(subst docker-cmd-,,$@):$(DOCKER_TAG)" \
 		--target "$(TARGET)" \
 		--build-arg CMD="$(subst docker-cmd-,,$@)" \
@@ -173,7 +171,6 @@ $(CURRENT_BUILD_OUTPUT_DIR)/support/%:
 $(DOCKER_SUPPORT_TOOLS_TARGETS):
 	cd $(SUPPORT_TOOLS_DIR)/$(subst docker-support-tool-,,$@) && \
 	docker build \
-		--debug \
 		--build-arg "DOCKER_ALPINE_VERSION=$(DOCKER_ALPINE_VERSION)" \
 		-f "./Dockerfile" \
 		-t "$(DOCKER_IMAGE_BASE_PATH)/canopsis-support-tool-$(subst docker-support-tool-,,$@):$(DOCKER_TAG)" \
