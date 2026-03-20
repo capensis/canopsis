@@ -141,10 +141,11 @@ mongosh -u root -p root
 
 === "Helm"
 
-    !!! warning Attention
-            Ce bloc est réservé uniquement aux environnements impliquant MongoDB exécuté dans un environnement Kubernetes.
-            
-            Si ce n'est pas votre cas, référez-vous au bloc [Paquets RPM](#__tabbed_1_2)
+    !!! warning "Attention"
+
+        Ce bloc est réservé uniquement aux environnements impliquant MongoDB exécuté dans un environnement Kubernetes.
+        
+        Si ce n'est pas votre cas, référez-vous au bloc [Paquets RPM](#rpm)
 
     Dump de la base de données Canopsis :
     ```sh
@@ -161,13 +162,13 @@ mongosh -u root -p root
     kubectl get statefulset --no-headers=true |grep mongodb| awk {'print $1'}| xargs kubectl delete statefulset
     ```
 
-    Suppresion des PVCs MongoDB :
+    Suppression des PVCs MongoDB :
     ```sh
     kubectl get pvc --no-headers=true | awk '{print $1}' | grep mongodb | xargs kubectl delete pvc
     ```
 
-    !!! warning Attention
-        Veillez à bien adapter la commande ci-dessous avec vos paramètres présent dans votre fichier de surcharges, par exemple customer-values.yml.
+    !!! warning "Attention"
+        Veillez à bien adapter la commande ci-dessous avec les paramètres présents dans votre fichier de surcharge, par exemple `customer-values.yml`.
 
     Mise à jour de MongoDB :
     ```sh
@@ -494,7 +495,7 @@ Deux étapes sont à suivre :
     dnf versionlock add --raw 'rabbitmq-server-4.1*'
     ```
 
-    Il faut couper le service
+    Il faut ensuite couper le service
 
     ```sh
     systemctl stop rabbitmq-server.service
@@ -542,7 +543,7 @@ Deux étapes sont à suivre :
 
     Dans cette version de Canopsis, le bus de données RabbitMQ passe de la version 4.0 à 4.1.  
 
-    Supprimer le volume associé à RabbitMQ
+    Supprimez le volume associé à RabbitMQ
 
     ```sh
     kubectl get pvc --no-headers=true | awk '{print $1}' | grep rabbitmq | xargs kubectl delete pvc
@@ -585,7 +586,7 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
 ### Séparation des flux d’événements par initiateur
 
 En version 25.04, les flags suivants avaient été dépréciés, ils sont à présent obsolètes.  
-Toute référence doit être supprimée dans vos configurations. Les moteurs concernés ne démareront pas sans cela.  
+Toute référence doit être supprimée dans vos configurations. Les moteurs concernés ne démarreront pas sans cela.  
 
 * -publishQueue
 * -consumeQueue
@@ -664,7 +665,7 @@ Toute référence doit être supprimée dans vos configurations. Les moteurs con
 
         Cette opération peut prendre plusieurs minutes pour s'exécuter.
 
-    Vous pouvez ensuite vérifier que le mécanisme de provisioning/reconfigure s'est correctement déroulé. Le conteneur doit présenté un "exit 0"
+    Vous pouvez ensuite vérifier que le mécanisme de provisioning/reconfigure s'est correctement déroulé. Le conteneur doit présenter un "exit 0"
 
     ```sh
     CPS_EDITION=pro docker compose ps -a|grep reconfigure
