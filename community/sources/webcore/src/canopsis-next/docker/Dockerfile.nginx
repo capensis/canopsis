@@ -1,7 +1,7 @@
 # Args defined here are only available to FROM commands
 # See https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG NGINX_VERSION
-ARG NODE_VERSION
+ARG NGINX_VERSION=dummy
+ARG NODE_VERSION=dummy
 
 FROM node:${NODE_VERSION} AS build
 
@@ -22,7 +22,7 @@ RUN make install DESTDIR=/installroot
 # OpenShift-compatible NGINX Container
 #
 
-FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} as nginx-openshift
+FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS nginx-openshift
 
 # Put the nginx certificates in a volume
 RUN mkdir -m 750 -p /etc/nginx/ssl && \
@@ -38,7 +38,7 @@ RUN chmod +x /entrypoint.sh
 USER nginx
 
 ENV NGINX_OPENSHIFT=1
-ENTRYPOINT /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 
 #
 # Default NGINX Container
