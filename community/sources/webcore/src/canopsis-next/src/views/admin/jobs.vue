@@ -1,10 +1,7 @@
 <template>
-  <div>
-    <c-page-header />
+  <c-page @refresh="refresh">
     <ticket-status-jobs-tabs />
-
-    <c-fab-btn @refresh="refresh" />
-  </div>
+  </c-page>
 </template>
 
 <script>
