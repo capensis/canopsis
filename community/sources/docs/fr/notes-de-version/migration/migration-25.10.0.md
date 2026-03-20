@@ -1,6 +1,10 @@
-# Guide de migration vers Canopsis 25.10.0
+# Guide de migration vers Canopsis 25.10.0
 
 Ce guide donne les instructions vous permettant de mettre à jour Canopsis 25.04 (dernière version disponible) vers [la version 25.10.0](../25.10.0.md).
+
+## Sommaire
+
+[TOC]
 
 ## Prérequis
 
@@ -15,32 +19,21 @@ Les fichiers de référence qui sont mentionnés dans ce guide sont disponibles 
 | Édition Community | [https://git.canopsis.net/canopsis/canopsis-community/-/releases](https://git.canopsis.net/canopsis/canopsis-community/-/releases)   |
 | Édition pro       | [https://git.canopsis.net/sources/canopsis-pro-sources/-/releases](https://git.canopsis.net/sources/canopsis-pro-sources/-/releases) |
 
-[TOC]
-
-
-
 ## Réalisation d'une sauvegarde
 
 Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lors de modifications importantes.
 
-## Procédure de mise à jour
+## Arrêt de l'environnement en cours d'exécution
 
-=== "Docker Compose"
-    ## Docker Compose
-    ### Vérification MongoDB
+=== "RPM"
 
-    !!! warning "Vérification"
-
-        Avant de démarrer la procédure de mise à jour, vous devez vérifier que la valeur de `featureCompatibilityVersion` est bien positionnée à **7.0**  
+    Vous devez prévoir une interruption du service afin de procéder à la mise à jour qui va suivre.
 
     ```sh
-    CPS_EDITION=pro docker compose exec mongodb bash
-    mongosh -u root -p root
-    > db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
-    > exit
+    systemctl stop canopsis.service
     ```
 
-    ### Arrêt de l'environnement en cours d'exécution
+=== "Docker Compose"
 
     Vous devez prévoir une interruption du service afin de procéder à la mise à jour qui va suivre.
 
@@ -48,111 +41,78 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     CPS_EDITION=pro docker compose down
     ```
 
-    ### Mise à jour de l'applicatif Canopsis
+=== "Helm"
 
-    !!! information "Information"
-
-        Canopsis 25.10 est livré avec un nouveau jeu de configurations de référence.
-        Vous devez télécharger ces configurations et y reporter vos personnalisations. 
-
-    Si vous êtes utilisateur de l'édition `community`, voici les étapes à suivre.
-
-    Télécharger le paquet de la version 25.10.0 (canopsis-community-docker-compose-25.10.0.tar.gz) disponible à cette adresse [https://git.canopsis.net/canopsis/canopsis-community/-/releases](https://git.canopsis.net/canopsis/canopsis-community/-/releases).
+    Vous devez prévoir une interruption du service afin de procéder à la mise à jour qui va suivre.
 
     ```sh
-    export CPS_EDITION=community
-    tar xvfz canopsis-community-docker-compose-25.10.0.tar.gz
-    cd canopsis-community-docker-compose-25.10.0
+    kubectl delete deployments --all
     ```
 
-    Si vous êtes utilisateur de l'édition `pro`, voici les étapes à suivre.
 
-    Télécharger le paquet de la version 25.10.0 (canopsis-pro-docker-compose-25.10.0.tar.gz) disponible à cette adresse [https://git.canopsis.net/sources/canopsis-pro-sources/-/releases](https://git.canopsis.net/sources/canopsis-pro-sources/-/releases).
+## Mise à jour de MongoDB
+
+### Vérifications MongoDB
+
+!!! warning "Vérification"
+
+    Avant de démarrer la procédure de mise à jour, vous devez vérifier que la valeur de `featureCompatibilityVersion` est bien positionnée à **7.0**  
+
+```sh
+mongosh -u root -p root
+> db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
+> exit
+```
+
+### Mise à jour
+
+=== "RPM"
+
+    Pour commencer, il faut couper le service
 
     ```sh
-    export CPS_EDITION=pro
-    tar xvfz canopsis-pro-docker-compose-25.10.0.tar.gz
-    cd canopsis-pro-docker-compose-25.10.0
+    systemctl stop mongod.service
     ```
 
-    À ce stade, vous devez synchroniser les modifications réalisées sur vos anciens fichiers de configuration `docker-compose` avec les fichiers `docker-compose.yml` et/ou `docker-compose.override.yml`.
-
-    ### Mise à jour de TimescaleDB
-
-    Dans cette version de Canopsis, la base de données TimescaleDB passe de la version 2.15.1 à 2.21.4.  
-    En plus de la mise à jour de TimescaleDB lui-même, le système de gestion de base de données PostreSQL doit être mis à jour de la version 15 à la version 17.
-
-    Deux étapes sont à suivre :
-
-    1. Mise à jour de TimescaleDB 2.15.1 vers 2.21.4
-    2. Mise à jour de PostgreSQL 15 vers 17
-
-    Modifiez la variable `TIMESCALEDB_TAG` du fichier `.env` de cette façon :
-
-    ```diff
-    -TIMESCALEDB_TAG=2.21.4-pg17
-    +TIMESCALEDB_TAG=2.21.4-pg15
-    ```
-
-    Démarrez le conteneur et mettez à jour l'extension TimescaleDB
+    Installer le dépôt pour la version `8.0` de MongoDB
 
     ```sh
-    CPS_EDITION=pro docker compose up -d timescaledb
-    CPS_EDITION=pro docker compose exec timescaledb psql postgresql://postgres:canopsis@timescaledb:5432/canopsis
-    canopsis=# ALTER EXTENSION timescaledb UPDATE;
-    canopsis=# \c canopsis_tech_metrics
-    canopsis=# ALTER EXTENSION timescaledb UPDATE;
+    cat << EOF > /etc/yum.repos.d/mongodb-org-8.0.repo
+    [mongodb-org-8.0]
+    name=MongoDB Repository
+    baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/8.0/x86_64/
+    gpgcheck=1
+    enabled=1
+    gpgkey=https://www.mongodb.org/static/pgp/server-8.0.asc
+    EOF
     ```
 
-    Vérifiez que la version de l'extension soit bien mise à jour
+    Lancer l'upgrade
 
     ```sh
-    canopsis=# \dx timescaledb
-                                                    List of installed extensions
-        Name     | Version | Schema |                                      Description                                      
-    -------------+---------+--------+---------------------------------------------------------------------------------------
-        timescaledb | 2.21.4  | public | Enables scalable inserts and complex queries for time-series data (Community Edition)
-    (1 row)
+    dnf upgrade mongodb-org mongodb-org-database mongodb-org-server mongodb-org-mongos mongodb-org-tools -y
     ```
 
-    Sauvegarde des bases de données
+    Une fois mis à jour, le service doit être relancé
+    ```sh
+    systemctl start mongod.service
+    ```
+
+    Il faut ensuite se connecter avec l'utilisateur `root` et terminer la mise à jour
+    ```sh
+    mongosh -u root -p root
+    > db.adminCommand( { setFeatureCompatibilityVersion: "8.0", confirm: true } )
+    exit
+    ```
+
+    Après avoir mis à jour mongodb, l'option de telemetry sera activée. Pour la désactiver, exécutez la commande suivante :
 
     ```sh
-    CPS_EDITION=pro docker compose exec timescaledb pg_dump postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis -Ft -f /tmp/postgres_dump_archive.tar
-    CPS_EDITION=pro docker compose exec timescaledb pg_dump postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics -Ft -f /tmp/postgres_dump_archive_techmetrics.tar
-    CPS_EDITION=pro docker compose cp timescaledb:/tmp/postgres_dump_archive.tar /tmp
-    CPS_EDITION=pro docker compose cp timescaledb:/tmp/postgres_dump_archive_techmetrics.tar /tmp
+    mongosh -u root -p root
+    > disableTelemetry()
     ```
 
-    Arrêtez le conteneur et supprimez les volumes associés
-
-    ```sh
-    CPS_EDITION=pro docker compose down -v timescaledb
-    ```
-
-    Modifiez la variable `TIMESCALEDB_TAG` du fichier `.env` de cette façon :
-
-    ```diff
-    -TIMESCALEDB_TAG=2.21.4-pg15
-    +TIMESCALEDB_TAG=2.21.4-pg17
-    ```
-
-    Démarrer le conteneur timescaledb
-
-    ```sh
-    CPS_EDITION=pro docker compose up -d timescaledb
-    ```
-
-    Restaurez le dump précédemment effectué
-
-    ```sh
-    CPS_EDITION=pro docker compose cp /tmp/postgres_dump_archive.tar timescaledb:/tmp/postgres_dump_archive.tar
-    CPS_EDITION=pro docker compose cp /tmp/postgres_dump_archive_techmetrics.tar timescaledb:/tmp/postgres_dump_archive_techmetrics.tar
-    CPS_EDITION=pro docker compose exec timescaledb pg_restore --dbname=postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis --no-owner -Ft -v /tmp/postgres_dump_archive.tar
-    CPS_EDITION=pro docker compose exec timescaledb pg_restore --dbname=postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics --no-owner -Ft -v /tmp/postgres_dump_archive_techmetrics.tar
-    ```
-
-    ### Mise à jour de MongoDB
+=== "Docker Compose"
 
     Dans cette version de Canopsis, la base de données MongoDB passe de la version 7.0 à 8.0.  
 
@@ -179,167 +139,83 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     exit
     ```
 
-    ### Mise à jour de RabbitMQ
+=== "Helm"
 
-    Dans cette version de Canopsis, le bus de données RabbitMQ passe de la version 4.0 à 4.1.  
+    !!! warning "Attention"
 
-    Les configurations de référence fournies dans Canopsis embarquent déjà ce changement.  
-    Vous devez néanmoins activer l'ensemble des ["feature flags"](https://www.rabbitmq.com/docs/feature-flags) stables.  
+        Ce bloc est réservé uniquement aux environnements impliquant MongoDB exécuté dans un environnement Kubernetes.
+        
+        Si ce n'est pas votre cas, référez-vous au bloc [Paquets RPM](#rpm)
 
-    Démarrez le conteneur `rabbitmq` :
-
+    Dump de la base de données Canopsis :
     ```sh
-    CPS_EDITION=pro docker compose up -d rabbitmq
+    kubectl exec -n canopsis canopsis-mongodb-0 -- mongodump --uri="mongodb://cpsmongo:canopsis@localhost:27017/canopsis" --gzip --out /tmp/dump_canopsis.gz
     ```
 
-    Puis activez les "feature flags" :
-
+    Récupération en local du dump :
     ```sh
-    CPS_EDITION=pro docker compose exec rabbitmq rabbitmqctl enable_feature_flag all
+    kubectl cp canopsis/canopsis-mongodb-0:/tmp/dump_canopsis.gz .
     ```
 
-    ### Lancement du provisioning `canopsis-reconfigure`
-
-    #### Synchronisation du fichier de configuration `canopsis.toml` ou fichier de surcharge
-
-    Si vous avez modifié le fichier `canopsis.toml` (vous le voyez via une définition de volume dans votre fichier docker-compose.yml), vous devez vérifier qu'il soit bien à jour par rapport au fichier de référence.  
-
-    * [`canopsis.toml` pour Canopsis Community 25.10.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/25.10.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml)
-    * [`canopsis.toml` pour Canopsis Pro 25.10.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/25.10.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml)
-
-    !!! information "Information"
-
-        Pour éviter ce type de synchronisation fastidieuse, la bonne pratique est d'utiliser [un fichier de surcharge de cette configuration](../../../guide-administration/administration-avancee/modification-canopsis-toml/). 
-
-    Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, uniquement continuer à le présenter dans un volume.
-
-    #### Séparation des flux d’événements par initiateur
-
-    En version 25.04, les flags suivants avaient été dépréciés, ils sont à présent obsolètes.  
-    Toute référence doit être supprimée dans vos configurations. Les moteurs concernés ne démareront pas sans cela.  
-
-    * -publishQueue
-    * -consumeQueue
-    * -workers (remplacé par des flags spécifiques à chaque type de flux)
-
-    | Moteur               | Flags nouveaux     | Valeur par défaut | Flags obsolètes                             |
-    |----------------------|--------------------|-------------------|---------------------------------------------|
-    | engine-fifo          | -workers           | 10                | -publishQueue, -consumeQueue                |
-    | engine-che           | -externalWorkers   | 4                 | -workers, -publishQueue, -consumeQueue      |
-    |                      | -systemWorkers     | 4                 |                                             |
-    |                      | -userWorkers       | 2                 |                                             |
-    | engine-axe           | -externalWorkers   | 4                 | -workers, -publishQueue                     |
-    |                      | -systemWorkers     | 4                 |                                             |
-    |                      | -userWorkers       | 2                 |                                             |
-    |                      | -rpcWorkers        | 4                 |                                             |
-    | engine-correlation   | -externalWorkers   | 4                 | -workers, -publishQueue, -consumeQueue      |
-    |                      | -systemWorkers     | 4                 |                                             |
-    |                      | -userWorkers       | 2                 |                                             |
-    |                      | -rpcWorkers        | 4                 |                                             |
-    | engine-dynamic-infos | -externalWorkers   | 4                 | -workers, -publishQueue                     |
-    |                      | -systemWorkers     | 4                 |                                             |
-    |                      | -userWorkers       | 2                 |                                             |
-    |                      | -rpcWorkers        | 4                 |                                             |
-    | engine-action        | -externalWorkers   | 4                 | -workers                                    |
-    |                      | -systemWorkers     | 4                 |                                             |
-    |                      | -userWorkers       | 2                 |                                             |
-    |                      | -rpcWorkers        | 4                 |                                             |
-
-    #### Reconfiguration de Canopsis
-
-    !!! Attention
-
-        Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette personnalisation.
-        L'outil est en effet pré paramétré pour fonctionner naturellement.
-
+    Arrêt des pods MongoDB :
     ```sh
-    CPS_EDITION=pro docker compose up -d reconfigure
+    kubectl get statefulset --no-headers=true | grep mongodb | awk '{print $1}' | xargs kubectl delete statefulset
     ```
 
-    !!! information "Information"
-
-        Cette opération peut prendre plusieurs minutes pour s'exécuter.
-
-    Vous pouvez ensuite vérifier que le mécanisme de provisioning/reconfigure s'est correctement déroulé. Le conteneur doit présenté un "exit 0"
-
+    Suppression des PVCs MongoDB :
     ```sh
-    CPS_EDITION=pro docker compose ps -a|grep reconfigure
-    canopsis-pro-reconfigure-1            "/canopsis-reconfigu…"   reconfigure            exited (0)
+    kubectl get pvc --no-headers=true | awk '{print $1}' | grep mongodb | xargs kubectl delete pvc
     ```
 
-    ### Mise à jour et démarrage final de Canopsis
+    !!! warning "Attention"
+        Veillez à bien adapter la commande ci-dessous avec les paramètres présents dans votre fichier de surcharge, par exemple `customer-values.yml`.
 
-    Enfin, il vous reste à mettre à jour et à démarrer tous les composants applicatifs de Canopsis
-
+    Mise à jour de MongoDB :
     ```sh
-    CPS_EDITION=pro docker compose up -d
+    helm repo update
+
+    helm upgrade canopsis canopsis/mongodb \
+    --set enabled=true \
+    --set settings.rootUsername=root \
+    --set settings.rootPassword=root \
+    --set replicaSet.enabled=true \
+    --set replicaSet.name=rs0 \
+    --set replicaSet.secondaries=0 \
+    --set replicaSet.key="c29tZXJhbmRvbXN0cmluZzEyMzQ1Ng==" \
+    --set userDatabase.name=canopsis \
+    --set userDatabase.user=cpsmongo \
+    --set userDatabase.password=canopsis \
+    --set storage.keepPvc=true \
+    --set storage.requestedSize=8Gi \
+    --version 1.1.0
     ```
 
-    Vous pouvez ensuite vérifier que l'ensemble des conteneurs soient correctement exécutés.
-
+    Lorsque le POD est UP, copie du dump de la DB sur l'instance 0 de MongoDB : 
     ```sh
-    CPS_EDITION=pro docker compose ps
+    kubectl cp ./canopsis canopsis-mongodb-0:/tmp/
     ```
 
-    Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
-
-    ![Healthcheck](./img/25.10.0-healthcheck.png)
-
-=== "Paquets RPM"
-    ## Paquets RPM
-    ### Mise à jour de dépôts
-
-    Certaines briques logicielles nécessitent un changement de dépôts
-
-    #### MongoDB:
-
+    Restauration du dump :
     ```sh
-    cat << EOF > /etc/yum.repos.d/mongodb-org-8.0.repo
-    [mongodb-org-8.0]
-    name=MongoDB Repository
-    baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/8.0/x86_64/
-    gpgcheck=1
-    enabled=1
-    gpgkey=https://www.mongodb.org/static/pgp/server-8.0.asc
-    EOF
+    kubectl exec -n canopsis canopsis-mongodb-0 -- mongorestore -u cpsmongo --password canopsis --gzip --db canopsis /tmp/canopsis
+    ``` 
+
+    Suppression du Statefulset :
+    ```sh
+    kubectl get statefulset --no-headers=true | awk '{print $1}' | grep mongo | xargs kubectl delete statefulset
     ```
 
-    ### Mise à jour des paquets de l'applicatif Canopsis
+## Mise à jour TimescaleDB
 
-    Pour réaliser la mise à jour de Canopsis il faut dans un premier temps arrêter l'application
+Dans cette version de Canopsis, la base de données TimescaleDB passe de la version 2.15.1 à 2.21.4.  
+En plus de la mise à jour de TimescaleDB lui-même, le système de gestion de base de données PostreSQL doit être mis à jour de la version 15 à la version 17.
 
-    ```sh
-    systemctl stop canopsis.service
-    ```
+Deux étapes sont à suivre :
 
-    Une fois le service correctement arrêté, il faut lever le `versionlock` éventuellement présent pour mettre à jour vers la version `25.10`
+1. Mise à jour de TimescaleDB 2.15.1 vers 2.21.4
+2. Mise à jour de PostgreSQL 15 vers 17
 
-    ```sh
-    dnf versionlock delete 'canopsis-pro-25.04.*'
-    dnf versionlock delete 'canopsis-webui-25.04.*'
-
-    dnf versionlock add --raw 'canopsis-pro-25.10.*'
-    dnf versionlock add --raw 'canopsis-webui-25.10.*'
-    ```
-
-    La mise à jour des packages peut ensuite commencer
-
-    ```sh
-    dnf upgrade canopsis-pro canopsis-webui -y
-    ```
-
-    Le paquet `canopsis-pro` a une dépendance vers le client `mongodb`, de ce fait ce paquet sera installé durant cette installation.
-
-
-    ### Mise à jour TimescaleDB
-
-    Dans cette version de Canopsis, la base de données TimescaleDB passe de la version 2.15.1 à 2.21.4.  
-    En plus de la mise à jour de TimescaleDB lui-même, le système de gestion de base de données PostreSQL doit être mis à jour de la version 15 à la version 17.
-
-    Deux étapes sont à suivre :
-
-    1. Mise à jour de TimescaleDB 2.15.1 vers 2.21.4
-    2. Mise à jour de PostgreSQL 15 vers 17
+=== "RPM"
 
     Dans un premier temps, on sauvegarde les bases de données `canopsis` et `canopsis_tech_metrics`
 
@@ -414,7 +290,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     ```sql
     postgres=# \c canopsis
     canopsis=# \dx timescaledb
-                                                  List of installed extensions
+                                                    List of installed extensions
         Name     | Version | Schema |                                      Description                                      
     -------------+---------+--------+---------------------------------------------------------------------------------------
     timescaledb | 2.21.4  | public | Enables scalable inserts and complex queries for time-series data (Community Edition)
@@ -444,54 +320,173 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     postgres=# ALTER ROLE cpspostgres_tech_metrics WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
     ```
 
-    ### Mise à jour MongoDB
+=== "Docker Compose"
 
-    #### Vérifications MongoDB
+    Modifiez la variable `TIMESCALEDB_TAG` du fichier `.env` de cette façon :
 
-    !!! warning "Vérification"
-
-        Avant de démarrer la procédure de mise à jour, vous devez vérifier que la valeur de `featureCompatibilityVersion` est bien positionnée à **7.0**  
-
-    ```sh
-    mongosh -u root -p root
-    > db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
-    > exit
+    ```diff
+    -TIMESCALEDB_TAG=2.21.4-pg17
+    +TIMESCALEDB_TAG=2.21.4-pg15
     ```
 
-    #### Mise à jour
-
-    Pour commencer, il faut couper le service
+    Démarrez le conteneur et mettez à jour l'extension TimescaleDB
 
     ```sh
-    systemctl stop mongod.service
+    CPS_EDITION=pro docker compose up -d timescaledb
+    CPS_EDITION=pro docker compose exec timescaledb psql postgresql://postgres:canopsis@timescaledb:5432/canopsis
+    canopsis=# ALTER EXTENSION timescaledb UPDATE;
+    canopsis=# \c canopsis_tech_metrics
+    canopsis=# ALTER EXTENSION timescaledb UPDATE;
     ```
 
-    Une fois le [dépôt mise à jour vers la version `8.0`](#mise-a-jour-de-depots), on peut lancer l'upgrade
+    Vérifiez que la version de l'extension soit bien mise à jour
 
     ```sh
-    dnf upgrade mongodb-org mongodb-org-database mongodb-org-server mongodb-org-mongos mongodb-org-tools -y
+    canopsis=# \dx timescaledb
+                                                    List of installed extensions
+        Name     | Version | Schema |                                      Description                                      
+    -------------+---------+--------+---------------------------------------------------------------------------------------
+        timescaledb | 2.21.4  | public | Enables scalable inserts and complex queries for time-series data (Community Edition)
+    (1 row)
     ```
 
-    Une fois mis à jour, le service doit être relancé
-    ```sh
-    systemctl start mongod.service
-    ```
-
-    Il faut ensuite se connecter avec l'utilisateur `root` et terminer la mise à jour
-    ```sh
-    mongosh -u root -p root
-    > db.adminCommand( { setFeatureCompatibilityVersion: "8.0", confirm: true } )
-    exit
-    ```
-
-    Après avoir mis à jour mongodb, l'option de telemetry sera activée. Pour la désactiver, exécutez la commande suivante :
+    Sauvegarde des bases de données
 
     ```sh
-    mongosh -u root -p root
-    > disableTelemetry()
+    CPS_EDITION=pro docker compose exec timescaledb pg_dump postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis -Ft -f /tmp/postgres_dump_archive.tar
+    CPS_EDITION=pro docker compose exec timescaledb pg_dump postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics -Ft -f /tmp/postgres_dump_archive_techmetrics.tar
+    CPS_EDITION=pro docker compose cp timescaledb:/tmp/postgres_dump_archive.tar /tmp
+    CPS_EDITION=pro docker compose cp timescaledb:/tmp/postgres_dump_archive_techmetrics.tar /tmp
     ```
 
-    ### Mise à jour RabbitMQ
+    Arrêtez le conteneur et supprimez les volumes associés
+
+    ```sh
+    CPS_EDITION=pro docker compose down -v timescaledb
+    ```
+
+    Modifiez la variable `TIMESCALEDB_TAG` du fichier `.env` de cette façon :
+
+    ```diff
+    -TIMESCALEDB_TAG=2.21.4-pg15
+    +TIMESCALEDB_TAG=2.21.4-pg17
+    ```
+
+    Démarrer le conteneur timescaledb
+
+    ```sh
+    CPS_EDITION=pro docker compose up -d timescaledb
+    ```
+
+    Restaurez le dump précédemment effectué
+
+    ```sh
+    CPS_EDITION=pro docker compose cp /tmp/postgres_dump_archive.tar timescaledb:/tmp/postgres_dump_archive.tar
+    CPS_EDITION=pro docker compose cp /tmp/postgres_dump_archive_techmetrics.tar timescaledb:/tmp/postgres_dump_archive_techmetrics.tar
+    CPS_EDITION=pro docker compose exec timescaledb pg_restore --dbname=postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis --no-owner -Ft -v /tmp/postgres_dump_archive.tar
+    CPS_EDITION=pro docker compose exec timescaledb pg_restore --dbname=postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics --no-owner -Ft -v /tmp/postgres_dump_archive_techmetrics.tar
+    ```
+
+=== "Helm"
+
+    Sauvegarder la base de données Canopsis :
+
+    ```sh
+    kubectl exec canopsis-timescaledb-0 -- pg_dump postgresql://cpspostgres:canopsis@canopsis-timescaledb:5432/canopsis -Ft -f /tmp/postgres_canopsis_dump.tar
+
+    kubectl cp canopsis-timescaledb-0:/tmp/postgres_canopsis_dump.tar postgres_canopsis_dump.tar
+    ```
+
+    Supprimer le Statefulset ainsi que le PVC :
+
+    ```sh
+    kubectl get statefulset --no-headers=true | awk '{print $1}' | grep timescaledb | xargs kubectl delete statefulset
+
+    kubectl get pvc --no-headers=true | awk '{print $1}' | grep timescaledb | xargs kubectl delete pvc
+    ```
+
+    Déploiement de PostgreSQL 17 - TimescaleDB 2.21.4
+
+    ```sh
+    kubectl apply -f - <<EOF
+    apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+        name: canopsis-timescaledb
+    spec:
+        selector:
+        matchLabels:
+            app.kubernetes.io/name: canopsis-pro
+        serviceName: canopsis-timescaledb-headless
+        updateStrategy:
+        type: RollingUpdate
+        template:
+        metadata:
+            labels:
+            app.kubernetes.io/name: canopsis-pro
+        spec:
+            containers:
+            - name: timescaledb
+                image: docker.io/timescale/timescaledb:2.21.4-pg17
+                ports:
+                - containerPort: 5432
+                env:
+                - name: TIMESCALEDB_TELEMETRY
+                    value: "off"
+                - name: POSTGRES_DB
+                    value: "canopsis"
+                - name: POSTGRES_USER
+                    value: "cpspostgres"
+                - name: POSTGRES_PASSWORD
+                    valueFrom:
+                    secretKeyRef:
+                        name: canopsis-timescaledb
+                        key: timescaledb-password
+                readinessProbe:
+                exec:
+                    command:
+                    - /bin/bash
+                    - -c
+                    - pg_isready -d \$POSTGRES_DB -U \$POSTGRES_USER
+                initialDelaySeconds: 5
+                periodSeconds: 10
+                timeoutSeconds: 5
+                volumeMounts:
+                - name: datadir
+                    mountPath: /var/lib/postgresql/data
+            imagePullSecrets:
+            - name: canopsisregistry
+        volumeClaimTemplates:
+        - metadata:
+            name: datadir
+            annotations:
+                helm.sh/resource-policy: "keep"
+            spec:
+            accessModes:
+                - ReadWriteOnce
+            resources:
+                requests:
+                storage: 8Gi
+    EOF
+    ```
+
+    Restauration du dump :
+
+    ```sh
+    kubectl cp postgres_canopsis_dump.tar canopsis-timescaledb-0:/tmp
+
+    kubectl exec canopsis-timescaledb-0 -- pg_restore --dbname=postgresql://cpspostgres:canopsis@canopsis-timescaledb-0:5432/canopsis --no-owner -Ft -v /tmp/postgres_canopsis_dump.tar
+    ```
+
+    Suppression du Statefulset :
+
+    ```sh
+    kubectl get statefulset --no-headers=true | awk '{print $1}' | grep timescaledb | xargs kubectl delete statefulset
+    ```
+
+## Mise à jour RabbitMQ
+
+=== "RPM"
 
     Pour mettre à jour RabbitMQ, on retire en premier lieu le `versionlock` de la version 4.0 de `rabbitmq-server`, puis on le réapplique pour la version `4.1` :
 
@@ -500,7 +495,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     dnf versionlock add --raw 'rabbitmq-server-4.1*'
     ```
 
-    Il faut couper le service
+    Il faut ensuite couper le service
 
     ```sh
     systemctl stop rabbitmq-server.service
@@ -525,15 +520,109 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     4.1.5
     ```
 
-    ### Lancement du provisioning `canopsis-reconfigure`
+=== "Docker Compose"
 
-    Reconfiguration de Canopsis
+    Dans cette version de Canopsis, le bus de données RabbitMQ passe de la version 4.0 à 4.1.  
 
-    !!! Attention
+    Les configurations de référence fournies dans Canopsis embarquent déjà ce changement.  
+    Vous devez néanmoins activer l'ensemble des ["feature flags"](https://www.rabbitmq.com/docs/feature-flags) stables.  
 
-        Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette personnalisation.
-        L'outil est en effet pré paramétré pour fonctionner naturellement.
+    Démarrez le conteneur `rabbitmq` :
 
+    ```sh
+    CPS_EDITION=pro docker compose up -d rabbitmq
+    ```
+
+    Puis activez les "feature flags" :
+
+    ```sh
+    CPS_EDITION=pro docker compose exec rabbitmq rabbitmqctl enable_feature_flag all
+    ```
+
+=== "Helm"
+
+    Dans cette version de Canopsis, le bus de données RabbitMQ passe de la version 4.0 à 4.1.  
+
+    Supprimez le volume associé à RabbitMQ
+
+    ```sh
+    kubectl get pvc --no-headers=true | awk '{print $1}' | grep rabbitmq | xargs kubectl delete pvc
+    ```
+
+## Mise à jour Valkey (Helm seulement)
+
+=== "Helm"
+
+    Valkey ne s’appuie plus sur les charts Bitnami, mais sur nos propres charts maintenus en interne.
+    Il est donc nécessaire de supprimer le StatefulSet ainsi que le PVC associé.
+
+    Supprimer le Statefulset Valkey
+
+    ```sh
+    kubectl get statefulset | grep valkey | awk '{print $1'}' | xargs kubectl delete statefulset
+    ```
+
+    Supprimer le PVC Valkey
+
+    ```sh
+    kubectl get pvc | grep valkey | awk '{print $1'} | xargs kubectl delete pvc
+    ```
+
+## Mise à jour de Canopsis
+
+### Synchronisation du fichier de configuration `canopsis.toml` ou fichier de surcharge
+
+Si vous avez modifié le fichier `canopsis.toml` (vous le voyez via une définition de volume dans votre fichier docker-compose.yml), vous devez vérifier qu'il soit bien à jour par rapport au fichier de référence.  
+
+* [`canopsis.toml` pour Canopsis Community 25.10.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/25.10.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml)
+* [`canopsis.toml` pour Canopsis Pro 25.10.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/25.10.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml)
+
+!!! information "Information"
+
+    Pour éviter ce type de synchronisation fastidieuse, la bonne pratique est d'utiliser [un fichier de surcharge de cette configuration](../../../guide-administration/administration-avancee/modification-canopsis-toml/). 
+
+Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, uniquement continuer à le présenter dans un volume.
+
+### Séparation des flux d’événements par initiateur
+
+En version 25.04, les flags suivants avaient été dépréciés, ils sont à présent obsolètes.  
+Toute référence doit être supprimée dans vos configurations. Les moteurs concernés ne démarreront pas sans cela.  
+
+* -publishQueue
+* -consumeQueue
+* -workers (remplacé par des flags spécifiques à chaque type de flux)
+
+| Moteur               | Flags nouveaux     | Valeur par défaut | Flags obsolètes                             |
+|----------------------|--------------------|-------------------|---------------------------------------------|
+| engine-fifo          | -workers           | 10                | -publishQueue, -consumeQueue                |
+| engine-che           | -externalWorkers   | 4                 | -workers, -publishQueue, -consumeQueue      |
+|                      | -systemWorkers     | 4                 |                                             |
+|                      | -userWorkers       | 2                 |                                             |
+| engine-axe           | -externalWorkers   | 4                 | -workers, -publishQueue                     |
+|                      | -systemWorkers     | 4                 |                                             |
+|                      | -userWorkers       | 2                 |                                             |
+|                      | -rpcWorkers        | 4                 |                                             |
+| engine-correlation   | -externalWorkers   | 4                 | -workers, -publishQueue, -consumeQueue      |
+|                      | -systemWorkers     | 4                 |                                             |
+|                      | -userWorkers       | 2                 |                                             |
+|                      | -rpcWorkers        | 4                 |                                             |
+| engine-dynamic-infos | -externalWorkers   | 4                 | -workers, -publishQueue                     |
+|                      | -systemWorkers     | 4                 |                                             |
+|                      | -userWorkers       | 2                 |                                             |
+|                      | -rpcWorkers        | 4                 |                                             |
+| engine-action        | -externalWorkers   | 4                 | -workers                                    |
+|                      | -systemWorkers     | 4                 |                                             |
+|                      | -userWorkers       | 2                 |                                             |
+|                      | -rpcWorkers        | 4                 |                                             |
+
+### Lancement du provisioning `canopsis-reconfigure` et terminer la mise à jour.
+
+!!! Attention
+
+    Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette personnalisation.
+    L'outil est en effet pré paramétré pour fonctionner naturellement.
+
+=== "RPM"
 
     Si vous utilisez un fichier d'override du canopsis.toml, veuillez ajouter à la ligne de commande suivante l'option `-override` suivie du chemin du fichier en question.
 
@@ -563,300 +652,43 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     ```
 
     Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
-    
+
+    ![Healthcheck](./img/25.10.0-healthcheck.png)
+
+=== "Docker Compose"
+
+    ```sh
+    CPS_EDITION=pro docker compose up -d reconfigure
+    ```
+
+    !!! information "Information"
+
+        Cette opération peut prendre plusieurs minutes pour s'exécuter.
+
+    Vous pouvez ensuite vérifier que le mécanisme de provisioning/reconfigure s'est correctement déroulé. Le conteneur doit présenter un "exit 0"
+
+    ```sh
+    CPS_EDITION=pro docker compose ps -a|grep reconfigure
+    canopsis-pro-reconfigure-1            "/canopsis-reconfigu…"   reconfigure            exited (0)
+    ```
+
+    Enfin, il vous reste à mettre à jour et à démarrer tous les composants applicatifs de Canopsis
+
+    ```sh
+    CPS_EDITION=pro docker compose up -d
+    ```
+
+    Vous pouvez ensuite vérifier que l'ensemble des conteneurs soient correctement exécutés.
+
+    ```sh
+    CPS_EDITION=pro docker compose ps
+    ```
+
+    Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
+
     ![Healthcheck](./img/25.10.0-healthcheck.png)
 
 === "Helm"
-    ## Helm
-    ### Vérification MongoDB
-
-    !!! warning "Vérification"
-
-        Avant de démarrer la procédure de mise à jour, vous devez vérifier que la valeur de `featureCompatibilityVersion` est bien positionnée à **7.0**  
-
-    Les commandes ci-dessous s'appliquent uniquement si votre instance MongoDB est hébergée sur votre cluster Kubernetes.
-    Dans le cas contraire, veuillez vous référer à l'onglet "Paquets RHEL 8".
-
-    ```sh
-    export MONGODB_ROOT_PASSWORD=$(kubectl get secret canopsis-mongodb -o jsonpath='{.data.mongodb-root-password}' | base64 --decode)
-
-    kubectl exec canopsis-mongodb-0 -- mongosh -u root -p $MONGODB_ROOT_PASSWORD --eval 'db.adminCommand({ getParameter: 1, featureCompatibilityVersion: 1 })'
-    ```
-
-    Le retour doit être de la forme `{ "featureCompatibilityVersion" : { "version" : "7.0" }, "ok" : 1 }`
-    Si ce n'est pas le cas, vous ne pouvez pas continuer la mise à jour.
-
-    ### Arrêt de l'environnement en cours d'exécution
-
-    Vous devez prévoir une interruption du service afin de procéder à la mise à jour qui va suivre.
-
-    ```sh
-    kubectl delete deployments --all
-    ```
-
-    ### Mise à jour de l'applicatif Canopsis
-
-    !!! information "Information"
-
-        Canopsis 25.10 est livré avec un nouveau jeu de configurations de référence.
-        Vous devez télécharger ces configurations et y reporter vos personnalisations.  
-
-    !!! warning "Warning - Helm"
-
-        Dans le cadre de la mise à jour vers Canopsis 25.10, les dépendances Helm pour MongoDB, RabbitMQ et Valkey ne s’appuient plus sur les charts Bitnami mais sur nos propres charts maintenus en interne. 
-
-        La migration ne concerne donc pas uniquement Canopsis lui-même, mais également ces composants sous-jacents.
-
-        Une attention particulière doit être portée aux valeurs de configuration et aux paramètres de persistance afin de garantir une transition fluide et sans perte de données.
-
-    ### Mise à jour de Valkey (Helm uniquement)
-
-    Valkey ne s’appuie plus sur les charts Bitnami, mais sur nos propres charts maintenus en interne.
-    Il est donc nécessaire de supprimer le StatefulSet ainsi que le PVC associé.
-
-    Supprimer le Statefulset Valkey
-
-    ```sh
-    kubectl get statefulset |grep valkey| awk {'print $1'}| xargs kubectl delete statefulset
-    ```
-
-    Supprimer le PVC Valkey
-
-    ```sh
-    kubectl get pvc |grep valkey| awk {'print $1'}| xargs kubectl delete pvc
-    ```
-
-    ### Mise à jour de TimescaleDB
-
-    Dans cette version de Canopsis, la base de données TimescaleDB passe de la version 2.15.1 à 2.21.4.  
-    En plus de la mise à jour de TimescaleDB lui-même, le système de gestion de base de données PostreSQL doit être mis à jour de la version 15 à la version 17.
-
-    Deux étapes sont à suivre :
-
-    1. Mise à jour de TimescaleDB 2.15.1 vers 2.21.4
-    2. Mise à jour de PostgreSQL 15 vers 17
-
-    Sauvegarder la base de données Canopsis :
-
-    ```sh
-    kubectl exec canopsis-timescaledb-0 -- pg_dump postgresql://cpspostgres:canopsis@canopsis-timescaledb:5432/canopsis -Ft -f /tmp/postgres_canopsis_dump.tar
-
-    kubectl cp canopsis-timescaledb-0:/tmp/postgres_canopsis_dump.tar postgres_canopsis_dump.tar
-    ```
-
-    Supprimer le Statefulset ainsi que le PVC :
-
-    ```sh
-    kubectl get statefulset --no-headers=true | awk '{print $1}' | grep timescaledb | xargs kubectl delete statefulset
-
-    kubectl get pvc --no-headers=true | awk '{print $1}' | grep timescaledb | xargs kubectl delete pvc
-    ```
-
-    Déploiement de PostgreSQL 17 - TimescaleDB 2.21.4
-
-    ```sh
-    kubectl apply -f - <<EOF
-    apiVersion: apps/v1
-    kind: StatefulSet
-    metadata:
-      name: canopsis-timescaledb
-    spec:
-      selector:
-        matchLabels:
-          app.kubernetes.io/name: canopsis-pro
-      serviceName: canopsis-timescaledb-headless
-      updateStrategy:
-        type: RollingUpdate
-      template:
-        metadata:
-          labels:
-            app.kubernetes.io/name: canopsis-pro
-        spec:
-          containers:
-            - name: timescaledb
-              image: docker.io/timescale/timescaledb:2.21.4-pg17
-              ports:
-                - containerPort: 5432
-              env:
-                - name: TIMESCALEDB_TELEMETRY
-                  value: "off"
-                - name: POSTGRES_DB
-                  value: "canopsis"
-                - name: POSTGRES_USER
-                  value: "cpspostgres"
-                - name: POSTGRES_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: canopsis-timescaledb
-                      key: timescaledb-password
-              readinessProbe:
-                exec:
-                  command:
-                    - /bin/bash
-                    - -c
-                    - pg_isready -d \$POSTGRES_DB -U \$POSTGRES_USER
-                initialDelaySeconds: 5
-                periodSeconds: 10
-                timeoutSeconds: 5
-              volumeMounts:
-                - name: datadir
-                  mountPath: /var/lib/postgresql/data
-          imagePullSecrets:
-            - name: canopsisregistry
-      volumeClaimTemplates:
-        - metadata:
-            name: datadir
-            annotations:
-              helm.sh/resource-policy: "keep"
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 8Gi
-    EOF
-    ```
-
-    Restauration du dump :
-
-    ```sh
-    kubectl cp postgres_canopsis_dump.tar canopsis-timescaledb-0:/tmp
-
-    kubectl exec canopsis-timescaledb-0 -- pg_restore --dbname=postgresql://cpspostgres:canopsis@canopsis-timescaledb-0:5432/canopsis --no-owner -Ft -v /tmp/postgres_canopsis_dump.tar
-    ```
-
-    Suppression du Statefulset :
-
-    ```sh
-    kubectl get statefulset --no-headers=true | awk '{print $1}' | grep timescaledb | xargs kubectl delete statefulset
-    ```
-
-    ### Mise à jour de MongoDB
-
-    Dans cette version de Canopsis, la base de données MongoDB passe de la version 7.0 à 8.0.  
-
-    !!! warning Attention
-            Ce bloc est réservé uniquement aux environnements impliquant MongoDB exécuté dans un environnement Kubernetes.
-            
-            Si ce n'est pas votre cas, référez-vous au bloc [Paquets RPM](#__tabbed_1_2)
-
-    Dump de la base de données Canopsis :
-    ```sh
-    kubectl exec -n canopsis canopsis-mongodb-0 -- mongodump --uri="mongodb://cpsmongo:canopsis@localhost:27017/canopsis" --gzip --out /tmp/dump_canopsis.gz
-    ```
-
-    Récupération en local du dump :
-    ```sh
-    kubectl cp canopsis/canopsis-mongodb-0:/tmp/dump_canopsis.gz .
-    ```
-
-    Arrêt des pods MongoDB :
-    ```sh
-      kubectl get statefulset --no-headers=true |grep mongodb| awk {'print $1'}| xargs kubectl delete statefulset
-    ```
-
-    Suppresion des PVCs MongoDB :
-    ```sh
-    kubectl get pvc --no-headers=true | awk '{print $1}' | grep mongodb | xargs kubectl delete pvc
-    ```
-
-    !!! warning Attention
-        Veillez à bien adapter la commande ci-dessous avec vos paramètres présent dans votre fichier de surcharges, par exemple customer-values.yml.
-
-    Mise à jour de MongoDB :
-    ```sh
-    helm repo update
-
-    helm upgrade canopsis canopsis/mongodb \
-    --set enabled=true \
-    --set settings.rootUsername=root \
-    --set settings.rootPassword=root \
-    --set replicaSet.enabled=true \
-    --set replicaSet.name=rs0 \
-    --set replicaSet.secondaries=0 \
-    --set replicaSet.key="c29tZXJhbmRvbXN0cmluZzEyMzQ1Ng==" \
-    --set userDatabase.name=canopsis \
-    --set userDatabase.user=cpsmongo \
-    --set userDatabase.password=canopsis \
-    --set storage.keepPvc=true \
-    --set storage.requestedSize=8Gi \
-    --version 1.1.0
-    ```
-
-    Lorsque le POD est UP, copie du dump de la DB sur l'instance 0 de MongoDB : 
-    ```sh
-    kubectl cp ./canopsis canopsis-mongodb-0:/tmp/
-    ```
-
-    Restauration du dump :
-    ```sh
-    kubectl exec -n canopsis canopsis-mongodb-0 -- mongorestore -u cpsmongo --password canopsis --gzip --db canopsis /tmp/canopsis
-    ``` 
-
-    Suppression du Statefulset :
-    ```sh
-    kubectl get statefulset --no-headers=true | awk '{print $1}' | grep mongo | xargs kubectl delete statefulset
-    ```
-
-    ## Mise à jour de RabbitMQ
-
-    Dans cette version de Canopsis, le bus de données RabbitMQ passe de la version 4.0 à 4.1.  
-
-    Supprimer le volume associé à RabbitMQ
-
-    ```sh
-    kubectl get pvc --no-headers=true | awk '{print $1}' | grep rabbitmq | xargs kubectl delete pvc
-    ```
-
-    ### Lancement du provisioning `canopsis-reconfigure`
-
-    #### Synchronisation du fichier de configuration `canopsis.toml` ou fichier de surcharge
-
-    Si vous avez modifié le fichier `canopsis.toml` (vous le voyez via une définition de volume dans votre fichier docker-compose.yml), vous devez vérifier qu'il soit bien à jour par rapport au fichier de référence.  
-
-    * [`canopsis.toml` pour Canopsis Community 25.10.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/25.10.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml)
-    * [`canopsis.toml` pour Canopsis Pro 25.10.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/25.10.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml)
-
-    !!! information "Information"
-
-        Pour éviter ce type de synchronisation fastidieuse, la bonne pratique est d'utiliser [un fichier de surcharge de cette configuration](../../../guide-administration/administration-avancee/modification-canopsis-toml/). 
-
-    Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, uniquement continuer à le présenter dans un volume.
-
-    #### Séparation des flux d’événements par initiateur
-
-    En version 25.04, les flags suivants avaient été dépréciés, ils sont à présent obsolètes.  
-    Toute référence doit être supprimée dans vos configurations. Les moteurs concernés ne démareront pas sans cela.  
-
-    * -publishQueue
-    * -consumeQueue
-    * -workers (remplacé par des flags spécifiques à chaque type de flux)
-
-    | Moteur               | Flags nouveaux     | Valeur par défaut | Flags obsolètes                             |
-    |----------------------|--------------------|-------------------|---------------------------------------------|
-    | engine-fifo          | -workers           | 10                | -publishQueue, -consumeQueue                |
-    | engine-che           | -externalWorkers   | 4                 | -workers, -publishQueue, -consumeQueue      |
-    |                      | -systemWorkers     | 4                 |                                             |
-    |                      | -userWorkers       | 2                 |                                             |
-    | engine-axe           | -externalWorkers   | 4                 | -workers, -publishQueue                     |
-    |                      | -systemWorkers     | 4                 |                                             |
-    |                      | -userWorkers       | 2                 |                                             |
-    |                      | -rpcWorkers        | 4                 |                                             |
-    | engine-correlation   | -externalWorkers   | 4                 | -workers, -publishQueue, -consumeQueue      |
-    |                      | -systemWorkers     | 4                 |                                             |
-    |                      | -userWorkers       | 2                 |                                             |
-    |                      | -rpcWorkers        | 4                 |                                             |
-    | engine-dynamic-infos | -externalWorkers   | 4                 | -workers, -publishQueue                     |
-    |                      | -systemWorkers     | 4                 |                                             |
-    |                      | -userWorkers       | 2                 |                                             |
-    |                      | -rpcWorkers        | 4                 |                                             |
-    | engine-action        | -externalWorkers   | 4                 | -workers                                    |
-    |                      | -systemWorkers     | 4                 |                                             |
-    |                      | -userWorkers       | 2                 |                                             |
-    |                      | -rpcWorkers        | 4                 |                                             |
-
-    ### Mise à jour et démarrage final de Canopsis
-
 
     Définir le nom de votre instance
 
@@ -879,4 +711,3 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
 
     ![Healthcheck](./img/25.10.0-healthcheck.png)
-
