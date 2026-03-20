@@ -1165,7 +1165,7 @@ export default {
   },
   entitiesComparison: {
     title: 'Comparaison des entités de motif',
-    infoMessage: 'Les résultats peuvent différer pour 2 raisons :\n<span class="font-weight-regular">1. Des changements se sont produits dans Canopsis pendant la vérification (certaines entités initialement filtrées ont changé et ne correspondent plus au filtre)</span>\n<span class="font-weight-regular">2. Le filtre suggéré n\'est pas correct</span>\n<span>Vous pouvez relancer la vérification pour être sûr.</span>',
+    infoMessage: 'Les résultats peuvent différer pour 2 raisons :\n<span class="font-weight-regular">1. Des changements se sont produits dans Canopsis pendant la vérification (certaines entités initialement filtrées ont changé et ne correspondent plus au filtre)</span>\n<span class="font-weight-regular">2. Le filtre suggéré n\'est pas correct</span>\n\n<strong>Vous pouvez relancer la vérification pour être sûr.</strong>',
     foundInCurrent: 'TROUVÉ DANS LE MOTIF ACTUEL, NON TROUVÉ DANS LE MOTIF SUGGÉRÉ',
     foundInSuggestion: 'TROUVÉ DANS LE MOTIF SUGGÉRÉ, NON TROUVÉ DANS LE MOTIF ACTUEL',
   },
