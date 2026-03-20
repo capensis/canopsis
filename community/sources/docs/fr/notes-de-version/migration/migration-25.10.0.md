@@ -559,13 +559,13 @@ Deux étapes sont à suivre :
     Supprimer le Statefulset Valkey
 
     ```sh
-    kubectl get statefulset |grep valkey| awk {'print $1'}| xargs kubectl delete statefulset
+    kubectl get statefulset | grep valkey | awk '{print $1'}' | xargs kubectl delete statefulset
     ```
 
     Supprimer le PVC Valkey
 
     ```sh
-    kubectl get pvc |grep valkey| awk {'print $1'}| xargs kubectl delete pvc
+    kubectl get pvc | grep valkey | awk '{print $1'} | xargs kubectl delete pvc
     ```
 
 ## Mise à jour de Canopsis
