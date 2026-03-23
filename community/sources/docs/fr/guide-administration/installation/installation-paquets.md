@@ -103,6 +103,25 @@ Ajout du dépôt pour PostgreSQL :
 dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-$(cat /etc/redhat-release | cut -d'.' -f1 | awk '{print $NF}')-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 ```
 
+!!! warning "Attention" 
+
+    Depuis le 13 novembre 2025 Postgres 13 est considéré comme étant en fin de vie (End-Of-Life).
+    Depuis Mars 2026, les paquets Postgres 13 ne sont plus disponible dans les dépôts "Live" de postgres, il est nécessaire d'ajouter le dépôt vers les `yum-archive` manuellement.
+
+Ajouter les dépôts `yum-archive` pour Postgres 13 :
+
+```sh
+cat << EOF > /etc/yum.repos.d/postgres13-archive.repo
+[pgdg13-archive]
+name=PostgreSQL 13 Archive - RHEL $releasever - $basearch
+baseurl=https://yum-archive.postgresql.org/13/redhat/rhel-$releasever-$basearch
+enabled=1
+gpgcheck=1
+gpgkey=https://www.postgresql.org/media/keys/ACCC4CF8.asc
+EOF
+```
+
+
 Ajout du dépôt pour MongoDB :
 
 ```sh
