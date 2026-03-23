@@ -33,6 +33,24 @@ La durée et l'unité sont configurables dans l'interface.
 | [**Tags externes des alarmes**](#tags-externes) | Supprimer les tags externes | Supprime les tags de la collection `alarm_tag` dont `last_event_date` est trop ancien, puis efface les couleurs associées dans `alarm_tag_color`. |
 | [**Enregistrements d'événements**](#enregistrements-devenements) | Supprimer les enregistrements | Supprime les enregistrements anciens de la collection `event_records`. |
 
+## Configuration avancée
+
+Il est possible de configurer les paramètres de stockage au travers du  fichier de configuration `canopsis.toml`
+```toml
+# Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
+[Canopsis.data_storage]
+TimeToExecute = "Sunday,23"
+MaxUpdates = 100000
+MongoClientTimeout = "1m"
+Timeout = "1h"
+```
+
+| Option | Description | Exemple |
+| ------ | ----------- | ------- |
+| TimeToExecute | Défini quand doit s’exécuter l’archivage et la suppression des données. Cette opération est utilisée par plusieurs moteurs, car chacun gère des données différentes. | `Sunday,23` |
+| MaxUpdates | Défini le nombre d’éléments pouvant être mis à jour ou supprimés en une seule fois. | `100000` |
+| MongoClientTimeout | Défini la durée maximale pendant laquelle une opération exécutée sur le client Mongo peut s’exécuter avant de retourner une erreur. | `1m` |
+| Timeout | Défini la durée maximale pendant laquelle un processus complet de nettoyage peut s’exécuter avant de retourner une erreur. | `1h` |
 
 ## Alarmes
 
