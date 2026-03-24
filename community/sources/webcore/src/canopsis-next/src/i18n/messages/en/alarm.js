@@ -81,6 +81,7 @@ export default {
     launched: 'launched',
     junit: 'JUnit',
     groupItems: 'Group elements',
+    onlyComments: 'Only comments',
     steps: {
       [ALARM_LIST_STEPS.statedec]: 'State decreased',
       [ALARM_LIST_STEPS.stateinc]: 'State increased',

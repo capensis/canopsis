@@ -3,10 +3,14 @@ import { fakeStaticAlarms } from '@unit/data/alarm';
 
 import AlarmGeneralList from '@/components/widgets/alarm/alarm-general-list.vue';
 
+const stubs = {
+  'c-collapse-panel': true,
+};
+
 describe('alarm-general-list', () => {
   const alarms = fakeStaticAlarms({ totalItems: 4 });
 
-  const snapshotFactory = generateRenderer(AlarmGeneralList);
+  const snapshotFactory = generateRenderer(AlarmGeneralList, { stubs });
 
   test('Renders `alarm-general-list` with empty items', () => {
     const wrapper = snapshotFactory({

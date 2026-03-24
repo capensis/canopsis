@@ -1616,6 +1616,36 @@ export const createPbehaviorPatternsModule = () => {
   };
 };
 
+export const createCommentTemplateModule = () => {
+  const createCommentTemplate = jest.fn();
+  const updateCommentTemplate = jest.fn();
+  const removeCommentTemplate = jest.fn();
+  const fetchCommentTemplatesListWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+    meta: {
+      total_count: 0,
+    },
+  });
+
+  const commentTemplateModule = {
+    name: 'commentTemplate',
+    actions: {
+      fetchListWithoutStore: fetchCommentTemplatesListWithoutStore,
+      create: createCommentTemplate,
+      update: updateCommentTemplate,
+      remove: removeCommentTemplate,
+    },
+  };
+
+  return {
+    createCommentTemplate,
+    updateCommentTemplate,
+    removeCommentTemplate,
+    fetchCommentTemplatesListWithoutStore,
+    commentTemplateModule,
+  };
+};
+
 export const createPatternEntitiesOptimizeModule = () => {
   const optimize = jest.fn().mockResolvedValue({});
   const fetchOptimizeStatus = jest.fn().mockResolvedValue({});
