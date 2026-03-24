@@ -6,10 +6,12 @@ import (
 	"errors"
 	"maps"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/gorilla/websocket"
@@ -25,6 +27,7 @@ func newConnection(
 	roomRegistry RoomRegistry,
 	authenticate Authenticate,
 	configProvider config.ApiConfigProvider,
+	trans validation.ErrorTranslator,
 	logger zerolog.Logger,
 ) *connection {
 	return &connection{
@@ -33,6 +36,7 @@ func newConnection(
 		roomRegistry:   roomRegistry,
 		authenticate:   authenticate,
 		configProvider: configProvider,
+		trans:          trans,
 		logger:         logger,
 		writeCh:        make(chan ServerMessage, msgBuffSize),
 		done:           make(chan struct{}),
@@ -46,14 +50,15 @@ type connection struct {
 	roomRegistry   RoomRegistry
 	authenticate   Authenticate
 	configProvider config.ApiConfigProvider
+	trans          validation.ErrorTranslator
 	logger         zerolog.Logger
 	closeOnce      sync.Once
 	writeCh        chan ServerMessage
 	done           chan struct{}
 	roomsMx        sync.RWMutex
 	rooms          map[string]bool
-	userIDMx       sync.RWMutex
-	userID         string
+	userMx         sync.RWMutex
+	user           User
 	userToken      string
 }
 
@@ -70,8 +75,8 @@ func (c *connection) close(ctx context.Context) error {
 		c.rooms = make(map[string]bool)
 		c.roomsMx.Unlock()
 
-		userID := c.getUserID()
-		c.logger.Debug().Str("conn", c.id).Str("user", userID).Msg("connection closed")
+		user, _ := c.getAuth()
+		c.logger.Debug().Str("conn", c.id).Str("user", user.ID).Msg("connection closed")
 		opts := LeaveOptions{
 			ConnID: c.id,
 		}
@@ -79,7 +84,7 @@ func (c *connection) close(ctx context.Context) error {
 			h, ok := c.roomRegistry.Get(room)
 			if ok && h.OnLeave != nil {
 				if lerr := h.OnLeave(ctx, opts); lerr != nil {
-					c.logger.Err(lerr).Str("room", room).Str("user", userID).Msg("cannot leave from room")
+					c.logger.Err(lerr).Str("room", room).Str("user", user.ID).Msg("cannot leave from room")
 				}
 			}
 		}
@@ -105,6 +110,8 @@ func (c *connection) runRead(ctx context.Context) {
 		return nil
 	})
 
+	valErrParam := strconv.Itoa(ClientMessageClientPing) + " " + strconv.Itoa(ClientMessageJoin) + " " + strconv.Itoa(ClientMessageLeave) + " " + strconv.Itoa(ClientMessageAuth) + " " + strconv.Itoa(ClientMessageInfo)
+	valErr := validation.NewSingleErrorWithParam("oneof", "type", "type", valErrParam, nil)
 	for {
 		msg := ClientMessage{}
 		err := c.conn.ReadJSON(&msg)
@@ -112,7 +119,7 @@ func (c *connection) runRead(ctx context.Context) {
 			unmarshalErr := &json.UnmarshalTypeError{}
 			syntaxErr := &json.SyntaxError{}
 			if errors.As(err, &syntaxErr) || errors.As(err, &unmarshalErr) {
-				c.writeError(ctx, "", http.StatusBadRequest, "cannot parse JSON")
+				c.writeError(ctx, "", http.StatusBadRequest, "")
 				continue
 			}
 
@@ -144,9 +151,9 @@ func (c *connection) runRead(ctx context.Context) {
 		case ClientMessageInfo:
 			c.msg(ctx, msg)
 		default:
-			c.writeError(ctx, msg.Room, http.StatusBadRequest, map[string]string{
-				"type": "invalid value",
-			})
+			user, _ := c.getAuth()
+
+			c.writeValError(ctx, msg.Room, valErr, user)
 		}
 
 		select {
@@ -220,7 +227,8 @@ func (c *connection) write(ctx context.Context, msg ServerMessage) {
 	case <-c.done:
 	case c.writeCh <- msg:
 	default:
-		c.logger.Warn().Str("conn", c.id).Str("user", c.getUserID()).Msg("write buffer full, closing connection")
+		user, _ := c.getAuth()
+		c.logger.Warn().Str("conn", c.id).Str("user", user.ID).Msg("write buffer full, closing connection")
 		err := c.close(ctx)
 		if err != nil {
 			c.logger.Err(err).Msg("cannot close connection")
@@ -241,11 +249,22 @@ func (c *connection) writeError(ctx context.Context, room string, status int, pa
 	})
 }
 
+func (c *connection) writeValError(ctx context.Context, room string, verr *validation.Error, user User) {
+	errTrans, err := c.trans.Translate(user.Locale, verr)
+	if err != nil {
+		c.logger.Err(err).Str("room", room).Str("user", user.ID).Msg("cannot translate validation error")
+		c.writeError(ctx, room, http.StatusInternalServerError, nil)
+
+		return
+	}
+
+	c.writeError(ctx, room, http.StatusBadRequest, map[string]map[string]string{"errors": errTrans})
+}
+
 func (c *connection) join(ctx context.Context, msg ClientMessage) {
+	user, _ := c.getAuth()
 	if msg.Room == "" {
-		c.writeError(ctx, "", http.StatusBadRequest, map[string]string{
-			"room": "is missing",
-		})
+		c.writeValError(ctx, "", validation.NewSingleError("required", "room", "room", nil), user)
 
 		return
 	}
@@ -257,17 +276,16 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 		return
 	}
 
-	userID := c.getUserID()
 	if h.Authorize != nil {
-		if userID == "" {
+		if user.ID == "" {
 			c.writeError(ctx, msg.Room, http.StatusUnauthorized, nil)
 
 			return
 		}
 
-		granted, err := h.Authorize(ctx, userID)
+		granted, err := h.Authorize(ctx, user.ID)
 		if err != nil {
-			c.logger.Err(err).Str("room", msg.Room).Str("user", userID).Msg("cannot authorize user")
+			c.logger.Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot authorize user")
 			c.writeError(ctx, msg.Room, http.StatusInternalServerError, nil)
 
 			return
@@ -291,7 +309,8 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 	if h.OnJoin != nil {
 		err := h.OnJoin(ctx, JoinOptions{
 			ConnID:  c.id,
-			UserID:  userID,
+			UserID:  user.ID,
+			Locale:  user.Locale,
 			Payload: msg.Payload,
 		})
 		if err != nil {
@@ -300,7 +319,7 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 			c.roomsMx.Unlock()
 
 			if jerr, ok := errors.AsType[*JoinError](err); ok {
-				c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", userID).Msg("cannot join to room")
+				c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot join to room")
 				c.write(ctx, ServerMessage{
 					Type:    ServerMessageInfo,
 					Room:    msg.Room,
@@ -314,9 +333,9 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 				return
 			}
 
-			if verr, ok := errors.AsType[*ValidationError](err); ok {
-				c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", userID).Msg("cannot join to room")
-				c.writeError(ctx, msg.Room, http.StatusBadRequest, verr.Payload)
+			if verr, ok := errors.AsType[*validation.Error](err); ok {
+				c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot join to room")
+				c.writeValError(ctx, msg.Room, verr, user)
 
 				return
 			}
@@ -327,22 +346,21 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 				return
 			}
 
-			c.logger.Err(err).Str("room", msg.Room).Str("user", userID).Msg("cannot join to room")
+			c.logger.Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot join to room")
 			c.writeError(ctx, msg.Room, http.StatusInternalServerError, nil)
 
 			return
 		}
 	}
 
-	c.logger.Debug().Str("conn", c.id).Str("room", msg.Room).Str("user", userID).Msg("joined room")
+	c.logger.Debug().Str("conn", c.id).Str("room", msg.Room).Str("user", user.ID).Msg("joined room")
 }
 
 func (c *connection) leave(ctx context.Context, msg ClientMessage) {
+	user, _ := c.getAuth()
 	room := msg.Room
 	if room == "" {
-		c.writeError(ctx, "", http.StatusBadRequest, map[string]string{
-			"room": "is missing",
-		})
+		c.writeValError(ctx, "", validation.NewSingleError("required", "room", "room", nil), user)
 
 		return
 	}
@@ -358,33 +376,30 @@ func (c *connection) leave(ctx context.Context, msg ClientMessage) {
 		return
 	}
 
-	userID := c.getUserID()
 	h, ok := c.roomRegistry.Get(room)
 	if ok && h.OnLeave != nil {
 		err := h.OnLeave(ctx, LeaveOptions{
 			ConnID: c.id,
 		})
 		if err != nil {
-			c.logger.Err(err).Str("room", room).Str("user", userID).Msg("cannot leave from room")
+			c.logger.Err(err).Str("room", room).Str("user", user.ID).Msg("cannot leave from room")
 			c.writeError(ctx, room, http.StatusInternalServerError, nil)
 
 			return
 		}
 	}
 
-	c.logger.Debug().Str("conn", c.id).Str("room", room).Str("user", userID).Msg("left room")
+	c.logger.Debug().Str("conn", c.id).Str("room", room).Str("user", user.ID).Msg("left room")
 }
 
 func (c *connection) auth(ctx context.Context, msg ClientMessage) {
 	if msg.Token == "" {
-		c.writeError(ctx, "", http.StatusBadRequest, map[string]string{
-			"token": "is missing",
-		})
+		c.writeValError(ctx, "", validation.NewSingleError("required", "token", "token", nil), User{})
 
 		return
 	}
 
-	userID, err := c.authenticate(ctx, msg.Token)
+	user, err := c.authenticate(ctx, msg.Token)
 	if err != nil {
 		c.logger.Debug().Err(err).Msg("cannot authenticate token")
 		c.writeError(ctx, "", http.StatusUnauthorized, nil)
@@ -392,9 +407,9 @@ func (c *connection) auth(ctx context.Context, msg ClientMessage) {
 		return
 	}
 
-	changed := c.setAuth(userID, msg.Token)
+	changed := c.setAuth(user, msg.Token)
 
-	c.logger.Debug().Str("conn", c.id).Str("user", userID).Msg("user authenticated")
+	c.logger.Debug().Str("conn", c.id).Str("user", user.ID).Msg("user authenticated")
 	c.write(ctx, ServerMessage{
 		Type: ServerMessageAuthSuccess,
 	})
@@ -405,10 +420,9 @@ func (c *connection) auth(ctx context.Context, msg ClientMessage) {
 }
 
 func (c *connection) msg(ctx context.Context, msg ClientMessage) {
+	user, _ := c.getAuth()
 	if msg.Room == "" {
-		c.writeError(ctx, "", http.StatusBadRequest, map[string]string{
-			"room": "is missing",
-		})
+		c.writeValError(ctx, "", validation.NewSingleError("required", "room", "room", nil), user)
 
 		return
 	}
@@ -432,29 +446,29 @@ func (c *connection) msg(ctx context.Context, msg ClientMessage) {
 		return
 	}
 
-	userID := c.getUserID()
 	err := h.OnMessage(ctx, MessageOptions{
 		ConnID:  c.id,
-		UserID:  userID,
+		UserID:  user.ID,
+		Locale:  user.Locale,
 		Payload: msg.Payload,
 	})
 	if err != nil {
-		if verr, ok := errors.AsType[*ValidationError](err); ok {
-			c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", userID).Msg("cannot handle message from room")
-			c.writeError(ctx, msg.Room, http.StatusBadRequest, verr.Payload)
+		if verr, ok := errors.AsType[*validation.Error](err); ok {
+			c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot handle message from room")
+			c.writeValError(ctx, msg.Room, verr, user)
 
 			return
 		}
 
 		if cerr, ok := errors.AsType[*CloseRoomError](err); ok {
-			c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", userID).Msg("cannot handle message from room")
+			c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot handle message from room")
 			c.writeError(ctx, msg.Room, http.StatusGone, cerr.Payload)
 			c.leaveRoom(ctx, msg.Room)
 
 			return
 		}
 
-		c.logger.Err(err).Str("room", msg.Room).Str("user", userID).Msg("cannot handle message from room")
+		c.logger.Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot handle message from room")
 		c.writeError(ctx, msg.Room, http.StatusInternalServerError, nil)
 
 		return
@@ -462,20 +476,20 @@ func (c *connection) msg(ctx context.Context, msg ClientMessage) {
 }
 
 func (c *connection) checkAuth(ctx context.Context) {
-	c.userIDMx.RLock()
-	token := c.userToken
-	c.userIDMx.RUnlock()
+	_, token := c.getAuth()
 
 	if token == "" {
 		return
 	}
 
-	_, err := c.authenticate(ctx, token)
+	user, err := c.authenticate(ctx, token)
 	if err != nil {
-		c.setAuth("", "")
+		c.setAuth(User{}, "")
 
 		c.logger.Debug().Err(err).Msg("cannot authenticate token")
 		c.writeError(ctx, "", http.StatusUnauthorized, nil)
+	} else {
+		c.setAuth(user, token)
 	}
 
 	// checkRooms is called even on auth failure: after clearing credentials above,
@@ -484,7 +498,7 @@ func (c *connection) checkAuth(ctx context.Context) {
 }
 
 func (c *connection) checkRooms(ctx context.Context) {
-	userID := c.getUserID()
+	user, _ := c.getAuth()
 	removedRooms := make([]string, 0)
 
 	c.roomsMx.RLock()
@@ -497,10 +511,10 @@ func (c *connection) checkRooms(ctx context.Context) {
 		if ok && h.Authorize != nil {
 			var granted bool
 			var err error
-			if userID == "" {
+			if user.ID == "" {
 				granted = false
-			} else if granted, err = h.Authorize(ctx, userID); err != nil {
-				c.logger.Err(err).Str("room", room).Str("user", userID).Msg("cannot authorize user")
+			} else if granted, err = h.Authorize(ctx, user.ID); err != nil {
+				c.logger.Err(err).Str("room", room).Str("user", user.ID).Msg("cannot authorize user")
 				continue
 			}
 
@@ -524,7 +538,7 @@ func (c *connection) checkRooms(ctx context.Context) {
 				ConnID: c.id,
 			})
 			if err != nil {
-				c.logger.Err(err).Str("room", room).Str("user", userID).Msg("cannot leave from room")
+				c.logger.Err(err).Str("room", room).Str("user", user.ID).Msg("cannot leave from room")
 			}
 		}
 
@@ -546,12 +560,12 @@ func (c *connection) leaveRoom(ctx context.Context, room string) {
 
 	h, ok := c.roomRegistry.Get(room)
 	if ok && h.OnLeave != nil {
-		userID := c.getUserID()
+		user, _ := c.getAuth()
 		err := h.OnLeave(ctx, LeaveOptions{
 			ConnID: c.id,
 		})
 		if err != nil {
-			c.logger.Err(err).Str("room", room).Str("user", userID).Msg("cannot leave from room")
+			c.logger.Err(err).Str("room", room).Str("user", user.ID).Msg("cannot leave from room")
 		}
 	}
 
@@ -568,30 +582,23 @@ func (c *connection) inRoom(room string) bool {
 	return c.rooms[room]
 }
 
-func (c *connection) getUserID() string {
-	c.userIDMx.RLock()
-	defer c.userIDMx.RUnlock()
+func (c *connection) getAuth() (User, string) {
+	c.userMx.RLock()
+	defer c.userMx.RUnlock()
 
-	return c.userID
+	return c.user, c.userToken
 }
 
-func (c *connection) getAuth() (userID, token string) {
-	c.userIDMx.RLock()
-	defer c.userIDMx.RUnlock()
+func (c *connection) setAuth(user User, token string) bool {
+	c.userMx.Lock()
+	defer c.userMx.Unlock()
 
-	return c.userID, c.userToken
-}
+	changed := c.user.ID != user.ID
 
-func (c *connection) setAuth(userID, token string) bool {
-	c.userIDMx.Lock()
-	defer c.userIDMx.Unlock()
-
-	changes := c.userID != userID || c.userToken != token
-
-	c.userID = userID
+	c.user = user
 	c.userToken = token
 
-	return changes
+	return changed
 }
 
 func (c *connection) getRoomsForGroup(group string) []string {

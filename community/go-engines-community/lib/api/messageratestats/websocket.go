@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/rs/zerolog"
@@ -60,7 +61,7 @@ type streamData struct {
 func (w *watcher) StartWatch(ctx context.Context, opts websocket.JoinOptions) error {
 	b, err := w.encoder.Encode(opts.Payload)
 	if err != nil {
-		return fmt.Errorf("unexpected data type: %w", err)
+		return fmt.Errorf("failed to encode payload: %w", err)
 	}
 
 	k := w.genKey(b)
@@ -72,7 +73,7 @@ func (w *watcher) StartWatch(ctx context.Context, opts websocket.JoinOptions) er
 	var searchRequest SearchRequest
 	err = w.decoder.Decode(b, &searchRequest)
 	if err != nil {
-		return fmt.Errorf("unexpected data type: %w", err)
+		return validation.NewSingleError("invalid", "payload", "payload", nil)
 	}
 
 	go func() {
