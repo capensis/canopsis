@@ -1,11 +1,12 @@
 <template>
   <c-collapse-panel class="c-alternative-bg-panel" expanded>
     <template #header>
-      <span class="font-weight-medium text-uppercase">{{ $t('common.general') }}</span>
+      <span class="font-weight-medium text-uppercase">{{ title }}</span>
     </template>
     <v-data-table
       :headers="headers"
       :items="items"
+      :item-class="itemClass"
     />
   </c-collapse-panel>
 </template>
@@ -21,9 +22,19 @@ export default {
       type: Array,
       default: () => [],
     },
+    itemClass: {
+      type: String,
+      required: false,
+    },
   },
-  setup() {
-    const { t } = useI18n();
+  setup(props) {
+    const { t, tc } = useI18n();
+
+    const title = computed(() => {
+      const count = props.items.length === 1 ? '' : ` (${props.items.length})`;
+
+      return `${tc('common.alarm', props.items.length)}${count}`;
+    });
 
     const headers = computed(() => [
       {
@@ -49,6 +60,7 @@ export default {
     ]);
 
     return {
+      title,
       headers,
     };
   },

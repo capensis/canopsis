@@ -92,6 +92,7 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.snooze]: 'Mettre en veille',
     [USER_PERMISSIONS.business.alarmsList.actions.declareTicket]: 'Déclarer un ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.associateTicket]: 'Associer un ticket',
+    [USER_PERMISSIONS.business.alarmsList.actions.removeAssociatedTicket]: 'Désassocier le ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.cancel]: 'Annuler l\'alarme',
     [USER_PERMISSIONS.business.alarmsList.actions.unCancel]: 'Annuler la suppression de l\'alarme',
     [USER_PERMISSIONS.business.alarmsList.actions.fastCancel]: 'Annuler rapidement l\'alarme',

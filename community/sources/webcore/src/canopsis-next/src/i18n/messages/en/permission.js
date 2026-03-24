@@ -92,6 +92,7 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.snooze]: 'Snooze alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.declareTicket]: 'Declare ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.associateTicket]: 'Associate ticket',
+    [USER_PERMISSIONS.business.alarmsList.actions.removeAssociatedTicket]: 'Remove associated ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.cancel]: 'Remove alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.unCancel]: 'Uncalcel alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.fastCancel]: 'Fast remove alarm',

@@ -14,6 +14,7 @@
     <extra-details-ticket
       v-if="hasTickets"
       :tickets="alarm.v.tickets"
+      :failed-ticket="alarm.v.failed_ticket"
     />
     <extra-details-canceled
       v-if="alarm.v.canceled"

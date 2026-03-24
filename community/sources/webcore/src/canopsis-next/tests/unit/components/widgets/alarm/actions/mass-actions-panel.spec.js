@@ -138,6 +138,7 @@ describe('mass-actions-panel', () => {
     bulkCreateAlarmAckremoveEvent,
     bulkCreateAlarmSnoozeEvent,
     bulkCreateAlarmAssocticketEvent,
+    bulkCreateAlarmTicketremoveEvent,
     bulkCreateAlarmCommentEvent,
     bulkCreateAlarmCancelEvent,
     bulkCreateAlarmChangestateEvent,
@@ -669,6 +670,88 @@ describe('mass-actions-panel', () => {
           _id: alarm._id,
           ...ticketEvent,
         }],
+      },
+    );
+
+    expect(wrapper).toHaveBeenEmit('clear:items');
+    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+  });
+
+  test('Remove associated ticket modal showed after trigger remove associated ticket action', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const alarmsWithTickets = [
+      {
+        ...alarm,
+        _id: 'alarm-with-ticket-1',
+        v: {
+          ...alarm.v,
+          tickets: [
+            {
+              ticket: 'TICKET-123',
+              ticket_system_name: 'Jira',
+            },
+          ],
+        },
+      },
+      {
+        ...alarm,
+        _id: 'alarm-with-ticket-2',
+        v: {
+          ...alarm.v,
+          tickets: [
+            {
+              ticket: 'TICKET-456',
+              ticket_system_name: 'ServiceNow',
+            },
+          ],
+        },
+      },
+    ];
+
+    const wrapper = factory({
+      store,
+      propsData: {
+        items: alarmsWithTickets,
+        refreshAlarmsList,
+        widget: widgetData,
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket).trigger('click');
+
+    expect($modals.show).toHaveBeenCalledWith(
+      {
+        name: MODALS.removeAssociatedTicketEvent,
+        config: {
+          items: alarmsWithTickets,
+          action: expect.any(Function),
+        },
+      },
+    );
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    const removeTicketEvent = {
+      ticket: 'TICKET-123',
+      reason: Faker.datatype.string(),
+    };
+
+    await config.action(removeTicketEvent);
+
+    expect(bulkCreateAlarmTicketremoveEvent).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: alarmsWithTickets.map(({ _id: alarmId }) => ({
+          _id: alarmId,
+          ...removeTicketEvent,
+        })),
       },
     );
 
