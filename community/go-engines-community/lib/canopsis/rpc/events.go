@@ -92,6 +92,8 @@ type AxeParameters struct {
 	CloseDelayValue *int64 `json:"close_delay,omitempty"`
 	// IsCloseDelayJob shows if an event is triggered by a close delay job.
 	IsCloseDelayJob bool `json:"is_close_delay,omitempty"`
+
+	StructuredMessage []types.StructuredMessage `json:"struct_m,omitempty"`
 }
 
 // AxeResultEvent

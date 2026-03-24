@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/commenttemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
@@ -2099,6 +2100,42 @@ func RegisterRoutes(
 		templateAPI := template.NewAPI(template.NewStore(primaryDbClient, authorProvider, enforcer,
 			tplTestTypePermMapping, json.NewDecoder()), templateConfigProvider, errorResponder, logger)
 
+		commentTemplateAPI := commenttemplate.NewApi(
+			commenttemplate.NewStore(primaryDbClient, authorProvider),
+			errorResponder,
+			logger,
+		)
+		commentTemplatesRouter := protected.Group("/comment-templates")
+		{
+			commentTemplatesRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionCreate, enforcer, errorResponder),
+				middleware.SetAuthor(errorResponder),
+				commentTemplateAPI.Create,
+			)
+			commentTemplatesRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionRead, enforcer, errorResponder),
+				commentTemplateAPI.List,
+			)
+			commentTemplatesRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionRead, enforcer, errorResponder),
+				commentTemplateAPI.Get,
+			)
+			commentTemplatesRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionUpdate, enforcer, errorResponder),
+				middleware.SetAuthor(errorResponder),
+				commentTemplateAPI.Update,
+			)
+			commentTemplatesRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionDelete, enforcer, errorResponder),
+				commentTemplateAPI.Delete,
+			)
+		}
+
 		bulkRouter := protected.Group("/bulk")
 		{
 			patternRouter := bulkRouter.Group("/patterns")
@@ -2398,6 +2435,13 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer, errorResponder),
 				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
 				externalDataTableAPI.BulkDeleteData,
+			)
+
+			bulkRouter.DELETE(
+				"/comment-templates",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionDelete, enforcer, errorResponder),
+				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+				commentTemplateAPI.BulkDelete,
 			)
 		}
 
