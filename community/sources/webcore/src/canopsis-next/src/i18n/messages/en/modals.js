@@ -1016,6 +1016,11 @@ export default {
   createAssociateTicketEvent: {
     title: 'Associate ticket number',
   },
+  removeAssociatedTicketEvent: {
+    title: 'Remove associated ticket',
+    associatedTicketLabel: 'Associated ticket',
+    associatedTicketHint: 'Selected associated ticket will be removed from selected alarm',
+  },
   createAckEvent: {
     title: 'Ack',
   },

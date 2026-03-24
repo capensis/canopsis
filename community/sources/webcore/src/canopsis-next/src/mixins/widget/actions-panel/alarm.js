@@ -59,6 +59,7 @@ export const widgetActionsPanelAlarmMixin = {
       bulkCreateAlarmAckremoveEvent: 'bulkCreateAlarmAckremoveEvent',
       bulkCreateAlarmSnoozeEvent: 'bulkCreateAlarmSnoozeEvent',
       bulkCreateAlarmAssocticketEvent: 'bulkCreateAlarmAssocticketEvent',
+      bulkCreateAlarmTicketremoveEvent: 'bulkCreateAlarmTicketremoveEvent',
       bulkCreateAlarmCommentEvent: 'bulkCreateAlarmCommentEvent',
       bulkCreateAlarmCancelEvent: 'bulkCreateAlarmCancelEvent',
       bulkCreateAlarmUnCancelEvent: 'bulkCreateAlarmUnCancelEvent',
@@ -277,6 +278,25 @@ export const widgetActionsPanelAlarmMixin = {
 
             await this.bulkCreateAlarmAssocticketEvent({
               data: alarms.map(alarm => ({ ...associateEvent, _id: alarm._id })),
+            });
+
+            this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    showRemoveAssociatedTicketModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.removeAssociatedTicketEvent,
+        config: {
+          items: alarms,
+          action: async (removeEvent) => {
+            await this.bulkCreateAlarmTicketremoveEvent({
+              data: alarms.map(alarm => ({
+                ...removeEvent,
+                _id: alarm._id,
+              })),
             });
 
             this.afterSubmit();

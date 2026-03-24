@@ -557,6 +557,9 @@ export default {
     [TRIGGERS_TYPES.assocticket]: {
       text: 'Ticket associated with an alarm',
     },
+    [TRIGGERS_TYPES.ticketremove]: {
+      text: 'Ticket removed',
+    },
     [TRIGGERS_TYPES.snooze]: {
       text: 'Alarm snoozed',
     },
