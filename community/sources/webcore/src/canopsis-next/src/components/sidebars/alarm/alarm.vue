@@ -148,6 +148,8 @@
         />
       </widget-settings-group>
 
+      <field-comment-templates v-model="form.parameters.comment_templates" />
+
       <fast-pbehavior-form v-model="form.parameters.fast_pbehaviors" />
 
       <field-switcher
@@ -287,6 +289,7 @@ import FieldOpenedResolvedFilter from './form/fields/opened-resolved-filter.vue'
 import FieldInfoPopup from './form/fields/info-popup.vue';
 import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue';
 import FieldQuickAlarmActions from './form/fields/quick-alarm-actions.vue';
+import FieldCommentTemplates from './form/fields/comment-templates.vue';
 import FastPbehaviorForm from './form/fast-pbehavior-form.vue';
 
 /**
@@ -313,6 +316,7 @@ export default {
     FieldGridRangeSize,
     FieldInfoPopup,
     FieldDensity,
+    FieldCommentTemplates,
     FastPbehaviorForm,
     ExportCsvForm,
     ChartsForm,
