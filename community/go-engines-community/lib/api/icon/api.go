@@ -91,10 +91,10 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{
+	a.websocketHub.SendMessage(c, websocketMsg{
 		ID:   res.ID,
 		Type: websocketMsgTypeCreate,
-	})
+	}, websocket.ToRoom(websocket.RoomIcons))
 	c.JSON(http.StatusCreated, res)
 }
 
@@ -178,10 +178,10 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{
+	a.websocketHub.SendMessage(c, websocketMsg{
 		ID:   res.ID,
 		Type: websocketMsgTypeUpdate,
-	})
+	}, websocket.ToRoom(websocket.RoomIcons))
 	c.JSON(http.StatusOK, res)
 }
 
@@ -227,10 +227,10 @@ func (a *api) Patch(c *gin.Context) {
 		return
 	}
 
-	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{
+	a.websocketHub.SendMessage(c, websocketMsg{
 		ID:   res.ID,
 		Type: websocketMsgTypeUpdate,
-	})
+	}, websocket.ToRoom(websocket.RoomIcons))
 	c.JSON(http.StatusOK, res)
 }
 
@@ -256,10 +256,10 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{
+	a.websocketHub.SendMessage(c, websocketMsg{
 		ID:   id,
 		Type: websocketMsgTypeDelete,
-	})
+	}, websocket.ToRoom(websocket.RoomIcons))
 	c.Status(http.StatusNoContent)
 }
 
