@@ -1147,6 +1147,14 @@ export default {
       title: 'Edit external auth token',
     },
   },
+  createLlm: {
+    create: {
+      title: 'Add LLM model',
+    },
+    edit: {
+      title: 'Edit LLM model',
+    },
+  },
   createTemplateTestingData: {
     create: {
       title: 'Create template testing data',

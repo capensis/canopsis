@@ -103,6 +103,8 @@ export const SIDE_BARS = {
   availabilitySettings: 'availability-settings',
   externalDataTableSettings: 'external-data-table-settings',
 
+  aiChat: 'ai-chat',
+
   ...featuresService.get('constants.SIDE_BARS'),
 };
 

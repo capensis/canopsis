@@ -25,7 +25,7 @@ export const widgetSettingsMixin = {
     activeViewMixin,
     entitiesWidgetMixin,
     entitiesUserPreferenceMixin,
-    confirmableModalMixinCreator({ field: 'form', closeMethod: '$sidebar.hide', originalField: 'originalForm' }),
+    confirmableModalMixinCreator({ field: 'form', closeMethod: 'hideSettingsSidebar', originalField: 'originalForm' }),
     submittableMixinCreator(),
   ],
   data() {
@@ -51,6 +51,10 @@ export const widgetSettingsMixin = {
     this.registerWatchOnceForForm();
   },
   methods: {
+    hideSettingsSidebar() {
+      this.$sidebar.hide({ id: this.sidebar.id });
+    },
+
     registerWatchOnceForForm() {
       const unwatch = this.$watch(() => this.form, () => {
         this.hasChanges = true;
@@ -101,7 +105,7 @@ export const widgetSettingsMixin = {
 
         await this.fetchActiveView();
 
-        this.$sidebar.hide();
+        this.hideSettingsSidebar();
 
         return;
       }

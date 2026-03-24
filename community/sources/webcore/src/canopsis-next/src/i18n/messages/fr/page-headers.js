@@ -168,6 +168,10 @@ export default {
   [USER_PERMISSIONS.technical.entityInfoProperty]: {
     title: 'Informations d\'entité',
   },
+  [USER_PERMISSIONS.technical.llm]: {
+    title: 'LLMs',
+    message: 'Le module LLM permet de gérer les modèles de langage pour l\'assistant IA Canopsis.',
+  },
 
   /**
    * Grouped admin

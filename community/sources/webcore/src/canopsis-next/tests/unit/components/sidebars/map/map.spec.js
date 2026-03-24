@@ -91,6 +91,7 @@ describe('map', () => {
   };
 
   const sidebar = {
+    id: 'test-sidebar-id',
     name: SIDE_BARS.mapSettings,
     config: {
       widget,

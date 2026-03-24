@@ -9,6 +9,14 @@
 </template>
 
 <script>
+import { computed, inject, onMounted, ref } from 'vue';
+
+import { DEFAULT_SIDEBAR_DRAWER_WIDTH } from '@/config';
+
+import { useStore } from '@/hooks/store';
+import { useModals } from '@/hooks/modals';
+import { useSidebar } from '@/hooks/sidebar';
+
 /**
  * Wrapper for each modal window
  *
@@ -16,56 +24,75 @@
  * @prop {Object} [dialogProps={}] - Properties for vuetify v-dialog
  */
 export default {
-  inject: ['$clickOutside'],
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-  data() {
-    return {
-      ready: false,
-    };
-  },
-  computed: {
-    isOpen: {
-      get() {
-        return !this.modal.hidden && this.ready;
-      },
-      set() {
-        this.$modals.hide({ id: this.modal.id });
-      },
-    },
-    dialogProps() {
+  setup(props) {
+    const store = useStore();
+    const modals = useModals();
+    const sidebar = useSidebar();
+
+    const clickOutside = inject('$clickOutside');
+
+    const ready = ref(false);
+
+    const modalSidebar = computed(() => store.getters[`${sidebar.moduleName}/sidebarsById`][props.modal.id]);
+
+    const paddingRight = computed(() => (
+      modalSidebar.value?.minimized || !modalSidebar.value?.config?.minimizable
+        ? 0
+        : modalSidebar.value?.config?.width || DEFAULT_SIDEBAR_DRAWER_WIDTH
+    ));
+
+    const isOpen = computed({
+      get: () => !props.modal.hidden && ready.value,
+      set: () => modals.hide({ id: props.modal.id }),
+    });
+
+    const dialogProps = computed(() => {
       const defaultDialogProps = {
         maxWidth: 700,
         attach: '.modals-wrapper',
         absolute: true,
         retainFocus: false,
       };
-      const { dialogPropsMap = {} } = this.$modals;
-      const { name, dialogProps, minimized } = this.modal;
+      const { dialogPropsMap = {} } = modals;
+      const { name, dialogProps: modalDialogProps, minimized } = props.modal;
 
-      const props = {
+      const merged = {
         ...defaultDialogProps,
         ...dialogPropsMap[name],
-        ...dialogProps,
+        ...modalDialogProps,
 
-        customCloseConditional: (...args) => this.$clickOutside.call(...args),
+        customCloseConditional: (...args) => clickOutside.call(...args),
       };
+
+      if (paddingRight.value) {
+        merged.contentWrapperStyle = {
+          ...merged.contentWrapperStyle,
+
+          paddingRight: `${paddingRight.value}px`,
+        };
+      }
 
       return {
-        ...props,
+        ...merged,
 
-        hideOverlay: props.hideOverlay || minimized,
-        ignoreClickOutside: props.ignoreClickOutside || minimized,
+        hideOverlay: merged.hideOverlay || minimized,
+        ignoreClickOutside: merged.ignoreClickOutside || minimized,
         contentWrapperClass: minimized ? 'v-dialog__content--minimized' : '',
       };
-    },
-  },
-  mounted() {
-    this.ready = true;
+    });
+
+    onMounted(() => ready.value = true);
+
+    return {
+      isOpen,
+      dialogProps,
+    };
   },
 };
 </script>

@@ -39,6 +39,7 @@
           :key="item[itemValue]"
           :disabled="item.disabled"
           :input-value="item[itemValue] === value"
+          :active-class="activeListItemClass"
           @click="selectItem(item[itemValue])"
         >
           <v-list-item-content>
@@ -113,6 +114,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    activeListItemClass: {
+      type: String,
+      default: '',
     },
   },
   setup(props, { emit }) {

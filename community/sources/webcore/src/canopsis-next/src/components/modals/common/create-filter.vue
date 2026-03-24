@@ -33,15 +33,22 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 import { omit } from 'lodash';
 
-import { MODALS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
+import {
+  MODALS,
+  PATTERNS_FIELDS,
+  SIDE_BARS,
+  VALIDATION_DELAY,
+  LLM_AI_CHAT_WIDTH,
+} from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/entities/filter/form';
 
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
+import { useSidebar } from '@/hooks/sidebar';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
@@ -104,6 +111,22 @@ export default {
     const title = computed(() => config.value.title ?? t('modals.createFilter.create.title'));
 
     const patternsProps = computed(() => omit(config.value, ['title', 'action']));
+
+    const sidebar = useSidebar();
+
+    onMounted(() => sidebar.show({
+      id: props.modal.id,
+      name: SIDE_BARS.aiChat,
+      config: {
+        minimizable: true,
+        width: LLM_AI_CHAT_WIDTH,
+        color: 'primary',
+        titleIcon: '$vuetify.icons.ai',
+        titleMinimized: 'AI',
+      },
+    }));
+
+    onBeforeUnmount(() => sidebar.hide({ id: props.modal.id }));
 
     return {
       title,

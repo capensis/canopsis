@@ -14,3 +14,4 @@ export { default as UserStatisticsSettings } from './statistics/user-statistics.
 export { default as AlarmStatisticsSettings } from './statistics/alarm-statistics.vue';
 export { default as AvailabilitySettings } from './availability/availability.vue';
 export { default as ExternalDataTableSettings } from './external-data-table/external-data-table.vue';
+export { default as AiChat } from './ai/ai-chat.vue';

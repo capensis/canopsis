@@ -97,6 +97,8 @@ export const MODALS = {
 
   createLinkRule: 'create-link-rule',
 
+  createLlm: 'create-llm',
+
   createMaintenance: 'create-maintenance',
 
   createTag: 'create-tag',

@@ -10,6 +10,7 @@ export * from './pattern';
 export * from './healthcheck';
 export * from './idle-rule';
 export * from './junit';
+export * from './llm';
 export * from './modal';
 export * from './pbehavior';
 export * from './permission';
