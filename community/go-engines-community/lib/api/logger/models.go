@@ -54,6 +54,7 @@ const (
 	ValueTypeTplTestData             = "tpltestdata"
 	ValueTypeTplTest                 = "tpltest"
 	ValueTypeWebhookTokenRule        = "webhooktokenrule"
+	ValueTypeCommentTemplate         = "commenttemplate"
 )
 
 type ActionLogEvent struct {

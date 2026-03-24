@@ -117,6 +117,11 @@ const (
 
 const MaxEventTimestampVariation = 24 * time.Hour
 
+type StructuredMessage struct {
+	Field   string `bson:"field" json:"field"`
+	Message string `bson:"message" json:"message"`
+}
+
 // Event represents a canopsis event.
 //
 //easyjson:json
@@ -129,14 +134,15 @@ type Event struct {
 	Resource      string `bson:"resource,omitempty" json:"resource,omitempty"`
 	Upstream      string `bson:"upstream,omitempty" json:"upstream,omitempty"`
 
-	PerfData   string     `bson:"perf_data,omitempty" json:"perf_data,omitempty"`
-	Status     *CpsNumber `bson:"status,omitempty" json:"status,omitempty"`
-	SourceType string     `bson:"source_type" json:"source_type"`
-	LongOutput string     `bson:"long_output,omitempty" json:"long_output,omitempty"`
-	State      CpsNumber  `bson:"state" json:"state"`
-	Output     string     `bson:"output,omitempty" json:"output,omitempty"`
-	Alarm      *Alarm     `bson:"current_alarm,omitempty" json:"current_alarm,omitempty"`
-	Entity     *Entity    `bson:"current_entity,omitempty" json:"current_entity,omitempty"`
+	PerfData          string              `bson:"perf_data,omitempty" json:"perf_data,omitempty"`
+	Status            *CpsNumber          `bson:"status,omitempty" json:"status,omitempty"`
+	SourceType        string              `bson:"source_type" json:"source_type"`
+	LongOutput        string              `bson:"long_output,omitempty" json:"long_output,omitempty"`
+	State             CpsNumber           `bson:"state" json:"state"`
+	Output            string              `bson:"output,omitempty" json:"output,omitempty"`
+	Alarm             *Alarm              `bson:"current_alarm,omitempty" json:"current_alarm,omitempty"`
+	Entity            *Entity             `bson:"current_entity,omitempty" json:"current_entity,omitempty"`
+	StructuredMessage []StructuredMessage `bson:"struct_m,omitempty" json:"struct_m,omitempty"`
 
 	// AlarmID is used if an event is emitted for the specific alarm.
 	AlarmID string `bson:"aid,omitempty" json:"aid,omitempty"`

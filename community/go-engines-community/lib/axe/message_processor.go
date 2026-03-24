@@ -156,6 +156,7 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 		StateSettingUpdated: event.StateSettingUpdated,
 		CloseDelayValue:     event.CloseDelayValue,
 		IsCloseDelayJob:     event.IsCloseDelayJob,
+		StructuredMessage:   event.StructuredMessage,
 	}
 
 	if event.Duration > 0 {
