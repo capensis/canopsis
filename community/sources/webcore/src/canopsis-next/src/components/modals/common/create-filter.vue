@@ -70,7 +70,7 @@ export default {
     },
   },
   setup(props) {
-    const { config, close, modal } = useInnerModal(props);
+    const { config, close, modal, registerOnHide } = useInnerModal(props);
     const { t } = useI18n();
 
     /**
@@ -114,19 +114,26 @@ export default {
 
     const sidebar = useSidebar();
 
-    onMounted(() => sidebar.show({
-      id: props.modal.id,
-      name: SIDE_BARS.aiChat,
-      config: {
-        minimizable: true,
-        width: LLM_AI_CHAT_WIDTH,
-        color: 'primary',
-        titleIcon: '$vuetify.icons.ai',
-        titleMinimized: 'AI',
-      },
-    }));
+    const hideSidebar = () => sidebar.hide({ id: props.modal.id });
 
-    onBeforeUnmount(() => sidebar.hide({ id: props.modal.id }));
+    onMounted(() => {
+      sidebar.show({
+        id: props.modal.id,
+        name: SIDE_BARS.aiChat,
+        config: {
+          overflowYHidden: true,
+          minimizable: true,
+          width: LLM_AI_CHAT_WIDTH,
+          color: 'primary',
+          titleIcon: '$vuetify.icons.ai',
+          titleMinimized: 'AI',
+        },
+      });
+
+      registerOnHide(hideSidebar);
+    });
+
+    onBeforeUnmount(hideSidebar);
 
     return {
       title,

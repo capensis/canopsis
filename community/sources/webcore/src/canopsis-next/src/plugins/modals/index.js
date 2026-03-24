@@ -34,6 +34,7 @@ export default {
           isModalOpenedById: id => Boolean(store.state[moduleName].byId[id]),
           show: modal => store.dispatch(`${moduleName}/show`, modal),
           hide: ({ id } = {}) => store.dispatch(`${moduleName}/hide`, { id: id || get(this.modal, 'id') }),
+          registerOnHide: ({ id, callback } = {}) => store.dispatch(`${moduleName}/registerOnHide`, { id: id || get(this.modal, 'id'), callback }),
           minimize: ({ id } = {}) => store.dispatch(`${moduleName}/minimize`, { id: id || get(this.modal, 'id') }),
           maximize: ({ id } = {}) => store.dispatch(`${moduleName}/maximize`, { id: id || get(this.modal, 'id') }),
         };

@@ -162,6 +162,7 @@ export const SOCKET_ROOMS = {
   executions: 'executions',
   simplifiedManualExecutions: 'simplified-manual-executions',
   pbehaviorPatterns: 'pbehavior-patterns',
+  llmChat: 'llmchat',
 };
 
 export const API_ROUTES = {

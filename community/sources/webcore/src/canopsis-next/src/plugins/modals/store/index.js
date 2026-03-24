@@ -8,6 +8,7 @@ export const types = {
   SHOW: 'SHOW',
   HIDE: 'HIDE',
   HIDE_COMPLETED: 'HIDE_COMPLETED',
+  REGISTER_ON_HIDE: 'REGISTER_ON_HIDE',
   MINIMIZE: 'MINIMIZE',
   MAXIMIZE: 'MAXIMIZE',
 };
@@ -26,12 +27,14 @@ export default {
     [types.SHOW](state, {
       id,
       name,
+      onHide,
       config = {},
       dialogProps = {},
     }) {
       Vue.set(state.byId, id, {
         id,
         name,
+        onHide,
         config,
         dialogProps,
         hidden: false,
@@ -47,6 +50,9 @@ export default {
       state.allIds = state.allIds.filter(value => value !== id);
 
       Vue.delete(state.byId, id);
+    },
+    [types.REGISTER_ON_HIDE](state, { id, callback }) {
+      Vue.set(state.byId[id], 'onHide', callback);
     },
     [types.MINIMIZE](state, { id }) {
       Vue.set(state.byId[id], 'minimized', true);
@@ -68,6 +74,7 @@ export default {
      */
     show({ commit, state }, {
       name,
+      onHide,
       config = {},
       dialogProps = {},
       id = uid('modal'),
@@ -79,6 +86,7 @@ export default {
       return commit(types.SHOW, {
         id,
         name,
+        onHide,
         config,
         dialogProps,
       });
@@ -102,6 +110,8 @@ export default {
 
       commit(types.HIDE, { id });
 
+      state.byId[id].onHide?.();
+
       /**
        * This function added for vuetify animation waiting
        */
@@ -111,6 +121,23 @@ export default {
         }
       }, VUETIFY_ANIMATION_DELAY);
     },
+
+    /**
+     * Register on hide callback
+     *
+     * @param {Function} commit
+     * @param {Object} state
+     * @param {string} id
+     * @param {Function} callback
+     */
+    registerOnHide({ commit, state }, { id, callback } = {}) {
+      if (!state.byId[id]) {
+        return;
+      }
+
+      commit(types.REGISTER_ON_HIDE, { id, callback });
+    },
+
     /**
      * Minimize modal by id
      *

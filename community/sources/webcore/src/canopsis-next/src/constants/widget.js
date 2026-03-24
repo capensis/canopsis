@@ -129,6 +129,10 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   ...featuresService.get('constants.SIDE_BARS_BY_WIDGET_TYPES'),
 };
 
+export const SIDE_BARS_WITH_OVERFLOW_Y_HIDDEN = [
+  SIDE_BARS.aiChat,
+];
+
 export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.pro },
   [WIDGET_TYPES.testingWeather]: { edition: CANOPSIS_EDITION.pro },

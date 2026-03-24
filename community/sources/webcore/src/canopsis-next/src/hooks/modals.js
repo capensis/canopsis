@@ -26,11 +26,13 @@ export const useInnerModal = (props) => {
   const config = computed(() => modal.value?.config ?? {});
 
   const close = () => modals.hide(props.modal);
+  const registerOnHide = (callback = () => {}) => modals.registerOnHide({ id: props.modal.id, callback });
 
   return {
     modals,
     close,
     modal,
     config,
+    registerOnHide,
   };
 };

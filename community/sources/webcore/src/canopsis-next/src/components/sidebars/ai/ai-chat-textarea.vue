@@ -1,10 +1,14 @@
 <template>
-  <div class="ai-chat-textarea pt-1">
+  <div
+    :class="{ 'ai-chat-textarea--empty-chat': emptyChat }"
+    class="ai-chat-textarea"
+  >
     <v-textarea
       v-model="prompt"
       :placeholder="$t('llm.chat.promptPlaceholder')"
       :aria-label="$t('llm.chat.promptPlaceholder')"
       :auto-grow="emptyChat"
+      :disabled="asking"
       rows="5"
       solo
       flat
@@ -23,10 +27,20 @@
         :disabled="llmsDisabled"
       />
       <v-btn
+        v-if="asking"
+        color="secondary"
+        depressed
+        @click="stop"
+      >
+        <v-icon class="mr-2">
+          stop
+        </v-icon>
+        <span>{{ $t('common.stop') }}</span>
+      </v-btn>
+      <v-btn
+        v-else
         :disabled="askDisabled"
-        :aria-label="$t('llm.chat.ask')"
         color="primary"
-        class="text-uppercase"
         depressed
         @click="ask"
       >
@@ -47,6 +61,10 @@ export default {
     AiChatLlmField,
   },
   props: {
+    asking: {
+      type: Boolean,
+      default: false,
+    },
     emptyChat: {
       type: Boolean,
       default: false,
@@ -74,6 +92,11 @@ export default {
       prompt: prompt.value.trim(),
     });
 
+    /**
+     * Emits `stop` so the parent can abort the current LLM request while `asking` is true.
+     */
+    const stop = () => emit('stop');
+
     return {
       prompt,
       selectedLlm,
@@ -82,6 +105,7 @@ export default {
       llmsDisabled,
       askDisabled,
       ask,
+      stop,
     };
   },
 };
@@ -89,11 +113,16 @@ export default {
 
 <style lang="scss" scoped>
 .ai-chat-textarea {
-  border: 1px solid var(--v-divider-border-color, rgba(0, 0, 0, 0.12));
-  border-radius: 8px;
+  border-top: 1px solid var(--v-divider-border-color, rgba(0, 0, 0, 0.12));
 
   ::v-deep textarea {
     resize: none;
+  }
+
+  &--empty-chat {
+    padding-top: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--v-divider-border-color, rgba(0, 0, 0, 0.12));
   }
 }
 </style>
