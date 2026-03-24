@@ -61,6 +61,7 @@ export default {
     [USER_PERMISSIONS_GROUPS.apiRules]: 'Rules',
     [USER_PERMISSIONS_GROUPS.apiRemediation]: 'Remediation',
     [USER_PERMISSIONS_GROUPS.apiPlanning]: 'Planning',
+    [USER_PERMISSIONS_GROUPS.apiLlmChat]: 'LLM chat',
     [USER_PERMISSIONS_GROUPS.technical]: 'Technical',
     [USER_PERMISSIONS_GROUPS.technicalAdmin]: 'Admin',
     [USER_PERMISSIONS_GROUPS.technicalAdminCommunication]: 'Communication',

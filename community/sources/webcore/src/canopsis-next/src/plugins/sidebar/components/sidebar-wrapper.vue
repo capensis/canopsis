@@ -76,6 +76,7 @@
 import { computed, inject, onMounted, ref } from 'vue';
 
 import { DEFAULT_SIDEBAR_DRAWER_WIDTH, CSS_COLORS_VARS } from '@/config';
+import { SIDE_BARS_WITH_OVERFLOW_Y_HIDDEN } from '@/constants';
 
 import { getMaxZIndex } from '@/helpers/vuetify';
 
@@ -147,6 +148,7 @@ export default {
       return {
         right: true,
         fixed: true,
+        class: SIDE_BARS_WITH_OVERFLOW_Y_HIDDEN.includes(props.sidebar.name) ? 'sidebar--overflow-y-hidden' : '',
         width: isOpen.value && !props.sidebar.minimized ? width : 0,
         temporary: !minimizable,
         hideOverlay: minimizable,
@@ -189,6 +191,10 @@ export default {
 
       &__content {
         overflow-x: visible;
+      }
+
+      &.sidebar--overflow-y-hidden .v-navigation-drawer__content  {
+        overflow-y: hidden;
       }
     }
   }

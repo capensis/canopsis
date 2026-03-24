@@ -4,34 +4,24 @@
       class="ai-chat__body gap-6 pa-4"
       column
     >
-      <ai-chat-greeting />
+      <ai-chat-greeting v-if="emptyChat" />
       <v-layout
         class="gap-3"
         column
       >
-        <ai-chat-message
-          :text="demoUserMessageText"
-          :timestamp="demoUserMessageTime"
-          from-user
+        <component
+          v-for="message in messages"
+          :is="message.type"
+          :key="message.id"
+          v-bind="message"
         />
-        <ai-chat-message
-          :text="'Pattern created'"
-          :timestamp="demoUserMessageTime"
-        />
-        <ai-chat-message
-          :text="'Pattern created'"
-          :timestamp="demoUserMessageTime"
-          from-system
-        />
-        <ai-chat-pattern :pattern="testPattern" />
-        <ai-chat-pattern :pattern="testPattern" active />
-
-        <ai-chat-message thinking />
       </v-layout>
+    </v-layout>
+    <v-layout class="gap-6 pa-4 pt-0" column>
       <ai-chat-textarea
-        :selected-model="selectedModel"
-        @update:selected-model="updateSelectedModel"
-        @ask="forwardAsk"
+        :empty-chat="emptyChat"
+        @ask="ask"
+        @stop="stop"
       />
 
       <ai-chat-suggestions @select="applySuggestion" />
@@ -40,11 +30,9 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { SIDE_BARS } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
 
 import AiChatGreeting from './ai-chat-greeting.vue';
 import AiChatMessage from './ai-chat-message.vue';
@@ -67,64 +55,24 @@ export default {
       required: true,
     },
   },
-  setup(_, { emit }) {
-    const { t } = useI18n();
+  setup() {
+    const messages = ref([]);
 
-    const demoUserMessageText = 'Create pattern when v.component has "test-attribute-correlation-1" prefix and when entity name is "test-entity-1" and last event date in range 2025-01-01T00:00:00Z to 2025-03-01T00:05:00Z.';
-    const demoUserMessageTime = 12345615965;
+    const emptyChat = computed(() => messages.value.length === 0);
 
-    const prompt = ref('');
-    const selectedModel = ref('');
-    const updatePrompt = (value) => {
-      prompt.value = value;
-    };
+    const ask = () => {};
 
-    const updateSelectedModel = (value) => {
-      selectedModel.value = value;
-    };
+    const stop = () => {};
 
-    const forwardAsk = (payload) => {
-      emit('ask', payload);
-    };
-
-    const suggestionPromptKeys = {
-      createPattern: 'llm.chat.suggestionPrompts.createPattern',
-      editPattern: 'llm.chat.suggestionPrompts.editPattern',
-      validatePattern: 'llm.chat.suggestionPrompts.validatePattern',
-    };
-
-    const applySuggestion = (type) => {
-      const key = suggestionPromptKeys[type];
-
-      if (key) {
-        prompt.value = t(key);
-      }
-
-      emit('suggestion', { type });
-    };
+    const applySuggestion = () => {};
 
     return {
-      demoUserMessageText,
-      demoUserMessageTime,
-      prompt,
-      selectedModel,
-      updatePrompt,
-      updateSelectedModel,
-      forwardAsk,
+      messages,
+      emptyChat,
+
+      ask,
+      stop,
       applySuggestion,
-      testPattern: {
-        alarm_pattern: [
-          [
-            {
-              field: 'v.component',
-              cond: {
-                type: 'eq',
-                value: 'test-attribute-correlation-1',
-              },
-            },
-          ],
-        ],
-      },
     };
   },
 };
@@ -134,10 +82,12 @@ export default {
 .ai-chat {
   --header-height: 64px;
   height: calc(100% - var(--header-height));
+  min-height: 0;
 
   &__body {
     flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
   }
-
 }
 </style>

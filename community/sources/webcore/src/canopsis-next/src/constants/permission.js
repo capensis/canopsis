@@ -151,6 +151,7 @@ export const USER_PERMISSIONS_GROUPS = {
   apiRules: 'api_rules',
   apiRemediation: 'api_remediation',
   apiPlanning: 'api_planning',
+  apiLlmChat: 'api_llm_chat',
 
   technical: 'technical',
 
