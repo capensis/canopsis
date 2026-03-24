@@ -9,16 +9,14 @@
       type="info"
     >
       <v-layout justify-space-between align-center>
-        <v-layout class="gap-2" column>
-          <div class="font-weight-regular">
-            {{ $t('pattern.conditionsOptimized') }}
-          </div>
-          <ul class="pl-4 font-weight-regular">
+        <v-layout class="gap-2 font-weight-regular" column>
+          <div v-html="$t('pattern.conditionsOptimized')" />
+          <ul class="pl-4">
             <li
               v-for="{ field, regexp } in optimizedFieldsRegexps"
               :key="field"
             >
-              Infos.{{ field }}.Value <strong>{{ $t('common.regexp') }}</strong> {{ regexp }}
+              Infos.{{ field }}.Value ({{ regexp }})
             </li>
           </ul>
         </v-layout>

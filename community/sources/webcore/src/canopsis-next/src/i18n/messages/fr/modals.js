@@ -481,6 +481,14 @@ export default {
     },
     defaultMessage: 'Votre message ici',
   },
+  createCommentTemplate: {
+    create: {
+      title: 'Créer un modèle de commentaire',
+    },
+    edit: {
+      title: 'Modifier le modèle de commentaire',
+    },
+  },
   createCommentEvent: {
     title: 'Ajouter un commentaire',
   },
@@ -1008,6 +1016,11 @@ export default {
   createAssociateTicketEvent: {
     title: 'Associer un numéro de ticket',
   },
+  removeAssociatedTicketEvent: {
+    title: 'Retirer le ticket associé',
+    associatedTicketLabel: 'Ticket associé',
+    associatedTicketHint: 'Le ticket associé sélectionné sera retiré de l\'alarme sélectionnée',
+  },
   createAckEvent: {
     title: 'Acquitter',
   },
@@ -1165,7 +1178,7 @@ export default {
   },
   entitiesComparison: {
     title: 'Comparaison des entités de motif',
-    infoMessage: 'Les comptages peuvent différer pour 2 raisons :\n<span class="font-weight-regular">1. des changements se sont produits dans Canopsis pendant la vérification (certaines entités initialement filtrées ont changé et ne correspondent plus au motif)</span>\n<span class="font-weight-regular">2. le motif suggéré n\'est pas correct</span>\n<span>Vous pouvez relancer la vérification pour être sûr.</span>',
+    infoMessage: 'Les résultats peuvent différer pour 2 raisons :\n<span class="font-weight-regular">1. Des changements se sont produits dans Canopsis pendant la vérification (certaines entités initialement filtrées ont changé et ne correspondent plus au filtre)</span>\n<span class="font-weight-regular">2. Le filtre suggéré n\'est pas correct</span>\n\n<strong>Vous pouvez relancer la vérification pour être sûr.</strong>',
     foundInCurrent: 'TROUVÉ DANS LE MOTIF ACTUEL, NON TROUVÉ DANS LE MOTIF SUGGÉRÉ',
     foundInSuggestion: 'TROUVÉ DANS LE MOTIF SUGGÉRÉ, NON TROUVÉ DANS LE MOTIF ACTUEL',
   },

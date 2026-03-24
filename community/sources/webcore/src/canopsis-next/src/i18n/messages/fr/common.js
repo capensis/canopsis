@@ -36,6 +36,7 @@ export default {
   quitEditing: 'Quitter le mode édition',
   enabled: 'Activé(e)',
   disabled: 'Désactivé(e)',
+  required: 'Requis(e)',
   login: 'Connexion',
   yes: 'Oui',
   no: 'Non',
@@ -73,6 +74,8 @@ export default {
   save: 'Sauvegarder',
   label: 'Label',
   field: 'Champ',
+  fields: 'Champs',
+  fieldName: 'Nom du champ',
   value: 'Valeur',
   limit: 'Limite',
   add: 'Ajouter',
@@ -553,6 +556,9 @@ export default {
     },
     [TRIGGERS_TYPES.assocticket]: {
       text: 'Ticket associé à une alarme',
+    },
+    [TRIGGERS_TYPES.ticketremove]: {
+      text: 'Ticket retiré',
     },
     [TRIGGERS_TYPES.snooze]: {
       text: 'Alarme mise en veille',

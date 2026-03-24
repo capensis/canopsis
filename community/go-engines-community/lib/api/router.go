@@ -74,6 +74,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/wsconn"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -133,7 +134,7 @@ func RegisterRoutes(
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
 	websocketHub websocket.Hub,
-	websocketStore websocket.Store,
+	websocketStore wsconn.Store,
 	broadcastMessageChan chan<- bool,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
@@ -199,7 +200,14 @@ func RegisterRoutes(
 	{
 		protected.Use(authMiddleware...)
 
-		protected.Group("/ws").GET("", websocket.NewApi(websocketHub, errorResponder).Handler)
+		protected.Group("/ws").GET("", func(c *gin.Context) {
+			err := websocketHub.Connect(c.Writer, c.Request)
+			if err != nil {
+				errorResponder.Respond(c, err)
+
+				return
+			}
+		})
 
 		accountRouter := protected.Group("/account/me")
 		{
