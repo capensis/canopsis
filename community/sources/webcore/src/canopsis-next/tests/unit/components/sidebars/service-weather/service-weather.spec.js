@@ -116,6 +116,7 @@ describe('service-weather', () => {
   };
 
   const sidebar = {
+    id: 'test-sidebar-id',
     name: SIDE_BARS.serviceWeatherSettings,
     config: {
       widget,

@@ -1,0 +1,77 @@
+import { LLM_THINKING_LEVELS } from '@/constants';
+
+export default {
+  expandTabs: {
+    details: 'Details',
+    promptsHistory: 'Prompts history',
+  },
+  promptsHistory: {
+    tabs: {
+      allPrompts: 'All prompts',
+      byUser: 'By user',
+    },
+    searchPlaceholder: 'Search by user, modal or name',
+    notRelatedToCanopsis: 'Not related to Canopsis',
+    groupByChat: 'Group by chat',
+    seeChat: 'See chat',
+    columns: {
+      userName: 'User name',
+      datetime: 'Datetime',
+      tokensUsed: 'Tokens used',
+      modal: 'Modal',
+      name: 'Name',
+      usage: 'Usage',
+      canopsisRelated: 'Canopsis related',
+      prompt: 'Prompt',
+      seeChat: 'See chat',
+      promptsCount: 'Prompts',
+      lastUsed: 'Last used',
+    },
+  },
+  modelType: 'LLM model type',
+  modelTypes: {
+    gemini: 'Gemini',
+  },
+  modelName: 'LLM model name',
+  model: 'LLM model',
+  recommendedBadge: 'recommended',
+  apiKey: 'API key',
+  timeoutSettings: 'Timeout settings',
+  thinkingLevel: 'Thinking level',
+  isDefaultModel: 'Is default model',
+  currentDefaultModelLine: 'Current default model: {name}',
+  lastUsedDate: 'Last used date',
+  expandNoDetails: 'No additional details for this configuration.',
+  thinkingLevels: {
+    [LLM_THINKING_LEVELS.minimal]: 'Minimal',
+    [LLM_THINKING_LEVELS.low]: 'Low',
+    [LLM_THINKING_LEVELS.medium]: 'Medium',
+    [LLM_THINKING_LEVELS.high]: 'High',
+  },
+  chat: {
+    howCanIHelp: 'How can I help?',
+    promptPlaceholder: 'Describe what you need…',
+    modelPlaceholder: 'Model',
+    ask: 'Ask',
+    expandMessage: 'Show full message',
+    collapseMessage: 'Show less',
+    thinking: 'Thinking…',
+    tryLabel: 'Try:',
+    suggestions: {
+      createPattern: 'Create pattern',
+      editPattern: 'Edit pattern',
+      validatePattern: 'Validate pattern',
+    },
+    suggestionPrompts: {
+      createPattern: 'Help me create a new pattern for this modal.',
+      editPattern: 'Help me improve the patterns configured in this modal.',
+      validatePattern: 'Help me validate that my patterns are correct and efficient.',
+    },
+    pattern: {
+      restoreVersion: 'Restore version',
+      seePattern: 'See pattern',
+      hidePattern: 'Hide pattern',
+      version: 'Version {version}',
+    },
+  },
+};

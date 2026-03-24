@@ -255,6 +255,7 @@ export default {
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'Jetons d\'authentification externes',
     [USER_PERMISSIONS.technical.externalDataTable]: 'Données externes',
     [USER_PERMISSIONS.technical.entityInfoProperty]: 'Informations d\'entité',
+    [USER_PERMISSIONS.technical.llm]: 'LLMs',
 
     /**
      * Technical Admin Access

@@ -18,6 +18,7 @@ export default {
   shareLink: 'Créer un lien de partage',
   addPbehavior: 'Ajouter un comportement périodique',
   refresh: 'Rafraîchir',
+  restart: 'Redémarrer',
   toggleEditView: 'Activer/Désactiver le mode édition',
   toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition',
   name: 'Nom',

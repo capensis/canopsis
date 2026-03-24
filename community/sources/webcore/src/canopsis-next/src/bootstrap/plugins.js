@@ -108,6 +108,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.importExternalDataTableRecords]: { maxWidth: 1200, persistent: true },
       [MODALS.createTheme]: { maxWidth: 500 },
       [MODALS.createExternalAuthToken]: { maxWidth: 1100 },
+      [MODALS.createLlm]: { maxWidth: 920 },
 
       ...featuresService.get('components.modals.dialogPropsMap'),
     },

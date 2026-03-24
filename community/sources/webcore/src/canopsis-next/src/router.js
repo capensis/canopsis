@@ -38,6 +38,7 @@ const AdminCustomObjectsExternalDataTables = () => import(/* webpackChunkName: "
 const AdminCustomObjectsIcons = () => import(/* webpackChunkName: "Icons" */ '@/views/admin/custom-objects/icons.vue');
 const AdminCustomObjectsMaps = () => import(/* webpackChunkName: "Maps" */ '@/views/admin/custom-objects/maps.vue');
 const AdminCustomObjectsTags = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/custom-objects/tags.vue');
+const AdminCustomObjectsLlms = () => import(/* webpackChunkName: "Llms" */ '@/views/admin/custom-objects/llms.vue');
 const AdminSettingsUserInterface = () => import(/* webpackChunkName: "UserInterface" */ '@/views/admin/settings/user-interface.vue');
 const AdminSettingsViewsImportExport = () => import(/* webpackChunkName: "ViewsImportExport" */ '@/views/admin/settings/views-import-export.vue');
 const AdminSettingsNotifications = () => import(/* webpackChunkName: "NotificationsSettings" */ '@/views/admin/settings/notifications-settings.vue');
@@ -292,6 +293,17 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USER_PERMISSIONS.technical.tag,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminCustomObjectsLlms,
+    name: ROUTES_NAMES.adminCustomObjectsLlms,
+    component: AdminCustomObjectsLlms,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.llm,
       },
     },
   },

@@ -167,6 +167,10 @@ export default {
   [USER_PERMISSIONS.technical.entityInfoProperty]: {
     title: 'Entity infos',
   },
+  [USER_PERMISSIONS.technical.llm]: {
+    title: 'LLMs',
+    message: 'LLM module is used to manage LLMs for Canopsis AI assistant.',
+  },
 
   /**
    * Grouped admin

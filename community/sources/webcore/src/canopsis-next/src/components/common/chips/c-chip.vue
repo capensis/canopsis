@@ -43,6 +43,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    rounded: {
+      type: Boolean,
+      default: false,
+    },
     textColor: {
       type: String,
       default: 'white',
@@ -52,6 +56,7 @@ export default {
     const chipClass = computed(() => ({
       'c-chip--closable': props.closable,
       'c-chip--small': props.small,
+      'c-chip--rounded': props.rounded,
     }));
 
     return {
@@ -68,6 +73,10 @@ export default {
   min-height: 24px;
   height: unset !important;
   padding: 0;
+
+  &.c-chip--rounded {
+    border-radius: 20px;
+  }
 
   &__text {
     white-space: initial;

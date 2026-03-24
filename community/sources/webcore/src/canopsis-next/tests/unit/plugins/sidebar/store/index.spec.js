@@ -12,55 +12,57 @@ describe('Sidebar plugin store module', () => {
     jest.useRealTimers();
   });
 
-  it('Mutate state after commit SHOW', () => {
-    const show = mutations[types.SHOW];
+  const createShownState = () => {
+    const id = Faker.datatype.uuid();
+    const name = Faker.datatype.string();
+    const config = Faker.helpers.createTransaction();
     const state = cloneDeep(initialState);
 
+    mutations[types.SHOW](state, { id, name, config });
+
+    return { state, id, name, config };
+  };
+
+  it('Mutate state after commit SHOW', () => {
+    const state = cloneDeep(initialState);
+    const id = Faker.datatype.uuid();
     const name = Faker.datatype.string();
     const config = Faker.helpers.createTransaction();
 
-    show(state, { name, config });
+    mutations[types.SHOW](state, { id, name, config });
 
-    expect(state).toEqual({ name, config, hidden: false });
+    expect(state.allIds).toEqual([id]);
+    expect(state.byId[id]).toEqual({
+      id,
+      name,
+      config,
+      hidden: false,
+      minimized: false,
+    });
   });
 
   it('Mutate state after commit SHOW without config', () => {
-    const show = mutations[types.SHOW];
     const state = cloneDeep(initialState);
-
+    const id = Faker.datatype.uuid();
     const name = Faker.datatype.string();
 
-    show(state, { name });
+    mutations[types.SHOW](state, { id, name });
 
-    expect(state).toEqual({ name, config: {}, hidden: false });
+    expect(state.byId[id].config).toEqual({});
   });
 
   it('Mutate state after commit HIDE', () => {
-    const show = mutations[types.SHOW];
-    const hide = mutations[types.HIDE];
-    const state = cloneDeep(initialState);
+    const { state, id } = createShownState();
 
-    const name = Faker.datatype.string();
-    const config = Faker.helpers.createTransaction();
+    mutations[types.HIDE](state, { id });
 
-    show(state, { name, config });
-
-    hide(state);
-
-    expect(state).toEqual({ name, config, hidden: true });
+    expect(state.byId[id].hidden).toBe(true);
   });
 
   it('Mutate state after commit HIDE_COMPLETED', () => {
-    const show = mutations[types.SHOW];
-    const hideCompleted = mutations[types.HIDE_COMPLETED];
-    const state = cloneDeep(initialState);
+    const { state, id } = createShownState();
 
-    const name = Faker.datatype.string();
-    const config = Faker.helpers.createTransaction();
-
-    show(state, { name, config });
-
-    hideCompleted(state);
+    mutations[types.HIDE_COMPLETED](state, { id });
 
     expect(state).toEqual(initialState);
   });
@@ -71,7 +73,8 @@ describe('Sidebar plugin store module', () => {
 
     const name = Faker.datatype.string();
     const config = Faker.helpers.createTransaction();
-    const payload = { name, config };
+    const id = Faker.datatype.uuid();
+    const payload = { id, name, config };
 
     actions.show({ commit, state }, payload);
 
@@ -79,62 +82,58 @@ describe('Sidebar plugin store module', () => {
     expect(commit).toHaveBeenCalledWith(types.SHOW, payload);
   });
 
+  it('Show sidebar with existing id maximizes. Action: show', () => {
+    const commit = jest.fn();
+    const { state, id } = createShownState();
+
+    actions.show({ commit, state }, { id, name: 'other', config: {} });
+
+    expect(commit).toHaveBeenCalledWith(types.MAXIMIZE, { id });
+  });
+
   it('Hide sidebar. Action: hide', () => {
     jest.useFakeTimers();
     jest.spyOn(global, 'setTimeout');
 
     const commit = jest.fn();
+    const { state, id } = createShownState();
+
+    actions.hide({ commit, state }, { id });
+
+    expect(commit).toHaveBeenCalledTimes(1);
+    expect(commit).toHaveBeenCalledWith(types.HIDE, { id });
+
+    commit.mockReset();
+
+    expect(setTimeout).toHaveBeenLastCalledWith(
+      expect.any(Function),
+      VUETIFY_ANIMATION_DELAY,
+    );
+
+    jest.runAllTimers();
+
+    expect(commit).toHaveBeenCalledTimes(1);
+    expect(commit).toHaveBeenCalledWith(types.HIDE_COMPLETED, { id });
+  });
+
+  it('Hide sidebar skips when id unknown. Action: hide', () => {
+    const commit = jest.fn();
     const state = cloneDeep(initialState);
 
-    actions.hide({ commit, state });
+    actions.hide({ commit, state }, { id: 'missing' });
 
-    expect(commit).toHaveBeenCalledTimes(1);
-    expect(commit).toHaveBeenCalledWith(types.HIDE);
-
-    commit.mockReset();
-
-    expect(setTimeout).toHaveBeenLastCalledWith(
-      expect.any(Function),
-      VUETIFY_ANIMATION_DELAY,
-    );
-
-    jest.runAllTimers();
-
-    expect(commit).toHaveBeenCalledTimes(1);
-    expect(commit).toHaveBeenCalledWith(types.HIDE_COMPLETED);
+    expect(commit).not.toHaveBeenCalled();
   });
 
-  it('Hide sidebar with hidden. Action: hide', () => {
-    jest.useFakeTimers();
-    jest.spyOn(global, 'setTimeout');
+  it('Getter: sidebars', () => {
+    const { state, id, name, config } = createShownState();
 
-    const commit = jest.fn();
-    const state = { ...initialState, hidden: true };
-
-    actions.hide({ commit, state });
-
-    expect(commit).toHaveBeenCalledTimes(1);
-    expect(commit).toHaveBeenCalledWith(types.HIDE);
-
-    commit.mockReset();
-
-    expect(setTimeout).toHaveBeenLastCalledWith(
-      expect.any(Function),
-      VUETIFY_ANIMATION_DELAY,
-    );
-
-    jest.runAllTimers();
-
-    expect(commit).toHaveBeenCalledTimes(1);
-    expect(commit).toHaveBeenCalledWith(types.HIDE_COMPLETED);
-  });
-
-  it('Get sidebar. Getter: sidebar', () => {
-    const state = {
-      ...initialState,
-      config: Faker.helpers.createTransaction(),
-    };
-
-    expect(getters.sidebar(state)).toEqual(state);
+    expect(getters.sidebars(state)).toEqual([{
+      id,
+      name,
+      config,
+      hidden: false,
+      minimized: false,
+    }]);
   });
 });

@@ -3,7 +3,7 @@
     v-field="value"
     v-validate="rules"
     v-bind="$attrs"
-    :label="$t('common.password')"
+    :label="label || $t('common.password')"
     :error-messages="errors.collect(name)"
     :name="name"
     type="password"

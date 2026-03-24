@@ -136,6 +136,11 @@ export default {
         icon: 'local_offer',
         permission: USER_PERMISSIONS.technical.tag,
       },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsLlms },
+        icon: '$vuetify.icons.robot',
+        permission: USER_PERMISSIONS.technical.llm,
+      },
     ]);
 
     const settingsLinks = computed(() => [

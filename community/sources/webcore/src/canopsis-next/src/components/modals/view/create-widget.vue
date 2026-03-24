@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper close>
+  <modal-wrapper padding-right="400" close>
     <template #title="">
       <span>{{ $t('modals.createWidget.title') }}</span>
     </template>
@@ -59,10 +59,10 @@
 import {
   MODALS,
   WIDGET_TYPES,
-  SIDE_BARS_BY_WIDGET_TYPES,
   WIDGET_TYPES_RULES,
   WIDGET_ICONS,
   TOP_LEVEL_WIDGET_TYPES,
+  SIDE_BARS_BY_WIDGET_TYPES,
 } from '@/constants';
 
 import { calculateNewWidgetGridParametersY } from '@/helpers/entities/widget/grid';
@@ -162,14 +162,19 @@ export default {
     },
 
     selectType(type) {
-      this.$sidebar.show({
-        name: SIDE_BARS_BY_WIDGET_TYPES[type],
-        config: {
-          widget: this.getWidgetWithUpdatedGridParametersByType(type),
-        },
-      });
-
       this.$modals.hide();
+
+      /**
+       * We need to wait for the modal to be hidden before showing the sidebar.
+       */
+      window.requestAnimationFrame(() => {
+        this.$sidebar.show({
+          name: SIDE_BARS_BY_WIDGET_TYPES[type],
+          config: {
+            widget: this.getWidgetWithUpdatedGridParametersByType(type),
+          },
+        });
+      });
     },
   },
 };

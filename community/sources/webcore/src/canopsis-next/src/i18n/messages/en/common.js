@@ -18,6 +18,7 @@ export default {
   shareLink: 'Create share link',
   addPbehavior: 'Add pbehavior',
   refresh: 'Refresh',
+  restart: 'Restart',
   toggleEditView: 'Toggle view edition mode',
   toggleEditViewSubtitle: 'If you want to save widget positions you should toggle off the editing mode for that',
   name: 'Name',

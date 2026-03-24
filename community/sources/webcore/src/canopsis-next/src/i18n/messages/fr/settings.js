@@ -26,6 +26,7 @@ export default {
     [SIDE_BARS.alarmStatisticsSettings]: 'Paramètres des statistiques d\'alarme',
     [SIDE_BARS.availabilitySettings]: 'Paramètres de disponibilité',
     [SIDE_BARS.externalDataTableSettings]: 'Paramètres des données externes',
+    [SIDE_BARS.aiChat]: 'Assistant AI',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',

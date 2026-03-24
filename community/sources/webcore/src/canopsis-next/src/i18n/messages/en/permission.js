@@ -255,6 +255,7 @@ export default {
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'External auth tokens',
     [USER_PERMISSIONS.technical.externalDataTable]: 'External data',
     [USER_PERMISSIONS.technical.entityInfoProperty]: 'Entity infos',
+    [USER_PERMISSIONS.technical.llm]: 'LLMs',
 
     /**
      * Technical Admin Access

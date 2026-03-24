@@ -1147,6 +1147,14 @@ export default {
       title: 'Modifier le jeton d\'authentification externe',
     },
   },
+  createLlm: {
+    create: {
+      title: 'Ajouter un modèle LLM',
+    },
+    edit: {
+      title: 'Modifier le modèle LLM',
+    },
+  },
   createTemplateTestingData: {
     create: {
       title: 'Créer des données de test de modèle',
