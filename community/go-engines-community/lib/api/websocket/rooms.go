@@ -4,8 +4,8 @@ const (
 	RoomLoggedUserCount   = "logged-user-count"
 	RoomBroadcastMessages = "broadcast-messages"
 
-	RoomAlarmsGroup       = "alarms/"
-	RoomAlarmDetailsGroup = "alarm-details/"
+	RoomAlarmsGroup       = "alarms"
+	RoomAlarmDetailsGroup = "alarm-details"
 
 	RoomHealthcheck       = "healthcheck"
 	RoomHealthcheckStatus = "healthcheck-status"
@@ -14,3 +14,7 @@ const (
 	RoomNotifications     = "notifications"
 	RoomPbhPatterns       = "pbehavior-patterns"
 )
+
+func GroupRoom(g, id string) string {
+	return g + groupDelimiter + id
+}
