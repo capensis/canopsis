@@ -1225,12 +1225,12 @@ func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
 
 	err := g.Wait()
 	if err != nil {
-		s.websocketHub.Send(websocket.RoomPbhPatterns, map[string]bool{"ok": false})
+		s.websocketHub.SendMessage(ctx, map[string]bool{"ok": false}, websocket.ToRoom(websocket.RoomPbhPatterns))
 
 		return err
 	}
 
-	s.websocketHub.Send(websocket.RoomPbhPatterns, map[string]bool{"ok": true})
+	s.websocketHub.SendMessage(ctx, map[string]bool{"ok": true}, websocket.ToRoom(websocket.RoomPbhPatterns))
 
 	return nil
 }

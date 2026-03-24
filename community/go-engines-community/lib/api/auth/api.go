@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/wsconn"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -31,7 +31,7 @@ func NewApi(
 	tokenService apisecurity.TokenService,
 	tokenProviders []security.TokenProvider,
 	providers []security.Provider,
-	websocketStore websocket.Store,
+	websocketStore wsconn.Store,
 	maintenanceAdapter config.MaintenanceAdapter,
 	enforcer security.Enforcer,
 	cookieName string,
@@ -60,7 +60,7 @@ type api struct {
 	tokenService       apisecurity.TokenService
 	tokenProviders     []security.TokenProvider
 	providers          []security.Provider
-	websocketStore     websocket.Store
+	websocketStore     wsconn.Store
 	maintenanceAdapter config.MaintenanceAdapter
 	enforcer           security.Enforcer
 	errorResponder     httperror.Responder
@@ -167,7 +167,7 @@ func (a *api) Logout(c *gin.Context) {
 // GetLoggedUserCount
 // @Success 200 {object} LoggedUserCountResponse
 func (a *api) GetLoggedUserCount(c *gin.Context) {
-	count, err := a.websocketStore.GetActiveConnections(c)
+	count, err := a.websocketStore.CountActiveConnections(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
