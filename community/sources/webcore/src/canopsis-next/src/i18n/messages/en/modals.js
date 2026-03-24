@@ -481,6 +481,14 @@ export default {
     },
     defaultMessage: 'Your message here',
   },
+  createCommentTemplate: {
+    create: {
+      title: 'Create comment template',
+    },
+    edit: {
+      title: 'Edit comment template',
+    },
+  },
   createCommentEvent: {
     title: 'Add comment',
   },

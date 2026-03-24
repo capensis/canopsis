@@ -1,29 +1,13 @@
 <template>
-  <div>
-    <v-subheader>{{ $t('common.general') }}</v-subheader>
+  <c-collapse-panel class="c-alternative-bg-panel" expanded>
+    <template #header>
+      <span class="font-weight-medium text-uppercase">{{ $t('common.general') }}</span>
+    </template>
     <v-data-table
       :headers="headers"
       :items="items"
-      item-key="_id"
-    >
-      <template #item="{ item }">
-        <tr>
-          <td class="text-left">
-            {{ item.v.state.a }}
-          </td>
-          <td class="text-left">
-            {{ item.v.connector }}
-          </td>
-          <td class="text-left">
-            {{ item.v.component }}
-          </td>
-          <td class="text-left">
-            {{ item.v.resource }}
-          </td>
-        </tr>
-      </template>
-    </v-data-table>
-  </div>
+    />
+  </c-collapse-panel>
 </template>
 
 <script>
@@ -44,18 +28,22 @@ export default {
     const headers = computed(() => [
       {
         text: t('common.author'),
+        value: 'v.state.a',
         sortable: false,
       },
       {
         text: t('common.connector'),
+        value: 'v.connector',
         sortable: false,
       },
       {
         text: t('common.component'),
+        value: 'v.component',
         sortable: false,
       },
       {
         text: t('common.resource'),
+        value: 'v.resource',
         sortable: false,
       },
     ]);

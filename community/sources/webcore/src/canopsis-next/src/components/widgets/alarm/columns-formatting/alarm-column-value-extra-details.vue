@@ -8,7 +8,7 @@
       :ack="alarm.v.ack"
     />
     <extra-details-last-comment
-      v-if="alarm.v.last_comment && alarm.v.last_comment.m"
+      v-if="alarm.v.last_comment && (alarm.v.last_comment.m || alarm.v.last_comment.struct_m?.length)"
       :last-comment="alarm.v.last_comment"
     />
     <extra-details-ticket

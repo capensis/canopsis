@@ -253,6 +253,7 @@ export default {
     [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Test de modèle',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'Jetons d\'authentification externes',
+    [USER_PERMISSIONS.technical.commentTemplate]: 'Modèles de commentaires',
     [USER_PERMISSIONS.technical.externalDataTable]: 'Données externes',
     [USER_PERMISSIONS.technical.entityInfoProperty]: 'Informations d\'entité',
 
@@ -285,8 +286,8 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Règles SNMP',
 
     /**
-     * Technical Admin Notification
-     */
+    * Technical Admin Notification
+    */
     [USER_PERMISSIONS.technical.notification.common]: 'Notifications',
 
     /**

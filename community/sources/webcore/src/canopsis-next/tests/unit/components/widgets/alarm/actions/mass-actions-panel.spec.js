@@ -811,7 +811,10 @@ describe('mass-actions-panel', () => {
   test('Comment modal showed after trigger comment action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
-      parameters: {},
+      comment_templates: [],
+      parameters: {
+        comment_templates: [],
+      },
     };
 
     const wrapper = factory({
@@ -835,6 +838,7 @@ describe('mass-actions-panel', () => {
         name: MODALS.createCommentEvent,
         config: {
           items,
+          templates: [],
           action: expect.any(Function),
         },
       },

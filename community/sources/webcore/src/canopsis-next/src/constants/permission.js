@@ -206,6 +206,7 @@ export const USER_PERMISSIONS = {
     externalAuthTokens: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalAuthTokens`,
     viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
     templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateTesting`,
+    commentTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_commentTemplate`,
     externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalData`,
     entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.technical.admin}_entityInfoProperty`,
     exploitation: {
