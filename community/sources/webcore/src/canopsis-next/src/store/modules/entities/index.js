@@ -27,6 +27,7 @@ import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
 import dynamicInfoModule from './dynamic-info';
 import broadcastMessageModule from './broadcast-message';
+import commentTemplateModule from './comment-template';
 import counterModule from './counter';
 import playlistModule from './playlist';
 import metaAlarmRuleModule from './meta-alarm-rule';
@@ -94,6 +95,7 @@ export default {
   snmpMib: snmpMibModule,
   dynamicInfo: dynamicInfoModule,
   broadcastMessage: broadcastMessageModule,
+  commentTemplate: commentTemplateModule,
   counter: counterModule,
   playlist: playlistModule,
   metaAlarmRule: metaAlarmRuleModule,

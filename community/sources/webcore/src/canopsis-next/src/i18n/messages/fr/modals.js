@@ -481,6 +481,14 @@ export default {
     },
     defaultMessage: 'Votre message ici',
   },
+  createCommentTemplate: {
+    create: {
+      title: 'Créer un modèle de commentaire',
+    },
+    edit: {
+      title: 'Modifier le modèle de commentaire',
+    },
+  },
   createCommentEvent: {
     title: 'Ajouter un commentaire',
   },
