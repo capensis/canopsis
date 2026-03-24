@@ -30,6 +30,11 @@ type ServerMessage struct {
 	Error   int    `json:"error,omitempty"`
 }
 
+type User struct {
+	ID     string
+	Locale string
+}
+
 type ConnectionInfo struct {
 	ID     string
 	UserID string
