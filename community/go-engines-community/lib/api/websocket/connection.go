@@ -354,6 +354,10 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 	}
 
 	c.logger.Debug().Str("conn", c.id).Str("room", msg.Room).Str("user", user.ID).Msg("joined room")
+	c.write(ctx, ServerMessage{
+		Type: ServerMessageJoined,
+		Room: msg.Room,
+	})
 }
 
 func (c *connection) leave(ctx context.Context, msg ClientMessage) {
@@ -390,6 +394,10 @@ func (c *connection) leave(ctx context.Context, msg ClientMessage) {
 	}
 
 	c.logger.Debug().Str("conn", c.id).Str("room", room).Str("user", user.ID).Msg("left room")
+	c.write(ctx, ServerMessage{
+		Type: ServerMessageLeft,
+		Room: room,
+	})
 }
 
 func (c *connection) auth(ctx context.Context, msg ClientMessage) {
@@ -543,6 +551,10 @@ func (c *connection) checkRooms(ctx context.Context) {
 		}
 
 		c.writeError(ctx, room, http.StatusForbidden, nil)
+		c.write(ctx, ServerMessage{
+			Type: ServerMessageCloseRoom,
+			Room: room,
+		})
 	}
 }
 

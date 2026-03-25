@@ -359,6 +359,11 @@ func TestHub_Connect_ShouldCallOnJoinHandler(t *testing.T) {
 
 			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
+		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageJoined,
+			Room: room,
+		}))
+		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().RemoteAddr().Return(&net.IPAddr{}).AnyTimes()
@@ -437,6 +442,15 @@ func TestHub_Connect_ShouldCallOnLeaveHandler(t *testing.T) {
 
 			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
+		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageJoined,
+			Room: room,
+		}))
+		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageLeft,
+			Room: room,
+		}))
+		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().RemoteAddr().Return(&net.IPAddr{}).AnyTimes()
@@ -520,6 +534,11 @@ func TestHub_Connect_GivenStopRun_ShouldCallOnLeaveHandler(t *testing.T) {
 
 			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
+		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageJoined,
+			Room: room,
+		}))
+		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().RemoteAddr().Return(&net.IPAddr{}).AnyTimes()
@@ -600,7 +619,11 @@ func TestHub_Connect_ShouldCallAuthorizeHandler(t *testing.T) {
 		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
 			Type: websocket.ServerMessageAuthSuccess,
 		}))
-		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
+		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageJoined,
+			Room: room,
+		}))
+		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().RemoteAddr().Return(&net.IPAddr{}).AnyTimes()
@@ -688,12 +711,20 @@ func TestHub_Connect_ShouldPeriodicallyCheckAuthorization(t *testing.T) {
 			Type: websocket.ServerMessageAuthSuccess,
 		}))
 		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageJoined,
+			Room: room,
+		}))
+		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
 			Type:    websocket.ServerMessageError,
 			Room:    room,
 			Error:   http.StatusForbidden,
 			Payload: http.StatusText(http.StatusForbidden),
 		}))
-		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
+		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageCloseRoom,
+			Room: room,
+		}))
+		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(4)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().RemoteAddr().Return(&net.IPAddr{}).AnyTimes()
@@ -781,11 +812,15 @@ func TestHub_SendMessage_ShouldDeliverToRoomConnections(t *testing.T) {
 			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
 		mockConn1.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageJoined,
+			Room: room,
+		}))
+		mockConn1.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
 			Type:    websocket.ServerMessageInfo,
 			Room:    room,
 			Payload: payload,
 		}))
-		mockConn1.EXPECT().SetWriteDeadline(gomock.Any())
+		mockConn1.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn1.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn1.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 		mockConn1.EXPECT().RemoteAddr().Return(&net.IPAddr{}).AnyTimes()
@@ -890,6 +925,11 @@ func TestHub_SendMessageToUser_ShouldDeliverToUser(t *testing.T) {
 			Room:    room,
 			Payload: payload,
 		}))
+		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageJoined,
+			Room: room,
+		}))
+		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -969,10 +1009,14 @@ func TestHub_LeaveRoom_ShouldSendCloseRoomAndCallOnLeave(t *testing.T) {
 			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
 		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageJoined,
+			Room: room,
+		}))
+		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
 			Type: websocket.ServerMessageCloseRoom,
 			Room: room,
 		}))
-		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
+		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().RemoteAddr().Return(&net.IPAddr{}).AnyTimes()
@@ -1433,6 +1477,11 @@ func TestHub_Connect_GivenDoubleJoin_ShouldCallOnJoinOnce(t *testing.T) {
 
 			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
+		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageJoined,
+			Room: room,
+		}))
+		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().RemoteAddr().Return(&net.IPAddr{}).AnyTimes()
@@ -1579,6 +1628,11 @@ func TestHub_Connect_GivenInfoMessage_ShouldCallOnMessageHandler(t *testing.T) {
 
 			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
+		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+			Type: websocket.ServerMessageJoined,
+			Room: room,
+		}))
+		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().RemoteAddr().Return(&net.IPAddr{}).AnyTimes()
