@@ -73,18 +73,18 @@ mongo           hald    nproc           64000
 EOF
 ```
 
-Désactivez la gestion des `Transparent Huge Pages (THP)` selon la [préconisation MongoDB](https://www.mongodb.com/docs/manual/tutorial/transparent-huge-pages/)
+Activez la gestion des `Transparent Huge Pages (THP)` selon la [préconisation MongoDB](https://www.mongodb.com/docs/manual/tutorial/transparent-huge-pages/)
 
 ```sh
-cat << EOF > /etc/systemd/system/disable-transparent-huge-pages.service
+cat << EOF > /etc/systemd/system/enable-transparent-huge-pages.service
 [Unit]
-Description=Disable Transparent Huge Pages (THP)
+Description=Enable Transparent Hugepages (THP)
 DefaultDependencies=no
 After=sysinit.target local-fs.target
 Before=mongod.service
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c 'echo never | tee /sys/kernel/mm/transparent_hugepage/enabled > /dev/null'
+ExecStart=/bin/sh -c 'echo always | tee /sys/kernel/mm/transparent_hugepage/enabled > /dev/null && echo defer+madvise | tee /sys/kernel/mm/transparent_hugepage/defrag > /dev/null && echo 0 | tee /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none > /dev/null && echo 1 | tee /proc/sys/vm/overcommit_memory > /dev/null'
 [Install]
 WantedBy=basic.target
 EOF
@@ -92,7 +92,13 @@ EOF
 
 ```sh
 systemctl daemon-reload
-systemctl enable --now disable-transparent-huge-pages
+systemctl enable --now enable-transparent-huge-pages
+```
+
+Désactiver le swapiness:
+```sh
+echo "vm.swappiness = 1" | sudo tee /etc/sysctl.d/99-mongodb.conf
+sysctl --system
 ```
 
 ### Ajout des dépôts tiers
@@ -559,7 +565,7 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 !!! Warning
     Si votre mot de passe MongoDB contient des caractères spéciaux (par exemple `@`, `+`, `/`, `%`), vous devez les encoder avant de les utiliser dans l’URL de connexion.
     
-    Consultez la section [Limitations sur les caractères spéciaux dans l’URL MongoDB](../../../guide-utilisation/limitations/#limitation-des-caracteres-speciaux-dans-lurl-mongodb) pour plus de détails.
+    Consultez la section [Limitations sur les caractères spéciaux dans l’URL MongoDB](../../guide-utilisation/limitations/index.md#limitation-des-caracteres-speciaux-dans-lurl-mongodb) pour plus de détails.
 
 Le fichier de configuration est `/opt/canopsis/etc/go-engines-vars.conf`, qui
 est normalement dans l'état suivant :
