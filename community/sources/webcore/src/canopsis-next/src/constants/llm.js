@@ -1,3 +1,5 @@
+import { PATTERN_TYPES } from './pattern';
+
 export const LLM_MODEL_TYPES = {
   gemini: 'gemini',
 };
@@ -17,27 +19,34 @@ export const LLM_PROMPTS_HISTORY_VIEWS = {
 export const LLM_AI_CHAT_WIDTH = 400;
 
 export const LLM_SOCKET_CONTEXTS = {
-  idle_rule: 'idle_rule',
+  idleRule: 'idle_rule',
   scenario: 'scenario',
-  flapping_rule: 'flapping_rule',
-  resolve_rule: 'resolve_rule',
-  alarm_tag: 'alarm_tag',
-  link_rule: 'link_rule',
+  flappingRule: 'flapping_rule',
+  resolveRule: 'resolve_rule',
+  alarmTag: 'alarm_tag',
+  linkRule: 'link_rule',
   instruction: 'instruction',
-  dynamic_infos: 'dynamic_infos',
-  meta_alarm_rule: 'meta_alarm_rule',
-  declare_ticket_rule: 'declare_ticket_rule',
+  dynamicInfos: 'dynamic_infos',
+  metaAlarmRule: 'meta_alarm_rule',
+  declareTicketRule: 'declare_ticket_rule',
   pbehavior: 'pbehavior',
-  entity_service: 'entity_service',
-  state_settings: 'state_settings',
+  entityService: 'entity_service',
+  stateSettings: 'state_settings',
   entity: 'entity',
-  kpi_filter: 'kpi_filter',
-  eventfilter: 'eventfilter',
-  event_record: 'event_record',
-  service_weather: 'service_weather',
-  widget_filter: 'widget_filter',
-  corporate_alarm_pattern: 'corporate_alarm_pattern',
-  corporate_entity_pattern: 'corporate_entity_pattern',
-  corporate_pbehavior_pattern: 'corporate_pbehavior_pattern',
-  corporate_weather_service_pattern: 'corporate_weather_service_pattern',
+  kpiFilter: 'kpi_filter',
+  eventFilter: 'eventfilter',
+  eventRecord: 'event_record',
+  serviceWeather: 'service_weather',
+  widgetFilter: 'widget_filter',
+  corporateAlarmPattern: 'corporate_alarm_pattern',
+  corporateEntityPattern: 'corporate_entity_pattern',
+  corporatePbehaviorPattern: 'corporate_pbehavior_pattern',
+  corporateWeatherServicePattern: 'corporate_weather_service_pattern',
+};
+
+export const PATTERN_TYPES_TO_LLM_SOCKET_CONTEXTS = {
+  [PATTERN_TYPES.alarm]: LLM_SOCKET_CONTEXTS.corporateAlarmPattern,
+  [PATTERN_TYPES.entity]: LLM_SOCKET_CONTEXTS.corporateEntityPattern,
+  [PATTERN_TYPES.pbehavior]: LLM_SOCKET_CONTEXTS.corporatePbehaviorPattern,
+  [PATTERN_TYPES.serviceWeather]: LLM_SOCKET_CONTEXTS.corporateWeatherServicePattern,
 };

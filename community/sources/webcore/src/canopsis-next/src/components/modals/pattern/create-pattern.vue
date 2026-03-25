@@ -11,7 +11,7 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -29,13 +29,21 @@
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { ref } from 'vue';
+
+import {
+  MODALS,
+  VALIDATION_DELAY,
+  PATTERN_TYPES_TO_LLM_SOCKET_CONTEXTS,
+  PATTERN_TYPES_TO_PATTERNS_FIELDS,
+} from '@/constants';
 
 import { patternToForm, formToPattern } from '@/helpers/entities/pattern/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 
 import PatternForm from '@/components/forms/pattern-form.vue';
 
@@ -51,30 +59,50 @@ export default {
     PatternForm,
     ModalWrapper,
   },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    const form = patternToForm(this.modal.config.pattern);
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { config, modals } = useInnerModal(props);
 
-    if (this.modal.config.type) {
-      form.type = this.modal.config.type;
+    const close = () => modals.hide();
+
+    const form = ref(patternToForm(config.value.pattern));
+
+    if (config.value.type) {
+      form.value.type = config.value.type;
     }
 
-    return { form };
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action?.(formToPattern(form.value));
 
-      if (isFormValid) {
-        await this.config.action?.(formToPattern(this.form));
+        close();
+      },
+    });
 
-        this.$modals.hide();
-      }
-    },
+    useFormConfirmableCloseModal({ form, submit, close });
+
+    useAiChatForm({
+      form,
+      modalId: props.modal.id,
+      ruleId: props.modal.config?.pattern?._id,
+      context: PATTERN_TYPES_TO_LLM_SOCKET_CONTEXTS[config.value.type],
+      field: PATTERN_TYPES_TO_PATTERNS_FIELDS[config.value.type],
+    });
+
+    return {
+      config,
+      form,
+      isDisabled,
+      submitting,
+      close,
+      submit,
+    };
   },
 };
 </script>

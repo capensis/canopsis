@@ -72,7 +72,7 @@ export default {
   inheritAttrs: false,
   props: {
     value: {
-      type: [String, Number],
+      type: [String, Number, Object],
       required: false,
     },
     emptyLabel: {

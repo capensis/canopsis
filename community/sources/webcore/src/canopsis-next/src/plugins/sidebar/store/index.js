@@ -10,6 +10,7 @@ export const types = {
   HIDE_COMPLETED: 'HIDE_COMPLETED',
   MINIMIZE: 'MINIMIZE',
   MAXIMIZE: 'MAXIMIZE',
+  UPDATE_CONFIG: 'UPDATE_CONFIG',
 };
 
 export default {
@@ -51,6 +52,9 @@ export default {
     },
     [types.MAXIMIZE](state, { id }) {
       Vue.set(state.byId[id], 'minimized', false);
+    },
+    [types.UPDATE_CONFIG](state, { id, config }) {
+      Vue.setSeveral(state.byId[id], 'config', config);
     },
   },
   actions: {
@@ -126,6 +130,14 @@ export default {
       }
 
       commit(types.MAXIMIZE, { id });
+    },
+
+    updateConfig({ commit }, { id, config } = {}) {
+      if (!id) {
+        throw new Error('Missed required parameter');
+      }
+
+      commit(types.UPDATE_CONFIG, { id, config });
     },
   },
 };

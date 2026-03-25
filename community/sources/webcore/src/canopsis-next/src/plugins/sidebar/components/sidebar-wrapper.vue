@@ -17,12 +17,7 @@
                   {{ sidebar.config.titleIcon }}
                 </v-icon>
                 <span class="text-h6 white--text">{{ title }}</span>
-                <v-btn class="white--text" color="white" outlined>
-                  <v-icon class="mr-2" color="white" small>
-                    refresh
-                  </v-icon>
-                  {{ $t('common.restart') }}
-                </v-btn>
+                <portal-target :name="$constants.PORTALS_NAMES.additionalSidebarTitle" />
               </v-layout>
             </v-list-item-title>
             <v-btn
@@ -73,7 +68,7 @@
 </template>
 
 <script>
-import { computed, inject, onMounted, ref } from 'vue';
+import { computed, inject, ref, onMounted } from 'vue';
 
 import { DEFAULT_SIDEBAR_DRAWER_WIDTH, CSS_COLORS_VARS } from '@/config';
 import { SIDE_BARS_WITH_OVERFLOW_Y_HIDDEN } from '@/constants';

@@ -1,10 +1,15 @@
+import { REQUEST_MESSAGES_TYPES, RESPONSE_MESSAGES_TYPES } from '@/plugins/socket/constants';
+
 class SocketRoom {
-  constructor(name, payload, authNeeded) {
+  constructor(name, payload, authNeeded, send) {
     this.name = name;
     this.payload = payload;
     this.authNeeded = authNeeded;
     this.count = 1;
-    this.listeners = [];
+    this.listeners = [this.check];
+    this.parentSend = send;
+    this.joined = false;
+    this.messagesToSend = [];
   }
 
   /**
@@ -73,6 +78,41 @@ class SocketRoom {
     this.listeners.forEach(listener => listener.call(context, ...restArgs));
 
     return this;
+  }
+
+  /**
+   * Send payload to room
+   *
+   * @param {Object} payload
+   * @return {SocketRoom}
+   */
+  send(payload) {
+    if (!this.joined) {
+      this.messagesToSend.push({
+        payload,
+      });
+
+      return this;
+    }
+
+    this.parentSend({
+      type: REQUEST_MESSAGES_TYPES.send,
+      room: this.name,
+      payload,
+    });
+
+    return this;
+  }
+
+  check(payload) {
+    if (payload.type === RESPONSE_MESSAGES_TYPES.joined) {
+      this.joined = true;
+
+      this.messagesToSend.forEach(message => this.parentSend(message));
+      this.messagesToSend = [];
+    } else if (payload.type === RESPONSE_MESSAGES_TYPES.left) {
+      this.joined = false;
+    }
   }
 }
 
