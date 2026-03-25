@@ -276,6 +276,13 @@ export const PATTERNS_FIELDS = {
   serviceWeather: 'weather_service_pattern',
 };
 
+export const PATTERN_TYPES_TO_PATTERNS_FIELDS = {
+  [PATTERN_TYPES.alarm]: PATTERNS_FIELDS.alarm,
+  [PATTERN_TYPES.entity]: PATTERNS_FIELDS.entity,
+  [PATTERN_TYPES.pbehavior]: PATTERNS_FIELDS.pbehavior,
+  [PATTERN_TYPES.serviceWeather]: PATTERNS_FIELDS.serviceWeather,
+};
+
 export const PATTERN_OPTIMIZATION_STATUSES = {
   created: 0,
   running: 1,

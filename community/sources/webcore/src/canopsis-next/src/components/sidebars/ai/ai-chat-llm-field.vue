@@ -7,8 +7,9 @@
     :color="colors.chipBackground"
     :text-color="colors.chipText"
     item-text="name"
-    item-value="name"
+    item-value="_id"
     active-list-item-class="primary--text"
+    return-object
     rounded
   >
     <template #selection>
@@ -20,7 +21,7 @@
         indeterminate
       />
       <span v-else>
-        <span>{{ value }}</span>
+        <span>{{ value?.name }}</span>
         <v-icon
           v-if="items.length > 1"
           :color="colors.chipText"
@@ -39,6 +40,8 @@ import { watch } from 'vue';
 
 import { COLORS } from '@/config';
 
+import { useModelField } from '@/hooks/form/model-field';
+
 export default {
   model: {
     prop: 'value',
@@ -46,8 +49,8 @@ export default {
   },
   props: {
     value: {
-      type: String,
-      default: '',
+      type: Object,
+      required: false,
     },
     items: {
       type: Array,
@@ -65,29 +68,15 @@ export default {
   setup(props, { emit }) {
     const colors = COLORS.aiChat;
 
-    const applyDefaultLlm = () => {
-      const list = props.items;
+    const { updateModel } = useModelField(props, emit);
 
-      if (!list.length) {
-        if (props.value) {
-          emit('input', '');
-        }
+    watch(() => props.items, () => {
+      const defaultLlm = props.items.find(llm => llm.default);
 
-        return;
+      if (defaultLlm) {
+        updateModel(defaultLlm);
       }
-
-      const stillValid = list.some(llm => llm.name === props.value);
-
-      if (stillValid) {
-        return;
-      }
-
-      const defaultLlm = list.find(llm => llm.default);
-
-      emit('input', defaultLlm?.name ?? list[0].name);
-    };
-
-    watch(() => props.items, applyDefaultLlm, { immediate: true });
+    }, { immediate: true });
 
     return {
       colors,

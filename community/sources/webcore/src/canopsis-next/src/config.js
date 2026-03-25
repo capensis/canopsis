@@ -54,7 +54,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
       'style', 'title', 'class', 'id', 'v-if', 'name', 'autoplay', 'colspan', 'controls', 'dir', 'align', 'width',
       'height', 'role',
     ],
-    a: ['href', 'name', 'target', 'rel'],
+    a: ['href', 'name', 'target'],
     img: ['src', 'alt'],
     font: ['color', 'size', 'face'],
     marquee: ['direction'],

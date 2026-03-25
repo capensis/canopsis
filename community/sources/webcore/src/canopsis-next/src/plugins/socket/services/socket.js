@@ -202,7 +202,7 @@ class Socket {
    */
   join(room, payload = {}, authNeeded = true) {
     if (!this.rooms[room]) {
-      this.rooms[room] = new SocketRoom(room, payload, authNeeded);
+      this.rooms[room] = new SocketRoom(room, payload, authNeeded, this.send.bind(this));
 
       this.send({
         room,

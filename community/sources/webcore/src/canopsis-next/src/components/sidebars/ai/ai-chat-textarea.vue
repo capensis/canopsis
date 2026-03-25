@@ -85,10 +85,10 @@ export default {
     /**
      * Emits the user message and chosen model so the parent can run the AI request.
      *
-     * Payload: `{ model: string | null, prompt: string }` (`prompt` is trimmed).
+     * Payload: `{ llm: string | null, prompt: string }` (`prompt` is trimmed).
      */
     const ask = () => emit('ask', {
-      model: selectedLlm.value,
+      llm: selectedLlm.value?._id,
       prompt: prompt.value.trim(),
     });
 

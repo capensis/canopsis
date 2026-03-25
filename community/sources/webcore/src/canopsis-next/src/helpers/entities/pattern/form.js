@@ -41,6 +41,7 @@ import {
   PBEHAVIOR_PATTERN_FIELDS,
 } from '@/constants';
 
+import { isOmitEqual } from '@/helpers/collection';
 import { uid } from '@/helpers/uid';
 import { convertDateToDateObject, convertDateToTimestamp, isValidDateInterval } from '@/helpers/date/date';
 import { durationToForm, isValidDuration, isValidRangeDuration } from '@/helpers/date/duration';
@@ -1165,6 +1166,22 @@ export const patternToForm = (pattern = {}) => ({
     || pattern.weather_service_pattern,
   ),
 });
+
+/**
+ * Returns pattern field keys (e.g. `alarm_pattern`) whose blocks differ between two forms that carry
+ * the same pattern-* shape as filter forms.
+ * Each block is compared with `isOmitEqual`, omitting `id` for the check.
+ *
+ * @param {Object} [newForm={}]
+ * @param {Object} [oldForm={}]
+ * @param {PatternsFields} [fields=Object.values(PATTERNS_FIELDS)]
+ * @returns {string[]}
+ */
+export const getChangedPatternsFields = (
+  newForm = {},
+  oldForm = {},
+  fields = Object.values(PATTERNS_FIELDS),
+) => fields.filter(fieldKey => !isOmitEqual(newForm?.[fieldKey] ?? [], oldForm?.[fieldKey] ?? [], ['id']));
 
 /**
  * Get duration from rule range by specified keys
