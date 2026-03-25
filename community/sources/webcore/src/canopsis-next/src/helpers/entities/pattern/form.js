@@ -944,6 +944,7 @@ export const patternRuleToForm = (rule = {}) => {
     (form.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(form.operator))
     && isArray(form.value)
     && (!form.value.length || !form.value[0]?.key)
+    && rule.field !== ALARM_PATTERN_FIELDS.tags
   ) {
     form.value = primitiveArrayToForm(form.value);
   }
