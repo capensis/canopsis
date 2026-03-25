@@ -416,8 +416,9 @@ describe('pattern form converters', () => {
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.hasEvery,
-      value,
+      value: value.map(item => ({ key: expect.any(String), value: item })),
     });
+
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 
@@ -434,7 +435,7 @@ describe('pattern form converters', () => {
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.hasOneOf,
-      value,
+      value: value.map(item => ({ key: expect.any(String), value: item })),
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
@@ -452,7 +453,7 @@ describe('pattern form converters', () => {
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.hasNot,
-      value,
+      value: value.map(item => ({ key: expect.any(String), value: item })),
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
