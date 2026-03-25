@@ -14,6 +14,8 @@ const (
 	ServerMessageError
 	ServerMessageCloseRoom
 	ServerMessageAuthSuccess
+	ServerMessageJoined
+	ServerMessageLeft
 )
 
 type ClientMessage struct {
