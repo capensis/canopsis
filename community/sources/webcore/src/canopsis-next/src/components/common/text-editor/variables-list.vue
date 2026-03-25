@@ -7,7 +7,7 @@
     :item-text="itemText"
     :show-value="showValue"
     :hide-empty-value="hideEmptyValue"
-    v-on="$listeners"
+    v-on="listenersWithoutInput"
   >
     <template v-if="$scopedSlots.prepend" #prepend>
       <slot :items="items" name="prepend" />
@@ -42,7 +42,8 @@
   </c-list>
 </template>
 <script>
-import { isUndefined } from 'lodash';
+import { omit, isUndefined } from 'lodash';
+import { computed } from 'vue';
 
 export default {
   model: {
@@ -79,9 +80,12 @@ export default {
       default: false,
     },
   },
-  setup() {
+  setup(props, { listeners }) {
+    const listenersWithoutInput = computed(() => omit(listeners ?? {}, ['input']));
+
     return {
       isUndefined,
+      listenersWithoutInput,
     };
   },
 };
