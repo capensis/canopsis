@@ -34,21 +34,50 @@ func (p *changeTicketStatusProcessor) Process(ctx context.Context, event rpc.Axe
 		"_id": bson.M{"$in": event.AlarmIDs},
 		"v.tickets": bson.M{
 			"$elemMatch": bson.M{
-				"ticket": event.Parameters.Ticket,
+				"ticket":             event.Parameters.Ticket,
+				"ticket_system_name": event.Parameters.TicketSystemName,
 				// to prevent status change after closed, closed should be the last status
-				"ticket_status": bson.M{"$nin": []int{event.Parameters.TicketStatus, webhook.TicketStatusClosed}},
+				"ticket_status": bson.M{"$ne": webhook.TicketStatusClosed},
+				"$or": bson.A{
+					bson.M{"ticket_status": bson.M{"$ne": event.Parameters.TicketStatus}},
+					bson.M{"ticket_source_status": bson.M{"$ne": event.Parameters.TicketSourceStatus}},
+				},
 			},
 		},
 	}
+
 	update := []bson.M{
 		{"$set": bson.M{
 			"v.steps": bson.M{
 				"$cond": bson.A{
-					bson.M{"$lt": bson.A{
-						bson.M{"$size": "$v.steps"},
-						types.AlarmStepsHardLimit,
+					bson.M{"$and": bson.A{
+						bson.M{"$lt": bson.A{
+							bson.M{"$size": "$v.steps"},
+							types.AlarmStepsHardLimit,
+						}},
+						bson.M{"$gt": bson.A{
+							bson.M{"$size": bson.M{
+								"$filter": bson.M{
+									"input": "$v.tickets",
+									"as":    "ticket",
+									"cond": bson.M{"$and": bson.A{
+										bson.M{"$eq": bson.A{"$$ticket.ticket", event.Parameters.Ticket}},
+										bson.M{"$eq": bson.A{"$$ticket.ticket_system_name", event.Parameters.TicketSystemName}},
+										bson.M{"$ne": bson.A{"$$ticket.ticket_status", event.Parameters.TicketStatus}},
+									}},
+								},
+							}},
+							0,
+						}},
 					}},
-					addStepUpdateQuery(valStepUpdateQueryWithInPbhInterval(types.AlarmStepChangeTicketStatus, types.CpsNumber(event.Parameters.TicketStatus), event.Parameters.Output, event.Parameters)),
+					addStepUpdateQuery(
+						valStepUpdateQueryWithInPbhInterval(
+							types.AlarmStepChangeTicketStatus,
+							types.CpsNumber(event.Parameters.TicketStatus),
+							event.Parameters.Output,
+							event.Parameters,
+						),
+					),
 					"$v.steps",
 				},
 			},
@@ -61,7 +90,11 @@ func (p *changeTicketStatusProcessor) Process(ctx context.Context, event rpc.Axe
 						"$cond": bson.A{
 							bson.M{"$and": bson.A{
 								bson.M{"$eq": bson.A{"$$ticket.ticket", event.Parameters.Ticket}},
-								bson.M{"$ne": bson.A{"$$ticket.ticket_status", event.Parameters.TicketStatus}},
+								bson.M{"$eq": bson.A{"$$ticket.ticket_system_name", event.Parameters.TicketSystemName}},
+								bson.M{"$or": bson.A{
+									bson.M{"$ne": bson.A{"$$ticket.ticket_status", event.Parameters.TicketStatus}},
+									bson.M{"$ne": bson.A{"$$ticket.ticket_source_status", event.Parameters.TicketSourceStatus}},
+								}},
 							}},
 							bson.M{"$mergeObjects": bson.A{"$$ticket", bson.M{
 								"ticket_status":             event.Parameters.TicketStatus,
@@ -79,7 +112,11 @@ func (p *changeTicketStatusProcessor) Process(ctx context.Context, event rpc.Axe
 				"$cond": bson.A{
 					bson.M{"$and": bson.A{
 						bson.M{"$eq": bson.A{"$v.ticket.ticket", event.Parameters.Ticket}},
-						bson.M{"$ne": bson.A{"$v.ticket.ticket_status", event.Parameters.TicketStatus}},
+						bson.M{"$eq": bson.A{"$v.ticket.ticket_system_name", event.Parameters.TicketSystemName}},
+						bson.M{"$or": bson.A{
+							bson.M{"$ne": bson.A{"$v.ticket.ticket_status", event.Parameters.TicketStatus}},
+							bson.M{"$ne": bson.A{"$v.ticket.ticket_source_status", event.Parameters.TicketSourceStatus}},
+						}},
 					}},
 					bson.M{"$mergeObjects": bson.A{"$v.ticket", bson.M{
 						"ticket_status":             event.Parameters.TicketStatus,
