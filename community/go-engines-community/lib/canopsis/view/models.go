@@ -119,6 +119,8 @@ type Parameters struct {
 	FastPbehaviors []FastPbehavior `bson:"fast_pbehaviors,omitempty" json:"fast_pbehaviors,omitempty"`
 
 	RemainParameters map[string]any `bson:",inline" json:"-"`
+
+	CommentTemplates []string `bson:"comment_templates,omitempty" json:"comment_templates,omitempty"`
 }
 
 func (p Parameters) MarshalJSON() ([]byte, error) {

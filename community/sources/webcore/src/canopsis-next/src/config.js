@@ -250,6 +250,7 @@ export const API_ROUTES = {
     list: '/api/v4/broadcast-message',
     activeList: '/api/v4/active-broadcast-message',
   },
+  commentTemplate: '/api/v4/comment-templates',
   counter: '/api/v4/alarm-counters',
   playlist: '/api/v4/playlists',
   pbehavior: {

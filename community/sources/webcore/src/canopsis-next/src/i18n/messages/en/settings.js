@@ -68,6 +68,10 @@ export default {
   isVirtualScrollEnabled: 'Render elements on scroll',
   fastAckOutput: 'Fast-ack output',
   fastCancelOutput: 'Fast-cancel output',
+  commentTemplates: {
+    title: 'Comment templates',
+    description: 'First template in the list will be default.',
+  },
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline',
   isCorrelationEnabled: 'Is correlation enabled?',
   fastPbehavior: 'Fast pbehavior',

@@ -37,6 +37,7 @@ export default {
   quitEditing: 'Quit editing',
   enabled: 'Enabled',
   disabled: 'Disabled',
+  required: 'Required',
   login: 'Login',
   yes: 'Yes',
   no: 'No',
@@ -74,6 +75,8 @@ export default {
   save: 'Save',
   label: 'Label',
   field: 'Field',
+  fields: 'Fields',
+  fieldName: 'Field name',
   value: 'Value',
   limit: 'Limit',
   add: 'Add',
@@ -228,7 +231,7 @@ export default {
   searchBy: 'Search by',
   dictionary: 'Dictionary',
   condition: 'Condition | Conditions',
-  template: 'Template',
+  template: 'Template | Templates',
   pbehaviorList: 'List periodic behaviors',
   canceled: 'Canceled',
   snooze: 'Snooze',
@@ -554,6 +557,9 @@ export default {
     },
     [TRIGGERS_TYPES.assocticket]: {
       text: 'Ticket associated with an alarm',
+    },
+    [TRIGGERS_TYPES.ticketremove]: {
+      text: 'Ticket removed',
     },
     [TRIGGERS_TYPES.snooze]: {
       text: 'Alarm snoozed',
