@@ -95,6 +95,7 @@ export default {
     return {
       form,
 
+      isNew,
       title,
       submitLabel,
 

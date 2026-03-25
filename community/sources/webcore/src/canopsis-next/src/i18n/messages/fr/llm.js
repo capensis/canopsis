@@ -36,12 +36,21 @@ export default {
   model: 'Modèle LLM',
   recommendedBadge: 'recommandé',
   apiKey: 'Clé API',
-  timeoutSettings: 'Paramètres de délai d\'expiration',
+  apiKeyPlaceholder: 'Nouvelle clé API',
   thinkingLevel: 'Niveau de réflexion',
   isDefaultModel: 'Modèle par défaut',
   currentDefaultModelLine: 'Modèle par défaut actuel : {name}',
   lastUsedDate: 'Dernière utilisation',
   expandNoDetails: 'Aucun détail supplémentaire pour cette configuration.',
+  importantNotesMessage:
+    '<div>Notes importantes :</div>'
+    + '<ul>'
+    + '<li>Les modèles Gemini peuvent être activés ou désactivés via ce module ; toutefois, '
+    + '<strong>la gestion des limites de jetons et des quotas</strong>'
+    + ' se configure directement dans la '
+    + '<strong><a href="{geminiConsoleUrl}" target="_blank">Console Gemini AI</a></strong>.</li>'
+    + '<li><strong>Une surveillance régulière</strong> des limites Google Cloud est requise, car les <strong>politiques d\'API</strong> et les conditions d\'utilisation sont susceptibles d\'évoluer.</li>'
+    + '</ul>',
   thinkingLevels: {
     [LLM_THINKING_LEVELS.minimal]: 'Minimal',
     [LLM_THINKING_LEVELS.low]: 'Faible',

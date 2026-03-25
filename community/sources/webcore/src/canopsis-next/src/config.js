@@ -54,7 +54,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
       'style', 'title', 'class', 'id', 'v-if', 'name', 'autoplay', 'colspan', 'controls', 'dir', 'align', 'width',
       'height', 'role',
     ],
-    a: ['href', 'name', 'target'],
+    a: ['href', 'name', 'target', 'rel'],
     img: ['src', 'alt'],
     font: ['color', 'size', 'face'],
     marquee: ['direction'],
@@ -788,6 +788,8 @@ export const DEFAULT_THEME_COLORS = {
 export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
+
+export const GEMINI_AI_CONSOLE_BILLING_URL = 'https://console.cloud.google.com/billing';
 
 export const EXPORT_FETCHING_INTERVAL = 2000;
 
