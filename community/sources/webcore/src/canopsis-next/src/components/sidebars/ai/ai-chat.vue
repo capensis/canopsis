@@ -32,7 +32,10 @@
 <script>
 import { computed, ref } from 'vue';
 
+import { SOCKET_ROOMS } from '@/config';
 import { SIDE_BARS } from '@/constants';
+
+import { useSocketRoom } from '@/hooks/socket';
 
 import AiChatGreeting from './ai-chat-greeting.vue';
 import AiChatMessage from './ai-chat-message.vue';
@@ -55,10 +58,17 @@ export default {
       required: true,
     },
   },
-  setup() {
+  setup(props) {
     const messages = ref([]);
 
     const emptyChat = computed(() => messages.value.length === 0);
+
+    useSocketRoom({
+      room: SOCKET_ROOMS.llmChat,
+      data: props.sidebar.config?.socketRoomData ?? {},
+      needAuth: true,
+      listener: () => {},
+    });
 
     const ask = () => {};
 
