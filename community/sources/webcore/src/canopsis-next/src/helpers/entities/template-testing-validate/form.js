@@ -89,6 +89,94 @@ export const convertHeadersToTemplateTestingTestValidateForm = ({
 );
 
 /**
+ * Converts webhook action parameters to template testing validation form items
+ *
+ * @param {Object} [options={}] - Options object with webhook, prefix, resultPrefix, webhookTemplateVarsKey and index
+ * @param {Object} [webhook={}] - Webhook object with request and declare_ticket
+ * @param {string} [prefix=''] - Prefix string for form field keys
+ * @param {string} [resultPrefix=''] - Prefix string for result keys
+ * @param {string} [webhookTemplateVarsKey=''] - Template variables key for webhook validation
+ * @param {number} [index=0] - Action index in the scenario
+ * @returns {TemplateTestingTestValidateForm} Array of validation form items for webhook action
+ */
+const convertWebhookActionToTemplateTestingTestValidateForm = ({
+  webhook,
+  prefix = '',
+  resultPrefix = prefix,
+  webhookTemplateVarsKey = '',
+  index = 0,
+}) => {
+  const { request, declare_ticket: declareTicket } = webhook;
+  const { check_ticket_status: checkTicketStatus } = declareTicket ?? {};
+
+  const result = [
+    {
+      key: `${prefix}.request.url`,
+      resultKey: `${resultPrefix}.request.url`,
+      textKey: 'templateTesting.webhookUrl',
+      textArgs: { number: index + 1 },
+      templateVarsKey: webhookTemplateVarsKey,
+    },
+    {
+      key: `${prefix}.request.payload`,
+      resultKey: `${resultPrefix}.request.payload`,
+      textKey: 'templateTesting.webhookPayload',
+      textArgs: { number: index + 1 },
+      textarea: true,
+      templateVarsKey: webhookTemplateVarsKey,
+    },
+  ];
+
+  result.push(
+    ...convertHeadersToTemplateTestingTestValidateForm({
+      headers: request.headers,
+      prefix: `${prefix}.request`,
+      resultPrefix: `${resultPrefix}.request`,
+      templateVarsKey: webhookTemplateVarsKey,
+    }),
+  );
+
+  if (!declareTicket.enabled) {
+    return result;
+  }
+
+  if (declareTicket.ticket_id.template) {
+    result.push({
+      key: `${prefix}.declare_ticket.ticket_id.value`,
+      resultKey: `${resultPrefix}.declare_ticket.ticket_id_tpl`,
+      textKey: 'templateTesting.ticketId',
+      textArgs: { number: index + 1 },
+      templateVarsKey: 'ticket',
+    });
+  }
+
+  if (declareTicket.ticket_url.template) {
+    result.push({
+      key: `${prefix}.declare_ticket.ticket_url.value`,
+      resultKey: `${resultPrefix}.declare_ticket.ticket_url_tpl`,
+      textKey: 'templateTesting.ticketUrl',
+      textArgs: { number: index + 1 },
+      templateVarsKey: 'ticket',
+    });
+  }
+
+  if (
+    checkTicketStatus.enabled
+    && checkTicketStatus.ticket_status.template
+  ) {
+    result.push({
+      key: `${prefix}.declare_ticket.check_ticket_status.ticket_status.value`,
+      resultKey: `${prefix}.declare_ticket.check_ticket_status.ticket_status_tpl`,
+      textKey: 'declareTicket.ticketStatusSourceField',
+      textArgs: { number: index + 1 },
+      templateVarsKey: 'ticket',
+    });
+  }
+
+  return result;
+};
+
+/**
  * Converts event filter form to template testing validation form items
  *
  * @param {EventFilterForm} [form={}] - Event filter configuration form
@@ -199,53 +287,16 @@ export const convertScenarioToTemplateTestingTestValidateForm = (form = {}) => {
 
     if (action.type === ACTION_TYPES.webhook) {
       const webhookTemplateVarsKey = firstWebhook ? 'first_webhook' : 'webhook';
-      const { request, declare_ticket: declareTicket } = action.parameters.webhook;
-
-      result.push({
-        key: `actions.${index}.parameters.webhook.request.url`,
-        resultKey: `actions.${index}.parameters.request.url`,
-        textKey: 'templateTesting.webhookUrl',
-        textArgs: { number: index + 1 },
-        templateVarsKey: webhookTemplateVarsKey,
-      }, {
-        key: `actions.${index}.parameters.webhook.request.payload`,
-        resultKey: `actions.${index}.parameters.request.payload`,
-        textKey: 'templateTesting.webhookPayload',
-        textArgs: { number: index + 1 },
-        textarea: true,
-        templateVarsKey: webhookTemplateVarsKey,
-      });
 
       result.push(
-        ...convertHeadersToTemplateTestingTestValidateForm(
-          {
-            headers: request.headers,
-            prefix: `actions.${index}.parameters.webhook.request`,
-            resultPrefix: `actions.${index}.parameters.request`,
-            templateVarsKey: webhookTemplateVarsKey,
-          },
-        ),
+        ...convertWebhookActionToTemplateTestingTestValidateForm({
+          webhook: action.parameters.webhook,
+          prefix: `actions.${index}.parameters.webhook`,
+          resultPrefix: `actions.${index}.parameters`,
+          index,
+          webhookTemplateVarsKey,
+        }),
       );
-
-      if (declareTicket.ticket_id.template) {
-        result.push({
-          key: `actions.${index}.parameters.webhook.declare_ticket.ticket_id.value`,
-          resultKey: `actions.${index}.parameters.declare_ticket.ticket_id_tpl`,
-          textKey: 'templateTesting.ticketId',
-          textArgs: { number: index + 1 },
-          templateVarsKey: 'ticket',
-        });
-      }
-
-      if (declareTicket.ticket_url.template) {
-        result.push({
-          key: `actions.${index}.parameters.webhook.declare_ticket.ticket_url.value`,
-          resultKey: `actions.${index}.parameters.declare_ticket.ticket_url_tpl`,
-          textKey: 'templateTesting.ticketUrl',
-          textArgs: { number: index + 1 },
-          templateVarsKey: 'ticket',
-        });
-      }
 
       if (firstWebhook) {
         firstWebhook = false;
@@ -349,61 +400,15 @@ export const convertDeclareTicketRuleToTemplateTestingTestValidateForm = (form =
   form.webhooks?.forEach?.((webhook, index) => {
     const templateVarsKey = !index ? 'first_webhook' : 'webhook';
 
-    result.push({
-      templateVarsKey,
-
-      key: `webhooks.${index}.request.url`,
-      textKey: 'templateTesting.webhookUrl',
-      textArgs: { number: index + 1 },
-    }, {
-      templateVarsKey,
-
-      key: `webhooks.${index}.request.payload`,
-      textKey: 'templateTesting.webhookPayload',
-      textArgs: { number: index + 1 },
-      textarea: true,
-    });
-
     result.push(
-      ...convertHeadersToTemplateTestingTestValidateForm(
-        {
-          headers: webhook.request.headers,
-          prefix: `webhooks.${index}.request`,
-          templateVarsKey,
-        },
-      ),
+      ...convertWebhookActionToTemplateTestingTestValidateForm({
+        webhook,
+        prefix: `webhooks.${index}`,
+        resultPrefix: `webhooks.${index}`,
+        index,
+        templateVarsKey,
+      }),
     );
-
-    if (!webhook.declare_ticket.enabled) {
-      return;
-    }
-
-    if (webhook.declare_ticket.ticket_id.template) {
-      result.push({
-        key: `webhooks.${index}.declare_ticket.ticket_id.value`,
-        textKey: 'templateTesting.ticketId',
-        textArgs: { number: index + 1 },
-        templateVarsKey: 'ticket',
-      });
-    }
-
-    if (webhook.declare_ticket.ticket_url.template) {
-      result.push({
-        key: `webhooks.${index}.declare_ticket.ticket_url.value`,
-        textKey: 'templateTesting.ticketUrl',
-        textArgs: { number: index + 1 },
-        templateVarsKey: 'ticket',
-      });
-    }
-
-    if (webhook.declare_ticket.check_ticket_status.enabled) {
-      result.push({
-        key: `webhooks.${index}.declare_ticket.check_ticket_status.ticket_status.value`,
-        textKey: 'declareTicket.ticketStatusSourceField',
-        textArgs: { number: index + 1 },
-        templateVarsKey: 'ticket',
-      });
-    }
   });
 
   return result;
