@@ -46,9 +46,9 @@ export const flattenErrorMap = (errors = {}, map = v => v) => {
  * @param {string} [valueKey = 'value']
  * @returns {{ key: string, [valueKey]: any }[]}
  */
-export function primitiveArrayToForm(array, valueKey = 'value') {
-  return array.map(value => ({ [valueKey]: value, key: uid() }));
-}
+export const primitiveArrayToForm = (array, valueKey = 'value') => (
+  array.map(value => ({ [valueKey]: value, key: uid() }))
+);
 
 /**
  * Convert form object to array with primitive values
@@ -57,18 +57,16 @@ export function primitiveArrayToForm(array, valueKey = 'value') {
  * @param {string} [valueKey = 'value']
  * @returns {Array}
  */
-export function formToPrimitiveArray(array, valueKey = 'value') {
-  return (isArray(array) ? array : [array]).map(item => (isObject(item) ? item[valueKey] : item));
-}
+export const formToPrimitiveArray = (array, valueKey = 'value') => (
+  (isArray(array) ? array : [array]).map(item => (isObject(item) ? item[valueKey] : item))
+);
 
 /**
  * Default item creator for primitive array
  *
  * @returns {{value: string, key: string}}
  */
-export function defaultPrimitiveArrayItemCreator() {
-  return { value: '', key: uid() };
-}
+export const defaultPrimitiveArrayItemCreator = () => ({ value: '', key: uid() });
 
 /**
  * Convert object infos to array
