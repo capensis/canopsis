@@ -151,6 +151,7 @@ export default {
       value: toRef(props, 'value'),
       addable: toRef(props, 'addable'),
       multiple: true,
+      attachValue: true,
     }, emit);
 
     watch(() => props.onlyLabels, fetchItems);
