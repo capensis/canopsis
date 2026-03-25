@@ -81,7 +81,7 @@ export const useLazySearch = ({
    * Computed property to get the list of items from the itemsByValue map.
    * @type {ComputedRef<Array>}
    */
-  const items = computed(() => itemsValues.value.map(itemValue => itemsByValue.value[itemValue]));
+  const items = computed(() => itemsValues.value.map(itemValue => itemsByValue.value[itemValue]).filter(Boolean));
 
   /**
    * Computed property to convert the value into an array format.
@@ -172,8 +172,13 @@ export const useLazySearch = ({
       * We need to use it for saving order of items
       */
       itemsValues.value = uniq([
-        ...(params.page && params.page !== 1 ? itemsValues.value : []),
+        ...(
+          params.page && params.page !== 1
+            ? itemsValues.value
+            : []
+        ),
         ...data.map(item => item[unwrappedIdKey]),
+        ...selectedItems.value.map(item => item[unwrappedIdKey]),
       ]);
 
       itemsByValue.value = {
