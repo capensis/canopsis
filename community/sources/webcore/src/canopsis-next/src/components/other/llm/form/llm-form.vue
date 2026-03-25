@@ -23,14 +23,10 @@
       v-field="form.api_key"
       :label="$t('llm.apiKey')"
       :required="isNew"
+      :placeholder="$t('llm.apiKeyPlaceholder')"
       name="api_key"
-    />
-
-    <span class="text-subtitle-2">{{ $t('llm.timeoutSettings') }}</span>
-    <c-duration-field
-      v-field="form.request_timeout"
-      name="request_timeout"
-      required
+      replaceable
+      visibility
     />
 
     <v-layout class="gap-3">

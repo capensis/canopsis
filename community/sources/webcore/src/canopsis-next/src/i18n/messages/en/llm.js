@@ -36,12 +36,21 @@ export default {
   model: 'LLM model',
   recommendedBadge: 'recommended',
   apiKey: 'API key',
-  timeoutSettings: 'Timeout settings',
+  apiKeyPlaceholder: 'New API key',
   thinkingLevel: 'Thinking level',
   isDefaultModel: 'Is default model',
   currentDefaultModelLine: 'Current default model: {name}',
   lastUsedDate: 'Last used date',
   expandNoDetails: 'No additional details for this configuration.',
+  importantNotesMessage:
+    '<div class="font-weight-regular">Important notes:</div>'
+    + '<ul>'
+    + '<li>Gemini models can be enabled or disabled through this module; however, '
+    + '<strong>token limits and quota management</strong>'
+    + ' are configured directly within the '
+    + '<strong><a href="{geminiConsoleUrl}" target="_blank">Gemini AI Console</a></strong>.</li>'
+    + '<li><strong>Regular monitoring</strong> of Google Cloud limits is required, as <strong>API policies</strong> and usage conditions are subject to change.</li>'
+    + '</ul>',
   thinkingLevels: {
     [LLM_THINKING_LEVELS.minimal]: 'Minimal',
     [LLM_THINKING_LEVELS.low]: 'Low',

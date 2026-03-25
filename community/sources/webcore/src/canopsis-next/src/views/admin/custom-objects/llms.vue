@@ -5,6 +5,9 @@
     @refresh="fetchList"
     @create="showCreateLlmModal"
   >
+    <div class="pa-4 pb-2">
+      <llms-important-notes-banner />
+    </div>
     <llms-list
       :llms="llms"
       :pending="pending"
@@ -31,10 +34,11 @@ import { useModals } from '@/hooks/modals';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useLlm } from '@/hooks/store/modules/llm';
 
+import LlmsImportantNotesBanner from '@/components/other/llm/partials/llms-important-notes-banner.vue';
 import LlmsList from '@/components/other/llm/llms-list.vue';
 
 export default {
-  components: { LlmsList },
+  components: { LlmsImportantNotesBanner, LlmsList },
   setup() {
     const modals = useModals();
     const {

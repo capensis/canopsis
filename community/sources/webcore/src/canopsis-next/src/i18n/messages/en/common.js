@@ -89,6 +89,7 @@ export default {
   collapseAll: 'Collapse all',
   edit: 'Edit',
   duplicate: 'Duplicate',
+  replace: 'Replace',
   play: 'Play',
   copyLink: 'Copy link',
   parse: 'Parse',
