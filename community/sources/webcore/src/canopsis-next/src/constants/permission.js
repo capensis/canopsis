@@ -207,6 +207,7 @@ export const USER_PERMISSIONS = {
     externalAuthTokens: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalAuthTokens`,
     viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
     templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateTesting`,
+    commentTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_commentTemplate`,
     externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalData`,
     entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.technical.admin}_entityInfoProperty`,
     llm: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`, // TODO: rename it to _job
@@ -248,6 +249,7 @@ export const USER_PERMISSIONS = {
         snooze: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_snoozeAlarm`,
         declareTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_declareanIncident`,
         associateTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_assignTicketNumber`,
+        removeAssociatedTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeAssociatedTicket`,
         cancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeAlarm`,
         unCancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_unCancel`,
         fastCancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_fastRemoveAlarm`,
@@ -548,6 +550,8 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.snooze]: USER_PERMISSIONS.business.alarmsList.actions.snooze,
     [ALARM_LIST_ACTIONS_TYPES.declareTicket]: USER_PERMISSIONS.business.alarmsList.actions.declareTicket,
     [ALARM_LIST_ACTIONS_TYPES.associateTicket]: USER_PERMISSIONS.business.alarmsList.actions.associateTicket,
+    [ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket]:
+      USER_PERMISSIONS.business.alarmsList.actions.removeAssociatedTicket,
     [ALARM_LIST_ACTIONS_TYPES.cancel]: USER_PERMISSIONS.business.alarmsList.actions.cancel,
     [ALARM_LIST_ACTIONS_TYPES.unCancel]: USER_PERMISSIONS.business.alarmsList.actions.unCancel,
     [ALARM_LIST_ACTIONS_TYPES.fastCancel]: USER_PERMISSIONS.business.alarmsList.actions.fastCancel,

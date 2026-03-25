@@ -2199,6 +2199,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/comment-templates:
+    delete:
+      tags:
+        - comment-templates
+      summary: Bulk delete comment templates
+      description: |
+        Bulk delete comment templates.
+
+        -  PERMISSIONS: `api_comment_template:delete`
+      operationId: alarm-tags-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/commenttemplate.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete comment templates
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/commenttemplate.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /bulk/connector-pbehaviors:
     post:
       tags:
@@ -4141,6 +4191,196 @@ paths:
         
         -  PERMISSIONS: `api_color_theme:delete`
       operationId: color-themes-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /comment-templates:
+    get:
+      tags:
+        - comment-templates
+      summary: Find all comment templates
+      description: |
+        Get paginated list of comment templates.
+        
+        -  PERMISSIONS: `api_comment_template:read`
+      operationId: comment-templates-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+        - name: ids[]
+          description: comment templates ids
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/commenttemplate.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - comment-templates
+      summary: Create comment template
+      description: |
+        Create comment template.
+        
+        -  PERMISSIONS: `api_comment_template:create`
+      operationId: comment-templates-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/commenttemplate.EditRequest'
+            examples:
+              create:
+                summary: Create a comment template
+                description: Create a comment template
+                value: {
+                  "name": "canopsis-comment-template",
+                  "fields": [
+                    {
+                      "name": "field1",
+                      "required": true
+                    },
+                    {
+                      "name": "field2",
+                      "required": false
+                    }
+                  ]
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/commenttemplate.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /comment-templates/{id}:
+    get:
+      tags:
+        - comment-templates
+      summary: Get comment template by id
+      description: |
+        Get comment template by id.
+        
+        -  PERMISSIONS: `api_comment_template:read`
+      operationId: comment-templates-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/commenttemplate.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - comment-templates
+      summary: Update comment template by id
+      description: |
+        Update comment template by id.
+        
+        -  PERMISSIONS: `api_comment_template:update`
+      operationId: comment-templates-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/commenttemplate.EditRequest'
+            examples:
+              update:
+                summary: Update a comment template
+                description: Update a comment template
+                value: {
+                  "name": "canopsis-comment-template",
+                  "fields": [
+                    {
+                      "name": "field1",
+                      "required": true
+                    },
+                    {
+                      "name": "field2",
+                      "required": false
+                    }
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/commenttemplate.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - comment-templates
+      summary: Delete comment template by id
+      description: |
+        Delete comment template by id.
+        
+        -  PERMISSIONS: `api_comment_template:delete`
+      operationId: comment-templates-delete-by-id
       parameters:
         - $ref: '#/components/parameters/id'
       responses:

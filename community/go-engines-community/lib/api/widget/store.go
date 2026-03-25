@@ -66,6 +66,7 @@ func NewStore(
 		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
 		tplTestCollection:         dbClient.Collection(mongo.TemplateTestCollection),
 		entityInfosPropCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		commentTemplateCollection: dbClient.Collection(mongo.CommentTemplateMongoCollection),
 		pbhTypeCollection:         dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
 		pbhReasonCollection:       dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
 		authorProvider:            authorProvider,
@@ -96,6 +97,7 @@ type store struct {
 	alarmCollection           mongo.DbCollection
 	tplTestCollection         mongo.DbCollection
 	entityInfosPropCollection mongo.DbCollection
+	commentTemplateCollection mongo.DbCollection
 	pbhTypeCollection         mongo.DbCollection
 	pbhReasonCollection       mongo.DbCollection
 	authorProvider            author.Provider
@@ -173,9 +175,17 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			},
 			"as": "filters",
 		}},
+		{"$lookup": bson.M{
+			"from":         mongo.CommentTemplateMongoCollection,
+			"localField":   "parameters.comment_templates",
+			"foreignField": "_id",
+			"as":           "comment_templates",
+		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$comment_templates", "preserveNullAndEmptyArrays": true}},
 	}
 	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("comment_templates.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
@@ -186,10 +196,16 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 				"then": "$filters",
 				"else": "$$REMOVE",
 			}}},
+			"comment_templates": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$comment_templates._id",
+				"then": "$comment_templates",
+				"else": "$$REMOVE",
+			}}},
 		}},
 		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
 			"$data",
 			bson.M{"filters": "$filters"},
+			bson.M{"comment_templates": "$comment_templates"},
 		}}}},
 	)
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
@@ -255,13 +271,27 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	var response *Response
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		var valErrs validator.ValidationErrors
 
 		patterns, aliases, err := s.fetchPatterns(ctx, r.Filters)
 		if err != nil {
 			return err
 		}
 
+		var valErrs validator.ValidationErrors
+
+		for i := range r.Parameters.CommentTemplates {
+			err := s.commentTemplateCollection.FindOne(ctx, bson.M{"_id": r.Parameters.CommentTemplates[i]}).Err()
+			if err != nil {
+				if errors.Is(err, mongodriver.ErrNoDocuments) {
+					valErrs = append(valErrs, validation.NewFieldError("not_exist", strconv.Itoa(i), "Parameters.CommentTemplates."+strconv.Itoa(i)))
+					continue
+				}
+
+				return err
+			}
+		}
+
+		filters := make([]view.WidgetFilter, len(r.Filters))
 		if len(r.EditRequest.Parameters.FastPbehaviors) > 0 {
 			pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
 			if err != nil {
@@ -271,7 +301,6 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			valErrs = append(valErrs, pbhValErrs...)
 		}
 
-		filters := make([]view.WidgetFilter, len(r.Filters))
 		for i, filterRequest := range r.Filters {
 			doc := view.WidgetFilter{
 				ID:               utils.NewID(),
@@ -371,11 +400,24 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	var response *Response
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		var valErrs validator.ValidationErrors
 
 		patterns, aliases, err := s.fetchPatterns(ctx, r.Filters)
 		if err != nil {
 			return err
+		}
+
+		var valErrs validator.ValidationErrors
+
+		for i := range r.Parameters.CommentTemplates {
+			err := s.commentTemplateCollection.FindOne(ctx, bson.M{"_id": r.Parameters.CommentTemplates[i]}).Err()
+			if err != nil {
+				if errors.Is(err, mongodriver.ErrNoDocuments) {
+					valErrs = append(valErrs, validation.NewFieldError("not_exist", strconv.Itoa(i), "Parameters.CommentTemplates."+strconv.Itoa(i)))
+					continue
+				}
+
+				return err
+			}
 		}
 
 		if len(r.EditRequest.Parameters.FastPbehaviors) > 0 {

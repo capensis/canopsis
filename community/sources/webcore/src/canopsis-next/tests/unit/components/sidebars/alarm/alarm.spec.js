@@ -2,7 +2,12 @@ import { omit, map } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules, createTemplateVarsModule, createEntityInfoPropertyModule } from '@unit/utils/store';
+import {
+  createMockedStoreModules,
+  createTemplateVarsModule,
+  createEntityInfoPropertyModule,
+  createCommentTemplateModule,
+} from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
 import { mockSidebar } from '@unit/utils/mock-hooks';
@@ -98,6 +103,7 @@ const snapshotStubs = {
   'field-root-cause-settings': true,
   'field-availability-graph-settings': true,
   'field-quick-alarm-actions': true,
+  'field-comment-templates': true,
 };
 
 const selectSwitcherFieldByTitle = (wrapper, title) => wrapper.find(`input.field-switcher[title="${title}"]`);
@@ -187,6 +193,7 @@ describe('alarm', () => {
 
   const { templateVarsModule } = createTemplateVarsModule();
   const { entityInfoPropertyModule } = createEntityInfoPropertyModule();
+  const { commentTemplateModule } = createCommentTemplateModule();
 
   const widget = {
     ...generateDefaultAlarmListWidget(),
@@ -227,6 +234,7 @@ describe('alarm', () => {
     serviceModule,
     infosModule,
     templateVarsModule,
+    commentTemplateModule,
   ]);
 
   const timestamp = 1386435600000;
@@ -641,6 +649,7 @@ describe('alarm', () => {
         entityInfoPropertyModule,
         infosModule,
         templateVarsModule,
+        commentTemplateModule,
         {
           ...authModule,
           getters: {
@@ -691,6 +700,7 @@ describe('alarm', () => {
         entityInfoPropertyModule,
         infosModule,
         templateVarsModule,
+        commentTemplateModule,
         {
           ...authModule,
           getters: {
@@ -1617,6 +1627,7 @@ describe('alarm', () => {
         entityInfoPropertyModule,
         serviceModule,
         templateVarsModule,
+        commentTemplateModule,
         {
           ...authModule,
           getters: {

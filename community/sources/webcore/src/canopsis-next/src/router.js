@@ -42,6 +42,7 @@ const AdminCustomObjectsLlms = () => import(/* webpackChunkName: "Llms" */ '@/vi
 const AdminSettingsUserInterface = () => import(/* webpackChunkName: "UserInterface" */ '@/views/admin/settings/user-interface.vue');
 const AdminSettingsViewsImportExport = () => import(/* webpackChunkName: "ViewsImportExport" */ '@/views/admin/settings/views-import-export.vue');
 const AdminSettingsNotifications = () => import(/* webpackChunkName: "NotificationsSettings" */ '@/views/admin/settings/notifications-settings.vue');
+const AdminSettingsCommentTemplates = () => import(/* webpackChunkName: "CommentTemplates" */ '@/views/admin/settings/comment-templates.vue');
 const AdminSettingsWidgetTemplates = () => import(/* webpackChunkName: "WidgetTemplates" */ '@/views/admin/settings/widget-templates.vue');
 const AdminSettingsStorageSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/settings/storage-settings.vue');
 const AdminSettingsStateSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/settings/state-settings.vue');
@@ -339,6 +340,17 @@ const routes = [
       requiresPermission: {
         action: CRUD_ACTIONS.can,
         id: USER_PERMISSIONS.technical.notification.common,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminSettingsCommentTemplates,
+    name: ROUTES_NAMES.adminSettingsCommentTemplates,
+    component: AdminSettingsCommentTemplates,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.commentTemplate,
       },
     },
   },

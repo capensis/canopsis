@@ -670,6 +670,10 @@ definitions:
               type: string
             m:
               type: string
+            struct_m:
+              items:
+                $ref: '#/definitions/types.StructuredMessage'
+              type: array
             t:
               type: integer
             ticket:
@@ -697,6 +701,10 @@ definitions:
             val:
               type: integer
           type: object
+        type: array
+      struct_m:
+        items:
+          $ref: '#/definitions/types.StructuredMessage'
         type: array
       t:
         type: integer
@@ -854,9 +862,12 @@ definitions:
       comment:
         maxLength: 255
         type: string
+      struct_comment:
+        items:
+          $ref: '#/definitions/alarmaction.StructuredMessageRequest'
+        type: array
     required:
     - _id
-    - comment
     type: object
   alarmaction.BulkRequestItem:
     properties:
@@ -915,8 +926,10 @@ definitions:
       comment:
         maxLength: 255
         type: string
-    required:
-    - comment
+      struct_comment:
+        items:
+          $ref: '#/definitions/alarmaction.StructuredMessageRequest'
+        type: array
     type: object
   alarmaction.Request:
     properties:
@@ -933,6 +946,18 @@ definitions:
         $ref: '#/definitions/datetime.DurationWithUnit'
     required:
     - duration
+    type: object
+  alarmaction.StructuredMessageRequest:
+    properties:
+      field:
+        maxLength: 255
+        type: string
+      message:
+        maxLength: 255
+        type: string
+    required:
+    - field
+    - message
     type: object
   alarmaction.TicketRemoveRequest:
     properties:
@@ -1437,6 +1462,53 @@ definitions:
       updated:
         type: integer
     type: object
+  commenttemplate.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  commenttemplate.EditRequest:
+    properties:
+      fields:
+        items:
+          $ref: '#/definitions/commenttemplate.Field'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+    required:
+    - fields
+    - name
+    type: object
+  commenttemplate.Field:
+    properties:
+      name:
+        maxLength: 255
+        type: string
+      required:
+        type: boolean
+    required:
+    - name
+    type: object
+  commenttemplate.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
+      fields:
+        items:
+          $ref: '#/definitions/commenttemplate.Field'
+        type: array
+      name:
+        type: string
+      updated:
+        type: integer
+    type: object
   common.AlarmStep:
     properties:
       _t:
@@ -1453,6 +1525,10 @@ definitions:
         type: string
       m:
         type: string
+      struct_m:
+        items:
+          $ref: '#/definitions/types.StructuredMessage'
+        type: array
       t:
         type: integer
       ticket:
@@ -6883,6 +6959,13 @@ definitions:
         type: string
       value: {}
     type: object
+  types.StructuredMessage:
+    properties:
+      field:
+        type: string
+      message:
+        type: string
+    type: object
   user.BulkDeleteRequestItem:
     properties:
       _id:
@@ -7309,6 +7392,10 @@ definitions:
     type: object
   view.Parameters:
     properties:
+      comment_templates:
+        items:
+          type: string
+        type: array
       directory:
         type: string
       fast_pbehaviors:
@@ -7553,6 +7640,10 @@ definitions:
         type: string
       author:
         $ref: '#/definitions/author.Author'
+      comment_templates:
+        items:
+          $ref: '#/definitions/commenttemplate.Response'
+        type: array
       created:
         type: integer
       filters:

@@ -1,4 +1,10 @@
-import { cloneDeep, isBoolean, isNull, omit } from 'lodash';
+import {
+  cloneDeep,
+  isBoolean,
+  isNull,
+  omit,
+  map,
+} from 'lodash';
 
 import {
   DENSE_TYPES,
@@ -24,6 +30,7 @@ import {
 } from '@/constants';
 import { EXPAND_DEFAULT_MAX_LETTERS, PAGINATION_LIMIT } from '@/config';
 
+import { uid } from '@/helpers/uid';
 import { setSeveralFields } from '@/helpers/immutable';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
@@ -206,6 +213,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetQuickAction[]} quickMassActions
  * @property {string} quickMassActionsTemplate
  * @property {boolean} hideMassActions
+ * @property {Array} comment_templates
  */
 
 /**
@@ -362,6 +370,19 @@ export const alarmListChartToForm = (chart = {}) => {
 };
 
 /**
+ * Convert widget comment template IDs to form objects with unique keys
+ *
+ * @param {Array} [commentTemplates=[]]
+ * @return {Array}
+ */
+export const widgetCommentTemplatesToForm = (commentTemplates = []) => (
+  commentTemplates.map(template => ({
+    template,
+    key: uid(),
+  }))
+);
+
+/**
  * Convert a single fast pbehavior parameter to form format.
  *
  * @param {WidgetFastPbehaviorParameters || {}} [fastPbehavior = {}]
@@ -444,6 +465,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   quickActions: widgetQuickActionsToForm(parameters.quickActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   quickMassActions: widgetQuickActionsToForm(parameters.quickMassActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   hideMassActions: parameters.hideMassActions ?? false,
+  comment_templates: widgetCommentTemplatesToForm(parameters.comment_templates ?? []),
   sort: widgetSortColumnsToForm(parameters.sort),
   sortTemplate: widgetTemplateValueToForm(parameters.sortTemplate),
 });
@@ -517,6 +539,14 @@ export const formToAlarmListChart = ({ type, title, parameters }) => {
 };
 
 /**
+ * Convert widget comment templates form to array of template values
+ *
+ * @param {Array} [form=[]]
+ * @return {Array}
+ */
+export const formToWidgetCommentTemplates = (form = []) => map(form, 'template');
+
+/**
  * Convert form parameters to alarm list widget parameters
  *
  * @param {AlarmListWidgetParametersForm} form
@@ -541,6 +571,7 @@ export const formToAlarmListWidgetParameters = (form) => {
     quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
     quickActions: formToWidgetQuickActions(form.quickActions),
     quickMassActions: formToWidgetQuickActions(form.quickMassActions),
+    comment_templates: formToWidgetCommentTemplates(form.comment_templates),
     fast_pbehaviors: removeKeyFromEntities(form.fast_pbehaviors),
     sort: formToWidgetSortColumns(form.sort),
     sortTemplate: formToWidgetTemplateValue(form.sortTemplate),
@@ -768,4 +799,25 @@ export const getAlarmsListWidgetColumnComponentGetter = (
       maxLetters,
     },
   });
+};
+
+/**
+ * Convert comment form to create comment event payload
+ *
+ * @param {Object} form - Comment form data
+ * @returns {Object} Comment event payload with either comment or struct_comment
+ */
+export const createCommentFormToCreateCommentEvent = (form) => {
+  if (!form.template) {
+    return {
+      comment: form.comment,
+    };
+  }
+
+  return {
+    struct_comment: (form.template?.fields ?? []).map(({ name: field }) => ({
+      field,
+      message: form[field],
+    })).filter(({ message }) => message),
+  };
 };
