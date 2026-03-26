@@ -665,6 +665,8 @@ definitions:
               type: string
             ticket_check_status_job_id:
               type: string
+            ticket_check_status_job_is_stopped:
+              type: boolean
             ticket_comment:
               type: string
             ticket_data:
@@ -705,6 +707,8 @@ definitions:
         type: string
       ticket_check_status_job_id:
         type: string
+      ticket_check_status_job_is_stopped:
+        type: boolean
       ticket_comment:
         type: string
       ticket_data:
@@ -1472,6 +1476,8 @@ definitions:
         type: string
       ticket_check_status_job_id:
         type: string
+      ticket_check_status_job_is_stopped:
+        type: boolean
       ticket_comment:
         type: string
       ticket_data:
