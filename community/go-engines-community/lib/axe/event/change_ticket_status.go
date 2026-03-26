@@ -6,7 +6,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -36,8 +35,8 @@ func (p *changeTicketStatusProcessor) Process(ctx context.Context, event rpc.Axe
 			"$elemMatch": bson.M{
 				"ticket":             event.Parameters.Ticket,
 				"ticket_system_name": event.Parameters.TicketSystemName,
-				// to prevent status change after closed, closed should be the last status
-				"ticket_status": bson.M{"$ne": webhook.TicketStatusClosed},
+				// to prevent status change after closed.
+				"ticket_check_status_job_is_stopped": bson.M{"$ne": true},
 				"$or": bson.A{
 					bson.M{"ticket_status": bson.M{"$ne": event.Parameters.TicketStatus}},
 					bson.M{"ticket_source_status": bson.M{"$ne": event.Parameters.TicketSourceStatus}},
@@ -97,11 +96,12 @@ func (p *changeTicketStatusProcessor) Process(ctx context.Context, event rpc.Axe
 								}},
 							}},
 							bson.M{"$mergeObjects": bson.A{"$$ticket", bson.M{
-								"ticket_status":             event.Parameters.TicketStatus,
-								"ticket_prev_status":        event.Parameters.TicketPrevStatus,
-								"ticket_source_status":      event.Parameters.TicketSourceStatus,
-								"ticket_prev_source_status": event.Parameters.TicketPrevSourceStatus,
-								"ticket_last_check_time":    event.Parameters.TicketLastCheckTime,
+								"ticket_status":                      event.Parameters.TicketStatus,
+								"ticket_prev_status":                 event.Parameters.TicketPrevStatus,
+								"ticket_source_status":               event.Parameters.TicketSourceStatus,
+								"ticket_prev_source_status":          event.Parameters.TicketPrevSourceStatus,
+								"ticket_last_check_time":             event.Parameters.TicketLastCheckTime,
+								"ticket_check_status_job_is_stopped": event.Parameters.TicketCheckStatusJobIsStopped,
 							}}},
 							"$$ticket",
 						},
@@ -119,11 +119,12 @@ func (p *changeTicketStatusProcessor) Process(ctx context.Context, event rpc.Axe
 						}},
 					}},
 					bson.M{"$mergeObjects": bson.A{"$v.ticket", bson.M{
-						"ticket_status":             event.Parameters.TicketStatus,
-						"ticket_prev_status":        event.Parameters.TicketPrevStatus,
-						"ticket_source_status":      event.Parameters.TicketSourceStatus,
-						"ticket_prev_source_status": event.Parameters.TicketPrevSourceStatus,
-						"ticket_last_check_time":    event.Parameters.TicketLastCheckTime,
+						"ticket_status":                      event.Parameters.TicketStatus,
+						"ticket_prev_status":                 event.Parameters.TicketPrevStatus,
+						"ticket_source_status":               event.Parameters.TicketSourceStatus,
+						"ticket_prev_source_status":          event.Parameters.TicketPrevSourceStatus,
+						"ticket_last_check_time":             event.Parameters.TicketLastCheckTime,
+						"ticket_check_status_job_is_stopped": event.Parameters.TicketCheckStatusJobIsStopped,
 					}}},
 					"$v.ticket",
 				},

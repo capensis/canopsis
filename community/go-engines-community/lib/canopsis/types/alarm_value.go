@@ -70,21 +70,22 @@ func (s *AlarmStep) GetInitiator() string {
 }
 
 type TicketInfo struct {
-	Ticket                 string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	TicketURL              string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
-	TicketURLTitle         string            `bson:"ticket_url_title,omitempty" json:"ticket_url_title,omitempty"`
-	TicketComment          string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
-	TicketSystemName       string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name,omitempty"`
-	TicketMetaAlarmID      string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id,omitempty"`
-	TicketRuleID           string            `bson:"ticket_rule_id,omitempty" json:"ticket_rule_id,omitempty"`
-	TicketRuleName         string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty"`
-	TicketData             map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
-	TicketStatus           int               `bson:"ticket_status,omitempty" json:"ticket_status,omitempty"`
-	TicketPrevStatus       int               `bson:"ticket_prev_status,omitempty" json:"ticket_prev_status,omitempty"`
-	TicketSourceStatus     string            `bson:"ticket_source_status,omitempty" json:"ticket_source_status,omitempty"`
-	TicketPrevSourceStatus string            `bson:"ticket_prev_source_status,omitempty" json:"ticket_prev_source_status,omitempty"`
-	TicketLastCheckTime    datetime.CpsTime  `bson:"ticket_last_check_time,omitempty" json:"ticket_last_check_time,omitzero" swaggertype:"integer"`
-	TicketCheckStatusJobID string            `bson:"ticket_check_status_job_id,omitempty" json:"ticket_check_status_job_id,omitempty"`
+	Ticket                        string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	TicketURL                     string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
+	TicketURLTitle                string            `bson:"ticket_url_title,omitempty" json:"ticket_url_title,omitempty"`
+	TicketComment                 string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
+	TicketSystemName              string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name,omitempty"`
+	TicketMetaAlarmID             string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id,omitempty"`
+	TicketRuleID                  string            `bson:"ticket_rule_id,omitempty" json:"ticket_rule_id,omitempty"`
+	TicketRuleName                string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty"`
+	TicketData                    map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
+	TicketStatus                  int               `bson:"ticket_status,omitempty" json:"ticket_status,omitempty"`
+	TicketPrevStatus              int               `bson:"ticket_prev_status,omitempty" json:"ticket_prev_status,omitempty"`
+	TicketSourceStatus            string            `bson:"ticket_source_status,omitempty" json:"ticket_source_status,omitempty"`
+	TicketPrevSourceStatus        string            `bson:"ticket_prev_source_status,omitempty" json:"ticket_prev_source_status,omitempty"`
+	TicketLastCheckTime           datetime.CpsTime  `bson:"ticket_last_check_time,omitempty" json:"ticket_last_check_time,omitzero" swaggertype:"integer"`
+	TicketCheckStatusJobID        string            `bson:"ticket_check_status_job_id,omitempty" json:"ticket_check_status_job_id,omitempty"`
+	TicketCheckStatusJobIsStopped bool              `bson:"ticket_check_status_job_is_stopped,omitempty" json:"ticket_check_status_job_is_stopped,omitempty"`
 }
 
 func (t TicketInfo) GetStepMessage() string {

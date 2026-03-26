@@ -3717,6 +3717,12 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			} else {
 				out.TicketCheckStatusJobID = string(in.String())
 			}
+		case "ticket_check_status_job_is_stopped":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.TicketCheckStatusJobIsStopped = bool(in.Bool())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -3894,6 +3900,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"ticket_check_status_job_id\":"
 		out.RawString(prefix)
 		out.String(string(in.TicketCheckStatusJobID))
+	}
+	if in.TicketCheckStatusJobIsStopped {
+		const prefix string = ",\"ticket_check_status_job_is_stopped\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.TicketCheckStatusJobIsStopped))
 	}
 	out.RawByte('}')
 }
@@ -5652,6 +5663,12 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			} else {
 				out.TicketCheckStatusJobID = string(in.String())
 			}
+		case "ticket_check_status_job_is_stopped":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.TicketCheckStatusJobIsStopped = bool(in.Bool())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -6066,6 +6083,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"ticket_check_status_job_id\":"
 		out.RawString(prefix)
 		out.String(string(in.TicketCheckStatusJobID))
+	}
+	if in.TicketCheckStatusJobIsStopped {
+		const prefix string = ",\"ticket_check_status_job_is_stopped\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.TicketCheckStatusJobIsStopped))
 	}
 	out.RawByte('}')
 }
