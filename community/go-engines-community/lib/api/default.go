@@ -185,7 +185,7 @@ func Default(
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to redis: %w", err)
 	}
-	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir)
+	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir, logger)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot load security config: %w", err)
 	}
