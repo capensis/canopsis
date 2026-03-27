@@ -26,6 +26,7 @@ export default {
   modules: { activeWidgets: activeWidgetsModule },
   state: {
     id: null,
+    item: null,
     pending: false,
     editing: false,
     editingProcess: false,
@@ -39,7 +40,7 @@ export default {
     pending: state => state.pending,
     screenMode: state => state.screenMode,
     isKioskScreenMode: state => [VIEW_SCREEN_MODES.kiosk, VIEW_SCREEN_MODES.kioskFullscreen].includes(state.screenMode),
-    item: (state, getters, rootState, rootGetters) => rootGetters['view/getViewById'](state.id),
+    item: state => state.item,
     periodicRefreshPaused: state => state.periodicRefreshPaused,
   },
   mutations: {
@@ -65,7 +66,8 @@ export default {
       state.id = id;
     },
 
-    [types.FETCH_ITEM_COMPLETED]: (state) => {
+    [types.FETCH_ITEM_COMPLETED]: (state, { item }) => {
+      state.item = item;
       state.pending = false;
     },
 
@@ -126,9 +128,9 @@ export default {
 
         commit(types.FETCH_ITEM, { id });
 
-        await dispatch('view/fetchView', { id }, { root: true });
+        const item = await dispatch('view/fetchView', { id }, { root: true });
 
-        commit(types.FETCH_ITEM_COMPLETED);
+        commit(types.FETCH_ITEM_COMPLETED, { item: item ?? state.item });
       } catch (err) {
         commit(types.FETCH_ITEM_FAILED);
 
