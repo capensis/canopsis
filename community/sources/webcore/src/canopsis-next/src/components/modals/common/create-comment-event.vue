@@ -5,19 +5,11 @@
         <span>{{ $t('modals.createCommentEvent.title') }}</span>
       </template>
       <template #text="">
-        <v-layout column>
+        <v-layout class="gap-4" column>
           <template v-if="items.length">
             <alarm-general-table :items="items" />
-            <v-divider class="my-3" />
           </template>
-          <c-name-field
-            v-model="form.comment"
-            :label="$tc('common.comment')"
-            :max-length="255"
-            name="comment"
-            autofocus
-            required
-          />
+          <alarm-comment-template-form v-model="form" :templates="templates" />
         </v-layout>
       </template>
       <template #actions="">
@@ -42,13 +34,18 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue';
+
 import { MODALS } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { createCommentFormToCreateCommentEvent } from '@/helpers/entities/widget/forms/alarm';
+
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
+import AlarmCommentTemplateForm from '@/components/other/comment-template/form/alarm-comment-template-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -60,34 +57,46 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { AlarmGeneralTable, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      form: {
-        comment: '',
+  components: { AlarmGeneralTable, AlarmCommentTemplateForm, ModalWrapper },
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { config, close } = useInnerModal(props);
+
+    const form = ref({
+      template: config.value.templates?.length ? config.value.templates[0] : null,
+      comment: '',
+    });
+
+    const items = computed(() => config.value.items ?? []);
+    const templates = computed(() => config.value.templates ?? []);
+
+    const { submitting, isDisabled, submit } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action(createCommentFormToCreateCommentEvent(form.value));
+        close();
       },
+    });
+
+    useFormConfirmableCloseModal({
+      form,
+      submit,
+      close,
+    });
+
+    return {
+      form,
+      items,
+      templates,
+      submitting,
+      isDisabled,
+      submit,
     };
-  },
-  computed: {
-    items() {
-      return this.config.items ?? [];
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        await this.config.action(this.form);
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

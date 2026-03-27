@@ -2,16 +2,16 @@
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
   <div
-    class="layout"
+    class="layout gap-3"
   >
     <div
       class="flex xs5"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <div
           class="flex xs4"
@@ -27,7 +27,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`]
           />
         </div>
         <div
-          class="flex pl-3 xs8"
+          class="flex xs8"
         >
           <c-infos-attribute-field-stub
             combobox="true"
@@ -44,10 +44,10 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`]
       class="flex xs7"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <div
-          class="flex pl-3 xs1"
+          class="flex xs1"
         >
           <c-input-type-field-stub
             disabled="true"
@@ -57,7 +57,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`]
           />
         </div>
         <div
-          class="flex pl-3 xs4"
+          class="flex xs4"
         >
           <pattern-operator-field-stub
             disabled="true"
@@ -69,7 +69,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`]
           />
         </div>
         <div
-          class="flex pl-3 xs7"
+          class="flex xs7"
         >
           <custom-component-stub
             disabled="true"
@@ -92,16 +92,16 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`]
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with date type 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
   <div
-    class="layout"
+    class="layout gap-3"
   >
     <div
       class="flex xs4"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <div
           class="flex"
@@ -122,11 +122,11 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with date type 1`] = 
       class="flex xs8"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <!---->
         <div
-          class="flex pl-3 xs5"
+          class="flex xs5"
         >
           <pattern-operator-field-stub
             label=""
@@ -137,7 +137,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with date type 1`] = 
           />
         </div>
         <div
-          class="flex pl-3 xs7"
+          class="flex xs7"
         >
           <pattern-rule-field-date-value-stub
             intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -159,16 +159,16 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with date type 1`] = 
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with default props 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
   <div
-    class="layout"
+    class="layout gap-3"
   >
     <div
       class="flex xs4"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <div
           class="flex"
@@ -189,11 +189,11 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with default props 1`
       class="flex xs8"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <!---->
         <div
-          class="flex pl-3 xs6"
+          class="flex xs6"
         >
           <pattern-operator-field-stub
             label=""
@@ -204,7 +204,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with default props 1`
           />
         </div>
         <div
-          class="flex pl-3 xs6"
+          class="flex xs6"
         >
           <c-mixed-input-field-stub
             inputtype="string"
@@ -228,16 +228,16 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with default props 1`
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with duration type 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
   <div
-    class="layout"
+    class="layout gap-3"
   >
     <div
       class="flex xs4"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <div
           class="flex"
@@ -258,11 +258,11 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with duration type 1`
       class="flex xs8"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <!---->
         <div
-          class="flex pl-3 xs6"
+          class="flex xs6"
         >
           <pattern-operator-field-stub
             label=""
@@ -273,7 +273,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with duration type 1`
           />
         </div>
         <div
-          class="flex pl-3 xs6"
+          class="flex xs6"
         >
           <c-duration-field-stub
             duration="[object Object]"
@@ -293,16 +293,16 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with duration type 1`
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with extra infos type 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
   <div
-    class="layout"
+    class="layout gap-3"
   >
     <div
       class="flex xs5"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <div
           class="flex xs4"
@@ -317,7 +317,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with extra infos type
           />
         </div>
         <div
-          class="flex pl-3 xs8"
+          class="flex xs8"
         >
           <c-infos-attribute-field-stub
             items=""
@@ -332,11 +332,11 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with extra infos type
       class="flex xs7"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <!---->
         <div
-          class="flex pl-3 xs4"
+          class="flex xs4"
         >
           <pattern-operator-field-stub
             label=""
@@ -360,16 +360,16 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with extra infos type
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with infos type and field is name 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
   <div
-    class="layout"
+    class="layout gap-3"
   >
     <div
       class="flex xs5"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <div
           class="flex xs4"
@@ -384,7 +384,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with infos type and f
           />
         </div>
         <div
-          class="flex pl-3 xs8"
+          class="flex xs8"
         >
           <c-infos-attribute-field-stub
             combobox="true"
@@ -400,11 +400,11 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with infos type and f
       class="flex xs7"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <!---->
         <div
-          class="flex pl-3 xs4"
+          class="flex xs4"
         >
           <pattern-operator-field-stub
             label=""
@@ -428,16 +428,16 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with infos type and f
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with timestamp field type as date rule 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
   <div
-    class="layout"
+    class="layout gap-3"
   >
     <div
       class="flex xs4"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <div
           class="flex"
@@ -458,11 +458,11 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with timestamp field 
       class="flex xs8"
     >
       <div
-        class="layout"
+        class="layout gap-3"
       >
         <!---->
         <div
-          class="flex pl-3 xs5"
+          class="flex xs5"
         >
           <pattern-operator-field-stub
             label=""
@@ -473,7 +473,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with timestamp field 
           />
         </div>
         <div
-          class="flex pl-3 xs7"
+          class="flex xs7"
         >
           <pattern-rule-field-date-value-stub
             intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
