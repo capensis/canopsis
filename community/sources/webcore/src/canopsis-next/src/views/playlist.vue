@@ -97,7 +97,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { toSeconds } from '@/helpers/date/duration';
 
-import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 import { permissionsEntitiesPlaylistTabMixin } from '@/mixins/permissions/entities/playlist-tab';
 
 import ViewTabWidgets from '@/components/other/view/view-tab-widgets.vue';
@@ -106,7 +106,7 @@ const { mapActions } = createNamespacedHelpers('playlist');
 
 export default {
   components: { ViewTabWidgets },
-  mixins: [entitiesViewGroupMixin, permissionsEntitiesPlaylistTabMixin],
+  mixins: [entitiesViewTabMixin, permissionsEntitiesPlaylistTabMixin],
   props: {
     id: {
       type: String,
@@ -126,13 +126,12 @@ export default {
       playlist: null,
       isFullscreenMode: false,
       activeTabIndex: 0,
+      availableTabs: [],
     };
   },
   computed: {
-    availableTabs() {
-      const tabsIds = (this.playlist && this.playlist.tabs_list) || [];
-
-      return this.getAvailableTabsByIds(tabsIds);
+    tabsIds() {
+      return this.playlist?.tabs_list ?? [];
     },
 
     activeTab() {
@@ -142,11 +141,10 @@ export default {
   async mounted() {
     this.pending = true;
 
-    if (!this.groupsPending) {
-      await this.fetchAllGroupsListWithWidgets();
-    }
-
     this.playlist = await this.fetchPlaylistItemWithoutStore({ id: this.id });
+
+    await this.fetchAvailableTabs();
+
     this.initTime();
 
     this.pending = false;
@@ -162,6 +160,10 @@ export default {
     ...mapActions({
       fetchPlaylistItemWithoutStore: 'fetchItemWithoutStore',
     }),
+
+    async fetchAvailableTabs() {
+      this.availableTabs = await Promise.all(this.tabsIds.map(id => this.fetchViewTab({ id })));
+    },
 
     initTime() {
       const { value, unit } = this.playlist.interval;
