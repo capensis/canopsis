@@ -117,5 +117,5 @@ const (
 
 	PatternOptimizeJobCollection = "pattern_optimize_job"
 
-	LLMConfigMongoCollection = "llm_config"
+	LLMConfigCollection = "llm_config"
 )

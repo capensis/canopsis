@@ -392,6 +392,22 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 </div>
 `;
 
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`ticketRemove\` correctly 1`] = `
+<div>
+  <v-icon-stub>
+    $vuetify.icons.remove_note
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`ticketremove\` correctly 1`] = `
+<div>
+  <v-icon-stub>
+    $vuetify.icons.remove_note
+  </v-icon-stub>
+</div>
+`;
+
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`unsnooze\` correctly 1`] = `
 <div>
   <v-icon-stub>

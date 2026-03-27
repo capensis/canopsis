@@ -1,5 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
-import { find, pick } from 'lodash';
+import { find, pick, keyBy } from 'lodash';
 
 import {
   MODALS,
@@ -59,6 +59,7 @@ export const widgetActionsPanelAlarmMixin = {
       bulkCreateAlarmAckremoveEvent: 'bulkCreateAlarmAckremoveEvent',
       bulkCreateAlarmSnoozeEvent: 'bulkCreateAlarmSnoozeEvent',
       bulkCreateAlarmAssocticketEvent: 'bulkCreateAlarmAssocticketEvent',
+      bulkCreateAlarmTicketremoveEvent: 'bulkCreateAlarmTicketremoveEvent',
       bulkCreateAlarmCommentEvent: 'bulkCreateAlarmCommentEvent',
       bulkCreateAlarmCancelEvent: 'bulkCreateAlarmCancelEvent',
       bulkCreateAlarmUnCancelEvent: 'bulkCreateAlarmUnCancelEvent',
@@ -194,10 +195,13 @@ export const widgetActionsPanelAlarmMixin = {
     },
 
     showCreateCommentModalByAlarms(alarms) {
+      const commentTemplatesById = keyBy(this.widget.comment_templates, '_id');
+
       this.$modals.show({
         name: MODALS.createCommentEvent,
         config: {
           items: alarms,
+          templates: this.widget.parameters.comment_templates.map(id => commentTemplatesById[id]),
           action: async (commentEvent) => {
             await this.bulkCreateAlarmCommentEvent({
               data: alarms.map(alarm => ({ ...commentEvent, _id: alarm._id })),
@@ -274,6 +278,25 @@ export const widgetActionsPanelAlarmMixin = {
 
             await this.bulkCreateAlarmAssocticketEvent({
               data: alarms.map(alarm => ({ ...associateEvent, _id: alarm._id })),
+            });
+
+            this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    showRemoveAssociatedTicketModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.removeAssociatedTicketEvent,
+        config: {
+          items: alarms,
+          action: async (removeEvent) => {
+            await this.bulkCreateAlarmTicketremoveEvent({
+              data: alarms.map(alarm => ({
+                ...removeEvent,
+                _id: alarm._id,
+              })),
             });
 
             this.afterSubmit();

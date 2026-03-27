@@ -1,11 +1,11 @@
 <template>
-  <v-layout column>
-    <v-layout>
+  <v-layout class="gap-3" column>
+    <v-layout class="gap-3">
       <v-flex
         :xs5="isAnyInfosRule"
         :xs4="!isAnyInfosRule"
       >
-        <v-layout>
+        <v-layout class="gap-3">
           <v-flex
             :xs4="!isObjectRule && isAnyInfosRule"
             :xs6="isObjectRule"
@@ -22,7 +22,6 @@
           </v-flex>
           <v-flex
             v-if="isAnyInfosRule"
-            class="pl-3"
             xs8
           >
             <c-infos-attribute-field
@@ -36,7 +35,6 @@
           </v-flex>
           <v-flex
             v-else-if="isObjectRule"
-            class="pl-3"
             xs6
           >
             <v-text-field
@@ -55,10 +53,9 @@
         :xs8="!isAnyInfosRuleOrAlias"
         :xs7="isAnyInfosRuleOrAlias"
       >
-        <v-layout>
+        <v-layout class="gap-3">
           <v-flex
             v-if="isInfosValueField"
-            class="pl-3"
             xs1
           >
             <c-input-type-field
@@ -72,7 +69,6 @@
           <v-flex
             v-if="shownOperatorField"
             v-bind="operatorFlexSizeAttrs"
-            class="pl-3"
           >
             <pattern-operator-field
               v-field="rule.operator"
@@ -85,7 +81,6 @@
           <v-flex
             v-if="rule.operator && operatorHasValue"
             v-bind="valueFlexSizeAttrs"
-            class="pl-3"
           >
             <component
               v-bind="valueComponent.props"
