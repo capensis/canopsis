@@ -1,5 +1,5 @@
 <template>
-  <v-layout :column="column">
+  <v-layout :column="column" class="gap-3">
     <v-flex :xs6="row">
       <v-combobox
         v-if="combobox"
@@ -29,10 +29,7 @@
         @input="updateInfosDictionary"
       />
     </v-flex>
-    <v-flex
-      :class="{ 'pl-3': row }"
-      :xs6="row"
-    >
+    <v-flex :xs6="row">
       <v-select
         v-validate="'required'"
         :value="value.field"

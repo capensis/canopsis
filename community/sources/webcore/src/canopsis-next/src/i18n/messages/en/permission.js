@@ -92,6 +92,7 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.snooze]: 'Snooze alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.declareTicket]: 'Declare ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.associateTicket]: 'Associate ticket',
+    [USER_PERMISSIONS.business.alarmsList.actions.removeAssociatedTicket]: 'Remove associated ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.cancel]: 'Remove alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.unCancel]: 'Uncalcel alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.fastCancel]: 'Fast remove alarm',
@@ -253,6 +254,7 @@ export default {
     [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Template testing',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'External auth tokens',
+    [USER_PERMISSIONS.technical.commentTemplate]: 'Comment templates',
     [USER_PERMISSIONS.technical.externalDataTable]: 'External data',
     [USER_PERMISSIONS.technical.entityInfoProperty]: 'Entity infos',
 
