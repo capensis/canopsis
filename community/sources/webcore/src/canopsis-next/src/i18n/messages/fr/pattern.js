@@ -1,4 +1,4 @@
-import { PATTERN_TYPES } from '@/constants';
+import { PATTERN_TYPES, PATTERNS_FIELDS } from '@/constants';
 
 export default {
   patterns: 'Modèles',
@@ -24,6 +24,15 @@ export default {
     [PATTERN_TYPES.pbehavior]: 'Modèle de comportements périodiques',
     [PATTERN_TYPES.serviceWeather]: 'Modèle de météo des services',
   },
+  patternsFields: {
+    [PATTERNS_FIELDS.alarm]: 'Alarme',
+    [PATTERNS_FIELDS.entity]: 'Entité',
+    [PATTERNS_FIELDS.pbehavior]: 'Comportements périodiques',
+    [PATTERNS_FIELDS.event]: 'Événement',
+    [PATTERNS_FIELDS.totalEntity]: 'Entité totale',
+    [PATTERNS_FIELDS.serviceWeather]: 'Météo des services',
+  },
+  patternsMessage: '{patterns} modèle | {patterns} modèles',
   notDefinedType: 'Le type sélectionné diffère du type défini dans les informations d\'entité',
   tryOptimization: 'Essayer l\'optimisation',
   tryOptimizationHint: 'Essayez d\'optimiser la Regexp pour accélérer la requête<br><span class="font-weight-regular">Les requêtes Regexp fonctionnent généralement plus lentement que les requêtes normales.</span>',

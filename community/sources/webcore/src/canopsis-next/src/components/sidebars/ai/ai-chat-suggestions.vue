@@ -33,6 +33,7 @@
 import { computed } from 'vue';
 
 import { COLORS } from '@/config';
+import { LLM_AI_CHAT_SUGGESTION_TYPES } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -41,22 +42,19 @@ export default {
     const { t } = useI18n();
     const colors = COLORS.aiChat;
 
-    /**
-     * TODO: move it into constants in the future
-     */
     const suggestions = computed(() => ([
       {
-        type: 'createPattern',
+        type: LLM_AI_CHAT_SUGGESTION_TYPES.createPattern,
         label: t('llm.chat.suggestions.createPattern'),
         icon: 'add',
       },
       {
-        type: 'editPattern',
+        type: LLM_AI_CHAT_SUGGESTION_TYPES.editPattern,
         label: t('llm.chat.suggestions.editPattern'),
         icon: 'edit',
       },
       {
-        type: 'validatePattern',
+        type: LLM_AI_CHAT_SUGGESTION_TYPES.validatePattern,
         label: t('llm.chat.suggestions.validatePattern'),
         icon: 'check_circle',
       },
@@ -65,9 +63,15 @@ export default {
     /**
      * Notifies the parent that the user picked a quick-action suggestion.
      *
-     * @param {string} type - Suggestion key (`createPattern`, `editPattern`, or `validatePattern`).
+     * @param {string} type - One of `LLM_AI_CHAT_SUGGESTION_TYPES` keys.
      */
-    const selectSuggestion = type => emit('select', type);
+    const selectSuggestion = (type) => {
+      if (!LLM_AI_CHAT_SUGGESTION_TYPES[type]) {
+        return;
+      }
+
+      emit('select', t(`llm.chat.suggestionPrompts.${type}`));
+    };
 
     return {
       colors,

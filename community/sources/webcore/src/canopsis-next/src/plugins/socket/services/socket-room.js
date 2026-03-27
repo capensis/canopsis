@@ -1,4 +1,4 @@
-import { REQUEST_MESSAGES_TYPES, RESPONSE_MESSAGES_TYPES } from '@/plugins/socket/constants';
+import { REQUEST_MESSAGES_TYPES } from '@/plugins/socket/constants';
 
 class SocketRoom {
   constructor(name, payload, authNeeded, send) {
@@ -6,7 +6,7 @@ class SocketRoom {
     this.payload = payload;
     this.authNeeded = authNeeded;
     this.count = 1;
-    this.listeners = [this.check];
+    this.listeners = [];
     this.parentSend = send;
     this.joined = false;
     this.messagesToSend = [];
@@ -87,31 +87,29 @@ class SocketRoom {
    * @return {SocketRoom}
    */
   send(payload) {
+    const message = {
+      type: REQUEST_MESSAGES_TYPES.send,
+      room: this.name,
+      payload,
+    };
+
     if (!this.joined) {
-      this.messagesToSend.push({
-        payload,
-      });
+      this.messagesToSend.push(message);
 
       return this;
     }
 
-    this.parentSend({
-      type: REQUEST_MESSAGES_TYPES.send,
-      room: this.name,
-      payload,
-    });
+    this.parentSend(message);
 
     return this;
   }
 
-  check(payload) {
-    if (payload.type === RESPONSE_MESSAGES_TYPES.joined) {
-      this.joined = true;
+  setJoined(joined) {
+    this.joined = joined;
 
+    if (joined) {
       this.messagesToSend.forEach(message => this.parentSend(message));
       this.messagesToSend = [];
-    } else if (payload.type === RESPONSE_MESSAGES_TYPES.left) {
-      this.joined = false;
     }
   }
 }

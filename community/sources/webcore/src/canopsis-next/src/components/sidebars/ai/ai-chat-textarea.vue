@@ -5,14 +5,16 @@
   >
     <v-textarea
       v-model="prompt"
+      ref="textareaElement"
       :placeholder="$t('llm.chat.promptPlaceholder')"
       :aria-label="$t('llm.chat.promptPlaceholder')"
       :auto-grow="emptyChat"
-      :disabled="asking"
+      :disabled="thinking"
       rows="5"
       solo
       flat
       hide-details
+      @keydown.enter="enterKeydown"
     />
     <v-layout
       class="px-4 pb-4 gap-2"
@@ -27,7 +29,7 @@
         :disabled="llmsDisabled"
       />
       <v-btn
-        v-if="asking"
+        v-if="thinking"
         color="secondary"
         depressed
         @click="stop"
@@ -61,7 +63,7 @@ export default {
     AiChatLlmField,
   },
   props: {
-    asking: {
+    thinking: {
       type: Boolean,
       default: false,
     },
@@ -71,6 +73,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const textareaElement = ref(null);
     const prompt = ref('');
     const selectedLlm = ref(null);
 
@@ -87,17 +90,34 @@ export default {
      *
      * Payload: `{ llm: string | null, prompt: string }` (`prompt` is trimmed).
      */
-    const ask = () => emit('ask', {
-      llm: selectedLlm.value?._id,
-      prompt: prompt.value.trim(),
-    });
+    const ask = () => {
+      emit('ask', {
+        llm: selectedLlm.value?._id,
+        prompt: prompt.value.trim(),
+      });
+    };
 
     /**
-     * Emits `stop` so the parent can abort the current LLM request while `asking` is true.
+     * Submits on Enter; Shift+Enter keeps the default newline. Matches `Ask` enablement.
+     *
+     * @param {KeyboardEvent} event
+     */
+    const enterKeydown = (event) => {
+      if (event.shiftKey || askDisabled.value) {
+        return;
+      }
+
+      event.preventDefault();
+      ask();
+    };
+
+    /**
+     * Emits `stop` so the parent can abort the current LLM request while `thinking` is true.
      */
     const stop = () => emit('stop');
 
     return {
+      textareaElement,
       prompt,
       selectedLlm,
       llms,
@@ -105,6 +125,7 @@ export default {
       llmsDisabled,
       askDisabled,
       ask,
+      enterKeydown,
       stop,
     };
   },

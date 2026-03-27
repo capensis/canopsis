@@ -1,4 +1,4 @@
-import { LLM_THINKING_LEVELS } from '@/constants';
+import { LLM_AI_CHAT_SUGGESTION_TYPES, LLM_THINKING_LEVELS } from '@/constants';
 
 export default {
   expandTabs: {
@@ -71,16 +71,21 @@ export default {
       editPattern: 'Edit pattern',
       validatePattern: 'Validate pattern',
     },
+    patternsMessage: '{patterns} pattern | {patterns} patterns',
+    patternsEditedMessage: 'You edited {patterns} pattern | You edited {patterns} patterns',
+    patternCreatedMessage: 'Patterns created',
+    patternUpdatedMessage: 'Patterns updated',
     suggestionPrompts: {
-      createPattern: 'Help me create a new pattern for this modal.',
-      editPattern: 'Help me improve the patterns configured in this modal.',
-      validatePattern: 'Help me validate that my patterns are correct and efficient.',
+      [LLM_AI_CHAT_SUGGESTION_TYPES.createPattern]: 'Create pattern with following conditions:\n',
+      [LLM_AI_CHAT_SUGGESTION_TYPES.editPattern]: 'The following changes are needed in pattern:\n',
+      [LLM_AI_CHAT_SUGGESTION_TYPES.validatePattern]: 'Fix the following pattern if needed:\n',
     },
     pattern: {
       restoreVersion: 'Restore version',
       seePattern: 'See pattern',
       hidePattern: 'Hide pattern',
       version: 'Version {version}',
+      versionRestored: 'Version {version} restored',
     },
   },
 };

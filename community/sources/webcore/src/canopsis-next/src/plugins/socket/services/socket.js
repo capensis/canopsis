@@ -469,6 +469,12 @@ class Socket {
         this.authenticated = true;
         this.sendMessagesToSend();
         break;
+      case RESPONSE_MESSAGES_TYPES.joined:
+        this.rooms[room]?.setJoined?.(true);
+        break;
+      case RESPONSE_MESSAGES_TYPES.left:
+        this.rooms[room]?.setJoined?.(false);
+        break;
       default:
         this.connection.dispatchEvent(
           new ErrorEvent('error', { message: 'Unknown message type' }),

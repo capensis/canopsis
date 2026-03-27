@@ -80,6 +80,7 @@ export const DATETIME_FORMATS = {
   short: 'DD/MM/YYYY',
   shortWithDayOfWeek: 'ddd DD/MM/YYYY',
   time: 'H:mm:ss',
+  timeWithoutSeconds: 'HH:mm',
   yearWithMonth: 'MMMM YYYY',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
   dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
