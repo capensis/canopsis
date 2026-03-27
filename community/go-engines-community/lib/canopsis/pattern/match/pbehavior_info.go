@@ -8,14 +8,20 @@ import (
 )
 
 func ValidatePbehaviorInfoPattern(p pattern.PbehaviorInfo) bool {
-	emptyPbhInfo := types.PbehaviorInfo{}
+	return len(PbehaviorInfoPatternErrors(p)) == 0
+}
 
-	for _, group := range p {
+func PbehaviorInfoPatternErrors(p pattern.PbehaviorInfo) []ConditionError {
+	emptyPbhInfo := types.PbehaviorInfo{}
+	var errs []ConditionError
+
+	for gidx, group := range p {
 		if len(group) == 0 {
-			return false
+			errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: -1, Err: pattern.ErrEmptyGroup})
+			continue
 		}
 
-		for _, v := range group {
+		for cidx, v := range group {
 			f := v.Field
 			cond := v.Condition
 			var err error
@@ -27,12 +33,12 @@ func ValidatePbehaviorInfoPattern(p pattern.PbehaviorInfo) bool {
 			}
 
 			if err != nil {
-				return false
+				errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: cidx, Err: err})
 			}
 		}
 	}
 
-	return true
+	return errs
 }
 
 func MatchPbehaviorInfoPattern(p pattern.PbehaviorInfo, pbhInfo *types.PbehaviorInfo) (bool, error) {

@@ -63,6 +63,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/gin-gonic/gin"
+	ut "github.com/go-playground/universal-translator"
 	gorillawebsocket "github.com/gorilla/websocket"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -105,6 +106,7 @@ type Services struct {
 	ExternalDataContainer       *externaldata.GetterContainer
 	NotificationStore           usernotification.Store
 	ErrorResponder              httperror.Responder
+	Translator                  *ut.UniversalTranslator
 }
 
 func Default(
@@ -200,12 +202,12 @@ func Default(
 	sessionStore.Options.Secure = flags.SecureSession
 	services.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
-	uniTrans, err := RegisterValidators(securityConfig, tplExecutor)
+	services.Translator, err = RegisterValidators(securityConfig, tplExecutor)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot register request validators: %w", err)
 	}
 
-	services.ErrorResponder = httperror.NewResponder(validation.NewErrorTranslator(uniTrans, logger), logger)
+	services.ErrorResponder = httperror.NewResponder(validation.NewErrorTranslator(services.Translator, logger), logger)
 	security := NewSecurity(securityConfig, cfg, primaryDbClient, sessionStore, services.Enforcer,
 		services.ApiConfigProvider, config.NewMaintenanceAdapter(primaryDbClient), cookieOptions,
 		services.ErrorResponder, logger)
@@ -297,7 +299,7 @@ func Default(
 		return websocket.User{}, errors.New("invalid token")
 	}
 	services.WebsocketHub = websocket.NewHub(websocketUpgrader, services.WebsocketRoomRegistry, wsRoomAuthenticate,
-		services.ApiConfigProvider, flags.IntegrationPeriodicalWaitTime, validation.NewErrorTranslator(uniTrans, logger),
+		services.ApiConfigProvider, flags.IntegrationPeriodicalWaitTime, validation.NewErrorTranslator(services.Translator, logger),
 		logger)
 	services.ExternalDataContainer = externaldata.NewGetterContainer()
 	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, services.ExternalDataContainer, logger)

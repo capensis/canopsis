@@ -46,6 +46,10 @@ func (m *EntityRegexMatches) SetComponentInfoRegexMatches(fieldName string, matc
 }
 
 func ValidateEntityPattern(p pattern.Entity, forbiddenFields []string) bool {
+	return len(EntityPatternErrors(p, forbiddenFields)) == 0
+}
+
+func EntityPatternErrors(p pattern.Entity, forbiddenFields []string) []ConditionError {
 	emptyEntity := types.Entity{}
 	now := time.Now() // to compute relative time values
 
@@ -54,12 +58,14 @@ func ValidateEntityPattern(p pattern.Entity, forbiddenFields []string) bool {
 		forbiddenFieldsMap[field] = true
 	}
 
-	for idx := range p {
-		if len(p[idx]) == 0 {
-			return false
+	var errs []ConditionError
+	for gidx := range p {
+		if len(p[gidx]) == 0 {
+			errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: -1, Err: pattern.ErrEmptyGroup})
+			continue
 		}
 
-		for _, v := range p[idx] {
+		for cidx, v := range p[gidx] {
 			f := v.Field
 
 			// if an alias is present, then fill the field with some valid value to validate condition
@@ -68,20 +74,21 @@ func ValidateEntityPattern(p pattern.Entity, forbiddenFields []string) bool {
 			}
 
 			if pattern.IsForbiddenEntityField(v, forbiddenFieldsMap) {
-				return false
+				errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: cidx, Err: pattern.ErrForbiddenField})
+				continue
 			}
 
 			if infoName := pattern.GetEntityInfoName(f); infoName != "" {
-				if !v.ValidateEntityInfoCondition() {
-					return false
+				if err := v.EntityInfoConditionError(); err != nil {
+					errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: cidx, Err: err})
 				}
 
 				continue
 			}
 
 			if infoName := pattern.GetEntityComponentInfoName(f); infoName != "" {
-				if !v.ValidateEntityInfoCondition() {
-					return false
+				if err := v.EntityInfoConditionError(); err != nil {
+					errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: cidx, Err: err})
 				}
 
 				continue
@@ -99,12 +106,12 @@ func ValidateEntityPattern(p pattern.Entity, forbiddenFields []string) bool {
 			}
 
 			if err != nil {
-				return false
+				errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: cidx, Err: err})
 			}
 		}
 	}
 
-	return true
+	return errs
 }
 
 func MatchEntityPattern(p pattern.Entity, entity *types.Entity) (bool, error) {
@@ -235,7 +242,7 @@ func MatchEntityPatternWithRegexMatches(p pattern.Entity, entity *types.Entity) 
 							matched, err = v.Condition.MatchTime(t, time.Now())
 						}
 					default:
-						return false, entityRegexMatches, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)
+						return false, entityRegexMatches, fmt.Errorf("invalid field type for %q field: %w", f, pattern.ErrUnsupportedFieldType)
 					}
 				}
 
@@ -285,7 +292,7 @@ func MatchEntityPatternWithRegexMatches(p pattern.Entity, entity *types.Entity) 
 							matched, err = v.Condition.MatchTime(t, time.Now())
 						}
 					default:
-						return false, entityRegexMatches, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)
+						return false, entityRegexMatches, fmt.Errorf("invalid field type for %q field: %w", f, pattern.ErrUnsupportedFieldType)
 					}
 				}
 
