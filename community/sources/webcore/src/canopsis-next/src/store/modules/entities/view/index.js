@@ -125,6 +125,8 @@ export default createCRUDModule({
         const { entities } = normalize(view, viewSchema);
 
         commit(types.MERGE_VIEW_ENTITIES, { entities });
+
+        return view;
       }, `view_${id}`);
     },
 
