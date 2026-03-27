@@ -5,7 +5,7 @@
   >
     <v-flex class="ai-chat-message__content pa-4">
       <span
-        v-if="thinking"
+        v-if="message.thinking"
         class="primary--text ai-chat-message__thinking"
       >{{ $t('llm.chat.thinking') }}</span>
       <v-layout
@@ -19,14 +19,14 @@
           align-start
         >
           <v-flex
-            v-if="text"
+            v-if="message.text"
             :class="{ 'ai-chat-message__text--collapsed': isCollapsible && !isExpanded }"
             class="ai-chat-message__text"
           >
-            {{ text }}
+            {{ message.text }}
           </v-flex>
-          <span v-if="timestamp" class="grey--text text--darken-1">
-            {{ dateString }}
+          <span v-if="message.time" class="grey--text text--darken-1">
+            {{ timeString }}
           </span>
         </v-layout>
         <c-expand-btn
@@ -37,9 +37,9 @@
         />
       </v-layout>
     </v-flex>
-    <v-avatar v-if="!fromSystem" :color="fromUser ? 'success' : 'primary'" size="40">
+    <v-avatar v-if="!isNoRole" :color="isUserRole ? 'success' : 'primary'" size="40">
       <v-icon
-        v-if="fromUser"
+        v-if="isUserRole"
         dark
       >
         person
@@ -57,7 +57,7 @@
 <script>
 import { computed, ref } from 'vue';
 
-import { DATETIME_FORMATS } from '@/constants';
+import { DATETIME_FORMATS, LLM_AI_CHAT_MESSAGE_ROLES } from '@/constants';
 
 import { convertDateToString, convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
@@ -65,27 +65,11 @@ const COLLAPSE_TEXT_MIN_LENGTH = 100;
 
 export default {
   props: {
-    text: {
-      type: String,
-      default: '',
-    },
-    timestamp: {
-      type: Number,
-      required: false,
-    },
-    fromUser: {
-      type: Boolean,
-      default: false,
-    },
-    fromSystem: {
-      type: Boolean,
-      default: false,
+    message: {
+      type: Object,
+      default: () => ({}),
     },
     history: {
-      type: Boolean,
-      default: false,
-    },
-    thinking: {
       type: Boolean,
       default: false,
     },
@@ -93,25 +77,33 @@ export default {
   setup(props) {
     const isExpanded = ref(false);
 
-    const isCollapsible = computed(() => (props.fromUser && props.text.length > COLLAPSE_TEXT_MIN_LENGTH));
+    const isUserRole = computed(() => props.message.role === LLM_AI_CHAT_MESSAGE_ROLES.user);
+    const isModelRole = computed(() => props.message.role === LLM_AI_CHAT_MESSAGE_ROLES.model);
+    const isNoRole = computed(() => !props.message.role);
+
+    const isCollapsible = computed(() => (
+      isUserRole.value && (props.message.text || '').length > COLLAPSE_TEXT_MIN_LENGTH
+    ));
     const wrapperClass = computed(() => ({
-      'ai-chat-message--from-system': props.fromSystem,
-      'ai-chat-message--from-user': props.fromUser,
-      'ai-chat-message--from-assistant': !props.fromUser && !props.fromSystem,
-      'ai-chat-message--thinking': props.thinking,
+      'ai-chat-message--from-no-role': isNoRole.value,
+      'ai-chat-message--from-user': isUserRole.value,
+      'ai-chat-message--from-assistant': isModelRole.value,
+      'ai-chat-message--thinking': props.message.thinking,
     }));
 
-    const dateString = computed(() => (
+    const timeString = computed(() => (
       props.history
-        ? convertDateToString(props.timestamp, DATETIME_FORMATS.long)
-        : convertDateToStringWithFormatForToday(props.timestamp, DATETIME_FORMATS.long)
+        ? convertDateToString(props.message.time, DATETIME_FORMATS.long)
+        : convertDateToStringWithFormatForToday(props.message.time, DATETIME_FORMATS.long, '', DATETIME_FORMATS.timeWithoutSeconds)
     ));
 
     return {
       isExpanded,
+      isUserRole,
+      isNoRole,
       isCollapsible,
       wrapperClass,
-      dateString,
+      timeString,
     };
   },
 };
@@ -177,7 +169,7 @@ export default {
     }
   }
 
-  &--from-system {
+  &--from-no-role {
     .ai-chat-message__content {
       border: 1px solid #949494;
     }

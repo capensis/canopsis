@@ -3,7 +3,10 @@
     <v-layout class="gap-2">
       <v-flex>
         <v-layout class="ai-chat-pattern__content grey--text" column>
-          <strong>Alarm, entity patterns</strong>
+          <strong>
+            <div class="ai-chat-pattern__patterns-text text-ucfirst">{{ patternsText }}</div>
+            <span v-if="originalVersionText">{{ originalVersionText }}</span>
+          </strong>
           <span>{{ versionText }}</span>
           <div>
             <v-btn
@@ -28,6 +31,7 @@
           color="primary"
           class="ai-chat-pattern__reset-version-btn"
           left
+          @click="restoreVersion"
         />
       </div>
     </v-layout>
@@ -42,6 +46,7 @@
 </template>
 
 <script>
+import { isUndefined } from 'lodash';
 import { computed, ref } from 'vue';
 
 import { stringifyJson } from '@/helpers/json';
@@ -50,7 +55,7 @@ import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
-    pattern: {
+    patterns: {
       type: Object,
       required: true,
     },
@@ -58,26 +63,56 @@ export default {
       type: Number,
       default: 1,
     },
+    originalVersion: {
+      type: Number,
+      required: false,
+    },
     active: {
       type: Boolean,
       default: false,
     },
   },
-  setup(props) {
-    const { t } = useI18n();
+  setup(props, { emit }) {
+    const { t, tc } = useI18n();
 
     const expanded = ref(false);
 
-    const versionText = computed(() => `${t('llm.chat.pattern.version', { version: props.version })}${props.active ? ` (${t('common.current')})` : ''}`);
-    const parsedJson = computed(() => stringifyJson(props.pattern, 2));
+    const patternsText = computed(() => {
+      const texts = Object.keys(props.patterns).map(key => t(`pattern.patternsFields.${key}`));
 
+      return tc('llm.chat.patternsMessage', texts.length, { patterns: texts.join(', ') });
+    });
+
+    const originalVersionText = computed(() => (
+      isUndefined(props.originalVersion) ? '' : ` - ${t('llm.chat.pattern.versionRestored', { version: props.originalVersion + 1 })}`
+    ));
+
+    const versionText = computed(() => {
+      const currentText = props.active ? ` (${t('common.current')})` : '';
+
+      return `${t('llm.chat.pattern.version', { version: props.version + 1 })}${currentText}`;
+    });
+
+    const parsedJson = computed(() => stringifyJson(props.patterns, 2));
+
+    /**
+     * Toggles visibility of the JSON pattern preview (`v-expand-transition`).
+     */
     const toggleExpanded = () => expanded.value = !expanded.value;
+
+    /**
+     * Emits `restore:version` with this card’s `version` so the parent can restore that snapshot.
+     */
+    const restoreVersion = () => emit('restore:version', props.version);
 
     return {
       expanded,
+      patternsText,
+      originalVersionText,
       versionText,
       parsedJson,
       toggleExpanded,
+      restoreVersion,
     };
   },
 };
@@ -111,6 +146,10 @@ export default {
     .ai-chat-pattern__content {
       color: var(--v-primary-base) !important;
     }
+  }
+
+  &__patterns-text {
+    display: inline-block;
   }
 }
 </style>

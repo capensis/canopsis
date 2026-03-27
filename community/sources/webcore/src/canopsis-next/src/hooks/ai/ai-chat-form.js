@@ -1,16 +1,9 @@
-import {
-  ref,
-  computed,
-  watch,
-  unref,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
-import { pick, throttle, isEqual } from 'lodash';
+import { watch, unref, onMounted, onBeforeUnmount } from 'vue';
+import { throttle } from 'lodash';
 
-import { SIDE_BARS, LLM_AI_CHAT_WIDTH } from '@/constants';
+import { SIDE_BARS, LLM_AI_CHAT_WIDTH, PATTERNS_FIELDS } from '@/constants';
 
-import { patternToForm, getChangedPatternsFields } from '@/helpers/entities/pattern/form';
+import { patternToForm } from '@/helpers/entities/pattern/form';
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
 import { useModals } from '@/hooks/modals';
@@ -38,47 +31,22 @@ export const useAiChatForm = ({
   const modals = useModals();
   const sidebar = useSidebar();
 
-  const aiChatForm = ref({ ...unref(form) });
-  const aiChangedPatternsFields = ref([]);
-
-  const currentChangedPatternsFields = computed(() => {
-    const unwrappedField = unref(field);
-    const unwrappedForm = unref(form);
-
-    if (unwrappedField) {
-      return isEqual(aiChatForm.value, unwrappedForm) ? [] : [unwrappedField];
-    }
-
-    const changedPatternsFields = getChangedPatternsFields(
-      unwrappedForm,
-      aiChatForm.value,
-    );
-
-    if (isEqual(aiChangedPatternsFields.value, changedPatternsFields)) {
-      return false;
-    }
-
-    return changedPatternsFields;
-  });
-
   const throttledUpdateSidebarConfig = throttle(() => {
-    const changedPatternsFields = currentChangedPatternsFields.value;
-
-    if (!changedPatternsFields) {
-      return;
-    }
-
     const unwrappedForm = unref(form);
     const unwrappedField = unref(field);
-
-    aiChangedPatternsFields.value = changedPatternsFields;
 
     let patterns = {};
 
     if (unwrappedField) {
-      patterns = changedPatternsFields.length ? { [unwrappedField]: unwrappedForm } : {};
+      patterns = unwrappedForm.groups.length ? { [unwrappedField]: unwrappedForm } : {};
     } else {
-      patterns = pick(unwrappedForm, changedPatternsFields);
+      patterns = Object.values(PATTERNS_FIELDS).reduce((acc, patternField) => {
+        if (unwrappedForm[patternField]?.groups?.length) {
+          acc[patternField] = unwrappedForm[patternField];
+        }
+
+        return acc;
+      }, {});
     }
 
     sidebar.updateConfig({
@@ -87,7 +55,7 @@ export const useAiChatForm = ({
     });
   }, THROTTLE_WAIT_MS);
 
-  watch(() => unref(form), throttledUpdateSidebarConfig, { deep: true });
+  watch(form, throttledUpdateSidebarConfig, { deep: true });
 
   /**
    * Opens the AI assistant sidebar for this modal instance and passes `socketRoomData`

@@ -18,6 +18,17 @@ export const LLM_PROMPTS_HISTORY_VIEWS = {
 
 export const LLM_AI_CHAT_WIDTH = 400;
 
+export const LLM_AI_CHAT_SUGGESTION_TYPES = {
+  createPattern: 'createPattern',
+  editPattern: 'editPattern',
+  validatePattern: 'validatePattern',
+};
+
+export const LLM_AI_CHAT_MESSAGE_ROLES = {
+  user: 'user',
+  model: 'model',
+};
+
 export const LLM_SOCKET_CONTEXTS = {
   idleRule: 'idle_rule',
   scenario: 'scenario',

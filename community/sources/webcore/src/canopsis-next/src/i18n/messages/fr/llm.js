@@ -1,4 +1,4 @@
-import { LLM_THINKING_LEVELS } from '@/constants';
+import { LLM_AI_CHAT_SUGGESTION_TYPES, LLM_THINKING_LEVELS } from '@/constants';
 
 export default {
   expandTabs: {
@@ -71,16 +71,21 @@ export default {
       editPattern: 'Éditer le modèle',
       validatePattern: 'Valider le modèle',
     },
+    patternsMessage: '{patterns} modèle | {patterns} modèles',
+    patternsEditedMessage: 'Vous avez modifié {patterns} modèle | Vous avez modifié {patterns} modèles',
+    patternCreatedMessage: 'Modèles créés',
+    patternUpdatedMessage: 'Modèles mis à jour',
     suggestionPrompts: {
-      createPattern: 'Aidez-moi à créer un nouveau modèle pour cette fenêtre.',
-      editPattern: 'Aidez-moi à améliorer les modèles configurés dans cette fenêtre.',
-      validatePattern: 'Aidez-moi à valider que mes modèles sont corrects et pertinents.',
+      [LLM_AI_CHAT_SUGGESTION_TYPES.createPattern]: 'Créer un modèle avec les conditions suivantes :\n',
+      [LLM_AI_CHAT_SUGGESTION_TYPES.editPattern]: 'Les modifications suivantes sont nécessaires dans le modèle :\n',
+      [LLM_AI_CHAT_SUGGESTION_TYPES.validatePattern]: 'Corrigez le modèle suivant si nécessaire :\n',
     },
     pattern: {
       restoreVersion: 'Restaurer la version',
       seePattern: 'Voir le modèle',
       hidePattern: 'Masquer le modèle',
       version: 'Version {version}',
+      versionRestored: 'Version {version} restaurée',
     },
   },
 };
