@@ -67,6 +67,10 @@ export default {
   isVirtualScrollEnabled: 'Rendre les éléments lors du défilement',
   fastAckOutput: 'Commentaire d\'acquittement rapide',
   fastCancelOutput: 'Commentaire d\'annulation rapide',
+  commentTemplates: {
+    title: 'Modèles de commentaires',
+    description: 'Le premier modèle de la liste sera par défaut.',
+  },
   isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie',
   isCorrelationEnabled: 'Corrélation activée ?',
   fastPbehavior: 'Comportement périodique rapide',
