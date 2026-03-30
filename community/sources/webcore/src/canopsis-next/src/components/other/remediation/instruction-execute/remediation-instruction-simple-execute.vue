@@ -7,7 +7,7 @@
       <span class="text-subtitle-1 mr-5">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
       <v-btn
         v-if="!isInstructionExecutionFinished"
-        :loading="executed"
+        :loading="executing"
         class="primary ma-0"
         @click="$emit('run:jobs')"
       >
@@ -46,7 +46,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    executed: {
+    executing: {
       type: Boolean,
       default: false,
     },
