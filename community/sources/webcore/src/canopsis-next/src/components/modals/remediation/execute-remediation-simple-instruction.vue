@@ -16,7 +16,7 @@
         </v-layout>
         <remediation-instruction-simple-execute
           v-else
-          :executed="executed"
+          :executing="executing"
           :instruction-execution="instructionExecution"
           :jobs="jobs"
           @run:jobs="runJobs"
@@ -31,6 +31,8 @@ import { SOCKET_ROOMS } from '@/config';
 import { MODALS } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
+
+import { isInstructionExecutionRunning } from '@/helpers/entities/remediation/instruction-execution/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediation/job-execution';
@@ -56,7 +58,7 @@ export default {
   data() {
     return {
       pending: true,
-      executed: false,
+      executing: false,
       instruction: null,
       instructionExecution: null,
     };
@@ -181,8 +183,10 @@ export default {
             id: this.instructionExecutionId,
           });
 
-          if (!this.executed) {
-            this.executed = true;
+          const newExecuting = isInstructionExecutionRunning(this.instructionExecution);
+
+          if (newExecuting !== this.executing) {
+            this.executing = newExecuting;
           }
         }
       } catch (err) {
@@ -208,7 +212,7 @@ export default {
           },
         });
 
-        this.executed = true;
+        this.executing = true;
 
         if (this.config.onExecute) {
           await this.config.onExecute();
