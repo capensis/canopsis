@@ -2,7 +2,7 @@
   <v-select
     v-field="value"
     :items="templatesWithCustom"
-    :label="$t('common.template')"
+    :label="$tc('common.template', 1)"
     :loading="pending"
     :clearable="clearable"
     return-object

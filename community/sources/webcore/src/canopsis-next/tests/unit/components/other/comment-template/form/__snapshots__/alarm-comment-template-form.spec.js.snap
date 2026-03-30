@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-comment-template-form Renders \`alarm-comment-template-form\` with template 1`] = `
+<div
+  class="c-alternative-bg-panel v-card v-sheet theme--light rounded-xl"
+>
+  <div
+    class="v-card__text"
+  >
+    <div
+      class="layout gap-2 column"
+    >
+      <c-select-field-stub
+        clearable=""
+        item-text="name"
+        item-value="_id"
+        items="[object Object]"
+        label="Template"
+        name="template"
+        return-object=""
+        value="[object Object]"
+      />
+      <c-name-field-stub
+        label="Field 1"
+        max-length="255"
+        name="field1"
+        required="true"
+        value=""
+      />
+      <c-name-field-stub
+        label="Field 2"
+        max-length="255"
+        name="field2"
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`alarm-comment-template-form Renders \`alarm-comment-template-form\` without template 1`] = `
+<div
+  class="c-alternative-bg-panel v-card v-sheet theme--light rounded-xl"
+>
+  <div
+    class="v-card__text"
+  >
+    <div
+      class="layout gap-2 column"
+    >
+      <!---->
+      <c-name-field-stub
+        label="Note"
+        max-length="255"
+        name="comment"
+        required="true"
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;

@@ -94,6 +94,7 @@ describe('actions-panel', () => {
     bulkCreateAlarmAckremoveEvent,
     bulkCreateAlarmSnoozeEvent,
     bulkCreateAlarmAssocticketEvent,
+    bulkCreateAlarmTicketremoveEvent,
     bulkCreateAlarmCommentEvent,
     bulkCreateAlarmCancelEvent,
     bulkCreateAlarmChangestateEvent,
@@ -767,6 +768,72 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
   });
 
+  test('Remove associated ticket modal showed after trigger remove associated ticket action', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const alarmWithTickets = {
+      ...alarm,
+      v: {
+        ...alarm.v,
+        tickets: [
+          {
+            ticket: 'TICKET-123',
+            ticket_system_name: 'Jira',
+          },
+        ],
+      },
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+      ]),
+      propsData: {
+        item: alarmWithTickets,
+        widget: widgetData,
+        parentAlarm,
+        refreshAlarmsList,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket).trigger('click');
+
+    expect($modals.show).toHaveBeenCalledWith(
+      {
+        name: MODALS.removeAssociatedTicketEvent,
+        config: {
+          items: [alarmWithTickets],
+          action: expect.any(Function),
+        },
+      },
+    );
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    const removeTicketEvent = {
+      ticket: 'TICKET-123',
+      reason: Faker.datatype.string(),
+    };
+
+    await config.action(removeTicketEvent);
+
+    expect(bulkCreateAlarmTicketremoveEvent).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: alarmWithTickets._id,
+          ...removeTicketEvent,
+        }],
+      },
+    );
+
+    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+  });
+
   test('Change state modal showed after trigger change state action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -1196,7 +1263,10 @@ describe('actions-panel', () => {
     };
     const widgetData = {
       _id: Faker.datatype.string(),
-      parameters: {},
+      comment_templates: [],
+      parameters: {
+        comment_templates: [],
+      },
     };
 
     const wrapper = factory({
@@ -1219,6 +1289,7 @@ describe('actions-panel', () => {
         name: MODALS.createCommentEvent,
         config: {
           items: [commentAlarm],
+          templates: [],
           action: expect.any(Function),
         },
       },

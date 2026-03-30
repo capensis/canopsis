@@ -8,12 +8,13 @@
       :ack="alarm.v.ack"
     />
     <extra-details-last-comment
-      v-if="alarm.v.last_comment && alarm.v.last_comment.m"
+      v-if="alarm.v.last_comment && (alarm.v.last_comment.m || alarm.v.last_comment.struct_m?.length)"
       :last-comment="alarm.v.last_comment"
     />
     <extra-details-ticket
       v-if="hasTickets"
       :tickets="alarm.v.tickets"
+      :failed-ticket="alarm.v.failed_ticket"
     />
     <extra-details-canceled
       v-if="alarm.v.canceled"
