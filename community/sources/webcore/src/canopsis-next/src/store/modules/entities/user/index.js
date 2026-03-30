@@ -4,6 +4,8 @@ import request from '@/services/request';
 
 import { createCRUDModule } from '@/store/plugins/entities';
 
+import { userToForm, formToUserRequest } from '@/helpers/entities/user/form';
+
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
@@ -31,13 +33,32 @@ export default createCRUDModule({
     /**
      * Method for update current user
      *
-     * @param {ActionContext} context
-     * @param {string} id
-     * @param {User} data
-     * @returns {AxiosPromise<any>}
+     * @param {ActionContext} { commit }
+     * @param {Object} params - The parameters object
+     * @param {Object} params.data - The user data to update
+     * @returns {Promise<User>}
      */
-    updateCurrentUser(context, { data }) {
-      return request.put(API_ROUTES.currentUser, data);
+    async updateCurrentUser({ commit }, { data } = {}) {
+      const newCurrentUser = await request.put(API_ROUTES.currentUser, data);
+
+      commit('auth/FETCH_USER_COMPLETED', newCurrentUser, { root: true });
+
+      return newCurrentUser;
+    },
+
+    updateCurrentUserTours({ rootGetters, dispatch }, { data } = {}) {
+      const userForm = userToForm(rootGetters['auth/currentUser']);
+
+      return dispatch('updateCurrentUser', {
+        data: formToUserRequest({
+          ...userForm,
+
+          ui_tours: {
+            ...userForm.ui_tours,
+            ...data,
+          },
+        }),
+      });
     },
   },
 });

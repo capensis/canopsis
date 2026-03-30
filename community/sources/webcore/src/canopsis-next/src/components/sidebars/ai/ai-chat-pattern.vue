@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { isUndefined } from 'lodash';
+import { isNil } from 'lodash';
 import { computed, ref } from 'vue';
 
 import { stringifyJson } from '@/helpers/json';
@@ -84,7 +84,7 @@ export default {
     });
 
     const originalVersionText = computed(() => (
-      isUndefined(props.originalVersion) ? '' : ` - ${t('llm.chat.pattern.versionRestored', { version: props.originalVersion + 1 })}`
+      isNil(props.originalVersion) ? '' : ` - ${t('llm.chat.pattern.versionRestored', { version: props.originalVersion + 1 })}`
     ));
 
     const versionText = computed(() => {

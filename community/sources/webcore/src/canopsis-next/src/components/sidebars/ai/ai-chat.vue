@@ -1,5 +1,6 @@
 <template>
   <v-layout class="ai-chat" column>
+    <ai-chat-warning-alert />
     <div
       ref="bodyElement"
       class="ai-chat__body layout column gap-6 pa-4"
@@ -40,6 +41,7 @@
     >
       <ai-chat-textarea
         ref="textareaElement"
+        :error-message="errorMessage"
         :empty-chat="emptyChat"
         :thinking="thinking"
         @ask="ask"
@@ -65,7 +67,7 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash';
+import { isEmpty, isUndefined } from 'lodash';
 import {
   computed,
   ref,
@@ -77,6 +79,8 @@ import {
 
 import { SOCKET_ROOMS } from '@/config';
 import { LLM_AI_CHAT_MESSAGE_ROLES, SIDE_BARS, PATTERNS_FIELDS } from '@/constants';
+
+import Socket from '@/plugins/socket/services/socket';
 
 import { uid } from '@/helpers/uid';
 /**
@@ -94,6 +98,7 @@ import AiChatMessage from './ai-chat-message.vue';
 import AiChatPattern from './ai-chat-pattern.vue';
 import AiChatSuggestions from './ai-chat-suggestions.vue';
 import AiChatTextarea from './ai-chat-textarea.vue';
+import AiChatWarningAlert from './ai-chat-warning-alert.vue';
 
 export default {
   name: SIDE_BARS.aiChat,
@@ -103,6 +108,7 @@ export default {
     AiChatPattern,
     AiChatSuggestions,
     AiChatTextarea,
+    AiChatWarningAlert,
   },
   props: {
     sidebar: {
@@ -120,6 +126,7 @@ export default {
     const versions = ref([]);
     const lastLlmVersion = ref(null);
     const socketRoom = ref(null);
+    const errorMessage = ref(null);
 
     let lastPrompt = '';
     let lastLlmMessageIndex = 0;
@@ -130,7 +137,7 @@ export default {
       formFilterToPatterns(props.sidebar.config?.patterns ?? {}, Object.values(PATTERNS_FIELDS))
     ));
     const changedPatternsFields = computed(() => (
-      getChangedPatternsFields(currentFormPatterns.value, lastLlmVersion.value)
+      getChangedPatternsFields(currentFormPatterns.value, versions.value[lastLlmVersion.value])
     ));
     const emptyCurrentFormPatterns = computed(() => isEmpty(currentFormPatterns.value));
     const emptyChat = computed(() => messages.value.length === 0);
@@ -163,7 +170,7 @@ export default {
         messageText = tc('llm.chat.patternsEditedMessage', changedPatternsFields.value.length, {
           patterns: changedPatternsFields.value.map(field => t(`pattern.patternsFields.${field}`)).join(', ').toLowerCase(),
         });
-      } else if (role === LLM_AI_CHAT_MESSAGE_ROLES.model) {
+      } else if (role === LLM_AI_CHAT_MESSAGE_ROLES.model || !isUndefined(originalVersion)) {
         lastLlmVersion.value = activeVersion.value;
         messageText = emptyCurrentFormPatterns.value ? t('llm.chat.patternCreatedMessage') : t('llm.chat.patternUpdatedMessage');
       }
@@ -185,41 +192,58 @@ export default {
       });
     };
 
+    const resetTextarea = () => {
+      textareaElement.value.prompt = lastPrompt;
+      lastPrompt = '';
+    };
+
     /**
      * Invoked when the `llmchat` room delivers a server message; extend to update `messages` or streaming state.
      * Payload shape follows `SocketRoom.call` (API-defined).
      */
-    const socketListener = async ({ error, ...patterns }) => {
-      await promisedTimeout(() => {}, 1000);
+    const socketListener = async ({ error, code, ...patterns }) => {
+      await promisedTimeout(() => {}, 5000);
 
       if (error) {
-        textareaElement.value.prompt = lastPrompt;
         thinking.value = false;
-        lastPrompt = '';
+        errorMessage.value = error;
 
-        console.error(error);
+        resetTextarea();
+
         return;
       }
 
       addPattern(patterns, LLM_AI_CHAT_MESSAGE_ROLES.model);
+      props.sidebar.config.setPatterns(patterns);
 
       thinking.value = false;
     };
 
-    const scrollChatBodyToBottom = () => {
-      nextTick(() => requestAnimationFrame(() => {
-        const el = bodyElement.value;
+    const scrollChatBodyToBottom = () => nextTick(() => requestAnimationFrame(() => {
+      const el = bodyElement.value;
 
-        if (!el) {
-          return;
-        }
+      if (!el) {
+        return;
+      }
 
-        el.scrollTop = el.scrollHeight;
-      }));
-    };
+      el.scrollTop = el.scrollHeight;
+    }));
 
     watch(messages, scrollChatBodyToBottom, { deep: true, flush: 'post' });
     watch(thinking, scrollChatBodyToBottom, { flush: 'post' });
+
+    const errorHandler = ({ message, error }) => {
+      const { room, code } = error ?? {};
+
+      if (room !== SOCKET_ROOMS.llmChat) {
+        return;
+      }
+
+      thinking.value = false;
+      errorMessage.value = code ? t(`llm.chat.errors.${code}`) : message;
+
+      resetTextarea();
+    };
 
     /**
      * Joins `SOCKET_ROOMS.llmChat` merging `socketRoomData` from the sidebar with `config: llm`.
@@ -234,14 +258,20 @@ export default {
         config: llm,
       };
 
-      socketRoom.value = socket.join(SOCKET_ROOMS.llmChat, joinData, true).addListener(socketListener);
+      socketRoom.value = socket
+        .on(Socket.EVENTS_TYPES.error, errorHandler)
+        .join(SOCKET_ROOMS.llmChat, joinData, true)
+        .addListener(socketListener);
     };
 
     /**
      * Leaves the LLM chat socket room and clears the cached `SocketRoom` reference (runs on unmount).
      */
     const leaveSocketRoom = () => {
-      socket.leave(SOCKET_ROOMS.llmChat).removeListener(socketListener);
+      socket
+        .off(Socket.EVENTS_TYPES.error, errorHandler)
+        .leave(SOCKET_ROOMS.llmChat)
+        .removeListener(socketListener);
 
       socketRoom.value = null;
     };
@@ -258,15 +288,23 @@ export default {
         joinSocketRoom(llm);
       }
 
+      errorMessage.value = null;
       lastPrompt = prompt;
       textareaElement.value.prompt = '';
       thinking.value = true;
 
-      socketRoom.value.send({
+      const data = {
         prompt,
-
         type: 'send',
-      });
+      };
+
+      if (!emptyCurrentFormPatterns.value) {
+        Object.entries(currentFormPatterns.value).forEach(([field, pattern]) => {
+          data[field] = pattern;
+        });
+      }
+
+      socketRoom.value.send(data);
 
       addMessage(prompt, LLM_AI_CHAT_MESSAGE_ROLES.user);
     };
@@ -290,7 +328,13 @@ export default {
       textareaElement.value.$refs.textareaElement?.focus?.();
     };
 
-    const restoreVersion = version => addPattern(versions.value[version], LLM_AI_CHAT_MESSAGE_ROLES.user, version);
+    const restoreVersion = (version) => {
+      const newPatterns = versions.value[version];
+
+      addPattern(newPatterns, LLM_AI_CHAT_MESSAGE_ROLES.user, version);
+
+      props.sidebar.config.setPatterns(newPatterns);
+    };
 
     watch(currentFormPatterns, (newPatterns) => {
       if (emptyChat.value) {
@@ -328,6 +372,11 @@ export default {
       addPattern(newPatterns);
     });
 
+    watch(
+      thinking,
+      newThinking => props.sidebar.config.setPending?.(newThinking, emptyCurrentFormPatterns.value, stop),
+    );
+
     onBeforeUnmount(leaveSocketRoom);
 
     return {
@@ -340,7 +389,7 @@ export default {
       thinkingMessage,
       socketRoom,
       emptyChat,
-
+      errorMessage,
       ask,
       stop,
       applySuggestion,

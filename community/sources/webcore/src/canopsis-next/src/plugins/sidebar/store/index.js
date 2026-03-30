@@ -1,6 +1,7 @@
 import Vue from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+import { SIDE_BARS_MINIMIZABLE_USER_FIELD } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 
@@ -28,13 +29,14 @@ export default {
       id,
       name,
       config = {},
+      minimized = false,
     }) {
       Vue.set(state.byId, id, {
         id,
         name,
         config,
+        minimized,
         hidden: false,
-        minimized: false,
       });
 
       state.allIds.push(id);
@@ -67,7 +69,7 @@ export default {
      * @param {Object} [config = {}]
      * @param {string} [id = uid()]
      */
-    show({ commit, state }, {
+    show({ commit, state, rootGetters }, {
       name,
       config = {},
       id = uid('sidebar'),
@@ -76,10 +78,18 @@ export default {
         return commit(types.MAXIMIZE, { id });
       }
 
+      const field = SIDE_BARS_MINIMIZABLE_USER_FIELD[name];
+      let minimized = false;
+
+      if (field) {
+        minimized = rootGetters['auth/currentUser']?.ui_tours?.[field] ?? false;
+      }
+
       return commit(types.SHOW, {
         id,
         name,
         config,
+        minimized,
       });
     },
 
@@ -112,32 +122,73 @@ export default {
      * @param {Function} commit
      * @param {string} id
      */
-    minimize({ commit }, { id } = {}) {
+    minimize({ commit, dispatch }, { id } = {}) {
       if (!id) {
         throw new Error('Missed required parameter');
       }
 
       commit(types.MINIMIZE, { id });
+
+      dispatch('setCurrentUserMinimized', { id, minimized: true });
     },
 
     /**
      * @param {Function} commit
      * @param {string} id
      */
-    maximize({ commit }, { id } = {}) {
+    maximize({ commit, dispatch }, { id } = {}) {
       if (!id) {
         throw new Error('Missed required parameter');
       }
 
       commit(types.MAXIMIZE, { id });
+
+      dispatch('setCurrentUserMinimized', { id, minimized: false });
     },
 
+    /**
+     * Shallow-merges `config` into the open sidebar’s `config` object (`UPDATE_CONFIG`).
+     *
+     * @param {Object} context
+     * @param {Function} context.commit
+     * @param {Object} [payload]
+     * @param {string} payload.id - Sidebar instance id.
+     * @param {Object} payload.config - Partial config merged into the existing entry.
+     */
     updateConfig({ commit }, { id, config } = {}) {
       if (!id) {
         throw new Error('Missed required parameter');
       }
 
       commit(types.UPDATE_CONFIG, { id, config });
+    },
+
+    /**
+     * Persists minimized / expanded state for minimizable sidebars on the current user
+     * (`user/updateCurrentUserTours` root action, field from `SIDE_BARS_MINIMIZABLE_USER_FIELD`).
+     * No-op if the sidebar id is unknown or the bar has no mapped user field.
+     *
+     * @param {Object} context
+     * @param {Object} context.getters
+     * @param {Function} context.dispatch
+     * @param {Object} [payload]
+     * @param {string} payload.id - Sidebar instance id.
+     * @param {boolean} payload.minimized - Whether the drawer is minimized.
+     */
+    async setCurrentUserMinimized({ getters, dispatch }, { id, minimized } = {}) {
+      if (!id) {
+        throw new Error('Missed required parameter');
+      }
+
+      const { name } = getters.sidebarsById[id] ?? {};
+
+      if (!name) {
+        return;
+      }
+
+      await dispatch('user/updateCurrentUserTours', {
+        data: { [SIDE_BARS_MINIMIZABLE_USER_FIELD[name]]: minimized },
+      }, { root: true });
     },
   },
 };

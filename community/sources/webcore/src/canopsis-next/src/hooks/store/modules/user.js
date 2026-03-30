@@ -30,6 +30,7 @@ const useUserStoreModule = () => useStoreModuleHooks('user');
  * @property {Function} createUser - Creates a new user
  * @property {Function} updateUser - Updates an existing user
  * @property {Function} updateCurrentUser - Updates the current user
+ * @property {Function} updateCurrentUserTours - Updates the current user tours
  * @property {Function} removeUser - Removes a user
  * @property {Function} createUserWithPopup - Creates a user with success popup
  * @property {Function} updateUserWithPopup - Updates a user with success popup
@@ -54,6 +55,7 @@ export const useUser = () => {
     createUser: 'create',
     updateUser: 'update',
     updateCurrentUser: 'updateCurrentUser',
+    updateCurrentUserTours: 'updateCurrentUserTours',
     removeUser: 'remove',
   });
 

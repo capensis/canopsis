@@ -1,11 +1,11 @@
 <template>
   <div ref="wrapperElement" class="c-patterns-field__wrapper">
-    <pattern-optimization-progress
+    <pattern-progress
       v-if="optimizationPending || optimizationFailedReason"
       :failed-reason="optimizationFailedReason"
-      @cancel:optimization="cancelOptimization"
-      @close:optimization="rejectAllSuggestions"
-      @try:optimization="tryOptimization"
+      @cancel="cancelOptimization"
+      @close="rejectAllSuggestions"
+      @try-again="tryOptimization"
     />
     <v-layout
       class="c-patterns-field"
@@ -202,7 +202,7 @@ import { usePatternCounters } from './hooks/pattern-counters';
 import { usePatternOptimization } from './hooks/pattern-optimization';
 import PatternCountMessage from './pattern-count-message.vue';
 import PatternTryOptimization from './pattern-try-optimization.vue';
-import PatternOptimizationProgress from './pattern-optimization-progress.vue';
+import PatternProgress from './pattern-progress.vue';
 import PatternFieldSuggestionsWrapper from './pattern-field-suggestions-wrapper.vue';
 
 /**
@@ -219,7 +219,7 @@ export default {
   components: {
     PatternCountMessage,
     PatternTryOptimization,
-    PatternOptimizationProgress,
+    PatternProgress,
     PatternFieldSuggestionsWrapper,
   },
   model: {
@@ -282,6 +282,10 @@ export default {
     name: {
       type: String,
       default: '',
+    },
+    pending: {
+      type: Boolean,
+      default: false,
     },
     readonly: {
       type: Boolean,

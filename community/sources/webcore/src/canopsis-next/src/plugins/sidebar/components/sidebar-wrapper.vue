@@ -129,8 +129,15 @@ export default {
      */
     const closeHandler = () => closeCondition() && sidebar.hide({ id: props.sidebar.id });
 
+    /**
+     * Collapses this drawer to the minimized strip (narrow header beside the viewport) when
+     * `sidebar.config.minimizable` is enabled; dispatches the sidebar plugin `minimize` action.
+     */
     const minimize = () => sidebar.minimize({ id: props.sidebar.id });
 
+    /**
+     * Expands this drawer from the minimized state back to full width; dispatches the sidebar plugin `maximize` action.
+     */
     const maximize = () => sidebar.maximize({ id: props.sidebar.id });
 
     const drawerStyle = computed(() => ({

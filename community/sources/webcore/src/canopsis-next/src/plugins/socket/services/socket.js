@@ -457,7 +457,7 @@ class Socket {
         break;
       case RESPONSE_MESSAGES_TYPES.error:
         this.connection.dispatchEvent(
-          new ErrorEvent('error', { message: error }),
+          new ErrorEvent('error', { message: error, error: { code: error, room } }),
         );
         break;
       case RESPONSE_MESSAGES_TYPES.close:

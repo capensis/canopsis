@@ -29,6 +29,17 @@ export const LLM_AI_CHAT_MESSAGE_ROLES = {
   model: 'model',
 };
 
+export const LLM_AI_CHAT_ERROR_CODES = {
+  gone: 410, // Currently is unavailable -> fetch -> if no models -> No AI models
+  tooManyRequests: 429, // Your exceeded your current quota { payload.retry_at }
+  timeout: 504, // Request timeout
+};
+
+export const LLM_AI_CHAT_TOURS = {
+  sidebarMinimized: 'ai_chat_minimized',
+  hiddenWarningAlert: 'ai_chat_hidden_warning_alert',
+};
+
 export const LLM_SOCKET_CONTEXTS = {
   idleRule: 'idle_rule',
   scenario: 'scenario',
