@@ -3,6 +3,9 @@
     :class="{ 'ai-chat-textarea--empty-chat': emptyChat }"
     class="ai-chat-textarea"
   >
+    <c-alert :value="!!errorMessage" type="error">
+      <span>{{ errorMessage }}</span>
+    </c-alert>
     <v-textarea
       v-model="prompt"
       ref="textareaElement"
@@ -70,6 +73,10 @@ export default {
     emptyChat: {
       type: Boolean,
       default: false,
+    },
+    errorMessage: {
+      type: String,
+      default: '',
     },
   },
   setup(props, { emit }) {

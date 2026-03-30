@@ -5,11 +5,19 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <patterns-form
-          v-model="form"
-          v-bind="patternsProps"
-          autofocus
-        />
+        <div class="position-relative">
+          <pattern-progress
+            v-if="chatPending"
+            :in-progress-text="chatPendingTexts.inProgress"
+            :cancel-button-label="chatPendingTexts.cancel"
+            @cancel="chatCancelPending"
+          />
+          <patterns-form
+            v-model="form"
+            v-bind="patternsProps"
+            autofocus
+          />
+        </div>
       </template>
       <template #actions="">
         <v-btn
@@ -20,7 +28,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="isDisabled || chatPending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -46,6 +54,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 
+import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
 import PatternsForm from '@/components/forms/patterns-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -56,7 +65,7 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: { PatternsForm, ModalWrapper },
+  components: { PatternsForm, ModalWrapper, PatternProgress },
   props: {
     modal: {
       type: Object,
@@ -86,7 +95,11 @@ export default {
 
     const patternsProps = computed(() => omit(config.value, ['title', 'action']));
 
-    useAiChatForm({
+    const {
+      pending: chatPending,
+      pendingTexts: chatPendingTexts,
+      cancelPending: chatCancelPending,
+    } = useAiChatForm({
       form,
       modalId: props.modal.id,
       ruleId: props.modal.config?.filter?._id,
@@ -101,6 +114,9 @@ export default {
       submitting,
       close,
       submit,
+      chatPending,
+      chatPendingTexts,
+      chatCancelPending,
     };
   },
 };

@@ -87,5 +87,10 @@ export default {
       version: 'Version {version}',
       versionRestored: 'Version {version} restored',
     },
+    warningAlert: '<div>Please be aware that:</div>'
+      + '<ul>'
+      + '<li>AI-generated output <strong>may contain errors</strong> — always review and validate patterns before use.</li>'
+      + '<li>This chat session is <strong>temporary</strong> and will be <strong>cleared</strong> when the modal is closed.</li>'
+      + '</ul>',
   },
 };

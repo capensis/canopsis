@@ -1,4 +1,11 @@
-import { watch, unref, onMounted, onBeforeUnmount } from 'vue';
+import {
+  computed,
+  watch,
+  ref,
+  unref,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 import { throttle } from 'lodash';
 
 import { SIDE_BARS, LLM_AI_CHAT_WIDTH, PATTERNS_FIELDS } from '@/constants';
@@ -6,6 +13,7 @@ import { SIDE_BARS, LLM_AI_CHAT_WIDTH, PATTERNS_FIELDS } from '@/constants';
 import { patternToForm } from '@/helpers/entities/pattern/form';
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
+import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSidebar } from '@/hooks/sidebar';
 
@@ -28,8 +36,21 @@ export const useAiChatForm = ({
   context,
   field,
 }) => {
+  const { t } = useI18n();
   const modals = useModals();
   const sidebar = useSidebar();
+
+  const pending = ref(false);
+  const creation = ref(false);
+  const cancelPending = ref(null);
+
+  const pendingTexts = computed(() => (creation.value ? {
+    inProgress: t('pattern.patternsCreationInProgress'),
+    cancel: t('pattern.cancelPatternsCreation'),
+  } : {
+    inProgress: t('pattern.patternsUpdateInProgress'),
+    cancel: t('pattern.cancelPatternsUpdate'),
+  }));
 
   const throttledUpdateSidebarConfig = throttle(() => {
     const unwrappedForm = unref(form);
@@ -80,6 +101,11 @@ export const useAiChatForm = ({
           ...(unref(field) ? patternToForm(newPatterns) : filterPatternsToForm(newPatterns)),
         };
       },
+      setPending: (newPending, newCreation = null, newCancelPending = null) => {
+        pending.value = newPending;
+        creation.value = newCreation;
+        cancelPending.value = newCancelPending;
+      },
       socketRoomData: {
         context: unref(context),
         rule_id: unref(ruleId),
@@ -98,4 +124,10 @@ export const useAiChatForm = ({
   });
 
   onBeforeUnmount(hideSidebar);
+
+  return {
+    pending,
+    pendingTexts,
+    cancelPending,
+  };
 };

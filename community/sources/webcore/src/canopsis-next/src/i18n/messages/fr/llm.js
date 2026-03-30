@@ -87,5 +87,10 @@ export default {
       version: 'Version {version}',
       versionRestored: 'Version {version} restaurée',
     },
+    warningAlert: '<div>Veuillez noter que :</div>'
+      + '<ul>'
+      + '<li>Les résultats générés par l\'IA <strong>peuvent contenir des erreurs</strong> — vérifiez et validez toujours les modèles avant utilisation.</li>'
+      + '<li>Cette conversation est <strong>temporaire</strong> et sera <strong>effacée</strong> à la fermeture de la fenêtre modale.</li>'
+      + '</ul>',
   },
 };

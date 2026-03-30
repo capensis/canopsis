@@ -26,6 +26,8 @@ const types = {
 
   FETCH_USER: 'FETCH_USER',
   FETCH_USER_COMPLETED: 'FETCH_USER_COMPLETED',
+
+  SET_TOURS: 'SET_TOURS',
 };
 
 export default {
@@ -57,6 +59,9 @@ export default {
     [types.FETCH_USER_COMPLETED](state, currentUser) {
       state.currentUser = currentUser;
       state.pending = false;
+    },
+    [types.SET_TOURS](state, tours) {
+      state.currentUser.ui_tours = tours;
     },
   },
   actions: {

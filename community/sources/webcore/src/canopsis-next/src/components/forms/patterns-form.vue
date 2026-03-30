@@ -20,6 +20,7 @@
       :entity-attributes="entityAttributes"
       :entity-types="entityTypes"
       :entity-counters-type="entityCountersType"
+
       class="mt-2"
       some-required
     />
