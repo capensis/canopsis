@@ -251,6 +251,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   snooze: 'snooze',
   declareTicket: 'declareTicket',
   associateTicket: 'associateTicket',
+  removeAssociatedTicket: 'removeAssociatedTicket',
   changeState: 'changeState',
   variablesHelp: 'variablesHelp',
   history: 'history',
@@ -295,6 +296,7 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
   [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm',
   [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'note_add',
   [ALARM_LIST_ACTIONS_TYPES.associateTicket]: 'sticky_note_2',
+  [ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket]: '$vuetify.icons.remove_note',
   [ALARM_LIST_ACTIONS_TYPES.changeState]: 'thumbs_up_down',
   [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: 'help',
   [ALARM_LIST_ACTIONS_TYPES.history]: 'history',
@@ -320,6 +322,7 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
 
 export const ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP = {
   [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: ALARM_LIST_ACTIONS_TYPES.addBookmark,
+  [ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket]: ALARM_LIST_ACTIONS_TYPES.associateTicket,
   [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove]: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
 };
 
@@ -411,6 +414,7 @@ export const ALARM_LIST_STEPS = {
   pbhleave: 'pbhleave',
 
   assocTicket: 'assocticket',
+  ticketRemove: 'ticketremove',
 
   webhookStart: 'webhookstart',
   webhookInProgress: 'webhookinprogress',
@@ -450,6 +454,7 @@ export const ALARM_STEPS_ICONS = {
   [ALARM_LIST_STEPS.ack]: 'check',
   [ALARM_LIST_STEPS.ackRemove]: 'remove_done',
   [ALARM_LIST_STEPS.assocTicket]: 'sticky_note_2',
+  [ALARM_LIST_STEPS.ticketRemove]: '$vuetify.icons.remove_note',
   [ALARM_LIST_STEPS.changeState]: 'warining',
   [ALARM_LIST_STEPS.declareTicket]: 'note_add',
   [ALARM_LIST_STEPS.declareTicketFail]: 'note_add',
@@ -525,6 +530,7 @@ export const ALARM_STEPS_WITH_AUTHOR_IN_TITLE = [
   ALARM_LIST_STEPS.pbhenter,
   ALARM_LIST_STEPS.pbhleave,
   ALARM_LIST_STEPS.assocTicket,
+  ALARM_LIST_STEPS.ticketRemove,
   ALARM_LIST_STEPS.webhookStart,
   ALARM_LIST_STEPS.webhookComplete,
   ALARM_LIST_STEPS.webhookFail,
@@ -553,6 +559,10 @@ export const ALARM_STEPS_WITH_CONDITION_FOR_AUTHOR_IN_TITLE = [
   ALARM_LIST_STEPS.webhookComplete,
   ALARM_LIST_STEPS.webhookFail,
 ];
+
+export const ALARM_STEPS_TYPES = {
+  comment: 'comment',
+};
 
 export const ALARM_UNKNOWN_VALUE = {
   color: COLORS.status.unknown,
