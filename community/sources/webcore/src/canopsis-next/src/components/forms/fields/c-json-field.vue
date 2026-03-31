@@ -79,6 +79,7 @@
       >
         {{ $t('common.reset') }}
       </v-btn>
+      <slot :json-string="localValue" name="append" />
     </v-flex>
   </v-layout>
 </template>

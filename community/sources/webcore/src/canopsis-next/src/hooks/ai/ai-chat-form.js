@@ -16,6 +16,7 @@ import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSidebar } from '@/hooks/sidebar';
+import { useValidator } from '@/hooks/validator/validator';
 
 const THROTTLE_WAIT_MS = 1000;
 
@@ -39,6 +40,7 @@ export const useAiChatForm = ({
   const { t } = useI18n();
   const modals = useModals();
   const sidebar = useSidebar();
+  const validator = useValidator();
 
   const pending = ref(false);
   const creation = ref(false);
@@ -100,6 +102,8 @@ export const useAiChatForm = ({
           ...formRef.value,
           ...(unref(field) ? patternToForm(newPatterns) : filterPatternsToForm(newPatterns)),
         };
+
+        Object.keys(newPatterns).forEach(patternField => validator.errors.clear(`${patternField}.json`));
       },
       setPending: (newPending, newCreation = null, newCancelPending = null) => {
         pending.value = newPending;

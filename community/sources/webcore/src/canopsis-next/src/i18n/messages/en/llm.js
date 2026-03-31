@@ -1,4 +1,4 @@
-import { LLM_AI_CHAT_SUGGESTION_TYPES, LLM_THINKING_LEVELS } from '@/constants';
+import { LLM_AI_CHAT_ERROR_CODES, LLM_AI_CHAT_SUGGESTION_TYPES, LLM_THINKING_LEVELS } from '@/constants';
 
 export default {
   expandTabs: {
@@ -92,5 +92,19 @@ export default {
       + '<li>AI-generated output <strong>may contain errors</strong> — always review and validate patterns before use.</li>'
       + '<li>This chat session is <strong>temporary</strong> and will be <strong>cleared</strong> when the modal is closed.</li>'
       + '</ul>',
+    errors: {
+      [LLM_AI_CHAT_ERROR_CODES.gone]:
+        'Selected AI model is currently unavailable.<br />'
+        + '<strong>Please contact your administrator. You can restart the chat with another model (the history will be lost).</strong>',
+      [LLM_AI_CHAT_ERROR_CODES.tooManyRequests]:
+        'You exceeded your current quota.<br />'
+        + '<strong>Please try again at {retryAt} or restart the chat with another model (the history will be lost).</strong>',
+      [LLM_AI_CHAT_ERROR_CODES.internalError]:
+        'Something went wrong.<br />'
+        + '<strong>Please contact your administrator</strong>',
+      [LLM_AI_CHAT_ERROR_CODES.timeout]:
+        'Request timed out.<br />'
+        + '<strong>Please try again later.</strong>',
+    },
   },
 };

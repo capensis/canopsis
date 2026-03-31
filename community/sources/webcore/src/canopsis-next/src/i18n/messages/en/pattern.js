@@ -9,6 +9,7 @@ export default {
   removeRule: 'Remove rule',
   advancedEditor: 'Advanced editor',
   simpleEditor: 'Simple editor',
+  fixJsonWithAi: 'Fix JSON with AI',
   noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
   noDataDisabled: 'No pattern set.',
   alarmsCount: 'Found: <strong>{alarmsCount} alarms</strong>',

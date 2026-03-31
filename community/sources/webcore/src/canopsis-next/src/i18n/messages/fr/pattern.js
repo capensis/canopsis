@@ -9,6 +9,7 @@ export default {
   removeRule: 'Supprimer la règle',
   advancedEditor: 'Éditeur avancé',
   simpleEditor: 'Éditeur simple',
+  fixJsonWithAi: 'Corriger le JSON avec l\'IA',
   noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
   noDataDisabled: 'Aucun modèle.',
   alarmsCount: '{alarmsCount} alarmes trouvées',
