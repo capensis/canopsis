@@ -8,6 +8,7 @@ import (
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"github.com/rs/zerolog"
 	"gopkg.in/yaml.v3"
 )
 
@@ -27,13 +28,43 @@ const configPath = "/api/security/config.yml"
 // Config providers which auth methods must be used.
 type Config struct {
 	Security struct {
-		AuthProviders []string     `yaml:"auth_providers"`
-		Basic         BasicConfig  `yaml:"basic"`
-		Ldap          LdapConfig   `yaml:"ldap"`
-		Cas           CasConfig    `yaml:"cas"`
-		Saml          SamlConfig   `yaml:"saml"`
-		OAuth2        OAuth2Config `yaml:"oauth2"`
+		AuthProviders []string       `yaml:"auth_providers"`
+		Basic         BasicConfig    `yaml:"basic"`
+		Ldap          LdapConfig     `yaml:"ldap"`
+		Cas           CasConfig      `yaml:"cas"`
+		Saml          SamlConfig     `yaml:"saml"`
+		OAuth2        OAuth2Config   `yaml:"oauth2"`
+		Extra         map[string]any `yaml:",inline"`
 	} `yaml:"security"`
+	Extra map[string]any `yaml:",inline"`
+}
+
+func (c *Config) getExtraFields() []string {
+	prefix := "security."
+
+	fields := make([]string, 0)
+
+	appendKeys := func(m map[string]any, p string) {
+		for k := range m {
+			fields = append(fields, p+k)
+		}
+	}
+
+	appendKeys(c.Extra, "")
+	appendKeys(c.Security.Extra, prefix)
+	appendKeys(c.Security.Basic.Extra, prefix+"basic.")
+	appendKeys(c.Security.Ldap.Extra, prefix+"ldap.")
+	appendKeys(c.Security.Cas.Extra, prefix+"cas.")
+	appendKeys(c.Security.Saml.Extra, prefix+"saml.")
+	appendKeys(c.Security.OAuth2.Extra, prefix+"oauth2.")
+
+	for name, provider := range c.Security.OAuth2.Providers {
+		appendKeys(provider.Extra, prefix+"oauth2.providers."+name+".")
+	}
+
+	slices.Sort(fields)
+
+	return fields
 }
 
 func (c *Config) GetIdpFieldsExtraRolesAllowed(source string) ([]string, bool, bool) {
@@ -82,8 +113,9 @@ func (c *Config) GetIdpFieldsExtraRolesAllowed(source string) ([]string, bool, b
 }
 
 type BasicConfig struct {
-	InactivityInterval string `yaml:"inactivity_interval"`
-	ExpirationInterval string `yaml:"expiration_interval"`
+	InactivityInterval string         `yaml:"inactivity_interval"`
+	ExpirationInterval string         `yaml:"expiration_interval"`
+	Extra              map[string]any `yaml:",inline"`
 }
 
 type LdapConfig struct {
@@ -100,16 +132,18 @@ type LdapConfig struct {
 	InsecureSkipVerify bool              `yaml:"insecure_skip_verify"`
 	MinTLSVersion      string            `yaml:"min_tls_ver"`
 	MaxTLSVersion      string            `yaml:"max_tls_ver"`
+	Extra              map[string]any    `yaml:",inline"`
 }
 
 type CasConfig struct {
-	InactivityInterval string `yaml:"inactivity_interval"`
-	ExpirationInterval string `yaml:"expiration_interval"`
-	Title              string `yaml:"title"`
-	LoginUrl           string `yaml:"login_url"`
-	ValidateUrl        string `yaml:"validate_url"`
-	DefaultRole        string `yaml:"default_role"`
-	InsecureSkipVerify bool   `yaml:"insecure_skip_verify"`
+	InactivityInterval string         `yaml:"inactivity_interval"`
+	ExpirationInterval string         `yaml:"expiration_interval"`
+	Title              string         `yaml:"title"`
+	LoginUrl           string         `yaml:"login_url"`
+	ValidateUrl        string         `yaml:"validate_url"`
+	DefaultRole        string         `yaml:"default_role"`
+	InsecureSkipVerify bool           `yaml:"insecure_skip_verify"`
+	Extra              map[string]any `yaml:",inline"`
 }
 
 type SamlConfig struct {
@@ -132,10 +166,12 @@ type SamlConfig struct {
 	ACSIndex                *int              `yaml:"acs_index"`
 	AutoUserRegistration    bool              `yaml:"auto_user_registration"`
 	AllowExtraRoles         bool              `yaml:"allow_extra_roles"`
+	Extra                   map[string]any    `yaml:",inline"`
 }
 
 type OAuth2Config struct {
 	Providers map[string]OAuth2ProviderConfig `yaml:"providers"`
+	Extra     map[string]any                  `yaml:",inline"`
 }
 
 type OAuth2ProviderConfig struct {
@@ -156,10 +192,11 @@ type OAuth2ProviderConfig struct {
 	OpenID             bool              `yaml:"open_id"`
 	PKCE               bool              `yaml:"pkce"`
 	InsecureSkipVerify bool              `yaml:"insecure_skip_verify"`
+	Extra              map[string]any    `yaml:",inline"`
 }
 
 // LoadConfig creates Config by config file.
-func LoadConfig(configDir string) (Config, error) {
+func LoadConfig(configDir string, logger zerolog.Logger) (Config, error) {
 	buf, err := os.ReadFile(filepath.Join(configDir, configPath))
 	if err != nil {
 		return Config{}, err
@@ -171,7 +208,7 @@ func LoadConfig(configDir string) (Config, error) {
 		return Config{}, err
 	}
 
-	err = validateConfig(config)
+	err = validateConfig(config, logger)
 	if err != nil {
 		return Config{}, err
 	}
@@ -231,7 +268,20 @@ func validateOAuth2Config(config OAuth2ProviderConfig) error {
 	return nil
 }
 
-func validateConfig(config Config) error {
+func validateConfig(config Config, logger zerolog.Logger) error {
+	extraFields := config.getExtraFields()
+	if len(extraFields) > 0 {
+		logger.Warn().Strs("extra_fields", extraFields).Msg("security config file contains unknown or misformatted fields")
+	}
+
+	if len(config.Security.AuthProviders) == 0 {
+		return errors.New("security.auth_providers is empty")
+	}
+
+	if len(config.Security.AuthProviders) == 1 && config.Security.AuthProviders[0] == AuthMethodApiKey {
+		logger.Warn().Msg("security.auth_providers is set to apikey only, the UI login will be disabled")
+	}
+
 	for _, name := range config.Security.AuthProviders {
 		switch name {
 		case AuthMethodApiKey:
@@ -300,6 +350,10 @@ func validateConfig(config Config) error {
 				}
 			}
 		case AuthMethodOAuth2:
+			if len(config.Security.OAuth2.Providers) == 0 {
+				logger.Warn().Msg("oauth2 auth provider is enabled but providers list is empty or misformatted")
+			}
+
 			for provider, cfg := range config.Security.OAuth2.Providers {
 				if err := validateOAuth2Config(cfg); err != nil {
 					return fmt.Errorf("invalid %s provider config: %w", provider, err)
