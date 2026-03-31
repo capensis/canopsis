@@ -4,6 +4,10 @@ package metrics
 
 import "context"
 
+type metaUpdaterContextKey string
+
+const updateRunIDContextKey metaUpdaterContextKey = "update_run_id"
+
 type AsyncMetaUpdater interface {
 	MetaUpdater
 	Run(ctx context.Context)
@@ -16,6 +20,24 @@ type MetaUpdater interface {
 }
 
 type nullMetaUpdater struct{}
+
+func ContextWithUpdateRunID(ctx context.Context, runID string) context.Context {
+	if runID == "" {
+		return ctx
+	}
+
+	return context.WithValue(ctx, updateRunIDContextKey, runID)
+}
+
+func UpdateRunIDFromContext(ctx context.Context) string {
+	if ctx == nil {
+		return ""
+	}
+
+	runID, _ := ctx.Value(updateRunIDContextKey).(string)
+
+	return runID
+}
 
 func NewNullMetaUpdater() MetaUpdater {
 	return &nullMetaUpdater{}
