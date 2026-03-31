@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -76,6 +77,7 @@ type store struct {
 	whTplVars                 []template.VarResponse
 	firstWhTplVars            []template.VarResponse
 	ticketTplVars             []template.VarResponse
+	ticketStatusTplVars       []template.VarResponse
 
 	dupErrorParser validation.DuplicateErrorParser
 }
@@ -114,6 +116,10 @@ func NewStore(
 		{Name: "headerField", Value: "{{ index .Header \"%field_name%\" }}"},
 		{Name: "responseField", Value: "{{ index .Response \"%field_name%\" }}"},
 		{Name: "responseFieldFromStep", Value: "{{ index .ResponseMap \"%N%.%field_name%\" }}"},
+	}
+	ticketStatusTplVars := []template.VarResponse{
+		{Name: "headerField", Value: "{{ index .Header \"%field_name%\" }}"},
+		{Name: "responseField", Value: "{{ index .Response \"%field_name%\" }}"},
 	}
 	firstWhTplVars := make([]template.VarResponse, len(outputTplVars), len(outputTplVars)+2)
 	copy(firstWhTplVars, outputTplVars)
@@ -159,6 +165,7 @@ func NewStore(
 		firstWhTplVars:            firstWhTplVars,
 		whTplVars:                 whTplVars,
 		ticketTplVars:             ticketTplVars,
+		ticketStatusTplVars:       ticketStatusTplVars,
 		dupErrorParser:            validation.NewDuplicateErrorParser(),
 	}
 }
@@ -343,7 +350,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 }
 
 func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[string]template.ValidateResponse, error) {
-	event, alarm, whTestData, err := s.getTplData(ctx, r)
+	event, alarm, whTestData, tsTestData, err := s.getTplData(ctx, r)
 	if err != nil {
 		return nil, err
 	}
@@ -360,7 +367,7 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 		RuleName:  r.Rule.Name,
 	}
 
-	return s.validateActionTpls(r, *event, *alarm, additionalData, whTestData)
+	return s.validateActionTpls(r, *event, *alarm, additionalData, whTestData, tsTestData)
 }
 
 func (s *store) GetTemplateVars(ctx context.Context) (TemplateVarsResponse, error) {
@@ -405,6 +412,7 @@ func (s *store) GetTemplateVars(ctx context.Context) (TemplateVarsResponse, erro
 		FirstWebhook: firstWebhookTplVars,
 		Webhook:      webhookTplVars,
 		Ticket:       template.AddEnvVars(s.ticketTplVars, s.tplConfigProvider),
+		TicketStatus: template.AddEnvVars(s.ticketStatusTplVars, s.tplConfigProvider),
 	}, nil
 }
 
@@ -504,9 +512,17 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r EditRequest
 	return actions, aliasPropIDs, err
 }
 
-func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event, *webhook.TplAlarm, map[int]template.ResponseTestData, error) {
+func (s *store) getTplData(ctx context.Context, r TemplateRequest) (
+	*types.Event,
+	*webhook.TplAlarm,
+	map[int]template.ResponseTestData,
+	map[int]template.ResponseTestData,
+	error,
+) {
 	eventDataID := r.TestData.Event
 	whTestDataIDs := r.TestData.Responses
+	tsTestDataIDs := r.TestData.TicketStatusResponses
+
 	if r.TestData.Test != "" {
 		test := template.TestModel{}
 		err := s.tplTestCollection.
@@ -514,10 +530,10 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 			Decode(&test)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, nil, nil, validation.NewSingleError("not_exist", "Test", "TestData.Test", r)
+				return nil, nil, nil, nil, validation.NewSingleError("not_exist", "Test", "TestData.Test", r)
 			}
 
-			return nil, nil, nil, err
+			return nil, nil, nil, nil, err
 		}
 
 		if eventDataID == "" {
@@ -527,19 +543,23 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 		if whTestDataIDs == nil {
 			whTestDataIDs = test.Data.Responses
 		}
+
+		if tsTestDataIDs == nil {
+			tsTestDataIDs = test.Data.TicketStatusResponses
+		}
 	}
 
 	if eventDataID == "" {
-		return nil, nil, nil, validation.NewSingleError("required", "Event", "TestData.Event", r)
+		return nil, nil, nil, nil, validation.NewSingleError("required", "Event", "TestData.Event", r)
 	}
 
 	event, err := template.GetEventData(ctx, s.tplDataCollection, eventDataID, s.encoder, s.decoder)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 
 	if event == nil {
-		return nil, nil, nil, validation.NewSingleError("not_exist", "Event", "TestData.Event", r)
+		return nil, nil, nil, nil, validation.NewSingleError("not_exist", "Event", "TestData.Event", r)
 	}
 
 	var whTestData map[int]template.ResponseTestData
@@ -547,34 +567,52 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 		if len(whTestDataIDs) > len(r.Rule.Actions) {
 			iStr := strconv.Itoa(len(r.Rule.Actions))
 
-			return nil, nil, nil, validation.NewSingleError("must_be_empty", iStr, "TestData.Responses."+iStr, r)
+			return nil, nil, nil, nil, validation.NewSingleError("must_be_empty", iStr, "TestData.Responses."+iStr, r)
 		}
 
 		whTestData, err = template.GetResponseData(ctx, s.tplDataCollection, whTestDataIDs)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, nil, nil, err
 		}
 
 		if len(whTestData) == 0 {
-			return nil, nil, nil, validation.NewSingleError("not_exist", "Responses", "TestData.Responses", r)
+			return nil, nil, nil, nil, validation.NewSingleError("not_exist", "Responses", "TestData.Responses", r)
+		}
+	}
+
+	var tsTestData map[int]template.ResponseTestData
+	if len(tsTestDataIDs) > 0 {
+		if len(tsTestDataIDs) > len(r.Rule.Actions) {
+			idxStr := strconv.Itoa(len(r.Rule.Actions))
+
+			return nil, nil, nil, nil, validation.NewSingleError("must_be_empty", idxStr, "TestData.TicketStatusResponses."+idxStr, r)
+		}
+
+		tsTestData, err = template.GetResponseData(ctx, s.tplDataCollection, tsTestDataIDs)
+		if err != nil {
+			return nil, nil, nil, nil, err
+		}
+
+		if len(tsTestData) == 0 {
+			return nil, nil, nil, nil, validation.NewSingleError("not_exist", "TicketStatusResponses", "TestData.TicketStatusResponses", r)
 		}
 	}
 
 	entityID := event.GetEID()
 	if entityID == "" {
-		return nil, nil, nil, validation.NewSingleError("entity_not_exist", "Event", "TestData.Event", r)
+		return nil, nil, nil, nil, validation.NewSingleError("entity_not_exist", "Event", "TestData.Event", r)
 	}
 
 	alarm, err := s.findAlarm(ctx, entityID)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 
 	if alarm.ID == "" {
-		return nil, nil, nil, validation.NewSingleError("alarm_not_exist", "Event", "TestData.Event", r)
+		return nil, nil, nil, nil, validation.NewSingleError("alarm_not_exist", "Event", "TestData.Event", r)
 	}
 
-	return event, &alarm, whTestData, nil
+	return event, &alarm, whTestData, tsTestData, nil
 }
 
 // findAlarm fetches alarm with meta-alarm children and related entities.
@@ -620,6 +658,7 @@ func (s *store) validateActionTpls(
 	alarm webhook.TplAlarm,
 	additionalData types.AdditionalData,
 	whTestData map[int]template.ResponseTestData,
+	tsTestData map[int]template.ResponseTestData,
 ) (map[string]template.ValidateResponse, error) {
 	response := make(map[string]template.ValidateResponse)
 	whResponse := make(map[string]any)
@@ -650,6 +689,11 @@ func (s *store) validateActionTpls(
 				ResponseMap: whResponseMap,
 			}
 			whTplData := webhook.NewTplData(false, []webhook.TplAlarm{alarm}, additionalData, whResponseTplVars)
+
+			if a.Parameters.Request == nil {
+				return nil, validation.NewSingleError("required", "Request", "Rule.Actions."+strconv.Itoa(i)+".Parameters.Request", r)
+			}
+
 			response[prefix+".request.url"], err = template.Validate(s.tplValidator, a.Parameters.Request.URL, whTplData)
 			if err != nil {
 				return nil, err
@@ -706,6 +750,62 @@ func (s *store) validateActionTpls(
 					response[prefix+".declare_ticket.ticket_url_tpl"], err = template.Validate(s.tplValidator, a.Parameters.DeclareTicket.TicketURLTpl, ticketTplData)
 					if err != nil {
 						return nil, err
+					}
+				}
+
+				if a.Parameters.DeclareTicket.TemplateCheckTicketStatus != nil {
+					maps.Copy(whTplData, ticketTplData)
+
+					prefix = prefix + ".declare_ticket.check_ticket_status"
+
+					response[prefix+".request.url"], err = template.Validate(s.tplValidator, a.Parameters.DeclareTicket.TemplateCheckTicketStatus.Request.URL, whTplData)
+					if err != nil {
+						return nil, err
+					}
+
+					response[prefix+".request.payload"], err = template.Validate(s.tplValidator, a.Parameters.DeclareTicket.TemplateCheckTicketStatus.Request.Payload, whTplData)
+					if err != nil {
+						return nil, err
+					}
+
+					for k, v := range a.Parameters.DeclareTicket.TemplateCheckTicketStatus.Request.Headers {
+						response[prefix+".request.headers."+k], err = template.Validate(s.tplValidator, v, whTplData)
+						if err != nil {
+							return nil, err
+						}
+					}
+
+					if a.Parameters.DeclareTicket.TemplateCheckTicketStatus.TicketStatusTpl != "" {
+						tsResponse := make(map[string]any)
+						var tsHeader map[string]string
+
+						if td, ok := tsTestData[i]; ok {
+							b, err := s.encoder.Encode(td.Body)
+							if err != nil {
+								return nil, validation.NewSingleError("not_json", iStr, "TestData.TicketStatusResponses."+iStr, r)
+							}
+
+							flatten, _, err := http.FlattenJSON(b)
+							if err != nil {
+								return nil, validation.NewSingleError("not_json", iStr, "TestData.TicketStatusResponses."+iStr, r)
+							}
+
+							tsHeader = td.Headers
+							for k, v := range flatten {
+								tsResponse[k] = v
+							}
+						} else {
+							return nil, validation.NewSingleError("required", iStr, "TestData.TicketStatusResponses."+iStr, r)
+						}
+
+						response[prefix+".ticket_status_tpl"], err = template.Validate(s.tplValidator,
+							a.Parameters.DeclareTicket.TemplateCheckTicketStatus.TicketStatusTpl, map[string]any{
+								"Response": tsResponse,
+								"Header":   tsHeader,
+							})
+						if err != nil {
+							return nil, err
+						}
 					}
 				}
 			}

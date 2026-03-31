@@ -215,7 +215,8 @@ type TemplateRequest struct {
 		Test  string `json:"test"`
 		Event string `json:"event"`
 		// TestData.Responses keys correspond with Rule.Actions keys
-		Responses map[int]string `json:"responses"`
+		Responses             map[int]string `json:"responses"`
+		TicketStatusResponses map[int]string `json:"ticket_status_responses"`
 	} `json:"testdata"`
 }
 
@@ -244,4 +245,5 @@ type TemplateVarsResponse struct {
 	FirstWebhook []template.VarResponse `json:"first_webhook"`
 	Webhook      []template.VarResponse `json:"webhook"`
 	Ticket       []template.VarResponse `json:"ticket"`
+	TicketStatus []template.VarResponse `json:"ticket_status"`
 }
