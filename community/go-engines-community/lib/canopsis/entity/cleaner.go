@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 )
@@ -223,36 +224,101 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) (datastorage.CleanR
 
 		return datastorage.CleanResult{Archived: archived}, nil
 	case CleanTaskTypeArchiveUnlinked:
-		totalArchived, err := arch.ArchiveUnlinkedResources(ctx, task.ArchiveBefore, limit)
+		runID := utils.NewID()
+		taskLogger := w.logger.With().
+			Str("task_type", "archive_unlinked").
+			Str("run_id", runID).
+			Str("user", task.UserID).
+			Logger()
+
+		taskLogger.Info().
+			Str("archive_before", task.ArchiveBefore.String()).
+			Msg("archive_unlinked started")
+
+		archivedEntityIDs := make([]string, 0, canopsis.DefaultBulkSize)
+		taskStarted := time.Now()
+		archivedIDs, totalArchived, err := arch.ArchiveUnlinkedResources(ctx, task.ArchiveBefore, limit)
+		resourcesDuration := time.Since(taskStarted)
 		if err != nil {
+			taskLogger.Err(err).
+				Dur("resources_archive_duration", resourcesDuration).
+				Msg("failed to archive unlinked resources")
 			return datastorage.CleanResult{}, fmt.Errorf("failed to archive unlinked resources: %w", err)
 		}
+		archivedEntityIDs = append(archivedEntityIDs, archivedIDs...)
+		taskLogger.Info().
+			Int64("archived_resources", totalArchived).
+			Dur("resources_archive_duration", resourcesDuration).
+			Msg("archive_unlinked resources archived")
 
-		archivedComponents, err := arch.ArchiveUnlinkedComponents(ctx, task.ArchiveBefore, limit)
+		started := time.Now()
+		archivedIDs, archivedComponents, err := arch.ArchiveUnlinkedComponents(ctx, task.ArchiveBefore, limit)
+		componentsDuration := time.Since(started)
 		if err != nil {
+			taskLogger.Err(err).
+				Dur("components_archive_duration", componentsDuration).
+				Msg("failed to archive unlinked components")
 			return datastorage.CleanResult{Archived: totalArchived}, fmt.Errorf("failed to archive unlinked components: %w", err)
 		}
+		archivedEntityIDs = append(archivedEntityIDs, archivedIDs...)
+		taskLogger.Info().
+			Int64("archived_components", archivedComponents).
+			Dur("components_archive_duration", componentsDuration).
+			Msg("archive_unlinked components archived")
 
 		totalArchived += archivedComponents
-		archivedConnectors, err := arch.ArchiveUnlinkedConnectors(ctx, task.ArchiveBefore, limit)
+		started = time.Now()
+		archivedIDs, archivedConnectors, err := arch.ArchiveUnlinkedConnectors(ctx, task.ArchiveBefore, limit)
+		connectorsDuration := time.Since(started)
 		if err != nil {
+			taskLogger.Err(err).
+				Dur("connectors_archive_duration", connectorsDuration).
+				Msg("failed to archive unlinked connectors")
 			return datastorage.CleanResult{Archived: totalArchived}, fmt.Errorf("failed to archive unlinked connectors: %w", err)
 		}
+		archivedEntityIDs = append(archivedEntityIDs, archivedIDs...)
+		taskLogger.Info().
+			Int64("archived_connectors", archivedConnectors).
+			Dur("connectors_archive_duration", connectorsDuration).
+			Msg("archive_unlinked connectors archived")
 
 		totalArchived += archivedConnectors
+		started = time.Now()
 		err = w.dataStorageAdapter.UpdateHistoryEntityUnlinked(ctx, datastorage.HistoryWithCount{
 			Time:     datetime.NewCpsTime(),
 			Archived: totalArchived,
 		})
+		historyDuration := time.Since(started)
 		if err != nil {
+			taskLogger.Err(err).
+				Dur("history_update_duration", historyDuration).
+				Msg("failed to update entity history")
 			return datastorage.CleanResult{Archived: totalArchived}, fmt.Errorf("failed to update entity history: %w", err)
 		}
 
+		deletedMetaRowsQueued := 0
+		deleteMetaQueued := false
+		var deleteMetaEnqueueDuration time.Duration
 		if totalArchived > 0 {
-			w.metricMetaUpdater.UpdateAll(ctx)
+			started = time.Now()
+			w.metricMetaUpdater.DeleteById(metrics.ContextWithRunID(ctx, runID), archivedEntityIDs...)
+			deletedMetaRowsQueued = len(archivedEntityIDs)
+			deleteMetaEnqueueDuration = time.Since(started)
+			deleteMetaQueued = deletedMetaRowsQueued > 0
 		}
 
-		w.logger.Info().Int64("entities_number", totalArchived).Str("user", task.UserID).Msg("unlinked entities have been archived")
+		taskLogger.Info().
+			Int64("entities_number", totalArchived).
+			Int("archived_entity_ids", len(archivedEntityIDs)).
+			Dur("resources_archive_duration", resourcesDuration).
+			Dur("components_archive_duration", componentsDuration).
+			Dur("connectors_archive_duration", connectorsDuration).
+			Dur("history_update_duration", historyDuration).
+			Bool("delete_meta_queued", deleteMetaQueued).
+			Int("delete_meta_rows_queued", deletedMetaRowsQueued).
+			Dur("delete_meta_enqueue_duration", deleteMetaEnqueueDuration).
+			Dur("task_duration", time.Since(taskStarted)).
+			Msg("unlinked entities have been archived")
 
 		return datastorage.CleanResult{Archived: totalArchived}, nil
 	case CleanTaskTypeCleanArchived:
