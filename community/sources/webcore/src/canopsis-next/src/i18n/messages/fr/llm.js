@@ -1,4 +1,4 @@
-import { LLM_AI_CHAT_SUGGESTION_TYPES, LLM_THINKING_LEVELS } from '@/constants';
+import { LLM_AI_CHAT_ERROR_CODES, LLM_AI_CHAT_SUGGESTION_TYPES, LLM_THINKING_LEVELS } from '@/constants';
 
 export default {
   expandTabs: {
@@ -92,5 +92,19 @@ export default {
       + '<li>Les résultats générés par l\'IA <strong>peuvent contenir des erreurs</strong> — vérifiez et validez toujours les modèles avant utilisation.</li>'
       + '<li>Cette conversation est <strong>temporaire</strong> et sera <strong>effacée</strong> à la fermeture de la fenêtre modale.</li>'
       + '</ul>',
+    errors: {
+      [LLM_AI_CHAT_ERROR_CODES.gone]:
+        'Le modèle d\'IA sélectionné est actuellement indisponible.<br />'
+        + '<strong>Veuillez contacter votre administrateur. Vous pouvez redémarrer la conversation avec un autre modèle (l\'historique sera perdu).</strong>',
+      [LLM_AI_CHAT_ERROR_CODES.tooManyRequests]:
+        'Vous avez dépassé votre quota actuel.<br />'
+        + '<strong>Veuillez réessayer à {retryAt} ou redémarrer la conversation avec un autre modèle (l\'historique sera perdu).</strong>',
+      [LLM_AI_CHAT_ERROR_CODES.internalError]:
+        'Une erreur s\'est produite.<br />'
+        + '<strong>Veuillez contacter votre administrateur</strong>',
+      [LLM_AI_CHAT_ERROR_CODES.timeout]:
+        'La requête a expiré.<br />'
+        + '<strong>Veuillez réessayer plus tard.</strong>',
+    },
   },
 };

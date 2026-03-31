@@ -21,7 +21,7 @@
           <v-flex
             v-if="message.text"
             :class="{ 'ai-chat-message__text--collapsed': isCollapsible && !isExpanded }"
-            class="ai-chat-message__text"
+            class="ai-chat-message__text pre-wrap"
           >
             {{ message.text }}
           </v-flex>

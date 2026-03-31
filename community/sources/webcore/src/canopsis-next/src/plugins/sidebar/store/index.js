@@ -55,7 +55,7 @@ export default {
     [types.MAXIMIZE](state, { id }) {
       Vue.set(state.byId[id], 'minimized', false);
     },
-    [types.UPDATE_CONFIG](state, { id, config }) {
+    [types.UPDATE_CONFIG](state, { id, config = {} }) {
       Vue.setSeveral(state.byId[id], 'config', config);
     },
   },

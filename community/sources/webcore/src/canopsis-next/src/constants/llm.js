@@ -32,6 +32,7 @@ export const LLM_AI_CHAT_MESSAGE_ROLES = {
 export const LLM_AI_CHAT_ERROR_CODES = {
   gone: 410, // Currently is unavailable -> fetch -> if no models -> No AI models
   tooManyRequests: 429, // Your exceeded your current quota { payload.retry_at }
+  internalError: 500, // Unexpected server error
   timeout: 504, // Request timeout
 };
 

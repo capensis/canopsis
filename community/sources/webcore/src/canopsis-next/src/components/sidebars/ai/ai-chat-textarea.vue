@@ -4,7 +4,7 @@
     class="ai-chat-textarea"
   >
     <c-alert :value="!!errorMessage" type="error">
-      <span>{{ errorMessage }}</span>
+      <span v-html="sanitizedErrorMessage" class="font-weight-regular" />
     </c-alert>
     <v-textarea
       v-model="prompt"
@@ -58,6 +58,8 @@
 <script>
 import { computed, ref } from 'vue';
 
+import { sanitizeHtml } from '@/helpers/html';
+
 import { useAiChatLlms } from './hooks/use-ai-chat-llms';
 import AiChatLlmField from './ai-chat-llm-field.vue';
 
@@ -92,17 +94,17 @@ export default {
       || !prompt.value.trim()
     ));
 
+    const sanitizedErrorMessage = computed(() => sanitizeHtml(props.errorMessage ?? ''));
+
     /**
      * Emits the user message and chosen model so the parent can run the AI request.
      *
      * Payload: `{ llm: string | null, prompt: string }` (`prompt` is trimmed).
      */
-    const ask = () => {
-      emit('ask', {
-        llm: selectedLlm.value?._id,
-        prompt: prompt.value.trim(),
-      });
-    };
+    const ask = () => emit('ask', {
+      llm: selectedLlm.value?._id,
+      prompt: prompt.value.trim(),
+    });
 
     /**
      * Submits on Enter; Shift+Enter keeps the default newline. Matches `Ask` enablement.
@@ -131,6 +133,7 @@ export default {
       llmsPending,
       llmsDisabled,
       askDisabled,
+      sanitizedErrorMessage,
       ask,
       enterKeydown,
       stop,

@@ -42,6 +42,7 @@
       <ai-chat-textarea
         ref="textareaElement"
         :error-message="errorMessage"
+        :validation-errors-messages="validationErrorsMessages"
         :empty-chat="emptyChat"
         :thinking="thinking"
         @ask="ask"
@@ -78,7 +79,7 @@ import {
 } from 'vue';
 
 import { SOCKET_ROOMS } from '@/config';
-import { LLM_AI_CHAT_MESSAGE_ROLES, SIDE_BARS, PATTERNS_FIELDS } from '@/constants';
+import { LLM_AI_CHAT_MESSAGE_ROLES, SIDE_BARS, PATTERNS_FIELDS, DATETIME_FORMATS } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
@@ -89,6 +90,7 @@ import { uid } from '@/helpers/uid';
 import { promisedTimeout } from '@/helpers/async';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { getChangedPatternsFields } from '@/helpers/entities/pattern/form';
+import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 import { useSocket } from '@/hooks/socket';
@@ -127,6 +129,7 @@ export default {
     const lastLlmVersion = ref(null);
     const socketRoom = ref(null);
     const errorMessage = ref(null);
+    const validationErrorsMessages = ref([]);
 
     let lastPrompt = '';
     let lastLlmMessageIndex = 0;
@@ -136,6 +139,7 @@ export default {
     const currentFormPatterns = computed(() => (
       formFilterToPatterns(props.sidebar.config?.patterns ?? {}, Object.values(PATTERNS_FIELDS))
     ));
+    const currentJsonString = computed(() => props.sidebar.config?.jsonString ?? '');
     const changedPatternsFields = computed(() => (
       getChangedPatternsFields(currentFormPatterns.value, versions.value[lastLlmVersion.value])
     ));
@@ -197,15 +201,31 @@ export default {
       lastPrompt = '';
     };
 
+    const resetErrors = () => {
+      errorMessage.value = null;
+      validationErrorsMessages.value = [];
+    };
+
     /**
      * Invoked when the `llmchat` room delivers a server message; extend to update `messages` or streaming state.
      * Payload shape follows `SocketRoom.call` (API-defined).
      */
-    const socketListener = async ({ error, code, ...patterns }) => {
+    const socketListener = async ({ error, code, val_errors: validationErrors = [], ...patterns }) => {
       await promisedTimeout(() => {}, 5000);
 
+      resetErrors();
+
+      thinking.value = false;
+
+      if (validationErrors?.length) {
+        errorMessage.value = `<ul>${validationErrors.map(validationError => `<li><strong>${validationError}</strong></li>`).join('')}</ul>`;
+
+        resetTextarea();
+
+        return;
+      }
+
       if (error) {
-        thinking.value = false;
         errorMessage.value = error;
 
         resetTextarea();
@@ -215,8 +235,6 @@ export default {
 
       addPattern(patterns, LLM_AI_CHAT_MESSAGE_ROLES.model);
       props.sidebar.config.setPatterns(patterns);
-
-      thinking.value = false;
     };
 
     const scrollChatBodyToBottom = () => nextTick(() => requestAnimationFrame(() => {
@@ -233,14 +251,20 @@ export default {
     watch(thinking, scrollChatBodyToBottom, { flush: 'post' });
 
     const errorHandler = ({ message, error }) => {
-      const { room, code } = error ?? {};
+      const { room, code, payload = {} } = error ?? {};
 
       if (room !== SOCKET_ROOMS.llmChat) {
         return;
       }
 
+      const data = payload?.retry_at
+        ? { retryAt: convertDateToStringWithFormatForToday(payload.retry_at, DATETIME_FORMATS.long, '', DATETIME_FORMATS.timeWithoutSeconds) }
+        : {};
+
+      resetErrors();
+
       thinking.value = false;
-      errorMessage.value = code ? t(`llm.chat.errors.${code}`) : message;
+      errorMessage.value = code ? t(`llm.chat.errors.${code}`, data) : message;
 
       resetTextarea();
     };
@@ -282,8 +306,9 @@ export default {
      * @param {Object} params
      * @param {Object} params.llm - LLM config passed into `joinSocketRoom` when the room is not open yet.
      * @param {string} params.prompt - User message text sent in the outbound `{ prompt }` payload.
+     * @param {boolean} params.withoutPatterns - Whether to send the patterns to the LLM.
      */
-    const ask = ({ llm, prompt }) => {
+    const ask = ({ llm, prompt, withoutPatterns = false }) => {
       if (!socketRoom.value) {
         joinSocketRoom(llm);
       }
@@ -298,7 +323,7 @@ export default {
         type: 'send',
       };
 
-      if (!emptyCurrentFormPatterns.value) {
+      if (!withoutPatterns && !emptyCurrentFormPatterns.value) {
         Object.entries(currentFormPatterns.value).forEach(([field, pattern]) => {
           data[field] = pattern;
         });
@@ -377,6 +402,12 @@ export default {
       newThinking => props.sidebar.config.setPending?.(newThinking, emptyCurrentFormPatterns.value, stop),
     );
 
+    watch(currentJsonString, newJsonString => ask({
+      llm: textareaElement.value.selectedLlm._id,
+      prompt: `Fix pattern:\n${newJsonString}`,
+      withoutPatterns: true,
+    }));
+
     onBeforeUnmount(leaveSocketRoom);
 
     return {
@@ -390,6 +421,7 @@ export default {
       socketRoom,
       emptyChat,
       errorMessage,
+      validationErrorsMessages,
       ask,
       stop,
       applySuggestion,
