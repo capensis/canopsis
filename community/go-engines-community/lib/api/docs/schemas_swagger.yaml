@@ -6061,6 +6061,10 @@ definitions:
             type: object
           test:
             type: string
+          ticket_status_responses:
+            additionalProperties:
+              type: string
+            type: object
         type: object
     type: object
   scenario.TemplateVarsResponse:
@@ -6708,6 +6712,10 @@ definitions:
             additionalProperties:
               type: string
             type: object
+          ticket_status_responses:
+            additionalProperties:
+              type: string
+            type: object
           user:
             type: string
         type: object
@@ -6738,6 +6746,13 @@ definitions:
     - name
     - rule
     - type
+    type: object
+  template.TemplateCheckTicketStatus:
+    properties:
+      request:
+        $ref: '#/definitions/template.TemplateParameters'
+      ticket_status_tpl:
+        type: string
     type: object
   template.TemplateParameters:
     properties:
@@ -6782,6 +6797,8 @@ definitions:
     type: object
   template.TemplateWebhookDeclareTicket:
     properties:
+      check_ticket_status:
+        $ref: '#/definitions/template.TemplateCheckTicketStatus'
       ticket_id_tpl:
         type: string
       ticket_url_tpl:
@@ -6814,6 +6831,15 @@ definitions:
                 type: string
             type: object
           responses:
+            additionalProperties:
+              properties:
+                _id:
+                  type: string
+                name:
+                  type: string
+              type: object
+            type: object
+          ticket_status_responses:
             additionalProperties:
               properties:
                 _id:
