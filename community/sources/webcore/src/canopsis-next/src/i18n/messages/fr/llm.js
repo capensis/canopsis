@@ -75,6 +75,7 @@ export default {
     patternsEditedMessage: 'Vous avez modifié {patterns} modèle | Vous avez modifié {patterns} modèles',
     patternCreatedMessage: 'Modèles créés',
     patternUpdatedMessage: 'Modèles mis à jour',
+    emptyPatternsMessage: 'Modèles vides',
     suggestionPrompts: {
       [LLM_AI_CHAT_SUGGESTION_TYPES.createPattern]: 'Créer un modèle avec les conditions suivantes :\n',
       [LLM_AI_CHAT_SUGGESTION_TYPES.editPattern]: 'Les modifications suivantes sont nécessaires dans le modèle :\n',

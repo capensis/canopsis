@@ -23,7 +23,7 @@
       <span v-else>
         <span>{{ value?.name }}</span>
         <v-icon
-          v-if="items.length > 1"
+          v-if="!disabled"
           :color="colors.chipText"
           class="ml-1"
           small

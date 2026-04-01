@@ -89,7 +89,7 @@ export default {
     },
   },
   setup(props) {
-    const shownPassword = ref(props.replaceable);
+    const shownPassword = ref(false);
     const shownField = ref(false);
 
     const rules = computed(() => ({

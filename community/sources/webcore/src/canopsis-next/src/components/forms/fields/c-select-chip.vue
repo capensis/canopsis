@@ -38,9 +38,9 @@
           v-for="item in items"
           :key="item[itemValue]"
           :disabled="item.disabled"
-          :input-value="item[itemValue] === value"
+          :input-value="item[itemValue] === (value?.[itemValue] ?? value)"
           :active-class="activeListItemClass"
-          @click="selectItem(item[itemValue])"
+          @click="selectItem(returnObject ? item : item[itemValue])"
         >
           <v-list-item-content>
             <div>{{ item[itemText] }}</div>
@@ -118,6 +118,10 @@ export default {
     activeListItemClass: {
       type: String,
       default: '',
+    },
+    returnObject: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {

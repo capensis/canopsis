@@ -132,10 +132,10 @@ export default {
     const validationErrorsMessages = ref([]);
 
     let lastPrompt = '';
-    let lastLlmMessageIndex = 0;
-    let lastChangedPatternsFieldsMessageIndex = 0;
+    let lastLlmMessageIndex = -1;
+    let lastChangedPatternsFieldsMessageIndex = -1;
 
-    const activeVersion = computed(() => Math.max(versions.value.length - 1, 0));
+    const activeVersion = computed(() => versions.value.length - 1);
     const currentFormPatterns = computed(() => (
       formFilterToPatterns(props.sidebar.config?.patterns ?? {}, Object.values(PATTERNS_FIELDS))
     ));
@@ -165,24 +165,24 @@ export default {
       });
     };
 
-    const addPattern = (patterns, role, originalVersion = null) => {
-      versions.value.push(patterns);
-
+    const addPattern = (patterns, role, originalVersion) => {
       let messageText = '';
 
       if (!role && changedPatternsFields.value.length > 0) {
         messageText = tc('llm.chat.patternsEditedMessage', changedPatternsFields.value.length, {
           patterns: changedPatternsFields.value.map(field => t(`pattern.patternsFields.${field}`)).join(', ').toLowerCase(),
         });
-      } else if (role === LLM_AI_CHAT_MESSAGE_ROLES.model || !isUndefined(originalVersion)) {
+        versions.value.push(patterns);
+      } else if (role === LLM_AI_CHAT_MESSAGE_ROLES.model) {
+        versions.value.push(patterns);
         lastLlmVersion.value = activeVersion.value;
         messageText = emptyCurrentFormPatterns.value ? t('llm.chat.patternCreatedMessage') : t('llm.chat.patternUpdatedMessage');
       }
 
-      if (messageText) {
+      if (messageText && isUndefined(originalVersion)) {
         addMessage(
           messageText,
-          role,
+          role || LLM_AI_CHAT_MESSAGE_ROLES.model,
         );
       }
 
@@ -226,7 +226,7 @@ export default {
       }
 
       if (error) {
-        errorMessage.value = error;
+        errorMessage.value = `<strong>${error}</strong>`;
 
         resetTextarea();
 
@@ -308,7 +308,7 @@ export default {
      * @param {string} params.prompt - User message text sent in the outbound `{ prompt }` payload.
      * @param {boolean} params.withoutPatterns - Whether to send the patterns to the LLM.
      */
-    const ask = ({ llm, prompt, withoutPatterns = false }) => {
+    const ask = ({ llm, prompt }) => {
       if (!socketRoom.value) {
         joinSocketRoom(llm);
       }
@@ -323,11 +323,12 @@ export default {
         type: 'send',
       };
 
-      if (!withoutPatterns && !emptyCurrentFormPatterns.value) {
-        Object.entries(currentFormPatterns.value).forEach(([field, pattern]) => {
-          data[field] = pattern;
-        });
-      }
+      // TODO: uncomment when the backend will be ready
+      // if (!withoutPatterns && !emptyCurrentFormPatterns.value) {
+      //   Object.entries(currentFormPatterns.value).forEach(([field, pattern]) => {
+      //     data[field] = pattern;
+      //   });
+      // }
 
       socketRoom.value.send(data);
 
@@ -356,18 +357,31 @@ export default {
     const restoreVersion = (version) => {
       const newPatterns = versions.value[version];
 
-      addPattern(newPatterns, LLM_AI_CHAT_MESSAGE_ROLES.user, version);
+      addPattern(newPatterns, LLM_AI_CHAT_MESSAGE_ROLES.model, version);
 
       props.sidebar.config.setPatterns(newPatterns);
     };
 
-    watch(currentFormPatterns, (newPatterns) => {
+    const restart = () => {
+      leaveSocketRoom();
+      messages.value = [];
+      versions.value = [];
+      lastLlmVersion.value = null;
+      lastPrompt = '';
+      lastLlmMessageIndex = -1;
+      lastChangedPatternsFieldsMessageIndex = -1;
+      thinking.value = false;
+      errorMessage.value = null;
+      validationErrorsMessages.value = [];
+    };
+
+    watch(currentFormPatterns, async (newPatterns) => {
       if (emptyChat.value) {
         return;
       }
 
       if (changedPatternsFields.value.length === 0) {
-        if (lastLlmVersion.value !== activeVersion.value) {
+        if (activeVersion.value >= 0 && lastLlmVersion.value >= 0 && lastLlmVersion.value !== activeVersion.value) {
           messages.value.splice(lastLlmMessageIndex + 1);
           versions.value.pop();
         }
@@ -375,7 +389,7 @@ export default {
         return;
       }
 
-      if (lastLlmVersion.value !== activeVersion.value) {
+      if (lastLlmVersion.value >= 0 && activeVersion.value >= 0 && lastLlmVersion.value !== activeVersion.value) {
         set(messages.value, lastChangedPatternsFieldsMessageIndex, {
           ...messages.value[lastChangedPatternsFieldsMessageIndex],
           text: tc('llm.chat.patternsEditedMessage', changedPatternsFields.value.length, {
@@ -426,7 +440,7 @@ export default {
       stop,
       applySuggestion,
       restoreVersion,
-      restart: leaveSocketRoom,
+      restart,
     };
   },
 };
@@ -436,6 +450,7 @@ export default {
 .ai-chat {
   --header-height: 64px;
   height: calc(100% - var(--header-height));
+  overflow-y: auto;
   min-height: 0;
 
   &__body {

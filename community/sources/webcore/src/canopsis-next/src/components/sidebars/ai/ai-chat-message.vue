@@ -21,9 +21,9 @@
           <v-flex
             v-if="message.text"
             :class="{ 'ai-chat-message__text--collapsed': isCollapsible && !isExpanded }"
-            class="ai-chat-message__text pre-wrap"
+            class="ai-chat-message__text"
           >
-            {{ message.text }}
+            <span class="pre-wrap">{{ message.text }}</span>
           </v-flex>
           <span v-if="message.time" class="grey--text text--darken-1">
             {{ timeString }}
@@ -122,6 +122,8 @@ export default {
 }
 
 .ai-chat-message {
+  --collapsed-line-clamp: 4;
+
   flex-direction: row;
   padding-left: 16px;
 
@@ -145,8 +147,8 @@ export default {
       display: -webkit-box;
       overflow: hidden;
       -webkit-box-orient: vertical;
-      line-clamp: 2;
-      -webkit-line-clamp: 2;
+      line-clamp: var(--collapsed-line-clamp);
+      -webkit-line-clamp: var(--collapsed-line-clamp);
     }
   }
 

@@ -18,6 +18,8 @@ export const LLM_PROMPTS_HISTORY_VIEWS = {
 
 export const LLM_AI_CHAT_WIDTH = 400;
 
+export const LLM_AI_CHAT_PROMPT_MAX_LENGTH = 10000;
+
 export const LLM_AI_CHAT_SUGGESTION_TYPES = {
   createPattern: 'createPattern',
   editPattern: 'editPattern',

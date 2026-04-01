@@ -41,7 +41,6 @@ import {
   PBEHAVIOR_PATTERN_FIELDS,
 } from '@/constants';
 
-import { isOmitEqual } from '@/helpers/collection';
 import { uid } from '@/helpers/uid';
 import { convertDateToDateObject, convertDateToTimestamp, isValidDateInterval } from '@/helpers/date/date';
 import { durationToForm, isValidDuration, isValidRangeDuration } from '@/helpers/date/duration';
@@ -1181,7 +1180,7 @@ export const getChangedPatternsFields = (
   newForm = {},
   oldForm = {},
   fields = Object.values(PATTERNS_FIELDS),
-) => fields.filter(fieldKey => !isOmitEqual(newForm?.[fieldKey] ?? [], oldForm?.[fieldKey] ?? [], ['id']));
+) => fields.filter(fieldKey => !isEqual(newForm?.[fieldKey] ?? [], oldForm?.[fieldKey] ?? []));
 
 /**
  * Get duration from rule range by specified keys
