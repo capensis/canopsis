@@ -13,9 +13,9 @@ import (
 
 type Archiver interface {
 	ArchiveDisabledEntities(ctx context.Context, archiveDeps bool) (int64, error)
-	ArchiveUnlinkedResources(ctx context.Context, before datetime.CpsTime) (int64, error)
-	ArchiveUnlinkedComponents(ctx context.Context, before datetime.CpsTime) (int64, error)
-	ArchiveUnlinkedConnectors(ctx context.Context, before datetime.CpsTime) (int64, error)
+	ArchiveUnlinkedResources(ctx context.Context, before datetime.CpsTime) ([]string, int64, error)
+	ArchiveUnlinkedComponents(ctx context.Context, before datetime.CpsTime) ([]string, int64, error)
+	ArchiveUnlinkedConnectors(ctx context.Context, before datetime.CpsTime) ([]string, int64, error)
 	DeleteArchivedEntities(ctx context.Context) (int64, error)
 }
 
@@ -61,7 +61,7 @@ func (a *archiver) ArchiveDisabledEntities(ctx context.Context, archiveDeps bool
 	return totalArchived, nil
 }
 
-func (a *archiver) ArchiveUnlinkedResources(ctx context.Context, before datetime.CpsTime) (int64, error) {
+func (a *archiver) ArchiveUnlinkedResources(ctx context.Context, before datetime.CpsTime) ([]string, int64, error) {
 	cursor, err := a.mainCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"type":     types.EntityTypeResource,
@@ -100,13 +100,13 @@ func (a *archiver) ArchiveUnlinkedResources(ctx context.Context, before datetime
 		{"$match": bson.M{"resolved_alarms": bson.A{}}},
 	})
 	if err != nil {
-		return 0, err
+		return nil, 0, err
 	}
 
 	return a.archiveUnlinked(ctx, cursor)
 }
 
-func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before datetime.CpsTime) (int64, error) {
+func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before datetime.CpsTime) ([]string, int64, error) {
 	cursor, err := a.mainCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"type":     types.EntityTypeComponent,
@@ -158,13 +158,13 @@ func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before datetim
 		{"$match": bson.M{"resolved_alarms": bson.A{}}},
 	})
 	if err != nil {
-		return 0, err
+		return nil, 0, err
 	}
 
 	return a.archiveUnlinked(ctx, cursor)
 }
 
-func (a *archiver) ArchiveUnlinkedConnectors(ctx context.Context, before datetime.CpsTime) (int64, error) {
+func (a *archiver) ArchiveUnlinkedConnectors(ctx context.Context, before datetime.CpsTime) ([]string, int64, error) {
 	cursor, err := a.mainCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"type":     types.EntityTypeConnector,
@@ -215,7 +215,7 @@ func (a *archiver) ArchiveUnlinkedConnectors(ctx context.Context, before datetim
 		{"$match": bson.M{"resolved_alarms": bson.A{}}},
 	})
 	if err != nil {
-		return 0, err
+		return nil, 0, err
 	}
 
 	return a.archiveUnlinked(ctx, cursor)
@@ -254,6 +254,10 @@ func (a *archiver) DeleteArchivedEntities(ctx context.Context) (int64, error) {
 		}
 	}
 
+	if err := cursor.Err(); err != nil {
+		return 0, err
+	}
+
 	if len(ids) > 0 {
 		deleted, err := a.archivedCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
 		if err != nil {
@@ -279,11 +283,12 @@ func (a *archiver) archiveEntitiesByType(ctx context.Context, eType string, arch
 	}
 
 	totalArchived, err := a.processCursor(ctx, cursor, archiveDeps)
+	closeErr := cursor.Close(ctx)
 	if err != nil {
 		return 0, err
 	}
 
-	return totalArchived, cursor.Close(ctx)
+	return totalArchived, closeErr
 }
 
 func (a *archiver) processCursor(ctx context.Context, cursor mongo.Cursor, archiveDeps bool) (int64, error) {
@@ -367,6 +372,10 @@ func (a *archiver) processCursor(ctx context.Context, cursor mongo.Cursor, archi
 		}
 	}
 
+	if err := cursor.Err(); err != nil {
+		return 0, err
+	}
+
 	if len(archiveModels) != 0 {
 		archived, err := a.bulkArchive(ctx, archiveModels, contextGraphModels, ids)
 		if err != nil {
@@ -389,12 +398,12 @@ func (a *archiver) archiveComponentDependencies(ctx context.Context, id string) 
 	}
 
 	archived, err := a.processCursor(ctx, cursor, false)
+	closeErr := cursor.Close(ctx)
 	if err != nil {
-		_ = cursor.Close(ctx)
 		return 0, err
 	}
 
-	return archived, cursor.Close(ctx)
+	return archived, closeErr
 }
 
 func (a *archiver) bulkArchive(ctx context.Context, models, contextGraphModels []mongodriver.WriteModel, ids []string) (int64, error) {
@@ -427,17 +436,18 @@ func (a *archiver) bulkArchive(ctx context.Context, models, contextGraphModels [
 	return count, nil
 }
 
-func (a *archiver) archiveUnlinked(ctx context.Context, cursor mongo.Cursor) (int64, error) {
+func (a *archiver) archiveUnlinked(ctx context.Context, cursor mongo.Cursor) ([]string, int64, error) {
 	defer cursor.Close(ctx)
 	archiveModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize)
 	ids := make([]string, 0, canopsis.DefaultBulkSize)
+	archivedIDs := make([]string, 0, canopsis.DefaultBulkSize)
 	archiveBulkBytesSize := 0
 	var totalArchived int64
 	for cursor.Next(ctx) {
 		entity := types.Entity{}
 		err := cursor.Decode(&entity)
 		if err != nil {
-			return 0, err
+			return nil, 0, err
 		}
 
 		newArchiveModel := mongodriver.NewUpdateOneModel().
@@ -446,7 +456,7 @@ func (a *archiver) archiveUnlinked(ctx context.Context, cursor mongo.Cursor) (in
 			SetUpsert(true)
 		b, err := bson.Marshal(newArchiveModel)
 		if err != nil {
-			return 0, err
+			return nil, 0, err
 		}
 
 		newArchiveModelLen := len(b)
@@ -455,11 +465,12 @@ func (a *archiver) archiveUnlinked(ctx context.Context, cursor mongo.Cursor) (in
 		if archiveBulkBytesSize > canopsis.DefaultBulkBytesSize {
 			archived, err := a.bulkArchive(ctx, archiveModels, nil, ids)
 			if err != nil {
-				return 0, err
+				return nil, 0, err
 			}
 
 			totalArchived += archived
 			archiveModels = archiveModels[:0]
+			archivedIDs = append(archivedIDs, ids...)
 			ids = ids[:0]
 			archiveBulkBytesSize = newArchiveModelLen
 		}
@@ -470,24 +481,30 @@ func (a *archiver) archiveUnlinked(ctx context.Context, cursor mongo.Cursor) (in
 		if len(archiveModels) == canopsis.DefaultBulkSize {
 			archived, err := a.bulkArchive(ctx, archiveModels, nil, ids)
 			if err != nil {
-				return 0, err
+				return nil, 0, err
 			}
 
 			totalArchived += archived
 			archiveModels = archiveModels[:0]
+			archivedIDs = append(archivedIDs, ids...)
 			ids = ids[:0]
 			archiveBulkBytesSize = 0
 		}
 	}
 
+	if err := cursor.Err(); err != nil {
+		return nil, 0, err
+	}
+
 	if len(archiveModels) > 0 {
 		archived, err := a.bulkArchive(ctx, archiveModels, nil, ids)
 		if err != nil {
-			return 0, err
+			return nil, 0, err
 		}
 
 		totalArchived += archived
+		archivedIDs = append(archivedIDs, ids...)
 	}
 
-	return totalArchived, nil
+	return archivedIDs, totalArchived, nil
 }

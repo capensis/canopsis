@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -160,8 +161,10 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 			Msg("archive_unlinked started")
 
 		before := task.ArchiveBefore.SubFrom(datetime.NewCpsTime())
+		archivedEntityIDs := make([]string, 0, canopsis.DefaultBulkSize)
 		resourcesStarted := time.Now()
-		totalArchived, err := arch.ArchiveUnlinkedResources(ctx, before)
+		archivedIDs, totalArchived, err := arch.ArchiveUnlinkedResources(ctx, before)
+		archivedEntityIDs = append(archivedEntityIDs, archivedIDs...)
 		resourcesDuration := time.Since(resourcesStarted)
 		if err != nil {
 			taskLogger.Err(err).
@@ -175,7 +178,8 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 		}
 
 		componentsStarted := time.Now()
-		archivedComponents, err := arch.ArchiveUnlinkedComponents(ctx, before)
+		archivedIDs, archivedComponents, err := arch.ArchiveUnlinkedComponents(ctx, before)
+		archivedEntityIDs = append(archivedEntityIDs, archivedIDs...)
 		componentsDuration := time.Since(componentsStarted)
 		if err != nil {
 			taskLogger.Err(err).
@@ -190,7 +194,8 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 
 		totalArchived += archivedComponents
 		connectorsStarted := time.Now()
-		archivedConnectors, err := arch.ArchiveUnlinkedConnectors(ctx, before)
+		archivedIDs, archivedConnectors, err := arch.ArchiveUnlinkedConnectors(ctx, before)
+		archivedEntityIDs = append(archivedEntityIDs, archivedIDs...)
 		connectorsDuration := time.Since(connectorsStarted)
 		if err != nil {
 			taskLogger.Err(err).
@@ -217,23 +222,28 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 			return
 		}
 
-		updateAllQueued := false
-		var updateAllEnqueueDuration time.Duration
+		deletedMetaRowsQueued := 0
+		deleteMetaQueued := false
+		var deleteMetaEnqueueDuration time.Duration
 		if totalArchived > 0 {
 			enqueueStarted := time.Now()
-			w.metricMetaUpdater.UpdateAll(metrics.ContextWithUpdateRunID(ctx, runID))
-			updateAllEnqueueDuration = time.Since(enqueueStarted)
-			updateAllQueued = true
+			deleteMetaCtx := metrics.ContextWithRunID(ctx, runID)
+			w.metricMetaUpdater.DeleteById(deleteMetaCtx, archivedEntityIDs...)
+			deletedMetaRowsQueued = len(archivedEntityIDs)
+			deleteMetaEnqueueDuration = time.Since(enqueueStarted)
+			deleteMetaQueued = deletedMetaRowsQueued > 0
 		}
 
 		taskLogger.Info().
 			Int64("entities_number", totalArchived).
+			Int("archived_entity_ids", len(archivedEntityIDs)).
 			Dur("resources_archive_duration", resourcesDuration).
 			Dur("components_archive_duration", componentsDuration).
 			Dur("connectors_archive_duration", connectorsDuration).
 			Dur("history_update_duration", historyDuration).
-			Bool("update_all_queued", updateAllQueued).
-			Dur("update_all_enqueue_duration", updateAllEnqueueDuration).
+			Bool("delete_meta_queued", deleteMetaQueued).
+			Int("delete_meta_rows_queued", deletedMetaRowsQueued).
+			Dur("delete_meta_enqueue_duration", deleteMetaEnqueueDuration).
 			Dur("task_duration", time.Since(taskStarted)).
 			Msg("unlinked entities have been archived")
 	case CleanTaskTypeCleanArchived:
