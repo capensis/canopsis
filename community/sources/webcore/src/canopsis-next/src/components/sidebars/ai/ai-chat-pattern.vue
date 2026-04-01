@@ -78,7 +78,13 @@ export default {
     const expanded = ref(false);
 
     const patternsText = computed(() => {
-      const texts = Object.keys(props.patterns).map(key => t(`pattern.patternsFields.${key}`));
+      const keys = Object.keys(props.patterns);
+
+      if (!keys.length) {
+        return t('llm.chat.emptyPatternsMessage');
+      }
+
+      const texts = keys.map(key => t(`pattern.patternsFields.${key}`));
 
       return tc('llm.chat.patternsMessage', texts.length, { patterns: texts.join(', ') });
     });

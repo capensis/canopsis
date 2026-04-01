@@ -75,6 +75,7 @@ export default {
     patternsEditedMessage: 'You edited {patterns} pattern | You edited {patterns} patterns',
     patternCreatedMessage: 'Patterns created',
     patternUpdatedMessage: 'Patterns updated',
+    emptyPatternsMessage: 'Empty patterns',
     suggestionPrompts: {
       [LLM_AI_CHAT_SUGGESTION_TYPES.createPattern]: 'Create pattern with following conditions:\n',
       [LLM_AI_CHAT_SUGGESTION_TYPES.editPattern]: 'The following changes are needed in pattern:\n',

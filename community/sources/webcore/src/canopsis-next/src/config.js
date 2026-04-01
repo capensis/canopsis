@@ -789,7 +789,7 @@ export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
 
-export const GEMINI_AI_CONSOLE_BILLING_URL = 'https://console.cloud.google.com/billing';
+export const GEMINI_AI_CONSOLE_BILLING_URL = 'https://ai.studio/spend';
 
 export const EXPORT_FETCHING_INTERVAL = 2000;
 

@@ -24,8 +24,8 @@
       :label="$t('llm.apiKey')"
       :required="isNew"
       :placeholder="$t('llm.apiKeyPlaceholder')"
+      :replaceable="!isNew"
       name="api_key"
-      replaceable
       visibility
     />
 
