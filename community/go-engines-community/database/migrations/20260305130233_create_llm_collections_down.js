@@ -1,4 +1,6 @@
 db.api_llm_config.drop();
+db.llm_chat_history.drop();
+db.llm_message_history.drop();
 
 db.permission.deleteMany({
     _id: {
