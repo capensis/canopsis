@@ -76,6 +76,7 @@ export default {
     patternCreatedMessage: 'Patterns created',
     patternUpdatedMessage: 'Patterns updated',
     emptyPatternsMessage: 'Empty patterns',
+    fixPatternPrompt: 'Fix pattern:\n{jsonString}',
     suggestionPrompts: {
       [LLM_AI_CHAT_SUGGESTION_TYPES.createPattern]: 'Create pattern with following conditions:\n',
       [LLM_AI_CHAT_SUGGESTION_TYPES.editPattern]: 'The following changes are needed in pattern:\n',
@@ -106,6 +107,9 @@ export default {
       [LLM_AI_CHAT_ERROR_CODES.timeout]:
         'Request timed out.<br />'
         + '<strong>Please try again later.</strong>',
+      noModels:
+        'No AI models are currently available.<br />'
+        + '<strong>Please contact your administrator.</strong>',
     },
   },
 };

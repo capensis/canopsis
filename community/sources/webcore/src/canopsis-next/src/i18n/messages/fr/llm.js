@@ -76,6 +76,7 @@ export default {
     patternCreatedMessage: 'Modèles créés',
     patternUpdatedMessage: 'Modèles mis à jour',
     emptyPatternsMessage: 'Modèles vides',
+    fixPatternPrompt: 'Corriger le modèle :\n{jsonString}',
     suggestionPrompts: {
       [LLM_AI_CHAT_SUGGESTION_TYPES.createPattern]: 'Créer un modèle avec les conditions suivantes :\n',
       [LLM_AI_CHAT_SUGGESTION_TYPES.editPattern]: 'Les modifications suivantes sont nécessaires dans le modèle :\n',
@@ -106,6 +107,9 @@ export default {
       [LLM_AI_CHAT_ERROR_CODES.timeout]:
         'La requête a expiré.<br />'
         + '<strong>Veuillez réessayer plus tard.</strong>',
+      noModels:
+        'Aucun modèle d\'IA n\'est actuellement disponible.<br />'
+        + '<strong>Veuillez contacter votre administrateur.</strong>',
     },
   },
 };

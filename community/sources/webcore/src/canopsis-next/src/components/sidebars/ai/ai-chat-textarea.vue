@@ -7,7 +7,7 @@
       <span v-html="sanitizedErrorMessage" class="font-weight-regular" />
     </c-alert>
     <v-textarea
-      v-model="prompt"
+      v-field="prompt"
       v-validate="promptRules"
       ref="textareaElement"
       :placeholder="$t('llm.chat.promptPlaceholder')"
@@ -29,10 +29,11 @@
       justify-space-between
     >
       <ai-chat-llm-field
-        v-model="selectedLlm"
+        :value="llm"
         :items="llms"
         :pending="llmsPending"
         :disabled="llmsDisabled"
+        @input="updateLlm"
       />
       <v-btn
         v-if="thinking"
@@ -67,7 +68,6 @@ import { sanitizeHtml } from '@/helpers/html';
 
 import { useValidator } from '@/hooks/validator/validator';
 
-import { useAiChatLlms } from './hooks/use-ai-chat-llms';
 import AiChatLlmField from './ai-chat-llm-field.vue';
 
 export default {
@@ -77,7 +77,27 @@ export default {
   components: {
     AiChatLlmField,
   },
+  model: {
+    prop: 'prompt',
+    event: 'input',
+  },
   props: {
+    prompt: {
+      type: String,
+      default: '',
+    },
+    llm: {
+      type: Object,
+      default: null,
+    },
+    llms: {
+      type: Array,
+      default: () => [],
+    },
+    llmsPending: {
+      type: Boolean,
+      default: false,
+    },
     thinking: {
       type: Boolean,
       default: false,
@@ -95,15 +115,12 @@ export default {
     const validator = useValidator();
 
     const textareaElement = ref(null);
-    const prompt = ref('');
-    const selectedLlm = ref(null);
 
-    const { llms, llmsPending } = useAiChatLlms();
-
-    const llmsDisabled = computed(() => llms.value.length <= 1 || !props.emptyChat);
+    const llmsDisabled = computed(() => props.llms.length <= 1 || !props.emptyChat);
     const askDisabled = computed(() => (
-      llmsPending.value
-      || !prompt.value.trim()
+      props.llmsPending
+      || !props.llms?.length
+      || !props.prompt.trim()
     ));
 
     const sanitizedErrorMessage = computed(() => sanitizeHtml(props.errorMessage ?? ''));
@@ -112,6 +129,8 @@ export default {
       required: true,
       max: LLM_AI_CHAT_PROMPT_MAX_LENGTH,
     }));
+
+    const updateLlm = newLlm => emit('update:llm', newLlm);
 
     /**
      * Emits the user message and chosen model so the parent can run the AI request.
@@ -126,10 +145,15 @@ export default {
       }
 
       emit('ask', {
-        llm: selectedLlm.value?._id,
-        prompt: prompt.value,
+        llm: props.llm?._id,
+        prompt: props.prompt,
       });
     };
+
+    /**
+     * Emits `stop` so the parent can abort the current LLM request while `thinking` is true.
+     */
+    const stop = () => emit('stop');
 
     /**
      * Submits on Enter; Shift+Enter keeps the default newline. Matches `Ask` enablement.
@@ -145,24 +169,25 @@ export default {
       ask();
     };
 
-    /**
-     * Emits `stop` so the parent can abort the current LLM request while `thinking` is true.
-     */
-    const stop = () => emit('stop');
+    const focus = () => textareaElement.value?.focus?.();
 
     return {
       textareaElement,
-      prompt,
-      selectedLlm,
-      llms,
-      llmsPending,
+
       llmsDisabled,
       askDisabled,
       sanitizedErrorMessage,
       promptRules,
+
+      updateLlm,
       ask,
       enterKeydown,
       stop,
+
+      /**
+       * Passed from the parent to focus the textarea element.
+       */
+      focus,
     };
   },
 };
