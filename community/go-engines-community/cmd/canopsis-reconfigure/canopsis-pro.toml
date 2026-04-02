@@ -499,6 +499,19 @@ EventsRecorderFetchStatusTimeout = "3s"
 WebsocketPingInterval = "5s"
 NotificationDisplayCount = 3
 
+[Canopsis.api.llm]
+# off_topic_errors defines error messages returned by the LLM when the user's prompt
+# is outside the LLM's scope (e.g. not related to Canopsis pattern generation).
+# If an LLM response error contains one of these strings, the message is marked as off-topic in history.
+off_topic_errors = [
+  "I am designed solely to generate Canopsis patterns.",
+  "Je suis conçu uniquement pour générer des modèles (patterns) Canopsis.",
+]
+
+# suggested_models defines the list of LLM models shown in the UI configuration form.
+# name: model identifier passed to the LLM provider.
+# thinking_levels: optional list of thinking budget levels supported by the model.
+# recommended: optional flag to highlight the model as recommended in the UI.
 [[Canopsis.api.llm.suggested_models]]
 name = "gemini-2.5-flash"
 [[Canopsis.api.llm.suggested_models]]

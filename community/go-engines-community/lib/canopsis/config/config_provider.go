@@ -139,6 +139,7 @@ type ApiConfig struct {
 	WebsocketPingInterval            time.Duration
 	NotificationDisplayCount         int
 	LLM                              struct {
+		OffTopicErrors  []string
 		SuggestedModels []LLMModelConf
 	}
 }
@@ -466,6 +467,7 @@ func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfi
 			Msgf("AuthorScheme of %s config section is used", sectionName)
 	}
 
+	conf.LLM.OffTopicErrors = cfg.API.LLM.OffTopicErrors
 	conf.LLM.SuggestedModels = cfg.API.LLM.SuggestedModels
 
 	return &BaseApiConfigProvider{
@@ -532,6 +534,7 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 		p.conf.NotificationDisplayCount = i
 	}
 
+	p.conf.LLM.OffTopicErrors = cfg.API.LLM.OffTopicErrors
 	p.conf.LLM.SuggestedModels = cfg.API.LLM.SuggestedModels
 }
 
