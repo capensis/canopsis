@@ -31,6 +31,11 @@ export const LLM_AI_CHAT_MESSAGE_ROLES = {
   model: 'model',
 };
 
+export const LLM_AI_CHAT_MESSAGE_TYPES = {
+  send: 'send',
+  cancel: 'cancel',
+};
+
 export const LLM_AI_CHAT_ERROR_CODES = {
   gone: 410, // Currently is unavailable -> fetch -> if no models -> No AI models
   tooManyRequests: 429, // Your exceeded your current quota { payload.retry_at }

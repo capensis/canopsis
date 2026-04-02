@@ -27,7 +27,7 @@
           />
         </template>
         <ai-chat-message
-          v-if="thinking"
+          v-if="thinkingMessage"
           :key="thinkingMessage._id"
           :message="thinkingMessage"
         />
@@ -40,18 +40,21 @@
       column
     >
       <ai-chat-textarea
+        v-model="prompt"
         ref="textareaElement"
+        :llm.sync="llm"
+        :llms="llms"
+        :llms-pending="llmsPending"
         :error-message="errorMessage"
-        :validation-errors-messages="validationErrorsMessages"
         :empty-chat="emptyChat"
-        :thinking="thinking"
+        :thinking="!!thinkingMessage"
         @ask="ask"
         @stop="stop"
       />
 
       <ai-chat-suggestions v-if="emptyChat" @select="applySuggestion" />
     </v-layout>
-    <portal v-if="socketRoom" :to="$constants.PORTALS_NAMES.additionalSidebarTitle">
+    <portal v-if="!emptyChat" :to="$constants.PORTALS_NAMES.additionalSidebarTitle">
       <v-btn
         class="white--text"
         color="white"
@@ -68,32 +71,11 @@
 </template>
 
 <script>
-import { isEmpty, isUndefined } from 'lodash';
-import {
-  computed,
-  ref,
-  set,
-  watch,
-  nextTick,
-  onBeforeUnmount,
-} from 'vue';
+import { toRef } from 'vue';
 
-import { SOCKET_ROOMS } from '@/config';
-import { LLM_AI_CHAT_MESSAGE_ROLES, SIDE_BARS, PATTERNS_FIELDS, DATETIME_FORMATS } from '@/constants';
+import { SIDE_BARS } from '@/constants';
 
-import Socket from '@/plugins/socket/services/socket';
-
-import { uid } from '@/helpers/uid';
-/**
- * TODO: REMOVE IT
- */
-import { promisedTimeout } from '@/helpers/async';
-import { formFilterToPatterns } from '@/helpers/entities/filter/form';
-import { getChangedPatternsFields } from '@/helpers/entities/pattern/form';
-import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
-
-import { useI18n } from '@/hooks/i18n';
-import { useSocket } from '@/hooks/socket';
+import { useAiChat } from '@/hooks/ai/ai-chat';
 
 import AiChatGreeting from './ai-chat-greeting.vue';
 import AiChatMessage from './ai-chat-message.vue';
@@ -119,329 +101,9 @@ export default {
     },
   },
   setup(props) {
-    const { t, tc } = useI18n();
-
-    const bodyElement = ref(null);
-    const textareaElement = ref(null);
-    const messages = ref([]);
-    const thinking = ref(false);
-    const versions = ref([]);
-    const lastLlmVersion = ref(null);
-    const socketRoom = ref(null);
-    const errorMessage = ref(null);
-    const validationErrorsMessages = ref([]);
-
-    let lastPrompt = '';
-    let lastLlmMessageIndex = -1;
-    let lastChangedPatternsFieldsMessageIndex = -1;
-
-    const activeVersion = computed(() => versions.value.length - 1);
-    const currentFormPatterns = computed(() => (
-      formFilterToPatterns(props.sidebar.config?.patterns ?? {}, Object.values(PATTERNS_FIELDS))
-    ));
-    const currentJsonString = computed(() => props.sidebar.config?.jsonString ?? '');
-    const changedPatternsFields = computed(() => (
-      getChangedPatternsFields(currentFormPatterns.value, versions.value[lastLlmVersion.value])
-    ));
-    const emptyCurrentFormPatterns = computed(() => isEmpty(currentFormPatterns.value));
-    const emptyChat = computed(() => messages.value.length === 0);
-
-    const socket = useSocket();
-
-    const thinkingMessage = computed(() => ({
-      _id: uid(),
-      role: LLM_AI_CHAT_MESSAGE_ROLES.model,
-      thinking: true,
-    }));
-
-    const addMessage = (text, role = LLM_AI_CHAT_MESSAGE_ROLES.model) => {
-      messages.value.push({
-        text,
-        role,
-
-        _id: uid(),
-        component: 'ai-chat-message',
-        time: Date.now(),
-      });
-    };
-
-    const addPattern = (patterns, role, originalVersion) => {
-      let messageText = '';
-
-      if (!role && changedPatternsFields.value.length > 0) {
-        messageText = tc('llm.chat.patternsEditedMessage', changedPatternsFields.value.length, {
-          patterns: changedPatternsFields.value.map(field => t(`pattern.patternsFields.${field}`)).join(', ').toLowerCase(),
-        });
-        versions.value.push(patterns);
-      } else if (role === LLM_AI_CHAT_MESSAGE_ROLES.model) {
-        versions.value.push(patterns);
-        lastLlmVersion.value = activeVersion.value;
-        messageText = emptyCurrentFormPatterns.value ? t('llm.chat.patternCreatedMessage') : t('llm.chat.patternUpdatedMessage');
-      }
-
-      if (messageText && isUndefined(originalVersion)) {
-        addMessage(
-          messageText,
-          role || LLM_AI_CHAT_MESSAGE_ROLES.model,
-        );
-      }
-
-      messages.value.push({
-        patterns,
-        originalVersion,
-
-        _id: uid(),
-        component: 'ai-chat-pattern',
-        version: activeVersion.value,
-      });
-    };
-
-    const resetTextarea = () => {
-      textareaElement.value.prompt = lastPrompt;
-      lastPrompt = '';
-    };
-
-    const resetErrors = () => {
-      errorMessage.value = null;
-      validationErrorsMessages.value = [];
-    };
-
-    /**
-     * Invoked when the `llmchat` room delivers a server message; extend to update `messages` or streaming state.
-     * Payload shape follows `SocketRoom.call` (API-defined).
-     */
-    const socketListener = async ({ error, code, val_errors: validationErrors = [], ...patterns }) => {
-      await promisedTimeout(() => {}, 5000);
-
-      resetErrors();
-
-      thinking.value = false;
-
-      if (validationErrors?.length) {
-        errorMessage.value = `<ul>${validationErrors.map(validationError => `<li><strong>${validationError}</strong></li>`).join('')}</ul>`;
-
-        resetTextarea();
-
-        return;
-      }
-
-      if (error) {
-        errorMessage.value = `<strong>${error}</strong>`;
-
-        resetTextarea();
-
-        return;
-      }
-
-      addPattern(patterns, LLM_AI_CHAT_MESSAGE_ROLES.model);
-      props.sidebar.config.setPatterns(patterns);
-    };
-
-    const scrollChatBodyToBottom = () => nextTick(() => requestAnimationFrame(() => {
-      const el = bodyElement.value;
-
-      if (!el) {
-        return;
-      }
-
-      el.scrollTop = el.scrollHeight;
-    }));
-
-    watch(messages, scrollChatBodyToBottom, { deep: true, flush: 'post' });
-    watch(thinking, scrollChatBodyToBottom, { flush: 'post' });
-
-    const errorHandler = ({ message, error }) => {
-      const { room, code, payload = {} } = error ?? {};
-
-      if (room !== SOCKET_ROOMS.llmChat) {
-        return;
-      }
-
-      const data = payload?.retry_at
-        ? { retryAt: convertDateToStringWithFormatForToday(payload.retry_at, DATETIME_FORMATS.long, '', DATETIME_FORMATS.timeWithoutSeconds) }
-        : {};
-
-      resetErrors();
-
-      thinking.value = false;
-      errorMessage.value = code ? t(`llm.chat.errors.${code}`, data) : message;
-
-      resetTextarea();
-    };
-
-    /**
-     * Joins `SOCKET_ROOMS.llmChat` merging `socketRoomData` from the sidebar with `config: llm`.
-     * Registers `socketListener` on the resulting `SocketRoom`.
-     *
-     * @param {Object} llm - LLM config merged into the join payload as `config` (e.g. selected model row).
-     */
-    const joinSocketRoom = (llm) => {
-      const joinData = {
-        ...props.sidebar.config?.socketRoomData,
-
-        config: llm,
-      };
-
-      socketRoom.value = socket
-        .on(Socket.EVENTS_TYPES.error, errorHandler)
-        .join(SOCKET_ROOMS.llmChat, joinData, true)
-        .addListener(socketListener);
-    };
-
-    /**
-     * Leaves the LLM chat socket room and clears the cached `SocketRoom` reference (runs on unmount).
-     */
-    const leaveSocketRoom = () => {
-      socket
-        .off(Socket.EVENTS_TYPES.error, errorHandler)
-        .leave(SOCKET_ROOMS.llmChat)
-        .removeListener(socketListener);
-
-      socketRoom.value = null;
-    };
-
-    /**
-     * Ensures the chat room is joined, then sends the user prompt over the socket via `SocketRoom.send`.
-     *
-     * @param {Object} params
-     * @param {Object} params.llm - LLM config passed into `joinSocketRoom` when the room is not open yet.
-     * @param {string} params.prompt - User message text sent in the outbound `{ prompt }` payload.
-     * @param {boolean} params.withoutPatterns - Whether to send the patterns to the LLM.
-     */
-    const ask = ({ llm, prompt }) => {
-      if (!socketRoom.value) {
-        joinSocketRoom(llm);
-      }
-
-      errorMessage.value = null;
-      lastPrompt = prompt;
-      textareaElement.value.prompt = '';
-      thinking.value = true;
-
-      const data = {
-        prompt,
-        type: 'send',
-      };
-
-      // TODO: uncomment when the backend will be ready
-      // if (!withoutPatterns && !emptyCurrentFormPatterns.value) {
-      //   Object.entries(currentFormPatterns.value).forEach(([field, pattern]) => {
-      //     data[field] = pattern;
-      //   });
-      // }
-
-      socketRoom.value.send(data);
-
-      addMessage(prompt, LLM_AI_CHAT_MESSAGE_ROLES.user);
-    };
-
-    /**
-     * Sends `{ type: 'cancel' }` on the room channel to stop an in-flight request when the room is joined.
-     */
-    const stop = () => {
-      socketRoom.value?.send({ type: 'cancel' });
-
-      textareaElement.value.prompt = lastPrompt;
-      thinking.value = false;
-      lastPrompt = '';
-    };
-
-    /**
-     * Handles `select` from `ai-chat-suggestions` (payload: `t('llm.chat.suggestionPrompts.*')` for current locale).
-     */
-    const applySuggestion = (newPrompt) => {
-      textareaElement.value.prompt = newPrompt;
-      textareaElement.value.$refs.textareaElement?.focus?.();
-    };
-
-    const restoreVersion = (version) => {
-      const newPatterns = versions.value[version];
-
-      addPattern(newPatterns, LLM_AI_CHAT_MESSAGE_ROLES.model, version);
-
-      props.sidebar.config.setPatterns(newPatterns);
-    };
-
-    const restart = () => {
-      leaveSocketRoom();
-      messages.value = [];
-      versions.value = [];
-      lastLlmVersion.value = null;
-      lastPrompt = '';
-      lastLlmMessageIndex = -1;
-      lastChangedPatternsFieldsMessageIndex = -1;
-      thinking.value = false;
-      errorMessage.value = null;
-      validationErrorsMessages.value = [];
-    };
-
-    watch(currentFormPatterns, async (newPatterns) => {
-      if (emptyChat.value) {
-        return;
-      }
-
-      if (changedPatternsFields.value.length === 0) {
-        if (activeVersion.value >= 0 && lastLlmVersion.value >= 0 && lastLlmVersion.value !== activeVersion.value) {
-          messages.value.splice(lastLlmMessageIndex + 1);
-          versions.value.pop();
-        }
-
-        return;
-      }
-
-      if (lastLlmVersion.value >= 0 && activeVersion.value >= 0 && lastLlmVersion.value !== activeVersion.value) {
-        set(messages.value, lastChangedPatternsFieldsMessageIndex, {
-          ...messages.value[lastChangedPatternsFieldsMessageIndex],
-          text: tc('llm.chat.patternsEditedMessage', changedPatternsFields.value.length, {
-            patterns: changedPatternsFields.value.map(field => t(`pattern.patternsFields.${field}`)).join(', ').toLowerCase(),
-          }),
-        });
-
-        set(messages.value, lastChangedPatternsFieldsMessageIndex + 1, {
-          ...messages.value[lastChangedPatternsFieldsMessageIndex + 1],
-          patterns: newPatterns,
-        });
-
-        return;
-      }
-
-      lastLlmMessageIndex = messages.value.length - 1;
-      lastChangedPatternsFieldsMessageIndex = lastLlmMessageIndex + 1;
-
-      addPattern(newPatterns);
+    return useAiChat({
+      sidebar: toRef(props, 'sidebar'),
     });
-
-    watch(
-      thinking,
-      newThinking => props.sidebar.config.setPending?.(newThinking, emptyCurrentFormPatterns.value, stop),
-    );
-
-    watch(currentJsonString, newJsonString => ask({
-      llm: textareaElement.value.selectedLlm._id,
-      prompt: `Fix pattern:\n${newJsonString}`,
-      withoutPatterns: true,
-    }));
-
-    onBeforeUnmount(leaveSocketRoom);
-
-    return {
-      bodyElement,
-      textareaElement,
-      versions,
-      activeVersion,
-      messages,
-      thinking,
-      thinkingMessage,
-      socketRoom,
-      emptyChat,
-      errorMessage,
-      validationErrorsMessages,
-      ask,
-      stop,
-      applySuggestion,
-      restoreVersion,
-      restart,
-    };
   },
 };
 </script>

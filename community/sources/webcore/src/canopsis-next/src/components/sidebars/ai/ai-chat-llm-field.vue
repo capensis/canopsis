@@ -36,11 +36,7 @@
 </template>
 
 <script>
-import { watch } from 'vue';
-
 import { COLORS } from '@/config';
-
-import { useModelField } from '@/hooks/form/model-field';
 
 export default {
   model: {
@@ -65,18 +61,8 @@ export default {
       default: false,
     },
   },
-  setup(props, { emit }) {
+  setup() {
     const colors = COLORS.aiChat;
-
-    const { updateModel } = useModelField(props, emit);
-
-    watch(() => props.items, () => {
-      const defaultLlm = props.items.find(llm => llm.default);
-
-      if (defaultLlm) {
-        updateModel(defaultLlm);
-      }
-    }, { immediate: true });
 
     return {
       colors,
