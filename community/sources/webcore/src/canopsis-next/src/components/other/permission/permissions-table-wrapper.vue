@@ -5,13 +5,13 @@
       <v-layout class="gap-2" justify-end>
         <v-btn color="primary" outlined @click="expandAll">
           <v-icon class="mr-2" small>
-            $vuetify.icons.expand_all
+            expand_all
           </v-icon>
           {{ $t('common.expandAll') }}
         </v-btn>
         <v-btn color="primary" outlined @click="collapseAll">
           <v-icon class="mr-2" small>
-            $vuetify.icons.collapse_all
+            collapse_all
           </v-icon>
           {{ $t('common.collapseAll') }}
         </v-btn>

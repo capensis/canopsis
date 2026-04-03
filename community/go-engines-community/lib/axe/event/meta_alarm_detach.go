@@ -140,7 +140,7 @@ func (p *metaAlarmDetachProcessor) detachChildrenFromMetaAlarm(ctx context.Conte
 			return err
 		}
 
-		var lastEventDate datetime.CpsTime // should be empty
+		var lastEventDate *datetime.CpsTime // should be empty
 		worstState := types.CpsNumber(types.AlarmStateOK)
 
 		for _, childAlarm := range metaAlarmChildren {
@@ -148,7 +148,7 @@ func (p *metaAlarmDetachProcessor) detachChildrenFromMetaAlarm(ctx context.Conte
 				worstState = childAlarm.Alarm.Value.State.Value
 			}
 
-			if lastEventDate.Before(childAlarm.Alarm.Value.LastEventDate) {
+			if childAlarm.Alarm.Value.LastEventDate != nil && (lastEventDate == nil || lastEventDate.Before(*childAlarm.Alarm.Value.LastEventDate)) {
 				lastEventDate = childAlarm.Alarm.Value.LastEventDate
 			}
 		}

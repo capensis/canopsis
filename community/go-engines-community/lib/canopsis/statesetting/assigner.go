@@ -126,17 +126,21 @@ func (a *assigner) AssignStateSetting(ctx context.Context, entity *types.Entity,
 }
 
 func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, prevStateMethodID string, commRegister mongo.CommandsRegister) (bool, error) {
-	for idx := range a.componentRules {
-		if len(a.componentRules[idx].EntityPattern) == 0 {
-			continue
-		}
+	if entity.Upstream == "" {
+		for idx := range a.componentRules {
+			if len(a.componentRules[idx].EntityPattern) == 0 {
+				continue
+			}
 
-		matched, err := match.MatchEntityPattern(a.componentRules[idx].EntityPattern, entity)
-		if err != nil {
-			return false, err
-		}
+			matched, err := match.MatchEntityPattern(a.componentRules[idx].EntityPattern, entity)
+			if err != nil {
+				return false, err
+			}
 
-		if matched {
+			if !matched {
+				continue
+			}
+
 			// for component, save inherited pattern to a state info to match resources easily.
 			entity.StateInfo = &types.StateInfo{
 				ID:               a.componentRules[idx].ID,
@@ -144,7 +148,7 @@ func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, 
 			}
 
 			// save rule to a corresponding state counter document to get it in the engine-axe on state calculation.
-			_, err := a.entityCountersCollection.UpdateOne(
+			_, err = a.entityCountersCollection.UpdateOne(
 				ctx,
 				bson.M{"_id": entity.ID},
 				bson.M{"$set": bson.M{"rule": a.componentRules[idx]}},
@@ -170,6 +174,8 @@ func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, 
 		}
 
 		commRegister.RegisterUpdate(entity.ID, bson.M{"state_info": nil})
+
+		return true, nil
 	}
 
 	return false, nil
@@ -186,27 +192,29 @@ func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, pr
 			return false, err
 		}
 
-		if matched {
-			// for service, save only rule's id, there is no need to save inherited pattern,
-			// because resources are matched to a service with service's pattern and inherited pattern
-			// will be used in axe for state calculation.
-			entity.StateInfo = &types.StateInfo{ID: a.serviceRules[idx].ID}
-
-			// save rule to a corresponding state counter document to get it in the engine-axe on state calculation.
-			_, err := a.entityCountersCollection.UpdateOne(
-				ctx,
-				bson.M{"_id": entity.ID},
-				bson.M{"$set": bson.M{"rule": a.serviceRules[idx]}},
-				options.UpdateOne().SetUpsert(true),
-			)
-			if err != nil {
-				return false, err
-			}
-
-			commRegister.RegisterUpdate(entity.ID, bson.M{"state_info": entity.StateInfo})
-
-			return true, nil
+		if !matched {
+			continue
 		}
+
+		// for service, save only rule's id, there is no need to save inherited pattern,
+		// because resources are matched to a service with service's pattern and inherited pattern
+		// will be used in axe for state calculation.
+		entity.StateInfo = &types.StateInfo{ID: a.serviceRules[idx].ID}
+
+		// save rule to a corresponding state counter document to get it in the engine-axe on state calculation.
+		_, err = a.entityCountersCollection.UpdateOne(
+			ctx,
+			bson.M{"_id": entity.ID},
+			bson.M{"$set": bson.M{"rule": a.serviceRules[idx]}},
+			options.UpdateOne().SetUpsert(true),
+		)
+		if err != nil {
+			return false, err
+		}
+
+		commRegister.RegisterUpdate(entity.ID, bson.M{"state_info": entity.StateInfo})
+
+		return true, nil
 	}
 
 	// if we're here then no rule was matched, set it to nil.
@@ -224,6 +232,8 @@ func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, pr
 		}
 
 		commRegister.RegisterUpdate(entity.ID, bson.M{"state_info": nil})
+
+		return true, nil
 	}
 
 	return false, nil

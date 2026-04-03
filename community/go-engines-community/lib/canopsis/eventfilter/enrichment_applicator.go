@@ -45,7 +45,7 @@ func (a *enrichmentApplicator) Apply(
 	}
 
 	for _, action := range rule.Config.Actions {
-		updatedEntityInfos, err = a.actionProcessor.Process(ctx, rule.ID, rule.Description, action, event, updatedEntityInfos, regexMatch, externalData)
+		updatedEntityInfos, err = a.actionProcessor.Process(ctx, rule, action, event, updatedEntityInfos, regexMatch, externalData)
 		if err != nil {
 			return RuleResult{Outcome: rule.Config.OnFailure}, fmt.Errorf("invalid action name=%q type=%q: %w", action.Name, action.Type, err)
 		}
@@ -73,7 +73,7 @@ func getExternalData(
 		getter, ok := externalDataContainer.Get(parameters.Type)
 		if !ok {
 			failReason := fmt.Sprintf("external data %q has invalid type %q", parameters.Reference, parameters.Type)
-			failureService.Add(rule.ID, rule.Description, FailureTypeOther, failReason, nil)
+			failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, nil)
 
 			return nil, nil, fmt.Errorf("no such data source: %s", parameters.Type)
 		}
@@ -104,9 +104,9 @@ func getExternalData(
 
 			if failReason != "" {
 				if isParamsInvalid {
-					failureService.Add(rule.ID, rule.Description, failureType, failReason, nil)
+					failureService.Add(rule.ID, rule.Description, rule.Updated, failureType, failReason, nil)
 				} else {
-					failureService.Add(rule.ID, rule.Description, failureType, failReason, event)
+					failureService.Add(rule.ID, rule.Description, rule.Updated, failureType, failReason, event)
 				}
 			}
 

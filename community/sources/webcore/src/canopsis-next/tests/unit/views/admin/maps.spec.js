@@ -7,7 +7,7 @@ import { mockModals } from '@unit/utils/mock-hooks';
 
 import { CRUD_ACTIONS, MAP_TYPES, MODALS, USER_PERMISSIONS } from '@/constants';
 
-import Maps from '@/views/admin/maps.vue';
+import Maps from '@/views/admin/custom-objects/maps.vue';
 
 const stubs = {
   'c-page-header': true,

@@ -90,9 +90,7 @@ func (s *sender) Run(ctx context.Context) {
 	}()
 
 	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		ticker := time.NewTicker(s.interval)
 		defer ticker.Stop()
 
@@ -104,11 +102,9 @@ func (s *sender) Run(ctx context.Context) {
 				s.send(ctx)
 			}
 		}
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		interval := s.configProvider.Get().GoMetricsInterval
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
@@ -128,7 +124,7 @@ func (s *sender) Run(ctx context.Context) {
 				}
 			}
 		}
-	}()
+	})
 
 	wg.Wait()
 }
@@ -289,10 +285,7 @@ func (s *sender) send(ctx context.Context) {
 		bulkCount := int(math.Ceil(float64(rowsCount) / float64(bulkSize)))
 		for i := 0; i < bulkCount; i++ {
 			begin := i * bulkSize
-			end := (i + 1) * bulkSize
-			if end > rowsCount {
-				end = rowsCount
-			}
+			end := min((i+1)*bulkSize, rowsCount)
 			_, err := pool.CopyFrom(ctx, pgx.Identifier{metricName}, columns, pgx.CopyFromRows(rows[begin:end]))
 			if err != nil {
 				s.logger.Err(err).Msg("cannot send tech metrics")

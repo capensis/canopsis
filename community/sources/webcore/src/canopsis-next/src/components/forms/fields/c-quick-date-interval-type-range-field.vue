@@ -24,14 +24,10 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { toRef } from 'vue';
 
-import { PATTERN_QUICK_RANGES_WITHOUT_CUSTOM } from '@/constants';
-
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
-
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
+import { useQuickDateIntervalRange } from '@/hooks/form/quick-date-interval-range';
 
 export default {
   model: {
@@ -69,59 +65,18 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
 
-    const fromQuickRanges = computed(() => {
-      const ranges = props.fromRanges ?? PATTERN_QUICK_RANGES_WITHOUT_CUSTOM;
-
-      return ranges.map(range => ({
-        ...range,
-        text: range.text ?? t(`quickRanges.types.${range.value}`),
-      }));
+    const {
+      fromQuickRanges,
+      toQuickRanges,
+      itemFromDisabled,
+      itemToDisabled,
+    } = useQuickDateIntervalRange({
+      fromRanges: toRef(props, 'fromRanges'),
+      toRanges: toRef(props, 'toRanges'),
+      value: toRef(props, 'value'),
     });
-
-    const toQuickRanges = computed(() => {
-      const ranges = props.toRanges ?? PATTERN_QUICK_RANGES_WITHOUT_CUSTOM;
-
-      return ranges.map(range => ({
-        ...range,
-        text: range.text ?? t(`quickRanges.types.${range.value}`),
-      }));
-    });
-
-    const allQuickRangesIntervals = computed(() => [
-      ...fromQuickRanges.value,
-      ...toQuickRanges.value,
-    ].reduce((acc, range) => {
-      acc[range.value] = {
-        start: convertStartDateIntervalToTimestamp(range.start),
-        stop: convertStopDateIntervalToTimestamp(range.stop),
-      };
-
-      return acc;
-    }, {}));
-
-    const itemFromDisabled = (item) => {
-      if (!props.value.to) {
-        return false;
-      }
-      const { start: itemStart } = allQuickRangesIntervals.value[item.value] ?? {};
-      const { start: toStart } = allQuickRangesIntervals.value[props.value.to] ?? {};
-
-      return toStart <= itemStart;
-    };
-
-    const itemToDisabled = (item) => {
-      if (!props.value.from) {
-        return false;
-      }
-
-      const { start: fromStart } = allQuickRangesIntervals.value[props.value.from] ?? {};
-      const { start: itemStart } = allQuickRangesIntervals.value[item.value] ?? {};
-
-      return fromStart >= itemStart;
-    };
 
     return {
       fromQuickRanges,

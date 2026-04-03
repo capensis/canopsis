@@ -40,7 +40,7 @@ func NewApi(
 }
 
 // List
-// @Success 200 {object} pagination.ListResponse{data=[]idlerule.Rule}
+// @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
@@ -63,7 +63,7 @@ func (a *api) List(c *gin.Context) {
 }
 
 // Get
-// @Success 200 {object} idlerule.Rule
+// @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
 	rule, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
@@ -82,7 +82,7 @@ func (a *api) Get(c *gin.Context) {
 
 // Create
 // @Param body body EditRequest true "body"
-// @Success 201 {object} idlerule.Rule
+// @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 	if err := validation.Bind(c, &request); err != nil {
@@ -109,7 +109,7 @@ func (a *api) Create(c *gin.Context) {
 
 // Update
 // @Param body body EditRequest true "body"
-// @Success 200 {object} Rule
+// @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),

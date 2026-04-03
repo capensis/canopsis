@@ -4,13 +4,19 @@ import (
 	"context"
 	"errors"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -22,6 +28,10 @@ import (
 
 func NewRecomputeEntityServiceProcessor(
 	dbClient mongo.DbClient,
+	alarmConfigProvider config.AlarmConfigProvider,
+	alarmStatusService alarmstatus.Service,
+	pbhTypeResolver pbehavior.EntityTypeResolver,
+	autoInstructionMatcher AutoInstructionMatcher,
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
@@ -29,44 +39,49 @@ func NewRecomputeEntityServiceProcessor(
 	metaAlarmStatesService correlation.MetaAlarmStateService,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
+	eventGenerator event.Generator,
+	amqpPublisher libamqp.Publisher,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
 	return &recomputeEntityServiceProcessor{
 		dbClient:                        dbClient,
-		alarmCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
 		entityCollection:                dbClient.Collection(mongo.EntityMongoCollection),
-		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
-		pbehaviorCollection:             dbClient.Collection(mongo.PbehaviorMongoCollection),
-		metaAlarmRuleCollection:         dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
-		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
-		metaAlarmPostProcessor:          metaAlarmPostProcessor,
-		metaAlarmStatesService:          metaAlarmStatesService,
-		metricsSender:                   metricsSender,
-		remediationRpcClient:            remediationRpcClient,
-		encoder:                         encoder,
 		logger:                          logger,
+		helper: newResolveHelper(
+			dbClient,
+			alarmConfigProvider,
+			alarmStatusService,
+			pbhTypeResolver,
+			autoInstructionMatcher,
+			internalTagAlarmMatcher,
+			entityServiceCountersCalculator,
+			componentCountersCalculator,
+			metaAlarmStatesService,
+			eventsSender,
+			metaAlarmPostProcessor,
+			metricsSender,
+			remediationRpcClient,
+			eventGenerator,
+			amqpPublisher,
+			encoder,
+			logger,
+		),
+		countersHelper: newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 	}
 }
 
 type recomputeEntityServiceProcessor struct {
 	dbClient                        mongo.DbClient
-	alarmCollection                 mongo.DbCollection
 	entityCollection                mongo.DbCollection
-	resolvedAlarmCollection         mongo.DbCollection
-	pbehaviorCollection             mongo.DbCollection
-	metaAlarmRuleCollection         mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
-	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
-	metaAlarmPostProcessor          MetaAlarmPostProcessor
-	metaAlarmStatesService          correlation.MetaAlarmStateService
-	metricsSender                   metrics.Sender
-	remediationRpcClient            engine.RPCClient
-	encoder                         encoding.Encoder
 	logger                          zerolog.Logger
+	helper                          *resolveHelper
+	countersHelper                  *countersHelper
 }
 
 func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -81,8 +96,8 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 			var err error
-
 			updatedServiceStates, err = p.entityServiceCountersCalculator.RecomputeCounters(ctx, &entity)
+
 			return err
 		})
 
@@ -102,14 +117,14 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 
 	now := datetime.NewCpsTime()
 	match := getOpenAlarmMatch(event)
-	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
+	countersRes := countersResult{}
 	notAckedMetricType := ""
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		updatedServiceStates = nil
+		countersRes = countersResult{}
 		notAckedMetricType = ""
 
-		beforeAlarm, err := updateAlarmToResolve(ctx, p.alarmCollection, match, event.Parameters)
+		beforeAlarm, err := p.helper.UpdateAlarmToResolve(ctx, match, event.Parameters)
 		if err != nil {
 			return err
 		}
@@ -120,19 +135,19 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 				notAckedMetricType = beforeAlarm.NotAckedMetricType
 			}
 
-			alarm, err := copyAlarmToResolvedCollection(ctx, p.alarmCollection, p.resolvedAlarmCollection, beforeAlarm.ID)
+			alarm, err := p.helper.CopyAlarmToResolvedCollection(ctx, beforeAlarm.ID)
 			if err != nil || alarm.ID == "" {
 				return err
 			}
 
-			entityUpdate = getResolveEntityUpdate()
+			entityUpdate = p.helper.GetResolveEntityUpdate()
 			alarmChange := types.NewAlarmChange()
 			alarmChange.Type = types.AlarmChangeTypeResolve
 			result.Forward = true
 			result.Alarm = alarm
 			result.AlarmChange = alarmChange
 
-			err = removeMetaAlarmStateOnResolve(ctx, p.metaAlarmRuleCollection, p.metaAlarmStatesService, result.Alarm)
+			err = p.helper.RemoveMetaAlarmStateOnResolve(ctx, result.Alarm)
 			if err != nil {
 				return err
 			}
@@ -158,10 +173,8 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 			result.Entity = entity
 		}
 
-		result.IsCountersUpdated, updatedServiceStates, _, _, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
-			p.entityServiceCountersCalculator,
-			p.componentCountersCalculator,
 			&result.Alarm,
 			&entity,
 			result.AlarmChange,
@@ -173,22 +186,11 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 		return result, err
 	}
 
-	go postProcessResolve(
-		context.Background(),
-		event,
-		result,
-		updatedServiceStates,
-		false,
-		0,
-		notAckedMetricType,
-		p.eventsSender,
-		p.metaAlarmPostProcessor,
-		p.metricsSender,
-		p.remediationRpcClient,
-		p.pbehaviorCollection,
-		p.encoder,
-		p.logger,
-	)
+	if result.AlarmChange.Type == types.AlarmChangeTypeResolve {
+		go p.helper.PostProcess(context.WithoutCancel(ctx), event, result, countersRes, notAckedMetricType)
+	} else {
+		go p.countersHelper.UpdateStates(context.WithoutCancel(ctx), countersRes)
+	}
 
 	return result, nil
 }

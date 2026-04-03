@@ -106,8 +106,6 @@ func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
 
 	inputCh <- task
 
-	time.Sleep(100 * time.Millisecond)
-
 	select {
 	case res := <-resultCh:
 		if res.Err != nil {
@@ -117,7 +115,7 @@ func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
 		if res.Alarm.ID != task.Alarm.ID {
 			t.Errorf("expected alarm but got %v", res.Alarm)
 		}
-	default:
+	case <-time.After(100 * time.Millisecond):
 		t.Errorf("expected result but got nothing")
 	}
 }
@@ -263,8 +261,6 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 
 	inputCh <- task
 
-	time.Sleep(100 * time.Millisecond)
-
 	select {
 	case res := <-resultCh:
 		if res.Err != nil {
@@ -274,7 +270,7 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 		if res.Alarm.ID != task.Alarm.ID {
 			t.Errorf("expected alarm but got %v", res.Alarm)
 		}
-	default:
+	case <-time.After(100 * time.Millisecond):
 		t.Errorf("expected result but got nothing")
 	}
 }
@@ -368,8 +364,6 @@ func TestTaskManager_Run_GiveDelayedTask_ShouldSendResult(t *testing.T) {
 
 	inputCh <- task
 
-	time.Sleep(100 * time.Millisecond)
-
 	select {
 	case res := <-resultCh:
 		if res.Err != nil {
@@ -379,7 +373,7 @@ func TestTaskManager_Run_GiveDelayedTask_ShouldSendResult(t *testing.T) {
 		if res.Alarm.ID != task.Alarm.ID {
 			t.Errorf("expected alarm but got %v", res.Alarm)
 		}
-	default:
+	case <-time.After(100 * time.Millisecond):
 		t.Errorf("expected result but got nothing")
 	}
 }
@@ -468,12 +462,11 @@ func TestTaskManager_Run_GiveAbandonedTask_ShouldSendResult(t *testing.T) {
 
 	inputCh <- task
 
-	time.Sleep(100 * time.Millisecond)
-
 	select {
 	case res := <-resultCh:
 
 		t.Errorf("expected not result but got %+v", res)
-	default:
+	case <-time.After(100 * time.Millisecond):
+		// expected no result
 	}
 }
