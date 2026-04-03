@@ -5,7 +5,15 @@
         <span>{{ config.title }}</span>
       </template>
       <template #text="">
-        <pattern-form v-model="form" />
+        <div class="position-relative">
+          <pattern-progress
+            v-if="chatPending"
+            :in-progress-text="chatPendingTexts.inProgress"
+            :cancel-button-label="chatPendingTexts.cancel"
+            @cancel="chatCancel"
+          />
+          <pattern-form v-model="form" />
+        </div>
       </template>
       <template #actions="">
         <v-btn
@@ -16,7 +24,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="isDisabled || chatPending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -46,6 +54,7 @@ import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 
 import PatternForm from '@/components/forms/pattern-form.vue';
+import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -57,6 +66,7 @@ export default {
   },
   components: {
     PatternForm,
+    PatternProgress,
     ModalWrapper,
   },
   props: {
@@ -66,9 +76,7 @@ export default {
     },
   },
   setup(props) {
-    const { config, modals } = useInnerModal(props);
-
-    const close = () => modals.hide();
+    const { config, close } = useInnerModal(props);
 
     const form = ref(patternToForm(config.value.pattern));
 
@@ -87,7 +95,11 @@ export default {
 
     useFormConfirmableCloseModal({ form, submit, close });
 
-    useAiChatForm({
+    const {
+      pending: chatPending,
+      pendingTexts: chatPendingTexts,
+      cancel: chatCancel,
+    } = useAiChatForm({
       form,
       modalId: props.modal.id,
       ruleId: props.modal.config?.pattern?._id,
@@ -102,6 +114,9 @@ export default {
       submitting,
       close,
       submit,
+      chatPending,
+      chatPendingTexts,
+      chatCancel,
     };
   },
 };

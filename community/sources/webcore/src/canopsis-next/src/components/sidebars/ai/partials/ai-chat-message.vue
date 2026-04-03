@@ -23,7 +23,7 @@
             :class="{ 'ai-chat-message__text--collapsed': isCollapsible && !isExpanded }"
             class="ai-chat-message__text"
           >
-            <span class="pre-wrap">{{ message.text }}</span>
+            <span v-html="sanitizedText" class="pre-wrap" />
           </v-flex>
           <span v-if="message.time" class="grey--text text--darken-1">
             {{ timeString }}
@@ -59,6 +59,7 @@ import { computed, ref } from 'vue';
 
 import { DATETIME_FORMATS, LLM_AI_CHAT_MESSAGE_ROLES } from '@/constants';
 
+import { sanitizeHtml } from '@/helpers/html';
 import { convertDateToString, convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 const COLLAPSE_TEXT_MIN_LENGTH = 100;
@@ -91,6 +92,8 @@ export default {
       'ai-chat-message--thinking': props.message.thinking,
     }));
 
+    const sanitizedText = computed(() => sanitizeHtml(props.message.text ?? ''));
+
     const timeString = computed(() => (
       props.history
         ? convertDateToString(props.message.time, DATETIME_FORMATS.long)
@@ -103,6 +106,7 @@ export default {
       isNoRole,
       isCollapsible,
       wrapperClass,
+      sanitizedText,
       timeString,
     };
   },

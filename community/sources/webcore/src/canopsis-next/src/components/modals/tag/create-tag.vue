@@ -5,11 +5,19 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <tag-form
-          v-model="form"
-          :is-imported="isImported"
-          :is-new="isNew"
-        />
+        <div class="position-relative">
+          <pattern-progress
+            v-if="chatPending"
+            :in-progress-text="chatPendingTexts.inProgress"
+            :cancel-button-label="chatPendingTexts.cancel"
+            @cancel="chatCancelPending"
+          />
+          <tag-form
+            v-model="form"
+            :is-imported="isImported"
+            :is-new="isNew"
+          />
+        </div>
       </template>
       <template #actions="">
         <v-btn
@@ -20,7 +28,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="isDisabled || chatPending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -35,15 +43,17 @@
 <script>
 import { ref, computed } from 'vue';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { tagToForm, formToTag } from '@/helpers/entities/tag/form';
 
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
+import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
 import TagForm from '@/components/other/tag/form/tag-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -54,7 +64,7 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: { TagForm, ModalWrapper },
+  components: { TagForm, ModalWrapper, PatternProgress },
   props: {
     modal: {
       type: Object,
@@ -66,6 +76,24 @@ export default {
     const { config, close } = useInnerModal(props);
 
     const form = ref(tagToForm(config.value.tag));
+
+    const aiChatPatternsForm = computed({
+      get: () => form.value.patterns,
+      set: (patterns) => {
+        form.value = { ...form.value, patterns };
+      },
+    });
+
+    const {
+      pending: chatPending,
+      pendingTexts: chatPendingTexts,
+      cancelPending: chatCancelPending,
+    } = useAiChatForm({
+      form: aiChatPatternsForm,
+      modalId: props.modal.id,
+      ruleId: props.modal.config?.tag?._id,
+      context: LLM_SOCKET_CONTEXTS.alarmTag,
+    });
 
     const isNew = computed(() => !config.value.tag?._id);
     const title = computed(() => (
@@ -92,6 +120,9 @@ export default {
       isImported,
       isDisabled,
       submitting,
+      chatPending,
+      chatPendingTexts,
+      chatCancelPending,
       submit,
       close,
     };

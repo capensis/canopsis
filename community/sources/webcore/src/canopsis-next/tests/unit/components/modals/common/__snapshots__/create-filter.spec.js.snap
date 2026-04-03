@@ -19,15 +19,20 @@ exports[`create-filter Renders \`create-filter\` with all parameters 1`] = `
     <div
       class="text"
     >
-      <patterns-form-stub
-        autofocus="true"
-        form="[object Object]"
-        withalarm="true"
-        withentity="true"
-        withevent="true"
-        withpbehavior="true"
-        withtitle="true"
-      />
+      <div
+        class="position-relative"
+      >
+        <!---->
+        <patterns-form-stub
+          autofocus="true"
+          form="[object Object]"
+          withalarm="true"
+          withentity="true"
+          withevent="true"
+          withpbehavior="true"
+          withtitle="true"
+        />
+      </div>
     </div>
     <div
       class="actions"
@@ -76,10 +81,15 @@ exports[`create-filter Renders \`create-filter\` with empty modal 1`] = `
     <div
       class="text"
     >
-      <patterns-form-stub
-        autofocus="true"
-        form="[object Object]"
-      />
+      <div
+        class="position-relative"
+      >
+        <!---->
+        <patterns-form-stub
+          autofocus="true"
+          form="[object Object]"
+        />
+      </div>
     </div>
     <div
       class="actions"

@@ -1,7 +1,7 @@
 import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -12,6 +12,7 @@ import CreatePbehavior from '@/components/modals/pbehavior/create-pbehavior.vue'
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pattern-progress': true,
   'pbehavior-form': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
@@ -30,6 +31,7 @@ const selectPbehaviorForm = wrapper => wrapper.find('pbehavior-form-stub');
 describe('create-pbehavior', () => {
   const $modals = mockModals();
   const $popups = mockPopups();
+  const $sidebar = mockSidebar();
   const defaultPbehavior = {
     _id: expect.any(String),
     name: '',
@@ -57,7 +59,7 @@ describe('create-pbehavior', () => {
 
     stubs,
     attachTo: document.body,
-    mocks: { $modals, $popups },
+    mocks: { $modals, $popups, $sidebar },
     parentComponent: {
       provide: {
         $clickOutside: new ClickOutside(),
@@ -67,7 +69,7 @@ describe('create-pbehavior', () => {
   const snapshotFactory = generateRenderer(CreatePbehavior, {
 
     stubs: snapshotStubs,
-    mocks: { $modals, $popups },
+    mocks: { $modals, $popups, $sidebar },
     parentComponent: {
       provide: {
         $clickOutside: new ClickOutside(),
@@ -92,7 +94,7 @@ describe('create-pbehavior', () => {
     await flushPromises();
 
     expect(action).toHaveBeenCalledWith(defaultPbehaviorRequest);
-    expect($modals.hide).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -140,7 +142,7 @@ describe('create-pbehavior', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -168,7 +170,7 @@ describe('create-pbehavior', () => {
 
     expect(formErrors).toEqual(addedErrors);
     expect(action).toHaveBeenCalledWith(defaultPbehaviorRequest);
-    expect($modals.hide).not.toHaveBeenCalledWith();
+    expect($modals.hide).not.toHaveBeenCalled();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -209,7 +211,7 @@ describe('create-pbehavior', () => {
       name: customPbehavior.name,
       _id: customPbehavior._id,
     });
-    expect($modals.hide).not.toHaveBeenCalledWith();
+    expect($modals.hide).not.toHaveBeenCalled();
 
     consoleErrorSpy.mockClear();
   });
@@ -244,7 +246,7 @@ describe('create-pbehavior', () => {
       ...defaultPbehaviorRequest,
       ...newForm,
     });
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -260,7 +262,7 @@ describe('create-pbehavior', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Renders `create-pbehavior` with empty modal', () => {

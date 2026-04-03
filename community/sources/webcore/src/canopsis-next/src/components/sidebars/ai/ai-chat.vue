@@ -77,12 +77,12 @@ import { SIDE_BARS } from '@/constants';
 
 import { useAiChat } from '@/hooks/ai/ai-chat';
 
-import AiChatGreeting from './ai-chat-greeting.vue';
-import AiChatMessage from './ai-chat-message.vue';
-import AiChatPattern from './ai-chat-pattern.vue';
-import AiChatSuggestions from './ai-chat-suggestions.vue';
-import AiChatTextarea from './ai-chat-textarea.vue';
-import AiChatWarningAlert from './ai-chat-warning-alert.vue';
+import AiChatGreeting from './partials/ai-chat-greeting.vue';
+import AiChatMessage from './partials/ai-chat-message.vue';
+import AiChatPattern from './partials/ai-chat-pattern.vue';
+import AiChatSuggestions from './partials/ai-chat-suggestions.vue';
+import AiChatTextarea from './partials/ai-chat-textarea.vue';
+import AiChatWarningAlert from './partials/ai-chat-warning-alert.vue';
 
 export default {
   name: SIDE_BARS.aiChat,

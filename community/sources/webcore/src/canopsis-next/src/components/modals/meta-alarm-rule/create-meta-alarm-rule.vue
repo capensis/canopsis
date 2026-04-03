@@ -11,15 +11,23 @@
           :type="type"
         >
           <template #default="{ templateVars }">
-            <meta-alarm-rule-form
-              v-model="form"
-              ref="formElement"
-              :active-step.sync="activeStep"
-              :disabled-id-field="config.isDisabledIdField"
-              :alarm-infos="alarmInfos"
-              :entity-infos="entityInfos"
-              :template-vars="templateVars"
-            />
+            <div class="position-relative">
+              <pattern-progress
+                v-if="chatPending"
+                :in-progress-text="chatPendingTexts.inProgress"
+                :cancel-button-label="chatPendingTexts.cancel"
+                @cancel="chatCancelPending"
+              />
+              <meta-alarm-rule-form
+                v-model="form"
+                ref="formElement"
+                :active-step.sync="activeStep"
+                :disabled-id-field="config.isDisabledIdField"
+                :alarm-infos="alarmInfos"
+                :entity-infos="entityInfos"
+                :template-vars="templateVars"
+              />
+            </div>
           </template>
         </template-testing-test-variables-wrapper>
       </template>
@@ -27,14 +35,14 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
           v-if="isLastStep"
           key="submit"
-          :disabled="isDisabled"
+          :disabled="isDisabled || chatPending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -44,7 +52,7 @@
         <v-btn
           v-else
           key="next"
-          :disabled="!isStepValid"
+          :disabled="!isStepValid || chatPending"
           type="button"
           class="primary"
           @click="next"
@@ -65,17 +73,25 @@ import {
   nextTick,
 } from 'vue';
 
-import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY, META_ALARMS_FORM_STEPS } from '@/constants';
+import {
+  LLM_SOCKET_CONTEXTS,
+  META_ALARMS_FORM_STEPS,
+  MODALS,
+  TEMPLATE_TESTING_TEST_TYPES,
+  VALIDATION_DELAY,
+} from '@/constants';
 
 import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/entities/meta-alarm/rule/form';
 
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useEntityInfos } from '@/hooks/store/modules/entity-infos';
 import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
+import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
 import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
@@ -89,6 +105,7 @@ export default {
   },
   components: {
     MetaAlarmRuleForm,
+    PatternProgress,
     TemplateTestingTestVariablesWrapper,
     ModalWrapper,
   },
@@ -109,6 +126,24 @@ export default {
     const isStepValid = ref(false);
     const formElement = ref(null);
     const form = ref(metaAlarmRuleToForm(config.value.rule));
+
+    const aiChatPatternsForm = computed({
+      get: () => form.value.patterns,
+      set: (patterns) => {
+        form.value = { ...form.value, patterns };
+      },
+    });
+
+    const {
+      pending: chatPending,
+      pendingTexts: chatPendingTexts,
+      cancelPending: chatCancelPending,
+    } = useAiChatForm({
+      form: aiChatPatternsForm,
+      modalId: props.modal.id,
+      ruleId: props.modal.config?.rule?._id,
+      context: LLM_SOCKET_CONTEXTS.metaAlarmRule,
+    });
 
     const isNew = computed(() => !config.value.rule?._id);
     const title = computed(() => config.value.title ?? t('modals.metaAlarmRule.create.title'));
@@ -207,8 +242,12 @@ export default {
       entityInfos,
       isDisabled,
       submitting,
+      chatPending,
+      chatPendingTexts,
+      chatCancelPending,
       next,
       submit,
+      close,
     };
   },
 };

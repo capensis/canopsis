@@ -11,12 +11,20 @@
           :type="type"
         >
           <template #default="{ templateVars, copyVars }">
-            <event-filter-form
-              v-model="form"
-              :template-vars="templateVars"
-              :copy-vars="copyVars"
-              :is-disabled-id-field="config.isDisabledIdField"
-            />
+            <div class="position-relative">
+              <pattern-progress
+                v-if="chatPending"
+                :in-progress-text="chatPendingTexts.inProgress"
+                :cancel-button-label="chatPendingTexts.cancel"
+                @cancel="chatCancelPending"
+              />
+              <event-filter-form
+                v-model="form"
+                :template-vars="templateVars"
+                :copy-vars="copyVars"
+                :is-disabled-id-field="config.isDisabledIdField"
+              />
+            </div>
           </template>
         </template-testing-test-variables-wrapper>
       </template>
@@ -29,7 +37,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="isDisabled || chatPending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -44,7 +52,7 @@
 <script>
 import { computed, ref, watch, inject } from 'vue';
 
-import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import { eventFilterToForm, formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
 import {
@@ -52,12 +60,14 @@ import {
   isEnrichmentEventFilterRuleType,
 } from '@/helpers/entities/event-filter/rule/entity';
 
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 
+import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
 import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
@@ -71,6 +81,7 @@ export default {
   },
   components: {
     EventFilterForm,
+    PatternProgress,
     TemplateTestingTestVariablesWrapper,
     ModalWrapper,
   },
@@ -90,6 +101,24 @@ export default {
     const { validator } = useValidationFormErrors();
 
     const form = ref(eventFilterToForm(config.value.rule, system.timezone));
+
+    const aiChatPatternsForm = computed({
+      get: () => form.value.patterns,
+      set: (patterns) => {
+        form.value = { ...form.value, patterns };
+      },
+    });
+
+    const {
+      pending: chatPending,
+      pendingTexts: chatPendingTexts,
+      cancelPending: chatCancelPending,
+    } = useAiChatForm({
+      form: aiChatPatternsForm,
+      modalId: props.modal.id,
+      ruleId: props.modal.config?.rule?._id,
+      context: LLM_SOCKET_CONTEXTS.eventFilter,
+    });
 
     const ruleId = computed(() => config.value.rule?._id);
     const title = computed(() => config.value.title ?? t('modals.createEventFilter.create.title'));
@@ -121,6 +150,9 @@ export default {
       isChangeEntity,
       isDisabled,
       submitting,
+      chatPending,
+      chatPendingTexts,
+      chatCancelPending,
       submit,
       close,
     };

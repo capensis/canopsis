@@ -1,7 +1,7 @@
 import Faker from 'faker';
 
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -33,6 +33,7 @@ const selectPatternForm = wrapper => wrapper
 describe('create-pattern', () => {
   const $modals = mockModals();
   const $popups = mockPopups();
+  const $sidebar = mockSidebar();
 
   const factory = generateShallowRenderer(CreatePattern, {
     stubs,
@@ -64,6 +65,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -77,7 +79,7 @@ describe('create-pattern', () => {
       type: PATTERN_TYPES.alarm,
       alarm_pattern: [],
     });
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toBeCalledWith(wrapper.props().modal);
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -92,6 +94,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -126,6 +129,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -133,7 +137,7 @@ describe('create-pattern', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toBeCalledWith(wrapper.props().modal);
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -153,6 +157,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -169,7 +174,7 @@ describe('create-pattern', () => {
       type: PATTERN_TYPES.alarm,
       alarm_pattern: [],
     });
-    expect($modals.hide).not.toBeCalledWith();
+    expect($modals.hide).not.toBeCalled();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -199,6 +204,7 @@ describe('create-pattern', () => {
       mocks: {
         $modals,
         $popups,
+        $sidebar,
       },
     });
 
@@ -216,7 +222,7 @@ describe('create-pattern', () => {
       type: customPattern.type,
       title: customPattern.title,
     });
-    expect($modals.hide).not.toBeCalledWith();
+    expect($modals.hide).not.toBeCalled();
 
     consoleErrorSpy.mockClear();
   });
@@ -238,6 +244,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -258,7 +265,7 @@ describe('create-pattern', () => {
       name: newForm.name,
       [expectedField]: [],
     });
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toBeCalledWith(wrapper.props().modal);
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -270,6 +277,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -277,7 +285,7 @@ describe('create-pattern', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toBeCalledWith(wrapper.props().modal);
   });
 
   test('Renders `create-pattern` with empty modal', () => {
@@ -289,6 +297,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -314,6 +323,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -332,6 +342,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
