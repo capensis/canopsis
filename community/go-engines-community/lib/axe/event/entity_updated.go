@@ -4,9 +4,17 @@ import (
 	"context"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -17,34 +25,61 @@ import (
 
 func NewEntityUpdatedProcessor(
 	dbClient mongo.DbClient,
+	alarmConfigProvider config.AlarmConfigProvider,
+	alarmStatusService alarmstatus.Service,
+	pbhTypeResolver pbehavior.EntityTypeResolver,
+	autoInstructionMatcher AutoInstructionMatcher,
+	externalTagUpdater alarmtag.ExternalUpdater,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
+	metricsSender metrics.Sender,
+	remediationRpcClient engine.RPCClient,
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
-	externalTagUpdater alarmtag.ExternalUpdater,
-	metaAlarmPostProcessor MetaAlarmPostProcessor,
+	eventGenerator libevent.Generator,
+	amqpPublisher amqp.Publisher,
+	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
 	return &entityUpdatedProcessor{
-		dbClient:                        dbClient,
-		alarmCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
-		entityServiceCountersCalculator: entityServiceCountersCalculator,
-		componentCountersCalculator:     componentCountersCalculator,
-		eventsSender:                    eventsSender,
-		externalTagUpdater:              externalTagUpdater,
-		metaAlarmPostProcessor:          metaAlarmPostProcessor,
-		logger:                          logger,
+		dbClient:                    dbClient,
+		alarmCollection:             dbClient.Collection(mongo.AlarmMongoCollection),
+		componentCountersCalculator: componentCountersCalculator,
+		externalTagUpdater:          externalTagUpdater,
+		metaAlarmPostProcessor:      metaAlarmPostProcessor,
+		logger:                      logger,
+		countersHelper:              newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		upstreamHelper: newUpstreamHelper(
+			dbClient,
+			alarmConfigProvider,
+			alarmStatusService,
+			pbhTypeResolver,
+			autoInstructionMatcher,
+			metaAlarmPostProcessor,
+			metricsSender,
+			remediationRpcClient,
+			internalTagAlarmMatcher,
+			entityServiceCountersCalculator,
+			componentCountersCalculator,
+			eventsSender,
+			eventGenerator,
+			amqpPublisher,
+			encoder,
+			logger,
+		),
 	}
 }
 
 type entityUpdatedProcessor struct {
-	dbClient                        mongo.DbClient
-	alarmCollection                 mongo.DbCollection
-	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
-	componentCountersCalculator     calculator.ComponentCountersCalculator
-	eventsSender                    entitycounters.EventsSender
-	externalTagUpdater              alarmtag.ExternalUpdater
-	metaAlarmPostProcessor          MetaAlarmPostProcessor
-	logger                          zerolog.Logger
+	dbClient                    mongo.DbClient
+	alarmCollection             mongo.DbCollection
+	componentCountersCalculator calculator.ComponentCountersCalculator
+	externalTagUpdater          alarmtag.ExternalUpdater
+	metaAlarmPostProcessor      MetaAlarmPostProcessor
+	logger                      zerolog.Logger
+	countersHelper              *countersHelper
+	upstreamHelper              *upstreamHelper
 }
 
 func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -55,17 +90,27 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 	entity := *event.Entity
 	importTags := types.TransformEventTags(event.Parameters.ImportTags)
-	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
-	var componentStateChanged bool
-	var newComponentState int
 	var alarm types.Alarm
+	countersRes := countersResult{}
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		updatedServiceStates = nil
 		result = Result{}
 		alarm = types.Alarm{}
+		countersRes = countersResult{}
 		err := p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
+		}
+
+		result, err = p.upstreamHelper.UpdateAlarm(ctx, event, alarm, entity)
+		if err != nil {
+			return err
+		}
+
+		if result.Alarm.ID == "" {
+			// to dynamic-infos
+			result.Forward = true
+			result.Alarm = alarm
+			result.AlarmChange = types.NewAlarmChange()
 		}
 
 		if event.Parameters.ImportSource != "" && (len(importTags) > 0 || len(alarm.ImportTags) > 0) {
@@ -124,10 +169,8 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			}
 		}
 
-		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
-			p.entityServiceCountersCalculator,
-			p.componentCountersCalculator,
 			&alarm,
 			&entity,
 			result.AlarmChange,
@@ -138,9 +181,9 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 		if entity.Type == types.EntityTypeComponent {
 			// force update
-			componentStateChanged = true
-
-			newComponentState, err = p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
+			countersRes.IsComponentStateChanged = true
+			countersRes.ComponentID = entity.ID
+			countersRes.NewComponentState, err = p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
 			if err != nil {
 				return err
 			}
@@ -153,12 +196,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		return result, err
 	}
 
-	// to dynamic-infos
-	result.Forward = true
-	result.Alarm = alarm
-	result.AlarmChange = types.NewAlarmChange()
-
-	go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates, componentStateChanged, newComponentState)
+	go p.postProcess(context.WithoutCancel(ctx), event, result, countersRes)
 
 	return result, nil
 }
@@ -167,35 +205,11 @@ func (p *entityUpdatedProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
-	componentStateChanged bool,
-	newComponentState int,
+	countersRes countersResult,
 ) {
-	for servID, servInfo := range updatedServiceStates {
-		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update service state")
-		}
-	}
-
-	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update component state")
-		}
-	}
-
 	if event.Parameters.ImportSource != "" {
 		p.externalTagUpdater.Add(event.Parameters.ImportTags)
 	}
 
-	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
-		Alarm:               &result.Alarm,
-		AlarmChangeType:     result.AlarmChange.Type,
-		AddedExternalTags:   result.AddedExternalTags,
-		RemovedExternalTags: result.RemovedExternalTags,
-	})
-	if err != nil {
-		p.logger.Err(err).Msg("cannot process meta alarm")
-	}
+	p.upstreamHelper.PostProcess(ctx, event, result, countersRes)
 }

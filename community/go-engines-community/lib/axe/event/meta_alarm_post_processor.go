@@ -602,18 +602,15 @@ func (p *metaAlarmPostProcessor) updateParentState(ctx context.Context, childAla
 					}
 
 					var newState types.CpsNumber
-					var newLastEventDate datetime.CpsTime
+					var newLastEventDate *datetime.CpsTime
 					if childState > parentState {
 						newState = childState
 					} else if childState < parentState {
-						state, lastEventDate, err := p.adapter.GetWorstAlarmStateAndMaxLastEventDate(ctx,
+						newState, newLastEventDate, err = p.adapter.GetWorstAlarmStateAndMaxLastEventDate(ctx,
 							parentAlarm.Alarm.Value.Children)
 						if err != nil {
 							return fmt.Errorf("cannot fetch children state: %w", err)
 						}
-
-						newState = types.CpsNumber(state)
-						newLastEventDate = datetime.NewCpsTime(lastEventDate)
 					} else {
 						return nil
 					}
@@ -741,7 +738,8 @@ func (p *metaAlarmPostProcessor) getChildEventByMetaAlarmEvent(
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
 		output = event.Parameters.TicketInfo.GetStepMessage()
 		isTicket = true
-	case types.AlarmChangeTypeAssocTicket:
+	case types.AlarmChangeTypeAssocTicket,
+		types.AlarmChangeTypeTicketRemove:
 		isTicket = true
 	}
 
@@ -791,6 +789,7 @@ func (p *metaAlarmPostProcessor) applyOnChild(changeType types.AlarmChangeType) 
 	case types.AlarmChangeTypeAck,
 		types.AlarmChangeTypeAckremove,
 		types.AlarmChangeTypeAssocTicket,
+		types.AlarmChangeTypeTicketRemove,
 		types.AlarmChangeTypeCancel,
 		types.AlarmChangeTypeChangeState,
 		types.AlarmChangeTypeComment,

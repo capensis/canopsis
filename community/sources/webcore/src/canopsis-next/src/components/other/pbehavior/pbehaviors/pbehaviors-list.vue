@@ -6,7 +6,7 @@
     :headers="headers"
     :total-items="totalItems"
     :select-all="removable || enablable || disablable"
-    :advanced-search-fields="advancedSearchFields"
+    :advanced-search-attributes="advancedSearchAttributes"
     advanced-search
     advanced-pagination
     expand
@@ -94,15 +94,11 @@
 <script>
 import { computed } from 'vue';
 
-import {
-  ADVANCED_SEARCH_DATE_CONDITIONS,
-  PBEHAVIOR_LIST_FIELDS,
-  PATTERN_DURATION_FORMAT,
-  TIME_UNITS,
-} from '@/constants';
+import { PBEHAVIOR_LIST_FIELDS, PATTERN_DURATION_FORMAT, TIME_UNITS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
+import { usePbehaviorAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
 import { usePbehaviorDateFormat } from '@/components/other/pbehavior/pbehaviors/hooks/pbehavior-date-format';
 
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
@@ -163,6 +159,8 @@ export default {
     const { t, tc } = useI18n();
     const { timezone, shownUserTimezone, formatIntervalDate, formatRruleEndDate } = usePbehaviorDateFormat();
 
+    const { attributes: advancedSearchAttributes } = usePbehaviorAdvancedSearchAttributes();
+
     const headers = computed(() => [
       { text: t('common.name'), value: PBEHAVIOR_LIST_FIELDS.name },
       { text: t('common.author'), value: PBEHAVIOR_LIST_FIELDS.author },
@@ -184,40 +182,14 @@ export default {
       { text: t('common.actionsLabel'), value: PBEHAVIOR_LIST_FIELDS.actions, sortable: false },
     ]);
 
-    const notSearchableFields = [
-      PBEHAVIOR_LIST_FIELDS.rruleEnd,
-      PBEHAVIOR_LIST_FIELDS.lastAlarmDate,
-      PBEHAVIOR_LIST_FIELDS.alarmCount,
-      PBEHAVIOR_LIST_FIELDS.typeIcon,
-      PBEHAVIOR_LIST_FIELDS.status,
-      PBEHAVIOR_LIST_FIELDS.actions,
-    ];
-
-    const dateSearchableFields = [
-      PBEHAVIOR_LIST_FIELDS.begins,
-      PBEHAVIOR_LIST_FIELDS.ends,
-      PBEHAVIOR_LIST_FIELDS.created,
-      PBEHAVIOR_LIST_FIELDS.updated,
-      PBEHAVIOR_LIST_FIELDS.patternExecAt,
-    ];
-
-    const advancedSearchFields = computed(() => (
-      headers.value.filter(header => !notSearchableFields.includes(header.value))
-        .map(header => (
-          dateSearchableFields.includes(header.value)
-            ? { ...header, conditions: ADVANCED_SEARCH_DATE_CONDITIONS }
-            : header
-        ))
-    ));
-
     return {
       durationFormat,
       millisecondUnit,
 
+      advancedSearchAttributes,
       timezone,
       shownUserTimezone,
       headers,
-      advancedSearchFields,
 
       formatIntervalDate,
       formatRruleEndDate,

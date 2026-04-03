@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
@@ -166,10 +167,8 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		return nil, err
 	}
 
-	for _, p := range prioritiesOfDefaultTypes {
-		if p == doc.Priority {
-			return nil, validation.NewSingleError("not_applicable", "Priority", "Priority", r)
-		}
+	if slices.Contains(prioritiesOfDefaultTypes, doc.Priority) {
+		return nil, validation.NewSingleError("not_applicable", "Priority", "Priority", r)
 	}
 
 	var res *Response
@@ -362,7 +361,7 @@ func (s *store) validateDeleteRequest(ctx context.Context, id string) error {
 
 	err = dbvalidation.ValidateLinkedReference(ctx, s.dbPbhCollection, bson.M{
 		"$or": []bson.M{
-			{"type_": id},
+			{"type": id},
 			{"exdates.type": id},
 		},
 	}, "type", "a pbehavior")
@@ -402,10 +401,8 @@ func (s *store) isDefault(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
-	for _, priority := range prioritiesOfDefaultTypes {
-		if pbhType.Priority == priority {
-			return true, nil
-		}
+	if slices.Contains(prioritiesOfDefaultTypes, pbhType.Priority) {
+		return true, nil
 	}
 
 	return false, nil

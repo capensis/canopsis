@@ -30,34 +30,30 @@ func NewPbhEnterProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &pbhEnterProcessor{
-		client:                          client,
-		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                client.Collection(mongo.EntityMongoCollection),
-		pbehaviorCollection:             client.Collection(mongo.PbehaviorMongoCollection),
-		autoInstructionMatcher:          autoInstructionMatcher,
-		entityServiceCountersCalculator: entityServiceCountersCalculator,
-		componentCountersCalculator:     componentCountersCalculator,
-		eventsSender:                    eventsSender,
-		metricsSender:                   metricsSender,
-		remediationRpcClient:            remediationRpcClient,
-		encoder:                         encoder,
-		logger:                          logger,
+		client:                 client,
+		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       client.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:    client.Collection(mongo.PbehaviorMongoCollection),
+		autoInstructionMatcher: autoInstructionMatcher,
+		metricsSender:          metricsSender,
+		remediationRpcClient:   remediationRpcClient,
+		encoder:                encoder,
+		logger:                 logger,
+		countersHelper:         newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 	}
 }
 
 type pbhEnterProcessor struct {
-	client                          mongo.DbClient
-	alarmCollection                 mongo.DbCollection
-	entityCollection                mongo.DbCollection
-	pbehaviorCollection             mongo.DbCollection
-	autoInstructionMatcher          AutoInstructionMatcher
-	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
-	componentCountersCalculator     calculator.ComponentCountersCalculator
-	eventsSender                    entitycounters.EventsSender
-	metricsSender                   metrics.Sender
-	remediationRpcClient            engine.RPCClient
-	encoder                         encoding.Encoder
-	logger                          zerolog.Logger
+	client                 mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
+	pbehaviorCollection    mongo.DbCollection
+	autoInstructionMatcher AutoInstructionMatcher
+	metricsSender          metrics.Sender
+	remediationRpcClient   engine.RPCClient
+	encoder                encoding.Encoder
+	logger                 zerolog.Logger
+	countersHelper         *countersHelper
 }
 
 func (p *pbhEnterProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -102,14 +98,11 @@ func (p *pbhEnterProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		}
 	}
 
-	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
-	var componentStateChanged bool
-	var newComponentState int
-
+	countersRes := countersResult{}
 	notAckedMetricType := ""
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		updatedServiceStates = nil
+		countersRes = countersResult{}
 		notAckedMetricType = ""
 
 		updatedAlarm := types.Alarm{}
@@ -180,10 +173,8 @@ func (p *pbhEnterProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		result.Alarm = alarm
 		result.AlarmChange = alarmChange
 
-		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
-			p.entityServiceCountersCalculator,
-			p.componentCountersCalculator,
 			&result.Alarm,
 			&result.Entity,
 			result.AlarmChange,
@@ -200,7 +191,7 @@ func (p *pbhEnterProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
 	}
 
-	go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates, notAckedMetricType, componentStateChanged, newComponentState)
+	go p.postProcess(context.WithoutCancel(ctx), event, result, countersRes, notAckedMetricType)
 
 	return result, nil
 }
@@ -209,10 +200,8 @@ func (p *pbhEnterProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
+	countersRes countersResult,
 	notAckedMetricType string,
-	componentStateChanged bool,
-	newComponentState int,
 ) {
 	entity := *event.Entity
 	if result.Entity.ID != "" {
@@ -230,19 +219,7 @@ func (p *pbhEnterProcessor) postProcess(
 		notAckedMetricType,
 	)
 
-	for servID, servInfo := range updatedServiceStates {
-		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update service state")
-		}
-	}
-
-	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update component state")
-		}
-	}
+	p.countersHelper.UpdateStates(ctx, countersRes)
 
 	if result.Alarm.ID == "" {
 		err := updatePbehaviorLastAlarmDate(ctx, p.pbehaviorCollection, result.Entity.PbehaviorInfo.ID, result.Entity.PbehaviorInfo.Timestamp)

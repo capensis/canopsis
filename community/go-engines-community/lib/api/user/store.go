@@ -13,7 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/wsconn"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -35,7 +35,7 @@ type Store interface {
 func NewStore(
 	dbClient mongo.DbClient,
 	passwordEncoder password.Encoder,
-	websocketStore websocket.Store,
+	websocketStore wsconn.Store,
 	authorProvider author.Provider,
 	securityConfig security.Config,
 ) Store {
@@ -83,7 +83,7 @@ type store struct {
 	roleCollection         mongo.DbCollection
 
 	passwordEncoder password.Encoder
-	websocketStore  websocket.Store
+	websocketStore  wsconn.Store
 	authorProvider  author.Provider
 	securityConfig  security.Config
 

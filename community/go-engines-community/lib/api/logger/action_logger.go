@@ -120,6 +120,7 @@ func NewActionLogger(
 		mongo.TemplateTestDataCollection:         ValueTypeTplTestData,
 		mongo.TemplateTestCollection:             ValueTypeTplTest,
 		mongo.WebhookTokenRuleCollection:         ValueTypeWebhookTokenRule,
+		mongo.CommentTemplateMongoCollection:     ValueTypeCommentTemplate,
 	}
 
 	watchedCollections := make([]string, 0, len(collectionValueTypeMap))

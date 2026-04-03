@@ -21,8 +21,10 @@ const (
 	tableNameMaxLen      = 63
 )
 
+const DefaultTimeFormat = "YYYY-MM-DDThh:mm:ss"
+
 var timeFormats = map[string]string{
-	"YYYY-MM-DDThh:mm:ss":        "2006-01-02T15:04:05",
+	DefaultTimeFormat:            "2006-01-02T15:04:05",
 	"YYYY-MM-DDThh:mm:ssZ":       "2006-01-02T15:04:05-0700",
 	"DD MMM YYYY hh:mm:ss":       "02 Jan 2006 15:04",
 	"DD MMM YYYY hh:mm:ss ZZ":    "02 Jan 2006 15:04 MST",
@@ -32,8 +34,8 @@ var timeFormats = map[string]string{
 var tableNameRegex = regexp.MustCompile(tableNameRegexString)
 
 // ValidateCpsTimeType implements CustomTypeFunc and returns value to validate.
-func ValidateCpsTimeType(field reflect.Value) interface{} {
-	if field.Type() == reflect.TypeOf(datetime.CpsTime{}) {
+func ValidateCpsTimeType(field reflect.Value) any {
+	if field.Type() == reflect.TypeFor[datetime.CpsTime]() {
 		if t, ok := field.Interface().(datetime.CpsTime); ok {
 			val := t.Time
 			if val.IsZero() {
