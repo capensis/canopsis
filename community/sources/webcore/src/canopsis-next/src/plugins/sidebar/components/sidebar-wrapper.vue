@@ -191,6 +191,10 @@ export default {
     ::v-deep .v-navigation-drawer {
       overflow: visible;
 
+      &--close .sidebar--minimized__header {
+        transform: translate(60px, -50%);
+      }
+
       &__content {
         overflow-x: visible;
       }
@@ -210,7 +214,8 @@ export default {
       border-bottom-left-radius: 10px;
       right: 100%;
       top: 50%;
-      transform: translateY(-50%);
+      transform: translate(0, -50%);
+      transition: transform 0.1s ease-in-out;
     }
   }
 }

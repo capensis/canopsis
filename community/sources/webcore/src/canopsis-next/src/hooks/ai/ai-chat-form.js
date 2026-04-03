@@ -18,6 +18,8 @@ import { useModals } from '@/hooks/modals';
 import { useSidebar } from '@/hooks/sidebar';
 import { useValidator } from '@/hooks/validator/validator';
 
+import { useAiChatLlmModel } from './ai-chat';
+
 const THROTTLE_WAIT_MS = 1000;
 
 /**
@@ -44,7 +46,8 @@ export const useAiChatForm = ({
 
   const pending = ref(false);
   const creation = ref(false);
-  const cancelPending = ref(null);
+
+  let cancel = () => {};
 
   const pendingTexts = computed(() => (creation.value ? {
     inProgress: t('pattern.patternsCreationInProgress'),
@@ -57,6 +60,10 @@ export const useAiChatForm = ({
   const throttledUpdateSidebarConfig = throttle(() => {
     const unwrappedForm = unref(form);
     const unwrappedField = unref(field);
+
+    if (!unwrappedForm) {
+      return;
+    }
 
     let patterns = {};
 
@@ -78,44 +85,59 @@ export const useAiChatForm = ({
     });
   }, THROTTLE_WAIT_MS);
 
-  watch(form, throttledUpdateSidebarConfig, { deep: true });
+  const unwatchForm = watch(form, throttledUpdateSidebarConfig, { deep: true });
+
+  const { fetchLlms } = useAiChatLlmModel({ sidebar });
 
   /**
    * Opens the AI assistant sidebar for this modal instance and passes `socketRoomData`
    * so `ai-chat` can join `SOCKET_ROOMS.llmChat` with widget-filter context and the current filter id.
+   *
+   * Wait for the vuetify modal opening animation to complete before fetching the LLMs.
    */
-  const showSidebar = () => sidebar.show({
-    id: modalId,
-    name: SIDE_BARS.aiChat,
-    config: {
-      overflowYHidden: true,
-      minimizable: true,
-      width: LLM_AI_CHAT_WIDTH,
-      color: 'primary',
-      titleIcon: '$vuetify.icons.ai',
-      titleMinimized: 'AI',
-      setPatterns: (newPatterns) => {
-        const formRef = form;
+  const showSidebar = async () => {
+    const llms = await fetchLlms();
 
-        // TODO: analyze if we can use patternToForm or filterPatternsToForm directly
-        formRef.value = {
-          ...formRef.value,
-          ...(unref(field) ? patternToForm(newPatterns) : filterPatternsToForm(newPatterns)),
-        };
+    if (!llms.length) {
+      unwatchForm();
 
-        Object.keys(newPatterns).forEach(patternField => validator.errors.clear(`${patternField}.json`));
+      return;
+    }
+
+    sidebar.show({
+      id: modalId,
+      name: SIDE_BARS.aiChat,
+      config: {
+        llms,
+        overflowYHidden: true,
+        minimizable: true,
+        width: LLM_AI_CHAT_WIDTH,
+        color: 'primary',
+        titleIcon: '$vuetify.icons.ai',
+        titleMinimized: 'AI',
+        setPatterns: (newPatterns) => {
+          const formRef = form;
+
+          // TODO: analyze if we can use patternToForm or filterPatternsToForm directly
+          formRef.value = {
+            ...formRef.value,
+            ...(unref(field) ? patternToForm(newPatterns) : filterPatternsToForm(newPatterns)),
+          };
+
+          Object.keys(newPatterns).forEach(patternField => validator.errors.clear(`${patternField}.json`));
+        },
+        setPending: (newPending, newCreation = null, newCancel = () => {}) => {
+          pending.value = newPending;
+          creation.value = newCreation;
+          cancel = newCancel;
+        },
+        socketRoomData: {
+          context: unref(context),
+          rule_id: unref(ruleId),
+        },
       },
-      setPending: (newPending, newCreation = null, newCancelPending = null) => {
-        pending.value = newPending;
-        creation.value = newCreation;
-        cancelPending.value = newCancelPending;
-      },
-      socketRoomData: {
-        context: unref(context),
-        rule_id: unref(ruleId),
-      },
-    },
-  });
+    });
+  };
 
   /**
    * Closes the AI assistant sidebar that was opened with the same `id` as this modal.
@@ -132,6 +154,6 @@ export const useAiChatForm = ({
   return {
     pending,
     pendingTexts,
-    cancelPending,
+    cancel,
   };
 };

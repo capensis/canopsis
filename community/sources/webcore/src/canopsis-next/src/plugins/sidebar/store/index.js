@@ -1,3 +1,4 @@
+import { isUndefined } from 'lodash';
 import Vue from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
@@ -67,10 +68,12 @@ export default {
      * @param {Object} state
      * @param {string} name
      * @param {Object} [config = {}]
+     * @param {boolean} [minimized = false]
      * @param {string} [id = uid()]
      */
     show({ commit, state, rootGetters }, {
       name,
+      minimized,
       config = {},
       id = uid('sidebar'),
     } = {}) {
@@ -79,17 +82,17 @@ export default {
       }
 
       const field = SIDE_BARS_MINIMIZABLE_USER_FIELD[name];
-      let minimized = false;
+      let localMinimized = minimized;
 
-      if (field) {
-        minimized = rootGetters['auth/currentUser']?.ui_tours?.[field] ?? false;
+      if (field && isUndefined(localMinimized)) {
+        localMinimized = rootGetters['auth/currentUser']?.ui_tours?.[field] ?? false;
       }
 
       return commit(types.SHOW, {
         id,
         name,
         config,
-        minimized,
+        minimized: localMinimized,
       });
     },
 

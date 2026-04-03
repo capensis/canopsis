@@ -5,13 +5,21 @@
         <span>{{ config.title ?? $t('modals.applyEventFilter.title') }}</span>
       </template>
       <template #text="">
-        <c-event-filter-patterns-field
-          v-model="form"
-          :excluded-attributes="config.excludedAttributes"
-          name="patterns"
-          required
-          @input="errors.remove('patterns')"
-        />
+        <div class="position-relative">
+          <pattern-progress
+            v-if="chatPending"
+            :in-progress-text="chatPendingTexts.inProgress"
+            :cancel-button-label="chatPendingTexts.cancel"
+            @cancel="chatCancelPending"
+          />
+          <c-event-filter-patterns-field
+            v-model="form"
+            :excluded-attributes="config.excludedAttributes"
+            name="patterns"
+            required
+            @input="errors.remove('patterns')"
+          />
+        </div>
       </template>
       <template #actions="">
         <v-btn
@@ -22,7 +30,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="isDisabled || chatPending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -37,14 +45,17 @@
 <script>
 import { ref } from 'vue';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
 
 import { promisedWait } from '@/helpers/async';
 import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/pattern/form';
 
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+
+import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -54,7 +65,7 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: { ModalWrapper },
+  components: { ModalWrapper, PatternProgress },
   props: {
     modal: {
       type: Object,
@@ -82,11 +93,26 @@ export default {
 
     useFormConfirmableCloseModal({ form, submit, close });
 
+    const {
+      pending: chatPending,
+      pendingTexts: chatPendingTexts,
+      cancelPending: chatCancelPending,
+    } = useAiChatForm({
+      form,
+      modalId: props.modal.id,
+      ruleId: props.modal.config?.eventsRecordId,
+      context: LLM_SOCKET_CONTEXTS.eventRecord,
+      field: PATTERNS_FIELDS.event,
+    });
+
     return {
       config,
       form,
       isDisabled,
       submitting,
+      chatPending,
+      chatPendingTexts,
+      chatCancelPending,
 
       submit,
       close,

@@ -19,10 +19,15 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with empty modal 1`] = `
     <div
       class="text"
     >
-      <pbehavior-form-stub
-        form="[object Object]"
-        pbehaviorcountertype="true"
-      />
+      <div
+        class="position-relative"
+      >
+        <!---->
+        <pbehavior-form-stub
+          form="[object Object]"
+          pbehaviorcountertype="true"
+        />
+      </div>
     </div>
     <div
       class="actions"
@@ -71,11 +76,16 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with pbehavior 1`] = `
     <div
       class="text"
     >
-      <pbehavior-form-stub
-        form="[object Object]"
-        nopattern="true"
-        pbehaviorcountertype="true"
-      />
+      <div
+        class="position-relative"
+      >
+        <!---->
+        <pbehavior-form-stub
+          form="[object Object]"
+          nopattern="true"
+          pbehaviorcountertype="true"
+        />
+      </div>
     </div>
     <div
       class="actions"

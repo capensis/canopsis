@@ -76,6 +76,7 @@ export default {
     patternCreatedMessage: 'Patterns created',
     patternUpdatedMessage: 'Patterns updated',
     emptyPatternsMessage: 'Empty patterns',
+    patternCannotBeCreatedReasons: 'Pattern cannot be created for the following reasons:\n',
     fixPatternPrompt: 'Fix pattern:\n{jsonString}',
     suggestionPrompts: {
       [LLM_AI_CHAT_SUGGESTION_TYPES.createPattern]: 'Create pattern with following conditions:\n',

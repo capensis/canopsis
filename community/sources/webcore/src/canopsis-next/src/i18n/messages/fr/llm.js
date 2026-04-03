@@ -76,6 +76,7 @@ export default {
     patternCreatedMessage: 'Modèles créés',
     patternUpdatedMessage: 'Modèles mis à jour',
     emptyPatternsMessage: 'Modèles vides',
+    patternCannotBeCreatedReasons: 'Le modèle ne peut pas être créé pour les raisons suivantes :\n',
     fixPatternPrompt: 'Corriger le modèle :\n{jsonString}',
     suggestionPrompts: {
       [LLM_AI_CHAT_SUGGESTION_TYPES.createPattern]: 'Créer un modèle avec les conditions suivantes :\n',

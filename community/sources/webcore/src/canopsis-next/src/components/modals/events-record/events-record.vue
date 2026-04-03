@@ -191,6 +191,7 @@ export default {
       name: MODALS.applyEventFilter,
       config: {
         title: t('eventsRecord.applyEventFilter'),
+        eventsRecordId: eventsRecordId.value,
         eventPattern: query.value.event_pattern,
         excludedAttributes: [
           { value: EVENT_FILTER_PATTERN_FIELDS.eventType },

@@ -1,5 +1,5 @@
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -12,6 +12,7 @@ import CreateFilter from '@/components/modals/common/create-filter.vue';
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pattern-progress': true,
   'patterns-form': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
@@ -19,6 +20,7 @@ const stubs = {
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pattern-progress': true,
   'patterns-form': true,
 };
 
@@ -29,6 +31,7 @@ const selectPatternsForm = wrapper => wrapper.find('patterns-form-stub');
 
 describe('create-filter', () => {
   const $modals = mockModals();
+  const $sidebar = mockSidebar();
   const $popups = mockPopups();
 
   const defaultPattern = {
@@ -77,6 +80,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -87,6 +92,11 @@ describe('create-filter', () => {
     expect(action).toHaveBeenCalledWith({
       is_user_preference: false,
       title: '',
+      alarm_pattern: [],
+      entity_pattern: [],
+      pbehavior_pattern: [],
+      event_pattern: [],
+      weather_service_pattern: [],
     });
     expect($modals.hide).toHaveBeenCalledWith(modal);
   });
@@ -109,6 +119,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -123,6 +135,7 @@ describe('create-filter', () => {
       entity_pattern: [],
       event_pattern: [],
       pbehavior_pattern: [],
+      weather_service_pattern: [],
     });
     expect($modals.hide).toHaveBeenCalledWith(modal);
   });
@@ -139,6 +152,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -174,6 +189,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -211,6 +228,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -226,10 +245,11 @@ describe('create-filter', () => {
       alarm_pattern: [],
       entity_pattern: [],
       pbehavior_pattern: [],
+      event_pattern: [],
       weather_service_pattern: [],
       title: '',
     });
-    expect($modals.hide).not.toHaveBeenCalledWith();
+    expect($modals.hide).not.toHaveBeenCalled();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -260,6 +280,7 @@ describe('create-filter', () => {
       mocks: {
         $modals,
         $popups,
+        $sidebar,
       },
     });
 
@@ -271,8 +292,14 @@ describe('create-filter', () => {
     expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toHaveBeenCalledWith(customFilter);
-    expect($modals.hide).not.toHaveBeenCalledWith();
+    expect(action).toHaveBeenCalledWith({
+      ...customFilter,
+      entity_pattern: [],
+      pbehavior_pattern: [],
+      event_pattern: [],
+      weather_service_pattern: [],
+    });
+    expect($modals.hide).not.toHaveBeenCalled();
 
     consoleErrorSpy.mockClear();
   });
@@ -304,6 +331,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -349,7 +378,7 @@ describe('create-filter', () => {
       is_user_preference: filter.is_user_preference,
       title: filter.title,
     });
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -361,6 +390,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -368,7 +399,7 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Renders `create-filter` with empty modal', () => {
@@ -380,6 +411,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -402,6 +435,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 

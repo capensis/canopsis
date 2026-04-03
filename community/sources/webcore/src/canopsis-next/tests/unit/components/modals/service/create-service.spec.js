@@ -1,7 +1,7 @@
 import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { mockConsole, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { mockConsole, mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -15,6 +15,7 @@ import CreateService from '@/components/modals/service/create-service.vue';
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pattern-progress': true,
   'service-form': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
@@ -22,6 +23,7 @@ const stubs = {
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pattern-progress': true,
   'service-form': true,
 };
 
@@ -33,6 +35,7 @@ const selectServiceForm = wrapper => wrapper.find('service-form-stub');
 describe('create-service', () => {
   const $modals = mockModals();
   const $popups = mockPopups();
+  const $sidebar = mockSidebar();
   const consoleMock = mockConsole();
 
   const { templateVarsModule } = createTemplateVarsModule();
@@ -45,7 +48,7 @@ describe('create-service', () => {
     stubs,
     attachTo: document.body,
     store,
-    mocks: { $modals, $popups },
+    mocks: { $modals, $popups, $sidebar },
     parentComponent: {
       provide: {
         $clickOutside: new ClickOutside(),
@@ -55,7 +58,7 @@ describe('create-service', () => {
   const snapshotFactory = generateRenderer(CreateService, {
     stubs: snapshotStubs,
     store,
-    mocks: { $modals, $popups },
+    mocks: { $modals, $popups, $sidebar },
     parentComponent: {
       provide: {
         $clickOutside: new ClickOutside(),
@@ -231,7 +234,7 @@ describe('create-service', () => {
       name: newForm.name,
       category: newForm.category._id,
     });
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toBeCalledWith(wrapper.props().modal);
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -247,7 +250,7 @@ describe('create-service', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toBeCalledWith(wrapper.props().modal);
   });
 
   test('Renders `create-service` with empty modal', () => {

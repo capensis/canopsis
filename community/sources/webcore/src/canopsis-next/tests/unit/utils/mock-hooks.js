@@ -60,6 +60,7 @@ export const mockModals = () => {
     hide: jest.fn(),
     minimize: jest.fn(),
     maximize: jest.fn(),
+    registerOnHide: jest.fn(),
     moduleName: 'modals',
   };
 
@@ -68,6 +69,7 @@ export const mockModals = () => {
     modals.hide.mockReset();
     modals.minimize.mockReset();
     modals.maximize.mockReset();
+    modals.registerOnHide.mockReset();
   });
 
   return modals;
@@ -116,6 +118,7 @@ export const mockSidebar = () => {
     hide: jest.fn(),
     minimize: jest.fn(),
     maximize: jest.fn(),
+    updateConfig: jest.fn(),
     moduleName: 'sidebar',
   };
 
@@ -124,6 +127,7 @@ export const mockSidebar = () => {
     sidebar.hide.mockReset();
     sidebar.minimize.mockReset();
     sidebar.maximize.mockReset();
+    sidebar.updateConfig.mockReset();
   });
 
   return sidebar;

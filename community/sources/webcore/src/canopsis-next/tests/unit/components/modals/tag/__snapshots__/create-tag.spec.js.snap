@@ -19,11 +19,16 @@ exports[`create-tag Renders \`create-tag\` with empty modal 1`] = `
     <div
       class="text"
     >
-      <tag-form-stub
-        form="[object Object]"
-        isnew="true"
-        maxtagnamelength="20"
-      />
+      <div
+        class="position-relative"
+      >
+        <!---->
+        <tag-form-stub
+          form="[object Object]"
+          isnew="true"
+          maxtagnamelength="20"
+        />
+      </div>
     </div>
     <div
       class="actions"
@@ -72,11 +77,16 @@ exports[`create-tag Renders \`create-tag\` with tag 1`] = `
     <div
       class="text"
     >
-      <tag-form-stub
-        form="[object Object]"
-        isnew="true"
-        maxtagnamelength="20"
-      />
+      <div
+        class="position-relative"
+      >
+        <!---->
+        <tag-form-stub
+          form="[object Object]"
+          isnew="true"
+          maxtagnamelength="20"
+        />
+      </div>
     </div>
     <div
       class="actions"

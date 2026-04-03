@@ -6,7 +6,6 @@ import {
   set,
   watch,
   nextTick,
-  onMounted,
   onBeforeUnmount,
 } from 'vue';
 
@@ -153,7 +152,7 @@ export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
    * @param {string} [payload.role] - Defaults to `LLM_AI_CHAT_MESSAGE_ROLES.model`.
    * @returns {number} New `messages` length from `Array.prototype.push`.
    */
-  const addMessage = ({ text, role = LLM_AI_CHAT_MESSAGE_ROLES.model, ...rest }) => messages.value.push({
+  const addMessage = ({ text, role, ...rest }) => messages.value.push({
     text,
     role,
 
@@ -189,8 +188,8 @@ export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
 
     if (messageText && isUndefined(originalVersion)) {
       addMessage({
+        role,
         text: messageText,
-        role: role || LLM_AI_CHAT_MESSAGE_ROLES.model,
       });
     }
 
@@ -211,7 +210,7 @@ export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
    * @param {number} index - Index in `messages`.
    * @param {Object} newMessage - Full replacement message object.
    */
-  const updateMessage = (index, newMessage) => set(messages.value, index, newMessage);
+  const updateMessage = (index, newMessage) => set(messages.value, index, { ...messages.value[index], ...newMessage });
 
   /**
    * Drops the last `count` messages from the tail of the list.
@@ -406,11 +405,12 @@ export const useAiChatThinking = () => {
  * @param {import('vue').Ref|Object} [options.sidebar]
  *   Join payload from `config.socketRoomData`; applies patterns on success.
  * @param {function(Object): void} [options.addPattern] - LLM pattern payload on success.
+ * @param {function(Object): void} [options.addMessage] - Add message to the chat.
  * @param {function(): void} [options.restorePrompt] - Restore prompt on socket error.
  * @param {function(): Promise<Array>} [options.fetchLlms] - Refetch LLM list (e.g. after Gone) to detect empty models.
  * @returns {Object} Thinking, errors, `sendMessage`, join/leave (unmount leaves room).
  */
-export const useAiChatSocket = ({ sidebar, addPattern, restorePrompt, fetchLlms } = {}) => {
+export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt, fetchLlms } = {}) => {
   const { t } = useI18n();
   const socket = useSocket();
 
@@ -469,7 +469,12 @@ export const useAiChatSocket = ({ sidebar, addPattern, restorePrompt, fetchLlms 
     disableThinking();
 
     if (validationErrors?.length) {
-      errorMessage.value = `<ul>${validationErrors.map(validationError => `<li><strong>${validationError}</strong></li>`).join('')}</ul>`;
+      const validationMessage = `<ul>${validationErrors.map(validationError => `<li>${validationError}</li>`).join('')}</ul>`;
+
+      addMessage({
+        text: `${t('llm.chat.patternCannotBeCreatedReasons')}${validationMessage}`,
+        role: LLM_AI_CHAT_MESSAGE_ROLES.model,
+      });
 
       restorePrompt();
 
@@ -477,7 +482,10 @@ export const useAiChatSocket = ({ sidebar, addPattern, restorePrompt, fetchLlms 
     }
 
     if (error) {
-      errorMessage.value = `<strong>${error}</strong>`;
+      addMessage({
+        text: error,
+        role: LLM_AI_CHAT_MESSAGE_ROLES.model,
+      });
 
       restorePrompt();
 
@@ -596,24 +604,21 @@ export const useAiChatPrompt = () => {
 /**
  * Hook for fetching LLM rows, keeping `llm` in sync with the default model, and exposing `fetchLlms`.
  *
+ * @param {Object} [options]
  * @returns {Object} `llm`, `llms`, `llmsPending`, `fetchLlms`, `resetLlm`.
  */
-export const useAiChatLlms = () => {
-  const llmsRaw = ref([]);
+export const useAiChatLlms = ({ initialLlms = [] } = {}) => {
+  const llms = ref([...unref(initialLlms)]);
 
   const { fetchLlmsListWithoutStore } = useLlm();
 
   const { pending: llmsPending, handler: fetchLlms } = usePendingHandler(async () => {
     const { data } = await fetchLlmsListWithoutStore({ params: { limit: MAX_LIMIT } });
 
-    llmsRaw.value = data;
+    llms.value = data;
 
     return data;
   });
-
-  const llms = computed(() => llmsRaw.value.filter(llm => llm.enabled));
-
-  onMounted(fetchLlms);
 
   return {
     llms,
@@ -625,12 +630,16 @@ export const useAiChatLlms = () => {
 /**
  * Hook for fetching LLM rows, keeping `llm` in sync with the default model, and exposing `fetchLlms`.
  *
+ * @param {Object} [options]
+ * @param {import('vue').Ref|Object} [options.sidebar]
  * @returns {Object} `llm`, `llms`, `llmsPending`, `fetchLlms`, `resetLlm`.
  */
-export const useAiChatLlmModel = () => {
+export const useAiChatLlmModel = ({ sidebar } = {}) => {
   const llm = ref(null);
 
-  const { llms, llmsPending, fetchLlms } = useAiChatLlms();
+  const initialLlms = computed(() => unref(sidebar)?.config?.llms ?? []);
+
+  const { llms, llmsPending, fetchLlms } = useAiChatLlms({ initialLlms });
 
   const defaultLlm = computed(() => llms.value.find(llmItem => llmItem.default) ?? null);
 
@@ -727,7 +736,7 @@ export const useAiChatSuggestions = ({ updatePrompt }) => {
  */
 export const useAiChat = ({ sidebar } = {}) => {
   const { prompt, updatePrompt, resetPrompt, restorePrompt } = useAiChatPrompt();
-  const { llm, llms, llmsPending, resetLlm, fetchLlms } = useAiChatLlmModel();
+  const { llm, llms, llmsPending, resetLlm, fetchLlms } = useAiChatLlmModel({ sidebar });
   const { textareaElement, applySuggestion } = useAiChatSuggestions({ updatePrompt });
 
   const {
@@ -759,6 +768,7 @@ export const useAiChat = ({ sidebar } = {}) => {
   } = useAiChatSocket({
     sidebar,
     addPattern,
+    addMessage,
     restorePrompt,
     fetchLlms,
   });
@@ -827,6 +837,10 @@ export const useAiChat = ({ sidebar } = {}) => {
     sidebar,
     ask,
   });
+
+  watch(thinking, newThinking => (
+    unref(sidebar)?.config?.setPending?.(newThinking, emptyCurrentFormPatterns.value, stop)
+  ));
 
   return {
     bodyElement,

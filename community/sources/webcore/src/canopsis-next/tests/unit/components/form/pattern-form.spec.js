@@ -11,6 +11,8 @@ const stubs = {
   'c-alarm-patterns-field': true,
   'c-entity-patterns-field': true,
   'c-pbehavior-patterns-field': true,
+  'c-service-weather-patterns-field': true,
+  'pattern-progress': true,
 };
 
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
