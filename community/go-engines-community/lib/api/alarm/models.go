@@ -275,7 +275,7 @@ type Alarm struct {
 	Value     AlarmValue                `bson:"v" json:"v"`
 	Tags      []string                  `bson:"tags" json:"tags"`
 	TagColors []TagColor                `bson:"tag_colors" json:"tag_colors,omitempty"`
-	Infos     map[string]map[string]any `bson:"infos" json:"infos"`
+	Infos     map[string]map[string]any `bson:"infos" json:"infos" swaggertype:"object"`
 
 	Pbehavior *Pbehavior `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
 
@@ -361,7 +361,7 @@ type AlarmValue struct {
 
 	EventsCount types.CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	Infos map[string]map[string]any `bson:"infos" json:"infos"`
+	Infos map[string]map[string]any `bson:"infos" json:"infos" swaggertype:"object"`
 
 	CloseDelayValue int64             `bson:"close_delay_value,omitempty" json:"close_delay_value,omitempty"`
 	CloseDelay      *common.AlarmStep `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
