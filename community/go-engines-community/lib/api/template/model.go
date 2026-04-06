@@ -41,7 +41,7 @@ type EditDataRequest struct {
 	Type        *int              `json:"type" binding:"required,oneof=0 1"`
 	Name        string            `json:"name" binding:"required,max=255"`
 	Description string            `json:"description" binding:"max=500"`
-	Body        any               `json:"body" binding:"required"`
+	Body        any               `json:"body" binding:"required" swaggertype:"object"`
 	Headers     map[string]string `json:"headers" binding:"dive,max=500"`
 	Author      string            `json:"author" swaggerignore:"true"`
 }
@@ -62,7 +62,7 @@ type BulkDeleteRequestItem struct {
 
 type VarResponse struct {
 	Name  string `json:"name"`
-	Value any    `json:"value"`
+	Value any    `json:"value" swaggertype:"object"`
 
 	Alias bool `json:"alias,omitempty"`
 }
@@ -72,7 +72,7 @@ type DataResponse struct {
 	Type        int               `json:"type" bson:"type"`
 	Name        string            `json:"name" bson:"name"`
 	Description string            `json:"description" bson:"description"`
-	Body        any               `json:"body" bson:"body"`
+	Body        any               `json:"body" bson:"body" swaggertype:"object"`
 	Headers     map[string]string `json:"headers,omitempty" bson:"headers"`
 	Created     datetime.CpsTime  `json:"created" bson:"created" swaggertype:"integer"`
 	Updated     datetime.CpsTime  `json:"updated" bson:"updated" swaggertype:"integer"`

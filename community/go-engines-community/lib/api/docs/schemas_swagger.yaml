@@ -6374,7 +6374,7 @@ definitions:
       _id:
         type: string
       body:
-        type: any
+        type: object
       created:
         type: integer
       description:
@@ -6393,7 +6393,7 @@ definitions:
   template.EditDataRequest:
     properties:
       body:
-        type: any
+        type: object
       description:
         maxLength: 500
         type: string
@@ -6588,7 +6588,7 @@ definitions:
       name:
         type: string
       value:
-        type: any
+        type: object
     type: object
   types.Author:
     properties:
