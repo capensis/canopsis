@@ -28,6 +28,7 @@ export default {
   submit: 'Submit',
   cancel: 'Cancel',
   continue: 'Continue',
+  tryAgain: 'Try again',
   stop: 'Stop',
   options: 'Options',
   type: 'Type',
@@ -35,6 +36,7 @@ export default {
   quitEditing: 'Quit editing',
   enabled: 'Enabled',
   disabled: 'Disabled',
+  required: 'Required',
   login: 'Login',
   yes: 'Yes',
   no: 'No',
@@ -72,9 +74,12 @@ export default {
   save: 'Save',
   label: 'Label',
   field: 'Field',
+  fields: 'Fields',
+  fieldName: 'Field name',
   value: 'Value',
   limit: 'Limit',
   add: 'Add',
+  addAtLeastOneItem: 'Add at least one item.',
   create: 'Create',
   delete: 'Delete',
   show: 'Show',
@@ -225,7 +230,7 @@ export default {
   searchBy: 'Search by',
   dictionary: 'Dictionary',
   condition: 'Condition | Conditions',
-  template: 'Template',
+  template: 'Template | Templates',
   pbehaviorList: 'List periodic behaviors',
   canceled: 'Canceled',
   snooze: 'Snooze',
@@ -258,6 +263,7 @@ export default {
   addMore: 'Add more',
   more: 'more',
   all: 'All',
+  other: 'Other',
   attribute: 'Attribute',
   timeTaken: 'Time taken',
   enginesMetrics: 'Engines` metrics',
@@ -271,6 +277,7 @@ export default {
   countOfMax: '{count} of {total}',
   trigger: 'Trigger | Triggers',
   column: 'Column | Columns',
+  sort: 'Sort',
   countOfTotal: '{count} of {total}',
   deprecatedTrigger: 'This trigger is not supported anymore',
   initialLongOutput: 'Long initial output',
@@ -495,6 +502,9 @@ export default {
     [PATTERN_OPERATORS.activated]: 'Activated',
     [PATTERN_OPERATORS.inactive]: 'Inactive',
 
+    [PATTERN_OPERATORS.enabled]: 'True',
+    [PATTERN_OPERATORS.disabled]: 'False',
+
     [PATTERN_OPERATORS.isMetaAlarm]: 'Is meta alarm',
     [PATTERN_OPERATORS.isNotMetaAlarm]: 'Is not meta alarm',
     [PATTERN_OPERATORS.ruleIs]: 'Rule is',
@@ -546,6 +556,9 @@ export default {
     },
     [TRIGGERS_TYPES.assocticket]: {
       text: 'Ticket associated with an alarm',
+    },
+    [TRIGGERS_TYPES.ticketremove]: {
+      text: 'Ticket removed',
     },
     [TRIGGERS_TYPES.snooze]: {
       text: 'Alarm snoozed',
@@ -637,5 +650,11 @@ export default {
       scenario: '<strong>Scenarios</strong>\n<ul>{rules}</ul>',
       declareticketrule: '<strong>Declare ticket rules</strong>\n<ul>{rules}</ul>',
     },
+  },
+
+  massActionsPanel: {
+    recordsSelected: '{count} record selected|{count} records selected',
+    keepSelectedAfterAction: 'Keep selected after action',
+    clearSelection: 'Clear selection',
   },
 };

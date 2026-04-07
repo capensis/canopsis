@@ -1,14 +1,14 @@
 import { useStoreModuleHooks } from '@/hooks/store';
 
 /**
- * Creates hooks for accessing the pattern Vuex store module.
- * Provides access to getters and actions for managing pattern operations.
+ * Hook for accessing the pattern Vuex store module
+ * Creates hooks for accessing pattern module's getters and actions
  *
- * @returns {Object} An object containing store module utilities:
- * @property {import('vuex').Store} store - The Vuex store instance
- * @property {import('vuex').Module} module - The pattern module instance
- * @property {Function} useGetters - Function to access module getters
- * @property {Function} useActions - Function to access module actions
+ * @returns {Object} An object containing store module utilities
+ * @property {Object} store - The Vuex store instance
+ * @property {Object} module - The pattern Vuex module
+ * @property {Function} useGetters - Function to access pattern module getters
+ * @property {Function} useActions - Function to access pattern module actions
  */
 const usePatternStoreModule = () => useStoreModuleHooks('pattern');
 
@@ -27,6 +27,8 @@ const usePatternStoreModule = () => useStoreModuleHooks('pattern');
  * @property {Function} bulkRemovePatterns - Action to bulk remove patterns
  * @property {Function} fetchPatternsListWithPreviousParams - Action to fetch patterns list with previous params
  * @property {Function} fetchPatternsListWithoutStore - Action to fetch patterns list without store
+ * @property {Function} checkPatternsEntitiesCount - Action to check the count of entities matching patterns
+ * @property {Function} checkPatternsAlarmsCount - Action to check the count of alarms matching patterns
  *
  * @example
  * // Usage in a component
@@ -50,6 +52,8 @@ export const usePattern = () => {
     bulkRemovePatterns: 'bulkRemove',
     fetchPatternsListWithPreviousParams: 'fetchListWithPreviousParams',
     fetchPatternsListWithoutStore: 'fetchListWithoutStore',
+    checkPatternsEntitiesCount: 'checkPatternsEntitiesCount',
+    checkPatternsAlarmsCount: 'checkPatternsAlarmsCount',
   });
 
   return {

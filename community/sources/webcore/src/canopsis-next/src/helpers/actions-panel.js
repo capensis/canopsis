@@ -15,7 +15,7 @@ export const findQuickActionIndex = (quickActions = [], action) => quickActions.
     return action.link;
   }
 
-  return quickAction === action.type || ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP[quickAction] === action.type;
+  return quickAction === action.type || ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP[action.type] === quickAction;
 });
 
 /**

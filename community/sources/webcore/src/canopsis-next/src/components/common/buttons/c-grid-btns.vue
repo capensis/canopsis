@@ -3,7 +3,7 @@
     <c-action-btn
       v-if="editing"
       :tooltip="$t('alarm.tooltips.resetChangeColumns')"
-      icon="$vuetify.icons.restart_alt"
+      icon="restart_alt"
       @click="$emit('reset')"
     />
     <c-action-btn

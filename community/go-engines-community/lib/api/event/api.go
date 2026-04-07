@@ -176,16 +176,17 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value, contextUser, c
 		}
 	}
 
-	if eventType == types.EventTypeAck ||
-		eventType == types.EventTypeAckremove ||
-		eventType == types.EventTypeCancel ||
-		eventType == types.EventTypeComment ||
-		eventType == types.EventTypeUncancel ||
-		eventType == types.EventTypeAssocTicket ||
-		eventType == types.EventTypeChangestate ||
-		eventType == types.EventTypeSnooze {
-
-		if len(roles) > 0 {
+	if len(roles) > 0 {
+		switch eventType {
+		case types.EventTypeAck,
+			types.EventTypeAckremove,
+			types.EventTypeCancel,
+			types.EventTypeComment,
+			types.EventTypeUncancel,
+			types.EventTypeAssocTicket,
+			types.EventTypeTicketRemove,
+			types.EventTypeChangestate,
+			types.EventTypeSnooze:
 			role := roles[0]
 			value.Set("role", fastjson.MustParse(fmt.Sprintf("%q", role)))
 			a.logger.Info().Str("event", string(value.MarshalTo(nil))).Msgf("Role added to the event. event_type = %s, role = %s", eventType, role)

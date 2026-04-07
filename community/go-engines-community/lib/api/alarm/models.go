@@ -67,6 +67,8 @@ type ListRequest struct {
 	WithDependencies   bool `form:"with_dependencies" json:"with_dependencies"`
 	WithTagColors      bool `form:"with_tag_colors" json:"with_tag_colors"`
 	QueryLog           bool `form:"query_log" json:"query_log"`
+
+	PbhOrigin string `form:"pbh_origin" json:"pbh_origin"`
 }
 
 type FilterRequest struct {
@@ -213,7 +215,7 @@ type ChildDetailsRequest struct {
 type DetailsResponse struct {
 	ID     string            `json:"_id"`
 	Status int               `json:"status"`
-	Data   Details           `json:"data,omitempty"`
+	Data   Details           `json:"data"`
 	Errors map[string]string `json:"errors,omitempty"`
 	Error  string            `json:"error,omitempty"`
 }
@@ -315,6 +317,8 @@ type Alarm struct {
 	Filtered *bool `bson:"filtered" json:"filtered,omitempty"`
 
 	Bookmark bool `bson:"bookmark" json:"bookmark"`
+
+	PbhOriginIcon string `json:"pbh_origin_icon" bson:"pbh_origin_icon"`
 }
 
 type MetaAlarmRule struct {
@@ -324,17 +328,18 @@ type MetaAlarmRule struct {
 }
 
 type AlarmValue struct {
-	ACK         *common.AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
-	Canceled    *common.AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Snooze      *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
-	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
-	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
-	ChangeState *common.AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
-	Tickets     []common.AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
-	Ticket      *common.AlarmStep  `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	Comments    []common.AlarmStep `bson:"comments,omitempty" json:"comments,omitempty"`
-	LastComment *common.AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
-	Steps       []common.AlarmStep `bson:"steps,omitempty" json:"steps,omitempty"`
+	ACK          *common.AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
+	Canceled     *common.AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
+	Snooze       *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	State        *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
+	Status       *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
+	ChangeState  *common.AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
+	Tickets      []common.AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
+	Ticket       *common.AlarmStep  `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	FailedTicket *common.AlarmStep  `bson:"failed_ticket,omitempty" json:"failed_ticket,omitempty"`
+	Comments     []common.AlarmStep `bson:"comments,omitempty" json:"comments,omitempty"`
+	LastComment  *common.AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	Steps        []common.AlarmStep `bson:"steps,omitempty" json:"steps,omitempty"`
 
 	Component                   string                `bson:"component" json:"component"`
 	Connector                   string                `bson:"connector" json:"connector"`

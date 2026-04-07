@@ -3,6 +3,7 @@ package alarm
 //go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/api/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm Store
 
 import (
+	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
@@ -757,7 +758,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			return nil, err
 		}
 	}
-	exportCursor := newExportCursor(cursor, t.Fields, validation.GetRealFormatTime(r.TimeFormat), location,
+	exportCursor := newExportCursor(cursor, t.Fields, validation.GetRealFormatTime(cmp.Or(r.TimeFormat, validation.DefaultTimeFormat)), location,
 		instructions, linkGenerator, user, s.tplExecutor, withModel, s.dbClient.Collection(mongo.EntityInfosPropertyCollection), s.logger)
 	return exportCursor, nil
 }

@@ -12,9 +12,6 @@ import { hasAtLeastOneVariable } from '@/helpers/variables';
 
 import { useI18n } from '@/hooks/i18n';
 
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import VariablesIcon from '!!svg-inline-loader?modules!@/assets/images/variables.svg';
-
 /**
  * Hook for managing text editor upload functionality.
  *
@@ -422,7 +419,7 @@ export const useTextEditorVariables = ({ editor, variables }) => {
   }));
 
   const variablesExtraIcon = computed(() => ({
-    variables: `<i class="material-icons v-icon v-icon--small" style="width: 18px; height: 18px;">${VariablesIcon}</i>`,
+    variables: '<i class="material-icons v-icon v-icon--small" style="width: 18px; height: 18px;">variables</i>',
   }));
 
   onBeforeUnmount(() => document.removeEventListener('selectionchange', selectVariableValueByCursor));

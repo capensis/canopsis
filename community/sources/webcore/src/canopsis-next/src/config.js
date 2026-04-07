@@ -47,6 +47,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-entity-tags-chips', 'c-copy-wrapper', 'c-links-list',
     'service-entities-list', 'v-icon', 'v-row', 'v-chip', 'c-remediation-instruction-execution-see-details',
+    'c-request-helper',
   ]),
   allowedAttributes: {
     '*': [
@@ -75,6 +76,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     ],
     'v-chip': ['color', 'text-color'],
     'c-remediation-instruction-execution-see-details': [':execution'],
+    'c-request-helper': ['helper-id', 'key'],
   },
   allowedSchemes: sanitizeHtml.defaults.allowedSchemes.concat(['data']),
   disallowedTagsMode: 'escape',
@@ -244,6 +246,7 @@ export const API_ROUTES = {
     list: '/api/v4/broadcast-message',
     activeList: '/api/v4/active-broadcast-message',
   },
+  commentTemplate: '/api/v4/comment-templates',
   counter: '/api/v4/alarm-counters',
   playlist: '/api/v4/playlists',
   pbehavior: {
@@ -293,6 +296,7 @@ export const API_ROUTES = {
     bulkList: '/api/v4/bulk/patterns',
     entitiesCount: '/api/v4/patterns-entities-count',
     alarmsCount: '/api/v4/patterns-alarms-count',
+    entitiesOptimize: '/api/v4/patterns-entities-optimize',
   },
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
