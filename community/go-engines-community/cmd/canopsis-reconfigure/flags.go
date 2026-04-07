@@ -41,11 +41,13 @@ type flags struct {
 	postgresMigrationDirectory string
 	postgresMigrationMode      string
 	postgresMigrationSteps     int
+	postgresMigrationBaseline  int
 
 	modeMigrateTechPostgres        bool
 	techPostgresMigrationDirectory string
 	techPostgresMigrationMode      string
 	techPostgresMigrationSteps     int
+	techPostgresMigrationBaseline  int
 
 	mongoFixtureMigrations        bool
 	mongoFixtureMigrationsVersion string
@@ -74,11 +76,13 @@ func (f *flags) Parse() {
 	flag.StringVar(&f.postgresMigrationDirectory, "postgres-migration-directory", DefaultPostgresMigrationsPath, "The directory with Postgres migration scripts")
 	flag.StringVar(&f.postgresMigrationMode, "postgres-migration-mode", "up", "Should be up or down")
 	flag.IntVar(&f.postgresMigrationSteps, "postgres-migration-steps", 0, "Number of migration steps, will execute all migrations if empty or 0")
+	flag.IntVar(&f.postgresMigrationBaseline, "postgres-migration-baseline", 0, "When >0 and the stored migration version is >= 1000 (maintenance range), force the version down to this baseline before running Up. Required when upgrading from a maintenance-branch release to this sequential release. Use 24 when upgrading from v24.10.x, 26 when upgrading from v25.04.x.")
 
 	flag.BoolVar(&f.modeMigrateTechPostgres, "migrate-tech-postgres", false, "If true, it will execute Tech Postgres migration scripts")
 	flag.StringVar(&f.techPostgresMigrationDirectory, "tech-postgres-migration-directory", DefaultTechPostgresMigrationsPath, "The directory with Tech Postgres migration scripts")
 	flag.StringVar(&f.techPostgresMigrationMode, "tech-postgres-migration-mode", "up", "Should be up or down")
 	flag.IntVar(&f.techPostgresMigrationSteps, "tech-postgres-migration-steps", 0, "Number of migration steps, will execute all migrations if empty or 0")
+	flag.IntVar(&f.techPostgresMigrationBaseline, "tech-postgres-migration-baseline", 0, "Same as postgres-migration-baseline but for the tech metrics database. Use 13 when upgrading from v24.10.x or v25.04.x.")
 
 	flag.BoolVar(&f.forceGenerateSerialName, "force-generate-serial-name", false, "If true, it will regenerate serial name even if it exists")
 
