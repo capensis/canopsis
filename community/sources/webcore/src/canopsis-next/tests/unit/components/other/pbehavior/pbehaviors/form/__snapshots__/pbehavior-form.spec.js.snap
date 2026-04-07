@@ -20,6 +20,7 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
 >
   <c-enabled-field-stub
     hide-details=""
+    with-background=""
   />
   <div
     class="v-tabs v-tabs--centered theme--light"

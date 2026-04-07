@@ -6,6 +6,7 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with custom props 1`] = `
 >
   <c-enabled-field-stub
     value="true"
+    with-background=""
   />
   <div
     class="v-tabs v-tabs--centered theme--light"
@@ -104,7 +105,9 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with default props 1`] = `
 <div
   class="layout column"
 >
-  <c-enabled-field-stub />
+  <c-enabled-field-stub
+    with-background=""
+  />
   <div
     class="v-tabs v-tabs--centered theme--light"
   >
@@ -200,7 +203,9 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with errors 1`] = `
 <div
   class="layout column"
 >
-  <c-enabled-field-stub />
+  <c-enabled-field-stub
+    with-background=""
+  />
   <div
     class="v-tabs v-tabs--centered theme--light"
   >

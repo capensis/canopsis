@@ -13,6 +13,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
       <c-enabled-field-stub
         hide-details=""
         label="Apply for all dependant entities"
+        with-background=""
       />
     </div>
   </div>
@@ -29,6 +30,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
       hide-details=""
       label="Start on trigger"
       value="true"
+      with-background=""
     />
     <c-duration-field-stub
       required=""
