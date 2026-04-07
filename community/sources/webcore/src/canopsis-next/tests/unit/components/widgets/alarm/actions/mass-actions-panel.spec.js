@@ -33,12 +33,13 @@ jest.mock('@/helpers/async', () => ({
 }));
 
 const stubs = {
-  'shared-mass-actions-panel': {
-    props: ['actions', 'dropDownActions'],
+  'new-mass-actions-panel': {
+    props: ['actions'],
     template: `
       <div class="shared-actions-panel">
         <button
           v-for="action in actions"
+          :key="action.type"
           :class="'action-' + action.type"
           @click="action.method"
         >{{ action.title }}|{{ action.icon }}|{{ action.type }}</button>
