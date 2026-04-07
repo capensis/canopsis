@@ -35,7 +35,7 @@
                   v-model="keepSelectedAfterAction"
                   v-bind="widgetCurrentGridParameters"
                   :selected="unresolvedSelected"
-                  :keep-selected="keepSelectedAfterAction"
+                  :default-value="defaultKeepSelectedAfterAction"
                   @clear:selected="clearSelected(true)"
                 >
                   <template #actions>
@@ -371,6 +371,10 @@ export default {
   computed: {
     widgetCurrentGridParameters() {
       return this.widget.grid_parameters[MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq]];
+    },
+
+    defaultKeepSelectedAfterAction() {
+      return this.widget.parameters.keepSelectedAfterAction ?? false;
     },
 
     shownTopPagination() {
