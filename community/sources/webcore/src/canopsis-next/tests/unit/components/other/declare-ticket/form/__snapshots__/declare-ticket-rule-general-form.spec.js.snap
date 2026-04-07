@@ -12,6 +12,7 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
     >
       <c-enabled-field-stub
         value="true"
+        with-background=""
       />
     </div>
     <div
@@ -20,6 +21,7 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
       <c-enabled-field-stub
         label="Emit trigger"
         name="emit_trigger"
+        with-background=""
       />
     </div>
   </div>
@@ -65,6 +67,7 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
     >
       <c-enabled-field-stub
         value="true"
+        with-background=""
       />
     </div>
     <div
@@ -73,6 +76,7 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
       <c-enabled-field-stub
         label="Emit trigger"
         name="emit_trigger"
+        with-background=""
       />
     </div>
   </div>

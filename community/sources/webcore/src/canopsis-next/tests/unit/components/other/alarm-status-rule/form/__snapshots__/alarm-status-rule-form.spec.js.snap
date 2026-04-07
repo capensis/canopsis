@@ -4,8 +4,9 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom p
 <div
   class="layout gap-2 column"
 >
-  <c-enabled-field
+  <c-enabled-field-stub
     hide-details=""
+    with-background=""
   />
   <c-name-field-stub
     autofocus=""
@@ -40,8 +41,9 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with default 
 <div
   class="layout gap-2 column"
 >
-  <c-enabled-field
+  <c-enabled-field-stub
     hide-details=""
+    with-background=""
   />
   <c-name-field-stub
     autofocus=""
