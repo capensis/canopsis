@@ -42,6 +42,7 @@ export const useDynamicInfo = () => {
   const actions = useActions({
     fetchDynamicInfosList: 'fetchList',
     fetchDynamicInfosListWithPreviousParams: 'fetchListWithPreviousParams',
+    fetchDynamicInfosListWithoutStore: 'fetchListWithoutStore',
     createDynamicInfo: 'create',
     updateDynamicInfo: 'update',
     removeDynamicInfo: 'remove',

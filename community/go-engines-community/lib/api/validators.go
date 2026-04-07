@@ -6,7 +6,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmaction"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/commenttemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
@@ -107,7 +109,6 @@ func registerStructValidations(
 	v.RegisterStructValidation(pbhValidator.ValidateEditRequest, pbehavior.EditRequest{})
 	v.RegisterStructValidation(pbhValidator.ValidatePatchRequest, pbehavior.PatchRequest{})
 	v.RegisterStructValidation(pbhValidator.ValidateCalendarRequest, pbehavior.CalendarByEntityIDRequest{})
-	v.RegisterStructValidation(pbhValidator.ValidateEntityCreateRequest, pbehavior.BulkEntityCreateRequestItem{})
 	v.RegisterStructValidation(pbhValidator.ValidateConnectorCreateRequest, pbehavior.BulkConnectorCreateRequestItem{})
 	v.RegisterStructValidation(pbhValidator.ValidateConnectorEditRequest, pbehavior.BulkConnectorEditRequestItem{})
 
@@ -199,4 +200,7 @@ func registerStructValidations(
 
 	v.RegisterStructValidation(template.ValidateEditDataRequest, template.EditDataRequest{})
 	v.RegisterStructValidation(template.ValidateEditTestRequest, template.EditTestRequest{})
+
+	v.RegisterStructValidation(commenttemplate.ValidateEditRequest, commenttemplate.EditRequest{})
+	v.RegisterStructValidation(alarmaction.ValidateCommentRequest, alarmaction.CommentRequest{})
 }

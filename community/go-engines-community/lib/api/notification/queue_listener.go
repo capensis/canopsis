@@ -136,7 +136,7 @@ func (s *queueListener) Listen(ctx context.Context) error {
 }
 
 func (s *queueListener) processEvent(ctx context.Context, event rpc.ApiNotificationEvent) error {
-	connectedUserIDs := s.websocketHub.GetUserIDs()
+	connectedUserIDs := s.websocketHub.ConnectedUserIDs()
 	if len(connectedUserIDs) == 0 || len(event.Users) == 0 && len(event.Roles) == 0 {
 		return nil
 	}
@@ -176,10 +176,10 @@ func (s *queueListener) processEvent(ctx context.Context, event rpc.ApiNotificat
 			return err
 		}
 
-		s.websocketHub.SendRoomByUser(u.ID, websocket.RoomNotifications, map[string]any{
+		s.websocketHub.SendMessage(ctx, map[string]any{
 			"data":        notifs.Data,
 			"total_count": notifs.TotalCount,
-		})
+		}, websocket.ToUser(websocket.RoomNotifications, u.ID))
 	}
 
 	if err = cursor.Err(); err != nil {

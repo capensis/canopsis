@@ -23,4 +23,6 @@ type AlarmStep struct {
 	types.TicketInfo `bson:",inline"`
 
 	InPbehaviorInterval bool `bson:"in_pbh,omitempty" json:"in_pbh,omitempty"`
+
+	StructuredMessage []types.StructuredMessage `bson:"struct_m,omitempty" json:"struct_m,omitempty"`
 }

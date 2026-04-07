@@ -99,7 +99,7 @@ func (c *rpcChecker) createAlarm(resource string, now datetime.CpsTime) types.Al
 			LongOutput:                  output,
 			LastUpdateDate:              now,
 			LastStateOrStatusUpdateDate: now,
-			LastEventDate:               now,
+			LastEventDate:               &now,
 			Resource:                    resource,
 		},
 		Healthcheck: true,

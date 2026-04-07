@@ -117,9 +117,17 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			},
 			"as": "filters",
 		}},
+		bson.M{"$lookup": bson.M{
+			"from":         mongo.CommentTemplateMongoCollection,
+			"localField":   "widgets.parameters.comment_templates",
+			"foreignField": "_id",
+			"as":           "comment_templates",
+		}},
 		bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+		bson.M{"$unwind": bson.M{"path": "$comment_templates", "preserveNullAndEmptyArrays": true}},
 	)
 	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("comment_templates.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
@@ -134,10 +142,16 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 				"then": "$filters",
 				"else": "$$REMOVE",
 			}}},
+			"comment_templates": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$comment_templates._id",
+				"then": "$comment_templates",
+				"else": "$$REMOVE",
+			}}},
 		}},
 		bson.M{"$addFields": bson.M{
-			"_id":             "$_id._id",
-			"widgets.filters": "$filters",
+			"_id":                       "$_id._id",
+			"widgets.filters":           "$filters",
+			"widgets.comment_templates": "$comment_templates",
 		}},
 		bson.M{"$sort": bson.D{
 			{Key: "widgets.grid_parameters.desktop.y", Value: 1},

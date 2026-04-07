@@ -22,12 +22,11 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
   <widget-settings-group-stub
     title="Columns"
   >
-    <field-default-sort-column-stub
+    <field-default-sort-columns-with-template-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      columnslabel="Column name"
-      itemtext="text"
-      itemvalue="value"
-      value="[object Object]"
+      sortcolumns=""
+      template="Symbol(custom)"
+      templates=""
     />
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -156,8 +155,11 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
         value="true"
       />
     </widget-settings-group-stub>
+    <field-comment-templates-stub
+      templates=""
+    />
     <fast-pbehavior-form-stub
-      form="[object Object]"
+      form=""
     />
     <field-switcher-stub
       title="Snooze - note field required"
@@ -171,6 +173,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     />
     <field-switcher-stub
       title="Actions allowed when state OK"
+    />
+    <field-switcher-stub
+      title="Keep selected after action"
     />
     <field-text-editor-with-template-stub
       addable="true"
@@ -688,12 +693,11 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
   <widget-settings-group-stub
     title="Columns"
   >
-    <field-default-sort-column-stub
+    <field-default-sort-columns-with-template-stub
       columns="[object Object]"
-      columnslabel="Column name"
-      itemtext="text"
-      itemvalue="value"
-      value="[object Object]"
+      sortcolumns="[object Object]"
+      template="Symbol(custom)"
+      templates=""
     />
     <field-columns-stub
       columns="[object Object]"
@@ -817,8 +821,11 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
         value="true"
       />
     </widget-settings-group-stub>
+    <field-comment-templates-stub
+      templates=""
+    />
     <fast-pbehavior-form-stub
-      form="[object Object]"
+      form=""
     />
     <field-switcher-stub
       title="Snooze - note field required"
@@ -833,6 +840,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     />
     <field-switcher-stub
       title="Actions allowed when state OK"
+    />
+    <field-switcher-stub
+      title="Keep selected after action"
     />
     <field-text-editor-with-template-stub
       addable="true"
@@ -1350,12 +1360,11 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
   <widget-settings-group-stub
     title="Columns"
   >
-    <field-default-sort-column-stub
+    <field-default-sort-columns-with-template-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      columnslabel="Column name"
-      itemtext="text"
-      itemvalue="value"
-      value="[object Object]"
+      sortcolumns=""
+      template="Symbol(custom)"
+      templates=""
     />
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -1476,8 +1485,11 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
         value="true"
       />
     </widget-settings-group-stub>
+    <field-comment-templates-stub
+      templates=""
+    />
     <fast-pbehavior-form-stub
-      form="[object Object]"
+      form=""
     />
     <field-switcher-stub
       title="Snooze - note field required"
@@ -1491,6 +1503,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     />
     <field-switcher-stub
       title="Actions allowed when state OK"
+    />
+    <field-switcher-stub
+      title="Keep selected after action"
     />
     <field-text-editor-with-template-stub
       addable="true"
@@ -2009,12 +2024,11 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
   <widget-settings-group-stub
     title="Columns"
   >
-    <field-default-sort-column-stub
+    <field-default-sort-columns-with-template-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      columnslabel="Column name"
-      itemtext="text"
-      itemvalue="value"
-      value="[object Object]"
+      sortcolumns=""
+      template="Symbol(custom)"
+      templates=""
     />
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -2135,8 +2149,11 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
         value="true"
       />
     </widget-settings-group-stub>
+    <field-comment-templates-stub
+      templates=""
+    />
     <fast-pbehavior-form-stub
-      form="[object Object]"
+      form=""
     />
     <field-switcher-stub
       title="Snooze - note field required"
@@ -2150,6 +2167,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     />
     <field-switcher-stub
       title="Actions allowed when state OK"
+    />
+    <field-switcher-stub
+      title="Keep selected after action"
     />
     <field-text-editor-with-template-stub
       addable="true"

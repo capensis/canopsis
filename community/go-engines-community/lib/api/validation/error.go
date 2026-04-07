@@ -69,7 +69,7 @@ loop:
 		rk := rv.Kind()
 
 		switch rk {
-		case reflect.Interface, reflect.Ptr:
+		case reflect.Interface, reflect.Pointer:
 			rv = rv.Elem()
 			rk = rv.Kind()
 		}
