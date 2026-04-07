@@ -651,4 +651,10 @@ export default {
       declareticketrule: '<strong>Règles de déclaration de tickets</strong>\n<ul>{rules}</ul>',
     },
   },
+
+  massActionsPanel: {
+    recordsSelected: '{count} enregistrement sélectionné|{count} enregistrements sélectionnés',
+    keepSelectedAfterAction: 'Conserver la sélection après l\'action',
+    clearSelection: 'Effacer la sélection',
+  },
 };
