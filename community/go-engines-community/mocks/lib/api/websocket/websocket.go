@@ -299,6 +299,18 @@ func (mr *MockHubMockRecorder) LeaveRoom(ctx, room any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LeaveRoom", reflect.TypeOf((*MockHub)(nil).LeaveRoom), ctx, room)
 }
 
+// LeaveRoomByConnID mocks base method.
+func (m *MockHub) LeaveRoomByConnID(ctx context.Context, room, connID string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "LeaveRoomByConnID", ctx, room, connID)
+}
+
+// LeaveRoomByConnID indicates an expected call of LeaveRoomByConnID.
+func (mr *MockHubMockRecorder) LeaveRoomByConnID(ctx, room, connID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LeaveRoomByConnID", reflect.TypeOf((*MockHub)(nil).LeaveRoomByConnID), ctx, room, connID)
+}
+
 // Run mocks base method.
 func (m *MockHub) Run(ctx context.Context) {
 	m.ctrl.T.Helper()

@@ -37,6 +37,7 @@ type Hub interface {
 	ConnectionsInRoom(room string) []ConnectionInfo
 	Connections() []ConnectionAuthInfo
 	LeaveRoom(ctx context.Context, room string)
+	LeaveRoomByConnID(ctx context.Context, room, connID string)
 	SendMessageToUser(ctx context.Context, payload any, room, userID string) bool
 }
 
@@ -242,6 +243,17 @@ func (h *hub) LeaveRoom(ctx context.Context, room string) {
 	for _, c := range conns {
 		c.leaveRoom(ctx, room)
 	}
+}
+
+func (h *hub) LeaveRoomByConnID(ctx context.Context, room, connID string) {
+	h.connsMx.RLock()
+	conn, ok := h.conns[connID]
+	h.connsMx.RUnlock()
+	if !ok || !conn.inRoom(room) {
+		return
+	}
+
+	conn.leaveRoom(ctx, room)
 }
 
 func (h *hub) Connections() []ConnectionAuthInfo {
