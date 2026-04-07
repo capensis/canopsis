@@ -1,5 +1,10 @@
 <template>
   <v-layout column>
+    <c-enabled-field
+      v-field="form.visible"
+      :label="$t('pbehavior.visible')"
+      with-background
+    />
     <c-name-field
       v-field="form.name"
       autofocus
@@ -11,10 +16,6 @@
       :label="$t('modals.createPbehaviorReason.fields.description')"
       :error-messages="errors.collect('description')"
       name="description"
-    />
-    <c-enabled-field
-      v-field="form.visible"
-      :label="$t('pbehavior.visible')"
     />
   </v-layout>
 </template>

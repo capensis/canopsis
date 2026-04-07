@@ -23,6 +23,7 @@
           <c-enabled-field
             :value="!!timebased.child_inactive_delay"
             :label="$t('metaAlarmRule.childInactiveDelay')"
+            with-background
             @input="enableChildInactiveDelay"
           />
           <c-help-icon

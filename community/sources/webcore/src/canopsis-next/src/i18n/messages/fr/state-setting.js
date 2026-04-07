@@ -20,6 +20,7 @@ export default {
   seeFilterPattern: 'Voir le modèle de filtre',
   dependsCount: 'Nombre total de dépendances',
   stateDependsCount: 'Nombre de dépendances de l\'état {state}',
+  massRemove: 'Supprimer les paramètres d\'état sélectionnés',
   steps: {
     basics: 'Les bases',
     rulePatterns: 'Définir les entités cibles',

@@ -8,6 +8,7 @@
       :updatable="hasUpdateAnyRemediationInstructionAccess"
       :removable="hasDeleteAnyRemediationInstructionAccess"
       :duplicable="hasCreateAnyRemediationInstructionAccess"
+      @refresh="fetchList"
       @remove-selected="showRemoveSelectedRemediationInstructionModal"
       @duplicate="showDuplicateRemediationInstructionModal"
       @remove="showRemoveRemediationInstructionModal"
@@ -24,7 +25,7 @@ import { onMounted } from 'vue';
 import { USER_PERMISSIONS } from '@/constants';
 
 import { useFetchListWithOptions } from '@/hooks/query/shared';
-import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 import { useCRUDPermissions } from '@/hooks/auth';
 
 import { useRemediationInstructionsActions } from './hooks/remediation-instructions';
@@ -38,7 +39,7 @@ export default {
       remediationInstructionsMeta,
       remediationInstructionsPending,
       fetchRemediationInstructionsList,
-    } = useRemdeitionInstruction();
+    } = useRemediationInstruction();
 
     const {
       options,
@@ -84,6 +85,7 @@ export default {
       showApproveRemediationInstructionModal,
       showRemoveRemediationInstructionModal,
       showRemoveSelectedRemediationInstructionModal,
+      fetchList,
     };
   },
 };

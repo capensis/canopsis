@@ -12,7 +12,7 @@
     search
     @update:options="$emit('update:options', $event)"
   >
-    <template v-if="removable && hasAnyDeletableMap" #mass-actions="{ selected, clearSelected }">
+    <template #mass-actions="{ selected, clearSelected }">
       <c-table-mass-actions-panel
         :items="selected"
         :removable="removable"

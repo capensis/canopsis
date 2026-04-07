@@ -1,6 +1,6 @@
 <template>
   <v-layout class="gap-2" column>
-    <c-enabled-field v-field="form.enabled" />
+    <c-enabled-field v-field="form.enabled" with-background />
     <v-stepper
       v-model="stepper"
       class="state-setting-form"

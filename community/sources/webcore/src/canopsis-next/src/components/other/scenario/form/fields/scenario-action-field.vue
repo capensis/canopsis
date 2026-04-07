@@ -16,6 +16,7 @@
         <c-enabled-field
           v-field="action.emit_trigger"
           :label="$t('common.emitTrigger')"
+          with-background
         />
         <action-author-field v-model="parameters" :variables="templateVars.author" />
       </v-flex>
@@ -26,11 +27,13 @@
         <c-enabled-field
           v-model="parameters.skip_for_child"
           :label="$t('scenario.skipForChild')"
+          with-background
         />
         <c-enabled-field
           v-model="parameters.skip_for_instruction"
           :label="$t('scenario.skipForInstruction')"
           class="mt-0"
+          with-background
         />
       </v-flex>
     </v-layout>

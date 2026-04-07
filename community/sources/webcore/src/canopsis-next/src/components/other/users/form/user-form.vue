@@ -4,6 +4,7 @@
       v-field="form.enabled"
       :disabled="onlyUserPrefs || isSelf"
       hide-details
+      with-background
     />
     <c-id-field
       v-field="form._id"

@@ -14,6 +14,7 @@
           :disabled="disabledCommon"
           class="mt-0"
           hide-details
+          with-background
         />
       </v-flex>
     </v-layout>
@@ -62,6 +63,7 @@
         :value="form.retry_enabled"
         :label="$t('remediation.instruction.retryEnabled')"
         class="pb-1"
+        with-background
         @input="updateRetryEnabled"
       >
         <template #append>
@@ -95,6 +97,7 @@
         <c-enabled-field
           v-field="form.enabled_repeat_triggers"
           :label="$t('remediation.instruction.enabledRepeatTrigger')"
+          with-background
         >
           <template #append>
             <c-help-icon

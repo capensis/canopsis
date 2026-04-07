@@ -10,11 +10,15 @@
     search
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :enablable="updatable"
+        :disablable="updatable"
+        :removable="removable"
+        user
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #enabled="{ item }">

@@ -7,6 +7,7 @@
       <template #text="">
         <alarm-status-rule-form
           v-model="form"
+          :disablable="config.disablable"
           :flapping="config.flapping"
         />
       </template>

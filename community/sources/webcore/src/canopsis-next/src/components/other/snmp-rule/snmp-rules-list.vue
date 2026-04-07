@@ -68,6 +68,9 @@
           />
         </template>
       </template>
+      <template #enabled="{ item }">
+        <c-enabled :value="item.enabled" />
+      </template>
       <template #actions="{ item }">
         <v-layout>
           <c-action-btn
@@ -168,6 +171,11 @@ export default {
       {
         text: t('snmpRule.state'),
         value: 'state',
+        sortable: false,
+      },
+      {
+        text: t('common.enabled'),
+        value: 'enabled',
         sortable: false,
       },
       {

@@ -5,6 +5,7 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
+    select-all
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
@@ -54,7 +55,11 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { JUNIT_STATE_SETTING_ID, SERVICE_STATE_SETTING_ID } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -87,47 +92,48 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.title'),
-          value: 'title',
-        },
-        {
-          text: this.$t('common.enabled'),
-          value: 'enabled',
-        },
-        {
-          text: this.$t('common.priority'),
-          value: 'priority',
-        },
-        {
-          text: this.$t('stateSetting.appliedFor'),
-          value: 'type',
-        },
-        {
-          text: this.$t('common.method'),
-          value: 'method',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
-  },
-  methods: {
-    isDuplicable(item) {
-      return ![JUNIT_STATE_SETTING_ID, SERVICE_STATE_SETTING_ID].includes(item._id);
-    },
+  setup() {
+    const { t, te } = useI18n();
 
-    getMethodLabel(method) {
-      return this.$te(`stateSetting.methods.${method}.label`)
-        ? this.$t(`stateSetting.methods.${method}.label`)
-        : this.$t(`stateSetting.junit.methods.${method}`);
-    },
+    const headers = computed(() => [
+      {
+        text: t('common.title'),
+        value: 'title',
+      },
+      {
+        text: t('common.enabled'),
+        value: 'enabled',
+      },
+      {
+        text: t('common.priority'),
+        value: 'priority',
+      },
+      {
+        text: t('stateSetting.appliedFor'),
+        value: 'type',
+      },
+      {
+        text: t('common.method'),
+        value: 'method',
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
+
+    const isDuplicable = item => ![JUNIT_STATE_SETTING_ID, SERVICE_STATE_SETTING_ID].includes(item._id);
+
+    const getMethodLabel = method => (te(`stateSetting.methods.${method}.label`)
+      ? t(`stateSetting.methods.${method}.label`)
+      : t(`stateSetting.junit.methods.${method}`));
+
+    return {
+      headers,
+      isDuplicable,
+      getMethodLabel,
+    };
   },
 };
 </script>
