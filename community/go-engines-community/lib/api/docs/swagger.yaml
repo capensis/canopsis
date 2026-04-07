@@ -4031,6 +4031,108 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/pbehaviors/disable:
+    put:
+      tags:
+        - pbehaviors
+      summary: Bulk disable pbehaviors
+      description: |
+        Bulk disable pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-bulk-disable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkToggleRequestItem'
+            examples:
+              update:
+                summary: Disable
+                description: Disable pbehaviors.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  },
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e102"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/BulkResponseItem'
+                    - type: object
+                      properties:
+                        item:
+                          $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkToggleRequestItem'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/pbehaviors/enable:
+    put:
+      tags:
+        - pbehaviors
+      summary: Bulk enable pbehaviors
+      description: |
+        Bulk enable pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-bulk-enable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkToggleRequestItem'
+            examples:
+              update:
+                summary: Enable
+                description: Enable pbehaviors.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  },
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e102"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/BulkResponseItem'
+                    - type: object
+                      properties:
+                        item:
+                          $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkToggleRequestItem'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/entity-pbehaviors:
     post:
       tags:

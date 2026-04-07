@@ -2442,25 +2442,37 @@ func RegisterRoutes(
 				)
 			}
 
-			pbehaviorRouter := bulkRouter.Group("/pbehaviors")
+			pbehaviorBulkRouter := bulkRouter.Group("/pbehaviors")
 			{
-				pbehaviorRouter.POST(
+				pbehaviorBulkRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					pbehaviorApi.BulkCreate,
 				)
-				pbehaviorRouter.PUT(
+				pbehaviorBulkRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					pbehaviorApi.BulkUpdate,
 				)
-				pbehaviorRouter.DELETE(
+				pbehaviorBulkRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
 					pbehaviorApi.BulkDelete,
+				)
+				pbehaviorBulkRouter.PUT(
+					"/enable",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorApi.BulkEnable,
+				)
+				pbehaviorBulkRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorApi.BulkDisable,
 				)
 			}
 

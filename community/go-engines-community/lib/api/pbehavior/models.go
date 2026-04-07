@@ -253,3 +253,8 @@ type ExecPatternRequest struct {
 	ID            string         `json:"_id"`
 	EntityPattern pattern.Entity `json:"entity_pattern" binding:"required,entity_pattern"`
 }
+
+type BulkToggleRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
+}

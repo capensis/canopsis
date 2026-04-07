@@ -4841,6 +4841,13 @@ definitions:
     - entity
     - origin
     type: object
+  pbehavior.BulkToggleRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   pbehavior.BulkUpdateRequestItem:
     properties:
       _id:
