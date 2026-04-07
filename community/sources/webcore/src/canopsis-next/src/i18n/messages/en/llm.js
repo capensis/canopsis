@@ -2,36 +2,37 @@ import { LLM_AI_CHAT_ERROR_CODES, LLM_AI_CHAT_SUGGESTION_TYPES, LLM_THINKING_LEV
 
 export default {
   expandTabs: {
-    details: 'Details',
     promptsHistory: 'Prompts history',
   },
   promptsHistory: {
     tabs: {
       allPrompts: 'All prompts',
-      byUser: 'By user',
     },
-    searchPlaceholder: 'Search by user, modal or name',
-    notRelatedToCanopsis: 'Not related to Canopsis',
+    expandUserHistory: {
+      empty: 'No prompts for this user.',
+      lastPromptDate: 'Last prompt date',
+    },
+    filterByUser: 'User filter',
     groupByChat: 'Group by chat',
-    seeChat: 'See chat',
+    onlyOffTopic: 'Only off-topic',
+    allUsers: 'All users',
+    search: 'Search by user, modal or name',
+    searchByUserName: 'Search by user name',
+    searchByModalOrName: 'Search by modal or name',
+    userHistoryTitle: 'User history',
+    userHistoryEmpty: 'No users yet for this configuration.',
     columns: {
       userName: 'User name',
       datetime: 'Datetime',
       tokensUsed: 'Tokens used',
-      modal: 'Modal',
+      context: 'Context',
       name: 'Name',
-      usage: 'Usage',
-      canopsisRelated: 'Canopsis related',
+      offTopic: 'Off topic',
       prompt: 'Prompt',
-      seeChat: 'See chat',
-      promptsCount: 'Prompts',
       lastUsed: 'Last used',
     },
   },
   modelType: 'LLM model type',
-  modelTypes: {
-    gemini: 'Gemini',
-  },
   modelName: 'LLM model name',
   model: 'LLM model',
   recommendedBadge: 'recommended',
@@ -41,7 +42,6 @@ export default {
   isDefaultModel: 'Is default model',
   currentDefaultModelLine: 'Current default model: {name}',
   lastUsedDate: 'Last used date',
-  expandNoDetails: 'No additional details for this configuration.',
   importantNotesMessage:
     '<div class="font-weight-regular">Important notes:</div>'
     + '<ul>'
@@ -60,10 +60,8 @@ export default {
   chat: {
     howCanIHelp: 'How can I help?',
     promptPlaceholder: 'Describe what you need…',
-    modelPlaceholder: 'Model',
     ask: 'Ask',
-    expandMessage: 'Show full message',
-    collapseMessage: 'Show less',
+    chatHistoryTitle: 'Chat history',
     thinking: 'Thinking…',
     tryLabel: 'Try:',
     suggestions: {

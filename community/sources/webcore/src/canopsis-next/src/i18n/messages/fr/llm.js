@@ -2,36 +2,37 @@ import { LLM_AI_CHAT_ERROR_CODES, LLM_AI_CHAT_SUGGESTION_TYPES, LLM_THINKING_LEV
 
 export default {
   expandTabs: {
-    details: 'Détails',
     promptsHistory: 'Historique des invites',
   },
   promptsHistory: {
     tabs: {
       allPrompts: 'Toutes les invites',
-      byUser: 'Par utilisateur',
     },
-    searchPlaceholder: 'Rechercher par utilisateur, modal ou nom',
-    notRelatedToCanopsis: 'Sans lien avec Canopsis',
+    expandUserHistory: {
+      empty: 'Aucune invite pour cet utilisateur.',
+      lastPromptDate: 'Date de la dernière invite',
+    },
+    filterByUser: 'Filtrer par utilisateur',
     groupByChat: 'Regrouper par conversation',
-    seeChat: 'Voir la conversation',
+    onlyOffTopic: 'Hors sujet uniquement',
+    allUsers: 'Tous les utilisateurs',
+    search: 'Rechercher par utilisateur, modal ou nom',
+    searchByUserName: "Rechercher par nom d'utilisateur",
+    searchByModalOrName: 'Rechercher par modal ou nom',
+    userHistoryTitle: 'Historique utilisateur',
+    userHistoryEmpty: 'Aucun utilisateur pour cette configuration.',
     columns: {
       userName: 'Utilisateur',
       datetime: 'Date et heure',
       tokensUsed: 'Jetons utilisés',
-      modal: 'Modal',
+      context: 'Contexte',
       name: 'Nom',
-      usage: 'Usage',
-      canopsisRelated: 'Lié à Canopsis',
+      offTopic: 'Hors sujet',
       prompt: 'Invite',
-      seeChat: 'Voir la conversation',
-      promptsCount: 'Invites',
       lastUsed: 'Dernière utilisation',
     },
   },
   modelType: 'Type de modèle LLM',
-  modelTypes: {
-    gemini: 'Gemini',
-  },
   modelName: 'Nom du modèle LLM',
   model: 'Modèle LLM',
   recommendedBadge: 'recommandé',
@@ -41,7 +42,6 @@ export default {
   isDefaultModel: 'Modèle par défaut',
   currentDefaultModelLine: 'Modèle par défaut actuel : {name}',
   lastUsedDate: 'Dernière utilisation',
-  expandNoDetails: 'Aucun détail supplémentaire pour cette configuration.',
   importantNotesMessage:
     '<div>Notes importantes :</div>'
     + '<ul>'
@@ -60,10 +60,8 @@ export default {
   chat: {
     howCanIHelp: 'Comment puis-je vous aider ?',
     promptPlaceholder: 'Décrivez votre besoin…',
-    modelPlaceholder: 'Modèle',
     ask: 'Demander',
-    expandMessage: 'Afficher le message en entier',
-    collapseMessage: 'Afficher moins',
+    chatHistoryTitle: 'Historique du chat',
     thinking: 'Réflexion en cours…',
     tryLabel: 'Essayez :',
     suggestions: {

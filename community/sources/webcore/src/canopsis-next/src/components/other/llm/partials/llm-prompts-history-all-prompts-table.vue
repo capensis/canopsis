@@ -1,184 +1,141 @@
 <template>
-  <v-layout
+  <c-advanced-data-table
+    :headers="headers"
+    :items="data"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :search-label="$t('llm.promptsHistory.search')"
     class="llm-prompts-history-all-prompts-table"
-    column
+    item-key="_id"
+    hide-actions
+    search
+    advanced-pagination
+    @update:options="updateOptions"
   >
-    <v-layout
-      class="pa-3 gap-3"
-      align-center
-      wrap
-    >
-      <v-flex
-        xs12
-        md5
+    <template #toolbar>
+      <v-layout
+        class="gap-3 px-4"
+        align-center
+        wrap
       >
-        <v-layout align-end>
-          <v-text-field
-            v-model="localSearchModel"
-            :placeholder="$t('llm.promptsHistory.searchPlaceholder')"
-            :aria-label="$t('llm.promptsHistory.searchPlaceholder')"
-            class="mr-2"
+        <v-flex xs12 md3>
+          <c-enabled-field
+            :value="options.only_off_topic"
+            :label="$t('llm.promptsHistory.onlyOffTopic')"
             hide-details
-            single-line
-            dense
-            @keydown.enter.prevent="emitSubmitSearch"
+            @change="onlyOffTopicChange"
           />
-          <c-action-btn
-            :tooltip="$t('common.search')"
-            :aria-label="$t('common.search')"
-            icon="search"
-            @click="emitSubmitSearch"
-          />
-          <c-action-btn
-            :tooltip="$t('common.clearSearch')"
-            :aria-label="$t('common.clearSearch')"
-            icon="clear"
-            @click="emitClearSearch"
-          />
-        </v-layout>
-      </v-flex>
-      <v-flex
-        xs12
-        md3
-      >
-        <v-switch
-          :input-value="query.not_related_to_canopsis"
-          :label="$t('llm.promptsHistory.notRelatedToCanopsis')"
-          class="mt-0"
-          color="primary"
-          hide-details
-          @change="onNotRelatedChange"
-        />
-      </v-flex>
-      <v-flex
-        xs12
-        md3
-      >
-        <v-switch
-          :input-value="query.group_by_chat"
-          :label="$t('llm.promptsHistory.groupByChat')"
-          class="mt-0"
-          color="primary"
-          hide-details
-          @change="onGroupByChatChange"
-        />
-      </v-flex>
-    </v-layout>
-
-    <v-layout justify-center>
-      <v-flex xs12>
-        <v-card>
-          <v-card-text class="pa-0">
-            <c-advanced-data-table
-              :headers="headers"
-              :items="data"
-              :loading="pending"
-              :total-items="totalItems"
-              :options="options"
-              item-key="_id"
-              hide-actions
-              advanced-pagination
-              @update:options="onUpdateOptions"
-            >
-              <template #datetime="{ item }">
-                {{ item.created | date('long', '-') }}
-              </template>
-              <template #canopsis_related="{ item }">
-                <c-enabled :value="item.canopsis_related" />
-              </template>
-              <template #prompt="{ item }">
-                <span class="llm-prompts-history-all-prompts-table__prompt">{{ item.prompt }}</span>
-              </template>
-              <template #see_chat="{ item }">
-                <c-action-btn
-                  :tooltip="$t('llm.promptsHistory.seeChat')"
-                  :aria-label="$t('llm.promptsHistory.seeChat')"
-                  icon="forum"
-                  @click="onSeeChat(item)"
-                />
-              </template>
-            </c-advanced-data-table>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-    </v-layout>
-  </v-layout>
+        </v-flex>
+        <v-flex>
+          <v-layout justify-end>
+            <c-enabled-field
+              :value="options.only_off_topic"
+              :label="$t('llm.promptsHistory.onlyOffTopic')"
+              hide-details
+              @change="onlyOffTopicChange"
+            />
+          </v-layout>
+        </v-flex>
+      </v-layout>
+    </template>
+    <template #timestamp="{ item }">
+      {{ item.timestamp | date('long', '-') }}
+    </template>
+    <template #prompt="{ item }">
+      <span class="llm-prompts-history-all-prompts-table__prompt">{{ item.prompt }}</span>
+    </template>
+    <template #actions="{ item }">
+      <c-action-btn
+        :tooltip="$t('common.seeChat')"
+        :aria-label="$t('common.seeChat')"
+        icon="forum"
+        @click="seeChat(item)"
+      />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
+
+import { convertQueryToRequest } from '@/helpers/query';
+
+import { useI18n } from '@/hooks/i18n';
+import { useLlm } from '@/hooks/store/modules/llm';
+import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 
 export default {
   props: {
-    query: {
-      type: Object,
-      required: true,
-    },
-    localSearch: {
+    llmId: {
       type: String,
-      default: '',
-    },
-    data: {
-      type: Array,
-      required: true,
-    },
-    pending: {
-      type: Boolean,
-      default: false,
-    },
-    totalItems: {
-      type: Number,
-      default: 0,
-    },
-    options: {
-      type: Object,
-      required: true,
-    },
-    headers: {
-      type: Array,
       required: true,
     },
   },
   setup(props, { emit }) {
-    const localSearchModel = computed({
-      get: () => props.localSearch,
-      set: (value) => {
-        emit('update:localSearch', value);
+    const { t } = useI18n();
+    const { fetchLlmHistoryWithoutStore } = useLlm();
+
+    const {
+      data,
+      meta,
+      pending,
+      query,
+      updateQuery,
+      options,
+      updateOptions,
+      fetchList,
+    } = useFetchListWithoutStoreWithOptions({
+      initialQuery: {
+        page: 1,
+        itemsPerPage: 10,
+        search: '',
+        sortBy: [],
+        sortDesc: [],
+        only_off_topic: false,
       },
+      convertQueryToRequest: (fetchQuery) => {
+        const params = {
+          ...convertQueryToRequest(fetchQuery),
+        };
+
+        if (fetchQuery.only_off_topic) {
+          params.only_off_topic = true;
+        }
+
+        return params;
+      },
+      fetchListHandler: async ({ params }) => fetchLlmHistoryWithoutStore({ id: props.llmId, params }),
     });
 
-    const emitSubmitSearch = () => {
-      emit('submit-search');
-    };
+    const totalItems = computed(() => meta.value?.total_count ?? 0);
 
-    const emitClearSearch = () => {
-      emit('clear-search');
-    };
+    const headers = computed(() => [
+      { text: t('llm.promptsHistory.columns.userName'), value: 'user.display_name' },
+      { text: t('llm.promptsHistory.columns.datetime'), value: 'timestamp' },
+      { text: t('llm.promptsHistory.columns.tokensUsed'), value: 'tokens' },
+      { text: t('llm.promptsHistory.columns.context'), value: 'context', sortable: false },
+      { text: t('llm.promptsHistory.columns.name'), value: 'rule.name', sortable: false },
+      { text: t('llm.promptsHistory.columns.offTopic'), value: 'off_topic', sortable: false },
+      { text: t('llm.promptsHistory.columns.prompt'), value: 'prompt', sortable: false },
+      { text: t('common.seeChat'), value: 'actions', sortable: false, width: '88px' },
+    ]);
 
-    const onNotRelatedChange = (value) => {
-      emit('not-related-change', value);
-    };
+    const onlyOffTopicChange = value => updateQuery({ ...query.value, only_off_topic: value, page: 1 });
 
-    const onGroupByChatChange = (value) => {
-      emit('group-by-chat-change', value);
-    };
+    const seeChat = item => emit('see-chat', item);
 
-    const onUpdateOptions = (opts) => {
-      emit('update:options', opts);
-    };
-
-    const onSeeChat = (item) => {
-      emit('see-chat', item);
-    };
+    onMounted(fetchList);
 
     return {
-      localSearchModel,
-      emitSubmitSearch,
-      emitClearSearch,
-      onNotRelatedChange,
-      onGroupByChatChange,
-      onUpdateOptions,
-      onSeeChat,
+      data,
+      pending,
+      totalItems,
+      options,
+      updateOptions,
+      headers,
+      onlyOffTopicChange,
+      seeChat,
     };
   },
 };

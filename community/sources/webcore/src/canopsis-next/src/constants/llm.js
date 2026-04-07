@@ -11,11 +11,6 @@ export const LLM_THINKING_LEVELS = {
   high: 'high',
 };
 
-export const LLM_PROMPTS_HISTORY_VIEWS = {
-  all: 'all',
-  byUser: 'byUser',
-};
-
 export const LLM_AI_CHAT_WIDTH = 400;
 
 export const LLM_AI_CHAT_PROMPT_MAX_LENGTH = 10000;

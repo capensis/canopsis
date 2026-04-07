@@ -20,7 +20,10 @@ export const useLlm = () => {
     bulkRemoveLlms: 'bulkRemove',
     fetchLlmsListWithoutStore: 'fetchListWithoutStore',
     fetchModelsListWithoutStore: 'fetchModelsListWithoutStore',
-    fetchPromptsHistoryWithoutStore: 'fetchPromptsHistoryWithoutStore',
+    fetchLlmHistoryWithoutStore: 'fetchLlmHistoryWithoutStore',
+    fetchLlmChatsWithoutStore: 'fetchLlmChatsWithoutStore',
+    fetchLlmUsersWithoutStore: 'fetchLlmUsersWithoutStore',
+    fetchLlmMessagesWithoutStore: 'fetchLlmMessagesWithoutStore',
   });
 
   return {

@@ -613,7 +613,7 @@ export const useAiChatLlms = ({ initialLlms = [] } = {}) => {
   const { fetchLlmsListWithoutStore } = useLlm();
 
   const { pending: llmsPending, handler: fetchLlms } = usePendingHandler(async () => {
-    const { data } = await fetchLlmsListWithoutStore({ params: { limit: MAX_LIMIT } });
+    const { data } = await fetchLlmsListWithoutStore({ params: { enabled: true, limit: MAX_LIMIT } });
 
     llms.value = data;
 
