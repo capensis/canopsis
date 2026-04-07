@@ -26,6 +26,10 @@ export default createCRUDModule({
       return request.put(`${API_ROUTES.remediation.instructions}/${id}/rate`, data);
     },
 
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.remediation.bulkInstructions, { data });
+    },
+
     bulkEnable(context, { data }) {
       return request.put(API_ROUTES.remediation.bulkInstructionsEnable, data);
     },

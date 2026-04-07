@@ -1,6 +1,11 @@
 <template>
   <v-layout class="gap-2" column>
-    <c-enabled-field v-field="form.enabled" hide-details />
+    <c-enabled-field
+      v-field="form.enabled"
+      :disabled="disablable"
+      hide-details
+      with-background
+    />
     <c-name-field
       v-field="form.name"
       autofocus
@@ -45,6 +50,10 @@ export default {
       default: () => ({}),
     },
     flapping: {
+      type: Boolean,
+      default: false,
+    },
+    disablable: {
       type: Boolean,
       default: false,
     },

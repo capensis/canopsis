@@ -6,7 +6,7 @@
       </template>
       <template #text="">
         <v-layout class="gap-2" column>
-          <c-enabled-field v-model="form.enabled" hide-details />
+          <c-enabled-field v-model="form.enabled" hide-details with-background />
           <template-testing-test-variables-wrapper
             v-model="form"
             :is-new="isNew"

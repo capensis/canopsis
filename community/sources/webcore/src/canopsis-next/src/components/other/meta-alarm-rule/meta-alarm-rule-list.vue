@@ -35,6 +35,9 @@
     <template #config.time_interval="{ item }">
       {{ item | get('config.time_interval') | duration }}
     </template>
+    <template #enabled="{ item }">
+      <c-enabled :value="item.enabled" />
+    </template>
     <template #created="{ item }">
       {{ item.created | date }}
     </template>
@@ -117,6 +120,7 @@ export default {
       { text: t('common.id'), value: '_id' },
       { text: t('common.name'), value: 'name' },
       { text: t('common.type'), value: 'type' },
+      { text: t('common.enabled'), value: 'enabled', sortable: false },
       { text: t('metaAlarmRule.autoResolve'), value: 'auto_resolve', sortable: false },
       { text: t('metaAlarmRule.thresholdRate'), value: 'config.threshold_rate', sortable: false },
       { text: t('metaAlarmRule.thresholdCount'), value: 'config.threshold_count', sortable: false },

@@ -1,5 +1,11 @@
 <template>
   <v-layout class="gap-2" column>
+    <c-enabled-field
+      v-field="form.visible"
+      :label="$t('pbehavior.visible')"
+      hide-details
+      with-background
+    />
     <c-name-field
       v-field="form.name"
       autofocus
@@ -11,11 +17,6 @@
       :label="$t('modals.createPbehaviorException.fields.description')"
       :error-messages="errors.collect('description')"
       name="description"
-    />
-    <c-enabled-field
-      v-field="form.visible"
-      :label="$t('pbehavior.visible')"
-      hide-details
     />
     <pbehavior-exceptions-field
       v-field="form.exdates"

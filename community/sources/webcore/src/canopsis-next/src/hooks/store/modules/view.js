@@ -42,6 +42,7 @@ export const useView = () => {
   const { useGetters, useActions } = useViewStoreModule();
 
   const getters = useGetters({
+    groups: 'items',
     getViewById: 'getViewById',
     getViewTabById: 'getViewTabById',
   });

@@ -8,12 +8,13 @@
     <c-duration-field v-field="form.interval" />
     <v-layout>
       <v-flex xs6>
-        <c-enabled-field v-field="form.enabled" />
+        <c-enabled-field v-field="form.enabled" with-background />
       </v-flex>
       <v-flex xs6>
         <c-enabled-field
           v-field="form.fullscreen"
           :label="$t('common.fullscreen')"
+          with-background
         />
       </v-flex>
     </v-layout>

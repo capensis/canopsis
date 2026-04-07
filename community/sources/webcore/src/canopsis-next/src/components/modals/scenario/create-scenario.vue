@@ -6,7 +6,7 @@
       </template>
       <template #text="">
         <v-layout class="gap-2" column>
-          <c-enabled-field v-model="form.enabled" />
+          <c-enabled-field v-model="form.enabled" with-background />
           <template-testing-test-variables-wrapper
             v-model="form"
             :rule-id="scenarioId"

@@ -4,6 +4,7 @@
       v-if="!noEnabled"
       v-field="form.enabled"
       hide-details
+      with-background
     />
     <pbehavior-general-form
       v-if="noPattern"

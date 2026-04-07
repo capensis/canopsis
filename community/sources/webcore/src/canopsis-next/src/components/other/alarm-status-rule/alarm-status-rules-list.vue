@@ -29,6 +29,9 @@
     <template #priority="{ item }">
       {{ item.priority || '-' }}
     </template>
+    <template #enabled="{ item }">
+      <c-enabled :value="item.enabled" />
+    </template>
     <template #actions="{ item }">
       <v-layout>
         <c-action-btn
@@ -108,6 +111,7 @@ export default {
       { text: t('common.name'), value: 'name' },
       { text: t('common.duration'), value: 'duration', sortable: false },
       { text: t('common.priority'), value: 'priority' },
+      { text: t('common.enabled'), value: 'enabled', sortable: false },
       props.flapping && { text: t('common.frequencyLimit'), value: 'freq_limit' },
       { text: t('common.author'), value: 'author.display_name' },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },

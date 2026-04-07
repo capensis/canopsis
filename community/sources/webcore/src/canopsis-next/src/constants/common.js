@@ -413,10 +413,12 @@ export const CONTENT_TYPES = {
 export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
 
 export const RESPONSE_STATUSES = {
+  success: 200,
+
   badRequest: 400,
   unauthorized: 401,
-  notFound: 404,
   forbidden: 403,
+  notFound: 404,
   timeout: 408,
 
   internalServerError: 500,

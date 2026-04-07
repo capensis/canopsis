@@ -4,6 +4,7 @@
       <c-enabled-field
         v-field="form.template"
         :label="$t('declareTicket.allowTicketURLTemplate')"
+        with-background
       />
     </v-flex>
     <v-flex xs6>

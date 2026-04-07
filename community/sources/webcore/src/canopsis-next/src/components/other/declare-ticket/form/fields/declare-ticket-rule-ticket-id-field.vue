@@ -4,6 +4,7 @@
       <c-enabled-field
         v-field="value.template"
         :label="$t('declareTicket.allowTicketIdTemplate')"
+        with-background
       />
     </v-flex>
     <declare-ticket-rule-ticket-id-payload-text-field

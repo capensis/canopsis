@@ -45,12 +45,13 @@
 <script>
 import { computed } from 'vue';
 
-import { MODALS } from '@/constants';
+import { MODALS, RESPONSE_STATUSES } from '@/constants';
 
 import { mapIds, pickIds } from '@/helpers/array';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
 import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
 import { useEventFilter } from '@/hooks/store/modules/event-filter';
 import { useFlappingRules } from '@/hooks/store/modules/flapping-rules';
@@ -66,7 +67,10 @@ import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
 import { usePlaylist } from '@/hooks/store/modules/playlist';
+import { useStateSetting } from '@/hooks/store/modules/state-setting';
 import { useMaps } from '@/hooks/store/modules/maps';
+import { useUser } from '@/hooks/store/modules/user';
+import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 
 export default {
   props: {
@@ -154,7 +158,19 @@ export default {
       type: Boolean,
       default: false,
     },
+    stateSetting: {
+      type: Boolean,
+      default: false,
+    },
     map: {
+      type: Boolean,
+      default: false,
+    },
+    user: {
+      type: Boolean,
+      default: false,
+    },
+    instruction: {
       type: Boolean,
       default: false,
     },
@@ -162,6 +178,7 @@ export default {
   setup(props, { emit }) {
     const { te, t } = useI18n();
     const modals = useModals();
+    const popups = usePopups();
 
     const {
       bulkEnableDynamicInfos,
@@ -224,8 +241,9 @@ export default {
     } = useDeclareTicketRule();
 
     const {
-      bulkUpdatePbehaviors,
       bulkRemovePbehaviors,
+      bulkEnablePbehaviors,
+      bulkDisablePbehaviors,
     } = usePbehavior();
 
     const {
@@ -253,8 +271,24 @@ export default {
     } = usePbehaviorException();
 
     const {
+      bulkRemoveStateSettings,
+    } = useStateSetting();
+
+    const {
       bulkRemoveMaps,
     } = useMaps();
+
+    const {
+      bulkRemoveUsers,
+      bulkEnableUsers,
+      bulkDisableUsers,
+    } = useUser();
+
+    const {
+      bulkEnableRemediationInstructions,
+      bulkDisableRemediationInstructions,
+      bulkRemoveRemediationInstructions,
+    } = useRemediationInstruction();
 
     const itemsIds = computed(() => mapIds(props.items));
     const enablableItems = computed(() => (
@@ -275,8 +309,8 @@ export default {
       const activeConfig = {
         [props.pbehavior]: {
           remove: bulkRemovePbehaviors,
-          enable: bulkUpdatePbehaviors,
-          disable: bulkUpdatePbehaviors,
+          enable: bulkEnablePbehaviors,
+          disable: bulkDisablePbehaviors,
           tooltipPrefix: 'pbehavior',
           exportProps: { pbehavior: true },
         },
@@ -312,7 +346,7 @@ export default {
           remove: bulkRemoveIdleRules,
           enable: bulkEnableIdleRules,
           disable: bulkDisableIdleRules,
-          tooltipPrefix: 'idleRule',
+          tooltipPrefix: 'idleRules',
           exportProps: { idleRule: true },
         },
         [props.linkRule]: {
@@ -373,9 +407,25 @@ export default {
           unhide: bulkUnhidePbehaviorExceptions,
           tooltipPrefix: 'pbehavior',
         },
+        [props.stateSetting]: {
+          remove: bulkRemoveStateSettings,
+          tooltipPrefix: 'stateSetting',
+        },
         [props.map]: {
           remove: bulkRemoveMaps,
           tooltipPrefix: 'map',
+        },
+        [props.user]: {
+          remove: bulkRemoveUsers,
+          enable: bulkEnableUsers,
+          disable: bulkDisableUsers,
+          tooltipPrefix: 'user',
+        },
+        [props.instruction]: {
+          remove: bulkRemoveRemediationInstructions,
+          enable: bulkEnableRemediationInstructions,
+          disable: bulkDisableRemediationInstructions,
+          tooltipPrefix: 'remediation.instruction',
         },
       }.true ?? {};
 
@@ -388,10 +438,31 @@ export default {
       return activeConfig;
     });
 
+    /**
+     * Clears selected items and triggers list refresh after a mass action.
+     */
     const afterSubmit = async () => {
       emit('clear:items');
       emit('refresh');
     };
+
+    /**
+     * Shows popup errors for failed mass action responses and injects
+     * the corresponding rule name by response index.
+     *
+     * @param {Array.<{status: number|string, message?: string}>} response
+     * @param {string} messageKey
+     */
+    const showErrorPopups = (response = [], messageKey) => (
+      response.forEach(({ status, message, error }, index) => {
+        if (status !== RESPONSE_STATUSES.success) {
+          const ruleName = props.items[index]?.name;
+          const text = te(messageKey) ? t(messageKey, { name: ruleName }) : message || error;
+
+          popups.error({ text });
+        }
+      })
+    );
 
     /**
      * Shows a confirmation modal for bulk remove operation.
@@ -401,7 +472,9 @@ export default {
       name: MODALS.confirmation,
       config: {
         action: async () => {
-          await config.value.remove({ data: pickIds(props.items) });
+          const response = await config.value.remove({ data: pickIds(props.items) });
+
+          showErrorPopups(response, `${config.value.tooltipPrefix}.removeForbidden`);
 
           return afterSubmit();
         },
@@ -431,22 +504,9 @@ export default {
       name: MODALS.confirmation,
       config: {
         action: async () => {
-          await config.value.disable({ data: enablableItemsIds.value });
+          const response = await config.value.disable({ data: enablableItemsIds.value });
 
-          return afterSubmit();
-        },
-      },
-    });
-
-    /**
-     * Shows a confirmation modal for bulk hide operation.
-     * On confirmation, hides selected items and refreshes the list.
-     */
-    const showHideModal = () => modals.show({
-      name: MODALS.confirmation,
-      config: {
-        action: async () => {
-          await config.value.hide({ data: hideableItemsIds.value });
+          showErrorPopups(response, `${config.value.tooltipPrefix}.disableForbidden`);
 
           return afterSubmit();
         },
@@ -468,6 +528,23 @@ export default {
       },
     });
 
+    /**
+     * Shows a confirmation modal for bulk hide operation.
+     * On confirmation, hides selected items and refreshes the list.
+     */
+    const showHideModal = () => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: async () => {
+          const response = await config.value.hide({ data: hideableItemsIds.value });
+
+          showErrorPopups(response, `${config.value.tooltipPrefix}.hideForbidden`);
+
+          return afterSubmit();
+        },
+      },
+    });
+
     return {
       config,
       itemsIds,
@@ -479,8 +556,8 @@ export default {
       showRemoveModal,
       showEnableModal,
       showDisableModal,
-      showHideModal,
       showUnhideModal,
+      showHideModal,
     };
   },
 };

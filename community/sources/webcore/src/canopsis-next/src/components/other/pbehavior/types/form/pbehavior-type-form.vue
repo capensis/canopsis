@@ -1,5 +1,10 @@
 <template>
   <v-layout column>
+    <c-enabled-field
+      v-field="form.visible"
+      :label="$t('pbehavior.visible')"
+      with-background
+    />
     <c-name-field
       v-field="form.name"
       :disabled="onlyColor"
@@ -61,10 +66,6 @@
         {{ $t('pbehavior.types.defaultType') }}
       </v-alert>
     </v-flex>
-    <c-enabled-field
-      v-field="form.visible"
-      :label="$t('pbehavior.visible')"
-    />
     <c-color-picker-field
       v-field="form.color"
       class="mt-2"

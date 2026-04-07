@@ -17,6 +17,7 @@
           <c-enabled-field
             v-field="form.declare_ticket.enabled"
             :disabled="isDeclareTicketExist"
+            with-background
           />
         </v-flex>
         <v-flex
@@ -26,6 +27,7 @@
           <c-enabled-field
             v-field="form.declare_ticket.is_regexp"
             :label="$t('declareTicket.isRegexp')"
+            with-background
           />
         </v-flex>
       </v-layout>
@@ -34,6 +36,7 @@
           v-if="!hideEmptyResponse"
           v-field="form.declare_ticket.empty_response"
           :label="$t('declareTicket.emptyResponse')"
+          with-background
         />
         <declare-ticket-rule-ticket-id-field
           v-field="form.declare_ticket.ticket_id"
