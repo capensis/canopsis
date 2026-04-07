@@ -1,10 +1,12 @@
 <template>
-  <div class="availability-widget-filters col-gap-6 row-gap-3">
-    <c-advanced-search
-      :tooltip="$t('availability.advancedSearch')"
-      :fields="columns"
-      class="pa-0 availability-widget-filters__search"
-      @submit="updateSearchInQuery"
+  <v-layout class="availability-widget-filters col-gap-6 row-gap-3" wrap>
+    <c-availability-advanced-search
+      :searches="searches"
+      class="mt-0 availability-widget-filters__search"
+      @submit="updateSearch"
+      @reset="resetSearch"
+      @toggle-pin:search="togglePinSearchInUserPreferences"
+      @remove:search="removeSearchFromUserPreferences"
     />
     <c-quick-date-interval-field
       v-if="showInterval"
@@ -74,14 +76,16 @@
       icon="cloud_download"
       @click="$emit('export')"
     />
-  </div>
+  </v-layout>
 </template>
 
 <script>
 import { debounce } from 'lodash';
-import { ref, watch } from 'vue';
+import { ref, toRef, computed, watch } from 'vue';
 
 import { AVAILABILITY_QUICK_RANGES } from '@/constants';
+
+import { useWidgetAdvancedSearchSavedItems } from '@/hooks/widget/advanced-search-saved-items';
 
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
@@ -102,20 +106,13 @@ export default {
       type: String,
       required: false,
     },
-    search: {
-      type: String,
+    query: {
+      type: Object,
       required: false,
+      default: () => ({}),
     },
     columns: {
       type: Array,
-      required: false,
-    },
-    interval: {
-      type: Object,
-      required: false,
-    },
-    filters: {
-      type: [String, Array],
       required: false,
     },
     userFilters: {
@@ -125,10 +122,6 @@ export default {
     widgetFilters: {
       type: Array,
       default: () => [],
-    },
-    lockedFilter: {
-      type: [String, Array],
-      required: false,
     },
     showInterval: {
       type: Boolean,
@@ -142,25 +135,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    displayParameter: {
-      type: Number,
-      required: false,
-    },
-    type: {
-      type: Number,
-      required: false,
-    },
-    trend: {
-      type: Boolean,
-      required: false,
-    },
     exporting: {
       type: Boolean,
       default: false,
-    },
-    valueFilter: {
-      type: Object,
-      required: false,
     },
     maxValueFilterSeconds: {
       type: Number,
@@ -175,31 +152,62 @@ export default {
     const localValueFilter = ref();
     const quickRanges = Object.values(AVAILABILITY_QUICK_RANGES);
 
+    const interval = computed(() => props.query?.interval);
+    const filters = computed(() => props.query?.filter);
+    const lockedFilter = computed(() => props.query?.lockedFilter);
+    const displayParameter = computed(() => props.query?.displayParameter);
+    const type = computed(() => props.query?.showType);
+    const trend = computed(() => props.query?.showTrend);
+    const valueFilter = computed(() => props.query?.valueFilter);
+
+    const {
+      searches,
+      updateSearch,
+      resetSearch,
+      togglePinSearchInUserPreferences,
+      removeSearchFromUserPreferences,
+    } = useWidgetAdvancedSearchSavedItems(
+      {
+        widgetId: toRef(props, 'widgetId'),
+        query: toRef(props, 'query'),
+      },
+      emit,
+    );
+
     watch(
-      () => props.valueFilter,
+      valueFilter,
       () => {
-        localValueFilter.value = props.valueFilter && { ...props.valueFilter };
+        localValueFilter.value = valueFilter.value && { ...valueFilter.value };
       },
       { immediate: true },
     );
 
-    const updateSearchInQuery = search => emit('update:search', search);
-    const emitUpdateValueFilter = valueFilter => emit('update:value-filter', valueFilter);
+    const emitUpdateValueFilter = newValueFilter => emit('update:value-filter', newValueFilter);
     const debouncedEmitUpdateValueFilter = debounce(emitUpdateValueFilter, 1000);
 
-    const handleUpdateValueFilter = (valueFilter) => {
-      if (!valueFilter || valueFilter.value === props.valueFilter?.value) {
-        emitUpdateValueFilter(valueFilter);
+    const handleUpdateValueFilter = (val) => {
+      if (!val || val.value === valueFilter.value?.value) {
+        emitUpdateValueFilter(val);
       } else {
-        debouncedEmitUpdateValueFilter(valueFilter);
+        debouncedEmitUpdateValueFilter(val);
       }
     };
 
     return {
       localValueFilter,
       quickRanges,
+      interval,
+      filters,
+      lockedFilter,
+      displayParameter,
+      type,
+      trend,
 
-      updateSearchInQuery,
+      searches,
+      updateSearch,
+      resetSearch,
+      togglePinSearchInUserPreferences,
+      removeSearchFromUserPreferences,
       handleUpdateValueFilter,
     };
   },
@@ -217,7 +225,7 @@ export default {
   }
 
   &__search {
-    width: 400px;
+    min-width: 400px;
   }
 
   &__show-type, &__filter-selector {

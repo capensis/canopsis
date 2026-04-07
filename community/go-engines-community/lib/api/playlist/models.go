@@ -30,8 +30,8 @@ type Response struct {
 	Fullscreen bool                      `bson:"fullscreen" json:"fullscreen"`
 	TabsList   []string                  `bson:"tabs_list" json:"tabs_list"`
 	Interval   datetime.DurationWithUnit `bson:"interval" json:"interval"`
-	Created    datetime.CpsTime          `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated    datetime.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created    datetime.CpsTime          `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated    datetime.CpsTime          `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 }
 
 type Playlist struct {
@@ -42,8 +42,8 @@ type Playlist struct {
 	Fullscreen bool                      `bson:"fullscreen" json:"fullscreen"`
 	TabsList   []string                  `bson:"tabs_list" json:"tabs_list"`
 	Interval   datetime.DurationWithUnit `bson:"interval" json:"interval"`
-	Created    datetime.CpsTime          `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated    datetime.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created    datetime.CpsTime          `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated    datetime.CpsTime          `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 }
 
 type AggregationResult struct {
@@ -51,7 +51,7 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 

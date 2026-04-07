@@ -2224,11 +2224,7 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
                       class="material-icons v-icon v-icon--small jodit-icon_variables jodit-icon"
                       style="width: 18px; height: 18px;"
                     >
-                      <svg>
-                        <text>
-                          variables
-                        </text>
-                      </svg>
+                      variables
                     </i>
                   </span>
                   <span

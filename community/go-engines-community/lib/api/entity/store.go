@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -436,7 +437,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
-	timeFormat := validation.GetRealFormatTime(t.TimeFormat)
+	timeFormat := validation.GetRealFormatTime(cmp.Or(t.TimeFormat, validation.DefaultTimeFormat))
 	timestampPropsCache := map[string]bool{}
 
 	return export.NewMongoCursor(cursor, t.Fields.Fields(), func(k string, v any) (any, error) {

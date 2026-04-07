@@ -67,9 +67,10 @@
         name="selection"
       />
     </template>
-    <template v-else-if="isMultiple" #selection="{ item, parent }">
+    <template v-else-if="isMultiple" #selection="{ item, parent, disabled: selectionDisabled }">
       <v-chip
         v-if="isMultiple"
+        :disabled="selectionDisabled"
         class="c-lazy-search-field__chip"
         small
         close

@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/commenttemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
@@ -74,6 +75,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/wsconn"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -133,7 +135,7 @@ func RegisterRoutes(
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
 	websocketHub websocket.Hub,
-	websocketStore websocket.Store,
+	websocketStore wsconn.Store,
 	broadcastMessageChan chan<- bool,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
@@ -145,6 +147,7 @@ func RegisterRoutes(
 	eventGenerator libevent.Generator,
 	securityConfig libsecurity.Config,
 	exdataImportWorker externaldatatable.ImportWorker,
+	patternOptimizeWorker pattern.OptimizeWorker,
 	notifStore usernotification.Store,
 	externalDataContainer *externaldata.GetterContainer,
 	tplTestTypePermMapping map[int][]any,
@@ -198,7 +201,14 @@ func RegisterRoutes(
 	{
 		protected.Use(authMiddleware...)
 
-		protected.Group("/ws").GET("", websocket.NewApi(websocketHub, errorResponder).Handler)
+		protected.Group("/ws").GET("", func(c *gin.Context) {
+			err := websocketHub.Connect(c.Writer, c.Request)
+			if err != nil {
+				errorResponder.Respond(c, err)
+
+				return
+			}
+		})
 
 		accountRouter := protected.Group("/account/me")
 		{
@@ -363,6 +373,11 @@ func RegisterRoutes(
 				"/:id/assocticket",
 				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
 				alarmActionAPI.AssocTicket,
+			)
+			alarmRouter.PUT(
+				"/:id/ticketremove",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
+				alarmActionAPI.TicketRemove,
 			)
 			alarmRouter.PUT(
 				"/:id/comment",
@@ -1741,9 +1756,8 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer, errorResponder),
 			idleRuleAPI.DBExport)
 
-		patternAPI := pattern.NewApi(
-			pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger),
-			userInterfaceConfig, enforcer, errorResponder)
+		patternStore := pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger)
+		patternAPI := pattern.NewApi(patternStore, userInterfaceConfig, enforcer, patternOptimizeWorker, errorResponder, logger)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth(errorResponder))
@@ -1779,6 +1793,26 @@ func RegisterRoutes(
 			"/patterns-entities-count",
 			middleware.OnlyAuth(errorResponder),
 			patternAPI.CountEntities,
+		)
+		protected.POST(
+			"/patterns-entities-optimize",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.Optimize,
+		)
+		protected.GET(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.OptimizeStatus,
+		)
+		protected.PUT(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.OptimizeAccept,
+		)
+		protected.DELETE(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.OptimizeCancel,
 		)
 
 		linkRuleAPI := linkrule.NewApi(
@@ -2066,6 +2100,42 @@ func RegisterRoutes(
 		templateAPI := template.NewAPI(template.NewStore(primaryDbClient, authorProvider, enforcer,
 			tplTestTypePermMapping, json.NewDecoder()), templateConfigProvider, errorResponder, logger)
 
+		commentTemplateAPI := commenttemplate.NewApi(
+			commenttemplate.NewStore(primaryDbClient, authorProvider),
+			errorResponder,
+			logger,
+		)
+		commentTemplatesRouter := protected.Group("/comment-templates")
+		{
+			commentTemplatesRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionCreate, enforcer, errorResponder),
+				middleware.SetAuthor(errorResponder),
+				commentTemplateAPI.Create,
+			)
+			commentTemplatesRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionRead, enforcer, errorResponder),
+				commentTemplateAPI.List,
+			)
+			commentTemplatesRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionRead, enforcer, errorResponder),
+				commentTemplateAPI.Get,
+			)
+			commentTemplatesRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionUpdate, enforcer, errorResponder),
+				middleware.SetAuthor(errorResponder),
+				commentTemplateAPI.Update,
+			)
+			commentTemplatesRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionDelete, enforcer, errorResponder),
+				commentTemplateAPI.Delete,
+			)
+		}
+
 		bulkRouter := protected.Group("/bulk")
 		{
 			patternRouter := bulkRouter.Group("/patterns")
@@ -2324,6 +2394,11 @@ func RegisterRoutes(
 					alarmActionAPI.BulkAssocTicket,
 				)
 				alarmRouter.PUT(
+					"/ticketremove",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
+					alarmActionAPI.BulkTicketRemove,
+				)
+				alarmRouter.PUT(
 					"/comment",
 					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
 					alarmActionAPI.BulkComment,
@@ -2360,6 +2435,13 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer, errorResponder),
 				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
 				externalDataTableAPI.BulkDeleteData,
+			)
+
+			bulkRouter.DELETE(
+				"/comment-templates",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionDelete, enforcer, errorResponder),
+				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+				commentTemplateAPI.BulkDelete,
 			)
 		}
 

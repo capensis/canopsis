@@ -17,7 +17,7 @@ func NewEncoder() encoding.Encoder {
 	return &xmlEncoder{}
 }
 
-func (e *xmlEncoder) Encode(in interface{}) ([]byte, error) {
+func (e *xmlEncoder) Encode(in any) ([]byte, error) {
 	b, err := xml.Marshal(in)
 	if err != nil {
 		return []byte{}, encoding.NewEncodingError(fmt.Errorf("xml encoder: %w", err))
@@ -29,7 +29,7 @@ func NewDecoder() encoding.Decoder {
 	return &xmlDecoder{}
 }
 
-func (e *xmlDecoder) Decode(in []byte, out interface{}) error {
+func (e *xmlDecoder) Decode(in []byte, out any) error {
 	if err := xml.Unmarshal(in, out); err != nil {
 		return encoding.NewDecodingError(fmt.Errorf("xml decoder: %w", err))
 	}

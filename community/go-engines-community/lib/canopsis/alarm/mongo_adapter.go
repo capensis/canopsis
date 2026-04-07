@@ -87,7 +87,7 @@ func (a *mongoAdapter) GetOpenedAlarmsByIDs(ctx context.Context, ids []string, a
 	var err error
 	*alarms, err = a.getAlarms(ctx, bson.M{
 		"d":          bson.M{"$in": ids},
-		"v.resolved": bson.M{"$in": []interface{}{"", nil}},
+		"v.resolved": bson.M{"$in": []any{"", nil}},
 	})
 
 	return err
@@ -117,7 +117,7 @@ func (a *mongoAdapter) GetOpenedOffAlarmsWithEntity(ctx context.Context) (libmon
 func (a *mongoAdapter) GetCountOpenedAlarmsByIDs(ctx context.Context, ids []string) (int64, error) {
 	return a.getAlarmsCount(ctx, bson.M{
 		"d":          bson.M{"$in": ids},
-		"v.resolved": bson.M{"$in": []interface{}{"", nil}},
+		"v.resolved": bson.M{"$in": []any{"", nil}},
 	})
 }
 

@@ -18,7 +18,7 @@ export const usePatternCountEntitiesModal = (props) => {
   const modals = useModals();
   const { t } = useI18n();
   const { useActions } = useStoreModuleHooks('entity');
-  const { fetchContextEntitiesWithoutStore } = useActions({ fetchContextEntitiesWithoutStore: 'fetchListWithoutStore' });
+  const { fetchContextEntitiesListWithoutStore } = useActions({ fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore' });
 
   /**
    * Shows a modal with entities filtered by the specified pattern names.
@@ -67,7 +67,7 @@ export const usePatternCountEntitiesModal = (props) => {
       config: {
         widget,
         title: t('pattern.patternEntities'),
-        fetchList: params => fetchContextEntitiesWithoutStore({
+        fetchList: params => fetchContextEntitiesListWithoutStore({
           params: {
             ...params,
             ...patterns,

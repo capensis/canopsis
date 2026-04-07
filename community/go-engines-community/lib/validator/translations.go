@@ -175,6 +175,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 				types.LocaleFr: "{0} doit être un modèle d'entité valide",
 			},
 		},
+		"negative_entity_pattern": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a valid negative entity pattern",
+				types.LocaleFr: "{0} doit être un modèle d'entité négatif valide",
+			},
+		},
 		"pbehavior_pattern": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be a valid pbehavior pattern",
@@ -191,6 +197,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be a valid weather service pattern",
 				types.LocaleFr: "{0} doit être un modèle de météo de service valide",
+			},
+		},
+		"search_pattern": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a valid search pattern",
+				types.LocaleFr: "{0} doit être un modèle de recherche valide",
 			},
 		},
 		"id": {
@@ -413,6 +425,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 			translations: map[string]string{
 				types.LocaleEn: "{0} contains a payload that cannot be executed",
 				types.LocaleFr: "{0} contient une charge utile qui ne peut pas être exécutée",
+			},
+		},
+		"pbh_type_not_pause": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be of type pause",
+				types.LocaleFr: "{0} doit être de type pause",
 			},
 		},
 	}

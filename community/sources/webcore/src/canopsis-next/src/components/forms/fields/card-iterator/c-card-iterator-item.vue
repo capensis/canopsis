@@ -23,6 +23,7 @@
       </v-layout>
       <slot name="header" />
       <c-action-btn
+        v-if="removable"
         :icon="small ? 'close' : 'delete'"
         :small="small"
         :icon-small="small"
@@ -71,6 +72,10 @@ export default {
     dragHandleClass: {
       type: String,
       default: 'item-drag-handler',
+    },
+    removable: {
+      type: Boolean,
+      default: true,
     },
   },
   setup(props) {

@@ -45,7 +45,7 @@ import {
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
-  ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
+  ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
   ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
 
@@ -209,7 +209,7 @@ export default {
     infosWithDefinedTypes() {
       return this.infos.map(({ type, ...info }) => ({
         ...info,
-        definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type],
+        definedType: ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type],
       }));
     },
 
@@ -297,7 +297,7 @@ export default {
         value: item.alias,
         alias: true,
         originalValue: item.name,
-        definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
+        definedType: ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
         options: {
           inputTypes: ENTITY_PATTERN_FIELD_TYPES,
         },

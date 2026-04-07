@@ -12,10 +12,21 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` with date in prev
     <c-alarm-extra-details-chip-stub
       color="#e91e63"
       icon="alarm"
-    />
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        alarm
+      </i>
+      <!---->
+    </c-alarm-extra-details-chip-stub>
   </c-simple-tooltip-stub>
 </div>
 `;
+
+exports[`extra-details-snooze Renders \`extra-details-snooze\` with date in previous month 2`] = `undefined`;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 1`] = `
 <div>
@@ -29,10 +40,53 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 
     <c-alarm-extra-details-chip-stub
       color="#e91e63"
       icon="alarm"
-    />
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        alarm
+      </i>
+      <!---->
+    </c-alarm-extra-details-chip-stub>
   </c-simple-tooltip-stub>
 </div>
 `;
+
+exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 2`] = `undefined`;
+
+exports[`extra-details-snooze Renders \`extra-details-snooze\` with inactive pbehavior 1`] = `
+<div>
+  <c-simple-tooltip-stub
+    content="<div class=\\"text-md-center\\"><strong>Snooze</strong>
+        <div>By : snooze-author</div>
+        <div>Date : 6:00:00</div>
+        <div>Cannot unsnooze until pbehavior is in progress</div><div>Initiator : snooze-initiator</div><div class=\\"c-extra-details__message\\">Comment : snooze-message</div></div>"
+    top=""
+  >
+    <c-alarm-extra-details-chip-stub
+      color="#e91e63"
+      icon="alarm"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        alarm
+      </i>
+      <strong
+        class="ml-2 white--text"
+      >
+        !
+      </strong>
+    </c-alarm-extra-details-chip-stub>
+  </c-simple-tooltip-stub>
+</div>
+`;
+
+exports[`extra-details-snooze Renders \`extra-details-snooze\` with inactive pbehavior 2`] = `undefined`;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator 1`] = `
 <div>
@@ -46,10 +100,21 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator
     <c-alarm-extra-details-chip-stub
       color="#e91e63"
       icon="alarm"
-    />
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        alarm
+      </i>
+      <!---->
+    </c-alarm-extra-details-chip-stub>
   </c-simple-tooltip-stub>
 </div>
 `;
+
+exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator 2`] = `undefined`;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 1`] = `
 <div>
@@ -63,7 +128,18 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 1
     <c-alarm-extra-details-chip-stub
       color="#e91e63"
       icon="alarm"
-    />
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        alarm
+      </i>
+      <!---->
+    </c-alarm-extra-details-chip-stub>
   </c-simple-tooltip-stub>
 </div>
 `;
+
+exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 2`] = `undefined`;

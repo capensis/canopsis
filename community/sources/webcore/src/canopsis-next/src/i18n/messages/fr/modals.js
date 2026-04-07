@@ -155,6 +155,7 @@ export default {
     },
     success: {
       create: 'Comportement périodique créé avec succès !',
+      remove: 'Comportement périodique supprimé avec succès ! Vous devrez peut-être attendre 60 s pour le voir dans l\'interface.',
     },
     cancelConfirmation: 'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
   },
@@ -479,6 +480,14 @@ export default {
       title: 'Modifier le message diffusé',
     },
     defaultMessage: 'Votre message ici',
+  },
+  createCommentTemplate: {
+    create: {
+      title: 'Créer un modèle de commentaire',
+    },
+    edit: {
+      title: 'Modifier le modèle de commentaire',
+    },
   },
   createCommentEvent: {
     title: 'Ajouter un commentaire',
@@ -1007,6 +1016,11 @@ export default {
   createAssociateTicketEvent: {
     title: 'Associer un numéro de ticket',
   },
+  removeAssociatedTicketEvent: {
+    title: 'Retirer le ticket associé',
+    associatedTicketLabel: 'Ticket associé',
+    associatedTicketHint: 'Le ticket associé sélectionné sera retiré de l\'alarme sélectionnée',
+  },
   createAckEvent: {
     title: 'Acquitter',
   },
@@ -1161,5 +1175,11 @@ export default {
   },
   createTemplateData: {
     title: 'Créer des données de modèle',
+  },
+  entitiesComparison: {
+    title: 'Comparaison des entités de motif',
+    infoMessage: 'Les résultats peuvent différer pour 2 raisons :\n<span class="font-weight-regular">1. Des changements se sont produits dans Canopsis pendant la vérification (certaines entités initialement filtrées ont changé et ne correspondent plus au filtre)</span>\n<span class="font-weight-regular">2. Le filtre suggéré n\'est pas correct</span>\n\n<strong>Vous pouvez relancer la vérification pour être sûr.</strong>',
+    foundInCurrent: 'TROUVÉ DANS LE MOTIF ACTUEL, NON TROUVÉ DANS LE MOTIF SUGGÉRÉ',
+    foundInSuggestion: 'TROUVÉ DANS LE MOTIF SUGGÉRÉ, NON TROUVÉ DANS LE MOTIF ACTUEL',
   },
 };
