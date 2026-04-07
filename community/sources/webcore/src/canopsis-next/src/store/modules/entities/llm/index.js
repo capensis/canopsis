@@ -14,8 +14,20 @@ export default createCRUDModule({
       return request.get(API_ROUTES.llms.models, { params });
     },
 
-    fetchPromptsHistoryWithoutStore(context, { id, params } = {}) {
-      return request.get(`${API_ROUTES.llms.list}/${id}/prompts-history`, { params });
+    fetchLlmHistoryWithoutStore(context, { id, params } = {}) {
+      return request.get(`${API_ROUTES.llms.list}/${id}/history`, { params });
+    },
+
+    fetchLlmChatsWithoutStore(context, { id, params } = {}) {
+      return request.get(`${API_ROUTES.llms.list}/${id}/chats`, { params });
+    },
+
+    fetchLlmUsersWithoutStore(context, { id, params } = {}) {
+      return request.get(`${API_ROUTES.llms.list}/${id}/users`, { params });
+    },
+
+    fetchLlmMessagesWithoutStore(context, { id, params } = {}) {
+      return request.get(`${API_ROUTES.llms.list}/${id}/messages`, { params });
     },
   },
 });

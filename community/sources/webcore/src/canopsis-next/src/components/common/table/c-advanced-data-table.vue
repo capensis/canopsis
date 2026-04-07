@@ -4,6 +4,7 @@
       <v-flex v-if="shownSearch" xs4>
         <c-search
           v-if="search"
+          :label="searchLabel"
           @submit="updateSearch"
         />
         <c-advanced-search
@@ -238,6 +239,10 @@ export default {
     },
     toolbarProps: {
       type: Object,
+      required: false,
+    },
+    searchLabel: {
+      type: String,
       required: false,
     },
     tableClass: {

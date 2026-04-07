@@ -4,6 +4,7 @@
       v-model="localValue"
       :combobox="combobox"
       :items="items"
+      :label="label"
       @submit="submit"
       @remove:item="removeItem"
       @toggle-pin:item="togglePinItem"
@@ -49,6 +50,10 @@ export default {
     fields: {
       type: Array,
       default: () => [],
+    },
+    label: {
+      type: String,
+      required: false,
     },
   },
   setup(props, { emit }) {
