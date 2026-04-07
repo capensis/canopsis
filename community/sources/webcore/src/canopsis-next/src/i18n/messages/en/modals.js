@@ -171,6 +171,7 @@ export default {
     },
     success: {
       create: 'Pbehavior successfully created! You may need to wait 60 sec to see it in interface',
+      remove: 'Pbehavior successfully removed! You may need to wait 60 sec to see it in interface',
     },
     cancelConfirmation: 'Some data has been modified and will not be saved. Do you really want to close this menu?',
   },
@@ -479,6 +480,14 @@ export default {
       title: 'Edit broadcast message',
     },
     defaultMessage: 'Your message here',
+  },
+  createCommentTemplate: {
+    create: {
+      title: 'Create comment template',
+    },
+    edit: {
+      title: 'Edit comment template',
+    },
   },
   createCommentEvent: {
     title: 'Add comment',
@@ -981,6 +990,12 @@ export default {
   entityDependenciesList: {
     title: '{name} impacted entities',
   },
+  entityUpstream: {
+    entities: 'Entities',
+    topLevelEntities: 'Top level entities',
+    seeEntities: 'See entities',
+    seeTopEntities: 'See top entities',
+  },
   createDeclareTicketRule: {
     create: {
       title: 'Create a declare ticket rule',
@@ -1000,6 +1015,11 @@ export default {
   },
   createAssociateTicketEvent: {
     title: 'Associate ticket number',
+  },
+  removeAssociatedTicketEvent: {
+    title: 'Remove associated ticket',
+    associatedTicketLabel: 'Associated ticket',
+    associatedTicketHint: 'Selected associated ticket will be removed from selected alarm',
   },
   createAckEvent: {
     title: 'Ack',
@@ -1155,5 +1175,11 @@ export default {
   },
   createTemplateData: {
     title: 'Create template data',
+  },
+  entitiesComparison: {
+    title: 'Pattern entities comparison',
+    infoMessage: 'Counts may differ because of 2 reasons :\n<span class="font-weight-regular">1. changes happened in Canopsis during the check (some if initially filtered entity changed and do not fit the pattern anymore)</span>\n<span class="font-weight-regular">2. suggested pattern isn\'t correct</span>\n\n<strong>You can run the check again to be sure.</strong>',
+    foundInCurrent: 'FOUND IN CURRENT, NOT FOUND IN SUGGESTION PATTERN',
+    foundInSuggestion: 'FOUND IN SUGGESTION, NOT FOUND IN CURRENT PATTERN',
   },
 };

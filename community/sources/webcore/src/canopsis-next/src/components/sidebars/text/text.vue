@@ -8,7 +8,7 @@
     <v-divider />
     <field-text-editor
       v-model="form.parameters.template"
-      :title="$t('common.template')"
+      :title="$tc('common.template', 1)"
       :sanitize-options="sanitizeOptions"
     />
     <v-divider />

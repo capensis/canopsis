@@ -4,13 +4,13 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createInputStub } from '@unit/stubs/input';
 
-import { COLOR_INDICATOR_TYPES } from '@/constants';
+import { COLOR_INDICATOR_TYPES, SORT_ORDERS } from '@/constants';
 
 import AlarmsListModal from '@/components/sidebars/alarm/form/alarms-list-modal.vue';
 
 const stubs = {
   'widget-settings-group': true,
-  'field-default-sort-column': true,
+  'field-default-sort-columns-with-template': true,
   'field-columns': true,
   'field-default-elements-per-page': true,
   'field-info-popup': true,
@@ -20,7 +20,7 @@ const stubs = {
 
 const snapshotStubs = {
   'widget-settings-group': true,
-  'field-default-sort-column': true,
+  'field-default-sort-columns-with-template': true,
   'field-columns': true,
   'field-default-elements-per-page': true,
   'field-info-popup': true,
@@ -28,6 +28,7 @@ const snapshotStubs = {
   'field-root-cause-settings': true,
 };
 
+const selectFieldDefaultSortColumnsWithTemplate = wrapper => wrapper.find('field-default-sort-columns-with-template-stub');
 const selectFieldColumns = wrapper => wrapper.find('field-columns-stub');
 const selectFieldDefaultElementsPerPage = wrapper => wrapper.find('field-default-elements-per-page-stub');
 const selectFieldInfoPopup = wrapper => wrapper.find('field-info-popup-stub');
@@ -64,6 +65,41 @@ describe('alarms-list-modal', () => {
   const snapshotFactory = generateRenderer(AlarmsListModal, {
     store,
     stubs: snapshotStubs,
+  });
+
+  test('Sort columns changed after trigger sort columns field', () => {
+    const wrapper = factory({
+      propsData: { form },
+    });
+
+    const newSort = [
+      {
+        sort_by: Faker.datatype.string(),
+        sort: SORT_ORDERS.desc,
+      },
+    ];
+
+    selectFieldDefaultSortColumnsWithTemplate(wrapper).triggerCustomEvent('input', newSort);
+
+    expect(wrapper).toEmitInput({ ...form, sort: newSort });
+  });
+
+  test('Sort template changed after trigger sort columns template field', () => {
+    const wrapper = factory({
+      propsData: { form },
+    });
+
+    const template = Faker.datatype.uuid();
+    const sort = [
+      {
+        sort_by: Faker.datatype.string(),
+        sort: SORT_ORDERS.asc,
+      },
+    ];
+
+    selectFieldDefaultSortColumnsWithTemplate(wrapper).triggerCustomEvent('update:template', template, sort);
+
+    expect(wrapper).toEmitInput({ ...form, sort, sortTemplate: template });
   });
 
   test('Columns changed after trigger columns field', () => {

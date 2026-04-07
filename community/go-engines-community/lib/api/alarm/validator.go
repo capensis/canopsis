@@ -1,6 +1,7 @@
 package alarm
 
 import (
+	"slices"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -44,10 +45,8 @@ func ValidateDetailsRequest(sl validator.StructLevel) {
 	}
 
 	if r.Steps != nil && r.Steps.Type != "" {
-		for _, stepType := range alarmStepTypes {
-			if r.Steps.Type == stepType {
-				return
-			}
+		if slices.Contains(alarmStepTypes, r.Steps.Type) {
+			return
 		}
 
 		param := strings.Join(alarmStepTypes, " ")

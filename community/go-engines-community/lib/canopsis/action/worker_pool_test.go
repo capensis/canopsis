@@ -219,7 +219,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 					EXPECT().
 					Call(gomock.Any(), gomock.Any()).
 					Times(1).
-					Do(func(_ context.Context, val1 interface{}) {
+					Do(func(_ context.Context, val1 any) {
 						decoder := json.NewDecoder()
 						message := val1.(engine.RPCMessage)
 						correlationID := message.CorrelationID
@@ -309,16 +309,13 @@ func TestPool_RunWorkers_GivenCancelContext_ShouldCancelTasks(t *testing.T) {
 	cancels := 0
 
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
+	wg.Go(func() {
 		for result := range resultChannel {
 			if result.Status == action.TaskCancelled {
 				cancels++
 			}
 		}
-
-		wg.Done()
-	}()
+	})
 
 	cancel()
 	wg.Wait()

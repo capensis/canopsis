@@ -5,12 +5,10 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
   title="Alarm list settings"
   value="[object Object]"
 >
-  <field-default-sort-column-stub
+  <field-default-sort-columns-with-template-stub
     columns=""
-    columnslabel="Column name"
-    itemtext="text"
-    itemvalue="value"
-    value="[object Object]"
+    sortcolumns=""
+    templates=""
   />
   <field-columns-stub
     columns=""
@@ -258,12 +256,10 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
 <widget-settings-group-stub
   title="Alarm list settings"
 >
-  <field-default-sort-column-stub
+  <field-default-sort-columns-with-template-stub
     columns=""
-    columnslabel="Column name"
-    itemtext="text"
-    itemvalue="value"
-    value="[object Object]"
+    sortcolumns=""
+    templates=""
   />
   <field-columns-stub
     columns=""

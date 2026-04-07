@@ -47,7 +47,7 @@ func (p *rmqPublisher) SendImportResultEvent(ctx context.Context, uuid string, e
 		Timestamp:     datetime.NewCpsTime(),
 		State:         state,
 		Output:        fmt.Sprintf("Import %s failed.", uuid),
-		ExtraInfos: map[string]interface{}{
+		ExtraInfos: map[string]any{
 			"execution_time": execTime,
 		},
 		Author:    canopsis.DefaultEventAuthor,

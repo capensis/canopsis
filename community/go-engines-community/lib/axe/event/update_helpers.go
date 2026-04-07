@@ -2,7 +2,6 @@ package event
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"reflect"
 	"strings"
@@ -14,10 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -246,32 +242,6 @@ func updateEntity(ctx context.Context, match, update bson.M, entityCollection mo
 	return newEntity, nil
 }
 
-func processComponentAndServiceCounters(
-	ctx context.Context,
-	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
-	componentCountersCalculator calculator.ComponentCountersCalculator,
-	alarm *types.Alarm,
-	entity *types.Entity,
-	alarmChange types.AlarmChange,
-) (bool, map[string]entitycounters.UpdatedServicesInfo, bool, int, error) {
-	serviceCountersUpdated, updatedServiceStates, err := entityServiceCountersCalculator.CalculateCounters(ctx, entity, alarm, alarmChange)
-	if err != nil {
-		return false, nil, false, 0, err
-	}
-
-	var componentCountersUpdated bool
-	var componentStateChanged bool
-	var newComponentState int
-	if entity.Type == types.EntityTypeResource {
-		componentCountersUpdated, componentStateChanged, newComponentState, err = componentCountersCalculator.CalculateCounters(ctx, entity, alarm, alarmChange)
-		if err != nil {
-			return false, nil, false, 0, err
-		}
-	}
-
-	return serviceCountersUpdated || componentCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, nil
-}
-
 func sendTriggerEvent(
 	ctx context.Context,
 	event rpc.AxeEvent,
@@ -368,316 +338,6 @@ Loop:
 	}
 
 	return timestamp.Unix() + snoozeDuration - snoozeElapsed
-}
-
-func processResolve(
-	ctx context.Context,
-	match bson.M,
-	event rpc.AxeEvent,
-	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
-	componentCountersCalculator calculator.ComponentCountersCalculator,
-	metaAlarmStatesService correlation.MetaAlarmStateService,
-	dbClient mongo.DbClient,
-	alarmCollection, entityCollection, resolvedCollection, metaAlarmRuleCollection, closeDelayJobCollection mongo.DbCollection,
-) (Result, map[string]entitycounters.UpdatedServicesInfo, string, bool, int, error) {
-	result := Result{}
-	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
-	notAckedMetricType := ""
-	var componentStateChanged bool
-	var newComponentState int
-
-	err := dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		result = Result{}
-		updatedServiceStates = nil
-		notAckedMetricType = ""
-		componentStateChanged = false
-		newComponentState = 0
-
-		beforeAlarm, err := updateAlarmToResolve(ctx, alarmCollection, match, event.Parameters)
-		if err != nil || beforeAlarm.ID == "" {
-			return err
-		}
-
-		if beforeAlarm.NotAckedMetricSendTime != nil {
-			notAckedMetricType = beforeAlarm.NotAckedMetricType
-		}
-
-		entity, err := updateEntityOfResolvedAlarm(ctx, entityCollection, event.Entity.ID)
-		if err != nil || entity.ID == "" {
-			return err
-		}
-
-		alarm, err := copyAlarmToResolvedCollection(ctx, alarmCollection, resolvedCollection, beforeAlarm.ID)
-		if err != nil || alarm.ID == "" {
-			return err
-		}
-
-		alarmChange := types.NewAlarmChange()
-		alarmChange.Type = types.AlarmChangeTypeResolve
-		result.Forward = true
-		result.Alarm = alarm
-		result.Entity = entity
-		result.AlarmChange = alarmChange
-
-		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
-			ctx,
-			entityServiceCountersCalculator,
-			componentCountersCalculator,
-			&result.Alarm,
-			&entity,
-			result.AlarmChange,
-		)
-		if err != nil {
-			return err
-		}
-
-		_, err = closeDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})
-		if err != nil {
-			return fmt.Errorf("failed to delete close_delay job on resolve: %w", err)
-		}
-
-		return removeMetaAlarmStateOnResolve(ctx, metaAlarmRuleCollection, metaAlarmStatesService, result.Alarm)
-	})
-	if err != nil || result.Alarm.ID == "" {
-		return result, nil, "", false, 0, err
-	}
-
-	return result, updatedServiceStates, notAckedMetricType, componentStateChanged, newComponentState, nil
-}
-
-func updateAlarmToResolve(ctx context.Context, alarmCollection mongo.DbCollection, match bson.M, params rpc.AxeParameters) (types.Alarm, error) {
-	beforeAlarm := types.Alarm{}
-	update := getResolveAlarmUpdate(datetime.NewCpsTime(), params)
-	opts := options.FindOneAndUpdate().
-		SetReturnDocument(options.Before).
-		SetProjection(bson.M{
-			"not_acked_metric_type":      1,
-			"not_acked_metric_send_time": 1,
-		})
-	err := alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&beforeAlarm)
-	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-		return beforeAlarm, err
-	}
-
-	return beforeAlarm, nil
-}
-
-func copyAlarmToResolvedCollection(
-	ctx context.Context,
-	alarmCollection, resolvedCollection mongo.DbCollection,
-	alarmID string,
-) (types.Alarm, error) {
-	// extend alarm struct with bookmarks to copy user's bookmarks to a resolved alarm document
-	var alarm struct {
-		types.Alarm `bson:"inline"`
-		Bookmarks   []string `bson:"bookmarks"`
-	}
-	err := alarmCollection.FindOne(ctx, bson.M{"_id": alarmID}).Decode(&alarm)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return alarm.Alarm, nil
-		}
-
-		return alarm.Alarm, err
-	}
-
-	_, err = resolvedCollection.UpdateOne(
-		ctx,
-		bson.M{"_id": alarm.ID},
-		bson.M{"$set": alarm},
-		options.UpdateOne().SetUpsert(true),
-	)
-
-	return alarm.Alarm, err
-}
-
-func updateEntityOfResolvedAlarm(ctx context.Context, entityCollection mongo.DbCollection, entityID string) (types.Entity, error) {
-	entity := types.Entity{}
-	entityUpdate := getResolveEntityUpdate()
-	err := entityCollection.FindOneAndUpdate(ctx, bson.M{"_id": entityID}, entityUpdate,
-		options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&entity)
-	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-		return entity, err
-	}
-
-	return entity, nil
-}
-
-func removeMetaAlarmStateOnResolve(
-	ctx context.Context,
-	metaAlarmRuleCollection mongo.DbCollection,
-	metaAlarmStatesService correlation.MetaAlarmStateService,
-	alarm types.Alarm,
-) error {
-	if !alarm.IsMetaAlarm() {
-		return nil
-	}
-
-	var rule correlation.Rule
-	err := metaAlarmRuleCollection.FindOne(ctx, bson.M{"_id": alarm.Value.Meta}).Decode(&rule)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return fmt.Errorf("meta alarm rule %s not found", alarm.Value.Meta)
-		}
-
-		return fmt.Errorf("cannot fetch meta alarm rule: %w", err)
-	}
-
-	return removeMetaAlarmState(ctx, alarm, rule, metaAlarmStatesService)
-}
-
-func postProcessResolve(
-	ctx context.Context,
-	event rpc.AxeEvent,
-	result Result,
-	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
-	componentChanged bool,
-	newComponentState int,
-	notAckedMetricType string,
-	eventsSender entitycounters.EventsSender,
-	metaAlarmPostProcessor MetaAlarmPostProcessor,
-	metricsSender metrics.Sender,
-	remediationRpcClient engine.RPCClient,
-	pbehaviorCollection mongo.DbCollection,
-	encoder encoding.Encoder,
-	logger zerolog.Logger,
-) {
-	metricsSender.SendEventMetrics(
-		result.Alarm,
-		*event.Entity,
-		result.AlarmChange,
-		event.Parameters.Timestamp.Time,
-		event.Parameters.Initiator,
-		event.Parameters.User,
-		event.Parameters.Instruction,
-		notAckedMetricType,
-	)
-
-	for servID, servInfo := range updatedServiceStates {
-		err := eventsSender.UpdateServiceState(ctx, servID, servInfo)
-		if err != nil {
-			logger.Err(err).Msg("failed to update service state")
-		}
-	}
-
-	if componentChanged {
-		err := eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
-		if err != nil {
-			logger.Err(err).Msg("failed to update component state")
-		}
-	}
-
-	err := metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
-		Alarm:           &result.Alarm,
-		AlarmChangeType: result.AlarmChange.Type,
-	})
-	if err != nil {
-		logger.Err(err).Msg("cannot process meta alarm")
-	}
-
-	err = sendRemediationEvent(ctx, event, result, remediationRpcClient, encoder)
-	if err != nil {
-		logger.Err(err).Msg("cannot send event to engine-remediation")
-	}
-
-	if !result.Alarm.Value.PbehaviorInfo.IsDefaultActive() {
-		err = updatePbehaviorAlarmCount(ctx, pbehaviorCollection, "", result.Alarm.Value.PbehaviorInfo.ID)
-		if err != nil {
-			logger.Err(err).Msg("cannot update pbehavior")
-		}
-	}
-}
-
-func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.M {
-	newStep := NewAlarmStep(types.AlarmStepResolve, params, false)
-	newStep.Timestamp = t
-
-	return []bson.M{
-		{"$set": bson.M{
-			"v.duration": bson.M{"$subtract": bson.A{
-				t,
-				"$t",
-			}},
-			"v.inactive_duration": bson.M{"$sum": bson.A{
-				"$v.inactive_duration",
-				bson.M{"$cond": bson.M{
-					"if": bson.M{"$and": []bson.M{
-						{"$gt": bson.A{"$v.inactive_start", 0}},
-						{"$or": []bson.M{
-							{"$ne": bson.A{
-								bson.M{"$ifNull": bson.A{"$v.snooze", nil}},
-								nil,
-							}},
-							{"$not": bson.M{"$in": bson.A{
-								bson.M{"$ifNull": bson.A{"$v.pbehavior_info.canonical_type", nil}},
-								bson.A{nil, "", pbehavior.TypeActive},
-							}}},
-							{"$eq": bson.A{"$auto_instruction_in_progress", true}},
-							{"$eq": bson.A{"$inactive_delay_meta_alarm_in_progress", true}},
-						}},
-					}},
-					"then": bson.M{"$subtract": bson.A{
-						t,
-						"$v.inactive_start",
-					}},
-					"else": 0,
-				}},
-			}},
-		}},
-		{"$set": bson.M{
-			"v.resolved": t,
-			"v.steps":    bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{bson.M{"$literal": newStep}}}},
-			"v.current_state_duration": bson.M{"$subtract": bson.A{
-				t,
-				"$v.state.t",
-			}},
-			"v.active_duration": bson.M{"$subtract": bson.A{
-				"$v.duration",
-				"$v.inactive_duration",
-			}},
-			"v.snooze_duration": bson.M{"$sum": bson.A{
-				"$v.snooze_duration",
-				bson.M{"$cond": bson.M{
-					"if": bson.M{"$ne": bson.A{
-						bson.M{"$ifNull": bson.A{"$v.snooze", nil}},
-						nil,
-					}},
-					"then": bson.M{"$subtract": bson.A{
-						t,
-						"$v.snooze.t",
-					}},
-					"else": 0,
-				}},
-			}},
-			"v.pbh_inactive_duration": bson.M{"$sum": bson.A{
-				"$v.pbh_inactive_duration",
-				bson.M{"$cond": bson.M{
-					"if": bson.M{"$not": bson.M{"$in": bson.A{
-						bson.M{"$ifNull": bson.A{"$v.pbehavior_info.canonical_type", nil}},
-						bson.A{nil, "", pbehavior.TypeActive},
-					}}},
-					"then": bson.M{"$subtract": bson.A{
-						t,
-						"$v.pbehavior_info.timestamp",
-					}},
-					"else": 0,
-				}},
-			}},
-		}},
-		{"$unset": bson.A{
-			"not_acked_metric_type",
-			"not_acked_metric_send_time",
-			"not_acked_since",
-			"v.close_delay_value",
-		}},
-	}
-}
-
-func getResolveEntityUpdate() bson.M {
-	return bson.M{"$unset": bson.M{
-		"idle_since":           "",
-		"last_idle_rule_apply": "",
-	}}
 }
 
 func updateInactiveStart(
@@ -787,16 +447,12 @@ func updateMetaAlarmState(
 			return nil, nil, err
 		}
 
-		if alarm.Value.InitialState == 0 {
-			alarm.Value.InitialState = newStep.Value
-		}
-
 		alarm.Value.TotalStateChanges++
 		alarm.Value.LastUpdateDate = timestamp
 		alarm.Value.LastStateOrStatusUpdateDate = timestamp
 	}
 
-	newStatus, statusRuleName := service.ComputeStatus(*alarm, entity)
+	newStatus, statusRuleName := service.ComputeStatusOnStateChange(*alarm, entity)
 	statusStepMessage := ConcatOutputAndRuleName(output, statusRuleName)
 	if newStatus == currentStatus {
 		if state == currentState {

@@ -35,7 +35,7 @@
         <v-select
           v-field="form.sort"
           :items="sortOrders"
-          :label="$t('externalData.fields.sort')"
+          :label="$t('common.sort')"
           :name="sortFieldName"
           :error-messages="errors.collect(sortFieldName)"
           :disabled="disabled"

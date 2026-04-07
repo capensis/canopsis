@@ -59,7 +59,7 @@ export default {
       hasCreateAccess: hasCreateAnyRemediationInstructionAccess,
       hasUpdateAccess: hasUpdateAnyRemediationInstructionAccess,
       hasDeleteAccess: hasDeleteAnyRemediationInstructionAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.remediationInstruction);
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.remediationInstruction);
 
     const {
       showDuplicateRemediationInstructionModal,

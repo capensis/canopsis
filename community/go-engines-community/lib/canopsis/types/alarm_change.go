@@ -22,6 +22,7 @@ const (
 	AlarmChangeTypeCancel            AlarmChangeType = "cancel"
 	AlarmChangeTypeUncancel          AlarmChangeType = "uncancel"
 	AlarmChangeTypeAssocTicket       AlarmChangeType = "assocticket"
+	AlarmChangeTypeTicketRemove      AlarmChangeType = "ticketremove"
 	AlarmChangeTypeSnooze            AlarmChangeType = "snooze"
 	AlarmChangeTypeUnsnooze          AlarmChangeType = "unsnooze"
 	AlarmChangeTypeResolve           AlarmChangeType = "resolve"

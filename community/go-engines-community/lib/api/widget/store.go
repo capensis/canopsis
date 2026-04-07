@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	tplvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -65,6 +66,9 @@ func NewStore(
 		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
 		tplTestCollection:         dbClient.Collection(mongo.TemplateTestCollection),
 		entityInfosPropCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		commentTemplateCollection: dbClient.Collection(mongo.CommentTemplateMongoCollection),
+		pbhTypeCollection:         dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
+		pbhReasonCollection:       dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
 		authorProvider:            authorProvider,
 		transformer:               transformer,
 		enforcer:                  enforcer,
@@ -93,6 +97,9 @@ type store struct {
 	alarmCollection           mongo.DbCollection
 	tplTestCollection         mongo.DbCollection
 	entityInfosPropCollection mongo.DbCollection
+	commentTemplateCollection mongo.DbCollection
+	pbhTypeCollection         mongo.DbCollection
+	pbhReasonCollection       mongo.DbCollection
 	authorProvider            author.Provider
 	transformer               patternfields.Transformer
 	enforcer                  security.Enforcer
@@ -168,9 +175,17 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			},
 			"as": "filters",
 		}},
+		{"$lookup": bson.M{
+			"from":         mongo.CommentTemplateMongoCollection,
+			"localField":   "parameters.comment_templates",
+			"foreignField": "_id",
+			"as":           "comment_templates",
+		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$comment_templates", "preserveNullAndEmptyArrays": true}},
 	}
 	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("comment_templates.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
@@ -181,10 +196,16 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 				"then": "$filters",
 				"else": "$$REMOVE",
 			}}},
+			"comment_templates": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$comment_templates._id",
+				"then": "$comment_templates",
+				"else": "$$REMOVE",
+			}}},
 		}},
 		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
 			"$data",
 			bson.M{"filters": "$filters"},
+			bson.M{"comment_templates": "$comment_templates"},
 		}}}},
 	)
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
@@ -256,8 +277,30 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			return err
 		}
 
-		filters := make([]view.WidgetFilter, len(r.Filters))
 		var valErrs validator.ValidationErrors
+
+		for i := range r.Parameters.CommentTemplates {
+			err := s.commentTemplateCollection.FindOne(ctx, bson.M{"_id": r.Parameters.CommentTemplates[i]}).Err()
+			if err != nil {
+				if errors.Is(err, mongodriver.ErrNoDocuments) {
+					valErrs = append(valErrs, validation.NewFieldError("not_exist", strconv.Itoa(i), "Parameters.CommentTemplates."+strconv.Itoa(i)))
+					continue
+				}
+
+				return err
+			}
+		}
+
+		filters := make([]view.WidgetFilter, len(r.Filters))
+		if len(r.EditRequest.Parameters.FastPbehaviors) > 0 {
+			pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
+			if err != nil {
+				return err
+			}
+
+			valErrs = append(valErrs, pbhValErrs...)
+		}
+
 		for i, filterRequest := range r.Filters {
 			doc := view.WidgetFilter{
 				ID:               utils.NewID(),
@@ -307,6 +350,35 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	return response, err
 }
 
+func (s *store) validateFastPbehaviors(ctx context.Context, r EditRequest) (validator.ValidationErrors, error) {
+	pbhTypesMap, err := GetPbehaviorTypesMap(ctx, s.pbhTypeCollection)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get pbh types map: %w", err)
+	}
+
+	pbhReasonsMap, err := GetPbehaviorReasonsMap(ctx, s.pbhReasonCollection)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get pbh reasons map: %w", err)
+	}
+
+	var valErrs validator.ValidationErrors
+
+	for i, fastPbh := range r.Parameters.FastPbehaviors {
+		t, ok := pbhTypesMap[fastPbh.Type]
+		if !ok {
+			valErrs = append(valErrs, validation.NewFieldError("not_exist", "Type", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Type"))
+		} else if t != pbehavior.TypePause {
+			valErrs = append(valErrs, validation.NewFieldError("pbh_type_not_pause", "Type", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Type"))
+		}
+
+		if !pbhReasonsMap[fastPbh.Reason] {
+			valErrs = append(valErrs, validation.NewFieldError("not_exist", "Reason", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Reason"))
+		}
+	}
+
+	return valErrs, nil
+}
+
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
 	oldWidget, err := s.GetOneBy(ctx, r.ID)
 	if err != nil || oldWidget == nil {
@@ -334,8 +406,30 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			return err
 		}
 
-		filters := make(map[string]view.WidgetFilter, len(r.Filters))
 		var valErrs validator.ValidationErrors
+
+		for i := range r.Parameters.CommentTemplates {
+			err := s.commentTemplateCollection.FindOne(ctx, bson.M{"_id": r.Parameters.CommentTemplates[i]}).Err()
+			if err != nil {
+				if errors.Is(err, mongodriver.ErrNoDocuments) {
+					valErrs = append(valErrs, validation.NewFieldError("not_exist", strconv.Itoa(i), "Parameters.CommentTemplates."+strconv.Itoa(i)))
+					continue
+				}
+
+				return err
+			}
+		}
+
+		if len(r.EditRequest.Parameters.FastPbehaviors) > 0 {
+			pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
+			if err != nil {
+				return err
+			}
+
+			valErrs = append(valErrs, pbhValErrs...)
+		}
+
+		filters := make(map[string]view.WidgetFilter, len(r.Filters))
 		for i, filterRequest := range r.Filters {
 			doc := view.WidgetFilter{
 				Title:            filterRequest.Title,
@@ -522,6 +616,17 @@ func (s *store) Copy(ctx context.Context, widgetID string, r CreateRequest) (*Re
 
 			if !ok {
 				return httperror.NewForbiddenError("")
+			}
+		}
+
+		if len(r.EditRequest.Parameters.FastPbehaviors) > 0 {
+			pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
+			if err != nil {
+				return err
+			}
+
+			if len(pbhValErrs) > 0 {
+				return validation.NewError(pbhValErrs, r)
 			}
 		}
 
@@ -860,6 +965,8 @@ func (s *store) transformTemplateFields(ctx context.Context, r *EditRequest) err
 			case view.WidgetTemplateTypeAlarmQuickActions,
 				view.WidgetTemplateTypeAlarmQuickMassActions:
 				parameters[key] = tpl.Actions
+			case view.WidgetTemplateTypeAlarmSortColumns:
+				parameters[key] = tpl.SortColumns
 			}
 		}
 	}
@@ -904,8 +1011,8 @@ func (s *store) findAlarm(ctx context.Context, alarmID string) (types.AlarmWithE
 }
 
 func (s *store) fetchPatterns(ctx context.Context, filters []FilterRequest) (patternfields.Patterns, patternfields.Aliases, error) {
-	patternIDs := make([]string, 0)
-	aliases := make([]string, 0)
+	patternIDs := make([]string, 0, len(filters)*4)
+	aliases := make([]string, 0, len(filters))
 	for _, fr := range filters {
 		patternIDs = append(patternIDs,
 			fr.CorporateEntityPattern,
@@ -937,4 +1044,65 @@ func transformEditRequestToModel(r EditRequest) view.Widget {
 		Parameters:     r.Parameters,
 		Author:         r.Author,
 	}
+}
+
+func GetPbehaviorTypesMap(ctx context.Context, coll mongo.DbCollection) (map[string]string, error) {
+	m := make(map[string]string)
+
+	cursor, err := coll.Find(ctx, bson.M{}, options.Find().SetProjection(bson.M{"_id": 1, "type": 1}))
+	if err != nil {
+		return nil, fmt.Errorf("failed to find pbh types: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var doc struct {
+			ID   string `bson:"_id"`
+			Type string `bson:"type"`
+		}
+
+		err = cursor.Decode(&doc)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode pbh type: %w", err)
+		}
+
+		m[doc.ID] = doc.Type
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, fmt.Errorf("failed to process pbh types mongodb cursor correctly: %w", err)
+	}
+
+	return m, nil
+}
+
+func GetPbehaviorReasonsMap(ctx context.Context, coll mongo.DbCollection) (map[string]bool, error) {
+	m := make(map[string]bool)
+
+	cursor, err := coll.Find(ctx, bson.M{}, options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		return nil, fmt.Errorf("failed to find pbh reasons: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var doc struct {
+			ID string `bson:"_id"`
+		}
+
+		err = cursor.Decode(&doc)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode pbh reason: %w", err)
+		}
+
+		m[doc.ID] = true
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, fmt.Errorf("failed to process pbh reason mongodb cursor correctly: %w", err)
+	}
+
+	return m, nil
 }

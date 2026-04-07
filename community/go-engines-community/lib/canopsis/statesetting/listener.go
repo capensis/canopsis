@@ -184,7 +184,8 @@ func (l *listener) processPattern(ctx context.Context, pattern pattern.Entity, t
 	cursor, err := l.entityCollection.Aggregate(ctx, []bson.M{
 		{
 			"$match": bson.M{
-				"type": t,
+				"type":     t,
+				"upstream": bson.M{"$in": bson.A{"", nil}},
 			},
 		},
 		{

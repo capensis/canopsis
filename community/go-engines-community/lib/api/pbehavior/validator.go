@@ -114,14 +114,6 @@ func (v *Validator) ValidatePatchRequest(sl validator.StructLevel) {
 	}
 }
 
-func (v *Validator) ValidateEntityCreateRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(BulkEntityCreateRequestItem)
-
-	if r.Stop != nil && r.Start != nil && r.Stop.Before(*r.Start) {
-		sl.ReportError(r.Stop, "Stop", "Stop", "gtfield", "Start")
-	}
-}
-
 func (v *Validator) ValidateConnectorCreateRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(BulkConnectorCreateRequestItem)
 

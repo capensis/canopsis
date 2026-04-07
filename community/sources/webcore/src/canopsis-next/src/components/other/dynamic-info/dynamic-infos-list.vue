@@ -6,6 +6,7 @@
     :headers="headers"
     :total-items="totalItems"
     :select-all="removable || updatable"
+    :advanced-search-attributes="advancedSearchAttributes"
     advanced-search
     advanced-pagination
     hide-actions
@@ -63,6 +64,8 @@ import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
 
+import { useDynamicInfoAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
+
 import DynamicInfosListExpandItem from './partials/dynamic-infos-expand-item.vue';
 
 export default {
@@ -101,6 +104,9 @@ export default {
   },
   setup() {
     const { t } = useI18n();
+
+    const { attributes: advancedSearchAttributes } = useDynamicInfoAdvancedSearchAttributes();
+
     const headers = computed(() => [
       { text: t('common.id'), value: '_id' },
       { text: t('common.name'), value: 'name' },
@@ -113,6 +119,8 @@ export default {
     ]);
 
     return {
+      advancedSearchAttributes,
+
       headers,
     };
   },
