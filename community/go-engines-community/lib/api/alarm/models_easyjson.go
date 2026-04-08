@@ -448,3 +448,469 @@ func (v ExportFetchParameters) MarshalEasyJSON(w *jwriter.Writer) {
 func (v *ExportFetchParameters) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm(l, v)
 }
+func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(in *jlexer.Lexer, out *DetailsRequest) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		switch key {
+		case "_id":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.ID = string(in.String())
+			}
+		case "search":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Search = string(in.String())
+			}
+		case "search_by":
+			if in.IsNull() {
+				in.Skip()
+				out.SearchBy = nil
+			} else {
+				in.Delim('[')
+				if out.SearchBy == nil {
+					if !in.IsDelim(']') {
+						out.SearchBy = make([]string, 0, 4)
+					} else {
+						out.SearchBy = []string{}
+					}
+				} else {
+					out.SearchBy = (out.SearchBy)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v13 string
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						v13 = string(in.String())
+					}
+					out.SearchBy = append(out.SearchBy, v13)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "opened":
+			if in.IsNull() {
+				in.Skip()
+				out.Opened = nil
+			} else {
+				if out.Opened == nil {
+					out.Opened = new(bool)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.Opened = bool(in.Bool())
+				}
+			}
+		case "with_instructions":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.WithInstructions = bool(in.Bool())
+			}
+		case "with_declare_tickets":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.WithDeclareTickets = bool(in.Bool())
+			}
+		case "with_dependencies":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.WithDependencies = bool(in.Bool())
+			}
+		case "steps":
+			if in.IsNull() {
+				in.Skip()
+				out.Steps = nil
+			} else {
+				if out.Steps == nil {
+					out.Steps = new(StepsRequest)
+				}
+				easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm2(in, out.Steps)
+			}
+		case "children":
+			if in.IsNull() {
+				in.Skip()
+				out.Children = nil
+			} else {
+				if out.Children == nil {
+					out.Children = new(ChildDetailsRequest)
+				}
+				easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm3(in, out.Children)
+			}
+		case "perf_data":
+			if in.IsNull() {
+				in.Skip()
+				out.PerfData = nil
+			} else {
+				in.Delim('[')
+				if out.PerfData == nil {
+					if !in.IsDelim(']') {
+						out.PerfData = make([]string, 0, 4)
+					} else {
+						out.PerfData = []string{}
+					}
+				} else {
+					out.PerfData = (out.PerfData)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v14 string
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						v14 = string(in.String())
+					}
+					out.PerfData = append(out.PerfData, v14)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(out *jwriter.Writer, in DetailsRequest) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"_id\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.ID))
+	}
+	{
+		const prefix string = ",\"search\":"
+		out.RawString(prefix)
+		out.String(string(in.Search))
+	}
+	{
+		const prefix string = ",\"search_by\":"
+		out.RawString(prefix)
+		if in.SearchBy == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v15, v16 := range in.SearchBy {
+				if v15 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v16))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"opened\":"
+		out.RawString(prefix)
+		if in.Opened == nil {
+			out.RawString("null")
+		} else {
+			out.Bool(bool(*in.Opened))
+		}
+	}
+	{
+		const prefix string = ",\"with_instructions\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.WithInstructions))
+	}
+	{
+		const prefix string = ",\"with_declare_tickets\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.WithDeclareTickets))
+	}
+	{
+		const prefix string = ",\"with_dependencies\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.WithDependencies))
+	}
+	{
+		const prefix string = ",\"steps\":"
+		out.RawString(prefix)
+		if in.Steps == nil {
+			out.RawString("null")
+		} else {
+			easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm2(out, *in.Steps)
+		}
+	}
+	{
+		const prefix string = ",\"children\":"
+		out.RawString(prefix)
+		if in.Children == nil {
+			out.RawString("null")
+		} else {
+			easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm3(out, *in.Children)
+		}
+	}
+	{
+		const prefix string = ",\"perf_data\":"
+		out.RawString(prefix)
+		if in.PerfData == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v17, v18 := range in.PerfData {
+				if v17 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v18))
+			}
+			out.RawByte(']')
+		}
+	}
+	out.RawByte('}')
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v DetailsRequest) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(w, v)
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *DetailsRequest) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(l, v)
+}
+func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm3(in *jlexer.Lexer, out *ChildDetailsRequest) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		switch key {
+		case "multi_sort":
+			if in.IsNull() {
+				in.Skip()
+				out.MultiSort = nil
+			} else {
+				in.Delim('[')
+				if out.MultiSort == nil {
+					if !in.IsDelim(']') {
+						out.MultiSort = make([]string, 0, 4)
+					} else {
+						out.MultiSort = []string{}
+					}
+				} else {
+					out.MultiSort = (out.MultiSort)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v19 string
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						v19 = string(in.String())
+					}
+					out.MultiSort = append(out.MultiSort, v19)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "sort":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Sort = string(in.String())
+			}
+		case "sort_by":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.SortBy = string(in.String())
+			}
+		case "page":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Page = int64(in.Int64())
+			}
+		case "limit":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Limit = int64(in.Int64())
+			}
+		case "paginate":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Paginate = bool(in.Bool())
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm3(out *jwriter.Writer, in ChildDetailsRequest) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"multi_sort\":"
+		out.RawString(prefix[1:])
+		if in.MultiSort == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v20, v21 := range in.MultiSort {
+				if v20 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v21))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"sort\":"
+		out.RawString(prefix)
+		out.String(string(in.Sort))
+	}
+	{
+		const prefix string = ",\"sort_by\":"
+		out.RawString(prefix)
+		out.String(string(in.SortBy))
+	}
+	{
+		const prefix string = ",\"page\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.Page))
+	}
+	{
+		const prefix string = ",\"limit\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.Limit))
+	}
+	{
+		const prefix string = ",\"paginate\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.Paginate))
+	}
+	out.RawByte('}')
+}
+func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm2(in *jlexer.Lexer, out *StepsRequest) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		switch key {
+		case "reversed":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Reversed = bool(in.Bool())
+			}
+		case "type":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
+		case "group":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Group = bool(in.Bool())
+			}
+		case "page":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Page = int64(in.Int64())
+			}
+		case "limit":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Limit = int64(in.Int64())
+			}
+		case "paginate":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Paginate = bool(in.Bool())
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm2(out *jwriter.Writer, in StepsRequest) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"reversed\":"
+		out.RawString(prefix[1:])
+		out.Bool(bool(in.Reversed))
+	}
+	{
+		const prefix string = ",\"type\":"
+		out.RawString(prefix)
+		out.String(string(in.Type))
+	}
+	{
+		const prefix string = ",\"group\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.Group))
+	}
+	{
+		const prefix string = ",\"page\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.Page))
+	}
+	{
+		const prefix string = ",\"limit\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.Limit))
+	}
+	{
+		const prefix string = ",\"paginate\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.Paginate))
+	}
+	out.RawByte('}')
+}
