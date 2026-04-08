@@ -1,8 +1,11 @@
 package websocket_test
 
 import (
+	"bytes"
 	"context"
 	"errors"
+	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -12,9 +15,12 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	mock_validation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/validation"
 	mock_websocket "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/websocket"
 	gorillawebsocket "github.com/gorilla/websocket"
+	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
 	"go.uber.org/mock/gomock"
 )
@@ -34,10 +40,12 @@ func TestHub_Connect_GivenStopRun_ShouldCloseConnection(t *testing.T) {
 			closeCalled = true
 			close(readDone)
 		})
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(v any) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			<-readDone
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		})
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -55,7 +63,8 @@ func TestHub_Connect_GivenStopRun_ShouldCloseConnection(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -90,10 +99,12 @@ func TestHub_Connect_GivenReadError_ShouldCloseConnection(t *testing.T) {
 		mockConn.EXPECT().Close().Do(func() {
 			closeCalled = true
 		})
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(v any) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			<-readDone
 
-			return errors.New("test error")
+			return -1, nil, errors.New("test error")
 		})
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -111,7 +122,8 @@ func TestHub_Connect_GivenReadError_ShouldCloseConnection(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -152,19 +164,24 @@ func TestHub_Connect_GivenWriteError_ShouldCloseConnection(t *testing.T) {
 			Type: websocket.ClientMessageJoin,
 			Room: room,
 		}
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			if joinMsg != nil {
-				*msg = *joinMsg
+				b, err := encoder.Encode(joinMsg)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
+
 				joinMsg = nil
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
 			<-readDone
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
-		mockConn.EXPECT().WriteJSON(gomock.Any()).Return(errors.New("test error"))
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(nil, errors.New("test error"))
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -186,7 +203,8 @@ func TestHub_Connect_GivenWriteError_ShouldCloseConnection(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, json.NewDecoder(), zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -222,10 +240,12 @@ func TestHub_Connect_GivenPingWriteError_ShouldCloseConnection(t *testing.T) {
 			closeCalled = true
 			close(readDone)
 		})
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(v any) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			<-readDone
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		})
 		mockConn.EXPECT().
 			WriteControl(gomock.Eq(gorillawebsocket.PingMessage), gomock.Any(), gomock.Any()).
@@ -249,7 +269,8 @@ func TestHub_Connect_GivenPingWriteError_ShouldCloseConnection(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -283,10 +304,12 @@ func TestHub_Connect_ShouldSendPingMessage(t *testing.T) {
 		mockConn.EXPECT().Close().Do(func() {
 			close(readDone)
 		})
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(v any) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			<-readDone
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		})
 		pingCalled := false
 		mockConn.EXPECT().WriteControl(gomock.Eq(gorillawebsocket.PingMessage), gomock.Any(), gomock.Any()).Do(func(_ int, _ []byte, _ time.Time) {
@@ -312,7 +335,8 @@ func TestHub_Connect_ShouldSendPingMessage(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -350,19 +374,27 @@ func TestHub_Connect_ShouldCallOnJoinHandler(t *testing.T) {
 			close(readCh)
 		})
 		room := "test"
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedJoinedMessage := websocket.ServerMessage{
 			Type: websocket.ServerMessageJoined,
 			Room: room,
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(newServerMessageWriter(writeCh, decoder), nil)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -392,7 +424,8 @@ func TestHub_Connect_ShouldCallOnJoinHandler(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -414,6 +447,10 @@ func TestHub_Connect_ShouldCallOnJoinHandler(t *testing.T) {
 			t.Fatalf("onJoin not called after join message")
 		}
 
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedJoinedMessage); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
 		cancel()
 		synctest.Wait()
 	})
@@ -433,23 +470,32 @@ func TestHub_Connect_ShouldCallOnLeaveHandler(t *testing.T) {
 			close(readCh)
 		})
 		room := "test"
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedJoinedMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageJoined,
 			Room: room,
-		}))
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		}
+		expectedLeftMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageLeft,
 			Room: room,
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		writer := newServerMessageWriter(writeCh, decoder)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(writer, nil).Times(2)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -479,7 +525,8 @@ func TestHub_Connect_ShouldCallOnLeaveHandler(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -492,11 +539,16 @@ func TestHub_Connect_ShouldCallOnLeaveHandler(t *testing.T) {
 		}
 
 		synctest.Wait()
+
 		readCh <- websocket.ClientMessage{
 			Type: websocket.ClientMessageJoin,
 			Room: room,
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedJoinedMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
 		readCh <- websocket.ClientMessage{
 			Type: websocket.ClientMessageLeave,
 			Room: room,
@@ -504,6 +556,10 @@ func TestHub_Connect_ShouldCallOnLeaveHandler(t *testing.T) {
 		synctest.Wait()
 		if !onLeaveCalled {
 			t.Fatalf("onLeave not called after leave message")
+		}
+
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedLeftMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
 		}
 
 		cancel()
@@ -525,19 +581,23 @@ func TestHub_Connect_GivenStopRun_ShouldCallOnLeaveHandler(t *testing.T) {
 			close(readCh)
 		})
 		room := "test"
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
-			Type: websocket.ServerMessageJoined,
-			Room: room,
-		}))
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(newServerMessageWriter(writeCh, decoder), nil)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -567,7 +627,8 @@ func TestHub_Connect_GivenStopRun_ShouldCallOnLeaveHandler(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -607,22 +668,31 @@ func TestHub_Connect_ShouldCallAuthorizeHandler(t *testing.T) {
 			close(readCh)
 		})
 		room := "test"
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedAuthMessage := websocket.ServerMessage{
 			Type: websocket.ServerMessageAuthSuccess,
-		}))
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		}
+		expectedJoinedMessage := websocket.ServerMessage{
 			Type: websocket.ServerMessageJoined,
 			Room: room,
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		writer := newServerMessageWriter(writeCh, decoder)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(writer, nil).Times(2)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -652,7 +722,8 @@ func TestHub_Connect_ShouldCallAuthorizeHandler(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -665,11 +736,16 @@ func TestHub_Connect_ShouldCallAuthorizeHandler(t *testing.T) {
 		}
 
 		synctest.Wait()
+
 		readCh <- websocket.ClientMessage{
 			Type:  websocket.ClientMessageAuth,
 			Token: "test",
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedAuthMessage); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
 		readCh <- websocket.ClientMessage{
 			Type: websocket.ClientMessageJoin,
 			Room: room,
@@ -677,6 +753,10 @@ func TestHub_Connect_ShouldCallAuthorizeHandler(t *testing.T) {
 		synctest.Wait()
 		if !authorizeCalled {
 			t.Fatalf("authorize not called after join message")
+		}
+
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedJoinedMessage); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
 		}
 
 		cancel()
@@ -693,37 +773,46 @@ func TestHub_Connect_ShouldPeriodicallyCheckAuthorization(t *testing.T) {
 		defer cancel()
 
 		mockConn := mock_websocket.NewMockConn(ctrl)
-		readCh := make(chan websocket.ClientMessage, 1)
+		readCh := make(chan websocket.ClientMessage, 2)
 		mockConn.EXPECT().Close().Do(func() {
 			close(readCh)
 		})
 		room := "test"
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedAuthMessage := websocket.ServerMessage{
 			Type: websocket.ServerMessageAuthSuccess,
-		}))
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		}
+		expectedJoinedMessage := websocket.ServerMessage{
 			Type: websocket.ServerMessageJoined,
 			Room: room,
-		}))
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		}
+		expectedForbiddenMessage := websocket.ServerMessage{
 			Type:    websocket.ServerMessageError,
 			Room:    room,
 			Error:   http.StatusForbidden,
 			Payload: http.StatusText(http.StatusForbidden),
-		}))
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		}
+		expectedCloseRoomMessage := websocket.ServerMessage{
 			Type: websocket.ServerMessageCloseRoom,
 			Room: room,
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 2)
+		defer close(writeCh)
+		writer := newServerMessageWriter(writeCh, decoder)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(writer, nil).Times(4)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(4)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -757,7 +846,8 @@ func TestHub_Connect_ShouldPeriodicallyCheckAuthorization(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, 10*time.Second, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, 10*time.Second, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -770,18 +860,35 @@ func TestHub_Connect_ShouldPeriodicallyCheckAuthorization(t *testing.T) {
 		}
 
 		synctest.Wait()
+
 		readCh <- websocket.ClientMessage{
 			Type:  websocket.ClientMessageAuth,
 			Token: "test",
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedAuthMessage); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
 		readCh <- websocket.ClientMessage{
 			Type: websocket.ClientMessageJoin,
 			Room: room,
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedJoinedMessage); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
 		time.Sleep(10 * time.Second)
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedForbiddenMessage); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedCloseRoomMessage); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
 		cancel()
 		synctest.Wait()
 	})
@@ -798,28 +905,38 @@ func TestHub_SendMessage_ShouldDeliverToRoomConnections(t *testing.T) {
 		room := "test"
 		payload := "hello"
 
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+
 		// conn1 — joins the room and receives the message
 		readCh1 := make(chan websocket.ClientMessage, 1)
 		mockConn1 := mock_websocket.NewMockConn(ctrl)
 		mockConn1.EXPECT().Close().Do(func() { close(readCh1) })
-		mockConn1.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		mockConn1.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh1 {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
-		mockConn1.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedJoinedMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageJoined,
 			Room: room,
-		}))
-		mockConn1.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		}
+		expectedInfoMsg := websocket.ServerMessage{
 			Type:    websocket.ServerMessageInfo,
 			Room:    room,
 			Payload: payload,
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		writer1 := newServerMessageWriter(writeCh, decoder)
+		mockConn1.EXPECT().NextWriter(gomock.Any()).Return(writer1, nil).Times(2)
 		mockConn1.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn1.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn1.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -830,14 +947,17 @@ func TestHub_SendMessage_ShouldDeliverToRoomConnections(t *testing.T) {
 		readCh2 := make(chan websocket.ClientMessage)
 		mockConn2 := mock_websocket.NewMockConn(ctrl)
 		mockConn2.EXPECT().Close().Do(func() { close(readCh2) })
-		mockConn2.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		mockConn2.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh2 {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		})
 		mockConn2.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn2.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -861,7 +981,8 @@ func TestHub_SendMessage_ShouldDeliverToRoomConnections(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -884,8 +1005,15 @@ func TestHub_SendMessage_ShouldDeliverToRoomConnections(t *testing.T) {
 			Room: room,
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedJoinedMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
 		hub.SendMessage(ctx, payload, websocket.ToRoom(room))
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedInfoMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
 
 		cancel()
 		synctest.Wait()
@@ -908,27 +1036,36 @@ func TestHub_SendMessageToUser_ShouldDeliverToUser(t *testing.T) {
 		room := "test"
 		userID := "testuser"
 		payload := "hello"
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedAuthMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageAuthSuccess,
-		}))
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		}
+		expectedJoinedMsg := websocket.ServerMessage{
+			Type: websocket.ServerMessageJoined,
+			Room: room,
+		}
+		expectedInfoMsg := websocket.ServerMessage{
 			Type:    websocket.ServerMessageInfo,
 			Room:    room,
 			Payload: payload,
-		}))
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
-			Type: websocket.ServerMessageJoined,
-			Room: room,
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		writer := newServerMessageWriter(writeCh, decoder)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(writer, nil).Times(3)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
@@ -952,7 +1089,8 @@ func TestHub_SendMessageToUser_ShouldDeliverToUser(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -970,15 +1108,27 @@ func TestHub_SendMessageToUser_ShouldDeliverToUser(t *testing.T) {
 			Token: "testtoken",
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedAuthMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
 		readCh <- websocket.ClientMessage{
 			Type: websocket.ClientMessageJoin,
 			Room: room,
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedJoinedMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
 		sent := hub.SendMessageToUser(ctx, payload, room, userID)
 		synctest.Wait()
 		if !sent {
 			t.Fatal("expected message to be sent to user")
+		}
+
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedInfoMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
 		}
 
 		cancel()
@@ -999,23 +1149,32 @@ func TestHub_LeaveRoom_ShouldSendCloseRoomAndCallOnLeave(t *testing.T) {
 			close(readCh)
 		})
 		room := "test"
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedJoinedMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageJoined,
 			Room: room,
-		}))
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		}
+		expectedCloseRoomMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageCloseRoom,
 			Room: room,
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		writer := newServerMessageWriter(writeCh, decoder)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(writer, nil).Times(2)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -1045,7 +1204,8 @@ func TestHub_LeaveRoom_ShouldSendCloseRoomAndCallOnLeave(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1063,10 +1223,18 @@ func TestHub_LeaveRoom_ShouldSendCloseRoomAndCallOnLeave(t *testing.T) {
 			Room: room,
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedJoinedMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
 		hub.LeaveRoom(ctx, room)
 		synctest.Wait()
 		if !onLeaveCalled {
 			t.Fatal("onLeave not called after hub LeaveRoom")
+		}
+
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedCloseRoomMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
 		}
 
 		cancel()
@@ -1088,21 +1256,29 @@ func TestHub_Connect_GivenJoinMessageWithoutAuth_ShouldReturn401(t *testing.T) {
 			close(readCh)
 		})
 		room := "test"
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedUnauthMsg := websocket.ServerMessage{
 			Type:    websocket.ServerMessageError,
 			Room:    room,
 			Error:   http.StatusUnauthorized,
 			Payload: http.StatusText(http.StatusUnauthorized),
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(newServerMessageWriter(writeCh, decoder), nil)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -1129,7 +1305,8 @@ func TestHub_Connect_GivenJoinMessageWithoutAuth_ShouldReturn401(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1148,6 +1325,9 @@ func TestHub_Connect_GivenJoinMessageWithoutAuth_ShouldReturn401(t *testing.T) {
 			Room: room,
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedUnauthMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
 
 		cancel()
 		synctest.Wait()
@@ -1167,20 +1347,28 @@ func TestHub_Connect_GivenAuthMessageWithInvalidToken_ShouldReturn401(t *testing
 		mockConn.EXPECT().Close().Do(func() {
 			close(readCh)
 		})
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedUnauthMsg := websocket.ServerMessage{
 			Type:    websocket.ServerMessageError,
 			Error:   http.StatusUnauthorized,
 			Payload: http.StatusText(http.StatusUnauthorized),
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(newServerMessageWriter(writeCh, decoder), nil)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -1198,7 +1386,8 @@ func TestHub_Connect_GivenAuthMessageWithInvalidToken_ShouldReturn401(t *testing
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1216,6 +1405,9 @@ func TestHub_Connect_GivenAuthMessageWithInvalidToken_ShouldReturn401(t *testing
 			Token: "badtoken",
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedUnauthMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
 
 		cancel()
 		synctest.Wait()
@@ -1234,23 +1426,32 @@ func TestHub_Connect_GivenCheckAuthWithExpiredToken_ShouldReturn401(t *testing.T
 		mockConn.EXPECT().Close().Do(func() {
 			close(readCh)
 		})
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedAuthMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageAuthSuccess,
-		}))
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		}
+		expectedUnauthMsg := websocket.ServerMessage{
 			Type:    websocket.ServerMessageError,
 			Error:   http.StatusUnauthorized,
 			Payload: http.StatusText(http.StatusUnauthorized),
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		writer := newServerMessageWriter(writeCh, decoder)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(writer, nil).Times(2)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -1278,7 +1479,8 @@ func TestHub_Connect_GivenCheckAuthWithExpiredToken_ShouldReturn401(t *testing.T
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, 10*time.Second, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, 10*time.Second, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1296,8 +1498,15 @@ func TestHub_Connect_GivenCheckAuthWithExpiredToken_ShouldReturn401(t *testing.T
 			Token: "testtoken",
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedAuthMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
 		time.Sleep(10 * time.Second)
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedUnauthMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
 
 		cancel()
 		synctest.Wait()
@@ -1317,21 +1526,29 @@ func TestHub_Connect_GivenJoinUnregisteredRoom_ShouldReturn404(t *testing.T) {
 			close(readCh)
 		})
 		room := "unknown-room"
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedNotFoundMsg := websocket.ServerMessage{
 			Type:    websocket.ServerMessageError,
 			Room:    room,
 			Error:   http.StatusNotFound,
 			Payload: http.StatusText(http.StatusNotFound),
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(newServerMessageWriter(writeCh, decoder), nil)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -1349,7 +1566,8 @@ func TestHub_Connect_GivenJoinUnregisteredRoom_ShouldReturn404(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1367,6 +1585,9 @@ func TestHub_Connect_GivenJoinUnregisteredRoom_ShouldReturn404(t *testing.T) {
 			Room: room,
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedNotFoundMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
 
 		cancel()
 		synctest.Wait()
@@ -1387,24 +1608,33 @@ func TestHub_Connect_GivenOnJoinReturnsJoinError_ShouldSendInfoMessage(t *testin
 		})
 		room := "test"
 		joinErrPayload := map[string]string{"msg": "room is full"}
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedInfoMsg := websocket.ServerMessage{
 			Type:    websocket.ServerMessageInfo,
 			Room:    room,
 			Payload: joinErrPayload,
-		}))
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		}
+		expectedCloseMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageCloseRoom,
 			Room: room,
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 2)
+		defer close(writeCh)
+		writer := newServerMessageWriter(writeCh, decoder)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(writer, nil).Times(2)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any()).Times(2)
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -1431,7 +1661,8 @@ func TestHub_Connect_GivenOnJoinReturnsJoinError_ShouldSendInfoMessage(t *testin
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1449,6 +1680,13 @@ func TestHub_Connect_GivenOnJoinReturnsJoinError_ShouldSendInfoMessage(t *testin
 			Room: room,
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedInfoMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedCloseMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
 
 		cancel()
 		synctest.Wait()
@@ -1468,19 +1706,27 @@ func TestHub_Connect_GivenDoubleJoin_ShouldCallOnJoinOnce(t *testing.T) {
 			close(readCh)
 		})
 		room := "test"
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedJoinedMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageJoined,
 			Room: room,
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(newServerMessageWriter(writeCh, decoder), nil)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -1510,7 +1756,8 @@ func TestHub_Connect_GivenDoubleJoin_ShouldCallOnJoinOnce(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1528,6 +1775,10 @@ func TestHub_Connect_GivenDoubleJoin_ShouldCallOnJoinOnce(t *testing.T) {
 			Room: room,
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedJoinedMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+
 		readCh <- websocket.ClientMessage{
 			Type: websocket.ClientMessageJoin,
 			Room: room,
@@ -1554,18 +1805,26 @@ func TestHub_Connect_GivenClientPingMessage_ShouldSendClientPong(t *testing.T) {
 		mockConn.EXPECT().Close().Do(func() {
 			close(readCh)
 		})
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
+		expectedPongMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageClientPong,
-		}))
+		}
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(newServerMessageWriter(writeCh, decoder), nil)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -1583,7 +1842,8 @@ func TestHub_Connect_GivenClientPingMessage_ShouldSendClientPong(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1600,6 +1860,9 @@ func TestHub_Connect_GivenClientPingMessage_ShouldSendClientPong(t *testing.T) {
 			Type: websocket.ClientMessageClientPing,
 		}
 		synctest.Wait()
+		if diff := pretty.Compare(readServerMessageCh(writeCh), expectedPongMsg); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
 
 		cancel()
 		synctest.Wait()
@@ -1619,19 +1882,23 @@ func TestHub_Connect_GivenInfoMessage_ShouldCallOnMessageHandler(t *testing.T) {
 			close(readCh)
 		})
 		room := "test"
-		mockConn.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *websocket.ClientMessage) error {
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
 			for v := range readCh {
-				*msg = v
+				b, err := encoder.Encode(v)
+				if err != nil {
+					t.Fatalf("cannot encode join message: %v", err)
+				}
 
-				return nil
+				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
 
-			return &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
-		mockConn.EXPECT().WriteJSON(gomock.Eq(websocket.ServerMessage{
-			Type: websocket.ServerMessageJoined,
-			Room: room,
-		}))
+		writeCh := make(chan websocket.ServerMessage, 1)
+		defer close(writeCh)
+		mockConn.EXPECT().NextWriter(gomock.Any()).Return(newServerMessageWriter(writeCh, decoder), nil)
 		mockConn.EXPECT().SetWriteDeadline(gomock.Any())
 		mockConn.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -1661,7 +1928,8 @@ func TestHub_Connect_GivenInfoMessage_ShouldCallOnMessageHandler(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1712,8 +1980,12 @@ func TestHub_Connect_GivenFullBuffer_ShouldReturnError(t *testing.T) {
 
 		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
 
+		encoder := json.NewEncoder()
+		decoder := json.NewDecoder()
+
 		// hub.Run is NOT called so registerCh never drains
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans,
+			encoder, decoder, zerolog.Nop())
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
@@ -1729,4 +2001,45 @@ func TestHub_Connect_GivenFullBuffer_ShouldReturnError(t *testing.T) {
 			t.Fatal("expected error when registerCh buffer is full")
 		}
 	})
+}
+
+func newServerMessageWriter(ch chan<- websocket.ServerMessage, decoder encoding.Decoder) *serverMessageWriter {
+	return &serverMessageWriter{
+		ch:      ch,
+		decoder: decoder,
+	}
+}
+
+type serverMessageWriter struct {
+	ch      chan<- websocket.ServerMessage
+	decoder encoding.Decoder
+}
+
+func (w *serverMessageWriter) Write(b []byte) (int, error) {
+	received := websocket.ServerMessage{}
+	err := w.decoder.Decode(b, &received)
+	if err != nil {
+		return 0, err
+	}
+
+	select {
+	case w.ch <- received:
+	default:
+		return 0, fmt.Errorf("write channel full")
+	}
+
+	return len(b), nil
+}
+
+func (w *serverMessageWriter) Close() error {
+	return nil
+}
+
+func readServerMessageCh(ch <-chan websocket.ServerMessage) websocket.ServerMessage {
+	select {
+	case msg := <-ch:
+		return msg
+	default:
+		return websocket.ServerMessage{}
+	}
 }

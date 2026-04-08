@@ -10,6 +10,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/rs/zerolog"
 )
 
@@ -50,6 +51,8 @@ func NewHub(
 	configProvider config.ApiConfigProvider,
 	checkAuthTokenInterval time.Duration,
 	trans validation.ErrorTranslator,
+	encoder encoding.Encoder,
+	decoder encoding.Decoder,
 	logger zerolog.Logger,
 ) Hub {
 	return &hub{
@@ -59,6 +62,8 @@ func NewHub(
 		configProvider:         configProvider,
 		checkAuthTokenInterval: checkAuthTokenInterval,
 		trans:                  trans,
+		encoder:                encoder,
+		decoder:                decoder,
 		logger:                 logger,
 		registerCh:             make(chan *connection, connBuffSize),
 		conns:                  make(map[string]*connection),
@@ -72,6 +77,8 @@ type hub struct {
 	configProvider         config.ApiConfigProvider
 	checkAuthTokenInterval time.Duration
 	trans                  validation.ErrorTranslator
+	encoder                encoding.Encoder
+	decoder                encoding.Decoder
 	logger                 zerolog.Logger
 	connsMx                sync.RWMutex
 	conns                  map[string]*connection
@@ -85,7 +92,7 @@ func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	select {
-	case h.registerCh <- newConnection(c, h.roomRegistry, h.authenticate, h.configProvider, h.trans, h.logger):
+	case h.registerCh <- newConnection(c, h.roomRegistry, h.authenticate, h.configProvider, h.trans, h.encoder, h.decoder, h.logger):
 		return nil
 	default:
 		_ = c.Close()
