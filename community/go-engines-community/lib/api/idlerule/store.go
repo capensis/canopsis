@@ -171,17 +171,19 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
-		err := dbvalidation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
-		if err != nil {
-			return err
+		if r.Operation != nil {
+			err := dbvalidation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
+			if err != nil {
+				return err
+			}
+
+			err = dbvalidation.ValidateExist(ctx, s.pbhReasonCollection, r, "Operation.Parameters.Reason", r.Operation.Parameters.Reason)
+			if err != nil {
+				return err
+			}
 		}
 
-		err = dbvalidation.ValidateExist(ctx, s.pbhReasonCollection, r, "Operation.Parameters.Reason", r.Operation.Parameters.Reason)
-		if err != nil {
-			return err
-		}
-
-		err = s.transformPatternRequestsToModel(ctx, r.EditRequest, &model)
+		err := s.transformPatternRequestsToModel(ctx, r.EditRequest, &model)
 		if err != nil {
 			return err
 		}
