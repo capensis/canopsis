@@ -31,6 +31,8 @@ const THROTTLE_WAIT_MS = 1000;
  * @param {string} params.modalId
  * @param {Function} params.registerOnHide
  * @param {import('vue').Ref|function(): *} [params.ruleId]
+ * @param {import('vue').Ref|import('vue').ComputedRef|string} [params.context] - LLM socket context
+ *   (e.g. `${LLM_SOCKET_CONTEXTS.widgetFilter}_${type}` for widget filters).
  */
 export const useAiChatForm = ({
   form,
@@ -91,7 +93,7 @@ export const useAiChatForm = ({
 
   /**
    * Opens the AI assistant sidebar for this modal instance and passes `socketRoomData`
-   * so `ai-chat` can join `SOCKET_ROOMS.llmChat` with widget-filter context and the current filter id.
+   * so `ai-chat` can join `SOCKET_ROOMS.llmChat` with the given `context` and optional `rule_id`.
    *
    * Wait for the vuetify modal opening animation to complete before fetching the LLMs.
    */

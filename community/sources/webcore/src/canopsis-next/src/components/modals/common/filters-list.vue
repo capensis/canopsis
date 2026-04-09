@@ -53,7 +53,11 @@ export default {
   },
   computed: {
     widgetId() {
-      return this.config.widgetId;
+      return this.config.widget?._id;
+    },
+
+    widgetType() {
+      return this.config.widget?.type;
     },
 
     userPreference() {
@@ -71,6 +75,7 @@ export default {
           'entityCountersType',
         ]),
 
+        widgetType: this.widgetType,
         withTitle: true,
       };
     },
@@ -91,7 +96,7 @@ export default {
     async refreshFilters() {
       this.pending = true;
 
-      await this.fetchUserPreference({ id: this.config.widgetId });
+      await this.fetchUserPreference({ id: this.widgetId });
 
       this.pending = false;
     },
@@ -170,7 +175,7 @@ export default {
           data: mapIds(filters),
         });
 
-        await this.fetchUserPreference({ id: this.config.widgetId });
+        await this.fetchUserPreference({ id: this.widgetId });
       } catch (err) {
         console.error(err);
 

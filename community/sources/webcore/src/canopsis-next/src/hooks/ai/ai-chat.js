@@ -1,4 +1,4 @@
-import { isEmpty, isUndefined, isNil } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 import {
   computed,
   ref,
@@ -12,6 +12,7 @@ import {
 import { SOCKET_ROOMS } from '@/config';
 import {
   MAX_LIMIT,
+  MODALS,
   LLM_AI_CHAT_MESSAGE_ROLES,
   LLM_AI_CHAT_MESSAGE_TYPES,
   LLM_AI_CHAT_ERROR_CODES,
@@ -31,14 +32,15 @@ import { getChangedPatternsFields } from '@/helpers/entities/pattern/form';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 import { useSocket } from '@/hooks/socket';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useLlm } from '@/hooks/store/modules/llm';
 
-const CHAT_COMPONENTS = {
-  message: 'ai-chat-message',
-  pattern: 'ai-chat-pattern',
-};
+const getEmptyMessage = () => ({
+  _id: uid(),
+  timestamp: Date.now(),
+});
 
 /**
  * Hook for watching sidebar JSON string changes and triggering `ask` with a localized fix-pattern prompt.
@@ -145,21 +147,18 @@ export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
   const messages = ref([]);
 
   /**
-   * Appends a text or pattern chat row with `_id`, `time`, and `CHAT_COMPONENTS.message` tag; extra keys are merged.
+   * Appends a text or pattern chat row with `_id`, `timestamp`, and `CHAT_COMPONENTS.message`.
    *
    * @param {Object} payload
-   * @param {string} [payload.text] - Visible body for a text bubble.
+   * @param {string} [payload.prompt] - Visible body for a prompt bubble.
    * @param {string} [payload.role] - Defaults to `LLM_AI_CHAT_MESSAGE_ROLES.model`.
    * @returns {number} New `messages` length from `Array.prototype.push`.
    */
-  const addMessage = ({ text, role, ...rest }) => messages.value.push({
-    text,
+  const addMessage = ({ prompt, role, ...rest }) => messages.value.push({
+    prompt,
     role,
 
-    _id: uid(),
-    component: CHAT_COMPONENTS.message,
-    time: Date.now(),
-
+    ...getEmptyMessage(),
     ...rest,
   });
 
@@ -169,38 +168,32 @@ export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
    * @param {Object} options
    * @param {Object} options.patterns - Pattern payload for this version.
    * @param {string} [options.role] - `LLM_AI_CHAT_MESSAGE_ROLES.model` for LLM turns; omit when syncing user edits.
-   * @param {number} [options.originalVersion] - Set when restoring a prior version (skips extra status text).
+   * @param {number} [options.fromVersion] - Set when restoring a prior version (skips extra status text).
+   * @param {boolean} [options.local] - Set when adding a local message.
    */
-  const addPattern = ({ patterns, role, originalVersion }) => {
-    let messageText = '';
+  const addPattern = ({ patterns, role, fromVersion, local }) => {
+    let messagePrompt = '';
 
     if (!role && changedPatternsFields.value.length > 0) {
-      messageText = tc('llm.chat.patternsEditedMessage', changedPatternsFields.value.length, {
+      messagePrompt = tc('llm.chat.patternsEditedMessage', changedPatternsFields.value.length, {
         patterns: changedPatternsFields.value.map(field => t(`pattern.patternsFields.${field}`)).join(', ').toLowerCase(),
       });
 
       addVersion(patterns);
     } else if (role === LLM_AI_CHAT_MESSAGE_ROLES.model) {
       addVersion(patterns, true);
-
-      messageText = emptyCurrentFormPatterns.value ? t('llm.chat.patternCreatedMessage') : t('llm.chat.patternUpdatedMessage');
-    }
-
-    if (messageText && isUndefined(originalVersion)) {
-      addMessage({
-        role,
-        text: messageText,
-      });
     }
 
     addMessage({
       patterns,
-      role: LLM_AI_CHAT_MESSAGE_ROLES.model,
-      originalVersion,
-      version: activeVersion.value,
+      local,
+      role,
 
       _id: uid(),
-      component: CHAT_COMPONENTS.pattern,
+      prompt: messagePrompt,
+      version: activeVersion.value,
+      from_version: fromVersion,
+      emptyPatterns: versions.value.length === 1 && emptyCurrentFormPatterns.value,
     });
   };
 
@@ -210,7 +203,9 @@ export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
    * @param {number} index - Index in `messages`.
    * @param {Object} newMessage - Full replacement message object.
    */
-  const updateMessage = (index, newMessage) => set(messages.value, index, { ...messages.value[index], ...newMessage });
+  const updateMessage = (index, newMessage) => (
+    set(messages.value, index, { ...(messages.value[index] ?? getEmptyMessage()), ...newMessage })
+  );
 
   /**
    * Drops the last `count` messages from the tail of the list.
@@ -228,7 +223,7 @@ export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
   const restoreVersion = (version) => {
     const newPatterns = versions.value[version];
 
-    addPattern({ patterns: newPatterns, role: LLM_AI_CHAT_MESSAGE_ROLES.model, originalVersion: version });
+    addPattern({ patterns: newPatterns, role: LLM_AI_CHAT_MESSAGE_ROLES.model, fromVersion: version });
 
     unref(sidebar)?.config?.setPatterns?.(newPatterns);
   };
@@ -269,9 +264,6 @@ export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
 export const useAiChatPattern = ({ sidebar } = {}) => {
   const { t, tc } = useI18n();
 
-  let lastChangedPatternsFieldsMessageIndex = -1;
-  let lastLlmMessageIndex = -1;
-
   const currentFormPatterns = computed(() => (
     formFilterToPatterns(unref(sidebar)?.config?.patterns ?? {}, Object.values(PATTERNS_FIELDS))
   ));
@@ -295,38 +287,63 @@ export const useAiChatPattern = ({ sidebar } = {}) => {
     emptyCurrentFormPatterns,
   } = useAiChatMessages({ sidebar, currentFormPatterns });
 
+  const lastLlmMessageIndex = computed(() => messages.value.findLastIndex(message => (
+    message.role === LLM_AI_CHAT_MESSAGE_ROLES.model && !message.local
+  )));
+
+  const lastChangedPatternsFieldsMessageIndex = computed(() => messages.value.findLastIndex(message => (
+    message.prompt && message.local
+  )));
+
   watch(currentFormPatterns, async () => {
-    if (!messages.value.length) {
+    if (!versions.value.length) {
       return;
     }
 
     if (changedPatternsFields.value.length === 0) {
-      if (activeVersion.value >= 0 && lastLlmVersion.value >= 0 && lastLlmVersion.value !== activeVersion.value) {
-        removeLastMessages(messages.value.length - lastLlmMessageIndex - 1);
+      if (lastLlmVersion.value < activeVersion.value) {
+        removeLastMessages(1);
         removeLastVersion();
       }
 
       return;
     }
 
-    if (lastLlmVersion.value >= 0 && activeVersion.value >= 0 && lastLlmVersion.value !== activeVersion.value) {
+    if (lastLlmVersion.value < activeVersion.value) {
       updateMessage(lastChangedPatternsFieldsMessageIndex, {
-        text: tc('llm.chat.patternsEditedMessage', changedPatternsFields.value.length, {
+        prompt: tc('llm.chat.patternsEditedMessage', changedPatternsFields.value.length, {
           patterns: changedPatternsFields.value.map(field => t(`pattern.patternsFields.${field}`)).join(', ').toLowerCase(),
         }),
       });
 
-      updateMessage(lastChangedPatternsFieldsMessageIndex + 1, {
+      const newMessage = emptyCurrentFormPatterns.value ? {
+        prompt: t('llm.chat.emptyPatternsMessage'),
+        patterns: undefined,
+      } : {
         patterns: currentFormPatterns.value,
-      });
+      };
+
+      if (emptyCurrentFormPatterns.value) {
+        removeLastVersion();
+      }
+
+      updateMessage(lastChangedPatternsFieldsMessageIndex.value, newMessage);
 
       return;
     }
 
-    lastLlmMessageIndex = messages.value.length - 1;
-    lastChangedPatternsFieldsMessageIndex = lastLlmMessageIndex + 1;
+    if (lastChangedPatternsFieldsMessageIndex.value > lastLlmMessageIndex.value) {
+      removeLastMessages(1);
+    }
 
-    addPattern({ patterns: currentFormPatterns.value });
+    if (emptyCurrentFormPatterns.value) {
+      addMessage({
+        prompt: t('llm.chat.emptyPatternsMessage'),
+        local: true,
+      });
+    } else {
+      addPattern({ patterns: currentFormPatterns.value, local: true });
+    }
   });
 
   return {
@@ -434,7 +451,7 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
     }
 
     const data = payload?.retry_at
-      ? { retryAt: convertDateToStringWithFormatForToday(payload.retry_at, DATETIME_FORMATS.long, '', DATETIME_FORMATS.timeWithoutSeconds) }
+      ? { retryAt: convertDateToStringWithFormatForToday(payload.retry_at, DATETIME_FORMATS.long, '', DATETIME_FORMATS.timePicker) }
       : {};
 
     let newErrorMessage = code ? t(`llm.chat.errors.${code}`, data) : message;
@@ -468,11 +485,9 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
 
     disableThinking();
 
-    if (validationErrors?.length) {
-      const validationMessage = `<ul>${validationErrors.map(validationError => `<li>${validationError}</li>`).join('')}</ul>`;
-
+    if (error) {
       addMessage({
-        text: `${t('llm.chat.patternCannotBeCreatedReasons')}${validationMessage}`,
+        error,
         role: LLM_AI_CHAT_MESSAGE_ROLES.model,
       });
 
@@ -481,9 +496,9 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
       return;
     }
 
-    if (error) {
+    if (validationErrors?.length) {
       addMessage({
-        text: error,
+        val_errors: validationErrors,
         role: LLM_AI_CHAT_MESSAGE_ROLES.model,
       });
 
@@ -495,6 +510,14 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
     addPattern({ patterns, role: LLM_AI_CHAT_MESSAGE_ROLES.model });
 
     unref(sidebar)?.config?.setPatterns?.(patterns);
+  };
+
+  const serverErrorHandler = () => {
+    resetErrorMessage();
+    disableThinking();
+    restorePrompt();
+
+    errorMessage.value = t('llm.chat.errors.serverError');
   };
 
   /**
@@ -512,6 +535,7 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
 
     socketRoom = socket
       .on(Socket.EVENTS_TYPES.error, errorHandler)
+      .on(Socket.EVENTS_TYPES.serverError, serverErrorHandler)
       .join(SOCKET_ROOMS.llmChat, joinData, true)
       .addListener(socketListener);
   };
@@ -522,6 +546,7 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
   const leaveSocketRoom = () => {
     socket
       .off(Socket.EVENTS_TYPES.error, errorHandler)
+      .off(Socket.EVENTS_TYPES.serverError, serverErrorHandler)
       .leave(SOCKET_ROOMS.llmChat)
       .removeListener(socketListener);
 
@@ -735,6 +760,8 @@ export const useAiChatSuggestions = ({ updatePrompt }) => {
  * @returns {Object} `ai-chat.vue` API: `ask`, `stop`, `restart`, refs.
  */
 export const useAiChat = ({ sidebar } = {}) => {
+  const { t } = useI18n();
+  const modals = useModals();
   const { prompt, updatePrompt, resetPrompt, restorePrompt } = useAiChatPrompt();
   const { llm, llms, llmsPending, resetLlm, fetchLlms } = useAiChatLlmModel({ sidebar });
   const { textareaElement, applySuggestion } = useAiChatSuggestions({ updatePrompt });
@@ -801,7 +828,7 @@ export const useAiChat = ({ sidebar } = {}) => {
     }
 
     sendMessage(data, llm.value?._id);
-    addMessage({ text: newPrompt, role: LLM_AI_CHAT_MESSAGE_ROLES.user });
+    addMessage({ prompt: newPrompt, role: LLM_AI_CHAT_MESSAGE_ROLES.user });
   };
 
   /**
@@ -828,10 +855,16 @@ export const useAiChat = ({ sidebar } = {}) => {
   /**
    * Leaves the LLM socket room then runs `resetChat` (full session reset from the UI).
    */
-  const restart = () => {
-    leaveSocketRoom();
-    resetChat();
-  };
+  const restart = () => modals.show({
+    name: MODALS.confirmation,
+    config: {
+      text: t('llm.chat.restartConfirmation'),
+      action: () => {
+        leaveSocketRoom();
+        resetChat();
+      },
+    },
+  });
 
   useAiChatJsonString({
     sidebar,

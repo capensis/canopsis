@@ -304,6 +304,9 @@ export default {
       isNotEmpty: 'Ce groupe n\'est pas vide',
     },
   },
+  aiChatHistory: {
+    title: 'Historique du chat',
+  },
   alarmsList: {
     title: 'Bac à alarmes',
     prefixTitle: '{prefix} - bac à alarmes',

@@ -16,7 +16,7 @@
                 v-if="chatPending"
                 :in-progress-text="chatPendingTexts.inProgress"
                 :cancel-button-label="chatPendingTexts.cancel"
-                @cancel="chatCancelPending"
+                @cancel="chatCancel"
               />
               <event-filter-form
                 v-model="form"
@@ -112,7 +112,7 @@ export default {
     const {
       pending: chatPending,
       pendingTexts: chatPendingTexts,
-      cancelPending: chatCancelPending,
+      cancel: chatCancel,
     } = useAiChatForm({
       form: aiChatPatternsForm,
       modalId: props.modal.id,
@@ -152,7 +152,7 @@ export default {
       submitting,
       chatPending,
       chatPendingTexts,
-      chatCancelPending,
+      chatCancel,
       submit,
       close,
     };

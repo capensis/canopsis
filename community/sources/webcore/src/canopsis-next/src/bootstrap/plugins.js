@@ -109,7 +109,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createTheme]: { maxWidth: 500 },
       [MODALS.createExternalAuthToken]: { maxWidth: 1100 },
       [MODALS.createLlm]: { maxWidth: 920 },
-      [MODALS.aiChatHistory]: { maxWidth: 920 },
+      [MODALS.aiChatHistory]: { maxWidth: 700 },
 
       ...featuresService.get('components.modals.dialogPropsMap'),
     },
