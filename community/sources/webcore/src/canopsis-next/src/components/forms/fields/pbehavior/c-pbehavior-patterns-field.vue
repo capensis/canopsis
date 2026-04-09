@@ -16,7 +16,7 @@
         v-if="alarmCounter && alarmCounter.count"
         text
         small
-        @click="showPatternAlarmsModal"
+        @click="showPatternAlarmsModal()"
       >
         {{ $t('common.seeAlarms') }}
       </v-btn>
@@ -171,7 +171,7 @@ export default {
       return [
         {
           text: this.$t('common.name'),
-          value: PBEHAVIOR_PATTERN_FIELDS.name,
+          value: PBEHAVIOR_PATTERN_FIELDS.id,
           options: this.nameOptions,
         },
         {

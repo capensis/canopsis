@@ -164,7 +164,7 @@
             v-else
             text
             small
-            @click="showPatternAlarmsModal"
+            @click="showPatternAlarmsModal()"
           >
             {{ $t('common.seeAlarms') }}
           </v-btn>

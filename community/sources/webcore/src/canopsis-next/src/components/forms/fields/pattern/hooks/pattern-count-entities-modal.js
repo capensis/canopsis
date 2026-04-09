@@ -55,7 +55,7 @@ export const usePatternCountEntitiesModal = (props) => {
         return acc;
       }
 
-      acc[patternName] = formGroupsToPatternRulesQuery(props.value[patternName]?.groups);
+      acc[patternName === PATTERNS_FIELDS.entity ? 'search_pattern' : patternName] = formGroupsToPatternRulesQuery(props.value[patternName]?.groups);
 
       return acc;
     }, {});
