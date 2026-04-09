@@ -28,7 +28,6 @@ export const useStateSetting = () => {
     createStateSetting: 'create',
     updateStateSetting: 'update',
     removeStateSetting: 'remove',
-    bulkRemoveStateSettings: 'bulkRemove',
   });
 
   return {

@@ -67,7 +67,6 @@ import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
 import { usePlaylist } from '@/hooks/store/modules/playlist';
-import { useStateSetting } from '@/hooks/store/modules/state-setting';
 import { useMaps } from '@/hooks/store/modules/maps';
 import { useUser } from '@/hooks/store/modules/user';
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
@@ -155,10 +154,6 @@ export default {
       default: false,
     },
     playlist: {
-      type: Boolean,
-      default: false,
-    },
-    stateSetting: {
       type: Boolean,
       default: false,
     },
@@ -269,10 +264,6 @@ export default {
       bulkUnhidePbehaviorExceptions,
       bulkRemovePbehaviorExceptions,
     } = usePbehaviorException();
-
-    const {
-      bulkRemoveStateSettings,
-    } = useStateSetting();
 
     const {
       bulkRemoveMaps,
@@ -406,10 +397,6 @@ export default {
           hide: bulkHidePbehaviorExceptions,
           unhide: bulkUnhidePbehaviorExceptions,
           tooltipPrefix: 'pbehavior',
-        },
-        [props.stateSetting]: {
-          remove: bulkRemoveStateSettings,
-          tooltipPrefix: 'stateSetting',
         },
         [props.map]: {
           remove: bulkRemoveMaps,
