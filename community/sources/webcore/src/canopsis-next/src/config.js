@@ -308,7 +308,6 @@ export const API_ROUTES = {
   },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',
-  bulkStateSetting: '/api/v4/bulk/state-settings',
   dataStorage: '/api/v4/data-storage',
   notificationSettings: '/api/v4/notification-settings',
   notifications: '/api/v4/notifications',

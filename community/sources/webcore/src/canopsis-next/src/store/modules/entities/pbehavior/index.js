@@ -154,7 +154,7 @@ export default {
       return request.put(API_ROUTES.pbehavior.bulkPbehaviors, data);
     },
 
-    bukdEnable(context, { data }) {
+    bulkEnable(context, { data }) {
       return request.put(API_ROUTES.pbehavior.bulkPbehaviorsEnable, data);
     },
 

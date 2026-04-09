@@ -20,7 +20,6 @@ export default {
   seeFilterPattern: 'See filter pattern',
   dependsCount: 'Total number of dependencies',
   stateDependsCount: 'Number of dependencies of the {state} state',
-  massRemove: 'Delete selected state settings',
   steps: {
     basics: 'Basics',
     rulePatterns: 'Define target entities',
