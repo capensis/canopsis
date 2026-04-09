@@ -9,15 +9,7 @@
       {{ $t('llm.expandTabs.promptsHistory') }}
     </v-tab>
     <v-tab-item>
-      <v-layout class="py-3 secondary lighten-2">
-        <v-flex xs12>
-          <v-card>
-            <v-card-text>
-              <llm-prompts-history-panel :llm-id="llm._id" />
-            </v-card-text>
-          </v-card>
-        </v-flex>
-      </v-layout>
+      <llm-prompts-history-panel :llm-id="llm._id" />
     </v-tab-item>
   </v-tabs>
 </template>

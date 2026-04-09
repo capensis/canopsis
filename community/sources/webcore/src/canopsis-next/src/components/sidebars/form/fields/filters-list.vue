@@ -23,6 +23,7 @@ import { formArrayMixin } from '@/mixins/form';
 import FiltersList from '@/components/other/filter/filters-list.vue';
 
 export default {
+  inject: ['$sidebar'],
   components: { FiltersList },
   mixins: [formArrayMixin],
   model: {
@@ -91,6 +92,7 @@ export default {
           'entityCountersType',
         ]),
 
+        widgetType: this.$sidebar.config?.widget?.type,
         withTitle: true,
       };
     },

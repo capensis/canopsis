@@ -10,7 +10,7 @@
             v-if="chatPending"
             :in-progress-text="chatPendingTexts.inProgress"
             :cancel-button-label="chatPendingTexts.cancel"
-            @cancel="chatCancelPending"
+            @cancel="chatCancel"
           />
           <patterns-form
             v-model="form"
@@ -94,16 +94,17 @@ export default {
     const title = computed(() => config.value.title ?? t('modals.createFilter.create.title'));
 
     const patternsProps = computed(() => omit(config.value, ['title', 'action']));
+    const chatContext = computed(() => `${LLM_SOCKET_CONTEXTS.widgetFilter}_${config.value.widgetType}`);
 
     const {
       pending: chatPending,
       pendingTexts: chatPendingTexts,
-      cancelPending: chatCancelPending,
+      cancel: chatCancel,
     } = useAiChatForm({
       form,
       modalId: props.modal.id,
       ruleId: props.modal.config?.filter?._id,
-      context: LLM_SOCKET_CONTEXTS.widgetFilter,
+      context: chatContext,
     });
 
     return {
@@ -116,7 +117,7 @@ export default {
       submit,
       chatPending,
       chatPendingTexts,
-      chatCancelPending,
+      chatCancel,
     };
   },
 };

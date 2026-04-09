@@ -24,7 +24,7 @@
           </div>
         </v-layout>
       </v-flex>
-      <div v-if="!active">
+      <div v-if="!active && !history">
         <c-action-btn
           :tooltip="$t('llm.chat.pattern.restoreVersion')"
           icon="refresh"
@@ -63,11 +63,15 @@ export default {
       type: Number,
       default: 1,
     },
-    originalVersion: {
+    fromVersion: {
       type: Number,
       required: false,
     },
     active: {
+      type: Boolean,
+      default: false,
+    },
+    history: {
       type: Boolean,
       default: false,
     },
@@ -79,18 +83,13 @@ export default {
 
     const patternsText = computed(() => {
       const keys = Object.keys(props.patterns);
-
-      if (!keys.length) {
-        return t('llm.chat.emptyPatternsMessage');
-      }
-
       const texts = keys.map(key => t(`pattern.patternsFields.${key}`));
 
       return tc('llm.chat.patternsMessage', texts.length, { patterns: texts.join(', ') });
     });
 
     const originalVersionText = computed(() => (
-      isNil(props.originalVersion) ? '' : ` - ${t('llm.chat.pattern.versionRestored', { version: props.originalVersion + 1 })}`
+      isNil(props.fromVersion) ? '' : ` - ${t('llm.chat.pattern.versionRestored', { version: props.fromVersion + 1 })}`
     ));
 
     const versionText = computed(() => {

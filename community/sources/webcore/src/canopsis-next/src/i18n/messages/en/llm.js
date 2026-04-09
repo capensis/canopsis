@@ -1,4 +1,9 @@
-import { LLM_AI_CHAT_ERROR_CODES, LLM_AI_CHAT_SUGGESTION_TYPES, LLM_THINKING_LEVELS } from '@/constants';
+import {
+  LLM_AI_CHAT_ERROR_CODES,
+  LLM_AI_CHAT_SUGGESTION_TYPES,
+  LLM_SOCKET_CONTEXTS,
+  LLM_THINKING_LEVELS,
+} from '@/constants';
 
 export default {
   expandTabs: {
@@ -9,27 +14,52 @@ export default {
       allPrompts: 'All prompts',
     },
     expandUserHistory: {
-      empty: 'No prompts for this user.',
       lastPromptDate: 'Last prompt date',
     },
     filterByUser: 'User filter',
     groupByChat: 'Group by chat',
-    onlyOffTopic: 'Only off-topic',
+    notRelatedToCanopsis: 'Not related to Canopsis',
     allUsers: 'All users',
     search: 'Search by user, modal or name',
     searchByUserName: 'Search by user name',
     searchByModalOrName: 'Search by modal or name',
     userHistoryTitle: 'User history',
     userHistoryEmpty: 'No users yet for this configuration.',
+    ruleNotSaved: 'Not saved',
     columns: {
       userName: 'User name',
       datetime: 'Datetime',
       tokensUsed: 'Tokens used',
-      context: 'Context',
-      name: 'Name',
-      offTopic: 'Off topic',
+      modal: 'Modal',
+      usage: 'Usage',
+      canopsisRelated: 'Canopsis related',
       prompt: 'Prompt',
       lastUsed: 'Last used',
+    },
+    contextTitles: {
+      [LLM_SOCKET_CONTEXTS.idleRule]: 'Idle rule',
+      [LLM_SOCKET_CONTEXTS.scenario]: 'Scenario',
+      [LLM_SOCKET_CONTEXTS.flappingRule]: 'Flapping rule',
+      [LLM_SOCKET_CONTEXTS.resolveRule]: 'Resolve rule',
+      [LLM_SOCKET_CONTEXTS.alarmTag]: 'Alarm tag',
+      [LLM_SOCKET_CONTEXTS.linkRule]: 'Link rule',
+      [LLM_SOCKET_CONTEXTS.instruction]: 'Remediation instruction',
+      [LLM_SOCKET_CONTEXTS.dynamicInfos]: 'Dynamic information',
+      [LLM_SOCKET_CONTEXTS.metaAlarmRule]: 'Meta alarm rule',
+      [LLM_SOCKET_CONTEXTS.declareTicketRule]: 'Declare ticket rule',
+      [LLM_SOCKET_CONTEXTS.pbehavior]: 'Pbehavior',
+      [LLM_SOCKET_CONTEXTS.entityService]: 'Service',
+      [LLM_SOCKET_CONTEXTS.stateSettings]: 'State setting',
+      [LLM_SOCKET_CONTEXTS.entity]: 'Entity',
+      [LLM_SOCKET_CONTEXTS.kpiFilter]: 'KPI filter',
+      [LLM_SOCKET_CONTEXTS.eventFilter]: 'Event filter',
+      [LLM_SOCKET_CONTEXTS.eventRecord]: 'Events record',
+      [LLM_SOCKET_CONTEXTS.serviceWeather]: 'Service weather',
+      [LLM_SOCKET_CONTEXTS.widgetFilter]: 'Widget filter',
+      [LLM_SOCKET_CONTEXTS.corporateAlarmPattern]: 'Shared alarm filter',
+      [LLM_SOCKET_CONTEXTS.corporateEntityPattern]: 'Shared entity filter',
+      [LLM_SOCKET_CONTEXTS.corporatePbehaviorPattern]: 'Shared pbehavior filter',
+      [LLM_SOCKET_CONTEXTS.corporateWeatherServicePattern]: 'Shared service weather filter',
     },
   },
   modelType: 'LLM model type',
@@ -61,9 +91,9 @@ export default {
     howCanIHelp: 'How can I help?',
     promptPlaceholder: 'Describe what you need…',
     ask: 'Ask',
-    chatHistoryTitle: 'Chat history',
     thinking: 'Thinking…',
     tryLabel: 'Try:',
+    restartConfirmation: 'Restart the chat? <strong>Chat history</strong> and <strong>versions</strong> will be cleared',
     suggestions: {
       createPattern: 'Create pattern',
       editPattern: 'Edit pattern',
@@ -73,7 +103,7 @@ export default {
     patternsEditedMessage: 'You edited {patterns} pattern | You edited {patterns} patterns',
     patternCreatedMessage: 'Patterns created',
     patternUpdatedMessage: 'Patterns updated',
-    emptyPatternsMessage: 'Empty patterns',
+    emptyPatternsMessage: 'You removed all patterns.\nIf you need to clear the context, restart AI assistant.',
     patternCannotBeCreatedReasons: 'Pattern cannot be created for the following reasons:\n',
     fixPatternPrompt: 'Fix pattern:\n{jsonString}',
     suggestionPrompts: {
@@ -108,6 +138,9 @@ export default {
         + '<strong>Please try again later.</strong>',
       noModels:
         'No AI models are currently available.<br />'
+        + '<strong>Please contact your administrator.</strong>',
+      serverError:
+        'Problem with socket connection.<br />'
         + '<strong>Please contact your administrator.</strong>',
     },
   },

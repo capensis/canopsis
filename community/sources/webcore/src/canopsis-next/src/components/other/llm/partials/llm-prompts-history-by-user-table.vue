@@ -1,35 +1,36 @@
 <template>
-  <v-layout
-    class="pa-3"
-    column
+  <c-advanced-data-table
+    :headers="headers"
+    :items="users"
+    :loading="usersPending"
+    :total-items="meta.total_count"
+    :options="options"
+    :no-data-text="$t('llm.promptsHistory.userHistoryEmpty')"
+    :search-label="$t('llm.promptsHistory.searchByUserName')"
+    item-key="_id"
+    hide-actions
+    search
+    expand
+    advanced-pagination
+    @update:options="updateOptions"
   >
-    <c-advanced-data-table
-      :headers="headers"
-      :items="users"
-      :loading="usersPending"
-      :total-items="meta.total_count"
-      :options="options"
-      :no-data-text="$t('llm.promptsHistory.userHistoryEmpty')"
-      :search-label="$t('llm.promptsHistory.searchByUserName')"
-      item-key="_id"
-      hide-actions
-      search
-      expand
-      advanced-pagination
-      @update:options="updateOptions"
-    >
-      <template #last_used="{ item }">
-        {{ item.last_used | date('long', '-') }}
-      </template>
-      <template #expand="{ item }">
-        <llm-prompts-history-user-expand-chats
-          :llm-id="llmId"
-          :user-id="item._id"
-          @see-chat="$emit('see-chat', $event)"
-        />
-      </template>
-    </c-advanced-data-table>
-  </v-layout>
+    <template #last_used="{ item }">
+      {{ item.last_used | date('long', '-') }}
+    </template>
+    <template #expand="{ item }">
+      <div class="pa-4 secondary lighten-2">
+        <v-card>
+          <v-card-text>
+            <llm-prompts-history-table
+              :llm-id="llmId"
+              :user-id="item._id"
+              :search-label="$t('llm.promptsHistory.searchByModalOrName')"
+            />
+          </v-card-text>
+        </v-card>
+      </div>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -40,12 +41,13 @@ import { PAGINATION_LIMIT } from '@/config';
 import { useI18n } from '@/hooks/i18n';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useLlm } from '@/hooks/store/modules/llm';
+import { useChildObserver } from '@/hooks/observer';
 
-import LlmPromptsHistoryUserExpandChats from './llm-prompts-history-user-expand-chats.vue';
+import LlmPromptsHistoryTable from './llm-prompts-history-table.vue';
 
 export default {
   components: {
-    LlmPromptsHistoryUserExpandChats,
+    LlmPromptsHistoryTable,
   },
   props: {
     llmId: {
@@ -80,6 +82,8 @@ export default {
       { text: t('llm.promptsHistory.columns.tokensUsed'), value: 'tokens' },
       { text: t('llm.promptsHistory.columns.lastUsed'), value: 'last_used' },
     ]);
+
+    useChildObserver({ handler: fetchList, key: '$refresh' });
 
     onMounted(fetchList);
 

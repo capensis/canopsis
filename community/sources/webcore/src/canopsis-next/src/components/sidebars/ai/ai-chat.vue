@@ -6,32 +6,12 @@
       class="ai-chat__body layout column gap-6 pa-4"
     >
       <ai-chat-greeting v-if="emptyChat" />
-      <v-layout
-        class="ai-chat__messages gap-3"
-        column
-      >
-        <template v-for="message in messages">
-          <ai-chat-pattern
-            v-if="message.patterns"
-            :key="message._id"
-            :version="message.version"
-            :active="message.version === activeVersion"
-            :patterns="message.patterns"
-            :original-version="message.originalVersion"
-            @restore:version="restoreVersion"
-          />
-          <ai-chat-message
-            v-else
-            :key="`${message._id}-message`"
-            :message="message"
-          />
-        </template>
-        <ai-chat-message
-          v-if="thinkingMessage"
-          :key="thinkingMessage._id"
-          :message="thinkingMessage"
-        />
-      </v-layout>
+      <ai-chat-messages-list
+        :messages="messages"
+        :thinking-message="thinkingMessage"
+        :active-version="activeVersion"
+        @restore:version="restoreVersion"
+      />
     </div>
     <v-layout
       :justify-end="!emptyChat"
@@ -77,19 +57,17 @@ import { SIDE_BARS } from '@/constants';
 
 import { useAiChat } from '@/hooks/ai/ai-chat';
 
-import AiChatGreeting from './partials/ai-chat-greeting.vue';
-import AiChatMessage from './partials/ai-chat-message.vue';
-import AiChatPattern from './partials/ai-chat-pattern.vue';
-import AiChatSuggestions from './partials/ai-chat-suggestions.vue';
-import AiChatTextarea from './partials/ai-chat-textarea.vue';
-import AiChatWarningAlert from './partials/ai-chat-warning-alert.vue';
+import AiChatMessagesList from '@/components/other/llm/chat/ai-chat-messages-list.vue';
+import AiChatGreeting from '@/components/other/llm/chat/ai-chat-greeting.vue';
+import AiChatSuggestions from '@/components/other/llm/chat/ai-chat-suggestions.vue';
+import AiChatTextarea from '@/components/other/llm/chat/ai-chat-textarea.vue';
+import AiChatWarningAlert from '@/components/other/llm/chat/ai-chat-warning-alert.vue';
 
 export default {
   name: SIDE_BARS.aiChat,
   components: {
+    AiChatMessagesList,
     AiChatGreeting,
-    AiChatMessage,
-    AiChatPattern,
     AiChatSuggestions,
     AiChatTextarea,
     AiChatWarningAlert,
@@ -119,16 +97,6 @@ export default {
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
-  }
-
-  /* Override Vuetify `.layout { flex: 1 1 auto }` so `padding-bottom` stays under the last message. */
-  &__messages {
-    flex: 0 0 auto !important;
-    min-height: 0;
-
-    > * {
-      flex: 0 0 auto !important;
-    }
   }
 }
 </style>

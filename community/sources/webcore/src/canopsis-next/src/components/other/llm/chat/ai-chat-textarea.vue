@@ -68,7 +68,7 @@ import { sanitizeHtml } from '@/helpers/html';
 
 import { useValidator } from '@/hooks/validator/validator';
 
-import AiChatLlmField from './ai-chat-llm-field.vue';
+import AiChatLlmField from './partials/ai-chat-llm-field.vue';
 
 export default {
   $_veeValidate: {
@@ -146,7 +146,7 @@ export default {
 
       emit('ask', {
         llm: props.llm?._id,
-        prompt: props.prompt,
+        prompt: props.prompt.trim(),
       });
     };
 

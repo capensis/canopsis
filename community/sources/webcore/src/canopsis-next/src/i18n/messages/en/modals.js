@@ -320,6 +320,9 @@ export default {
       isNotEmpty: 'The group is not empty',
     },
   },
+  aiChatHistory: {
+    title: 'Chat history',
+  },
   alarmsList: {
     title: 'Alarm list',
     prefixTitle: '{prefix} - alarm list',

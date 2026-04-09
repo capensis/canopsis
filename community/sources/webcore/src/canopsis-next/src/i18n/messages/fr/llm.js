@@ -1,4 +1,9 @@
-import { LLM_AI_CHAT_ERROR_CODES, LLM_AI_CHAT_SUGGESTION_TYPES, LLM_THINKING_LEVELS } from '@/constants';
+import {
+  LLM_AI_CHAT_ERROR_CODES,
+  LLM_AI_CHAT_SUGGESTION_TYPES,
+  LLM_SOCKET_CONTEXTS,
+  LLM_THINKING_LEVELS,
+} from '@/constants';
 
 export default {
   expandTabs: {
@@ -9,27 +14,52 @@ export default {
       allPrompts: 'Toutes les invites',
     },
     expandUserHistory: {
-      empty: 'Aucune invite pour cet utilisateur.',
       lastPromptDate: 'Date de la dernière invite',
     },
     filterByUser: 'Filtrer par utilisateur',
     groupByChat: 'Regrouper par conversation',
-    onlyOffTopic: 'Hors sujet uniquement',
+    notRelatedToCanopsis: 'Sans lien avec Canopsis',
     allUsers: 'Tous les utilisateurs',
     search: 'Rechercher par utilisateur, modal ou nom',
     searchByUserName: "Rechercher par nom d'utilisateur",
     searchByModalOrName: 'Rechercher par modal ou nom',
     userHistoryTitle: 'Historique utilisateur',
     userHistoryEmpty: 'Aucun utilisateur pour cette configuration.',
+    ruleNotSaved: 'Non enregistré',
     columns: {
       userName: 'Utilisateur',
       datetime: 'Date et heure',
       tokensUsed: 'Jetons utilisés',
-      context: 'Contexte',
-      name: 'Nom',
-      offTopic: 'Hors sujet',
+      modal: 'Modal',
+      usage: 'Utilisation',
+      canopsisRelated: 'Lié à Canopsis',
       prompt: 'Invite',
       lastUsed: 'Dernière utilisation',
+    },
+    contextTitles: {
+      [LLM_SOCKET_CONTEXTS.idleRule]: 'Règle d\'inactivité',
+      [LLM_SOCKET_CONTEXTS.scenario]: 'Scénario',
+      [LLM_SOCKET_CONTEXTS.flappingRule]: 'Règle de flapping',
+      [LLM_SOCKET_CONTEXTS.resolveRule]: 'Règle de résolution',
+      [LLM_SOCKET_CONTEXTS.alarmTag]: 'Étiquette d\'alarme',
+      [LLM_SOCKET_CONTEXTS.linkRule]: 'Générateur de liens',
+      [LLM_SOCKET_CONTEXTS.instruction]: 'Instruction de remédiation',
+      [LLM_SOCKET_CONTEXTS.dynamicInfos]: 'Information dynamique',
+      [LLM_SOCKET_CONTEXTS.metaAlarmRule]: 'Règle d\'alarme méta',
+      [LLM_SOCKET_CONTEXTS.declareTicketRule]: 'Règle de déclaration de ticket',
+      [LLM_SOCKET_CONTEXTS.pbehavior]: 'Comportement périodique',
+      [LLM_SOCKET_CONTEXTS.entityService]: 'Service',
+      [LLM_SOCKET_CONTEXTS.stateSettings]: 'Méthode de calcul d\'état',
+      [LLM_SOCKET_CONTEXTS.entity]: 'Entité',
+      [LLM_SOCKET_CONTEXTS.kpiFilter]: 'Filtre KPI',
+      [LLM_SOCKET_CONTEXTS.eventFilter]: 'Règle de filtre d\'événements',
+      [LLM_SOCKET_CONTEXTS.eventRecord]: 'Enregistrement d\'événements',
+      [LLM_SOCKET_CONTEXTS.serviceWeather]: 'Météo du service',
+      [LLM_SOCKET_CONTEXTS.widgetFilter]: 'Filtre de widget',
+      [LLM_SOCKET_CONTEXTS.corporateAlarmPattern]: 'Filtre partagé d\'alarme',
+      [LLM_SOCKET_CONTEXTS.corporateEntityPattern]: 'Filtre partagé d\'entité',
+      [LLM_SOCKET_CONTEXTS.corporatePbehaviorPattern]: 'Filtre partagé de comportement périodique',
+      [LLM_SOCKET_CONTEXTS.corporateWeatherServicePattern]: 'Modèle partagé de météo des services',
     },
   },
   modelType: 'Type de modèle LLM',
@@ -61,9 +91,9 @@ export default {
     howCanIHelp: 'Comment puis-je vous aider ?',
     promptPlaceholder: 'Décrivez votre besoin…',
     ask: 'Demander',
-    chatHistoryTitle: 'Historique du chat',
     thinking: 'Réflexion en cours…',
     tryLabel: 'Essayez :',
+    restartConfirmation: 'Redémarrer la conversation ? <strong>L\'historique</strong> et les <strong>versions</strong> seront effacés.',
     suggestions: {
       createPattern: 'Créer un modèle',
       editPattern: 'Éditer le modèle',
@@ -73,7 +103,7 @@ export default {
     patternsEditedMessage: 'Vous avez modifié {patterns} modèle | Vous avez modifié {patterns} modèles',
     patternCreatedMessage: 'Modèles créés',
     patternUpdatedMessage: 'Modèles mis à jour',
-    emptyPatternsMessage: 'Modèles vides',
+    emptyPatternsMessage: 'Vous avez supprimé tous les modèles.\nSi vous devez effacer le contexte, redémarrez l\'assistant IA.',
     patternCannotBeCreatedReasons: 'Le modèle ne peut pas être créé pour les raisons suivantes :\n',
     fixPatternPrompt: 'Corriger le modèle :\n{jsonString}',
     suggestionPrompts: {
@@ -108,6 +138,9 @@ export default {
         + '<strong>Veuillez réessayer plus tard.</strong>',
       noModels:
         'Aucun modèle d\'IA n\'est actuellement disponible.<br />'
+        + '<strong>Veuillez contacter votre administrateur.</strong>',
+      serverError:
+        'Problème de connexion au socket.<br />'
         + '<strong>Veuillez contacter votre administrateur.</strong>',
     },
   },

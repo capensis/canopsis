@@ -2,7 +2,7 @@
   <c-page
     :creatable="hasCreateAnyLlmAccess"
     :create-tooltip="$t('modals.createLlm.create.title')"
-    @refresh="fetchList"
+    @refresh="refresh"
     @create="showCreateLlmModal"
   >
     <div class="pa-4 pb-2">
@@ -33,6 +33,7 @@ import { useCRUDPermissions } from '@/hooks/auth';
 import { useModals } from '@/hooks/modals';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useLlm } from '@/hooks/store/modules/llm';
+import { useObserver } from '@/hooks/observer';
 
 import LlmsImportantNotesBanner from '@/components/other/llm/partials/llms-important-notes-banner.vue';
 import LlmsList from '@/components/other/llm/llms-list.vue';
@@ -128,7 +129,14 @@ export default {
       },
     });
 
-    onMounted(fetchList);
+    const { observer } = useObserver({ key: '$refresh' });
+
+    const refresh = () => observer.notify();
+
+    onMounted(() => {
+      observer.register(fetchList);
+      fetchList();
+    });
 
     return {
       hasCreateAnyLlmAccess,
@@ -141,7 +149,7 @@ export default {
       options,
       updateOptions,
 
-      fetchList,
+      refresh,
       showCreateLlmModal,
       showEditLlmModal,
       showRemoveLlmModal,
