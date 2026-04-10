@@ -61,19 +61,19 @@
     <template #actions="{ item }">
       <v-layout>
         <c-action-btn
+          :tooltip="item.is_recording ? $t('eventsRecord.viewPattern') : $t('eventsRecord.viewEventsAndPattern')"
+          icon="pageview"
+          color="#6A6A6A"
+          @click="show(item)"
+        />
+        <c-action-btn
           v-if="item.is_recording"
           :tooltip="$t('eventsRecord.stop')"
           color="blue darken-3"
           icon="stop"
           @click="stop(item._id)"
         />
-        <c-action-btn
-          :tooltip="item.is_recording ? $t('eventsRecord.viewPattern') : $t('eventsRecord.viewEventsAndPattern')"
-          icon="pageview"
-          color="#6A6A6A"
-          @click="show(item)"
-        />
-        <template v-if="!item.is_recording">
+        <template v-else>
           <events-record-download-btn :events-record-id="item._id" icon />
           <c-action-btn
             type="delete"

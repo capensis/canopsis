@@ -148,7 +148,7 @@ export default {
     const { stopRecording } = useEventsRecordRecording(config.value.fetchList);
 
     const recording = computed(() => recordingsById.value[eventsRecordId.value]);
-    const count = computed(() => recording.value?.n || config.value.eventsRecord.n || 0);
+    const count = computed(() => recording.value?.n || config.value.eventsRecord?.count || 0);
     const isRecording = computed(() => !!recording.value);
     const isResending = computed(() => !!resendingsById.value[eventsRecordId.value]);
 
