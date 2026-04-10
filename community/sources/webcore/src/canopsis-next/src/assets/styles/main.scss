@@ -154,8 +154,33 @@ html {
   }
 }
 
-.v-tab.v-tab--disabled {
-  opacity: .5;
+.v-tab {
+  &.v-tab--disabled {
+    opacity: .5;
+  }
+
+  &--tooltip {
+    padding: 0;
+
+    &.v-tab--disabled {
+      cursor: default;
+
+      &, * {
+        pointer-events: auto;
+      }
+
+      &:before, .v-ripple__container {
+        display: none;
+      }
+    }
+
+    span:not(.v-tooltip) {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding: 0 16px;
+    }
+  }
 }
 
 .c-nowrap {

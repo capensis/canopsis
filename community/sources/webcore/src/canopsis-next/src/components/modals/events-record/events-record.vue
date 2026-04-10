@@ -6,25 +6,65 @@
       </template>
       <template #text="">
         <events-record-events-header
-          :events-record-id="eventsRecordId"
-          :count="config.eventsRecord.count"
+          :count="count"
+          :is-recording="isRecording"
           @remove="remove"
-          @apply:filter="applyEventFilter"
+          @stop:recording="stopRecording(eventsRecordId)"
         />
-        <events-record-events-list
-          :events-record-id="eventsRecordId"
-          :events="events"
-          :pending="pending"
-          :resending="resending"
-          :resending-disabled="resendingDisabled"
-          :options="query"
-          :total-items="meta.total_count"
-          @remove="removeEvent"
-          @remove:selected="removeEvents"
-          @start:resending="startResending(eventsRecordId, $event)"
-          @stop:resending="stopResending"
-          @update:options="updateOptions"
-        />
+        <v-tabs v-model="activeTab" centered>
+          <v-tab
+            :href="`#${TABS.events}`"
+            :disabled="isRecording"
+            class="v-tab--tooltip"
+          >
+            <v-tooltip :disabled="!isRecording" bottom>
+              <template #activator="{ on }">
+                <span v-on="on">
+                  {{ $t('modals.eventsRecord.eventsTab') }}
+                </span>
+              </template>
+              <span>{{ $t('eventsRecord.eventsAreLoading') }}</span>
+            </v-tooltip>
+          </v-tab>
+          <v-tab :href="`#${TABS.pattern}`">
+            {{ $t('modals.eventsRecord.patternTab') }}
+          </v-tab>
+          <v-tabs-items v-model="activeTab">
+            <v-tab-item :value="TABS.events">
+              <div>
+                <events-record-events-filter
+                  :events-record-id="eventsRecordId"
+                  :count="config.eventsRecord.count"
+                  :has-filter-applied="hasFilterApplied"
+                  @apply:filter="applyEventFilter"
+                  @reset:filter="resetFilter"
+                />
+                <events-record-events-list
+                  :events-record-id="eventsRecordId"
+                  :events="events"
+                  :pending="pending"
+                  :resending="isResending"
+                  :resending-disabled="resendingDisabled"
+                  :options="query"
+                  :total-items="meta.total_count"
+                  @remove="removeEvent"
+                  @remove:selected="removeEvents"
+                  @start:resending="startResending(eventsRecordId, $event)"
+                  @stop:resending="stopResending(eventsRecordId)"
+                  @update:options="updateOptions"
+                />
+              </div>
+            </v-tab-item>
+            <v-tab-item :value="TABS.pattern">
+              <v-layout class="mt-4" column>
+                <c-event-filter-patterns-field
+                  :patterns="patternForm"
+                  readonly
+                />
+              </v-layout>
+            </v-tab-item>
+          </v-tabs-items>
+        </v-tabs>
       </template>
       <template #actions="">
         <v-btn
@@ -40,12 +80,13 @@
 </template>
 
 <script>
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, watch, onMounted } from 'vue';
 
 import { MODALS, EVENT_FILTER_PATTERN_FIELDS } from '@/constants';
 
 import { pickIds } from '@/helpers/array';
 import { convertDateToString } from '@/helpers/date/date';
+import { patternToForm } from '@/helpers/entities/pattern/form';
 
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
@@ -55,15 +96,27 @@ import { useEventsRecordCurrent } from '@/hooks/store/modules/events-record-curr
 import { useQueryOptions } from '@/hooks/query/options';
 
 import { useEventsRecordResending } from '@/components/other/events-record/hooks/resending';
+import { useEventsRecordRecording } from '@/components/other/events-record/hooks/recording';
 
 import EventsRecordEventsHeader from '@/components/other/events-record/events-record-events-header.vue';
+import EventsRecordEventsFilter from '@/components/other/events-record/events-record-events-filter.vue';
 import EventsRecordEventsList from '@/components/other/events-record/events-record-events-list.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
+const TABS = {
+  events: 'events',
+  pattern: 'pattern',
+};
+
 export default {
   name: MODALS.eventsRecord,
-  components: { EventsRecordEventsHeader, EventsRecordEventsList, ModalWrapper },
+  components: {
+    EventsRecordEventsHeader,
+    EventsRecordEventsFilter,
+    EventsRecordEventsList,
+    ModalWrapper,
+  },
   props: {
     modal: {
       type: Object,
@@ -73,16 +126,13 @@ export default {
   setup(props) {
     const events = ref([]);
     const meta = ref({});
+    const activeTab = ref(TABS.events);
 
     const { t } = useI18n();
     const { config, close, modals } = useInnerModal(props);
 
     const eventsRecord = computed(() => config.value.eventsRecord);
     const eventsRecordId = computed(() => eventsRecord.value._id);
-
-    const title = computed(() => (
-      t('modals.eventsRecord.title', { date: convertDateToString(eventsRecord.value.t) })
-    ));
 
     /**
      * EVENTS RECORD STORE MODULES
@@ -94,10 +144,29 @@ export default {
       fetchEventsRecordEventsListWithoutStore,
     } = useEventsRecord();
 
-    const { current } = useEventsRecordCurrent();
+    const { recordingsById, resendingsById } = useEventsRecordCurrent();
+    const { stopRecording } = useEventsRecordRecording(config.value.fetchList);
 
-    const resending = computed(() => current.value.is_resending && current.value._id === eventsRecordId.value);
-    const resendingDisabled = computed(() => current.value.is_recording || current.value.is_resending);
+    const recording = computed(() => recordingsById.value[eventsRecordId.value]);
+    const count = computed(() => recording.value?.n || config.value.eventsRecord?.count || 0);
+    const isRecording = computed(() => !!recording.value);
+    const isResending = computed(() => !!resendingsById.value[eventsRecordId.value]);
+
+    const patternForm = computed(() => (
+      patternToForm({ event_pattern: eventsRecord.value.pattern })
+    ));
+
+    const title = computed(() => (
+      t('modals.eventsRecord.title', { date: convertDateToString(eventsRecord.value.t) })
+    ));
+
+    const resendingDisabled = computed(() => isRecording.value || isResending.value);
+
+    watch(isRecording, (newIsRecording) => {
+      if (newIsRecording && activeTab.value === TABS.events) {
+        activeTab.value = TABS.pattern;
+      }
+    }, { immediate: true });
 
     /**
      * QUERY
@@ -108,6 +177,7 @@ export default {
       fetchHandlerWithQuery: fetchList,
       updateQuery,
       updateQueryField,
+      removeQueryField,
     } = usePendingWithLocalQuery({
       fetchHandler: async (fetchQuery) => {
         const response = await fetchEventsRecordEventsListWithoutStore({
@@ -125,6 +195,10 @@ export default {
     });
 
     const { updateOptions } = useQueryOptions(query, updateQuery);
+
+    const hasFilterApplied = computed(() => query.value.event_pattern !== undefined);
+
+    const resetFilter = () => removeQueryField('event_pattern');
 
     /**
      * RESEND
@@ -209,6 +283,7 @@ export default {
     onMounted(() => fetchList(query.value));
 
     return {
+      TABS,
       eventsRecordId,
       events,
       pending,
@@ -216,10 +291,16 @@ export default {
       config,
       query,
       title,
-      resending,
+      activeTab,
+      count,
+      isRecording,
+      hasFilterApplied,
+      patternForm,
+      isResending,
       resendingDisabled,
 
       close,
+      resetFilter,
       updateOptions,
       remove,
       removeEvent,
@@ -228,6 +309,7 @@ export default {
 
       startResending,
       stopResending,
+      stopRecording,
     };
   },
 };

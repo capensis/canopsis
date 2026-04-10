@@ -12,6 +12,9 @@
             :cancel-button-label="chatPendingTexts.cancel"
             @cancel="chatCancel"
           />
+          <v-alert v-if="config.infoAlert" class="mb-4" type="info">
+            {{ config.infoAlert }}
+          </v-alert>
           <c-event-filter-patterns-field
             v-model="form"
             :excluded-attributes="config.excludedAttributes"
