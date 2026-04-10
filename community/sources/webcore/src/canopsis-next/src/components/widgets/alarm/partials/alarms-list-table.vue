@@ -947,6 +947,7 @@ export default {
     }
 
     .alarm-list-row__cell {
+      .alarm-column-cell__text,
       .alarm-column-cell__text > span,
       .alarm-column-value {
         overflow: hidden;
