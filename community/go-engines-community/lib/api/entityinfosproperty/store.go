@@ -7,7 +7,7 @@ import (
 	"regexp"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -69,10 +69,7 @@ func NewStore(
 			dbClient.Collection(libmongo.ScenarioCollection),
 			dbClient.Collection(libmongo.StateSettingsMongoCollection),
 		},
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"name":  "Name already exists.",
-			"alias": "Alias already exists.",
-		}),
+		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -91,7 +88,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, r)
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -134,7 +131,7 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
 	pipeline := s.authorProvider.Pipeline()
 
-	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if filter == nil {
 		filter = bson.M{}
 	}
@@ -150,7 +147,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(query.SortBy, "created"), query.Sort),
+		mongoquery.GetSortQuery(cmp.Or(query.SortBy, "created"), query.Sort),
 	))
 
 	if err != nil {
@@ -191,7 +188,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			}
 
 			if mongo.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err

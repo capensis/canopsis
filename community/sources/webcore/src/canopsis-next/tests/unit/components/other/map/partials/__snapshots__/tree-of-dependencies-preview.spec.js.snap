@@ -45,7 +45,7 @@ exports[`tree-of-dependencies-preview Renders \`tree-of-dependencies-preview\` w
                 <i
                   class="v-icon material-icons theme--light white--text tree-of-dependencies__node-icon"
                 >
-                  [object Object]
+                  engineering
                 </i>
                 <div
                   class="position-absolute"

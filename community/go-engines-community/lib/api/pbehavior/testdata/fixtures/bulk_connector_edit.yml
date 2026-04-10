@@ -30,7 +30,7 @@ pbehavior:
     color: <HexColor()>
     rrule: ""
     reason: default_reason
-    type_: default_maintenance
+    type: default_maintenance
     author: root
     created: <NowUnix()>
     updated: <Current().created>

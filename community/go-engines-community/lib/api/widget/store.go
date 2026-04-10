@@ -8,19 +8,23 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	tplvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -48,8 +52,8 @@ func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
 	enforcer security.Enforcer,
-	transformer common.PatternFieldsTransformer,
-	tplValidator validator.Validator,
+	transformer patternfields.Transformer,
+	tplValidator tplvalidator.Validator,
 	tplConfigProvider config.TemplateConfigProvider,
 ) Store {
 	return &store{
@@ -62,6 +66,9 @@ func NewStore(
 		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
 		tplTestCollection:         dbClient.Collection(mongo.TemplateTestCollection),
 		entityInfosPropCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		commentTemplateCollection: dbClient.Collection(mongo.CommentTemplateMongoCollection),
+		pbhTypeCollection:         dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
+		pbhReasonCollection:       dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
 		authorProvider:            authorProvider,
 		transformer:               transformer,
 		enforcer:                  enforcer,
@@ -90,10 +97,13 @@ type store struct {
 	alarmCollection           mongo.DbCollection
 	tplTestCollection         mongo.DbCollection
 	entityInfosPropCollection mongo.DbCollection
+	commentTemplateCollection mongo.DbCollection
+	pbhTypeCollection         mongo.DbCollection
+	pbhReasonCollection       mongo.DbCollection
 	authorProvider            author.Provider
-	transformer               common.PatternFieldsTransformer
+	transformer               patternfields.Transformer
 	enforcer                  security.Enforcer
-	tplValidator              validator.Validator
+	tplValidator              tplvalidator.Validator
 	tplConfigProvider         config.TemplateConfigProvider
 	tplVars                   []template.VarResponse
 }
@@ -165,9 +175,17 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			},
 			"as": "filters",
 		}},
+		{"$lookup": bson.M{
+			"from":         mongo.CommentTemplateMongoCollection,
+			"localField":   "parameters.comment_templates",
+			"foreignField": "_id",
+			"as":           "comment_templates",
+		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$comment_templates", "preserveNullAndEmptyArrays": true}},
 	}
 	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("comment_templates.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
@@ -178,10 +196,16 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 				"then": "$filters",
 				"else": "$$REMOVE",
 			}}},
+			"comment_templates": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$comment_templates._id",
+				"then": "$comment_templates",
+				"else": "$$REMOVE",
+			}}},
 		}},
 		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
 			"$data",
 			bson.M{"filters": "$filters"},
+			bson.M{"comment_templates": "$comment_templates"},
 		}}}},
 	)
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
@@ -211,18 +235,22 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		return nil, err
 	}
 
+	if tabInfo.ID == "" {
+		return nil, validation.NewSingleError("not_exist", "Tab", "Tab", r)
+	}
+
 	if tabInfo.IsPrivate && tabInfo.Author != r.Author {
-		return nil, common.NewValidationError("tab", "Tab is private.")
+		return nil, validation.NewSingleError("not_exist", "Tab", "Tab", r)
 	}
 
 	if !tabInfo.IsPrivate {
 		ok, err := s.enforcer.Enforce(r.Author, tabInfo.View, model.PermissionUpdate)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
 		if !ok {
-			return nil, common.NewValidationError("tab", "Can't modify a tab.")
+			return nil, httperror.NewForbiddenError("")
 		}
 	}
 
@@ -244,7 +272,35 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
+		patterns, aliases, err := s.fetchPatterns(ctx, r.Filters)
+		if err != nil {
+			return err
+		}
+
+		var valErrs validator.ValidationErrors
+
+		for i := range r.Parameters.CommentTemplates {
+			err := s.commentTemplateCollection.FindOne(ctx, bson.M{"_id": r.Parameters.CommentTemplates[i]}).Err()
+			if err != nil {
+				if errors.Is(err, mongodriver.ErrNoDocuments) {
+					valErrs = append(valErrs, validation.NewFieldError("not_exist", strconv.Itoa(i), "Parameters.CommentTemplates."+strconv.Itoa(i)))
+					continue
+				}
+
+				return err
+			}
+		}
+
 		filters := make([]view.WidgetFilter, len(r.Filters))
+		if len(r.EditRequest.Parameters.FastPbehaviors) > 0 {
+			pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
+			if err != nil {
+				return err
+			}
+
+			valErrs = append(valErrs, pbhValErrs...)
+		}
+
 		for i, filterRequest := range r.Filters {
 			doc := view.WidgetFilter{
 				ID:               utils.NewID(),
@@ -262,15 +318,20 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 				widget.Parameters.MainFilter = doc.ID
 			}
 
-			err = s.transformPatternRequestsToModel(ctx, filterRequest, i, &doc)
-			if err != nil {
-				return err
+			fErrs := s.transformPatternRequestsToModel(filterRequest, i, &doc, patterns, aliases)
+			if fErrs != nil {
+				valErrs = append(valErrs, fErrs...)
+				continue
 			}
 
 			filters[i] = doc
 		}
 
-		_, err := s.collection.InsertOne(ctx, widget)
+		if len(valErrs) > 0 {
+			return validation.NewError(valErrs, r)
+		}
+
+		_, err = s.collection.InsertOne(ctx, widget)
 		if err != nil {
 			return err
 		}
@@ -287,6 +348,35 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	})
 
 	return response, err
+}
+
+func (s *store) validateFastPbehaviors(ctx context.Context, r EditRequest) (validator.ValidationErrors, error) {
+	pbhTypesMap, err := GetPbehaviorTypesMap(ctx, s.pbhTypeCollection)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get pbh types map: %w", err)
+	}
+
+	pbhReasonsMap, err := GetPbehaviorReasonsMap(ctx, s.pbhReasonCollection)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get pbh reasons map: %w", err)
+	}
+
+	var valErrs validator.ValidationErrors
+
+	for i, fastPbh := range r.Parameters.FastPbehaviors {
+		t, ok := pbhTypesMap[fastPbh.Type]
+		if !ok {
+			valErrs = append(valErrs, validation.NewFieldError("not_exist", "Type", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Type"))
+		} else if t != pbehavior.TypePause {
+			valErrs = append(valErrs, validation.NewFieldError("pbh_type_not_pause", "Type", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Type"))
+		}
+
+		if !pbhReasonsMap[fastPbh.Reason] {
+			valErrs = append(valErrs, validation.NewFieldError("not_exist", "Reason", "Parameters.FastPbehaviors."+strconv.Itoa(i)+".Reason"))
+		}
+	}
+
+	return valErrs, nil
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
@@ -311,6 +401,34 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
+		patterns, aliases, err := s.fetchPatterns(ctx, r.Filters)
+		if err != nil {
+			return err
+		}
+
+		var valErrs validator.ValidationErrors
+
+		for i := range r.Parameters.CommentTemplates {
+			err := s.commentTemplateCollection.FindOne(ctx, bson.M{"_id": r.Parameters.CommentTemplates[i]}).Err()
+			if err != nil {
+				if errors.Is(err, mongodriver.ErrNoDocuments) {
+					valErrs = append(valErrs, validation.NewFieldError("not_exist", strconv.Itoa(i), "Parameters.CommentTemplates."+strconv.Itoa(i)))
+					continue
+				}
+
+				return err
+			}
+		}
+
+		if len(r.EditRequest.Parameters.FastPbehaviors) > 0 {
+			pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
+			if err != nil {
+				return err
+			}
+
+			valErrs = append(valErrs, pbhValErrs...)
+		}
+
 		filters := make(map[string]view.WidgetFilter, len(r.Filters))
 		for i, filterRequest := range r.Filters {
 			doc := view.WidgetFilter{
@@ -323,12 +441,17 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 				Updated:          now,
 			}
 
-			err = s.transformPatternRequestsToModel(ctx, filterRequest, i, &doc)
-			if err != nil {
-				return err
+			fErrs := s.transformPatternRequestsToModel(filterRequest, i, &doc, patterns, aliases)
+			if fErrs != nil {
+				valErrs = append(valErrs, fErrs...)
+				continue
 			}
 
 			filters[filterRequest.ID] = doc
+		}
+
+		if len(valErrs) > 0 {
+			return validation.NewError(valErrs, r)
 		}
 
 		cursor, err := s.filterCollection.Find(ctx, bson.M{"widget": widget.ID, "is_user_preference": false})
@@ -477,18 +600,33 @@ func (s *store) Copy(ctx context.Context, widgetID string, r CreateRequest) (*Re
 			return err
 		}
 
+		if tabInfo.ID == "" {
+			return validation.NewSingleError("not_exist", "Tab", "Tab", r)
+		}
+
 		if tabInfo.IsPrivate && tabInfo.Author != r.Author {
-			return common.NewValidationError("tab", "Tab is private.")
+			return validation.NewSingleError("not_exist", "Tab", "Tab", r)
 		}
 
 		if !tabInfo.IsPrivate {
 			ok, err := s.enforcer.Enforce(r.Author, tabInfo.View, model.PermissionUpdate)
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			if !ok {
-				return common.NewValidationError("tab", "Can't modify a tab.")
+				return httperror.NewForbiddenError("")
+			}
+		}
+
+		if len(r.EditRequest.Parameters.FastPbehaviors) > 0 {
+			pbhValErrs, err := s.validateFastPbehaviors(ctx, r.EditRequest)
+			if err != nil {
+				return err
+			}
+
+			if len(pbhValErrs) > 0 {
+				return validation.NewError(pbhValErrs, r)
 			}
 		}
 
@@ -556,7 +694,7 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 			if tabId == "" {
 				tabId = w.Tab
 			} else if tabId != w.Tab {
-				return ValidationError{error: errors.New("widgets are related to different view tabs")}
+				return validation.NewSingleError("not_applicable", "items", "items", nil)
 			}
 		}
 
@@ -565,7 +703,7 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 			return err
 		}
 		if count != int64(len(items)) {
-			return ValidationError{error: errors.New("widgets are missing")}
+			return validation.NewSingleErrorWithParam("slicelen", "items", "items", strconv.FormatInt(count, 10), nil)
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(widgets))
@@ -599,12 +737,16 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 
 	if r.TestData.Alarm == "" {
 		if alarm.Alarm.ID == "" {
-			return nil, common.NewValidationError("testdata.alarm", "Alarm is missing.")
+			return nil, validation.NewSingleError("required", "Alarm", "TestData.Alarm", r)
 		}
 	} else if r.TestData.Alarm != alarm.Alarm.ID { // keep snapshot from the test
 		alarm, err = s.findAlarm(ctx, r.TestData.Alarm)
 		if err != nil {
 			return nil, err
+		}
+
+		if alarm.Alarm.ID == "" {
+			return nil, validation.NewSingleError("not_exist", "Alarm", "TestData.Alarm", r)
 		}
 	}
 
@@ -644,7 +786,7 @@ func (s *store) getTabPrivacySettings(ctx context.Context, tabID string) (apisec
 
 	err := s.tabCollection.FindOne(ctx, bson.M{"_id": tabID}).Decode(&tabInfo)
 	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {
-		return tabInfo, common.NewValidationError("tab", "Tab doesn't exist.")
+		return tabInfo, nil
 	}
 
 	return tabInfo, err
@@ -736,50 +878,37 @@ func (s *store) copy(ctx context.Context, widgetID string, isPrivate bool, r Cre
 	return s.GetOneBy(ctx, newWidget.ID)
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, r FilterRequest, i int, model *view.WidgetFilter) error {
-	var valErr common.ValidationError
-
-	transformedAlarmPattern, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, r.AlarmPatternFieldsRequest)
-	if err != nil {
-		if errors.As(err, &valErr) {
-			return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
-		}
-
-		return err
+func (s *store) transformPatternRequestsToModel(
+	r FilterRequest,
+	idx int,
+	model *view.WidgetFilter,
+	patterns patternfields.Patterns,
+	aliases patternfields.Aliases,
+) validator.ValidationErrors {
+	filtersFieldName := "Filters"
+	sIdx := strconv.Itoa(idx)
+	var valErrs, applyErrs validator.ValidationErrors
+	r.AlarmRequest, applyErrs = s.transformer.ApplyAlarmCorporatePattern(r.AlarmRequest, patterns, filtersFieldName, sIdx, "CorporateAlarmPattern")
+	valErrs = append(valErrs, applyErrs...)
+	if r.CorporateEntityPattern != "" {
+		r.EntityRequest, model.Aliases, applyErrs = s.transformer.ApplyEntityCorporatePattern(r.EntityRequest, patterns, filtersFieldName, sIdx, "CorporateEntityPattern")
+	} else if r.EntityPattern != nil {
+		r.EntityPattern, model.Aliases, applyErrs = s.transformer.ApplyAliases(r.EntityPattern, aliases, filtersFieldName, sIdx, "EntityPattern")
 	}
 
-	transformedEntityPattern, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r.EntityPatternFieldsRequest)
-	if err != nil {
-		if errors.As(err, &valErr) {
-			return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
-		}
-
-		return err
+	valErrs = append(valErrs, applyErrs...)
+	r.PbehaviorRequest, applyErrs = s.transformer.ApplyPbehaviorCorporatePattern(r.PbehaviorRequest, patterns, filtersFieldName, sIdx, "CorporatePbehaviorPattern")
+	valErrs = append(valErrs, applyErrs...)
+	r.WeatherServiceRequest, applyErrs = s.transformer.ApplyServiceWeatherCorporatePattern(r.WeatherServiceRequest, patterns, filtersFieldName, sIdx, "CorporateServiceWeatherPattern")
+	valErrs = append(valErrs, applyErrs...)
+	if len(valErrs) > 0 {
+		return valErrs
 	}
 
-	transformedPbehaviorPattern, err := s.transformer.TransformPbehaviorPatternFieldsRequest(ctx, r.PbehaviorPatternFieldsRequest)
-	if err != nil {
-		if errors.As(err, &valErr) {
-			return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
-		}
-
-		return err
-	}
-
-	transformedWeatherPattern, err := s.transformer.TransformWeatherServicePatternFieldsRequest(ctx, r.WeatherServicePatternFieldsRequest)
-	if err != nil {
-		if errors.As(err, &valErr) {
-			return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
-		}
-
-		return err
-	}
-
-	model.Aliases = transformedEntityPattern.Aliases
-	model.AlarmPatternFields = transformedAlarmPattern.ToModel()
-	model.EntityPatternFields = transformedEntityPattern.ToModel()
-	model.PbehaviorPatternFields = transformedPbehaviorPattern.ToModel()
-	model.WeatherServicePatternFields = transformedWeatherPattern.ToModel()
+	model.AlarmPatternFields = r.AlarmRequest.ToModel()
+	model.EntityPatternFields = r.EntityRequest.ToModel()
+	model.PbehaviorPatternFields = r.PbehaviorRequest.ToModel()
+	model.WeatherServicePatternFields = r.WeatherServiceRequest.ToModel()
 
 	return nil
 }
@@ -816,7 +945,7 @@ func (s *store) transformTemplateFields(ctx context.Context, r *EditRequest) err
 			}).Decode(&tpl)
 			if err != nil {
 				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return common.NewValidationError("parameters."+parameter+"Template", "Template doesn't exist.")
+					return validation.NewSingleError("not_exist", parameter+"Template", "parameters."+parameter+"Template", nil)
 				}
 
 				return err
@@ -836,6 +965,8 @@ func (s *store) transformTemplateFields(ctx context.Context, r *EditRequest) err
 			case view.WidgetTemplateTypeAlarmQuickActions,
 				view.WidgetTemplateTypeAlarmQuickMassActions:
 				parameters[key] = tpl.Actions
+			case view.WidgetTemplateTypeAlarmSortColumns:
+				parameters[key] = tpl.SortColumns
 			}
 		}
 	}
@@ -863,7 +994,7 @@ func (s *store) findAlarm(ctx context.Context, alarmID string) (types.AlarmWithE
 
 	defer cursor.Close(ctx)
 	if !cursor.Next(ctx) {
-		return types.AlarmWithEntity{}, common.NewValidationError("testdata.alarm", "Alarm doesn't exist.")
+		return types.AlarmWithEntity{}, nil
 	}
 
 	var alarm types.AlarmWithEntity
@@ -879,6 +1010,32 @@ func (s *store) findAlarm(ctx context.Context, alarmID string) (types.AlarmWithE
 	return alarm, nil
 }
 
+func (s *store) fetchPatterns(ctx context.Context, filters []FilterRequest) (patternfields.Patterns, patternfields.Aliases, error) {
+	patternIDs := make([]string, 0, len(filters)*4)
+	aliases := make([]string, 0, len(filters))
+	for _, fr := range filters {
+		patternIDs = append(patternIDs,
+			fr.CorporateEntityPattern,
+			fr.CorporateAlarmPattern,
+			fr.CorporatePbehaviorPattern,
+			fr.CorporateWeatherServicePattern,
+		)
+		aliases = append(aliases, patternfields.GetAliases(fr.EntityPattern)...)
+	}
+
+	patterns, err := s.transformer.FetchCorporatePatterns(ctx, patternIDs...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	aliasProps, err := s.transformer.FetchAliases(ctx, aliases)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return patterns, aliasProps, nil
+}
+
 func transformEditRequestToModel(r EditRequest) view.Widget {
 	return view.Widget{
 		Title:          r.Title,
@@ -887,4 +1044,65 @@ func transformEditRequestToModel(r EditRequest) view.Widget {
 		Parameters:     r.Parameters,
 		Author:         r.Author,
 	}
+}
+
+func GetPbehaviorTypesMap(ctx context.Context, coll mongo.DbCollection) (map[string]string, error) {
+	m := make(map[string]string)
+
+	cursor, err := coll.Find(ctx, bson.M{}, options.Find().SetProjection(bson.M{"_id": 1, "type": 1}))
+	if err != nil {
+		return nil, fmt.Errorf("failed to find pbh types: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var doc struct {
+			ID   string `bson:"_id"`
+			Type string `bson:"type"`
+		}
+
+		err = cursor.Decode(&doc)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode pbh type: %w", err)
+		}
+
+		m[doc.ID] = doc.Type
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, fmt.Errorf("failed to process pbh types mongodb cursor correctly: %w", err)
+	}
+
+	return m, nil
+}
+
+func GetPbehaviorReasonsMap(ctx context.Context, coll mongo.DbCollection) (map[string]bool, error) {
+	m := make(map[string]bool)
+
+	cursor, err := coll.Find(ctx, bson.M{}, options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		return nil, fmt.Errorf("failed to find pbh reasons: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var doc struct {
+			ID string `bson:"_id"`
+		}
+
+		err = cursor.Decode(&doc)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode pbh reason: %w", err)
+		}
+
+		m[doc.ID] = true
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, fmt.Errorf("failed to process pbh reason mongodb cursor correctly: %w", err)
+	}
+
+	return m, nil
 }

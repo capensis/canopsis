@@ -95,7 +95,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (map
 				s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
 			}
 
-			s.failureService.Add(rule.ID, rule.Description, FailureTypeInvalidPattern, "missing entity and event patterns", nil)
+			s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidPattern, "missing entity and event patterns", nil)
 			continue
 		}
 
@@ -103,7 +103,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (map
 			matched, eventRegexMatches, err = match.MatchEventPatternWithRegexMatches(rule.EventPattern, event)
 			if err != nil {
 				s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid event pattern")
-				s.failureService.Add(rule.ID, rule.Description, FailureTypeInvalidPattern, "invalid event pattern: "+err.Error(), nil)
+				s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidPattern, "invalid event pattern: "+err.Error(), nil)
 				continue
 			}
 
@@ -128,7 +128,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (map
 			matched, entityRegexMatches, err = match.MatchEntityPatternWithRegexMatches(rule.EntityPattern, event.Entity)
 			if err != nil {
 				s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid entity pattern")
-				s.failureService.Add(rule.ID, rule.Description, FailureTypeInvalidPattern, "invalid entity pattern: "+err.Error(), nil)
+				s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidPattern, "invalid entity pattern: "+err.Error(), nil)
 				continue
 			}
 
@@ -162,9 +162,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (map
 		}
 
 		updatedEntityInfos = res.UpdatedEntityInfos
-		if rule.Updated != nil {
-			s.eventCounter.Add(rule.ID, *rule.Updated)
-		}
+		s.eventCounter.Add(rule.ID, rule.Updated)
 
 		if rule.Type == RuleTypeEnrichment {
 			executedEnrichRuleCount++

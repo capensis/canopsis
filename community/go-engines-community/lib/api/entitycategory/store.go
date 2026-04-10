@@ -2,10 +2,10 @@ package entitycategory
 
 import (
 	"context"
-	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -31,9 +31,7 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		defaultSearchByFields: []string{"_id", "name"},
 		defaultSortBy:         "name",
 		authorProvider:        authorProvider,
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"name": "Name already exists.",
-		}),
+		dupErrorParser:        validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -53,7 +51,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"_id": bson.M{"$in": r.IDs}}})
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -66,7 +64,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, r.Sort),
+		mongoquery.GetSortQuery(sortBy, r.Sort),
 		s.authorProvider.Pipeline(),
 	))
 
@@ -126,7 +124,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		_, err := s.dbCollection.InsertOne(ctx, category)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, category)
 			}
 
 			return err
@@ -154,7 +152,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		)
 		if err != nil || res.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Category{})
 			}
 
 			return err
@@ -171,19 +169,17 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
-	err := s.entityCollection.FindOne(ctx, bson.M{"category": id, "soft_deleted": bson.M{"$exists": false}}).Err()
-	if err != nil {
-		if !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, err
-		}
-	} else {
-		return false, ErrLinkedCategoryToEntity
-	}
-
 	var deleted int64
-
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
+
+		err := dbvalidation.ValidateLinkedReference(ctx, s.entityCollection, bson.M{
+			"category":     id,
+			"soft_deleted": bson.M{"$exists": false},
+		}, "category", "an entity")
+		if err != nil {
+			return err
+		}
 
 		// required to get the author in action log listener.
 		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})

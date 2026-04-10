@@ -49,7 +49,7 @@
               </v-layout>
             </v-card-title>
             <v-card-text>
-              <p>{{ $t('common.template') }}:</p>
+              <p>{{ $tc('common.template', 1) }}:</p>
               <v-textarea
                 :value="popup.template"
                 disabled

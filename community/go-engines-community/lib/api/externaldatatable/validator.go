@@ -12,22 +12,23 @@ import (
 
 func ValidateRefParameters(sl validator.StructLevel, templateExecutor template.Executor, r []externaldata.RefParameters, availableTypes []string) {
 	for i, params := range r {
+		structNs := "ExternalData." + strconv.Itoa(i)
 		if !slices.Contains(availableTypes, params.Type) {
-			sl.ReportError(params.Type, "ExternalData."+strconv.Itoa(i)+".Type", "Type", "oneof", strings.Join(availableTypes, " "))
+			sl.ReportError(params.Type, "Type", structNs+".Type", "oneof", strings.Join(availableTypes, " "))
 			continue
 		}
 
 		switch params.Type {
 		case externaldata.RefTypeTable:
 			if params.Table == "" {
-				sl.ReportError(params.Table, "ExternalData."+strconv.Itoa(i)+".Table", "Table", "required", "")
+				sl.ReportError(params.Table, "Table", structNs+".Table", "required", "")
 			}
 
 			for k, v := range params.Regexp {
 				if v != "" {
 					parsedValue := templateExecutor.Parse(v)
 					if parsedValue.Err != nil {
-						sl.ReportError(v, "ExternalData."+strconv.Itoa(i)+".Regexp."+k, k, "template", "")
+						sl.ReportError(v, k, structNs+".Regexp."+k, "template", "")
 					}
 				}
 			}
@@ -36,13 +37,13 @@ func ValidateRefParameters(sl validator.StructLevel, templateExecutor template.E
 				if v != "" {
 					parsedValue := templateExecutor.Parse(v)
 					if parsedValue.Err != nil {
-						sl.ReportError(v, "ExternalData."+strconv.Itoa(i)+".Select."+k, k, "template", "")
+						sl.ReportError(v, k, structNs+".Select."+k, "template", "")
 					}
 				}
 			}
 		case externaldata.RefTypeAPI:
 			if params.Request == nil {
-				sl.ReportError(params.Request, "ExternalData."+strconv.Itoa(i)+".Request", "Request", "required", "")
+				sl.ReportError(params.Request, "Request", structNs+".Request", "required", "")
 				return
 			}
 		}

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 )
@@ -26,10 +26,10 @@ type EditRequest struct {
 type BaseEditRequest struct {
 	Title string `json:"title" binding:"required,max=255"`
 
-	common.AlarmPatternFieldsRequest
-	common.EntityPatternFieldsRequest
-	common.PbehaviorPatternFieldsRequest
-	common.WeatherServicePatternFieldsRequest
+	patternfields.AlarmRequest
+	patternfields.EntityRequest
+	patternfields.PbehaviorRequest
+	patternfields.WeatherServiceRequest
 }
 
 type CreateRequest struct {
@@ -64,7 +64,7 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 

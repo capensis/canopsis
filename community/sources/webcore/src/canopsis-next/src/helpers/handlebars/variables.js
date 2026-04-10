@@ -1,4 +1,5 @@
 import { Handlebars } from './handlebars';
+import { normalizeHandlebarsNbsp } from './normalize';
 
 /**
  * Get all node variables
@@ -75,5 +76,5 @@ const getVariablesFromNode = (node) => {
  * @returns {string[]}
  */
 export const getTemplateVariables = template => getVariablesFromNode(
-  Handlebars.parseWithoutProcessing(template),
+  Handlebars.parseWithoutProcessing(normalizeHandlebarsNbsp(template)),
 ).filter(variable => !Handlebars.helpers[variable]);

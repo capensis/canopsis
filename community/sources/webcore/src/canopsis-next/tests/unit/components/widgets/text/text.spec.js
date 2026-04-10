@@ -3,17 +3,25 @@ import axios from 'axios';
 
 import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
+import { uid } from '@/helpers/uid';
+
 import TextWidget from '@/components/widgets/text/text.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 
+jest.mock('@/helpers/uid');
+
 const stubs = {
+  'c-request-helper': true,
   'c-runtime-template': CRuntimeTemplate,
   'c-compiled-template': CCompiledTemplate,
 };
 
 describe('text', () => {
   const axiosMockAdapter = new AxiosMockAdapter(axios);
+
+  beforeEach(() => uid.mockReturnValue('request-helper-test-uid'));
+  afterEach(() => jest.clearAllMocks());
 
   const snapshotFactory = generateRenderer(TextWidget, {
     stubs,

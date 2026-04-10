@@ -15,8 +15,8 @@ import (
 )
 
 type Watcher interface {
-	StartWatch(ctx context.Context, connId, userID, roomId string, data any) error
-	StopWatch(connId, roomId string) error
+	StartWatch(ctx context.Context, opts websocket.JoinOptions) error
+	StopWatch(ctx context.Context, opts websocket.LeaveOptions) error
 }
 
 func NewWatcher(
@@ -57,15 +57,15 @@ type streamData struct {
 }
 
 // StartWatch creates a new stream change or adds a connection to an existed one if there is already a stream change with the same request.
-func (w *watcher) StartWatch(ctx context.Context, connId, _, _ string, data any) error {
-	b, err := w.encoder.Encode(data)
+func (w *watcher) StartWatch(ctx context.Context, opts websocket.JoinOptions) error {
+	b, err := w.encoder.Encode(opts.Payload)
 	if err != nil {
 		return fmt.Errorf("unexpected data type: %w", err)
 	}
 
 	k := w.genKey(b)
 	ctx, cancel := context.WithCancel(ctx)
-	if !w.newStream(k, connId, cancel) {
+	if !w.newStream(k, opts.ConnID, cancel) {
 		return nil
 	}
 
@@ -95,7 +95,7 @@ func (w *watcher) StartWatch(ctx context.Context, connId, _, _ string, data any)
 					continue
 				}
 
-				w.hub.SendGroupRoomByConnections(w.getConnIds(k), websocket.RoomMessageRates, "", rates)
+				w.hub.SendMessage(ctx, rates, websocket.ToConnection(websocket.RoomMessageRates, w.getConnIds(k)...))
 			}
 		}
 	}()
@@ -103,12 +103,12 @@ func (w *watcher) StartWatch(ctx context.Context, connId, _, _ string, data any)
 	return nil
 }
 
-func (w *watcher) StopWatch(connId, _ string) error {
+func (w *watcher) StopWatch(_ context.Context, opts websocket.LeaveOptions) error {
 	w.streamsMx.Lock()
 	defer w.streamsMx.Unlock()
 
 	for k, v := range w.streams {
-		index := slices.Index(v.connIds, connId)
+		index := slices.Index(v.connIds, opts.ConnID)
 
 		if index < 0 {
 			continue

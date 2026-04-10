@@ -1,12 +1,12 @@
 package template
 
 import (
-	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -31,13 +31,20 @@ type API interface {
 type api struct {
 	store                  Store
 	templateConfigProvider config.TemplateConfigProvider
+	errorResponder         httperror.Responder
 	logger                 zerolog.Logger
 }
 
-func NewAPI(store Store, templateConfigProvider config.TemplateConfigProvider, logger zerolog.Logger) API {
+func NewAPI(
+	store Store,
+	templateConfigProvider config.TemplateConfigProvider,
+	errorResponder httperror.Responder,
+	logger zerolog.Logger,
+) API {
 	return &api{
 		store:                  store,
 		templateConfigProvider: templateConfigProvider,
+		errorResponder:         errorResponder,
 		logger:                 logger,
 	}
 }
@@ -51,57 +58,41 @@ func (a *api) GetEnvVars(c *gin.Context) {
 // @Success 200 {object} DataResponse
 func (a *api) CreateData(c *gin.Context) {
 	r := EditDataRequest{}
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	res, err := a.store.CreateData(c, r)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
-
-		panic(err)
+		return
 	}
 
 	c.JSON(http.StatusCreated, res)
 }
 
 // ListData
-// @Success 200 {object} common.PaginatedListResponse{data=[]DataResponse}
+// @Success 200 {object} pagination.ListResponse{data=[]DataResponse}
 func (a *api) ListData(c *gin.Context) {
 	var r ListDataRequest
 	r.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	aggregationResult, err := a.store.FindData(c, r)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
-		panic(err)
-	}
-
-	res, err := common.NewPaginatedResponse(r.Query, &aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
+	res := pagination.NewResponse(r.Query, &aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -110,11 +101,13 @@ func (a *api) ListData(c *gin.Context) {
 func (a *api) GetData(c *gin.Context) {
 	res, err := a.store.GetData(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res.ID == "" {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -129,26 +122,21 @@ func (a *api) UpdateData(c *gin.Context) {
 	r := EditDataRequest{
 		ID: c.Param("id"),
 	}
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	res, err := a.store.UpdateData(c, r)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
-
-		panic(err)
+		return
 	}
 
 	if res.ID == "" {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -157,19 +145,20 @@ func (a *api) UpdateData(c *gin.Context) {
 }
 
 func (a *api) DeleteData(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	ok, err := a.store.DeleteData(c, c.Param("id"), userID)
 	if err != nil {
-		if errors.Is(err, ErrIsLinked) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
-
-		panic(err)
+		return
 	}
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -182,72 +171,68 @@ func (a *api) DeleteData(c *gin.Context) {
 // @Success 200 {object} TestResponse
 func (a *api) CreateTest(c *gin.Context) {
 	r := EditTestRequest{}
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	res, err := a.store.CreateTest(c, r)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
-
-		panic(err)
+		return
 	}
 
 	c.JSON(http.StatusCreated, res)
 }
 
 // ListTest
-// @Success 200 {object} common.PaginatedListResponse{data=[]TestResponse}
+// @Success 200 {object} pagination.ListResponse{data=[]TestResponse}
 func (a *api) ListTest(c *gin.Context) {
 	var r ListTestRequest
 	r.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	aggregationResult, err := a.store.FindTest(c, r, userID)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
-		panic(err)
-	}
-
-	res, err := common.NewPaginatedResponse(r.Query, &aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
+	res := pagination.NewResponse(r.Query, &aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
 // GetTest
 // @Success 200 {object} TestResponse
 func (a *api) GetTest(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	res, err := a.store.GetTest(c, c.Param("id"), userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res.ID == "" {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -262,26 +247,21 @@ func (a *api) UpdateTest(c *gin.Context) {
 	r := EditTestRequest{
 		ID: c.Param("id"),
 	}
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	res, err := a.store.UpdateTest(c, r)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
-
-		panic(err)
+		return
 	}
 
 	if res.ID == "" {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -290,14 +270,21 @@ func (a *api) UpdateTest(c *gin.Context) {
 }
 
 func (a *api) DeleteTest(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	ok, err := a.store.DeleteTest(c, c.Param("id"), userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}

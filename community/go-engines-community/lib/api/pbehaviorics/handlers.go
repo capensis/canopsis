@@ -7,39 +7,48 @@ import (
 	"strings"
 	"unicode"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
 )
 
-func GetICS(store Store, service Service) gin.HandlerFunc {
+func GetICS(store Store, service Service, errorResponder httperror.Responder) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
 		pbh, err := store.GetOneBy(c, id)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		maxPriority, err := store.FindMaxPriority(c)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		minPriority, err := store.FindMinPriority(c)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if pbh == nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			errorResponder.Respond(c, httperror.ErrNotFound)
+
 			return
 		}
 
 		calendar, err := service.GenICSFrom(*pbh, maxPriority, minPriority)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		fileName := genFileName(pbh.Name)
