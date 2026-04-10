@@ -80,7 +80,7 @@ func GetForbiddenFieldsInEntityPattern(collection string) []string {
 	}
 }
 
-func GetAliases(p pattern.Entity) []string {
+func GetAliases(p [][]pattern.FieldCondition) []string {
 	aliases := make([]string, 0)
 	for _, g := range p {
 		for _, c := range g {

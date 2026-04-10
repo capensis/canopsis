@@ -5692,9 +5692,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30000921, caniuse-lite@npm:^1.0.30001254, caniuse-lite@npm:^1.0.30001517, caniuse-lite@npm:^1.0.30001520, caniuse-lite@npm:^1.0.30001565":
-  version: 1.0.30001741
-  resolution: "caniuse-lite@npm:1.0.30001741"
-  checksum: 10c0/45746f896205a61a8eeb85a32aeca243ebce640cd6eb80d04949d9389a13f4659c737860300d7b988057599f0958c55eeab74ec02ce9ef137feb7d006e75fec1
+  version: 1.0.30001777
+  resolution: "caniuse-lite@npm:1.0.30001777"
+  checksum: 10c0/e35443fa7c470edc06e315297cca706790840e96983fff12dfe502a4b123d6e4a64b9b4e8e35fb2f5bb60c31b24fbda93d76b2f700ce183df474671236fa7a4a
   languageName: node
   linkType: hard
 
@@ -5811,7 +5811,6 @@ __metadata:
     vue-cli-plugin-test-attrs: "npm:^0.1.5"
     vue-clipboard2: "npm:^0.3.0"
     vue-color: "npm:^2.6.0"
-    vue-fragment: "npm:^1.6.0"
     vue-fullscreen: "npm:^2.6.2"
     vue-i18n: "npm:^7.6.0"
     vue-loader: "npm:^17.2.2"
@@ -19176,15 +19175,6 @@ __metadata:
   peerDependencies:
     eslint: ">=6.0.0"
   checksum: 10c0/2495cd855b8a0969e1d1a109762e54d4302429ebd87c21212de38fc60ea774be1bc001dc86338d3f78e17ae79d80fa633a8c409d7a65990cde9bc04484dac933
-  languageName: node
-  linkType: hard
-
-"vue-fragment@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "vue-fragment@npm:1.6.0"
-  peerDependencies:
-    vue: ^2.5.16
-  checksum: 10c0/45e4c05d366782dd0ddb3bee9279951c7d9e8bc50c361213dbfe2d50438a850232d687c998eeac5fbd234e8963e6f949a6346b17cfbc7286a503b0ac3bf72217
   languageName: node
   linkType: hard
 

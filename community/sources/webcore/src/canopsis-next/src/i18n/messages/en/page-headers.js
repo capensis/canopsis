@@ -8,7 +8,7 @@ export default {
    * Exploitation
    */
   [USER_PERMISSIONS.technical.exploitation.eventFilter]: {
-    title: 'Event filter',
+    title: 'Event filters',
     message: 'The event-filter is a feature of engine-che, allowing to define rules handling events.',
   },
 
@@ -18,22 +18,26 @@ export default {
   },
 
   [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
-    title: 'Meta alarm rule',
+    title: 'Meta alarm rules',
+    topbarTitle: 'Meta alarms',
     message: 'Meta alarm rules can be used for grouping alarms by types and criteria (parent-child relationship, time interval, etc).',
   },
 
   [USER_PERMISSIONS.technical.exploitation.idleRules]: {
     title: 'Idle rules',
+    topbarTitle: 'Idle',
     message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.flappingRules]: {
     title: 'Flapping rules',
+    topbarTitle: 'Flapping',
     message: 'An alarm inherits flapping status when it oscillates from an alert to a stable state a certain number of times over a given period.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.resolveRules]: {
     title: 'Resolve rules',
+    topbarTitle: 'Resolve',
     message: 'When an alarm receives a recovery type event, it changes to the closed status. Before considering this alarm as definitively resolved, Canopsis can wait for a delay. This delay can be useful if the alarm flaps or if the user wishes keep the alarm open in case of error.',
   },
 
@@ -49,29 +53,28 @@ export default {
 
   [USER_PERMISSIONS.technical.exploitation.snmpRule]: {
     title: 'SNMP rules',
+    topbarTitle: 'SNMP',
     message: 'The SNMP engine allows the processing of SNMP traps retrieved by the connector snmp2canopsis.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: {
     title: 'Ticket declaration rules',
+    topbarTitle: 'Ticket declaration',
     message: 'Allows you to define the rules for creating incident tickets for multiple incident management tools. These tickets are created by a driver from the WebUI, and Canopsis then takes care of contacting the incident management tool to record the ticket.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.linkRule]: {
-    title: 'Links generator',
+    title: 'Link generator',
     message: 'Allows you to define the rules for associating links with alarms',
   },
 
-  [USER_PERMISSIONS.technical.exploitation.externalDataTable]: {
-    title: 'External data',
-  },
-
-  [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: {
-    title: 'Entity infos',
+  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
+    title: 'Instructions',
+    message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
   },
 
   /**
-   * Admin access
+   * Administration - Access
    */
   [USER_PERMISSIONS.technical.permission]: {
     title: 'Rights',
@@ -87,7 +90,19 @@ export default {
   },
 
   /**
-   * Admin communications
+   * Administration - Maintenance
+   */
+  [USER_PERMISSIONS.technical.maintenance]: {
+    title: 'Maintenance mode',
+    message: 'Switches Canopsis to maintenance mode. All users except administrators will be logged out.',
+  },
+  [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
+    title: 'Planning',
+    message: 'The Canopsis Planning Administration functionality can be used for the periodic behavior types customization.',
+  },
+
+  /**
+   * Administration - Communications
    */
   [USER_PERMISSIONS.technical.broadcastMessage]: {
     title: 'Broadcast messages',
@@ -97,33 +112,43 @@ export default {
     title: 'Playlists',
     message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
   },
-
-  /**
-   * Admin general
-   */
-  [USER_PERMISSIONS.technical.parameters]: {
-    title: 'Parameters',
-    message: 'Various and varied parameters of the Canopsis interface',
-  },
   [USER_PERMISSIONS.technical.healthcheck]: {
     title: 'Healthcheck',
     message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
-  },
-  [USER_PERMISSIONS.technical.engine]: {
-    title: 'Engines',
-    message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
   },
   [USER_PERMISSIONS.technical.kpi]: {
     title: 'KPI',
     message: 'Allows you to present indicators in the form of graphs',
   },
+
+  /**
+   * Administration - Custom objects
+   */
   [USER_PERMISSIONS.technical.map]: {
     title: 'Maps',
     message: 'Module to define and display maps (geographic, logical, mermaid, etc.) via the "Map" widget.',
   },
-  [USER_PERMISSIONS.technical.maintenance]: {
-    title: 'Maintenance mode',
-    message: 'Switches Canopsis to maintenance mode. All users except administrators will be logged out.',
+  [USER_PERMISSIONS.technical.commentTemplate]: {
+    title: 'Comment templates',
+    topbarTitle: 'Comment templates',
+  },
+
+  /**
+   * Administration - Settings
+   */
+  [USER_PERMISSIONS.technical.parameters]: {
+    title: 'User interface',
+  },
+  [USER_PERMISSIONS.technical.viewImportExport]: {
+    title: 'Import / export',
+  },
+  [USER_PERMISSIONS.technical.notification.common]: {
+    title: 'Notifications settings',
+    topbarTitle: 'Notifications',
+  },
+  [USER_PERMISSIONS.technical.engine]: {
+    title: 'Engines',
+    message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
   },
   [USER_PERMISSIONS.technical.tag]: {
     title: 'Tags management',
@@ -131,10 +156,12 @@ export default {
   },
   [USER_PERMISSIONS.technical.storageSettings]: {
     title: 'Storage settings',
+    topbarTitle: 'Storage',
     message: 'Allows you to define data retention policies.',
   },
   [USER_PERMISSIONS.technical.stateSetting]: {
     title: 'State settings',
+    topbarTitle: 'State',
     message: 'Allows you to define methods for calculating the state/severity of components and/or services.\nUseful for modeling dependency trees.',
   },
   [USER_PERMISSIONS.technical.eventsRecord]: {
@@ -142,22 +169,27 @@ export default {
     message: 'Allows you to define and trigger the recording of events as soon as they arrive in the Canopsis data bus.',
   },
   [USER_PERMISSIONS.technical.templateTesting]: {
-    title: 'Templates Studio',
+    title: 'Templates studio',
   },
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'External auth tokens',
   },
+  [USER_PERMISSIONS.technical.widgetTemplate]: {
+    title: 'Widget templates',
+  },
+  [USER_PERMISSIONS.technical.externalDataTable]: {
+    title: 'External data',
+  },
+  [USER_PERMISSIONS.technical.entityInfoProperty]: {
+    title: 'Entity infos',
+  },
 
   /**
-   * Grouped admin
+   * Administration - Remediation
    */
   [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
     title: 'Planning',
     message: 'The Canopsis Planning Administration functionality can be used for the periodic behavior types customization.',
-  },
-  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
-    title: 'Instructions',
-    message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
   },
 
   /**

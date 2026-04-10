@@ -1,13 +1,6 @@
 <template>
   <v-layout column>
     <c-progress-overlay :pending="appInfoPending" />
-    <v-layout>
-      <v-flex class="text-center">
-        <div class="text-h6">
-          {{ $t('userInterface.title') }}
-        </div>
-      </v-flex>
-    </v-layout>
     <v-form @submit.prevent="submit">
       <user-interface-form
         v-model="form"

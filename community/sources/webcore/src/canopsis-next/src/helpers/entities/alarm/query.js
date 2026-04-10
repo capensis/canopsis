@@ -12,6 +12,7 @@ import {
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   LIVE_REPORTING_QUICK_RANGES,
   SORT_ORDERS,
+  PBEHAVIOR_ORIGINS,
 } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
 
@@ -116,6 +117,7 @@ export function convertAlarmWidgetToQuery(widget) {
     with_tag_colors: true,
     with_declare_tickets: true,
     with_links: true,
+    pbh_origin: PBEHAVIOR_ORIGINS.alarmList,
     sortBy: [],
     sortDesc: [],
     lockedFilter: mainFilter,

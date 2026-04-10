@@ -19,9 +19,9 @@ import (
 )
 
 type Watcher interface {
-	StartWatch(ctx context.Context, connId, userID, roomId string, data any) error
-	StartWatchDetails(ctx context.Context, connId, userID, roomId string, data any) error
-	StopWatch(connId, roomId string) error
+	StartWatch(ctx context.Context, opts websocket.JoinOptions) error
+	StartWatchDetails(ctx context.Context, opts websocket.JoinOptions) error
+	StopWatch(ctx context.Context, opts websocket.LeaveOptions) error
 }
 
 func NewWatcher(
@@ -62,15 +62,16 @@ type streamData struct {
 }
 
 // StartWatch creates a new stream change or adds a connection to an existed one if there is already a stream change with the same request.
-func (w *watcher) StartWatch(ctx context.Context, connId, userID, roomId string, data any) error {
-	b, err := w.encoder.Encode(data)
+func (w *watcher) StartWatch(ctx context.Context, opts websocket.JoinOptions) error {
+	b, err := w.encoder.Encode(opts.Payload)
 	if err != nil {
 		return fmt.Errorf("unexpected data type: %w", err)
 	}
 
 	k := w.genKey(b)
 	streamCtx, streamCancel := context.WithCancel(ctx)
-	if !w.newStream(roomId, k, connId, userID, streamCancel) {
+	roomID := opts.RoomID
+	if !w.newStream(roomID, k, opts.ConnID, opts.UserID, streamCancel) {
 		return nil
 	}
 
@@ -108,7 +109,7 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userID, roomId string,
 				continue
 			}
 
-			connIdsByUserId := w.getConnIds(roomId, k)
+			connIdsByUserId := w.getConnIds(roomID, k)
 			for userID, connIds := range connIdsByUserId {
 				res, err := w.store.GetByID(streamCtx, changeEvent.DocumentKey.ID, userID)
 				if err != nil {
@@ -120,7 +121,7 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userID, roomId string,
 					continue
 				}
 
-				w.hub.SendGroupRoomByConnections(connIds, websocket.RoomAlarmsGroup, roomId, res)
+				w.hub.SendMessage(ctx, res, websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomID), connIds...))
 			}
 		}
 	}()
@@ -129,15 +130,16 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userID, roomId string,
 }
 
 // StartWatchDetails creates a new stream change or adds a connection to an existed one if there is already a stream change with the same request.
-func (w *watcher) StartWatchDetails(ctx context.Context, connId, userID, roomId string, data any) error {
-	b, err := w.encoder.Encode(data)
+func (w *watcher) StartWatchDetails(ctx context.Context, opts websocket.JoinOptions) error {
+	b, err := w.encoder.Encode(opts.Payload)
 	if err != nil {
 		return fmt.Errorf("unexpected data type: %w", err)
 	}
 
 	k := w.genKey(b)
 	streamCtx, streamCancel := context.WithCancel(ctx)
-	if !w.newStream(roomId, k, connId, userID, streamCancel) {
+	roomID := opts.RoomID
+	if !w.newStream(roomID, k, opts.ConnID, opts.UserID, streamCancel) {
 		return nil
 	}
 
@@ -191,7 +193,7 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userID, roomId 
 	}
 
 	var pipeline []bson.M
-	opts := options.ChangeStream()
+	csOts := options.ChangeStream()
 	if len(metaAlarmEntityIds) == 0 {
 		pipeline = []bson.M{
 			{"$match": bson.M{
@@ -212,10 +214,10 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userID, roomId 
 				},
 			}}},
 		}
-		opts = opts.SetFullDocument(options.UpdateLookup)
+		csOts = csOts.SetFullDocument(options.UpdateLookup)
 	}
 
-	stream, err := w.collection.Watch(ctx, pipeline, opts)
+	stream, err := w.collection.Watch(ctx, pipeline, csOts)
 	if err != nil {
 		return fmt.Errorf("cannot watch collection: %w", err)
 	}
@@ -238,12 +240,12 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userID, roomId 
 				continue
 			}
 
-			connIdsByUserId := w.getConnIds(roomId, k)
-			w.sendGroupRoomAlrmDetails(streamCtx, changeEvent.DocumentKey.ID, roomId, requestsById, connIdsByUserId)
+			connIdsByUserId := w.getConnIds(roomID, k)
+			w.sendGroupRoomAlrmDetails(streamCtx, changeEvent.DocumentKey.ID, roomID, requestsById, connIdsByUserId)
 
 			for _, parent := range changeEvent.FullDocument.Value.Parents {
 				if metaAlarmId, ok := metaAlarmIdByEntityId[parent]; ok {
-					w.sendGroupRoomAlrmDetails(streamCtx, metaAlarmId, roomId, requestsById, connIdsByUserId)
+					w.sendGroupRoomAlrmDetails(streamCtx, metaAlarmId, roomID, requestsById, connIdsByUserId)
 				}
 			}
 		}
@@ -265,28 +267,30 @@ func (w *watcher) sendGroupRoomAlrmDetails(ctx context.Context, alarmId, roomId 
 		}
 		if res != nil {
 			res.ID = request.ID
-			w.hub.SendGroupRoomByConnections(connIds, websocket.RoomAlarmDetailsGroup, roomId, res)
+			w.hub.SendMessage(ctx, res, websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connIds...))
 		}
 	}
 }
 
-func (w *watcher) StopWatch(connId, roomId string) error {
+func (w *watcher) StopWatch(_ context.Context, opts websocket.LeaveOptions) error {
 	w.streamsMx.Lock()
 	defer w.streamsMx.Unlock()
 
-	for k, v := range w.streams[roomId] {
+	roomID := opts.RoomID
+	connID := opts.ConnID
+	for k, v := range w.streams[roomID] {
 		for userID, connIds := range v.connIdsByUserId {
-			index := slices.Index(connIds, connId)
+			index := slices.Index(connIds, connID)
 			if index < 0 {
 				continue
 			}
 
-			w.streams[roomId][k].connIdsByUserId[userID] = slices.Delete(connIds, index, index+1)
-			if len(w.streams[roomId][k].connIdsByUserId[userID]) == 0 {
-				delete(w.streams[roomId][k].connIdsByUserId, userID)
+			w.streams[roomID][k].connIdsByUserId[userID] = slices.Delete(connIds, index, index+1)
+			if len(w.streams[roomID][k].connIdsByUserId[userID]) == 0 {
+				delete(w.streams[roomID][k].connIdsByUserId, userID)
 
-				if len(w.streams[roomId][k].connIdsByUserId) == 0 {
-					delete(w.streams[roomId], k)
+				if len(w.streams[roomID][k].connIdsByUserId) == 0 {
+					delete(w.streams[roomID], k)
 					v.cancel()
 				}
 			}

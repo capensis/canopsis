@@ -258,7 +258,7 @@ export default {
       return {
         text: this.column?.template ?? '',
         title: this.$t('settings.columns.withTemplate'),
-        label: this.$t('common.template'),
+        label: this.$tc('common.template', 1),
         variables: this.variables,
         rules: {
           required: true,

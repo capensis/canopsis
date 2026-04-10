@@ -1,144 +1,54 @@
 <template>
-  <v-layout class="c-advanced-search" align-end>
-    <c-advanced-search-field
-      v-if="advancedSearchActive"
-      v-model="localValue"
-      :fields="fields"
-      :conditions="conditions"
-    />
-    <c-search-field
-      v-else
-      v-model="localValue"
-      :items="savedItems"
-      :tooltip="tooltip"
-      :combobox="combobox"
-      @submit="submit"
-      @remove:item="removeItem"
-      @toggle-pin:item="togglePinItem"
-    />
-    <c-action-btn
-      :tooltip="$t('common.search')"
-      icon="search"
-      @click="submit"
-    />
-    <c-action-btn
-      :tooltip="$t('common.clearSearch')"
-      icon="clear"
-      @click="clear"
-    />
-    <c-action-btn
-      :tooltip="advancedSearchActiveTooltip"
-      :input-value="advancedSearchActive"
-      icon="tune"
-      @click="toggleAdvancedSearchActive"
-    />
-  </v-layout>
+  <c-advanced-search-field
+    v-model="rules"
+    :searches="searches"
+    :attributes="attributes"
+    :pending="pending"
+    :allow-or="allowOr"
+    :alarm-pattern="alarmPattern"
+    :with-history="withHistory"
+    v-on="$listeners"
+  />
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue';
+import { ref } from 'vue';
 
-import { ADVANCED_SEARCH_CONDITIONS } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
-
-import { useSearchLocalValue } from './hooks/search';
+import { advancedSearchRuleItemToFormItem } from '@/helpers/search/advanced-search';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
-      type: String,
-      default: '',
-    },
-    fields: {
+    attributes: {
       type: Array,
       default: () => [],
     },
-    conditions: {
-      type: Array,
-      default: () => Object.values(ADVANCED_SEARCH_CONDITIONS),
+    pending: {
+      type: Boolean,
+      default: false,
     },
-    savedItems: {
+    searches: {
       type: Array,
       default: () => [],
     },
-    tooltip: {
-      type: String,
-      default: '',
+    allowOr: {
+      type: Boolean,
+      default: true,
     },
-    combobox: {
+    withHistory: {
+      type: Boolean,
+      default: false,
+    },
+    alarmPattern: {
       type: Boolean,
       default: false,
     },
   },
-  setup(props, { emit }) {
-    const { t } = useI18n();
-
-    const addItem = search => emit('add:item', search);
-    const removeItem = search => emit('remove:item', search);
-    const togglePinItem = search => emit('toggle-pin:item', search);
-
-    const {
-      localValue,
-      submit,
-      clear,
-    } = useSearchLocalValue({
-      value: toRef(props, 'value'),
-      fields: toRef(props, 'fields'),
-      onSubmit: addItem,
-    }, emit);
-
-    const advancedSearchActive = ref(false);
-    const advancedSearchActiveTooltip = computed(() => (
-      advancedSearchActive.value
-        ? t('advancedSearch.switchAdvancedSearchActiveToFalse')
-        : t('advancedSearch.switchAdvancedSearchActiveToTrue')
-    ));
-
-    const toggleAdvancedSearchActive = () => advancedSearchActive.value = !advancedSearchActive.value;
+  setup() {
+    const rules = ref([advancedSearchRuleItemToFormItem()]);
 
     return {
-      localValue,
-      advancedSearchActive,
-      advancedSearchActiveTooltip,
-
-      toggleAdvancedSearchActive,
-      submit,
-      clear,
-      removeItem,
-      togglePinItem,
+      rules,
     };
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.c-advanced-search::v-deep {
-  --advanced-search-input-min-width: 170px;
-
-  .v-input, .v-input__control .v-input__slot, .v-select__selections {
-    width: unset;
-    max-width: unset;
-  }
-
-  .v-select__slot {
-    width: 100%;
-    max-width: unset;
-
-    input {
-      min-width: var(--advanced-search-input-min-width);
-      width: var(--advanced-search-input-min-width);
-    }
-
-    &, .v-select__selections {
-      &:first-child.input {
-        width: 100%;
-      }
-    }
-  }
-}
-</style>

@@ -103,11 +103,11 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			} else {
 				out.NoEvents = bool(in.Bool())
 			}
-		case "entity_pattern":
+		case "search_pattern":
 			if in.IsNull() {
 				in.Skip()
 			} else {
-				out.EntityPattern = string(in.String())
+				out.SearchPattern = string(in.String())
 			}
 		case "negative_entity_pattern":
 			if in.IsNull() {
@@ -204,9 +204,9 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.Bool(bool(in.NoEvents))
 	}
 	{
-		const prefix string = ",\"entity_pattern\":"
+		const prefix string = ",\"search_pattern\":"
 		out.RawString(prefix)
-		out.String(string(in.EntityPattern))
+		out.String(string(in.SearchPattern))
 	}
 	{
 		const prefix string = ",\"negative_entity_pattern\":"
