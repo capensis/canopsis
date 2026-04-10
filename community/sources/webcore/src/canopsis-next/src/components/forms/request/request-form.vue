@@ -73,6 +73,7 @@
       />
     </c-information-block>
     <c-information-block
+      v-if="!hideHeaders"
       :title="$tc('common.header', 2)"
       :help-text="$t('common.request.headersHelpText')"
       class="mb-2"
@@ -143,6 +144,10 @@ export default {
       default: false,
     },
     hideAuth: {
+      type: Boolean,
+      default: false,
+    },
+    hideHeaders: {
       type: Boolean,
       default: false,
     },

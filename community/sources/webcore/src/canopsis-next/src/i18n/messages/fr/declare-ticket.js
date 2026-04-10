@@ -40,7 +40,7 @@ export default {
   checkTicketStatusHelpText: 'Activer pour vérifier que le ticket existe dans le système de tickets avant d\'exécuter les étapes suivantes.',
   ticketStatusMapping: 'Correspondance des statuts de ticket',
   ticketStatusMappingHelpText: 'Au moins une valeur source doit être mappée vers la valeur Canopsis « Fermé ».',
-  ticketStatusMappingUnmappedToOpen: 'Toutes les valeurs sources non mappées seront mappées au statut Canopsis « Ouvert ».',
+  ticketStatusMappingUnmappedToOpen: 'Toutes les valeurs sources non mappées seront mappées au statut Canopsis « Inconnu ».',
   sourceValue: 'Valeur source',
   canopsisValue: 'Valeur Canopsis',
   addMappingPair: 'Ajouter une paire de correspondance',
