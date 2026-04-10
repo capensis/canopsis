@@ -1,188 +1,130 @@
-# Connector Livestatus2Canopsis
+# Connecteur Icinga2 vers Canopsis (connector-icinga2)
 
-<!-- XXX: documentation de très faible qualité -->
+Convertit les problèmes dans Icinga2 en événements Canopsis.
 
-## Description
+## Prerequis
 
-Convertit des évènements de supervision Icinga 2 en évènements Canopsis.
+ - Icinga2 **2.7.0** ou supérieur
 
-## Structure
+## Introdution
 
-```
-├── application.py
-├── doc
-├── install
-│   ├── apache-jmeter-2.13.tgz
-│   ├── config.example.json
-│   ├── lib-python-skeleton.install
-│   ├── lib-python-specific.install
-│   ├── skeleton.ansible
-│   ├── specific.ansible
-│   ├── uninstall.ansible
-│   ├── virtualenv.py
-│   └── virtualenv.pyc
-└── README.md
-```
+Le connecteur _connector-icinga2_ interroge l'API Icinga2 (port par défaut
+`tcp/5665`) pour collecter les problèmes, les convertir et envoyer les
+événements à Canopsis. Ce connecteur publie des messages directement dans le
+bus AMQP (instance RabbitMQ de Canopsis).
 
-## Installation && Configuration VENV
+## Intégration du connecteur
 
-```
-git clone https://git.canopsis.net/canopsis-connectors/connector-livestatus2canopsis.git
-cd connector-livestatus2canopsis
-git checkout rc
-ansible-playbook install/skeleton.ansible
-ansible-playbook install/specific.ansible
-```
+Le connecteur et sa documentation sont disponibles dans le dépôt
+[canopsis-connectors/connector-icinga2][git-repo].
 
-## Supprimer VENV
+Un compte utilisateur API Icinga2 avec les permissions appropriées est
+nécessaire pour authentifier les requêtes du connecteur Icinga2. Pour plus
+d'information sur l'authentification avec l'API Icinga2, consulter la
+[documentation Icinga][doc-icinga-api].
 
-```
-cd connector-livestatus2canopsis
-ansible-playbook install/uninstall.ansible
-```
+## Installation
 
-## Application.py
+Deux méthodes d'installation ou d'exécution sont proposées :
 
-Ce fichier contient le connecteur de classe. Dans cette classe, il existe quelques fonctions:
+ - Installation en tant que service sur un système Linux de branche Red Hat
+   (paquets RPM)
+ - Exécution en tant que conteneur Docker avec l'image fournie :
+   [canopsis/connector-icinga2][docker-image]
 
-* **Init** initialise ConnectorTool, CanopsisPublisher, NagiosPublisher
+### Paquets RPM
 
-* **Lister** Fonction qui exécute un écouteur de socket avec la configuration d'installation.
+Ajouter les dépôts Canopsis :
 
-* **Lance** Fonction qui initie le fonctionnement du connecteur (Socket, One Exec, Daemon).
+=== "RHEL 8"
 
-* **Processing** convertit les données d'entrée en données Canopsis mais publie également un évènement.
+    ```sh
+    cat << EOF > /etc/yum.repos.d/canopsis.repo
+    [canopsis-community]
+    name = canopsis community
+    baseurl=https://nexus.canopsis.net/repository/canopsis/el8/community/
+    gpgcheck=0
+    enabled=1
+    EOF
 
-## Configuration
-La configuration de ce connecteur ce fait dans `./etc/config.json`
+    cat << EOF > /etc/yum.repos.d/canopsis-connectors.repo
+    [canopsis-connectors]
+    name=Canopsis connectors repository
+    baseurl=https://nexus.canopsis.net/repository/canopsis-connectors/el8/
+    gpgcheck=0
+    enabled=1
+    EOF
+    ```
 
-* `wait_loop` :  le temps d'attente pour fermer la connexion lors de la demande de livestatus.
+=== "RHEL 9"
 
-## Attribu :
-* `state_changed` : est défini lorsque `state` est différent de `last_state` et peut être utiliser pour limiter l'utilisation de la bande passante lorsqu'il utilisé pour envoyer un évènement via Canopsis2Canopsis (Pro).
+    ```sh
+    cat << EOF > /etc/yum.repos.d/canopsis.repo
+    [canopsis-community]
+    name = canopsis community
+    baseurl=https://nexus.canopsis.net/repository/canopsis/el9/community/
+    gpgcheck=0
+    enabled=1
+    EOF
 
-# Installation
+    cat << EOF > /etc/yum.repos.d/canopsis-connectors.repo
+    [canopsis-connectors]
+    name=Canopsis connectors repository
+    baseurl=https://nexus.canopsis.net/repository/canopsis-connectors/el9/
+    gpgcheck=0
+    enabled=1
+    EOF
+    ```
 
-## Requirements
+Installer le connecteur Icinga2 :
 
-Debian like (Debian, Ubuntu ...):
-
-```
-apt-get install build-essential git-core python supervisord
-```
-
-Redhat like (Centos ..):
-
-```
-yum groupinstall "Development Tools"
-yum install git-core python supervisord
-```
-
-## Download & Build
-
-via git:
-
-```
-    mkdir /opt/canopsis-connectors/
-    git clone https://git.canopsis.net/canopsis-connectors/connector-livestatus2canopsis.git
-    git clone -b develop git@git.canopsis.net:canopsis-connectors/connector-libs.git connector-libs
-    cd connector-livestatus2canopsis
+```sh
+dnf makecache
+dnf install canopsis-connector-icinga2
 ```
 
-## InstallH
+Éditer le fichier de configuration
+`/etc/canopsis-connectors/icinga2/config.yml` afin de l'adapter à
+l'environnement cible.
 
+Activer le service au démarrage du système et démarrer le connecteur
 
-### Ansible H> v2
-
-```
-    ansible-playbook install/skeleton.ansible
-    ansible-playbook install/specific.ansible
-```
-
-### Manuellement
-
-```
-    python install/virtualenv.py .
-    for pkg in `cat install/lib-python-skeleton.install`; do bin/pip install $pkg; done
-    for pkg in `cat install/lib-python-specific.install`; do bin/pip install $pkg; done
-    mkdir etc
-    cp install/config.example.json etc/config.json
-    cp -r ../connector-libs lib/
-    bin/python lib/connector-libs/setup.py install
-    mv lib/connector-libs/connector_libs lib/python{2.6|2.7}/site-packages/
+```sh
+systemctl enable --now canopsis-connector-icinga2.service
 ```
 
-## Configuration
+### Docker
 
-### livestatus2canopsis
+Exemple de définition de service pour Docker Compose :
 
-Edit etc/config.json
-
-| cat        | Param            | Type    | Description                           |
-|------------|------------------|---------|---------------------------------------|
-| connector  | loglevel         | Boolean | Enable debug mode                     |
-| connector  | publish2nagios   | Boolean | Publish scenario result to nagios     |
-| connector  | write2json       | Boolean | DUMP JSON DOC TO FILE                 |
-| connector  | wait_loop        | Integer | Wait time during pulling              |
-| amqp       | host             | IP      | AMQP IP                               |
-| amqp       | port             | Integer | AMQP Port (default: 5672)             |
-| amqp       | user             | String  | AMQP User (default: "guest")          |
-| amqp       | pass             | String  | AMQP Pass (default: "guest")          |
-| amqp       | vhost            | String  | AMQP VHost (default: "canopsis")      |
-| livestatus | threadProcessing | Integer | How many thread processing the events |
-| livestatus | socket           | String  | Livestatus socket                     |
-
-### supervisord
-
-Créer le fichier : /etc/supervisord.d/livestatus2canopsis.ini
-
-```
-    [program:connector-livestatus2canopsis]
-    command=/opt/canopsis-connectors/connector-livestatus2canopsis/bin/python /opt/canopsis-connectors/connector-livestatus2canopsis/application.py
-    directory=/opt/canopsis-connectors/connector-livestatus2canopsis
-    process_name=%(program_name)s
-    stdout_logfile=/var/log/%(program_name)s_out.log
-    stderr_logfile=/var/log/%(program_name)s_err.log
-    autostart=true
-    autorestart=true
-```
-Créer les fichier de logs
-
-```
-    touch /var/log/connector-livestatus2canopsis_out.log
-    touch /var/log/connector-livestatus2canopsis_err.log
-    chmod 777 /var/log/connector-livestatus2canopsis_out.log
-    chmod 777 /var/log/connector-livestatus2canopsis_err.log
+```yaml
+services:
+  connector-icinga2:
+    image: docker.canopsis.net/docker/community/connector-icinga2:<TAG>
+    volumes:
+      - ./config/config.yml:/config.yml
+    restart: on-failure
 ```
 
-# Use
+Un exemple complet de fichier [config.yml][config] est fourni avec le code du
+connecteur.
 
-## Start / Stop
+## Résultat
 
-Comme ce connecteur est un script python autonome, il n’a pas de mod deadmon, c’est pourquoi nous utilisons Supervord pour gérer le mode Deamon.
-
-Et pour démarrer le processus de supervision global.
-
-```
-    service supervisord start
-```
-
-Et pour arrêter le processus de supervision global.
+Lorsque le connecteur démarre correctement, il indique les événements
+ci-dessous dans son log (cas où les clefs `forward_ack` et `forward_downtime`
+ont pour valeur `false`) :
 
 ```
-    service supervisord stop
+> acknowledgement event stream types forward disabled
+> downtime event stream types forward disabled
+> connector started
 ```
 
-Pour démarrer seulement un processus.
+Pour rappel, toute la documentation du connecteur Icinga2 est disponible sur le
+[dépôt Git][git-repo].
 
-```
-	service supervisord status
-	supervisord start "Nom inside the status return"
-```
-
-Pour stopper seulement un processus.
-
-```
-	service supervisord status
-	supervisord stop "Nom inside the status return"
-```
+[doc-icinga-api]: https://icinga.com/docs/icinga-2/latest/doc/12-icinga2-api/#authentication
+[git-repo]: https://git.canopsis.net/canopsis-connectors/connector-icinga2
+[docker-image]: https://git.canopsis.net/docker/community/container_registry/305
+[config]: https://git.canopsis.net/canopsis-connectors/connector-icinga2/-/blob/main/config/config.yml

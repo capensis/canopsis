@@ -1,4 +1,10 @@
-import { cloneDeep, isBoolean, isNull, omit } from 'lodash';
+import {
+  cloneDeep,
+  isBoolean,
+  isNull,
+  omit,
+  map,
+} from 'lodash';
 
 import {
   DENSE_TYPES,
@@ -18,17 +24,17 @@ import {
   EXPORT_CSV_DATETIME_FORMATS,
   CSV_SEPARATORS,
   GRID_SIZES,
-  SORT_ORDERS,
   TIME_UNITS,
   WIDGET_TYPES,
   DEFAULT_ALARM_MORE_INFO_TEMPLATE,
 } from '@/constants';
 import { EXPAND_DEFAULT_MAX_LETTERS, PAGINATION_LIMIT } from '@/config';
 
+import { uid } from '@/helpers/uid';
 import { setSeveralFields } from '@/helpers/immutable';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
-import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
+import { addKeyInEntities, addKeyInEntity, removeKeyFromEntities } from '@/helpers/array';
 import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
 import { hasStateSetting } from '@/helpers/entities/entity/entity';
 import { convertAlarmWidgetParametersToActiveColumns } from '@/helpers/entities/alarm/query';
@@ -40,10 +46,16 @@ import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../templat
 import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
 import { widgetQuickActionsToForm, formToWidgetQuickActions } from '../quick-action/form';
+import { widgetSortColumnsToForm, formToWidgetSortColumns } from '../sort-column/form';
 
 import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
 import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from './line-chart';
 import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './numbers-chart';
+
+/**
+ * @typedef {WidgetSort[]} WidgetMultiSort
+ */
+
 /**
  * @typedef {'BarChart', 'LineChart', 'Numbers'} AlarmChartType
  */
@@ -139,7 +151,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
 
  * @typedef {Object} AlarmListBaseParameters
  * @property {number} itemsPerPage
- * @property {WidgetSort} sort
+ * @property {WidgetSortColumn} sort
+ * @property {string} sortTemplate
  * @property {string} moreInfoTemplate
  * @property {string} moreInfoTemplateTemplate
  * @property {WidgetInfoPopup[]} infoPopups
@@ -150,6 +163,13 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} showRootCauseByStateClick
  * @property {ColorIndicator} rootCauseColorIndicator
  * @property {WidgetColumnsParameters} columns
+ */
+
+/**
+ * @typedef {Object} WidgetFastPbehaviorParameters
+ * @property {string} name_prefix
+ * @property {string} type
+ * @property {string} reason
  */
 
 /**
@@ -180,11 +200,10 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isHtmlEnabledOnTimeLine
  * @property {boolean} pausePeriodicRefreshOnExpandPanel
  * @property {boolean} isActionsAllowWithOkState
+ * @property {boolean} keepSelectedAfterAction
  * @property {boolean} isVirtualScrollEnabled
  * @property {boolean} isCorrelationEnabled
- * @property {string} fastPbehaviorNamePrefix
- * @property {string} fastPbehaviorType
- * @property {string} fastPbehaviorReason
+ * @property {FastPbehaviorParameters[]} fast_pbehaviors
  * @property {boolean} sticky_header
  * @property {boolean} sticky_horizontal_scroll
  * @property {WidgetDenseParameters} dense
@@ -196,6 +215,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetQuickAction[]} quickMassActions
  * @property {string} quickMassActionsTemplate
  * @property {boolean} hideMassActions
+ * @property {Array} comment_templates
  */
 
 /**
@@ -204,7 +224,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} liveWatching
  * @property {string | null} mainFilter
  * @property {WidgetLiveReporting} liveReporting
- * @property {WidgetSort} sort
+ * @property {WidgetSortColumn} sort
+ * @property {string} sortTemplate
  * @property {boolean | null} opened
  * @property {number[]} expandGridRangeSize
  * @property {WidgetCsvSeparator} exportCsvSeparator
@@ -227,6 +248,10 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  */
 
 /**
+ * @typedef {WidgetFastPbehaviorParametersForm & ObjectKey} WidgetFastPbehaviorParametersForm
+ */
+
+/**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetDefaultParametersForm
  * @property {string | Symbol} widgetColumnsTemplate
  * @property {string | Symbol} widgetGroupColumnsTemplate
@@ -238,6 +263,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetColumnForm[]} serviceDependenciesColumns
  * @property {WidgetQuickActionForm[]} quickActions
  * @property {WidgetQuickActionForm[]} quickMassActions
+ * @property {WidgetFastPbehaviorParametersForm[]} fast_pbehaviors
  */
 
 /**
@@ -285,24 +311,14 @@ export const columnsParametersToForm = (columns = {}) => ({
 export const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({ ...infoPopup }));
 
 /**
- * Convert widget sort parameters to form
- *
- * @param {WidgetSort} [sort = {}]
- * @return {WidgetSort}
- */
-export const widgetSortToForm = (sort = {}) => ({
-  order: sort.order ?? SORT_ORDERS.asc,
-  column: sort.column ?? '',
-});
-
-/**
  * Convert alarm list base parameters (we are using it inside another widgets with alarmList) to form
  *
  * @param {AlarmListBaseParameters} [alarmListParameters = {}]
  * @return {AlarmListBaseParametersForm}
  */
 export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
-  sort: widgetSortToForm(alarmListParameters.sort),
+  sort: widgetSortColumnsToForm(alarmListParameters.sort),
+  sortTemplate: widgetTemplateValueToForm(alarmListParameters.sortTemplate),
   itemsPerPage: alarmListParameters.itemsPerPage ?? PAGINATION_LIMIT,
   moreInfoTemplate: alarmListParameters.moreInfoTemplate ?? DEFAULT_ALARM_MORE_INFO_TEMPLATE,
   moreInfoTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.moreInfoTemplateTemplate),
@@ -357,6 +373,41 @@ export const alarmListChartToForm = (chart = {}) => {
 };
 
 /**
+ * Convert widget comment template IDs to form objects with unique keys
+ *
+ * @param {Array} [commentTemplates=[]]
+ * @return {Array}
+ */
+export const widgetCommentTemplatesToForm = (commentTemplates = []) => (
+  commentTemplates.map(template => ({
+    template,
+    key: uid(),
+  }))
+);
+
+/**
+ * Convert a single fast pbehavior parameter to form format.
+ *
+ * @param {WidgetFastPbehaviorParameters || {}} [fastPbehavior = {}]
+ * @return {WidgetFastPbehaviorParametersForm}
+ */
+export const alarmListFastPbehaviorParametersItemToForm = (fastPbehavior = {}) => addKeyInEntity({
+  name_prefix: fastPbehavior.name_prefix ?? '',
+  type: fastPbehavior.type ?? '',
+  reason: fastPbehavior.reason ?? '',
+});
+
+/**
+ * Convert fast pbehavior parameters array to form format.
+ *
+ * @param {WidgetFastPbehaviorParameters[]} [fastPbehavior = []]
+ * @return {WidgetFastPbehaviorParametersForm[]}
+ */
+export const alarmListFastPbehaviorParametersToForm = (fastPbehavior = []) => (
+  fastPbehavior.map(alarmListFastPbehaviorParametersItemToForm)
+);
+
+/**
  * Convert alarm list widget parameters to form
  *
  * @param {AlarmListWidgetDefaultParameters} [parameters = {}]
@@ -376,11 +427,10 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
   pausePeriodicRefreshOnExpandPanel: parameters.pausePeriodicRefreshOnExpandPanel ?? false,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
+  keepSelectedAfterAction: !!parameters.keepSelectedAfterAction,
   isVirtualScrollEnabled: !!parameters.isVirtualScrollEnabled,
   isCorrelationEnabled: !!parameters.isCorrelationEnabled,
-  fastPbehaviorNamePrefix: parameters.fastPbehaviorNamePrefix ?? '',
-  fastPbehaviorType: parameters.fastPbehaviorType,
-  fastPbehaviorReason: parameters.fastPbehaviorReason,
+  fast_pbehaviors: alarmListFastPbehaviorParametersToForm(parameters.fast_pbehaviors),
   sticky_header: !!parameters.sticky_header,
   sticky_horizontal_scroll: !!parameters.sticky_horizontal_scroll,
   dense: parameters.dense ?? DENSE_TYPES.large,
@@ -419,6 +469,9 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   quickActions: widgetQuickActionsToForm(parameters.quickActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   quickMassActions: widgetQuickActionsToForm(parameters.quickMassActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   hideMassActions: parameters.hideMassActions ?? false,
+  comment_templates: widgetCommentTemplatesToForm(parameters.comment_templates ?? []),
+  sort: widgetSortColumnsToForm(parameters.sort),
+  sortTemplate: widgetTemplateValueToForm(parameters.sortTemplate),
 });
 
 /**
@@ -438,7 +491,6 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   liveReporting: parameters.liveReporting
     ? cloneDeep(parameters.liveReporting)
     : {},
-  sort: widgetSortToForm(parameters.sort),
   opened: openedToForm(parameters.opened),
   expandGridRangeSize: parameters.expandGridRangeSize
     ? [...parameters.expandGridRangeSize]
@@ -464,6 +516,8 @@ export const formToAlarmListBaseParameters = (form = {}) => ({
   exportPdfTemplateTemplate: formToWidgetTemplateValue(form.exportPdfTemplateTemplate),
   widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
   widgetColumns: formToWidgetColumns(form.widgetColumns),
+  sort: formToWidgetSortColumns(form.sort),
+  sortTemplate: formToWidgetTemplateValue(form.sortTemplate),
 });
 
 /**
@@ -487,6 +541,14 @@ export const formToAlarmListChart = ({ type, title, parameters }) => {
     parameters: omit(converter ? converter(parameters) : parameters, ['periodic_refresh']),
   };
 };
+
+/**
+ * Convert widget comment templates form to array of template values
+ *
+ * @param {Array} [form=[]]
+ * @return {Array}
+ */
+export const formToWidgetCommentTemplates = (form = []) => map(form, 'template');
 
 /**
  * Convert form parameters to alarm list widget parameters
@@ -513,6 +575,10 @@ export const formToAlarmListWidgetParameters = (form) => {
     quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
     quickActions: formToWidgetQuickActions(form.quickActions),
     quickMassActions: formToWidgetQuickActions(form.quickMassActions),
+    comment_templates: formToWidgetCommentTemplates(form.comment_templates),
+    fast_pbehaviors: removeKeyFromEntities(form.fast_pbehaviors),
+    sort: formToWidgetSortColumns(form.sort),
+    sortTemplate: formToWidgetTemplateValue(form.sortTemplate),
   };
 
   parameters.usedAlarmProperties = convertAlarmWidgetParametersToActiveColumns(parameters);
@@ -737,4 +803,25 @@ export const getAlarmsListWidgetColumnComponentGetter = (
       maxLetters,
     },
   });
+};
+
+/**
+ * Convert comment form to create comment event payload
+ *
+ * @param {Object} form - Comment form data
+ * @returns {Object} Comment event payload with either comment or struct_comment
+ */
+export const createCommentFormToCreateCommentEvent = (form) => {
+  if (!form.template) {
+    return {
+      comment: form.comment,
+    };
+  }
+
+  return {
+    struct_comment: (form.template?.fields ?? []).map(({ name: field }) => ({
+      field,
+      message: form[field],
+    })).filter(({ message }) => message),
+  };
 };

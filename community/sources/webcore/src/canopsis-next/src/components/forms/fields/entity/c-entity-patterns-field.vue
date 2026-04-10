@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { isArray, mergeWith } from 'lodash';
+import { isArray, isUndefined, mergeWith } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -36,7 +36,7 @@ import {
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
-  ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
+  ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
   ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
 
@@ -198,7 +198,7 @@ export default {
     infosWithDefinedTypes() {
       return this.infos.map(({ type, ...info }) => ({
         ...info,
-        definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type],
+        definedType: ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type],
       }));
     },
 
@@ -286,7 +286,7 @@ export default {
         value: item.alias,
         alias: true,
         originalValue: item.name,
-        definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
+        definedType: ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
         options: {
           inputTypes: ENTITY_PATTERN_FIELD_TYPES,
         },
@@ -351,12 +351,12 @@ export default {
 
     availableEntityAttributes() {
       const mergedAttributes = [...this.entityAttributes];
-      const availableAttributesIndexesByValue = indexesByKey(this.attributes, 'value');
+      const mergedAttributesIndexesByValue = indexesByKey(this.entityAttributes, 'value');
 
       this.attributes.forEach((attribute) => {
-        const index = availableAttributesIndexesByValue[attribute.value];
+        const index = mergedAttributesIndexesByValue[attribute.value];
 
-        if (index !== -1) {
+        if (isUndefined(index)) {
           mergedAttributes.push(attribute);
 
           return;
@@ -384,7 +384,7 @@ export default {
 
     showPatternEntitiesModal() {
       this.showEntitiesModalByPatterns({
-        entity_pattern: formGroupsToPatternRulesQuery(this.patterns.groups),
+        search_pattern: formGroupsToPatternRulesQuery(this.patterns.groups),
       });
     },
 

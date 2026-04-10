@@ -5,15 +5,16 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	mock_patternfields "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/patternfields"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
@@ -68,7 +69,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	}
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient))
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -155,7 +156,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient))
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -259,7 +260,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	)
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient))
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -278,7 +279,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		Unit:  "m",
 	})
 	if err != nil {
-		panic(err)
+		t.Fatalf("unexpected error: %v", err)
 	}
 	filter := view.WidgetFilter{
 		ID: "test-filter",
@@ -348,7 +349,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}...)
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient))
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -431,7 +432,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}...)
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient))
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -515,7 +516,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 	}...)
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient))
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -585,7 +586,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	}
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient))
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -595,7 +596,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	}
 }
 
-func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchExpression_ShouldBuildQuery(t *testing.T) {
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchPattern_ShouldBuildQuery(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -604,7 +605,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			BaseFilterRequest: BaseFilterRequest{
-				Search: "infos.test1.value LIKE \"test val\"",
+				SearchPattern: `[[{"field": "infos.test1", "field_type": "string", "cond": {"type": "regexp", "value": "test val"}}]]`,
 			},
 		},
 	}
@@ -633,7 +634,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			"soft_deleted": bson.M{"$exists": false},
 			"healthcheck":  bson.M{"$in": bson.A{nil, false}},
 		}},
-		{"$match": bson.M{"$and": []bson.M{{"infos.test1.value": bson.M{"$regex": "test val"}}}}},
+		{"$match": bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"infos.test1.value": bson.M{"$regex": "test val"}},
+			}},
+		}}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -643,8 +648,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		}},
 	}
 
+	mockTransformer := mock_patternfields.NewMockTransformer(ctrl)
+	mockTransformer.EXPECT().FetchAliases(gomock.Any(), gomock.Any()).Return(patternfields.Aliases{}, nil).AnyTimes()
+
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, mockTransformer)
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -790,7 +798,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	)
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider, common.NewPatternFieldsTransformer(mockDbClient))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, patternfields.NewTransformer(mockDbClient))
 	result, err := b.CreateListAggregationPipeline(t.Context(), request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)

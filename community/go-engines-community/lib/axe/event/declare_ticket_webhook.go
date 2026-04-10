@@ -60,6 +60,9 @@ func (p *declareTicketWebhookProcessor) Process(ctx context.Context, event rpc.A
 			"v.steps":            addStepUpdateQuery(newTicketStepQuery),
 			"v.last_update_date": event.Parameters.Timestamp,
 		}},
+		{"$unset": bson.A{
+			"v.failed_ticket",
+		}},
 	}
 
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)

@@ -6,6 +6,7 @@
   >
     <ul
       v-if="isTop"
+      :class="{ 'theme--light': !$vuetify.theme.dark, 'theme--dark': $vuetify.theme.dark }"
       class="v-pagination"
     >
       <li>

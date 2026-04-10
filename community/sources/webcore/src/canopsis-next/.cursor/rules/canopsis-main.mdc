@@ -65,6 +65,7 @@ This is a **Vue 2.7.14** application with:
 - Use **lowercase-with-dashes** for all file and directory names
 
 ### Import Order (ESLint enforced)
+- Combine constants to one import from the `@/constants`
 ```js
 // 1. External libraries
 import { isEmpty } from 'lodash';
@@ -148,6 +149,8 @@ export default {
 ### Form Handling
 - `v-field` is a custom compiled directive which works similar as `v-model`, but it just emits changes to the parent component instead of mutating. Use this directive
 - Components with name starts from `c-` should register globally. We don't need to import them in the components
+- Don't create component with this prefix if we don't need that they will be global.
+- Don't import components which name starts from `c-`. It's global components. 
 
 ```html
 <c-name-field

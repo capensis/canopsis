@@ -38,17 +38,18 @@ describe('extra-details-ticket', () => {
     attachTo: document.body,
   });
 
-  it('Renders `extra-details-ticket` with full tickets', () => {
+  it('Renders `extra-details-ticket` with full tickets and failed ticket', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tickets,
+        failedTicket: tickets[1],
       },
     });
 
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-ticket` with full tickets and without failed last ticket', () => {
+  it('Renders `extra-details-ticket` with full tickets and without failed ticket', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tickets: [...tickets].reverse(),

@@ -3,6 +3,7 @@ package healthcheck
 import (
 	"context"
 	"reflect"
+	"slices"
 	"sort"
 	"sync"
 	"time"
@@ -221,8 +222,8 @@ func (s *store) doLoad(ctx context.Context) {
 	s.loadConfig(ctx)
 	s.loadServices(ctx)
 	s.loadEngines(ctx)
-	s.websocketHub.Send(websocket.RoomHealthcheck, s.GetInfo())
-	s.websocketHub.Send(websocket.RoomHealthcheckStatus, s.GetStatus())
+	s.websocketHub.SendMessage(ctx, s.GetInfo(), websocket.ToRoom(websocket.RoomHealthcheck))
+	s.websocketHub.SendMessage(ctx, s.GetStatus(), websocket.ToRoom(websocket.RoomHealthcheckStatus))
 }
 
 func (s *store) loadEngines(ctx context.Context) {
@@ -481,10 +482,8 @@ func transformEngineInfoToGraph(engines map[string]engine.RunInfo, order []strin
 
 func isIntersected(l, r []string) bool {
 	for _, lv := range l {
-		for _, rv := range r {
-			if lv == rv {
-				return true
-			}
+		if slices.Contains(r, lv) {
+			return true
 		}
 	}
 

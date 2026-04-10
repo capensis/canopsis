@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
@@ -16,6 +17,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -41,48 +43,65 @@ func NewNoEventsProcessor(
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
+	eventGenerator event.Generator,
+	amqpPublisher amqp.Publisher,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
 	return &noEventsProcessor{
-		client:                          client,
-		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                client.Collection(mongo.EntityMongoCollection),
-		pbehaviorCollection:             client.Collection(mongo.PbehaviorMongoCollection),
-		alarmConfigProvider:             alarmConfigProvider,
-		alarmStatusService:              alarmStatusService,
-		pbhTypeResolver:                 pbhTypeResolver,
-		autoInstructionMatcher:          autoInstructionMatcher,
-		entityServiceCountersCalculator: entityServiceCountersCalculator,
-		componentCountersCalculator:     componentCountersCalculator,
-		eventsSender:                    eventsSender,
-		metaAlarmPostProcessor:          metaAlarmPostProcessor,
-		metricsSender:                   metricsSender,
-		remediationRpcClient:            remediationRpcClient,
-		internalTagAlarmMatcher:         internalTagAlarmMatcher,
-		encoder:                         encoder,
-		logger:                          logger,
+		client:                  client,
+		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:        client.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:     client.Collection(mongo.PbehaviorMongoCollection),
+		alarmConfigProvider:     alarmConfigProvider,
+		alarmStatusService:      alarmStatusService,
+		pbhTypeResolver:         pbhTypeResolver,
+		autoInstructionMatcher:  autoInstructionMatcher,
+		metaAlarmPostProcessor:  metaAlarmPostProcessor,
+		metricsSender:           metricsSender,
+		remediationRpcClient:    remediationRpcClient,
+		internalTagAlarmMatcher: internalTagAlarmMatcher,
+		encoder:                 encoder,
+		logger:                  logger,
+		countersHelper:          newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		upstreamHelper: newUpstreamHelper(
+			client,
+			alarmConfigProvider,
+			alarmStatusService,
+			pbhTypeResolver,
+			autoInstructionMatcher,
+			metaAlarmPostProcessor,
+			metricsSender,
+			remediationRpcClient,
+			internalTagAlarmMatcher,
+			entityServiceCountersCalculator,
+			componentCountersCalculator,
+			eventsSender,
+			eventGenerator,
+			amqpPublisher,
+			encoder,
+			logger,
+		),
 	}
 }
 
 type noEventsProcessor struct {
-	client                          mongo.DbClient
-	alarmCollection                 mongo.DbCollection
-	entityCollection                mongo.DbCollection
-	pbehaviorCollection             mongo.DbCollection
-	alarmConfigProvider             config.AlarmConfigProvider
-	alarmStatusService              alarmstatus.Service
-	pbhTypeResolver                 pbehavior.EntityTypeResolver
-	autoInstructionMatcher          AutoInstructionMatcher
-	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
-	componentCountersCalculator     calculator.ComponentCountersCalculator
-	eventsSender                    entitycounters.EventsSender
-	metaAlarmPostProcessor          MetaAlarmPostProcessor
-	metricsSender                   metrics.Sender
-	remediationRpcClient            engine.RPCClient
-	internalTagAlarmMatcher         alarmtag.InternalTagAlarmMatcher
-	encoder                         encoding.Encoder
-	logger                          zerolog.Logger
+	client                  mongo.DbClient
+	alarmCollection         mongo.DbCollection
+	entityCollection        mongo.DbCollection
+	pbehaviorCollection     mongo.DbCollection
+	alarmConfigProvider     config.AlarmConfigProvider
+	alarmStatusService      alarmstatus.Service
+	pbhTypeResolver         pbehavior.EntityTypeResolver
+	autoInstructionMatcher  AutoInstructionMatcher
+	metaAlarmPostProcessor  MetaAlarmPostProcessor
+	metricsSender           metrics.Sender
+	remediationRpcClient    engine.RPCClient
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher
+	encoder                 encoding.Encoder
+	logger                  zerolog.Logger
+	countersHelper          *countersHelper
+	upstreamHelper          *upstreamHelper
 }
 
 func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -91,16 +110,16 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		return result, nil
 	}
 
+	if event.Parameters.Initiator != types.InitiatorSystem {
+		return Result{}, fmt.Errorf("unknown initiator %q", event.Parameters.Initiator)
+	}
+
 	entity := *event.Entity
-	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
-
-	var componentStateChanged bool
-	var newComponentState int
-
+	countersRes := countersResult{}
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		entity = *event.Entity
-		updatedServiceStates = nil
+		countersRes = countersResult{}
 
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, bson.M{
@@ -132,10 +151,8 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 			entity = result.Entity
 		}
 
-		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
-			p.entityServiceCountersCalculator,
-			p.componentCountersCalculator,
 			&result.Alarm,
 			&entity,
 			result.AlarmChange,
@@ -148,7 +165,7 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		return result, err
 	}
 
-	go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates, componentStateChanged, newComponentState)
+	go p.postProcess(context.WithoutCancel(ctx), event, result, countersRes)
 
 	return result, nil
 }
@@ -186,8 +203,6 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 
 	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, false)
 	stateStep.Value = *params.State
-	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
-	statusStep.Value = types.AlarmStatusNoEvents
 	alarm.Value.State = &stateStep
 	alarm.Value.MaxState = stateStep.Value
 	alarm.Value.InitialState = stateStep.Value
@@ -195,7 +210,17 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 	if err != nil {
 		return result, fmt.Errorf("cannot add alarm steps: %w", err)
 	}
+
+	var statusRuleName string
+	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
+	statusStep.Value, statusRuleName, err = p.alarmStatusService.ComputeStatusOnStatusChange(ctx, alarm, entity)
+	if err != nil {
+		return result, fmt.Errorf("cannot compute alarm status: %w", err)
+	}
+
+	statusStep.Message = ConcatOutputAndRuleName(params.Output, statusRuleName)
 	alarm.Value.Status = &statusStep
+	alarm.Value.InitialStatus = statusStep.Value
 	err = alarm.Value.Steps.Add(statusStep)
 	if err != nil {
 		return result, fmt.Errorf("cannot add alarm steps: %w", err)
@@ -246,16 +271,16 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 		return result, fmt.Errorf("cannot create alarm: %w", err)
 	}
 
-	entityUpdate := bson.M{"$set": bson.M{
+	entityUpdate := bson.M{
 		"idle_since":           params.Timestamp,
 		"last_idle_rule_apply": params.IdleRuleApply,
-	}}
+	}
 	if alarmChange.Type == types.AlarmChangeTypeCreateAndPbhEnter && updateEntityPbhInfo {
 		entityUpdate["pbehavior_info"] = alarm.Value.PbehaviorInfo
 		entityUpdate["last_pbehavior_date"] = alarm.Value.PbehaviorInfo.Timestamp
 	}
 
-	result.Entity, err = updateEntityByID(ctx, entity.ID, entityUpdate, p.entityCollection)
+	result.Entity, err = updateEntityByID(ctx, entity.ID, bson.M{"$set": entityUpdate}, p.entityCollection)
 	if err != nil {
 		return result, err
 	}
@@ -315,39 +340,37 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 		}
 	}
 
-	newStatus := types.CpsNumber(types.AlarmStatusNoEvents)
-	statusStepMessage := params.Output
-	if newState == types.AlarmStateOK {
-		var statusRuleName string
-		newStatus, statusRuleName = p.alarmStatusService.ComputeStatus(alarm, entity)
-		statusStepMessage = ConcatOutputAndRuleName(params.Output, statusRuleName)
+	if *params.State == types.AlarmStateOK {
+		if entity.Type != types.EntityTypeConnector {
+			return result, nil
+		}
+
+		alarm.Value.NoEventsDate = nil
+		unset["v.no_events_date"] = ""
+	} else {
+		alarm.Value.NoEventsDate = &params.Timestamp
+		set["v.no_events_date"] = alarm.Value.NoEventsDate
 	}
 
-	if newStatus == previousStatus && newState == previousState {
+	newStatus, statusRuleName := p.alarmStatusService.ComputeStatusOnStateChange(alarm, entity)
+	if newStatus == previousStatus {
 		return result, nil
 	}
 
-	if newStatus == previousStatus {
-		if stateStep.Type != "" {
-			push["v.steps"] = stateStep
-			inc["v.total_state_changes"] = 1
-			inc["v.state_changes_since_status_update"] = 1
-		}
-	} else {
-		statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
-		statusStep.Value = newStatus
-		statusStep.Message = statusStepMessage
-		if newStatus < previousStatus {
-			statusStep.Type = types.AlarmStepStatusDecrease
-		}
+	statusStepMessage := ConcatOutputAndRuleName(params.Output, statusRuleName)
+	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+	statusStep.Value = newStatus
+	statusStep.Message = statusStepMessage
+	if newStatus < previousStatus {
+		statusStep.Type = types.AlarmStepStatusDecrease
+	}
 
-		set["v.status"] = statusStep
-		set["v.state_changes_since_status_update"] = 0
-		if stateStep.Type != "" {
-			push["v.steps"] = bson.M{"$each": bson.A{stateStep, statusStep}}
-		} else {
-			push["v.steps"] = statusStep
-		}
+	set["v.status"] = statusStep
+	set["v.state_changes_since_status_update"] = 0
+	if stateStep.Type != "" {
+		push["v.steps"] = bson.M{"$each": bson.A{stateStep, statusStep}}
+	} else {
+		push["v.steps"] = statusStep
 	}
 
 	newAlarm := types.Alarm{}
@@ -409,6 +432,7 @@ func (p *noEventsProcessor) newAlarm(
 		ID:       utils.NewID(),
 		Time:     timestamp,
 		Value: types.AlarmValue{
+			NoEventsDate:                &params.Timestamp,
 			CreationDate:                timestamp,
 			DisplayName:                 types.GenDisplayName(alarmConfig.DisplayNameScheme),
 			InitialOutput:               params.Output,
@@ -418,16 +442,11 @@ func (p *noEventsProcessor) newAlarm(
 			LongOutputHistory:           []string{params.LongOutput},
 			LastUpdateDate:              params.Timestamp,
 			LastStateOrStatusUpdateDate: params.Timestamp,
-			LastEventDate:               timestamp,
 			Parents:                     []string{},
 			Children:                    []string{},
 			UnlinkedParents:             []string{},
-			Infos:                       map[string]map[string]interface{}{},
+			Infos:                       map[string]map[string]any{},
 		},
-	}
-
-	if params.Initiator != types.InitiatorSystem {
-		return types.Alarm{}, fmt.Errorf("unknown initiator %q", params.Initiator)
 	}
 
 	connector := ""
@@ -462,9 +481,7 @@ func (p *noEventsProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
-	componentStateChanged bool,
-	newComponentState int,
+	countersRes countersResult,
 ) {
 	entity := *event.Entity
 	if result.Entity.ID != "" {
@@ -482,19 +499,7 @@ func (p *noEventsProcessor) postProcess(
 		"",
 	)
 
-	for servID, servInfo := range updatedServiceStates {
-		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update service state")
-		}
-	}
-
-	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update component state")
-		}
-	}
+	p.countersHelper.UpdateStates(ctx, countersRes)
 
 	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
@@ -519,6 +524,23 @@ func (p *noEventsProcessor) postProcess(
 			err = updatePbehaviorAlarmCount(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, "")
 			if err != nil {
 				p.logger.Err(err).Msg("cannot update pbehavior")
+			}
+		}
+	}
+
+	switch result.AlarmChange.Type {
+	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter:
+		err = p.upstreamHelper.SendDownstreamEventsOnKO(ctx, entity)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot send downstream events")
+		}
+	case types.AlarmChangeTypeStateIncrease:
+		alarmStatus := result.Alarm.Value.Status.Value
+		prevStatus := result.AlarmChange.PreviousStatus
+		if prevStatus != alarmStatus && prevStatus == types.AlarmStatusOff {
+			err = p.upstreamHelper.SendDownstreamEventsOnKO(ctx, entity)
+			if err != nil {
+				p.logger.Err(err).Msg("cannot send downstream events")
 			}
 		}
 	}
