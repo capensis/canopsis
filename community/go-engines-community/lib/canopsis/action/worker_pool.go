@@ -198,7 +198,7 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 }
 
 func (s *pool) call(ctx context.Context, task Task, workerId int) (bool, error) {
-	var event interface{}
+	var event any
 	var rpcClient engine.RPCClient
 	var skip bool
 	var err error

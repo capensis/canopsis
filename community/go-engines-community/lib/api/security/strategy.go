@@ -56,7 +56,7 @@ func (v *viewOwnerStrategy) IsOwner(ctx context.Context, id, userID string) (byt
 	if !obj.IsPrivate {
 		ok, err := v.enforcer.Enforce(userID, id, v.linkedViewPermission)
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 
 		if !ok {
@@ -187,7 +187,7 @@ func (v *viewTabOwnerStrategy) IsOwner(ctx context.Context, id, userID string) (
 	if !obj.IsPrivate {
 		ok, err := v.enforcer.Enforce(userID, obj.View, v.linkedViewPermission)
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 
 		if !ok {
@@ -267,7 +267,7 @@ func (v *widgetOwnershipStrategy) IsOwner(ctx context.Context, id, userID string
 	if !obj.IsPrivate {
 		ok, err := v.enforcer.Enforce(userID, obj.View, v.linkedViewPermission)
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 
 		if !ok {

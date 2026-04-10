@@ -2,11 +2,13 @@ import {
   ALARM_STATES_ICONS,
   ALARM_STATES_TEXTS,
   ALARM_STATES_CLASSES,
+  ALARM_STATUSES,
   ALARM_STATUSES_ICONS,
   ALARM_STATUSES_RESOLVED_ICONS,
   ALARM_STATUSES_TEXTS,
   ALARM_UNKNOWN_VALUE,
   ALARM_STATES_UNKNOWN_CLASS,
+  COLOR_INDICATOR_TYPES_WITH_STATUS,
 } from '@/constants';
 
 import { getAlarmStateColor, getAlarmStatusColor } from './color';
@@ -73,3 +75,15 @@ export const formatAlarmStatus = (status, resolved) => ({
   text: getAlarmStatusText(status) ?? ALARM_UNKNOWN_VALUE.text,
   color: getAlarmStatusColor(status) ?? ALARM_UNKNOWN_VALUE.color,
 });
+
+/**
+ * Return color indicator by status
+ *
+ * @param {number} status
+ * @returns {string}
+ */
+export const getColorIndicatorByStatusAndState = status => (
+  status === ALARM_STATUSES.ongoing
+    ? COLOR_INDICATOR_TYPES_WITH_STATUS.state
+    : COLOR_INDICATOR_TYPES_WITH_STATUS.status
+);

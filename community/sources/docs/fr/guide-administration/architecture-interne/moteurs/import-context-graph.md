@@ -2,8 +2,9 @@
 
 ## Introduction
 
-Le service import-context-graph est utilisé pour importer et gérer le graphe de contexte dans Canopsis.  
-Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur l'import](../../../../interconnexions/drivers/driver-api/).
+Le service import-context-graph est utilisé pour importer et gérer le graphe de contexte dans Canopsis.
+
+Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur l'import](../../../interconnexions/drivers/driver-api.md).
 
 ## Options de démarrage
 
@@ -15,4 +16,4 @@ Pour plus d'informations sur les fonctionnalités, consultez la [documentation s
 
 ## Exemple d'utilisation
 
-Un [cas d'usage complet](../../../../interconnexions/drivers/cas-d-usage-complet/) est disponible dans la documentation de Canopsis.
+Un [cas d'usage complet](../../../interconnexions/drivers/cas-d-usage-complet.md) est disponible dans la documentation de Canopsis.

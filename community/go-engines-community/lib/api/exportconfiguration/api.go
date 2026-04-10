@@ -1,14 +1,14 @@
 package exportconfiguration
 
 import (
-	"fmt"
-	"net/http"
 	"os"
-	"strings"
+	"strconv"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/goccy/go-yaml"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -22,14 +22,16 @@ type API interface {
 
 type api struct {
 	client          mongo.DbClient
+	errorResponder  httperror.Responder
 	logger          zerolog.Logger
 	collectionNames map[string]string
 }
 
-func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
+func NewApi(client mongo.DbClient, errorResponder httperror.Responder, logger zerolog.Logger) API {
 	return &api{
-		client: client,
-		logger: logger,
+		client:         client,
+		errorResponder: errorResponder,
+		logger:         logger,
 		collectionNames: map[string]string{
 			"configuration":              mongo.ConfigurationMongoCollection,
 			"user":                       mongo.UserCollection,
@@ -81,20 +83,24 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 func (a *api) Export(c *gin.Context) {
 	var r Request
 
-	if err := c.ShouldBindJSON(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	err := a.transformRequest(r)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	file, err := os.CreateTemp("", "cps_export_configurations_*.yml")
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	filename := file.Name()
@@ -117,18 +123,24 @@ func (a *api) Export(c *gin.Context) {
 	for _, collection := range r.Exports {
 		err = a.addContents(c, contents, collection)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 	}
 
 	b, err := yaml.Marshal(contents)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	_, err = file.Write(b)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.FileAttachment(filename, exportFileName)
@@ -146,7 +158,7 @@ func (a *api) addContents(c *gin.Context, contents map[string]ExportDocuments, c
 	i := 0
 
 	for cursor.Next(c) {
-		var model map[string]interface{}
+		var model map[string]any
 		err = cursor.Decode(&model)
 		if err != nil {
 			return err
@@ -164,19 +176,21 @@ func (a *api) addContents(c *gin.Context, contents map[string]ExportDocuments, c
 }
 
 func (a *api) transformRequest(r Request) error {
-	var invalid []string
+	var fieldErrs validator.ValidationErrors
 	for idx, export := range r.Exports {
 		collectionName, ok := a.collectionNames[export]
 		if !ok {
-			invalid = append(invalid, export)
+			idxStr := strconv.Itoa(idx)
+			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", idxStr, "Exports."+idxStr))
+
 			continue
 		}
 
 		r.Exports[idx] = collectionName
 	}
 
-	if len(invalid) != 0 {
-		return fmt.Errorf("invalid export fields: [%s]", strings.Join(invalid, ","))
+	if len(fieldErrs) != 0 {
+		return validation.NewError(fieldErrs, r)
 	}
 
 	return nil

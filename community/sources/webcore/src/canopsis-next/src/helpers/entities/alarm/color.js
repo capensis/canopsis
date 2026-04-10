@@ -43,4 +43,5 @@ export const getAlarmStatusColor = value => ({
   [ALARM_STATUSES.flapping]: CSS_COLORS_VARS.status.flapping,
   [ALARM_STATUSES.cancelled]: CSS_COLORS_VARS.status.cancelled,
   [ALARM_STATUSES.noEvents]: CSS_COLORS_VARS.status.noEvents,
+  [ALARM_STATUSES.unknown]: CSS_COLORS_VARS.status.unknown,
 }[value]);

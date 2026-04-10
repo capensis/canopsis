@@ -1,6 +1,5 @@
 # Cartographie
 
-
 ![Cartographie](./img/cartographie.png  "Cartographie")
 
 ## Utilisation courante
@@ -12,7 +11,7 @@ Le widget Cartographie permet de filtrer les entités selon ces catégories.
 
 ### Filtres
 
-Le sélecteur de filtre permet d'appliquer un [filtre](../../patterns) sur la cartographie. Seules les entités correspondant aux critères du filtre seront affichées.
+Le sélecteur de filtre permet d'appliquer un [filtre][patterns] sur la cartographie. Seules les entités correspondant aux critères du filtre seront affichées.
 
 ![Sélecteur de filtres](./img/selecteur-filtres.png "Sélecteur de filtres")
 
@@ -25,7 +24,7 @@ Il existe 4 types de cartes :
 * Géographique : nécessite les coordonnées des entités dans le référentiel
 * Flowchart : réalisé à partir d'un "fond" de carte
 * Mermaid : interprétation du format [Mermaid](https://mermaid.js.org/). Un [éditeur en ligne](https://mermaid.live) est disponible.
-* Arbre de dépendances : modélisation des [services Canopsis](../../../services/)
+* Arbre de dépendances : modélisation des [services Canopsis](../../../services/index.md)
 
 ### Actions
 
@@ -52,14 +51,14 @@ Il s'agit ici de sélectionner la cartographie qui doit être présentée dans l
 ### Paramètres d'affichage des entités
 
 #### Indicateur de couleur
-    
+
 La couleur d'un tuile correspond-elle à la sévérité ou la priorité du service ?
 
 ### Paramètres avancés
 
 #### Filtres
 
-Ce paramètre permet de créer des [filtres](../../patterns/) qui seront appliqués sur les cartographies.
+Ce paramètre permet de créer des [filtres][patterns] qui seront appliqués sur les cartographies.
 
 L'ordre des filtres est modifiable par drag'n drop.
 
@@ -67,7 +66,7 @@ L'ordre des filtres est modifiable par drag'n drop.
 
 Ce paramètre permet de personnaliser les informations affichées dans la modale des entités.
 
-Le langage utilisé ici est le [Handlebars](../../../cas-d-usage/template_handlebars/).
+Le langage utilisé ici est le [Handlebars](../../../cas-d-usage/template_handlebars.md).
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entrez le texte souhaité pour le template des tuiles, puis cliquez sur 'Soumettre'.
 
@@ -83,7 +82,7 @@ Les paramètres qui sont décrits dans ce paragraphe concernent les éléments s
 ![Paramètre Nom des colonnes](./img/noms-des-colonnes.png "Paramètre Nom des colonnes")
 
 Afin d'**ajouter une colonne**, cliquez sur le bouton :material-plus:.  
-Il vous reste alors à sélectionner la colonne souhaitée dans la liste.  
+Il vous reste alors à sélectionner la colonne souhaitée dans la liste.
 
 !!! tip "Astuce"
     Vous pouvez modifier le label de la colonne en activant l'option "Etiquette personnalisée".  
@@ -94,5 +93,6 @@ Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix roug
 L'ordre des colonnes est modifiable par drag'n drop.
 
 !!! tip "Recommandation"
-    Il est recommandé de définir un [modèle de colonnes/template](../../../menu-administration/parametres/#modeles-de-widgets) pour faciliter la maintenance générale.
+    Il est recommandé de définir un [modèle de colonnes/template](../../../menu-administration/parametres.md#modeles-de-widgets) pour faciliter la maintenance générale.
 
+[patterns]: ../../patterns/index.md

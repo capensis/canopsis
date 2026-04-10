@@ -18,6 +18,7 @@
     :resizable-column="resizableColumn"
     :draggable-column="draggableColumn"
     :cells-content-behavior="cellsContentBehavior"
+    :keep-selected-after-action="query.keepSelectedAfterAction"
     eager
     @update:page="updatePage"
     @update:items-per-page="updateItemsPerPage"

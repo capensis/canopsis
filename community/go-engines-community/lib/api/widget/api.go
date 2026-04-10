@@ -2,11 +2,11 @@ package widget
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
@@ -24,17 +24,20 @@ type API interface {
 }
 
 type api struct {
-	store    Store
-	enforcer security.Enforcer
+	store          Store
+	enforcer       security.Enforcer
+	errorResponder httperror.Responder
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
+	errorResponder httperror.Responder,
 ) API {
 	return &api{
-		store:    store,
-		enforcer: enforcer,
+		store:          store,
+		enforcer:       enforcer,
+		errorResponder: errorResponder,
 	}
 }
 
@@ -43,11 +46,14 @@ func NewApi(
 func (a *api) Get(c *gin.Context) {
 	widget, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if widget == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -59,20 +65,17 @@ func (a *api) Get(c *gin.Context) {
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	request := CreateRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	widget, err := a.store.Insert(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
+		a.errorResponder.Respond(c, err)
 
-		panic(err)
+		return
 	}
 
 	c.JSON(http.StatusCreated, widget)
@@ -86,24 +89,22 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	widget, err := a.store.Update(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
+		a.errorResponder.Respond(c, err)
 
-		panic(err)
+		return
 	}
 
 	if widget == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -111,13 +112,23 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, c.Param("id"), userID)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -130,24 +141,22 @@ func (a *api) Delete(c *gin.Context) {
 func (a *api) Copy(c *gin.Context) {
 	request := CreateRequest{}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	widget, err := a.store.Copy(c, c.Param("id"), request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
+		a.errorResponder.Respond(c, err)
 
-		panic(err)
+		return
 	}
 
 	if widget == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -159,38 +168,45 @@ func (a *api) Copy(c *gin.Context) {
 func (a *api) UpdateGridPositions(c *gin.Context) {
 	request := EditGridPositionRequest{}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	ids := make([]string, len(request.Items))
 	for i, item := range request.Items {
 		ids[i] = item.ID
 	}
 	ok, err := a.checkAccess(c, ids, userID, model.PermissionUpdate)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+		a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 		return
 	}
 
 	ok, err = a.store.UpdateGridPositions(c, request.Items)
 	if err != nil {
-		valErr := ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
-			return
-		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -202,22 +218,17 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 // @Success 200 {object} template.ValidateResponse
 func (a *api) ValidateTemplates(c *gin.Context) {
 	var request TemplateRequest
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	response, err := a.store.ValidateTemplates(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+		a.errorResponder.Respond(c, err)
 
-			return
-		}
-
-		panic(err)
+		return
 	}
 
 	c.JSON(http.StatusOK, response)
@@ -228,7 +239,9 @@ func (a *api) ValidateTemplates(c *gin.Context) {
 func (a *api) GetTemplateVars(c *gin.Context) {
 	vars, err := a.store.GetTemplateVars(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, vars)

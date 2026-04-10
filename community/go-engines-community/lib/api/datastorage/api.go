@@ -3,7 +3,8 @@ package datastorage
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"github.com/gin-gonic/gin"
 )
@@ -14,14 +15,16 @@ type API interface {
 	Update(c *gin.Context)
 }
 
-func NewApi(store Store) API {
+func NewApi(store Store, errorResponder httperror.Responder) API {
 	return &api{
-		store: store,
+		store:          store,
+		errorResponder: errorResponder,
 	}
 }
 
 type api struct {
-	store Store
+	store          Store
+	errorResponder httperror.Responder
 }
 
 // Get
@@ -29,7 +32,9 @@ type api struct {
 func (a *api) Get(c *gin.Context) {
 	data, err := a.store.Get(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, data)
@@ -40,14 +45,17 @@ func (a *api) Get(c *gin.Context) {
 // @Success 200 {object} DataStorage
 func (a *api) Update(c *gin.Context) {
 	conf := datastorage.Config{}
-	if err := c.ShouldBind(&conf); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, conf))
+	if err := validation.Bind(c, &conf); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	data, err := a.store.Update(c, conf)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, data)

@@ -190,13 +190,13 @@ describe('c-mixed-input-field', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-mixed-input-field` with null type correctly', () => {
+  it('Renders `c-mixed-input-field` with stringArray type correctly', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: [0, '1', null, false, []],
         inputType: PATTERN_FIELD_TYPES.stringArray,
         name: 'mixedFieldName',
-        label: 'Mixed field with null type',
+        label: 'Mixed field with stringArray type',
       },
     });
 

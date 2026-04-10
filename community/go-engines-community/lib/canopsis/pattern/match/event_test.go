@@ -98,7 +98,7 @@ func getMatchEventPatternDataSets() map[string]eventDataSet {
 				},
 			},
 			event: types.Event{
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"info_name": "test name",
 				},
 			},
@@ -115,7 +115,7 @@ func getMatchEventPatternDataSets() map[string]eventDataSet {
 				},
 			},
 			event: types.Event{
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"info_name": "test another name",
 				},
 			},
@@ -132,7 +132,7 @@ func getMatchEventPatternDataSets() map[string]eventDataSet {
 				},
 			},
 			event: types.Event{
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"info_name": 2,
 				},
 			},
@@ -211,7 +211,7 @@ func BenchmarkMatchEventPattern_Infos_Equal(b *testing.B) {
 		Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test 2"),
 	}
 	event := types.Event{
-		ExtraInfos: map[string]interface{}{
+		ExtraInfos: map[string]any{
 			"test": "test",
 		},
 	}
@@ -230,7 +230,7 @@ func BenchmarkMatchEventPattern_Infos_Regexp(b *testing.B) {
 		Condition: regexpCondition,
 	}
 	event := types.Event{
-		ExtraInfos: map[string]interface{}{
+		ExtraInfos: map[string]any{
 			"test": "test",
 		},
 	}
@@ -263,7 +263,7 @@ func BenchmarkMatchEventPattern_UnmarshalBson_Infos_Equal(b *testing.B) {
 		},
 	}
 	event := types.Event{
-		ExtraInfos: map[string]interface{}{
+		ExtraInfos: map[string]any{
 			"test": "test",
 		},
 	}
@@ -281,7 +281,7 @@ func BenchmarkMatchEventPattern_UnmarshalBson_Infos_Regexp(b *testing.B) {
 		},
 	}
 	event := types.Event{
-		ExtraInfos: map[string]interface{}{
+		ExtraInfos: map[string]any{
 			"test": "test",
 		},
 	}

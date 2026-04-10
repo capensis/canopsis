@@ -8,8 +8,10 @@ import (
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -18,6 +20,7 @@ import (
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
@@ -72,9 +75,7 @@ func NewStore(
 			TypeTestMetaAlarmRule:     mongo.MetaAlarmRulesMongoCollection,
 			TypeTestWebhookTokenRule:  mongo.WebhookTokenRuleCollection,
 		},
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"name": "Name already exists.",
-		}),
+		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -106,12 +107,12 @@ func (s *store) FindData(ctx context.Context, r ListDataRequest) (AggregationDat
 		var eventPattern pattern.Event
 		err := s.decoder.Decode([]byte(r.EventPattern), &eventPattern)
 		if err != nil {
-			return res, common.NewValidationError("event_pattern", "EventPattern is invalid.")
+			return res, validation.NewSingleError("event_pattern", "EventPattern", "EventPattern", r)
 		}
 
 		q, err := db.EventPatternToMongoQuery(eventPattern, "body")
 		if err != nil {
-			return res, common.NewValidationError("event_pattern", "EventPattern is invalid.")
+			return res, validation.NewSingleError("event_pattern", "EventPattern", "EventPattern", r)
 		}
 
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"$and": []bson.M{
@@ -120,7 +121,7 @@ func (s *store) FindData(ctx context.Context, r ListDataRequest) (AggregationDat
 		}}})
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		beforeLimit = append(beforeLimit, bson.M{"$match": filter})
 	}
@@ -128,7 +129,7 @@ func (s *store) FindData(ctx context.Context, r ListDataRequest) (AggregationDat
 	cursor, err := s.testDataCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		beforeLimit,
-		common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
+		mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
 	))
 	if err != nil {
 		return res, err
@@ -183,7 +184,7 @@ func (s *store) CreateData(ctx context.Context, r EditDataRequest) (DataResponse
 		_, err := s.testDataCollection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, res)
 			}
 
 			return err
@@ -218,13 +219,13 @@ func (s *store) UpdateData(ctx context.Context, r EditDataRequest) (DataResponse
 		}
 
 		if prev.Type != model.Type {
-			return common.NewValidationError("type", "Type cannot be changed.")
+			return validation.NewSingleError("unchangeable", "Type", "Type", r)
 		}
 
 		_, err = s.testDataCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, res)
 			}
 
 			return err
@@ -249,7 +250,7 @@ func (s *store) DeleteData(ctx context.Context, id, author string) (bool, error)
 		}
 
 		if isUsed {
-			return ErrIsLinked
+			return httperror.NewConflictError("The test data cannot be deleted because it is referenced by a test.")
 		}
 
 		// required to get the author in action log listener
@@ -283,7 +284,7 @@ func (s *store) FindTest(ctx context.Context, r ListTestRequest, userID string) 
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"type": bson.M{"$in": types}}})
 	} else {
 		if !slices.Contains(types, *r.Type) {
-			return res, common.NewValidationError("type", "Type is not accessible.")
+			return res, validation.NewSingleError("not_accessible", "Type", "Type", r)
 		}
 
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"type": r.Type}})
@@ -297,12 +298,12 @@ func (s *store) FindTest(ctx context.Context, r ListTestRequest, userID string) 
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"rule._id": r.Rule}})
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		beforeLimit = append(beforeLimit, bson.M{"$match": filter})
 	}
 
-	sort := common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
+	sort := mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
 	afterLimit := s.getTestNestedObjectsPipeline()
 	afterLimit = append(afterLimit, sort)
 	cursor, err := s.testCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
@@ -369,7 +370,7 @@ func (s *store) CreateTest(ctx context.Context, r EditTestRequest) (TestResponse
 	}
 
 	if !slices.Contains(types, *r.Type) {
-		return TestResponse{}, common.NewValidationError("type", "Type is not accessible.")
+		return TestResponse{}, validation.NewSingleError("not_accessible", "Type", "Type", r)
 	}
 
 	now := datetime.NewCpsTime()
@@ -410,7 +411,7 @@ func (s *store) CreateTest(ctx context.Context, r EditTestRequest) (TestResponse
 			Decode(&rule)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return common.NewValidationError("rule", "Rule doesn't exist.")
+				return validation.NewSingleError("not_exist", "Rule", "Rule", r)
 			}
 
 			return err
@@ -426,7 +427,7 @@ func (s *store) CreateTest(ctx context.Context, r EditTestRequest) (TestResponse
 		_, err = s.testCollection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, res)
 			}
 
 			return err
@@ -447,7 +448,7 @@ func (s *store) UpdateTest(ctx context.Context, r EditTestRequest) (TestResponse
 	}
 
 	if !slices.Contains(types, *r.Type) {
-		return TestResponse{}, common.NewValidationError("type", "Type is not accessible.")
+		return TestResponse{}, validation.NewSingleError("not_accessible", "Type", "Type", r)
 	}
 
 	now := datetime.NewCpsTime()
@@ -477,11 +478,11 @@ func (s *store) UpdateTest(ctx context.Context, r EditTestRequest) (TestResponse
 		}
 
 		if prev.Type != model.Type {
-			return common.NewValidationError("type", "Type cannot be changed.")
+			return validation.NewSingleError("unchangeable", "Type", "Type", r)
 		}
 
 		if prev.Rule.ID != r.Rule {
-			return common.NewValidationError("rule", "Rule cannot be changed.")
+			return validation.NewSingleError("unchangeable", "Rule", "Rule", r)
 		}
 
 		model.Rule = prev.Rule
@@ -496,7 +497,7 @@ func (s *store) UpdateTest(ctx context.Context, r EditTestRequest) (TestResponse
 		)
 		if err != nil || updateRes.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, res)
 			}
 
 			return err
@@ -559,6 +560,17 @@ func (s *store) getAuthorizedTestTypes(userID string) ([]int, error) {
 }
 
 func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTest *TestModel) (*libtypes.AlarmWithEntityField, *libtypes.Entity, error) {
+	if r.Data.User != "" {
+		ok, err := s.enforcer.Enforce(r.Author, apisecurity.PermAcl, securitymodel.PermissionRead)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		if !ok {
+			return nil, nil, validation.NewSingleError("not_accessible", "User", "Data.User", r)
+		}
+	}
+
 	var alarm *libtypes.AlarmWithEntityField
 	var entity *libtypes.Entity
 	if r.Data.Event != "" {
@@ -566,7 +578,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 			options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, nil, common.NewValidationError("data.event", "Event doesn't exist.")
+				return nil, nil, validation.NewSingleError("not_exist", "Event", "Data.Event", r)
 			}
 
 			return nil, nil, err
@@ -578,7 +590,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 			options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, nil, common.NewValidationError("data.response", "Response doesn't exist.")
+				return nil, nil, validation.NewSingleError("not_exist", "Response", "Data.Response", r)
 			}
 
 			return nil, nil, err
@@ -605,7 +617,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 		}
 
 		if len(ids) != len(responses) {
-			return nil, nil, common.NewValidationError("data.responses", "Responses don't exist.")
+			return nil, nil, validation.NewSingleError("not_exist", "Responses", "Data.Responses", r)
 		}
 	}
 
@@ -614,7 +626,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 			options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, nil, common.NewValidationError("data.user", "User doesn't exist.")
+				return nil, nil, validation.NewSingleError("not_exist", "User", "Data.User", r)
 			}
 
 			return nil, nil, err
@@ -630,7 +642,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 				options.FindOne().SetProjection(bson.M{"v.steps": 0})).Decode(alarm)
 			if err != nil {
 				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return nil, nil, common.NewValidationError("data.alarm", "Alarm doesn't exist.")
+					return nil, nil, validation.NewSingleError("not_exist", "Alarm", "Data.Alarm", r)
 				}
 
 				return nil, nil, err
@@ -646,7 +658,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 			err := s.entityCollection.FindOne(ctx, bson.M{"_id": r.Data.Entity}).Decode(entity)
 			if err != nil {
 				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return nil, nil, common.NewValidationError("data.entity", "Entity doesn't exist.")
+					return nil, nil, validation.NewSingleError("not_exist", "Entity", "Data.Entity", r)
 				}
 
 				return nil, nil, err

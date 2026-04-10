@@ -75,9 +75,9 @@ Pour rappel, il existe 3 types de consignes :
 
 | Type de consigne | Description |
 | ---------------- | ----------- |
-| Manuel           | L'exécution de la remédiation est à l'initiative du pilote à partir d'un bac à alarmes. Le système lui présente toutes les opérations à effectuer. Ces opérations peuvent inclure des [jobs](#taches) |
-| Automatique      | L'exécution de la remédiation est déclenchée par un [trigger](#declenchement-dune-consigne-et-activation-dune-alarme). Le pilote ne peut que constater le résultat de la remédiation |
-| Manuel simplifié | L'exécution de la remédiation est à l'initiative du pilote à partir d'un bac à alarmes. Ces remédiations sont uniquement une succession de jobs, sans opération manuelle à exécuter |
+| Manuel           | L'exécution de la remédiation est à l'initiative du pilote à partir d'un bac à alarmes. Le système lui présente toutes les opérations à effectuer. Ces opérations peuvent inclure des [jobs](../menu-administration/consignes.md#taches). |
+| Automatique      | L'exécution de la remédiation est déclenchée par un [trigger](../menu-administration/consignes.md#declenchement-dune-consigne-et-activation-dune-alarme). Le pilote ne peut que constater le résultat de la remédiation. |
+| Manuel simplifié | L'exécution de la remédiation est à l'initiative du pilote à partir d'un bac à alarmes. Ces remédiations sont uniquement une succession de jobs, sans opération manuelle à exécuter. |
 
 
 * Vérifier la présence d'une ou plusieurs consignes associées

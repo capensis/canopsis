@@ -2,25 +2,11 @@
 
 exports[`availability-widget-filters Renders \`availability-widget-filters\` with custom props 1`] = `
 <div
-  class="availability-widget-filters col-gap-6 row-gap-3"
-  filteraddable="true"
-  filtereditable="true"
+  class="layout availability-widget-filters col-gap-6 row-gap-3 wrap"
 >
-  <c-advanced-search-stub
-    class="pa-0 availability-widget-filters__search"
-    tooltip="<span>Help on the advanced research :</span>
-<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The \\"-\\" before the research is required</p>
-<p>Operators :
-    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
-<dl><dt>Examples :</dt><dt>- Name = \\"name_1\\"</dt>
-    <dd>Entities whose names are \\"name_1\\"</dd><dt>- Name=\\"name_1\\" AND Type=\\"service\\"</dt>
-    <dd>Entities whose names is \\"name_1\\" and the types is \\"service\\"</dd><dt>- infos.custom=\\"Custom value\\" OR Type=\\"resource\\"</dt>
-    <dd>Entities whose infos.custom is \\"Custom value\\" or the type is \\"resource\\"</dd><dt>- infos.custom LIKE 1 OR infos.custom LIKE 2</dt>
-    <dd>Entities whose infos.custom contains 1 or 2</dd><dt>- NOT Name = \\"name_1\\"</dt>
-    <dd>Entities whose name isn't \\"name_1\\"</dd>
-</dl>"
+  <c-availability-advanced-search-stub
+    class="mt-0 availability-widget-filters__search"
+    searches=""
   />
   <c-quick-date-interval-field-stub
     allow-future=""
@@ -87,23 +73,11 @@ exports[`availability-widget-filters Renders \`availability-widget-filters\` wit
 
 exports[`availability-widget-filters Renders \`availability-widget-filters\` with default props 1`] = `
 <div
-  class="availability-widget-filters col-gap-6 row-gap-3"
+  class="layout availability-widget-filters col-gap-6 row-gap-3 wrap"
 >
-  <c-advanced-search-stub
-    class="pa-0 availability-widget-filters__search"
-    tooltip="<span>Help on the advanced research :</span>
-<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The \\"-\\" before the research is required</p>
-<p>Operators :
-    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
-<dl><dt>Examples :</dt><dt>- Name = \\"name_1\\"</dt>
-    <dd>Entities whose names are \\"name_1\\"</dd><dt>- Name=\\"name_1\\" AND Type=\\"service\\"</dt>
-    <dd>Entities whose names is \\"name_1\\" and the types is \\"service\\"</dd><dt>- infos.custom=\\"Custom value\\" OR Type=\\"resource\\"</dt>
-    <dd>Entities whose infos.custom is \\"Custom value\\" or the type is \\"resource\\"</dd><dt>- infos.custom LIKE 1 OR infos.custom LIKE 2</dt>
-    <dd>Entities whose infos.custom contains 1 or 2</dd><dt>- NOT Name = \\"name_1\\"</dt>
-    <dd>Entities whose name isn't \\"name_1\\"</dd>
-</dl>"
+  <c-availability-advanced-search-stub
+    class="mt-0 availability-widget-filters__search"
+    searches=""
   />
   <!---->
   <!---->

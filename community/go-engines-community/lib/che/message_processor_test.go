@@ -3,19 +3,24 @@ package che
 import (
 	"context"
 	"fmt"
+	"runtime/debug"
 	"testing"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
@@ -211,6 +216,7 @@ func benchmarkMessageProcessorWithConfig(
 
 	defer func() {
 		if r := recover(); r != nil {
+			b.Log(string(debug.Stack()))
 			b.Fatal("benchmark failed due to panic:", r)
 		}
 	}()
@@ -273,11 +279,24 @@ func benchmarkMessageProcessorWithConfig(
 
 	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, zerolog.Nop())
+
+	entityAdapter := entity.NewAdapter(dbClient)
+	stateSettingsService := statesetting.NewService(dbClient, zerolog.Nop())
+	contextGraphManager := contextgraph.NewManager(entityAdapter, dbClient, contextgraph.NewEntityServiceStorage(dbClient), stateSettingsService, zerolog.Nop())
+	metricsSender := metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, zerolog.Nop())
+
+	eventProcessorContainer := event.NewProcessorContainer()
+	eventProcessorContainer.Set(types.SourceTypeResource, event.NewResourceProcessor(dbClient, contextGraphManager, ruleService, metricsSender, zerolog.Nop()))
+	eventProcessorContainer.Set(types.SourceTypeComponent, event.NewComponentProcessor(dbClient, contextGraphManager, ruleService, metricsSender, zerolog.Nop()))
+	eventProcessorContainer.Set(types.SourceTypeConnector, event.NewConnectorProcessor(dbClient, contextGraphManager, ruleService, metricsSender))
+	eventProcessorContainer.Set(types.SourceTypeService, event.NewServiceProcessor(dbClient, contextGraphManager, ruleService, metricsSender))
+
 	p := messageProcessor{
+		EventProcessorContainer:  eventProcessorContainer,
 		FeaturePrintEventOnError: true,
 		AlarmConfigProvider:      alarmConfigProvider,
 		MetricsConfigProvider:    metricsConfigProvider,
-		MetricsSender:            metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, zerolog.Nop()),
+		MetricsSender:            metricsSender,
 		MetaUpdater:              metrics.NewNullMetaUpdater(),
 		TechMetricsSender:        techMetricsSender,
 		EntityCollection:         dbClient.Collection(mongo.EntityMongoCollection),

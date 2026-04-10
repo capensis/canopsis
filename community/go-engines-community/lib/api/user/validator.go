@@ -1,39 +1,29 @@
 package user
 
 import (
-	"context"
-	"errors"
 	"slices"
 	"strconv"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/password"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/go-playground/validator/v10"
-	"go.mongodb.org/mongo-driver/v2/bson"
-	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type Validator interface {
-	ValidateCreateRequest(ctx context.Context, sl validator.StructLevel)
-	ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel)
-	ValidatePatchRequest(ctx context.Context, sl validator.StructLevel)
-	ValidateBulkUpdateRequestItem(ctx context.Context, sl validator.StructLevel)
-	ValidateBulkPatchRequestItem(ctx context.Context, sl validator.StructLevel)
+	ValidateCreateRequest(sl validator.StructLevel)
+	ValidateUpdateRequest(sl validator.StructLevel)
+	ValidatePatchRequest(sl validator.StructLevel)
+	ValidateBulkUpdateRequestItem(sl validator.StructLevel)
+	ValidateBulkPatchRequestItem(sl validator.StructLevel)
 }
 
 type baseValidator struct {
-	dbCollection           mongo.DbCollection
-	dbRoleCollection       mongo.DbCollection
-	dbViewCollection       mongo.DbCollection
-	dbColorThemeCollection mongo.DbCollection
-
 	availableAuthSources      map[string]bool
 	availableAuthSourcesNames []string
 }
 
-func NewValidator(dbClient mongo.DbClient, secConfig security.Config) Validator {
+func NewValidator(secConfig security.Config) Validator {
 	availableAuthSources := make(map[string]bool)
 	availableAuthSourcesNames := make([]string, 0, len(secConfig.Security.AuthProviders))
 
@@ -54,32 +44,25 @@ func NewValidator(dbClient mongo.DbClient, secConfig security.Config) Validator 
 	slices.Sort(availableAuthSourcesNames)
 
 	return &baseValidator{
-		dbCollection:              dbClient.Collection(mongo.UserCollection),
-		dbRoleCollection:          dbClient.Collection(mongo.RoleCollection),
-		dbViewCollection:          dbClient.Collection(mongo.ViewMongoCollection),
-		dbColorThemeCollection:    dbClient.Collection(mongo.ColorThemeCollection),
 		availableAuthSources:      availableAuthSources,
 		availableAuthSourcesNames: availableAuthSourcesNames,
 	}
 }
 
-func (v *baseValidator) ValidateBulkUpdateRequestItem(ctx context.Context, sl validator.StructLevel) {
+func (v *baseValidator) ValidateBulkUpdateRequestItem(sl validator.StructLevel) {
 	r := sl.Current().Interface().(BulkUpdateRequestItem)
 
-	v.validateEditRequest(ctx, sl, r.ID, r.EditRequest)
 	v.validatePassword(sl, r.EditRequest, r.ID)
 }
 
-func (v *baseValidator) ValidateBulkPatchRequestItem(ctx context.Context, sl validator.StructLevel) {
+func (v *baseValidator) ValidateBulkPatchRequestItem(sl validator.StructLevel) {
 	r := sl.Current().Interface().(BulkPatchRequestItem)
 
-	v.validatePatchEditRequest(ctx, sl, r.ID, r.PatchEditRequest)
+	v.validatePatchEditRequest(sl, r.ID, r.PatchEditRequest)
 }
 
-func (v *baseValidator) ValidateCreateRequest(ctx context.Context, sl validator.StructLevel) {
+func (v *baseValidator) ValidateCreateRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(CreateRequest)
-
-	v.validateEditRequest(ctx, sl, "", r.EditRequest)
 
 	// Validate source and external_id
 	if r.Source == "" && r.ExternalID != "" {
@@ -104,103 +87,26 @@ func (v *baseValidator) ValidateCreateRequest(ctx context.Context, sl validator.
 	}
 }
 
-func (v *baseValidator) ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel) {
+func (v *baseValidator) ValidateUpdateRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(UpdateRequest)
 
-	v.validateEditRequest(ctx, sl, r.ID, r.EditRequest)
 	v.validatePassword(sl, r.EditRequest, r.ID)
 }
 
-func (v *baseValidator) ValidatePatchRequest(ctx context.Context, sl validator.StructLevel) {
+func (v *baseValidator) ValidatePatchRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(PatchRequest)
 
-	v.validatePatchEditRequest(ctx, sl, r.ID, r.PatchEditRequest)
+	v.validatePatchEditRequest(sl, r.ID, r.PatchEditRequest)
 }
 
-func (v *baseValidator) validatePatchEditRequest(ctx context.Context, sl validator.StructLevel, id string, r PatchEditRequest) {
+func (v *baseValidator) validatePatchEditRequest(sl validator.StructLevel, id string, r PatchEditRequest) {
 	// to avoid code duplication, use validation functions for EditRequest
-	editReq := EditRequest{
-		Roles: r.Roles,
-	}
-
-	if r.Name != nil {
-		editReq.Name = *r.Name
-	}
-
-	if r.DefaultView != nil {
-		editReq.DefaultView = *r.DefaultView
-	}
-
-	if r.UITheme != nil {
-		editReq.UITheme = *r.UITheme
-	}
-
+	editReq := EditRequest{}
 	if r.Password != nil {
 		editReq.Password = *r.Password
 	}
 
-	v.validateEditRequest(ctx, sl, id, editReq)
 	v.validatePassword(sl, editReq, id)
-}
-
-func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.StructLevel, id string, r EditRequest) {
-	if r.Name != "" {
-		// Check unique by id
-		res := struct {
-			ID string `bson:"_id"`
-		}{}
-		err := v.dbCollection.FindOne(ctx, bson.M{"_id": r.Name}).Decode(&res)
-		if err == nil {
-			if res.ID != id {
-				sl.ReportError(r.Name, "Name", "Name", "unique", "")
-			}
-		} else if errors.Is(err, mongodriver.ErrNoDocuments) {
-			// Check unique by name
-			err := v.dbCollection.FindOne(ctx, bson.M{"name": r.Name}).Decode(&res)
-			if err == nil {
-				if res.ID != id {
-					sl.ReportError(r.Name, "Name", "Name", "unique", "")
-				}
-			} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
-				panic(err)
-			}
-		} else {
-			panic(err)
-		}
-	}
-
-	// Validate default view
-	if r.DefaultView != "" {
-		err := v.dbViewCollection.FindOne(ctx, bson.M{"_id": r.DefaultView}).Err()
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				sl.ReportError(r.DefaultView, "DefaultView", "DefaultView", "not_exist", "")
-			} else {
-				panic(err)
-			}
-		}
-	}
-	// Validate role
-	if len(r.Roles) > 0 {
-		c, err := v.dbRoleCollection.CountDocuments(ctx, bson.M{"_id": bson.M{"$in": r.Roles}})
-		if err != nil {
-			panic(err)
-		}
-		if int(c) < len(r.Roles) {
-			sl.ReportError(r.Roles, "Roles", "Roles", "not_exist", "")
-		}
-	}
-	// Validate UITheme
-	if r.UITheme != "" {
-		err := v.dbColorThemeCollection.FindOne(ctx, bson.M{"_id": r.UITheme}).Err()
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				sl.ReportError(r.UITheme, "UITheme", "UITheme", "not_exist", "")
-			} else {
-				panic(err)
-			}
-		}
-	}
 }
 
 func (v *baseValidator) validatePassword(sl validator.StructLevel, r EditRequest, id string) {
