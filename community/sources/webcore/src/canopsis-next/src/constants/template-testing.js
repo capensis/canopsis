@@ -30,8 +30,8 @@ export const TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS = {
   [TEMPLATE_TESTING_TEST_TYPES.widget]: USER_PERMISSIONS.technical.view,
   [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: USER_PERMISSIONS.technical.exploitation.declareTicketRule,
   [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: USER_PERMISSIONS.technical.exploitation.dynamicInfo,
-  [TEMPLATE_TESTING_TEST_TYPES.instruction]: USER_PERMISSIONS.technical.remediationInstruction,
-  [TEMPLATE_TESTING_TEST_TYPES.job]: USER_PERMISSIONS.technical.remediationJob,
+  [TEMPLATE_TESTING_TEST_TYPES.instruction]: USER_PERMISSIONS.technical.exploitation.remediationInstruction,
+  [TEMPLATE_TESTING_TEST_TYPES.job]: USER_PERMISSIONS.technical.exploitation.remediationJob,
   [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: USER_PERMISSIONS.technical.exploitation.metaAlarmRule,
 };
 

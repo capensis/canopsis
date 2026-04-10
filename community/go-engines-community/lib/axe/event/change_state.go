@@ -4,13 +4,17 @@ import (
 	"context"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -23,7 +27,9 @@ import (
 func NewChangeStateProcessor(
 	client mongo.DbClient,
 	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
+	alarmConfigProvider config.AlarmConfigProvider,
 	alarmStatusService alarmstatus.Service,
+	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher AutoInstructionMatcher,
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
@@ -31,42 +37,60 @@ func NewChangeStateProcessor(
 	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
 	encoder encoding.Encoder,
+	eventGenerator libevent.Generator,
+	amqpPublisher amqp.Publisher,
 	logger zerolog.Logger,
 ) Processor {
 	return &changeStateProcessor{
-		client:                          client,
-		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                client.Collection(mongo.EntityMongoCollection),
-		userInterfaceConfigProvider:     userInterfaceConfigProvider,
-		alarmStatusService:              alarmStatusService,
-		autoInstructionMatcher:          autoInstructionMatcher,
-		entityServiceCountersCalculator: entityServiceCountersCalculator,
-		componentCountersCalculator:     componentCountersCalculator,
-		eventsSender:                    eventsSender,
-		metaAlarmPostProcessor:          metaAlarmPostProcessor,
-		metricsSender:                   metricsSender,
-		remediationRpcClient:            remediationRpcClient,
-		encoder:                         encoder,
-		logger:                          logger,
+		client:                      client,
+		alarmCollection:             client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:            client.Collection(mongo.EntityMongoCollection),
+		userInterfaceConfigProvider: userInterfaceConfigProvider,
+		alarmStatusService:          alarmStatusService,
+		autoInstructionMatcher:      autoInstructionMatcher,
+		metaAlarmPostProcessor:      metaAlarmPostProcessor,
+		metricsSender:               metricsSender,
+		remediationRpcClient:        remediationRpcClient,
+		encoder:                     encoder,
+		logger:                      logger,
+		countersHelper:              newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		upstreamHelper: newUpstreamHelper(
+			client,
+			alarmConfigProvider,
+			alarmStatusService,
+			pbhTypeResolver,
+			autoInstructionMatcher,
+			metaAlarmPostProcessor,
+			metricsSender,
+			remediationRpcClient,
+			internalTagAlarmMatcher,
+			entityServiceCountersCalculator,
+			componentCountersCalculator,
+			eventsSender,
+			eventGenerator,
+			amqpPublisher,
+			encoder,
+			logger,
+		),
 	}
 }
 
 type changeStateProcessor struct {
-	client                          mongo.DbClient
-	alarmCollection                 mongo.DbCollection
-	entityCollection                mongo.DbCollection
-	userInterfaceConfigProvider     config.UserInterfaceConfigProvider
-	alarmStatusService              alarmstatus.Service
-	autoInstructionMatcher          AutoInstructionMatcher
-	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
-	componentCountersCalculator     calculator.ComponentCountersCalculator
-	eventsSender                    entitycounters.EventsSender
-	metaAlarmPostProcessor          MetaAlarmPostProcessor
-	metricsSender                   metrics.Sender
-	remediationRpcClient            engine.RPCClient
-	encoder                         encoding.Encoder
-	logger                          zerolog.Logger
+	client                      mongo.DbClient
+	alarmCollection             mongo.DbCollection
+	entityCollection            mongo.DbCollection
+	userInterfaceConfigProvider config.UserInterfaceConfigProvider
+	alarmStatusService          alarmstatus.Service
+	autoInstructionMatcher      AutoInstructionMatcher
+	metaAlarmPostProcessor      MetaAlarmPostProcessor
+	metricsSender               metrics.Sender
+	remediationRpcClient        engine.RPCClient
+	encoder                     encoding.Encoder
+	logger                      zerolog.Logger
+	countersHelper              *countersHelper
+	upstreamHelper              *upstreamHelper
 }
 
 func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -82,7 +106,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	entity := *event.Entity
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["$and"] = []bson.M{
-		{"v.state.val": bson.M{"$ne": types.AlarmStateOK}},
+		{"v.status.val": bson.M{"$ne": types.AlarmStatusOff}},
 		{"$or": []bson.M{
 			{"v.state.val": bson.M{"$ne": event.Parameters.State}},
 			{"v.change_state": nil},
@@ -90,14 +114,11 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 	matchUpdate := getOpenAlarmMatch(event)
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
-	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
-
-	var componentStateChanged bool
-	var newComponentState int
+	countersRes := countersResult{}
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		updatedServiceStates = nil
+		countersRes = countersResult{}
 
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
@@ -128,7 +149,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		}
 
 		currentStatus := alarm.Value.Status.Value
-		newStatus, statusRuleName := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
+		newStatus, statusRuleName := p.alarmStatusService.ComputeStatusOnStateChange(alarm, *event.Entity)
 		var update bson.M
 		if newStatus == currentStatus {
 			update = bson.M{
@@ -187,10 +208,8 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			}
 		}
 
-		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
-			p.entityServiceCountersCalculator,
-			p.componentCountersCalculator,
 			&result.Alarm,
 			&entity,
 			result.AlarmChange,
@@ -203,7 +222,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 
 	result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
-	go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates, componentStateChanged, newComponentState)
+	go p.postProcess(context.WithoutCancel(ctx), event, result, countersRes)
 
 	return result, nil
 }
@@ -212,9 +231,7 @@ func (p *changeStateProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
-	componentStateChanged bool,
-	newComponentState int,
+	countersRes countersResult,
 ) {
 	p.metricsSender.SendEventMetrics(
 		result.Alarm,
@@ -227,19 +244,7 @@ func (p *changeStateProcessor) postProcess(
 		"",
 	)
 
-	for servID, servInfo := range updatedServiceStates {
-		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update service state")
-		}
-	}
-
-	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update component state")
-		}
-	}
+	p.countersHelper.UpdateStates(ctx, countersRes)
 
 	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
@@ -252,5 +257,13 @@ func (p *changeStateProcessor) postProcess(
 	err = sendRemediationEvent(ctx, event, result, p.remediationRpcClient, p.encoder)
 	if err != nil {
 		p.logger.Err(err).Msg("cannot send event to engine-remediation")
+	}
+
+	alarmStatus := result.Alarm.Value.Status.Value
+	if result.AlarmChange.Type == types.AlarmChangeTypeChangeState && result.AlarmChange.PreviousStatus != alarmStatus && alarmStatus == types.AlarmStatusOff {
+		err = p.upstreamHelper.SendDownstreamEventsOnOK(ctx, *event.Entity)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot send downstream events")
+		}
 	}
 }

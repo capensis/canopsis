@@ -39,7 +39,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 	}
 
 	if rule.Config.Resource.Text != "" {
-		resource, err := ExecuteParsedTemplate(rule.ID, rule.Description, "Resource", rule.Config.Resource,
+		resource, err := ExecuteParsedTemplate(rule, "Resource", rule.Config.Resource,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
 			return RuleResult{Outcome: OutcomeDrop}, err
@@ -49,7 +49,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 	}
 
 	if rule.Config.Component.Text != "" {
-		component, err := ExecuteParsedTemplate(rule.ID, rule.Description, "Component", rule.Config.Component,
+		component, err := ExecuteParsedTemplate(rule, "Component", rule.Config.Component,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
 			return RuleResult{Outcome: OutcomeDrop}, err
@@ -59,7 +59,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 	}
 
 	if rule.Config.Connector.Text != "" {
-		connector, err := ExecuteParsedTemplate(rule.ID, rule.Description, "Connector", rule.Config.Connector,
+		connector, err := ExecuteParsedTemplate(rule, "Connector", rule.Config.Connector,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
 			return RuleResult{Outcome: OutcomeDrop}, err
@@ -69,13 +69,23 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 	}
 
 	if rule.Config.ConnectorName.Text != "" {
-		connectorName, err := ExecuteParsedTemplate(rule.ID, rule.Description, "ConnectorName", rule.Config.ConnectorName,
+		connectorName, err := ExecuteParsedTemplate(rule, "ConnectorName", rule.Config.ConnectorName,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
 			return RuleResult{Outcome: OutcomeDrop}, err
 		}
 
 		event.ConnectorName = connectorName
+	}
+
+	if rule.Config.Upstream.Text != "" {
+		upstream, err := ExecuteParsedTemplate(rule, "Upstream", rule.Config.Upstream,
+			templateParams, event, a.failureService, a.templateExecutor)
+		if err != nil {
+			return RuleResult{Outcome: OutcomeDrop}, err
+		}
+
+		event.Upstream = upstream
 	}
 
 	return RuleResult{Outcome: OutcomePass, ExternalRequestCount: externalRequestCount}, nil

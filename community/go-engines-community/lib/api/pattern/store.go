@@ -5,11 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -36,6 +38,8 @@ type Store interface {
 	Delete(ctx context.Context, pattern Response, userID string) (bool, error)
 	CountAlarms(ctx context.Context, r CountRequest, maxCount int64) (CountAlarmsResponse, error)
 	CountEntities(ctx context.Context, r CountRequest, maxCount int64) (CountEntitiesResponse, error)
+	GetLiteralsFieldStats(ctx context.Context, allLiterals []string) (map[string][]LiteralFieldStats, error)
+	GetEntityIDs(ctx context.Context, entityPattern pattern.Entity) ([]string, int64, error)
 }
 
 type store struct {
@@ -43,6 +47,7 @@ type store struct {
 	readClient                    mongo.DbClient
 	collection                    mongo.DbCollection
 	entityInfosPropertyCollection mongo.DbCollection
+	entityCollection              mongo.DbCollection
 	authorProvider                author.Provider
 
 	linkedCollections []string
@@ -56,7 +61,7 @@ type store struct {
 
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage
 
-	transformer common.PatternFieldsTransformer
+	transformer patternfields.Transformer
 
 	logger zerolog.Logger
 }
@@ -68,7 +73,7 @@ func NewStore(
 	serviceChangeChan chan<- entityservice.ChangeEntityMessage,
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
@@ -76,6 +81,7 @@ func NewStore(
 		collection:                    dbClient.Collection(mongo.PatternMongoCollection),
 		readClient:                    readDbClient,
 		entityInfosPropertyCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		entityCollection:              dbClient.Collection(mongo.EntityMongoCollection),
 		authorProvider:                authorProvider,
 		defaultSearchByFields:         []string{"_id", "author.name", "title"},
 		defaultSortBy:                 "created",
@@ -187,7 +193,7 @@ func (s *store) Find(ctx context.Context, request ListRequest, userID string) (*
 	}
 
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
-	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(request.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -200,7 +206,7 @@ func (s *store) Find(ctx context.Context, request ListRequest, userID string) (*
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, request.Sort),
+		mongoquery.GetSortQuery(sortBy, request.Sort),
 	))
 
 	if err != nil {
@@ -385,7 +391,7 @@ func (s *store) updateLinkedModelsOnEntityUpdate(ctx context.Context, pattern Re
 							"$$this",
 							bson.M{
 								"entity_pattern": pattern.EntityPattern.RemoveFields(
-									common.GetForbiddenFieldsInEntityPattern(collection),
+									patternfields.GetForbiddenFieldsInEntityPattern(collection),
 								),
 								"corporate_entity_pattern_title": pattern.Title,
 							},
@@ -421,7 +427,7 @@ func (s *store) updateLinkedModelsOnEntityUpdate(ctx context.Context, pattern Re
 				filter := bson.M{"corporate_" + f: pattern.ID}
 				set := bson.M{
 					f: pattern.EntityPattern.RemoveFields(
-						common.GetForbiddenFieldsInEntityPattern(collection),
+						patternfields.GetForbiddenFieldsInEntityPattern(collection),
 					),
 					"corporate_" + f + "_title": pattern.Title,
 					"updated":                   datetime.NewCpsTime(),
@@ -444,7 +450,7 @@ func (s *store) updateLinkedModelsOnEntityUpdate(ctx context.Context, pattern Re
 			filter := bson.M{"corporate_entity_pattern": pattern.ID}
 			update := bson.M{"$set": bson.M{
 				"entity_pattern": pattern.EntityPattern.RemoveFields(
-					common.GetForbiddenFieldsInEntityPattern(collection),
+					patternfields.GetForbiddenFieldsInEntityPattern(collection),
 				),
 				"corporate_entity_pattern_title": pattern.Title,
 				"aliases":                        newAliases, // can set newAliases because a document contains only one entity pattern
@@ -472,8 +478,8 @@ func (s *store) updateLinkedModelsOnAlarmUpdate(ctx context.Context, pattern Res
 			}
 			update = bson.M{"$set": bson.M{
 				"actions.$[action].alarm_pattern": pattern.AlarmPattern.RemoveFields(
-					common.GetForbiddenFieldsInAlarmPattern(collection),
-					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
+					patternfields.GetForbiddenFieldsInAlarmPattern(collection),
+					patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
 				),
 				"actions.$[action].corporate_alarm_pattern_title": pattern.Title,
 				"updated": datetime.NewCpsTime(),
@@ -488,8 +494,8 @@ func (s *store) updateLinkedModelsOnAlarmUpdate(ctx context.Context, pattern Res
 			}
 			update = bson.M{"$set": bson.M{
 				"alarm_pattern": pattern.AlarmPattern.RemoveFields(
-					common.GetForbiddenFieldsInAlarmPattern(collection),
-					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
+					patternfields.GetForbiddenFieldsInAlarmPattern(collection),
+					patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
 				),
 				"corporate_alarm_pattern_title": pattern.Title,
 				"updated":                       datetime.NewCpsTime(),
@@ -670,14 +676,12 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 		}
 	}
 	if len(r.EntityPattern) > 0 {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-			EntityPattern: r.EntityPattern,
-		})
+		r.EntityPattern, _, err = s.transformer.TransformAliases(ctx, r.EntityPattern, r)
 		if err != nil {
 			return res, err
 		}
 
-		entityPatternQuery, err = db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "entity")
+		entityPatternQuery, err = db.EntityPatternToMongoQuery(r.EntityPattern, "entity")
 		if err != nil {
 			return res, err
 		}
@@ -696,7 +700,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 			)
 		}
 
-		entityPatternQueryForEntities, err := db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "")
+		entityPatternQueryForEntities, err := db.EntityPatternToMongoQuery(r.EntityPattern, "")
 		if err != nil {
 			return res, err
 		}
@@ -805,14 +809,12 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 	entitiesPipeline := make([]bson.M, 0)
 	var alarmPatternCount, entityPatternCount, pbhPatternCount, entitiesCount CountResponse
 	if len(r.EntityPattern) > 0 {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-			EntityPattern: r.EntityPattern,
-		})
+		r.EntityPattern, _, err = s.transformer.TransformAliases(ctx, r.EntityPattern, r)
 		if err != nil {
 			return res, err
 		}
 
-		entityPatternQuery, err = db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "")
+		entityPatternQuery, err = db.EntityPatternToMongoQuery(r.EntityPattern, "")
 		if err != nil {
 			return res, err
 		}
@@ -1109,16 +1111,174 @@ func (s *store) transformEntityPatternToModel(
 	model *savedpattern.SavedPattern,
 ) error {
 	if r.Type == savedpattern.TypeEntity {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-			EntityPattern: r.EntityPattern,
-		})
+		var err error
+		r.EntityPattern, model.Aliases, err = s.transformer.TransformAliases(ctx, r.EntityPattern, r)
 		if err != nil {
 			return err
 		}
 
-		model.Aliases = transformedEntityPatternRequest.Aliases
-		model.EntityPattern = transformedEntityPatternRequest.EntityPattern
+		model.EntityPattern = r.EntityPattern
 	}
 
 	return nil
+}
+
+func (s *store) GetLiteralsFieldStats(ctx context.Context, allLiterals []string) (map[string][]LiteralFieldStats, error) {
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"$text": bson.M{
+					"$search": strings.Join(allLiterals, " "),
+				},
+			},
+		},
+		{
+			"$set": bson.M{
+				"infos": bson.M{
+					"$objectToArray": "$infos",
+				},
+			},
+		},
+		{
+			"$set": bson.M{
+				"fields": bson.M{
+					"$map": bson.M{
+						"input": bson.M{
+							"$filter": bson.M{
+								"input": bson.M{
+									"$concatArrays": bson.A{"$infos", bson.A{
+										bson.M{
+											"k": EntityFieldName,
+											"v": bson.M{
+												"value": "$name",
+											},
+										},
+										bson.M{
+											"k": EntityFieldComponent,
+											"v": bson.M{
+												"value": "$component",
+											},
+										},
+									}},
+								},
+								"cond": bson.M{
+									"$in": bson.A{"$$this.v.value", allLiterals},
+								},
+							},
+						},
+						"in": bson.M{
+							"field": "$$m.k",
+							"val":   "$$m.v.value",
+						},
+						"as": "m",
+					},
+				},
+			},
+		},
+		{
+			"$project": bson.M{
+				"_id":    0,
+				"fields": 1,
+			},
+		},
+		{
+			"$unwind": "$fields",
+		},
+		{
+			"$group": bson.M{
+				"_id": bson.M{
+					"val":   "$fields.val",
+					"field": "$fields.field",
+				},
+				"count": bson.M{
+					"$sum": 1,
+				},
+			},
+		},
+		{
+			"$group": bson.M{
+				"_id": "$_id.val",
+				"counts": bson.M{
+					"$push": bson.M{
+						"k": "$_id.field",
+						"v": "$count",
+					},
+				},
+			},
+		},
+		{
+			"$set": bson.M{
+				"counts": bson.M{
+					"$sortArray": bson.M{
+						"input":  "$counts",
+						"sortBy": bson.M{"v": -1, "k": 1},
+					},
+				},
+			},
+		},
+	}
+
+	cursor, err := s.readClient.Collection(mongo.EntityMongoCollection).Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get literals field stats: %w", err)
+	}
+
+	var docs []struct {
+		ID     string              `bson:"_id"`
+		Counts []LiteralFieldStats `bson:"counts"`
+	}
+
+	if err := cursor.All(ctx, &docs); err != nil {
+		return nil, fmt.Errorf("failed to decode literals field stats: %w", err)
+	}
+
+	fieldStats := make(map[string][]LiteralFieldStats)
+	for _, doc := range docs {
+		fieldStats[doc.ID] = doc.Counts
+	}
+
+	return fieldStats, nil
+}
+
+func (s *store) GetEntityIDs(ctx context.Context, entityPattern pattern.Entity) ([]string, int64, error) {
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, "")
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to transform entity pattern to mongo query: %w", err)
+	}
+
+	start := time.Now()
+
+	cursor, err := s.readClient.Collection(mongo.EntityMongoCollection).Aggregate(ctx, []bson.M{
+		{
+			"$match": entityPatternQuery,
+		},
+		{
+			"$project": bson.M{"_id": 1},
+		},
+	})
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to get entity ids: %w", err)
+	}
+
+	end := time.Since(start)
+
+	var docs []struct {
+		ID string `bson:"_id"`
+	}
+
+	err = cursor.All(ctx, &docs)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to decode entity ids: %w", err)
+	}
+
+	if len(docs) == 0 {
+		return nil, 0, nil
+	}
+
+	entityIDs := make([]string, len(docs))
+	for i := range docs {
+		entityIDs[i] = docs[i].ID
+	}
+
+	return entityIDs, max(end.Milliseconds(), 1), nil
 }

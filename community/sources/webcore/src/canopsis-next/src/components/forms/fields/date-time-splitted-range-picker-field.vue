@@ -95,18 +95,18 @@ export default {
 </script>
 
 <style lang="scss">
-$dashWidth: 26px;
-
 .date-time-splitted-range-picker-field {
+  --dash-width: 26px;
+
   &__time-dash {
-    width: $dashWidth;
+    width: var(--dash-width);
     line-height: 68px;
     text-align: center;
   }
 
   &__start, &__end {
-    width: calc(50% - calc($dashWidth / 2));
-    max-width: calc(50% - calc($dashWidth / 2));
+    width: calc(50% - calc(var(--dash-width) / 2));
+    max-width: calc(50% - calc(var(--dash-width) / 2));
   }
 }
 </style>

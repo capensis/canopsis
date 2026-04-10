@@ -8,7 +8,6 @@ import (
 	"runtime/debug"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
@@ -20,7 +19,7 @@ const (
 )
 
 // Router is used to implement adding new routes to API.
-type Router func(*gin.Engine)
+type Router func(*gin.Engine) error
 
 // Worker is used to implement adding new worker to API.
 type Worker func(context.Context)
@@ -53,10 +52,6 @@ type API interface {
 	AddNoRoute(...gin.HandlerFunc)
 	// AddNoMethod adds handlers for no method.
 	AddNoMethod(...gin.HandlerFunc)
-	// SetWebsocketHub sets websocket hub.
-	SetWebsocketHub(websocket.Hub)
-	// GetWebsocketHub gets websocket hub.
-	GetWebsocketHub() websocket.Hub
 }
 
 type api struct {
@@ -68,8 +63,6 @@ type api struct {
 
 	noRouteHandlers  []gin.HandlerFunc
 	noMethodHandlers []gin.HandlerFunc
-
-	websocketHub websocket.Hub
 }
 
 // New creates new api.
@@ -111,9 +104,14 @@ func (a *api) Run(ctx context.Context) error {
 	apiErrGroup, ctx := errgroup.WithContext(ctx)
 
 	// Start server.
+	h, err := a.registerRoutes()
+	if err != nil {
+		return err
+	}
+
 	server := &http.Server{
 		Addr:              a.addr,
-		Handler:           a.registerRoutes(),
+		Handler:           h,
 		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
@@ -151,20 +149,16 @@ func (a *api) Run(ctx context.Context) error {
 	return apiErrGroup.Wait()
 }
 
-func (a *api) SetWebsocketHub(v websocket.Hub) {
-	a.websocketHub = v
-}
-func (a *api) GetWebsocketHub() websocket.Hub {
-	return a.websocketHub
-}
-
-func (a *api) registerRoutes() http.Handler {
+func (a *api) registerRoutes() (http.Handler, error) {
 	ginRouter := gin.New()
 	ginRouter.HandleMethodNotAllowed = true
 	ginRouter.ContextWithFallback = true
 
 	for _, router := range a.routers {
-		router(ginRouter)
+		err := router(ginRouter)
+		if err != nil {
+			return nil, fmt.Errorf("cannot register routes: %w", err)
+		}
 	}
 
 	if len(a.noRouteHandlers) > 0 {
@@ -175,7 +169,7 @@ func (a *api) registerRoutes() http.Handler {
 		ginRouter.NoMethod(a.noMethodHandlers...)
 	}
 
-	return ginRouter
+	return ginRouter, nil
 }
 
 func (a *api) runWorkers(ctx context.Context) *errgroup.Group {

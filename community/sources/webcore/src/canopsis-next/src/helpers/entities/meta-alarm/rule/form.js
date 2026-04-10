@@ -1,4 +1,4 @@
-import { omit, pick, isNumber } from 'lodash';
+import { omit, pick, isNumber, isArray } from 'lodash';
 
 import {
   DEFAULT_TIME_INTERVAL,
@@ -248,12 +248,18 @@ export const metaAlarmRuleTagsToForm = (tags = {}) => ({
  * @param {MetaAlarmRuleInfosItem} [item = {}]
  * @returns {MetaAlarmRuleInfosItemForm}
  */
-export const metaAlarmRuleInfosItemToForm = (item = {}) => addKeyInEntity({
-  copy_from_children: !!item.copy_from_children,
-  name: item.name ?? '',
-  value: item.value ?? '',
-  description: item.description ?? '',
-});
+export const metaAlarmRuleInfosItemToForm = (item = {}) => {
+  const value = isArray(item.value)
+    ? primitiveArrayToForm(item.value)
+    : item.value;
+
+  return addKeyInEntity({
+    value,
+    copy_from_children: !!item.copy_from_children,
+    name: item.name ?? '',
+    description: item.description ?? '',
+  });
+};
 
 /**
  * Convert meta alarm rule to form
@@ -337,11 +343,22 @@ export const formToMetaAlarmRule = (form = {}) => {
     patternsFields.push(PATTERNS_FIELDS.totalEntity);
   }
 
+  const infos = removeKeyFromEntities(form.infos).map((info) => {
+    const value = isArray(info.value) && info.value.length > 0 && info.value[0]?.key
+      ? formToPrimitiveArray(info.value)
+      : info.value;
+
+    return {
+      ...info,
+      value,
+    };
+  });
+
   const metaAlarmRule = {
     ...omit(form, ['config', 'patterns', 'infos', 'tags']),
     ...formFilterToPatterns(form.patterns, patternsFields),
 
-    infos: removeKeyFromEntities(form.infos),
+    infos,
     tags: formToMetaAlarmRuleTags(form.tags),
   };
 

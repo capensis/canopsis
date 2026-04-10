@@ -15,22 +15,26 @@ import (
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	libcommtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/wsconn"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -71,10 +75,11 @@ const (
 	websocketReadBufferSize  = 1024
 	websocketWriteBufferSize = 2048
 
-	jobKeyExport        = "export"
-	jobKeyImport        = "import"
-	jobKeyExtDataImport = "extdataimport"
-	jobKeyPbhPatterns   = "pbhpatterns"
+	jobKeyExport          = "export"
+	jobKeyImport          = "import"
+	jobKeyExtDataImport   = "extdataimport"
+	jobKeyPbhPatterns     = "pbhpatterns"
+	jobKeyPatternOptimize = "patternoptimize"
 )
 
 //go:embed swaggerui/*
@@ -89,6 +94,9 @@ type Services struct {
 	Enforcer           libsecurity.Enforcer
 	DocsFile           fs.ReadFileFS
 
+	WebsocketHub                websocket.Hub
+	WebsocketRoomRegistry       websocket.RoomRegistry
+	WebsocketAuthorize          func(perms ...string) websocket.Authorize
 	DataStorageConfigProvider   *config.BaseDataStorageConfigProvider
 	TimezoneConfigProvider      *config.BaseTimezoneConfigProvider
 	ApiConfigProvider           *config.BaseApiConfigProvider
@@ -96,6 +104,7 @@ type Services struct {
 	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
 	ExternalDataContainer       *externaldata.GetterContainer
 	NotificationStore           usernotification.Store
+	ErrorResponder              httperror.Responder
 }
 
 func Default(
@@ -180,7 +189,7 @@ func Default(
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to redis: %w", err)
 	}
-	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir)
+	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir, logger)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot load security config: %w", err)
 	}
@@ -190,7 +199,16 @@ func Default(
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
 	services.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
-	security := NewSecurity(securityConfig, cfg, primaryDbClient, sessionStore, services.Enforcer, services.ApiConfigProvider, config.NewMaintenanceAdapter(primaryDbClient), cookieOptions, logger)
+	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
+	uniTrans, err := RegisterValidators(securityConfig, tplExecutor)
+	if err != nil {
+		return nil, services, fmt.Errorf("cannot register request validators: %w", err)
+	}
+
+	services.ErrorResponder = httperror.NewResponder(validation.NewErrorTranslator(uniTrans, logger), logger)
+	security := NewSecurity(securityConfig, cfg, primaryDbClient, sessionStore, services.Enforcer,
+		services.ApiConfigProvider, config.NewMaintenanceAdapter(primaryDbClient), cookieOptions,
+		services.ErrorResponder, logger)
 
 	if flags.EnableSameServiceNames {
 		logger.Info().Msg("Non-unique names for services ENABLED")
@@ -245,7 +263,7 @@ func Default(
 			importcontextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpPublisher),
 			metricsEntityMetaUpdater,
 			canopsis.ApiConnector,
-			common.NewPatternFieldsTransformer(primaryDbClient),
+			patternfields.NewTransformer(primaryDbClient),
 			logger,
 		),
 		workers.NewJobPublisher(jobKeyImport, amqpPublisher),
@@ -254,36 +272,55 @@ func Default(
 	workersRunner.AddJobExecutor(jobKeyImport, func(ctx context.Context, _ string) error {
 		return importWorker.ProcessFirstJob(ctx)
 	})
-	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
-	websocketStore := websocket.NewStore(primaryDbClient, flags.IntegrationPeriodicalWaitTime)
-	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
+	websocketStore := wsconn.NewStore(primaryDbClient, flags.IntegrationPeriodicalWaitTime)
+	websocketUpgrader := websocket.NewUpgrader(&gorillawebsocket.Upgrader{
 		ReadBufferSize:  websocketReadBufferSize,
 		WriteBufferSize: websocketWriteBufferSize,
 		CheckOrigin: func(r *http.Request) bool {
 			return true
 		},
 	})
+	services.WebsocketRoomRegistry = websocket.NewRoomRegistry()
+	wsRoomAuthenticate := func(ctx context.Context, token string) (string, error) {
+		tokenProviders := security.GetTokenProviders()
+		for _, provider := range tokenProviders {
+			user, err := provider.Auth(ctx, token)
+			if err != nil {
+				return "", err
+			}
 
-	websocketAuthorizer := websocket.NewAuthorizer(services.Enforcer, security.GetTokenProviders())
-	websocketHub := websocket.NewHub(ctx, websocketUpgrader, websocketAuthorizer, flags.IntegrationPeriodicalWaitTime, services.ApiConfigProvider, logger)
-	err = registerWebsocketRooms(websocketHub)
-	if err != nil {
-		return nil, services, fmt.Errorf("cannot register websocket rooms: %w", err)
+			if user != nil {
+				return user.ID, nil
+			}
+		}
+
+		return "", errors.New("invalid token")
 	}
-
+	services.WebsocketHub = websocket.NewHub(websocketUpgrader, services.WebsocketRoomRegistry, wsRoomAuthenticate, services.ApiConfigProvider, flags.IntegrationPeriodicalWaitTime, logger)
 	services.ExternalDataContainer = externaldata.NewGetterContainer()
 	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, services.ExternalDataContainer, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)
-	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, common.NewPatternFieldsTransformer(primaryDbClient),
+	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, patternfields.NewTransformer(primaryDbClient),
 		services.TimezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
-	alarmWatcher := alarmapi.NewWatcher(noTimeoutClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
+	alarmWatcher := alarmapi.NewWatcher(noTimeoutClient, services.WebsocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
-	messageRateWatcher := messageratestats.NewWatcher(websocketHub, messageratestats.NewStore(pgPoolProvider),
+	messageRateWatcher := messageratestats.NewWatcher(services.WebsocketHub, messageratestats.NewStore(pgPoolProvider),
 		json.NewEncoder(), json.NewDecoder(), flags.IntegrationPeriodicalWaitTime, logger)
 
-	err = registerWebsocketGroups(websocketHub, alarmWatcher, messageRateWatcher)
+	services.WebsocketAuthorize = func(perms ...string) websocket.Authorize {
+		return func(ctx context.Context, userID string) (bool, error) {
+			vals := make([]any, len(perms)+1)
+			vals[0] = userID
+			for i, v := range perms {
+				vals[i+1] = v
+			}
+
+			return services.Enforcer.Enforce(vals...)
+		}
+	}
+	err = registerWebsocketRooms(services.WebsocketRoomRegistry, services.WebsocketAuthorize, alarmWatcher, messageRateWatcher)
 	if err != nil {
-		return nil, services, fmt.Errorf("cannot register websocket groups: %w", err)
+		return nil, services, fmt.Errorf("cannot register websocket rooms: %w", err)
 	}
 
 	broadcastMessageChan := make(chan bool, chanBuf)
@@ -306,7 +343,7 @@ func Default(
 		healthCheckConfigAdapter,
 		healthCheckConfigProvider,
 		logger,
-		websocketHub,
+		services.WebsocketHub,
 	)
 
 	exdataImportWorker := apiexternaldata.NewImportWorker(primaryDbClient, pgPoolProvider,
@@ -315,17 +352,25 @@ func Default(
 	workersRunner.AddJobExecutor(jobKeyExtDataImport, func(ctx context.Context, id string) error {
 		return exdataImportWorker.ProcessJob(ctx, id)
 	})
+
+	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
+
+	patternStore := pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger)
+	patternOptimizeWorker := pattern.NewOptimizeWorker(patternStore, primaryDbClient, workers.NewJobPublisher(jobKeyPatternOptimize, amqpPublisher), patternfields.NewTransformer(primaryDbClient), logger)
+	workersRunner.AddJobExecutor(jobKeyPatternOptimize, func(ctx context.Context, id string) error {
+		return patternOptimizeWorker.ProcessJob(ctx, id)
+	})
 	apiPbhStore := pbehavior.NewStore(primaryDbClient, secondaryDbClient, lockRedisSession, pbhEntityTypeResolver,
 		libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
-		services.TimezoneConfigProvider, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient),
-		websocketHub, services.UserInterfaceConfigProvider)
+		services.TimezoneConfigProvider, authorProvider, patternfields.NewTransformer(primaryDbClient),
+		services.WebsocketHub, services.UserInterfaceConfigProvider)
 	workersRunner.AddJobExecutor(jobKeyPbhPatterns, func(ctx context.Context, _ string) error {
 		return apiPbhStore.ExecPatternsAndUpdate(ctx)
 	})
 
 	services.NotificationStore = usernotification.NewStore(primaryDbClient, amqpPublisher, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
-	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConn, websocketHub,
+	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConn, services.WebsocketHub,
 		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
 
 	if tplTestTypePermMapping == nil {
@@ -405,10 +450,8 @@ func Default(
 		logger,
 	)
 
-	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
-
-	api.AddRouter(func(router *gin.Engine) {
-		router.Use(middleware.Logger(logger, flags.LogBody, flags.LogBodyOnError))
+	api.AddRouter(func(router *gin.Engine) error {
+		router.Use(middleware.Logger(services.ErrorResponder, logger, flags.LogBody, flags.LogBodyOnError))
 		router.Use(middleware.Recovery(logger))
 		router.Use(middleware.CacheControl())
 
@@ -424,13 +467,13 @@ func Default(
 			})
 		})
 
-		RegisterValidators(primaryDbClient, security.GetConfig(), services.Enforcer, tplExecutor)
-		RegisterRoutes(
+		return RegisterRoutes(
 			ctx,
 			cfg,
 			router,
 			security,
 			services.Enforcer,
+			services.ErrorResponder,
 			services.LinkGenerator,
 			primaryDbClient,
 			secondaryDbClient,
@@ -448,7 +491,7 @@ func Default(
 			services.ExportTaskExecutor,
 			techMetricsTaskExecutor,
 			services.UserInterfaceConfigProvider,
-			websocketHub,
+			services.WebsocketHub,
 			websocketStore,
 			broadcastMessageChan,
 			metricsEntityMetaUpdater,
@@ -461,18 +504,20 @@ func Default(
 			event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector),
 			securityConfig,
 			exdataImportWorker,
+			patternOptimizeWorker,
 			services.NotificationStore,
 			services.ExternalDataContainer,
-			workersRunner,
 			tplTestTypePermMapping,
 			logger,
 		)
 	})
 	if flags.EnableDocs {
-		api.AddRouter(func(router *gin.Engine) {
+		api.AddRouter(func(router *gin.Engine) error {
 			router.GET("/swagger/*filepath", func(c *gin.Context) {
 				c.FileFromFS("swaggerui/"+c.Param("filepath"), http.FS(docsUiFile))
 			})
+
+			return nil
 		})
 		if !overrideDocs {
 			content, err := docsFile.ReadFile("docs/swagger.yaml")
@@ -483,19 +528,24 @@ func Default(
 			if err != nil {
 				return nil, services, fmt.Errorf("cannot read swagger: %w", err)
 			}
-			api.AddRouter(func(router *gin.Engine) {
-				router.GET("/swagger.yaml", docs.GetHandler(schemasContent, content))
+			api.AddRouter(func(router *gin.Engine) error {
+				router.GET("/swagger.yaml", docs.GetHandler(
+					services.ErrorResponder,
+					[][]byte{schemasContent},
+					[][]byte{content},
+				))
+
+				return nil
 			})
 		}
 	}
 
 	api.AddNoRoute(func(c *gin.Context) {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		services.ErrorResponder.Respond(c, httperror.ErrNotFound)
 	})
 	api.AddNoMethod(func(c *gin.Context) {
-		c.AbortWithStatusJSON(http.StatusMethodNotAllowed, common.MethodNotAllowedResponse)
+		services.ErrorResponder.Respond(c, httperror.ErrMethodNotAllowed)
 	})
-	api.SetWebsocketHub(websocketHub)
 
 	actionLogger := apilogger.NewActionLogger(noTimeoutClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	api.AddWorker("action_log", func(ctx context.Context) {
@@ -563,17 +613,17 @@ func Default(
 	tokenStore := token.NewMongoStore(primaryDbClient, logger)
 	shareTokenStore := sharetoken.NewMongoStore(primaryDbClient, logger)
 	api.AddWorker("auth_token_activity", updateTokenActivity(flags.IntegrationPeriodicalWaitTime, tokenStore, shareTokenStore,
-		websocketHub, logger))
+		services.WebsocketHub, logger))
 	api.AddWorker("auth_token_expiration", removeExpiredTokens(flags.PeriodicalWaitTime, tokenStore, shareTokenStore,
 		logger))
 	api.AddWorker("websocket", func(ctx context.Context) {
-		websocketHub.Start(ctx)
+		services.WebsocketHub.Run(ctx)
 	})
-	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, websocketHub, websocketStore, logger))
+	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, services.WebsocketHub, websocketStore, logger))
 
 	maintenanceAdapter := config.NewMaintenanceAdapter(primaryDbClient)
 	broadcastMessageService := broadcastmessage.NewService(
-		broadcastmessage.NewStore(primaryDbClient, maintenanceAdapter, authorProvider), websocketHub,
+		broadcastmessage.NewStore(primaryDbClient, maintenanceAdapter, authorProvider), services.WebsocketHub,
 		flags.BroadcastMessagePeriodicalWaitTime, logger)
 	api.AddWorker("broadcast_message", func(ctx context.Context) {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
@@ -600,6 +650,9 @@ func Default(
 	api.AddWorker("data_extdata_import_delete_old", func(ctx context.Context) {
 		exdataImportWorker.DeleteOldJobs(ctx)
 	})
+	api.AddWorker("pattern_optimize_abandoned", func(ctx context.Context) {
+		patternOptimizeWorker.ProcessAbandonedJobs(ctx)
+	})
 	api.AddWorker("healthcheck", func(ctx context.Context) {
 		healthcheckStore.Load(ctx)
 	})
@@ -618,63 +671,63 @@ func Default(
 	return api, services, nil
 }
 
-func registerWebsocketRooms(websocketHub websocket.Hub) error {
-	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomLoggedUserCount); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomNotifications); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomHealthcheck, apisecurity.PermHealthcheck, securitymodel.PermissionCan); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomHealthcheckStatus, apisecurity.PermHealthcheck, securitymodel.PermissionCan); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomIcons); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomPbhPatterns, apisecurity.PermPbhPatterns, securitymodel.PermissionCan); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	return nil
-}
-
-func registerWebsocketGroups(
-	websocketHub websocket.Hub,
+func registerWebsocketRooms(
+	roomRegistry websocket.RoomRegistry,
+	authorize func(perms ...string) websocket.Authorize,
 	alarmWatcher alarmapi.Watcher,
 	messageRateWatcher messageratestats.Watcher,
 ) error {
-	err := websocketHub.RegisterGroup(websocket.RoomAlarmsGroup, websocket.GroupParameters{
-		OnJoin:  alarmWatcher.StartWatch,
-		OnLeave: alarmWatcher.StopWatch,
-	}, apisecurity.PermAlarmRead, securitymodel.PermissionCan)
+	if err := roomRegistry.Register(websocket.RoomBroadcastMessages, websocket.RoomHandlers{}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := roomRegistry.Register(websocket.RoomLoggedUserCount, websocket.RoomHandlers{}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := roomRegistry.Register(websocket.RoomNotifications, websocket.RoomHandlers{}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := roomRegistry.Register(websocket.RoomHealthcheck, websocket.RoomHandlers{Authorize: authorize(apisecurity.PermHealthcheck, securitymodel.PermissionCan)}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := roomRegistry.Register(websocket.RoomHealthcheckStatus, websocket.RoomHandlers{Authorize: authorize(apisecurity.PermHealthcheck, securitymodel.PermissionCan)}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := roomRegistry.Register(websocket.RoomIcons, websocket.RoomHandlers{}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := roomRegistry.Register(websocket.RoomPbhPatterns, websocket.RoomHandlers{Authorize: authorize(apisecurity.PermPbhPatterns, securitymodel.PermissionCan)}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	err := roomRegistry.RegisterGroup(websocket.RoomAlarmsGroup, websocket.RoomHandlers{
+		OnJoin:    alarmWatcher.StartWatch,
+		OnLeave:   alarmWatcher.StopWatch,
+		Authorize: authorize(apisecurity.PermAlarmRead, securitymodel.PermissionCan),
+	})
 	if err != nil {
 		return fmt.Errorf("fail to register websocket group: %w", err)
 	}
 
-	err = websocketHub.RegisterGroup(websocket.RoomAlarmDetailsGroup, websocket.GroupParameters{
-		OnJoin:  alarmWatcher.StartWatchDetails,
-		OnLeave: alarmWatcher.StopWatch,
-	}, apisecurity.PermAlarmRead, securitymodel.PermissionCan)
+	err = roomRegistry.RegisterGroup(websocket.RoomAlarmDetailsGroup, websocket.RoomHandlers{
+		OnJoin:    alarmWatcher.StartWatchDetails,
+		OnLeave:   alarmWatcher.StopWatch,
+		Authorize: authorize(apisecurity.PermAlarmRead, securitymodel.PermissionCan),
+	})
 	if err != nil {
 		return fmt.Errorf("fail to register websocket group: %w", err)
 	}
 
-	err = websocketHub.RegisterGroup(websocket.RoomMessageRates, websocket.GroupParameters{
-		OnJoin:  messageRateWatcher.StartWatch,
-		OnLeave: messageRateWatcher.StopWatch,
-	}, apisecurity.PermMessageRateStatsRead, securitymodel.PermissionCan)
+	err = roomRegistry.RegisterGroup(websocket.RoomMessageRates, websocket.RoomHandlers{
+		OnJoin:    messageRateWatcher.StartWatch,
+		OnLeave:   messageRateWatcher.StopWatch,
+		Authorize: authorize(apisecurity.PermMessageRateStatsRead, securitymodel.PermissionCan),
+	})
 	if err != nil {
 		return fmt.Errorf("fail to register websocket group: %w", err)
 	}

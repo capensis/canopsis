@@ -97,6 +97,7 @@ type RuleConfig struct {
 	Component     string `bson:"component,omitempty" json:"component,omitempty" binding:"template"`
 	Connector     string `bson:"connector,omitempty" json:"connector,omitempty" binding:"template"`
 	ConnectorName string `bson:"connector_name,omitempty" json:"connector_name,omitempty" binding:"template"`
+	Upstream      string `bson:"upstream,omitempty" json:"upstream,omitempty" binding:"template"`
 
 	// enrichment fields
 	Actions   []Action `bson:"actions,omitempty" json:"actions,omitempty" binding:"dive,required_if=Type enrichment"`
@@ -105,10 +106,10 @@ type RuleConfig struct {
 }
 
 type Action struct {
-	Type        string      `bson:"type" json:"type"`
-	Name        string      `bson:"name" json:"name"`
-	Description string      `bson:"description,omitempty" json:"description,omitempty"`
-	Value       interface{} `bson:"value" json:"value" binding:"info_value"`
+	Type        string `bson:"type" json:"type"`
+	Name        string `bson:"name" json:"name"`
+	Description string `bson:"description,omitempty" json:"description,omitempty"`
+	Value       any    `bson:"value" json:"value" binding:"info_value"`
 }
 
 type RegexMatch struct {
@@ -119,5 +120,5 @@ type RegexMatch struct {
 type Template struct {
 	Event        *types.Event
 	RegexMatch   RegexMatch
-	ExternalData map[string]interface{}
+	ExternalData map[string]any
 }

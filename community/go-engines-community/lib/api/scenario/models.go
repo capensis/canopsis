@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -128,13 +128,13 @@ type BulkDeleteRequestItem struct {
 
 type ActionRequest struct {
 	Type                     string            `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior pbehaviorremove snooze unsnooze webhook"`
-	Parameters               action.Parameters `json:"parameters,omitempty"`
+	Parameters               action.Parameters `json:"parameters"`
 	Comment                  string            `json:"comment"`
 	DropScenarioIfNotMatched *bool             `json:"drop_scenario_if_not_matched" binding:"required"`
 	EmitTrigger              *bool             `json:"emit_trigger" binding:"required"`
 
-	common.EntityPatternFieldsRequest `bson:",inline"`
-	common.AlarmPatternFieldsRequest  `bson:",inline"`
+	patternfields.EntityRequest `bson:",inline"`
+	patternfields.AlarmRequest  `bson:",inline"`
 }
 
 type Scenario struct {
@@ -147,14 +147,14 @@ type Scenario struct {
 	Actions              []Action                   `bson:"actions" json:"actions"`
 	Priority             int64                      `bson:"priority" json:"priority"`
 	Delay                *datetime.DurationWithUnit `bson:"delay" json:"delay"`
-	Created              datetime.CpsTime           `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created              datetime.CpsTime           `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 }
 
 type Action struct {
 	Type                     string     `bson:"type" json:"type"`
 	Comment                  string     `bson:"comment" json:"comment"`
-	Parameters               Parameters `bson:"parameters,omitempty" json:"parameters,omitempty"`
+	Parameters               Parameters `bson:"parameters,omitempty" json:"parameters"`
 	DropScenarioIfNotMatched bool       `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
 	EmitTrigger              bool       `bson:"emit_trigger" json:"emit_trigger"`
 
@@ -203,13 +203,11 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-// GetTotal implementation PaginatedData interface
 func (r AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
 
-// GetData implementation PaginatedData interface
-func (r AggregationResult) GetData() interface{} {
+func (r AggregationResult) GetData() any {
 	return r.Data
 }
 

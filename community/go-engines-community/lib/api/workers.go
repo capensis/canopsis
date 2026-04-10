@@ -6,6 +6,7 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/wsconn"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -76,12 +77,20 @@ func updateTokenActivity(
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				for _, t := range websocketHub.GetUserTokens() {
-					err := tokenStore.Access(ctx, t)
+				conns := websocketHub.Connections()
+				seen := make(map[string]bool, len(conns))
+				for _, c := range conns {
+					if seen[c.Token] {
+						continue
+					}
+
+					seen[c.Token] = true
+					err := tokenStore.Access(ctx, c.Token)
 					if err != nil {
 						logger.Err(err).Msg("cannot update token access")
 					}
-					err = shareTokenStore.Access(ctx, t)
+
+					err = shareTokenStore.Access(ctx, c.Token)
 					if err != nil {
 						logger.Err(err).Msg("cannot update share token access")
 					}
@@ -122,7 +131,7 @@ func removeExpiredTokens(
 func updateWebsocketConns(
 	interval time.Duration,
 	websocketHub websocket.Hub,
-	websocketStore websocket.Store,
+	websocketStore wsconn.Store,
 	logger zerolog.Logger,
 ) func(context.Context) {
 	return func(ctx context.Context) {
@@ -134,19 +143,19 @@ func updateWebsocketConns(
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				err := websocketStore.UpdateConnections(ctx, websocketHub.GetConnections())
+				err := websocketStore.SyncConnections(ctx, websocketHub.Connections())
 				if err != nil {
 					logger.Err(err).Msg("cannot update websocket connections")
 					continue
 				}
 
-				c, err := websocketStore.GetActiveConnections(ctx)
+				c, err := websocketStore.CountActiveConnections(ctx)
 				if err != nil {
 					logger.Err(err).Msg("cannot get active websocket connections")
 					continue
 				}
 
-				websocketHub.Send(websocket.RoomLoggedUserCount, c)
+				websocketHub.SendMessage(ctx, c, websocket.ToRoom(websocket.RoomLoggedUserCount))
 			}
 		}
 	}

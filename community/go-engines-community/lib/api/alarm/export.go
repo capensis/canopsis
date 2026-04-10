@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
@@ -32,6 +33,8 @@ var statusTitles = map[int]string{
 	types.AlarmStatusStealthy:  types.AlarmStatusTitleStealthy,
 	types.AlarmStatusFlapping:  types.AlarmStatusTitleFlapping,
 	types.AlarmStatusCancelled: types.AlarmStatusTitleCancelled,
+	types.AlarmStatusNoEvents:  types.AlarmStatusTitleNoEvents,
+	types.AlarmStatusUnknown:   types.AlarmStatusTitleUnknown,
 }
 
 func newExportCursor(
@@ -317,27 +320,12 @@ func (c *mongoCursor) matchInstructions(model types.AlarmWithEntity) []string {
 			continue
 		}
 
-		found := false
-		for _, pbhType := range instruction.DisabledOnPbh {
-			if alarmPbhType == pbhType {
-				found = true
-				break
-			}
-		}
-
-		if found {
+		if slices.Contains(instruction.DisabledOnPbh, alarmPbhType) {
 			continue
 		}
 
 		if len(instruction.ActiveOnPbh) > 0 {
-			found := false
-			for _, pbhType := range instruction.ActiveOnPbh {
-				if alarmPbhType == pbhType {
-					found = true
-					break
-				}
-			}
-			if !found {
+			if !slices.Contains(instruction.ActiveOnPbh, alarmPbhType) {
 				continue
 			}
 		}

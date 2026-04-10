@@ -42,4 +42,19 @@ describe('alarm-timeline-step-icon', () => {
 
     expect(wrapper).toMatchSnapshot();
   });
+
+  test('Renders `alarm-timeline-step-icon` for step `ticketRemove` correctly', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        step: {
+          _t: ALARM_LIST_STEPS.ticketRemove,
+          val: 1,
+          color: 'color',
+          icon_name: 'icon_name',
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
 });
