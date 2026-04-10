@@ -330,7 +330,7 @@ func MatchEntityPatternWithRegexMatches(p pattern.Entity, entity *types.Entity) 
 	return false, entityRegexMatches, nil
 }
 
-func getEntityInfoVal(entity *types.Entity, f string) (interface{}, bool) {
+func getEntityInfoVal(entity *types.Entity, f string) (any, bool) {
 	if v, ok := entity.Infos[f]; ok {
 		return v.Value, true
 	}
@@ -338,7 +338,7 @@ func getEntityInfoVal(entity *types.Entity, f string) (interface{}, bool) {
 	return nil, false
 }
 
-func getEntityComponentInfoVal(entity *types.Entity, f string) (interface{}, bool) {
+func getEntityComponentInfoVal(entity *types.Entity, f string) (any, bool) {
 	if v, ok := entity.ComponentInfos[f]; ok {
 		return v.Value, true
 	}

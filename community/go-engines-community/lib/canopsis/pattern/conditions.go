@@ -59,8 +59,8 @@ const tagLabelSeparator = ":"
 type FieldCondition struct {
 	Field string `json:"field" bson:"field"`
 	// FieldType is only defined for custom fields, ex: infos.
-	FieldType string    `json:"field_type,omitempty" bson:"field_type,omitempty"`
-	Condition Condition `json:"cond" bson:"cond"`
+	FieldType string    `json:"field_type,omitempty" bson:"field_type,omitempty" mapstructure:"field_type,omitempty"`
+	Condition Condition `json:"cond" bson:"cond" mapstructure:"cond"`
 	// Alias can only be defined for entity infos.
 	Alias string `json:"alias,omitempty" bson:"alias,omitempty"`
 }
@@ -335,7 +335,7 @@ func (c *Condition) MatchBool(value bool) (bool, error) {
 	return false, ErrUnsupportedConditionType
 }
 
-func (c *Condition) MatchRef(value interface{}) (bool, error) {
+func (c *Condition) MatchRef(value any) (bool, error) {
 	if c.valueBool == nil {
 		return false, ErrWrongConditionValue
 	}
@@ -884,7 +884,7 @@ func (c *Condition) StringToSql(f string) (string, error) {
 		}
 
 		// "IS NULL" is mandatory
-		return fmt.Sprintf("(%[1]s IS NULL OR NOT (%[1]s = ANY (ARRAY [%s]))", f, strings.Join(values, ",")), nil
+		return fmt.Sprintf("(%[1]s IS NULL OR NOT (%[1]s = ANY (ARRAY [%s])))", f, strings.Join(values, ",")), nil
 	case ConditionRegexp,
 		ConditionContain,
 		ConditionNotContain,
@@ -966,7 +966,7 @@ func (c *Condition) DurationToSql(f string) (string, error) {
 
 		return fmt.Sprintf("%s > %d", f, *c.valueDuration), nil
 	case ConditionLT:
-		if c.valueDuration != nil {
+		if c.valueDuration == nil {
 			return "", ErrWrongConditionValue
 		}
 
@@ -1083,14 +1083,14 @@ func (c *Condition) IntToSqlJson(field, key string) (string, error) {
 
 func (c *Condition) BoolToSqlJson(field, key string) (string, error) {
 	checkType := fmt.Sprintf("jsonb_typeof(%s->%s) = 'boolean'", field, sqlQuoteString(key))
-	cast := fmt.Sprintf("%s AND %s->%s", checkType, field, sqlQuoteString(key))
+	operand := fmt.Sprintf("(CASE WHEN %s THEN (%s->%s)::boolean END)", checkType, field, sqlQuoteString(key))
+	cast := fmt.Sprintf("%s AND %s", checkType, operand)
 
 	switch c.Type {
 	case ConditionEqual:
-		if c.valueBool != nil {
+		if c.valueBool == nil {
 			return "", ErrWrongConditionValue
 		}
-
 		return fmt.Sprintf("(%s = %t)", cast, *c.valueBool), nil
 	default:
 		return "", ErrUnsupportedConditionType
@@ -1180,6 +1180,9 @@ func (c *Condition) TimeToSqlJson(field, key string) (string, error) {
 	case ConditionTimeRelative:
 		if c.valueDuration == nil && c.valueDurationTo == nil {
 			return "", ErrWrongConditionValue
+		}
+		if c.valueDuration != nil && c.valueDurationTo != nil && *c.valueDuration < *c.valueDurationTo {
+			return "", fmt.Errorf("duration from (%d) < to (%d)", *c.valueDuration, *c.valueDurationTo)
 		}
 		var conditions []string
 		if c.valueDuration != nil {
@@ -1460,7 +1463,7 @@ func (c *Condition) GetRegexp() utils.RegexExpression {
 	return c.valueRegexp
 }
 
-func GetStringValue(v interface{}) (string, error) {
+func GetStringValue(v any) (string, error) {
 	if s, ok := v.(string); ok {
 		return s, nil
 	}
@@ -1468,7 +1471,7 @@ func GetStringValue(v interface{}) (string, error) {
 	return "", ErrWrongConditionValue
 }
 
-func GetIntValue(v interface{}) (int64, error) {
+func GetIntValue(v any) (int64, error) {
 	switch i := v.(type) {
 	case int:
 		return int64(i), nil
@@ -1497,7 +1500,7 @@ func GetIntValue(v interface{}) (int64, error) {
 	return 0, ErrWrongConditionValue
 }
 
-func GetBoolValue(v interface{}) (bool, error) {
+func GetBoolValue(v any) (bool, error) {
 	if b, ok := v.(bool); ok {
 		return b, nil
 	}
@@ -1505,13 +1508,13 @@ func GetBoolValue(v interface{}) (bool, error) {
 	return false, ErrWrongConditionValue
 }
 
-func GetStringArrayValue(v interface{}) ([]string, error) {
-	var interfaceArr []interface{}
+func GetStringArrayValue(v any) ([]string, error) {
+	var interfaceArr []any
 
 	switch a := v.(type) {
 	case []string:
 		return a, nil
-	case []interface{}:
+	case []any:
 		interfaceArr = a
 	case bson.A:
 		interfaceArr = a
@@ -1532,7 +1535,7 @@ func GetStringArrayValue(v interface{}) ([]string, error) {
 	return strArr, nil
 }
 
-func GetTimeValue(v interface{}) (time.Time, error) {
+func GetTimeValue(v any) (time.Time, error) {
 	intVal, err := GetIntValue(v)
 	if err != nil {
 		return time.Time{}, err
@@ -1541,7 +1544,7 @@ func GetTimeValue(v interface{}) (time.Time, error) {
 	return time.Unix(intVal, 0), nil
 }
 
-func getTimeIntervalValue(v interface{}) (int64, int64, error) {
+func getTimeIntervalValue(v any) (int64, int64, error) {
 	mapVal, err := parseMapVal(v)
 	if err != nil {
 		return 0, 0, err

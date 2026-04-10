@@ -1,0 +1,380 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-status-chip-with-relations Renders \`alarm-status-chip-with-relations\` with all custom props 1`] = `
+<span
+  class="pl-2 pr-1 v-chip v-chip--outlined theme--light v-size--small error error--text"
+>
+  <span
+    class="v-chip__content"
+  >
+    <span>
+      Custom content
+    </span>
+    <div
+      class="c-simple-tooltip"
+      content="See top entities"
+      top=""
+    >
+      <button
+        class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <span
+            aria-hidden="true"
+            class="v-icon notranslate theme--light white--text"
+            style="font-size: 16px; height: 16px; width: 16px;"
+          >
+            <svg
+              class="v-icon__component theme--light white--text"
+              height="16"
+              style="font-size: 16px; height: 16px; width: 16px;"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g>
+                <path
+                  d="M5.99984 1.33337V5.33337H7.33317V7.33337H3.33317C2.59317 7.33337 1.99984 7.92671 1.99984 8.66671V10.6667H0.666504V14.6667H4.6665V10.6667H3.33317V8.66671H7.33317V10.6667H5.99984V14.6667H9.99984V10.6667H8.6665V8.66671H12.6665V10.6667H11.3332V14.6667H15.3332V10.6667H13.9998V8.66671C13.9998 7.92671 13.4065 7.33337 12.6665 7.33337H8.6665V5.33337H9.99984V1.33337H5.99984Z"
+                  fill="currentColor"
+                />
+              </g>
+            </svg>
+          </span>
+        </span>
+      </button>
+    </div>
+  </span>
+</span>
+`;
+
+exports[`alarm-status-chip-with-relations Renders \`alarm-status-chip-with-relations\` with color prop 1`] = `
+<span
+  class="pl-2 pr-1 v-chip theme--light v-size--default primary"
+>
+  <span
+    class="v-chip__content"
+  >
+    <div
+      class="c-simple-tooltip"
+      content="See entities"
+      top=""
+    >
+      <button
+        class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <span
+            aria-hidden="true"
+            class="v-icon notranslate theme--light white--text"
+            style="font-size: 16px; height: 16px; width: 16px;"
+          >
+            <svg
+              class="v-icon__component theme--light white--text"
+              height="16"
+              style="font-size: 16px; height: 16px; width: 16px;"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g>
+                <path
+                  d="M5.99984 1.33337V5.33337H7.33317V7.33337H3.33317C2.59317 7.33337 1.99984 7.92671 1.99984 8.66671V10.6667H0.666504V14.6667H4.6665V10.6667H3.33317V8.66671H7.33317V10.6667H5.99984V14.6667H9.99984V10.6667H8.6665V8.66671H12.6665V10.6667H11.3332V14.6667H15.3332V10.6667H13.9998V8.66671C13.9998 7.92671 13.4065 7.33337 12.6665 7.33337H8.6665V5.33337H9.99984V1.33337H5.99984Z"
+                  fill="currentColor"
+                />
+              </g>
+            </svg>
+          </span>
+        </span>
+      </button>
+    </div>
+  </span>
+</span>
+`;
+
+exports[`alarm-status-chip-with-relations Renders \`alarm-status-chip-with-relations\` with default props 1`] = `
+<span
+  class="pl-2 pr-1 v-chip v-chip--no-color theme--light v-size--default"
+>
+  <span
+    class="v-chip__content"
+  >
+    <div
+      class="c-simple-tooltip"
+      content="See entities"
+      top=""
+    >
+      <button
+        class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <span
+            aria-hidden="true"
+            class="v-icon notranslate theme--light white--text"
+            style="font-size: 16px; height: 16px; width: 16px;"
+          >
+            <svg
+              class="v-icon__component theme--light white--text"
+              height="16"
+              style="font-size: 16px; height: 16px; width: 16px;"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g>
+                <path
+                  d="M5.99984 1.33337V5.33337H7.33317V7.33337H3.33317C2.59317 7.33337 1.99984 7.92671 1.99984 8.66671V10.6667H0.666504V14.6667H4.6665V10.6667H3.33317V8.66671H7.33317V10.6667H5.99984V14.6667H9.99984V10.6667H8.6665V8.66671H12.6665V10.6667H11.3332V14.6667H15.3332V10.6667H13.9998V8.66671C13.9998 7.92671 13.4065 7.33337 12.6665 7.33337H8.6665V5.33337H9.99984V1.33337H5.99984Z"
+                  fill="currentColor"
+                />
+              </g>
+            </svg>
+          </span>
+        </span>
+      </button>
+    </div>
+  </span>
+</span>
+`;
+
+exports[`alarm-status-chip-with-relations Renders \`alarm-status-chip-with-relations\` with entity that has no upstream 1`] = `
+<span
+  class="pl-2 pr-1 v-chip v-chip--no-color theme--light v-size--default"
+>
+  <span
+    class="v-chip__content"
+  >
+    <div
+      class="c-simple-tooltip"
+      content="See entities"
+      top=""
+    >
+      <button
+        class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <span
+            aria-hidden="true"
+            class="v-icon notranslate theme--light white--text"
+            style="font-size: 16px; height: 16px; width: 16px;"
+          >
+            <svg
+              class="v-icon__component theme--light white--text"
+              height="16"
+              style="font-size: 16px; height: 16px; width: 16px;"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g>
+                <path
+                  d="M5.99984 1.33337V5.33337H7.33317V7.33337H3.33317C2.59317 7.33337 1.99984 7.92671 1.99984 8.66671V10.6667H0.666504V14.6667H4.6665V10.6667H3.33317V8.66671H7.33317V10.6667H5.99984V14.6667H9.99984V10.6667H8.6665V8.66671H12.6665V10.6667H11.3332V14.6667H15.3332V10.6667H13.9998V8.66671C13.9998 7.92671 13.4065 7.33337 12.6665 7.33337H8.6665V5.33337H9.99984V1.33337H5.99984Z"
+                  fill="currentColor"
+                />
+              </g>
+            </svg>
+          </span>
+        </span>
+      </button>
+    </div>
+  </span>
+</span>
+`;
+
+exports[`alarm-status-chip-with-relations Renders \`alarm-status-chip-with-relations\` with entity that has upstream 1`] = `
+<span
+  class="pl-2 pr-1 v-chip v-chip--no-color theme--light v-size--default"
+>
+  <span
+    class="v-chip__content"
+  >
+    <div
+      class="c-simple-tooltip"
+      content="See top entities"
+      top=""
+    >
+      <button
+        class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <span
+            aria-hidden="true"
+            class="v-icon notranslate theme--light white--text"
+            style="font-size: 16px; height: 16px; width: 16px;"
+          >
+            <svg
+              class="v-icon__component theme--light white--text"
+              height="16"
+              style="font-size: 16px; height: 16px; width: 16px;"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g>
+                <path
+                  d="M5.99984 1.33337V5.33337H7.33317V7.33337H3.33317C2.59317 7.33337 1.99984 7.92671 1.99984 8.66671V10.6667H0.666504V14.6667H4.6665V10.6667H3.33317V8.66671H7.33317V10.6667H5.99984V14.6667H9.99984V10.6667H8.6665V8.66671H12.6665V10.6667H11.3332V14.6667H15.3332V10.6667H13.9998V8.66671C13.9998 7.92671 13.4065 7.33337 12.6665 7.33337H8.6665V5.33337H9.99984V1.33337H5.99984Z"
+                  fill="currentColor"
+                />
+              </g>
+            </svg>
+          </span>
+        </span>
+      </button>
+    </div>
+  </span>
+</span>
+`;
+
+exports[`alarm-status-chip-with-relations Renders \`alarm-status-chip-with-relations\` with iconColor prop 1`] = `
+<span
+  class="pl-2 pr-1 v-chip v-chip--no-color theme--light v-size--default"
+>
+  <span
+    class="v-chip__content"
+  >
+    <div
+      class="c-simple-tooltip"
+      content="See entities"
+      top=""
+    >
+      <button
+        class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <span
+            aria-hidden="true"
+            class="v-icon notranslate theme--light error--text"
+            style="font-size: 16px; height: 16px; width: 16px;"
+          >
+            <svg
+              class="v-icon__component theme--light error--text"
+              height="16"
+              style="font-size: 16px; height: 16px; width: 16px;"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g>
+                <path
+                  d="M5.99984 1.33337V5.33337H7.33317V7.33337H3.33317C2.59317 7.33337 1.99984 7.92671 1.99984 8.66671V10.6667H0.666504V14.6667H4.6665V10.6667H3.33317V8.66671H7.33317V10.6667H5.99984V14.6667H9.99984V10.6667H8.6665V8.66671H12.6665V10.6667H11.3332V14.6667H15.3332V10.6667H13.9998V8.66671C13.9998 7.92671 13.4065 7.33337 12.6665 7.33337H8.6665V5.33337H9.99984V1.33337H5.99984Z"
+                  fill="currentColor"
+                />
+              </g>
+            </svg>
+          </span>
+        </span>
+      </button>
+    </div>
+  </span>
+</span>
+`;
+
+exports[`alarm-status-chip-with-relations Renders \`alarm-status-chip-with-relations\` with outlined prop 1`] = `
+<span
+  class="pl-2 pr-1 v-chip v-chip--no-color v-chip--outlined theme--light v-size--default"
+>
+  <span
+    class="v-chip__content"
+  >
+    <div
+      class="c-simple-tooltip"
+      content="See entities"
+      top=""
+    >
+      <button
+        class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <span
+            aria-hidden="true"
+            class="v-icon notranslate theme--light white--text"
+            style="font-size: 16px; height: 16px; width: 16px;"
+          >
+            <svg
+              class="v-icon__component theme--light white--text"
+              height="16"
+              style="font-size: 16px; height: 16px; width: 16px;"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g>
+                <path
+                  d="M5.99984 1.33337V5.33337H7.33317V7.33337H3.33317C2.59317 7.33337 1.99984 7.92671 1.99984 8.66671V10.6667H0.666504V14.6667H4.6665V10.6667H3.33317V8.66671H7.33317V10.6667H5.99984V14.6667H9.99984V10.6667H8.6665V8.66671H12.6665V10.6667H11.3332V14.6667H15.3332V10.6667H13.9998V8.66671C13.9998 7.92671 13.4065 7.33337 12.6665 7.33337H8.6665V5.33337H9.99984V1.33337H5.99984Z"
+                  fill="currentColor"
+                />
+              </g>
+            </svg>
+          </span>
+        </span>
+      </button>
+    </div>
+  </span>
+</span>
+`;
+
+exports[`alarm-status-chip-with-relations Renders \`alarm-status-chip-with-relations\` with small prop 1`] = `
+<span
+  class="pl-2 pr-1 v-chip v-chip--no-color theme--light v-size--small"
+>
+  <span
+    class="v-chip__content"
+  >
+    <div
+      class="c-simple-tooltip"
+      content="See entities"
+      top=""
+    >
+      <button
+        class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <span
+            aria-hidden="true"
+            class="v-icon notranslate theme--light white--text"
+            style="font-size: 16px; height: 16px; width: 16px;"
+          >
+            <svg
+              class="v-icon__component theme--light white--text"
+              height="16"
+              style="font-size: 16px; height: 16px; width: 16px;"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g>
+                <path
+                  d="M5.99984 1.33337V5.33337H7.33317V7.33337H3.33317C2.59317 7.33337 1.99984 7.92671 1.99984 8.66671V10.6667H0.666504V14.6667H4.6665V10.6667H3.33317V8.66671H7.33317V10.6667H5.99984V14.6667H9.99984V10.6667H8.6665V8.66671H12.6665V10.6667H11.3332V14.6667H15.3332V10.6667H13.9998V8.66671C13.9998 7.92671 13.4065 7.33337 12.6665 7.33337H8.6665V5.33337H9.99984V1.33337H5.99984Z"
+                  fill="currentColor"
+                />
+              </g>
+            </svg>
+          </span>
+        </span>
+      </button>
+    </div>
+  </span>
+</span>
+`;

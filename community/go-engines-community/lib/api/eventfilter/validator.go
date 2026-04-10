@@ -9,20 +9,16 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"github.com/teambition/rrule-go"
-	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type Validator struct {
-	dbClient         mongo.DbClient
 	templateExecutor template.Executor
 }
 
-func NewValidator(client mongo.DbClient, templateExecutor template.Executor) *Validator {
+func NewValidator(templateExecutor template.Executor) *Validator {
 	return &Validator{
-		dbClient:         client,
 		templateExecutor: templateExecutor,
 	}
 }
@@ -34,12 +30,13 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 		if r.Config.Component == "" &&
 			r.Config.Resource == "" &&
 			r.Config.Connector == "" &&
-			r.Config.ConnectorName == "" {
-			sl.ReportError(r.Config, "config", "Config", "required", "")
+			r.Config.ConnectorName == "" &&
+			r.Config.Upstream == "" {
+			sl.ReportError(r.Config, "Config", "Config", "required", "")
 		}
 	case eventfilter.RuleTypeEnrichment:
 		if len(r.Config.Actions) == 0 {
-			sl.ReportError(r.Config.Actions, "actions", "Actions", "required", "")
+			sl.ReportError(r.Config.Actions, "Actions", "Config.Actions", "required", "")
 		}
 
 		for i, action := range r.Config.Actions {
@@ -47,16 +44,17 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 			case eventfilter.ActionSetFieldFromTemplate,
 				eventfilter.ActionSetEntityInfoFromTemplate,
 				eventfilter.ActionSetTagsFromTemplate:
+				structNs := "Config.Actions." + strconv.Itoa(i) + ".Value"
 				strVal, ok := action.Value.(string)
 				if !ok {
-					sl.ReportError(action.Value, "Config.Actions."+strconv.Itoa(i)+".Value", "Value", "must_be_string", "")
+					sl.ReportError(action.Value, "Value", structNs, "value_string", "")
 					continue
 				}
 
 				if strVal != "" {
 					parsedValue := v.templateExecutor.Parse(strVal)
 					if parsedValue.Err != nil {
-						sl.ReportError(strVal, "Config.Actions."+strconv.Itoa(i)+".Value", "Value", "template", "")
+						sl.ReportError(strVal, "Value", structNs, "template", "")
 					}
 				}
 			}
@@ -68,22 +66,22 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 			eventfilter.OutcomeBreak,
 		}
 		if r.Config.OnSuccess == "" {
-			sl.ReportError(r.Config.OnSuccess, "on_success", "OnSuccess", "required_if", "Type enrichment")
+			sl.ReportError(r.Config.OnSuccess, "OnSuccess", "Config.OnSuccess", "required_if", "Type enrichment")
 		} else {
 			switch r.Config.OnSuccess {
 			case eventfilter.OutcomePass, eventfilter.OutcomeDrop, eventfilter.OutcomeBreak:
 			default:
-				sl.ReportError(r.Config.OnSuccess, "on_success", "OnSuccess", "oneof", strings.Join(validOutcome, " "))
+				sl.ReportError(r.Config.OnSuccess, "OnSuccess", "Config.OnSuccess", "oneof", strings.Join(validOutcome, " "))
 			}
 		}
 
 		if r.Config.OnFailure == "" {
-			sl.ReportError(r.Config.OnFailure, "on_failure", "OnFailure", "required_if", "Type enrichment")
+			sl.ReportError(r.Config.OnFailure, "OnFailure", "Config.OnFailure", "required_if", "Type enrichment")
 		} else {
 			switch r.Config.OnFailure {
 			case eventfilter.OutcomePass, eventfilter.OutcomeDrop, eventfilter.OutcomeBreak:
 			default:
-				sl.ReportError(r.Config.OnFailure, "on_failure", "OnFailure", "oneof", strings.Join(validOutcome, " "))
+				sl.ReportError(r.Config.OnFailure, "OnFailure", "Config.OnFailure", "oneof", strings.Join(validOutcome, " "))
 			}
 		}
 	}
@@ -125,14 +123,6 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 		sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
 	}
 
-	ok, err := v.checkExceptions(ctx, r.Exceptions)
-	if err != nil {
-		panic(err)
-	}
-	if !ok {
-		sl.ReportError(r.Exceptions, "Exceptions", "Exceptions", "not_exist", "")
-	}
-
 	apiexternaldata.ValidateRefParameters(sl, v.templateExecutor, r.ExternalData, []string{externaldata.RefTypeAPI, externaldata.RefTypeTable})
 }
 
@@ -144,11 +134,11 @@ func (v *Validator) ValidateTemplateRuleRequest(sl validator.StructLevel) {
 			r.Config.Resource == "" &&
 			r.Config.Connector == "" &&
 			r.Config.ConnectorName == "" {
-			sl.ReportError(r.Config, "config", "Config", "required", "")
+			sl.ReportError(r.Config, "Config", "Config", "required", "")
 		}
 	case eventfilter.RuleTypeEnrichment:
 		if len(r.Config.Actions) == 0 {
-			sl.ReportError(r.Config.Actions, "actions", "Actions", "required", "")
+			sl.ReportError(r.Config.Actions, "Actions", "Config.Actions", "required", "")
 		}
 	}
 
@@ -172,18 +162,4 @@ func (v *Validator) ValidateTemplateRuleRequest(sl validator.StructLevel) {
 func (v *Validator) checkRrule(r string) bool {
 	_, err := rrule.StrToROption(r)
 	return err == nil
-}
-
-func (v *Validator) checkExceptions(ctx context.Context, exceptions []string) (bool, error) {
-	if len(exceptions) == 0 {
-		return true, nil
-	}
-	count, err := v.dbClient.
-		Collection(mongo.PbehaviorExceptionMongoCollection).
-		CountDocuments(ctx, bson.M{"_id": bson.M{"$in": exceptions}})
-	if err != nil {
-		return false, err
-	}
-
-	return count == int64(len(exceptions)), nil
 }

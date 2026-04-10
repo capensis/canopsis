@@ -41,19 +41,35 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
 }
 
-// ComputeStatus mocks base method.
-func (m *MockService) ComputeStatus(alarm types.Alarm, entity types.Entity) (types.CpsNumber, string) {
+// ComputeStatusOnStateChange mocks base method.
+func (m *MockService) ComputeStatusOnStateChange(alarm types.Alarm, entity types.Entity) (types.CpsNumber, string) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ComputeStatus", alarm, entity)
+	ret := m.ctrl.Call(m, "ComputeStatusOnStateChange", alarm, entity)
 	ret0, _ := ret[0].(types.CpsNumber)
 	ret1, _ := ret[1].(string)
 	return ret0, ret1
 }
 
-// ComputeStatus indicates an expected call of ComputeStatus.
-func (mr *MockServiceMockRecorder) ComputeStatus(alarm, entity any) *gomock.Call {
+// ComputeStatusOnStateChange indicates an expected call of ComputeStatusOnStateChange.
+func (mr *MockServiceMockRecorder) ComputeStatusOnStateChange(alarm, entity any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ComputeStatus", reflect.TypeOf((*MockService)(nil).ComputeStatus), alarm, entity)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ComputeStatusOnStateChange", reflect.TypeOf((*MockService)(nil).ComputeStatusOnStateChange), alarm, entity)
+}
+
+// ComputeStatusOnStatusChange mocks base method.
+func (m *MockService) ComputeStatusOnStatusChange(ctx context.Context, alarm types.Alarm, entity types.Entity) (types.CpsNumber, string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ComputeStatusOnStatusChange", ctx, alarm, entity)
+	ret0, _ := ret[0].(types.CpsNumber)
+	ret1, _ := ret[1].(string)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// ComputeStatusOnStatusChange indicates an expected call of ComputeStatusOnStatusChange.
+func (mr *MockServiceMockRecorder) ComputeStatusOnStatusChange(ctx, alarm, entity any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ComputeStatusOnStatusChange", reflect.TypeOf((*MockService)(nil).ComputeStatusOnStatusChange), ctx, alarm, entity)
 }
 
 // Load mocks base method.

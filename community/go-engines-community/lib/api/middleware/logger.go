@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -31,7 +32,7 @@ func (w responseBodyLogWriter) Write(b []byte) (int, error) {
 	return w.ResponseWriter.Write(b)
 }
 
-func Logger(logger zerolog.Logger, logBody bool, logBodyOnError bool) gin.HandlerFunc {
+func Logger(errorResponder httperror.Responder, logger zerolog.Logger, logBody bool, logBodyOnError bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 		path := c.Request.URL.Path
@@ -45,7 +46,9 @@ func Logger(logger zerolog.Logger, logBody bool, logBodyOnError bool) gin.Handle
 		if logBody || logBodyOnError {
 			buf, ok := bufPool.Get().(*bytes.Buffer)
 			if !ok {
-				panic(errors.New("unknown buffer type"))
+				errorResponder.Respond(c, errors.New("unknown buffer type"))
+
+				return
 			}
 
 			defer bufPool.Put(buf)

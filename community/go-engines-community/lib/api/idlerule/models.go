@@ -2,8 +2,8 @@ package idlerule
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -29,8 +29,8 @@ type EditRequest struct {
 	AlarmCondition       string                    `json:"alarm_condition"`
 	Operation            *OperationRequest         `json:"operation,omitempty"`
 
-	common.AlarmPatternFieldsRequest
-	common.EntityPatternFieldsRequest
+	patternfields.AlarmRequest
+	patternfields.EntityRequest
 }
 
 type CreateRequest struct {
@@ -54,10 +54,10 @@ type BulkDeleteRequestItem struct {
 
 type OperationRequest struct {
 	Type       string              `json:"type" binding:"required"`
-	Parameters idlerule.Parameters `json:"parameters,omitempty"`
+	Parameters idlerule.Parameters `json:"parameters"`
 }
 
-type Rule struct {
+type Response struct {
 	ID          string                    `bson:"_id,omitempty" json:"_id"`
 	Name        string                    `bson:"name" json:"name"`
 	Description string                    `bson:"description" json:"description"`
@@ -108,16 +108,14 @@ type Parameters struct {
 }
 
 type AggregationResult struct {
-	Data       []Rule `bson:"data" json:"data"`
-	TotalCount int64  `bson:"total_count" json:"total_count"`
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-// GetTotal implementation PaginatedData interface
 func (r AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
 
-// GetData implementation PaginatedData interface
-func (r AggregationResult) GetData() interface{} {
+func (r AggregationResult) GetData() any {
 	return r.Data
 }

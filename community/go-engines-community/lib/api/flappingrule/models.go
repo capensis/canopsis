@@ -2,8 +2,8 @@ package flappingrule
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 )
@@ -16,8 +16,8 @@ type EditRequest struct {
 	Priority    int64                     `json:"priority" binding:"min=0"`
 	Author      string                    `json:"author" swaggerignore:"true"`
 
-	common.AlarmPatternFieldsRequest
-	common.EntityPatternFieldsRequest
+	patternfields.AlarmRequest
+	patternfields.EntityRequest
 }
 
 type CreateRequest struct {
@@ -38,8 +38,8 @@ type Response struct {
 	Duration    datetime.DurationWithUnit `bson:"duration" json:"duration"`
 	Priority    int64                     `bson:"priority" json:"priority"`
 	Author      *author.Author            `bson:"author" json:"author"`
-	Created     datetime.CpsTime          `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated     datetime.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created     datetime.CpsTime          `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated     datetime.CpsTime          `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
@@ -50,7 +50,7 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 

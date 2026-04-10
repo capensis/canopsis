@@ -12,8 +12,10 @@
         :loading="pending"
         :query.sync="query"
         :refresh-alarms-list="fetchList"
+        :columns-settings="columnsSettings"
         selectable
         expandable
+        @update:columns-settings="updateColumnsSettings"
       />
     </template>
   </modal-wrapper>
@@ -29,6 +31,7 @@ import { convertAlarmWidgetToQuery } from '@/helpers/entities/alarm/query';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
 import AlarmsListTableWithPagination from '@/components/widgets/alarm/partials/alarms-list-table-with-pagination.vue';
 
@@ -40,6 +43,7 @@ export default {
   mixins: [
     modalInnerMixin,
     widgetColumnsAlarmMixin,
+    entitiesUserPreferenceMixin,
   ],
   data() {
     const { config = {} } = this.modal;
@@ -59,6 +63,10 @@ export default {
     widget() {
       return this.config.widget;
     },
+
+    columnsSettings() {
+      return this.userPreference.content.alarms_columns_settings ?? {};
+    },
   },
   watch: {
     query(query, prevQuery) {
@@ -67,10 +75,18 @@ export default {
       }
     },
   },
-  mounted() {
+  async mounted() {
+    if (this.widget._id) {
+      await this.fetchUserPreference({ id: this.widget._id });
+    }
+
     this.fetchList();
   },
   methods: {
+    updateColumnsSettings(columnsSettings) {
+      this.updateContentInUserPreference({ alarms_columns_settings: columnsSettings });
+    },
+
     async fetchList() {
       try {
         this.pending = true;

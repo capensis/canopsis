@@ -154,9 +154,9 @@ func GetImpactsCountPipeline(prefixArg ...string) []bson.M {
 			"pipeline": []bson.M{
 				{"$project": bson.M{
 					"hasStateSettings": bson.M{
-						"$cond": []interface{}{bson.M{
+						"$cond": []any{bson.M{
 							"$and": []bson.M{
-								{"$eq": []interface{}{
+								{"$eq": []any{
 									bson.M{"$type": "$state_info._id"},
 									"string",
 								}},
@@ -172,8 +172,8 @@ func GetImpactsCountPipeline(prefixArg ...string) []bson.M {
 		{"$unwind": bson.M{"path": "$" + prefix + "component_impacts", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
 			prefix + "impacts_count": bson.M{
-				"$cond": []interface{}{
-					bson.M{"$and": []interface{}{
+				"$cond": []any{
+					bson.M{"$and": []any{
 						bson.M{"$eq": []string{
 							"$" + prefix + "type", "resource"},
 						},
@@ -197,5 +197,39 @@ func GetStateSettingPipeline() []bson.M {
 			"as":           "state_setting",
 		}},
 		{"$unwind": bson.M{"path": "$state_setting", "preserveNullAndEmptyArrays": true}},
+	}
+}
+
+func GetDownstreamCountPipeline(prefixArg ...string) []bson.M {
+	prefix := ""
+	if len(prefixArg) > 0 && prefixArg[0] != "" {
+		prefix = prefixArg[0] + "."
+	}
+
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   prefix + "_id",
+			"foreignField": "upstream",
+			"as":           prefix + "downstreams",
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"type":    bson.M{"$in": bson.A{types.EntityTypeResource, types.EntityTypeComponent}},
+					"enabled": true,
+				}},
+				{"$project": bson.M{"_id": 1}},
+			},
+		}},
+		{"$addFields": bson.M{
+			prefix + "downstream_count": bson.M{"$cond": bson.M{
+				"if": bson.M{"$and": []bson.M{
+					{"$in": bson.A{"$" + prefix + "type", bson.A{types.EntityTypeResource, types.EntityTypeComponent}}},
+					{"$eq": bson.A{"$" + prefix + "enabled", true}},
+				}},
+				"then": bson.M{"$size": "$" + prefix + "downstreams"},
+				"else": 0,
+			}},
+		}},
+		{"$project": bson.M{prefix + "downstreams": 0}},
 	}
 }

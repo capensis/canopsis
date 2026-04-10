@@ -34,6 +34,7 @@ type User struct {
 	IsEnabled  bool   `bson:"enable"`
 	ExternalID string `bson:"external_id"`
 	Source     string `bson:"source"`
+	Language   string `bson:"language"`
 
 	// IdPRoles field show roles from idp, and they should be used ONLY in idp/canopsis role merging, see SetRolesFromIdP.
 	IdPRoles []string `bson:"idp_roles"`

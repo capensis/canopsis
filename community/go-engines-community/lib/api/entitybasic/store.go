@@ -2,16 +2,15 @@ package entitybasic
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
-	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type Store interface {
@@ -21,18 +20,20 @@ type Store interface {
 }
 
 type store struct {
-	dbClient          mongo.DbClient
-	dbCollection      mongo.DbCollection
-	alarmDbCollection mongo.DbCollection
-	basicTypes        []string
+	dbClient             mongo.DbClient
+	dbCollection         mongo.DbCollection
+	alarmDbCollection    mongo.DbCollection
+	categoryDbCollection mongo.DbCollection
+	basicTypes           []string
 }
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		dbClient:          db,
-		dbCollection:      db.Collection(mongo.EntityMongoCollection),
-		alarmDbCollection: db.Collection(mongo.AlarmMongoCollection),
-		basicTypes:        []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector},
+		dbClient:             db,
+		dbCollection:         db.Collection(mongo.EntityMongoCollection),
+		alarmDbCollection:    db.Collection(mongo.AlarmMongoCollection),
+		categoryDbCollection: db.Collection(mongo.EntityCategoryMongoCollection),
+		basicTypes:           []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector},
 	}
 }
 
@@ -100,6 +101,11 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		isToggled = false
 		updatedEntity = nil
+
+		err := dbvalidation.ValidateExist(ctx, s.categoryDbCollection, r, "Category", r.Category)
+		if err != nil {
+			return err
+		}
 
 		oldEntity := Entity{}
 		cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
@@ -187,25 +193,20 @@ func (s *store) Delete(ctx context.Context, id, userID string) (*Entity, error) 
 		}
 
 		if entity.Type == types.EntityTypeComponent {
-			c, err := s.dbCollection.CountDocuments(ctx, bson.M{"component": entity.ID, "type": types.EntityTypeResource})
+			err = dbvalidation.ValidateLinkedReference(ctx, s.dbCollection, bson.M{
+				"component": entity.ID,
+				"type":      types.EntityTypeResource,
+			}, "component", "a resource")
 			if err != nil {
 				return err
 			}
-
-			if c > 0 {
-				return ErrComponent
-			}
 		}
 
-		err = s.alarmDbCollection.FindOne(ctx, bson.M{
+		err = dbvalidation.ValidateLinkedReference(ctx, s.alarmDbCollection, bson.M{
 			"d":          entity.ID,
 			"v.resolved": nil,
-		}).Err()
-		if err == nil {
-			return ErrLinkedEntityToAlarm
-		}
-
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		}, "entity", "an alarm")
+		if err != nil {
 			return err
 		}
 

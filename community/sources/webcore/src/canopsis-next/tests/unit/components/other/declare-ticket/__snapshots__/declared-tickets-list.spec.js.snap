@@ -637,8 +637,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               class="text-start"
             >
               <c-help-icon-stub
-                color="error"
-                icon="error"
+                color="primary"
+                icon="check_circle"
                 maxwidth="400"
                 top=""
               />
@@ -742,8 +742,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               class="text-start"
             >
               <c-help-icon-stub
-                color="error"
-                icon="error"
+                color="primary"
+                icon="check_circle"
                 maxwidth="400"
                 top=""
               />
@@ -847,8 +847,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               class="text-start"
             >
               <c-help-icon-stub
-                color="error"
-                icon="error"
+                color="primary"
+                icon="check_circle"
                 maxwidth="400"
                 top=""
               />
@@ -952,8 +952,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               class="text-start"
             >
               <c-help-icon-stub
-                color="error"
-                icon="error"
+                color="primary"
+                icon="check_circle"
                 maxwidth="400"
                 top=""
               />
@@ -1057,8 +1057,8 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               class="text-start"
             >
               <c-help-icon-stub
-                color="error"
-                icon="error"
+                color="primary"
+                icon="check_circle"
                 maxwidth="400"
                 top=""
               />

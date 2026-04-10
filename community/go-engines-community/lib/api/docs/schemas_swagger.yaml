@@ -86,7 +86,8 @@ definitions:
   action.Parameters:
     properties:
       auth_token:
-        $ref: '#/definitions/request.WebhookAuthToken'
+        allOf:
+        - $ref: '#/definitions/request.WebhookAuthToken'
         description: AuthToken is used in webhook action.
       author:
         type: string
@@ -94,10 +95,12 @@ definitions:
         description: Color is used in pbehavior action.
         type: string
       declare_ticket:
-        $ref: '#/definitions/request.WebhookDeclareTicket'
+        allOf:
+        - $ref: '#/definitions/request.WebhookDeclareTicket'
         description: DeclareTicket is used in webhook action.
       duration:
-        $ref: '#/definitions/datetime.DurationWithUnit'
+        allOf:
+        - $ref: '#/definitions/datetime.DurationWithUnit'
         description: Duration is used in snooze and pbehavior actions.
       forward_author:
         type: boolean
@@ -115,7 +118,8 @@ definitions:
         description: Reason is used in pbehavior action.
         type: string
       request:
-        $ref: '#/definitions/request.Parameters'
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
         description: Request is used in webhook action.
       rrule:
         description: RRule is used in pbehavior action.
@@ -218,7 +222,8 @@ definitions:
       links:
         $ref: '#/definitions/link.LinksByCategory'
       meta_alarm_rule:
-        $ref: '#/definitions/alarm.MetaAlarmRule'
+        allOf:
+        - $ref: '#/definitions/alarm.MetaAlarmRule'
         description: Meta alarm fields
       meta_alarm_rules:
         items:
@@ -231,6 +236,8 @@ definitions:
         type: integer
       pbehavior:
         $ref: '#/definitions/alarm.Pbehavior'
+      pbh_origin_icon:
+        type: string
       running_auto_instructions:
         items:
           type: string
@@ -300,6 +307,8 @@ definitions:
         type: integer
       events_count:
         type: integer
+      failed_ticket:
+        $ref: '#/definitions/common.AlarmStep'
       infos:
         type: object
       initial_long_output:
@@ -405,7 +414,7 @@ definitions:
           $ref: '#/definitions/alarm.Alarm'
         type: array
       meta:
-        $ref: '#/definitions/common.PaginatedMeta'
+        $ref: '#/definitions/pagination.MetaResponse'
     type: object
   alarm.Count:
     properties:
@@ -661,6 +670,10 @@ definitions:
               type: string
             m:
               type: string
+            struct_m:
+              items:
+                $ref: '#/definitions/types.StructuredMessage'
+              type: array
             t:
               type: integer
             ticket:
@@ -688,6 +701,10 @@ definitions:
             val:
               type: integer
           type: object
+        type: array
+      struct_m:
+        items:
+          $ref: '#/definitions/types.StructuredMessage'
         type: array
       t:
         type: integer
@@ -723,7 +740,7 @@ definitions:
           $ref: '#/definitions/alarm.Step'
         type: array
       meta:
-        $ref: '#/definitions/common.PaginatedMeta'
+        $ref: '#/definitions/pagination.MetaResponse'
     type: object
   alarm.StepsRequest:
     properties:
@@ -845,9 +862,12 @@ definitions:
       comment:
         maxLength: 255
         type: string
+      struct_comment:
+        items:
+          $ref: '#/definitions/alarmaction.StructuredMessageRequest'
+        type: array
     required:
     - _id
-    - comment
     type: object
   alarmaction.BulkRequestItem:
     properties:
@@ -872,6 +892,20 @@ definitions:
     - _id
     - duration
     type: object
+  alarmaction.BulkTicketRemoveRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+    required:
+    - _id
+    - comment
+    - ticket
+    type: object
   alarmaction.ChangeStateRequest:
     properties:
       comment:
@@ -892,8 +926,10 @@ definitions:
       comment:
         maxLength: 255
         type: string
-    required:
-    - comment
+      struct_comment:
+        items:
+          $ref: '#/definitions/alarmaction.StructuredMessageRequest'
+        type: array
     type: object
   alarmaction.Request:
     properties:
@@ -910,6 +946,29 @@ definitions:
         $ref: '#/definitions/datetime.DurationWithUnit'
     required:
     - duration
+    type: object
+  alarmaction.StructuredMessageRequest:
+    properties:
+      field:
+        maxLength: 255
+        type: string
+      message:
+        maxLength: 255
+        type: string
+    required:
+    - field
+    - message
+    type: object
+  alarmaction.TicketRemoveRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+    required:
+    - comment
+    - ticket
     type: object
   alarmtag.BulkDeleteRequestItem:
     properties:
@@ -1403,6 +1462,53 @@ definitions:
       updated:
         type: integer
     type: object
+  commenttemplate.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  commenttemplate.EditRequest:
+    properties:
+      fields:
+        items:
+          $ref: '#/definitions/commenttemplate.Field'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+    required:
+    - fields
+    - name
+    type: object
+  commenttemplate.Field:
+    properties:
+      name:
+        maxLength: 255
+        type: string
+      required:
+        type: boolean
+    required:
+    - name
+    type: object
+  commenttemplate.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
+      fields:
+        items:
+          $ref: '#/definitions/commenttemplate.Field'
+        type: array
+      name:
+        type: string
+      updated:
+        type: integer
+    type: object
   common.AlarmStep:
     properties:
       _t:
@@ -1419,6 +1525,10 @@ definitions:
         type: string
       m:
         type: string
+      struct_m:
+        items:
+          $ref: '#/definitions/types.StructuredMessage'
+        type: array
       t:
         type: integer
       ticket:
@@ -1445,35 +1555,6 @@ definitions:
         type: string
       val:
         type: integer
-    type: object
-  common.ErrorResponse:
-    properties:
-      error:
-        type: string
-    type: object
-  common.PaginatedListResponse:
-    properties:
-      data: {}
-      meta:
-        $ref: '#/definitions/common.PaginatedMeta'
-    type: object
-  common.PaginatedMeta:
-    properties:
-      page:
-        type: integer
-      page_count:
-        type: integer
-      per_page:
-        type: integer
-      total_count:
-        type: integer
-    type: object
-  common.ValidationErrorResponse:
-    properties:
-      errors:
-        additionalProperties:
-          type: string
-        type: object
     type: object
   config.EngineParameters:
     properties:
@@ -1779,6 +1860,8 @@ definitions:
       depends_count:
         description: DependsCount contains only service's dependencies
         type: integer
+      downstream_count:
+        type: integer
       enabled:
         type: boolean
       entity_pattern:
@@ -1813,7 +1896,8 @@ definitions:
       last_pbehavior_date:
         type: integer
       links:
-        $ref: '#/definitions/link.LinksByCategory'
+        allOf:
+        - $ref: '#/definitions/link.LinksByCategory'
         description: Links
       name:
         type: string
@@ -1831,12 +1915,12 @@ definitions:
         type: integer
       type:
         type: string
+      upstream:
+        type: string
     type: object
   entity.ExportRequest:
     properties:
       category:
-        type: string
-      entity_pattern:
         type: string
       fields:
         items:
@@ -1850,9 +1934,14 @@ definitions:
         items:
           type: string
         type: array
+      negative_entity_pattern:
+        type: string
       no_events:
         type: boolean
       search:
+        type: string
+      search_pattern:
+        example: '[[{"field":"name","cond":{"type":"eq","value":"cps_name"}}]]'
         type: string
       separator:
         type: string
@@ -2046,6 +2135,8 @@ definitions:
         type: integer
       description:
         type: string
+      downstream_count:
+        type: integer
       enabled:
         type: boolean
       entity_pattern:
@@ -2080,7 +2171,8 @@ definitions:
       last_pbehavior_date:
         type: integer
       links:
-        $ref: '#/definitions/link.LinksByCategory'
+        allOf:
+        - $ref: '#/definitions/link.LinksByCategory'
         description: Links
       name:
         type: string
@@ -2099,6 +2191,8 @@ definitions:
       status:
         type: integer
       type:
+        type: string
+      upstream:
         type: string
     type: object
   entitycategory.Category:
@@ -2345,6 +2439,8 @@ definitions:
       depends_count:
         description: DependsCount contains only service's dependencies
         type: integer
+      downstream_count:
+        type: integer
       enabled:
         type: boolean
       entity_pattern:
@@ -2379,7 +2475,8 @@ definitions:
       last_pbehavior_date:
         type: integer
       links:
-        $ref: '#/definitions/link.LinksByCategory'
+        allOf:
+        - $ref: '#/definitions/link.LinksByCategory'
         description: Links
       name:
         type: string
@@ -2400,6 +2497,8 @@ definitions:
       status:
         type: integer
       type:
+        type: string
+      upstream:
         type: string
     type: object
   entityservice.CreateRequest:
@@ -2478,6 +2577,8 @@ definitions:
       depends_count:
         description: DependsCount contains only service's dependencies
         type: integer
+      downstream_count:
+        type: integer
       enabled:
         type: boolean
       entity_pattern:
@@ -2512,7 +2613,8 @@ definitions:
       last_pbehavior_date:
         type: integer
       links:
-        $ref: '#/definitions/link.LinksByCategory'
+        allOf:
+        - $ref: '#/definitions/link.LinksByCategory'
         description: Links
       name:
         type: string
@@ -2533,6 +2635,8 @@ definitions:
       status:
         type: integer
       type:
+        type: string
+      upstream:
         type: string
     type: object
   entityservice.StateSettingResponse:
@@ -2603,6 +2707,95 @@ definitions:
     - name
     - output_template
     - sli_avail_state
+    type: object
+  entityupstream.Response:
+    properties:
+      _id:
+        type: string
+      ack:
+        $ref: '#/definitions/common.AlarmStep'
+      alarm_last_update_date:
+        type: integer
+      category:
+        $ref: '#/definitions/entity.Category'
+      component:
+        type: string
+      component_infos:
+        $ref: '#/definitions/entity.Infos'
+      connector:
+        type: string
+      connector_type:
+        description: ConnectorType contains a part before "/" of connector id.
+        type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      deletable:
+        description: Flags
+        type: boolean
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
+      downstream_count:
+        type: integer
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      filtered_perf_data:
+        items:
+          type: string
+        type: array
+      idle_since:
+        type: integer
+      impact_level:
+        type: integer
+      impact_state:
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
+        type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
+      infos:
+        $ref: '#/definitions/entity.Infos'
+      ko_events:
+        type: integer
+      last_event_date:
+        type: integer
+      last_pbehavior_date:
+        type: integer
+      links:
+        allOf:
+        - $ref: '#/definitions/link.LinksByCategory'
+        description: Links
+      name:
+        type: string
+      ok_events:
+        description: Stats
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      snooze:
+        $ref: '#/definitions/common.AlarmStep'
+      state:
+        description: Alarm fields
+        type: integer
+      status:
+        type: integer
+      type:
+        type: string
+      upstream:
+        type: string
     type: object
   eventfilter.Action:
     properties:
@@ -2851,6 +3044,8 @@ definitions:
         type: string
       resource:
         type: string
+      upstream:
+        type: string
     type: object
   eventfilter.TemplateRequest:
     properties:
@@ -3072,7 +3267,8 @@ definitions:
           Key contains field name of table with regexp, value contains template.
         type: object
       request:
-        $ref: '#/definitions/request.Parameters'
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
         description: are used in api external data
       select:
         additionalProperties:
@@ -3230,6 +3426,15 @@ definitions:
       status:
         type: integer
     type: object
+  externaldatatable.PreviewRequest:
+    properties:
+      column_configs:
+        items:
+          $ref: '#/definitions/externaldatatable.ColumnConfig'
+        type: array
+    required:
+    - column_configs
+    type: object
   externaldatatable.RefResponse:
     properties:
       optional:
@@ -3241,7 +3446,8 @@ definitions:
           type: string
         type: object
       request:
-        $ref: '#/definitions/request.Parameters'
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
         description: are used in api external data
       select:
         additionalProperties:
@@ -3252,7 +3458,8 @@ definitions:
       sort_by:
         type: string
       table:
-        $ref: '#/definitions/externaldatatable.Table'
+        allOf:
+        - $ref: '#/definitions/externaldatatable.Table'
         description: are used in db external data
       type:
         type: string
@@ -3312,7 +3519,7 @@ definitions:
     - name
     - type
     type: object
-  file.File:
+  file.Response:
     properties:
       _id:
         type: string
@@ -3437,6 +3644,108 @@ definitions:
     - duration
     - freq_limit
     - name
+    type: object
+  git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_idlerule.Operation:
+    properties:
+      parameters:
+        $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_idlerule.Parameters'
+      type:
+        type: string
+    type: object
+  git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_idlerule.Parameters:
+    properties:
+      duration:
+        allOf:
+        - $ref: '#/definitions/datetime.DurationWithUnit'
+        description: Snooze and Pbehavior
+      name:
+        description: Pbehavior
+        maxLength: 255
+        type: string
+      output:
+        type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
+      rrule:
+        type: string
+      start_on_trigger:
+        type: boolean
+      state:
+        description: ChangeState
+        type: integer
+      ticket:
+        description: AssocTicket
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
+      ticket_url_title:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+    type: object
+  git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_canopsis_idlerule.Parameters:
+    properties:
+      color:
+        type: string
+      duration:
+        allOf:
+        - $ref: '#/definitions/datetime.DurationWithUnit'
+        description: Snooze and Pbehavior
+      name:
+        description: Pbehavior
+        maxLength: 255
+        type: string
+      output:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      start_on_trigger:
+        type: boolean
+      state:
+        description: ChangeState
+        type: integer
+      ticket:
+        description: |-
+          AssocTicket
+          Ticket is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        description: TicketData is used in assocticket action.
+        type: object
+      ticket_system_name:
+        description: TicketSystemName is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_url:
+        description: TicketURL is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_url_title:
+        description: TicketURLTitle is used in assocticket action.
+        maxLength: 255
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
     type: object
   healthcheck.Edge:
     properties:
@@ -3704,63 +4013,16 @@ definitions:
     - name
     - type
     type: object
-  idlerule.Operation:
-    properties:
-      parameters:
-        $ref: '#/definitions/idlerule.Parameters'
-      type:
-        type: string
-    type: object
   idlerule.OperationRequest:
     properties:
       parameters:
-        $ref: '#/definitions/idlerule.Parameters'
+        $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_canopsis_idlerule.Parameters'
       type:
         type: string
     required:
     - type
     type: object
-  idlerule.Parameters:
-    properties:
-      duration:
-        $ref: '#/definitions/datetime.DurationWithUnit'
-        description: Snooze and Pbehavior
-      name:
-        description: Pbehavior
-        maxLength: 255
-        type: string
-      output:
-        type: string
-      reason:
-        $ref: '#/definitions/pbehavior.Reason'
-      rrule:
-        type: string
-      start_on_trigger:
-        type: boolean
-      state:
-        description: ChangeState
-        type: integer
-      ticket:
-        description: AssocTicket
-        type: string
-      ticket_data:
-        additionalProperties:
-          type: string
-        type: object
-      ticket_system_name:
-        type: string
-      ticket_url:
-        type: string
-      ticket_url_title:
-        type: string
-      tstart:
-        type: integer
-      tstop:
-        type: integer
-      type:
-        $ref: '#/definitions/pbehavior.Type'
-    type: object
-  idlerule.Rule:
+  idlerule.Response:
     properties:
       _id:
         type: string
@@ -3809,7 +4071,7 @@ definitions:
       name:
         type: string
       operation:
-        $ref: '#/definitions/idlerule.Operation'
+        $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_idlerule.Operation'
       priority:
         type: integer
       type:
@@ -3848,6 +4110,8 @@ definitions:
           type: string
         type: object
       type:
+        type: string
+      upstream:
         type: string
     required:
     - name
@@ -4150,6 +4414,23 @@ definitions:
       instruction:
         $ref: '#/definitions/notification.InstructionNotificationSettings'
     type: object
+  pagination.ListResponse:
+    properties:
+      data: {}
+      meta:
+        $ref: '#/definitions/pagination.MetaResponse'
+    type: object
+  pagination.MetaResponse:
+    properties:
+      page:
+        type: integer
+      page_count:
+        type: integer
+      per_page:
+        type: integer
+      total_count:
+        type: integer
+    type: object
   pattern.BulkDeleteRequestItem:
     properties:
       _id:
@@ -4274,6 +4555,62 @@ definitions:
         description: 'FieldType is only defined for custom fields, ex: infos.'
         type: string
     type: object
+  pattern.OptimizeAcceptRequest:
+    properties:
+      accept:
+        type: boolean
+      index:
+        type: integer
+    required:
+    - accept
+    type: object
+  pattern.OptimizeJob:
+    properties:
+      _id:
+        type: string
+      accepted_suggestion:
+        type: integer
+      fail_reason:
+        type: string
+      optimized_field_regexps:
+        items:
+          $ref: '#/definitions/pattern.OptimizedFieldRegexp'
+        type: array
+      original_pattern_count:
+        type: integer
+      original_pattern_ms:
+        type: integer
+      status:
+        description: |-
+          Possible status values.
+            * `0` - Created
+            * `1` - Running
+            * `2` - Succeeded
+            * `3` - Failed
+            * `4` - Accepted
+            * `5` - Rejected
+        type: integer
+      suggestions:
+        items:
+          $ref: '#/definitions/pattern.Suggestion'
+        type: array
+    type: object
+  pattern.OptimizeRequest:
+    properties:
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+    type: object
+  pattern.OptimizedFieldRegexp:
+    properties:
+      field:
+        type: string
+      regexp:
+        type: string
+    type: object
   pattern.Response:
     properties:
       _id:
@@ -4314,6 +4651,19 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+    type: object
+  pattern.Suggestion:
+    properties:
+      difference:
+        type: integer
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      found_entities:
+        type: integer
     type: object
   pbehavior.BulkConnectorCreateRequestItem:
     properties:
@@ -4429,10 +4779,6 @@ definitions:
         type: string
       reason:
         type: string
-      tstart:
-        type: integer
-      tstop:
-        type: integer
       type:
         type: string
     required:
@@ -4440,7 +4786,6 @@ definitions:
     - name
     - origin
     - reason
-    - tstart
     - type
     type: object
   pbehavior.BulkEntityDeleteRequestItem:
@@ -5641,7 +5986,8 @@ definitions:
       declare_ticket:
         $ref: '#/definitions/request.WebhookDeclareTicket'
       duration:
-        $ref: '#/definitions/datetime.DurationWithUnit'
+        allOf:
+        - $ref: '#/definitions/datetime.DurationWithUnit'
         description: Snooze and Pbehavior
       forward_author:
         type: boolean
@@ -5655,7 +6001,8 @@ definitions:
       reason:
         $ref: '#/definitions/pbehavior.Reason'
       request:
-        $ref: '#/definitions/request.Parameters'
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
         description: Webhook
       rrule:
         type: string
@@ -6157,7 +6504,8 @@ definitions:
           type: array
         type: array
       junit_thresholds:
-        $ref: '#/definitions/statesettings.JUnitThresholds'
+        allOf:
+        - $ref: '#/definitions/statesettings.JUnitThresholds'
         description: JUnit state setting only field
       method:
         description: |-
@@ -6253,7 +6601,8 @@ definitions:
           type: array
         type: array
       junit_thresholds:
-        $ref: '#/definitions/statesettings.JUnitThresholds'
+        allOf:
+        - $ref: '#/definitions/statesettings.JUnitThresholds'
         description: JUnit state setting only field
       method:
         description: |-
@@ -6364,8 +6713,7 @@ definitions:
     properties:
       _id:
         type: string
-      body:
-        type: any
+      body: {}
       created:
         type: integer
       description:
@@ -6383,8 +6731,7 @@ definitions:
     type: object
   template.EditDataRequest:
     properties:
-      body:
-        type: any
+      body: {}
       description:
         maxLength: 500
         type: string
@@ -6578,8 +6925,7 @@ definitions:
         type: boolean
       name:
         type: string
-      value:
-        type: any
+      value: {}
     type: object
   types.Author:
     properties:
@@ -6612,6 +6958,13 @@ definitions:
       name:
         type: string
       value: {}
+    type: object
+  types.StructuredMessage:
+    properties:
+      field:
+        type: string
+      message:
+        type: string
     type: object
   user.BulkDeleteRequestItem:
     properties:
@@ -6896,7 +7249,7 @@ definitions:
   userpreferences.EditRequest:
     properties:
       content:
-        additionalProperties: true
+        additionalProperties: {}
         type: object
       widget:
         type: string
@@ -6907,7 +7260,7 @@ definitions:
   userpreferences.Response:
     properties:
       content:
-        additionalProperties: true
+        additionalProperties: {}
         type: object
       filters:
         items:
@@ -7006,6 +7359,20 @@ definitions:
           $ref: '#/definitions/view.Response'
         type: array
     type: object
+  view.FastPbehavior:
+    properties:
+      name_prefix:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      type:
+        type: string
+    required:
+    - name_prefix
+    - reason
+    - type
+    type: object
   view.ImportItemRequest:
     properties:
       _id:
@@ -7025,8 +7392,16 @@ definitions:
     type: object
   view.Parameters:
     properties:
+      comment_templates:
+        items:
+          type: string
+        type: array
       directory:
         type: string
+      fast_pbehaviors:
+        items:
+          $ref: '#/definitions/view.FastPbehavior'
+        type: array
       is_api:
         description: Junit
         type: boolean
@@ -7121,6 +7496,18 @@ definitions:
     required:
     - value
     type: object
+  view.WidgetSortColumn:
+    properties:
+      sort:
+        enum:
+        - asc
+        - desc
+        type: string
+      sort_by:
+        type: string
+    required:
+    - sort_by
+    type: object
   viewgroup.EditRequest:
     properties:
       title:
@@ -7182,7 +7569,7 @@ definitions:
       _id:
         type: string
       grid_parameters:
-        additionalProperties: true
+        additionalProperties: {}
         type: object
     type: object
   widget.EditRequest:
@@ -7192,7 +7579,7 @@ definitions:
           $ref: '#/definitions/widget.FilterRequest'
         type: array
       grid_parameters:
-        additionalProperties: true
+        additionalProperties: {}
         type: object
       parameters:
         $ref: '#/definitions/view.Parameters'
@@ -7253,6 +7640,10 @@ definitions:
         type: string
       author:
         $ref: '#/definitions/author.Author'
+      comment_templates:
+        items:
+          $ref: '#/definitions/commenttemplate.Response'
+        type: array
       created:
         type: integer
       filters:
@@ -7260,7 +7651,7 @@ definitions:
           $ref: '#/definitions/widgetfilter.Response'
         type: array
       grid_parameters:
-        additionalProperties: true
+        additionalProperties: {}
         type: object
       is_private:
         type: boolean
@@ -7411,6 +7802,10 @@ definitions:
         type: array
       content:
         type: string
+      sort_columns:
+        items:
+          $ref: '#/definitions/view.WidgetSortColumn'
+        type: array
       title:
         maxLength: 255
         type: string
@@ -7422,6 +7817,7 @@ definitions:
         - alarm_export_to_pdf
         - alarm_quick_actions
         - alarm_mass_quick_actions
+        - alarm_sort_columns
         - weather_item
         - weather_modal
         - weather_entity
@@ -7448,6 +7844,10 @@ definitions:
         type: string
       created:
         type: integer
+      sort_columns:
+        items:
+          $ref: '#/definitions/view.WidgetSortColumn'
+        type: array
       title:
         type: string
       type:
