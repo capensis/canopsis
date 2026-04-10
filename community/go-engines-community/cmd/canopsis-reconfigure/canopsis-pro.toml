@@ -521,7 +521,7 @@ TimeFormat = "2006-01-02T15:04:05Z07:00"
 PartsOrder = ["time", "level", "caller", "message"]
 
 [Canopsis.metrics]
-Enabled = true
+Enabled = false
 # FlushInterval defines how often metrics are flushed from memory to TimescaleDB.
 FlushInterval = "10s"
 # Long SLI intervals are splitted to short intervals which are defined by SliInterval paramter.
@@ -545,6 +545,10 @@ AllowedPerfDataUnits = [
     "TB",
     "c"
 ]
+# Separate switch for each metrics:
+# EnabledSliMetrics = false
+# EnabledInstructions = false
+# EnabledNotAckedMetrics = false
 
 [Canopsis.tech_metrics]
 # DumpKeepInterval defines how long dump with tech metrics should be kept before delete.

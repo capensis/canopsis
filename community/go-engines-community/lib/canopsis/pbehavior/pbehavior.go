@@ -47,14 +47,14 @@ type PBehavior struct {
 	Enabled       bool              `bson:"enabled"`
 	Name          string            `bson:"name"`
 	Reason        string            `bson:"reason"`
-	Type          string            `bson:"type_"`
+	Type          string            `bson:"type"`
 	Exdates       []Exdate          `bson:"exdates"`
 	Exceptions    []string          `bson:"exceptions"`
 	Color         string            `bson:"color"`
 	Created       *datetime.CpsTime `bson:"created,omitempty"`
 	Updated       *datetime.CpsTime `bson:"updated,omitempty"`
 	LastAlarmDate *datetime.CpsTime `bson:"last_alarm_date,omitempty"`
-	AlarmCount    int64             `bson:"alarm_count,omitempty"`
+	AlarmCount    int64             `bson:"alarm_count"`
 
 	Timezone string            `bson:"timezone"`
 	Start    *datetime.CpsTime `bson:"tstart"`

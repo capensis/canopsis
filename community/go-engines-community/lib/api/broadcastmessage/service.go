@@ -56,7 +56,7 @@ func (s *service) Start(ctx context.Context, ch <-chan bool) {
 
 func (s *service) check(ctx context.Context) {
 	room := websocket.RoomBroadcastMessages
-	conns := s.websocketHub.GetConnectionsByRoom(room)
+	conns := s.websocketHub.ConnectionsInRoom(room)
 	for _, c := range conns {
 		messages, err := s.store.GetActive(ctx, c.UserID)
 		if err != nil {
@@ -65,6 +65,6 @@ func (s *service) check(ctx context.Context) {
 			return
 		}
 
-		s.websocketHub.SendToConn(c.ID, room, messages)
+		s.websocketHub.SendMessage(ctx, messages, websocket.ToConnection(room, c.ID))
 	}
 }

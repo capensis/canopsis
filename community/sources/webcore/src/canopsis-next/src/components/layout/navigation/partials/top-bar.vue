@@ -30,6 +30,7 @@
     <healthcheck-chips-list v-if="isProVersion && hasAccessToHealthcheckStatus" />
     <v-spacer v-else />
     <portal-target :name="$constants.PORTALS_NAMES.additionalTopBarItems" />
+    <the-mass-actions-panels />
     <v-toolbar-items v-if="!$route.meta.simpleNavigation">
       <top-bar-exploitation-menu />
       <top-bar-administration-menu />
@@ -52,6 +53,7 @@ import { useAuth, useCanPermission } from '@/hooks/auth';
 import { useInfo } from '@/hooks/store/modules/info';
 
 import HealthcheckChipsList from '@/components/other/healthcheck/partials/healthcheck-chips-list.vue';
+import TheMassActionsPanels from '@/components/common/actions-panel/the-mass-actions-panels.vue';
 
 import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';
@@ -71,6 +73,7 @@ import TopBarTitle from './top-bar-title.vue';
 export default {
   components: {
     HealthcheckChipsList,
+    TheMassActionsPanels,
     AppLogo,
     AppVersion,
     LoggedUsersCount,

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"sync"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/wsconn"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -50,7 +50,7 @@ type updater struct {
 	runInfoManager     engine.RunInfoManager
 	healthCheckAdapter config.HealthCheckAdapter
 	pbhRedisClient     *redis.Client
-	websocketStore     websocket.Store
+	websocketStore     wsconn.Store
 	logger             zerolog.Logger
 
 	entityMongoCollection        libmongo.DbCollection
@@ -74,7 +74,7 @@ func NewUpdater(
 	manager engine.RunInfoManager,
 	adapter config.HealthCheckAdapter,
 	pbhClient *redis.Client,
-	store websocket.Store,
+	store wsconn.Store,
 	logger zerolog.Logger,
 ) Updater {
 	return &updater{
@@ -236,7 +236,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 	})
 
 	wg.Go(func() {
-		count, err := u.websocketStore.GetActiveConnections(ctx)
+		count, err := u.websocketStore.CountActiveConnections(ctx)
 		if err != nil {
 			u.logger.Err(err).Msg("failed to get active connections")
 		}

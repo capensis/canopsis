@@ -26,6 +26,8 @@ type ListRequest struct {
 	pagination.FilteredQuery
 	SortBy string   `form:"sort_by" binding:"oneoforempty=name author.name author.display_name enabled timezone tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date pattern_ms pattern_exec_at"`
 	IDs    []string `form:"ids[]"`
+
+	SearchPattern string `form:"search_pattern"`
 }
 
 type EntitiesListRequest struct {
@@ -196,16 +198,14 @@ type CalendarResponse struct {
 }
 
 type BulkEntityCreateRequestItem struct {
-	Author  string            `json:"author" swaggerignore:"true"`
-	Entity  string            `json:"entity" binding:"required"`
-	Origin  string            `json:"origin" binding:"required,max=255"`
-	Name    string            `json:"name" binding:"required,max=255"`
-	Reason  string            `json:"reason" binding:"required"`
-	Start   *datetime.CpsTime `json:"tstart" binding:"required" swaggertype:"integer"`
-	Stop    *datetime.CpsTime `json:"tstop" swaggertype:"integer"`
-	Type    string            `json:"type" binding:"required"`
-	Color   string            `json:"color" binding:"iscolororempty"`
-	Comment string            `json:"comment"`
+	Author  string `json:"author" swaggerignore:"true"`
+	Entity  string `json:"entity" binding:"required"`
+	Origin  string `json:"origin" binding:"required,max=255"`
+	Name    string `json:"name" binding:"required,max=255"`
+	Reason  string `json:"reason" binding:"required"`
+	Type    string `json:"type" binding:"required"`
+	Color   string `json:"color" binding:"iscolororempty"`
+	Comment string `json:"comment"`
 }
 
 type BulkEntityDeleteRequestItem struct {

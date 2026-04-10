@@ -53,6 +53,7 @@ import {
   isDeclareTicketStepType,
   isWebhookStepType,
   isMetaAlarmStepType,
+  isTicketRemoveStepType,
 } from '@/helpers/entities/alarm/step/entity';
 
 export default {
@@ -81,6 +82,7 @@ export default {
       || isDeclareTicketStepType(props.step._t)
       || isInstructionStepType(props.step._t)
       || isAutoInstructionStepType(props.step._t)
+      || isTicketRemoveStepType(props.step._t)
     ));
 
     const status = computed(() => formatAlarmStatus(props.step.val));
