@@ -84,6 +84,14 @@ export const isCommentStepType = type => type === ALARM_LIST_STEPS.comment;
 export const isAssocTicketStepType = type => type === ALARM_LIST_STEPS.assocTicket;
 
 /**
+ * Checks if the provided type is a `ticketremove` step type.
+ *
+ * @param {AlarmStepType} type - The step type to check.
+ * @returns {boolean} Returns `true` if the type is `ticketremove`, otherwise returns `false`.
+ */
+export const isTicketRemoveStepType = type => type === ALARM_LIST_STEPS.ticketRemove;
+
+/**
  * Checks if the provided type is an acknowledgment step type.
  *
  * @param {AlarmStepType} type - The step type to check.

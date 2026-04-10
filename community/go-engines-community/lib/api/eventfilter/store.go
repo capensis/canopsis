@@ -274,6 +274,8 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	unset := bson.M{
 		"events_count":          "",
 		"unread_failures_count": "",
+		"next_resolved_start":   "",
+		"next_resolved_stop":    "",
 	}
 
 	if model.Start == nil || model.Start.IsZero() || model.Stop == nil || model.Stop.IsZero() {
@@ -281,8 +283,6 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		unset["stop"] = ""
 		unset["resolved_start"] = ""
 		unset["resolved_stop"] = ""
-		unset["next_resolved_start"] = ""
-		unset["next_resolved_stop"] = ""
 	}
 
 	if len(unset) != 0 {
@@ -651,16 +651,21 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.
 		return tplData, nil, err
 	}
 
-	aliases, err := s.transformer.FetchAliases(ctx, patternfields.GetAliases(r.Rule.EntityPattern))
-	if err != nil {
-		return tplData, nil, err
-	}
-
 	var valErrs, applyErrs validator.ValidationErrors
 	r.Rule.EntityRequest, _, applyErrs = s.transformer.ApplyEntityCorporatePattern(r.Rule.EntityRequest, patterns, "Rule", "CorporateEntityPattern")
 	valErrs = append(valErrs, applyErrs...)
-	r.Rule.EntityPattern, _, applyErrs = s.transformer.ApplyAliases(r.Rule.EntityPattern, aliases, "Rule", "EntityPattern")
-	valErrs = append(valErrs, applyErrs...)
+
+	patternAliases := patternfields.GetAliases(r.Rule.EntityPattern)
+	if len(patternAliases) != 0 {
+		aliases, err := s.transformer.FetchAliases(ctx, patternAliases)
+		if err != nil {
+			return tplData, nil, err
+		}
+
+		r.Rule.EntityPattern, _, applyErrs = s.transformer.ApplyAliases(r.Rule.EntityPattern, aliases, "Rule", "EntityPattern")
+		valErrs = append(valErrs, applyErrs...)
+	}
+
 	if len(valErrs) > 0 {
 		return tplData, nil, validation.NewError(valErrs, r)
 	}
