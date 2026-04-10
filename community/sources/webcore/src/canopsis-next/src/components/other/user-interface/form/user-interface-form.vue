@@ -12,7 +12,8 @@
     <c-number-field
       v-field="form.popup_timeout.info.value"
       :label="$t('userInterface.infoPopupTimeout')"
-      name="popup_timeout.info"
+      :min="1"
+      name="popup_timeout.info.value"
     >
       <template #append>
         {{ $tc('common.times.second', form.popup_timeout.info.value) }}
@@ -21,7 +22,8 @@
     <c-number-field
       v-field="form.popup_timeout.error.value"
       :label="$t('userInterface.errorPopupTimeout')"
-      name="popup_timeout.error"
+      :min="1"
+      name="popup_timeout.error.value"
     >
       <template #append>
         {{ $tc('common.times.second', form.popup_timeout.error.value) }}
