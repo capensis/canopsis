@@ -40,7 +40,7 @@ export default {
   checkTicketStatusHelpText: 'Enable to verify that the ticket exists in the ticket system before performing the next steps.',
   ticketStatusMapping: 'Ticket status mapping',
   ticketStatusMappingHelpText: 'At least one source value must be mapped to Canopsis "Closed" value.',
-  ticketStatusMappingUnmappedToOpen: 'All unmapped source values will be mapped to Canopsis status "Open".',
+  ticketStatusMappingUnmappedToOpen: 'All unmapped source values will be mapped to Canopsis status "Unknown".',
   sourceValue: 'Source value',
   canopsisValue: 'Canopsis value',
   addMappingPair: 'Add mapping pair',
