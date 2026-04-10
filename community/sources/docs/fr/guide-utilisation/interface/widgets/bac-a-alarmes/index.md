@@ -13,7 +13,7 @@ Il est souvent utilisé dans les vues principales des exploitants et NOC pour as
 
 ### Alarmes
 
-Le tableau [d'alarmes](../../../vocabulaire/#alarme) présente la liste des alarmes. Une ligne correspond à une alarme.  
+Le tableau [d'alarmes](../../../vocabulaire/index.md#alarme) présente la liste des alarmes. Une ligne correspond à une alarme.  
 Les colonnes affichées sont personnalisables ([Paramètres colonnes](#colonnes)).
 En plus des détails de l'alarme, chaque alarme est éligible à des [actions](#actions).
 
@@ -45,7 +45,7 @@ Tout l'entête du widget est prévu pour filtrer les alarmes à afficher dans la
 
 #### Recherche
 
-Le bac à alarmes met à disposition 2 types de recherche, la recherche simple et l'avancée.  
+Le bac à alarmes met à disposition 2 types de recherche, la recherche simple et l'avancée.
 
 **Recherche simple**
 
@@ -54,24 +54,24 @@ Cette recherche est également capable de rechercher parmi les alarmes conséque
 
 **Recherche avancée**
 
-La recherche avancée est accessible en cliquant dans la zone de recherche.  
+La recherche avancée est accessible en cliquant dans la zone de recherche.
 
 Séquence :
 
 * Des suggestions de champs sont présentées à l'utilisateur : Composant, Information d'entité, Message de l'alarme, etc.
 * Le module complète avec des opérateurs en fonction du champ précédent : Egal, Contient, Est l'un de, etc.
 * L'utilisateur complète la valeur attendue par l'opérateur
-* Le module propose de combiner la recherche avec un opérateur `ET` ou `OU`. 
+* Le module propose de combiner la recherche avec un opérateur `ET` ou `OU`.
     * En cliquant sur la :material-magnify:, la recherche se lance
     * En sélectionnant un opérateur, une nouvelle séquence démarre
 
 #### Catégorie
 
-Il est possible d'afficher les alarmes dont l'entité est attachée à une [catégorie](../contexte/#categorie)
+Il est possible d'afficher les alarmes dont l'entité est attachée à une [catégorie](../contexte/index.md#categorie).
 
 #### Filtres
 
-L'utilisateur peut sélectionner un [filtre](../../patterns/) parmi la liste. 
+L'utilisateur peut sélectionner un [filtre][patterns] parmi la liste.
 
 Il peut également, selon ses droits, gérer ses propres filtres en cliquant sur le bouton :material-filter-variant:.
 
@@ -97,13 +97,13 @@ Le critère de temps peut être :
 
 ### Corrélation
 
-Lorsque ce paramètre est activé, les [méta alarmes](../../../menu-exploitation/regles-metaalarme/index.md) sont présentées sur la bac à alarmes avec la possibilité de visualiser les alarmes conséquences dans un onglet dédié.
+Lorsque ce paramètre est activé, les [méta alarmes][metaalarm-rules] sont présentées sur la bac à alarmes avec la possibilité de visualiser les alarmes conséquences dans un onglet dédié.  
 Lorsqu'il est désactivé, les méta alarmes sont masquées.
 
 ### Export CSV
 
 En cliquant sur le bouton :material-cloud-download:, un fichier CSV vous sera proposé en téléchargement.  
-Les options de l'export sont définis dans les [paramètres du widget](#exporter-csv)
+Les options de l'export sont définies dans les [paramètres du widget](#exporter-csv).
 
 ### Actions
 
@@ -171,7 +171,7 @@ Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix roug
 L'ordre des colonnes est modifiable par drag'n drop.
 
 !!! tip "Recommandation"
-    Il est recommandé de définir un [modèle de colonnes/template](../../../menu-administration/parametres/#modeles-de-widgets) pour faciliter la maintenance générale.
+    Il est recommandé de définir un [modèle de colonnes/template](../../../menu-administration/parametres.md#modeles-de-widgets) pour faciliter la maintenance générale.
 
 #### Paramètres des colonnes
 
@@ -191,17 +191,17 @@ Vous pouvez choisir de présenter les dépendances avec leur sévérité ou leur
 
 Chaque colonne du bac à alarmes peut être accompagnée d'une popup d'informations complémentaires.  
 Ce paramètre permet de définir les informations que vous souhaitez afficher. 
-L'éditeur wysiwyg met à disposition une liste de variables accessibles pour chaque alarme via le bouton `(X)`.
+L'éditeur WYSIWYG met à disposition une liste de variables accessibles pour chaque alarme via le bouton `(X)`.
 
 !!! tip "Astuce"
-    Les [helpers handlebars](../helpers/index.md) peuvent être utilisés dans l'éditeur
+    Les [helpers handlebars][helpers] peuvent être utilisés dans l'éditeur.
 
 ### Filtres
 
 #### Filtres
 
 Ce paramètre permet de définir les filtres qui seront mis à disposition des utilisateurs.  
-Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../patterns/).
+Pour plus de détails sur les filtres et leur création, voir la partie sur [les filtres][patterns].
 
 Pour créer un filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre alors.
 Vous avez la possibilité d'éditer ou de supprimer des filtres existants et de définir un filtre à appliquer par défaut.
@@ -211,7 +211,7 @@ Vous avez la possibilité d'éditer ou de supprimer des filtres existants et de 
 Ce paramètre permet de choisir le contexte de calcul des filtres.
 
 * Alarmes ouvertes : les filtres sont appliqués sur les alarmes ouvertes uniquement.
-* Alarmes ouvertes et récemment résolues : les filtres s'appliquent sur les alarmes ouvertes ainsi que les alarmes résolues depuis moins de `TimeToKeepResolvedAlarms` (Voir [la documentation du fichier canopsis.toml](../../../../guide-administration/administration-avancee/modification-canopsis-toml/#section-canopsisalarm)).
+* Alarmes ouvertes et récemment résolues : les filtres s'appliquent sur les alarmes ouvertes ainsi que les alarmes résolues depuis moins de `TimeToKeepResolvedAlarms` (Voir [la documentation du fichier canopsis.toml](../../../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsisalarm)).
 * Alarmes résolues : les filtres s'appliquent sur les alarmes résolues uniquement.
 
 #### Filtres de consignes
@@ -226,7 +226,7 @@ Un filtre de consigne consiste à sélectionner des alarmes avec des critères d
 
 #### Corrélation
 
-Lorsque ce paramètre est activé, les [méta alarmes](../../menu-exploitation/regles-metaalarme/index.md) sont présentées sur la bac à alarmes avec la possibilité de visualiser les alarmes conséquences dans un onglet dédié.  
+Lorsque ce paramètre est activé, les [méta alarmes][metaalarm-rules] sont présentées sur la bac à alarmes avec la possibilité de visualiser les alarmes conséquences dans un onglet dédié.  
 Lorsqu'il est désactivé, les méta alarmes sont masquées.
 
 #### Effacement du filtre sélectionné autorisé
@@ -250,7 +250,7 @@ Le bac à alarmes peut afficher plus ou moins d'alarmes sur une page.
 #### Mode kiosque
 
 Le mode Kiosque permet d'adapter l'affichage du bac à alarmes pour une utilisation sur écran de supervision, en masquant les éléments non essentiels et en facilitant la lecture à distance.  
-La documentation du mode kiosque est disponible sur la page [Mode TV (ou Kiosque) ](./mode-kiosque.md)
+La documentation du mode kiosque est disponible sur la page [Mode TV (ou Kiosque) ](./mode-kiosque.md).
 
 #### Entête collant
 
@@ -318,7 +318,7 @@ Les actions de masse présentées dans l'entête peuvent être sélectionnées e
 Ce paramètre permet de définir le contenu de la fenêtre plus d'infos. Le bouton permettant d'ouvrir cette fenêtre se trouve dans les actions de chaque alarme du bac à alarmes.
 
 Ce champ se présente sous forme d'un éditeur de texte.
-Le langage utilisé dans cet éditeur est le [Handlebars](../helpers/index.md).
+Le langage utilisé dans cet éditeur est le [Handlebars][helpers].
 
 Par ailleurs, vous pouvez ajuster la largeur occupée par la fenêtre "Plus d'infos".
 
@@ -328,7 +328,7 @@ Vous pouvez activer la possibilité de visualiser dans un onglet de l'alarme le 
 
 #### HTML activé dans la chronologie
 
-En activant cette option, vous activez l'interprétation HTML dans la fenêtre de chronologie d'une alarme
+En activant cette option, vous activez l'interprétation HTML dans la fenêtre de chronologie d'une alarme.
 
 ### Exporter CSV
 
@@ -337,4 +337,8 @@ Vous avez à disposition les paramètres d'export CSV de la liste d'alarmes.
 ### Graphiques
 
 Vous pouvez ajouter un onglet dédié aux graphiques d'une alarme.  
-Pour plus d'informations concernant les métriques utilisables, consultez [cette documentation](../graphiques/index.md)
+Pour plus d'informations concernant les métriques utilisables, consultez [cette documentation](../graphiques/index.md).
+
+[patterns]: ../../patterns/index.md
+[metaalarm-rules]: ../../../menu-exploitation/regles-metaalarme.md
+[helpers]: ../../helpers/index.md

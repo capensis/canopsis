@@ -11,13 +11,14 @@ import CColumnsField from '@/components/forms/fields/column/c-columns-field.vue'
 const snapshotStubs = {
   'c-draggable-list-field': true,
   'c-card-iterator-field': true,
+  'c-card-iterator-form': true,
   'column-field': true,
 };
 const stubs = {
   ...snapshotStubs,
 
   'v-tooltip': createActivatorElementStub('v-tooltip'),
-  'c-card-iterator-field': {
+  'c-card-iterator-form': {
     props: {
       value: {
         type: Array,
@@ -25,10 +26,11 @@ const stubs = {
       },
     },
     template: `
-    <ul class="c-card-iterator-field" v-on="$listeners">
+    <ul class="c-card-iterator-form" v-on="$listeners">
       <li v-for="(item, index) in value" :key="item.key">
         <slot :item="item" :index="index" name="item" />
       </li>
+      <button @click="$emit('add')" />
     </ul>
   `,
   },

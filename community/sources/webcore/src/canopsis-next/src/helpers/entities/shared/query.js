@@ -1,6 +1,6 @@
 import { isArray, isEqual, omit, pick } from 'lodash';
 
-import { DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
+import { DATETIME_FORMATS, SORT_ORDERS, ADVANCED_SEARCH_FIELDS } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
 
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
@@ -179,6 +179,7 @@ export const convertWidgetQueryToRequest = (query) => {
  * @param {number} options.itemsPerPage - The number of items per page.
  * @param {string[]} [options.sortBy = []] - The fields to sort by.
  * @param {string[]} [options.sortDesc = []] - The sort order for each field in `sortBy`.
+ * @param {string} [options.[ADVANCED_SEARCH_FIELDS.search]] - The search pattern to filter results.
  * @returns {Object} The constructed query object.
  */
 export const getQueryForList = ({
@@ -187,6 +188,7 @@ export const getQueryForList = ({
   itemsPerPage,
   sortBy = [],
   sortDesc = [],
+  [ADVANCED_SEARCH_FIELDS.search]: searchPattern,
 } = {}) => {
   const query = {
     page,
@@ -197,6 +199,10 @@ export const getQueryForList = ({
 
   if (search) {
     query.search = search;
+  }
+
+  if (searchPattern) {
+    query[ADVANCED_SEARCH_FIELDS.search] = searchPattern;
   }
 
   return query;

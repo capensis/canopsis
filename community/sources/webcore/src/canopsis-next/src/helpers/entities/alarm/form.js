@@ -181,6 +181,14 @@ export const isAlarmStatusNoEvents = alarm => alarm.v?.status?.val === ALARM_STA
 export const isAlarmStatusFlapping = alarm => alarm.v?.status?.val === ALARM_STATUSES.flapping;
 
 /**
+ * Check alarm status is unknown
+ *
+ * @param {Alarm} alarm
+ * @returns {boolean}
+ */
+export const isAlarmStatusUnknown = alarm => alarm.v?.status?.val === ALARM_STATUSES.unknown;
+
+/**
  * @typedef {Object} SnoozeAction
  * @property {number} duration
  * @property {string} comment
@@ -190,22 +198,6 @@ export const isAlarmStatusFlapping = alarm => alarm.v?.status?.val === ALARM_STA
  * @typedef {SnoozeAction} SnoozeActionForm
  * @property {Duration} duration
  */
-
-/**
- * Checks if alarm is cancelled
- *
- * @param {Alarm} alarm - alarm entity
- * @returns {boolean}
- */
-export const isCancelledAlarmStatus = alarm => alarm.v.status.val === ALARM_STATUSES.cancelled;
-
-/**
- * Checks if alarm is closed
- *
- * @param {Alarm} alarm - alarm entity
- * @returns {boolean}
- */
-export const isClosedAlarmStatus = alarm => alarm.v.status.val === ALARM_STATUSES.closed;
 
 /**
  * Checks if alarm is resolved
@@ -233,12 +225,12 @@ export const isActionAvailableForAlarm = (alarm, widget) => {
   /**
    * When alarm is cancelled, but not resolved we can uncancel by mass actions
    */
-  if (isCancelledAlarmStatus(alarm)) {
+  if (isAlarmStatusCancelled(alarm)) {
     return !isResolvedAlarm(alarm);
   }
 
   return !isResolvedAlarm(alarm)
-    && !isClosedAlarmStatus(alarm);
+    && !isAlarmStatusClosed(alarm);
 };
 
 /**

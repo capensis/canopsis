@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	apicommon "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -94,7 +94,7 @@ func insertNewTables(
 					continue
 				}
 
-				if !hasCol[f.Key] && !apicommon.IsTableName(f.Key) {
+				if !hasCol[f.Key] && !validation.IsTableName(f.Key) {
 					invalidFields = append(invalidFields, f.Key)
 					continue
 				}

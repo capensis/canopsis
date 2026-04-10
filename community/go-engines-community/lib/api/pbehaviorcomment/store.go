@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -92,7 +92,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		}
 
 		if pbh.Origin != "" && len(pbh.Comments) > 0 && pbh.Comments[0].ID == id {
-			return common.NewValidationError("_id", "Cannot remove main comment.")
+			return httperror.NewForbiddenError("The comment cannot be deleted because it is referenced by an external pbehavior.")
 		}
 
 		res, err := s.dbCollection.UpdateOne(

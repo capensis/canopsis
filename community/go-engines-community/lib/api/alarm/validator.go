@@ -1,9 +1,10 @@
 package alarm
 
 import (
+	"slices"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/go-playground/validator/v10"
 )
@@ -29,7 +30,7 @@ func ValidateListRequest(sl validator.StructLevel) {
 			return
 		}
 
-		if multiSortData[1] != common.SortAsc && multiSortData[1] != common.SortDesc {
+		if multiSortData[1] != pagination.SortAsc && multiSortData[1] != pagination.SortDesc {
 			sl.ReportError(r.MultiSort, "MultiSort", "MultiSort", "multi_sort_invalid", "MultiSort")
 			return
 		}
@@ -44,10 +45,8 @@ func ValidateDetailsRequest(sl validator.StructLevel) {
 	}
 
 	if r.Steps != nil && r.Steps.Type != "" {
-		for _, stepType := range alarmStepTypes {
-			if r.Steps.Type == stepType {
-				return
-			}
+		if slices.Contains(alarmStepTypes, r.Steps.Type) {
+			return
 		}
 
 		param := strings.Join(alarmStepTypes, " ")

@@ -2,6 +2,7 @@ package correlation
 
 import (
 	"math"
+	"slices"
 	"sort"
 	"time"
 
@@ -85,8 +86,8 @@ func (s *MetaAlarmState) IsOutdated(alarmLastUpdate, timeInterval int64) bool {
 func (s *MetaAlarmState) PushChild(entityID string, timestamp int64, ruleTimeInterval int64) []string {
 	for idx, v := range s.ChildrenEntityIDs {
 		if v == entityID {
-			s.ChildrenTimestamps = append(s.ChildrenTimestamps[:idx], s.ChildrenTimestamps[idx+1:]...)
-			s.ChildrenEntityIDs = append(s.ChildrenEntityIDs[:idx], s.ChildrenEntityIDs[idx+1:]...)
+			s.ChildrenTimestamps = slices.Delete(s.ChildrenTimestamps, idx, idx+1)
+			s.ChildrenEntityIDs = slices.Delete(s.ChildrenEntityIDs, idx, idx+1)
 
 			break
 		}
@@ -111,8 +112,8 @@ func (s *MetaAlarmState) PushChild(entityID string, timestamp int64, ruleTimeInt
 		}
 
 		// Push to front, because it's new minimal value
-		s.ChildrenTimestamps = append([]int64{timestamp}, s.ChildrenTimestamps...)
-		s.ChildrenEntityIDs = append([]string{entityID}, s.ChildrenEntityIDs...)
+		s.ChildrenTimestamps = slices.Insert(s.ChildrenTimestamps, 0, timestamp)
+		s.ChildrenEntityIDs = slices.Insert(s.ChildrenEntityIDs, 0, entityID)
 
 		return nil
 	}
@@ -138,8 +139,8 @@ func (s *MetaAlarmState) PushChild(entityID string, timestamp int64, ruleTimeInt
 		return s.ChildrenTimestamps[i] >= timestamp
 	})
 
-	s.ChildrenTimestamps = append(s.ChildrenTimestamps[:insertIdx], append([]int64{timestamp}, s.ChildrenTimestamps[insertIdx:]...)...)
-	s.ChildrenEntityIDs = append(s.ChildrenEntityIDs[:insertIdx], append([]string{entityID}, s.ChildrenEntityIDs[insertIdx:]...)...)
+	s.ChildrenTimestamps = slices.Insert(s.ChildrenTimestamps, insertIdx, timestamp)
+	s.ChildrenEntityIDs = slices.Insert(s.ChildrenEntityIDs, insertIdx, entityID)
 
 	return nil
 }
@@ -147,8 +148,8 @@ func (s *MetaAlarmState) PushChild(entityID string, timestamp int64, ruleTimeInt
 func (s *MetaAlarmState) PushParent(entityID string, timestamp int64, ruleTimeInterval int64) {
 	for idx, v := range s.ParentsEntityIDs {
 		if v == entityID {
-			s.ParentsTimestamps = append(s.ParentsTimestamps[:idx], s.ParentsTimestamps[idx+1:]...)
-			s.ParentsEntityIDs = append(s.ParentsEntityIDs[:idx], s.ParentsEntityIDs[idx+1:]...)
+			s.ParentsTimestamps = slices.Delete(s.ParentsTimestamps, idx, idx+1)
+			s.ParentsEntityIDs = slices.Delete(s.ParentsEntityIDs, idx, idx+1)
 
 			break
 		}
@@ -173,8 +174,8 @@ func (s *MetaAlarmState) PushParent(entityID string, timestamp int64, ruleTimeIn
 		}
 
 		// Push to front, because it's new minimal value
-		s.ParentsTimestamps = append([]int64{timestamp}, s.ParentsTimestamps...)
-		s.ParentsEntityIDs = append([]string{entityID}, s.ParentsEntityIDs...)
+		s.ParentsTimestamps = slices.Insert(s.ParentsTimestamps, 0, timestamp)
+		s.ParentsEntityIDs = slices.Insert(s.ParentsEntityIDs, 0, entityID)
 
 		return
 	}
@@ -197,8 +198,8 @@ func (s *MetaAlarmState) PushParent(entityID string, timestamp int64, ruleTimeIn
 		return s.ParentsTimestamps[i] >= timestamp
 	})
 
-	s.ParentsTimestamps = append(s.ParentsTimestamps[:insertIdx], append([]int64{timestamp}, s.ParentsTimestamps[insertIdx:]...)...)
-	s.ParentsEntityIDs = append(s.ParentsEntityIDs[:insertIdx], append([]string{entityID}, s.ParentsEntityIDs[insertIdx:]...)...)
+	s.ParentsTimestamps = slices.Insert(s.ParentsTimestamps, insertIdx, timestamp)
+	s.ParentsEntityIDs = slices.Insert(s.ParentsEntityIDs, insertIdx, entityID)
 }
 
 func (s *MetaAlarmState) GetChildrenOpenTime() int64 {

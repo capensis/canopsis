@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -80,7 +80,7 @@ func (s *store) Insert(ctx context.Context, r Request, userID, username string) 
 		return nil, err
 	}
 	if entity.Type != types.EntityTypeService && entity.Type != types.EntityTypeResource {
-		return nil, common.NewValidationError("entity", "Invalid entity type.")
+		return nil, validation.NewSingleError("type", "Entity", "Entity", r)
 	}
 	comm := types.EntityComment{
 		ID:        utils.NewID(),

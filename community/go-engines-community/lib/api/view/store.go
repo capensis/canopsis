@@ -4,18 +4,26 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
+	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
+	libwidget "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	libview "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -52,6 +60,8 @@ func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store, authorProvider au
 		roleCollection:        dbClient.Collection(mongo.RoleCollection),
 		permissionCollection:  dbClient.Collection(mongo.PermissionCollection),
 		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		pbhTypeCollection:     dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
+		pbhReasonCollection:   dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "title", "description"},
 		defaultSortBy:         "position",
@@ -72,6 +82,8 @@ type store struct {
 	roleCollection        mongo.DbCollection
 	permissionCollection  mongo.DbCollection
 	userPrefCollection    mongo.DbCollection
+	pbhTypeCollection     mongo.DbCollection
+	pbhReasonCollection   mongo.DbCollection
 	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -114,19 +126,23 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 			return err
 		}
 
+		if group.ID == "" {
+			return validation.NewSingleError("not_exist", "Group", "Group", r)
+		}
+
 		if group.IsPrivate && group.Author != r.Author {
-			return common.NewValidationError("group", "Group is private.")
+			return validation.NewSingleError("not_exist", "Group", "Group", r)
 		}
 
 		if !group.IsPrivate {
 			// check the api_view create permission here, because user might not have it while having private views permission.
 			ok, err := s.enforcer.Enforce(r.Author, apisecurity.ObjView, securitymodel.PermissionCreate)
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			if !ok {
-				return common.NewValidationError("group", "Group is public.")
+				return httperror.NewForbiddenError("")
 			}
 		}
 
@@ -206,12 +222,20 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		if group.IsPrivate && (!oldView.IsPrivate || group.Author != r.Author) {
-			return common.NewValidationError("group", "Group is private.")
+		if group.ID == "" {
+			return validation.NewSingleError("not_exist", "Group", "Group", r)
+		}
+
+		if group.IsPrivate && group.Author != r.Author {
+			return validation.NewSingleError("not_exist", "Group", "Group", r)
+		}
+
+		if group.IsPrivate && !oldView.IsPrivate {
+			return httperror.NewForbiddenError("Public views are not allowed in private groups.")
 		}
 
 		if !group.IsPrivate && oldView.IsPrivate {
-			return common.NewValidationError("group", "Group is public.")
+			return httperror.NewForbiddenError("Private views are not allowed in public groups.")
 		}
 
 		now := datetime.NewCpsTime()
@@ -464,7 +488,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 	if len(r.Views) > 0 {
 		pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": r.Views}}}}
 		pipeline = append(pipeline, nestedObjectsPipeline...)
-		pipeline = append(pipeline, common.GetSortQuery("position", common.SortAsc))
+		pipeline = append(pipeline, mongoquery.GetSortQuery("position", pagination.SortAsc))
 		pipeline = append(pipeline, bson.M{"$project": bson.M{
 			"_id":      0,
 			"author":   0,
@@ -483,7 +507,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		}
 
 		if len(views) != len(r.Views) {
-			return ExportResponse{}, ValidationError{field: "views", error: errors.New("views not found")}
+			return ExportResponse{}, validation.NewSingleError("not_exist", "Views", "Views", r)
 		}
 	}
 	if len(r.Groups) > 0 {
@@ -512,7 +536,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			}}}},
 		}...)
 		pipeline = append(pipeline, nestedObjectsPipeline...)
-		pipeline = append(pipeline, common.GetSortQuery("position", common.SortAsc))
+		pipeline = append(pipeline, mongoquery.GetSortQuery("position", pagination.SortAsc))
 		pipeline = append(pipeline, []bson.M{
 			{"$project": bson.M{
 				"author":   0,
@@ -539,7 +563,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 				"position": 0,
 			}},
 		}...)
-		pipeline = append(pipeline, common.GetSortQuery("position", common.SortAsc))
+		pipeline = append(pipeline, mongoquery.GetSortQuery("position", pagination.SortAsc))
 		cursor, err := s.groupCollection.Aggregate(ctx, pipeline)
 		if err != nil {
 			return ExportResponse{}, err
@@ -551,7 +575,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		}
 
 		if len(groups) != len(r.Groups) {
-			return ExportResponse{}, ValidationError{field: "groups", error: errors.New("groups not found")}
+			return ExportResponse{}, validation.NewSingleError("not_exist", "Groups", "Groups", r)
 		}
 
 		for i, group := range groups {
@@ -564,7 +588,9 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			}
 			groups[i].Views = foundViews
 			if len(groups[i].Views) != len(viewsByGroup[group.ID]) {
-				return ExportResponse{}, ValidationError{field: fmt.Sprintf("groups.%d", i), error: ErrViewsNotFound}
+				iStr := strconv.Itoa(i)
+
+				return ExportResponse{}, validation.NewSingleError("not_applicable", iStr, "Groups."+iStr, r)
 			}
 
 			groups[i].ID = ""
@@ -640,25 +666,26 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 			}
 		}
 
-		newGroups := make([]interface{}, 0, len(r.Items))
-		newViews := make([]interface{}, 0, len(r.Items))
-		newTabs := make([]interface{}, 0, len(r.Items))
-		newWidgets := make([]interface{}, 0, len(r.Items))
-		newWidgetFilters := make([]interface{}, 0, len(r.Items))
+		newGroups := make([]any, 0, len(r.Items))
+		newViews := make([]any, 0, len(r.Items))
+		newTabs := make([]any, 0, len(r.Items))
+		newWidgets := make([]any, 0, len(r.Items))
+		newWidgetFilters := make([]any, 0, len(r.Items))
 		newViewTitles := make(map[string]string, len(r.Items))
 		newViewGroups := make(map[string]string, len(r.Items))
 		positionItems := make([]EditPositionItemRequest, 0, len(r.Items))
 		now := datetime.NewCpsTime()
+
+		var pbhTypesMap map[string]string
+		var pbhReasonsMap map[string]bool
+
 		for gi, g := range r.Items {
 			groupID := g.ID
 
 			if g.ID == "" || !existedGroupIds[g.ID] {
 				groupID = utils.NewID()
 				if g.Title == "" {
-					return ValidationError{
-						field: fmt.Sprintf("%d.title", gi),
-						error: ErrValueIsMissing,
-					}
+					return validation.NewSingleError("required", "Title", "Items."+strconv.Itoa(gi)+".Title", r)
 				}
 				newGroups = append(newGroups, libview.Group{
 					ID:       groupID,
@@ -681,10 +708,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 					}
 
 					if v.Title == "" {
-						return ValidationError{
-							field: fmt.Sprintf("%d.views.%d.title", gi, vi),
-							error: ErrValueIsMissing,
-						}
+						return validation.NewSingleError("required", "Title", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Title", r)
 					}
 
 					viewID := utils.NewID()
@@ -709,10 +733,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 					if v.Tabs != nil {
 						for ti, tab := range *v.Tabs {
 							if tab.Title == "" {
-								return ValidationError{
-									field: fmt.Sprintf("%d.views.%d.tabs.%d.title", gi, vi, ti),
-									error: ErrValueIsMissing,
-								}
+								return validation.NewSingleError("required", "Title", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Tabs."+strconv.Itoa(ti)+".Title", r)
 							}
 
 							tabId := utils.NewID()
@@ -729,10 +750,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 							if tab.Widgets != nil {
 								for wi, widget := range *tab.Widgets {
 									if widget.Type == "" {
-										return ValidationError{
-											field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.type", gi, vi, ti, wi),
-											error: ErrValueIsMissing,
-										}
+										return validation.NewSingleError("required", "Type", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Tabs."+strconv.Itoa(ti)+".Widgets."+strconv.Itoa(wi)+".Type", r)
 									}
 
 									widgetId := utils.NewID()
@@ -740,16 +758,19 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 
 									for fi, filter := range widget.Filters {
 										if filter.Title == "" {
-											return ValidationError{
-												field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.title", gi, vi, ti, wi, fi),
-												error: ErrValueIsMissing,
-											}
+											return validation.NewSingleError("required", "Title", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Tabs."+strconv.Itoa(ti)+".Widgets."+strconv.Itoa(wi)+".Filters."+strconv.Itoa(fi)+".Title", r)
 										}
 										if len(filter.AlarmPattern) == 0 && len(filter.EntityPattern) == 0 && len(filter.PbehaviorPattern) == 0 {
-											return ValidationError{
-												field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.alarm_pattern", gi, vi, ti, wi, fi),
-												error: ErrValueIsMissing,
-											}
+											ns := "Items." + strconv.Itoa(gi) + ".Views." + strconv.Itoa(vi) + ".Tabs." + strconv.Itoa(ti) + ".Widgets." + strconv.Itoa(wi) + ".Filters." + strconv.Itoa(fi)
+
+											return validation.NewError(
+												validator.ValidationErrors{
+													validation.NewFieldError("required", "AlarmPattern", ns+".AlarmPattern"),
+													validation.NewFieldError("required", "EntityPattern", ns+".EntityPattern"),
+													validation.NewFieldError("required", "PbehaviorPattern", ns+".PbehaviorPattern"),
+												},
+												r,
+											)
 										}
 
 										filterId := utils.NewID()
@@ -779,6 +800,39 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 									}
 
 									widget.Parameters.MainFilter = mainFilterId
+
+									if len(widget.Parameters.FastPbehaviors) > 0 && (pbhTypesMap == nil || pbhReasonsMap == nil) {
+										pbhTypesMap, err = libwidget.GetPbehaviorTypesMap(ctx, s.pbhTypeCollection)
+										if err != nil {
+											return fmt.Errorf("failed to get pbh types map: %w", err)
+										}
+
+										pbhReasonsMap, err = libwidget.GetPbehaviorReasonsMap(ctx, s.pbhReasonCollection)
+										if err != nil {
+											return fmt.Errorf("failed to get pbh reasons map: %w", err)
+										}
+									}
+
+									var fastPbhValErrs validator.ValidationErrors
+									for fi, fastPbh := range widget.Parameters.FastPbehaviors {
+										ns := "Items." + strconv.Itoa(gi) + ".Views." + strconv.Itoa(vi) + ".Tabs." + strconv.Itoa(ti) + ".Widgets." + strconv.Itoa(wi) + ".Parameters.FastPbehaviors." + strconv.Itoa(fi)
+
+										t, ok := pbhTypesMap[fastPbh.Type]
+										if !ok {
+											fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("not_exist", "Type", ns+".Type"))
+										} else if t != pbehavior.TypePause {
+											fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("pbh_type_not_pause", "Type", ns+".Type"))
+										}
+
+										if !pbhReasonsMap[fastPbh.Reason] {
+											fastPbhValErrs = append(fastPbhValErrs, validation.NewFieldError("not_exist", "Reason", ns+".Reason"))
+										}
+									}
+
+									if len(fastPbhValErrs) > 0 {
+										return validation.NewError(fastPbhValErrs, r)
+									}
+
 									newWidgets = append(newWidgets, libview.Widget{
 										ID:             widgetId,
 										Tab:            tabId,
@@ -850,7 +904,7 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 		return nil
 	}
 
-	newPermissions := make([]interface{}, 0, len(views))
+	newPermissions := make([]any, 0, len(views))
 	setRole := bson.M{}
 	for viewID, viewTitle := range views {
 		newPermActionsID := utils.NewID()
@@ -962,14 +1016,9 @@ func (s *store) normalizePositionsOnViewMove(ctx context.Context, viewID, groupI
 		return err
 	}
 
-	index := -1
-	for i, v := range viewPositionsByGroup[groupID] {
-		if v == viewID {
-			index = i
-		}
-	}
+	index := slices.Index(viewPositionsByGroup[groupID], viewID)
 
-	viewPositionsByGroup[groupID] = append(viewPositionsByGroup[groupID][:index], viewPositionsByGroup[groupID][index+1:]...)
+	viewPositionsByGroup[groupID] = slices.Delete(viewPositionsByGroup[groupID], index, index+1)
 	viewPositionsByGroup[groupID] = append(viewPositionsByGroup[groupID], viewID)
 
 	viewPositions := make([]string, 0)
@@ -1190,7 +1239,7 @@ func (s *store) getGroupPrivacySettings(ctx context.Context, groupID string) (ap
 
 	err := s.groupCollection.FindOne(ctx, bson.M{"_id": groupID}).Decode(&group)
 	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {
-		return group, common.NewValidationError("group", "Group doesn't exist.")
+		return group, nil
 	}
 
 	return group, err
@@ -1229,9 +1278,17 @@ func (s *store) getNestedObjectsPipeline() []bson.M {
 			},
 			"as": "filters",
 		}},
+		bson.M{"$lookup": bson.M{
+			"from":         mongo.CommentTemplateMongoCollection,
+			"localField":   "widgets.parameters.comment_templates",
+			"foreignField": "_id",
+			"as":           "comment_templates",
+		}},
 		bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+		bson.M{"$unwind": bson.M{"path": "$comment_templates", "preserveNullAndEmptyArrays": true}},
 	)
 	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("comment_templates.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
@@ -1248,10 +1305,16 @@ func (s *store) getNestedObjectsPipeline() []bson.M {
 				"then": "$filters",
 				"else": "$$REMOVE",
 			}}},
+			"comment_templates": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$comment_templates._id",
+				"then": "$comment_templates",
+				"else": "$$REMOVE",
+			}}},
 		}},
 		bson.M{"$addFields": bson.M{
-			"_id":             "$_id._id",
-			"widgets.filters": "$filters",
+			"_id":                       "$_id._id",
+			"widgets.filters":           "$filters",
+			"widgets.comment_templates": "$comment_templates",
 		}},
 		bson.M{"$sort": bson.D{
 			{Key: "widgets.grid_parameters.desktop.y", Value: 1},

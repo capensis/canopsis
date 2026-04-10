@@ -5,7 +5,7 @@
   >
     <v-layout class="gap-3">
       <view-scroll-top-btn />
-      <view-executions-btn />
+      <view-executions-btn v-if="hasAccessToExecuteInstruction" />
       <view-periodic-refresh-btn />
       <view-screen-mode-btn
         v-if="isFullscreen"
@@ -91,6 +91,7 @@ import {
   KEYS_TO_VIEW_SCREEN_MODES,
   VIEW_SCREEN_MODES,
   FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES,
+  USER_PERMISSIONS,
 } from '@/constants';
 
 import { useActiveView } from '@/hooks/store/modules/active-view';
@@ -100,6 +101,7 @@ import { usePopups } from '@/hooks/popups';
 import { useFullscreen } from '@/hooks/fullscreen';
 import { useView } from '@/hooks/store/modules/view';
 import { useViewRouter } from '@/hooks/view/router';
+import { useCanPermission } from '@/hooks/auth';
 
 import ViewShareLinkBtn from './view-share-link-btn.vue';
 import ViewEditingBtn from './view-editing-btn.vue';
@@ -149,6 +151,14 @@ export default {
       setActiveViewScreenMode,
     } = useActiveView();
 
+    const {
+      hasAccess: hasAccessToExecuteInstruction,
+    } = useCanPermission(USER_PERMISSIONS.business.alarmsList.actions.executeInstruction);
+
+    /**
+     * Requests fullscreen on the app root (`[data-app]`), toggles `view-fullscreen` on the active tab
+     * container, and maps exit fullscreen back to a default screen mode when applicable.
+     */
     const enterFullscreen = () => {
       if (!props.activeTab) {
         popups.warning({ text: t('view.errors.emptyTabs') });
@@ -181,8 +191,16 @@ export default {
       });
     };
 
+    /**
+     * Leaves browser fullscreen if active.
+     */
     const exitFullscreen = () => fullscreen.exit();
 
+    /**
+     * Updates the active view screen mode; enters fullscreen for fullscreen/kiosk modes and exits otherwise.
+
+     * @param {string} newMode - One of `VIEW_SCREEN_MODES` values.
+     */
     const changeScreenMode = (newMode) => {
       setActiveViewScreenMode(newMode);
 
@@ -197,6 +215,12 @@ export default {
       }
     };
 
+    /**
+     * Handles global shortcuts: Ctrl+E toggles view editing when `updatable`; Alt/Meta + Shift + number
+     * keys switch screen mode via `KEYS_TO_VIEW_SCREEN_MODES`.
+
+     * @param {KeyboardEvent} event
+     */
     const keyDownListener = (event) => {
       if (event.key === 'e' && event.ctrlKey && props.updatable) {
         toggleEditing();
@@ -217,6 +241,9 @@ export default {
       }
     };
 
+    /**
+     * Opens the create-widget modal for the current tab, or shows a warning when there is no active tab.
+     */
     const showCreateWidgetModal = () => {
       if (!props.activeTab) {
         popups.warning({ text: t('view.errors.emptyTabs') });
@@ -231,6 +258,10 @@ export default {
       });
     };
 
+    /**
+     * Opens the text-field editor to create a view tab; on submit creates the tab, refreshes the active view,
+     * and redirects to the first tab when the route has no `tabId` query.
+     */
     const showCreateTabModal = () => {
       modals.show({
         name: MODALS.textFieldEditor,
@@ -266,6 +297,7 @@ export default {
     });
 
     return {
+      hasAccessToExecuteInstruction,
       isFullscreen,
       view,
       activeViewScreenMode,

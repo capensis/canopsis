@@ -4,7 +4,7 @@
 
 Le moteur REMEDIATION a pour objectif d'appliquer les remédiations associées aux alarmes. Il permet d'exécuter des actions correctives automatiques pour résoudre des problèmes identifiés par des alarmes, avec des jobs ordonnancés si nécessaire. Ce moteur est disponible uniquement en édition Pro.
 
-Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur la remédiation](../../../../guide-utilisation/remediation/).
+Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur la remédiation](../../../guide-utilisation/remediation/index.md).
 
 ## Options de démarrage
 
@@ -32,4 +32,4 @@ Cette commande lance le moteur REMEDIATION en mode debug, avec 15 workers pour t
 ## Schéma d'interactions
 
 Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
-[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-remediation/)
+[EN - View Engine Interaction Schemas](../../../guide-developpement/schemas/engine-remediation.md)

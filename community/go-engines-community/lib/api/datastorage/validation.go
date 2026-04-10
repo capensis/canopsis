@@ -10,23 +10,23 @@ func ValidateConfig(sl validator.StructLevel) {
 	r := sl.Current().Interface().(datastorage.Config)
 
 	if !durationGt(r.Remediation.DeleteStatsAfter, r.Remediation.DeleteAfter) {
-		sl.ReportError(r.Remediation.DeleteStatsAfter, "Remediation.DeleteStatsAfter", "DeleteStatsAfter", "gtfield", "DeleteAfter")
+		sl.ReportError(r.Remediation.DeleteStatsAfter, "DeleteStatsAfter", "Remediation.DeleteStatsAfter", "gtfield", "DeleteAfter")
 	}
 
 	if !durationGt(r.Remediation.DeleteModStatsAfter, r.Remediation.DeleteAfter) {
-		sl.ReportError(r.Remediation.DeleteModStatsAfter, "Remediation.DeleteModStatsAfter", "DeleteModStatsAfter", "gtfield", "DeleteAfter")
+		sl.ReportError(r.Remediation.DeleteModStatsAfter, "DeleteModStatsAfter", "Remediation.DeleteModStatsAfter", "gtfield", "DeleteAfter")
 	}
 
 	if !durationGt(r.Remediation.DeleteModStatsAfter, r.Remediation.DeleteStatsAfter) {
-		sl.ReportError(r.Remediation.DeleteModStatsAfter, "Remediation.DeleteModStatsAfter", "DeleteModStatsAfter", "gtfield", "DeleteStatsAfter")
+		sl.ReportError(r.Remediation.DeleteModStatsAfter, "DeleteModStatsAfter", "Remediation.DeleteModStatsAfter", "gtfield", "DeleteStatsAfter")
 	}
 
 	if !durationGt(r.Alarm.DeleteAfter, r.Alarm.ArchiveAfter) {
-		sl.ReportError(r.Alarm.DeleteAfter, "Alarm.DeleteAfter", "DeleteAfter", "gtfield", "ArchiveAfter")
+		sl.ReportError(r.Alarm.DeleteAfter, "DeleteAfter", "Alarm.DeleteAfter", "gtfield", "ArchiveAfter")
 	}
 
 	if datetime.IsDurationEnabledAndValid(r.Alarm.DeleteAfter) && !datetime.IsDurationEnabledAndValid(r.Alarm.ArchiveAfter) {
-		sl.ReportError(r.Alarm.ArchiveAfter, "Alarm.ArchiveAfter", "ArchiveAfter", "required_if", "DeleteAfter")
+		sl.ReportError(r.Alarm.ArchiveAfter, "ArchiveAfter", "Alarm.ArchiveAfter", "required_if", "DeleteAfter")
 	}
 }
 

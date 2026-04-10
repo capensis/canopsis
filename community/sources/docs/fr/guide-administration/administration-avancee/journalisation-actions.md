@@ -20,7 +20,7 @@ Types  | Description
 `scenario`              | [Les règles de scénarios](../../guide-utilisation/menu-exploitation/scenarios.md)
 `metaalarmrule`         | [Les règles de méta alarmes/corrélation](../../guide-utilisation/menu-exploitation/regles-metaalarme.md)
 `dynamicinfo`           | [Les règles d'enrichissement d'alarmes](../../guide-utilisation/cas-d-usage/enrichissement.md)
-`entity`<br/>`entityservice`<br/>`entitycategory` | [Gestion des entitées](../../guide-utilisation/menu-administration/)
+`entity`<br/>`entityservice`<br/>`entitycategory` | [Gestion des entités](../../guide-utilisation/interface/widgets/contexte/index.md)
 `pbehavior`<br/>`pbehaviortype`<br/>`pbehaviorreason`<br/>`pbehaviorexception`  | [Les comportements périodiques](../../guide-utilisation/cas-d-usage/comportements_periodiques.md)
 `instruction`<br/>`job`<br/>`jobconfig`             | [Les objets de remédiation](../../guide-utilisation/remediation/index.md)
 `statesetting`          | [Les paramètres](../../guide-utilisation/menu-administration/parametres-de-calculd-etat-sévérité.md)

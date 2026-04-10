@@ -8,7 +8,7 @@ Cette page présente les outils et mécanismes mis à disposition pour supervise
 
 Canopsis propose un module dédié permettant de consulter en temps réel l'état des différents composants du système : les moteurs, les files RabbitMQ, les bases de données, etc.
 
-[Consulter la documentation du Bilan de santé](../../../guide-utilisation/menu-administration/bilan-de-sante/)
+[Consulter la documentation du Bilan de santé](../../guide-utilisation/menu-administration/bilan-de-sante.md)
 
 ## Exporter Prometheus
 

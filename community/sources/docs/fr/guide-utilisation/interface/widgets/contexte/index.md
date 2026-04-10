@@ -1,6 +1,6 @@
 # Explorateur de contexte
 
-L'Explorateur de contexte est un widget central dans Canopsis. Il permet d'afficher, filtrer, rechercher et manipuler l'ensemble des [entités](../../../vocabulaire/#entite) du système : composants, connecteurs, ressources et services. 
+L'Explorateur de contexte est un widget central dans Canopsis. Il permet d'afficher, filtrer, rechercher et manipuler l'ensemble des [entités](../../../vocabulaire/index.md#entite) du système : composants, connecteurs, ressources et services. 
 
 C'est, en quelque sorte, le référentiel interne de toutes les entités connues de la plateforme.
 
@@ -44,7 +44,7 @@ L'explorateur de contexte permet de filtrer les entités selon ces catégories.
 
 ### Filtres
 
-Le sélecteur de filtre permet d'appliquer un [filtre](../../patterns) sur l'Explorateur de contexte. Seules les entités correspondant aux critères du filtre seront affichées.
+Le sélecteur de filtre permet d'appliquer un [filtre][patterns] sur l'Explorateur de contexte. Seules les entités correspondant aux critères du filtre seront affichées.
 
 ![Sélecteur de filtre](./img/filter-selector.png "Sélecteur de filtre")
 
@@ -53,7 +53,7 @@ L'option "Combiner les filtres", présente dans l'entête du sélecteur de filtr
 ### Filtre "Aucun événement"
 
 L'explorateur de contexte permet de filtrer les entités pour lesquelles aucun événement n'a été reçu depuis un certain temps.  
-Ces entités sont régies par les [règles d'inactivité](../../../menu-exploitation/regles-inactivite/).
+Ces entités sont régies par les [règles d'inactivité](../../../menu-exploitation/regles-inactivite.md).
 
 ### Création d'entités "services"
 
@@ -61,7 +61,7 @@ Depuis l'Explorateur de contexte, il vous est possible de créer des entités de
 
 Pour accéder aux fenêtres de création, cliquer sur le bouton ![Icône Création Entité](./img/add-entity-button.png "Icône Création Entité").
 
-Tous les paramètres concernant les services sont [documentés ici](../../../services).
+Tous les paramètres concernant les services sont [documentés ici](../../../services/index.md).
 
 ### Actions
 
@@ -73,7 +73,7 @@ En fonction du type d'entité, plusieurs actions sont disponibles :
 
 * **Supprimer** : Permet de supprimer une entité. Au clic sur l'icône de suppression :material-delete:, une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité.
 
-* **Comportement périodique** : Permet d'ajouter un comportement périodique à l'entité. Au clic sur l'icône :material-pause:, une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../../menu-exploitation/comportements-periodiques/).
+* **Comportement périodique** : Permet d'ajouter un comportement périodique à l'entité. Au clic sur l'icône :material-pause:, une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../../menu-exploitation/comportements-periodiques.md).
 
 * **Lister les variables** : Permet de lister toutes les variables relatives à l'entité. Au clic sur l'icône :material-help:, une fenêtre s'ouvre et propose une liste brute de variables.
 
@@ -123,12 +123,12 @@ Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix roug
 L'ordre des colonnes est modifiable par drag'n drop.
 
 !!! tip "Recommandation"
-    Il est recommandé de définir un [modèle de colonnes/template](../../../menu-administration/parametres/#modeles-de-widgets) pour faciliter la maintenance générale.
+    Il est recommandé de définir un [modèle de colonnes/template](../../../menu-administration/parametres.md#modeles-de-widgets) pour faciliter la maintenance générale.
 
 
 #### Paramètres de l'arborescence des dépendances
 
-Ce paramètre est directement dépendant de la configuration de [calcul d'état/sévérité](../../../menu-administration/parametres-de-calculd-etat-sévérité/) réalisée.
+Ce paramètre est directement dépendant de la configuration de [calcul d'état/sévérité](../../../menu-administration/parametres-de-calculd-etat-sévérité.md) réalisée.
 
 | Option                                      | Signification |
 | ------------------------------------------- | ------------------ |
@@ -153,7 +153,7 @@ Vous pouvez choisir de présenter les dépendances avec leur sévérité ou leur
 
 #### Filtres
 
-Ce paramètre permet créer des [filtres](../../patterns/) qui seront disponibles dans l'explorateur de contexte.  
+Ce paramètre permet créer des [filtres][patterns] qui seront disponibles dans l'explorateur de contexte.  
 Il est également possible de sélectionner un filtre par défaut à appliquer.
 
 L'ordre des filtres est modifiable par drag'n drop.
@@ -175,3 +175,5 @@ Vous pouvez définir la "largeur" et la "position" de la fenêtre qui est affich
 #### Exporter CSV
 
 Les entités sont exportables au format CSV. Ce menu permet de sélectionner les colonnes que vous souhaitez exporter.  
+
+[patterns]: ../../patterns/index.md

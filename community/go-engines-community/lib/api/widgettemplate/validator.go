@@ -19,7 +19,7 @@ func ValidateEditRequest(sl validator.StructLevel) {
 
 		for i, column := range r.Columns {
 			if column.Value != "" && !view.IsValidWidgetColumn(r.Type, column.Value) {
-				sl.ReportError(column, fmt.Sprintf("Columns.%d.Value", i), "Value", "invalid", "")
+				sl.ReportError(column.Value, "Value", fmt.Sprintf("Columns.%d.Value", i), "invalid", "")
 			}
 		}
 
@@ -28,7 +28,11 @@ func ValidateEditRequest(sl validator.StructLevel) {
 		}
 
 		if len(r.Actions) > 0 {
-			sl.ReportError(r.Columns, "Actions", "Actions", "must_be_empty", "")
+			sl.ReportError(r.Actions, "Actions", "Actions", "must_be_empty", "")
+		}
+
+		if len(r.SortColumns) > 0 {
+			sl.ReportError(r.SortColumns, "SortColumns", "SortColumns", "must_be_empty", "")
 		}
 	case view.WidgetTemplateTypeAlarmMoreInfos,
 		view.WidgetTemplateTypeAlarmExportToPDF,
@@ -44,7 +48,11 @@ func ValidateEditRequest(sl validator.StructLevel) {
 		}
 
 		if len(r.Actions) > 0 {
-			sl.ReportError(r.Columns, "Actions", "Actions", "must_be_empty", "")
+			sl.ReportError(r.Actions, "Actions", "Actions", "must_be_empty", "")
+		}
+
+		if len(r.SortColumns) > 0 {
+			sl.ReportError(r.SortColumns, "SortColumns", "SortColumns", "must_be_empty", "")
 		}
 	case view.WidgetTemplateTypeAlarmQuickActions,
 		view.WidgetTemplateTypeAlarmQuickMassActions:
@@ -54,6 +62,32 @@ func ValidateEditRequest(sl validator.StructLevel) {
 
 		if len(r.Columns) > 0 {
 			sl.ReportError(r.Columns, "Columns", "Columns", "must_be_empty", "")
+		}
+
+		if r.Content != "" {
+			sl.ReportError(r.Content, "Content", "Content", "must_be_empty", "")
+		}
+
+		if len(r.SortColumns) > 0 {
+			sl.ReportError(r.SortColumns, "SortColumns", "SortColumns", "must_be_empty", "")
+		}
+	case view.WidgetTemplateTypeAlarmSortColumns:
+		if len(r.SortColumns) == 0 {
+			sl.ReportError(r.SortColumns, "SortColumns", "SortColumns", "required", "")
+		}
+
+		for i, column := range r.SortColumns {
+			if column.SortBy != "" && !view.IsValidWidgetColumn(view.WidgetTemplateTypeAlarmColumns, column.SortBy) {
+				sl.ReportError(column.SortBy, "SortBy", fmt.Sprintf("SortColumns.%d.SortBy", i), "invalid", "")
+			}
+		}
+
+		if len(r.Columns) > 0 {
+			sl.ReportError(r.Columns, "Columns", "Columns", "must_be_empty", "")
+		}
+
+		if len(r.Actions) > 0 {
+			sl.ReportError(r.Actions, "Actions", "Actions", "must_be_empty", "")
 		}
 
 		if r.Content != "" {

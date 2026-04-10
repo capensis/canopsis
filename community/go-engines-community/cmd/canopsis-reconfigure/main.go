@@ -60,7 +60,9 @@ func main() {
 	}
 
 	// remove timeout to not limit long migrations
-	client, err := mongo.NewClient(ctx)
+	client, err := mongo.NewClient(ctx, mongo.ClientOptions{
+		NoClientTimeout: true,
+	})
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to connect to mongo")
 	}
@@ -464,9 +466,9 @@ func parseConfig(f flags, logger zerolog.Logger) (Conf, error) {
 }
 
 func mergeConfigs(configs ...[]byte) ([]byte, error) {
-	var res map[string]interface{}
+	var res map[string]any
 	for _, b := range configs {
-		v := make(map[string]interface{})
+		v := make(map[string]any)
 		err := toml.Unmarshal(b, &v)
 		if err != nil {
 			return nil, err
@@ -481,10 +483,10 @@ func mergeConfigs(configs ...[]byte) ([]byte, error) {
 	return toml.Marshal(res)
 }
 
-func mergeMaps(l, r map[string]interface{}) {
+func mergeMaps(l, r map[string]any) {
 	for k, v := range r {
-		if rm, ok := v.(map[string]interface{}); ok {
-			if lm, ok := l[k].(map[string]interface{}); ok {
+		if rm, ok := v.(map[string]any); ok {
+			if lm, ok := l[k].(map[string]any); ok {
 				mergeMaps(lm, rm)
 				continue
 			}

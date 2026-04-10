@@ -488,6 +488,11 @@ export default {
     },
   },
   watch: {
+    '$i18n.locale': {
+      handler() {
+        this.$nextTick(this.refreshGraph);
+      },
+    },
     services() {
       this.$nextTick(this.refreshGraph);
     },
@@ -600,7 +605,7 @@ export default {
     }) {
       const elements = [`<div class="subtitle-1">${this.getNodeName(id)}</div>`];
 
-      const getInfoDiv = (message, hasError) => `<div class="body-1 grey--text darken-3 ${hasError ? 'error--text' : ''}">${message}</div>`;
+      const getInfoDiv = (message, hasError) => `<div class="body-1 grey--text darken-3 pre-wrap ${hasError ? 'error--text' : ''}">${message}</div>`;
 
       if (!isUnknown && this.showDescription) {
         elements.push(

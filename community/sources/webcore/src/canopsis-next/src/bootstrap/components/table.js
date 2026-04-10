@@ -3,3 +3,4 @@ export { default as CTreeviewDataTable } from '@/components/common/table/c-treev
 export { default as CEmptyDataTableColumns } from '@/components/common/table/c-empty-data-table-columns.vue';
 export { default as CTablePagination } from '@/components/common/pagination/c-table-pagination.vue';
 export { default as AlarmsListTable } from '@/components/widgets/alarm/partials/alarms-list-table.vue';
+export { default as CMassActionsPanel } from '@/components/common/actions-panel/c-mass-actions-panel.vue';

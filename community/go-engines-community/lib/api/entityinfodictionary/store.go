@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -33,7 +33,7 @@ func (s *store) FindKeys(ctx context.Context, r ListKeysRequest) (AggregationRes
 
 	var pipeline []bson.M
 
-	searchQuery := common.GetSearchQuery(r.Search, []string{"_id.k"})
+	searchQuery := mongoquery.GetSearchQuery(r.Search, []string{"_id.k"})
 	if searchQuery != nil {
 		pipeline = append(pipeline, bson.M{"$match": searchQuery})
 	}
@@ -130,7 +130,7 @@ func (s *store) FindValues(ctx context.Context, r ListValuesRequest) (Aggregatio
 		},
 	}
 
-	searchQuery := common.GetSearchQuery(r.Search, []string{"_id.v"})
+	searchQuery := mongoquery.GetSearchQuery(r.Search, []string{"_id.v"})
 	if searchQuery != nil {
 		pipeline = append(pipeline, bson.M{"$match": searchQuery})
 	}

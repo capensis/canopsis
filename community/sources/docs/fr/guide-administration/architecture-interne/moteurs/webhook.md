@@ -4,7 +4,7 @@
 
 Le moteur WEBHOOK a pour objectif de gérer les appels externes via webhook. Ce moteur permet d'envoyer des notifications ou des informations à des systèmes externes via des appels HTTP. Ce moteur est disponible uniquement en édition Pro.
 
-Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les webhooks](../../../../guide-utilisation/menu-exploitation/scenarios/#webhook).
+Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les webhooks](../../../guide-utilisation/menu-exploitation/scenarios.md#webhook).
 
 ## Options de démarrage
 
@@ -31,4 +31,4 @@ Cette commande lance le moteur WEBHOOK en mode debug, avec 15 workers pour trait
 ## Schéma d'interactions
 
 Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
-[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-webhook/)
+[EN - View Engine Interaction Schemas](../../../guide-developpement/schemas/engine-webhook.md)

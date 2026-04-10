@@ -4,9 +4,10 @@
 
 Le moteur CHE a pour objectif d'appliquer les règles d'enrichissement d'événements et d'entités. Ce moteur est disponible en édition Community et Pro, avec des fonctionnalités supplémentaires pour l'enrichissement externe en édition Pro.
 
-Pour plus d'informations sur les fonctionnalités, consultez :  
-- [Documentation sur les filtres d'événements](../../../../guide-utilisation/menu-exploitation/filtres-evenements/)  
-- [Documentation sur les données externes](../../../../guide-utilisation/menu-exploitation/donnees-externes/) (édition Pro)
+Pour plus d'informations sur les fonctionnalités, consultez :
+
+- [Documentation sur les filtres d'événements](../../../guide-utilisation/menu-exploitation/filtres-evenements.md)
+- [Documentation sur les données externes](../../../guide-utilisation/menu-exploitation/donnees-externes.md) (édition Pro)
 
 ## Options de démarrage
 
@@ -42,4 +43,4 @@ Cette commande lance le moteur CHE en mode debug, avec 6 workers pour les évén
 ## Schéma d'interactions
 
 Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
-[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-che/)
+[EN - View Engine Interaction Schemas](../../../guide-developpement/schemas/engine-che.md)

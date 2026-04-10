@@ -6,7 +6,7 @@ Une *alarme* est le résultat du traitement des [évènements](#evenement) par u
 
 Une alarme est liée à une [entité](#entite) de type [composant](#composant), [ressource](#ressource) ou [service](#service). La combinaison d'un [connecteur](#connecteur), d'un [nom de connecteur](#nom-de-connecteur), d'un composant et d'une ressource crée une alarme unique. Si l'un de ces éléments change, une alarme différente est créée.
 
-Une alarme peut connaître de multiples changements de [criticité](#criticite), [priorité](#priorite) et de [statut](#statut), et subir une suite d'actions (acquittement, mise en veille, changement de criticité, annulation, etc.), [utilisateurs](../interface/widgets/bac-a-alarmes/actions.md) ou [automatiques](../menu-exploitation/scenarios.md). L'ensemble de ces changements et de ces actions constitue le *cycle d'alarme*.
+Une alarme peut connaître de multiples changements de [criticité](#criticite), [priorité](#priorite) et de [statut](#statut-des-alarmes), et subir une suite d'actions (acquittement, mise en veille, changement de criticité, annulation, etc.), [utilisateurs](../interface/widgets/bac-a-alarmes/actions.md) ou [automatiques](../menu-exploitation/scenarios.md). L'ensemble de ces changements et de ces actions constitue le *cycle d'alarme*.
 
 Les alarmes peuvent être affichées à l'aide d'un [widget Bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
 

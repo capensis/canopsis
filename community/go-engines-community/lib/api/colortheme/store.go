@@ -5,7 +5,8 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -64,9 +65,7 @@ func NewStore(
 			ColorBlind:     {},
 			ColorBlindDark: {},
 		},
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"name": "Name already exists.",
-		}),
+		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -89,7 +88,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		_, err := s.dbColorCollection.InsertOne(ctx, doc)
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -135,7 +134,7 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
 	var pipeline []bson.M
 
-	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -150,7 +149,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	cursor, err := s.dbColorCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, query.Sort),
+		mongoquery.GetSortQuery(sortBy, query.Sort),
 	))
 	if err != nil {
 		return nil, err
@@ -177,7 +176,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	if s.isDefaultCanopsisTheme(r.ID) {
-		return nil, ErrCanopsisDefaultTheme
+		return nil, httperror.NewForbiddenError("The predefined theme cannot be modified.")
 	}
 
 	doc := Document{
@@ -195,7 +194,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": doc})
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -217,7 +216,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	if s.isDefaultCanopsisTheme(id) {
-		return false, ErrCanopsisDefaultTheme
+		return false, httperror.NewForbiddenError("The predefined theme cannot be deleted.")
 	}
 
 	cfg, err := s.userInterfaceAdapter.GetConfig(ctx)
@@ -231,7 +230,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		deleted = 0
 
 		if cfg.DefaultColorTheme == id {
-			return ErrDefaultTheme
+			return httperror.NewForbiddenError("The default theme cannot be deleted.")
 		}
 
 		// required to get the author in action log listener.
