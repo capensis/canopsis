@@ -248,6 +248,7 @@ export default {
       try {
         const widget = generatePreparedDefaultAlarmListWidget();
 
+        widget._id = this.widget._id;
         widget.parameters = {
           ...widget.parameters,
           ...this.widget.parameters.alarmsList,

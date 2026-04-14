@@ -28,6 +28,7 @@ const (
 	RemediationEngineName  = "engine-remediation"
 	SnmpEngineName         = "engine-snmp"
 	WebhookEngineName      = "engine-webhook"
+	RecorderName           = "recorder"
 )
 
 // Internal connectors
@@ -132,6 +133,9 @@ const (
 	PBehaviorRPCConsumerName = "pbehavior_rpc"
 	PBehaviorConsumerName    = "pbehavior"
 
+	RecorderConsumerName    = "recorder"
+	RecorderRPCConsumerName = "recorder_rpc"
+
 	RemediationRPCConsumerName = "remediation_rpc"
 
 	WebhookRPCConsumerName = "webhook_rpc"
@@ -145,9 +149,6 @@ const (
 	DefaultEventAuthor = "system"
 
 	JsonContentType = "application/json"
-
-	RecorderConsumerName    = "recorder"
-	RecorderRPCConsumerName = "recorder_rpc"
 
 	PeriodicalWaitTime       = time.Minute
 	TechMetricsFlushInterval = time.Second * 10

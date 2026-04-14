@@ -343,7 +343,7 @@ func BenchmarkCalculateRRuleAllCalculated(b *testing.B) {
 
 	r.DTStart(ef.Start.Time)
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)}
 		ef.ResolvedStop = &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)}
 		ef.NextResolvedStart = &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)}
@@ -365,7 +365,7 @@ func BenchmarkCalculateRRuleDailyInTheBeginningOfTheInterval(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -387,7 +387,7 @@ func BenchmarkCalculateRRuleDailyOneDayGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -409,7 +409,7 @@ func BenchmarkCalculateRRuleDailyOneWeekGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -431,7 +431,7 @@ func BenchmarkCalculateRRuleDailyOneMonthGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -453,7 +453,7 @@ func BenchmarkCalculateRRuleDailyOneYearGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -475,7 +475,7 @@ func BenchmarkCalculateRRuleHourlyOneDayGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -497,7 +497,7 @@ func BenchmarkCalculateRRuleHourlyOneWeekGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -519,7 +519,7 @@ func BenchmarkCalculateRRuleHourlyOneMonthGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -541,7 +541,7 @@ func BenchmarkCalculateRRuleHourlyOneYearGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -563,7 +563,7 @@ func BenchmarkCalculateRRuleMinutelyOneDayGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -585,7 +585,7 @@ func BenchmarkCalculateRRuleMinutelyOneWeekGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -607,7 +607,7 @@ func BenchmarkCalculateRRuleComplexOneDayGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -629,7 +629,7 @@ func BenchmarkCalculateRRuleComplexOneWeekGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -651,7 +651,7 @@ func BenchmarkCalculateRRuleComplexOneMonthGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
@@ -673,7 +673,7 @@ func BenchmarkCalculateRRuleComplexOneYearGap(b *testing.B) {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ef.ResolvedStart = nil
 		ef.ResolvedStop = nil
 		ef.NextResolvedStart = nil
