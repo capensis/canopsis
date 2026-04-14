@@ -115,14 +115,8 @@ func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 	reconnectCount int, minReconnectTimeout time.Duration) (*redis.FailoverOptions, error) {
 	failoverOptions, err := redis.ParseFailoverURL(strings.ReplaceAll(sURL, "redis-sentinel://", "redis://"))
 	if err != nil {
-		if !strings.Contains(err.Error(), "invalid port") {
-			return nil, err
-		}
-
-		// replace redis-sentinel:// with postgresql:// is a hack to avoid url parsing error due to golang 1.26 url parsing changes, which
-		// disallows multiple hosts in the url and only allow them for postgres.
 		// @todo: remove NewFailoverOptions in the next version and use redis.ParseFailoverURL()
-		redisURL, err := url.ParseRequestURI(strings.ReplaceAll(sURL, "redis-sentinel://", "postgresql://"))
+		redisURL, err := url.ParseRequestURI(sURL)
 		if err != nil {
 			return nil, err
 		}
