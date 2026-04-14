@@ -1935,9 +1935,13 @@ definitions:
           type: string
         type: array
       negative_entity_pattern:
+        example: '[[{"field":"name","cond":{"type":"eq","value":"cps_name"}}]]'
         type: string
       no_events:
         type: boolean
+      pbehavior_pattern:
+        example: '[[{"field":"pbehavior_info.id","cond":{"type":"eq","value":"df17b079-03fb-4a4f-a19d-14d9c0c3563b"}}]]'
+        type: string
       search:
         type: string
       search_pattern:
