@@ -138,10 +138,8 @@ type ApiConfig struct {
 	ExportMongoClientTimeout time.Duration
 	AuthorScheme             []string
 	MetricsCacheExpiration   time.Duration
-	// EventsRecorderFetchStatusTimeout is a timeout for fetching status from events recorder
-	EventsRecorderFetchStatusTimeout time.Duration
-	WebsocketPingInterval            time.Duration
-	NotificationDisplayCount         int
+	WebsocketPingInterval    time.Duration
+	NotificationDisplayCount int
 }
 
 type RemediationConfig struct {
@@ -457,13 +455,12 @@ func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
 func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfigProvider {
 	sectionName := "api"
 	conf := ApiConfig{
-		TokenSigningMethod:               parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
-		BulkMaxSize:                      parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
-		ExportMongoClientTimeout:         parseTimeDurationByStr(cfg.API.ExportMongoClientTimeout, ApiExportMongoClientTimeout, "ExportMongoClientTimeout", sectionName, logger),
-		MetricsCacheExpiration:           parseTimeDurationByStr(cfg.API.MetricsCacheExpiration, ApiMetricsCacheExpiration, "MetricsCacheExpiration", sectionName, logger),
-		EventsRecorderFetchStatusTimeout: parseTimeDurationByStr(cfg.API.EventsRecorderFetchStatusTimeout, ApiEventsRecorderFetchStatusTimeout, "EventsRecorderFetchStatusTimeout", sectionName, logger),
-		WebsocketPingInterval:            parseTimeDurationByStr(cfg.API.WebsocketPingInterval, ApiWebsocketPingInterval, "WebsocketPingInterval", sectionName, logger),
-		NotificationDisplayCount:         parseInt(cfg.API.NotificationDisplayCount, ApiNotificationDisplayCount, "NotificationDisplayCount", sectionName, logger),
+		TokenSigningMethod:       parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
+		BulkMaxSize:              parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
+		ExportMongoClientTimeout: parseTimeDurationByStr(cfg.API.ExportMongoClientTimeout, ApiExportMongoClientTimeout, "ExportMongoClientTimeout", sectionName, logger),
+		MetricsCacheExpiration:   parseTimeDurationByStr(cfg.API.MetricsCacheExpiration, ApiMetricsCacheExpiration, "MetricsCacheExpiration", sectionName, logger),
+		WebsocketPingInterval:    parseTimeDurationByStr(cfg.API.WebsocketPingInterval, ApiWebsocketPingInterval, "WebsocketPingInterval", sectionName, logger),
+		NotificationDisplayCount: parseInt(cfg.API.NotificationDisplayCount, ApiNotificationDisplayCount, "NotificationDisplayCount", sectionName, logger),
 	}
 
 	if len(cfg.API.AuthorScheme) == 0 {
@@ -526,11 +523,6 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	d, ok = parseUpdatedTimeDurationByStr(cfg.API.MetricsCacheExpiration, p.conf.MetricsCacheExpiration, "MetricsCacheExpiration", sectionName, p.logger)
 	if ok {
 		p.conf.MetricsCacheExpiration = d
-	}
-
-	d, ok = parseUpdatedTimeDurationByStr(cfg.API.EventsRecorderFetchStatusTimeout, p.conf.EventsRecorderFetchStatusTimeout, "EventsRecorderFetchStatusTimeout", sectionName, p.logger)
-	if ok {
-		p.conf.EventsRecorderFetchStatusTimeout = d
 	}
 
 	d, ok = parseUpdatedTimeDurationByStr(cfg.API.WebsocketPingInterval, p.conf.WebsocketPingInterval, "WebsocketPingInterval", sectionName, p.logger)

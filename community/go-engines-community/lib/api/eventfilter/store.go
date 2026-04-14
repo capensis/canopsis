@@ -52,6 +52,7 @@ type Store interface {
 	ValidateTemplates(ctx context.Context, request TemplateRequest) (map[string]template.ValidateResponse, error)
 	GetTemplateVars() TemplateVarsResponse
 	GetCopyVars() CopyVarsResponse
+	Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error)
 }
 
 type store struct {
@@ -514,6 +515,23 @@ func (s *store) GetCopyVars() CopyVarsResponse {
 	}
 }
 
+func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error) {
+	res, err := s.dbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"enabled": enabled,
+			"author":  r.Author,
+			"updated": datetime.NewCpsTime(),
+		}},
+	)
+	if err != nil {
+		return false, fmt.Errorf("failed to toggle eventfilter rules: %w", err)
+	}
+
+	return res.MatchedCount != 0, nil
+}
+
 func (s *store) transformRequestToDocument(ctx context.Context, r EditRequest) (eventfilter.Rule, error) {
 	exdates := make([]types.Exdate, len(r.Exdates))
 	for i := range r.Exdates {
@@ -651,16 +669,21 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.
 		return tplData, nil, err
 	}
 
-	aliases, err := s.transformer.FetchAliases(ctx, patternfields.GetAliases(r.Rule.EntityPattern))
-	if err != nil {
-		return tplData, nil, err
-	}
-
 	var valErrs, applyErrs validator.ValidationErrors
 	r.Rule.EntityRequest, _, applyErrs = s.transformer.ApplyEntityCorporatePattern(r.Rule.EntityRequest, patterns, "Rule", "CorporateEntityPattern")
 	valErrs = append(valErrs, applyErrs...)
-	r.Rule.EntityPattern, _, applyErrs = s.transformer.ApplyAliases(r.Rule.EntityPattern, aliases, "Rule", "EntityPattern")
-	valErrs = append(valErrs, applyErrs...)
+
+	patternAliases := patternfields.GetAliases(r.Rule.EntityPattern)
+	if len(patternAliases) != 0 {
+		aliases, err := s.transformer.FetchAliases(ctx, patternAliases)
+		if err != nil {
+			return tplData, nil, err
+		}
+
+		r.Rule.EntityPattern, _, applyErrs = s.transformer.ApplyAliases(r.Rule.EntityPattern, aliases, "Rule", "EntityPattern")
+		valErrs = append(valErrs, applyErrs...)
+	}
+
 	if len(valErrs) > 0 {
 		return tplData, nil, validation.NewError(valErrs, r)
 	}

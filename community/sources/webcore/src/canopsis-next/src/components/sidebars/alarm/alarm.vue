@@ -58,7 +58,7 @@
         with-color-indicator
         @update:template="updateServiceDependenciesColumnsTemplate"
       />
-      <field-resize-column-behavior v-model="form.parameters.columns" />
+      <field-resize-column-behavior v-model="form.parameters.columns" draggable resizable />
       <field-root-cause-settings v-model="form.parameters" />
       <field-info-popup
         v-model="form.parameters.infoPopups"
@@ -148,7 +148,9 @@
         />
       </widget-settings-group>
 
-      <fast-pbehavior-form v-model="form.parameters" />
+      <field-comment-templates v-model="form.parameters.comment_templates" />
+
+      <fast-pbehavior-form v-model="form.parameters.fast_pbehaviors" />
 
       <field-switcher
         v-model="form.parameters.isSnoozeNoteRequired"
@@ -165,6 +167,10 @@
       <field-switcher
         v-model="form.parameters.isActionsAllowWithOkState"
         :title="$t('settings.isActionsAllowWithOkState')"
+      />
+      <field-switcher
+        v-model="form.parameters.keepSelectedAfterAction"
+        :title="$t('common.massActionsPanel.keepSelectedAfterAction')"
       />
       <field-text-editor-with-template
         :value="form.parameters.exportPdfTemplate"
@@ -287,6 +293,7 @@ import FieldOpenedResolvedFilter from './form/fields/opened-resolved-filter.vue'
 import FieldInfoPopup from './form/fields/info-popup.vue';
 import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue';
 import FieldQuickAlarmActions from './form/fields/quick-alarm-actions.vue';
+import FieldCommentTemplates from './form/fields/comment-templates.vue';
 import FastPbehaviorForm from './form/fast-pbehavior-form.vue';
 
 /**
@@ -313,6 +320,7 @@ export default {
     FieldGridRangeSize,
     FieldInfoPopup,
     FieldDensity,
+    FieldCommentTemplates,
     FastPbehaviorForm,
     ExportCsvForm,
     ChartsForm,

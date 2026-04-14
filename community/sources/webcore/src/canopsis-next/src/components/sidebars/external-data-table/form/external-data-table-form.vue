@@ -23,7 +23,7 @@
         without-custom-label
         required
       />
-      <field-resize-column-behavior v-field="form.parameters.columns" />
+      <field-resize-column-behavior v-field="form.parameters.columns" draggable resizable />
       <field-default-sort-column
         v-field="form.parameters.sort"
         :columns="form.parameters.widgetColumns"

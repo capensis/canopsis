@@ -360,6 +360,14 @@ exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for ste
 </span>
 `;
 
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`ticketremove\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Ticket removed by root
+</span>
+`;
+
 exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`unsnooze\` correctly 1`] = `
 <span
   class="text-subtitle-2"

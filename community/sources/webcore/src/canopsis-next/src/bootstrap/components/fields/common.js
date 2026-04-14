@@ -45,6 +45,7 @@ export { default as CDraggableListField } from '@/components/forms/fields/list/c
 export { default as CColumnSizeField } from '@/components/forms/fields/c-column-size-field.vue';
 export { default as CInfosAttributeField } from '@/components/forms/fields/c-infos-attribute-field.vue';
 export { default as CCardIteratorField } from '@/components/forms/fields/card-iterator/c-card-iterator-field.vue';
+export { default as CCardIteratorForm } from '@/components/forms/fields/card-iterator/c-card-iterator-form.vue';
 export { default as CCardIteratorItem } from '@/components/forms/fields/card-iterator/c-card-iterator-item.vue';
 export { default as CMovableCardIteratorField } from '@/components/forms/fields/card-iterator/c-movable-card-iterator-field.vue';
 export { default as CCsvSeparatorField } from '@/components/forms/fields/c-csv-separator-field.vue';
