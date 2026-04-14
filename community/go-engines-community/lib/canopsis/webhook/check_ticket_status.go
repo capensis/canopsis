@@ -19,7 +19,7 @@ func GetStatusName(status int) string {
 	case TicketStatusOpen:
 		return "Open"
 	case TicketStatusInProgress:
-		return "In Progress"
+		return "In progress"
 	case TicketStatusAssigned:
 		return "Assigned"
 	case TicketStatusClosed:

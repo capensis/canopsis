@@ -812,9 +812,7 @@ func (s *store) validateActionTpls(
 							}
 
 							tsHeader = td.Headers
-							for k, v := range flatten {
-								tsResponse[k] = v
-							}
+							maps.Copy(tsResponse, flatten)
 						} else {
 							return nil, validation.NewSingleError("required", iStr, "TestData.TicketStatusResponses."+iStr, r)
 						}
