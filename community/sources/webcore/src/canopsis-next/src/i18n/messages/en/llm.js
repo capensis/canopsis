@@ -50,11 +50,9 @@ export default {
       [LLM_SOCKET_CONTEXTS.pbehavior]: 'Pbehavior',
       [LLM_SOCKET_CONTEXTS.entityService]: 'Service',
       [LLM_SOCKET_CONTEXTS.stateSettings]: 'State setting',
-      [LLM_SOCKET_CONTEXTS.entity]: 'Entity',
       [LLM_SOCKET_CONTEXTS.kpiFilter]: 'KPI filter',
       [LLM_SOCKET_CONTEXTS.eventFilter]: 'Event filter',
       [LLM_SOCKET_CONTEXTS.eventRecord]: 'Events record',
-      [LLM_SOCKET_CONTEXTS.serviceWeather]: 'Service weather',
       [LLM_SOCKET_CONTEXTS.widgetFilter]: 'Widget filter',
       [LLM_SOCKET_CONTEXTS.corporateAlarmPattern]: 'Shared alarm filter',
       [LLM_SOCKET_CONTEXTS.corporateEntityPattern]: 'Shared entity filter',
@@ -118,6 +116,14 @@ export default {
       version: 'Version {version}',
       versionRestored: 'Version {version} restored',
     },
+    patternsItemsLabel: {
+      [LLM_SOCKET_CONTEXTS.scenario]: 'Scenario action',
+    },
+    infoAlert:
+      'Works only with pattern for action <strong>{patternItem}</strong><br />'
+      + '<strong>Click Restart to run AI assistant for another pattern</strong>',
+    patternsItemsError:
+      '<strong>The selected pattern item was removed from the form. Please restart the AI chat to continue.</strong>',
     warningAlert: '<div>Please be aware that:</div>'
       + '<ul>'
       + '<li>AI-generated output <strong>may contain errors</strong> — always review and validate patterns before use.</li>'

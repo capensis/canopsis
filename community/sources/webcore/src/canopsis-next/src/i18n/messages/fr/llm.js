@@ -50,11 +50,9 @@ export default {
       [LLM_SOCKET_CONTEXTS.pbehavior]: 'Comportement périodique',
       [LLM_SOCKET_CONTEXTS.entityService]: 'Service',
       [LLM_SOCKET_CONTEXTS.stateSettings]: 'Méthode de calcul d\'état',
-      [LLM_SOCKET_CONTEXTS.entity]: 'Entité',
       [LLM_SOCKET_CONTEXTS.kpiFilter]: 'Filtre KPI',
       [LLM_SOCKET_CONTEXTS.eventFilter]: 'Règle de filtre d\'événements',
       [LLM_SOCKET_CONTEXTS.eventRecord]: 'Enregistrement d\'événements',
-      [LLM_SOCKET_CONTEXTS.serviceWeather]: 'Météo du service',
       [LLM_SOCKET_CONTEXTS.widgetFilter]: 'Filtre de widget',
       [LLM_SOCKET_CONTEXTS.corporateAlarmPattern]: 'Filtre partagé d\'alarme',
       [LLM_SOCKET_CONTEXTS.corporateEntityPattern]: 'Filtre partagé d\'entité',
@@ -118,6 +116,14 @@ export default {
       version: 'Version {version}',
       versionRestored: 'Version {version} restaurée',
     },
+    patternsItemsLabel: {
+      [LLM_SOCKET_CONTEXTS.scenario]: 'Action de scénario',
+    },
+    infoAlert:
+      'Fonctionne uniquement avec le modèle pour l\'action <strong>{patternItem}</strong><br />'
+      + '<strong>Cliquez sur Redémarrer pour lancer l\'assistant IA pour un autre modèle</strong>',
+    patternsItemsError:
+      '<strong>L\'élément sélectionné a été retiré du formulaire. Veuillez redémarrer l\'assistant IA pour continuer.</strong>',
     warningAlert: '<div>Veuillez noter que :</div>'
       + '<ul>'
       + '<li>Les résultats générés par l\'IA <strong>peuvent contenir des erreurs</strong> — vérifiez et validez toujours les modèles avant utilisation.</li>'

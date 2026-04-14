@@ -1,6 +1,7 @@
 <template>
   <div
     :class="{ 'modals-wrapper--active': modals.length > 0 }"
+    :style="{ zIndex }"
     class="modals-wrapper"
   >
     <modal-base
@@ -19,6 +20,14 @@ export default {
   computed: {
     modals() {
       return this.$store.getters[`${this.$modals.moduleName}/modals`];
+    },
+
+    visibleModals() {
+      return this.modals.filter(modal => !modal.hidden);
+    },
+
+    zIndex() {
+      return this.visibleModals.length * 300;
     },
   },
   watch: {
@@ -70,6 +79,7 @@ $minimizedDialogMaxWidth: 360px;
           max-width: $minimizedDialogMaxWidth;
           pointer-events: all;
           z-index: inherit !important;
+          padding: 0 !important;
 
           .v-dialog {
             margin: 0;

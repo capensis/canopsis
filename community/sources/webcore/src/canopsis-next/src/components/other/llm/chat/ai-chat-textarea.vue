@@ -13,7 +13,7 @@
       :placeholder="$t('llm.chat.promptPlaceholder')"
       :aria-label="$t('llm.chat.promptPlaceholder')"
       :auto-grow="emptyChat"
-      :disabled="thinking"
+      :disabled="thinking || disabled"
       :error-messages="errors.collect('prompt')"
       name="prompt"
       rows="5"
@@ -32,7 +32,7 @@
         :value="llm"
         :items="llms"
         :pending="llmsPending"
-        :disabled="llmsDisabled"
+        :disabled="llmsDisabled || disabled"
         @input="updateLlm"
       />
       <v-btn
@@ -48,7 +48,7 @@
       </v-btn>
       <v-btn
         v-else
-        :disabled="askDisabled"
+        :disabled="askDisabled || disabled"
         color="primary"
         depressed
         @click="ask"
@@ -71,9 +71,7 @@ import { useValidator } from '@/hooks/validator/validator';
 import AiChatLlmField from './partials/ai-chat-llm-field.vue';
 
 export default {
-  $_veeValidate: {
-    validator: 'new',
-  },
+  inject: ['$validator'],
   components: {
     AiChatLlmField,
   },
@@ -103,6 +101,10 @@ export default {
       default: false,
     },
     emptyChat: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

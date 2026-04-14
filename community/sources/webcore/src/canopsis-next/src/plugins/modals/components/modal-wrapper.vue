@@ -2,6 +2,7 @@
   <v-dialog
     v-model="isOpen"
     v-bind="dialogProps"
+    fixed
   >
     <!-- @slot use this slot default-->
     <slot />
@@ -98,9 +99,11 @@ export default {
 </script>
 
 <style lang="scss">
-.v-dialog .v-card__title {
-  .headline {
-    word-break: break-word;
-  }
+.v-dialog {
+  .v-card__title {
+    .headline {
+      word-break: break-word;
+    }
+}
 }
 </style>

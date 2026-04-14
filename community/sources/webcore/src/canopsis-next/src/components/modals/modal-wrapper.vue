@@ -55,7 +55,7 @@ export default {
     },
     minimize: {
       type: Boolean,
-      default: false,
+      default: true, // TODO: revert to false
     },
     close: {
       type: [Boolean, Function],

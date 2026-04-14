@@ -1,5 +1,6 @@
 <template>
   <v-layout class="ai-chat" column>
+    <ai-chat-info-alert v-if="hasPatternItem && !emptyChat" :pattern-item="patternItem" />
     <ai-chat-warning-alert />
     <div
       ref="bodyElement"
@@ -19,6 +20,13 @@
       class="gap-6 pt-0"
       column
     >
+      <v-spacer />
+      <ai-chat-pattern-item-field
+        v-if="hasPatternItem && emptyChat"
+        v-model="patternItem"
+        :items="patternsItems"
+        :label="patternsItemsLabel"
+      />
       <ai-chat-textarea
         v-model="prompt"
         ref="textareaElement"
@@ -28,6 +36,7 @@
         :error-message="errorMessage"
         :empty-chat="emptyChat"
         :thinking="!!thinkingMessage"
+        :disabled="needRestart"
         @ask="ask"
         @stop="stop"
       />
@@ -61,15 +70,22 @@ import AiChatMessagesList from '@/components/other/llm/chat/ai-chat-messages-lis
 import AiChatGreeting from '@/components/other/llm/chat/ai-chat-greeting.vue';
 import AiChatSuggestions from '@/components/other/llm/chat/ai-chat-suggestions.vue';
 import AiChatTextarea from '@/components/other/llm/chat/ai-chat-textarea.vue';
+import AiChatInfoAlert from '@/components/other/llm/chat/ai-chat-info-alert.vue';
+import AiChatPatternItemField from '@/components/other/llm/chat/ai-chat-pattern-item-field.vue';
 import AiChatWarningAlert from '@/components/other/llm/chat/ai-chat-warning-alert.vue';
 
 export default {
   name: SIDE_BARS.aiChat,
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     AiChatMessagesList,
     AiChatGreeting,
     AiChatSuggestions,
     AiChatTextarea,
+    AiChatInfoAlert,
+    AiChatPatternItemField,
     AiChatWarningAlert,
   },
   props: {

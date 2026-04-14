@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="sidebars-wrapper position-relative">
     <sidebar-base
       v-for="sidebarItem in sidebars"
       :key="sidebarItem.id"
