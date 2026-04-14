@@ -99,7 +99,7 @@ func NewStore(
 			Value: template.GetEntityVars("{{ ", " }}", ".Entity", false),
 		},
 	}
-	outputTplVars := make([]template.VarResponse, len(authorTplVars))
+	outputTplVars := make([]template.VarResponse, len(authorTplVars), len(authorTplVars)+6)
 	copy(outputTplVars, authorTplVars)
 	outputTplVars = append(outputTplVars,
 		template.VarResponse{Name: "trigger", Value: "{{ .AdditionalData.Trigger }}"},
@@ -114,7 +114,7 @@ func NewStore(
 		{Name: "responseField", Value: "{{ index .Response \"%field_name%\" }}"},
 		{Name: "responseFieldFromStep", Value: "{{ index .ResponseMap \"%N%.%field_name%\" }}"},
 	}
-	firstWhTplVars := make([]template.VarResponse, len(outputTplVars))
+	firstWhTplVars := make([]template.VarResponse, len(outputTplVars), len(outputTplVars)+2)
 	copy(firstWhTplVars, outputTplVars)
 	firstWhTplVars = append(firstWhTplVars,
 		template.VarResponse{
@@ -434,13 +434,14 @@ func (s *store) transformEditRequestToModel(r EditRequest) libaction.Scenario {
 
 func (s *store) transformActionRequestToModel(ctx context.Context, r EditRequest) ([]libaction.Action, []string, error) {
 	var err error
-	patternIDs := make([]string, 0)
-	aliases := make([]string, 0)
+	patternIDs := make([]string, 0, len(r.Actions)*2)
+	aliases := make([]string, 0, len(r.Actions))
 	for _, ar := range r.Actions {
 		patternIDs = append(patternIDs,
 			ar.CorporateAlarmPattern,
 			ar.CorporateEntityPattern,
 		)
+
 		aliases = append(aliases, patternfields.GetAliases(ar.EntityPattern)...)
 	}
 
@@ -469,10 +470,12 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r EditRequest
 			aliasPropMap[id] = true
 		}
 
-		ar.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(ar.EntityPattern, aliasProps, actionsFieldName, sIdx, "EntityPattern")
-		valErrs = append(valErrs, applyErrs...)
-		for _, id := range applyAliasPropIDs {
-			aliasPropMap[id] = true
+		if len(aliases) != 0 {
+			ar.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(ar.EntityPattern, aliasProps, actionsFieldName, sIdx, "EntityPattern")
+			valErrs = append(valErrs, applyErrs...)
+			for _, id := range applyAliasPropIDs {
+				aliasPropMap[id] = true
+			}
 		}
 
 		if len(valErrs) > 0 {

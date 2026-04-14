@@ -38,6 +38,7 @@ module.exports = {
     '^.+\\.styl(us)?$': '<rootDir>/tests/unit/mocks/styleMock.js',
     '^.+\\.(scss|sass|css)$': '<rootDir>/tests/unit/mocks/styleMock.js',
     '^@unit/(.*)$': '<rootDir>/tests/unit/$1',
+    '^@/services/features(\\.js)?$': '<rootDir>/tests/unit/mocks/featuresService.js',
     '^@/(.*)$': '<rootDir>/src/$1',
     '^vue$': 'vue/dist/vue.common.dev.js',
     '^mermaid$': '<rootDir>/node_modules/mermaid/dist/mermaid.js',

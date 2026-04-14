@@ -123,5 +123,9 @@ export default {
       height: 20px !important;
     }
   }
+
+  .v-select__selections {
+    flex-wrap: nowrap;
+  }
 }
 </style>

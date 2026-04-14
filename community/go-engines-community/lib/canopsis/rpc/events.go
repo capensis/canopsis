@@ -7,6 +7,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -20,7 +21,7 @@ const (
 //easyjson:json
 type AxeEvent struct {
 	EventType   string        `json:"event_type"`
-	Parameters  AxeParameters `json:"parameters,omitempty"`
+	Parameters  AxeParameters `json:"parameters"`
 	Alarm       *types.Alarm  `json:"alarm,omitempty"`
 	AlarmID     string        `json:"alarm_id,omitempty"`
 	Entity      *types.Entity `json:"entity,omitempty"`
@@ -37,7 +38,7 @@ type AxeParameters struct {
 	User      string           `json:"user,omitempty"`
 	Role      string           `json:"role,omitempty"`
 	Initiator string           `json:"initiator,omitempty"`
-	Timestamp datetime.CpsTime `json:"timestamp,omitempty"`
+	Timestamp datetime.CpsTime `json:"timestamp"`
 	// ChangeState
 	State *types.CpsNumber `json:"state,omitempty"`
 	// AssocTicket and Webhook
@@ -53,7 +54,7 @@ type AxeParameters struct {
 	// Snooze and Pbehavior
 	Duration *datetime.DurationWithUnit `json:"duration,omitempty"`
 	// Pbehavior enter
-	PbehaviorInfo types.PbehaviorInfo `json:"pbehavior_info,omitempty"`
+	PbehaviorInfo types.PbehaviorInfo `json:"pbehavior_info"`
 	// Pbehavior create
 	Name           string            `json:"name,omitempty"`
 	Reason         string            `json:"reason,omitempty"`
@@ -92,6 +93,8 @@ type AxeParameters struct {
 	CloseDelayValue *int64 `json:"close_delay,omitempty"`
 	// IsCloseDelayJob shows if an event is triggered by a close delay job.
 	IsCloseDelayJob bool `json:"is_close_delay,omitempty"`
+
+	StructuredMessage []types.StructuredMessage `json:"struct_m,omitempty"`
 }
 
 // AxeResultEvent
@@ -215,6 +218,54 @@ type ApiRemediationResultEvent struct {
 type ApiNotificationEvent struct {
 	Users []string `json:"users,omitempty"`
 	Roles []string `json:"roles,omitempty"`
+}
+
+const (
+	RecorderCmdStart  = "start"
+	RecorderCmdStop   = "stop"
+	RecorderCmdResend = "resend"
+	RecorderCmdHalt   = "halt"
+	RecorderCmdPing   = "ping"
+)
+
+// easyjson:json
+type RecorderEvent struct {
+	Cmd string
+	Opt *RecorderCommandOptions
+}
+
+type RecordStartOptions struct {
+	EventPattern pattern.Event `json:"event_pattern" binding:"event_pattern"`
+}
+
+type ResendOptions struct {
+	Delay datetime.ShortDurationWithUnit `json:"delay"`
+	// list of optional event ids to play only selected events
+	EventIds []string `json:"event_ids,omitempty"`
+}
+
+type RecorderCommandOptions struct {
+	RecordStartOptions
+	ResendOptions
+	Author   string `json:"author,omitempty"`
+	RecordID string `json:"record_id,omitempty"`
+}
+
+func NewRecorderCommandOptions() *RecorderCommandOptions {
+	return &RecorderCommandOptions{
+		RecordStartOptions: RecordStartOptions{},
+		ResendOptions:      ResendOptions{},
+	}
+}
+
+func (o *RecorderCommandOptions) SetRecordID(id string) *RecorderCommandOptions {
+	o.RecordID = id
+	return o
+}
+
+func (o *RecorderCommandOptions) SetAuthor(author string) *RecorderCommandOptions {
+	o.Author = author
+	return o
 }
 
 type Error struct {

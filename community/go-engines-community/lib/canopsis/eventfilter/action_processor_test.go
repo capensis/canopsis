@@ -49,7 +49,7 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event:        types.Event{},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Output: "test output",
 			},
@@ -61,11 +61,11 @@ func TestActionProcessor(t *testing.T) {
 			action: eventfilter.ParsedAction{
 				Type:  eventfilter.ActionSetField,
 				Name:  "Output",
-				Value: 5,
+				Value: []int{1, 2, 3},
 			},
 			event:                types.Event{},
 			regexMatches:         eventfilter.RegexMatch{},
-			externalData:         map[string]interface{}{},
+			externalData:         map[string]any{},
 			expectedEvent:        types.Event{},
 			expectedError:        true,
 			expectedUpdatedInfos: nil,
@@ -79,7 +79,7 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event:        types.Event{},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{
+			externalData: map[string]any{
 				"data_1": "test output",
 			},
 			expectedEvent: types.Event{
@@ -97,7 +97,7 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event:        types.Event{},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{
+			externalData: map[string]any{
 				"data_1": "test output",
 			},
 			expectedEvent:        types.Event{},
@@ -113,7 +113,7 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event:        types.Event{},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{
+			externalData: map[string]any{
 				"data_1": "test output",
 			},
 			expectedEvent:        types.Event{},
@@ -132,7 +132,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -164,7 +164,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -196,7 +196,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -228,7 +228,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -254,13 +254,13 @@ func TestActionProcessor(t *testing.T) {
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       []interface{}{"test2", "test"},
+				Value:       []any{"test2", "test"},
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -300,7 +300,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -333,7 +333,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -365,7 +365,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -397,7 +397,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
@@ -410,13 +410,13 @@ func TestActionProcessor(t *testing.T) {
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       []interface{}{"test", 1, "test2"},
+				Value:       []any{"test", 1, "test2"},
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
@@ -435,7 +435,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
@@ -456,7 +456,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
@@ -483,7 +483,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -524,7 +524,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -566,7 +566,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -608,7 +608,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -641,7 +641,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{
+			externalData: map[string]any{
 				"data_1": "test output",
 			},
 			expectedEvent: types.Event{
@@ -675,7 +675,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
@@ -694,7 +694,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity: &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
@@ -721,7 +721,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -762,7 +762,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -788,7 +788,7 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
 				Output:   "test resource",
@@ -807,7 +807,7 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
 			},
@@ -825,7 +825,7 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
 			},
@@ -843,7 +843,7 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
 			},
@@ -864,8 +864,8 @@ func TestActionProcessor(t *testing.T) {
 					"tag2": "value2",
 					"tag3": "value3",
 				},
-				ExtraInfos: map[string]interface{}{
-					"newtags": map[string]interface{}{
+				ExtraInfos: map[string]any{
+					"newtags": map[string]any{
 						"tag1": "value1a",
 						"tag2": "value2a",
 						"tag4": "",
@@ -873,7 +873,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Tags: map[string]string{
 					"tag0": "",
@@ -882,8 +882,8 @@ func TestActionProcessor(t *testing.T) {
 					"tag3": "value3",
 					"tag4": "",
 				},
-				ExtraInfos: map[string]interface{}{
-					"newtags": map[string]interface{}{
+				ExtraInfos: map[string]any{
+					"newtags": map[string]any{
 						"tag1": "value1a",
 						"tag2": "value2a",
 						"tag4": "",
@@ -907,12 +907,12 @@ func TestActionProcessor(t *testing.T) {
 					"tag2": "value2",
 					"tag3": "value3",
 				},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"newtags": []string{"tag1", "tag2", "tag4"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Tags: map[string]string{
 					"tag0": "",
@@ -920,7 +920,7 @@ func TestActionProcessor(t *testing.T) {
 					"tag2": "value2",
 					"tag3": "value3",
 				},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"newtags": []string{"tag1", "tag2", "tag4"},
 				},
 			},
@@ -939,7 +939,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity:   &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
 				Entity: &types.Entity{
@@ -973,7 +973,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity:   &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{
+			externalData: map[string]any{
 				"Info": 123,
 			},
 			expectedEvent: types.Event{
@@ -1009,7 +1009,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity:   &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{
+			externalData: map[string]any{
 				"Info": true,
 			},
 			expectedEvent: types.Event{
@@ -1045,7 +1045,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity:   &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
 				Entity: &types.Entity{
@@ -1076,12 +1076,12 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": []string{"test", "test2"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -1092,7 +1092,7 @@ func TestActionProcessor(t *testing.T) {
 						},
 					},
 				},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": []string{"test", "test2"},
 				},
 			},
@@ -1114,12 +1114,12 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
-					"Test": []interface{}{"test2", "test"},
+				ExtraInfos: map[string]any{
+					"Test": []any{"test2", "test"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -1130,8 +1130,8 @@ func TestActionProcessor(t *testing.T) {
 						},
 					},
 				},
-				ExtraInfos: map[string]interface{}{
-					"Test": []interface{}{"test2", "test"},
+				ExtraInfos: map[string]any{
+					"Test": []any{"test2", "test"},
 				},
 			},
 			expectedError: false,
@@ -1152,12 +1152,12 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": bson.A{"test2", "test"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -1168,7 +1168,7 @@ func TestActionProcessor(t *testing.T) {
 						},
 					},
 				},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": bson.A{"test2", "test"},
 				},
 			},
@@ -1190,12 +1190,12 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": float64(2),
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -1206,7 +1206,7 @@ func TestActionProcessor(t *testing.T) {
 						},
 					},
 				},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": float64(2),
 				},
 			},
@@ -1228,12 +1228,12 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": float32(2),
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -1244,7 +1244,7 @@ func TestActionProcessor(t *testing.T) {
 						},
 					},
 				},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": float32(2),
 				},
 			},
@@ -1266,15 +1266,15 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": 1.2,
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": 1.2,
 				},
 			},
@@ -1291,16 +1291,16 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
-					"Test": []interface{}{"test1", 1, "test2"},
+				ExtraInfos: map[string]any{
+					"Test": []any{"test1", 1, "test2"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
-					"Test": []interface{}{"test1", 1, "test2"},
+				ExtraInfos: map[string]any{
+					"Test": []any{"test1", 1, "test2"},
 				},
 			},
 			expectedError:        true,
@@ -1316,15 +1316,15 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": bson.A{"test1", 1, "test2"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": bson.A{"test1", 1, "test2"},
 				},
 			},
@@ -1341,17 +1341,17 @@ func TestActionProcessor(t *testing.T) {
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": struct {
 						Test string
 					}{Test: "test"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"Test": struct {
 						Test string
 					}{Test: "test"},
@@ -1381,7 +1381,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
 				Entity: &types.Entity{
@@ -1424,7 +1424,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
 				Entity: &types.Entity{
@@ -1453,7 +1453,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity:   &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
 				Entity:   &types.Entity{},
@@ -1474,7 +1474,7 @@ func TestActionProcessor(t *testing.T) {
 				Entity:   &types.Entity{},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
 				Entity:   &types.Entity{},
@@ -1488,7 +1488,7 @@ func TestActionProcessor(t *testing.T) {
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       []interface{}{"test2", "test3", "test1"},
+				Value:       []any{"test2", "test3", "test1"},
 			},
 			event: types.Event{
 				Entity: &types.Entity{
@@ -1502,7 +1502,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{},
+			externalData: map[string]any{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
 					Infos: map[string]types.Info{
@@ -1572,7 +1572,7 @@ func TestActionProcessor(t *testing.T) {
 					"tag0": "",
 					"tag1": "value1",
 				},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"strparam": "Prod ENV; Critical Severity;",
 				},
 			},
@@ -1600,7 +1600,7 @@ func TestActionProcessor(t *testing.T) {
 					"ENV":      "Prod",
 					"Severity": "Critical",
 				},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"strparam": "Prod ENV; Critical Severity;",
 				},
 			},
@@ -1621,7 +1621,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
-			externalData: map[string]interface{}{
+			externalData: map[string]any{
 				"data_1": "Prod",
 			},
 			expectedEvent: types.Event{
@@ -1688,7 +1688,7 @@ func TestActionProcessor(t *testing.T) {
 					"tag0": "",
 					"tag1": "value1",
 				},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"strparam": "Some text preceding tags. Prod ENV; Critical Severity;",
 				},
 			},
@@ -1716,7 +1716,7 @@ func TestActionProcessor(t *testing.T) {
 					"ENV":      "Prod",
 					"Severity": "Critical",
 				},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"strparam": "Some text preceding tags. Prod ENV; Critical Severity;",
 				},
 			},
@@ -1735,7 +1735,7 @@ func TestActionProcessor(t *testing.T) {
 					"tag0": "",
 					"tag1": "value1",
 				},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"strparam": "Prod ENV; Critical Severity;",
 				},
 			},
@@ -1755,7 +1755,7 @@ func TestActionProcessor(t *testing.T) {
 					"tag1": "value1",
 					"ENV":  "Prod ENV; Critical Severity;",
 				},
-				ExtraInfos: map[string]interface{}{
+				ExtraInfos: map[string]any{
 					"strparam": "Prod ENV; Critical Severity;",
 				},
 			},

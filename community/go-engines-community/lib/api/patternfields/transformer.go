@@ -1,5 +1,7 @@
 package patternfields
 
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/api/patternfields/transformer.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields Transformer
+
 import (
 	"context"
 	"fmt"
@@ -99,7 +101,7 @@ type Transformer interface {
 	ApplyPbehaviorCorporatePattern(r PbehaviorRequest, patterns Patterns, fieldNs ...string) (PbehaviorRequest, validator.ValidationErrors)
 	ApplyServiceWeatherCorporatePattern(r WeatherServiceRequest, patterns Patterns, fieldNs ...string) (WeatherServiceRequest, validator.ValidationErrors)
 
-	ApplyAliases(p pattern.Entity, aliasProps Aliases, fieldNs ...string) (pattern.Entity, []string, validator.ValidationErrors)
+	ApplyAliases(p [][]pattern.FieldCondition, aliasProps Aliases, fieldNs ...string) ([][]pattern.FieldCondition, []string, validator.ValidationErrors)
 
 	TransformEntityRequest(
 		ctx context.Context,
@@ -195,6 +197,10 @@ func (t *baseTransformer) FetchPatternsByUser(ctx context.Context, userID string
 }
 
 func (t *baseTransformer) FetchAliases(ctx context.Context, aliases []string) (Aliases, error) {
+	if len(aliases) == 0 {
+		return Aliases{}, nil
+	}
+
 	cursor, err := t.entityInfosPropertyCollection.Find(
 		ctx,
 		bson.M{"alias": bson.M{"$in": aliases}},
@@ -266,7 +272,7 @@ func (t *baseTransformer) ApplyEntityCorporatePattern(r EntityRequest, patterns 
 	return r, p.Aliases, nil
 }
 
-func (t *baseTransformer) ApplyAliases(p pattern.Entity, aliasProps Aliases, fieldNs ...string) (pattern.Entity, []string, validator.ValidationErrors) {
+func (t *baseTransformer) ApplyAliases(p [][]pattern.FieldCondition, aliasProps Aliases, fieldNs ...string) ([][]pattern.FieldCondition, []string, validator.ValidationErrors) {
 	if p == nil {
 		return p, nil, nil
 	}
@@ -285,7 +291,7 @@ func (t *baseTransformer) ApplyAliases(p pattern.Entity, aliasProps Aliases, fie
 
 			n, ok := aliasProps[c.Alias]
 			if !ok {
-				aliasNs := make([]string, len(fieldNs))
+				aliasNs := make([]string, len(fieldNs), len(fieldNs)+3)
 				copy(aliasNs, fieldNs)
 				aliasNs = append(aliasNs, strconv.Itoa(gi), strconv.Itoa(ci), "Alias")
 				valErrs = append(valErrs, t.newNotExistErr(aliasNs))
@@ -340,6 +346,8 @@ func (t *baseTransformer) TransformEntityRequest(
 	r any,
 	collectionName string,
 ) (epf savedpattern.EntityPatternFields, aliasPropIDs []string, err error) {
+	aliasPropIDs = make([]string, 0)
+
 	var valErrs validator.ValidationErrors
 	if er.CorporateEntityPattern != "" {
 		var patterns Patterns
@@ -350,13 +358,15 @@ func (t *baseTransformer) TransformEntityRequest(
 
 		er, aliasPropIDs, valErrs = t.ApplyEntityCorporatePattern(er, patterns)
 	} else if er.EntityPattern != nil {
-		var aliases Aliases
-		aliases, err = t.FetchAliases(ctx, GetAliases(er.EntityPattern))
-		if err != nil {
-			return epf, aliasPropIDs, err
-		}
+		patternAliases := GetAliases(er.EntityPattern)
+		if len(patternAliases) != 0 {
+			aliases, err := t.FetchAliases(ctx, patternAliases)
+			if err != nil {
+				return epf, aliasPropIDs, err
+			}
 
-		er.EntityPattern, aliasPropIDs, valErrs = t.ApplyAliases(er.EntityPattern, aliases)
+			er.EntityPattern, aliasPropIDs, valErrs = t.ApplyAliases(er.EntityPattern, aliases)
+		}
 	}
 
 	if len(valErrs) > 0 {
@@ -375,6 +385,8 @@ func (t *baseTransformer) TransformAlarmAndEntityRequest(
 	r any,
 	collectionName string,
 ) (apf savedpattern.AlarmPatternFields, epf savedpattern.EntityPatternFields, aliasPropIDs []string, err error) {
+	aliasPropIDs = make([]string, 0)
+
 	patterns, err := t.FetchCorporatePatterns(ctx,
 		ar.CorporateAlarmPattern,
 		er.CorporateEntityPattern,
@@ -389,13 +401,15 @@ func (t *baseTransformer) TransformAlarmAndEntityRequest(
 	if er.CorporateEntityPattern != "" {
 		er, aliasPropIDs, applyErrs = t.ApplyEntityCorporatePattern(er, patterns)
 	} else if er.EntityPattern != nil {
-		var aliases Aliases
-		aliases, err = t.FetchAliases(ctx, GetAliases(er.EntityPattern))
-		if err != nil {
-			return apf, epf, aliasPropIDs, err
-		}
+		patternAliases := GetAliases(er.EntityPattern)
+		if len(patternAliases) != 0 {
+			aliases, err := t.FetchAliases(ctx, patternAliases)
+			if err != nil {
+				return apf, epf, aliasPropIDs, err
+			}
 
-		er.EntityPattern, aliasPropIDs, applyErrs = t.ApplyAliases(er.EntityPattern, aliases)
+			er.EntityPattern, aliasPropIDs, applyErrs = t.ApplyAliases(er.EntityPattern, aliases)
+		}
 	}
 
 	valErrs = append(valErrs, applyErrs...)
@@ -414,16 +428,21 @@ func (t *baseTransformer) TransformAliases(ctx context.Context, p pattern.Entity
 		return p, nil, nil
 	}
 
-	aliases, err := t.FetchAliases(ctx, GetAliases(p))
-	if err != nil {
-		return p, nil, err
-	}
+	aliasPropIDs := make([]string, 0)
 
-	var aliasPropIDs []string
-	var valErrs validator.ValidationErrors
-	p, aliasPropIDs, valErrs = t.ApplyAliases(p, aliases)
-	if len(valErrs) > 0 {
-		return p, nil, validation.NewError(valErrs, r)
+	patternAliases := GetAliases(p)
+	if len(patternAliases) != 0 {
+		aliases, err := t.FetchAliases(ctx, patternAliases)
+		if err != nil {
+			return p, nil, err
+		}
+
+		var valErrs validator.ValidationErrors
+
+		p, aliasPropIDs, valErrs = t.ApplyAliases(p, aliases)
+		if len(valErrs) > 0 {
+			return p, nil, validation.NewError(valErrs, r)
+		}
 	}
 
 	return p, aliasPropIDs, nil

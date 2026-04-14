@@ -20,8 +20,8 @@ type Scenario struct {
 	Actions              []Action                   `bson:"actions" json:"actions"`
 	Priority             int64                      `bson:"priority" json:"priority"`
 	Delay                *datetime.DurationWithUnit `bson:"delay" json:"delay"`
-	Created              datetime.CpsTime           `bson:"created,omitempty" json:"created,omitempty"`
-	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty"`
+	Created              datetime.CpsTime           `bson:"created,omitempty" json:"created,omitzero"`
+	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitzero"`
 
 	// Aliases is used to ease find by entity info property api.
 	Aliases []string `bson:"aliases" json:"-"`
@@ -43,7 +43,7 @@ func (s Scenario) IsTriggered(triggers []string) string {
 type Action struct {
 	Type                     string     `bson:"type" json:"type"`
 	Comment                  string     `bson:"comment" json:"comment"`
-	Parameters               Parameters `bson:"parameters,omitempty" json:"parameters,omitempty"`
+	Parameters               Parameters `bson:"parameters,omitempty" json:"parameters"`
 	DropScenarioIfNotMatched bool       `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
 	EmitTrigger              bool       `bson:"emit_trigger" json:"emit_trigger"`
 
