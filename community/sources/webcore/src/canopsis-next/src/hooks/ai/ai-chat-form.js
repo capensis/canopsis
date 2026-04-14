@@ -1,17 +1,19 @@
+import { throttle } from 'lodash';
 import {
   computed,
   watch,
   ref,
   unref,
+  set,
   onMounted,
   onBeforeUnmount,
 } from 'vue';
-import { throttle } from 'lodash';
 
-import { SIDE_BARS, LLM_AI_CHAT_WIDTH, PATTERNS_FIELDS } from '@/constants';
+import { SIDE_BARS, LLM_AI_CHAT_WIDTH, LLM_SOCKET_CONTEXTS } from '@/constants';
 
-import { patternToForm } from '@/helpers/entities/pattern/form';
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
+import { aiChatFormToPatterns } from '@/helpers/entities/llm/chat/form';
+import { patternToForm } from '@/helpers/entities/pattern/form';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
@@ -21,6 +23,23 @@ import { useValidator } from '@/hooks/validator/validator';
 import { useAiChatLlmModel } from './ai-chat';
 
 const THROTTLE_WAIT_MS = 1000;
+
+export const useAiChatPatternsItems = ({ form = [], context } = {}) => {
+  const { t } = useI18n();
+
+  const contextToPatternsItems = {
+    [LLM_SOCKET_CONTEXTS.scenario]: () => unref(form)?.map?.((formItem, index) => ({
+      text: `${index + 1} - ${t(`scenario.actions.${formItem.type}`)}`,
+      value: formItem.key,
+    })),
+  };
+
+  const patternsItems = computed(() => contextToPatternsItems[context]?.(form) ?? []);
+
+  return {
+    patternsItems,
+  };
+};
 
 /**
  * Opens the AI chat sidebar for a filter (or similar) form, syncs changed pattern blocks to the sidebar
@@ -59,35 +78,26 @@ export const useAiChatForm = ({
     cancel: t('pattern.cancelPatternsUpdate'),
   }));
 
+  const { patternsItems } = useAiChatPatternsItems({ form, context });
+
   const throttledUpdateSidebarConfig = throttle(() => {
-    const unwrappedForm = unref(form);
-    const unwrappedField = unref(field);
+    const newConfig = {
+      patterns: aiChatFormToPatterns({
+        form: unref(form),
+        field: unref(field),
+        context: unref(context),
+      }),
+    };
 
-    if (!unwrappedForm) {
-      return;
-    }
-
-    let patterns = {};
-
-    if (unwrappedField) {
-      patterns = unwrappedForm.groups.length ? { [unwrappedField]: unwrappedForm } : {};
-    } else {
-      patterns = Object.values(PATTERNS_FIELDS).reduce((acc, patternField) => {
-        if (unwrappedForm[patternField]?.groups?.length) {
-          acc[patternField] = unwrappedForm[patternField];
-        }
-
-        return acc;
-      }, {});
+    if (patternsItems.value.length) {
+      newConfig.patternsItems = patternsItems.value;
     }
 
     sidebar.updateConfig({
       id: modalId,
-      config: { patterns },
+      config: newConfig,
     });
   }, THROTTLE_WAIT_MS);
-
-  const unwatchForm = watch(form, throttledUpdateSidebarConfig, { deep: true });
 
   const { fetchLlms } = useAiChatLlmModel({ sidebar });
 
@@ -101,8 +111,6 @@ export const useAiChatForm = ({
     const llms = await fetchLlms();
 
     if (!llms.length) {
-      unwatchForm();
-
       return;
     }
 
@@ -117,10 +125,23 @@ export const useAiChatForm = ({
         color: 'primary',
         titleIcon: '$vuetify.icons.ai',
         titleMinimized: 'AI',
-        setPatterns: (newPatterns) => {
+        setPatterns: (newPatterns, key) => {
           const formRef = form;
 
-          // TODO: analyze if we can use patternToForm or filterPatternsToForm directly
+          if (key) {
+            const index = formRef.value.findIndex(item => item.key === key);
+            const formItem = formRef.value[index];
+
+            set(formRef.value, index, {
+              ...formItem,
+              ...filterPatternsToForm(newPatterns),
+            });
+
+            Object.keys(newPatterns).forEach(patternField => validator.errors.clear(`actions.${formItem.key}.${patternField}.json`));
+
+            return;
+          }
+
           formRef.value = {
             ...formRef.value,
             ...(unref(field) ? patternToForm(newPatterns) : filterPatternsToForm(newPatterns)),
@@ -135,10 +156,12 @@ export const useAiChatForm = ({
         },
         socketRoomData: {
           context: unref(context),
-          rule_id: unref(ruleId),
+          rule: unref(ruleId),
         },
       },
     });
+
+    watch(form, throttledUpdateSidebarConfig, { deep: true, immediate: true });
   };
 
   /**

@@ -1,70 +1,69 @@
 <template>
-  <div class="sidebar-wrapper">
-    <v-navigation-drawer
-      v-model="isOpen"
-      v-bind="navigationProps"
-      :style="drawerStyle"
+  <v-navigation-drawer
+    v-model="isOpen"
+    v-bind="navigationProps"
+    :style="drawerStyle"
+    class="sidebar-wrapper"
+  >
+    <div
+      v-if="title"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div
-        v-if="title"
-        class="sidebar-wrapper__sticky-title"
-      >
-        <v-list :color="sidebar.config.color || 'secondary'">
-          <v-list-item>
-            <v-list-item-title class="text-subtitle-1">
-              <v-layout class="gap-3 align-center">
-                <v-icon v-if="sidebar.config.titleIcon" color="white">
-                  {{ sidebar.config.titleIcon }}
-                </v-icon>
-                <span class="text-h6 white--text">{{ title }}</span>
-                <portal-target :name="$constants.PORTALS_NAMES.additionalSidebarTitle" />
-              </v-layout>
-            </v-list-item-title>
-            <v-btn
-              v-if="sidebar.config?.minimizable"
-              icon
-              @click.stop="minimize"
-            >
-              <v-icon color="white">
-                $vuetify.icons.hide_sidebar
+      <v-list :color="sidebar.config.color || 'secondary'">
+        <v-list-item>
+          <v-list-item-title class="text-subtitle-1">
+            <v-layout class="gap-3 align-center">
+              <v-icon v-if="sidebar.config.titleIcon" color="white">
+                {{ sidebar.config.titleIcon }}
               </v-icon>
-            </v-btn>
-            <v-btn
-              v-else
-              icon
-              @click.stop="closeHandler"
-            >
-              <v-icon color="white">
-                close
-              </v-icon>
-            </v-btn>
-          </v-list-item>
-        </v-list>
-        <v-divider />
-      </div>
-      <v-slide-x-transition v-if="sidebar.config?.minimizable">
-        <v-layout
-          v-if="sidebar.minimized"
-          :style="minimizedHeaderStyle"
-          class="sidebar--minimized__header gap-5"
-          column
-          justify-center
-          align-center
-        >
+              <span class="text-h6 white--text">{{ title }}</span>
+              <portal-target :name="$constants.PORTALS_NAMES.additionalSidebarTitle" />
+            </v-layout>
+          </v-list-item-title>
           <v-btn
+            v-if="sidebar.config?.minimizable"
             icon
-            @click.stop="maximize"
+            @click.stop="minimize"
           >
             <v-icon color="white">
-              $vuetify.icons.show_sidebar
+              $vuetify.icons.hide_sidebar
             </v-icon>
           </v-btn>
-          <span class="text-h6 white--text">{{ sidebar.config.titleMinimized }}</span>
-        </v-layout>
-      </v-slide-x-transition>
-      <slot />
-    </v-navigation-drawer>
-  </div>
+          <v-btn
+            v-else
+            icon
+            @click.stop="closeHandler"
+          >
+            <v-icon color="white">
+              close
+            </v-icon>
+          </v-btn>
+        </v-list-item>
+      </v-list>
+      <v-divider />
+    </div>
+    <v-slide-x-transition v-if="sidebar.config?.minimizable">
+      <v-layout
+        v-if="sidebar.minimized"
+        :style="minimizedHeaderStyle"
+        class="sidebar--minimized__header gap-5"
+        column
+        justify-center
+        align-center
+      >
+        <v-btn
+          icon
+          @click.stop="maximize"
+        >
+          <v-icon color="white">
+            $vuetify.icons.show_sidebar
+          </v-icon>
+        </v-btn>
+        <span class="text-h6 white--text">{{ sidebar.config.titleMinimized }}</span>
+      </v-layout>
+    </v-slide-x-transition>
+    <slot />
+  </v-navigation-drawer>
 </template>
 
 <script>
@@ -179,8 +178,6 @@ export default {
 <style lang="scss" scoped>
 .sidebar {
   &-wrapper {
-    position: relative;
-
     &__sticky-title {
       position: sticky;
       top: 0;
@@ -188,7 +185,7 @@ export default {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
     }
 
-    ::v-deep .v-navigation-drawer {
+    &.v-navigation-drawer {
       overflow: visible;
 
       &--close .sidebar--minimized__header {

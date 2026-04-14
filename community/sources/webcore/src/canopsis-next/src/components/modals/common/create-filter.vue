@@ -82,7 +82,7 @@ export default {
       form,
       method: async () => {
         if (config.value.action) {
-          await config.value.action(formToFilter(form.value, PATTERNS_FIELDS, config.value.corporate));
+          await config.value.action(formToFilter(form.value, Object.values(PATTERNS_FIELDS), config.value.corporate));
         }
 
         close();

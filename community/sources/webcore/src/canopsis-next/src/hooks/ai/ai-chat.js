@@ -1,4 +1,4 @@
-import { isEmpty, isNil } from 'lodash';
+import { pick, isEmpty, isNil } from 'lodash';
 import {
   computed,
   ref,
@@ -18,15 +18,12 @@ import {
   LLM_AI_CHAT_ERROR_CODES,
   PATTERNS_FIELDS,
   DATETIME_FORMATS,
+  LLM_SOCKET_CONTEXTS,
 } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
 import { uid } from '@/helpers/uid';
-/**
- * TODO: REMOVE IT
- */
-import { promisedTimeout } from '@/helpers/async';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { getChangedPatternsFields } from '@/helpers/entities/pattern/form';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
@@ -259,14 +256,22 @@ export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
  *
  * @param {Object} [options]
  * @param {import('vue').Ref|Object} [options.sidebar] - Source for `config.patterns` and `setPatterns`.
+ * @param {import('vue').Ref|Object} [options.patternItem] - Selected pattern item.
  * @returns {Object} Subset of message/version API for the AI chat UI (`resetMessages`, `resetVersions`, etc.).
  */
-export const useAiChatPattern = ({ sidebar } = {}) => {
+export const useAiChatPattern = ({ sidebar, patternItem } = {}) => {
   const { t, tc } = useI18n();
 
-  const currentFormPatterns = computed(() => (
-    formFilterToPatterns(unref(sidebar)?.config?.patterns ?? {}, Object.values(PATTERNS_FIELDS))
-  ));
+  const currentFormPatterns = computed(() => {
+    const unwrappedPatternItem = unref(patternItem);
+
+    return formFilterToPatterns(
+      unwrappedPatternItem
+        ? { [unwrappedPatternItem.value]: unref(sidebar)?.config?.patterns?.[unwrappedPatternItem.value] }
+        : unref(sidebar)?.config?.patterns ?? {},
+      Object.values(PATTERNS_FIELDS),
+    );
+  });
 
   const {
     messages,
@@ -478,8 +483,8 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
    * @param {*} [payload.code] - May accompany failures from the wire format.
    * @param {Array<string>} [payload.val_errors] - Renders a `<ul>` of validation messages.
    */
-  const socketListener = async ({ error, code, val_errors: validationErrors = [], ...patterns }) => {
-    await promisedTimeout(() => {}, 1000); // TODO: remove this
+  const socketListener = async ({ error, code, val_errors: validationErrors = [], ...rest }) => {
+    const patterns = pick(rest, Object.values(PATTERNS_FIELDS));
 
     resetErrorMessage();
 
@@ -751,6 +756,37 @@ export const useAiChatSuggestions = ({ updatePrompt }) => {
   };
 };
 
+export const useAiChatPatternItems = ({ sidebar } = {}) => {
+  const { t, te } = useI18n();
+
+  const patternItem = ref(null);
+
+  const context = computed(() => unref(sidebar)?.config?.socketRoomData?.context);
+  const patternsItems = computed(() => unref(sidebar)?.config?.patternsItems ?? []);
+  const hasPatternItem = computed(() => context.value === LLM_SOCKET_CONTEXTS.scenario);
+
+  const patternsItemsLabel = computed(() => {
+    const labelKey = `llm.chat.patternsItemsLabel.${context.value}`;
+
+    if (te(labelKey)) {
+      return t(labelKey);
+    }
+
+    return te(labelKey) ? t(labelKey) : t('common.patternsItems');
+  });
+
+  const resetPatternItem = () => patternItem.value = null;
+
+  return {
+    patternItem,
+    patternsItems,
+    hasPatternItem,
+    patternsItemsLabel,
+
+    resetPatternItem,
+  };
+};
+
 /**
  * Hook for composing AI chat sidebar state: prompt, model, messages, socket, scroll, JSON auto-ask, restart.
  *
@@ -766,6 +802,16 @@ export const useAiChat = ({ sidebar } = {}) => {
   const { llm, llms, llmsPending, resetLlm, fetchLlms } = useAiChatLlmModel({ sidebar });
   const { textareaElement, applySuggestion } = useAiChatSuggestions({ updatePrompt });
 
+  const needRestart = ref(false);
+
+  const {
+    patternItem,
+    patternsItems,
+    hasPatternItem,
+    patternsItemsLabel,
+    resetPatternItem,
+  } = useAiChatPatternItems({ sidebar });
+
   const {
     currentFormPatterns,
     emptyCurrentFormPatterns,
@@ -779,7 +825,7 @@ export const useAiChat = ({ sidebar } = {}) => {
     versions,
     activeVersion,
     restoreVersion,
-  } = useAiChatPattern({ sidebar });
+  } = useAiChatPattern({ sidebar, patternItem });
 
   const {
     thinking,
@@ -844,6 +890,9 @@ export const useAiChat = ({ sidebar } = {}) => {
    * Local-only reset: prompt, selected model, errors, messages, versions, thinking (does not leave socket).
    */
   const resetChat = () => {
+    needRestart.value = false;
+
+    resetPatternItem();
     resetPrompt();
     resetLlm();
     resetErrorMessage();
@@ -875,9 +924,24 @@ export const useAiChat = ({ sidebar } = {}) => {
     unref(sidebar)?.config?.setPending?.(newThinking, emptyCurrentFormPatterns.value, stop)
   ));
 
+  watch(patternsItems, (items) => {
+    if (patternItem.value?.value && !items.some(item => item.value === patternItem.value.value)) {
+      if (emptyChat.value) {
+        resetPatternItem();
+
+        return;
+      }
+
+      errorMessage.value = t('llm.chat.patternsItemsError');
+      needRestart.value = true;
+    }
+  });
+
   return {
     bodyElement,
     textareaElement,
+
+    needRestart,
 
     prompt,
 
@@ -894,6 +958,11 @@ export const useAiChat = ({ sidebar } = {}) => {
 
     thinkingMessage,
     errorMessage,
+
+    patternItem,
+    patternsItems,
+    hasPatternItem,
+    patternsItemsLabel,
 
     ask,
     stop,

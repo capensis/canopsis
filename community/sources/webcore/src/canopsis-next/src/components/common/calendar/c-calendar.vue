@@ -166,7 +166,7 @@
 import { getStartOfWeek, getEndOfWeek } from 'vuetify/lib/components/VCalendar/util/timestamp';
 
 import { LOCALES } from '@/config';
-import { CALENDAR_TYPES, CALENDAR_START_DRAG_DELAY } from '@/constants';
+import { CALENDAR_TYPES, CALENDAR_START_DRAG_DELAY, LLM_AI_CHAT_WIDTH } from '@/constants';
 
 import {
   convertDateToEndOfDayDateObject,
@@ -181,6 +181,8 @@ import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
 import CalendarTodayBtn from './partials/calendar-today-btn.vue';
 import CalendarViewMode from './partials/calendar-view-mode.vue';
 import CalendarPagination from './partials/calendar-pagination.vue';
+
+const CALENDAR_POPOVER_WIDTH = 980; // TODO: need to move to config
 
 export default {
   components: { CalendarPagination, CalendarViewMode, CalendarTodayBtn },
@@ -508,11 +510,15 @@ export default {
     },
 
     showCreateEventPopover(event, target) {
-      const { top, left, width } = target.getBoundingClientRect();
+      const { top } = target.getBoundingClientRect();
 
       this.setPopoverEvent(event);
 
-      this.positionX = left + width / 2;
+      const wrapperWidth = window.innerWidth * 0.95;
+      const wrapperWidthWidhoutAiChat = wrapperWidth - LLM_AI_CHAT_WIDTH;
+      const left = (wrapperWidthWidhoutAiChat - CALENDAR_POPOVER_WIDTH) / 2;
+
+      this.positionX = left;
       this.positionY = top;
 
       this.popoverOpen = true;
@@ -710,6 +716,10 @@ export default {
 </script>
 
 <style lang="scss">
+:root {
+  --c-calendar-popover-width: 980px;
+}
+
 .c-calendar {
   position: relative;
 
@@ -823,7 +833,7 @@ export default {
   &__popover-wrapper {
     max-height: 95%;
     max-width: 95% !important;
-    width: 980px !important;
+    width: var(--c-calendar-popover-width) !important;
     top: 50% !important;
     transform: translate3d(0, -50%, 0);
   }
