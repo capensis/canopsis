@@ -10,6 +10,6 @@ type CorrelationRuleTags struct {
 type CorrelationRuleInfo struct {
 	Name             string `bson:"name" json:"name"`
 	Description      string `bson:"description,omitempty" json:"description,omitempty"`
-	Value            any    `bson:"value,omitempty" json:"value,omitempty"`
+	Value            any    `bson:"value,omitempty" json:"value,omitempty" swaggertype:"object"`
 	CopyFromChildren bool   `bson:"copy_from_children,omitempty" json:"copy_from_children,omitempty"`
 }
