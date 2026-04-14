@@ -112,8 +112,7 @@ func NewActionLogger(
 		mongo.MapMongoCollection:                 ValueTypeMap,
 		mongo.MetaAlarmRulesMongoCollection:      ValueTypeMetaalarmRule,
 		mongo.SnmpRulesCollection:                ValueTypeSnmpRule,
-		mongo.InstructionMongoCollection:         ValueTypeInstruction,
-		mongo.EventRecordsMongoCollection:        ValueTypeEventRecord,
+		mongo.InstructionMongoCollection:         ValueTypeInstruction, // TODO: removed {mongo.EventRecordsMongoCollection: ValueTypeEventRecord}; when EventRecordsMongoCollection needs to be logged then its records should be limited by {"m": nil} condition
 		mongo.ExternalDataTableCollection:        ValueTypeExternalData,
 		mongo.EntityInfosPropertyCollection:      ValueTypeEntityInfosProperty,
 		mongo.UserNotificationSettingsCollection: ValueTypeUserNotificationSetting,
