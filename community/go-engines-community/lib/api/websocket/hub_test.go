@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -377,16 +376,21 @@ func TestHub_Connect_ShouldCallOnJoinHandler(t *testing.T) {
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
 		expectedJoinedMessage := websocket.ServerMessage{
 			Type: websocket.ServerMessageJoined,
@@ -473,16 +477,21 @@ func TestHub_Connect_ShouldCallOnLeaveHandler(t *testing.T) {
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
 		expectedJoinedMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageJoined,
@@ -584,16 +593,21 @@ func TestHub_Connect_GivenStopRun_ShouldCallOnLeaveHandler(t *testing.T) {
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
 		writeCh := make(chan websocket.ServerMessage, 1)
 		defer close(writeCh)
@@ -671,16 +685,21 @@ func TestHub_Connect_ShouldCallAuthorizeHandler(t *testing.T) {
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
 		expectedAuthMessage := websocket.ServerMessage{
 			Type: websocket.ServerMessageAuthSuccess,
@@ -781,16 +800,21 @@ func TestHub_Connect_ShouldPeriodicallyCheckAuthorization(t *testing.T) {
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
 		expectedAuthMessage := websocket.ServerMessage{
 			Type: websocket.ServerMessageAuthSuccess,
@@ -913,16 +937,21 @@ func TestHub_SendMessage_ShouldDeliverToRoomConnections(t *testing.T) {
 		mockConn1 := mock_websocket.NewMockConn(ctrl)
 		mockConn1.EXPECT().Close().Do(func() { close(readCh1) })
 		mockConn1.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh1 {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh1:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
 		expectedJoinedMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageJoined,
@@ -948,16 +977,21 @@ func TestHub_SendMessage_ShouldDeliverToRoomConnections(t *testing.T) {
 		mockConn2 := mock_websocket.NewMockConn(ctrl)
 		mockConn2.EXPECT().Close().Do(func() { close(readCh2) })
 		mockConn2.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh2 {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh2:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		})
 		mockConn2.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 		mockConn2.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -1039,16 +1073,21 @@ func TestHub_SendMessageToUser_ShouldDeliverToUser(t *testing.T) {
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
 		expectedAuthMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageAuthSuccess,
@@ -1152,16 +1191,21 @@ func TestHub_LeaveRoom_ShouldSendCloseRoomAndCallOnLeave(t *testing.T) {
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
 		expectedJoinedMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageJoined,
@@ -1259,16 +1303,21 @@ func TestHub_Connect_GivenJoinMessageWithoutAuth_ShouldReturn401(t *testing.T) {
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
 		expectedUnauthMsg := websocket.ServerMessage{
 			Type:    websocket.ServerMessageError,
@@ -1350,16 +1399,21 @@ func TestHub_Connect_GivenAuthMessageWithInvalidToken_ShouldReturn401(t *testing
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
 		expectedUnauthMsg := websocket.ServerMessage{
 			Type:    websocket.ServerMessageError,
@@ -1429,16 +1483,21 @@ func TestHub_Connect_GivenCheckAuthWithExpiredToken_ShouldReturn401(t *testing.T
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
 		expectedAuthMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageAuthSuccess,
@@ -1529,16 +1588,21 @@ func TestHub_Connect_GivenJoinUnregisteredRoom_ShouldReturn404(t *testing.T) {
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
 		expectedNotFoundMsg := websocket.ServerMessage{
 			Type:    websocket.ServerMessageError,
@@ -1611,16 +1675,21 @@ func TestHub_Connect_GivenOnJoinReturnsJoinError_ShouldSendInfoMessage(t *testin
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
 		expectedInfoMsg := websocket.ServerMessage{
 			Type:    websocket.ServerMessageInfo,
@@ -1709,16 +1778,21 @@ func TestHub_Connect_GivenDoubleJoin_ShouldCallOnJoinOnce(t *testing.T) {
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
 		expectedJoinedMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageJoined,
@@ -1808,16 +1882,21 @@ func TestHub_Connect_GivenClientPingMessage_ShouldSendClientPong(t *testing.T) {
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(2)
 		expectedPongMsg := websocket.ServerMessage{
 			Type: websocket.ServerMessageClientPong,
@@ -1885,16 +1964,21 @@ func TestHub_Connect_GivenInfoMessage_ShouldCallOnMessageHandler(t *testing.T) {
 		encoder := json.NewEncoder()
 		decoder := json.NewDecoder()
 		mockConn.EXPECT().NextReader().DoAndReturn(func() (int, io.Reader, error) {
-			for v := range readCh {
-				b, err := encoder.Encode(v)
+			select {
+			case <-ctx.Done():
+				return -1, nil, ctx.Err()
+			case msg, ok := <-readCh:
+				if !ok {
+					return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
+				}
+
+				b, err := encoder.Encode(msg)
 				if err != nil {
 					t.Fatalf("cannot encode join message: %v", err)
 				}
 
 				return gorillawebsocket.TextMessage, bytes.NewReader(b), nil
 			}
-
-			return -1, nil, &gorillawebsocket.CloseError{Code: gorillawebsocket.CloseNormalClosure}
 		}).Times(3)
 		writeCh := make(chan websocket.ServerMessage, 1)
 		defer close(writeCh)
@@ -2025,7 +2109,7 @@ func (w *serverMessageWriter) Write(b []byte) (int, error) {
 	select {
 	case w.ch <- received:
 	default:
-		return 0, fmt.Errorf("write channel full")
+		return 0, errors.New("write channel full")
 	}
 
 	return len(b), nil
