@@ -69,6 +69,7 @@ type Store interface {
 	ConnectorDelete(ctx context.Context, r BulkConnectorDeleteRequestItem) (string, error)
 	ExecPatternAndUpdate(ctx context.Context, r ExecPatternRequest) (*apipattern.CountResponse, error)
 	ExecPatternsAndUpdate(ctx context.Context) error
+	Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, bool, error)
 }
 
 type store struct {
@@ -1233,6 +1234,30 @@ func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
 	s.websocketHub.SendMessage(ctx, map[string]bool{"ok": true}, websocket.ToRoom(websocket.RoomPbhPatterns))
 
 	return nil
+}
+
+func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, bool, error) {
+	var prevPbh pbehavior.PBehavior
+
+	err := s.dbCollection.FindOneAndUpdate(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"enabled": enabled,
+			"author":  r.Author,
+			"updated": datetime.NewCpsTime(),
+		}},
+		options.FindOneAndUpdate().SetReturnDocument(options.Before).SetProjection(bson.M{"inherited": 1}),
+	).Decode(&prevPbh)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return false, false, nil
+		}
+
+		return false, false, err
+	}
+
+	return true, prevPbh.Inherited, nil
 }
 
 func (s *store) getMatchedPbhIDs(ctx context.Context, entity libtypes.Entity) ([]string, error) {

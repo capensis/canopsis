@@ -33,6 +33,8 @@ type API interface {
 	DBExport(c *gin.Context)
 	ExecPattern(c *gin.Context)
 	ExecAllPatterns(c *gin.Context)
+	BulkEnable(c *gin.Context)
+	BulkDisable(c *gin.Context)
 }
 
 type api struct {
@@ -742,6 +744,48 @@ func (a *api) ExecAllPatterns(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// BulkEnable
+// @Param body body []BulkToggleRequestItem true "body"
+func (a *api) BulkEnable(c *gin.Context) {
+	a.toggle(c, true)
+}
+
+// BulkDisable
+// @Param body body []BulkToggleRequestItem true "body"
+func (a *api) BulkDisable(c *gin.Context) {
+	a.toggle(c, false)
+}
+
+func (a *api) toggle(c *gin.Context, enabled bool) {
+	recomputeInherited := false
+	exists := make(map[string]bool)
+	ids := make([]string, 0)
+
+	bulk.Handler(c, func(request BulkToggleRequestItem) (string, error) {
+		ok, curRecomputeInherited, err := a.store.Toggle(c, request, enabled)
+		if err != nil {
+			return "", err
+		}
+
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
+		if !exists[request.ID] {
+			ids = append(ids, request.ID)
+			exists[request.ID] = true
+		}
+
+		recomputeInherited = recomputeInherited || curRecomputeInherited
+
+		return request.ID, nil
+	}, a.errorResponder)
+
+	if len(ids) > 0 {
+		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids, RecomputeInherited: recomputeInherited})
+	}
 }
 
 func (a *api) sendComputeTask(event rpc.PbehaviorRecomputeEvent) {
