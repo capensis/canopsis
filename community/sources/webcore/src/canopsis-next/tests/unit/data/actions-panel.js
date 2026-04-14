@@ -27,3 +27,17 @@ export const ackAction = {
   title: 'Ack title',
   method: jest.fn(),
 };
+
+export const fastPbehaviorAddAction = {
+  icon: 'motion_photos_paused',
+  title: 'Fast pbehavior add',
+  type: 'fastPbehaviorAdd',
+  method: jest.fn(),
+};
+
+export const fastPbehaviorRemoveAction = {
+  icon: 'play_arrow',
+  title: 'Fast pbehavior remove',
+  type: 'fastPbehaviorRemove',
+  method: jest.fn(),
+};

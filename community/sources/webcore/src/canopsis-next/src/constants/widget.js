@@ -80,7 +80,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.userStatistics]: 'perm_identity',
   [WIDGET_TYPES.alarmStatistics]: 'notification_important',
   [WIDGET_TYPES.availability]: 'published_with_changes',
-  [WIDGET_TYPES.externalDataTable]: '$vuetify.icons.database_outlined',
+  [WIDGET_TYPES.externalDataTable]: 'database',
 
   ...featuresService.get('constants.WIDGET_ICONS'),
 };

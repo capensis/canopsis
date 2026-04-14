@@ -59,6 +59,8 @@ type AlarmStep struct {
 
 	DisplayGroup        string `bson:"dgroup,omitempty" json:"dgroup,omitempty"`
 	InPbehaviorInterval bool   `bson:"in_pbh,omitempty" json:"in_pbh,omitempty"`
+
+	StructuredMessage []StructuredMessage `bson:"struct_m,omitempty" json:"struct_m,omitempty"`
 }
 
 func (s *AlarmStep) GetInitiator() string {

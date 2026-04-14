@@ -2,7 +2,12 @@ import { omit, map } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules, createTemplateVarsModule, createEntityInfoPropertyModule } from '@unit/utils/store';
+import {
+  createMockedStoreModules,
+  createTemplateVarsModule,
+  createEntityInfoPropertyModule,
+  createCommentTemplateModule,
+} from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
 import { mockSidebar } from '@unit/utils/mock-hooks';
@@ -98,6 +103,7 @@ const snapshotStubs = {
   'field-root-cause-settings': true,
   'field-availability-graph-settings': true,
   'field-quick-alarm-actions': true,
+  'field-comment-templates': true,
 };
 
 const selectSwitcherFieldByTitle = (wrapper, title) => wrapper.find(`input.field-switcher[title="${title}"]`);
@@ -137,6 +143,10 @@ const selectFieldKioskHideToolbar = wrapper => selectSwitcherFieldByTitle(wrappe
 const selectFieldActionsAllowWithOkState = wrapper => selectSwitcherFieldByTitle(
   wrapper,
   'Actions allowed when state OK',
+);
+const selectFieldKeepSelectedAfterAction = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Keep selected after action',
 );
 const selectFieldCorrelationEnabled = wrapper => selectSwitcherFieldByTitle(
   wrapper,
@@ -187,6 +197,7 @@ describe('alarm', () => {
 
   const { templateVarsModule } = createTemplateVarsModule();
   const { entityInfoPropertyModule } = createEntityInfoPropertyModule();
+  const { commentTemplateModule } = createCommentTemplateModule();
 
   const widget = {
     ...generateDefaultAlarmListWidget(),
@@ -226,6 +237,7 @@ describe('alarm', () => {
     serviceModule,
     infosModule,
     templateVarsModule,
+    commentTemplateModule,
   ]);
 
   const timestamp = 1386435600000;
@@ -640,6 +652,7 @@ describe('alarm', () => {
         entityInfoPropertyModule,
         infosModule,
         templateVarsModule,
+        commentTemplateModule,
         {
           ...authModule,
           getters: {
@@ -690,6 +703,7 @@ describe('alarm', () => {
         entityInfoPropertyModule,
         infosModule,
         templateVarsModule,
+        commentTemplateModule,
         {
           ...authModule,
           getters: {
@@ -1359,6 +1373,32 @@ describe('alarm', () => {
     });
   });
 
+  test('Keep selected after action changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const keepSelectedAfterAction = Faker.datatype.boolean();
+
+    selectFieldKeepSelectedAfterAction(wrapper).triggerCustomEvent('input', keepSelectedAfterAction);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'keepSelectedAfterAction', keepSelectedAfterAction),
+      },
+    });
+  });
+
   test('Actions allowed with state ok changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
@@ -1616,6 +1656,7 @@ describe('alarm', () => {
         entityInfoPropertyModule,
         serviceModule,
         templateVarsModule,
+        commentTemplateModule,
         {
           ...authModule,
           getters: {

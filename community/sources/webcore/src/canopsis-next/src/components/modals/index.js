@@ -245,6 +245,10 @@ export const CreateBroadcastMessage = () => ({
   component: import(/* webpackChunkName: "BroadcastMessage" */ './admin/create-broadcast-message.vue'),
   loading: LoaderOverlay,
 });
+export const CreateCommentTemplate = () => ({
+  component: import(/* webpackChunkName: "CommentTemplate" */ './comment-template/create-comment-template.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateEventFilter = () => ({
   component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter.vue'),
   loading: LoaderOverlay,
@@ -396,6 +400,10 @@ export const ExecuteDeclareTickets = () => ({
 });
 export const CreateAssociateTicketEvent = () => ({
   component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-associate-ticket-event.vue'),
+  loading: LoaderOverlay,
+});
+export const RemoveAssociatedTicketEvent = () => ({
+  component: import(/* webpackChunkName: "Events" */ './alarm/create-remove-associated-ticket-event.vue'),
   loading: LoaderOverlay,
 });
 

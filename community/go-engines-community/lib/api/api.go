@@ -8,7 +8,6 @@ import (
 	"runtime/debug"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
@@ -53,10 +52,6 @@ type API interface {
 	AddNoRoute(...gin.HandlerFunc)
 	// AddNoMethod adds handlers for no method.
 	AddNoMethod(...gin.HandlerFunc)
-	// SetWebsocketHub sets websocket hub.
-	SetWebsocketHub(websocket.Hub)
-	// GetWebsocketHub gets websocket hub.
-	GetWebsocketHub() websocket.Hub
 }
 
 type api struct {
@@ -68,8 +63,6 @@ type api struct {
 
 	noRouteHandlers  []gin.HandlerFunc
 	noMethodHandlers []gin.HandlerFunc
-
-	websocketHub websocket.Hub
 }
 
 // New creates new api.
@@ -154,13 +147,6 @@ func (a *api) Run(ctx context.Context) error {
 	})
 
 	return apiErrGroup.Wait()
-}
-
-func (a *api) SetWebsocketHub(v websocket.Hub) {
-	a.websocketHub = v
-}
-func (a *api) GetWebsocketHub() websocket.Hub {
-	return a.websocketHub
 }
 
 func (a *api) registerRoutes() (http.Handler, error) {

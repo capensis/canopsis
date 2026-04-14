@@ -1,4 +1,10 @@
-import { cloneDeep, isBoolean, isNull, omit } from 'lodash';
+import {
+  cloneDeep,
+  isBoolean,
+  isNull,
+  omit,
+  map,
+} from 'lodash';
 
 import {
   DENSE_TYPES,
@@ -24,10 +30,11 @@ import {
 } from '@/constants';
 import { EXPAND_DEFAULT_MAX_LETTERS, PAGINATION_LIMIT } from '@/config';
 
+import { uid } from '@/helpers/uid';
 import { setSeveralFields } from '@/helpers/immutable';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
-import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
+import { addKeyInEntities, addKeyInEntity, removeKeyFromEntities } from '@/helpers/array';
 import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
 import { hasStateSetting } from '@/helpers/entities/entity/entity';
 import { convertAlarmWidgetParametersToActiveColumns } from '@/helpers/entities/alarm/query';
@@ -155,6 +162,14 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {string} exportPdfTemplateTemplate
  * @property {boolean} showRootCauseByStateClick
  * @property {ColorIndicator} rootCauseColorIndicator
+ * @property {WidgetColumnsParameters} columns
+ */
+
+/**
+ * @typedef {Object} WidgetFastPbehaviorParameters
+ * @property {string} name_prefix
+ * @property {string} type
+ * @property {string} reason
  */
 
 /**
@@ -185,11 +200,10 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isHtmlEnabledOnTimeLine
  * @property {boolean} pausePeriodicRefreshOnExpandPanel
  * @property {boolean} isActionsAllowWithOkState
+ * @property {boolean} keepSelectedAfterAction
  * @property {boolean} isVirtualScrollEnabled
  * @property {boolean} isCorrelationEnabled
- * @property {string} fastPbehaviorNamePrefix
- * @property {string} fastPbehaviorType
- * @property {string} fastPbehaviorReason
+ * @property {FastPbehaviorParameters[]} fast_pbehaviors
  * @property {boolean} sticky_header
  * @property {boolean} sticky_horizontal_scroll
  * @property {WidgetDenseParameters} dense
@@ -201,6 +215,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetQuickAction[]} quickMassActions
  * @property {string} quickMassActionsTemplate
  * @property {boolean} hideMassActions
+ * @property {Array} comment_templates
  */
 
 /**
@@ -233,6 +248,10 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  */
 
 /**
+ * @typedef {WidgetFastPbehaviorParametersForm & ObjectKey} WidgetFastPbehaviorParametersForm
+ */
+
+/**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetDefaultParametersForm
  * @property {string | Symbol} widgetColumnsTemplate
  * @property {string | Symbol} widgetGroupColumnsTemplate
@@ -244,6 +263,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetColumnForm[]} serviceDependenciesColumns
  * @property {WidgetQuickActionForm[]} quickActions
  * @property {WidgetQuickActionForm[]} quickMassActions
+ * @property {WidgetFastPbehaviorParametersForm[]} fast_pbehaviors
  */
 
 /**
@@ -305,6 +325,7 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
   widgetColumnsTemplate: widgetTemplateValueToForm(alarmListParameters.widgetColumnsTemplate),
   widgetColumns: widgetColumnsToForm(alarmListParameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  columns: columnsParametersToForm(alarmListParameters.columns),
   exportPdfTemplate: alarmListParameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
   exportPdfTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.exportPdfTemplateTemplate),
   showRootCauseByStateClick: alarmListParameters.showRootCauseByStateClick ?? true,
@@ -352,6 +373,41 @@ export const alarmListChartToForm = (chart = {}) => {
 };
 
 /**
+ * Convert widget comment template IDs to form objects with unique keys
+ *
+ * @param {Array} [commentTemplates=[]]
+ * @return {Array}
+ */
+export const widgetCommentTemplatesToForm = (commentTemplates = []) => (
+  commentTemplates.map(template => ({
+    template,
+    key: uid(),
+  }))
+);
+
+/**
+ * Convert a single fast pbehavior parameter to form format.
+ *
+ * @param {WidgetFastPbehaviorParameters || {}} [fastPbehavior = {}]
+ * @return {WidgetFastPbehaviorParametersForm}
+ */
+export const alarmListFastPbehaviorParametersItemToForm = (fastPbehavior = {}) => addKeyInEntity({
+  name_prefix: fastPbehavior.name_prefix ?? '',
+  type: fastPbehavior.type ?? '',
+  reason: fastPbehavior.reason ?? '',
+});
+
+/**
+ * Convert fast pbehavior parameters array to form format.
+ *
+ * @param {WidgetFastPbehaviorParameters[]} [fastPbehavior = []]
+ * @return {WidgetFastPbehaviorParametersForm[]}
+ */
+export const alarmListFastPbehaviorParametersToForm = (fastPbehavior = []) => (
+  fastPbehavior.map(alarmListFastPbehaviorParametersItemToForm)
+);
+
+/**
  * Convert alarm list widget parameters to form
  *
  * @param {AlarmListWidgetDefaultParameters} [parameters = {}]
@@ -371,11 +427,10 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
   pausePeriodicRefreshOnExpandPanel: parameters.pausePeriodicRefreshOnExpandPanel ?? false,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
+  keepSelectedAfterAction: !!parameters.keepSelectedAfterAction,
   isVirtualScrollEnabled: !!parameters.isVirtualScrollEnabled,
   isCorrelationEnabled: !!parameters.isCorrelationEnabled,
-  fastPbehaviorNamePrefix: parameters.fastPbehaviorNamePrefix ?? '',
-  fastPbehaviorType: parameters.fastPbehaviorType,
-  fastPbehaviorReason: parameters.fastPbehaviorReason,
+  fast_pbehaviors: alarmListFastPbehaviorParametersToForm(parameters.fast_pbehaviors),
   sticky_header: !!parameters.sticky_header,
   sticky_horizontal_scroll: !!parameters.sticky_horizontal_scroll,
   dense: parameters.dense ?? DENSE_TYPES.large,
@@ -414,6 +469,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   quickActions: widgetQuickActionsToForm(parameters.quickActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   quickMassActions: widgetQuickActionsToForm(parameters.quickMassActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   hideMassActions: parameters.hideMassActions ?? false,
+  comment_templates: widgetCommentTemplatesToForm(parameters.comment_templates ?? []),
   sort: widgetSortColumnsToForm(parameters.sort),
   sortTemplate: widgetTemplateValueToForm(parameters.sortTemplate),
 });
@@ -487,6 +543,14 @@ export const formToAlarmListChart = ({ type, title, parameters }) => {
 };
 
 /**
+ * Convert widget comment templates form to array of template values
+ *
+ * @param {Array} [form=[]]
+ * @return {Array}
+ */
+export const formToWidgetCommentTemplates = (form = []) => map(form, 'template');
+
+/**
  * Convert form parameters to alarm list widget parameters
  *
  * @param {AlarmListWidgetParametersForm} form
@@ -511,6 +575,8 @@ export const formToAlarmListWidgetParameters = (form) => {
     quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
     quickActions: formToWidgetQuickActions(form.quickActions),
     quickMassActions: formToWidgetQuickActions(form.quickMassActions),
+    comment_templates: formToWidgetCommentTemplates(form.comment_templates),
+    fast_pbehaviors: removeKeyFromEntities(form.fast_pbehaviors),
     sort: formToWidgetSortColumns(form.sort),
     sortTemplate: formToWidgetTemplateValue(form.sortTemplate),
   };
@@ -737,4 +803,25 @@ export const getAlarmsListWidgetColumnComponentGetter = (
       maxLetters,
     },
   });
+};
+
+/**
+ * Convert comment form to create comment event payload
+ *
+ * @param {Object} form - Comment form data
+ * @returns {Object} Comment event payload with either comment or struct_comment
+ */
+export const createCommentFormToCreateCommentEvent = (form) => {
+  if (!form.template) {
+    return {
+      comment: form.comment,
+    };
+  }
+
+  return {
+    struct_comment: (form.template?.fields ?? []).map(({ name: field }) => ({
+      field,
+      message: form[field],
+    })).filter(({ message }) => message),
+  };
 };
