@@ -5737,6 +5737,16 @@ paths:
             items:
               type: string
         - $ref: '#/components/parameters/search_pattern'
+        - name: negative_entity_pattern
+          in: query
+          schema:
+            type: string
+          example: '[[{"field":"name","cond":{"type":"eq","value":"cps_name"}}]]'
+        - name: pbehavior_pattern
+          in: query
+          schema:
+            type: string
+          example: '[[{"field":"pbehavior_info.id","cond":{"type":"eq","value":"df17b079-03fb-4a4f-a19d-14d9c0c3563b"}}]]'
         - name: no_events
           in: query
           schema:
