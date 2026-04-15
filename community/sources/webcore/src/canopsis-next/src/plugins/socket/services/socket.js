@@ -155,7 +155,7 @@ class Socket {
    */
   addMessageToSend(message) {
     const messageExists = this.messagesToSend
-      .find(({ data, authNeeded }) => message.data === data && message.authNeeded === authNeeded);
+      .find(({ payload, authNeeded }) => message.payload === payload && message.authNeeded === authNeeded);
 
     if (messageExists) {
       return this;
@@ -167,16 +167,16 @@ class Socket {
   }
 
   /**
-   * Send data to connection
+   * Send payload to connection
    *
-   * @param {Object} data
+   * @param {Object} payload
    * @param {boolean} [authNeeded = false]
    * @returns {Socket}
    */
-  send(data, authNeeded = false) {
+  send(payload, authNeeded = false) {
     if (!this.isConnectionOpen || (authNeeded && !this.authenticated)) {
       this.addMessageToSend({
-        data,
+        payload,
         authNeeded,
       });
 
@@ -184,7 +184,7 @@ class Socket {
     }
 
     try {
-      this.connection.send(JSON.stringify(data));
+      this.connection.send(JSON.stringify(payload));
     } catch (err) {
       console.error(err);
     }
@@ -196,17 +196,17 @@ class Socket {
    * Join to a room
    *
    * @param {string} room
-   * @param {Object} [data = {}]
+   * @param {Object} [payload = {}]
    * @param {boolean} [authNeeded = true]
    * @returns {SocketRoom}
    */
-  join(room, data = {}, authNeeded = true) {
+  join(room, payload = {}, authNeeded = true) {
     if (!this.rooms[room]) {
-      this.rooms[room] = new SocketRoom(room, data, authNeeded);
+      this.rooms[room] = new SocketRoom(room, payload, authNeeded);
 
       this.send({
         room,
-        data,
+        payload,
         type: REQUEST_MESSAGES_TYPES.join,
       }, authNeeded);
     } else {
@@ -343,7 +343,7 @@ class Socket {
     Object.entries(this.rooms).forEach(([name, room]) => {
       room.decrement();
 
-      this.join(name, room.data, room.authNeeded);
+      this.join(name, room.payload, room.authNeeded);
     });
 
     return this;
@@ -360,7 +360,7 @@ class Socket {
     }
 
     const { toSend, toDelay } = this.messagesToSend.reduce((acc, message) => {
-      if (message.data.type === REQUEST_MESSAGES_TYPES.leave) {
+      if (message.payload.type === REQUEST_MESSAGES_TYPES.leave) {
         return acc;
       }
 
@@ -376,7 +376,7 @@ class Socket {
       toDelay: [],
     });
 
-    toSend.forEach(({ data, authNeeded }) => this.send(data, authNeeded));
+    toSend.forEach(({ payload, authNeeded }) => this.send(payload, authNeeded));
 
     this.messagesToSend = toDelay;
 
@@ -446,14 +446,14 @@ class Socket {
    * @param {string} data
    */
   baseMessageHandler({ data }) {
-    const { type, room, msg, error } = JSON.parse(data);
+    const { type, room, payload, error } = JSON.parse(data);
 
     switch (type) {
       case RESPONSE_MESSAGES_TYPES.pong:
         this.lastPongedAt = Date.now();
         break;
       case RESPONSE_MESSAGES_TYPES.ok:
-        this.rooms[room]?.call(null, msg);
+        this.rooms[room]?.call(null, payload);
         break;
       case RESPONSE_MESSAGES_TYPES.error:
         this.connection.dispatchEvent(

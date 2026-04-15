@@ -1132,6 +1132,8 @@ export default {
     title: 'Enregistrement des événements {date}',
     subtitle: '{count} événements reçus',
     buttonTooltip: 'Supprimer les événements reçus',
+    eventsTab: 'Événements',
+    patternTab: 'Modèle',
   },
   createExternalDataTable: {
     create: {

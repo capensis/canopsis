@@ -69,7 +69,7 @@ func TestHub_Connect_GivenStopRun_ShouldCloseConnection(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err := hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -128,7 +128,7 @@ func TestHub_Connect_GivenReadError_ShouldCloseConnection(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err := hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -209,7 +209,7 @@ func TestHub_Connect_GivenWriteError_ShouldCloseConnection(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -275,7 +275,7 @@ func TestHub_Connect_GivenPingWriteError_ShouldCloseConnection(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err := hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -341,7 +341,7 @@ func TestHub_Connect_ShouldSendPingMessage(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err := hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -435,7 +435,7 @@ func TestHub_Connect_ShouldCallOnJoinHandler(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -541,7 +541,7 @@ func TestHub_Connect_ShouldCallOnLeaveHandler(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -648,7 +648,7 @@ func TestHub_Connect_GivenStopRun_ShouldCallOnLeaveHandler(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -748,7 +748,7 @@ func TestHub_Connect_ShouldCallAuthorizeHandler(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -877,7 +877,7 @@ func TestHub_Connect_ShouldPeriodicallyCheckAuthorization(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -1022,7 +1022,7 @@ func TestHub_SendMessage_ShouldDeliverToRoomConnections(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect conn1: %v", err)
@@ -1135,7 +1135,7 @@ func TestHub_SendMessageToUser_ShouldDeliverToUser(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -1255,7 +1255,7 @@ func TestHub_LeaveRoom_ShouldSendCloseRoomAndCallOnLeave(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -1361,7 +1361,7 @@ func TestHub_Connect_GivenJoinMessageWithoutAuth_ShouldReturn401(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -1447,7 +1447,7 @@ func TestHub_Connect_GivenAuthMessageWithInvalidToken_ShouldReturn401(t *testing
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err := hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -1545,7 +1545,7 @@ func TestHub_Connect_GivenCheckAuthWithExpiredToken_ShouldReturn401(t *testing.T
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err := hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -1637,7 +1637,7 @@ func TestHub_Connect_GivenJoinUnregisteredRoom_ShouldReturn404(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err := hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -1737,7 +1737,7 @@ func TestHub_Connect_GivenOnJoinReturnsJoinError_ShouldSendInfoMessage(t *testin
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -1837,7 +1837,7 @@ func TestHub_Connect_GivenDoubleJoin_ShouldCallOnJoinOnce(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -1928,7 +1928,7 @@ func TestHub_Connect_GivenClientPingMessage_ShouldSendClientPong(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err := hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -2019,7 +2019,7 @@ func TestHub_Connect_GivenInfoMessage_ShouldCallOnMessageHandler(t *testing.T) {
 		}()
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/ws", nil)
 		err = hub.Connect(w, r)
 		if err != nil {
 			t.Fatalf("cannot connect: %v", err)
@@ -2072,7 +2072,7 @@ func TestHub_Connect_GivenFullBuffer_ShouldReturnError(t *testing.T) {
 			encoder, decoder, zerolog.Nop())
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
+		r := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/ws", nil)
 		for i := range 10 {
 			err := hub.Connect(w, r)
 			if err != nil {

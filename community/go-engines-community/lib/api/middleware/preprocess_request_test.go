@@ -30,7 +30,7 @@ func TestSetAuthor_ShouldUpdateAuthor(t *testing.T) {
 	}
 
 	noAuthorEncodedBody, _ := json.Marshal(noAuthorBody)
-	req := httptest.NewRequest(http.MethodPost, okURL, bytes.NewReader(noAuthorEncodedBody))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, okURL, bytes.NewReader(noAuthorEncodedBody))
 	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 	router := gin.New()
 	router.POST(
@@ -88,7 +88,7 @@ func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 	}
 
 	noAuthorEncodedBody, _ := json.Marshal(noAuthorBody)
-	req := httptest.NewRequest(http.MethodPost, okURL, bytes.NewReader(noAuthorEncodedBody))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, okURL, bytes.NewReader(noAuthorEncodedBody))
 	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 	router := gin.New()
 	router.POST(
@@ -146,8 +146,10 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 		},
 	}
 
+	ctx := t.Context()
+
 	body, _ := json.Marshal(valid)
-	req := httptest.NewRequest(http.MethodPost, okURL, bytes.NewReader(body))
+	req := httptest.NewRequestWithContext(ctx, http.MethodPost, okURL, bytes.NewReader(body))
 	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 	mockErrResponder.EXPECT().Respond(gomock.Any(), gomock.Eq(httperror.ErrRequestEntityTooLarge)).Do(func(c *gin.Context, err error) {
 		c.AbortWithStatus(http.StatusRequestEntityTooLarge)
@@ -185,7 +187,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 	}
 
 	body, _ = json.Marshal(invalid)
-	req = httptest.NewRequest(http.MethodPost, okURL, bytes.NewReader(body))
+	req = httptest.NewRequestWithContext(ctx, http.MethodPost, okURL, bytes.NewReader(body))
 
 	w = httptest.NewRecorder()
 	router.ServeHTTP(w, req)

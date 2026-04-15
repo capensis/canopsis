@@ -7,6 +7,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -92,6 +93,8 @@ type AxeParameters struct {
 	CloseDelayValue *int64 `json:"close_delay,omitempty"`
 	// IsCloseDelayJob shows if an event is triggered by a close delay job.
 	IsCloseDelayJob bool `json:"is_close_delay,omitempty"`
+
+	StructuredMessage []types.StructuredMessage `json:"struct_m,omitempty"`
 }
 
 // AxeResultEvent
@@ -215,6 +218,54 @@ type ApiRemediationResultEvent struct {
 type ApiNotificationEvent struct {
 	Users []string `json:"users,omitempty"`
 	Roles []string `json:"roles,omitempty"`
+}
+
+const (
+	RecorderCmdStart  = "start"
+	RecorderCmdStop   = "stop"
+	RecorderCmdResend = "resend"
+	RecorderCmdHalt   = "halt"
+	RecorderCmdPing   = "ping"
+)
+
+// easyjson:json
+type RecorderEvent struct {
+	Cmd string
+	Opt *RecorderCommandOptions
+}
+
+type RecordStartOptions struct {
+	EventPattern pattern.Event `json:"event_pattern" binding:"event_pattern"`
+}
+
+type ResendOptions struct {
+	Delay datetime.ShortDurationWithUnit `json:"delay"`
+	// list of optional event ids to play only selected events
+	EventIds []string `json:"event_ids,omitempty"`
+}
+
+type RecorderCommandOptions struct {
+	RecordStartOptions
+	ResendOptions
+	Author   string `json:"author,omitempty"`
+	RecordID string `json:"record_id,omitempty"`
+}
+
+func NewRecorderCommandOptions() *RecorderCommandOptions {
+	return &RecorderCommandOptions{
+		RecordStartOptions: RecordStartOptions{},
+		ResendOptions:      ResendOptions{},
+	}
+}
+
+func (o *RecorderCommandOptions) SetRecordID(id string) *RecorderCommandOptions {
+	o.RecordID = id
+	return o
+}
+
+func (o *RecorderCommandOptions) SetAuthor(author string) *RecorderCommandOptions {
+	o.Author = author
+	return o
 }
 
 type Error struct {

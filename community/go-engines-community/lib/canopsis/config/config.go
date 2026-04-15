@@ -49,7 +49,8 @@ type SectionGlobal struct {
 
 	EventsCountTriggerDefaultThreshold int `toml:"EventsCountTriggerDefaultThreshold"`
 
-	EventsRecorderLimit int `toml:"EventsRecorderLimit"`
+	EventsRecorderLimit   int `toml:"EventsRecorderLimit"`
+	EventsRecorderWorkers int `toml:"EventsRecorderWorkers"`
 }
 
 func (s *SectionGlobal) GetReconnectTimeout() time.Duration {
@@ -87,11 +88,9 @@ type SectionApi struct {
 	ExportMongoClientTimeout string   `toml:"ExportMongoClientTimeout"`
 	AuthorScheme             []string `toml:"AuthorScheme"`
 	MetricsCacheExpiration   string   `toml:"MetricsCacheExpiration"`
-	// EventsRecorderFetchStatusTimeout is a timeout for fetching status from events recorder
-	EventsRecorderFetchStatusTimeout string `toml:"EventsRecorderFetchStatusTimeout"`
-	WebsocketPingInterval            string `toml:"WebsocketPingInterval"`
-	NotificationDisplayCount         int    `toml:"NotificationDisplayCount"`
-	LLM                              struct {
+	WebsocketPingInterval    string   `toml:"WebsocketPingInterval"`
+	NotificationDisplayCount int      `toml:"NotificationDisplayCount"`
+	LLM                      struct {
 		OffTopicErrors  []string       `toml:"off_topic_errors"`
 		SuggestedModels []LLMModelConf `toml:"suggested_models"`
 	} `toml:"llm"`

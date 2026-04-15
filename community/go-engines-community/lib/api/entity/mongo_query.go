@@ -116,6 +116,10 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
+	err = q.handlePbehaviorPattern(r.ListRequest)
+	if err != nil {
+		return nil, err
+	}
 	q.handleFilter(r.ListRequest)
 	q.handleSort(r.SortRequest)
 
@@ -483,6 +487,29 @@ func (q *MongoQueryBuilder) handleNegativeEntityPattern(ctx context.Context, r L
 
 	if len(negativeEntityPatternQuery) > 0 {
 		q.entityMatch = append(q.entityMatch, bson.M{"$match": negativeEntityPatternQuery})
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handlePbehaviorPattern(r ListRequest) error {
+	if r.PbehaviorPattern == "" {
+		return nil
+	}
+
+	var pbehaviorPattern pattern.PbehaviorInfo
+	err := json.Unmarshal([]byte(r.PbehaviorPattern), &pbehaviorPattern)
+	if err != nil {
+		return validation.NewSingleError("pbehavior_pattern", "PbehaviorPattern", "PbehaviorPattern", r)
+	}
+
+	pbhPatternQuery, err := db.PbehaviorInfoPatternToMongoQuery(pbehaviorPattern, "")
+	if err != nil {
+		return validation.NewSingleError("pbehavior_pattern", "PbehaviorPattern", "PbehaviorPattern", r)
+	}
+
+	if len(pbhPatternQuery) > 0 {
+		q.entityMatch = append(q.entityMatch, bson.M{"$match": pbhPatternQuery})
 	}
 
 	return nil

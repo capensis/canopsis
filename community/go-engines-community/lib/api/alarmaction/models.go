@@ -1,6 +1,8 @@
 package alarmaction
 
-import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+)
 
 type Request struct {
 	Comment string `json:"comment" binding:"max=255"`
@@ -36,8 +38,14 @@ type ChangeStateRequest struct {
 	Comment string `json:"comment" binding:"max=255"`
 }
 
+type StructuredMessageRequest struct {
+	Field   string `json:"field" binding:"required,max=255"`
+	Message string `json:"message" binding:"required,max=255"`
+}
+
 type CommentRequest struct {
-	Comment string `json:"comment" binding:"required,max=255"`
+	Comment           string                     `json:"comment" binding:"max=255"`
+	StructuredComment []StructuredMessageRequest `json:"struct_comment" binding:"dive"`
 }
 
 type BulkRequestItem struct {

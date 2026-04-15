@@ -651,4 +651,10 @@ export default {
       declareticketrule: '<strong>Declare ticket rules</strong>\n<ul>{rules}</ul>',
     },
   },
+
+  massActionsPanel: {
+    recordsSelected: '{count} record selected|{count} records selected',
+    keepSelectedAfterAction: 'Keep selected after action',
+    clearSelection: 'Clear selection',
+  },
 };

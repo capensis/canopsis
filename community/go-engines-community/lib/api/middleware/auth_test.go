@@ -33,7 +33,7 @@ func TestAuth_GivenCredentials_ShouldReturnResponseAndSetUserDataToContext(t *te
 		AuthApiKey:     "testkey",
 		HashedPassword: "testhash",
 	}
-	req := httptest.NewRequest(http.MethodGet, okURL, nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, okURL, nil)
 	mockProvider := mock_security.NewMockHttpProvider(ctrl)
 	mockProvider.
 		EXPECT().
@@ -92,7 +92,7 @@ func TestAuth_GivenNoCredentials_ShouldReturnResponse(t *testing.T) {
 	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 
 	expectedCode := http.StatusOK
-	req := httptest.NewRequest(http.MethodGet, okURL, nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, okURL, nil)
 	mockProvider := mock_security.NewMockHttpProvider(ctrl)
 	mockProvider.
 		EXPECT().
@@ -122,7 +122,7 @@ func TestAuth_GivenInvalidCredentials_ShouldReturnUnauthorizedError(t *testing.T
 
 	enforcer := mock_security.NewMockEnforcer(ctrl)
 	expectedCode := http.StatusUnauthorized
-	req := httptest.NewRequest(http.MethodGet, okURL, nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, okURL, nil)
 	mockProvider := mock_security.NewMockHttpProvider(ctrl)
 	mockProvider.
 		EXPECT().
