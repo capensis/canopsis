@@ -52,4 +52,6 @@ const (
 	ApiPbhPatternCountLockKey    = "api-pbh-pattern-count-lock-key"
 
 	CorrelationInactiveDelayPeriodicalLockKey = "correlation-inactive-delay-periodical-lock-key"
+
+	WebhookCheckTicketStatusLockKey = "webhook-check-ticket-status-lock-key"
 )
