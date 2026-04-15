@@ -47,7 +47,9 @@ func (f *toUserFilter) room() string {
 }
 
 func (f *toUserFilter) match(conn *connection) bool {
-	return slices.Contains(f.userIDs, conn.getUserID()) && conn.inRoom(f.r)
+	user, _ := conn.getAuth()
+
+	return slices.Contains(f.userIDs, user.ID) && conn.inRoom(f.r)
 }
 
 type toConnFilter struct {

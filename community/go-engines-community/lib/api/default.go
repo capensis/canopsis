@@ -281,22 +281,24 @@ func Default(
 		},
 	})
 	services.WebsocketRoomRegistry = websocket.NewRoomRegistry()
-	wsRoomAuthenticate := func(ctx context.Context, token string) (string, error) {
+	wsRoomAuthenticate := func(ctx context.Context, token string) (websocket.User, error) {
 		tokenProviders := security.GetTokenProviders()
 		for _, provider := range tokenProviders {
 			user, err := provider.Auth(ctx, token)
 			if err != nil {
-				return "", err
+				return websocket.User{}, err
 			}
 
 			if user != nil {
-				return user.ID, nil
+				return websocket.User{ID: user.ID, Locale: user.Language}, nil
 			}
 		}
 
-		return "", errors.New("invalid token")
+		return websocket.User{}, errors.New("invalid token")
 	}
-	services.WebsocketHub = websocket.NewHub(websocketUpgrader, services.WebsocketRoomRegistry, wsRoomAuthenticate, services.ApiConfigProvider, flags.IntegrationPeriodicalWaitTime, logger)
+	services.WebsocketHub = websocket.NewHub(websocketUpgrader, services.WebsocketRoomRegistry, wsRoomAuthenticate,
+		services.ApiConfigProvider, flags.IntegrationPeriodicalWaitTime, validation.NewErrorTranslator(uniTrans, logger),
+		logger)
 	services.ExternalDataContainer = externaldata.NewGetterContainer()
 	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, services.ExternalDataContainer, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)

@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/rs/zerolog"
 )
@@ -39,7 +40,7 @@ type Hub interface {
 	SendMessageToUser(ctx context.Context, payload any, room, userID string) bool
 }
 
-type Authenticate func(ctx context.Context, token string) (userID string, err error)
+type Authenticate func(ctx context.Context, token string) (User, error)
 
 func NewHub(
 	upgrader Upgrader,
@@ -47,6 +48,7 @@ func NewHub(
 	authenticate Authenticate,
 	configProvider config.ApiConfigProvider,
 	checkAuthTokenInterval time.Duration,
+	trans validation.ErrorTranslator,
 	logger zerolog.Logger,
 ) Hub {
 	return &hub{
@@ -55,6 +57,7 @@ func NewHub(
 		authenticate:           authenticate,
 		configProvider:         configProvider,
 		checkAuthTokenInterval: checkAuthTokenInterval,
+		trans:                  trans,
 		logger:                 logger,
 		registerCh:             make(chan *connection, connBuffSize),
 		conns:                  make(map[string]*connection),
@@ -67,6 +70,7 @@ type hub struct {
 	authenticate           Authenticate
 	configProvider         config.ApiConfigProvider
 	checkAuthTokenInterval time.Duration
+	trans                  validation.ErrorTranslator
 	logger                 zerolog.Logger
 	connsMx                sync.RWMutex
 	conns                  map[string]*connection
@@ -80,7 +84,7 @@ func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	select {
-	case h.registerCh <- newConnection(c, h.roomRegistry, h.authenticate, h.configProvider, h.logger):
+	case h.registerCh <- newConnection(c, h.roomRegistry, h.authenticate, h.configProvider, h.trans, h.logger):
 		return nil
 	default:
 		_ = c.Close()
@@ -196,10 +200,10 @@ func (h *hub) ConnectedUserIDs() []string {
 	seen := make(map[string]bool, len(h.conns))
 	ids := make([]string, 0, len(h.conns))
 	for _, c := range h.conns {
-		if userID := c.getUserID(); userID != "" {
-			if !seen[userID] {
-				seen[userID] = true
-				ids = append(ids, userID)
+		if user, _ := c.getAuth(); user.ID != "" {
+			if !seen[user.ID] {
+				seen[user.ID] = true
+				ids = append(ids, user.ID)
 			}
 		}
 	}
@@ -214,9 +218,10 @@ func (h *hub) ConnectionsInRoom(room string) []ConnectionInfo {
 	conns := make([]ConnectionInfo, 0)
 	for _, c := range h.conns {
 		if c.inRoom(room) {
+			user, _ := c.getAuth()
 			conns = append(conns, ConnectionInfo{
 				ID:     c.id,
-				UserID: c.getUserID(),
+				UserID: user.ID,
 			})
 		}
 	}
@@ -245,10 +250,10 @@ func (h *hub) Connections() []ConnectionAuthInfo {
 
 	conns := make([]ConnectionAuthInfo, 0, len(h.conns))
 	for _, c := range h.conns {
-		userID, token := c.getAuth()
+		user, token := c.getAuth()
 		conns = append(conns, ConnectionAuthInfo{
 			ID:     c.id,
-			UserID: userID,
+			UserID: user.ID,
 			Token:  token,
 		})
 	}

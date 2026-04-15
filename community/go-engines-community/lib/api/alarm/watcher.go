@@ -8,11 +8,11 @@ import (
 	"slices"
 	"sync"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -62,10 +62,16 @@ type streamData struct {
 }
 
 // StartWatch creates a new stream change or adds a connection to an existed one if there is already a stream change with the same request.
-func (w *watcher) StartWatch(ctx context.Context, opts websocket.JoinOptions) error {
+func (w *watcher) StartWatch(ctx context.Context, opts websocket.JoinOptions) (err error) {
 	b, err := w.encoder.Encode(opts.Payload)
 	if err != nil {
-		return fmt.Errorf("unexpected data type: %w", err)
+		return fmt.Errorf("failed to encode payload: %w", err)
+	}
+
+	var alarmIds []string
+	err = w.decoder.Decode(b, &alarmIds)
+	if err != nil || len(alarmIds) == 0 {
+		return validation.NewSingleError("invalid", "payload", "payload", nil)
 	}
 
 	k := w.genKey(b)
@@ -75,11 +81,11 @@ func (w *watcher) StartWatch(ctx context.Context, opts websocket.JoinOptions) er
 		return nil
 	}
 
-	var alarmIds []string
-	err = w.decoder.Decode(b, &alarmIds)
-	if err != nil {
-		return fmt.Errorf("unexpected data type: %w", err)
-	}
+	defer func() {
+		if err != nil {
+			_ = w.removeStream(roomID, opts.ConnID)
+		}
+	}()
 
 	stream, err := w.collection.Watch(ctx, []bson.M{
 		{"$match": bson.M{
@@ -93,7 +99,11 @@ func (w *watcher) StartWatch(ctx context.Context, opts websocket.JoinOptions) er
 
 	go func() {
 		defer func() {
-			_ = stream.Close(streamCtx)
+			err := stream.Close(streamCtx)
+			if err != nil {
+				w.logger.Warn().Err(err).Msg("failed to close stream")
+			}
+
 			streamCancel()
 		}()
 
@@ -130,10 +140,30 @@ func (w *watcher) StartWatch(ctx context.Context, opts websocket.JoinOptions) er
 }
 
 // StartWatchDetails creates a new stream change or adds a connection to an existed one if there is already a stream change with the same request.
-func (w *watcher) StartWatchDetails(ctx context.Context, opts websocket.JoinOptions) error {
+func (w *watcher) StartWatchDetails(ctx context.Context, opts websocket.JoinOptions) (err error) {
 	b, err := w.encoder.Encode(opts.Payload)
 	if err != nil {
-		return fmt.Errorf("unexpected data type: %w", err)
+		return fmt.Errorf("failed to encode payload: %w", err)
+	}
+
+	var requests []DetailsRequest
+	err = w.decoder.Decode(b, &requests)
+	if err != nil || len(requests) == 0 {
+		return validation.NewSingleError("invalid", "payload", "payload", nil)
+	}
+
+	for i := range requests {
+		requests[i].Format()
+	}
+
+	valStruct := struct {
+		Requests []DetailsRequest `json:"-" binding:"dive"`
+	}{
+		Requests: requests,
+	}
+	err = validation.ValidateStruct(valStruct)
+	if err != nil {
+		return err
 	}
 
 	k := w.genKey(b)
@@ -143,22 +173,16 @@ func (w *watcher) StartWatchDetails(ctx context.Context, opts websocket.JoinOpti
 		return nil
 	}
 
-	var requests []DetailsRequest
-	err = w.decoder.Decode(b, &requests)
-	if err != nil {
-		return fmt.Errorf("unexpected data type: %w", err)
-	}
+	defer func() {
+		if err != nil {
+			_ = w.removeStream(roomID, opts.ConnID)
+		}
+	}()
 
 	requestsById := make(map[string]DetailsRequest, len(requests))
 	alarmIds := make([]string, len(requests))
 	metaAlarmIds := make([]string, 0, len(requests))
 	for i, request := range requests {
-		request.Format()
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			return fmt.Errorf("invalid request %d: %w", i, err)
-		}
-
 		requestsById[request.ID] = request
 		alarmIds[i] = request.ID
 		if request.Children != nil && request.Children.Page > 0 {
@@ -273,11 +297,13 @@ func (w *watcher) sendGroupRoomAlrmDetails(ctx context.Context, alarmId, roomId 
 }
 
 func (w *watcher) StopWatch(_ context.Context, opts websocket.LeaveOptions) error {
+	return w.removeStream(opts.RoomID, opts.ConnID)
+}
+
+func (w *watcher) removeStream(roomID, connID string) error {
 	w.streamsMx.Lock()
 	defer w.streamsMx.Unlock()
 
-	roomID := opts.RoomID
-	connID := opts.ConnID
 	for k, v := range w.streams[roomID] {
 		for userID, connIds := range v.connIdsByUserId {
 			index := slices.Index(connIds, connID)

@@ -12,6 +12,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	mock_validation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/validation"
 	mock_websocket "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/websocket"
 	gorillawebsocket "github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
@@ -47,12 +48,14 @@ func TestHub_Connect_GivenStopRun_ShouldCloseConnection(t *testing.T) {
 		mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConn, nil)
 
 		roomRegistry := websocket.NewRoomRegistry()
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -101,12 +104,14 @@ func TestHub_Connect_GivenReadError_ShouldCloseConnection(t *testing.T) {
 		mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConn, nil)
 
 		roomRegistry := websocket.NewRoomRegistry()
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -174,12 +179,14 @@ func TestHub_Connect_GivenWriteError_ShouldCloseConnection(t *testing.T) {
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -231,8 +238,8 @@ func TestHub_Connect_GivenPingWriteError_ShouldCloseConnection(t *testing.T) {
 		mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConn, nil)
 
 		roomRegistry := websocket.NewRoomRegistry()
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{
 			API: config.SectionApi{
@@ -240,7 +247,9 @@ func TestHub_Connect_GivenPingWriteError_ShouldCloseConnection(t *testing.T) {
 			},
 		}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -292,8 +301,8 @@ func TestHub_Connect_ShouldSendPingMessage(t *testing.T) {
 		mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConn, nil)
 
 		roomRegistry := websocket.NewRoomRegistry()
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{
 			API: config.SectionApi{
@@ -301,7 +310,9 @@ func TestHub_Connect_ShouldSendPingMessage(t *testing.T) {
 			},
 		}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -374,12 +385,14 @@ func TestHub_Connect_ShouldCallOnJoinHandler(t *testing.T) {
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -459,12 +472,14 @@ func TestHub_Connect_ShouldCallOnLeaveHandler(t *testing.T) {
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -545,12 +560,14 @@ func TestHub_Connect_GivenStopRun_ShouldCallOnLeaveHandler(t *testing.T) {
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -628,12 +645,14 @@ func TestHub_Connect_ShouldCallAuthorizeHandler(t *testing.T) {
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "testuser", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{ID: "testuser"}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -727,8 +746,8 @@ func TestHub_Connect_ShouldPeriodicallyCheckAuthorization(t *testing.T) {
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "testuser", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{ID: "testuser"}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{
 			API: config.SectionApi{
@@ -736,7 +755,9 @@ func TestHub_Connect_ShouldPeriodicallyCheckAuthorization(t *testing.T) {
 			},
 		}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, 10*time.Second, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, 10*time.Second, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -833,12 +854,14 @@ func TestHub_SendMessage_ShouldDeliverToRoomConnections(t *testing.T) {
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -922,12 +945,14 @@ func TestHub_SendMessageToUser_ShouldDeliverToUser(t *testing.T) {
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return userID, nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{ID: userID}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1013,12 +1038,14 @@ func TestHub_LeaveRoom_ShouldSendCloseRoomAndCallOnLeave(t *testing.T) {
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1095,12 +1122,14 @@ func TestHub_Connect_GivenJoinMessageWithoutAuth_ShouldReturn401(t *testing.T) {
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "testuser", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{ID: "testuser"}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1162,12 +1191,14 @@ func TestHub_Connect_GivenAuthMessageWithInvalidToken_ShouldReturn401(t *testing
 		mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConn, nil)
 
 		roomRegistry := websocket.NewRoomRegistry()
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", errors.New("invalid token")
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, errors.New("invalid token")
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1231,13 +1262,13 @@ func TestHub_Connect_GivenCheckAuthWithExpiredToken_ShouldReturn401(t *testing.T
 
 		roomRegistry := websocket.NewRoomRegistry()
 		callCount := 0
-		authenticate := func(ctx context.Context, token string) (string, error) {
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
 			callCount++
 			if callCount == 1 {
-				return "testuser", nil
+				return websocket.User{ID: "testuser"}, nil
 			}
 
-			return "", errors.New("token expired")
+			return websocket.User{}, errors.New("token expired")
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{
 			API: config.SectionApi{
@@ -1245,7 +1276,9 @@ func TestHub_Connect_GivenCheckAuthWithExpiredToken_ShouldReturn401(t *testing.T
 			},
 		}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, 10*time.Second, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, 10*time.Second, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1309,12 +1342,14 @@ func TestHub_Connect_GivenJoinUnregisteredRoom_ShouldReturn404(t *testing.T) {
 		mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConn, nil)
 
 		roomRegistry := websocket.NewRoomRegistry()
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1389,12 +1424,14 @@ func TestHub_Connect_GivenOnJoinReturnsJoinError_ShouldSendInfoMessage(t *testin
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1466,12 +1503,14 @@ func TestHub_Connect_GivenDoubleJoin_ShouldCallOnJoinOnce(t *testing.T) {
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1537,12 +1576,14 @@ func TestHub_Connect_GivenClientPingMessage_ShouldSendClientPong(t *testing.T) {
 		mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConn, nil)
 
 		roomRegistry := websocket.NewRoomRegistry()
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1613,12 +1654,14 @@ func TestHub_Connect_GivenInfoMessage_ShouldCallOnMessageHandler(t *testing.T) {
 			t.Fatalf("cannot register room: %v", err)
 		}
 
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 		go func() {
 			hub.Run(ctx)
 		}()
@@ -1662,13 +1705,15 @@ func TestHub_Connect_GivenFullBuffer_ShouldReturnError(t *testing.T) {
 		mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConn, nil).Times(11)
 
 		roomRegistry := websocket.NewRoomRegistry()
-		authenticate := func(ctx context.Context, token string) (string, error) {
-			return "", nil
+		authenticate := func(ctx context.Context, token string) (websocket.User, error) {
+			return websocket.User{}, nil
 		}
 		configProvider := config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 
+		mockErrTrans := mock_validation.NewMockErrorTranslator(ctrl)
+
 		// hub.Run is NOT called so registerCh never drains
-		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, zerolog.Nop())
+		hub := websocket.NewHub(mockUpgrader, roomRegistry, authenticate, configProvider, time.Hour, mockErrTrans, zerolog.Nop())
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest(http.MethodGet, "/ws", nil)
