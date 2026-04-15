@@ -138,6 +138,9 @@ type ApiConfig struct {
 	EventsRecorderFetchStatusTimeout time.Duration
 	WebsocketPingInterval            time.Duration
 	NotificationDisplayCount         int
+	LLM                              struct {
+		SuggestedModels []LLMModelConf
+	}
 }
 
 type RemediationConfig struct {
@@ -463,6 +466,8 @@ func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfi
 			Msgf("AuthorScheme of %s config section is used", sectionName)
 	}
 
+	conf.LLM.SuggestedModels = cfg.API.LLM.SuggestedModels
+
 	return &BaseApiConfigProvider{
 		conf:   conf,
 		logger: logger,
@@ -526,6 +531,8 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	if ok {
 		p.conf.NotificationDisplayCount = i
 	}
+
+	p.conf.LLM.SuggestedModels = cfg.API.LLM.SuggestedModels
 }
 
 func (p *BaseApiConfigProvider) Get() ApiConfig {
