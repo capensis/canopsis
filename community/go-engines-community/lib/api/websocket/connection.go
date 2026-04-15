@@ -2,8 +2,8 @@ package websocket
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
+	"io"
 	"maps"
 	"net/http"
 	"strconv"
@@ -13,6 +13,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
@@ -28,6 +29,8 @@ func newConnection(
 	authenticate Authenticate,
 	configProvider config.ApiConfigProvider,
 	trans validation.ErrorTranslator,
+	encoder encoding.Encoder,
+	decoder encoding.Decoder,
 	logger zerolog.Logger,
 ) *connection {
 	return &connection{
@@ -37,6 +40,8 @@ func newConnection(
 		authenticate:   authenticate,
 		configProvider: configProvider,
 		trans:          trans,
+		encoder:        encoder,
+		decoder:        decoder,
 		logger:         logger,
 		writeCh:        make(chan ServerMessage, msgBuffSize),
 		done:           make(chan struct{}),
@@ -51,6 +56,8 @@ type connection struct {
 	authenticate   Authenticate
 	configProvider config.ApiConfigProvider
 	trans          validation.ErrorTranslator
+	encoder        encoding.Encoder
+	decoder        encoding.Decoder
 	logger         zerolog.Logger
 	closeOnce      sync.Once
 	writeCh        chan ServerMessage
@@ -113,12 +120,9 @@ func (c *connection) runRead(ctx context.Context) {
 	valErrParam := strconv.Itoa(ClientMessageClientPing) + " " + strconv.Itoa(ClientMessageJoin) + " " + strconv.Itoa(ClientMessageLeave) + " " + strconv.Itoa(ClientMessageAuth) + " " + strconv.Itoa(ClientMessageInfo)
 	valErr := validation.NewSingleErrorWithParam("oneof", "type", "type", valErrParam, nil)
 	for {
-		msg := ClientMessage{}
-		err := c.conn.ReadJSON(&msg)
+		msg, err := c.readJSON()
 		if err != nil {
-			unmarshalErr := &json.UnmarshalTypeError{}
-			syntaxErr := &json.SyntaxError{}
-			if errors.As(err, &syntaxErr) || errors.As(err, &unmarshalErr) {
+			if _, ok := errors.AsType[encoding.DecodingError](err); ok {
 				c.writeError(ctx, "", http.StatusBadRequest, "")
 				continue
 			}
@@ -194,7 +198,7 @@ func (c *connection) runWrite(ctx context.Context) {
 			}
 
 			c.logger.Debug().Int("type", msg.Type).Str("room", msg.Room).Interface("payload", msg.Payload).Msg("writing message")
-			err = c.conn.WriteJSON(msg)
+			err = c.writeJSON(msg)
 			if err != nil {
 				c.logger.Err(err).
 					Str("addr", c.conn.RemoteAddr().String()).
@@ -627,4 +631,42 @@ func (c *connection) getRoomsForGroup(group string) []string {
 	}
 
 	return ids
+}
+
+func (c *connection) readJSON() (msg ClientMessage, err error) {
+	_, r, err := c.conn.NextReader()
+	if err != nil {
+		return msg, err
+	}
+
+	b, err := io.ReadAll(r)
+	if err != nil {
+		return msg, err
+	}
+
+	err = c.decoder.Decode(b, &msg)
+
+	return msg, err
+}
+
+func (c *connection) writeJSON(msg ServerMessage) (err error) {
+	w, err := c.conn.NextWriter(websocket.TextMessage)
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if cerr := w.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
+
+	b, err := c.encoder.Encode(msg)
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write(b)
+
+	return err
 }

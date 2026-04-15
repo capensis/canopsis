@@ -11,6 +11,7 @@ package mock_websocket
 
 import (
 	context "context"
+	io "io"
 	net "net"
 	http "net/http"
 	reflect "reflect"
@@ -97,18 +98,35 @@ func (mr *MockConnMockRecorder) Close() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockConn)(nil).Close))
 }
 
-// ReadJSON mocks base method.
-func (m *MockConn) ReadJSON(v any) error {
+// NextReader mocks base method.
+func (m *MockConn) NextReader() (int, io.Reader, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ReadJSON", v)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "NextReader")
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(io.Reader)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
-// ReadJSON indicates an expected call of ReadJSON.
-func (mr *MockConnMockRecorder) ReadJSON(v any) *gomock.Call {
+// NextReader indicates an expected call of NextReader.
+func (mr *MockConnMockRecorder) NextReader() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadJSON", reflect.TypeOf((*MockConn)(nil).ReadJSON), v)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NextReader", reflect.TypeOf((*MockConn)(nil).NextReader))
+}
+
+// NextWriter mocks base method.
+func (m *MockConn) NextWriter(messageType int) (io.WriteCloser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "NextWriter", messageType)
+	ret0, _ := ret[0].(io.WriteCloser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// NextWriter indicates an expected call of NextWriter.
+func (mr *MockConnMockRecorder) NextWriter(messageType any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NextWriter", reflect.TypeOf((*MockConn)(nil).NextWriter), messageType)
 }
 
 // RemoteAddr mocks base method.
@@ -177,20 +195,6 @@ func (m *MockConn) WriteControl(messageType int, data []byte, deadline time.Time
 func (mr *MockConnMockRecorder) WriteControl(messageType, data, deadline any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WriteControl", reflect.TypeOf((*MockConn)(nil).WriteControl), messageType, data, deadline)
-}
-
-// WriteJSON mocks base method.
-func (m *MockConn) WriteJSON(v any) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "WriteJSON", v)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// WriteJSON indicates an expected call of WriteJSON.
-func (mr *MockConnMockRecorder) WriteJSON(v any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WriteJSON", reflect.TypeOf((*MockConn)(nil).WriteJSON), v)
 }
 
 // MockHub is a mock of Hub interface.
