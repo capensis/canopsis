@@ -1175,6 +1175,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_general"
+  permission_api_llm_chat:
+    <<: *permission
+    _id: api_llm_chat
+    name: <Current()._id>
+    description: LLM Chat
+    groups:
+      - "@group_api"
+      - "@group_api_general"
 
   # api -> rules
   permission_api_dynamicinfos:
@@ -3872,6 +3880,7 @@ role:
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
       "@permission_api_entity_info_property": 15
+      "@permission_api_llm_chat": 1
       # Views permissions
       "@permission_view_open_alarms_general": 7
       "@permission_view_open_alarms_actions": 1
