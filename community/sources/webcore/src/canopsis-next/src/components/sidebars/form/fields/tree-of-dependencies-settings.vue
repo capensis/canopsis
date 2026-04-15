@@ -1,5 +1,5 @@
 <template>
-  <widget-settings-item :title="$t('settings.treeOfDependenciesSettings')">
+  <widget-settings-item :title="label || $t('settings.treeOfDependenciesSettings')">
     <v-layout>
       <v-radio-group
         v-field="value"
@@ -21,7 +21,11 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
@@ -32,14 +36,22 @@ export default {
       type: Number,
       default: TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
     },
-  },
-  computed: {
-    types() {
-      return Object.values(TREE_OF_DEPENDENCIES_SHOW_TYPES).map(value => ({
-        value,
-        label: this.$t(`entity.treeOfDependenciesShowTypes.${value}`),
-      }));
+    label: {
+      type: String,
+      default: '',
     },
+  },
+  setup() {
+    const { t } = useI18n();
+
+    const types = computed(() => Object.values(TREE_OF_DEPENDENCIES_SHOW_TYPES).map(value => ({
+      value,
+      label: t(`entity.treeOfDependenciesShowTypes.${value}`),
+    })));
+
+    return {
+      types,
+    };
   },
 };
 </script>

@@ -167,7 +167,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 	})
 
 	wg.Go(func() {
-		count, err := u.userCollection.CountDocuments(ctx, bson.M{"enable": true})
+		count, err := u.userCollection.CountDocuments(ctx, bson.M{"enabled": true})
 		if err != nil {
 			u.logger.Err(err).Msg("failed to count number of active users from db")
 		}
@@ -185,7 +185,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 	})
 
 	wg.Go(func() {
-		count, err := u.metaAlarmRulesCollection.CountDocuments(ctx, bson.M{})
+		count, err := u.metaAlarmRulesCollection.CountDocuments(ctx, bson.M{"enabled": true})
 		if err != nil {
 			u.logger.Err(err).Msg("failed to count number of meta alarm rules from db")
 		}

@@ -162,6 +162,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {string} exportPdfTemplateTemplate
  * @property {boolean} showRootCauseByStateClick
  * @property {ColorIndicator} rootCauseColorIndicator
+ * @property {WidgetColumnsParameters} columns
  */
 
 /**
@@ -199,6 +200,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isHtmlEnabledOnTimeLine
  * @property {boolean} pausePeriodicRefreshOnExpandPanel
  * @property {boolean} isActionsAllowWithOkState
+ * @property {boolean} keepSelectedAfterAction
  * @property {boolean} isVirtualScrollEnabled
  * @property {boolean} isCorrelationEnabled
  * @property {FastPbehaviorParameters[]} fast_pbehaviors
@@ -323,6 +325,7 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
   widgetColumnsTemplate: widgetTemplateValueToForm(alarmListParameters.widgetColumnsTemplate),
   widgetColumns: widgetColumnsToForm(alarmListParameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  columns: columnsParametersToForm(alarmListParameters.columns),
   exportPdfTemplate: alarmListParameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
   exportPdfTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.exportPdfTemplateTemplate),
   showRootCauseByStateClick: alarmListParameters.showRootCauseByStateClick ?? true,
@@ -424,6 +427,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
   pausePeriodicRefreshOnExpandPanel: parameters.pausePeriodicRefreshOnExpandPanel ?? false,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
+  keepSelectedAfterAction: !!parameters.keepSelectedAfterAction,
   isVirtualScrollEnabled: !!parameters.isVirtualScrollEnabled,
   isCorrelationEnabled: !!parameters.isCorrelationEnabled,
   fast_pbehaviors: alarmListFastPbehaviorParametersToForm(parameters.fast_pbehaviors),
