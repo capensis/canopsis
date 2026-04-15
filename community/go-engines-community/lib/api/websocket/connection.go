@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -322,8 +323,8 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 			delete(c.rooms, msg.Room)
 			c.roomsMx.Unlock()
 
+			c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot join to room")
 			if jerr, ok := errors.AsType[*JoinError](err); ok {
-				c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot join to room")
 				c.write(ctx, ServerMessage{
 					Type:    ServerMessageInfo,
 					Room:    msg.Room,
@@ -338,7 +339,6 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 			}
 
 			if verr, ok := errors.AsType[*validation.Error](err); ok {
-				c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot join to room")
 				c.writeValError(ctx, msg.Room, verr, user)
 
 				return
@@ -346,6 +346,18 @@ func (c *connection) join(ctx context.Context, msg ClientMessage) {
 
 			if errors.Is(err, ErrRoomNotFound) {
 				c.writeError(ctx, msg.Room, http.StatusNotFound, nil)
+
+				return
+			}
+
+			if cerr, ok := errors.AsType[*httperror.ConflictError](err); ok {
+				c.writeError(ctx, msg.Room, http.StatusConflict, map[string]string{"error": cerr.Message})
+
+				return
+			}
+
+			if ferr, ok := errors.AsType[*httperror.ForbiddenError](err); ok {
+				c.writeError(ctx, msg.Room, http.StatusForbidden, map[string]string{"error": ferr.Message})
 
 				return
 			}
@@ -465,17 +477,28 @@ func (c *connection) msg(ctx context.Context, msg ClientMessage) {
 		Payload: msg.Payload,
 	})
 	if err != nil {
+		c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot handle message from room")
 		if verr, ok := errors.AsType[*validation.Error](err); ok {
-			c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot handle message from room")
 			c.writeValError(ctx, msg.Room, verr, user)
 
 			return
 		}
 
 		if cerr, ok := errors.AsType[*CloseRoomError](err); ok {
-			c.logger.Debug().Err(err).Str("room", msg.Room).Str("user", user.ID).Msg("cannot handle message from room")
 			c.writeError(ctx, msg.Room, http.StatusGone, cerr.Payload)
 			c.leaveRoom(ctx, msg.Room)
+
+			return
+		}
+
+		if cerr, ok := errors.AsType[*httperror.ConflictError](err); ok {
+			c.writeError(ctx, msg.Room, http.StatusConflict, map[string]string{"error": cerr.Message})
+
+			return
+		}
+
+		if ferr, ok := errors.AsType[*httperror.ForbiddenError](err); ok {
+			c.writeError(ctx, msg.Room, http.StatusForbidden, map[string]string{"error": ferr.Message})
 
 			return
 		}
