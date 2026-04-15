@@ -117,5 +117,7 @@ const (
 
 	PatternOptimizeJobCollection = "pattern_optimize_job"
 
-	LLMConfigCollection = "llm_config"
+	LLMConfigCollection         = "llm_config"
+	LLMChatHistoryCollection    = "llm_chat_history"
+	LLMMessageHistoryCollection = "llm_message_history"
 )
