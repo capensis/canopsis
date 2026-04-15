@@ -6,9 +6,9 @@ if (db.getCollectionNames().includes("llm_config")) {
 
 db.llm_config.createIndex({name: 1}, {name: "name_1", unique: true});
 db.llm_chat_history.createIndex({config: 1, user: 1}, {name: "config_1_user_1"});
-db.llm_message_history.createIndex({chat: 1}, {name: "chat_1"});
+db.llm_chat_history.createIndex({thread: 1}, {name: "thread_1"});
+db.llm_message_history.createIndex({chat: 1, timestamp: 1}, {name: "chat_1_timestamp_1"});
 db.llm_message_history.createIndex({turn: 1}, {name: "turn_1"});
-db.llm_message_history.createIndex({timestamp: 1}, {name: "timestamp_1"});
 
 if (!db.permission.findOne({_id: "api_llm_config"})) {
     db.permission.insertOne({
