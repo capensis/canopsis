@@ -58,7 +58,7 @@ func getAlarmPatternGroupMongoQueries(p pattern.Alarm, prefix string) ([]bson.M,
 				case "":
 					condQueries[j], err = cond.Condition.RefInArrayToMongoQuery(mongoArrayField, mongoArrayItemField)
 				default:
-					return nil, fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
+					return nil, fmt.Errorf("invalid field type for %q field: %w", cond.Field, pattern.ErrUnsupportedFieldType)
 				}
 
 				if err != nil {
