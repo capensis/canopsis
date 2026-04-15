@@ -300,7 +300,7 @@ func Default(
 	}
 	services.WebsocketHub = websocket.NewHub(websocketUpgrader, services.WebsocketRoomRegistry, wsRoomAuthenticate,
 		services.ApiConfigProvider, flags.IntegrationPeriodicalWaitTime, validation.NewErrorTranslator(services.Translator, logger),
-		logger)
+		json.NewEncoder(), json.NewDecoder(), logger)
 	services.ExternalDataContainer = externaldata.NewGetterContainer()
 	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, services.ExternalDataContainer, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)
