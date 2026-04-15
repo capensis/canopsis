@@ -92,6 +92,7 @@ type SectionApi struct {
 	WebsocketPingInterval            string `toml:"WebsocketPingInterval"`
 	NotificationDisplayCount         int    `toml:"NotificationDisplayCount"`
 	LLM                              struct {
+		OffTopicErrors  []string       `toml:"off_topic_errors"`
 		SuggestedModels []LLMModelConf `toml:"suggested_models"`
 	} `toml:"llm"`
 }
