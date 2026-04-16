@@ -6,14 +6,14 @@ db.permission.deleteMany({
     _id: {
         $in: [
             "api_llm_config",
-            "api_llm_chat",
+            "models_llm",
         ]
     }
 });
 db.role.updateMany({}, {
     $unset: {
         "permissions.api_llm_config": "",
-        "permissions.api_llm_chat": "",
+        "permissions.models_llm": "",
     }
 });
 
