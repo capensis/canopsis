@@ -183,4 +183,8 @@ export default {
     [TEMPLATE_TESTING_TEST_TYPES.scenario]: 'Réponse (Action - {index} webhook)',
     [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: 'Réponse (Webhook - {index})',
   },
+  testDataCheckTicketStatusResponseLabels: {
+    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: 'Réponse de vérification du statut du ticket (Webhook - {index})',
+    [TEMPLATE_TESTING_TEST_TYPES.scenario]: 'Réponse de vérification du statut du ticket (Action - {index} webhook)',
+  },
 };

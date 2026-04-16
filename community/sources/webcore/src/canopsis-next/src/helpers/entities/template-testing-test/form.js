@@ -65,6 +65,7 @@ import { formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
  * @property {Object} params - Additional parameters for the item
  * @property {number} [index] - Index of the item in the array
  * @property {boolean} required - Whether the item is required
+ * @property {boolean} checkTicketStatusResponse - Whether the item is a check ticket status response
  * @property {boolean} someRequired - Whether the item has some requirement
  * @property {string} key - Unique key for the item
  * @property {string} value - Value of the item
@@ -104,6 +105,7 @@ import { formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
  * @property {string} type - The type of the validate form item
  * @property {Object} [params] - Additional parameters for the item
  * @property {boolean} [required] - Whether the item is required
+ * @property {boolean} [checkTicketStatusResponse] - Whether the item is a check ticket status response
  * @property {boolean} [someRequired] - Whether the item has some requirement
  * @property {number} [index] - Index of the item in the array
  * @property {string} [key] - Unique key for the item, defaults to type if not provided
@@ -182,6 +184,7 @@ export const getTemplateTestingTestValidateFormItem = ({
   type,
   params = {},
   required = false,
+  checkTicketStatusResponse = false,
   someRequired = false,
   index,
   key,
@@ -190,6 +193,7 @@ export const getTemplateTestingTestValidateFormItem = ({
   params,
   index,
   required,
+  checkTicketStatusResponse,
   someRequired,
   key: key ?? type,
   value: '',
@@ -240,6 +244,16 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
             key: action.key,
             type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
           }));
+
+          if (action.parameters?.webhook?.declare_ticket?.check_ticket_status?.enabled) {
+            acc.push(getTemplateTestingTestValidateFormItem({
+              index,
+              required: true,
+              checkTicketStatusResponse: true,
+              key: `${action.key}.check_ticket_status.ticket_status_tpl`,
+              type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+            }));
+          }
         }
 
         return acc;
@@ -283,14 +297,26 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
         params: { opened: true },
       }),
 
-      ...form.webhooks.map((webhook, index) => (
-        getTemplateTestingTestValidateFormItem({
+      ...form.webhooks.reduce((acc, webhook, index) => {
+        acc.push(getTemplateTestingTestValidateFormItem({
           index,
           required: true,
           key: webhook.key,
           type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
-        })
-      )),
+        }));
+
+        if (webhook?.declare_ticket?.check_ticket_status?.enabled) {
+          acc.push(getTemplateTestingTestValidateFormItem({
+            index,
+            required: true,
+            checkTicketStatusResponse: true,
+            key: `${webhook.key}.check_ticket_status.ticket_status_tpl`,
+            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+          }));
+        }
+
+        return acc;
+      }, []),
     ];
   }
 
@@ -376,11 +402,13 @@ export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc
       return acc;
     }
 
-    if (!acc.responses) {
-      acc.responses = {};
+    const responsesField = item.checkTicketStatusResponse ? 'ticket_status_responses' : 'responses';
+
+    if (!acc[responsesField]) {
+      acc[responsesField] = {};
     }
 
-    acc.responses[item.index] = item.value;
+    acc[responsesField][item.index] = item.value;
 
     return acc;
   }
