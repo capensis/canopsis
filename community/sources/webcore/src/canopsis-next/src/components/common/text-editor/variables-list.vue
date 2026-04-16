@@ -7,7 +7,7 @@
     :item-text="itemText"
     :show-value="showValue"
     :hide-empty-value="hideEmptyValue"
-    v-on="listenersFromParent"
+    v-on="listenersWithoutInput"
   >
     <template v-if="$slots['no-data']" #no-data>
       <slot name="no-data" />
@@ -45,7 +45,7 @@
   </c-list>
 </template>
 <script>
-import { isUndefined, omit } from 'lodash';
+import { omit, isUndefined } from 'lodash';
 import { computed } from 'vue';
 
 export default {
@@ -83,12 +83,12 @@ export default {
       default: false,
     },
   },
-  setup(props, { listeners = {} }) {
-    const listenersFromParent = computed(() => omit(listeners, ['input']));
+  setup(props, { listeners }) {
+    const listenersWithoutInput = computed(() => omit(listeners ?? {}, ['input']));
 
     return {
       isUndefined,
-      listenersFromParent,
+      listenersWithoutInput,
     };
   },
 };
