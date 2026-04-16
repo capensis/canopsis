@@ -1,22 +1,19 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <modal-wrapper text-class="position-relative" close>
       <template #title="">
         {{ title }}
       </template>
       <template #text="">
-        <div class="position-relative">
-          <pattern-progress
-            v-if="chatPending"
-            :in-progress-text="chatPendingTexts.inProgress"
-            :cancel-button-label="chatPendingTexts.cancel"
-            @cancel="chatCancel"
-          />
-          <link-rule-form
-            v-model="form"
-            :rule-id="config.linkRule?._id"
-          />
-        </div>
+        <link-rule-form
+          v-model="form"
+          :rule-id="config.linkRule?._id"
+        />
+        <ai-chat-sidebar
+          v-if="chatShown"
+          v-bind="chatOptions.bind"
+          v-on="chatOptions.on"
+        />
       </template>
       <template #actions="">
         <v-btn
@@ -28,7 +25,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatPending"
+          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -41,7 +38,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref, toRef } from 'vue';
 
 import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
@@ -54,7 +51,7 @@ import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
-import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import LinkRuleForm from '@/components/other/link-rule/form/link-rule-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -68,7 +65,7 @@ export default {
   components: {
     LinkRuleForm,
     ModalWrapper,
-    PatternProgress,
+    AiChatSidebar,
   },
   props: {
     modal: {
@@ -84,20 +81,13 @@ export default {
 
     const form = ref(linkRuleToForm(config.value.linkRule));
 
-    const aiChatPatternsForm = computed({
-      get: () => form.value.patterns,
-      set: (patterns) => {
-        form.value = { ...form.value, patterns };
-      },
-    });
-
     const {
-      pending: chatPending,
-      pendingTexts: chatPendingTexts,
-      cancel: chatCancel,
+      shown: chatShown,
+      options: chatOptions,
     } = useAiChatForm({
-      form: aiChatPatternsForm,
-      modalId: props.modal.id,
+      form,
+
+      modal: toRef(props, 'modal'),
       ruleId: props.modal.config?.linkRule?._id,
       context: LLM_SOCKET_CONTEXTS.linkRule,
     });
@@ -105,11 +95,11 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        const linkRule = await config.value.action?.(formToLinkRule(form.value));
+        const result = await config.value.action?.(formToLinkRule(form.value));
+
+        await config.value.afterSubmit?.(result);
 
         close();
-
-        return linkRule;
       },
     });
 
@@ -130,9 +120,8 @@ export default {
 
       title,
 
-      chatPending,
-      chatPendingTexts,
-      chatCancel,
+      chatShown,
+      chatOptions,
 
       submit,
       close,

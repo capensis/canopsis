@@ -144,7 +144,7 @@
       :close-on-click="false"
       :position-x="positionX"
       :position-y="positionY"
-      attach=".modals-wrapper"
+      attach=".pbehavior-calendar-event-menu"
       content-class="c-calendar__popover-wrapper"
     >
       <v-card v-if="popoverOpen">
@@ -834,8 +834,10 @@ export default {
     max-height: 95%;
     max-width: 95% !important;
     width: var(--c-calendar-popover-width) !important;
-    top: 50% !important;
-    transform: translate3d(0, -50%, 0);
+    top: unset !important;
+    bottom: unset !important;
+    contain: none !important;
+    position: relative !important;
   }
 
   &__week-day-label-btn {

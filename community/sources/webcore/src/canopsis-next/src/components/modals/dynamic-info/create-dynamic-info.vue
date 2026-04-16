@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <modal-wrapper text-class="position-relative" close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
@@ -11,25 +11,23 @@
           :type="type"
         >
           <template #default="{ templateVars, copyVars }">
-            <div class="position-relative">
-              <pattern-progress
-                v-if="chatPending"
-                :in-progress-text="chatPendingTexts.inProgress"
-                :cancel-button-label="chatPendingTexts.cancel"
-                @cancel="chatCancel"
-              />
-              <dynamic-info-form
-                v-model="form"
-                :is-disabled-id-field="isDisabledIdField"
-                :template-vars="templateVars"
-                :copy-vars="copyVars"
-              />
-            </div>
+            <dynamic-info-form
+              v-model="form"
+              :is-disabled-id-field="isDisabledIdField"
+              :template-vars="templateVars"
+              :copy-vars="copyVars"
+            />
+            <ai-chat-sidebar
+              v-if="chatShown"
+              v-bind="chatOptions.bind"
+              v-on="chatOptions.on"
+            />
           </template>
         </template-testing-test-variables-wrapper>
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
           @click="close"
@@ -37,7 +35,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatPending"
+          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -50,7 +48,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref, toRef } from 'vue';
 
 import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
@@ -62,7 +60,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 
-import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
 import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
@@ -76,7 +74,7 @@ export default {
   },
   components: {
     DynamicInfoForm,
-    PatternProgress,
+    AiChatSidebar,
     TemplateTestingTestVariablesWrapper,
     ModalWrapper,
   },
@@ -94,20 +92,13 @@ export default {
 
     const form = ref(dynamicInfoToForm(config.value.dynamicInfo));
 
-    const aiChatPatternsForm = computed({
-      get: () => form.value.patterns,
-      set: (patterns) => {
-        form.value = { ...form.value, patterns };
-      },
-    });
-
     const {
-      pending: chatPending,
-      pendingTexts: chatPendingTexts,
-      cancel: chatCancel,
+      shown: chatShown,
+      options: chatOptions,
     } = useAiChatForm({
-      form: aiChatPatternsForm,
-      modalId: props.modal.id,
+      form,
+
+      modal: toRef(props, 'modal'),
       ruleId: props.modal.config?.dynamicInfo?._id,
       context: LLM_SOCKET_CONTEXTS.dynamicInfos,
     });
@@ -119,11 +110,11 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        const data = await config.value.action?.(formToDynamicInfo(form.value));
+        const result = await config.value.action?.(formToDynamicInfo(form.value));
+
+        await config.value.afterSubmit?.(result);
 
         close();
-
-        return data;
       },
     });
 
@@ -138,9 +129,8 @@ export default {
       isDisabledIdField,
       isDisabled,
       submitting,
-      chatPending,
-      chatPendingTexts,
-      chatCancel,
+      chatShown,
+      chatOptions,
       submit,
       close,
     };

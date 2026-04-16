@@ -39,7 +39,7 @@ export const LLM_AI_CHAT_ERROR_CODES = {
 };
 
 export const LLM_AI_CHAT_TOURS = {
-  sidebarMinimized: 'ai_chat_minimized',
+  minimized: 'ai_chat_minimized',
   hiddenWarningAlert: 'ai_chat_hidden_warning_alert',
 };
 

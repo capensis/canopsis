@@ -7,6 +7,8 @@ import { uid } from '@/helpers/uid';
 export const types = {
   SHOW: 'SHOW',
   HIDE: 'HIDE',
+  UPDATE_DIALOG_PROPS: 'UPDATE_DIALOG_PROPS',
+  UPDATE_MODAL_CONFIG: 'UPDATE_MODAL_CONFIG',
   HIDE_COMPLETED: 'HIDE_COMPLETED',
   REGISTER_ON_HIDE: 'REGISTER_ON_HIDE',
   MINIMIZE: 'MINIMIZE',
@@ -51,6 +53,16 @@ export default {
 
       Vue.delete(state.byId, id);
     },
+    [types.UPDATE_DIALOG_PROPS](state, { id, dialogProps }) {
+      Vue.set(state.byId[id], 'dialogProps', dialogProps);
+    },
+    [types.UPDATE_MODAL_CONFIG](state, { id, config = {} }) {
+      if (!state.byId[id]) {
+        return;
+      }
+
+      Vue.set(state.byId[id], 'config', config);
+    },
     [types.REGISTER_ON_HIDE](state, { id, callback }) {
       Vue.set(state.byId[id], 'onHide', callback);
     },
@@ -92,6 +104,29 @@ export default {
       });
     },
 
+    updateDialogProps({ commit }, { id, dialogProps } = {}) {
+      if (!id) {
+        throw new Error('Missed required parameter');
+      }
+
+      commit(types.UPDATE_DIALOG_PROPS, { id, dialogProps });
+    },
+
+    /**
+     * Shallow-merge payload into the modal's `config` (same modal id).
+     *
+     * @param {Function} commit
+     * @param {string} id
+     * @param {Object} [config={}]
+     */
+    updateModalConfig({ commit }, { id, config = {} } = {}) {
+      if (!id) {
+        throw new Error('Missed required parameter');
+      }
+
+      commit(types.UPDATE_MODAL_CONFIG, { id, config });
+    },
+
     /**
      * Hide modal by id
      *
@@ -99,7 +134,7 @@ export default {
      * @param {Object} state
      * @param {string} [id]
      */
-    hide({ commit, state }, { id } = {}) {
+    async hide({ commit, state }, { id } = {}) {
       if (!id) {
         throw new Error('Missed required parameter');
       }
@@ -110,7 +145,7 @@ export default {
 
       commit(types.HIDE, { id });
 
-      state.byId[id].onHide?.();
+      await state.byId[id].onHide?.();
 
       /**
        * This function added for vuetify animation waiting

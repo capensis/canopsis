@@ -1,8 +1,7 @@
-import { isUndefined } from 'lodash';
 import Vue from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-import { SIDE_BARS_MINIMIZABLE_USER_FIELD } from '@/constants';
+import { LLM_AI_CHAT_TOURS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 
@@ -68,12 +67,10 @@ export default {
      * @param {Object} state
      * @param {string} name
      * @param {Object} [config = {}]
-     * @param {boolean} [minimized = false]
      * @param {string} [id = uid()]
      */
-    show({ commit, state, rootGetters }, {
+    show({ commit, state }, {
       name,
-      minimized,
       config = {},
       id = uid('sidebar'),
     } = {}) {
@@ -81,18 +78,10 @@ export default {
         return commit(types.MAXIMIZE, { id });
       }
 
-      const field = SIDE_BARS_MINIMIZABLE_USER_FIELD[name];
-      let localMinimized = minimized;
-
-      if (field && isUndefined(localMinimized)) {
-        localMinimized = rootGetters['auth/currentUser']?.ui_tours?.[field] ?? false;
-      }
-
       return commit(types.SHOW, {
         id,
         name,
         config,
-        minimized: localMinimized,
       });
     },
 
@@ -190,7 +179,7 @@ export default {
       }
 
       await dispatch('user/updateCurrentUserTours', {
-        data: { [SIDE_BARS_MINIMIZABLE_USER_FIELD[name]]: minimized },
+        data: { [LLM_AI_CHAT_TOURS.minimized]: minimized },
       }, { root: true });
     },
   },

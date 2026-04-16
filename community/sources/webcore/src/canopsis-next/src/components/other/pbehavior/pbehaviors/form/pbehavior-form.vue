@@ -42,6 +42,7 @@
         ref="patterns"
         :pbehavior-id="pbehaviorId"
         :pbehavior-counter-type="pbehaviorCounterType"
+        class="mt-4"
       />
     </v-tab-item>
   </v-tabs>

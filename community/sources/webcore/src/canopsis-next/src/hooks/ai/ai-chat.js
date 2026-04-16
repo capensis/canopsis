@@ -5,6 +5,7 @@ import {
   unref,
   set,
   watch,
+  inject,
   nextTick,
   onBeforeUnmount,
 } from 'vue';
@@ -34,38 +35,49 @@ import { useSocket } from '@/hooks/socket';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useLlm } from '@/hooks/store/modules/llm';
 
+/**
+ * Base fields merged into every new chat row (`_id`, `timestamp`).
+ *
+ * @returns {{ _id: string, timestamp: number }}
+ */
 const getEmptyMessage = () => ({
   _id: uid(),
   timestamp: Date.now(),
 });
 
 /**
- * Hook for watching sidebar JSON string changes and triggering `ask` with a localized fix-pattern prompt.
+ * Watches a pattern JSON string ref and calls `ask` with the localized fix-pattern prompt on each non-empty
+ * value.
  *
  * @param {Object} [options]
- * @param {import('vue').Ref|Object} [options.sidebar] - Sidebar instance; `config.jsonString` is observed.
- * @param {function(Object): void} [options.ask] - Invoked with `{ prompt, withoutPatterns }` when JSON changes.
- * @returns {{ jsonString: import('vue').ComputedRef<string> }}
+ * @param {import('vue').Ref<string>|import('vue').ComputedRef<string>|string} [options.jsonString] -
+ *   Observed JSON text (e.g. from the pattern editor).
+ * @param {function({ prompt: string, withoutPatterns: boolean })} [options.ask] - Invoked when `jsonString`
+ *   updates to a truthy string.
+ * @returns {{ jsonString: import('vue').Ref<string>|import('vue').ComputedRef<string>|string }} Echo of
+ *   `options.jsonString` (for chaining); the composable only registers the watcher.
  */
-export const useAiChatJsonString = ({ sidebar, ask } = {}) => {
+export const useAiChatJsonString = ({ jsonString, ask } = {}) => {
   const { t } = useI18n();
 
-  const jsonString = computed(() => unref(sidebar)?.config?.jsonString ?? '');
-
-  watch(jsonString, newJsonString => ask({
+  watch(jsonString, newJsonString => newJsonString && ask({
     prompt: t('llm.chat.fixPatternPrompt', { jsonString: newJsonString }),
     withoutPatterns: true,
   }));
-
-  return {
-    jsonString,
-  };
 };
 
 /**
- * Hook for the stack of pattern versions from the chat and the index of the last LLM-applied version.
+ * Stack of pattern snapshots produced in the chat and index of the version last attributed to the LLM.
  *
- * @returns {Object} Version refs and mutators (`addVersion`, `removeLastVersion`, `resetVersions`).
+ * @returns {{
+ *   versions: import('vue').Ref<Array<Object>>,
+ *   lastLlmVersion: import('vue').Ref<number|null>,
+ *   activeVersion: import('vue').ComputedRef<number>,
+ *   lastLlmPatterns: import('vue').ComputedRef<Object|null>,
+ *   addVersion: function(Object, boolean),
+ *   removeLastVersion: function(),
+ *   resetVersions: function(),
+ * }}
  */
 export const useAiChatVersions = () => {
   const versions = ref([]);
@@ -94,7 +106,7 @@ export const useAiChatVersions = () => {
   const removeLastVersion = () => versions.value.pop();
 
   /**
-   * Clears all versions and does not reset `lastLlmVersion` (callers may set it to `null` if needed).
+   * Clears `versions` and sets `lastLlmVersion` back to `null`.
    */
   const resetVersions = () => {
     versions.value = [];
@@ -114,15 +126,33 @@ export const useAiChatVersions = () => {
 };
 
 /**
- * Hook for the chat message list, pattern cards, and version bookkeeping tied to sidebar patterns.
+ * Chat transcript, pattern-card rows, and version history; diffs the live form patterns against the last LLM
+ * snapshot for status text and version bumps.
  *
  * @param {Object} [options]
- * @param {import('vue').Ref|Object} [options.sidebar] - Used for `setPatterns` on restore.
- * @param {import('vue').ComputedRef|import('vue').Ref} [options.currentFormPatterns]
- *   Live form patterns for diff vs last LLM output.
- * @returns {Object} Messages API, versions, diffs, `restoreVersion`.
+ * @param {import('vue').Ref<Object>|import('vue').ComputedRef<Object>} [options.currentFormPatterns] -
+ *   Normalized patterns from the host, compared to the last LLM version.
+ * @param {function(Object)} [options.updateFormPatterns] - Writes patterns into the host when restoring a
+ *   version from `restoreVersion`.
+ * @returns {{
+ *   messages: import('vue').Ref<Array<Object>>,
+ *   addMessage: function(Object): number,
+ *   addPattern: function(Object),
+ *   updateMessage: function(number, Object),
+ *   removeLastMessages: function(number=): Array,
+ *   resetMessages: function,
+ *   versions: import('vue').Ref<Array<Object>>,
+ *   activeVersion: import('vue').ComputedRef<number>,
+ *   lastLlmVersion: import('vue').Ref<number|null>,
+ *   addVersion: function(Object, boolean=),
+ *   removeLastVersion: function,
+ *   restoreVersion: function(number),
+ *   resetVersions: function,
+ *   changedPatternsFields: import('vue').ComputedRef<Array<string>>,
+ *   emptyCurrentFormPatterns: import('vue').ComputedRef<boolean>,
+ * }}
  */
-export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
+export const useAiChatMessages = ({ currentFormPatterns, updateFormPatterns } = {}) => {
   const { t, tc } = useI18n();
   const {
     versions,
@@ -144,12 +174,13 @@ export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
   const messages = ref([]);
 
   /**
-   * Appends a text or pattern chat row with `_id`, `timestamp`, and `CHAT_COMPONENTS.message`.
+   * Appends a chat row; merges `getEmptyMessage()` (`_id`, `timestamp`) with `payload`.
    *
-   * @param {Object} payload
+   * @param {Object} payload - Row fields; additional keys (e.g. `patterns`, `error`, `val_errors`, `local`,
+   *   `thinking`) are kept on the stored object.
    * @param {string} [payload.prompt] - Visible body for a prompt bubble.
-   * @param {string} [payload.role] - Defaults to `LLM_AI_CHAT_MESSAGE_ROLES.model`.
-   * @returns {number} New `messages` length from `Array.prototype.push`.
+   * @param {string} [payload.role] - One of `LLM_AI_CHAT_MESSAGE_ROLES` when set.
+   * @returns {number} New `messages.length` after `Array.prototype.push`.
    */
   const addMessage = ({ prompt, role, ...rest }) => messages.value.push({
     prompt,
@@ -213,16 +244,16 @@ export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
   const removeLastMessages = (count = 1) => messages.value.splice(messages.value.length - count);
 
   /**
-   * Replays patterns from `versions[version]` into chat and applies them to the sidebar form.
+   * Replays patterns from `versions[version]` into the transcript and applies them via `updateFormPatterns`.
    *
-   * @param {number} version - Version index inside `versions`.
+   * @param {number} version - Index in `versions`.
    */
   const restoreVersion = (version) => {
     const newPatterns = versions.value[version];
 
     addPattern({ patterns: newPatterns, role: LLM_AI_CHAT_MESSAGE_ROLES.model, fromVersion: version });
 
-    unref(sidebar)?.config?.setPatterns?.(newPatterns);
+    updateFormPatterns(newPatterns);
   };
 
   /**
@@ -252,14 +283,30 @@ export const useAiChatMessages = ({ sidebar, currentFormPatterns } = {}) => {
 };
 
 /**
- * Hook for binding sidebar filter patterns to chat: syncs manual edits with messages and version stack.
+ * Keeps filter patterns, chat messages, and the version stack aligned when the user edits the form after LLM
+ * replies (watches `currentFormPatterns`).
  *
  * @param {Object} [options]
- * @param {import('vue').Ref|Object} [options.sidebar] - Source for `config.patterns` and `setPatterns`.
- * @param {import('vue').Ref|Object} [options.patternItem] - Selected pattern item.
- * @returns {Object} Subset of message/version API for the AI chat UI (`resetMessages`, `resetVersions`, etc.).
+ * @param {import('vue').Ref<Object>|import('vue').ComputedRef<Object>} [options.patterns] - Raw pattern map
+ *   from the host (e.g. modal form).
+ * @param {import('vue').Ref<Object|null>} [options.patternItem] - Optional selected item (`value` is the key
+ *   into `patterns`); narrows `currentFormPatterns` when set.
+ * @param {function(Object)} [options.updateFormPatterns] - Callback used when restoring versions (same shape
+ *   as in `useAiChatMessages`).
+ * @returns {{
+ *   messages: import('vue').Ref<Array<Object>>,
+ *   addMessage: function(Object): number,
+ *   addPattern: function(Object),
+ *   resetMessages: function,
+ *   versions: import('vue').Ref<Array<Object>>,
+ *   activeVersion: import('vue').ComputedRef<number>,
+ *   resetVersions: function,
+ *   restoreVersion: function(number),
+ *   currentFormPatterns: import('vue').ComputedRef<Object>,
+ *   emptyCurrentFormPatterns: import('vue').ComputedRef<boolean>,
+ * }}
  */
-export const useAiChatPattern = ({ sidebar, patternItem } = {}) => {
+export const useAiChatPattern = ({ patterns, patternItem, updateFormPatterns } = {}) => {
   const { t, tc } = useI18n();
 
   const currentFormPatterns = computed(() => {
@@ -267,8 +314,8 @@ export const useAiChatPattern = ({ sidebar, patternItem } = {}) => {
 
     return formFilterToPatterns(
       unwrappedPatternItem
-        ? { [unwrappedPatternItem.value]: unref(sidebar)?.config?.patterns?.[unwrappedPatternItem.value] }
-        : unref(sidebar)?.config?.patterns ?? {},
+        ? { [unwrappedPatternItem.value]: unref(patterns)?.[unwrappedPatternItem.value] }
+        : unref(patterns) ?? {},
       Object.values(PATTERNS_FIELDS),
     );
   });
@@ -290,7 +337,7 @@ export const useAiChatPattern = ({ sidebar, patternItem } = {}) => {
 
     changedPatternsFields,
     emptyCurrentFormPatterns,
-  } = useAiChatMessages({ sidebar, currentFormPatterns });
+  } = useAiChatMessages({ currentFormPatterns, updateFormPatterns });
 
   const lastLlmMessageIndex = computed(() => messages.value.findLastIndex(message => (
     message.role === LLM_AI_CHAT_MESSAGE_ROLES.model && !message.local
@@ -368,9 +415,12 @@ export const useAiChatPattern = ({ sidebar, patternItem } = {}) => {
 };
 
 /**
- * Hook for the error line above the chat input (socket/validation failures).
+ * Inline error string above the chat input (socket, validation, or pattern-item errors).
  *
- * @returns {{ errorMessage: import('vue').Ref<string|null>, resetErrorMessage: function(): void }}
+ * @returns {{
+ *   errorMessage: import('vue').Ref<string|null>,
+ *   resetErrorMessage: function,
+ * }}
  */
 export const useAiChatErrors = () => {
   const errorMessage = ref(null);
@@ -387,9 +437,15 @@ export const useAiChatErrors = () => {
 };
 
 /**
- * Hook for loading state while waiting for the LLM socket response; drives the thinking bubble message.
+ * In-flight flag and a synthetic “thinking” placeholder message for the transcript while the socket request
+ * runs.
  *
- * @returns {Object} `thinking` ref, `thinkingMessage` computed, `enableThinking` / `disableThinking`.
+ * @returns {{
+ *   thinking: import('vue').Ref<boolean>,
+ *   thinkingMessage: import('vue').ComputedRef<Object|null>,
+ *   enableThinking: function,
+ *   disableThinking: function,
+ * }}
  */
 export const useAiChatThinking = () => {
   const thinking = ref(false);
@@ -421,25 +477,60 @@ export const useAiChatThinking = () => {
 };
 
 /**
- * Hook for joining `SOCKET_ROOMS.llmChat`, handling responses via `addPattern` / `setPatterns`, and `sendMessage`.
+ * Joins `SOCKET_ROOMS.llmChat`, wires listeners, and exposes `sendMessage` with shared thinking/error state.
+ * Unregisters and leaves the room in `onBeforeUnmount`.
  *
  * @param {Object} [options]
- * @param {import('vue').Ref|Object} [options.sidebar]
- *   Join payload from `config.socketRoomData`; applies patterns on success.
- * @param {function(Object): void} [options.addPattern] - LLM pattern payload on success.
- * @param {function(Object): void} [options.addMessage] - Add message to the chat.
- * @param {function(): void} [options.restorePrompt] - Restore prompt on socket error.
- * @param {function(): Promise<Array>} [options.fetchLlms] - Refetch LLM list (e.g. after Gone) to detect empty models.
- * @returns {Object} Thinking, errors, `sendMessage`, join/leave (unmount leaves room).
+ * @param {import('vue').Ref<string>|string} [options.context] - LLM socket context (e.g. `LLM_SOCKET_CONTEXTS.*`).
+ * @param {import('vue').Ref<string>|string} [options.ruleId] - Optional rule id sent as `rule` on join.
+ * @param {function(Object)} [options.addPattern] - Appends a pattern-card message when the payload is a
+ *   successful apply.
+ * @param {function(Object)} [options.updateFormPatterns] - Applies parsed pattern fields to the host on success.
+ * @param {function(Object)} [options.addMessage] - Appends chat rows (wire errors, `val_errors`, etc.).
+ * @param {function} [options.restorePrompt] - Restores the prompt after recoverable socket or validation errors.
+ * @param {function(): Promise<Array>|Array} [options.fetchLlms] - Optional refetch of enabled LLMs (e.g. after
+ *   `LLM_AI_CHAT_ERROR_CODES.gone`) to refine the error message.
+ * @returns {{
+ *   thinking: import('vue').Ref<boolean>,
+ *   thinkingMessage: import('vue').ComputedRef<Object|null>,
+ *   enableThinking: function,
+ *   disableThinking: function,
+ *   errorMessage: import('vue').Ref<string|null>,
+ *   resetErrorMessage: function,
+ *   sendMessage: function(Object, Object|string): *,
+ *   joinSocketRoom: function(Object|string),
+ *   leaveSocketRoom: function,
+ * }}
  */
-export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt, fetchLlms } = {}) => {
+export const useAiChatSocket = ({
+  context,
+  ruleId,
+  addPattern,
+  updateFormPatterns,
+  addMessage,
+  restorePrompt,
+  fetchLlms,
+} = {}) => {
   const { t } = useI18n();
   const socket = useSocket();
+
+  const aiChat = inject('$aiChat', {});
+
+  const needRestart = ref(false);
 
   let socketRoom = null;
 
   const { thinking, thinkingMessage, enableThinking, disableThinking } = useAiChatThinking();
   const { errorMessage, resetErrorMessage } = useAiChatErrors();
+
+  /**
+   * Writes the `needRestart` ref so callers (or nested composables) can surface a "restart chat" state
+   * without reaching into the ref directly.
+   *
+   * @param {boolean} newNeedRestart - Next value for `needRestart` (e.g. `true` when pattern items go stale
+   *   mid-session).
+   */
+  const updateNeedRestart = newNeedRestart => needRestart.value = newNeedRestart;
 
   /**
    * Socket error callback: only handles `SOCKET_ROOMS.llmChat`, maps codes to i18n, restores prompt.
@@ -467,6 +558,8 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
       if (!llms.length) {
         newErrorMessage = t('llm.chat.errors.noModels');
       }
+
+      updateNeedRestart(true);
     }
 
     errorMessage.value = newErrorMessage;
@@ -476,15 +569,19 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
   };
 
   /**
-   * Room message handler: validation HTML, plain error, or success (`addPattern` + sidebar `setPatterns`).
+   * Room message handler: validation list, wire error, or success (`addPattern` + `updateFormPatterns`).
    *
    * @param {Object} payload - Server payload; keys other than those below are spread as `patterns` for the form.
    * @param {*} [payload.error] - When set, shown as HTML error and prompt restored.
    * @param {*} [payload.code] - May accompany failures from the wire format.
    * @param {Array<string>} [payload.val_errors] - Renders a `<ul>` of validation messages.
    */
-  const socketListener = async ({ error, code, val_errors: validationErrors = [], ...rest }) => {
+  const socketListener = async ({ error, code, val_errors: validationErrors = [], chat, ...rest }) => {
     const patterns = pick(rest, Object.values(PATTERNS_FIELDS));
+
+    if (chat) {
+      aiChat.registerChatId?.(chat);
+    }
 
     resetErrorMessage();
 
@@ -513,10 +610,12 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
     }
 
     addPattern({ patterns, role: LLM_AI_CHAT_MESSAGE_ROLES.model });
-
-    unref(sidebar)?.config?.setPatterns?.(patterns);
+    updateFormPatterns(patterns);
   };
 
+  /**
+   * Generic HTTP/server failure on the socket: clears thinking, restores the prompt, sets a generic error.
+   */
   const serverErrorHandler = () => {
     resetErrorMessage();
     disableThinking();
@@ -526,15 +625,15 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
   };
 
   /**
-   * Joins `SOCKET_ROOMS.llmChat` merging `socketRoomData` from the sidebar with `config: llm`.
-   * Registers `socketListener` on the resulting `SocketRoom`.
+   * Joins `SOCKET_ROOMS.llmChat` with `{ context, rule, config: llm }` and registers `socketListener`.
    *
-   * @param {Object} llm - LLM config merged into the join payload as `config` (e.g. selected model row).
+   * @param {Object|string} llm - Model config for the join payload (`config`); may be a full document or id
+   *   depending on the caller.
    */
   const joinSocketRoom = (llm) => {
     const joinData = {
-      ...unref(sidebar)?.config?.socketRoomData,
-
+      context: unref(context),
+      rule: unref(ruleId),
       config: llm,
     };
 
@@ -559,11 +658,12 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
   };
 
   /**
-   * Turns on thinking state, ensures the LLM room is joined, then sends `data` on the socket.
+   * Enables thinking, joins the LLM room on first use, then sends `data` on the active room.
    *
    * @param {Object} data - Outbound payload (e.g. `prompt` + `LLM_AI_CHAT_MESSAGE_TYPES.send`, or cancel).
-   * @param {Object} llm - Merged as `config` on join when `socketRoom` is not open yet.
-   * @returns {*} Whatever `SocketRoom.send` returns, or `undefined` if the room is missing.
+   * @param {Object|string} llm - Model config for `joinSocketRoom` when the room is not open yet (callers may
+   *   pass a full document or an id, depending on the socket layer).
+   * @returns {*} Return value of `SocketRoom.send`, or `undefined` if the room could not be created.
    */
   const sendMessage = (data, llm) => {
     enableThinking();
@@ -587,13 +687,21 @@ export const useAiChatSocket = ({ sidebar, addPattern, addMessage, restorePrompt
     sendMessage,
     joinSocketRoom,
     leaveSocketRoom,
+    needRestart,
+    updateNeedRestart,
   };
 };
 
 /**
- * Hook for the current textarea value and stash used when sending (restore on error/cancel).
+ * Prompt field, `lastPrompt` stash for send/cancel/error recovery, and small setters.
  *
- * @returns {Object} `prompt`, `lastPrompt`, `updatePrompt`, `restorePrompt`, `resetPrompt`.
+ * @returns {{
+ *   prompt: import('vue').Ref<string>,
+ *   lastPrompt: import('vue').Ref<string>,
+ *   updatePrompt: function(string=),
+ *   restorePrompt: function,
+ *   resetPrompt: function,
+ * }}
  */
 export const useAiChatPrompt = () => {
   const prompt = ref('');
@@ -632,10 +740,15 @@ export const useAiChatPrompt = () => {
 };
 
 /**
- * Hook for fetching LLM rows, keeping `llm` in sync with the default model, and exposing `fetchLlms`.
+ * Local `llms` list and a `usePendingHandler`-wrapped fetch of enabled models from the API.
  *
  * @param {Object} [options]
- * @returns {Object} `llm`, `llms`, `llmsPending`, `fetchLlms`, `resetLlm`.
+ * @param {import('vue').Ref<Array>|Array} [options.initialLlms=[]] - Seed list before the first fetch.
+ * @returns {{
+ *   llms: import('vue').Ref<Array<Object>>,
+ *   llmsPending: import('vue').Ref<boolean>,
+ *   fetchLlms: function(): Promise<Array<Object>>,
+ * }}
  */
 export const useAiChatLlms = ({ initialLlms = [] } = {}) => {
   const llms = ref([...unref(initialLlms)]);
@@ -658,16 +771,20 @@ export const useAiChatLlms = ({ initialLlms = [] } = {}) => {
 };
 
 /**
- * Hook for fetching LLM rows, keeping `llm` in sync with the default model, and exposing `fetchLlms`.
+ * Selected model (`llm`), list + fetch from `useAiChatLlms`, and sync to the row with `default: true`.
  *
  * @param {Object} [options]
- * @param {import('vue').Ref|Object} [options.sidebar]
- * @returns {Object} `llm`, `llms`, `llmsPending`, `fetchLlms`, `resetLlm`.
+ * @param {import('vue').Ref<Array>|Array} [options.initialLlms=[]] - Initial rows passed to `useAiChatLlms`.
+ * @returns {{
+ *   llm: import('vue').Ref<Object|null>,
+ *   llms: import('vue').Ref<Array<Object>>,
+ *   llmsPending: import('vue').Ref<boolean>,
+ *   fetchLlms: function(): Promise<Array<Object>>,
+ *   resetLlm: function,
+ * }}
  */
-export const useAiChatLlmModel = ({ sidebar } = {}) => {
+export const useAiChatLlmModel = ({ initialLlms = [] } = {}) => {
   const llm = ref(null);
-
-  const initialLlms = computed(() => unref(sidebar)?.config?.llms ?? []);
 
   const { llms, llmsPending, fetchLlms } = useAiChatLlms({ initialLlms });
 
@@ -695,12 +812,15 @@ export const useAiChatLlmModel = ({ sidebar } = {}) => {
 };
 
 /**
- * Hook for keeping the chat body scrolled to the bottom when messages or thinking state change.
+ * Binds the chat body element and keeps it scrolled to the bottom when `messages` (deep) or `thinking` changes.
  *
  * @param {Object} [options]
- * @param {import('vue').Ref} [options.messages] - Chat messages ref (deep watch).
- * @param {import('vue').Ref} [options.thinking] - Thinking flag ref.
- * @returns {{ bodyElement: import('vue').Ref, scrollChatBodyToBottom: function(): void }}
+ * @param {import('vue').Ref<Array>} [options.messages] - Watched with `{ deep: true, flush: 'post' }`.
+ * @param {import('vue').Ref<boolean>} [options.thinking] - Watched with `{ flush: 'post' }` for the thinking row.
+ * @returns {{
+ *   bodyElement: import('vue').Ref<HTMLElement|undefined>,
+ *   scrollChatBodyToBottom: function,
+ * }}
  */
 export const useAiChatScroll = ({ messages, thinking } = {}) => {
   const bodyElement = ref(null);
@@ -730,11 +850,14 @@ export const useAiChatScroll = ({ messages, thinking } = {}) => {
 };
 
 /**
- * Hook for the prompt textarea template ref and applying a suggestion string with focus.
+ * Template ref for the prompt textarea plus `applySuggestion` for starter prompts (sets text and focuses).
  *
  * @param {Object} options
- * @param {function(string): void} options.updatePrompt - Sets the prompt text (e.g. from `useAiChatPrompt`).
- * @returns {{ textareaElement: import('vue').Ref, applySuggestion: function(string): void }}
+ * @param {function(string=)} options.updatePrompt - Setter from `useAiChatPrompt`.
+ * @returns {{
+ *   textareaElement: import('vue').Ref<HTMLTextAreaElement|undefined>,
+ *   applySuggestion: function(string),
+ * }}
  */
 export const useAiChatSuggestions = ({ updatePrompt }) => {
   const textareaElement = ref(null);
@@ -756,17 +879,28 @@ export const useAiChatSuggestions = ({ updatePrompt }) => {
   };
 };
 
-export const useAiChatPatternItems = ({ sidebar } = {}) => {
+/**
+ * Pattern-item selector for scenario context: selection ref, visibility flag, label, and reset.
+ *
+ * @param {Object} [options]
+ * @param {import('vue').Ref<string>} [options.context] - Compared with `LLM_SOCKET_CONTEXTS.scenario` for
+ *   `hasPatternItem`; `patternsItemsLabel` uses `unref(context)`.
+ * @returns {{
+ *   patternItem: import('vue').Ref<Object|null>,
+ *   hasPatternItem: import('vue').ComputedRef<boolean>,
+ *   patternsItemsLabel: import('vue').ComputedRef<string>,
+ *   resetPatternItem: function,
+ * }}
+ */
+export const useAiChatPatternItem = ({ context } = {}) => {
   const { t, te } = useI18n();
 
   const patternItem = ref(null);
 
-  const context = computed(() => unref(sidebar)?.config?.socketRoomData?.context);
-  const patternsItems = computed(() => unref(sidebar)?.config?.patternsItems ?? []);
   const hasPatternItem = computed(() => context.value === LLM_SOCKET_CONTEXTS.scenario);
 
   const patternsItemsLabel = computed(() => {
-    const labelKey = `llm.chat.patternsItemsLabel.${context.value}`;
+    const labelKey = `llm.chat.patternsItemsLabel.${unref(context)}`;
 
     if (te(labelKey)) {
       return t(labelKey);
@@ -779,7 +913,6 @@ export const useAiChatPatternItems = ({ sidebar } = {}) => {
 
   return {
     patternItem,
-    patternsItems,
     hasPatternItem,
     patternsItemsLabel,
 
@@ -788,29 +921,67 @@ export const useAiChatPatternItems = ({ sidebar } = {}) => {
 };
 
 /**
- * Hook for composing AI chat sidebar state: prompt, model, messages, socket, scroll, JSON auto-ask, restart.
+ * Full AI chat composable: prompt, models, pattern sync, socket, scroll, JSON-triggered ask, and restart flow.
+ * Emits `update:patterns` when patterns are applied from the socket or restore, and `update:pending` while the
+ * LLM request is in flight.
  *
  * @param {Object} [options]
- * @param {import('vue').Ref|Object} [options.sidebar]
- *   Sidebar `config`: patterns, jsonString, socket, setPatterns, setPending.
- * @returns {Object} `ai-chat.vue` API: `ask`, `stop`, `restart`, refs.
+ * @param {import('vue').Ref<Object>} [options.patterns] - Live pattern map from the host.
+ * @param {import('vue').Ref<string>|string} [options.context] - Socket join `context`.
+ * @param {import('vue').Ref<Array>|Array} [options.patternsItems] - Selectable pattern groups; watched to detect
+ *   stale `patternItem` and set `needRestart` / error when needed.
+ * @param {import('vue').Ref<string>|string} [options.ruleId] - Optional `rule` on socket join.
+ * @param {import('vue').Ref<string>|string} [options.jsonString] - When it updates, triggers `ask` with the
+ *   fix-pattern prompt via `useAiChatJsonString`.
+ * @param {import('vue').Ref<Array>|Array} [options.llms] - Initial LLM rows (`initialLlms` for `useAiChatLlmModel`).
+ * @param {function(string, ...*)} emit - Vue `setup` emit; must handle `update:patterns` and `update:pending`.
+ * @returns {{
+ *   bodyElement: import('vue').Ref<HTMLElement|undefined>,
+ *   textareaElement: import('vue').Ref<HTMLTextAreaElement|undefined>,
+ *   needRestart: import('vue').Ref<boolean>,
+ *   prompt: import('vue').Ref<string>,
+ *   llm: import('vue').Ref<Object|null>,
+ *   llms: import('vue').Ref<Array<Object>>,
+ *   llmsPending: import('vue').Ref<boolean>,
+ *   messages: import('vue').Ref<Array<Object>>,
+ *   emptyChat: import('vue').ComputedRef<boolean>,
+ *   versions: import('vue').Ref<Array<Object>>,
+ *   activeVersion: import('vue').ComputedRef<number>,
+ *   restoreVersion: function(number),
+ *   thinkingMessage: import('vue').ComputedRef<Object|null>,
+ *   errorMessage: import('vue').Ref<string|null>,
+ *   patternItem: import('vue').Ref<Object|null>,
+ *   patternsItems: import('vue').Ref<Array>|Array|undefined,
+ *   hasPatternItem: import('vue').ComputedRef<boolean>,
+ *   patternsItemsLabel: import('vue').ComputedRef<string>,
+ *   ask: function({ prompt: string, withoutPatterns?: boolean }),
+ *   stop: function,
+ *   applySuggestion: function(string),
+ *   restart: function,
+ * }}
  */
-export const useAiChat = ({ sidebar } = {}) => {
+export const useAiChat = ({
+  patterns,
+  context,
+  patternsItems,
+  ruleId,
+  jsonString,
+  llms: initialLlms,
+} = {}, emit) => {
   const { t } = useI18n();
   const modals = useModals();
   const { prompt, updatePrompt, resetPrompt, restorePrompt } = useAiChatPrompt();
-  const { llm, llms, llmsPending, resetLlm, fetchLlms } = useAiChatLlmModel({ sidebar });
+  const { llm, llms, llmsPending, resetLlm, fetchLlms } = useAiChatLlmModel({ initialLlms });
   const { textareaElement, applySuggestion } = useAiChatSuggestions({ updatePrompt });
-
-  const needRestart = ref(false);
 
   const {
     patternItem,
-    patternsItems,
     hasPatternItem,
     patternsItemsLabel,
     resetPatternItem,
-  } = useAiChatPatternItems({ sidebar });
+  } = useAiChatPatternItem({ context });
+
+  const updateFormPatterns = newPatterns => emit('update:patterns', newPatterns, patternItem?.value?.key);
 
   const {
     currentFormPatterns,
@@ -825,7 +996,7 @@ export const useAiChat = ({ sidebar } = {}) => {
     versions,
     activeVersion,
     restoreVersion,
-  } = useAiChatPattern({ sidebar, patternItem });
+  } = useAiChatPattern({ patterns, patternItem, updateFormPatterns });
 
   const {
     thinking,
@@ -838,9 +1009,14 @@ export const useAiChat = ({ sidebar } = {}) => {
     sendMessage,
 
     leaveSocketRoom,
+
+    needRestart,
+    updateNeedRestart,
   } = useAiChatSocket({
-    sidebar,
+    context,
+    ruleId,
     addPattern,
+    updateFormPatterns,
     addMessage,
     restorePrompt,
     fetchLlms,
@@ -867,7 +1043,7 @@ export const useAiChat = ({ sidebar } = {}) => {
       type: LLM_AI_CHAT_MESSAGE_TYPES.send,
     };
 
-    if (false && !withoutPatterns && !emptyCurrentFormPatterns.value) { // TODO: remove false
+    if (!withoutPatterns && !emptyCurrentFormPatterns.value) {
       Object.entries(currentFormPatterns.value).forEach(([field, pattern]) => {
         data[field] = pattern;
       });
@@ -890,8 +1066,7 @@ export const useAiChat = ({ sidebar } = {}) => {
    * Local-only reset: prompt, selected model, errors, messages, versions, thinking (does not leave socket).
    */
   const resetChat = () => {
-    needRestart.value = false;
-
+    updateNeedRestart(false);
     resetPatternItem();
     resetPrompt();
     resetLlm();
@@ -916,12 +1091,12 @@ export const useAiChat = ({ sidebar } = {}) => {
   });
 
   useAiChatJsonString({
-    sidebar,
+    jsonString,
     ask,
   });
 
   watch(thinking, newThinking => (
-    unref(sidebar)?.config?.setPending?.(newThinking, emptyCurrentFormPatterns.value, stop)
+    emit('update:pending', newThinking, emptyCurrentFormPatterns.value)
   ));
 
   watch(patternsItems, (items) => {
@@ -932,8 +1107,8 @@ export const useAiChat = ({ sidebar } = {}) => {
         return;
       }
 
-      errorMessage.value = t('llm.chat.patternsItemsError');
-      needRestart.value = true;
+      errorMessage.value = t(`llm.chat.patternsItemsError.${unref(context)}`);
+      updateNeedRestart(true);
     }
   });
 

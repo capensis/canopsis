@@ -45,7 +45,7 @@
       {{ $t('pattern.patterns') }}
     </template>
     <template #rule="{ item }">
-      <span v-if="item.rule">{{ item.rule }}</span>
+      <span v-if="item.rule?.name">{{ item.rule.name }}</span>
       <span v-else class="font-italic">{{ $t('llm.promptsHistory.ruleNotSaved') }}</span>
     </template>
     <template #off_topic="{ item }">

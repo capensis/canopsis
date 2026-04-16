@@ -9,6 +9,7 @@
       :key="modal.id"
       :modal="modal"
     />
+    <div class="pbehavior-calendar-event-menu" />
   </div>
 </template>
 
@@ -52,6 +53,13 @@ $minimizedDialogMaxWidth: 360px;
 
 .modals-wrapper {
   display: none;
+
+  .pbehavior-calendar-event-menu {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+  }
 
   &--active {
     position: fixed;

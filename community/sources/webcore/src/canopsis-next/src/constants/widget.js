@@ -7,7 +7,6 @@ import { ALARM_METRIC_PARAMETERS } from './alarm';
 import { QUICK_RANGES } from './common';
 import { SAMPLINGS } from './date';
 import { AGGREGATE_FUNCTIONS, KPI_PIE_CHART_SHOW_MODS } from './kpi';
-import { LLM_AI_CHAT_TOURS } from './llm';
 
 export const WIDGET_TYPES = {
   alarmList: 'AlarmsList',
@@ -104,8 +103,6 @@ export const SIDE_BARS = {
   availabilitySettings: 'availability-settings',
   externalDataTableSettings: 'external-data-table-settings',
 
-  aiChat: 'ai-chat',
-
   ...featuresService.get('constants.SIDE_BARS'),
 };
 
@@ -128,14 +125,6 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.externalDataTable]: SIDE_BARS.externalDataTableSettings,
 
   ...featuresService.get('constants.SIDE_BARS_BY_WIDGET_TYPES'),
-};
-
-export const SIDE_BARS_WITH_OVERFLOW_Y_HIDDEN = [
-  SIDE_BARS.aiChat,
-];
-
-export const SIDE_BARS_MINIMIZABLE_USER_FIELD = {
-  [SIDE_BARS.aiChat]: LLM_AI_CHAT_TOURS.sidebarMinimized,
 };
 
 export const WIDGET_TYPES_RULES = {

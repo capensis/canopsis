@@ -4,12 +4,6 @@
     class="pbehavior-form position-relative"
     @submit.prevent="submitHandler"
   >
-    <pattern-progress
-      v-if="chatPending"
-      :in-progress-text="chatPendingTexts.inProgress"
-      :cancel-button-label="chatPendingTexts.cancel"
-      @cancel="chatCancel"
-    />
     <pbehavior-form
       v-model="form"
       :pbehavior-id="pbehavior?._id"
@@ -18,6 +12,11 @@
       :no-timezone="noTimezone"
       class="py-3"
       pbehavior-counter-type
+    />
+    <ai-chat-sidebar
+      v-if="chatShown"
+      v-bind="chatOptions.bind"
+      v-on="chatOptions.on"
     />
     <v-layout
       class="pbehavior-form__actions"
@@ -39,7 +38,7 @@
         {{ $t('common.cancel') }}
       </v-btn>
       <v-btn
-        :disabled="errors.any()"
+        :disabled="errors.any() || chatOptions.bind.pending"
         color="primary"
         type="submit"
       >
@@ -67,8 +66,8 @@ import { useModals } from '@/hooks/modals';
 import { useValidator } from '@/hooks/validator/validator';
 import { useComponentInstance } from '@/hooks/vue';
 
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
-import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
 
 export default {
   $_veeValidate: {
@@ -76,7 +75,7 @@ export default {
     delay: VALIDATION_DELAY,
   },
   inject: ['$system'],
-  components: { PbehaviorForm, PatternProgress },
+  components: { PbehaviorForm, AiChatSidebar },
   mixins: [dependentMixin],
   props: {
     event: {
@@ -117,23 +116,17 @@ export default {
 
     const pbehavior = computed(() => props.event?.data?.pbehavior);
 
-    const aiChatSidebarId = `pbehavior-calendar-event-${props.event.id}`;
-    const ruleId = computed(() => props.event?.data?.pbehavior?._id);
+    const ruleId = computed(() => {
+      const { _id: id = '' } = props.event?.data?.pbehavior ?? {};
 
-    const aiChatPatternsForm = computed({
-      get: () => form.value.patterns,
-      set: (patterns) => {
-        form.value = { ...form.value, patterns };
-      },
+      return id.startsWith('pbehavior_') ? '' : id;
     });
 
     const {
-      pending: chatPending,
-      pendingTexts: chatPendingTexts,
-      cancel: chatCancel,
+      shown: chatShown,
+      options: chatOptions,
     } = useAiChatForm({
-      form: aiChatPatternsForm,
-      modalId: aiChatSidebarId,
+      form,
       ruleId,
       context: LLM_SOCKET_CONTEXTS.pbehavior,
     });
@@ -216,9 +209,8 @@ export default {
       form,
       pbehavior,
       clickOutsideDirective,
-      chatPending,
-      chatPendingTexts,
-      chatCancel,
+      chatShown,
+      chatOptions,
       cancel,
       remove,
       submitHandler,

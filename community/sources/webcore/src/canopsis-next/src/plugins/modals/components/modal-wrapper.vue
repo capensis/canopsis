@@ -12,11 +12,7 @@
 <script>
 import { computed, inject, onMounted, ref } from 'vue';
 
-import { DEFAULT_SIDEBAR_DRAWER_WIDTH } from '@/config';
-
-import { useStore } from '@/hooks/store';
 import { useModals } from '@/hooks/modals';
-import { useSidebar } from '@/hooks/sidebar';
 
 /**
  * Wrapper for each modal window
@@ -32,21 +28,11 @@ export default {
     },
   },
   setup(props) {
-    const store = useStore();
     const modals = useModals();
-    const sidebar = useSidebar();
 
     const clickOutside = inject('$clickOutside');
 
     const ready = ref(false);
-
-    const modalSidebar = computed(() => store.getters[`${sidebar.moduleName}/sidebarsById`][props.modal.id]);
-
-    const paddingRight = computed(() => (
-      modalSidebar.value?.minimized || !modalSidebar.value?.config?.minimizable
-        ? 0
-        : modalSidebar.value?.config?.width || DEFAULT_SIDEBAR_DRAWER_WIDTH
-    ));
 
     const isOpen = computed({
       get: () => !props.modal.hidden && ready.value,
@@ -70,14 +56,6 @@ export default {
 
         customCloseConditional: (...args) => clickOutside.call(...args),
       };
-
-      if (paddingRight.value) {
-        merged.contentWrapperStyle = {
-          ...merged.contentWrapperStyle,
-
-          paddingRight: `${paddingRight.value}px`,
-        };
-      }
 
       return {
         ...merged,

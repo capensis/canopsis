@@ -1,26 +1,24 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <modal-wrapper text-class="position-relative" close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <div class="position-relative">
-          <pattern-progress
-            v-if="chatPending"
-            :in-progress-text="chatPendingTexts.inProgress"
-            :cancel-button-label="chatPendingTexts.cancel"
-            @cancel="chatCancel"
-          />
-          <tag-form
-            v-model="form"
-            :is-imported="isImported"
-            :is-new="isNew"
-          />
-        </div>
+        <tag-form
+          v-model="form"
+          :is-imported="isImported"
+          :is-new="isNew"
+        />
+        <ai-chat-sidebar
+          v-if="chatShown"
+          v-bind="chatOptions.bind"
+          v-on="chatOptions.on"
+        />
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
           @click="close"
@@ -28,7 +26,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatPending"
+          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -41,7 +39,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, toRef } from 'vue';
 
 import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -53,7 +51,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 
-import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import TagForm from '@/components/other/tag/form/tag-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -64,7 +62,7 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: { TagForm, ModalWrapper, PatternProgress },
+  components: { TagForm, ModalWrapper, AiChatSidebar },
   props: {
     modal: {
       type: Object,
@@ -77,20 +75,13 @@ export default {
 
     const form = ref(tagToForm(config.value.tag));
 
-    const aiChatPatternsForm = computed({
-      get: () => form.value.patterns,
-      set: (patterns) => {
-        form.value = { ...form.value, patterns };
-      },
-    });
-
     const {
-      pending: chatPending,
-      pendingTexts: chatPendingTexts,
-      cancel: chatCancel,
+      shown: chatShown,
+      options: chatOptions,
     } = useAiChatForm({
-      form: aiChatPatternsForm,
-      modalId: props.modal.id,
+      form,
+
+      modal: toRef(props, 'modal'),
       ruleId: props.modal.config?.tag?._id,
       context: LLM_SOCKET_CONTEXTS.alarmTag,
     });
@@ -105,7 +96,9 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        await config.value.action?.(formToTag(form.value));
+        const result = await config.value.action?.(formToTag(form.value));
+
+        await config.value.afterSubmit?.(result);
 
         close();
       },
@@ -120,9 +113,8 @@ export default {
       isImported,
       isDisabled,
       submitting,
-      chatPending,
-      chatPendingTexts,
-      chatCancel,
+      chatShown,
+      chatOptions,
       submit,
       close,
     };

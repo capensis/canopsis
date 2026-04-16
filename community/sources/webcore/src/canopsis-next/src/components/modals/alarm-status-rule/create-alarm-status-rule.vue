@@ -1,25 +1,23 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <modal-wrapper text-class="position-relative" close>
       <template #title="">
         <span>{{ config.title }}</span>
       </template>
       <template #text="">
-        <div class="position-relative">
-          <pattern-progress
-            v-if="chatPending"
-            :in-progress-text="chatPendingTexts.inProgress"
-            :cancel-button-label="chatPendingTexts.cancel"
-            @cancel="chatCancel"
-          />
-          <alarm-status-rule-form
-            v-model="form"
-            :flapping="config.flapping"
-          />
-        </div>
+        <alarm-status-rule-form
+          v-model="form"
+          :flapping="config.flapping"
+        />
+        <ai-chat-sidebar
+          v-if="chatShown"
+          v-bind="chatOptions.bind"
+          v-on="chatOptions.on"
+        />
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
           @click="close"
@@ -27,7 +25,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatPending"
+          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -40,7 +38,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref, toRef } from 'vue';
 
 import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -51,8 +49,8 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import AlarmStatusRuleForm from '@/components/other/alarm-status-rule/form/alarm-status-rule-form.vue';
-import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -62,7 +60,7 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: { AlarmStatusRuleForm, ModalWrapper, PatternProgress },
+  components: { AlarmStatusRuleForm, ModalWrapper, AiChatSidebar },
   props: {
     modal: {
       type: Object,
@@ -82,20 +80,13 @@ export default {
         : LLM_SOCKET_CONTEXTS.resolveRule
     ));
 
-    const aiChatPatternsForm = computed({
-      get: () => form.value.patterns,
-      set: (patterns) => {
-        form.value = { ...form.value, patterns };
-      },
-    });
-
     const {
-      pending: chatPending,
-      pendingTexts: chatPendingTexts,
-      cancel: chatCancel,
+      shown: chatShown,
+      options: chatOptions,
     } = useAiChatForm({
-      form: aiChatPatternsForm,
-      modalId: props.modal.id,
+      form,
+
+      modal: toRef(props, 'modal'),
       ruleId: props.modal.config?.rule?._id,
       context: llmContext,
     });
@@ -103,7 +94,10 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        await config.value.action?.(formToAlarmStatusRule(form.value));
+        const result = await config.value.action?.(formToAlarmStatusRule(form.value));
+
+        await config.value.afterSubmit?.(result);
+
         close();
       },
     });
@@ -115,9 +109,8 @@ export default {
       config,
       isDisabled,
       submitting,
-      chatPending,
-      chatPendingTexts,
-      chatCancel,
+      chatShown,
+      chatOptions,
       submit,
       close,
     };

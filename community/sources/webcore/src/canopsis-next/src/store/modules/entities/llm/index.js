@@ -29,5 +29,9 @@ export default createCRUDModule({
     fetchLlmMessagesWithoutStore(context, { id, params } = {}) {
       return request.get(`${API_ROUTES.llms.list}/${id}/messages`, { params });
     },
+
+    bulkLinkLlmHistory(context, { data } = {}) {
+      return request.put(API_ROUTES.llms.bulkHistoryLink, data);
+    },
   },
 });

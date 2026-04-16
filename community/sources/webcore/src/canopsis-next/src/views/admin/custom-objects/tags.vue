@@ -55,9 +55,11 @@ export default {
         name: MODALS.createTag,
         config: {
           action: async (newTag) => {
-            await this.createAlarmTag({ data: newTag });
+            const result = await this.createAlarmTag({ data: newTag });
 
-            return this.fetchList();
+            this.fetchList();
+
+            return result;
           },
         },
       });
@@ -71,9 +73,11 @@ export default {
           tag,
           isImported: isImportedTag(tag),
           action: async (newTag) => {
-            await this.updateAlarmTag({ id: tag._id, data: newTag });
+            const result = await this.updateAlarmTag({ id: tag._id, data: newTag });
 
-            return this.fetchList();
+            this.fetchList();
+
+            return result;
           },
         },
       });
@@ -86,9 +90,11 @@ export default {
           title: this.$t('modals.createTag.duplicate.title'),
           tag: omit(tag, ['_id']),
           action: async (newTag) => {
-            await this.createAlarmTag({ data: newTag });
+            const result = await this.createAlarmTag({ data: newTag });
 
-            return this.fetchList();
+            this.fetchList();
+
+            return result;
           },
         },
       });

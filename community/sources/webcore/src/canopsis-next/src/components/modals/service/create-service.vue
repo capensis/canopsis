@@ -1,27 +1,25 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <modal-wrapper text-class="position-relative" close>
       <template #title="">
         {{ config.title }}
       </template>
       <template #text="">
         <c-progress-overlay :pending="pending" />
-        <div class="position-relative">
-          <pattern-progress
-            v-if="chatPending"
-            :in-progress-text="chatPendingTexts.inProgress"
-            :cancel-button-label="chatPendingTexts.cancel"
-            @cancel="chatCancel"
-          />
-          <service-form
-            v-model="form"
-            :prepare-state-setting-form="prepareStateSettingForm"
-            :template-vars="templateVars"
-          />
-        </div>
+        <service-form
+          v-model="form"
+          :prepare-state-setting-form="prepareStateSettingForm"
+          :template-vars="templateVars"
+        />
+        <ai-chat-sidebar
+          v-if="chatShown"
+          v-bind="chatOptions.bind"
+          v-on="chatOptions.on"
+        />
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
           @click="close"
@@ -29,7 +27,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatPending"
+          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -42,7 +40,7 @@
 </template>
 
 <script>
-import { computed, ref, onMounted } from 'vue';
+import { ref, onMounted, toRef } from 'vue';
 
 import { ENTITY_TYPES, LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -54,7 +52,7 @@ import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
-import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import ServiceForm from '@/components/other/service/form/service-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -65,7 +63,7 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: { ServiceForm, ModalWrapper, PatternProgress },
+  components: { ServiceForm, ModalWrapper, AiChatSidebar },
   props: {
     modal: {
       type: Object,
@@ -77,20 +75,13 @@ export default {
 
     const form = ref(serviceToForm(config.value.item));
 
-    const aiChatPatternsForm = computed({
-      get: () => form.value.patterns,
-      set: (patterns) => {
-        form.value = { ...form.value, patterns };
-      },
-    });
-
     const {
-      pending: chatPending,
-      pendingTexts: chatPendingTexts,
-      cancel: chatCancel,
+      shown: chatShown,
+      options: chatOptions,
     } = useAiChatForm({
-      form: aiChatPatternsForm,
-      modalId: props.modal.id,
+      form,
+
+      modal: toRef(props, 'modal'),
       ruleId: props.modal.config?.item?._id,
       context: LLM_SOCKET_CONTEXTS.entityService,
     });
@@ -98,7 +89,10 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        await config.value.action?.(formToService(form.value));
+        const result = await config.value.action?.(formToService(form.value));
+
+        await config.value.afterSubmit?.(result);
+
         close();
       },
     });
@@ -131,9 +125,8 @@ export default {
       pending,
       isDisabled,
       submitting,
-      chatPending,
-      chatPendingTexts,
-      chatCancel,
+      chatShown,
+      chatOptions,
 
       close,
       prepareStateSettingForm,
