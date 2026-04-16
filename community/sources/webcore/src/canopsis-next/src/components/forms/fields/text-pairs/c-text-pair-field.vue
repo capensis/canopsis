@@ -15,7 +15,17 @@
         />
       </v-flex>
       <v-flex xs6>
+        <c-select-field
+          v-if="items.length"
+          v-field="item[itemValue]"
+          :label="valueLabel"
+          :disabled="disabled"
+          :items="items"
+          :name="valueFieldName"
+          :required="valueRequired"
+        />
         <c-payload-text-field
+          v-else
           v-field="item[itemValue]"
           v-validate="valueValidationRules"
           :label="valueLabel"
@@ -39,6 +49,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 export default {
   inject: ['$validator'],
   model: {
@@ -82,31 +94,33 @@ export default {
       type: Boolean,
       default: false,
     },
+    items: {
+      type: Array,
+      default: () => [],
+    },
     variables: {
       type: Array,
       default: () => [],
     },
   },
-  computed: {
-    textValidationRules() {
-      return {
-        required: this.textRequired,
-      };
-    },
+  setup(props) {
+    const textValidationRules = computed(() => ({
+      required: props.textRequired,
+    }));
 
-    valueValidationRules() {
-      return {
-        required: this.valueRequired,
-      };
-    },
+    const valueValidationRules = computed(() => ({
+      required: props.valueRequired,
+    }));
 
-    textFieldName() {
-      return `${this.name}.${this.itemText}`;
-    },
+    const textFieldName = computed(() => `${props.name}.${props.itemText}`);
+    const valueFieldName = computed(() => `${props.name}.${props.itemValue}`);
 
-    valueFieldName() {
-      return `${this.name}.${this.itemValue}`;
-    },
+    return {
+      textValidationRules,
+      valueValidationRules,
+      textFieldName,
+      valueFieldName,
+    };
   },
 };
 </script>

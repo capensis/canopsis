@@ -101,6 +101,7 @@ type Services struct {
 	DataStorageConfigProvider   *config.BaseDataStorageConfigProvider
 	TimezoneConfigProvider      *config.BaseTimezoneConfigProvider
 	ApiConfigProvider           *config.BaseApiConfigProvider
+	AlarmConfigProvider         *config.BaseAlarmConfigProvider
 	TemplateConfigProvider      *config.BaseTemplateConfigProvider
 	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
 	ExternalDataContainer       *externaldata.GetterContainer
@@ -201,6 +202,7 @@ func Default(
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
 	services.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
+	services.AlarmConfigProvider = config.NewAlarmConfigProvider(cfg, logger)
 	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
 	services.Translator, err = RegisterValidators(securityConfig, tplExecutor)
 	if err != nil {
@@ -603,8 +605,8 @@ func Default(
 		importWorker.DeleteOldJobs(ctx)
 	})
 	api.AddWorker("config_reload", updateConfig(services.TimezoneConfigProvider, services.DataStorageConfigProvider,
-		services.ApiConfigProvider, services.TemplateConfigProvider, techMetricsConfigProvider, configAdapter,
-		services.UserInterfaceConfigProvider, userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
+		services.ApiConfigProvider, services.TemplateConfigProvider, techMetricsConfigProvider, services.AlarmConfigProvider,
+		configAdapter, services.UserInterfaceConfigProvider, userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
 	api.AddWorker("data_export_abandoned", func(ctx context.Context) {
 		services.ExportTaskExecutor.ProcessAbandonedTasks(ctx)
 	})
