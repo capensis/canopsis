@@ -82,6 +82,10 @@ export default {
         return t(`templateTesting.testDataLabels.${item.type}`);
       }
 
+      if (item.checkTicketStatusResponse) {
+        return t(`templateTesting.testDataCheckTicketStatusResponseLabels.${props.type}`, { index: item.index + 1 });
+      }
+
       return t(`templateTesting.testDataResponseLabels.${props.type}`, { index: item.index + 1 });
     };
 
