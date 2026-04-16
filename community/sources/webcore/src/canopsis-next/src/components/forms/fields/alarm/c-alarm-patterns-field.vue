@@ -15,7 +15,7 @@
         v-if="alarmCounter && alarmCounter.count"
         text
         small
-        @click="showPatternAlarmsModal"
+        @click="showPatternAlarmsModal()"
       >
         {{ $t('common.seeAlarms') }}
       </v-btn>
