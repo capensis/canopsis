@@ -24,7 +24,7 @@
         v-if="entityCounter && entityCounter.count"
         text
         small
-        @click="showPatternEntitiesModal"
+        @click="showPatternEntitiesModal()"
       >
         {{ $t('common.seeEntities') }}
       </v-btn>
