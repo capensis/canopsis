@@ -36,7 +36,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       external_id:
         type: string
@@ -86,18 +86,14 @@ definitions:
   action.Parameters:
     properties:
       auth_token:
-        allOf:
-        - $ref: '#/definitions/request.WebhookAuthToken'
-        description: AuthToken is used in webhook action.
+        $ref: '#/definitions/request.WebhookAuthToken'
       author:
         type: string
       color:
         description: Color is used in pbehavior action.
         type: string
       declare_ticket:
-        allOf:
-        - $ref: '#/definitions/request.WebhookDeclareTicket'
-        description: DeclareTicket is used in webhook action.
+        $ref: '#/definitions/webhook.DeclareTicket'
       duration:
         allOf:
         - $ref: '#/definitions/datetime.DurationWithUnit'
@@ -105,7 +101,6 @@ definitions:
       forward_author:
         type: boolean
       multiple_urls:
-        description: MultipleURLs is used in webhook action.
         type: boolean
       name:
         description: Name is used in pbehavior action.
@@ -118,9 +113,7 @@ definitions:
         description: Reason is used in pbehavior action.
         type: string
       request:
-        allOf:
-        - $ref: '#/definitions/request.Parameters'
-        description: Request is used in webhook action.
+        $ref: '#/definitions/request.Parameters'
       rrule:
         description: RRule is used in pbehavior action.
         type: string
@@ -142,10 +135,8 @@ definitions:
             * `3` - Critical
         type: integer
       stop_on_fail:
-        description: StopOnFail is used in webhook action.
         type: boolean
       stop_on_success:
-        description: StopOnSuccess is used in webhook action.
         type: boolean
       ticket:
         description: Ticket is used in assocticket action.
@@ -670,22 +661,40 @@ definitions:
               type: string
             m:
               type: string
+            struct_m:
+              items:
+                $ref: '#/definitions/types.StructuredMessage'
+              type: array
             t:
               type: integer
             ticket:
               type: string
+            ticket_check_status_job_id:
+              type: string
+            ticket_check_status_job_is_stopped:
+              type: boolean
             ticket_comment:
               type: string
             ticket_data:
               additionalProperties:
                 type: string
               type: object
+            ticket_last_check_time:
+              type: integer
             ticket_meta_alarm_id:
               type: string
+            ticket_prev_source_status:
+              type: string
+            ticket_prev_status:
+              type: integer
             ticket_rule_id:
               type: string
             ticket_rule_name:
               type: string
+            ticket_source_status:
+              type: string
+            ticket_status:
+              type: integer
             ticket_system_name:
               type: string
             ticket_url:
@@ -698,22 +707,40 @@ definitions:
               type: integer
           type: object
         type: array
+      struct_m:
+        items:
+          $ref: '#/definitions/types.StructuredMessage'
+        type: array
       t:
         type: integer
       ticket:
         type: string
+      ticket_check_status_job_id:
+        type: string
+      ticket_check_status_job_is_stopped:
+        type: boolean
       ticket_comment:
         type: string
       ticket_data:
         additionalProperties:
           type: string
         type: object
+      ticket_last_check_time:
+        type: integer
       ticket_meta_alarm_id:
         type: string
+      ticket_prev_source_status:
+        type: string
+      ticket_prev_status:
+        type: integer
       ticket_rule_id:
         type: string
       ticket_rule_name:
         type: string
+      ticket_source_status:
+        type: string
+      ticket_status:
+        type: integer
       ticket_system_name:
         type: string
       ticket_url:
@@ -854,9 +881,12 @@ definitions:
       comment:
         maxLength: 255
         type: string
+      struct_comment:
+        items:
+          $ref: '#/definitions/alarmaction.StructuredMessageRequest'
+        type: array
     required:
     - _id
-    - comment
     type: object
   alarmaction.BulkRequestItem:
     properties:
@@ -915,8 +945,10 @@ definitions:
       comment:
         maxLength: 255
         type: string
-    required:
-    - comment
+      struct_comment:
+        items:
+          $ref: '#/definitions/alarmaction.StructuredMessageRequest'
+        type: array
     type: object
   alarmaction.Request:
     properties:
@@ -933,6 +965,18 @@ definitions:
         $ref: '#/definitions/datetime.DurationWithUnit'
     required:
     - duration
+    type: object
+  alarmaction.StructuredMessageRequest:
+    properties:
+      field:
+        maxLength: 255
+        type: string
+      message:
+        maxLength: 255
+        type: string
+    required:
+    - field
+    - message
     type: object
   alarmaction.TicketRemoveRequest:
     properties:
@@ -1437,6 +1481,53 @@ definitions:
       updated:
         type: integer
     type: object
+  commenttemplate.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  commenttemplate.EditRequest:
+    properties:
+      fields:
+        items:
+          $ref: '#/definitions/commenttemplate.Field'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+    required:
+    - fields
+    - name
+    type: object
+  commenttemplate.Field:
+    properties:
+      name:
+        maxLength: 255
+        type: string
+      required:
+        type: boolean
+    required:
+    - name
+    type: object
+  commenttemplate.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
+      fields:
+        items:
+          $ref: '#/definitions/commenttemplate.Field'
+        type: array
+      name:
+        type: string
+      updated:
+        type: integer
+    type: object
   common.AlarmStep:
     properties:
       _t:
@@ -1453,22 +1544,40 @@ definitions:
         type: string
       m:
         type: string
+      struct_m:
+        items:
+          $ref: '#/definitions/types.StructuredMessage'
+        type: array
       t:
         type: integer
       ticket:
         type: string
+      ticket_check_status_job_id:
+        type: string
+      ticket_check_status_job_is_stopped:
+        type: boolean
       ticket_comment:
         type: string
       ticket_data:
         additionalProperties:
           type: string
         type: object
+      ticket_last_check_time:
+        type: integer
       ticket_meta_alarm_id:
         type: string
+      ticket_prev_source_status:
+        type: string
+      ticket_prev_status:
+        type: integer
       ticket_rule_id:
         type: string
       ticket_rule_name:
         type: string
+      ticket_source_status:
+        type: string
+      ticket_status:
+        type: integer
       ticket_system_name:
         type: string
       ticket_url:
@@ -1859,9 +1968,13 @@ definitions:
           type: string
         type: array
       negative_entity_pattern:
+        example: '[[{"field":"name","cond":{"type":"eq","value":"cps_name"}}]]'
         type: string
       no_events:
         type: boolean
+      pbehavior_pattern:
+        example: '[[{"field":"pbehavior_info.id","cond":{"type":"eq","value":"df17b079-03fb-4a4f-a19d-14d9c0c3563b"}}]]'
+        type: string
       search:
         type: string
       search_pattern:
@@ -2738,6 +2851,13 @@ definitions:
     required:
     - _id
     type: object
+  eventfilter.BulkToggleRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   eventfilter.BulkUpdateRequestItem:
     properties:
       _id:
@@ -3454,6 +3574,20 @@ definitions:
       mediatype:
         type: string
     type: object
+  flappingrule.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  flappingrule.BulkToggleRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   flappingrule.CreateRequest:
     properties:
       _id:
@@ -3473,6 +3607,8 @@ definitions:
         type: string
       duration:
         $ref: '#/definitions/datetime.DurationWithUnit'
+      enabled:
+        type: boolean
       entity_pattern:
         items:
           items:
@@ -3489,6 +3625,7 @@ definitions:
         type: integer
     required:
     - duration
+    - enabled
     - freq_limit
     - name
     type: object
@@ -3518,6 +3655,8 @@ definitions:
         type: string
       duration:
         $ref: '#/definitions/datetime.DurationWithUnit'
+      enabled:
+        type: boolean
       entity_pattern:
         items:
           items:
@@ -3550,6 +3689,8 @@ definitions:
         type: string
       duration:
         $ref: '#/definitions/datetime.DurationWithUnit'
+      enabled:
+        type: boolean
       entity_pattern:
         items:
           items:
@@ -3566,6 +3707,7 @@ definitions:
         type: integer
     required:
     - duration
+    - enabled
     - freq_limit
     - name
     type: object
@@ -3779,6 +3921,13 @@ definitions:
         type: integer
     type: object
   idlerule.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  idlerule.BulkToggleRequestItem:
     properties:
       _id:
         type: string
@@ -4102,6 +4251,13 @@ definitions:
     - url
     type: object
   linkrule.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  linkrule.BulkToggleRequestItem:
     properties:
       _id:
         type: string
@@ -4722,6 +4878,13 @@ definitions:
     - entity
     - origin
     type: object
+  pbehavior.BulkToggleRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   pbehavior.BulkUpdateRequestItem:
     properties:
       _id:
@@ -5078,6 +5241,20 @@ definitions:
       ts:
         type: integer
     type: object
+  pbehaviorexception.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  pbehaviorexception.BulkToggleHiddenRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   pbehaviorexception.CreateRequest:
     properties:
       _id:
@@ -5089,6 +5266,9 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
       name:
         maxLength: 255
         type: string
@@ -5135,6 +5315,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.Exdate'
         type: array
+      hidden:
+        type: boolean
       name:
         type: string
       updated:
@@ -5149,6 +5331,9 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
       name:
         maxLength: 255
         type: string
@@ -5156,6 +5341,20 @@ definitions:
     - description
     - exdates
     - name
+    type: object
+  pbehaviorreason.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  pbehaviorreason.BulkToggleHiddenRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
     type: object
   pbehaviorreason.CreateRequest:
     properties:
@@ -5246,6 +5445,20 @@ definitions:
     - type
     - view_from
     - view_to
+    type: object
+  pbehaviortype.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  pbehaviortype.BulkToggleHiddenRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
     type: object
   pbehaviortype.CreateRequest:
     properties:
@@ -5377,6 +5590,20 @@ definitions:
       type:
         type: string
     type: object
+  playlist.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  playlist.BulkToggleRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   playlist.EditRequest:
     properties:
       enabled:
@@ -5476,26 +5703,19 @@ definitions:
       rule:
         type: string
     type: object
-  request.WebhookDeclareTicket:
+  resolverule.BulkDeleteRequestItem:
     properties:
-      customFields:
-        additionalProperties:
-          type: string
-        type: object
-      empty_response:
-        type: boolean
-      is_regexp:
-        type: boolean
-      ticket_id:
+      _id:
         type: string
-      ticket_id_tpl:
+    required:
+    - _id
+    type: object
+  resolverule.BulkToggleRequestItem:
+    properties:
+      _id:
         type: string
-      ticket_url:
-        type: string
-      ticket_url_title:
-        type: string
-      ticket_url_tpl:
-        type: string
+    required:
+    - _id
     type: object
   resolverule.CreateRequest:
     properties:
@@ -5516,6 +5736,8 @@ definitions:
         type: string
       duration:
         $ref: '#/definitions/datetime.DurationWithUnit'
+      enabled:
+        type: boolean
       entity_pattern:
         items:
           items:
@@ -5530,6 +5752,7 @@ definitions:
         type: integer
     required:
     - duration
+    - enabled
     - name
     type: object
   resolverule.Response:
@@ -5558,6 +5781,8 @@ definitions:
         type: string
       duration:
         $ref: '#/definitions/datetime.DurationWithUnit'
+      enabled:
+        type: boolean
       entity_pattern:
         items:
           items:
@@ -5588,6 +5813,8 @@ definitions:
         type: string
       duration:
         $ref: '#/definitions/datetime.DurationWithUnit'
+      enabled:
+        type: boolean
       entity_pattern:
         items:
           items:
@@ -5602,6 +5829,7 @@ definitions:
         type: integer
     required:
     - duration
+    - enabled
     - name
     type: object
   role.BulkUpdatePermissionsRequestItem:
@@ -5806,6 +6034,13 @@ definitions:
     required:
     - _id
     type: object
+  scenario.BulkToggleRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   scenario.BulkUpdateRequestItem:
     properties:
       _id:
@@ -5908,7 +6143,7 @@ definitions:
       author:
         type: string
       declare_ticket:
-        $ref: '#/definitions/request.WebhookDeclareTicket'
+        $ref: '#/definitions/webhook.DeclareTicket'
       duration:
         allOf:
         - $ref: '#/definitions/datetime.DurationWithUnit'
@@ -5925,9 +6160,7 @@ definitions:
       reason:
         $ref: '#/definitions/pbehavior.Reason'
       request:
-        allOf:
-        - $ref: '#/definitions/request.Parameters'
-        description: Webhook
+        $ref: '#/definitions/request.Parameters'
       rrule:
         type: string
       skip_for_child:
@@ -6049,6 +6282,10 @@ definitions:
             type: object
           test:
             type: string
+          ticket_status_responses:
+            additionalProperties:
+              type: string
+            type: object
         type: object
     type: object
   scenario.TemplateVarsResponse:
@@ -6066,6 +6303,10 @@ definitions:
           $ref: '#/definitions/template.VarResponse'
         type: array
       ticket:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+      ticket_status:
         items:
           $ref: '#/definitions/template.VarResponse'
         type: array
@@ -6696,6 +6937,10 @@ definitions:
             additionalProperties:
               type: string
             type: object
+          ticket_status_responses:
+            additionalProperties:
+              type: string
+            type: object
           user:
             type: string
         type: object
@@ -6726,6 +6971,13 @@ definitions:
     - name
     - rule
     - type
+    type: object
+  template.TemplateCheckTicketStatus:
+    properties:
+      request:
+        $ref: '#/definitions/template.TemplateParameters'
+      ticket_status_tpl:
+        type: string
     type: object
   template.TemplateParameters:
     properties:
@@ -6770,6 +7022,8 @@ definitions:
     type: object
   template.TemplateWebhookDeclareTicket:
     properties:
+      check_ticket_status:
+        $ref: '#/definitions/template.TemplateCheckTicketStatus'
       ticket_id_tpl:
         type: string
       ticket_url_tpl:
@@ -6802,6 +7056,15 @@ definitions:
                 type: string
             type: object
           responses:
+            additionalProperties:
+              properties:
+                _id:
+                  type: string
+                name:
+                  type: string
+              type: object
+            type: object
+          ticket_status_responses:
             additionalProperties:
               properties:
                 _id:
@@ -6883,6 +7146,13 @@ definitions:
         type: string
       value: {}
     type: object
+  types.StructuredMessage:
+    properties:
+      field:
+        type: string
+      message:
+        type: string
+    type: object
   user.BulkDeleteRequestItem:
     properties:
       _id:
@@ -6898,7 +7168,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       firstname:
         maxLength: 255
@@ -6927,6 +7197,13 @@ definitions:
     required:
     - _id
     type: object
+  user.BulkToggleRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   user.BulkUpdateRequestItem:
     properties:
       _id:
@@ -6935,7 +7212,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       firstname:
         maxLength: 255
@@ -6964,7 +7241,7 @@ definitions:
     required:
     - _id
     - email
-    - enable
+    - enabled
     - name
     - roles
     type: object
@@ -6974,7 +7251,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       external_id:
         type: string
@@ -7006,7 +7283,7 @@ definitions:
         type: string
     required:
     - email
-    - enable
+    - enabled
     - name
     - roles
     type: object
@@ -7016,7 +7293,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       firstname:
         maxLength: 255
@@ -7060,7 +7337,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       firstname:
         maxLength: 255
@@ -7088,7 +7365,7 @@ definitions:
         type: string
     required:
     - email
-    - enable
+    - enabled
     - name
     - roles
     type: object
@@ -7112,7 +7389,7 @@ definitions:
         type: string
       email:
         type: string
-      enable:
+      enabled:
         type: boolean
       external_id:
         type: string
@@ -7309,6 +7586,10 @@ definitions:
     type: object
   view.Parameters:
     properties:
+      comment_templates:
+        items:
+          type: string
+        type: array
       directory:
         type: string
       fast_pbehaviors:
@@ -7477,6 +7758,46 @@ definitions:
           $ref: '#/definitions/widget.Response'
         type: array
     type: object
+  webhook.CheckTicketStatus:
+    properties:
+      auth_token:
+        $ref: '#/definitions/request.WebhookAuthToken'
+      request:
+        $ref: '#/definitions/request.Parameters'
+      reuse_headers_and_auth:
+        type: boolean
+      status_mapping:
+        additionalProperties:
+          type: integer
+        type: object
+      ticket_status:
+        type: string
+      ticket_status_tpl:
+        type: string
+    type: object
+  webhook.DeclareTicket:
+    properties:
+      check_ticket_status:
+        $ref: '#/definitions/webhook.CheckTicketStatus'
+      customFields:
+        additionalProperties:
+          type: string
+        type: object
+      empty_response:
+        type: boolean
+      is_regexp:
+        type: boolean
+      ticket_id:
+        type: string
+      ticket_id_tpl:
+        type: string
+      ticket_url:
+        type: string
+      ticket_url_title:
+        type: string
+      ticket_url_tpl:
+        type: string
+    type: object
   widget.EditGridPositionItemRequest:
     properties:
       _id:
@@ -7553,6 +7874,10 @@ definitions:
         type: string
       author:
         $ref: '#/definitions/author.Author'
+      comment_templates:
+        items:
+          $ref: '#/definitions/commenttemplate.Response'
+        type: array
       created:
         type: integer
       filters:

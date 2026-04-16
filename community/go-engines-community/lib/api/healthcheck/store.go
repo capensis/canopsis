@@ -222,8 +222,8 @@ func (s *store) doLoad(ctx context.Context) {
 	s.loadConfig(ctx)
 	s.loadServices(ctx)
 	s.loadEngines(ctx)
-	s.websocketHub.Send(websocket.RoomHealthcheck, s.GetInfo())
-	s.websocketHub.Send(websocket.RoomHealthcheckStatus, s.GetStatus())
+	s.websocketHub.SendMessage(ctx, s.GetInfo(), websocket.ToRoom(websocket.RoomHealthcheck))
+	s.websocketHub.SendMessage(ctx, s.GetStatus(), websocket.ToRoom(websocket.RoomHealthcheckStatus))
 }
 
 func (s *store) loadEngines(ctx context.Context) {

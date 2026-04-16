@@ -44,6 +44,7 @@ export default {
       snooze: 'Mettre en veille',
       declareTicket: 'Déclarer un incident',
       associateTicket: 'Associer un ticket',
+      removeAssociatedTicket: 'Retirer le ticket associé',
       cancel: 'Annuler l\'alarme',
       unCancel: 'Annuler l\'annulation de l\'alarme',
       fastCancel: 'Annulation rapide',
@@ -81,6 +82,7 @@ export default {
     launched: 'lancé',
     junit: 'JUnit',
     groupItems: 'Grouper les éléments',
+    onlyComments: 'Commentaires uniquement',
     steps: {
       [ALARM_LIST_STEPS.statedec]: 'Sévérité diminuée',
       [ALARM_LIST_STEPS.stateinc]: 'Sévérité augmentée',
@@ -97,6 +99,7 @@ export default {
       [ALARM_LIST_STEPS.pbhenter]: 'Comportement périodique activé',
       [ALARM_LIST_STEPS.pbhleave]: 'Comportement périodique désactivé',
       [ALARM_LIST_STEPS.assocTicket]: 'Ticket associé',
+      [ALARM_LIST_STEPS.ticketRemove]: 'Ticket retiré',
       [ALARM_LIST_STEPS.webhookStart]: 'Exécution du Webhook',
       [ALARM_LIST_STEPS.webhookInProgress]: 'Webhook exécuté par {author} en cours...',
       [ALARM_LIST_STEPS.webhookComplete]: 'Webhook exécuté avec succès',

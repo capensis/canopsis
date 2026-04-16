@@ -232,7 +232,9 @@ export const useExtraDetailsTicketTooltip = (props) => {
   const getTicketStatusText = ticket => t(`declareTicket.status.${ticket.ticket_status ?? DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown}`);
   const convertDateWithToday = date => convertDateToStringWithFormatForToday(date);
 
-  const shownTickets = computed(() => props.tickets.slice(0, props.limit));
+  const shownTickets = computed(() => (
+    props.failedTicket ? [props.failedTicket] : props.tickets.slice(0, props.limit)
+  ));
 
   const tooltipContent = computed(() => {
     const content = shownTickets.value.reduce((acc, ticket) => {
