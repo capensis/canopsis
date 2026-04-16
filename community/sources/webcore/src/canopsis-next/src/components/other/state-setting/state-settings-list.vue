@@ -5,7 +5,6 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
-    select-all
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
