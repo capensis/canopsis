@@ -8,6 +8,7 @@ exports[`create-service Renders \`create-service\` with empty modal 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -17,16 +18,12 @@ exports[`create-service Renders \`create-service\` with empty modal 1`] = `
       class="text"
     >
       <c-progress-overlay />
-      <div
-        class="position-relative"
-      >
-        <!---->
-        <service-form-stub
-          form="[object Object]"
-          preparestatesettingform="[Function]"
-          templatevars="[object Object]"
-        />
-      </div>
+      <service-form-stub
+        form="[object Object]"
+        preparestatesettingform="[Function]"
+        templatevars="[object Object]"
+      />
+      <!---->
     </div>
     <div
       class="actions"
@@ -64,6 +61,7 @@ exports[`create-service Renders \`create-service\` with pbehavior 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -74,16 +72,12 @@ exports[`create-service Renders \`create-service\` with pbehavior 1`] = `
       class="text"
     >
       <c-progress-overlay />
-      <div
-        class="position-relative"
-      >
-        <!---->
-        <service-form-stub
-          form="[object Object]"
-          preparestatesettingform="[Function]"
-          templatevars="[object Object]"
-        />
-      </div>
+      <service-form-stub
+        form="[object Object]"
+        preparestatesettingform="[Function]"
+        templatevars="[object Object]"
+      />
+      <!---->
     </div>
     <div
       class="actions"

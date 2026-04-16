@@ -1,4 +1,7 @@
+import { merge } from 'lodash';
+
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { createAuthModule, createLlmModule, createMockedStoreModules, createUserModule } from '@unit/utils/store';
 import { mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
@@ -29,10 +32,37 @@ const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectPatternsForm = wrapper => wrapper.find('patterns-form-stub');
 
+const withModalInject = (options = {}) => {
+  const rawModal = options.propsData?.modal ?? { config: {} };
+  const modal = rawModal.id ? rawModal : { id: 'test-modal-id', ...rawModal };
+
+  return merge({}, options, {
+    propsData: {
+      ...options.propsData,
+      modal,
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $modal: modal,
+      },
+    },
+  });
+};
+
 describe('create-filter', () => {
-  const $modals = mockModals();
+  const $modals = {
+    ...mockModals(),
+    updateModalConfig: jest.fn(),
+    updateDialogProps: jest.fn(),
+  };
   const $sidebar = mockSidebar();
   const $popups = mockPopups();
+
+  const { authModule } = createAuthModule();
+  const { userModule } = createUserModule();
+  const { llmModule } = createLlmModule();
+  const store = createMockedStoreModules([authModule, userModule, llmModule]);
 
   const defaultPattern = {
     field: '',
@@ -49,23 +79,18 @@ describe('create-filter', () => {
     },
   };
 
-  const factory = generateShallowRenderer(CreateFilter, {
+  const shallowCreateFilter = generateShallowRenderer(CreateFilter, {
     stubs,
+    store,
     attachTo: document.body,
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
   });
-  const snapshotFactory = generateRenderer(CreateFilter, {
+  const factory = (options = {}) => shallowCreateFilter(withModalInject(options));
+
+  const renderCreateFilter = generateRenderer(CreateFilter, {
     stubs: snapshotStubs,
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
+    store,
   });
+  const snapshotFactory = (options = {}) => renderCreateFilter(withModalInject(options));
 
   test('Form submitted without fields after trigger submit button', async () => {
     const action = jest.fn();
@@ -95,10 +120,8 @@ describe('create-filter', () => {
       alarm_pattern: [],
       entity_pattern: [],
       pbehavior_pattern: [],
-      event_pattern: [],
-      weather_service_pattern: [],
     });
-    expect($modals.hide).toHaveBeenCalledWith(modal);
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Form submitted with all fields after trigger submit button', async () => {
@@ -133,11 +156,9 @@ describe('create-filter', () => {
       title: '',
       alarm_pattern: [],
       entity_pattern: [],
-      event_pattern: [],
       pbehavior_pattern: [],
-      weather_service_pattern: [],
     });
-    expect($modals.hide).toHaveBeenCalledWith(modal);
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -198,7 +219,7 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toHaveBeenCalledWith(modal);
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -207,7 +228,6 @@ describe('create-filter', () => {
       alarm_pattern: 'Alarm pattern error',
       entity_pattern: 'Entity pattern error',
       pbehavior_pattern: 'PBehavior pattern error',
-      weather_service_pattern: 'Weather service pattern error',
     };
     const action = jest.fn().mockRejectedValue({
       ...formErrors,
@@ -245,8 +265,6 @@ describe('create-filter', () => {
       alarm_pattern: [],
       entity_pattern: [],
       pbehavior_pattern: [],
-      event_pattern: [],
-      weather_service_pattern: [],
       title: '',
     });
     expect($modals.hide).not.toHaveBeenCalled();
@@ -296,8 +314,6 @@ describe('create-filter', () => {
       ...customFilter,
       entity_pattern: [],
       pbehavior_pattern: [],
-      event_pattern: [],
-      weather_service_pattern: [],
     });
     expect($modals.hide).not.toHaveBeenCalled();
 

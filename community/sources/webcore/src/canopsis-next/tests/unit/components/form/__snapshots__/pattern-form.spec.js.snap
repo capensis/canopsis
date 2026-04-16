@@ -2,94 +2,74 @@
 
 exports[`pattern-form Renders \`pattern-form\` with alarm type 1`] = `
 <div
-  class="position-relative"
+  class="layout column"
 >
-  <!---->
-  <div
-    class="layout column"
-  >
-    <c-name-field-stub
-      autofocus=""
-      label="Title"
-      name="title"
-      required=""
-      value="Title"
-    />
-    <c-alarm-patterns-field-stub
-      check-count-name="alarm_pattern"
-      name="alarm_pattern"
-      required=""
-      value="[object Object]"
-    />
-  </div>
+  <c-name-field-stub
+    autofocus=""
+    label="Title"
+    name="title"
+    required=""
+    value="Title"
+  />
+  <c-alarm-patterns-field-stub
+    check-count-name="alarm_pattern"
+    name="alarm_pattern"
+    required=""
+    value="[object Object]"
+  />
 </div>
 `;
 
 exports[`pattern-form Renders \`pattern-form\` with default props 1`] = `
 <div
-  class="position-relative"
+  class="layout column"
 >
+  <c-name-field-stub
+    autofocus=""
+    label="Title"
+    name="title"
+    required=""
+  />
   <!---->
-  <div
-    class="layout column"
-  >
-    <c-name-field-stub
-      autofocus=""
-      label="Title"
-      name="title"
-      required=""
-    />
-    <!---->
-  </div>
 </div>
 `;
 
 exports[`pattern-form Renders \`pattern-form\` with entity type 1`] = `
 <div
-  class="position-relative"
+  class="layout column"
 >
-  <!---->
-  <div
-    class="layout column"
-  >
-    <c-name-field-stub
-      autofocus=""
-      label="Title"
-      name="title"
-      required=""
-      value="Title"
-    />
-    <c-entity-patterns-field-stub
-      check-count-name="entity_pattern"
-      name="entity_pattern"
-      required=""
-      value="[object Object]"
-    />
-  </div>
+  <c-name-field-stub
+    autofocus=""
+    label="Title"
+    name="title"
+    required=""
+    value="Title"
+  />
+  <c-entity-patterns-field-stub
+    check-count-name="entity_pattern"
+    name="entity_pattern"
+    required=""
+    value="[object Object]"
+  />
 </div>
 `;
 
-exports[`pattern-form Renders \`pattern-form\` with entity type 2`] = `
+exports[`pattern-form Renders \`pattern-form\` with pbehavior type 1`] = `
 <div
-  class="position-relative"
+  class="layout column"
 >
-  <!---->
-  <div
-    class="layout column"
-  >
-    <c-name-field-stub
-      autofocus=""
-      label="Title"
-      name="title"
-      required=""
-      value="Title"
-    />
-    <c-pbehavior-patterns-field-stub
-      check-count-name="pbehavior_pattern"
-      name="pbehavior_pattern"
-      required=""
-      value="[object Object]"
-    />
-  </div>
+  <c-name-field-stub
+    autofocus=""
+    label="Title"
+    name="title"
+    required=""
+    value="Title"
+  />
+  <c-pbehavior-patterns-field-stub
+    check-count-name="pbehavior_pattern"
+    name="pbehavior_pattern"
+    required=""
+    value="[object Object]"
+  />
 </div>
 `;

@@ -1,7 +1,7 @@
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
-import { mockRequestAnimationFrame, mockModals, mockSidebar } from '@unit/utils/mock-hooks';
+import { mockModals, mockSidebar } from '@unit/utils/mock-hooks';
 
 import { SIDE_BARS } from '@/constants';
 
@@ -29,8 +29,6 @@ const stubs = {
 };
 
 describe('sidebar-wrapper', () => {
-  mockRequestAnimationFrame();
-
   const $modals = mockModals();
   const $sidebar = mockSidebar();
 
@@ -69,6 +67,18 @@ describe('sidebar-wrapper', () => {
         },
       },
     },
+  });
+
+  beforeEach(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((fn) => {
+      fn(0);
+
+      return 0;
+    });
+  });
+
+  afterEach(() => {
+    window.requestAnimationFrame.mockRestore();
   });
 
   it('Sidebar hidden trigger drawer', async () => {
@@ -114,7 +124,7 @@ describe('sidebar-wrapper', () => {
       },
     });
 
-    const closeButton = wrapper.findAll('button.v-btn').at(1);
+    const closeButton = wrapper.findAll('button.v-btn').at(0);
 
     closeButton.trigger('click');
 
@@ -144,12 +154,70 @@ describe('sidebar-wrapper', () => {
       },
     });
 
-    const closeButton = wrapper.findAll('button.v-btn').at(1);
+    const closeButton = wrapper.findAll('button.v-btn').at(0);
 
     closeButton.trigger('click');
 
     expect($clickOutside.call).toHaveBeenCalledTimes(1);
     expect($sidebar.hide).not.toHaveBeenCalled();
+  });
+
+  it('Sidebar minimize after click when config is minimizable', async () => {
+    const wrapper = factory({
+      propsData: {
+        sidebar: {
+          id: 'test-sidebar-id',
+          name: SIDE_BARS.alarmSettings,
+          config: {
+            minimizable: true,
+            title: 'Test title',
+          },
+          hidden: false,
+        },
+      },
+      store,
+      mocks: {
+        $modals,
+        $sidebar,
+      },
+    });
+
+    await flushPromises();
+
+    wrapper.findAll('button.v-btn').at(0).trigger('click');
+
+    expect($sidebar.minimize).toHaveBeenCalledTimes(1);
+    expect($sidebar.minimize).toHaveBeenCalledWith({ id: 'test-sidebar-id' });
+    expect($sidebar.hide).not.toHaveBeenCalled();
+  });
+
+  it('Sidebar maximize after click when minimized and minimizable', async () => {
+    const wrapper = factory({
+      propsData: {
+        sidebar: {
+          id: 'test-sidebar-id',
+          name: SIDE_BARS.alarmSettings,
+          config: {
+            minimizable: true,
+            title: 'Test title',
+          },
+          hidden: false,
+          minimized: true,
+        },
+      },
+      store,
+      mocks: {
+        $modals,
+        $sidebar,
+      },
+    });
+
+    await flushPromises();
+
+    wrapper.findAll('button.v-btn').at(1).trigger('click');
+
+    expect($sidebar.maximize).toHaveBeenCalledTimes(1);
+    expect($sidebar.maximize).toHaveBeenCalledWith({ id: 'test-sidebar-id' });
   });
 
   it.each(Object.values(SIDE_BARS))('Renders `sidebar-wrapper` with type: %s', async (type) => {

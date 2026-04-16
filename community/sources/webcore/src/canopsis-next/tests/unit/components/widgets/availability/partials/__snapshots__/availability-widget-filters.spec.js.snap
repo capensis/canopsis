@@ -36,7 +36,7 @@ exports[`availability-widget-filters Renders \`availability-widget-filters\` wit
       addable="true"
       editable="true"
       private="true"
-      widget="[object Object]"
+      widgetid="widget-id"
       withentity="true"
     />
   </div>

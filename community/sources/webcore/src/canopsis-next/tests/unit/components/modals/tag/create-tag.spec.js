@@ -1,6 +1,8 @@
 import Faker from 'faker';
+import { merge } from 'lodash';
 
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { createAuthModule, createLlmModule, createMockedStoreModules, createUserModule } from '@unit/utils/store';
 import { mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
@@ -32,28 +34,50 @@ const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectTagForm = wrapper => wrapper
   .find('tag-form-stub');
 
+const withModalInject = (options = {}) => {
+  const rawModal = options.propsData?.modal ?? { config: {} };
+  const modal = rawModal.id ? rawModal : { id: 'test-modal-id', ...rawModal };
+
+  return merge({}, options, {
+    propsData: {
+      ...options.propsData,
+      modal,
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $modal: modal,
+      },
+    },
+  });
+};
+
 describe('create-tag', () => {
-  const $modals = mockModals();
+  const $modals = {
+    ...mockModals(),
+    updateModalConfig: jest.fn(),
+    updateDialogProps: jest.fn(),
+  };
   const $popups = mockPopups();
   const $sidebar = mockSidebar();
 
-  const factory = generateShallowRenderer(CreateTag, {
+  const { authModule } = createAuthModule();
+  const { userModule } = createUserModule();
+  const { llmModule } = createLlmModule();
+  const store = createMockedStoreModules([authModule, userModule, llmModule]);
+
+  const shallowCreateTag = generateShallowRenderer(CreateTag, {
     stubs,
+    store,
     attachTo: document.body,
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
   });
-  const snapshotFactory = generateRenderer(CreateTag, {
+  const factory = (options = {}) => shallowCreateTag(withModalInject(options));
+
+  const renderCreateTag = generateRenderer(CreateTag, {
     stubs: snapshotStubs,
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
+    store,
   });
+  const snapshotFactory = (options = {}) => renderCreateTag(withModalInject(options));
 
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();

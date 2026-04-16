@@ -90,6 +90,7 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
           style="display: none;"
         >
           <pbehavior-patterns-form-stub
+            class="mt-4"
             form="[object Object]"
           />
         </div>

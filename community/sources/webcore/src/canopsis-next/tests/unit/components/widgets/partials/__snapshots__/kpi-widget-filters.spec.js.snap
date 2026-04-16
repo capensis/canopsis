@@ -37,7 +37,7 @@ exports[`kpi-widget-filters Renders 'kpi-widget-filters' with custom props 1`] =
       addable="true"
       editable="true"
       private="true"
-      widget="[object Object]"
+      widgetid="id"
       withentity="true"
     />
   </div>

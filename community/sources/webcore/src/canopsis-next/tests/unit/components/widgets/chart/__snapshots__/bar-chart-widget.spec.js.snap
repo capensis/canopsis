@@ -6,8 +6,8 @@ exports[`bar-chart-widget Renders \`bar-chart-widget\` with custom props 1`] = `
 >
   <kpi-widget-filters-stub
     class="mx-3"
-    widget="[object Object]"
     widgetfilters=""
+    widgetid="bar-chart-widget-id"
   />
   <div
     class="layout pa-3 column"
@@ -54,8 +54,8 @@ exports[`bar-chart-widget Renders \`bar-chart-widget\` with required props 1`] =
 >
   <kpi-widget-filters-stub
     class="mx-3"
-    widget="[object Object]"
     widgetfilters=""
+    widgetid="bar-chart-widget-id"
   />
   <div
     class="layout pa-3 column"
