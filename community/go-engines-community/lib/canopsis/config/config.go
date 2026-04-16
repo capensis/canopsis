@@ -30,9 +30,11 @@ type SectionAlarm struct {
 	TimeToKeepResolvedAlarms string `toml:"TimeToKeepResolvedAlarms"`
 	AllowDoubleAck           bool   `toml:"AllowDoubleAck"`
 	// ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
-	ActivateAlarmAfterAutoRemediation bool `toml:"ActivateAlarmAfterAutoRemediation"`
-	EnableArraySortingInEntityInfos   bool `toml:"EnableArraySortingInEntityInfos"`
-	CropStepsNumber                   int  `toml:"CropStepsNumber"`
+	ActivateAlarmAfterAutoRemediation bool   `toml:"ActivateAlarmAfterAutoRemediation"`
+	EnableArraySortingInEntityInfos   bool   `toml:"EnableArraySortingInEntityInfos"`
+	CropStepsNumber                   int    `toml:"CropStepsNumber"`
+	CheckTicketStatusInterval         string `toml:"CheckTicketStatusInterval"`
+	CheckTicketStatusMaxPeriod        string `toml:"CheckTicketStatusMaxPeriod"`
 }
 
 // SectionGlobal ...

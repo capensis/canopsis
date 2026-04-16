@@ -23,6 +23,7 @@ func updateConfig(
 	apiConfigProvider *config.BaseApiConfigProvider,
 	templateConfigProvider *config.BaseTemplateConfigProvider,
 	techMetricsConfigProvider *config.BaseTechMetricsConfigProvider,
+	alarmConfigProvider *config.BaseAlarmConfigProvider,
 	configAdapter config.Adapter,
 	userInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider,
 	userInterfaceAdapter config.UserInterfaceAdapter,
@@ -47,6 +48,7 @@ func updateConfig(
 				techMetricsConfigProvider.Update(cfg)
 				dataStorageConfigProvider.Update(cfg)
 				templateConfigProvider.Update(cfg)
+				alarmConfigProvider.Update(cfg)
 
 				userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {

@@ -1183,6 +1183,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_general"
+  permission_api_ticket_status_job_management:
+    <<: *permission
+    _id: api_ticket_status_job_management
+    name: <Current()._id>
+    description: Ticket status job management
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_llm_chat:
     <<: *permission
     _id: api_llm_chat
@@ -1955,6 +1963,17 @@ permission:
       - "@group_technical_admin_settings"
     api_permissions:
       "@permission_api_comment_template": 0
+  permission_models_job_management:
+    <<: *permission
+    _id: models_job_management
+    name: <Current()._id>
+    description: Jobs management
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_ticket_status_job_management": 1
 
   # technical -> viewsandwidgets
   permission_models_privateView:
@@ -3830,6 +3849,7 @@ role:
       "@permission_numbers_filter": 1
       "@permission_numbers_userFilter": 1
       "@permission_models_maintenance": 1
+      "@permission_models_job_management": 1
       # API permissions
       "@permission_api_alarm_read": 1
       "@permission_api_alarm_update": 1
@@ -3901,6 +3921,7 @@ role:
       "@permission_api_resend_events": 1
       "@permission_api_entity_info_property": 15
       "@permission_api_comment_template": 15
+      "@permission_api_ticket_status_job_management": 1
       "@permission_api_llm_chat": 1
       # Views permissions
       "@permission_view_open_alarms_general": 7
