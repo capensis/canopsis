@@ -2,11 +2,12 @@
   <div :class="wrapperClass" class="c-enabled-field">
     <v-switch
       v-field="value"
+      :class="{ 'ma-0': withBackground }"
       :label="label || $t('common.enabled')"
       :color="color"
       :disabled="disabled"
       :readonly="readonly"
-      :hide-details="hideDetails"
+      :hide-details="hideDetails || withBackground"
       v-on="listenersWithoutInput"
     >
       <template #label="">
@@ -79,7 +80,7 @@ export default {
 
 <style lang="scss" scoped>
 .c-enabled-field {
-  display: contents;
+  display: flex;
 }
 
 .c-enabled-field--with-background {
