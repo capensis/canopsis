@@ -199,3 +199,27 @@ func IsDurationEnabledAndValid(durationWithEnabled *DurationWithEnabled) bool {
 		*durationWithEnabled.Enabled &&
 		durationWithEnabled.Value > 0
 }
+
+type ShortDurationWithUnit struct {
+	Value int64  `bson:"value" json:"value" binding:"required,min=1"`
+	Unit  string `bson:"unit" json:"unit" binding:"required,oneof=ms s"`
+}
+
+func NewShortDurationWithUnit(value int64, unit string) ShortDurationWithUnit {
+	return ShortDurationWithUnit{
+		Value: value,
+		Unit:  unit,
+	}
+}
+
+func (d ShortDurationWithUnit) IsZero() bool {
+	return d == ShortDurationWithUnit{}
+}
+
+func (d ShortDurationWithUnit) AsDuration() time.Duration {
+	switch d.Unit {
+	case "ms":
+		return time.Duration(d.Value) * time.Millisecond
+	}
+	return time.Duration(d.Value) * time.Second
+}

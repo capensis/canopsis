@@ -36,7 +36,7 @@ export default {
   foundEntities: 'found: <strong>{count} entities</strong>',
   sameEntities: 'same entities',
   seeRecordsComparison: 'See records comparison',
-  conditionsOptimized: 'The following conditions were optimized:',
+  conditionsOptimized: 'The following <strong>regular expressions</strong> were optimized:',
   applyThisSuggestion: 'APPLY THIS SUGGESTION',
   optimizationSuggestionsWasntFound: 'No <strong>regexp</strong> optimization suggestions found',
   errors: {

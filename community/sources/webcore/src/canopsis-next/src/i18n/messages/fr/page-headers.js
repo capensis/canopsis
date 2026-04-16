@@ -75,7 +75,7 @@ export default {
   },
 
   /**
-   * Admin access
+   * Administration - Access
    */
   [USER_PERMISSIONS.technical.permission]: {
     title: 'Droits',
@@ -91,7 +91,7 @@ export default {
   },
 
   /**
-   * Admin communications
+   * Administration - Communications
    */
   [USER_PERMISSIONS.technical.broadcastMessage]: {
     title: 'Diffusion de messages',
@@ -101,9 +101,21 @@ export default {
     title: 'Listes de lecture',
     message: 'Permet de personnaliser l\'affichage des vues en les faisant défiler les unes après les autres avec un délai défini.',
   },
+  [USER_PERMISSIONS.technical.healthcheck]: {
+    title: 'Bilan de santé',
+    message: 'Le Healthcheck est un tableau de bord indiquant l\'état et les erreurs de tous les composants inclus dans Canopsis.',
+  },
 
   /**
-   * Admin general
+   * Administration - Custom objects
+   */
+  [USER_PERMISSIONS.technical.commentTemplate]: {
+    title: 'Modèles de commentaires',
+    topbarTitle: 'Modèles de commentaires',
+  },
+
+  /**
+   * Administration - Settings
    */
   [USER_PERMISSIONS.technical.parameters]: {
     title: 'Interface utilisateur',
@@ -114,10 +126,6 @@ export default {
   [USER_PERMISSIONS.technical.notification.common]: {
     title: 'Paramètres de notification',
     topbarTitle: 'Notifications',
-  },
-  [USER_PERMISSIONS.technical.healthcheck]: {
-    title: 'Bilan de santé',
-    message: 'Le Healthcheck est un tableau de bord indiquant l\'état et les erreurs de tous les composants inclus dans Canopsis.',
   },
   [USER_PERMISSIONS.technical.engine]: {
     title: 'Engines',
@@ -170,7 +178,7 @@ export default {
   },
 
   /**
-   * Grouped admin
+   * Administration - Remediation
    */
   [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
     title: 'Planification',

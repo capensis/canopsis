@@ -201,10 +201,12 @@ func (p *provider) loadUrlMetadata(ctx context.Context) error {
 	}
 
 	tr := dt.Clone()
-	tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: p.config.InsecureSkipVerify} //nolint:gosec
+	tc := &tls.Config{InsecureSkipVerify: p.config.InsecureSkipVerify} //nolint:gosec
 	if !p.config.InsecureVerifyAnyCert {
-		tr.TLSClientConfig.VerifyPeerCertificate = libsectls.VerifySelfSignedCertificate(tr.TLSClientConfig)
+		tc.SessionTicketsDisabled = true
+		tc.VerifyPeerCertificate = libsectls.VerifySelfSignedCertificate(tc)
 	}
+	tr.TLSClientConfig = tc
 
 	hc := http.Client{Timeout: MetadataReqTimeout, Transport: tr}
 

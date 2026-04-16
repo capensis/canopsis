@@ -346,16 +346,15 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (sta
 		return model, err
 	}
 
-	aliasPropMap := make(map[string]bool)
 	var applyAliasPropIDs []string
-	var valErrs, applyErrs validator.ValidationErrors
+	var applyErrs validator.ValidationErrors
 	if r.CorporateEntityPattern != "" {
 		r.EntityRequest, applyAliasPropIDs, applyErrs = s.transformer.ApplyEntityCorporatePattern(r.EntityRequest, patterns)
 	} else if r.EntityPattern != nil && len(patternAliases) != 0 {
 		r.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(r.EntityPattern, aliases)
 	}
 
-	valErrs = append(valErrs, applyErrs...)
+	aliasPropMap := make(map[string]bool)
 	for _, id := range applyAliasPropIDs {
 		aliasPropMap[id] = true
 	}
@@ -364,16 +363,21 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (sta
 		EntityPattern:          r.InheritedEntityPattern,
 		CorporateEntityPattern: r.CorporateInheritedEntityPattern,
 	}
+
+	var inheritedApplyErrs validator.ValidationErrors
 	if r.CorporateInheritedEntityPattern != "" {
-		inheritedEntityRequest, applyAliasPropIDs, applyErrs = s.transformer.ApplyEntityCorporatePattern(inheritedEntityRequest, patterns, "CorporateInheritedEntityPattern")
+		inheritedEntityRequest, applyAliasPropIDs, inheritedApplyErrs = s.transformer.ApplyEntityCorporatePattern(inheritedEntityRequest, patterns, "CorporateInheritedEntityPattern")
 	} else if r.InheritedEntityPattern != nil && len(patternAliases) != 0 {
-		inheritedEntityRequest.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(inheritedEntityRequest.EntityPattern, aliases, "InheritedEntityPattern")
+		inheritedEntityRequest.EntityPattern, applyAliasPropIDs, inheritedApplyErrs = s.transformer.ApplyAliases(inheritedEntityRequest.EntityPattern, aliases, "InheritedEntityPattern")
 	}
 
-	valErrs = append(valErrs, applyErrs...)
 	for _, id := range applyAliasPropIDs {
 		aliasPropMap[id] = true
 	}
+
+	valErrs := make(validator.ValidationErrors, 0, len(applyErrs)+len(inheritedApplyErrs))
+	valErrs = append(valErrs, applyErrs...)
+	valErrs = append(valErrs, inheritedApplyErrs...)
 
 	if len(valErrs) > 0 {
 		return model, validation.NewError(valErrs, r)

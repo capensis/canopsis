@@ -1,9 +1,10 @@
-package websocket
+package wsconn
 
 import (
 	"context"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -11,9 +12,9 @@ import (
 )
 
 type Store interface {
-	UpdateConnections(ctx context.Context, conns []UserConnection) error
-	GetConnections(ctx context.Context, ids []string) (map[string]int64, error)
-	GetActiveConnections(ctx context.Context) (int64, error)
+	SyncConnections(ctx context.Context, conns []websocket.ConnectionAuthInfo) error
+	GetConnections(ctx context.Context, userIDs []string) (map[string]int64, error)
+	CountActiveConnections(ctx context.Context) (int64, error)
 	GetUsers(ctx context.Context) ([]string, error)
 }
 
@@ -34,7 +35,7 @@ type store struct {
 	readInterval   time.Duration
 }
 
-func (s *store) UpdateConnections(ctx context.Context, conns []UserConnection) error {
+func (s *store) SyncConnections(ctx context.Context, conns []websocket.ConnectionAuthInfo) error {
 	writeModels := make([]mongodriver.WriteModel, len(conns))
 	now := datetime.NewCpsTime()
 	for i, conn := range conns {
@@ -67,10 +68,10 @@ func (s *store) UpdateConnections(ctx context.Context, conns []UserConnection) e
 	return err
 }
 
-func (s *store) GetConnections(ctx context.Context, ids []string) (map[string]int64, error) {
+func (s *store) GetConnections(ctx context.Context, userIDs []string) (map[string]int64, error) {
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
-			"user":    bson.M{"$in": ids},
+			"user":    bson.M{"$in": userIDs},
 			"updated": bson.M{"$gt": datetime.CpsTime{Time: time.Now().Add(-s.readInterval)}},
 		}},
 		{"$group": bson.M{
@@ -104,7 +105,7 @@ func (s *store) GetConnections(ctx context.Context, ids []string) (map[string]in
 	return res, nil
 }
 
-func (s *store) GetActiveConnections(ctx context.Context) (int64, error) {
+func (s *store) CountActiveConnections(ctx context.Context) (int64, error) {
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"updated": bson.M{"$gt": datetime.CpsTime{Time: time.Now().Add(-s.readInterval)}},

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/commenttemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -63,7 +64,8 @@ type Response struct {
 	Created        *datetime.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated        *datetime.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 
-	Filters []widgetfilter.Response `bson:"filters" json:"filters"`
+	Filters          []widgetfilter.Response    `bson:"filters" json:"filters"`
+	CommentTemplates []commenttemplate.Response `bson:"comment_templates,omitempty" json:"comment_templates,omitempty"`
 
 	IsPrivate bool `bson:"is_private" json:"is_private"`
 }

@@ -92,6 +92,7 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.snooze]: 'Mettre en veille',
     [USER_PERMISSIONS.business.alarmsList.actions.declareTicket]: 'Déclarer un ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.associateTicket]: 'Associer un ticket',
+    [USER_PERMISSIONS.business.alarmsList.actions.removeAssociatedTicket]: 'Désassocier le ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.cancel]: 'Annuler l\'alarme',
     [USER_PERMISSIONS.business.alarmsList.actions.unCancel]: 'Annuler la suppression de l\'alarme',
     [USER_PERMISSIONS.business.alarmsList.actions.fastCancel]: 'Annuler rapidement l\'alarme',
@@ -253,6 +254,7 @@ export default {
     [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Test de modèle',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'Jetons d\'authentification externes',
+    [USER_PERMISSIONS.technical.commentTemplate]: 'Modèles de commentaires',
     [USER_PERMISSIONS.technical.externalDataTable]: 'Données externes',
     [USER_PERMISSIONS.technical.entityInfoProperty]: 'Informations d\'entité',
 
@@ -285,8 +287,8 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Règles SNMP',
 
     /**
-     * Technical Admin Notification
-     */
+    * Technical Admin Notification
+    */
     [USER_PERMISSIONS.technical.notification.common]: 'Notifications',
 
     /**

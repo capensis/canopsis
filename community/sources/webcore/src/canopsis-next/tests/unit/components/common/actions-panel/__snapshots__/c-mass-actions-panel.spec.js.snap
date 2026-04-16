@@ -1,0 +1,189 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-mass-actions-panel Renders \`c-mass-actions-panel\` with actions slot 1`] = `
+<div
+  class="portal"
+>
+        Portal to: mass-actions-panel
+  <div
+    class="c-mass-actions-panel"
+    style="grid-column-start: 2; grid-column-end: 14; grid-row-start: 2; grid-row-end: 3;"
+  >
+    <div
+      class="layout align-center justify-center"
+    >
+      <div
+        class="c-mass-actions-panel__card v-card v-sheet theme--light"
+      >
+        <div
+          class="v-card__text pa-1"
+        >
+          <div
+            class="layout gap-4 pa-3 align-center"
+          >
+            <span
+              class="c-mass-actions-panel__message mr-1"
+            >
+              1 record selected
+            </span>
+            <hr
+              aria-orientation="vertical"
+              class="v-divider v-divider--vertical theme--light"
+              role="separator"
+            />
+            <c-enabled-field-stub
+              class="ma-0"
+              hide-details=""
+              label="Keep selected after action"
+            />
+            <hr
+              aria-orientation="vertical"
+              class="v-divider v-divider--vertical theme--light"
+              role="separator"
+            />
+            <div
+              class="custom-actions"
+            >
+              Custom actions
+            </div>
+            <hr
+              aria-orientation="vertical"
+              class="v-divider v-divider--vertical theme--light"
+              role="separator"
+            />
+            <button
+              class="c-action-btn"
+              icon="close"
+              small=""
+              tooltip="Clear selection"
+              type="button"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-mass-actions-panel Renders \`c-mass-actions-panel\` with default props 1`] = `
+<div
+  class="portal"
+>
+        Portal to: mass-actions-panel
+  <div
+    class="c-mass-actions-panel"
+    style="grid-column-start: 2; grid-column-end: 14; grid-row-start: 2; grid-row-end: 3;"
+  >
+    <div
+      class="layout align-center justify-center"
+    >
+      <div
+        class="c-mass-actions-panel__card v-card v-sheet theme--light"
+      >
+        <div
+          class="v-card__text pa-1"
+        >
+          <div
+            class="layout gap-4 pa-3 align-center"
+          >
+            <span
+              class="c-mass-actions-panel__message mr-1"
+            >
+              1 record selected
+            </span>
+            <hr
+              aria-orientation="vertical"
+              class="v-divider v-divider--vertical theme--light"
+              role="separator"
+            />
+            <c-enabled-field-stub
+              class="ma-0"
+              hide-details=""
+              label="Keep selected after action"
+            />
+            <hr
+              aria-orientation="vertical"
+              class="v-divider v-divider--vertical theme--light"
+              role="separator"
+            />
+            <hr
+              aria-orientation="vertical"
+              class="v-divider v-divider--vertical theme--light"
+              role="separator"
+            />
+            <button
+              class="c-action-btn"
+              icon="close"
+              small=""
+              tooltip="Clear selection"
+              type="button"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-mass-actions-panel Renders \`c-mass-actions-panel\` with modal id 1`] = `
+<div
+  class="portal"
+>
+        Portal to: mass-actions-panel-alarms-list-modal
+  <div
+    class="c-mass-actions-panel"
+    style="grid-column-start: 2; grid-column-end: 14; grid-row-start: 2; grid-row-end: 3;"
+  >
+    <div
+      class="layout align-center justify-center"
+    >
+      <div
+        class="c-mass-actions-panel__card v-card v-sheet theme--light"
+      >
+        <div
+          class="v-card__text pa-1"
+        >
+          <div
+            class="layout gap-4 pa-3 align-center"
+          >
+            <span
+              class="c-mass-actions-panel__message mr-1"
+            >
+              2 records selected
+            </span>
+            <hr
+              aria-orientation="vertical"
+              class="v-divider v-divider--vertical theme--light"
+              role="separator"
+            />
+            <c-enabled-field-stub
+              class="ma-0"
+              hide-details=""
+              label="Keep selected after action"
+            />
+            <hr
+              aria-orientation="vertical"
+              class="v-divider v-divider--vertical theme--light"
+              role="separator"
+            />
+            <hr
+              aria-orientation="vertical"
+              class="v-divider v-divider--vertical theme--light"
+              role="separator"
+            />
+            <button
+              class="c-action-btn"
+              icon="close"
+              small=""
+              tooltip="Clear selection"
+              type="button"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
