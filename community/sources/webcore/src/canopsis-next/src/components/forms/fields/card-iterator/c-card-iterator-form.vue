@@ -26,8 +26,8 @@
         <c-btn-with-error
           v-if="required"
           :error="required && hasErrors ? (requiredErrorMessage || $t('common.addAtLeastOneItem')) : ''"
+          :fab="!addButtonLabel"
           class="mt-3"
-          fab
           small
           @click="$emit('add')"
         >

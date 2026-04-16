@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -22,64 +23,94 @@ func NewDeclareTicketWebhookProcessor(
 	metricsSender metrics.Sender,
 	amqpPublisher libamqp.Publisher,
 	eventGenerator event.Generator,
+	checkTicketStatusService webhook.CheckTicketStatusService,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
 	return &declareTicketWebhookProcessor{
-		alarmCollection: client.Collection(mongo.AlarmMongoCollection),
-		metricsSender:   metricsSender,
-		amqpPublisher:   amqpPublisher,
-		eventGenerator:  eventGenerator,
-		encoder:         encoder,
-		logger:          logger,
+		dbClient:                 client,
+		alarmCollection:          client.Collection(mongo.AlarmMongoCollection),
+		metricsSender:            metricsSender,
+		amqpPublisher:            amqpPublisher,
+		eventGenerator:           eventGenerator,
+		checkTicketStatusService: checkTicketStatusService,
+		encoder:                  encoder,
+		logger:                   logger,
 	}
 }
 
 type declareTicketWebhookProcessor struct {
-	alarmCollection mongo.DbCollection
-	metricsSender   metrics.Sender
-	amqpPublisher   libamqp.Publisher
-	eventGenerator  event.Generator
-	encoder         encoding.Encoder
-	logger          zerolog.Logger
+	dbClient                 mongo.DbClient
+	alarmCollection          mongo.DbCollection
+	metricsSender            metrics.Sender
+	amqpPublisher            libamqp.Publisher
+	eventGenerator           event.Generator
+	encoder                  encoding.Encoder
+	checkTicketStatusService webhook.CheckTicketStatusService
+	logger                   zerolog.Logger
 }
 
 func (p *declareTicketWebhookProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
-	result := Result{}
 	if event.Entity == nil || !event.Entity.Enabled {
-		return result, nil
+		return Result{}, nil
 	}
 
-	match := getOpenAlarmMatchWithStepsLimit(event)
-	newTicketStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepDeclareTicket, "",
-		event.Parameters.Output, event.Parameters)
-	update := []bson.M{
-		{"$set": bson.M{
-			"v.ticket":           newTicketStepQuery,
-			"v.tickets":          addTicketUpdateQuery(newTicketStepQuery),
-			"v.steps":            addStepUpdateQuery(newTicketStepQuery),
-			"v.last_update_date": event.Parameters.Timestamp,
-		}},
-		{"$unset": bson.A{
-			"v.failed_ticket",
-		}},
-	}
+	var result Result
 
-	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
-	alarm := types.Alarm{}
-	err := p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&alarm)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return result, nil
+	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		result = Result{}
+
+		if event.Parameters.TicketCheckStatusJobID != "" {
+			job, err := p.checkTicketStatusService.AddAlarmToCheckStatusJob(ctx, event.Parameters.TicketCheckStatusJobID, event.AlarmID)
+			if err != nil {
+				return err
+			}
+
+			if job.ID != "" {
+				event.Parameters.TicketStatus = job.TicketStatus
+				event.Parameters.TicketPrevStatus = job.PrevTicketStatus
+				event.Parameters.TicketSourceStatus = job.TicketSourceStatus
+				event.Parameters.TicketPrevSourceStatus = job.PrevTicketSourceStatus
+				event.Parameters.TicketLastCheckTime = job.CheckedAt
+			}
 		}
 
-		return result, err
+		match := getOpenAlarmMatchWithStepsLimit(event)
+		newTicketStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepDeclareTicket, "",
+			event.Parameters.Output, event.Parameters)
+		update := []bson.M{
+			{"$set": bson.M{
+				"v.ticket":           newTicketStepQuery,
+				"v.tickets":          addTicketUpdateQuery(newTicketStepQuery),
+				"v.steps":            addStepUpdateQuery(newTicketStepQuery),
+				"v.last_update_date": event.Parameters.Timestamp,
+			}},
+			{"$unset": bson.A{
+				"v.failed_ticket",
+			}},
+		}
+
+		alarm := types.Alarm{}
+		err := p.alarmCollection.FindOneAndUpdate(ctx, match, update, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&alarm)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return err
+		}
+
+		result.Alarm = alarm
+
+		return nil
+	})
+	if err != nil || result.Alarm.ID == "" {
+		return Result{}, err
 	}
 
 	alarmChange := types.NewAlarmChange()
 	alarmChange.Type = types.AlarmChangeTypeDeclareTicketWebhook
 	result.Forward = true
-	result.Alarm = alarm
 	result.AlarmChange = alarmChange
 
 	go p.postProcess(context.WithoutCancel(ctx), event, result)

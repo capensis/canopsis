@@ -115,7 +115,7 @@ func (a *api) Run(ctx context.Context) error {
 		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
-	go func() {
+	go func() { // nolint:gosec
 		<-ctx.Done()
 		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), shutdownTimout)
 		defer shutdownCancel()

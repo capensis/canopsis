@@ -30,6 +30,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/webhook"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
@@ -37,6 +38,7 @@ import (
 	libdatastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
+	libwebhook "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	"github.com/gin-gonic/gin/binding"
@@ -200,6 +202,9 @@ func registerStructValidations(
 
 	v.RegisterStructValidation(template.ValidateEditDataRequest, template.EditDataRequest{})
 	v.RegisterStructValidation(template.ValidateEditTestRequest, template.EditTestRequest{})
+
+	checkTicketStatusValidator := webhook.NewCheckTicketStatusValidator(tplExecutor)
+	v.RegisterStructValidation(checkTicketStatusValidator.ValidateCheckTicketStatus, libwebhook.CheckTicketStatus{})
 
 	v.RegisterStructValidation(commenttemplate.ValidateEditRequest, commenttemplate.EditRequest{})
 	v.RegisterStructValidation(alarmaction.ValidateCommentRequest, alarmaction.CommentRequest{})

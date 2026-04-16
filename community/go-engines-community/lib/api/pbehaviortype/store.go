@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"context"
 	"errors"
+	"fmt"
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -31,6 +32,7 @@ type Store interface {
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
 	GetNextPriority(ctx context.Context) (int64, error)
+	ToggleHidden(ctx context.Context, r BulkToggleHiddenRequestItem, hidden bool) (bool, error)
 }
 
 type store struct {
@@ -482,4 +484,20 @@ func transformRequestToDocument(request EditRequest) *pbehavior.Type {
 		Hidden:      request.Hidden,
 		Author:      request.Author,
 	}
+}
+
+func (s *store) ToggleHidden(ctx context.Context, r BulkToggleHiddenRequestItem, hidden bool) (bool, error) {
+	res, err := s.dbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"hidden": hidden,
+			"author": r.Author,
+		}},
+	)
+	if err != nil {
+		return false, fmt.Errorf("failed to toggle pbehavior type visibility: %w", err)
+	}
+
+	return res.MatchedCount != 0, nil
 }

@@ -15,6 +15,7 @@ type Rule struct {
 	Duration    datetime.DurationWithUnit `bson:"duration"`
 	Priority    int64                     `bson:"priority"`
 	Author      string                    `bson:"author"`
+	Enabled     bool                      `bson:"enabled"`
 	Created     datetime.CpsTime          `bson:"created"`
 	Updated     datetime.CpsTime          `bson:"updated"`
 
