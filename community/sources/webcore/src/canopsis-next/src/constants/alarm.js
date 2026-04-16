@@ -426,6 +426,7 @@ export const ALARM_LIST_STEPS = {
   declareTicketRuleInProgress: 'declareticketruleinprogress',
   declareTicketRuleComplete: 'declareticketrulecomplete',
   declareTicketRuleFail: 'declareticketrulefail',
+  changeTicketStatus: 'changeticketstatus',
 
   snooze: 'snooze',
   unsnooze: 'unsnooze',

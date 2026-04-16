@@ -1,6 +1,8 @@
 import { escape } from 'lodash';
 import { computed } from 'vue';
 
+import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
+
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 import { linkifyHtml, sanitizeHtml } from '@/helpers/html';
@@ -227,7 +229,7 @@ export const useExtraDetailsSnoozeTooltip = (props) => {
 export const useExtraDetailsTicketTooltip = (props) => {
   const { t, tc } = useI18n();
 
-  const getTicketStatusText = () => t(`common.${props.failedTicket ? 'failed' : 'ok'}`);
+  const getTicketStatusText = ticket => t(`declareTicket.status.${ticket.ticket_status ?? DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown}`);
   const convertDateWithToday = date => convertDateToStringWithFormatForToday(date);
 
   const shownTickets = computed(() => (
@@ -236,7 +238,7 @@ export const useExtraDetailsTicketTooltip = (props) => {
 
   const tooltipContent = computed(() => {
     const content = shownTickets.value.reduce((acc, ticket) => {
-      let ticketContent = `<strong>${ticket.ticket_rule_name || ''} ${getTicketStatusText()}</strong>
+      let ticketContent = `<strong>${ticket.ticket_rule_name ? `${ticket.ticket_rule_name} - ` : ''}${getTicketStatusText(ticket)}</strong>
           <div>${t('common.by')} : ${escape(ticket.a)}</div>
           <div>${t('common.date')} : ${convertDateWithToday(ticket.t)}</div>`;
 
