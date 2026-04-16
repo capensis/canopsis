@@ -15,8 +15,8 @@ if (!db.permission.findOne({_id: "api_llm_config"})) {
         _id: "api_llm_config",
         name: "api_llm_config",
         type: "CRUD",
-        description: "LLM config",
-        groups: ["api", "api_rules"]
+        description: "LLMs",
+        groups: ["api", "api_general"]
     });
     db.role.updateOne({name: "admin"}, {
         $set: {
@@ -25,16 +25,18 @@ if (!db.permission.findOne({_id: "api_llm_config"})) {
     });
 }
 
-if (!db.permission.findOne({_id: "api_llm_chat"})) {
+if (!db.permission.findOne({_id: "models_llm"})) {
     db.permission.insertOne({
-        _id: "api_llm_chat",
-        name: "api_llm_chat",
-        description: "LLM chat",
-        groups: ["api", "api_general"]
+        _id: "models_llm",
+        name: "models_llm",
+        type: "CRUD",
+        description: "LLMs",
+        groups: ["technical", "technical_admin", "technical_admin_customobjects"],
+        api_permissions: {api_llm_config: 0}
     });
     db.role.updateOne({name: "admin"}, {
         $set: {
-            "permissions.api_llm_chat": 1
+            "permissions.models_llm": 15
         }
     });
 }
