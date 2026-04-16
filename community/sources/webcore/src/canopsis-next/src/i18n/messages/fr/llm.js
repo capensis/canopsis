@@ -122,8 +122,11 @@ export default {
     infoAlert:
       'Fonctionne uniquement avec le modèle pour l\'action <strong>{patternItem}</strong><br />'
       + '<strong>Cliquez sur Redémarrer pour lancer l\'assistant IA pour un autre modèle</strong>',
-    patternsItemsError:
-      '<strong>L\'élément sélectionné a été retiré du formulaire. Veuillez redémarrer l\'assistant IA pour continuer.</strong>',
+    patternsItemsError: {
+      [LLM_SOCKET_CONTEXTS.scenario]:
+        'L\'action sélectionnée a été supprimée.<br />'
+        + '<strong>Vous pouvez redémarrer la conversation avec une autre action (l\'historique sera perdu).</strong>',
+    },
     warningAlert: '<div>Veuillez noter que :</div>'
       + '<ul>'
       + '<li>Les résultats générés par l\'IA <strong>peuvent contenir des erreurs</strong> — vérifiez et validez toujours les modèles avant utilisation.</li>'

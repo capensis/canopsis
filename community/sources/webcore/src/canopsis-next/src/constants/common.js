@@ -126,7 +126,6 @@ export const POPUP_TYPES = {
 
 export const PORTALS_NAMES = {
   additionalTopBarItems: 'additional-top-bar-items',
-  additionalSidebarTitle: 'additional-sidebar-title',
   massActionsPanel: 'mass-actions-panel',
 };
 

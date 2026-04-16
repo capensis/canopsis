@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <modal-wrapper text-class="position-relative" close>
       <template #title="">
         {{ title }}
       </template>
@@ -12,24 +12,22 @@
           :dismissed="isChangesDismissed"
           class="mb-3"
         />
-        <div class="position-relative">
-          <pattern-progress
-            v-if="chatPending"
-            :in-progress-text="chatPendingTexts.inProgress"
-            :cancel-button-label="chatPendingTexts.cancel"
-            @cancel="chatCancel"
-          />
-          <remediation-instruction-form
-            v-model="form"
-            :disabled="disabled"
-            :is-new="isNew"
-            :required-approve="requiredInstructionApprove"
-            :rule-id="config.remediationInstruction?._id"
-          />
-        </div>
+        <remediation-instruction-form
+          v-model="form"
+          :disabled="disabled"
+          :is-new="isNew"
+          :required-approve="requiredInstructionApprove"
+          :rule-id="config.remediationInstruction?._id"
+        />
+        <ai-chat-sidebar
+          v-if="chatShown"
+          v-bind="chatOptions.bind"
+          v-on="chatOptions.on"
+        />
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
           @click="$modals.hide"
@@ -37,7 +35,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatPending"
+          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -51,7 +49,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref, toRef } from 'vue';
 import { createNamespacedHelpers } from 'vuex';
 
 import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
@@ -69,7 +67,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 
-import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 import RemediationInstructionApprovalAlert from '@/components/other/remediation/instructions/partials/approval-alert.vue';
 
@@ -85,7 +83,7 @@ export default {
   },
   components: {
     ModalWrapper,
-    PatternProgress,
+    AiChatSidebar,
     RemediationInstructionForm,
     RemediationInstructionApprovalAlert,
   },
@@ -104,20 +102,13 @@ export default {
 
     const form = ref(remediationInstructionToFullForm(config.value.remediationInstruction));
 
-    const aiChatPatternsForm = computed({
-      get: () => form.value.patterns,
-      set: (patterns) => {
-        form.value = { ...form.value, patterns };
-      },
-    });
-
     const {
-      pending: chatPending,
-      pendingTexts: chatPendingTexts,
-      cancel: chatCancel,
+      shown: chatShown,
+      options: chatOptions,
     } = useAiChatForm({
-      form: aiChatPatternsForm,
-      modalId: props.modal.id,
+      form,
+
+      modal: toRef(props, 'modal'),
       ruleId: props.modal.config?.remediationInstruction?._id,
       context: LLM_SOCKET_CONTEXTS.instruction,
     });
@@ -140,11 +131,11 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        const data = await config.value.action?.(formToRemediationInstructionRequest(form.value));
+        const result = await config.value.action?.(formToRemediationInstructionRequest(form.value));
+
+        await config.value.afterSubmit?.(result);
 
         close();
-
-        return data;
       },
       errorsToValidation: err => remediationInstructionErrorsToForm(err, form.value),
     });
@@ -166,9 +157,8 @@ export default {
       alertComment,
       isDisabled,
       submitting,
-      chatPending,
-      chatPendingTexts,
-      chatCancel,
+      chatShown,
+      chatOptions,
       submit,
     };
   },

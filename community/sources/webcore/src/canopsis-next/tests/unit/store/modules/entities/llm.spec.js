@@ -77,4 +77,17 @@ describe('Entities llm module', () => {
 
     expect(result).toEqual(body);
   });
+
+  test('Link LLM history in bulk without store. Action: bulkLinkLlmHistory', async () => {
+    const data = { items: [{ _id: Faker.datatype.uuid() }] };
+    const body = { updated: 1 };
+
+    axiosMockAdapter
+      .onPost(API_ROUTES.llms.bulkHistoryLink, data)
+      .reply(200, body);
+
+    const result = await llmModule.actions.bulkLinkLlmHistory({}, { data });
+
+    expect(result).toEqual(body);
+  });
 });

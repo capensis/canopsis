@@ -86,6 +86,7 @@ export default {
     [LLM_THINKING_LEVELS.high]: 'High',
   },
   chat: {
+    title: 'AI assistant',
     howCanIHelp: 'How can I help?',
     promptPlaceholder: 'Describe what you need…',
     ask: 'Ask',
@@ -122,8 +123,11 @@ export default {
     infoAlert:
       'Works only with pattern for action <strong>{patternItem}</strong><br />'
       + '<strong>Click Restart to run AI assistant for another pattern</strong>',
-    patternsItemsError:
-      '<strong>The selected pattern item was removed from the form. Please restart the AI chat to continue.</strong>',
+    patternsItemsError: {
+      [LLM_SOCKET_CONTEXTS.scenario]:
+        'Selected action is deleted.<br />'
+        + '<strong>You can restart the chat with another action (the history will be lost).</strong>',
+    },
     warningAlert: '<div>Please be aware that:</div>'
       + '<ul>'
       + '<li>AI-generated output <strong>may contain errors</strong> — always review and validate patterns before use.</li>'

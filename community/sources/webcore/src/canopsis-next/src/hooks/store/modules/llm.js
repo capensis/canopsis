@@ -24,6 +24,7 @@ export const useLlm = () => {
     fetchLlmChatsWithoutStore: 'fetchLlmChatsWithoutStore',
     fetchLlmUsersWithoutStore: 'fetchLlmUsersWithoutStore',
     fetchLlmMessagesWithoutStore: 'fetchLlmMessagesWithoutStore',
+    bulkLinkLlmHistory: 'bulkLinkLlmHistory',
   });
 
   return {

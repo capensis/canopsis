@@ -1,5 +1,5 @@
 <template>
-  <v-btn :disabled="!modalId" color="primary" @click="fixWithAi">
+  <v-btn v-if="hasLlms" color="primary" @click="fixWithAi">
     <v-icon class="mr-2">
       $vuetify.icons.ai
     </v-icon>
@@ -10,8 +10,6 @@
 <script>
 import { computed, inject } from 'vue';
 
-import { useSidebar } from '@/hooks/sidebar';
-
 export default {
   props: {
     jsonString: {
@@ -20,18 +18,14 @@ export default {
     },
   },
   setup(props) {
-    const modal = inject('$modal');
-    const sidebar = useSidebar();
+    const aiChat = inject('$aiChat', {});
 
-    const modalId = computed(() => modal.id);
+    const hasLlms = computed(() => aiChat.llms?.value?.length);
 
-    const fixWithAi = () => sidebar.updateConfig({
-      id: modalId.value,
-      config: { jsonString: props.jsonString },
-    });
+    const fixWithAi = () => aiChat.updateJsonString?.(props.jsonString);
 
     return {
-      modalId,
+      hasLlms,
       fixWithAi,
     };
   },

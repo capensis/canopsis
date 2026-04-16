@@ -276,7 +276,11 @@ export default {
           { value: EVENT_FILTER_PATTERN_FIELDS.author },
           { value: EVENT_FILTER_PATTERN_FIELDS.initiator },
         ],
-        action: eventPattern => updateQueryField('event_pattern', eventPattern),
+        action: async (eventPattern) => {
+          updateQueryField('event_pattern', eventPattern);
+
+          return fetchList();
+        },
       },
     });
 

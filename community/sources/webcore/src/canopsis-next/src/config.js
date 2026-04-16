@@ -466,6 +466,7 @@ export const API_ROUTES = {
   llms: {
     list: '/api/v4/cat/llm-configs',
     bulk: '/api/v4/cat/llm-configs/bulk',
+    bulkHistoryLink: '/api/v4/cat/bulk/llm-history/link',
     models: '/api/v4/cat/llm-config-models',
   },
 };

@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <modal-wrapper text-class="position-relative" close>
       <template #title="">
         {{ title }}
       </template>
@@ -11,28 +11,26 @@
           :type="type"
         >
           <template #default="{ templateVars }">
-            <div class="position-relative">
-              <pattern-progress
-                v-if="chatPending"
-                :in-progress-text="chatPendingTexts.inProgress"
-                :cancel-button-label="chatPendingTexts.cancel"
-                @cancel="chatCancel"
-              />
-              <meta-alarm-rule-form
-                v-model="form"
-                ref="formElement"
-                :active-step.sync="activeStep"
-                :disabled-id-field="config.isDisabledIdField"
-                :alarm-infos="alarmInfos"
-                :entity-infos="entityInfos"
-                :template-vars="templateVars"
-              />
-            </div>
+            <meta-alarm-rule-form
+              v-model="form"
+              ref="formElement"
+              :active-step.sync="activeStep"
+              :disabled-id-field="config.isDisabledIdField"
+              :alarm-infos="alarmInfos"
+              :entity-infos="entityInfos"
+              :template-vars="templateVars"
+            />
+            <ai-chat-sidebar
+              v-if="chatShown"
+              v-bind="chatOptions.bind"
+              v-on="chatOptions.on"
+            />
           </template>
         </template-testing-test-variables-wrapper>
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
           @click="close"
@@ -42,7 +40,7 @@
         <v-btn
           v-if="isLastStep"
           key="submit"
-          :disabled="isDisabled || chatPending"
+          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -52,7 +50,7 @@
         <v-btn
           v-else
           key="next"
-          :disabled="!isStepValid || chatPending"
+          :disabled="!isStepValid || chatOptions.bind.pending"
           type="button"
           class="primary"
           @click="next"
@@ -71,6 +69,7 @@ import {
   onMounted,
   watch,
   nextTick,
+  toRef,
 } from 'vue';
 
 import {
@@ -91,7 +90,7 @@ import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useEntityInfos } from '@/hooks/store/modules/entity-infos';
 import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
-import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
 import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
@@ -105,7 +104,7 @@ export default {
   },
   components: {
     MetaAlarmRuleForm,
-    PatternProgress,
+    AiChatSidebar,
     TemplateTestingTestVariablesWrapper,
     ModalWrapper,
   },
@@ -127,20 +126,13 @@ export default {
     const formElement = ref(null);
     const form = ref(metaAlarmRuleToForm(config.value.rule));
 
-    const aiChatPatternsForm = computed({
-      get: () => form.value.patterns,
-      set: (patterns) => {
-        form.value = { ...form.value, patterns };
-      },
-    });
-
     const {
-      pending: chatPending,
-      pendingTexts: chatPendingTexts,
-      cancel: chatCancel,
+      shown: chatShown,
+      options: chatOptions,
     } = useAiChatForm({
-      form: aiChatPatternsForm,
-      modalId: props.modal.id,
+      form,
+
+      modal: toRef(props, 'modal'),
       ruleId: props.modal.config?.rule?._id,
       context: LLM_SOCKET_CONTEXTS.metaAlarmRule,
     });
@@ -205,11 +197,11 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        const data = await config.value.action(formToMetaAlarmRule(form.value));
+        const result = await config.value.action(formToMetaAlarmRule(form.value));
+
+        await config.value.afterSubmit?.(result);
 
         close();
-
-        return data;
       },
     });
 
@@ -242,9 +234,8 @@ export default {
       entityInfos,
       isDisabled,
       submitting,
-      chatPending,
-      chatPendingTexts,
-      chatCancel,
+      chatShown,
+      chatOptions,
       next,
       submit,
       close,

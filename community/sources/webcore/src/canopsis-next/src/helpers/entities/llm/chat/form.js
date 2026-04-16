@@ -17,13 +17,17 @@ export const aiChatFormToPatternsField = (form = {}, field) => (
  * @param {Object} [form={}] - Form whose keys may include alarm/entity/pbehavior/etc. pattern fields.
  * @returns {Object<string, Object>} Subset of `form` pattern fields that have at least one group.
  */
-export const aiChatFormToPatternsDefault = (form = {}) => Object.values(PATTERNS_FIELDS).reduce((acc, field) => {
-  if (form[field]?.groups?.length) {
-    acc[field] = form[field];
-  }
+export const aiChatFormToPatternsDefault = (form = {}) => {
+  const patternsForm = form.patterns ?? form;
 
-  return acc;
-}, {});
+  return Object.values(PATTERNS_FIELDS).reduce((acc, field) => {
+    if (patternsForm[field]?.groups?.length) {
+      acc[field] = patternsForm[field];
+    }
+
+    return acc;
+  }, {});
+};
 
 /**
  * Maps a list of form rows (e.g. scenario actions) to a list of per-row pattern maps for the AI sidebar.

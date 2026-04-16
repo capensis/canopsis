@@ -43,26 +43,11 @@
 
       <ai-chat-suggestions v-if="emptyChat" @select="applySuggestion" />
     </v-layout>
-    <portal v-if="!emptyChat" :to="$constants.PORTALS_NAMES.additionalSidebarTitle">
-      <v-btn
-        class="white--text"
-        color="white"
-        outlined
-        @click="restart"
-      >
-        <v-icon class="mr-2" color="white" small>
-          refresh
-        </v-icon>
-        {{ $t('common.restart') }}
-      </v-btn>
-    </portal>
   </v-layout>
 </template>
 
 <script>
-import { toRef } from 'vue';
-
-import { SIDE_BARS } from '@/constants';
+import { toRefs } from 'vue';
 
 import { useAiChat } from '@/hooks/ai/ai-chat';
 
@@ -75,7 +60,6 @@ import AiChatPatternItemField from '@/components/other/llm/chat/ai-chat-pattern-
 import AiChatWarningAlert from '@/components/other/llm/chat/ai-chat-warning-alert.vue';
 
 export default {
-  name: SIDE_BARS.aiChat,
   $_veeValidate: {
     validator: 'new',
   },
@@ -89,15 +73,33 @@ export default {
     AiChatWarningAlert,
   },
   props: {
-    sidebar: {
-      type: Object,
-      required: true,
+    patterns: {
+      type: [Object, Array],
+      default: () => ({}),
+    },
+    patternsItems: {
+      type: Array,
+      default: () => [],
+    },
+    jsonString: {
+      type: String,
+      default: '',
+    },
+    llms: {
+      type: Array,
+      default: () => [],
+    },
+    context: {
+      type: String,
+      default: '',
+    },
+    ruleId: {
+      type: String,
+      default: '',
     },
   },
-  setup(props) {
-    return useAiChat({
-      sidebar: toRef(props, 'sidebar'),
-    });
+  setup(props, { emit }) {
+    return useAiChat(toRefs(props), emit);
   },
 };
 </script>
