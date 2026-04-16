@@ -8,6 +8,7 @@ exports[`create-pattern Renders \`create-pattern\` with empty modal 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -19,9 +20,8 @@ exports[`create-pattern Renders \`create-pattern\` with empty modal 1`] = `
     >
       <pattern-form-stub
         form="[object Object]"
-        patternprogresscancellabel="Cancel Patterns update"
-        patternprogressinprogresstext="Patterns update in progress..."
       />
+      <!---->
     </div>
     <div
       class="actions"
@@ -59,6 +59,7 @@ exports[`create-pattern Renders \`create-pattern\` with hidden title 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -70,9 +71,8 @@ exports[`create-pattern Renders \`create-pattern\` with hidden title 1`] = `
     >
       <pattern-form-stub
         form="[object Object]"
-        patternprogresscancellabel="Cancel Patterns update"
-        patternprogressinprogresstext="Patterns update in progress..."
       />
+      <!---->
     </div>
     <div
       class="actions"
@@ -110,6 +110,7 @@ exports[`create-pattern Renders \`create-pattern\` with pattern 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -121,9 +122,8 @@ exports[`create-pattern Renders \`create-pattern\` with pattern 1`] = `
     >
       <pattern-form-stub
         form="[object Object]"
-        patternprogresscancellabel="Cancel Patterns update"
-        patternprogressinprogresstext="Patterns update in progress..."
       />
+      <!---->
     </div>
     <div
       class="actions"

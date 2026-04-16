@@ -41,8 +41,7 @@ describe('filters-list', () => {
   const widgetId = 'widget-id';
   const modal = {
     config: {
-      widgetId,
-      filters: [],
+      widget: { _id: widgetId },
       addable: true,
       editable: true,
     },
@@ -305,7 +304,7 @@ describe('filters-list', () => {
       propsData: {
         modal: {
           config: {
-            widgetId,
+            widget: { _id: widgetId },
           },
         },
       },

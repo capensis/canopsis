@@ -351,6 +351,60 @@ export const createAuthModule = () => {
   };
 };
 
+/**
+ * Mocked `user` store module (entities user) for modals that call `updateCurrentUserTours` / `updateCurrentUser`.
+ */
+export const createUserModule = () => {
+  const updateCurrentUserTours = jest.fn().mockResolvedValue(undefined);
+  const updateCurrentUser = jest.fn().mockResolvedValue(undefined);
+
+  const userModule = {
+    name: 'user',
+    actions: {
+      updateCurrentUserTours,
+      updateCurrentUser,
+    },
+  };
+
+  afterEach(() => {
+    updateCurrentUserTours.mockClear();
+    updateCurrentUser.mockClear();
+  });
+
+  return {
+    userModule,
+    updateCurrentUserTours,
+    updateCurrentUser,
+  };
+};
+
+/**
+ * Mocked `llm` store module for AI chat hooks (`fetchListWithoutStore`, `bulkLinkLlmHistory`).
+ */
+export const createLlmModule = () => {
+  const fetchListWithoutStore = jest.fn().mockResolvedValue({ data: [] });
+  const bulkLinkLlmHistory = jest.fn().mockResolvedValue({});
+
+  const llmModule = {
+    name: 'llm',
+    actions: {
+      fetchListWithoutStore,
+      bulkLinkLlmHistory,
+    },
+  };
+
+  afterEach(() => {
+    fetchListWithoutStore.mockClear();
+    bulkLinkLlmHistory.mockClear();
+  });
+
+  return {
+    llmModule,
+    fetchListWithoutStore,
+    bulkLinkLlmHistory,
+  };
+};
+
 export const createPbehaviorTypesModule = () => {
   const fetchPbehaviorTypesListWithoutStore = jest.fn().mockReturnValue({
     data: [],

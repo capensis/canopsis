@@ -83,7 +83,7 @@ describe('Entities llm module', () => {
     const body = { updated: 1 };
 
     axiosMockAdapter
-      .onPost(API_ROUTES.llms.bulkHistoryLink, data)
+      .onPut(API_ROUTES.llms.bulkHistoryLink, data)
       .reply(200, body);
 
     const result = await llmModule.actions.bulkLinkLlmHistory({}, { data });

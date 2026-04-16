@@ -1,1540 +1,1146 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Alarm list settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Alarm list settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
-      <div
-        class="default-slot"
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
       />
     </div>
+    <!---->
     <div
-      class="v-navigation-drawer__border"
+      class="default-slot"
     />
-  </aside>
-</div>
-`;
-
-exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: ai-chat 1`] = `
-<div
-  class="sidebar-wrapper"
->
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
-  >
-    <div
-      class="v-navigation-drawer__content"
-    >
-      <div>
-        <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
-        >
-          <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
-          >
-            <div
-              class="v-list-item__title text-subtitle-1"
-            >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  settings.titles.ai-chat
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
-              <span
-                class="v-btn__content"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
-              </span>
-            </button>
-          </div>
-        </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
-      </div>
-      <!---->
-    </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Alarm list settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Alarm list settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Alarm statistics settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Alarm statistics settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: availability-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Availability settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Availability settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Bar chart settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Bar chart settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Context table settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Context table settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Counter settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Counter settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: external-data-table-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  External data settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                External data settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Line chart settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Line chart settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Mapping widget settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Mapping widget settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Numbers settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Numbers settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Pie chart settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Pie chart settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Service weather settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Service weather settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Stats calendar settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Stats calendar settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Testing weather
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Testing weather
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  Text settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                Text settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: user-statistics-settings 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
     <div
-      class="v-navigation-drawer__content"
+      class="sidebar-wrapper__sticky-title"
     >
-      <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
         <div
-          class="v-list v-sheet theme--light secondary"
-          role="list"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="v-list-item theme--light"
-            role="listitem"
-            tabindex="-1"
+            class="v-list-item__title text-subtitle-1"
           >
             <div
-              class="v-list-item__title text-subtitle-1"
+              class="layout gap-3 align-center"
             >
-              <div
-                class="layout gap-3 align-center"
-              >
-                <!---->
-                <span
-                  class="text-h6 white--text"
-                >
-                  User statistics settings
-                </span>
-                <button
-                  class="white--text v-btn v-btn--outlined theme--light v-size--default white--text"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon notranslate mr-2 material-icons theme--light white--text"
-                      style="font-size: 16px;"
-                    >
-                      refresh
-                    </i>
-                Restart
-                  </span>
-                </button>
-              </div>
-            </div>
-            <button
-              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-              type="button"
-            >
+              <!---->
               <span
-                class="v-btn__content"
+                class="text-h6 white--text"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light white--text"
-                >
-                  close
-                </i>
+                User statistics settings
               </span>
-            </button>
+              <portal-target />
+            </div>
           </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
         </div>
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
       </div>
-      <!---->
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
     </div>
-    <div
-      class="v-navigation-drawer__border"
-    />
-  </aside>
-</div>
+    <!---->
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` without sidebar name 1`] = `
-<div
-  class="sidebar-wrapper"
+<aside
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--close v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(100%); width: 0px; z-index: 7;"
 >
-  <aside
-    class="v-navigation-drawer v-navigation-drawer--close v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-    style="height: 100%; top: 0px; transform: translateX(100%); width: 0px; z-index: 200;"
+  <div
+    class="v-navigation-drawer__content"
   >
+    <!---->
+    <!---->
     <div
-      class="v-navigation-drawer__content"
-    >
-      <!---->
-      <!---->
-      <div
-        class="default-slot"
-      />
-    </div>
-    <div
-      class="v-navigation-drawer__border"
+      class="default-slot"
     />
-  </aside>
-</div>
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
 `;

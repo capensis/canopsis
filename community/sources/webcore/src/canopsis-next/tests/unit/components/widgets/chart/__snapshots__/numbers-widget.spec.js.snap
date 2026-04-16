@@ -6,8 +6,8 @@ exports[`numbers-widget Renders \`numbers-widget\` with custom props 1`] = `
 >
   <kpi-widget-filters-stub
     class="mx-3"
-    widget="[object Object]"
     widgetfilters=""
+    widgetid="numbers-widget-id"
   />
   <div
     class="layout pa-3 column"
@@ -54,8 +54,8 @@ exports[`numbers-widget Renders \`numbers-widget\` with required props 1`] = `
 >
   <kpi-widget-filters-stub
     class="mx-3"
-    widget="[object Object]"
     widgetfilters=""
+    widgetid="numbers-widget-id"
   />
   <div
     class="layout pa-3 column"

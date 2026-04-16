@@ -1,6 +1,8 @@
 import Faker from 'faker';
+import { merge } from 'lodash';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { createAuthModule, createLlmModule, createMockedStoreModules, createUserModule } from '@unit/utils/store';
 import { mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
@@ -28,8 +30,30 @@ const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectPbehaviorForm = wrapper => wrapper.find('pbehavior-form-stub');
 
+const withModalInject = (options = {}) => {
+  const rawModal = options.propsData?.modal ?? { config: {} };
+  const modal = rawModal.id ? rawModal : { id: 'test-modal-id', ...rawModal };
+
+  return merge({}, options, {
+    propsData: {
+      ...options.propsData,
+      modal,
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $modal: modal,
+      },
+    },
+  });
+};
+
 describe('create-pbehavior', () => {
-  const $modals = mockModals();
+  const $modals = {
+    ...mockModals(),
+    updateModalConfig: jest.fn(),
+    updateDialogProps: jest.fn(),
+  };
   const $popups = mockPopups();
   const $sidebar = mockSidebar();
   const defaultPbehavior = {
@@ -55,27 +79,25 @@ describe('create-pbehavior', () => {
     exec_pattern: true,
   };
 
-  const factory = generateShallowRenderer(CreatePbehavior, {
+  const { authModule } = createAuthModule();
+  const { userModule } = createUserModule();
+  const { llmModule } = createLlmModule();
+  const store = createMockedStoreModules([authModule, userModule, llmModule]);
 
+  const shallowCreatePbehavior = generateShallowRenderer(CreatePbehavior, {
     stubs,
+    store,
     attachTo: document.body,
     mocks: { $modals, $popups, $sidebar },
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
   });
-  const snapshotFactory = generateRenderer(CreatePbehavior, {
+  const factory = (options = {}) => shallowCreatePbehavior(withModalInject(options));
 
+  const renderCreatePbehavior = generateRenderer(CreatePbehavior, {
     stubs: snapshotStubs,
+    store,
     mocks: { $modals, $popups, $sidebar },
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
   });
+  const snapshotFactory = (options = {}) => renderCreatePbehavior(withModalInject(options));
 
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();

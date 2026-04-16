@@ -1,6 +1,8 @@
 import Faker from 'faker';
+import { merge } from 'lodash';
 
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { createAuthModule, createLlmModule, createMockedStoreModules, createUserModule } from '@unit/utils/store';
 import { mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
@@ -30,28 +32,51 @@ const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectPatternForm = wrapper => wrapper
   .find('pattern-form-stub');
 
+const withModalInject = (options = {}) => {
+  const rawModal = options.propsData?.modal ?? { config: {} };
+  const modal = rawModal.id ? rawModal : { id: 'test-modal-id', ...rawModal };
+
+  return merge({}, options, {
+    propsData: {
+      ...options.propsData,
+      modal,
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $modal: modal,
+      },
+    },
+  });
+};
+
 describe('create-pattern', () => {
-  const $modals = mockModals();
+  const $modals = {
+    ...mockModals(),
+    updateModalConfig: jest.fn(),
+    updateDialogProps: jest.fn(),
+  };
   const $popups = mockPopups();
   const $sidebar = mockSidebar();
 
-  const factory = generateShallowRenderer(CreatePattern, {
+  const { authModule } = createAuthModule();
+  const { userModule } = createUserModule();
+  const { llmModule } = createLlmModule();
+
+  const store = createMockedStoreModules([authModule, userModule, llmModule]);
+
+  const shallowCreatePattern = generateShallowRenderer(CreatePattern, {
     stubs,
+    store,
     attachTo: document.body,
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
   });
-  const snapshotFactory = generateRenderer(CreatePattern, {
+  const factory = (options = {}) => shallowCreatePattern(withModalInject(options));
+
+  const renderCreatePattern = generateRenderer(CreatePattern, {
     stubs: snapshotStubs,
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
+    store,
   });
+  const snapshotFactory = (options = {}) => renderCreatePattern(withModalInject(options));
 
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();

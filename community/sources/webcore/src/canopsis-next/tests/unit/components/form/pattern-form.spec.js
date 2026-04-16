@@ -144,7 +144,7 @@ describe('pattern-form', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `pattern-form` with entity type', () => {
+  test('Renders `pattern-form` with pbehavior type', () => {
     const wrapper = snapshotFactory({
       propsData: {
         form: {

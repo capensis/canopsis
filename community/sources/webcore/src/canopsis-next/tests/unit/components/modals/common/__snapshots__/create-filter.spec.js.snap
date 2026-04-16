@@ -8,6 +8,7 @@ exports[`create-filter Renders \`create-filter\` with all parameters 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -19,20 +20,16 @@ exports[`create-filter Renders \`create-filter\` with all parameters 1`] = `
     <div
       class="text"
     >
-      <div
-        class="position-relative"
-      >
-        <!---->
-        <patterns-form-stub
-          autofocus="true"
-          form="[object Object]"
-          withalarm="true"
-          withentity="true"
-          withevent="true"
-          withpbehavior="true"
-          withtitle="true"
-        />
-      </div>
+      <patterns-form-stub
+        autofocus="true"
+        form="[object Object]"
+        withalarm="true"
+        withentity="true"
+        withevent="true"
+        withpbehavior="true"
+        withtitle="true"
+      />
+      <!---->
     </div>
     <div
       class="actions"
@@ -70,6 +67,7 @@ exports[`create-filter Renders \`create-filter\` with empty modal 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -81,15 +79,11 @@ exports[`create-filter Renders \`create-filter\` with empty modal 1`] = `
     <div
       class="text"
     >
-      <div
-        class="position-relative"
-      >
-        <!---->
-        <patterns-form-stub
-          autofocus="true"
-          form="[object Object]"
-        />
-      </div>
+      <patterns-form-stub
+        autofocus="true"
+        form="[object Object]"
+      />
+      <!---->
     </div>
     <div
       class="actions"

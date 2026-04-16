@@ -86,6 +86,7 @@ export default {
     [LLM_THINKING_LEVELS.high]: 'Élevé',
   },
   chat: {
+    title: 'Assistant IA',
     howCanIHelp: 'Comment puis-je vous aider ?',
     promptPlaceholder: 'Décrivez votre besoin…',
     ask: 'Demander',

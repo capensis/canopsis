@@ -10,8 +10,8 @@ exports[`availability-widget Renders \`availability-widget\` with default props 
     maxvaluefilterseconds="86400"
     query="[object Object]"
     showfilter="true"
-    widget="[object Object]"
     widgetfilters=""
+    widgetid="Availability_id"
   />
   <availability-list-stub
     activealarmscolumns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
