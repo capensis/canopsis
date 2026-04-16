@@ -542,7 +542,9 @@ html {
   }
 
   .theme--light & {
-    &,
+    background-color: var(--v-application-background-darken1) !important;
+    border: 1px solid var(--v-application-background-darken2) !important;
+
     .v-expansion-panel-header,
     .v-card,
     .v-data-table,
@@ -555,17 +557,21 @@ html {
 
     .v-expansion-panel-header,
         :not(.v-btn__content:has(.v-icon), .v-pagination__navigation:has(.v-icon),
-          .v-input--selection-controls__input:has(.v-icon)) > .v-icon:not(button, .success--text, .primary--text, .error--text) {
+          .v-input--selection-controls__input:has(.v-icon), .v-alert__wrapper:has(.v-icon)) > .v-icon:not(button, .success--text, .primary--text, .error--text) {
       color: var(--v-application-background-darken4) !important;
     }
   }
 
   .theme--dark & {
-    &,
+    color: var(--v-active-color-base) !important;
+    background-color: var(--v-application-background-lighten2) !important;
+    border: 1px solid var(--v-application-background-lighten3) !important;
+
     .v-expansion-panel-header,
     .v-card,
     .v-data-table,
-    .v-data-table tbody tr {
+    .v-data-table tbody tr,
+    .treeview-data-table {
       // For selictivity
       color: var(--v-active-color-base) !important;
       background-color: var(--v-application-background-lighten2) !important;
@@ -573,7 +579,8 @@ html {
     }
 
     .v-expansion-panel-header,
-    .v-icon {
+        :not(.v-btn__content:has(.v-icon), .v-pagination__navigation:has(.v-icon), .v-alert__wrapper:has(.v-icon),
+          .v-input--selection-controls__input:has(.v-icon), .v-alert__wrapper:has(.v-icon)) > .v-icon:not(button, .success--text, .primary--text, .error--text){
       color: var(--v-application-background-lighten5) !important;
     }
   }

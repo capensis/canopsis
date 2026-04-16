@@ -13,8 +13,7 @@ const stubs = {
 };
 
 const selectEnabledFields = wrapper => wrapper.findAll('c-enabled-field-stub');
-const selectEnabledField = wrapper => selectEnabledFields(wrapper).at(0);
-const selectEmitTriggerField = wrapper => selectEnabledFields(wrapper).at(1);
+const selectEmitTriggerField = wrapper => selectEnabledFields(wrapper).at(0);
 const selectNameFields = wrapper => wrapper.findAll('c-name-field-stub');
 const selectNameField = wrapper => selectNameFields(wrapper).at(0);
 const selectSystemNameField = wrapper => selectNameFields(wrapper).at(1);
@@ -59,21 +58,7 @@ describe('declare-ticket-rule-general-form', () => {
     expect(wrapper).toEmitInput({ ...form, system_name: newName });
   });
 
-  test('Enabled changed after trigger enabled field', () => {
-    const wrapper = factory({
-      propsData: {
-        form,
-      },
-    });
-
-    const newEnabled = !form.enabled;
-
-    selectEnabledField(wrapper).triggerCustomEvent('input', newEnabled);
-
-    expect(wrapper).toEmitInput({ ...form, enabled: newEnabled });
-  });
-
-  test('Emit trigger field changed after trigger enabled field', () => {
+  test('Emit trigger field changed after trigger emit trigger field', () => {
     const wrapper = factory({
       propsData: {
         form,

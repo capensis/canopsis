@@ -19,8 +19,6 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-var errFailedToRefreshLock = errors.New("failed to refresh lock")
-
 const (
 	getLogQuery    = "SELECT id FROM action_log WHERE type = $1 AND value_type = $2 AND value_id = $3"
 	insertLogQuery = "INSERT INTO action_log (type, value_type, value_id, author, time, data) VALUES ($1, $2, $3, $4, $5, $6)"
@@ -301,7 +299,7 @@ func (l *logger) Watch(ctx context.Context) (err error) {
 				case <-gCtx.Done():
 					return nil
 				case <-exitChan:
-					return errFailedToRefreshLock
+					return libredis.ErrFailedToRefreshLock
 				}
 			})
 
@@ -323,7 +321,7 @@ func (l *logger) Watch(ctx context.Context) (err error) {
 			}
 
 			if err != nil && !mongo.IsConnectionError(err) {
-				if errors.Is(err, errFailedToRefreshLock) {
+				if errors.Is(err, libredis.ErrFailedToRefreshLock) {
 					// refresh is failed, so the lock is no longer belong to us for whatever reason,
 					// do not retry watcher again, break from mongo retries cycle and try to obtain the lock again.
 					break
