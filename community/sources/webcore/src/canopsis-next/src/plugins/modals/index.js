@@ -36,7 +36,6 @@ export default {
           hide: ({ id } = {}) => store.dispatch(`${moduleName}/hide`, { id: id || get(this.modal, 'id') }),
           updateDialogProps: ({ id, dialogProps } = {}) => store.dispatch(`${moduleName}/updateDialogProps`, { id: id || get(this.modal, 'id'), dialogProps }),
           updateModalConfig: ({ id, config } = {}) => store.dispatch(`${moduleName}/updateModalConfig`, { id: id || get(this.modal, 'id'), config }),
-          registerOnHide: ({ id, callback } = {}) => store.dispatch(`${moduleName}/registerOnHide`, { id: id || get(this.modal, 'id'), callback }),
           minimize: ({ id } = {}) => store.dispatch(`${moduleName}/minimize`, { id: id || get(this.modal, 'id') }),
           maximize: ({ id } = {}) => store.dispatch(`${moduleName}/maximize`, { id: id || get(this.modal, 'id') }),
         };

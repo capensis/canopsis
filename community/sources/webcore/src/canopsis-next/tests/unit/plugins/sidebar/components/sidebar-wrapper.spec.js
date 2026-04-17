@@ -162,64 +162,6 @@ describe('sidebar-wrapper', () => {
     expect($sidebar.hide).not.toHaveBeenCalled();
   });
 
-  it('Sidebar minimize after click when config is minimizable', async () => {
-    const wrapper = factory({
-      propsData: {
-        sidebar: {
-          id: 'test-sidebar-id',
-          name: SIDE_BARS.alarmSettings,
-          config: {
-            minimizable: true,
-            title: 'Test title',
-          },
-          hidden: false,
-        },
-      },
-      store,
-      mocks: {
-        $modals,
-        $sidebar,
-      },
-    });
-
-    await flushPromises();
-
-    wrapper.findAll('button.v-btn').at(0).trigger('click');
-
-    expect($sidebar.minimize).toHaveBeenCalledTimes(1);
-    expect($sidebar.minimize).toHaveBeenCalledWith({ id: 'test-sidebar-id' });
-    expect($sidebar.hide).not.toHaveBeenCalled();
-  });
-
-  it('Sidebar maximize after click when minimized and minimizable', async () => {
-    const wrapper = factory({
-      propsData: {
-        sidebar: {
-          id: 'test-sidebar-id',
-          name: SIDE_BARS.alarmSettings,
-          config: {
-            minimizable: true,
-            title: 'Test title',
-          },
-          hidden: false,
-          minimized: true,
-        },
-      },
-      store,
-      mocks: {
-        $modals,
-        $sidebar,
-      },
-    });
-
-    await flushPromises();
-
-    wrapper.findAll('button.v-btn').at(1).trigger('click');
-
-    expect($sidebar.maximize).toHaveBeenCalledTimes(1);
-    expect($sidebar.maximize).toHaveBeenCalledWith({ id: 'test-sidebar-id' });
-  });
-
   it.each(Object.values(SIDE_BARS))('Renders `sidebar-wrapper` with type: %s', async (type) => {
     const wrapper = snapshotFactory({
       propsData: {

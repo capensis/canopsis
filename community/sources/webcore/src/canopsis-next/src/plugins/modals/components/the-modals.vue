@@ -23,12 +23,8 @@ export default {
       return this.$store.getters[`${this.$modals.moduleName}/modals`];
     },
 
-    visibleModals() {
-      return this.modals.filter(modal => !modal.hidden);
-    },
-
     zIndex() {
-      return this.visibleModals.length * 300;
+      return this.modals.length * 300;
     },
   },
   watch: {

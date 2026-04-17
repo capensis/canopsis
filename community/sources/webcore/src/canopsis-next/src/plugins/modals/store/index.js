@@ -10,7 +10,6 @@ export const types = {
   UPDATE_DIALOG_PROPS: 'UPDATE_DIALOG_PROPS',
   UPDATE_MODAL_CONFIG: 'UPDATE_MODAL_CONFIG',
   HIDE_COMPLETED: 'HIDE_COMPLETED',
-  REGISTER_ON_HIDE: 'REGISTER_ON_HIDE',
   MINIMIZE: 'MINIMIZE',
   MAXIMIZE: 'MAXIMIZE',
 };
@@ -62,9 +61,6 @@ export default {
       }
 
       Vue.set(state.byId[id], 'config', config);
-    },
-    [types.REGISTER_ON_HIDE](state, { id, callback }) {
-      Vue.set(state.byId[id], 'onHide', callback);
     },
     [types.MINIMIZE](state, { id }) {
       Vue.set(state.byId[id], 'minimized', true);
@@ -155,22 +151,6 @@ export default {
           commit(types.HIDE_COMPLETED, { id });
         }
       }, VUETIFY_ANIMATION_DELAY);
-    },
-
-    /**
-     * Register on hide callback
-     *
-     * @param {Function} commit
-     * @param {Object} state
-     * @param {string} id
-     * @param {Function} callback
-     */
-    registerOnHide({ commit, state }, { id, callback } = {}) {
-      if (!state.byId[id]) {
-        return;
-      }
-
-      commit(types.REGISTER_ON_HIDE, { id, callback });
     },
 
     /**

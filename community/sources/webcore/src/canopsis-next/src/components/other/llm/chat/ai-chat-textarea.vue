@@ -132,6 +132,11 @@ export default {
       max: LLM_AI_CHAT_PROMPT_MAX_LENGTH,
     }));
 
+    /**
+     * Forwards the selected LLM from `ai-chat-llm-field` to the parent via `update:llm`.
+
+     * @param {Object|null} newLlm - Selected LLM record (same shape as the `llm` prop), or null when cleared.
+     */
     const updateLlm = newLlm => emit('update:llm', newLlm);
 
     /**

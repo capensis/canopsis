@@ -468,7 +468,7 @@ export const useAiChatForm = ({
   /**
    * Wait for the vuetify modal opening animation to complete before fetching the LLMs.
    */
-  onMounted(() => setTimeout(showChat, VUETIFY_ANIMATION_DELAY));
+  onMounted(() => setTimeout(showChat, VUETIFY_ANIMATION_DELAY * 2));
   onBeforeUnmount(hideChat);
 
   return {

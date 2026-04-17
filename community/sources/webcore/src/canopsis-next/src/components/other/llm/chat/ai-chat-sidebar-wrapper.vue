@@ -3,9 +3,9 @@
     v-model="opened"
     v-bind="navigationProps"
     :style="drawerStyle"
-    class="sidebar-wrapper"
+    class="ai-chat-sidebar-wrapper"
   >
-    <div class="sidebar-wrapper__sticky-title">
+    <div class="ai-chat-sidebar-wrapper__sticky-title">
       <v-list color="primary">
         <v-list-item>
           <v-list-item-title class="text-subtitle-1">
@@ -41,7 +41,7 @@
       <v-layout
         v-if="minimized"
         :style="minimizedHeaderStyle"
-        class="sidebar--minimized__header gap-5"
+        class="ai-chat-sidebar-wrapper--minimized__header gap-5"
         column
         justify-center
         align-center
@@ -69,9 +69,6 @@ import { LLM_AI_CHAT_WIDTH } from '@/constants';
 
 import { getMaxZIndex } from '@/helpers/vuetify';
 
-/**
- * Wrapper for each sidebar
- */
 export default {
   props: {
     initialMinimized: {
@@ -97,21 +94,35 @@ export default {
     const navigationProps = computed(() => ({
       right: true,
       fixed: true,
-      class: 'sidebar--overflow-y-hidden',
+      class: { 'ai-chat-sidebar-wrapper--overflow-y-hidden': true, 'ai-chat-sidebar-wrapper--minimized': minimized.value },
       width: !minimized.value ? LLM_AI_CHAT_WIDTH : 0,
       hideOverlay: true,
     }));
 
+    /**
+     * Updates minimized state and notifies the parent via `update:minimized`.
+
+     * @param {boolean} [newMinimized] - When omitted, keeps the current minimized value (re-sync only).
+     */
     const updateMinimized = (newMinimized = minimized.value) => {
       minimized.value = newMinimized;
 
       emit('update:minimized', newMinimized);
     };
 
+    /**
+     * Collapses the sidebar to the minimized strip.
+     */
     const minimize = () => updateMinimized(true);
 
+    /**
+     * Expands the sidebar from the minimized strip.
+     */
     const maximize = () => updateMinimized(false);
 
+    /**
+     * Emits `restart` so the parent can reset the chat session.
+     */
     const restart = () => emit('restart');
 
     onMounted(() => window.requestAnimationFrame(() => {
@@ -135,29 +146,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sidebar {
-  &-wrapper {
-    &__sticky-title {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+.ai-chat-sidebar-wrapper {
+  &__sticky-title {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  }
+  &.v-navigation-drawer {
+    overflow: visible;
+
+    &__content {
+      overflow-x: visible;
     }
 
-    &.v-navigation-drawer {
-      overflow: visible;
-
-      &--close .sidebar--minimized__header {
-        transform: translate(60px, -50%);
-      }
-
-      &__content {
-        overflow-x: visible;
-      }
-
-      &.sidebar--overflow-y-hidden .v-navigation-drawer__content  {
-        overflow-y: hidden;
-      }
+    &--close .ai-chat-sidebar-wrapper--minimized__header {
+      transform: translate(60px, -50%);
     }
   }
 

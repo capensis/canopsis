@@ -37,7 +37,6 @@ describe('Sidebar plugin store module', () => {
       name,
       config,
       hidden: false,
-      minimized: false,
     });
   });
 
@@ -82,13 +81,18 @@ describe('Sidebar plugin store module', () => {
     expect(commit).toHaveBeenCalledWith(types.SHOW, payload);
   });
 
-  it('Show sidebar with existing id maximizes. Action: show', () => {
+  it('Show sidebar with existing id still commits SHOW. Action: show', () => {
     const commit = jest.fn();
-    const { state, id } = createShownState();
+    const { id } = createShownState();
 
-    actions.show({ commit, state }, { id, name: 'other', config: {} });
+    actions.show({ commit }, { id, name: 'other', config: {} });
 
-    expect(commit).toHaveBeenCalledWith(types.MAXIMIZE, { id });
+    expect(commit).toHaveBeenCalledTimes(1);
+    expect(commit).toHaveBeenCalledWith(types.SHOW, {
+      id,
+      name: 'other',
+      config: {},
+    });
   });
 
   it('Hide sidebar. Action: hide', () => {
@@ -133,7 +137,6 @@ describe('Sidebar plugin store module', () => {
       name,
       config,
       hidden: false,
-      minimized: false,
     }]);
   });
 });

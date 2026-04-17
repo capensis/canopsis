@@ -31,8 +31,6 @@ export default {
 
           show: payload => store.dispatch(`${moduleName}/show`, payload),
           hide: ({ id } = {}) => store.dispatch(`${moduleName}/hide`, { id: id || get(this.sidebar, 'id') }),
-          minimize: ({ id } = {}) => store.dispatch(`${moduleName}/minimize`, { id: id || get(this.sidebar, 'id') }),
-          maximize: ({ id } = {}) => store.dispatch(`${moduleName}/maximize`, { id: id || get(this.sidebar, 'id') }),
           updateConfig: ({ id, config } = {}) => store.dispatch(`${moduleName}/updateConfig`, { id: id || get(this.sidebar, 'id'), config }),
         };
       },

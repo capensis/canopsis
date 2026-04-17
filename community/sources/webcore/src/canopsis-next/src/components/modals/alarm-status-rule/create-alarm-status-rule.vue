@@ -99,6 +99,8 @@ export default {
         await config.value.afterSubmit?.(result);
 
         close();
+
+        return result;
       },
     });
 

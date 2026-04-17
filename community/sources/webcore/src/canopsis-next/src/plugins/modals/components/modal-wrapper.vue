@@ -2,7 +2,6 @@
   <v-dialog
     v-model="isOpen"
     v-bind="dialogProps"
-    fixed
   >
     <!-- @slot use this slot default-->
     <slot />

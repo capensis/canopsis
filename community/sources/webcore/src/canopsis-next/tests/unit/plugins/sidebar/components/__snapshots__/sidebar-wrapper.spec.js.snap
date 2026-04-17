@@ -32,7 +32,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
               >
                 Alarm list settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -58,7 +57,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
         role="separator"
       />
     </div>
-    <!---->
     <div
       class="default-slot"
     />
@@ -101,7 +99,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1
               >
                 Alarm list settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -127,7 +124,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -167,7 +163,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics
               >
                 Alarm statistics settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -193,7 +188,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -233,7 +227,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: availability-set
               >
                 Availability settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -259,7 +252,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: availability-set
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -299,7 +291,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settin
               >
                 Bar chart settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -325,7 +316,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settin
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -365,7 +355,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings
               >
                 Context table settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -391,7 +380,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -431,7 +419,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings
               >
                 Counter settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -457,7 +444,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -497,7 +483,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: external-data-ta
               >
                 External data settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -523,7 +508,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: external-data-ta
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -563,7 +547,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-setti
               >
                 Line chart settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -589,7 +572,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-setti
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -629,7 +611,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`]
               >
                 Mapping widget settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -655,7 +636,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`]
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -695,7 +675,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings
               >
                 Numbers settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -721,7 +700,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -761,7 +739,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settin
               >
                 Pie chart settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -787,7 +764,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settin
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -827,7 +803,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-
               >
                 Service weather settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -853,7 +828,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -893,7 +867,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-s
               >
                 Stats calendar settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -919,7 +892,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-s
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -959,7 +931,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-
               >
                 Testing weather
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -985,7 +956,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -1025,7 +995,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`
               >
                 Text settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -1051,7 +1020,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -1091,7 +1059,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: user-statistics-
               >
                 User statistics settings
               </span>
-              <portal-target />
             </div>
           </div>
           <button
@@ -1117,7 +1084,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: user-statistics-
         role="separator"
       />
     </div>
-    <!---->
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -1133,7 +1099,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` without sidebar name 1`] = 
   <div
     class="v-navigation-drawer__content"
   >
-    <!---->
     <!---->
     <div
       class="default-slot"

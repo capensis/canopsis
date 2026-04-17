@@ -25,9 +25,8 @@
         <v-layout class="ai-chat-history-modal__messages_wrapper" column>
           <div
             v-if="messages.length"
-            ref="messagesElement"
             class="ai-chat-history-modal__messages pa-4"
-            @scroll.passive="messagesScroll"
+            @scroll.passive="messagesInfinityScroll"
           >
             <ai-chat-messages-list
               :messages="messages"
@@ -91,8 +90,6 @@ export default {
     const { config, close } = useInnerModal(props);
     const { fetchLlmMessagesWithoutStore } = useLlm();
 
-    const messagesElement = ref(null);
-
     const messages = ref([]);
     const meta = ref({});
 
@@ -134,7 +131,7 @@ export default {
      *
      * @param {{ target: HTMLElement }} event
      */
-    const messagesScroll = ({ target }) => {
+    const messagesInfinityScroll = ({ target }) => {
       if (pending.value || !hasMore.value) {
         return;
       }
@@ -150,8 +147,6 @@ export default {
     onMounted(fetchList);
 
     return {
-      messagesElement,
-
       messages,
       pending,
       loadMore,
@@ -159,7 +154,7 @@ export default {
       chatUserDisplayName,
 
       close,
-      messagesScroll,
+      messagesInfinityScroll,
     };
   },
 };

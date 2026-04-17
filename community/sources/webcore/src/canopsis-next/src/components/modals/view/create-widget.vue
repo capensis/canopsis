@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper padding-right="400" close>
+  <modal-wrapper close>
     <template #title="">
       <span>{{ $t('modals.createWidget.title') }}</span>
     </template>
