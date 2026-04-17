@@ -3,6 +3,7 @@ package flappingrule
 import (
 	"cmp"
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
@@ -24,6 +25,7 @@ type Store interface {
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
+	Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error)
 }
 
 type store struct {
@@ -201,6 +203,23 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	return deleted > 0, err
 }
 
+func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error) {
+	res, err := s.dbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"enabled": enabled,
+			"author":  r.Author,
+			"updated": datetime.NewCpsTime(),
+		}},
+	)
+	if err != nil {
+		return false, fmt.Errorf("failed to toggle flapping rule: %w", err)
+	}
+
+	return res.MatchedCount != 0, nil
+}
+
 func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *flappingrule.Rule) (err error) {
 	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.dbCollection.Name())
 
@@ -215,5 +234,6 @@ func transformRequestToModel(r EditRequest) flappingrule.Rule {
 		Duration:    r.Duration,
 		Priority:    r.Priority,
 		Author:      r.Author,
+		Enabled:     *r.Enabled,
 	}
 }

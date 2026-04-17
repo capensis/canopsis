@@ -46,7 +46,8 @@ type BaseFilterRequest struct {
 	Type                  []string `form:"type[]" json:"type"`
 	NoEvents              bool     `form:"no_events" json:"no_events"`
 	SearchPattern         string   `form:"search_pattern" json:"search_pattern" example:"[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_name\"}}]]"`
-	NegativeEntityPattern string   `form:"negative_entity_pattern" json:"negative_entity_pattern"`
+	PbehaviorPattern      string   `form:"pbehavior_pattern" json:"pbehavior_pattern" example:"[[{\"field\":\"pbehavior_info.id\",\"cond\":{\"type\":\"eq\",\"value\":\"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}]]"`
+	NegativeEntityPattern string   `form:"negative_entity_pattern" json:"negative_entity_pattern" example:"[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_name\"}}]]"`
 	IDs                   []string `form:"ids[]" json:"ids"`
 }
 

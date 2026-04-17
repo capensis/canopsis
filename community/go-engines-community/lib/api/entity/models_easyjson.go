@@ -109,6 +109,12 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			} else {
 				out.SearchPattern = string(in.String())
 			}
+		case "pbehavior_pattern":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.PbehaviorPattern = string(in.String())
+			}
 		case "negative_entity_pattern":
 			if in.IsNull() {
 				in.Skip()
@@ -207,6 +213,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"search_pattern\":"
 		out.RawString(prefix)
 		out.String(string(in.SearchPattern))
+	}
+	{
+		const prefix string = ",\"pbehavior_pattern\":"
+		out.RawString(prefix)
+		out.String(string(in.PbehaviorPattern))
 	}
 	{
 		const prefix string = ",\"negative_entity_pattern\":"

@@ -11,7 +11,11 @@
     with-auth-token
     @update:auth-token="updateAuthToken"
     @update:multiple="updateMultiple"
-  />
+  >
+    <template #additional-fields>
+      <slot name="additional-fields" />
+    </template>
+  </request-form>
 </template>
 
 <script>
