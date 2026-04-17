@@ -23,7 +23,6 @@
           v-field="form.copy_from_children"
           :label="$t('metaAlarmRule.copyFromLastChild')"
           class="mr-4 pt-4"
-          with-background
         >
           <template #append>
             <c-help-icon

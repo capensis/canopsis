@@ -40,12 +40,10 @@
             v-field="form.single"
             :label="$t('linkRule.single')"
             hide-details
-            with-background
           />
           <c-enabled-field
             v-field="form.hide_in_menu"
             :label="$t('linkRule.hideInMenu')"
-            with-background
           />
         </template>
         <c-payload-text-field

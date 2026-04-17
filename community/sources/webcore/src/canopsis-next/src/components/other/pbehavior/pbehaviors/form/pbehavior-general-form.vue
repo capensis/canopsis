@@ -6,7 +6,6 @@
           v-field="form.inherited"
           :label="$t('modals.createPbehavior.steps.general.fields.inherited')"
           hide-details
-          with-background
         />
       </v-flex>
     </v-layout>
@@ -27,7 +26,6 @@
         :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')"
         class="mt-0 mb-1"
         hide-details
-        with-background
         @input="updateStartOnTrigger"
       />
       <c-duration-field

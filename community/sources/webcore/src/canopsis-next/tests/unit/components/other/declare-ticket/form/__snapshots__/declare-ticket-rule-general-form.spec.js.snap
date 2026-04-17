@@ -4,27 +4,15 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
 <div
   class="layout column"
 >
-  <div
-    class="layout"
-  >
-    <div
-      class="flex xs6"
-    >
-      <c-enabled-field-stub
-        value="true"
-        with-background=""
-      />
-    </div>
-    <div
-      class="flex xs6"
-    >
-      <c-enabled-field-stub
-        label="Emit trigger"
-        name="emit_trigger"
-        with-background=""
-      />
-    </div>
-  </div>
+  <c-enabled-field-stub
+    value="true"
+    with-background=""
+  />
+  <c-enabled-field-stub
+    class="pa-2"
+    hide-details=""
+    label="Emit trigger"
+  />
   <div
     class="layout mb-2"
   >
@@ -59,27 +47,15 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
 <div
   class="layout column"
 >
-  <div
-    class="layout"
-  >
-    <div
-      class="flex xs6"
-    >
-      <c-enabled-field-stub
-        value="true"
-        with-background=""
-      />
-    </div>
-    <div
-      class="flex xs6"
-    >
-      <c-enabled-field-stub
-        label="Emit trigger"
-        name="emit_trigger"
-        with-background=""
-      />
-    </div>
-  </div>
+  <c-enabled-field-stub
+    value="true"
+    with-background=""
+  />
+  <c-enabled-field-stub
+    class="pa-2"
+    hide-details=""
+    label="Emit trigger"
+  />
   <div
     class="layout mb-2"
   >

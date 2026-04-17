@@ -1,18 +1,12 @@
 <template>
   <v-layout column>
-    <v-layout>
-      <v-flex xs6>
-        <c-enabled-field v-field="form.enabled" with-background />
-      </v-flex>
-      <v-flex xs6>
-        <c-enabled-field
-          v-field="form.emit_trigger"
-          :label="$t('common.emitTrigger')"
-          name="emit_trigger"
-          with-background
-        />
-      </v-flex>
-    </v-layout>
+    <c-enabled-field v-field="form.enabled" with-background />
+    <c-enabled-field
+      v-field="form.emit_trigger"
+      :label="$t('common.emitTrigger')"
+      class="pa-2"
+      hide-details
+    />
     <v-layout class="mb-2">
       <v-flex
         class="mr-3"

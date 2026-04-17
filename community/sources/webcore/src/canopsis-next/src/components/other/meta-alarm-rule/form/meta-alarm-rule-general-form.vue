@@ -28,7 +28,6 @@
       <c-enabled-field
         v-field="form.auto_resolve"
         :label="$t('metaAlarmRule.autoResolve')"
-        with-background
       />
     </v-layout>
   </v-layout>

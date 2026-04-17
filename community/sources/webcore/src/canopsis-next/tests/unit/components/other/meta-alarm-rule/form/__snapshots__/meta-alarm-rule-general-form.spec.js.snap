@@ -33,7 +33,6 @@ exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` w
   >
     <c-enabled-field-stub
       label="Auto resolve"
-      with-background=""
     />
   </div>
 </div>
@@ -69,7 +68,6 @@ exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` w
   >
     <c-enabled-field-stub
       label="Auto resolve"
-      with-background=""
     />
   </div>
 </div>
