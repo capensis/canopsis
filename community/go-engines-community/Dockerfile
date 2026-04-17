@@ -118,3 +118,10 @@ EXPOSE 8082
 USER root
 RUN apk add --no-cache postgresql17-client
 USER canopsis:canopsis
+
+# Export-alarms
+FROM final-container AS export-alarms
+
+USER root
+RUN mkdir -p /tmp/export-alarms
+USER root:root
