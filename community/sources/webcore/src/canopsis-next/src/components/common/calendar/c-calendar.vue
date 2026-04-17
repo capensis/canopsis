@@ -166,7 +166,7 @@
 import { getStartOfWeek, getEndOfWeek } from 'vuetify/lib/components/VCalendar/util/timestamp';
 
 import { LOCALES } from '@/config';
-import { CALENDAR_TYPES, CALENDAR_START_DRAG_DELAY, LLM_AI_CHAT_WIDTH } from '@/constants';
+import { CALENDAR_TYPES, CALENDAR_START_DRAG_DELAY, CALENDAR_POPOVER_WIDTH, LLM_AI_CHAT_WIDTH } from '@/constants';
 
 import {
   convertDateToEndOfDayDateObject,
@@ -181,8 +181,6 @@ import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
 import CalendarTodayBtn from './partials/calendar-today-btn.vue';
 import CalendarViewMode from './partials/calendar-view-mode.vue';
 import CalendarPagination from './partials/calendar-pagination.vue';
-
-const CALENDAR_POPOVER_WIDTH = 980; // TODO: need to move to config
 
 export default {
   components: { CalendarPagination, CalendarViewMode, CalendarTodayBtn },

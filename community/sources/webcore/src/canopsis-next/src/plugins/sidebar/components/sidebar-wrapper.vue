@@ -17,20 +17,9 @@
                 {{ sidebar.config.titleIcon }}
               </v-icon>
               <span class="text-h6 white--text">{{ title }}</span>
-              <portal-target :name="$constants.PORTALS_NAMES.additionalSidebarTitle" />
             </v-layout>
           </v-list-item-title>
           <v-btn
-            v-if="sidebar.config?.minimizable"
-            icon
-            @click.stop="minimize"
-          >
-            <v-icon color="white">
-              $vuetify.icons.hide_sidebar
-            </v-icon>
-          </v-btn>
-          <v-btn
-            v-else
             icon
             @click.stop="closeHandler"
           >
@@ -42,26 +31,6 @@
       </v-list>
       <v-divider />
     </div>
-    <v-slide-x-transition v-if="sidebar.config?.minimizable">
-      <v-layout
-        v-if="sidebar.minimized"
-        :style="minimizedHeaderStyle"
-        class="sidebar--minimized__header gap-5"
-        column
-        justify-center
-        align-center
-      >
-        <v-btn
-          icon
-          @click.stop="maximize"
-        >
-          <v-icon color="white">
-            $vuetify.icons.show_sidebar
-          </v-icon>
-        </v-btn>
-        <span class="text-h6 white--text">{{ sidebar.config.titleMinimized }}</span>
-      </v-layout>
-    </v-slide-x-transition>
     <slot />
   </v-navigation-drawer>
 </template>
@@ -69,7 +38,7 @@
 <script>
 import { computed, inject, ref, onMounted } from 'vue';
 
-import { DEFAULT_SIDEBAR_DRAWER_WIDTH, CSS_COLORS_VARS } from '@/config';
+import { DEFAULT_SIDEBAR_DRAWER_WIDTH } from '@/config';
 
 import { getMaxZIndex } from '@/helpers/vuetify';
 
@@ -102,10 +71,6 @@ export default {
 
     const title = computed(() => props.sidebar.config.title || (props.sidebar.name ? t(`settings.titles.${props.sidebar.name}`) : ''));
 
-    const minimizedHeaderStyle = computed(() => ({
-      backgroundColor: CSS_COLORS_VARS[props.sidebar.config.color] || CSS_COLORS_VARS.secondary,
-    }));
-
     const isOpen = computed({
       get: () => props.sidebar.name && !props.sidebar.hidden && ready.value,
       set: (value) => {
@@ -127,30 +92,19 @@ export default {
      */
     const closeHandler = () => closeCondition() && sidebar.hide({ id: props.sidebar.id });
 
-    /**
-     * Collapses this drawer to the minimized strip (narrow header beside the viewport) when
-     * `sidebar.config.minimizable` is enabled; dispatches the sidebar plugin `minimize` action.
-     */
-    const minimize = () => sidebar.minimize({ id: props.sidebar.id });
-
-    /**
-     * Expands this drawer from the minimized state back to full width; dispatches the sidebar plugin `maximize` action.
-     */
-    const maximize = () => sidebar.maximize({ id: props.sidebar.id });
-
     const drawerStyle = computed(() => ({
       zIndex,
     }));
 
     const navigationProps = computed(() => {
-      const { minimizable, width = DEFAULT_SIDEBAR_DRAWER_WIDTH } = props.sidebar.config;
+      const { width = DEFAULT_SIDEBAR_DRAWER_WIDTH } = props.sidebar.config;
 
       return {
         right: true,
         fixed: true,
-        width: isOpen.value && !props.sidebar.minimized ? width : 0,
-        temporary: !minimizable,
-        hideOverlay: minimizable,
+        width: isOpen.value ? width : 0,
+        temporary: true,
+        hideOverlay: false,
         ignoreClickOutside: hasMaximizedModal.value,
         customCloseConditional: closeCondition,
       };
@@ -161,11 +115,8 @@ export default {
     return {
       hasMaximizedModal,
       title,
-      minimizedHeaderStyle,
       isOpen,
       closeHandler,
-      minimize,
-      maximize,
       drawerStyle,
       navigationProps,
     };
@@ -186,31 +137,9 @@ export default {
     &.v-navigation-drawer {
       overflow: visible;
 
-      &--close .sidebar--minimized__header {
-        transform: translate(60px, -50%);
-      }
-
       &__content {
         overflow-x: visible;
       }
-
-      &.sidebar--overflow-y-hidden .v-navigation-drawer__content  {
-        overflow-y: hidden;
-      }
-    }
-  }
-
-  &--minimized {
-    &__header {
-      position: absolute;
-      width: 58px;
-      height: 200px;
-      border-top-left-radius: 10px;
-      border-bottom-left-radius: 10px;
-      right: 100%;
-      top: 50%;
-      transform: translate(0, -50%);
-      transition: transform 0.1s ease-in-out;
     }
   }
 }

@@ -117,9 +117,6 @@ describe('create-filter', () => {
     expect(action).toHaveBeenCalledWith({
       is_user_preference: false,
       title: '',
-      alarm_pattern: [],
-      entity_pattern: [],
-      pbehavior_pattern: [],
     });
     expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
@@ -310,11 +307,7 @@ describe('create-filter', () => {
     expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toHaveBeenCalledWith({
-      ...customFilter,
-      entity_pattern: [],
-      pbehavior_pattern: [],
-    });
+    expect(action).toHaveBeenCalledWith(customFilter);
     expect($modals.hide).not.toHaveBeenCalled();
 
     consoleErrorSpy.mockClear();

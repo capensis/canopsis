@@ -102,6 +102,8 @@ export default {
         await promisedWait(3000);
         await config.value.afterSubmit?.(result);
         close();
+
+        return result;
       },
     });
 

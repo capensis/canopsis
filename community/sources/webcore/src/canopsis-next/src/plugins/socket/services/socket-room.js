@@ -104,6 +104,14 @@ class SocketRoom {
     return this;
   }
 
+  /**
+   * Marks the room as joined or not on the socket layer.
+   *
+   * When `joined` becomes true, sends every message queued by `send` while the room was not joined,
+   * then clears that queue.
+   *
+   * @param {boolean} joined - Whether the socket has successfully joined this room.
+   */
   setJoined(joined) {
     this.joined = joined;
 

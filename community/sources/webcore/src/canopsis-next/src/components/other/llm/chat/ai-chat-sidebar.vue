@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="ai-chat-sidebar">
     <pattern-progress
       v-if="pending"
       :in-progress-text="pendingTexts.inProgress"
@@ -137,3 +137,13 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.ai-chat-sidebar {
+  display: none;
+
+  .v-dialog--active & {
+    display: block !important;
+  }
+}
+</style>

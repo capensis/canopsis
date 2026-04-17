@@ -76,16 +76,30 @@ export default {
 
     const form = ref(filterToForm(config.value.filter));
 
+    const patternsFields = computed(() => {
+      const { withAlarm, withEntity, withPbehavior, withEvent, withServiceWeather } = config.value;
+
+      return [
+        withAlarm && PATTERNS_FIELDS.alarm,
+        withEntity && PATTERNS_FIELDS.entity,
+        withPbehavior && PATTERNS_FIELDS.pbehavior,
+        withEvent && PATTERNS_FIELDS.event,
+        withServiceWeather && PATTERNS_FIELDS.serviceWeather,
+      ].filter(Boolean);
+    });
+
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
         const result = await config.value.action?.(
-          formToFilter(form.value, Object.values(PATTERNS_FIELDS), config.value.corporate),
+          formToFilter(form.value, patternsFields.value, config.value.corporate),
         );
 
         await config.value.afterSubmit?.(result);
 
         close();
+
+        return result;
       },
     });
 

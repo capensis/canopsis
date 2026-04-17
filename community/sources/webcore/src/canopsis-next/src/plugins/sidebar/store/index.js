@@ -1,7 +1,6 @@
 import Vue from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-import { LLM_AI_CHAT_TOURS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 
@@ -9,8 +8,6 @@ export const types = {
   SHOW: 'SHOW',
   HIDE: 'HIDE',
   HIDE_COMPLETED: 'HIDE_COMPLETED',
-  MINIMIZE: 'MINIMIZE',
-  MAXIMIZE: 'MAXIMIZE',
   UPDATE_CONFIG: 'UPDATE_CONFIG',
 };
 
@@ -29,13 +26,11 @@ export default {
       id,
       name,
       config = {},
-      minimized = false,
     }) {
       Vue.set(state.byId, id, {
         id,
         name,
         config,
-        minimized,
         hidden: false,
       });
 
@@ -48,12 +43,6 @@ export default {
       state.allIds = state.allIds.filter(value => value !== id);
 
       Vue.delete(state.byId, id);
-    },
-    [types.MINIMIZE](state, { id }) {
-      Vue.set(state.byId[id], 'minimized', true);
-    },
-    [types.MAXIMIZE](state, { id }) {
-      Vue.set(state.byId[id], 'minimized', false);
     },
     [types.UPDATE_CONFIG](state, { id, config = {} }) {
       Vue.setSeveral(state.byId[id], 'config', config);
@@ -69,15 +58,11 @@ export default {
      * @param {Object} [config = {}]
      * @param {string} [id = uid()]
      */
-    show({ commit, state }, {
+    show({ commit }, {
       name,
       config = {},
       id = uid('sidebar'),
     } = {}) {
-      if (state.byId[id]) {
-        return commit(types.MAXIMIZE, { id });
-      }
-
       return commit(types.SHOW, {
         id,
         name,
@@ -111,34 +96,6 @@ export default {
     },
 
     /**
-     * @param {Function} commit
-     * @param {string} id
-     */
-    minimize({ commit, dispatch }, { id } = {}) {
-      if (!id) {
-        throw new Error('Missed required parameter');
-      }
-
-      commit(types.MINIMIZE, { id });
-
-      dispatch('setCurrentUserMinimized', { id, minimized: true });
-    },
-
-    /**
-     * @param {Function} commit
-     * @param {string} id
-     */
-    maximize({ commit, dispatch }, { id } = {}) {
-      if (!id) {
-        throw new Error('Missed required parameter');
-      }
-
-      commit(types.MAXIMIZE, { id });
-
-      dispatch('setCurrentUserMinimized', { id, minimized: false });
-    },
-
-    /**
      * Shallow-merges `config` into the open sidebar’s `config` object (`UPDATE_CONFIG`).
      *
      * @param {Object} context
@@ -153,34 +110,6 @@ export default {
       }
 
       commit(types.UPDATE_CONFIG, { id, config });
-    },
-
-    /**
-     * Persists minimized / expanded state for minimizable sidebars on the current user
-     * (`user/updateCurrentUserTours` root action, field from `SIDE_BARS_MINIMIZABLE_USER_FIELD`).
-     * No-op if the sidebar id is unknown or the bar has no mapped user field.
-     *
-     * @param {Object} context
-     * @param {Object} context.getters
-     * @param {Function} context.dispatch
-     * @param {Object} [payload]
-     * @param {string} payload.id - Sidebar instance id.
-     * @param {boolean} payload.minimized - Whether the drawer is minimized.
-     */
-    async setCurrentUserMinimized({ getters, dispatch }, { id, minimized } = {}) {
-      if (!id) {
-        throw new Error('Missed required parameter');
-      }
-
-      const { name } = getters.sidebarsById[id] ?? {};
-
-      if (!name) {
-        return;
-      }
-
-      await dispatch('user/updateCurrentUserTours', {
-        data: { [LLM_AI_CHAT_TOURS.minimized]: minimized },
-      }, { root: true });
     },
   },
 };

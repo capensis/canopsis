@@ -55,7 +55,7 @@ export default {
       default: false,
     },
   },
-  setup(_, { emit }) {
+  setup(props, { emit }) {
     const restoreVersion = version => emit('restore:version', version);
 
     return {

@@ -136,6 +136,8 @@ export default {
         await config.value.afterSubmit?.(result);
 
         close();
+
+        return result;
       },
       errorsToValidation: err => remediationInstructionErrorsToForm(err, form.value),
     });

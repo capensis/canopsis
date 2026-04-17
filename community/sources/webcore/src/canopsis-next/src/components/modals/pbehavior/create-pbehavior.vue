@@ -91,7 +91,7 @@ export default {
       form,
 
       modal: toRef(props, 'modal'),
-      ruleId: props.modal.config?.pbehavior?._id,
+      ruleId: pbehaviorId,
       context: LLM_SOCKET_CONTEXTS.pbehavior,
     });
 
@@ -105,6 +105,8 @@ export default {
         await config.value.afterSubmit?.(result);
 
         close();
+
+        return result;
       },
     });
 

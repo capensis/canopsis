@@ -45,7 +45,7 @@ export const LLM_AI_CHAT_TOURS = {
 
 export const LLM_SOCKET_CONTEXTS = {
   idleRule: 'idle_rule',
-  scenario: 'scenario', // TODO: here we have array of patterns for each action. Need to check.
+  scenario: 'scenario',
   flappingRule: 'flapping_rule',
   resolveRule: 'resolve_rule',
   alarmTag: 'alarm_tag',
@@ -54,7 +54,7 @@ export const LLM_SOCKET_CONTEXTS = {
   dynamicInfos: 'dynamic_infos',
   metaAlarmRule: 'meta_alarm_rule',
   declareTicketRule: 'declare_ticket_rule',
-  pbehavior: 'pbehavior', // TODO: here we have popups with form in modal window. Need to check.
+  pbehavior: 'pbehavior',
   entityService: 'entity_service',
   stateSettings: 'state_settings',
   kpiFilter: 'kpi_filter',
