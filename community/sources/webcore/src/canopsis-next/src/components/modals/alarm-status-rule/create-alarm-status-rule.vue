@@ -9,6 +9,7 @@
           v-model="form"
           :disablable="config.disablable"
           :flapping="config.flapping"
+          :default-rule="isDefaultRule"
         />
       </template>
       <template #actions="">
@@ -33,7 +34,7 @@
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { MODALS, VALIDATION_DELAY, DEFAULT_RESOLVE_RULE_ID } from '@/constants';
 
 import { alarmStatusRuleToForm, formToAlarmStatusRule } from '@/helpers/entities/alarm-status-rule/form';
 
@@ -63,6 +64,11 @@ export default {
     return {
       form: alarmStatusRuleToForm(rule, flapping),
     };
+  },
+  computed: {
+    isDefaultRule() {
+      return this.modal.config.rule?._id === DEFAULT_RESOLVE_RULE_ID;
+    },
   },
   methods: {
     async submit() {

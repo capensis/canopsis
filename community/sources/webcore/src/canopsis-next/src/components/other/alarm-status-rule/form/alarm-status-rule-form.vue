@@ -2,7 +2,7 @@
   <v-layout class="gap-2" column>
     <c-enabled-field
       v-field="form.enabled"
-      :disabled="disablable"
+      :disabled="disablable || defaultRule"
       hide-details
       with-background
     />
@@ -15,7 +15,7 @@
       v-field="form.duration"
       required
     />
-    <c-priority-field v-field="form.priority" />
+    <c-priority-field v-field="form.priority" :disabled="defaultRule" />
     <c-number-field
       v-if="flapping"
       v-field="form.freq_limit"
@@ -28,6 +28,7 @@
       required
     />
     <alarm-status-rule-patterns-form
+      v-if="!defaultRule"
       v-field="form.patterns"
       class="mt-2"
     />
@@ -54,6 +55,10 @@ export default {
       default: false,
     },
     disablable: {
+      type: Boolean,
+      default: false,
+    },
+    defaultRule: {
       type: Boolean,
       default: false,
     },

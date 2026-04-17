@@ -12,7 +12,6 @@
       <c-enabled-field
         v-field="form.fullscreen"
         :label="$t('common.fullscreen')"
-        with-background
       />
     </v-layout>
     <v-btn

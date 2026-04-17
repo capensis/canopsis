@@ -32,7 +32,6 @@
     <c-enabled-field
       v-model="isLinked"
       :label="$t('map.addLink')"
-      with-background
     />
     <c-map-field
       v-show="isLinked"

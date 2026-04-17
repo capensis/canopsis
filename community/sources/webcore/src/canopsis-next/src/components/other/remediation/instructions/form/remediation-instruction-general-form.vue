@@ -1,23 +1,17 @@
 <template>
-  <div>
-    <v-layout>
-      <v-flex xs3>
-        <c-instruction-type-field
-          v-field="form.type"
-          :disabled="disabled || !isNew"
-          class="mb-2"
-        />
-      </v-flex>
-      <v-flex>
-        <c-enabled-field
-          v-field="form.enabled"
-          :disabled="disabledCommon"
-          class="mt-0"
-          hide-details
-          with-background
-        />
-      </v-flex>
-    </v-layout>
+  <v-layout column>
+    <c-enabled-field
+      v-field="form.enabled"
+      :disabled="disabledCommon"
+      class="mt-0"
+      hide-details
+      with-background
+    />
+    <c-instruction-type-field
+      v-field="form.type"
+      :disabled="disabled || !isNew"
+      class="mb-2"
+    />
     <c-name-field
       v-field="form.name"
       :disabled="disabledCommon"
@@ -63,7 +57,6 @@
         :value="form.retry_enabled"
         :label="$t('remediation.instruction.retryEnabled')"
         class="pb-1"
-        with-background
         @input="updateRetryEnabled"
       >
         <template #append>
@@ -97,7 +90,6 @@
         <c-enabled-field
           v-field="form.enabled_repeat_triggers"
           :label="$t('remediation.instruction.enabledRepeatTrigger')"
-          with-background
         >
           <template #append>
             <c-help-icon
@@ -137,7 +129,7 @@
       :disabled="disabled"
       :required="requiredApprove"
     />
-  </div>
+  </v-layout>
 </template>
 
 <script>

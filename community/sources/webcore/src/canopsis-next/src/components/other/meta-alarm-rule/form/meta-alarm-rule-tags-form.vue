@@ -6,7 +6,6 @@
         v-field="form.copy_from_children"
         :label="$t('metaAlarmRule.copyTagsFromChildren')"
         hide-details
-        with-background
       />
     </v-layout>
     <v-layout v-if="form.copy_from_children">
@@ -14,7 +13,6 @@
         v-model="filterByLabelEnabled"
         :label="$t('metaAlarmRule.filterByLabelEnabled')"
         class="mr-4 pt-4"
-        with-background
       >
         <template #append>
           <c-help-icon
