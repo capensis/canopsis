@@ -6,7 +6,7 @@
     :outlined="outlined"
     class="c-chip"
     small
-    @click="$emit('click', $event)"
+    v-on="chipListeners"
   >
     <span class="c-chip__text">
       <slot />
@@ -52,15 +52,18 @@ export default {
       default: 'white',
     },
   },
-  setup(props) {
+  setup(props, { listeners }) {
     const chipClass = computed(() => ({
       'c-chip--closable': props.closable,
       'c-chip--small': props.small,
       'c-chip--rounded': props.rounded,
     }));
 
+    const chipListeners = computed(() => (listeners?.click ? { click: listeners.click } : {}));
+
     return {
       chipClass,
+      chipListeners,
     };
   },
 };

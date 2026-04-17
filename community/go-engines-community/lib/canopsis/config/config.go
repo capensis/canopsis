@@ -30,9 +30,11 @@ type SectionAlarm struct {
 	TimeToKeepResolvedAlarms string `toml:"TimeToKeepResolvedAlarms"`
 	AllowDoubleAck           bool   `toml:"AllowDoubleAck"`
 	// ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
-	ActivateAlarmAfterAutoRemediation bool `toml:"ActivateAlarmAfterAutoRemediation"`
-	EnableArraySortingInEntityInfos   bool `toml:"EnableArraySortingInEntityInfos"`
-	CropStepsNumber                   int  `toml:"CropStepsNumber"`
+	ActivateAlarmAfterAutoRemediation bool   `toml:"ActivateAlarmAfterAutoRemediation"`
+	EnableArraySortingInEntityInfos   bool   `toml:"EnableArraySortingInEntityInfos"`
+	CropStepsNumber                   int    `toml:"CropStepsNumber"`
+	CheckTicketStatusInterval         string `toml:"CheckTicketStatusInterval"`
+	CheckTicketStatusMaxPeriod        string `toml:"CheckTicketStatusMaxPeriod"`
 }
 
 // SectionGlobal ...
@@ -49,7 +51,8 @@ type SectionGlobal struct {
 
 	EventsCountTriggerDefaultThreshold int `toml:"EventsCountTriggerDefaultThreshold"`
 
-	EventsRecorderLimit int `toml:"EventsRecorderLimit"`
+	EventsRecorderLimit   int `toml:"EventsRecorderLimit"`
+	EventsRecorderWorkers int `toml:"EventsRecorderWorkers"`
 }
 
 func (s *SectionGlobal) GetReconnectTimeout() time.Duration {
@@ -87,10 +90,8 @@ type SectionApi struct {
 	ExportMongoClientTimeout string   `toml:"ExportMongoClientTimeout"`
 	AuthorScheme             []string `toml:"AuthorScheme"`
 	MetricsCacheExpiration   string   `toml:"MetricsCacheExpiration"`
-	// EventsRecorderFetchStatusTimeout is a timeout for fetching status from events recorder
-	EventsRecorderFetchStatusTimeout string `toml:"EventsRecorderFetchStatusTimeout"`
-	WebsocketPingInterval            string `toml:"WebsocketPingInterval"`
-	NotificationDisplayCount         int    `toml:"NotificationDisplayCount"`
+	WebsocketPingInterval    string   `toml:"WebsocketPingInterval"`
+	NotificationDisplayCount int      `toml:"NotificationDisplayCount"`
 }
 
 type SectionLogger struct {

@@ -9,6 +9,7 @@ const stubs = {
   'c-alarm-state-chip': true,
   'c-alarm-pbehavior-chip': true,
   'c-alarm-extra-details-chip': true,
+  'declare-ticket-rule-ticket-status-chip': true,
   'v-icon': true,
 };
 

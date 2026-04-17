@@ -554,6 +554,13 @@ export const COLORS = {
     edgeGray: '#979797',
     edgeBlack: '#000000',
   },
+  declareTicketRuleTicketStatusChip: {
+    unknown: '#E0E0E0',
+    open: '#BBDEFB',
+    assigned: '#FFC107',
+    inProgress: '#FFECB3',
+    closed: '#4CAF50',
+  },
   aiChat: {
     chipBackground: 'grey lighten-2',
     chipText: 'grey darken-2',

@@ -30,10 +30,24 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	msg := d.Body
 	var event rpc.AxeEvent
 	err := p.Decoder.Decode(msg, &event)
-	if err != nil || event.Alarm == nil || event.Alarm.ID == "" || event.Entity == nil || event.Entity.ID == "" {
-		p.logError(err, "RPC Message Processor: invalid event", msg)
+	if err != nil {
+		p.logError(err, "RPC Message Processor: cannot decode event", msg)
 
 		return p.getErrRpcEvent(errors.New("invalid event"), nil), nil
+	}
+
+	if len(event.AlarmIDs) == 0 {
+		if event.Alarm == nil || event.Alarm.ID == "" {
+			p.logError(err, "RPC Message Processor: alarm is empty", msg)
+
+			return p.getErrRpcEvent(errors.New("alarm is empty"), nil), nil
+		}
+
+		if event.Entity == nil || event.Entity.ID == "" {
+			p.logError(err, "RPC Message Processor: entity is empty", msg)
+
+			return p.getErrRpcEvent(errors.New("entity is empty"), nil), nil
+		}
 	}
 
 	alarm := event.Alarm
@@ -65,14 +79,16 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		alarm = &res.Alarm
 	}
 
-	p.sendEventToAction(ctx, *alarm, d.CorrelationId, event, res.AlarmChange, msg)
-	if p.DynamicInfosRpc != nil && p.forwardToDynamicInfos(res.AlarmChange.Type) {
-		entity := *event.Entity
-		if res.Entity.ID != "" {
-			entity = res.Entity
-		}
+	if alarm != nil {
+		p.sendEventToAction(ctx, *alarm, d.CorrelationId, event, res.AlarmChange, msg)
+		if p.DynamicInfosRpc != nil && p.forwardToDynamicInfos(res.AlarmChange.Type) {
+			entity := *event.Entity
+			if res.Entity.ID != "" {
+				entity = res.Entity
+			}
 
-		return p.sendEventToDynamicInfos(ctx, res.Alarm, entity, res.AlarmChange, d)
+			return p.sendEventToDynamicInfos(ctx, res.Alarm, entity, res.AlarmChange, d)
+		}
 	}
 
 	return p.getRpcEvent(rpc.AxeResultEvent{

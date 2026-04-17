@@ -23,7 +23,7 @@ import {
   HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS,
 } from '@/constants';
 
-import { getHealthcheckNodeRenderedPositionDiff } from '@/helpers/charts/healthcheck';
+import { getHealthcheckNodeRenderedPositionDiff, getHealthcheckInfoDiv } from '@/helpers/charts/healthcheck';
 import { getHealthcheckNodeColor } from '@/helpers/entities/healthcheck/color';
 import { convertDateToString } from '@/helpers/date/date';
 
@@ -75,6 +75,8 @@ export default {
               name: node.name,
               color: getHealthcheckNodeColor(node),
               is_running: node.is_running,
+              nodes: node.nodes,
+              running_nodes: node.running_nodes,
             },
           })),
 
@@ -282,7 +284,7 @@ export default {
           halign: 'left',
           valignBox: 'bottom',
           halignBox: 'left',
-          tpl: data => `<div class="subtitle-1">${this.getNodeName(data.id)}</div>`,
+          tpl: this.getServiceNodeHtmlLabel,
         },
         {
           query: '.service-node--without-node',
@@ -580,6 +582,23 @@ export default {
     },
 
     /**
+     * Get html label for service node
+     *
+     * @param {Object} data
+     * @return {string}
+     */
+    getServiceNodeHtmlLabel(data) {
+      const { id, nodes, running_nodes: runningNodes = 0 } = data;
+      const elements = [`<div class="subtitle-1">${this.getNodeName(id)}</div>`];
+
+      if (this.showDescription && !isNil(nodes)) {
+        elements.push(getHealthcheckInfoDiv(this.$t('healthcheck.runningNodes', { nodes, runningNodes })));
+      }
+
+      return `<div class="ml-2">${elements.join('')}</div>`;
+    },
+
+    /**
      * Get html label for engine node
      *
      * @param {string} id
@@ -605,22 +624,20 @@ export default {
     }) {
       const elements = [`<div class="subtitle-1">${this.getNodeName(id)}</div>`];
 
-      const getInfoDiv = (message, hasError) => `<div class="body-1 grey--text darken-3 pre-wrap ${hasError ? 'error--text' : ''}">${message}</div>`;
-
       if (!isUnknown && this.showDescription) {
         elements.push(
           isNil(time)
             ? null
-            : getInfoDiv(convertDateToString(time)),
+            : getHealthcheckInfoDiv(convertDateToString(time)),
           isNil(queueLength)
             ? null
-            : getInfoDiv(
+            : getHealthcheckInfoDiv(
               this.$t('healthcheck.queueLength', { queueLength, maxQueueLength: this.maxQueueLength }),
               isQueueOverflown,
             ),
           isNil(instances) && isNil(minInstances)
             ? null
-            : getInfoDiv(
+            : getHealthcheckInfoDiv(
               this.$t('healthcheck.instancesCount', { instances, minInstances }),
               isTooFewInstances,
             ),
