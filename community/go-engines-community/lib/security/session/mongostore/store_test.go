@@ -33,7 +33,7 @@ func TestMongoStore_New_GivenNoCookie_ShouldReturnNewSession(t *testing.T) {
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, codecs)
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	session, err := store.New(req, name)
 
 	if err != nil {
@@ -53,7 +53,7 @@ func TestMongoStore_New_GivenCookie_ShouldReturnSessionFromDB(t *testing.T) {
 	if err != nil {
 		t.Fatal("fail to create object id", err)
 	}
-	values := map[interface{}]interface{}{
+	values := map[any]any{
 		"test": "testvalue",
 	}
 	name := "testsession"
@@ -79,7 +79,7 @@ func TestMongoStore_New_GivenCookie_ShouldReturnSessionFromDB(t *testing.T) {
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, codecs)
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	encoded, err = securecookie.EncodeMulti(name, sessionId, securecookie.CodecsFromPairs(codecs)...)
 	if err != nil {
 		t.Fatal("fail to encode session", err)
@@ -120,7 +120,7 @@ func TestMongoStore_Get_GivenNoCookie_ShouldReturnNewSession(t *testing.T) {
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, codecs)
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	session, err := store.Get(req, name)
 
 	if err != nil {
@@ -140,7 +140,7 @@ func TestMongoStore_Get_GivenCookie_ShouldReturnSessionFromDB(t *testing.T) {
 	if err != nil {
 		t.Fatal("fail to create object id", err)
 	}
-	values := map[interface{}]interface{}{
+	values := map[any]any{
 		"test": "testvalue",
 	}
 	name := "testsession"
@@ -166,7 +166,7 @@ func TestMongoStore_Get_GivenCookie_ShouldReturnSessionFromDB(t *testing.T) {
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, codecs)
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	encoded, err = securecookie.EncodeMulti(name, sessionId, securecookie.CodecsFromPairs(codecs)...)
 	if err != nil {
 		t.Fatal("fail to encode session", err)
@@ -217,7 +217,7 @@ func TestMongoStore_Save_GivenNoCookie_ShouldCreateNewSessionAndSaveSessionToDBA
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, []byte("test"))
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	name := "testsession"
 	session := sessions.NewSession(store, name)
 	if session != nil {
@@ -257,7 +257,7 @@ func TestMongoStore_Save_GivenCookie_ShouldUpdateSessionInDBAndAddCookieToRespon
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, []byte("test"))
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	session := sessions.NewSession(store, name)
 	session.ID = sessionId
 	session.Values["test"] = "test"
@@ -291,7 +291,7 @@ func TestMongoStore_Save_GivenCookieAndZeroMaxAge_ShouldDeleteSessionFromDBAndDe
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, []byte("test"))
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	session := sessions.NewSession(store, name)
 	session.ID = sessionId
 	session.Values["test"] = "test"
@@ -316,7 +316,7 @@ func mockCursor(ctrl *gomock.Controller, data *sessionData) libmongo.Cursor {
 		mockCursor.
 			EXPECT().
 			Decode(gomock.Any()).
-			Do(func(val interface{}) {
+			Do(func(val any) {
 				if u, ok := val.(*sessionData); ok {
 					*u = *data
 				}

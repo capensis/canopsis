@@ -60,6 +60,9 @@ export const PATTERN_OPERATORS = {
   activated: 'activated',
   inactive: 'inactive',
 
+  enabled: 'enabled',
+  disabled: 'disabled',
+
   isMetaAlarm: 'is_meta_alarm',
   isNotMetaAlarm: 'is_not_meta_alarm',
   ruleIs: 'rule_is',
@@ -106,6 +109,13 @@ export const PATTERN_FIELD_TYPES = {
   timestamp: 'timestamp',
 };
 
+export const PATTERN_DATE_OPERATORS = [
+  PATTERN_OPERATORS.within,
+  PATTERN_OPERATORS.olderThan,
+  PATTERN_OPERATORS.inRangePeriod,
+  PATTERN_OPERATORS.inRangeDates,
+];
+
 export const DEFAULT_PATTERN_FIELD_TYPES = [
   { value: PATTERN_FIELD_TYPES.string },
   { value: PATTERN_FIELD_TYPES.number },
@@ -135,6 +145,8 @@ export const PATTERN_OPERATORS_WITHOUT_VALUE = [
   PATTERN_OPERATORS.isGrey,
   PATTERN_OPERATORS.activated,
   PATTERN_OPERATORS.inactive,
+  PATTERN_OPERATORS.enabled,
+  PATTERN_OPERATORS.disabled,
   PATTERN_OPERATORS.isMetaAlarm,
   PATTERN_OPERATORS.isNotMetaAlarm,
 ];
@@ -262,4 +274,11 @@ export const PATTERNS_FIELDS = {
   event: 'event_pattern',
   totalEntity: 'total_entity_pattern',
   serviceWeather: 'weather_service_pattern',
+};
+
+export const PATTERN_OPTIMIZATION_STATUSES = {
+  created: 0,
+  running: 1,
+  success: 2,
+  failed: 3,
 };

@@ -69,6 +69,7 @@ type Store interface {
 	ConnectorDelete(ctx context.Context, r BulkConnectorDeleteRequestItem) (string, error)
 	ExecPatternAndUpdate(ctx context.Context, r ExecPatternRequest) (*apipattern.CountResponse, error)
 	ExecPatternsAndUpdate(ctx context.Context) error
+	Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, bool, error)
 }
 
 type store struct {
@@ -501,7 +502,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		set["reason"] = *r.Reason
 	}
 	if r.Type != nil {
-		set["type_"] = *r.Type
+		set["type"] = *r.Type
 	}
 	if r.RRule != nil {
 		set["rrule"] = *r.RRule
@@ -562,7 +563,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 			{"$match": bson.M{"_id": r.ID}},
 			{"$lookup": bson.M{
 				"from":         mongo.PbehaviorTypeMongoCollection,
-				"localField":   "type_",
+				"localField":   "type",
 				"foreignField": "_id",
 				"as":           "type",
 			}},
@@ -757,8 +758,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 		Enabled:  true,
 		Name:     r.Name,
 		Reason:   r.Reason,
-		Start:    r.Start,
-		Stop:     r.Stop,
+		Start:    &now,
 		Type:     r.Type,
 		Created:  &now,
 		Updated:  &now,
@@ -802,8 +802,8 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 			return validation.NewSingleError("not_exist", "Type", "Type", r)
 		}
 
-		if r.Stop == nil && t.Type != pbehavior.TypePause {
-			return validation.NewSingleError("required", "Stop", "Stop", r)
+		if t.Type != pbehavior.TypePause {
+			return validation.NewSingleError("pbh_type_not_pause", "Type", "Type", r)
 		}
 
 		err = dbvalidation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
@@ -815,8 +815,6 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 			bson.M{
 				"origin": r.Origin,
 				"entity": r.Entity,
-				"tstart": bson.M{"$lte": now},
-				"tstop":  bson.M{"$gte": now},
 			},
 			bson.M{
 				"$setOnInsert": doc,
@@ -844,7 +842,6 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 }
 
 func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error) {
-	now := datetime.NewCpsTime()
 	id := ""
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		id = ""
@@ -853,11 +850,6 @@ func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem)
 			FindOneAndDelete(ctx, bson.M{
 				"entity": r.Entity,
 				"origin": r.Origin,
-				"tstart": bson.M{"$lte": now},
-				"$or": bson.A{
-					bson.M{"tstop": nil},
-					bson.M{"tstop": bson.M{"$gte": now}},
-				},
 			}, options.FindOneAndDelete().SetProjection(bson.M{"_id": 1})).
 			Decode(&pbh)
 		if err != nil {
@@ -1234,14 +1226,38 @@ func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
 
 	err := g.Wait()
 	if err != nil {
-		s.websocketHub.Send(websocket.RoomPbhPatterns, map[string]bool{"ok": false})
+		s.websocketHub.SendMessage(ctx, map[string]bool{"ok": false}, websocket.ToRoom(websocket.RoomPbhPatterns))
 
 		return err
 	}
 
-	s.websocketHub.Send(websocket.RoomPbhPatterns, map[string]bool{"ok": true})
+	s.websocketHub.SendMessage(ctx, map[string]bool{"ok": true}, websocket.ToRoom(websocket.RoomPbhPatterns))
 
 	return nil
+}
+
+func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, bool, error) {
+	var prevPbh pbehavior.PBehavior
+
+	err := s.dbCollection.FindOneAndUpdate(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"enabled": enabled,
+			"author":  r.Author,
+			"updated": datetime.NewCpsTime(),
+		}},
+		options.FindOneAndUpdate().SetReturnDocument(options.Before).SetProjection(bson.M{"inherited": 1}),
+	).Decode(&prevPbh)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return false, false, nil
+		}
+
+		return false, false, err
+	}
+
+	return true, prevPbh.Inherited, nil
 }
 
 func (s *store) getMatchedPbhIDs(ctx context.Context, entity libtypes.Entity) ([]string, error) {

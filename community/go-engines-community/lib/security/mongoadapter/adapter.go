@@ -9,8 +9,8 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libmodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
-	"github.com/casbin/casbin/v2/model"
-	"github.com/casbin/casbin/v2/persist"
+	"github.com/casbin/casbin/v3/model"
+	"github.com/casbin/casbin/v3/persist"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 

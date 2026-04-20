@@ -1,11 +1,5 @@
 <template>
-  <v-layout>
-    <v-flex xs6>
-      <c-enabled-field
-        v-field="form.template"
-        :label="$t('declareTicket.allowTicketURLTemplate')"
-      />
-    </v-flex>
+  <v-layout class="gap-3">
     <v-flex xs6>
       <declare-ticket-rule-ticket-url-payload-text-field
         v-if="form.template"
@@ -21,6 +15,10 @@
         :disabled="disabled"
       />
     </v-flex>
+    <c-enabled-field
+      v-field="form.template"
+      :label="$t('declareTicket.allowTicketURLTemplate')"
+    />
   </v-layout>
 </template>
 

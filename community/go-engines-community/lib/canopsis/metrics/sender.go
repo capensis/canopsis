@@ -16,6 +16,7 @@ type Sender interface {
 	SendAck(alarm types.Alarm, userID string, timestamp time.Time)
 	SendCancelAck(alarm types.Alarm, timestamp time.Time)
 	SendTicket(alarm types.Alarm, userID string, timestamp time.Time)
+	SendTicketRemove(alarm types.Alarm, timestamp time.Time)
 	SendResolve(alarm types.Alarm, entity types.Entity, timestamp time.Time)
 	SendCreate(alarm types.Alarm, timestamp time.Time)
 	SendCreateAndPbhEnter(alarm types.Alarm, timestamp time.Time)

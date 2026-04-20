@@ -1,5 +1,5 @@
 <template>
-  <shared-mass-actions-panel :actions="preparedActions" :inline-count="inlineCount" />
+  <new-mass-actions-panel :actions="preparedActions" :inline-count="inlineCount" :small="small" />
 </template>
 
 <script>
@@ -14,8 +14,9 @@ import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
 import {
   isAlarmStateOk,
-  isCancelledAlarmStatus,
-  isClosedAlarmStatus,
+  isAlarmStatusCancelled,
+  isAlarmStatusClosed,
+  isAlarmStatusUnknown,
   isResolvedAlarm,
 } from '@/helpers/entities/alarm/form';
 import { sortActionsByQuickActions, getActionsInlineCount } from '@/helpers/actions-panel';
@@ -23,7 +24,7 @@ import { sortActionsByQuickActions, getActionsInlineCount } from '@/helpers/acti
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
-import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
+import NewMassActionsPanel from '@/components/common/actions-panel/new-mass-actions-panel.vue'; // TODO: add condition for desplaying old mass actions
 /**
  * Panel regrouping mass actions icons
  *
@@ -32,7 +33,7 @@ import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actio
  * @prop {Array} [itemIds] - Items selected for the mass action
  */
 export default {
-  components: { SharedMassActionsPanel },
+  components: { NewMassActionsPanel },
   mixins: [
     widgetActionsPanelAlarmMixin,
     entitiesDeclareTicketRuleMixin,
@@ -50,6 +51,10 @@ export default {
       type: Function,
       default: () => {},
     },
+    small: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -62,17 +67,26 @@ export default {
     },
 
     openedAlarms() {
-      return this.localItems.filter(item => !isCancelledAlarmStatus(item) && !isClosedAlarmStatus(item));
+      return this.localItems.filter(item => !isAlarmStatusCancelled(item) && !isAlarmStatusClosed(item));
     },
 
     alarmsForActions() {
-      return this.localItems.filter((item) => {
-        if (this.widget.parameters.isActionsAllowWithOkState && isAlarmStateOk(item)) {
-          return true;
-        }
+      return this.localItems.filter(item => (
+        (this.widget.parameters.isActionsAllowWithOkState && isAlarmStateOk(item))
+          || (!isAlarmStatusCancelled(item) && !isAlarmStatusClosed(item))
+      ));
+    },
 
-        return !isCancelledAlarmStatus(item) && !isClosedAlarmStatus(item);
-      });
+    alarmsWithFastPbehavior() {
+      return this.alarmsForActions.filter(item => item.pbh_origin_icon);
+    },
+
+    alarmsWithoutFastPbehavior() {
+      return this.alarmsForActions.filter(item => !item.pbh_origin_icon);
+    },
+
+    alarmsForActionsWithoutUnknown() {
+      return this.alarmsForActions.filter(item => !isAlarmStatusUnknown(item));
     },
 
     openedAndUnResolvedAlarms() {
@@ -80,7 +94,7 @@ export default {
     },
 
     cancelledAndUnResolvedAlarms() {
-      return this.localItems.filter(alarm => isCancelledAlarmStatus(alarm) && !isResolvedAlarm(alarm));
+      return this.localItems.filter(alarm => isAlarmStatusCancelled(alarm) && !isResolvedAlarm(alarm));
     },
 
     alarmsWithAssignedDeclareTicketRules() {
@@ -93,6 +107,14 @@ export default {
 
     alarmsWithoutTickets() {
       return difference(this.alarmsForActions, this.alarmsWithTickets);
+    },
+
+    alarmsWithAssociatedTickets() {
+      return this.alarmsForActions.filter(item => item.v?.tickets?.length > 0);
+    },
+
+    hasAlarmsWithAssociatedTickets() {
+      return !!this.alarmsWithAssociatedTickets.length;
     },
 
     alarmsWithAck() {
@@ -123,12 +145,49 @@ export default {
       return !!this.alarmsWithoutAck.length;
     },
 
+    hasAlarmsWithoutUnknownStatus() {
+      return !!this.alarmsForActionsWithoutUnknown.length;
+    },
+
     hasMetaAlarm() {
       return this.alarmsForActions.some(item => item.is_meta_alarm);
     },
 
     isActionsAllowWithOkState() {
       return this.widget.parameters.isActionsAllowWithOkState;
+    },
+
+    fastPbehaviorActions() {
+      const actions = [];
+
+      if (this.alarmsWithFastPbehavior.length) {
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove,
+          title: this.$t('alarm.actions.titles.fastPbehaviorRemove'),
+          method: this.fastRemovePbehavior,
+        });
+      }
+
+      if (this.alarmsWithoutFastPbehavior.length) {
+        const fastPbehaviorsParameters = this.widget.parameters.fast_pbehaviors ?? [];
+        const fastPbehaviorAction = {
+          type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
+          title: this.$t('alarm.actions.titles.fastPbehaviorAdd'),
+        };
+
+        if (fastPbehaviorsParameters.length > 1) {
+          fastPbehaviorAction.items = fastPbehaviorsParameters.map(pbehaviorParameters => ({
+            title: pbehaviorParameters.name_prefix,
+            method: () => this.fastAddPbehavior(pbehaviorParameters),
+          }));
+        } else {
+          fastPbehaviorAction.method = () => this.fastAddPbehavior(fastPbehaviorsParameters[0]);
+        }
+
+        actions.push(fastPbehaviorAction);
+      }
+
+      return actions;
     },
 
     actions() {
@@ -142,11 +201,8 @@ export default {
 
       if (this.hasOpenedAlarms) {
         actions.push(
-          {
-            type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
-            title: this.$t('alarm.actions.titles.fastPbehaviorAdd'),
-            method: this.fastAddPbehavior,
-          },
+          ...this.fastPbehaviorActions,
+
           {
             type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
             title: this.$t('alarm.actions.titles.pbehavior'),
@@ -185,7 +241,7 @@ export default {
         );
       }
 
-      if (this.hasOpenedAlarms) {
+      if (this.hasAlarmsWithoutUnknownStatus) {
         actions.push(
           {
             type: ALARM_LIST_ACTIONS_TYPES.cancel,
@@ -211,6 +267,14 @@ export default {
           type: ALARM_LIST_ACTIONS_TYPES.comment,
           title: this.$t('alarm.actions.titles.comment'),
           method: this.showCreateCommentEventModal,
+        });
+      }
+
+      if (this.hasAlarmsWithAssociatedTickets) {
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket,
+          title: this.$t('alarm.actions.titles.removeAssociatedTicket'),
+          method: this.showRemoveAssociatedTicketModal,
         });
       }
 
@@ -351,8 +415,12 @@ export default {
       this.showAddPbehaviorModalByAlarms(this.alarmsForActions);
     },
 
-    fastAddPbehavior() {
-      this.addFastPbehaviorByAlarms(this.alarmsForActions);
+    fastAddPbehavior(pbehaviorParameters = {}) {
+      this.addFastPbehaviorByAlarms(this.alarmsWithoutFastPbehavior, pbehaviorParameters);
+    },
+
+    fastRemovePbehavior() {
+      this.removeFastPbehaviorByAlarms(this.alarmsWithFastPbehavior);
     },
 
     showCreateAssociateTicketModal() {
@@ -361,6 +429,10 @@ export default {
           ? this.alarmsForActions
           : this.alarmsWithoutTickets,
       );
+    },
+
+    showRemoveAssociatedTicketModal() {
+      this.showRemoveAssociatedTicketModalByAlarms(this.alarmsWithAssociatedTickets);
     },
 
     showCreateDeclareTicketModal() {
@@ -384,7 +456,7 @@ export default {
     },
 
     showCancelEventModal() {
-      this.showCancelModalByAlarms(this.alarmsForActions);
+      this.showCancelModalByAlarms(this.alarmsForActionsWithoutUnknown);
     },
 
     showUnCancelEventModal() {
@@ -404,7 +476,7 @@ export default {
     },
 
     createFastCancelEvent() {
-      this.createFastCancelActionByAlarms(this.alarmsForActions);
+      this.createFastCancelActionByAlarms(this.alarmsForActionsWithoutUnknown);
     },
 
     showCreateCommentEventModal() {

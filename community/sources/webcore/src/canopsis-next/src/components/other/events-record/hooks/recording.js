@@ -1,7 +1,5 @@
 import { EVENT_FILTER_PATTERN_FIELDS, MODALS } from '@/constants';
 
-import { promisedWait } from '@/helpers/async';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useEventsRecordCurrent } from '@/hooks/store/modules/events-record-current';
@@ -25,6 +23,8 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
     name: MODALS.applyEventFilter,
     config: {
       title: t('eventsRecord.launchEventRecording'),
+      description: t('eventsRecord.launchEventRecordingDescription'),
+      infoAlert: t('eventsRecord.filterPatternOptional'),
       excludedAttributes: [
         { value: EVENT_FILTER_PATTERN_FIELDS.eventType },
         { value: EVENT_FILTER_PATTERN_FIELDS.state },
@@ -41,19 +41,15 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
   });
 
   /**
-   * Stop the current event recording.
+   * Stop the event recording by id.
+   *
+   * @param {string} [recordingId] - ID of the recording to stop. Required when multiple recordings exist.
    */
-  const stopRecording = () => modals.show({
+  const stopRecording = recordingId => modals.show({
     name: MODALS.confirmation,
     config: {
       action: async () => {
-        await stopEventsRecordCurrent();
-
-        /**
-         * We've added that to avoiding problem with async on the backend side.
-         * There is 3000ms timeout on the backend side for sync
-         */
-        await promisedWait(3000);
+        await stopEventsRecordCurrent({ id: recordingId });
 
         return fetchListHandler();
       },

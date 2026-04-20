@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
@@ -386,6 +387,7 @@ func (s *store) CreateTest(ctx context.Context, r EditTestRequest) (TestResponse
 	model.Data.Event = r.Data.Event
 	model.Data.Response = r.Data.Response
 	model.Data.Responses = r.Data.Responses
+	model.Data.TicketStatusResponses = r.Data.TicketStatusResponses
 	model.Data.User = r.Data.User
 	ruleCollectionName, ok := s.collectionNamesByType[*r.Type]
 	if !ok {
@@ -462,6 +464,7 @@ func (s *store) UpdateTest(ctx context.Context, r EditTestRequest) (TestResponse
 	model.Data.Event = r.Data.Event
 	model.Data.Response = r.Data.Response
 	model.Data.Responses = r.Data.Responses
+	model.Data.TicketStatusResponses = r.Data.TicketStatusResponses
 	model.Data.User = r.Data.User
 	var res TestResponse
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
@@ -621,6 +624,36 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 		}
 	}
 
+	if len(r.Data.TicketStatusResponses) > 0 {
+		ids := make([]string, 0, len(r.Data.TicketStatusResponses))
+		for i, id := range r.Data.TicketStatusResponses {
+			if _, ok := r.Data.Responses[i]; !ok {
+				iStr := strconv.Itoa(i)
+
+				return nil, nil, validation.NewSingleError("required", iStr, "Data.Responses."+iStr, r)
+			}
+
+			ids = append(ids, id)
+		}
+
+		ids = utils.Unique(ids)
+		cursor, err := s.testDataCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}, "type": TypeTestDataResponse},
+			options.Find().SetProjection(bson.M{"_id": 1}))
+		if err != nil {
+			return nil, nil, err
+		}
+
+		var responses []DataModel
+		err = cursor.All(ctx, &responses)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		if len(ids) != len(responses) {
+			return nil, nil, validation.NewSingleError("not_exist", "TicketStatusResponses", "Data.TicketStatusResponses", r)
+		}
+	}
+
 	if r.Data.User != "" {
 		err := s.userCollection.FindOne(ctx, bson.M{"_id": r.Data.User},
 			options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
@@ -731,28 +764,43 @@ func (s *store) getTestNestedObjectsPipeline() []bson.M {
 		}},
 		{"$unwind": bson.M{"path": "$data.response", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
-			"doc":       "$$ROOT",
-			"responses": bson.M{"$objectToArray": "$data.responses"},
+			"doc":                     "$$ROOT",
+			"responses":               bson.M{"$objectToArray": "$data.responses"},
+			"ticket_status_responses": bson.M{"$objectToArray": "$data.ticket_status_responses"},
 		}},
 		{"$unwind": bson.M{"path": "$responses", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$ticket_status_responses", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.TemplateTestDataCollection,
 			"localField":   "responses.v",
 			"foreignField": "_id",
 			"as":           "responses.v",
 		}},
+		{"$lookup": bson.M{
+			"from":         mongo.TemplateTestDataCollection,
+			"localField":   "ticket_status_responses.v",
+			"foreignField": "_id",
+			"as":           "ticket_status_responses.v",
+		}},
 		{"$unwind": bson.M{"path": "$responses.v", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$ticket_status_responses.v", "preserveNullAndEmptyArrays": true}},
 		{"$group": bson.M{
 			"_id": "$_id",
 			"doc": bson.M{"$first": "$doc"},
-			"responses": bson.M{"$push": bson.M{"$cond": bson.M{
+			"responses": bson.M{"$addToSet": bson.M{"$cond": bson.M{
 				"if":   "$responses.k",
 				"then": "$responses",
 				"else": "$$REMOVE",
 			}}},
+			"ticket_status_responses": bson.M{"$addToSet": bson.M{"$cond": bson.M{
+				"if":   "$ticket_status_responses.k",
+				"then": "$ticket_status_responses",
+				"else": "$$REMOVE",
+			}}},
 		}},
 		{"$addFields": bson.M{
-			"doc.data.responses": bson.M{"$arrayToObject": "$responses"},
+			"doc.data.responses":               bson.M{"$arrayToObject": "$responses"},
+			"doc.data.ticket_status_responses": bson.M{"$arrayToObject": "$ticket_status_responses"},
 		}},
 		{"$replaceRoot": bson.M{"newRoot": "$doc"}},
 	}...)

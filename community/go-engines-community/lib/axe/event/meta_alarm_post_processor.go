@@ -175,6 +175,7 @@ func (p *metaAlarmPostProcessor) processComponent(ctx context.Context, event rpc
 		resourceEvent.Author = event.Parameters.Author
 		resourceEvent.UserID = event.Parameters.User
 		resourceEvent.Initiator = event.Parameters.Initiator
+		resourceEvent.AlarmID = resource.Alarm.ID
 		err = p.sendToFifo(ctx, resourceEvent)
 		if err != nil {
 			return err
@@ -730,6 +731,7 @@ func (p *metaAlarmPostProcessor) getChildEventByMetaAlarmEvent(
 	childEvent.Initiator = event.Parameters.Initiator
 	childEvent.TicketInfo = event.Parameters.TicketInfo
 	childEvent.TicketInfo.TicketMetaAlarmID = eventRes.Alarm.ID
+	childEvent.AlarmID = childAlarm.Alarm.ID
 	output := event.Parameters.Output
 	isTicket := false
 	switch eventRes.AlarmChangeType {
@@ -738,7 +740,8 @@ func (p *metaAlarmPostProcessor) getChildEventByMetaAlarmEvent(
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
 		output = event.Parameters.TicketInfo.GetStepMessage()
 		isTicket = true
-	case types.AlarmChangeTypeAssocTicket:
+	case types.AlarmChangeTypeAssocTicket,
+		types.AlarmChangeTypeTicketRemove:
 		isTicket = true
 	}
 
@@ -788,6 +791,7 @@ func (p *metaAlarmPostProcessor) applyOnChild(changeType types.AlarmChangeType) 
 	case types.AlarmChangeTypeAck,
 		types.AlarmChangeTypeAckremove,
 		types.AlarmChangeTypeAssocTicket,
+		types.AlarmChangeTypeTicketRemove,
 		types.AlarmChangeTypeCancel,
 		types.AlarmChangeTypeChangeState,
 		types.AlarmChangeTypeComment,
