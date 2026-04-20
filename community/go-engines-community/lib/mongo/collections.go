@@ -114,4 +114,12 @@ const (
 
 	TemplateTestDataCollection = "template_data"
 	TemplateTestCollection     = "template_test"
+
+	WebhookCheckTicketStatusCollection = "webhook_check_ticket_status"
+
+	CommentTemplateMongoCollection = "comment_template"
+
+	PatternOptimizeJobCollection = "pattern_optimize_job"
+
+	ChangeStreamTokenCollection = "change_stream_token"
 )

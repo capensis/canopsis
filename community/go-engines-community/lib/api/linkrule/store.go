@@ -50,6 +50,7 @@ type Store interface {
 	GetCategories(ctx context.Context, r CategoriesRequest) (*CategoryResponse, error)
 	ValidateTemplates(ctx context.Context, request TemplateRequest) (map[string]template.ValidateResponse, error)
 	GetTemplateVars(ctx context.Context) (TemplateVarsResponse, error)
+	Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error)
 }
 
 type store struct {
@@ -336,6 +337,23 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	})
 
 	return deleted > 0, err
+}
+
+func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error) {
+	res, err := s.collection.UpdateOne(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"enabled": enabled,
+			"author":  r.Author,
+			"updated": datetime.NewCpsTime(),
+		}},
+	)
+	if err != nil {
+		return false, fmt.Errorf("failed to toggle link rule: %w", err)
+	}
+
+	return res.MatchedCount != 0, nil
 }
 
 // GetCategories returns list of distinct categories

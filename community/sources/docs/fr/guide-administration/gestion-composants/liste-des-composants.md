@@ -7,4 +7,4 @@
 | Nginx | Serveur HTTP |
 | PostgreSQL/TimescaleDB | Base de données, métriques |
 | RabbitMQ | Transfert de messages |
-| Redis | Cache |
+| Valkey | Cache |

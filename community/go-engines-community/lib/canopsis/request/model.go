@@ -1,6 +1,9 @@
 package request
 
 import (
+	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 )
@@ -17,9 +20,33 @@ type Parameters struct {
 	RetryDelay *datetime.DurationWithUnit `bson:"retry_delay,omitempty" json:"retry_delay"`
 }
 
+func (p Parameters) GetRetryParams() (time.Duration, int64, time.Duration, error) {
+	var timeout, retryDelay time.Duration
+
+	if p.Timeout != nil && p.Timeout.Value > 0 {
+		d, err := p.Timeout.To(datetime.DurationUnitSecond)
+		if err != nil {
+			return 0, 0, 0, fmt.Errorf("invalid request timeout: %w", err)
+		}
+
+		timeout = time.Duration(d.Value) * time.Second
+	}
+
+	if p.RetryDelay != nil && p.RetryDelay.Value > 0 {
+		d, err := p.RetryDelay.To(datetime.DurationUnitSecond)
+		if err != nil {
+			return 0, 0, 0, fmt.Errorf("invalid request retry delay: %w", err)
+		}
+
+		retryDelay = time.Duration(d.Value) * time.Second
+	}
+
+	return timeout, p.RetryCount, retryDelay, nil
+}
+
 type BasicAuth struct {
 	Username string `bson:"username" json:"username"`
-	Password string `bson:"password" json:"password"`
+	Password string `bson:"password" json:"password"` //nolint:gosec
 }
 
 type ParsedParameters struct {

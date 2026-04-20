@@ -12,13 +12,12 @@ const (
 	AlarmCancelAutosolveDelay = 60 * 60 * time.Second
 	AlarmDisplayNameScheme    = "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
 
-	ApiTokenSigningMethod               = "HS256"
-	ApiBulkMaxSize                      = 10000
-	ApiExportMongoClientTimeout         = time.Minute
-	ApiMetricsCacheExpiration           = 24 * time.Hour
-	ApiEventsRecorderFetchStatusTimeout = 3 * time.Second
-	ApiWebsocketPingInterval            = 5 * time.Second
-	ApiNotificationDisplayCount         = 3
+	ApiTokenSigningMethod       = "HS256"
+	ApiBulkMaxSize              = 10000
+	ApiExportMongoClientTimeout = time.Minute
+	ApiMetricsCacheExpiration   = 24 * time.Hour
+	ApiWebsocketPingInterval    = 5 * time.Second
+	ApiNotificationDisplayCount = 3
 
 	RemediationHttpTimeout                    = 5 * time.Second
 	RemediationPauseManualInstructionInterval = 15 * time.Second
@@ -39,6 +38,9 @@ const (
 	DataStorageMaxUpdates = 100000
 
 	DefaultEventsCountThreshold = 10
+
+	CheckTicketStatusInterval  = 10 * time.Second
+	CheckTicketStatusMaxPeriod = 30 * 24 * time.Hour
 )
 
 var ApiAuthorScheme = []string{"$username"}

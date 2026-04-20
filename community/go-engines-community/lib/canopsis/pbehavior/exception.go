@@ -16,6 +16,9 @@ type Exception struct {
 	Author      string           `bson:"author" json:"author"`
 	Description string           `bson:"description" json:"description"`
 	Exdates     []Exdate         `bson:"exdates" json:"exdates"`
-	Created     datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty"`
-	Updated     datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty"`
+	Created     datetime.CpsTime `bson:"created,omitempty" json:"created,omitzero"`
+	Updated     datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitzero"`
+
+	// Hidden is used in API to hide documents from the list response
+	Hidden bool `bson:"hidden" json:"hidden"`
 }
