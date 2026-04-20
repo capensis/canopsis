@@ -1955,6 +1955,9 @@ definitions:
     properties:
       category:
         type: string
+      entity_pattern:
+        example: '[[{"field":"name","cond":{"type":"eq","value":"cps_name"}}]]'
+        type: string
       fields:
         items:
           $ref: '#/definitions/export.Field'
