@@ -5737,6 +5737,11 @@ paths:
             items:
               type: string
         - $ref: '#/components/parameters/search_pattern'
+        - name: entity_pattern
+          in: query
+          schema:
+            type: string
+          example: '[[{"field":"name","cond":{"type":"eq","value":"cps_name"}}]]'        
         - name: negative_entity_pattern
           in: query
           schema:
