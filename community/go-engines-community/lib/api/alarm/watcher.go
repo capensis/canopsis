@@ -83,7 +83,7 @@ func (w *watcher) StartWatch(ctx context.Context, opts websocket.JoinOptions) (e
 
 	defer func() {
 		if err != nil {
-			_ = w.removeStream(roomID, opts.ConnID)
+			w.removeStream(roomID, opts.ConnID)
 		}
 	}()
 
@@ -175,7 +175,7 @@ func (w *watcher) StartWatchDetails(ctx context.Context, opts websocket.JoinOpti
 
 	defer func() {
 		if err != nil {
-			_ = w.removeStream(roomID, opts.ConnID)
+			w.removeStream(roomID, opts.ConnID)
 		}
 	}()
 
@@ -297,10 +297,12 @@ func (w *watcher) sendGroupRoomAlrmDetails(ctx context.Context, alarmId, roomId 
 }
 
 func (w *watcher) StopWatch(_ context.Context, opts websocket.LeaveOptions) error {
-	return w.removeStream(opts.RoomID, opts.ConnID)
+	w.removeStream(opts.RoomID, opts.ConnID)
+
+	return nil
 }
 
-func (w *watcher) removeStream(roomID, connID string) error {
+func (w *watcher) removeStream(roomID, connID string) {
 	w.streamsMx.Lock()
 	defer w.streamsMx.Unlock()
 
@@ -321,11 +323,9 @@ func (w *watcher) removeStream(roomID, connID string) error {
 				}
 			}
 
-			return nil
+			return
 		}
 	}
-
-	return nil
 }
 
 func (w *watcher) newStream(roomId, k, connId, userID string, streamCancel context.CancelFunc) bool {
