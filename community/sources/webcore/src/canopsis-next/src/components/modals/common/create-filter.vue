@@ -15,7 +15,7 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -33,15 +33,15 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
 import { omit } from 'lodash';
+import { computed, ref } from 'vue';
 
 import { MODALS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/entities/filter/form';
 
-import { useInnerModal } from '@/hooks/modals';
 import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 

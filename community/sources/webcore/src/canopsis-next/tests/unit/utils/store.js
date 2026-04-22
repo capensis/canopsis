@@ -879,6 +879,7 @@ export const createAlarmModule = () => {
   const bulkCreateAlarmAckremoveEvent = jest.fn();
   const bulkCreateAlarmSnoozeEvent = jest.fn();
   const bulkCreateAlarmAssocticketEvent = jest.fn();
+  const bulkCreateAlarmTicketremoveEvent = jest.fn();
   const bulkCreateAlarmCommentEvent = jest.fn();
   const bulkCreateAlarmCancelEvent = jest.fn();
   const bulkCreateAlarmUnCancelEvent = jest.fn();
@@ -895,6 +896,7 @@ export const createAlarmModule = () => {
     bulkCreateAlarmAckremoveEvent.mockClear();
     bulkCreateAlarmSnoozeEvent.mockClear();
     bulkCreateAlarmAssocticketEvent.mockClear();
+    bulkCreateAlarmTicketremoveEvent.mockClear();
     bulkCreateAlarmCommentEvent.mockClear();
     bulkCreateAlarmCancelEvent.mockClear();
     bulkCreateAlarmUnCancelEvent.mockClear();
@@ -914,6 +916,7 @@ export const createAlarmModule = () => {
       bulkCreateAlarmAckremoveEvent,
       bulkCreateAlarmSnoozeEvent,
       bulkCreateAlarmAssocticketEvent,
+      bulkCreateAlarmTicketremoveEvent,
       bulkCreateAlarmCommentEvent,
       bulkCreateAlarmCancelEvent,
       bulkCreateAlarmUnCancelEvent,
@@ -932,6 +935,7 @@ export const createAlarmModule = () => {
     bulkCreateAlarmAckremoveEvent,
     bulkCreateAlarmSnoozeEvent,
     bulkCreateAlarmAssocticketEvent,
+    bulkCreateAlarmTicketremoveEvent,
     bulkCreateAlarmCommentEvent,
     bulkCreateAlarmCancelEvent,
     bulkCreateAlarmUnCancelEvent,
@@ -1771,5 +1775,60 @@ export const createPatternsFieldsModule = () => {
     fetchKpiFilterPatternFields,
     fetchDynamicInfosPatternFields,
     fetchEventRecordPatternFields,
+  };
+};
+
+export const createCommentTemplateModule = () => {
+  const createCommentTemplate = jest.fn();
+  const updateCommentTemplate = jest.fn();
+  const removeCommentTemplate = jest.fn();
+  const fetchCommentTemplatesListWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+    meta: {
+      total_count: 0,
+    },
+  });
+
+  const commentTemplateModule = {
+    name: 'commentTemplate',
+    actions: {
+      fetchListWithoutStore: fetchCommentTemplatesListWithoutStore,
+      create: createCommentTemplate,
+      update: updateCommentTemplate,
+      remove: removeCommentTemplate,
+    },
+  };
+
+  return {
+    createCommentTemplate,
+    updateCommentTemplate,
+    removeCommentTemplate,
+    fetchCommentTemplatesListWithoutStore,
+    commentTemplateModule,
+  };
+};
+
+export const createPatternEntitiesOptimizeModule = () => {
+  const optimize = jest.fn().mockResolvedValue({});
+  const fetchOptimizeStatus = jest.fn().mockResolvedValue({});
+  const update = jest.fn().mockResolvedValue({});
+  const remove = jest.fn().mockResolvedValue({});
+
+  const patternEntitiesOptimizeModule = {
+    name: 'pattern/entitiesOptimize',
+    actions: {
+      optimize,
+      fetchOptimizeStatus,
+      update,
+      remove,
+    },
+  };
+
+  return {
+    patternEntitiesOptimizeModule,
+    optimize,
+    fetchOptimizeStatus,
+    update,
+    remove,
   };
 };

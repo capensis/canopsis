@@ -158,8 +158,8 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect(action).not.toBeCalled();
-    expect($modals.hide).not.toBeCalled();
+    expect(action).not.toHaveBeenCalled();
+    expect($modals.hide).not.toHaveBeenCalled();
 
     validator.detach('name');
   });
@@ -349,7 +349,7 @@ describe('create-filter', () => {
       is_user_preference: filter.is_user_preference,
       title: filter.title,
     });
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalled();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -368,7 +368,7 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalled();
   });
 
   test('Renders `create-filter` with empty modal', () => {

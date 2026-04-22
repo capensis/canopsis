@@ -162,6 +162,7 @@ docker-cmd-canopsis-api-pro: TARGET=canopsis-api-pro
 docker-cmd-canopsis-reconfigure: TARGET=canopsis-reconfigure
 docker-cmd-engine-webhook: TARGET=engine-webhook
 docker-cmd-import-context-graph: TARGET=import-context-graph
+docker-cmd-export-alarms: TARGET=export-alarms
 
 # Support tool targets.
 $(CURRENT_BUILD_OUTPUT_DIR)/support/%:

@@ -3,6 +3,7 @@ export const MODALS = {
   createAckEvent: 'create-ack-event',
   confirmAckWithTicket: 'confirm-ack-with-ticket',
   createAssociateTicketEvent: 'create-associate-ticket-event',
+  removeAssociatedTicketEvent: 'remove-associated-ticket-event',
   createCommentEvent: 'create-comment-event',
   createChangeStateEvent: 'create-change-state-event',
   createSnoozeEvent: 'create-snooze-event',
@@ -34,6 +35,7 @@ export const MODALS = {
   createUser: 'create-user',
   createRole: 'create-role',
   createBroadcastMessage: 'create-broadcast-message',
+  createCommentTemplate: 'create-comment-template',
   createEventFilter: 'create-event-filter',
   createMetaAlarmRule: 'create-meta-alarm-rule',
   createPattern: 'create-pattern',
@@ -105,10 +107,12 @@ export const MODALS = {
   createService: 'create-service',
   entityDependenciesList: 'entity-dependencies-list',
   entitiesRootCauseDiagram: 'entities-root-cause-diagram',
+  entityUpstream: 'entity-upstream',
   createEntityInfoProperty: 'create-entity-info-property',
   createEntityInfo: 'create-entity-info',
   serviceEntities: 'service-entities',
   entitiesList: 'entities-list',
+  entitiesComparison: 'entities-comparison',
 
   createTheme: 'create-theme',
 

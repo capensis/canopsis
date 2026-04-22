@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"slices"
 	"testing"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -30,7 +31,7 @@ func TestEventFailureCleaner_Clean(t *testing.T) {
 		t.Fatalf("cannot connect to mongodb: %v", err)
 	}
 
-	now := datetime.NewCpsTime()
+	now := datetime.CpsTime{Time: time.Unix(time.Now().Unix(), 0)}
 	failColl := client.Collection(mongo.EventFilterFailureCollection)
 	ruleColl := client.Collection(mongo.EventFilterRuleCollection)
 	notifColl := client.Collection(mongo.UserNotificationCollection)
@@ -115,43 +116,44 @@ func TestEventFailureCleaner_Clean(t *testing.T) {
 		}
 	}
 
+	twoWeeksAgo := datetime.CpsTime{Time: now.AddDate(0, 0, -14)}
 	weekAgo := datetime.CpsTime{Time: now.AddDate(0, 0, -7)}
 	f(
 		newDSConfig("7d"),
 		0,
 		[]any{
-			newTestFail("f1", "r1", now, true),
-			newTestFail("f2", "r1", now, true),
-			newTestFail("f3", "r1", now, false),
-			newTestFail("f4", "r1", now, false),
-			newTestFail("f5", "r1", weekAgo, true),
-			newTestFail("f6", "r1", weekAgo, true),
-			newTestFail("f7", "r1", weekAgo, false),
-			newTestFail("f8", "r1", weekAgo, false),
-			newTestFail("f9", "r2", now, true),
-			newTestFail("f10", "r3", weekAgo, true),
-			newTestFail("f11", "r4", weekAgo, true),
+			newTestFail("f1", "r1", now, weekAgo, true),
+			newTestFail("f2", "r1", now, weekAgo, true),
+			newTestFail("f3", "r1", now, weekAgo, false),
+			newTestFail("f4", "r1", now, weekAgo, false),
+			newTestFail("f5", "r1", weekAgo, weekAgo, true),
+			newTestFail("f6", "r1", weekAgo, weekAgo, true),
+			newTestFail("f7", "r1", weekAgo, weekAgo, false),
+			newTestFail("f8", "r1", weekAgo, weekAgo, false),
+			newTestFail("f9", "r2", now, weekAgo, true),
+			newTestFail("f10", "r3", weekAgo, weekAgo, true),
+			newTestFail("f11", "r4", weekAgo, weekAgo, true),
 		},
 		[]any{
-			newTestRule("r1", 8, 4),
-			newTestRule("r2", 1, 1),
-			newTestRule("r3", 1, 1),
-			newTestRule("r4", 1, 1),
-			newTestRule("r5", 0, 0),
+			newTestRule("r1", weekAgo, 8, 4),
+			newTestRule("r2", weekAgo, 1, 1),
+			newTestRule("r3", weekAgo, 1, 1),
+			newTestRule("r4", weekAgo, 1, 1),
+			newTestRule("r5", weekAgo, 0, 0),
 		},
 		[]any{
-			newTestNotif("n1", "r1", weekAgo, []string{"ro1"}),
-			newTestNotif("n2", "r2", now, []string{"ro2"}),
-			newTestNotif("n3", "r3", weekAgo, []string{"ro3", "ro4"}),
-			newTestNotif("n4", "r4", weekAgo, []string{"ro4", "ro5"}),
+			newTestNotif("n1", "r1", weekAgo, weekAgo, []string{"ro1"}),
+			newTestNotif("n2", "r2", now, weekAgo, []string{"ro2"}),
+			newTestNotif("n3", "r3", weekAgo, weekAgo, []string{"ro3", "ro4"}),
+			newTestNotif("n4", "r4", weekAgo, weekAgo, []string{"ro4", "ro5"}),
 		},
 		[]string{"f1", "f2", "f3", "f4", "f9"},
 		[]eventfilter.Rule{
-			newTestRule("r1", 4, 2),
-			newTestRule("r2", 1, 1),
-			newTestRule("r3", 0, 0),
-			newTestRule("r4", 0, 0),
-			newTestRule("r5", 0, 0),
+			newTestRule("r1", weekAgo, 4, 2),
+			newTestRule("r2", weekAgo, 1, 1),
+			newTestRule("r3", weekAgo, 0, 0),
+			newTestRule("r4", weekAgo, 0, 0),
+			newTestRule("r5", weekAgo, 0, 0),
 		},
 		6,
 		[]string{"n1", "n2"},
@@ -161,21 +163,52 @@ func TestEventFailureCleaner_Clean(t *testing.T) {
 		newDSConfig("7d"),
 		3,
 		[]any{
-			newTestFail("f1", "r1", weekAgo, false),
-			newTestFail("f2", "r1", weekAgo, false),
-			newTestFail("f3", "r1", weekAgo, false),
-			newTestFail("f4", "r1", weekAgo, false),
+			newTestFail("f1", "r1", weekAgo, weekAgo, false),
+			newTestFail("f2", "r1", weekAgo, weekAgo, false),
+			newTestFail("f3", "r1", weekAgo, weekAgo, false),
+			newTestFail("f4", "r1", weekAgo, weekAgo, false),
 		},
 		[]any{
-			newTestRule("r1", 4, 0),
+			newTestRule("r1", weekAgo, 4, 0),
 		},
 		[]any{},
 		[]string{"f4"},
 		[]eventfilter.Rule{
-			newTestRule("r1", 1, 0),
+			newTestRule("r1", weekAgo, 1, 0),
 		},
 		3,
 		[]string{},
+		nil,
+	)
+	f(
+		newDSConfig("7d"),
+		0,
+		[]any{
+			newTestFail("f1", "r1", now, weekAgo, true),
+			newTestFail("f2", "r1", now, weekAgo, false),
+			newTestFail("f3", "r1", now, twoWeeksAgo, true),
+			newTestFail("f4", "r1", now, twoWeeksAgo, false),
+			newTestFail("f5", "r2", now, twoWeeksAgo, true),
+			newTestFail("f6", "r2", now, twoWeeksAgo, false),
+			newTestFail("f7", "noexist", now, weekAgo, true),
+			newTestFail("f8", "noexist", now, weekAgo, false),
+		},
+		[]any{
+			newTestRule("r1", weekAgo, 2, 1),
+			newTestRule("r2", weekAgo, 0, 0),
+		},
+		[]any{
+			newTestNotif("n1", "r1", now, weekAgo, []string{"ro1"}),
+			newTestNotif("n2", "r2", now, twoWeeksAgo, []string{"ro1"}),
+			newTestNotif("n3", "noexist", now, weekAgo, []string{"ro1"}),
+		},
+		[]string{"f1", "f2", "f3", "f4", "f5", "f6"},
+		[]eventfilter.Rule{
+			newTestRule("r1", weekAgo, 2, 1),
+			newTestRule("r2", weekAgo, 0, 0),
+		},
+		2,
+		[]string{"n1"},
 		nil,
 	)
 }
@@ -196,24 +229,26 @@ func newDSConfig(deletedAfterStr string) datastorage.Config {
 	return c
 }
 
-func newTestRule(id string, f, u int64) eventfilter.Rule {
+func newTestRule(id string, updated datetime.CpsTime, f, u int64) eventfilter.Rule {
 	return eventfilter.Rule{
 		ID:                  id,
+		Updated:             &updated,
 		FailuresCount:       f,
 		UnreadFailuresCount: u,
 	}
 }
 
-func newTestFail(id, r string, t datetime.CpsTime, u bool) eventfilter.Failure {
+func newTestFail(id, ruleID string, t, ruleUpdated datetime.CpsTime, u bool) eventfilter.Failure {
 	return eventfilter.Failure{
-		ID:        id,
-		Rule:      r,
-		Timestamp: t,
-		Unread:    u,
+		ID:          id,
+		Rule:        ruleID,
+		RuleUpdated: ruleUpdated,
+		Timestamp:   t,
+		Unread:      u,
 	}
 }
 
-func newTestNotif(id, r string, t datetime.CpsTime, roles []string) usernotification.Notification {
+func newTestNotif(id, ruleID string, t, ruleUpdated datetime.CpsTime, roles []string) usernotification.Notification {
 	return usernotification.Notification{
 		ID:      id,
 		Type:    usernotification.TypeEventFilterFailure,
@@ -221,8 +256,9 @@ func newTestNotif(id, r string, t datetime.CpsTime, roles []string) usernotifica
 		Time:    t,
 		Comment: "test",
 		Rule: &usernotification.Rule{
-			ID:   r,
-			Name: "test",
+			ID:      ruleID,
+			Name:    "test",
+			Updated: &ruleUpdated,
 		},
 	}
 }

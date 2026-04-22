@@ -4,10 +4,10 @@
       <span>{{ $t('common.filters') }}</span>
     </template>
     <template #text="">
-      <c-progress-overlay :pending="combinedPending" />
+      <c-progress-overlay :pending="pending" />
       <filters-list-component
         :filters="filters"
-        :pending="combinedPending"
+        :pending="pending"
         :addable="config.addable"
         :editable="config.editable"
         @input="updateFiltersPositions"

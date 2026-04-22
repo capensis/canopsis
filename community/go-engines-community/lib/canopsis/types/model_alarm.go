@@ -2,6 +2,7 @@ package types
 
 import (
 	"log"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -74,6 +75,7 @@ const (
 	AlarmStepAssocTicket       = "assocticket"
 	AlarmStepDeclareTicket     = "declareticket"
 	AlarmStepDeclareTicketFail = "declareticketfail"
+	AlarmStepTicketRemove      = "ticketremove"
 	AlarmStepWebhookStart      = "webhookstart"
 	AlarmStepWebhookComplete   = "webhookcomplete"
 	AlarmStepWebhookFail       = "webhookfail"
@@ -94,6 +96,8 @@ const (
 	// Following alarm steps are used for junit.
 	AlarmStepJunitTestSuiteUpdate = "junittestsuiteupdate"
 	AlarmStepJunitTestCaseUpdate  = "junittestcaseupdate"
+
+	AlarmStepChangeTicketStatus = "changeticketstatus"
 )
 
 func GetAlarmStepTypes() []string {
@@ -116,6 +120,7 @@ func GetAlarmStepTypes() []string {
 		AlarmStepActivate,
 		AlarmStepResolve,
 		AlarmStepAssocTicket,
+		AlarmStepTicketRemove,
 		AlarmStepDeclareTicket,
 		AlarmStepDeclareTicketFail,
 		AlarmStepWebhookStart,
@@ -132,6 +137,7 @@ func GetAlarmStepTypes() []string {
 		AlarmStepAutoInstructionFail,
 		AlarmStepJunitTestSuiteUpdate,
 		AlarmStepJunitTestCaseUpdate,
+		AlarmStepChangeTicketStatus,
 	}
 }
 
@@ -223,11 +229,7 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps) {
 		steps = append(steps, *a.Value.ACK)
 	}
 
-	for _, ticketStep := range a.Value.Tickets {
-		if ticketStep.Type == AlarmStepDeclareTicket || ticketStep.Type == AlarmStepAssocTicket {
-			steps = append(steps, ticketStep)
-		}
-	}
+	steps = append(steps, a.Value.Tickets...)
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)
 	}
@@ -336,33 +338,15 @@ func (a *Alarm) IsMetaChild() bool {
 }
 
 func (a *Alarm) HasChildByEID(childEID string) bool {
-	for _, child := range a.Value.Children {
-		if child == childEID {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(a.Value.Children, childEID)
 }
 
 func (a *Alarm) HasParentByEID(parentEID string) bool {
-	for _, parent := range a.Value.Parents {
-		if parent == parentEID {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(a.Value.Parents, parentEID)
 }
 
 func (a *Alarm) HasUnlinkedParentByEID(parentEID string) bool {
-	for _, parent := range a.Value.UnlinkedParents {
-		if parent == parentEID {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(a.Value.UnlinkedParents, parentEID)
 }
 
 func (a *Alarm) AddChild(childEID string) {
@@ -376,7 +360,7 @@ func (a *Alarm) AddChild(childEID string) {
 func (a *Alarm) RemoveChild(childEID string) {
 	for idx, child := range a.Value.Children {
 		if child == childEID {
-			a.Value.Children = append(a.Value.Children[:idx], a.Value.Children[idx+1:]...)
+			a.Value.Children = slices.Delete(a.Value.Children, idx, idx+1)
 
 			return
 		}
@@ -397,7 +381,7 @@ func (a *Alarm) RemoveParent(parentEID string) bool {
 	removed := false
 	for idx, parent := range a.Value.Parents {
 		if parent == parentEID {
-			a.Value.Parents = append(a.Value.Parents[:idx], a.Value.Parents[idx+1:]...)
+			a.Value.Parents = slices.Delete(a.Value.Parents, idx, idx+1)
 			removed = true
 
 			break
@@ -539,7 +523,7 @@ func (a *Alarm) GetIntField(f string) (int64, bool) {
 }
 
 // GetRefField is a magic getter for reference fields for easier field retrieving when matching alarm pattern
-func (a *Alarm) GetRefField(f string) (interface{}, bool) {
+func (a *Alarm) GetRefField(f string) (any, bool) {
 	switch f {
 	case "v.ack":
 		if a.Value.ACK == nil {
@@ -645,7 +629,7 @@ func (a *Alarm) GetTagsField(f string) ([]string, bool) {
 }
 
 // GetInfoVal is a magic getter for infos fields for easier field retrieving when matching alarm pattern
-func (a *Alarm) GetInfoVal(f string) (interface{}, bool) {
+func (a *Alarm) GetInfoVal(f string) (any, bool) {
 	for _, infosByRule := range a.Value.Infos {
 		if v, ok := infosByRule[f]; ok {
 			return v, true

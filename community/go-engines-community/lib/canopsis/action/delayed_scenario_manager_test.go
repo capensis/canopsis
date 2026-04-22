@@ -4,6 +4,7 @@ import (
 	"context"
 	"reflect"
 	"testing"
+	"testing/synctest"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
@@ -25,7 +26,7 @@ func TestDelayedScenarioManager_AddDelayedScenario_GivenNotDelayedScenario_Shoul
 	mockStorage := mock_action.NewMockDelayedScenarioStorage(ctrl)
 	periodicalTimeout := time.Second
 
-	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Logger{})
+	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Nop())
 	alarm := types.Alarm{}
 	scenario := action.Scenario{}
 
@@ -43,7 +44,7 @@ func TestDelayedScenarioManager_AddDelayedScenario_GivenMatchedDelayedScenario_S
 	mockStorage := mock_action.NewMockDelayedScenarioStorage(ctrl)
 	periodicalTimeout := time.Second
 
-	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Logger{})
+	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Nop())
 	alarm := types.Alarm{
 		ID: "test-alarm-id",
 		Value: types.AlarmValue{
@@ -88,7 +89,7 @@ func TestDelayedScenarioManager_PauseDelayedScenarios_GivenNotPausedScenario_Sho
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockStorage := mock_action.NewMockDelayedScenarioStorage(ctrl)
 	periodicalTimeout := time.Second
-	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Logger{})
+	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Nop())
 	alarm := types.Alarm{ID: "test-alarm-id"}
 
 	mockStorage.EXPECT().GetAll(gomock.Any()).Return([]action.DelayedScenario{
@@ -130,7 +131,7 @@ func TestDelayedScenarioManager_PauseDelayedScenarios_GivenPausedScenario_Should
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockStorage := mock_action.NewMockDelayedScenarioStorage(ctrl)
 	periodicalTimeout := time.Second
-	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Logger{})
+	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Nop())
 	alarm := types.Alarm{ID: "test-alarm-id"}
 
 	mockStorage.EXPECT().GetAll(gomock.Any()).Return([]action.DelayedScenario{
@@ -157,7 +158,7 @@ func TestDelayedScenarioManager_ResumeDelayedScenarios_GivenPausedScenario_Shoul
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockStorage := mock_action.NewMockDelayedScenarioStorage(ctrl)
 	periodicalTimeout := time.Second
-	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Logger{})
+	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Nop())
 	alarm := types.Alarm{ID: "test-alarm-id"}
 
 	mockStorage.EXPECT().GetAll(gomock.Any()).Return([]action.DelayedScenario{
@@ -204,7 +205,7 @@ func TestDelayedScenarioManager_ResumeDelayedScenarios_GivenNotPausedScenario_Sh
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockStorage := mock_action.NewMockDelayedScenarioStorage(ctrl)
 	periodicalTimeout := time.Second
-	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Logger{})
+	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Nop())
 	alarm := types.Alarm{ID: "test-alarm-id"}
 
 	mockStorage.EXPECT().GetAll(gomock.Any()).Return([]action.DelayedScenario{
@@ -225,35 +226,99 @@ func TestDelayedScenarioManager_ResumeDelayedScenarios_GivenNotPausedScenario_Sh
 }
 
 func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByTick(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	mockActionAdapter := mock_action.NewMockAdapter(ctrl)
-	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
-	mockStorage := mock_action.NewMockDelayedScenarioStorage(ctrl)
-	periodicalTimeout := time.Second
-	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter,
-		mockStorage, periodicalTimeout, zerolog.Logger{})
+	synctest.Test(t, func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
 
-	expectedAlarm := types.Alarm{ID: "test-alarm-id"}
-	expectedScenario := action.Scenario{ID: "test-scenario-id"}
-	mockStorage.EXPECT().GetAll(gomock.Any()).Return([]action.DelayedScenario{
-		{
+		mockActionAdapter := mock_action.NewMockAdapter(ctrl)
+		mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
+		mockStorage := mock_action.NewMockDelayedScenarioStorage(ctrl)
+		periodicalTimeout := time.Second
+		manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter,
+			mockStorage, periodicalTimeout, zerolog.Nop())
+
+		expectedAlarm := types.Alarm{ID: "test-alarm-id"}
+		expectedScenario := action.Scenario{ID: "test-scenario-id"}
+		mockStorage.EXPECT().GetAll(gomock.Any()).Return([]action.DelayedScenario{
+			{
+				ID:            "test-delayed-id",
+				ScenarioID:    expectedScenario.ID,
+				AlarmID:       expectedAlarm.ID,
+				ExecutionTime: datetime.CpsTime{Time: time.Now().Add(periodicalTimeout + time.Millisecond)},
+			},
+			{
+				ID:            "test-delayed-id-2",
+				ScenarioID:    expectedScenario.ID,
+				AlarmID:       expectedAlarm.ID,
+				ExecutionTime: datetime.CpsTime{Time: time.Now().Add(10 * periodicalTimeout)},
+			},
+		}, nil).Times(2)
+		mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
+		mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Any(), gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
+		mockAlarmAdapter.EXPECT().GetOpenedAlarmsWithEntityByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).
+			Do(func(_ context.Context, ids []string, alarms *[]types.AlarmWithEntity) {
+				if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
+					t.Errorf("expected %v but got %v", []string{expectedAlarm.ID}, ids)
+				}
+
+				*alarms = []types.AlarmWithEntity{{Alarm: expectedAlarm}}
+			}).Return(nil)
+
+		ch, err := manager.Run(t.Context())
+		if err != nil {
+			t.Errorf("expected not error but got %v", err)
+		}
+
+		synctest.Wait()
+		time.Sleep(periodicalTimeout + 10*time.Millisecond)
+		synctest.Wait()
+
+		select {
+		case task := <-ch:
+			if !reflect.DeepEqual(task.Scenario, expectedScenario) {
+				t.Errorf("expected scenario %v but got %v", expectedScenario, task.Scenario)
+			}
+			if !reflect.DeepEqual(task.Alarm, expectedAlarm) {
+				t.Errorf("expected alarm %v but got %v", expectedAlarm, task.Alarm)
+			}
+		default:
+			t.Errorf("expected task but go nothing")
+		}
+	})
+}
+
+func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByWaitingGoroutine(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		mockActionAdapter := mock_action.NewMockAdapter(ctrl)
+		mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
+		mockStorage := mock_action.NewMockDelayedScenarioStorage(ctrl)
+		periodicalTimeout := 2 * time.Second
+		manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Nop())
+
+		expectedAlarm := types.Alarm{ID: "test-alarm-id"}
+		expectedScenario := action.Scenario{ID: "test-scenario-id"}
+		delayedScenario := action.DelayedScenario{
 			ID:            "test-delayed-id",
 			ScenarioID:    expectedScenario.ID,
 			AlarmID:       expectedAlarm.ID,
-			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(periodicalTimeout + time.Millisecond)},
-		},
-		{
-			ID:            "test-delayed-id-2",
-			ScenarioID:    expectedScenario.ID,
-			AlarmID:       expectedAlarm.ID,
-			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(10 * periodicalTimeout)},
-		},
-	}, nil).Times(2)
-	mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
-	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Any(), gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
-	mockAlarmAdapter.EXPECT().GetOpenedAlarmsWithEntityByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).
-		Do(func(_ context.Context, ids []string, alarms *[]types.AlarmWithEntity) {
+			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(3500 * time.Millisecond)},
+		}
+		mockStorage.EXPECT().GetAll(gomock.Any()).Return([]action.DelayedScenario{
+			delayedScenario,
+			{
+				ID:            "test-delayed-id-2",
+				ScenarioID:    expectedScenario.ID,
+				AlarmID:       expectedAlarm.ID,
+				ExecutionTime: datetime.CpsTime{Time: time.Now().Add(10 * periodicalTimeout)},
+			},
+		}, nil).Times(2)
+		mockStorage.EXPECT().Get(gomock.Any(), gomock.Eq(delayedScenario.ID)).Return(&delayedScenario, nil)
+		mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
+		mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Any(), gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
+		mockAlarmAdapter.EXPECT().GetOpenedAlarmsWithEntityByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).Do(func(_ context.Context, ids []string, alarms *[]types.AlarmWithEntity) {
 			if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
 				t.Errorf("expected %v but got %v", []string{expectedAlarm.ID}, ids)
 			}
@@ -261,81 +326,27 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByTick(t 
 			*alarms = []types.AlarmWithEntity{{Alarm: expectedAlarm}}
 		}).Return(nil)
 
-	ch, err := manager.Run(t.Context())
-	if err != nil {
-		t.Errorf("expected not error but got %v", err)
-	}
-
-	time.Sleep(periodicalTimeout + 10*time.Millisecond)
-
-	select {
-	case task := <-ch:
-		if !reflect.DeepEqual(task.Scenario, expectedScenario) {
-			t.Errorf("expected scenario %v but got %v", expectedScenario, task.Scenario)
-		}
-		if !reflect.DeepEqual(task.Alarm, expectedAlarm) {
-			t.Errorf("expected alarm %v but got %v", expectedAlarm, task.Alarm)
-		}
-	default:
-		t.Errorf("expected task but go nothing")
-	}
-}
-
-func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByWaitingGoroutine(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	mockActionAdapter := mock_action.NewMockAdapter(ctrl)
-	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
-	mockStorage := mock_action.NewMockDelayedScenarioStorage(ctrl)
-	periodicalTimeout := 2 * time.Second
-	manager := action.NewDelayedScenarioManager(mockActionAdapter, mockAlarmAdapter, mockStorage, periodicalTimeout, zerolog.Logger{})
-
-	expectedAlarm := types.Alarm{ID: "test-alarm-id"}
-	expectedScenario := action.Scenario{ID: "test-scenario-id"}
-	delayedScenario := action.DelayedScenario{
-		ID:            "test-delayed-id",
-		ScenarioID:    expectedScenario.ID,
-		AlarmID:       expectedAlarm.ID,
-		ExecutionTime: datetime.CpsTime{Time: time.Now().Add(3500 * time.Millisecond)},
-	}
-	mockStorage.EXPECT().GetAll(gomock.Any()).Return([]action.DelayedScenario{
-		delayedScenario,
-		{
-			ID:            "test-delayed-id-2",
-			ScenarioID:    expectedScenario.ID,
-			AlarmID:       expectedAlarm.ID,
-			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(10 * periodicalTimeout)},
-		},
-	}, nil).Times(2)
-	mockStorage.EXPECT().Get(gomock.Any(), gomock.Eq(delayedScenario.ID)).Return(&delayedScenario, nil)
-	mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
-	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Any(), gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
-	mockAlarmAdapter.EXPECT().GetOpenedAlarmsWithEntityByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).Do(func(_ context.Context, ids []string, alarms *[]types.AlarmWithEntity) {
-		if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
-			t.Errorf("expected %v but got %v", []string{expectedAlarm.ID}, ids)
+		ch, err := manager.Run(t.Context())
+		if err != nil {
+			t.Errorf("expected not error but got %v", err)
 		}
 
-		*alarms = []types.AlarmWithEntity{{Alarm: expectedAlarm}}
-	}).Return(nil)
+		synctest.Wait()
+		time.Sleep(3600 * time.Millisecond)
+		synctest.Wait()
 
-	ch, err := manager.Run(t.Context())
-	if err != nil {
-		t.Errorf("expected not error but got %v", err)
-	}
-
-	time.Sleep(3600 * time.Millisecond)
-
-	select {
-	case task := <-ch:
-		if !reflect.DeepEqual(task.Scenario, expectedScenario) {
-			t.Errorf("expected scenario %v but got %v", expectedScenario, task.Scenario)
+		select {
+		case task := <-ch:
+			if !reflect.DeepEqual(task.Scenario, expectedScenario) {
+				t.Errorf("expected scenario %v but got %v", expectedScenario, task.Scenario)
+			}
+			if !reflect.DeepEqual(task.Alarm, expectedAlarm) {
+				t.Errorf("expected alarm %v but got %v", expectedAlarm, task.Alarm)
+			}
+		default:
+			t.Errorf("expected task but go nothing")
 		}
-		if !reflect.DeepEqual(task.Alarm, expectedAlarm) {
-			t.Errorf("expected alarm %v but got %v", expectedAlarm, task.Alarm)
-		}
-	default:
-		t.Errorf("expected task but go nothing")
-	}
+	})
 }
 
 func newTestMatchResourceAlarmPattern(resource string) savedpattern.AlarmPatternFields {
