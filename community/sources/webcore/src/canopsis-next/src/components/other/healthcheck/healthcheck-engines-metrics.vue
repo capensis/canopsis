@@ -23,7 +23,7 @@
           <c-action-btn
             :disabled="exporting"
             :tooltip="$t('techMetric.generateDump')"
-            icon="play_circle_filled"
+            icon="play_circle"
             color="secondary"
             @click="exportTechMetrics"
           />
@@ -52,7 +52,7 @@
           <c-action-btn
             :disabled="exporting || item.disabled"
             :tooltip="$t('techMetric.generateDump')"
-            icon="play_circle_filled"
+            icon="play_circle"
             color="secondary"
             @click="exportTechMetrics"
           />

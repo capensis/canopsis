@@ -1,16 +1,35 @@
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer, flushPromises } from '@unit/utils/vue';
 import { deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
-import { createButtonStub } from '@unit/stubs/button';
 
 import MassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
+const actionsPanelBtnStub = {
+  props: { action: { type: Object, required: true } },
+  template: '<button class="actions-panel-btn" @click="action.method && action.method()"><slot /></button>',
+};
+
+const actionsPanelMenuStub = {
+  props: { actions: { type: Array, default: () => [] } },
+  template: `
+    <div class="actions-panel-menu">
+      <button
+        v-for="(action, i) in actions"
+        :key="i"
+        class="actions-panel-menu-item"
+        @click="action.method && action.method()"
+      />
+    </div>
+  `,
+};
+
 const stubs = {
-  'c-action-btn': createButtonStub('c-action-btn'),
-  'v-list-item': createButtonStub('v-list-item'),
+  'actions-panel-btn': actionsPanelBtnStub,
+  'actions-panel-menu': actionsPanelMenuStub,
 };
 
 const snapshotStubs = {
   'c-action-btn': true,
+  'c-list': true,
 };
 
 describe('mass-actions-panel', () => {
@@ -31,7 +50,7 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const actionElements = wrapper.findAll('button.c-action-btn');
+    const actionElements = wrapper.findAll('button.actions-panel-btn');
 
     expect(actionElements).toHaveLength(actions.length);
 
@@ -57,7 +76,7 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const dropdownActionElements = wrapper.findAll('v-menu-stub button.v-list-item');
+    const dropdownActionElements = wrapper.findAll('button.actions-panel-menu-item');
 
     expect(dropdownActionElements).toHaveLength(actions.length);
 
@@ -68,7 +87,7 @@ describe('mass-actions-panel', () => {
     expect(secondAction.method).toBeCalledTimes(1);
   });
 
-  it('Renders `mass-actions-panel` with actions on the large size', () => {
+  it('Renders `mass-actions-panel` with actions on the large size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
         $mq: 'l+',
@@ -78,10 +97,12 @@ describe('mass-actions-panel', () => {
       },
     });
 
+    await flushPromises();
+
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `mass-actions-panel` with actions correctly on the tablet size', () => {
+  it('Renders `mass-actions-panel` with actions correctly on the tablet size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
         $mq: 't',
@@ -91,13 +112,15 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const dropdownContent = wrapper.findMenu();
+    await flushPromises();
 
     expect(wrapper).toMatchSnapshot();
-    expect(dropdownContent.element).toMatchSnapshot();
+
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `mass-actions-panel` with actions correctly on the mobile size', () => {
+  it('Renders `mass-actions-panel` with actions correctly on the mobile size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
         $mq: 'm',
@@ -107,9 +130,11 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const dropdownContent = wrapper.findMenu();
+    await flushPromises();
 
     expect(wrapper).toMatchSnapshot();
-    expect(dropdownContent.element).toMatchSnapshot();
+
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 });

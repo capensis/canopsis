@@ -9,7 +9,7 @@ Group=canopsis
 WorkingDirectory=/opt/canopsis
 Environment=HOME=/opt/canopsis
 EnvironmentFile=/opt/canopsis/etc/go-engines-vars.conf
-ExecStart=/usr/bin/env /opt/canopsis/bin/%i
+ExecStart=/opt/canopsis/bin/%i
 PIDFile=/run/canopsis-engine-go-%i.pid
 Restart=always
 RestartSec=1

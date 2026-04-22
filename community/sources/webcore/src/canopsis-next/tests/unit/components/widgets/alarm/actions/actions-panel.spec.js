@@ -8,6 +8,9 @@ import {
   createDeclareTicketModule,
   createMetaAlarmModule,
   createMockedStoreModules,
+  createPbehaviorModule,
+  createPbehaviorTypesModule,
+  createPbehaviorReasonModule,
 } from '@unit/utils/store';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 
@@ -21,6 +24,7 @@ import {
   META_ALARMS_RULE_TYPES,
   MODALS,
   PATTERN_CONDITIONS,
+  PBEHAVIOR_ORIGINS,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
   REMEDIATION_INSTRUCTION_TYPES,
   TIME_UNITS,
@@ -42,6 +46,10 @@ jest.mock('@/helpers/file/pdf', () => {
     exportAlarmToPdf: jest.fn(),
   };
 });
+
+jest.mock('@/helpers/async', () => ({
+  promisedTimeout: callback => (callback ? Promise.resolve(callback()) : Promise.resolve()),
+}));
 
 const stubs = {
   'shared-actions-panel': {
@@ -86,6 +94,7 @@ describe('actions-panel', () => {
     bulkCreateAlarmAckremoveEvent,
     bulkCreateAlarmSnoozeEvent,
     bulkCreateAlarmAssocticketEvent,
+    bulkCreateAlarmTicketremoveEvent,
     bulkCreateAlarmCommentEvent,
     bulkCreateAlarmCancelEvent,
     bulkCreateAlarmChangestateEvent,
@@ -99,6 +108,13 @@ describe('actions-panel', () => {
     declareTicketRuleModule,
     fetchAssignedDeclareTicketsWithoutStore,
   } = createDeclareTicketModule();
+  const {
+    pbehaviorModule,
+    createEntityPbehaviors,
+    removeEntityPbehaviors,
+  } = createPbehaviorModule();
+  const { pbehaviorTypesModule } = createPbehaviorTypesModule();
+  const { pbehaviorReasonModule } = createPbehaviorReasonModule();
 
   const store = createMockedStoreModules([
     metaAlarmModule,
@@ -106,6 +122,9 @@ describe('actions-panel', () => {
     alarmModule,
     alarmDetailsModule,
     declareTicketRuleModule,
+    pbehaviorModule,
+    pbehaviorTypesModule,
+    pbehaviorReasonModule,
   ]);
 
   const assignedInstructions = [
@@ -194,7 +213,7 @@ describe('actions-panel', () => {
 
   const factory = generateShallowRenderer(ActionsPanel, {
     stubs,
-    mocks: { $modals },
+    mocks: { $modals, $popups },
     provide: {
       $system: {},
     },
@@ -468,6 +487,101 @@ describe('actions-panel', () => {
     );
   });
 
+  test('Fast pbehavior add creates downtime pbehavior and calls refreshAlarmsList', async () => {
+    const entity = {
+      _id: Faker.datatype.string(),
+    };
+    const typeId = Faker.datatype.string();
+    const reasonId = Faker.datatype.string();
+    const alarmWithEntity = { ...alarm, entity };
+    const widgetWithFastPbehavior = {
+      parameters: {
+        isMultiAckEnabled: true,
+        fast_pbehaviors: [{ type: typeId, reason: reasonId, name_prefix: 'Test' }],
+      },
+    };
+
+    createEntityPbehaviors.mockResolvedValue([{}]);
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        pbehaviorModule,
+        pbehaviorTypesModule,
+        pbehaviorReasonModule,
+      ]),
+      propsData: {
+        item: alarmWithEntity,
+        widget: widgetWithFastPbehavior,
+        parentAlarm,
+        refreshAlarmsList,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd).trigger('click');
+
+    await flushPromises();
+
+    expect(createEntityPbehaviors).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        data: expect.arrayContaining([
+          expect.objectContaining({
+            entity: entity._id,
+            type: typeId,
+            reason: reasonId,
+            origin: PBEHAVIOR_ORIGINS.alarmList,
+          }),
+        ]),
+      }),
+    );
+    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+  });
+
+  test('Fast pbehavior remove removes downtime pbehavior and calls refreshAlarmsList', async () => {
+    const entity = {
+      _id: Faker.datatype.string(),
+    };
+    const alarmWithFastPbehavior = {
+      ...alarm,
+      entity,
+      pbh_origin_icon: true,
+    };
+
+    removeEntityPbehaviors.mockResolvedValue([{}]);
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        pbehaviorModule,
+        pbehaviorTypesModule,
+        pbehaviorReasonModule,
+      ]),
+      propsData: {
+        item: alarmWithFastPbehavior,
+        widget,
+        parentAlarm,
+        refreshAlarmsList,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove).trigger('click');
+
+    await flushPromises();
+
+    expect(removeEntityPbehaviors).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: [
+          { origin: PBEHAVIOR_ORIGINS.alarmList, entity: entity._id },
+        ],
+      },
+    );
+    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+  });
+
   test('Snooze modal showed after trigger snooze action', async () => {
     const isNoteRequired = Faker.datatype.boolean();
     const widgetData = {
@@ -647,6 +761,72 @@ describe('actions-panel', () => {
         data: [{
           _id: alarm._id,
           ...ticketEvent,
+        }],
+      },
+    );
+
+    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+  });
+
+  test('Remove associated ticket modal showed after trigger remove associated ticket action', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const alarmWithTickets = {
+      ...alarm,
+      v: {
+        ...alarm.v,
+        tickets: [
+          {
+            ticket: 'TICKET-123',
+            ticket_system_name: 'Jira',
+          },
+        ],
+      },
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+      ]),
+      propsData: {
+        item: alarmWithTickets,
+        widget: widgetData,
+        parentAlarm,
+        refreshAlarmsList,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket).trigger('click');
+
+    expect($modals.show).toHaveBeenCalledWith(
+      {
+        name: MODALS.removeAssociatedTicketEvent,
+        config: {
+          items: [alarmWithTickets],
+          action: expect.any(Function),
+        },
+      },
+    );
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    const removeTicketEvent = {
+      ticket: 'TICKET-123',
+      reason: Faker.datatype.string(),
+    };
+
+    await config.action(removeTicketEvent);
+
+    expect(bulkCreateAlarmTicketremoveEvent).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: alarmWithTickets._id,
+          ...removeTicketEvent,
         }],
       },
     );
@@ -1083,7 +1263,10 @@ describe('actions-panel', () => {
     };
     const widgetData = {
       _id: Faker.datatype.string(),
-      parameters: {},
+      comment_templates: [],
+      parameters: {
+        comment_templates: [],
+      },
     };
 
     const wrapper = factory({
@@ -1106,6 +1289,7 @@ describe('actions-panel', () => {
         name: MODALS.createCommentEvent,
         config: {
           items: [commentAlarm],
+          templates: [],
           action: expect.any(Function),
         },
       },

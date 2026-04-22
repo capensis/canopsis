@@ -27,7 +27,7 @@ func NewApi(store Store, errorResponder httperror.Responder) API {
 }
 
 // GetDownstreams
-// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
+// @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) GetDownstreams(c *gin.Context) {
 	var r DownstreamsRequest
 	r.Query = pagination.GetDefaultQuery()

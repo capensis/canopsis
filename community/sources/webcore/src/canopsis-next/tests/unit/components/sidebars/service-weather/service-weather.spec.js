@@ -334,6 +334,7 @@ describe('service-weather', () => {
       moreInfoTemplate: Faker.datatype.string(),
       infoPopups: [],
       widgetColumns: [],
+      sort: [],
     };
 
     selectAlarmsListModalForm(wrapper).triggerCustomEvent('input', newAlarmsList);

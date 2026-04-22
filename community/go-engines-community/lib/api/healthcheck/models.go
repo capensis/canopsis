@@ -32,8 +32,10 @@ type Status struct {
 }
 
 type Service struct {
-	Name      string `json:"name"`
-	IsRunning bool   `json:"is_running"`
+	Name         string `json:"name"`
+	IsRunning    bool   `json:"is_running"`
+	Nodes        *int   `json:"nodes,omitempty"`
+	RunningNodes *int   `json:"running_nodes,omitempty"`
 }
 
 type Graph struct {

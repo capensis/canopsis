@@ -7,6 +7,9 @@
       <template #text="">
         <div class="position-relative">
           <c-progress-overlay :pending="eventPatternAttributesPending" />
+          <v-alert v-if="config.infoAlert" class="mb-4" type="info">
+            {{ config.infoAlert }}
+          </v-alert>
           <c-event-filter-patterns-field
             v-model="form"
             :attributes="eventPatternAttributes"

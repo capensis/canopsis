@@ -84,6 +84,14 @@ export const isCommentStepType = type => type === ALARM_LIST_STEPS.comment;
 export const isAssocTicketStepType = type => type === ALARM_LIST_STEPS.assocTicket;
 
 /**
+ * Checks if the provided type is a `ticketremove` step type.
+ *
+ * @param {AlarmStepType} type - The step type to check.
+ * @returns {boolean} Returns `true` if the type is `ticketremove`, otherwise returns `false`.
+ */
+export const isTicketRemoveStepType = type => type === ALARM_LIST_STEPS.ticketRemove;
+
+/**
  * Checks if the provided type is an acknowledgment step type.
  *
  * @param {AlarmStepType} type - The step type to check.
@@ -203,6 +211,15 @@ export const isDeclareTicketStepType = type => [
   ALARM_LIST_STEPS.declareTicketRuleComplete,
   ALARM_LIST_STEPS.declareTicketRuleFail,
 ].includes(type);
+
+/**
+ * Checks if the provided type is a declare ticket rule ticket change status step type.
+ *
+ * @param {AlarmStepType} type - The step type to check.
+ * @returns {boolean} Returns `true` if the type is a declare ticket rule ticket change status step type,
+ *                    otherwise `false`.
+ */
+export const isDeclareTicketChangeTicketStatusStepType = type => type === ALARM_LIST_STEPS.changeTicketStatus;
 
 /**
  * Checks if the provided type is a webhook step type.
