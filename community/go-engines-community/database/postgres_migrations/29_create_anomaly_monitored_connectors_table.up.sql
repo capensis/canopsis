@@ -1,7 +1,3 @@
-BEGIN;
-
-SELECT add_retention_policy('event_anomaly_hourly', INTERVAL '14 days');
-
 CREATE TABLE IF NOT EXISTS anomaly_monitored_connectors (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
@@ -10,4 +6,3 @@ CREATE TABLE IF NOT EXISTS anomaly_monitored_connectors (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-COMMIT;
