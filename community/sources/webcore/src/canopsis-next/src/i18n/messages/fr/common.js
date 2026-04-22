@@ -618,6 +618,7 @@ export default {
     timeout: 'Temps libre',
     timeoutSettings: 'Paramètres de délai d\'attente',
     repeatRequest: 'Répéter la demande',
+    repeatRequestInTomlFile: 'Les paramètres de répétition sont configurés dans le fichier toml',
     skipVerify: 'Ne pas vérifier les certificats HTTPS',
     headersHelpText: 'Sélectionnez la clé et la valeur de l\'en-tête ou saisissez-les manuellement',
     emptyHeaders: 'Aucun en-tête ajouté pour le moment',
@@ -650,5 +651,11 @@ export default {
       scenario: '<strong>Scénarios</strong>\n<ul>{rules}</ul>',
       declareticketrule: '<strong>Règles de déclaration de tickets</strong>\n<ul>{rules}</ul>',
     },
+  },
+
+  massActionsPanel: {
+    recordsSelected: '{count} enregistrement sélectionné|{count} enregistrements sélectionnés',
+    keepSelectedAfterAction: 'Conserver la sélection après l\'action',
+    clearSelection: 'Effacer la sélection',
   },
 };

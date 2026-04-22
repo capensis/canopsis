@@ -41,6 +41,8 @@
       :some-required="!isChangeEntityType"
       :required="isChangeEntityType"
       :with-entity="!isChangeEntityType"
+      :event-attributes="eventAttributes"
+      :pending="attributesPending"
       with-event
       entity-counters-type
     />
@@ -121,6 +123,14 @@ export default {
       default: () => ({}),
     },
     isDisabledIdField: {
+      type: Boolean,
+      default: false,
+    },
+    eventAttributes: {
+      type: Array,
+      required: false,
+    },
+    attributesPending: {
       type: Boolean,
       default: false,
     },

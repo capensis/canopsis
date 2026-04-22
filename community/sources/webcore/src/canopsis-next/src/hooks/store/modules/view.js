@@ -48,6 +48,7 @@ export const useView = () => {
 
   const actions = useActions({
     createView: 'createView',
+    createViewTab: 'createViewTab',
     updateView: 'updateView',
     updateViewsPositions: 'updateViewPositions',
     updateViewWithoutStore: 'updateWithoutStoreView',

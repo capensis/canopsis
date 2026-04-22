@@ -150,7 +150,7 @@ describe('create-associate-ticket-event', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       comment: '',
       ticket: '',
       data: {},
@@ -159,7 +159,7 @@ describe('create-associate-ticket-event', () => {
       url: '',
       url_title: '',
     });
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -227,8 +227,8 @@ describe('create-associate-ticket-event', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(addedErrors).toEqual(formErrors);
-    expect(action).toBeCalledWith(assocTicketEventData);
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(assocTicketEventData);
+    expect($modals.hide).not.toHaveBeenCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -261,12 +261,12 @@ describe('create-associate-ticket-event', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith(assocTicketEventData);
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(assocTicketEventData);
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     consoleErrorSpy.mockClear();
   });

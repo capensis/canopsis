@@ -364,7 +364,7 @@ func (g *generator) getAlarms(ctx context.Context, ids []string) ([]AlarmWithDat
 		return nil, err
 	}
 
-	var openAlarms []AlarmWithData
+	var openAlarms []AlarmWithData // nolint:prealloc
 	err = openCursor.All(ctx, &openAlarms)
 	if err != nil {
 		return nil, err

@@ -19,6 +19,10 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     withhtml="true"
     withtemplate="true"
   />
+  <field-resize-column-behavior-stub
+    resizable="true"
+    value="[object Object]"
+  />
   <field-default-elements-per-page-stub
     value="10"
   />
@@ -269,6 +273,10 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     withcolorindicator="true"
     withhtml="true"
     withtemplate="true"
+  />
+  <field-resize-column-behavior-stub
+    resizable="true"
+    value="[object Object]"
   />
   <field-default-elements-per-page-stub
     value="10"

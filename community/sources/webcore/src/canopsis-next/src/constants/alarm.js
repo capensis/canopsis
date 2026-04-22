@@ -426,6 +426,7 @@ export const ALARM_LIST_STEPS = {
   declareTicketRuleInProgress: 'declareticketruleinprogress',
   declareTicketRuleComplete: 'declareticketrulecomplete',
   declareTicketRuleFail: 'declareticketrulefail',
+  changeTicketStatus: 'changeticketstatus',
 
   snooze: 'snooze',
   unsnooze: 'unsnooze',
@@ -1068,6 +1069,8 @@ export const ALARM_LINK_TD_PADDINGS = {
 };
 
 export const ALARM_EXPORT_FILE_NAME_PREFIX = 'alarm';
+
+export const MASS_ACTIONS_BUTTON_WIDTH = 36;
 
 export const ALARM_ACTION_BUTTON_WIDTHS = {
   [DENSE_TYPES.large]: 36,
