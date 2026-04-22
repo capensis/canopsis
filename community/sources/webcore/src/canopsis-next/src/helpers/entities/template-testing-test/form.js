@@ -65,7 +65,6 @@ import { formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
  * @property {Object} params - Additional parameters for the item
  * @property {number} [index] - Index of the item in the array
  * @property {boolean} required - Whether the item is required
- * @property {boolean} checkTicketStatusResponse - Whether the item is a check ticket status response
  * @property {boolean} someRequired - Whether the item has some requirement
  * @property {string} key - Unique key for the item
  * @property {string} value - Value of the item
@@ -105,7 +104,6 @@ import { formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
  * @property {string} type - The type of the validate form item
  * @property {Object} [params] - Additional parameters for the item
  * @property {boolean} [required] - Whether the item is required
- * @property {boolean} [checkTicketStatusResponse] - Whether the item is a check ticket status response
  * @property {boolean} [someRequired] - Whether the item has some requirement
  * @property {number} [index] - Index of the item in the array
  * @property {string} [key] - Unique key for the item, defaults to type if not provided
@@ -184,7 +182,6 @@ export const getTemplateTestingTestValidateFormItem = ({
   type,
   params = {},
   required = false,
-  checkTicketStatusResponse = false,
   someRequired = false,
   index,
   key,
@@ -193,7 +190,6 @@ export const getTemplateTestingTestValidateFormItem = ({
   params,
   index,
   required,
-  checkTicketStatusResponse,
   someRequired,
   key: key ?? type,
   value: '',
@@ -249,9 +245,8 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
             acc.push(getTemplateTestingTestValidateFormItem({
               index,
               required: true,
-              checkTicketStatusResponse: true,
               key: `${action.key}.check_ticket_status.ticket_status_tpl`,
-              type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+              type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
             }));
           }
         }
@@ -309,9 +304,8 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
           acc.push(getTemplateTestingTestValidateFormItem({
             index,
             required: true,
-            checkTicketStatusResponse: true,
             key: `${webhook.key}.check_ticket_status.ticket_status_tpl`,
-            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
           }));
         }
 
@@ -395,14 +389,19 @@ export const getChangesForValidateForm = (form = [], oldForm = []) => ({
  * @returns {TemplateTestingTestValidate} The validate object with entity values and responses
  */
 export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc, item) => {
-  if (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response) {
+  const isResponse = [
+    TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+    TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+  ].includes(item.type);
+
+  if (isResponse) {
     if (isNil(item.index)) {
       acc.response = item.value;
 
       return acc;
     }
 
-    const responsesField = item.checkTicketStatusResponse ? 'ticket_status_responses' : 'responses';
+    const responsesField = item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse ? 'ticket_status_responses' : 'responses';
 
     if (!acc[responsesField]) {
       acc[responsesField] = {};
@@ -427,10 +426,16 @@ export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc
  */
 export const templateTestingTestValidateToForm = (originalForm = [], validate = {}) => {
   const responses = Object.values(validate.responses || {});
+  const ticketStatusResponses = Object.values(validate.ticket_status_responses || {});
 
   return originalForm.map((item) => {
-    if (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response) {
-      const response = responses.pop();
+    const isResponse = [
+      TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+      TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+    ].includes(item.type);
+
+    if (isResponse) {
+      const response = ticketStatusResponses.length ? ticketStatusResponses.pop() : responses.pop();
 
       return {
         ...item,
