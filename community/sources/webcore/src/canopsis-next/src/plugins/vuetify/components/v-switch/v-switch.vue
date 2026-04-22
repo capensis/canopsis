@@ -14,6 +14,9 @@ export default {
     },
   },
   methods: {
+    /**
+     * Redefined onChange method to confirm the action if the confirmDisable or confirmEnable function is provided.
+     */
     async onChange() {
       if (!this.isInteractive) return;
       const { value } = this;
@@ -38,6 +41,9 @@ export default {
         input = !input;
       }
 
+      /**
+       * If the confirmDisable function is provided, confirm the disable action.
+       */
       if (this.confirmDisable && !input) {
         const isConfirmed = await this.confirmDisable({
           currentValue: true,
@@ -49,6 +55,9 @@ export default {
         }
       }
 
+      /**
+       * If the confirmEnable function is provided, confirm the enable action.
+       */
       if (this.confirmEnable && input) {
         const isConfirmed = await this.confirmEnable({
           currentValue: false,

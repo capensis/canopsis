@@ -75,7 +75,7 @@ export default {
     title: 'Enregistrements d\'événements',
     deleteAfter: 'Supprimer les enregistrements d\'événements',
   },
-  eventAnomaly: {
+  connectorAnomalies: {
     title: 'Anomalies d\'événements',
     deleteHourlyData: 'Supprimer les données horaires des anomalies',
   },
