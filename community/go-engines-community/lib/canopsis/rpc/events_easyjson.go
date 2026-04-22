@@ -3928,7 +3928,7 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.String(string(in.TicketPrevSourceStatus))
 	}
-	{
+	if !(in.TicketLastCheckTime).IsZero() {
 		const prefix string = ",\"ticket_last_check_time\":"
 		out.RawString(prefix)
 		out.Raw((in.TicketLastCheckTime).MarshalJSON())
@@ -6504,7 +6504,7 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.String(string(in.TicketPrevSourceStatus))
 	}
-	{
+	if !(in.TicketLastCheckTime).IsZero() {
 		const prefix string = ",\"ticket_last_check_time\":"
 		out.RawString(prefix)
 		out.Raw((in.TicketLastCheckTime).MarshalJSON())
