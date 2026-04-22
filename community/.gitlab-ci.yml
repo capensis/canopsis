@@ -1,6 +1,7 @@
 stages:
   - source
   - build
+  - sign
   - publish
   - release
 
@@ -23,9 +24,7 @@ include:
   - community/.gitlab-ci-builder.yml
   - project: 'templates/gitlab-ci'
     ref: main
-    file: 'mkdocs-build/gitlab-ci-mkdocs.yml'
-    rules:
-      - if: $CI_PROJECT_NAME == "canopsis-pro"
+    file: 'rpm-sign/gitlab-ci-rpm-sign.yml'
 
 create_release:
   extends: .create_release

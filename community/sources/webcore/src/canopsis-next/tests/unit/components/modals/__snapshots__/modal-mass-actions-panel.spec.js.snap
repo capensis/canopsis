@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`modal-mass-actions-panel Renders \`modal-mass-actions-panel\` with custom id 1`] = `
+<div
+  class="portal-target modal-mass-actions-panel__portal-target"
+>
+        Portal target name: mass-actions-panel-custom-modal-id
+</div>
+`;
+
+exports[`modal-mass-actions-panel Renders \`modal-mass-actions-panel\` with default props 1`] = `
+<div
+  class="portal-target modal-mass-actions-panel__portal-target"
+>
+        Portal target name: mass-actions-panel-modal-alarms-list
+</div>
+`;

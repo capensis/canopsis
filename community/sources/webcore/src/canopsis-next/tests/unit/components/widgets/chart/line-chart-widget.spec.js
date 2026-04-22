@@ -84,7 +84,7 @@ describe('line-chart-widget', () => {
 
     await flushPromises();
 
-    expect(fetchUserPreference).toBeCalledWith(
+    expect(fetchUserPreference).toHaveBeenCalledWith(
       expect.any(Object),
       { id: widget._id },
     );
@@ -131,7 +131,7 @@ describe('line-chart-widget', () => {
 
     await wrapper.vm.fetchList();
 
-    expect(fetchVectorMetricsList).toBeCalledWith(
+    expect(fetchVectorMetricsList).toHaveBeenCalledWith(
       expect.any(Object),
       {
         widgetId: widget._id,

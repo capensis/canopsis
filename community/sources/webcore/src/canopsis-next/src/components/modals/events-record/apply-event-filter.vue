@@ -5,13 +5,19 @@
         <span>{{ config.title ?? $t('modals.applyEventFilter.title') }}</span>
       </template>
       <template #text="">
-        <c-event-filter-patterns-field
-          v-model="form"
-          :excluded-attributes="config.excludedAttributes"
-          name="patterns"
-          required
-          @input="errors.remove('patterns')"
-        />
+        <div class="position-relative">
+          <c-progress-overlay :pending="eventPatternAttributesPending" />
+          <v-alert v-if="config.infoAlert" class="mb-4" type="info">
+            {{ config.infoAlert }}
+          </v-alert>
+          <c-event-filter-patterns-field
+            v-model="form"
+            :attributes="eventPatternAttributes"
+            name="patterns"
+            required
+            @input="errors.remove('patterns')"
+          />
+        </div>
       </template>
       <template #actions="">
         <v-btn
@@ -45,6 +51,7 @@ import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/patt
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -65,6 +72,13 @@ export default {
     const { config, close } = useInnerModal(props);
 
     const form = ref(patternToForm({ event_pattern: config.value.eventPattern }));
+
+    const { fetchEventRecordPatternFields } = usePatternsFields();
+
+    const {
+      pending: eventPatternAttributesPending,
+      eventPatternAttributes,
+    } = usePatternsFieldsFetching(fetchEventRecordPatternFields);
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
@@ -87,6 +101,9 @@ export default {
       form,
       isDisabled,
       submitting,
+
+      eventPatternAttributes,
+      eventPatternAttributesPending,
 
       submit,
       close,

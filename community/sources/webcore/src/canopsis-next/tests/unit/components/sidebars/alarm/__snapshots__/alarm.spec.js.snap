@@ -59,6 +59,8 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       withcolorindicator="true"
     />
     <field-resize-column-behavior-stub
+      draggable="true"
+      resizable="true"
       value="[object Object]"
     />
     <field-root-cause-settings-stub
@@ -173,6 +175,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     />
     <field-switcher-stub
       title="Actions allowed when state OK"
+    />
+    <field-switcher-stub
+      title="Keep selected after action"
     />
     <field-text-editor-with-template-stub
       addable="true"
@@ -727,6 +732,8 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       withcolorindicator="true"
     />
     <field-resize-column-behavior-stub
+      draggable="true"
+      resizable="true"
       value="[object Object]"
     />
     <field-root-cause-settings-stub
@@ -837,6 +844,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     />
     <field-switcher-stub
       title="Actions allowed when state OK"
+    />
+    <field-switcher-stub
+      title="Keep selected after action"
     />
     <field-text-editor-with-template-stub
       addable="true"
@@ -1391,6 +1401,8 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       withcolorindicator="true"
     />
     <field-resize-column-behavior-stub
+      draggable="true"
+      resizable="true"
       value="[object Object]"
     />
     <field-root-cause-settings-stub
@@ -1497,6 +1509,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     />
     <field-switcher-stub
       title="Actions allowed when state OK"
+    />
+    <field-switcher-stub
+      title="Keep selected after action"
     />
     <field-text-editor-with-template-stub
       addable="true"
@@ -2052,6 +2067,8 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
       withcolorindicator="true"
     />
     <field-resize-column-behavior-stub
+      draggable="true"
+      resizable="true"
       value="[object Object]"
     />
     <field-root-cause-settings-stub
@@ -2158,6 +2175,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     />
     <field-switcher-stub
       title="Actions allowed when state OK"
+    />
+    <field-switcher-stub
+      title="Keep selected after action"
     />
     <field-text-editor-with-template-stub
       addable="true"

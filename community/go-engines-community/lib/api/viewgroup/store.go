@@ -141,6 +141,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds, owne
 					}},
 					bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
 					bson.M{"$unwind": bson.M{"path": "$comment_templates", "preserveNullAndEmptyArrays": true}},
+					bson.M{"$project": bson.M{"widgets.parameters": 0}},
 				)
 				project = append(project, s.authorProvider.PipelineForField("filters.author")...)
 				project = append(project, s.authorProvider.PipelineForField("comment_templates.author")...)

@@ -618,6 +618,7 @@ export default {
     timeout: 'Timeout',
     timeoutSettings: 'Timeout settings',
     repeatRequest: 'Repeat request',
+    repeatRequestInTomlFile: 'Repeat settings are configured in toml file',
     skipVerify: 'Ignore HTTPS certificate verification',
     headersHelpText: 'Select header key and value or type them manually',
     emptyHeaders: 'No headers added yet',
@@ -650,5 +651,11 @@ export default {
       scenario: '<strong>Scenarios</strong>\n<ul>{rules}</ul>',
       declareticketrule: '<strong>Declare ticket rules</strong>\n<ul>{rules}</ul>',
     },
+  },
+
+  massActionsPanel: {
+    recordsSelected: '{count} record selected|{count} records selected',
+    keepSelectedAfterAction: 'Keep selected after action',
+    clearSelection: 'Clear selection',
   },
 };

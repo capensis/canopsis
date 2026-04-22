@@ -112,7 +112,15 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
+	err = q.handleEntityPattern(ctx, r.ListRequest)
+	if err != nil {
+		return nil, err
+	}
 	err = q.handleNegativeEntityPattern(ctx, r.ListRequest)
+	if err != nil {
+		return nil, err
+	}
+	err = q.handlePbehaviorPattern(r.ListRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -446,6 +454,51 @@ func (q *MongoQueryBuilder) handleSearchPattern(ctx context.Context, r ListReque
 	return nil
 }
 
+func (q *MongoQueryBuilder) handleEntityPattern(ctx context.Context, r ListRequest) error {
+	if r.EntityPattern == "" {
+		return nil
+	}
+
+	var entityPattern pattern.Entity
+	err := json.Unmarshal([]byte(r.EntityPattern), &entityPattern)
+	if err != nil {
+		return validation.NewSingleError("entity_pattern", "EntityPattern", "EntityPattern", r)
+	}
+
+	patternAliases := patternfields.GetAliases(entityPattern)
+	if len(patternAliases) != 0 {
+		aliases, err := q.transformer.FetchAliases(ctx, patternAliases)
+		if err != nil {
+			return err
+		}
+
+		var valErrs validator.ValidationErrors
+		entityPattern, _, valErrs = q.transformer.ApplyAliases(entityPattern, aliases, "EntityPattern")
+		if len(valErrs) > 0 {
+			// use anonymous struct to correctly transform validation error namespace
+			// because r.EntityPattern has string type
+			validatedStruct := struct {
+				EntityPattern pattern.Entity `json:"entity_pattern"`
+			}{
+				EntityPattern: entityPattern,
+			}
+
+			return validation.NewError(valErrs, validatedStruct)
+		}
+	}
+
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, "")
+	if err != nil {
+		return validation.NewSingleError("entity_pattern", "EntityPattern", "EntityPattern", r)
+	}
+
+	if len(entityPatternQuery) > 0 {
+		q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
+	}
+
+	return nil
+}
+
 func (q *MongoQueryBuilder) handleNegativeEntityPattern(ctx context.Context, r ListRequest) error {
 	if r.NegativeEntityPattern == "" {
 		return nil
@@ -457,23 +510,26 @@ func (q *MongoQueryBuilder) handleNegativeEntityPattern(ctx context.Context, r L
 		return validation.NewSingleError("negative_entity_pattern", "NegativeEntityPattern", "NegativeEntityPattern", r)
 	}
 
-	aliases, err := q.transformer.FetchAliases(ctx, patternfields.GetAliases(negativeEntityPattern))
-	if err != nil {
-		return err
-	}
-
-	var valErrs validator.ValidationErrors
-	negativeEntityPattern, _, valErrs = q.transformer.ApplyAliases(negativeEntityPattern, aliases, "NegativeEntityPattern")
-	if len(valErrs) > 0 {
-		// use anonymous struct to correctly transform validation error namespace
-		// because r.NegativeEntityPattern has string type
-		validatedStruct := struct {
-			NegativeEntityPattern pattern.Entity `json:"negative_entity_pattern"`
-		}{
-			NegativeEntityPattern: negativeEntityPattern,
+	patternAliases := patternfields.GetAliases(negativeEntityPattern)
+	if len(patternAliases) != 0 {
+		aliases, err := q.transformer.FetchAliases(ctx, patternAliases)
+		if err != nil {
+			return err
 		}
 
-		return validation.NewError(valErrs, validatedStruct)
+		var valErrs validator.ValidationErrors
+		negativeEntityPattern, _, valErrs = q.transformer.ApplyAliases(negativeEntityPattern, aliases, "NegativeEntityPattern")
+		if len(valErrs) > 0 {
+			// use anonymous struct to correctly transform validation error namespace
+			// because r.NegativeEntityPattern has string type
+			validatedStruct := struct {
+				NegativeEntityPattern pattern.Entity `json:"negative_entity_pattern"`
+			}{
+				NegativeEntityPattern: negativeEntityPattern,
+			}
+
+			return validation.NewError(valErrs, validatedStruct)
+		}
 	}
 
 	negativeEntityPatternQuery, err := db.EntityPatternToNegativeMongoQuery(negativeEntityPattern, "")
@@ -483,6 +539,29 @@ func (q *MongoQueryBuilder) handleNegativeEntityPattern(ctx context.Context, r L
 
 	if len(negativeEntityPatternQuery) > 0 {
 		q.entityMatch = append(q.entityMatch, bson.M{"$match": negativeEntityPatternQuery})
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handlePbehaviorPattern(r ListRequest) error {
+	if r.PbehaviorPattern == "" {
+		return nil
+	}
+
+	var pbehaviorPattern pattern.PbehaviorInfo
+	err := json.Unmarshal([]byte(r.PbehaviorPattern), &pbehaviorPattern)
+	if err != nil {
+		return validation.NewSingleError("pbehavior_pattern", "PbehaviorPattern", "PbehaviorPattern", r)
+	}
+
+	pbhPatternQuery, err := db.PbehaviorInfoPatternToMongoQuery(pbehaviorPattern, "")
+	if err != nil {
+		return validation.NewSingleError("pbehavior_pattern", "PbehaviorPattern", "PbehaviorPattern", r)
+	}
+
+	if len(pbhPatternQuery) > 0 {
+		q.entityMatch = append(q.entityMatch, bson.M{"$match": pbhPatternQuery})
 	}
 
 	return nil

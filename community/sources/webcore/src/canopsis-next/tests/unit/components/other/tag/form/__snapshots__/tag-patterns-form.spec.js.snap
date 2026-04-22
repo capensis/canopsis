@@ -2,9 +2,9 @@
 
 exports[`tag-patterns-form Renders \`tag-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object]"
   class="mt-2"
-  entity-attributes="[object Object]"
+  entity-attributes="[object Object],[object Object],[object Object]"
   some-required=""
   value="[object Object]"
   with-alarm=""
@@ -14,9 +14,9 @@ exports[`tag-patterns-form Renders \`tag-patterns-form\` with custom props 1`] =
 
 exports[`tag-patterns-form Renders \`tag-patterns-form\` with default props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object]"
   class="mt-2"
-  entity-attributes="[object Object]"
+  entity-attributes="[object Object],[object Object],[object Object]"
   some-required=""
   value="[object Object]"
   with-alarm=""
