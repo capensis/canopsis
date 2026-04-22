@@ -8,7 +8,6 @@ import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form'
 import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form.vue';
 
 const stubs = {
-  'storage-settings-event-anomaly-form': true,
   'storage-settings-entity-unlinked-form': true,
   'storage-settings-event-filter-failure-form': true,
   'storage-settings-perf-data-metrics-form': true,
@@ -22,6 +21,7 @@ const stubs = {
   'storage-settings-alarm-external-tag-form': true,
   'storage-settings-events-records-form': true,
   'storage-settings-entity-infos-log-form': true,
+  'storage-settings-connector-anomalies-form': true,
 };
 
 const selectStorageSettingsPerfDataMetricsForm = wrapper => wrapper.find('storage-settings-perf-data-metrics-form-stub');
@@ -33,7 +33,7 @@ const selectStorageSettingsPbehaviorForm = wrapper => wrapper.find('storage-sett
 const selectStorageSettingsRemediationForm = wrapper => wrapper.find('storage-settings-remediation-form-stub');
 const selectStorageSettingsAlarmForm = wrapper => wrapper.find('storage-settings-alarm-form-stub');
 const selectStorageSettingsEntityInfosLogForm = wrapper => wrapper.find('storage-settings-entity-infos-log-form-stub');
-const selectStorageSettingsEventAnomalyForm = wrapper => wrapper.find('storage-settings-event-anomaly-form-stub');
+const selectStorageSettingsConnectorAnomaliesForm = wrapper => wrapper.find('storage-settings-connector-anomalies-form-stub');
 
 describe('storage-settings-form', () => {
   const form = dataStorageSettingsToForm({
@@ -310,7 +310,7 @@ describe('storage-settings-form', () => {
     });
   });
 
-  test('Event anomaly storage settings changed after trigger event anomaly settings', () => {
+  test('Connector anomalies storage settings changed after trigger connector anomalies settings', () => {
     const wrapper = factory({
       propsData: {
         form,
@@ -322,11 +322,11 @@ describe('storage-settings-form', () => {
       delete_after: randomDurationEnabledValue(),
     };
 
-    selectStorageSettingsEventAnomalyForm(wrapper).triggerCustomEvent('input', newValue);
+    selectStorageSettingsConnectorAnomaliesForm(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmitInput({
       ...form,
-      event_anomaly: newValue,
+      connector_anomalies: newValue,
     });
   });
 

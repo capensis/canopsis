@@ -22,12 +22,12 @@
     </v-layout>
     <healthcheck-connectors-list
       :title="$t('healthcheck.connectorsBlocks.enabledConnectors')"
-      :connectors="enabledConnectors"
+      :connectors="filteredConnectors.enabled"
       @refresh="fetchList"
     />
     <healthcheck-connectors-list
       :title="$t('healthcheck.connectorsBlocks.disabledConnectors')"
-      :connectors="disabledConnectors"
+      :connectors="filteredConnectors.disabled"
       @refresh="fetchList"
     />
     <c-pagination
@@ -40,26 +40,17 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
-import {
-  computed,
-  watch,
-  set,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
+import { computed, onMounted } from 'vue';
 
-import { SOCKET_ROOMS } from '@/config';
 import { ANOMALY_MONITORED_CONNECTOR_STATUSES, ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
 
-import { mapIds } from '@/helpers/array';
-
-import { useSocket } from '@/hooks/socket';
 import { useCanPermission } from '@/hooks/auth';
 import { useAnomalyMonitoredConnectors } from '@/hooks/store/modules/anomaly-monitored-connector';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 
 import HealthcheckConnectorsList from '@/components/other/healthcheck/partials/healthcheck-connectors-list.vue';
+
+import { useHealthcheckConnectorsSocket } from './hooks/healthcheck-connectors-socket';
 
 export default {
   components: { HealthcheckConnectorsList },
@@ -83,65 +74,32 @@ export default {
 
     const manageConnectorsRoute = { name: ROUTES_NAMES.adminAnomalyMonitoredConnectors };
 
-    const enabledConnectors = computed(() => connectors.value.filter(
-      ({ status }) => status !== ANOMALY_MONITORED_CONNECTOR_STATUSES.disabled,
-    ));
+    const filteredConnectors = computed(() => connectors.value.reduce((acc, connector) => {
+      if (connector.status === ANOMALY_MONITORED_CONNECTOR_STATUSES.disabled) {
+        acc.disabled.push(connector);
+      } else {
+        acc.enabled.push(connector);
+      }
 
-    const disabledConnectors = computed(() => connectors.value.filter(
-      ({ status }) => status === ANOMALY_MONITORED_CONNECTOR_STATUSES.disabled,
-    ));
+      return acc;
+    }, { enabled: [], disabled: [] }));
 
+    /**
+     * Updates the page option and fetches the list.
+     *
+     * @param {number} page - The page number to update.
+     */
     const updatePage = page => updateOptions({ ...options.value, page });
 
-    const socket = useSocket();
-
-    const socketListener = (data) => {
-      data.data.forEach((connector, index) => {
-        if (isEqual(connector, connectors.value[index])) {
-          return;
-        }
-
-        set(connectors.value, index, connector);
-      });
-
-      if (meta.value.total_count !== data.total_count) {
-        set(meta.value, 'total_count', data.total_count);
-      }
-    };
-
-    const joinToSocketRoom = (ids = []) => socket
-      .join(SOCKET_ROOMS.anomalyMonitoredConnectorStates, { ids }, true)
-      .addListener(socketListener);
-
-    const leaveFromSocketRoom = () => socket
-      .leave(SOCKET_ROOMS.anomalyMonitoredConnectorStates)
-      .removeListener(socketListener);
-
-    const reconnectToSocketRoom = (ids = []) => {
-      leaveFromSocketRoom();
-      joinToSocketRoom(ids);
-    };
-
-    watch(connectors, (items, prevItems) => {
-      const newIds = mapIds(items, 'id');
-      const oldIds = mapIds(prevItems ?? [], 'id');
-
-      if (isEqual(newIds, oldIds)) {
-        return;
-      }
-
-      reconnectToSocketRoom(newIds);
-    }, { immediate: true });
+    useHealthcheckConnectorsSocket({ connectors, meta });
 
     onMounted(fetchList);
-    onBeforeUnmount(leaveFromSocketRoom);
 
     return {
       meta,
       pending,
       options,
-      enabledConnectors,
-      disabledConnectors,
+      filteredConnectors,
       hasAccessToAnomalyMonitoredConnectors,
       manageConnectorsRoute,
 

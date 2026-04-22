@@ -75,7 +75,7 @@ export default {
     title: 'Events recordings',
     deleteAfter: 'Delete events recordings',
   },
-  eventAnomaly: {
+  connectorAnomalies: {
     title: 'Event anomalies',
     deleteHourlyData: 'Delete anomalies hourly data',
   },

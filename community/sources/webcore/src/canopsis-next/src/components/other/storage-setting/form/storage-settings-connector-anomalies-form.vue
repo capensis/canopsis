@@ -1,10 +1,10 @@
 <template>
-  <c-information-block :title="$t('storageSetting.eventAnomaly.title')">
+  <c-information-block :title="$t('storageSetting.connectorAnomalies.title')">
     <c-enabled-duration-field
       v-field="form.delete_after"
-      :label="$t('storageSetting.eventAnomaly.deleteHourlyData')"
+      :label="$t('storageSetting.connectorAnomalies.deleteHourlyData')"
       :suffix="$t('storageSetting.olderThan')"
-      name="event_anomaly.delete_after"
+      name="connector_anomalies.delete_after"
       switcher
       hide-value-on-false
     />

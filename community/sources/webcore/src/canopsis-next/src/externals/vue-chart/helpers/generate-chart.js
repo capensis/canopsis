@@ -83,26 +83,6 @@ export const generateChart = (chartId, chartType) => ({
         }
       },
     },
-
-    width: {
-      handler() {
-        this.$nextTick(() => {
-          if (this.chart) {
-            this.chart.resize();
-          }
-        });
-      },
-    },
-
-    height: {
-      handler() {
-        this.$nextTick(() => {
-          if (this.chart) {
-            this.chart.resize();
-          }
-        });
-      },
-    },
   },
 
   created() {

@@ -67,7 +67,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
- * @typedef {Object} DataStorageEventAnomalyConfig
+ * @typedef {Object} DataStorageConnectorAnomaliesConfig
  * @property {DurationWithEnabled} delete_after
  */
 
@@ -86,7 +86,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {DataStorageAlarmExternalTagConfig} alarm_external_tag
  * @property {DataStorageEventsRecordsConfig} event_records
  * @property {DataStorageEntityInfosLogConfig} entity_infos_log
- * @property {DataStorageEventAnomalyConfig} event_anomaly
+ * @property {DataStorageConnectorAnomaliesConfig} connector_anomalies
  */
 
 /**
@@ -286,12 +286,12 @@ export const dataStorageEntityInfosLogToForm = (entityInfosLog = {}) => ({
 /**
  * Convert data storage event anomaly config to form object
  *
- * @param {DataStorageEventAnomalyConfig} eventAnomalyConfig
- * @return {DataStorageEventAnomalyConfig}
+ * @param {DataStorageConnectorAnomaliesConfig} connectorAnomaliesConfig
+ * @return {DataStorageConnectorAnomaliesConfig}
  */
-export const dataStorageEventAnomalySettingsToForm = (eventAnomalyConfig = {}) => ({
-  delete_after: eventAnomalyConfig.delete_after
-    ? durationWithEnabledToForm(eventAnomalyConfig.delete_after)
+export const dataStorageConnectorAnomaliesSettingsToForm = (connectorAnomaliesConfig = {}) => ({
+  delete_after: connectorAnomaliesConfig.delete_after
+    ? durationWithEnabledToForm(connectorAnomaliesConfig.delete_after)
     : { value: 1, unit: TIME_UNITS.month, enabled: true },
 });
 
@@ -315,5 +315,5 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   alarm_external_tag: dataStorageAlarmExternalTagToForm(dataStorage.alarm_external_tag),
   event_records: dataStorageEventsRecordsToForm(dataStorage.event_records),
   entity_infos_log: dataStorageEntityInfosLogToForm(dataStorage.entity_infos_log),
-  event_anomaly: dataStorageEventAnomalySettingsToForm(dataStorage.event_anomaly),
+  connector_anomalies: dataStorageConnectorAnomaliesSettingsToForm(dataStorage.connector_anomalies),
 });
