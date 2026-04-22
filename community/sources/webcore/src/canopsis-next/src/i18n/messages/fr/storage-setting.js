@@ -75,6 +75,10 @@ export default {
     title: 'Enregistrements d\'événements',
     deleteAfter: 'Supprimer les enregistrements d\'événements',
   },
+  eventAnomaly: {
+    title: 'Anomalies d\'événements',
+    deleteHourlyData: 'Supprimer les données horaires des anomalies',
+  },
   entityInfosLog: {
     title: 'Filtre d\'événements : journaux d\'enrichissement d\'entité',
     deleteAfter: 'Supprimer les journaux de filtre d\'événements antérieurs à',

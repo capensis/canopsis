@@ -50,6 +50,9 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
     form="[object Object]"
     history="1611320000"
   />
+  <storage-settings-event-anomaly-form-stub
+    form="[object Object]"
+  />
 </div>
 `;
 
@@ -94,6 +97,9 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with default fo
     form="[object Object]"
   />
   <storage-settings-events-records-form-stub
+    form="[object Object]"
+  />
+  <storage-settings-event-anomaly-form-stub
     form="[object Object]"
   />
 </div>

@@ -489,6 +489,20 @@ export default {
       title: 'Modifier le modèle de commentaire',
     },
   },
+  createAnomalyMonitoredConnector: {
+    create: {
+      title: 'Créer un connecteur surveillé pour anomalies',
+    },
+    edit: {
+      title: 'Modifier le connecteur surveillé pour anomalies',
+    },
+    remove: {
+      text: 'Supprimer <strong>{connectorName}</strong> de la liste des connecteurs de surveillance d\'anomalies ?',
+    },
+  },
+  anomalyMonitoredConnectorHistory: {
+    disableConfirm: 'Désactiver la surveillance des anomalies pour <strong>{connectorName}</strong> ?',
+  },
   createCommentEvent: {
     title: 'Ajouter un commentaire',
   },

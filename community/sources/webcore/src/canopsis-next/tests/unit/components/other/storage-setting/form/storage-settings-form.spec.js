@@ -8,6 +8,7 @@ import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form'
 import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form.vue';
 
 const stubs = {
+  'storage-settings-event-anomaly-form': true,
   'storage-settings-entity-unlinked-form': true,
   'storage-settings-event-filter-failure-form': true,
   'storage-settings-perf-data-metrics-form': true,
@@ -32,6 +33,7 @@ const selectStorageSettingsPbehaviorForm = wrapper => wrapper.find('storage-sett
 const selectStorageSettingsRemediationForm = wrapper => wrapper.find('storage-settings-remediation-form-stub');
 const selectStorageSettingsAlarmForm = wrapper => wrapper.find('storage-settings-alarm-form-stub');
 const selectStorageSettingsEntityInfosLogForm = wrapper => wrapper.find('storage-settings-entity-infos-log-form-stub');
+const selectStorageSettingsEventAnomalyForm = wrapper => wrapper.find('storage-settings-event-anomaly-form-stub');
 
 describe('storage-settings-form', () => {
   const form = dataStorageSettingsToForm({
@@ -305,6 +307,26 @@ describe('storage-settings-form', () => {
     expect(wrapper).toEmitInput({
       ...form,
       entity_infos_log: newValue,
+    });
+  });
+
+  test('Event anomaly storage settings changed after trigger event anomaly settings', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+        history: {},
+      },
+    });
+
+    const newValue = {
+      delete_after: randomDurationEnabledValue(),
+    };
+
+    selectStorageSettingsEventAnomalyForm(wrapper).triggerCustomEvent('input', newValue);
+
+    expect(wrapper).toEmitInput({
+      ...form,
+      event_anomaly: newValue,
     });
   });
 

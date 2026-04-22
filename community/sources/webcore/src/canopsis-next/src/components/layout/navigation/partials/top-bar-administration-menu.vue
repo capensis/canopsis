@@ -102,6 +102,11 @@ export default {
         icon: 'play_circle',
         permission: USER_PERMISSIONS.technical.templateTesting,
       },
+      {
+        route: { name: ROUTES_NAMES.adminAnomalyMonitoredConnectors },
+        icon: 'steppers',
+        permission: USER_PERMISSIONS.technical.anomalyMonitoredConnector,
+      },
     ];
 
     const customObjectsLinks = computed(() => [

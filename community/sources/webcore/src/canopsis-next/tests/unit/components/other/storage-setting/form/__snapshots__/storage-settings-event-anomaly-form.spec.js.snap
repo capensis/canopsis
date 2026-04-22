@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`storage-settings-event-anomaly-form Renders \`storage-settings-event-anomaly-form\` with custom form 1`] = `
+<div
+  class="layout c-information-block column"
+>
+  <div
+    class="layout"
+  >
+    <div
+      class="text-subtitle-1 font-weight-bold"
+    >
+      Event anomalies
+    </div>
+    <!---->
+  </div>
+  <!---->
+  <c-enabled-duration-field-stub
+    hide-value-on-false=""
+    label="Delete anomalies hourly data"
+    name="event_anomaly.delete_after"
+    suffix="Older than"
+    switcher=""
+    value="[object Object]"
+  />
+</div>
+`;
+
+exports[`storage-settings-event-anomaly-form Renders \`storage-settings-event-anomaly-form\` with default form 1`] = `
+<div
+  class="layout c-information-block column"
+>
+  <div
+    class="layout"
+  >
+    <div
+      class="text-subtitle-1 font-weight-bold"
+    >
+      Event anomalies
+    </div>
+    <!---->
+  </div>
+  <!---->
+  <c-enabled-duration-field-stub
+    hide-value-on-false=""
+    label="Delete anomalies hourly data"
+    name="event_anomaly.delete_after"
+    suffix="Older than"
+    switcher=""
+    value="[object Object]"
+  />
+</div>
+`;

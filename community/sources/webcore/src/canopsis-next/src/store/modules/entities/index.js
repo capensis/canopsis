@@ -71,6 +71,7 @@ import externalDataTableModule from './external-data-table';
 import templateModule from './template';
 import copyModule from './copy';
 import webhookTokenRuleModule from './webhook-token-rule';
+import anomalyMonitoredConnectorModule from './anomaly-monitored-connector';
 
 export default {
   alarm: alarmModule,
@@ -146,4 +147,5 @@ export default {
   template: templateModule,
   copy: copyModule,
   webhookTokenRule: webhookTokenRuleModule,
+  anomalyMonitoredConnector: anomalyMonitoredConnectorModule,
 };

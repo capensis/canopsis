@@ -161,6 +161,11 @@ export default {
     title: 'Enregistrements d\'événements',
     message: 'Permet de définir et de déclencher l\'enregistrement des événements dès leur arrivée dans le bus de données Canopsis.',
   },
+  [USER_PERMISSIONS.technical.anomalyMonitoredConnector]: {
+    title: 'Connecteurs surveillés pour anomalies',
+    topbarTitle: 'Connecteurs surveillés pour anomalies',
+    message: 'Le module Connecteurs surveillés pour anomalies permet de gérer la liste de ces connecteurs. Les données d\'anomalies de ces connecteurs sont affichées sur la page Bilan de santé.',
+  },
   [USER_PERMISSIONS.technical.templateTesting]: {
     title: 'Studio templates',
   },

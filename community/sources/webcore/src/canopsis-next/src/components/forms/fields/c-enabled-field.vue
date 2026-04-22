@@ -6,6 +6,7 @@
     :disabled="disabled"
     :readonly="readonly"
     :hide-details="hideDetails"
+    v-bind="$attrs"
     v-on="listeners"
   >
     <template #label="">
@@ -21,6 +22,7 @@
 import { omit } from 'lodash';
 
 export default {
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'input',
