@@ -71,13 +71,13 @@ describe('create-pattern', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       title: '',
       is_corporate: false,
       type: PATTERN_TYPES.alarm,
       alarm_pattern: [],
     });
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -133,7 +133,7 @@ describe('create-pattern', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -163,13 +163,13 @@ describe('create-pattern', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       title: '',
       is_corporate: false,
       type: PATTERN_TYPES.alarm,
       alarm_pattern: [],
     });
-    expect($modals.hide).not.toBeCalledWith();
+    expect($modals.hide).not.toHaveBeenCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -206,17 +206,17 @@ describe('create-pattern', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       entity_pattern: customPattern.entity_pattern,
       is_corporate: customPattern.is_corporate,
       type: customPattern.type,
       title: customPattern.title,
     });
-    expect($modals.hide).not.toBeCalledWith();
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     consoleErrorSpy.mockClear();
   });
@@ -253,7 +253,7 @@ describe('create-pattern', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       type: newForm.type,
       name: newForm.name,
       [expectedField]: [],

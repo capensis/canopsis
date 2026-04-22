@@ -49,7 +49,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    expect(fetchAlarmTagsList).toBeCalledWith(
+    expect(fetchAlarmTagsList).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {
@@ -72,7 +72,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    expect(fetchAlarmTagsList).toBeCalledWith(
+    expect(fetchAlarmTagsList).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {
@@ -97,7 +97,7 @@ describe('tags', () => {
     selectPageNode(wrapper).$emit('create');
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createTag,
         config: {
@@ -115,7 +115,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    expect(createAlarmTag).toBeCalledWith(
+    expect(createAlarmTag).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: newTag,
@@ -141,7 +141,7 @@ describe('tags', () => {
     selectTagsList(wrapper).triggerCustomEvent('edit', tag);
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createTag,
         config: {
@@ -163,7 +163,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    expect(updateAlarmTag).toBeCalledWith(
+    expect(updateAlarmTag).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: newTag,
@@ -190,7 +190,7 @@ describe('tags', () => {
     selectTagsList(wrapper).triggerCustomEvent('duplicate', tag);
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createTag,
         config: {
@@ -211,7 +211,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    expect(createAlarmTag).toBeCalledWith(
+    expect(createAlarmTag).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: newTag,
@@ -236,7 +236,7 @@ describe('tags', () => {
     await selectTagsList(wrapper).triggerCustomEvent('remove', tag._id);
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {
@@ -251,7 +251,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    expect(removeAlarmTag).toBeCalledWith(
+    expect(removeAlarmTag).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: tag._id,
@@ -276,7 +276,7 @@ describe('tags', () => {
     await selectTagsList(wrapper).triggerCustomEvent('remove-selected', [tag]);
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {
@@ -291,7 +291,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    expect(bulkRemoveAlarmTags).toBeCalledWith(
+    expect(bulkRemoveAlarmTags).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: [{ _id: tag._id }],
