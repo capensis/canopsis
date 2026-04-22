@@ -257,6 +257,7 @@ export default {
     [USER_PERMISSIONS.technical.commentTemplate]: 'Modèles de commentaires',
     [USER_PERMISSIONS.technical.externalDataTable]: 'Données externes',
     [USER_PERMISSIONS.technical.entityInfoProperty]: 'Informations d\'entité',
+    [USER_PERMISSIONS.technical.anomalyMonitoredConnector]: 'Connecteurs surveillés pour anomalies',
 
     /**
      * Technical Admin Access
@@ -355,6 +356,7 @@ export default {
     [USER_PERMISSIONS.api.general.viewgroup]: 'Groupes de vues',
     [USER_PERMISSIONS.api.general.widgetTemplate]: 'Modèles de widgets',
     [USER_PERMISSIONS.api.general.templateData]: 'Données de modèle',
+    [USER_PERMISSIONS.api.general.anomalyMonitoredConnector]: 'Connecteurs surveillés pour anomalies',
 
     /**
      * API Permissions Rules

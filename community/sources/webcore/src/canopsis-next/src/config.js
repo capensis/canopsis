@@ -159,6 +159,7 @@ export const SOCKET_ROOMS = {
   executions: 'executions',
   simplifiedManualExecutions: 'simplified-manual-executions',
   pbehaviorPatterns: 'pbehavior-patterns',
+  anomalyMonitoredConnectorStates: 'anomaly-monitored-connector-states',
 };
 
 export const API_ROUTES = {
@@ -419,6 +420,8 @@ export const API_ROUTES = {
   snmpRule: '/api/v4/cat/snmprules',
   snmpMib: '/api/v4/cat/snmpmibs',
   webhookTokenRule: '/api/v4/cat/webhook-token-rules',
+  anomalyMonitoredConnector: '/api/v4/cat/anomalies/monitored-connectors',
+  anomalyMonitoredConnectorStates: '/api/v4/cat/anomalies/monitored-connectors/states',
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',

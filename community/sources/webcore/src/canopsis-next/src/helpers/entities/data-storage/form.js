@@ -67,6 +67,11 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {Object} DataStorageEventAnomalyConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfig
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
@@ -80,6 +85,8 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {DataStorageEventFilterFailureConfig} event_filter_failure
  * @property {DataStorageAlarmExternalTagConfig} alarm_external_tag
  * @property {DataStorageEventsRecordsConfig} event_records
+ * @property {DataStorageEntityInfosLogConfig} entity_infos_log
+ * @property {DataStorageEventAnomalyConfig} event_anomaly
  */
 
 /**
@@ -277,6 +284,18 @@ export const dataStorageEntityInfosLogToForm = (entityInfosLog = {}) => ({
 });
 
 /**
+ * Convert data storage event anomaly config to form object
+ *
+ * @param {DataStorageEventAnomalyConfig} eventAnomalyConfig
+ * @return {DataStorageEventAnomalyConfig}
+ */
+export const dataStorageEventAnomalySettingsToForm = (eventAnomalyConfig = {}) => ({
+  delete_after: eventAnomalyConfig.delete_after
+    ? durationWithEnabledToForm(eventAnomalyConfig.delete_after)
+    : { value: 1, unit: TIME_UNITS.month, enabled: true },
+});
+
+/**
  * Convert data storage object to data storage form
  *
  * @param {DataStorageConfig} dataStorage
@@ -296,4 +315,5 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   alarm_external_tag: dataStorageAlarmExternalTagToForm(dataStorage.alarm_external_tag),
   event_records: dataStorageEventsRecordsToForm(dataStorage.event_records),
   entity_infos_log: dataStorageEntityInfosLogToForm(dataStorage.entity_infos_log),
+  event_anomaly: dataStorageEventAnomalySettingsToForm(dataStorage.event_anomaly),
 });

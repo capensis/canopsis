@@ -44,6 +44,7 @@
       v-field="form.event_records"
       :history="history.event_records"
     />
+    <storage-settings-event-anomaly-form v-field="form.event_anomaly" />
   </v-layout>
 </template>
 
@@ -61,10 +62,12 @@ import StorageSettingsAlarmExternalTagForm from './storage-settings-alarm-extern
 import StorageSettingsEntityUnlinkedForm from './storage-settings-entity-unlinked-form.vue';
 import StorageSettingsEventsRecordsForm from './storage-settings-events-records-form.vue';
 import StorageSettingsEntityInfosLogForm from './storage-settings-entity-infos-log-form.vue';
+import StorageSettingsEventAnomalyForm from './storage-settings-event-anomaly-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    StorageSettingsEventAnomalyForm,
     StorageSettingsAlarmExternalTagForm,
     StorageSettingsEntityUnlinkedForm,
     StorageSettingsEventFilterFailureForm,
