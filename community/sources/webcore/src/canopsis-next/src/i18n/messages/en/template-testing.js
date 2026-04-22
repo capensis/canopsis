@@ -52,6 +52,7 @@ export default {
   columnTemplate: 'Column template - {number}',
   ticketId: 'Ticket ID - {number}',
   ticketUrl: 'Ticket URL - {number}',
+  ticketStatusWebhookUrl: 'Ticket status webhook URL - {number}',
   dynamicInfoValue: 'Dynamic info value - {number} - {name}',
   instructionWebhookUrl: 'Instruction webhook URL - Step {step}, Operation {operation}',
   instructionWebhookPayload: 'Instruction webhook payload - Step {step}, Operation {operation}',
@@ -177,6 +178,7 @@ export default {
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user]: 'User',
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity]: 'Entity',
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: 'Response',
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse]: 'Ticket status response',
   },
   testDataResponseLabels: {
     [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: 'Response (External data - {index} API)',
