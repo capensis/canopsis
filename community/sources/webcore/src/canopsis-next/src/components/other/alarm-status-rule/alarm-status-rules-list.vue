@@ -46,7 +46,10 @@
       </v-layout>
     </template>
     <template #expand="{ item }">
-      <alarm-status-rules-list-expand-item :rule="item" />
+      <alarm-status-rules-list-expand-item
+        :rule="item"
+        :flapping="flapping"
+      />
     </template>
   </c-advanced-data-table>
 </template>
