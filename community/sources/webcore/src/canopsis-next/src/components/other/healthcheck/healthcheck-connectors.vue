@@ -5,7 +5,6 @@
   >
     <c-progress-overlay :pending="pending" />
     <v-layout
-      v-if="hasAccessToAnomalyMonitoredConnectors"
       class="mb-4"
       justify-center
     >
@@ -30,11 +29,13 @@
       :connectors="filteredConnectors.disabled"
       @refresh="fetchList"
     />
-    <c-pagination
+    <c-table-pagination
+      :total-items="meta.total_count"
+      :items-per-page="options.itemsPerPage"
       :page="options.page"
-      :limit="options.itemsPerPage"
-      :total="meta.total_count"
-      @input="updatePage"
+      @update:page="updatePage"
+      @update:items-per-page="updateItemsPerPage"
+      @input="updatePaginationOptions"
     />
   </v-layout>
 </template>
@@ -42,9 +43,8 @@
 <script>
 import { computed, onMounted } from 'vue';
 
-import { ANOMALY_MONITORED_CONNECTOR_STATUSES, ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
+import { ANOMALY_MONITORED_CONNECTOR_STATUSES, ROUTES_NAMES } from '@/constants';
 
-import { useCanPermission } from '@/hooks/auth';
 import { useAnomalyMonitoredConnectors } from '@/hooks/store/modules/anomaly-monitored-connector';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 
@@ -55,10 +55,6 @@ import { useHealthcheckConnectorsSocket } from './hooks/healthcheck-connectors-s
 export default {
   components: { HealthcheckConnectorsList },
   setup() {
-    const { hasAccess: hasAccessToAnomalyMonitoredConnectors } = useCanPermission(
-      USER_PERMISSIONS.technical.anomalyMonitoredConnector,
-    );
-
     const { fetchAnomalyMonitoredConnectorStatesListWithoutStore } = useAnomalyMonitoredConnectors();
 
     const {
@@ -91,6 +87,26 @@ export default {
      */
     const updatePage = page => updateOptions({ ...options.value, page });
 
+    /**
+     * Updates items per page; current page is adjusted in `c-table-pagination` when needed.
+     *
+     * @param {number} itemsPerPage - The new page size.
+     */
+    const updateItemsPerPage = itemsPerPage => updateOptions({ ...options.value, itemsPerPage });
+
+    /**
+     * Updates both page and items per page (e.g. when page is recomputed for a new page size).
+     *
+     * @param {Object} payload
+     * @param {number} payload.page
+     * @param {number} payload.itemsPerPage
+     */
+    const updatePaginationOptions = ({ page, itemsPerPage }) => updateOptions({
+      ...options.value,
+      page,
+      itemsPerPage,
+    });
+
     useHealthcheckConnectorsSocket({ connectors, meta });
 
     onMounted(fetchList);
@@ -100,10 +116,11 @@ export default {
       pending,
       options,
       filteredConnectors,
-      hasAccessToAnomalyMonitoredConnectors,
       manageConnectorsRoute,
 
       updatePage,
+      updateItemsPerPage,
+      updatePaginationOptions,
       fetchList,
     };
   },

@@ -20,7 +20,9 @@
         centered
       >
         <v-tab>{{ $t('common.systemStatus') }}</v-tab>
-        <v-tab>{{ $t('healthcheck.connectors') }}</v-tab>
+        <v-tab v-if="hasAccessToAnomalyMonitoredConnectors">
+          {{ $t('healthcheck.connectors') }}
+        </v-tab>
         <v-tab>{{ $tc('common.graph', 2) }}</v-tab>
         <v-tab>{{ $tc('common.parameter', 2) }}</v-tab>
         <v-tab v-if="hasAccessToTechMetrics">
@@ -49,7 +51,7 @@
             {{ $t('healthcheck.systemStatusServerError') }}
           </h2>
         </v-tab-item>
-        <v-tab-item>
+        <v-tab-item v-if="hasAccessToAnomalyMonitoredConnectors">
           <healthcheck-connectors />
         </v-tab-item>
         <v-tab-item>
@@ -112,6 +114,10 @@ export default {
 
     hasAccessToTechMetrics() {
       return this.checkAccess(USER_PERMISSIONS.technical.techmetrics);
+    },
+
+    hasAccessToAnomalyMonitoredConnectors() {
+      return this.checkAccess(USER_PERMISSIONS.technical.anomalyMonitoredConnector);
     },
   },
   mounted() {
