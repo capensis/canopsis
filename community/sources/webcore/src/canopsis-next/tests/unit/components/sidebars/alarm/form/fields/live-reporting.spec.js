@@ -57,7 +57,7 @@ describe('live-reporting', () => {
     createButton.trigger('click');
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.editLiveReporting,
         config: {
@@ -92,7 +92,7 @@ describe('live-reporting', () => {
     editButton.trigger('click');
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.editLiveReporting,
         config: {
