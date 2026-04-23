@@ -16,6 +16,8 @@
               :template-vars="templateVars"
               :copy-vars="copyVars"
               :is-disabled-id-field="config.isDisabledIdField"
+              :event-attributes="eventAttributes"
+              :attributes-pending="pending"
             />
             <ai-chat-sidebar
               v-if="chatShown"
@@ -70,6 +72,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
@@ -105,6 +108,13 @@ export default {
     const { validator } = useValidationFormErrors();
 
     const form = ref(eventFilterToForm(config.value.rule, system.timezone));
+
+    const { fetchEventFilterPatternFields } = usePatternsFields();
+
+    const {
+      pending,
+      eventAttributes,
+    } = usePatternsFieldsFetching(fetchEventFilterPatternFields);
 
     const {
       shown: chatShown,
@@ -145,6 +155,8 @@ export default {
       ruleId,
       type,
       title,
+      pending,
+      eventAttributes,
       isEnrichment,
       isChangeEntity,
       isDisabled,

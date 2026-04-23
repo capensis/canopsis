@@ -346,7 +346,7 @@ export default {
     },
 
     shownOperatorField() {
-      return this.operators.length !== 1 || this.operators[0] !== this.rule.operator;
+      return this.operators.length > 0 || this.operators[0] !== this.rule.operator;
     },
 
     objectDictionaryName() {

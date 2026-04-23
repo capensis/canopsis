@@ -39,8 +39,8 @@
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue';
 import { omit } from 'lodash';
+import { computed, ref, toRef } from 'vue';
 
 import { MODALS, PATTERNS_FIELDS, VALIDATION_DELAY, LLM_SOCKET_CONTEXTS } from '@/constants';
 
@@ -71,10 +71,8 @@ export default {
     },
   },
   setup(props) {
-    const { config, close } = useInnerModal(props);
     const { t } = useI18n();
-
-    const form = ref(filterToForm(config.value.filter));
+    const { config, close } = useInnerModal(props);
 
     const patternsFields = computed(() => {
       const { withAlarm, withEntity, withPbehavior, withEvent, withServiceWeather } = config.value;
@@ -88,7 +86,15 @@ export default {
       ].filter(Boolean);
     });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const form = ref(filterToForm(config.value.filter, patternsFields.value));
+
+    const title = computed(() => config.value.title ?? t('modals.createFilter.create.title'));
+    const patternsProps = computed(() => omit(config.value, ['title', 'action']));
+
+    /**
+     * Submits the form and calls the action callback if provided
+     */
+    const { submit, submitting, isDisabled } = useSubmittableForm({
       form,
       method: async () => {
         const result = await config.value.action?.(
@@ -105,9 +111,6 @@ export default {
 
     useFormConfirmableCloseModal({ form, submit, close });
 
-    const title = computed(() => config.value.title ?? t('modals.createFilter.create.title'));
-
-    const patternsProps = computed(() => omit(config.value, ['title', 'action']));
     const chatContext = computed(() => `${LLM_SOCKET_CONTEXTS.widgetFilter}_${config.value.widgetType}`);
 
     const {
@@ -122,13 +125,13 @@ export default {
     });
 
     return {
-      title,
       form,
+      title,
       patternsProps,
-      isDisabled,
       submitting,
-      close,
+      isDisabled,
       submit,
+      close,
 
       chatShown,
       chatOptions,

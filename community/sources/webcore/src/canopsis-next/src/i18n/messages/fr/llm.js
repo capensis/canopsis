@@ -134,6 +134,9 @@ export default {
       + '<li>Cette conversation est <strong>temporaire</strong> et sera <strong>effacée</strong> à la fermeture de la fenêtre modale.</li>'
       + '</ul>',
     errors: {
+      [LLM_AI_CHAT_ERROR_CODES.badRequest]:
+        'La requête n\'a pas pu être traitée.<br />'
+        + '<strong>Vérifiez votre saisie et réessayez.</strong>',
       [LLM_AI_CHAT_ERROR_CODES.gone]:
         'Le modèle d\'IA sélectionné est actuellement indisponible.<br />'
         + '<strong>Veuillez contacter votre administrateur. Vous pouvez redémarrer la conversation avec un autre modèle (l\'historique sera perdu).</strong>',

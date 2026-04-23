@@ -134,6 +134,9 @@ export default {
       + '<li>This chat session is <strong>temporary</strong> and will be <strong>cleared</strong> when the modal is closed.</li>'
       + '</ul>',
     errors: {
+      [LLM_AI_CHAT_ERROR_CODES.badRequest]:
+        'The request could not be processed.<br />'
+        + '<strong>Please check your input and try again.</strong>',
       [LLM_AI_CHAT_ERROR_CODES.gone]:
         'Selected AI model is currently unavailable.<br />'
         + '<strong>Please contact your administrator. You can restart the chat with another model (the history will be lost).</strong>',

@@ -29,6 +29,7 @@ const stubs = {
   'c-pbehavior-patterns-field': true,
   'c-event-filter-patterns-field': true,
   'c-alert': true,
+  'c-progress-overlay': true,
   'pattern-try-optimization': true,
   'pattern-progress': true,
   'pattern-suggestions': true,

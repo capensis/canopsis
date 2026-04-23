@@ -32,6 +32,7 @@ export const LLM_AI_CHAT_MESSAGE_TYPES = {
 };
 
 export const LLM_AI_CHAT_ERROR_CODES = {
+  badRequest: 400,
   gone: 410,
   tooManyRequests: 429,
   internalError: 500,
