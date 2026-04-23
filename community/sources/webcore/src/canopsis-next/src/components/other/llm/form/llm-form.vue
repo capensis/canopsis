@@ -1,13 +1,16 @@
 <template>
   <v-layout class="gap-3" column>
     <c-enabled-field
-      v-field="form.enabled"
+      :value="form.enabled"
+      with-background
       hide-details
+      @change="updateEnabled"
     />
 
     <c-name-field
       v-field="form.name"
       :label="$t('llm.modelName')"
+      :max-length="255"
       name="llm_name"
       required
     />
@@ -51,19 +54,23 @@
     <c-enabled-field
       v-field="form.default"
       :label="$t('llm.isDefaultModel')"
+      :disabled="!form.enabled"
+      hide-details
     />
 
     <div
-      v-if="currentDefaultModelName"
-      class="text-caption text--secondary mt-2"
+      v-if="defaultLlm"
+      class="text-caption text--secondary"
     >
-      {{ $t('llm.currentDefaultModelLine', { name: currentDefaultModelName }) }}
+      {{ $t('llm.currentDefaultModelLine') }} <strong>{{ defaultLlm.name }}</strong>
     </div>
   </v-layout>
 </template>
 
 <script>
 import { computed } from 'vue';
+
+import { useModelField } from '@/hooks/form/model-field';
 
 import { useLlmModelsListForSelect } from '@/components/other/llm/hooks/llm-models-list';
 
@@ -89,21 +96,36 @@ export default {
       type: Boolean,
       default: false,
     },
-    currentDefaultModelName: {
-      type: String,
-      default: '',
+    defaultLlm: {
+      type: Object,
+      default: () => ({}),
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
     const { items: models, itemsByName: modelsByName, pending: modelsPending } = useLlmModelsListForSelect();
     const emptyThinkingLevels = [];
 
     const thinkingLevels = computed(() => modelsByName.value[props.form.model]?.thinking_levels ?? emptyThinkingLevels);
 
+    const updateEnabled = (value) => {
+      const newForm = {
+        ...props.form,
+        enabled: value,
+      };
+
+      if (!newForm.enabled) {
+        newForm.default = false;
+      }
+
+      updateModel(newForm);
+    };
+
     return {
       models,
       modelsPending,
       thinkingLevels,
+      updateEnabled,
     };
   },
 };

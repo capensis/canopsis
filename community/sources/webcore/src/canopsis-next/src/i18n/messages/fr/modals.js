@@ -838,6 +838,20 @@ export default {
         + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText: 'Veuillez saisir le nom du jeton pour confirmer :',
     },
+    deleteLlm: {
+      title: 'Supprimer le LLM',
+      text: 'Vous êtes sur le point de supprimer la connexion LLM.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez saisir le nom du LLM pour confirmer :',
+    },
+    deleteSelectedLlms: {
+      title: 'Supprimer {count} modèle ? | Supprimer {count} modèles ?',
+      text: 'Vous êtes sur le point de supprimer {count} modèle.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong> | Vous êtes sur le point de supprimer {count} modèles.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez taper ce qui suit pour confirmer <strong>l\'opération de suppression</strong> :',
+      phrase: 'supprimer',
+    },
     templateTestingData: {
       title: 'Supprimer les données de test',
       text: 'Vous êtes sur le point de supprimer les données de test.\n'

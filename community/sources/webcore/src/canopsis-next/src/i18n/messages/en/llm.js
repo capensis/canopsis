@@ -68,7 +68,7 @@ export default {
   apiKeyPlaceholder: 'New API key',
   thinkingLevel: 'Thinking level',
   isDefaultModel: 'Is default model',
-  currentDefaultModelLine: 'Current default model: {name}',
+  currentDefaultModelLine: 'Current default model:',
   lastUsedDate: 'Last used date',
   importantNotesMessage:
     '<div class="font-weight-regular">Important notes:</div>'
@@ -77,7 +77,7 @@ export default {
     + '<strong>token limits and quota management</strong>'
     + ' are configured directly within the '
     + '<strong><a href="{geminiConsoleUrl}" target="_blank">Gemini AI Console</a></strong>.</li>'
-    + '<li><strong>Regular monitoring</strong> of Google Cloud limits is required, as <strong>API policies</strong> and usage conditions are subject to change.</li>'
+    + '<li><strong>Regular monitoring</strong> of Google Cloud limits is required, as <strong>API policies and usage conditions are subject to change.</strong></li>'
     + '</ul>',
   thinkingLevels: {
     [LLM_THINKING_LEVELS.minimal]: 'Minimal',

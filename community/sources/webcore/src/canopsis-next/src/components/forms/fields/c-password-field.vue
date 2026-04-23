@@ -47,6 +47,8 @@
 <script>
 import { computed, ref } from 'vue';
 
+import { useModelField } from '@/hooks/form/model-field';
+
 export default {
   inject: ['$validator'],
   inheritAttrs: false,
@@ -88,7 +90,9 @@ export default {
       default: false,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
+
     const shownPassword = ref(false);
     const shownField = ref(false);
 
@@ -105,7 +109,13 @@ export default {
     });
 
     const toggleShownPassword = () => shownPassword.value = !shownPassword.value;
-    const toggleShownField = () => shownField.value = !shownField.value;
+    const toggleShownField = () => {
+      shownField.value = !shownField.value;
+
+      if (!shownField.value) {
+        updateModel('');
+      }
+    };
 
     return {
       shownPassword,

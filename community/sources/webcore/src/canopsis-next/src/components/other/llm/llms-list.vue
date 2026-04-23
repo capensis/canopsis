@@ -23,9 +23,6 @@
     <template #type="{ item }">
       {{ item.type ?? item.model_type }}
     </template>
-    <template #model="{ item }">
-      {{ item.model }}
-    </template>
     <template #thinking_level="{ item }">
       <span v-if="item.thinking_level && $te(`llm.thinkingLevels.${item.thinking_level}`)">
         {{ $t(`llm.thinkingLevels.${item.thinking_level}`) }}
@@ -34,6 +31,9 @@
     </template>
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
+    </template>
+    <template #default="{ item }">
+      <c-enabled :value="item.default" />
     </template>
     <template #last_used="{ item }">
       {{ item.last_used | date('long', '-') }}
@@ -104,6 +104,7 @@ export default {
       { text: t('llm.model'), value: 'model' },
       { text: t('llm.thinkingLevel'), value: 'thinking_level', sortable: false },
       { text: t('common.enabled'), value: 'enabled', sortable: false },
+      { text: t('llm.isDefaultModel'), value: 'default', sortable: false },
       { text: t('llm.lastUsedDate'), value: 'last_used' },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
