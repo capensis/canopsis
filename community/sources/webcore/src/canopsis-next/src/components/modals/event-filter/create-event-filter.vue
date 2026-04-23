@@ -16,7 +16,6 @@
               :template-vars="templateVars"
               :copy-vars="copyVars"
               :is-disabled-id-field="config.isDisabledIdField"
-              :is-new="!ruleId"
               :event-attributes="eventAttributes"
               :attributes-pending="pending"
             />
