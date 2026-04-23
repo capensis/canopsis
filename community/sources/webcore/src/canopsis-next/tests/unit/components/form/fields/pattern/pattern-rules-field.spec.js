@@ -175,11 +175,16 @@ describe('pattern-rules-field', () => {
 
     lastRule.triggerCustomEvent('input', updatedRule);
 
+    const expectedValue = [{
+      value: updatedRule.value,
+      key: expect.any(String),
+    }];
+
     expect(wrapper).toEmitInput([
       rules[0],
       {
         ...updatedRule,
-        value: [updatedRule.value],
+        value: expectedValue,
       },
       rules[2],
     ]);
@@ -620,11 +625,13 @@ describe('pattern-rules-field', () => {
     ruleField.triggerCustomEvent('input', updatedRule);
 
     expect(wrapper).toEmitInput([
-      expect.objectContaining({
-        value: [rules[0].value], // Value converted to array
-      }),
-      rules[1],
-      rules[2],
+      {
+        ...rules[0],
+        operator: '',
+        value: expect.any(Array),
+      },
+      { ...rules[1] },
+      { ...rules[2] },
     ]);
   });
 

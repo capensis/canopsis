@@ -7,27 +7,40 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
   <div
     class="v-menu"
   >
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          more_vert
-        </i>
-      </span>
-    </button>
     <!---->
   </div>
+  <button
+    class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+    type="button"
+  >
+    <span
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        more_vert
+      </i>
+    </span>
+  </button>
 </div>
 `;
 
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 2`] = `undefined`;
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <c-list-stub
+    item-text="title"
+    item-value="title"
+    items="[object Object],[object Object]"
+    return-object=""
+  />
+</div>
+`;
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 1`] = `
 <div
@@ -36,27 +49,40 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
   <div
     class="v-menu"
   >
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          more_vert
-        </i>
-      </span>
-    </button>
     <!---->
   </div>
+  <button
+    class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+    type="button"
+  >
+    <span
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        more_vert
+      </i>
+    </span>
+  </button>
 </div>
 `;
 
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 2`] = `undefined`;
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <c-list-stub
+    item-text="title"
+    item-value="title"
+    items="[object Object],[object Object]"
+    return-object=""
+  />
+</div>
+`;
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions on the large size 1`] = `
 <div
@@ -72,6 +98,25 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions on the l
     icon="delete"
     tooltip="Delete title"
   />
-  <!---->
+  <div
+    class="v-menu"
+  >
+    <!---->
+  </div>
+  <button
+    class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+    type="button"
+  >
+    <span
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        more_vert
+      </i>
+    </span>
+  </button>
 </div>
 `;

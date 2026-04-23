@@ -1,52 +1,34 @@
 <template>
-  <v-layout column>
-    <c-card-iterator-field
-      v-field="columns"
-      :class="{ empty: isColumnsEmpty }"
-      :handle="`.${dragItemHandleClass}`"
-    >
-      <template #item="{ item: column, index }">
-        <column-field
-          v-field="columns[index]"
-          :key="column.key"
-          :name="column.key"
-          :type="type"
-          :drag-handle-class="dragItemHandleClass"
-          :with-html="withHtml"
-          :with-template="withTemplate"
-          :with-color-indicator="withColorIndicator"
-          :with-instructions="withInstructions"
-          :optional-infos-attributes="optionalInfosAttributes"
-          :with-simple-template="withSimpleTemplate"
-          :without-infos-attributes="withoutInfosAttributes"
-          :without-custom-label="withoutCustomLabel"
-          :with-filter-on-click="withFilterOnClick"
-          :items="items"
-          :variables="variables"
-          :excluded-columns="excludedColumns"
-          class="mb-3"
-          @remove="remove(index)"
-        />
-      </template>
-    </c-card-iterator-field>
-    <v-layout justify-end>
-      <v-tooltip left>
-        <template #activator="{ on }">
-          <v-btn
-            class="mt-3"
-            color="primary"
-            fab
-            small
-            v-on="on"
-            @click.prevent="add"
-          >
-            <v-icon>add</v-icon>
-          </v-btn>
-        </template>
-        <span>{{ $t('common.add') }}</span>
-      </v-tooltip>
-    </v-layout>
-  </v-layout>
+  <c-card-iterator-form
+    v-field="columns"
+    :handle="`.${dragItemHandleClass}`"
+    :iterator-class="{ empty: isColumnsEmpty }"
+    @add="add"
+  >
+    <template #item="{ item: column, index }">
+      <column-field
+        v-field="columns[index]"
+        :key="column.key"
+        :name="column.key"
+        :type="type"
+        :drag-handle-class="dragItemHandleClass"
+        :with-html="withHtml"
+        :with-template="withTemplate"
+        :with-color-indicator="withColorIndicator"
+        :with-instructions="withInstructions"
+        :optional-infos-attributes="optionalInfosAttributes"
+        :with-simple-template="withSimpleTemplate"
+        :without-infos-attributes="withoutInfosAttributes"
+        :without-custom-label="withoutCustomLabel"
+        :with-filter-on-click="withFilterOnClick"
+        :items="items"
+        :variables="variables"
+        :excluded-columns="excludedColumns"
+        class="mb-3"
+        @remove="remove(index)"
+      />
+    </template>
+  </c-card-iterator-form>
 </template>
 
 <script>
@@ -59,13 +41,11 @@ import { widgetColumnToForm } from '@/helpers/entities/widget/column/form';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useAsyncBootingParent } from '@/hooks/render/async-booting';
 
-import CCardIteratorField from '@/components/forms/fields/card-iterator/c-card-iterator-field.vue';
-
 import ColumnField from './partials/column-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ColumnField, CCardIteratorField },
+  components: { ColumnField },
   model: {
     prop: 'columns',
     event: 'input',

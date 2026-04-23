@@ -61,8 +61,8 @@ describe('confirm-ack-with-ticket', () => {
 
     await flushPromises();
 
-    expect(continueAction).toBeCalledWith();
-    expect($modals.hide).toBeCalledWith();
+    expect(continueAction).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Ack confirmed after trigger continue with ticket button', async () => {
@@ -84,8 +84,8 @@ describe('confirm-ack-with-ticket', () => {
 
     await flushPromises();
 
-    expect(continueWithTicketAction).toBeCalledWith();
-    expect($modals.hide).toBeCalledWith();
+    expect(continueWithTicketAction).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Modal hidden after trigger continue button without action', async () => {
@@ -106,7 +106,7 @@ describe('confirm-ack-with-ticket', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Modal hidden after trigger continue with ticket button without action', async () => {
@@ -127,7 +127,7 @@ describe('confirm-ack-with-ticket', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Modal hidden after trigger cancel button', async () => {

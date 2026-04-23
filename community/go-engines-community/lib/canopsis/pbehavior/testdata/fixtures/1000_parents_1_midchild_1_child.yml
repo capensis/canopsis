@@ -193,7 +193,7 @@ pbehavior:
     tstart: <NowUnix()>
     tstop: <NowUnixAdd(1h)>
     color: "#FFFFFF"
-    type_: <{test-type-<RangeIndex()>}>
+    type: <{test-type-<RangeIndex()>}>
     created: <NowUnix()>
     updated: <Current().created>
     inherited: true

@@ -33,7 +33,13 @@ type EditRequest struct {
 }
 
 type BulkDeleteRequestItem struct {
-	ID string `json:"_id" binding:"required"`
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
+}
+
+type BulkToggleRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
 }
 
 type Response struct {
@@ -44,8 +50,8 @@ type Response struct {
 	Links      []link.Parameters `bson:"links" json:"links,omitempty"`
 	SourceCode string            `bson:"source_code" json:"source_code,omitempty"`
 	Author     *author.Author    `bson:"author" json:"author"`
-	Created    datetime.CpsTime  `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated    datetime.CpsTime  `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created    datetime.CpsTime  `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated    datetime.CpsTime  `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 
 	ExternalData []externaldatatable.RefResponse `bson:"external_data" json:"external_data"`
 
@@ -58,7 +64,7 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 

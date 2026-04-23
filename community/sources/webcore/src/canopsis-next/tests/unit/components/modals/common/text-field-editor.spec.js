@@ -79,8 +79,8 @@ describe('text-field-editor', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith('');
-    expect($modals.hide).toBeCalledWith();
+    expect(action).toHaveBeenCalledWith('');
+    expect($modals.hide).toHaveBeenCalledWith();
 
     wrapper.destroy();
   });
@@ -110,8 +110,8 @@ describe('text-field-editor', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(value);
-    expect($modals.hide).toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(value);
+    expect($modals.hide).toHaveBeenCalledWith();
 
     wrapper.destroy();
   });
@@ -176,7 +176,7 @@ describe('text-field-editor', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
 
     wrapper.destroy();
   });

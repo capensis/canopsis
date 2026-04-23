@@ -27,18 +27,19 @@ const (
 )
 
 type Failure struct {
-	ID        string           `bson:"_id" json:"_id"`
-	Rule      string           `bson:"rule" json:"rule"`
-	Type      int64            `bson:"type" json:"type"`
-	Timestamp datetime.CpsTime `bson:"t" json:"t"`
-	Message   string           `bson:"message" json:"message"`
-	Event     *types.Event     `bson:"event,omitempty" json:"event"`
-	Unread    bool             `bson:"unread,omitempty" json:"unread"`
+	ID          string           `bson:"_id" json:"_id"`
+	Rule        string           `bson:"rule" json:"rule"`
+	RuleUpdated datetime.CpsTime `bson:"rule_updated" json:"rule_updated"`
+	Type        int64            `bson:"type" json:"type"`
+	Timestamp   datetime.CpsTime `bson:"t" json:"t"`
+	Message     string           `bson:"message" json:"message"`
+	Event       *types.Event     `bson:"event,omitempty" json:"event"`
+	Unread      bool             `bson:"unread,omitempty" json:"unread"`
 }
 
 type FailureService interface {
 	Run(ctx context.Context)
-	Add(ruleID, ruleDesc string, failureType int64, message string, event *types.Event)
+	Add(ruleID, ruleDesc string, ruleUpdated datetime.CpsTime, failureType int64, message string, event *types.Event)
 }
 
 func NewFailureService(
@@ -56,7 +57,7 @@ func NewFailureService(
 		interval:          interval,
 		permToNotify:      permToNotify,
 		logger:            logger,
-		countsByRule:      make(map[string]int64),
+		countsByRule:      make(map[string]map[int64]int64),
 		failedRules:       make(map[string]failedRule),
 	}
 }
@@ -72,12 +73,13 @@ type failureService struct {
 
 	dataMx       sync.Mutex
 	inserts      []any
-	countsByRule map[string]int64
+	countsByRule map[string]map[int64]int64
 	failedRules  map[string]failedRule
 }
 
 type failedRule struct {
 	Timestamp   datetime.CpsTime
+	RuleUpdated datetime.CpsTime
 	Description string
 }
 
@@ -98,22 +100,28 @@ func (s *failureService) Run(ctx context.Context) {
 	}
 }
 
-func (s *failureService) Add(ruleID, ruleDesc string, failureType int64, message string, event *types.Event) {
+func (s *failureService) Add(ruleID, ruleDesc string, ruleUpdated datetime.CpsTime, failureType int64, message string, event *types.Event) {
 	s.dataMx.Lock()
 	defer s.dataMx.Unlock()
 	now := datetime.NewCpsTime()
 	s.inserts = append(s.inserts, Failure{
-		ID:        utils.NewID(),
-		Rule:      ruleID,
-		Type:      failureType,
-		Timestamp: now,
-		Message:   message,
-		Event:     event,
-		Unread:    true,
+		ID:          utils.NewID(),
+		Rule:        ruleID,
+		RuleUpdated: ruleUpdated,
+		Type:        failureType,
+		Timestamp:   now,
+		Message:     message,
+		Event:       event,
+		Unread:      true,
 	})
-	s.countsByRule[ruleID]++
+	if _, ok := s.countsByRule[ruleID]; !ok {
+		s.countsByRule[ruleID] = make(map[int64]int64, 1)
+	}
+
+	s.countsByRule[ruleID][ruleUpdated.Unix()]++
 	s.failedRules[ruleID] = failedRule{
 		Timestamp:   now,
+		RuleUpdated: ruleUpdated,
 		Description: ruleDesc,
 	}
 }
@@ -144,10 +152,7 @@ func (s *failureService) insertFailures(ctx context.Context, inserts []any, bulk
 	bulkCount := int(math.Ceil(float64(l) / float64(bulkSize)))
 	for i := 0; i < bulkCount; i++ {
 		begin := i * bulkSize
-		end := begin + bulkSize
-		if end > l {
-			end = l
-		}
+		end := min(begin+bulkSize, l)
 
 		_, err := s.collection.InsertMany(ctx, inserts[begin:end])
 		if err != nil {
@@ -158,22 +163,27 @@ func (s *failureService) insertFailures(ctx context.Context, inserts []any, bulk
 	return nil
 }
 
-func (s *failureService) updateRuleCounts(ctx context.Context, countsByRule map[string]int64, bulkSize int) error {
+func (s *failureService) updateRuleCounts(ctx context.Context, countsByRule map[string]map[int64]int64, bulkSize int) error {
 	writeModels := make([]mongodriver.WriteModel, 0, bulkSize)
-	for ruleID, inc := range countsByRule {
-		writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": ruleID}).
-			SetUpdate(bson.M{"$inc": bson.M{
-				"failures_count":        inc,
-				"unread_failures_count": inc,
-			}}))
-		if len(writeModels) == bulkSize {
-			_, err := s.ruleCollection.BulkWrite(ctx, writeModels)
-			if err != nil {
-				return err
-			}
+	for ruleID, c := range countsByRule {
+		for ruleUpdated, inc := range c {
+			writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+				SetFilter(bson.M{
+					"_id":     ruleID,
+					"updated": ruleUpdated,
+				}).
+				SetUpdate(bson.M{"$inc": bson.M{
+					"failures_count":        inc,
+					"unread_failures_count": inc,
+				}}))
+			if len(writeModels) == bulkSize {
+				_, err := s.ruleCollection.BulkWrite(ctx, writeModels)
+				if err != nil {
+					return err
+				}
 
-			writeModels = writeModels[:0]
+				writeModels = writeModels[:0]
+			}
 		}
 	}
 
@@ -198,7 +208,7 @@ func (s *failureService) updateRuleNotifications(ctx context.Context, failedRule
 	}
 
 	for ruleID, r := range failedRules {
-		s.notificationStore.AddForEventFilterFailure(r.Timestamp, ruleID, r.Description, roleIDs)
+		s.notificationStore.AddForEventFilterFailure(r.Timestamp, ruleID, r.Description, r.RuleUpdated, roleIDs)
 	}
 
 	err = s.notificationStore.Flush(ctx)
@@ -241,14 +251,14 @@ func (s *failureService) findRoles(ctx context.Context) ([]string, error) {
 	return roleIDs, nil
 }
 
-func (s *failureService) flushData() ([]any, map[string]int64, map[string]failedRule) {
+func (s *failureService) flushData() ([]any, map[string]map[int64]int64, map[string]failedRule) {
 	s.dataMx.Lock()
 	defer s.dataMx.Unlock()
 	inserts := s.inserts
 	countsByRule := s.countsByRule
 	failedRules := s.failedRules
 	s.inserts = make([]any, 0, len(inserts))
-	s.countsByRule = make(map[string]int64, len(countsByRule))
+	s.countsByRule = make(map[string]map[int64]int64, len(countsByRule))
 	s.failedRules = make(map[string]failedRule, len(failedRules))
 
 	return inserts, countsByRule, failedRules

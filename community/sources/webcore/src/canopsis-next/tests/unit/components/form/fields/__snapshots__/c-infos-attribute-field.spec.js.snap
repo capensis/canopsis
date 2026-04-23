@@ -2,7 +2,7 @@
 
 exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with custom props 1`] = `
 <div
-  class="layout"
+  class="layout gap-3"
 >
   <div
     class="flex"
@@ -188,7 +188,7 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
 
 exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with custom props 3`] = `
 <div
-  class="layout"
+  class="layout gap-3"
 >
   <div
     class="flex"
@@ -374,7 +374,7 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
 
 exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props 1`] = `
 <div
-  class="layout"
+  class="layout gap-3"
 >
   <div
     class="flex"
@@ -548,7 +548,7 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
 
 exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props and combobox 1`] = `
 <div
-  class="layout"
+  class="layout gap-3"
 >
   <div
     class="flex"

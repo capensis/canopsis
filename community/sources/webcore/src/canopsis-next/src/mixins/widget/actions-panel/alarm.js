@@ -1,16 +1,19 @@
 import { createNamespacedHelpers } from 'vuex';
-import { find, pick } from 'lodash';
+import { find, pick, keyBy } from 'lodash';
 
 import {
   MODALS,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   LINK_RULE_ACTIONS,
   ALARM_LIST_ACTIONS_TYPES,
+  ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP,
+  ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT,
   ALARM_EXPORT_FILE_NAME_PREFIX,
   PBEHAVIOR_TYPE_TYPES,
   PBEHAVIOR_ORIGINS,
 } from '@/constants';
 
+import { promisedTimeout } from '@/helpers/async';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 import { mapIds } from '@/helpers/array';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
@@ -56,6 +59,7 @@ export const widgetActionsPanelAlarmMixin = {
       bulkCreateAlarmAckremoveEvent: 'bulkCreateAlarmAckremoveEvent',
       bulkCreateAlarmSnoozeEvent: 'bulkCreateAlarmSnoozeEvent',
       bulkCreateAlarmAssocticketEvent: 'bulkCreateAlarmAssocticketEvent',
+      bulkCreateAlarmTicketremoveEvent: 'bulkCreateAlarmTicketremoveEvent',
       bulkCreateAlarmCommentEvent: 'bulkCreateAlarmCommentEvent',
       bulkCreateAlarmCancelEvent: 'bulkCreateAlarmCancelEvent',
       bulkCreateAlarmUnCancelEvent: 'bulkCreateAlarmUnCancelEvent',
@@ -65,7 +69,8 @@ export const widgetActionsPanelAlarmMixin = {
     }),
 
     isActionTypeInPending(type) {
-      return !!this.pendingByActionsTypes[type];
+      return !!this.pendingByActionsTypes[type]
+       || !!this.pendingByActionsTypes[ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP[type]];
     },
 
     setActionPending(type, value) {
@@ -190,10 +195,13 @@ export const widgetActionsPanelAlarmMixin = {
     },
 
     showCreateCommentModalByAlarms(alarms) {
+      const commentTemplatesById = keyBy(this.widget.comment_templates, '_id');
+
       this.$modals.show({
         name: MODALS.createCommentEvent,
         config: {
           items: alarms,
+          templates: this.widget.parameters.comment_templates.map(id => commentTemplatesById[id]),
           action: async (commentEvent) => {
             await this.bulkCreateAlarmCommentEvent({
               data: alarms.map(alarm => ({ ...commentEvent, _id: alarm._id })),
@@ -270,6 +278,25 @@ export const widgetActionsPanelAlarmMixin = {
 
             await this.bulkCreateAlarmAssocticketEvent({
               data: alarms.map(alarm => ({ ...associateEvent, _id: alarm._id })),
+            });
+
+            this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    showRemoveAssociatedTicketModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.removeAssociatedTicketEvent,
+        config: {
+          items: alarms,
+          action: async (removeEvent) => {
+            await this.bulkCreateAlarmTicketremoveEvent({
+              data: alarms.map(alarm => ({
+                ...removeEvent,
+                _id: alarm._id,
+              })),
             });
 
             this.afterSubmit();
@@ -439,12 +466,16 @@ export const widgetActionsPanelAlarmMixin = {
             alarms.length === 1 ? alarms[0].entity?._id : alarms.map(item => item.entity._id),
           ),
           entities: mapAlarmsEntities(alarms),
-          afterSubmit: this.afterSubmit,
+          afterSubmit: async () => {
+            this.$popups.success({ text: this.$t('modals.pbehaviorPlanning.success.create') });
+
+            return promisedTimeout(this.afterSubmit, ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT);
+          },
         },
       });
     },
 
-    async addFastPbehaviorByAlarms(alarms) {
+    async addFastPbehaviorByAlarms(alarms, pbehaviorParameters = {}) {
       try {
         this.setActionPending(ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd, true);
 
@@ -454,8 +485,8 @@ export const widgetActionsPanelAlarmMixin = {
           return acc;
         }, {});
 
-        const { fastPbehaviorNamePrefix: namePrefix = '' } = this.widget.parameters;
-        let { fastPbehaviorType: type, fastPbehaviorReason: reason } = this.widget.parameters;
+        const { name_prefix: namePrefix = '' } = pbehaviorParameters;
+        let { type, reason } = pbehaviorParameters;
 
         /**
          * Select first pause default type if default type is empty
@@ -485,7 +516,30 @@ export const widgetActionsPanelAlarmMixin = {
           origin: PBEHAVIOR_ORIGINS.alarmList,
         });
 
-        await this.afterSubmit();
+        await promisedTimeout(this.afterSubmit, ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd, false);
+      }
+    },
+
+    async removeFastPbehaviorByAlarms(alarms) {
+      try {
+        /**
+         * The same action type as fast pbehavior add
+         */
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd, true);
+
+        const entitiesMap = alarms.reduce((acc, { entity }) => {
+          acc[entity._id] = entity;
+
+          return acc;
+        }, {});
+
+        await this.removeDowntimePbehavior(Object.values(entitiesMap), PBEHAVIOR_ORIGINS.alarmList);
+
+        await promisedTimeout(this.afterSubmit, ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT);
       } catch (err) {
         console.error(err);
       } finally {
@@ -542,7 +596,10 @@ export const widgetActionsPanelAlarmMixin = {
 
     async removeBookmarkByAlarm(alarm) {
       try {
-        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.removeBookmark, true);
+        /**
+         * The same action type as add bookmark
+         */
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.addBookmark, true);
 
         await this.removeBookmarkFromAlarm({ id: alarm._id });
 
@@ -554,7 +611,7 @@ export const widgetActionsPanelAlarmMixin = {
 
         this.$popups.error({ text: this.$t('alarm.popups.removeBookmarkFailed') });
       } finally {
-        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.removeBookmark, false);
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.addBookmark, false);
       }
     },
   },

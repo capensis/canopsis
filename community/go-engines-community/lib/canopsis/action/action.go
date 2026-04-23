@@ -3,9 +3,9 @@ package action
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 )
 
 const PbehaviorOrigin = "scenario"
@@ -20,8 +20,8 @@ type Scenario struct {
 	Actions              []Action                   `bson:"actions" json:"actions"`
 	Priority             int64                      `bson:"priority" json:"priority"`
 	Delay                *datetime.DurationWithUnit `bson:"delay" json:"delay"`
-	Created              datetime.CpsTime           `bson:"created,omitempty" json:"created,omitempty"`
-	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty"`
+	Created              datetime.CpsTime           `bson:"created,omitempty" json:"created,omitzero"`
+	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitzero"`
 
 	// Aliases is used to ease find by entity info property api.
 	Aliases []string `bson:"aliases" json:"-"`
@@ -43,7 +43,7 @@ func (s Scenario) IsTriggered(triggers []string) string {
 type Action struct {
 	Type                     string     `bson:"type" json:"type"`
 	Comment                  string     `bson:"comment" json:"comment"`
-	Parameters               Parameters `bson:"parameters,omitempty" json:"parameters,omitempty"`
+	Parameters               Parameters `bson:"parameters,omitempty" json:"parameters"`
 	DropScenarioIfNotMatched bool       `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
 	EmitTrigger              bool       `bson:"emit_trigger" json:"emit_trigger"`
 
@@ -96,20 +96,11 @@ type Parameters struct {
 	StartOnTrigger *bool `json:"start_on_trigger,omitempty" bson:"start_on_trigger,omitempty"`
 	// Color is used in pbehavior action.
 	Color string `json:"color,omitempty" bson:"color,omitempty"`
-	// Request is used in webhook action.
-	Request *request.Parameters `json:"request,omitempty" bson:"request,omitempty"`
-	// AuthToken is used in webhook action.
-	AuthToken *request.WebhookAuthToken `json:"auth_token,omitempty" bson:"auth_token,omitempty"`
+
+	webhook.Webhook `bson:",inline"`
+
 	// SkipForChild is used in webhook action.
 	SkipForChild *bool `json:"skip_for_child,omitempty" bson:"skip_for_child,omitempty"`
 	// SkipForInstruction is used in webhook action.
 	SkipForInstruction *bool `json:"skip_for_instruction,omitempty" bson:"skip_for_instruction,omitempty"`
-	// DeclareTicket is used in webhook action.
-	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket,omitempty"`
-	// StopOnFail is used in webhook action.
-	StopOnFail *bool `json:"stop_on_fail,omitempty" bson:"stop_on_fail,omitempty"`
-	// StopOnSuccess is used in webhook action.
-	StopOnSuccess *bool `json:"stop_on_success,omitempty" bson:"stop_on_success,omitempty"`
-	// MultipleURLs is used in webhook action.
-	MultipleURLs *bool `json:"multiple_urls,omitempty" bson:"multiple_urls,omitempty"`
 }

@@ -80,7 +80,7 @@ describe('create-service', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(defaultService);
+    expect(action).toHaveBeenCalledWith(defaultService);
     expect($modals.hide).toHaveBeenCalledWith(modal);
   });
 
@@ -128,7 +128,7 @@ describe('create-service', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith(modal);
+    expect($modals.hide).toHaveBeenCalledWith(modal);
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -157,7 +157,7 @@ describe('create-service', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledWith(defaultService);
+    expect(action).toHaveBeenCalledWith(defaultService);
     expect($modals.hide).not.toHaveBeenCalled();
   });
 
@@ -189,11 +189,11 @@ describe('create-service', () => {
 
     await flushPromises();
 
-    expect(consoleMock.error).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleMock.error).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       ...defaultService,
       name: customService.name,
       category: customService.category._id,
@@ -226,7 +226,7 @@ describe('create-service', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       ...defaultService,
       name: newForm.name,
       category: newForm.category._id,

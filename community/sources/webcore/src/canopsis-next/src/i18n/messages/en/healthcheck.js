@@ -8,6 +8,7 @@ export default {
   diffInstancesConfig: 'Invalid instances configuration',
   queueLength: 'Queue length {queueLength}/{maxQueueLength}',
   instancesCount: 'Instances {instances}/{minInstances}',
+  runningNodes: 'Running nodes {runningNodes}/{nodes}',
   activeInstances: 'Only {instances} is active out of {minInstances}. The optimal number of instances is {optimalInstances}.',
   queueOverflowed: 'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
   engineDown: '{name} is down, the system is not operational.\nPlease check the log or restart the service.',

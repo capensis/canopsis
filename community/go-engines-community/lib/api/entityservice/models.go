@@ -47,6 +47,8 @@ type ContextGraphRequest struct {
 	WithFlags bool   `form:"with_flags" json:"with_flags"`
 	// Show dependencies defining the state of the entity
 	DefineState bool `form:"define_state" json:"define_state"`
+
+	SearchPattern string `form:"search_pattern" json:"search_pattern"`
 }
 
 type EditRequest struct {
@@ -76,7 +78,7 @@ type ContextGraphAggregationResult struct {
 	TotalCount int64                `bson:"total_count" json:"total_count"`
 }
 
-func (r *ContextGraphAggregationResult) GetData() interface{} {
+func (r *ContextGraphAggregationResult) GetData() any {
 	return r.Data
 }
 

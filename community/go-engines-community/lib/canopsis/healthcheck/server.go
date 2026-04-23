@@ -64,7 +64,7 @@ func runHttpServer(
 		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
-	go func() {
+	go func() { // nolint:gosec
 		<-ctx.Done()
 		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), serverShutdownInterval)
 		defer shutdownCancel()

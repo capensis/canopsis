@@ -1,10 +1,11 @@
 import { escape } from 'lodash';
 import { computed } from 'vue';
 
+import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
+
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 import { linkifyHtml, sanitizeHtml } from '@/helpers/html';
-import { isSuccessTicketDeclaration } from '@/helpers/entities/declare-ticket/event/entity';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -196,10 +197,14 @@ export const useExtraDetailsSnoozeTooltip = (props) => {
   const end = computed(() => convertDateToStringWithFormatForToday(props.snooze.val));
 
   const tooltipContent = computed(() => {
+    const endContent = props.hasInactivePbehavior
+      ? t('alarm.actions.iconsFields.cannotUnsnoozeUntilPbehaviorInProgress')
+      : `${t('common.end')} : ${end.value}`;
+
     let content = `<strong>${t('alarm.actions.iconsTitles.snooze')}</strong>
         <div>${t('common.by')} : ${escape(props.snooze.a)}</div>
         <div>${t('common.date')} : ${date.value}</div>
-        <div>${t('common.end')} : ${end.value}</div>`;
+        <div>${endContent}</div>`;
 
     if (props.snooze.initiator) {
       content += `<div>${t('common.initiator')} : ${escape(props.snooze.initiator)}</div>`;
@@ -224,14 +229,16 @@ export const useExtraDetailsSnoozeTooltip = (props) => {
 export const useExtraDetailsTicketTooltip = (props) => {
   const { t, tc } = useI18n();
 
-  const getTicketStatusText = ticket => t(`common.${isSuccessTicketDeclaration(ticket) ? 'ok' : 'failed'}`);
+  const getTicketStatusText = ticket => t(`declareTicket.status.${ticket.ticket_status ?? DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown}`);
   const convertDateWithToday = date => convertDateToStringWithFormatForToday(date);
 
-  const shownTickets = computed(() => props.tickets.slice(0, props.limit));
+  const shownTickets = computed(() => (
+    props.failedTicket ? [props.failedTicket] : props.tickets.slice(0, props.limit)
+  ));
 
   const tooltipContent = computed(() => {
     const content = shownTickets.value.reduce((acc, ticket) => {
-      let ticketContent = `<strong>${ticket.ticket_rule_name || ''} ${getTicketStatusText(ticket)}</strong>
+      let ticketContent = `<strong>${ticket.ticket_rule_name ? `${ticket.ticket_rule_name} - ` : ''}${getTicketStatusText(ticket)}</strong>
           <div>${t('common.by')} : ${escape(ticket.a)}</div>
           <div>${t('common.date')} : ${convertDateWithToday(ticket.t)}</div>`;
 

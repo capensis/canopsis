@@ -1,22 +1,7 @@
 <template>
-  <v-layout column>
-    <v-layout>
-      <v-flex xs6>
-        <c-enabled-field v-field="form.enabled" />
-      </v-flex>
-      <v-flex xs6>
-        <c-enabled-field
-          v-field="form.emit_trigger"
-          :label="$t('common.emitTrigger')"
-          name="emit_trigger"
-        />
-      </v-flex>
-    </v-layout>
-    <v-layout class="mb-2">
-      <v-flex
-        class="mr-3"
-        xs8
-      >
+  <v-layout class="gap-2" column>
+    <v-layout class="gap-3">
+      <v-flex xs8>
         <c-name-field
           v-field="form.name"
           autofocus
@@ -31,6 +16,11 @@
         />
       </v-flex>
     </v-layout>
+    <c-enabled-field
+      v-field="form.emit_trigger"
+      :label="$t('common.emitTrigger')"
+      name="emit_trigger"
+    />
     <declare-ticket-rule-webhooks-field v-field="form.webhooks" :template-vars="templateVars" />
   </v-layout>
 </template>
