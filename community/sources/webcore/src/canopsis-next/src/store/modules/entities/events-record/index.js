@@ -22,8 +22,8 @@ export default {
       return request.get(`${API_ROUTES.eventsRecord.list}/${id}`, { params });
     },
 
-    createExport(context, { id, eventIds = [] } = {}) {
-      return request.post(`${API_ROUTES.eventsRecord.list}/${id}/exports`, { event_ids: eventIds });
+    createExport(context, { id, eventIds = [], params = {} } = {}) {
+      return request.post(`${API_ROUTES.eventsRecord.list}/${id}/exports`, { event_ids: eventIds }, { params });
     },
 
     fetchExport(context, { id } = {}) {
