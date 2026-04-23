@@ -229,7 +229,12 @@ export default {
 
 <style lang="scss">
 .llm-prompts-history-table__prompt {
-  white-space: pre-wrap;
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
   word-break: break-word;
 }
 </style>

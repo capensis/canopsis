@@ -75,7 +75,7 @@ describe('filters-list', () => {
 
     selectFiltersList(wrapper).$emit('add');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createFilter,
         config: {
@@ -128,7 +128,7 @@ describe('filters-list', () => {
 
     selectFiltersList(wrapper).$emit('edit', updatedFilter, 1);
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createFilter,
         config: {
@@ -175,7 +175,7 @@ describe('filters-list', () => {
 
     selectFiltersList(wrapper).$emit('delete', deletedFilter, 1);
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {
@@ -204,7 +204,7 @@ describe('filters-list', () => {
 
     selectFiltersList(wrapper).$emit('delete', deletedFilter, 1);
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {

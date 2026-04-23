@@ -154,6 +154,7 @@ describe('create-filter', () => {
       alarm_pattern: [],
       entity_pattern: [],
       pbehavior_pattern: [],
+      event_pattern: [],
     });
     expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
@@ -262,6 +263,7 @@ describe('create-filter', () => {
       alarm_pattern: [],
       entity_pattern: [],
       pbehavior_pattern: [],
+      weather_service_pattern: [],
       title: '',
     });
     expect($modals.hide).not.toHaveBeenCalled();

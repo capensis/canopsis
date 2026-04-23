@@ -7,6 +7,7 @@
       @close="rejectAllSuggestions"
       @try-again="tryOptimization"
     />
+    <c-progress-overlay :pending="pending" />
     <v-layout
       class="c-patterns-field"
       column
@@ -71,6 +72,7 @@
           :disabled="disabled"
           :readonly="readonly"
           :name="preparedPbehaviorName"
+          :attributes="pbehaviorAttributes"
           :counter="counters.pbehavior_pattern"
           with-type
           @input="errors.remove(preparedPbehaviorName)"
@@ -88,6 +90,7 @@
           :disabled="disabled"
           :readonly="readonly"
           :name="preparedEventName"
+          :attributes="eventAttributes"
           :counter="counters.event_pattern"
           @input="errors.remove(preparedEventName)"
         />
@@ -104,6 +107,7 @@
           :disabled="disabled"
           :readonly="readonly"
           :name="preparedTotalEntityName"
+          :attributes="totalEntityAttributes"
           :counter="counters.total_entity_pattern"
           with-type
           @input="errors.remove(preparedTotalEntityName)"
@@ -120,6 +124,7 @@
           :required="isPatternRequired"
           :disabled="disabled"
           :name="preparedServiceWeatherName"
+          :attributes="weatherServiceAttributes"
           :counter="counters.weather_service_pattern"
           with-type
           @input="errors.remove(preparedServiceWeatherName)"
@@ -231,10 +236,6 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
     alarmAttributes: {
       type: Array,
       required: false,
@@ -242,6 +243,30 @@ export default {
     entityAttributes: {
       type: Array,
       required: false,
+    },
+    pbehaviorAttributes: {
+      type: Array,
+      required: false,
+    },
+    eventAttributes: {
+      type: Array,
+      required: false,
+    },
+    totalEntityAttributes: {
+      type: Array,
+      required: false,
+    },
+    weatherServiceAttributes: {
+      type: Array,
+      required: false,
+    },
+    pending: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     withAlarm: {
       type: Boolean,
@@ -282,10 +307,6 @@ export default {
     name: {
       type: String,
       default: '',
-    },
-    pending: {
-      type: Boolean,
-      default: false,
     },
     readonly: {
       type: Boolean,

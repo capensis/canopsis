@@ -59,7 +59,7 @@ describe('kpi-alarms', () => {
     });
 
     expect(fetchAlarmsMetrics).toBeCalledTimes(1);
-    expect(fetchAlarmsMetrics).toBeCalledWith(
+    expect(fetchAlarmsMetrics).toHaveBeenCalledWith(
       expect.any(Object),
       { params: expectedDefaultParams },
     );
@@ -104,7 +104,7 @@ describe('kpi-alarms', () => {
     await flushPromises();
 
     expect(fetchAlarmsMetrics).toBeCalledTimes(2);
-    expect(fetchAlarmsMetrics).toBeCalledWith(
+    expect(fetchAlarmsMetrics).toHaveBeenCalledWith(
       expect.any(Object),
       { params: expectedParamsAfterUpdate },
     );

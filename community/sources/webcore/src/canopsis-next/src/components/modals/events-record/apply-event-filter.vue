@@ -5,16 +5,19 @@
         <span>{{ config.title ?? $t('modals.applyEventFilter.title') }}</span>
       </template>
       <template #text="">
-        <v-alert v-if="config.infoAlert" class="mb-4" type="info">
-          {{ config.infoAlert }}
-        </v-alert>
-        <c-event-filter-patterns-field
-          v-model="form"
-          :excluded-attributes="config.excludedAttributes"
-          name="patterns"
-          required
-          @input="errors.remove('patterns')"
-        />
+        <div class="position-relative">
+          <c-progress-overlay :pending="eventPatternAttributesPending" />
+          <v-alert v-if="config.infoAlert" class="mb-4" type="info">
+            {{ config.infoAlert }}
+          </v-alert>
+          <c-event-filter-patterns-field
+            v-model="form"
+            :attributes="eventPatternAttributes"
+            name="patterns"
+            required
+            @input="errors.remove('patterns')"
+          />
+        </div>
         <ai-chat-sidebar
           v-if="chatShown"
           v-bind="chatOptions.bind"
@@ -52,9 +55,10 @@ import { promisedWait } from '@/helpers/async';
 import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/pattern/form';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 
@@ -77,6 +81,13 @@ export default {
     const { config, close } = useInnerModal(props);
 
     const form = ref(patternToForm({ event_pattern: config.value.eventPattern }));
+
+    const { fetchEventRecordPatternFields } = usePatternsFields();
+
+    const {
+      pending: eventPatternAttributesPending,
+      eventPatternAttributes,
+    } = usePatternsFieldsFetching(fetchEventRecordPatternFields);
 
     const {
       shown: chatShown,
@@ -116,6 +127,9 @@ export default {
       submitting,
       chatShown,
       chatOptions,
+
+      eventPatternAttributes,
+      eventPatternAttributesPending,
 
       submit,
       close,

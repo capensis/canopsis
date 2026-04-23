@@ -36,6 +36,19 @@ describe('filters-list', () => {
 
   beforeEach(() => {
     axiosMockAdapter.reset();
+    axiosMockAdapter
+      .onGet(API_ROUTES.patternFields.widgetFilter)
+      .reply(200, {
+        entity_pattern: [
+          { name: 'name', enabled: true, alias: false },
+          { name: 'category', enabled: true, alias: false },
+          { name: 'component', enabled: true, alias: false },
+        ],
+        alarm_pattern: [],
+        event_pattern: [],
+        pbehavior_pattern: [],
+        weather_service_pattern: [],
+      });
   });
 
   const widgetId = 'widget-id';
@@ -108,9 +121,11 @@ describe('filters-list', () => {
 
     await flushPromises();
 
-    const [getRequestData] = axiosMockAdapter.history.get;
+    const userPreferenceRequests = axiosMockAdapter.history.get.filter(
+      req => req.url && req.url.includes('user-preferences'),
+    );
 
-    expect(getRequestData).toBeTruthy();
+    expect(userPreferenceRequests.length).toBeGreaterThan(0);
   });
 
   test('Filter created after trigger filters list', async () => {
@@ -123,13 +138,19 @@ describe('filters-list', () => {
       },
     });
 
+    await flushPromises();
+
     selectFiltersList(wrapper).triggerCustomEvent('add');
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.createFilter,
       config: {
         action: expect.any(Function),
+        alarmAttributes: [],
         corporate: true,
+        entityAttributes: expect.any(Array),
+        pbehaviorAttributes: [],
+        weatherServiceAttributes: [],
         withTitle: true,
         title: 'Create filter',
       },
@@ -158,6 +179,8 @@ describe('filters-list', () => {
       },
     });
 
+    await flushPromises();
+
     const editingFilter = {
       _id: Faker.datatype.string(),
       title: Faker.datatype.string(),
@@ -166,12 +189,16 @@ describe('filters-list', () => {
 
     selectFiltersList(wrapper).triggerCustomEvent('edit', editingFilter);
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.createFilter,
       config: {
         action: expect.any(Function),
-        filter: editingFilter,
+        alarmAttributes: [],
         corporate: true,
+        entityAttributes: expect.any(Array),
+        filter: editingFilter,
+        pbehaviorAttributes: [],
+        weatherServiceAttributes: [],
         withTitle: true,
         title: 'Edit filter',
       },
@@ -207,7 +234,7 @@ describe('filters-list', () => {
 
     selectFiltersList(wrapper).triggerCustomEvent('delete', removingFilter);
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.confirmation,
       config: {
         action: expect.any(Function),
@@ -291,7 +318,7 @@ describe('filters-list', () => {
       newSortedFilters.map(({ _id: id }) => id),
     );
 
-    expect($popups.error).toBeCalledWith({ text: 'Something went wrong...' });
+    expect($popups.error).toHaveBeenCalledWith({ text: 'Something went wrong...' });
 
     consoleErrorSpy.mockClear();
   });

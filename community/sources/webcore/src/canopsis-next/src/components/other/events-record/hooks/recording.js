@@ -1,4 +1,4 @@
-import { EVENT_FILTER_PATTERN_FIELDS, MODALS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
@@ -23,18 +23,6 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
     name: MODALS.applyEventFilter,
     config: {
       title: t('eventsRecord.launchEventRecording'),
-      description: t('eventsRecord.launchEventRecordingDescription'),
-      infoAlert: t('eventsRecord.filterPatternOptional'),
-      excludedAttributes: [
-        { value: EVENT_FILTER_PATTERN_FIELDS.eventType },
-        { value: EVENT_FILTER_PATTERN_FIELDS.state },
-        { value: EVENT_FILTER_PATTERN_FIELDS.sourceType },
-        { value: EVENT_FILTER_PATTERN_FIELDS.output },
-        { value: EVENT_FILTER_PATTERN_FIELDS.extraInfos },
-        { value: EVENT_FILTER_PATTERN_FIELDS.longOutput },
-        { value: EVENT_FILTER_PATTERN_FIELDS.author },
-        { value: EVENT_FILTER_PATTERN_FIELDS.initiator },
-      ],
       action: async (eventPattern) => {
         const result = await startEventsRecordCurrent({ data: { event_pattern: eventPattern } });
 
