@@ -41,9 +41,9 @@
       :some-required="!isChangeEntityType"
       :required="isChangeEntityType"
       :with-entity="!isChangeEntityType"
-      :expanded-event="isNew"
       :event-attributes="eventAttributes"
       :pending="attributesPending"
+      expanded-event
       with-event
       entity-counters-type
     />
@@ -124,10 +124,6 @@ export default {
       default: () => ({}),
     },
     isDisabledIdField: {
-      type: Boolean,
-      default: false,
-    },
-    isNew: {
       type: Boolean,
       default: false,
     },

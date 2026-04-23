@@ -160,13 +160,14 @@ export const eventFilterConfigToForm = (eventFilterConfig = {}) => ({
  * @returns {FilterPatterns}
  */
 export const eventFilterPatternToForm = (eventFilter) => {
-  const isNew = isEmpty(eventFilter);
+  const hasNotEventPattern = isEmpty(eventFilter?.event_pattern);
+
   const patterns = filterPatternsToForm(
-    isNew ? EVENT_FILTER_DEFAULT_PATTERN : eventFilter,
+    hasNotEventPattern ? { ...eventFilter, ...EVENT_FILTER_DEFAULT_PATTERN } : eventFilter,
     [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
   );
 
-  if (isNew) {
+  if (hasNotEventPattern) {
     patterns[PATTERNS_FIELDS.event].groups.forEach((group) => {
       group.rules.forEach((rule) => {
         // eslint-disable-next-line no-param-reassign
