@@ -110,7 +110,7 @@ export default {
           title: this.$t('modals.createFilter.create.title'),
           corporate: true,
           action: async (newFilter) => {
-            await this.createWidgetFilter({
+            const result = await this.createWidgetFilter({
               data: {
                 ...newFilter,
 
@@ -119,7 +119,9 @@ export default {
               },
             });
 
-            return this.refreshFilters();
+            this.refreshFilters();
+
+            return result;
           },
         },
       });
@@ -135,7 +137,7 @@ export default {
           title: this.$t('modals.createFilter.edit.title'),
           corporate: true,
           action: async (newFilter) => {
-            await this.updateWidgetFilter({
+            const result = await this.updateWidgetFilter({
               id: filter._id,
               data: {
                 ...newFilter,
@@ -144,7 +146,9 @@ export default {
               },
             });
 
-            return this.refreshFilters();
+            this.refreshFilters();
+
+            return result;
           },
         },
       });

@@ -33,15 +33,17 @@ export default createCRUDModule({
     /**
      * Method for update current user
      *
-     * @param {ActionContext} { commit }
+     * @param {ActionContext} { commit, dispatch }
      * @param {Object} params - The parameters object
      * @param {Object} params.data - The user data to update
      * @returns {Promise<User>}
      */
-    async updateCurrentUser({ commit }, { data } = {}) {
+    async updateCurrentUser({ commit, dispatch }, { data } = {}) {
       const newCurrentUser = await request.put(API_ROUTES.currentUser, data);
 
       commit('auth/FETCH_USER_COMPLETED', newCurrentUser, { root: true });
+
+      dispatch('auth/afterFetchCurrentUser', newCurrentUser, { root: true });
 
       return newCurrentUser;
     },

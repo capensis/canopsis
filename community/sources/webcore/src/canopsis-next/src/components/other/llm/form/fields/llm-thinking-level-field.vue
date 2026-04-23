@@ -14,6 +14,8 @@
 <script>
 import { computed, watch } from 'vue';
 
+import { LLM_THINKING_LEVELS } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
 
@@ -54,7 +56,15 @@ export default {
       text: t(`llm.thinkingLevels.${value}`),
     })));
 
-    watch(() => props.items, newItems => !newItems.includes(props.value) && updateModel(null));
+    watch(() => props.items, (newItems) => {
+      if (newItems.length && !props.value) {
+        const middleIndex = Math.ceil(newItems.length / 2);
+
+        updateModel(newItems.includes(LLM_THINKING_LEVELS.medium) ? LLM_THINKING_LEVELS.medium : newItems[middleIndex]);
+      } else if (!newItems.includes(props.value)) {
+        updateModel(null);
+      }
+    });
 
     return {
       preparedItems,

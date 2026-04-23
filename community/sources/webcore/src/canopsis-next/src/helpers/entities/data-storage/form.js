@@ -67,6 +67,11 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {Object} DataStorageLlmChatConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfig
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
@@ -80,6 +85,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {DataStorageEventFilterFailureConfig} event_filter_failure
  * @property {DataStorageAlarmExternalTagConfig} alarm_external_tag
  * @property {DataStorageEventsRecordsConfig} event_records
+ * @property {DataStorageLlmChatConfig} llm_chat
  */
 
 /**
@@ -277,6 +283,18 @@ export const dataStorageEntityInfosLogToForm = (entityInfosLog = {}) => ({
 });
 
 /**
+ * Convert data storage LLM chat config to form object
+ *
+ * @param {DataStorageLlmChatConfig} [llmChat = {}]
+ * @return {DataStorageLlmChatConfig}
+ */
+export const dataStorageLlmChatToForm = (llmChat = {}) => ({
+  delete_after: llmChat.delete_after
+    ? durationWithEnabledToForm(llmChat.delete_after)
+    : { value: 1, unit: TIME_UNITS.month, enabled: false },
+});
+
+/**
  * Convert data storage object to data storage form
  *
  * @param {DataStorageConfig} dataStorage
@@ -296,4 +314,5 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   alarm_external_tag: dataStorageAlarmExternalTagToForm(dataStorage.alarm_external_tag),
   event_records: dataStorageEventsRecordsToForm(dataStorage.event_records),
   entity_infos_log: dataStorageEntityInfosLogToForm(dataStorage.entity_infos_log),
+  llm_chat: dataStorageLlmChatToForm(dataStorage.llm_chat),
 });

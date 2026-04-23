@@ -65,6 +65,13 @@ export default {
     },
   },
   actions: {
+    /**
+     * POSTs login credentials, stores the returned access token, and runs post-login loading.
+     * On failure, logs the error, dispatches a local logout, and rethrows.
+     * @param {import('vuex').ActionContext} context
+     * @param {Object} credentials - Payload forwarded to the login API (e.g. username, password)
+     * @returns {Promise<void>}
+     */
     async login({ commit, dispatch }, credentials) {
       try {
         const { access_token: accessToken } = await request.post(
@@ -82,6 +89,12 @@ export default {
       }
     },
 
+    /**
+     * Persists the access token, marks the session as logged in, and loads current user and file access in parallel.
+     * @param {import('vuex').ActionContext} context
+     * @param {string} accessToken - JWT (or other) access token from login/refresh
+     * @returns {Promise<[void, void]>}
+     */
     applyAccessToken({ commit, dispatch }, accessToken) {
       localStorageService.set(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
 
@@ -93,10 +106,20 @@ export default {
       ]);
     },
 
+    /**
+     * Fetches file-access rights for the current session (used after successful authentication).
+     * @returns {Promise<*>}
+     */
     filesAccess() {
       return request.get(API_ROUTES.fileAccess);
     },
 
+    /**
+     * Loads the current user from the API and commits them to state.
+     * No-ops with logout if not logged in. On certain HTTP statuses, dispatches `logout` before rethrowing.
+     * @param {import('vuex').ActionContext} context
+     * @returns {Promise<void>}
+     */
     async fetchCurrentUser({ commit, dispatch, state }) {
       if (!state.isLoggedIn) {
         commit(types.LOGOUT);
@@ -109,21 +132,9 @@ export default {
 
         const currentUser = await request.get(API_ROUTES.currentUser, { fullResponse: true });
 
-        if (isUserHasOnlyApiRole(currentUser)) {
-          localStorageService.set(LOCAL_STORAGE_WARNING_POPUP_KEY, i18n.t('warnings.userDoesNotHaveUiRole'));
-
-          dispatch('logout');
-
-          return;
-        }
-
-        if (currentUser.ui_language) {
-          dispatch('i18n/setPersonalLocale', currentUser.ui_language, { root: true });
-        } else {
-          dispatch('i18n/setDefaultLocale', DEFAULT_LOCALE, { root: true });
-        }
-
         commit(types.FETCH_USER_COMPLETED, currentUser);
+
+        await dispatch('afterFetchCurrentUser', currentUser);
       } catch (err) {
         if (EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
           dispatch('logout');
@@ -133,6 +144,35 @@ export default {
       }
     },
 
+    /**
+     * Post-processing after the current user is loaded: blocks API-only users (logout + warning) or applies UI locale.
+     * @param {import('vuex').ActionContext} context
+     * @param {Object} currentUser - User object returned from `API_ROUTES.currentUser`
+     */
+    afterFetchCurrentUser({ dispatch }, currentUser) {
+      if (isUserHasOnlyApiRole(currentUser)) {
+        localStorageService.set(LOCAL_STORAGE_WARNING_POPUP_KEY, i18n.t('warnings.userDoesNotHaveUiRole'));
+
+        dispatch('logout');
+
+        return;
+      }
+
+      if (currentUser.ui_language) {
+        dispatch('i18n/setPersonalLocale', currentUser.ui_language, { root: true });
+      } else {
+        dispatch('i18n/setDefaultLocale', DEFAULT_LOCALE, { root: true });
+      }
+    },
+
+    /**
+     * Calls the logout API, clears auth state and token, optionally runs a redirect,
+     * then reloads the page after a short delay.
+     * @param {import('vuex').ActionContext} context
+     * @param {Object} [options]
+     * @param {function(): (void|Promise<void>)} [options.redirect] - After local logout, before the delayed reload
+     * @returns {Promise<void>}
+     */
     async logout({ commit }, { redirect } = {}) {
       try {
         await request.post(API_ROUTES.logout);
@@ -154,6 +194,10 @@ export default {
       }
     },
 
+    /**
+     * Returns the number of currently logged-in users (direct request; does not read or update Vuex state).
+     * @returns {Promise<*>}
+     */
     fetchLoggedUsersCountWithoutStore() {
       return request.get(API_ROUTES.loggedUserCount);
     },

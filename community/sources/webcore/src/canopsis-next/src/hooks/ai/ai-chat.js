@@ -788,7 +788,7 @@ export const useAiChatLlmModel = ({ initialLlms = [] } = {}) => {
 
   const { llms, llmsPending, fetchLlms } = useAiChatLlms({ initialLlms });
 
-  const defaultLlm = computed(() => llms.value.find(llmItem => llmItem.default) ?? null);
+  const defaultLlm = computed(() => llms.value.find(llmItem => llmItem.default) ?? llms.value[0] ?? null);
 
   /**
    * Resets `llm` to the row marked `default` in the current `llms` list (or `null` if none).

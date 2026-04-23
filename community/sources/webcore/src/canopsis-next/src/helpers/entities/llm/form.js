@@ -15,16 +15,17 @@ import { LLM_MODEL_TYPES } from '@/constants';
  * Convert LLM entity to form object
  *
  * @param {LlmConfig} [llm={}]
+ * @param {boolean} [defaultValue=false]
  * @returns {LlmConfig}
  */
-export const llmToForm = (llm = {}) => ({
+export const llmToForm = (llm = {}, defaultValue = false) => ({
   enabled: llm.enabled ?? true,
   type: LLM_MODEL_TYPES.gemini,
   name: llm.name ?? '',
   api_key: llm.api_key ?? '',
   model: llm.model ?? '',
   thinking_level: llm.thinking_level ?? '',
-  default: llm.default ?? false,
+  default: llm.default ?? defaultValue,
 });
 
 /**

@@ -19,7 +19,7 @@
         align-center
         wrap
       >
-        <v-flex xs12 md3>
+        <v-flex v-if="!groupByChat" xs12 md3>
           <c-enabled-field
             :value="options.only_off_topic"
             :label="$t('llm.promptsHistory.notRelatedToCanopsis')"
@@ -143,19 +143,22 @@ export default {
 
     const headers = computed(() => [
       !props.userId && { text: t('llm.promptsHistory.columns.userName'), value: 'user.display_name' },
-      { text: t('llm.promptsHistory.columns.datetime'), value: 'timestamp' },
+      {
+        text: t(groupByChat.value ? 'llm.promptsHistory.expandUserHistory.lastPromptDate' : 'llm.promptsHistory.columns.datetime'),
+        value: 'timestamp',
+      },
       { text: t('llm.promptsHistory.columns.tokensUsed'), value: 'tokens' },
       { text: t('llm.promptsHistory.columns.modal'), value: 'context', sortable: false },
       { text: t('common.name'), value: 'rule', sortable: false },
       { text: t('llm.promptsHistory.columns.usage'), value: 'usage', sortable: false },
-      { text: t('llm.promptsHistory.columns.canopsisRelated'), value: 'off_topic', sortable: false },
+      !groupByChat.value && { text: t('llm.promptsHistory.columns.canopsisRelated'), value: 'off_topic', sortable: false },
       !groupByChat.value && { text: t('llm.promptsHistory.columns.prompt'), value: 'prompt', sortable: false },
       { text: t('common.seeChat'), value: 'actions', sortable: false, width: '88px' },
     ].filter(Boolean));
 
     const preparedItems = computed(() => items.value.map((item) => {
       const context = item.context.replace(`${LLM_SOCKET_CONTEXTS.widgetFilter}_`, '');
-      const widgetMessageKey = `modals.createWidget.types.${context}`;
+      const widgetMessageKey = `modals.createWidget.types.${context}.title`;
 
       return {
         ...item,

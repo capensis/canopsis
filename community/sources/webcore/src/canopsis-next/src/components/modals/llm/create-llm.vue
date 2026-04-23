@@ -1,11 +1,12 @@
 <template>
-  <v-form @submit.prevent="submit">
+  <v-form class="position-relative" @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
         {{ title }}
       </template>
       <template #text="">
-        <llm-form v-model="form" :is-new="isNew" />
+        <c-progress-overlay :pending="defaultLlmPending" />
+        <llm-form v-model="form" :is-new="isNew" :default-llm="defaultLlm" />
       </template>
       <template #actions="">
         <v-btn
@@ -30,7 +31,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -40,6 +41,8 @@ import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { useLlm } from '@/hooks/store/modules/llm';
 
 import LlmForm from '@/components/other/llm/form/llm-form.vue';
 
@@ -64,8 +67,10 @@ export default {
   setup(props) {
     const { t } = useI18n();
     const { config, close } = useInnerModal(props);
+    const { fetchDefaultLlmWithoutStore } = useLlm();
 
     const form = ref(llmToForm(config.value.llm));
+    const defaultLlm = ref(null);
 
     const isNew = computed(() => !config.value.llm?._id);
 
@@ -90,7 +95,25 @@ export default {
       },
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    const { updateOriginalForm } = useFormConfirmableCloseModal({ form, submit, close });
+
+    const { pending: defaultLlmPending, handler: fetchDefaultLlm } = usePendingHandler(async () => {
+      const { data: [fetchedDefaultLlm] = [] } = await fetchDefaultLlmWithoutStore() || {};
+
+      if (!fetchedDefaultLlm || fetchedDefaultLlm._id === config.value.llm?._id) {
+        return;
+      }
+
+      defaultLlm.value = fetchedDefaultLlm;
+
+      if (!defaultLlm.value && isNew.value) {
+        form.value.default = true;
+
+        updateOriginalForm();
+      }
+    });
+
+    onMounted(fetchDefaultLlm);
 
     return {
       form,
@@ -104,6 +127,9 @@ export default {
 
       submit,
       close,
+
+      defaultLlmPending,
+      defaultLlm,
     };
   },
 };

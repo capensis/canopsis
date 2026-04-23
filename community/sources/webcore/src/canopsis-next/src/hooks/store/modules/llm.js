@@ -27,7 +27,13 @@ export const useLlm = () => {
     bulkLinkLlmHistory: 'bulkLinkLlmHistory',
   });
 
+  const fetchDefaultLlmWithoutStore = () => actions.fetchLlmsListWithoutStore({
+    params: { only_default: true, enabled: true },
+  });
+
   return {
     ...actions,
+
+    fetchDefaultLlmWithoutStore,
   };
 };
