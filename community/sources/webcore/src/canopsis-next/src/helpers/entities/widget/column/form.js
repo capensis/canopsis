@@ -46,6 +46,8 @@ export const getInfosWidgetColumn = (value = '') => [
   ...ENTITY_INFOS_FIELDS,
 ].find(constantField => value.startsWith(constantField));
 
+export const isAlarmTicketDataWidgetColumn = (value = '') => value.startsWith(ALARM_FIELDS.ticketData);
+
 /**
  * Check if column is links
  *
@@ -63,7 +65,8 @@ export const isLinksWidgetColumn = (value = '') => value.startsWith(ALARM_LIST_W
 export const widgetColumnValueToForm = (value = '') => {
   const result = {};
 
-  const infosColumn = getInfosWidgetColumn(value) ?? '';
+  const infosColumn = getInfosWidgetColumn(value);
+  const isAlarmTicketData = isAlarmTicketDataWidgetColumn(value);
 
   if (infosColumn === ALARM_FIELDS.infos) {
     const [rule, dictionary] = value === ALARM_FIELDS.infos
@@ -84,6 +87,9 @@ export const widgetColumnValueToForm = (value = '') => {
 
     result.column = column;
     result.field = field;
+  } else if (isAlarmTicketData) {
+    result.column = ALARM_FIELDS.ticketData;
+    result.dictionary = value.replace(`${ALARM_FIELDS.ticketData}.`, '');
   } else {
     result.column = value;
   }
@@ -160,6 +166,8 @@ export const formToWidgetColumn = ({ key, column, dictionary, field, onlyIcon, l
     if (field) {
       result.value = `${column}.${field}`;
     }
+  } else if (isAlarmTicketDataWidgetColumn(column)) {
+    result.value = [column, dictionary].filter(Boolean).join('.');
   }
 
   return result;
