@@ -16,7 +16,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with boolean type c
         <input
           aria-checked="false"
           aria-disabled="false"
-          name="mixedFieldName"
+          name="mixedFieldName.switch"
           role="switch"
           type="checkbox"
           value=""
@@ -65,7 +65,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with custom props c
       >
         <input
           disabled="disabled"
-          name="mixedFieldName"
+          name="mixedFieldName.combobox"
           placeholder="Mixed field label"
           type="text"
         />
@@ -91,7 +91,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with default props 
         class="v-text-field__slot"
       >
         <input
-          name="value"
+          name="value.combobox"
           placeholder=""
           type="text"
         />
@@ -131,7 +131,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with errors correct
         class="v-text-field__slot"
       >
         <input
-          name="value"
+          name="value.combobox"
           placeholder=""
           type="text"
         />
@@ -171,7 +171,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type corr
       >
         <input
           disabled="disabled"
-          name="mixedFieldName"
+          name="mixedFieldName.text_field"
           type="text"
         />
       </div>
@@ -195,17 +195,6 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type corr
 
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type correctly 2`] = `undefined`;
 
-exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type correctly 3`] = `
-<c-array-text-field-stub
-  class="c-mixed-input-field"
-  errormessages=""
-  name="mixedFieldName"
-  values="0,1,,false,"
-/>
-`;
-
-exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type correctly 4`] = `undefined`;
-
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with number type correctly 1`] = `
 <div
   class="v-input c-mixed-input-field v-input--is-label-active v-input--is-dirty theme--light v-text-field v-text-field--single-line v-text-field--placeholder c-mixed-input-field__text"
@@ -220,7 +209,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with number type co
         class="v-text-field__slot"
       >
         <input
-          name="mixedFieldName"
+          name="mixedFieldName.combobox"
           placeholder="Mixed field with number type"
           type="number"
         />
@@ -261,7 +250,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with string type an
         <input
           aria-checked="false"
           aria-disabled="false"
-          name="mixedFieldName"
+          name="mixedFieldName.switch"
           role="switch"
           type="checkbox"
           value=""
@@ -291,3 +280,14 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with string type an
   </div>
 </div>
 `;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with stringArray type correctly 1`] = `
+<c-array-text-field-stub
+  class="c-mixed-input-field"
+  errormessages=""
+  name="mixedFieldName.array_text_field"
+  values="0,1,,false,"
+/>
+`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with stringArray type correctly 2`] = `undefined`;

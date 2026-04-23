@@ -2,10 +2,7 @@ package patternfields
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/go-playground/validator/v10"
 )
 
 type EntityRequest struct {
@@ -45,42 +42,7 @@ func (r EntityRequest) ToModelWithoutFields(collectionName string) savedpattern.
 	}
 }
 
-func ValidateEntityPattern(fl validator.FieldLevel) bool {
-	i := fl.Field().Interface()
-	if i == nil {
-		return true
-	}
-
-	p, ok := i.(pattern.Entity)
-
-	return ok && match.ValidateEntityPattern(p, nil)
-}
-
-func GetForbiddenFieldsInEntityPattern(collection string) []string {
-	switch collection {
-	case mongo.StateSettingsMongoCollection:
-		return []string{"last_event_date", "component", "component_infos"}
-	case mongo.EntityMongoCollection:
-		return []string{"last_event_date", "connector", "component_infos"}
-	case mongo.PbehaviorMongoCollection,
-		mongo.IdleRuleMongoCollection,
-		mongo.DynamicInfosRulesMongoCollection,
-		mongo.MetaAlarmRulesMongoCollection,
-		mongo.FlappingRuleMongoCollection,
-		mongo.ResolveRuleMongoCollection,
-		mongo.ScenarioCollection,
-		mongo.InstructionMongoCollection,
-		mongo.KpiFilterMongoCollection,
-		mongo.DeclareTicketRuleCollection,
-		mongo.LinkRuleMongoCollection,
-		mongo.AlarmTagCollection:
-		return []string{"last_event_date"}
-	default:
-		return nil
-	}
-}
-
-func GetAliases(p pattern.Entity) []string {
+func GetAliases(p [][]pattern.FieldCondition) []string {
 	aliases := make([]string, 0)
 	for _, g := range p {
 		for _, c := range g {

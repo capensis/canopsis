@@ -28,9 +28,9 @@ const EntityDefaultImpactLevel = 1
 
 // Info contain extra values for the entity
 type Info struct {
-	Name        string      `bson:"name,omitempty" json:"name"`
-	Description string      `bson:"description,omitempty" json:"description"`
-	Value       interface{} `bson:"value,omitempty" json:"value"`
+	Name        string `bson:"name,omitempty" json:"name"`
+	Description string `bson:"description,omitempty" json:"description"`
+	Value       any    `bson:"value,omitempty" json:"value"`
 }
 
 // Entity ...
@@ -40,7 +40,7 @@ type Entity struct {
 	Author         string             `bson:"author,omitempty" json:"author,omitempty"`
 	Description    string             `bson:"description" json:"description"`
 	EnableHistory  []datetime.CpsTime `bson:"enable_history" json:"enable_history"`
-	Measurements   interface{}        `bson:"measurements" json:"measurements"` // unused collection ids
+	Measurements   any                `bson:"measurements" json:"measurements"` // unused collection ids
 	Enabled        bool               `bson:"enabled" json:"enabled"`
 	Infos          map[string]Info    `bson:"infos" json:"infos"`
 	ComponentInfos map[string]Info    `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
@@ -74,7 +74,7 @@ type Entity struct {
 	Imported     *datetime.CpsTime `bson:"imported,omitempty" json:"imported"`
 	ImportTags   []string          `bson:"imtags,omitempty" json:"imtags,omitempty"`
 
-	PbehaviorInfo     PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	PbehaviorInfo     PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info"`
 	LastPbehaviorDate *datetime.CpsTime `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty"`
 
 	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`

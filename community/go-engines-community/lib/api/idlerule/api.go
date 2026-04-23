@@ -17,6 +17,8 @@ import (
 type API interface {
 	crud.BulkAPI
 	DBExport(c *gin.Context)
+	BulkEnable(c *gin.Context)
+	BulkDisable(c *gin.Context)
 }
 
 type api struct {
@@ -38,7 +40,7 @@ func NewApi(
 }
 
 // List
-// @Success 200 {object} pagination.ListResponse{data=[]idlerule.Rule}
+// @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
@@ -61,7 +63,7 @@ func (a *api) List(c *gin.Context) {
 }
 
 // Get
-// @Success 200 {object} idlerule.Rule
+// @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
 	rule, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
@@ -80,7 +82,7 @@ func (a *api) Get(c *gin.Context) {
 
 // Create
 // @Param body body EditRequest true "body"
-// @Success 201 {object} idlerule.Rule
+// @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 	if err := validation.Bind(c, &request); err != nil {
@@ -107,7 +109,7 @@ func (a *api) Create(c *gin.Context) {
 
 // Update
 // @Param body body EditRequest true "body"
-// @Success 200 {object} Rule
+// @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),
@@ -192,15 +194,8 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID, err := authctx.GetUserKey(c)
-	if err != nil {
-		a.errorResponder.Respond(c, err)
-
-		return
-	}
-
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID, userID)
+		ok, err := a.store.Delete(c, request.ID, request.Author)
 		if err != nil {
 			return "", err
 		}
@@ -232,4 +227,31 @@ func (a *api) DBExport(c *gin.Context) {
 	}
 
 	dbexport.AttachFile(c, mongo.IdleRuleMongoCollection, b)
+}
+
+// BulkEnable
+// @Param body body []BulkToggleRequestItem true "body"
+func (a *api) BulkEnable(c *gin.Context) {
+	a.toggle(c, true)
+}
+
+// BulkDisable
+// @Param body body []BulkToggleRequestItem true "body"
+func (a *api) BulkDisable(c *gin.Context) {
+	a.toggle(c, false)
+}
+
+func (a *api) toggle(c *gin.Context, enabled bool) {
+	bulk.Handler(c, func(request BulkToggleRequestItem) (string, error) {
+		found, err := a.store.Toggle(c, request, enabled)
+		if err != nil {
+			return "", err
+		}
+
+		if !found {
+			return "", httperror.ErrNotFound
+		}
+
+		return request.ID, nil
+	}, a.errorResponder)
 }

@@ -139,7 +139,7 @@ describe('geomap-preview', () => {
 
     await flushPromises();
 
-    expect(fitBounds).toBeCalledWith({
+    expect(fitBounds).toHaveBeenCalledWith({
       _northEast: point.coordinates,
       _southWest: point.coordinates,
     });
@@ -165,7 +165,7 @@ describe('geomap-preview', () => {
 
     await flushPromises();
 
-    expect(fitBounds).toBeCalledWith({
+    expect(fitBounds).toHaveBeenCalledWith({
       _northEast: secondPoint.coordinates,
       _southWest: point.coordinates,
     });

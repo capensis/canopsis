@@ -142,7 +142,7 @@ function toStructureEqual(received, expected) {
 
 function toBeDispatchedWith(received, expected) {
   try {
-    expect(received).toBeCalledWith(
+    expect(received).toHaveBeenCalledWith(
       expect.any(Object),
       expected,
 

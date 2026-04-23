@@ -2,6 +2,7 @@
   <v-expansion-panels
     v-model="localExpanded"
     :style="panelStyle"
+    :disabled="disabled"
     class="c-collapse-panel elevation-2"
     accordion
   >
@@ -36,7 +37,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Validator } from 'vee-validate';
 
 import { useValidationChildren } from '@/hooks/validator/validation-children';
@@ -72,6 +73,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const localExpanded = ref(props.expanded ? 0 : null);
@@ -79,12 +84,11 @@ export default {
     const { hasChildrenError } = useValidationChildren();
 
     const panelStyle = computed(() => ({ outlineColor: props.outlineColor }));
-
     const panelContentStyle = computed(() => ({ backgroundColor: props.color }));
-
     const hasError = computed(() => props.error || hasChildrenError.value);
-
     const headerColor = computed(() => (hasError.value ? 'error' : props.color));
+
+    watch(() => props.expanded, expanded => localExpanded.value = expanded ? 0 : null);
 
     return {
       localExpanded,

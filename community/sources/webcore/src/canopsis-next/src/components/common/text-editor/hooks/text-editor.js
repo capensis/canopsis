@@ -5,15 +5,14 @@ import { ajaxInstances } from 'jodit/esm/modules/uploader/helpers/send';
 
 import { FILE_BASE_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 
+import icons from '@/plugins/vuetify/components/icons';
+
 import localStorageService from '@/services/local-storage';
 
 import { matchPayloadVariableBySelection } from '@/helpers/payload-json';
 import { hasAtLeastOneVariable } from '@/helpers/variables';
 
 import { useI18n } from '@/hooks/i18n';
-
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import VariablesIcon from '!!svg-inline-loader?modules!@/assets/images/variables.svg';
 
 /**
  * Hook for managing text editor upload functionality.
@@ -422,7 +421,7 @@ export const useTextEditorVariables = ({ editor, variables }) => {
   }));
 
   const variablesExtraIcon = computed(() => ({
-    variables: `<i class="material-icons v-icon v-icon--small" style="width: 18px; height: 18px;">${VariablesIcon}</i>`,
+    variables: `<i class="material-icons v-icon v-icon--small" style="width: 18px; height: 18px;">${icons.variables_x?.component?.template ?? 'variable_add'}</i>`,
   }));
 
   onBeforeUnmount(() => document.removeEventListener('selectionchange', selectVariableValueByCursor));

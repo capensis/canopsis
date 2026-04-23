@@ -47,6 +47,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-entity-tags-chips', 'c-copy-wrapper', 'c-links-list',
     'service-entities-list', 'v-icon', 'v-row', 'v-chip', 'c-remediation-instruction-execution-see-details',
+    'c-request-helper',
   ]),
   allowedAttributes: {
     '*': [
@@ -75,6 +76,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     ],
     'v-chip': ['color', 'text-color'],
     'c-remediation-instruction-execution-see-details': [':execution'],
+    'c-request-helper': ['helper-id', 'key'],
   },
   allowedSchemes: sanitizeHtml.defaults.allowedSchemes.concat(['data']),
   disallowedTagsMode: 'escape',
@@ -244,6 +246,7 @@ export const API_ROUTES = {
     list: '/api/v4/broadcast-message',
     activeList: '/api/v4/active-broadcast-message',
   },
+  commentTemplate: '/api/v4/comment-templates',
   counter: '/api/v4/alarm-counters',
   playlist: '/api/v4/playlists',
   pbehavior: {
@@ -293,6 +296,7 @@ export const API_ROUTES = {
     bulkList: '/api/v4/bulk/patterns',
     entitiesCount: '/api/v4/patterns-entities-count',
     alarmsCount: '/api/v4/patterns-alarms-count',
+    entitiesOptimize: '/api/v4/patterns-entities-optimize',
   },
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
@@ -352,6 +356,30 @@ export const API_ROUTES = {
     instructions: '/api/v4/cat/instructions-db-export',
     jobs: '/api/v4/cat/jobs-db-export',
     jobConfigs: '/api/v4/cat/job-configs-db-export',
+  },
+
+  patternFields: {
+    flappingRule: '/api/v4/flapping-rule-pattern-fields',
+    idleRule: '/api/v4/idle-rule-pattern-fields',
+    linkRule: '/api/v4/link-rule-pattern-fields',
+    resolveRule: '/api/v4/resolve-rule-pattern-fields',
+    pbehavior: '/api/v4/pbehavior-pattern-fields',
+    alarmTag: '/api/v4/alarm-tag-pattern-fields',
+    widgetFilter: '/api/v4/widget-filter-pattern-fields',
+    service: '/api/v4/entityservice-pattern-fields',
+    stateSetting: '/api/v4/state-setting-pattern-fields',
+    eventFilter: '/api/v4/eventfilter-pattern-fields',
+    scenario: '/api/v4/scenario-pattern-fields',
+
+    /**
+     * Cat routes for pattern fields
+     */
+    metaalarmrule: '/api/v4/cat/metaalarmrule-pattern-fields',
+    declareTicketRule: '/api/v4/cat/declare-ticket-rule-pattern-fields',
+    instruction: '/api/v4/cat/instruction-pattern-fields',
+    kpiFilter: '/api/v4/cat/kpi-filter-pattern-fields',
+    dynamicInfos: '/api/v4/cat/dynamic-infos-pattern-fields',
+    eventRecord: '/api/v4/cat/event-record-pattern-fields',
   },
 
   /**
@@ -539,6 +567,13 @@ export const COLORS = {
     unknown: '#C4C4C4',
     edgeGray: '#979797',
     edgeBlack: '#000000',
+  },
+  declareTicketRuleTicketStatusChip: {
+    unknown: '#E0E0E0',
+    open: '#BBDEFB',
+    assigned: '#FFC107',
+    inProgress: '#FFECB3',
+    closed: '#4CAF50',
   },
   impactState: [
     '#2FAB63',

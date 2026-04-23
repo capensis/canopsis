@@ -10,12 +10,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -23,28 +25,36 @@ type API interface {
 	BulkDelete(c *gin.Context)
 	CountAlarms(c *gin.Context)
 	CountEntities(c *gin.Context)
+	Optimize(c *gin.Context)
+	OptimizeStatus(c *gin.Context)
+	OptimizeAccept(c *gin.Context)
+	OptimizeCancel(c *gin.Context)
 }
 
 type api struct {
 	store          Store
 	enforcer       security.Enforcer
 	errorResponder httperror.Responder
-
 	configProvider config.UserInterfaceConfigProvider
+	optimizeWorker OptimizeWorker
+	logger         zerolog.Logger
 }
 
-func NewApi(
+func NewAPI(
 	store Store,
 	configProvider config.UserInterfaceConfigProvider,
 	enforcer security.Enforcer,
+	optimizeWorker OptimizeWorker,
 	errorResponder httperror.Responder,
+	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:          store,
 		enforcer:       enforcer,
 		errorResponder: errorResponder,
-
 		configProvider: configProvider,
+		optimizeWorker: optimizeWorker,
+		logger:         logger,
 	}
 }
 
@@ -368,4 +378,107 @@ func (a *api) CountEntities(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+}
+
+// Optimize
+// @Param body body OptimizeRequest true "body"
+// @Success 200 {object} OptimizeJob
+func (a *api) Optimize(c *gin.Context) {
+	request := OptimizeRequest{}
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	job, err := a.optimizeWorker.CreateJob(c, request)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	c.JSON(http.StatusOK, job)
+}
+
+// OptimizeStatus
+// @Success 200 {array} OptimizeJob
+func (a *api) OptimizeStatus(c *gin.Context) {
+	job, err := a.optimizeWorker.GetJob(c, c.Param("id"))
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	if job.ID == "" {
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
+		return
+	}
+
+	c.JSON(http.StatusOK, job)
+}
+
+// OptimizeAccept
+// @Param body body OptimizeAcceptRequest true "body"
+// @Success 200 {object} OptimizeJob
+func (a *api) OptimizeAccept(c *gin.Context) {
+	request := OptimizeAcceptRequest{
+		ID: c.Param("id"),
+	}
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	job, err := a.optimizeWorker.UpdateJob(c, request)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	if job.ID == "" {
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
+// OptimizeCancel
+// @Success 204
+func (a *api) OptimizeCancel(c *gin.Context) {
+	ok, err := a.optimizeWorker.DeleteJob(c, c.Param("id"))
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	if !ok {
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
+// GetPatternFieldsHandler
+// @Success 200 {array} patternfields.FieldsResponse
+func GetPatternFieldsHandler(patternFieldGetter patternfields.FieldGetter, errorResponder httperror.Responder, collection string) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		res, err := patternFieldGetter.Get(c, collection)
+		if err != nil {
+			errorResponder.Respond(c, err)
+
+			return
+		}
+
+		c.JSON(http.StatusOK, res)
+	}
 }

@@ -42,6 +42,8 @@
       :required="isChangeEntityType"
       :with-entity="!isChangeEntityType"
       :expanded-event="isNew"
+      :event-attributes="eventAttributes"
+      :pending="attributesPending"
       with-event
       entity-counters-type
     />
@@ -126,6 +128,14 @@ export default {
       default: false,
     },
     isNew: {
+      type: Boolean,
+      default: false,
+    },
+    eventAttributes: {
+      type: Array,
+      required: false,
+    },
+    attributesPending: {
       type: Boolean,
       default: false,
     },

@@ -16,6 +16,7 @@
           />
         </div>
       </div>
+      <modal-mass-actions-panel :id="$modal.id" />
     </v-card-title>
     <template v-if="!$modal.minimized">
       <v-card-text
@@ -42,10 +43,11 @@
 import { CSS_COLORS_VARS } from '@/config';
 
 import ModalTitleButtons from './modal-title-buttons.vue';
+import ModalMassActionsPanel from './modal-mass-actions-panel.vue';
 
 export default {
   inject: ['$modal'],
-  components: { ModalTitleButtons },
+  components: { ModalTitleButtons, ModalMassActionsPanel },
   props: {
     fillHeight: {
       type: Boolean,
