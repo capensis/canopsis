@@ -7,6 +7,7 @@
     :required="required"
     :attributes="availableEventFilterAttributes"
     :counter="counter"
+    class="c-event-filter-patterns-field"
   />
 </template>
 

@@ -24,12 +24,14 @@
 </template>
 
 <script>
-import { computed, ref, toRef, onMounted } from 'vue';
+import { computed, onMounted, ref, toRef } from 'vue';
+
+import { TEMPLATE_TESTING_TEST_VARIABLES_TABS } from '@/constants';
 
 import { useCopyVarsList } from '@/hooks/vars/copy';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
-import { useTestVariablesTabData } from './hooks/template-test-variables-wrapper';
+import { useTemplateTestVariablesAiChatExpand, useTestVariablesTabData } from './hooks/template-test-variables-wrapper';
 import TemplateTestingTestVariables from './template-testing-test-variables.vue';
 import TemplateTestingTestVariablesTab from './partials/template-testing-test-variables-tab.vue';
 
@@ -55,9 +57,11 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const activeTab = ref(0);
+    const activeTab = ref(TEMPLATE_TESTING_TEST_VARIABLES_TABS.general);
 
-    const isActiveTestingTab = computed(() => activeTab.value === 1);
+    const isActiveTestingTab = computed(
+      () => activeTab.value === TEMPLATE_TESTING_TEST_VARIABLES_TABS.testVariables,
+    );
 
     const {
       vars: copyVars,
@@ -84,6 +88,8 @@ export default {
     } = useTestVariablesTabData(props, toRef(props, 'type'), emit);
 
     const pending = computed(() => templateVarsPending.value || copyVarsPending.value);
+
+    useTemplateTestVariablesAiChatExpand(activeTab);
 
     onMounted(() => {
       fetchCopyVarsList();

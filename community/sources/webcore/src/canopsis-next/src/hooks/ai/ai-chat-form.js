@@ -13,7 +13,9 @@ import {
 } from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-import { LLM_AI_CHAT_WIDTH, LLM_SOCKET_CONTEXTS, LLM_AI_CHAT_TOURS } from '@/constants';
+import { LLM_AI_CHAT_WIDTH, LLM_SOCKET_CONTEXTS, LLM_AI_CHAT_TOURS, PATTERNS_FIELDS } from '@/constants';
+
+import Observer from '@/services/observer';
 
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 import { aiChatFormToPatterns } from '@/helpers/entities/llm/chat/form';
@@ -198,7 +200,7 @@ export const useAiChatJsonString = () => {
  *   throttledUpdatePatterns: function,
  * }}
  */
-export const useAiChatFormPatterns = ({ form, field, context }) => {
+export const useAiChatFormPatterns = ({ form, field, context, callExpand }) => {
   const validator = useValidator();
 
   const patterns = ref({});
@@ -217,12 +219,11 @@ export const useAiChatFormPatterns = ({ form, field, context }) => {
       const index = formRef.value.findIndex(item => item.key === key);
       const formItem = formRef.value[index];
 
-      set(formRef.value, index, {
-        ...formItem,
-        ...filterPatternsToForm(newPatterns),
-      });
+      set(formRef.value[index], 'patterns', filterPatternsToForm(newPatterns, Object.values(PATTERNS_FIELDS)));
 
       Object.keys(newPatterns).forEach(patternField => validator.errors.clear(`actions.${formItem.key}.${patternField}.json`));
+
+      callExpand({ key, fields: Object.keys(newPatterns) });
 
       return;
     }
@@ -242,6 +243,8 @@ export const useAiChatFormPatterns = ({ form, field, context }) => {
     }
 
     Object.keys(newPatterns).forEach(patternField => validator.errors.clear(`${patternField}.json`));
+
+    callExpand({ fields: Object.keys(newPatterns) });
   };
 
   /**
@@ -428,6 +431,8 @@ export const useAiChatForm = ({
   context,
   field,
 }) => {
+  const expandFunctionsObserver = new Observer(true);
+
   const { patternsItems } = useAiChatPatternsItems({ form, context });
   const { initialMinimized, updateMinimized } = useAiChatMinimized({ modal });
   const { pending, pendingTexts, updatePending } = useAiChatPending();
@@ -436,7 +441,13 @@ export const useAiChatForm = ({
     patterns,
     updateFormPatterns,
     throttledUpdatePatterns,
-  } = useAiChatFormPatterns({ form, field, context });
+  } = useAiChatFormPatterns({
+    form,
+    field,
+    context,
+    callExpand: expandFunctionsObserver.notifyInSeries.bind(expandFunctionsObserver),
+  });
+
   const { llms, shown, showChat, hideChat } = useAiChatShown({ form, throttledUpdatePatterns });
   const { registerChatId, linkChatsWithRuleId } = useAiChatLinkChats({ ruleId });
 
@@ -463,6 +474,8 @@ export const useAiChatForm = ({
     llms,
     updateJsonString,
     registerChatId,
+    registerExpandFunction: expandFunctionsObserver.register.bind(expandFunctionsObserver),
+    unregisterExpandFunction: expandFunctionsObserver.unregister.bind(expandFunctionsObserver),
   });
 
   /**

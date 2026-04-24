@@ -205,6 +205,7 @@ import { usePatternCountAlarmsModal } from './hooks/pattern-count-alarms-modal';
 import { usePatternCountEntitiesModal } from './hooks/pattern-count-entities-modal';
 import { usePatternCounters } from './hooks/pattern-counters';
 import { usePatternOptimization } from './hooks/pattern-optimization';
+import { usePatternsFieldExpand } from './hooks/patterns-field-expand';
 import PatternCountMessage from './pattern-count-message.vue';
 import PatternTryOptimization from './pattern-try-optimization.vue';
 import PatternProgress from './pattern-progress.vue';
@@ -218,6 +219,8 @@ import PatternFieldSuggestionsWrapper from './pattern-field-suggestions-wrapper.
  * @returns {string} Combined field pattern name
  */
 const getFieldPatternName = (componentName, fieldName) => [componentName, fieldName].filter(Boolean).join('.');
+
+export { PATTERNS_FIELDS_TO_EXPANDED_KEYS } from './hooks/patterns-field-expand';
 
 export default {
   inject: ['$validator'],
@@ -553,6 +556,8 @@ export default {
         expanded.value.entity = true;
       }
     });
+
+    usePatternsFieldExpand({ wrapperElement, expanded });
 
     return {
       wrapperElement,

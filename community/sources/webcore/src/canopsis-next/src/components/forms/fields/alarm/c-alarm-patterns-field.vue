@@ -9,6 +9,7 @@
     :attributes="availableAlarmAttributes"
     :with-type="withType"
     :counter="counter"
+    class="c-alarm-patterns-field"
   >
     <template #append-count="">
       <v-btn

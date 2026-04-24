@@ -9,6 +9,7 @@
     :attributes="pbehaviorAttributes"
     :with-type="withType"
     :counter="counter"
+    class="c-pbehavior-patterns-field"
   />
 </template>
 
