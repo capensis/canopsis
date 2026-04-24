@@ -981,7 +981,7 @@ export const useAiChat = ({
     resetPatternItem,
   } = useAiChatPatternItem({ context });
 
-  const updateFormPatterns = newPatterns => emit('update:patterns', newPatterns, patternItem?.value?.key);
+  const updateFormPatterns = newPatterns => emit('update:patterns', newPatterns, patternItem.value?.value);
 
   const {
     currentFormPatterns,

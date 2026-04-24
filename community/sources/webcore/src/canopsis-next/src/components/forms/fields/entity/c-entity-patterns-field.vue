@@ -9,6 +9,7 @@
     :attributes="availableEntityAttributes"
     :with-type="withType"
     :counter="counter"
+    class="c-entity-patterns-field"
   >
     <template #append-count="">
       <v-btn
