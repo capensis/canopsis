@@ -33,7 +33,8 @@ type UpdateRequest struct {
 
 type FilterRequest struct {
 	widgetfilter.BaseEditRequest
-	ID string `json:"_id"`
+	ID      string `json:"_id"`
+	LLMChat string `json:"llm_chat"`
 }
 
 type EditGridPositionItemRequest struct {
