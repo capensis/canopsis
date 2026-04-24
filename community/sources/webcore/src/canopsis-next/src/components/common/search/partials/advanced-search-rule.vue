@@ -416,6 +416,7 @@ export default {
         component = 'advanced-search-range-value-date-chip';
       } else if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration) {
         component = 'advanced-search-duration-chip';
+        bind.long = true;
       }
 
       return {
