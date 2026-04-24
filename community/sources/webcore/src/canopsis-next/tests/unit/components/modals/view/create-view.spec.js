@@ -141,7 +141,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       ...newView,
       group: newGroup._id,
     });
@@ -190,7 +190,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       ...fakedViewWithoutId,
       group: fakedView.group._id,
     });
@@ -243,7 +243,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       ...fakedViewWithoutId,
       group: fakedView.group._id,
     });
@@ -296,7 +296,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       ...fakedViewWithoutId,
       group: fakedView.group._id,
     });
@@ -325,7 +325,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.confirmation,
       config: {
         action: expect.any(Function),
@@ -361,7 +361,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.confirmation,
       config: {
         action: expect.any(Function),
@@ -372,7 +372,7 @@ describe('create-view', () => {
     await config.action();
 
     expect(remove).toBeCalled();
-    expect($popups.error).toBeCalledWith({
+    expect($popups.error).toHaveBeenCalledWith({
       text: 'View deletion failed...',
     });
     expect($modals.hide).not.toBeCalled();

@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash';
+
 import {
   formToRequest,
   formToRequestAuthToken,
@@ -11,7 +13,18 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
 import { uid } from '@/helpers/uid';
 
 /**
+ * @typedef {Object} DeclareTicketRuleCheckTicketStatus
+ * @property {Request} request
+ * @property {RequestAuthToken} auth_token
+ * @property {Object} status_mapping
+ * @property {string} [ticket_status]
+ * @property {string} [ticket_status_tpl]
+ * @property {boolean} reuse_headers_and_auth
+ */
+
+/**
  * @typedef {Object} DeclareTicketRuleWebhookDeclareTicket
+ * @property {DeclareTicketRuleCheckTicketStatus} [check_ticket_status]
  * @property {string} empty_response
  * @property {string} is_regexp
  * @property {string} ticket_id
@@ -43,23 +56,26 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
- * @typedef {Object} DeclareTicketRuleWebhookTickerUrlForm
+ * @typedef {Object} DeclareTicketRuleWebhookTicketTemplateForm
  * @property {boolean} template
  * @property {string} value
  */
 
 /**
- * @typedef {Object} DeclareTicketRuleWebhookTickerIdForm
- * @property {boolean} template
- * @property {string} value
+ * @typedef {Object} DeclareTicketRuleCheckTicketStatusForm
+ * @property {RequestForm} request
+ * @property {RequestAuthTokenForm} auth_token
+ * @property {TextPairObject[]} status_mapping
+ * @property {DeclareTicketRuleWebhookTicketTemplateForm} ticket_status
+ * @property {boolean} reuse_headers_and_auth
  */
 
 /**
  * @typedef {DeclareTicketRuleWebhookDeclareTicket} DeclareTicketRuleWebhookDeclareTicketForm
  * @property {boolean} enabled
  * @property {TextPairObject[]} mapping
- * @property {DeclareTicketRuleWebhookTickerIdForm} ticket_id
- * @property {DeclareTicketRuleWebhookTickerUrlForm} ticket_url
+ * @property {DeclareTicketRuleWebhookTicketTemplateForm} ticket_id
+ * @property {DeclareTicketRuleWebhookTicketTemplateForm} ticket_url
  */
 
 /**
@@ -80,6 +96,35 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
+ * Convert declare ticket rule check ticket status object to form compatible object
+ *
+ * @param {DeclareTicketRuleCheckTicketStatus} declareTicketStatus
+ * @returns {DeclareTicketRuleCheckTicketStatusForm}
+ */
+export const declareTicketRuleCheckTicketStatusToForm = (declareTicketStatus = {}) => {
+  const {
+    request = {},
+    auth_token: authToken = {},
+    status_mapping: statusMapping = [],
+    ticket_status: ticketStatus = '',
+    ticket_status_tpl: ticketStatusTpl = '',
+    reuse_headers_and_auth: reuseHeadersAndAuth = false,
+  } = declareTicketStatus;
+
+  return {
+    enabled: !isEmpty(declareTicketStatus),
+    request: requestToForm(request, authToken),
+    auth_token: requestAuthTokenToForm(authToken),
+    status_mapping: objectToTextPairs(statusMapping),
+    ticket_status: {
+      template: !!ticketStatusTpl,
+      value: ticketStatusTpl || ticketStatus,
+    },
+    reuse_headers_and_auth: reuseHeadersAndAuth,
+  };
+};
+
+/**
  * Convert declare ticket object to form compatible object
  *
  * @param {DeclareTicketRuleWebhookDeclareTicket} declareTicket
@@ -94,6 +139,7 @@ export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket) => {
     ticket_url: ticketUrl = '',
     ticket_url_tpl: ticketUrlTpl = '',
     ticket_url_title: ticketUrlTitle = '',
+    check_ticket_status: checkTicketStatus,
     ...fields
   } = declareTicket ?? {};
 
@@ -111,6 +157,7 @@ export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket) => {
     },
     ticket_url_title: ticketUrlTitle,
     mapping: objectToTextPairs(fields),
+    check_ticket_status: declareTicketRuleCheckTicketStatusToForm(checkTicketStatus),
   };
 };
 
@@ -152,6 +199,40 @@ export const declareTicketRuleToForm = (declareTicketRule = {}) => ({
 });
 
 /**
+ * Convert declare ticket rule check ticket status form to API compatible object
+ *
+ * @param {DeclareTicketRuleCheckTicketStatusForm} form
+ * @returns {DeclareTicketRuleCheckTicketStatus}
+ */
+export const formToDeclareTicketRuleCheckTicketStatus = (form) => {
+  const {
+    enabled,
+    ticket_status: ticketStatus,
+  } = form;
+
+  if (!enabled) {
+    return null;
+  }
+
+  const result = {
+    request: formToRequest(form.request),
+    auth_token: formToRequestAuthToken(form.auth_token),
+    status_mapping: textPairsToObject(form.status_mapping),
+    reuse_headers_and_auth: form.reuse_headers_and_auth || false,
+  };
+
+  if (ticketStatus.template) {
+    result.ticket_status = '';
+    result.ticket_status_tpl = ticketStatus.value;
+  } else {
+    result.ticket_status = ticketStatus.value;
+    result.ticket_status_tpl = '';
+  }
+
+  return result;
+};
+
+/**
  * Convert declare ticket rule webhook form to API compatible object
  *
  * @param {DeclareTicketRuleWebhookDeclareTicketForm} form
@@ -173,6 +254,8 @@ export const formToDeclareTicketRuleWebhookDeclareTicket = (form) => {
   const declareTicket = {
     ...rest,
     ...textPairsToObject(mapping),
+
+    check_ticket_status: formToDeclareTicketRuleCheckTicketStatus(form.check_ticket_status),
   };
 
   if (ticketUrl.template) {
@@ -202,6 +285,7 @@ export const formToDeclareTicketRuleWebhookDeclareTicket = (form) => {
  */
 export const formToDeclareTicketRuleWebhook = webhook => ({
   ...webhook,
+
   declare_ticket: formToDeclareTicketRuleWebhookDeclareTicket(webhook.declare_ticket),
   request: formToRequest(webhook.request),
   auth_token: formToRequestAuthToken(webhook.auth_token, webhook.request.auth?.type),

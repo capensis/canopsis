@@ -5,6 +5,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 // Adapter interface is used to implement a storage adapter.
@@ -24,7 +25,10 @@ func NewAdapter(client mongo.DbClient) Adapter {
 }
 
 func (a *mongoAdapter) Get(ctx context.Context) ([]Rule, error) {
-	cursor, err := a.collection.Aggregate(ctx, priority.GetSortPipeline())
+	cursor, err := a.collection.Aggregate(
+		ctx,
+		append([]bson.M{{"$match": bson.M{"enabled": true}}}, priority.GetSortPipeline()...),
+	)
 	if err != nil {
 		return nil, err
 	}

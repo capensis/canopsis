@@ -154,6 +154,7 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 				InsecureSkipVerify: casConfig.InsecureSkipVerify, //nolint:gosec
 			}
 			if !casConfig.InsecureVerifyAnyCert {
+				tc.SessionTicketsDisabled = true
 				tc.VerifyPeerCertificate = libsectls.VerifySelfSignedCertificate(tc)
 			}
 
@@ -188,6 +189,7 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 					InsecureSkipVerify: conf.InsecureSkipVerify, //nolint:gosec
 				}
 				if !conf.InsecureVerifyAnyCert {
+					tc.SessionTicketsDisabled = true
 					tc.VerifyPeerCertificate = libsectls.VerifySelfSignedCertificate(tc)
 				}
 

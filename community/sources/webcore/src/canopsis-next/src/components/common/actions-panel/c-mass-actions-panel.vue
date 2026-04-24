@@ -31,11 +31,12 @@
 </template>
 
 <script>
-import { computed, inject } from 'vue';
+import { computed, inject, onBeforeUnmount } from 'vue';
+
+import { PORTALS_NAMES } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
-
-import { PORTALS_NAMES } from '@/constants/common';
+import { useModelField } from '@/hooks/form/model-field';
 
 export default {
   model: {
@@ -44,6 +45,10 @@ export default {
   },
   props: {
     value: {
+      type: Boolean,
+      default: false,
+    },
+    defaultValue: {
       type: Boolean,
       default: false,
     },
@@ -70,6 +75,7 @@ export default {
   },
   setup(props, { emit }) {
     const { tc } = useI18n();
+    const { updateModel } = useModelField(props, emit);
     const modal = inject('$modal', null);
 
     const target = computed(() => `${PORTALS_NAMES.massActionsPanel}${modal?.id ? `-${modal.id}` : ''}`);
@@ -92,12 +98,7 @@ export default {
      */
     const clearSelected = () => emit('clear:selected');
 
-    /**
-     * Emits 'update:keep-selected' to notify the parent to update the keep selected after action.
-     *
-     * @param {boolean} value
-     */
-    const updateKeepSelected = value => emit('update:keep-selected', value);
+    onBeforeUnmount(() => updateModel(props.defaultValue));
 
     return {
       target,
@@ -105,7 +106,6 @@ export default {
       style,
 
       clearSelected,
-      updateKeepSelected,
     };
   },
 };

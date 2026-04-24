@@ -467,7 +467,7 @@ describe('flowchart-editor', () => {
 
     const copiedData = JSON.stringify(pick(shapes, [SHAPES.rect, SHAPES.circle]));
 
-    expect(writeTextToClipboard).toBeCalledWith(copiedData);
+    expect(writeTextToClipboard).toHaveBeenCalledWith(copiedData);
 
     readTextFromClipboard.mockReturnValueOnce(copiedData);
 

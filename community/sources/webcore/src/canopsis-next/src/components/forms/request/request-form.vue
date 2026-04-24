@@ -46,7 +46,9 @@
       </v-flex>
       <v-flex xs6>
         <c-information-block :title="$t('common.request.repeatRequest')">
+          <span v-if="hideRepeat" class="font-italic mt-4">{{ $t('common.request.repeatRequestInTomlFile') }}</span>
           <c-retry-field
+            v-else
             v-field="form"
             :disabled="disabled"
           />
@@ -59,7 +61,8 @@
       :disabled="disabled"
       hide-details
     />
-    <c-information-block :title="$t('user.auth')" class="mb-2 mt-2">
+    <slot name="additional-fields" />
+    <c-information-block v-if="!hideAuth" :title="$t('user.auth')" class="mb-2 mt-2">
       <request-auth-with-token-field
         v-field="form.auth"
         :auth-token="authToken"
@@ -70,6 +73,7 @@
       />
     </c-information-block>
     <c-information-block
+      v-if="!hideHeaders"
       :title="$tc('common.header', 2)"
       :help-text="$t('common.request.headersHelpText')"
       class="mb-2"
@@ -132,6 +136,18 @@ export default {
       default: false,
     },
     hideUrl: {
+      type: Boolean,
+      default: false,
+    },
+    hideRepeat: {
+      type: Boolean,
+      default: false,
+    },
+    hideAuth: {
+      type: Boolean,
+      default: false,
+    },
+    hideHeaders: {
       type: Boolean,
       default: false,
     },
