@@ -166,7 +166,7 @@ describe('c-patterns-field', () => {
     });
 
     const pbehaviorPattern = patternToForm({
-      entity_pattern: [[
+      pbehavior_pattern: [[
         {
           field: PBEHAVIOR_PATTERN_FIELDS.name,
           cond: {
@@ -197,7 +197,7 @@ describe('c-patterns-field', () => {
     });
 
     const eventFilterPattern = patternToForm({
-      entity_pattern: [[
+      event_pattern: [[
         {
           field: EVENT_FILTER_PATTERN_FIELDS.output,
           cond: {

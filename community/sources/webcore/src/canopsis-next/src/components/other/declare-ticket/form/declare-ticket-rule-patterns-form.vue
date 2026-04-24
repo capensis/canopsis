@@ -9,7 +9,6 @@
     with-pbehavior
     with-alarm
     with-entity
-    both-counters
   />
 </template>
 

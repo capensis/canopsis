@@ -33,6 +33,7 @@
       :entity-attributes="entityAttributes"
       :pending="pending"
       :with-alarm="isAlarmType"
+      :entity-counters-type="!isAlarmType"
       some-required
       with-entity
     />
