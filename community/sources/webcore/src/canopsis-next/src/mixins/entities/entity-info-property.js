@@ -19,6 +19,7 @@ export const entitiesEntityInfoPropertyMixin = {
       createEntityInfoProperty: 'create',
       updateEntityInfoProperty: 'update',
       removeEntityInfoProperty: 'remove',
+      bulkRemoveEntityInfoProperty: 'bulkRemove',
       fetchEntityInfoPropertiesListWithoutStore: 'fetchListWithoutStore',
     }),
 

@@ -115,7 +115,7 @@ describe('service-dependencies', () => {
 
     await flushPromises();
 
-    expect(fetchDependenciesWithoutStore).toBeCalledWith(
+    expect(fetchDependenciesWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: entity._id,
@@ -145,7 +145,7 @@ describe('service-dependencies', () => {
 
     treeviewTable.vm.loadChildren(entityWithDeps);
 
-    expect(fetchDependenciesWithoutStore).toBeCalledWith(
+    expect(fetchDependenciesWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: entityWithDeps._id,
@@ -190,7 +190,7 @@ describe('service-dependencies', () => {
 
     await flushPromises();
 
-    expect(fetchDependenciesWithoutStore).toBeCalledWith(
+    expect(fetchDependenciesWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: entity._id,
@@ -229,7 +229,7 @@ describe('service-dependencies', () => {
 
     const [, entityWithDeps] = data;
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.serviceDependencies,
       config: {
         columns,

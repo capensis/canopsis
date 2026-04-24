@@ -20,7 +20,7 @@ import { QUICK_RANGES } from '@/constants';
 import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 import { useFetchListWithOptions } from '@/hooks/query/shared';
-import { useRemdeitionInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
+import { useRemediationInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
 
 import RemediationInstructionStatsList from '@/components/other/remediation/instruction-stats/remediation-instruction-stats-list.vue';
 
@@ -36,7 +36,7 @@ export default {
       remediationInstructionStatsPending,
       remediationInstructionStatsMeta,
       fetchRemediationInstructionStatsList,
-    } = useRemdeitionInstructionStats();
+    } = useRemediationInstructionStats();
 
     const {
       options,

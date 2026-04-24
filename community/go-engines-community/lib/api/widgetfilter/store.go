@@ -497,20 +497,28 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditReque
 		return err
 	}
 
-	var valErrs, applyErrs validator.ValidationErrors
-	r.AlarmRequest, applyErrs = s.transformer.ApplyAlarmCorporatePattern(r.AlarmRequest, patterns)
-	valErrs = append(valErrs, applyErrs...)
+	var alarmApplyErrs validator.ValidationErrors
+	r.AlarmRequest, alarmApplyErrs = s.transformer.ApplyAlarmCorporatePattern(r.AlarmRequest, patterns)
+
+	var entityApplyErrs validator.ValidationErrors
 	if r.CorporateEntityPattern != "" {
-		r.EntityRequest, model.Aliases, applyErrs = s.transformer.ApplyEntityCorporatePattern(r.EntityRequest, patterns)
+		r.EntityRequest, model.Aliases, entityApplyErrs = s.transformer.ApplyEntityCorporatePattern(r.EntityRequest, patterns)
 	} else if r.EntityPattern != nil {
-		r.EntityPattern, model.Aliases, applyErrs = s.transformer.ApplyAliases(r.EntityPattern, aliases)
+		r.EntityPattern, model.Aliases, entityApplyErrs = s.transformer.ApplyAliases(r.EntityPattern, aliases)
 	}
 
-	valErrs = append(valErrs, applyErrs...)
-	r.PbehaviorRequest, applyErrs = s.transformer.ApplyPbehaviorCorporatePattern(r.PbehaviorRequest, patterns)
-	valErrs = append(valErrs, applyErrs...)
-	r.WeatherServiceRequest, applyErrs = s.transformer.ApplyServiceWeatherCorporatePattern(r.WeatherServiceRequest, patterns)
-	valErrs = append(valErrs, applyErrs...)
+	var pbhApplyErrs validator.ValidationErrors
+	r.PbehaviorRequest, pbhApplyErrs = s.transformer.ApplyPbehaviorCorporatePattern(r.PbehaviorRequest, patterns)
+
+	var weatherApplyErrs validator.ValidationErrors
+	r.WeatherServiceRequest, weatherApplyErrs = s.transformer.ApplyServiceWeatherCorporatePattern(r.WeatherServiceRequest, patterns)
+
+	valErrs := make(validator.ValidationErrors, 0, len(alarmApplyErrs)+len(entityApplyErrs)+len(pbhApplyErrs)+len(weatherApplyErrs))
+	valErrs = append(valErrs, alarmApplyErrs...)
+	valErrs = append(valErrs, entityApplyErrs...)
+	valErrs = append(valErrs, pbhApplyErrs...)
+	valErrs = append(valErrs, weatherApplyErrs...)
+
 	if len(valErrs) > 0 {
 		return validation.NewError(valErrs, r)
 	}

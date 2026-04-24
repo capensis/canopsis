@@ -32,6 +32,7 @@ func (baseDialer) DialURL(config security.LdapConfig) (ldap.Client, error) {
 		InsecureSkipVerify: config.InsecureSkipVerify, //nolint:gosec
 	}
 	if !config.InsecureVerifyAnyCert {
+		tc.SessionTicketsDisabled = true
 		tc.VerifyPeerCertificate = libsectls.VerifySelfSignedCertificate(tc)
 	}
 

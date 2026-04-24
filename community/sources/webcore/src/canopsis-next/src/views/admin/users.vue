@@ -9,23 +9,23 @@
       >
         <v-tab
           v-if="hasReadAnyUserAccess"
-          :href="`#${$constants.USERS_TABS.users}`"
+          :href="`#${USERS_TABS.users}`"
         >
           {{ $tc('common.user', 2) }}
         </v-tab>
         <v-tab
           v-if="hasReadAnyShareTokenAccess"
-          :href="`#${$constants.USERS_TABS.shareTokens}`"
+          :href="`#${USERS_TABS.shareTokens}`"
         >
           {{ $t('common.sharedTokens') }}
         </v-tab>
       </v-tabs>
       <v-tabs-items v-model="activeTab">
         <v-card-text>
-          <v-tab-item :value="$constants.USERS_TABS.users">
+          <v-tab-item :value="USERS_TABS.users">
             <users />
           </v-tab-item>
-          <v-tab-item :value="$constants.USERS_TABS.shareTokens">
+          <v-tab-item :value="USERS_TABS.shareTokens">
             <share-tokens />
           </v-tab-item>
         </v-card-text>
@@ -42,12 +42,14 @@
 </template>
 
 <script>
-import { MODALS, USERS_TABS } from '@/constants';
+import { ref, computed } from 'vue';
 
-import { entitiesUserMixin } from '@/mixins/entities/user';
-import { entitiesShareTokenMixin } from '@/mixins/entities/share-token';
-import { permissionsTechnicalUserMixin } from '@/mixins/permissions/technical/user';
-import { permissionsTechnicalShareTokenMixin } from '@/mixins/permissions/technical/share-token';
+import { MODALS, USERS_TABS, USER_PERMISSIONS } from '@/constants';
+
+import { useModals } from '@/hooks/modals';
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useStoreModuleHooks } from '@/hooks/store';
+import { useUser } from '@/hooks/store/modules/user';
 
 import Users from '@/components/other/users/users.vue';
 import ShareTokens from '@/components/other/share-token/share-tokens.vue';
@@ -57,57 +59,86 @@ export default {
     Users,
     ShareTokens,
   },
-  mixins: [
-    entitiesUserMixin,
-    entitiesShareTokenMixin,
-    permissionsTechnicalUserMixin,
-    permissionsTechnicalShareTokenMixin,
-  ],
-  data() {
-    return {
-      activeTab: USERS_TABS.users,
-    };
-  },
-  computed: {
-    hasCreateAccess() {
-      return {
-        [USERS_TABS.users]: this.hasCreateAnyUserAccess,
-        [USERS_TABS.shareTokens]: false,
-      }[this.activeTab];
-    },
-  },
-  methods: {
-    refresh() {
-      switch (this.activeTab) {
-        case USERS_TABS.users:
-          this.fetchUsersListWithPreviousParams();
-          break;
-        case USERS_TABS.shareTokens:
-          this.fetchShareTokensListWithPreviousParams();
-          break;
-      }
-    },
+  setup() {
+    const modals = useModals();
 
-    create() {
-      switch (this.activeTab) {
-        case USERS_TABS.users:
-          this.showCreateUserModal();
-          break;
-      }
-    },
+    const {
+      fetchUsersListWithPreviousParams,
+      createUserWithPopup,
+    } = useUser();
 
-    showCreateUserModal() {
-      this.$modals.show({
+    const {
+      hasCreateAccess: hasCreateAnyUserAccess,
+      hasReadAccess: hasReadAnyUserAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.user);
+
+    const {
+      hasReadAccess: hasReadAnyShareTokenAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.shareToken);
+
+    const { useActions: useShareTokenActions } = useStoreModuleHooks('shareToken');
+    const { fetchShareTokensListWithPreviousParams } = useShareTokenActions({
+      fetchShareTokensListWithPreviousParams: 'fetchListWithPreviousParams',
+    });
+
+    const activeTab = ref(USERS_TABS.users);
+
+    const hasCreateAccess = computed(() => ({
+      [USERS_TABS.users]: hasCreateAnyUserAccess.value,
+      [USERS_TABS.shareTokens]: false,
+    }[activeTab.value]));
+
+    /**
+     * Shows the modal for creating a new user.
+     * After successful creation, refreshes the users list.
+     */
+    const showCreateUserModal = () => {
+      modals.show({
         name: MODALS.createUser,
         config: {
           action: async (data) => {
-            await this.createUserWithPopup({ data });
+            await createUserWithPopup({ data });
 
-            await this.fetchUsersListWithPreviousParams();
+            await fetchUsersListWithPreviousParams();
           },
         },
       });
-    },
+    };
+
+    /**
+     * Refreshes the list based on the active tab.
+     */
+    const refresh = () => {
+      switch (activeTab.value) {
+        case USERS_TABS.users:
+          fetchUsersListWithPreviousParams();
+          break;
+        case USERS_TABS.shareTokens:
+          fetchShareTokensListWithPreviousParams();
+          break;
+      }
+    };
+
+    /**
+     * Shows the create modal based on the active tab.
+     */
+    const create = () => {
+      switch (activeTab.value) {
+        case USERS_TABS.users:
+          showCreateUserModal();
+          break;
+      }
+    };
+
+    return {
+      USERS_TABS,
+      activeTab,
+      hasCreateAccess,
+      hasReadAnyUserAccess,
+      hasReadAnyShareTokenAccess,
+      refresh,
+      create,
+    };
   },
 };
 </script>

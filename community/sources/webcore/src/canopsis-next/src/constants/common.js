@@ -25,6 +25,7 @@ export const ROUTES_NAMES = {
   adminSettingsUserInterface: 'admin-settings-user-interface',
   adminSettingsViewsImportExport: 'admin-settings-views-import-export',
   adminSettingsNotifications: 'admin-settings-notifications',
+  adminSettingsCommentTemplates: 'admin-settings-comment-templates',
   adminSettingsWidgetTemplates: 'admin-settings-widget-templates',
   adminSettingsStorageSettings: 'admin-settings-storage-settings',
   adminSettingsStateSettings: 'admin-settings-state-settings',
@@ -83,6 +84,7 @@ export const ROUTES = {
   adminSettingsUserInterface: '/admin/user-interface',
   adminSettingsViewsImportExport: '/admin/views-import-export',
   adminSettingsNotifications: '/admin/notifications',
+  adminSettingsCommentTemplates: '/admin/comment-templates',
   adminSettingsWidgetTemplates: '/admin/widget-templates',
   adminSettingsStorageSettings: '/admin/storage-settings',
   adminSettingsStateSettings: '/admin/state-settings',
@@ -124,6 +126,7 @@ export const POPUP_TYPES = {
 
 export const PORTALS_NAMES = {
   additionalTopBarItems: 'additional-top-bar-items',
+  massActionsPanel: 'mass-actions-panel',
 };
 
 export const MAX_LIMIT = 10000;
@@ -384,6 +387,7 @@ export const TRIGGERS_TYPES = {
   declareticket: 'declareticket',
   declareticketwebhook: 'declareticketwebhook',
   assocticket: 'assocticket',
+  ticketremove: 'ticketremove',
   snooze: 'snooze',
   unsnooze: 'unsnooze',
   resolve: 'resolve',
@@ -432,10 +436,12 @@ export const CONTENT_TYPES = {
 export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
 
 export const RESPONSE_STATUSES = {
+  success: 200,
+
   badRequest: 400,
   unauthorized: 401,
-  notFound: 404,
   forbidden: 403,
+  notFound: 404,
   timeout: 408,
 
   internalServerError: 500,

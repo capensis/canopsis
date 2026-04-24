@@ -27,6 +27,7 @@ import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
 import dynamicInfoModule from './dynamic-info';
 import broadcastMessageModule from './broadcast-message';
+import commentTemplateModule from './comment-template';
 import counterModule from './counter';
 import playlistModule from './playlist';
 import metaAlarmRuleModule from './meta-alarm-rule';
@@ -48,6 +49,7 @@ import metricsModule from './metrics';
 import filterModule from './filter';
 import ratingSettingsModule from './rating-settings';
 import patternModule from './pattern';
+import patternsFieldsModule from './patterns-fields';
 import mapModule from './map';
 import alarmTagModule from './alarm-tag';
 import shareTokenModule from './share-token';
@@ -95,6 +97,7 @@ export default {
   snmpMib: snmpMibModule,
   dynamicInfo: dynamicInfoModule,
   broadcastMessage: broadcastMessageModule,
+  commentTemplate: commentTemplateModule,
   counter: counterModule,
   playlist: playlistModule,
   metaAlarmRule: metaAlarmRuleModule,
@@ -123,6 +126,7 @@ export default {
   filter: filterModule,
   ratingSettings: ratingSettingsModule,
   pattern: patternModule,
+  patternsFields: patternsFieldsModule,
   map: mapModule,
   alarmTag: alarmTagModule,
   shareToken: shareTokenModule,

@@ -47,3 +47,4 @@ export * from './request';
 export * from './entity-info-property';
 export * from './jobs';
 export * from './ticket-status-job';
+export * from './resolve-rule';

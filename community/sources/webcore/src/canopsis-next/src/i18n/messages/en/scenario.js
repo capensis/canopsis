@@ -29,6 +29,11 @@ export default {
     + '  children_count: "{{ len .Children }}",\n'
     + '  children: {{ range .Children }}{{ .ID }}{{ end }}\n'
     + '}</pre>',
+  allowMultipleUrls: 'Allow multiple URLs',
+  allowMultipleUrlsTooltip: 'If turned on, URL field can contain multiple URLs, it will be parsed and request will be sent to all of them.\nComma should be used as delimiter.\nFor example, URL could contain: {{ range $link := .Alarm.Value.Infos }}{{ if (eq $link.type "webhook") }}{{ $link.webhookURL }},{{ end }}{{ end }}',
+  massRemove: 'Remove scenarios',
+  massEnable: 'Enable scenarios',
+  massDisable: 'Disable scenarios',
   actions: {
     [ACTION_TYPES.snooze]: 'Snooze',
     [ACTION_TYPES.unsnooze]: 'Unsnooze',
@@ -53,6 +58,4 @@ export default {
   tooltips: {
     pbehaviorActionsNamePrefix: 'Name is going to be `{{prefix}} {{entity_id}} {{start}}-{{stop}}`',
   },
-  allowMultipleUrls: 'Allow multiple URLs',
-  allowMultipleUrlsTooltip: 'If turned on, URL field can contain multiple URLs, it will be parsed and request will be sent to all of them.\nComma should be used as delimiter.\nFor example, URL could contain: {{ range $link := .Alarm.Value.Infos }}{{ if (eq $link.type "webhook") }}{{ $link.webhookURL }},{{ end }}{{ end }}',
 };

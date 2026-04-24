@@ -18,6 +18,7 @@
               :headers-variables="templateVars.ticket"
               :payload-variables="templateVars.ticket"
               :hide-auth="form.reuse_headers_and_auth"
+              :hide-headers="form.reuse_headers_and_auth"
               hide-repeat
             >
               <template #additional-fields>
