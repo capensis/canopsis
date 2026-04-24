@@ -7,7 +7,6 @@
       :pending="pending"
       with-alarm
       with-entity
-      both-counters
       some-required
     />
     <c-collapse-panel

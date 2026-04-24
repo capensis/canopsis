@@ -8,8 +8,28 @@
     :required="required"
     :attributes="pbehaviorAttributes"
     :with-type="withType"
-    :counter="counter"
-  />
+    :alarm-counter="alarmCounter"
+    :entity-counter="entityCounter"
+  >
+    <template #append-count="">
+      <v-btn
+        v-if="alarmCounter && alarmCounter.count"
+        text
+        small
+        @click="showPatternAlarmsModal()"
+      >
+        {{ $t('common.seeAlarms') }}
+      </v-btn>
+      <v-btn
+        v-if="entityCounter && entityCounter.count"
+        text
+        small
+        @click="showPatternEntitiesModal()"
+      >
+        {{ $t('common.seeEntities') }}
+      </v-btn>
+    </template>
+  </pattern-editor-field>
 </template>
 
 <script>
@@ -58,7 +78,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    counter: {
+    alarmCounter: {
+      type: Object,
+      required: false,
+    },
+    entityCounter: {
       type: Object,
       required: false,
     },
@@ -147,7 +171,7 @@ export default {
       return [
         {
           text: this.$t('common.name'),
-          value: PBEHAVIOR_PATTERN_FIELDS.name,
+          value: PBEHAVIOR_PATTERN_FIELDS.id,
           options: this.nameOptions,
         },
         {
@@ -177,6 +201,14 @@ export default {
     ...pbehaviorMapActions({ fetchPbehaviorsListWithoutStore: 'fetchListWithoutStore' }),
     ...pbehaviorReasonMapActions({ fetchPbehaviorReasonsListWithoutStore: 'fetchListWithoutStore' }),
     ...pbehaviorTypeMapActions({ fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore' }),
+
+    showPatternAlarmsModal() {
+      this.$emit('show:alarms');
+    },
+
+    showPatternEntitiesModal() {
+      this.$emit('show:entities');
+    },
 
     async fetchPbehaviors() {
       this.pbehaviorsPending = true;

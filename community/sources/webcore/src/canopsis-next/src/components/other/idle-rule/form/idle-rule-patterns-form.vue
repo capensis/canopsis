@@ -7,7 +7,6 @@
     :pending="pending"
     :readonly="readonly"
     :entity-counters-type="isEntityType"
-    :both-counters="!isEntityType"
     some-required
     with-entity
   />
