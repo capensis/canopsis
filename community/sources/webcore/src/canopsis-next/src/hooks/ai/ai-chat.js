@@ -1058,7 +1058,7 @@ export const useAiChat = ({
    */
   const stop = () => {
     sendMessage({ type: LLM_AI_CHAT_MESSAGE_TYPES.cancel }, llm.value?._id);
-
+    disableThinking();
     restorePrompt();
   };
 
