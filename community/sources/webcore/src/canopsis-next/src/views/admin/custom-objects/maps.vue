@@ -5,19 +5,20 @@
       <maps-list
         :maps="maps"
         :pending="mapsPending"
-        :options.sync="options"
+        :options="options"
         :total-items="mapsMeta.total_count"
-        :updatable="hasUpdateAnyMapAccess"
-        :removable="hasDeleteAnyMapAccess"
-        :duplicable="hasCreateAnyMapAccess"
+        :updatable="hasUpdateAccess"
+        :removable="hasDeleteAccess"
+        :duplicable="hasCreateAccess"
         @edit="showEditMapModal"
         @remove="showRemoveMapModal"
         @duplicate="showDuplicateMapModal"
-        @remove-selected="showDeleteSelectedMapsModal"
+        @refresh="fetchList"
+        @update:options="updateOptions"
       />
     </v-card>
     <c-fab-btn
-      :has-access="hasCreateAnyMapAccess"
+      :has-access="hasCreateAccess"
       @refresh="fetchList"
       @create="showCreateMapModal"
     >
@@ -28,15 +29,17 @@
 
 <script>
 import { omit } from 'lodash';
+import { onMounted } from 'vue';
 
-import { MODALS, MAP_TYPES, CREATE_MAP_MODAL_NAMES_BY_TYPE } from '@/constants';
+import { MODALS, MAP_TYPES, CREATE_MAP_MODAL_NAMES_BY_TYPE, USER_PERMISSIONS } from '@/constants';
 
-import { pickIds } from '@/helpers/array';
+import { convertQueryToRequest } from '@/helpers/query';
 
-import { authMixin } from '@/mixins/auth';
-import { permissionsTechnicalMapMixin } from '@/mixins/permissions/technical/map';
-import { entitiesMapMixin } from '@/mixins/entities/map';
-import { localQueryMixin } from '@/mixins/query/query';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
+import { useMaps } from '@/hooks/store/modules/maps';
 
 import MapsList from '@/components/other/map/maps-list.vue';
 
@@ -44,111 +47,154 @@ export default {
   components: {
     MapsList,
   },
-  mixins: [
-    authMixin,
-    localQueryMixin,
-    permissionsTechnicalMapMixin,
-    entitiesMapMixin,
-  ],
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    showCreateMapModal() {
-      this.$modals.show({
+  setup() {
+    const {
+      items: maps,
+      pending: mapsPending,
+      meta: mapsMeta,
+      fetchList: fetchMapsList,
+      fetchItemWithoutStore: fetchMapWithoutStore,
+      createMap,
+      updateMap,
+      removeMap,
+    } = useMaps();
+
+    const {
+      hasCreateAccess,
+      hasUpdateAccess,
+      hasDeleteAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.map);
+
+    const modals = useModals();
+    const { t } = useI18n();
+
+    const {
+      options,
+      updateOptions,
+      handler: fetchList,
+    } = useLocalQueryWithOptions({
+      onUpdate: (fetchQuery) => {
+        const params = convertQueryToRequest(fetchQuery);
+        params.with_flags = true;
+        return fetchMapsList({ params });
+      },
+    });
+
+    /**
+     * Shows the modal for creating a new map.
+     * After successful creation, refreshes the maps list.
+     */
+    const showCreateMapModal = () => {
+      modals.show({
         name: MODALS.createMap,
         config: {
           action: async (newMap) => {
-            await this.createMap({ data: newMap });
+            await createMap({ data: newMap });
 
-            return this.fetchList();
+            return fetchList();
           },
         },
       });
-    },
+    };
 
-    async showEditMapModal({ _id: id }) {
-      const map = await this.fetchMapWithoutStore({ id });
+    /**
+     * Shows the modal for editing an existing map.
+     * After successful update, refreshes the maps list.
+     *
+     * @param {Object} params - The parameters object.
+     * @param {string} params._id - The unique identifier of the map to edit.
+     */
+    const showEditMapModal = async ({ _id: id }) => {
+      const map = await fetchMapWithoutStore({ id });
 
       const title = {
-        [MAP_TYPES.geo]: this.$t('modals.createGeoMap.edit.title'),
-        [MAP_TYPES.flowchart]: this.$t('modals.createFlowchartMap.edit.title'),
-        [MAP_TYPES.mermaid]: this.$t('modals.createMermaidMap.edit.title'),
-        [MAP_TYPES.treeOfDependencies]: this.$t('modals.createTreeOfDependenciesMap.edit.title'),
+        [MAP_TYPES.geo]: t('modals.createGeoMap.edit.title'),
+        [MAP_TYPES.flowchart]: t('modals.createFlowchartMap.edit.title'),
+        [MAP_TYPES.mermaid]: t('modals.createMermaidMap.edit.title'),
+        [MAP_TYPES.treeOfDependencies]: t('modals.createTreeOfDependenciesMap.edit.title'),
       }[map.type];
 
-      this.$modals.show({
+      modals.show({
         name: CREATE_MAP_MODAL_NAMES_BY_TYPE[map.type],
         config: {
           map,
           title,
           action: async (newMap) => {
-            await this.updateMap({ id: map._id, data: newMap });
+            await updateMap({ id: map._id, data: newMap });
 
-            return this.fetchList();
+            return fetchList();
           },
         },
       });
-    },
+    };
 
-    async showDuplicateMapModal({ _id: id }) {
-      const map = await this.fetchMapWithoutStore({ id });
+    /**
+     * Shows the modal for duplicating an existing map.
+     * After successful duplication, refreshes the maps list.
+     *
+     * @param {Object} params - The parameters object.
+     * @param {string} params._id - The unique identifier of the map to duplicate.
+     */
+    const showDuplicateMapModal = async ({ _id: id }) => {
+      const map = await fetchMapWithoutStore({ id });
 
       const title = {
-        [MAP_TYPES.geo]: this.$t('modals.createGeoMap.duplicate.title'),
-        [MAP_TYPES.flowchart]: this.$t('modals.createFlowchartMap.duplicate.title'),
-        [MAP_TYPES.mermaid]: this.$t('modals.createMermaidMap.duplicate.title'),
-        [MAP_TYPES.treeOfDependencies]: this.$t('modals.createTreeOfDependenciesMap.duplicate.title'),
+        [MAP_TYPES.geo]: t('modals.createGeoMap.duplicate.title'),
+        [MAP_TYPES.flowchart]: t('modals.createFlowchartMap.duplicate.title'),
+        [MAP_TYPES.mermaid]: t('modals.createMermaidMap.duplicate.title'),
+        [MAP_TYPES.treeOfDependencies]: t('modals.createTreeOfDependenciesMap.duplicate.title'),
       }[map.type];
 
-      this.$modals.show({
+      modals.show({
         name: CREATE_MAP_MODAL_NAMES_BY_TYPE[map.type],
         config: {
           map: omit(map, ['_id']),
           title,
           action: async (newMap) => {
-            await this.createMap({ data: newMap });
+            await createMap({ data: newMap });
 
-            return this.fetchList();
+            return fetchList();
           },
         },
       });
-    },
+    };
 
-    showRemoveMapModal(id) {
-      this.$modals.show({
+    /**
+     * Shows the confirmation modal for deleting a map.
+     * After successful deletion, refreshes the maps list.
+     *
+     * @param {string} id - The unique identifier of the map to delete.
+     */
+    const showRemoveMapModal = (id) => {
+      modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await this.removeMap({ id });
+            await removeMap({ id });
 
-            return this.fetchList();
+            return fetchList();
           },
         },
       });
-    },
+    };
 
-    showDeleteSelectedMapsModal(selected) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.bulkRemoveMaps({
-              data: pickIds(selected),
-            });
+    onMounted(fetchList);
 
-            return this.fetchList();
-          },
-        },
-      });
-    },
-
-    fetchList() {
-      const params = this.getQuery();
-      params.with_flags = true;
-
-      return this.fetchMapsList({ params });
-    },
+    return {
+      maps,
+      mapsPending,
+      mapsMeta,
+      options,
+      updateOptions,
+      hasCreateAccess,
+      hasUpdateAccess,
+      hasDeleteAccess,
+      fetchList,
+      showCreateMapModal,
+      showEditMapModal,
+      showDuplicateMapModal,
+      showRemoveMapModal,
+    };
   },
 };
 </script>

@@ -15,6 +15,9 @@ export default {
 
   instruction: {
     name: 'Instruction name',
+    massRemove: 'Delete selected instructions',
+    massEnable: 'Enable selected instructions',
+    massDisable: 'Disable selected instructions',
     manualInstructionsProgress: 'Manual instructions progress',
     usingInstruction: 'Cannot be deleted since it is in use',
     addStep: 'Add step',

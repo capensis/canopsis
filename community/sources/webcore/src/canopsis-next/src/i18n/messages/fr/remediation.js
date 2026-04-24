@@ -15,6 +15,9 @@ export default {
 
   instruction: {
     name: 'Nom de l\'instruction',
+    massRemove: 'Supprimer les consignes sélectionnées',
+    massEnable: 'Activer les consignes sélectionnées',
+    massDisable: 'Désactiver les consignes sélectionnées',
     manualInstructionsProgress: 'Progression des consignes manuelles',
     usingInstruction: 'Ne peut pas être supprimée, car en cours d\'utilisation',
     addStep: 'Ajouter une étape',

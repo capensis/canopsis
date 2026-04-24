@@ -1,11 +1,9 @@
 import { range } from 'lodash';
 
-import { flushPromises, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import {
   selectRowRemoveButtonByIndex,
   selectRowEditButtonByIndex,
-  selectRowCheckboxByIndex,
-  selectMassRemoveButton,
   selectRowDuplicateButtonByIndex,
   selectRowExpandButtonByIndex,
 } from '@unit/utils/table';
@@ -17,6 +15,7 @@ import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
+  'c-table-mass-actions-panel': true,
   'c-search': true,
   'v-checkbox': true,
   'c-expand-btn': true,
@@ -41,28 +40,6 @@ describe('maps-list', () => {
   }));
 
   const snapshotFactory = generateRenderer(MapsList, { stubs });
-
-  test('Selected items removed after trigger mass remove button', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        maps,
-        removable: true,
-        options: {
-          page: 1,
-          itemsPerPage: 10,
-        },
-        totalItems,
-      },
-    });
-
-    await flushPromises();
-
-    await selectRowCheckboxByIndex(wrapper, 0).trigger('click');
-    await selectRowCheckboxByIndex(wrapper, 2).trigger('click');
-    await selectMassRemoveButton(wrapper).triggerCustomEvent('click');
-
-    expect(wrapper).toEmit('remove-selected', [maps[0], maps[2]]);
-  });
 
   test('Remove event emitted after trigger click on the remove button', async () => {
     const wrapper = snapshotFactory({

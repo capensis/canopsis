@@ -36,6 +36,7 @@ import { removeKeyFromEntities } from '@/helpers/array';
 
 /**
  * @typedef {Object} SnmpRule
+ * @property {boolean} enabled
  * @property {SnmpRuleModuleMib} component
  * @property {SnmpRuleModuleMib} connector_name
  * @property {SnmpRuleModuleMib} output
@@ -70,6 +71,7 @@ import { removeKeyFromEntities } from '@/helpers/array';
 
 /**
  * @typedef {Object} SnmpRuleForm
+ * @property {boolean} enabled
  * @property {SnmpRuleModuleMib} component
  * @property {SnmpRuleModuleMib} connector_name
  * @property {SnmpRuleModuleMib} output
@@ -184,6 +186,7 @@ export const snmpRuleExtraToForm = (extra = []) => (extra ?? []).map(snmpRuleExt
  * @returns {SnmpRuleForm}
  */
 export const snmpRuleToForm = (snmpRule = {}) => ({
+  enabled: snmpRule.enabled ?? true,
   oid: snmpRuleOidToForm(snmpRule.oid),
   component: snmpRuleModuleMibToForm(snmpRule.component),
   connector_name: snmpRuleModuleMibToForm(snmpRule.connector_name),
