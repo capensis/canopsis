@@ -508,8 +508,8 @@ NotificationDisplayCount = 3
 # is outside the LLM's scope (e.g. not related to Canopsis pattern generation).
 # If an LLM response error contains one of these strings, the message is marked as off-topic in history.
 off_topic_errors = [
-  "I am designed solely to generate Canopsis patterns.",
-  "Je suis conçu uniquement pour générer des modèles (patterns) Canopsis.",
+  "designed solely to generate Canopsis patterns",
+  "conçu uniquement pour générer des modèles (patterns) Canopsis",
 ]
 
 # suggested_models defines the list of LLM models shown in the UI configuration form.
