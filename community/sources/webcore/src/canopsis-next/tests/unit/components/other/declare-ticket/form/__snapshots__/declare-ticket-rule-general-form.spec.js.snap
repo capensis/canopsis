@@ -2,7 +2,7 @@
 
 exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-form\` with empty form 1`] = `
 <div
-  class="layout column"
+  class="layout gap-2 column"
 >
   <c-enabled-field-stub
     value="true"
@@ -14,10 +14,10 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
     label="Emit trigger"
   />
   <div
-    class="layout mb-2"
+    class="layout gap-3"
   >
     <div
-      class="flex mr-3 xs8"
+      class="flex xs8"
     >
       <c-name-field-stub
         autofocus=""
@@ -35,6 +35,10 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
       />
     </div>
   </div>
+  <c-enabled-field-stub
+    label="Emit trigger"
+    name="emit_trigger"
+  />
   <declare-ticket-rule-webhooks-field-stub
     name="webhooks"
     templatevars="[object Object]"
@@ -45,7 +49,7 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
 
 exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-form\` with filled form 1`] = `
 <div
-  class="layout column"
+  class="layout gap-2 column"
 >
   <c-enabled-field-stub
     value="true"
@@ -57,10 +61,10 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
     label="Emit trigger"
   />
   <div
-    class="layout mb-2"
+    class="layout gap-3"
   >
     <div
-      class="flex mr-3 xs8"
+      class="flex xs8"
     >
       <c-name-field-stub
         autofocus=""
@@ -78,6 +82,10 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
       />
     </div>
   </div>
+  <c-enabled-field-stub
+    label="Emit trigger"
+    name="emit_trigger"
+  />
   <declare-ticket-rule-webhooks-field-stub
     name="webhooks"
     templatevars="[object Object]"

@@ -60,3 +60,13 @@ func (r AggregationResult) GetData() any {
 type PriorityResponse struct {
 	Priority int64 `json:"priority"`
 }
+
+type BulkToggleHiddenRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
+}
+
+type BulkDeleteRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
+}

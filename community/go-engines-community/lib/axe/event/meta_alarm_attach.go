@@ -417,6 +417,7 @@ func (p *metaAlarmAttachProcessor) getChildEventByStep(
 		isTicketStep = true
 	case types.AlarmStepDeclareTicket:
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
+		childEvent.AlarmID = childAlarm.Alarm.ID
 		isTicketStep = true
 	case types.AlarmStepComment:
 		childEvent.EventType = types.EventTypeComment

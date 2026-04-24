@@ -326,7 +326,7 @@ describe('actions-panel', () => {
 
     selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ack).trigger('click');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createAckEvent,
         config: {
@@ -1147,7 +1147,7 @@ describe('actions-panel', () => {
 
     selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.variablesHelp).trigger('click');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.variablesHelp,
         config: {

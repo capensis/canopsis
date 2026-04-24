@@ -30,6 +30,7 @@
     <alarm-status-rule-patterns-form
       v-if="!defaultRule"
       v-field="form.patterns"
+      :flapping="flapping"
       class="mt-2"
     />
   </v-layout>

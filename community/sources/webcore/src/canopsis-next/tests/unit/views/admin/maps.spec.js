@@ -27,7 +27,6 @@ describe('maps', () => {
   const createMap = jest.fn();
   const updateMap = jest.fn();
   const removeMap = jest.fn();
-  const bulkRemoveMap = jest.fn();
   const mapsPending = jest.fn(() => false);
   const mapsItems = jest.fn(() => []);
   const mapsMeta = jest.fn(() => ({
@@ -47,7 +46,6 @@ describe('maps', () => {
       create: createMap,
       update: updateMap,
       remove: removeMap,
-      bulkRemove: bulkRemoveMap,
     },
   };
 
@@ -73,7 +71,6 @@ describe('maps', () => {
     createMap.mockClear();
     updateMap.mockClear();
     removeMap.mockClear();
-    bulkRemoveMap.mockClear();
   });
 
   test('Maps fetched after mounted', async () => {
@@ -133,7 +130,7 @@ describe('maps', () => {
     fabButton.triggerCustomEvent('create');
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createMap,
         config: {

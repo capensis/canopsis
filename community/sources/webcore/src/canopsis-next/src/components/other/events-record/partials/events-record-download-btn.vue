@@ -10,9 +10,10 @@
     v-else
     :loading="downloading"
     color="primary"
+    outlined
     @click="exportJson"
   >
-    <v-icon class="mr-2" color="white">
+    <v-icon class="mr-2">
       file_download
     </v-icon>
     <span>{{ $t('common.exportToJson') }}</span>

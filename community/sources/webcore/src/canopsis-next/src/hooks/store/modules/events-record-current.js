@@ -13,8 +13,12 @@ const useEventsRecordCurrentStoreModule = () => useStoreModuleHooks('eventsRecor
  * import { useEventsRecordCurrentStoreModule } from './path/to/useEventsRecordCurrentStoreModule';
  *
  * const {
- *   current,
  *   pending,
+ *   recordings,
+ *   resendings,
+ *   limit,
+ *   recordingsById,
+ *   resendingsById,
  *   fetchEventsRecordCurrent,
  *   startEventsRecordCurrent,
  *   stopEventsRecordCurrent
@@ -24,7 +28,7 @@ const useEventsRecordCurrentStoreModule = () => useStoreModuleHooks('eventsRecor
 export const useEventsRecordCurrent = () => {
   const { useGetters, useActions } = useEventsRecordCurrentStoreModule();
 
-  const getters = useGetters(['current', 'pending']);
+  const getters = useGetters(['pending', 'recordings', 'resendings', 'limit', 'recordingsById', 'resendingsById']);
 
   const actions = useActions({
     fetchEventsRecordCurrent: 'fetchCurrent',

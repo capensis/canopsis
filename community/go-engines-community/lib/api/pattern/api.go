@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -39,7 +40,7 @@ type api struct {
 	logger         zerolog.Logger
 }
 
-func NewApi(
+func NewAPI(
 	store Store,
 	configProvider config.UserInterfaceConfigProvider,
 	enforcer security.Enforcer,
@@ -465,4 +466,19 @@ func (a *api) OptimizeCancel(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusNoContent, nil)
+}
+
+// GetPatternFieldsHandler
+// @Success 200 {array} patternfields.FieldsResponse
+func GetPatternFieldsHandler(patternFieldGetter patternfields.FieldGetter, errorResponder httperror.Responder, collection string) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		res, err := patternFieldGetter.Get(c, collection)
+		if err != nil {
+			errorResponder.Respond(c, err)
+
+			return
+		}
+
+		c.JSON(http.StatusOK, res)
+	}
 }
