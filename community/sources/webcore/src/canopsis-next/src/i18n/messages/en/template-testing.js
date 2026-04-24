@@ -53,6 +53,7 @@ export default {
   ticketId: 'Ticket ID - {number}',
   ticketUrl: 'Ticket URL - {number}',
   ticketStatusWebhookUrl: 'Ticket status webhook URL - {number}',
+  ticketStatusWebhookPayload: 'Ticket status webhook payload - {number}',
   dynamicInfoValue: 'Dynamic info value - {number} - {name}',
   instructionWebhookUrl: 'Instruction webhook URL - Step {step}, Operation {operation}',
   instructionWebhookPayload: 'Instruction webhook payload - Step {step}, Operation {operation}',

@@ -52,6 +52,7 @@ export default {
   ticketId: 'ID de ticket - {number}',
   ticketUrl: 'URL de ticket - {number}',
   ticketStatusWebhookUrl: 'URL webhook de vérification du statut - {number}',
+  ticketStatusWebhookPayload: 'Charge utile webhook de vérification du statut - {number}',
   dynamicInfoValue: 'Valeur d\'information dynamique - {number} - {name}',
   instructionWebhookUrl: 'URL webhook de remédiation - Étape {step}, Opération {operation}',
   instructionWebhookPayload: 'Charge utile webhook de remédiation - Étape {step}, Opération {operation}',
