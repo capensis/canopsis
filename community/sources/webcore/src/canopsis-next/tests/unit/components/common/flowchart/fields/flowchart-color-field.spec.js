@@ -61,7 +61,7 @@ describe('flowchart-color-field', () => {
     const button = selectButton(wrapper);
 
     button.triggerCustomEvent('click');
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.colorPicker,
         config: {

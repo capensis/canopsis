@@ -6,7 +6,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useAuth } from '@/hooks/auth';
-import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 
 /**
  * Provides actions for managing remediation instructions, including modals for duplication,
@@ -30,7 +30,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
     createRemediationInstruction,
     updateRemediationInstruction,
     removeRemediationInstruction,
-  } = useRemdeitionInstruction();
+  } = useRemediationInstruction();
 
   /**
    * Opens a modal to duplicate a remediation instruction.

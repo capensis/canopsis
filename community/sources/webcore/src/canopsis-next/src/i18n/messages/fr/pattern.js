@@ -34,9 +34,9 @@ export default {
   suggestions: 'Suggestions',
   rejectAllSuggestions: 'REJETER TOUTES LES SUGGESTIONS',
   foundEntities: 'trouvé: <strong>{count} entités</strong>',
-  sameEntities: 'mêmes entités',
-  seeRecordsComparison: 'Voir la comparaison des enregistrements',
-  conditionsOptimized: 'Les conditions suivantes ont été optimisées :',
+  sameEntities: 'entités identiques',
+  seeRecordsComparison: 'Comparaison des résultats',
+  conditionsOptimized: 'Les expressions <strong>réguliéres suivantes</strong> ont été optimisées :',
   applyThisSuggestion: 'APPLIQUER CETTE SUGGESTION',
   optimizationSuggestionsWasntFound: 'Aucune suggestion d\'optimisation <strong>regexp</strong> trouvée',
   errors: {

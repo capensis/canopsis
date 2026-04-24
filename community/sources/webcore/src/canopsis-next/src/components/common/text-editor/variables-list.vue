@@ -9,6 +9,9 @@
     :hide-empty-value="hideEmptyValue"
     v-on="listenersWithoutInput"
   >
+    <template v-if="$slots['no-data']" #no-data>
+      <slot name="no-data" />
+    </template>
     <template v-if="$scopedSlots.prepend" #prepend>
       <slot :items="items" name="prepend" />
     </template>

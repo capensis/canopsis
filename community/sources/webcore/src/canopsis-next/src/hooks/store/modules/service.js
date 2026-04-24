@@ -16,6 +16,7 @@ export const useService = () => {
     fetchServiceImpactsWithoutStore: 'fetchImpactsWithoutStore',
     fetchEntityUpstreamWithoutStore: 'fetchUpstreamWithoutStore',
     fetchEntityDownstreamsWithoutStore: 'fetchDownstreamsWithoutStore',
+    bulkRemoveServices: 'bulkRemove',
     // TODO: finish add another actions and getters
   });
 

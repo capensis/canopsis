@@ -66,12 +66,12 @@ describe('basic-login', () => {
 
     await flushPromises();
 
-    expect(login).toBeCalledWith(
+    expect(login).toHaveBeenCalledWith(
       expect.any(Object),
       { username, password },
     );
 
-    expect($router.push).toBeCalledWith({ name: ROUTES_NAMES.home });
+    expect($router.push).toHaveBeenCalledWith({ name: ROUTES_NAMES.home });
   });
 
   it('Error shown after trigger submit button with error', async () => {
@@ -92,7 +92,7 @@ describe('basic-login', () => {
 
     await flushPromises();
 
-    expect(login).toBeCalledWith(
+    expect(login).toHaveBeenCalledWith(
       expect.any(Object),
       { username: '', password: '' },
     );
@@ -116,7 +116,7 @@ describe('basic-login', () => {
 
     await flushPromises();
 
-    expect(login).toBeCalledWith(
+    expect(login).toHaveBeenCalledWith(
       expect.any(Object),
       {
         username: '',
@@ -124,7 +124,7 @@ describe('basic-login', () => {
       },
     );
 
-    expect($router.push).toBeCalledWith(redirectUrl);
+    expect($router.push).toHaveBeenCalledWith(redirectUrl);
   });
 
   it('Form submitted after trigger submit button with default view', async () => {
@@ -149,7 +149,7 @@ describe('basic-login', () => {
 
     await flushPromises();
 
-    expect(login).toBeCalledWith(
+    expect(login).toHaveBeenCalledWith(
       expect.any(Object),
       {
         username: '',
@@ -157,7 +157,7 @@ describe('basic-login', () => {
       },
     );
 
-    expect($router.push).toBeCalledWith({
+    expect($router.push).toHaveBeenCalledWith({
       name: ROUTES_NAMES.view,
       params: { id: defaultView._id },
     });

@@ -16,7 +16,7 @@ import { mapIds } from '@/helpers/array';
  * @property {string} password
  * @property {Role[]} roles
  * @property {string} email
- * @property {boolean} enable
+ * @property {boolean} enabled
  * @property {Object} ui_tours
  * @property {DefaultView} defaultview
  * @property {string} ui_groups_navigation_type
@@ -48,7 +48,7 @@ export const userToForm = (user = {}) => ({
   email: user.email ?? '',
   password: user.password ?? '',
   roles: user.roles || [],
-  enable: user.enable ?? true,
+  enabled: user.enabled ?? true,
   defaultview: user.defaultview ? user.defaultview._id : '',
   ui_language: user.ui_language ?? '',
   ui_tours: user.ui_tours ?? {},

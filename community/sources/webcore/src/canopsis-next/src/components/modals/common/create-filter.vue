@@ -33,8 +33,8 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
 import { omit } from 'lodash';
+import { computed, ref } from 'vue';
 
 import { MODALS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
 
@@ -63,19 +63,16 @@ export default {
     },
   },
   setup(props) {
-    const { config, close, modal } = useInnerModal(props);
     const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
 
     /**
-     * Get pattern fields based on modal configuration flags.
+     * Gets pattern fields based on config flags
      *
-     * Returns an array of pattern field constants that are enabled in the modal config.
-     * Each flag (withAlarm, withEntity, etc.) determines which pattern field type should be included.
-     *
-     * @returns {string[]} Array of pattern field constants (e.g., 'alarm_pattern', 'entity_pattern')
+     * @returns {Array} Array of pattern field constants
      */
     const getPatternsFields = () => {
-      const { withAlarm, withEntity, withPbehavior, withEvent, withServiceWeather } = modal.value.config;
+      const { withAlarm, withEntity, withPbehavior, withEvent, withServiceWeather } = config.value;
 
       return [
         withAlarm && PATTERNS_FIELDS.alarm,
@@ -88,7 +85,13 @@ export default {
 
     const form = ref(filterToForm(config.value.filter, getPatternsFields()));
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const title = computed(() => config.value.title ?? t('modals.createFilter.create.title'));
+    const patternsProps = computed(() => omit(config.value, ['title', 'action']));
+
+    /**
+     * Submits the form and calls the action callback if provided
+     */
+    const { submit, submitting, isDisabled } = useSubmittableForm({
       form,
       method: async () => {
         if (config.value.action) {
@@ -99,20 +102,20 @@ export default {
       },
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
-
-    const title = computed(() => config.value.title ?? t('modals.createFilter.create.title'));
-
-    const patternsProps = computed(() => omit(config.value, ['title', 'action']));
+    useFormConfirmableCloseModal({
+      form,
+      submit,
+      close,
+    });
 
     return {
-      title,
       form,
+      title,
       patternsProps,
-      isDisabled,
       submitting,
-      close,
+      isDisabled,
       submit,
+      close,
     };
   },
 };

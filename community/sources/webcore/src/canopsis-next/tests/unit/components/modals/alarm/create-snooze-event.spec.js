@@ -131,8 +131,8 @@ describe('create-snooze-event', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(snoozeEventData);
-    expect($modals.hide).toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(snoozeEventData);
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -200,8 +200,8 @@ describe('create-snooze-event', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledWith(snoozeEventData);
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(snoozeEventData);
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     action.mockClear();
   });
@@ -234,12 +234,12 @@ describe('create-snooze-event', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith(snoozeEventData);
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(snoozeEventData);
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     consoleErrorSpy.mockClear();
     action.mockClear();
@@ -277,7 +277,7 @@ describe('create-snooze-event', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(newForm);
+    expect(action).toHaveBeenCalledWith(newForm);
     expect($modals.hide).toBeCalled();
   });
 

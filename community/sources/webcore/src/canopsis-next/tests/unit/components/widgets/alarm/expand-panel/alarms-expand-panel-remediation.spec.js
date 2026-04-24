@@ -42,7 +42,7 @@ describe('alarms-expand-panel-remediation', () => {
 
     await flushPromises();
 
-    expect(fetchExecutionsWithoutStore).toBeCalledWith(
+    expect(fetchExecutionsWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: alarm._id,

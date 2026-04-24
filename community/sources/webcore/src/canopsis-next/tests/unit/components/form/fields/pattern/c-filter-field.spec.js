@@ -67,7 +67,7 @@ describe('c-filter-field', () => {
     await flushPromises();
 
     expect(fetchFiltersList).toBeCalledTimes(1);
-    expect(fetchFiltersList).toBeCalledWith(
+    expect(fetchFiltersList).toHaveBeenCalledWith(
       expect.any(Object),
       { params: { limit: MAX_LIMIT } },
     );

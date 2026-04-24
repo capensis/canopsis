@@ -44,6 +44,7 @@ export default {
       snooze: 'Snooze alarm',
       declareTicket: 'Declare ticket',
       associateTicket: 'Associate ticket',
+      removeAssociatedTicket: 'Remove associated ticket',
       cancel: 'Cancel alarm',
       unCancel: 'Uncancel alarm',
       fastCancel: 'Fast cancel',
@@ -81,6 +82,7 @@ export default {
     launched: 'launched',
     junit: 'JUnit',
     groupItems: 'Group elements',
+    onlyComments: 'Only comments',
     steps: {
       [ALARM_LIST_STEPS.statedec]: 'State decreased',
       [ALARM_LIST_STEPS.stateinc]: 'State increased',
@@ -97,6 +99,7 @@ export default {
       [ALARM_LIST_STEPS.pbhenter]: 'Periodical behavior activated',
       [ALARM_LIST_STEPS.pbhleave]: 'Periodical behavior deactivated',
       [ALARM_LIST_STEPS.assocTicket]: 'Ticket associated',
+      [ALARM_LIST_STEPS.ticketRemove]: 'Ticket removed',
       [ALARM_LIST_STEPS.webhookStart]: 'Webhook is launched',
       [ALARM_LIST_STEPS.webhookInProgress]: 'Webhook launched by {author} in progress...',
       [ALARM_LIST_STEPS.webhookComplete]: 'Webhook is executed successfully',

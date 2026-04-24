@@ -1,5 +1,11 @@
 <template>
-  <v-layout column>
+  <v-layout class="gap-2" column>
+    <c-enabled-field
+      v-field="form.enabled"
+      :disabled="disablable || defaultRule"
+      hide-details
+      with-background
+    />
     <c-name-field
       v-field="form.name"
       autofocus
@@ -9,7 +15,7 @@
       v-field="form.duration"
       required
     />
-    <c-priority-field v-field="form.priority" />
+    <c-priority-field v-field="form.priority" :disabled="defaultRule" />
     <c-number-field
       v-if="flapping"
       v-field="form.freq_limit"
@@ -22,7 +28,9 @@
       required
     />
     <alarm-status-rule-patterns-form
+      v-if="!defaultRule"
       v-field="form.patterns"
+      :flapping="flapping"
       class="mt-2"
     />
   </v-layout>
@@ -44,6 +52,14 @@ export default {
       default: () => ({}),
     },
     flapping: {
+      type: Boolean,
+      default: false,
+    },
+    disablable: {
+      type: Boolean,
+      default: false,
+    },
+    defaultRule: {
       type: Boolean,
       default: false,
     },

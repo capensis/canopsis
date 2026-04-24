@@ -58,6 +58,7 @@ import {
   isDeclareTicketChangeTicketStatusStepType,
   isWebhookStepType,
   isMetaAlarmStepType,
+  isTicketRemoveStepType,
 } from '@/helpers/entities/alarm/step/entity';
 
 import DeclareTicketRuleTicketStatusChip from '@/components/other/declare-ticket/declare-ticket-rule-ticket-status-chip.vue';
@@ -92,6 +93,7 @@ export default {
       || isDeclareTicketStepType(props.step._t)
       || isInstructionStepType(props.step._t)
       || isAutoInstructionStepType(props.step._t)
+      || isTicketRemoveStepType(props.step._t)
     ));
 
     const status = computed(() => formatAlarmStatus(props.step.val));
