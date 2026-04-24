@@ -13,7 +13,7 @@ const stubs = {
 };
 
 const selectEnabledFields = wrapper => wrapper.findAll('c-enabled-field-stub');
-const selectEmitTriggerField = wrapper => selectEnabledFields(wrapper).at(0);
+const selectEmitTriggerField = wrapper => selectEnabledFields(wrapper).at(1);
 const selectNameFields = wrapper => wrapper.findAll('c-name-field-stub');
 const selectNameField = wrapper => selectNameFields(wrapper).at(0);
 const selectSystemNameField = wrapper => selectNameFields(wrapper).at(1);

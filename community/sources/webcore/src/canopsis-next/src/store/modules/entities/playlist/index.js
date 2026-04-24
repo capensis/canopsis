@@ -12,5 +12,17 @@ export default createCRUDModule({
     fetchItemWithoutStore(context, { id }) {
       return request.get(`${API_ROUTES.playlist}/${id}`);
     },
+
+    bulkEnable(context, { data }) {
+      return request.put(API_ROUTES.bulkPlaylistEnable, data);
+    },
+
+    bulkDisable(context, { data }) {
+      return request.put(API_ROUTES.bulkPlaylistDisable, data);
+    },
+
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.bulkPlaylist, { data });
+    },
   },
 });

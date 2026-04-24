@@ -11,6 +11,7 @@
           :type="type"
         >
           <template #default="{ templateVars, copyVars }">
+            <c-enabled-field v-model="form.enabled" with-background />
             <event-filter-form
               v-model="form"
               :template-vars="templateVars"

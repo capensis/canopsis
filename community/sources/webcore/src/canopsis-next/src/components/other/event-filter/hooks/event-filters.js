@@ -16,7 +16,6 @@ import { useEventFilter } from '@/hooks/store/modules/event-filter';
  * @property {Function} showDuplicateRuleModal - Show modal to duplicate an event filter.
  * @property {Function} showEditRuleModal - Show modal to edit an event filter.
  * @property {Function} showDeleteRuleModal - Show modal to delete an event filter.
- * @property {Function} showDeleteSelectedRulesModal - Show modal to delete multiple event filters.
  */
 export const useEventFilterActions = (refresh = () => {}) => {
   const { t } = useI18n();
@@ -111,30 +110,10 @@ export const useEventFilterActions = (refresh = () => {}) => {
     });
   };
 
-  /**
-   * Show modal to delete multiple event filters.
-   *
-   * @param {Array<Object>} [selected=[]] - Array of selected event filter rules to delete.
-   * @returns {void}
-   */
-  const showDeleteSelectedRulesModal = (selected = []) => {
-    modals.show({
-      name: MODALS.confirmation,
-      config: {
-        action: async () => {
-          await Promise.all(selected.map(({ _id: id }) => removeEventFilter({ id })));
-          popups.success({ text: t('modals.createEventFilter.remove.success') });
-          refresh();
-        },
-      },
-    });
-  };
-
   return {
     showCreateRuleModal,
     showDuplicateRuleModal,
     showEditRuleModal,
     showDeleteRuleModal,
-    showDeleteSelectedRulesModal,
   };
 };

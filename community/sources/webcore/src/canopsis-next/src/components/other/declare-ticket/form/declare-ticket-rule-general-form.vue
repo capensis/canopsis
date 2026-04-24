@@ -1,5 +1,12 @@
 <template>
   <v-layout class="gap-2" column>
+    <c-enabled-field v-field="form.enabled" with-background />
+    <c-enabled-field
+      v-field="form.emit_trigger"
+      :label="$t('common.emitTrigger')"
+      class="pa-2"
+      hide-details
+    />
     <v-layout class="gap-3">
       <v-flex xs8>
         <c-name-field

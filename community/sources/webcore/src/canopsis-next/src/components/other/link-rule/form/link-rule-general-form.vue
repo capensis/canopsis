@@ -20,9 +20,6 @@
           />
         </v-radio-group>
       </v-flex>
-      <v-flex xs6>
-        <c-enabled-field v-field="form.enabled" />
-      </v-flex>
     </v-layout>
     <c-name-field
       v-field="form.name"

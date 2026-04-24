@@ -28,5 +28,13 @@ export default createCRUDModule({
     fetchAssignedTicketsWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.declareTicket.alarmsAssigned, { params });
     },
+
+    bulkEnable(context, { data }) {
+      return request.put(API_ROUTES.declareTicket.bulkRulesEnable, data);
+    },
+
+    bulkDisable(context, { data }) {
+      return request.put(API_ROUTES.declareTicket.bulkRulesDisable, data);
+    },
   },
 });
