@@ -4,6 +4,7 @@
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
     :readonly="readonly"
+    :pending="pending"
     some-required
     with-pbehavior
     with-alarm
@@ -12,13 +13,10 @@
 </template>
 
 <script>
-import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS } from '@/constants';
-
-import { formValidationHeaderMixin } from '@/mixins/form';
+import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
-  inject: ['$validator'],
-  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -33,34 +31,25 @@ export default {
       default: false,
     },
   },
-  computed: {
-    alarmAttributes() {
-      return [
-        {
-          value: ALARM_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.ackAt,
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.creationDate,
-        },
-      ];
-    },
+  setup(props) {
+    const { fetchDeclareTicketRulePatternFields } = usePatternsFields();
+    const { hasAnyError } = useValidationHeader();
 
-    entityAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-      ];
-    },
+    const {
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchDeclareTicketRulePatternFields, props.readonly);
+
+    return {
+      /**
+       * It's using in the parent component to display the validation header color for tabs
+       */
+      hasAnyError,
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    };
   },
 };
 </script>

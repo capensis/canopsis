@@ -29,6 +29,7 @@ const snapshotStubs = {
 
 const selectPortal = wrapper => wrapper.find('portal-stub');
 const selectClearButton = wrapper => wrapper.find('button.c-action-btn');
+const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 
 describe('c-mass-actions-panel', () => {
   const factory = generateShallowRenderer(CMassActionsPanel, { stubs });
@@ -117,20 +118,20 @@ describe('c-mass-actions-panel', () => {
     });
   });
 
-  test('updateKeepSelected emits update:keep-selected with true', () => {
+  test('Keep-selected field emits input with true', () => {
     const wrapper = factory();
 
-    wrapper.vm.updateKeepSelected(true);
+    selectEnabledField(wrapper).triggerCustomEvent('input', true);
 
-    expect(wrapper).toEmit('update:keep-selected', true);
+    expect(wrapper).toEmitInput(true);
   });
 
-  test('updateKeepSelected emits update:keep-selected with false', () => {
+  test('Keep-selected field emits input with false', () => {
     const wrapper = factory();
 
-    wrapper.vm.updateKeepSelected(false);
+    selectEnabledField(wrapper).triggerCustomEvent('input', false);
 
-    expect(wrapper).toEmit('update:keep-selected', false);
+    expect(wrapper).toEmitInput(false);
   });
 
   test('Renders `c-mass-actions-panel` with default props', () => {

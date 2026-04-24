@@ -3,6 +3,7 @@ package playlist
 import (
 	"cmp"
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
@@ -26,6 +27,7 @@ type Store interface {
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
+	Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
@@ -312,4 +314,21 @@ func (s *store) deletePermission(ctx context.Context, playlistID, userID string)
 
 	_, err = s.permissionCollection.DeleteOne(ctx, bson.M{"_id": playlistID})
 	return err
+}
+
+func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error) {
+	res, err := s.collection.UpdateOne(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"enabled": enabled,
+			"author":  r.Author,
+			"updated": datetime.NewCpsTime(),
+		}},
+	)
+	if err != nil {
+		return false, fmt.Errorf("failed to toggle playlist: %w", err)
+	}
+
+	return res.MatchedCount != 0, nil
 }

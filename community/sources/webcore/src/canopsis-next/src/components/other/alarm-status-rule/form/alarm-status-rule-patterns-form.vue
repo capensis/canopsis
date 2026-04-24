@@ -4,6 +4,7 @@
     :readonly="readonly"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
+    :pending="pending"
     with-alarm
     with-entity
     some-required
@@ -11,7 +12,10 @@
 </template>
 
 <script>
-import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS } from '@/constants';
+import { computed } from 'vue';
+
+import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
   model: {
@@ -27,41 +31,33 @@ export default {
       type: Boolean,
       default: false,
     },
+    flapping: {
+      type: Boolean,
+      default: false,
+    },
   },
-  setup() {
-    const alarmAttributes = [
-      {
-        value: ALARM_PATTERN_FIELDS.creationDate,
-      },
-      {
-        value: ALARM_PATTERN_FIELDS.ackAt,
-      },
-      {
-        value: ALARM_PATTERN_FIELDS.lastUpdateDate,
-        options: { disabled: true },
-      },
-      {
-        value: ALARM_PATTERN_FIELDS.lastEventDate,
-        options: { disabled: true },
-      },
-      {
-        value: ALARM_PATTERN_FIELDS.resolved,
-        options: { disabled: true },
-      },
-      {
-        value: ALARM_PATTERN_FIELDS.activationDate,
-        options: { disabled: true },
-      },
-    ];
+  setup(props) {
+    const { fetchFlappingRulePatternFields, fetchResolveRulePatternFields } = usePatternsFields();
+    const { hasAnyError } = useValidationHeader();
 
-    const entityAttributes = [
-      {
-        value: ENTITY_PATTERN_FIELDS.lastEventDate,
-        options: { disabled: true },
-      },
-    ];
+    const fetchAction = computed(() => (
+      props.flapping
+        ? fetchFlappingRulePatternFields
+        : fetchResolveRulePatternFields
+    ));
+
+    const {
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchAction, props.readonly);
 
     return {
+      /**
+       * It's using in the parent component to display the validation header color for tabs
+       */
+      hasAnyError,
+      pending,
       alarmAttributes,
       entityAttributes,
     };

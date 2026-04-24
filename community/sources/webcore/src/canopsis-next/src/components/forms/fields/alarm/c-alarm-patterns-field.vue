@@ -24,13 +24,7 @@
 </template>
 
 <script>
-import {
-  isArray,
-  keyBy,
-  merge,
-  omit,
-  map,
-} from 'lodash';
+import { isArray, keyBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -48,6 +42,8 @@ import {
   PATTERN_EXISTS_OPERATORS,
   PATTERN_ALARM_TAG_LABEL_OPERATORS,
 } from '@/constants';
+
+import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -68,10 +64,6 @@ export default {
       required: true,
     },
     attributes: {
-      type: Array,
-      default: () => [],
-    },
-    excludedAttributes: {
       type: Array,
       default: () => [],
     },
@@ -587,13 +579,7 @@ export default {
     },
 
     availableAlarmAttributes() {
-      const mergedAttributes = omit(merge(
-        {},
-        this.availableAttributesByValue,
-        this.externalAttributesByValue,
-      ), map(this.excludedAttributes, 'value'));
-
-      return Object.values(mergedAttributes);
+      return mergePatternAttributes(this.alarmAttributes, this.attributes);
     },
   },
   mounted() {

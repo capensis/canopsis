@@ -55,6 +55,9 @@ export const useUser = () => {
     updateUser: 'update',
     updateCurrentUser: 'updateCurrentUser',
     removeUser: 'remove',
+    bulkEnableUsers: 'bulkEnable',
+    bulkDisableUsers: 'bulkDisable',
+    bulkRemoveUsers: 'bulkRemove',
   });
 
   /**

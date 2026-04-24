@@ -2,106 +2,111 @@
 
 exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with custom props 1`] = `
 <div
-  class="v-tabs v-tabs--fixed-tabs theme--light"
+  class="layout gap-2 column"
 >
+  <c-enabled-field />
   <div
-    class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
-    role="tablist"
+    class="v-tabs v-tabs--centered theme--light"
   >
     <div
-      class="v-slide-group__prev v-slide-group__prev--disabled"
-    >
-      <transition-stub
-        name="fade-transition"
-      />
-    </div>
-    <div
-      class="v-slide-group__wrapper"
+      class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+      role="tablist"
     >
       <div
-        class="v-slide-group__content v-tabs-bar__content"
+        class="v-slide-group__prev v-slide-group__prev--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+      <div
+        class="v-slide-group__wrapper"
       >
         <div
-          class="v-tabs-slider-wrapper"
-          style="transition: none;"
+          class="v-slide-group__content v-tabs-bar__content"
         >
           <div
-            class="v-tabs-slider primary"
-          />
+            class="v-tabs-slider-wrapper"
+            style="transition: none;"
+          >
+            <div
+              class="v-tabs-slider primary"
+            />
+          </div>
+          <div
+            aria-selected="true"
+            class="v-tab v-tab--active"
+            role="tab"
+            tabindex="0"
+          >
+      General
+          </div>
+          <div
+            aria-selected="false"
+            class="v-tab"
+            role="tab"
+            tabindex="0"
+          >
+      Pattern
+          </div>
+          <div
+            aria-selected="false"
+            class="v-tab"
+            role="tab"
+            tabindex="0"
+          >
+            Test query
+          </div>
+          <!---->
+          <!---->
         </div>
-        <div
-          aria-selected="true"
-          class="v-tab v-tab--active"
-          role="tab"
-          tabindex="0"
-        >
-    General
-        </div>
-        <div
-          aria-selected="false"
-          class="v-tab"
-          role="tab"
-          tabindex="0"
-        >
-    Pattern
-        </div>
-        <div
-          aria-selected="false"
-          class="v-tab"
-          role="tab"
-          tabindex="0"
-        >
-          Test query
-        </div>
-        <!---->
-        <!---->
+      </div>
+      <div
+        class="v-slide-group__next v-slide-group__next--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
       </div>
     </div>
     <div
-      class="v-slide-group__next v-slide-group__next--disabled"
+      class="v-window v-item-group theme--light v-tabs-items"
     >
-      <transition-stub
-        name="fade-transition"
-      />
-    </div>
-  </div>
-  <div
-    class="v-window v-item-group theme--light v-tabs-items"
-  >
-    <div
-      class="v-window__container"
-    >
-      <transition-stub
-        name=""
+      <div
+        class="v-window__container"
       >
-        <div
-          class="v-window-item v-window-item--active"
+        <transition-stub
+          name=""
         >
-          <declare-ticket-rule-general-form-stub
-            class="mt-2"
-            form="[object Object]"
-            templatevars="[object Object]"
-          />
-        </div>
-      </transition-stub>
-      <transition-stub
-        name=""
-      >
-        <div
-          class="v-window-item"
-          style="display: none;"
+          <div
+            class="v-window-item v-window-item--active"
+          >
+            <declare-ticket-rule-general-form-stub
+              class="mt-2"
+              form="[object Object]"
+              templatevars="[object Object]"
+            />
+          </div>
+        </transition-stub>
+        <transition-stub
+          name=""
         >
-          <declare-ticket-rule-patterns-form-stub
-            class="mt-2"
-            form="[object Object]"
-          />
-        </div>
-      </transition-stub>
-      <transition-stub
-        name=""
-      >
-        <!---->
-      </transition-stub>
+          <div
+            class="v-window-item"
+            style="display: none;"
+          >
+            <declare-ticket-rule-patterns-form-stub
+              class="mt-2"
+              form="[object Object]"
+            />
+          </div>
+        </transition-stub>
+        <transition-stub
+          name=""
+        >
+          <!---->
+        </transition-stub>
+      </div>
     </div>
   </div>
 </div>
@@ -109,106 +114,111 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with cust
 
 exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with default props 1`] = `
 <div
-  class="v-tabs v-tabs--fixed-tabs theme--light"
+  class="layout gap-2 column"
 >
+  <c-enabled-field />
   <div
-    class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
-    role="tablist"
+    class="v-tabs v-tabs--centered theme--light"
   >
     <div
-      class="v-slide-group__prev v-slide-group__prev--disabled"
-    >
-      <transition-stub
-        name="fade-transition"
-      />
-    </div>
-    <div
-      class="v-slide-group__wrapper"
+      class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+      role="tablist"
     >
       <div
-        class="v-slide-group__content v-tabs-bar__content"
+        class="v-slide-group__prev v-slide-group__prev--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+      <div
+        class="v-slide-group__wrapper"
       >
         <div
-          class="v-tabs-slider-wrapper"
-          style="transition: none;"
+          class="v-slide-group__content v-tabs-bar__content"
         >
           <div
-            class="v-tabs-slider primary"
-          />
+            class="v-tabs-slider-wrapper"
+            style="transition: none;"
+          >
+            <div
+              class="v-tabs-slider primary"
+            />
+          </div>
+          <div
+            aria-selected="true"
+            class="v-tab v-tab--active"
+            role="tab"
+            tabindex="0"
+          >
+      General
+          </div>
+          <div
+            aria-selected="false"
+            class="v-tab"
+            role="tab"
+            tabindex="0"
+          >
+      Pattern
+          </div>
+          <div
+            aria-selected="false"
+            class="v-tab"
+            role="tab"
+            tabindex="0"
+          >
+            Test query
+          </div>
+          <!---->
+          <!---->
         </div>
-        <div
-          aria-selected="true"
-          class="v-tab v-tab--active"
-          role="tab"
-          tabindex="0"
-        >
-    General
-        </div>
-        <div
-          aria-selected="false"
-          class="v-tab"
-          role="tab"
-          tabindex="0"
-        >
-    Pattern
-        </div>
-        <div
-          aria-selected="false"
-          class="v-tab"
-          role="tab"
-          tabindex="0"
-        >
-          Test query
-        </div>
-        <!---->
-        <!---->
+      </div>
+      <div
+        class="v-slide-group__next v-slide-group__next--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
       </div>
     </div>
     <div
-      class="v-slide-group__next v-slide-group__next--disabled"
+      class="v-window v-item-group theme--light v-tabs-items"
     >
-      <transition-stub
-        name="fade-transition"
-      />
-    </div>
-  </div>
-  <div
-    class="v-window v-item-group theme--light v-tabs-items"
-  >
-    <div
-      class="v-window__container"
-    >
-      <transition-stub
-        name=""
+      <div
+        class="v-window__container"
       >
-        <div
-          class="v-window-item v-window-item--active"
+        <transition-stub
+          name=""
         >
-          <declare-ticket-rule-general-form-stub
-            class="mt-2"
-            form="[object Object]"
-            templatevars="[object Object]"
-          />
-        </div>
-      </transition-stub>
-      <transition-stub
-        name=""
-      >
-        <div
-          class="v-window-item"
-          style="display: none;"
+          <div
+            class="v-window-item v-window-item--active"
+          >
+            <declare-ticket-rule-general-form-stub
+              class="mt-2"
+              form="[object Object]"
+              templatevars="[object Object]"
+            />
+          </div>
+        </transition-stub>
+        <transition-stub
+          name=""
         >
-          <declare-ticket-rule-patterns-form-stub
-            class="mt-2"
-            form="[object Object]"
-          />
-        </div>
-      </transition-stub>
-      <transition-stub
-        name=""
-      >
-        <!---->
-      </transition-stub>
+          <div
+            class="v-window-item"
+            style="display: none;"
+          >
+            <declare-ticket-rule-patterns-form-stub
+              class="mt-2"
+              form="[object Object]"
+            />
+          </div>
+        </transition-stub>
+        <transition-stub
+          name=""
+        >
+          <!---->
+        </transition-stub>
+      </div>
     </div>
   </div>
 </div>
@@ -216,122 +226,127 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with defa
 
 exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with errors 1`] = `
 <div
-  class="v-tabs v-tabs--fixed-tabs theme--light"
+  class="layout gap-2 column"
 >
+  <c-enabled-field />
   <div
-    class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
-    role="tablist"
+    class="v-tabs v-tabs--centered theme--light"
   >
     <div
-      class="v-slide-group__prev v-slide-group__prev--disabled"
-    >
-      <transition-stub
-        name="fade-transition"
-      />
-    </div>
-    <div
-      class="v-slide-group__wrapper"
+      class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+      role="tablist"
     >
       <div
-        class="v-slide-group__content v-tabs-bar__content"
+        class="v-slide-group__prev v-slide-group__prev--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+      <div
+        class="v-slide-group__wrapper"
       >
         <div
-          class="v-tabs-slider-wrapper"
-          style="transition: none;"
+          class="v-slide-group__content v-tabs-bar__content"
         >
           <div
-            class="v-tabs-slider primary"
-          />
+            class="v-tabs-slider-wrapper"
+            style="transition: none;"
+          >
+            <div
+              class="v-tabs-slider primary"
+            />
+          </div>
+          <div
+            aria-selected="false"
+            class="v-tab error--text"
+            role="tab"
+            tabindex="0"
+          >
+      General
+          </div>
+          <div
+            aria-selected="false"
+            class="v-tab error--text"
+            role="tab"
+            tabindex="0"
+          >
+      Pattern
+          </div>
+          <div
+            aria-selected="true"
+            class="v-tab v-tab--active"
+            role="tab"
+            tabindex="0"
+          >
+            Test query
+          </div>
+          <!---->
+          <!---->
         </div>
-        <div
-          aria-selected="false"
-          class="v-tab error--text"
-          role="tab"
-          tabindex="0"
-        >
-    General
-        </div>
-        <div
-          aria-selected="false"
-          class="v-tab error--text"
-          role="tab"
-          tabindex="0"
-        >
-    Pattern
-        </div>
-        <div
-          aria-selected="true"
-          class="v-tab v-tab--active"
-          role="tab"
-          tabindex="0"
-        >
-          Test query
-        </div>
-        <!---->
-        <!---->
+      </div>
+      <div
+        class="v-slide-group__next v-slide-group__next--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
       </div>
     </div>
     <div
-      class="v-slide-group__next v-slide-group__next--disabled"
+      class="v-window v-item-group theme--light v-tabs-items"
     >
-      <transition-stub
-        name="fade-transition"
-      />
-    </div>
-  </div>
-  <div
-    class="v-window v-item-group theme--light v-tabs-items"
-  >
-    <div
-      class="v-window__container"
-    >
-      <transition-stub
-        name=""
+      <div
+        class="v-window__container"
       >
-        <div
-          class="v-window-item"
-          style="display: none;"
-        >
-          <declare-ticket-rule-general-form-stub
-            class="mt-2"
-            form="[object Object]"
-            templatevars="[object Object]"
-          />
-        </div>
-      </transition-stub>
-      <transition-stub
-        name=""
-      >
-        <div
-          class="v-window-item"
-          style="display: none;"
-        >
-          <declare-ticket-rule-patterns-form-stub
-            class="mt-2"
-            form="[object Object]"
-          />
-        </div>
-      </transition-stub>
-      <transition-stub
-        name=""
-      >
-        <div
-          class="v-window-item v-window-item--active"
+        <transition-stub
+          name=""
         >
           <div
-            class="layout"
+            class="v-window-item"
+            style="display: none;"
+          >
+            <declare-ticket-rule-general-form-stub
+              class="mt-2"
+              form="[object Object]"
+              templatevars="[object Object]"
+            />
+          </div>
+        </transition-stub>
+        <transition-stub
+          name=""
+        >
+          <div
+            class="v-window-item"
+            style="display: none;"
+          >
+            <declare-ticket-rule-patterns-form-stub
+              class="mt-2"
+              form="[object Object]"
+            />
+          </div>
+        </transition-stub>
+        <transition-stub
+          name=""
+        >
+          <div
+            class="v-window-item v-window-item--active"
           >
             <div
-              class="flex offset-xs1 xs10"
+              class="layout"
             >
-              <declare-ticket-rule-test-query-stub
-                class="mt-2"
-                form="[object Object]"
-              />
+              <div
+                class="flex offset-xs1 xs10"
+              >
+                <declare-ticket-rule-test-query-stub
+                  class="mt-2"
+                  form="[object Object]"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </transition-stub>
+        </transition-stub>
+      </div>
     </div>
   </div>
 </div>
@@ -339,112 +354,117 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with erro
 
 exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with template testing tab access 1`] = `
 <div
-  class="v-tabs v-tabs--fixed-tabs theme--light"
+  class="layout gap-2 column"
 >
+  <c-enabled-field />
   <div
-    class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
-    role="tablist"
+    class="v-tabs v-tabs--centered theme--light"
   >
     <div
-      class="v-slide-group__prev v-slide-group__prev--disabled"
-    >
-      <transition-stub
-        name="fade-transition"
-      />
-    </div>
-    <div
-      class="v-slide-group__wrapper"
+      class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+      role="tablist"
     >
       <div
-        class="v-slide-group__content v-tabs-bar__content"
+        class="v-slide-group__prev v-slide-group__prev--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+      <div
+        class="v-slide-group__wrapper"
       >
         <div
-          class="v-tabs-slider-wrapper"
-          style="transition: none;"
+          class="v-slide-group__content v-tabs-bar__content"
         >
           <div
-            class="v-tabs-slider primary"
+            class="v-tabs-slider-wrapper"
+            style="transition: none;"
+          >
+            <div
+              class="v-tabs-slider primary"
+            />
+          </div>
+          <div
+            aria-selected="true"
+            class="v-tab v-tab--active"
+            role="tab"
+            tabindex="0"
+          >
+      General
+          </div>
+          <div
+            aria-selected="false"
+            class="v-tab"
+            role="tab"
+            tabindex="0"
+          >
+      Pattern
+          </div>
+          <div
+            aria-selected="false"
+            class="v-tab"
+            role="tab"
+            tabindex="0"
+          >
+            Test query
+          </div>
+          <template-testing-test-variables-tab-stub
+            disabled="true"
           />
         </div>
-        <div
-          aria-selected="true"
-          class="v-tab v-tab--active"
-          role="tab"
-          tabindex="0"
-        >
-    General
-        </div>
-        <div
-          aria-selected="false"
-          class="v-tab"
-          role="tab"
-          tabindex="0"
-        >
-    Pattern
-        </div>
-        <div
-          aria-selected="false"
-          class="v-tab"
-          role="tab"
-          tabindex="0"
-        >
-          Test query
-        </div>
-        <template-testing-test-variables-tab-stub
-          disabled="true"
+      </div>
+      <div
+        class="v-slide-group__next v-slide-group__next--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
         />
       </div>
     </div>
     <div
-      class="v-slide-group__next v-slide-group__next--disabled"
+      class="v-window v-item-group theme--light v-tabs-items"
     >
-      <transition-stub
-        name="fade-transition"
-      />
-    </div>
-  </div>
-  <div
-    class="v-window v-item-group theme--light v-tabs-items"
-  >
-    <div
-      class="v-window__container"
-    >
-      <transition-stub
-        name=""
+      <div
+        class="v-window__container"
       >
-        <div
-          class="v-window-item v-window-item--active"
+        <transition-stub
+          name=""
         >
-          <declare-ticket-rule-general-form-stub
-            class="mt-2"
-            form="[object Object]"
-            templatevars="[object Object]"
-          />
-        </div>
-      </transition-stub>
-      <transition-stub
-        name=""
-      >
-        <div
-          class="v-window-item"
-          style="display: none;"
+          <div
+            class="v-window-item v-window-item--active"
+          >
+            <declare-ticket-rule-general-form-stub
+              class="mt-2"
+              form="[object Object]"
+              templatevars="[object Object]"
+            />
+          </div>
+        </transition-stub>
+        <transition-stub
+          name=""
         >
-          <declare-ticket-rule-patterns-form-stub
-            class="mt-2"
-            form="[object Object]"
-          />
-        </div>
-      </transition-stub>
-      <transition-stub
-        name=""
-      >
-        <!---->
-      </transition-stub>
-      <transition-stub
-        name=""
-      >
-        <!---->
-      </transition-stub>
+          <div
+            class="v-window-item"
+            style="display: none;"
+          >
+            <declare-ticket-rule-patterns-form-stub
+              class="mt-2"
+              form="[object Object]"
+            />
+          </div>
+        </transition-stub>
+        <transition-stub
+          name=""
+        >
+          <!---->
+        </transition-stub>
+        <transition-stub
+          name=""
+        >
+          <!---->
+        </transition-stub>
+      </div>
     </div>
   </div>
 </div>

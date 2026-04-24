@@ -346,7 +346,7 @@ export default {
     },
 
     shownOperatorField() {
-      return this.operators.length !== 1 || this.operators[0] !== this.rule.operator;
+      return this.operators.length > 0 || this.operators[0] !== this.rule.operator;
     },
 
     objectDictionaryName() {
@@ -390,11 +390,11 @@ export default {
       const newRule = {
         ...this.rule,
 
-        attribute: attribute.value,
-        alias: attribute.alias ?? false,
+        attribute: attribute?.value,
+        alias: attribute?.alias ?? false,
       };
 
-      if (attribute.definedType) {
+      if (attribute?.definedType) {
         newRule.fieldType = attribute.definedType;
       }
 

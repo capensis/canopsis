@@ -1,5 +1,10 @@
 import { useStoreModuleHooks } from '@/hooks/store';
 
+/**
+ * Creates hooks for accessing the theme Vuex store module
+ *
+ * @returns {Object} Store module hooks for theme namespace
+ */
 const useThemeStoreModule = () => useStoreModuleHooks('theme');
 
 /**

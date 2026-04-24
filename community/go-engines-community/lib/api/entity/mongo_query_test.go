@@ -662,6 +662,72 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchP
 	}
 }
 
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityPattern_ShouldBuildQuery(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDbClient := createMockDbClient(ctrl)
+	request := ListRequestWithPagination{
+		Query: pagination.GetDefaultQuery(),
+		ListRequest: ListRequest{
+			BaseFilterRequest: BaseFilterRequest{
+				EntityPattern: `[[{"field": "infos.test1", "field_type": "string", "cond": {"type": "regexp", "value": "test val"}}]]`,
+			},
+		},
+	}
+	now := datetime.NewCpsTime()
+	expectedDataPipeline := []bson.M{
+		{"$sort": bson.D{{Key: "_id", Value: 1}}},
+		{"$skip": 0},
+		{"$limit": 10},
+	}
+	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
+	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(),
+	})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$project": bson.M{
+			"services":    0,
+			"alarm":       0,
+			"event_stats": 0,
+		},
+	})
+	expected := []bson.M{
+		{"$match": bson.M{
+			"soft_deleted": bson.M{"$exists": false},
+			"healthcheck":  bson.M{"$in": bson.A{nil, false}},
+		}},
+		{"$match": bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"infos.test1.value": bson.M{"$regex": "test val"}},
+			}},
+		}}},
+		{"$facet": bson.M{
+			"data":        expectedDataPipeline,
+			"total_count": []bson.M{{"$count": "count"}},
+		}},
+		{"$addFields": bson.M{
+			"total_count": bson.M{"$sum": "$total_count.count"},
+		}},
+	}
+
+	mockTransformer := mock_patternfields.NewMockTransformer(ctrl)
+	mockTransformer.EXPECT().FetchAliases(gomock.Any(), gomock.Any()).Return(patternfields.Aliases{}, nil).AnyTimes()
+
+	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider, mockTransformer)
+	result, err := b.CreateListAggregationPipeline(t.Context(), request, now)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
+		t.Errorf("unexpected result: %s", diff)
+	}
+}
+
 func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipleWidgetFilters_ShouldBuildQueryWithAllMatches(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
