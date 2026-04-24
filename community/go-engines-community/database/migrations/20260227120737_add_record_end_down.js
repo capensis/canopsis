@@ -1,0 +1,1 @@
+db.event_records.dropIndex("t_-1");

@@ -6,27 +6,34 @@
     :total-items="totalItems"
     :options="options"
     :is-disabled-item="isDisabledException"
-    select-all
+    :select-all="removable || updatable"
     expand
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
-      <c-action-btn
-        v-if="hasDeleteAnyPbehaviorExceptionAccess"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :hideable="updatable"
+        :unhideable="updatable"
+        pbehavior-exception
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
+    </template>
+    <template #visible="{ item }">
+      <c-enabled :value="!item.hidden" />
     </template>
     <template #actions="{ item: actionsItem }">
       <c-action-btn
-        v-if="hasUpdateAnyPbehaviorExceptionAccess"
+        v-if="updatable"
         type="edit"
         @click="$emit('edit', actionsItem)"
       />
       <c-action-btn
-        v-if="hasDeleteAnyPbehaviorExceptionAccess"
+        v-if="removable"
         :tooltip="actionsItem.deletable ? $t('common.delete') : $t('pbehavior.exceptions.usingException')"
         :disabled="!actionsItem.deletable"
         type="delete"
@@ -40,7 +47,9 @@
 </template>
 
 <script>
-import { permissionsTechnicalPbehaviorExceptionsMixin } from '@/mixins/permissions/technical/pbehavior-exceptions';
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
 
 import PbehaviorExceptionsListExpandPanel from './partials/pbehavior-exceptions-list-expand-panel.vue';
 
@@ -48,7 +57,6 @@ export default {
   components: {
     PbehaviorExceptionsListExpandPanel,
   },
-  mixins: [permissionsTechnicalPbehaviorExceptionsMixin],
   props: {
     pbehaviorExceptions: {
       type: Array,
@@ -66,26 +74,42 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.name'),
-          value: 'name',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
+    removable: {
+      type: Boolean,
+      required: true,
+    },
+    updatable: {
+      type: Boolean,
+      required: true,
     },
   },
-  methods: {
-    isDisabledException({ deletable }) {
-      return !deletable;
-    },
+  setup() {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      {
+        text: t('common.name'),
+        value: 'name',
+      },
+      {
+        text: t('pbehavior.visible'),
+        value: 'visible',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
+
+    const isDisabledException = ({ deletable }) => !deletable;
+
+    return {
+      headers,
+
+      isDisabledException,
+    };
   },
 };
 </script>

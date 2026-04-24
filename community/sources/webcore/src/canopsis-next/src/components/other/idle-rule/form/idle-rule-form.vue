@@ -1,6 +1,6 @@
 <template>
   <v-layout column>
-    <c-enabled-field v-field="form.enabled" />
+    <c-enabled-field v-field="form.enabled" with-background />
     <v-tabs
       slider-color="primary"
       centered

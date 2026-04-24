@@ -5,7 +5,7 @@
     :loading="pending"
     :headers="headers"
     :total-items="totalItems"
-    :select-all="removable || enablable || disablable"
+    :select-all="removable || updatable"
     :advanced-search-attributes="advancedSearchAttributes"
     advanced-search
     advanced-pagination
@@ -25,12 +25,14 @@
       </v-layout>
     </template>
     <template #mass-actions="{ selected, clearSelected }">
-      <pbehaviors-mass-actions-panel
+      <c-table-mass-actions-panel
         :items="selected"
         :removable="removable"
-        :enablable="enablable"
-        :disablable="disablable"
+        :enablable="updatable"
+        :disablable="updatable"
+        pbehavior
         @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #name="{ item }">
@@ -101,7 +103,6 @@ import { useI18n } from '@/hooks/i18n';
 import { usePbehaviorAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
 import { usePbehaviorDateFormat } from '@/components/other/pbehavior/pbehaviors/hooks/pbehavior-date-format';
 
-import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
 import PbehaviorActions from './partials/pbehavior-actions.vue';
 import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
 import PbehaviorsListAlarmFilteringBtn from './partials/pbehaviors-list-alarm-filtering-btn.vue';
@@ -111,7 +112,6 @@ export default {
   components: {
     PbehaviorActions,
     PbehaviorsListExpandItem,
-    PbehaviorsMassActionsPanel,
     PbehaviorsListAlarmFilteringBtn,
   },
   props: {
@@ -140,14 +140,6 @@ export default {
       default: false,
     },
     duplicable: {
-      type: Boolean,
-      default: false,
-    },
-    enablable: {
-      type: Boolean,
-      default: false,
-    },
-    disablable: {
       type: Boolean,
       default: false,
     },

@@ -11,11 +11,14 @@
           :type="type"
         >
           <template #default="{ templateVars, copyVars }">
+            <c-enabled-field v-model="form.enabled" with-background />
             <event-filter-form
               v-model="form"
               :template-vars="templateVars"
               :copy-vars="copyVars"
               :is-disabled-id-field="config.isDisabledIdField"
+              :event-attributes="eventAttributes"
+              :attributes-pending="pending"
             />
           </template>
         </template-testing-test-variables-wrapper>
@@ -57,6 +60,7 @@ import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
 import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
@@ -91,6 +95,13 @@ export default {
 
     const form = ref(eventFilterToForm(config.value.rule, system.timezone));
 
+    const { fetchEventFilterPatternFields } = usePatternsFields();
+
+    const {
+      pending,
+      eventAttributes,
+    } = usePatternsFieldsFetching(fetchEventFilterPatternFields);
+
     const ruleId = computed(() => config.value.rule?._id);
     const title = computed(() => config.value.title ?? t('modals.createEventFilter.create.title'));
     const isEnrichment = computed(() => isEnrichmentEventFilterRuleType(form.value.type));
@@ -117,6 +128,8 @@ export default {
       ruleId,
       type,
       title,
+      pending,
+      eventAttributes,
       isEnrichment,
       isChangeEntity,
       isDisabled,

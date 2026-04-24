@@ -22,6 +22,9 @@ export default {
   pbehaviorName: 'Nom de comportement périodique',
   pbehaviorCanonicalType: 'Type canonique de comportement périodique',
   rruleEnd: 'Fin de récurrence',
+  visible: 'Afficher sur le formulaire de comportement périodique',
+  massHide: 'Masquer dans le formulaire de comportement',
+  massUnhide: '@:pbehavior.visible',
   defaultNameForSingleResourceEntity: '{component} - {name} - Le {datetime}',
   defaultNameForSingleEntity: '{name} - Le {datetime}',
   defaultNameForMultipleEntities: 'Comportement périodique - Le {datetime}',
@@ -48,7 +51,6 @@ export default {
   types: {
     usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
     defaultType: 'Le type est par défaut, vous ne pouvez modifier que le champ de couleur.',
-    hidden: 'Masquer ce type sur le formulaire de comportement ?',
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',

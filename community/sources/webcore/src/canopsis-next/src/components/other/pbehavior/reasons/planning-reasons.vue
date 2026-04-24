@@ -5,9 +5,12 @@
       :pending="pbehaviorReasonsPending"
       :total-items="pbehaviorReasonsMeta.total_count"
       :options.sync="options"
+      :removable="hasDeleteAnyPbehaviorReasonAccess"
+      :updatable="hasUpdateAnyPbehaviorReasonAccess"
       @remove-selected="showRemoveSelectedPbehaviorReasonModal"
       @remove="showRemovePbehaviorReasonModal"
       @edit="showEditPbehaviorReasonModal"
+      @refresh="fetchList"
     />
   </v-card-text>
 </template>

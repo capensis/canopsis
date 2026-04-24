@@ -90,7 +90,7 @@ describe('entity-chart-widget', () => {
 
     await flushPromises();
 
-    expect(fetchEntityAlarmsMetricsWithoutStore).toBeCalledWith(
+    expect(fetchEntityAlarmsMetricsWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {

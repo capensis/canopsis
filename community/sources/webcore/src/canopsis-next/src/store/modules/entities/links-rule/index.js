@@ -12,5 +12,13 @@ export default createCRUDModule({
     fetchLinkCategoriesWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.linkCategories, { params });
     },
+
+    bulkEnable(context, { data }) {
+      return request.put(API_ROUTES.bulkLinkRuleEnable, data);
+    },
+
+    bulkDisable(context, { data }) {
+      return request.put(API_ROUTES.bulkLinkRuleDisable, data);
+    },
   },
 });

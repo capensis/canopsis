@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { isArray, isUndefined, mergeWith } from 'lodash';
+import { isArray } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -49,8 +49,8 @@ import {
   ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
 
+import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
 import { getMapEntityText } from '@/helpers/entities/map/list';
-import { indexesByKey } from '@/helpers/array';
 
 import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
 
@@ -361,27 +361,7 @@ export default {
     },
 
     availableEntityAttributes() {
-      const mergedAttributes = [...this.entityAttributes];
-      const mergedAttributesIndexesByValue = indexesByKey(this.entityAttributes, 'value');
-
-      this.attributes.forEach((attribute) => {
-        const index = mergedAttributesIndexesByValue[attribute.value];
-
-        if (isUndefined(index)) {
-          mergedAttributes.push(attribute);
-
-          return;
-        }
-
-        mergedAttributes[index] = mergeWith(
-          {},
-          mergedAttributes[index],
-          attribute,
-          (a, b) => (isArray(b) ? b : undefined),
-        );
-      });
-
-      return mergedAttributes;
+      return mergePatternAttributes(this.entityAttributes, this.attributes);
     },
   },
   mounted() {
