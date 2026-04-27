@@ -242,6 +242,7 @@ export const useLazySearch = ({
     const unwrappedIdKey = unref(idKey);
     const unwrappedAddable = unref(addable);
     const unwrappedMultiple = unref(multiple);
+    const unwrappedReturnObject = unref(returnObject);
 
     let preparedNewSelectedItems;
 
@@ -263,7 +264,7 @@ export const useLazySearch = ({
       unwrappedIdKey,
     );
 
-    if (returnObject) {
+    if (unwrappedReturnObject) {
       updateModel(
         unwrappedMultiple
           ? selectedItems.value
