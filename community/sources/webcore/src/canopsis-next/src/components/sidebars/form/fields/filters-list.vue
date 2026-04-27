@@ -13,19 +13,21 @@
 
 <script>
 import { pick } from 'lodash';
+import { computed, inject } from 'vue';
 
 import { MODALS } from '@/constants';
 
 import { uuid } from '@/helpers/uuid';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import FiltersList from '@/components/other/filter/filters-list.vue';
 
 export default {
   inject: ['$sidebar'],
   components: { FiltersList },
-  mixins: [formArrayMixin],
   model: {
     prop: 'filters',
     event: 'input',
@@ -80,68 +82,83 @@ export default {
       default: false,
     },
   },
-  computed: {
-    modalConfig() {
-      return {
-        ...pick(this, [
-          'withAlarm',
-          'withEntity',
-          'withPbehavior',
-          'withServiceWeather',
-          'entityTypes',
-          'entityCountersType',
-        ]),
+  setup(props, { emit }) {
+    const sidebar = inject('$sidebar');
 
-        widgetType: this.$sidebar.config?.widget?.type,
-        withTitle: true,
-      };
-    },
-  },
-  methods: {
-    showCreateFilterModal() {
-      this.$modals.show({
+    const { t } = useI18n();
+    const modals = useModals();
+
+    const {
+      addItemIntoArray,
+      updateItemInArray,
+      removeItemFromArray,
+    } = useArrayModelField(props, emit);
+
+    const modalConfig = computed(() => ({
+      ...pick(props, [
+        'withAlarm',
+        'withEntity',
+        'withPbehavior',
+        'withServiceWeather',
+        'entityTypes',
+        'entityCountersType',
+      ]),
+
+      widgetType: sidebar?.config?.widget?.type,
+      withTitle: true,
+      withoutLink: true,
+    }));
+
+    const showCreateFilterModal = () => {
+      modals.show({
         name: MODALS.createFilter,
         config: {
-          ...this.modalConfig,
+          ...modalConfig.value,
 
-          title: this.$t('modals.createFilter.create.title'),
-          action: newFilter => this.addItemIntoArray({
+          title: t('modals.createFilter.create.title'),
+          action: newFilter => addItemIntoArray({
             ...newFilter,
 
             _id: uuid('filter'),
-            widget: this.widgetId,
+            widget: props.widgetId,
             is_user_preference: false,
           }),
         },
       });
-    },
+    };
 
-    showEditFilterModal(filter, index) {
-      this.$modals.show({
+    const showEditFilterModal = (filter, index) => {
+      modals.show({
         name: MODALS.createFilter,
         config: {
-          ...this.modalConfig,
+          ...modalConfig.value,
 
           filter,
-          title: this.$t('modals.createFilter.edit.title'),
-          action: newFilter => this.updateItemInArray(index, {
+          title: t('modals.createFilter.edit.title'),
+          action: newFilter => updateItemInArray(index, {
             ...newFilter,
 
-            widget: this.widgetId,
+            widget: props.widgetId,
             _id: filter._id,
           }),
         },
       });
-    },
+    };
 
-    showDeleteFilterModal(filter, index) {
-      this.$modals.show({
+    const showDeleteFilterModal = (filter, index) => {
+      modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.removeItemFromArray(index),
+          action: () => removeItemFromArray(index),
         },
       });
-    },
+    };
+
+    return {
+      showCreateFilterModal,
+      showEditFilterModal,
+      showDeleteFilterModal,
+    };
   },
 };
 </script>
