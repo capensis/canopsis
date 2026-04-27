@@ -91,15 +91,34 @@ export default {
     const title = computed(() => config.value.title ?? t('modals.createFilter.create.title'));
     const patternsProps = computed(() => omit(config.value, ['title', 'action']));
 
+    const chatContext = computed(() => `${LLM_SOCKET_CONTEXTS.widgetFilter}_${config.value.widgetType}`);
+
+    const {
+      chatIds,
+      shown: chatShown,
+      options: chatOptions,
+    } = useAiChatForm({
+      form,
+
+      modal: toRef(props, 'modal'),
+      ruleId: config.value?.filter?._id,
+      context: chatContext,
+      withoutLink: config.value?.withoutLink,
+    });
+
     /**
      * Submits the form and calls the action callback if provided
      */
     const { submit, submitting, isDisabled } = useSubmittableForm({
       form,
       method: async () => {
-        const result = await config.value.action?.(
-          formToFilter(form.value, patternsFields.value, config.value.corporate),
-        );
+        const newFilter = formToFilter(form.value, patternsFields.value, config.value.corporate);
+
+        if (config.value?.withoutLink && chatIds.value.length) {
+          newFilter.llm_chat = chatIds.value.at(-1);
+        }
+
+        const result = await config.value.action?.(newFilter);
 
         await config.value.afterSubmit?.(result);
 
@@ -110,19 +129,6 @@ export default {
     });
 
     useFormConfirmableCloseModal({ form, submit, close });
-
-    const chatContext = computed(() => `${LLM_SOCKET_CONTEXTS.widgetFilter}_${config.value.widgetType}`);
-
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
-
-      modal: toRef(props, 'modal'),
-      ruleId: props.modal.config?.filter?._id,
-      context: chatContext,
-    });
 
     return {
       form,

@@ -228,7 +228,9 @@ export const useAiChatFormPatterns = ({ form, field, context, callExpand }) => {
       return;
     }
 
-    const newPatternsForm = unref(field) ? patternToForm(newPatterns) : filterPatternsToForm(newPatterns);
+    const newPatternsForm = unref(field)
+      ? patternToForm({ ...formRef.value, ...newPatterns })
+      : filterPatternsToForm(newPatterns);
 
     if (formRef.value.patterns) {
       set(formRef.value, 'patterns', {
@@ -325,21 +327,21 @@ export const useAiChatShown = ({ form, throttledUpdatePatterns } = {}) => {
  *   linkChatsWithRuleId: function(string),
  * }}
  */
-export const useAiChatLinkChats = ({ ruleId } = {}) => {
+export const useAiChatLinkChats = ({ ruleId, withoutLink } = {}) => {
   const modals = useModals();
   const { bulkLinkLlmHistory } = useLlm();
 
   const modal = inject('$modal', null);
 
   /** LLM chat history ids collected through `registerChatId` for a later `linkChatsWithRuleId` bulk update. */
-  const chatIds = [];
+  const chatIds = ref([]);
 
   /**
    * Appends a chat history id to `chatIds` for a later `linkChatsWithRuleId` call.
    *
    * @param {string} chatId - Server id of the LLM history row to associate with a rule after save.
    */
-  const registerChatId = chatId => !chatIds.includes(chatIds) && chatIds.push(chatId);
+  const registerChatId = chatId => !chatIds.value.includes(chatId) && chatIds.value.push(chatId);
 
   /**
    * Bulk-links every id in `chatIds` to the given rule id via `bulkLinkLlmHistory` (e.g. after the modal rule is
@@ -353,7 +355,7 @@ export const useAiChatLinkChats = ({ ruleId } = {}) => {
     const rulesIds = rulesIdsForLink.filter(ruleIdForLink => ruleIdForLink !== unwrappedRuleId);
 
     const data = rulesIds.reduce((acc, ruleIdForLink) => {
-      chatIds.forEach((chatId) => {
+      chatIds.value.forEach((chatId) => {
         acc.push({
           _id: chatId,
           rule: ruleIdForLink,
@@ -399,10 +401,15 @@ export const useAiChatLinkChats = ({ ruleId } = {}) => {
   };
 
   onMounted(() => {
+    if (unref(withoutLink)) {
+      return;
+    }
+
     modals.updateModalConfig({ id: modal.id, config: { ...modal.config, afterSubmit: newAfterSubmit } });
   });
 
   return {
+    chatIds,
     registerChatId,
   };
 };
@@ -419,6 +426,7 @@ export const useAiChatLinkChats = ({ ruleId } = {}) => {
  * @param {import('vue').Ref<string>|import('vue').ComputedRef<string>|string|undefined} [params.context] - LLM
  *   socket context (e.g. `LLM_SOCKET_CONTEXTS.scenario` or `${LLM_SOCKET_CONTEXTS.widgetFilter}_${type}`).
  * @param {import('vue').Ref<string>|string|undefined} [params.field] - Optional field key for `useAiChatFormPatterns`.
+ * @param {boolean} [params.withoutLink] - Whether to disable link chats with rule id.
  * @returns {{
  *   shown: import('vue').Ref<boolean>,
  *   options: import('vue').ComputedRef<{ bind: Object, on: Object }>,
@@ -430,6 +438,7 @@ export const useAiChatForm = ({
   ruleId,
   context,
   field,
+  withoutLink,
 }) => {
   const expandFunctionsObserver = new Observer(true);
 
@@ -449,7 +458,7 @@ export const useAiChatForm = ({
   });
 
   const { llms, shown, showChat, hideChat } = useAiChatShown({ form, throttledUpdatePatterns });
-  const { registerChatId, linkChatsWithRuleId } = useAiChatLinkChats({ ruleId });
+  const { chatIds, registerChatId } = useAiChatLinkChats({ ruleId, withoutLink });
 
   const options = computed(() => ({
     bind: {
@@ -487,6 +496,6 @@ export const useAiChatForm = ({
   return {
     shown,
     options,
-    linkChatsWithRuleId,
+    chatIds,
   };
 };
