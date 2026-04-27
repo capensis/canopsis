@@ -110,7 +110,7 @@ export default {
       });
     },
 
-    setHealthcheckStatus({ services, engines }) {
+    setHealthcheckStatus({ services = [], engines = [] } = {}) {
       const newWrongNodes = sortBy([...services, ...engines], ['name']);
 
       if (!isEqual(newWrongNodes, this.wrongNodes)) {

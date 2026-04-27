@@ -490,6 +490,11 @@ export const API_ROUTES = {
   bulkSnmpRuleDisable: '/api/v4/cat/bulk/snmprules/disable',
   snmpMib: '/api/v4/cat/snmpmibs',
   webhookTokenRule: '/api/v4/cat/webhook-token-rules',
+  ticketStatusJobs: '/api/v4/cat/ticket-status-jobs',
+  bulkTicketStatusJobs: {
+    play: '/api/v4/cat/bulk/ticket-status-jobs/sync',
+    pause: '/api/v4/cat/bulk/ticket-status-jobs/pause',
+  },
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',

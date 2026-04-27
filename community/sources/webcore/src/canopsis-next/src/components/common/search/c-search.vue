@@ -4,6 +4,7 @@
       v-model="localValue"
       :combobox="combobox"
       :items="items"
+      :label="label"
       @submit="submit"
       @remove:item="removeItem"
       @toggle-pin:item="togglePinItem"
@@ -35,6 +36,10 @@ import { useSearchLocalValue, useSearchSavedItems } from './hooks/search';
 export default {
   props: {
     value: {
+      type: String,
+      default: '',
+    },
+    label: {
       type: String,
       default: '',
     },

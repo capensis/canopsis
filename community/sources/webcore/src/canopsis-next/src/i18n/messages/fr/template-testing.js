@@ -51,6 +51,8 @@ export default {
   columnTemplate: 'Modèle de colonne - {number}',
   ticketId: 'ID de ticket - {number}',
   ticketUrl: 'URL de ticket - {number}',
+  ticketStatusWebhookUrl: 'URL webhook de vérification du statut - {number}',
+  ticketStatusWebhookPayload: 'Charge utile webhook de vérification du statut - {number}',
   dynamicInfoValue: 'Valeur d\'information dynamique - {number} - {name}',
   instructionWebhookUrl: 'URL webhook de remédiation - Étape {step}, Opération {operation}',
   instructionWebhookPayload: 'Charge utile webhook de remédiation - Étape {step}, Opération {operation}',
@@ -177,10 +179,15 @@ export default {
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user]: 'Utilisateur',
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity]: 'Entité',
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: 'Réponse',
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse]: 'Réponse de vérification du statut du ticket',
   },
   testDataResponseLabels: {
     [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: 'Réponse (Données externes - {index} API)',
     [TEMPLATE_TESTING_TEST_TYPES.scenario]: 'Réponse (Action - {index} webhook)',
     [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: 'Réponse (Webhook - {index})',
+  },
+  testDataCheckTicketStatusResponseLabels: {
+    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: 'Réponse de vérification du statut du ticket (Webhook - {index})',
+    [TEMPLATE_TESTING_TEST_TYPES.scenario]: 'Réponse de vérification du statut du ticket (Action - {index} webhook)',
   },
 };

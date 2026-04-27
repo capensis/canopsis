@@ -535,7 +535,7 @@ export default {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
-      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.pause]: '@:common.pause',
     },
   },
   pbehaviorRecurrentChangesConfirmation: {
@@ -630,6 +630,11 @@ export default {
       popups: {
         success: '{jobName} a été dupliquée avec succès',
       },
+    },
+  },
+  createTicketStatusJob: {
+    edit: {
+      title: 'Éditer la tâche : {jobName}',
     },
   },
   clickOutsideConfirmation: {
