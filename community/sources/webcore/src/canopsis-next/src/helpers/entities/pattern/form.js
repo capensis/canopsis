@@ -1033,8 +1033,8 @@ export const patternRuleToForm = (rule = {}) => {
       form.operator = PATTERN_OPERATORS.notContains;
       form.value = rule.cond.value;
       break;
-    case PATTERN_CONDITIONS.beginsWith:
-      form.operator = PATTERN_OPERATORS.beginsWith;
+    case PATTERN_CONDITIONS.beginWith:
+      form.operator = PATTERN_OPERATORS.beginWith;
       form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.notBeginWith:
@@ -1306,8 +1306,8 @@ export const formRuleToPatternRule = (rule) => {
       pattern.cond.type = PATTERN_CONDITIONS.notContains;
       break;
 
-    case PATTERN_OPERATORS.beginsWith:
-      pattern.cond.type = PATTERN_CONDITIONS.beginsWith;
+    case PATTERN_OPERATORS.beginWith:
+      pattern.cond.type = PATTERN_CONDITIONS.beginWith;
       break;
     case PATTERN_OPERATORS.notBeginWith:
       pattern.cond.type = PATTERN_CONDITIONS.notBeginWith;

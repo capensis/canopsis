@@ -10,11 +10,15 @@
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
-      <c-action-btn
-        v-show="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="updatable"
+        :disablable="updatable"
+        llm
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #name="{ item }">

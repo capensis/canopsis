@@ -9,6 +9,8 @@ export default {
   expandTabs: {
     promptsHistory: 'Historique des invites',
   },
+  massEnable: 'Activer les modèles LLM',
+  massDisable: 'Désactiver les modèles LLM',
   promptsHistory: {
     tabs: {
       allPrompts: 'Toutes les invites',

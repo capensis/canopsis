@@ -118,6 +118,8 @@ export default {
         PATTERN_OPERATORS.isNotOneOf,
         PATTERN_OPERATORS.contains,
         PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.beginWith,
+        PATTERN_OPERATORS.notBeginWith,
         PATTERN_OPERATORS.regexp,
       ];
     },

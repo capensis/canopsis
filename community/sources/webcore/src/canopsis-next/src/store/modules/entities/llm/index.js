@@ -10,6 +10,14 @@ export default createCRUDModule({
   withWithoutStore: true,
 }, {
   actions: {
+    bulkEnable(context, { data } = {}) {
+      return request.put(API_ROUTES.llms.bulkEnable, data);
+    },
+
+    bulkDisable(context, { data } = {}) {
+      return request.put(API_ROUTES.llms.bulkDisable, data);
+    },
+
     fetchModelsListWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.llms.models, { params });
     },

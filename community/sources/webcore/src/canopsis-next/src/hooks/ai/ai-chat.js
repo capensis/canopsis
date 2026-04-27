@@ -362,7 +362,7 @@ export const useAiChatPattern = ({ patterns, patternItem, updateFormPatterns } =
     }
 
     if (lastLlmVersion.value < activeVersion.value) {
-      updateMessage(lastChangedPatternsFieldsMessageIndex, {
+      updateMessage(lastChangedPatternsFieldsMessageIndex.value, {
         prompt: tc('llm.chat.patternsEditedMessage', changedPatternsFields.value.length, {
           patterns: changedPatternsFields.value.map(field => t(`pattern.patternsFields.${field}`)).join(', ').toLowerCase(),
         }),
