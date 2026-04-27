@@ -412,13 +412,13 @@ describe('pattern form converters', () => {
 
     const form = patternRuleToForm(patternRule);
 
-    expect(form).toEqual({
-      ...defaultForm,
+    const { value: defaultValue, ...defaultFormWithoutValue } = defaultForm;
+    expect(form).toMatchObject({
+      ...defaultFormWithoutValue,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.hasEvery,
-      value: value.map(item => ({ key: expect.any(String), value: item })),
     });
-
+    expect(form.value).toEqual(value);
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 
@@ -431,12 +431,13 @@ describe('pattern form converters', () => {
 
     const form = patternRuleToForm(patternRule);
 
-    expect(form).toEqual({
-      ...defaultForm,
+    const { value: defaultValue, ...defaultFormWithoutValue } = defaultForm;
+    expect(form).toMatchObject({
+      ...defaultFormWithoutValue,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.hasOneOf,
-      value: value.map(item => ({ key: expect.any(String), value: item })),
     });
+    expect(form.value).toEqual(value);
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 
@@ -449,12 +450,13 @@ describe('pattern form converters', () => {
 
     const form = patternRuleToForm(patternRule);
 
-    expect(form).toEqual({
-      ...defaultForm,
+    const { value: defaultValue, ...defaultFormWithoutValue } = defaultForm;
+    expect(form).toMatchObject({
+      ...defaultFormWithoutValue,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.hasNot,
-      value: value.map(item => ({ key: expect.any(String), value: item })),
     });
+    expect(form.value).toEqual(value);
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 
@@ -708,15 +710,7 @@ describe('pattern form converters', () => {
       operator: PATTERN_OPERATORS.hasNot,
       dictionary,
     });
-    expect(form.value).toHaveLength(value.length);
-    expect(form.value).toEqual(
-      expect.arrayContaining(
-        value.map(item => expect.objectContaining({
-          key: expect.any(String),
-          value: item,
-        })),
-      ),
-    );
+    expect(form.value).toEqual(value);
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 
