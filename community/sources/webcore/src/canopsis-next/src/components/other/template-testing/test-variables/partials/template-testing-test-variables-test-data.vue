@@ -37,6 +37,7 @@ import TemplateTestingTestDataField from '../../form/fields/template-testing-dat
 const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_COPONENTS = {
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event]: 'template-testing-test-data-field',
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: 'template-testing-test-data-field',
+  [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse]: 'template-testing-test-data-field',
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm]: 'c-alarm-field',
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user]: 'c-user-picker-field',
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity]: 'c-entity-field',
@@ -80,6 +81,10 @@ export default {
     const getLabel = (item) => {
       if (isUndefined(item.index)) {
         return t(`templateTesting.testDataLabels.${item.type}`);
+      }
+
+      if (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse) {
+        return t(`templateTesting.testDataCheckTicketStatusResponseLabels.${props.type}`, { index: item.index + 1 });
       }
 
       return t(`templateTesting.testDataResponseLabels.${props.type}`, { index: item.index + 1 });

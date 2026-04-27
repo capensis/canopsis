@@ -32,6 +32,7 @@ const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/v
 const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
 const AdminEventsRecords = () => import(/* webpackChunkName: "EventsRecords" */ '@/views/admin/events-records.vue');
 const AdminTemplateTesting = () => import(/* webpackChunkName: "TemplateTesting" */ '@/views/admin/template-testing.vue');
+const AdminJobs = () => import(/* webpackChunkName: "Jobs" */ '@/views/admin/jobs.vue');
 const AdminCustomObjectsExternalAuthTokens = () => import(/* webpackChunkName: "ExternalAuthTokens" */ '@/views/admin/custom-objects/external-auth-tokens.vue');
 const AdminCustomObjectsEntityInfosProperties = () => import(/* webpackChunkName: "EntityInfosProperties" */ '@/views/admin/custom-objects/entity-infos-properties.vue');
 const AdminCustomObjectsExternalDataTables = () => import(/* webpackChunkName: "ExternalDataTables" */ '@/views/admin/custom-objects/external-data-tables.vue');
@@ -238,6 +239,18 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USER_PERMISSIONS.technical.externalAuthTokens,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminJobsManagement,
+    name: ROUTES_NAMES.adminJobsManagement,
+    component: AdminJobs,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        action: CRUD_ACTIONS.can,
+        id: USER_PERMISSIONS.technical.jobManagement,
       },
     },
   },

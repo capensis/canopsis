@@ -20,7 +20,7 @@ import { useVarsPrepare } from './shared';
  * @returns {import('vue').Ref<boolean>} returns.pending - Loading state indicator
  * @returns {Function} returns.fetchList - Function to fetch template variables list
  */
-export const useTemplateVarsList = ({ type, form } = {}) => {
+export const useTemplateVarsList = ({ type, form = {} } = {}) => {
   const vars = ref({});
 
   const {
