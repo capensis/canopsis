@@ -20,6 +20,7 @@ import {
   PATTERNS_FIELDS,
   DATETIME_FORMATS,
   LLM_SOCKET_CONTEXTS,
+  DEFAULT_TIMEZONE,
 } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
@@ -514,6 +515,7 @@ export const useAiChatSocket = ({
   const { t } = useI18n();
   const socket = useSocket();
 
+  const system = inject('$system', { timezone: DEFAULT_TIMEZONE });
   const aiChat = inject('$aiChat', {});
 
   const needRestart = ref(false);
@@ -635,6 +637,7 @@ export const useAiChatSocket = ({
       context: unref(context),
       rule: unref(ruleId),
       config: llm,
+      timezone: system.timezone,
     };
 
     socketRoom = socket
