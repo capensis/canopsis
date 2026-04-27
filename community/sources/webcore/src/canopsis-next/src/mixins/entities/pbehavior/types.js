@@ -20,6 +20,9 @@ export const entitiesPbehaviorTypeMixin = {
       removePbehaviorType: 'remove',
       fetchPbehaviorTypeByEntityId: 'fetchListByEntityId',
       fetchNextPbehaviorTypePriority: 'fetchNextPriority',
+      bulkHidePbehaviorTypes: 'bulkHide',
+      bulkUnhidePbehaviorTypes: 'bulkUnhide',
+      bulkRemovePbehaviorTypes: 'bulkRemove',
     }),
 
     async fetchDefaultPbehaviorTypes() {

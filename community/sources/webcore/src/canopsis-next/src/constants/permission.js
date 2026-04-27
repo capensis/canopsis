@@ -50,6 +50,7 @@ export const ADMIN_PAGES_RULES = {
   tag: { edition: CANOPSIS_EDITION.pro },
   map: { edition: CANOPSIS_EDITION.pro },
   eventsRecord: { edition: CANOPSIS_EDITION.pro },
+  jobManagement: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const USER_PERMISSIONS_PREFIXES = {
@@ -207,6 +208,7 @@ export const USER_PERMISSIONS = {
     externalAuthTokens: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalAuthTokens`,
     viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
     templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateTesting`,
+    jobManagement: `${USER_PERMISSIONS_PREFIXES.technical.admin}_job_management`,
     commentTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_commentTemplate`,
     externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalData`,
     entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.technical.admin}_entityInfoProperty`,
@@ -624,6 +626,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USER_PERMISSIONS.technical.tag]: ADMIN_PAGES_RULES.tag,
   [USER_PERMISSIONS.technical.map]: ADMIN_PAGES_RULES.map,
   [USER_PERMISSIONS.technical.eventsRecord]: ADMIN_PAGES_RULES.eventsRecord,
+  [USER_PERMISSIONS.technical.jobManagement]: ADMIN_PAGES_RULES.jobManagement,
 
   /**
    * Exploitation pages (including grouped remediation)

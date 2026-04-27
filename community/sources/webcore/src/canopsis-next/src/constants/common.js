@@ -22,6 +22,7 @@ export const ROUTES_NAMES = {
   adminCustomObjectsTags: 'admin-custom-objects-tags',
   adminCustomObjectsLlms: 'admin-custom-objects-llms',
   adminTemplateTesting: 'admin-template-testing',
+  adminJobsManagement: 'admin-jobs-management',
   adminSettingsUserInterface: 'admin-settings-user-interface',
   adminSettingsViewsImportExport: 'admin-settings-views-import-export',
   adminSettingsNotifications: 'admin-settings-notifications',
@@ -74,6 +75,7 @@ export const ROUTES = {
   adminKPI: '/admin/kpi',
   adminEventsRecords: '/admin/events-records',
   adminTemplateTesting: '/admin/template-testing',
+  adminJobsManagement: '/admin/jobs',
   adminCustomObjectsExternalAuthTokens: '/admin/external-auth-tokens',
   adminCustomObjectsExternalDataTables: '/admin/external-data-tables',
   adminCustomObjectsEntityInfosProperties: '/admin/entity-infos-properties',
@@ -436,10 +438,12 @@ export const CONTENT_TYPES = {
 export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
 
 export const RESPONSE_STATUSES = {
+  success: 200,
+
   badRequest: 400,
   unauthorized: 401,
-  notFound: 404,
   forbidden: 403,
+  notFound: 404,
   timeout: 408,
 
   internalServerError: 500,

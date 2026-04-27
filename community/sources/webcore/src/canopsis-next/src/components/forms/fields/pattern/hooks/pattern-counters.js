@@ -1,10 +1,4 @@
 import { computed, ref, unref } from 'vue';
-import { isEmpty } from 'lodash';
-
-import { PATTERN_DURATION_FORMAT, TIME_UNITS } from '@/constants';
-
-import { sanitizeHtml } from '@/helpers/html';
-import { convertDurationToString } from '@/helpers/date/duration';
 
 import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
@@ -24,7 +18,6 @@ import { usePattern } from '@/hooks/store/modules/pattern';
 export const usePatternCounters = ({
   counterMethod,
   entityCountersType,
-  bothCounters,
   hasError,
   patterns,
 }) => {
@@ -55,41 +48,25 @@ export const usePatternCounters = ({
   const allOverLimit = computed(() => (counters.value?.all?.over_limit ?? false));
   const allCount = computed(() => (counters.value?.all?.count ?? 0));
 
-  const checkFilterMessages = computed(() => {
+  const patternsCountMessageBind = computed(() => {
+    let entityCounter;
+    let alarmCounter;
+
     if (unref(hasError)) {
-      return t('pattern.errors.required');
+      return { errorMessage: t('pattern.errors.required') };
     }
-
-    if (isEmpty(counters.value)) {
-      return '';
-    }
-
-    const alarmsCount = counters.value?.all?.count ?? 0;
-    const allDuration = convertDurationToString(
-      counters.value?.all?.ms,
-      PATTERN_DURATION_FORMAT,
-      TIME_UNITS.millisecond,
-    );
-    const durationMessage = t('pattern.searchTime', { duration: allDuration });
-
-    let message = '';
 
     if (unref(entityCountersType)) {
-      const entitiesCount = counters.value?.entity_pattern?.count ?? 0;
-
-      message = t('pattern.entitiesCount', { entitiesCount });
-    } else if (unref(bothCounters)) {
-      const entitiesCount = counters.value?.entities?.count ?? 0;
-
-      message = t('pattern.alarmsEntitiesCount', {
-        alarmsCount,
-        entitiesCount,
-      });
+      entityCounter = counters.value?.all;
     } else {
-      message = t('pattern.alarmsCount', { alarmsCount });
+      alarmCounter = counters.value?.all;
+      entityCounter = counters.value?.entities;
     }
 
-    return sanitizeHtml(`${message} / ${durationMessage}`);
+    return {
+      alarmCounter,
+      entityCounter,
+    };
   });
 
   return {
@@ -99,6 +76,6 @@ export const usePatternCounters = ({
     hasAllInCounter,
     allOverLimit,
     allCount,
-    checkFilterMessages,
+    patternsCountMessageBind,
   };
 };

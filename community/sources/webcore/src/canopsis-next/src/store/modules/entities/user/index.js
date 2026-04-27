@@ -62,5 +62,17 @@ export default createCRUDModule({
         }),
       });
     },
+
+    bulkEnable(context, { data }) {
+      return request.put(API_ROUTES.bulkUsersEnable, data);
+    },
+
+    bulkDisable(context, { data }) {
+      return request.put(API_ROUTES.bulkUsersDisable, data);
+    },
+
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.bulkUsers, { data });
+    },
   },
 });

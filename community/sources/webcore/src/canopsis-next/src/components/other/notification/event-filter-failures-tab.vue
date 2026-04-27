@@ -9,10 +9,10 @@
     :removable="hasDeleteAnyEventFilterAccess"
     :duplicable="hasCreateAnyEventFilterAccess"
     @update:options="$emit('update:options', $event)"
-    @remove-selected="showDeleteSelectedRulesModal"
     @duplicate="showDuplicateRuleModal"
     @remove="showDeleteRuleModal"
     @edit="showEditRuleModal"
+    @refresh="refresh"
   />
 </template>
 
@@ -70,7 +70,6 @@ export default {
       showDuplicateRuleModal,
       showEditRuleModal,
       showDeleteRuleModal,
-      showDeleteSelectedRulesModal,
     } = useEventFilterActions(refresh);
 
     /**
@@ -118,7 +117,6 @@ export default {
       showDuplicateRuleModal,
       showEditRuleModal,
       showDeleteRuleModal,
-      showDeleteSelectedRulesModal,
     };
   },
 };

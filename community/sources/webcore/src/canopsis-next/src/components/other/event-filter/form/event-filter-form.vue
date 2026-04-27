@@ -22,13 +22,7 @@
       v-field="form.description"
       required
     />
-    <v-layout justify-space-between>
-      <c-enabled-field
-        v-field="form.enabled"
-        class="mr-3"
-      />
-      <c-priority-field v-field="form.priority" />
-    </v-layout>
+    <c-priority-field v-field="form.priority" />
     <c-information-block :title="$t('eventFilter.duringPeriod')">
       <event-filter-drop-intervals-field v-field="form" />
     </c-information-block>

@@ -7,7 +7,9 @@
       <template #text="">
         <alarm-status-rule-form
           v-model="form"
+          :disablable="config.disablable"
           :flapping="config.flapping"
+          :default-rule="isDefaultRule"
         />
         <ai-chat-sidebar
           v-if="chatShown"
@@ -40,7 +42,7 @@
 <script>
 import { computed, ref, toRef } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY, DEFAULT_RESOLVE_RULE_ID } from '@/constants';
 
 import { alarmStatusRuleToForm, formToAlarmStatusRule } from '@/helpers/entities/alarm-status-rule/form';
 
@@ -80,6 +82,8 @@ export default {
         : LLM_SOCKET_CONTEXTS.resolveRule
     ));
 
+    const isDefaultRule = computed(() => config.value.rule?._id === DEFAULT_RESOLVE_RULE_ID);
+
     const {
       shown: chatShown,
       options: chatOptions,
@@ -109,6 +113,7 @@ export default {
     return {
       form,
       config,
+      isDefaultRule,
       isDisabled,
       submitting,
       chatShown,

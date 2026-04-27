@@ -5,25 +5,28 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <template-testing-test-variables-wrapper
-          v-model="form"
-          :rule-id="dynamicInfoId"
-          :type="type"
-        >
-          <template #default="{ templateVars, copyVars }">
-            <dynamic-info-form
-              v-model="form"
-              :is-disabled-id-field="isDisabledIdField"
-              :template-vars="templateVars"
-              :copy-vars="copyVars"
-            />
-            <ai-chat-sidebar
-              v-if="chatShown"
-              v-bind="chatOptions.bind"
-              v-on="chatOptions.on"
-            />
-          </template>
-        </template-testing-test-variables-wrapper>
+        <v-layout class="gap-2" column>
+          <c-enabled-field v-model="form.enabled" with-background />
+          <template-testing-test-variables-wrapper
+            v-model="form"
+            :rule-id="dynamicInfoId"
+            :type="type"
+          >
+            <template #default="{ templateVars, copyVars }">
+              <dynamic-info-form
+                v-model="form"
+                :is-disabled-id-field="isDisabledIdField"
+                :template-vars="templateVars"
+                :copy-vars="copyVars"
+              />
+            </template>
+          </template-testing-test-variables-wrapper>
+        </v-layout>
+        <ai-chat-sidebar
+          v-if="chatShown"
+          v-bind="chatOptions.bind"
+          v-on="chatOptions.on"
+        />
       </template>
       <template #actions="">
         <v-btn

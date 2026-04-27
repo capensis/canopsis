@@ -19,6 +19,9 @@ export default {
   uploadedMibPopup:
     'File was uploaded.\nNotifications: {notification}\nObjects: {object}'
     + '|Files were uploaded.\nNotifications: {notification}\nObjects: {object}',
+  massRemove: 'Remove SNMP rules',
+  massEnable: 'Enable SNMP rules',
+  massDisable: 'Disable SNMP rules',
   states: {
     [SNMP_TEMPLATE_STATE_STATES.info]: 'Info',
     [SNMP_TEMPLATE_STATE_STATES.minor]: 'Minor',

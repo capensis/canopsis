@@ -7,8 +7,15 @@ export const usePbehaviorReason = () => {
   const { useActions } = usePbehaviorReasonStoreModule();
 
   const actions = useActions({
+    fetchPbehaviorReasonsList: 'fetchList',
+    fetchPbehaviorReasonsListWithPreviousParams: 'fetchListWithPreviousParams',
     fetchPbehaviorReasonsListWithoutStore: 'fetchListWithoutStore',
-    // TODO: finish add another actions and getters
+    createPbehaviorReason: 'create',
+    updatePbehaviorReason: 'update',
+    removePbehaviorReason: 'remove',
+    bulkHidePbehaviorReasons: 'bulkHide',
+    bulkUnhidePbehaviorReasons: 'bulkUnhide',
+    bulkRemovePbehaviorReasons: 'bulkRemove',
   });
 
   return {
