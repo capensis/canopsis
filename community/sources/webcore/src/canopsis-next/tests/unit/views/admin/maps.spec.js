@@ -27,7 +27,6 @@ describe('maps', () => {
   const createMap = jest.fn();
   const updateMap = jest.fn();
   const removeMap = jest.fn();
-  const bulkRemoveMap = jest.fn();
   const mapsPending = jest.fn(() => false);
   const mapsItems = jest.fn(() => []);
   const mapsMeta = jest.fn(() => ({
@@ -47,7 +46,6 @@ describe('maps', () => {
       create: createMap,
       update: updateMap,
       remove: removeMap,
-      bulkRemove: bulkRemoveMap,
     },
   };
 
@@ -73,7 +71,6 @@ describe('maps', () => {
     createMap.mockClear();
     updateMap.mockClear();
     removeMap.mockClear();
-    bulkRemoveMap.mockClear();
   });
 
   test('Maps fetched after mounted', async () => {
@@ -156,7 +153,7 @@ describe('maps', () => {
         data: newMap,
       },
     );
-    expect(fetchMapsList).toBeCalled();
+    expect(fetchMapsList).toHaveBeenCalled();
   });
 
   test.each(Object.values(MAP_TYPES))('Edit %s map modal showed after trigger edit button', async (value) => {
@@ -200,7 +197,7 @@ describe('maps', () => {
       [MAP_TYPES.mermaid]: MODALS.createMermaidMap,
     }[value];
 
-    expect($modals.show).toBeCalledTimes(1);
+    expect($modals.show).toHaveBeenCalledTimes(1);
     expect($modals.show).toHaveBeenCalledWith(
       {
         name: modal,
@@ -227,7 +224,7 @@ describe('maps', () => {
         data: newMap,
       },
     );
-    expect(fetchMapsList).toBeCalled();
+    expect(fetchMapsList).toHaveBeenCalled();
   });
 
   test.each(Object.values(MAP_TYPES))('Duplicate %s map modal showed after trigger edit button', async (value) => {
@@ -271,7 +268,7 @@ describe('maps', () => {
       [MAP_TYPES.mermaid]: MODALS.createMermaidMap,
     }[value];
 
-    expect($modals.show).toBeCalledTimes(1);
+    expect($modals.show).toHaveBeenCalledTimes(1);
     expect($modals.show).toHaveBeenCalledWith(
       {
         name: modal,
@@ -297,7 +294,7 @@ describe('maps', () => {
         data: newMap,
       },
     );
-    expect(fetchMapsList).toBeCalled();
+    expect(fetchMapsList).toHaveBeenCalled();
   });
 
   test('Confirmation modal showed after trigger remove map button', async () => {
@@ -318,7 +315,7 @@ describe('maps', () => {
 
     await mapsList.triggerCustomEvent('remove', map._id);
 
-    expect($modals.show).toBeCalledTimes(1);
+    expect($modals.show).toHaveBeenCalledTimes(1);
     expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
@@ -337,51 +334,7 @@ describe('maps', () => {
         id: map._id,
       },
     );
-    expect(fetchMapsList).toBeCalled();
-  });
-
-  test('Confirmation modal showed after trigger remove selected maps button', async () => {
-    const map = {
-      _id: Faker.datatype.string(),
-      type: MAP_TYPES.geo,
-    };
-    const wrapper = factory({
-      store,
-      mocks: {
-        $modals,
-      },
-    });
-
-    await flushPromises();
-
-    const mapsList = selectMapsList(wrapper);
-
-    await mapsList.triggerCustomEvent('remove-selected', [map]);
-
-    expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toHaveBeenCalledWith(
-      {
-        name: MODALS.confirmation,
-        config: {
-          action: expect.any(Function),
-        },
-      },
-    );
-    const [modalArguments] = $modals.show.mock.calls[0];
-
-    modalArguments.config.action();
-
-    expect(bulkRemoveMap).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        data: [
-          {
-            _id: map._id,
-          },
-        ],
-      },
-    );
-    expect(fetchMapsList).toBeCalled();
+    expect(fetchMapsList).toHaveBeenCalled();
   });
 
   test('Renders `maps` without permissions', () => {

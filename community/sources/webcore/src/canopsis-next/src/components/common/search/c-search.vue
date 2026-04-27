@@ -39,6 +39,10 @@ export default {
       type: String,
       default: '',
     },
+    label: {
+      type: String,
+      default: '',
+    },
     combobox: {
       type: Boolean,
       default: false,
@@ -50,10 +54,6 @@ export default {
     fields: {
       type: Array,
       default: () => [],
-    },
-    label: {
-      type: String,
-      required: false,
     },
   },
   setup(props, { emit }) {

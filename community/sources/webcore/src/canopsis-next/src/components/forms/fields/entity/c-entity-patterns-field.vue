@@ -8,15 +8,24 @@
     :required="required"
     :attributes="availableEntityAttributes"
     :with-type="withType"
-    :counter="counter"
+    :alarm-counter="alarmCounter"
+    :entity-counter="entityCounter"
     class="c-entity-patterns-field"
   >
     <template #append-count="">
       <v-btn
-        v-if="counter && counter.count"
+        v-if="alarmCounter && alarmCounter.count"
         text
         small
-        @click="showPatternEntitiesModal"
+        @click="showPatternAlarmsModal()"
+      >
+        {{ $t('common.seeAlarms') }}
+      </v-btn>
+      <v-btn
+        v-if="entityCounter && entityCounter.count"
+        text
+        small
+        @click="showPatternEntitiesModal()"
       >
         {{ $t('common.seeEntities') }}
       </v-btn>
@@ -41,11 +50,9 @@ import {
   ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
 
-import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
 import { getMapEntityText } from '@/helpers/entities/map/list';
 
-import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
 import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
@@ -55,7 +62,7 @@ const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
 
 export default {
   components: { PatternEditorField },
-  mixins: [patternCountEntitiesModalMixin, entitiesEntityInfoPropertyMixin],
+  mixins: [entitiesEntityInfoPropertyMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -97,7 +104,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    counter: {
+    alarmCounter: {
+      type: Object,
+      required: false,
+    },
+    entityCounter: {
       type: Object,
       required: false,
     },
@@ -363,10 +374,12 @@ export default {
     ...mapEntityCategoryActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
     ...mapServiceActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
 
+    showPatternAlarmsModal() {
+      this.$emit('show:alarms');
+    },
+
     showPatternEntitiesModal() {
-      this.showEntitiesModalByPatterns({
-        search_pattern: formGroupsToPatternRulesQuery(this.patterns.groups),
-      });
+      this.$emit('show:entities');
     },
 
     async fetchCategories() {

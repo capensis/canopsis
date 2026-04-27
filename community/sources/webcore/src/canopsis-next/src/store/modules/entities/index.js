@@ -73,6 +73,7 @@ import llmModule from './llm';
 import templateModule from './template';
 import copyModule from './copy';
 import webhookTokenRuleModule from './webhook-token-rule';
+import ticketStatusJobModule from './ticket-status-job';
 
 export default {
   alarm: alarmModule,
@@ -150,4 +151,5 @@ export default {
   template: templateModule,
   copy: copyModule,
   webhookTokenRule: webhookTokenRuleModule,
+  ticketStatusJob: ticketStatusJobModule,
 };

@@ -10,6 +10,10 @@ export default {
   type: 'Link type',
   single: 'Apply this link only to single alarm ?',
   hideInMenu: 'Hide this link from alarm actions ?',
+  actionType: 'Action type',
+  massRemove: 'Remove link rules',
+  massEnable: 'Enable link rules',
+  massDisable: 'Disable link rules',
   types: {
     [LINK_RULE_TYPES.alarm]: 'Alarm',
     [LINK_RULE_TYPES.entity]: 'Entity',

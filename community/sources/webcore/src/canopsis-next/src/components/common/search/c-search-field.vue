@@ -60,7 +60,7 @@ export default {
     },
     label: {
       type: String,
-      required: false,
+      default: '',
     },
     combobox: {
       type: Boolean,

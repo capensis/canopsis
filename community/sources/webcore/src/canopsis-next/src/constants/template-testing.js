@@ -50,6 +50,7 @@ export const TEMPLATE_TESTING_DATA_EVENT_PRE_FILLED_TEMPLATE = JSON.stringify({
 export const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES = {
   event: 'event',
   response: 'response',
+  ticketStatusResponse: 'ticket_status_response',
   alarm: 'alarm',
   user: 'user',
   entity: 'entity',
@@ -58,6 +59,7 @@ export const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES = {
 export const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_DATA_TYPE = {
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event]: TEMPLATE_TESTING_DATA_TYPES.event,
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: TEMPLATE_TESTING_DATA_TYPES.response,
+  [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse]: TEMPLATE_TESTING_DATA_TYPES.response,
 };
 
 export const TEMPLATE_TESTING_TEST_VARIABLES_TABS = {

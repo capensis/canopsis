@@ -14,6 +14,7 @@ import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 /**
  * @typedef {PbehaviorType} PbehaviorTypeForm
+ * @property {boolean} visible
  */
 
 /**
@@ -30,5 +31,16 @@ export const pbehaviorTypeToForm = (type = {}) => ({
   priority: type.priority ?? 5,
   icon_name: type.icon_name ?? '',
   color: type.color ?? '',
-  hidden: type.hidden ?? false,
+  visible: !(type.hidden ?? false), // visible is the opposite of hidden
+});
+
+/**
+ * Convert pbehavior type form to pbehavior type
+ *
+ * @param {PbehaviorTypeForm} form
+ * @return {PbehaviorType}
+ */
+export const formToPbehaviorType = (form = {}) => ({
+  ...form,
+  hidden: !form.visible,
 });

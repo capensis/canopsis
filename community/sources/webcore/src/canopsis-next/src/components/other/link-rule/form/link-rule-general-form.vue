@@ -20,9 +20,6 @@
           />
         </v-radio-group>
       </v-flex>
-      <v-flex xs6>
-        <c-enabled-field v-field="form.enabled" />
-      </v-flex>
     </v-layout>
     <c-name-field
       v-field="form.name"
@@ -36,6 +33,7 @@
       :entity-attributes="entityAttributes"
       :pending="pending"
       :with-alarm="isAlarmType"
+      :entity-counters-type="!isAlarmType"
       some-required
       with-entity
     />
