@@ -18,6 +18,8 @@ export const useLlm = () => {
     updateLlm: 'update',
     removeLlm: 'remove',
     bulkRemoveLlms: 'bulkRemove',
+    bulkEnableLlms: 'bulkEnable',
+    bulkDisableLlms: 'bulkDisable',
     fetchLlmsListWithoutStore: 'fetchListWithoutStore',
     fetchModelsListWithoutStore: 'fetchModelsListWithoutStore',
     fetchLlmHistoryWithoutStore: 'fetchLlmHistoryWithoutStore',

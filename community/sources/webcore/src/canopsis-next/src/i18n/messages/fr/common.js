@@ -463,7 +463,7 @@ export default {
     [PATTERN_OPERATORS.contains]: 'Contient',
     [PATTERN_OPERATORS.notEqual]: 'n\'est pas égal',
     [PATTERN_OPERATORS.notContains]: 'Ne contient pas',
-    [PATTERN_OPERATORS.beginsWith]: 'Commence par',
+    [PATTERN_OPERATORS.beginWith]: 'Commence par',
     [PATTERN_OPERATORS.notBeginWith]: 'Ne commence pas par',
     [PATTERN_OPERATORS.endsWith]: 'Se termine par',
     [PATTERN_OPERATORS.notEndWith]: 'Ne se termine pas par',

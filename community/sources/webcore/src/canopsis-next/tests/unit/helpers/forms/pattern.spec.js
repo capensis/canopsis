@@ -256,7 +256,7 @@ describe('pattern form converters', () => {
     const value = Faker.lorem.word();
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connector,
-      cond: { type: PATTERN_CONDITIONS.beginsWith, value },
+      cond: { type: PATTERN_CONDITIONS.beginWith, value },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -264,7 +264,7 @@ describe('pattern form converters', () => {
     expect(form).toEqual({
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.connector,
-      operator: PATTERN_OPERATORS.beginsWith,
+      operator: PATTERN_OPERATORS.beginWith,
       value,
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);

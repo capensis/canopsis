@@ -9,6 +9,8 @@ export default {
   expandTabs: {
     promptsHistory: 'Prompts history',
   },
+  massEnable: 'Enable LLMs',
+  massDisable: 'Disable LLMs',
   promptsHistory: {
     tabs: {
       allPrompts: 'All prompts',

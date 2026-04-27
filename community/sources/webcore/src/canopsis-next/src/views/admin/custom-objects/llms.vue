@@ -16,8 +16,7 @@
       :updatable="hasUpdateAnyLlmAccess"
       :removable="hasDeleteAnyLlmAccess"
       @edit="showEditLlmModal"
-      @remove="showRemoveLlmModal"
-      @remove-selected="showRemoveSelectedLlmsModal"
+      @refresh="refresh"
     />
   </c-page>
 </template>

@@ -142,7 +142,7 @@ export default {
 .ai-chat-sidebar {
   display: none;
 
-  .v-dialog--active & {
+  .v-dialog--active &, .menuable__content__active & {
     display: block !important;
   }
 }
