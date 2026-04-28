@@ -315,7 +315,7 @@ export const useAiChatPattern = ({ patterns, patternItem, updateFormPatterns } =
 
     return formFilterToPatterns(
       unwrappedPatternItem
-        ? { [unwrappedPatternItem.value]: unref(patterns)?.[unwrappedPatternItem.value] }
+        ? unref(patterns)?.[unwrappedPatternItem.value]
         : unref(patterns) ?? {},
       Object.values(PATTERNS_FIELDS),
     );

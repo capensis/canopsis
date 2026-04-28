@@ -33,9 +33,13 @@ export const aiChatFormToPatternsDefault = (form = {}) => {
  * Maps a list of form rows (e.g. scenario actions) to a list of per-row pattern maps for the AI sidebar.
  *
  * @param {Object[]} [form=[]] - Array of form fragments, each passed through `aiChatFormToPatternsDefault`.
- * @returns {Object[]} Same length as `form`; each element is a `patterns`-shaped object.
+ * @returns {Object} Same length as `form`; each element is a `patterns`-shaped object.
  */
-export const aiChatFormToPatternsItems = (form = []) => form.map(aiChatFormToPatternsDefault);
+export const aiChatFormToPatternsItems = (form = []) => form.reduce((acc, item) => {
+  acc[item.key] = aiChatFormToPatternsDefault(item);
+
+  return acc;
+}, {});
 
 /**
  * Normalizes modal form data into the `patterns` payload shape expected by the AI chat sidebar, by socket context.
