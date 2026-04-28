@@ -309,7 +309,7 @@ export default {
             duration: this.rule.duration,
             disabled: this.disabled,
             name: this.valueFieldName,
-            long: true,
+            medium: true,
           },
           on: {
             input: this.updateDuration,
