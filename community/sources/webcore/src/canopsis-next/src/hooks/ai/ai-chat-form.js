@@ -34,6 +34,36 @@ import { useAiChatLlmModel } from './ai-chat';
 const THROTTLE_WAIT_MS = 1000;
 
 /**
+ * Registers AI chat expand handler: switches to the `neededTab` when the chat expands.
+ *
+ * @param {Object} options
+ * @param {import('vue').Ref<number>} options.activeTab - Ref to the active tab
+ * @param {import('vue').Ref<number>} options.neededTab - Ref to the needed tab
+ */
+export const useAiChatExpand = ({ activeTab, neededTab } = {}) => {
+  const aiChat = inject('$aiChat', {});
+
+  /**
+   * Sets `activeTab` to the unwrapped `neededTab` when they differ, then waits for the next Vue tick
+   * so the tab switch is applied before follow-up UI (e.g. AI chat expand) runs.
+   */
+  const goToNeedeeTab = async () => {
+    const unwrappedNeededTab = unref(neededTab);
+
+    if (activeTab.value !== unwrappedNeededTab) {
+      // eslint-disable-next-line no-param-reassign -- sync tab ref owned by parent
+      activeTab.value = unwrappedNeededTab;
+    }
+
+    return nextTick();
+  };
+
+  aiChat?.registerExpandFunction?.(goToNeedeeTab);
+
+  onBeforeUnmount(() => aiChat?.unregisterExpandFunction?.(goToNeedeeTab));
+};
+
+/**
  * Builds `patternsItems` options for the AI sidebar from the modal form (scenario: one row per action).
  *
  * @param {Object} [options]

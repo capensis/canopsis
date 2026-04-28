@@ -28,10 +28,11 @@ import { computed, onMounted, ref, toRef } from 'vue';
 
 import { TEMPLATE_TESTING_TEST_VARIABLES_TABS } from '@/constants';
 
+import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 import { useCopyVarsList } from '@/hooks/vars/copy';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
-import { useTemplateTestVariablesAiChatExpand, useTestVariablesTabData } from './hooks/template-test-variables-wrapper';
+import { useTestVariablesTabData } from './hooks/template-test-variables-wrapper';
 import TemplateTestingTestVariables from './template-testing-test-variables.vue';
 import TemplateTestingTestVariablesTab from './partials/template-testing-test-variables-tab.vue';
 
@@ -89,7 +90,7 @@ export default {
 
     const pending = computed(() => templateVarsPending.value || copyVarsPending.value);
 
-    useTemplateTestVariablesAiChatExpand(activeTab);
+    useAiChatExpand({ activeTab, neededTab: TEMPLATE_TESTING_TEST_VARIABLES_TABS.general });
 
     onMounted(() => {
       fetchCopyVarsList();

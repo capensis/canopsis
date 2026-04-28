@@ -72,8 +72,7 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with custom props 1`] = `
           name=""
         >
           <div
-            class="v-window-item"
-            style="display: none;"
+            class="v-window-item v-window-item--active"
           >
             <idle-rule-general-form-stub
               form="[object Object]"
@@ -172,8 +171,7 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with default props 1`] = `
           name=""
         >
           <div
-            class="v-window-item"
-            style="display: none;"
+            class="v-window-item v-window-item--active"
           >
             <idle-rule-general-form-stub
               form="[object Object]"
@@ -270,8 +268,7 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with errors 1`] = `
           name=""
         >
           <div
-            class="v-window-item"
-            style="display: none;"
+            class="v-window-item v-window-item--active"
           >
             <idle-rule-general-form-stub
               form="[object Object]"

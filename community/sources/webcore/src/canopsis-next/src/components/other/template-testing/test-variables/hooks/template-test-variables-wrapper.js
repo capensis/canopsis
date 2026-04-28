@@ -1,43 +1,13 @@
 import { get } from 'lodash';
-import {
-  computed,
-  inject,
-  nextTick,
-  onBeforeUnmount,
-  ref,
-  unref,
-  watch,
-} from 'vue';
+import { computed, ref, unref, watch } from 'vue';
 
-import { TEMPLATE_TESTING_TEST_VARIABLES_TABS, USER_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { isOmitEqual } from '@/helpers/collection';
 import { convertRuleToTemplateTestingTestValidateForm } from '@/helpers/entities/template-testing-validate/form';
 
 import { useCanPermission } from '@/hooks/auth';
 import { useModelField } from '@/hooks/form/model-field';
-
-/**
- * Registers AI chat expand handler: switches to the General tab when the chat expands.
- *
- * @param {import('vue').Ref<number>} activeTab
- */
-export const useTemplateTestVariablesAiChatExpand = (activeTab) => {
-  const aiChat = inject('$aiChat', {});
-
-  const goToGeneralTab = async () => {
-    if (activeTab.value !== TEMPLATE_TESTING_TEST_VARIABLES_TABS.general) {
-      // eslint-disable-next-line no-param-reassign -- sync tab ref owned by parent
-      activeTab.value = TEMPLATE_TESTING_TEST_VARIABLES_TABS.general;
-    }
-
-    return nextTick();
-  };
-
-  aiChat?.registerExpandFunction?.(goToGeneralTab);
-
-  onBeforeUnmount(() => aiChat?.unregisterExpandFunction?.(goToGeneralTab));
-};
 
 /**
  * Hook for managing test variables fields with form integration and access permission check
