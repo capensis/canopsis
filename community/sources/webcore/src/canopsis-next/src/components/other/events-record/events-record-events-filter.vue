@@ -30,7 +30,7 @@
       </v-btn>
     </v-layout>
     <v-spacer />
-    <events-record-download-btn :events-record-id="eventsRecordId" :params="downloadParams" />
+    <events-record-download-btn :events-record-id="eventsRecordId" :event-pattern="query.event_pattern" />
   </v-layout>
 </template>
 <script>
@@ -56,7 +56,6 @@ export default {
   },
   setup(props, { emit }) {
     const hasFilterApplied = computed(() => props.query.event_pattern !== undefined);
-    const downloadParams = computed(() => ({ event_pattern: JSON.stringify(props.query.event_pattern) }));
 
     const remove = () => emit('remove');
     const applyEventFilter = () => emit('apply:filter');
@@ -64,7 +63,6 @@ export default {
 
     return {
       hasFilterApplied,
-      downloadParams,
 
       remove,
       applyEventFilter,
