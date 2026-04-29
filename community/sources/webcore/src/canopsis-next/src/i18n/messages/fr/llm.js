@@ -121,10 +121,16 @@ export default {
     },
     patternsItemsLabel: {
       [LLM_SOCKET_CONTEXTS.scenario]: 'Action de scénario',
+      [LLM_SOCKET_CONTEXTS.stateSettings]: 'Modèle cible',
     },
-    infoAlert:
-      'Fonctionne uniquement avec le modèle pour l\'action <strong>{patternItem}</strong><br />'
-      + '<strong>Cliquez sur Redémarrer pour lancer l\'assistant IA pour un autre modèle</strong>',
+    infoAlerts: {
+      [LLM_SOCKET_CONTEXTS.scenario]:
+        'Fonctionne uniquement avec le modèle pour l\'action <strong>{patternItem}</strong><br />',
+      [LLM_SOCKET_CONTEXTS.stateSettings]:
+        'Fonctionne uniquement avec le modèle pour <strong>{patternItem}</strong><br />',
+    },
+    infoAlertEnding:
+      '<strong>Cliquez sur Redémarrer pour lancer l\'assistant IA pour un autre modèle</strong>',
     patternsItemsError: {
       [LLM_SOCKET_CONTEXTS.scenario]:
         'L\'action sélectionnée a été supprimée.<br />'

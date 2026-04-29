@@ -121,10 +121,13 @@ export default {
     },
     patternsItemsLabel: {
       [LLM_SOCKET_CONTEXTS.scenario]: 'Scenario action',
+      [LLM_SOCKET_CONTEXTS.stateSettings]: 'Target pattern',
     },
-    infoAlert:
-      'Works only with pattern for action <strong>{patternItem}</strong><br />'
-      + '<strong>Click Restart to run AI assistant for another pattern</strong>',
+    infoAlerts: {
+      [LLM_SOCKET_CONTEXTS.scenario]: 'Works only with pattern for action <strong>{patternItem}</strong><br />',
+      [LLM_SOCKET_CONTEXTS.stateSettings]: 'Works only with pattern for <strong>{patternItem}</strong><br />',
+    },
+    infoAlertEnding: '<strong>Click Restart to run AI assistant for another pattern</strong>',
     patternsItemsError: {
       [LLM_SOCKET_CONTEXTS.scenario]:
         'Selected action is deleted.<br />'

@@ -79,7 +79,7 @@
 <script>
 import { computed, inject, ref, watch } from 'vue';
 
-import { STATE_SETTING_METHODS } from '@/constants';
+import { STATE_SETTING_METHODS, PATTERNS_FIELDS } from '@/constants';
 
 import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 import { useI18n } from '@/hooks/i18n';
@@ -132,7 +132,13 @@ export default {
 
     const patternEntityTypes = computed(() => [props.form.type]);
 
-    useAiChatExpand({ activeTab: stepper, neededTab: STATE_SETTING_FORM_STEPS.entityPattern });
+    useAiChatExpand({
+      activeTab: stepper,
+      neededTab: {
+        [PATTERNS_FIELDS.entity]: STATE_SETTING_FORM_STEPS.entityPattern,
+        inherited_entity_pattern: STATE_SETTING_FORM_STEPS.thresholds,
+      },
+    });
 
     watch(() => basicsFormElement.value?.hasAnyError, (value) => {
       hasBasicsFormAnyError.value = value ?? false;

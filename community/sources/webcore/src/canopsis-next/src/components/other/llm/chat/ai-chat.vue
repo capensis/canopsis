@@ -1,6 +1,10 @@
 <template>
   <v-layout class="ai-chat" column>
-    <ai-chat-info-alert v-if="hasPatternItem && !emptyChat" :pattern-item="patternItem" />
+    <ai-chat-info-alert
+      v-if="hasPatternItem && !emptyChat"
+      :pattern-item="patternItem"
+      :context="context"
+    />
     <ai-chat-warning-alert />
     <div
       ref="bodyElement"

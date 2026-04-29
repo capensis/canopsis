@@ -839,12 +839,12 @@ export const CSS_COLORS_VARS = {
   },
 
   status: {
-    closed: 'var(--v-status-closed-base)',
+    closed: 'var(--v-success-base)',
     stealthy: 'var(--v-status-stealthy-base)',
     flapping: 'var(--v-status-flapping-base)',
     ongoing: 'var(--v-status-ongoing-base)',
     cancelled: 'var(--v-status-cancelled-base)',
-    noEvents: 'var(--v-status-noEvents-base)',
+    noEvents: 'var(--v-error-base)',
     unknown: 'var(--v-status-unknown-base)',
   },
 };
