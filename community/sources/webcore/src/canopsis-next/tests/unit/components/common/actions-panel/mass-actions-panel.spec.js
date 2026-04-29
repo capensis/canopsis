@@ -1,99 +1,88 @@
 import { generateShallowRenderer, generateRenderer, flushPromises } from '@unit/utils/vue';
-import { deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
+import { installResizeObserver, uninstallResizeObserver } from '@unit/utils/resize-observer';
+import { ackAction, deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
 
 import MassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
-const actionsPanelBtnStub = {
-  props: { action: { type: Object, required: true } },
-  template: '<button class="actions-panel-btn" @click="action.method && action.method()"><slot /></button>',
-};
-
-const actionsPanelMenuStub = {
-  props: { actions: { type: Array, default: () => [] } },
-  template: `
-    <div class="actions-panel-menu">
-      <button
-        v-for="(action, i) in actions"
-        :key="i"
-        class="actions-panel-menu-item"
-        @click="action.method && action.method()"
-      />
-    </div>
-  `,
+const cActionBtnStub = {
+  template: '<button class="c-action-btn-stub" type="button" v-on="$listeners" />',
 };
 
 const stubs = {
-  'actions-panel-btn': actionsPanelBtnStub,
-  'actions-panel-menu': actionsPanelMenuStub,
+  'c-action-btn': cActionBtnStub,
 };
 
 const snapshotStubs = {
   'c-action-btn': true,
-  'c-list': true,
 };
+
+const threeActionsWithTypes = [
+  { ...editAction, type: 'edit' },
+  { ...deleteAction, type: 'delete' },
+  { ...ackAction, type: 'ack' },
+];
 
 describe('mass-actions-panel', () => {
   const factory = generateShallowRenderer(MassActionsPanel, { stubs });
   const snapshotFactory = generateRenderer(MassActionsPanel, { stubs: snapshotStubs });
 
-  it('Method into list called after trigger click on action item button. On the large size.', () => {
-    const actions = [
-      fakeAction(),
-      fakeAction(),
-    ];
-    const wrapper = factory({
-      propsData: {
-        actions,
-      },
-      mocks: {
-        $mq: 'l+',
-      },
-    });
-
-    const actionElements = wrapper.findAll('button.actions-panel-btn');
-
-    expect(actionElements).toHaveLength(actions.length);
-
-    const secondActionElement = actionElements.at(1);
-
-    secondActionElement.trigger('click');
-
-    const [, secondAction] = actions;
-    expect(secondAction.method).toHaveBeenCalledTimes(1);
+  afterEach(() => {
+    uninstallResizeObserver();
   });
 
-  it('Method into dropdown called after trigger click on action item button. On the tablet size.', () => {
+  it('Method into inline button called after click when layout is wide enough', async () => {
+    installResizeObserver(400);
+
     const actions = [
-      fakeAction(),
-      fakeAction(),
+      { ...fakeAction(), type: 'a' },
+      { ...fakeAction(), type: 'b' },
     ];
+
     const wrapper = factory({
-      propsData: {
-        actions,
-      },
-      mocks: {
-        $mq: 't',
-      },
+      propsData: { actions },
     });
 
-    const dropdownActionElements = wrapper.findAll('button.actions-panel-menu-item');
+    await flushPromises();
 
-    expect(dropdownActionElements).toHaveLength(actions.length);
+    const buttons = wrapper.findAll('button.c-action-btn-stub');
 
-    const secondActionElement = dropdownActionElements.at(1);
-    secondActionElement.trigger('click');
+    expect(buttons.length).toBe(2);
 
-    const [, secondAction] = actions;
-    expect(secondAction.method).toBeCalledTimes(1);
+    buttons.at(1).trigger('click');
+
+    expect(actions[1].method).toHaveBeenCalledTimes(1);
+  });
+
+  it('Method into overflow menu called after click when layout is narrow', async () => {
+    installResizeObserver(36);
+
+    const actions = [
+      { ...fakeAction(), type: 'a' },
+      { ...fakeAction(), type: 'b' },
+    ];
+
+    const wrapper = snapshotFactory({
+      propsData: { actions },
+    });
+
+    await flushPromises();
+    await wrapper.activateAllMenus();
+
+    const menuItems = wrapper.findAll('.v-list-item');
+
+    expect(menuItems.length).toBe(2);
+
+    menuItems.at(1).trigger('click');
+
+    expect(actions[1].method).toHaveBeenCalledTimes(1);
   });
 
   it('Renders `mass-actions-panel` with actions on the large size', async () => {
+    installResizeObserver(400);
+
     const wrapper = snapshotFactory({
-      mocks: {
-        $mq: 'l+',
-      },
       propsData: {
-        actions: [editAction, deleteAction],
+        actions: threeActionsWithTypes,
       },
     });
 
@@ -103,12 +92,11 @@ describe('mass-actions-panel', () => {
   });
 
   it('Renders `mass-actions-panel` with actions correctly on the tablet size', async () => {
+    installResizeObserver(100);
+
     const wrapper = snapshotFactory({
-      mocks: {
-        $mq: 't',
-      },
       propsData: {
-        actions: [editAction, deleteAction],
+        actions: threeActionsWithTypes,
       },
     });
 
@@ -121,12 +109,11 @@ describe('mass-actions-panel', () => {
   });
 
   it('Renders `mass-actions-panel` with actions correctly on the mobile size', async () => {
+    installResizeObserver(36);
+
     const wrapper = snapshotFactory({
-      mocks: {
-        $mq: 'm',
-      },
       propsData: {
-        actions: [editAction, deleteAction],
+        actions: threeActionsWithTypes,
       },
     });
 
