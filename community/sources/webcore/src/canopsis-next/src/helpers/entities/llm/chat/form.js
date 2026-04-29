@@ -1,4 +1,4 @@
-import { LLM_SOCKET_CONTEXTS, PATTERNS_FIELDS } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, PATTERNS_FIELDS, STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD } from '@/constants';
 
 /**
  * Builds a single-key `patterns` map for corporate shared filters: `{ [field]: form }` when the block has groups.
@@ -42,6 +42,23 @@ export const aiChatFormToPatternsItems = (form = []) => form.reduce((acc, item) 
 }, {});
 
 /**
+ * Builds the AI chat sidebar `patterns` object for state-settings modals: one entry per block (`entity_pattern`
+ * and inherited dependency pattern), each reduced via `aiChatFormToPatternsDefault` so only non-empty `groups`
+ * are kept.
+ *
+ * @param {Object} [form={}] - State-setting form containing `entity_pattern` and
+ *   `STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD` editors.
+ * @returns {Object<string, Object>} Two keyed pattern maps aligned with `PATTERNS_FIELDS.entity` and
+ *   `STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD`.
+ */
+export const aiChatFormToPatternsStateSettings = (form = {}) => ({
+  [PATTERNS_FIELDS.entity]: aiChatFormToPatternsDefault(form[PATTERNS_FIELDS.entity]),
+  [STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD]: aiChatFormToPatternsDefault(
+    form[STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD],
+  ),
+});
+
+/**
  * Normalizes modal form data into the `patterns` payload shape expected by the AI chat sidebar, by socket context.
  *
  * Scenario context returns an array of pattern maps; corporate pattern contexts use a single keyed block;
@@ -60,6 +77,7 @@ export const aiChatFormToPatterns = ({
 } = {}) => {
   const method = {
     [LLM_SOCKET_CONTEXTS.scenario]: () => aiChatFormToPatternsItems(form),
+    [LLM_SOCKET_CONTEXTS.stateSettings]: () => aiChatFormToPatternsStateSettings(form),
     [LLM_SOCKET_CONTEXTS.corporateAlarmPattern]: () => aiChatFormToPatternsField(form, field),
     [LLM_SOCKET_CONTEXTS.corporateEntityPattern]: () => aiChatFormToPatternsField(form, field),
     [LLM_SOCKET_CONTEXTS.corporatePbehaviorPattern]: () => aiChatFormToPatternsField(form, field),

@@ -174,6 +174,8 @@ export const useAiChatMessages = ({ currentFormPatterns, updateFormPatterns } = 
 
   const messages = ref([]);
 
+  const restoreVersionsMap = ref({});
+
   /**
    * Appends a chat row; merges `getEmptyMessage()` (`_id`, `timestamp`) with `payload`.
    *
@@ -255,6 +257,8 @@ export const useAiChatMessages = ({ currentFormPatterns, updateFormPatterns } = 
     addPattern({ patterns: newPatterns, role: LLM_AI_CHAT_MESSAGE_ROLES.model, fromVersion: version });
 
     updateFormPatterns(newPatterns);
+
+    restoreVersionsMap.value[activeVersion.value] = version;
   };
 
   /**
@@ -273,6 +277,7 @@ export const useAiChatMessages = ({ currentFormPatterns, updateFormPatterns } = 
     versions,
     activeVersion,
     lastLlmVersion,
+    restoreVersionsMap,
     addVersion,
     removeLastVersion,
     restoreVersion,
@@ -332,6 +337,7 @@ export const useAiChatPattern = ({ patterns, patternItem, updateFormPatterns } =
     versions,
     lastLlmVersion,
     activeVersion,
+    restoreVersionsMap,
     removeLastVersion,
     resetVersions,
     restoreVersion,
@@ -407,10 +413,12 @@ export const useAiChatPattern = ({ patterns, patternItem, updateFormPatterns } =
 
     versions,
     activeVersion,
+    restoreVersionsMap,
     resetVersions,
     restoreVersion,
 
     currentFormPatterns,
+    changedPatternsFields,
     emptyCurrentFormPatterns,
   };
 };
@@ -521,6 +529,7 @@ export const useAiChatSocket = ({
   const needRestart = ref(false);
 
   let socketRoom = null;
+  let activeChatId = null;
 
   const { thinking, thinkingMessage, enableThinking, disableThinking } = useAiChatThinking();
   const { errorMessage, resetErrorMessage } = useAiChatErrors();
@@ -582,6 +591,7 @@ export const useAiChatSocket = ({
     const patterns = pick(rest, Object.values(PATTERNS_FIELDS));
 
     if (chat) {
+      activeChatId = chat;
       aiChat.registerChatId?.(chat);
     }
 
@@ -637,6 +647,7 @@ export const useAiChatSocket = ({
       context: unref(context),
       rule: unref(ruleId),
       config: llm,
+      chat: activeChatId,
       timezone: system.timezone,
     };
 
@@ -900,7 +911,10 @@ export const useAiChatPatternItem = ({ context } = {}) => {
 
   const patternItem = ref(null);
 
-  const hasPatternItem = computed(() => context.value === LLM_SOCKET_CONTEXTS.scenario);
+  const hasPatternItem = computed(() => [
+    LLM_SOCKET_CONTEXTS.scenario,
+    LLM_SOCKET_CONTEXTS.stateSettings,
+  ].includes(context.value));
 
   const patternsItemsLabel = computed(() => {
     const labelKey = `llm.chat.patternsItemsLabel.${unref(context)}`;
@@ -988,6 +1002,7 @@ export const useAiChat = ({
 
   const {
     currentFormPatterns,
+    changedPatternsFields,
     emptyCurrentFormPatterns,
 
     messages,
@@ -998,6 +1013,7 @@ export const useAiChat = ({
 
     versions,
     activeVersion,
+    restoreVersionsMap,
     restoreVersion,
   } = useAiChatPattern({ patterns, patternItem, updateFormPatterns });
 
@@ -1046,10 +1062,14 @@ export const useAiChat = ({
       type: LLM_AI_CHAT_MESSAGE_TYPES.send,
     };
 
-    if (!withoutPatterns && !emptyCurrentFormPatterns.value) {
+    if (!withoutPatterns && !emptyCurrentFormPatterns.value && changedPatternsFields.value.length > 0) {
       Object.entries(currentFormPatterns.value).forEach(([field, pattern]) => {
         data[field] = pattern;
       });
+
+      if (restoreVersionsMap.value[activeVersion.value]) {
+        data.version = restoreVersionsMap.value[activeVersion.value];
+      }
     }
 
     sendMessage(data, llm.value?._id);

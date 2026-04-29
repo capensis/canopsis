@@ -13,7 +13,13 @@ import {
 } from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-import { LLM_AI_CHAT_WIDTH, LLM_SOCKET_CONTEXTS, LLM_AI_CHAT_TOURS, PATTERNS_FIELDS } from '@/constants';
+import {
+  LLM_AI_CHAT_WIDTH,
+  LLM_AI_CHAT_TOURS,
+  LLM_SOCKET_CONTEXTS,
+  PATTERNS_FIELDS,
+  STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD,
+} from '@/constants';
 
 import Observer from '@/services/observer';
 
@@ -47,12 +53,13 @@ export const useAiChatExpand = ({ activeTab, neededTab } = {}) => {
    * Sets `activeTab` to the unwrapped `neededTab` when they differ, then waits for the next Vue tick
    * so the tab switch is applied before follow-up UI (e.g. AI chat expand) runs.
    */
-  const goToNeedeeTab = async () => {
+  const goToNeedeeTab = async ({ key } = {}) => {
     const unwrappedNeededTab = unref(neededTab);
+    const neededTabPrimitive = unwrappedNeededTab[key] ?? unwrappedNeededTab;
 
-    if (activeTab.value !== unwrappedNeededTab) {
+    if (activeTab.value !== neededTabPrimitive) {
       // eslint-disable-next-line no-param-reassign -- sync tab ref owned by parent
-      activeTab.value = unwrappedNeededTab;
+      activeTab.value = neededTabPrimitive;
     }
 
     return nextTick();
@@ -81,6 +88,13 @@ export const useAiChatPatternsItems = ({ form = [], context } = {}) => {
       text: `${index + 1} - ${t(`scenario.actions.${formItem.type}`)}`,
       value: formItem.key,
     })),
+    [LLM_SOCKET_CONTEXTS.stateSettings]: () => [
+      { text: t('common.entityPatterns'), value: PATTERNS_FIELDS.entity },
+      {
+        text: t('stateSetting.dependenciesEntityPattern'),
+        value: STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD,
+      },
+    ],
   };
 
   const patternsItems = computed(() => contextToPatternsItems[unref(context)]?.(form) ?? []);
@@ -246,21 +260,28 @@ export const useAiChatFormPatterns = ({ form, field, context, callExpand }) => {
     const formRef = form;
 
     if (key) {
-      const index = formRef.value.findIndex(item => item.key === key);
-      const formItem = formRef.value[index];
+      const newPatternsForm = filterPatternsToForm(newPatterns, Object.values(PATTERNS_FIELDS));
 
-      set(formRef.value[index], 'patterns', filterPatternsToForm(newPatterns, Object.values(PATTERNS_FIELDS)));
+      if (isArray(formRef.value)) {
+        const index = formRef.value.findIndex(item => item.key === key);
+        const formItem = formRef.value[index];
 
-      Object.keys(newPatterns).forEach(patternField => validator.errors.clear(`actions.${formItem.key}.${patternField}.json`));
+        set(formRef.value[index], 'patterns', newPatternsForm);
+
+        Object.keys(newPatterns).forEach(patternField => validator.errors.clear(`actions.${formItem.key}.${patternField}.json`));
+      } else {
+        set(formRef.value, key, newPatternsForm);
+
+        Object.keys(newPatterns).forEach(patternField => validator.errors.clear(`${key}.${patternField}.json`));
+      }
 
       callExpand({ key, fields: Object.keys(newPatterns) });
 
       return;
     }
-
     const newPatternsForm = unref(field)
       ? patternToForm({ ...formRef.value, ...newPatterns })
-      : filterPatternsToForm(newPatterns);
+      : filterPatternsToForm(newPatterns, Object.values(PATTERNS_FIELDS));
 
     if (formRef.value.patterns) {
       set(formRef.value, 'patterns', {

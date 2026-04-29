@@ -21,13 +21,17 @@ export default {
       type: Object,
       default: null,
     },
+    context: {
+      type: String,
+      required: true,
+    },
   },
   setup(props) {
     const { t } = useI18n();
 
-    const messageHtml = computed(() => t('llm.chat.infoAlert', {
+    const messageHtml = computed(() => `${t(`llm.chat.infoAlerts.${props.context}`, {
       patternItem: props.patternItem?.text,
-    }));
+    })}${t('llm.chat.infoAlertEnding')}`);
 
     return {
       messageHtml,

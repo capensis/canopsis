@@ -88,7 +88,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
   <span
     aria-hidden="true"
     class="v-icon notranslate alarm-column-value-status__icon theme--light"
-    style="caret-color: var(--v-status-closed-base);"
+    style="caret-color: var(--v-success-base);"
   >
     <svg
       class="v-icon__component theme--light"
@@ -115,7 +115,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
   <i
     aria-hidden="true"
     class="v-icon notranslate alarm-column-value-status__icon material-icons theme--light"
-    style="caret-color: var(--v-status-closed-base);"
+    style="caret-color: var(--v-success-base);"
   >
     check_circle
   </i>
