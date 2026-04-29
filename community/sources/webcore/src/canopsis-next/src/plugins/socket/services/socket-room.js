@@ -120,6 +120,20 @@ class SocketRoom {
       this.messagesToSend = [];
     }
   }
+
+  /**
+   * Update the payload of the room
+   *
+   * @param {string} field
+   * @param {*} value
+   */
+  updatePayloadField(field, value) {
+    if (!this.payload) {
+      this.payload = {};
+    }
+
+    this.payload[field] = value;
+  }
 }
 
 export default SocketRoom;

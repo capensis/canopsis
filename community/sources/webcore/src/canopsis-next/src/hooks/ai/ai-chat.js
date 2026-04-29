@@ -592,6 +592,7 @@ export const useAiChatSocket = ({
 
     if (chat) {
       activeChatId = chat;
+      socketRoom?.updatePayloadField?.('chat', chat);
       aiChat.registerChatId?.(chat);
     }
 
