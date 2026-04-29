@@ -1,11 +1,11 @@
 <template>
   <div ref="wrapperElement" class="c-patterns-field__wrapper">
-    <pattern-optimization-progress
+    <pattern-progress
       v-if="optimizationPending || optimizationFailedReason"
       :failed-reason="optimizationFailedReason"
-      @cancel:optimization="cancelOptimization"
-      @close:optimization="rejectAllSuggestions"
-      @try:optimization="tryOptimization"
+      @cancel="cancelOptimization"
+      @close="rejectAllSuggestions"
+      @try-again="tryOptimization"
     />
     <c-progress-overlay :pending="pending" />
     <v-layout
@@ -208,9 +208,10 @@ import { usePatternCountAlarmsModal } from './hooks/pattern-count-alarms-modal';
 import { usePatternCountEntitiesModal } from './hooks/pattern-count-entities-modal';
 import { usePatternCounters } from './hooks/pattern-counters';
 import { usePatternOptimization } from './hooks/pattern-optimization';
+import { usePatternsFieldExpand } from './hooks/patterns-field-expand';
 import PatternCountMessage from './pattern-count-message.vue';
 import PatternTryOptimization from './pattern-try-optimization.vue';
-import PatternOptimizationProgress from './pattern-optimization-progress.vue';
+import PatternProgress from './pattern-progress.vue';
 import PatternFieldSuggestionsWrapper from './pattern-field-suggestions-wrapper.vue';
 
 /**
@@ -222,12 +223,14 @@ import PatternFieldSuggestionsWrapper from './pattern-field-suggestions-wrapper.
  */
 const getFieldPatternName = (componentName, fieldName) => [componentName, fieldName].filter(Boolean).join('.');
 
+export { PATTERNS_FIELDS_TO_EXPANDED_KEYS } from './hooks/patterns-field-expand';
+
 export default {
   inject: ['$validator'],
   components: {
     PatternCountMessage,
     PatternTryOptimization,
-    PatternOptimizationProgress,
+    PatternProgress,
     PatternFieldSuggestionsWrapper,
   },
   model: {
@@ -565,6 +568,8 @@ export default {
         expanded.value.entity = true;
       }
     });
+
+    usePatternsFieldExpand({ wrapperElement, expanded });
 
     return {
       PATTERNS_FIELDS,

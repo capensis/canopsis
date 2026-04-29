@@ -1,4 +1,4 @@
-import { PATTERN_TYPES } from '@/constants';
+import { PATTERN_TYPES, PATTERNS_FIELDS } from '@/constants';
 
 export default {
   patterns: 'Patterns',
@@ -9,6 +9,7 @@ export default {
   removeRule: 'Remove rule',
   advancedEditor: 'Advanced editor',
   simpleEditor: 'Simple editor',
+  fixJsonWithAi: 'Fix JSON with AI',
   noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
   noDataDisabled: 'No pattern set.',
   alarmsCount: 'Found: <strong>{alarmsCount} alarms</strong>',
@@ -26,12 +27,25 @@ export default {
     [PATTERN_TYPES.pbehavior]: 'Pbehavior pattern',
     [PATTERN_TYPES.serviceWeather]: 'Service weather pattern',
   },
+  patternsFields: {
+    [PATTERNS_FIELDS.alarm]: 'Alarm',
+    [PATTERNS_FIELDS.entity]: 'Entity',
+    [PATTERNS_FIELDS.pbehavior]: 'Pbehavior',
+    [PATTERNS_FIELDS.event]: 'Event',
+    [PATTERNS_FIELDS.totalEntity]: 'Total entity',
+    [PATTERNS_FIELDS.serviceWeather]: 'Weather service',
+  },
+  patternsMessage: '{patterns} pattern | {patterns} patterns',
   notDefinedType: 'Selected type differs from the type set in Entity infos',
   tryOptimization: 'Try optimization',
   tryOptimizationHint: 'Try optimization of Regexp to speed up the query<br><span class="font-weight-regular">Regexp queries usually work slower than normal queries.</span>',
   optimizationInProgress: 'Optimization in progress...',
   optimizationFailed: 'Optimization failed : {reason}',
   cancelOptimization: 'Cancel optimization',
+  patternsCreationInProgress: 'Patterns creation in progress...',
+  cancelPatternsCreation: 'Cancel Patterns creation',
+  patternsUpdateInProgress: 'Patterns update in progress...',
+  cancelPatternsUpdate: 'Cancel Patterns update',
   optimizationCancelled: 'Optimization was cancelled',
   suggestions: 'Suggestions',
   rejectAllSuggestions: 'REJECT ALL SUGGESTIONS',

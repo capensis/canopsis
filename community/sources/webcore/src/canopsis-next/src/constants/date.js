@@ -55,6 +55,14 @@ export const AVAILABLE_TIME_UNITS = {
   },
 };
 
+export const MEDIUM_AVAILABLE_TIME_UNITS = {
+  second: AVAILABLE_TIME_UNITS.second,
+  minute: AVAILABLE_TIME_UNITS.minute,
+  hour: AVAILABLE_TIME_UNITS.hour,
+  day: AVAILABLE_TIME_UNITS.day,
+  week: AVAILABLE_TIME_UNITS.week,
+};
+
 export const SHORT_AVAILABLE_TIME_UNITS = {
   second: AVAILABLE_TIME_UNITS.second,
   minute: AVAILABLE_TIME_UNITS.minute,

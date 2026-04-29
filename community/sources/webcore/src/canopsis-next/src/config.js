@@ -124,6 +124,9 @@ export const POPUP_TICK_DELAY = 100;
 
 export const SIDE_BAR_WIDTH = 250;
 
+/** Default width (px) for plugin sidebars when `config.width` is omitted */
+export const DEFAULT_SIDEBAR_DRAWER_WIDTH = 450;
+
 export const TOP_BAR_HEIGHT = 48;
 
 export const EXPAND_DEFAULT_MAX_LETTERS = 50;
@@ -159,6 +162,7 @@ export const SOCKET_ROOMS = {
   executions: 'executions',
   simplifiedManualExecutions: 'simplified-manual-executions',
   pbehaviorPatterns: 'pbehavior-patterns',
+  llmChat: 'llmchat',
 };
 
 export const API_ROUTES = {
@@ -537,6 +541,14 @@ export const API_ROUTES = {
   copyVarsCat: {
     dynamicInfos: '/api/v4/cat/dynamic-infos-copy-vars',
   },
+  llms: {
+    list: '/api/v4/cat/llm-configs',
+    bulk: '/api/v4/cat/bulk/llm-configs',
+    bulkEnable: '/api/v4/cat/bulk/llm-configs/enable',
+    bulkDisable: '/api/v4/cat/bulk/llm-configs/disable',
+    bulkHistoryLink: '/api/v4/cat/bulk/llm-history/link',
+    models: '/api/v4/cat/llm-config-models',
+  },
 };
 
 export const COLORS = {
@@ -628,6 +640,10 @@ export const COLORS = {
     assigned: '#FFC107',
     inProgress: '#FFECB3',
     closed: '#4CAF50',
+  },
+  aiChat: {
+    chipBackground: 'grey lighten-2',
+    chipText: 'grey darken-2',
   },
   impactState: [
     '#2FAB63',
@@ -823,12 +839,12 @@ export const CSS_COLORS_VARS = {
   },
 
   status: {
-    closed: 'var(--v-status-closed-base)',
+    closed: 'var(--v-success-base)',
     stealthy: 'var(--v-status-stealthy-base)',
     flapping: 'var(--v-status-flapping-base)',
     ongoing: 'var(--v-status-ongoing-base)',
     cancelled: 'var(--v-status-cancelled-base)',
-    noEvents: 'var(--v-status-noEvents-base)',
+    noEvents: 'var(--v-error-base)',
     unknown: 'var(--v-status-unknown-base)',
   },
 };
@@ -860,6 +876,8 @@ export const DEFAULT_THEME_COLORS = {
 export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
+
+export const GEMINI_AI_CONSOLE_BILLING_URL = 'https://ai.studio/spend';
 
 export const EXPORT_FETCHING_INTERVAL = 2000;
 

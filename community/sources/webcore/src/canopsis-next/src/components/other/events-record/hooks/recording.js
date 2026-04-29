@@ -23,7 +23,11 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
     name: MODALS.applyEventFilter,
     config: {
       title: t('eventsRecord.launchEventRecording'),
-      action: eventPattern => startEventsRecordCurrent({ data: { event_pattern: eventPattern } }),
+      action: async (eventPattern) => {
+        const result = await startEventsRecordCurrent({ data: { event_pattern: eventPattern } });
+
+        return result;
+      },
       afterSubmit: fetchListHandler,
     },
   });

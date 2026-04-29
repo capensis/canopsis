@@ -152,6 +152,7 @@ export const USER_PERMISSIONS_GROUPS = {
   apiRules: 'api_rules',
   apiRemediation: 'api_remediation',
   apiPlanning: 'api_planning',
+  apiLlmChat: 'api_llm_chat',
 
   technical: 'technical',
 
@@ -211,6 +212,7 @@ export const USER_PERMISSIONS = {
     commentTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_commentTemplate`,
     externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalData`,
     entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.technical.admin}_entityInfoProperty`,
+    llm: `${USER_PERMISSIONS_PREFIXES.technical.admin}_llm`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,

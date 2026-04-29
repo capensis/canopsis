@@ -33,7 +33,7 @@
 <script>
 import { computed } from 'vue';
 
-import { AVAILABLE_TIME_UNITS, SHORT_AVAILABLE_TIME_UNITS, TIME_UNITS } from '@/constants';
+import { AVAILABLE_TIME_UNITS, SHORT_AVAILABLE_TIME_UNITS, TIME_UNITS, MEDIUM_AVAILABLE_TIME_UNITS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
@@ -69,15 +69,21 @@ export default {
       type: Boolean,
       required: false,
     },
+    middle: {
+      type: Boolean,
+      required: false,
+    },
   },
   setup(props, { emit }) {
     const { tc } = useI18n();
     const { updateField } = useModelField(props, emit);
 
     const units = computed(() => {
-      const preparedUnits = props.long
-        ? AVAILABLE_TIME_UNITS
-        : SHORT_AVAILABLE_TIME_UNITS;
+      const preparedUnits = {
+        true: SHORT_AVAILABLE_TIME_UNITS,
+        [props.long]: AVAILABLE_TIME_UNITS,
+        [props.middle]: MEDIUM_AVAILABLE_TIME_UNITS,
+      }.true;
 
       return Object.values(preparedUnits).map(({ value, text }) => ({
         value,

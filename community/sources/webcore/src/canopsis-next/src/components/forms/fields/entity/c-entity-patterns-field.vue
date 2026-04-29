@@ -10,6 +10,7 @@
     :with-type="withType"
     :alarm-counter="alarmCounter"
     :entity-counter="entityCounter"
+    class="c-entity-patterns-field"
   >
     <template #append-count="">
       <v-btn
@@ -128,6 +129,8 @@ export default {
         PATTERN_OPERATORS.isNotOneOf,
         PATTERN_OPERATORS.contains,
         PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.beginWith,
+        PATTERN_OPERATORS.notBeginWith,
         PATTERN_OPERATORS.regexp,
       ];
     },
@@ -171,6 +174,8 @@ export default {
           PATTERN_OPERATORS.notEqual,
           PATTERN_OPERATORS.contains,
           PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.beginWith,
+          PATTERN_OPERATORS.notBeginWith,
           PATTERN_OPERATORS.regexp,
         ],
         defaultValue: [],
@@ -193,6 +198,8 @@ export default {
           PATTERN_OPERATORS.notEqual,
           PATTERN_OPERATORS.contains,
           PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.beginWith,
+          PATTERN_OPERATORS.notBeginWith,
           PATTERN_OPERATORS.regexp,
         ],
         defaultValue: [],

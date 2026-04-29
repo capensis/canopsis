@@ -219,6 +219,7 @@ describe('alarm', () => {
   widget.parameters.moreInfoTemplate = '';
 
   const sidebar = {
+    id: 'test-sidebar-id',
     name: SIDE_BARS.alarmSettings,
     config: {
       widget,

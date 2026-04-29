@@ -1,7 +1,7 @@
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
-import { mockRequestAnimationFrame, mockModals, mockSidebar } from '@unit/utils/mock-hooks';
+import { mockModals, mockSidebar } from '@unit/utils/mock-hooks';
 
 import { SIDE_BARS } from '@/constants';
 
@@ -29,8 +29,6 @@ const stubs = {
 };
 
 describe('sidebar-wrapper', () => {
-  mockRequestAnimationFrame();
-
   const $modals = mockModals();
   const $sidebar = mockSidebar();
 
@@ -44,6 +42,7 @@ describe('sidebar-wrapper', () => {
   ]);
 
   const sidebar = {
+    id: 'test-sidebar-id',
     name: SIDE_BARS.alarmSettings,
     config: {},
     hidden: false,
@@ -70,6 +69,18 @@ describe('sidebar-wrapper', () => {
     },
   });
 
+  beforeEach(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((fn) => {
+      fn(0);
+
+      return 0;
+    });
+  });
+
+  afterEach(() => {
+    window.requestAnimationFrame.mockRestore();
+  });
+
   it('Sidebar hidden trigger drawer', async () => {
     const wrapper = factory({
       propsData: {
@@ -89,6 +100,7 @@ describe('sidebar-wrapper', () => {
     navigationDrawerInput.setChecked(false);
 
     expect($sidebar.hide).toHaveBeenCalledTimes(1);
+    expect($sidebar.hide).toHaveBeenCalledWith({ id: sidebar.id });
   });
 
   it('Sidebar hidden happened after click on the close button', async () => {
@@ -112,12 +124,13 @@ describe('sidebar-wrapper', () => {
       },
     });
 
-    const closeButton = wrapper.find('button.v-btn');
+    const closeButton = wrapper.findAll('button.v-btn').at(0);
 
     closeButton.trigger('click');
 
     expect($clickOutside.call).toHaveBeenCalledTimes(1);
     expect($sidebar.hide).toHaveBeenCalledTimes(1);
+    expect($sidebar.hide).toHaveBeenCalledWith({ id: sidebar.id });
   });
 
   it('Sidebar hidden after click on the close button with close condition', async () => {
@@ -141,7 +154,7 @@ describe('sidebar-wrapper', () => {
       },
     });
 
-    const closeButton = wrapper.find('button.v-btn');
+    const closeButton = wrapper.findAll('button.v-btn').at(0);
 
     closeButton.trigger('click');
 
@@ -153,6 +166,7 @@ describe('sidebar-wrapper', () => {
     const wrapper = snapshotFactory({
       propsData: {
         sidebar: {
+          id: 'test-sidebar-id',
           name: type,
           config: {},
           hidden: false,
@@ -199,6 +213,7 @@ describe('sidebar-wrapper', () => {
     const wrapper = snapshotFactory({
       propsData: {
         sidebar: {
+          id: 'test-sidebar-id',
           config: {},
           hidden: false,
         },

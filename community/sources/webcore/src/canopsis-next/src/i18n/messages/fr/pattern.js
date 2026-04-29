@@ -1,4 +1,4 @@
-import { PATTERN_TYPES } from '@/constants';
+import { PATTERN_TYPES, PATTERNS_FIELDS } from '@/constants';
 
 export default {
   patterns: 'Modèles',
@@ -9,6 +9,7 @@ export default {
   removeRule: 'Supprimer la règle',
   advancedEditor: 'Éditeur avancé',
   simpleEditor: 'Éditeur simple',
+  fixJsonWithAi: 'Corriger le JSON avec l\'IA',
   noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
   noDataDisabled: 'Aucun modèle.',
   alarmsCount: '{alarmsCount} alarmes trouvées',
@@ -26,12 +27,25 @@ export default {
     [PATTERN_TYPES.pbehavior]: 'Modèle de comportements périodiques',
     [PATTERN_TYPES.serviceWeather]: 'Modèle de météo des services',
   },
+  patternsFields: {
+    [PATTERNS_FIELDS.alarm]: 'Alarme',
+    [PATTERNS_FIELDS.entity]: 'Entité',
+    [PATTERNS_FIELDS.pbehavior]: 'Comportements périodiques',
+    [PATTERNS_FIELDS.event]: 'Événement',
+    [PATTERNS_FIELDS.totalEntity]: 'Entité totale',
+    [PATTERNS_FIELDS.serviceWeather]: 'Météo des services',
+  },
+  patternsMessage: '{patterns} modèle | {patterns} modèles',
   notDefinedType: 'Le type sélectionné diffère du type défini dans les informations d\'entité',
   tryOptimization: 'Essayer l\'optimisation',
   tryOptimizationHint: 'Essayez d\'optimiser la Regexp pour accélérer la requête<br><span class="font-weight-regular">Les requêtes Regexp fonctionnent généralement plus lentement que les requêtes normales.</span>',
   optimizationInProgress: 'Optimisation en cours...',
   optimizationFailed: 'Optimisation échouée : {reason}',
   cancelOptimization: 'Annuler l\'optimisation',
+  patternsCreationInProgress: 'Création des modèles en cours...',
+  cancelPatternsCreation: 'Annuler la création des modèles',
+  patternsUpdateInProgress: 'Mise à jour des modèles en cours...',
+  cancelPatternsUpdate: 'Annuler la mise à jour des modèles',
   optimizationCancelled: 'L\'optimisation a été annulée',
   suggestions: 'Suggestions',
   rejectAllSuggestions: 'REJETER TOUTES LES SUGGESTIONS',

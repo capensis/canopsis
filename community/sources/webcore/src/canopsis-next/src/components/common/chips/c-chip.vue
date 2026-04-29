@@ -6,7 +6,7 @@
     :outlined="outlined"
     class="c-chip"
     small
-    v-on="chipListeners"
+    v-on="$listeners"
   >
     <span class="c-chip__text">
       <slot />
@@ -43,22 +43,24 @@ export default {
       type: Boolean,
       default: false,
     },
+    rounded: {
+      type: Boolean,
+      default: false,
+    },
     textColor: {
       type: String,
       default: 'white',
     },
   },
-  setup(props, { listeners }) {
+  setup(props) {
     const chipClass = computed(() => ({
       'c-chip--closable': props.closable,
       'c-chip--small': props.small,
+      'c-chip--rounded': props.rounded,
     }));
-
-    const chipListeners = computed(() => (listeners?.click ? { click: listeners.click } : {}));
 
     return {
       chipClass,
-      chipListeners,
     };
   },
 };
@@ -71,6 +73,10 @@ export default {
   min-height: 24px;
   height: unset !important;
   padding: 0;
+
+  &.c-chip--rounded {
+    border-radius: 20px;
+  }
 
   &__text {
     white-space: initial;

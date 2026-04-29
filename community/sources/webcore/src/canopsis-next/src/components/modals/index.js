@@ -416,6 +416,16 @@ export const CreateLinkRule = () => ({
   loading: LoaderOverlay,
 });
 
+export const CreateLlm = () => ({
+  component: import(/* webpackChunkName: "Llm" */ './llm/create-llm.vue'),
+  loading: LoaderOverlay,
+});
+
+export const AiChatHistory = () => ({
+  component: import(/* webpackChunkName: "Llm" */ './llm/ai-chat-history.vue'),
+  loading: LoaderOverlay,
+});
+
 export const CreateMaintenance = () => ({
   component: import(/* webpackChunkName: "Maintenance" */ './maintenance/create-maintenance.vue'),
   loading: LoaderOverlay,

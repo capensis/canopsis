@@ -206,6 +206,14 @@ export default {
     watch(
       () => props.patterns.groups,
       (groups, oldGroups) => {
+        if (hasJsonError.value) {
+          errors.remove(`${props.name}.json`);
+
+          if (activeTab.value === PATTERN_EDITOR_TABS.advanced) {
+            patternsJson.value = formGroupsToPatternRules(groups);
+          }
+        }
+
         if (!isEqual(groups, oldGroups)) {
           errors.remove(props.name);
         }
