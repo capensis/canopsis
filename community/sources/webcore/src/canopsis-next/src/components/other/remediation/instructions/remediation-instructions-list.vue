@@ -17,6 +17,7 @@
         :enablable="updatable"
         :disablable="updatable"
         instruction
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />

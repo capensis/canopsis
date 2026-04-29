@@ -14,6 +14,7 @@
       <c-action-btn
         v-if="removable"
         type="delete"
+        small
         @click="$emit('remove-selected', selected)"
       />
     </template>

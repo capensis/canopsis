@@ -31,6 +31,7 @@
         :enablable="updatable"
         :disablable="updatable"
         pbehavior
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />

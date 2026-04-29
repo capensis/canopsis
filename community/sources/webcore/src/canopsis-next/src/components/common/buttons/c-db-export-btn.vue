@@ -3,6 +3,7 @@
     :disabled="pending"
     :loading="pending"
     :tooltip="$t('common.download')"
+    :small="small"
     icon="file_download"
     @click="download"
   />
@@ -25,6 +26,10 @@ export default {
     ids: {
       type: Array,
       default: () => [],
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
     pbehavior: {
       type: Boolean,

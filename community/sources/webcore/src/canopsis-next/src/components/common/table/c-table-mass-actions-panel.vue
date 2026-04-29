@@ -3,12 +3,14 @@
     <c-action-btn
       v-if="removable && config.remove"
       :tooltip="config.removeTooltip"
+      :small="small"
       type="delete"
       @click="showRemoveModal"
     />
     <c-action-btn
       v-if="enablable && someOneDisable && config.enable"
       :tooltip="$t(`${config.tooltipPrefix}.massEnable`)"
+      :small="small"
       icon="check_circle"
       color="primary"
       @click="showEnableModal"
@@ -16,6 +18,7 @@
     <c-action-btn
       v-if="disablable && someOneEnable && config.disable"
       :tooltip="$t(`${config.tooltipPrefix}.massDisable`)"
+      :small="small"
       icon="cancel"
       color="error"
       @click="showDisableModal"
@@ -23,6 +26,7 @@
     <c-action-btn
       v-if="unhideable && someOneHidden && config.unhide"
       :tooltip="$t(`${config.tooltipPrefix}.massUnhide`)"
+      :small="small"
       icon="check_circle"
       color="primary"
       @click="showUnhideModal"
@@ -30,6 +34,7 @@
     <c-action-btn
       v-if="hideable && someOneVisible && config.hide"
       :tooltip="$t(`${config.tooltipPrefix}.massHide`)"
+      :small="small"
       icon="cancel"
       color="error"
       @click="showHideModal"
@@ -37,6 +42,7 @@
     <c-db-export-btn
       v-if="config.exportProps"
       :ids="itemsIds"
+      :small="small"
       v-bind="config.exportProps"
     />
   </v-layout>
@@ -76,6 +82,10 @@ export default {
     items: {
       type: Array,
       default: () => [],
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
     removable: {
       type: Boolean,

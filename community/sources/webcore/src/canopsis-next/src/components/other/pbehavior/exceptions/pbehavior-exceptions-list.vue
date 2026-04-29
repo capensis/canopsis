@@ -19,6 +19,7 @@
         :hideable="updatable"
         :unhideable="updatable"
         pbehavior-exception
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />

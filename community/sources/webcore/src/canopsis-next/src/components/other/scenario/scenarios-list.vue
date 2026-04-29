@@ -18,6 +18,7 @@
         :enablable="updatable"
         :disablable="updatable"
         scenario
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
