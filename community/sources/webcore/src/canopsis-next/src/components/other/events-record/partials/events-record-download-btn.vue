@@ -42,9 +42,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    params: {
-      type: Object,
-      default: () => ({}),
+    eventPattern: {
+      type: Array,
+      required: false,
     },
   },
   setup(props) {
@@ -52,7 +52,7 @@ export default {
 
     const { downloading, exportJson } = useEventsRecordExportJson({
       eventIds,
-      params: toRef(props, 'params'),
+      eventPattern: toRef(props, 'eventPattern'),
       eventsRecordId: toRef(props, 'eventsRecordId'),
     });
 

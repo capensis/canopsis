@@ -12,10 +12,10 @@ import { useFilePolling } from '@/hooks/polling';
  * @param {Object} options - Options for events record export JSON
  * @param {string} options.eventsRecordId - ID of the events record
  * @param {Array} [options.eventIds = []] - Array of event IDs (default: empty array)
- * @param {Object} [options.params = {}] - Object of parameters (default: empty object)
+ * @param {Array} [options.eventPattern = []] - Array of event pattern (default: empty array)
  * @returns {Object} Object containing downloading status and function to export JSON
  */
-export const useEventsRecordExportJson = ({ eventsRecordId, eventIds = [], params = {} }) => {
+export const useEventsRecordExportJson = ({ eventsRecordId, eventIds = [], eventPattern = [] }) => {
   const downloading = ref(false);
 
   const {
@@ -38,7 +38,7 @@ export const useEventsRecordExportJson = ({ eventsRecordId, eventIds = [], param
     try {
       downloading.value = true;
 
-      await generateFile({ id: unref(eventsRecordId), eventIds: unref(eventIds), params: unref(params) });
+      await generateFile({ id: unref(eventsRecordId), eventIds: unref(eventIds), eventPattern: unref(eventPattern) });
     } finally {
       downloading.value = false;
     }
