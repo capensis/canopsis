@@ -118,6 +118,7 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
       operators: [
         PATTERN_OPERATORS.with,
         PATTERN_OPERATORS.without,
+        PATTERN_OPERATORS.hasEvery,
         PATTERN_OPERATORS.withLabel,
         PATTERN_OPERATORS.withoutLabel,
       ],

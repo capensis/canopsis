@@ -1033,8 +1033,8 @@ export const patternRuleToForm = (rule = {}) => {
       form.operator = PATTERN_OPERATORS.notContains;
       form.value = rule.cond.value;
       break;
-    case PATTERN_CONDITIONS.beginsWith:
-      form.operator = PATTERN_OPERATORS.beginsWith;
+    case PATTERN_CONDITIONS.beginWith:
+      form.operator = PATTERN_OPERATORS.beginWith;
       form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.notBeginWith:
@@ -1167,6 +1167,22 @@ export const patternToForm = (pattern = {}) => ({
 });
 
 /**
+ * Returns pattern field keys (e.g. `alarm_pattern`) whose blocks differ between two forms that carry
+ * the same pattern-* shape as filter forms.
+ * Each block is compared with `isOmitEqual`, omitting `id` for the check.
+ *
+ * @param {Object} [newForm={}]
+ * @param {Object} [oldForm={}]
+ * @param {PatternsFields} [fields=Object.values(PATTERNS_FIELDS)]
+ * @returns {string[]}
+ */
+export const getChangedPatternsFields = (
+  newForm = {},
+  oldForm = {},
+  fields = Object.values(PATTERNS_FIELDS),
+) => fields.filter(fieldKey => !isEqual(newForm?.[fieldKey] ?? [], oldForm?.[fieldKey] ?? []));
+
+/**
  * Get duration from rule range by specified keys
  *
  * @param {PatternRuleForm} rule - Pattern rule form object
@@ -1290,8 +1306,8 @@ export const formRuleToPatternRule = (rule) => {
       pattern.cond.type = PATTERN_CONDITIONS.notContains;
       break;
 
-    case PATTERN_OPERATORS.beginsWith:
-      pattern.cond.type = PATTERN_CONDITIONS.beginsWith;
+    case PATTERN_OPERATORS.beginWith:
+      pattern.cond.type = PATTERN_CONDITIONS.beginWith;
       break;
     case PATTERN_OPERATORS.notBeginWith:
       pattern.cond.type = PATTERN_CONDITIONS.notBeginWith;

@@ -86,8 +86,7 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
           name=""
         >
           <div
-            class="v-window-item"
-            style="display: none;"
+            class="v-window-item v-window-item--active"
           >
             <pbehavior-general-form-stub
               form="[object Object]"
@@ -102,6 +101,7 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
             style="display: none;"
           >
             <pbehavior-patterns-form-stub
+              class="mt-4"
               form="[object Object]"
             />
           </div>

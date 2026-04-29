@@ -1,16 +1,54 @@
 <template>
+  <v-layout v-if="replaceable" class="gap-4" column>
+    <v-label :aria-required="required" class="c-password-field__label">
+      {{ label }}
+    </v-label>
+    <v-layout v-if="shownField" class="gap-3" align-center>
+      <v-text-field
+        v-field="value"
+        v-validate="rules"
+        v-bind="$attrs"
+        :placeholder="placeholder || $t('common.password')"
+        :error-messages="errors.collect(name)"
+        :name="name"
+        :type="shownPassword ? 'text' : 'password'"
+        :append-icon="appendIcon"
+        :clearable="false"
+        @click:append="toggleShownPassword"
+      />
+      <c-action-btn
+        type="delete"
+        top
+        small
+        @click="toggleShownField"
+      />
+    </v-layout>
+    <div v-if="!shownField">
+      <v-btn color="primary" outlined @click="toggleShownField">
+        {{ buttonLabel || `${$t('common.replace')} ${label}` }}
+      </v-btn>
+    </div>
+  </v-layout>
   <v-text-field
+    v-else
     v-field="value"
     v-validate="rules"
     v-bind="$attrs"
-    :label="$t('common.password')"
+    :label="label || $t('common.password')"
     :error-messages="errors.collect(name)"
     :name="name"
-    type="password"
+    :type="shownPassword ? 'text' : 'password'"
+    :append-icon="appendIcon"
+    :clearable="false"
+    @click:append="toggleShownPassword"
   />
 </template>
 
 <script>
+import { computed, ref } from 'vue';
+
+import { useModelField } from '@/hooks/form/model-field';
+
 export default {
   inject: ['$validator'],
   inheritAttrs: false,
@@ -27,6 +65,14 @@ export default {
       type: String,
       default: '',
     },
+    placeholder: {
+      type: String,
+      default: '',
+    },
+    buttonLabel: {
+      type: String,
+      default: '',
+    },
     name: {
       type: String,
       default: 'password',
@@ -35,13 +81,57 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
+    replaceable: {
+      type: Boolean,
+      default: false,
     },
+    visibility: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
+
+    const shownPassword = ref(false);
+    const shownField = ref(false);
+
+    const rules = computed(() => ({
+      required: props.required,
+    }));
+
+    const appendIcon = computed(() => {
+      if (!props.visibility) {
+        return null;
+      }
+
+      return shownPassword.value ? 'visibility' : 'visibility_off';
+    });
+
+    const toggleShownPassword = () => shownPassword.value = !shownPassword.value;
+    const toggleShownField = () => {
+      shownField.value = !shownField.value;
+
+      if (!shownField.value) {
+        updateModel('');
+      }
+    };
+
+    return {
+      shownPassword,
+      shownField,
+      rules,
+      appendIcon,
+      toggleShownPassword,
+      toggleShownField,
+    };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.c-password-field__label {
+  transform: scale(0.75);
+  transform-origin: left;
+}
+</style>

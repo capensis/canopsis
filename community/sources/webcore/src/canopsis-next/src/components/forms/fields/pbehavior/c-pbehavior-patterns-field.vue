@@ -10,6 +10,7 @@
     :with-type="withType"
     :alarm-counter="alarmCounter"
     :entity-counter="entityCounter"
+    class="c-pbehavior-patterns-field"
   >
     <template #append-count="">
       <v-btn

@@ -100,6 +100,9 @@ export const MODALS = {
 
   createLinkRule: 'create-link-rule',
 
+  createLlm: 'create-llm',
+  aiChatHistory: 'ai-chat-history',
+
   createMaintenance: 'create-maintenance',
 
   createTag: 'create-tag',

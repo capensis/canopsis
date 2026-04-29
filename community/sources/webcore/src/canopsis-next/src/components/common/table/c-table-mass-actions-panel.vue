@@ -70,6 +70,7 @@ import { usePlaylist } from '@/hooks/store/modules/playlist';
 import { useMaps } from '@/hooks/store/modules/maps';
 import { useUser } from '@/hooks/store/modules/user';
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useLlm } from '@/hooks/store/modules/llm';
 
 export default {
   props: {
@@ -166,6 +167,10 @@ export default {
       default: false,
     },
     instruction: {
+      type: Boolean,
+      default: false,
+    },
+    llm: {
       type: Boolean,
       default: false,
     },
@@ -280,6 +285,12 @@ export default {
       bulkDisableRemediationInstructions,
       bulkRemoveRemediationInstructions,
     } = useRemediationInstruction();
+
+    const {
+      bulkRemoveLlms,
+      bulkEnableLlms,
+      bulkDisableLlms,
+    } = useLlm();
 
     const itemsIds = computed(() => mapIds(props.items));
     const enablableItems = computed(() => (
@@ -413,6 +424,12 @@ export default {
           enable: bulkEnableRemediationInstructions,
           disable: bulkDisableRemediationInstructions,
           tooltipPrefix: 'remediation.instruction',
+        },
+        [props.llm]: {
+          remove: bulkRemoveLlms,
+          enable: bulkEnableLlms,
+          disable: bulkDisableLlms,
+          tooltipPrefix: 'llm',
         },
       }.true ?? {};
 

@@ -265,8 +265,13 @@ export default {
       name: MODALS.applyEventFilter,
       config: {
         title: t('eventsRecord.applyEventFilter'),
+        eventsRecordId: eventsRecordId.value,
         eventPattern: query.value.event_pattern,
-        action: eventPattern => updateQueryField('event_pattern', eventPattern),
+        action: (eventPattern) => {
+          updateQueryField('event_pattern', eventPattern);
+
+          return fetchList();
+        },
       },
     });
 

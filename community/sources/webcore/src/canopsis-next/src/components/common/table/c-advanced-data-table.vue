@@ -245,6 +245,10 @@ export default {
       type: Object,
       required: false,
     },
+    searchLabel: {
+      type: String,
+      default: '',
+    },
     tableClass: {
       type: [String, Object],
       required: false,
@@ -268,10 +272,6 @@ export default {
     expandIcon: {
       type: String,
       default: '$expand',
-    },
-    searchLabel: {
-      type: String,
-      default: '',
     },
     advancedSearchAttributes: {
       type: Array,
