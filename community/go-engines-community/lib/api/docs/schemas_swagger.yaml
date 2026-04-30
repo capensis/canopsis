@@ -1698,6 +1698,11 @@ definitions:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
+      llm_chat:
+        properties:
+          delete_after:
+            $ref: '#/definitions/datetime.DurationWithEnabled'
+        type: object
       metrics:
         properties:
           delete_after:
@@ -7911,6 +7916,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      llm_chat:
+        type: string
       pbehavior_pattern:
         items:
           items:

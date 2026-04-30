@@ -3,6 +3,7 @@ package websocket
 //go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/api/websocket/websocket.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket Upgrader,Conn,Hub
 
 import (
+	"io"
 	"net"
 	"net/http"
 	"time"
@@ -16,13 +17,13 @@ type Upgrader interface {
 
 type Conn interface {
 	SetReadDeadline(t time.Time) error
-	ReadJSON(v any) error
+	NextReader() (messageType int, r io.Reader, err error)
 
 	SetPongHandler(h func(appData string) error)
 
 	SetWriteDeadline(t time.Time) error
 	WriteControl(messageType int, data []byte, deadline time.Time) error
-	WriteJSON(v interface{}) error
+	NextWriter(messageType int) (io.WriteCloser, error)
 
 	RemoteAddr() net.Addr
 

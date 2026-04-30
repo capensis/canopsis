@@ -19,6 +19,9 @@ var ErrUnsupportedField = errors.New("unsupported field")
 var ErrUnsupportedConditionType = errors.New("unsupported condition type")
 var ErrWrongConditionValue = errors.New("wrong condition value")
 var ErrOverwriteMatchedRegexp = errors.New("attempt to overwrite matched regex with groups")
+var ErrUnsupportedFieldType = errors.New("unsupported field type")
+var ErrForbiddenField = errors.New("forbidden field")
+var ErrEmptyGroup = errors.New("empty group")
 
 const (
 	ConditionEqual        = "eq"
@@ -444,7 +447,7 @@ func (c *Condition) MatchTime(value, now time.Time) (bool, error) {
 			if c.valueDurationTo != nil {
 				// when both durations are set, t1 must be not after t2
 				if t1.After(t2) {
-					return false, fmt.Errorf("duration from (%d) < to (%d)", *c.valueDuration, *c.valueDurationTo)
+					return false, fmt.Errorf("duration from (%d) < to (%d): %w", *c.valueDuration, *c.valueDurationTo, ErrWrongConditionValue)
 				}
 				return value.After(t1) && value.Before(t2), nil
 			}
@@ -807,7 +810,7 @@ func (c *Condition) TimeToMongoQuery(f string, now time.Time) (bson.M, error) {
 			if c.valueDurationTo != nil {
 				// when both durations are set, t1 must be not after t2
 				if t1.Time.After(t2.Time) {
-					return nil, fmt.Errorf("duration from (%d) < to (%d)", *c.valueDuration, *c.valueDurationTo)
+					return nil, fmt.Errorf("duration from (%d) < to (%d): %w", *c.valueDuration, *c.valueDurationTo, ErrWrongConditionValue)
 				}
 				return bson.M{f: bson.M{"$gt": t1, "$lt": t2}}, nil
 			}
@@ -1182,7 +1185,7 @@ func (c *Condition) TimeToSqlJson(field, key string) (string, error) {
 			return "", ErrWrongConditionValue
 		}
 		if c.valueDuration != nil && c.valueDurationTo != nil && *c.valueDuration < *c.valueDurationTo {
-			return "", fmt.Errorf("duration from (%d) < to (%d)", *c.valueDuration, *c.valueDurationTo)
+			return "", fmt.Errorf("duration from (%d) < to (%d): %w", *c.valueDuration, *c.valueDurationTo, ErrWrongConditionValue)
 		}
 		var conditions []string
 		if c.valueDuration != nil {
@@ -1336,6 +1339,10 @@ func (c *Condition) parseValue() {
 
 // ValidateInfoCondition is a helper function to validate FieldCondition when it's used to match various infos fields.
 func (c *FieldCondition) ValidateInfoCondition() bool {
+	return c.InfoConditionError() == nil
+}
+
+func (c *FieldCondition) InfoConditionError() error {
 	var err error
 
 	switch c.FieldType {
@@ -1350,14 +1357,18 @@ func (c *FieldCondition) ValidateInfoCondition() bool {
 	case "":
 		_, err = c.Condition.MatchRef(nil)
 	default:
-		return false
+		err = ErrUnsupportedFieldType
 	}
 
-	return err == nil
+	return err
 }
 
 // ValidateEntityInfoCondition is a helper function to validate FieldCondition when it's used to match various infos fields.
 func (c *FieldCondition) ValidateEntityInfoCondition() bool {
+	return c.EntityInfoConditionError() == nil
+}
+
+func (c *FieldCondition) EntityInfoConditionError() error {
 	var err error
 
 	switch c.FieldType {
@@ -1374,10 +1385,10 @@ func (c *FieldCondition) ValidateEntityInfoCondition() bool {
 	case "":
 		_, err = c.Condition.MatchRef(nil)
 	default:
-		return false
+		err = ErrUnsupportedFieldType
 	}
 
-	return err == nil
+	return err
 }
 
 // MatchAlarmInfoCondition is a helper function to match FieldCondition when it's used to match various alarm infos fields.
@@ -1410,7 +1421,7 @@ func (c *FieldCondition) MatchAlarmInfoCondition(infoVal any, infoExists bool) (
 				matched, err = c.Condition.MatchStringArray(a)
 			}
 		default:
-			return false, fmt.Errorf("invalid field type for %q field: %s", c.Field, c.FieldType)
+			return false, ErrUnsupportedFieldType
 		}
 	}
 
@@ -1452,7 +1463,7 @@ func (c *FieldCondition) MatchEntityInfoCondition(infoVal any, infoExists bool) 
 				matched, err = c.Condition.MatchTime(t, time.Now())
 			}
 		default:
-			return false, fmt.Errorf("invalid field type for %q field: %s", c.Field, c.FieldType)
+			return false, ErrUnsupportedFieldType
 		}
 	}
 

@@ -92,6 +92,10 @@ type SectionApi struct {
 	MetricsCacheExpiration   string   `toml:"MetricsCacheExpiration"`
 	WebsocketPingInterval    string   `toml:"WebsocketPingInterval"`
 	NotificationDisplayCount int      `toml:"NotificationDisplayCount"`
+	LLM                      struct {
+		OffTopicErrors  []string       `toml:"off_topic_errors"`
+		SuggestedModels []LLMModelConf `toml:"suggested_models"`
+	} `toml:"llm"`
 }
 
 type SectionLogger struct {
@@ -165,4 +169,10 @@ type VersionConf struct {
 
 	Version        string            `bson:"version"`
 	VersionUpdated *datetime.CpsTime `bson:"version_updated,omitempty"`
+}
+
+type LLMModelConf struct {
+	Name           string   `bson:"name" json:"name" toml:"name"`
+	Recommended    bool     `bson:"recommended" json:"recommended" toml:"recommended"`
+	ThinkingLevels []string `bson:"thinking_levels" json:"thinking_levels" toml:"thinking_levels"`
 }

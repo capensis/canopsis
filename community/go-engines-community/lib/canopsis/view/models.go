@@ -19,6 +19,13 @@ const (
 	WidgetTypeJunit               = "Junit"
 	WidgetTypeMap                 = "Map"
 	WidgetTypeExternalData        = "ExternalData"
+	WidgetTypeAvailability        = "Availability"
+	WidgetTypeUserStatistics      = "UserStatistics"
+	WidgetTypeAlarmStatistics     = "AlarmStatistics"
+	WidgetTypeBarChart            = "BarChart"
+	WidgetTypeLineChart           = "LineChart"
+	WidgetTypePieChart            = "PieChart"
+	WidgetTypeNumbers             = "Numbers"
 
 	WidgetInternalParamJunitTestSuites = "test_suites"
 
@@ -39,6 +46,8 @@ const (
 )
 
 const PermissionGroupCommonViews = "commonviews"
+
+const LLMContextPrefixWidgetFilter = "widget_filter_"
 
 type Group struct {
 	ID       string           `bson:"_id"`
