@@ -1191,6 +1191,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_general"
+  permission_api_llm_config:
+    <<: *permission_crud
+    _id: api_llm_config
+    name: <Current()._id>
+    description: LLMs
+    groups:
+      - "@group_api"
+      - "@group_api_general"
 
   # api -> rules
   permission_api_dynamicinfos:
@@ -1831,6 +1839,17 @@ permission:
         "@permission_api_icon": 1
       1:
         "@permission_api_icon": 1
+  permission_models_llm:
+    <<: *permission_crud
+    _id: models_llm
+    name: <Current()._id>
+    description: LLMs
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_customobjects"
+    api_permissions:
+      "@permission_api_llm_config": 0
   permission_models_map:
     <<: *permission_crud
     _id: models_map
@@ -3725,6 +3744,7 @@ role:
       "@permission_models_kpiRatingSettings": 15
       "@permission_models_kpiCollectionSettings": 15
       "@permission_models_profile_corporatePattern": 15
+      "@permission_models_llm": 15
       "@permission_models_map": 15
       "@permission_models_shareToken": 15
       "@permission_models_techmetrics": 1
@@ -3905,6 +3925,7 @@ role:
       "@permission_api_entity_info_property": 15
       "@permission_api_comment_template": 15
       "@permission_api_ticket_status_job_management": 1
+      "@permission_api_llm_config": 15
       # Views permissions
       "@permission_view_open_alarms_general": 7
       "@permission_view_open_alarms_actions": 1
@@ -3922,6 +3943,7 @@ role_template:
     permissions:
       # UI permissions
       "@permission_models_exploitation_remediationStatistics": 1
+      "@permission_models_llm": 4
       "@permission_listalarm_ack": 1
       "@permission_listalarm_fastAck": 1
       "@permission_listalarm_cancelAck": 1
@@ -4028,7 +4050,8 @@ role_template:
       "@permission_api_entity": 4
       "@permission_api_associative_table": 4
       "@permission_api_junit": 4
-      "@permission_api_map": 2
+      "@permission_api_llm_config": 4
+      "@permission_api_map": 4
       "@permission_api_declare_ticket_execution": 1
       "@permission_api_alarm_tag": 4
       "@permission_api_share_token": 4
