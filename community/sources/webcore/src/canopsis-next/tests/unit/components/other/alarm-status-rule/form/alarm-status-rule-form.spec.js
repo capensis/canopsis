@@ -8,6 +8,7 @@ import { TIME_UNITS } from '@/constants';
 import AlarmStatusRuleForm from '@/components/other/alarm-status-rule/form/alarm-status-rule-form.vue';
 
 const stubs = {
+  'c-enabled-field': true,
   'c-name-field': true,
   'c-duration-field': true,
   'c-priority-field': true,
@@ -18,6 +19,7 @@ const stubs = {
 };
 
 const snapshotStubs = {
+  'c-enabled-field': true,
   'c-name-field': true,
   'c-duration-field': true,
   'c-priority-field': true,

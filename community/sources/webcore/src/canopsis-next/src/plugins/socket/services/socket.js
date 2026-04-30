@@ -192,6 +192,14 @@ class Socket {
     return this;
   }
 
+  sendJoin(room, payload = {}, authNeeded = true) {
+    this.send({
+      room,
+      payload,
+      type: REQUEST_MESSAGES_TYPES.join,
+    }, authNeeded);
+  }
+
   /**
    * Join to a room
    *
@@ -202,13 +210,9 @@ class Socket {
    */
   join(room, payload = {}, authNeeded = true) {
     if (!this.rooms[room]) {
-      this.rooms[room] = new SocketRoom(room, payload, authNeeded);
+      this.rooms[room] = new SocketRoom(room, payload, authNeeded, this.send.bind(this));
 
-      this.send({
-        room,
-        payload,
-        type: REQUEST_MESSAGES_TYPES.join,
-      }, authNeeded);
+      this.sendJoin(room, payload, authNeeded);
     } else {
       this.rooms[room].increment();
     }
@@ -343,7 +347,7 @@ class Socket {
     Object.entries(this.rooms).forEach(([name, room]) => {
       room.decrement();
 
-      this.join(name, room.payload, room.authNeeded);
+      this.sendJoin(name, room.payload, room.authNeeded);
     });
 
     return this;
@@ -457,7 +461,7 @@ class Socket {
         break;
       case RESPONSE_MESSAGES_TYPES.error:
         this.connection.dispatchEvent(
-          new ErrorEvent('error', { message: error }),
+          new ErrorEvent('error', { message: error, error: { code: error, room, payload } }),
         );
         break;
       case RESPONSE_MESSAGES_TYPES.close:
@@ -468,6 +472,12 @@ class Socket {
       case RESPONSE_MESSAGES_TYPES.authenticated:
         this.authenticated = true;
         this.sendMessagesToSend();
+        break;
+      case RESPONSE_MESSAGES_TYPES.joined:
+        this.rooms[room]?.setJoined?.(true);
+        break;
+      case RESPONSE_MESSAGES_TYPES.left:
+        this.rooms[room]?.setJoined?.(false);
         break;
       default:
         this.connection.dispatchEvent(

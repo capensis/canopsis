@@ -37,6 +37,7 @@
       />
       <field-filters-list
         v-field="form.patterns"
+        :widget-id="widgetId"
         name="patterns"
         with-entity
         addable
@@ -77,6 +78,10 @@ export default {
     type: {
       type: Number,
       default: KPI_RATING_SETTINGS_TYPES.entity,
+    },
+    widgetId: {
+      type: String,
+      required: false,
     },
   },
   data() {

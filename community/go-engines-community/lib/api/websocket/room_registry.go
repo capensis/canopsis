@@ -32,6 +32,7 @@ type RoomHandlers struct {
 type JoinOptions struct {
 	ConnID, UserID string
 	RoomID         string
+	Locale         string
 	Payload        any
 }
 
@@ -43,6 +44,7 @@ type LeaveOptions struct {
 type MessageOptions struct {
 	ConnID, UserID string
 	RoomID         string
+	Locale         string
 	Payload        any
 }
 
@@ -63,6 +65,24 @@ func (e *JoinError) Error() string {
 
 func NewJoinError(err error, payload any) *JoinError {
 	return &JoinError{Err: err, Payload: payload}
+}
+
+// CloseRoomError is returned by OnMessage when the room should be closed —
+// for example, when the resource being watched is no longer available.
+// Payload is sent to the client as ServerMessageError with HTTP 410,
+// followed by ServerMessageCloseRoom to close the room.
+// Use plain errors for internal failures instead.
+type CloseRoomError struct {
+	Err     error
+	Payload any
+}
+
+func (e *CloseRoomError) Error() string {
+	return e.Err.Error()
+}
+
+func NewCloseRoomError(err error, payload any) *CloseRoomError {
+	return &CloseRoomError{Err: err, Payload: payload}
 }
 
 func NewRoomRegistry() RoomRegistry {

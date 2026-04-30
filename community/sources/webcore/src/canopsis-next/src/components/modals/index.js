@@ -301,6 +301,10 @@ export const CreateRemediationJob = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/create-remediation-job.vue'),
   loading: LoaderOverlay,
 });
+export const CreateTicketStatusJob = () => ({
+  component: import(/* webpackChunkName: "TicketStatusJob" */ './ticket-status-job/create-ticket-status-job.vue'),
+  loading: LoaderOverlay,
+});
 export const ExecuteRemediationInstruction = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/execute-remediation-instruction.vue'),
   loading: LoaderOverlay,
@@ -409,6 +413,16 @@ export const RemoveAssociatedTicketEvent = () => ({
 
 export const CreateLinkRule = () => ({
   component: import(/* webpackChunkName: "LinkRule" */ './link-rule/create-link-rule.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateLlm = () => ({
+  component: import(/* webpackChunkName: "Llm" */ './llm/create-llm.vue'),
+  loading: LoaderOverlay,
+});
+
+export const AiChatHistory = () => ({
+  component: import(/* webpackChunkName: "Llm" */ './llm/ai-chat-history.vue'),
   loading: LoaderOverlay,
 });
 

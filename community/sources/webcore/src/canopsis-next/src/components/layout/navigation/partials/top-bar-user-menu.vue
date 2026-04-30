@@ -31,7 +31,7 @@ export default {
     const { t } = useI18n();
     const modals = useModals();
     const popups = usePopups();
-    const { currentUser, logout, fetchCurrentUser } = useAuth();
+    const { currentUser, logout } = useAuth();
     const { updateCurrentUser } = useUser();
     const { defaultColorTheme } = useInfo();
     const { filterLinks } = useTopBarMenu();
@@ -54,8 +54,6 @@ export default {
             await updateCurrentUser({ data });
 
             popups.success({ text: t('success.default', data.ui_language) });
-
-            await fetchCurrentUser();
 
             $system.setTheme(currentUser.value.ui_theme_colors);
           },

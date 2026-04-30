@@ -30,10 +30,12 @@
       </v-btn>
     </v-layout>
     <v-spacer />
-    <events-record-download-btn :events-record-id="eventsRecordId" />
+    <events-record-download-btn :events-record-id="eventsRecordId" :event-pattern="query.event_pattern" />
   </v-layout>
 </template>
 <script>
+import { computed } from 'vue';
+
 import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';
 
 export default {
@@ -47,17 +49,21 @@ export default {
       type: Number,
       default: 0,
     },
-    hasFilterApplied: {
-      type: Boolean,
-      default: false,
+    query: {
+      type: Object,
+      default: () => ({}),
     },
   },
   setup(props, { emit }) {
+    const hasFilterApplied = computed(() => props.query.event_pattern !== undefined);
+
     const remove = () => emit('remove');
     const applyEventFilter = () => emit('apply:filter');
     const resetFilter = () => emit('reset:filter');
 
     return {
+      hasFilterApplied,
+
       remove,
       applyEventFilter,
       resetFilter,

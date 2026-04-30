@@ -122,4 +122,8 @@ const (
 	PatternOptimizeJobCollection = "pattern_optimize_job"
 
 	ChangeStreamTokenCollection = "change_stream_token"
+
+	LLMConfigCollection         = "llm_config"
+	LLMChatHistoryCollection    = "llm_chat_history"
+	LLMMessageHistoryCollection = "llm_message_history"
 )

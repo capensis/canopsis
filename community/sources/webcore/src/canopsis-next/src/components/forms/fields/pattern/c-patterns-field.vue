@@ -1,11 +1,11 @@
 <template>
   <div ref="wrapperElement" class="c-patterns-field__wrapper">
-    <pattern-optimization-progress
+    <pattern-progress
       v-if="optimizationPending || optimizationFailedReason"
       :failed-reason="optimizationFailedReason"
-      @cancel:optimization="cancelOptimization"
-      @close:optimization="rejectAllSuggestions"
-      @try:optimization="tryOptimization"
+      @cancel="cancelOptimization"
+      @close="rejectAllSuggestions"
+      @try-again="tryOptimization"
     />
     <c-progress-overlay :pending="pending" />
     <v-layout
@@ -25,9 +25,10 @@
           :readonly="readonly"
           :name="preparedAlarmName"
           :attributes="alarmAttributes"
-          :counter="counters.alarm_pattern"
+          :alarm-counter="counters.alarm_pattern"
           with-type
           @input="errors.remove(preparedAlarmName)"
+          @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.alarm])"
         />
       </c-collapse-panel>
       <c-collapse-panel
@@ -48,15 +49,17 @@
         >
           <c-entity-patterns-field
             v-field="value.entity_pattern"
+            v-bind="entityPatternsCounters"
             :required="isPatternRequired"
             :disabled="disabled"
             :readonly="readonly"
             :name="preparedEntityName"
             :attributes="entityAttributes"
             :entity-types="entityTypes"
-            :counter="counters.entity_pattern ?? optimizationOriginalCounter"
             with-type
             @input="errors.remove(preparedEntityName)"
+            @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.entity])"
+            @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.entity])"
           />
         </pattern-field-suggestions-wrapper>
       </c-collapse-panel>
@@ -68,14 +71,16 @@
       >
         <c-pbehavior-patterns-field
           v-field="value.pbehavior_pattern"
+          v-bind="pbehaviorPatternsCounters"
           :required="isPatternRequired"
           :disabled="disabled"
           :readonly="readonly"
           :name="preparedPbehaviorName"
           :attributes="pbehaviorAttributes"
-          :counter="counters.pbehavior_pattern"
           with-type
           @input="errors.remove(preparedPbehaviorName)"
+          @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.pbehavior])"
+          @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.pbehavior])"
         />
       </c-collapse-panel>
       <c-collapse-panel
@@ -93,6 +98,7 @@
           :attributes="eventAttributes"
           :counter="counters.event_pattern"
           @input="errors.remove(preparedEventName)"
+          @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.event])"
         />
       </c-collapse-panel>
       <c-collapse-panel
@@ -108,7 +114,6 @@
           :readonly="readonly"
           :name="preparedTotalEntityName"
           :attributes="totalEntityAttributes"
-          :counter="counters.total_entity_pattern"
           with-type
           @input="errors.remove(preparedTotalEntityName)"
         />
@@ -125,7 +130,6 @@
           :disabled="disabled"
           :name="preparedServiceWeatherName"
           :attributes="weatherServiceAttributes"
-          :counter="counters.weather_service_pattern"
           with-type
           @input="errors.remove(preparedServiceWeatherName)"
         />
@@ -147,18 +151,17 @@
         <span>{{ $t('pattern.errors.countOverLimit', { count: allCount }) }}</span>
       </c-alert>
       <v-layout
+        class="gap-2"
         justify-end
         align-center
       >
-        <pattern-count-message :error="hasError">
-          <span v-html="checkFilterMessages" />
-        </pattern-count-message>
+        <pattern-count-message v-bind="patternsCountMessageBind" />
         <template v-if="hasAllInCounter">
           <v-btn
             v-if="entityCountersType"
             text
             small
-            @click="showPatternEntities"
+            @click="showPatternEntitiesModal()"
           >
             {{ $t('common.seeEntities') }}
           </v-btn>
@@ -166,7 +169,7 @@
             v-else
             text
             small
-            @click="showPatternAlarms"
+            @click="showPatternAlarmsModal()"
           >
             {{ $t('common.seeAlarms') }}
           </v-btn>
@@ -205,9 +208,10 @@ import { usePatternCountAlarmsModal } from './hooks/pattern-count-alarms-modal';
 import { usePatternCountEntitiesModal } from './hooks/pattern-count-entities-modal';
 import { usePatternCounters } from './hooks/pattern-counters';
 import { usePatternOptimization } from './hooks/pattern-optimization';
+import { usePatternsFieldExpand } from './hooks/patterns-field-expand';
 import PatternCountMessage from './pattern-count-message.vue';
 import PatternTryOptimization from './pattern-try-optimization.vue';
-import PatternOptimizationProgress from './pattern-optimization-progress.vue';
+import PatternProgress from './pattern-progress.vue';
 import PatternFieldSuggestionsWrapper from './pattern-field-suggestions-wrapper.vue';
 
 /**
@@ -219,12 +223,14 @@ import PatternFieldSuggestionsWrapper from './pattern-field-suggestions-wrapper.
  */
 const getFieldPatternName = (componentName, fieldName) => [componentName, fieldName].filter(Boolean).join('.');
 
+export { PATTERNS_FIELDS_TO_EXPANDED_KEYS } from './hooks/patterns-field-expand';
+
 export default {
   inject: ['$validator'],
   components: {
     PatternCountMessage,
     PatternTryOptimization,
-    PatternOptimizationProgress,
+    PatternProgress,
     PatternFieldSuggestionsWrapper,
   },
   model: {
@@ -376,8 +382,8 @@ export default {
   setup(props, { emit }) {
     const validator = useValidator();
 
-    const { showAlarmsModalByPatterns } = usePatternCountAlarmsModal();
-    const { showEntitiesModalByPatterns } = usePatternCountEntitiesModal();
+    const { showPatternAlarmsModal } = usePatternCountAlarmsModal(props);
+    const { showPatternEntitiesModal } = usePatternCountEntitiesModal(props);
 
     const wrapperElement = ref(null);
     const expanded = ref({
@@ -455,7 +461,7 @@ export default {
       hasAllInCounter,
       allOverLimit,
       allCount,
-      checkFilterMessages,
+      patternsCountMessageBind,
     } = usePatternCounters({
       counterMethod: toRef(props, 'counterMethod'),
       entityCountersType: toRef(props, 'entityCountersType'),
@@ -463,6 +469,16 @@ export default {
       hasError,
       patterns,
     });
+
+    const entityPatternsCounters = computed(() => {
+      if (props.entityCountersType) {
+        return { entityCounter: counters.value?.entity_pattern };
+      }
+
+      return { alarmCounter: counters.value?.entity_pattern, entityCounter: counters.value?.entities };
+    });
+
+    const pbehaviorPatternsCounters = computed(() => ({ [props.entityCountersType ? 'entityCounter' : 'alarmCounter']: counters.value?.pbehavior_pattern }));
 
     /**
      * Validates pattern rules
@@ -517,7 +533,7 @@ export default {
     /**
      * Shows alarms modal filtered by current patterns
      */
-    const showPatternAlarms = () => showAlarmsModalByPatterns({
+    const showPatternAlarms = () => showPatternAlarmsModal({
       alarm_pattern: formGroupsToPatternRulesQuery(props.value.alarm_pattern?.groups),
       entity_pattern: formGroupsToPatternRulesQuery(props.value.entity_pattern?.groups),
       pbehavior_pattern: formGroupsToPatternRulesQuery(props.value.pbehavior_pattern?.groups),
@@ -526,7 +542,7 @@ export default {
     /**
      * Shows entities modal filtered by current patterns
      */
-    const showPatternEntities = () => showEntitiesModalByPatterns({
+    const showPatternEntities = () => showPatternEntitiesModal({
       search_pattern: formGroupsToPatternRulesQuery(props.value.entity_pattern.groups),
     });
 
@@ -535,7 +551,6 @@ export default {
       suggestions: optimizationSuggestions,
       failedReason: optimizationFailedReason,
       successful: optimizationSuccessful,
-      originalCounter: optimizationOriginalCounter,
       optimizedFieldsRegexps,
       mayHaveOptimizationSuggestions,
       tryOptimization,
@@ -554,7 +569,10 @@ export default {
       }
     });
 
+    usePatternsFieldExpand({ wrapperElement, expanded });
+
     return {
+      PATTERNS_FIELDS,
       wrapperElement,
       expanded,
       counters,
@@ -577,7 +595,7 @@ export default {
       serviceWeatherPatternOutlineColor,
       hasError,
       hasAllInCounter,
-      checkFilterMessages,
+      patternsCountMessageBind,
       patternsFields,
       patterns,
       allOverLimit,
@@ -587,12 +605,15 @@ export default {
       showPatternAlarms,
       showPatternEntities,
       checkFilter,
+      showPatternAlarmsModal,
+      showPatternEntitiesModal,
+      entityPatternsCounters,
+      pbehaviorPatternsCounters,
 
       optimizationPending,
       optimizationSuggestions,
       optimizationFailedReason,
       optimizationSuccessful,
-      optimizationOriginalCounter,
       optimizedFieldsRegexps,
       tryOptimization,
       cancelOptimization,

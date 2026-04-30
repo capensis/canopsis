@@ -304,6 +304,9 @@ export default {
       isNotEmpty: 'Ce groupe n\'est pas vide',
     },
   },
+  aiChatHistory: {
+    title: 'Historique du chat',
+  },
   alarmsList: {
     title: 'Bac à alarmes',
     prefixTitle: '{prefix} - bac à alarmes',
@@ -535,7 +538,7 @@ export default {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
-      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.pause]: '@:common.pause',
     },
   },
   pbehaviorRecurrentChangesConfirmation: {
@@ -630,6 +633,11 @@ export default {
       popups: {
         success: '{jobName} a été dupliquée avec succès',
       },
+    },
+  },
+  createTicketStatusJob: {
+    edit: {
+      title: 'Éditer la tâche : {jobName}',
     },
   },
   clickOutsideConfirmation: {
@@ -834,6 +842,20 @@ export default {
       text: '<span class="font-weight-regular">Vous êtes sur le point de supprimer le jeton.</span>\n'
         + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText: 'Veuillez saisir le nom du jeton pour confirmer :',
+    },
+    deleteLlm: {
+      title: 'Supprimer le LLM',
+      text: 'Vous êtes sur le point de supprimer la connexion LLM.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez saisir le nom du LLM pour confirmer :',
+    },
+    deleteSelectedLlms: {
+      title: 'Supprimer {count} modèle ? | Supprimer {count} modèles ?',
+      text: 'Vous êtes sur le point de supprimer {count} modèle.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong> | Vous êtes sur le point de supprimer {count} modèles.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez taper ce qui suit pour confirmer <strong>l\'opération de suppression</strong> :',
+      phrase: 'supprimer',
     },
     templateTestingData: {
       title: 'Supprimer les données de test',
@@ -1160,6 +1182,14 @@ export default {
     },
     edit: {
       title: 'Modifier le jeton d\'authentification externe',
+    },
+  },
+  createLlm: {
+    create: {
+      title: 'Ajouter un modèle LLM',
+    },
+    edit: {
+      title: 'Modifier le modèle LLM',
     },
   },
   createTemplateTestingData: {

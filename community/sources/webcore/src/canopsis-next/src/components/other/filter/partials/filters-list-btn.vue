@@ -11,6 +11,7 @@
 import { MODALS } from '@/constants';
 
 export default {
+  inject: ['$widget'],
   props: {
     widgetId: {
       type: String,
@@ -62,7 +63,7 @@ export default {
       this.$modals.show({
         name: MODALS.filtersList,
         config: {
-          widgetId: this.widgetId,
+          widget: this.$widget,
           private: this.private,
           addable: this.addable,
           editable: this.editable,

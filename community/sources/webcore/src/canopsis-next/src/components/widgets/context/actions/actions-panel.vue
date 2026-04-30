@@ -109,11 +109,13 @@ export default {
             item: service,
             title: this.$t('modals.createService.edit.title'),
             action: async (data) => {
-              await this.editService({ id: this.item._id, data });
+              const result = await this.editService({ id: this.item._id, data });
 
               this.$popups.success({ text: this.$t('modals.createService.success.edit') });
 
               await this.fetchContextEntitiesListWithPreviousParams();
+
+              return result;
             },
           },
         });
@@ -152,11 +154,13 @@ export default {
           item: service,
           title: this.$t('modals.createService.duplicate.title'),
           action: async (data) => {
-            await this.createService({ data });
+            const result = await this.createService({ data });
 
             this.$popups.success({ text: this.$t('modals.createService.success.duplicate') });
 
             await this.fetchContextEntitiesListWithPreviousParams();
+
+            return result;
           },
         },
       });

@@ -8,7 +8,9 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/rs/zerolog"
 )
 
@@ -30,15 +32,17 @@ type Hub interface {
 	Connect(w http.ResponseWriter, r *http.Request) error
 	Run(ctx context.Context)
 	SendMessage(ctx context.Context, payload any, f Filter)
+	SendError(ctx context.Context, status int, payload any, f Filter)
 	ConnectedUserIDs() []string
 	ConnectedGroupRoomIDs(group string) []string
 	ConnectionsInRoom(room string) []ConnectionInfo
 	Connections() []ConnectionAuthInfo
 	LeaveRoom(ctx context.Context, room string)
+	LeaveRoomByConnID(ctx context.Context, room, connID string)
 	SendMessageToUser(ctx context.Context, payload any, room, userID string) bool
 }
 
-type Authenticate func(ctx context.Context, token string) (userID string, err error)
+type Authenticate func(ctx context.Context, token string) (User, error)
 
 func NewHub(
 	upgrader Upgrader,
@@ -46,6 +50,9 @@ func NewHub(
 	authenticate Authenticate,
 	configProvider config.ApiConfigProvider,
 	checkAuthTokenInterval time.Duration,
+	trans validation.ErrorTranslator,
+	encoder encoding.Encoder,
+	decoder encoding.Decoder,
 	logger zerolog.Logger,
 ) Hub {
 	return &hub{
@@ -54,6 +61,9 @@ func NewHub(
 		authenticate:           authenticate,
 		configProvider:         configProvider,
 		checkAuthTokenInterval: checkAuthTokenInterval,
+		trans:                  trans,
+		encoder:                encoder,
+		decoder:                decoder,
 		logger:                 logger,
 		registerCh:             make(chan *connection, connBuffSize),
 		conns:                  make(map[string]*connection),
@@ -66,6 +76,9 @@ type hub struct {
 	authenticate           Authenticate
 	configProvider         config.ApiConfigProvider
 	checkAuthTokenInterval time.Duration
+	trans                  validation.ErrorTranslator
+	encoder                encoding.Encoder
+	decoder                encoding.Decoder
 	logger                 zerolog.Logger
 	connsMx                sync.RWMutex
 	conns                  map[string]*connection
@@ -79,7 +92,7 @@ func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	select {
-	case h.registerCh <- newConnection(c, h.roomRegistry, h.authenticate, h.configProvider, h.logger):
+	case h.registerCh <- newConnection(c, h.roomRegistry, h.authenticate, h.configProvider, h.trans, h.encoder, h.decoder, h.logger):
 		return nil
 	default:
 		_ = c.Close()
@@ -167,6 +180,16 @@ func (h *hub) SendMessage(ctx context.Context, payload any, f Filter) {
 	h.sendToConns(ctx, msg, f.match)
 }
 
+func (h *hub) SendError(ctx context.Context, status int, payload any, f Filter) {
+	msg := ServerMessage{
+		Type:    ServerMessageError,
+		Room:    f.room(),
+		Error:   status,
+		Payload: payload,
+	}
+	h.sendToConns(ctx, msg, f.match)
+}
+
 func (h *hub) SendMessageToUser(ctx context.Context, payload any, room, userID string) bool {
 	msg := ServerMessage{
 		Type:    ServerMessageInfo,
@@ -185,10 +208,10 @@ func (h *hub) ConnectedUserIDs() []string {
 	seen := make(map[string]bool, len(h.conns))
 	ids := make([]string, 0, len(h.conns))
 	for _, c := range h.conns {
-		if userID := c.getUserID(); userID != "" {
-			if !seen[userID] {
-				seen[userID] = true
-				ids = append(ids, userID)
+		if user, _ := c.getAuth(); user.ID != "" {
+			if !seen[user.ID] {
+				seen[user.ID] = true
+				ids = append(ids, user.ID)
 			}
 		}
 	}
@@ -203,9 +226,10 @@ func (h *hub) ConnectionsInRoom(room string) []ConnectionInfo {
 	conns := make([]ConnectionInfo, 0)
 	for _, c := range h.conns {
 		if c.inRoom(room) {
+			user, _ := c.getAuth()
 			conns = append(conns, ConnectionInfo{
 				ID:     c.id,
-				UserID: c.getUserID(),
+				UserID: user.ID,
 			})
 		}
 	}
@@ -228,16 +252,27 @@ func (h *hub) LeaveRoom(ctx context.Context, room string) {
 	}
 }
 
+func (h *hub) LeaveRoomByConnID(ctx context.Context, room, connID string) {
+	h.connsMx.RLock()
+	conn, ok := h.conns[connID]
+	h.connsMx.RUnlock()
+	if !ok || !conn.inRoom(room) {
+		return
+	}
+
+	conn.leaveRoom(ctx, room)
+}
+
 func (h *hub) Connections() []ConnectionAuthInfo {
 	h.connsMx.RLock()
 	defer h.connsMx.RUnlock()
 
 	conns := make([]ConnectionAuthInfo, 0, len(h.conns))
 	for _, c := range h.conns {
-		userID, token := c.getAuth()
+		user, token := c.getAuth()
 		conns = append(conns, ConnectionAuthInfo{
 			ID:     c.id,
-			UserID: userID,
+			UserID: user.ID,
 			Token:  token,
 		})
 	}

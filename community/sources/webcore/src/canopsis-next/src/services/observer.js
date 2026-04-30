@@ -29,6 +29,18 @@ class Observer {
     await Promise.all(this.handlers.map(subscriber => subscriber(data)));
     await Promise.all(this.childrenHandlers.map(subscriber => subscriber(data)));
   }
+
+  async notifyInSeries(data) {
+    for (const handler of this.handlers) {
+      // eslint-disable-next-line no-await-in-loop
+      await handler(data);
+    }
+
+    for (const handler of this.childrenHandlers) {
+      // eslint-disable-next-line no-await-in-loop
+      await handler(data);
+    }
+  }
 }
 
 export default Observer;

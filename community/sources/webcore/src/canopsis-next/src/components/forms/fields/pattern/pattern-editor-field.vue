@@ -67,9 +67,10 @@
           align-center
           justify-end
         >
-          <pattern-count-message :error="count === 0">
-            <span v-html="countMessage" />
-          </pattern-count-message>
+          <pattern-count-message
+            :alarm-counter="alarmCounter"
+            :entity-counter="entityCounter"
+          />
           <slot name="append-count" />
         </v-layout>
       </v-layout>
@@ -95,14 +96,22 @@
 </template>
 
 <script>
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 import { isEqual, isEmpty } from 'lodash';
 
-import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS, PATTERN_DURATION_FORMAT, TIME_UNITS } from '@/constants';
+import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS } from '@/constants';
 
 import { formGroupsToPatternRules, patternsToGroups, patternToForm } from '@/helpers/entities/pattern/form';
-import { convertDurationToString } from '@/helpers/date/duration';
 
-import { formMixin, validationChildrenMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form/model-field';
+import { useValidator } from '@/hooks/validator/validator';
+import { useComponentInstance } from '@/hooks/vue';
 
 import PatternAdvancedEditorField from './pattern-advanced-editor-field.vue';
 import PatternGroupsField from './pattern-groups-field.vue';
@@ -111,7 +120,6 @@ import PatternCountMessage from './pattern-count-message.vue';
 export default {
   inject: ['$validator'],
   components: { PatternCountMessage, PatternGroupsField, PatternAdvancedEditorField },
-  mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -157,108 +165,124 @@ export default {
       type: Object,
       required: false,
     },
-  },
-  data() {
-    return {
-      activeTab: PATTERN_EDITOR_TABS.simple,
-      patternsJson: [],
-    };
-  },
-  computed: {
-    patternGroupsFieldName() {
-      return `${this.name}.groups`;
+    alarmCounter: {
+      type: Object,
+      required: false,
     },
-
-    patternJsonFieldName() {
-      return `${this.name}.json`;
-    },
-
-    hasJsonError() {
-      return this.errors.has(this.patternJsonFieldName);
-    },
-
-    errorMessage() {
-      return this.errors.collect(this.name)?.join('\n');
-    },
-
-    isSimpleTab() {
-      return this.activeTab === PATTERN_EDITOR_TABS.simple;
-    },
-
-    formDisabled() {
-      return this.disabled || (this.withType && !this.isCustomPattern);
-    },
-
-    isCustomPattern() {
-      return this.patterns.id === PATTERN_CUSTOM_ITEM_VALUE;
-    },
-
-    checked() {
-      return !isEmpty(this.counter);
-    },
-
-    count() {
-      return this.counter?.count ?? 0;
-    },
-
-    overLimit() {
-      return this.counter?.over_limit ?? false;
-    },
-
-    countMessage() {
-      const { ms = 0 } = this.counter ?? {};
-      const duration = convertDurationToString(ms, PATTERN_DURATION_FORMAT, TIME_UNITS.millisecond);
-      const durationMessage = this.$t('pattern.searchTime', { duration });
-
-      return `${this.$tc('pattern.itemFound', this.count, { count: this.count })} / ${durationMessage}`;
+    entityCounter: {
+      type: Object,
+      required: false,
     },
   },
-  watch: {
-    'patterns.groups': {
-      handler(groups, oldGroups) {
+  setup(props, { emit }) {
+    const validator = useValidator();
+    const { errors } = validator;
+    const vm = useComponentInstance();
+    const { updateModel, updateField } = useModelField(props, emit);
+
+    const activeTab = ref(PATTERN_EDITOR_TABS.simple);
+    const patternsJson = ref([]);
+
+    const patternGroupsFieldName = computed(() => `${props.name}.groups`);
+    const patternJsonFieldName = computed(() => `${props.name}.json`);
+
+    const hasJsonError = computed(() => errors.has(patternJsonFieldName.value));
+    const errorMessage = computed(() => errors.collect(props.name)?.join('\n'));
+
+    const isSimpleTab = computed(() => activeTab.value === PATTERN_EDITOR_TABS.simple);
+    const isCustomPattern = computed(() => props.patterns.id === PATTERN_CUSTOM_ITEM_VALUE);
+    const formDisabled = computed(() => props.disabled || (props.withType && !isCustomPattern.value));
+
+    const checked = computed(() => !isEmpty(props.alarmCounter) || !isEmpty(props.entityCounter));
+    const count = computed(() => props.alarmCounter?.count ?? props.entityCounter?.count ?? 0);
+    const overLimit = computed(() => props.alarmCounter?.over_limit || props.entityCounter?.over_limit || false);
+
+    /**
+     * Watches for changes in pattern groups and removes validation errors when groups change.
+     *
+     * @param {Array} groups - New pattern groups value.
+     * @param {Array} oldGroups - Previous pattern groups value.
+     */
+    watch(
+      () => props.patterns.groups,
+      (groups, oldGroups) => {
+        if (hasJsonError.value) {
+          errors.remove(`${props.name}.json`);
+
+          if (activeTab.value === PATTERN_EDITOR_TABS.advanced) {
+            patternsJson.value = formGroupsToPatternRules(groups);
+          }
+        }
+
         if (!isEqual(groups, oldGroups)) {
-          this.errors.remove(this.name);
+          errors.remove(props.name);
         }
       },
-    },
+    );
 
-    activeTab(newTab) {
+    watch(activeTab, (newTab) => {
       if (newTab === PATTERN_EDITOR_TABS.advanced) {
-        this.patternsJson = formGroupsToPatternRules(this.patterns.groups);
+        patternsJson.value = formGroupsToPatternRules(props.patterns.groups);
       }
-    },
-  },
-  created() {
-    this.$validator.attach({
-      name: this.name,
-      getter: () => this.patterns.length,
-      vm: this,
     });
-  },
-  beforeDestroy() {
-    this.$validator.detach(this.name);
-  },
-  methods: {
-    updatePattern(pattern) {
+
+    /**
+     * Updates the pattern with new pattern data from the pattern field.
+     *
+     * @param {Object} pattern - Pattern object containing pattern data.
+     */
+    const updatePattern = (pattern) => {
       const { groups } = patternToForm(pattern);
 
-      this.updateModel({
-        ...this.patterns,
+      updateModel({
+        ...props.patterns,
         is_corporate: pattern.is_corporate,
         id: pattern._id,
         groups,
       });
-    },
+    };
 
-    updatePatternToCustom() {
-      this.updateField('id', PATTERN_CUSTOM_ITEM_VALUE);
-    },
+    /**
+     * Updates the pattern to use custom pattern type.
+     */
+    const updatePatternToCustom = () => updateField('id', PATTERN_CUSTOM_ITEM_VALUE);
 
-    updateGroupsFromPatterns(patterns) {
-      this.updateField('groups', patternsToGroups(patterns));
+    /**
+     * Updates pattern groups from advanced editor patterns and syncs patterns JSON.
+     *
+     * @param {Array} patterns - Array of pattern rules from advanced editor.
+     */
+    const updateGroupsFromPatterns = (patterns) => {
+      updateField('groups', patternsToGroups(patterns));
 
-      this.patternsJson = patterns;
-    },
+      patternsJson.value = patterns;
+    };
+
+    onMounted(() => validator.attach({
+      name: props.name,
+      getter: () => props.patterns.length,
+      vm,
+    }));
+
+    onBeforeUnmount(() => validator.detach(props.name));
+
+    return {
+      activeTab,
+      patternsJson,
+      patternGroupsFieldName,
+      patternJsonFieldName,
+      hasJsonError,
+      errorMessage,
+      isSimpleTab,
+      isCustomPattern,
+      formDisabled,
+      checked,
+      count,
+      overLimit,
+      updatePattern,
+      updatePatternToCustom,
+      updateGroupsFromPatterns,
+    };
   },
 };
 </script>
