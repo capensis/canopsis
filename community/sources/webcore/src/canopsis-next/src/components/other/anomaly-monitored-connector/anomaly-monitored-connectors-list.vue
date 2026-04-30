@@ -5,10 +5,24 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
+    :select-all="updatable || removable"
+    item-key="id"
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="updatable"
+        :disablable="updatable"
+        item-id="id"
+        anomaly-monitored-connector
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
+      />
+    </template>
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
@@ -21,12 +35,12 @@
     <template #actions="{ item }">
       <v-layout>
         <c-action-btn
-          v-if="editable"
+          v-if="updatable"
           type="edit"
           @click="$emit('edit', item)"
         />
         <c-action-btn
-          v-if="deletable"
+          v-if="removable"
           type="delete"
           @click="$emit('remove', item)"
         />
@@ -58,11 +72,11 @@ export default {
       type: Object,
       required: true,
     },
-    editable: {
+    updatable: {
       type: Boolean,
       default: false,
     },
-    deletable: {
+    removable: {
       type: Boolean,
       default: false,
     },
@@ -74,27 +88,27 @@ export default {
       {
         text: t('common.connectorName'),
         value: 'name',
-        sortable: true,
+        sortable: false,
       },
       {
         text: t('common.enabled'),
         value: 'enabled',
-        sortable: true,
+        sortable: false,
       },
       {
         text: t('common.created'),
         value: 'created',
-        sortable: true,
+        sortable: false,
       },
       {
         text: t('common.updated'),
         value: 'updated',
-        sortable: true,
+        sortable: false,
       },
       {
         text: t('common.author'),
         value: 'author.display_name',
-        sortable: true,
+        sortable: false,
       },
       {
         text: t('common.actionsLabel'),

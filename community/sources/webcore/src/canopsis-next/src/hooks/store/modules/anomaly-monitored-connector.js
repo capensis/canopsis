@@ -1,19 +1,22 @@
 import { useStoreModuleHooks } from '@/hooks/store';
 
-const useAnomalyMonitoredConnectorStoreModule = () => useStoreModuleHooks('anomalyMonitoredConnector');
+const useAnomalyMonitoredConnectortoreModule = () => useStoreModuleHooks('anomalyMonitoredConnector');
 
 /**
  * Custom hook for accessing actions related to anomaly monitored connectors from Vuex store module.
  *
- * @returns {Object} Actions to create, update, remove and fetch anomaly monitored connectors list.
+ * @returns {Object} Actions for anomaly monitored connectors CRUD, bulk enabled toggles, and fetches.
  */
-export const useAnomalyMonitoredConnectors = () => {
-  const { useActions } = useAnomalyMonitoredConnectorStoreModule();
+export const useAnomalyMonitoredConnector = () => {
+  const { useActions } = useAnomalyMonitoredConnectortoreModule();
 
   const actions = useActions({
     createAnomalyMonitoredConnector: 'create',
     updateAnomalyMonitoredConnector: 'update',
     removeAnomalyMonitoredConnector: 'remove',
+    bulkRemoveAnomalyMonitoredConnectors: 'bulkRemove',
+    bulkEnableAnomalyMonitoredConnectors: 'bulkEnable',
+    bulkDisableAnomalyMonitoredConnectors: 'bulkDisable',
     updateAnomalyMonitoredConnectorEnabled: 'updateEnabled',
     fetchAnomalyMonitoredConnectorsListWithoutStore: 'fetchListWithoutStore',
     fetchAnomalyMonitoredConnectorStatesListWithoutStore: 'fetchStatesListWithoutStore',

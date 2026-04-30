@@ -1,17 +1,20 @@
 <template>
-  <v-layout column>
+  <v-layout class="gap-3" column>
     <c-enabled-field v-field="form.enabled" with-background />
-    <c-name-field
+    <c-entity-field
       v-field="form.name"
       :label="$t('common.connectorName')"
-      :max-length="255"
-      name="name"
+      :entity-types="entityTypes"
+      item-text="name"
+      item-value="name"
       required
     />
   </v-layout>
 </template>
 
 <script>
+import { BASIC_ENTITY_TYPES } from '@/constants';
+
 export default {
   model: {
     prop: 'form',
@@ -22,6 +25,13 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  setup() {
+    const entityTypes = [BASIC_ENTITY_TYPES.connector];
+
+    return {
+      entityTypes,
+    };
   },
 };
 </script>

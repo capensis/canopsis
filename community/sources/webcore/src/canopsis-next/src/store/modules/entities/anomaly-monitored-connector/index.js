@@ -52,5 +52,42 @@ export default createCRUDModule({
         { params },
       );
     },
+
+    bulkRemove(context, { data } = {}) {
+      return request.delete(
+        API_ROUTES.bulkAnomalyMonitoredConnector,
+        { data: data.map(({ id }) => ({ _id: id })) },
+      );
+    },
+
+    /**
+     * Bulk-enable anomaly monitored connectors.
+     *
+     * @param {ActionContext} context
+     * @param {Object} options
+     * @param {Array.<string>} options.data - Connector ids
+     * @returns {Promise<AxiosPromise>}
+     */
+    bulkEnable(context, { data } = {}) {
+      return request.patch(
+        API_ROUTES.bulkAnomalyMonitoredConnector,
+        data.map(({ id }) => ({ id, enabled: true })),
+      );
+    },
+
+    /**
+     * Bulk-disable anomaly monitored connectors.
+     *
+     * @param {ActionContext} context
+     * @param {Object} options
+     * @param {Array.<string>} options.data - Connector ids
+     * @returns {Promise<AxiosPromise>}
+     */
+    bulkDisable(context, { data } = {}) {
+      return request.patch(
+        API_ROUTES.bulkAnomalyMonitoredConnector,
+        data.map(({ id }) => ({ id, enabled: false })),
+      );
+    },
   },
 });

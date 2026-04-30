@@ -497,6 +497,7 @@ export const API_ROUTES = {
   webhookTokenRule: '/api/v4/cat/webhook-token-rules',
   anomalyMonitoredConnector: '/api/v4/cat/anomalies/monitored-connectors',
   anomalyMonitoredConnectorStates: '/api/v4/cat/anomalies/monitored-connectors/states',
+  bulkAnomalyMonitoredConnector: '/api/v4/cat/bulk/anomalies/monitored-connectors',
   ticketStatusJobs: '/api/v4/cat/ticket-status-jobs',
   bulkTicketStatusJobs: {
     play: '/api/v4/cat/bulk/ticket-status-jobs/sync',
