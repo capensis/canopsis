@@ -85,9 +85,10 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 		return nil, nil, eventMetric, nil
 	}
 
+	var updatedInfos map[string]eventfilter.UpdatedValue
+
 	// Process event by event filters.
 	if event.Entity.Enabled {
-		var updatedInfos map[string]eventfilter.UpdatedValue
 		updatedInfos, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			return nil, nil, eventMetric, err
@@ -104,7 +105,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 			}
 
 			eventMetric.IsInfosUpdated = true
-			report.CheckResource = true
+			report.CheckInfoChanged = true
 			logInfosUpdate(p.metricsSender, event.Entity.ID, updatedInfos)
 		}
 	}
@@ -113,7 +114,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 	entityIdsToCheck := make([]string, 0, 3)
 	entityIdsToUpdateMetrics := make([]string, 0, 3)
 
-	if report.CheckResource {
+	if report.CheckResource || report.CheckInfoChanged {
 		entityIdsToCheck = append(entityIdsToCheck, event.Entity.ID)
 		entityIdsToUpdateMetrics = append(entityIdsToUpdateMetrics, event.Entity.ID)
 
@@ -191,8 +192,13 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 			return fmt.Errorf("cannot refresh services: %w", err)
 		}
 
-		p.contextGraphManager.AssignServices(&resource, commRegister)
-		eventMetric.IsServicesUpdated = len(event.Entity.ServicesToAdd) > 0 || len(event.Entity.ServicesToRemove) > 0
+		if report.CheckResource {
+			p.contextGraphManager.AssignServices(&resource, commRegister)
+		} else if report.CheckInfoChanged {
+			p.contextGraphManager.AssignServicesByInfoNames(&resource, updatedInfos, nil, commRegister)
+		}
+
+		eventMetric.IsServicesUpdated = len(resource.ServicesToAdd) > 0 || len(resource.ServicesToRemove) > 0
 
 		if component.ID != "" && report.CheckComponent {
 			p.contextGraphManager.AssignServices(&component, commRegister)

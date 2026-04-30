@@ -51,6 +51,7 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 		},
 	}
 
+	var report contextgraph.Report
 	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
 
 	if event.EventType == types.EventTypeRecomputeEntityService {
@@ -83,7 +84,7 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 		commRegister.Clear()
 
 		var err error
-		_, err = p.contextGraphManager.HandleService(ctx, event, commRegister)
+		report, err = p.contextGraphManager.HandleService(ctx, event, commRegister)
 		if err != nil {
 			return fmt.Errorf("cannot update context graph: %w", err)
 		}
@@ -99,11 +100,15 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 	}
 
 	eventMetric.EntityType = event.Entity.Type
-	var checkServices bool
+
+	if event.Healthcheck {
+		return nil, nil, eventMetric, nil
+	}
+
+	var updatedInfos map[string]eventfilter.UpdatedValue
 
 	// Process event by event filters.
-	if event.Entity.Enabled && !event.Healthcheck {
-		var updatedInfos map[string]eventfilter.UpdatedValue
+	if event.Entity.Enabled {
 		updatedInfos, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			return nil, nil, eventMetric, err
@@ -120,12 +125,12 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 			}
 
 			eventMetric.IsInfosUpdated = true
-			checkServices = true
+			report.CheckInfoChanged = true
 			logInfosUpdate(p.metricsSender, event.Entity.ID, updatedInfos)
 		}
 	}
 
-	if event.Healthcheck || !checkServices {
+	if !report.CheckService && !report.CheckInfoChanged {
 		return nil, nil, eventMetric, nil
 	}
 
@@ -152,7 +157,11 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 			return fmt.Errorf("cannot refresh services: %w", err)
 		}
 
-		p.contextGraphManager.AssignServices(&service, commRegister)
+		if report.CheckService {
+			p.contextGraphManager.AssignServices(&service, commRegister)
+		} else if report.CheckInfoChanged {
+			p.contextGraphManager.AssignServicesByInfoNames(&service, updatedInfos, nil, commRegister)
+		}
 
 		eventMetric.IsStateSettingUpdated, err = p.contextGraphManager.AssignStateSetting(ctx, &service, commRegister)
 		if err != nil {

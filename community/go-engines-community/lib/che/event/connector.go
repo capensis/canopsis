@@ -51,11 +51,14 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 		},
 	}
 
+	var report contextgraph.Report
 	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
+
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		commRegister.Clear()
 
-		_, err := p.contextGraphManager.HandleConnector(ctx, event, commRegister)
+		var err error
+		report, err = p.contextGraphManager.HandleConnector(ctx, event, commRegister)
 		if err != nil {
 			return fmt.Errorf("cannot update context graph: %w", err)
 		}
@@ -71,15 +74,14 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 	}
 
 	eventMetric.EntityType = event.Entity.Type
-	var checkServices bool
 
 	if event.Healthcheck {
 		return nil, nil, eventMetric, nil
 	}
 
 	// Process event by event filters.
+	var updatedInfos map[string]eventfilter.UpdatedValue
 	if event.Entity.Enabled {
-		var updatedInfos map[string]eventfilter.UpdatedValue
 		updatedInfos, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			return nil, nil, eventMetric, err
@@ -96,12 +98,12 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 			}
 
 			eventMetric.IsInfosUpdated = true
-			checkServices = true
+			report.CheckInfoChanged = true
 			logInfosUpdate(p.metricsSender, event.Entity.ID, updatedInfos)
 		}
 	}
 
-	if !checkServices {
+	if !report.CheckConnector && !report.CheckInfoChanged {
 		return nil, nil, eventMetric, nil
 	}
 
@@ -128,7 +130,11 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 			return fmt.Errorf("cannot refresh services: %w", err)
 		}
 
-		p.contextGraphManager.AssignServices(&connector, commRegister)
+		if report.CheckConnector {
+			p.contextGraphManager.AssignServices(&connector, commRegister)
+		} else if report.CheckInfoChanged {
+			p.contextGraphManager.AssignServicesByInfoNames(&connector, updatedInfos, nil, commRegister)
+		}
 
 		err = commRegister.Commit(ctx)
 		if err != nil {

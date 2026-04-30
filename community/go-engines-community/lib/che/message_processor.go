@@ -142,6 +142,19 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 		var updateCountersEvent types.Event
 
 		switch ent.Type {
+		case types.EntityTypeResource:
+			updateCountersEvent = types.Event{
+				EventType:     types.EventTypeUpdateCounters,
+				SourceType:    types.SourceTypeResource,
+				Connector:     canopsis.CheConnector,
+				ConnectorName: canopsis.CheConnector,
+				Component:     ent.Component,
+				Resource:      ent.Name,
+				Timestamp:     now,
+				Entity:        &ent,
+				Author:        canopsis.DefaultEventAuthor,
+				Initiator:     types.InitiatorSystem,
+			}
 		case types.EntityTypeComponent:
 			updateCountersEvent = types.Event{
 				EventType:     types.EventTypeUpdateCounters,

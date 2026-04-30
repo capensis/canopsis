@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -434,6 +435,465 @@ func TestCheckServices(t *testing.T) {
 			}
 
 			manager.AssignServices(&dataset.entity, commRegister)
+
+			slices.Sort(dataset.entity.Services)
+			slices.Sort(dataset.entity.ServicesToAdd)
+			slices.Sort(dataset.entity.ServicesToRemove)
+			slices.Sort(dataset.expectedEntity.Services)
+			slices.Sort(dataset.expectedEntity.ServicesToAdd)
+			slices.Sort(dataset.expectedEntity.ServicesToRemove)
+
+			if slices.Compare(dataset.entity.Services, dataset.expectedEntity.Services) != 0 {
+				t.Errorf("expected Services to be %v, but got %v", dataset.expectedEntity.Services, dataset.entity.Services)
+			}
+
+			if slices.Compare(dataset.entity.ServicesToAdd, dataset.expectedEntity.ServicesToAdd) != 0 {
+				t.Errorf("expected ServicesToAdd to be %v, but got %v", dataset.expectedEntity.ServicesToAdd, dataset.entity.ServicesToAdd)
+			}
+
+			if slices.Compare(dataset.entity.ServicesToRemove, dataset.expectedEntity.ServicesToRemove) != 0 {
+				t.Errorf("expected ServicesToRemove to be %v, but got %v", dataset.expectedEntity.ServicesToRemove, dataset.entity.ServicesToRemove)
+			}
+		})
+	}
+}
+
+func TestCheckServicesByInfos(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	collection := mock_mongo.NewMockDbCollection(ctrl)
+
+	dbClient := mock_mongo.NewMockDbClient(ctrl)
+	dbClient.EXPECT().Collection(mongo.EntityMongoCollection).Return(collection).AnyTimes()
+
+	adapter := entity.NewAdapter(dbClient)
+	storage := mock_contextgraph.NewMockEntityServiceStorage(ctrl)
+	assigner := mock_statesetting.NewMockAssigner(ctrl)
+
+	dataSets := []struct {
+		name                 string
+		infoUpdates          map[string]eventfilter.UpdatedValue
+		componentInfoUpdates map[string]eventfilter.UpdatedValue
+		services             []entityservice.EntityService
+		entity               types.Entity
+		expectedEntity       types.Entity
+	}{
+		{
+			name:        "targeted infos update adds matching service and preserves unrelated service",
+			infoUpdates: map[string]eventfilter.UpdatedValue{"team": {}},
+			entity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				Infos: map[string]types.Info{
+					"team":  {Value: "core"},
+					"owner": {Value: "ops"},
+				},
+				Services: []string{"serv-owner"},
+			},
+			services: []entityservice.EntityService{
+				{
+					Entity: types.Entity{ID: "serv-team", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						}},
+					},
+				},
+				{
+					Entity: types.Entity{ID: "serv-owner", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "infos.owner",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "ops"),
+							},
+						}},
+					},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				Infos: map[string]types.Info{
+					"team":  {Value: "core"},
+					"owner": {Value: "ops"},
+				},
+				Services:      []string{"serv-owner", "serv-team"},
+				ServicesToAdd: []string{"serv-team"},
+			},
+		},
+		{
+			name:        "targeted infos update removes only matching indexed service",
+			infoUpdates: map[string]eventfilter.UpdatedValue{"team": {}},
+			entity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				Infos: map[string]types.Info{
+					"team":  {Value: "dev"},
+					"owner": {Value: "ops"},
+				},
+				Services: []string{"serv-owner", "serv-team"},
+			},
+			services: []entityservice.EntityService{
+				{
+					Entity: types.Entity{ID: "serv-team", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						}},
+					},
+				},
+				{
+					Entity: types.Entity{ID: "serv-owner", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "infos.owner",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "ops"),
+							},
+						}},
+					},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				Infos: map[string]types.Info{
+					"team":  {Value: "dev"},
+					"owner": {Value: "ops"},
+				},
+				Services:         []string{"serv-owner"},
+				ServicesToAdd:    []string{},
+				ServicesToRemove: []string{"serv-team"},
+			},
+		},
+		{
+			name:        "targeted infos update with no indexed services does nothing",
+			infoUpdates: map[string]eventfilter.UpdatedValue{"zone": {}},
+			entity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				Infos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+				Services: []string{"serv-team"},
+			},
+			services: []entityservice.EntityService{
+				{
+					Entity: types.Entity{ID: "serv-team", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						}},
+					},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				Infos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+				Services: []string{"serv-team"},
+			},
+		},
+		{
+			name:                 "targeted component_infos update adds matching service and preserves unrelated service",
+			componentInfoUpdates: map[string]eventfilter.UpdatedValue{"env": {}},
+			entity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env":  {Value: "prod"},
+					"zone": {Value: "eu"},
+				},
+				Services: []string{"serv-zone"},
+			},
+			services: []entityservice.EntityService{
+				{
+					Entity: types.Entity{ID: "serv-env", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "component_infos.env",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+							},
+						}},
+					},
+				},
+				{
+					Entity: types.Entity{ID: "serv-zone", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "component_infos.zone",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "eu"),
+							},
+						}},
+					},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env":  {Value: "prod"},
+					"zone": {Value: "eu"},
+				},
+				Services:      []string{"serv-env", "serv-zone"},
+				ServicesToAdd: []string{"serv-env"},
+			},
+		},
+		{
+			name:                 "targeted component_infos update removes only matching indexed service",
+			componentInfoUpdates: map[string]eventfilter.UpdatedValue{"env": {}},
+			entity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env":  {Value: "dev"},
+					"zone": {Value: "eu"},
+				},
+				Services: []string{"serv-env", "serv-zone"},
+			},
+			services: []entityservice.EntityService{
+				{
+					Entity: types.Entity{ID: "serv-env", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "component_infos.env",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+							},
+						}},
+					},
+				},
+				{
+					Entity: types.Entity{ID: "serv-zone", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "component_infos.zone",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "eu"),
+							},
+						}},
+					},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env":  {Value: "dev"},
+					"zone": {Value: "eu"},
+				},
+				Services:         []string{"serv-zone"},
+				ServicesToAdd:    []string{},
+				ServicesToRemove: []string{"serv-env"},
+			},
+		},
+		{
+			name:                 "targeted component_infos update with no indexed services does nothing",
+			componentInfoUpdates: map[string]eventfilter.UpdatedValue{"region": {}},
+			entity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env": {Value: "prod"},
+				},
+				Services: []string{"serv-env"},
+			},
+			services: []entityservice.EntityService{
+				{
+					Entity: types.Entity{ID: "serv-env", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "component_infos.env",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+							},
+						}},
+					},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env": {Value: "prod"},
+				},
+				Services: []string{"serv-env"},
+			},
+		},
+		{
+			name:                 "mixed infos and component_infos update adds services indexed by both keys",
+			infoUpdates:          map[string]eventfilter.UpdatedValue{"team": {}},
+			componentInfoUpdates: map[string]eventfilter.UpdatedValue{"env": {}},
+			entity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				Infos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+				ComponentInfos: map[string]types.Info{
+					"env": {Value: "prod"},
+				},
+			},
+			services: []entityservice.EntityService{
+				{
+					Entity: types.Entity{ID: "serv-team", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						}},
+					},
+				},
+				{
+					Entity: types.Entity{ID: "serv-env", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "component_infos.env",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+							},
+						}},
+					},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				Infos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+				ComponentInfos: map[string]types.Info{
+					"env": {Value: "prod"},
+				},
+				Services:      []string{"serv-env", "serv-team"},
+				ServicesToAdd: []string{"serv-env", "serv-team"},
+			},
+		},
+		{
+			name:        "service indexed by both infos and component_infos matches only when both conditions match",
+			infoUpdates: map[string]eventfilter.UpdatedValue{"team": {}},
+			entity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				Infos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+				ComponentInfos: map[string]types.Info{
+					"env": {Value: "dev"},
+				},
+			},
+			services: []entityservice.EntityService{
+				{
+					Entity: types.Entity{ID: "serv-team-prod", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+							{
+								Field:     "component_infos.env",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+							},
+						}},
+					},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				Infos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+				ComponentInfos: map[string]types.Info{
+					"env": {Value: "dev"},
+				},
+			},
+		},
+		{
+			name: "empty updates do not modify services",
+			entity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				Infos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+				Services: []string{"serv-team"},
+			},
+			services: []entityservice.EntityService{
+				{
+					Entity: types.Entity{ID: "serv-team", Enabled: true},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{{
+							{
+								Field:     "infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "other"),
+							},
+						}},
+					},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Enabled: true,
+				Infos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+				Services: []string{"serv-team"},
+			},
+		},
+	}
+
+	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
+
+	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
+	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
+	commRegister.EXPECT().Clear().AnyTimes()
+
+	for _, dataset := range dataSets {
+		t.Run(dataset.name, func(t *testing.T) {
+			commRegister.Clear()
+			storage.EXPECT().GetAll(gomock.Any()).Return(dataset.services, nil)
+
+			err := manager.LoadServices(t.Context())
+			if err != nil {
+				t.Error(err)
+			}
+
+			manager.AssignServicesByInfoNames(&dataset.entity, dataset.infoUpdates, dataset.componentInfoUpdates, commRegister)
 
 			slices.Sort(dataset.entity.Services)
 			slices.Sort(dataset.entity.ServicesToAdd)

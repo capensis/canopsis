@@ -85,9 +85,10 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 		return nil, nil, eventMetric, nil
 	}
 
+	var updatedInfos map[string]eventfilter.UpdatedValue
+
 	// Process event by event filters.
 	if event.Entity.Enabled {
-		var updatedInfos map[string]eventfilter.UpdatedValue
 		updatedInfos, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			return nil, nil, eventMetric, err
@@ -104,7 +105,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 			}
 
 			eventMetric.IsInfosUpdated = true
-			report.CheckComponent = true
+			report.CheckInfoChanged = true
 			logInfosUpdate(p.metricsSender, event.Entity.ID, updatedInfos)
 		}
 	}
@@ -112,7 +113,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 	// cap = 2: component and connector.
 	entityIdsToCheck := make([]string, 0, 2)
 
-	if report.CheckComponent {
+	if report.CheckComponent || report.CheckInfoChanged {
 		entityIdsToCheck = append(entityIdsToCheck, event.Entity.ID)
 	}
 
@@ -172,7 +173,11 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 			return fmt.Errorf("cannot refresh services: %w", err)
 		}
 
-		p.contextGraphManager.AssignServices(&component, commRegister)
+		if report.CheckComponent {
+			p.contextGraphManager.AssignServices(&component, commRegister)
+		} else if report.CheckInfoChanged {
+			p.contextGraphManager.AssignServicesByInfoNames(&component, updatedInfos, nil, commRegister)
+		}
 
 		if connector.ID != "" && report.CheckConnector {
 			p.contextGraphManager.AssignServices(&connector, commRegister)
@@ -186,12 +191,13 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 			return fmt.Errorf("cannot assign state setting: %w", err)
 		}
 
-		resourceIDs, err := p.contextGraphManager.ProcessComponentDependencies(ctx, &component, commRegister)
+		resourceIDs, resources, err := p.contextGraphManager.ProcessComponentDependencies(ctx, &component, updatedInfos, commRegister)
 		if err != nil {
 			return fmt.Errorf("cannot process resources: %w", err)
 		}
 
 		resourceIDsToUpdateMetrics = append(resourceIDsToUpdateMetrics, resourceIDs...)
+		toCountersUpdate = append(toCountersUpdate, resources...)
 
 		err = commRegister.Commit(ctx)
 		if err != nil {
