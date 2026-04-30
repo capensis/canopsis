@@ -42,7 +42,7 @@ export default {
         color: 'error lighten-5',
       },
       {
-        value: props.history.average_events ?? '-',
+        value: Math.round(props.history.average_events) ?? '-',
         label: t('healthcheck.connectorsBlocks.averageEvents'),
         color: 'info lighten-4',
       },

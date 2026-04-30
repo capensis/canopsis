@@ -32,7 +32,7 @@ import {
 
 import { useInnerModal } from '@/hooks/modals';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
-import { useAnomalyMonitoredConnectors } from '@/hooks/store/modules/anomaly-monitored-connector';
+import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -55,7 +55,7 @@ export default {
     const {
       updateAnomalyMonitoredConnectorEnabled,
       fetchAnomalyMonitoredConnectorHistoryWithoutStore,
-    } = useAnomalyMonitoredConnectors();
+    } = useAnomalyMonitoredConnector();
 
     const connector = ref({ ...config.value.connector });
     const history = ref({});

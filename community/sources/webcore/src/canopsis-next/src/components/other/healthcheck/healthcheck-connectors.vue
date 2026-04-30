@@ -45,7 +45,7 @@ import { computed, onMounted } from 'vue';
 
 import { ANOMALY_MONITORED_CONNECTOR_STATUSES, ROUTES_NAMES } from '@/constants';
 
-import { useAnomalyMonitoredConnectors } from '@/hooks/store/modules/anomaly-monitored-connector';
+import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 
 import HealthcheckConnectorsList from '@/components/other/healthcheck/partials/healthcheck-connectors-list.vue';
@@ -55,7 +55,7 @@ import { useHealthcheckConnectorsSocket } from './hooks/healthcheck-connectors-s
 export default {
   components: { HealthcheckConnectorsList },
   setup() {
-    const { fetchAnomalyMonitoredConnectorStatesListWithoutStore } = useAnomalyMonitoredConnectors();
+    const { fetchAnomalyMonitoredConnectorStatesListWithoutStore } = useAnomalyMonitoredConnector();
 
     const {
       data: connectors,

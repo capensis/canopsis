@@ -71,6 +71,7 @@ import { useMaps } from '@/hooks/store/modules/maps';
 import { useUser } from '@/hooks/store/modules/user';
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 import { useLlm } from '@/hooks/store/modules/llm';
+import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
 
 export default {
   props: {
@@ -97,6 +98,10 @@ export default {
     unhideable: {
       type: Boolean,
       default: false,
+    },
+    itemId: {
+      type: String,
+      default: '_id',
     },
     pbehavior: {
       type: Boolean,
@@ -171,6 +176,10 @@ export default {
       default: false,
     },
     llm: {
+      type: Boolean,
+      default: false,
+    },
+    anomalyMonitoredConnector: {
       type: Boolean,
       default: false,
     },
@@ -292,18 +301,24 @@ export default {
       bulkDisableLlms,
     } = useLlm();
 
-    const itemsIds = computed(() => mapIds(props.items));
+    const {
+      bulkRemoveAnomalyMonitoredConnectors,
+      bulkEnableAnomalyMonitoredConnectors,
+      bulkDisableAnomalyMonitoredConnectors,
+    } = useAnomalyMonitoredConnector();
+
+    const itemsIds = computed(() => mapIds(props.items, props.itemId));
     const enablableItems = computed(() => (
       props.pbehavior ? props.items.filter(({ editable }) => editable) : props.items
     ));
 
-    const enablableItemsIds = computed(() => pickIds(enablableItems.value));
+    const enablableItemsIds = computed(() => pickIds(enablableItems.value, props.itemId));
 
     const someOneEnable = computed(() => enablableItems.value.some(({ enabled }) => enabled));
     const someOneDisable = computed(() => enablableItems.value.some(({ enabled }) => !enabled));
 
     const hideableItems = computed(() => props.items);
-    const hideableItemsIds = computed(() => pickIds(hideableItems.value));
+    const hideableItemsIds = computed(() => pickIds(hideableItems.value, props.itemId));
     const someOneVisible = computed(() => hideableItems.value.some(({ hidden }) => !hidden));
     const someOneHidden = computed(() => hideableItems.value.some(({ hidden }) => hidden));
 
@@ -431,6 +446,12 @@ export default {
           disable: bulkDisableLlms,
           tooltipPrefix: 'llm',
         },
+        [props.anomalyMonitoredConnector]: {
+          remove: bulkRemoveAnomalyMonitoredConnectors,
+          enable: bulkEnableAnomalyMonitoredConnectors,
+          disable: bulkDisableAnomalyMonitoredConnectors,
+          tooltipPrefix: 'anomalyMonitoredConnector',
+        },
       }.true ?? {};
 
       const massRemoveTooltipKey = `${activeConfig.tooltipPrefix}.massRemove`;
@@ -476,7 +497,7 @@ export default {
       name: MODALS.confirmation,
       config: {
         action: async () => {
-          const response = await config.value.remove({ data: pickIds(props.items) });
+          const response = await config.value.remove({ data: pickIds(props.items, props.itemId) });
 
           showErrorPopups(response, `${config.value.tooltipPrefix}.removeForbidden`);
 

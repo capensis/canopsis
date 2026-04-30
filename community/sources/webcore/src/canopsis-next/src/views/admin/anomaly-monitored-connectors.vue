@@ -10,11 +10,12 @@
       :pending="pending"
       :options="options"
       :total-items="meta.total_count"
-      :editable="hasUpdateAnyAnomalyMonitoredConnectorAccess"
-      :deletable="hasDeleteAnyAnomalyMonitoredConnectorAccess"
+      :updatable="hasUpdateAnyAnomalyMonitoredConnectorAccess"
+      :removable="hasDeleteAnyAnomalyMonitoredConnectorAccess"
       @edit="showEditAnomalyMonitoredConnectorModal"
       @remove="showRemoveAnomalyMonitoredConnectorModal"
       @update:options="updateOptions"
+      @refresh="fetchList"
     />
   </c-page>
 </template>
@@ -26,7 +27,7 @@ import { MODALS, USER_PERMISSIONS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useAnomalyMonitoredConnectors } from '@/hooks/store/modules/anomaly-monitored-connector';
+import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
 import { useCallActionWithPopup } from '@/hooks/actions/call';
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
@@ -50,7 +51,7 @@ export default {
       updateAnomalyMonitoredConnector,
       removeAnomalyMonitoredConnector,
       fetchAnomalyMonitoredConnectorsListWithoutStore,
-    } = useAnomalyMonitoredConnectors();
+    } = useAnomalyMonitoredConnector();
 
     const { callActionWithPopup } = useCallActionWithPopup();
 
