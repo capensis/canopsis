@@ -22,6 +22,9 @@ export const entitiesPbehaviorExceptionMixin = {
       updatePbehaviorException: 'update',
       removePbehaviorException: 'remove',
       importPbehaviorException: 'import',
+      bulkHidePbehaviorExceptions: 'bulkHide',
+      bulkUnhidePbehaviorExceptions: 'bulkUnhide',
+      bulkRemovePbehaviorExceptions: 'bulkRemove',
     }),
   },
 };

@@ -72,6 +72,7 @@ describe('text', () => {
   };
 
   const sidebar = {
+    id: 'test-sidebar-id',
     name: SIDE_BARS.textSettings,
     config: {
       widget,

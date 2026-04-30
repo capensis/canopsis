@@ -16,6 +16,9 @@ export const entitiesFlappingRulesMixin = {
       createFlappingRule: 'create',
       updateFlappingRule: 'update',
       removeFlappingRule: 'remove',
+      bulkEnableFlappingRules: 'bulkEnable',
+      bulkDisableFlappingRules: 'bulkDisable',
+      bulkRemoveFlappingRules: 'bulkRemove',
     }),
   },
 };

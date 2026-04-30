@@ -70,9 +70,11 @@ export default {
         config: {
           title: this.$t('modals.createService.create.title'),
           action: async (service) => {
-            await this.createService({ data: service });
+            const result = await this.createService({ data: service });
 
             this.$popups.success({ text: this.$t('modals.createService.success.create') });
+
+            return result;
           },
         },
       });

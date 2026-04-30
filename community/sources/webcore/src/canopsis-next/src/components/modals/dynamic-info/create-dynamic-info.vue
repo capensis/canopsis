@@ -1,35 +1,44 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <modal-wrapper text-class="position-relative" close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <template-testing-test-variables-wrapper
-          v-model="form"
-          :rule-id="dynamicInfoId"
-          :type="type"
-        >
-          <template #default="{ templateVars, copyVars }">
-            <dynamic-info-form
-              v-model="form"
-              :is-disabled-id-field="isDisabledIdField"
-              :template-vars="templateVars"
-              :copy-vars="copyVars"
-            />
-          </template>
-        </template-testing-test-variables-wrapper>
+        <v-layout class="gap-2" column>
+          <c-enabled-field v-model="form.enabled" with-background />
+          <template-testing-test-variables-wrapper
+            v-model="form"
+            :rule-id="dynamicInfoId"
+            :type="type"
+          >
+            <template #default="{ templateVars, copyVars }">
+              <dynamic-info-form
+                v-model="form"
+                :is-disabled-id-field="isDisabledIdField"
+                :template-vars="templateVars"
+                :copy-vars="copyVars"
+              />
+            </template>
+          </template-testing-test-variables-wrapper>
+        </v-layout>
+        <ai-chat-sidebar
+          v-if="chatShown"
+          v-bind="chatOptions.bind"
+          v-on="chatOptions.on"
+        />
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -42,17 +51,19 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref, toRef } from 'vue';
 
-import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import { dynamicInfoToForm, formToDynamicInfo } from '@/helpers/entities/dynamic-info/rule/form';
 
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
 import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
@@ -66,6 +77,7 @@ export default {
   },
   components: {
     DynamicInfoForm,
+    AiChatSidebar,
     TemplateTestingTestVariablesWrapper,
     ModalWrapper,
   },
@@ -83,6 +95,17 @@ export default {
 
     const form = ref(dynamicInfoToForm(config.value.dynamicInfo));
 
+    const {
+      shown: chatShown,
+      options: chatOptions,
+    } = useAiChatForm({
+      form,
+
+      modal: toRef(props, 'modal'),
+      ruleId: props.modal.config?.dynamicInfo?._id,
+      context: LLM_SOCKET_CONTEXTS.dynamicInfos,
+    });
+
     const dynamicInfoId = computed(() => config.value.dynamicInfo?._id);
     const title = computed(() => config.value.title || t('modals.createDynamicInfo.create.title'));
     const isDisabledIdField = computed(() => config.value.isDisabledIdField);
@@ -90,11 +113,13 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        const data = await config.value.action?.(formToDynamicInfo(form.value));
+        const result = await config.value.action?.(formToDynamicInfo(form.value));
+
+        await config.value.afterSubmit?.(result);
 
         close();
 
-        return data;
+        return result;
       },
     });
 
@@ -109,7 +134,10 @@ export default {
       isDisabledIdField,
       isDisabled,
       submitting,
+      chatShown,
+      chatOptions,
       submit,
+      close,
     };
   },
 };

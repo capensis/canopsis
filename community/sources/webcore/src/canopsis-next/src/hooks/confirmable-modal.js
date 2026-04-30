@@ -87,6 +87,8 @@ export const useFormConfirmableCloseModal = ({
     return equal;
   };
 
+  const updateOriginalForm = () => originalForm.value = cloneDeep(unref(form));
+
   provide('$closeModal', () => {
     if (clickOutsideHandlerMethod()) {
       close?.();
@@ -94,4 +96,8 @@ export const useFormConfirmableCloseModal = ({
   });
 
   useRegisterClickOutsideHandler(clickOutsideHandlerMethod);
+
+  return {
+    updateOriginalForm,
+  };
 };

@@ -8,6 +8,7 @@
     :attributes="availableServiceWeatherAttributes"
     :with-type="withType"
     :counter="counter"
+    class="c-service-weather-patterns-field"
   />
 </template>
 

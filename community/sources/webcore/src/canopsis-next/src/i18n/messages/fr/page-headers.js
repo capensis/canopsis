@@ -167,6 +167,10 @@ export default {
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'Jetons d\'authentification externes',
   },
+  [USER_PERMISSIONS.technical.jobManagement]: {
+    title: 'Jobs',
+    message: 'Gérer les jobs pour le statut des tickets.',
+  },
   [USER_PERMISSIONS.technical.widgetTemplate]: {
     title: 'Modèles de widget',
   },
@@ -175,6 +179,10 @@ export default {
   },
   [USER_PERMISSIONS.technical.entityInfoProperty]: {
     title: 'Informations d\'entité',
+  },
+  [USER_PERMISSIONS.technical.llm]: {
+    title: 'LLMs',
+    message: 'Le module LLM permet de gérer les modèles de langage pour l\'assistant IA Canopsis.',
   },
 
   /**

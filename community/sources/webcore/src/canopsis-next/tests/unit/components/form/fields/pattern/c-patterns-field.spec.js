@@ -31,7 +31,7 @@ const stubs = {
   'c-alert': true,
   'c-progress-overlay': true,
   'pattern-try-optimization': true,
-  'pattern-optimization-progress': true,
+  'pattern-progress': true,
   'pattern-suggestions': true,
   'pattern-field-suggestions-wrapper': true,
 };
@@ -41,7 +41,7 @@ const selectEntityPatternsField = wrapper => wrapper.find('c-entity-patterns-fie
 const selectPbehaviorPatternsField = wrapper => wrapper.find('c-pbehavior-patterns-field-stub');
 const selectEventFilterPatternsField = wrapper => wrapper.find('c-event-filter-patterns-field-stub');
 const selectTryOptimization = wrapper => wrapper.find('pattern-try-optimization-stub');
-const selectOptimizationProgress = wrapper => wrapper.find('pattern-optimization-progress-stub');
+const selectOptimizationProgress = wrapper => wrapper.find('pattern-progress-stub');
 const selectPatternFieldSuggestionsWrapper = wrapper => wrapper.find('pattern-field-suggestions-wrapper-stub');
 
 const createPatternWithRegexpInfos = () => {
@@ -166,7 +166,7 @@ describe('c-patterns-field', () => {
     });
 
     const pbehaviorPattern = patternToForm({
-      entity_pattern: [[
+      pbehavior_pattern: [[
         {
           field: PBEHAVIOR_PATTERN_FIELDS.name,
           cond: {
@@ -197,7 +197,7 @@ describe('c-patterns-field', () => {
     });
 
     const eventFilterPattern = patternToForm({
-      entity_pattern: [[
+      event_pattern: [[
         {
           field: EVENT_FILTER_PATTERN_FIELDS.output,
           cond: {
@@ -487,7 +487,7 @@ describe('c-patterns-field', () => {
 
     expect(progressComponent.exists()).toBe(true);
 
-    progressComponent.triggerCustomEvent('cancel:optimization');
+    progressComponent.triggerCustomEvent('cancel');
 
     await flushPromises();
 

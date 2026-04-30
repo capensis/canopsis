@@ -37,7 +37,13 @@ import { PAGINATION_LIMIT } from '@/config';
  * };
  */
 export const useLocalQuery = ({
-  initialQuery = { page: 1, itemsPerPage: PAGINATION_LIMIT },
+  initialQuery = {
+    page: 1,
+    itemsPerPage: PAGINATION_LIMIT,
+    search: '',
+    sortBy: [],
+    sortDesc: [],
+  },
   onUpdate,
   comparator = isEqual,
 } = {}) => {

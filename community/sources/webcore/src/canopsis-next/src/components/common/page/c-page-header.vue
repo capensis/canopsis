@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 class="text-center text-h4 font-weight-medium mt-4 mb-2">
-      <slot>{{ $t(`pageHeaders.${name}.title`) }}</slot>
+      <slot>{{ $t(`pageHeaders.${pageName}.title`) }}</slot>
       <v-btn
         v-if="hasMessage"
         class="ml-2 my-2"
@@ -47,83 +47,108 @@
 </template>
 
 <script>
-import { get, isFunction } from 'lodash';
+import { isFunction } from 'lodash';
+import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router/composables';
 
 import { DOCUMENTATION_BASE_URL } from '@/config';
 import { DOCUMENTATION_LINKS } from '@/constants';
 
 import { removeTrailingSlashes } from '@/helpers/url';
 
-import { tourBaseMixin } from '@/mixins/tour/base';
+import { useI18n } from '@/hooks/i18n';
+import { useTourBase } from '@/hooks/tour/tour-base';
 
 export default {
-  mixins: [tourBaseMixin],
   props: {
     name: {
       type: String,
-      default() {
-        const name = get(this.$route, 'meta.requiresPermission.id');
-
-        return isFunction(name)
-          ? name(this.$route)
-          : name;
-      },
+      default: undefined,
     },
   },
-  data() {
-    return {
-      shownMessage: false,
-      isHidePending: false,
-    };
-  },
-  computed: {
-    hasMessage() {
-      return this.$te(`pageHeaders.${this.name}.message`);
-    },
+  setup(props) {
+    const route = useRoute();
+    const { t, te } = useI18n();
+    const { currentUser, finishTourByName } = useTourBase();
 
-    messageWasHidden() {
-      return !!get(this.currentUser, ['ui_tours', this.name]);
-    },
+    const shownMessage = ref(false);
+    const isHidePending = ref(false);
 
-    learMoreMessage() {
-      if (!DOCUMENTATION_LINKS[this.name]) {
+    const pageName = computed(() => {
+      if (props.name) {
+        return props.name;
+      }
+
+      const id = route.meta?.requiresPermission?.id;
+
+      return isFunction(id) ? id(route) : id;
+    });
+
+    const hasMessage = computed(() => {
+      const key = pageName.value;
+
+      return !key || te(`pageHeaders.${key}.message`);
+    });
+
+    const messageWasHidden = computed(() => !!currentUser.value?.ui_tours?.[pageName.value]);
+
+    const learMoreMessage = computed(() => {
+      const key = pageName.value;
+
+      if (!key || !DOCUMENTATION_LINKS[key]) {
         return '';
       }
 
-      const link = removeTrailingSlashes(`${DOCUMENTATION_BASE_URL}${DOCUMENTATION_LINKS[this.name]}`);
+      const link = removeTrailingSlashes(`${DOCUMENTATION_BASE_URL}${DOCUMENTATION_LINKS[key]}`);
       const linkMessage = `<a href="${link}" target="_blank"><strong>${link}</strong></a>`;
 
-      return this.$t('pageHeaders.learnMore', { link: linkMessage });
-    },
+      return t('pageHeaders.learnMore', { link: linkMessage });
+    });
 
-    message() {
-      const message = this.hasMessage
-        ? this.$t(`pageHeaders.${this.name}.message`)
+    const message = computed(() => {
+      const key = pageName.value;
+
+      const baseMessage = hasMessage.value && key
+        ? t(`pageHeaders.${key}.message`)
         : '';
 
-      return this.learMoreMessage ? `${message}\n${this.learMoreMessage}` : message;
-    },
-  },
-  created() {
-    if (!this.messageWasHidden) {
-      this.shownMessage = true;
+      return learMoreMessage.value ? `${baseMessage}\n${learMoreMessage.value}` : baseMessage;
+    });
+
+    if (!messageWasHidden.value) {
+      shownMessage.value = true;
     }
-  },
-  methods: {
-    toggleMessageVisibility() {
-      this.shownMessage = !this.shownMessage;
-    },
 
-    async hideMessage() {
-      this.isHidePending = true;
+    /**
+     * Toggles the expanded/collapsed state of the page header help message block (help icon target).
+     */
+    const toggleMessageVisibility = () => shownMessage.value = !shownMessage.value;
 
-      if (!this.messageWasHidden) {
-        await this.finishTourByName(this.name);
+    /**
+     * Hides the message panel: if the user has not dismissed this page tour yet, persists completion
+     * via `finishTourByName` for `pageName`, then clears the loading state and collapses the message.
+     */
+    const hideMessage = async () => {
+      isHidePending.value = true;
+
+      if (!messageWasHidden.value) {
+        finishTourByName(pageName.value);
       }
 
-      this.isHidePending = false;
-      this.shownMessage = false;
-    },
+      isHidePending.value = false;
+      shownMessage.value = false;
+    };
+
+    return {
+      pageName,
+      hasMessage,
+      shownMessage,
+      isHidePending,
+      messageWasHidden,
+      message,
+      toggleMessageVisibility,
+      hideMessage,
+    };
   },
 };
 </script>
