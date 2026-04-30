@@ -234,9 +234,12 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
     ...eventFilter
   } = eventFilterForm;
 
+  let patternsFields = [PATTERNS_FIELDS.event, PATTERNS_FIELDS.entity];
+
   switch (eventFilterForm.type) {
     case EVENT_FILTER_TYPES.changeEntity:
       eventFilter.config = pick(config, ['resource', 'component', 'connector', 'connector_name', 'upstream']);
+      patternsFields = [PATTERNS_FIELDS.event];
       break;
     case EVENT_FILTER_TYPES.enrichment:
       eventFilter.config = pick(config, ['on_success', 'on_failure']);
@@ -252,6 +255,6 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
     ...eventFilter,
     exdates: exdatesToRequest(formExdatesToExdates(exdates, timezone)),
     exceptions: exceptionsToRequest(formExceptionsToExceptions(exceptions)),
-    ...formFilterToPatterns(patterns, [PATTERNS_FIELDS.event, PATTERNS_FIELDS.entity]),
+    ...formFilterToPatterns(patterns, patternsFields),
   };
 };
