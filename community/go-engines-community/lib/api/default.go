@@ -729,13 +729,13 @@ func registerWebsocketRooms(
 		return fmt.Errorf("fail to register websocket group: %w", err)
 	}
 
-	err = roomRegistry.RegisterGroup(websocket.RoomMessageRates, websocket.RoomHandlers{
+	err = roomRegistry.Register(websocket.RoomMessageRates, websocket.RoomHandlers{
 		OnJoin:    messageRateWatcher.StartWatch,
 		OnLeave:   messageRateWatcher.StopWatch,
 		Authorize: authorize(apisecurity.PermMessageRateStatsRead, securitymodel.PermissionCan),
 	})
 	if err != nil {
-		return fmt.Errorf("fail to register websocket group: %w", err)
+		return fmt.Errorf("fail to register websocket room: %w", err)
 	}
 
 	return nil
