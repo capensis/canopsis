@@ -71,6 +71,7 @@ export const MODALS = {
   createRemediationInstruction: 'create-remediation-instruction',
   createRemediationConfiguration: 'create-remediation-configuration',
   createRemediationJob: 'create-remediation-job',
+  createTicketStatusJob: 'create-ticket-status-job',
   executeRemediationInstruction: 'execute-remediation-instruction',
   executeRemediationSimpleInstruction: 'execute-remediation-simple-instruction',
   pbehaviorPatterns: 'pbehavior-patterns',
@@ -100,6 +101,9 @@ export const MODALS = {
   executeDeclareTickets: 'execute-declare-tickets',
 
   createLinkRule: 'create-link-rule',
+
+  createLlm: 'create-llm',
+  aiChatHistory: 'ai-chat-history',
 
   createMaintenance: 'create-maintenance',
 

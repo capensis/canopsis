@@ -5,6 +5,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
   class="c-patterns-field__wrapper"
 >
   <!---->
+  <c-progress-overlay-stub />
   <div
     class="layout c-patterns-field column"
   >
@@ -99,10 +100,10 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       </span>
     </c-alert-stub>
     <div
-      class="layout justify-end align-center"
+      class="layout gap-2 justify-end align-center"
     >
       <span
-        class="text-caption text--secondary error--text"
+        class="text-caption error--text"
       >
         <span>
           At least one pattern has to be defined. Please define filter patterns for rule
@@ -130,6 +131,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = 
   class="c-patterns-field__wrapper"
 >
   <!---->
+  <c-progress-overlay-stub />
   <div
     class="layout c-patterns-field column"
   >
@@ -150,7 +152,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = 
       </span>
     </c-alert-stub>
     <div
-      class="layout justify-end align-center"
+      class="layout gap-2 justify-end align-center"
     >
       <span
         class="text-caption text--secondary"

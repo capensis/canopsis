@@ -124,6 +124,9 @@ export const POPUP_TICK_DELAY = 100;
 
 export const SIDE_BAR_WIDTH = 250;
 
+/** Default width (px) for plugin sidebars when `config.width` is omitted */
+export const DEFAULT_SIDEBAR_DRAWER_WIDTH = 450;
+
 export const TOP_BAR_HEIGHT = 48;
 
 export const EXPAND_DEFAULT_MAX_LETTERS = 50;
@@ -159,6 +162,7 @@ export const SOCKET_ROOMS = {
   executions: 'executions',
   simplifiedManualExecutions: 'simplified-manual-executions',
   pbehaviorPatterns: 'pbehavior-patterns',
+  llmChat: 'llmchat',
   anomalyMonitoredConnectorStates: 'anomaly-monitored-connector-states',
 };
 
@@ -188,6 +192,7 @@ export const API_ROUTES = {
   bulkEntitiesDisable: '/api/v4/bulk/entities/disable',
   entityBasics: '/api/v4/entitybasics',
   service: '/api/v4/entityservices',
+  bulkService: '/api/v4/bulk/entityservices',
   serviceDependencies: '/api/v4/entityservice-dependencies',
   serviceImpacts: '/api/v4/entityservice-impacts',
   serviceAlarms: '/api/v4/entityservice-alarms',
@@ -226,6 +231,9 @@ export const API_ROUTES = {
   widgetTemplate: '/api/v4/widget-templates',
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
+  bulkUsersEnable: '/api/v4/bulk/users/enable',
+  bulkUsersDisable: '/api/v4/bulk/users/disable',
+  bulkUsers: '/api/v4/bulk/users',
   roles: {
     list: '/api/v4/roles',
     templates: '/api/v4/role-templates',
@@ -234,6 +242,9 @@ export const API_ROUTES = {
   eventFilter: {
     list: '/api/v4/eventfilter',
     rules: '/api/v4/eventfilter/rules',
+    bulk: '/api/v4/bulk/eventfilters',
+    bulkEnable: '/api/v4/bulk/eventfilters/enable',
+    bulkDisable: '/api/v4/bulk/eventfilters/disable',
   },
   file: '/api/v4/file',
   fileAccess: '/api/v4/file-access',
@@ -250,18 +261,32 @@ export const API_ROUTES = {
   commentTemplate: '/api/v4/comment-templates',
   counter: '/api/v4/alarm-counters',
   playlist: '/api/v4/playlists',
+  bulkPlaylist: '/api/v4/bulk/playlists',
+  bulkPlaylistEnable: '/api/v4/bulk/playlists/enable',
+  bulkPlaylistDisable: '/api/v4/bulk/playlists/disable',
   pbehavior: {
     timespan: '/api/v4/pbehavior-timespans',
     exceptions: '/api/v4/pbehavior-exceptions',
     exceptionImport: '/api/v4/pbehavior-exception-import',
+    bulkExceptions: '/api/v4/bulk/pbehavior-exceptions',
+    bulkExceptionsHide: '/api/v4/bulk/pbehavior-exceptions/hide',
+    bulkExceptionsUnhide: '/api/v4/bulk/pbehavior-exceptions/unhide',
     types: '/api/v4/pbehavior-types',
     nextTypesPriority: '/api/v4/pbehavior-types/next-priority',
+    bulkTypes: '/api/v4/bulk/pbehavior-types',
+    bulkTypesHide: '/api/v4/bulk/pbehavior-types/hide',
+    bulkTypesUnhide: '/api/v4/bulk/pbehavior-types/unhide',
     pbehaviors: '/api/v4/pbehaviors',
     bulkPbehaviors: '/api/v4/bulk/pbehaviors',
+    bulkPbehaviorsEnable: '/api/v4/bulk/pbehaviors/enable',
+    bulkPbehaviorsDisable: '/api/v4/bulk/pbehaviors/disable',
     pbehaviorComments: '/api/v4/pbehavior-comments',
     entities: '/api/v4/entities/pbehaviors',
     entitiesCalendar: '/api/v4/entities/pbehavior-calendar',
     reasons: '/api/v4/pbehavior-reasons',
+    bulkReasons: '/api/v4/bulk/pbehavior-reasons',
+    bulkReasonsHide: '/api/v4/bulk/pbehavior-reasons/hide',
+    bulkReasonsUnhide: '/api/v4/bulk/pbehavior-reasons/unhide',
     calendar: '/api/v4/pbehavior-calendar',
     bulkEntityPbehaviors: '/api/v4/bulk/entity-pbehaviors',
     patterns: '/api/v4/pbehavior-patterns',
@@ -282,6 +307,9 @@ export const API_ROUTES = {
     scenarios: '/api/v4/scenarios',
     testExecution: '/api/v4/cat/test-scenario-executions',
     testExecutionWebhooks: '/api/v4/cat/test-scenario-webhooks',
+    bulk: '/api/v4/bulk/scenarios',
+    bulkEnable: '/api/v4/bulk/scenarios/enable',
+    bulkDisable: '/api/v4/bulk/scenarios/disable',
   },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',
@@ -289,8 +317,17 @@ export const API_ROUTES = {
   notificationSettings: '/api/v4/notification-settings',
   notifications: '/api/v4/notifications',
   idleRules: '/api/v4/idle-rules',
+  bulkIdleRules: '/api/v4/bulk/idle-rules',
+  bulkIdleRulesEnable: '/api/v4/bulk/idle-rules/enable',
+  bulkIdleRulesDisable: '/api/v4/bulk/idle-rules/disable',
   flappingRules: '/api/v4/flapping-rules',
+  bulkFlappingRules: '/api/v4/bulk/flapping-rules',
+  bulkFlappingRulesEnable: '/api/v4/bulk/flapping-rules/enable',
+  bulkFlappingRulesDisable: '/api/v4/bulk/flapping-rules/disable',
   resolveRules: '/api/v4/resolve-rules',
+  bulkResolveRules: '/api/v4/bulk/resolve-rules',
+  bulkResolveRulesEnable: '/api/v4/bulk/resolve-rules/enable',
+  bulkResolveRulesDisable: '/api/v4/bulk/resolve-rules/disable',
   messageRateStats: '/api/v4/message-rate-stats',
   pattern: {
     list: '/api/v4/patterns',
@@ -324,6 +361,8 @@ export const API_ROUTES = {
   },
   linkRule: '/api/v4/link-rules',
   bulkLinkRule: '/api/v4/bulk/link-rules',
+  bulkLinkRuleEnable: '/api/v4/bulk/link-rules/enable',
+  bulkLinkRuleDisable: '/api/v4/bulk/link-rules/disable',
   linkCategories: '/api/v4/link-categories',
   icons: '/api/v4/icons',
   externalDataTables: '/api/v4/external-data-tables',
@@ -359,6 +398,30 @@ export const API_ROUTES = {
     jobConfigs: '/api/v4/cat/job-configs-db-export',
   },
 
+  patternFields: {
+    flappingRule: '/api/v4/flapping-rule-pattern-fields',
+    idleRule: '/api/v4/idle-rule-pattern-fields',
+    linkRule: '/api/v4/link-rule-pattern-fields',
+    resolveRule: '/api/v4/resolve-rule-pattern-fields',
+    pbehavior: '/api/v4/pbehavior-pattern-fields',
+    alarmTag: '/api/v4/alarm-tag-pattern-fields',
+    widgetFilter: '/api/v4/widget-filter-pattern-fields',
+    service: '/api/v4/entityservice-pattern-fields',
+    stateSetting: '/api/v4/state-setting-pattern-fields',
+    eventFilter: '/api/v4/eventfilter-pattern-fields',
+    scenario: '/api/v4/scenario-pattern-fields',
+
+    /**
+     * Cat routes for pattern fields
+     */
+    metaalarmrule: '/api/v4/cat/metaalarmrule-pattern-fields',
+    declareTicketRule: '/api/v4/cat/declare-ticket-rule-pattern-fields',
+    instruction: '/api/v4/cat/instruction-pattern-fields',
+    kpiFilter: '/api/v4/cat/kpi-filter-pattern-fields',
+    dynamicInfos: '/api/v4/cat/dynamic-infos-pattern-fields',
+    eventRecord: '/api/v4/cat/event-record-pattern-fields',
+  },
+
   /**
    * Cat routes
    */
@@ -366,10 +429,19 @@ export const API_ROUTES = {
   ratingSettings: '/api/v4/cat/rating-settings',
   bulkRatingSettings: '/api/v4/cat/rating-settings/bulk',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
+  bulkDynamicInfo: '/api/v4/cat/bulk/dynamic-infos',
+  bulkDynamicInfoEnable: '/api/v4/cat/bulk/dynamic-infos/enable',
+  bulkDynamicInfoDisable: '/api/v4/cat/bulk/dynamic-infos/disable',
   dynamicInfosDictionaryKeys: '/api/v4/cat/dynamic-infos-dictionary/keys',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
+  bulkMetaAlarmRule: '/api/v4/cat/bulk/metaalarmrules',
+  bulkMetaAlarmRuleEnable: '/api/v4/cat/bulk/metaalarmrules/enable',
+  bulkMetaAlarmRuleDisable: '/api/v4/cat/bulk/metaalarmrules/disable',
   remediation: {
     instructions: '/api/v4/cat/instructions',
+    bulkInstructions: '/api/v4/cat/bulk/instructions',
+    bulkInstructionsEnable: '/api/v4/cat/bulk/instructions/enable',
+    bulkInstructionsDisable: '/api/v4/cat/bulk/instructions/disable',
     instructionStats: '/api/v4/cat/instruction-stats',
     jobs: '/api/v4/cat/jobs',
     configurations: '/api/v4/cat/job-configs',
@@ -414,17 +486,27 @@ export const API_ROUTES = {
     availability: '/api/v4/cat/metrics/availability',
   },
   maps: '/api/v4/cat/maps',
-  bulkMaps: '/api/v4/cat/maps/bulk',
+  bulkMaps: '/api/v4/cat/bulk/maps',
   mapState: '/api/v4/cat/map-state',
   metaAlarm: '/api/v4/cat/meta-alarms',
   snmpRule: '/api/v4/cat/snmprules',
+  bulkSnmpRule: '/api/v4/cat/bulk/snmprules',
+  bulkSnmpRuleEnable: '/api/v4/cat/bulk/snmprules/enable',
+  bulkSnmpRuleDisable: '/api/v4/cat/bulk/snmprules/disable',
   snmpMib: '/api/v4/cat/snmpmibs',
   webhookTokenRule: '/api/v4/cat/webhook-token-rules',
   anomalyMonitoredConnector: '/api/v4/cat/anomalies/monitored-connectors',
   anomalyMonitoredConnectorStates: '/api/v4/cat/anomalies/monitored-connectors/states',
+  ticketStatusJobs: '/api/v4/cat/ticket-status-jobs',
+  bulkTicketStatusJobs: {
+    play: '/api/v4/cat/bulk/ticket-status-jobs/sync',
+    pause: '/api/v4/cat/bulk/ticket-status-jobs/pause',
+  },
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
+    bulkRulesEnable: '/api/v4/cat/bulk/declare-ticket-rules/enable',
+    bulkRulesDisable: '/api/v4/cat/bulk/declare-ticket-rules/disable',
     alarmsAssigned: '/api/v4/cat/declare-ticket-assigned',
     testExecution: '/api/v4/cat/test-declare-ticket-executions',
     testExecutionWebhooks: '/api/v4/cat/test-declare-ticket-webhooks',
@@ -461,6 +543,14 @@ export const API_ROUTES = {
   },
   copyVarsCat: {
     dynamicInfos: '/api/v4/cat/dynamic-infos-copy-vars',
+  },
+  llms: {
+    list: '/api/v4/cat/llm-configs',
+    bulk: '/api/v4/cat/bulk/llm-configs',
+    bulkEnable: '/api/v4/cat/bulk/llm-configs/enable',
+    bulkDisable: '/api/v4/cat/bulk/llm-configs/disable',
+    bulkHistoryLink: '/api/v4/cat/bulk/llm-history/link',
+    models: '/api/v4/cat/llm-config-models',
   },
 };
 
@@ -553,6 +643,10 @@ export const COLORS = {
     assigned: '#FFC107',
     inProgress: '#FFECB3',
     closed: '#4CAF50',
+  },
+  aiChat: {
+    chipBackground: 'grey lighten-2',
+    chipText: 'grey darken-2',
   },
   impactState: [
     '#2FAB63',
@@ -748,12 +842,12 @@ export const CSS_COLORS_VARS = {
   },
 
   status: {
-    closed: 'var(--v-status-closed-base)',
+    closed: 'var(--v-success-base)',
     stealthy: 'var(--v-status-stealthy-base)',
     flapping: 'var(--v-status-flapping-base)',
     ongoing: 'var(--v-status-ongoing-base)',
     cancelled: 'var(--v-status-cancelled-base)',
-    noEvents: 'var(--v-status-noEvents-base)',
+    noEvents: 'var(--v-error-base)',
     unknown: 'var(--v-status-unknown-base)',
   },
 };
@@ -785,6 +879,8 @@ export const DEFAULT_THEME_COLORS = {
 export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
+
+export const GEMINI_AI_CONSOLE_BILLING_URL = 'https://ai.studio/spend';
 
 export const EXPORT_FETCHING_INTERVAL = 2000;
 

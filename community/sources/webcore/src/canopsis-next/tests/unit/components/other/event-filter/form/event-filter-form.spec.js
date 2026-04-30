@@ -11,7 +11,6 @@ const stubs = {
   'c-event-filter-type-field': true,
   'c-description-field': true,
   'c-priority-field': true,
-  'c-enabled-field': true,
   'c-patterns-field': true,
   'c-information-block': true,
   'c-collapse-panel': true,
@@ -26,7 +25,6 @@ const selectIdField = wrapper => wrapper.find('c-id-field-stub');
 const selectEventFilterTypeField = wrapper => wrapper.find('c-event-filter-type-field-stub');
 const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
 const selectPriorityField = wrapper => wrapper.find('c-priority-field-stub');
-const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 const selectPatternsField = wrapper => wrapper.find('c-patterns-field-stub');
 const selectEventFilterChangeEntityForm = wrapper => wrapper.find('event-filter-change-entity-form-stub');
 const selectEventFilterEnrichmentForm = wrapper => wrapper.find('event-filter-enrichment-form-stub');
@@ -123,29 +121,6 @@ describe('event-filter-form', () => {
     expect(wrapper).toEmitInput({
       ...form,
       priority,
-    });
-  });
-
-  test('Enabled changed after trigger enabled field', () => {
-    const enabled = Faker.datatype.boolean();
-    const wrapper = factory({
-      propsData: {
-        form: {
-          ...form,
-          enabled,
-        },
-      },
-    });
-
-    const enabledField = selectEnabledField(wrapper);
-
-    const newEnabled = !enabled;
-
-    enabledField.triggerCustomEvent('input', newEnabled);
-
-    expect(wrapper).toEmitInput({
-      ...form,
-      enabled: newEnabled,
     });
   });
 

@@ -33,12 +33,14 @@ const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.v
 const AdminEventsRecords = () => import(/* webpackChunkName: "EventsRecords" */ '@/views/admin/events-records.vue');
 const AdminAnomalyMonitoredConnectors = () => import(/* webpackChunkName: "AnomalyMonitoredConnectors" */ '@/views/admin/anomaly-monitored-connectors.vue');
 const AdminTemplateTesting = () => import(/* webpackChunkName: "TemplateTesting" */ '@/views/admin/template-testing.vue');
+const AdminJobs = () => import(/* webpackChunkName: "Jobs" */ '@/views/admin/jobs.vue');
 const AdminCustomObjectsExternalAuthTokens = () => import(/* webpackChunkName: "ExternalAuthTokens" */ '@/views/admin/custom-objects/external-auth-tokens.vue');
 const AdminCustomObjectsEntityInfosProperties = () => import(/* webpackChunkName: "EntityInfosProperties" */ '@/views/admin/custom-objects/entity-infos-properties.vue');
 const AdminCustomObjectsExternalDataTables = () => import(/* webpackChunkName: "ExternalDataTables" */ '@/views/admin/custom-objects/external-data-tables.vue');
 const AdminCustomObjectsIcons = () => import(/* webpackChunkName: "Icons" */ '@/views/admin/custom-objects/icons.vue');
 const AdminCustomObjectsMaps = () => import(/* webpackChunkName: "Maps" */ '@/views/admin/custom-objects/maps.vue');
 const AdminCustomObjectsTags = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/custom-objects/tags.vue');
+const AdminCustomObjectsLlms = () => import(/* webpackChunkName: "Llms" */ '@/views/admin/custom-objects/llms.vue');
 const AdminSettingsUserInterface = () => import(/* webpackChunkName: "UserInterface" */ '@/views/admin/settings/user-interface.vue');
 const AdminSettingsViewsImportExport = () => import(/* webpackChunkName: "ViewsImportExport" */ '@/views/admin/settings/views-import-export.vue');
 const AdminSettingsNotifications = () => import(/* webpackChunkName: "NotificationsSettings" */ '@/views/admin/settings/notifications-settings.vue');
@@ -254,6 +256,18 @@ const routes = [
     },
   },
   {
+    path: ROUTES.adminJobsManagement,
+    name: ROUTES_NAMES.adminJobsManagement,
+    component: AdminJobs,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        action: CRUD_ACTIONS.can,
+        id: USER_PERMISSIONS.technical.jobManagement,
+      },
+    },
+  },
+  {
     path: ROUTES.adminCustomObjectsExternalDataTables,
     name: ROUTES_NAMES.adminCustomObjectsExternalDataTables,
     component: AdminCustomObjectsExternalDataTables,
@@ -305,6 +319,17 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USER_PERMISSIONS.technical.tag,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminCustomObjectsLlms,
+    name: ROUTES_NAMES.adminCustomObjectsLlms,
+    component: AdminCustomObjectsLlms,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.llm,
       },
     },
   },

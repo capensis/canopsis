@@ -61,6 +61,7 @@ export default {
     [USER_PERMISSIONS_GROUPS.apiRules]: 'Rules',
     [USER_PERMISSIONS_GROUPS.apiRemediation]: 'Remediation',
     [USER_PERMISSIONS_GROUPS.apiPlanning]: 'Planning',
+    [USER_PERMISSIONS_GROUPS.apiLlmChat]: 'LLM chat',
     [USER_PERMISSIONS_GROUPS.technical]: 'Technical',
     [USER_PERMISSIONS_GROUPS.technicalAdmin]: 'Admin',
     [USER_PERMISSIONS_GROUPS.technicalAdminCommunication]: 'Communication',
@@ -254,9 +255,11 @@ export default {
     [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Template testing',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'External auth tokens',
+    [USER_PERMISSIONS.technical.jobManagement]: 'Jobs',
     [USER_PERMISSIONS.technical.commentTemplate]: 'Comment templates',
     [USER_PERMISSIONS.technical.externalDataTable]: 'External data',
     [USER_PERMISSIONS.technical.entityInfoProperty]: 'Entity infos',
+    [USER_PERMISSIONS.technical.llm]: 'LLMs',
     [USER_PERMISSIONS.technical.anomalyMonitoredConnector]: 'Anomaly monitored connectors',
 
     /**

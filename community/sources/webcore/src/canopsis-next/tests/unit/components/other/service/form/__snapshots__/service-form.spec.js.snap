@@ -117,11 +117,11 @@ exports[`service-form Renders \`service-form\` with custom props 1`] = `
         class="v-window__container"
       >
         <transition-stub
-          name=""
+          name="v-window-x-transition"
         >
           <div
-            class="v-window-item"
-            style="display: none;"
+            class="v-window-item v-window-item--active"
+            style=""
           >
             <c-patterns-field-stub
               class="mt-2"
@@ -133,7 +133,7 @@ exports[`service-form Renders \`service-form\` with custom props 1`] = `
           </div>
         </transition-stub>
         <transition-stub
-          name=""
+          name="v-window-x-transition"
         >
           <div
             class="v-window-item"
@@ -265,8 +265,8 @@ exports[`service-form Renders \`service-form\` with default props 1`] = `
           name=""
         >
           <div
-            class="v-window-item"
-            style="display: none;"
+            class="v-window-item v-window-item--active"
+            style=""
           >
             <c-patterns-field-stub
               class="mt-2"

@@ -21,6 +21,7 @@ const stubs = {
   'storage-settings-alarm-external-tag-form': true,
   'storage-settings-events-records-form': true,
   'storage-settings-entity-infos-log-form': true,
+  'storage-settings-llm-chat-form': true,
   'storage-settings-connector-anomalies-form': true,
 };
 

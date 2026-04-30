@@ -277,6 +277,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with duration type 1`
         >
           <c-duration-field-stub
             duration="[object Object]"
+            medium="true"
             name="rule.value"
           />
         </div>

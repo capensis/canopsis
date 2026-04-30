@@ -47,10 +47,12 @@ export default {
         config: {
           title: this.$t('modals.createStateSetting.create.title'),
           action: async (newStateSetting) => {
-            await this.createStateSetting({ data: newStateSetting });
+            const result = await this.createStateSetting({ data: newStateSetting });
 
             this.$popups.success({ text: this.$t('modals.createStateSetting.create.success') });
             this.fetchList();
+
+            return result;
           },
         },
       });
@@ -85,10 +87,12 @@ export default {
           stateSetting,
           title: this.$t('modals.createStateSetting.edit.title'),
           action: async (data) => {
-            await this.updateStateSetting({ data, id: stateSetting._id });
+            const result = await this.updateStateSetting({ data, id: stateSetting._id });
 
             this.$popups.success({ text: this.$t('modals.createStateSetting.edit.success') });
             this.fetchList();
+
+            return result;
           },
         },
       });
@@ -101,10 +105,12 @@ export default {
           stateSetting,
           title: this.$t('modals.createStateSetting.duplicate.title'),
           action: async (data) => {
-            await this.createStateSetting({ data });
+            const result = await this.createStateSetting({ data });
 
             this.$popups.success({ text: this.$t('modals.createStateSetting.duplicate.success') });
             this.fetchList();
+
+            return result;
           },
         },
       });

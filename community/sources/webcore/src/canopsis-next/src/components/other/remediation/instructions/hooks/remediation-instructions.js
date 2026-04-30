@@ -6,7 +6,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useAuth } from '@/hooks/auth';
-import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 
 /**
  * Provides actions for managing remediation instructions, including modals for duplication,
@@ -30,7 +30,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
     createRemediationInstruction,
     updateRemediationInstruction,
     removeRemediationInstruction,
-  } = useRemdeitionInstruction();
+  } = useRemediationInstruction();
 
   /**
    * Opens a modal to duplicate a remediation instruction.
@@ -77,7 +77,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
         disabled: wasRequestedByAnotherUser,
         title: t('modals.createRemediationInstruction.edit.title'),
         action: async (instruction) => {
-          await updateRemediationInstruction({ id: remediationInstruction._id, data: instruction });
+          const result = await updateRemediationInstruction({ id: remediationInstruction._id, data: instruction });
 
           popups.success({
             text: t('modals.createRemediationInstruction.edit.popups.success', {
@@ -86,6 +86,8 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
           });
 
           refresh();
+
+          return result;
         },
       },
     });

@@ -165,8 +165,20 @@ const convertWebhookActionToTemplateTestingTestValidateForm = ({
     && checkTicketStatus.ticket_status.template
   ) {
     result.push({
+      key: `${prefix}.declare_ticket.check_ticket_status.request.url`,
+      resultKey: `${resultPrefix}.declare_ticket.check_ticket_status.request.url`,
+      textKey: 'templateTesting.ticketStatusWebhookUrl',
+      textArgs: { number: index + 1 },
+      templateVarsKey: 'ticket',
+    }, {
+      key: `${prefix}.declare_ticket.check_ticket_status.request.payload`,
+      resultKey: `${resultPrefix}.declare_ticket.check_ticket_status.request.payload`,
+      textKey: 'templateTesting.ticketStatusWebhookPayload',
+      textArgs: { number: index + 1 },
+      templateVarsKey: 'ticket',
+    }, {
       key: `${prefix}.declare_ticket.check_ticket_status.ticket_status.value`,
-      resultKey: `${prefix}.declare_ticket.check_ticket_status.ticket_status_tpl`,
+      resultKey: `${resultPrefix}.declare_ticket.check_ticket_status.ticket_status_tpl`,
       textKey: 'declareTicket.ticketStatusSourceField',
       textArgs: { number: index + 1 },
       templateVarsKey: 'ticket',

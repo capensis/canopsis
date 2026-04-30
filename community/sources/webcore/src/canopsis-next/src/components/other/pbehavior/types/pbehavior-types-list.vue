@@ -6,17 +6,21 @@
     :total-items="totalItems"
     :options="options"
     :is-disabled-item="isDisabledType"
-    :select-all="removable"
+    :select-all="removable || updatable"
     expand
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :hideable="updatable"
+        :unhideable="updatable"
+        pbehavior-type
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #icon_name="{ item }">
@@ -35,8 +39,8 @@
     <template #priority="{ item }">
       {{ item.priority || '-' }}
     </template>
-    <template #hidden="{ item }">
-      <c-enabled :value="item.hidden" />
+    <template #visible="{ item }">
+      <c-enabled :value="!item.hidden" />
     </template>
     <template #actions="{ item }">
       <v-layout>
@@ -59,7 +63,11 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { getMostReadableTextColor } from '@/helpers/color';
+
+import { useI18n } from '@/hooks/i18n';
 
 import PbehaviorTypesListExpandPanel from './partials/pbehavior-types-list-expand-panel.vue';
 
@@ -88,43 +96,49 @@ export default {
       type: Boolean,
       required: true,
     },
-  },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.name'),
-          value: 'name',
-        },
-        {
-          text: this.$tc('common.icon', 1),
-          value: 'icon_name',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.priority'),
-          value: 'priority',
-        },
-        {
-          text: this.$t('common.hidden'),
-          value: 'hidden',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
+    updatable: {
+      type: Boolean,
+      required: true,
     },
   },
-  methods: {
-    isDisabledType({ deletable }) {
-      return !deletable;
-    },
+  setup() {
+    const { t, tc } = useI18n();
 
-    getIconColor(color) {
-      return getMostReadableTextColor(color, { level: 'AA', size: 'large' });
-    },
+    const headers = computed(() => [
+      {
+        text: t('common.name'),
+        value: 'name',
+      },
+      {
+        text: tc('common.icon', 1),
+        value: 'icon_name',
+        sortable: false,
+      },
+      {
+        text: t('common.priority'),
+        value: 'priority',
+      },
+      {
+        text: t('pbehavior.visible'),
+        value: 'visible',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
+
+    const isDisabledType = ({ deletable }) => !deletable;
+
+    const getIconColor = color => getMostReadableTextColor(color, { level: 'AA', size: 'large' });
+
+    return {
+      headers,
+      isDisabledType,
+      getIconColor,
+    };
   },
 };
 </script>

@@ -198,7 +198,7 @@ export const testsEntityModule = ({
 
     await actions.fetchList({ commit });
 
-    expect(commit).toBeCalledWith(
+    expect(commit).toHaveBeenCalledWith(
       types.FETCH_LIST_COMPLETED,
       {
         data: entities,
@@ -217,7 +217,7 @@ export const testsEntityModule = ({
 
       await actions.fetchListWithPreviousParams({ dispatch, state });
 
-      expect(dispatch).toBeCalledWith('fetchList', { params: fetchingParams });
+      expect(dispatch).toHaveBeenCalledWith('fetchList', { params: fetchingParams });
     });
   }
 
@@ -231,7 +231,7 @@ export const testsEntityModule = ({
 
     await actions.fetchList({ commit }, { params });
 
-    expect(commit).toBeCalledWith(
+    expect(commit).toHaveBeenCalledWith(
       types.FETCH_LIST_COMPLETED,
       {
         data: entities,
@@ -257,9 +257,9 @@ export const testsEntityModule = ({
     } catch (err) {
       expect(err.message).toBe(error.message);
 
-      expect(commit).toBeCalledWith(types.FETCH_LIST_FAILED);
+      expect(commit).toHaveBeenCalledWith(types.FETCH_LIST_FAILED);
 
-      expect(console.error).toBeCalledWith(error);
+      expect(console.error).toHaveBeenCalledWith(error);
     } finally {
       console.error = originalError;
     }
@@ -348,6 +348,60 @@ export const createAuthModule = () => {
     currentUserViewPermissionsByViewId,
     login,
     fetchCurrentUser,
+  };
+};
+
+/**
+ * Mocked `user` store module (entities user) for modals that call `updateCurrentUserTours` / `updateCurrentUser`.
+ */
+export const createUserModule = () => {
+  const updateCurrentUserTours = jest.fn().mockResolvedValue(undefined);
+  const updateCurrentUser = jest.fn().mockResolvedValue(undefined);
+
+  const userModule = {
+    name: 'user',
+    actions: {
+      updateCurrentUserTours,
+      updateCurrentUser,
+    },
+  };
+
+  afterEach(() => {
+    updateCurrentUserTours.mockClear();
+    updateCurrentUser.mockClear();
+  });
+
+  return {
+    userModule,
+    updateCurrentUserTours,
+    updateCurrentUser,
+  };
+};
+
+/**
+ * Mocked `llm` store module for AI chat hooks (`fetchListWithoutStore`, `bulkLinkLlmHistory`).
+ */
+export const createLlmModule = () => {
+  const fetchListWithoutStore = jest.fn().mockResolvedValue({ data: [] });
+  const bulkLinkLlmHistory = jest.fn().mockResolvedValue({});
+
+  const llmModule = {
+    name: 'llm',
+    actions: {
+      fetchListWithoutStore,
+      bulkLinkLlmHistory,
+    },
+  };
+
+  afterEach(() => {
+    fetchListWithoutStore.mockClear();
+    bulkLinkLlmHistory.mockClear();
+  });
+
+  return {
+    llmModule,
+    fetchListWithoutStore,
+    bulkLinkLlmHistory,
   };
 };
 
@@ -1602,21 +1656,179 @@ export const createEntityInfoPropertyModule = () => {
 
 export const createPbehaviorPatternsModule = () => {
   const runAlarmFiltering = jest.fn().mockResolvedValue();
+  const checkPatternsPbehaviorsCount = jest.fn().mockResolvedValue({
+    data: 0,
+  });
 
   const pbehaviorPatternsModule = {
     name: 'pbehaviorPatterns',
     actions: {
       runAlarmFiltering,
+      checkPatternsPbehaviorsCount,
     },
   };
 
   afterEach(() => {
     runAlarmFiltering.mockClear();
+    checkPatternsPbehaviorsCount.mockClear();
   });
 
   return {
     runAlarmFiltering,
+    checkPatternsPbehaviorsCount,
     pbehaviorPatternsModule,
+  };
+};
+
+export const createPatternsFieldsModule = () => {
+  const fetchFlappingRulePatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchIdleRulePatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchLinkRulePatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchResolveRulePatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchPbehaviorPatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchAlarmTagPatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchWidgetFilterPatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchServicePatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchStateSettingPatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchEventFilterPatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchScenarioPatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchMetaalarmrulePatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchDeclareTicketRulePatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchInstructionPatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchKpiFilterPatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchDynamicInfosPatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+  const fetchEventRecordPatternFields = jest.fn().mockResolvedValue({
+    entity_pattern: [],
+    alarm_pattern: [],
+    event_pattern: [],
+  });
+
+  const patternsFieldsModule = {
+    name: 'patternsFields',
+    actions: {
+      fetchFlappingRulePatternFields,
+      fetchIdleRulePatternFields,
+      fetchLinkRulePatternFields,
+      fetchResolveRulePatternFields,
+      fetchPbehaviorPatternFields,
+      fetchAlarmTagPatternFields,
+      fetchWidgetFilterPatternFields,
+      fetchServicePatternFields,
+      fetchStateSettingPatternFields,
+      fetchEventFilterPatternFields,
+      fetchScenarioPatternFields,
+      fetchMetaalarmrulePatternFields,
+      fetchDeclareTicketRulePatternFields,
+      fetchInstructionPatternFields,
+      fetchKpiFilterPatternFields,
+      fetchDynamicInfosPatternFields,
+      fetchEventRecordPatternFields,
+    },
+  };
+
+  afterEach(() => {
+    fetchFlappingRulePatternFields.mockClear();
+    fetchIdleRulePatternFields.mockClear();
+    fetchLinkRulePatternFields.mockClear();
+    fetchResolveRulePatternFields.mockClear();
+    fetchPbehaviorPatternFields.mockClear();
+    fetchAlarmTagPatternFields.mockClear();
+    fetchWidgetFilterPatternFields.mockClear();
+    fetchServicePatternFields.mockClear();
+    fetchStateSettingPatternFields.mockClear();
+    fetchEventFilterPatternFields.mockClear();
+    fetchScenarioPatternFields.mockClear();
+    fetchMetaalarmrulePatternFields.mockClear();
+    fetchDeclareTicketRulePatternFields.mockClear();
+    fetchInstructionPatternFields.mockClear();
+    fetchKpiFilterPatternFields.mockClear();
+    fetchDynamicInfosPatternFields.mockClear();
+    fetchEventRecordPatternFields.mockClear();
+  });
+
+  return {
+    patternsFieldsModule,
+    fetchFlappingRulePatternFields,
+    fetchIdleRulePatternFields,
+    fetchLinkRulePatternFields,
+    fetchResolveRulePatternFields,
+    fetchPbehaviorPatternFields,
+    fetchAlarmTagPatternFields,
+    fetchWidgetFilterPatternFields,
+    fetchServicePatternFields,
+    fetchStateSettingPatternFields,
+    fetchEventFilterPatternFields,
+    fetchScenarioPatternFields,
+    fetchMetaalarmrulePatternFields,
+    fetchDeclareTicketRulePatternFields,
+    fetchInstructionPatternFields,
+    fetchKpiFilterPatternFields,
+    fetchDynamicInfosPatternFields,
+    fetchEventRecordPatternFields,
   };
 };
 

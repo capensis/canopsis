@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <modal-wrapper text-class="position-relative" close>
       <template #title="">
         {{ title }}
       </template>
@@ -8,6 +8,11 @@
         <link-rule-form
           v-model="form"
           :rule-id="config.linkRule?._id"
+        />
+        <ai-chat-sidebar
+          v-if="chatShown"
+          v-bind="chatOptions.bind"
+          v-on="chatOptions.on"
         />
       </template>
       <template #actions="">
@@ -20,7 +25,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -33,18 +38,20 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref, toRef } from 'vue';
 
-import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import { linkRuleToForm, formToLinkRule } from '@/helpers/entities/link/form';
 
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import LinkRuleForm from '@/components/other/link-rule/form/link-rule-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -58,6 +65,7 @@ export default {
   components: {
     LinkRuleForm,
     ModalWrapper,
+    AiChatSidebar,
   },
   props: {
     modal: {
@@ -73,14 +81,27 @@ export default {
 
     const form = ref(linkRuleToForm(config.value.linkRule));
 
+    const {
+      shown: chatShown,
+      options: chatOptions,
+    } = useAiChatForm({
+      form,
+
+      modal: toRef(props, 'modal'),
+      ruleId: props.modal.config?.linkRule?._id,
+      context: LLM_SOCKET_CONTEXTS.linkRule,
+    });
+
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        const linkRule = await config.value.action?.(formToLinkRule(form.value));
+        const result = await config.value.action?.(formToLinkRule(form.value));
+
+        await config.value.afterSubmit?.(result);
 
         close();
 
-        return linkRule;
+        return result;
       },
     });
 
@@ -100,6 +121,9 @@ export default {
       submitting,
 
       title,
+
+      chatShown,
+      chatOptions,
 
       submit,
       close,

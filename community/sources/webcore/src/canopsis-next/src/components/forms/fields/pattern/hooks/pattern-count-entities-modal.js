@@ -1,27 +1,65 @@
-import { MODALS } from '@/constants';
+import { PATTERNS_FIELDS, MODALS } from '@/constants';
 
+import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/form';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useEntity } from '@/hooks/store/modules/entity';
+import { useStoreModuleHooks } from '@/hooks/store';
 
 /**
- * Hook for showing entities modal filtered by patterns
+ * Hook for managing pattern count entities modal functionality.
  *
- * @returns {Object} An object containing the showEntitiesModalByPatterns function
+ * @param {Object} props - Component props containing pattern configuration flags.
+ * @returns {Object} Object containing showPatternEntitiesModal function.
+ * @property {Function} showPatternEntitiesModal - Function to show the entities modal with pattern filters.
  */
-export const usePatternCountEntitiesModal = () => {
+export const usePatternCountEntitiesModal = (props) => {
   const modals = useModals();
   const { t } = useI18n();
-  const { fetchContextEntitiesListWithoutStore } = useEntity();
+  const { useActions } = useStoreModuleHooks('entity');
+  const { fetchContextEntitiesListWithoutStore } = useActions({ fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore' });
 
   /**
-   * Shows entities modal filtered by patterns
+   * Shows a modal with entities filtered by the specified pattern names.
    *
-   * @param {Object} patterns - Patterns object containing entity_pattern and other pattern filters
+   * Only includes patterns that are enabled based on props configuration.
+   *
+   * @param {Array<string>} [patternNames=[
+   *   PATTERNS_FIELDS.entity,
+   *   PATTERNS_FIELDS.pbehavior,
+   *   PATTERNS_FIELDS.event,
+   *   PATTERNS_FIELDS.totalEntity,
+   *   PATTERNS_FIELDS.serviceWeather
+   * ]]
    */
-  const showEntitiesModalByPatterns = (patterns) => {
+  const showPatternEntitiesModal = (
+    patternNames = [
+      PATTERNS_FIELDS.entity,
+      PATTERNS_FIELDS.pbehavior,
+      PATTERNS_FIELDS.event,
+      PATTERNS_FIELDS.totalEntity,
+      PATTERNS_FIELDS.serviceWeather,
+    ],
+  ) => {
+    const withPatternsByNamesMap = {
+      [PATTERNS_FIELDS.entity]: true,
+      [PATTERNS_FIELDS.pbehavior]: props.withPbehavior,
+      [PATTERNS_FIELDS.event]: props.eventName,
+      [PATTERNS_FIELDS.totalEntity]: props.totalEntityName,
+      [PATTERNS_FIELDS.serviceWeather]: props.serviceWeatherName,
+    };
+
+    const patterns = patternNames.reduce((acc, patternName) => {
+      if (!withPatternsByNamesMap[patternName]) {
+        return acc;
+      }
+
+      acc[patternName === PATTERNS_FIELDS.entity ? 'search_pattern' : patternName] = formGroupsToPatternRulesQuery(props.value[patternName]?.groups);
+
+      return acc;
+    }, {});
+
     const widget = generatePreparedDefaultContextWidget();
 
     modals.show({
@@ -39,7 +77,5 @@ export const usePatternCountEntitiesModal = () => {
     });
   };
 
-  return {
-    showEntitiesModalByPatterns,
-  };
+  return { showPatternEntitiesModal };
 };
