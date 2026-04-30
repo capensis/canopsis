@@ -1,6 +1,7 @@
 <template>
   <div
     :class="{ 'modals-wrapper--active': modals.length > 0 }"
+    :style="{ zIndex }"
     class="modals-wrapper"
   >
     <modal-base
@@ -8,6 +9,7 @@
       :key="modal.id"
       :modal="modal"
     />
+    <div class="pbehavior-calendar-event-menu" />
   </div>
 </template>
 
@@ -19,6 +21,10 @@ export default {
   computed: {
     modals() {
       return this.$store.getters[`${this.$modals.moduleName}/modals`];
+    },
+
+    zIndex() {
+      return this.modals.length * 300;
     },
   },
   watch: {
@@ -43,6 +49,13 @@ $minimizedDialogMaxWidth: 360px;
 
 .modals-wrapper {
   display: none;
+
+  .pbehavior-calendar-event-menu {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+  }
 
   &--active {
     position: fixed;
@@ -70,6 +83,7 @@ $minimizedDialogMaxWidth: 360px;
           max-width: $minimizedDialogMaxWidth;
           pointer-events: all;
           z-index: inherit !important;
+          padding: 0 !important;
 
           .v-dialog {
             margin: 0;

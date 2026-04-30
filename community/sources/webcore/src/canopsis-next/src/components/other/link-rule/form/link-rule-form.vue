@@ -1,6 +1,7 @@
 <template>
-  <div class="position-relative">
+  <v-layout class="position-relative gap-2" column>
     <c-progress-overlay :pending="templateVarsPending" />
+    <c-enabled-field v-field="form.enabled" with-background />
     <v-tabs
       v-model="activeTab"
       slider-color="primary"
@@ -80,7 +81,7 @@
         />
       </v-tab-item>
     </v-tabs>
-  </div>
+  </v-layout>
 </template>
 
 <script>
@@ -99,6 +100,7 @@ import { isDefaultSourceCode } from '@/helpers/entities/link/form';
 
 import { useTemplateVarsList } from '@/hooks/vars/template';
 import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
+import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 
 import {
   useTestVariablesTabData,
@@ -110,6 +112,13 @@ import TemplateTestingTestVariablesTab from '@/components/other/template-testing
 import LinkRuleGeneralForm from './link-rule-general-form.vue';
 import LinkRuleSimpleForm from './link-rule-simple-form.vue';
 import LinkRuleAdvancedForm from './link-rule-advanced-form.vue';
+
+const LINK_RULE_FORM_TABS = {
+  general: 0,
+  simple: 1,
+  advanced: 2,
+  testing: 3,
+};
 
 export default {
   inject: ['$validator'],
@@ -136,7 +145,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const activeTab = ref(0);
+    const activeTab = ref(LINK_RULE_FORM_TABS.general);
 
     const type = TEMPLATE_TESTING_TEST_TYPES.linkRule;
 
@@ -148,7 +157,7 @@ export default {
     const simpleElement = ref(null);
     const advancedElement = ref(null);
 
-    const isActiveTestingTab = computed(() => activeTab.value === 3);
+    const isActiveTestingTab = computed(() => activeTab.value === LINK_RULE_FORM_TABS.testing);
 
     const {
       attachRequiredRule,
@@ -186,13 +195,18 @@ export default {
     watch(() => simpleElement.value?.hasAnyError, value => hasSimpleError.value = value);
     watch(() => advancedElement.value?.hasAnyError, value => hasAdvancedError.value = value);
 
+    useAiChatExpand({ activeTab, neededTab: LINK_RULE_FORM_TABS.general });
+
     onMounted(() => {
       attachRequiredRule(requiredRuleGetter);
       fetchTemplateVarsList();
     });
+
     onBeforeUnmount(detachRequiredRule);
 
     return {
+      LINK_RULE_FORM_TABS,
+
       activeTab,
       isActiveTestingTab,
 

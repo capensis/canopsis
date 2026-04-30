@@ -1,5 +1,7 @@
 <template>
-  <div>
+  <v-layout column>
+    <c-enabled-field v-field="form.enabled" with-background />
+
     <c-name-field
       v-field="form.name"
       autofocus
@@ -7,15 +9,10 @@
     />
     <c-duration-field v-field="form.interval" />
     <v-layout>
-      <v-flex xs6>
-        <c-enabled-field v-field="form.enabled" />
-      </v-flex>
-      <v-flex xs6>
-        <c-enabled-field
-          v-field="form.fullscreen"
-          :label="$t('common.fullscreen')"
-        />
-      </v-flex>
+      <c-enabled-field
+        v-field="form.fullscreen"
+        :label="$t('common.fullscreen')"
+      />
     </v-layout>
     <v-btn
       class="secondary ml-0"
@@ -49,7 +46,7 @@
     >
       {{ $t('modals.createPlaylist.errors.emptyTabs') }}
     </c-alert>
-  </div>
+  </v-layout>
 </template>
 
 <script>

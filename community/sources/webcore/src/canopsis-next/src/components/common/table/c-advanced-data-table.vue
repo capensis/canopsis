@@ -4,6 +4,7 @@
       <v-flex v-if="shownSearch" xs4>
         <c-search
           v-if="search"
+          :label="searchLabel"
           @submit="updateSearch"
         />
         <c-advanced-search
@@ -66,6 +67,10 @@
       checkbox-color="primary"
       @update:options="updateOptions"
     >
+      <template v-if="hasHeaderSelectSlot" #header.data-table-select="props">
+        <slot name="header.data-table-select" v-bind="props" />
+      </template>
+
       <template v-if="hasItemSlot" #item="props">
         <slot name="item" v-bind="props" />
       </template>
@@ -240,6 +245,10 @@ export default {
       type: Object,
       required: false,
     },
+    searchLabel: {
+      type: String,
+      default: '',
+    },
     tableClass: {
       type: [String, Object],
       required: false,
@@ -325,6 +334,10 @@ export default {
 
     visibleItems() {
       return this.options?.itemsPerPage ? this.items.slice(0, this.options?.itemsPerPage) : this.items;
+    },
+
+    hasHeaderSelectSlot() {
+      return this.$slots['header.data-table-select'] || this.$scopedSlots['header.data-table-select'];
     },
 
     hasItemSlot() {

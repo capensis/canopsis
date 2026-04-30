@@ -5,11 +5,23 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
+    :select-all="removable || updatable"
     advanced-pagination
     expand
     search
     @update:options="$emit('update:options', $event)"
   >
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="updatable"
+        :disablable="updatable"
+        playlist
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
+      />
+    </template>
     <template #fullscreen="{ item }">
       <c-enabled :value="item.fullscreen" />
     </template>
@@ -20,38 +32,40 @@
       <c-enabled :value="item.enabled" />
     </template>
     <template #actions="{ item }">
-      <c-action-btn :tooltip="$t('common.play')">
-        <template #button="">
-          <v-btn
-            :to="getPlaylistRouteById(item._id, true)"
-            class="mx-1 ma-0"
-            icon
-          >
-            <v-icon>play_arrow</v-icon>
-          </v-btn>
-        </template>
-      </c-action-btn>
-      <c-copy-btn
-        :value="getPlaylistRouteFullUrlById(item._id)"
-        :tooltip="$t('common.copyLink')"
-        @success="onSuccessCopied"
-        @error="onErrorCopied"
-      />
-      <c-action-btn
-        v-if="duplicable"
-        type="duplicate"
-        @click="$emit('duplicate', item)"
-      />
-      <c-action-btn
-        v-if="updatable"
-        type="edit"
-        @click="$emit('edit', item)"
-      />
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove', item._id)"
-      />
+      <v-layout align-center>
+        <c-action-btn :tooltip="$t('common.play')">
+          <template #button="">
+            <v-btn
+              :to="getPlaylistRouteById(item._id, true)"
+              class="mx-1 ma-0"
+              icon
+            >
+              <v-icon>play_arrow</v-icon>
+            </v-btn>
+          </template>
+        </c-action-btn>
+        <c-copy-btn
+          :value="getPlaylistRouteFullUrlById(item._id)"
+          :tooltip="$t('common.copyLink')"
+          @success="onSuccessCopied"
+          @error="onErrorCopied"
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
+          @click="$emit('duplicate', item)"
+        />
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
+          @click="$emit('remove', item._id)"
+        />
+      </v-layout>
     </template>
     <template #expand="{ item }">
       <playlist-list-expand-item :playlist="item" />

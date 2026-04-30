@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pattern-progress Renders \`pattern-progress\` in failed state 1`] = `
+<div
+  class="c-progress-overlay-stub c-patterns-field__progress-overlay"
+  transition=""
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light error--text v-icon--no-fill"
+    style="font-size: 50px;"
+  >
+    error_outline
+  </i>
+  <div
+    class="layout gap-4 mt-3 column"
+  >
+    <span
+      class="error--text text-h6 font-weight-regular"
+    >
+      Optimization failed : test reason
+    </span>
+    <div
+      class="layout gap-2 justify-center"
+    >
+      <button
+        class="v-btn v-btn--outlined theme--light v-size--default primary--text"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Close
+        </span>
+      </button>
+      <button
+        class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Try again
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pattern-progress Renders \`pattern-progress\` in progress state 1`] = `
+<div
+  class="c-progress-overlay-stub c-patterns-field__progress-overlay"
+  transition=""
+>
+  <div
+    class="layout gap-4 mt-3 justify-center column"
+  >
+    <span
+      class="primary--text text-h6 font-weight-regular"
+    >
+      Optimization in progress...
+    </span>
+    <div
+      class="layout justify-center"
+    >
+      <button
+        class="v-btn v-btn--outlined theme--light v-size--default primary--text"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Cancel optimization
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

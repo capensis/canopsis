@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <v-layout class="gap-2" column>
+    <c-enabled-field
+      v-field="form.enabled"
+      hide-details
+      with-background
+    />
     <snmp-rule-form-module-form v-field="form.oid" />
     <v-layout>
       <v-flex xs12>
@@ -52,7 +57,7 @@
       v-field="form.extra"
       :items="selectedModuleMibObjects"
     />
-  </div>
+  </v-layout>
 </template>
 
 <script>

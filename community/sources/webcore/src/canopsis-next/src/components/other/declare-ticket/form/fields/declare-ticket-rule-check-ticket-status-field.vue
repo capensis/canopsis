@@ -33,7 +33,7 @@
               v-field="form.ticket_status"
               :name="`${name}.ticket_status_source`"
               :disabled="disabled"
-              :variables="templateVars.ticket"
+              :variables="templateVars.ticket_status"
             />
             <declare-ticket-rule-ticket-status-mapping-field
               v-field="form.status_mapping"

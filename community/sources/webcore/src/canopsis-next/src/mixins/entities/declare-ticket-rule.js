@@ -22,6 +22,8 @@ export const entitiesDeclareTicketRuleMixin = {
       fetchTestDeclareTicketExecutionWebhooksResponse: 'fetchTestDeclareTicketExecutionWebhooksResponse',
       bulkRemoveDeclareTicketRules: 'bulkRemove',
       bulkCreateDeclareTicketExecution: 'bulkCreateDeclareTicketExecution',
+      bulkEnableDeclareTicketRules: 'bulkEnable',
+      bulkDisableDeclareTicketRules: 'bulkDisable',
     }),
   },
 };

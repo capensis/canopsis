@@ -8,6 +8,7 @@ exports[`create-filter Renders \`create-filter\` with all parameters 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -28,6 +29,7 @@ exports[`create-filter Renders \`create-filter\` with all parameters 1`] = `
         withpbehavior="true"
         withtitle="true"
       />
+      <!---->
     </div>
     <div
       class="actions"
@@ -65,6 +67,7 @@ exports[`create-filter Renders \`create-filter\` with empty modal 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -80,6 +83,7 @@ exports[`create-filter Renders \`create-filter\` with empty modal 1`] = `
         autofocus="true"
         form="[object Object]"
       />
+      <!---->
     </div>
     <div
       class="actions"

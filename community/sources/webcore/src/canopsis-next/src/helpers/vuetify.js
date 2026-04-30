@@ -21,11 +21,11 @@ export const waitVuetifyAnimation = () => promisedWait(VUETIFY_ANIMATION_DELAY);
  * @returns {number} The maximum z-index value.
  */
 export const getMaxZIndex = (base, minZIndex = 6, exclude = []) => {
-  if (!base) {
-    return minZIndex;
-  }
+  const zis = [minZIndex];
 
-  const zis = [minZIndex, getZIndex(base)];
+  if (base) {
+    zis.push(getZIndex(base));
+  }
 
   const activeElements = [
     ...document.getElementsByClassName('v-menu__content--active'),
@@ -40,7 +40,7 @@ export const getMaxZIndex = (base, minZIndex = 6, exclude = []) => {
     }
   }
 
-  return Math.max(...zis);
+  return Math.max(...zis) + 1;
 };
 
 export const getSelectionText = (items, selectionItem, itemValue = 'value', itemText = 'text') => {

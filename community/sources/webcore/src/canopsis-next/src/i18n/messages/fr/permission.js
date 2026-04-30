@@ -61,6 +61,7 @@ export default {
     [USER_PERMISSIONS_GROUPS.apiRules]: 'Règles',
     [USER_PERMISSIONS_GROUPS.apiRemediation]: 'Remédiation',
     [USER_PERMISSIONS_GROUPS.apiPlanning]: 'Planification',
+    [USER_PERMISSIONS_GROUPS.apiLlmChat]: 'Chat LLM',
     [USER_PERMISSIONS_GROUPS.technical]: 'Technique',
     [USER_PERMISSIONS_GROUPS.technicalAdmin]: 'Admin',
     [USER_PERMISSIONS_GROUPS.technicalAdminCommunication]: 'Communication',
@@ -254,9 +255,11 @@ export default {
     [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Test de modèle',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'Jetons d\'authentification externes',
+    [USER_PERMISSIONS.technical.jobManagement]: 'Jobs',
     [USER_PERMISSIONS.technical.commentTemplate]: 'Modèles de commentaires',
     [USER_PERMISSIONS.technical.externalDataTable]: 'Données externes',
     [USER_PERMISSIONS.technical.entityInfoProperty]: 'Informations d\'entité',
+    [USER_PERMISSIONS.technical.llm]: 'LLMs',
 
     /**
      * Technical Admin Access

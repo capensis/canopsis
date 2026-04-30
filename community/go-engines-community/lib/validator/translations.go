@@ -74,6 +74,56 @@ func getTranslations() map[string]map[string]string {
 			types.LocaleEn: "The field",
 			types.LocaleFr: "Le champ",
 		},
+		"meta_alarm_rule": {
+			types.LocaleEn: "meta alarm rule",
+			types.LocaleFr: "règle de méta-alarme",
+		},
+		"category": {
+			types.LocaleEn: "category",
+			types.LocaleFr: "catégorie",
+		},
+		"pbehavior": {
+			types.LocaleEn: "pbehavior",
+			types.LocaleFr: "comportement périodique",
+		},
+		"pbehavior_type": {
+			types.LocaleEn: "pbehavior type",
+			types.LocaleFr: "type de comportement périodique",
+		},
+		"pbehavior_reason": {
+			types.LocaleEn: "pbehavior reason",
+			types.LocaleFr: "raison de comportement périodique",
+		},
+
+		// LLM
+		"llm_pattern_empty_group": {
+			types.LocaleEn: "Empty group in {0}.",
+			types.LocaleFr: "Groupe vide dans {0}.",
+		},
+		"llm_pattern_unsupported_field": {
+			types.LocaleEn: "The field '{0}' ({1}) doesn't exist.",
+			types.LocaleFr: "Le champ '{0}' ({1}) n'existe pas.",
+		},
+		"llm_pattern_forbidden_field": {
+			types.LocaleEn: "The field '{0}' is a forbidden {1} in the {2} context.",
+			types.LocaleFr: "Le champ '{0}' est un {1} interdit dans le contexte {2}.",
+		},
+		"llm_pattern_unsupported_cond": {
+			types.LocaleEn: "The '{0}' condition is not allowed for the '{1}' field in {2}.",
+			types.LocaleFr: "La condition '{0}' n'est pas autorisée pour le champ '{1}' dans {2}.",
+		},
+		"llm_pattern_wrong_cond_val": {
+			types.LocaleEn: "Wrong condition value for the field '{0}' in {1}.",
+			types.LocaleFr: "Valeur de condition incorrecte pour le champ '{0}' dans {1}.",
+		},
+		"llm_pattern_unsupported_field_type": {
+			types.LocaleEn: "The '{0}' field type is not allowed for the '{1}' field in {2}.",
+			types.LocaleFr: "Le type de champ '{0}' n'est pas autorisé pour le champ '{1}' dans {2}.",
+		},
+		"llm_pattern_name_not_exist": {
+			types.LocaleEn: "{0} '{1}' ({2}) doesn't exist.",
+			types.LocaleFr: "{0} '{1}' ({2}) n'existe pas.",
+		},
 	}
 }
 
