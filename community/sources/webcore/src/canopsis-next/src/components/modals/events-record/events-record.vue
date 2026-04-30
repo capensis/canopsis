@@ -35,7 +35,7 @@
                 <events-record-events-filter
                   :events-record-id="eventsRecordId"
                   :count="config.eventsRecord.count"
-                  :has-filter-applied="hasFilterApplied"
+                  :query="query"
                   @apply:filter="applyEventFilter"
                   @reset:filter="resetFilter"
                 />
@@ -196,8 +196,6 @@ export default {
 
     const { updateOptions } = useQueryOptions(query, updateQuery);
 
-    const hasFilterApplied = computed(() => query.value.event_pattern !== undefined);
-
     const resetFilter = () => removeQueryField('event_pattern');
 
     /**
@@ -289,7 +287,6 @@ export default {
       activeTab,
       count,
       isRecording,
-      hasFilterApplied,
       patternForm,
       isResending,
       resendingDisabled,
