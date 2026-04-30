@@ -44,6 +44,7 @@
       v-field="form.event_records"
       :history="history.event_records"
     />
+    <storage-settings-llm-chat-form v-field="form.llm_chat" />
     <storage-settings-connector-anomalies-form v-field="form.connector_anomalies" />
   </v-layout>
 </template>
@@ -62,6 +63,7 @@ import StorageSettingsAlarmExternalTagForm from './storage-settings-alarm-extern
 import StorageSettingsEntityUnlinkedForm from './storage-settings-entity-unlinked-form.vue';
 import StorageSettingsEventsRecordsForm from './storage-settings-events-records-form.vue';
 import StorageSettingsEntityInfosLogForm from './storage-settings-entity-infos-log-form.vue';
+import StorageSettingsLlmChatForm from './storage-settings-llm-chat-form.vue';
 import StorageSettingsConnectorAnomaliesForm from './storage-settings-connector-anomalies-form.vue';
 
 export default {
@@ -80,6 +82,7 @@ export default {
     StorageSettingsAlarmForm,
     StorageSettingsEventsRecordsForm,
     StorageSettingsEntityInfosLogForm,
+    StorageSettingsLlmChatForm,
     StorageSettingsConnectorAnomaliesForm,
   },
   model: {

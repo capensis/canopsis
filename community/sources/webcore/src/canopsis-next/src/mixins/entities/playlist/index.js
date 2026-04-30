@@ -16,6 +16,9 @@ export const entitiesPlaylistMixin = {
       createPlaylist: 'create',
       updatePlaylist: 'update',
       removePlaylist: 'remove',
+      bulkEnablePlaylists: 'bulkEnable',
+      bulkDisablePlaylists: 'bulkDisable',
+      bulkRemovePlaylists: 'bulkRemove',
     }),
   },
 };

@@ -19,6 +19,9 @@ export const entitiesEventFilterMixin = {
       createEventFilter: 'create',
       updateEventFilter: 'update',
       removeEventFilter: 'remove',
+      bulkEnableEventFilters: 'bulkEnable',
+      bulkDisableEventFilters: 'bulkDisable',
+      bulkRemoveEventFilters: 'bulkRemove',
     }),
   },
 };

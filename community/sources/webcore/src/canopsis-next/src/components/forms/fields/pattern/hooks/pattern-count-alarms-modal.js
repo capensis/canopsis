@@ -1,28 +1,43 @@
-import { MODALS } from '@/constants';
+import { PATTERNS_FIELDS, MODALS } from '@/constants';
 
+import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
-import { useI18n } from '@/hooks/i18n';
+import { useStoreModuleHooks } from '@/hooks/store';
 import { useModals } from '@/hooks/modals';
-import { useAlarm } from '@/hooks/store/modules/alarm';
+import { useI18n } from '@/hooks/i18n';
 
 /**
- * Hook for showing alarms modal filtered by patterns
+ * Hook for managing pattern count alarms modal functionality.
  *
- * @returns {Object} An object containing the showAlarmsModalByPatterns function
+ * @param {import('vue').Ref<Object>} value - Reactive reference to the pattern value object.
+ * @returns {Object} Object containing showPatternAlarmsModal function.
+ * @property {Function} showPatternAlarmsModal - Function to show the alarms modal with pattern filters.
  */
-export const usePatternCountAlarmsModal = () => {
+export const usePatternCountAlarmsModal = (props) => {
   const modals = useModals();
   const { t } = useI18n();
-  const { fetchAlarmsListWithoutStore } = useAlarm();
+  const { useActions } = useStoreModuleHooks('alarm');
+  const { fetchAlarmsListWithoutStore } = useActions({ fetchAlarmsListWithoutStore: 'fetchListWithoutStore' });
 
   /**
-   * Shows alarms modal filtered by patterns
+   * Shows a modal with alarms filtered by the specified pattern names.
    *
-   * @param {Object} patterns - Patterns object containing alarm_pattern, entity_pattern,
-   *                            pbehavior_pattern and other pattern filters
+   * @param {Array<string>} [patternNames=[PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior]]
    */
-  const showAlarmsModalByPatterns = (patterns) => {
+  const showPatternAlarmsModal = (
+    patternNames = [
+      PATTERNS_FIELDS.alarm,
+      PATTERNS_FIELDS.entity,
+      PATTERNS_FIELDS.pbehavior,
+    ],
+  ) => {
+    const patterns = patternNames.reduce((acc, patternName) => {
+      acc[patternName] = formGroupsToPatternRulesQuery(props.value[patternName]?.groups);
+
+      return acc;
+    }, {});
+
     const widget = generatePreparedDefaultAlarmListWidget();
 
     modals.show({
@@ -40,7 +55,5 @@ export const usePatternCountAlarmsModal = () => {
     });
   };
 
-  return {
-    showAlarmsModalByPatterns,
-  };
+  return { showPatternAlarmsModal };
 };

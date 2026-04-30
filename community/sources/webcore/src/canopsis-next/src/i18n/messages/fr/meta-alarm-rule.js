@@ -41,6 +41,9 @@ export default {
   filterByLabelEnabledTooltip: 'Certaines balises peuvent être définies au format Tag:Value, par exemple Env:Prod.\nAvec le filtre par libellé, seules les balises avec le libellé défini seront copiées des alarmes enfants vers la méta-alarme.',
   copyFromLastChild: 'Copie du dernier enfant',
   copyFromLastChildTooltip: 'Lorsque cette option est activée, la valeur infos est copiée à partir d\'une infos d\'une dernière alarme enfant. Le nom infos de l\'alarme enfant doit être défini dans ce cas.',
+  massRemove: 'Supprimer les règles de méta-alarme',
+  massEnable: 'Activer les règles de méta-alarme',
+  massDisable: 'Désactiver les règles de méta-alarme',
   steps: {
     basics: 'Les bases',
     defineType: 'Définir le type',

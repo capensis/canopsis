@@ -34,6 +34,7 @@ This is a **Vue 2.7.14** application with:
 - Prioritize maintainability and clarity over premature optimization
 - Use early returns (guard clauses) to simplify logic flow
 - Always verify your solution thoroughly — do not assume something "should work"
+- Don't touch folders and files not in the canopsis-next
 
 ## Documentation
 
@@ -150,7 +151,7 @@ export default {
 - `v-field` is a custom compiled directive which works similar as `v-model`, but it just emits changes to the parent component instead of mutating. Use this directive
 - Components with name starts from `c-` should register globally. We don't need to import them in the components
 - Don't create component with this prefix if we don't need that they will be global.
-- Don't import components which name starts from `c-`. It's global components. 
+- Don't import components which name starts from `c-`. It's global components.
 
 ```html
 <c-name-field

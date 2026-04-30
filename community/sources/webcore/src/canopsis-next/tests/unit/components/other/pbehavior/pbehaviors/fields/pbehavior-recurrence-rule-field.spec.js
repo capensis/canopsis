@@ -41,7 +41,7 @@ describe('pbehavior-recurrence-rule-field', () => {
 
     selectCreateRruleButton(wrapper).triggerCustomEvent('click');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createRecurrenceRule,
         config: {
@@ -83,7 +83,7 @@ describe('pbehavior-recurrence-rule-field', () => {
 
     selectRemoveRruleButton(wrapper).triggerCustomEvent('click');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {

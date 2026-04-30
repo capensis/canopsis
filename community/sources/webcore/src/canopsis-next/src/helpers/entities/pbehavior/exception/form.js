@@ -13,24 +13,33 @@ import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
  * @property {boolean} deletable
  * @property {string} description
  * @property {string} name
+ * @property {boolean} hidden
  * @property {PbehaviorExdate[]} exdates
  */
 
 /**
- * @typedef {PbehaviorException & ObjectKey} PbehaviorExceptionForm
+ * @typedef {ObjectKey} PbehaviorExceptionForm
+ * @property {string} _id
+ * @property {number} created
+ * @property {boolean} deletable
+ * @property {string} description
+ * @property {string} name
+ * @property {boolean} visible
+ * @property {PbehaviorExdate[]} exdates
  */
 
 /**
  * Convert pbehavior exception data to date exception form
  *
- * @param {Object} [exception = {}]
+ * @param {PbehaviorException} [exception = {}]
  * @param {string} [timezone = getLocalTimezone()]
- * @return {Object}
+ * @return {PbehaviorExceptionForm}
  */
 export function pbehaviorExceptionToForm(exception = {}, timezone = getLocalTimezone()) {
   return {
     name: exception.name ?? '',
     description: exception.description ?? '',
+    visible: !(exception.hidden ?? false),
     exdates: exception.exdates
       ? addKeyInEntities(exception.exdates.map(({ begin, end, type }) => ({
         begin: convertDateToDateObjectByTimezone(begin, timezone),
@@ -58,12 +67,12 @@ export function pbehaviorExceptionImportToForm(exceptionImport = {}) {
 /**
  * Convert exception form to pbehavior exception data
  *
- * @param {Object} [exceptionForm = {}]
+ * @param {PbehaviorExceptionForm} [exceptionForm = {}]
  * @param {string} [timezone = getLocalTimezone()]
- * @return {Object}
+ * @return {PbehaviorException}
  */
 export function formToPbehaviorException(exceptionForm = {}, timezone = getLocalTimezone()) {
-  const { exdates, ...form } = exceptionForm;
+  const { exdates, visible, ...form } = exceptionForm;
 
   return {
     exdates: removeKeyFromEntities(exdates).map(({ type, begin, end }) => ({
@@ -71,6 +80,7 @@ export function formToPbehaviorException(exceptionForm = {}, timezone = getLocal
       begin: convertDateToTimestampByTimezone(begin, timezone),
       end: convertDateToTimestampByTimezone(end, timezone),
     })),
+    hidden: !visible,
     ...form,
   };
 }

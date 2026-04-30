@@ -2,13 +2,15 @@
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -19,9 +21,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Alarm list settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Alarm list settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -58,13 +69,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -75,9 +88,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Alarm list settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Alarm list settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -111,13 +133,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -128,9 +152,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Alarm statistics settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Alarm statistics settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -164,13 +197,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: availability-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -181,9 +216,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: availability-set
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Availability settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Availability settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -217,13 +261,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: availability-set
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -234,9 +280,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settin
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Bar chart settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Bar chart settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -270,13 +325,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settin
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -287,9 +344,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Context table settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Context table settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -323,13 +389,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -340,9 +408,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Counter settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Counter settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -376,13 +453,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: external-data-table-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -393,9 +472,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: external-data-ta
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          External data settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                External data settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -429,13 +517,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: external-data-ta
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -446,9 +536,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-setti
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Line chart settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Line chart settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -482,13 +581,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-setti
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -499,9 +600,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`]
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Mapping widget settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Mapping widget settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -535,13 +645,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`]
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -552,9 +664,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Numbers settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Numbers settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -588,13 +709,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -605,9 +728,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settin
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Pie chart settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Pie chart settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -641,13 +773,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settin
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -658,9 +792,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Service weather settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Service weather settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -694,13 +837,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -711,9 +856,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-s
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Stats calendar settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Stats calendar settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -747,13 +901,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-s
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -764,9 +920,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Testing weather
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Testing weather
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -800,13 +965,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -817,9 +984,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          Text settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                Text settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -853,13 +1029,15 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: user-statistics-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"
   >
-    <div>
+    <div
+      class="sidebar-wrapper__sticky-title"
+    >
       <div
         class="v-list v-sheet theme--light secondary"
         role="list"
@@ -870,9 +1048,18 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: user-statistics-
           tabindex="-1"
         >
           <div
-            class="v-list-item__title white--text text-subtitle-1"
+            class="v-list-item__title text-subtitle-1"
           >
-          User statistics settings
+            <div
+              class="layout gap-3 align-center"
+            >
+              <!---->
+              <span
+                class="text-h6 white--text"
+              >
+                User statistics settings
+              </span>
+            </div>
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
@@ -906,8 +1093,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: user-statistics-
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` without sidebar name 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--close v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; top: 0px; transform: translateX(100%); width: 450px;"
+  class="sidebar-wrapper v-navigation-drawer v-navigation-drawer--close v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(100%); width: 0px; z-index: 7;"
 >
   <div
     class="v-navigation-drawer__content"

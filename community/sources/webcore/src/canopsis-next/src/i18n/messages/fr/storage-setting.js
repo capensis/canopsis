@@ -83,6 +83,10 @@ export default {
     title: 'Filtre d\'événements : journaux d\'enrichissement d\'entité',
     deleteAfter: 'Supprimer les journaux de filtre d\'événements antérieurs à',
   },
+  llmChat: {
+    title: 'Discussions IA',
+    deleteHistory: 'Supprimer l\'historique des discussions IA',
+  },
   history: {
     scriptLaunched: 'Script lancé à {launchedAt}.',
     alarm: {

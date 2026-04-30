@@ -5,7 +5,7 @@
     :loading="pending"
     :headers="headers"
     :total-items="totalItems"
-    :select-all="removable"
+    :select-all="removable || updatable"
     :advanced-search-attributes="advancedSearchAttributes"
     advanced-search
     advanced-pagination
@@ -13,13 +13,16 @@
     expand
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected, selectedKeys }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="updatable"
+        :disablable="updatable"
+        dynamic-info
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
-      <c-db-export-btn :ids="selectedKeys" dynamic-info />
     </template>
     <template #created="{ item }">
       {{ item.created | date }}
@@ -116,8 +119,9 @@ export default {
     ]);
 
     return {
-      headers,
       advancedSearchAttributes,
+
+      headers,
     };
   },
 };

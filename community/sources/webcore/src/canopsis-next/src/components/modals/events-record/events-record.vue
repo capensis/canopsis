@@ -82,7 +82,7 @@
 <script>
 import { computed, ref, watch, onMounted } from 'vue';
 
-import { MODALS, EVENT_FILTER_PATTERN_FIELDS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { pickIds } from '@/helpers/array';
 import { convertDateToString } from '@/helpers/date/date';
@@ -265,17 +265,13 @@ export default {
       name: MODALS.applyEventFilter,
       config: {
         title: t('eventsRecord.applyEventFilter'),
+        eventsRecordId: eventsRecordId.value,
         eventPattern: query.value.event_pattern,
-        excludedAttributes: [
-          { value: EVENT_FILTER_PATTERN_FIELDS.eventType },
-          { value: EVENT_FILTER_PATTERN_FIELDS.state },
-          { value: EVENT_FILTER_PATTERN_FIELDS.sourceType },
-          { value: EVENT_FILTER_PATTERN_FIELDS.extraInfos },
-          { value: EVENT_FILTER_PATTERN_FIELDS.longOutput },
-          { value: EVENT_FILTER_PATTERN_FIELDS.author },
-          { value: EVENT_FILTER_PATTERN_FIELDS.initiator },
-        ],
-        action: eventPattern => updateQueryField('event_pattern', eventPattern),
+        action: (eventPattern) => {
+          updateQueryField('event_pattern', eventPattern);
+
+          return fetchList();
+        },
       },
     });
 

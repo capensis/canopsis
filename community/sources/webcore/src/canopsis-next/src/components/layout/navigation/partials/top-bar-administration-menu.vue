@@ -35,6 +35,7 @@ export default {
       USER_PERMISSIONS.technical.templateTesting,
       USER_PERMISSIONS.technical.viewImportExport,
       USER_PERMISSIONS.technical.notification.common,
+      USER_PERMISSIONS.technical.jobManagement,
     ];
 
     const accessLinks = [
@@ -107,6 +108,11 @@ export default {
         icon: 'steppers',
         permission: USER_PERMISSIONS.technical.anomalyMonitoredConnector,
       },
+      {
+        route: { name: ROUTES_NAMES.adminJobsManagement },
+        icon: '$vuetify.icons.ticket_status_job',
+        permission: USER_PERMISSIONS.technical.jobManagement,
+      },
     ];
 
     const customObjectsLinks = computed(() => [
@@ -140,6 +146,11 @@ export default {
         route: { name: ROUTES_NAMES.adminCustomObjectsTags },
         icon: 'local_offer',
         permission: USER_PERMISSIONS.technical.tag,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsLlms },
+        icon: '$vuetify.icons.robot',
+        permission: USER_PERMISSIONS.technical.llm,
       },
     ]);
 

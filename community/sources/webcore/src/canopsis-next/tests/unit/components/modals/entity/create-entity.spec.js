@@ -74,7 +74,7 @@ describe('create-entity', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(defaultEntity);
+    expect(action).toHaveBeenCalledWith(defaultEntity);
     expect($modals.hide).toHaveBeenCalledWith(modal);
   });
 
@@ -122,7 +122,7 @@ describe('create-entity', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith(modal);
+    expect($modals.hide).toHaveBeenCalledWith(modal);
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -150,7 +150,7 @@ describe('create-entity', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledWith(defaultEntity);
+    expect(action).toHaveBeenCalledWith(defaultEntity);
     expect($modals.hide).not.toHaveBeenCalled();
   });
 
@@ -179,11 +179,11 @@ describe('create-entity', () => {
 
     await flushPromises();
 
-    expect(consoleMock.error).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleMock.error).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       ...defaultEntity,
       name: customEntity.name,
     });
@@ -212,7 +212,7 @@ describe('create-entity', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       ...defaultEntity,
       name: newForm.name,
     });

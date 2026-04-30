@@ -18,5 +18,17 @@ export default createCRUDModule({
     fetchEventFilterFailuresListWithoutStore(context, { id, params } = {}) {
       return request.get(`${API_ROUTES.eventFilter.list}/${id}/failures`, { params });
     },
+
+    bulkEnable(context, { data }) {
+      return request.put(API_ROUTES.eventFilter.bulkEnable, data);
+    },
+
+    bulkDisable(context, { data }) {
+      return request.put(API_ROUTES.eventFilter.bulkDisable, data);
+    },
+
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.eventFilter.bulk, { data });
+    },
   },
 });

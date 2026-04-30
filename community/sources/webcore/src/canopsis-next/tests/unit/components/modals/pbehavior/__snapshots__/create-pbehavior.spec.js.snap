@@ -8,6 +8,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with empty modal 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -23,6 +24,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with empty modal 1`] = `
         form="[object Object]"
         pbehaviorcountertype="true"
       />
+      <!---->
     </div>
     <div
       class="actions"
@@ -60,6 +62,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with pbehavior 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -76,6 +79,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with pbehavior 1`] = `
         nopattern="true"
         pbehaviorcountertype="true"
       />
+      <!---->
     </div>
     <div
       class="actions"

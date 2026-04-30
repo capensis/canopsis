@@ -1,3 +1,5 @@
+import { get } from 'lodash';
+
 import TheSidebar from './components/the-sidebar.vue';
 import SidebarBase from './components/sidebar-base.vue';
 import sidebarStoreModule from './store';
@@ -27,8 +29,9 @@ export default {
         return {
           moduleName,
 
-          show: sidebar => store.dispatch(`${moduleName}/show`, sidebar),
-          hide: () => store.dispatch(`${moduleName}/hide`),
+          show: payload => store.dispatch(`${moduleName}/show`, payload),
+          hide: ({ id } = {}) => store.dispatch(`${moduleName}/hide`, { id: id || get(this.sidebar, 'id') }),
+          updateConfig: ({ id, config } = {}) => store.dispatch(`${moduleName}/updateConfig`, { id: id || get(this.sidebar, 'id'), config }),
         };
       },
     });

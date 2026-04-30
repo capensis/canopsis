@@ -22,6 +22,9 @@ export const entitiesPbehaviorReasonMixin = {
       updatePbehaviorReason: 'update',
       removePbehaviorReason: 'remove',
       fetchPbehaviorReasonByEntityId: 'fetchListByEntityId',
+      bulkHidePbehaviorReasons: 'bulkHide',
+      bulkUnhidePbehaviorReasons: 'bulkUnhide',
+      bulkRemovePbehaviorReasons: 'bulkRemove',
     }),
   },
 };

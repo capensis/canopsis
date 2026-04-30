@@ -179,6 +179,10 @@ export default {
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'External auth tokens',
   },
+  [USER_PERMISSIONS.technical.jobManagement]: {
+    title: 'Jobs',
+    message: 'Manage jobs for ticket status.',
+  },
   [USER_PERMISSIONS.technical.widgetTemplate]: {
     title: 'Widget templates',
   },
@@ -187,6 +191,10 @@ export default {
   },
   [USER_PERMISSIONS.technical.entityInfoProperty]: {
     title: 'Entity infos',
+  },
+  [USER_PERMISSIONS.technical.llm]: {
+    title: 'LLMs',
+    message: 'LLM module is used to manage LLMs for Canopsis AI assistant.',
   },
 
   /**

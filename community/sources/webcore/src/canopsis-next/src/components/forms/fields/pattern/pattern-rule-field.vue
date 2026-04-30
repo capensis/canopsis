@@ -309,6 +309,7 @@ export default {
             duration: this.rule.duration,
             disabled: this.disabled,
             name: this.valueFieldName,
+            medium: true,
           },
           on: {
             input: this.updateDuration,
@@ -346,7 +347,7 @@ export default {
     },
 
     shownOperatorField() {
-      return this.operators.length !== 1 || this.operators[0] !== this.rule.operator;
+      return this.operators.length > 0 || this.operators[0] !== this.rule.operator;
     },
 
     objectDictionaryName() {
