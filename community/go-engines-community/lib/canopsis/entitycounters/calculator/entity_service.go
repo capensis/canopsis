@@ -39,6 +39,7 @@ func NewEntityServiceCountersCalculator(dbClient mongo.DbClient, executor templa
 				"services":           1,
 				"services_to_add":    1,
 				"services_to_remove": 1,
+				"inherited_services": 1,
 			},
 		),
 	}
@@ -65,7 +66,12 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 
 	cursor, err := s.entityCollection.Aggregate(ctx, []bson.M{
 		{
-			"$match": bson.M{"services": service.ID},
+			"$match": bson.M{
+				"$or": []bson.M{
+					{"services": service.ID},
+					{"inherited_services": service.ID},
+				},
+			},
 		},
 		{
 			"$project": bson.M{
@@ -114,6 +120,8 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 
 	defer cursor.Close(ctx)
 
+	writeModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize)
+
 	for cursor.Next(ctx) {
 		var depEnt types.AlarmWithEntity
 		err := cursor.Decode(&depEnt)
@@ -121,12 +129,35 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 			return nil, err
 		}
 
-		inherited := false
+		var matchedInherited bool
 		if counters.Rule != nil && len(counters.Rule.InheritedEntityPattern) > 0 {
-			inherited, err = match.MatchEntityPattern(counters.Rule.InheritedEntityPattern, &depEnt.Entity)
+			matchedInherited, err = match.MatchEntityPattern(counters.Rule.InheritedEntityPattern, &depEnt.Entity)
 			if err != nil {
 				return nil, err
 			}
+		}
+
+		inherited := entitycounters.InheritedNone
+		if matchedInherited {
+			inherited = entitycounters.InheritedWith
+			writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+				SetFilter(bson.M{"_id": depEnt.Entity.ID}).
+				SetUpdate(bson.M{"$addToSet": bson.M{"inherited_services": service.ID}}),
+			)
+		} else {
+			writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+				SetFilter(bson.M{"_id": depEnt.Entity.ID}).
+				SetUpdate(bson.M{"$pull": bson.M{"inherited_services": service.ID}}),
+			)
+		}
+
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			_, err = s.entityCollection.BulkWrite(ctx, writeModels)
+			if err != nil {
+				return nil, fmt.Errorf("unable to bulk write inherited services: %w", err)
+			}
+
+			writeModels = writeModels[:0]
 		}
 
 		curActive := depEnt.Entity.PbehaviorInfo.IsActive()
@@ -153,6 +184,13 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 	counters.Output, err = s.templateExecutor.Execute(counters.OutputTemplate, counters)
 	if err != nil {
 		return nil, err
+	}
+
+	if len(writeModels) > 0 {
+		_, err = s.entityCollection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return nil, fmt.Errorf("unable to bulk write inherited services: %w", err)
+		}
 	}
 
 	_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": service.ID}, bson.M{"$set": counters}, options.UpdateOne().SetUpsert(true))
@@ -275,7 +313,7 @@ func (s *entityServiceCountersCalculator) calculateCounters(
 	}
 
 	if len(info.Services) == 0 && len(info.ServicesToRemove) == 0 {
-		return false, nil, err
+		return false, nil, nil
 	}
 
 	var calcData entitycounters.EntityServiceCountersCalcData
@@ -322,8 +360,9 @@ func (s *entityServiceCountersCalculator) calculateCounters(
 		calcData.ServicesToAdd[impServ] = true
 	}
 
-	if strategy.CanSkip(calcData) {
-		return false, nil, err
+	calcData.InheritedServices = make(map[string]bool, len(info.InheritedServices))
+	for _, impServ := range info.InheritedServices {
+		calcData.InheritedServices[impServ] = true
 	}
 
 	serviceIDs := append(info.Services, info.ServicesToRemove...)
@@ -345,6 +384,9 @@ func (s *entityServiceCountersCalculator) calculateCounters(
 
 	defer cursor.Close(ctx)
 
+	inheritedServices := make([]string, 0, len(info.InheritedServices))
+	inheritedServicesChanged := false
+
 	for cursor.Next(ctx) {
 		var counters entitycounters.EntityCounters
 		err = cursor.Decode(&counters)
@@ -352,29 +394,61 @@ func (s *entityServiceCountersCalculator) calculateCounters(
 			return false, nil, err
 		}
 
-		if counters.Rule != nil && len(counters.Rule.InheritedEntityPattern) > 0 {
-			calcData.Inherited, err = match.MatchEntityPattern(counters.Rule.InheritedEntityPattern, entity)
+		calcData.Counters = counters.Copy()
+		calcData.CurInherited = false
+		calcData.PrevInherited = calcData.InheritedServices[counters.ID]
+
+		if counters.Rule != nil && len(counters.Rule.InheritedEntityPattern) != 0 && !calcData.ServicesToRemove[counters.ID] {
+			calcData.CurInherited, err = match.MatchEntityPattern(counters.Rule.InheritedEntityPattern, entity)
 			if err != nil {
 				return false, nil, err
 			}
+
+			if calcData.CurInherited {
+				inheritedServices = append(inheritedServices, counters.ID)
+			}
 		}
 
-		calcData.Counters = counters.Copy()
+		if calcData.CurInherited == calcData.PrevInherited {
+			if strategy.CanSkip(calcData) {
+				continue
+			}
+		} else {
+			inheritedServicesChanged = true
+		}
+
 		newCounters := strategy.Calculate(calcData)
+
 		newOutput, err := s.templateExecutor.Execute(newCounters.OutputTemplate, newCounters)
 		if err != nil {
 			return false, nil, err
 		}
 
-		countersUpdated = true
+		update := bson.M{}
+		if counters.Output != newOutput {
+			update["$set"] = bson.M{"output": newOutput}
+		}
+
+		diff := newCounters.Sub(counters)
+		if len(diff) > 0 {
+			update["$inc"] = diff
+		}
+
+		if len(update) == 0 {
+			continue
+		}
+
 		updateCountersModels = append(
 			updateCountersModels,
 			mongodriver.
 				NewUpdateOneModel().
 				SetFilter(bson.M{"_id": newCounters.ID}).
-				SetUpdate(bson.M{"$inc": newCounters.Sub(counters), "$set": bson.M{"output": newOutput}}).
+				SetUpdate(update).
 				SetUpsert(true),
 		)
+
+		countersUpdated = true
+
 		newWorstState := newCounters.GetWorstState()
 		if counters.Output == newOutput && counters.GetWorstState() == newWorstState {
 			continue
@@ -395,6 +469,11 @@ func (s *entityServiceCountersCalculator) calculateCounters(
 		}
 	}
 
+	err = cursor.Err()
+	if err != nil {
+		return false, nil, fmt.Errorf("failed to iterate over service counters: %w", err)
+	}
+
 	if len(updateCountersModels) > 0 {
 		_, err = s.serviceCountersCollection.BulkWrite(ctx, updateCountersModels)
 		if err != nil {
@@ -402,12 +481,22 @@ func (s *entityServiceCountersCalculator) calculateCounters(
 		}
 	}
 
-	_, err = s.entityCollection.UpdateOne(
-		ctx,
-		bson.M{"_id": entity.ID},
-		bson.M{"$unset": bson.M{"services_to_add": 1, "services_to_remove": 1}})
-	if err != nil {
-		return false, nil, err
+	if len(info.ServicesToAdd) > 0 || len(info.ServicesToRemove) > 0 || inheritedServicesChanged {
+		_, err = s.entityCollection.UpdateOne(
+			ctx,
+			bson.M{"_id": entity.ID},
+			bson.M{
+				"$set": bson.M{
+					"inherited_services": inheritedServices,
+				},
+				"$unset": bson.M{
+					"services_to_add":    1,
+					"services_to_remove": 1,
+				},
+			})
+		if err != nil {
+			return false, nil, err
+		}
 	}
 
 	return countersUpdated, updatedServiceInfos, nil
