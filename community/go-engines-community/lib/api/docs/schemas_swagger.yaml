@@ -1668,6 +1668,11 @@ definitions:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
+      connector_anomalies:
+        properties:
+          delete_after:
+            $ref: '#/definitions/datetime.DurationWithEnabled'
+        type: object
       entity:
         properties:
           archive_after:
