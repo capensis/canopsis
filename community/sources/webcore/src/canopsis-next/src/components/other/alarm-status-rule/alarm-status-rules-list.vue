@@ -5,25 +5,32 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
-    :select-all="removable"
+    :select-all="removable || updatable"
     expand
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected, selectedKeys }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="updatable"
+        :disablable="updatable"
+        :flapping-rule="flapping"
+        :resolve-rule="!flapping"
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
-      <c-db-export-btn :ids="selectedKeys" flapping-rule />
     </template>
     <template #duration="{ item }">
       <span>{{ item.duration | duration }}</span>
     </template>
     <template #priority="{ item }">
       {{ item.priority || '-' }}
+    </template>
+    <template #enabled="{ item }">
+      <c-enabled :value="item.enabled" />
     </template>
     <template #actions="{ item }">
       <v-layout>
@@ -55,10 +62,16 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 import AlarmStatusRulesListExpandItem from './partials/alarm-status-rules-list-expand-item.vue';
 
 export default {
-  components: { AlarmStatusRulesListExpandItem },
+  components: {
+    AlarmStatusRulesListExpandItem,
+  },
   props: {
     rules: {
       type: Array,
@@ -93,24 +106,23 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        { text: this.$t('common.id'), value: '_id' },
-        { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.duration'), value: 'duration', sortable: false },
-        { text: this.$t('common.priority'), value: 'priority' },
+  setup(props) {
+    const { t } = useI18n();
 
-        this.flapping && { text: this.$t('common.frequencyLimit'), value: 'freq_limit' },
+    const headers = computed(() => [
+      { text: t('common.id'), value: '_id' },
+      { text: t('common.name'), value: 'name' },
+      { text: t('common.duration'), value: 'duration', sortable: false },
+      { text: t('common.priority'), value: 'priority' },
+      { text: t('common.enabled'), value: 'enabled', sortable: false },
+      props.flapping && { text: t('common.frequencyLimit'), value: 'freq_limit' },
+      { text: t('common.author'), value: 'author.display_name' },
+      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+    ].filter(Boolean));
 
-        { text: this.$t('common.author'), value: 'author.display_name' },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ].filter(Boolean);
-    },
+    return {
+      headers,
+    };
   },
 };
 </script>

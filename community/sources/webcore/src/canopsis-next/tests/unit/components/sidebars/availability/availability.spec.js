@@ -66,6 +66,7 @@ describe('availability-settings', () => {
   };
 
   const sidebar = {
+    id: 'test-sidebar-id',
     name: SIDE_BARS.availabilitySettings,
     config: {
       widget,

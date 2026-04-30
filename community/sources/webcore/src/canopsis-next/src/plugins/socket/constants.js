@@ -3,6 +3,7 @@ export const REQUEST_MESSAGES_TYPES = {
   join: 1,
   leave: 2,
   authenticate: 3,
+  send: 4,
 };
 
 export const RESPONSE_MESSAGES_TYPES = {
@@ -11,6 +12,8 @@ export const RESPONSE_MESSAGES_TYPES = {
   error: 2,
   close: 3,
   authenticated: 4,
+  joined: 5,
+  left: 6,
 };
 
 export const ICONS_RESPONSE_MESSAGES_TYPES = {

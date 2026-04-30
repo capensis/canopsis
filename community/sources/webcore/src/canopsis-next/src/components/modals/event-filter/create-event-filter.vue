@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <modal-wrapper text-class="position-relative" close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
@@ -11,6 +11,7 @@
           :type="type"
         >
           <template #default="{ templateVars, copyVars }">
+            <c-enabled-field v-model="form.enabled" with-background />
             <event-filter-form
               v-model="form"
               :template-vars="templateVars"
@@ -19,11 +20,17 @@
               :event-attributes="eventAttributes"
               :attributes-pending="pending"
             />
+            <ai-chat-sidebar
+              v-if="chatShown"
+              v-bind="chatOptions.bind"
+              v-on="chatOptions.on"
+            />
           </template>
         </template-testing-test-variables-wrapper>
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
           @click="close"
@@ -31,7 +38,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -44,9 +51,15 @@
 </template>
 
 <script>
-import { computed, ref, watch, inject } from 'vue';
+import {
+  computed,
+  ref,
+  watch,
+  inject,
+  toRef,
+} from 'vue';
 
-import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import { eventFilterToForm, formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
 import {
@@ -54,13 +67,15 @@ import {
   isEnrichmentEventFilterRuleType,
 } from '@/helpers/entities/event-filter/rule/entity';
 
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
 import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
@@ -74,6 +89,7 @@ export default {
   },
   components: {
     EventFilterForm,
+    AiChatSidebar,
     TemplateTestingTestVariablesWrapper,
     ModalWrapper,
   },
@@ -101,6 +117,17 @@ export default {
       eventAttributes,
     } = usePatternsFieldsFetching(fetchEventFilterPatternFields);
 
+    const {
+      shown: chatShown,
+      options: chatOptions,
+    } = useAiChatForm({
+      form,
+
+      modal: toRef(props, 'modal'),
+      ruleId: props.modal.config?.rule?._id,
+      context: LLM_SOCKET_CONTEXTS.eventFilter,
+    });
+
     const ruleId = computed(() => config.value.rule?._id);
     const title = computed(() => config.value.title ?? t('modals.createEventFilter.create.title'));
     const isEnrichment = computed(() => isEnrichmentEventFilterRuleType(form.value.type));
@@ -109,11 +136,13 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        const data = await config.value.action?.(formToEventFilter(form.value, system.timezone));
+        const result = await config.value.action?.(formToEventFilter(form.value, system.timezone));
+
+        await config.value.afterSubmit?.(result);
 
         close();
 
-        return data;
+        return result;
       },
     });
 
@@ -133,6 +162,8 @@ export default {
       isChangeEntity,
       isDisabled,
       submitting,
+      chatShown,
+      chatOptions,
       submit,
       close,
     };
