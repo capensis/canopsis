@@ -20,10 +20,8 @@ import (
 )
 
 const (
-	getLogQuery    = "SELECT id FROM action_log WHERE type = $1 AND value_type = $2 AND value_id = $3"
-	insertLogQuery = "INSERT INTO action_log (type, value_type, value_id, author, time, data) VALUES ($1, $2, $3, $4, $5, $6)"
-
-	workerPoolSize = 10
+	batchSize     = 500
+	flushInterval = 100 * time.Millisecond
 
 	redisLockTTLDuration     = 30 * time.Second
 	redisLockRefreshDuration = redisLockTTLDuration / 2
@@ -141,60 +139,6 @@ func NewActionLogger(
 	}
 }
 
-func (l *logger) log(ctx context.Context, log ActionLog) error {
-	pgPool, err := l.pgPoolProvider.Get(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to get pgPool: %w", err)
-	}
-
-	switch log.OperationType {
-	case mongo.ChangeStreamTypeInsert:
-		_, err = pgPool.Exec(ctx, insertLogQuery, logTypeCreate, log.ValueType, log.ValueID, log.GetCurAuthor(), log.Timestamp, log.CurDocument)
-	case mongo.ChangeStreamTypeUpdate:
-		err = pgPool.WithTransaction(ctx, func(ctx context.Context, tx pgx.Tx) error {
-			var objectID int
-			author := log.GetCurAuthor()
-
-			err := tx.QueryRow(ctx, getLogQuery, logTypeCreate, log.ValueType, log.ValueID).Scan(&objectID)
-			if errors.Is(err, pgx.ErrNoRows) {
-				// reconstruct action create log if it doesn't exist
-				_, err = tx.Exec(ctx, insertLogQuery, logTypeCreate, log.ValueType, log.ValueID,
-					cmp.Or(log.GetPrevAuthor(), author), cmp.Or(log.GetPrevCreated(), log.Timestamp), log.PrevDocument)
-			}
-
-			if err != nil {
-				return err
-			}
-
-			_, err = tx.Exec(ctx, insertLogQuery, logTypeUpdate, log.ValueType, log.ValueID, author, log.Timestamp, log.UpdateDescription)
-
-			return err
-		})
-	case mongo.ChangeStreamTypeDelete:
-		err = pgPool.WithTransaction(ctx, func(ctx context.Context, tx pgx.Tx) error {
-			var objectID int
-			author := log.GetPrevAuthor()
-
-			err := tx.QueryRow(ctx, getLogQuery, logTypeCreate, log.ValueType, log.ValueID).Scan(&objectID)
-			if errors.Is(err, pgx.ErrNoRows) {
-				// reconstruct action create log if it doesn't exist
-				_, err = tx.Exec(ctx, insertLogQuery, logTypeCreate, log.ValueType, log.ValueID,
-					author, cmp.Or(log.GetPrevCreated(), log.Timestamp), log.PrevDocument)
-			}
-
-			if err != nil {
-				return err
-			}
-
-			_, err = tx.Exec(ctx, insertLogQuery, logTypeDelete, log.ValueType, log.ValueID, author, log.Timestamp, nil)
-
-			return err
-		})
-	}
-
-	return err
-}
-
 func (l *logger) obtainLock(ctx context.Context) (libredis.Lock, error) {
 	for {
 		select {
@@ -310,13 +254,9 @@ func (l *logger) Watch(ctx context.Context) (err error) {
 				attempt = 0
 				retryTimeout = l.retryTimeout
 
-				for j := 0; j < workerPoolSize; j++ {
-					g.Go(func() error {
-						l.runWorker(gCtx, eventChan)
-
-						return nil
-					})
-				}
+				g.Go(func() error {
+					return l.runCollector(gCtx, eventChan)
+				})
 
 				err = g.Wait()
 			}
@@ -416,40 +356,272 @@ func (l *logger) runWatcher(ctx context.Context, g *errgroup.Group) (<-chan Acti
 	return eventChan, nil
 }
 
-func (l *logger) runWorker(ctx context.Context, eventChan <-chan ActionLogEvent) {
-	for event := range eventChan {
-		valueType := l.collectionValueTypeMap[event.Collection]
+func (l *logger) resolveEvent(event ActionLogEvent) ActionLog {
+	valueType := l.collectionValueTypeMap[event.Collection]
 
-		// The special case for entity services, since they are in the same collection with entities.
-		if valueType == ValueTypeEntity {
-			var rawType any
-			var ok bool
+	// The special case for entity services, since they are in the same collection with entities.
+	if valueType == ValueTypeEntity {
+		var rawType any
+		var ok bool
 
-			if event.Document == nil {
-				rawType, ok = event.DocumentBefore["type"]
-			} else {
-				rawType, ok = event.Document["type"]
-			}
-
-			if ok {
-				strType, ok := rawType.(string)
-				if ok && strType == types.EntityTypeService {
-					valueType = ValueTypeEntityService
-				}
-			}
+		if event.Document == nil {
+			rawType, ok = event.DocumentBefore["type"]
+		} else {
+			rawType, ok = event.Document["type"]
 		}
 
-		err := l.log(ctx, ActionLog{
-			OperationType:     event.OperationType,
-			ValueType:         valueType,
-			ValueID:           event.DocumentID,
-			Timestamp:         event.ClusterTime,
-			CurDocument:       event.Document,
-			PrevDocument:      event.DocumentBefore,
-			UpdateDescription: event.UpdateDescription,
-		})
-		if err != nil {
-			l.zLog.Err(err).Str("value_type", valueType).Str("value_id", event.DocumentID).Msgf("error on action log %s", event.OperationType)
+		if ok {
+			strType, ok := rawType.(string)
+			if ok && strType == types.EntityTypeService {
+				valueType = ValueTypeEntityService
+			}
 		}
 	}
+
+	return ActionLog{
+		OperationType:     event.OperationType,
+		ValueType:         valueType,
+		ValueID:           event.DocumentID,
+		Timestamp:         event.ClusterTime,
+		CurDocument:       event.Document,
+		PrevDocument:      event.DocumentBefore,
+		UpdateDescription: event.UpdateDescription,
+	}
+}
+
+func (l *logger) runCollector(ctx context.Context, eventChan <-chan ActionLogEvent) error {
+	ticker := time.NewTicker(flushInterval)
+	defer ticker.Stop()
+
+	batch := make([]ActionLog, 0, batchSize)
+
+	flush := func() {
+		if len(batch) == 0 {
+			return
+		}
+
+		if err := l.flushBatch(ctx, batch); err != nil {
+			l.zLog.Err(err).Msg("failed to flush action log batch")
+		}
+
+		batch = batch[:0]
+	}
+
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case event, ok := <-eventChan:
+			if !ok {
+				flush()
+				return nil
+			}
+
+			batch = append(batch, l.resolveEvent(event))
+
+			if len(batch) >= batchSize {
+				flush()
+				ticker.Reset(flushInterval)
+			}
+		case <-ticker.C:
+			flush()
+		}
+	}
+}
+
+func (l *logger) flushBatch(ctx context.Context, batch []ActionLog) error {
+	pgPool, err := l.pgPoolProvider.Get(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to get pgPool: %w", err)
+	}
+
+	var inserts, updates, deletes []ActionLog
+
+	for _, log := range batch {
+		switch log.OperationType {
+		case mongo.ChangeStreamTypeInsert:
+			inserts = append(inserts, log)
+		case mongo.ChangeStreamTypeUpdate:
+			updates = append(updates, log)
+		case mongo.ChangeStreamTypeDelete:
+			deletes = append(deletes, log)
+		}
+	}
+
+	return pgPool.WithTransaction(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if err := l.flushInserts(ctx, tx, inserts); err != nil {
+			return err
+		}
+
+		if err := l.flushUpdates(ctx, tx, updates); err != nil {
+			return err
+		}
+
+		return l.flushDeletes(ctx, tx, deletes)
+	})
+}
+
+func (l *logger) flushInserts(ctx context.Context, tx pgx.Tx, logs []ActionLog) error {
+	if len(logs) == 0 {
+		return nil
+	}
+
+	rows := make([][]any, len(logs))
+	for i, log := range logs {
+		rows[i] = []any{logTypeCreate, log.ValueType, log.ValueID, log.GetCurAuthor(), log.Timestamp, log.CurDocument}
+	}
+
+	_, err := tx.CopyFrom(ctx, pgx.Identifier{"action_log"},
+		[]string{"type", "value_type", "value_id", "author", "time", "data"},
+		pgx.CopyFromRows(rows),
+	)
+
+	return err
+}
+
+func (l *logger) flushUpdates(ctx context.Context, tx pgx.Tx, logs []ActionLog) error {
+	if len(logs) == 0 {
+		return nil
+	}
+
+	logByKey := make(map[string]ActionLog, len(logs))
+	valueTypes := make([]string, len(logs))
+	valueIDs := make([]string, len(logs))
+
+	for i, log := range logs {
+		valueTypes[i] = log.ValueType
+		valueIDs[i] = log.ValueID
+		logByKey[log.ValueType+"\x00"+log.ValueID] = log
+	}
+
+	missingPairs, err := l.queryMissingCreateLogs(ctx, tx, valueTypes, valueIDs, logByKey)
+	if err != nil {
+		return err
+	}
+
+	if len(missingPairs) > 0 {
+		rows := make([][]any, len(missingPairs))
+		for i, log := range missingPairs {
+			author := log.GetCurAuthor()
+			rows[i] = []any{
+				logTypeCreate, log.ValueType, log.ValueID,
+				cmp.Or(log.GetPrevAuthor(), author),
+				cmp.Or(log.GetPrevCreated(), log.Timestamp),
+				log.PrevDocument,
+			}
+		}
+
+		if _, err := tx.CopyFrom(ctx, pgx.Identifier{"action_log"},
+			[]string{"type", "value_type", "value_id", "author", "time", "data"},
+			pgx.CopyFromRows(rows),
+		); err != nil {
+			return fmt.Errorf("failed to insert reconstructed create logs for update: %w", err)
+		}
+	}
+
+	rows := make([][]any, len(logs))
+	for i, log := range logs {
+		rows[i] = []any{logTypeUpdate, log.ValueType, log.ValueID, log.GetCurAuthor(), log.Timestamp, log.UpdateDescription}
+	}
+
+	_, err = tx.CopyFrom(ctx, pgx.Identifier{"action_log"},
+		[]string{"type", "value_type", "value_id", "author", "time", "data"},
+		pgx.CopyFromRows(rows),
+	)
+
+	return err
+}
+
+func (l *logger) flushDeletes(ctx context.Context, tx pgx.Tx, logs []ActionLog) error {
+	if len(logs) == 0 {
+		return nil
+	}
+
+	logByKey := make(map[string]ActionLog, len(logs))
+	valueTypes := make([]string, len(logs))
+	valueIDs := make([]string, len(logs))
+
+	for i, log := range logs {
+		valueTypes[i] = log.ValueType
+		valueIDs[i] = log.ValueID
+		logByKey[log.ValueType+"\x00"+log.ValueID] = log
+	}
+
+	missingPairs, err := l.queryMissingCreateLogs(ctx, tx, valueTypes, valueIDs, logByKey)
+	if err != nil {
+		return err
+	}
+
+	if len(missingPairs) > 0 {
+		rows := make([][]any, len(missingPairs))
+		for i, log := range missingPairs {
+			author := log.GetPrevAuthor()
+			created := log.GetPrevCreated()
+			if created.IsZero() {
+				created = log.Timestamp
+			}
+
+			rows[i] = []any{logTypeCreate, log.ValueType, log.ValueID, author, created, log.PrevDocument}
+		}
+
+		if _, err := tx.CopyFrom(ctx, pgx.Identifier{"action_log"},
+			[]string{"type", "value_type", "value_id", "author", "time", "data"},
+			pgx.CopyFromRows(rows),
+		); err != nil {
+			return fmt.Errorf("failed to insert reconstructed create logs for delete: %w", err)
+		}
+	}
+
+	rows := make([][]any, len(logs))
+	for i, log := range logs {
+		rows[i] = []any{logTypeDelete, log.ValueType, log.ValueID, log.GetPrevAuthor(), log.Timestamp, nil}
+	}
+
+	_, err = tx.CopyFrom(ctx, pgx.Identifier{"action_log"},
+		[]string{"type", "value_type", "value_id", "author", "time", "data"},
+		pgx.CopyFromRows(rows),
+	)
+
+	return err
+}
+
+// queryMissingCreateLogs returns the subset of the input logs for which no logTypeCreate
+// row exists yet in action_log within the current transaction.
+//
+// SELECT query has verified with EXPLAIN ANALYZE on 80k rows
+func (l *logger) queryMissingCreateLogs(
+	ctx context.Context,
+	tx pgx.Tx,
+	valueTypes, valueIDs []string,
+	logByKey map[string]ActionLog,
+) ([]ActionLog, error) {
+	const missingPairsQuery = `
+		SELECT pairs.value_type, pairs.value_id
+		FROM UNNEST($1::text[], $2::text[]) AS pairs(value_type, value_id)
+		WHERE NOT EXISTS (
+			SELECT 1 FROM action_log al
+			WHERE al.type = $3 AND al.value_type = pairs.value_type AND al.value_id = pairs.value_id
+		)`
+
+	rows, err := tx.Query(ctx, missingPairsQuery, valueTypes, valueIDs, logTypeCreate)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query missing create logs: %w", err)
+	}
+	defer rows.Close()
+
+	var missing []ActionLog
+
+	for rows.Next() {
+		var vt, vid string
+
+		if err := rows.Scan(&vt, &vid); err != nil {
+			return nil, fmt.Errorf("failed to scan missing pair: %w", err)
+		}
+
+		if log, ok := logByKey[vt+"\x00"+vid]; ok {
+			missing = append(missing, log)
+		}
+	}
+
+	return missing, rows.Err()
 }
