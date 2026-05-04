@@ -16,6 +16,7 @@
       :updatable="hasUpdateAnyLlmAccess"
       :removable="hasDeleteAnyLlmAccess"
       @edit="showEditLlmModal"
+      @remove="showRemoveLlmModal"
       @refresh="refresh"
     />
   </c-page>
@@ -25,8 +26,6 @@
 import { onMounted } from 'vue';
 
 import { MODALS, USER_PERMISSIONS } from '@/constants';
-
-import { pickIds } from '@/helpers/array';
 
 import { useCallActionWithPopup } from '@/hooks/actions/call';
 import { useCRUDPermissions } from '@/hooks/auth';
@@ -42,7 +41,7 @@ import LlmsList from '@/components/other/llm/llms-list.vue';
 export default {
   components: { LlmsImportantNotesBanner, LlmsList },
   setup() {
-    const { t, tc } = useI18n();
+    const { t } = useI18n();
     const modals = useModals();
     const { callActionWithPopup } = useCallActionWithPopup();
     const {
@@ -50,7 +49,6 @@ export default {
       createLlm,
       updateLlm,
       removeLlm,
-      bulkRemoveLlms,
     } = useLlm();
     const {
       hasCreateAccess: hasCreateAnyLlmAccess,
@@ -121,30 +119,6 @@ export default {
       });
     };
 
-    /**
-     * Opens confirmation phrase for bulk delete, removes selected LLMs, then refreshes the list.
-     *
-     * @param {Object[]} [selected=[]] - Selected rows; each item must include `_id`.
-     */
-    const showRemoveSelectedLlmsModal = (selected = []) => {
-      const count = selected.length;
-      const countValues = { count };
-
-      modals.show({
-        name: MODALS.confirmationPhrase,
-        config: {
-          title: tc('modals.confirmationPhrase.deleteSelectedLlms.title', count, countValues),
-          text: tc('modals.confirmationPhrase.deleteSelectedLlms.text', count, countValues),
-          phraseText: t('modals.confirmationPhrase.deleteSelectedLlms.phraseText'),
-          phrase: t('modals.confirmationPhrase.deleteSelectedLlms.phrase'),
-          action: () => callActionWithPopup(
-            () => bulkRemoveLlms({ data: pickIds(selected) }),
-            fetchList,
-          ),
-        },
-      });
-    };
-
     const { observer } = useObserver({ key: '$refresh' });
 
     const refresh = () => observer.notify();
@@ -169,7 +143,6 @@ export default {
       showCreateLlmModal,
       showEditLlmModal,
       showRemoveLlmModal,
-      showRemoveSelectedLlmsModal,
     };
   },
 };
