@@ -10,6 +10,7 @@ import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   EVENT_FILTER_ENRICHMENT_AFTER_TYPES,
   EVENT_FILTER_EVENT_EXTRA_PREFIX,
+  EVENT_FILTER_DEFAULT_PATTERN,
   EVENT_FILTER_TYPES,
   PATTERNS_FIELDS,
 } from '@/constants';
@@ -158,10 +159,29 @@ export const eventFilterConfigToForm = (eventFilterConfig = {}) => ({
  * @param {EventFilter} eventFilter
  * @returns {FilterPatterns}
  */
-export const eventFilterPatternToForm = eventFilter => filterPatternsToForm(
-  eventFilter,
-  [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
-);
+export const eventFilterPatternToForm = (eventFilter) => {
+  const hasNotEventPattern = isEmpty(eventFilter?.event_pattern);
+
+  const patterns = filterPatternsToForm(
+    hasNotEventPattern ? { ...eventFilter, ...EVENT_FILTER_DEFAULT_PATTERN } : eventFilter,
+    [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
+  );
+
+  if (hasNotEventPattern) {
+    patterns[PATTERNS_FIELDS.event].groups.forEach((group) => {
+      group.rules.forEach((rule) => {
+        // eslint-disable-next-line no-param-reassign
+        rule.disabled = {
+          field: true,
+          operator: true,
+          remove: true,
+        };
+      });
+    });
+  }
+
+  return patterns;
+};
 
 /**
  * Convert event filter to form

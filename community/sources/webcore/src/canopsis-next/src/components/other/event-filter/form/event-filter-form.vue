@@ -37,6 +37,7 @@
       :with-entity="!isChangeEntityType"
       :event-attributes="eventAttributes"
       :pending="attributesPending"
+      expanded-event
       with-event
       entity-counters-type
     />
