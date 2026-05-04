@@ -354,6 +354,10 @@ export default {
       type: String,
       default: '',
     },
+    expandedEvent: {
+      type: Boolean,
+      default: false,
+    },
     alarmName: {
       type: String,
       default: '',
@@ -390,7 +394,7 @@ export default {
       alarm: false,
       entity: false,
       pbehavior: false,
-      event: false,
+      event: props.expandedEvent,
       totalEntity: false,
       serviceWeather: false,
     });
