@@ -85,6 +85,7 @@ export default {
     } = usePendingWithLocalQuery({
       initialQuery: {
         page: 1,
+        category: '',
         itemsPerPage: PAGINATION_LIMIT,
         search: '',
         sortBy: [],
