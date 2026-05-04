@@ -260,6 +260,7 @@ export default {
     [USER_PERMISSIONS.technical.externalDataTable]: 'External data',
     [USER_PERMISSIONS.technical.entityInfoProperty]: 'Entity infos',
     [USER_PERMISSIONS.technical.llm]: 'LLMs',
+    [USER_PERMISSIONS.technical.anomalyMonitoredConnector]: 'Anomaly monitored connectors',
 
     /**
      * Technical Admin Access
@@ -358,6 +359,7 @@ export default {
     [USER_PERMISSIONS.api.general.viewgroup]: 'View groups',
     [USER_PERMISSIONS.api.general.widgetTemplate]: 'Widget templates',
     [USER_PERMISSIONS.api.general.templateData]: 'Template data',
+    [USER_PERMISSIONS.api.general.anomalyMonitoredConnector]: 'Anomaly monitored connectors',
 
     /**
      * API Permissions Rules

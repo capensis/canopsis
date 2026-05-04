@@ -31,6 +31,7 @@ const AdminPlanning = () => import(/* webpackChunkName: "Planning" */ '@/views/a
 const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
 const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
 const AdminEventsRecords = () => import(/* webpackChunkName: "EventsRecords" */ '@/views/admin/events-records.vue');
+const AdminAnomalyMonitoredConnectors = () => import(/* webpackChunkName: "AnomalyMonitoredConnectors" */ '@/views/admin/anomaly-monitored-connectors.vue');
 const AdminTemplateTesting = () => import(/* webpackChunkName: "TemplateTesting" */ '@/views/admin/template-testing.vue');
 const AdminJobs = () => import(/* webpackChunkName: "Jobs" */ '@/views/admin/jobs.vue');
 const AdminCustomObjectsExternalAuthTokens = () => import(/* webpackChunkName: "ExternalAuthTokens" */ '@/views/admin/custom-objects/external-auth-tokens.vue');
@@ -217,6 +218,17 @@ const routes = [
       requiresPermission: {
         action: CRUD_ACTIONS.can,
         id: USER_PERMISSIONS.technical.eventsRecord,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminAnomalyMonitoredConnectors,
+    name: ROUTES_NAMES.adminAnomalyMonitoredConnectors,
+    component: AdminAnomalyMonitoredConnectors,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.anomalyMonitoredConnector,
       },
     },
   },
