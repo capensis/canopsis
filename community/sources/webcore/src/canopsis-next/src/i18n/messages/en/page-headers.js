@@ -168,6 +168,11 @@ export default {
     title: 'Events records',
     message: 'Allows you to define and trigger the recording of events as soon as they arrive in the Canopsis data bus.',
   },
+  [USER_PERMISSIONS.technical.anomalyMonitoredConnector]: {
+    title: 'Anomaly monitored connectors',
+    topbarTitle: 'Anomaly monitored connectors',
+    message: 'Anomaly monitored connectors is a module to manage the list of such connectors. Anomalies data for these connectors is shown on Healthcheck page.',
+  },
   [USER_PERMISSIONS.technical.templateTesting]: {
     title: 'Templates studio',
   },

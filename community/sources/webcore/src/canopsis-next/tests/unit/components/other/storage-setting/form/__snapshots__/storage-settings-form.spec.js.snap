@@ -53,6 +53,9 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
   <storage-settings-llm-chat-form-stub
     form="[object Object]"
   />
+  <storage-settings-connector-anomalies-form-stub
+    form="[object Object]"
+  />
 </div>
 `;
 
@@ -100,6 +103,9 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with default fo
     form="[object Object]"
   />
   <storage-settings-llm-chat-form-stub
+    form="[object Object]"
+  />
+  <storage-settings-connector-anomalies-form-stub
     form="[object Object]"
   />
 </div>

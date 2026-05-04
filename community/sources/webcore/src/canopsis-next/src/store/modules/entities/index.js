@@ -74,6 +74,7 @@ import templateModule from './template';
 import copyModule from './copy';
 import webhookTokenRuleModule from './webhook-token-rule';
 import ticketStatusJobModule from './ticket-status-job';
+import anomalyMonitoredConnectorModule from './anomaly-monitored-connector';
 
 export default {
   alarm: alarmModule,
@@ -152,4 +153,5 @@ export default {
   copy: copyModule,
   webhookTokenRule: webhookTokenRuleModule,
   ticketStatusJob: ticketStatusJobModule,
+  anomalyMonitoredConnector: anomalyMonitoredConnectorModule,
 };

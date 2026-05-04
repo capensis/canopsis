@@ -249,6 +249,14 @@ export const CreateCommentTemplate = () => ({
   component: import(/* webpackChunkName: "CommentTemplate" */ './comment-template/create-comment-template.vue'),
   loading: LoaderOverlay,
 });
+export const CreateAnomalyMonitoredConnector = () => ({
+  component: import(/* webpackChunkName: "AnomalyMonitoredConnector" */ './anomaly-monitored-connector/create-anomaly-monitored-connector.vue'),
+  loading: LoaderOverlay,
+});
+export const AnomalyMonitoredConnectorHistory = () => ({
+  component: import(/* webpackChunkName: "AnomalyMonitoredConnector" */ './anomaly-monitored-connector/anomaly-monitored-connector-history.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateEventFilter = () => ({
   component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter.vue'),
   loading: LoaderOverlay,

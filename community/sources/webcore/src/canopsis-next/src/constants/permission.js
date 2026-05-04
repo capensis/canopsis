@@ -212,6 +212,7 @@ export const USER_PERMISSIONS = {
     commentTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_commentTemplate`,
     externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalData`,
     entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.technical.admin}_entityInfoProperty`,
+    anomalyMonitoredConnector: `${USER_PERMISSIONS_PREFIXES.technical.admin}_anomalyMonitoredConnector`,
     llm: `${USER_PERMISSIONS_PREFIXES.technical.admin}_llm`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
@@ -487,6 +488,7 @@ export const USER_PERMISSIONS = {
       resendEvents: `${USER_PERMISSIONS_PREFIXES.api}_resend_events`,
       externalDataTable: `${USER_PERMISSIONS_PREFIXES.api}_external_data_table`,
       templateData: `${USER_PERMISSIONS_PREFIXES.api}_template_data`,
+      anomalyMonitoredConnector: `${USER_PERMISSIONS_PREFIXES.api}_anomaly_monitored_connector`,
 
       ...featuresService.get('constants.USER_PERMISSIONS.api.general'),
     },

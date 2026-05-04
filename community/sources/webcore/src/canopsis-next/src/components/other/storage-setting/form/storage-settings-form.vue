@@ -45,6 +45,7 @@
       :history="history.event_records"
     />
     <storage-settings-llm-chat-form v-field="form.llm_chat" />
+    <storage-settings-connector-anomalies-form v-field="form.connector_anomalies" />
   </v-layout>
 </template>
 
@@ -63,6 +64,7 @@ import StorageSettingsEntityUnlinkedForm from './storage-settings-entity-unlinke
 import StorageSettingsEventsRecordsForm from './storage-settings-events-records-form.vue';
 import StorageSettingsEntityInfosLogForm from './storage-settings-entity-infos-log-form.vue';
 import StorageSettingsLlmChatForm from './storage-settings-llm-chat-form.vue';
+import StorageSettingsConnectorAnomaliesForm from './storage-settings-connector-anomalies-form.vue';
 
 export default {
   inject: ['$validator'],
@@ -81,6 +83,7 @@ export default {
     StorageSettingsEventsRecordsForm,
     StorageSettingsEntityInfosLogForm,
     StorageSettingsLlmChatForm,
+    StorageSettingsConnectorAnomaliesForm,
   },
   model: {
     prop: 'form',

@@ -492,6 +492,20 @@ export default {
       title: 'Edit comment template',
     },
   },
+  createAnomalyMonitoredConnector: {
+    create: {
+      title: 'Create anomaly monitored connector',
+    },
+    edit: {
+      title: 'Edit anomaly monitored connector',
+    },
+    remove: {
+      text: 'Delete <strong>{connectorName}</strong> from the list of anomalies monitoring connectors?',
+    },
+  },
+  anomalyMonitoredConnectorHistory: {
+    disableConfirm: 'Disable anomalies monitoring for <strong>{connectorName}</strong>?',
+  },
   createCommentEvent: {
     title: 'Add comment',
   },

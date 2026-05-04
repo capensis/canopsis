@@ -22,6 +22,7 @@ const stubs = {
   'storage-settings-events-records-form': true,
   'storage-settings-entity-infos-log-form': true,
   'storage-settings-llm-chat-form': true,
+  'storage-settings-connector-anomalies-form': true,
 };
 
 const selectStorageSettingsPerfDataMetricsForm = wrapper => wrapper.find('storage-settings-perf-data-metrics-form-stub');
@@ -33,6 +34,7 @@ const selectStorageSettingsPbehaviorForm = wrapper => wrapper.find('storage-sett
 const selectStorageSettingsRemediationForm = wrapper => wrapper.find('storage-settings-remediation-form-stub');
 const selectStorageSettingsAlarmForm = wrapper => wrapper.find('storage-settings-alarm-form-stub');
 const selectStorageSettingsEntityInfosLogForm = wrapper => wrapper.find('storage-settings-entity-infos-log-form-stub');
+const selectStorageSettingsConnectorAnomaliesForm = wrapper => wrapper.find('storage-settings-connector-anomalies-form-stub');
 
 describe('storage-settings-form', () => {
   const form = dataStorageSettingsToForm({
@@ -306,6 +308,26 @@ describe('storage-settings-form', () => {
     expect(wrapper).toEmitInput({
       ...form,
       entity_infos_log: newValue,
+    });
+  });
+
+  test('Connector anomalies storage settings changed after trigger connector anomalies settings', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+        history: {},
+      },
+    });
+
+    const newValue = {
+      delete_after: randomDurationEnabledValue(),
+    };
+
+    selectStorageSettingsConnectorAnomaliesForm(wrapper).triggerCustomEvent('input', newValue);
+
+    expect(wrapper).toEmitInput({
+      ...form,
+      connector_anomalies: newValue,
     });
   });
 
