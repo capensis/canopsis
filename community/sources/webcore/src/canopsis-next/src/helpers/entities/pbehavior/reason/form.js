@@ -22,7 +22,7 @@ export function pbehaviorReasonToForm(reason = {}) {
   return {
     name: reason.name ?? '',
     description: reason.description ?? '',
-    hidden: !reason.visible,
+    visible: !reason.hidden,
   };
 }
 
