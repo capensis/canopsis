@@ -3,6 +3,8 @@ import { LMap } from 'vue2-leaflet';
 import { Map, Icon } from 'leaflet';
 import { GestureHandling } from 'leaflet-gesture-handling';
 
+import { GEOMAP_PANES, GEOMAP_PANE_Z_INDEXES } from '@/constants';
+
 import locationUrl from '@/assets/images/location.svg';
 
 Map.mergeOptions({
@@ -42,6 +44,10 @@ export default {
     },
   },
   mounted() {
+    Object.values(GEOMAP_PANES).forEach((pane) => {
+      this.mapObject.createPane(pane).style.zIndex = GEOMAP_PANE_Z_INDEXES[pane];
+    });
+
     if (this.disabled) {
       this.disableInteraction();
     }
