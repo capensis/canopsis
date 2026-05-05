@@ -43,6 +43,7 @@ export const useView = () => {
 
   const getters = useGetters({
     groups: 'items',
+    getGroupById: 'getGroupById',
     getViewById: 'getViewById',
     getViewTabById: 'getViewTabById',
   });
