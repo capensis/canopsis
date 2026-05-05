@@ -11,6 +11,14 @@
       :error-messages="columnValueErrorMessages"
       :name="columnValueFieldName"
     />
+    <v-text-field
+      v-if="isAlarmTicketData"
+      v-validate="'required'"
+      v-field="column.dictionary"
+      :label="$t('common.dictionary')"
+      :error-messages="columnDictionaryErrorMessages"
+      :name="columnDictionaryName"
+    />
     <template v-if="!withoutInfosAttributes">
       <c-alarm-infos-attribute-field
         v-if="isAlarmInfos"
@@ -245,6 +253,10 @@ export default {
       return this.infosFields.includes(this.column?.column);
     },
 
+    isAlarmTicketData() {
+      return ALARM_FIELDS.ticketData === this.column?.column;
+    },
+
     infosItems() {
       return [
         ALARM_LIST_WIDGET_COLUMNS.entityInfos,
@@ -276,6 +288,14 @@ export default {
 
     columnValueErrorMessages() {
       return this.errors.collect(this.columnValueFieldName);
+    },
+
+    columnDictionaryName() {
+      return `${this.name}.dictionary`;
+    },
+
+    columnDictionaryErrorMessages() {
+      return this.errors.collect(this.columnDictionaryName);
     },
 
     filterOnClickAvailable() {
