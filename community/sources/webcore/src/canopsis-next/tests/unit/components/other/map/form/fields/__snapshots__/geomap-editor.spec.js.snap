@@ -92,7 +92,7 @@ Left mouse click + drag - pan the area"
           latlng="[object Object]"
           opacity="1"
           options="[object Object]"
-          pane="markerPane"
+          pane="geomapMarkersPane"
           visible="true"
         >
           <geomap-icon-stub

@@ -1,8 +1,16 @@
 <script>
 import { LMarker } from 'vue2-leaflet';
 
+import { GEOMAP_PANES } from '@/constants';
+
 export default {
   extends: LMarker,
+  props: {
+    pane: {
+      type: String,
+      default: GEOMAP_PANES.markers,
+    },
+  },
   mounted() {
     this.mapObject.on('contextmenu', this.openContextMenu);
   },
