@@ -202,6 +202,21 @@ func (c *connection) runWrite(ctx context.Context) {
 			c.logger.Debug().Int("type", msg.Type).Str("room", msg.Room).Interface("payload", msg.Payload).Msg("writing message")
 			err = c.writeJSON(msg)
 			if err != nil {
+				if _, ok := errors.AsType[encoding.EncodingError](err); ok {
+					c.logger.Debug().Err(err).
+						Str("addr", c.conn.RemoteAddr().String()).
+						Msg("encoding error when writing message")
+					continue
+				}
+
+				if _, ok := errors.AsType[*websocket.CloseError](err); ok || errors.Is(err, websocket.ErrCloseSent) {
+					c.logger.Debug().Err(err).
+						Str("addr", c.conn.RemoteAddr().String()).
+						Msg("connection closed")
+
+					return
+				}
+
 				c.logger.Err(err).
 					Str("addr", c.conn.RemoteAddr().String()).
 					Msg("cannot write message to connection, connection will be closed")
@@ -673,27 +688,22 @@ func (c *connection) readJSON() (msg ClientMessage, err error) {
 	return msg, err
 }
 
-func (c *connection) writeJSON(msg ServerMessage) (err error) {
-	w, err := c.conn.NextWriter(websocket.TextMessage)
-	if err != nil {
-		return fmt.Errorf("next writer error: %w", err)
-	}
-
-	defer func() {
-		if cerr := w.Close(); cerr != nil && err == nil {
-			err = fmt.Errorf("writer close error: %w", cerr)
-		}
-	}()
-
+func (c *connection) writeJSON(msg ServerMessage) error {
 	b, err := c.encoder.Encode(msg)
 	if err != nil {
 		return fmt.Errorf("encoder error: %w", err)
 	}
 
-	_, err = w.Write(b)
+	w, err := c.conn.NextWriter(websocket.TextMessage)
 	if err != nil {
-		return fmt.Errorf("writer write error: %w", err)
+		return fmt.Errorf("next writer error: %w", err)
 	}
 
-	return nil
+	_, err = w.Write(b)
+	cerr := w.Close()
+	if err == nil && cerr != nil {
+		err = fmt.Errorf("writer close error: %w", cerr)
+	}
+
+	return err
 }
