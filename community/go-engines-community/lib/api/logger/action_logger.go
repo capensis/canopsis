@@ -347,7 +347,11 @@ func (l *logger) runWatcher(ctx context.Context, g *errgroup.Group) (<-chan Acti
 				continue
 			}
 
-			eventChan <- event
+			select {
+			case <-ctx.Done():
+				return nil
+			case eventChan <- event:
+			}
 		}
 
 		return stream.Err()
