@@ -3,6 +3,7 @@ package websocket
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"maps"
 	"net/http"
@@ -675,21 +676,24 @@ func (c *connection) readJSON() (msg ClientMessage, err error) {
 func (c *connection) writeJSON(msg ServerMessage) (err error) {
 	w, err := c.conn.NextWriter(websocket.TextMessage)
 	if err != nil {
-		return err
+		return fmt.Errorf("next writer error: %w", err)
 	}
 
 	defer func() {
 		if cerr := w.Close(); cerr != nil && err == nil {
-			err = cerr
+			err = fmt.Errorf("writer close error: %w", cerr)
 		}
 	}()
 
 	b, err := c.encoder.Encode(msg)
 	if err != nil {
-		return err
+		return fmt.Errorf("encoder error: %w", err)
 	}
 
 	_, err = w.Write(b)
+	if err != nil {
+		return fmt.Errorf("writer write error: %w", err)
+	}
 
-	return err
+	return nil
 }
