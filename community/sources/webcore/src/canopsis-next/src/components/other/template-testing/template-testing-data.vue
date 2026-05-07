@@ -4,8 +4,8 @@
     :items="items"
     :pending="pending"
     :total-items="meta.total_count"
-    updatable
-    removable
+    :updatable="hasUpdateAccessForTemplateData"
+    :removable="hasDeleteAccessForTemplateData"
     @edit="showEditTemplateTestingDataModal"
     @remove="showRemoveTemplateTestingDataModal"
     @update:options="updateOptions"
@@ -15,6 +15,9 @@
 <script>
 import { onMounted } from 'vue';
 
+import { USER_PERMISSIONS } from '@/constants';
+
+import { useCRUDPermissions } from '@/hooks/auth';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useTemplateData } from '@/hooks/store/modules/template-data';
 
@@ -24,6 +27,11 @@ import TemplateTestingDataList from './partials/template-testing-data-list.vue';
 export default {
   components: { TemplateTestingDataList },
   setup() {
+    const {
+      hasUpdateAccess: hasUpdateAccessForTemplateData,
+      hasDeleteAccess: hasDeleteAccessForTemplateData,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.templateData);
+
     const { fetchTemplateDataListWithoutStore } = useTemplateData();
 
     const {
@@ -45,6 +53,9 @@ export default {
     onMounted(fetchList);
 
     return {
+      hasUpdateAccessForTemplateData,
+      hasDeleteAccessForTemplateData,
+
       items,
       pending,
       meta,

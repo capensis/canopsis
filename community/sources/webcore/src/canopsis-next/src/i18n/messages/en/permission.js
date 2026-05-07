@@ -254,6 +254,7 @@ export default {
     [USER_PERMISSIONS.technical.widgetTemplate]: 'Widget templates',
     [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Template testing',
+    [USER_PERMISSIONS.technical.templateData]: 'Template data',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'External auth tokens',
     [USER_PERMISSIONS.technical.jobManagement]: 'Jobs',
     [USER_PERMISSIONS.technical.commentTemplate]: 'Comment templates',
