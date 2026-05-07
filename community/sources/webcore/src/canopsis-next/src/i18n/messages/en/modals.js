@@ -147,6 +147,8 @@ export default {
           noEnding: 'No ending',
           startOnTrigger: 'Start on trigger',
           inherited: 'Apply for all dependant entities',
+          reasonAndType: 'Reason and type',
+          color: 'Color',
         },
       },
       filter: {
@@ -432,6 +434,11 @@ export default {
     errors: {
       emptyInfos: 'At least one info must be added.',
     },
+    infosSection: {
+      title: 'Information',
+      addInfos: 'Add infos',
+      addInfosFromTemplate: 'Add infos from template',
+    },
     steps: {
       infos: {
         title: 'Informations',
@@ -444,31 +451,32 @@ export default {
       },
     },
   },
-  createDynamicInfoInformation: {
-    create: {
-      title: 'Add an information to the dynamic information rule',
-    },
-  },
-  dynamicInfoTemplatesList: {
-    title: 'Dynamic info templates',
-  },
   createDynamicInfoTemplate: {
     create: {
-      title: 'Create dynamic info template',
+      title: 'Create dynamic information template',
     },
     edit: {
-      title: 'Edit dynamic info template',
+      title: 'Edit dynamic information template',
     },
     fields: {
       names: 'Names',
     },
     buttons: {
-      addName: 'Add new name',
+      addName: 'Add name',
     },
     errors: {
       noNames: 'You have to add at least 1 name',
     },
     emptyNames: 'No names added yet',
+  },
+  addDynamicInfoInfosFromTemplate: {
+    title: 'Add infos from template',
+    fields: {
+      template: 'Template',
+    },
+    actions: {
+      addInfos: 'Add infos',
+    },
   },
   importExportViews: {
     title: 'Import/Export views',

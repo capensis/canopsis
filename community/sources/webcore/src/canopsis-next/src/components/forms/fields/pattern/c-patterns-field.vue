@@ -12,10 +12,10 @@
       class="c-patterns-field"
       column
     >
+      <c-label :required="isPatternRequired">{{ $tc('common.pattern', 2) }}</c-label>
       <c-collapse-panel
         v-if="withAlarm"
         :expanded="expanded.alarm"
-        :outline-color="alarmPatternOutlineColor"
         :title="alarmTitle || $t('common.alarmPatterns')"
       >
         <c-alarm-patterns-field
@@ -34,7 +34,6 @@
       <c-collapse-panel
         v-if="withEntity"
         :expanded="expanded.entity"
-        :outline-color="entityPatternOutlineColor"
         :title="entityTitle || $t('common.entityPatterns')"
       >
         <pattern-field-suggestions-wrapper
@@ -66,7 +65,6 @@
       <c-collapse-panel
         v-if="withPbehavior"
         :expanded="expanded.pbehavior"
-        :outline-color="pbehaviorPatternOutlineColor"
         :title="pbehaviorTitle || $t('common.pbehaviorPatterns')"
       >
         <c-pbehavior-patterns-field
@@ -86,7 +84,6 @@
       <c-collapse-panel
         v-if="withEvent"
         :expanded="expanded.event"
-        :outline-color="eventPatternOutlineColor"
         :title="eventTitle || $t('common.eventPatterns')"
       >
         <c-event-filter-patterns-field
@@ -104,7 +101,6 @@
       <c-collapse-panel
         v-if="withTotalEntity"
         :expanded="expanded.totalEntity"
-        :outline-color="totalEntityPatternOutlineColor"
         :title="totalEntityTitle || $t('common.totalEntityPatterns')"
       >
         <c-entity-patterns-field
@@ -121,7 +117,6 @@
       <c-collapse-panel
         v-if="withServiceWeather"
         :expanded="expanded.serviceWeather"
-        :outline-color="serviceWeatherPatternOutlineColor"
         :title="serviceWeatherTitle || $t('common.serviceWeatherPatterns')"
       >
         <c-service-weather-patterns-field
@@ -192,17 +187,10 @@
 import { computed, ref, toRef, watch } from 'vue';
 import { isString } from 'lodash';
 
-import { CSS_COLORS_VARS } from '@/config';
 import { PATTERNS_FIELDS } from '@/constants';
 
-import {
-  isValidPatternRule,
-  formGroupsToPatternRules,
-  formGroupsToPatternRulesQuery,
-} from '@/helpers/entities/pattern/form';
+import { isValidPatternRule, formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
-
-import { useValidator } from '@/hooks/validator/validator';
 
 import { usePatternCountAlarmsModal } from './hooks/pattern-count-alarms-modal';
 import { usePatternCountEntitiesModal } from './hooks/pattern-count-entities-modal';
@@ -384,8 +372,6 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const validator = useValidator();
-
     const { showPatternAlarmsModal } = usePatternCountAlarmsModal(props);
     const { showPatternEntitiesModal } = usePatternCountEntitiesModal(props);
 
@@ -507,34 +493,6 @@ export default {
     );
 
     /**
-     * Gets the outline color for a pattern field based on validation state
-     *
-     * @param {string} name - Pattern field name
-     * @returns {string|undefined} CSS color variable or undefined
-     */
-    const getPatternOutlineColor = (name) => {
-      const rules = formGroupsToPatternRules(props.value[name]?.groups ?? []);
-      const fieldName = patternNamesToFields.value[name];
-
-      if (validator.errors.has(fieldName)) {
-        return CSS_COLORS_VARS.error;
-      }
-
-      if (!isPatternRequired.value && !rules.length) {
-        return undefined;
-      }
-
-      return isValidPatternRules(rules) ? CSS_COLORS_VARS.primary : CSS_COLORS_VARS.error;
-    };
-
-    const alarmPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.alarm));
-    const entityPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.entity));
-    const eventPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.event));
-    const totalEntityPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.totalEntity));
-    const pbehaviorPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.pbehavior));
-    const serviceWeatherPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.serviceWeather));
-
-    /**
      * Shows alarms modal filtered by current patterns
      */
     const showPatternAlarms = () => showPatternAlarmsModal({
@@ -591,12 +549,6 @@ export default {
       isPatternRequired,
       mayHaveOptimizationSuggestions,
       patternNamesToFields,
-      alarmPatternOutlineColor,
-      entityPatternOutlineColor,
-      eventPatternOutlineColor,
-      totalEntityPatternOutlineColor,
-      pbehaviorPatternOutlineColor,
-      serviceWeatherPatternOutlineColor,
       hasError,
       hasAllInCounter,
       patternsCountMessageBind,
@@ -605,7 +557,6 @@ export default {
       allOverLimit,
       allCount,
       isValidPatternRules,
-      getPatternOutlineColor,
       showPatternAlarms,
       showPatternEntities,
       checkFilter,

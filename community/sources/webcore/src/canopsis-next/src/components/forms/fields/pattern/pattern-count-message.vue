@@ -1,8 +1,5 @@
 <template>
-  <span
-    :class="{ 'error--text': !!errorMessage, 'text--secondary': !errorMessage }"
-    class="text-caption"
-  >
+  <span class="text-caption text--secondary">
     <span v-html="errorMessage || message" />
   </span>
 </template>

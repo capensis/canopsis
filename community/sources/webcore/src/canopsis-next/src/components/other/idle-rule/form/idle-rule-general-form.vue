@@ -1,52 +1,61 @@
 <template>
   <v-layout column>
-    <template v-if="!isEntityType">
-      <idle-rule-alarm-type-field
-        v-field="form.alarm_condition"
-        :label="$t('common.type')"
-        class="mb-2"
-      />
-    </template>
     <c-name-field
       v-field="form.name"
+      :max-length="255"
       autofocus
       required
     />
-    <c-description-field
-      v-field="form.description"
-      required
-    />
-    <v-layout justify-space-between>
-      <v-flex xs7>
+    <c-form-block>
+      <c-form-block-row :label="$t('common.priority')">
+        <c-priority-field v-field="form.priority" />
+      </c-form-block-row>
+      <c-form-block-row v-if="!isEntityType" :label="$t('common.type')">
+        <idle-rule-alarm-type-field
+          v-field="form.alarm_condition"
+          :label="$t('common.type')"
+        />
+      </c-form-block-row>
+      <c-form-block-row :label="$t('common.description')">
+        <c-description-field
+          v-field="form.description"
+          required
+        />
+      </c-form-block-row>
+      <c-form-block-row :label="$t('idleRules.timeRangeAwaiting')">
         <c-duration-field
           v-field="form.duration"
           :label="$t('idleRules.timeRangeAwaiting')"
           required
         />
-      </v-flex>
-      <v-flex xs3>
-        <c-priority-field v-field="form.priority" />
-      </v-flex>
-    </v-layout>
-    <c-disable-during-periods-field v-field="form.disable_during_periods" />
-    <template v-if="!isEntityType">
-      <c-action-type-field
-        v-field="form.operation.type"
-        :types="actionTypes"
-        name="operation.type"
-      />
-      <action-parameters-form
-        v-model="parameters"
-        :type="form.operation.type"
-        name="operation.parameters"
-      />
-      <c-description-field
-        v-if="isAssociateTicketAction"
-        v-field="form.comment"
-        :label="$tc('common.comment')"
-        name="comment"
-      />
-    </template>
+      </c-form-block-row>
+      <c-form-block-row :label="$t('common.disableDuringPeriods')">
+        <c-disable-during-periods-field v-field="form.disable_during_periods" />
+      </c-form-block-row>
+      <template v-if="!isEntityType">
+        <c-form-block-row :label="$t('common.type')">
+          <c-action-type-field
+            v-field="form.operation.type"
+            :types="actionTypes"
+            name="operation.type"
+          />
+        </c-form-block-row>
+        <c-form-block-row :label="$t('common.parameters')">
+          <action-parameters-form
+            v-model="parameters"
+            :type="form.operation.type"
+            name="operation.parameters"
+          />
+        </c-form-block-row>
+        <c-form-block-row v-if="isAssociateTicketAction" :label="$tc('common.comment')">
+          <c-description-field
+            v-field="form.comment"
+            :label="$tc('common.comment')"
+            name="comment"
+          />
+        </c-form-block-row>
+      </template>
+    </c-form-block>
   </v-layout>
 </template>
 

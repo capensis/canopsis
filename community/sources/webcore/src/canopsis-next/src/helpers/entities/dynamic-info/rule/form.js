@@ -1,6 +1,6 @@
 import { isArray } from 'lodash';
 
-import { PATTERNS_FIELDS } from '@/constants';
+import { DYNAMIC_INFO_INFORMATION_TYPES, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/shared/form';
@@ -31,7 +31,11 @@ import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/s
  * @returns {DynamicInfoForm}
  */
 export const dynamicInfoToForm = (dynamicInfo = {}) => {
-  const infos = (dynamicInfo.infos || []).map((info) => {
+  const infos = (
+    dynamicInfo.infos?.length
+      ? dynamicInfo.infos
+      : [{ type: DYNAMIC_INFO_INFORMATION_TYPES.setToInfo }]
+  ).map((info) => {
     const value = isArray(info.value) && (!info.value.length || !info.value[0]?.key)
       ? primitiveArrayToForm(info.value)
       : info.value;

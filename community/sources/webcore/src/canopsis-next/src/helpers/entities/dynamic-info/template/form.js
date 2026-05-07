@@ -36,7 +36,7 @@ export function generateTemplateFormName(name = '') {
  *
  * @param {string} [_id = '']
  * @param {string} [title = '']
- * @param {string[]} [names = []]
+ * @param {string[]} [names = []] When empty, the form still receives one blank name row.
  * @returns {DynamicInfoTemplateForm}
  */
 export function templateToForm({
@@ -44,10 +44,14 @@ export function templateToForm({
   title = '',
   names = [],
 } = {}) {
+  const preparedNames = names.length > 0
+    ? names.map(generateTemplateFormName)
+    : [generateTemplateFormName()];
+
   return {
     _id,
     title,
-    names: names.map(generateTemplateFormName),
+    names: preparedNames,
   };
 }
 

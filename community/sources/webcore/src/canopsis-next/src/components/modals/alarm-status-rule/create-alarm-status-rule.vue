@@ -89,7 +89,7 @@ export default {
       options: chatOptions,
     } = useAiChatForm({
       form,
-
+      disabled: isDefaultRule,
       modal: toRef(props, 'modal'),
       ruleId: props.modal.config?.rule?._id,
       context: llmContext,
