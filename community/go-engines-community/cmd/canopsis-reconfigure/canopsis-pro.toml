@@ -460,7 +460,10 @@ AllowDoubleAck = false
 ActivateAlarmAfterAutoRemediation = false
 # EnableArraySortingInEntityInfos enables sorting string array infos before saving to an entity.
 EnableArraySortingInEntityInfos = true
-# CropStepsNumber defines how many sequential stateinc and statedec steps after the current status should be replaced with a statecounter step.
+# CropStepsNumber defines how many most recent stateinc/statedec steps after the current status are kept.
+# Older stateinc/statedec steps are aggregated into a statecounter step right after the current status.
+# If CropStepsNumber = 0, no stateinc/statedec step is kept after current status:
+# all such steps are aggregated into statecounter (non-state steps are kept as-is).
 CropStepsNumber = 0
 # CheckTicketStatusInterval defines how often ticket status should be checked.
 CheckTicketStatusInterval = "1h"
