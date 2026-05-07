@@ -214,10 +214,10 @@ func (a *mongoAdapter) GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) 
 	return alarms, nil
 }
 
-func (a *mongoAdapter) CountResolvedAlarm(ctx context.Context, entityIDs []string) (int, error) {
+func (a *mongoAdapter) CountOpenedChildrenAlarmsByParent(ctx context.Context, parentID string) (int, error) {
 	res, err := a.getAlarmsCount(ctx, bson.M{
-		"d":          bson.M{"$in": entityIDs},
-		"v.resolved": bson.M{"$exists": true},
+		"v.parents":  parentID,
+		"v.resolved": nil,
 	})
 
 	return int(res), err
