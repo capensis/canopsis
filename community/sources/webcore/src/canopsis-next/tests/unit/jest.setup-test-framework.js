@@ -123,6 +123,10 @@ function toHaveBeenEmit(wrapper, event) {
   return toEmit.call(this, wrapper, event);
 }
 
+function toHaveBeenEmitWith(wrapper, event, ...data) {
+  return toEmit.call(this, wrapper, event, ...data);
+}
+
 function toStructureEqual(received, expected) {
   const flattenReceived = flatten(received);
   const flattenExpected = flatten(expected);
@@ -167,6 +171,7 @@ expect.extend({
   toEmit,
   toEmitInput,
   toHaveBeenEmit,
+  toHaveBeenEmitWith,
   toStructureEqual,
   toBeDispatchedWith,
 });
