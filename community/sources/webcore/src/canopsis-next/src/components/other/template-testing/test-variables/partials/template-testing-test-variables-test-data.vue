@@ -34,6 +34,12 @@ import TemplateTestingTestDataField from '../../form/fields/template-testing-dat
 /**
  * We don't need this constant in another partials, because it's used only here
  */
+const TEMPLATE_TESTING_TEST_VARIABLES_TEST_DATA_TYPES = [
+  TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
+  TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+  TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+];
+
 const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_COPONENTS = {
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event]: 'template-testing-test-data-field',
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: 'template-testing-test-data-field',
@@ -67,6 +73,7 @@ export default {
     const { t } = useI18n();
 
     const { hasReadAccess: hasReadAccessForAnyUser } = useCRUDPermissions(USER_PERMISSIONS.technical.user);
+    const { hasReadAccess: hasReadAccessForTemplateData } = useCRUDPermissions(USER_PERMISSIONS.technical.templateData);
     const { updateFieldInArrayItem } = useArrayModelField(props, emit);
 
     /**
@@ -101,7 +108,13 @@ export default {
         params: item.params,
         name: `${props.name}.${item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response ? `responses.${index}` : item.type}`,
         required: item.required || (item.someRequired && !hasFilledSomeRequiredField.value),
-        disabled: item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user && !hasReadAccessForAnyUser.value,
+        disabled: (
+          (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user && !hasReadAccessForAnyUser.value)
+          || (
+            TEMPLATE_TESTING_TEST_VARIABLES_TEST_DATA_TYPES.includes(item.type)
+            && !hasReadAccessForTemplateData.value
+          )
+        ),
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_DATA_TYPE[item.type],
         clearable: true,
       },
