@@ -59,19 +59,19 @@ func (mr *MockAdapterMockRecorder) CopyAlarmToResolvedCollection(ctx, alarm any)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CopyAlarmToResolvedCollection", reflect.TypeOf((*MockAdapter)(nil).CopyAlarmToResolvedCollection), ctx, alarm)
 }
 
-// CountResolvedAlarm mocks base method.
-func (m *MockAdapter) CountResolvedAlarm(ctx context.Context, alarmList []string) (int, error) {
+// CountOpenedChildrenAlarmsByParent mocks base method.
+func (m *MockAdapter) CountOpenedChildrenAlarmsByParent(ctx context.Context, parentID string) (int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CountResolvedAlarm", ctx, alarmList)
+	ret := m.ctrl.Call(m, "CountOpenedChildrenAlarmsByParent", ctx, parentID)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// CountResolvedAlarm indicates an expected call of CountResolvedAlarm.
-func (mr *MockAdapterMockRecorder) CountResolvedAlarm(ctx, alarmList any) *gomock.Call {
+// CountOpenedChildrenAlarmsByParent indicates an expected call of CountOpenedChildrenAlarmsByParent.
+func (mr *MockAdapterMockRecorder) CountOpenedChildrenAlarmsByParent(ctx, parentID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountResolvedAlarm", reflect.TypeOf((*MockAdapter)(nil).CountResolvedAlarm), ctx, alarmList)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountOpenedChildrenAlarmsByParent", reflect.TypeOf((*MockAdapter)(nil).CountOpenedChildrenAlarmsByParent), ctx, parentID)
 }
 
 // DeleteResolvedAlarms mocks base method.
