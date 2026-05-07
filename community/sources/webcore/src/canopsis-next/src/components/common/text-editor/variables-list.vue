@@ -3,6 +3,7 @@
     v-field="value"
     v-bind="$attrs"
     :items="items"
+    :children-key="childrenKey"
     :item-value="itemValue"
     :item-text="itemText"
     :show-value="showValue"
@@ -73,6 +74,10 @@ export default {
     itemText: {
       type: String,
       default: 'text',
+    },
+    childrenKey: {
+      type: String,
+      default: 'items',
     },
     showValue: {
       type: Boolean,

@@ -18,7 +18,7 @@
                 :ref="setRef"
                 :copy-vars="copyVars"
                 :is-disabled-id-field="isDisabledIdField"
-                :variables="templateVars"
+                :template-vars="templateVars"
               />
             </template>
             <template #patterns="{ setRef }">
@@ -45,7 +45,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -117,7 +117,7 @@ export default {
     const title = computed(() => config.value.title || t('modals.createDynamicInfo.create.title'));
     const isDisabledIdField = computed(() => config.value.isDisabledIdField);
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       form,
       method: async () => {
         const result = await config.value.action?.(formToDynamicInfo(form.value));
@@ -139,7 +139,6 @@ export default {
       type,
       title,
       isDisabledIdField,
-      isDisabled,
       submitting,
       chatShown,
       chatOptions,

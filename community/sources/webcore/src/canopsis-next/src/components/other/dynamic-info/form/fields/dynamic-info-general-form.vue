@@ -17,7 +17,7 @@
           <c-disable-during-periods-field v-field="form.disable_during_periods" />
         </c-form-block-row>
         <c-form-block-row :label="$t('modals.createDynamicInfo.infosSection.title')">
-          <dynamic-info-information-form
+          <dynamic-info-infos-form
             v-field="form.infos"
             :variables="templateVars.value"
             :copy-variables="copyVars.value"
@@ -33,12 +33,12 @@
 import { useComponentInstance } from '@/hooks/vue';
 import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 
-import DynamicInfoInformationForm from './dynamic-info-information-form.vue';
+import DynamicInfoInfosForm from './dynamic-info-infos-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    DynamicInfoInformationForm,
+    DynamicInfoInfosForm,
   },
   model: {
     prop: 'form',

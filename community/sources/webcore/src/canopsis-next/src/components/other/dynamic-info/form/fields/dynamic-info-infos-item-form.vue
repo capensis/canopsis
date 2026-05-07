@@ -33,17 +33,17 @@
       required
     />
 
-    <v-combobox
+    <c-select-field
       v-else
       v-field="form.value"
-      v-validate="'required'"
       :label="$t('common.value')"
       :items="copyVariables"
       :menu-props="comboboxMenuProps"
-      :error-messages="errors.collect('value')"
       :return-object="false"
       children-key="variables"
       name="value"
+      required
+      combobox
     />
   </v-layout>
 </template>

@@ -87,7 +87,7 @@ export default {
     const { submit, submitting } = useSubmittableForm({
       form: template,
       method: async () => {
-        await config.value.action?.(template);
+        await config.value.action?.(template.value);
 
         close();
 
