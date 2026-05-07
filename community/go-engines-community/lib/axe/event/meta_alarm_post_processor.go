@@ -48,36 +48,34 @@ func NewMetaAlarmPostProcessor(
 	logger zerolog.Logger,
 ) MetaAlarmPostProcessor {
 	return &metaAlarmPostProcessor{
-		dbClient:                  dbClient,
-		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
-		metaAlarmStatesCollection: dbClient.Collection(mongo.MetaAlarmStatesCollection),
-		entityCollection:          dbClient.Collection(mongo.EntityMongoCollection),
-		adapter:                   adapter,
-		ruleAdapter:               ruleAdapter,
-		alarmStatusService:        alarmStatusService,
-		metaAlarmStatesService:    metaAlarmStatesService,
-		encoder:                   encoder,
-		eventGenerator:            eventGenerator,
-		amqpPublisher:             amqpPublisher,
-		metricsSender:             metricsSender,
-		logger:                    logger,
+		dbClient:               dbClient,
+		alarmCollection:        dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       dbClient.Collection(mongo.EntityMongoCollection),
+		adapter:                adapter,
+		ruleAdapter:            ruleAdapter,
+		alarmStatusService:     alarmStatusService,
+		metaAlarmStatesService: metaAlarmStatesService,
+		encoder:                encoder,
+		eventGenerator:         eventGenerator,
+		amqpPublisher:          amqpPublisher,
+		metricsSender:          metricsSender,
+		logger:                 logger,
 	}
 }
 
 type metaAlarmPostProcessor struct {
-	dbClient                  mongo.DbClient
-	alarmCollection           mongo.DbCollection
-	metaAlarmStatesCollection mongo.DbCollection
-	entityCollection          mongo.DbCollection
-	adapter                   libalarm.Adapter
-	ruleAdapter               correlation.RulesAdapter
-	alarmStatusService        alarmstatus.Service
-	metaAlarmStatesService    correlation.MetaAlarmStateService
-	encoder                   encoding.Encoder
-	eventGenerator            event.Generator
-	amqpPublisher             libamqp.Publisher
-	metricsSender             metrics.Sender
-	logger                    zerolog.Logger
+	dbClient               mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
+	adapter                libalarm.Adapter
+	ruleAdapter            correlation.RulesAdapter
+	alarmStatusService     alarmstatus.Service
+	metaAlarmStatesService correlation.MetaAlarmStateService
+	encoder                encoding.Encoder
+	eventGenerator         event.Generator
+	amqpPublisher          libamqp.Publisher
+	metricsSender          metrics.Sender
+	logger                 zerolog.Logger
 }
 
 func (p *metaAlarmPostProcessor) Process(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error {
@@ -519,12 +517,12 @@ func (p *metaAlarmPostProcessor) resolveParents(ctx context.Context, parentIDs [
 						return nil
 					}
 
-					resolvedCount, err := p.adapter.CountResolvedAlarm(ctx, parentAlarm.Alarm.Value.Children)
+					openedCount, err := p.adapter.CountOpenedChildrenAlarmsByParent(ctx, parentAlarm.Entity.ID)
 					if err != nil {
 						return fmt.Errorf("cannot fetch alarms: %w", err)
 					}
 
-					if resolvedCount < len(parentAlarm.Alarm.Value.Children) {
+					if openedCount > 0 {
 						return nil
 					}
 
