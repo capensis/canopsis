@@ -1,9 +1,8 @@
-import { isArray } from 'lodash';
-
 import { DYNAMIC_INFO_INFORMATION_TYPES, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
-import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/shared/form';
+
+import { dynamicInfoInformationToForm, formToDynamicInfoInformation } from '../information/form';
 
 /**
  * @typedef { 'maintenance' | 'pause' } DisableDuringPeriods
@@ -35,16 +34,7 @@ export const dynamicInfoToForm = (dynamicInfo = {}) => {
     dynamicInfo.infos?.length
       ? dynamicInfo.infos
       : [{ type: DYNAMIC_INFO_INFORMATION_TYPES.setToInfo }]
-  ).map((info) => {
-    const value = isArray(info.value) && (!info.value.length || !info.value[0]?.key)
-      ? primitiveArrayToForm(info.value)
-      : info.value;
-
-    return {
-      ...info,
-      value,
-    };
-  });
+  ).map(dynamicInfoInformationToForm);
 
   return {
     infos,
@@ -65,22 +55,11 @@ export const dynamicInfoToForm = (dynamicInfo = {}) => {
  * @returns {DynamicInfo}
  */
 export const formToDynamicInfo = (form) => {
-  const { patterns, infos, ...dynamicInfo } = form;
-
-  const convertedInfos = (infos || []).map((info) => {
-    const value = isArray(info.value) && info.value.length > 0 && info.value[0]?.key
-      ? formToPrimitiveArray(info.value)
-      : info.value;
-
-    return {
-      ...info,
-      value,
-    };
-  });
+  const { patterns, infos = [], ...dynamicInfo } = form;
 
   return {
     ...dynamicInfo,
-    infos: convertedInfos,
+    infos: infos.map(formToDynamicInfoInformation),
     ...formFilterToPatterns(patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
   };
 };

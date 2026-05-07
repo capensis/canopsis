@@ -4,13 +4,14 @@ import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/array';
 
 /**
  * @typedef {Object} DynamicInfoInformation
- * @property {string} key - The key of the dynamic info information
+ * @property {string} type - The type of the dynamic info information
  * @property {string} [name] - The name of the dynamic info information
  * @property {string} [value] - The value of the dynamic info information
  */
 
 /**
- * @typedef {Object} DynamicInfoInformationForm
+ * @typedef {ObjectKey} DynamicInfoInformationForm
+ * @property {string} type - The type field for the form
  * @property {string} name - The name field for the form
  * @property {string} value - The value field for the form
  */
@@ -23,7 +24,7 @@ import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/array';
  */
 export const dynamicInfoInformationToForm = (info = {}) => addKeyInEntity({
   name: info.name ?? '',
-  type: info.type ?? DYNAMIC_INFO_INFORMATION_TYPES.setToInfo,
+  type: info.type || DYNAMIC_INFO_INFORMATION_TYPES.setToInfo,
   value: info.value ?? '',
 });
 

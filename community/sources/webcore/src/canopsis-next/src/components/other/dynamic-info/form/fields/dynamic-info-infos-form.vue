@@ -1,9 +1,11 @@
 <template>
   <v-layout class="gap-3 py-3" column>
-    <v-card v-for="(item, index) in items" :key="index">
+    <v-card v-for="(item, index) in items" :key="item.key">
       <v-card-text>
-        <dynamic-info-information-item-form
+        <dynamic-info-infos-item-form
           v-field="items[index]"
+          :variables="variables"
+          :copy-variables="copyVariables"
           :removable="items.length > 1"
           @remove="removeItem(index)"
         />
@@ -28,12 +30,12 @@ import { dynamicInfoInformationToForm } from '@/helpers/entities/dynamic-info/in
 import { useModals } from '@/hooks/modals';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
-import DynamicInfoInformationItemForm from './dynamic-info-information-item-form.vue';
+import DynamicInfoInfosItemForm from './dynamic-info-infos-item-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    DynamicInfoInformationItemForm,
+    DynamicInfoInfosItemForm,
   },
   model: {
     prop: 'items',
@@ -65,11 +67,19 @@ export default {
     const modals = useModals();
     const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
 
+    /**
+     * Appends a new dynamic info row with default form fields to the list.
+     */
     const addItem = () => addItemIntoArray(dynamicInfoInformationToForm());
 
+    /**
+     * Opens the modal to pick a dynamic info template; on confirm, adds one row per template name preset.
+     */
     const showAddInfosFromTemplateModal = () => modals.show({
       name: MODALS.addDynamicInfoInfosFromTemplate,
-      config: { action: (infosFromTemplate) => { infosFromTemplate.forEach(item => addItemIntoArray(item)); } },
+      config: {
+        action: template => template.names.forEach(name => addItemIntoArray(dynamicInfoInformationToForm({ name }))),
+      },
     });
 
     return {
