@@ -277,16 +277,12 @@ export const CreateDynamicInfo = () => ({
   component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/create-dynamic-info.vue'),
   loading: LoaderOverlay,
 });
-export const CreateDynamicInfoInformation = () => ({
-  component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/create-dynamic-info-information.vue'),
-  loading: LoaderOverlay,
-});
-export const DynamicInfoTemplatesList = () => ({
-  component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/dynamic-info-templates-list.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateDynamicInfoTemplate = () => ({
   component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/create-dynamic-info-template.vue'),
+  loading: LoaderOverlay,
+});
+export const AddDynamicInfoInfosFromTemplate = () => ({
+  component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/add-dynamic-info-infos-from-template.vue'),
   loading: LoaderOverlay,
 });
 export const CreatePlaylist = () => ({

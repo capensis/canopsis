@@ -1,70 +1,48 @@
 <template>
-  <v-layout class="gap-2" column>
-    <v-text-field
-      v-field="form.name"
-      v-validate="nameRules"
-      :label="$t('common.name')"
-      :error-messages="errors.collect('name')"
-      name="name"
-      required
-    />
-    <dynamic-info-information-type-field :value="form.type" @input="changeType" />
-    <c-mixed-field
-      v-if="isDefaultType"
-      v-field="form.value"
-      :label="$t('common.value')"
-      :types="mixedFieldTypes"
-      name="value"
-      required
-    />
-
-    <c-payload-text-field
-      v-else-if="isTemplateType"
-      v-field="form.value"
-      :label="$t('common.value')"
-      :variables="isTemplateType ? variables : copyVariables"
-      name="value"
-      required
-    />
-
-    <v-combobox
-      v-else
-      v-field="form.value"
-      v-validate="'required'"
-      :label="$t('common.value')"
-      :items="copyVariables"
-      :menu-props="comboboxMenuProps"
-      :error-messages="errors.collect('value')"
-      :return-object="false"
-      children-key="variables"
-      name="value"
-    />
+  <v-layout class="gap-3 py-3" column>
+    <v-card v-for="(item, index) in items" :key="index">
+      <v-card-text>
+        <dynamic-info-information-item-form
+          v-field="items[index]"
+          :removable="items.length > 1"
+          @remove="removeItem(index)"
+        />
+      </v-card-text>
+    </v-card>
+    <v-layout class="gap-2">
+      <v-btn color="primary" outlined @click="addItem">
+        {{ $t('modals.createDynamicInfo.infosSection.addInfos') }}
+      </v-btn>
+      <v-btn color="primary" outlined @click="showAddInfosFromTemplateModal">
+        {{ $t('modals.createDynamicInfo.infosSection.addInfosFromTemplate') }}
+      </v-btn>
+    </v-layout>
   </v-layout>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { MODALS } from '@/constants';
 
-import { DYNAMIC_INFO_INFORMATION_TYPES, PATTERN_FIELD_TYPES } from '@/constants';
+import { dynamicInfoInformationToForm } from '@/helpers/entities/dynamic-info/information/form';
 
-import { useValidator } from '@/hooks/validator/validator';
-import { useModelField } from '@/hooks/form/model-field';
+import { useModals } from '@/hooks/modals';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
-import DynamicInfoInformationTypeField from './dynamic-info-information-type-field.vue';
+import DynamicInfoInformationItemForm from './dynamic-info-information-item-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    DynamicInfoInformationTypeField,
+    DynamicInfoInformationItemForm,
   },
   model: {
-    prop: 'form',
+    prop: 'items',
     event: 'input',
   },
   props: {
-    form: {
-      type: Object,
-      required: true,
+    items: {
+      type: Array,
+      default: () => [],
     },
     existingNames: {
       type: Array,
@@ -84,52 +62,20 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const validator = useValidator();
+    const modals = useModals();
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
 
-    const mixedFieldTypes = [
-      { value: PATTERN_FIELD_TYPES.string },
-      { value: PATTERN_FIELD_TYPES.number },
-      { value: PATTERN_FIELD_TYPES.boolean },
-      { value: PATTERN_FIELD_TYPES.stringArray },
-    ];
+    const addItem = () => addItemIntoArray(dynamicInfoInformationToForm());
 
-    const { updateModel } = useModelField(props, emit);
-
-    const nameRules = computed(() => ({
-      required: true,
-      unique: {
-        values: props.existingNames,
-        initialValue: props.initialName,
-      },
-    }));
-
-    const isDefaultType = computed(() => props.form.type === DYNAMIC_INFO_INFORMATION_TYPES.setToInfo);
-    const isTemplateType = computed(() => props.form.type === DYNAMIC_INFO_INFORMATION_TYPES.setToInfoFromTemplate);
-
-    const comboboxMenuProps = computed(() => ({
-      minWidth: 200,
-    }));
-
-    const changeType = (type) => {
-      updateModel({
-        ...props.form,
-
-        type,
-        value: '',
-      });
-
-      validator.errors.remove('value');
-    };
+    const showAddInfosFromTemplateModal = () => modals.show({
+      name: MODALS.addDynamicInfoInfosFromTemplate,
+      config: { action: (infosFromTemplate) => { infosFromTemplate.forEach(item => addItemIntoArray(item)); } },
+    });
 
     return {
-      mixedFieldTypes,
-
-      nameRules,
-      isDefaultType,
-      isTemplateType,
-      comboboxMenuProps,
-
-      changeType,
+      addItem,
+      removeItem: removeItemFromArray,
+      showAddInfosFromTemplateModal,
     };
   },
 };

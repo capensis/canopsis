@@ -335,7 +335,7 @@ export const useAiChatFormPatterns = ({ form, field, context, callExpand }) => {
  *   hideChat: function,
  * }}
  */
-export const useAiChatShown = ({ form, throttledUpdatePatterns } = {}) => {
+export const useAiChatShown = ({ form, throttledUpdatePatterns, disabled } = {}) => {
   const { fetchLlms } = useAiChatLlmModel();
 
   const llms = ref([]);
@@ -345,6 +345,10 @@ export const useAiChatShown = ({ form, throttledUpdatePatterns } = {}) => {
    * Fetches enabled LLMs; when the list is non-empty, shows the chat and starts a deep `watch` on `form`.
    */
   const showChat = async () => {
+    if (unref(disabled)) {
+      return;
+    }
+
     llms.value = await fetchLlms();
 
     if (!llms.value.length) {
@@ -473,6 +477,7 @@ export const useAiChatLinkChats = ({ ruleId, withoutLink } = {}) => {
  * @param {{ id: string, dialogProps: Object }} params.modal - Passed to `useAiChatMinimized` for padding updates.
  * @param {import('vue').Ref|import('vue').ComputedRef} params.form - Full host form when it owns a `patterns`
  *   object; scenario modals pass the `actions` array ref instead.
+ * @param {boolean} [params.disabled] - Whether to disable the chat.
  * @param {import('vue').Ref<string>|string|undefined} [params.ruleId] - Optional rule id for the LLM socket.
  * @param {import('vue').Ref<string>|import('vue').ComputedRef<string>|string|undefined} [params.context] - LLM
  *   socket context (e.g. `LLM_SOCKET_CONTEXTS.scenario` or `${LLM_SOCKET_CONTEXTS.widgetFilter}_${type}`).
@@ -488,6 +493,7 @@ export const useAiChatForm = ({
   form,
   ruleId,
   context,
+  disabled,
   field,
   withoutLink,
 }) => {
@@ -508,7 +514,7 @@ export const useAiChatForm = ({
     callExpand: expandFunctionsObserver.notifyInSeries.bind(expandFunctionsObserver),
   });
 
-  const { llms, shown, showChat, hideChat } = useAiChatShown({ form, throttledUpdatePatterns });
+  const { llms, shown, showChat, hideChat } = useAiChatShown({ form, throttledUpdatePatterns, disabled });
   const { chatIds, registerChatId } = useAiChatLinkChats({ ruleId, withoutLink });
 
   const options = computed(() => ({

@@ -1,4 +1,4 @@
-import { computed, provide } from 'vue';
+import { computed, provide, unref } from 'vue';
 
 import Observer from '@/services/observer';
 
@@ -37,7 +37,14 @@ import { usePopups } from './popups';
  *   </form>
  * </template>
  */
-export const useSubmittableForm = ({ form, method, scope = null, errorsToValidation = v => v, withTimeout = true }) => {
+export const useSubmittableForm = ({
+  form,
+  item,
+  method,
+  scope = null,
+  errorsToValidation = v => v,
+  withTimeout = true,
+}) => {
   const popups = usePopups();
   const { validator, setFormErrors } = useValidationFormErrors(form);
   const { t } = useI18n();
@@ -85,8 +92,8 @@ export const useSubmittableForm = ({ form, method, scope = null, errorsToValidat
    * We write custom any errors flag instead of errors.any
    * because we need to keep logic with filtering nullable scope
    */
-  const hasAnyErrors = computed(() => !!validator.errors.items.filter(item => (
-    item?.scope === scope && validator.errors.vmId === item?.vmId
+  const hasAnyErrors = computed(() => !!validator.errors.items.filter(errorItem => (
+    errorItem?.scope === scope && validator.errors.vmId === errorItem?.vmId
   )).length);
 
   const isDisabled = computed(() => {
@@ -97,9 +104,21 @@ export const useSubmittableForm = ({ form, method, scope = null, errorsToValidat
     return submitting.value || hasAnyErrors.value;
   });
 
+  const isNew = computed(() => !unref(item)?._id);
+
+  const submitLabel = computed(() => {
+    if (!unref(item)) {
+      return t('common.submit');
+    }
+
+    return isNew.value ? t('common.create') : t('common.save');
+  });
+
   return {
     submitting,
     isDisabled,
     submit,
+    isNew,
+    submitLabel,
   };
 };

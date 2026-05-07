@@ -131,6 +131,8 @@ export default {
           noEnding: 'Sans fin',
           startOnTrigger: 'Démarrer sur déclencheur',
           inherited: 'S\'applique à toutes les entités dépendantes',
+          reasonAndType: 'Raison et type',
+          color: 'Couleur',
         },
       },
       filter: {
@@ -432,6 +434,11 @@ export default {
     errors: {
       emptyInfos: 'Au moins une information doit être ajoutée.',
     },
+    infosSection: {
+      title: 'Information',
+      addInfos: 'Ajouter des informations',
+      addInfosFromTemplate: 'Ajouter des informations depuis un modèle',
+    },
     steps: {
       infos: {
         title: 'Informations',
@@ -444,31 +451,32 @@ export default {
       },
     },
   },
-  createDynamicInfoInformation: {
-    create: {
-      title: 'Ajouter une information à la règle d\'information dynamique',
-    },
-  },
-  dynamicInfoTemplatesList: {
-    title: 'Modèles d\'informations dynamiques',
-  },
   createDynamicInfoTemplate: {
     create: {
-      title: 'Créer un modèle d\'informations dynamiques',
+      title: 'Créer un modèle d\'information dynamique',
     },
     edit: {
-      title: 'Éditer un modèle d\'informations dynamiques',
+      title: 'Modifier un modèle d\'information dynamique',
     },
     fields: {
-      names: 'Attributs',
+      names: 'Noms',
     },
     buttons: {
-      addName: 'Ajouter un attribut',
+      addName: 'Ajouter un nom',
     },
     errors: {
-      noNames: 'Vous devez ajouter au moins 1 attribut',
+      noNames: 'Vous devez ajouter au moins un nom',
     },
     emptyNames: 'Aucun nom ajouté pour le moment',
+  },
+  addDynamicInfoInfosFromTemplate: {
+    title: 'Ajouter des informations depuis un modèle',
+    fields: {
+      template: 'Modèle',
+    },
+    actions: {
+      addInfos: 'Ajouter des informations',
+    },
   },
   importExportViews: {
     title: 'Vues d\'importation / exportation',

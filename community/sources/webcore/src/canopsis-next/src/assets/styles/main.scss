@@ -472,10 +472,12 @@ html {
   min-width: 64px;
 }
 
-*[aria-required="true"] label:before {
-  content: '*' !important;
-  padding-right: 4px !important;
-  color: var(--v-error-base) !important;
+*[aria-required="true"] label, label[aria-required="true"] {
+  &:before {
+    content: '*' !important;
+    padding-right: 4px !important;
+    color: var(--v-error-base) !important;
+  }
 }
 
 .not-required label:before {

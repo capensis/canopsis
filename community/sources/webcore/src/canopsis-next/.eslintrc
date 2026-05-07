@@ -76,6 +76,11 @@
     "vue/first-attribute-linebreak": ["error", {
       "singleline": "beside"
     }],
+    "vue/singleline-html-element-content-newline": ["error", {
+      "ignoreWhenNoAttributes": true,
+      "ignoreWhenEmpty": true,
+      "ignores": ["c-label", "v-label"]
+    }],
     "vue/component-name-in-template-casing": ["error", "kebab-case", {
       "registeredComponentsOnly": true
     }],

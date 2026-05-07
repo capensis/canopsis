@@ -7,20 +7,27 @@
       <template #text="">
         <v-layout class="gap-2" column>
           <c-enabled-field v-model="form.enabled" with-background />
-          <template-testing-test-variables-wrapper
+          <c-form-general-patterns-tabs
             v-model="form"
             :rule-id="dynamicInfoId"
             :type="type"
           >
-            <template #default="{ templateVars, copyVars }">
-              <dynamic-info-form
+            <template #general="{ setRef, templateVars, copyVars }">
+              <dynamic-info-general-form
                 v-model="form"
-                :is-disabled-id-field="isDisabledIdField"
-                :template-vars="templateVars"
+                :ref="setRef"
                 :copy-vars="copyVars"
+                :is-disabled-id-field="isDisabledIdField"
+                :variables="templateVars"
               />
             </template>
-          </template-testing-test-variables-wrapper>
+            <template #patterns="{ setRef }">
+              <dynamic-info-patterns-form
+                v-model="form.patterns"
+                :ref="setRef"
+              />
+            </template>
+          </c-form-general-patterns-tabs>
         </v-layout>
         <ai-chat-sidebar
           v-if="chatShown"
@@ -64,8 +71,8 @@ import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
+import DynamicInfoGeneralForm from '@/components/other/dynamic-info/form/fields/dynamic-info-general-form.vue';
+import DynamicInfoPatternsForm from '@/components/other/dynamic-info/form/fields/dynamic-info-patterns-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -76,9 +83,9 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: {
-    DynamicInfoForm,
     AiChatSidebar,
-    TemplateTestingTestVariablesWrapper,
+    DynamicInfoGeneralForm,
+    DynamicInfoPatternsForm,
     ModalWrapper,
   },
   props: {
