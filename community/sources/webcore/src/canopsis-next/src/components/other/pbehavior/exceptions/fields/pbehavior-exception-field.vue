@@ -4,10 +4,7 @@
     column
   >
     <v-layout justify-space-between>
-      <v-flex
-        class="pbehavior-exception-field__interval"
-        xs6
-      >
+      <v-flex class="pbehavior-exception-field__interval">
         <date-time-splitted-range-picker-field
           v-if="editing"
           :start="value.begin"
@@ -51,6 +48,7 @@
       <v-flex
         v-if="!disabled"
         class="pbehavior-exception-field__actions"
+        shrink
       >
         <v-btn
           :input-value="editing"
@@ -93,6 +91,8 @@
 </template>
 
 <script>
+import { ref, computed, watch } from 'vue';
+
 import { DATETIME_FORMATS } from '@/constants';
 
 import {
@@ -103,7 +103,8 @@ import {
   isStartOfDay,
 } from '@/helpers/date/date';
 
-import { formMixin, validationChildrenMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form/model-field';
+import { useValidationChildren } from '@/hooks/validator/validation-children';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 import DateTimeSplittedRangePickerText from '@/components/forms/fields/date-time-picker/date-time-splitted-range-picker-text.vue';
@@ -114,10 +115,6 @@ export default {
     DateTimeSplittedRangePickerField,
     DateTimeSplittedRangePickerText,
   },
-  mixins: [
-    formMixin,
-    validationChildrenMixin,
-  ],
   model: {
     prop: 'value',
     event: 'input',
@@ -136,60 +133,61 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      editing: !this.value.type,
-      fullDay: isStartOfDay(this.value.begin) && (isEndOfDay(this.value.end) || isStartOfDay(this.value.end)),
-    };
-  },
-  computed: {
-    beginRules() {
-      return {
-        required: true,
-        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-      };
-    },
+  setup(props, { emit }) {
+    const { updateField, updateModel } = useModelField(props, emit);
+    const { hasChildrenError, validateChildren } = useValidationChildren();
 
-    endRules() {
-      return {
-        required: true,
-        after: [convertDateToString(this.value.begin, DATETIME_FORMATS.dateTimePicker)],
-        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-      };
-    },
+    const editing = ref(!props.value.type);
+    const fullDay = ref(
+      isStartOfDay(props.value.begin) && (isEndOfDay(props.value.end) || isStartOfDay(props.value.end)),
+    );
 
-    nameSuffix() {
-      return this.value.key ? `-${this.value.key}` : '';
-    },
+    const beginRules = computed(() => ({
+      required: true,
+      date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
+    }));
 
-    datesName() {
-      return `dates${this.nameSuffix}`;
-    },
+    const endRules = computed(() => ({
+      required: true,
+      after: [convertDateToString(props.value.begin, DATETIME_FORMATS.dateTimePicker)],
+      date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
+    }));
 
-    typeName() {
-      return `type${this.nameSuffix}`;
-    },
-  },
-  watch: {
-    fullDay() {
-      this.updateModel({
-        ...this.value,
+    const nameSuffix = computed(() => (props.value.key ? `-${props.value.key}` : ''));
 
-        begin: convertDateToStartOfDayDateObject(this.value.begin),
-        end: convertDateToEndOfDayDateObject(this.value.end),
+    const datesName = computed(() => `dates${nameSuffix.value}`);
+
+    const typeName = computed(() => `type${nameSuffix.value}`);
+
+    watch(fullDay, () => {
+      updateModel({
+        ...props.value,
+
+        begin: convertDateToStartOfDayDateObject(props.value.begin),
+        end: convertDateToEndOfDayDateObject(props.value.end),
       });
-    },
-  },
-  methods: {
-    async toggleEditing() {
-      if (this.editing) {
-        await this.validateChildren();
+    });
+
+    const toggleEditing = async () => {
+      if (editing.value) {
+        await validateChildren();
       }
 
-      if (!this.hasChildrenError) {
-        this.editing = !this.editing;
+      if (!hasChildrenError.value) {
+        editing.value = !editing.value;
       }
-    },
+    };
+
+    return {
+      editing,
+      fullDay,
+      beginRules,
+      endRules,
+      datesName,
+      typeName,
+      updateField,
+      toggleEditing,
+    };
   },
 };
 </script>

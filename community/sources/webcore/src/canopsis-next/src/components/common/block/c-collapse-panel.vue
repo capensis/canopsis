@@ -9,7 +9,9 @@
     <v-expansion-panel class="c-collapse-panel__panel">
       <v-expansion-panel-header :color="headerColor">
         <slot name="header">
-          <span class="white--text">{{ title }}</span>
+          <span class="white--text">
+            {{ title }}
+          </span>
         </slot>
         <template #actions="">
           <slot name="actions">

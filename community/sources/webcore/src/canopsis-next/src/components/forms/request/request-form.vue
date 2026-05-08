@@ -46,7 +46,9 @@
       </v-flex>
       <v-flex xs6>
         <c-information-block :title="$t('common.request.repeatRequest')">
-          <span v-if="hideRepeat" class="font-italic mt-4">{{ $t('common.request.repeatRequestInTomlFile') }}</span>
+          <span v-if="hideRepeat" class="font-italic mt-4">
+            {{ $t('common.request.repeatRequestInTomlFile') }}
+          </span>
           <c-retry-field
             v-else
             v-field="form"

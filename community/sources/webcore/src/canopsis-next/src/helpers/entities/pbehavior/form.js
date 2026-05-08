@@ -226,7 +226,7 @@ export const pbehaviorToForm = (
   entityPattern,
   timezone = getLocalTimezone(),
 ) => {
-  let rrule = pbehavior.rrule ?? null;
+  let rrule = pbehavior.rrule ?? '';
 
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
     ({ rrule } = pbehavior.rrule);

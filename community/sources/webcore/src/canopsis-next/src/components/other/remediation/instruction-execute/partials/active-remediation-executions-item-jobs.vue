@@ -8,7 +8,9 @@
       text-color="white"
       small
     >
-      <span class="text-ucfirst">{{ chip.text }}</span>
+      <span class="text-ucfirst">
+        {{ chip.text }}
+      </span>
     </v-chip>
   </v-layout>
 </template>

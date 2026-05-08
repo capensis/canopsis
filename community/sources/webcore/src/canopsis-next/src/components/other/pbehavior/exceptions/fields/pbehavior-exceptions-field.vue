@@ -1,11 +1,7 @@
 <template>
-  <v-layout column>
-    <v-layout class="mt-3">
+  <v-layout class="gap-3" column>
+    <v-layout v-if="exdates.length">
       <v-flex xs12>
-        <slot
-          v-if="!exdates.length"
-          name="no-data"
-        />
         <pbehavior-exception-field
           v-for="(exdate, index) in exdates"
           v-field="exdates[index]"
@@ -34,21 +30,18 @@
 </template>
 
 <script>
+import { onMounted } from 'vue';
+
 import { uid } from '@/helpers/uid';
 import { convertDateToStartOfDayDateObject, convertDateToEndOfDayDateObject } from '@/helpers/date/date';
 
-import { formArrayMixin } from '@/mixins/form';
-import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
 import PbehaviorExceptionField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exception-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: { PbehaviorExceptionField },
-  mixins: [
-    formArrayMixin,
-    entitiesFieldPbehaviorFieldTypeMixin,
-  ],
   model: {
     prop: 'exdates',
     event: 'input',
@@ -67,18 +60,25 @@ export default {
       default: false,
     },
   },
-  mounted() {
-    this.fetchFieldPbehaviorTypesList();
-  },
-  methods: {
-    addExceptionDate() {
-      this.addItemIntoArray({
+  setup(props, { emit }) {
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+    const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
+
+    onMounted(fetchPbehaviorTypesFieldList);
+
+    const addExceptionDate = () => {
+      addItemIntoArray({
         key: uid(),
         begin: convertDateToStartOfDayDateObject(),
         end: convertDateToEndOfDayDateObject(),
         type: '',
       });
-    },
+    };
+
+    return {
+      addExceptionDate,
+      removeItemFromArray,
+    };
   },
 };
 </script>

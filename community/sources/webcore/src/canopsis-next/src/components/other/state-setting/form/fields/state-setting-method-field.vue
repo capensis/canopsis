@@ -1,6 +1,8 @@
 <template>
   <v-layout column>
-    <span class="subheading font-weight-bold">{{ $t('stateSetting.computeMethod') }}</span>
+    <span class="subheading font-weight-bold">
+      {{ $t('stateSetting.computeMethod') }}
+    </span>
     <v-radio-group
       v-field="value"
       hide-details
@@ -13,7 +15,9 @@
         color="primary"
       >
         <template #label>
-          <span class="mr-2">{{ $t(`stateSetting.methods.${method}.label`) }}</span>
+          <span class="mr-2">
+            {{ $t(`stateSetting.methods.${method}.label`) }}
+          </span>
           <c-help-icon
             :text="$t(`stateSetting.methods.${method}.tooltip`)"
             top

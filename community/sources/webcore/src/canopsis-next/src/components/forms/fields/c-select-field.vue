@@ -21,7 +21,9 @@
         name="selection"
         v-bind="props"
       >
-        <span class="text-truncate">{{ getItemText(props.item) }}</span>
+        <span class="text-truncate">
+          {{ getItemText(props.item) }}
+        </span>
       </slot>
     </template>
     <template

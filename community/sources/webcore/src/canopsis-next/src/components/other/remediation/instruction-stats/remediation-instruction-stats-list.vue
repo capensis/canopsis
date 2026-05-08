@@ -22,7 +22,9 @@
         </v-layout>
       </template>
       <template #headerCell="{ header }">
-        <span class="c-table-header__text--multiline">{{ header.text }}</span>
+        <span class="c-table-header__text--multiline">
+          {{ header.text }}
+        </span>
       </template>
       <template #type="{ item }">
         {{ $t(`remediation.instruction.types.${item.type}`) }}

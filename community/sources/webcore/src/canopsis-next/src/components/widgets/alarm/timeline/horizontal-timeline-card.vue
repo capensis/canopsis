@@ -20,7 +20,9 @@
           >
             {{ style.icon }}
           </v-icon>
-          <span class="horizontal-time-line-card__time">{{ step.t | date('time') }}</span>
+          <span class="horizontal-time-line-card__time">
+            {{ step.t | date('time') }}
+          </span>
         </v-layout>
       </template>
       <div class="pre-line">

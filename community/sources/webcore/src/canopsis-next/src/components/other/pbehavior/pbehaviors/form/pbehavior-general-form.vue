@@ -103,22 +103,6 @@
       row
     />
     <c-collapse-panel
-      :title="$t('recurrenceRule.title')"
-      class="mb-2"
-    >
-      <recurrence-rule-form
-        v-field="form.rrule"
-        :start="form.tstart"
-      />
-      <pbehavior-recurrence-rule-exceptions-field
-        v-field="form.exdates"
-        :exceptions="form.exceptions"
-        class="mt-2"
-        with-exdate-type
-        @update:exceptions="updateExceptions"
-      />
-    </c-collapse-panel>
-    <c-collapse-panel
       v-if="!noComments"
       :title="$tc('common.comment', 2)"
       class="mt-2"
@@ -152,16 +136,12 @@ import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reason
 import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
-import RecurrenceRuleForm from '@/components/forms/recurrence-rule/recurrence-rule-form.vue';
-import PbehaviorRecurrenceRuleExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
 
 import PbehaviorCommentsField from '../fields/pbehavior-comments-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    RecurrenceRuleForm,
-    PbehaviorRecurrenceRuleExceptionsField,
     PbehaviorCommentsField,
     DateTimeSplittedRangePickerField,
   },
@@ -318,10 +298,6 @@ export default {
           start_on_trigger: false,
         });
       }
-    },
-
-    updateExceptions(exceptions) {
-      this.updateField('exceptions', exceptions);
     },
   },
 };

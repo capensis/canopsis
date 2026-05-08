@@ -16,7 +16,9 @@
         </c-alert>
         <div class="my-3">
           <p v-html="sanitizedPhraseText" class="mb-2" />
-          <pre class="black--text grey lighten-2 d-inline pa-1">{{ originalPhrase }}</pre>
+          <pre class="black--text grey lighten-2 d-inline pa-1">
+{{ originalPhrase }}
+</pre>
         </div>
         <v-text-field
           v-model="phrase"

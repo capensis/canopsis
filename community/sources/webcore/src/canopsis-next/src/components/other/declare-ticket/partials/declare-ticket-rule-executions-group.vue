@@ -14,7 +14,9 @@
       >
         {{ ruleName }}
       </v-chip>
-      <span class="text-subtitle-1 mr-5">{{ $t('common.webhookStatus') }}:</span>
+      <span class="text-subtitle-1 mr-5">
+        {{ $t('common.webhookStatus') }}:
+      </span>
       <alarm-webhook-execution-status
         :running="isExecutionsRunning"
         :success="isExecutionsSucceeded"

@@ -4,7 +4,9 @@
     align-center
     justify-center
   >
-    <span class="error--text">{{ $t('kpi.noData') }}</span>
+    <span class="error--text">
+      {{ $t('kpi.noData') }}
+    </span>
   </v-layout>
 </template>
 

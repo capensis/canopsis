@@ -23,7 +23,9 @@
       />
     </template>
     <template #headerCell="{ header }">
-      <span class="pre-line header-text">{{ header.text }}</span>
+      <span class="pre-line header-text">
+        {{ header.text }}
+      </span>
     </template>
     <template #delay="{ item }">
       <span>{{ item.delay | duration }}</span>

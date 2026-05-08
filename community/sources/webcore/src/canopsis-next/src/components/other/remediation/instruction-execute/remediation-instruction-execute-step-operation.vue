@@ -42,7 +42,9 @@
             hide-details
           />
           <v-layout column>
-            <span class="text-subtitle-1">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
+            <span class="text-subtitle-1">
+              {{ $t('remediation.instructionExecute.jobs.title') }}
+            </span>
             <remediation-instruction-execute-assigned-jobs-table
               v-if="operation.jobs.length"
               :jobs="operation.jobs"

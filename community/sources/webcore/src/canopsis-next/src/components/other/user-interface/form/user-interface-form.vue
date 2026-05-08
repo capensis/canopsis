@@ -174,7 +174,9 @@
     </v-layout>
     <v-layout class="mt-3">
       <v-flex>
-        <span class="v-label file-selector__label">{{ $t('userInterface.logo') }}</span>
+        <span class="v-label file-selector__label">
+          {{ $t('userInterface.logo') }}
+        </span>
         <v-layout>
           <file-selector
             ref="fileSelectorElement"

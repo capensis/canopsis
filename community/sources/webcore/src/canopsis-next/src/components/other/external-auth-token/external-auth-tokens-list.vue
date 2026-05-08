@@ -18,7 +18,9 @@
       <template #last_used="{ item }">
         <span v-if="item.failed" class="error--text">
           {{ item.fail_reason }}
-          <v-icon class="ml-2" color="error">warning</v-icon>
+          <v-icon class="ml-2" color="error">
+            warning
+          </v-icon>
         </span>
         <span v-else>
           {{ item.last_used | date }}

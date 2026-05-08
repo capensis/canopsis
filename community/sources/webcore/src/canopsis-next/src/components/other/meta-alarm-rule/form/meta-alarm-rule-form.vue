@@ -9,7 +9,9 @@
         editable
       >
         {{ $t('metaAlarmRule.steps.basics') }}
-        <small v-if="hasGeneralError">{{ $t('errors.invalid') }}</small>
+        <small v-if="hasGeneralError">
+          {{ $t('errors.invalid') }}
+        </small>
       </v-stepper-step>
       <v-divider />
       <v-stepper-step
@@ -20,7 +22,9 @@
         editable
       >
         {{ $t('metaAlarmRule.steps.defineType') }}
-        <small v-if="hasTypeError">{{ $t('errors.invalid') }}</small>
+        <small v-if="hasTypeError">
+          {{ $t('errors.invalid') }}
+        </small>
       </v-stepper-step>
       <v-divider />
       <v-stepper-step
@@ -31,7 +35,9 @@
         editable
       >
         {{ $t('metaAlarmRule.steps.addParameters') }}
-        <small v-if="hasParametersError">{{ $t('errors.invalid') }}</small>
+        <small v-if="hasParametersError">
+          {{ $t('errors.invalid') }}
+        </small>
       </v-stepper-step>
     </v-stepper-header>
 
@@ -69,7 +75,9 @@
           :title="$t(`metaAlarmRule.parametersTitle.${form.type}`)"
           class="pa-4"
         >
-          <span class="text--secondary mb-2">{{ $t(`metaAlarmRule.parametersDescription.${form.type}`) }}</span>
+          <span class="text--secondary mb-2">
+            {{ $t(`metaAlarmRule.parametersDescription.${form.type}`) }}
+          </span>
           <meta-alarm-rule-parameters-form v-field="form" :template-vars="templateVars" />
         </c-information-block>
       </v-stepper-content>

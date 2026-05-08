@@ -1,46 +1,33 @@
 <template>
-  <div>
-    <v-layout>
-      <v-flex xs8>
-        <c-id-field
-          v-field="form._id"
-          :disabled="isDisabledIdField"
-          :help-text="$t('eventFilter.idHelp')"
-          class="mr-3"
-          autofocus
-        />
-      </v-flex>
-      <v-flex xs4>
-        <c-event-filter-type-field
-          v-field="form.type"
-          :autofocus="isDisabledIdField"
-          class="ml-3"
-        />
-      </v-flex>
-    </v-layout>
-    <c-description-field
-      v-field="form.description"
-      required
-    />
-    <c-priority-field v-field="form.priority" />
-    <c-information-block :title="$t('eventFilter.duringPeriod')">
-      <event-filter-drop-intervals-field v-field="form" />
-    </c-information-block>
-    <pbehavior-recurrence-rule-field
-      v-field="form"
-      class="mb-3"
-    />
-    <c-patterns-field
-      v-field="form.patterns"
-      :some-required="!isChangeEntityType"
-      :required="isChangeEntityType"
-      :with-entity="!isChangeEntityType"
-      :event-attributes="eventAttributes"
-      :pending="attributesPending"
-      expanded-event
-      with-event
-      entity-counters-type
-    />
+  <v-layout class="gap-3" column>
+    <c-form-block>
+      <c-form-block-row :label="$t('common.type')">
+        <c-event-filter-type-field v-field="form.type" />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.priority')">
+        <c-priority-field v-field="form.priority" />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.description')">
+        <c-description-field v-field="form.description" required />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('eventFilter.duringPeriod')">
+        <event-filter-drop-intervals-field v-field="form" />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.recurrence')">
+        <div class="py-3">
+          <pbehavior-recurrence-rule-field v-field="form" />
+        </div>
+      </c-form-block-row>
+    </c-form-block>
+
+    <span class="text-subtitle-1">
+      {{ $t('eventFilter.enrichmentOptions') }}
+    </span>
+
     <template v-if="hasAdditionalOptions">
       <v-divider class="my-3" />
       <c-information-block
@@ -72,7 +59,7 @@
         />
       </c-information-block>
     </template>
-  </div>
+  </v-layout>
 </template>
 
 <script>
@@ -84,6 +71,7 @@ import {
   getSetTagsItemsFromPattern,
 } from '@/helpers/entities/event-filter/rule/entity';
 
+import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
 import EventFilterEnrichmentForm from './fields/event-filter-enrichment-form.vue';
@@ -95,6 +83,7 @@ export default {
   components: {
     ExternalDataForm,
     EventFilterDropIntervalsField,
+    PbehaviorRecurrenceRuleField,
     EventFilterEnrichmentForm,
     EventFilterChangeEntityForm,
   },
@@ -116,14 +105,6 @@ export default {
       default: () => ({}),
     },
     isDisabledIdField: {
-      type: Boolean,
-      default: false,
-    },
-    eventAttributes: {
-      type: Array,
-      required: false,
-    },
-    attributesPending: {
       type: Boolean,
       default: false,
     },

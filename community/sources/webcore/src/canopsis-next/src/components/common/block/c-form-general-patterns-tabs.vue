@@ -4,14 +4,17 @@
     slider-color="primary"
     centered
   >
-    <v-tab :class="{ 'error--text': hasGeneralError }">
-      {{ $t('common.general') }}
-    </v-tab>
     <v-tab
-      v-if="hasPatternsSlot"
+      key="patterns"
       :class="{ 'error--text': hasPatternsError }"
     >
       {{ $tc('common.pattern') }}
+    </v-tab>
+    <v-tab
+      key="general"
+      :class="{ 'error--text': hasGeneralError }"
+    >
+      {{ $t('common.general') }}
     </v-tab>
     <template-testing-test-variables-tab
       v-if="hasTemplateTestingTab"
@@ -19,27 +22,26 @@
     />
 
     <v-tab-item
+      key="patternsItem"
       class="pt-4"
-      eager
-    >
-      <slot
-        :set-ref="setGeneralRef"
-        :copy-vars="copyVars"
-        :template-vars="templateVars"
-        name="general"
-      />
-    </v-tab-item>
-
-    <v-tab-item
-      v-if="hasPatternsSlot"
-      class="pt-4"
-      eager
     >
       <slot
         :set-ref="setPatternsRef"
         :template-vars="templateVars"
         :copy-vars="copyVars"
         name="patterns"
+      />
+    </v-tab-item>
+
+    <v-tab-item
+      key="generalItem"
+      class="pt-4"
+    >
+      <slot
+        :set-ref="setGeneralRef"
+        :copy-vars="copyVars"
+        :template-vars="templateVars"
+        name="general"
       />
     </v-tab-item>
 
@@ -81,12 +83,6 @@ import {
 import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
 import TemplateTestingTestVariablesTab from '@/components/other/template-testing/test-variables/partials/template-testing-test-variables-tab.vue';
 
-export const GENERAL_PATTERNS_FORM_TABS = {
-  general: 0,
-  patterns: 1,
-  testing: 2,
-};
-
 export default {
   components: { TemplateTestingTestVariables, TemplateTestingTestVariablesTab },
   model: {
@@ -106,19 +102,29 @@ export default {
       type: Number,
       required: false,
     },
+    reverse: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const slots = useSlots();
 
-    const activeTab = ref(GENERAL_PATTERNS_FORM_TABS.general);
+    const GENERAL_PATTERNS_FORM_TABS = computed(() => ({
+      patterns: 0,
+      general: 1,
+      testing: 2,
+    }));
 
-    const isActiveTestingTab = computed(() => activeTab.value === GENERAL_PATTERNS_FORM_TABS.testing);
+    const activeTab = ref(0);
+
+    const isActiveTestingTab = computed(() => activeTab.value === GENERAL_PATTERNS_FORM_TABS.value.testing);
 
     const hasPatternsSlot = computed(() => Boolean(slots.patterns));
 
     useAiChatExpand({
       activeTab,
-      neededTab: GENERAL_PATTERNS_FORM_TABS.patterns,
+      neededTab: GENERAL_PATTERNS_FORM_TABS.value.patterns,
     });
 
     const generalElement = ref(null);

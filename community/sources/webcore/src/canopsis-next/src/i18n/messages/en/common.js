@@ -51,6 +51,7 @@ export default {
   comment: 'Comment | Comments',
   start: 'Start',
   end: 'End',
+  every: 'Every',
   message: 'Message',
   preview: 'Preview',
   recursive: 'Recursive',

@@ -31,7 +31,9 @@
           small
           @click="$emit('add')"
         >
-          <span v-if="addButtonLabel">{{ addButtonLabel }}</span>
+          <span v-if="addButtonLabel">
+            {{ addButtonLabel }}
+          </span>
           <v-icon v-else>
             add
           </v-icon>

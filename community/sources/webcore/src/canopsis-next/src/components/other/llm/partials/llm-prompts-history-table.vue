@@ -45,14 +45,20 @@
       {{ $t('pattern.patterns') }}
     </template>
     <template #rule="{ item }">
-      <span v-if="item.rule?.name">{{ item.rule.name }}</span>
-      <span v-else class="font-italic">{{ $t('llm.promptsHistory.ruleNotSaved') }}</span>
+      <span v-if="item.rule?.name">
+        {{ item.rule.name }}
+      </span>
+      <span v-else class="font-italic">
+        {{ $t('llm.promptsHistory.ruleNotSaved') }}
+      </span>
     </template>
     <template #off_topic="{ item }">
       <c-enabled :value="!item.off_topic" />
     </template>
     <template #prompt="{ item }">
-      <span class="llm-prompts-history-table__prompt">{{ item.prompt }}</span>
+      <span class="llm-prompts-history-table__prompt">
+        {{ item.prompt }}
+      </span>
     </template>
     <template #actions="{ item }">
       <c-action-btn

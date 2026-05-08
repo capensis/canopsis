@@ -5,7 +5,9 @@
       :key="group.day"
       class="c-horizontal-time-line__groups"
     >
-      <span class="c-horizontal-time-line__day">{{ group.day }}</span>
+      <span class="c-horizontal-time-line__day">
+        {{ group.day }}
+      </span>
       <v-divider
         class="grey mr-2"
         vertical

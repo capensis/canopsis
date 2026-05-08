@@ -37,7 +37,9 @@
       >
         {{ item[itemText] }}
       </c-chip>
-      <span v-else-if="index === showCount">+{{ selectedItems.length - showCount }} {{ $t('common.more') }}</span>
+      <span v-else-if="index === showCount">
+        +{{ selectedItems.length - showCount }} {{ $t('common.more') }}
+      </span>
       <span v-else />
     </template>
     <template #item="{ item, attrs, on, parent }">

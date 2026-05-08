@@ -33,7 +33,9 @@
                 :style="{ backgroundColor: color }"
                 label
               >
-                <strong class="state-title">{{ text }}</strong>
+                <strong class="state-title">
+                  {{ text }}
+                </strong>
               </v-chip>
             </v-flex>
             <v-flex xs10>
