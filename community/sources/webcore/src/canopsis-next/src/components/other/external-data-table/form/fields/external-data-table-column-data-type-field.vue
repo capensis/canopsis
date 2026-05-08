@@ -11,7 +11,9 @@
         outlined
       >
         <template #selection-empty>
-          <span class="grey--text">{{ $t('externalData.selectDataType') }}</span>
+          <span class="grey--text">
+            {{ $t('externalData.selectDataType') }}
+          </span>
         </template>
       </c-select-chip>
     </v-flex>

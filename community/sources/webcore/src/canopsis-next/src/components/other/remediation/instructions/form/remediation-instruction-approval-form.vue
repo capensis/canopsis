@@ -9,7 +9,9 @@
     />
     <template v-if="needApprove">
       <v-layout v-if="disabled">
-        <span class="text-subtitle-1 grey--text my-4">{{ assignLabel }}: {{ assignValue }}</span>
+        <span class="text-subtitle-1 grey--text my-4">
+          {{ assignLabel }}: {{ assignValue }}
+        </span>
       </v-layout>
       <v-layout
         v-else

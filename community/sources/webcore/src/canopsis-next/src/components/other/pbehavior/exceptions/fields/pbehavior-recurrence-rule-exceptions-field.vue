@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <h3 class="text--secondary">
-      {{ $t('pbehavior.exceptions.title') }}
-    </h3>
+  <v-layout class="gap-3" column>
     <pbehavior-exceptions-list
       v-if="exceptions.length"
       :exceptions="exceptions"
@@ -13,29 +10,23 @@
       :disabled="disabled"
       :with-exdate-type="withExdateType"
     >
-      <template #no-data="">
-        <c-alert
-          :value="!hasExceptionsOrExdates"
-          type="info"
-        >
-          {{ $t('pbehavior.exceptions.emptyExceptions') }}
-        </c-alert>
-      </template>
       <template #actions="">
-        <v-btn
-          class="mr-2"
-          color="primary"
-          @click="addException"
-        >
-          {{ $t('pbehavior.exceptions.create') }}
-        </v-btn>
-        <pbehavior-recurrence-rule-exceptions-list-menu
-          :value="exceptions"
-          @input="updateExceptions"
-        />
+        <v-layout class="gap-2 fill-height" align-center>
+          <v-btn
+            color="primary"
+            outlined
+            @click="addException"
+          >
+            {{ $t('pbehavior.exceptions.create') }}
+          </v-btn>
+          <pbehavior-recurrence-rule-exceptions-list-menu
+            :value="exceptions"
+            @input="updateExceptions"
+          />
+        </v-layout>
       </template>
     </pbehavior-exceptions-field>
-  </div>
+  </v-layout>
 </template>
 
 <script>

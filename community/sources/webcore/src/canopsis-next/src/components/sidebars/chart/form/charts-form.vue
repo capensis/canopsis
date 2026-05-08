@@ -14,7 +14,9 @@
             <v-icon large>
               {{ $constants.WIDGET_ICONS[item.type] }}
             </v-icon>
-            <span class="ml-3">{{ item.title }}</span>
+            <span class="ml-3">
+              {{ item.title }}
+            </span>
           </v-layout>
         </template>
       </field-draggable-list>
@@ -37,7 +39,9 @@
             @click="showCreateChartModal(type)"
           >
             <v-icon>{{ icon }}</v-icon>
-            <span class="ml-3">{{ text }}</span>
+            <span class="ml-3">
+              {{ text }}
+            </span>
           </v-list-item>
         </v-list>
       </v-menu>

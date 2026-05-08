@@ -30,7 +30,7 @@ import { dynamicInfoInformationToForm } from '@/helpers/entities/dynamic-info/in
 import { useModals } from '@/hooks/modals';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
-import DynamicInfoInfosItemForm from './dynamic-info-infos-item-form.vue';
+import DynamicInfoInfosItemForm from './fields/dynamic-info-infos-item-form.vue';
 
 export default {
   inject: ['$validator'],

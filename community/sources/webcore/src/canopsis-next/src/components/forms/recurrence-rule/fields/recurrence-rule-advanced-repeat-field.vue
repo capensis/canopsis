@@ -13,6 +13,7 @@ import { isSeveralEqual } from '@/helpers/collection';
 
 import { formBaseMixin } from '@/mixins/form';
 
+// TODO: Remove component
 export default {
   mixins: [formBaseMixin],
   model: {
@@ -43,34 +44,34 @@ export default {
     },
 
     hints() {
-      if (!this.start) {
-        return [];
-      }
+      // if (!this.start) {
+      //   return [];
+      // }
 
       const hints = [];
 
-      const dayOfMonth = this.start.getDate();
+      const dayOfMonth = new Date().getDate();
 
-      if (dayOfMonth < 28) {
-        hints.push({
-          text: this.$t('recurrenceRule.dayOfMonth', { day: dayOfMonth }),
-          value: {
-            byyearday: '',
-            byweekno: '',
-            byhour: '',
-            bysetpos: '',
-            byweekday: [],
-            bymonthday: String(dayOfMonth),
-          },
-        });
-      }
+      // if (dayOfMonth < 28) {
+      hints.push({
+        text: this.$t('recurrenceRule.dayOfMonth', { day: dayOfMonth }),
+        value: {
+          byyearday: '',
+          byweekno: '',
+          byhour: '',
+          bysetpos: '',
+          byweekday: [],
+          bymonthday: String(dayOfMonth),
+        },
+      });
+      // }
 
       /**
        * 7 - day in week
        * @type {number}
        */
-      const weekNumber = Math.ceil(this.start.getDate() / 7);
-      const weekDayIndex = this.start.getDay();
+      const weekNumber = Math.ceil(dayOfMonth / 7);
+      const weekDayIndex = new Date().getDay();
 
       const weekDay = [
         this.$t('common.weekDays.monday'),

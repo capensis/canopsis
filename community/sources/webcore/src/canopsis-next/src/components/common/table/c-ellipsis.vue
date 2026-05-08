@@ -1,6 +1,8 @@
 <template>
   <div>
-    <span @click.stop="textClicked">{{ shortenedText }}</span>
+    <span @click.stop="textClicked">
+      {{ shortenedText }}
+    </span>
     <v-menu
       v-if="!isShort"
       :close-on-content-click="false"

@@ -36,6 +36,7 @@ import { useTestVariablesTabData } from './hooks/template-test-variables-wrapper
 import TemplateTestingTestVariables from './template-testing-test-variables.vue';
 import TemplateTestingTestVariablesTab from './partials/template-testing-test-variables-tab.vue';
 
+// TODO: remove this component
 export default {
   components: { TemplateTestingTestVariables, TemplateTestingTestVariablesTab },
   inheritAttrs: false,

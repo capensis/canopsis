@@ -71,8 +71,8 @@ import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import DynamicInfoGeneralForm from '@/components/other/dynamic-info/form/fields/dynamic-info-general-form.vue';
-import DynamicInfoPatternsForm from '@/components/other/dynamic-info/form/fields/dynamic-info-patterns-form.vue';
+import DynamicInfoGeneralForm from '@/components/other/dynamic-info/form/dynamic-info-general-form.vue';
+import DynamicInfoPatternsForm from '@/components/other/dynamic-info/form/dynamic-info-patterns-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

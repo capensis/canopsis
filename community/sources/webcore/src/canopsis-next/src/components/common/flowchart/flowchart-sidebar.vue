@@ -25,7 +25,9 @@
     >
       <v-expansion-panel>
         <v-expansion-panel-header>
-          <span class="v-label">{{ $tc('flowchart.shape', 2) }}</span>
+          <span class="v-label">
+            {{ $tc('flowchart.shape', 2) }}
+          </span>
         </v-expansion-panel-header>
         <v-divider />
         <v-expansion-panel-content>
@@ -82,7 +84,9 @@
       </v-expansion-panel>
       <v-expansion-panel>
         <v-expansion-panel-header>
-          <span class="v-label">{{ $t('flowchart.icons') }}</span>
+          <span class="v-label">
+            {{ $t('flowchart.icons') }}
+          </span>
         </v-expansion-panel-header>
         <v-divider />
         <v-expansion-panel-content>

@@ -2,7 +2,6 @@ import { PBEHAVIOR_RRULE_PERIODS_RANGES } from '@/constants';
 
 export default {
   title: 'Règle de récurrence',
-  repeatEvery: 'Répéter chaque',
   repeatOn: 'Répété le',
   freq: 'Fréquence',
   until: 'Jusqu\'à',

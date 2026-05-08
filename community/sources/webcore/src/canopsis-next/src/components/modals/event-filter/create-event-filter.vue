@@ -5,28 +5,37 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <template-testing-test-variables-wrapper
+        <c-enabled-field v-model="form.enabled" class="mb-3" with-background />
+
+        <c-form-general-patterns-tabs
           v-model="form"
           :rule-id="ruleId"
           :type="type"
+          reverse
         >
-          <template #default="{ templateVars, copyVars }">
-            <c-enabled-field v-model="form.enabled" with-background />
-            <event-filter-form
+          <template #general="{ setRef, templateVars, copyVars }">
+            <event-filter-general-form
               v-model="form"
+              :ref="setRef"
               :template-vars="templateVars"
               :copy-vars="copyVars"
               :is-disabled-id-field="config.isDisabledIdField"
+            />
+          </template>
+          <template #patterns="{ setRef }">
+            <event-filter-patterns-form
+              v-model="form"
+              :ref="setRef"
               :event-attributes="eventAttributes"
               :attributes-pending="pending"
             />
-            <ai-chat-sidebar
-              v-if="chatShown"
-              v-bind="chatOptions.bind"
-              v-on="chatOptions.on"
-            />
           </template>
-        </template-testing-test-variables-wrapper>
+        </c-form-general-patterns-tabs>
+        <ai-chat-sidebar
+          v-if="chatShown"
+          v-bind="chatOptions.bind"
+          v-on="chatOptions.on"
+        />
       </template>
       <template #actions="">
         <v-btn
@@ -76,8 +85,8 @@ import { useValidationFormErrors } from '@/hooks/validator/validation-form-error
 import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
+import EventFilterGeneralForm from '@/components/other/event-filter/form/event-filter-general-form.vue';
+import EventFilterPatternsForm from '@/components/other/event-filter/form/event-filter-patterns-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -88,9 +97,9 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: {
-    EventFilterForm,
     AiChatSidebar,
-    TemplateTestingTestVariablesWrapper,
+    EventFilterGeneralForm,
+    EventFilterPatternsForm,
     ModalWrapper,
   },
   props: {

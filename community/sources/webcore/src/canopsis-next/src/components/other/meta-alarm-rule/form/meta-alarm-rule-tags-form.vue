@@ -1,6 +1,8 @@
 <template>
   <v-layout class="gap-3" column>
-    <span class="text-subtitle-1 font-weight-bold">{{ $tc('common.tag', 2) }}</span>
+    <span class="text-subtitle-1 font-weight-bold">
+      {{ $tc('common.tag', 2) }}
+    </span>
     <v-layout>
       <c-enabled-field
         v-field="form.copy_from_children"

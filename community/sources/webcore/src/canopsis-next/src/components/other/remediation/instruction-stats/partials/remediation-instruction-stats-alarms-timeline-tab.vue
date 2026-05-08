@@ -21,7 +21,9 @@
       </v-layout>
     </template>
     <template #alarm_display_name="{ item }">
-      <span class="c-nowrap">{{ item.alarm_display_name }}</span>
+      <span class="c-nowrap">
+        {{ item.alarm_display_name }}
+      </span>
     </template>
     <template #result="{ item }">
       <c-enabled
@@ -35,22 +37,34 @@
       <c-alarm-state-chip v-if="item.alarm_id" :value="item.result_alarm_state" />
     </template>
     <template #started_at="{ item }">
-      <span class="c-nowrap">{{ item.started_at }}</span>
+      <span class="c-nowrap">
+        {{ item.started_at }}
+      </span>
     </template>
     <template #completed_at="{ item }">
-      <span class="c-nowrap">{{ item.completed_at }}</span>
+      <span class="c-nowrap">
+        {{ item.completed_at }}
+      </span>
     </template>
     <template #duration="{ item }">
-      <span class="c-nowrap">{{ item.duration }}</span>
+      <span class="c-nowrap">
+        {{ item.duration }}
+      </span>
     </template>
     <template #alarm_ok_at="{ item }">
-      <span class="c-nowrap">{{ item.alarm_ok_at }}</span>
+      <span class="c-nowrap">
+        {{ item.alarm_ok_at }}
+      </span>
     </template>
     <template #timeout_after_execution="{ item }">
-      <span class="c-nowrap">{{ item.timeout_after_execution }}</span>
+      <span class="c-nowrap">
+        {{ item.timeout_after_execution }}
+      </span>
     </template>
     <template #alarm_ok_before_completed="{ item }">
-      <span class="c-nowrap">{{ item.alarm_ok_before_completed }}</span>
+      <span class="c-nowrap">
+        {{ item.alarm_ok_before_completed }}
+      </span>
     </template>
     <template #timeline="{ item }">
       <span

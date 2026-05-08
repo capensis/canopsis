@@ -5,23 +5,21 @@
         <span>{{ $t('modals.createRrule.title') }}</span>
       </template>
       <template #text="">
-        <recurrence-rule-form
-          v-model="form.rrule"
-          :start="config.start"
-          autofocus
-        />
-        <pbehavior-recurrence-rule-exceptions-field
-          v-model="form.exdates"
-          :exceptions.sync="form.exceptions"
-          :with-exdate-type="config.withExdateType"
-          class="mt-2"
-        />
+        <v-layout
+          class="gap-2"
+          column
+        >
+          <recurrence-rule-form
+            v-model="form"
+            :with-exdate-type="config.withExdateType"
+          />
+        </v-layout>
       </template>
       <template #actions="">
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -39,14 +37,20 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import {
+  recurrenceRuleModalConfigToForm,
+  formToReccurenceRuleModalConfig,
+} from '@/helpers/entities/shared/recurrence-rule/form';
+
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import RecurrenceRuleForm from '@/components/forms/recurrence-rule/recurrence-rule-form.vue';
-import PbehaviorRecurrenceRuleExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -56,46 +60,40 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  inject: ['$system'],
   components: {
     RecurrenceRuleForm,
-    PbehaviorRecurrenceRuleExceptionsField,
     ModalWrapper,
   },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    const { rrule, exdates, exceptions } = this.modal.config;
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { config, close } = useInnerModal(props);
+
+    const form = ref(recurrenceRuleModalConfigToForm(config.value));
+
+    const { submit, submitting, isDisabled } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action?.(formToReccurenceRuleModalConfig(form.value));
+
+        close();
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      form: {
-        rrule: rrule ?? '',
-        exdates: exdates ?? [],
-        exceptions: exceptions ?? [],
-      },
+      form,
+      config,
+      close,
+      submit,
+      submitting,
+      isDisabled,
     };
-  },
-  methods: {
-    async submit() {
-      const isValid = await this.$validator.validateAll();
-
-      if (isValid) {
-        if (this.config.action) {
-          const { rrule, exdates, exceptions } = this.form;
-
-          this.config.action({
-            rrule,
-            exdates,
-            exceptions,
-          });
-        }
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

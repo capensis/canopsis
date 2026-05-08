@@ -4,7 +4,9 @@
       <span>{{ $t('modals.clickOutsideConfirmation.title') }}</span>
     </template>
     <template #text="">
-      <span class="text-subtitle-1">{{ $t('modals.clickOutsideConfirmation.text') }}</span>
+      <span class="text-subtitle-1">
+        {{ $t('modals.clickOutsideConfirmation.text') }}
+      </span>
     </template>
     <template #actions="">
       <v-btn

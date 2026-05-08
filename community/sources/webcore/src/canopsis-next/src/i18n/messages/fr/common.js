@@ -50,6 +50,7 @@ export default {
   data: 'Données',
   comment: 'Commentaire | Commentaires',
   end: 'Fin',
+  every: 'Chaque',
   start: 'Début',
   message: 'Message',
   preview: 'Aperçu',
