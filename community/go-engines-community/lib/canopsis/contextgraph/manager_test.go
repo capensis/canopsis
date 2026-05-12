@@ -3,6 +3,7 @@ package contextgraph_test
 import (
 	"context"
 	"fmt"
+	"maps"
 	"os"
 	"slices"
 	"testing"
@@ -10,7 +11,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -37,7 +37,7 @@ func TestCheckServices(t *testing.T) {
 	assigner := mock_statesetting.NewMockAssigner(ctrl)
 
 	dataSets := []struct {
-		services       []entityservice.EntityService
+		services       []contextgraph.EntityService
 		entity         types.Entity
 		expectedEntity types.Entity
 		name           string
@@ -49,19 +49,15 @@ func TestCheckServices(t *testing.T) {
 				Component: "component-1",
 				Enabled:   true,
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{
-						ID:      "serv-1",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-1",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
@@ -83,35 +79,27 @@ func TestCheckServices(t *testing.T) {
 				Component: "component-1",
 				Enabled:   true,
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{
-						ID:      "serv-1",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-1",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
 				},
 				{
-					Entity: types.Entity{
-						ID:      "serv-2",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-2",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
@@ -135,35 +123,27 @@ func TestCheckServices(t *testing.T) {
 				ServicesToAdd:    []string{"serv-4"},
 				ServicesToRemove: []string{"serv-0", "serv-2", "serv-3"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{
-						ID:      "serv-1",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-1",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
 				},
 				{
-					Entity: types.Entity{
-						ID:      "serv-2",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-2",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
@@ -186,19 +166,15 @@ func TestCheckServices(t *testing.T) {
 				Enabled:   true,
 				Services:  []string{"serv-1"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{
-						ID:      "serv-1",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-1",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 							},
 						},
 					},
@@ -222,19 +198,15 @@ func TestCheckServices(t *testing.T) {
 				Services:      []string{"serv-1"},
 				ServicesToAdd: []string{"serv-1"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{
-						ID:      "serv-1",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-1",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 							},
 						},
 					},
@@ -256,35 +228,27 @@ func TestCheckServices(t *testing.T) {
 				Component: "component-1",
 				Services:  []string{"serv-1", "serv-2"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{
-						ID:      "serv-1",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-1",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 							},
 						},
 					},
 				},
 				{
-					Entity: types.Entity{
-						ID:      "serv-2",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-2",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 							},
 						},
 					},
@@ -307,51 +271,39 @@ func TestCheckServices(t *testing.T) {
 				Enabled:   true,
 				Services:  []string{"serv-1", "serv-2"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{
-						ID:      "serv-1",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-1",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
 				},
 				{
-					Entity: types.Entity{
-						ID:      "serv-2",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-2",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 							},
 						},
 					},
 				},
 				{
-					Entity: types.Entity{
-						ID:      "serv-3",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-3",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
@@ -374,35 +326,27 @@ func TestCheckServices(t *testing.T) {
 				Component: "component-1",
 				Services:  []string{"serv-1", "serv-2"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{
-						ID:      "serv-1",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-1",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
 				},
 				{
-					Entity: types.Entity{
-						ID:      "serv-2",
-						Enabled: true,
-					},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{
+					ID:      "serv-2",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{
+						{
 							{
-								{
-									Field:     "component",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
-								},
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
@@ -472,16 +416,17 @@ func TestCheckServicesByInfos(t *testing.T) {
 	assigner := mock_statesetting.NewMockAssigner(ctrl)
 
 	dataSets := []struct {
-		name                 string
-		infoUpdates          map[string]eventfilter.UpdatedValue
-		componentInfoUpdates map[string]eventfilter.UpdatedValue
-		services             []entityservice.EntityService
-		entity               types.Entity
-		expectedEntity       types.Entity
+		name                     string
+		infoUpdates              []string
+		componentInfoUpdates     []string
+		services                 []contextgraph.EntityService
+		entity                   types.Entity
+		expectedEntity           types.Entity
+		expectedAffectedServices []string
 	}{
 		{
 			name:        "targeted infos update adds matching service and preserves unrelated service",
-			infoUpdates: map[string]eventfilter.UpdatedValue{"team": {}},
+			infoUpdates: []string{"team"},
 			entity: types.Entity{
 				ID:      "id-1",
 				Enabled: true,
@@ -491,30 +436,28 @@ func TestCheckServicesByInfos(t *testing.T) {
 				},
 				Services: []string{"serv-owner"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{ID: "serv-team", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "infos.team",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-							},
-						}},
-					},
+					ID:      "serv-team",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "infos.team",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+						},
+					}},
 				},
 				{
-					Entity: types.Entity{ID: "serv-owner", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "infos.owner",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "ops"),
-							},
-						}},
-					},
+					ID:      "serv-owner",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "infos.owner",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "ops"),
+						},
+					}},
 				},
 			},
 			expectedEntity: types.Entity{
@@ -530,7 +473,7 @@ func TestCheckServicesByInfos(t *testing.T) {
 		},
 		{
 			name:        "targeted infos update removes only matching indexed service",
-			infoUpdates: map[string]eventfilter.UpdatedValue{"team": {}},
+			infoUpdates: []string{"team"},
 			entity: types.Entity{
 				ID:      "id-1",
 				Enabled: true,
@@ -540,30 +483,28 @@ func TestCheckServicesByInfos(t *testing.T) {
 				},
 				Services: []string{"serv-owner", "serv-team"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{ID: "serv-team", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "infos.team",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-							},
-						}},
-					},
+					ID:      "serv-team",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "infos.team",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+						},
+					}},
 				},
 				{
-					Entity: types.Entity{ID: "serv-owner", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "infos.owner",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "ops"),
-							},
-						}},
-					},
+					ID:      "serv-owner",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "infos.owner",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "ops"),
+						},
+					}},
 				},
 			},
 			expectedEntity: types.Entity{
@@ -580,7 +521,7 @@ func TestCheckServicesByInfos(t *testing.T) {
 		},
 		{
 			name:        "targeted infos update with no indexed services does nothing",
-			infoUpdates: map[string]eventfilter.UpdatedValue{"zone": {}},
+			infoUpdates: []string{"zone"},
 			entity: types.Entity{
 				ID:      "id-1",
 				Enabled: true,
@@ -589,18 +530,17 @@ func TestCheckServicesByInfos(t *testing.T) {
 				},
 				Services: []string{"serv-team"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{ID: "serv-team", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "infos.team",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-							},
-						}},
-					},
+					ID:      "serv-team",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "infos.team",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+						},
+					}},
 				},
 			},
 			expectedEntity: types.Entity{
@@ -614,7 +554,7 @@ func TestCheckServicesByInfos(t *testing.T) {
 		},
 		{
 			name:                 "targeted component_infos update adds matching service and preserves unrelated service",
-			componentInfoUpdates: map[string]eventfilter.UpdatedValue{"env": {}},
+			componentInfoUpdates: []string{"env"},
 			entity: types.Entity{
 				ID:      "id-1",
 				Enabled: true,
@@ -624,30 +564,28 @@ func TestCheckServicesByInfos(t *testing.T) {
 				},
 				Services: []string{"serv-zone"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{ID: "serv-env", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "component_infos.env",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
-							},
-						}},
-					},
+					ID:      "serv-env",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "component_infos.env",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+						},
+					}},
 				},
 				{
-					Entity: types.Entity{ID: "serv-zone", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "component_infos.zone",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "eu"),
-							},
-						}},
-					},
+					ID:      "serv-zone",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "component_infos.zone",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "eu"),
+						},
+					}},
 				},
 			},
 			expectedEntity: types.Entity{
@@ -660,10 +598,11 @@ func TestCheckServicesByInfos(t *testing.T) {
 				Services:      []string{"serv-env", "serv-zone"},
 				ServicesToAdd: []string{"serv-env"},
 			},
+			expectedAffectedServices: []string{"serv-env"},
 		},
 		{
 			name:                 "targeted component_infos update removes only matching indexed service",
-			componentInfoUpdates: map[string]eventfilter.UpdatedValue{"env": {}},
+			componentInfoUpdates: []string{"env"},
 			entity: types.Entity{
 				ID:      "id-1",
 				Enabled: true,
@@ -673,30 +612,28 @@ func TestCheckServicesByInfos(t *testing.T) {
 				},
 				Services: []string{"serv-env", "serv-zone"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{ID: "serv-env", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "component_infos.env",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
-							},
-						}},
-					},
+					ID:      "serv-env",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "component_infos.env",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+						},
+					}},
 				},
 				{
-					Entity: types.Entity{ID: "serv-zone", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "component_infos.zone",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "eu"),
-							},
-						}},
-					},
+					ID:      "serv-zone",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "component_infos.zone",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "eu"),
+						},
+					}},
 				},
 			},
 			expectedEntity: types.Entity{
@@ -710,10 +647,11 @@ func TestCheckServicesByInfos(t *testing.T) {
 				ServicesToAdd:    []string{},
 				ServicesToRemove: []string{"serv-env"},
 			},
+			expectedAffectedServices: []string{"serv-env"},
 		},
 		{
 			name:                 "targeted component_infos update with no indexed services does nothing",
-			componentInfoUpdates: map[string]eventfilter.UpdatedValue{"region": {}},
+			componentInfoUpdates: []string{"region"},
 			entity: types.Entity{
 				ID:      "id-1",
 				Enabled: true,
@@ -722,18 +660,17 @@ func TestCheckServicesByInfos(t *testing.T) {
 				},
 				Services: []string{"serv-env"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{ID: "serv-env", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "component_infos.env",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
-							},
-						}},
-					},
+					ID:      "serv-env",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "component_infos.env",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+						},
+					}},
 				},
 			},
 			expectedEntity: types.Entity{
@@ -744,63 +681,11 @@ func TestCheckServicesByInfos(t *testing.T) {
 				},
 				Services: []string{"serv-env"},
 			},
-		},
-		{
-			name:                 "mixed infos and component_infos update adds services indexed by both keys",
-			infoUpdates:          map[string]eventfilter.UpdatedValue{"team": {}},
-			componentInfoUpdates: map[string]eventfilter.UpdatedValue{"env": {}},
-			entity: types.Entity{
-				ID:      "id-1",
-				Enabled: true,
-				Infos: map[string]types.Info{
-					"team": {Value: "core"},
-				},
-				ComponentInfos: map[string]types.Info{
-					"env": {Value: "prod"},
-				},
-			},
-			services: []entityservice.EntityService{
-				{
-					Entity: types.Entity{ID: "serv-team", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "infos.team",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-							},
-						}},
-					},
-				},
-				{
-					Entity: types.Entity{ID: "serv-env", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "component_infos.env",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
-							},
-						}},
-					},
-				},
-			},
-			expectedEntity: types.Entity{
-				ID:      "id-1",
-				Enabled: true,
-				Infos: map[string]types.Info{
-					"team": {Value: "core"},
-				},
-				ComponentInfos: map[string]types.Info{
-					"env": {Value: "prod"},
-				},
-				Services:      []string{"serv-env", "serv-team"},
-				ServicesToAdd: []string{"serv-env", "serv-team"},
-			},
+			expectedAffectedServices: []string{},
 		},
 		{
 			name:        "service indexed by both infos and component_infos matches only when both conditions match",
-			infoUpdates: map[string]eventfilter.UpdatedValue{"team": {}},
+			infoUpdates: []string{"team"},
 			entity: types.Entity{
 				ID:      "id-1",
 				Enabled: true,
@@ -811,23 +696,22 @@ func TestCheckServicesByInfos(t *testing.T) {
 					"env": {Value: "dev"},
 				},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{ID: "serv-team-prod", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "infos.team",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-							},
-							{
-								Field:     "component_infos.env",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
-							},
-						}},
-					},
+					ID:      "serv-team-prod",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "infos.team",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+						},
+						{
+							Field:     "component_infos.env",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+						},
+					}},
 				},
 			},
 			expectedEntity: types.Entity{
@@ -851,18 +735,17 @@ func TestCheckServicesByInfos(t *testing.T) {
 				},
 				Services: []string{"serv-team"},
 			},
-			services: []entityservice.EntityService{
+			services: []contextgraph.EntityService{
 				{
-					Entity: types.Entity{ID: "serv-team", Enabled: true},
-					EntityPatternFields: savedpattern.EntityPatternFields{
-						EntityPattern: [][]pattern.FieldCondition{{
-							{
-								Field:     "infos.team",
-								FieldType: pattern.FieldTypeString,
-								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "other"),
-							},
-						}},
-					},
+					ID:      "serv-team",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "infos.team",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "other"),
+						},
+					}},
 				},
 			},
 			expectedEntity: types.Entity{
@@ -873,6 +756,226 @@ func TestCheckServicesByInfos(t *testing.T) {
 				},
 				Services: []string{"serv-team"},
 			},
+		},
+		{
+			name:                 "component_infos update transitions entity to inherited",
+			componentInfoUpdates: []string{"env"},
+			entity: types.Entity{
+				ID:      "id-1",
+				Name:    "my-entity",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env": {Value: "prod"},
+				},
+			},
+			services: []contextgraph.EntityService{
+				{
+					ID:      "serv-inherited",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "name",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "other-entity"),
+						},
+					}},
+					InheritedPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "component_infos.env",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+						},
+					}},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Name:    "my-entity",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env": {Value: "prod"},
+				},
+			},
+			expectedAffectedServices: []string{"serv-inherited"},
+		},
+		{
+			name:                 "component_infos update transitions entity from inherited",
+			componentInfoUpdates: []string{"env"},
+			entity: types.Entity{
+				ID:      "id-1",
+				Name:    "my-entity",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env": {Value: "dev"},
+				},
+				InheritedServices: []string{"serv-inherited"},
+			},
+			services: []contextgraph.EntityService{
+				{
+					ID:      "serv-inherited",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "name",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "other-entity"),
+						},
+					}},
+					InheritedPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "component_infos.env",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+						},
+					}},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Name:    "my-entity",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env": {Value: "dev"},
+				},
+				InheritedServices: []string{"serv-inherited"},
+			},
+			expectedAffectedServices: []string{"serv-inherited"},
+		},
+		{
+			name:                 "component_infos update with stable inherited status does not affect service",
+			componentInfoUpdates: []string{"env"},
+			entity: types.Entity{
+				ID:      "id-1",
+				Name:    "my-entity",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env": {Value: "prod"},
+				},
+				InheritedServices: []string{"serv-inherited"},
+			},
+			services: []contextgraph.EntityService{
+				{
+					ID:      "serv-inherited",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "name",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "other-entity"),
+						},
+					}},
+					InheritedPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "component_infos.env",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+						},
+					}},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Name:    "my-entity",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env": {Value: "prod"},
+				},
+				InheritedServices: []string{"serv-inherited"},
+			},
+			expectedAffectedServices: []string{},
+		},
+		{
+			name:                 "component_infos update with positive match takes priority over inherited path",
+			componentInfoUpdates: []string{"env"},
+			entity: types.Entity{
+				ID:      "id-1",
+				Name:    "my-entity",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env":  {Value: "prod"},
+					"zone": {Value: "eu"},
+				},
+			},
+			services: []contextgraph.EntityService{
+				{
+					ID:      "serv-mixed",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "component_infos.env",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+						},
+					}},
+					InheritedPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "component_infos.zone",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "eu"),
+						},
+					}},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Name:    "my-entity",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env":  {Value: "prod"},
+					"zone": {Value: "eu"},
+				},
+				Services:      []string{"serv-mixed"},
+				ServicesToAdd: []string{"serv-mixed"},
+			},
+			expectedAffectedServices: []string{"serv-mixed"},
+		},
+		{
+			name:                 "inherited pattern indexed by component_infos triggers recompute when matched via other key",
+			componentInfoUpdates: []string{"zone"},
+			entity: types.Entity{
+				ID:      "id-1",
+				Name:    "my-entity",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env":  {Value: "prod"},
+					"zone": {Value: "eu"},
+				},
+			},
+			services: []contextgraph.EntityService{
+				{
+					ID:      "serv-inherited",
+					Enabled: true,
+					EntityPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "name",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "other-entity"),
+						},
+					}},
+					InheritedPattern: [][]pattern.FieldCondition{{
+						{
+							Field:     "component_infos.env",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "prod"),
+						},
+						{
+							Field:     "component_infos.zone",
+							FieldType: pattern.FieldTypeString,
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "eu"),
+						},
+					}},
+				},
+			},
+			expectedEntity: types.Entity{
+				ID:      "id-1",
+				Name:    "my-entity",
+				Enabled: true,
+				ComponentInfos: map[string]types.Info{
+					"env":  {Value: "prod"},
+					"zone": {Value: "eu"},
+				},
+			},
+			expectedAffectedServices: []string{"serv-inherited"},
 		},
 	}
 
@@ -893,14 +996,17 @@ func TestCheckServicesByInfos(t *testing.T) {
 				t.Error(err)
 			}
 
-			manager.AssignServicesByInfoNames(&dataset.entity, dataset.infoUpdates, dataset.componentInfoUpdates, commRegister)
+			manager.AssignServicesByInfoNames(&dataset.entity, dataset.infoUpdates, commRegister)
+			affected := manager.AssignServicesByComponentInfoNames(&dataset.entity, dataset.componentInfoUpdates, commRegister)
 
 			slices.Sort(dataset.entity.Services)
 			slices.Sort(dataset.entity.ServicesToAdd)
 			slices.Sort(dataset.entity.ServicesToRemove)
+			slices.Sort(dataset.entity.InheritedServices)
 			slices.Sort(dataset.expectedEntity.Services)
 			slices.Sort(dataset.expectedEntity.ServicesToAdd)
 			slices.Sort(dataset.expectedEntity.ServicesToRemove)
+			slices.Sort(dataset.expectedEntity.InheritedServices)
 
 			if slices.Compare(dataset.entity.Services, dataset.expectedEntity.Services) != 0 {
 				t.Errorf("expected Services to be %v, but got %v", dataset.expectedEntity.Services, dataset.entity.Services)
@@ -912,6 +1018,18 @@ func TestCheckServicesByInfos(t *testing.T) {
 
 			if slices.Compare(dataset.entity.ServicesToRemove, dataset.expectedEntity.ServicesToRemove) != 0 {
 				t.Errorf("expected ServicesToRemove to be %v, but got %v", dataset.expectedEntity.ServicesToRemove, dataset.entity.ServicesToRemove)
+			}
+
+			if slices.Compare(dataset.entity.InheritedServices, dataset.expectedEntity.InheritedServices) != 0 {
+				t.Errorf("expected InheritedServices to be %v, but got %v", dataset.expectedEntity.InheritedServices, dataset.entity.InheritedServices)
+			}
+
+			if dataset.expectedAffectedServices != nil {
+				gotAffected := slices.Sorted(maps.Keys(affected))
+				slices.Sort(dataset.expectedAffectedServices)
+				if slices.Compare(gotAffected, dataset.expectedAffectedServices) != 0 {
+					t.Errorf("expected affected services to be %v, but got %v", dataset.expectedAffectedServices, gotAffected)
+				}
 			}
 		})
 	}
@@ -938,6 +1056,9 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 		ents := results.(*[]types.Entity)
 		*ents = append(*ents, entities...)
 	}).Return(nil).AnyTimes()
+	cursor.EXPECT().Next(gomock.Any()).Return(false).AnyTimes()
+	cursor.EXPECT().Close(gomock.Any()).Return(nil).AnyTimes()
+	cursor.EXPECT().Err().Return(nil).AnyTimes()
 
 	collection := mock_mongo.NewMockDbCollection(ctrl)
 	collection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
@@ -947,7 +1068,7 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 
 	adapter := entity.NewAdapter(dbClient)
 	storage := mock_contextgraph.NewMockEntityServiceStorage(ctrl)
-	storage.EXPECT().GetAll(gomock.Any()).Return([]entityservice.EntityService{}, nil).AnyTimes()
+	storage.EXPECT().GetAll(gomock.Any()).Return([]contextgraph.EntityService{}, nil).AnyTimes()
 	storage.EXPECT().Get(gomock.Any(), gomock.Any()).Return(entityservice.EntityService{
 		Entity: types.Entity{
 			ID:      "serv-1",
@@ -993,16 +1114,20 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 		})
 	}
 
-	call := 0
+	addIdx := 0
 	cursor := mock_mongo.NewMockCursor(ctrl)
-	cursor.EXPECT().All(gomock.Any(), gomock.Any()).Do(func(ctx context.Context, results any) {
-		if call == 1 {
-			ents := results.(*[]types.Entity)
-			*ents = append(*ents, entities...)
-		}
-
-		call++
-	}).Return(nil).AnyTimes()
+	cursor.EXPECT().All(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	cursor.EXPECT().Next(gomock.Any()).DoAndReturn(func(_ context.Context) bool {
+		return addIdx < len(entities)
+	}).AnyTimes()
+	cursor.EXPECT().Decode(gomock.Any()).DoAndReturn(func(val any) error {
+		ent := val.(*types.Entity)
+		*ent = entities[addIdx]
+		addIdx++
+		return nil
+	}).AnyTimes()
+	cursor.EXPECT().Close(gomock.Any()).Return(nil).AnyTimes()
+	cursor.EXPECT().Err().Return(nil).AnyTimes()
 
 	collection := mock_mongo.NewMockDbCollection(ctrl)
 	collection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
@@ -1012,7 +1137,7 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 
 	adapter := entity.NewAdapter(dbClient)
 	storage := mock_contextgraph.NewMockEntityServiceStorage(ctrl)
-	storage.EXPECT().GetAll(gomock.Any()).Return([]entityservice.EntityService{}, nil).AnyTimes()
+	storage.EXPECT().GetAll(gomock.Any()).Return([]contextgraph.EntityService{}, nil).AnyTimes()
 	storage.EXPECT().Get(gomock.Any(), gomock.Any()).Return(entityservice.EntityService{
 		Entity: types.Entity{
 			ID:      "serv-1",
@@ -1039,7 +1164,7 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
 	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
 	for b.Loop() {
-		call = 0
+		addIdx = 0
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
 	}
 }
@@ -1070,21 +1195,23 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 		})
 	}
 
-	call := 0
+	addIdx := 0
 	cursor := mock_mongo.NewMockCursor(ctrl)
 	cursor.EXPECT().All(gomock.Any(), gomock.Any()).Do(func(ctx context.Context, results any) {
-		if call == 0 {
-			ents := results.(*[]types.Entity)
-			*ents = append(*ents, entitiesToRemove...)
-		}
-
-		if call == 1 {
-			ents := results.(*[]types.Entity)
-			*ents = append(*ents, entitiesToAdd...)
-		}
-
-		call++
+		ents := results.(*[]types.Entity)
+		*ents = append(*ents, entitiesToRemove...)
 	}).Return(nil).AnyTimes()
+	cursor.EXPECT().Next(gomock.Any()).DoAndReturn(func(_ context.Context) bool {
+		return addIdx < len(entitiesToAdd)
+	}).AnyTimes()
+	cursor.EXPECT().Decode(gomock.Any()).DoAndReturn(func(val any) error {
+		ent := val.(*types.Entity)
+		*ent = entitiesToAdd[addIdx]
+		addIdx++
+		return nil
+	}).AnyTimes()
+	cursor.EXPECT().Close(gomock.Any()).Return(nil).AnyTimes()
+	cursor.EXPECT().Err().Return(nil).AnyTimes()
 
 	collection := mock_mongo.NewMockDbCollection(ctrl)
 	collection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
@@ -1094,7 +1221,7 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 
 	adapter := entity.NewAdapter(dbClient)
 	storage := mock_contextgraph.NewMockEntityServiceStorage(ctrl)
-	storage.EXPECT().GetAll(gomock.Any()).Return([]entityservice.EntityService{}, nil).AnyTimes()
+	storage.EXPECT().GetAll(gomock.Any()).Return([]contextgraph.EntityService{}, nil).AnyTimes()
 	storage.EXPECT().Get(gomock.Any(), gomock.Any()).Return(entityservice.EntityService{
 		Entity: types.Entity{
 			ID:      "serv-1",
@@ -1121,7 +1248,7 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
 	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
 	for b.Loop() {
-		call = 0
+		addIdx = 0
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
 	}
 }

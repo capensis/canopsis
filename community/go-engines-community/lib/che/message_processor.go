@@ -16,7 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
+	libcheevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -37,11 +37,10 @@ type messageProcessor struct {
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
 
-	EventProcessorContainer event.ProcessorContainer
+	EventProcessorContainer libcheevent.ProcessorContainer
 }
 
 func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
-	var eventMetric techmetrics.CheEventMetric
 	start := time.Now()
 
 	ctx, task := trace.NewTask(ctx, "che.WorkerProcess")
@@ -75,11 +74,13 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 		return nil, nil
 	}
 
-	defer func() {
-		eventMetric.Interval = time.Since(start)
-		eventMetric.Timestamp = start
+	result := libcheevent.ProcessorResult{}
 
-		p.TechMetricsSender.SendCheEvent(eventMetric)
+	defer func() {
+		result.EventMetric.Interval = time.Since(start)
+		result.EventMetric.Timestamp = start
+
+		p.TechMetricsSender.SendCheEvent(result.EventMetric)
 	}()
 
 	alarmConfig := p.AlarmConfigProvider.Get()
@@ -88,16 +89,13 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 		event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
 	}
 
-	var updatedEntitiesForEvent []types.Entity
-	var updatedEntityIdsForMetrics []string
-
 	proc, ok := p.EventProcessorContainer.Get(event.SourceType)
 	if !ok {
 		p.logError(err, "unsupported source type", d.Body)
 		return nil, nil
 	}
 
-	updatedEntitiesForEvent, updatedEntityIdsForMetrics, eventMetric, err = proc.Process(ctx, &event)
+	result, err = proc.Process(ctx, &event)
 	if err != nil {
 		if errors.Is(err, eventfilter.ErrDropOutcome) {
 			return nil, nil
@@ -111,7 +109,8 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 		return nil, nil
 	}
 
-	go p.postProcessUpdatedEntities(ctx, event, updatedEntitiesForEvent, updatedEntityIdsForMetrics)
+	go p.postProcessProcessorResult(context.WithoutCancel(ctx), event, result)
+
 	p.handlePerfData(ctx, &event)
 	event.Format()
 	body, err := p.Encoder.Encode(&event)
@@ -130,31 +129,17 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 	return body, nil
 }
 
-func (p *messageProcessor) postProcessUpdatedEntities(
+func (p *messageProcessor) postProcessProcessorResult(
 	ctx context.Context,
 	event types.Event,
-	entitiesForEvent []types.Entity,
-	updatedEntityIdsForMetrics []string,
+	result libcheevent.ProcessorResult,
 ) {
 	now := datetime.NewCpsTime()
 
-	for _, ent := range entitiesForEvent {
+	for _, ent := range result.UpdatedEntitiesToCountersUpd {
 		var updateCountersEvent types.Event
 
 		switch ent.Type {
-		case types.EntityTypeResource:
-			updateCountersEvent = types.Event{
-				EventType:     types.EventTypeUpdateCounters,
-				SourceType:    types.SourceTypeResource,
-				Connector:     canopsis.CheConnector,
-				ConnectorName: canopsis.CheConnector,
-				Component:     ent.Component,
-				Resource:      ent.Name,
-				Timestamp:     now,
-				Entity:        &ent,
-				Author:        canopsis.DefaultEventAuthor,
-				Initiator:     types.InitiatorSystem,
-			}
 		case types.EntityTypeComponent:
 			updateCountersEvent = types.Event{
 				EventType:     types.EventTypeUpdateCounters,
@@ -183,6 +168,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 		body, err := p.Encoder.Encode(updateCountersEvent)
 		if err != nil {
 			p.Logger.Err(err).Msg("unable to serialize event")
+			continue
 		}
 
 		err = p.AmqpPublisher.PublishWithContext(
@@ -202,7 +188,40 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 		}
 	}
 
-	p.MetaUpdater.UpdateById(ctx, updatedEntityIdsForMetrics...)
+	for _, id := range result.ServicesIDsToRecompute {
+		body, err := p.Encoder.Encode(types.Event{
+			EventType:     types.EventTypeRecomputeEntityService,
+			Connector:     canopsis.CheConnector,
+			ConnectorName: canopsis.CheConnector,
+			Component:     id,
+			Timestamp:     datetime.NewCpsTime(),
+			SourceType:    types.SourceTypeService,
+			Author:        canopsis.DefaultEventAuthor,
+			Initiator:     types.InitiatorSystem,
+		})
+		if err != nil {
+			p.Logger.Err(err).Msg("unable to serialize event")
+			continue
+		}
+
+		err = p.AmqpPublisher.PublishWithContext(
+			ctx,
+			canopsis.DefaultExchangeName,
+			canopsis.FIFOQueueName,
+			false,
+			false,
+			amqp.Publishing{
+				Body:         body,
+				ContentType:  "application/json",
+				DeliveryMode: amqp.Persistent,
+			},
+		)
+		if err != nil {
+			p.Logger.Err(err).Msg("unable to send service event")
+		}
+	}
+
+	p.MetaUpdater.UpdateById(ctx, result.UpdatedEntityIDsForMetrics...)
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {

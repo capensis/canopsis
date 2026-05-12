@@ -39,15 +39,12 @@ func NewServiceProcessor(
 	}
 }
 
-func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
-	[]types.Entity,
-	[]string,
-	techmetrics.CheEventMetric,
-	error,
-) {
-	eventMetric := techmetrics.CheEventMetric{
-		EventMetric: techmetrics.EventMetric{
-			EventType: event.EventType,
+func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (ProcessorResult, error) {
+	result := ProcessorResult{
+		EventMetric: techmetrics.CheEventMetric{
+			EventMetric: techmetrics.EventMetric{
+				EventType: event.EventType,
+			},
 		},
 	}
 
@@ -71,13 +68,13 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 			return commRegister.Commit(ctx)
 		})
 		if err != nil {
-			return nil, nil, eventMetric, err
+			return result, err
 		}
 
 		event.Entity = &eventEntity
-		eventMetric.EntityType = eventEntity.Type
+		result.EventMetric.EntityType = eventEntity.Type
 
-		return nil, nil, eventMetric, nil
+		return result, nil
 	}
 
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
@@ -92,26 +89,27 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 		return commRegister.Commit(ctx)
 	})
 	if err != nil {
-		return nil, nil, eventMetric, err
+		return result, err
 	}
 
 	if event.Entity == nil {
-		return nil, nil, eventMetric, errors.New("unexpected empty entity")
+		return result, errors.New("unexpected empty entity")
 	}
 
-	eventMetric.EntityType = event.Entity.Type
+	result.EventMetric.EntityType = event.Entity.Type
 
 	if event.Healthcheck {
-		return nil, nil, eventMetric, nil
+		return result, nil
 	}
 
 	var updatedInfos map[string]eventfilter.UpdatedValue
+	var updatedInfosNames []string
 
 	// Process event by event filters.
 	if event.Entity.Enabled {
-		updatedInfos, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
+		updatedInfos, result.EventMetric.ExecutedEnrichRules, result.EventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
-			return nil, nil, eventMetric, err
+			return result, err
 		}
 
 		if len(updatedInfos) > 0 {
@@ -121,25 +119,30 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 				bson.M{"$set": bson.M{"infos": event.Entity.Infos}},
 			)
 			if err != nil {
-				return nil, nil, eventMetric, fmt.Errorf("cannot update entities: %w", err)
+				return result, fmt.Errorf("cannot update entities: %w", err)
 			}
 
-			eventMetric.IsInfosUpdated = true
+			result.EventMetric.IsInfosUpdated = true
 			report.CheckInfoChanged = true
 			logInfosUpdate(p.metricsSender, event.Entity.ID, updatedInfos)
+
+			updatedInfosNames = make([]string, 0, len(updatedInfos))
+			for k := range updatedInfos {
+				updatedInfosNames = append(updatedInfosNames, k)
+			}
 		}
 	}
 
 	if !report.CheckService && !report.CheckInfoChanged {
-		return nil, nil, eventMetric, nil
+		return result, nil
 	}
 
 	entityIdsToMetrics := []string{event.Entity.ID}
 
 	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		commRegister.Clear()
-		eventMetric.IsServicesUpdated = false
-		eventMetric.IsStateSettingUpdated = false
+		result.EventMetric.IsServicesUpdated = false
+		result.EventMetric.IsStateSettingUpdated = false
 
 		var service types.Entity
 		err := p.dbCollection.FindOne(ctx, bson.M{"_id": event.Entity.ID}).Decode(&service)
@@ -160,10 +163,10 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 		if report.CheckService {
 			p.contextGraphManager.AssignServices(&service, commRegister)
 		} else if report.CheckInfoChanged {
-			p.contextGraphManager.AssignServicesByInfoNames(&service, updatedInfos, nil, commRegister)
+			p.contextGraphManager.AssignServicesByInfoNames(&service, updatedInfosNames, commRegister)
 		}
 
-		eventMetric.IsStateSettingUpdated, err = p.contextGraphManager.AssignStateSetting(ctx, &service, commRegister)
+		result.EventMetric.IsStateSettingUpdated, err = p.contextGraphManager.AssignStateSetting(ctx, &service, commRegister)
 		if err != nil {
 			return fmt.Errorf("cannot inherit component fields: %w", err)
 		}
@@ -174,13 +177,15 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 		}
 
 		event.Entity = &service
-		eventMetric.IsServicesUpdated = len(event.Entity.ServicesToAdd) > 0 || len(event.Entity.ServicesToRemove) > 0
+		result.EventMetric.IsServicesUpdated = len(service.ServicesToAdd) > 0 || len(service.ServicesToRemove) > 0
 
 		return nil
 	})
 	if err != nil {
-		return nil, nil, eventMetric, err
+		return result, err
 	}
 
-	return nil, entityIdsToMetrics, eventMetric, nil
+	result.UpdatedEntityIDsForMetrics = entityIdsToMetrics
+
+	return result, nil
 }

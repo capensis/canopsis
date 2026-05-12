@@ -15,7 +15,6 @@ import (
 
 	contextgraph "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	entityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
-	eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	gomock "go.uber.org/mock/gomock"
@@ -57,16 +56,30 @@ func (mr *MockManagerMockRecorder) AssignServices(eventEntity, commRegister any)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignServices", reflect.TypeOf((*MockManager)(nil).AssignServices), eventEntity, commRegister)
 }
 
-// AssignServicesByInfoNames mocks base method.
-func (m *MockManager) AssignServicesByInfoNames(eventEntity *types.Entity, infoUpdates, componentInfoUpdates map[string]eventfilter.UpdatedValue, commRegister mongo.CommandsRegister) {
+// AssignServicesByComponentInfoNames mocks base method.
+func (m *MockManager) AssignServicesByComponentInfoNames(eventEntity *types.Entity, componentInfoNames []string, commRegister mongo.CommandsRegister) map[string]bool {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "AssignServicesByInfoNames", eventEntity, infoUpdates, componentInfoUpdates, commRegister)
+	ret := m.ctrl.Call(m, "AssignServicesByComponentInfoNames", eventEntity, componentInfoNames, commRegister)
+	ret0, _ := ret[0].(map[string]bool)
+	return ret0
+}
+
+// AssignServicesByComponentInfoNames indicates an expected call of AssignServicesByComponentInfoNames.
+func (mr *MockManagerMockRecorder) AssignServicesByComponentInfoNames(eventEntity, componentInfoNames, commRegister any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignServicesByComponentInfoNames", reflect.TypeOf((*MockManager)(nil).AssignServicesByComponentInfoNames), eventEntity, componentInfoNames, commRegister)
+}
+
+// AssignServicesByInfoNames mocks base method.
+func (m *MockManager) AssignServicesByInfoNames(eventEntity *types.Entity, infoNames []string, commRegister mongo.CommandsRegister) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "AssignServicesByInfoNames", eventEntity, infoNames, commRegister)
 }
 
 // AssignServicesByInfoNames indicates an expected call of AssignServicesByInfoNames.
-func (mr *MockManagerMockRecorder) AssignServicesByInfoNames(eventEntity, infoUpdates, componentInfoUpdates, commRegister any) *gomock.Call {
+func (mr *MockManagerMockRecorder) AssignServicesByInfoNames(eventEntity, infoNames, commRegister any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignServicesByInfoNames", reflect.TypeOf((*MockManager)(nil).AssignServicesByInfoNames), eventEntity, infoUpdates, componentInfoUpdates, commRegister)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignServicesByInfoNames", reflect.TypeOf((*MockManager)(nil).AssignServicesByInfoNames), eventEntity, infoNames, commRegister)
 }
 
 // AssignStateSetting mocks base method.
@@ -172,20 +185,20 @@ func (mr *MockManagerMockRecorder) LoadServices(ctx any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadServices", reflect.TypeOf((*MockManager)(nil).LoadServices), ctx)
 }
 
-// ProcessComponentDependencies mocks base method.
-func (m *MockManager) ProcessComponentDependencies(ctx context.Context, component *types.Entity, updatedInfos map[string]eventfilter.UpdatedValue, commRegister mongo.CommandsRegister) ([]string, []types.Entity, error) {
+// ProcessComponentInfos mocks base method.
+func (m *MockManager) ProcessComponentInfos(ctx context.Context, component *types.Entity, updatedComponentInfos []string, stateSettingUpdated bool, commRegister mongo.CommandsRegister) ([]string, []string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ProcessComponentDependencies", ctx, component, updatedInfos, commRegister)
+	ret := m.ctrl.Call(m, "ProcessComponentInfos", ctx, component, updatedComponentInfos, stateSettingUpdated, commRegister)
 	ret0, _ := ret[0].([]string)
-	ret1, _ := ret[1].([]types.Entity)
+	ret1, _ := ret[1].([]string)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }
 
-// ProcessComponentDependencies indicates an expected call of ProcessComponentDependencies.
-func (mr *MockManagerMockRecorder) ProcessComponentDependencies(ctx, component, updatedInfos, commRegister any) *gomock.Call {
+// ProcessComponentInfos indicates an expected call of ProcessComponentInfos.
+func (mr *MockManagerMockRecorder) ProcessComponentInfos(ctx, component, updatedComponentInfos, stateSettingUpdated, commRegister any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessComponentDependencies", reflect.TypeOf((*MockManager)(nil).ProcessComponentDependencies), ctx, component, updatedInfos, commRegister)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessComponentInfos", reflect.TypeOf((*MockManager)(nil).ProcessComponentInfos), ctx, component, updatedComponentInfos, stateSettingUpdated, commRegister)
 }
 
 // RecomputeService mocks base method.
@@ -257,10 +270,10 @@ func (mr *MockEntityServiceStorageMockRecorder) Get(ctx, serviceID any) *gomock.
 }
 
 // GetAll mocks base method.
-func (m *MockEntityServiceStorage) GetAll(ctx context.Context) ([]entityservice.EntityService, error) {
+func (m *MockEntityServiceStorage) GetAll(ctx context.Context) ([]contextgraph.EntityService, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", ctx)
-	ret0, _ := ret[0].([]entityservice.EntityService)
+	ret0, _ := ret[0].([]contextgraph.EntityService)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
