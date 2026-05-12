@@ -28,7 +28,6 @@ type EntityServiceCountersCalcData struct {
 	ServicesToAdd     map[string]bool
 	ServicesToRemove  map[string]bool
 	InheritedServices map[string]bool
-	Info              ServicesInfo
 	Counters          EntityCounters
 	PrevPbhTypeID     string
 	CurPbhTypeID      string

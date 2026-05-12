@@ -67,10 +67,7 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 	cursor, err := s.entityCollection.Aggregate(ctx, []bson.M{
 		{
 			"$match": bson.M{
-				"$or": []bson.M{
-					{"services": service.ID},
-					{"inherited_services": service.ID},
-				},
+				"services": service.ID,
 			},
 		},
 		{
@@ -120,8 +117,6 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 
 	defer cursor.Close(ctx)
 
-	writeModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize)
-
 	for cursor.Next(ctx) {
 		var depEnt types.AlarmWithEntity
 		err := cursor.Decode(&depEnt)
@@ -137,31 +132,9 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 			}
 		}
 
-		update := bson.M{}
-		pull := bson.M{"services_to_add": service.ID}
-
 		inherited := entitycounters.InheritedNone
 		if matchedInherited {
 			inherited = entitycounters.InheritedWith
-			update["$addToSet"] = bson.M{"inherited_services": service.ID}
-		} else {
-			pull["inherited_services"] = service.ID
-		}
-
-		update["$pull"] = pull
-
-		writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": depEnt.Entity.ID}).
-			SetUpdate(update),
-		)
-
-		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err = s.entityCollection.BulkWrite(ctx, writeModels)
-			if err != nil {
-				return nil, fmt.Errorf("unable to bulk write inherited services: %w", err)
-			}
-
-			writeModels = writeModels[:0]
 		}
 
 		curActive := depEnt.Entity.PbehaviorInfo.IsActive()
@@ -188,13 +161,6 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 	counters.Output, err = s.templateExecutor.Execute(counters.OutputTemplate, counters)
 	if err != nil {
 		return nil, err
-	}
-
-	if len(writeModels) > 0 {
-		_, err = s.entityCollection.BulkWrite(ctx, writeModels)
-		if err != nil {
-			return nil, fmt.Errorf("unable to bulk write inherited services: %w", err)
-		}
 	}
 
 	_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": service.ID}, bson.M{"$set": counters}, options.UpdateOne().SetUpsert(true))

@@ -434,7 +434,7 @@ func (s *store) checkRabbitMQ() Service {
 
 	nodes, err := s.rmqClient.ListNodes()
 	if err != nil {
-		//s.logger.Err(err).Msg("cannot get list of rabbitmq nodes")
+		s.logger.Err(err).Msg("cannot get list of rabbitmq nodes")
 
 		return res
 	}

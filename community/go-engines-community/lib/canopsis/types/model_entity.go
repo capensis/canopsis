@@ -91,10 +91,6 @@ type Entity struct {
 	PerfData        []string          `bson:"perf_data,omitempty" json:"-"`
 	PerfDataUpdated *datetime.CpsTime `bson:"perf_data_updated,omitempty" json:"-"`
 
-	// IsNew and IsUpdated used in engine che in entity creation and eventfilter
-	IsNew     bool `bson:"-" json:"-"`
-	IsUpdated bool `bson:"-" json:"-"`
-
 	Healthcheck bool `bson:"healthcheck,omitempty" json:"-"`
 
 	StateInfo *StateInfo `bson:"state_info" json:"state_info"`

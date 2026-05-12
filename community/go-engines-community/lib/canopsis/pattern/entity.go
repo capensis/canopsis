@@ -37,11 +37,13 @@ func (p Entity) RemoveFields(forbiddenFieldsMap map[string]bool) Entity {
 
 func (p Entity) GetInfosNames() []string {
 	var keys []string
+	keysMap := make(map[string]bool)
 
 	for _, group := range p {
 		for _, cond := range group {
-			if n, ok := strings.CutPrefix(cond.Field, entityInfosPrefix); ok {
+			if n, ok := strings.CutPrefix(cond.Field, entityInfosPrefix); ok && !keysMap[n] {
 				keys = append(keys, n)
+				keysMap[n] = true
 			}
 		}
 	}
@@ -51,11 +53,13 @@ func (p Entity) GetInfosNames() []string {
 
 func (p Entity) GetComponentInfosNames() []string {
 	var keys []string
+	keysMap := make(map[string]bool)
 
 	for _, group := range p {
 		for _, cond := range group {
-			if n, ok := strings.CutPrefix(cond.Field, componentEntityInfosPrefix); ok {
+			if n, ok := strings.CutPrefix(cond.Field, componentEntityInfosPrefix); ok && !keysMap[n] {
 				keys = append(keys, n)
+				keysMap[n] = true
 			}
 		}
 	}
