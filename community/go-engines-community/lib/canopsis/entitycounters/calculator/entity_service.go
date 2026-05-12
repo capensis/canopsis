@@ -137,19 +137,23 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 			}
 		}
 
+		update := bson.M{}
+		pull := bson.M{"services_to_add": service.ID}
+
 		inherited := entitycounters.InheritedNone
 		if matchedInherited {
 			inherited = entitycounters.InheritedWith
-			writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
-				SetFilter(bson.M{"_id": depEnt.Entity.ID}).
-				SetUpdate(bson.M{"$addToSet": bson.M{"inherited_services": service.ID}}),
-			)
+			update["$addToSet"] = bson.M{"inherited_services": service.ID}
 		} else {
-			writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
-				SetFilter(bson.M{"_id": depEnt.Entity.ID}).
-				SetUpdate(bson.M{"$pull": bson.M{"inherited_services": service.ID}}),
-			)
+			pull["inherited_services"] = service.ID
 		}
+
+		update["$pull"] = pull
+
+		writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+			SetFilter(bson.M{"_id": depEnt.Entity.ID}).
+			SetUpdate(update),
+		)
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
 			_, err = s.entityCollection.BulkWrite(ctx, writeModels)
