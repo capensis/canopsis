@@ -21,7 +21,7 @@
       :headers="headers"
       :items="form"
       :no-data-text="$t('common.noData')"
-      item-key="key"
+      item-key="name"
     >
       <template #item="{ item }">
         <tr>
@@ -94,6 +94,13 @@ export default {
         { text: this.$t('common.value'), value: 'value' },
         { text: this.$t('common.actionsLabel'), value: 'actions' },
       ];
+    },
+
+    preparedForm() {
+      return this.form.map(info => ({
+        ...info,
+        value: info.value.join(','),
+      }));
     },
   },
   watch: {
