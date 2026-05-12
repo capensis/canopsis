@@ -250,6 +250,7 @@ export default {
   connectorName: 'Nom du connecteur',
   component: 'Composant',
   resource: 'Ressource',
+  upstream: 'Amont',
   ack: 'Acquittement',
   acked: 'Acquitté',
   extraInfo: 'Extra info | Extra infos',

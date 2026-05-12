@@ -2,8 +2,6 @@ import { EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES, EVENT_FILTER_FAILURE_TYPES, EVEN
 
 export default {
   externalData: 'Données externes',
-  actionsRequired: 'Veuillez ajouter au moins une action',
-  configRequired: 'Aucune configuration définie. Veuillez ajouter au moins un paramètre de configuration',
   idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
   editPattern: 'Éditer le modèle',
   advanced: 'Avancée',
@@ -19,6 +17,7 @@ export default {
   actions: 'Actions',
   onSuccess: 'En cas de succès',
   onFailure: 'En cas d\'échec',
+  onSuccessAndFailure: 'En cas de succès / échec',
   configuration: 'Configuration',
   resource: 'ID de ressource ou modèle',
   component: 'ID de composant ou modèle',

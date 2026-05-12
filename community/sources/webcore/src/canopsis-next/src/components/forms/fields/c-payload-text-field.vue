@@ -93,6 +93,15 @@ export default {
       };
     },
   },
+  watch: {
+    required(value) {
+      if (value) {
+        this.$validator.validate(this.name);
+      } else {
+        this.errors.remove(this.name);
+      }
+    },
+  },
   methods: {
     onSearchInputChange(value) {
       this.debouncedOnSelectionChange();

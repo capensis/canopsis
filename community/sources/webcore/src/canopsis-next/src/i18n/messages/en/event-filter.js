@@ -2,8 +2,6 @@ import { EVENT_FILTER_TYPES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES, EVENT_FILTER
 
 export default {
   externalData: 'External data',
-  actionsRequired: 'Please add at least one action',
-  configRequired: 'No configuration defined. Please add at least one config parameter',
   idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
   editPattern: 'Edit pattern',
   advanced: 'Advanced',
@@ -19,6 +17,7 @@ export default {
   actions: 'Actions',
   onSuccess: 'On success',
   onFailure: 'On failure',
+  onSuccessAndFailure: 'On success / failure',
   configuration: 'Configuration',
   resource: 'Resource ID or template',
   component: 'Component ID or template',

@@ -14,7 +14,7 @@
       </c-form-block-row>
 
       <c-form-block-row :label="$t('eventFilter.duringPeriod')">
-        <event-filter-drop-intervals-field v-field="form" />
+        <event-filter-drop-intervals-field v-field="form" :required="hasRRule" />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.recurrence')">
@@ -24,41 +24,18 @@
       </c-form-block-row>
     </c-form-block>
 
-    <span class="text-subtitle-1">
-      {{ $t('eventFilter.enrichmentOptions') }}
-    </span>
+    <event-filter-enrichment-form
+      v-if="isEnrichmentType"
+      v-field="form"
+      :template-vars="templateVars"
+      :copy-vars="copyVars"
+    />
 
-    <template v-if="hasAdditionalOptions">
-      <v-divider class="my-3" />
-      <c-information-block
-        :title="
-          isEnrichmentType ? $t('eventFilter.enrichmentOptions') : $t('eventFilter.changeEntityOptions')
-        "
-      >
-        <c-collapse-panel
-          :title="$t('externalData.title')"
-          class="mb-2"
-        >
-          <external-data-form
-            v-field="form.external_data"
-            :variables="templateVars.external_data"
-            optionally
-          />
-        </c-collapse-panel>
-        <event-filter-enrichment-form
-          v-if="isEnrichmentType"
-          v-field="form"
-          :template-variables="templateVars.config"
-          :copy-variables="copyVars.config"
-          :set-tags-items="setTagsItems"
-        />
-        <event-filter-change-entity-form
-          v-else-if="isChangeEntityType"
-          v-field="form.config"
-          :variables="templateVars.config"
-        />
-      </c-information-block>
-    </template>
+    <event-filter-change-entity-form
+      v-else-if="isChangeEntityType"
+      v-field="form"
+      :template-vars="templateVars"
+    />
   </v-layout>
 </template>
 
@@ -68,11 +45,9 @@ import { computed } from 'vue';
 import {
   isEnrichmentEventFilterRuleType,
   isChangeEntityEventFilterRuleType,
-  getSetTagsItemsFromPattern,
 } from '@/helpers/entities/event-filter/rule/entity';
 
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
-import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
 import EventFilterEnrichmentForm from './fields/event-filter-enrichment-form.vue';
 import EventFilterChangeEntityForm from './fields/event-filter-change-entity-form.vue';
@@ -81,7 +56,6 @@ import EventFilterDropIntervalsField from './fields/event-filter-drop-intervals-
 export default {
   inject: ['$validator'],
   components: {
-    ExternalDataForm,
     EventFilterDropIntervalsField,
     PbehaviorRecurrenceRuleField,
     EventFilterEnrichmentForm,
@@ -110,19 +84,14 @@ export default {
     },
   },
   setup(props) {
+    const hasRRule = computed(() => !!props.form.rrule);
     const isEnrichmentType = computed(() => isEnrichmentEventFilterRuleType(props.form.type));
-
     const isChangeEntityType = computed(() => isChangeEntityEventFilterRuleType(props.form.type));
 
-    const hasAdditionalOptions = computed(() => isEnrichmentType.value || isChangeEntityType.value);
-
-    const setTagsItems = computed(() => getSetTagsItemsFromPattern(props.form.patterns?.event_pattern));
-
     return {
+      hasRRule,
       isEnrichmentType,
       isChangeEntityType,
-      hasAdditionalOptions,
-      setTagsItems,
     };
   },
 };

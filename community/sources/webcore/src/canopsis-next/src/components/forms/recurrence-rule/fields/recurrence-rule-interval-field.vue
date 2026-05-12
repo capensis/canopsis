@@ -6,7 +6,6 @@
         :label="$t('common.every')"
         :min="1"
         name="interval"
-        required
       />
     </v-flex>
     <v-flex
