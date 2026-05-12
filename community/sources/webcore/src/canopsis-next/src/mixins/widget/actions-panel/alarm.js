@@ -467,7 +467,7 @@ export const widgetActionsPanelAlarmMixin = {
           ),
           entities: mapAlarmsEntities(alarms),
           afterSubmit: async () => {
-            this.$popups.success({ text: this.$t('modals.pbehaviorPlanning.success.create') });
+            this.$popups.success({ text: this.$t('modals.createPbehavior.success.create') });
 
             return promisedTimeout(this.afterSubmit, ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT);
           },

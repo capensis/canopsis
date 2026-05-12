@@ -6,6 +6,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with default and required
   id="view-tab-tab-id"
 >
   <!---->
+  <!---->
   <div
     class="grid-layout grid-layout--disabled"
     style="padding: 20px; column-gap: 20px; grid-template-columns: repeat(12, 1fr); max-width: 100%;"
@@ -32,6 +33,8 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode 1`] = `
       value="desktop"
     />
   </div>
+   
+  <!---->
    
   <div
     class="grid-layout"
@@ -87,6 +90,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode without
       value="desktop"
     />
   </div>
+  <!---->
   <div
     class="grid-layout grid-layout--disabled"
     style="padding: 20px; column-gap: 20px; grid-template-columns: repeat(12, 1fr); max-width: 100%;"
@@ -101,6 +105,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets 1`] = `
   class="view"
   id="view-tab-tab-id"
 >
+  <!---->
   <!---->
   <div
     class="grid-layout grid-layout--disabled"
@@ -165,6 +170,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'l' windo
       value="desktop"
     />
   </div>
+  <!---->
   <div
     class="grid-layout"
     style="height: 1260px; max-width: 100%;"
@@ -337,6 +343,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
       value="mobile"
     />
   </div>
+  <!---->
   <div
     class="grid-layout"
     style="height: 580px; max-width: 450px;"
@@ -509,6 +516,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
       value="tablet"
     />
   </div>
+  <!---->
   <div
     class="grid-layout"
     style="height: 140px; max-width: 900px;"
@@ -681,6 +689,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'xl' wind
       value="desktop"
     />
   </div>
+  <!---->
   <div
     class="grid-layout"
     style="height: 1260px; max-width: 100%;"
@@ -853,6 +862,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
       value="desktop"
     />
   </div>
+  <!---->
   <div
     class="grid-layout"
     style="height: 1260px; max-width: 100%;"
