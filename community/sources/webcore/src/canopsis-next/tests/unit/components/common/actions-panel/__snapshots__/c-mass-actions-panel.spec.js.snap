@@ -32,7 +32,7 @@ exports[`c-mass-actions-panel Renders \`c-mass-actions-panel\` with actions slot
               role="separator"
             />
             <c-enabled-field-stub
-              class="ma-0"
+              class="c-mass-actions-panel__enabled-field"
               hide-details=""
               label="Keep selected after action"
             />
@@ -98,7 +98,7 @@ exports[`c-mass-actions-panel Renders \`c-mass-actions-panel\` with default prop
               role="separator"
             />
             <c-enabled-field-stub
-              class="ma-0"
+              class="c-mass-actions-panel__enabled-field"
               hide-details=""
               label="Keep selected after action"
             />
@@ -159,7 +159,7 @@ exports[`c-mass-actions-panel Renders \`c-mass-actions-panel\` with modal id 1`]
               role="separator"
             />
             <c-enabled-field-stub
-              class="ma-0"
+              class="c-mass-actions-panel__enabled-field"
               hide-details=""
               label="Keep selected after action"
             />
