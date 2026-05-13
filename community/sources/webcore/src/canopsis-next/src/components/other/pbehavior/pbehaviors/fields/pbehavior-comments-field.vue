@@ -8,8 +8,8 @@
     />
     <v-layout>
       <v-btn
-        class="ml-0 primary"
-        type="button"
+        color="primary"
+        outlined
         @click="addComment"
       >
         {{ $t('modals.createPbehavior.steps.comments.buttons.addComment') }}

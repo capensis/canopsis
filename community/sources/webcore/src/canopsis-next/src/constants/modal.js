@@ -53,7 +53,6 @@ export const MODALS = {
   createPlaylist: 'create-playlist',
   managePlaylistTabs: 'manage-playlist-tabs',
 
-  pbehaviorList: 'pbehavior-list',
   pbehaviorPlanning: 'pbehavior-planning',
   pbehaviorsCalendar: 'pbehaviors-calendar',
   pbehaviorRecurrenceRule: 'pbehavior-recurrence-rule',

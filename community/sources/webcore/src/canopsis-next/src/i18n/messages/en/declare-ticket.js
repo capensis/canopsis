@@ -1,7 +1,6 @@
 import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
 
 export default {
-  ticketUrlAndId: 'Ticket URL and ID',
   ticketUrlAndIdHelpText: 'The ticket URL received from the API response can be added to the alarm dynamic infos.',
   dataFromOneStepAttention: 'Data from the API response can be taken only from one step of a rule.',
   ticketID: 'Ticket ID',
@@ -17,7 +16,6 @@ export default {
   emptyResponse: 'Empty response',
   isRegexp: 'The value can be a RegExp',
   addWebhook: 'Add webhook',
-  emptyFields: 'No fields added yet',
   emptyWebhooks: 'No webhooks added yet',
   workflowIfStepFails: 'If this step fails',
   continueWithNextStep: 'Continue with next steps',

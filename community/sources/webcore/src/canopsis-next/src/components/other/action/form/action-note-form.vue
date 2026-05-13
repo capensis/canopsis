@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <c-form-block-row :label="$t('scenario.output')" :depth="1">
     <c-payload-textarea-field
       v-field="value.output"
       :label="$t('scenario.output')"
@@ -13,7 +13,7 @@
         />
       </template>
     </c-payload-textarea-field>
-  </v-layout>
+  </c-form-block-row>
 </template>
 
 <script>
