@@ -52,6 +52,19 @@ type Sender interface {
 	SendSliMetric(timestamp time.Time, alarm types.Alarm, entity types.Entity)
 
 	SendMessageRate(timestamp time.Time, eventType, connectorName string)
-
-	SendEntityInfosUpdate(timestamp time.Time, entityID, ruleID, name string, val any)
 }
+
+type EntityInfosUpdateSender interface {
+	Run(ctx context.Context)
+	Send(timestamp time.Time, entityID, ruleID, name string, val any)
+}
+
+func NewNullEntityInfosUpdateSender() EntityInfosUpdateSender {
+	return &nullEntityInfosUpdateSender{}
+}
+
+type nullEntityInfosUpdateSender struct{}
+
+func (*nullEntityInfosUpdateSender) Run(_ context.Context) {}
+
+func (*nullEntityInfosUpdateSender) Send(_ time.Time, _, _, _ string, _ any) {}

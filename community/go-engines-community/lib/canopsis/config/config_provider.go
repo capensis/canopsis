@@ -96,6 +96,10 @@ type TechMetricsConfigProvider interface {
 	Get() TechMetricsConfig
 }
 
+type EntityInfosLogsConfigProvider interface {
+	Get() EntityInfosLogsConfig
+}
+
 type MetricsConfigProvider interface {
 	Get() MetricsConfig
 }
@@ -160,6 +164,11 @@ type DataStorageConfig struct {
 	MaxUpdates         int
 	MongoClientTimeout time.Duration
 	Timeout            time.Duration
+}
+
+type EntityInfosLogsConfig struct {
+	Enabled       bool
+	FlushInterval time.Duration
 }
 
 type MetricsConfig struct {
@@ -1485,6 +1494,48 @@ func parseUpdatedJwtSigningMethod(
 	logInfoNewValue(logger, name, sectionName, oldVal.Alg(), v)
 
 	return m, true
+}
+
+type BaseEntityInfosLogsSettingsConfigProvider struct {
+	conf   EntityInfosLogsConfig
+	mx     sync.RWMutex
+	logger zerolog.Logger
+}
+
+func NewEntityInfosLogsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseEntityInfosLogsSettingsConfigProvider {
+	sectionName := "entity_infos_logs"
+
+	return &BaseEntityInfosLogsSettingsConfigProvider{
+		conf: EntityInfosLogsConfig{
+			Enabled:       parseBool(cfg.EntityInfosLogs.Enabled, "Enabled", sectionName, logger),
+			FlushInterval: parseTimeDurationByStr(cfg.EntityInfosLogs.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
+		},
+		logger: logger,
+	}
+}
+
+func (p *BaseEntityInfosLogsSettingsConfigProvider) Update(cfg CanopsisConf) {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	sectionName := "entity_infos_logs"
+
+	b, ok := parseUpdatedBool(cfg.EntityInfosLogs.Enabled, p.conf.Enabled, "Enabled", sectionName, p.logger)
+	if ok {
+		p.conf.Enabled = b
+	}
+
+	d, ok := parseUpdatedTimeDurationByStr(cfg.EntityInfosLogs.FlushInterval, p.conf.FlushInterval, "FlushInterval", sectionName, p.logger)
+	if ok {
+		p.conf.FlushInterval = d
+	}
+}
+
+func (p *BaseEntityInfosLogsSettingsConfigProvider) Get() EntityInfosLogsConfig {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+
+	return p.conf
 }
 
 type BaseMetricsSettingsConfigProvider struct {
