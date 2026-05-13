@@ -17,6 +17,7 @@
           <c-disable-during-periods-field v-field="form.disable_during_periods" />
         </c-form-block-row>
         <c-form-block-row :label="$t('modals.createDynamicInfo.infosSection.title')">
+          <c-label>{{ $t('modals.createDynamicInfo.infosSection.title') }}</c-label>
           <dynamic-info-infos-form
             v-field="form.infos"
             :variables="templateVars.value"

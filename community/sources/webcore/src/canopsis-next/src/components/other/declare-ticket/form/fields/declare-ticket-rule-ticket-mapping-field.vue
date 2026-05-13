@@ -1,7 +1,7 @@
 <template>
   <v-layout column>
     <c-information-block
-      :title="$t('declareTicket.ticketUrlAndId')"
+      :title="$t('declareTicket.ticketURL') + ' / ' + $t('declareTicket.ticketID')"
       :help-text="ticketUrlHelpText"
       help-icon="help"
       help-icon-color="grey darken-1"

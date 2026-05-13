@@ -51,7 +51,6 @@ export const bootstrapApplicationPlugins = (Vue) => {
     },
 
     dialogPropsMap: {
-      [MODALS.pbehaviorList]: { maxWidth: 1280 },
       [MODALS.createWidget]: { maxWidth: 500 },
       [MODALS.createWidgetTemplate]: { maxWidth: 920 },
       [MODALS.alarmsList]: { maxWidth: '95%' },

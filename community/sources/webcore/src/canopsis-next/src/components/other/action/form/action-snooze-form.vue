@@ -1,11 +1,14 @@
 <template>
   <div>
     <action-note-form v-field="value" :template-vars="templateVars" />
-    <c-duration-field
-      v-field="value.duration"
-      :name="`${name}.duration`"
-      required
-    />
+
+    <c-form-block-row :label="$t('common.duration')" :depth="1">
+      <c-duration-field
+        v-field="value.duration"
+        :name="`${name}.duration`"
+        required
+      />
+    </c-form-block-row>
   </div>
 </template>
 

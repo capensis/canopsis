@@ -148,7 +148,6 @@ export default {
           startOnTrigger: 'Start on trigger',
           inherited: 'Apply for all dependant entities',
           reasonAndType: 'Reason and type',
-          color: 'Color',
         },
       },
       filter: {
@@ -1189,7 +1188,7 @@ export default {
   },
   createExternalDataTableRecord: {
     create: {
-      title: 'Add record',
+      title: 'Import records',
     },
     edit: {
       title: 'Edit record',

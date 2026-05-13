@@ -21,6 +21,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { isIdleRuleEntityType } from '@/helpers/entities/idle-rule/form';
+
 import IdleRuleGeneralForm from './idle-rule-general-form.vue';
 import IdleRulePatternsForm from './idle-rule-patterns-form.vue';
 
@@ -38,6 +42,13 @@ export default {
       type: Object,
       default: () => ({}),
     },
+  },
+  setup(props) {
+    const isEntityType = computed(() => isIdleRuleEntityType(props.form.type));
+
+    return {
+      isEntityType,
+    };
   },
 };
 </script>

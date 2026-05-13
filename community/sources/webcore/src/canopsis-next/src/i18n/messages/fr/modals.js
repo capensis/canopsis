@@ -132,7 +132,6 @@ export default {
           startOnTrigger: 'Démarrer sur déclencheur',
           inherited: 'S\'applique à toutes les entités dépendantes',
           reasonAndType: 'Raison et type',
-          color: 'Couleur',
         },
       },
       filter: {
@@ -1189,7 +1188,7 @@ export default {
   },
   createExternalDataTableRecord: {
     create: {
-      title: 'Ajouter un enregistrement',
+      title: 'Importer des enregistrements',
     },
     edit: {
       title: 'Modifier l\'enregistrement',

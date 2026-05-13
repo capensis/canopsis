@@ -43,15 +43,14 @@ const snapshotStubs = {
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectDurationField = wrapper => wrapper.find('c-duration-field-stub');
 const selectDateTimePickerField = wrapper => wrapper.find('date-time-splitted-range-picker-field-stub');
-const selectEnabledFields = wrapper => wrapper.findAll('c-enabled-field-stub');
+const selectDurationSectionEnabledFields = wrapper => wrapper.findAll('c-enabled-field-stub');
+const selectEnabledField = wrapper => selectDurationSectionEnabledFields(wrapper)
+  .at(0);
 const selectReasonField = wrapper => wrapper.find('c-pbehavior-reason-field-stub');
 const selectTypeField = wrapper => wrapper.find('c-pbehavior-type-field-stub');
-const selectEnabledField = wrapper => selectEnabledFields(wrapper)
+const selectFullDayEnabledField = wrapper => selectDurationSectionEnabledFields(wrapper)
   .at(0);
-const selectCheckboxFields = wrapper => wrapper.findAll('.v-checkbox');
-const selectFullDayCheckbox = wrapper => selectCheckboxFields(wrapper)
-  .at(0);
-const selectNoEndingCheckbox = wrapper => selectCheckboxFields(wrapper)
+const selectNoEndingEnabledField = wrapper => selectDurationSectionEnabledFields(wrapper)
   .at(1);
 const selectPbehaviorCommentsField = wrapper => wrapper.find('pbehavior-comments-field-stub');
 const selectEnabledColorPickerField = wrapper => wrapper.find('c-enabled-color-picker-field-stub');
@@ -266,7 +265,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectFullDayCheckbox(wrapper).triggerCustomEvent('change', true);
+    selectFullDayEnabledField(wrapper).triggerCustomEvent('input', true);
     await flushPromises();
 
     expect(wrapper).toEmitInput({
@@ -289,7 +288,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectFullDayCheckbox(wrapper).triggerCustomEvent('change', true);
+    selectFullDayEnabledField(wrapper).triggerCustomEvent('input', true);
     await flushPromises();
 
     expect(wrapper).not.toHaveBeenEmit('input');
@@ -310,7 +309,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectNoEndingCheckbox(wrapper).triggerCustomEvent('change', true);
+    selectNoEndingEnabledField(wrapper).triggerCustomEvent('input', true);
     await flushPromises();
 
     expect(wrapper).toEmitInput({
@@ -338,7 +337,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectNoEndingCheckbox(wrapper).triggerCustomEvent('change', false);
+    selectNoEndingEnabledField(wrapper).triggerCustomEvent('input', false);
     await flushPromises();
 
     expect(wrapper).toEmitInput({
@@ -367,7 +366,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectNoEndingCheckbox(wrapper).triggerCustomEvent('change', false);
+    selectNoEndingEnabledField(wrapper).triggerCustomEvent('input', false);
     await flushPromises();
 
     expect(wrapper).not.toHaveBeenEmit('input');

@@ -12,7 +12,7 @@
         {{ label }}
       </h4>
     </v-flex>
-    <v-flex class="c-form-block-row__field text-break">
+    <v-flex :class="{ 'py-3': indented }" class="c-form-block-row__field text-break">
       <slot />
     </v-flex>
   </v-layout>
@@ -37,12 +37,21 @@ export default {
       type: [Number, String],
       default: 0,
     },
+    indented: {
+      type: Boolean,
+      default: false,
+    },
+    topBorder: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const { hasChildrenError } = useValidationChildren();
 
     const layoutClasses = computed(() => ({
       [`c-form-block-row--depth-${props.depth}`]: !!props.depth,
+      'c-form-block-row--top-border': !!props.topBorder,
       'c-form-block-row--error': hasChildrenError.value,
     }));
 
@@ -75,6 +84,10 @@ export default {
 .c-form-block-row {
   &:not(:last-child) {
     border-bottom: 1px solid var(--v-application-background-darken2);
+  }
+
+  &--top-border {
+    border-top: 1px solid var(--v-application-background-darken2);
   }
 
   .c-form-block-row__label {

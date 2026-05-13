@@ -17,10 +17,9 @@
         <event-filter-drop-intervals-field v-field="form" :required="hasRRule" />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('common.recurrence')">
-        <div class="py-3">
-          <pbehavior-recurrence-rule-field v-field="form" />
-        </div>
+      <c-form-block-row :label="$t('common.recurrence')" indented>
+        <c-label class="mb-3">{{ $t('common.recurrence') }}</c-label>
+        <pbehavior-recurrence-rule-field v-field="form" />
       </c-form-block-row>
     </c-form-block>
 

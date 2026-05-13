@@ -1,11 +1,6 @@
 <template>
-  <c-information-block :title="$tc('common.customField', 2)">
-    <c-alert
-      v-if="!value.length"
-      type="info"
-    >
-      {{ $t('declareTicket.emptyFields') }}
-    </c-alert>
+  <v-layout class="gap-3" column>
+    <c-label>{{ $tc('common.customField', 2) }}</c-label>
     <c-text-pairs-field
       v-field="value"
       :text-label="$t('declareTicket.alarmFieldName')"
@@ -25,7 +20,7 @@
         />
       </template>
     </c-text-pairs-field>
-  </c-information-block>
+  </v-layout>
 </template>
 
 <script>

@@ -61,10 +61,6 @@ export const CreateAlarmChart = () => ({
   loading: LoaderOverlay,
 });
 
-export const PbehaviorList = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-list.vue'),
-  loading: LoaderOverlay,
-});
 export const PbehaviorPlanning = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-planning.vue'),
   loading: LoaderOverlay,

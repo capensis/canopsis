@@ -2,6 +2,7 @@
   <associate-ticket-event-form
     v-field="value"
     :name="name"
+    :depth="1"
   />
 </template>
 

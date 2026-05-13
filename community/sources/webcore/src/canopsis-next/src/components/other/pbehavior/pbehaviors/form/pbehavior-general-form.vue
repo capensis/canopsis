@@ -1,119 +1,142 @@
 <template>
-  <v-layout column>
-    <v-layout>
-      <v-flex v-if="withInherited" xs6>
+  <v-layout :class="{ 'gap-3': !depth }" column>
+    <c-enabled-field
+      v-if="withEnabled"
+      v-field="form.enabled"
+      hide-details
+      with-background
+    />
+
+    <component :is="depth ? 'c-form-block-row' : 'div'" :label="nameLabel" :depth="depth">
+      <c-name-field
+        v-field="form.name"
+        :label="nameLabel"
+        :tooltip="nameTooltip"
+        autofocus
+        required
+      />
+    </component>
+
+    <component :is="depth ? 'div' : 'c-form-block'">
+      <c-form-block-row
+        v-if="withInherited"
+        :label="$t('modals.createPbehavior.steps.general.fields.inherited')"
+        :depth="depth"
+      >
         <c-enabled-field
           v-field="form.inherited"
           :label="$t('modals.createPbehavior.steps.general.fields.inherited')"
           hide-details
         />
-      </v-flex>
-    </v-layout>
-    <c-name-field
-      v-field="form.name"
-      :label="nameLabel"
-      :tooltip="nameTooltip"
-      autofocus
-      required
-    />
-    <v-flex
-      class="mt-3"
-      xs12
-    >
-      <c-enabled-field
-        v-if="withStartOnTrigger"
-        :value="form.start_on_trigger"
-        :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')"
-        class="mt-0 mb-1"
-        hide-details
-        @input="updateStartOnTrigger"
-      />
-      <c-duration-field
-        v-if="form.start_on_trigger"
-        v-field="form.duration"
-        required
-      />
-      <template v-else>
-        <v-layout class="gap-2" align-center>
-          <v-flex xs2>
-            <v-checkbox
-              v-model="fullDay"
-              :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
-              class="mt-0"
-              color="primary"
-              hide-details
+      </c-form-block-row>
+
+      <c-form-block-row
+        :label="$t('common.duration')"
+        :depth="depth"
+      >
+        <c-enabled-field
+          v-if="withStartOnTrigger"
+          :value="form.start_on_trigger"
+          :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')"
+          class="mt-0 mb-1"
+          hide-details
+          @input="updateStartOnTrigger"
+        />
+
+        <c-duration-field
+          v-if="form.start_on_trigger"
+          v-field="form.duration"
+          required
+        />
+        <template v-else>
+          <v-layout class="gap-2 mb-3" align-center>
+            <v-flex xs6>
+              <c-enabled-field
+                v-model="fullDay"
+                :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
+                hide-details
+              />
+            </v-flex>
+            <v-flex xs6>
+              <c-enabled-field
+                v-if="hasPauseType"
+                v-model="noEnding"
+                :label="$t('modals.createPbehavior.steps.general.fields.noEnding')"
+                hide-details
+              />
+            </v-flex>
+          </v-layout>
+          <v-layout class="gap-2" align-center>
+            <v-flex>
+              <date-time-splitted-range-picker-field
+                :start="form.tstart"
+                :end="form.tstop"
+                :start-label="$t('modals.createPbehavior.steps.general.fields.start')"
+                :end-label="$t('modals.createPbehavior.steps.general.fields.stop')"
+                :start-rules="tstartRules"
+                :end-rules="tstopRules"
+                :end-min="tstopMin"
+                :end-max="tstopMax"
+                :no-ending="noEnding"
+                :full-day="fullDay"
+                @update:start="updateField('tstart', $event)"
+                @update:end="updateField('tstop', $event)"
+              />
+            </v-flex>
+            <v-flex v-if="!noTimezone">
+              <c-timezone-field
+                v-field="form.timezone"
+                server
+              />
+            </v-flex>
+          </v-layout>
+        </template>
+      </c-form-block-row>
+
+      <c-form-block-row :label="'Pbehavior reason and type'" :depth="depth">
+        <v-layout>
+          <v-flex xs6>
+            <c-pbehavior-reason-field
+              v-field="form.reason"
+              class="mr-2"
+              required
+              return-object
             />
           </v-flex>
-          <v-flex xs2>
-            <v-checkbox
-              v-if="hasPauseType"
-              v-model="noEnding"
-              :label="$t('modals.createPbehavior.steps.general.fields.noEnding')"
-              class="mt-0"
-              color="primary"
-              hide-details
-            />
-          </v-flex>
-          <v-flex :xs5="!noTimezone" :xs8="noTimezone">
-            <date-time-splitted-range-picker-field
-              :start="form.tstart"
-              :end="form.tstop"
-              :start-label="$t('modals.createPbehavior.steps.general.fields.start')"
-              :end-label="$t('modals.createPbehavior.steps.general.fields.stop')"
-              :start-rules="tstartRules"
-              :end-rules="tstopRules"
-              :end-min="tstopMin"
-              :end-max="tstopMax"
-              :no-ending="noEnding"
-              :full-day="fullDay"
-              @update:start="updateField('tstart', $event)"
-              @update:end="updateField('tstop', $event)"
-            />
-          </v-flex>
-          <v-flex v-if="!noTimezone" xs3>
-            <c-timezone-field
-              v-field="form.timezone"
-              server
+          <v-flex xs6>
+            <c-pbehavior-type-field
+              v-field="form.type"
+              class="ml-2"
+              required
+              return-object
             />
           </v-flex>
         </v-layout>
-      </template>
-      <v-layout>
-        <v-flex xs6>
-          <c-pbehavior-reason-field
-            v-field="form.reason"
-            class="mr-2"
-            required
-            return-object
-          />
-        </v-flex>
-        <v-flex xs6>
-          <c-pbehavior-type-field
-            v-field="form.type"
-            class="ml-2"
-            required
-            return-object
-          />
-        </v-flex>
-      </v-layout>
-    </v-flex>
-    <c-enabled-color-picker-field
-      v-field="form.color"
-      :label="$t('modals.createPbehavior.steps.color.label')"
-      row
-    />
-    <c-collapse-panel
-      v-if="!noComments"
-      :title="$tc('common.comment', 2)"
-      class="mt-2"
-    >
-      <pbehavior-comments-field v-field="form.comments" />
-    </c-collapse-panel>
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.color')" :depth="depth">
+        <c-enabled-color-picker-field
+          v-field="form.color"
+          :label="$t('modals.createPbehavior.steps.color.label')"
+          row
+        />
+      </c-form-block-row>
+
+      <c-form-block-row
+        v-if="!noComments"
+        :label="$tc('common.comment', 2)"
+        :depth="depth"
+        indented
+      >
+        <c-label class="mb-3">{{ $tc('common.comment', 2) }}</c-label>
+        <pbehavior-comments-field v-field="form.comments" />
+      </c-form-block-row>
+    </component>
   </v-layout>
 </template>
 
 <script>
-import { get } from 'lodash';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import { MAX_PBEHAVIOR_DATES_DIFF_YEARS } from '@/config';
 import { DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
@@ -131,9 +154,8 @@ import {
   convertDateToEndOfDayDateObject,
 } from '@/helpers/date/date';
 
-import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
-import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reasons';
-import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
+import { useModelField } from '@/hooks/form/model-field';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 
@@ -145,12 +167,6 @@ export default {
     PbehaviorCommentsField,
     DateTimeSplittedRangePickerField,
   },
-  mixins: [
-    formMixin,
-    formValidationHeaderMixin,
-    entitiesPbehaviorReasonMixin,
-    entitiesFieldPbehaviorFieldTypeMixin,
-  ],
   model: {
     prop: 'form',
     event: 'input',
@@ -180,6 +196,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withEnabled: {
+      type: Boolean,
+      default: false,
+    },
     nameLabel: {
       type: String,
       required: false,
@@ -188,117 +208,132 @@ export default {
       type: String,
       required: false,
     },
-  },
-  data() {
-    const noEnding = this.form.tstart && !this.form.tstop;
-
-    return {
-      noEnding,
-
-      fullDay: isStartOfDay(this.form.tstart) && (noEnding || isEndOfDay(this.form.tstop)),
-    };
-  },
-  computed: {
-    hasPauseType() {
-      return get(this.form.type, 'type') === PBEHAVIOR_TYPE_TYPES.pause;
+    depth: {
+      type: Number,
+      default: 0,
     },
+  },
+  setup(props, { emit }) {
+    const { updateModel, updateField } = useModelField(props, emit);
+    const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
 
-    tstartRules() {
-      return {
-        required: true,
-        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-      };
-    },
+    const initialNoEnding = Boolean(props.form.tstart && !props.form.tstop);
+    const noEnding = ref(initialNoEnding);
+    const fullDay = ref(
+      isStartOfDay(props.form.tstart) && (initialNoEnding || isEndOfDay(props.form.tstop)),
+    );
 
-    tstopRules() {
-      const rules = { required: !this.hasPauseType };
+    const hasPauseType = computed(() => props.form.type?.type === PBEHAVIOR_TYPE_TYPES.pause);
 
-      if (this.form.tstart) {
-        rules.after = [convertDateToString(this.form.tstart, DATETIME_FORMATS.dateTimePicker)];
+    const tstartRules = computed(() => ({
+      required: true,
+      date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
+    }));
+
+    const tstopRules = computed(() => {
+      const rules = { required: !hasPauseType.value };
+
+      if (props.form.tstart) {
+        rules.after = [convertDateToString(props.form.tstart, DATETIME_FORMATS.dateTimePicker)];
         rules.date_format = DATETIME_FORMATS.veeValidateDateTimeFormat;
       }
 
       return rules;
-    },
+    });
 
-    tstopMin() {
+    const tstopMin = computed(() => {
       const nowTimestamp = getNowTimestamp();
-      const startTimestamp = convertDateToTimestamp(this.form.tstart);
+      const startTimestamp = convertDateToTimestamp(props.form.tstart);
 
       return convertDateToString(
         Math.min(nowTimestamp, startTimestamp),
         DATETIME_FORMATS.vuetifyDatePicker,
       );
-    },
+    });
 
-    tstopMax() {
-      return convertDateToString(
-        addUnitToDate(this.form.tstart, MAX_PBEHAVIOR_DATES_DIFF_YEARS, TIME_UNITS.year),
-        DATETIME_FORMATS.vuetifyDatePicker,
-      );
-    },
-  },
-  watch: {
-    noEnding(noEnding) {
-      const { tstart } = this.form;
+    const tstopMax = computed(() => convertDateToString(
+      addUnitToDate(props.form.tstart, MAX_PBEHAVIOR_DATES_DIFF_YEARS, TIME_UNITS.year),
+      DATETIME_FORMATS.vuetifyDatePicker,
+    ));
 
-      if (noEnding) {
-        this.updateField('tstop', null);
+    watch(noEnding, (isNoEnding) => {
+      const { tstart } = props.form;
+
+      if (isNoEnding) {
+        updateField('tstop', null);
       } else if (tstart) {
-        const unit = this.fullDay ? 'day' : 'hour';
+        const unit = fullDay.value ? 'day' : 'hour';
 
         const tstop = addUnitToDate(tstart, 1, unit);
-        const tstopDate = this.fullDay
+        const tstopDate = fullDay.value
           ? convertDateToEndOfUnitDateObject(tstop, unit)
           : convertDateToDateObject(tstop);
 
-        this.updateField('tstop', tstopDate);
+        updateField('tstop', tstopDate);
       }
-    },
-    fullDay() {
-      const { tstart, tstop } = this.form;
+    });
+
+    watch(fullDay, () => {
+      const { tstart, tstop } = props.form;
 
       if (tstart) {
-        this.updateModel({
-          ...this.form,
+        updateModel({
+          ...props.form,
 
           tstart: convertDateToStartOfDayDateObject(tstart),
-          tstop: !this.noEnding && tstop ? convertDateToEndOfDayDateObject(tstop) : tstop,
+          tstop: !noEnding.value && tstop ? convertDateToEndOfDayDateObject(tstop) : tstop,
         });
       }
-    },
-    hasPauseType(value) {
-      if (!value) {
-        this.noEnding = false;
-      }
-    },
-  },
-  mounted() {
-    this.fetchFieldPbehaviorTypesList();
-  },
-  methods: {
-    updateStartOnTrigger(value) {
-      if (value) {
-        this.fullDay = false;
-        this.noEnding = false;
+    });
 
-        this.updateModel({
-          ...this.form,
+    watch(hasPauseType, (value) => {
+      if (!value) {
+        noEnding.value = false;
+      }
+    });
+
+    /**
+     * Syncs form state when "start on trigger" is toggled. Enabling clears scheduled window flags
+     * and removes start/stop; disabling drops duration and turns start_on_trigger off.
+     *
+     * @param {boolean} value - Whether the pbehavior should start only when the trigger fires.
+     */
+    const updateStartOnTrigger = (value) => {
+      if (value) {
+        fullDay.value = false;
+        noEnding.value = false;
+
+        updateModel({
+          ...props.form,
 
           start_on_trigger: true,
           tstart: null,
           tstop: null,
         });
       } else {
-        const { duration, ...form } = this.form;
+        const { duration, ...form } = props.form;
 
-        this.updateModel({
+        updateModel({
           ...form,
 
           start_on_trigger: false,
         });
       }
-    },
+    };
+
+    onMounted(fetchPbehaviorTypesFieldList);
+
+    return {
+      noEnding,
+      fullDay,
+      hasPauseType,
+      tstartRules,
+      tstopRules,
+      tstopMin,
+      tstopMax,
+      updateField,
+      updateStartOnTrigger,
+    };
   },
 };
 </script>

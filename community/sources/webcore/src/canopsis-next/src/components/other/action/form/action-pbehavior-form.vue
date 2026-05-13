@@ -1,20 +1,19 @@
 <template>
-  <pbehavior-form
+  <pbehavior-general-form
     v-field="value"
     :name-label="$t('common.namePrefix')"
     :name-tooltip="$t('scenario.tooltips.pbehaviorActionsNamePrefix')"
-    no-pattern
-    no-enabled
+    :depth="1"
     no-comments
     with-start-on-trigger
   />
 </template>
 
 <script>
-import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
+import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
 
 export default {
-  components: { PbehaviorForm },
+  components: { PbehaviorGeneralForm },
   model: {
     prop: 'value',
     event: 'input',

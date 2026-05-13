@@ -4,8 +4,16 @@ import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 
+const formGeneralPatternsTabsStub = {
+  template: '<div><slot name="general" :set-ref="noop" /><slot name="patterns" :set-ref="noop" /></div>',
+  methods: {
+    noop() {},
+  },
+};
+
 const stubs = {
   'c-enabled-field': true,
+  'c-form-general-patterns-tabs': formGeneralPatternsTabsStub,
   'pbehavior-general-form': true,
   'pbehavior-patterns-form': true,
 };
@@ -103,7 +111,6 @@ describe('pbehavior-form', () => {
           patterns: {},
           comments: [],
         },
-        noPattern: true,
         noEnabled: true,
         noComments: true,
         withStartOnTrigger: true,

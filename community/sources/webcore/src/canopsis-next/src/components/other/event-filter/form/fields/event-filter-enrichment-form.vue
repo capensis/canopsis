@@ -5,26 +5,23 @@
     </span>
 
     <c-form-block>
-      <c-form-block-row :label="$t('externalData.title')">
-        <div class="py-3">
-          <external-data-form
-            v-field="form.external_data"
-            :variables="templateVars.external_data"
-            optionally
-          />
-        </div>
+      <c-form-block-row :label="$t('externalData.title')" indented>
+        <external-data-form
+          v-field="form.external_data"
+          :variables="templateVars.external_data"
+          optionally
+        />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('common.actionsLabel')">
-        <div class="py-3">
-          <event-filter-enrichment-actions-form
-            v-field="form.config.actions"
-            :variables="templateVars.config"
-            :copy-variables="copyVars.config"
-            :name="name"
-            :set-tags-items="setTagsItems"
-          />
-        </div>
+      <c-form-block-row :label="$t('common.actionsLabel')" indented>
+        <c-label class="mb-3">{{ $t('common.actionsLabel') }}</c-label>
+        <event-filter-enrichment-actions-form
+          v-field="form.config.actions"
+          :variables="templateVars.config"
+          :copy-variables="copyVars.config"
+          :name="name"
+          :set-tags-items="setTagsItems"
+        />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('eventFilter.onSuccessAndFailure')">

@@ -4,13 +4,20 @@
     class="pbehavior-form position-relative"
     @submit.prevent="submitHandler"
   >
-    <pbehavior-form
-      v-model="form"
-      :pbehavior-id="pbehavior?._id"
-      :no-pattern="!!entityPattern"
+    <pbehavior-general-form
+      v-if="entityPattern"
+      v-field="form"
       :with-inherited="withInherited"
       :no-timezone="noTimezone"
-      class="py-3"
+      with-enabled
+    />
+
+    <pbehavior-form
+      v-else
+      v-model="form"
+      :pbehavior-id="pbehavior?._id"
+      :with-inherited="withInherited"
+      :no-timezone="noTimezone"
       pbehavior-counter-type
     />
     <ai-chat-sidebar
@@ -19,7 +26,7 @@
       v-on="chatOptions.on"
     />
     <v-layout
-      class="pbehavior-form__actions"
+      class="pbehavior-form__actions mt-3"
       justify-end
     >
       <v-btn
@@ -68,6 +75,7 @@ import { useComponentInstance } from '@/hooks/vue';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
+import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
 
 export default {
   $_veeValidate: {
@@ -75,7 +83,7 @@ export default {
     delay: VALIDATION_DELAY,
   },
   inject: ['$system'],
-  components: { PbehaviorForm, AiChatSidebar },
+  components: { PbehaviorForm, PbehaviorGeneralForm, AiChatSidebar },
   mixins: [dependentMixin],
   props: {
     event: {

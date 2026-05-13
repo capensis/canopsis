@@ -5,6 +5,7 @@
     centered
   >
     <v-tab
+      v-if="reverse && hasPatternsSlot"
       key="patterns"
       :class="{ 'error--text': hasPatternsError }"
     >
@@ -16,12 +17,20 @@
     >
       {{ $t('common.general') }}
     </v-tab>
+    <v-tab
+      v-if="!reverse && hasPatternsSlot"
+      key="patterns"
+      :class="{ 'error--text': hasPatternsError }"
+    >
+      {{ $tc('common.pattern') }}
+    </v-tab>
     <template-testing-test-variables-tab
       v-if="hasTemplateTestingTab"
       :disabled="isEmptyVariablesFields"
     />
 
     <v-tab-item
+      v-if="reverse && hasPatternsSlot"
       key="patternsItem"
       class="pt-4"
     >
@@ -42,6 +51,19 @@
         :copy-vars="copyVars"
         :template-vars="templateVars"
         name="general"
+      />
+    </v-tab-item>
+
+    <v-tab-item
+      v-if="!reverse && hasPatternsSlot"
+      key="patternsItem"
+      class="pt-4"
+    >
+      <slot
+        :set-ref="setPatternsRef"
+        :template-vars="templateVars"
+        :copy-vars="copyVars"
+        name="patterns"
       />
     </v-tab-item>
 
@@ -111,8 +133,8 @@ export default {
     const slots = useSlots();
 
     const GENERAL_PATTERNS_FORM_TABS = computed(() => ({
-      patterns: 0,
-      general: 1,
+      patterns: Number(props.reverse),
+      general: Number(!props.reverse),
       testing: 2,
     }));
 
