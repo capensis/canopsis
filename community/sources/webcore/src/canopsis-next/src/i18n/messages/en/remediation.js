@@ -92,6 +92,7 @@ export default {
       wasPaused: '{instructionName} instruction paused.',
       wasFinished: '{instructionName} instruction finished.',
       wasFailed: '{instructionName} instruction failed.',
+      wasWaitingResult: '{instructionName} instruction is waiting for a result.',
       wasRemovedOrDisabled: 'The {instructionName} instruction was removed or disabled.',
     },
     jobs: {
