@@ -38,7 +38,7 @@ func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) eng
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
 	metricsSender := metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, logger)
 	e := che.NewEngine(ctx, opts, primaryDbClient, secondaryDbClient, noTimeoutClient, cfg, metricsSender,
-		metrics.NewNullMetaUpdater(), externaldata.NewGetterContainer(), config.NewTimezoneConfigProvider(cfg, logger),
+		metrics.NewNullMetaUpdater(), metrics.NewNullEntityInfosUpdateSender(), externaldata.NewGetterContainer(), config.NewTimezoneConfigProvider(cfg, logger),
 		config.NewTemplateConfigProvider(cfg, logger), logger)
 	e.AddDeferFunc(func(ctx context.Context) {
 		err := primaryDbClient.Disconnect(ctx)
