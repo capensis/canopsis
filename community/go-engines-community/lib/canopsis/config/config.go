@@ -110,6 +110,11 @@ type ConsoleWriter struct {
 	PartsOrder []string `toml:"PartsOrder"`
 }
 
+type SectionEntityInfosLogs struct {
+	Enabled       bool   `toml:"Enabled"`
+	FlushInterval string `toml:"FlushInterval"`
+}
+
 type SectionMetrics struct {
 	Enabled                bool     `toml:"Enabled"`
 	FlushInterval          string   `toml:"FlushInterval"`
@@ -139,19 +144,20 @@ type SectionExternalData struct {
 
 // CanopsisConf represents a generic configuration object.
 type CanopsisConf struct {
-	ID           string              `bson:"_id,omitempty" toml:"omitempty"`
-	Global       SectionGlobal       `bson:"global" toml:"global"`
-	Alarm        SectionAlarm        `bson:"alarm" toml:"alarm"`
-	Timezone     SectionTimezone     `bson:"timezone" toml:"timezone"`
-	ImportCtx    SectionImportCtx    `bson:"import_ctx" toml:"import_ctx"`
-	File         SectionFile         `bson:"file" toml:"file"`
-	DataStorage  SectionDataStorage  `bson:"data_storage" toml:"data_storage"`
-	Logger       SectionLogger       `bson:"logger" toml:"logger"`
-	API          SectionApi          `bson:"api" toml:"api"`
-	Metrics      SectionMetrics      `bson:"metrics" toml:"metrics"`
-	TechMetrics  SectionTechMetrics  `bson:"tech_metrics" toml:"tech_metrics"`
-	Template     SectionTemplate     `bson:"template" toml:"template"`
-	ExternalData SectionExternalData `bson:"external_data" toml:"external_data"`
+	ID              string                 `bson:"_id,omitempty" toml:"omitempty"`
+	Global          SectionGlobal          `bson:"global" toml:"global"`
+	Alarm           SectionAlarm           `bson:"alarm" toml:"alarm"`
+	Timezone        SectionTimezone        `bson:"timezone" toml:"timezone"`
+	ImportCtx       SectionImportCtx       `bson:"import_ctx" toml:"import_ctx"`
+	File            SectionFile            `bson:"file" toml:"file"`
+	DataStorage     SectionDataStorage     `bson:"data_storage" toml:"data_storage"`
+	Logger          SectionLogger          `bson:"logger" toml:"logger"`
+	API             SectionApi             `bson:"api" toml:"api"`
+	EntityInfosLogs SectionEntityInfosLogs `bson:"entity_infos_logs" toml:"entity_infos_logs"`
+	Metrics         SectionMetrics         `bson:"metrics" toml:"metrics"`
+	TechMetrics     SectionTechMetrics     `bson:"tech_metrics" toml:"tech_metrics"`
+	Template        SectionTemplate        `bson:"template" toml:"template"`
+	ExternalData    SectionExternalData    `bson:"external_data" toml:"external_data"`
 }
 
 // UserInterfaceConf represents a user interface configuration object.
