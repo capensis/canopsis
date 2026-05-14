@@ -98,7 +98,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createDeclareTicketRule]: { maxWidth: 1280 },
       [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
       [MODALS.executeDeclareTickets]: { maxWidth: 920 },
-      [MODALS.createLinkRule]: { maxWidth: 920 },
+      [MODALS.createLinkRule]: { maxWidth: 1000 },
       [MODALS.anomalyMonitoredConnectorHistory]: { maxWidth: 1400 },
       [MODALS.createAlarmChart]: { maxWidth: 500 },
       [MODALS.createTag]: { maxWidth: 920 },
