@@ -8,15 +8,15 @@ import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form
 
 const stubs = {
   'meta-alarm-rule-corel-form': true,
-  'meta-alarm-rule-threshold-form': true,
-  'meta-alarm-rule-time-based-form': true,
+  'meta-alarm-rule-threshold-field': true,
+  'meta-alarm-rule-time-based-field': true,
   'meta-alarm-rule-value-paths-form': true,
   'meta-alarm-rule-patterns-form': true,
 };
 
 const selectMetaAlarmRuleCorelForm = wrapper => wrapper.find('meta-alarm-rule-corel-form-stub');
-const selectMetaAlarmRuleThresholdForm = wrapper => wrapper.find('meta-alarm-rule-threshold-form-stub');
-const selectMetaAlarmRuleTimeBasedForm = wrapper => wrapper.find('meta-alarm-rule-time-based-form-stub');
+const selectMetaAlarmRuleThresholdField = wrapper => wrapper.find('meta-alarm-rule-threshold-field-stub');
+const selectMetaAlarmRuleTimeBasedField = wrapper => wrapper.find('meta-alarm-rule-time-based-field-stub');
 const selectMetaAlarmRuleValuePathsForm = wrapper => wrapper.find('meta-alarm-rule-value-paths-form-stub');
 const selectMetaAlarmRulePatternsForm = wrapper => wrapper.find('meta-alarm-rule-patterns-form-stub');
 
@@ -65,13 +65,13 @@ describe('meta-alarm-rule-parameters-form', () => {
       },
     });
 
-    const metaAlarmRuleThresholdForm = selectMetaAlarmRuleThresholdForm(wrapper);
+    const metaAlarmRuleThresholdField = selectMetaAlarmRuleThresholdField(wrapper);
 
     const newThresholdConfig = {
       threshold_count: 0.2,
     };
 
-    metaAlarmRuleThresholdForm.triggerCustomEvent('input', newThresholdConfig);
+    metaAlarmRuleThresholdField.triggerCustomEvent('input', newThresholdConfig);
 
     expect(wrapper).toEmitInput({
       ...form,
@@ -79,24 +79,25 @@ describe('meta-alarm-rule-parameters-form', () => {
     });
   });
 
-  test('Time based changed after trigger time based form', () => {
+  test('Time based changed after trigger time based field', () => {
     const wrapper = factory({
       propsData: {
         form,
       },
     });
 
-    const metaAlarmRuleTimeBasedForm = selectMetaAlarmRuleTimeBasedForm(wrapper);
+    const metaAlarmRuleTimeBasedField = selectMetaAlarmRuleTimeBasedField(wrapper);
 
-    const newTimeBasedConfig = {
-      time_interval: {},
-    };
+    const newTimeInterval = {};
 
-    metaAlarmRuleTimeBasedForm.triggerCustomEvent('input', newTimeBasedConfig);
+    metaAlarmRuleTimeBasedField.triggerCustomEvent('input', newTimeInterval);
 
     expect(wrapper).toEmitInput({
       ...form,
-      config: newTimeBasedConfig,
+      config: {
+        ...form.config,
+        time_interval: newTimeInterval,
+      },
     });
   });
 

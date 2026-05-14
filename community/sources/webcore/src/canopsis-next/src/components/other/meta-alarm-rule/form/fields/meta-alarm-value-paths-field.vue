@@ -1,23 +1,37 @@
 <template>
-  <v-layout column>
-    <v-layout
-      v-for="(item, index) in items"
-      :key="item[itemKey]"
-      justify-space-between
-      align-center
-    >
-      <c-name-field
-        :value="item[itemValue]"
-        :label="label"
-        :name="getFieldName(item[itemKey])"
-        :required="required"
-        @input="updateFieldInArrayItem(index, itemValue, $event)"
+  <c-form-block-row :label="$tc('metaAlarmRule.valuePath', 2)" indented>
+    <v-layout class="gap-3" column>
+      <!-- eslint-disable-next-line vue/multiline-html-element-content-newline -->
+      <c-label :required="required">{{ $tc('metaAlarmRule.valuePath', 2) }}
+        <c-help-icon
+          :text="$t('metaAlarmRule.valuePathHelpText')"
+          class="ml-1"
+          icon="help"
+          top
+        />
+      </c-label>
+      <v-layout
+        v-for="(item, index) in items"
+        :key="item[itemKey]"
+        justify-space-between
+        align-center
+      >
+        <c-name-field
+          :value="item[itemValue]"
+          :label="label"
+          :name="getFieldName(item[itemKey])"
+          :required="required"
+          @input="updateFieldInArrayItem(index, itemValue, $event)"
+        />
+        <c-action-btn type="delete" @click="removeItemFromArray(index)" />
+      </v-layout>
+      <c-btn-with-error
+        :error="hasValuePathsErrors ? $t('metaAlarmRule.errors.noValuePaths'): ''"
+        outlined
+        @click="addNewItem"
       />
-      <c-action-btn type="delete" @click="removeItemFromArray(index)" />
-      <c-help-icon :text="$t('metaAlarmRule.valuePathHelpText')" icon="help" top />
     </v-layout>
-    <c-btn-with-error :error="hasValuePathsErrors ? $t('metaAlarmRule.errors.noValuePaths'): ''" @click="addNewItem" />
-  </v-layout>
+  </c-form-block-row>
 </template>
 
 <script>
@@ -91,9 +105,7 @@ export default {
       { immediate: true },
     );
 
-    watch(() => props.items, () => {
-      nextTick(validateRequiredRule);
-    });
+    watch(() => props.items, () => nextTick(validateRequiredRule));
 
     onBeforeUnmount(detachRequiredRule);
 

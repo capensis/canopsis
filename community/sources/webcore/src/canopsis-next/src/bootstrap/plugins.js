@@ -75,7 +75,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
       [MODALS.imagesViewer]: { maxWidth: '100%', contentClass: 'v-dialog__images-viewer' },
       [MODALS.rate]: { maxWidth: 500 },
-      [MODALS.createMetaAlarmRule]: { maxWidth: 1280 },
+      [MODALS.createMetaAlarmRule]: { maxWidth: 1000 },
       [MODALS.createEventFilter]: { maxWidth: 1280 },
       [MODALS.testSuite]: { maxWidth: 920 },
       [MODALS.createPattern]: { maxWidth: 1280 },

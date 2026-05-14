@@ -1,45 +1,44 @@
 <template>
-  <v-layout class="meta-alarm-rule-threshold-form">
-    <v-radio-group v-field="threshold.threshold_type">
+  <c-form-block-row :label="$t('metaAlarmRule.threshold')" class="meta-alarm-rule-threshold-field">
+    <c-label>
+      {{ $t('metaAlarmRule.threshold') }}
+      <c-help-icon
+        :text="$t('metaAlarmRule.thresholdHelpText')"
+        icon="help"
+        max-width="300"
+        class="ml-2"
+        right
+      />
+    </c-label>
+    <v-radio-group v-field="value.threshold_type">
       <v-radio :value="META_ALARMS_THRESHOLD_TYPES.thresholdCount" color="primary">
         <template #label>
           <v-layout class="gap-3" align-center>
-            {{ $t('metaAlarmRule.thresholdCount') }}
+            {{ $t('common.count') }}
             <c-number-field
-              v-if="threshold.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount"
-              v-field="threshold.threshold_count"
+              v-if="value.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount"
+              v-field="value.threshold_count"
               :min="0"
               name="thresholdCount"
-            />
-            <c-help-icon
-              :text="$t('metaAlarmRule.thresholdCountHelpText')"
-              icon="help"
-              max-width="300"
-              top
             />
           </v-layout>
         </template>
       </v-radio>
+
       <v-radio :value="META_ALARMS_THRESHOLD_TYPES.thresholdRate" color="primary">
         <template #label>
           <v-layout class="gap-3" align-center>
-            {{ $t('metaAlarmRule.thresholdRate') }}
+            {{ $t('common.rate') }}
             <c-percents-field
-              v-if="threshold.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdRate"
-              v-field="threshold.threshold_rate"
+              v-if="value.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdRate"
+              v-field="value.threshold_rate"
               name="thresholdRate"
-            />
-            <c-help-icon
-              :text="$t('metaAlarmRule.thresholdRateHelpText')"
-              icon="help"
-              max-width="300"
-              top
             />
           </v-layout>
         </template>
       </v-radio>
     </v-radio-group>
-  </v-layout>
+  </c-form-block-row>
 </template>
 
 <script>
@@ -47,11 +46,11 @@ import { META_ALARMS_THRESHOLD_TYPES } from '@/constants';
 
 export default {
   model: {
-    prop: 'threshold',
+    prop: 'value',
     event: 'input',
   },
   props: {
-    threshold: {
+    value: {
       type: Object,
       default: () => ({}),
     },
@@ -65,10 +64,15 @@ export default {
 </script>
 
 <style lang="scss">
-.meta-alarm-rule-threshold-form {
+.meta-alarm-rule-threshold-field {
   .v-radio {
     width: 100%;
-    height: 70px;
+    height: 40px;
+  }
+
+  .v-text-field {
+    margin-top: 0;
+    padding-top: 0;
   }
 }
 </style>

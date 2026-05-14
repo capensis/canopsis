@@ -1,8 +1,6 @@
 <template>
-  <v-layout column>
-    <span class="text-subtitle-1 font-weight-bold mb-2">
-      {{ $t('common.infos') }}
-    </span>
+  <v-layout class="gap-3" column>
+    <c-label>{{ $t('common.infos') }}</c-label>
     <meta-alarm-rule-infos-item-form
       v-for="(item, index) in infos"
       v-field="infos[index]"
@@ -10,11 +8,11 @@
       :name="item.key"
       @remove="removeItemFromArray(index)"
     />
-    <v-layout class="my-4">
-      <v-btn color="primary" @click="add">
+    <div>
+      <v-btn color="primary" outlined @click="add">
         {{ $t('common.add') }}
       </v-btn>
-    </v-layout>
+    </div>
   </v-layout>
 </template>
 <script>

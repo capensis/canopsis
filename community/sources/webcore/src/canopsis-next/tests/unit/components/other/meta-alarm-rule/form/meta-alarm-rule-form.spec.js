@@ -12,13 +12,14 @@ import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alar
 
 const stubs = {
   'meta-alarm-rule-general-form': true,
-  'meta-alarm-rule-type-form': true,
+  'meta-alarm-rule-type-field': true,
   'meta-alarm-rule-parameters-form': true,
   'c-information-block': true,
+  'c-payload-text-field': true,
 };
 
 const selectMetaAlarmRuleGeneralForm = wrapper => wrapper.find('meta-alarm-rule-general-form-stub');
-const selectMetaAlarmRuleTypeForm = wrapper => wrapper.find('meta-alarm-rule-type-form-stub');
+const selectMetaAlarmRuleTypeField = wrapper => wrapper.find('meta-alarm-rule-type-field-stub');
 
 describe('meta-alarm-rule-form', () => {
   const form = metaAlarmRuleToForm();
@@ -65,7 +66,7 @@ describe('meta-alarm-rule-form', () => {
       type: META_ALARMS_RULE_TYPES.attribute,
     };
 
-    selectMetaAlarmRuleTypeForm(wrapper).triggerCustomEvent('input', data);
+    selectMetaAlarmRuleTypeField(wrapper).triggerCustomEvent('input', data.type);
 
     expect(wrapper).toEmitInput(data);
   });

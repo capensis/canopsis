@@ -94,7 +94,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
             class="pa-4"
             disabledidfield="true"
             form="[object Object]"
-            variables=""
+            templatevars="[object Object]"
           />
         </div>
       </div>
@@ -113,10 +113,26 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
           <div
             class="pa-4"
           >
-            <meta-alarm-rule-type-form-stub
-              form="[object Object]"
-              variables=""
+            <meta-alarm-rule-type-field-stub
+              class="mb-4"
+              value="attribute"
             />
+            <transition-stub
+              name="expand-transition"
+            >
+              <div
+                class="layout column"
+              >
+                <c-payload-text-field-stub
+                  label="Component template"
+                  value=""
+                />
+                <c-payload-text-field-stub
+                  label="Resource template"
+                  value=""
+                />
+              </div>
+            </transition-stub>
           </div>
         </div>
       </div>
@@ -139,7 +155,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
             <span
               class="text--secondary mb-2"
             >
-              All alarms that have the attribute(s) defined by filter patterns are grouped
+          All alarms that have the attribute(s) defined by filter patterns are grouped
             </span>
             <meta-alarm-rule-parameters-form-stub
               form="[object Object]"
@@ -236,7 +252,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default prop
           <meta-alarm-rule-general-form-stub
             class="pa-4"
             form="[object Object]"
-            variables=""
+            templatevars="[object Object]"
           />
         </div>
       </div>
@@ -255,10 +271,26 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default prop
           <div
             class="pa-4"
           >
-            <meta-alarm-rule-type-form-stub
-              form="[object Object]"
-              variables=""
+            <meta-alarm-rule-type-field-stub
+              class="mb-4"
+              value="attribute"
             />
+            <transition-stub
+              name="expand-transition"
+            >
+              <div
+                class="layout column"
+              >
+                <c-payload-text-field-stub
+                  label="Component template"
+                  value=""
+                />
+                <c-payload-text-field-stub
+                  label="Resource template"
+                  value=""
+                />
+              </div>
+            </transition-stub>
           </div>
         </div>
       </div>
@@ -281,7 +313,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default prop
             <span
               class="text--secondary mb-2"
             >
-              All alarms that have the attribute(s) defined by filter patterns are grouped
+          All alarms that have the attribute(s) defined by filter patterns are grouped
             </span>
             <meta-alarm-rule-parameters-form-stub
               form="[object Object]"

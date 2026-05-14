@@ -9,7 +9,7 @@
       key="patterns"
       :class="{ 'error--text': hasPatternsError }"
     >
-      {{ $tc('common.pattern') }}
+      {{ patternsLabel || $tc('common.pattern') }}
     </v-tab>
     <v-tab
       key="general"
@@ -22,7 +22,7 @@
       key="patterns"
       :class="{ 'error--text': hasPatternsError }"
     >
-      {{ $tc('common.pattern') }}
+      {{ patternsLabel || $tc('common.pattern') }}
     </v-tab>
     <template-testing-test-variables-tab
       v-if="hasTemplateTestingTab"
@@ -33,6 +33,7 @@
       v-if="reverse && hasPatternsSlot"
       key="patternsItem"
       class="pt-4"
+      eager
     >
       <slot
         :set-ref="setPatternsRef"
@@ -45,6 +46,7 @@
     <v-tab-item
       key="generalItem"
       class="pt-4"
+      eager
     >
       <slot
         :set-ref="setGeneralRef"
@@ -58,6 +60,7 @@
       v-if="!reverse && hasPatternsSlot"
       key="patternsItem"
       class="pt-4"
+      eager
     >
       <slot
         :set-ref="setPatternsRef"
@@ -127,6 +130,10 @@ export default {
     reverse: {
       type: Boolean,
       default: false,
+    },
+    patternsLabel: {
+      type: String,
+      default: '',
     },
   },
   setup(props, { emit }) {
