@@ -201,7 +201,7 @@ export const widgetActionsPanelAlarmMixin = {
         name: MODALS.createCommentEvent,
         config: {
           items: alarms,
-          templates: this.widget.parameters.comment_templates.map(id => commentTemplatesById[id]),
+          templates: (this.widget.parameters.comment_templates ?? []).map(id => commentTemplatesById[id]),
           action: async (commentEvent) => {
             await this.bulkCreateAlarmCommentEvent({
               data: alarms.map(alarm => ({ ...commentEvent, _id: alarm._id })),
