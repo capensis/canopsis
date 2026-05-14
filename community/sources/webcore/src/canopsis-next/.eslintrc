@@ -79,7 +79,7 @@
     "vue/singleline-html-element-content-newline": ["error", {
       "ignoreWhenNoAttributes": true,
       "ignoreWhenEmpty": true,
-      "ignores": ["c-label", "v-label"]
+      "ignores": ["c-label", "v-label", "span"]
     }],
     "vue/component-name-in-template-casing": ["error", "kebab-case", {
       "registeredComponentsOnly": true

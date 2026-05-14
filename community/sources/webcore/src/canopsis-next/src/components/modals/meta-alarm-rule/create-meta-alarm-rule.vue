@@ -5,25 +5,30 @@
         {{ title }}
       </template>
       <template #text="">
-        <v-layout class="gap-2" column>
+        <v-layout class="gap-3" column>
           <c-enabled-field v-model="form.enabled" hide-details with-background />
-          <template-testing-test-variables-wrapper
+          <c-form-general-patterns-tabs
             v-model="form"
-            :is-new="isNew"
+            :rule-id="ruleId"
             :type="type"
+            :patterns-label="$t('metaAlarmRule.patternsTabLabel')"
           >
-            <template #default="{ templateVars }">
-              <meta-alarm-rule-form
+            <template #general="{ setRef, templateVars }">
+              <meta-alarm-rule-general-form
                 v-model="form"
-                ref="formElement"
-                :active-step.sync="activeStep"
+                :ref="setRef"
                 :disabled-id-field="config.isDisabledIdField"
-                :alarm-infos="alarmInfos"
-                :entity-infos="entityInfos"
                 :template-vars="templateVars"
               />
             </template>
-          </template-testing-test-variables-wrapper>
+            <template #patterns="{ setRef, templateVars }">
+              <meta-alarm-rule-parameters-form
+                v-model="form"
+                :ref="setRef"
+                :template-vars="templateVars"
+              />
+            </template>
+          </c-form-general-patterns-tabs>
         </v-layout>
         <ai-chat-sidebar
           v-if="chatShown"
@@ -41,24 +46,12 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          v-if="isLastStep"
-          key="submit"
           :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
-        </v-btn>
-        <v-btn
-          v-else
-          key="next"
-          :disabled="!isStepValid || chatOptions.bind.pending"
-          type="button"
-          class="primary"
-          @click="next"
-        >
-          {{ $t('common.next') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -66,22 +59,9 @@
 </template>
 
 <script>
-import {
-  computed,
-  ref,
-  onMounted,
-  watch,
-  nextTick,
-  toRef,
-} from 'vue';
+import { computed, ref, onMounted, toRef } from 'vue';
 
-import {
-  LLM_SOCKET_CONTEXTS,
-  META_ALARMS_FORM_STEPS,
-  MODALS,
-  TEMPLATE_TESTING_TEST_TYPES,
-  VALIDATION_DELAY,
-} from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/entities/meta-alarm/rule/form';
 
@@ -94,8 +74,8 @@ import { useEntityInfos } from '@/hooks/store/modules/entity-infos';
 import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
+import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
+import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -106,9 +86,9 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: {
-    MetaAlarmRuleForm,
+    MetaAlarmRuleGeneralForm,
+    MetaAlarmRuleParametersForm,
     AiChatSidebar,
-    TemplateTestingTestVariablesWrapper,
     ModalWrapper,
   },
   props: {
@@ -122,83 +102,27 @@ export default {
 
     const { config, close } = useInnerModal(props);
     const { t } = useI18n();
-    const { alarmInfos, entityInfos, fetchInfos } = useEntityInfos();
+    const { alarmInfos, entityInfos, fetchInfos } = useEntityInfos(); // TODO: may be remove this
 
-    const activeStep = ref(META_ALARMS_FORM_STEPS.general);
-    const isStepValid = ref(false);
-    const formElement = ref(null);
     const form = ref(metaAlarmRuleToForm(config.value.rule));
+    const ruleId = computed(() => config.value.rule?._id);
 
     const {
       shown: chatShown,
       options: chatOptions,
     } = useAiChatForm({
       form,
+      ruleId,
 
       modal: toRef(props, 'modal'),
-      ruleId: props.modal.config?.rule?._id,
       context: LLM_SOCKET_CONTEXTS.metaAlarmRule,
     });
 
-    const isNew = computed(() => !config.value.rule?._id);
     const title = computed(() => config.value.title ?? t('modals.metaAlarmRule.create.title'));
-    const isLastStep = computed(() => activeStep.value === META_ALARMS_FORM_STEPS.parameters);
 
-    /**
-     * Checks if the current step is valid based on error states
-     * @returns {boolean} True if the current step has no errors, false otherwise
-     */
-    const isCurrentStepValid = () => {
-      const { hasGeneralError, hasTypeError, hasParametersError } = formElement.value ?? {};
-
-      return {
-        [META_ALARMS_FORM_STEPS.general]: !hasGeneralError,
-        [META_ALARMS_FORM_STEPS.type]: !hasTypeError,
-        [META_ALARMS_FORM_STEPS.parameters]: !hasParametersError,
-      }[activeStep.value];
-    };
-
-    /**
-     * Validates the current step by calling the appropriate validation function
-     *
-     * @returns {Promise<boolean>|boolean|undefined} The validation result for the current step
-     */
-    const validateCurrentStepValid = () => {
-      const {
-        validateGeneralChildren,
-        validateTypeChildren,
-        validateParametersChildren,
-      } = formElement.value ?? {};
-
-      const func = {
-        [META_ALARMS_FORM_STEPS.general]: validateGeneralChildren,
-        [META_ALARMS_FORM_STEPS.type]: validateTypeChildren,
-        [META_ALARMS_FORM_STEPS.parameters]: validateParametersChildren,
-      }[activeStep.value];
-
-      return func?.();
-    };
-
-    /**
-     * Moves to the next step if the current step validation passes
-     */
-    const next = async () => {
-      const isValid = await validateCurrentStepValid();
-
-      if (isValid) {
-        activeStep.value += 1;
-      }
-    };
-
-    /**
-     * Updates the step validation state by checking if the current step is valid
-     */
-    const handleValidationChanged = () => {
-      isStepValid.value = isCurrentStepValid();
-    };
-
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.rule,
       method: async () => {
         const result = await config.value.action(formToMetaAlarmRule(form.value));
 
@@ -215,35 +139,28 @@ export default {
 
     onMounted(() => {
       fetchInfos();
-
-      handleValidationChanged();
-
-      nextTick(() => {
-        watch(() => formElement.value?.hasGeneralError, handleValidationChanged);
-        watch(() => formElement.value?.hasTypeError, handleValidationChanged);
-        watch(() => formElement.value?.hasParametersError, handleValidationChanged);
-      });
     });
 
     return {
-      form,
-      config,
-      isNew,
       type,
+
+      form,
+
+      ruleId,
+      config,
       title,
-      activeStep,
-      isStepValid,
-      isLastStep,
-      formElement,
+
       alarmInfos,
       entityInfos,
+
       isDisabled,
       submitting,
-      chatShown,
-      chatOptions,
-      next,
+      submitLabel,
       submit,
       close,
+
+      chatShown,
+      chatOptions,
     };
   },
 };

@@ -2,9 +2,21 @@ import { META_ALARMS_RULE_TYPES } from '@/constants';
 
 export default {
   outputTemplate: 'Modèle de message',
+  threshold: 'Seuil',
   thresholdType: 'Type de seuil',
   thresholdRate: 'Taux de déclenchement',
-  thresholdRateHelpText: 'Après avoir atteint ce taux seuil, les alarmes qui correspondent aux modèles et créées pendant l\'intervalle de temps défini sont regroupées',
+  thresholdHelpText: 'Après avoir atteint ce taux seuil, les alarmes qui correspondent aux modèles et créées pendant l\'intervalle de temps défini sont regroupées\n\n'
+    + 'a - alarmes correspondant aux modèles d\'alarme et d\'entité\n'
+    + 'b - entités du modèle d\'entité\n'
+    + 'c - entités du modèle d\'entité total\n'
+    + 'd - toutes les entités dans Canopsis\n'
+    + '------------------------------------\n'
+    + 'Cas 1 - Si seul le modèle d\'alarme est renseigné\n'
+    + 'Taux seuil = a * 100 / d\n\n'
+    + 'Cas 2 - Si le modèle d\'entité est renseigné et que le modèle d\'entité total ne l\'est pas\n'
+    + 'Taux seuil = a * 100 / b\n\n'
+    + 'Cas 3 - Si le modèle d\'entité total est renseigné\n'
+    + 'Taux seuil = a * 100 / c',
   thresholdCount: 'Seuil de déclenchement',
   thresholdCountHelpText: 'Après avoir atteint ce seuil, les alarmes qui correspondent aux modèles et créées pendant l\'intervalle de temps défini sont regroupées',
   timeInterval: 'Intervalle de temps',
@@ -22,6 +34,10 @@ export default {
   corelParentHelpText: 'Les alarmes avec cette valeur du champ Corel Status sont définies comme parents',
   corelChild: 'Corrélation enfant',
   corelChildHelpText: 'Les alarmes avec cette valeur du champ Corel Status sont définies comme enfants',
+  corelGroupingSummary: 'Les alarmes qui ont la même valeur dans le champ {corelID} et\n'
+    + '{corelChild} = {corel}\n'
+    + 'seront regroupées sous l\'alarme qui a\n'
+    + '{corelParent} = {corel}',
   outputTemplateHelp: '<p>Les variables accessibles sont:</p>\n'
     + '<p><strong>.Count</strong>: Le nombre d\'alarmes conséquences attachées à la méta-alarme.</p>'
     + '<p><strong>.Children</strong>: L\'ensemble des variables de la dernière alarme conséquence attachée à la méta-alarme.</p>'
@@ -33,7 +49,16 @@ export default {
   removeConfirmationText: 'Lors de la suppression d\'une règle de méta-alarme, toutes les méta-alarmes correspondantes seront également supprimées.\n'
     + 'Êtes-vous sûr de continuer?',
   selectType: 'Sélectionnez le type de règle de méta-alarme',
-  valuePathHelpText: 'Attribut personnalisé pour regrouper les alarmes définies par un chemin de valeur',
+  grouping: 'Regroupement',
+  groupingTabs: {
+    existing: 'Regrouper sous une alarme existante',
+    createNew: 'Regrouper et créer une nouvelle méta-alarme',
+  },
+  groupingLabels: {
+    groupUnder: 'Regrouper sous',
+    groupBy: 'Regrouper par',
+  },
+  valuePathHelpText: 'Les alarmes ayant la même combinaison de valeurs dans ces champs seront regroupées sous la même méta-alarme',
   componentTemplate: 'Modèle de composant',
   resourceTemplate: 'Modèle de ressource',
   copyTagsFromChildren: 'Copier les balises des alarmes pour enfants',
@@ -51,46 +76,37 @@ export default {
   },
   types: {
     [META_ALARMS_RULE_TYPES.relation]: {
-      text: 'Relation parent-enfant',
-      helpText: 'Toutes les alarmes déclenchées sur les entités dépendantes sont regroupées',
+      label: 'Composant parent',
+      text: 'Regrouper sous le composant parent',
+      helpText: 'Définir les modèles pour lesquels toutes les alarmes déclenchées sur ses dépendances doivent être regroupées',
     },
     [META_ALARMS_RULE_TYPES.timebased]: {
-      text: 'Regroupement par intervalle de temps',
-      helpText: 'Toutes les alarmes déclenchées pendant un intervalle de temps défini sont regroupées',
+      label: 'Intervalle de temps (lorsque la gravité change)',
+      text: 'Regrouper par intervalle de dates de création',
+      helpText: 'Toutes les alarmes qui correspondent aux modèles et déclenchées pendant un intervalle de temps défini sont regroupées',
     },
     [META_ALARMS_RULE_TYPES.attribute]: {
-      text: 'Regroupement par attribut',
-      helpText: 'Toutes les alarmes qui correspondent à un modèle avec des attributs définis sont regroupées',
+      label: 'Parent uniquement',
+      text: 'Regrouper par modèle uniquement',
+      helpText: 'Toutes les alarmes dont les attributs sont définis par les modèles de filtre sont regroupées',
     },
     [META_ALARMS_RULE_TYPES.complex]: {
-      text: 'Regroupement complexe avec seuil ou taux de déclenchement',
-      helpText: 'Toutes les alarmes qui correspondent à un modèle avec des attributs définis pendant l\'intervalle de temps défini sont regroupées',
+      label: 'Avec seuil ou taux de déclenchement',
+      text: 'Regrouper avec seuil ou taux de déclenchement',
+      helpText: 'Toutes les alarmes dont les attributs sont définis par les modèles de filtre, l\'intervalle de temps et un seuil ou un taux de déclenchement sont regroupées',
     },
     [META_ALARMS_RULE_TYPES.valuegroup]: {
-      text: 'Regroupement par groupe de valeurs',
-      helpText: 'Il s\'agit d\'un regroupement complexe avec des chemins de valeurs comme paramètres supplémentaires pour le regroupement',
+      label: 'Avec seuil ou taux de déclenchement et valeurs d\'attributs personnalisés',
+      text: 'Regrouper par groupe de valeurs',
+      helpText: 'Toutes les alarmes dont les attributs sont définis par les modèles de filtre, l\'intervalle de temps, le seuil ou le taux de déclenchement et le chemin de valeur sont regroupées',
     },
     [META_ALARMS_RULE_TYPES.corel]: {
-      text: 'Regroupement par identifiants de corrélation',
-      helpText: 'Regroupement des alarmes déjà corrélées : toutes les alarmes d\'un même identifiant de corrélation sont regroupées',
+      label: 'Parent défini personnalisé',
+      text: 'Regrouper sous un parent défini personnalisé',
+      helpText: 'Toutes les alarmes dont les attributs sont définis par les modèles de filtre, l\'intervalle de temps, le nombre de seuils et les identifiants de corrélation sont regroupées',
     },
   },
-  parametersTitle: {
-    [META_ALARMS_RULE_TYPES.relation]: 'Relation parent-enfant',
-    [META_ALARMS_RULE_TYPES.timebased]: 'Relation basée sur le temps',
-    [META_ALARMS_RULE_TYPES.attribute]: 'Relation basée sur les attributs',
-    [META_ALARMS_RULE_TYPES.complex]: 'Regroupement complexe avec un seuil ou un taux de déclenchement',
-    [META_ALARMS_RULE_TYPES.valuegroup]: 'Regroupement par groupe de valeurs',
-    [META_ALARMS_RULE_TYPES.corel]: 'Regroupement par identifiants de corrélation',
-  },
-  parametersDescription: {
-    [META_ALARMS_RULE_TYPES.relation]: 'Définir les modèles de filtre pour les entités dont toutes les alarmes déclenchées sur ses dépendances doivent être regroupées',
-    [META_ALARMS_RULE_TYPES.timebased]: 'Toutes les alarmes qui correspondent aux modèles et déclenchées pendant un intervalle de temps défini sont regroupées',
-    [META_ALARMS_RULE_TYPES.attribute]: 'Toutes les alarmes dont les attributs sont définis par des modèles de filtre sont regroupées',
-    [META_ALARMS_RULE_TYPES.complex]: 'Toutes les alarmes dont les attributs sont définis par des modèles de filtre, un intervalle de temps et un seuil ou un taux de déclenchement sont regroupées',
-    [META_ALARMS_RULE_TYPES.valuegroup]: 'Toutes les alarmes dont les attributs sont définis par des modèles de filtre, un intervalle de temps, un seuil ou un taux et le chemin de valeur sont regroupées',
-    [META_ALARMS_RULE_TYPES.corel]: 'Toutes les alarmes dont les attributs sont définis par des modèles de filtre, un intervalle de temps, un nombre de seuils et des identifiants de corrélation sont regroupées.',
-  },
+  patternsTabLabel: 'Modèles et paramètres',
   errors: {
     noValuePaths: 'Vous devez ajouter au moins un chemin de valeur',
   },

@@ -50,8 +50,7 @@
         <meta-alarm-rule-general-form
           v-field="form"
           :disabled-id-field="disabledIdField"
-          :variables="templateVars.output"
-          class="pa-4"
+          :template-vars="templateVars"
         />
       </v-stepper-content>
       <v-stepper-content
@@ -60,10 +59,24 @@
         class="pa-0"
       >
         <div class="pa-4">
-          <meta-alarm-rule-type-form
-            v-field="form"
-            :variables="templateVars.entity"
+          <meta-alarm-rule-type-field
+            v-field="form.type"
+            class="mb-4"
           />
+          <v-expand-transition>
+            <v-layout v-if="hasTemplateFields" column>
+              <c-payload-text-field
+                v-field="form.config.component_template"
+                :label="$t('metaAlarmRule.componentTemplate')"
+                :variables="templateVars.entity"
+              />
+              <c-payload-text-field
+                v-field="form.config.resource_template"
+                :label="$t('metaAlarmRule.resourceTemplate')"
+                :variables="templateVars.entity"
+              />
+            </v-layout>
+          </v-expand-transition>
         </div>
       </v-stepper-content>
       <v-stepper-content
@@ -90,17 +103,20 @@ import { computed, ref } from 'vue';
 
 import { META_ALARMS_FORM_STEPS, META_ALARMS_RULE_TYPES } from '@/constants';
 
+import { metaAlarmRuleToForm } from '@/helpers/entities/meta-alarm/rule/form';
+
 import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
-import MetaAlarmRuleTypeForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-type-form.vue';
+import MetaAlarmRuleTypeField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-type-field.vue';
 import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
 
+// TODO: remove this component
 export default {
   components: {
     MetaAlarmRuleParametersForm,
-    MetaAlarmRuleTypeForm,
+    MetaAlarmRuleTypeField,
     MetaAlarmRuleGeneralForm,
   },
   model: {
@@ -110,9 +126,7 @@ export default {
   props: {
     form: {
       type: Object,
-      default: () => ({
-        type: META_ALARMS_RULE_TYPES.attribute,
-      }),
+      default: () => metaAlarmRuleToForm(),
     },
     disabledIdField: {
       type: Boolean,
@@ -160,6 +174,13 @@ export default {
       set: value => emit('update:active-step', value),
     });
 
+    const hasTemplateFields = computed(() => [
+      META_ALARMS_RULE_TYPES.timebased,
+      META_ALARMS_RULE_TYPES.attribute,
+      META_ALARMS_RULE_TYPES.complex,
+      META_ALARMS_RULE_TYPES.valuegroup,
+    ].includes(props.form.type));
+
     useAiChatExpand({ activeTab: activeStepComputed, neededTab: META_ALARMS_FORM_STEPS.parameters });
 
     expose({
@@ -183,6 +204,7 @@ export default {
       hasGeneralError,
       hasParametersError,
       hasTypeError,
+      hasTemplateFields,
     };
   },
 };

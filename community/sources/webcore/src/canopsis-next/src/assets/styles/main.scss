@@ -5,6 +5,12 @@ html {
   background-color: var(--v-application-background-base);
 }
 
+.v-application .text-body-2 {
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  letter-spacing: .0178571429em !important;
+}
+
 .v-app--disabled-transitions {
   .v-navigation-drawer {
     &, .v-item-group, .v-expansion-panel {
