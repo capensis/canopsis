@@ -1,4 +1,4 @@
-import { throttle, isArray } from 'lodash';
+import { throttle, isArray, isEmpty } from 'lodash';
 import {
   computed,
   watch,
@@ -328,6 +328,7 @@ export const useAiChatFormPatterns = ({ form, field, context, callExpand }) => {
  * @param {import('vue').Ref|import('vue').ComputedRef} [options.form] - Watched while the chat is shown.
  * @param {function} [options.throttledUpdateSidebarConfig] - From `useAiChatFormPatterns` (throttled
  *   `updateFormPatterns`).
+ * @param {boolean} [options.disabled] - Whether to disable the chat.
  * @returns {{
  *   llms: import('vue').Ref<Array<Object>>,
  *   shown: import('vue').Ref<boolean>,
@@ -335,7 +336,7 @@ export const useAiChatFormPatterns = ({ form, field, context, callExpand }) => {
  *   hideChat: function,
  * }}
  */
-export const useAiChatShown = ({ form, throttledUpdatePatterns } = {}) => {
+export const useAiChatShown = ({ form, throttledUpdatePatterns, disabled } = {}) => {
   const { fetchLlms } = useAiChatLlmModel();
 
   const llms = ref([]);
@@ -345,6 +346,10 @@ export const useAiChatShown = ({ form, throttledUpdatePatterns } = {}) => {
    * Fetches enabled LLMs; when the list is non-empty, shows the chat and starts a deep `watch` on `form`.
    */
   const showChat = async () => {
+    if (unref(disabled)) {
+      return;
+    }
+
     llms.value = await fetchLlms();
 
     if (!llms.value.length) {
@@ -442,6 +447,10 @@ export const useAiChatLinkChats = ({ ruleId, withoutLink } = {}) => {
   const newAfterSubmit = async (createdItems) => {
     const result = await previousAfterSubmit?.(createdItems) ?? createdItems;
 
+    if (isEmpty(result)) {
+      return result;
+    }
+
     const ids = (isArray(createdItems) ? createdItems : [createdItems])
       .map(item => item._id ?? item.id)
       .filter(Boolean);
@@ -478,6 +487,7 @@ export const useAiChatLinkChats = ({ ruleId, withoutLink } = {}) => {
  *   socket context (e.g. `LLM_SOCKET_CONTEXTS.scenario` or `${LLM_SOCKET_CONTEXTS.widgetFilter}_${type}`).
  * @param {import('vue').Ref<string>|string|undefined} [params.field] - Optional field key for `useAiChatFormPatterns`.
  * @param {boolean} [params.withoutLink] - Whether to disable link chats with rule id.
+ * @param {boolean} [params.disabled] - Whether to disable the chat.
  * @returns {{
  *   shown: import('vue').Ref<boolean>,
  *   options: import('vue').ComputedRef<{ bind: Object, on: Object }>,
@@ -488,6 +498,7 @@ export const useAiChatForm = ({
   form,
   ruleId,
   context,
+  disabled,
   field,
   withoutLink,
 }) => {
@@ -508,7 +519,7 @@ export const useAiChatForm = ({
     callExpand: expandFunctionsObserver.notifyInSeries.bind(expandFunctionsObserver),
   });
 
-  const { llms, shown, showChat, hideChat } = useAiChatShown({ form, throttledUpdatePatterns });
+  const { llms, shown, showChat, hideChat } = useAiChatShown({ form, throttledUpdatePatterns, disabled });
   const { chatIds, registerChatId } = useAiChatLinkChats({ ruleId, withoutLink });
 
   const options = computed(() => ({
