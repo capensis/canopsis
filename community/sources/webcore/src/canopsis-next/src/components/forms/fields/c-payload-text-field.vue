@@ -103,9 +103,33 @@ export default {
     },
   },
   methods: {
+    /**
+     * v-combobox syncs `search-input` on mount/update and emits `update:search-input`
+     * even when the decoded value is unchanged. That used to propagate through v-field /
+     * VeeValidate's `$watch(value)` and run `required` immediately for new rows.
+     */
     onSearchInputChange(value) {
       this.debouncedOnSelectionChange();
-      this.updateModel(value ?? '');
+
+      const nextValue = value ?? '';
+
+      if (nextValue === this.value) {
+        if (this.errorMessages?.length) {
+          this.$nextTick(() => {
+            if (this.hasValidationRules) {
+              this.$validator.validate(this.name);
+
+              return;
+            }
+
+            this.errors.remove(this.name);
+          });
+        }
+
+        return;
+      }
+
+      this.updateModel(nextValue);
 
       if (this.errorMessages?.length) {
         this.$nextTick(() => {

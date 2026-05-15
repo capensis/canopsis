@@ -60,6 +60,6 @@ export default {
 .c-card-iterator-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 </style>

@@ -1,50 +1,58 @@
 <template>
-  <v-layout column>
-    <c-information-block
-      :title="$t('declareTicket.checkTicketStatus')"
-      :help-text="$t('declareTicket.checkTicketStatusHelpText')"
-      help-icon="help"
-      help-icon-color="grey darken-1"
-    >
-      <v-layout class="gap-3" column>
-        <c-enabled-field v-field="form.enabled" />
-        <v-expand-transition>
-          <v-layout v-if="form.enabled" class="gap-3" column>
-            <request-with-token-form
-              v-field="form"
-              :name="`${name}.request`"
-              :disabled="disabled"
-              :url-variables="templateVars.ticket"
-              :headers-variables="templateVars.ticket"
-              :payload-variables="templateVars.ticket"
-              :hide-auth="form.reuse_headers_and_auth"
-              :hide-headers="form.reuse_headers_and_auth"
-              hide-repeat
-            >
-              <template #additional-fields>
-                <c-enabled-field
-                  v-field="form.reuse_headers_and_auth"
-                  :label="$t('declareTicket.reuseHeadersAndAuthFromTicketDeclarationRule')"
-                  :disabled="disabled"
-                />
-              </template>
-            </request-with-token-form>
-            <declare-ticket-rule-ticket-status-source-field
-              v-field="form.ticket_status"
-              :name="`${name}.ticket_status_source`"
-              :disabled="disabled"
-              :variables="templateVars.ticket_status"
-            />
-            <declare-ticket-rule-ticket-status-mapping-field
-              v-field="form.status_mapping"
-              :name="`${name}.status_mapping`"
-              :disabled="disabled"
-            />
-          </v-layout>
-        </v-expand-transition>
-      </v-layout>
-    </c-information-block>
-  </v-layout>
+  <div>
+    <c-form-block-row :label="$t('declareTicket.checkTicketStatus')" top-border>
+      <c-enabled-field v-field="form.enabled">
+        <template #append>
+          <c-help-icon
+            :text="$t('declareTicket.checkTicketStatusHelpText')"
+            icon="help"
+            color="grey darken-1"
+            left
+          />
+        </template>
+      </c-enabled-field>
+    </c-form-block-row>
+
+    <v-expand-transition>
+      <div v-if="form.enabled">
+        <request-with-token-form
+          v-field="form"
+          :name="`${name}.request`"
+          :disabled="disabled"
+          :url-variables="templateVars.ticket"
+          :headers-variables="templateVars.ticket"
+          :payload-variables="templateVars.ticket"
+          :hide-auth="form.reuse_headers_and_auth"
+          :hide-headers="form.reuse_headers_and_auth"
+          :url-label="$t('declareTicket.ticketStatusEndpoint')"
+          :depth="1"
+          hide-repeat
+        >
+          <template #additional-fields>
+            <c-form-block-row :label="$t('declareTicket.reuseHeadersAndAuthFromTicketDeclarationRule')" :depth="1">
+              <c-enabled-field
+                v-field="form.reuse_headers_and_auth"
+                :label="$t('declareTicket.reuseHeadersAndAuthFromTicketDeclarationRule')"
+                :disabled="disabled"
+              />
+            </c-form-block-row>
+          </template>
+        </request-with-token-form>
+
+        <declare-ticket-rule-ticket-status-source-field
+          v-field="form.ticket_status"
+          :name="`${name}.ticket_status_source`"
+          :disabled="disabled"
+          :variables="templateVars.ticket_status"
+        />
+        <declare-ticket-rule-ticket-status-mapping-field
+          v-field="form.status_mapping"
+          :name="`${name}.status_mapping`"
+          :disabled="disabled"
+        />
+      </div>
+    </v-expand-transition>
+  </div>
 </template>
 
 <script>

@@ -633,7 +633,7 @@ export default {
     repeatRequestInTomlFile: 'Repeat settings are configured in toml file',
     skipVerify: 'Ignore HTTPS certificate verification',
     headersHelpText: 'Select header key and value or type them manually',
-    emptyHeaders: 'No headers added yet',
+    addHeader: 'Add header',
     urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
       + '<i>For example:</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'

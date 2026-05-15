@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="gap-2" column>
+  <v-layout class="gap-3" column>
     <slot name="header" />
     <c-alert
       v-if="required && isEmpty && emptyMessage"
@@ -27,8 +27,8 @@
           v-if="required"
           :error="required && hasErrors ? (requiredErrorMessage || $t('common.addAtLeastOneItem')) : ''"
           :fab="!addButtonLabel"
-          class="mt-3"
-          small
+          :small="!addButtonLabel"
+          outlined
           @click="$emit('add')"
         >
           <span v-if="addButtonLabel">
@@ -42,10 +42,10 @@
           <template #activator="{ on }">
             <v-btn
               :error="required && hasErrors ? (requiredErrorMessage || $t('common.addAtLeastOneItem')) : ''"
-              class="mt-3"
               color="primary"
               fab
               small
+              outlined
               v-on="on"
               @click="$emit('add')"
             >

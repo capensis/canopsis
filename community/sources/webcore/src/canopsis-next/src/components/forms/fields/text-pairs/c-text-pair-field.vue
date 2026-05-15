@@ -1,45 +1,37 @@
 <template>
-  <v-layout align-center>
-    <v-layout>
-      <v-flex
-        class="mr-3"
-        xs6
-      >
-        <v-text-field
-          v-field="item[itemText]"
-          v-validate="textValidationRules"
-          :label="textLabel"
-          :disabled="disabled"
-          :name="textFieldName"
-          :error-messages="errors.collect(textFieldName)"
-        />
-      </v-flex>
-      <v-flex xs6>
-        <c-select-field
-          v-if="items.length"
-          v-field="item[itemValue]"
-          :label="valueLabel"
-          :disabled="disabled"
-          :items="items"
-          :name="valueFieldName"
-          :required="valueRequired"
-        />
-        <c-payload-text-field
-          v-else
-          v-field="item[itemValue]"
-          v-validate="valueValidationRules"
-          :label="valueLabel"
-          :disabled="disabled"
-          :name="valueFieldName"
-          :error-messages="errors.collect(valueFieldName)"
-          :variables="variables"
-        >
-          <template #append="">
-            <slot name="append-value" />
-          </template>
-        </c-payload-text-field>
-      </v-flex>
-    </v-layout>
+  <v-layout class="gap-3" align-center>
+    <v-text-field
+      v-field="item[itemText]"
+      v-validate="textValidationRules"
+      :label="textLabel"
+      :disabled="disabled"
+      :name="textFieldName"
+      :error-messages="errors.collect(textFieldName)"
+    />
+
+    <c-select-field
+      v-if="items.length"
+      v-field="item[itemValue]"
+      :label="valueLabel"
+      :disabled="disabled"
+      :items="items"
+      :name="valueFieldName"
+      :required="valueRequired"
+    />
+    <c-payload-text-field
+      v-else
+      v-field="item[itemValue]"
+      :required="valueRequired"
+      :label="valueLabel"
+      :disabled="disabled"
+      :name="valueFieldName"
+      :variables="variables"
+    >
+      <template #append="">
+        <slot name="append-value" />
+      </template>
+    </c-payload-text-field>
+
     <c-action-btn
       v-if="!disabled"
       type="delete"
@@ -108,16 +100,11 @@ export default {
       required: props.textRequired,
     }));
 
-    const valueValidationRules = computed(() => ({
-      required: props.valueRequired,
-    }));
-
     const textFieldName = computed(() => `${props.name}.${props.itemText}`);
     const valueFieldName = computed(() => `${props.name}.${props.itemValue}`);
 
     return {
       textValidationRules,
-      valueValidationRules,
       textFieldName,
       valueFieldName,
     };

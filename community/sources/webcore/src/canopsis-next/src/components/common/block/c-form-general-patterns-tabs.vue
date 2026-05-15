@@ -24,6 +24,7 @@
     >
       {{ patternsLabel || $tc('common.pattern') }}
     </v-tab>
+    <v-tab v-if="hasTestQuerySlot">{{ $t('common.testQuery') }}</v-tab>
     <template-testing-test-variables-tab
       v-if="hasTemplateTestingTab"
       :disabled="isEmptyVariablesFields"
@@ -68,6 +69,10 @@
         :copy-vars="copyVars"
         name="patterns"
       />
+    </v-tab-item>
+
+    <v-tab-item v-if="hasTestQuerySlot">
+      <slot :form="form" name="test-query" />
     </v-tab-item>
 
     <v-tab-item
@@ -139,22 +144,7 @@ export default {
   setup(props, { emit }) {
     const slots = useSlots();
 
-    const GENERAL_PATTERNS_FORM_TABS = computed(() => ({
-      patterns: Number(props.reverse),
-      general: Number(!props.reverse),
-      testing: 2,
-    }));
-
     const activeTab = ref(0);
-
-    const isActiveTestingTab = computed(() => activeTab.value === GENERAL_PATTERNS_FORM_TABS.value.testing);
-
-    const hasPatternsSlot = computed(() => Boolean(slots.patterns));
-
-    useAiChatExpand({
-      activeTab,
-      neededTab: GENERAL_PATTERNS_FORM_TABS.value.patterns,
-    });
 
     const generalElement = ref(null);
     const patternsElement = ref(null);
@@ -192,6 +182,29 @@ export default {
     const hasTemplateTestingTab = computed(() => isNumber(props.type) && hasAccessToTemplateTesting.value);
     const templateTestingPending = computed(() => templateVarsPending.value || copyVarsPending.value);
 
+    const hasTestQuerySlot = computed(() => Boolean(slots.testQuery));
+
+    const GENERAL_PATTERNS_FORM_TABS = computed(() => {
+      const result = props.reverse ? { patterns: 0, general: 1 } : { general: 0, patterns: 1 };
+
+      if (hasTestQuerySlot.value) {
+        result.testQuery = 2;
+      }
+
+      result.testing = 2 + Number(hasTestQuerySlot.value);
+
+      return result;
+    });
+
+    const isActiveTestingTab = computed(() => activeTab.value === GENERAL_PATTERNS_FORM_TABS.value.testing);
+
+    const hasPatternsSlot = computed(() => Boolean(slots.patterns));
+
+    useAiChatExpand({
+      activeTab,
+      neededTab: GENERAL_PATTERNS_FORM_TABS.value.patterns,
+    });
+
     onMounted(() => {
       if (hasTemplateTestingTab.value) {
         fetchCopyVarsList();
@@ -203,7 +216,7 @@ export default {
       activeTab,
 
       hasPatternsSlot,
-
+      hasTestQuerySlot,
       hasGeneralError,
       hasPatternsError,
 
