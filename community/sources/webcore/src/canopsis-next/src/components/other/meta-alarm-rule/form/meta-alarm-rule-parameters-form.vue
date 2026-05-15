@@ -58,8 +58,6 @@ import {
   isValueGroupMetaAlarmRuleType,
 } from '@/helpers/entities/meta-alarm/rule/form';
 
-import { useValidationChildren } from '@/hooks/validator/validation-children';
-
 import MetaAlarmRuleThresholdField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-threshold-field.vue';
 import MetaAlarmRuleValuePathsField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-value-paths-field.vue';
 import MetaAlarmRuleTimeBasedField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-time-based-field.vue';
@@ -91,8 +89,6 @@ export default {
     },
   },
   setup(props) {
-    const { hasChildrenError: hasAnyError } = useValidationChildren();
-
     /**
      * Rule types
      */
@@ -115,11 +111,6 @@ export default {
     const withTotalEntityPattern = computed(() => isMetaAlarmRuleTypeHasTotalEntityPatterns(props.form.type));
 
     return {
-      /**
-       * It's using in the parent component to display the validation header color for tabs
-       */
-      hasAnyError,
-
       isAttributeType,
 
       isThresholdFormShown,

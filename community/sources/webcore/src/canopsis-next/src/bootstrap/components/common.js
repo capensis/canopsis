@@ -9,6 +9,7 @@ export { default as CInformationBlock } from '@/components/common/block/c-inform
 export { default as CInformationBlockRow } from '@/components/common/block/c-information-block-row.vue';
 export { default as CFormBlock } from '@/components/common/block/c-form-block.vue';
 export { default as CFormBlockRow } from '@/components/common/block/c-form-block-row.vue';
+export { default as CFormBlockArrayField } from '@/components/common/block/c-form-block-array-field.vue';
 export { default as CFormGeneralPatternsTabs } from '@/components/common/block/c-form-general-patterns-tabs.vue';
 export { default as CResponsiveList } from '@/components/common/responsive-list/c-responsive-list.vue';
 export { default as CRuntimeTemplate } from '@/components/common/runtime-template/c-runtime-template.vue';

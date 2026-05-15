@@ -1,13 +1,15 @@
 <template>
-  <v-layout align-center>
-    <v-btn
-      v-if="!hasRecurrenceRule"
-      color="primary"
-      outlined
-      @click="showCreateRecurrenceRuleModal"
-    >
-      {{ $t('pbehavior.buttons.addRRule') }}
-    </v-btn>
+  <v-layout class="gap-3" justify-center column>
+    <c-label>{{ $t('common.recurrence') }}</c-label>
+    <div v-if="!hasRecurrenceRule">
+      <v-btn
+        color="primary"
+        outlined
+        @click="showCreateRecurrenceRuleModal"
+      >
+        {{ $t('pbehavior.buttons.addRRule') }}
+      </v-btn>
+    </div>
     <template v-else>
       <v-layout>
         <recurrence-rule-information

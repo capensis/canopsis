@@ -79,8 +79,6 @@ import { computed } from 'vue';
 
 import { META_ALARMS_RULE_TYPES } from '@/constants';
 
-import { useValidationChildren } from '@/hooks/validator/validation-children';
-
 import MetaAlarmRuleTagsForm from './meta-alarm-rule-tags-form.vue';
 import MetaAlarmRuleInfosForm from './meta-alarm-rule-infos-form.vue';
 import MetaAlarmRuleTypeField from './fields/meta-alarm-rule-type-field.vue';
@@ -107,8 +105,6 @@ export default {
     },
   },
   setup(props) {
-    const { hasChildrenError: hasAnyError } = useValidationChildren();
-
     const hasTemplateFields = computed(() => [
       META_ALARMS_RULE_TYPES.timebased,
       META_ALARMS_RULE_TYPES.attribute,
@@ -117,11 +113,6 @@ export default {
     ].includes(props.form.type));
 
     return {
-      /**
-       * It's using in the parent component to display the validation header color for tabs
-       */
-      hasAnyError,
-
       hasTemplateFields,
     };
   },

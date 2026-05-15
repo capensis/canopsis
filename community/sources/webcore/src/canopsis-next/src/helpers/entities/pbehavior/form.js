@@ -148,6 +148,16 @@ export const isNotActivePbehaviorType = type => [
 export const hasPausedPbehavior = pbehaviors => pbehaviors.some(isPausedPbehavior);
 
 /**
+ * Blank comment row for pbehavior creation forms (no `_id` until persisted).
+ *
+ * @returns {{ key: string, message: string }}
+ */
+export const pbehaviorCommentItemToForm = ({ message = '' } = {}) => ({
+  key: uid(),
+  message,
+});
+
+/**
  * Clear exdate entity and convert to request.
  *
  * @param {PbehaviorExdate[]} [exdates = []]
@@ -253,7 +263,7 @@ export const pbehaviorToForm = (
     reason: cloneDeep(pbehavior.reason),
     tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, pbehaviorTimezone) : null,
     tstop: pbehavior.tstop ? convertDateToDateObjectByTimezone(pbehavior.tstop, pbehaviorTimezone) : null,
-    comments: pbehavior.comments ? addKeyInEntities(cloneDeep(pbehavior.comments)) : [],
+    comments: pbehavior.comments?.length ? pbehavior.comments.map(pbehaviorCommentItemToForm) : [],
     timezone: pbehaviorTimezone,
     exceptions: exceptionsToForm(pbehavior.exceptions),
     exdates: exdatesToForm(pbehavior.exdates, timezone),

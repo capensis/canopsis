@@ -32,8 +32,6 @@
 </template>
 
 <script>
-import { useValidationHeader } from '@/hooks/validator/validation-header';
-
 export default {
   inject: ['$validator'],
   model: {
@@ -53,13 +51,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  setup() {
-    const { hasAnyError } = useValidationHeader();
-
-    return {
-      hasAnyError,
-    };
   },
 };
 </script>
