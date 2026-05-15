@@ -321,6 +321,7 @@ export default {
     [USER_PERMISSIONS.api.general.alarmUpdate]: 'Mettre à jour les alarmes',
     [USER_PERMISSIONS.api.general.associativeTable]: 'Tables associatives',
     [USER_PERMISSIONS.api.general.broadcastMessage]: 'Message de diffusion',
+    [USER_PERMISSIONS.api.general.commentTemplate]: 'Modèles de commentaires',
     [USER_PERMISSIONS.api.general.theme]: 'Gérer les thèmes',
     [USER_PERMISSIONS.api.general.contextgraph]: 'Importn de référentiels',
     [USER_PERMISSIONS.api.general.corporatePattern]: 'Patterns partagés',
@@ -332,11 +333,13 @@ export default {
     [USER_PERMISSIONS.api.general.entityservice]: 'Entités de type Service',
     [USER_PERMISSIONS.api.general.entityInfoProperty]: 'Propriétés d\'informations des entités',
     [USER_PERMISSIONS.api.general.event]: 'Événements',
+    [USER_PERMISSIONS.api.general.externalDataTable]: 'Tables de données externes',
     [USER_PERMISSIONS.api.general.exportConfigurations]: 'Exporter les configurations',
     [USER_PERMISSIONS.api.general.files]: 'Fichiers',
     [USER_PERMISSIONS.api.general.healthcheck]: 'Bilan de santé',
     [USER_PERMISSIONS.api.general.icon]: 'Icônes',
     [USER_PERMISSIONS.api.general.junit]: 'JUnit',
+    [USER_PERMISSIONS.api.general.llmConfig]: 'Configuration LLM',
     [USER_PERMISSIONS.api.general.kpiFilter]: 'Filtres KPI',
     [USER_PERMISSIONS.api.general.launchEventRecording]: 'Lancer l\'enregistrement des événements',
     [USER_PERMISSIONS.api.general.maintenance]: 'Mode maintenance',
@@ -352,6 +355,7 @@ export default {
     [USER_PERMISSIONS.api.general.shareToken]: 'Partager les jetons',
     [USER_PERMISSIONS.api.general.stateSettings]: 'Paramètres d\'état/sévérité',
     [USER_PERMISSIONS.api.general.techmetrics]: 'Métriques techniques',
+    [USER_PERMISSIONS.api.general.ticketStatusJobManagement]: 'Gestion des tâches de statut de ticket',
     [USER_PERMISSIONS.api.general.techmetricsSettings]: 'Paramètres des métriques techniques',
     [USER_PERMISSIONS.api.general.userInterfaceDelete]: 'Supprimer l\'interface utilisateur',
     [USER_PERMISSIONS.api.general.userInterfaceUpdate]: 'Mettre à jour l\'interface utilisateur',
@@ -376,6 +380,7 @@ export default {
     [USER_PERMISSIONS.api.rules.resolveRule]: 'Règles de résolution',
     [USER_PERMISSIONS.api.rules.snmpRule]: 'Règles SNMP',
     [USER_PERMISSIONS.api.rules.snmpMib]: 'MIB SNMP',
+    [USER_PERMISSIONS.api.rules.webhookTokenRule]: 'Règles de jetons webhook',
 
     /**
      * API Permissions Remediation
