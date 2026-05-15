@@ -1,46 +1,35 @@
 <template>
-  <v-layout class="gap-2" column>
-    <c-enabled-field v-field="form.enabled" with-background />
-    <c-enabled-field
-      v-field="form.emit_trigger"
-      :label="$t('common.emitTrigger')"
-      class="pa-2"
-      hide-details
-    />
-    <v-layout class="gap-3">
-      <v-flex xs8>
-        <c-name-field
-          v-field="form.name"
-          autofocus
-          required
-        />
-      </v-flex>
-      <v-flex xs4>
-        <c-name-field
-          v-field="form.system_name"
-          :label="$t('common.systemName')"
-          name="system_name"
-        />
-      </v-flex>
+  <v-layout class="gap-5" column>
+    <v-layout class="gap-4">
+      <c-name-field
+        v-field="form.name"
+        autofocus
+        required
+      />
+      <c-name-field
+        v-field="form.system_name"
+        :label="$t('common.systemName')"
+        name="system_name"
+      />
     </v-layout>
+
     <c-enabled-field
       v-field="form.emit_trigger"
       :label="$t('common.emitTrigger')"
-      name="emit_trigger"
+      hide-details
+      no-margin
     />
+
     <declare-ticket-rule-webhooks-field v-field="form.webhooks" :template-vars="templateVars" />
   </v-layout>
 </template>
 
 <script>
-import { formValidationHeaderMixin } from '@/mixins/form';
-
 import DeclareTicketRuleWebhooksField from './fields/declare-ticket-rule-webhooks-field.vue';
 
 export default {
   inject: ['$validator'],
   components: { DeclareTicketRuleWebhooksField },
-  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',

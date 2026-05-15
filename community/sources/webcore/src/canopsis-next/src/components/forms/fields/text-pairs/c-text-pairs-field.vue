@@ -2,67 +2,50 @@
   <v-layout
     :class="{ 'text-pairs__disabled': disabled }"
     class="text-pairs"
-    wrap
+    column
   >
-    <v-flex
-      v-show="title"
-      xs12
+    <slot
+      v-if="!items.length"
+      name="no-data"
+    />
+    <c-form-block-array-field
+      v-field="items"
+      :add-button-label="addButtonLabel"
+      :disabled="disabled"
+      :form="items"
+      :item-key="itemKey"
+      :item-to-form="textPairToForm"
+      :label="title || ''"
     >
-      <h4 class="ml-1">
-        {{ title }}
-      </h4>
-    </v-flex>
-    <v-flex xs12>
-      <slot
-        v-if="!items.length"
-        name="no-data"
-      />
-      <c-text-pair-field
-        v-for="(item, index) in items"
-        v-field="items[index]"
-        :key="item[itemKey]"
-        :disabled="disabled"
-        :value-required="valueRequired"
-        :text-required="textRequired"
-        :text-label="textLabel"
-        :value-label="valueLabel"
-        :item-text="itemText"
-        :item-value="itemValue"
-        :name="item[itemKey]"
-        :variables="variables"
-        :items="valueItems"
-        @remove="removeItemFromArray(index)"
-      >
-        <template #append-value="">
-          <slot
-            :item="item"
-            name="append-value"
-          />
-        </template>
-      </c-text-pair-field>
-    </v-flex>
-    <v-flex
-      v-if="!disabled"
-      xs12
-    >
-      <v-layout>
-        <v-btn
-          class="ml-0"
-          color="primary"
-          outlined
-          @click="addItem"
+      <template #item="{ index, remove }">
+        <c-text-pair-field
+          v-field="items[index]"
+          :disabled="disabled"
+          :value-required="valueRequired"
+          :text-required="textRequired"
+          :text-label="textLabel"
+          :value-label="valueLabel"
+          :item-text="itemText"
+          :item-value="itemValue"
+          :name="items[index][itemKey]"
+          :variables="variables"
+          :items="valueItems"
+          @remove="remove"
         >
-          {{ addButtonLabel || $t('common.add') }}
-        </v-btn>
-      </v-layout>
-    </v-flex>
+          <template #append-value="">
+            <slot
+              :item="items[index]"
+              name="append-value"
+            />
+          </template>
+        </c-text-pair-field>
+      </template>
+    </c-form-block-array-field>
   </v-layout>
 </template>
 
 <script>
 import { textPairToForm } from '@/helpers/text-pairs';
-
-import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 export default {
   inject: ['$validator'],
@@ -128,14 +111,9 @@ export default {
       default: () => [],
     },
   },
-  setup(props, { emit }) {
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
-
-    const addItem = () => addItemIntoArray(textPairToForm());
-
+  setup() {
     return {
-      addItem,
-      removeItemFromArray,
+      textPairToForm,
     };
   },
 };

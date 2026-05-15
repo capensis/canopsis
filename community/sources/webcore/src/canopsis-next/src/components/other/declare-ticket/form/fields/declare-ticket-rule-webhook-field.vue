@@ -12,33 +12,33 @@
         :url-variables="templateVars[webhookTemplateVarsKey]"
       />
     </template>
-    <v-layout class="gap-3" column>
+    <c-form-block>
       <request-with-token-form
         v-field="form"
         :name="requestFormName"
         :headers-variables="templateVars[webhookTemplateVarsKey]"
         :payload-variables="templateVars[webhookTemplateVarsKey]"
-        class="c-alternative-bg-panel pa-5"
         hide-url
       />
+
       <declare-ticket-rule-ticket-mapping-field
         v-field="form"
         :name="`${name}.declare_ticket`"
         :is-declare-ticket-exist="isDeclareTicketExist"
         :variables="templateVars.ticket"
-        class="c-alternative-bg-panel pa-5"
         hide-empty-response
         ticket-id-required
         only-one-ticket-id
       />
+
       <declare-ticket-rule-check-ticket-status-field
         v-if="form.declare_ticket.enabled"
         v-field="form.declare_ticket.check_ticket_status"
         :name="`${name}.declare_ticket.check_ticket_status`"
         :template-vars="templateVars"
         :disabled="disabled"
-        class="c-alternative-bg-panel pa-5"
       />
+
       <c-information-block :title="$t('declareTicket.workflowIfStepFails')" class="c-alternative-bg-panel pa-5">
         <c-workflow-field
           v-field="form.stop_on_fail"
@@ -47,7 +47,7 @@
           class="mt-3"
         />
       </c-information-block>
-    </v-layout>
+    </c-form-block>
   </c-card-iterator-item>
 </template>
 

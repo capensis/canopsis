@@ -1,62 +1,74 @@
 <template>
-  <v-layout column>
-    <c-information-block
-      :title="$t('declareTicket.ticketURL') + ' / ' + $t('declareTicket.ticketID')"
-      :help-text="ticketUrlHelpText"
-      help-icon="help"
-      help-icon-color="grey darken-1"
-    >
+  <div>
+    <c-form-block-row :label="$t('declareTicket.ticketUrlAndId')" top-border>
+      <c-enabled-field
+        v-field="form.declare_ticket.enabled"
+        :disabled="isDeclareTicketExist"
+      >
+        <template #append>
+          <c-help-icon
+            :text="ticketUrlHelpText"
+            icon="help"
+            color="grey darken-1"
+            left
+          />
+        </template>
+      </c-enabled-field>
+
       <c-alert
         v-if="isDeclareTicketExist"
         type="info"
       >
         {{ $t('declareTicket.webhookTicketDeclarationExist') }}
       </c-alert>
-      <v-layout>
-        <v-flex xs6>
+    </c-form-block-row>
+
+    <v-expand-transition>
+      <div v-if="form.declare_ticket.enabled">
+        <c-form-block-row v-if="!hideEmptyResponse" :label="$t('declareTicket.emptyResponse')" depth="1">
           <c-enabled-field
-            v-field="form.declare_ticket.enabled"
-            :disabled="isDeclareTicketExist"
+            v-field="form.declare_ticket.empty_response"
+            :label="$t('declareTicket.emptyResponse')"
           />
-        </v-flex>
-      </v-layout>
-      <template v-if="form.declare_ticket.enabled">
-        <c-enabled-field
-          v-if="!hideEmptyResponse"
-          v-field="form.declare_ticket.empty_response"
-          :label="$t('declareTicket.emptyResponse')"
-        />
-        <declare-ticket-rule-ticket-id-field
-          v-field="form.declare_ticket"
-          :disabled="disabled"
-          :name="ticketIdFieldName"
-          :required="ticketIdRequired"
-          :variables="variables"
-        />
-        <declare-ticket-rule-ticket-url-field
-          v-field="form.declare_ticket.ticket_url"
-          :disabled="disabled"
-          :name="ticketUrlFieldName"
-          :variables="variables"
-        />
-        <v-layout>
-          <v-flex xs6>
-            <declare-ticket-rule-ticket-url-title-field v-field="form.declare_ticket.ticket_url_title" />
-            <v-text-field
-              v-if="withTicketSystemName"
-              v-field="form.ticket_system_name"
-              :label="$t('declareTicket.ticketSystemName')"
-            />
-          </v-flex>
-        </v-layout>
-        <declare-ticket-rule-ticket-custom-fields-field
-          v-field="form.declare_ticket.mapping"
-          :name="name"
-          :disabled="disabled"
-        />
-      </template>
-    </c-information-block>
-  </v-layout>
+        </c-form-block-row>
+
+        <c-form-block-row :label="$t('declareTicket.ticketID')" depth="1">
+          <declare-ticket-rule-ticket-id-field
+            v-field="form.declare_ticket"
+            :disabled="disabled"
+            :name="ticketIdFieldName"
+            :required="ticketIdRequired"
+            :variables="variables"
+          />
+        </c-form-block-row>
+
+        <c-form-block-row :label="$t('declareTicket.ticketURL')" depth="1">
+          <declare-ticket-rule-ticket-url-field
+            v-field="form.declare_ticket.ticket_url"
+            :disabled="disabled"
+            :name="ticketUrlFieldName"
+            :variables="variables"
+          />
+
+          <declare-ticket-rule-ticket-url-title-field v-field="form.declare_ticket.ticket_url_title" />
+
+          <v-text-field
+            v-if="withTicketSystemName"
+            v-field="form.ticket_system_name"
+            :label="$t('declareTicket.ticketSystemName')"
+          />
+        </c-form-block-row>
+
+        <c-form-block-row :label="$tc('common.customField', 2)" depth="1" indented>
+          <declare-ticket-rule-ticket-custom-fields-field
+            v-field="form.declare_ticket.mapping"
+            :name="name"
+            :disabled="disabled"
+          />
+        </c-form-block-row>
+      </div>
+    </v-expand-transition>
+  </div>
 </template>
 
 <script>
