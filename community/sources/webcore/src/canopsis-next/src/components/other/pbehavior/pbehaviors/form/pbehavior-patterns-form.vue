@@ -15,7 +15,6 @@
 import { computed } from 'vue';
 
 import { useStoreModuleHooks } from '@/hooks/store';
-import { useValidationHeader } from '@/hooks/validator/validation-header';
 import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 const usePbehaviorPatternsStoreModule = () => useStoreModuleHooks('pbehaviorPatterns');
@@ -46,7 +45,6 @@ export default {
   },
   setup(props) {
     const { fetchPbehaviorPatternFields } = usePatternsFields();
-    const { hasAnyError } = useValidationHeader();
 
     const {
       pending,
@@ -76,10 +74,6 @@ export default {
     ));
 
     return {
-      /**
-       * It's using in the parent component to display the validation header color for tabs
-       */
-      hasAnyError,
       pending,
       entityAttributes,
       counterMethod,

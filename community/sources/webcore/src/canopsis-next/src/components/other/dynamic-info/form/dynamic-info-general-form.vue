@@ -1,6 +1,6 @@
 <template>
   <v-layout class="gap-4" column>
-    <v-layout ref="generalSectionRef" class="gap-2" column>
+    <v-layout class="gap-2" column>
       <c-name-field
         v-field="form.name"
         :autofocus="isDisabledIdField"
@@ -30,10 +30,6 @@
 </template>
 
 <script>
-
-import { useComponentInstance } from '@/hooks/vue';
-import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
-
 import DynamicInfoInfosForm from './dynamic-info-infos-form.vue';
 
 export default {
@@ -62,15 +58,6 @@ export default {
       type: Object,
       default: () => ({}),
     },
-  },
-  setup() {
-    const instance = useComponentInstance();
-
-    const { hasChildrenError: hasGeneralError } = useValidationElementChildren(instance);
-
-    return {
-      hasAnyError: hasGeneralError,
-    };
   },
 };
 </script>

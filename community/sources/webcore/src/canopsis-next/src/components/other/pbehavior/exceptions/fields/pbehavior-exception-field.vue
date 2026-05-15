@@ -3,8 +3,8 @@
     class="pbehavior-exception-field"
     column
   >
-    <v-layout justify-space-between>
-      <v-flex class="pbehavior-exception-field__interval">
+    <v-layout class="gap-2" justify-space-between>
+      <v-flex class="pbehavior-exception-field__interval" xs7>
         <date-time-splitted-range-picker-field
           v-if="editing"
           :start="value.begin"
@@ -30,7 +30,7 @@
       </v-flex>
       <v-flex
         v-if="withType"
-        class="pl-2"
+        xs5
       >
         <c-pbehavior-type-field
           v-if="editing"

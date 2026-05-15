@@ -122,13 +122,16 @@
         />
       </c-form-block-row>
 
+      <c-form-block-row :label="$t('modals.createPbehavior.steps.rrule.title')" :depth="depth" indented>
+        <pbehavior-recurrence-rule-field v-field="form" with-exdate-type />
+      </c-form-block-row>
+
       <c-form-block-row
         v-if="!noComments"
         :label="$tc('common.comment', 2)"
         :depth="depth"
         indented
       >
-        <c-label class="mb-3">{{ $tc('common.comment', 2) }}</c-label>
         <pbehavior-comments-field v-field="form.comments" />
       </c-form-block-row>
     </component>
@@ -158,14 +161,18 @@ import { useModelField } from '@/hooks/form/model-field';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
+import PbehaviorRecurrenceRule from '@/components/modals/pbehavior/pbehavior-recurrence-rule.vue';
 
 import PbehaviorCommentsField from '../fields/pbehavior-comments-field.vue';
+import PbehaviorRecurrenceRuleField from '../fields/pbehavior-recurrence-rule-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     PbehaviorCommentsField,
     DateTimeSplittedRangePickerField,
+    PbehaviorRecurrenceRule,
+    PbehaviorRecurrenceRuleField,
   },
   model: {
     prop: 'form',

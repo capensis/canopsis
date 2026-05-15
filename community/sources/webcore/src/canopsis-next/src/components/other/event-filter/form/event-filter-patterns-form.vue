@@ -17,8 +17,6 @@ import { computed } from 'vue';
 
 import { isChangeEntityEventFilterRuleType } from '@/helpers/entities/event-filter/rule/entity';
 
-import { useValidationHeader } from '@/hooks/validator/validation-header';
-
 export default {
   model: {
     prop: 'form',
@@ -39,15 +37,9 @@ export default {
     },
   },
   setup(props) {
-    const { hasAnyError } = useValidationHeader();
-
     const isChangeEntityType = computed(() => isChangeEntityEventFilterRuleType(props.form.type));
 
     return {
-      /**
-       * It's using in the parent component to display the validation header color for tabs
-       */
-      hasAnyError,
       isChangeEntityType,
     };
   },

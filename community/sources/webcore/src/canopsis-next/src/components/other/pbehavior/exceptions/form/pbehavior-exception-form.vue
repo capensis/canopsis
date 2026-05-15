@@ -32,14 +32,11 @@
 </template>
 
 <script>
-import { formMixin, formArrayMixin } from '@/mixins/form';
-
 import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exceptions-field.vue';
 
 export default {
   inject: ['$validator'],
   components: { PbehaviorExceptionsField },
-  mixins: [formMixin, formArrayMixin],
   model: {
     prop: 'form',
     event: 'input',

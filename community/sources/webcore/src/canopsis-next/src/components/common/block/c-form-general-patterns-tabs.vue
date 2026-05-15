@@ -93,13 +93,13 @@ import {
   ref,
   toRef,
   useSlots,
-  watch,
   onMounted,
 } from 'vue';
 
 import { useCopyVarsList } from '@/hooks/vars/copy';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
+import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 
 import {
   useTestVariablesTabData,
@@ -159,19 +159,11 @@ export default {
     const generalElement = ref(null);
     const patternsElement = ref(null);
 
-    const hasGeneralError = ref(false);
-    const hasPatternsError = ref(false);
-
     const setGeneralRef = refElement => generalElement.value = refElement;
     const setPatternsRef = refElement => patternsElement.value = refElement;
 
-    watch(() => generalElement.value?.hasAnyError, (value) => {
-      hasGeneralError.value = value ?? false;
-    });
-
-    watch(() => patternsElement.value?.hasAnyError, (value) => {
-      hasPatternsError.value = value ?? false;
-    });
+    const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
+    const { hasChildrenError: hasPatternsError } = useValidationElementChildren(patternsElement);
 
     const {
       vars: copyVars,
