@@ -143,6 +143,7 @@ type SortRequest struct {
 	SortBy    string   `form:"sort_by" json:"sort_by"`
 }
 
+// easyjson:json
 type DetailsRequest struct {
 	ID                 string               `json:"_id" binding:"required"`
 	Search             string               `json:"search"`
