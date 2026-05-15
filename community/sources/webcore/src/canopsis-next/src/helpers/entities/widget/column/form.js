@@ -111,12 +111,14 @@ export const widgetColumnToForm = ({
   value = '',
   label = '',
   onlyIcon = false,
+  isHtml = false,
 
   ...rest
 } = {}) => {
   const result = {
     ...rest,
 
+    isHtml,
     label,
     key: uid(),
     column: value,
