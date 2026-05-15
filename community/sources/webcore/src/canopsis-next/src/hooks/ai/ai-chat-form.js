@@ -1,4 +1,4 @@
-import { throttle, isArray } from 'lodash';
+import { throttle, isArray, isEmpty } from 'lodash';
 import {
   computed,
   watch,
@@ -446,6 +446,10 @@ export const useAiChatLinkChats = ({ ruleId, withoutLink } = {}) => {
    */
   const newAfterSubmit = async (createdItems) => {
     const result = await previousAfterSubmit?.(createdItems) ?? createdItems;
+
+    if (isEmpty(result)) {
+      return result;
+    }
 
     const ids = (isArray(createdItems) ? createdItems : [createdItems])
       .map(item => item._id ?? item.id)
