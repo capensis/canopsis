@@ -1,7 +1,6 @@
 package alarm
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 
@@ -39,6 +38,7 @@ type api struct {
 	defaultExportFields export.Fields
 	exportSeparators    map[string]rune
 	encoder             encoding.Encoder
+	decoder             encoding.Decoder
 
 	logger zerolog.Logger
 }
@@ -47,6 +47,7 @@ func NewApi(
 	store Store,
 	taskCreator export.TaskCreator,
 	encoder encoding.Encoder,
+	decoder encoding.Decoder,
 	logger zerolog.Logger,
 ) API {
 	fields := []string{"_id", "v.connector", "v.connector_name", "v.component",
@@ -66,6 +67,7 @@ func NewApi(
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
 		encoder: encoder,
+		decoder: decoder,
 		logger:  logger,
 	}
 }
@@ -179,7 +181,7 @@ func (a *api) GetDetails(c *gin.Context) {
 		}
 
 		var request DetailsRequest
-		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		err = a.decoder.Decode(object.MarshalTo(nil), &request)
 		if err != nil {
 			response[idx].Status = http.StatusBadRequest
 			response[idx].Error = err.Error()
