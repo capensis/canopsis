@@ -12,7 +12,7 @@
         :url-variables="templateVars[webhookTemplateVarsKey]"
       />
     </template>
-    <c-form-block>
+    <c-form-block class="mt-3">
       <request-with-token-form
         v-field="form"
         :name="requestFormName"
@@ -39,14 +39,13 @@
         :disabled="disabled"
       />
 
-      <c-information-block :title="$t('declareTicket.workflowIfStepFails')" class="c-alternative-bg-panel pa-5">
+      <c-form-block-row :label="$t('declareTicket.workflowIfStepFails')" indented top-border>
         <c-workflow-field
           v-field="form.stop_on_fail"
           :disabled="disabled"
           :continue-label="$t('declareTicket.continueWithNextStep')"
-          class="mt-3"
         />
-      </c-information-block>
+      </c-form-block-row>
     </c-form-block>
   </c-card-iterator-item>
 </template>

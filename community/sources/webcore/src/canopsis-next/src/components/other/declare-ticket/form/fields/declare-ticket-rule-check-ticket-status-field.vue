@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-form-block-row :label="$t('declareTicket.checkTicketStatus')" top-border>
+    <c-form-block-row :depth="depth" :label="$t('declareTicket.checkTicketStatus')" top-border>
       <c-enabled-field v-field="form.enabled">
         <template #append>
           <c-help-icon
@@ -25,11 +25,14 @@
           :hide-auth="form.reuse_headers_and_auth"
           :hide-headers="form.reuse_headers_and_auth"
           :url-label="$t('declareTicket.ticketStatusEndpoint')"
-          :depth="1"
+          :depth="depth + 1"
           hide-repeat
         >
           <template #additional-fields>
-            <c-form-block-row :label="$t('declareTicket.reuseHeadersAndAuthFromTicketDeclarationRule')" :depth="1">
+            <c-form-block-row
+              :depth="depth + 1"
+              :label="$t('declareTicket.reuseHeadersAndAuthFromTicketDeclarationRule')"
+            >
               <c-enabled-field
                 v-field="form.reuse_headers_and_auth"
                 :label="$t('declareTicket.reuseHeadersAndAuthFromTicketDeclarationRule')"
@@ -44,11 +47,14 @@
           :name="`${name}.ticket_status_source`"
           :disabled="disabled"
           :variables="templateVars.ticket_status"
+          :depth="depth + 1"
         />
+
         <declare-ticket-rule-ticket-status-mapping-field
           v-field="form.status_mapping"
           :name="`${name}.status_mapping`"
           :disabled="disabled"
+          :depth="depth + 1"
         />
       </div>
     </v-expand-transition>
@@ -87,6 +93,10 @@ export default {
     templateVars: {
       type: Object,
       default: () => ({}),
+    },
+    depth: {
+      type: Number,
+      default: 0,
     },
   },
 };

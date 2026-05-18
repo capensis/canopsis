@@ -7,7 +7,6 @@
     :required-error-message="$t('declareTicket.errors.webhookRequired')"
     :empty-message="$t('declareTicket.emptyWebhooks')"
     :add-button-label="$t('declareTicket.addWebhook')"
-    iterator-class="mb-2"
     item-key="key"
     required
     @add="addWebhook"

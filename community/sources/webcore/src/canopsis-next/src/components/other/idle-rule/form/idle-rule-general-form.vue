@@ -49,6 +49,7 @@
         <action-parameters-form
           v-model="parameters"
           :type="form.operation.type"
+          :depth="1"
           name="operation.parameters"
         />
 

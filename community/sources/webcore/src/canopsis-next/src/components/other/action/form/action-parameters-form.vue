@@ -64,12 +64,17 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    depth: {
+      type: Number,
+      default: 0,
+    },
   },
   setup(props) {
     const bindProps = computed(() => {
       const childProps = {
         is: ACTION_COMPONENT_BY_TYPE[props.type],
         name: props.name,
+        depth: props.depth,
       };
 
       if (props.type === ACTION_TYPES.webhook) {
@@ -78,7 +83,6 @@ export default {
 
       if (props.type === ACTION_TYPES.changeState) {
         childProps.variables = props.templateVars?.output;
-        childProps.depth = 1;
       } else {
         childProps.templateVars = props.templateVars;
       }

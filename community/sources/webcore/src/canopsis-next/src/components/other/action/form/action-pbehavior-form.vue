@@ -3,7 +3,8 @@
     v-field="value"
     :name-label="$t('common.namePrefix')"
     :name-tooltip="$t('scenario.tooltips.pbehaviorActionsNamePrefix')"
-    :depth="1"
+    :depth="depth"
+    block-child
     no-comments
     with-start-on-trigger
   />
@@ -22,6 +23,10 @@ export default {
     value: {
       type: Object,
       required: true,
+    },
+    depth: {
+      type: Number,
+      default: 0,
     },
   },
 };

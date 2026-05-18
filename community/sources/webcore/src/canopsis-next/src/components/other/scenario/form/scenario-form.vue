@@ -61,6 +61,7 @@ import ScenarioTestQuery from '@/components/other/scenario/partials/scenario-tes
 
 import ScenarioActionsForm from './scenario-actions-form.vue';
 
+// TODO: remove this component
 export default {
   inject: ['$validator'],
   components: { ScenarioTestQuery, ScenarioActionsForm },

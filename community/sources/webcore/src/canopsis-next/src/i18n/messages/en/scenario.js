@@ -16,6 +16,7 @@ export default {
   emptyActions: 'No actions added yet',
   output: 'Output Action Format',
   forwardAuthor: 'Forward author to the next step',
+  skip: 'Skip',
   skipForChild: 'Skip for meta alarm children',
   skipForInstruction: 'Skip if event triggered an auto instruction',
   outputHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'

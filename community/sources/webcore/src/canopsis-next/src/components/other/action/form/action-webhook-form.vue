@@ -1,18 +1,18 @@
 <template>
-  <v-layout class="gap-3" column>
+  <div>
     <request-with-token-form
       v-field="webhook"
       :name="`${name}.request`"
       :url-variables="templateVars[webhookTemplateVarsKey]"
       :headers-variables="templateVars[webhookTemplateVarsKey]"
       :payload-variables="templateVars[webhookTemplateVarsKey]"
-      class="c-alternative-bg-panel pa-5"
+      :depth="depth"
       with-multiple-urls
     />
     <declare-ticket-rule-ticket-mapping-field
       v-field="webhook"
       :variables="templateVars.ticket"
-      class="c-alternative-bg-panel pa-5"
+      :depth="depth"
       with-ticket-system-name
     />
     <declare-ticket-rule-check-ticket-status-field
@@ -20,9 +20,9 @@
       v-field="webhook.declare_ticket.check_ticket_status"
       :name="`${name}.declare_ticket.check_ticket_status`"
       :template-vars="templateVars"
-      class="c-alternative-bg-panel pa-5"
+      :depth="depth"
     />
-  </v-layout>
+  </div>
 </template>
 
 <script>

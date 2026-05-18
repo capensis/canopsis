@@ -12,111 +12,105 @@
 
       <c-action-btn type="duplicate" @click="duplicateAction" />
     </template>
-    <v-layout>
-      <v-flex xs6>
+
+    <c-form-block>
+      <c-form-block-row :label="$t('common.emitTrigger')">
         <c-enabled-field
           v-field="action.emit_trigger"
           :label="$t('common.emitTrigger')"
         />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('scenario.forwardAuthor')">
         <action-author-field v-model="parameters" :variables="templateVars.author" />
-      </v-flex>
-      <v-flex
-        v-if="isWebhookActionType"
-        xs6
-      >
+      </c-form-block-row>
+
+      <c-form-block-row v-if="isWebhookAction" :label="$t('scenario.skip')">
         <c-enabled-field
           v-model="parameters.skip_for_child"
           :label="$t('scenario.skipForChild')"
+          hide-details
         />
         <c-enabled-field
           v-model="parameters.skip_for_instruction"
           :label="$t('scenario.skipForInstruction')"
-          class="mt-0"
         />
-      </v-flex>
-    </v-layout>
-    <v-layout justify-space-between>
-      <c-workflow-field
-        v-field="action.drop_scenario_if_not_matched"
-        :label="$t('scenario.workflow')"
-        :continue-label="$t('scenario.remainingAction')"
-      />
-      <template v-if="isWebhookActionType">
-        <c-workflow-field
-          v-model="parameters.stop_on_fail"
-          :label="$t('scenario.workflowInCaseOfFailure')"
-          :continue-label="$t('scenario.remainingStep')"
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('scenario.workflow')" indented>
+        <v-layout justify-space-between>
+          <c-workflow-field
+            v-field="action.drop_scenario_if_not_matched"
+            :label="$t('scenario.workflow')"
+            :continue-label="$t('scenario.remainingAction')"
+          />
+
+          <template v-if="isWebhookAction">
+            <c-workflow-field
+              v-model="parameters.stop_on_fail"
+              :label="$t('scenario.workflowInCaseOfFailure')"
+              :continue-label="$t('scenario.remainingStep')"
+            />
+            <c-workflow-field
+              v-model="parameters.stop_on_success"
+              :label="$t('scenario.workflowInCaseOfSuccess')"
+              :continue-label="$t('scenario.remainingStep')"
+            />
+          </template>
+        </v-layout>
+      </c-form-block-row>
+
+      <c-form-block-row :label="$tc('common.comment')">
+        <v-textarea
+          v-field="action.comment"
+          :label="$tc('common.comment')"
         />
-        <c-workflow-field
-          v-model="parameters.stop_on_success"
-          :label="$t('scenario.workflowInCaseOfSuccess')"
-          :continue-label="$t('scenario.remainingStep')"
-        />
+      </c-form-block-row>
+    </c-form-block>
+
+    <c-form-general-patterns-tabs>
+      <template v-if="!isPbehaviorRemoveAction" #general="{ setRef }">
+        <c-form-block>
+          <action-parameters-form
+            v-model="parameters"
+            :ref="setRef"
+            :name="`${name}.parameters`"
+            :type="action.type"
+            :has-previous-webhook="hasPreviousWebhook"
+            :template-vars="templateVars"
+          />
+        </c-form-block>
       </template>
-    </v-layout>
-    <v-textarea
-      v-field="action.comment"
-      :label="$tc('common.comment')"
-      class="mt-2"
-    />
-    <v-tabs
-      v-model="activeTab"
-      slider-color="primary"
-      background-color="transparent"
-      centered
-    >
-      <v-tab v-if="!isPbehaviorRemoveAction" :class="{ 'error--text': hasGeneralError }">
-        {{ $t('common.general') }}
-      </v-tab>
-      <v-tab :class="{ 'error--text': hasPatternsError }">
-        {{ $tc('common.pattern') }}
-      </v-tab>
-    </v-tabs>
-    <v-divider />
-    <v-tabs-items
-      v-model="activeTab"
-      class="pt-2"
-    >
-      <v-tab-item v-if="!isPbehaviorRemoveAction" eager>
-        <action-parameters-form
-          v-model="parameters"
-          ref="general"
-          :name="`${name}.parameters`"
-          :type="action.type"
-          :has-previous-webhook="hasPreviousWebhook"
-          :template-vars="templateVars"
-          class="mt-4"
-        />
-      </v-tab-item>
-      <v-tab-item eager>
+      <template #patterns="{ setRef }">
         <scenario-action-patterns-form
           v-field="action.patterns"
-          ref="patterns"
+          :ref="setRef"
           :name="name"
-          class="mt-4"
         />
-      </v-tab-item>
-    </v-tabs-items>
+      </template>
+    </c-form-general-patterns-tabs>
   </c-card-iterator-item>
 </template>
 
 <script>
+import {
+  computed,
+  ref,
+  toRef,
+  onMounted,
+  inject,
+} from 'vue';
 import { Validator } from 'vee-validate';
 
-import { isPbehaviorRemoveActionType, isWebhookActionType } from '@/helpers/entities/action';
+import { isWebhookActionType, isPbehaviorRemoveActionType } from '@/helpers/entities/action';
 
-import { formMixin } from '@/mixins/form';
-import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
+import { useConfirmableForm } from '@/hooks/confirmable-form';
+import { useModelField } from '@/hooks/form/model-field';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
 import ActionAuthorField from '@/components/other/action/form/fields/action-author-field.vue';
 
 import ScenarioActionPatternsForm from '../scenario-action-patterns-form.vue';
-
-const SCENARIO_ACTION_TABS = {
-  general: 0,
-  patterns: 1,
-};
 
 export default {
   inject: {
@@ -132,14 +126,6 @@ export default {
     ActionParametersForm,
     ScenarioActionPatternsForm,
   },
-  mixins: [
-    formMixin,
-    confirmableFormMixinCreator({
-      field: 'action',
-      method: 'removeAction',
-      cloning: true,
-    }),
-  ],
   model: {
     prop: 'action',
     event: 'input',
@@ -166,83 +152,54 @@ export default {
       default: () => ({}),
     },
   },
-  data() {
-    return {
-      activeTab: SCENARIO_ACTION_TABS.general,
-      cardIteratorItemElement: null,
-      hasGeneralError: false,
-      hasPatternsError: false,
-    };
-  },
-  computed: {
-    isPbehaviorRemoveAction() {
-      return isPbehaviorRemoveActionType(this.action.type);
-    },
+  setup(props, { emit }) {
+    const $aiChat = inject('$aiChat', {});
 
-    isWebhookActionType() {
-      return isWebhookActionType(this.action.type);
-    },
+    const { updateField } = useModelField(props, emit);
 
-    parameters: {
+    const cardIteratorItemElement = ref(null);
+
+    const { confirmAction: removeAction } = useConfirmableForm({
+      form: toRef(props, 'action'),
+      action: () => emit('remove'),
+      cloning: true,
+    });
+
+    const isWebhookAction = computed(() => isWebhookActionType(props.action.type));
+    const isPbehaviorRemoveAction = computed(() => isPbehaviorRemoveActionType(props.action.type));
+
+    const parameters = computed({
       get() {
-        const { type, parameters } = this.action;
+        const { type, parameters: actionParameters } = props.action;
 
-        return parameters[type];
+        return actionParameters[type];
       },
       set(value) {
-        this.updateField(`parameters.${this.action.type}`, value);
+        updateField(`parameters.${props.action.type}`, value);
       },
-    },
-  },
-  created() {
-    this.$aiChat?.registerExpandFunction?.(this.showPatternsForAiChat);
-  },
-  mounted() {
-    this.$watch(() => this.$refs.general?.hasAnyError, (value) => {
-      this.hasGeneralError = value;
     });
 
-    this.$watch(() => this.$refs.patterns.hasAnyError, (value) => {
-      this.hasPatternsError = value;
+    const duplicateAction = () => emit('duplicate');
+
+    const toggleOnExpanded = () => cardIteratorItemElement.value.toggleOnExpanded();
+
+    onMounted(() => {
+      $aiChat?.registerExpandFunction?.(({ key }) => {
+        if (key === props.action.key) {
+          toggleOnExpanded();
+        }
+      });
     });
-  },
-  beforeUnmount() {
-    this.aiChat?.unregisterExpandFunction?.(this.showPatternsForAiChat);
-  },
-  methods: {
-    removeAction() {
-      this.$emit('remove');
-    },
 
-    duplicateAction() {
-      this.$emit('duplicate');
-    },
+    return {
+      cardIteratorItemElement,
 
-    goToPatternsTab() {
-      if (this.activeTab !== SCENARIO_ACTION_TABS.patterns) {
-        this.activeTab = SCENARIO_ACTION_TABS.patterns;
-      }
-    },
-
-    toggleOnExpanded() {
-      if (!this.$refs.cardIteratorItemElement.expanded) {
-        this.$refs.cardIteratorItemElement.expanded = true;
-      }
-    },
-
-    async showPatternsForAiChat({ key } = {}) {
-      if (this.action.key !== key) {
-        return;
-      }
-
-      this.goToPatternsTab();
-
-      await this.$nextTick();
-
-      this.toggleOnExpanded();
-
-      await this.$nextTick();
-    },
+      isWebhookAction,
+      isPbehaviorRemoveAction,
+      parameters,
+      removeAction,
+      duplicateAction,
+    };
   },
 };
 </script>

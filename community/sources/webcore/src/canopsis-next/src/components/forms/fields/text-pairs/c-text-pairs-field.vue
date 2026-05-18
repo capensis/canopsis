@@ -15,6 +15,8 @@
       :form="items"
       :item-key="itemKey"
       :item-to-form="textPairToForm"
+      :error-messages="errors.collect(name)"
+      :required-error-message="requiredErrorMessage"
       :label="title || ''"
     >
       <template #item="{ index, remove }">
@@ -97,6 +99,10 @@ export default {
     addButtonLabel: {
       type: String,
       required: false,
+    },
+    requiredErrorMessage: {
+      type: String,
+      default: '',
     },
     disabled: {
       type: Boolean,
