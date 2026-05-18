@@ -46,48 +46,46 @@ func NewMetaAlarmProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &metaAlarmProcessor{
-		autoInstructionMatcher:    autoInstructionMatcher,
-		metricsSender:             metricsSender,
-		remediationRpcClient:      remediationRpcClient,
-		dbClient:                  dbClient,
-		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
-		metaAlarmStatesCollection: dbClient.Collection(mongo.MetaAlarmStatesCollection),
-		entityCollection:          dbClient.Collection(mongo.EntityMongoCollection),
-		pbehaviorCollection:       dbClient.Collection(mongo.PbehaviorMongoCollection),
-		metaAlarmStatesService:    metaAlarmStatesService,
-		adapter:                   adapter,
-		ruleAdapter:               ruleAdapter,
-		pbhTypeResolver:           pbhTypeResolver,
-		alarmStatusService:        alarmStatusService,
-		alarmConfigProvider:       alarmConfigProvider,
-		templateExecutor:          templateExecutor,
-		encoder:                   encoder,
-		eventGenerator:            eventGenerator,
-		amqpPublisher:             amqpPublisher,
-		logger:                    logger,
+		autoInstructionMatcher: autoInstructionMatcher,
+		metricsSender:          metricsSender,
+		remediationRpcClient:   remediationRpcClient,
+		dbClient:               dbClient,
+		alarmCollection:        dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       dbClient.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:    dbClient.Collection(mongo.PbehaviorMongoCollection),
+		metaAlarmStatesService: metaAlarmStatesService,
+		adapter:                adapter,
+		ruleAdapter:            ruleAdapter,
+		pbhTypeResolver:        pbhTypeResolver,
+		alarmStatusService:     alarmStatusService,
+		alarmConfigProvider:    alarmConfigProvider,
+		templateExecutor:       templateExecutor,
+		encoder:                encoder,
+		eventGenerator:         eventGenerator,
+		amqpPublisher:          amqpPublisher,
+		logger:                 logger,
 	}
 }
 
 type metaAlarmProcessor struct {
-	dbClient                  mongo.DbClient
-	alarmCollection           mongo.DbCollection
-	metaAlarmStatesCollection mongo.DbCollection
-	entityCollection          mongo.DbCollection
-	pbehaviorCollection       mongo.DbCollection
-	metaAlarmStatesService    correlation.MetaAlarmStateService
-	adapter                   libalarm.Adapter
-	ruleAdapter               correlation.RulesAdapter
-	pbhTypeResolver           pbehavior.EntityTypeResolver
-	alarmStatusService        alarmstatus.Service
-	alarmConfigProvider       config.AlarmConfigProvider
-	autoInstructionMatcher    AutoInstructionMatcher
-	metricsSender             metrics.Sender
-	remediationRpcClient      engine.RPCClient
-	encoder                   encoding.Encoder
-	eventGenerator            libevent.Generator
-	amqpPublisher             libamqp.Publisher
-	templateExecutor          template.Executor
-	logger                    zerolog.Logger
+	dbClient               mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
+	pbehaviorCollection    mongo.DbCollection
+	metaAlarmStatesService correlation.MetaAlarmStateService
+	adapter                libalarm.Adapter
+	ruleAdapter            correlation.RulesAdapter
+	pbhTypeResolver        pbehavior.EntityTypeResolver
+	alarmStatusService     alarmstatus.Service
+	alarmConfigProvider    config.AlarmConfigProvider
+	autoInstructionMatcher AutoInstructionMatcher
+	metricsSender          metrics.Sender
+	remediationRpcClient   engine.RPCClient
+	encoder                encoding.Encoder
+	eventGenerator         libevent.Generator
+	amqpPublisher          libamqp.Publisher
+	templateExecutor       template.Executor
+	logger                 zerolog.Logger
 }
 
 func (p *metaAlarmProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {

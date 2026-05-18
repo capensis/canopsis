@@ -43,7 +43,7 @@ type Adapter interface {
 
 	GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) ([]types.Alarm, error)
 
-	CountResolvedAlarm(ctx context.Context, alarmList []string) (int, error)
+	CountOpenedChildrenAlarmsByParent(ctx context.Context, parentID string) (int, error)
 
 	GetLastAlarmByEntityID(ctx context.Context, entityID string) (*types.Alarm, error)
 
