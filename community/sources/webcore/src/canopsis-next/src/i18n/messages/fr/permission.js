@@ -254,6 +254,7 @@ export default {
     [USER_PERMISSIONS.technical.widgetTemplate]: 'Modèles de widget',
     [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Test de modèle',
+    [USER_PERMISSIONS.technical.templateData]: 'Données de modèle',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'Jetons d\'authentification externes',
     [USER_PERMISSIONS.technical.jobManagement]: 'Jobs',
     [USER_PERMISSIONS.technical.commentTemplate]: 'Modèles de commentaires',
