@@ -1,5 +1,5 @@
 <template>
-  <v-layout :class="{ 'gap-3': !depth }" column>
+  <v-layout :class="{ 'gap-3': !blockChild }" column>
     <c-enabled-field
       v-if="withEnabled"
       v-field="form.enabled"
@@ -7,7 +7,7 @@
       with-background
     />
 
-    <component :is="depth ? 'c-form-block-row' : 'div'" :label="nameLabel" :depth="depth">
+    <component :is="blockChild ? 'c-form-block-row' : 'div'" :label="nameLabel" :depth="depth">
       <c-name-field
         v-field="form.name"
         :label="nameLabel"
@@ -17,7 +17,7 @@
       />
     </component>
 
-    <component :is="depth ? 'div' : 'c-form-block'">
+    <component :is="blockChild ? 'div' : 'c-form-block'">
       <c-form-block-row
         v-if="withInherited"
         :label="$t('modals.createPbehavior.steps.general.fields.inherited')"
@@ -218,6 +218,10 @@ export default {
     depth: {
       type: Number,
       default: 0,
+    },
+    blockChild: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {

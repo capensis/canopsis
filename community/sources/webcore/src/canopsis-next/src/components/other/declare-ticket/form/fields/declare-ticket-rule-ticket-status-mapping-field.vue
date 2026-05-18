@@ -1,18 +1,12 @@
 <template>
-  <c-information-block
-    :title="$t('declareTicket.ticketStatusMapping')"
-    :help-text="$t('declareTicket.ticketStatusMappingHelpText')"
-    help-icon="help"
-    help-icon-color="grey darken-1"
-  >
+  <c-form-block-row :label="$t('declareTicket.ticketStatusMapping')" :depth="1" indented>
     <v-layout class="gap-3" column>
-      <strong class="mt-3 grey--text text--darken-1">
-        {{ $t('declareTicket.ticketStatusMappingUnmappedToOpen') }}
-      </strong>
-
-      <c-alert :value="errors.has(name)" type="error">
-        {{ $t('declareTicket.ticketStatusMappingHelpText') }}
-      </c-alert>
+      <c-label
+        :label="$t('declareTicket.ticketStatusMapping')"
+        :help-text="$t('declareTicket.ticketStatusMappingHelpText')"
+        :error="errors.has(name)"
+        required
+      />
 
       <c-text-pairs-field
         v-field="value"
@@ -22,11 +16,12 @@
         :text-label="$t('declareTicket.sourceValue')"
         :value-label="$t('declareTicket.canopsisValue')"
         :add-button-label="$t('declareTicket.addMappingPair')"
+        :required-error-message="$t('declareTicket.ticketStatusMappingHelpText')"
         text-required
         value-required
       />
     </v-layout>
-  </c-information-block>
+  </c-form-block-row>
 </template>
 
 <script>

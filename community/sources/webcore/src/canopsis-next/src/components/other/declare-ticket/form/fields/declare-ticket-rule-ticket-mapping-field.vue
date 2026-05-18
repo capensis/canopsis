@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-form-block-row :label="$t('declareTicket.ticketUrlAndId')" top-border>
+    <c-form-block-row :label="$t('declareTicket.ticketUrlAndId')" :depth="depth" top-border>
       <c-enabled-field
         v-field="form.declare_ticket.enabled"
         :disabled="isDeclareTicketExist"
@@ -25,14 +25,14 @@
 
     <v-expand-transition>
       <div v-if="form.declare_ticket.enabled">
-        <c-form-block-row v-if="!hideEmptyResponse" :label="$t('declareTicket.emptyResponse')" depth="1">
+        <c-form-block-row v-if="!hideEmptyResponse" :depth="depth + 1" :label="$t('declareTicket.emptyResponse')">
           <c-enabled-field
             v-field="form.declare_ticket.empty_response"
             :label="$t('declareTicket.emptyResponse')"
           />
         </c-form-block-row>
 
-        <c-form-block-row :label="$t('declareTicket.ticketID')" depth="1">
+        <c-form-block-row :depth="depth + 1" :label="$t('declareTicket.ticketID')">
           <declare-ticket-rule-ticket-id-field
             v-field="form.declare_ticket"
             :disabled="disabled"
@@ -42,7 +42,7 @@
           />
         </c-form-block-row>
 
-        <c-form-block-row :label="$t('declareTicket.ticketURL')" depth="1">
+        <c-form-block-row :depth="depth + 1" :label="$t('declareTicket.ticketURL')">
           <declare-ticket-rule-ticket-url-field
             v-field="form.declare_ticket.ticket_url"
             :disabled="disabled"
@@ -59,7 +59,7 @@
           />
         </c-form-block-row>
 
-        <c-form-block-row :label="$tc('common.customField', 2)" depth="1" indented>
+        <c-form-block-row :depth="depth + 1" :label="$tc('common.customField', 2)" indented>
           <declare-ticket-rule-ticket-custom-fields-field
             v-field="form.declare_ticket.mapping"
             :name="name"
@@ -129,6 +129,10 @@ export default {
     variables: {
       type: Array,
       default: () => [],
+    },
+    depth: {
+      type: Number,
+      default: 0,
     },
   },
   setup(props) {

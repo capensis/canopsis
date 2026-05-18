@@ -4,7 +4,7 @@
     <c-label
       v-if="label || $slots.label"
       :required="required"
-      :error="errorMessages.length > 0"
+      :error="displayErrorMessages.length > 0"
     ><slot name="label">{{ label }}</slot></c-label>
     <!-- eslint-enable vue/multiline-html-element-content-newline -->
 
@@ -32,7 +32,7 @@
         name="add-button"
       >
         <v-btn
-          :color="errorMessages.length ? 'error' : 'primary'"
+          :color="displayErrorMessages.length ? 'error' : 'primary'"
           outlined
           @click="add"
         >
@@ -41,8 +41,8 @@
       </slot>
     </div>
     <v-messages
-      v-if="errorMessages.length > 0"
-      :value="errorMessages"
+      v-if="displayErrorMessages.length > 0"
+      :value="displayErrorMessages"
       color="error"
     />
   </v-layout>
@@ -84,6 +84,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    requiredErrorMessage: {
+      type: String,
+      default: '',
+    },
     addButtonLabel: {
       type: String,
       default: '',
@@ -99,6 +103,15 @@ export default {
     const resolvedAddButtonLabel = computed(
       () => props.addButtonLabel || t('common.add'),
     );
+
+    const displayErrorMessages = computed(() => {
+      if (props.requiredErrorMessage && props.errorMessages.length > 0) {
+        return [props.requiredErrorMessage];
+      }
+
+      return props.errorMessages;
+    });
+
     const {
       addItemIntoArray,
       removeItemFromArray,
@@ -130,6 +143,7 @@ export default {
     return {
       add,
       resolvedAddButtonLabel,
+      displayErrorMessages,
       addItemIntoArray,
       removeItemFromArray,
       updateItemInArray,

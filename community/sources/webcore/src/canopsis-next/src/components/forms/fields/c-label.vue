@@ -1,14 +1,21 @@
 <template>
-  <!-- Keeps default slot flush with tags — line breaks here become visible spaces in the label -->
-  <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-  <v-label :aria-required="required" :class="labelClasses"><slot /></v-label>
+  <!-- eslint-disable-next-line vue/multiline-html-element-content-newline -->
+  <v-label :aria-required="required" :class="labelClasses">{{ label ?? '' }}<slot />
+    <span v-if="helpText" class="ml-1">
+      <c-help-icon
+        :text="helpText"
+        icon="help"
+        left
+      />
+    </span>
+  </v-label>
 </template>
 
 <script>
+// TODO: CHECK THAT I'M USING IT IN ALL PLACES WITH HELP ICON
 import { computed } from 'vue';
 
 export default {
-  name: 'CLabel',
   props: {
     required: {
       type: Boolean,
@@ -17,6 +24,14 @@ export default {
     error: {
       type: Boolean,
       default: false,
+    },
+    label: {
+      type: String,
+      required: false,
+    },
+    helpText: {
+      type: String,
+      required: false,
     },
   },
   setup(props) {

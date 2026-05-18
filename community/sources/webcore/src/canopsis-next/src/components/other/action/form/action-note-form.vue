@@ -1,5 +1,5 @@
 <template>
-  <c-form-block-row :label="$t('scenario.output')" :depth="1">
+  <c-form-block-row :label="$t('scenario.output')" :depth="depth">
     <c-payload-textarea-field
       v-field="value.output"
       :label="$t('scenario.output')"
@@ -31,6 +31,10 @@ export default {
     templateVars: {
       type: Object,
       default: () => ({}),
+    },
+    depth: {
+      type: Number,
+      default: 0,
     },
   },
 };

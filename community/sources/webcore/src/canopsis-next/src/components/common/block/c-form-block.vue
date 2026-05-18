@@ -55,9 +55,6 @@ export default {
       required: false,
     },
   },
-  setup() {
-    return {};
-  },
 };
 </script>
 

@@ -2,7 +2,7 @@
   <associate-ticket-event-form
     v-field="value"
     :name="name"
-    :depth="1"
+    :depth="depth"
   />
 </template>
 
@@ -24,6 +24,10 @@ export default {
     name: {
       type: String,
       required: 'parameters',
+    },
+    depth: {
+      type: Number,
+      default: 0,
     },
   },
 };
