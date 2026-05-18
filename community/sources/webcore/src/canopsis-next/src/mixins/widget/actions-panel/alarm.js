@@ -1,5 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
-import { find, pick, keyBy } from 'lodash';
+import { keyBy } from 'lodash';
 
 import {
   MODALS,
@@ -407,7 +407,9 @@ export const widgetActionsPanelAlarmMixin = {
           params: { ids: mapIds(alarms) },
         });
 
-        const summaryLink = find(links, pick(link, ['icon_name', 'label']));
+        const summaryLink = links.find(({ icon_name: iconName, label = '' } = {}) => (
+          iconName === link.icon_name && label.includes(link.label)
+        ));
 
         if (!summaryLink) {
           return;
@@ -467,7 +469,7 @@ export const widgetActionsPanelAlarmMixin = {
           ),
           entities: mapAlarmsEntities(alarms),
           afterSubmit: async () => {
-            this.$popups.success({ text: this.$t('modals.pbehaviorPlanning.success.create') });
+            this.$popups.success({ text: this.$t('modals.createPbehavior.success.create') });
 
             return promisedTimeout(this.afterSubmit, ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT);
           },

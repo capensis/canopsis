@@ -10,7 +10,7 @@
               <c-enabled-field
                 v-field="value"
                 :label="$t('common.massActionsPanel.keepSelectedAfterAction')"
-                class="ma-0"
+                class="c-mass-actions-panel__enabled-field"
                 hide-details
               />
               <v-divider vertical />
@@ -78,6 +78,10 @@ export default {
     const { updateModel } = useModelField(props, emit);
     const modal = inject('$modal', null);
 
+    const wrapperClass = computed(() => ({
+      'c-mass-actions-panel': true,
+      'c-mass-actions-panel--fixed': props.fixed,
+    }));
     const target = computed(() => `${PORTALS_NAMES.massActionsPanel}${modal?.id ? `-${modal.id}` : ''}`);
 
     const message = computed(() => (
@@ -101,6 +105,7 @@ export default {
     onBeforeUnmount(() => updateModel(props.defaultValue));
 
     return {
+      wrapperClass,
       target,
       message,
       style,
@@ -111,13 +116,13 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .c-mass-actions-panel {
   display: block;
   justify-content: center;
   width: 100%;
   padding-top: 20px;
-  z-index: 1;
+  z-index: 3;
   position: relative;
 
   &__card {
@@ -127,6 +132,15 @@ export default {
 
   &__message {
     white-space: nowrap;
+  }
+
+  &__enabled-field {
+    margin: 0;
+
+    .v-input--selection-controls {
+      margin: 0;
+      padding: 0;
+    }
   }
 }
 </style>
