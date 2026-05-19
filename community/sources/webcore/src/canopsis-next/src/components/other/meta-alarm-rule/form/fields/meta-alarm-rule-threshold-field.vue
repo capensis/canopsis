@@ -1,15 +1,9 @@
 <template>
   <c-form-block-row :label="$t('metaAlarmRule.threshold')" class="meta-alarm-rule-threshold-field">
-    <c-label>
-      {{ $t('metaAlarmRule.threshold') }}
-      <c-help-icon
-        :text="$t('metaAlarmRule.thresholdHelpText')"
-        icon="help"
-        max-width="300"
-        class="ml-2"
-        right
-      />
-    </c-label>
+    <c-label
+      :label="$t('metaAlarmRule.threshold')"
+      :help-text="$t('metaAlarmRule.thresholdHelpText')"
+    />
     <v-radio-group v-field="value.threshold_type">
       <v-radio :value="META_ALARMS_THRESHOLD_TYPES.thresholdCount" color="primary">
         <template #label>

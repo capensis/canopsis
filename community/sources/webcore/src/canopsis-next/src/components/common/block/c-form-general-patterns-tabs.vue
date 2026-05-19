@@ -45,20 +45,25 @@
         :set-ref="setGeneralRef"
         :copy-vars="copyVars"
         :template-vars="templateVars"
+        :pending="templateTestingPending"
         name="general"
       />
+
       <slot
         v-else-if="tab.patterns"
         :set-ref="setPatternsRef"
         :template-vars="templateVars"
         :copy-vars="copyVars"
+        :pending="templateTestingPending"
         name="patterns"
       />
+
       <slot
         v-else-if="tab['test-query']"
         :form="form"
         name="test-query"
       />
+
       <template-testing-test-variables
         v-else-if="tab.testing"
         :general-form="form"
@@ -79,6 +84,7 @@ import {
   ref,
   toRef,
   useSlots,
+  watch,
   onMounted,
 } from 'vue';
 
@@ -139,6 +145,10 @@ export default {
       required: false,
       default: '',
     },
+    hideGeneral: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const slots = useSlots();
@@ -148,8 +158,8 @@ export default {
     const generalElement = ref(null);
     const patternsElement = ref(null);
 
-    const setGeneralRef = (refElement) => { generalElement.value = refElement; };
-    const setPatternsRef = (refElement) => { patternsElement.value = refElement; };
+    const setGeneralRef = refElement => generalElement.value = refElement;
+    const setPatternsRef = refElement => patternsElement.value = refElement;
 
     const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
     const { hasChildrenError: hasPatternsError } = useValidationElementChildren(patternsElement);
@@ -173,7 +183,6 @@ export default {
 
     const {
       hasAccess: hasAccessToTemplateTesting,
-
       items: variablesFields,
       isEmptyItems: isEmptyVariablesFields,
     } = useTestVariablesTabData(props, toRef(props, 'type'), emit);
@@ -186,40 +195,21 @@ export default {
     const hasTestQuerySlot = computed(() => Boolean(slots['test-query']));
 
     const visibleTabs = computed(() => {
-      const tabs = [];
+      const generalTab = hasGeneralSlot.value && !props.hideGeneral && createTab(TAB_GENERAL);
+      const patternsTab = hasPatternsSlot.value && createTab(TAB_PATTERNS);
+      const testQueryTab = hasTestQuerySlot.value && createTab(TAB_TEST_QUERY);
+      const testingTab = hasTemplateTestingTab.value && createTab(TAB_TESTING);
 
-      if (props.reverse) {
-        if (hasPatternsSlot.value) {
-          tabs.push(createTab(TAB_PATTERNS));
-        }
-        if (hasGeneralSlot.value) {
-          tabs.push(createTab(TAB_GENERAL));
-        }
-      } else {
-        if (hasGeneralSlot.value) {
-          tabs.push(createTab(TAB_GENERAL));
-        }
-        if (hasPatternsSlot.value) {
-          tabs.push(createTab(TAB_PATTERNS));
-        }
-      }
+      const tabs = props.reverse ? [patternsTab, generalTab] : [generalTab, patternsTab];
 
-      if (hasTestQuerySlot.value) {
-        tabs.push(createTab(TAB_TEST_QUERY));
-      }
+      tabs.push(testQueryTab, testingTab);
 
-      if (hasTemplateTestingTab.value) {
-        tabs.push(createTab(TAB_TESTING));
-      }
-
-      return tabs;
+      return tabs.filter(Boolean);
     });
 
-    const patternsTabIndex = computed(() => {
-      const idx = visibleTabs.value.findIndex(tab => tab.id === TAB_PATTERNS);
-
-      return idx >= 0 ? idx : 0;
-    });
+    const patternsTabIndex = computed(() => (
+      visibleTabs.value.findIndex(tab => tab.id === TAB_PATTERNS)
+    ));
 
     const testingTabIndex = computed(() => visibleTabs.value.findIndex(tab => tab.id === TAB_TESTING));
 
@@ -237,6 +227,12 @@ export default {
     useAiChatExpand({
       activeTab,
       neededTab: patternsTabIndex,
+    });
+
+    watch(() => props.hideGeneral, (value) => {
+      if (value) {
+        activeTab.value = patternsTabIndex.value;
+      }
     });
 
     onMounted(() => {

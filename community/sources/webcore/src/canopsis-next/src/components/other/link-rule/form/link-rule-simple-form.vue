@@ -1,6 +1,10 @@
 <template>
   <v-layout class="gap-3" column>
-    <c-label :error="!!errorMessages.length" required>{{ $tc('common.link', 2) }}</c-label>
+    <c-label
+      :label="$tc('common.link', 2)"
+      :error="!!errorMessages.length"
+      required
+    />
     <link-rule-link-form
       v-for="(link, index) in links"
       v-field="links[index]"

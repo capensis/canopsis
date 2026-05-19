@@ -21,11 +21,11 @@
     <c-payload-text-field
       v-else
       v-field="item[itemValue]"
-      :required="valueRequired"
       :label="valueLabel"
       :disabled="disabled"
       :name="valueFieldName"
       :variables="variables"
+      :required="valueRequired"
     >
       <template #append="">
         <slot name="append-value" />

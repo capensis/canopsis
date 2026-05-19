@@ -12,7 +12,10 @@
       class="c-patterns-field"
       column
     >
-      <c-label :required="isPatternRequired">{{ $tc('common.pattern', 2) }}</c-label>
+      <c-label
+        :label="$tc('common.pattern', 2)"
+        :required="isPatternRequired"
+      />
       <c-collapse-panel
         v-if="withAlarm"
         :expanded="expanded.alarm"

@@ -82,7 +82,13 @@ export default {
 
     const { asyncValidateRequiredRule } = useValidationAttachRequiredForField(props.name, hasClosedItem, false);
 
-    watch(() => props.value, asyncValidateRequiredRule);
+    watch(() => props.value, (newValue = [], oldValue = []) => {
+      if (newValue.length && newValue.length !== oldValue.length) {
+        return;
+      }
+
+      asyncValidateRequiredRule();
+    });
 
     return {
       canopsisValueItems,

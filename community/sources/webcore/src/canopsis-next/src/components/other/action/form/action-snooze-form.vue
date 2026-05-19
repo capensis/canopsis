@@ -1,6 +1,6 @@
 <template>
   <div>
-    <action-note-form v-field="value" :template-vars="templateVars" />
+    <action-note-form v-field="value" :template-vars="templateVars" :depth="depth" />
 
     <c-form-block-row :label="$t('common.duration')" :depth="depth">
       <c-duration-field

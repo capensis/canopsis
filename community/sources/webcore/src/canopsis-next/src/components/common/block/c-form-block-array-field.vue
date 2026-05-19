@@ -3,6 +3,7 @@
     <!-- eslint-disable vue/multiline-html-element-content-newline -->
     <c-label
       v-if="label || $slots.label"
+      :label="label"
       :required="required"
       :error="displayErrorMessages.length > 0"
     ><slot name="label">{{ label }}</slot></c-label>

@@ -55,6 +55,11 @@ export const useAiChatExpand = ({ activeTab, neededTab } = {}) => {
    */
   const goToNeedeeTab = async ({ key } = {}) => {
     const unwrappedNeededTab = unref(neededTab);
+
+    if (unwrappedNeededTab < 0) {
+      return Promise.resolve();
+    }
+
     const neededTabPrimitive = unwrappedNeededTab[key] ?? unwrappedNeededTab;
 
     if (activeTab.value !== neededTabPrimitive) {

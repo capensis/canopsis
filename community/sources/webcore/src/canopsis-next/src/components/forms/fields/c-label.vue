@@ -12,7 +12,6 @@
 </template>
 
 <script>
-// TODO: CHECK THAT I'M USING IT IN ALL PLACES WITH HELP ICON
 import { computed } from 'vue';
 
 export default {

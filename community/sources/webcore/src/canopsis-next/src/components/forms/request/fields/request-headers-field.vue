@@ -1,14 +1,9 @@
 <template>
   <v-layout class="gap-3" column>
-    <c-label>
-      {{ $tc('common.header', 2) }}
-      <c-help-icon
-        :text="$t('common.request.headersHelpText')"
-        icon="help"
-        color="grey darken-1"
-        left
-      />
-    </c-label>
+    <c-label
+      :label="$tc('common.header', 2)"
+      :help-text="$t('common.request.headersHelpText')"
+    />
 
     <v-layout
       v-for="(item, index) in headers"

@@ -1,6 +1,9 @@
 <template>
   <v-layout class="gap-2" column>
-    <c-label required>{{ $t('modals.createDynamicInfoTemplate.fields.names') }}</c-label>
+    <c-label
+      :label="$t('modals.createDynamicInfoTemplate.fields.names')"
+      required
+    />
     <v-layout
       v-for="(name, index) in names"
       :key="name.key"
