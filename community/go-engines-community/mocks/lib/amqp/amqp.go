@@ -43,18 +43,18 @@ func (m *MockConnection) EXPECT() *MockConnectionMockRecorder {
 }
 
 // Channel mocks base method.
-func (m *MockConnection) Channel() (amqp.Channel, error) {
+func (m *MockConnection) Channel(ctx context.Context) (amqp.Channel, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Channel")
+	ret := m.ctrl.Call(m, "Channel", ctx)
 	ret0, _ := ret[0].(amqp.Channel)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Channel indicates an expected call of Channel.
-func (mr *MockConnectionMockRecorder) Channel() *gomock.Call {
+func (mr *MockConnectionMockRecorder) Channel(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Channel", reflect.TypeOf((*MockConnection)(nil).Channel))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Channel", reflect.TypeOf((*MockConnection)(nil).Channel), ctx)
 }
 
 // Close mocks base method.
@@ -69,20 +69,6 @@ func (m *MockConnection) Close() error {
 func (mr *MockConnectionMockRecorder) Close() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockConnection)(nil).Close))
-}
-
-// IsClosed mocks base method.
-func (m *MockConnection) IsClosed() bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsClosed")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// IsClosed indicates an expected call of IsClosed.
-func (mr *MockConnectionMockRecorder) IsClosed() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsClosed", reflect.TypeOf((*MockConnection)(nil).IsClosed))
 }
 
 // MockChannel is a mock of Channel interface.
@@ -110,17 +96,17 @@ func (m *MockChannel) EXPECT() *MockChannelMockRecorder {
 }
 
 // Ack mocks base method.
-func (m *MockChannel) Ack(tag uint64, multiple bool) error {
+func (m *MockChannel) Ack(ctx context.Context, tag uint64, multiple bool) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Ack", tag, multiple)
+	ret := m.ctrl.Call(m, "Ack", ctx, tag, multiple)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Ack indicates an expected call of Ack.
-func (mr *MockChannelMockRecorder) Ack(tag, multiple any) *gomock.Call {
+func (mr *MockChannelMockRecorder) Ack(ctx, tag, multiple any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ack", reflect.TypeOf((*MockChannel)(nil).Ack), tag, multiple)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ack", reflect.TypeOf((*MockChannel)(nil).Ack), ctx, tag, multiple)
 }
 
 // Close mocks base method.
@@ -137,47 +123,48 @@ func (mr *MockChannelMockRecorder) Close() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockChannel)(nil).Close))
 }
 
-// Consume mocks base method.
-func (m *MockChannel) Consume(queue, consumer string, autoAck, exclusive, noLocal, noWait bool, args amqp091.Table) (<-chan amqp091.Delivery, error) {
+// ConsumeWithContext mocks base method.
+func (m *MockChannel) ConsumeWithContext(ctx context.Context, queue, consumer string, autoAck, exclusive, noLocal, noWait bool, args amqp091.Table) (<-chan amqp091.Delivery, <-chan *amqp091.Error, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Consume", queue, consumer, autoAck, exclusive, noLocal, noWait, args)
+	ret := m.ctrl.Call(m, "ConsumeWithContext", ctx, queue, consumer, autoAck, exclusive, noLocal, noWait, args)
 	ret0, _ := ret[0].(<-chan amqp091.Delivery)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(<-chan *amqp091.Error)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
-// Consume indicates an expected call of Consume.
-func (mr *MockChannelMockRecorder) Consume(queue, consumer, autoAck, exclusive, noLocal, noWait, args any) *gomock.Call {
+// ConsumeWithContext indicates an expected call of ConsumeWithContext.
+func (mr *MockChannelMockRecorder) ConsumeWithContext(ctx, queue, consumer, autoAck, exclusive, noLocal, noWait, args any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consume", reflect.TypeOf((*MockChannel)(nil).Consume), queue, consumer, autoAck, exclusive, noLocal, noWait, args)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsumeWithContext", reflect.TypeOf((*MockChannel)(nil).ConsumeWithContext), ctx, queue, consumer, autoAck, exclusive, noLocal, noWait, args)
 }
 
 // ExchangeDeclare mocks base method.
-func (m *MockChannel) ExchangeDeclare(name, kind string, durable, autoDelete, internal, noWait bool, args amqp091.Table) error {
+func (m *MockChannel) ExchangeDeclare(ctx context.Context, name, kind string, durable, autoDelete, internal, noWait bool, args amqp091.Table) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ExchangeDeclare", name, kind, durable, autoDelete, internal, noWait, args)
+	ret := m.ctrl.Call(m, "ExchangeDeclare", ctx, name, kind, durable, autoDelete, internal, noWait, args)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ExchangeDeclare indicates an expected call of ExchangeDeclare.
-func (mr *MockChannelMockRecorder) ExchangeDeclare(name, kind, durable, autoDelete, internal, noWait, args any) *gomock.Call {
+func (mr *MockChannelMockRecorder) ExchangeDeclare(ctx, name, kind, durable, autoDelete, internal, noWait, args any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExchangeDeclare", reflect.TypeOf((*MockChannel)(nil).ExchangeDeclare), name, kind, durable, autoDelete, internal, noWait, args)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExchangeDeclare", reflect.TypeOf((*MockChannel)(nil).ExchangeDeclare), ctx, name, kind, durable, autoDelete, internal, noWait, args)
 }
 
 // Nack mocks base method.
-func (m *MockChannel) Nack(tag uint64, multiple, requeue bool) error {
+func (m *MockChannel) Nack(ctx context.Context, tag uint64, multiple, requeue bool) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Nack", tag, multiple, requeue)
+	ret := m.ctrl.Call(m, "Nack", ctx, tag, multiple, requeue)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Nack indicates an expected call of Nack.
-func (mr *MockChannelMockRecorder) Nack(tag, multiple, requeue any) *gomock.Call {
+func (mr *MockChannelMockRecorder) Nack(ctx, tag, multiple, requeue any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Nack", reflect.TypeOf((*MockChannel)(nil).Nack), tag, multiple, requeue)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Nack", reflect.TypeOf((*MockChannel)(nil).Nack), ctx, tag, multiple, requeue)
 }
 
 // PublishWithContext mocks base method.
@@ -195,105 +182,105 @@ func (mr *MockChannelMockRecorder) PublishWithContext(ctx, exchange, key, mandat
 }
 
 // Qos mocks base method.
-func (m *MockChannel) Qos(prefetchCount, prefetchSize int, global bool) error {
+func (m *MockChannel) Qos(ctx context.Context, prefetchCount, prefetchSize int, global bool) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Qos", prefetchCount, prefetchSize, global)
+	ret := m.ctrl.Call(m, "Qos", ctx, prefetchCount, prefetchSize, global)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Qos indicates an expected call of Qos.
-func (mr *MockChannelMockRecorder) Qos(prefetchCount, prefetchSize, global any) *gomock.Call {
+func (mr *MockChannelMockRecorder) Qos(ctx, prefetchCount, prefetchSize, global any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Qos", reflect.TypeOf((*MockChannel)(nil).Qos), prefetchCount, prefetchSize, global)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Qos", reflect.TypeOf((*MockChannel)(nil).Qos), ctx, prefetchCount, prefetchSize, global)
 }
 
 // QueueBind mocks base method.
-func (m *MockChannel) QueueBind(name, key, exchange string, noWait bool, args amqp091.Table) error {
+func (m *MockChannel) QueueBind(ctx context.Context, name, key, exchange string, noWait bool, args amqp091.Table) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "QueueBind", name, key, exchange, noWait, args)
+	ret := m.ctrl.Call(m, "QueueBind", ctx, name, key, exchange, noWait, args)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // QueueBind indicates an expected call of QueueBind.
-func (mr *MockChannelMockRecorder) QueueBind(name, key, exchange, noWait, args any) *gomock.Call {
+func (mr *MockChannelMockRecorder) QueueBind(ctx, name, key, exchange, noWait, args any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueBind", reflect.TypeOf((*MockChannel)(nil).QueueBind), name, key, exchange, noWait, args)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueBind", reflect.TypeOf((*MockChannel)(nil).QueueBind), ctx, name, key, exchange, noWait, args)
 }
 
 // QueueDeclare mocks base method.
-func (m *MockChannel) QueueDeclare(name string, durable, autoDelete, exclusive, noWait bool, args amqp091.Table) (amqp091.Queue, error) {
+func (m *MockChannel) QueueDeclare(ctx context.Context, name string, durable, autoDelete, exclusive, noWait bool, args amqp091.Table) (amqp091.Queue, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "QueueDeclare", name, durable, autoDelete, exclusive, noWait, args)
+	ret := m.ctrl.Call(m, "QueueDeclare", ctx, name, durable, autoDelete, exclusive, noWait, args)
 	ret0, _ := ret[0].(amqp091.Queue)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // QueueDeclare indicates an expected call of QueueDeclare.
-func (mr *MockChannelMockRecorder) QueueDeclare(name, durable, autoDelete, exclusive, noWait, args any) *gomock.Call {
+func (mr *MockChannelMockRecorder) QueueDeclare(ctx, name, durable, autoDelete, exclusive, noWait, args any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueDeclare", reflect.TypeOf((*MockChannel)(nil).QueueDeclare), name, durable, autoDelete, exclusive, noWait, args)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueDeclare", reflect.TypeOf((*MockChannel)(nil).QueueDeclare), ctx, name, durable, autoDelete, exclusive, noWait, args)
+}
+
+// QueueDeclarePassive mocks base method.
+func (m *MockChannel) QueueDeclarePassive(ctx context.Context, name string, durable, autoDelete, exclusive, noWait bool, args amqp091.Table) (amqp091.Queue, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "QueueDeclarePassive", ctx, name, durable, autoDelete, exclusive, noWait, args)
+	ret0, _ := ret[0].(amqp091.Queue)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// QueueDeclarePassive indicates an expected call of QueueDeclarePassive.
+func (mr *MockChannelMockRecorder) QueueDeclarePassive(ctx, name, durable, autoDelete, exclusive, noWait, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueDeclarePassive", reflect.TypeOf((*MockChannel)(nil).QueueDeclarePassive), ctx, name, durable, autoDelete, exclusive, noWait, args)
 }
 
 // QueueDelete mocks base method.
-func (m *MockChannel) QueueDelete(name string, ifUnused, ifEmpty, noWait bool) (int, error) {
+func (m *MockChannel) QueueDelete(ctx context.Context, name string, ifUnused, ifEmpty, noWait bool) (int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "QueueDelete", name, ifUnused, ifEmpty, noWait)
+	ret := m.ctrl.Call(m, "QueueDelete", ctx, name, ifUnused, ifEmpty, noWait)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // QueueDelete indicates an expected call of QueueDelete.
-func (mr *MockChannelMockRecorder) QueueDelete(name, ifUnused, ifEmpty, noWait any) *gomock.Call {
+func (mr *MockChannelMockRecorder) QueueDelete(ctx, name, ifUnused, ifEmpty, noWait any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueDelete", reflect.TypeOf((*MockChannel)(nil).QueueDelete), name, ifUnused, ifEmpty, noWait)
-}
-
-// QueueInspect mocks base method.
-func (m *MockChannel) QueueInspect(name string) (amqp091.Queue, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "QueueInspect", name)
-	ret0, _ := ret[0].(amqp091.Queue)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// QueueInspect indicates an expected call of QueueInspect.
-func (mr *MockChannelMockRecorder) QueueInspect(name any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueInspect", reflect.TypeOf((*MockChannel)(nil).QueueInspect), name)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueDelete", reflect.TypeOf((*MockChannel)(nil).QueueDelete), ctx, name, ifUnused, ifEmpty, noWait)
 }
 
 // QueuePurge mocks base method.
-func (m *MockChannel) QueuePurge(name string, noWait bool) (int, error) {
+func (m *MockChannel) QueuePurge(ctx context.Context, name string, noWait bool) (int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "QueuePurge", name, noWait)
+	ret := m.ctrl.Call(m, "QueuePurge", ctx, name, noWait)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // QueuePurge indicates an expected call of QueuePurge.
-func (mr *MockChannelMockRecorder) QueuePurge(name, noWait any) *gomock.Call {
+func (mr *MockChannelMockRecorder) QueuePurge(ctx, name, noWait any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueuePurge", reflect.TypeOf((*MockChannel)(nil).QueuePurge), name, noWait)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueuePurge", reflect.TypeOf((*MockChannel)(nil).QueuePurge), ctx, name, noWait)
 }
 
 // Reject mocks base method.
-func (m *MockChannel) Reject(tag uint64, requeue bool) error {
+func (m *MockChannel) Reject(ctx context.Context, tag uint64, requeue bool) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Reject", tag, requeue)
+	ret := m.ctrl.Call(m, "Reject", ctx, tag, requeue)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Reject indicates an expected call of Reject.
-func (mr *MockChannelMockRecorder) Reject(tag, requeue any) *gomock.Call {
+func (mr *MockChannelMockRecorder) Reject(ctx, tag, requeue any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reject", reflect.TypeOf((*MockChannel)(nil).Reject), tag, requeue)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reject", reflect.TypeOf((*MockChannel)(nil).Reject), ctx, tag, requeue)
 }
 
 // MockPublisher is a mock of Publisher interface.

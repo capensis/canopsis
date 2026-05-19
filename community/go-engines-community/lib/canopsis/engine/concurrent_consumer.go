@@ -44,7 +44,7 @@ type concurrentConsumer struct {
 }
 
 func (c *concurrentConsumer) Consume(ctx context.Context) error {
-	err := c.queuePurge()
+	err := c.queuePurge(ctx)
 	if err != nil {
 		return err
 	}

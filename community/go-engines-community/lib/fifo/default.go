@@ -107,8 +107,8 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	s.TemplateConfigProvider = templateConfigProvider
 	dataStorageConfigProvider := config.NewDataStorageConfigProvider(s.Cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, s.Cfg)
-	amqpPubChannel := m.DepAMQPChannelPub(amqpConnection)
-	amqpConsumeChannel := m.DepAMQPChannelSub(amqpConnection, s.Cfg.Global.PrefetchCount, s.Cfg.Global.PrefetchSize)
+	amqpPubChannel := m.DepAMQPChannelPub(ctx, amqpConnection)
+	amqpConsumeChannel := m.DepAMQPChannelSub(ctx, amqpConnection, s.Cfg.Global.PrefetchCount, s.Cfg.Global.PrefetchSize)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, s.Cfg)
 	engineLockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, s.Cfg)
 	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, s.Cfg)

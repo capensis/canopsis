@@ -2,7 +2,6 @@ package workers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"sync"
 
@@ -13,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"golang.org/x/sync/errgroup"
 )
 
 type JobPublisher interface {
@@ -50,19 +48,17 @@ type Runner struct {
 
 func (r *Runner) Run(ctx context.Context) error {
 	// check if queue exists because Consume method doesn't return appropriate error
-	_, err := r.amqpChannel.QueueInspect(r.queue)
+	_, err := r.amqpChannel.QueueDeclarePassive(ctx, r.queue, false, false, false, false, nil)
 	if err != nil {
 		return err
 	}
 
-	ch, err := r.amqpChannel.Consume(r.queue, "", false, false, false, false, nil)
-	if err != nil {
-		return fmt.Errorf("failed to consume jobs: %w", err)
+	opts := libamqp.ConsumeOptions{
+		Queue: r.queue,
 	}
 
-	g, ctx := errgroup.WithContext(ctx)
-	for i := 0; i < r.workers; i++ {
-		g.Go(func() error {
+	return libamqp.ConsumeWithReconnect(ctx, r.amqpChannel, opts, r.workers, func(ctx context.Context, ch <-chan amqp.Delivery) func() error {
+		return func() error {
 			var err error
 			for {
 				select {
@@ -70,7 +66,7 @@ func (r *Runner) Run(ctx context.Context) error {
 					return nil
 				case msg, ok := <-ch:
 					if !ok {
-						return errors.New("channel closed")
+						return nil
 					}
 
 					r.logger.Debug().Str("msg", string(msg.Body)).Msg("worker job message")
@@ -93,7 +89,7 @@ func (r *Runner) Run(ctx context.Context) error {
 					if err != nil {
 						r.logger.Err(err).Str("type", job.Type).Str("id", job.ID).Msg("failed to execute job")
 						if mongo.IsConnectionError(err) {
-							err = r.amqpChannel.Nack(msg.DeliveryTag, false, true)
+							err = r.amqpChannel.Nack(ctx, msg.DeliveryTag, false, true)
 							if err != nil {
 								r.logger.Err(err).Msg("failed to negatively acknowledge message")
 							}
@@ -102,16 +98,14 @@ func (r *Runner) Run(ctx context.Context) error {
 						}
 					}
 
-					err = r.amqpChannel.Ack(msg.DeliveryTag, false)
+					err = r.amqpChannel.Ack(ctx, msg.DeliveryTag, false)
 					if err != nil {
 						r.logger.Err(err).Msg("failed to acknowledge message")
 					}
 				}
 			}
-		})
-	}
-
-	return g.Wait()
+		}
+	})
 }
 
 func (r *Runner) AddJobExecutor(t string, e JobExecutor) {

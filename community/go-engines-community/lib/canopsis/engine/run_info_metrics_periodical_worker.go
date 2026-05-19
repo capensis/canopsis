@@ -44,7 +44,7 @@ func (w *queueMetricsPeriodicalWorker) Work(ctx context.Context) {
 	queueLength := 0
 
 	for i := range w.consumeQueues {
-		queue, err := w.channel.QueueInspect(w.consumeQueues[i])
+		queue, err := w.channel.QueueDeclarePassive(ctx, w.consumeQueues[i], false, false, false, false, nil)
 		if err != nil {
 			w.logger.Err(err).Msg("cannot get consume queue length")
 		}

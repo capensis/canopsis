@@ -110,8 +110,8 @@ func NewEngine(
 		panic(fmt.Errorf("dependency error: %s: %w", "can't get user interface config", err))
 	}
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
-	amqpPubChannel := m.DepAMQPChannelPub(amqpConnection)
-	amqpConsumeChannel := m.DepAMQPChannelSub(amqpConnection, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
+	amqpPubChannel := m.DepAMQPChannelPub(ctx, amqpConnection)
+	amqpConsumeChannel := m.DepAMQPChannelSub(ctx, amqpConnection, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
