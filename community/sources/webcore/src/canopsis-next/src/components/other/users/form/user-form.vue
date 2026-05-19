@@ -6,11 +6,13 @@
       hide-details
       with-background
     />
+
     <c-id-field
       v-field="form._id"
       :disabled="onlyUserPrefs || !isNew"
       autofocus
     />
+
     <c-name-field
       v-field="form.name"
       :label="$t('common.username')"
@@ -19,69 +21,81 @@
       autocomplete="new-password"
       required
     />
-    <v-text-field
-      v-field="form.firstname"
-      :label="$t('user.firstName')"
-      :disabled="onlyUserPrefs || idpFieldsMap['firstname']"
-    />
-    <v-text-field
-      v-field="form.lastname"
-      :label="$t('user.lastName')"
-      :disabled="onlyUserPrefs || idpFieldsMap['lastname']"
-    />
-    <v-text-field
-      v-field="form.email"
-      v-validate="'required|email'"
-      :label="$t('user.email')"
-      :disabled="onlyUserPrefs || idpFieldsMap['email']"
-      :error-messages="errors.collect('email')"
-      name="email"
-      autocomplete="new-password"
-    />
-    <c-password-field
-      v-if="hasPassword"
-      v-field="form.password"
-      :required="isNew"
-      :autofocus="onlyUserPrefs"
-      autocomplete="new-password"
-    />
-    <c-role-field
-      v-field="form.roles"
-      :disabled="onlyUserPrefs || idpFieldsMap['roles']"
-      :label="$tc('common.role', 2)"
-      :is-disabled-items="isDisabledRoleItem"
-      name="roles"
-      required
-      multiple
-      chips
-    />
-    <c-language-field
-      v-field="form.ui_language"
-      :label="$t('user.language')"
-    />
-    <v-select
-      v-field="form.ui_groups_navigation_type"
-      :label="$t('user.navigationType')"
-      :items="groupsNavigationItems"
-      class="mt-0"
-    />
-    <c-theme-field v-if="hasReadThemeAccess" v-field="form.ui_theme" clearable />
-    <v-layout
-      v-if="!isNew"
-      align-center
-    >
-      <div>{{ $t('common.authKey') }}: {{ user.authkey }}</div>
-      <c-copy-btn
-        :value="user.authkey"
-        :tooltip="$t('common.copyToClipboard')"
-        small
-        fab
-        left
-        @success="showCopyAuthKeySuccessPopup"
-        @error="showCopyAuthKeyErrorPopup"
-      />
-    </v-layout>
-    <view-selector v-field="form.defaultview" />
+
+    <c-form-block>
+      <c-form-block-row :label="$t('user.email')">
+        <v-text-field
+          v-field="form.email"
+          v-validate="'required|email'"
+          :label="$t('user.email')"
+          :disabled="onlyUserPrefs || idpFieldsMap['email']"
+          :error-messages="errors.collect('email')"
+          name="email"
+          autocomplete="new-password"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.password')">
+        <c-password-field
+          v-field="form.password"
+          :required="isNew"
+          :autofocus="onlyUserPrefs"
+          autocomplete="new-password"
+          visibility
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$tc('common.role', 2)">
+        <c-role-field
+          v-field="form.roles"
+          :disabled="onlyUserPrefs || idpFieldsMap['roles']"
+          :label="$tc('common.role', 2)"
+          :is-disabled-items="isDisabledRoleItem"
+          name="roles"
+          required
+          multiple
+          chips
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('user.language')">
+        <c-language-field
+          v-field="form.ui_language"
+          :label="$t('user.language')"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('user.navigationType')">
+        <v-select
+          v-field="form.ui_groups_navigation_type"
+          :label="$t('user.navigationType')"
+          :items="groupsNavigationItems"
+          :menu-props="menuProps"
+          class="mt-0"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$tc('common.theme', 2)">
+        <c-theme-field v-if="hasReadThemeAccess" v-field="form.ui_theme" clearable />
+      </c-form-block-row>
+
+      <c-form-block-row v-if="!isNew">
+        <div>{{ $t('common.authKey') }}: {{ user.authkey }}</div>
+        <c-copy-btn
+          :value="user.authkey"
+          :tooltip="$t('common.copyToClipboard')"
+          small
+          fab
+          left
+          @success="showCopyAuthKeySuccessPopup"
+          @error="showCopyAuthKeyErrorPopup"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('role.defaultView')">
+        <view-selector v-field="form.defaultview" />
+      </c-form-block-row>
+    </c-form-block>
   </v-layout>
 </template>
 
@@ -124,6 +138,8 @@ export default {
     },
   },
   setup(props) {
+    const menuProps = { offsetY: true };
+
     const { t } = useI18n();
     const popups = usePopups();
     const { currentUser } = useAuth();
@@ -152,6 +168,8 @@ export default {
     const showCopyAuthKeyErrorPopup = () => popups.error({ text: t('errors.default') });
 
     return {
+      menuProps,
+
       hasReadThemeAccess,
       hasPassword,
       groupsNavigationItems,

@@ -45,6 +45,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    bottomBorder: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const { hasChildrenError } = useValidationChildren();
@@ -52,6 +56,7 @@ export default {
     const layoutClasses = computed(() => ({
       [`c-form-block-row--depth-${props.depth}`]: !!props.depth,
       'c-form-block-row--top-border': !!props.topBorder,
+      'c-form-block-row--bottom-border': !!props.bottomBorder,
       'c-form-block-row--error': hasChildrenError.value,
     }));
 
@@ -81,6 +86,15 @@ export default {
 </script>
 
 <style lang="scss">
+:root {
+  --c-form-block-row-label-background-color-light: #EAEAEA;
+  --c-form-block-row-label-background-color-light-depth-1: #F0F0F0;
+  --c-form-block-row-label-background-color-light-depth-2: #F5F5F5;
+
+  --c-form-block-row-label-background-color-dark: var(--v-application-background-lighten2);
+  --c-form-block-row-label-background-color-dark-depth-1: #3A3A3A;
+  --c-form-block-row-label-background-color-dark-depth-2: #474747;
+}
 .c-form-block-row {
   &:not(:last-child) {
     border-bottom: 1px solid var(--v-application-background-darken2);
@@ -88,6 +102,10 @@ export default {
 
   &--top-border {
     border-top: 1px solid var(--v-application-background-darken2);
+  }
+
+  &--bottom-border {
+    border-bottom: 1px solid var(--v-application-background-darken2);
   }
 
   .c-form-block-row__label {
@@ -142,7 +160,7 @@ export default {
   }
 
   .c-form-block-row__label {
-    background-color: var(--v-application-background-lighten2);
+    background-color: var(--c-form-block-row-label-background-color-dark);
     border-right-color: var(--v-application-background-lighten3);
   }
 
@@ -151,25 +169,25 @@ export default {
   }
 
   &--depth-1 .c-form-block-row__label {
-    background-image: linear-gradient(rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.052));
+    background-color: var(--c-form-block-row-label-background-color-dark-depth-1);
   }
 
   &--depth-2 .c-form-block-row__label {
-    background-image: linear-gradient(rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.085));
+    background-color: var(--c-form-block-row-label-background-color-dark-depth-2);
   }
 }
 
 .theme--light .c-form-block-row {
   .c-form-block-row__label {
-    background-color: #EAEAEA;
+    background-color: var(--c-form-block-row-label-background-color-light);
   }
 
   &--depth-1 .c-form-block-row__label {
-    background-color: #F0F0F0;
+    background-color: var(--c-form-block-row-label-background-color-light-depth-1);
   }
 
   &--depth-2 .c-form-block-row__label {
-    background-color: #F5F5F5;
+    background-color: var(--c-form-block-row-label-background-color-light-depth-2);
   }
 }
 </style>

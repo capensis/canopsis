@@ -68,7 +68,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.pbehaviorsCalendar]: { maxWidth: '95%', persistent: true },
       [MODALS.pbehaviorRecurrenceRule]: { maxWidth: '95%', persistent: true },
       [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
-      [MODALS.createRemediationInstruction]: { maxWidth: 960 },
+      [MODALS.createRemediationInstruction]: { maxWidth: 1200 },
       [MODALS.createTicketStatusJob]: { maxWidth: 1200 },
       [MODALS.remediationInstructionApproval]: { maxWidth: 960 },
       [MODALS.executeRemediationInstruction]: { maxWidth: 960 },
@@ -115,6 +115,8 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.aiChatHistory]: { maxWidth: 700 },
       [MODALS.createRecurrenceRule]: { maxWidth: 1000 },
       [MODALS.createSnmpRule]: { maxWidth: 1000 },
+      [MODALS.createRole]: { maxWidth: 900 },
+      [MODALS.createUser]: { maxWidth: 900 },
 
       ...featuresService.get('components.modals.dialogPropsMap'),
     },
