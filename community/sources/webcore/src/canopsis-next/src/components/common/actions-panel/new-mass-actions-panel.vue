@@ -1,63 +1,18 @@
 <template>
   <div :style="{ width: `${maxWidth}px` }" class="mass-actions-panel__wrapper">
     <v-layout ref="actionsElement" class="mass-actions-panel__actions">
-      <c-action-btn
+      <mass-actions-panel-inline-actions
         v-for="action in preparedActions.inline"
         :key="action.type"
-        :tooltip="action.title"
-        :disabled="action.disabled"
-        :loading="action.loading"
-        :icon="action.icon"
-        :color="action.iconColor"
-        :badge-value="action.badgeValue"
-        :badge-tooltip="action.badgeTooltip"
+        :action="action"
         :small="small"
-        @click="action.method"
       />
-      <v-menu
+      <mass-actions-panel-dropdown-menu-actions
         v-if="preparedActions.dropDown.length"
-        bottom
-        left
-        @click.native.stop=""
-      >
-        <template #activator="{ on }">
-          <v-btn
-            :small="small"
-            icon
-            v-on="on"
-          >
-            <v-icon>more_vert</v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            v-for="action in preparedActions.dropDown"
-            :key="action.type"
-            :disabled="action.disabled || action.loading"
-            @click.stop="action.method"
-          >
-            <v-list-item-title>
-              <span class="mr-4">
-                <v-icon
-                  :color="action.iconColor"
-                  :disabled="action.disabled"
-                  class="ma-0 pa-0"
-                  left
-                  small
-                >
-                  {{ action.icon }}
-                </v-icon>
-              </span>
-              <span
-                :class="action.cssClass"
-                class="text-body-1"
-              >
-                {{ action.title }}
-              </span>
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+        key="dropdown-menu-actions"
+        :actions="preparedActions.dropDown"
+        :small="small"
+      />
     </v-layout>
   </div>
 </template>
@@ -73,7 +28,14 @@ import {
 
 import { MASS_ACTIONS_BUTTON_WIDTH } from '@/constants';
 
+import MassActionsPanelDropdownMenuActions from './mass-actions-panel-dropdown-menu-actions.vue';
+import MassActionsPanelInlineActions from './mass-actions-panel-inline-actions.vue';
+
 export default {
+  components: {
+    MassActionsPanelDropdownMenuActions,
+    MassActionsPanelInlineActions,
+  },
   props: {
     actions: {
       type: Array,
