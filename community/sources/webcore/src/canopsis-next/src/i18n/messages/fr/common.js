@@ -100,6 +100,7 @@ export default {
   parse: 'Analyser',
   home: 'Accueil',
   step: 'Étape',
+  workflow: 'Comportement',
   paginationItems: 'Affiche {first} à {last} sur {total} Entrées',
   apply: 'Appliquer',
   from: 'Depuis',

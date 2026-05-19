@@ -15,7 +15,7 @@
           </v-layout>
           <span v-if="execution.current_operation">
             <strong class="mr-2">
-              {{ $t('common.step') }} {{ stepFullNumber }}:
+              {{ $tc('common.step') }} {{ stepFullNumber }}:
             </strong>
             <span>{{ execution.current_operation.name }}</span>
           </span>

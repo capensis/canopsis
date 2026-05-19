@@ -494,6 +494,11 @@ html {
   content: none !important;
 }
 
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
 @for $i from 0 through 16 {
   .row-gap-#{$i}, .gap-#{$i} {
     row-gap: $i * 4px;

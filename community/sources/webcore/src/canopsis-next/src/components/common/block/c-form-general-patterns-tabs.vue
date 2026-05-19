@@ -22,6 +22,9 @@
         <template v-else-if="tab.patterns">
           {{ patternsLabel || $tc('common.pattern') }}
         </template>
+        <template v-else-if="tab.additional">
+          {{ additionalLabel || $t('common.additional') }}
+        </template>
         <template v-else-if="tab['test-query']">
           <v-tooltip :disabled="!disabledTestQueryTooltip" top>
             <template #activator="{ on }">
@@ -37,7 +40,7 @@
       v-for="tab in visibleTabs"
       :key="`item-${tab.id}`"
       :class="tabItemClass(tab)"
-      :eager="tab.general || tab.patterns"
+      :eager="tab.general || tab.patterns || tab.additional"
       :disabled="tab.testing && isEmptyVariablesFields"
     >
       <slot
@@ -47,6 +50,15 @@
         :template-vars="templateVars"
         :pending="templateTestingPending"
         name="general"
+      />
+
+      <slot
+        v-else-if="tab.additional"
+        :set-ref="setAdditionalRef"
+        :template-vars="templateVars"
+        :copy-vars="copyVars"
+        :pending="templateTestingPending"
+        name="additional"
       />
 
       <slot
@@ -100,17 +112,21 @@ import {
 import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
 import TemplateTestingTestVariablesTab from '@/components/other/template-testing/test-variables/partials/template-testing-test-variables-tab.vue';
 
-const TAB_GENERAL = 'general';
-const TAB_PATTERNS = 'patterns';
-const TAB_TEST_QUERY = 'test-query';
-const TAB_TESTING = 'testing';
+const TABS = {
+  general: 'general',
+  patterns: 'patterns',
+  testQuery: 'test-query',
+  testing: 'testing',
+  additional: 'additional',
+};
 
 const createTab = id => ({
   id,
-  [TAB_GENERAL]: id === TAB_GENERAL,
-  [TAB_PATTERNS]: id === TAB_PATTERNS,
-  [TAB_TEST_QUERY]: id === TAB_TEST_QUERY,
-  [TAB_TESTING]: id === TAB_TESTING,
+  [TABS.general]: id === TABS.general,
+  [TABS.patterns]: id === TABS.patterns,
+  [TABS.testQuery]: id === TABS.testQuery,
+  [TABS.testing]: id === TABS.testing,
+  [TABS.additional]: id === TABS.additional,
 });
 
 export default {
@@ -140,6 +156,10 @@ export default {
       type: String,
       default: '',
     },
+    additionalLabel: {
+      type: String,
+      default: '',
+    },
     disabledTestQueryTooltip: {
       type: String,
       required: false,
@@ -157,13 +177,15 @@ export default {
 
     const generalElement = ref(null);
     const patternsElement = ref(null);
+    const additionalElement = ref(null);
 
     const setGeneralRef = refElement => generalElement.value = refElement;
     const setPatternsRef = refElement => patternsElement.value = refElement;
+    const setAdditionalRef = refElement => additionalElement.value = refElement;
 
     const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
     const { hasChildrenError: hasPatternsError } = useValidationElementChildren(patternsElement);
-
+    const { hasChildrenError: hasAdditionalError } = useValidationElementChildren(additionalElement);
     const {
       vars: copyVars,
       pending: copyVarsPending,
@@ -193,14 +215,16 @@ export default {
     const hasGeneralSlot = computed(() => Boolean(slots.general));
     const hasPatternsSlot = computed(() => Boolean(slots.patterns));
     const hasTestQuerySlot = computed(() => Boolean(slots['test-query']));
+    const hasAdditionalSlot = computed(() => Boolean(slots.additional));
 
     const visibleTabs = computed(() => {
-      const generalTab = hasGeneralSlot.value && !props.hideGeneral && createTab(TAB_GENERAL);
-      const patternsTab = hasPatternsSlot.value && createTab(TAB_PATTERNS);
-      const testQueryTab = hasTestQuerySlot.value && createTab(TAB_TEST_QUERY);
-      const testingTab = hasTemplateTestingTab.value && createTab(TAB_TESTING);
+      const generalTab = hasGeneralSlot.value && !props.hideGeneral && createTab(TABS.general);
+      const patternsTab = hasPatternsSlot.value && createTab(TABS.patterns);
+      const testQueryTab = hasTestQuerySlot.value && createTab(TABS.testQuery);
+      const testingTab = hasTemplateTestingTab.value && createTab(TABS.testing);
+      const additionalTab = hasAdditionalSlot.value && createTab(TABS.additional);
 
-      const tabs = props.reverse ? [patternsTab, generalTab] : [generalTab, patternsTab];
+      const tabs = props.reverse ? [patternsTab, generalTab, additionalTab] : [generalTab, additionalTab, patternsTab];
 
       tabs.push(testQueryTab, testingTab);
 
@@ -208,17 +232,17 @@ export default {
     });
 
     const patternsTabIndex = computed(() => (
-      visibleTabs.value.findIndex(tab => tab.id === TAB_PATTERNS)
+      visibleTabs.value.findIndex(tab => tab.id === TABS.patterns)
     ));
 
-    const testingTabIndex = computed(() => visibleTabs.value.findIndex(tab => tab.id === TAB_TESTING));
+    const testingTabIndex = computed(() => visibleTabs.value.findIndex(tab => tab.id === TABS.testing));
 
     const isActiveTestingTab = computed(() => (
       testingTabIndex.value !== -1 && activeTab.value === testingTabIndex.value
     ));
 
     const tabTabClass = tab => ({
-      'error--text': (tab.general && hasGeneralError.value) || (tab.patterns && hasPatternsError.value),
+      'error--text': (tab.general && hasGeneralError.value) || (tab.patterns && hasPatternsError.value) || (tab.additional && hasAdditionalError.value),
       'v-tab--tooltip': tab['test-query'],
     });
 
@@ -252,6 +276,7 @@ export default {
 
       setGeneralRef,
       setPatternsRef,
+      setAdditionalRef,
 
       copyVars,
       templateVars,
