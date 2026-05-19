@@ -46,7 +46,6 @@ export const useView = () => {
     getGroupById: 'getGroupById',
     getViewById: 'getViewById',
     getViewTabById: 'getViewTabById',
-    getGroupById: 'getGroupById',
   });
 
   const actions = useActions({
