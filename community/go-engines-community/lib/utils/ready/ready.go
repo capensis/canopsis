@@ -108,7 +108,7 @@ func CheckMongo(ctx context.Context, _ zerolog.Logger) error {
 }
 
 func CheckAMQP(_ context.Context, logger zerolog.Logger) error {
-	q, err := amqp.NewConnection(logger, 0, 0)
+	q, err := amqp.New(0, 0, logger)
 	if err != nil {
 		return err
 	}

@@ -52,7 +52,7 @@ func updateInstanceRunInfo(
 	info.QueueLength = 0
 
 	for i := range info.ConsumeQueues {
-		queue, err := channel.QueueInspect(info.ConsumeQueues[i])
+		queue, err := channel.QueueDeclarePassive(ctx, info.ConsumeQueues[i], false, false, false, false, nil)
 		if err != nil {
 			logger.Err(err).Msg("cannot get consume queue length")
 			return InstanceRunInfo{}

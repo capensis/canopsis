@@ -45,25 +45,25 @@ func (m DependencyMaker) DepConfig(ctx context.Context, dbClient mongo.DbClient)
 
 // DepAmqpConnection opens an amqp session.
 func (m DependencyMaker) DepAmqpConnection(logger zerolog.Logger, cfg config.CanopsisConf) libamqp.Connection {
-	c, err := libamqp.NewConnection(logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+	c, err := libamqp.New(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 	Panic("amqp session", err)
 	return c
 }
 
 // DepAMQPChannelSub opens a channel from a given session, and apply Qos on it.
-func (m DependencyMaker) DepAMQPChannelSub(session libamqp.Connection, prefetchCount, prefetchSize int) libamqp.Channel {
-	channel, err := session.Channel()
+func (m DependencyMaker) DepAMQPChannelSub(ctx context.Context, session libamqp.Connection, prefetchCount, prefetchSize int) libamqp.Channel {
+	channel, err := session.Channel(ctx)
 	Panic("amqp consume channel", err)
 
-	err = channel.Qos(prefetchCount, prefetchSize, true)
+	err = channel.Qos(ctx, prefetchCount, prefetchSize, true)
 	Panic("amqp consume channel qos", err)
 
 	return channel
 }
 
 // DepAMQPChannelPub opens a channel from a given session, to be used for publishing messages.
-func (m DependencyMaker) DepAMQPChannelPub(session libamqp.Connection) libamqp.Channel {
-	channel, err := session.Channel()
+func (m DependencyMaker) DepAMQPChannelPub(ctx context.Context, session libamqp.Connection) libamqp.Channel {
+	channel, err := session.Channel(ctx)
 	Panic("amqp publish channel", err)
 	return channel
 }

@@ -35,7 +35,7 @@ func main() {
 		return
 	}
 
-	amqpConnection, err := amqp.NewConnection(liblog.NewLogger(ctx, logOpts), 0, 0)
+	amqpConnection, err := amqp.New(0, 0, liblog.NewLogger(ctx, logOpts))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,7 +47,7 @@ func main() {
 		}
 	}()
 
-	ch, err := amqpConnection.Channel()
+	ch, err := amqpConnection.Channel(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -60,6 +60,7 @@ func main() {
 	}()
 
 	queue, err := ch.QueueDeclare(
+		ctx,
 		daemonName,
 		true,
 		true,
@@ -72,6 +73,7 @@ func main() {
 	}
 
 	err = ch.QueueBind(
+		ctx,
 		queue.Name,
 		"#",
 		exchange,
@@ -82,7 +84,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	msgs, err := ch.Consume(
+	msgs, _, err := ch.ConsumeWithContext(
+		ctx,
 		queue.Name,
 		daemonName,
 		true,

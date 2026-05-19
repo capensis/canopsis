@@ -169,15 +169,15 @@ func Default(
 	services.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
 	services.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg, logger)
 	// Connect to rmq.
-	amqpConn, err := libamqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
+	amqpConn, err := libamqp.New(-1, cfg.Global.GetReconnectTimeout(), logger)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
-	amqpPublisher, err := amqpConn.Channel()
+	amqpPublisher, err := amqpConn.Channel(ctx)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
-	amqpConsumer, err := amqpConn.Channel()
+	amqpConsumer, err := amqpConn.Channel(ctx)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}

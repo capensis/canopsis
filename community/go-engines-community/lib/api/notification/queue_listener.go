@@ -2,8 +2,6 @@ package notification
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -13,10 +11,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
-	"golang.org/x/sync/errgroup"
 )
 
 type QueueListener interface {
@@ -56,77 +54,53 @@ type queueListener struct {
 }
 
 func (s *queueListener) Listen(ctx context.Context) error {
-	q, err := s.amqpChannel.QueueDeclare(
-		"",    // name
-		true,  // durable
-		true,  // delete when unused
-		true,  // exclusive
-		false, // no-wait
-		nil,   // arguments
-	)
-	if err != nil {
-		return fmt.Errorf("cannot declare queue: %w", err)
+	opts := amqp.SubscribeOptions{
+		Exchange:       canopsis.ApiNotificationExchangeName,
+		QueueExclusive: true,
 	}
 
-	err = s.amqpChannel.QueueBind(
-		q.Name,                               // name
-		"",                                   // key
-		canopsis.ApiNotificationExchangeName, // exchange
-		false,                                // no-wait
-		nil,                                  // arguments
-	)
-	if err != nil {
-		return fmt.Errorf("cannot bind queue: %w", err)
-	}
+	return amqp.SubscribeWithReconnect(ctx, s.amqpChannel, opts, s.workers, s.newWorkerFunc)
+}
 
-	ch, err := s.amqpChannel.Consume(q.Name, "", false, false, false, false, nil)
-	if err != nil {
-		return fmt.Errorf("failed to consume events: %w", err)
-	}
-
-	g, ctx := errgroup.WithContext(ctx)
-	for i := 0; i < s.workers; i++ {
-		g.Go(func() error {
-			var err error
-			for {
-				select {
-				case <-ctx.Done():
+func (s *queueListener) newWorkerFunc(ctx context.Context, ch <-chan amqp091.Delivery) func() error {
+	return func() error {
+		var err error
+		for {
+			select {
+			case <-ctx.Done():
+				return nil
+			case msg, ok := <-ch:
+				if !ok {
 					return nil
-				case msg, ok := <-ch:
-					if !ok {
-						return errors.New("channel closed")
-					}
+				}
 
-					event := rpc.ApiNotificationEvent{}
-					err = s.decoder.Decode(msg.Body, &event)
-					if err != nil {
-						s.logger.Err(err).Msg("failed to decode remediation result event")
+				event := rpc.ApiNotificationEvent{}
+				err = s.decoder.Decode(msg.Body, &event)
+				if err != nil {
+					s.logger.Err(err).Msg("failed to decode remediation result event")
+					continue
+				}
+
+				err = s.processEvent(ctx, event)
+				if err != nil {
+					s.logger.Err(err).Msg("failed to process notification event")
+					if mongo.IsConnectionError(err) {
+						err = s.amqpChannel.Nack(ctx, msg.DeliveryTag, false, true)
+						if err != nil {
+							s.logger.Err(err).Msg("failed to negatively acknowledge message")
+						}
+
 						continue
 					}
+				}
 
-					err = s.processEvent(ctx, event)
-					if err != nil {
-						s.logger.Err(err).Msg("failed to process notification event")
-						if mongo.IsConnectionError(err) {
-							err = s.amqpChannel.Nack(msg.DeliveryTag, false, true)
-							if err != nil {
-								s.logger.Err(err).Msg("failed to negatively acknowledge message")
-							}
-
-							continue
-						}
-					}
-
-					err = s.amqpChannel.Ack(msg.DeliveryTag, false)
-					if err != nil {
-						s.logger.Err(err).Msg("failed to acknowledge message")
-					}
+				err = s.amqpChannel.Ack(ctx, msg.DeliveryTag, false)
+				if err != nil {
+					s.logger.Err(err).Msg("failed to acknowledge message")
 				}
 			}
-		})
+		}
 	}
-
-	return g.Wait()
 }
 
 func (s *queueListener) processEvent(ctx context.Context, event rpc.ApiNotificationEvent) error {

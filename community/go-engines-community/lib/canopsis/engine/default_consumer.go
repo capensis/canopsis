@@ -2,14 +2,12 @@ package engine
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"runtime/debug"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"golang.org/x/sync/errgroup"
 )
 
 type defaultConsumer struct {
@@ -35,9 +33,9 @@ type defaultConsumer struct {
 	logger zerolog.Logger
 }
 
-func (c *defaultConsumer) queuePurge() error {
+func (c *defaultConsumer) queuePurge(ctx context.Context) error {
 	if c.purgeQueue {
-		_, err := c.consumeCh.QueuePurge(c.queue, false)
+		_, err := c.consumeCh.QueuePurge(ctx, c.queue, false)
 		if err != nil {
 			return fmt.Errorf("error while purging queue: %w", err)
 		}
@@ -53,7 +51,7 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) e
 		Msgf("received")
 	msgToNext, err := c.processor.Process(ctx, d)
 	if err != nil {
-		nackErr := c.consumeCh.Nack(d.DeliveryTag, false, true)
+		nackErr := c.consumeCh.Nack(ctx, d.DeliveryTag, false, true)
 		if nackErr != nil {
 			c.logger.Err(nackErr).Msg("cannot nack amqp delivery")
 		}
@@ -61,7 +59,7 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) e
 		return fmt.Errorf("cannot process message: %w", err)
 	}
 
-	err = c.consumeCh.Ack(d.DeliveryTag, false)
+	err = c.consumeCh.Ack(ctx, d.DeliveryTag, false)
 	if err != nil {
 		c.logger.Err(err).Msg("cannot ack amqp delivery")
 	}
@@ -129,28 +127,24 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) e
 }
 
 func (c *defaultConsumer) consume(ctx context.Context, workers int) error {
-	msgs, err := c.consumeCh.Consume(
-		c.queue,     // queue
-		c.name,      // consumer
-		false,       // auto-ack
-		c.exclusive, // exclusive
-		false,       // no-local
-		false,       // no-wait
-		nil,         // args
+	opts := libamqp.ConsumeOptions{
+		Queue:     c.queue,
+		Consumer:  c.name,
+		Exclusive: c.exclusive,
+	}
+
+	return libamqp.ConsumeWithReconnect(
+		ctx,
+		c.consumeCh,
+		opts,
+		workers,
+		func(gctx context.Context, d <-chan amqp.Delivery) func() error {
+			return c.newWorkerFunc(gctx, d)
+		},
 	)
-	if err != nil {
-		return fmt.Errorf("cannot consume messages: %w", err)
-	}
-
-	g, ctx := errgroup.WithContext(ctx)
-	for i := 0; i < workers; i++ {
-		g.Go(c.getWorkerFunc(ctx, msgs))
-	}
-
-	return g.Wait()
 }
 
-func (c *defaultConsumer) getWorkerFunc(ctx context.Context, ch <-chan amqp.Delivery) func() error {
+func (c *defaultConsumer) newWorkerFunc(ctx context.Context, ch <-chan amqp.Delivery) func() error {
 	return func() (resErr error) {
 		defer func() {
 			if r := recover(); r != nil {
@@ -171,7 +165,7 @@ func (c *defaultConsumer) getWorkerFunc(ctx context.Context, ch <-chan amqp.Deli
 				return nil
 			case d, ok := <-ch:
 				if !ok {
-					return errors.New("the rabbitmq channel has been closed")
+					return nil
 				}
 
 				err := c.processMessage(ctx, d)
