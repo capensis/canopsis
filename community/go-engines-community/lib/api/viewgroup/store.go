@@ -116,6 +116,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds, owne
 						"foreignField": "tab",
 						"as":           "widgets",
 					}},
+					bson.M{"$project": bson.M{"widgets.parameters": 0}},
 					bson.M{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
 				)
 				project = append(project, s.authorProvider.PipelineForField("widgets.author")...)
