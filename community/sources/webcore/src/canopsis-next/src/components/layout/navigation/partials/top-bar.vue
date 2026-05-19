@@ -1,6 +1,7 @@
 <template>
   <v-app-bar
     :height="$config.TOP_BAR_HEIGHT"
+    :class="{ 'top-bar--with-extension': isShownGroupsTopBar }"
     class="top-bar primary"
     dense
     fixed
@@ -130,12 +131,14 @@ export default {
 }
 
 .top-bar {
-  & ::v-deep .v-toolbar__content {
-    padding: 0;
+  &.top-bar--with-extension ::v-deep .v-toolbar__content {
+    z-index: 1;
   }
 
-  & ::v-deep .v-toolbar__extension {
-    padding: 0;
+  & ::v-deep {
+    .v-toolbar__content, .v-toolbar__extension {
+      padding: 0;
+    }
   }
 }
 </style>

@@ -8,7 +8,7 @@ import {
   createWidgetModule,
 } from '@unit/utils/store';
 
-import { WIDGET_GRID_SIZES_KEYS, WIDGET_TYPES } from '@/constants';
+import { VIEW_SCREEN_MODES, WIDGET_GRID_SIZES_KEYS, WIDGET_TYPES } from '@/constants';
 
 import { setField } from '@/helpers/immutable';
 
@@ -181,6 +181,63 @@ describe('view-tab-widgets', () => {
     await wrapper.vm.updatePositions();
 
     expect(updateGridPositions).toHaveBeenCalledTimes(0);
+  });
+
+  it('Reflects active view screen mode from store', () => {
+    const wrapperDefaultScreenMode = factory({
+      propsData: {
+        tab: {
+          _id: 'tab-id',
+          widgets: [],
+        },
+      },
+      store,
+    });
+
+    expect(wrapperDefaultScreenMode.vm.activeViewScreenMode).toBe(VIEW_SCREEN_MODES.default);
+    expect(wrapperDefaultScreenMode.vm.isDefaultMode).toBe(true);
+
+    const activeViewFullscreenModule = {
+      name: 'activeView',
+      getters: {
+        editing: jest.fn().mockReturnValue(false),
+        item: jest.fn().mockReturnValue({}),
+        screenMode: jest.fn().mockReturnValue(VIEW_SCREEN_MODES.fullscreen),
+        isKioskScreenMode: jest.fn().mockReturnValue(false),
+        periodicRefreshPaused: jest.fn().mockReturnValue(false),
+      },
+      actions: {
+        registerEditingOffHandler: jest.fn(),
+        unregisterEditingOffHandler: jest.fn(),
+        toggleEditing: jest.fn(),
+        setScreenMode: jest.fn(),
+        fetch: jest.fn(),
+        resumePeriodicRefresh: jest.fn(),
+        pausePeriodicRefresh: jest.fn(),
+      },
+    };
+
+    const storeFullscreen = createMockedStoreModules([
+      queryModule,
+      activeViewFullscreenModule,
+      widgetModule,
+    ]);
+
+    const wrapperNonDefaultScreenMode = factory({
+      propsData: {
+        tab: {
+          _id: 'tab-id',
+          widgets: [],
+        },
+      },
+      store: storeFullscreen,
+    });
+
+    expect(wrapperNonDefaultScreenMode.vm.activeViewScreenMode).toBe(VIEW_SCREEN_MODES.fullscreen);
+    expect(wrapperNonDefaultScreenMode.vm.isDefaultMode).toBe(false);
+
+    wrapperDefaultScreenMode.destroy();
+    wrapperNonDefaultScreenMode.destroy();
   });
 
   it('Update positions triggers updateGridPositions with changes', async () => {

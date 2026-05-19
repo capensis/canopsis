@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit, pick } from 'lodash';
 import { computed, unref } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
@@ -50,7 +50,7 @@ export const useQueryOptions = (query, updateQuery) => {
     const oldItemsPerPage = unwrappedQuery.itemsPerPage ?? PAGINATION_LIMIT;
 
     updateQuery({
-      ...unwrappedQuery,
+      ...pick(unwrappedQuery, Object.keys(value)),
 
       search: value.search || '',
       page: value.itemsPerPage <= oldItemsPerPage ? value.page : 1,

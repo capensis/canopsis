@@ -92,6 +92,7 @@ export default {
       wasPaused: 'La consigne {instructionName} a été mise en pause.',
       wasFinished: 'La consigne {instructionName} s\'est terminée.',
       wasFailed: 'La consigne {instructionName} a échoué.',
+      wasWaitingResult: 'La consigne {instructionName} attend un résultat.',
       wasRemovedOrDisabled: 'La consigne {instructionName} a été supprimée ou désactivée.',
     },
     jobs: {

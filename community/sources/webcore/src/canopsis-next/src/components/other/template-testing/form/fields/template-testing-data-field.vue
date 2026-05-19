@@ -8,6 +8,7 @@
     :has-more="hasMoreItems"
     :required="required"
     :clearable="clearable"
+    :disabled="disabled"
     :menu-props="menuProps"
     :clear-on-empty-search="false"
     item-text="name"
@@ -19,7 +20,7 @@
     @fetch:more="fetchMoreItems"
     @update:search="updateSearch"
   >
-    <template v-if="hasAccessToTemplateTesting" #no-data>
+    <template v-if="hasReadAccessForTemplateData && hasCreateAccessForTemplateData" #no-data>
       <v-layout justify-center>
         <v-btn
           color="primary"
@@ -42,7 +43,7 @@ import { watch, toRef } from 'vue';
 
 import { USER_PERMISSIONS } from '@/constants';
 
-import { useCanPermission } from '@/hooks/auth';
+import { useCRUDPermissions } from '@/hooks/auth';
 import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useTemplateData } from '@/hooks/store/modules/template-data';
 
@@ -82,17 +83,32 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const menuProps = { closeOnContentClick: true };
 
-    const hasAccessToTemplateTesting = useCanPermission(USER_PERMISSIONS.technical.templateTesting);
+    const {
+      hasCreateAccess: hasCreateAccessForTemplateData,
+      hasReadAccess: hasReadAccessForTemplateData,
+    } = useCRUDPermissions(
+      USER_PERMISSIONS.technical.templateData,
+    );
 
     const { fetchTemplateDataListWithoutStore } = useTemplateData();
 
-    const fetchHandler = ({ params }) => fetchTemplateDataListWithoutStore({
-      params: merge(params, props.params, { type: props.type }),
-    });
+    const fetchHandler = async ({ params }) => {
+      if (!hasReadAccessForTemplateData.value) {
+        return { data: [], meta: { page_count: 0 } };
+      }
+
+      return fetchTemplateDataListWithoutStore({
+        params: merge(params, props.params, { type: props.type }),
+      });
+    };
 
     const {
       selectedItems,
@@ -121,7 +137,8 @@ export default {
 
     return {
       menuProps,
-      hasAccessToTemplateTesting,
+      hasCreateAccessForTemplateData,
+      hasReadAccessForTemplateData,
       selectedItems,
       items,
       wholePending,

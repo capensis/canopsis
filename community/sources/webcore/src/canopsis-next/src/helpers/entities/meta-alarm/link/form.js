@@ -53,9 +53,18 @@ export const metaAlarmLinkToForm = (link = {}) => ({
  * @param {MetaAlarmLinkForm} form
  * @returns {{infos: Array}}
  */
-export const formToMetaAlarmLinkRequest = ({ infos, metaAlarm, ...form } = {}) => ({
-  ...form,
+export const formToMetaAlarmLinkRequest = ({ infos, metaAlarm, ...form } = {}) => {
+  const result = {
+    ...form,
 
-  [metaAlarm?.noData ? 'name' : 'id']: metaAlarm?._id,
-  infos: removeKeyFromEntities(infos),
-});
+    infos: removeKeyFromEntities(infos),
+  };
+
+  if (metaAlarm?._id) {
+    result.id = metaAlarm._id;
+  } else {
+    result.name = metaAlarm;
+  }
+
+  return result;
+};

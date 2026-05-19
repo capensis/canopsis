@@ -10,10 +10,16 @@
       slider-color="primary"
       fixed-tabs
     >
-      <v-tab :href="`#${TEMPLATE_TESTING_TABS.data}`">
+      <v-tab
+        v-if="hasReadAccessForTemplateData"
+        :href="`#${TEMPLATE_TESTING_TABS.data}`"
+      >
         {{ $t('templateTesting.tabs.data') }}
       </v-tab>
-      <v-tab-item :value="TEMPLATE_TESTING_TABS.data">
+      <v-tab-item
+        v-if="hasReadAccessForTemplateData"
+        :value="TEMPLATE_TESTING_TABS.data"
+      >
         <v-card-text>
           <template-testing-data ref="templateTestingDataElement" />
         </v-card-text>
@@ -33,7 +39,9 @@
 <script>
 import { ref, computed } from 'vue';
 
-import { TEMPLATE_TESTING_TABS } from '@/constants';
+import { TEMPLATE_TESTING_TABS, USER_PERMISSIONS } from '@/constants';
+
+import { useCRUDPermissions } from '@/hooks/auth';
 
 import { useTemplateDataModals } from '@/components/other/template-testing/hooks/template-testing-data';
 
@@ -49,9 +57,16 @@ export default {
     const templateTestingDataElement = ref(null);
     const templateTestingTestsElement = ref(null);
 
+    const {
+      hasCreateAccess: hasCreateAccessForTemplateData,
+      hasReadAccess: hasReadAccessForTemplateData,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.templateData);
+
     const activeTab = ref(TEMPLATE_TESTING_TABS.data);
 
-    const creatable = computed(() => ({ [TEMPLATE_TESTING_TABS.data]: true }[activeTab.value]));
+    const creatable = computed(() => (
+      activeTab.value === TEMPLATE_TESTING_TABS.data && hasCreateAccessForTemplateData.value
+    ));
 
     /**
      * Refreshes the currently active tab's data by calling the appropriate fetchList method
@@ -71,6 +86,8 @@ export default {
 
       TEMPLATE_TESTING_TABS,
       activeTab,
+
+      hasReadAccessForTemplateData,
 
       creatable,
 

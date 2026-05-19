@@ -13,6 +13,7 @@
         light
       />
     </portal>
+    <the-mass-actions-panels v-if="!isDefaultMode" fixed />
     <grid-layout
       v-model="layouts[size]"
       :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]"
@@ -42,7 +43,12 @@
 <script>
 import { isEqual } from 'lodash';
 
-import { WIDGET_GRID_SIZES_KEYS, MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP, WIDGET_LAYOUT_MAX_WIDTHS } from '@/constants';
+import {
+  WIDGET_GRID_SIZES_KEYS,
+  MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP,
+  WIDGET_LAYOUT_MAX_WIDTHS,
+  VIEW_SCREEN_MODES,
+} from '@/constants';
 
 import { widgetsToLayoutsWithCompact, layoutsToWidgetsGrid } from '@/helpers/entities/widget/grid';
 
@@ -54,6 +60,7 @@ import GridLayout from '@/components/common/grid/grid-layout.vue';
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 import WindowSizeField from '@/components/forms/fields/window-size.vue';
 import WidgetEditDragHandler from '@/components/widgets/widget-edit-drag-handler.vue';
+import TheMassActionsPanels from '@/components/common/actions-panel/the-mass-actions-panels.vue';
 
 export default {
   components: {
@@ -61,6 +68,7 @@ export default {
     WidgetWrapper,
     WindowSizeField,
     WidgetEditDragHandler,
+    TheMassActionsPanels,
   },
   mixins: [
     queryMixin,
@@ -92,6 +100,10 @@ export default {
       return {
         maxWidth: WIDGET_LAYOUT_MAX_WIDTHS[this.size],
       };
+    },
+
+    isDefaultMode() {
+      return this.activeViewScreenMode === VIEW_SCREEN_MODES.default;
     },
   },
   watch: {

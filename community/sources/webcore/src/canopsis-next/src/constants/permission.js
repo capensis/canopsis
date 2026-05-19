@@ -208,6 +208,7 @@ export const USER_PERMISSIONS = {
     externalAuthTokens: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalAuthTokens`,
     viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
     templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateTesting`,
+    templateData: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateData`,
     jobManagement: `${USER_PERMISSIONS_PREFIXES.technical.admin}_job_management`,
     commentTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_commentTemplate`,
     externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalData`,
@@ -487,6 +488,9 @@ export const USER_PERMISSIONS = {
       launchEventRecording: `${USER_PERMISSIONS_PREFIXES.api}_launch_event_recording`,
       resendEvents: `${USER_PERMISSIONS_PREFIXES.api}_resend_events`,
       externalDataTable: `${USER_PERMISSIONS_PREFIXES.api}_external_data_table`,
+      commentTemplate: `${USER_PERMISSIONS_PREFIXES.api}_comment_template`,
+      llmConfig: `${USER_PERMISSIONS_PREFIXES.api}_llm_config`,
+      ticketStatusJobManagement: `${USER_PERMISSIONS_PREFIXES.api}_ticket_status_job_management`,
       templateData: `${USER_PERMISSIONS_PREFIXES.api}_template_data`,
       anomalyMonitoredConnector: `${USER_PERMISSIONS_PREFIXES.api}_anomaly_monitored_connector`,
 

@@ -85,8 +85,7 @@ func (s *MongoStore) New(r *http.Request, name string) (*sessions.Session, error
 			err = s.load(r.Context(), session)
 			session.IsNew = false
 		}
-		var securecookieError securecookie.Error
-		if errors.As(err, &securecookieError) {
+		if _, ok := errors.AsType[securecookie.Error](err); ok {
 			// if securecookie decode failed (for example due changed key), then it's a new session
 			err = nil
 		}
@@ -122,7 +121,8 @@ func (s *MongoStore) Save(r *http.Request, w http.ResponseWriter, session *sessi
 		return err
 	}
 
-	cookie := sessions.NewCookie(session.Name(), encoded, session.Options)
+	// TODO: to be resolved with #6243
+	cookie := sessions.NewCookie(session.Name(), encoded, session.Options) // nolint:gosec
 	cookie.Expires = expires
 	http.SetCookie(w, cookie)
 

@@ -284,12 +284,13 @@ func benchmarkMessageProcessorWithConfig(
 	stateSettingsService := statesetting.NewService(dbClient, zerolog.Nop())
 	contextGraphManager := contextgraph.NewManager(entityAdapter, dbClient, contextgraph.NewEntityServiceStorage(dbClient), stateSettingsService, zerolog.Nop())
 	metricsSender := metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, zerolog.Nop())
+	entityInfosUpdateSender := metrics.NewNullEntityInfosUpdateSender()
 
 	eventProcessorContainer := event.NewProcessorContainer()
-	eventProcessorContainer.Set(types.SourceTypeResource, event.NewResourceProcessor(dbClient, contextGraphManager, ruleService, metricsSender, zerolog.Nop()))
-	eventProcessorContainer.Set(types.SourceTypeComponent, event.NewComponentProcessor(dbClient, contextGraphManager, ruleService, metricsSender, zerolog.Nop()))
-	eventProcessorContainer.Set(types.SourceTypeConnector, event.NewConnectorProcessor(dbClient, contextGraphManager, ruleService, metricsSender))
-	eventProcessorContainer.Set(types.SourceTypeService, event.NewServiceProcessor(dbClient, contextGraphManager, ruleService, metricsSender))
+	eventProcessorContainer.Set(types.SourceTypeResource, event.NewResourceProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender, zerolog.Nop()))
+	eventProcessorContainer.Set(types.SourceTypeComponent, event.NewComponentProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender, zerolog.Nop()))
+	eventProcessorContainer.Set(types.SourceTypeConnector, event.NewConnectorProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender))
+	eventProcessorContainer.Set(types.SourceTypeService, event.NewServiceProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender))
 
 	p := messageProcessor{
 		EventProcessorContainer:  eventProcessorContainer,

@@ -283,13 +283,21 @@ func (s *AlarmSteps) Add(step AlarmStep) error {
 	return fmt.Errorf("max number of steps reached: %v", AlarmStepsHardLimit)
 }
 
-// Crop steps by replacing stateinc and statedec steps after the current status with a statecounter step
-// Returns :
-//   - the updated alarm steps
-//   - True if it was updated, false else
+// Crop keeps at most cropNum most recent AlarmStepStateIncrease/AlarmStepStateDecrease
+// steps located after currentStatus. Older stateinc/statedec steps are merged into
+// an AlarmStepStateCounter step placed right after currentStatus.
 //
-// param currentStatus: the current status of the alarm. The steps will be cropped from this status
-// param cropNum: crop only if we have at least cropNum steps with type AlarmStepStateIncrease or AlarmStepStateDecrease
+// currentStatus must be non-nil and is used both as crop boundary and as the insertion
+// point for the statecounter step.
+//
+// Crop returns updated steps and true when crop is applied. It returns the original
+// steps and false when no crop is needed.
+//
+// Example:
+//
+//	steps after currentStatus: [stateinc, comment, statedec, stateinc]
+//	cropNum: 1
+//	result: [statecounter(2 changes), comment, stateinc]
 func (s AlarmSteps) Crop(currentStatus *AlarmStep, cropNum int) (AlarmSteps, bool) {
 	nbStepsToCrop := 0
 	currentStatusIdx := -1
@@ -299,9 +307,9 @@ func (s AlarmSteps) Crop(currentStatus *AlarmStep, cropNum int) (AlarmSteps, boo
 	for i := len(s) - 1; i >= 0 && currentStatusIdx < 0; i-- {
 		step := s[i]
 		if step.Type == AlarmStepStateIncrease || step.Type == AlarmStepStateDecrease {
-			nbStepsToCrop += 1
+			nbStepsToCrop++
 		}
-		if step.Type == currentStatus.Type && step.Timestamp.Time.Equal(currentStatus.Timestamp.Time) {
+		if step.Type == currentStatus.Type && step.Timestamp.Equal(currentStatus.Timestamp) && step.Value == currentStatus.Value {
 			currentStatusIdx = i
 		}
 	}

@@ -67,6 +67,7 @@ describe('c-columns-field', () => {
         column: '',
         key: expect.any(String),
         label: '',
+        isHtml: false,
       },
     ]);
   });
