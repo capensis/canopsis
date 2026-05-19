@@ -13,82 +13,84 @@
       <c-action-btn type="duplicate" @click="duplicateAction" />
     </template>
 
-    <c-form-block>
-      <c-form-block-row :label="$t('common.emitTrigger')">
-        <c-enabled-field
-          v-field="action.emit_trigger"
-          :label="$t('common.emitTrigger')"
-        />
-      </c-form-block-row>
-
-      <c-form-block-row :label="$t('scenario.forwardAuthor')">
-        <action-author-field v-model="parameters" :variables="templateVars.author" />
-      </c-form-block-row>
-
-      <c-form-block-row v-if="isWebhookAction" :label="$t('scenario.skip')">
-        <c-enabled-field
-          v-model="parameters.skip_for_child"
-          :label="$t('scenario.skipForChild')"
-          hide-details
-        />
-        <c-enabled-field
-          v-model="parameters.skip_for_instruction"
-          :label="$t('scenario.skipForInstruction')"
-        />
-      </c-form-block-row>
-
-      <c-form-block-row :label="$t('scenario.workflow')" indented>
-        <v-layout justify-space-between>
-          <c-workflow-field
-            v-field="action.drop_scenario_if_not_matched"
-            :label="$t('scenario.workflow')"
-            :continue-label="$t('scenario.remainingAction')"
+    <v-layout class="gap-4" column>
+      <c-form-block>
+        <c-form-block-row :label="$t('common.emitTrigger')">
+          <c-enabled-field
+            v-field="action.emit_trigger"
+            :label="$t('common.emitTrigger')"
           />
+        </c-form-block-row>
 
-          <template v-if="isWebhookAction">
+        <c-form-block-row :label="$t('scenario.forwardAuthor')">
+          <action-author-field v-model="parameters" :variables="templateVars.author" />
+        </c-form-block-row>
+
+        <c-form-block-row v-if="isWebhookAction" :label="$t('scenario.skip')">
+          <c-enabled-field
+            v-model="parameters.skip_for_child"
+            :label="$t('scenario.skipForChild')"
+            hide-details
+          />
+          <c-enabled-field
+            v-model="parameters.skip_for_instruction"
+            :label="$t('scenario.skipForInstruction')"
+          />
+        </c-form-block-row>
+
+        <c-form-block-row :label="$t('scenario.workflow')" indented>
+          <v-layout justify-space-between>
             <c-workflow-field
-              v-model="parameters.stop_on_fail"
-              :label="$t('scenario.workflowInCaseOfFailure')"
-              :continue-label="$t('scenario.remainingStep')"
+              v-field="action.drop_scenario_if_not_matched"
+              :label="$t('scenario.workflow')"
+              :continue-label="$t('scenario.remainingAction')"
             />
-            <c-workflow-field
-              v-model="parameters.stop_on_success"
-              :label="$t('scenario.workflowInCaseOfSuccess')"
-              :continue-label="$t('scenario.remainingStep')"
+
+            <template v-if="isWebhookAction">
+              <c-workflow-field
+                v-model="parameters.stop_on_fail"
+                :label="$t('scenario.workflowInCaseOfFailure')"
+                :continue-label="$t('scenario.remainingStep')"
+              />
+              <c-workflow-field
+                v-model="parameters.stop_on_success"
+                :label="$t('scenario.workflowInCaseOfSuccess')"
+                :continue-label="$t('scenario.remainingStep')"
+              />
+            </template>
+          </v-layout>
+        </c-form-block-row>
+
+        <c-form-block-row :label="$tc('common.comment')">
+          <v-textarea
+            v-field="action.comment"
+            :label="$tc('common.comment')"
+          />
+        </c-form-block-row>
+      </c-form-block>
+
+      <c-form-general-patterns-tabs :hide-general="isPbehaviorRemoveAction">
+        <template #general="{ setRef }">
+          <c-form-block>
+            <action-parameters-form
+              v-model="parameters"
+              :ref="setRef"
+              :name="`${name}.parameters`"
+              :type="action.type"
+              :has-previous-webhook="hasPreviousWebhook"
+              :template-vars="templateVars"
             />
-          </template>
-        </v-layout>
-      </c-form-block-row>
-
-      <c-form-block-row :label="$tc('common.comment')">
-        <v-textarea
-          v-field="action.comment"
-          :label="$tc('common.comment')"
-        />
-      </c-form-block-row>
-    </c-form-block>
-
-    <c-form-general-patterns-tabs>
-      <template v-if="!isPbehaviorRemoveAction" #general="{ setRef }">
-        <c-form-block>
-          <action-parameters-form
-            v-model="parameters"
+          </c-form-block>
+        </template>
+        <template #patterns="{ setRef }">
+          <scenario-action-patterns-form
+            v-field="action.patterns"
             :ref="setRef"
-            :name="`${name}.parameters`"
-            :type="action.type"
-            :has-previous-webhook="hasPreviousWebhook"
-            :template-vars="templateVars"
+            :name="name"
           />
-        </c-form-block>
-      </template>
-      <template #patterns="{ setRef }">
-        <scenario-action-patterns-form
-          v-field="action.patterns"
-          :ref="setRef"
-          :name="name"
-        />
-      </template>
-    </c-form-general-patterns-tabs>
+        </template>
+      </c-form-general-patterns-tabs>
+    </v-layout>
   </c-card-iterator-item>
 </template>
 

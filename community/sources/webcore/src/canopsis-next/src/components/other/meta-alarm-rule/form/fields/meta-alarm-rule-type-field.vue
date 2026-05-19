@@ -11,7 +11,7 @@
       </v-btn>
     </v-tab>
     <v-tab-item>
-      <c-label>{{ $t('metaAlarmRule.groupingLabels.groupUnder') }}</c-label>
+      <c-label :label="$t('metaAlarmRule.groupingLabels.groupUnder')" />
       <v-radio-group v-field="value" hide-details>
         <v-radio
           v-for="option in firstTabOptions"
@@ -29,7 +29,7 @@
       </v-btn>
     </v-tab>
     <v-tab-item>
-      <c-label>{{ $t('metaAlarmRule.groupingLabels.groupBy') }}</c-label>
+      <c-label :label="$t('metaAlarmRule.groupingLabels.groupBy')" />
       <v-radio-group v-field="value" hide-details>
         <v-radio
           v-for="option in secondTabOptions"

@@ -1,6 +1,6 @@
 <template>
   <v-layout class="gap-3" column>
-    <c-label>{{ $tc('common.customField', 2) }}</c-label>
+    <c-label :label="$tc('common.customField', 2)" />
     <c-text-pairs-field
       v-field="value"
       :text-label="$t('declareTicket.alarmFieldName')"

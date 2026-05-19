@@ -1,6 +1,6 @@
 <template>
   <v-layout class="gap-3" justify-center column>
-    <c-label>{{ $t('common.recurrence') }}</c-label>
+    <c-label :label="$t('common.recurrence')" />
     <div v-if="!hasRecurrenceRule">
       <v-btn
         color="primary"

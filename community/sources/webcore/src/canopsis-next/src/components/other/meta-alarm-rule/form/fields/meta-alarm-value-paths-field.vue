@@ -1,15 +1,11 @@
 <template>
   <c-form-block-row :label="$tc('metaAlarmRule.valuePath', 2)" indented>
     <v-layout class="gap-3" column>
-      <!-- eslint-disable-next-line vue/multiline-html-element-content-newline -->
-      <c-label :required="required">{{ $tc('metaAlarmRule.valuePath', 2) }}
-        <c-help-icon
-          :text="$t('metaAlarmRule.valuePathHelpText')"
-          class="ml-1"
-          icon="help"
-          top
-        />
-      </c-label>
+      <c-label
+        :label="$tc('metaAlarmRule.valuePath', 2)"
+        :help-text="$t('metaAlarmRule.valuePathHelpText')"
+        :required="required"
+      />
       <v-layout
         v-for="(item, index) in items"
         :key="item[itemKey]"

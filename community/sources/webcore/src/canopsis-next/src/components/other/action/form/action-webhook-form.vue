@@ -9,12 +9,14 @@
       :depth="depth"
       with-multiple-urls
     />
+
     <declare-ticket-rule-ticket-mapping-field
       v-field="webhook"
       :variables="templateVars.ticket"
       :depth="depth"
       with-ticket-system-name
     />
+
     <declare-ticket-rule-check-ticket-status-field
       v-if="webhook.declare_ticket?.enabled"
       v-field="webhook.declare_ticket.check_ticket_status"
@@ -60,6 +62,10 @@ export default {
     templateVars: {
       type: Object,
       default: () => ({}),
+    },
+    depth: {
+      type: Number,
+      default: 0,
     },
   },
   setup(props, { emit }) {

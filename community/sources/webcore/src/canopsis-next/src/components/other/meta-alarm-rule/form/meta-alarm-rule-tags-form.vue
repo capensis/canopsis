@@ -1,6 +1,6 @@
 <template>
   <v-layout column>
-    <c-label>{{ $tc('common.tag', 2) }}</c-label>
+    <c-label :label="$tc('common.tag', 2)" />
     <v-layout>
       <c-enabled-field
         v-field="form.copy_from_children"
