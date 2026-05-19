@@ -16,6 +16,8 @@ import { convertDateToEndOfDayTimestamp, convertDateToStartOfDayTimestamp } from
  * @param {number} params.itemsPerPage - The number of items per page.
  * @param {string[]} [params.sortBy=[]] - An array of fields to sort by.
  * @param {boolean[]} [params.sortDesc=[]] - An array indicating the sort direction for each field in `sortBy`.
+ * @param {string} [params.lastRunStatus] - The last run status to filter results.
+ * @param {string} [params.searchPattern] - The search pattern to filter results.
  * @returns {Object} The request object containing pagination, sorting, and search parameters.
  */
 export const convertQueryToRequest = ({
@@ -23,11 +25,12 @@ export const convertQueryToRequest = ({
   search = '',
   type,
   status,
-  last_run_status: lastRunStatus,
   interval,
   itemsPerPage,
   sortBy = [],
   sortDesc = [],
+  last_run_status: lastRunStatus,
+  search_pattern: searchPattern,
 } = {}) => {
   const query = {
     page,
@@ -62,6 +65,10 @@ export const convertQueryToRequest = ({
     query.to = convertDateToEndOfDayTimestamp(convertStopDateIntervalToTimestamp(
       interval.to,
     ));
+  }
+
+  if (searchPattern) {
+    query.search_pattern = searchPattern;
   }
 
   return query;
