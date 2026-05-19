@@ -17,25 +17,25 @@ import (
 )
 
 type connectorProcessor struct {
-	dbClient            libmongo.DbClient
-	dbCollection        libmongo.DbCollection
-	contextGraphManager contextgraph.Manager
-	eventFilterService  eventfilter.Service
-	metricsSender       metrics.Sender
+	dbClient                libmongo.DbClient
+	dbCollection            libmongo.DbCollection
+	contextGraphManager     contextgraph.Manager
+	eventFilterService      eventfilter.Service
+	entityInfosUpdateSender metrics.EntityInfosUpdateSender
 }
 
 func NewConnectorProcessor(
 	dbClient libmongo.DbClient,
 	contextGraphManager contextgraph.Manager,
 	eventFilterService eventfilter.Service,
-	metricsSender metrics.Sender,
+	entityInfosUpdateSender metrics.EntityInfosUpdateSender,
 ) Processor {
 	return &connectorProcessor{
-		dbClient:            dbClient,
-		dbCollection:        dbClient.Collection(libmongo.EntityMongoCollection),
-		contextGraphManager: contextGraphManager,
-		eventFilterService:  eventFilterService,
-		metricsSender:       metricsSender,
+		dbClient:                dbClient,
+		dbCollection:            dbClient.Collection(libmongo.EntityMongoCollection),
+		contextGraphManager:     contextGraphManager,
+		eventFilterService:      eventFilterService,
+		entityInfosUpdateSender: entityInfosUpdateSender,
 	}
 }
 
@@ -98,7 +98,7 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (P
 
 			result.EventMetric.IsInfosUpdated = true
 			report.CheckInfoChanged = true
-			logInfosUpdate(p.metricsSender, event.Entity.ID, updatedInfos)
+			logInfosUpdate(p.entityInfosUpdateSender, event.Entity.ID, updatedInfos)
 
 			updatedInfosNames = make([]string, 0, len(updatedInfos))
 			for k := range updatedInfos {

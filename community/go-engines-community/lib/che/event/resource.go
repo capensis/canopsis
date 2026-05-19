@@ -17,30 +17,30 @@ import (
 )
 
 type resourceProcessor struct {
-	dbClient            libmongo.DbClient
-	dbEntityCollection  libmongo.DbCollection
-	dbAlarmCollection   libmongo.DbCollection
-	contextGraphManager contextgraph.Manager
-	eventFilterService  eventfilter.Service
-	metricsSender       metrics.Sender
-	logger              zerolog.Logger
+	dbClient                libmongo.DbClient
+	dbEntityCollection      libmongo.DbCollection
+	dbAlarmCollection       libmongo.DbCollection
+	contextGraphManager     contextgraph.Manager
+	eventFilterService      eventfilter.Service
+	entityInfosUpdateSender metrics.EntityInfosUpdateSender
+	logger                  zerolog.Logger
 }
 
 func NewResourceProcessor(
 	dbClient libmongo.DbClient,
 	contextGraphManager contextgraph.Manager,
 	eventFilterService eventfilter.Service,
-	metricsSender metrics.Sender,
+	entityInfosUpdateSender metrics.EntityInfosUpdateSender,
 	logger zerolog.Logger,
 ) Processor {
 	return &resourceProcessor{
-		dbClient:            dbClient,
-		dbEntityCollection:  dbClient.Collection(libmongo.EntityMongoCollection),
-		dbAlarmCollection:   dbClient.Collection(libmongo.AlarmMongoCollection),
-		contextGraphManager: contextGraphManager,
-		eventFilterService:  eventFilterService,
-		metricsSender:       metricsSender,
-		logger:              logger,
+		dbClient:                dbClient,
+		dbEntityCollection:      dbClient.Collection(libmongo.EntityMongoCollection),
+		dbAlarmCollection:       dbClient.Collection(libmongo.AlarmMongoCollection),
+		contextGraphManager:     contextGraphManager,
+		eventFilterService:      eventFilterService,
+		entityInfosUpdateSender: entityInfosUpdateSender,
+		logger:                  logger,
 	}
 }
 
@@ -104,7 +104,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (Pr
 
 			result.EventMetric.IsInfosUpdated = true
 			report.CheckInfoChanged = true
-			logInfosUpdate(p.metricsSender, event.Entity.ID, updatedInfos)
+			logInfosUpdate(p.entityInfosUpdateSender, event.Entity.ID, updatedInfos)
 
 			updatedInfosNames = make([]string, 0, len(updatedInfos))
 			for k := range updatedInfos {

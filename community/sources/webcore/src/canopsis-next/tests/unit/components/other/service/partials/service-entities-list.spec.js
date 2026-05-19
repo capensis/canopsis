@@ -22,7 +22,6 @@ import {
   WEATHER_ACTIONS_TYPES,
   WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
 } from '@/constants';
-import { COLORS } from '@/config';
 
 import { uid } from '@/helpers/uid';
 
@@ -401,7 +400,6 @@ describe('service-entities-list', () => {
       expect.any(Object),
       {
         data: [{
-          color: COLORS.secondary,
           comment,
           reason,
           comments: [],
