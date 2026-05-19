@@ -27,9 +27,9 @@ type Job struct {
 	Type string `json:"type"`
 }
 
-func NewRunner(amqpConn libamqp.Connection, logger zerolog.Logger) *Runner {
+func NewRunner(amqpChannel libamqp.Channel, logger zerolog.Logger) *Runner {
 	return &Runner{
-		amqpConn:     amqpConn,
+		amqpChannel:  amqpChannel,
 		queue:        canopsis.ApiWorkersQueueName,
 		decoder:      json.NewDecoder(),
 		workers:      10,
@@ -39,7 +39,7 @@ func NewRunner(amqpConn libamqp.Connection, logger zerolog.Logger) *Runner {
 }
 
 type Runner struct {
-	amqpConn       libamqp.Connection
+	amqpChannel    libamqp.Channel
 	queue          string
 	decoder        encoding.Decoder
 	workers        int
@@ -49,19 +49,13 @@ type Runner struct {
 }
 
 func (r *Runner) Run(ctx context.Context) error {
-	amqpConsumer, err := r.amqpConn.Channel()
-	if err != nil {
-		return fmt.Errorf("cannot create rmq channel: %w", err)
-	}
-
-	defer amqpConsumer.Close()
 	// check if queue exists because Consume method doesn't return appropriate error
-	_, err = amqpConsumer.QueueInspect(r.queue)
+	_, err := r.amqpChannel.QueueInspect(r.queue)
 	if err != nil {
 		return err
 	}
 
-	ch, err := amqpConsumer.Consume(r.queue, "", false, false, false, false, nil)
+	ch, err := r.amqpChannel.Consume(r.queue, "", false, false, false, false, nil)
 	if err != nil {
 		return fmt.Errorf("failed to consume jobs: %w", err)
 	}
@@ -99,7 +93,7 @@ func (r *Runner) Run(ctx context.Context) error {
 					if err != nil {
 						r.logger.Err(err).Str("type", job.Type).Str("id", job.ID).Msg("failed to execute job")
 						if mongo.IsConnectionError(err) {
-							err = amqpConsumer.Nack(msg.DeliveryTag, false, true)
+							err = r.amqpChannel.Nack(msg.DeliveryTag, false, true)
 							if err != nil {
 								r.logger.Err(err).Msg("failed to negatively acknowledge message")
 							}
@@ -108,7 +102,7 @@ func (r *Runner) Run(ctx context.Context) error {
 						}
 					}
 
-					err = amqpConsumer.Ack(msg.DeliveryTag, false)
+					err = r.amqpChannel.Ack(msg.DeliveryTag, false)
 					if err != nil {
 						r.logger.Err(err).Msg("failed to acknowledge message")
 					}

@@ -47,7 +47,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	config.SetDbClientRetry(dbClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
-	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
+	amqpPubChannel := m.DepAMQPChannelPub(amqpConnection)
+	amqpConsumeChannel := m.DepAMQPChannelSub(amqpConnection, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
 	pbhRedisSession := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
@@ -74,7 +75,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		healthCheckCfg.ParseUpdateInterval(logger),
 		engine.NewRunInfoManager(runInfoRedisSession),
 		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, "", "", nil, []string{canopsis.PBehaviorRPCQueueServerName}),
-		amqpChannel,
+		amqpPubChannel,
 		logger,
 	)
 
@@ -130,6 +131,16 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 				logger.Err(err).Msg("failed to close mongo connection")
 			}
 
+			err = amqpPubChannel.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp publish channel")
+			}
+
+			err = amqpConsumeChannel.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp consumer channel")
+			}
+
 			err = amqpConnection.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
@@ -162,7 +173,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
 		EventManager:             eventManager,
 		TimezoneConfigProvider:   timezoneConfigProvider,
-		PubChannel:               amqpChannel,
+		PubChannel:               amqpPubChannel,
 		Decoder:                  json.NewDecoder(),
 		Encoder:                  json.NewEncoder(),
 		Logger:                   logger,
@@ -170,18 +181,15 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	enginePbehavior.AddConsumer(engine.NewRPCServer(
 		canopsis.PBehaviorRPCConsumerName,
 		canopsis.PBehaviorRPCQueueServerName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
 		options.Workers,
-		amqpConnection,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		rpcMessageProcessor,
 		logger,
 	))
 	enginePbehavior.AddConsumer(engine.NewConcurrentConsumer(
 		canopsis.PBehaviorConsumerName,
 		canopsis.PBehaviorQueueRecomputeName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",
@@ -189,7 +197,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		"",
 		options.Workers,
 		false,
-		amqpConnection,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		&recomputeMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
@@ -198,7 +207,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			EventManager:             eventManager,
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
-			Publisher:                amqpChannel,
+			Publisher:                amqpPubChannel,
 			InheritedServiceResolver: pbehavior.NewInheritedServicePbhResolver(dbClient, eventManager, pbhStore, pbhLockerClient),
 			Exchange:                 canopsis.DefaultExchangeName,
 			Queue:                    canopsis.FIFOQueueName,
@@ -213,7 +222,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		redis.PbehaviorPeriodicalLockKey,
 		&periodicalWorker{
 			TechMetricsSender:        techMetricsSender,
-			ChannelPub:               amqpChannel,
+			ChannelPub:               amqpPubChannel,
 			PeriodicalInterval:       options.PeriodicalWaitTime,
 			PbhService:               pbhLongTimeoutService,
 			AlarmAdapter:             alarm.NewAdapter(dbClient),

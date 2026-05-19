@@ -177,6 +177,10 @@ func Default(
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
+	amqpConsumer, err := amqpConn.Channel()
+	if err != nil {
+		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
+	}
 	// Connect to redis.
 	pbhRedisSession, err := libredis.NewSession(ctx, libredis.PBehaviorLockStorage, logger,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
@@ -251,7 +255,7 @@ func Default(
 	}
 
 	services.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
-	workersRunner := workers.NewRunner(amqpConn, logger)
+	workersRunner := workers.NewRunner(amqpConsumer, logger)
 	// Create csv exporter.
 	services.ExportTaskExecutor = export.NewTaskExecutor(primaryDbClient, workers.NewJobPublisher(jobKeyExport, amqpPublisher),
 		services.TimezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
@@ -376,7 +380,7 @@ func Default(
 
 	services.NotificationStore = usernotification.NewStore(primaryDbClient, amqpPublisher, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
-	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConn, services.WebsocketHub,
+	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConsumer, services.WebsocketHub,
 		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
 
 	if tplTestTypePermMapping == nil {
@@ -427,6 +431,16 @@ func Default(
 			err = dbExportClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
+			}
+
+			err = amqpPublisher.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp channel")
+			}
+
+			err = amqpConsumer.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp channel")
 			}
 
 			err = amqpConn.Close()

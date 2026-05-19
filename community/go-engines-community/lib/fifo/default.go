@@ -107,7 +107,8 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	s.TemplateConfigProvider = templateConfigProvider
 	dataStorageConfigProvider := config.NewDataStorageConfigProvider(s.Cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, s.Cfg)
-	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
+	amqpPubChannel := m.DepAMQPChannelPub(amqpConnection)
+	amqpConsumeChannel := m.DepAMQPChannelSub(amqpConnection, s.Cfg.Global.PrefetchCount, s.Cfg.Global.PrefetchSize)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, s.Cfg)
 	engineLockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, s.Cfg)
 	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, s.Cfg)
@@ -115,7 +116,7 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	scheduler := libscheduler.NewSchedulerService(
 		lockRedisClient,
 		queueRedisClient,
-		m.DepAMQPChannelPub(m.DepAmqpConnection(logger, s.Cfg)),
+		amqpPubChannel,
 		canopsis.CheQueuePrefix,
 		logger,
 		options.LockTtl,
@@ -124,7 +125,7 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	)
 	eventFilterEventCounter := eventfilter.NewEventCounter(s.DbClient,
 		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), logger)
-	notifStore := usernotification.NewStore(s.DbClient, amqpChannel, json.NewEncoder(),
+	notifStore := usernotification.NewStore(s.DbClient, amqpPubChannel, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
 	s.EventFilterFailureService = eventfilter.NewFailureService(s.DbClient, notifStore,
 		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilterRule, logger)
@@ -146,13 +147,13 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 		healthCheckCfg.ParseUpdateInterval(logger),
 		libengine.NewRunInfoManager(runInfoRedisClient),
 		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, canopsis.FIFOQueueName, canopsis.CheQueuePrefix, []string{canopsis.FIFOQueueName}),
-		amqpChannel,
+		amqpPubChannel,
 		logger,
 	)
 
 	queueMetricsPeriodicalWorker := libengine.NewQueueMetricsPeriodicalWorker(
 		options.PeriodicalWaitTime,
-		amqpChannel,
+		amqpPubChannel,
 		techMetricsSender,
 		[]string{canopsis.FIFOQueueName},
 		techmetrics.FIFOQueue,
@@ -201,6 +202,16 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 			err = noTimeoutClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection without timeout")
+			}
+
+			err = amqpPubChannel.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp publish channel")
+			}
+
+			err = amqpConsumeChannel.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp consumer channel")
 			}
 
 			err = amqpConnection.Close()
@@ -255,8 +266,6 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.FIFOConsumerName,
 		canopsis.FIFOQueueName,
-		s.Cfg.Global.PrefetchCount,
-		s.Cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",
@@ -264,15 +273,14 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 		"",
 		1, // TODO: 1 worker for now, to think about making fifo concurrent
 		false,
-		amqpConnection,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		mainMessageProcessor,
 		logger,
 	))
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.FIFOAckConsumerName,
 		canopsis.FIFOAckQueueName,
-		s.Cfg.Global.PrefetchCount,
-		s.Cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",
@@ -280,7 +288,8 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 		"",
 		options.Workers,
 		false,
-		amqpConnection,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		&ackMessageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,
 
@@ -319,7 +328,7 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	s.DataStoragePeriodicalWorker.AddCleaner("alarm", alarm.NewCleaner(logger))
 	s.DataStoragePeriodicalWorker.AddCleaner("alarm_external_tag", axe.NewExternalTagCleaner(logger))
 	s.DataStoragePeriodicalWorker.AddCleaner("pbehavior", pbehavior.NewCleaner(logger))
-	s.DataStoragePeriodicalWorker.AddCleaner("event_filter_failure", che.NewEventFailureCleaner(amqpChannel, json.NewEncoder(),
+	s.DataStoragePeriodicalWorker.AddCleaner("event_filter_failure", che.NewEventFailureCleaner(amqpPubChannel, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType, logger))
 	engine.AddPeriodicalWorker("datastorage", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(engineLockRedisClient),

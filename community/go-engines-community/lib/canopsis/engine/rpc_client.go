@@ -7,28 +7,25 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"golang.org/x/sync/errgroup"
 )
 
 // NewRPCClient creates new AMQP RPC client.
 func NewRPCClient(
 	name, serverExchangeName, serverRoutingKey, clientQueueName string,
-	consumePrefetchCount, consumePrefetchSize int,
 	workers int,
-	connection libamqp.Connection,
 	publishCh libamqp.Channel,
+	consumeCh libamqp.Channel,
 	processor RPCMessageProcessor,
 	logger zerolog.Logger,
 ) RPCClient {
 	return &rpcClient{
 		defaultConsumer: defaultConsumer{
-			name:                 name,
-			queue:                clientQueueName,
-			consumePrefetchCount: consumePrefetchCount,
-			consumePrefetchSize:  consumePrefetchSize,
-			processor:            &rpcClientMessageProcessorWrapper{processor: processor},
-			connection:           connection,
-			logger:               logger,
+			name:      name,
+			queue:     clientQueueName,
+			processor: &rpcClientMessageProcessorWrapper{processor: processor},
+			publishCh: publishCh,
+			consumeCh: consumeCh,
+			logger:    logger,
 		},
 		serverExchangeName: serverExchangeName,
 		serverRoutingKey:   serverRoutingKey,
@@ -82,28 +79,11 @@ func (c *rpcClient) Call(ctx context.Context, m RPCMessage) error {
 }
 
 func (c *rpcClient) Consume(ctx context.Context) (err error) {
-	if c.connection == nil {
-		return errors.New("connection is nil")
+	if c.consumeCh == nil {
+		return errors.New("consume channel is nil")
 	}
 
-	consumeCh, msgs, err := c.getConsumeChannel()
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		closeError := consumeCh.Close()
-		if err == nil {
-			err = closeError
-		}
-	}()
-
-	g, ctx := errgroup.WithContext(ctx)
-	for i := 0; i < c.workers; i++ {
-		g.Go(c.getWorkerFunc(ctx, msgs, consumeCh, nil))
-	}
-
-	return g.Wait()
+	return c.consume(ctx, c.workers)
 }
 
 type rpcClientMessageProcessorWrapper struct {
