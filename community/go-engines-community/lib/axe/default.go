@@ -110,7 +110,8 @@ func NewEngine(
 		panic(fmt.Errorf("dependency error: %s: %w", "can't get user interface config", err))
 	}
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
-	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
+	amqpPubChannel := m.DepAMQPChannelPub(amqpConnection)
+	amqpConsumeChannel := m.DepAMQPChannelSub(amqpConnection, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
@@ -121,7 +122,7 @@ func NewEngine(
 	actionRpcClient := libengine.NewRPCClientWithoutReply(
 		"",
 		canopsis.ActionAxeRPCClientQueueName,
-		amqpChannel,
+		amqpPubChannel,
 	)
 	idleSinceService := entityservice.NewService(
 		entityservice.NewAdapter(dbClient),
@@ -134,12 +135,12 @@ func NewEngine(
 	eventGenerator := libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector)
 	metaAlarmStatesService := correlation.NewMetaAlarmStateService(dbClient)
 	metaAlarmPostProcessor := event.NewMetaAlarmPostProcessor(dbClient, libalarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
-		alarmStatusService, metaAlarmStatesService, json.NewEncoder(), eventGenerator, amqpChannel, metricsSender, logger)
+		alarmStatusService, metaAlarmStatesService, json.NewEncoder(), eventGenerator, amqpPubChannel, metricsSender, logger)
 
 	externalTagUpdater := alarmtag.NewExternalUpdater(dbClient)
 	internalTagAlarmMatcher := alarmtag.NewInternalTagAlarmMatcher(dbClient)
 
-	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.DefaultExchangeName, canopsis.FIFOQueueName, canopsis.AxeConnector, alarmConfigProvider)
+	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpPubChannel, canopsis.DefaultExchangeName, canopsis.FIFOQueueName, canopsis.AxeConnector, alarmConfigProvider)
 	entityServiceCountersCalculator := calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, timezoneConfigProvider), eventsSender)
 	componentCountersCalculator := calculator.NewComponentCountersCalculator(dbClient, eventsSender)
 
@@ -160,7 +161,7 @@ func NewEngine(
 		remediationRpcClient,
 		externalTagUpdater,
 		internalTagAlarmMatcher,
-		amqpChannel,
+		amqpPubChannel,
 		eventGenerator,
 		template.NewExecutor(templateConfigProvider, timezoneConfigProvider),
 		checkTicketStatusService,
@@ -168,19 +169,17 @@ func NewEngine(
 	)
 
 	pbhRpcClient := libengine.NewRPCClient(
-		canopsis.AxeRPCConsumerName,
+		canopsis.AxeRPCConsumerName+"_pbh",
 		"",
 		canopsis.PBehaviorRPCQueueServerName,
 		canopsis.AxePbehaviorRPCClientQueueName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
 		options.RpcWorkers,
-		amqpConnection,
-		amqpChannel,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		&rpcPBehaviorClientMessageProcessor{
 			DbClient:                 dbClient,
 			MetricsSender:            metricsSender,
-			PublishCh:                amqpChannel,
+			PublishCh:                amqpPubChannel,
 			RemediationRpc:           remediationRpcClient,
 			EventProcessor:           eventProcessor,
 			EntityAdapter:            entityAdapter,
@@ -194,18 +193,16 @@ func NewEngine(
 		logger,
 	)
 	pbhRpcClientForIdleRules := libengine.NewRPCClient(
-		canopsis.AxeRPCConsumerName,
+		canopsis.AxeRPCConsumerName+"_pbh_idle_rules",
 		"",
 		canopsis.PBehaviorRPCQueueServerName,
 		"",
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
 		options.RpcWorkers,
-		amqpConnection,
-		amqpChannel,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		&rpcPBehaviorClientMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			PublishCh:                amqpChannel,
+			PublishCh:                amqpPubChannel,
 			RemediationRpc:           remediationRpcClient,
 			EventProcessor:           eventProcessor,
 			EntityAdapter:            entity.NewAdapter(dbClient),
@@ -237,7 +234,7 @@ func NewEngine(
 			nil,
 			append([]string{canopsis.PBehaviorRPCQueueServerName}, rpcPublishQueues...),
 		),
-		amqpChannel,
+		amqpPubChannel,
 		logger,
 	)
 
@@ -298,6 +295,16 @@ func NewEngine(
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
+
+			err = amqpPubChannel.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp publish channel")
+			}
+
+			err = amqpConsumeChannel.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp consumer channel")
+			}
 		},
 		logger,
 	)
@@ -323,8 +330,6 @@ func NewEngine(
 	engineAxe.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.AxeExternalConsumerName,
 		canopsis.AxeExternalQueueName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
 		false,
 		canopsis.EngineExchangeName,
 		amqp.BuildRoutingKey(publishQueuePrefix, types.InitiatorExternal),
@@ -332,15 +337,14 @@ func NewEngine(
 		canopsis.FIFOAckQueueName,
 		options.ExternalWorkers,
 		false,
-		amqpConnection,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		mainMessageProcessor,
 		logger,
 	))
 	engineAxe.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.AxeSystemConsumerName,
 		canopsis.AxeSystemQueueName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
 		false,
 		canopsis.EngineExchangeName,
 		amqp.BuildRoutingKey(publishQueuePrefix, types.InitiatorSystem),
@@ -348,15 +352,14 @@ func NewEngine(
 		canopsis.FIFOAckQueueName,
 		options.SystemWorkers,
 		false,
-		amqpConnection,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		mainMessageProcessor,
 		logger,
 	))
 	engineAxe.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.AxeUserConsumerName,
 		canopsis.AxeUserQueueName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
 		false,
 		canopsis.EngineExchangeName,
 		amqp.BuildRoutingKey(publishQueuePrefix, types.InitiatorUser),
@@ -364,17 +367,17 @@ func NewEngine(
 		canopsis.FIFOAckQueueName,
 		options.UserWorkers,
 		false,
-		amqpConnection,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		mainMessageProcessor,
 		logger,
 	))
 	engineAxe.AddConsumer(libengine.NewRPCServer(
 		canopsis.AxeRPCConsumerName,
 		canopsis.AxeRPCQueueServerName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
 		options.RpcWorkers,
-		amqpConnection,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		&rpcMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			EventProcessor:           eventProcessor,
@@ -423,7 +426,7 @@ func NewEngine(
 		&periodicalWorker{
 			TechMetricsSender:  techMetricsSender,
 			PeriodicalInterval: options.PeriodicalWaitTime,
-			ChannelPub:         amqpChannel,
+			ChannelPub:         amqpPubChannel,
 			AlarmService:       libalarm.NewService(libalarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, eventGenerator, logger),
 			AlarmAdapter:       libalarm.NewAdapter(dbClient),
 			Encoder:            json.NewEncoder(),

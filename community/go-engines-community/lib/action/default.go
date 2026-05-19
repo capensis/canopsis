@@ -81,7 +81,8 @@ func NewEngineAction(
 	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
-	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
+	amqpPubChannel := m.DepAMQPChannelPub(amqpConnection)
+	amqpConsumeChannel := m.DepAMQPChannelSub(amqpConnection, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
 	actionAdapter := action.NewAdapter(mongoClient)
 	alarmAdapter := alarm.NewAdapter(mongoClient)
 	actionRedisClient := m.DepRedisSession(ctx, redis.ActionScenarioStorage, logger, cfg)
@@ -98,9 +99,9 @@ func NewEngineAction(
 		json.NewDecoder(), options.LastRetryInterval, logger)
 	actionScenarioStorage := action.NewScenarioStorage(actionAdapter, delayedScenarioManager, logger)
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
-		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpChannel,
+		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpPubChannel,
 		options.FifoAckExchange, options.FifoAckQueue,
-		alarm.NewActivationService(json.NewEncoder(), amqpChannel), techMetricsSender, logger)
+		alarm.NewActivationService(json.NewEncoder(), amqpPubChannel), techMetricsSender, logger)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 
 	rpcResultChannel := make(chan action.RpcResult)
@@ -110,11 +111,9 @@ func NewEngineAction(
 		"",
 		canopsis.AxeRPCQueueServerName,
 		canopsis.ActionAxeRPCClientQueueName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
 		options.RpcWorkers,
-		amqpConnection,
-		amqpChannel,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		&axeRpcClientMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			Decoder:                  json.NewDecoder(),
@@ -133,7 +132,7 @@ func NewEngineAction(
 		healthCheckCfg.ParseUpdateInterval(logger),
 		engine.NewRunInfoManager(runInfoRedisClient),
 		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueuePrefix, "", nil, nil, rpcPublishQueues),
-		amqpChannel,
+		amqpPubChannel,
 		logger,
 	)
 
@@ -170,7 +169,7 @@ func NewEngineAction(
 			listener := &delayedScenarioListener{
 				PeriodicalInterval:     options.PeriodicalWaitTime,
 				DelayedScenarioManager: delayedScenarioManager,
-				AmqpChannel:            amqpChannel,
+				AmqpChannel:            amqpPubChannel,
 				Queue:                  canopsis.FIFOQueueName,
 				EventGenerator:         libevent.NewGenerator(canopsis.ActionConnector, canopsis.ActionConnector),
 				Encoder:                json.NewEncoder(),
@@ -198,6 +197,16 @@ func NewEngineAction(
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
+
+			err = amqpPubChannel.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp publish channel")
+			}
+
+			err = amqpConsumeChannel.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp consumer channel")
+			}
 		},
 		logger,
 	)
@@ -216,8 +225,6 @@ func NewEngineAction(
 	engineAction.AddConsumer(engine.NewConcurrentConsumer(
 		canopsis.ActionExternalConsumerName,
 		canopsis.ActionExternalQueueName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",
@@ -225,15 +232,14 @@ func NewEngineAction(
 		"",
 		options.ExternalWorkers,
 		false,
-		amqpConnection,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		mainMessageProcessor,
 		logger,
 	))
 	engineAction.AddConsumer(engine.NewConcurrentConsumer(
 		canopsis.ActionSystemConsumerName,
 		canopsis.ActionSystemQueueName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",
@@ -241,15 +247,14 @@ func NewEngineAction(
 		"",
 		options.SystemWorkers,
 		false,
-		amqpConnection,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		mainMessageProcessor,
 		logger,
 	))
 	engineAction.AddConsumer(engine.NewConcurrentConsumer(
 		canopsis.ActionUserConsumerName,
 		canopsis.ActionUserQueueName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",
@@ -257,7 +262,8 @@ func NewEngineAction(
 		"",
 		options.UserWorkers,
 		false,
-		amqpConnection,
+		amqpPubChannel,
+		amqpConsumeChannel,
 		mainMessageProcessor,
 		logger,
 	))
