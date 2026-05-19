@@ -185,7 +185,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { te, t } = useI18n();
+    const { te, tc, t } = useI18n();
     const modals = useModals();
     const popups = usePopups();
 
@@ -445,6 +445,7 @@ export default {
           enable: bulkEnableLlms,
           disable: bulkDisableLlms,
           tooltipPrefix: 'llm',
+          removePhraseMessagesKey: 'modals.confirmationPhrase.deleteSelectedLlms',
         },
         [props.anomalyMonitoredConnector]: {
           remove: bulkRemoveAnomalyMonitoredConnectors,
@@ -493,18 +494,41 @@ export default {
      * Shows a confirmation modal for bulk remove operation.
      * On confirmation, removes selected items and refreshes the list.
      */
-    const showRemoveModal = () => modals.show({
-      name: MODALS.confirmation,
-      config: {
-        action: async () => {
-          const response = await config.value.remove({ data: pickIds(props.items, props.itemId) });
+    const showRemoveModal = () => {
+      if (config.value.removePhraseMessagesKey) {
+        const { removePhraseMessagesKey: keyPrefix } = config.value;
+        const count = props.items.length;
+        const countValues = { count };
 
-          showErrorPopups(response, `${config.value.tooltipPrefix}.removeForbidden`);
+        modals.show({
+          name: MODALS.confirmationPhrase,
+          config: {
+            title: tc(`${keyPrefix}.title`, count, countValues),
+            text: tc(`${keyPrefix}.text`, count, countValues),
+            phraseText: t(`${keyPrefix}.phraseText`),
+            phrase: t(`${keyPrefix}.phrase`),
+            action: async () => {
+              await config.value.remove({ data: pickIds(props.items, props.itemId) });
+            },
+          },
+        });
 
-          return afterSubmit();
+        return;
+      }
+
+      modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            const response = await config.value.remove({ data: pickIds(props.items, props.itemId) });
+
+            showErrorPopups(response, `${config.value.tooltipPrefix}.removeForbidden`);
+
+            return afterSubmit();
+          },
         },
-      },
-    });
+      });
+    };
 
     /**
      * Shows a confirmation modal for bulk enable operation.
