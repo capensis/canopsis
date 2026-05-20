@@ -25,6 +25,9 @@ include:
   - project: 'templates/gitlab-ci'
     ref: main
     file: 'rpm-sign/gitlab-ci-rpm-sign.yml'
+  - project: 'templates/gitlab-ci'
+    ref: main
+    file: 'docker-sign/gitlab-ci-canopsis-docker-sign.yml'
 
 create_release:
   extends: .create_release
