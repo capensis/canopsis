@@ -79,17 +79,8 @@
         <c-theme-field v-if="hasReadThemeAccess" v-field="form.ui_theme" clearable />
       </c-form-block-row>
 
-      <c-form-block-row v-if="!isNew">
-        <div>{{ $t('common.authKey') }}: {{ user.authkey }}</div>
-        <c-copy-btn
-          :value="user.authkey"
-          :tooltip="$t('common.copyToClipboard')"
-          small
-          fab
-          left
-          @success="showCopyAuthKeySuccessPopup"
-          @error="showCopyAuthKeyErrorPopup"
-        />
+      <c-form-block-row v-if="!isNew" :label="$t('common.authKey')">
+        <user-auth-key-field :value="user.authkey" class="fill-height" />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('role.defaultView')">
@@ -105,15 +96,16 @@ import { computed } from 'vue';
 import { AUTH_SOURCES_WITH_PASSWORD_CHANGING, GROUPS_NAVIGATION_TYPES, USER_PERMISSIONS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
-import { usePopups } from '@/hooks/popups';
 import { useAuth, useCRUDPermissions } from '@/hooks/auth';
 
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
+import UserAuthKeyField from '@/components/other/users/form/fields/user-auth-key-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     ViewSelector,
+    UserAuthKeyField,
   },
   model: {
     prop: 'form',
@@ -141,7 +133,6 @@ export default {
     const menuProps = { offsetY: true };
 
     const { t } = useI18n();
-    const popups = usePopups();
     const { currentUser } = useAuth();
 
     const { hasReadAccess: hasReadThemeAccess } = useCRUDPermissions(USER_PERMISSIONS.technical.profile.theme);
@@ -164,8 +155,6 @@ export default {
     const isSelf = computed(() => props.user._id === currentUser.value._id);
 
     const isDisabledRoleItem = item => (props.user?.idp_roles ?? []).includes(item._id);
-    const showCopyAuthKeySuccessPopup = () => popups.success({ text: t('success.authKeyCopied') });
-    const showCopyAuthKeyErrorPopup = () => popups.error({ text: t('errors.default') });
 
     return {
       menuProps,
@@ -177,8 +166,6 @@ export default {
       isSelf,
 
       isDisabledRoleItem,
-      showCopyAuthKeySuccessPopup,
-      showCopyAuthKeyErrorPopup,
     };
   },
 };

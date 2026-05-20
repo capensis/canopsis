@@ -37,7 +37,7 @@
           </v-btn>
         </template>
         <v-btn
-          v-else
+          v-else-if="activeMessage.closable"
           class="my-0 ml-0 mr-2"
           color="white"
           outlined
@@ -105,9 +105,11 @@ export default {
       const { id: routeId } = route.params;
       const currentView = getViewById.value(routeId);
 
-      return activeMessages.value.filter(({ views: messageViews }) => (messageViews || []).some(
-        messageView => isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
-      ));
+      return activeMessages.value
+        .filter(({ views: messageViews }) => (messageViews || []).some(
+          messageView => isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
+        ))
+        .toSorted((first, second) => (first.priority || 1) - (second.priority || 1));
     });
 
     /**
