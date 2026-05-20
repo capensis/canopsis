@@ -5,7 +5,10 @@
         <span>{{ $t('modals.createTicketStatusJob.edit.title') }}</span>
       </template>
       <template #text="">
-        <ticket-status-job-form v-model="form" />
+        <ticket-status-job-form
+          v-model="form"
+          :is-new="isNew"
+        />
       </template>
       <template #actions="">
         <v-btn
@@ -30,7 +33,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -65,6 +68,8 @@ export default {
 
     const form = ref(ticketStatusJobToForm(config.value.ticketStatusJob ?? {}));
 
+    const isNew = computed(() => !config.value.ticketStatusJob?._id);
+
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
@@ -78,6 +83,7 @@ export default {
 
     return {
       form,
+      isNew,
       isDisabled,
       submitting,
       submit,

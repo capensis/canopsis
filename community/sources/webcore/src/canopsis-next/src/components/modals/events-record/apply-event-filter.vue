@@ -13,8 +13,8 @@
           <c-event-filter-patterns-field
             v-model="form"
             :attributes="eventPatternAttributes"
+            :required="config.required ?? true"
             name="patterns"
-            required
             @input="errors.remove('patterns')"
           />
         </div>
