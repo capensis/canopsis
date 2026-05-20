@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
@@ -165,7 +166,7 @@ func getAlarmStoreWithFixtures(ctx context.Context, b *testing.B, fixturesPath s
 	}
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	s := NewStore(dbClient, dbClient, nil, common.NewPatternFieldsTransformer(dbClient), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
+	s := NewStore(dbClient, dbClient, nil, patternfields.NewTransformer(dbClient), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
 		authorProvider, nil, json.NewDecoder(), zerolog.Nop())
 
 	b.Cleanup(func() {
