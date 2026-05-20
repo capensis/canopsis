@@ -1,15 +1,15 @@
 # Args defined here are only available to FROM commands
 # See https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG ALPINE_VERSION
-ARG ALPINE_BUILD_VERSION
-ARG GOLANG_VERSION
-ARG DEBIAN_VERSION
+ARG DOCKER_ALPINE_VERSION=dummy
+ARG DOCKER_ALPINE_BUILD_VERSION=dummy
+ARG GOLANG_VERSION=dummy
+ARG DEBIAN_VERSION=dummy
 
 #
 # Build the engines
 #
 
-FROM golang:${GOLANG_VERSION}-alpine${ALPINE_BUILD_VERSION} AS builder
+FROM golang:${GOLANG_VERSION}-alpine${DOCKER_ALPINE_BUILD_VERSION} AS builder
 RUN apk add --no-cache make git gcc binutils libc-dev
 
 ARG CANOPSIS_EDITION
@@ -33,7 +33,7 @@ RUN make
 # Prepare the common final container
 #
 
-FROM alpine:${ALPINE_VERSION} AS final-container
+FROM alpine:${DOCKER_ALPINE_VERSION} AS final-container
 
 RUN apk add --no-cache ca-certificates tzdata
 
@@ -45,7 +45,7 @@ COPY community/go-engines-community/config /opt/canopsis/share/config
 
 ARG CANOPSIS_EDITION
 ARG CMD
-ENV CMD ${CMD}
+ENV CMD=${CMD}
 
 COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /${CMD}
 RUN ln -sf /${CMD} /opt/canopsis/bin/${CMD}
@@ -78,7 +78,7 @@ COPY --from=builder /monorepo/community/go-engines-community/build/cmd/${CMD} /$
 
 USER canopsis:canopsis
 
-ENV CMD ${CMD}
+ENV CMD=${CMD}
 
 # note: CPS_EDITION is defined at Docker Compose runtime in the .env file
 CMD ["/bin/sh", "-c", "/${CMD} -edition ${CPS_EDITION:-community} -conf /canopsis-${CPS_EDITION:-community}.toml -migrate-postgres=true -override /opt/canopsis/etc/conf.d/canopsis-override.toml"]

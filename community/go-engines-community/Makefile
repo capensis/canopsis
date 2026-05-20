@@ -107,8 +107,8 @@ $(CURRENT_BUILD_OUTPUT_DIR)/cmd/%: $(CURRENT_ROOT_DIR)/cmd/% $(CURRENT_ROOT_DIR)
 
 define DOCKER_BUILD_ARGS
 --platform linux/amd64 \
---build-arg "ALPINE_VERSION=$(DOCKER_ALPINE_VERSION)" \
---build-arg "ALPINE_BUILD_VERSION=$(DOCKER_ALPINE_BUILD_VERSION)" \
+--build-arg "DOCKER_ALPINE_VERSION=$(DOCKER_ALPINE_VERSION)" \
+--build-arg "DOCKER_ALPINE_BUILD_VERSION=$(DOCKER_ALPINE_BUILD_VERSION)" \
 --build-arg "DEBIAN_VERSION=$(DEBIAN_VERSION)" \
 --build-arg "GOLANG_VERSION=$(GOLANG_VERSION)" \
 --build-arg "CANOPSIS_EDITION=$(CANOPSIS_EDITION)" \
@@ -171,7 +171,7 @@ $(CURRENT_BUILD_OUTPUT_DIR)/support/%:
 $(DOCKER_SUPPORT_TOOLS_TARGETS):
 	cd $(SUPPORT_TOOLS_DIR)/$(subst docker-support-tool-,,$@) && \
 	docker build \
-		--build-arg "ALPINE_VERSION=$(DOCKER_ALPINE_VERSION)" \
+		--build-arg "DOCKER_ALPINE_VERSION=$(DOCKER_ALPINE_VERSION)" \
 		-f "./Dockerfile" \
 		-t "$(DOCKER_IMAGE_BASE_PATH)/canopsis-support-tool-$(subst docker-support-tool-,,$@):$(DOCKER_TAG)" \
 		.
