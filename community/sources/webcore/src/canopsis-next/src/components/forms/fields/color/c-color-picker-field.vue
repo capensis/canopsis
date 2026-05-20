@@ -17,7 +17,7 @@
         {{ color }}
       </div>
     </v-layout>
-    <v-layout align-center justify-end>
+    <v-layout class="color-picker__button__wrapper" align-center>
       <v-btn
         :style="style"
         :disabled="disabled"

@@ -118,6 +118,7 @@
         <c-enabled-color-picker-field
           v-field="form.color"
           :label="$t('modals.createPbehavior.steps.color.label')"
+          class="pbehavior-color-picker-field"
           row
         />
       </c-form-block-row>
@@ -348,3 +349,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.pbehavior-color-picker-field ::v-deep .color-picker__button__wrapper {
+  justify-content: flex-end;
+}
+</style>

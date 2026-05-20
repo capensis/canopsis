@@ -49,6 +49,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    error: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const { hasChildrenError } = useValidationChildren();
@@ -57,7 +61,7 @@ export default {
       [`c-form-block-row--depth-${props.depth}`]: !!props.depth,
       'c-form-block-row--top-border': !!props.topBorder,
       'c-form-block-row--bottom-border': !!props.bottomBorder,
-      'c-form-block-row--error': hasChildrenError.value,
+      'c-form-block-row--error': hasChildrenError.value || props.error,
     }));
 
     const labelFlexStyle = computed(() => {

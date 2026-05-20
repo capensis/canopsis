@@ -115,8 +115,6 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.aiChatHistory]: { maxWidth: 700 },
       [MODALS.createRecurrenceRule]: { maxWidth: 1000 },
       [MODALS.createSnmpRule]: { maxWidth: 1000 },
-      [MODALS.createRole]: { maxWidth: 900 },
-      [MODALS.createUser]: { maxWidth: 900 },
 
       ...featuresService.get('components.modals.dialogPropsMap'),
     },

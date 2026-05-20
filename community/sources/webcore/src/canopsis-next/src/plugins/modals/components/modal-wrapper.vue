@@ -40,7 +40,7 @@ export default {
 
     const dialogProps = computed(() => {
       const defaultDialogProps = {
-        maxWidth: 700,
+        maxWidth: 900,
         attach: '.modals-wrapper',
         absolute: true,
         retainFocus: false,
