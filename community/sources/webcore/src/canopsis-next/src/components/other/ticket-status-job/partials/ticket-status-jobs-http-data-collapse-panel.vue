@@ -1,5 +1,5 @@
 <template>
-  <c-collapse-panel>
+  <c-collapse-panel :expanded="expanded">
     <template #header>
       <span class="white--text">
         <strong>{{ titlePrefix }} : </strong>
@@ -38,6 +38,10 @@ export default {
     raw: {
       type: String,
       default: '',
+    },
+    expanded: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props) {
