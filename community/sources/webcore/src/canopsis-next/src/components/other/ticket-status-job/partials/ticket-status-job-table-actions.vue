@@ -1,5 +1,5 @@
 <template>
-  <v-layout>
+  <v-layout v-if="!isStopped">
     <c-action-btn
       v-if="item"
       :tooltip="$t('jobs.actions.editJob')"
@@ -60,7 +60,7 @@ export default {
       default: () => [],
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const { t, tc } = useI18n();
     const modals = useModals();
     const popups = usePopups();
@@ -75,6 +75,7 @@ export default {
     const preparedItems = computed(() => (props.item ? [props.item] : props.items));
     const preparedItemsById = computed(() => keyBy(preparedItems.value, '_id'));
     const isRunning = computed(() => preparedItems.value.some(item => item.status === JOB_STATUS.running));
+    const isStopped = computed(() => preparedItems.value.every(item => item.status === JOB_STATUS.stopped));
 
     /**
      * Displays a popup with a ticket status job action message.
@@ -129,6 +130,8 @@ export default {
         popups.error({ text: t('errors.default') });
       } finally {
         fetchTicketStatusJobsListWithPreviousParams();
+
+        emit('clear:items');
       }
     };
 
@@ -179,6 +182,7 @@ export default {
     return {
       preparedItems,
       isRunning,
+      isStopped,
       playPending,
       repeatPending,
       pausePending,
