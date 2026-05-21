@@ -56,7 +56,7 @@
         @click="showImportExceptionsModal"
       />
       <c-action-fab-btn
-        :tooltip="$t('modals.createPbehaviorException.title')"
+        :tooltip="$t('modals.createPbehaviorException.create.title')"
         color="deep-purple"
         icon="event"
         top
@@ -134,9 +134,9 @@ export default {
     const activeTab = ref(PLANNING_TABS.types);
 
     const tooltipText = computed(() => ({
-      [PLANNING_TABS.types]: t('modals.createPbehaviorType.title'),
-      [PLANNING_TABS.reasons]: t('modals.createPbehaviorReason.title'),
-      [PLANNING_TABS.exceptions]: t('modals.createPbehaviorException.title'),
+      [PLANNING_TABS.types]: t('modals.createPbehaviorType.create.title'),
+      [PLANNING_TABS.reasons]: t('modals.createPbehaviorReason.create.title'),
+      [PLANNING_TABS.exceptions]: t('modals.createPbehaviorException.create.title'),
     }[activeTab.value]));
 
     const hasCreateAccess = computed(() => ({

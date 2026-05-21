@@ -79,8 +79,12 @@
         <c-theme-field v-if="hasReadThemeAccess" v-field="form.ui_theme" clearable />
       </c-form-block-row>
 
-      <c-form-block-row v-if="!isNew" :label="$t('common.authKey')">
-        <user-auth-key-field :value="user.authkey" class="fill-height" />
+      <c-form-block-row
+        v-if="!isNew"
+        :label="$t('common.authKey')"
+        align-center
+      >
+        <user-auth-key-field :value="user.authkey" />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('role.defaultView')">

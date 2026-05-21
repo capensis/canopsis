@@ -32,7 +32,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -86,8 +86,9 @@ export default {
       context: LLM_SOCKET_CONTEXTS.entityService,
     });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.item,
       method: async () => {
         const result = await config.value.action?.(formToService(form.value));
 
@@ -132,6 +133,7 @@ export default {
 
       close,
       prepareStateSettingForm,
+      submitLabel,
       submit,
     };
   },

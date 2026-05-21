@@ -35,7 +35,7 @@
           type="submit"
           @click="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -97,8 +97,9 @@ export default {
     const withPayload = computed(() => remediationJobConfigType.value?.with_body);
     const withQuery = computed(() => remediationJobConfigType.value?.with_query);
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.remediationJob,
       method: async () => {
         const data = await config.value.action?.(formToRemediationJob(form.value));
 
@@ -120,6 +121,7 @@ export default {
       title,
       isDisabled,
       submitting,
+      submitLabel,
       submit,
       withPayload,
       withQuery,

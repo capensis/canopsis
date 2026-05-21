@@ -62,7 +62,7 @@ import { useRoute } from 'vue-router/composables';
 import { SOCKET_ROOMS } from '@/config';
 import { MODALS, ROUTES_NAMES_TO_BROADCAST_MESSAGES } from '@/constants';
 
-import { isBroadcastMessageViewMatchingRoute } from '@/helpers/entities/broadcast-message/list';
+import { isActiveBroadcastMessageVisibleOnRoute } from '@/helpers/entities/broadcast-message/list';
 
 import { useAuth } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
@@ -106,9 +106,7 @@ export default {
       const currentView = getViewById.value(routeId);
 
       return activeMessages.value
-        .filter(({ views: messageViews }) => (messageViews || []).some(
-          messageView => isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
-        ))
+        .filter(message => isActiveBroadcastMessageVisibleOnRoute(message, routeView, routeId, currentView))
         .toSorted((first, second) => (first.priority || 1) - (second.priority || 1));
     });
 

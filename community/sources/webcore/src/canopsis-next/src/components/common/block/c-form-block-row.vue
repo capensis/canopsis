@@ -12,7 +12,10 @@
         {{ label }}
       </h4>
     </v-flex>
-    <v-flex :class="{ 'py-3': indented }" class="c-form-block-row__field text-break">
+    <v-flex
+      :class="fieldClasses"
+      class="c-form-block-row__field text-break"
+    >
       <slot />
     </v-flex>
   </v-layout>
@@ -53,6 +56,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    alignCenter: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const { hasChildrenError } = useValidationChildren();
@@ -62,6 +69,11 @@ export default {
       'c-form-block-row--top-border': !!props.topBorder,
       'c-form-block-row--bottom-border': !!props.bottomBorder,
       'c-form-block-row--error': hasChildrenError.value || props.error,
+    }));
+
+    const fieldClasses = computed(() => ({
+      'py-3': props.indented,
+      'c-form-block-row__field--align-center': props.alignCenter,
     }));
 
     const labelFlexStyle = computed(() => {
@@ -84,6 +96,7 @@ export default {
     return {
       layoutClasses,
       labelFlexStyle,
+      fieldClasses,
     };
   },
 };
@@ -149,6 +162,11 @@ export default {
     word-break: break-word;
     overflow-wrap: anywhere;
     padding: 4px 16px;
+
+    &--align-center {
+      display: flex;
+      align-items: center;
+    }
   }
 
   &--error {

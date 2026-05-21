@@ -52,7 +52,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -142,8 +142,9 @@ export default {
     const isEnrichment = computed(() => isEnrichmentEventFilterRuleType(form.value.type));
     const isChangeEntity = computed(() => isChangeEntityEventFilterRuleType(form.value.type));
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.rule,
       method: async () => {
         const result = await config.value.action?.(formToEventFilter(form.value, system.timezone));
 
@@ -173,6 +174,7 @@ export default {
       submitting,
       chatShown,
       chatOptions,
+      submitLabel,
       submit,
       close,
     };

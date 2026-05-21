@@ -1,13 +1,15 @@
 <template>
   <div>
-    <c-form-block-row :label="$t('common.state')" :depth="depth">
-      <v-layout class="fill-height" align-center>
-        <state-criticity-field
-          v-field="value.state"
-          :state-values="availableStateValues"
-          mandatory
-        />
-      </v-layout>
+    <c-form-block-row
+      :label="$t('common.state')"
+      :depth="depth"
+      align-center
+    >
+      <state-criticity-field
+        v-field="value.state"
+        :state-values="availableStateValues"
+        mandatory
+      />
     </c-form-block-row>
 
     <c-form-block-row :label="$t('common.note')" :depth="depth">

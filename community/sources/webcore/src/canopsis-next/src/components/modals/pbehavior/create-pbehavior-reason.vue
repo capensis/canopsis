@@ -2,13 +2,14 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ $t('modals.createPbehaviorReason.title') }}</span>
+        <span>{{ title }}</span>
       </template>
       <template #text="">
         <pbehavior-reason-form v-model="form" />
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
           @click="close"
@@ -16,10 +17,12 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -27,12 +30,14 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { pbehaviorReasonToForm, formToPbehaviorReason } from '@/helpers/entities/pbehavior/reason/form';
 
+import { useI18n } from '@/hooks/i18n';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 
@@ -57,12 +62,22 @@ export default {
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const { config, close } = useInnerModal(props);
 
     const form = ref(pbehaviorReasonToForm(config.value.pbehaviorReason));
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const isNew = computed(() => !config.value.pbehaviorReason?._id);
+
+    const title = computed(() => (
+      config.value.title || t(isNew.value
+        ? 'modals.createPbehaviorReason.create.title'
+        : 'modals.createPbehaviorReason.edit.title')
+    ));
+
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.pbehaviorReason,
       method: async () => {
         if (config.value.action) {
           await config.value.action(formToPbehaviorReason(form.value));
@@ -72,11 +87,15 @@ export default {
       },
     });
 
+    useFormConfirmableCloseModal({ form, submit, close });
+
     return {
       form,
+      title,
       isDisabled,
       submitting,
       close,
+      submitLabel,
       submit,
     };
   },

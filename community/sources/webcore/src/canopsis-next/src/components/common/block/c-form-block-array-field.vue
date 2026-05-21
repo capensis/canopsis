@@ -6,7 +6,7 @@
       :label="label"
       :required="required"
       :error="displayErrorMessages.length > 0"
-    ><slot name="label">{{ label }}</slot></c-label>
+    ><slot name="label" /></c-label>
     <!-- eslint-enable vue/multiline-html-element-content-newline -->
 
     <div

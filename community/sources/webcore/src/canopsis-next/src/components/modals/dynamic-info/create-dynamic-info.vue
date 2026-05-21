@@ -50,7 +50,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -117,8 +117,9 @@ export default {
     const title = computed(() => config.value.title || t('modals.createDynamicInfo.create.title'));
     const isDisabledIdField = computed(() => config.value.isDisabledIdField);
 
-    const { submit, submitting } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.dynamicInfo,
       method: async () => {
         const result = await config.value.action?.(formToDynamicInfo(form.value));
 
@@ -142,6 +143,7 @@ export default {
       submitting,
       chatShown,
       chatOptions,
+      submitLabel,
       submit,
       close,
     };

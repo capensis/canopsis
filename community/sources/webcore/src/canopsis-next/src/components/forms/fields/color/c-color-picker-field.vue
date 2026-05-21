@@ -17,7 +17,11 @@
         {{ color }}
       </div>
     </v-layout>
-    <v-layout class="color-picker__button__wrapper" align-center>
+    <v-layout
+      :justify-end="justifyEnd"
+      class="color-picker__button__wrapper"
+      align-center
+    >
       <v-btn
         :style="style"
         :disabled="disabled"
@@ -85,6 +89,10 @@ export default {
       default: 'color',
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    justifyEnd: {
       type: Boolean,
       default: false,
     },

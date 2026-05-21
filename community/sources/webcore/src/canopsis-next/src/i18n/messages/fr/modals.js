@@ -1,4 +1,4 @@
-import { PBEHAVIOR_TYPE_TYPES, WIDGET_TYPES } from '@/constants';
+import { PBEHAVIOR_TYPE_TYPES, WIDGET_TEMPLATES_TYPES, WIDGET_TYPES } from '@/constants';
 
 export default {
   common: {
@@ -543,7 +543,12 @@ export default {
     title: 'Créer une règle de récurrence',
   },
   createPbehaviorType: {
-    title: 'Créer un type',
+    create: {
+      title: 'Créer un type',
+    },
+    edit: {
+      title: 'Modifier un type',
+    },
     iconNameHint: 'Entrez le nom d\'une icône à partir de material.io',
     errors: {
       iconName: 'Le nom est invalide',
@@ -570,20 +575,29 @@ export default {
     },
   },
   createPbehaviorReason: {
-    title: 'Créer une raison',
+    create: {
+      title: 'Créer une raison',
+    },
+    edit: {
+      title: 'Modifier une raison',
+    },
     fields: {
       name: 'Nom',
       description: 'Description',
     },
   },
   createPbehaviorException: {
-    title: 'Créer une liste d\'exceptions',
+    create: {
+      title: 'Créer une liste d\'exceptions',
+    },
+    edit: {
+      title: 'Modifier une liste d\'exceptions',
+    },
     addDate: 'Ajouter une date',
     fields: {
       name: 'Nom',
       description: 'Description',
     },
-    emptyExdates: 'Aucune date d\'exception ajoutée pour le moment',
   },
   linkToMetaAlarm: {
     title: 'Lier à une méta-alarme',
@@ -1025,6 +1039,18 @@ export default {
     },
     edit: {
       title: 'Modifier le modèle de widget',
+    },
+    types: {
+      [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'Colonnes des alarmes',
+      [WIDGET_TEMPLATES_TYPES.alarmSortColumns]: 'Colonnes de tri par défaut des alarmes',
+      [WIDGET_TEMPLATES_TYPES.entityColumns]: 'Colonnes des entités',
+      [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'Plus d\'infos',
+      [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'Actions rapides (alarme unitaire)',
+      [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'Actions rapides (massive)',
+      [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'Export PDF',
+      [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Modèle de tuile',
+      [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Modèle de modale',
+      [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Modèle d\'entité',
     },
   },
   selectWidgetTemplateType: {

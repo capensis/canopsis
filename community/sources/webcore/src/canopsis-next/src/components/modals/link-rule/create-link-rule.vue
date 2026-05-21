@@ -30,7 +30,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -92,8 +92,9 @@ export default {
       context: LLM_SOCKET_CONTEXTS.linkRule,
     });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.linkRule,
       method: async () => {
         const result = await config.value.action?.(formToLinkRule(form.value));
 
@@ -125,6 +126,7 @@ export default {
       chatShown,
       chatOptions,
 
+      submitLabel,
       submit,
       close,
     };

@@ -106,13 +106,7 @@ export const useSubmittableForm = ({
 
   const isNew = computed(() => !unref(item)?._id);
 
-  const submitLabel = computed(() => {
-    if (!unref(item)) {
-      return t('common.submit');
-    }
-
-    return isNew.value ? t('common.create') : t('common.save');
-  });
+  const submitLabel = computed(() => (isNew.value ? t('common.create') : t('common.save')));
 
   return {
     submitting,

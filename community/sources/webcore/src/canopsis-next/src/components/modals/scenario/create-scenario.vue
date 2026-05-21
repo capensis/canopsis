@@ -48,7 +48,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -139,8 +139,9 @@ export default {
       context: LLM_SOCKET_CONTEXTS.scenario,
     });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.scenario,
       method: async () => {
         const result = await config.value.action?.(formToScenario(form.value, system.timezone));
 
@@ -165,6 +166,7 @@ export default {
       submitting,
       chatShown,
       chatOptions,
+      submitLabel,
       submit,
       close,
       disabledTestQueryTooltip,

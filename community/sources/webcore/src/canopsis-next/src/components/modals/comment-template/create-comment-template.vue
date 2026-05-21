@@ -21,7 +21,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -64,8 +64,9 @@ export default {
 
     const title = computed(() => config.value.title || t('modals.createCommentTemplate.create.title'));
 
-    const { submitting, isDisabled, submit } = useSubmittableForm({
+    const { submitting, isDisabled, submit, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.template,
       method: async () => {
         await config.value.action?.(formToCommentTemplate(form.value));
 
@@ -81,6 +82,7 @@ export default {
       submitting,
       isDisabled,
 
+      submitLabel,
       submit,
       close,
     };

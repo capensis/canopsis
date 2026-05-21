@@ -31,7 +31,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -109,8 +109,9 @@ export default {
     /**
      * Submits the form and calls the action callback if provided
      */
-    const { submit, submitting, isDisabled } = useSubmittableForm({
+    const { submit, submitting, isDisabled, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.filter,
       method: async () => {
         const newFilter = formToFilter(form.value, patternsFields.value, config.value.corporate);
 
@@ -136,6 +137,7 @@ export default {
       patternsProps,
       submitting,
       isDisabled,
+      submitLabel,
       submit,
       close,
 

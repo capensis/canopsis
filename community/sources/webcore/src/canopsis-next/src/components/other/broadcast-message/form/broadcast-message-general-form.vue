@@ -66,7 +66,10 @@
       </v-layout>
     </c-form-block-row>
 
-    <c-form-block-row :label="$t('broadcastMessage.closable')">
+    <c-form-block-row
+      :label="$t('broadcastMessage.closable')"
+      align-center
+    >
       <c-enabled-field v-field="form.closable" :label="$t('broadcastMessage.closable')">
         <template #append>
           <c-help-icon
@@ -79,8 +82,11 @@
       </c-enabled-field>
     </c-form-block-row>
 
-    <c-form-block-row :label="$t('common.color')">
-      <c-color-picker-field v-field="form.color" class="fill-height" />
+    <c-form-block-row
+      :label="$t('common.color')"
+      align-center
+    >
+      <c-color-picker-field v-field="form.color" />
     </c-form-block-row>
   </c-form-block>
 </template>

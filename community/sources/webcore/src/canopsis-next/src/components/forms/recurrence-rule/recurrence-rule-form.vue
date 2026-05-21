@@ -57,23 +57,9 @@
           <div class="py-4">
             <pbehavior-exceptions-field
               v-field="form.exdates"
+              :add-button-label="$t('pbehavior.exceptions.create')"
               :with-exdate-type="withExdateType"
-            >
-              <template #actions="">
-                <v-layout
-                  class="gap-2 fill-height"
-                  align-center
-                >
-                  <v-btn
-                    color="primary"
-                    outlined
-                    @click="addExdate"
-                  >
-                    {{ $t('pbehavior.exceptions.create') }}
-                  </v-btn>
-                </v-layout>
-              </template>
-            </pbehavior-exceptions-field>
+            />
           </div>
         </c-form-block-row>
         <c-form-block-row :label="$t('pbehavior.exceptions.title')">

@@ -176,6 +176,7 @@
         :value="form.parameters.exportPdfTemplate"
         :template="form.parameters.exportPdfTemplateTemplate"
         :title="$t('settings.exportPdfTemplate')"
+        :widget-template-type="$constants.WIDGET_TEMPLATES_TYPES.alarmExportToPdf"
         :variables="exportPdfAlarmVariables"
         :default-value="defaultExportPdfTemplateValue"
         :dialog-props="{ maxWidth: 1070 }"
@@ -215,6 +216,7 @@
           :value="form.parameters.moreInfoTemplate"
           :template="form.parameters.moreInfoTemplateTemplate"
           :title="$t('common.infos')"
+          :widget-template-type="$constants.WIDGET_TEMPLATES_TYPES.alarmMoreInfos"
           :variables="alarmVariables"
           :templates="alarmMoreInfosWidgetTemplates"
           addable

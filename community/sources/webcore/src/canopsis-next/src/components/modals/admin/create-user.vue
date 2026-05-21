@@ -26,7 +26,7 @@
           class="primary white--text"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -74,8 +74,9 @@ export default {
     const isNew = computed(() => !config.value.user);
     const title = computed(() => (config.value.title || t('modals.createUser.create.title')));
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.user,
       method: async () => {
         await config.value.action(formToUserRequest(form.value));
 
@@ -91,6 +92,7 @@ export default {
       title,
       isDisabled,
       submitting,
+      submitLabel,
       submit,
       close,
       config,

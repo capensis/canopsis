@@ -5,16 +5,18 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <c-alert type="warning">
-          {{ config.warningText }}
-        </c-alert>
-        <maintenance-form v-model="form" />
+        <v-layout class="gap-4" column>
+          <c-alert type="warning">
+            {{ config.warningText }}
+          </c-alert>
+          <maintenance-form v-model="form" />
+        </v-layout>
       </template>
       <template #actions="">
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -24,7 +26,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t(config.maintenance ? 'common.submit' : 'modals.createMaintenance.enableMaintenance') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -32,13 +34,16 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { maintenanceToForm } from '@/helpers/entities/maintenance/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import MaintenanceForm from '@/components/other/maintenance/form/maintenance-form.vue';
 
@@ -51,33 +56,45 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: { MaintenanceForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    const { maintenance } = this.modal.config;
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
+
+    const form = ref(maintenanceToForm(config.value.maintenance));
+
+    const title = computed(() => config.value.title ?? t('modals.createMaintenance.setup.title'));
+
+    const submitLabel = computed(() => (
+      config.value.maintenance ? t('common.submit') : t('modals.createMaintenance.enableMaintenance')
+    ));
+
+    const { submit, submitting, isDisabled } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action?.(form.value);
+
+        close();
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      form: maintenanceToForm(maintenance),
+      form,
+      config,
+      title,
+      submitLabel,
+      submit,
+      submitting,
+      isDisabled,
+      close,
     };
-  },
-  computed: {
-    title() {
-      return this.$t('modals.createMaintenance.setup.title');
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validate();
-
-      if (isFormValid) {
-        await this.config.action?.(this.form);
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

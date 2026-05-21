@@ -16,6 +16,7 @@
       :disabled="!enabled"
       :required="enabled"
       :name="name"
+      :justify-end="justifyEnd"
     />
   </v-layout>
 </template>
@@ -44,6 +45,10 @@ export default {
       default: 'color',
     },
     column: {
+      type: Boolean,
+      default: false,
+    },
+    justifyEnd: {
       type: Boolean,
       default: false,
     },

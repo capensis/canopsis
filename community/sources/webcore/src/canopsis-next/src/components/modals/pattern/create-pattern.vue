@@ -27,7 +27,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -82,8 +82,9 @@ export default {
       form.value.type = config.value.type;
     }
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.pattern,
       method: async () => {
         const result = await config.value.action?.(formToPattern(form.value));
 
@@ -115,6 +116,7 @@ export default {
       isDisabled,
       submitting,
       close,
+      submitLabel,
       submit,
       chatShown,
       chatOptions,
