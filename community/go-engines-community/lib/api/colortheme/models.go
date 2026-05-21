@@ -59,6 +59,16 @@ type Colors struct {
 		Major    string `bson:"major" json:"major" binding:"required,iscolor"`
 		Critical string `bson:"critical" json:"critical" binding:"required,iscolor"`
 	} `bson:"state" json:"state"`
+	Icons struct {
+		Ack         string `bson:"ack" json:"ack" binding:"required,iscolor"`
+		Canceled    string `bson:"canceled" json:"canceled" binding:"required,iscolor"`
+		Children    string `bson:"children" json:"children" binding:"required,iscolor"`
+		Parent      string `bson:"parent" json:"parent" binding:"required,iscolor"`
+		Comment     string `bson:"comment" json:"comment" binding:"required,iscolor"`
+		Snooze      string `bson:"snooze" json:"snooze" binding:"required,iscolor"`
+		Tickets     string `bson:"tickets" json:"tickets" binding:"required,iscolor"`
+		CancelDelay string `bson:"cancel_delay" json:"cancel_delay" binding:"required,iscolor"`
+	} `bson:"icons" json:"icons"`
 }
 
 type Document struct {

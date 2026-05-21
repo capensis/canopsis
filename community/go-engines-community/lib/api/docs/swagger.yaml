@@ -4969,6 +4969,16 @@ paths:
                       "minor": "#AAAAAA",
                       "major": "#AAAAAA",
                       "critical": "#AAAAAA"
+                    },
+                    "icons": {
+                      "ack": "#AAAAAA",
+                      "canceled": "#AAAAAA",
+                      "children": "#AAAAAA",
+                      "parent": "#AAAAAA",
+                      "comment": "#AAAAAA",
+                      "snooze": "#AAAAAA",
+                      "tickets": "#AAAAAA",
+                      "cancel_delay": "#AAAAAA"
                     }
                   }
                 }
@@ -5064,6 +5074,16 @@ paths:
                       "minor": "#FFFFFF",
                       "major": "#FFFFFF",
                       "critical": "#FFFFFF"
+                    },
+                    "icons": {
+                      "ack": "#FFFFFF",
+                      "canceled": "#FFFFFF",
+                      "children": "#FFFFFF",
+                      "parent": "#FFFFFF",
+                      "comment": "#FFFFFF",
+                      "snooze": "#FFFFFF",
+                      "tickets": "#FFFFFF",
+                      "cancel_delay": "#FFFFFF"
                     }
                   }
                 }

@@ -29,6 +29,15 @@ color_theme:
         shift_row_color: '#F5F5F5'
         hover_row: true
         hover_row_color: '#E5E5E5'
+      icons:
+        ack: '#9C27B0'
+        canceled: '#607D8B'
+        children: '#6D4C41'
+        parent: '#6D4C41'
+        comment: '#BA68C8'
+        snooze: '#E91E63'
+        tickets: '#2196F3'
+        cancel_delay: '#808080'
     font_size: 2
     author: root
     created: <NowUnix()>
@@ -64,6 +73,15 @@ color_theme:
         shift_row_color: '#515151'
         hover_row: true
         hover_row_color: '#616161'
+      icons:
+        ack: '#9C27B0'
+        canceled: '#607D8B'
+        children: '#6D4C41'
+        parent: '#6D4C41'
+        comment: '#BA68C8'
+        snooze: '#E91E63'
+        tickets: '#2196F3'
+        cancel_delay: '#808080'
     font_size: 2
     author: root
     created: <NowUnix()>
@@ -99,6 +117,15 @@ color_theme:
         shift_row_color: '#F5F5F5'
         hover_row: true
         hover_row_color: '#E5E5E5'
+      icons:
+        ack: '#9C27B0'
+        canceled: '#607D8B'
+        children: '#6D4C41'
+        parent: '#6D4C41'
+        comment: '#BA68C8'
+        snooze: '#E91E63'
+        tickets: '#2196F3'
+        cancel_delay: '#808080'
     font_size: 2
     author: root
     created: <NowUnix()>
@@ -134,6 +161,15 @@ color_theme:
         shift_row_color: '#515151'
         hover_row: true
         hover_row_color: '#616161'
+      icons:
+        ack: '#9C27B0'
+        canceled: '#607D8B'
+        children: '#6D4C41'
+        parent: '#6D4C41'
+        comment: '#BA68C8'
+        snooze: '#E91E63'
+        tickets: '#2196F3'
+        cancel_delay: '#808080'
     font_size: 2
     author: root
     created: <NowUnix()>
