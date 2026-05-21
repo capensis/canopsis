@@ -22,7 +22,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -67,8 +67,9 @@ export default {
 
     const form = ref(entityToForm(config.value.entity));
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.entity,
       method: async () => {
         await config.value.action?.(formToEntity(form.value));
 
@@ -95,6 +96,7 @@ export default {
 
       close,
       prepareStateSettingForm,
+      submitLabel,
       submit,
     };
   },

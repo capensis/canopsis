@@ -30,7 +30,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -82,8 +82,9 @@ export default {
     const title = computed(() => config.value.title || t('modals.createExternalAuthToken.create.title'));
     const ruleId = computed(() => config.value.externalAuthToken?._id);
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.externalAuthToken,
       method: async () => {
         const data = await config.value.action?.(formToExternalAuthToken(form.value));
 
@@ -108,6 +109,7 @@ export default {
 
       title,
 
+      submitLabel,
       submit,
       close,
     };

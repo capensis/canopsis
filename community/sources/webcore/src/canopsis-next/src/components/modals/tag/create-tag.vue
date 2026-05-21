@@ -31,7 +31,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -93,8 +93,9 @@ export default {
 
     const isImported = computed(() => config.value.isImported);
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.tag,
       method: async () => {
         const result = await config.value.action?.(formToTag(form.value));
 
@@ -117,6 +118,7 @@ export default {
       submitting,
       chatShown,
       chatOptions,
+      submitLabel,
       submit,
       close,
     };

@@ -33,7 +33,7 @@
           class="primary white--text"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -141,8 +141,9 @@ export default {
       }],
     }));
 
-    const { submit, isDisabled } = useSubmittableForm({
+    const { submit, isDisabled, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.message,
       method: async () => {
         await config.value.action?.(formToMessage(form.value, treeItems.value));
 
@@ -176,6 +177,7 @@ export default {
       isDisabled,
       treeItems,
 
+      submitLabel,
       submit,
       close,
     };

@@ -1,7 +1,7 @@
 <template>
   <v-layout>
     <v-flex
-      class="manage-playlist-tabs mr-2"
+      class="manage-playlist-tabs"
       xs12
     >
       <v-flex class="text-center mb-2">
@@ -229,6 +229,10 @@ export default {
 
 <style lang="scss" scoped>
   .manage-playlist-tabs {
+    & ::v-deep .layout.column {
+      max-height: 100%;
+    }
+
     & ::v-deep .panel-header {
       display: flex;
       flex: inherit;

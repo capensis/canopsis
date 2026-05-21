@@ -41,7 +41,7 @@
           type="submit"
           @click="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -128,8 +128,9 @@ export default {
 
     const alertComment = computed(() => approval.value?.dismiss_comment ?? approval.value?.comment);
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.remediationInstruction,
       method: async () => {
         const result = await config.value.action?.(formToRemediationInstructionRequest(form.value));
 
@@ -161,6 +162,7 @@ export default {
       submitting,
       chatShown,
       chatOptions,
+      submitLabel,
       submit,
     };
   },

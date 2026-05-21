@@ -32,7 +32,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -95,8 +95,9 @@ export default {
       disabled: isDefaultRule,
     });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.rule,
       method: async () => {
         const result = await config.value.action?.(formToAlarmStatusRule(form.value));
 
@@ -118,6 +119,7 @@ export default {
       submitting,
       chatShown,
       chatOptions,
+      submitLabel,
       submit,
       close,
     };

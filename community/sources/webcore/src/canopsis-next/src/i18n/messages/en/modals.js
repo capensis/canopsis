@@ -1,4 +1,4 @@
-import { PBEHAVIOR_TYPE_TYPES, WIDGET_TYPES } from '@/constants';
+import { PBEHAVIOR_TYPE_TYPES, WIDGET_TEMPLATES_TYPES, WIDGET_TYPES } from '@/constants';
 
 export default {
   common: {
@@ -543,7 +543,12 @@ export default {
     title: 'Create recurrence rule',
   },
   createPbehaviorType: {
-    title: 'Create type',
+    create: {
+      title: 'Create type',
+    },
+    edit: {
+      title: 'Edit type',
+    },
     iconNameHint: 'Enter a name of an icon from material.io',
     errors: {
       iconName: 'The name is invalid',
@@ -570,20 +575,29 @@ export default {
     },
   },
   createPbehaviorReason: {
-    title: 'Create reason',
+    create: {
+      title: 'Create reason',
+    },
+    edit: {
+      title: 'Edit reason',
+    },
     fields: {
       name: 'Name',
       description: 'Description',
     },
   },
   createPbehaviorException: {
-    title: 'Create date of exception',
+    create: {
+      title: 'Create date of exception',
+    },
+    edit: {
+      title: 'Edit date of exception',
+    },
     addDate: 'Add date',
     fields: {
       name: 'Name',
       description: 'Description',
     },
-    emptyExdates: 'No exdates added yet',
   },
   linkToMetaAlarm: {
     title: 'Link to a meta alarm',
@@ -1025,6 +1039,18 @@ export default {
     },
     edit: {
       title: 'Edit widget template',
+    },
+    types: {
+      [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'Alarm columns',
+      [WIDGET_TEMPLATES_TYPES.alarmSortColumns]: 'Alarm default sort columns',
+      [WIDGET_TEMPLATES_TYPES.entityColumns]: 'Entity columns',
+      [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'More infos',
+      [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'Quick actions (single alarm)',
+      [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'Quick actions (massive)',
+      [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'Export to PDF',
+      [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Tile template',
+      [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Modal template',
+      [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Entity template',
     },
   },
   selectWidgetTemplateType: {

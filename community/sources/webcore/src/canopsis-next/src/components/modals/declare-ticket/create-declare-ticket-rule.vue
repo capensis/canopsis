@@ -30,7 +30,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -94,8 +94,9 @@ export default {
     const isNew = computed(() => !config.value.declareTicketRule?._id);
     const title = computed(() => config.value.title ?? t('modals.createDeclareTicketRule.create.title'));
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.declareTicketRule,
       method: async () => {
         const result = await config.value.action?.(formToDeclareTicketRule(form.value));
 
@@ -119,6 +120,7 @@ export default {
       submitting,
       chatShown,
       chatOptions,
+      submitLabel,
       submit,
       close,
     };

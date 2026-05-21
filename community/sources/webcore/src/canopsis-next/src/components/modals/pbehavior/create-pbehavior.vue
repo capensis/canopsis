@@ -44,7 +44,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -107,8 +107,9 @@ export default {
       context: LLM_SOCKET_CONTEXTS.pbehavior,
     });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.pbehavior,
       method: async () => {
         const result = await config.value.action?.(
           pbehaviorToRequest(formToPbehavior(form.value, config.value.timezone)),
@@ -134,6 +135,7 @@ export default {
       submitting,
       chatShown,
       chatOptions,
+      submitLabel,
       submit,
       close,
     };

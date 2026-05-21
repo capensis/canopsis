@@ -24,6 +24,8 @@ import {
   convertDateToDateObjectByTimezone,
   convertDateToTimestampByTimezone,
   convertDateToTimezoneDateString,
+  convertDateToEndOfDayDateObject,
+  convertDateToStartOfDayDateObject,
   getLocalTimezone,
   getNowTimestamp,
   isEndOfDay,
@@ -155,6 +157,18 @@ export const hasPausedPbehavior = pbehaviors => pbehaviors.some(isPausedPbehavio
 export const pbehaviorCommentItemToForm = ({ message = '' } = {}) => ({
   key: uid(),
   message,
+});
+
+/**
+ * Blank exdate row for pbehavior exception forms.
+ *
+ * @returns {{ key: string, begin: Date, end: Date, type: string }}
+ */
+export const pbehaviorExdateItemToForm = () => ({
+  key: uid(),
+  begin: convertDateToStartOfDayDateObject(),
+  end: convertDateToEndOfDayDateObject(),
+  type: '',
 });
 
 /**

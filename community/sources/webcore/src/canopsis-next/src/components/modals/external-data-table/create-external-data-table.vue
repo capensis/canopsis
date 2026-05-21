@@ -26,7 +26,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -71,8 +71,9 @@ export default {
 
     const form = ref(externalDataTableToForm(config.value.externalDataTable));
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.externalDataTable,
       method: async () => {
         await config.value.action?.(form.value);
 
@@ -96,6 +97,7 @@ export default {
       isNew,
       fromConfig,
 
+      submitLabel,
       submit,
       close,
     };

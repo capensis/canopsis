@@ -22,7 +22,7 @@
           type="submit"
           @click="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -65,8 +65,9 @@ export default {
 
     const form = ref(ticketStatusJobToForm(config.value.ticketStatusJob ?? {}));
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.ticketStatusJob,
       method: async () => {
         await config.value.action?.(formToTicketStatusJob(form.value));
 
@@ -80,6 +81,7 @@ export default {
       form,
       isDisabled,
       submitting,
+      submitLabel,
       submit,
       close,
     };
