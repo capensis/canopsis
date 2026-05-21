@@ -26,6 +26,7 @@
                     v-if="item.raw_response"
                     :title-prefix="$t('jobs.data.response')"
                     :raw="item.raw_response"
+                    expanded
                   />
                 </v-layout>
               </v-card-text>
