@@ -1425,6 +1425,34 @@ definitions:
         - minor
         - ok
         type: object
+      icons:
+        properties:
+          ack:
+            type: string
+          cancel_delay:
+            type: string
+          canceled:
+            type: string
+          children:
+            type: string
+          comment:
+            type: string
+          parent:
+            type: string
+          snooze:
+            type: string
+          tickets:
+            type: string
+        required:
+        - ack
+        - cancel_delay
+        - canceled
+        - children
+        - comment
+        - parent
+        - snooze
+        - tickets
+        type: object
       table:
         properties:
           background:
