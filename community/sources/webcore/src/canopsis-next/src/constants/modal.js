@@ -35,6 +35,7 @@ export const MODALS = {
   createUser: 'create-user',
   createRole: 'create-role',
   createBroadcastMessage: 'create-broadcast-message',
+  userInterface: 'user-interface',
   createCommentTemplate: 'create-comment-template',
   createAnomalyMonitoredConnector: 'create-anomaly-monitored-connector',
   anomalyMonitoredConnectorHistory: 'anomaly-monitored-connector-history',

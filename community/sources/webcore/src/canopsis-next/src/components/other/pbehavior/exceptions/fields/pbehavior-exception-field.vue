@@ -78,7 +78,7 @@
       </v-flex>
     </v-layout>
     <v-layout>
-      <v-checkbox
+      <v-switch
         v-model="fullDay"
         :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
         :disabled="disabled || !editing"

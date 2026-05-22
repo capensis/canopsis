@@ -23,6 +23,7 @@
       :name="`${name}.declare_ticket.check_ticket_status`"
       :template-vars="templateVars"
       :depth="depth"
+      top-border
     />
   </div>
 </template>

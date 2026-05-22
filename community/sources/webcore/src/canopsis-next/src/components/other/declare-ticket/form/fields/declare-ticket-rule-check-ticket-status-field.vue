@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-form-block-row :depth="depth" :label="$t('declareTicket.checkTicketStatus')" top-border>
+    <c-form-block-row :depth="depth" :label="$t('declareTicket.checkTicketStatus')" :top-border="topBorder">
       <c-enabled-field v-field="form.enabled">
         <template #append>
           <c-help-icon
@@ -97,6 +97,10 @@ export default {
     depth: {
       type: Number,
       default: 0,
+    },
+    topBorder: {
+      type: Boolean,
+      default: false,
     },
   },
 };

@@ -19,6 +19,7 @@ import {
   LLM_SOCKET_CONTEXTS,
   PATTERNS_FIELDS,
   STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD,
+  STATE_SETTING_METHODS,
 } from '@/constants';
 
 import Observer from '@/services/observer';
@@ -79,13 +80,13 @@ export const useAiChatExpand = ({ activeTab, neededTab } = {}) => {
  * Builds `patternsItems` options for the AI sidebar from the modal form (scenario: one row per action).
  *
  * @param {Object} [options]
- * @param {import('vue').Ref<Array>|Array} [options.form=[]] - Host form rows (e.g. scenario `actions`); only
+ * @param {import('vue').Ref<Array|Object>} [options.form=[]] - Host form rows (e.g. scenario `actions`); only
  *   `LLM_SOCKET_CONTEXTS.scenario` is mapped today.
  * @param {string} [options.context] - LLM socket context key; must match a key in the internal map (pass a
  *   resolved string; a bare `Ref`/`ComputedRef` is not unwrapped here).
  * @returns {{ patternsItems: import('vue').ComputedRef<Array<{ text: string, value: string }>> }}
  */
-export const useAiChatPatternsItems = ({ form = [], context } = {}) => {
+export const useAiChatPatternsItems = ({ form, context } = {}) => {
   const { t } = useI18n();
 
   const contextToPatternsItems = {
@@ -95,11 +96,11 @@ export const useAiChatPatternsItems = ({ form = [], context } = {}) => {
     })),
     [LLM_SOCKET_CONTEXTS.stateSettings]: () => [
       { text: t('common.entityPatterns'), value: PATTERNS_FIELDS.entity },
-      {
+      unref(form)?.method === STATE_SETTING_METHODS.inherited && {
         text: t('stateSetting.dependenciesEntityPattern'),
         value: STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD,
       },
-    ],
+    ].filter(Boolean),
   };
 
   const patternsItems = computed(() => contextToPatternsItems[unref(context)]?.(form) ?? []);

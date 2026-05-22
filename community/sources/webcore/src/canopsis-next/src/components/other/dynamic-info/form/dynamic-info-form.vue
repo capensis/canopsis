@@ -1,28 +1,22 @@
 <template>
-  <v-layout class="gap-3" column>
+  <v-layout class="gap-2" column>
     <c-enabled-field v-field="form.enabled" with-background />
     <c-form-general-patterns-tabs
       :form="form"
       :rule-id="ruleId"
       :type="type"
-      reverse
     >
       <template #general="{ setRef, templateVars, copyVars }">
-        <event-filter-general-form
+        <dynamic-info-general-form
           v-field="form"
           :ref="setRef"
-          :template-vars="templateVars"
           :copy-vars="copyVars"
           :is-disabled-id-field="isDisabledIdField"
+          :template-vars="templateVars"
         />
       </template>
       <template #patterns="{ setRef }">
-        <event-filter-patterns-form
-          v-field="form"
-          :ref="setRef"
-          :event-attributes="eventAttributes"
-          :attributes-pending="attributesPending"
-        />
+        <dynamic-info-patterns-form v-field="form.patterns" :ref="setRef" />
       </template>
     </c-form-general-patterns-tabs>
   </v-layout>
@@ -31,13 +25,13 @@
 <script>
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
-import EventFilterGeneralForm from './event-filter-general-form.vue';
-import EventFilterPatternsForm from './event-filter-patterns-form.vue';
+import DynamicInfoGeneralForm from './dynamic-info-general-form.vue';
+import DynamicInfoPatternsForm from './dynamic-info-patterns-form.vue';
 
 export default {
   components: {
-    EventFilterGeneralForm,
-    EventFilterPatternsForm,
+    DynamicInfoGeneralForm,
+    DynamicInfoPatternsForm,
   },
   model: {
     prop: 'form',
@@ -56,17 +50,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    eventAttributes: {
-      type: Array,
-      default: () => [],
-    },
-    attributesPending: {
-      type: Boolean,
-      default: false,
-    },
   },
   setup() {
-    const type = TEMPLATE_TESTING_TEST_TYPES.eventFilter;
+    const type = TEMPLATE_TESTING_TEST_TYPES.dynamicInfo;
 
     return { type };
   },

@@ -37,6 +37,7 @@
         :name="`${name}.declare_ticket.check_ticket_status`"
         :template-vars="templateVars"
         :disabled="disabled"
+        top-border
       />
 
       <c-form-block-row :label="$t('declareTicket.workflowIfStepFails')" indented top-border>

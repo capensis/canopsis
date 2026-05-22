@@ -100,6 +100,8 @@ import {
   onMounted,
 } from 'vue';
 
+import { FORM_GENERAL_PATTERNS_TABS } from '@/constants';
+
 import { useCopyVarsList } from '@/hooks/vars/copy';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
@@ -112,21 +114,26 @@ import {
 import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
 import TemplateTestingTestVariablesTab from '@/components/other/template-testing/test-variables/partials/template-testing-test-variables-tab.vue';
 
-const TABS = {
-  general: 'general',
-  patterns: 'patterns',
-  testQuery: 'test-query',
-  testing: 'testing',
-  additional: 'additional',
-};
-
+/**
+ * Builds a tab descriptor for `c-form-general-patterns-tabs` with a single active type flag.
+ *
+ * @param {string} id - Tab id from `FORM_GENERAL_PATTERNS_TABS`.
+ * @returns {{
+ *   id: string,
+ *   general: boolean,
+ *   patterns: boolean,
+ *   'test-query': boolean,
+ *   testing: boolean,
+ *   additional: boolean,
+ * }}
+ */
 const createTab = id => ({
   id,
-  [TABS.general]: id === TABS.general,
-  [TABS.patterns]: id === TABS.patterns,
-  [TABS.testQuery]: id === TABS.testQuery,
-  [TABS.testing]: id === TABS.testing,
-  [TABS.additional]: id === TABS.additional,
+  [FORM_GENERAL_PATTERNS_TABS.general]: id === FORM_GENERAL_PATTERNS_TABS.general,
+  [FORM_GENERAL_PATTERNS_TABS.patterns]: id === FORM_GENERAL_PATTERNS_TABS.patterns,
+  [FORM_GENERAL_PATTERNS_TABS.testQuery]: id === FORM_GENERAL_PATTERNS_TABS.testQuery,
+  [FORM_GENERAL_PATTERNS_TABS.testing]: id === FORM_GENERAL_PATTERNS_TABS.testing,
+  [FORM_GENERAL_PATTERNS_TABS.additional]: id === FORM_GENERAL_PATTERNS_TABS.additional,
 });
 
 export default {
@@ -168,6 +175,10 @@ export default {
     hideGeneral: {
       type: Boolean,
       default: false,
+    },
+    aiChatExpandTabKeys: {
+      type: Object,
+      default: null,
     },
   },
   setup(props, { emit }) {
@@ -218,11 +229,11 @@ export default {
     const hasAdditionalSlot = computed(() => Boolean(slots.additional));
 
     const visibleTabs = computed(() => {
-      const generalTab = hasGeneralSlot.value && !props.hideGeneral && createTab(TABS.general);
-      const patternsTab = hasPatternsSlot.value && createTab(TABS.patterns);
-      const testQueryTab = hasTestQuerySlot.value && createTab(TABS.testQuery);
-      const testingTab = hasTemplateTestingTab.value && createTab(TABS.testing);
-      const additionalTab = hasAdditionalSlot.value && createTab(TABS.additional);
+      const generalTab = hasGeneralSlot.value && !props.hideGeneral && createTab(FORM_GENERAL_PATTERNS_TABS.general);
+      const patternsTab = hasPatternsSlot.value && createTab(FORM_GENERAL_PATTERNS_TABS.patterns);
+      const testQueryTab = hasTestQuerySlot.value && createTab(FORM_GENERAL_PATTERNS_TABS.testQuery);
+      const testingTab = hasTemplateTestingTab.value && createTab(FORM_GENERAL_PATTERNS_TABS.testing);
+      const additionalTab = hasAdditionalSlot.value && createTab(FORM_GENERAL_PATTERNS_TABS.additional);
 
       const tabs = props.reverse ? [patternsTab, generalTab, additionalTab] : [generalTab, additionalTab, patternsTab];
 
@@ -232,25 +243,42 @@ export default {
     });
 
     const patternsTabIndex = computed(() => (
-      visibleTabs.value.findIndex(tab => tab.id === TABS.patterns)
+      visibleTabs.value.findIndex(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.patterns)
     ));
 
-    const testingTabIndex = computed(() => visibleTabs.value.findIndex(tab => tab.id === TABS.testing));
+    const testingTabIndex = computed(() => (
+      visibleTabs.value.findIndex(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.testing)
+    ));
 
     const isActiveTestingTab = computed(() => (
       testingTabIndex.value !== -1 && activeTab.value === testingTabIndex.value
     ));
 
     const tabTabClass = tab => ({
-      'error--text': (tab.general && hasGeneralError.value) || (tab.patterns && hasPatternsError.value) || (tab.additional && hasAdditionalError.value),
+      'error--text': (tab.general && hasGeneralError.value)
+        || (tab.patterns && hasPatternsError.value)
+        || (tab.additional && hasAdditionalError.value),
       'v-tab--tooltip': tab['test-query'],
     });
 
-    const tabItemClass = tab => ((tab.general || tab.patterns) ? 'pt-4' : '');
+    const tabItemClass = tab => ((tab.general || tab.patterns || tab.additional) ? 'pt-4' : '');
+
+    const expandNeededTab = computed(() => {
+      if (props.aiChatExpandTabKeys) {
+        return Object.fromEntries(
+          Object.entries(props.aiChatExpandTabKeys).map(([fieldKey, tabId]) => [
+            fieldKey,
+            visibleTabs.value.findIndex(tab => tab.id === tabId),
+          ]),
+        );
+      }
+
+      return patternsTabIndex.value;
+    });
 
     useAiChatExpand({
       activeTab,
-      neededTab: patternsTabIndex,
+      neededTab: expandNeededTab,
     });
 
     watch(() => props.hideGeneral, (value) => {

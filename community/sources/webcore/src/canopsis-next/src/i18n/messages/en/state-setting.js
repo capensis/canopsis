@@ -22,8 +22,7 @@ export default {
   stateDependsCount: 'Number of dependencies of the {state} state',
   steps: {
     basics: 'Basics',
-    rulePatterns: 'Define target entities',
-    conditions: 'Add conditions',
+    targetEntities: 'Target entities',
   },
   methods: {
     [STATE_SETTING_METHODS.inherited]: {

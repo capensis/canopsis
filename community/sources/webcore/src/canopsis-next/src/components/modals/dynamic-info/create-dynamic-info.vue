@@ -5,30 +5,11 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <v-layout class="gap-2" column>
-          <c-enabled-field v-model="form.enabled" with-background />
-          <c-form-general-patterns-tabs
-            v-model="form"
-            :rule-id="dynamicInfoId"
-            :type="type"
-          >
-            <template #general="{ setRef, templateVars, copyVars }">
-              <dynamic-info-general-form
-                v-model="form"
-                :ref="setRef"
-                :copy-vars="copyVars"
-                :is-disabled-id-field="isDisabledIdField"
-                :template-vars="templateVars"
-              />
-            </template>
-            <template #patterns="{ setRef }">
-              <dynamic-info-patterns-form
-                v-model="form.patterns"
-                :ref="setRef"
-              />
-            </template>
-          </c-form-general-patterns-tabs>
-        </v-layout>
+        <dynamic-info-form
+          v-model="form"
+          :rule-id="dynamicInfoId"
+          :is-disabled-id-field="isDisabledIdField"
+        />
         <ai-chat-sidebar
           v-if="chatShown"
           v-bind="chatOptions.bind"
@@ -60,7 +41,7 @@
 <script>
 import { computed, ref, toRef } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { dynamicInfoToForm, formToDynamicInfo } from '@/helpers/entities/dynamic-info/rule/form';
 
@@ -71,8 +52,7 @@ import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import DynamicInfoGeneralForm from '@/components/other/dynamic-info/form/dynamic-info-general-form.vue';
-import DynamicInfoPatternsForm from '@/components/other/dynamic-info/form/dynamic-info-patterns-form.vue';
+import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -84,8 +64,7 @@ export default {
   },
   components: {
     AiChatSidebar,
-    DynamicInfoGeneralForm,
-    DynamicInfoPatternsForm,
+    DynamicInfoForm,
     ModalWrapper,
   },
   props: {
@@ -95,8 +74,6 @@ export default {
     },
   },
   setup(props) {
-    const type = TEMPLATE_TESTING_TEST_TYPES.dynamicInfo;
-
     const { config, close } = useInnerModal(props);
     const { t } = useI18n();
 
@@ -135,9 +112,7 @@ export default {
 
     return {
       form,
-      config,
       dynamicInfoId,
-      type,
       title,
       isDisabledIdField,
       submitting,
