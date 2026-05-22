@@ -1608,7 +1608,13 @@ func getOnlyParentsSearchPipeline(
 func GetTagColorsLookup() []bson.M {
 	return []bson.M{
 		{"$addFields": bson.M{
-			"doc": "$$ROOT",
+			"doc": bson.M{"$mergeObjects": bson.A{
+				"$$ROOT",
+				bson.M{"v": bson.M{"$unsetField": bson.M{
+					"field": "steps",
+					"input": "$v",
+				}}},
+			}},
 		}},
 		{"$unwind": bson.M{"path": "$tags", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
