@@ -241,6 +241,10 @@ export const CreateBroadcastMessage = () => ({
   component: import(/* webpackChunkName: "BroadcastMessage" */ './admin/create-broadcast-message.vue'),
   loading: LoaderOverlay,
 });
+export const UserInterface = () => ({
+  component: import(/* webpackChunkName: "UserInterface" */ './admin/user-interface.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateCommentTemplate = () => ({
   component: import(/* webpackChunkName: "CommentTemplate" */ './comment-template/create-comment-template.vue'),
   loading: LoaderOverlay,

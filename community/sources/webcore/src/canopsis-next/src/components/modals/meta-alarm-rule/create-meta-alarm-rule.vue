@@ -5,31 +5,11 @@
         {{ title }}
       </template>
       <template #text="">
-        <v-layout class="gap-3" column>
-          <c-enabled-field v-model="form.enabled" hide-details with-background />
-          <c-form-general-patterns-tabs
-            v-model="form"
-            :rule-id="ruleId"
-            :type="type"
-            :patterns-label="$t('metaAlarmRule.patternsTabLabel')"
-          >
-            <template #general="{ setRef, templateVars }">
-              <meta-alarm-rule-general-form
-                v-model="form"
-                :ref="setRef"
-                :disabled-id-field="config.isDisabledIdField"
-                :template-vars="templateVars"
-              />
-            </template>
-            <template #patterns="{ setRef, templateVars }">
-              <meta-alarm-rule-parameters-form
-                v-model="form"
-                :ref="setRef"
-                :template-vars="templateVars"
-              />
-            </template>
-          </c-form-general-patterns-tabs>
-        </v-layout>
+        <meta-alarm-rule-form
+          v-model="form"
+          :rule-id="ruleId"
+          :disabled-id-field="config.isDisabledIdField"
+        />
         <ai-chat-sidebar
           v-if="chatShown"
           v-bind="chatOptions.bind"
@@ -61,7 +41,7 @@
 <script>
 import { computed, ref, onMounted, toRef } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/entities/meta-alarm/rule/form';
 
@@ -74,8 +54,7 @@ import { useEntityInfos } from '@/hooks/store/modules/entity-infos';
 import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
-import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
+import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -86,8 +65,7 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: {
-    MetaAlarmRuleGeneralForm,
-    MetaAlarmRuleParametersForm,
+    MetaAlarmRuleForm,
     AiChatSidebar,
     ModalWrapper,
   },
@@ -98,8 +76,6 @@ export default {
     },
   },
   setup(props) {
-    const type = TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule;
-
     const { config, close } = useInnerModal(props);
     const { t } = useI18n();
     const { alarmInfos, entityInfos, fetchInfos } = useEntityInfos(); // TODO: may be remove this
@@ -142,8 +118,6 @@ export default {
     });
 
     return {
-      type,
-
       form,
 
       ruleId,

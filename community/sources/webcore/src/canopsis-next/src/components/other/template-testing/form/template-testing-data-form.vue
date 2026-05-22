@@ -7,55 +7,56 @@
       required
     />
 
-    <c-description-field
-      v-field="form.description"
-      :label="$t('common.description')"
-      :max-length="500"
-      name="description"
-    />
+    <c-form-block>
+      <c-form-block-row :label="$t('common.description')">
+        <c-description-field
+          v-field="form.description"
+          :label="$t('common.description')"
+          :max-length="500"
+          name="description"
+        />
+      </c-form-block-row>
 
-    <template-testing-data-type-field
-      v-field="form.type"
-      :label="$t('common.type')"
-      :disabled="!isNew"
-      name="type"
-      required
-    />
+      <c-form-block-row :label="$t('common.type')">
+        <template-testing-data-type-field
+          v-field="form.type"
+          :label="$t('common.type')"
+          :disabled="!isNew"
+          name="type"
+          required
+        />
+      </c-form-block-row>
 
-    <c-json-field
-      v-field="form.body"
-      ref="jsonFieldElement"
-      :label="$t('common.value')"
-      name="value"
-      rows="11"
-      validate-on="blur"
-    />
-    <v-flex
-      v-if="isEventType"
-      class="ml-3"
-      align-self-end
-    >
-      <v-btn
-        color="primary"
-        outlined
-        @click="showSetPreFilledTemplateModal"
-      >
-        {{ $t('templateTesting.usePreFilledTemplate') }}
-      </v-btn>
-    </v-flex>
-    <c-information-block
-      v-else
-      :title="$tc('common.header', 2)"
-      :help-text="$t('templateTesting.headersHelpText')"
-      class="mb-2"
-      help-icon="help"
-      help-icon-color="grey darken-1"
-    >
-      <request-headers-field
-        v-field="form.headers"
-        name="headers"
-      />
-    </c-information-block>
+      <c-form-block-row :label="$t('templateTesting.testData')" indented>
+        <c-json-field
+          v-field="form.body"
+          ref="jsonFieldElement"
+          :label="$t('common.value')"
+          name="value"
+          rows="11"
+          validate-on="button"
+        >
+          <template v-if="isEventType" #append>
+            <v-layout justify-end>
+              <v-btn
+                color="primary"
+                outlined
+                @click="showSetPreFilledTemplateModal"
+              >
+                {{ $t('templateTesting.usePreFilledTemplate') }}
+              </v-btn>
+            </v-layout>
+          </template>
+        </c-json-field>
+      </c-form-block-row>
+
+      <c-form-block-row v-if="!isEventType" :label="$tc('common.header', 2)" indented>
+        <request-headers-field
+          v-field="form.headers"
+          name="headers"
+        />
+      </c-form-block-row>
+    </c-form-block>
   </v-layout>
 </template>
 

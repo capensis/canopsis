@@ -76,7 +76,6 @@ export const ROUTES_NAMES_TO_BROADCAST_MESSAGES = {
   [ROUTES_NAMES.adminCustomObjectsMaps]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminCustomObjectsTags]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminCustomObjectsLlms]: BROADCAST_MESSAGE_VIEWS.administration,
-  [ROUTES_NAMES.adminSettingsUserInterface]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminSettingsViewsImportExport]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminSettingsNotifications]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminSettingsCommentTemplates]: BROADCAST_MESSAGE_VIEWS.administration,

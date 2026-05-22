@@ -5,32 +5,13 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <c-enabled-field v-model="form.enabled" class="mb-3" with-background />
-
-        <c-form-general-patterns-tabs
+        <event-filter-form
           v-model="form"
           :rule-id="ruleId"
-          :type="type"
-          reverse
-        >
-          <template #general="{ setRef, templateVars, copyVars }">
-            <event-filter-general-form
-              v-model="form"
-              :ref="setRef"
-              :template-vars="templateVars"
-              :copy-vars="copyVars"
-              :is-disabled-id-field="config.isDisabledIdField"
-            />
-          </template>
-          <template #patterns="{ setRef }">
-            <event-filter-patterns-form
-              v-model="form"
-              :ref="setRef"
-              :event-attributes="eventAttributes"
-              :attributes-pending="pending"
-            />
-          </template>
-        </c-form-general-patterns-tabs>
+          :is-disabled-id-field="config.isDisabledIdField"
+          :event-attributes="eventAttributes"
+          :attributes-pending="pending"
+        />
         <ai-chat-sidebar
           v-if="chatShown"
           v-bind="chatOptions.bind"
@@ -68,13 +49,9 @@ import {
   toRef,
 } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { eventFilterToForm, formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
-import {
-  isChangeEntityEventFilterRuleType,
-  isEnrichmentEventFilterRuleType,
-} from '@/helpers/entities/event-filter/rule/entity';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
@@ -85,8 +62,7 @@ import { useValidationFormErrors } from '@/hooks/validator/validation-form-error
 import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import EventFilterGeneralForm from '@/components/other/event-filter/form/event-filter-general-form.vue';
-import EventFilterPatternsForm from '@/components/other/event-filter/form/event-filter-patterns-form.vue';
+import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -98,8 +74,7 @@ export default {
   },
   components: {
     AiChatSidebar,
-    EventFilterGeneralForm,
-    EventFilterPatternsForm,
+    EventFilterForm,
     ModalWrapper,
   },
   props: {
@@ -109,8 +84,6 @@ export default {
     },
   },
   setup(props) {
-    const type = TEMPLATE_TESTING_TEST_TYPES.eventFilter;
-
     const system = inject('$system');
 
     const { config, close } = useInnerModal(props);
@@ -139,8 +112,6 @@ export default {
 
     const ruleId = computed(() => config.value.rule?._id);
     const title = computed(() => config.value.title ?? t('modals.createEventFilter.create.title'));
-    const isEnrichment = computed(() => isEnrichmentEventFilterRuleType(form.value.type));
-    const isChangeEntity = computed(() => isChangeEntityEventFilterRuleType(form.value.type));
 
     const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
       form,
@@ -164,12 +135,9 @@ export default {
       form,
       config,
       ruleId,
-      type,
       title,
       pending,
       eventAttributes,
-      isEnrichment,
-      isChangeEntity,
       isDisabled,
       submitting,
       chatShown,

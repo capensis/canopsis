@@ -5,28 +5,7 @@
         {{ title }}
       </template>
       <template #text="">
-        <v-layout class="gap-2" column>
-          <c-enabled-field v-model="form.enabled" with-background />
-          <c-form-general-patterns-tabs
-            v-model="form"
-            :rule-id="scenarioId"
-            :type="type"
-            :patterns-label="$t('common.actionsLabel')"
-            :disabled-test-query-tooltip="disabledTestQueryTooltip"
-          >
-            <template #general="{ setRef }">
-              <scenario-general-form v-model="form" :ref="setRef" />
-            </template>
-
-            <template #patterns="{ setRef, templateVars }">
-              <scenario-actions-form v-model="form.actions" :ref="setRef" :template-vars="templateVars" />
-            </template>
-
-            <template #test-query>
-              <scenario-test-query :form="form" />
-            </template>
-          </c-form-general-patterns-tabs>
-        </v-layout>
+        <scenario-form v-model="form" :rule-id="scenarioId" />
         <ai-chat-sidebar
           v-if="chatShown"
           v-bind="chatOptions.bind"
@@ -64,10 +43,9 @@ import {
   toRef,
 } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { formToScenario, scenarioToForm } from '@/helpers/entities/scenario/form';
-import { isWebhookActionType } from '@/helpers/entities/action/form';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
@@ -77,9 +55,7 @@ import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import ScenarioGeneralForm from '@/components/other/scenario/form/scenario-general-form.vue';
-import ScenarioActionsForm from '@/components/other/scenario/form/scenario-actions-form.vue';
-import ScenarioTestQuery from '@/components/other/scenario/partials/scenario-test-query.vue';
+import ScenarioForm from '@/components/other/scenario/form/scenario-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -90,9 +66,7 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: {
-    ScenarioGeneralForm,
-    ScenarioActionsForm,
-    ScenarioTestQuery,
+    ScenarioForm,
     ModalWrapper,
     AiChatSidebar,
   },
@@ -103,8 +77,6 @@ export default {
     },
   },
   setup(props) {
-    const type = TEMPLATE_TESTING_TEST_TYPES.scenario;
-
     const system = inject('$system');
 
     const { config, close } = useInnerModal(props);
@@ -119,14 +91,6 @@ export default {
       get: () => form.value.actions,
       set: actions => set(form, 'actions', actions),
     });
-
-    const hasWebhookAction = computed(() => (
-      form.value.actions.some(({ type: actionType }) => isWebhookActionType(actionType))
-    ));
-
-    const disabledTestQueryTooltip = computed(() => (
-      hasWebhookAction.value ? '' : t('scenario.errors.testQueryRequireSteps')
-    ));
 
     const {
       shown: chatShown,
@@ -158,9 +122,7 @@ export default {
 
     return {
       form,
-      config,
       scenarioId,
-      type,
       title,
       isDisabled,
       submitting,
@@ -169,7 +131,6 @@ export default {
       submitLabel,
       submit,
       close,
-      disabledTestQueryTooltip,
     };
   },
 };

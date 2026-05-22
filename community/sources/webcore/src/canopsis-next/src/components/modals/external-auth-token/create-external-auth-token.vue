@@ -5,15 +5,10 @@
         {{ title }}
       </template>
       <template #text="">
-        <template-testing-test-variables-wrapper
+        <external-auth-token-form
           v-model="form"
           :rule-id="ruleId"
-          :type="type"
-        >
-          <template #default="{ templateVars }">
-            <external-auth-token-form v-model="form" :template-vars="templateVars" />
-          </template>
-        </template-testing-test-variables-wrapper>
+        />
       </template>
       <template #actions="">
         <v-btn
@@ -40,7 +35,7 @@
 <script>
 import { computed, ref } from 'vue';
 
-import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { externalAuthTokenToForm, formToExternalAuthToken } from '@/helpers/entities/external-auth-token/form';
 
@@ -50,7 +45,6 @@ import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import ExternalAuthTokenForm from '@/components/other/external-auth-token/form/external-auth-token-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -62,7 +56,6 @@ export default {
   },
   components: {
     ExternalAuthTokenForm,
-    TemplateTestingTestVariablesWrapper,
     ModalWrapper,
   },
   props: {
@@ -72,8 +65,6 @@ export default {
     },
   },
   setup(props) {
-    const type = TEMPLATE_TESTING_TEST_TYPES.externalAuthToken;
-
     const { t } = useI18n();
     const { config, close } = useInnerModal(props);
 
@@ -97,8 +88,6 @@ export default {
     useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      type,
-
       config,
 
       form,

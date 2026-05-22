@@ -36,11 +36,13 @@
       :error-messages="errors.collect('ticket')"
       name="ticket"
     />
-    <declare-ticket-rule-check-ticket-status-field
-      v-field="form.check_ticket_status"
-      :template-vars="templateVars"
-      class="c-alternative-bg-panel pa-5"
-    />
+
+    <c-form-block>
+      <declare-ticket-rule-check-ticket-status-field
+        v-field="form.check_ticket_status"
+        :template-vars="templateVars"
+      />
+    </c-form-block>
   </v-layout>
 </template>
 
