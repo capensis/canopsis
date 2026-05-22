@@ -8,6 +8,7 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"golang.org/x/sync/errgroup"
 )
 
 type defaultConsumer struct {
@@ -27,15 +28,22 @@ type defaultConsumer struct {
 	fifoQueue    string
 	fifoExchange string
 
-	publishCh libamqp.Channel
-	consumeCh libamqp.Channel
+	publisher   libamqp.Publisher
+	consumePool libamqp.ChannelPool
 
 	logger zerolog.Logger
 }
 
 func (c *defaultConsumer) queuePurge(ctx context.Context) error {
 	if c.purgeQueue {
-		_, err := c.consumeCh.QueuePurge(ctx, c.queue, false)
+		ch, err := c.consumePool.Get(ctx)
+		if err != nil {
+			return err
+		}
+
+		defer c.consumePool.Put(ch)
+
+		_, err = ch.QueuePurge(ctx, c.queue, false)
 		if err != nil {
 			return fmt.Errorf("error while purging queue: %w", err)
 		}
@@ -51,7 +59,7 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) e
 		Msgf("received")
 	msgToNext, err := c.processor.Process(ctx, d)
 	if err != nil {
-		nackErr := c.consumeCh.Nack(ctx, d.DeliveryTag, false, true)
+		nackErr := d.Nack(false, true)
 		if nackErr != nil {
 			c.logger.Err(nackErr).Msg("cannot nack amqp delivery")
 		}
@@ -59,13 +67,13 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) e
 		return fmt.Errorf("cannot process message: %w", err)
 	}
 
-	err = c.consumeCh.Ack(ctx, d.DeliveryTag, false)
+	err = d.Ack(false)
 	if err != nil {
 		c.logger.Err(err).Msg("cannot ack amqp delivery")
 	}
 
 	if c.nextQueue != "" && msgToNext != nil {
-		err = c.publishCh.PublishWithContext(
+		err = c.publisher.PublishWithContext(
 			ctx,
 			c.nextExchange,
 			c.nextQueue,
@@ -85,7 +93,7 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) e
 	}
 
 	if d.ReplyTo != "" && msgToNext != nil {
-		err = c.publishCh.PublishWithContext(
+		err = c.publisher.PublishWithContext(
 			ctx,
 			"",
 			d.ReplyTo,
@@ -106,7 +114,7 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) e
 	}
 
 	if c.fifoQueue != "" {
-		err = c.publishCh.PublishWithContext(
+		err = c.publisher.PublishWithContext(
 			ctx,
 			c.fifoExchange,
 			c.fifoQueue,
@@ -127,21 +135,38 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) e
 }
 
 func (c *defaultConsumer) consume(ctx context.Context, workers int) error {
-	opts := libamqp.ConsumeOptions{
-		Queue:     c.queue,
-		Consumer:  c.name,
-		Exclusive: c.exclusive,
+	g, gctx := errgroup.WithContext(ctx)
+
+	for i := 0; i < workers; i++ {
+		g.Go(func() error {
+			consumeCh, err := c.consumePool.Get(gctx)
+			if err != nil {
+				return err
+			}
+
+			defer c.consumePool.Put(consumeCh)
+
+			for {
+				select {
+				case <-gctx.Done():
+					return nil
+				default:
+				}
+
+				d, err := consumeCh.ConsumeWithContext(gctx, c.queue, c.name, false, c.exclusive, false, false, nil)
+				if err != nil {
+					return err
+				}
+
+				err = c.newWorkerFunc(gctx, d)()
+				if err != nil {
+					return err
+				}
+			}
+		})
 	}
 
-	return libamqp.ConsumeWithReconnect(
-		ctx,
-		c.consumeCh,
-		opts,
-		workers,
-		func(gctx context.Context, d <-chan amqp.Delivery) func() error {
-			return c.newWorkerFunc(gctx, d)
-		},
-	)
+	return g.Wait()
 }
 
 func (c *defaultConsumer) newWorkerFunc(ctx context.Context, ch <-chan amqp.Delivery) func() error {

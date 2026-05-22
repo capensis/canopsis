@@ -169,18 +169,17 @@ func Default(
 	services.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
 	services.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg, logger)
 	// Connect to rmq.
-	amqpConn, err := libamqp.New(-1, cfg.Global.GetReconnectTimeout(), logger)
+	amqpPubConn, err := libamqp.New(-1, cfg.Global.GetReconnectTimeout(), logger)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
-	amqpPublisher, err := amqpConn.Channel(ctx)
+	amqpConsumeConn, err := libamqp.New(-1, cfg.Global.GetReconnectTimeout(), logger)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
-	amqpConsumer, err := amqpConn.Channel(ctx)
-	if err != nil {
-		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
-	}
+	amqpPubPool := libamqp.NewPublishChannelPool(amqpPubConn, canopsis.DefaultAMQPPublishPoolSize)
+	amqpPublisher := libamqp.NewPooledPublisher(amqpPubPool)
+	amqpConsumePool := libamqp.NewConsumeChannelPool(amqpConsumeConn, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize, true)
 	// Connect to redis.
 	pbhRedisSession, err := libredis.NewSession(ctx, libredis.PBehaviorLockStorage, logger,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
@@ -255,7 +254,7 @@ func Default(
 	}
 
 	services.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
-	workersRunner := workers.NewRunner(amqpConsumer, logger)
+	workersRunner := workers.NewRunner(amqpConsumePool, logger)
 	// Create csv exporter.
 	services.ExportTaskExecutor = export.NewTaskExecutor(primaryDbClient, workers.NewJobPublisher(jobKeyExport, amqpPublisher),
 		services.TimezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
@@ -380,7 +379,7 @@ func Default(
 
 	services.NotificationStore = usernotification.NewStore(primaryDbClient, amqpPublisher, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
-	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConsumer, services.WebsocketHub,
+	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConsumePool, services.WebsocketHub,
 		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
 
 	if tplTestTypePermMapping == nil {
@@ -433,17 +432,22 @@ func Default(
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
 
-			err = amqpPublisher.Close()
+			err = amqpPubPool.Close()
 			if err != nil {
-				logger.Error().Err(err).Msg("failed to close amqp channel")
+				logger.Error().Err(err).Msg("failed to close amqp channels")
 			}
 
-			err = amqpConsumer.Close()
+			err = amqpConsumePool.Close()
 			if err != nil {
-				logger.Error().Err(err).Msg("failed to close amqp channel")
+				logger.Error().Err(err).Msg("failed to close amqp channels")
 			}
 
-			err = amqpConn.Close()
+			err = amqpPubConn.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = amqpConsumeConn.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}

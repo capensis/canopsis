@@ -19,7 +19,8 @@ func NewEngineAction(
 	dbClient := m.DepMongoClient(ctx, mongo.ClientOptions{})
 	cfg := m.DepConfig(ctx, dbClient)
 	libconfig.SetDbClientRetry(dbClient, cfg)
-	amqpConnection := m.DepAmqpConnection(logger, cfg)
+	amqpPubConn := m.DepAmqpConnection(logger, cfg)
+	amqpConsumeConn := m.DepAmqpConnection(logger, cfg)
 	engine := libaction.NewEngineAction(ctx, options, cfg, dbClient, amqpConnection, nil, nil, logger)
 	engine.AddDeferFunc(func(ctx context.Context) {
 		err := dbClient.Disconnect(ctx)

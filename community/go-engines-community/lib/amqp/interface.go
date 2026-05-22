@@ -6,7 +6,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-//go:generate go tool go.uber.org/mock/mockgen -destination=../../mocks/lib/amqp/amqp.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp Connection,Channel,Publisher
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../mocks/lib/amqp/amqp.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp Connection,Channel,Publisher,ChannelPool
 
 // Connection is a long-lived AMQP connection that transparently reconnects on failure. Built by New / NewConfig.
 //
@@ -45,10 +45,7 @@ type Channel interface {
 		queue, consumer string,
 		autoAck, exclusive, noLocal, noWait bool,
 		args amqp.Table,
-	) (<-chan amqp.Delivery, <-chan *amqp.Error, error)
-	Ack(ctx context.Context, tag uint64, multiple bool) error
-	Nack(ctx context.Context, tag uint64, multiple, requeue bool) error
-	Reject(ctx context.Context, tag uint64, requeue bool) error
+	) (<-chan amqp.Delivery, error)
 	PublishWithContext(
 		ctx context.Context,
 		exchange, key string,

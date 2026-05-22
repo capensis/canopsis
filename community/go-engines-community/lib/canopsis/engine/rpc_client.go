@@ -13,23 +13,23 @@ import (
 func NewRPCClient(
 	name, serverExchangeName, serverRoutingKey, clientQueueName string,
 	workers int,
-	publishCh libamqp.Channel,
-	consumeCh libamqp.Channel,
+	publisher libamqp.Publisher,
+	consumePool libamqp.ChannelPool,
 	processor RPCMessageProcessor,
 	logger zerolog.Logger,
 ) RPCClient {
 	return &rpcClient{
 		defaultConsumer: defaultConsumer{
-			name:      name,
-			queue:     clientQueueName,
-			processor: &rpcClientMessageProcessorWrapper{processor: processor},
-			publishCh: publishCh,
-			consumeCh: consumeCh,
-			logger:    logger,
+			name:        name,
+			queue:       clientQueueName,
+			processor:   &rpcClientMessageProcessorWrapper{processor: processor},
+			publisher:   publisher,
+			consumePool: consumePool,
+			logger:      logger,
 		},
 		serverExchangeName: serverExchangeName,
 		serverRoutingKey:   serverRoutingKey,
-		publishCh:          publishCh,
+		publisher:          publisher,
 		workers:            workers,
 	}
 }
@@ -37,12 +37,12 @@ func NewRPCClient(
 func NewRPCClientWithoutReply(
 	serverExchangeName string,
 	serverRoutingKey string,
-	publishCh libamqp.Channel,
+	publisher libamqp.Publisher,
 ) RPCClient {
 	return &rpcClient{
 		serverExchangeName: serverExchangeName,
 		serverRoutingKey:   serverRoutingKey,
-		publishCh:          publishCh,
+		publisher:          publisher,
 	}
 }
 
@@ -51,13 +51,13 @@ type rpcClient struct {
 	defaultConsumer
 	serverExchangeName string
 	serverRoutingKey   string
-	publishCh          libamqp.Channel
+	publisher          libamqp.Publisher
 	// amount of workers which process events.
 	workers int
 }
 
 func (c *rpcClient) Call(ctx context.Context, m RPCMessage) error {
-	err := c.publishCh.PublishWithContext(
+	return c.publisher.PublishWithContext(
 		ctx,
 		c.serverExchangeName,
 		c.serverRoutingKey,
@@ -71,15 +71,10 @@ func (c *rpcClient) Call(ctx context.Context, m RPCMessage) error {
 			DeliveryMode:  amqp.Persistent,
 		},
 	)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (c *rpcClient) Consume(ctx context.Context) (err error) {
-	if c.consumeCh == nil {
+	if c.consumePool == nil {
 		return errors.New("consume channel is nil")
 	}
 

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -56,9 +57,11 @@ func NewEngine(
 	m := DependencyMaker{}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	amqpConnection := m.DepAmqpConnection(logger, cfg)
-	amqpPubChannel := m.DepAMQPChannelPub(ctx, amqpConnection)
-	amqpConsumeChannel := m.DepAMQPChannelSub(ctx, amqpConnection, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
+	amqpPubConn := m.DepAmqpConnection(logger, cfg)
+	amqpConsumeConn := m.DepAmqpConnection(logger, cfg)
+	amqpPubChPool := m.DepAMQPPubChannelPool(amqpPubConn)
+	amqpPublisher := amqp.NewPooledPublisher(amqpPubChPool)
+	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
 	entityAdapter := entity.NewAdapter(primaryDbClient)
 	redisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
@@ -69,7 +72,7 @@ func NewEngine(
 	contextGraphManager := contextgraph.NewManager(entityAdapter, primaryDbClient, contextgraph.NewEntityServiceStorage(primaryDbClient), stateSettingsService, logger)
 	eventFilterEventCounter := eventfilter.NewEventCounter(primaryDbClient,
 		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), logger)
-	notifStore := usernotification.NewStore(primaryDbClient, amqpPubChannel, json.NewEncoder(),
+	notifStore := usernotification.NewStore(primaryDbClient, amqpPublisher, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
 	eventFilterFailureService := eventfilter.NewFailureService(primaryDbClient, notifStore,
 		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilterRule, logger)
@@ -108,7 +111,7 @@ func NewEngine(
 			canopsis.CheSystemQueueName,
 			canopsis.CheUserQueueName,
 		}),
-		amqpPubChannel,
+		amqpConsumeChPool,
 		logger,
 	)
 
@@ -157,17 +160,22 @@ func NewEngine(
 			return nil
 		},
 		func(ctx context.Context) {
-			err := amqpPubChannel.Close()
+			err := amqpPubChPool.Close()
 			if err != nil {
-				logger.Err(err).Msg("failed to close amqp publish channel")
+				logger.Err(err).Msg("failed to close amqp publish channels")
 			}
 
-			err = amqpConsumeChannel.Close()
+			err = amqpConsumeChPool.Close()
 			if err != nil {
-				logger.Err(err).Msg("failed to close amqp consumer channel")
+				logger.Err(err).Msg("failed to close amqp consumer channels")
 			}
 
-			err = amqpConnection.Close()
+			err = amqpPubConn.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = amqpConsumeConn.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
@@ -218,7 +226,7 @@ func NewEngine(
 		MetricsConfigProvider:    metricsConfigProvider,
 		TechMetricsSender:        techMetricsSender,
 		MetricsSender:            metricsSender,
-		AmqpPublisher:            amqpPubChannel,
+		AmqpPublisher:            amqpPublisher,
 		MetaUpdater:              metricsEntityMetaUpdater,
 		EntityCollection:         primaryDbClient.Collection(mongo.EntityMongoCollection),
 		EventProcessorContainer:  eventProcessor,
@@ -236,8 +244,8 @@ func NewEngine(
 		canopsis.FIFOAckQueueName,
 		options.ExternalWorkers,
 		false,
-		amqpPubChannel,
-		amqpConsumeChannel,
+		amqpPublisher,
+		amqpConsumeChPool,
 		mainMessageProcessor,
 		logger,
 	))
@@ -251,8 +259,8 @@ func NewEngine(
 		canopsis.FIFOAckQueueName,
 		options.SystemWorkers,
 		false,
-		amqpPubChannel,
-		amqpConsumeChannel,
+		amqpPublisher,
+		amqpConsumeChPool,
 		mainMessageProcessor,
 		logger,
 	))
@@ -266,8 +274,8 @@ func NewEngine(
 		canopsis.FIFOAckQueueName,
 		options.UserWorkers,
 		false,
-		amqpPubChannel,
-		amqpConsumeChannel,
+		amqpPublisher,
+		amqpConsumeChPool,
 		mainMessageProcessor,
 		logger,
 	))
@@ -278,7 +286,7 @@ func NewEngine(
 			entityCollection:          primaryDbClient.Collection(mongo.EntityMongoCollection),
 			serviceCountersCollection: primaryDbClient.Collection(mongo.EntityCountersCollection),
 			periodicalInterval:        options.PeriodicalWaitTime,
-			eventPublisher:            communityimport.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpPubChannel),
+			eventPublisher:            communityimport.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpPublisher),
 			softDeleteWaitTime:        options.SoftDeleteWaitTime,
 			logger:                    logger,
 		},

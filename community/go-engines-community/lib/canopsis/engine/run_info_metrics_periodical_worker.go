@@ -11,7 +11,7 @@ import (
 
 func NewQueueMetricsPeriodicalWorker(
 	periodicalInterval time.Duration,
-	channel amqp.Channel,
+	chPool amqp.ChannelPool,
 	techMetricsSender techmetrics.Sender,
 	consumeQueues []string,
 	techMetric string,
@@ -19,7 +19,7 @@ func NewQueueMetricsPeriodicalWorker(
 ) PeriodicalWorker {
 	return &queueMetricsPeriodicalWorker{
 		periodicalInterval: periodicalInterval,
-		channel:            channel,
+		chPool:             chPool,
 		techMetricsSender:  techMetricsSender,
 		consumeQueues:      consumeQueues,
 		techMetric:         techMetric,
@@ -29,7 +29,7 @@ func NewQueueMetricsPeriodicalWorker(
 
 type queueMetricsPeriodicalWorker struct {
 	periodicalInterval time.Duration
-	channel            amqp.Channel
+	chPool             amqp.ChannelPool
 	techMetricsSender  techmetrics.Sender
 	consumeQueues      []string
 	techMetric         string
@@ -41,10 +41,19 @@ func (w *queueMetricsPeriodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *queueMetricsPeriodicalWorker) Work(ctx context.Context) {
+	ch, err := w.chPool.Get(ctx)
+	if err != nil {
+		w.logger.Error().Err(err).Msg("cannot get channel")
+
+		return
+	}
+
+	defer w.chPool.Put(ch)
+
 	queueLength := 0
 
 	for i := range w.consumeQueues {
-		queue, err := w.channel.QueueDeclarePassive(ctx, w.consumeQueues[i], false, false, false, false, nil)
+		queue, err := ch.QueueDeclarePassive(ctx, w.consumeQueues[i], false, false, false, false, nil)
 		if err != nil {
 			w.logger.Err(err).Msg("cannot get consume queue length")
 		}
