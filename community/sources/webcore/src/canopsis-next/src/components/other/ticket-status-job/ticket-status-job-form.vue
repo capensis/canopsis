@@ -34,6 +34,7 @@
       v-validate="'required'"
       :label="$tc('common.ticket')"
       :error-messages="errors.collect('ticket')"
+      :disabled="!isNew"
       name="ticket"
     />
     <declare-ticket-rule-check-ticket-status-field
@@ -67,6 +68,10 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    isNew: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props) {
