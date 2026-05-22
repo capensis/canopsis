@@ -1,4 +1,4 @@
-package amqp
+package amqp_test
 
 import (
 	"context"
@@ -6,7 +6,9 @@ import (
 	"testing"
 	"testing/synctest"
 
-	amqp "github.com/rabbitmq/amqp091-go"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
+	"github.com/rabbitmq/amqp091-go"
 	"go.uber.org/mock/gomock"
 )
 
@@ -15,20 +17,24 @@ func TestConsumeWithReconnect_GivenSuccessfulConsume_ShouldRunUntilCtxCancel(t *
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockCh := NewMockamqp091Channel(ctrl)
-		ch := newTestChannel(nil, mockCh)
+		pool := mock_amqp.NewMockChannelPool(ctrl)
 
 		queue := "amq.queue"
-		mockCh.EXPECT().
-			ConsumeWithContext(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(make(chan amqp.Delivery), nil)
-		mockCh.EXPECT().NotifyClose(gomock.Any())
+		workers := 3
+		for i := 0; i < workers; i++ {
+			ch := mock_amqp.NewMockChannel(ctrl)
+			pool.EXPECT().Get(gomock.Any()).Return(ch, nil)
+			pool.EXPECT().Put(gomock.Any())
+			ch.EXPECT().
+				ConsumeWithContext(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+				Return(make(chan amqp091.Delivery), nil)
+		}
 
 		ctx, cancel := context.WithCancel(t.Context())
 		var gotErr error
 		done := make(chan struct{})
 		go func() {
-			gotErr = ConsumeWithReconnect(ctx, ch, ConsumeOptions{Queue: queue}, 3, newNoopWorker())
+			gotErr = amqp.ConsumeWithReconnect(ctx, pool, amqp.ConsumeOptions{Queue: queue}, workers, newNoopWorker())
 			close(done)
 		}()
 
@@ -53,16 +59,18 @@ func TestConsumeWithReconnect_GivenInitialConsumeError_ShouldReturnErr(t *testin
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockCh := NewMockamqp091Channel(ctrl)
-		ch := newTestChannel(nil, mockCh)
+		ch := mock_amqp.NewMockChannel(ctrl)
+		pool := mock_amqp.NewMockChannelPool(ctrl)
+		pool.EXPECT().Get(gomock.Any()).Return(ch, nil)
+		pool.EXPECT().Put(gomock.Any())
 
 		cerr := errors.New("test")
 		queue := "amq.queue"
-		mockCh.EXPECT().
+		ch.EXPECT().
 			ConsumeWithContext(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 			Return(nil, cerr)
 
-		gotErr := ConsumeWithReconnect(t.Context(), ch, ConsumeOptions{Queue: queue}, 1, newNoopWorker())
+		gotErr := amqp.ConsumeWithReconnect(t.Context(), pool, amqp.ConsumeOptions{Queue: queue}, 1, newNoopWorker())
 
 		if !errors.Is(gotErr, cerr) {
 			t.Fatalf("expected %+v, got %+v", cerr, gotErr)
@@ -75,41 +83,51 @@ func TestConsumeWithReconnect_GivenNotifyClose_ShouldReConsume(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockCh := NewMockamqp091Channel(ctrl)
-		ch := newTestChannel(nil, mockCh)
+		ch := mock_amqp.NewMockChannel(ctrl)
+		pool := mock_amqp.NewMockChannelPool(ctrl)
+		pool.EXPECT().Get(gomock.Any()).Return(ch, nil)
+		pool.EXPECT().Put(gomock.Any())
 
-		var notifyCh1, notifyCh2 chan *amqp.Error
+		var msgCh1, msgCh2 chan amqp091.Delivery
 		queue := "amq.queue"
-		mockCh.EXPECT().
+		ch.EXPECT().
 			ConsumeWithContext(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(make(chan amqp.Delivery), nil)
-		mockCh.EXPECT().NotifyClose(gomock.Any()).DoAndReturn(func(ch chan *amqp.Error) chan *amqp.Error {
-			notifyCh1 = ch
+			DoAndReturn(func(
+				ctx context.Context,
+				queue, consumer string,
+				autoAck, exclusive, noLocal, noWait bool,
+				args amqp091.Table,
+			) (<-chan amqp091.Delivery, error) {
+				msgCh1 = make(chan amqp091.Delivery)
 
-			return ch
-		})
-		mockCh.EXPECT().
+				return msgCh1, nil
+			})
+		ch.EXPECT().
 			ConsumeWithContext(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(make(chan amqp.Delivery), nil)
-		mockCh.EXPECT().NotifyClose(gomock.Any()).DoAndReturn(func(ch chan *amqp.Error) chan *amqp.Error {
-			notifyCh2 = ch
+			DoAndReturn(func(
+				ctx context.Context,
+				queue, consumer string,
+				autoAck, exclusive, noLocal, noWait bool,
+				args amqp091.Table,
+			) (<-chan amqp091.Delivery, error) {
+				msgCh2 = make(chan amqp091.Delivery)
 
-			return ch
-		})
+				return msgCh2, nil
+			})
 
 		ctx, cancel := context.WithCancel(t.Context())
 		var gotErr error
 		done := make(chan struct{})
 		go func() {
-			gotErr = ConsumeWithReconnect(ctx, ch, ConsumeOptions{Queue: queue}, 1, newNoopWorker())
+			gotErr = amqp.ConsumeWithReconnect(ctx, pool, amqp.ConsumeOptions{Queue: queue}, 1, newNoopWorker())
 			close(done)
 		}()
 
 		synctest.Wait()
-		close(notifyCh1)
+		close(msgCh1)
 		synctest.Wait()
 
-		if notifyCh2 == nil {
+		if msgCh2 == nil {
 			t.Fatal("re-consume did not happen after notifyCh fired")
 		}
 
@@ -133,23 +151,24 @@ func TestConsumeWithReconnect_GivenWorkerError_ShouldReturnErr(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockCh := NewMockamqp091Channel(ctrl)
-		ch := newTestChannel(nil, mockCh)
+		ch := mock_amqp.NewMockChannel(ctrl)
+		pool := mock_amqp.NewMockChannelPool(ctrl)
+		pool.EXPECT().Get(gomock.Any()).Return(ch, nil)
+		pool.EXPECT().Put(gomock.Any())
 
 		queue := "amq.queue"
-		mockCh.EXPECT().
+		ch.EXPECT().
 			ConsumeWithContext(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(make(chan amqp.Delivery), nil)
-		mockCh.EXPECT().NotifyClose(gomock.Any())
+			Return(make(chan amqp091.Delivery), nil)
 
 		werr := errors.New("worker error")
-		failFast := func(gctx context.Context, d <-chan amqp.Delivery) func() error {
+		failFast := func(gctx context.Context, d <-chan amqp091.Delivery) func() error {
 			return func() error {
 				return werr
 			}
 		}
 
-		gotErr := ConsumeWithReconnect(t.Context(), ch, ConsumeOptions{Queue: queue}, 1, failFast)
+		gotErr := amqp.ConsumeWithReconnect(t.Context(), pool, amqp.ConsumeOptions{Queue: queue}, 1, failFast)
 		if !errors.Is(gotErr, werr) {
 			t.Fatalf("expected %+v, got %+v", werr, gotErr)
 		}
@@ -161,23 +180,30 @@ func TestSubscribeWithReconnect_GivenSuccessfulSetup_ShouldRunUntilCtxCancel(t *
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockCh := NewMockamqp091Channel(ctrl)
-		ch := newTestChannel(nil, mockCh)
+		pool := mock_amqp.NewMockChannelPool(ctrl)
 
 		queue := "amq.gen-1"
 		exchange := "test.exchange"
-		mockCh.EXPECT().
-			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(amqp.Queue{Name: queue}, nil)
-		mockCh.EXPECT().
-			QueueBind(gomock.Eq(queue), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
-			Return(nil)
-		mockCh.EXPECT().
-			ConsumeWithContext(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(make(chan amqp.Delivery), nil)
-		mockCh.EXPECT().NotifyClose(gomock.Any())
+		workers := 2
+		for i := 0; i < workers; i++ {
+			ch := mock_amqp.NewMockChannel(ctrl)
+			pool.EXPECT().Get(gomock.Any()).Return(ch, nil)
+			pool.EXPECT().Put(gomock.Any())
+			if i == 0 {
+				ch.EXPECT().
+					QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+					Return(amqp091.Queue{Name: queue}, nil)
+				ch.EXPECT().
+					QueueBind(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
+					Return(nil)
+			}
 
-		opts := SubscribeOptions{
+			ch.EXPECT().
+				ConsumeWithContext(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+				Return(make(chan amqp091.Delivery), nil)
+		}
+
+		opts := amqp.SubscribeOptions{
 			Exchange:       exchange,
 			QueueExclusive: true,
 		}
@@ -186,7 +212,7 @@ func TestSubscribeWithReconnect_GivenSuccessfulSetup_ShouldRunUntilCtxCancel(t *
 		var gotErr error
 		done := make(chan struct{})
 		go func() {
-			gotErr = SubscribeWithReconnect(ctx, ch, opts, 2, newNoopWorker())
+			gotErr = amqp.SubscribeWithReconnect(ctx, pool, opts, workers, newNoopWorker())
 			close(done)
 		}()
 
@@ -211,30 +237,31 @@ func TestSubscribeWithReconnect_GivenBindQueueMissing_ShouldRetryDeclare(t *test
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockCh := NewMockamqp091Channel(ctrl)
-		ch := newTestChannel(nil, mockCh)
+		ch := mock_amqp.NewMockChannel(ctrl)
+		pool := mock_amqp.NewMockChannelPool(ctrl)
+		pool.EXPECT().Get(gomock.Any()).Return(ch, nil)
+		pool.EXPECT().Put(gomock.Any())
 
 		queue1 := "amq.gen-1"
 		queue2 := "amq.gen-2"
 		exchange := "test.exchange"
-		mockCh.EXPECT().
-			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(amqp.Queue{Name: queue1}, nil)
-		mockCh.EXPECT().
-			QueueBind(gomock.Eq(queue1), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
-			Return(&amqp.Error{Code: amqp.NotFound, Reason: "NOT_FOUND - no queue '" + queue1 + "' in vhost '/'"})
-		mockCh.EXPECT().
-			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(amqp.Queue{Name: queue2}, nil)
-		mockCh.EXPECT().
-			QueueBind(gomock.Eq(queue2), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
+		ch.EXPECT().
+			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(amqp091.Queue{Name: queue1}, nil)
+		ch.EXPECT().
+			QueueBind(gomock.Any(), gomock.Eq(queue1), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
+			Return(&amqp091.Error{Code: amqp091.NotFound, Reason: "NOT_FOUND - no queue '" + queue1 + "' in vhost '/'"})
+		ch.EXPECT().
+			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(amqp091.Queue{Name: queue2}, nil)
+		ch.EXPECT().
+			QueueBind(gomock.Any(), gomock.Eq(queue2), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
 			Return(nil)
-		mockCh.EXPECT().
+		ch.EXPECT().
 			ConsumeWithContext(gomock.Any(), gomock.Eq(queue2), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(make(chan amqp.Delivery), nil)
-		mockCh.EXPECT().NotifyClose(gomock.Any())
+			Return(make(chan amqp091.Delivery), nil)
 
-		opts := SubscribeOptions{
+		opts := amqp.SubscribeOptions{
 			Exchange:       exchange,
 			QueueExclusive: true,
 		}
@@ -243,7 +270,7 @@ func TestSubscribeWithReconnect_GivenBindQueueMissing_ShouldRetryDeclare(t *test
 		var gotErr error
 		done := make(chan struct{})
 		go func() {
-			gotErr = SubscribeWithReconnect(ctx, ch, opts, 1, newNoopWorker())
+			gotErr = amqp.SubscribeWithReconnect(ctx, pool, opts, 1, newNoopWorker())
 			close(done)
 		}()
 
@@ -268,33 +295,34 @@ func TestSubscribeWithReconnect_GivenConsumeQueueMissing_ShouldResetAndRetry(t *
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockCh := NewMockamqp091Channel(ctrl)
-		ch := newTestChannel(nil, mockCh)
+		ch := mock_amqp.NewMockChannel(ctrl)
+		pool := mock_amqp.NewMockChannelPool(ctrl)
+		pool.EXPECT().Get(gomock.Any()).Return(ch, nil)
+		pool.EXPECT().Put(gomock.Any())
 
 		queue1 := "amq.gen-1"
 		queue2 := "amq.gen-2"
 		exchange := "test.exchange"
-		mockCh.EXPECT().
-			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(amqp.Queue{Name: queue1}, nil)
-		mockCh.EXPECT().
-			QueueBind(gomock.Eq(queue1), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
+		ch.EXPECT().
+			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(amqp091.Queue{Name: queue1}, nil)
+		ch.EXPECT().
+			QueueBind(gomock.Any(), gomock.Eq(queue1), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
 			Return(nil)
-		mockCh.EXPECT().
+		ch.EXPECT().
 			ConsumeWithContext(gomock.Any(), gomock.Eq(queue1), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(nil, &amqp.Error{Code: amqp.NotFound, Reason: "NOT_FOUND - no queue '" + queue1 + "' in vhost '/'"})
-		mockCh.EXPECT().
-			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(amqp.Queue{Name: queue2}, nil)
-		mockCh.EXPECT().
-			QueueBind(gomock.Eq(queue2), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
+			Return(nil, &amqp091.Error{Code: amqp091.NotFound, Reason: "NOT_FOUND - no queue '" + queue1 + "' in vhost '/'"})
+		ch.EXPECT().
+			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(amqp091.Queue{Name: queue2}, nil)
+		ch.EXPECT().
+			QueueBind(gomock.Any(), gomock.Eq(queue2), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
 			Return(nil)
-		mockCh.EXPECT().
+		ch.EXPECT().
 			ConsumeWithContext(gomock.Any(), gomock.Eq(queue2), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(make(chan amqp.Delivery), nil)
-		mockCh.EXPECT().NotifyClose(gomock.Any())
+			Return(make(chan amqp091.Delivery), nil)
 
-		opts := SubscribeOptions{
+		opts := amqp.SubscribeOptions{
 			Exchange:       exchange,
 			QueueExclusive: true,
 		}
@@ -303,7 +331,7 @@ func TestSubscribeWithReconnect_GivenConsumeQueueMissing_ShouldResetAndRetry(t *
 		var gotErr error
 		done := make(chan struct{})
 		go func() {
-			gotErr = SubscribeWithReconnect(ctx, ch, opts, 1, newNoopWorker())
+			gotErr = amqp.SubscribeWithReconnect(ctx, pool, opts, 1, newNoopWorker())
 			close(done)
 		}()
 
@@ -328,26 +356,28 @@ func TestSubscribeWithReconnect_GivenBindExchangeMissing_ShouldReturnErr(t *test
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockCh := NewMockamqp091Channel(ctrl)
-		ch := newTestChannel(nil, mockCh)
+		ch := mock_amqp.NewMockChannel(ctrl)
+		pool := mock_amqp.NewMockChannelPool(ctrl)
+		pool.EXPECT().Get(gomock.Any()).Return(ch, nil)
+		pool.EXPECT().Put(gomock.Any())
 
 		queue := "amq.gen-1"
 		exchange := "test.exchange"
-		mockCh.EXPECT().
-			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(amqp.Queue{Name: queue}, nil)
-		mockCh.EXPECT().
-			QueueBind(gomock.Eq(queue), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
-			Return(&amqp.Error{Code: amqp.NotFound, Reason: "NOT_FOUND - no exchange '" + exchange + "' in vhost '/'"})
+		ch.EXPECT().
+			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(amqp091.Queue{Name: queue}, nil)
+		ch.EXPECT().
+			QueueBind(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
+			Return(&amqp091.Error{Code: amqp091.NotFound, Reason: "NOT_FOUND - no exchange '" + exchange + "' in vhost '/'"})
 
-		opts := SubscribeOptions{
+		opts := amqp.SubscribeOptions{
 			Exchange:       exchange,
 			QueueExclusive: true,
 		}
 
-		gotErr := SubscribeWithReconnect(t.Context(), ch, opts, 1, newNoopWorker())
+		gotErr := amqp.SubscribeWithReconnect(t.Context(), pool, opts, 1, newNoopWorker())
 
-		if aerr, ok := errors.AsType[*amqp.Error](gotErr); !ok || aerr.Code != amqp.NotFound {
+		if aerr, ok := errors.AsType[*amqp091.Error](gotErr); !ok || aerr.Code != amqp091.NotFound {
 			t.Fatalf("expected NOT_FOUND error, got %+v", gotErr)
 		}
 	})
@@ -358,39 +388,41 @@ func TestSubscribeWithReconnect_GivenMaxRetriesExceeded_ShouldReturnErr(t *testi
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockCh := NewMockamqp091Channel(ctrl)
-		ch := newTestChannel(nil, mockCh)
+		ch := mock_amqp.NewMockChannel(ctrl)
+		pool := mock_amqp.NewMockChannelPool(ctrl)
+		pool.EXPECT().Get(gomock.Any()).Return(ch, nil)
+		pool.EXPECT().Put(gomock.Any())
 
 		queue := "amq.gen-1"
 		exchange := "test.exchange"
-		mockCh.EXPECT().
-			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(amqp.Queue{Name: queue}, nil).
-			Times(maxSubscribeRetries)
-		mockCh.EXPECT().
-			QueueBind(gomock.Eq(queue), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
-			Return(&amqp.Error{Code: amqp.NotFound, Reason: "NOT_FOUND - no queue '" + queue + "' in vhost '/'"}).
-			Times(maxSubscribeRetries)
+		ch.EXPECT().
+			QueueDeclare(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(amqp091.Queue{Name: queue}, nil).
+			Times(10)
+		ch.EXPECT().
+			QueueBind(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
+			Return(&amqp091.Error{Code: amqp091.NotFound, Reason: "NOT_FOUND - no queue '" + queue + "' in vhost '/'"}).
+			Times(10)
 
-		opts := SubscribeOptions{
+		opts := amqp.SubscribeOptions{
 			Exchange:       exchange,
 			QueueExclusive: true,
 		}
 
-		gotErr := SubscribeWithReconnect(t.Context(), ch, opts, 1, newNoopWorker())
+		gotErr := amqp.SubscribeWithReconnect(t.Context(), pool, opts, 1, newNoopWorker())
 
 		if gotErr == nil {
 			t.Fatal("expected error after max retries, got nil")
 		}
 
-		if aerr, ok := errors.AsType[*amqp.Error](gotErr); !ok || aerr.Code != amqp.NotFound {
+		if aerr, ok := errors.AsType[*amqp091.Error](gotErr); !ok || aerr.Code != amqp091.NotFound {
 			t.Fatalf("expected NOT_FOUND error, got %+v", gotErr)
 		}
 	})
 }
 
-func newNoopWorker() func(context.Context, <-chan amqp.Delivery) func() error {
-	return func(gctx context.Context, d <-chan amqp.Delivery) func() error {
+func newNoopWorker() func(context.Context, <-chan amqp091.Delivery) func() error {
+	return func(gctx context.Context, d <-chan amqp091.Delivery) func() error {
 		return func() error {
 			for {
 				select {

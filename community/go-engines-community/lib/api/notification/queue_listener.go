@@ -23,7 +23,7 @@ type QueueListener interface {
 
 func NewQueueListener(
 	dbClient mongo.DbClient,
-	amqpChannel amqp.Channel,
+	amqpChannel amqp.ChannelPool,
 	websocketHub websocket.Hub,
 	store Store,
 	decoder encoding.Decoder,
@@ -31,26 +31,26 @@ func NewQueueListener(
 	logger zerolog.Logger,
 ) QueueListener {
 	return &queueListener{
-		amqpChannel:    amqpChannel,
-		websocketHub:   websocketHub,
-		store:          store,
-		userCollection: dbClient.Collection(mongo.UserCollection),
-		workers:        10,
-		decoder:        decoder,
-		configProvider: configProvider,
-		logger:         logger,
+		amqpChannelPool: amqpChannel,
+		websocketHub:    websocketHub,
+		store:           store,
+		userCollection:  dbClient.Collection(mongo.UserCollection),
+		workers:         10,
+		decoder:         decoder,
+		configProvider:  configProvider,
+		logger:          logger,
 	}
 }
 
 type queueListener struct {
-	amqpChannel    amqp.Channel
-	websocketHub   websocket.Hub
-	store          Store
-	userCollection mongo.DbCollection
-	workers        int
-	decoder        encoding.Decoder
-	configProvider config.ApiConfigProvider
-	logger         zerolog.Logger
+	amqpChannelPool amqp.ChannelPool
+	websocketHub    websocket.Hub
+	store           Store
+	userCollection  mongo.DbCollection
+	workers         int
+	decoder         encoding.Decoder
+	configProvider  config.ApiConfigProvider
+	logger          zerolog.Logger
 }
 
 func (s *queueListener) Listen(ctx context.Context) error {
@@ -59,7 +59,7 @@ func (s *queueListener) Listen(ctx context.Context) error {
 		QueueExclusive: true,
 	}
 
-	return amqp.SubscribeWithReconnect(ctx, s.amqpChannel, opts, s.workers, s.newWorkerFunc)
+	return amqp.SubscribeWithReconnect(ctx, s.amqpChannelPool, opts, s.workers, s.newWorkerFunc)
 }
 
 func (s *queueListener) newWorkerFunc(ctx context.Context, ch <-chan amqp091.Delivery) func() error {
@@ -85,7 +85,7 @@ func (s *queueListener) newWorkerFunc(ctx context.Context, ch <-chan amqp091.Del
 				if err != nil {
 					s.logger.Err(err).Msg("failed to process notification event")
 					if mongo.IsConnectionError(err) {
-						err = s.amqpChannel.Nack(ctx, msg.DeliveryTag, false, true)
+						err = msg.Nack(false, true)
 						if err != nil {
 							s.logger.Err(err).Msg("failed to negatively acknowledge message")
 						}
@@ -94,7 +94,7 @@ func (s *queueListener) newWorkerFunc(ctx context.Context, ch <-chan amqp091.Del
 					}
 				}
 
-				err = s.amqpChannel.Ack(ctx, msg.DeliveryTag, false)
+				err = msg.Ack(false)
 				if err != nil {
 					s.logger.Err(err).Msg("failed to acknowledge message")
 				}

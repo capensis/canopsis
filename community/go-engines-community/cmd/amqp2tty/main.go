@@ -84,7 +84,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	msgs, _, err := ch.ConsumeWithContext(
+	msgs, err := ch.ConsumeWithContext(
 		ctx,
 		queue.Name,
 		daemonName,

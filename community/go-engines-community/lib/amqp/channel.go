@@ -46,9 +46,8 @@ func (c *channel) ConsumeWithContext(
 	queue, consumer string,
 	autoAck, exclusive, noLocal, noWait bool,
 	args amqp.Table,
-) (<-chan amqp.Delivery, <-chan *amqp.Error, error) {
+) (<-chan amqp.Delivery, error) {
 	var d <-chan amqp.Delivery
-	var notifyCh chan *amqp.Error
 	err := c.withChannel(ctx, func(amqpCh amqp091Channel) error {
 		var err error
 		d, err = amqpCh.ConsumeWithContext(ctx, queue, consumer, autoAck, exclusive, noLocal, noWait, args)
@@ -56,31 +55,10 @@ func (c *channel) ConsumeWithContext(
 			return err
 		}
 
-		notifyCh = make(chan *amqp.Error, 1)
-		amqpCh.NotifyClose(notifyCh)
-
 		return nil
 	})
 
-	return d, notifyCh, err
-}
-
-func (c *channel) Ack(ctx context.Context, tag uint64, multiple bool) error {
-	return c.withChannel(ctx, func(amqpCh amqp091Channel) error {
-		return amqpCh.Ack(tag, multiple)
-	})
-}
-
-func (c *channel) Nack(ctx context.Context, tag uint64, multiple, requeue bool) error {
-	return c.withChannel(ctx, func(amqpCh amqp091Channel) error {
-		return amqpCh.Nack(tag, multiple, requeue)
-	})
-}
-
-func (c *channel) Reject(ctx context.Context, tag uint64, requeue bool) error {
-	return c.withChannel(ctx, func(amqpCh amqp091Channel) error {
-		return amqpCh.Reject(tag, requeue)
-	})
+	return d, err
 }
 
 func (c *channel) PublishWithContext(

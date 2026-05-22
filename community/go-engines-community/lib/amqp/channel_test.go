@@ -718,25 +718,19 @@ func TestChannel_ConsumeWithContext_GivenSetConn_ShouldReturnChannelImmediately(
 		amqpCh.EXPECT().
 			ConsumeWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 			Return(make(chan amqp.Delivery), nil)
-		amqpCh.EXPECT().NotifyClose(gomock.Any())
 
 		c := newTestChannel(nil, amqpCh)
 
 		var got <-chan amqp.Delivery
-		var gotNotifyClose <-chan *amqp.Error
 		var gerr error
 		go func() {
-			got, gotNotifyClose, gerr = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
+			got, gerr = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
 		}()
 
 		synctest.Wait()
 
 		if got == nil {
 			t.Fatal("expected consume channel, got nil")
-		}
-
-		if gotNotifyClose == nil {
-			t.Fatal("expected notify close channel, got nil")
 		}
 
 		if gerr != nil {
@@ -750,10 +744,9 @@ func TestChannel_ConsumeWithContext_GivenChannelClosed_ShouldReturnErr(t *testin
 		c := newTestChannel(nil, nil)
 
 		var got <-chan amqp.Delivery
-		var gotNotifyClose <-chan *amqp.Error
 		var gerr error
 		go func() {
-			got, gotNotifyClose, gerr = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
+			got, gerr = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
 		}()
 
 		synctest.Wait()
@@ -762,10 +755,6 @@ func TestChannel_ConsumeWithContext_GivenChannelClosed_ShouldReturnErr(t *testin
 
 		if got != nil {
 			t.Fatalf("expected nil, got %+v", got)
-		}
-
-		if gotNotifyClose != nil {
-			t.Fatalf("expected nil, got %+v", gotNotifyClose)
 		}
 
 		if !errors.Is(gerr, ErrChannelClosed) {
@@ -784,10 +773,9 @@ func TestChannel_ConsumeWithContext_GivenCallerCtxCanceled_ShouldReturnErr(t *te
 		ctx, cancel := context.WithCancel(t.Context())
 
 		var got <-chan amqp.Delivery
-		var gotNotifyClose <-chan *amqp.Error
 		var gerr error
 		go func() {
-			got, gotNotifyClose, gerr = c.ConsumeWithContext(ctx, "test", "test", false, false, false, false, nil)
+			got, gerr = c.ConsumeWithContext(ctx, "test", "test", false, false, false, false, nil)
 		}()
 
 		synctest.Wait()
@@ -796,10 +784,6 @@ func TestChannel_ConsumeWithContext_GivenCallerCtxCanceled_ShouldReturnErr(t *te
 
 		if got != nil {
 			t.Fatalf("expected nil, got %+v", got)
-		}
-
-		if gotNotifyClose != nil {
-			t.Fatalf("expected nil, got %+v", gotNotifyClose)
 		}
 
 		if !errors.Is(gerr, context.Canceled) {
@@ -816,10 +800,9 @@ func TestChannel_ConsumeWithContext_GivenReconnection_ShouldReturnNewChannel(t *
 		c := newTestChannel(nil, nil)
 
 		var got <-chan amqp.Delivery
-		var gotNotifyClose <-chan *amqp.Error
 		var gerr error
 		go func() {
-			got, gotNotifyClose, gerr = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
+			got, gerr = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
 		}()
 
 		synctest.Wait()
@@ -828,7 +811,6 @@ func TestChannel_ConsumeWithContext_GivenReconnection_ShouldReturnNewChannel(t *
 		amqpCh.EXPECT().
 			ConsumeWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 			Return(make(chan amqp.Delivery), nil)
-		amqpCh.EXPECT().NotifyClose(gomock.Any())
 
 		simulateChannelReconnect(c, amqpCh)
 
@@ -836,10 +818,6 @@ func TestChannel_ConsumeWithContext_GivenReconnection_ShouldReturnNewChannel(t *
 
 		if got == nil {
 			t.Fatal("expected consume channel, got nil")
-		}
-
-		if gotNotifyClose == nil {
-			t.Fatal("expected notify close channel, got nil")
 		}
 
 		if gerr != nil {
@@ -856,11 +834,10 @@ func TestChannel_ConsumeWithContext_GivenMultipleCallers_ShouldUnblockAllOfThem(
 		c := newTestChannel(nil, nil)
 		size := 5
 		got := make([]<-chan amqp.Delivery, size)
-		gotNotifyClose := make([]<-chan *amqp.Error, size)
 		gerrs := make([]error, size)
 		for i := 0; i < size; i++ {
 			go func() {
-				got[i], gotNotifyClose[i], gerrs[i] = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
+				got[i], gerrs[i] = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
 			}()
 		}
 
@@ -872,7 +849,6 @@ func TestChannel_ConsumeWithContext_GivenMultipleCallers_ShouldUnblockAllOfThem(
 			amqpCh.EXPECT().
 				ConsumeWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 				Return(make(chan amqp.Delivery), nil)
-			amqpCh.EXPECT().NotifyClose(gomock.Any())
 		}
 
 		simulateChannelReconnect(c, amqpCh)
@@ -882,10 +858,6 @@ func TestChannel_ConsumeWithContext_GivenMultipleCallers_ShouldUnblockAllOfThem(
 		for i := 0; i < size; i++ {
 			if got[i] == nil {
 				t.Fatalf("[%d] expected consume channel, got nil", i)
-			}
-
-			if gotNotifyClose[i] == nil {
-				t.Fatalf("[%d] expected notify close channel, got nil", i)
 			}
 
 			if gerrs[i] != nil {
@@ -913,10 +885,9 @@ func TestChannel_ConsumeWithContext_GivenExhaustRetries_ShouldReturnErr(t *testi
 		}, amqpConn)
 
 		var got <-chan amqp.Delivery
-		var gotNotifyClose <-chan *amqp.Error
 		var gerr error
 		go func() {
-			got, gotNotifyClose, gerr = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
+			got, gerr = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
 		}()
 
 		time.Sleep(time.Duration(reconnects) * reconnTimeout)
@@ -924,10 +895,6 @@ func TestChannel_ConsumeWithContext_GivenExhaustRetries_ShouldReturnErr(t *testi
 
 		if got != nil {
 			t.Fatalf("expected nil, got %+v", got)
-		}
-
-		if gotNotifyClose != nil {
-			t.Fatalf("expected nil, got %+v", gotNotifyClose)
 		}
 
 		if !errors.Is(gerr, ErrChannelClosed) {
@@ -949,10 +916,9 @@ func TestChannel_ConsumeWithContext_GivenErrClosed_ShouldRetryWithNewChannel(t *
 		c := newTestChannel(nil, amqpCh1)
 
 		var got <-chan amqp.Delivery
-		var gotNotifyClose <-chan *amqp.Error
 		var gerr error
 		go func() {
-			got, gotNotifyClose, gerr = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
+			got, gerr = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
 		}()
 
 		synctest.Wait()
@@ -961,7 +927,6 @@ func TestChannel_ConsumeWithContext_GivenErrClosed_ShouldRetryWithNewChannel(t *
 		amqpCh2.EXPECT().
 			ConsumeWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 			Return(make(chan amqp.Delivery), nil)
-		amqpCh2.EXPECT().NotifyClose(gomock.Any())
 
 		simulateChannelReconnect(c, amqpCh2)
 
@@ -969,10 +934,6 @@ func TestChannel_ConsumeWithContext_GivenErrClosed_ShouldRetryWithNewChannel(t *
 
 		if got == nil {
 			t.Fatal("expected consume channel, got nil")
-		}
-
-		if gotNotifyClose == nil {
-			t.Fatal("expected notify close channel, got nil")
 		}
 
 		if gerr != nil {
@@ -995,20 +956,15 @@ func TestChannel_ConsumeWithContext_GivenUnknownErr_ShouldNotRetry(t *testing.T)
 		c := newTestChannel(nil, amqpCh)
 
 		var got <-chan amqp.Delivery
-		var gotNotifyClose <-chan *amqp.Error
 		var gerr error
 		go func() {
-			got, gotNotifyClose, gerr = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
+			got, gerr = c.ConsumeWithContext(t.Context(), "test", "test", false, false, false, false, nil)
 		}()
 
 		synctest.Wait()
 
 		if got != nil {
 			t.Fatalf("expected nil, got %+v", got)
-		}
-
-		if gotNotifyClose != nil {
-			t.Fatalf("expected nil, got %+v", gotNotifyClose)
 		}
 
 		if !errors.Is(gerr, unknownErr) {

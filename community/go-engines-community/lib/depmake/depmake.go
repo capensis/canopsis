@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -50,22 +51,12 @@ func (m DependencyMaker) DepAmqpConnection(logger zerolog.Logger, cfg config.Can
 	return c
 }
 
-// DepAMQPChannelSub opens a channel from a given session, and apply Qos on it.
-func (m DependencyMaker) DepAMQPChannelSub(ctx context.Context, session libamqp.Connection, prefetchCount, prefetchSize int) libamqp.Channel {
-	channel, err := session.Channel(ctx)
-	Panic("amqp consume channel", err)
-
-	err = channel.Qos(ctx, prefetchCount, prefetchSize, true)
-	Panic("amqp consume channel qos", err)
-
-	return channel
+func (m DependencyMaker) DepAMQPConsumeChannelPool(conn libamqp.Connection, prefetchCount, prefetchSize int) libamqp.ChannelPool {
+	return libamqp.NewConsumeChannelPool(conn, prefetchCount, prefetchSize, true)
 }
 
-// DepAMQPChannelPub opens a channel from a given session, to be used for publishing messages.
-func (m DependencyMaker) DepAMQPChannelPub(ctx context.Context, session libamqp.Connection) libamqp.Channel {
-	channel, err := session.Channel(ctx)
-	Panic("amqp publish channel", err)
-	return channel
+func (m DependencyMaker) DepAMQPPubChannelPool(conn libamqp.Connection) libamqp.ChannelPool {
+	return libamqp.NewPublishChannelPool(conn, canopsis.DefaultAMQPPublishPoolSize)
 }
 
 // DepRedisSession opens a redis session.

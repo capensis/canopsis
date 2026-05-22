@@ -1,7 +1,6 @@
 package amqp
 
 import (
-	"errors"
 	"os"
 	"sync/atomic"
 	"testing"
@@ -54,7 +53,7 @@ func TestIntegration_Channel_GivenLiveBroker_ShouldPublishAndConsumeMessage(t *t
 		t.Fatalf("PublishWithContext: %+v", err)
 	}
 
-	d, _, err := consumeCh.ConsumeWithContext(t.Context(), q.Name, "", false, false, false, false, nil)
+	d, err := consumeCh.ConsumeWithContext(t.Context(), q.Name, "", false, false, false, false, nil)
 	if err != nil {
 		t.Fatalf("ConsumeWithContext: %+v", err)
 	}
@@ -71,7 +70,7 @@ func TestIntegration_Channel_GivenLiveBroker_ShouldPublishAndConsumeMessage(t *t
 			t.Fatalf("expected %s, got %s", string(msg), string(got.Body))
 		}
 
-		err = consumeCh.Ack(t.Context(), got.DeliveryTag, false)
+		err = got.Ack(false)
 		if err != nil {
 			t.Fatalf("Ack: %+v", err)
 		}
@@ -278,7 +277,7 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldResumeMessageFlow(t *testing.
 		consumedMsgCount := 0
 		for {
 			consumeWithCtxCalled.Add(1)
-			d, notifyClose, err := consumeCh.ConsumeWithContext(t.Context(), q.Name, "", true, false, false, false, nil)
+			d, err := consumeCh.ConsumeWithContext(t.Context(), q.Name, "", true, false, false, false, nil)
 			if err != nil {
 				select {
 				case <-t.Context().Done():
@@ -293,16 +292,9 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldResumeMessageFlow(t *testing.
 				select {
 				case <-t.Context().Done():
 					return
-				case <-notifyClose:
-					break loop
 				case got, ok := <-d:
 					if !ok {
-						select {
-						case <-t.Context().Done():
-						case consumeErrCh <- errors.New("channel closed unexpectedly"):
-						}
-
-						return
+						break loop
 					}
 
 					consumedMsgCount++

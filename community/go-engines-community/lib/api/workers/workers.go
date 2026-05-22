@@ -25,30 +25,36 @@ type Job struct {
 	Type string `json:"type"`
 }
 
-func NewRunner(amqpChannel libamqp.Channel, logger zerolog.Logger) *Runner {
+func NewRunner(amqpChannelPool libamqp.ChannelPool, logger zerolog.Logger) *Runner {
 	return &Runner{
-		amqpChannel:  amqpChannel,
-		queue:        canopsis.ApiWorkersQueueName,
-		decoder:      json.NewDecoder(),
-		workers:      10,
-		jobExecutors: make(map[string]JobExecutor),
-		logger:       logger,
+		amqpChannelPool: amqpChannelPool,
+		queue:           canopsis.ApiWorkersQueueName,
+		decoder:         json.NewDecoder(),
+		workers:         10,
+		jobExecutors:    make(map[string]JobExecutor),
+		logger:          logger,
 	}
 }
 
 type Runner struct {
-	amqpChannel    libamqp.Channel
-	queue          string
-	decoder        encoding.Decoder
-	workers        int
-	jobExecutorsMx sync.RWMutex
-	jobExecutors   map[string]JobExecutor
-	logger         zerolog.Logger
+	amqpChannelPool libamqp.ChannelPool
+	queue           string
+	decoder         encoding.Decoder
+	workers         int
+	jobExecutorsMx  sync.RWMutex
+	jobExecutors    map[string]JobExecutor
+	logger          zerolog.Logger
 }
 
 func (r *Runner) Run(ctx context.Context) error {
+	ch, err := r.amqpChannelPool.Get(ctx)
+	if err != nil {
+		return err
+	}
+
 	// check if queue exists because Consume method doesn't return appropriate error
-	_, err := r.amqpChannel.QueueDeclarePassive(ctx, r.queue, false, false, false, false, nil)
+	_, err = ch.QueueDeclarePassive(ctx, r.queue, false, false, false, false, nil)
+	r.amqpChannelPool.Put(ch)
 	if err != nil {
 		return err
 	}
@@ -57,55 +63,57 @@ func (r *Runner) Run(ctx context.Context) error {
 		Queue: r.queue,
 	}
 
-	return libamqp.ConsumeWithReconnect(ctx, r.amqpChannel, opts, r.workers, func(ctx context.Context, ch <-chan amqp.Delivery) func() error {
-		return func() error {
-			var err error
-			for {
-				select {
-				case <-ctx.Done():
+	return libamqp.ConsumeWithReconnect(ctx, r.amqpChannelPool, opts, r.workers, r.newWorkerFunc)
+}
+
+func (r *Runner) newWorkerFunc(ctx context.Context, ch <-chan amqp.Delivery) func() error {
+	return func() error {
+		var err error
+		for {
+			select {
+			case <-ctx.Done():
+				return nil
+			case msg, ok := <-ch:
+				if !ok {
 					return nil
-				case msg, ok := <-ch:
-					if !ok {
-						return nil
-					}
+				}
 
-					r.logger.Debug().Str("msg", string(msg.Body)).Msg("worker job message")
-					job := Job{}
-					err = r.decoder.Decode(msg.Body, &job)
-					if err != nil {
-						r.logger.Err(err).Msg("failed to decode job")
-						continue
-					}
+				r.logger.Debug().Str("msg", string(msg.Body)).Msg("worker job message")
+				job := Job{}
+				err = r.decoder.Decode(msg.Body, &job)
+				if err != nil {
+					r.logger.Err(err).Msg("failed to decode job")
+					continue
+				}
 
-					r.jobExecutorsMx.RLock()
-					e, ok := r.jobExecutors[job.Type]
-					r.jobExecutorsMx.RUnlock()
-					if !ok {
-						r.logger.Warn().Str("type", job.Type).Str("id", job.ID).Msg("unknown job type")
-						continue
-					}
+				r.jobExecutorsMx.RLock()
+				e, ok := r.jobExecutors[job.Type]
+				r.jobExecutorsMx.RUnlock()
+				if !ok {
+					r.logger.Warn().Str("type", job.Type).Str("id", job.ID).Msg("unknown job type")
+					continue
+				}
 
-					err = e(ctx, job.ID)
-					if err != nil {
-						r.logger.Err(err).Str("type", job.Type).Str("id", job.ID).Msg("failed to execute job")
-						if mongo.IsConnectionError(err) {
-							err = r.amqpChannel.Nack(ctx, msg.DeliveryTag, false, true)
-							if err != nil {
-								r.logger.Err(err).Msg("failed to negatively acknowledge message")
-							}
-
-							continue
+				err = e(ctx, job.ID)
+				if err != nil {
+					r.logger.Err(err).Str("type", job.Type).Str("id", job.ID).Msg("failed to execute job")
+					if mongo.IsConnectionError(err) {
+						err = msg.Nack(false, true)
+						if err != nil {
+							r.logger.Err(err).Msg("failed to negatively acknowledge message")
 						}
-					}
 
-					err = r.amqpChannel.Ack(ctx, msg.DeliveryTag, false)
-					if err != nil {
-						r.logger.Err(err).Msg("failed to acknowledge message")
+						continue
 					}
+				}
+
+				err = msg.Ack(false)
+				if err != nil {
+					r.logger.Err(err).Msg("failed to acknowledge message")
 				}
 			}
 		}
-	})
+	}
 }
 
 func (r *Runner) AddJobExecutor(t string, e JobExecutor) {
@@ -118,7 +126,7 @@ func (r *Runner) AddJobExecutor(t string, e JobExecutor) {
 	r.jobExecutors[t] = e
 }
 
-func NewJobPublisher(t string, amqpPublisher libamqp.Channel) JobPublisher {
+func NewJobPublisher(t string, amqpPublisher libamqp.Publisher) JobPublisher {
 	return &jobPublisher{
 		jobType:       t,
 		amqpPublisher: amqpPublisher,
@@ -131,7 +139,7 @@ func NewJobPublisher(t string, amqpPublisher libamqp.Channel) JobPublisher {
 
 type jobPublisher struct {
 	jobType         string
-	amqpPublisher   libamqp.Channel
+	amqpPublisher   libamqp.Publisher
 	exchange, queue string
 	encoder         encoding.Encoder
 	contentType     string

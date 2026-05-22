@@ -11,19 +11,19 @@ import (
 func NewRPCServer(
 	name, queue string,
 	workers int,
-	publishCh libamqp.Channel,
-	consumeCh libamqp.Channel,
+	publisher libamqp.Publisher,
+	consumePool libamqp.ChannelPool,
 	processor MessageProcessor,
 	logger zerolog.Logger,
 ) Consumer {
 	return &rpcServer{
 		defaultConsumer: defaultConsumer{
-			name:      name,
-			queue:     queue,
-			publishCh: publishCh,
-			consumeCh: consumeCh,
-			processor: processor,
-			logger:    logger,
+			name:        name,
+			queue:       queue,
+			publisher:   publisher,
+			consumePool: consumePool,
+			processor:   processor,
+			logger:      logger,
 		},
 		workers: workers,
 	}

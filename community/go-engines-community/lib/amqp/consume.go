@@ -24,36 +24,41 @@ type ConsumeOptions struct {
 }
 
 // ConsumeWithReconnect drives a consume loop that survives AMQP channel reconnects.
-// It opens a consumer on ch, spawns `workers` goroutines built by newWorker to process deliveries,
-// and watches the channel's notifyClose.
-// When the channel closes, it re-consumes against the freshly reopened channel and
-// spawns a new batch of workers bound to the new delivery channel.
+// It spawns `workers` goroutines, each borrowing a Channel from pool, calling
+// ConsumeWithContext against opts.Queue, and running a worker function built by newWorker
+// to process the resulting deliveries.
 //
-// newWorker is invoked once per worker per generation, with the errgroup's context and the current delivery channel.
-// The returned func() error runs in an errgroup goroutine — returning a non-nil error cancels the whole consume loop
-// and is propagated as the return value.
+// Channel reconnects are handled transparently by the pool: when the delivery channel ends,
+// the worker function returns and the goroutine re-runs ConsumeWithContext to bind to the
+// new delivery channel.
+//
+// newWorker is invoked once per delivery-channel generation, with the errgroup's context and
+// the current delivery channel. The returned func() error runs synchronously in the worker
+// goroutine — returning a non-nil error cancels the whole consume loop and is propagated as
+// the return value. A nil return means the delivery channel ended and the goroutine is ready
+// to re-consume.
 // Workers must select on gctx.Done() to exit cleanly on shutdown or sibling failure.
 //
 // Returns nil when ctx is canceled, or the first error returned by any spawned worker or
 // by ConsumeWithContext on (re)consume.
 func ConsumeWithReconnect(
 	ctx context.Context,
-	ch Channel,
+	pool ChannelPool,
 	opts ConsumeOptions,
 	workers int,
 	newWorker func(gctx context.Context, d <-chan amqp.Delivery) func() error,
 ) error {
-	setup := func(gctx context.Context) (<-chan amqp.Delivery, <-chan *amqp.Error, error) {
-		d, notifyCh, err := ch.ConsumeWithContext(gctx, opts.Queue, opts.Consumer, opts.AutoAck, opts.Exclusive,
+	setup := func(gctx context.Context, ch Channel) (<-chan amqp.Delivery, error) {
+		d, err := ch.ConsumeWithContext(gctx, opts.Queue, opts.Consumer, opts.AutoAck, opts.Exclusive,
 			opts.NoLocal, opts.NoWait, opts.Args)
 		if err != nil {
-			return nil, nil, fmt.Errorf("cannot consume messages: %w", err)
+			return nil, fmt.Errorf("cannot consume messages: %w", err)
 		}
 
-		return d, notifyCh, nil
+		return d, nil
 	}
 
-	return runWithReconnect(ctx, workers, setup, newWorker)
+	return runWithReconnect(ctx, pool, workers, setup, newWorker)
 }
 
 // SubscribeOptions bundles the parameters for declaring a transient queue,
@@ -77,20 +82,21 @@ type SubscribeOptions struct {
 	Args     amqp.Table
 }
 
-// SubscribeWithReconnect declares a queue, binds it to opts.Exchange with opts.RoutingKey, and consumes from it.
-// On each channel reconnect it re-declares, re-binds, and re-consumes -
-// so subscribers backed by exclusive or auto-delete queues survive connection drops without
-// the caller managing queue lifecycle.
+// SubscribeWithReconnect declares a queue, binds it to opts.Exchange with opts.RoutingKey,
+// and consumes from it. On every (re)consume — including after a channel reconnect — it
+// reuses the previously declared queue and just re-runs ConsumeWithContext; if the broker
+// reports the queue as missing (typically the prior connection's exclusive queue lost on
+// reconnect), it re-declares, re-binds, and retries, up to maxSubscribeRetries times.
+// This lets subscribers backed by exclusive or auto-delete queues survive connection drops
+// without the caller managing queue lifecycle.
 //
-// On a NOT_FOUND from bind or consume whose reply text contains "no queue",
-// the queue has died (typically the prior connection's exclusive queue lost on reconnect):
-// re-declare and retry, up to maxSubscribeRetries times.
+// A NOT_FOUND whose reply text contains "no queue" is treated as queue-missing and retried.
 // Any other error - including a NOT_FOUND for a missing exchange - is returned to the caller.
 //
 // See ConsumeWithReconnect for newWorker semantics.
 func SubscribeWithReconnect(
 	ctx context.Context,
-	ch Channel,
+	pool ChannelPool,
 	opts SubscribeOptions,
 	workers int,
 	newWorker func(gctx context.Context, d <-chan amqp.Delivery) func() error,
@@ -104,11 +110,11 @@ func SubscribeWithReconnect(
 	}
 
 	queue := ""
-	setup := func(gctx context.Context) (d <-chan amqp.Delivery, notifyCh <-chan *amqp.Error, err error) {
+	setup := func(gctx context.Context, ch Channel) (d <-chan amqp.Delivery, err error) {
 		attempts := 0
 		for {
 			if attempts == maxSubscribeRetries {
-				return nil, nil, fmt.Errorf("cannot resolve queue after %d attempts: %w", maxSubscribeRetries, err)
+				return nil, fmt.Errorf("cannot resolve queue after %d attempts: %w", maxSubscribeRetries, err)
 			}
 
 			attempts++
@@ -119,7 +125,7 @@ func SubscribeWithReconnect(
 				q, err = ch.QueueDeclare(gctx, opts.QueueName, opts.QueueDurable,
 					opts.QueueAutoDelete, opts.QueueExclusive, false, opts.QueueArgs)
 				if err != nil {
-					return nil, nil, fmt.Errorf("cannot declare queue: %w", err)
+					return nil, fmt.Errorf("cannot declare queue: %w", err)
 				}
 
 				err = ch.QueueBind(gctx, q.Name, opts.RoutingKey, opts.Exchange, false, nil)
@@ -128,13 +134,13 @@ func SubscribeWithReconnect(
 						continue
 					}
 
-					return nil, nil, fmt.Errorf("cannot bind queue: %w", err)
+					return nil, fmt.Errorf("cannot bind queue: %w", err)
 				}
 
 				queue = q.Name
 			}
 
-			d, notifyCh, err = ch.ConsumeWithContext(gctx, queue, opts.Consumer,
+			d, err = ch.ConsumeWithContext(gctx, queue, opts.Consumer,
 				opts.AutoAck, opts.QueueExclusive, opts.NoLocal, opts.NoWait, opts.Args)
 			if err != nil {
 				if queueMissing(err) {
@@ -143,55 +149,59 @@ func SubscribeWithReconnect(
 					continue
 				}
 
-				return nil, nil, fmt.Errorf("cannot consume messages: %w", err)
+				return nil, fmt.Errorf("cannot consume messages: %w", err)
 			}
 
-			return d, notifyCh, nil
+			return d, nil
 		}
 	}
 
-	return runWithReconnect(ctx, workers, setup, newWorker)
+	return runWithReconnect(ctx, pool, workers, setup, newWorker)
 }
 
-// runWithReconnect runs setup to obtain a delivery channel, spawns workers to process it,
-// and re-runs setup whenever the channel notifies close.
-// Returns when ctx is canceled, when setup returns an error, or when any worker returns an error.
+// runWithReconnect spawns `workers` goroutines, each borrowing a Channel from pool.
+// Each goroutine loops: call setup to obtain a delivery channel, then run newWorker against it.
+// When newWorker returns nil (typically because the delivery channel ended on a reconnect)
+// the loop re-runs setup against the same Channel — the pool handles the underlying AMQP
+// reconnect transparently.
+// Returns when ctx is canceled, when setup returns an error, or when any worker returns a non-nil error.
 func runWithReconnect(
 	ctx context.Context,
+	pool ChannelPool,
 	workers int,
-	setup func(gctx context.Context) (<-chan amqp.Delivery, <-chan *amqp.Error, error),
+	setup func(gctx context.Context, ch Channel) (<-chan amqp.Delivery, error),
 	newWorker func(gctx context.Context, d <-chan amqp.Delivery) func() error,
 ) error {
 	g, gctx := errgroup.WithContext(ctx)
 
-	spawn := func(d <-chan amqp.Delivery) {
-		for i := 0; i < workers; i++ {
-			g.Go(newWorker(gctx, d))
-		}
-	}
+	for i := 0; i < workers; i++ {
+		g.Go(func() error {
+			ch, err := pool.Get(gctx)
+			if err != nil {
+				return err
+			}
 
-	d, notifyCh, err := setup(gctx)
-	if err != nil {
-		return err
-	}
+			defer pool.Put(ch)
 
-	spawn(d)
+			for {
+				select {
+				case <-gctx.Done():
+					return nil
+				default:
+				}
 
-	g.Go(func() error {
-		for {
-			select {
-			case <-gctx.Done():
-				return nil
-			case <-notifyCh:
-				d, notifyCh, err = setup(gctx)
+				d, err := setup(gctx, ch)
 				if err != nil {
 					return err
 				}
 
-				spawn(d)
+				err = newWorker(gctx, d)()
+				if err != nil {
+					return err
+				}
 			}
-		}
-	})
+		})
+	}
 
 	return g.Wait()
 }
