@@ -8,7 +8,6 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"golang.org/x/sync/errgroup"
 )
 
 type defaultConsumer struct {
@@ -135,38 +134,13 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) e
 }
 
 func (c *defaultConsumer) consume(ctx context.Context, workers int) error {
-	g, gctx := errgroup.WithContext(ctx)
-
-	for i := 0; i < workers; i++ {
-		g.Go(func() error {
-			consumeCh, err := c.consumePool.Get(gctx)
-			if err != nil {
-				return err
-			}
-
-			defer c.consumePool.Put(consumeCh)
-
-			for {
-				select {
-				case <-gctx.Done():
-					return nil
-				default:
-				}
-
-				d, err := consumeCh.ConsumeWithContext(gctx, c.queue, c.name, false, c.exclusive, false, false, nil)
-				if err != nil {
-					return err
-				}
-
-				err = c.newWorkerFunc(gctx, d)()
-				if err != nil {
-					return err
-				}
-			}
-		})
+	opts := libamqp.ConsumeOptions{
+		Queue:     c.queue,
+		Consumer:  c.name,
+		Exclusive: c.exclusive,
 	}
 
-	return g.Wait()
+	return libamqp.ConsumeWithReconnect(ctx, c.consumePool, opts, workers, c.newWorkerFunc)
 }
 
 func (c *defaultConsumer) newWorkerFunc(ctx context.Context, ch <-chan amqp.Delivery) func() error {
