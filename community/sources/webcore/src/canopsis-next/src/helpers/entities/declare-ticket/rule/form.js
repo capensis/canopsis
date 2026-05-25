@@ -216,7 +216,7 @@ export const formToDeclareTicketRuleCheckTicketStatus = (form) => {
 
   const result = {
     request: formToRequest(form.request),
-    auth_token: formToRequestAuthToken(form.auth_token),
+    auth_token: formToRequestAuthToken(form.auth_token, form.request.auth?.type),
     status_mapping: textPairsToObject(form.status_mapping),
     reuse_headers_and_auth: form.reuse_headers_and_auth || false,
   };
