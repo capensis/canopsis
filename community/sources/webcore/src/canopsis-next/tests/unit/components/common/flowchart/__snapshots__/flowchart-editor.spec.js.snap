@@ -18,8 +18,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -194,8 +196,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="100"
       pointer-events="none"
       style="overflow: visible;"
+      width="100"
     >
       <div
         class="text-shape-editor"
@@ -224,8 +228,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -251,8 +257,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -278,8 +286,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -318,8 +328,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
     </g>
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -345,8 +357,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -372,8 +386,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -491,8 +507,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -667,8 +685,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="100"
       pointer-events="none"
       style="overflow: visible;"
+      width="100"
     >
       <div
         class="text-shape-editor"
@@ -697,8 +717,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -724,8 +746,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -751,8 +775,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -791,8 +817,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
     </g>
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -818,8 +846,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
@@ -845,8 +875,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
     />
     <foreignobject
       fontcolor="black"
+      height="130"
       pointer-events="none"
       style="overflow: visible;"
+      width="130"
     >
       <div
         class="text-shape-editor"
