@@ -1,6 +1,8 @@
 <template>
   <component
     :is="'foreignObject'"
+    :width="width"
+    :height="height"
     pointer-events="none"
     style="overflow: visible;"
   >
