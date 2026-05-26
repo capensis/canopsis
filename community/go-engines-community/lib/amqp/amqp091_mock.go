@@ -161,6 +161,20 @@ func (mr *Mockamqp091ChannelMockRecorder) Ack(tag, multiple any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ack", reflect.TypeOf((*Mockamqp091Channel)(nil).Ack), tag, multiple)
 }
 
+// Cancel mocks base method.
+func (m *Mockamqp091Channel) Cancel(consumer string, noWait bool) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Cancel", consumer, noWait)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Cancel indicates an expected call of Cancel.
+func (mr *Mockamqp091ChannelMockRecorder) Cancel(consumer, noWait any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Cancel", reflect.TypeOf((*Mockamqp091Channel)(nil).Cancel), consumer, noWait)
+}
+
 // Close mocks base method.
 func (m *Mockamqp091Channel) Close() error {
 	m.ctrl.T.Helper()
@@ -332,18 +346,4 @@ func (m *Mockamqp091Channel) QueuePurge(name string, noWait bool) (int, error) {
 func (mr *Mockamqp091ChannelMockRecorder) QueuePurge(name, noWait any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueuePurge", reflect.TypeOf((*Mockamqp091Channel)(nil).QueuePurge), name, noWait)
-}
-
-// Reject mocks base method.
-func (m *Mockamqp091Channel) Reject(tag uint64, requeue bool) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Reject", tag, requeue)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Reject indicates an expected call of Reject.
-func (mr *Mockamqp091ChannelMockRecorder) Reject(tag, requeue any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reject", reflect.TypeOf((*Mockamqp091Channel)(nil).Reject), tag, requeue)
 }

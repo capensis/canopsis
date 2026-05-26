@@ -46,12 +46,21 @@ type Channel interface {
 		autoAck, exclusive, noLocal, noWait bool,
 		args amqp.Table,
 	) (<-chan amqp.Delivery, error)
+	ConsumeWithCloseNotify(
+		ctx context.Context,
+		queue, consumer string,
+		autoAck, exclusive, noLocal, noWait bool,
+		args amqp.Table,
+	) (<-chan amqp.Delivery, <-chan *amqp.Error, error)
 	PublishWithContext(
 		ctx context.Context,
 		exchange, key string,
 		mandatory, immediate bool,
 		msg amqp.Publishing,
 	) error
+	Ack(tag uint64, multiple bool) error
+	Nack(tag uint64, multiple, requeue bool) error
+	Cancel(consumer string, noWait bool) error
 	Qos(ctx context.Context, prefetchCount, prefetchSize int, global bool) error
 	Close() error
 	ExchangeDeclare(ctx context.Context, name, kind string, durable, autoDelete, internal, noWait bool, args amqp.Table) error

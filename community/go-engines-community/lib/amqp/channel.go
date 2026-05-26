@@ -61,6 +61,30 @@ func (c *channel) ConsumeWithContext(
 	return d, err
 }
 
+func (c *channel) ConsumeWithCloseNotify(
+	ctx context.Context,
+	queue, consumer string,
+	autoAck, exclusive, noLocal, noWait bool,
+	args amqp.Table,
+) (<-chan amqp.Delivery, <-chan *amqp.Error, error) {
+	var d <-chan amqp.Delivery
+	var notifyCh chan *amqp.Error
+	err := c.withChannel(ctx, func(amqpCh amqp091Channel) error {
+		var err error
+		d, err = amqpCh.ConsumeWithContext(ctx, queue, consumer, autoAck, exclusive, noLocal, noWait, args)
+		if err != nil {
+			return err
+		}
+
+		notifyCh = make(chan *amqp.Error, 1)
+		amqpCh.NotifyClose(notifyCh)
+
+		return nil
+	})
+
+	return d, notifyCh, err
+}
+
 func (c *channel) PublishWithContext(
 	ctx context.Context,
 	exchange, key string,
@@ -70,6 +94,42 @@ func (c *channel) PublishWithContext(
 	return c.withChannel(ctx, func(amqpCh amqp091Channel) error {
 		return amqpCh.PublishWithContext(ctx, exchange, key, mandatory, immediate, msg)
 	})
+}
+
+func (c *channel) Ack(tag uint64, multiple bool) error {
+	c.mx.RLock()
+	ch := c.amqpChannel
+	c.mx.RUnlock()
+
+	if ch == nil {
+		return ErrChannelClosed
+	}
+
+	return ch.Ack(tag, multiple)
+}
+
+func (c *channel) Nack(tag uint64, multiple, requeue bool) error {
+	c.mx.RLock()
+	ch := c.amqpChannel
+	c.mx.RUnlock()
+
+	if ch == nil {
+		return ErrChannelClosed
+	}
+
+	return ch.Nack(tag, multiple, requeue)
+}
+
+func (c *channel) Cancel(consumer string, noWait bool) error {
+	c.mx.RLock()
+	ch := c.amqpChannel
+	c.mx.RUnlock()
+
+	if ch == nil {
+		return ErrChannelClosed
+	}
+
+	return ch.Cancel(consumer, noWait)
 }
 
 func (c *channel) Qos(ctx context.Context, prefetchCount, prefetchSize int, global bool) error {

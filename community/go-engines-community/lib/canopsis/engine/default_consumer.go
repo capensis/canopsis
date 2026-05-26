@@ -3,7 +3,6 @@ package engine
 import (
 	"context"
 	"fmt"
-	"runtime/debug"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -33,42 +32,14 @@ type defaultConsumer struct {
 	logger zerolog.Logger
 }
 
-func (c *defaultConsumer) queuePurge(ctx context.Context) error {
-	if c.purgeQueue {
-		ch, err := c.consumePool.Get(ctx)
-		if err != nil {
-			return err
-		}
-
-		defer c.consumePool.Put(ch)
-
-		_, err = ch.QueuePurge(ctx, c.queue, false)
-		if err != nil {
-			return fmt.Errorf("error while purging queue: %w", err)
-		}
-	}
-
-	return nil
-}
-
-func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) error {
+func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) (libamqp.AckAction, error) {
 	c.logger.Debug().
 		Str("consumer", c.name).Str("queue", c.queue).
 		Str("msg", string(d.Body)).
 		Msgf("received")
 	msgToNext, err := c.processor.Process(ctx, d)
 	if err != nil {
-		nackErr := d.Nack(false, true)
-		if nackErr != nil {
-			c.logger.Err(nackErr).Msg("cannot nack amqp delivery")
-		}
-
-		return fmt.Errorf("cannot process message: %w", err)
-	}
-
-	err = d.Ack(false)
-	if err != nil {
-		c.logger.Err(err).Msg("cannot ack amqp delivery")
+		return libamqp.Nack, fmt.Errorf("cannot process message: %w", err)
 	}
 
 	if c.nextQueue != "" && msgToNext != nil {
@@ -85,10 +56,10 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) e
 			},
 		)
 		if err != nil {
-			return fmt.Errorf("cannot sent message to next queue: %w", err)
+			return libamqp.Ack, fmt.Errorf("cannot sent message to next queue: %w", err)
 		}
 
-		return nil
+		return libamqp.Ack, nil
 	}
 
 	if d.ReplyTo != "" && msgToNext != nil {
@@ -106,10 +77,10 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) e
 			},
 		)
 		if err != nil {
-			return fmt.Errorf("cannot sent message result back to sender: %w", err)
+			return libamqp.Ack, fmt.Errorf("cannot sent message result back to sender: %w", err)
 		}
 
-		return nil
+		return libamqp.Ack, nil
 	}
 
 	if c.fifoQueue != "" {
@@ -126,52 +97,33 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) e
 			},
 		)
 		if err != nil {
-			return fmt.Errorf("cannot sent message to fifo queue: %w", err)
+			return libamqp.Ack, fmt.Errorf("cannot sent message to fifo queue: %w", err)
 		}
 	}
 
-	return nil
+	return libamqp.Ack, nil
 }
 
 func (c *defaultConsumer) consume(ctx context.Context, workers int) error {
+	ch, err := c.consumePool.Get(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer c.consumePool.Put(ch)
+
+	if c.purgeQueue {
+		_, err = ch.QueuePurge(ctx, c.queue, false)
+		if err != nil {
+			return fmt.Errorf("error while purging queue: %w", err)
+		}
+	}
+
 	opts := libamqp.ConsumeOptions{
 		Queue:     c.queue,
 		Consumer:  c.name,
 		Exclusive: c.exclusive,
 	}
 
-	return libamqp.ConsumeWithReconnect(ctx, c.consumePool, opts, workers, c.newWorkerFunc)
-}
-
-func (c *defaultConsumer) newWorkerFunc(ctx context.Context, ch <-chan amqp.Delivery) func() error {
-	return func() (resErr error) {
-		defer func() {
-			if r := recover(); r != nil {
-				var err error
-				var ok bool
-				if err, ok = r.(error); !ok {
-					err = fmt.Errorf("%v", r)
-				}
-
-				c.logger.Err(err).Msgf("consumer recovered from panic\n%s\n", debug.Stack())
-				resErr = fmt.Errorf("consumer recovered from panic: %w", err)
-			}
-		}()
-
-		for {
-			select {
-			case <-ctx.Done():
-				return nil
-			case d, ok := <-ch:
-				if !ok {
-					return nil
-				}
-
-				err := c.processMessage(ctx, d)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	}
+	return libamqp.ConsumeWithReconnect(ctx, ch, opts, workers, c.processMessage, c.logger)
 }

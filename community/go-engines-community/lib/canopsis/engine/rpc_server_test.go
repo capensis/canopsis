@@ -20,13 +20,16 @@ func TestRpcServer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 	name := "test-consumer"
 	queue := "test-queue"
 	mockPubCh := mock_amqp.NewMockChannel(ctrl)
+	mockChPool := mock_amqp.NewMockChannelPool(ctrl)
 	mockConsumeCh := mock_amqp.NewMockChannel(ctrl)
+	mockChPool.EXPECT().Get(gomock.Any()).Return(mockConsumeCh, nil)
+	mockChPool.EXPECT().Put(gomock.Any())
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewRPCServer(
 		name, queue,
 		10,
 		mockPubCh,
-		mockConsumeCh,
+		mockChPool,
 		mockMessageProcessor,
 		zerolog.Logger{},
 	)
@@ -40,15 +43,15 @@ func TestRpcServer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 	msgs <- d
 	close(msgs)
 	notifyClose := make(chan *amqp.Error)
-	mockConsumeCh.EXPECT().Ack(gomock.Any(), gomock.Any(), gomock.Any()).Do(func(_ context.Context, _ uint64, _ bool) {
+	mockConsumeCh.EXPECT().Ack(gomock.Any(), gomock.Any()).Do(func(_ uint64, _ bool) {
 		close(notifyClose)
 	})
-	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
 	mockConsumeCh.EXPECT().
-		ConsumeWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)
 	mockConsumeCh.EXPECT().
-		ConsumeWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil, nil, libamqp.ErrChannelClosed)
 	mockPubCh.EXPECT().PublishWithContext(gomock.Any(), gomock.Any(), gomock.Eq(replyTo), gomock.Any(),
 		gomock.Any(), gomock.Any())
@@ -69,13 +72,16 @@ func TestRpcServer_Consume_GivenProcessedMessage_ShouldPublishResultMessageToBac
 	backQueue := "test-back-queue"
 	corrId := "test-corr-id"
 	mockPubCh := mock_amqp.NewMockChannel(ctrl)
+	mockChPool := mock_amqp.NewMockChannelPool(ctrl)
 	mockConsumeCh := mock_amqp.NewMockChannel(ctrl)
+	mockChPool.EXPECT().Get(gomock.Any()).Return(mockConsumeCh, nil)
+	mockChPool.EXPECT().Put(gomock.Any())
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewRPCServer(
 		name, queue,
 		10,
 		mockPubCh,
-		mockConsumeCh,
+		mockChPool,
 		mockMessageProcessor,
 		zerolog.Logger{},
 	)
@@ -88,15 +94,15 @@ func TestRpcServer_Consume_GivenProcessedMessage_ShouldPublishResultMessageToBac
 	}
 	close(msgs)
 	notifyClose := make(chan *amqp.Error)
-	mockConsumeCh.EXPECT().Ack(gomock.Any(), gomock.Any(), gomock.Any()).Do(func(_ context.Context, _ uint64, _ bool) {
+	mockConsumeCh.EXPECT().Ack(gomock.Any(), gomock.Any()).Do(func(_ uint64, _ bool) {
 		close(notifyClose)
 	})
-	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
 	mockConsumeCh.EXPECT().
-		ConsumeWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)
 	mockConsumeCh.EXPECT().
-		ConsumeWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil, nil, libamqp.ErrChannelClosed)
 
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Any()).Return(resultBody, nil)
@@ -125,13 +131,16 @@ func TestRpcServer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testing.T) 
 	name := "test-consumer"
 	queue := "test-queue"
 	mockPubCh := mock_amqp.NewMockChannel(ctrl)
+	mockChPool := mock_amqp.NewMockChannelPool(ctrl)
 	mockConsumeCh := mock_amqp.NewMockChannel(ctrl)
+	mockChPool.EXPECT().Get(gomock.Any()).Return(mockConsumeCh, nil)
+	mockChPool.EXPECT().Put(gomock.Any())
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewRPCServer(
 		name, queue,
 		10,
 		mockPubCh,
-		mockConsumeCh,
+		mockChPool,
 		mockMessageProcessor,
 		zerolog.Logger{},
 	)
@@ -141,12 +150,12 @@ func TestRpcServer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testing.T) 
 	defer close(msgs)
 	notifyClose := make(chan *amqp.Error)
 	mockConsumeCh.EXPECT().
-		ConsumeWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)
 	mockPubCh.EXPECT().PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(),
 		gomock.Any()).Times(0)
-	mockConsumeCh.EXPECT().Ack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
-	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any())
+	mockConsumeCh.EXPECT().Ack(gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any())
 
 	expectedErr := &testError{msg: "test error"}
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Any()).Return(nil, expectedErr)
@@ -164,23 +173,26 @@ func TestRpcServer_Consume_GivenContextDone_ShouldStopConsumer(t *testing.T) {
 	name := "test-consumer"
 	queue := "test-queue"
 	mockPubCh := mock_amqp.NewMockChannel(ctrl)
+	mockChPool := mock_amqp.NewMockChannelPool(ctrl)
 	mockConsumeCh := mock_amqp.NewMockChannel(ctrl)
+	mockChPool.EXPECT().Get(gomock.Any()).Return(mockConsumeCh, nil)
+	mockChPool.EXPECT().Put(gomock.Any())
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewRPCServer(
 		name, queue,
 		10,
 		mockPubCh,
-		mockConsumeCh,
+		mockChPool,
 		mockMessageProcessor,
 		zerolog.Logger{},
 	)
 	msgs := make(chan amqp.Delivery, 1)
 	defer close(msgs)
 	notifyClose := make(chan *amqp.Error)
-	mockConsumeCh.EXPECT().Ack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
-	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Ack(gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
 	mockConsumeCh.EXPECT().
-		ConsumeWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Any()).Times(0)
 

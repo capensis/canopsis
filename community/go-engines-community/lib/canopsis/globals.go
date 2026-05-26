@@ -146,7 +146,7 @@ const (
 	DefaultBulkSize      = 1000
 	DefaultBulkBytesSize = 16000000 // < MongoDB limit (16 megabytes)
 
-	DefaultAMQPPublishPoolSize = 10
+	DefaultAMQPPublishPoolSize = 20
 
 	DefaultEventAuthor = "system"
 

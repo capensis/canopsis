@@ -1,6 +1,7 @@
 package amqp
 
 import (
+	"errors"
 	"os"
 	"sync/atomic"
 	"testing"
@@ -277,7 +278,7 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldResumeMessageFlow(t *testing.
 		consumedMsgCount := 0
 		for {
 			consumeWithCtxCalled.Add(1)
-			d, err := consumeCh.ConsumeWithContext(t.Context(), q.Name, "", true, false, false, false, nil)
+			d, notifyClose, err := consumeCh.ConsumeWithCloseNotify(t.Context(), q.Name, "", true, false, false, false, nil)
 			if err != nil {
 				select {
 				case <-t.Context().Done():
@@ -292,9 +293,16 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldResumeMessageFlow(t *testing.
 				select {
 				case <-t.Context().Done():
 					return
+				case <-notifyClose:
+					break loop
 				case got, ok := <-d:
 					if !ok {
-						break loop
+						select {
+						case <-t.Context().Done():
+						case consumeErrCh <- errors.New("channel closed unexpectedly"):
+						}
+
+						return
 					}
 
 					consumedMsgCount++

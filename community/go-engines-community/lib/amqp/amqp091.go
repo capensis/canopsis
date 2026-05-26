@@ -36,7 +36,7 @@ type amqp091Channel interface {
 	NotifyClose(c chan *amqp.Error) chan *amqp.Error
 	Ack(tag uint64, multiple bool) error
 	Nack(tag uint64, multiple, requeue bool) error
-	Reject(tag uint64, requeue bool) error
+	Cancel(consumer string, noWait bool) error
 	PublishWithContext(ctx context.Context, exchange, key string, mandatory, immediate bool, msg amqp.Publishing) error
 	Qos(prefetchCount, prefetchSize int, global bool) error
 	Close() error
