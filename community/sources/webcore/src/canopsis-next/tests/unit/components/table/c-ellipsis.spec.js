@@ -9,11 +9,27 @@ const stubs = {
   'v-menu': createActivatorElementStub('v-menu'),
 };
 
+const hoverTooltipStub = {
+  props: ['content', 'disabled', 'top'],
+  template: `
+    <div class="c-simple-tooltip">
+      <slot name="activator" :on="{}" />
+    </div>
+  `,
+};
+
+const hoverStubs = {
+  'v-menu': createActivatorElementStub('v-menu'),
+  'c-simple-tooltip': hoverTooltipStub,
+};
+
 const defaultMaxLetters = CEllipsis.props.maxLetters.default;
 
 const selectMenu = wrapper => wrapper.find('.v-menu');
 const selectSpan = wrapper => selectMenu(wrapper).find('span');
 const selectCardTitle = wrapper => selectMenu(wrapper).find('v-card-stub > v-card-title-stub');
+const selectHoverTooltip = wrapper => wrapper.find('.c-simple-tooltip');
+const selectHoverActivator = wrapper => wrapper.find('.c-ellipsis__activator');
 
 describe('c-ellipsis', () => {
   const factory = generateShallowRenderer(CEllipsis, {
@@ -93,6 +109,82 @@ describe('c-ellipsis', () => {
     expect(wrapper).toHaveBeenEmit('textClicked');
   });
 
+  describe('hover', () => {
+    const hoverFactory = generateShallowRenderer(CEllipsis, {
+      stubs: hoverStubs,
+      attachTo: document.body,
+    });
+
+    it('Text letters count less then default max letters', () => {
+      const text = Faker.datatype.string(defaultMaxLetters - 1);
+
+      const wrapper = hoverFactory({ propsData: { text, hover: true } });
+
+      expect(selectHoverActivator(wrapper).text()).toBe(text);
+      expect(selectHoverTooltip(wrapper).props()).toMatchObject({
+        content: text,
+        disabled: true,
+      });
+      expect(wrapper.find('v-menu-stub').exists()).toBeFalsy();
+    });
+
+    it('Text letters count more then default max letters', async () => {
+      const text = Faker.datatype.string(defaultMaxLetters + 1);
+      const shortenText = text.substr(0, defaultMaxLetters);
+
+      const wrapper = hoverFactory({ propsData: { text, hover: true } });
+
+      await flushPromises();
+
+      expect(selectHoverActivator(wrapper).text().replace(/\s/g, '')).toBe(`${shortenText}...`);
+      expect(selectHoverTooltip(wrapper).props()).toMatchObject({
+        content: text,
+        disabled: false,
+      });
+      expect(wrapper.find('v-menu-stub').exists()).toBeFalsy();
+    });
+
+    it('Text letters count less then custom maxLetters', () => {
+      const text = Faker.datatype.string();
+
+      const wrapper = hoverFactory({
+        propsData: {
+          text,
+          hover: true,
+          maxLetters: text.length + 1,
+        },
+      });
+
+      expect(selectHoverActivator(wrapper).text()).toBe(text);
+      expect(selectHoverTooltip(wrapper).props('disabled')).toBe(true);
+      expect(wrapper.find('v-menu-stub').exists()).toBeFalsy();
+    });
+
+    it('Text letters count more then custom maxLetters', () => {
+      const maxLetters = Faker.datatype.number({ min: 1, max: 50 });
+      const text = Faker.datatype.string(maxLetters + 1);
+      const shortenText = text.substr(0, maxLetters);
+
+      const wrapper = hoverFactory({ propsData: { text, hover: true, maxLetters } });
+
+      expect(selectHoverActivator(wrapper).text().replace(/\s/g, '')).toBe(`${shortenText}...`);
+      expect(selectHoverTooltip(wrapper).props()).toMatchObject({
+        content: text,
+        disabled: false,
+      });
+    });
+
+    it('Click on activator emits textClicked', () => {
+      const text = Faker.datatype.string();
+
+      const wrapper = hoverFactory({ propsData: { text, hover: true } });
+
+      selectHoverActivator(wrapper).trigger('click');
+
+      expect(wrapper).toHaveBeenEmit('textClicked');
+    });
+  });
+
   it('Renders `c-ellipsis` correctly', async () => {
     const text = `omnis esse recusandae magni similique porro quaerat alias vel deserunt porro voluptate
       voluptatibus commodi sequi et qui fugiat exercitationem et et eligendi ad officia quis suscipit earum soluta
@@ -104,6 +196,25 @@ describe('c-ellipsis', () => {
 
     const wrapper = snapshotFactory({
       propsData: { text },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
+  });
+
+  it('Renders `c-ellipsis` with hover correctly', async () => {
+    const text = `omnis esse recusandae magni similique porro quaerat alias vel deserunt porro voluptate
+      voluptatibus commodi sequi et qui fugiat exercitationem et et eligendi ad officia quis suscipit earum soluta
+      minima architecto numquam et voluptatibus quia officiis nulla veritatis soluta optio assumenda est fugiat est
+      suscipit inventore temporibus dolores quos dolorem doloremque autem qui sit ipsam praesentium esse sunt ut
+      molestiae nulla itaque voluptatem pariatur vel dolorum impedit asperiores numquam animi esse laborum in et
+      magnam nulla et consequatur facere sint nam facere sunt aut alias qui omnis rerum corporis totam quibusdam
+      nostrum mollitia quia vel amet pariatur eveniet explicabo quia ullam`;
+
+    const wrapper = snapshotFactory({
+      propsData: { text, hover: true },
+      stubs: hoverStubs,
     });
 
     expect(wrapper).toMatchSnapshot();

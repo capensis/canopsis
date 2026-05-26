@@ -174,7 +174,7 @@ export default {
   },
   [USER_PERMISSIONS.technical.jobManagement]: {
     title: 'Jobs',
-    message: 'Gérer les jobs pour le statut des tickets.',
+    message: 'Le module Jobs permet de consulter les jobs, d\'arrêter les nouvelles tentatives des jobs en cours si le serveur est indisponible, et de modifier et relancer les jobs de statut de ticket en cas d\'erreurs dans leur configuration.',
   },
   [USER_PERMISSIONS.technical.widgetTemplate]: {
     title: 'Modèles de widget',

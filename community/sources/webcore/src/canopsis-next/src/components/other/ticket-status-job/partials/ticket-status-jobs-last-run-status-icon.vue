@@ -42,8 +42,8 @@ export default {
     const statusIcon = computed(() => (
       {
         [JOB_LAST_RUN_STATUS.succeed]: 'check_circle',
-        [JOB_LAST_RUN_STATUS.failed]: 'close_circle',
-        [JOB_LAST_RUN_STATUS.aborted]: 'close_circle',
+        [JOB_LAST_RUN_STATUS.failed]: 'cancel',
+        [JOB_LAST_RUN_STATUS.aborted]: 'cancel',
       }[props.status] ?? 'help_outline'
     ));
 

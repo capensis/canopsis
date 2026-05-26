@@ -26,6 +26,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const (
@@ -994,20 +995,50 @@ func (s *store) updatePermissions(ctx context.Context, viewID, viewGroupID, view
 }
 
 func (s *store) deletePermissions(ctx context.Context, viewID string) error {
-	_, err := s.roleCollection.UpdateMany(ctx,
-		bson.M{
-			"permissions." + viewID: bson.M{"$exists": true},
-		},
-		bson.M{"$unset": bson.M{
-			"permissions." + viewID: "",
-		}},
-	)
+	cursor, err := s.permissionCollection.Find(ctx, bson.M{"view": viewID}, options.Find().SetProjection(bson.M{"_id": 1}))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to find permissions for view %s: %w", viewID, err)
 	}
 
-	_, err = s.permissionCollection.DeleteOne(ctx, bson.M{"_id": viewID})
-	return err
+	defer cursor.Close(ctx)
+
+	or := bson.A{}
+	unset := bson.M{}
+
+	for cursor.Next(ctx) {
+		var doc struct {
+			ID string `bson:"_id"`
+		}
+
+		err = cursor.Decode(&doc)
+		if err != nil {
+			return fmt.Errorf("failed to decode permission: %w", err)
+		}
+
+		or = append(or, bson.M{"permissions." + doc.ID: bson.M{"$exists": true}})
+		unset["permissions."+doc.ID] = ""
+	}
+
+	if err := cursor.Err(); err != nil {
+		return fmt.Errorf("failed to process permissions cursor: %w", err)
+	}
+
+	if len(unset) > 0 {
+		_, err = s.roleCollection.UpdateMany(ctx,
+			bson.M{"$or": or},
+			bson.M{"$unset": unset},
+		)
+		if err != nil {
+			return fmt.Errorf("failed to unset permissions: %w", err)
+		}
+	}
+
+	_, err = s.permissionCollection.DeleteMany(ctx, bson.M{"view": viewID})
+	if err != nil {
+		return fmt.Errorf("failed to delete permissions: %w", err)
+	}
+
+	return nil
 }
 
 func (s *store) normalizePositionsOnViewMove(ctx context.Context, viewID, groupID string) error {
