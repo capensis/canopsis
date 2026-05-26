@@ -95,6 +95,34 @@ func (m *MockChannel) EXPECT() *MockChannelMockRecorder {
 	return m.recorder
 }
 
+// Ack mocks base method.
+func (m *MockChannel) Ack(tag uint64, multiple bool) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Ack", tag, multiple)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Ack indicates an expected call of Ack.
+func (mr *MockChannelMockRecorder) Ack(tag, multiple any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ack", reflect.TypeOf((*MockChannel)(nil).Ack), tag, multiple)
+}
+
+// Cancel mocks base method.
+func (m *MockChannel) Cancel(consumer string, noWait bool) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Cancel", consumer, noWait)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Cancel indicates an expected call of Cancel.
+func (mr *MockChannelMockRecorder) Cancel(consumer, noWait any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Cancel", reflect.TypeOf((*MockChannel)(nil).Cancel), consumer, noWait)
+}
+
 // Close mocks base method.
 func (m *MockChannel) Close() error {
 	m.ctrl.T.Helper()
@@ -107,6 +135,22 @@ func (m *MockChannel) Close() error {
 func (mr *MockChannelMockRecorder) Close() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockChannel)(nil).Close))
+}
+
+// ConsumeWithCloseNotify mocks base method.
+func (m *MockChannel) ConsumeWithCloseNotify(ctx context.Context, queue, consumer string, autoAck, exclusive, noLocal, noWait bool, args amqp091.Table) (<-chan amqp091.Delivery, <-chan *amqp091.Error, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ConsumeWithCloseNotify", ctx, queue, consumer, autoAck, exclusive, noLocal, noWait, args)
+	ret0, _ := ret[0].(<-chan amqp091.Delivery)
+	ret1, _ := ret[1].(<-chan *amqp091.Error)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// ConsumeWithCloseNotify indicates an expected call of ConsumeWithCloseNotify.
+func (mr *MockChannelMockRecorder) ConsumeWithCloseNotify(ctx, queue, consumer, autoAck, exclusive, noLocal, noWait, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsumeWithCloseNotify", reflect.TypeOf((*MockChannel)(nil).ConsumeWithCloseNotify), ctx, queue, consumer, autoAck, exclusive, noLocal, noWait, args)
 }
 
 // ConsumeWithContext mocks base method.
@@ -136,6 +180,20 @@ func (m *MockChannel) ExchangeDeclare(ctx context.Context, name, kind string, du
 func (mr *MockChannelMockRecorder) ExchangeDeclare(ctx, name, kind, durable, autoDelete, internal, noWait, args any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExchangeDeclare", reflect.TypeOf((*MockChannel)(nil).ExchangeDeclare), ctx, name, kind, durable, autoDelete, internal, noWait, args)
+}
+
+// Nack mocks base method.
+func (m *MockChannel) Nack(tag uint64, multiple, requeue bool) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Nack", tag, multiple, requeue)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Nack indicates an expected call of Nack.
+func (mr *MockChannelMockRecorder) Nack(tag, multiple, requeue any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Nack", reflect.TypeOf((*MockChannel)(nil).Nack), tag, multiple, requeue)
 }
 
 // PublishWithContext mocks base method.

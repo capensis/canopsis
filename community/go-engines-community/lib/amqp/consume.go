@@ -7,10 +7,25 @@ import (
 	"strings"
 
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
 )
 
 const maxSubscribeRetries = 10
+
+// AckAction is the decision returned by a ProcessFunc:
+// Ack to acknowledge the delivery, Nack to reject it (with requeue).
+type AckAction int
+
+const (
+	Nack AckAction = iota
+	Ack
+)
+
+// ProcessFunc handles a delivery and returns whether it should be Ack'd or Nack'd.
+// A non-nil error is propagated to the caller and tears down the consume loop;
+// the returned AckAction is still forwarded to the dispatcher before the worker exits.
+type ProcessFunc func(ctx context.Context, msg amqp.Delivery) (AckAction, error)
 
 // ConsumeOptions bundles the parameters forwarded to Channel.ConsumeWithContext.
 type ConsumeOptions struct {
@@ -24,41 +39,34 @@ type ConsumeOptions struct {
 }
 
 // ConsumeWithReconnect drives a consume loop that survives AMQP channel reconnects.
-// It spawns `workers` goroutines, each borrowing a Channel from pool, calling
-// ConsumeWithContext against opts.Queue, and running a worker function built by newWorker
-// to process the resulting deliveries.
+// It opens a consumer on ch, spawns `workers` goroutines to process deliveries,
+// and watches the channel's notifyClose. When the channel closes, it re-consumes
+// against the freshly reopened channel and spawns a new batch of workers.
 //
-// Channel reconnects are handled transparently by the pool: when the delivery channel ends,
-// the worker function returns and the goroutine re-runs ConsumeWithContext to bind to the
-// new delivery channel.
-//
-// newWorker is invoked once per delivery-channel generation, with the errgroup's context and
-// the current delivery channel. The returned func() error runs synchronously in the worker
-// goroutine — returning a non-nil error cancels the whole consume loop and is propagated as
-// the return value. A nil return means the delivery channel ended and the goroutine is ready
-// to re-consume.
-// Workers must select on gctx.Done() to exit cleanly on shutdown or sibling failure.
+// Ack/Nack from in-flight workers on the previous channel is discarded after reconnect;
+// RabbitMQ requeues those deliveries on the new consumer.
 //
 // Returns nil when ctx is canceled, or the first error returned by any spawned worker or
 // by ConsumeWithContext on (re)consume.
 func ConsumeWithReconnect(
 	ctx context.Context,
-	pool ChannelPool,
+	ch Channel,
 	opts ConsumeOptions,
 	workers int,
-	newWorker func(gctx context.Context, d <-chan amqp.Delivery) func() error,
+	process ProcessFunc,
+	logger zerolog.Logger,
 ) error {
-	setup := func(gctx context.Context, ch Channel) (<-chan amqp.Delivery, error) {
-		d, err := ch.ConsumeWithContext(gctx, opts.Queue, opts.Consumer, opts.AutoAck, opts.Exclusive,
+	setup := func(gctx context.Context) (<-chan amqp.Delivery, <-chan *amqp.Error, error) {
+		d, notifyCh, err := ch.ConsumeWithCloseNotify(gctx, opts.Queue, opts.Consumer, opts.AutoAck, opts.Exclusive,
 			opts.NoLocal, opts.NoWait, opts.Args)
 		if err != nil {
-			return nil, fmt.Errorf("cannot consume messages: %w", err)
+			return nil, nil, fmt.Errorf("cannot consume messages: %w", err)
 		}
 
-		return d, nil
+		return d, notifyCh, nil
 	}
 
-	return runWithReconnect(ctx, pool, workers, setup, newWorker)
+	return runWithReconnect(ctx, ch, workers, setup, process, logger)
 }
 
 // SubscribeOptions bundles the parameters for declaring a transient queue,
@@ -82,24 +90,24 @@ type SubscribeOptions struct {
 	Args     amqp.Table
 }
 
-// SubscribeWithReconnect declares a queue, binds it to opts.Exchange with opts.RoutingKey,
-// and consumes from it. On every (re)consume — including after a channel reconnect — it
-// reuses the previously declared queue and just re-runs ConsumeWithContext; if the broker
-// reports the queue as missing (typically the prior connection's exclusive queue lost on
-// reconnect), it re-declares, re-binds, and retries, up to maxSubscribeRetries times.
-// This lets subscribers backed by exclusive or auto-delete queues survive connection drops
-// without the caller managing queue lifecycle.
+// SubscribeWithReconnect declares a queue, binds it to opts.Exchange with opts.RoutingKey, and consumes from it.
+// On each channel reconnect it re-declares, re-binds, and re-consumes -
+// so subscribers backed by exclusive or auto-delete queues survive connection drops without
+// the caller managing queue lifecycle.
 //
-// A NOT_FOUND whose reply text contains "no queue" is treated as queue-missing and retried.
+// On a NOT_FOUND from bind or consume whose reply text contains "no queue",
+// the queue has died (typically the prior connection's exclusive queue lost on reconnect):
+// re-declare and retry, up to maxSubscribeRetries times.
 // Any other error - including a NOT_FOUND for a missing exchange - is returned to the caller.
 //
-// See ConsumeWithReconnect for newWorker semantics.
+// See ConsumeWithReconnect for reconnect and ack semantics.
 func SubscribeWithReconnect(
 	ctx context.Context,
-	pool ChannelPool,
+	ch Channel,
 	opts SubscribeOptions,
 	workers int,
-	newWorker func(gctx context.Context, d <-chan amqp.Delivery) func() error,
+	process ProcessFunc,
+	logger zerolog.Logger,
 ) error {
 	queueMissing := func(err error) bool {
 		if aerr, ok := errors.AsType[*amqp.Error](err); ok {
@@ -110,11 +118,11 @@ func SubscribeWithReconnect(
 	}
 
 	queue := ""
-	setup := func(gctx context.Context, ch Channel) (d <-chan amqp.Delivery, err error) {
+	setup := func(gctx context.Context) (d <-chan amqp.Delivery, notifyCh <-chan *amqp.Error, err error) {
 		attempts := 0
 		for {
 			if attempts == maxSubscribeRetries {
-				return nil, fmt.Errorf("cannot resolve queue after %d attempts: %w", maxSubscribeRetries, err)
+				return nil, nil, fmt.Errorf("cannot resolve queue after %d attempts: %w", maxSubscribeRetries, err)
 			}
 
 			attempts++
@@ -125,7 +133,7 @@ func SubscribeWithReconnect(
 				q, err = ch.QueueDeclare(gctx, opts.QueueName, opts.QueueDurable,
 					opts.QueueAutoDelete, opts.QueueExclusive, false, opts.QueueArgs)
 				if err != nil {
-					return nil, fmt.Errorf("cannot declare queue: %w", err)
+					return nil, nil, fmt.Errorf("cannot declare queue: %w", err)
 				}
 
 				err = ch.QueueBind(gctx, q.Name, opts.RoutingKey, opts.Exchange, false, nil)
@@ -134,13 +142,13 @@ func SubscribeWithReconnect(
 						continue
 					}
 
-					return nil, fmt.Errorf("cannot bind queue: %w", err)
+					return nil, nil, fmt.Errorf("cannot bind queue: %w", err)
 				}
 
 				queue = q.Name
 			}
 
-			d, err = ch.ConsumeWithContext(gctx, queue, opts.Consumer,
+			d, notifyCh, err = ch.ConsumeWithCloseNotify(gctx, queue, opts.Consumer,
 				opts.AutoAck, opts.QueueExclusive, opts.NoLocal, opts.NoWait, opts.Args)
 			if err != nil {
 				if queueMissing(err) {
@@ -149,59 +157,140 @@ func SubscribeWithReconnect(
 					continue
 				}
 
-				return nil, fmt.Errorf("cannot consume messages: %w", err)
+				return nil, nil, fmt.Errorf("cannot consume messages: %w", err)
 			}
 
-			return d, nil
+			return d, notifyCh, nil
 		}
 	}
 
-	return runWithReconnect(ctx, pool, workers, setup, newWorker)
+	return runWithReconnect(ctx, ch, workers, setup, process, logger)
 }
 
-// runWithReconnect spawns `workers` goroutines, each borrowing a Channel from pool.
-// Each goroutine loops: call setup to obtain a delivery channel, then run newWorker against it.
-// When newWorker returns nil (typically because the delivery channel ended on a reconnect)
-// the loop re-runs setup against the same Channel — the pool handles the underlying AMQP
-// reconnect transparently.
-// Returns when ctx is canceled, when setup returns an error, or when any worker returns a non-nil error.
+// ackOp is a request from a worker to runWithReconnect's loop to Ack or Nack a delivery.
+// generation identifies the channel incarnation the deliveryTag belongs to;
+// requests from a stale generation are discarded after reconnect.
+type ackOp struct {
+	deliveryTag uint64
+	action      AckAction
+	generation  uint64
+}
+
+// runWithReconnect runs setup to obtain a delivery channel, spawns workers to process it,
+// and re-runs setup whenever the channel notifies close.
+//
+// A generation counter is bumped on every reconnect and stamped on every ackOp; the loop
+// drops acks whose generation no longer matches the current one, so stale delivery tags
+// from a closed channel are never forwarded to the new one. RabbitMQ requeues those
+// deliveries automatically when the previous channel closes.
+//
+// Returns when ctx is canceled, when setup returns an error, or when any worker returns an error.
 func runWithReconnect(
 	ctx context.Context,
-	pool ChannelPool,
+	ch Channel,
 	workers int,
-	setup func(gctx context.Context, ch Channel) (<-chan amqp.Delivery, error),
-	newWorker func(gctx context.Context, d <-chan amqp.Delivery) func() error,
+	setup func(gctx context.Context) (<-chan amqp.Delivery, <-chan *amqp.Error, error),
+	process ProcessFunc,
+	logger zerolog.Logger,
 ) error {
 	g, gctx := errgroup.WithContext(ctx)
+	ackCh := make(chan ackOp, workers)
 
-	for i := 0; i < workers; i++ {
-		g.Go(func() error {
-			ch, err := pool.Get(gctx)
-			if err != nil {
-				return err
-			}
-
-			defer pool.Put(ch)
-
-			for {
-				select {
-				case <-gctx.Done():
-					return nil
-				default:
-				}
-
-				d, err := setup(gctx, ch)
-				if err != nil {
-					return err
-				}
-
-				err = newWorker(gctx, d)()
-				if err != nil {
-					return err
-				}
-			}
-		})
+	spawnWorkers := func(d <-chan amqp.Delivery, generation uint64) {
+		for i := 0; i < workers; i++ {
+			g.Go(newWorker(gctx, d, ackCh, process, generation))
+		}
 	}
 
-	return g.Wait()
+	d, notifyCh, err := setup(gctx)
+	if err != nil {
+		return err
+	}
+
+	generation := uint64(0)
+	spawnWorkers(d, generation)
+
+	ack := func(op ackOp) {
+		if op.generation != generation {
+			return
+		}
+
+		var err error
+		switch op.action {
+		case Ack:
+			err = ch.Ack(op.deliveryTag, false)
+		case Nack:
+			err = ch.Nack(op.deliveryTag, false, true)
+		default:
+			err = fmt.Errorf("unknown ack action %d", op.action)
+		}
+
+		if err != nil {
+			logger.Err(err).Msg("cannot acknowledge message")
+		}
+	}
+
+	var setupErr error
+loop:
+	for {
+		select {
+		case <-gctx.Done():
+			break loop
+		case <-notifyCh:
+			d, notifyCh, setupErr = setup(gctx)
+			if setupErr != nil {
+				break loop
+			}
+
+			generation++
+			spawnWorkers(d, generation)
+		case op := <-ackCh:
+			ack(op)
+		}
+	}
+
+	go func() {
+		_ = g.Wait()
+		close(ackCh)
+	}()
+
+	for op := range ackCh {
+		ack(op)
+	}
+
+	return errors.Join(setupErr, g.Wait())
+}
+
+func newWorker(ctx context.Context, deliveries <-chan amqp.Delivery, ackCh chan ackOp, process ProcessFunc, generation uint64) func() error {
+	return func() (resErr error) {
+		defer func() {
+			if r := recover(); r != nil {
+				var err error
+				var ok bool
+				if err, ok = r.(error); !ok {
+					err = fmt.Errorf("%v", r)
+				}
+
+				resErr = fmt.Errorf("consumer recovered from panic: %w", err)
+			}
+		}()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return nil
+			case d, ok := <-deliveries:
+				if !ok {
+					return nil
+				}
+
+				action, err := process(ctx, d)
+				ackCh <- ackOp{deliveryTag: d.DeliveryTag, action: action, generation: generation}
+
+				if err != nil {
+					return fmt.Errorf("cannot process message: %w", err)
+				}
+			}
+		}
+	}
 }

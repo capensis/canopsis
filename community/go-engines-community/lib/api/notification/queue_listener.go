@@ -54,53 +54,39 @@ type queueListener struct {
 }
 
 func (s *queueListener) Listen(ctx context.Context) error {
+	ch, err := s.amqpChannelPool.Get(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer s.amqpChannelPool.Put(ch)
+
 	opts := amqp.SubscribeOptions{
 		Exchange:       canopsis.ApiNotificationExchangeName,
 		QueueExclusive: true,
 	}
 
-	return amqp.SubscribeWithReconnect(ctx, s.amqpChannelPool, opts, s.workers, s.newWorkerFunc)
+	return amqp.SubscribeWithReconnect(ctx, ch, opts, s.workers, s.processMsg, s.logger)
 }
 
-func (s *queueListener) newWorkerFunc(ctx context.Context, ch <-chan amqp091.Delivery) func() error {
-	return func() error {
-		var err error
-		for {
-			select {
-			case <-ctx.Done():
-				return nil
-			case msg, ok := <-ch:
-				if !ok {
-					return nil
-				}
+func (s *queueListener) processMsg(ctx context.Context, msg amqp091.Delivery) (amqp.AckAction, error) {
+	event := rpc.ApiNotificationEvent{}
+	err := s.decoder.Decode(msg.Body, &event)
+	if err != nil {
+		s.logger.Err(err).Msg("failed to decode remediation result event")
 
-				event := rpc.ApiNotificationEvent{}
-				err = s.decoder.Decode(msg.Body, &event)
-				if err != nil {
-					s.logger.Err(err).Msg("failed to decode remediation result event")
-					continue
-				}
+		return amqp.Ack, nil
+	}
 
-				err = s.processEvent(ctx, event)
-				if err != nil {
-					s.logger.Err(err).Msg("failed to process notification event")
-					if mongo.IsConnectionError(err) {
-						err = msg.Nack(false, true)
-						if err != nil {
-							s.logger.Err(err).Msg("failed to negatively acknowledge message")
-						}
-
-						continue
-					}
-				}
-
-				err = msg.Ack(false)
-				if err != nil {
-					s.logger.Err(err).Msg("failed to acknowledge message")
-				}
-			}
+	err = s.processEvent(ctx, event)
+	if err != nil {
+		s.logger.Err(err).Msg("failed to process notification event")
+		if mongo.IsConnectionError(err) {
+			return amqp.Nack, nil
 		}
 	}
+
+	return amqp.Ack, nil
 }
 
 func (s *queueListener) processEvent(ctx context.Context, event rpc.ApiNotificationEvent) error {

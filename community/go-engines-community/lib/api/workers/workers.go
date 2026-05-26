@@ -52,9 +52,10 @@ func (r *Runner) Run(ctx context.Context) error {
 		return err
 	}
 
+	defer r.amqpChannelPool.Put(ch)
+
 	// check if queue exists because Consume method doesn't return appropriate error
 	_, err = ch.QueueDeclarePassive(ctx, r.queue, false, false, false, false, nil)
-	r.amqpChannelPool.Put(ch)
 	if err != nil {
 		return err
 	}
@@ -63,57 +64,37 @@ func (r *Runner) Run(ctx context.Context) error {
 		Queue: r.queue,
 	}
 
-	return libamqp.ConsumeWithReconnect(ctx, r.amqpChannelPool, opts, r.workers, r.newWorkerFunc)
+	return libamqp.ConsumeWithReconnect(ctx, ch, opts, r.workers, r.process, r.logger)
 }
 
-func (r *Runner) newWorkerFunc(ctx context.Context, ch <-chan amqp.Delivery) func() error {
-	return func() error {
-		var err error
-		for {
-			select {
-			case <-ctx.Done():
-				return nil
-			case msg, ok := <-ch:
-				if !ok {
-					return nil
-				}
+func (r *Runner) process(ctx context.Context, msg amqp.Delivery) (libamqp.AckAction, error) {
+	r.logger.Debug().Str("msg", string(msg.Body)).Msg("worker job message")
+	job := Job{}
+	err := r.decoder.Decode(msg.Body, &job)
+	if err != nil {
+		r.logger.Err(err).Msg("failed to decode job")
 
-				r.logger.Debug().Str("msg", string(msg.Body)).Msg("worker job message")
-				job := Job{}
-				err = r.decoder.Decode(msg.Body, &job)
-				if err != nil {
-					r.logger.Err(err).Msg("failed to decode job")
-					continue
-				}
+		return libamqp.Ack, nil
+	}
 
-				r.jobExecutorsMx.RLock()
-				e, ok := r.jobExecutors[job.Type]
-				r.jobExecutorsMx.RUnlock()
-				if !ok {
-					r.logger.Warn().Str("type", job.Type).Str("id", job.ID).Msg("unknown job type")
-					continue
-				}
+	r.jobExecutorsMx.RLock()
+	e, ok := r.jobExecutors[job.Type]
+	r.jobExecutorsMx.RUnlock()
+	if !ok {
+		r.logger.Warn().Str("type", job.Type).Str("id", job.ID).Msg("unknown job type")
 
-				err = e(ctx, job.ID)
-				if err != nil {
-					r.logger.Err(err).Str("type", job.Type).Str("id", job.ID).Msg("failed to execute job")
-					if mongo.IsConnectionError(err) {
-						err = msg.Nack(false, true)
-						if err != nil {
-							r.logger.Err(err).Msg("failed to negatively acknowledge message")
-						}
+		return libamqp.Ack, nil
+	}
 
-						continue
-					}
-				}
-
-				err = msg.Ack(false)
-				if err != nil {
-					r.logger.Err(err).Msg("failed to acknowledge message")
-				}
-			}
+	err = e(ctx, job.ID)
+	if err != nil {
+		r.logger.Err(err).Str("type", job.Type).Str("id", job.ID).Msg("failed to execute job")
+		if mongo.IsConnectionError(err) {
+			return libamqp.Nack, nil
 		}
 	}
+
+	return libamqp.Ack, nil
 }
 
 func (r *Runner) AddJobExecutor(t string, e JobExecutor) {
