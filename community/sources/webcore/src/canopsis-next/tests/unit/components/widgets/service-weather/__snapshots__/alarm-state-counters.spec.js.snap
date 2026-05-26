@@ -21,7 +21,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <span
         class="text-caption white--text"
       >
-        11
+    11
       </span>
     </div>
     <div
@@ -67,7 +67,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <span
         class="text-caption white--text"
       >
-        10
+    10
       </span>
     </div>
     <div
@@ -83,7 +83,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <span
         class="text-caption white--text"
       >
-        9
+    9
       </span>
     </div>
     <div
@@ -99,7 +99,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <span
         class="text-caption white--text"
       >
-        8
+    8
       </span>
     </div>
     <div
@@ -127,7 +127,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <span
         class="text-caption white--text"
       >
-        7
+    7
       </span>
     </div>
     <div
@@ -155,7 +155,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <span
         class="text-caption white--text"
       >
-        6
+    6
       </span>
     </div>
     <div
@@ -183,7 +183,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <span
         class="text-caption white--text"
       >
-        5
+    5
       </span>
     </div>
     <div
@@ -199,7 +199,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <span
         class="text-caption white--text"
       >
-        4
+    4
       </span>
     </div>
     <div
@@ -227,7 +227,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <span
         class="text-caption white--text"
       >
-        3
+    3
       </span>
     </div>
     <div
@@ -243,7 +243,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <span
         class="text-caption white--text"
       >
-        2
+    2
       </span>
     </div>
     <div
@@ -259,7 +259,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <span
         class="text-caption white--text"
       >
-        1
+    1
       </span>
     </div>
   </div>

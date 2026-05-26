@@ -46,7 +46,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>
@@ -107,7 +107,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with pbehavior 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>

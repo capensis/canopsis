@@ -8,7 +8,7 @@
         <meta-alarm-rule-form
           v-model="form"
           :rule-id="ruleId"
-          :disabled-id-field="config.isDisabledIdField"
+          :disabled-id-field="config.submittingIdField"
         />
         <ai-chat-sidebar
           v-if="chatShown"
@@ -26,7 +26,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -96,7 +96,7 @@ export default {
 
     const title = computed(() => config.value.title ?? t('modals.metaAlarmRule.create.title'));
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.rule,
       method: async () => {
@@ -127,7 +127,6 @@ export default {
       alarmInfos,
       entityInfos,
 
-      isDisabled,
       submitting,
       submitLabel,
       submit,

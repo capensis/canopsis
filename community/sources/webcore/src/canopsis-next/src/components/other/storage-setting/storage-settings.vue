@@ -64,7 +64,7 @@
       </v-btn>
       <v-btn
         :loading="submitting"
-        :disabled="isDisabled || !hasChanges"
+        :disabled="submitting || !hasChanges"
         color="primary"
         @click="submit"
       >
@@ -219,7 +219,7 @@ export default {
       },
     });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       form,
       method: () => modals.show({
         name: MODALS.confirmationPhrase,
@@ -251,7 +251,6 @@ export default {
       form,
       history,
       hasChanges,
-      isDisabled,
       submitting,
       archiveDisabledEntities,
       archiveUnlinkedEntities,

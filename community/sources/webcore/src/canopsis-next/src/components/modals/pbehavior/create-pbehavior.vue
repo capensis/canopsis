@@ -39,7 +39,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -107,7 +107,7 @@ export default {
       context: LLM_SOCKET_CONTEXTS.pbehavior,
     });
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.pbehavior,
       method: async () => {
@@ -131,7 +131,6 @@ export default {
       noPattern,
       withInherited,
       pbehaviorId,
-      isDisabled,
       submitting,
       chatShown,
       chatOptions,

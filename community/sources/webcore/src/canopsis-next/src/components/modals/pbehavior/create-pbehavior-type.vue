@@ -21,7 +21,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -93,7 +93,7 @@ export default {
       form.value.priority = priority;
     });
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.pbehaviorType,
       method: async () => {
@@ -119,7 +119,6 @@ export default {
       title,
       pendingPriority,
       onlyColor,
-      isDisabled,
       submitting,
       submitLabel,
       submit,

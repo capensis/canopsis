@@ -8,7 +8,7 @@
         <dynamic-info-form
           v-model="form"
           :rule-id="dynamicInfoId"
-          :is-disabled-id-field="isDisabledIdField"
+          :is-disabled-id-field="submittingIdField"
         />
         <ai-chat-sidebar
           v-if="chatShown"
@@ -92,7 +92,7 @@ export default {
 
     const dynamicInfoId = computed(() => config.value.dynamicInfo?._id);
     const title = computed(() => config.value.title || t('modals.createDynamicInfo.create.title'));
-    const isDisabledIdField = computed(() => config.value.isDisabledIdField);
+    const submittingIdField = computed(() => config.value.submittingIdField);
 
     const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
@@ -114,7 +114,7 @@ export default {
       form,
       dynamicInfoId,
       title,
-      isDisabledIdField,
+      submittingIdField,
       submitting,
       chatShown,
       chatOptions,

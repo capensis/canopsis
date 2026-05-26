@@ -2,16 +2,20 @@
 
 exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom props 1`] = `
 <div
-  class="layout gap-3 column"
+  class="layout column gap-3"
 >
   <!---->
-  <c-name-field-stub
-    autofocus=""
-    required=""
-    value="pbehavior"
-  />
-  <c-form-block>
-    <c-form-block-row
+  <div
+    depth="0"
+  >
+    <c-name-field-stub
+      autofocus=""
+      required=""
+      value="pbehavior"
+    />
+  </div>
+  <c-form-block-stub>
+    <c-form-block-row-stub
       depth="0"
       label="Apply for all dependant entities"
     >
@@ -19,8 +23,8 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
         hide-details=""
         label="Apply for all dependant entities"
       />
-    </c-form-block-row>
-    <c-form-block-row
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       depth="0"
       label="Duration"
     >
@@ -34,8 +38,8 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
         required=""
         value="[object Object]"
       />
-    </c-form-block-row>
-    <c-form-block-row
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       depth="0"
       label="Pbehavior reason and type"
     >
@@ -63,48 +67,58 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
           />
         </div>
       </div>
-    </c-form-block-row>
-    <c-form-block-row
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       depth="0"
       label="Color"
     >
       <c-enabled-color-picker-field-stub
+        justify-end=""
         label="Use special color for this event?"
         row=""
         value="#123123"
       />
-    </c-form-block-row>
-    <c-form-block-row
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      indented=""
+      label="Recurrence rule"
+    >
+      <pbehavior-recurrence-rule-field-stub
+        form="[object Object]"
+        withexdatetype="true"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       depth="0"
       indented=""
       label="Comments"
     >
-      <c-label
-        class="mb-3"
-      >
-        Comments
-      </c-label>
       <pbehavior-comments-field-stub
         comments=""
       />
-    </c-form-block-row>
-  </c-form-block>
+    </c-form-block-row-stub>
+  </c-form-block-stub>
 </div>
 `;
 
 exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required props 1`] = `
 <div
-  class="layout gap-3 column"
+  class="layout column gap-3"
 >
   <!---->
-  <c-name-field-stub
-    autofocus=""
-    required=""
-    value="pbehavior"
-  />
-  <c-form-block>
+  <div
+    depth="0"
+  >
+    <c-name-field-stub
+      autofocus=""
+      required=""
+      value="pbehavior"
+    />
+  </div>
+  <c-form-block-stub>
     <!---->
-    <c-form-block-row
+    <c-form-block-row-stub
       depth="0"
       label="Duration"
     >
@@ -152,8 +166,8 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
           />
         </div>
       </div>
-    </c-form-block-row>
-    <c-form-block-row
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       depth="0"
       label="Pbehavior reason and type"
     >
@@ -181,31 +195,37 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
           />
         </div>
       </div>
-    </c-form-block-row>
-    <c-form-block-row
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       depth="0"
       label="Color"
     >
       <c-enabled-color-picker-field-stub
+        justify-end=""
         label="Use special color for this event?"
         row=""
         value="#123123"
       />
-    </c-form-block-row>
-    <c-form-block-row
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      indented=""
+      label="Recurrence rule"
+    >
+      <pbehavior-recurrence-rule-field-stub
+        form="[object Object]"
+        withexdatetype="true"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       depth="0"
       indented=""
       label="Comments"
     >
-      <c-label
-        class="mb-3"
-      >
-        Comments
-      </c-label>
       <pbehavior-comments-field-stub
         comments=""
       />
-    </c-form-block-row>
-  </c-form-block>
+    </c-form-block-row-stub>
+  </c-form-block-stub>
 </div>
 `;

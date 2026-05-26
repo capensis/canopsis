@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tag-general-form Renders \`tag-general-form\` with custom props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-name-field-stub
+    autofocus=""
+    disabled="true"
+    max-length="11"
+    name="value"
+    required=""
+    value="tag-value"
+  />
+  <c-form-block-stub>
+    <c-form-block-row-stub
+      align-center=""
+      label="Color"
+    >
+      <c-color-picker-field-stub
+        value="#2B3E4F"
+      />
+    </c-form-block-row-stub>
+  </c-form-block-stub>
+</div>
+`;
+
+exports[`tag-general-form Renders \`tag-general-form\` with default props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-name-field-stub
+    autofocus=""
+    disabled="true"
+    max-length="20"
+    name="value"
+    required=""
+  />
+  <c-form-block-stub>
+    <c-form-block-row-stub
+      align-center=""
+      label="Color"
+    >
+      <c-color-picker-field-stub />
+    </c-form-block-row-stub>
+  </c-form-block-stub>
+</div>
+`;

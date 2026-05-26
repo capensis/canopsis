@@ -23,7 +23,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary white--text"
           type="submit"
@@ -79,7 +79,7 @@ export default {
     const isNew = computed(() => !config.value.role?._id);
     const title = computed(() => (config.value.title || t('modals.createRole.create.title')));
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.role,
       method: async () => {
@@ -95,7 +95,6 @@ export default {
       form,
       isNew,
       title,
-      isDisabled,
       submitting,
       submitLabel,
       submit,

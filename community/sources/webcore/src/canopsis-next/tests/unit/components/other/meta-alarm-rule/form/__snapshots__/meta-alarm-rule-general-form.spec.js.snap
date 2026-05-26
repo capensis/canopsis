@@ -7,18 +7,26 @@ exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` w
   <div
     class="layout gap-2"
   >
-    <c-id-field-stub
-      autofocus=""
-      help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-      value=""
-    />
-    <c-name-field-stub
-      required=""
-      value=""
-    />
+    <div
+      class="flex xs6"
+    >
+      <c-id-field-stub
+        autofocus=""
+        help-text="If no id is specified, a unique id will be generated automatically on rule creation"
+        value=""
+      />
+    </div>
+    <div
+      class="flex xs6"
+    >
+      <c-name-field-stub
+        required=""
+        value=""
+      />
+    </div>
   </div>
-  <c-form-block>
-    <c-form-block-row
+  <c-form-block-stub>
+    <c-form-block-row-stub
       label="Output template"
     >
       <c-payload-textarea-field-stub
@@ -27,133 +35,57 @@ exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` w
         required=""
         value="{{ .LastChild.Alarm.Value.State.Message }}"
       />
-    </c-form-block-row>
-    <c-form-block-row
-      label="metaAlarmRule.tags"
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Tags"
     >
       <meta-alarm-rule-tags-form-stub
         class="mb-4"
         form="[object Object]"
         variables=""
       />
-    </c-form-block-row>
-    <c-form-block-row
-      label="metaAlarmRule.infos"
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Infos"
     >
       <meta-alarm-rule-infos-form-stub
         infos=""
       />
-    </c-form-block-row>
-    <c-form-block-row
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       label="Auto resolve"
     >
       <c-enabled-field-stub
         label="Auto resolve"
       />
-    </c-form-block-row>
-    <c-form-block-row
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       indented=""
-      label="metaAlarmRule.grouping"
+      label="Grouping"
     >
-      <div
-        class="v-tabs meta-alarm-rule-type-field v-tabs--fixed-tabs theme--light"
-      >
-        <div
-          class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
-          role="tablist"
-        >
-          <div
-            class="v-slide-group__prev v-slide-group__prev--disabled"
-          >
-            <transition-stub
-              name="fade-transition"
-            />
-          </div>
-          <div
-            class="v-slide-group__wrapper"
-          >
-            <div
-              class="v-slide-group__content v-tabs-bar__content"
-            >
-              <div
-                aria-selected="true"
-                class="v-tab v-tab--active"
-                role="tab"
-                tabindex="0"
-              >
-                <button
-                  class="v-btn v-btn--has-bg theme--light v-size--default"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-      metaAlarmRule.groupingTabs.existing
-                  </span>
-                </button>
-              </div>
-              <div
-                aria-selected="false"
-                class="v-tab"
-                role="tab"
-                tabindex="0"
-              >
-                <button
-                  class="v-btn v-btn--has-bg theme--light v-size--default"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-      metaAlarmRule.groupingTabs.createNew
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-slide-group__next v-slide-group__next--disabled"
-          >
-            <transition-stub
-              name="fade-transition"
-            />
-          </div>
-        </div>
-        <div
-          class="v-window v-item-group theme--light v-tabs-items"
-        >
-          <div
-            class="v-window__container"
-          >
-            <transition-stub
-              name=""
-            >
-              <!---->
-            </transition-stub>
-            <transition-stub
-              name=""
-            >
-              <!---->
-            </transition-stub>
-          </div>
-        </div>
-      </div>
-    </c-form-block-row>
-    <c-form-block-row
+      <meta-alarm-rule-type-field-stub
+        value="attribute"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       label="Component template"
     >
-      <c-payload-text-field
+      <c-payload-text-field-stub
         label="Component template"
+        value=""
       />
-    </c-form-block-row>
-    <c-form-block-row
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       label="Resource template"
     >
-      <c-payload-text-field
+      <c-payload-text-field-stub
         label="Resource template"
+        value=""
       />
-    </c-form-block-row>
-  </c-form-block>
+    </c-form-block-row-stub>
+  </c-form-block-stub>
 </div>
 `;
 
@@ -164,16 +96,24 @@ exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` w
   <div
     class="layout gap-2"
   >
-    <c-id-field-stub
-      autofocus=""
-      help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    />
-    <c-name-field-stub
-      required=""
-    />
+    <div
+      class="flex xs6"
+    >
+      <c-id-field-stub
+        autofocus=""
+        help-text="If no id is specified, a unique id will be generated automatically on rule creation"
+      />
+    </div>
+    <div
+      class="flex xs6"
+    >
+      <c-name-field-stub
+        required=""
+      />
+    </div>
   </div>
-  <c-form-block>
-    <c-form-block-row
+  <c-form-block-stub>
+    <c-form-block-row-stub
       label="Output template"
     >
       <c-payload-textarea-field-stub
@@ -181,119 +121,41 @@ exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` w
         label="Output template"
         required=""
       />
-    </c-form-block-row>
-    <c-form-block-row
-      label="metaAlarmRule.tags"
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Tags"
     >
       <meta-alarm-rule-tags-form-stub
         class="mb-4"
         form="[object Object]"
         variables=""
       />
-    </c-form-block-row>
-    <c-form-block-row
-      label="metaAlarmRule.infos"
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Infos"
     >
       <meta-alarm-rule-infos-form-stub
         infos=""
       />
-    </c-form-block-row>
-    <c-form-block-row
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       label="Auto resolve"
     >
       <c-enabled-field-stub
         label="Auto resolve"
       />
-    </c-form-block-row>
-    <c-form-block-row
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
       indented=""
-      label="metaAlarmRule.grouping"
+      label="Grouping"
     >
-      <div
-        class="v-tabs meta-alarm-rule-type-field v-tabs--fixed-tabs theme--light"
-      >
-        <div
-          class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
-          role="tablist"
-        >
-          <div
-            class="v-slide-group__prev v-slide-group__prev--disabled"
-          >
-            <transition-stub
-              name="fade-transition"
-            />
-          </div>
-          <div
-            class="v-slide-group__wrapper"
-          >
-            <div
-              class="v-slide-group__content v-tabs-bar__content"
-            >
-              <div
-                aria-selected="true"
-                class="v-tab v-tab--active"
-                role="tab"
-                tabindex="0"
-              >
-                <button
-                  class="v-btn v-btn--has-bg theme--light v-size--default"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-      metaAlarmRule.groupingTabs.existing
-                  </span>
-                </button>
-              </div>
-              <div
-                aria-selected="false"
-                class="v-tab"
-                role="tab"
-                tabindex="0"
-              >
-                <button
-                  class="v-btn v-btn--has-bg theme--light v-size--default"
-                  type="button"
-                >
-                  <span
-                    class="v-btn__content"
-                  >
-      metaAlarmRule.groupingTabs.createNew
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-slide-group__next v-slide-group__next--disabled"
-          >
-            <transition-stub
-              name="fade-transition"
-            />
-          </div>
-        </div>
-        <div
-          class="v-window v-item-group theme--light v-tabs-items"
-        >
-          <div
-            class="v-window__container"
-          >
-            <transition-stub
-              name=""
-            >
-              <!---->
-            </transition-stub>
-            <transition-stub
-              name=""
-            >
-              <!---->
-            </transition-stub>
-          </div>
-        </div>
-      </div>
-    </c-form-block-row>
+      <meta-alarm-rule-type-field-stub
+        value="relation"
+      />
+    </c-form-block-row-stub>
     <!---->
-  </c-form-block>
+  </c-form-block-stub>
 </div>
 `;

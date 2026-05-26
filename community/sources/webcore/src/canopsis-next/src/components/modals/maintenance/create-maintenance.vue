@@ -22,7 +22,7 @@
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled"
+          :disabled="submitting"
           class="primary"
           type="submit"
         >
@@ -74,7 +74,7 @@ export default {
       config.value.maintenance ? t('common.submit') : t('modals.createMaintenance.enableMaintenance')
     ));
 
-    const { submit, submitting, isDisabled } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       form,
       method: async () => {
         await config.value.action?.(form.value);
@@ -92,7 +92,6 @@ export default {
       submitLabel,
       submit,
       submitting,
-      isDisabled,
       close,
     };
   },

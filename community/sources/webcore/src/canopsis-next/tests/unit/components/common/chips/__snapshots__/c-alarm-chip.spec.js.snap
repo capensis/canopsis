@@ -29,7 +29,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with custom props 1`] = `
           <span
             class="px-1"
           >
-            3
+        3
           </span>
         </span>
       </transition-stub>
@@ -67,7 +67,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with default props 1`] = `
           <span
             class="px-1"
           >
-            0
+        0
           </span>
         </span>
       </transition-stub>
@@ -105,7 +105,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: critical 1`] = `
           <span
             class="px-1"
           >
-            23
+        23
           </span>
         </span>
       </transition-stub>
@@ -143,7 +143,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: major 1`] = `
           <span
             class="px-1"
           >
-            22
+        22
           </span>
         </span>
       </transition-stub>
@@ -181,7 +181,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: minor 1`] = `
           <span
             class="px-1"
           >
-            21
+        21
           </span>
         </span>
       </transition-stub>
@@ -219,7 +219,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ok 1`] = `
           <span
             class="px-1"
           >
-            20
+        20
           </span>
         </span>
       </transition-stub>
@@ -257,7 +257,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: cancelled 1`] = `
           <span
             class="px-1"
           >
-            14
+        14
           </span>
         </span>
       </transition-stub>
@@ -295,7 +295,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: closed 1`] = `
           <span
             class="px-1"
           >
-            10
+        10
           </span>
         </span>
       </transition-stub>
@@ -333,7 +333,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: flapping 1`] = `
           <span
             class="px-1"
           >
-            13
+        13
           </span>
         </span>
       </transition-stub>
@@ -371,7 +371,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: noEvents 1`] = `
           <span
             class="px-1"
           >
-            15
+        15
           </span>
         </span>
       </transition-stub>
@@ -409,7 +409,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: ongoing 1`] = `
           <span
             class="px-1"
           >
-            11
+        11
           </span>
         </span>
       </transition-stub>
@@ -447,7 +447,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: stealthy 1`] = `
           <span
             class="px-1"
           >
-            12
+        12
           </span>
         </span>
       </transition-stub>
@@ -485,7 +485,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: unknown 1`] = `
           <span
             class="px-1"
           >
-            16
+        16
           </span>
         </span>
       </transition-stub>

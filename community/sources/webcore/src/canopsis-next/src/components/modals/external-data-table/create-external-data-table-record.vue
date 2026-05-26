@@ -20,7 +20,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -78,7 +78,7 @@ export default {
       columnConfigs.value,
     ));
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.externalDataTableRecord,
       method: async () => {
@@ -97,7 +97,6 @@ export default {
 
       form,
 
-      isDisabled,
       submitting,
 
       title,

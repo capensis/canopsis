@@ -25,7 +25,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -94,7 +94,7 @@ export default {
     const isNew = computed(() => !config.value.declareTicketRule?._id);
     const title = computed(() => config.value.title ?? t('modals.createDeclareTicketRule.create.title'));
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.declareTicketRule,
       method: async () => {
@@ -116,7 +116,6 @@ export default {
       isNew,
       type,
       title,
-      isDisabled,
       submitting,
       chatShown,
       chatOptions,

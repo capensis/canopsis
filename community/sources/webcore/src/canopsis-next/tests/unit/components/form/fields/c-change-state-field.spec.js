@@ -14,6 +14,7 @@ const stubs = {
 };
 
 const snapshotStubs = {
+  'c-form-block-row': true,
   'state-criticity-field': true,
 };
 

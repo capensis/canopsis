@@ -65,7 +65,7 @@ export default {
   },
   setup(props, { emit }) {
     const modals = useModals();
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+    const { updateModel, addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
 
     /**
      * Appends a new dynamic info row with default form fields to the list.
@@ -78,7 +78,9 @@ export default {
     const showAddInfosFromTemplateModal = () => modals.show({
       name: MODALS.addDynamicInfoInfosFromTemplate,
       config: {
-        action: template => template.names.forEach(name => addItemIntoArray(dynamicInfoInformationToForm({ name }))),
+        action: template => (
+          updateModel([...props.items, ...template.names.map(name => dynamicInfoInformationToForm({ name }))])
+        ),
       },
     });
 
