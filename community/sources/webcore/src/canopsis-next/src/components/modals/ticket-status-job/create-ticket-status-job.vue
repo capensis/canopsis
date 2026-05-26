@@ -5,7 +5,10 @@
         <span>{{ $t('modals.createTicketStatusJob.edit.title') }}</span>
       </template>
       <template #text="">
-        <ticket-status-job-form v-model="form" />
+        <ticket-status-job-form
+          v-model="form"
+          :is-new="isNew"
+        />
       </template>
       <template #actions="">
         <v-btn
@@ -65,7 +68,7 @@ export default {
 
     const form = ref(ticketStatusJobToForm(config.value.ticketStatusJob ?? {}));
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel, isNew } = useSubmittableForm({
       form,
       item: config.value.ticketStatusJob,
       method: async () => {
@@ -79,6 +82,7 @@ export default {
 
     return {
       form,
+      isNew,
       submitting,
       submitLabel,
       submit,

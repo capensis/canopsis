@@ -181,7 +181,7 @@ export default {
   },
   [USER_PERMISSIONS.technical.jobManagement]: {
     title: 'Jobs',
-    message: 'Manage jobs for ticket status.',
+    message: 'Job module is used to view jobs, stop retries of jobs in progress in case if server is down, edit and retry ticket status jobs in case of errors in their configuration.',
   },
   [USER_PERMISSIONS.technical.widgetTemplate]: {
     title: 'Widget templates',

@@ -8,7 +8,7 @@
         {{ statusIcon }}
       </v-icon>
     </template>
-    <span>{{ label }}</span>
+    <span class="pre-line">{{ label }}</span>
   </v-tooltip>
 </template>
 
@@ -27,9 +27,13 @@ export default {
     },
   },
   setup(props) {
-    const { t } = useI18n();
+    const { t, te } = useI18n();
 
-    const label = computed(() => t(`jobs.status.${props.status}`));
+    const label = computed(() => {
+      const statusTooltipKey = `jobs.statusTooltip.${props.status}`;
+
+      return te(statusTooltipKey) ? t(statusTooltipKey) : t(`jobs.status.${props.status}`);
+    });
 
     const statusColor = computed(() => (props.status === JOB_STATUS.running ? 'success' : 'grey darken-1'));
 

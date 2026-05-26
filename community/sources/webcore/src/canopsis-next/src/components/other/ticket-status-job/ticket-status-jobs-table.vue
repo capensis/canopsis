@@ -20,10 +20,11 @@
         @update:options="updateOptions"
       />
     </template>
-    <template #mass-actions="{ selected: slotSelected }">
+    <template #mass-actions="{ selected: slotSelected, clearSelected }">
       <ticket-status-job-table-actions
         :items="slotSelected"
         class="mt-2"
+        @clear:items="clearSelected"
       />
     </template>
     <template #header.data-table-select />
@@ -46,7 +47,10 @@
       {{ item.next_check_at | date('long', '-') }}
     </template>
     <template #fail_reason="{ item }">
-      {{ item.fail_reason || '-' }}
+      <c-ellipsis
+        :text="item.fail_reason || '-'"
+        hover
+      />
     </template>
     <template #actions="{ item }">
       <ticket-status-job-table-actions :item="item" />
@@ -60,6 +64,8 @@
 <script>
 import { isUndefined } from 'lodash';
 import { ref, computed } from 'vue';
+
+import { JOB_STATUS } from '@/constants';
 
 import TicketStatusJobsActiveStateIcon from './partials/ticket-status-jobs-active-state-icon.vue';
 import TicketStatusJobsDetailsExpandPanel from './partials/ticket-status-jobs-details-expand-panel.vue';
@@ -109,7 +115,10 @@ export default {
      * @param {Object} item - Ticket status job entity
      * @returns {boolean} True if the item should be disabled for selection
      */
-    const isDisabledItem = item => !isUndefined(firstSelectedStatus.value) && item.status !== firstSelectedStatus.value;
+    const isDisabledItem = item => (
+      item.status === JOB_STATUS.stopped
+        || (!isUndefined(firstSelectedStatus.value) && item.status !== firstSelectedStatus.value)
+    );
 
     /**
      * Emits options update to the parent.
