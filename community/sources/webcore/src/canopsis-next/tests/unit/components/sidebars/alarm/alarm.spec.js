@@ -125,6 +125,10 @@ const selectFieldClearFilterDisabled = wrapper => selectSwitcherFieldByTitle(
   'Clear of selected filter allowed',
 );
 const selectFieldHtmlEnabledSwitcher = wrapper => selectSwitcherFieldByTitle(wrapper, 'HTML enabled on timeline');
+const selectFieldOpenExpandPanelByDoubleClickSwitcher = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Open expandable panel on double click alarm',
+);
 const selectFieldAckNoteRequired = wrapper => selectSwitcherFieldByTitle(wrapper, 'Ack - note field required');
 const selectFieldMultiAckEnabled = wrapper => selectSwitcherFieldByTitle(wrapper, 'Multiple ack');
 const selectFieldFastAckOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(0);
@@ -988,6 +992,38 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'isHtmlEnabledOnTimeLine', isHtmlEnabledOnTimeLine),
+      },
+    });
+  });
+
+  test('Open expandable panel on double click alarm changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldOpenExpandPanelByDoubleClickSwitcher = selectFieldOpenExpandPanelByDoubleClickSwitcher(wrapper);
+
+    const openExpandPanelByDoubleClick = Faker.datatype.boolean();
+
+    fieldOpenExpandPanelByDoubleClickSwitcher.triggerCustomEvent('input', openExpandPanelByDoubleClick);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(
+          widget,
+          'openExpandPanelByDoubleClick',
+          openExpandPanelByDoubleClick,
+        ),
       },
     });
   });
