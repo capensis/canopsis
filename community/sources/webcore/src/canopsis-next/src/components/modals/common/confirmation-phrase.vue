@@ -41,7 +41,7 @@
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled || !phrasesEqual"
+          :disabled="submitting || !phrasesEqual"
           class="primary"
           type="submit"
         >
@@ -90,7 +90,7 @@ export default {
     const phrasesEqual = computed(() => phrase.value === originalPhrase.value);
     const sanitizedPhraseText = computed(() => sanitizeHtml(config.value.phraseText || ''));
 
-    const { submitting, isDisabled, submit } = useSubmittableForm({
+    const { submitting, submit } = useSubmittableForm({
       form: { phrase },
       method: async () => {
         if (phrasesEqual.value) {
@@ -109,7 +109,6 @@ export default {
       phrasesEqual,
       sanitizedPhraseText,
       submitting,
-      isDisabled,
       submit,
     };
   },

@@ -26,6 +26,8 @@ const stubs = {
 };
 
 const snapshotStubs = {
+  'c-form-block': true,
+  'c-form-block-row': true,
   'c-name-field': true,
   'c-enabled-field': true,
   'c-duration-field': true,
@@ -33,6 +35,7 @@ const snapshotStubs = {
   'pbehavior-comments-field': true,
   'recurrence-rule-form': true,
   'pbehavior-recurrence-rule-exceptions-field': true,
+  'pbehavior-recurrence-rule-field': true,
   'c-pbehavior-reason-field': true,
   'c-pbehavior-type-field': true,
   'c-enabled-color-picker-field': true,

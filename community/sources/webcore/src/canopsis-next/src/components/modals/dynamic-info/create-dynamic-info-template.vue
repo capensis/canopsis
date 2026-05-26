@@ -16,7 +16,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -66,7 +66,7 @@ export default {
       config.value.title || t('modals.createDynamicInfoTemplate.create.title')
     ));
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.template,
       method: async () => {
@@ -83,7 +83,6 @@ export default {
     return {
       form,
       title,
-      isDisabled,
       submitting,
       submit,
       submitLabel,

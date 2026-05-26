@@ -16,7 +16,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -69,7 +69,7 @@ export default {
       config.value.title || t('modals.createAnomalyMonitoredConnector.create.title')
     ));
 
-    const { submitting, isDisabled, submit, submitLabel } = useSubmittableForm({
+    const { submitting, submit, submitLabel } = useSubmittableForm({
       form,
       item: config.value.connector,
       method: async () => {
@@ -85,7 +85,6 @@ export default {
       form,
       title,
       submitting,
-      isDisabled,
 
       submitLabel,
       submit,

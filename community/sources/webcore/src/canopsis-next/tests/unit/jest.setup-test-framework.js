@@ -7,12 +7,20 @@ import flatten from 'flat';
 
 registerRequireContextHook();
 
+const i18n = require('@/i18n').default;
+
+i18n.silentTranslationWarn = true;
+i18n.silentFallbackWarn = true;
+
 global.ResizeObserver = ResizeObserver;
 global.IntersectionObserver = jest.fn(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
 }));
+
+Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollTo = jest.fn();
 
 Object.defineProperty(HTMLElement.prototype, 'innerText', {
   set(value) {

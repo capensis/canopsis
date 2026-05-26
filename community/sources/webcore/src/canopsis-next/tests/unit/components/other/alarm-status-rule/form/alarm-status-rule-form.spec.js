@@ -1,116 +1,82 @@
 import Faker from 'faker';
 
 import { generateRenderer } from '@unit/utils/vue';
-import { createInputStub } from '@unit/stubs/input';
+import { getFormGeneralPatternsTabsStub } from '@unit/stubs/form';
 
 import { TIME_UNITS } from '@/constants';
 
-import AlarmStatusRuleGeneralForm from '@/components/other/alarm-status-rule/form/alarm-status-rule-general-form.vue';
 import AlarmStatusRuleForm from '@/components/other/alarm-status-rule/form/alarm-status-rule-form.vue';
-
-const formGeneralPatternsTabsStub = {
-  template: '<div><slot name="general" /><slot name="patterns" /></div>',
-};
 
 const stubs = {
   'c-enabled-field': true,
-  'c-form-general-patterns-tabs': formGeneralPatternsTabsStub,
-  [AlarmStatusRuleGeneralForm.name]: false,
-  'c-form-block': true,
-  'c-form-block-row': true,
-  'c-name-field': true,
-  'c-duration-field': true,
-  'c-priority-field': true,
-  'c-number-field': true,
-  'c-description-field': true,
-  'alarm-status-rule-patterns-form': true,
-  'v-text-field': createInputStub('v-text-field'),
-};
-
-const snapshotStubs = {
-  'c-enabled-field': true,
-  'c-form-general-patterns-tabs': formGeneralPatternsTabsStub,
-  [AlarmStatusRuleGeneralForm.name]: false,
-  'c-form-block': true,
-  'c-form-block-row': true,
-  'c-name-field': true,
-  'c-duration-field': true,
-  'c-priority-field': true,
-  'c-number-field': true,
-  'c-description-field': true,
+  'c-form-general-patterns-tabs': getFormGeneralPatternsTabsStub(),
+  'alarm-status-rule-general-form': true,
   'alarm-status-rule-patterns-form': true,
 };
 
-const selectGeneralFormRoot = wrapper => wrapper.findComponent(AlarmStatusRuleGeneralForm);
-
-const selectNameField = wrapper => selectGeneralFormRoot(wrapper).find('c-name-field-stub');
-
-const selectDurationField = wrapper => selectGeneralFormRoot(wrapper).find('c-duration-field-stub');
-
-const selectPriorityField = wrapper => selectGeneralFormRoot(wrapper).find('c-priority-field-stub');
-
-const selectNumberField = wrapper => selectGeneralFormRoot(wrapper).find('c-number-field-stub');
-
-const selectDescriptionField = wrapper => selectGeneralFormRoot(wrapper).find('c-description-field-stub');
-
+const selectGeneralForm = wrapper => wrapper.find('alarm-status-rule-general-form-stub');
 const selectAlarmStatusRulePatternsForm = wrapper => wrapper.find('alarm-status-rule-patterns-form-stub');
 
 describe('alarm-status-rule-form', () => {
   const factory = generateRenderer(AlarmStatusRuleForm, { stubs });
-  const snapshotFactory = generateRenderer(AlarmStatusRuleForm, { stubs: snapshotStubs });
+  const snapshotFactory = generateRenderer(AlarmStatusRuleForm, { stubs });
 
-  test('Name changed after trigger text field', () => {
+  test('General form is rendered in general tab', () => {
     const wrapper = factory({
       propsData: {
         form: {},
       },
     });
 
-    const nameField = selectNameField(wrapper);
+    expect(selectGeneralForm(wrapper).exists()).toBe(true);
+  });
+
+  test('Name changed after trigger general form', () => {
+    const wrapper = factory({
+      propsData: {
+        form: {},
+      },
+    });
 
     const newValue = Faker.datatype.string();
 
-    nameField.triggerCustomEvent('input', newValue);
+    selectGeneralForm(wrapper).triggerCustomEvent('input', { name: newValue });
 
     expect(wrapper).toEmitInput({ name: newValue });
   });
 
-  test('Duration changed after trigger duration field', () => {
+  test('Duration changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: {},
       },
     });
-
-    const durationField = selectDurationField(wrapper);
 
     const newDuration = {
       value: Faker.datatype.number(),
       unit: TIME_UNITS.hour,
     };
 
-    durationField.triggerCustomEvent('input', newDuration);
+    selectGeneralForm(wrapper).triggerCustomEvent('input', { duration: newDuration });
 
     expect(wrapper).toEmitInput({ duration: newDuration });
   });
 
-  test('Priority changed after trigger priority field', () => {
+  test('Priority changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: {},
       },
     });
 
-    const priorityField = selectPriorityField(wrapper);
-
     const newPriority = Faker.datatype.number();
 
-    priorityField.triggerCustomEvent('input', newPriority);
+    selectGeneralForm(wrapper).triggerCustomEvent('input', { priority: newPriority });
 
     expect(wrapper).toEmitInput({ priority: newPriority });
   });
 
-  test('Freq limit changed after trigger number field', () => {
+  test('Freq limit changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: {},
@@ -118,27 +84,23 @@ describe('alarm-status-rule-form', () => {
       },
     });
 
-    const numberField = selectNumberField(wrapper);
-
     const newFreqLimit = Faker.datatype.number();
 
-    numberField.triggerCustomEvent('input', newFreqLimit);
+    selectGeneralForm(wrapper).triggerCustomEvent('input', { freq_limit: newFreqLimit });
 
     expect(wrapper).toEmitInput({ freq_limit: newFreqLimit });
   });
 
-  test('Description changed after trigger description field', () => {
+  test('Description changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: {},
       },
     });
 
-    const descriptionField = selectDescriptionField(wrapper);
-
     const newDescription = Faker.datatype.string();
 
-    descriptionField.triggerCustomEvent('input', newDescription);
+    selectGeneralForm(wrapper).triggerCustomEvent('input', { description: newDescription });
 
     expect(wrapper).toEmitInput({ description: newDescription });
   });
@@ -150,13 +112,11 @@ describe('alarm-status-rule-form', () => {
       },
     });
 
-    const alarmStatusRulePatternsForm = selectAlarmStatusRulePatternsForm(wrapper);
-
     const newPatterns = {
       alarm_pattern: {},
     };
 
-    alarmStatusRulePatternsForm.triggerCustomEvent('input', newPatterns);
+    selectAlarmStatusRulePatternsForm(wrapper).triggerCustomEvent('input', newPatterns);
 
     expect(wrapper).toEmitInput({ patterns: newPatterns });
   });

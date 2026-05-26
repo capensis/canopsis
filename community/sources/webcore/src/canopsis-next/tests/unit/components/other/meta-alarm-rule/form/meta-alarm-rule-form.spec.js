@@ -1,25 +1,23 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { randomArrayItem } from '@unit/utils/array';
 import { createMockedStoreModules, createEntityInfoPropertyModule } from '@unit/utils/store';
-
-import { META_ALARMS_FORM_STEPS, META_ALARMS_RULE_TYPES } from '@/constants';
+import { getFormGeneralPatternsTabsStub } from '@unit/stubs/form';
 
 import { metaAlarmRuleToForm } from '@/helpers/entities/meta-alarm/rule/form';
 
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
 
 const stubs = {
+  'c-enabled-field': true,
+  'c-form-general-patterns-tabs': getFormGeneralPatternsTabsStub(),
   'meta-alarm-rule-general-form': true,
-  'meta-alarm-rule-type-field': true,
   'meta-alarm-rule-parameters-form': true,
-  'c-information-block': true,
-  'c-payload-text-field': true,
 };
 
+const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 const selectMetaAlarmRuleGeneralForm = wrapper => wrapper.find('meta-alarm-rule-general-form-stub');
-const selectMetaAlarmRuleTypeField = wrapper => wrapper.find('meta-alarm-rule-type-field-stub');
+const selectMetaAlarmRuleParametersForm = wrapper => wrapper.find('meta-alarm-rule-parameters-form-stub');
 
 describe('meta-alarm-rule-form', () => {
   const form = metaAlarmRuleToForm();
@@ -31,6 +29,33 @@ describe('meta-alarm-rule-form', () => {
   const factory = generateShallowRenderer(MetaAlarmRuleForm, { stubs });
   const snapshotFactory = generateRenderer(MetaAlarmRuleForm, { stubs });
 
+  test('General form is rendered in general tab', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+      store,
+    });
+
+    expect(selectMetaAlarmRuleGeneralForm(wrapper).exists()).toBe(true);
+  });
+
+  test('Enabled changed after trigger enabled field', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+      store,
+    });
+
+    selectEnabledField(wrapper).triggerCustomEvent('input', false);
+
+    expect(wrapper).toEmitInput({
+      ...form,
+      enabled: false,
+    });
+  });
+
   test('General fields updated after trigger general form', async () => {
     const wrapper = factory({
       propsData: {
@@ -41,10 +66,7 @@ describe('meta-alarm-rule-form', () => {
 
     const newFields = {
       ...form,
-      id: Faker.datatype.string(),
-      type: randomArrayItem(Object.values(META_ALARMS_RULE_TYPES)),
       name: Faker.datatype.string(),
-      auto_resolve: Faker.datatype.boolean(),
       output_template: Faker.datatype.string(),
     };
 
@@ -53,7 +75,7 @@ describe('meta-alarm-rule-form', () => {
     expect(wrapper).toEmitInput(newFields);
   });
 
-  test('Type changed after trigger type field', () => {
+  test('Parameters changed after trigger parameters form', () => {
     const wrapper = factory({
       propsData: {
         form,
@@ -61,14 +83,16 @@ describe('meta-alarm-rule-form', () => {
       store,
     });
 
-    const data = {
+    const newFields = {
       ...form,
-      type: META_ALARMS_RULE_TYPES.attribute,
+      patterns: {
+        alarm_pattern: {},
+      },
     };
 
-    selectMetaAlarmRuleTypeField(wrapper).triggerCustomEvent('input', data.type);
+    selectMetaAlarmRuleParametersForm(wrapper).triggerCustomEvent('input', newFields);
 
-    expect(wrapper).toEmitInput(data);
+    expect(wrapper).toEmitInput(newFields);
   });
 
   test('Renders `meta-alarm-rule-form` with default props', () => {
@@ -84,9 +108,6 @@ describe('meta-alarm-rule-form', () => {
       propsData: {
         form,
         disabledIdField: true,
-        activeStep: META_ALARMS_FORM_STEPS.parameters,
-        alarmInfos: [{ value: 'alarm-infos' }],
-        entityInfos: [{ value: 'alarm-infos' }],
       },
       store,
     });

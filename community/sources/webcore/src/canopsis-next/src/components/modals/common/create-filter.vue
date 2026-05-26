@@ -26,7 +26,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -109,7 +109,7 @@ export default {
     /**
      * Submits the form and calls the action callback if provided
      */
-    const { submit, submitting, isDisabled, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.filter,
       method: async () => {
@@ -136,7 +136,6 @@ export default {
       title,
       patternsProps,
       submitting,
-      isDisabled,
       submitLabel,
       submit,
       close,

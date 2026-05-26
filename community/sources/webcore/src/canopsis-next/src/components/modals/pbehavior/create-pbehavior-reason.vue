@@ -17,7 +17,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -75,7 +75,7 @@ export default {
         : 'modals.createPbehaviorReason.edit.title')
     ));
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.pbehaviorReason,
       method: async () => {
@@ -92,7 +92,6 @@ export default {
     return {
       form,
       title,
-      isDisabled,
       submitting,
       close,
       submitLabel,

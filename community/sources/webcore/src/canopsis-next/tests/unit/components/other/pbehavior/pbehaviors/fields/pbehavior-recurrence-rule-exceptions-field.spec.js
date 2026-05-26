@@ -1,81 +1,50 @@
-import Faker from 'faker';
-
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
-
-import { convertDateToStartOfDayDateObject, convertDateToEndOfDayDateObject } from '@/helpers/date/date';
 
 import PbehaviorRecurrenceRuleExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
 
 const stubs = {
   'pbehavior-exceptions-list': true,
-  'pbehavior-recurrence-rule-exceptions-list-menu': true,
-  'pbehavior-exceptions-field': {
-    template: `
-    <div>
-      <slot name="no-data" />
-      <slot name="actions" />
-    </div>
-  `,
-  },
-  'c-alert': true,
+  'pbehavior-exceptions-field': true,
 };
 
-const selectButtonByIndex = (wrapper, index) => wrapper.findAll('v-btn-stub').at(index);
-const selectAddExceptionButton = wrapper => selectButtonByIndex(wrapper, 0);
-const selectChooseExceptionButton = wrapper => wrapper.find('pbehavior-recurrence-rule-exceptions-list-menu-stub');
+const selectPbehaviorExceptionsList = wrapper => wrapper.find('pbehavior-exceptions-list-stub');
+const selectPbehaviorExceptionsField = wrapper => wrapper.find('pbehavior-exceptions-field-stub');
 
 describe('pbehavior-recurrence-rule-exceptions-field', () => {
-  const nowTimestamp = 1386435500000;
-  mockDateNow(nowTimestamp);
-  const $modals = mockModals();
-
-  const factory = generateShallowRenderer(PbehaviorRecurrenceRuleExceptionsField, {
-    stubs,
-    mocks: { $modals },
-  });
+  const factory = generateShallowRenderer(PbehaviorRecurrenceRuleExceptionsField, { stubs });
   const snapshotFactory = generateRenderer(PbehaviorRecurrenceRuleExceptionsField, { stubs });
 
-  test('Exception added after trigger create button', () => {
-    const exdates = [{ key: 'exdate-1', begin: 1, end: 2, type: '' }];
+  test('Exceptions list shown when exceptions exist', () => {
+    const exceptions = [{ name: 'exception-1' }];
+    const wrapper = factory({
+      propsData: {
+        exceptions,
+      },
+    });
+
+    expect(selectPbehaviorExceptionsList(wrapper).exists()).toBe(true);
+    expect(selectPbehaviorExceptionsList(wrapper).props('exceptions')).toEqual(exceptions);
+  });
+
+  test('Exceptions list hidden when exceptions are empty', () => {
+    const wrapper = factory({
+      propsData: {
+        exceptions: [],
+      },
+    });
+
+    expect(selectPbehaviorExceptionsList(wrapper).exists()).toBe(false);
+  });
+
+  test('Passes exdates to exceptions field', () => {
+    const exdates = [{ key: 'exdate-1' }];
     const wrapper = factory({
       propsData: {
         exdates,
       },
     });
 
-    selectAddExceptionButton(wrapper).triggerCustomEvent('click');
-
-    expect(wrapper).toEmitInput([
-      ...exdates,
-      {
-        key: expect.any(String),
-        begin: convertDateToStartOfDayDateObject(new Date(nowTimestamp)),
-        end: convertDateToEndOfDayDateObject(new Date(nowTimestamp)),
-        type: '',
-      },
-    ]);
-  });
-
-  test('Exceptions selected after trigger select button', () => {
-    const exceptions = [{
-      name: Faker.datatype.string(),
-    }];
-    const wrapper = factory({
-      propsData: {
-        exceptions,
-      },
-    });
-    const mewExceptions = [
-      ...exceptions,
-      {
-        name: Faker.datatype.string(),
-      },
-    ];
-
-    selectChooseExceptionButton(wrapper).triggerCustomEvent('input', mewExceptions);
-
-    expect(wrapper).toEmit('update:exceptions', mewExceptions);
+    expect(selectPbehaviorExceptionsField(wrapper).props('exdates')).toEqual(exdates);
   });
 
   test('Renders `pbehavior-exceptions-field` with default props', () => {

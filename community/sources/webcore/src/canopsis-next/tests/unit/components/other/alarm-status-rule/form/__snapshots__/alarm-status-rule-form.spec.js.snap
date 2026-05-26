@@ -9,51 +9,10 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom p
     with-background=""
   />
   <div>
-    <div
-      class="layout column"
-    >
-      <c-name-field-stub
-        autofocus=""
-        max-length="255"
-        required=""
-        value="name"
-      />
-      <c-form-block-stub>
-        <c-form-block-row-stub
-          label="common.priority"
-        >
-          <c-priority-field-stub
-            value="2"
-          />
-        </c-form-block-row-stub>
-        <c-form-block-row-stub
-          label="common.duration"
-        >
-          <c-duration-field-stub
-            required=""
-            value="[object Object]"
-          />
-        </c-form-block-row-stub>
-        <c-form-block-row-stub
-          label="common.frequencyLimit"
-        >
-          <c-number-field-stub
-            label="common.frequencyLimit"
-            min="1"
-            name="freq_limit"
-            value="3"
-          />
-        </c-form-block-row-stub>
-        <c-form-block-row-stub
-          label="common.description"
-        >
-          <c-description-field-stub
-            required=""
-            value="description"
-          />
-        </c-form-block-row-stub>
-      </c-form-block-stub>
-    </div>
+    <alarm-status-rule-general-form-stub
+      flapping="true"
+      form="[object Object]"
+    />
     <alarm-status-rule-patterns-form-stub
       class="mt-2"
       flapping="true"
@@ -72,37 +31,9 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with default 
     with-background=""
   />
   <div>
-    <div
-      class="layout column"
-    >
-      <c-name-field-stub
-        autofocus=""
-        max-length="255"
-        required=""
-      />
-      <c-form-block-stub>
-        <c-form-block-row-stub
-          label="common.priority"
-        >
-          <c-priority-field-stub />
-        </c-form-block-row-stub>
-        <c-form-block-row-stub
-          label="common.duration"
-        >
-          <c-duration-field-stub
-            required=""
-          />
-        </c-form-block-row-stub>
-        <!---->
-        <c-form-block-row-stub
-          label="common.description"
-        >
-          <c-description-field-stub
-            required=""
-          />
-        </c-form-block-row-stub>
-      </c-form-block-stub>
-    </div>
+    <alarm-status-rule-general-form-stub
+      form="[object Object]"
+    />
     <alarm-status-rule-patterns-form-stub
       class="mt-2"
       form="[object Object]"

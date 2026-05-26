@@ -1,20 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`c-change-state-field Renders \`c-change-state-field\` after validate correctly 1`] = `
-<div
-  class="mt-3"
->
-  <div
-    class="layout"
+<div>
+  <c-form-block-row-stub
+    align-center=""
+    depth="0"
+    label="Severity"
   >
     <state-criticity-field-stub
       mandatory="true"
       statevalues="[object Object]"
       value="2"
     />
-  </div>
-  <div
-    class="layout mt-4"
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    label="Note"
   >
     <div
       class="v-input v-textarea v-input--has-state theme--light v-text-field error--text"
@@ -64,25 +65,26 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
         </div>
       </div>
     </div>
-  </div>
+  </c-form-block-row-stub>
 </div>
 `;
 
 exports[`c-change-state-field Renders \`c-change-state-field\` with allowed change severity to info correctly 1`] = `
-<div
-  class="mt-3"
->
-  <div
-    class="layout"
+<div>
+  <c-form-block-row-stub
+    align-center=""
+    depth="0"
+    label="Severity"
   >
     <state-criticity-field-stub
       mandatory="true"
       statevalues="[object Object]"
       value="0"
     />
-  </div>
-  <div
-    class="layout mt-4"
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    label="Note"
   >
     <div
       class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
@@ -125,25 +127,26 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with allowed chan
         </div>
       </div>
     </div>
-  </div>
+  </c-form-block-row-stub>
 </div>
 `;
 
 exports[`c-change-state-field Renders \`c-change-state-field\` with custom label correctly 1`] = `
-<div
-  class="mt-3"
->
-  <div
-    class="layout"
+<div>
+  <c-form-block-row-stub
+    align-center=""
+    depth="0"
+    label="Severity"
   >
     <state-criticity-field-stub
       mandatory="true"
       statevalues="[object Object]"
       value="0"
     />
-  </div>
-  <div
-    class="layout mt-4"
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    label="Note"
   >
     <div
       class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
@@ -186,25 +189,26 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with custom label
         </div>
       </div>
     </div>
-  </div>
+  </c-form-block-row-stub>
 </div>
 `;
 
 exports[`c-change-state-field Renders \`c-change-state-field\` with errors correctly 1`] = `
-<div
-  class="mt-3"
->
-  <div
-    class="layout"
+<div>
+  <c-form-block-row-stub
+    align-center=""
+    depth="0"
+    label="Severity"
   >
     <state-criticity-field-stub
       mandatory="true"
       statevalues="[object Object]"
       value="0"
     />
-  </div>
-  <div
-    class="layout mt-4"
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    label="Note"
   >
     <div
       class="v-input v-textarea v-input--has-state v-input--is-label-active v-input--is-dirty theme--light v-text-field error--text"
@@ -254,25 +258,26 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with errors corre
         </div>
       </div>
     </div>
-  </div>
+  </c-form-block-row-stub>
 </div>
 `;
 
 exports[`c-change-state-field Renders \`c-change-state-field\` without allowed change severity to info correctly 1`] = `
-<div
-  class="mt-3"
->
-  <div
-    class="layout"
+<div>
+  <c-form-block-row-stub
+    align-center=""
+    depth="0"
+    label="Severity"
   >
     <state-criticity-field-stub
       mandatory="true"
       statevalues="[object Object]"
       value="0"
     />
-  </div>
-  <div
-    class="layout mt-4"
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    label="Note"
   >
     <div
       class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
@@ -315,6 +320,6 @@ exports[`c-change-state-field Renders \`c-change-state-field\` without allowed c
         </div>
       </div>
     </div>
-  </div>
+  </c-form-block-row-stub>
 </div>
 `;

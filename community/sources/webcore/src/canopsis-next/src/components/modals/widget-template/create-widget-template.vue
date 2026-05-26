@@ -16,7 +16,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           type="submit"
           color="primary"
@@ -80,7 +80,7 @@ export default {
       });
     });
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.widgetTemplate,
       method: async () => {
@@ -97,7 +97,6 @@ export default {
       title,
       submitLabel,
       submit,
-      isDisabled,
       submitting,
     };
   },

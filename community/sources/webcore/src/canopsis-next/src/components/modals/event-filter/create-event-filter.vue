@@ -8,7 +8,7 @@
         <event-filter-form
           v-model="form"
           :rule-id="ruleId"
-          :is-disabled-id-field="config.isDisabledIdField"
+          :is-disabled-id-field="config.submittingIdField"
           :event-attributes="eventAttributes"
           :attributes-pending="pending"
         />
@@ -28,7 +28,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -113,7 +113,7 @@ export default {
     const ruleId = computed(() => config.value.rule?._id);
     const title = computed(() => config.value.title ?? t('modals.createEventFilter.create.title'));
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.rule,
       method: async () => {
@@ -138,7 +138,6 @@ export default {
       title,
       pending,
       eventAttributes,
-      isDisabled,
       submitting,
       chatShown,
       chatOptions,

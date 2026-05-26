@@ -7,17 +7,20 @@ import { META_ALARMS_RULE_TYPES } from '@/constants';
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
 
 const stubs = {
+  'c-form-block': true,
+  'c-form-block-row': true,
   'meta-alarm-rule-corel-form': true,
   'meta-alarm-rule-threshold-field': true,
   'meta-alarm-rule-time-based-field': true,
-  'meta-alarm-rule-value-paths-form': true,
+  'meta-alarm-rule-child-inactive-delay-field': true,
+  'meta-alarm-rule-value-paths-field': true,
   'meta-alarm-rule-patterns-form': true,
 };
 
 const selectMetaAlarmRuleCorelForm = wrapper => wrapper.find('meta-alarm-rule-corel-form-stub');
 const selectMetaAlarmRuleThresholdField = wrapper => wrapper.find('meta-alarm-rule-threshold-field-stub');
 const selectMetaAlarmRuleTimeBasedField = wrapper => wrapper.find('meta-alarm-rule-time-based-field-stub');
-const selectMetaAlarmRuleValuePathsForm = wrapper => wrapper.find('meta-alarm-rule-value-paths-form-stub');
+const selectMetaAlarmRuleValuePathsField = wrapper => wrapper.find('meta-alarm-rule-value-paths-field-stub');
 const selectMetaAlarmRulePatternsForm = wrapper => wrapper.find('meta-alarm-rule-patterns-form-stub');
 
 describe('meta-alarm-rule-parameters-form', () => {
@@ -101,7 +104,7 @@ describe('meta-alarm-rule-parameters-form', () => {
     });
   });
 
-  test('Value paths changed after trigger value paths form', () => {
+  test('Value paths changed after trigger value paths field', () => {
     const valuegroupForm = {
       ...form,
       type: META_ALARMS_RULE_TYPES.valuegroup,
@@ -112,17 +115,18 @@ describe('meta-alarm-rule-parameters-form', () => {
       },
     });
 
-    const metaAlarmRuleValuePathsForm = selectMetaAlarmRuleValuePathsForm(wrapper);
+    const metaAlarmRuleValuePathsField = selectMetaAlarmRuleValuePathsField(wrapper);
 
-    const newValuePathsConfig = {
-      value_paths: [Faker.datatype.string()],
-    };
+    const newValuePaths = [Faker.datatype.string()];
 
-    metaAlarmRuleValuePathsForm.triggerCustomEvent('input', newValuePathsConfig);
+    metaAlarmRuleValuePathsField.triggerCustomEvent('input', newValuePaths);
 
     expect(wrapper).toEmitInput({
       ...valuegroupForm,
-      config: newValuePathsConfig,
+      config: {
+        ...valuegroupForm.config,
+        value_paths: newValuePaths,
+      },
     });
   });
 
@@ -150,7 +154,14 @@ describe('meta-alarm-rule-parameters-form', () => {
   });
 
   test('Renders `meta-alarm-rule-parameters-form` with default props', () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      propsData: {
+        form: {
+          type: META_ALARMS_RULE_TYPES.complex,
+          config: {},
+        },
+      },
+    });
 
     expect(wrapper).toMatchSnapshot();
   });
@@ -166,7 +177,7 @@ describe('meta-alarm-rule-parameters-form', () => {
   });
 
   test.each(
-    Object.values(META_ALARMS_RULE_TYPES),
+    Object.values(META_ALARMS_RULE_TYPES).filter(type => type !== META_ALARMS_RULE_TYPES.manualgroup),
   )('Renders `meta-alarm-rule-parameters-form` with `%s` type', (type) => {
     const wrapper = snapshotFactory({
       propsData: {

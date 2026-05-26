@@ -21,7 +21,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary white--text"
           type="submit"
@@ -74,7 +74,7 @@ export default {
     const isNew = computed(() => !config.value.user);
     const title = computed(() => (config.value.title || t('modals.createUser.create.title')));
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.user,
       method: async () => {
@@ -90,7 +90,6 @@ export default {
       form,
       isNew,
       title,
-      isDisabled,
       submitting,
       submitLabel,
       submit,

@@ -24,7 +24,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -75,7 +75,7 @@ export default {
 
     const form = ref(recurrenceRuleModalConfigToForm(config.value));
 
-    const { submit, submitting, isDisabled } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       form,
       method: async () => {
         await config.value.action?.(formToReccurenceRuleModalConfig(form.value));
@@ -92,7 +92,6 @@ export default {
       close,
       submit,
       submitting,
-      isDisabled,
     };
   },
 };

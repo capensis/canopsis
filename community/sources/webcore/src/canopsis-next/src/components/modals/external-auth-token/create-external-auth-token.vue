@@ -20,7 +20,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -73,7 +73,7 @@ export default {
     const title = computed(() => config.value.title || t('modals.createExternalAuthToken.create.title'));
     const ruleId = computed(() => config.value.externalAuthToken?._id);
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.externalAuthToken,
       method: async () => {
@@ -93,7 +93,6 @@ export default {
       form,
 
       ruleId,
-      isDisabled,
       submitting,
 
       title,

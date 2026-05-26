@@ -17,7 +17,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -67,7 +67,7 @@ export default {
 
     const form = ref(entityInfoPropertyToForm(config.value.entityInfoProperty));
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.entityInfoProperty,
       method: async () => {
@@ -85,7 +85,6 @@ export default {
     return {
       form,
 
-      isDisabled,
       submitting,
 
       title,

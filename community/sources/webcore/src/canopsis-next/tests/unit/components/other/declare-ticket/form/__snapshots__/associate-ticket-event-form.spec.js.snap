@@ -1,41 +1,52 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` with form 1`] = `
-<c-information-block-stub
-  title="Ticket URL and ID"
->
-  <c-name-field-stub
-    autofocus=""
+<div>
+  <c-form-block-row-stub
+    depth="0"
     label="System name"
-    name="system_name"
-  />
-  <div
-    class="layout"
+  >
+    <c-name-field-stub
+      autofocus=""
+      label="System name"
+      name="system_name"
+    />
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    label="Ticket ID"
+  >
+    <declare-ticket-rule-ticket-id-text-field-stub
+      name="ticket"
+      required="true"
+      value="Ticket ID"
+    />
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    label="Ticket URL"
   >
     <div
-      class="flex mr-3 xs6"
-    >
-      <declare-ticket-rule-ticket-id-text-field-stub
-        name="ticket"
-        required="true"
-        value="Ticket ID"
-      />
-    </div>
-    <div
-      class="flex xs6"
+      class="layout column"
     >
       <declare-ticket-rule-ticket-url-text-field-stub
         name="ticket_url"
         value="Ticket URL"
       />
+      <declare-ticket-rule-ticket-url-title-field-stub
+        value="Ticket URL"
+      />
     </div>
-  </div>
-  <declare-ticket-rule-ticket-url-title-field-stub
-    value="Ticket URL"
-  />
-  <declare-ticket-rule-ticket-custom-fields-field-stub
-    name="declare_ticket"
-    value="[object Object]"
-  />
-</c-information-block-stub>
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    indented=""
+    label="Custom fields"
+  >
+    <declare-ticket-rule-ticket-custom-fields-field-stub
+      name="declare_ticket"
+      value="[object Object]"
+    />
+  </c-form-block-row-stub>
+</div>
 `;

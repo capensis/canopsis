@@ -26,7 +26,7 @@
         </v-btn>
         <v-btn
           v-if="hasUpdateAccess"
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary white--text"
           type="submit"
@@ -109,7 +109,7 @@ export default {
 
     const pending = computed(() => appInfoPending.value || isFormLoading.value);
 
-    const { submitting, isDisabled, submit } = useSubmittableForm({
+    const { submitting, submit } = useSubmittableForm({
       form,
       method: async () => {
         const { instruction, ...userInterfaceFormData } = form.value;
@@ -161,7 +161,6 @@ export default {
       pending,
       hasUpdateAccess,
       submitting,
-      isDisabled,
       submit,
       close,
     };

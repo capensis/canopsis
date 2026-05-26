@@ -1,5 +1,5 @@
 <template>
-  <v-card :class="{ 'fill-min-height': fillHeight }">
+  <v-card :class="{ 'fill-min-height': fillHeight }" class="modal-wrapper">
     <v-card-title
       v-if="$slots.title"
       :style="titleStyle"
@@ -27,13 +27,15 @@
         <slot name="text" />
       </v-card-text>
       <template v-if="$slots.actions">
-        <v-divider key="divider" />
-        <v-card-actions
-          key="actions"
-          class="justify-end align-center px-2 py-3"
-        >
-          <slot name="actions" />
-        </v-card-actions>
+        <v-layout justify-end column>
+          <v-divider key="divider" />
+          <v-card-actions
+            key="actions"
+            class="justify-end align-center pa-3"
+          >
+            <slot name="actions" />
+          </v-card-actions>
+        </v-layout>
       </template>
     </template>
   </v-card>
@@ -85,14 +87,31 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.modal-wrapper__title {
+.modal-wrapper {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 
-  & > div {
+  &__title {
     display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+
+    & > div {
+      display: flex;
+    }
+  }
+
+  .v-card__text {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  & > .layout {
+    flex: 0 0 auto;
   }
 }
 </style>

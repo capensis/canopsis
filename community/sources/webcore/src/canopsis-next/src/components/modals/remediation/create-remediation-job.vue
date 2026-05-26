@@ -29,7 +29,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -97,7 +97,7 @@ export default {
     const withPayload = computed(() => remediationJobConfigType.value?.with_body);
     const withQuery = computed(() => remediationJobConfigType.value?.with_query);
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.remediationJob,
       method: async () => {
@@ -119,7 +119,6 @@ export default {
       remediationJobId,
       type,
       title,
-      isDisabled,
       submitting,
       submitLabel,
       submit,

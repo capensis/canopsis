@@ -1,0 +1,151 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`event-filter-general-form Renders \`event-filter-general-form\` with change entity type 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-form-block-stub>
+    <c-form-block-row-stub
+      label="Type"
+    >
+      <c-event-filter-type-field-stub
+        value="change_entity"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Priority"
+    >
+      <c-priority-field-stub
+        value="2"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Description"
+    >
+      <c-description-field-stub
+        required=""
+        value="event-filter-description"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Applied during this period only"
+    >
+      <event-filter-drop-intervals-field-stub
+        form="[object Object]"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Recurrence"
+    >
+      <pbehavior-recurrence-rule-field-stub
+        form="[object Object]"
+      />
+    </c-form-block-row-stub>
+  </c-form-block-stub>
+  <event-filter-change-entity-form-stub
+    form="[object Object]"
+    name="config"
+    templatevars="[object Object]"
+  />
+</div>
+`;
+
+exports[`event-filter-general-form Renders \`event-filter-general-form\` with drop type 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-form-block-stub>
+    <c-form-block-row-stub
+      label="Type"
+    >
+      <c-event-filter-type-field-stub
+        value="drop"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Priority"
+    >
+      <c-priority-field-stub
+        value="2"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Description"
+    >
+      <c-description-field-stub
+        required=""
+        value="event-filter-description"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Applied during this period only"
+    >
+      <event-filter-drop-intervals-field-stub
+        form="[object Object]"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Recurrence"
+    >
+      <pbehavior-recurrence-rule-field-stub
+        form="[object Object]"
+      />
+    </c-form-block-row-stub>
+  </c-form-block-stub>
+  <!---->
+</div>
+`;
+
+exports[`event-filter-general-form Renders \`event-filter-general-form\` with enrichment type 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-form-block-stub>
+    <c-form-block-row-stub
+      label="Type"
+    >
+      <c-event-filter-type-field-stub
+        value="enrichment"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Priority"
+    >
+      <c-priority-field-stub
+        value="2"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Description"
+    >
+      <c-description-field-stub
+        required=""
+        value="event-filter-description"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Applied during this period only"
+    >
+      <event-filter-drop-intervals-field-stub
+        form="[object Object]"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Recurrence"
+    >
+      <pbehavior-recurrence-rule-field-stub
+        form="[object Object]"
+      />
+    </c-form-block-row-stub>
+  </c-form-block-stub>
+  <event-filter-enrichment-form-stub
+    copyvars="[object Object]"
+    form="[object Object]"
+    name="config.actions"
+    templatevars="[object Object]"
+  />
+</div>
+`;

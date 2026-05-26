@@ -22,7 +22,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -89,7 +89,7 @@ export default {
       context: LLM_SOCKET_CONTEXTS.idleRule,
     });
 
-    const { submit, isDisabled, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
       item: config.value.idleRule,
       method: async () => {
@@ -109,7 +109,6 @@ export default {
     return {
       form,
       title,
-      isDisabled,
       submitting,
       chatShown,
       chatOptions,

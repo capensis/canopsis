@@ -8,6 +8,7 @@ export default {
   matchedItems: 'Éléments correspondants',
   animations: 'Animations',
   instructionApprovement: 'Approbation des consignes',
+  advanced: 'Avancé',
   logo: 'Logo',
   infoPopupTimeout: 'Délai d\'affichage pour les popups d\'informations',
   errorPopupTimeout: 'Délai d\'affichage pour les popups d\'erreurs',
