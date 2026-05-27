@@ -9,6 +9,8 @@ import { PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
 import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
 
 const stubs = {
+  'c-form-block': true,
+  'c-form-block-row': true,
   'c-name-field': true,
   'c-enabled-field': true,
   'c-duration-field': true,

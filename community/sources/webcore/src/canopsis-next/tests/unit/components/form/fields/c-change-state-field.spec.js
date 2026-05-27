@@ -9,6 +9,7 @@ import { ALARM_STATES } from '@/constants';
 import CChangeStateField from '@/components/forms/fields/c-change-state-field.vue';
 
 const stubs = {
+  'c-form-block-row': true,
   'state-criticity-field': createNumberInputStub('state-criticity-field'),
   'v-textarea': createTextareaInputStub('v-textarea'),
 };

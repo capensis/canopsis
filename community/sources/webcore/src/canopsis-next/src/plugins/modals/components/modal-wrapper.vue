@@ -86,10 +86,20 @@ export default {
 .v-dialog__content--auto-height .v-dialog {
   height: auto !important;
 
-  .v-dialog > {
-    .v-form, .v-card {
+  > .v-form {
+    height: auto;
+
+    > .v-card {
       min-height: unset !important;
+      height: auto;
+      flex: 0 0 auto;
     }
+  }
+
+  > .v-card {
+    min-height: unset !important;
+    height: auto;
+    flex: 0 0 auto;
   }
 }
 
