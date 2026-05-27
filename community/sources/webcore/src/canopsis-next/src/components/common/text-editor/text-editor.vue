@@ -1,6 +1,6 @@
 <template>
   <div class="text-editor">
-    <c-label v-show="label" :error="hasError" class="mb-2">{{ label }}</c-label>
+    <c-label v-if="label" :error="hasError" class="mb-2">{{ label }}</c-label>
     <div
       :class="{ 'error--text': hasError }"
       class="text-editor"

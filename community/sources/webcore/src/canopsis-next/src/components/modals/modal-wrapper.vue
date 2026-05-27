@@ -1,5 +1,5 @@
 <template>
-  <v-card :class="{ 'fill-min-height': fillHeight }" class="modal-wrapper">
+  <v-card :class="wrapperClasses" class="modal-wrapper">
     <v-card-title
       v-if="$slots.title"
       :style="titleStyle"
@@ -42,7 +42,11 @@
 </template>
 
 <script>
+import { computed, inject } from 'vue';
+
 import { CSS_COLORS_VARS } from '@/config';
+
+import { useModals } from '@/hooks/modals';
 
 import ModalTitleButtons from './modal-title-buttons.vue';
 import ModalMassActionsPanel from './modal-mass-actions-panel.vue';
@@ -76,12 +80,25 @@ export default {
       required: false,
     },
   },
-  computed: {
-    titleStyle() {
-      return {
-        backgroundColor: this.titleColor,
-      };
-    },
+  setup(props) {
+    const modal = inject('$modal');
+    const modals = useModals();
+
+    const isAutoHeight = computed(() => Boolean(modals.dialogPropsMap?.[modal.name]?.autoHeight));
+
+    const titleStyle = computed(() => ({
+      backgroundColor: props.titleColor,
+    }));
+
+    const wrapperClasses = computed(() => ({
+      'fill-min-height': props.fillHeight,
+      'modal-wrapper--auto-height': isAutoHeight.value,
+    }));
+
+    return {
+      titleStyle,
+      wrapperClasses,
+    };
   },
 };
 </script>
@@ -92,6 +109,17 @@ export default {
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+
+  &--auto-height {
+    height: auto;
+    overflow: visible;
+
+    .v-card__text {
+      flex: 0 1 auto;
+      min-height: auto;
+      overflow-y: visible;
+    }
+  }
 
   &__title {
     display: flex;
@@ -104,7 +132,7 @@ export default {
     }
   }
 
-  .v-card__text {
+  &:not(.modal-wrapper--auto-height) .v-card__text {
     flex: 1 1 0;
     min-height: 0;
     overflow-y: auto;

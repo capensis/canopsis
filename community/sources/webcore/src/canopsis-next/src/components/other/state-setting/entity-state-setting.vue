@@ -1,8 +1,5 @@
 <template>
   <v-layout column>
-    <h5 class="subheading font-weight-bold">
-      {{ $t('stateSetting.title') }}
-    </h5>
     <v-text-field
       :value="stateSetting?.title"
       :loading="stateSettingPending"
@@ -12,12 +9,13 @@
 </template>
 
 <script>
-import { debounce } from 'lodash';
+import { debounce, pick } from 'lodash';
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 
-import { checkStateSettingMixin } from '@/mixins/entities/check-state-setting';
+import { useEntity } from '@/hooks/store/modules/entity';
+import { usePendingHandler } from '@/hooks/query/pending';
 
 export default {
-  mixins: [checkStateSettingMixin],
   props: {
     form: {
       type: Object,
@@ -28,29 +26,48 @@ export default {
       default: () => d => d,
     },
   },
-  data() {
-    return {
-      stateSetting: {},
-      stateSettingPending: false,
-    };
-  },
-  watch: {
-    form: {
-      deep: true,
-      handler(form) {
-        this.debouncedCheckStateSetting(form);
-      },
-    },
-  },
-  created() {
-    this.debouncedCheckStateSetting = debounce(this.checkStateSettingByForm, 500);
+  setup(props) {
+    const stateSetting = ref();
 
-    this.checkStateSettingByForm(this.form);
-  },
-  methods: {
-    checkStateSettingByForm(form) {
-      return this.checkStateSetting(this.preparer(form));
-    },
+    const { checkStateSetting: checkEntityStateSetting } = useEntity();
+
+    const {
+      pending: stateSettingPending,
+      handler: checkStateSetting,
+    } = usePendingHandler(async (data) => {
+      const response = await checkEntityStateSetting({
+        data: pick(data, ['_id', 'name', 'type', 'connector', 'infos', 'category', 'impact_level']),
+      });
+
+      stateSetting.value = response?.title ? response : undefined;
+    });
+
+    /**
+     * Prepares entity data from the form and fetches the matching state setting when a name is present.
+     *
+     * @param {Object} form - Entity or service form passed from the parent component
+     */
+    const checkStateSettingByForm = (form) => {
+      const data = props.preparer(form);
+
+      if (!data.name) {
+        return;
+      }
+
+      checkStateSetting(data);
+    };
+
+    const debouncedCheckStateSetting = debounce(checkStateSettingByForm, 500);
+
+    watch(() => props.form, debouncedCheckStateSetting, { deep: true });
+
+    onMounted(() => checkStateSettingByForm(props.form));
+    onBeforeUnmount(() => debouncedCheckStateSetting.cancel());
+
+    return {
+      stateSetting,
+      stateSettingPending,
+    };
   },
 };
 </script>

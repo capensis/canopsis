@@ -179,6 +179,7 @@ export default {
   method: 'Method',
   url: 'URL',
   category: 'Category',
+  coordinates: 'Coordinates',
   infos: 'Infos',
   impactLevel: 'Impact level',
   impactState: 'Impact state',

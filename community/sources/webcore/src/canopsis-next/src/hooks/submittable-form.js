@@ -22,6 +22,7 @@ import { useComponentInstance } from './vue';
  * @param {Object} options - Configuration options for the submittable form.
  * @param {Object} options.form - The form data object that will be validated.
  * @param {Function} options.method - The submission method to be called if the form is valid.
+ * @param {Function} [options.isNewCheck = value => !value?._id] - The function to check if the item is new.
  * @param {Function} [options.errorsToValidation = v => v] - The function to convert errors to validation errors.
  * @param {boolean} [options.withTimeout = false] - The property for timeout enabling.
  * @returns {Object} An object containing methods and properties to manage the form submission.
@@ -43,6 +44,7 @@ export const useSubmittableForm = ({
   form,
   item,
   method,
+  isNewCheck = value => !value?._id,
   errorsToValidation = v => v,
   withTimeout = true,
 }) => {
@@ -123,7 +125,7 @@ export const useSubmittableForm = ({
       : submitHandler,
   );
 
-  const isNew = computed(() => !unref(item)?._id);
+  const isNew = computed(() => isNewCheck?.(unref(item)));
 
   const submitLabel = computed(() => (isNew.value ? t('common.create') : t('common.save')));
 

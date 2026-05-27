@@ -24,7 +24,10 @@ export const useValidationElementChildrenFields = (parent) => {
     }
 
     const node = unref(parent);
+    const nodeEl = node?.$el;
 
-    return validator.fields.items.filter(({ vm }) => isParent(vm, node));
+    return validator.fields.items.filter(({ vm, el }) => (
+      (nodeEl && nodeEl === el) || nodeEl?.contains?.(el) || isParent(vm, node)
+    ));
   });
 };
