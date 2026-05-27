@@ -3,6 +3,7 @@ package amqp_test
 import (
 	"context"
 	"errors"
+	"sync/atomic"
 	"testing"
 	"testing/synctest"
 
@@ -21,9 +22,10 @@ func TestConsumeWithReconnect_GivenSuccessfulConsume_ShouldRunUntilCtxCancel(t *
 		queue := "amq.queue"
 		workers := 3
 		ch := mock_amqp.NewMockChannel(ctrl)
+		d := make(chan amqp091.Delivery)
 		ch.EXPECT().
 			ConsumeWithCloseNotify(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(make(chan amqp091.Delivery), make(chan *amqp091.Error), nil)
+			Return(d, make(chan *amqp091.Error), nil)
 
 		ctx, cancel := context.WithCancel(t.Context())
 		var gotErr error
@@ -35,6 +37,7 @@ func TestConsumeWithReconnect_GivenSuccessfulConsume_ShouldRunUntilCtxCancel(t *
 
 		synctest.Wait()
 		cancel()
+		close(d)
 		synctest.Wait()
 
 		select {
@@ -90,6 +93,7 @@ func TestConsumeWithReconnect_GivenNotifyClose_ShouldReConsume(t *testing.T) {
 			) (<-chan amqp091.Delivery, <-chan *amqp091.Error, error) {
 				return make(chan amqp091.Delivery), notifyClose1, nil
 			})
+		d := make(chan amqp091.Delivery)
 		ch.EXPECT().
 			ConsumeWithCloseNotify(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 			DoAndReturn(func(
@@ -98,7 +102,7 @@ func TestConsumeWithReconnect_GivenNotifyClose_ShouldReConsume(t *testing.T) {
 				autoAck, exclusive, noLocal, noWait bool,
 				args amqp091.Table,
 			) (<-chan amqp091.Delivery, <-chan *amqp091.Error, error) {
-				return make(chan amqp091.Delivery), notifyClose2, nil
+				return d, notifyClose2, nil
 			})
 
 		ctx, cancel := context.WithCancel(t.Context())
@@ -114,6 +118,8 @@ func TestConsumeWithReconnect_GivenNotifyClose_ShouldReConsume(t *testing.T) {
 		synctest.Wait()
 
 		cancel()
+		close(d)
+
 		synctest.Wait()
 
 		select {
@@ -124,33 +130,6 @@ func TestConsumeWithReconnect_GivenNotifyClose_ShouldReConsume(t *testing.T) {
 
 		if gotErr != nil {
 			t.Fatalf("expected nil, got %+v", gotErr)
-		}
-	})
-}
-
-func TestConsumeWithReconnect_GivenWorkerError_ShouldReturnErr(t *testing.T) {
-	synctest.Test(t, func(t *testing.T) {
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
-
-		ch := mock_amqp.NewMockChannel(ctrl)
-
-		queue := "amq.queue"
-		d := make(chan amqp091.Delivery, 1)
-		d <- amqp091.Delivery{}
-		ch.EXPECT().
-			ConsumeWithCloseNotify(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(d, make(chan *amqp091.Error), nil)
-		ch.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any())
-
-		werr := errors.New("worker error")
-		failFast := func(gctx context.Context, d amqp091.Delivery) (amqp.AckAction, error) {
-			return amqp.Nack, werr
-		}
-
-		gotErr := amqp.ConsumeWithReconnect(t.Context(), ch, amqp.ConsumeOptions{Queue: queue}, 1, failFast, zerolog.Nop())
-		if !errors.Is(gotErr, werr) {
-			t.Fatalf("expected %+v, got %+v", werr, gotErr)
 		}
 	})
 }
@@ -181,6 +160,7 @@ func TestConsumeWithReconnect_GivenProcessReturnsAck_ShouldAckDelivery(t *testin
 
 		synctest.Wait()
 		cancel()
+		close(d)
 		synctest.Wait()
 
 		select {
@@ -225,6 +205,7 @@ func TestConsumeWithReconnect_GivenProcessReturnsNack_ShouldNackDelivery(t *test
 
 		synctest.Wait()
 		cancel()
+		close(d)
 		synctest.Wait()
 
 		select {
@@ -250,6 +231,7 @@ func TestConsumeWithReconnect_GivenProcessReturnsNackAndError_ShouldNackDelivery
 		d := make(chan amqp091.Delivery, 1)
 		msg := amqp091.Delivery{DeliveryTag: 1}
 		d <- msg
+		close(d)
 		ch.EXPECT().
 			ConsumeWithCloseNotify(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 			Return(d, make(chan *amqp091.Error), nil)
@@ -306,6 +288,7 @@ func TestConsumeWithReconnect_GivenAckBrokerError_ShouldNotReturnErr(t *testing.
 
 		synctest.Wait()
 		cancel()
+		close(d)
 		synctest.Wait()
 
 		select {
@@ -411,6 +394,7 @@ func TestConsumeWithReconnect_GivenCtxCancelDuringProcess_ShouldDrainAck(t *test
 		synctest.Wait()
 
 		cancel()
+		close(d)
 
 		synctest.Wait()
 
@@ -440,6 +424,7 @@ func TestConsumeWithReconnect_GivenProcessPanic_ShouldReturnErr(t *testing.T) {
 
 		d := make(chan amqp091.Delivery, 1)
 		d <- amqp091.Delivery{DeliveryTag: 1}
+		close(d)
 		ch.EXPECT().
 			ConsumeWithCloseNotify(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 			Return(d, make(chan *amqp091.Error), nil)
@@ -453,6 +438,91 @@ func TestConsumeWithReconnect_GivenProcessPanic_ShouldReturnErr(t *testing.T) {
 
 		if !errors.Is(gotErr, panicErr) {
 			t.Fatalf("expected %+v, got %+v", panicErr, gotErr)
+		}
+	})
+}
+
+func TestConsumeWithReconnect_GivenCtxCanceled_ShouldDrainDeliveries(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		queue := "amq.queue"
+		workers := 3
+		ch := mock_amqp.NewMockChannel(ctrl)
+		msgCount := 3 * workers
+		d := make(chan amqp091.Delivery, msgCount)
+		for i := 0; i < msgCount; i++ {
+			msg := amqp091.Delivery{DeliveryTag: uint64(i + 1)}
+			d <- msg
+
+			if i < workers {
+				ch.EXPECT().Ack(gomock.Eq(msg.DeliveryTag), gomock.Any()).Return(nil)
+			} else {
+				ch.EXPECT().Nack(gomock.Eq(msg.DeliveryTag), gomock.Any(), gomock.Any()).Return(nil)
+			}
+		}
+
+		ch.EXPECT().
+			ConsumeWithCloseNotify(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(d, make(chan *amqp091.Error), nil)
+
+		processStarted := make(chan struct{}, workers)
+		processDone := make(chan struct{})
+		var processExecutions atomic.Int32
+		slowProcess := func(_ context.Context, _ amqp091.Delivery) (amqp.AckAction, error) {
+			processExecutions.Add(1)
+			processStarted <- struct{}{}
+			<-processDone
+
+			return amqp.Ack, nil
+		}
+
+		ctx, cancel := context.WithCancel(t.Context())
+		var gotErr error
+		done := make(chan struct{})
+		go func() {
+			gotErr = amqp.ConsumeWithReconnect(ctx, ch, amqp.ConsumeOptions{Queue: queue}, workers, slowProcess, zerolog.Nop())
+			close(done)
+		}()
+
+		synctest.Wait()
+
+		for i := 0; i < workers; i++ {
+			<-processStarted
+		}
+
+		synctest.Wait()
+
+		cancel()
+		close(d)
+
+		synctest.Wait()
+
+		close(processDone)
+
+		synctest.Wait()
+
+		select {
+		case <-done:
+		default:
+			t.Fatal("ConsumeWithReconnect did not return after ctx cancel")
+		}
+
+		if gotErr != nil {
+			t.Fatalf("expected nil, got %+v", gotErr)
+		}
+
+		if got := processExecutions.Load(); got != int32(workers) {
+			t.Fatalf("expected %d processed deliveries, got %d", workers, got)
+		}
+
+		select {
+		case m, ok := <-d:
+			if ok {
+				t.Fatalf("expected deliveries to be drained, got %+v", m)
+			}
+		default:
 		}
 	})
 }
@@ -472,9 +542,10 @@ func TestSubscribeWithReconnect_GivenSuccessfulSetup_ShouldRunUntilCtxCancel(t *
 		ch.EXPECT().
 			QueueBind(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
 			Return(nil)
+		d := make(chan amqp091.Delivery)
 		ch.EXPECT().
 			ConsumeWithCloseNotify(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(make(chan amqp091.Delivery), make(chan *amqp091.Error), nil)
+			Return(d, make(chan *amqp091.Error), nil)
 		opts := amqp.SubscribeOptions{
 			Exchange:       exchange,
 			QueueExclusive: true,
@@ -490,6 +561,7 @@ func TestSubscribeWithReconnect_GivenSuccessfulSetup_ShouldRunUntilCtxCancel(t *
 
 		synctest.Wait()
 		cancel()
+		close(d)
 		synctest.Wait()
 
 		select {
@@ -526,9 +598,10 @@ func TestSubscribeWithReconnect_GivenBindQueueMissing_ShouldRetryDeclare(t *test
 		ch.EXPECT().
 			QueueBind(gomock.Any(), gomock.Eq(queue2), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
 			Return(nil)
+		d := make(chan amqp091.Delivery)
 		ch.EXPECT().
 			ConsumeWithCloseNotify(gomock.Any(), gomock.Eq(queue2), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(make(chan amqp091.Delivery), make(chan *amqp091.Error), nil)
+			Return(d, make(chan *amqp091.Error), nil)
 
 		opts := amqp.SubscribeOptions{
 			Exchange:       exchange,
@@ -545,6 +618,7 @@ func TestSubscribeWithReconnect_GivenBindQueueMissing_ShouldRetryDeclare(t *test
 
 		synctest.Wait()
 		cancel()
+		close(d)
 		synctest.Wait()
 
 		select {
@@ -584,9 +658,10 @@ func TestSubscribeWithReconnect_GivenConsumeQueueMissing_ShouldResetAndRetry(t *
 		ch.EXPECT().
 			QueueBind(gomock.Any(), gomock.Eq(queue2), gomock.Any(), gomock.Eq(exchange), gomock.Any(), gomock.Any()).
 			Return(nil)
+		d := make(chan amqp091.Delivery)
 		ch.EXPECT().
 			ConsumeWithCloseNotify(gomock.Any(), gomock.Eq(queue2), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(make(chan amqp091.Delivery), make(chan *amqp091.Error), nil)
+			Return(d, make(chan *amqp091.Error), nil)
 
 		opts := amqp.SubscribeOptions{
 			Exchange:       exchange,
@@ -603,6 +678,7 @@ func TestSubscribeWithReconnect_GivenConsumeQueueMissing_ShouldResetAndRetry(t *
 
 		synctest.Wait()
 		cancel()
+		close(d)
 		synctest.Wait()
 
 		select {

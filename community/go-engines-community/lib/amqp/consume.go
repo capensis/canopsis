@@ -202,13 +202,13 @@ func runWithReconnect(
 		}
 	}
 
-	d, notifyCh, err := setup(gctx)
+	deliveries, notifyCh, err := setup(gctx)
 	if err != nil {
 		return err
 	}
 
 	generation := uint64(0)
-	spawnWorkers(d, generation)
+	spawnWorkers(deliveries, generation)
 
 	ack := func(op ackOp) {
 		if op.generation != generation {
@@ -237,13 +237,13 @@ loop:
 		case <-gctx.Done():
 			break loop
 		case <-notifyCh:
-			d, notifyCh, setupErr = setup(gctx)
+			deliveries, notifyCh, setupErr = setup(gctx)
 			if setupErr != nil {
 				break loop
 			}
 
 			generation++
-			spawnWorkers(d, generation)
+			spawnWorkers(deliveries, generation)
 		case op := <-ackCh:
 			ack(op)
 		}
@@ -256,6 +256,14 @@ loop:
 
 	for op := range ackCh {
 		ack(op)
+	}
+
+	if setupErr == nil {
+		// Drain deliveries until amqp091 closes the chan:
+		// unread deliveries stall the connection reader and the subsequent Channel.Close would hang.
+		for d := range deliveries {
+			ack(ackOp{deliveryTag: d.DeliveryTag, action: Nack, generation: generation})
+		}
 	}
 
 	return errors.Join(setupErr, g.Wait())
@@ -282,6 +290,14 @@ func newWorker(ctx context.Context, deliveries <-chan amqp.Delivery, ackCh chan 
 			case d, ok := <-deliveries:
 				if !ok {
 					return nil
+				}
+
+				select {
+				case <-ctx.Done():
+					ackCh <- ackOp{deliveryTag: d.DeliveryTag, action: Nack, generation: generation}
+
+					return nil
+				default:
 				}
 
 				action, err := process(ctx, d)
