@@ -25,10 +25,16 @@ import (
 	"github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	pgxdriver "github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+)
+
+var ErrDownMigrationBlocked = errors.New(
+	"down migration blocked: a cross-line Force() transition has been recorded for this database;" +
+		" restore from a pre-upgrade backup or pass -postgres-migration-unsafe to override",
 )
 
 func main() {
@@ -88,12 +94,12 @@ func main() {
 		logger.Fatal().Err(err).Msg("failed to run mongo migrations")
 	}
 
-	err = migratePostgres(f, logger)
+	err = migratePostgres(ctx, f, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to run postgres migrations")
 	}
 
-	err = migrateTechPostgres(f, logger)
+	err = migrateTechPostgres(ctx, f, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to run tech postgres migrations")
 	}
@@ -323,7 +329,7 @@ func migrateMongo(ctx context.Context, f flags, dbClient mongo.DbClient, logger 
 	return nil
 }
 
-func migratePostgres(f flags, logger zerolog.Logger) error {
+func migratePostgres(ctx context.Context, f flags, logger zerolog.Logger) error {
 	if !f.modeMigratePostgres {
 		return nil
 	}
@@ -338,7 +344,7 @@ func migratePostgres(f flags, logger zerolog.Logger) error {
 		return err
 	}
 
-	err = runPostgresMigrations(f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps, connStr)
+	err = runPostgresMigrations(ctx, f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps, connStr, f.postgresUnsafeMigrations, f.diagnoseMigrations, logger)
 	if err != nil {
 		return err
 	}
@@ -347,7 +353,7 @@ func migratePostgres(f flags, logger zerolog.Logger) error {
 	return nil
 }
 
-func migrateTechPostgres(f flags, logger zerolog.Logger) error {
+func migrateTechPostgres(ctx context.Context, f flags, logger zerolog.Logger) error {
 	if !f.modeMigrateTechPostgres {
 		return nil
 	}
@@ -362,7 +368,7 @@ func migrateTechPostgres(f flags, logger zerolog.Logger) error {
 		return err
 	}
 
-	err = runPostgresMigrations(f.techPostgresMigrationDirectory, f.techPostgresMigrationMode, f.techPostgresMigrationSteps, connStr)
+	err = runPostgresMigrations(ctx, f.techPostgresMigrationDirectory, f.techPostgresMigrationMode, f.techPostgresMigrationSteps, connStr, f.techPostgresUnsafeMigrations, f.diagnoseMigrations, logger)
 	if err != nil {
 		return err
 	}
@@ -411,7 +417,11 @@ func generateSerialName(ctx context.Context, logger zerolog.Logger, forceUpdate 
 	return nil
 }
 
-func runPostgresMigrations(migrationDirectory, mode string, steps int, connStr string) error {
+func runPostgresMigrations(ctx context.Context, migrationDirectory, mode string, steps int, connStr string, unsafe, diagnose bool, logger zerolog.Logger) error {
+	if steps < 0 {
+		return errors.New("postgres migration steps should be >= 0")
+	}
+
 	p := &pgx.Postgres{}
 	driver, err := p.Open(connStr)
 	if err != nil {
@@ -422,30 +432,96 @@ func runPostgresMigrations(migrationDirectory, mode string, steps int, connStr s
 	if err != nil {
 		return err
 	}
+	defer m.Close()
 
-	if steps < 0 {
-		return errors.New("postgres migration steps should be >= 0")
+	// Read the current schema_migrations state before any operation.
+	state, err := loadMigrationState(m)
+	if err != nil {
+		return err
 	}
+
+	// Condition 1: dirty state blocks all migration operations.
+	if state.hasVersion && state.dirty {
+		return fmt.Errorf("postgres migration state is dirty at version %d: manual recovery required before re-running", state.version)
+	}
+
+	// Open a dedicated pool for transition registry/history queries.
+	pool, poolErr := pgxpool.New(ctx, connStr)
+	if poolErr != nil {
+		return fmt.Errorf("opening transition pool: %w", poolErr)
+	}
+	defer pool.Close()
 
 	switch mode {
 	case "up":
+		// wrapper function computing transition plan and printing diagnostics
+		plan, dir, exit, err := upTransitionPreflight(ctx, pool, state, migrationDirectory, unsafe, diagnose, logger)
+		if exit {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		// Apply Force() if the plan requires it.
+		if plan.needsForce {
+			if steps != 0 {
+				return fmt.Errorf(
+					"step-based migration cannot be used when a cross-line Force() transition is required"+
+						" (source line %q, checkpoint %d): omit -postgres-migration-steps to proceed",
+					plan.sourceReleaseLine, plan.forceVersion,
+				)
+			}
+			if err = m.Force(int(plan.forceVersion)); err != nil {
+				return fmt.Errorf("forcing migration state to checkpoint %d: %w", plan.forceVersion, err)
+			}
+		}
+
+		// execute the requested migration steps.
 		if steps != 0 {
 			err = m.Steps(steps)
 		} else {
 			err = m.Up()
 		}
+		if err != nil && !errors.Is(err, migrate.ErrNoChange) {
+			return err
+		}
+
+		// Record the cross-line transition after a successful Force() + Up().
+		if plan.needsForce {
+			if recordErr := recordTransitionHistory(ctx, pool, state, plan, dir); recordErr != nil {
+				// intentionally log and continue rather than rolling back a completed migration.
+				logger.Err(recordErr).Msg("transition history write failed; upgrade succeeded but Down() will not be blocked by history check")
+			}
+		}
+
 	case "down":
+		// block Down() if a cross-line transition has found
+		// unsafe flag bypasses this check for recovery purposes
+		if !unsafe {
+			historyExists, histErr := hasTransitionHistory(ctx, pool)
+			if histErr != nil {
+				return histErr
+			}
+			if historyExists {
+				return ErrDownMigrationBlocked
+			}
+		}
+
 		if steps != 0 {
 			err = m.Steps(-steps)
 		} else {
 			err = m.Down()
 		}
-	default:
-		return errors.New("postgres migration mode should be up or down")
-	}
+		if err != nil && !errors.Is(err, migrate.ErrNoChange) {
+			return err
+		}
 
-	if !errors.Is(err, migrate.ErrNoChange) {
-		return err
+	default:
+		if !diagnose {
+			return errors.New("postgres migration mode should be up or down")
+		}
+		// in diagnose mode, print diagnostics and exit when the mode is not explicitly set to up or down.
+		printMigrationDiagnostics(logger, state, dirInfo{}, transitionPlan{})
 	}
 
 	return nil
