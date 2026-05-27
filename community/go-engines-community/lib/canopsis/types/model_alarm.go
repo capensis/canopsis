@@ -555,6 +555,11 @@ func (a *Alarm) GetRefField(f string) (any, bool) {
 			return nil, true
 		}
 		return a.Value.ChangeState, true
+	case "v.failed_ticket":
+		if a.Value.FailedTicket == nil {
+			return nil, true
+		}
+		return a.Value.FailedTicket, true
 	case "v.meta":
 		if a.Value.Meta == "" {
 			return nil, true
