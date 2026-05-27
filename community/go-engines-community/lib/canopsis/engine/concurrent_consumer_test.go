@@ -258,7 +258,7 @@ func TestConcurrentConsumer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *te
 	body := []byte("test-body")
 	msgs := make(chan amqp.Delivery, 1)
 	msgs <- amqp.Delivery{Body: body}
-	defer close(msgs)
+	close(msgs)
 	notifyClose := make(chan *amqp.Error)
 	mockConsumeCh.EXPECT().
 		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
@@ -299,7 +299,6 @@ func TestConcurrentConsumer_Consume_GivenContextDone_ShouldStopConsumer(t *testi
 		zerolog.Logger{},
 	)
 	msgs := make(chan amqp.Delivery, 1)
-	defer close(msgs)
 	notifyClose := make(chan *amqp.Error)
 	mockConsumeCh.EXPECT().Ack(gomock.Any(), gomock.Any()).Times(0)
 	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
@@ -310,6 +309,7 @@ func TestConcurrentConsumer_Consume_GivenContextDone_ShouldStopConsumer(t *testi
 
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
+	close(msgs)
 
 	err := consumer.Consume(ctx)
 	if err != nil {

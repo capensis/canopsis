@@ -147,7 +147,7 @@ func TestRpcServer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testing.T) 
 	body := []byte("test-body")
 	msgs := make(chan amqp.Delivery, 1)
 	msgs <- amqp.Delivery{Body: body}
-	defer close(msgs)
+	close(msgs)
 	notifyClose := make(chan *amqp.Error)
 	mockConsumeCh.EXPECT().
 		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
@@ -187,7 +187,7 @@ func TestRpcServer_Consume_GivenContextDone_ShouldStopConsumer(t *testing.T) {
 		zerolog.Logger{},
 	)
 	msgs := make(chan amqp.Delivery, 1)
-	defer close(msgs)
+	close(msgs)
 	notifyClose := make(chan *amqp.Error)
 	mockConsumeCh.EXPECT().Ack(gomock.Any(), gomock.Any()).Times(0)
 	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)

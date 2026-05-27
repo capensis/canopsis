@@ -101,18 +101,9 @@ func main() {
 	fmt.Printf("%s started\n", daemonName)
 	defer fmt.Printf("\n%s closed\n", daemonName)
 
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case d, ok := <-msgs:
-			if !ok {
-				log.Fatal("the rabbitmq channel has been closed")
-			}
-
-			fmt.Printf("%s %s New message:\n%s@%s:\n\t%s\n",
-				time.Now().Format("2006-01-02T15:04:05.999999999Z07:00"),
-				daemonName, d.RoutingKey, d.Exchange, d.Body)
-		}
+	for d := range msgs {
+		fmt.Printf("%s %s New message:\n%s@%s:\n\t%s\n",
+			time.Now().Format("2006-01-02T15:04:05.999999999Z07:00"),
+			daemonName, d.RoutingKey, d.Exchange, d.Body)
 	}
 }
