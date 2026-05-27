@@ -567,7 +567,7 @@ func (m DependencyMaker) EventProcessor(
 		remediationRpcClient, internalTagAlarmMatcher, eventGenerator, amqpPublisher, json.NewEncoder(), logger))
 	container.Set(types.EventTypeWebhookStarted, event.NewWebhookStartProcessor(dbClient))
 	container.Set(types.EventTypeWebhookCompleted, event.NewWebhookCompleteProcessor(dbClient, metaAlarmPostProcessor, metricsSender, amqpPublisher, eventGenerator, json.NewEncoder(), checkTicketStatusService, logger))
-	container.Set(types.EventTypeWebhookFailed, event.NewWebhookFailProcessor(dbClient))
+	container.Set(types.EventTypeWebhookFailed, event.NewWebhookFailProcessor(dbClient, amqpPublisher, eventGenerator, json.NewEncoder(), logger))
 	container.Set(types.EventTypeAutoWebhookStarted, event.NewAutoWebhookStartProcessor(dbClient))
 	container.Set(types.EventTypeAutoWebhookCompleted, event.NewAutoWebhookCompleteProcessor(dbClient, metaAlarmPostProcessor, metricsSender, checkTicketStatusService, logger))
 	container.Set(types.EventTypeAutoWebhookFailed, event.NewAutoWebhookFailProcessor(dbClient))
