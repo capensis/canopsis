@@ -4528,6 +4528,25 @@ definitions:
       total_count:
         type: integer
     type: object
+  pattern.AlarmCountResponse:
+    properties:
+      alarms:
+        properties:
+          alarm_pattern:
+            $ref: '#/definitions/pattern.CountResponse'
+          combined:
+            $ref: '#/definitions/pattern.CountResponse'
+          entity_pattern:
+            $ref: '#/definitions/pattern.CountResponse'
+          pbehavior_pattern:
+            $ref: '#/definitions/pattern.CountResponse'
+        type: object
+      entities:
+        properties:
+          entity_pattern:
+            $ref: '#/definitions/pattern.CountResponse'
+        type: object
+    type: object
   pattern.BulkDeleteRequestItem:
     properties:
       _id:
@@ -4541,30 +4560,6 @@ definitions:
         type: string
       value:
         type: object
-    type: object
-  pattern.CountAlarmsResponse:
-    properties:
-      alarm_pattern:
-        $ref: '#/definitions/pattern.CountResponse'
-      all:
-        $ref: '#/definitions/pattern.CountResponse'
-      entities:
-        $ref: '#/definitions/pattern.CountResponse'
-      entity_pattern:
-        $ref: '#/definitions/pattern.CountResponse'
-      pbehavior_pattern:
-        $ref: '#/definitions/pattern.CountResponse'
-    type: object
-  pattern.CountEntitiesResponse:
-    properties:
-      alarm_pattern:
-        $ref: '#/definitions/pattern.CountResponse'
-      all:
-        $ref: '#/definitions/pattern.CountResponse'
-      entity_pattern:
-        $ref: '#/definitions/pattern.CountResponse'
-      pbehavior_pattern:
-        $ref: '#/definitions/pattern.CountResponse'
     type: object
   pattern.CountRequest:
     properties:
@@ -4638,6 +4633,17 @@ definitions:
     - is_corporate
     - title
     - type
+    type: object
+  pattern.EntityCountResponse:
+    properties:
+      alarm_pattern:
+        $ref: '#/definitions/pattern.CountResponse'
+      combined:
+        $ref: '#/definitions/pattern.CountResponse'
+      entity_pattern:
+        $ref: '#/definitions/pattern.CountResponse'
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.CountResponse'
     type: object
   pattern.FieldCondition:
     properties:
