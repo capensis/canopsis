@@ -177,9 +177,9 @@ func Default(
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
-	amqpPubPool := libamqp.NewPublishChannelPool(amqpPubConn, canopsis.DefaultAMQPPublishPoolSize)
+	amqpPubPool := libamqp.NewChannelPool(amqpPubConn, canopsis.DefaultAMQPPublishPoolSize)
 	amqpPublisher := libamqp.NewPooledPublisher(amqpPubPool)
-	amqpConsumePool := libamqp.NewConsumeChannelPool(amqpConsumeConn, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize, true)
+	amqpConsumePool := libamqp.NewChannelPool(amqpConsumeConn, 0)
 	// Connect to redis.
 	pbhRedisSession, err := libredis.NewSession(ctx, libredis.PBehaviorLockStorage, logger,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
@@ -254,7 +254,7 @@ func Default(
 	}
 
 	services.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
-	workersRunner := workers.NewRunner(amqpConsumePool, logger)
+	workersRunner := workers.NewRunner(amqpConsumePool, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize, logger)
 	// Create csv exporter.
 	services.ExportTaskExecutor = export.NewTaskExecutor(primaryDbClient, workers.NewJobPublisher(jobKeyExport, amqpPublisher),
 		services.TimezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
@@ -379,7 +379,8 @@ func Default(
 
 	services.NotificationStore = usernotification.NewStore(primaryDbClient, amqpPublisher, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
-	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConsumePool, services.WebsocketHub,
+	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConsumePool,
+		cfg.Global.PrefetchCount, cfg.Global.PrefetchSize, services.WebsocketHub,
 		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
 
 	if tplTestTypePermMapping == nil {

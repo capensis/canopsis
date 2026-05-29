@@ -27,15 +27,17 @@ const (
 // the returned AckAction is still forwarded to the dispatcher before the worker exits.
 type ProcessFunc func(ctx context.Context, msg amqp.Delivery) (AckAction, error)
 
-// ConsumeOptions bundles the parameters forwarded to Channel.ConsumeWithContext.
+// ConsumeOptions bundles the parameters for Channel.Qos and Channel.ConsumeWithContext.
 type ConsumeOptions struct {
-	Queue     string
-	Consumer  string
-	AutoAck   bool
-	Exclusive bool
-	NoLocal   bool
-	NoWait    bool
-	Args      amqp.Table
+	Queue         string
+	Consumer      string
+	AutoAck       bool
+	Exclusive     bool
+	NoLocal       bool
+	NoWait        bool
+	Args          amqp.Table
+	PrefetchCount int
+	PrefetchSize  int
 }
 
 // ConsumeWithReconnect drives a consume loop that survives AMQP channel reconnects.
@@ -57,6 +59,11 @@ func ConsumeWithReconnect(
 	logger zerolog.Logger,
 ) error {
 	setup := func(gctx context.Context) (<-chan amqp.Delivery, <-chan *amqp.Error, error) {
+		err := ch.Qos(gctx, opts.PrefetchCount, opts.PrefetchSize, false)
+		if err != nil {
+			return nil, nil, fmt.Errorf("cannot set prefetch params: %w", err)
+		}
+
 		d, notifyCh, err := ch.ConsumeWithCloseNotify(gctx, opts.Queue, opts.Consumer, opts.AutoAck, opts.Exclusive,
 			opts.NoLocal, opts.NoWait, opts.Args)
 		if err != nil {
@@ -88,6 +95,10 @@ type SubscribeOptions struct {
 	NoLocal  bool
 	NoWait   bool
 	Args     amqp.Table
+
+	// QoS params.
+	PrefetchCount int
+	PrefetchSize  int
 }
 
 // SubscribeWithReconnect declares a queue, binds it to opts.Exchange with opts.RoutingKey, and consumes from it.
@@ -146,6 +157,11 @@ func SubscribeWithReconnect(
 				}
 
 				queue = q.Name
+			}
+
+			err = ch.Qos(gctx, opts.PrefetchCount, opts.PrefetchSize, false)
+			if err != nil {
+				return nil, nil, fmt.Errorf("cannot set prefetch params: %w", err)
 			}
 
 			d, notifyCh, err = ch.ConsumeWithCloseNotify(gctx, queue, opts.Consumer,

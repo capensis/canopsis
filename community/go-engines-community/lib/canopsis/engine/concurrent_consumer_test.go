@@ -27,6 +27,7 @@ func TestConcurrentConsumer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewConcurrentConsumer(
 		name, queue,
+		1, 100,
 		false,
 		"", "", "", "", 10, false,
 		mockPubCh,
@@ -44,6 +45,7 @@ func TestConcurrentConsumer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 		close(notifyClose)
 	})
 	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Qos(gomock.Any(), gomock.Eq(1), gomock.Eq(100), gomock.Eq(false)).Times(2)
 	mockConsumeCh.EXPECT().
 		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)
@@ -74,6 +76,7 @@ func TestConcurrentConsumer_Consume_GivenProcessedMessage_ShouldPublishResultMes
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewConcurrentConsumer(
 		name, queue,
+		1, 100,
 		false,
 		nextExchange, nextQueue, "", "", 10, false,
 		mockPubCh,
@@ -90,6 +93,7 @@ func TestConcurrentConsumer_Consume_GivenProcessedMessage_ShouldPublishResultMes
 		close(notifyClose)
 	})
 	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Qos(gomock.Any(), gomock.Eq(1), gomock.Eq(100), gomock.Eq(false)).Times(2)
 	mockConsumeCh.EXPECT().
 		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)
@@ -132,6 +136,7 @@ func TestConcurrentConsumer_Consume_GivenProcessedMessageAndNoNextQueue_ShouldPu
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewConcurrentConsumer(
 		name, queue,
+		1, 100,
 		false,
 		"", "", fifoExchange, fifoQueue, 10, false,
 		mockPubCh,
@@ -148,6 +153,7 @@ func TestConcurrentConsumer_Consume_GivenProcessedMessageAndNoNextQueue_ShouldPu
 		close(notifyClose)
 	})
 	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Qos(gomock.Any(), gomock.Eq(1), gomock.Eq(100), gomock.Eq(false)).Times(2)
 	mockConsumeCh.EXPECT().
 		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)
@@ -192,6 +198,7 @@ func TestConcurrentConsumer_Consume_GivenProcessedMessageAndNoNextMessage_Should
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewConcurrentConsumer(
 		name, queue,
+		1, 100,
 		false,
 		nextExchange, nextQueue, fifoExchange, fifoQueue, 10, false,
 		mockPubCh,
@@ -208,6 +215,7 @@ func TestConcurrentConsumer_Consume_GivenProcessedMessageAndNoNextMessage_Should
 		close(notifyClose)
 	})
 	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Qos(gomock.Any(), gomock.Eq(1), gomock.Eq(100), gomock.Eq(false)).Times(2)
 	mockConsumeCh.EXPECT().
 		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)
@@ -248,6 +256,7 @@ func TestConcurrentConsumer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *te
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewConcurrentConsumer(
 		name, queue,
+		1, 100,
 		false,
 		"", "", "", "", 10, false,
 		mockPubCh,
@@ -260,6 +269,7 @@ func TestConcurrentConsumer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *te
 	msgs <- amqp.Delivery{Body: body}
 	close(msgs)
 	notifyClose := make(chan *amqp.Error)
+	mockConsumeCh.EXPECT().Qos(gomock.Any(), gomock.Eq(1), gomock.Eq(100), gomock.Eq(false))
 	mockConsumeCh.EXPECT().
 		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)
@@ -291,6 +301,7 @@ func TestConcurrentConsumer_Consume_GivenContextDone_ShouldStopConsumer(t *testi
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewConcurrentConsumer(
 		name, queue,
+		1, 100,
 		false,
 		"", "", "", "", 10, false,
 		mockPubCh,
@@ -302,6 +313,7 @@ func TestConcurrentConsumer_Consume_GivenContextDone_ShouldStopConsumer(t *testi
 	notifyClose := make(chan *amqp.Error)
 	mockConsumeCh.EXPECT().Ack(gomock.Any(), gomock.Any()).Times(0)
 	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Qos(gomock.Any(), gomock.Eq(1), gomock.Eq(100), gomock.Eq(false))
 	mockConsumeCh.EXPECT().
 		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)

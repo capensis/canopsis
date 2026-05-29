@@ -84,7 +84,7 @@ func NewEngineAction(
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	amqpPubChPool := m.DepAMQPPubChannelPool(amqpPubConn)
 	amqpPublisher := amqp.NewPooledPublisher(amqpPubChPool)
-	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
+	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn)
 	actionAdapter := action.NewAdapter(mongoClient)
 	alarmAdapter := alarm.NewAdapter(mongoClient)
 	actionRedisClient := m.DepRedisSession(ctx, redis.ActionScenarioStorage, logger, cfg)
@@ -113,6 +113,8 @@ func NewEngineAction(
 		"",
 		canopsis.AxeRPCQueueServerName,
 		canopsis.ActionAxeRPCClientQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		options.RpcWorkers,
 		amqpPublisher,
 		amqpConsumeChPool,
@@ -227,6 +229,8 @@ func NewEngineAction(
 	engineAction.AddConsumer(engine.NewConcurrentConsumer(
 		canopsis.ActionExternalConsumerName,
 		canopsis.ActionExternalQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",
@@ -242,6 +246,8 @@ func NewEngineAction(
 	engineAction.AddConsumer(engine.NewConcurrentConsumer(
 		canopsis.ActionSystemConsumerName,
 		canopsis.ActionSystemQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",
@@ -257,6 +263,8 @@ func NewEngineAction(
 	engineAction.AddConsumer(engine.NewConcurrentConsumer(
 		canopsis.ActionUserConsumerName,
 		canopsis.ActionUserQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",

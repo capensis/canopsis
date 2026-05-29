@@ -61,7 +61,7 @@ func NewEngine(
 	amqpConsumeConn := m.DepAmqpConnection(logger, cfg)
 	amqpPubChPool := m.DepAMQPPubChannelPool(amqpPubConn)
 	amqpPublisher := amqp.NewPooledPublisher(amqpPubChPool)
-	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
+	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn)
 	entityAdapter := entity.NewAdapter(primaryDbClient)
 	redisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
@@ -237,6 +237,8 @@ func NewEngine(
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.CheExternalConsumerName,
 		canopsis.CheExternalQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		options.Purge,
 		canopsis.EngineExchangeName,
 		canopsis.AxeExternalQueueName,
@@ -252,6 +254,8 @@ func NewEngine(
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.CheSystemConsumerName,
 		canopsis.CheSystemQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		options.Purge,
 		canopsis.EngineExchangeName,
 		canopsis.AxeSystemQueueName,
@@ -267,6 +271,8 @@ func NewEngine(
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.CheUserConsumerName,
 		canopsis.CheUserQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		options.Purge,
 		canopsis.EngineExchangeName,
 		canopsis.AxeUserQueueName,

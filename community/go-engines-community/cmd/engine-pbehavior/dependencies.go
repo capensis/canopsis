@@ -51,7 +51,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	amqpConsumeConn := m.DepAmqpConnection(logger, cfg)
 	amqpPubChPool := m.DepAMQPPubChannelPool(amqpPubConn)
 	amqpPublisher := amqp.NewPooledPublisher(amqpPubChPool)
-	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
+	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn)
 	pbhRedisSession := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
@@ -189,6 +189,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	enginePbehavior.AddConsumer(engine.NewRPCServer(
 		canopsis.PBehaviorRPCConsumerName,
 		canopsis.PBehaviorRPCQueueServerName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		options.Workers,
 		amqpPublisher,
 		amqpConsumeChPool,
@@ -198,6 +200,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	enginePbehavior.AddConsumer(engine.NewConcurrentConsumer(
 		canopsis.PBehaviorConsumerName,
 		canopsis.PBehaviorQueueRecomputeName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",

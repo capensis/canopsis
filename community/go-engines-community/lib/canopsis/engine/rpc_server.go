@@ -10,6 +10,7 @@ import (
 // NewRPCServer creates consumer.
 func NewRPCServer(
 	name, queue string,
+	prefetchCount, prefetchSize int,
 	workers int,
 	publisher libamqp.Publisher,
 	consumePool libamqp.ChannelPool,
@@ -18,12 +19,14 @@ func NewRPCServer(
 ) Consumer {
 	return &rpcServer{
 		defaultConsumer: defaultConsumer{
-			name:        name,
-			queue:       queue,
-			publisher:   publisher,
-			consumePool: consumePool,
-			processor:   processor,
-			logger:      logger,
+			name:          name,
+			queue:         queue,
+			prefetchCount: prefetchCount,
+			prefetchSize:  prefetchSize,
+			publisher:     publisher,
+			consumePool:   consumePool,
+			processor:     processor,
+			logger:        logger,
 		},
 		workers: workers,
 	}

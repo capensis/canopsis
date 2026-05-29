@@ -15,34 +15,16 @@ var ErrPoolClosed = errors.New("amqp channel pool is closed")
 // At most limit channels are ever open at once; when the limit is reached and
 // no idle channel is available, Get blocks until a channel is returned via Put,
 // the pool is closed, or ctx is cancelled.
-//
-// setup runs once per newly opened channel (e.g. to apply Qos); pass nil to skip.
-// It is not re-applied on Get of a reused channel.
 type ChannelPool interface {
 	Get(ctx context.Context) (Channel, error)
 	Put(ch Channel)
 	Close() error
 }
 
-func NewPublishChannelPool(conn Connection, limit int) ChannelPool {
-	return NewChannelPool(conn, limit, nil)
-}
-
-func NewConsumeChannelPool(conn Connection, prefetchCount, prefetchSize int, prefetchGlobal bool) ChannelPool {
-	return NewChannelPool(conn, 0, func(ctx context.Context, ch Channel) error {
-		return ch.Qos(ctx, prefetchCount, prefetchSize, prefetchGlobal)
-	})
-}
-
-func NewChannelPool(
-	conn Connection,
-	limit int,
-	setup func(context.Context, Channel) error,
-) ChannelPool {
+func NewChannelPool(conn Connection, limit int) ChannelPool {
 	if limit < 1 {
 		return &channelPool{
-			conn:  conn,
-			setup: setup,
+			conn: conn,
 		}
 	}
 
@@ -53,7 +35,6 @@ func NewChannelPool(
 
 	return &channelPoolWithLimit{
 		conn:   conn,
-		setup:  setup,
 		idle:   make(chan Channel, limit),
 		tokens: tokens,
 		done:   make(chan struct{}),
@@ -61,8 +42,7 @@ func NewChannelPool(
 }
 
 type channelPoolWithLimit struct {
-	conn  Connection
-	setup func(context.Context, Channel) error
+	conn Connection
 
 	mx       sync.Mutex
 	all      []Channel
@@ -140,19 +120,6 @@ func (p *channelPoolWithLimit) openAndRegister(ctx context.Context) (Channel, er
 		return nil, err
 	}
 
-	if p.setup != nil {
-		if err := p.setup(ctx, ch); err != nil {
-			_ = ch.Close()
-
-			select {
-			case p.tokens <- struct{}{}:
-			default:
-			}
-
-			return nil, err
-		}
-	}
-
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
@@ -168,8 +135,7 @@ func (p *channelPoolWithLimit) openAndRegister(ctx context.Context) (Channel, er
 }
 
 type channelPool struct {
-	conn  Connection
-	setup func(context.Context, Channel) error
+	conn Connection
 
 	mx       sync.Mutex
 	all      []Channel

@@ -27,6 +27,7 @@ func TestRpcServer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewRPCServer(
 		name, queue,
+		1, 100,
 		10,
 		mockPubCh,
 		mockChPool,
@@ -47,6 +48,7 @@ func TestRpcServer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 		close(notifyClose)
 	})
 	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Qos(gomock.Any(), gomock.Eq(1), gomock.Eq(100), gomock.Eq(false)).Times(2)
 	mockConsumeCh.EXPECT().
 		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)
@@ -79,6 +81,7 @@ func TestRpcServer_Consume_GivenProcessedMessage_ShouldPublishResultMessageToBac
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewRPCServer(
 		name, queue,
+		1, 100,
 		10,
 		mockPubCh,
 		mockChPool,
@@ -98,6 +101,7 @@ func TestRpcServer_Consume_GivenProcessedMessage_ShouldPublishResultMessageToBac
 		close(notifyClose)
 	})
 	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Qos(gomock.Any(), gomock.Eq(1), gomock.Eq(100), gomock.Eq(false)).Times(2)
 	mockConsumeCh.EXPECT().
 		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)
@@ -138,6 +142,7 @@ func TestRpcServer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testing.T) 
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewRPCServer(
 		name, queue,
+		1, 100,
 		10,
 		mockPubCh,
 		mockChPool,
@@ -149,6 +154,7 @@ func TestRpcServer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testing.T) 
 	msgs <- amqp.Delivery{Body: body}
 	close(msgs)
 	notifyClose := make(chan *amqp.Error)
+	mockConsumeCh.EXPECT().Qos(gomock.Any(), gomock.Eq(1), gomock.Eq(100), gomock.Eq(false))
 	mockConsumeCh.EXPECT().
 		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)
@@ -180,6 +186,7 @@ func TestRpcServer_Consume_GivenContextDone_ShouldStopConsumer(t *testing.T) {
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
 	consumer := engine.NewRPCServer(
 		name, queue,
+		1, 100,
 		10,
 		mockPubCh,
 		mockChPool,
@@ -191,6 +198,7 @@ func TestRpcServer_Consume_GivenContextDone_ShouldStopConsumer(t *testing.T) {
 	notifyClose := make(chan *amqp.Error)
 	mockConsumeCh.EXPECT().Ack(gomock.Any(), gomock.Any()).Times(0)
 	mockConsumeCh.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+	mockConsumeCh.EXPECT().Qos(gomock.Any(), gomock.Eq(1), gomock.Eq(100), gomock.Eq(false))
 	mockConsumeCh.EXPECT().
 		ConsumeWithCloseNotify(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(msgs, notifyClose, nil)

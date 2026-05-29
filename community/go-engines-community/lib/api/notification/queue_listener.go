@@ -24,6 +24,7 @@ type QueueListener interface {
 func NewQueueListener(
 	dbClient mongo.DbClient,
 	amqpChannel amqp.ChannelPool,
+	prefetchCount, prefetchSize int,
 	websocketHub websocket.Hub,
 	store Store,
 	decoder encoding.Decoder,
@@ -32,6 +33,8 @@ func NewQueueListener(
 ) QueueListener {
 	return &queueListener{
 		amqpChannelPool: amqpChannel,
+		prefetchCount:   prefetchCount,
+		prefetchSize:    prefetchSize,
 		websocketHub:    websocketHub,
 		store:           store,
 		userCollection:  dbClient.Collection(mongo.UserCollection),
@@ -44,6 +47,8 @@ func NewQueueListener(
 
 type queueListener struct {
 	amqpChannelPool amqp.ChannelPool
+	prefetchCount   int
+	prefetchSize    int
 	websocketHub    websocket.Hub
 	store           Store
 	userCollection  mongo.DbCollection
@@ -64,6 +69,8 @@ func (s *queueListener) Listen(ctx context.Context) error {
 	opts := amqp.SubscribeOptions{
 		Exchange:       canopsis.ApiNotificationExchangeName,
 		QueueExclusive: true,
+		PrefetchCount:  s.prefetchCount,
+		PrefetchSize:   s.prefetchSize,
 	}
 
 	return amqp.SubscribeWithReconnect(ctx, ch, opts, s.workers, s.processMsg, s.logger)

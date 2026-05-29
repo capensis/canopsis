@@ -25,10 +25,12 @@ type Job struct {
 	Type string `json:"type"`
 }
 
-func NewRunner(amqpChannelPool libamqp.ChannelPool, logger zerolog.Logger) *Runner {
+func NewRunner(amqpChannelPool libamqp.ChannelPool, prefetchCount, prefetchSize int, logger zerolog.Logger) *Runner {
 	return &Runner{
 		amqpChannelPool: amqpChannelPool,
 		queue:           canopsis.ApiWorkersQueueName,
+		prefetchCount:   prefetchCount,
+		prefetchSize:    prefetchSize,
 		decoder:         json.NewDecoder(),
 		workers:         10,
 		jobExecutors:    make(map[string]JobExecutor),
@@ -39,6 +41,8 @@ func NewRunner(amqpChannelPool libamqp.ChannelPool, logger zerolog.Logger) *Runn
 type Runner struct {
 	amqpChannelPool libamqp.ChannelPool
 	queue           string
+	prefetchCount   int
+	prefetchSize    int
 	decoder         encoding.Decoder
 	workers         int
 	jobExecutorsMx  sync.RWMutex
@@ -61,7 +65,9 @@ func (r *Runner) Run(ctx context.Context) error {
 	}
 
 	opts := libamqp.ConsumeOptions{
-		Queue: r.queue,
+		Queue:         r.queue,
+		PrefetchCount: r.prefetchCount,
+		PrefetchSize:  r.prefetchSize,
 	}
 
 	return libamqp.ConsumeWithReconnect(ctx, ch, opts, r.workers, r.process, r.logger)
