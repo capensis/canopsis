@@ -263,3 +263,10 @@ func (r *row) Scan(dest ...interface{}) error {
 
 	return r.rows.Scan(dest...)
 }
+
+// IsTableMissingErr reports whether err is a PostgreSQL "undefined table"
+// error (SQLSTATE 42P01).
+func IsTableMissingErr(err error) bool {
+	var pgErr *pgconn.PgError
+	return errors.As(err, &pgErr) && pgErr.Code == "42P01"
+}
