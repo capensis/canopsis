@@ -259,6 +259,7 @@ func (c *channel) handleReconnect(amqpConn amqp091Conn) {
 	c.logger.Debug().Msg("starting channel reconnect loop")
 	defer c.logger.Debug().Msg("channel reconnect loop stopped")
 	attempt := 0
+	reconnectTimeout := c.conn.reconnectTimeout
 	for {
 		select {
 		case <-c.done:
@@ -278,6 +279,9 @@ func (c *channel) handleReconnect(amqpConn amqp091Conn) {
 					return
 				}
 
+				attempt = 0
+				reconnectTimeout = c.conn.reconnectTimeout
+
 				continue
 			}
 
@@ -294,16 +298,21 @@ func (c *channel) handleReconnect(amqpConn amqp091Conn) {
 				return
 			}
 
-			t := time.NewTimer(c.conn.reconnectTimeout)
+			t := time.NewTimer(reconnectTimeout)
 			select {
 			case <-c.done:
 				t.Stop()
 
 				return
 			case <-t.C:
+				reconnectTimeout = min(2*reconnectTimeout, maxReconnectTimeout)
+
 				continue
 			}
 		}
+
+		attempt = 0
+		reconnectTimeout = c.conn.reconnectTimeout
 
 		var prevReconnNotify chan struct{}
 

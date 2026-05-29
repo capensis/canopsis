@@ -11,6 +11,8 @@ import (
 	"github.com/rs/zerolog"
 )
 
+const maxReconnectTimeout = time.Second
+
 var ErrConnectionClosed = errors.New("connection is closed")
 
 type connection struct {
@@ -123,6 +125,7 @@ func (c *connection) handleReconnect() {
 	c.logger.Debug().Msg("starting connection reconnect loop")
 	defer c.logger.Debug().Msg("connection reconnect loop stopped")
 	attempt := 0
+	reconnectTimeout := c.reconnectTimeout
 	for {
 		select {
 		case <-c.done:
@@ -145,22 +148,26 @@ func (c *connection) handleReconnect() {
 				return
 			}
 
-			t := time.NewTimer(c.reconnectTimeout)
+			t := time.NewTimer(reconnectTimeout)
 			select {
 			case <-c.done:
 				t.Stop()
 
 				return
 			case <-t.C:
+				reconnectTimeout = min(2*reconnectTimeout, maxReconnectTimeout)
+
 				continue
 			}
 		}
+
+		attempt = 0
+		reconnectTimeout = c.reconnectTimeout
 
 		// Publish the new conn under the lock, then close the previous reconnNotify *outside* the lock.
 		// Any goroutine parked in waitReconnect on the old notify wakes up, re-reads c.amqpConn under the lock,
 		// and either returns it or loops again (e.g. if it had flagged this conn as stale).
 
-		attempt = 0
 		var prevReconnNotify chan struct{}
 
 		c.mx.Lock()
