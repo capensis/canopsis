@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import {
+  ALARM_FIELDS,
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
   PATTERN_CONDITIONS,
@@ -248,6 +249,22 @@ describe('pattern form converters', () => {
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.ticket,
       operator: PATTERN_OPERATORS.ticketNotAssociated,
+    });
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it('should be converted to form and back to pattern with `ticket creation failed` operator', () => {
+    const patternRule = {
+      field: ALARM_FIELDS.failedTicket,
+      cond: { type: PATTERN_CONDITIONS.exist, value: true },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.ticket,
+      operator: PATTERN_OPERATORS.ticketCreationFailed,
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
