@@ -96,8 +96,6 @@ export const messageToForm = (broadcastMessage = {}) => ({
   color: broadcastMessage?.color || DEFAULT_BROADCAST_MESSAGE_COLOR,
   start: convertDateToDateObject(broadcastMessage?.start),
   end: convertDateToDateObject(broadcastMessage?.end),
-  priority: broadcastMessage?.priority || 1,
-  closable: broadcastMessage?.closable || true,
   views: broadcastMessage?.views?.length
     ? viewsArrayToViewsForm(broadcastMessage.views)
     : {
