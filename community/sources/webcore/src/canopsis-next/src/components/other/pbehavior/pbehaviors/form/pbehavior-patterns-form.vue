@@ -14,10 +14,8 @@
 <script>
 import { computed } from 'vue';
 
-import { useStoreModuleHooks } from '@/hooks/store';
 import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
-
-const usePbehaviorPatternsStoreModule = () => useStoreModuleHooks('pbehaviorPatterns');
+import { usePbehaviorPatterns } from '@/hooks/store/modules/pbehavior-patterns';
 
 export default {
   inject: ['$validator'],
@@ -51,10 +49,7 @@ export default {
       entityAttributes,
     } = usePatternsFieldsFetching(fetchPbehaviorPatternFields, props.readonly);
 
-    const { useActions: usePbehaviorPatternActions } = usePbehaviorPatternsStoreModule();
-    const { checkPatternsPbehaviorsCount } = usePbehaviorPatternActions({
-      checkPatternsPbehaviorsCount: 'checkPatternsPbehaviorsCount',
-    });
+    const { checkPatternsPbehaviorsCount } = usePbehaviorPatterns();
 
     const checkFilter = async ({ data } = {}) => {
       const counter = await checkPatternsPbehaviorsCount({
@@ -63,7 +58,7 @@ export default {
 
       return {
         entity_pattern: counter,
-        all: counter,
+        combined: counter,
       };
     };
 
