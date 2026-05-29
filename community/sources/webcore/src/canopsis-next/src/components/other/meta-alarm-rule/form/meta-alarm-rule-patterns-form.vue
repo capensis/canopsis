@@ -7,12 +7,21 @@
     :pending="pending"
     :with-total-entity="withTotalEntity"
     :some-required="someRequired"
+    :counter-method="counterMethod"
     with-alarm
     with-entity
-  />
+  >
+    <template #additional-counters="{ counters }">
+      <v-layout v-if="counters?.threshold_summary" class="gap-2">
+        <strong>{{ $t('common.summary') }}:</strong>
+        <span class="pre-line">{{ counters.threshold_summary }}</span>
+      </v-layout>
+    </template>
+  </c-patterns-field>
 </template>
 
 <script>
+import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
 import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
@@ -47,10 +56,13 @@ export default {
       entityAttributes,
     } = usePatternsFieldsFetching(fetchMetaalarmrulePatternFields, props.readonly);
 
+    const { checkPatternsAlarmsCount } = useMetaAlarmRule();
+
     return {
       pending,
       alarmAttributes,
       entityAttributes,
+      counterMethod: checkPatternsAlarmsCount,
     };
   },
 };

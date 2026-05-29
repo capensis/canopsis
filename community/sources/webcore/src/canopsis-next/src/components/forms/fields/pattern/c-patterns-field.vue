@@ -28,7 +28,7 @@
           :readonly="readonly"
           :name="preparedAlarmName"
           :attributes="alarmAttributes"
-          :alarm-counter="counters.alarm_pattern"
+          :alarm-counter="alarmPatternCounter"
           with-type
           @input="errors.remove(preparedAlarmName)"
           @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.alarm])"
@@ -44,7 +44,7 @@
           :patterns="value.entity_pattern"
           :entity-attributes="entityAttributes"
           :optimized-fields-regexps="optimizedFieldsRegexps"
-          :entities-count="counters.entity_pattern?.count"
+          :entities-count="entityPatternEntitiesCounter?.count"
           @apply:suggestion="applySuggestion"
           @reject:all="rejectAllSuggestions"
           @show:entities-comparison="showEntitiesComparisonModal"
@@ -182,6 +182,8 @@
           {{ $t('common.checkFilter') }}
         </v-btn>
       </v-layout>
+
+      <slot :counters="counters" name="additional-counters" />
     </v-layout>
   </div>
 </template>
@@ -463,15 +465,36 @@ export default {
       patterns,
     });
 
+    const alarmPatternCounter = computed(() => (
+      props.entityCountersType
+        ? counters.value?.alarm_pattern
+        : counters.value?.alarms?.alarm_pattern
+    ));
+
+    const entityPatternEntitiesCounter = computed(() => (
+      props.entityCountersType
+        ? counters.value?.entity_pattern
+        : counters.value?.entities?.entity_pattern
+    ));
+
     const entityPatternsCounters = computed(() => {
       if (props.entityCountersType) {
         return { entityCounter: counters.value?.entity_pattern };
       }
 
-      return { alarmCounter: counters.value?.entity_pattern, entityCounter: counters.value?.entities };
+      return {
+        alarmCounter: counters.value?.alarms?.entity_pattern,
+        entityCounter: counters.value?.entities?.entity_pattern,
+      };
     });
 
-    const pbehaviorPatternsCounters = computed(() => ({ [props.entityCountersType ? 'entityCounter' : 'alarmCounter']: counters.value?.pbehavior_pattern }));
+    const pbehaviorPatternsCounters = computed(() => {
+      const counter = props.entityCountersType
+        ? counters.value?.pbehavior_pattern
+        : counters.value?.alarms?.pbehavior_pattern;
+
+      return { [props.entityCountersType ? 'entityCounter' : 'alarmCounter']: counter };
+    });
 
     /**
      * Validates pattern rules
@@ -565,6 +588,8 @@ export default {
       checkFilter,
       showPatternAlarmsModal,
       showPatternEntitiesModal,
+      alarmPatternCounter,
+      entityPatternEntitiesCounter,
       entityPatternsCounters,
       pbehaviorPatternsCounters,
 

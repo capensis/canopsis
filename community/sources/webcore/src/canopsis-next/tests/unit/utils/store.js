@@ -1199,6 +1199,26 @@ export const createMetaAlarmModule = () => {
   };
 };
 
+export const createMetaAlarmRuleModule = () => {
+  const checkPatternsAlarmsCount = jest.fn().mockResolvedValue({});
+
+  afterEach(() => {
+    checkPatternsAlarmsCount.mockClear();
+  });
+
+  const metaAlarmRuleModule = {
+    name: 'metaAlarmRule',
+    actions: {
+      checkPatternsAlarmsCount,
+    },
+  };
+
+  return {
+    checkPatternsAlarmsCount,
+    metaAlarmRuleModule,
+  };
+};
+
 export const createDeclareTicketModule = () => {
   const bulkCreateDeclareTicketExecution = jest.fn().mockResolvedValue([]);
   const fetchAssignedDeclareTicketsWithoutStore = jest.fn().mockResolvedValue({
