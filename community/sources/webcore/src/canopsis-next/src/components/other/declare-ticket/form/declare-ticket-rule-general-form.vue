@@ -14,8 +14,16 @@
     </v-layout>
 
     <c-enabled-field
-      v-field="form.emit_trigger"
-      :label="$t('common.emitTrigger')"
+      v-field="form.emit_trigger_success"
+      :label="$t('common.emitTriggerSuccess')"
+      name="emit_trigger_success"
+      hide-details
+      no-margin
+    />
+    <c-enabled-field
+      v-field="form.emit_trigger_fail"
+      :label="$t('common.emitTriggerFail')"
+      name="emit_trigger_fail"
       hide-details
       no-margin
     />

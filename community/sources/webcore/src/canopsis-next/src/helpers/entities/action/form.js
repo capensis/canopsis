@@ -107,7 +107,8 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  * @typedef {FilterPatterns} Action
  * @property {ActionType} type
  * @property {boolean} drop_scenario_if_not_matched
- * @property {boolean} emit_trigger
+ * @property {boolean} emit_trigger_success
+ * @property {boolean} [emit_trigger_fail]
  * @property {string} comment
  * @property {ActionParameters} parameters
  */
@@ -324,7 +325,8 @@ export const actionToForm = (action = {}, timezone = getLocalTimezone()) => ({
   key: uid(),
   parameters: actionParametersToForm(action, timezone),
   drop_scenario_if_not_matched: !!action.drop_scenario_if_not_matched,
-  emit_trigger: !!action.emit_trigger,
+  emit_trigger_success: !!action.emit_trigger_success,
+  emit_trigger_fail: !!action.emit_trigger_fail,
   comment: action.comment ?? '',
   patterns: filterPatternsToForm(action, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
 });
@@ -420,8 +422,18 @@ const formToActionParameters = (form, timezone) => {
  * @param {string} [timezone]
  * @returns {Action}
  */
-export const formToAction = (form, timezone) => ({
-  ...omit(form, ['key', 'patterns']),
-  ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
-  parameters: formToActionParameters(form, timezone),
-});
+export const formToAction = (form, timezone) => {
+  const parameters = formToActionParameters(form, timezone);
+
+  const action = {
+    ...omit(form, ['key', 'patterns', 'emit_trigger_fail']),
+    ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+    parameters,
+  };
+
+  if (isWebhookActionType(form.type) && parameters.declare_ticket) {
+    action.emit_trigger_fail = form.emit_trigger_fail;
+  }
+
+  return action;
+};

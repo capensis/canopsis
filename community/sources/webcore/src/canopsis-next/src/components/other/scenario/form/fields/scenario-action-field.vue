@@ -12,14 +12,24 @@
 
       <c-action-btn type="duplicate" @click="duplicateAction" />
     </template>
-
     <v-layout class="gap-4" column>
       <c-form-block>
         <c-form-block-row :label="$t('common.emitTrigger')">
-          <c-enabled-field
-            v-field="action.emit_trigger"
-            :label="$t('common.emitTrigger')"
-          />
+          <v-layout>
+            <v-flex xs6>
+              <c-enabled-field
+                v-field="action.emit_trigger_success"
+                :label="$t('common.emitTriggerSuccess')"
+              />
+            </v-flex>
+            <v-flex xs6>
+              <c-enabled-field
+                v-if="isDeclareTicketWebhookAction"
+                v-field="action.emit_trigger_fail"
+                :label="$t('common.emitTriggerFail')"
+              />
+            </v-flex>
+          </v-layout>
         </c-form-block-row>
 
         <c-form-block-row :label="$t('scenario.forwardAuthor')">
@@ -181,6 +191,10 @@ export default {
       },
     });
 
+    const isDeclareTicketWebhookAction = computed(() => (
+      isWebhookAction.value && !!parameters.value?.declare_ticket?.enabled
+    ));
+
     const duplicateAction = () => emit('duplicate');
 
     const toggleOnExpanded = () => cardIteratorItemElement.value.toggleOnExpanded();
@@ -198,6 +212,7 @@ export default {
 
       isWebhookAction,
       isPbehaviorRemoveAction,
+      isDeclareTicketWebhookAction,
       parameters,
       removeAction,
       duplicateAction,
