@@ -13,9 +13,11 @@ type defaultConsumer struct {
 	// name is consumer name.
 	name string
 	// queue is name of AMQP queue from where consumer receives messages.
-	queue      string
-	purgeQueue bool
-	exclusive  bool
+	queue         string
+	prefetchCount int
+	prefetchSize  int
+	purgeQueue    bool
+	exclusive     bool
 	// processor handles AMQP messages.
 	processor MessageProcessor
 	// nextQueue is name of AMQP queue to where consumer sends message after succeeded processing.
@@ -120,9 +122,11 @@ func (c *defaultConsumer) consume(ctx context.Context, workers int) error {
 	}
 
 	opts := libamqp.ConsumeOptions{
-		Queue:     c.queue,
-		Consumer:  c.name,
-		Exclusive: c.exclusive,
+		Queue:         c.queue,
+		Consumer:      c.name,
+		Exclusive:     c.exclusive,
+		PrefetchSize:  c.prefetchSize,
+		PrefetchCount: c.prefetchCount,
 	}
 
 	return libamqp.ConsumeWithReconnect(ctx, ch, opts, workers, c.processMessage, c.logger)

@@ -111,7 +111,7 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	amqpConsumeConn := m.DepAmqpConnection(logger, s.Cfg)
 	amqpPubChPool := m.DepAMQPPubChannelPool(amqpPubConn)
 	amqpPublisher := amqp.NewPooledPublisher(amqpPubChPool)
-	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn, s.Cfg.Global.PrefetchCount, s.Cfg.Global.PrefetchSize)
+	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, s.Cfg)
 	engineLockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, s.Cfg)
 	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, s.Cfg)
@@ -274,6 +274,8 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.FIFOConsumerName,
 		canopsis.FIFOQueueName,
+		s.Cfg.Global.PrefetchCount,
+		s.Cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",
@@ -289,6 +291,8 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.FIFOAckConsumerName,
 		canopsis.FIFOAckQueueName,
+		s.Cfg.Global.PrefetchCount,
+		s.Cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",

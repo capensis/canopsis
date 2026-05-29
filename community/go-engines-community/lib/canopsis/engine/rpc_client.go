@@ -12,6 +12,7 @@ import (
 // NewRPCClient creates new AMQP RPC client.
 func NewRPCClient(
 	name, serverExchangeName, serverRoutingKey, clientQueueName string,
+	prefetchCount, prefetchSize int,
 	workers int,
 	publisher libamqp.Publisher,
 	consumePool libamqp.ChannelPool,
@@ -20,12 +21,14 @@ func NewRPCClient(
 ) RPCClient {
 	return &rpcClient{
 		defaultConsumer: defaultConsumer{
-			name:        name,
-			queue:       clientQueueName,
-			processor:   &rpcClientMessageProcessorWrapper{processor: processor},
-			publisher:   publisher,
-			consumePool: consumePool,
-			logger:      logger,
+			name:          name,
+			queue:         clientQueueName,
+			prefetchCount: prefetchCount,
+			prefetchSize:  prefetchSize,
+			processor:     &rpcClientMessageProcessorWrapper{processor: processor},
+			publisher:     publisher,
+			consumePool:   consumePool,
+			logger:        logger,
 		},
 		serverExchangeName: serverExchangeName,
 		serverRoutingKey:   serverRoutingKey,

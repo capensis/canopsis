@@ -113,7 +113,7 @@ func NewEngine(
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
 	amqpPubChPool := m.DepAMQPPubChannelPool(amqpPubConn)
 	amqpPublisher := amqp.NewPooledPublisher(amqpPubChPool)
-	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
+	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
@@ -136,13 +136,8 @@ func NewEngine(
 	alarmAdapter := libalarm.NewAdapter(dbClient)
 	eventGenerator := libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector)
 	metaAlarmStatesService := correlation.NewMetaAlarmStateService(dbClient)
-	metaalarmCh, err := amqpPubChPool.Get(ctx)
-	if err != nil {
-		panic(fmt.Errorf("cannot create amqp channel: %w", err))
-	}
-
 	metaAlarmPostProcessor := event.NewMetaAlarmPostProcessor(dbClient, libalarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
-		alarmStatusService, metaAlarmStatesService, json.NewEncoder(), eventGenerator, metaalarmCh, metricsSender, logger)
+		alarmStatusService, metaAlarmStatesService, json.NewEncoder(), eventGenerator, amqpPublisher, metricsSender, logger)
 
 	externalTagUpdater := alarmtag.NewExternalUpdater(dbClient)
 	internalTagAlarmMatcher := alarmtag.NewInternalTagAlarmMatcher(dbClient)
@@ -180,6 +175,8 @@ func NewEngine(
 		"",
 		canopsis.PBehaviorRPCQueueServerName,
 		canopsis.AxePbehaviorRPCClientQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		options.RpcWorkers,
 		amqpPublisher,
 		amqpConsumeChPool,
@@ -204,6 +201,8 @@ func NewEngine(
 		"",
 		canopsis.PBehaviorRPCQueueServerName,
 		"",
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		options.RpcWorkers,
 		amqpPublisher,
 		amqpConsumeChPool,
@@ -337,6 +336,8 @@ func NewEngine(
 	engineAxe.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.AxeExternalConsumerName,
 		canopsis.AxeExternalQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		false,
 		canopsis.EngineExchangeName,
 		amqp.BuildRoutingKey(publishQueuePrefix, types.InitiatorExternal),
@@ -352,6 +353,8 @@ func NewEngine(
 	engineAxe.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.AxeSystemConsumerName,
 		canopsis.AxeSystemQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		false,
 		canopsis.EngineExchangeName,
 		amqp.BuildRoutingKey(publishQueuePrefix, types.InitiatorSystem),
@@ -367,6 +370,8 @@ func NewEngine(
 	engineAxe.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.AxeUserConsumerName,
 		canopsis.AxeUserQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		false,
 		canopsis.EngineExchangeName,
 		amqp.BuildRoutingKey(publishQueuePrefix, types.InitiatorUser),
@@ -382,6 +387,8 @@ func NewEngine(
 	engineAxe.AddConsumer(libengine.NewRPCServer(
 		canopsis.AxeRPCConsumerName,
 		canopsis.AxeRPCQueueServerName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
 		options.RpcWorkers,
 		amqpPublisher,
 		amqpConsumeChPool,

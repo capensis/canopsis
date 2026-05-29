@@ -18,7 +18,7 @@ func TestChannelPool_Get_GivenLimitN_ShouldCreateNChannels(t *testing.T) {
 		Channel(gomock.Any()).
 		Return(mock_amqp.NewMockChannel(ctrl), nil).
 		Times(limit)
-	pool := amqp.NewChannelPool(conn, limit, nil)
+	pool := amqp.NewChannelPool(conn, limit)
 	for i := 0; i < limit; i++ {
 		ch, err := pool.Get(t.Context())
 		if err != nil {
@@ -41,7 +41,7 @@ func TestChannelPool_Get_GivenLimit_ShouldWaitForIdleChannel(t *testing.T) {
 			Channel(gomock.Any()).
 			Return(mock_amqp.NewMockChannel(ctrl), nil).
 			Times(limit)
-		pool := amqp.NewChannelPool(conn, limit, nil)
+		pool := amqp.NewChannelPool(conn, limit)
 		for i := 0; i < limit; i++ {
 			ch, err := pool.Get(t.Context())
 			if err != nil {

@@ -51,12 +51,12 @@ func (m DependencyMaker) DepAmqpConnection(logger zerolog.Logger, cfg config.Can
 	return c
 }
 
-func (m DependencyMaker) DepAMQPConsumeChannelPool(conn libamqp.Connection, prefetchCount, prefetchSize int) libamqp.ChannelPool {
-	return libamqp.NewConsumeChannelPool(conn, prefetchCount, prefetchSize, true)
+func (m DependencyMaker) DepAMQPConsumeChannelPool(conn libamqp.Connection) libamqp.ChannelPool {
+	return libamqp.NewChannelPool(conn, 0)
 }
 
 func (m DependencyMaker) DepAMQPPubChannelPool(conn libamqp.Connection) libamqp.ChannelPool {
-	return libamqp.NewPublishChannelPool(conn, canopsis.DefaultAMQPPublishPoolSize)
+	return libamqp.NewChannelPool(conn, canopsis.DefaultAMQPPublishPoolSize)
 }
 
 // DepRedisSession opens a redis session.

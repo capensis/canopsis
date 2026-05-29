@@ -9,6 +9,7 @@ import (
 
 func NewConcurrentConsumer(
 	name, queue string,
+	prefetchCount, prefetchSize int,
 	purgeQueue bool,
 	nextExchange, nextQueue, fifoExchange, fifoQueue string,
 	workers int,
@@ -20,18 +21,20 @@ func NewConcurrentConsumer(
 ) Consumer {
 	return &concurrentConsumer{
 		defaultConsumer: defaultConsumer{
-			name:         name,
-			queue:        queue,
-			purgeQueue:   purgeQueue,
-			nextExchange: nextExchange,
-			nextQueue:    nextQueue,
-			fifoExchange: fifoExchange,
-			fifoQueue:    fifoQueue,
-			exclusive:    exclusive,
-			processor:    processor,
-			publisher:    publisher,
-			consumePool:  consumePool,
-			logger:       logger,
+			name:          name,
+			queue:         queue,
+			prefetchCount: prefetchCount,
+			prefetchSize:  prefetchSize,
+			purgeQueue:    purgeQueue,
+			nextExchange:  nextExchange,
+			nextQueue:     nextQueue,
+			fifoExchange:  fifoExchange,
+			fifoQueue:     fifoQueue,
+			exclusive:     exclusive,
+			processor:     processor,
+			publisher:     publisher,
+			consumePool:   consumePool,
+			logger:        logger,
 		},
 		workers: workers,
 	}
