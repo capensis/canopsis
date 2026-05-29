@@ -1,18 +1,5 @@
 <template>
   <c-form-block>
-    <c-form-block-row :label="$t('common.priority')">
-      <c-priority-field v-field="form.priority" :min="1">
-        <template #append>
-          <c-help-icon
-            :text="$t('broadcastMessage.priorityHelp')"
-            max-width="250"
-            icon="help"
-            left
-          />
-        </template>
-      </c-priority-field>
-    </c-form-block-row>
-
     <c-form-block-row :label="$t('common.message')" indented>
       <text-editor-field
         v-field="form.message"
@@ -64,22 +51,6 @@
           </date-time-picker-field>
         </v-flex>
       </v-layout>
-    </c-form-block-row>
-
-    <c-form-block-row
-      :label="$t('broadcastMessage.closable')"
-      align-center
-    >
-      <c-enabled-field v-field="form.closable" :label="$t('broadcastMessage.closable')">
-        <template #append>
-          <c-help-icon
-            :text="$t('broadcastMessage.closableHelp')"
-            max-width="250"
-            icon="help"
-            left
-          />
-        </template>
-      </c-enabled-field>
     </c-form-block-row>
 
     <c-form-block-row

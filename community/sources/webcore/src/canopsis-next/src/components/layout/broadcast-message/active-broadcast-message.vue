@@ -37,7 +37,6 @@
           </v-btn>
         </template>
         <v-btn
-          v-else-if="activeMessage.closable"
           class="my-0 ml-0 mr-2"
           color="white"
           outlined
@@ -62,7 +61,7 @@ import { useRoute } from 'vue-router/composables';
 import { SOCKET_ROOMS } from '@/config';
 import { MODALS, ROUTES_NAMES_TO_BROADCAST_MESSAGES } from '@/constants';
 
-import { isActiveBroadcastMessageVisibleOnRoute } from '@/helpers/entities/broadcast-message/list';
+import { isBroadcastMessageViewMatchingRoute } from '@/helpers/entities/broadcast-message/list';
 
 import { useAuth } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
@@ -105,9 +104,9 @@ export default {
       const { id: routeId } = route.params;
       const currentView = getViewById.value(routeId);
 
-      return activeMessages.value
-        .filter(message => isActiveBroadcastMessageVisibleOnRoute(message, routeView, routeId, currentView))
-        .toSorted((first, second) => (first.priority || 1) - (second.priority || 1));
+      return activeMessages.value.filter(({ views: messageViews }) => (messageViews || []).some(
+        messageView => isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
+      ));
     });
 
     /**
