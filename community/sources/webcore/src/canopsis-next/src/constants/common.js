@@ -387,6 +387,7 @@ export const TRIGGERS_TYPES = {
   comment: 'comment',
   declareticket: 'declareticket',
   declareticketwebhook: 'declareticketwebhook',
+  declareticketwebhookfail: 'declareticketwebhookfail',
   assocticket: 'assocticket',
   ticketremove: 'ticketremove',
   snooze: 'snooze',
@@ -409,6 +410,7 @@ export const TRIGGERS_TYPES = {
 export const PRO_TRIGGERS = [
   TRIGGERS_TYPES.declareticket,
   TRIGGERS_TYPES.declareticketwebhook,
+  TRIGGERS_TYPES.declareticketwebhookfail,
   TRIGGERS_TYPES.instructionfail,
   TRIGGERS_TYPES.autoinstructionfail,
   TRIGGERS_TYPES.instructionjobcomplete,
