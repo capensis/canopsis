@@ -208,23 +208,102 @@ func TestConnection_handleReconnect_GivenExhaustRetries_ShouldStop(t *testing.T)
 		defer ctrl.Finish()
 
 		c := newTestConn(nil)
-		c.reconnectCount = 3
-		c.reconnectTimeout = time.Second
+		c.reconnectCount = 12
+		c.reconnectTimeout = 8 * time.Millisecond
 		amqpDialer := NewMockamqpDialer(ctrl)
 		amqpDialer.EXPECT().Dial().Times(c.reconnectCount).Return(nil, errors.New("Dial error"))
 		c.dialer = amqpDialer
 
+		var elapsed time.Duration
 		stopped := false
 		go func() {
+			start := time.Now()
 			c.handleReconnect()
+			elapsed = time.Since(start)
 			stopped = true
 		}()
 
-		time.Sleep(time.Duration(c.reconnectCount) * c.reconnectTimeout)
+		reconnectTimeout := c.reconnectTimeout
+		timeout := reconnectTimeout
+		for i := 1; i < c.reconnectCount-1; i++ {
+			reconnectTimeout = min(2*reconnectTimeout, maxReconnectTimeout)
+			timeout += reconnectTimeout
+		}
+
+		time.Sleep(timeout)
 		synctest.Wait()
 
 		if !stopped {
 			t.Fatalf("expected true, got %+v", stopped)
+		}
+
+		if elapsed != timeout {
+			t.Fatalf("expected %+v, got %+v", timeout, elapsed)
+		}
+	})
+}
+
+func TestConnection_handleReconnect_GivenReconnectAfterFailures_ShouldResetAttemptsAndTimeout(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		c := newTestConn(nil)
+		c.reconnectCount = 12
+		c.reconnectTimeout = 8 * time.Millisecond
+		amqpConn1 := NewMockamqp091Conn(ctrl)
+		var notifClose1 chan *amqp.Error
+		amqpConn1.EXPECT().NotifyClose(gomock.Any()).Do(func(ch chan *amqp.Error) {
+			notifClose1 = ch
+		})
+		amqpConn2 := NewMockamqp091Conn(ctrl)
+		var notifClose2 chan *amqp.Error
+		amqpConn2.EXPECT().NotifyClose(gomock.Any()).Do(func(ch chan *amqp.Error) {
+			notifClose2 = ch
+		})
+		amqpDialer := NewMockamqpDialer(ctrl)
+		gomock.InOrder(
+			amqpDialer.EXPECT().Dial().Return(amqpConn1, nil),
+			amqpDialer.EXPECT().Dial().Times(c.reconnectCount-1).Return(nil, errors.New("Dial error")),
+			amqpDialer.EXPECT().Dial().Return(amqpConn2, nil),
+			amqpDialer.EXPECT().Dial().Times(c.reconnectCount).Return(nil, errors.New("Dial error")),
+		)
+		c.dialer = amqpDialer
+
+		reconnectTimeout := c.reconnectTimeout
+		timeout := reconnectTimeout
+		for i := 1; i < c.reconnectCount-1; i++ {
+			reconnectTimeout = min(2*reconnectTimeout, maxReconnectTimeout)
+			timeout += reconnectTimeout
+		}
+
+		var elapsed time.Duration
+		stopped := false
+		go func() {
+			start := time.Now()
+			c.handleReconnect()
+			elapsed = time.Since(start)
+			stopped = true
+		}()
+
+		synctest.Wait()
+
+		close(notifClose1)
+		time.Sleep(timeout)
+
+		synctest.Wait()
+
+		close(notifClose2)
+		time.Sleep(timeout)
+
+		synctest.Wait()
+
+		if !stopped {
+			t.Fatalf("expected true, got %+v", stopped)
+		}
+
+		if elapsed != 2*timeout {
+			t.Fatalf("expected %+v, got %+v", 2*timeout, elapsed)
 		}
 	})
 }
@@ -241,9 +320,12 @@ func TestConnection_handleReconnect_GivenNoRetries_ShouldStop(t *testing.T) {
 		amqpDialer.EXPECT().Dial().Return(nil, errors.New("Dial error"))
 		c.dialer = amqpDialer
 
+		var elapsed time.Duration
 		stopped := false
 		go func() {
+			start := time.Now()
 			c.handleReconnect()
+			elapsed = time.Since(start)
 			stopped = true
 		}()
 
@@ -251,6 +333,10 @@ func TestConnection_handleReconnect_GivenNoRetries_ShouldStop(t *testing.T) {
 
 		if !stopped {
 			t.Fatalf("expected true, got %+v", stopped)
+		}
+
+		if elapsed > 0 {
+			t.Fatalf("expected 0, got %+v", elapsed)
 		}
 	})
 }
