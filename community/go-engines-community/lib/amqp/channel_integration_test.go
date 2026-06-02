@@ -95,6 +95,10 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldReconnect(t *testing.T) {
 	connName := t.Name() + utils.NewID()
 	config.Properties.SetClientConnectionName(connName)
 
+	apiClient := newTestAPIClient(t)
+	testUser := createTemporaryAMQPUser(t, apiClient)
+	setTemporaryAMQPUserURL(t, testUser)
+
 	conn, err := NewConfig(20, 200*time.Millisecond, config, zerolog.Nop())
 	if err != nil {
 		t.Fatalf("New: %+v", err)
@@ -126,9 +130,7 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldReconnect(t *testing.T) {
 		t.Fatal("initial channel nil")
 	}
 
-	apiClient := newTestAPIClient(t)
-	realConnName := findRealConnName(t, apiClient, connName)
-	killConnection(t, apiClient, realConnName)
+	killAllConnectionsOfUser(t, apiClient, testUser.Username)
 
 	gotConn := connection.waitReconnect(t.Context().Done(), initialConn)
 	if gotConn == nil {
@@ -229,6 +231,10 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldResumeMessageFlow(t *testing.
 	connName := t.Name() + utils.NewID()
 	config.Properties.SetClientConnectionName(connName)
 
+	apiClient := newTestAPIClient(t)
+	testUser := createTemporaryAMQPUser(t, apiClient)
+	setTemporaryAMQPUserURL(t, testUser)
+
 	conn, err := NewConfig(20, 200*time.Millisecond, config, zerolog.Nop())
 	if err != nil {
 		t.Fatalf("New: %+v", err)
@@ -270,14 +276,30 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldResumeMessageFlow(t *testing.
 		[]byte("test2"),
 	}
 
+	publishInternal := publishCh.(*channel)
+	consumeInternal := consumeCh.(*channel)
+	initialConn := publishInternal.conn.waitReconnect(t.Context().Done(), nil)
+	initialPublishAmqpCh := publishInternal.waitReconnect(t.Context(), nil)
+	initialConsumeAmqpCh := consumeInternal.waitReconnect(t.Context(), nil)
+	if initialConn == nil || initialPublishAmqpCh == nil || initialConsumeAmqpCh == nil {
+		t.Fatal("initial connection/channel state is nil")
+	}
+
 	consumeMsgCh := make(chan []byte, 1)
 	consumeErrCh := make(chan error, 1)
 	var consumeWithCtxCalled atomic.Int32
+	consumeResubscribed := make(chan struct{}, 1)
 
 	go func() {
 		consumedMsgCount := 0
 		for {
-			consumeWithCtxCalled.Add(1)
+			calls := consumeWithCtxCalled.Add(1)
+			if calls >= 2 {
+				select {
+				case consumeResubscribed <- struct{}{}:
+				default:
+				}
+			}
 			d, notifyClose, err := consumeCh.ConsumeWithCloseNotify(t.Context(), q.Name, "", true, false, false, false, nil)
 			if err != nil {
 				select {
@@ -339,10 +361,21 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldResumeMessageFlow(t *testing.
 		}
 	}
 
-	apiClient := newTestAPIClient(t)
-	realConnName := findRealConnName(t, apiClient, connName)
-	killConnection(t, apiClient, realConnName)
+	killAllConnectionsOfUser(t, apiClient, testUser.Username)
 
+	if publishInternal.conn.waitReconnect(t.Context().Done(), initialConn) == nil {
+		t.Fatal("publish connection did not reconnect")
+	}
+	if publishInternal.waitReconnect(t.Context(), initialPublishAmqpCh) == nil {
+		t.Fatal("publish channel did not reconnect")
+	}
+	select {
+	case <-t.Context().Done():
+		t.Fatal("context done before consume re-subscribe")
+	case <-time.After(5 * time.Second):
+		t.Fatal("timeout waiting for consume re-subscribe")
+	case <-consumeResubscribed:
+	}
 	err = publishCh.PublishWithContext(t.Context(), "", q.Name, false, false, amqp.Publishing{
 		Body:         msgs[1],
 		DeliveryMode: amqp.Persistent,
