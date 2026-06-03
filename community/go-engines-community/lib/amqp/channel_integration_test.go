@@ -95,6 +95,9 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldReconnect(t *testing.T) {
 	connName := t.Name() + utils.NewID()
 	config.Properties.SetClientConnectionName(connName)
 
+	apiClient := newRabbitMQAPIClient(t)
+	username := setupTempAMQPUser(t, apiClient)
+
 	conn, err := NewConfig(20, 200*time.Millisecond, config, zerolog.Nop())
 	if err != nil {
 		t.Fatalf("New: %+v", err)
@@ -126,9 +129,7 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldReconnect(t *testing.T) {
 		t.Fatal("initial channel nil")
 	}
 
-	apiClient := newTestAPIClient(t)
-	realConnName := findRealConnName(t, apiClient, connName)
-	killConnection(t, apiClient, realConnName)
+	killAllConnectionsOfUser(t, apiClient, username)
 
 	gotConn := connection.waitReconnect(t.Context().Done(), initialConn)
 	if gotConn == nil {
@@ -228,6 +229,9 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldResumeMessageFlow(t *testing.
 	config := amqp.Config{Properties: amqp.NewConnectionProperties()}
 	connName := t.Name() + utils.NewID()
 	config.Properties.SetClientConnectionName(connName)
+
+	apiClient := newRabbitMQAPIClient(t)
+	username := setupTempAMQPUser(t, apiClient)
 
 	conn, err := NewConfig(20, 200*time.Millisecond, config, zerolog.Nop())
 	if err != nil {
@@ -339,9 +343,7 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldResumeMessageFlow(t *testing.
 		}
 	}
 
-	apiClient := newTestAPIClient(t)
-	realConnName := findRealConnName(t, apiClient, connName)
-	killConnection(t, apiClient, realConnName)
+	killAllConnectionsOfUser(t, apiClient, username)
 
 	err = publishCh.PublishWithContext(t.Context(), "", q.Name, false, false, amqp.Publishing{
 		Body:         msgs[1],
