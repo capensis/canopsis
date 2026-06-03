@@ -396,12 +396,8 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (sta
 
 	model.Aliases = aliasPropIDs
 	model.EntityPatternFields = r.EntityRequest.ToModelWithoutFields(s.dbCollection.Name())
-	model.InheritedEntityPatternFields = r.InheritedEntityPatternRequest.ToModelWithoutFields(s.dbCollection.Name())
-
-	if r.Type != nil && *r.Type == statesetting.RuleTypeComponent {
-		componentInfosForbidden := map[string]bool{"component_infos": true}
-		model.EntityPatternFields.EntityPattern = model.EntityPatternFields.EntityPattern.RemoveFields(componentInfosForbidden)
-		model.InheritedEntityPatternFields.InheritedEntityPattern = model.InheritedEntityPatternFields.InheritedEntityPattern.RemoveFields(componentInfosForbidden)
+	if r.Type != nil {
+		model.InheritedEntityPatternFields = r.InheritedEntityPatternRequest.ToModelWithoutFields(s.dbCollection.Name(), *r.Type)
 	}
 
 	return model, nil

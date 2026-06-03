@@ -1,7 +1,6 @@
 package statesettings
 
 import (
-	"maps"
 	"strconv"
 	"strings"
 
@@ -19,29 +18,16 @@ type Validator interface {
 }
 
 type baseValidator struct {
-	servicePatternFields            map[string]bool
-	serviceInheritedPatternFields   map[string]bool
-	componentPatternFields          map[string]bool
-	componentInheritedPatternFields map[string]bool
+	invalidEntityPatternFields             map[string]bool
+	invalidServiceInheritedPatternFields   map[string]bool
+	invalidComponentInheritedPatternFields map[string]bool
 }
 
 func NewValidator() Validator {
-	servicePatternFields := patternfields.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection)
-
-	serviceInheritedPatternFields := maps.Clone(servicePatternFields)
-	serviceInheritedPatternFields["connector"] = true
-
-	componentPatternFields := maps.Clone(servicePatternFields)
-	componentPatternFields["component_infos"] = true
-
-	componentInheritedPatternFields := maps.Clone(componentPatternFields)
-	componentInheritedPatternFields["connector"] = true
-
 	return &baseValidator{
-		servicePatternFields:            servicePatternFields,
-		serviceInheritedPatternFields:   serviceInheritedPatternFields,
-		componentPatternFields:          componentPatternFields,
-		componentInheritedPatternFields: componentInheritedPatternFields,
+		invalidEntityPatternFields:             patternfields.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection),
+		invalidServiceInheritedPatternFields:   patternfields.GetForbiddenFieldsInInheritedEntityPattern(mongo.StateSettingsMongoCollection, statesetting.RuleTypeService),
+		invalidComponentInheritedPatternFields: patternfields.GetForbiddenFieldsInInheritedEntityPattern(mongo.StateSettingsMongoCollection, statesetting.RuleTypeComponent),
 	}
 }
 
@@ -54,12 +40,9 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 		return
 	}
 
-	isComponent := r.Type != nil && *r.Type == statesetting.RuleTypeComponent
-	invalidPatternFields := v.servicePatternFields
-	invalidInheritedPatternFields := v.serviceInheritedPatternFields
-	if isComponent {
-		invalidPatternFields = v.componentPatternFields
-		invalidInheritedPatternFields = v.componentInheritedPatternFields
+	invalidInheritedPatternFields := v.invalidServiceInheritedPatternFields
+	if r.Type != nil && *r.Type == statesetting.RuleTypeComponent {
+		invalidInheritedPatternFields = v.invalidComponentInheritedPatternFields
 	}
 
 	switch r.Method {
@@ -106,7 +89,7 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "")
 	}
 
-	if r.EntityPattern != nil && !match.ValidateEntityPattern(r.EntityPattern, invalidPatternFields) {
+	if r.EntityPattern != nil && !match.ValidateEntityPattern(r.EntityPattern, v.invalidEntityPatternFields) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
