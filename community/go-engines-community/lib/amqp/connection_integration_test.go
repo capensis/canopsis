@@ -3,8 +3,10 @@ package amqp
 import (
 	"io"
 	"net/http"
+	"net/url"
 	"os"
-	"slices"
+	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -39,6 +41,9 @@ func TestIntegration_Connection_GivenBrokerDrop_ShouldReconnect(t *testing.T) {
 	connName := t.Name() + utils.NewID()
 	config.Properties.SetClientConnectionName(connName)
 
+	apiClient := newRabbitMQAPIClient(t)
+	username := setupTempAMQPUser(t, apiClient)
+
 	c, err := NewConfig(20, 200*time.Millisecond, config, zerolog.Nop())
 	if err != nil {
 		t.Fatalf("New: %+v", err)
@@ -51,9 +56,7 @@ func TestIntegration_Connection_GivenBrokerDrop_ShouldReconnect(t *testing.T) {
 		t.Fatal("initial conn nil")
 	}
 
-	apiClient := newTestAPIClient(t)
-	realConnName := findRealConnName(t, apiClient, connName)
-	killConnection(t, apiClient, realConnName)
+	killAllConnectionsOfUser(t, apiClient, username)
 
 	got := conn.waitReconnect(t.Context().Done(), initial)
 	if got == nil {
@@ -69,44 +72,102 @@ func TestIntegration_Connection_GivenBrokerDrop_ShouldReconnect(t *testing.T) {
 	}
 }
 
-func findRealConnName(t *testing.T, c *rabbithole.Client, connName string) string {
+func killAllConnectionsOfUser(t *testing.T, c *rabbithole.Client, username string) {
 	t.Helper()
 
-	const retries = 50
-	const timeout = 100 * time.Millisecond
-	for i := 0; i < retries; i++ {
-		conns, err := c.ListConnections()
-		if err != nil {
-			t.Fatalf("cannot list rabbitmq connections: %+v", err)
-		}
-
-		idx := slices.IndexFunc(conns, func(info rabbithole.ConnectionInfo) bool {
-			return info.ClientProperties["connection_name"] == connName
-		})
-		if idx >= 0 {
-			return conns[idx].Name
-		}
-
-		if i < retries-1 {
-			select {
-			case <-t.Context().Done():
-			case <-time.After(timeout):
-			}
-		}
+	resp, err := c.CloseAllConnectionsOfUser(username)
+	if err != nil {
+		t.Fatalf("cannot close all user connections: %+v", err)
 	}
 
-	t.Fatalf("cannot find rabbitmq connection: %s", connName)
-
-	return ""
+	checkAMQPResponseCode(t, resp, http.StatusNoContent)
 }
 
-func killConnection(t *testing.T, c *rabbithole.Client, realConnName string) {
+func setupTempAMQPUser(t *testing.T, c *rabbithole.Client) string {
+	username, pwd := createTempAMQPUser(t, c)
+	t.Cleanup(func() {
+		deleteTempAMQPUser(t, c, username)
+	})
+
+	overrideEnvURLUser(t, username, pwd)
+
+	return username
+}
+
+func createTempAMQPUser(t *testing.T, c *rabbithole.Client) (username string, pwd string) {
+	t.Helper()
+	vhost := getAMQPVhost(t)
+	username = t.Name() + strconv.FormatInt(time.Now().Unix(), 10)
+	pwd = "test"
+
+	resp, err := c.PutUser(username, rabbithole.UserSettings{
+		Password: pwd,
+	})
+	if err != nil {
+		t.Fatalf("cannot create temporary rabbitmq user: %+v", err)
+	}
+
+	checkAMQPResponseCode(t, resp, http.StatusCreated)
+
+	resp, err = c.UpdatePermissionsIn(vhost, username, rabbithole.Permissions{
+		Configure: ".*",
+		Write:     ".*",
+		Read:      ".*",
+	})
+	if err != nil {
+		_, _ = c.DeleteUser(username)
+		t.Fatalf("cannot grant temporary rabbitmq user permissions: %+v", err)
+	}
+
+	checkAMQPResponseCode(t, resp, http.StatusCreated)
+
+	return username, pwd
+}
+
+func deleteTempAMQPUser(t *testing.T, c *rabbithole.Client, username string) {
 	t.Helper()
 
-	resp, err := c.CloseConnection(realConnName)
+	resp, err := c.DeleteUser(username)
 	if err != nil {
-		t.Fatalf("cannot close connection: %+v", err)
+		t.Fatalf("cannot delete temporary rabbitmq user: %+v", err)
 	}
+
+	checkAMQPResponseCode(t, resp, http.StatusNoContent)
+}
+
+func overrideEnvURLUser(t *testing.T, username, pwd string) {
+	t.Helper()
+	u, err := url.Parse(os.Getenv(EnvURL))
+	if err != nil {
+		t.Fatalf("cannot parse amqp url: %+v", err)
+	}
+
+	u.User = url.UserPassword(username, pwd)
+	t.Setenv(EnvURL, u.String())
+}
+
+func getAMQPVhost(t *testing.T) string {
+	t.Helper()
+	u, err := url.Parse(os.Getenv(EnvURL))
+	if err != nil {
+		t.Fatalf("cannot parse amqp url: %+v", err)
+	}
+
+	vhost := strings.TrimPrefix(u.Path, "/")
+	if vhost == "" {
+		return "/"
+	}
+
+	decoded, err := url.PathUnescape(vhost)
+	if err != nil {
+		t.Fatalf("cannot decode amqp vhost: %+v", err)
+	}
+
+	return decoded
+}
+
+func checkAMQPResponseCode(t *testing.T, resp *http.Response, expectedStatusCode int) {
+	t.Helper()
 
 	defer resp.Body.Close()
 
@@ -115,22 +176,23 @@ func killConnection(t *testing.T, c *rabbithole.Client, realConnName string) {
 		t.Fatalf("cannot read response body: %+v", err)
 	}
 
-	if resp.StatusCode != http.StatusNoContent {
-		t.Fatalf("cannot close connection: %s, status code: %d, response body: %s", realConnName, resp.StatusCode, string(b))
+	if resp.StatusCode != expectedStatusCode {
+		t.Fatalf("unexpected status code: %d, expected %d, request url: %s, response body: %s",
+			resp.StatusCode, expectedStatusCode, resp.Request.URL.String(), string(b))
 	}
 }
 
-func newTestAPIClient(t *testing.T) *rabbithole.Client {
+func newRabbitMQAPIClient(t *testing.T) *rabbithole.Client {
 	t.Helper()
-	url := os.Getenv(EnvHTTPURL)
-	if url == "" {
+	u := os.Getenv(EnvHTTPURL)
+	if u == "" {
 		t.Fatalf("environment variable %s not set", EnvHTTPURL)
 	}
 
 	user := os.Getenv(EnvHTTPUser)
 	pass := os.Getenv(EnvHTTPPassword)
 
-	c, err := rabbithole.NewClient(url, user, pass)
+	c, err := rabbithole.NewClient(u, user, pass)
 	if err != nil {
 		t.Fatalf("cannot create rabbitmq api client: %+v", err)
 	}
