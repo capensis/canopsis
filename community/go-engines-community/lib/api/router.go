@@ -308,7 +308,7 @@ func RegisterRoutes(
 
 		alarmStore := alarm.NewStore(secondaryDbClient, dbExportClient, linkGenerator, common.NewPatternFieldsTransformer(primaryDbClient),
 			timezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
-		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), logger)
+		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), json.NewDecoder(), logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(primaryDbClient, amqpPublisher, canopsis.DefaultExchangeName,
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, eventGenerator, logger), logger)
 		alarmRouter := protected.Group("/alarms")
