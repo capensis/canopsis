@@ -7,6 +7,7 @@ import (
 	"maps"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -352,7 +353,7 @@ var onlyAbsoluteTimeCondFieldsInAlarmPattern = map[string]map[string]bool{
 }
 
 var disabledFieldsInEntityPattern = map[string]map[string]bool{
-	mongo.StateSettingsMongoCollection:     {"last_event_date": true, "component": true},
+	mongo.StateSettingsMongoCollection:     {"last_event_date": true, "component": true, "type": true, "component_infos": true},
 	mongo.EntityMongoCollection:            {"last_event_date": true, "connector": true},
 	mongo.PbehaviorMongoCollection:         {"last_event_date": true},
 	mongo.IdleRuleMongoCollection:          {"last_event_date": true},
@@ -370,6 +371,13 @@ var disabledFieldsInEntityPattern = map[string]map[string]bool{
 	mongo.WidgetFiltersMongoCollection:     {},
 }
 
+var disabledFieldsInInheritedEntityPattern = map[string]map[string]map[string]bool{
+	mongo.StateSettingsMongoCollection: {
+		statesetting.RuleTypeService:   {"last_event_date": true},
+		statesetting.RuleTypeComponent: {"last_event_date": true, "component": true, "type": true, "component_infos": true},
+	},
+}
+
 var disabledFieldsInEventPattern = map[string]map[string]bool{
 	mongo.EventFilterRuleCollection:   {},
 	mongo.EventRecordsMongoCollection: {},
@@ -383,16 +391,23 @@ var disabledFieldsInWeatherServicePattern = map[string]map[string]bool{
 	mongo.WidgetFiltersMongoCollection: {},
 }
 
+type FieldsRequest struct {
+	// Type should be only used to get state settings inherited pattern fields
+	// if empty inherited pattern fields aren't included in the response.
+	Type string `form:"type" binding:"oneoforempty=service component"`
+}
+
 type FieldGetter interface {
-	Get(ctx context.Context, collection string) (FieldsResponse, error)
+	Get(ctx context.Context, collection string, r FieldsRequest) (FieldsResponse, error)
 }
 
 type FieldsResponse struct {
-	AlarmPattern          []AlarmFieldResponse  `json:"alarm_pattern,omitempty"`
-	EntityPattern         []EntityFieldResponse `json:"entity_pattern,omitempty"`
-	EventPattern          []FieldResponse       `json:"event_pattern,omitempty"`
-	PbehaviorPattern      []FieldResponse       `json:"pbehavior_pattern,omitempty"`
-	WeatherServicePattern []FieldResponse       `json:"weather_service_pattern,omitempty"`
+	AlarmPattern           []AlarmFieldResponse  `json:"alarm_pattern,omitempty"`
+	EntityPattern          []EntityFieldResponse `json:"entity_pattern,omitempty"`
+	InheritedEntityPattern []EntityFieldResponse `json:"inherited_entity_pattern,omitempty"`
+	EventPattern           []FieldResponse       `json:"event_pattern,omitempty"`
+	PbehaviorPattern       []FieldResponse       `json:"pbehavior_pattern,omitempty"`
+	WeatherServicePattern  []FieldResponse       `json:"weather_service_pattern,omitempty"`
 }
 
 type FieldResponse struct {
@@ -417,6 +432,7 @@ func NewFieldGetter(dbClient mongo.DbClient) FieldGetter {
 		disabledFieldsInAlarmPattern:             maps.Clone(disabledFieldsInAlarmPattern),
 		onlyAbsoluteTimeCondFieldsInAlarmPattern: maps.Clone(onlyAbsoluteTimeCondFieldsInAlarmPattern),
 		disabledFieldsInEntityPattern:            maps.Clone(disabledFieldsInEntityPattern),
+		disabledFieldsInInheritedEntityPattern:   maps.Clone(disabledFieldsInInheritedEntityPattern),
 		disabledFieldsInEventPattern:             maps.Clone(disabledFieldsInEventPattern),
 		disabledFieldsInPbehaviorPattern:         maps.Clone(disabledFieldsInPbehaviorPattern),
 		disabledFieldsInWeatherServicePattern:    maps.Clone(disabledFieldsInWeatherServicePattern),
@@ -435,28 +451,48 @@ func GetForbiddenFieldsInEntityPattern(collection string) map[string]bool {
 	return disabledFieldsInEntityPattern[collection]
 }
 
+func GetForbiddenFieldsInInheritedEntityPattern(collection string, t string) map[string]bool {
+	return disabledFieldsInInheritedEntityPattern[collection][t]
+}
+
 type fieldGetter struct {
 	entityPropCollection                     mongo.DbCollection
 	disabledFieldsInAlarmPattern             map[string]map[string]bool
 	onlyAbsoluteTimeCondFieldsInAlarmPattern map[string]map[string]bool
 	disabledFieldsInEntityPattern            map[string]map[string]bool
+	disabledFieldsInInheritedEntityPattern   map[string]map[string]map[string]bool
 	disabledFieldsInEventPattern             map[string]map[string]bool
 	disabledFieldsInPbehaviorPattern         map[string]map[string]bool
 	disabledFieldsInWeatherServicePattern    map[string]map[string]bool
 }
 
-func (g *fieldGetter) Get(ctx context.Context, collection string) (FieldsResponse, error) {
-	ep, err := g.getEntityFields(ctx, collection)
-	if err != nil {
-		return FieldsResponse{}, err
+func (g *fieldGetter) Get(ctx context.Context, collection string, r FieldsRequest) (FieldsResponse, error) {
+	var ep, iep []EntityFieldResponse
+	var err error
+
+	if disabledEntityFields, ok := g.disabledFieldsInEntityPattern[collection]; ok {
+		ep, err = g.getEntityFields(ctx, disabledEntityFields)
+		if err != nil {
+			return FieldsResponse{}, err
+		}
+
+		if disabledInheritedEntityFieldsColl, ok := g.disabledFieldsInInheritedEntityPattern[collection]; ok {
+			if disabledInheritedEntityFields, ok := disabledInheritedEntityFieldsColl[r.Type]; ok {
+				iep, err = g.getEntityFields(ctx, disabledInheritedEntityFields)
+				if err != nil {
+					return FieldsResponse{}, err
+				}
+			}
+		}
 	}
 
 	return FieldsResponse{
-		AlarmPattern:          g.getAlarmFields(collection),
-		EntityPattern:         ep,
-		EventPattern:          g.getFields(collection, eventFields, g.disabledFieldsInEventPattern),
-		PbehaviorPattern:      g.getFields(collection, pbehaviorFields, g.disabledFieldsInPbehaviorPattern),
-		WeatherServicePattern: g.getFields(collection, weatherServiceFields, g.disabledFieldsInWeatherServicePattern),
+		AlarmPattern:           g.getAlarmFields(collection),
+		EntityPattern:          ep,
+		InheritedEntityPattern: iep,
+		EventPattern:           g.getFields(collection, eventFields, g.disabledFieldsInEventPattern),
+		PbehaviorPattern:       g.getFields(collection, pbehaviorFields, g.disabledFieldsInPbehaviorPattern),
+		WeatherServicePattern:  g.getFields(collection, weatherServiceFields, g.disabledFieldsInWeatherServicePattern),
 	}, nil
 }
 
@@ -479,12 +515,7 @@ func (g *fieldGetter) getAlarmFields(collection string) []AlarmFieldResponse {
 	return fields
 }
 
-func (g *fieldGetter) getEntityFields(ctx context.Context, collection string) ([]EntityFieldResponse, error) {
-	disabledFields, ok := g.disabledFieldsInEntityPattern[collection]
-	if !ok {
-		return nil, nil
-	}
-
+func (g *fieldGetter) getEntityFields(ctx context.Context, disabledFields map[string]bool) ([]EntityFieldResponse, error) {
 	fields := make([]EntityFieldResponse, len(entityFields))
 	for i := range fields {
 		fields[i].FieldResponse = entityFields[i]

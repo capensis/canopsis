@@ -4807,6 +4807,10 @@ definitions:
         items:
           $ref: '#/definitions/patternfields.FieldResponse'
         type: array
+      inherited_entity_pattern:
+        items:
+          $ref: '#/definitions/patternfields.EntityFieldResponse'
+        type: array
       pbehavior_pattern:
         items:
           $ref: '#/definitions/patternfields.FieldResponse'
