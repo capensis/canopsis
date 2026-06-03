@@ -5,25 +5,15 @@ import (
 	"os"
 	"time"
 
-	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
 
 // Environment variables linked to session parameters
 const (
-	EnvURL = "CPS_AMQP_URL"
+	EnvURL                = "CPS_AMQP_URL"
+	EnvInsecureSkipVerify = "CPS_AMQP_INSECURE_SKIP_VERIFY"
+	EnvCaCertFile         = "CPS_AMQP_CA_CERT_FILE"
 )
-
-// NewSession creates a new connection to an AMQP bus,
-// using env var EnvCpsAmqpURL as configuration.
-// Use NewConnection for reconnection feature.
-func NewSession() (*amqp.Connection, error) {
-	url := os.Getenv(EnvURL)
-	if url == "" {
-		return nil, fmt.Errorf("environment variable %s empty", EnvURL)
-	}
-	return amqp.Dial(url)
-}
 
 // NewSession creates a new connection to an AMQP bus,
 // using env var EnvCpsAmqpURL as configuration.
