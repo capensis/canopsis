@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tls"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
@@ -39,7 +40,8 @@ func New(
 	reconnectTimeout time.Duration,
 	logger zerolog.Logger,
 ) (Connection, error) {
-	d, err := newDefaultDialer(amqp.Config{})
+	d, err := newDefaultDialer(amqp.Config{
+		TLSClientConfig: tls.CreateTLSConfigFromEnv(EnvCaCertFile, EnvInsecureSkipVerify, logger)})
 	if err != nil {
 		return nil, err
 	}
@@ -53,6 +55,9 @@ func NewConfig(
 	config amqp.Config,
 	logger zerolog.Logger,
 ) (Connection, error) {
+	if config.TLSClientConfig == nil {
+		config.TLSClientConfig = tls.CreateTLSConfigFromEnv(EnvCaCertFile, EnvInsecureSkipVerify, logger)
+	}
 	d, err := newDefaultDialer(config)
 	if err != nil {
 		return nil, err
