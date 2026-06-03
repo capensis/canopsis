@@ -206,9 +206,13 @@ export default {
     },
 
     async change(event) {
+      let isValid = true;
+
       this.setFilesForValidator(event.target.files);
 
-      const isValid = await this.$validator.validate(this.name);
+      if (this.name) {
+        isValid = await this.$validator.validate(this.name);
+      }
 
       if (isValid) {
         this.setFiles(this.filesForValidator);
