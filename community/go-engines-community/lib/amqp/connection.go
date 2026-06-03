@@ -137,10 +137,12 @@ func (c *connection) handleReconnect() {
 		if err != nil {
 			attempt++
 
-			c.logger.
-				Err(err).
-				Str("retries", strconv.Itoa(attempt)+"/"+strconv.Itoa(c.reconnectCount)).
-				Msg("cannot connect to amqp server")
+			le := c.logger.Err(err)
+			if c.reconnectCount > 0 {
+				le = le.Str("retries", strconv.Itoa(attempt)+"/"+strconv.Itoa(c.reconnectCount))
+			}
+
+			le.Msg("cannot connect to amqp server")
 
 			if c.reconnectCount == 0 || attempt == c.reconnectCount {
 				c.doneOnce.Do(func() { close(c.done) })
@@ -212,7 +214,8 @@ func (c *connection) handleReconnect() {
 	}
 }
 
-// waitReconnect blocks until a non-stale amqpConn is available, or until the connection is closed, or until abort fires.
+// waitReconnect blocks until a non-stale amqpConn is available, then returns it.
+// It returns nil instead if the connection is shut down (c.done) or the caller cancels (callerDone) first.
 // Pass stale to skip a known-bad conn (typical when the previous operation returned amqp.ErrClosed against it).
 func (c *connection) waitReconnect(callerDone <-chan struct{}, stale amqp091Conn) amqp091Conn {
 	for {

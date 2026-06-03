@@ -123,6 +123,10 @@ func killConnection(t *testing.T, c *rabbithole.Client, realConnName string) {
 func newTestAPIClient(t *testing.T) *rabbithole.Client {
 	t.Helper()
 	url := os.Getenv(EnvHTTPURL)
+	if url == "" {
+		t.Fatalf("environment variable %s not set", EnvHTTPURL)
+	}
+
 	user := os.Getenv(EnvHTTPUser)
 	pass := os.Getenv(EnvHTTPPassword)
 

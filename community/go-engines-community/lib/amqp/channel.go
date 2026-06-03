@@ -287,10 +287,12 @@ func (c *channel) handleReconnect(amqpConn amqp091Conn) {
 
 			attempt++
 
-			c.logger.
-				Err(err).
-				Str("retries", strconv.Itoa(attempt)+"/"+strconv.Itoa(c.conn.reconnectCount)).
-				Msg("cannot create amqp channel")
+			le := c.logger.Err(err)
+			if c.conn.reconnectCount > 0 {
+				le = le.Str("retries", strconv.Itoa(attempt)+"/"+strconv.Itoa(c.conn.reconnectCount))
+			}
+
+			le.Msg("cannot create amqp channel")
 
 			if c.conn.reconnectCount == 0 || attempt == c.conn.reconnectCount {
 				c.doneOnce.Do(func() { close(c.done) })
