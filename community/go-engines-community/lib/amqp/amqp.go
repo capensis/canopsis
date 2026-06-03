@@ -16,6 +16,8 @@ const (
 	EnvHTTPUser               = "CPS_AMQP_HTTP_USER"
 	EnvHTTPPassword           = "CPS_AMQP_HTTP_PASSWORD" //nolint:gosec
 	EnvHTTPInsecureSkipVerify = "CPS_AMQP_HTTP_INSECURE_SKIP_VERIFY"
+	EnvInsecureSkipVerify     = "CPS_AMQP_INSECURE_SKIP_VERIFY"
+	EnvCaCertFile             = "CPS_AMQP_CA_CERT_FILE"
 )
 
 // NewSession creates a new connection to an AMQP bus,

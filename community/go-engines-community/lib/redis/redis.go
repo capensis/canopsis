@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tls"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
@@ -40,6 +41,12 @@ const (
 // Env vars for redis session
 const (
 	EnvURL = "CPS_REDIS_URL"
+
+	// CPS_VALKEY_ prefix is preferrable, but if not set, CPS_REDIS_ prefix is used as fallback for backward compatibility.
+	EnvInsecureSkipVerify      = "CPS_VALKEY_INSECURE_SKIP_VERIFY"
+	EnvCaCertFile              = "CPS_VALKEY_CA_CERT_FILE"
+	EnvRedisInsecureSkipVerify = "CPS_REDIS_INSECURE_SKIP_VERIFY"
+	EnvRedisCaCertFile         = "CPS_REDIS_CA_CERT_FILE"
 )
 
 var ErrFailedToRefreshLock = errors.New("failed to refresh lock")
@@ -206,17 +213,21 @@ func NewSession(ctx context.Context, db int, logger zerolog.Logger, reconnectCou
 
 	var redisClient *redis.Client
 	readTimeout := 3 * time.Second // redis.Options.ReadTimeout default value
+	envCaCertFile, envInsecureSkipVerify := getTLSConfigEnvVars()
+	tc := tls.CreateTLSConfigFromEnv(envCaCertFile, envInsecureSkipVerify, logger)
 	if strings.HasPrefix(connectUrl, "redis-sentinel://") {
 		failoverOptions, err := NewFailoverOptions(connectUrl, db, logger, reconnectCount, minReconnectTimeout)
 		if err != nil {
 			return nil, err
 		}
+		failoverOptions.TLSConfig = tc
 		redisClient = redis.NewFailoverClient(failoverOptions)
 	} else {
 		redisOptions, err := NewOptions(connectUrl, db, logger, reconnectCount, minReconnectTimeout)
 		if err != nil {
 			return nil, err
 		}
+		redisOptions.TLSConfig = tc
 		redisClient = redis.NewClient(redisOptions)
 	}
 	if minReconnectTimeout > 0 {
@@ -252,4 +263,14 @@ func IsConnectionError(err error) bool {
 	}
 
 	return false
+}
+
+func getTLSConfigEnvVars() (envCaCertFile, envInsecureSkipVerify string) {
+	envCaCertFile, envInsecureSkipVerify = EnvCaCertFile, EnvInsecureSkipVerify
+	caCertFile, insecureSkipVerify := os.Getenv(EnvCaCertFile), os.Getenv(EnvInsecureSkipVerify)
+	if caCertFile != "" || insecureSkipVerify != "" {
+		return
+	}
+	envCaCertFile, envInsecureSkipVerify = EnvRedisCaCertFile, EnvRedisInsecureSkipVerify
+	return
 }
