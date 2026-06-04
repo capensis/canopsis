@@ -434,10 +434,13 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	previousState := alarm.Value.State.Value
 	previousStatus := alarm.Value.Status.Value
 	match := bson.M{"_id": alarm.ID, "v.resolved": nil}
+	alarm.Value.Output = params.Output
+	alarm.Value.LastEventDate = &params.Timestamp
+	alarm.Value.LongOutput = params.LongOutput
 	set := bson.M{
-		"v.output":          params.Output,
-		"v.last_event_date": params.Timestamp,
-		"v.long_output":     params.LongOutput,
+		"v.output":          alarm.Value.Output,
+		"v.last_event_date": alarm.Value.LastEventDate,
+		"v.long_output":     alarm.Value.LongOutput,
 	}
 	push := bson.M{}
 	inc := bson.M{
