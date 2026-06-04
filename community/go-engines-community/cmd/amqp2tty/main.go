@@ -35,7 +35,7 @@ func main() {
 		return
 	}
 
-	amqpConnection, err := amqp.NewConnection(liblog.NewLogger(ctx, logOpts), 0, 0)
+	amqpConnection, err := amqp.New(0, 0, liblog.NewLogger(ctx, logOpts))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,7 +47,7 @@ func main() {
 		}
 	}()
 
-	ch, err := amqpConnection.Channel()
+	ch, err := amqpConnection.Channel(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -60,6 +60,7 @@ func main() {
 	}()
 
 	queue, err := ch.QueueDeclare(
+		ctx,
 		daemonName,
 		true,
 		true,
@@ -72,6 +73,7 @@ func main() {
 	}
 
 	err = ch.QueueBind(
+		ctx,
 		queue.Name,
 		"#",
 		exchange,
@@ -82,7 +84,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	msgs, err := ch.Consume(
+	msgs, err := ch.ConsumeWithContext(
+		ctx,
 		queue.Name,
 		daemonName,
 		true,
@@ -98,18 +101,9 @@ func main() {
 	fmt.Printf("%s started\n", daemonName)
 	defer fmt.Printf("\n%s closed\n", daemonName)
 
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case d, ok := <-msgs:
-			if !ok {
-				log.Fatal("the rabbitmq channel has been closed")
-			}
-
-			fmt.Printf("%s %s New message:\n%s@%s:\n\t%s\n",
-				time.Now().Format("2006-01-02T15:04:05.999999999Z07:00"),
-				daemonName, d.RoutingKey, d.Exchange, d.Body)
-		}
+	for d := range msgs {
+		fmt.Printf("%s %s New message:\n%s@%s:\n\t%s\n",
+			time.Now().Format("2006-01-02T15:04:05.999999999Z07:00"),
+			daemonName, d.RoutingKey, d.Exchange, d.Body)
 	}
 }
