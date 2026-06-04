@@ -6,16 +6,18 @@
     :options="options"
     :total-items="totalItems"
     :select-all="removable"
+    :is-disabled-item="isDisabledRole"
     advanced-pagination
     search
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
         small
-        @click="$emit('remove-selected', selected)"
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #auth_config.inactivity_interval="{ item }">
@@ -49,6 +51,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     roles: {
@@ -80,35 +86,48 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.name'),
-          value: 'name',
-        },
-        {
-          text: this.$t('role.inactivityInterval'),
-          value: 'auth_config.inactivity_interval',
-          sortable: false,
-        },
-        {
-          text: this.$t('role.expirationInterval'),
-          value: 'auth_config.expiration_interval',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
-  },
-  methods: {
-    durationToString(duration) {
-      return duration ? `${duration.value}${duration.unit}` : this.$t('common.notAvailable');
-    },
+  setup() {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      {
+        text: t('common.name'),
+        value: 'name',
+      },
+      {
+        text: t('role.inactivityInterval'),
+        value: 'auth_config.inactivity_interval',
+        sortable: false,
+      },
+      {
+        text: t('role.expirationInterval'),
+        value: 'auth_config.expiration_interval',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
+
+    /**
+     * Convert duration to string
+     */
+    const durationToString = duration => (
+      duration ? `${duration.value}${duration.unit}` : t('common.notAvailable')
+    );
+
+    /**
+     * Check if role is disabled
+     */
+    const isDisabledRole = ({ deletable = true }) => !deletable;
+
+    return {
+      headers,
+      durationToString,
+      isDisabledRole,
+    };
   },
 };
 </script>

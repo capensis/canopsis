@@ -1,7 +1,7 @@
 <template>
   <v-layout>
     <c-action-btn
-      v-if="removable && config.remove"
+      v-if="removable && someOneRemovable && config.remove"
       :tooltip="config.removeTooltip"
       :small="small"
       type="delete"
@@ -44,6 +44,7 @@
       :ids="itemsIds"
       :small="small"
       v-bind="config.exportProps"
+      @refresh="afterSubmit"
     />
   </v-layout>
 </template>
@@ -75,6 +76,7 @@ import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception
 import { usePlaylist } from '@/hooks/store/modules/playlist';
 import { useMaps } from '@/hooks/store/modules/maps';
 import { useUser } from '@/hooks/store/modules/user';
+import { useRole } from '@/hooks/store/modules/role';
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 
 export default {
@@ -286,6 +288,10 @@ export default {
     } = useUser();
 
     const {
+      bulkRemoveRoles,
+    } = useRole();
+
+    const {
       bulkEnableRemediationInstructions,
       bulkDisableRemediationInstructions,
       bulkRemoveRemediationInstructions,
@@ -300,6 +306,7 @@ export default {
 
     const someOneEnable = computed(() => enablableItems.value.some(({ enabled }) => enabled));
     const someOneDisable = computed(() => enablableItems.value.some(({ enabled }) => !enabled));
+    const someOneRemovable = computed(() => props.items.some(({ deletable = true }) => deletable));
 
     const hideableItems = computed(() => props.items);
     const hideableItemsIds = computed(() => pickIds(hideableItems.value));
@@ -412,6 +419,10 @@ export default {
           remove: bulkRemoveMaps,
           tooltipPrefix: 'map',
         },
+        [props.role]: {
+          remove: bulkRemoveRoles,
+          tooltipPrefix: 'role',
+        },
         [props.user]: {
           remove: bulkRemoveUsers,
           enable: bulkEnableUsers,
@@ -423,6 +434,7 @@ export default {
           enable: bulkEnableRemediationInstructions,
           disable: bulkDisableRemediationInstructions,
           tooltipPrefix: 'remediation.instruction',
+          exportProps: { instruction: true },
         },
       }.true ?? {};
 
@@ -549,7 +561,9 @@ export default {
       someOneDisable,
       someOneVisible,
       someOneHidden,
+      someOneRemovable,
 
+      afterSubmit,
       showRemoveModal,
       showEnableModal,
       showDisableModal,
