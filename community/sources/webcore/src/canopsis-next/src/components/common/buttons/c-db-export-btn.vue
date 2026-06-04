@@ -84,7 +84,7 @@ export default {
       default: false,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const {
       exportPbehaviorsDb,
       exportEventFiltersDb,
@@ -125,7 +125,11 @@ export default {
 
       const filename = String(headers['content-disposition']).replace(/^.*filename="?|"$/g, '');
 
-      return saveFile(data, filename);
+      const result = await saveFile(data, filename);
+
+      emit('refresh');
+
+      return result;
     });
 
     return {
