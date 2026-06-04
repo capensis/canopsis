@@ -169,14 +169,17 @@ func Default(
 	services.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
 	services.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg, logger)
 	// Connect to rmq.
-	amqpConn, err := libamqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
+	amqpPubConn, err := libamqp.New(-1, cfg.Global.GetReconnectTimeout(), logger)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
-	amqpPublisher, err := amqpConn.Channel()
+	amqpConsumeConn, err := libamqp.New(-1, cfg.Global.GetReconnectTimeout(), logger)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
+	amqpPubPool := libamqp.NewChannelPool(amqpPubConn, canopsis.DefaultAMQPPublishPoolSize)
+	amqpPublisher := libamqp.NewPooledPublisher(amqpPubPool)
+	amqpConsumePool := libamqp.NewChannelPool(amqpConsumeConn, 0)
 	// Connect to redis.
 	pbhRedisSession, err := libredis.NewSession(ctx, libredis.PBehaviorLockStorage, logger,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
@@ -251,7 +254,7 @@ func Default(
 	}
 
 	services.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
-	workersRunner := workers.NewRunner(amqpConn, logger)
+	workersRunner := workers.NewRunner(amqpConsumePool, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize, logger)
 	// Create csv exporter.
 	services.ExportTaskExecutor = export.NewTaskExecutor(primaryDbClient, workers.NewJobPublisher(jobKeyExport, amqpPublisher),
 		services.TimezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
@@ -376,7 +379,8 @@ func Default(
 
 	services.NotificationStore = usernotification.NewStore(primaryDbClient, amqpPublisher, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
-	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConn, services.WebsocketHub,
+	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConsumePool,
+		cfg.Global.PrefetchCount, cfg.Global.PrefetchSize, services.WebsocketHub,
 		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
 
 	if tplTestTypePermMapping == nil {
@@ -429,7 +433,22 @@ func Default(
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
 
-			err = amqpConn.Close()
+			err = amqpPubPool.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp channels")
+			}
+
+			err = amqpConsumePool.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp channels")
+			}
+
+			err = amqpPubConn.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = amqpConsumeConn.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
@@ -554,67 +573,89 @@ func Default(
 	})
 
 	actionLogger := apilogger.NewActionLogger(noTimeoutClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-	api.AddWorker("action_log", func(ctx context.Context) {
-		err := actionLogger.Watch(ctx)
-		if err != nil && !errors.Is(err, context.Canceled) {
-			panic(FatalWorkerError{err: err})
-		}
+	api.AddWorker("action_log", func(ctx context.Context) error {
+		return actionLogger.Watch(ctx)
 	})
 
-	api.AddWorker("amqp_workers", func(ctx context.Context) {
+	api.AddWorker("amqp_workers", func(ctx context.Context) error {
 		err = workersRunner.Run(ctx)
 		if err != nil {
-			var amqpErr *amqp.Error
-			if errors.As(err, &amqpErr) && amqpErr.Code == amqp.NotFound {
-				panic(NewFatalWorkerError(err))
+			if amqpErr, ok := errors.AsType[*amqp.Error](err); ok && amqpErr.Code == amqp.NotFound {
+				return err
 			}
 
-			panic(err)
+			return NewReloadWorkerError(err)
 		}
+
+		return nil
 	})
 
-	api.AddWorker("tech_metrics", func(ctx context.Context) {
+	api.AddWorker("tech_metrics", func(ctx context.Context) error {
 		techMetricsSender.Run(ctx)
+
+		return nil
 	})
-	api.AddWorker("session_clean", func(ctx context.Context) {
+	api.AddWorker("session_clean", func(ctx context.Context) error {
 		security.GetSessionStore().StartAutoClean(ctx, flags.PeriodicalWaitTime)
+
+		return nil
 	})
-	api.AddWorker("enforce_policy_load", func(ctx context.Context) {
+	api.AddWorker("enforce_policy_load", func(ctx context.Context) error {
 		services.Enforcer.StartAutoLoadPolicy(ctx, flags.PeriodicalWaitTime)
+
+		return nil
 	})
 	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpPublisher, logger))
 
 	stateSettingsListener := statesetting.NewListener(primaryDbClient, amqpPublisher, canopsis.ApiConnector,
 		flags.IntegrationPeriodicalWaitTime, flags.StateSettingRecomputeDelay, json.NewEncoder(), logger)
-	api.AddWorker("state_settings_listener", func(ctx context.Context) {
+	api.AddWorker("state_settings_listener", func(ctx context.Context) error {
 		stateSettingsListener.Listen(ctx, stateSettingsUpdatesChan)
+
+		return nil
 	})
-	api.AddWorker("state_settings_worker", func(ctx context.Context) {
+	api.AddWorker("state_settings_worker", func(ctx context.Context) error {
 		stateSettingsListener.Work(ctx)
+
+		return nil
 	})
-	api.AddWorker("entity_event_publish", func(ctx context.Context) {
+	api.AddWorker("entity_event_publish", func(ctx context.Context) error {
 		entityServiceEventPublisher.Publish(ctx, entityPublChan)
+
+		return nil
 	})
-	api.AddWorker("entity_cleaner", func(ctx context.Context) {
+	api.AddWorker("entity_cleaner", func(ctx context.Context) error {
 		disabledEntityCleaner.RunCleanerProcess(ctx, entityCleanerTaskChan)
+
+		return nil
 	})
-	api.AddWorker("data_import_abandoned", func(ctx context.Context) {
+	api.AddWorker("data_import_abandoned", func(ctx context.Context) error {
 		importWorker.ProcessAbandonedJob(ctx)
+
+		return nil
 	})
-	api.AddWorker("data_import_delete_old", func(ctx context.Context) {
+	api.AddWorker("data_import_delete_old", func(ctx context.Context) error {
 		importWorker.DeleteOldJobs(ctx)
+
+		return nil
 	})
 	api.AddWorker("config_reload", updateConfig(services.TimezoneConfigProvider, services.DataStorageConfigProvider,
 		services.ApiConfigProvider, services.TemplateConfigProvider, techMetricsConfigProvider, services.AlarmConfigProvider,
 		configAdapter, services.UserInterfaceConfigProvider, userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
-	api.AddWorker("data_export_abandoned", func(ctx context.Context) {
+	api.AddWorker("data_export_abandoned", func(ctx context.Context) error {
 		services.ExportTaskExecutor.ProcessAbandonedTasks(ctx)
+
+		return nil
 	})
-	api.AddWorker("data_export_delete_old", func(ctx context.Context) {
+	api.AddWorker("data_export_delete_old", func(ctx context.Context) error {
 		services.ExportTaskExecutor.DeleteOldTasks(ctx)
+
+		return nil
 	})
-	api.AddWorker("tech_metrics_export", func(ctx context.Context) {
+	api.AddWorker("tech_metrics_export", func(ctx context.Context) error {
 		techMetricsTaskExecutor.Run(ctx)
+
+		return nil
 	})
 	tokenStore := token.NewMongoStore(primaryDbClient, logger)
 	shareTokenStore := sharetoken.NewMongoStore(primaryDbClient, logger)
@@ -622,8 +663,10 @@ func Default(
 		services.WebsocketHub, logger))
 	api.AddWorker("auth_token_expiration", removeExpiredTokens(flags.PeriodicalWaitTime, tokenStore, shareTokenStore,
 		logger))
-	api.AddWorker("websocket", func(ctx context.Context) {
+	api.AddWorker("websocket", func(ctx context.Context) error {
 		services.WebsocketHub.Run(ctx)
+
+		return nil
 	})
 	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, services.WebsocketHub, websocketStore, logger))
 
@@ -631,17 +674,19 @@ func Default(
 	broadcastMessageService := broadcastmessage.NewService(
 		broadcastmessage.NewStore(primaryDbClient, maintenanceAdapter, authorProvider), services.WebsocketHub,
 		flags.BroadcastMessagePeriodicalWaitTime, logger)
-	api.AddWorker("broadcast_message", func(ctx context.Context) {
+	api.AddWorker("broadcast_message", func(ctx context.Context) error {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
+
+		return nil
 	})
-	api.AddWorker("links", func(ctx context.Context) {
+	api.AddWorker("links", func(ctx context.Context) error {
 		ticker := time.NewTicker(flags.PeriodicalWaitTime)
 		defer ticker.Stop()
 
 		for {
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case <-ticker.C:
 				err := services.LinkGenerator.Load(ctx)
 				if err != nil {
@@ -650,28 +695,37 @@ func Default(
 			}
 		}
 	})
-	api.AddWorker("data_exdata_import_abandoned", func(ctx context.Context) {
+	api.AddWorker("data_exdata_import_abandoned", func(ctx context.Context) error {
 		exdataImportWorker.ProcessAbandonedJobs(ctx)
+
+		return nil
 	})
-	api.AddWorker("data_extdata_import_delete_old", func(ctx context.Context) {
+	api.AddWorker("data_extdata_import_delete_old", func(ctx context.Context) error {
 		exdataImportWorker.DeleteOldJobs(ctx)
+
+		return nil
 	})
-	api.AddWorker("pattern_optimize_abandoned", func(ctx context.Context) {
+	api.AddWorker("pattern_optimize_abandoned", func(ctx context.Context) error {
 		patternOptimizeWorker.ProcessAbandonedJobs(ctx)
+
+		return nil
 	})
-	api.AddWorker("healthcheck", func(ctx context.Context) {
+	api.AddWorker("healthcheck", func(ctx context.Context) error {
 		healthcheckStore.Load(ctx)
+
+		return nil
 	})
-	api.AddWorker("notification_queue_listen", func(ctx context.Context) {
+	api.AddWorker("notification_queue_listen", func(ctx context.Context) error {
 		err := notifQueueListener.Listen(ctx)
 		if err != nil {
-			var amqpErr *amqp.Error
-			if errors.As(err, &amqpErr) && amqpErr.Code == amqp.NotFound {
-				panic(NewFatalWorkerError(err))
+			if amqpErr, ok := errors.AsType[*amqp.Error](err); ok && amqpErr.Code == amqp.NotFound {
+				return err
 			}
 
-			panic(err)
+			return NewReloadWorkerError(err)
 		}
+
+		return nil
 	})
 
 	return api, services, nil

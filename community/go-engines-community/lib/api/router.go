@@ -122,7 +122,7 @@ func RegisterRoutes(
 	secondaryDbClient mongo.DbClient,
 	dbExportClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
-	amqpPublisher amqp.Channel,
+	amqpPublisher amqp.Publisher,
 	lockRedisSession redis.Cmdable,
 	apiConfigProvider config.ApiConfigProvider,
 	timezoneConfigProvider config.TimezoneConfigProvider,
