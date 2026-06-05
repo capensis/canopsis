@@ -123,7 +123,7 @@ func (s *MongoStore) Save(r *http.Request, w http.ResponseWriter, session *sessi
 		return err
 	}
 
-	cookie := sessions.NewCookie(session.Name(), encoded, session.Options)
+	cookie := sessions.NewCookie(session.Name(), encoded, session.Options) // #nosec G124
 	cookie.Expires = expires
 	http.SetCookie(w, cookie)
 

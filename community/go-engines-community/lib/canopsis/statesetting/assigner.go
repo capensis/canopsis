@@ -76,10 +76,11 @@ func (a *assigner) LoadRules(ctx context.Context) error {
 			return err
 		}
 
-		if rule.Type == RuleTypeComponent {
+		switch rule.Type {
+		case RuleTypeComponent:
 			componentRules = append(componentRules, rule)
 			componentRulesIDs = append(componentRulesIDs, rule.ID)
-		} else if rule.Type == RuleTypeService {
+		case RuleTypeService:
 			serviceRules = append(serviceRules, rule)
 			serviceRulesIDs = append(serviceRulesIDs, rule.ID)
 		}
@@ -114,9 +115,10 @@ func (a *assigner) AssignStateSetting(ctx context.Context, entity *types.Entity,
 	a.rulesMutex.RLock()
 	defer a.rulesMutex.RUnlock()
 
-	if entity.Type == types.EntityTypeComponent {
+	switch entity.Type {
+	case types.EntityTypeComponent:
 		return a.assignToComponent(ctx, entity, prevStateMethodID, commRegister)
-	} else if entity.Type == types.EntityTypeService {
+	case types.EntityTypeService:
 		return a.assignToService(ctx, entity, prevStateMethodID, commRegister)
 	}
 

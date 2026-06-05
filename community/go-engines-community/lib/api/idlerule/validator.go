@@ -1,6 +1,7 @@
 package idlerule
 
 import (
+	"slices"
 	"strconv"
 	"strings"
 
@@ -179,24 +180,19 @@ func (v *Validator) validateOperationParametersRequest(sl validator.StructLevel,
 				types.AlarmStateMajor,
 				types.AlarmStateCritical,
 			}
-			param := ""
-			for i := range validTypes {
-				param += strconv.Itoa(int(validTypes[i]))
-				if i < len(validTypes)-1 {
-					param += " "
-				}
-			}
 
-			found := false
-			for _, v := range validTypes {
-				if v == *params.State {
-					found = true
-					break
-				}
-			}
+			found := slices.Contains(validTypes, *params.State)
 
 			if !found {
-				sl.ReportError(params.State, "Operation.Parameters.State", "State", "oneof", param)
+				var param strings.Builder
+				for i := range validTypes {
+					param.WriteString(strconv.Itoa(int(validTypes[i])))
+					if i < len(validTypes)-1 {
+						param.WriteString(" ")
+					}
+				}
+
+				sl.ReportError(params.State, "Operation.Parameters.State", "State", "oneof", param.String())
 			}
 		}
 	case types.ActionTypeSnooze:
