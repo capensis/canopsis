@@ -575,6 +575,10 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		} else {
 			push["v.steps"] = statusStep
 		}
+
+		if alarmChange.Type == types.AlarmChangeTypeNone {
+			alarmChange.Type = types.AlarmChangeTypeUpdateStatus
+		}
 	}
 
 	addToSet := bson.M{}
