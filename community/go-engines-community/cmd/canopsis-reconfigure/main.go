@@ -326,7 +326,7 @@ func migratePostgres(f flags, logger zerolog.Logger) error {
 		return err
 	}
 
-	err = runPostgresMigrations(f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps, connStr)
+	err = runPostgresMigrations(f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps, f.postgresMigrationBaseline, connStr)
 	if err != nil {
 		return err
 	}
@@ -350,7 +350,7 @@ func migrateTechPostgres(f flags, logger zerolog.Logger) error {
 		return err
 	}
 
-	err = runPostgresMigrations(f.techPostgresMigrationDirectory, f.techPostgresMigrationMode, f.techPostgresMigrationSteps, connStr)
+	err = runPostgresMigrations(f.techPostgresMigrationDirectory, f.techPostgresMigrationMode, f.techPostgresMigrationSteps, f.techPostgresMigrationBaseline, connStr)
 	if err != nil {
 		return err
 	}
@@ -399,7 +399,7 @@ func generateSerialName(ctx context.Context, logger zerolog.Logger, forceUpdate 
 	return nil
 }
 
-func runPostgresMigrations(migrationDirectory, mode string, steps int, connStr string) error {
+func runPostgresMigrations(migrationDirectory, mode string, steps, baseline int, connStr string) error {
 	p := &pgx.Postgres{}
 	driver, err := p.Open(connStr)
 	if err != nil {
@@ -413,6 +413,25 @@ func runPostgresMigrations(migrationDirectory, mode string, steps int, connStr s
 
 	if steps < 0 {
 		return errors.New("postgres migration steps should be >= 0")
+	}
+
+	// When upgrading from a maintenance-branch release, the stored version may be in the
+	// reserved range (>= 1000). Migrations from the next sequential release line (e.g. 27, 28)
+	// have lower numbers and would be skipped by a plain Up(). Force the version back to the
+	// supplied baseline so that the ascending walk picks them up.
+	//
+	// Only applies for a full Up (no steps) — never for Down or stepped navigation.
+	const maintenanceRangeStart = 1000
+	if baseline > 0 && mode == "up" && steps == 0 {
+		currentVersion, dirty, err := m.Version()
+		if err != nil && !errors.Is(err, migrate.ErrNilVersion) {
+			return fmt.Errorf("failed to read current migration version: %w", err)
+		}
+		if !dirty && currentVersion >= maintenanceRangeStart {
+			if err := m.Force(baseline); err != nil {
+				return fmt.Errorf("failed to force migration baseline to %d: %w", baseline, err)
+			}
+		}
 	}
 
 	switch mode {
