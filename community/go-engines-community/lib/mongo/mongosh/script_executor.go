@@ -43,7 +43,7 @@ func (scriptExecutor) Exec(ctx context.Context, file string) (resErr error) {
 	}()
 
 	cmd := fmt.Sprintf("mongosh %q %s %s", os.Getenv(mongo.EnvURL), h.Name(), file)
-	result := exec.CommandContext(ctx, "bash", "-c", cmd)
+	result := exec.CommandContext(ctx, "bash", "-c", cmd) // #nosec G702 -- we need to execute mongosh with a custom script, and the command is built from environment variable and file path which are controlled by us
 	output, err := result.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("cannot execute command %w: %s", err, string(output))
