@@ -323,7 +323,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (Table, error) {
 				return res, fmt.Errorf("failed to rename postgres table: %w", err)
 			}
 		default:
-			return res, fmt.Errorf("invalid table type: %q", oldTable.Type)
+			return res, fmt.Errorf("invalid table type: %d", oldTable.Type)
 		}
 	}
 
@@ -502,12 +502,14 @@ func (s *store) FindOneData(ctx context.Context, tableID, id string) (map[string
 		columnsWithID := make([]string, len(columns)+1)
 		columnsWithID[0] = externaldata.IDColumnName
 		copy(columnsWithID[1:], columns)
+		var sqlSb505 strings.Builder
 		for i, col := range columnsWithID {
-			sql += pgx.Identifier{col}.Sanitize()
+			sqlSb505.WriteString(pgx.Identifier{col}.Sanitize())
 			if i < len(columnsWithID)-1 {
-				sql += ", "
+				sqlSb505.WriteString(", ")
 			}
 		}
+		sql += sqlSb505.String()
 
 		sql += " FROM " + table.getDBTableName() + " WHERE " + externaldata.IDColumnName + " = $1"
 		rows, err := pgPool.Query(ctx, sql, id)
@@ -658,6 +660,7 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 
 	valErrMsgs := make(map[string]string)
 
+	var querySqlSb661 strings.Builder
 	for i, cfg := range table.ColumnConfigs {
 		columnName := cfg.Name
 
@@ -722,11 +725,12 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 		doc[columnName] = val
 
 		queryArgs[i] = val
-		querySql += pgx.Identifier{columnName}.Sanitize() + " = $" + strconv.Itoa(i+1)
+		querySqlSb661.WriteString(pgx.Identifier{columnName}.Sanitize() + " = $" + strconv.Itoa(i+1))
 		if i < len(table.ColumnConfigs)-1 {
-			querySql += ", "
+			querySqlSb661.WriteString(", ")
 		}
 	}
+	querySql += querySqlSb661.String()
 
 	if len(valErrMsgs) > 0 {
 		return nil, common.NewValidationErrors(valErrMsgs)
@@ -843,24 +847,28 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		}
 
 		sql := "SELECT "
+		var sqlSb846 strings.Builder
 		for i, c := range selectColumns {
-			sql += pgx.Identifier{c}.Sanitize()
+			sqlSb846.WriteString(pgx.Identifier{c}.Sanitize())
 			if i < len(selectColumns)-1 {
-				sql += ", "
+				sqlSb846.WriteString(", ")
 			}
 		}
+		sql += sqlSb846.String()
 
 		sql += " FROM " + table.getDBTableName()
 		queryArgs := make([]any, 0)
 		if r.Search != "" {
 			sql += " WHERE "
 			queryArgs = append(queryArgs, r.Search)
+			var sqlSb858 strings.Builder
 			for i, col := range searchBy {
-				sql += pgx.Identifier{col}.Sanitize() + " ~ $" + strconv.Itoa(len(queryArgs))
+				sqlSb858.WriteString(pgx.Identifier{col}.Sanitize() + " ~ $" + strconv.Itoa(len(queryArgs)))
 				if i < len(searchBy)-1 {
-					sql += " OR "
+					sqlSb858.WriteString(" OR ")
 				}
 			}
+			sql += sqlSb858.String()
 		}
 
 		rows, err := pgPool.Query(ctx, sql, queryArgs...)
@@ -1021,6 +1029,7 @@ func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, 
 	columnsWithID[0] = externaldata.IDColumnName
 
 	sql := "SELECT " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + ", "
+	var sqlSb1024 strings.Builder
 	for i, cfg := range job.ColumnConfigs {
 		initialName := cfg.Name + "_initial_value"
 		transformedName := cfg.Name + "_transformed_value"
@@ -1030,13 +1039,14 @@ func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, 
 		columnsWithID[i*sqlColumnsForCsvColumn+2] = transformedName
 		columnsWithID[i*sqlColumnsForCsvColumn+3] = errorsName
 
-		sql += pgx.Identifier{initialName}.Sanitize() + ", " +
+		sqlSb1024.WriteString(pgx.Identifier{initialName}.Sanitize() + ", " +
 			pgx.Identifier{transformedName}.Sanitize() + ", " +
-			pgx.Identifier{errorsName}.Sanitize()
+			pgx.Identifier{errorsName}.Sanitize())
 		if i < len(job.ColumnConfigs)-1 {
-			sql += ", "
+			sqlSb1024.WriteString(", ")
 		}
 	}
+	sql += sqlSb1024.String()
 
 	tableName := job.getDBTableName()
 
@@ -1120,12 +1130,14 @@ func (s *store) findDataFromPostgres(ctx context.Context, tableName string, colu
 	columnsWithID[0] = externaldata.IDColumnName
 	copy(columnsWithID[1:], columns)
 	sql := "SELECT "
+	var sqlSb1123 strings.Builder
 	for i, col := range columnsWithID {
-		sql += pgx.Identifier{col}.Sanitize()
+		sqlSb1123.WriteString(pgx.Identifier{col}.Sanitize())
 		if i < len(columnsWithID)-1 {
-			sql += ", "
+			sqlSb1123.WriteString(", ")
 		}
 	}
+	sql += sqlSb1123.String()
 
 	// A hack to avoid the "cached plan must not change result type (SQLSTATE 0A000)" error when column types have been changed.
 	// Adding a comment forces Postgres to execute the query without using a cached plan.
@@ -1209,7 +1221,7 @@ func (s *store) transformPostgresResToData(vals []any, columnConfigs []externald
 				return nil, fmt.Errorf("transformed value for %q column doesn't contain a string array", cfg.Name)
 			}
 		default:
-			return nil, fmt.Errorf("unsupported column type %q", cfg.Type)
+			return nil, fmt.Errorf("unsupported column type %d", cfg.Type)
 		}
 
 		res[cfg.Name] = value
@@ -1281,7 +1293,7 @@ func (s *store) transformPostgresPreviewResToData(vals []any, columnConfigs []Co
 				return nil, fmt.Errorf("transformed value for %q column doesn't contain a string array", cfg.Name)
 			}
 		default:
-			return nil, fmt.Errorf("unsupported column type %q", cfg.Type)
+			return nil, fmt.Errorf("unsupported column type %d", cfg.Type)
 		}
 
 		res[cfg.Name] = transformedValue

@@ -1,7 +1,9 @@
 package scenario
 
 import (
+	"slices"
 	"strconv"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
@@ -55,24 +57,18 @@ func validateActionParametersRequest(sl validator.StructLevel, t string, params 
 				types.AlarmStateMajor,
 				types.AlarmStateCritical,
 			}
-			param := ""
-			for i := range validTypes {
-				param += strconv.Itoa(int(validTypes[i]))
-				if i < len(validTypes)-1 {
-					param += " "
-				}
-			}
-
-			found := false
-			for _, v := range validTypes {
-				if v == *params.State {
-					found = true
-					break
-				}
-			}
+			found := slices.Contains(validTypes, *params.State)
 
 			if !found {
-				sl.ReportError(params.State, "Parameters.State", "State", "oneof", param)
+				var param strings.Builder
+				for i := range validTypes {
+					param.WriteString(strconv.Itoa(int(validTypes[i])))
+					if i < len(validTypes)-1 {
+						param.WriteString(" ")
+					}
+				}
+
+				sl.ReportError(params.State, "Parameters.State", "State", "oneof", param.String())
 			}
 		}
 	case types.ActionTypeSnooze:

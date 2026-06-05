@@ -31,7 +31,7 @@ func ToMap(v any) (map[string]any, bool) {
 func UnwrapPointer(v reflect.Value) reflect.Value {
 	for {
 		switch v.Kind() {
-		case reflect.Interface, reflect.Ptr:
+		case reflect.Interface, reflect.Pointer:
 			v = v.Elem()
 		default:
 			return v
