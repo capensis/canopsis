@@ -504,6 +504,7 @@ func Default(
 			secondaryDbClient,
 			dbExportClient,
 			pgPoolProvider,
+			amqpPubPool,
 			amqpPublisher,
 			lockRedisSession,
 			services.ApiConfigProvider,
