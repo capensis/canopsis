@@ -122,6 +122,7 @@ func RegisterRoutes(
 	secondaryDbClient mongo.DbClient,
 	dbExportClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
+	amqpPubPool amqp.ChannelPool,
 	amqpPublisher amqp.Publisher,
 	lockRedisSession redis.Cmdable,
 	apiConfigProvider config.ApiConfigProvider,
@@ -986,7 +987,7 @@ func RegisterRoutes(
 			)
 		}
 
-		eventApi := event.NewApi(amqpPublisher, errorResponder, logger)
+		eventApi := event.NewApi(amqpPubPool, errorResponder, logger)
 		eventRouter := protected.Group("/event")
 		{
 			eventRouter.POST(
