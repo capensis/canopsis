@@ -542,7 +542,8 @@ func (c *dbClient) BulkWrite(ctx context.Context, writes []mongo.ClientBulkWrite
 //
 // It uses the "hello" command, which is exempt from access control:
 // it requires no authentication and no privileges, so it works regardless of the roles granted to the connection user.
-// The reply identifies the deployment type:
+// The reply's "ok" field reports command success (1) or failure (0); on failure "code"/"errmsg" carry the reason.
+// On success the remaining fields identify the deployment type:
 //   - replica set      -> non-empty "setName"
 //   - sharded (mongos) -> "msg" == "isdbgrid"
 //   - standalone       -> neither field is set
@@ -550,12 +551,19 @@ func isMongoDistributed(ctx context.Context, client *mongo.Client) (bool, error)
 	db := client.Database(DB)
 	cmd := bson.D{{Key: "hello", Value: 1}}
 	var r struct {
-		Msg     string `bson:"msg"`
-		SetName string `bson:"setName"`
+		OK      float64 `bson:"ok"`
+		Msg     string  `bson:"msg"`
+		SetName string  `bson:"setName"`
+		Code    int     `bson:"code"`
+		ErrMsg  string  `bson:"errmsg"`
 	}
 	err := db.RunCommand(ctx, cmd).Decode(&r)
 	if err != nil {
 		return false, fmt.Errorf("failed to execute hello command: %w", err)
+	}
+
+	if r.OK != 1 {
+		return false, fmt.Errorf("hello command failed: code=%d errmsg=%q", r.Code, r.ErrMsg)
 	}
 
 	return r.SetName != "" || r.Msg == "isdbgrid", nil
