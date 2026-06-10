@@ -1286,24 +1286,23 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 
 		return nil
 	case externaldata.TypePostgreSQL:
-		sql := "CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
-			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, "
-		var sqlSb1291 strings.Builder
+		sqlSb := strings.Builder{}
+		sqlSb.WriteString("CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
+			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, ")
 		for i, field := range columns {
-			sqlSb1291.WriteString(pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") ")
+			sqlSb.WriteString(pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") ")
 			if i != len(columns)-1 {
-				sqlSb1291.WriteString(",")
+				sqlSb.WriteString(",")
 			}
 		}
-		sql += sqlSb1291.String()
+		sqlSb.WriteString(")")
 
-		sql += ")"
 		pgPool, err := w.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		_, err = pgPool.Exec(ctx, sql)
+		_, err = pgPool.Exec(ctx, sqlSb.String())
 		if err != nil {
 			return fmt.Errorf("failed to create postgres table: %w", err)
 		}
@@ -1337,7 +1336,7 @@ func (w *importWorker) deleteTable(ctx context.Context, job ImportJob) error {
 
 		_, err = pgPool.Exec(ctx, "DROP TABLE IF EXISTS "+job.getDBTableName())
 		if err != nil {
-			return fmt.Errorf("failed to create postgres table: %w", err)
+			return fmt.Errorf("failed to drop postgres table: %w", err)
 		}
 
 		return nil
