@@ -498,21 +498,20 @@ func (s *store) FindOneData(ctx context.Context, tableID, id string) (map[string
 
 		columns := table.getColumns()
 
-		sql := "SELECT "
 		columnsWithID := make([]string, len(columns)+1)
 		columnsWithID[0] = externaldata.IDColumnName
 		copy(columnsWithID[1:], columns)
-		var sqlSb505 strings.Builder
+		sqlSb := strings.Builder{}
+		sqlSb.WriteString("SELECT ")
 		for i, col := range columnsWithID {
-			sqlSb505.WriteString(pgx.Identifier{col}.Sanitize())
+			sqlSb.WriteString(pgx.Identifier{col}.Sanitize())
 			if i < len(columnsWithID)-1 {
-				sqlSb505.WriteString(", ")
+				sqlSb.WriteString(", ")
 			}
 		}
-		sql += sqlSb505.String()
+		sqlSb.WriteString(" FROM " + pgx.Identifier{table.getDBTableName()}.Sanitize() + " WHERE " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + " = $1")
 
-		sql += " FROM " + table.getDBTableName() + " WHERE " + externaldata.IDColumnName + " = $1"
-		rows, err := pgPool.Query(ctx, sql, id)
+		rows, err := pgPool.Query(ctx, sqlSb.String(), id)
 		if err != nil {
 			return nil, err
 		}
@@ -655,12 +654,12 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 	}
 
 	doc := make(map[string]any, len(table.ColumnConfigs)+1)
-	querySql := "UPDATE " + table.getDBTableName() + " SET "
+	querySqlSb := strings.Builder{}
+	querySqlSb.WriteString("UPDATE " + table.getDBTableName() + " SET ")
 	queryArgs := make([]any, len(table.ColumnConfigs)+1)
 
 	valErrMsgs := make(map[string]string)
 
-	var querySqlSb661 strings.Builder
 	for i, cfg := range table.ColumnConfigs {
 		columnName := cfg.Name
 
@@ -725,19 +724,18 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 		doc[columnName] = val
 
 		queryArgs[i] = val
-		querySqlSb661.WriteString(pgx.Identifier{columnName}.Sanitize() + " = $" + strconv.Itoa(i+1))
+		querySqlSb.WriteString(pgx.Identifier{columnName}.Sanitize() + " = $" + strconv.Itoa(i+1))
 		if i < len(table.ColumnConfigs)-1 {
-			querySqlSb661.WriteString(", ")
+			querySqlSb.WriteString(", ")
 		}
 	}
-	querySql += querySqlSb661.String()
 
 	if len(valErrMsgs) > 0 {
 		return nil, common.NewValidationErrors(valErrMsgs)
 	}
 
 	queryArgs[len(queryArgs)-1] = id
-	querySql += " WHERE " + externaldata.IDColumnName + " = $" + strconv.Itoa(len(queryArgs))
+	querySqlSb.WriteString(" WHERE " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + " = $" + strconv.Itoa(len(queryArgs)))
 	switch table.Type {
 	case externaldata.TypeMongoDB:
 		updateRes, err := s.dbClient.Collection(table.getDBTableName()).UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": doc})
@@ -750,7 +748,7 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 			return nil, fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		execRes, err := pgPool.Exec(ctx, querySql, queryArgs...)
+		execRes, err := pgPool.Exec(ctx, querySqlSb.String(), queryArgs...)
 		if err != nil || execRes.RowsAffected() == 0 {
 			return nil, err
 		}
@@ -846,32 +844,28 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			return nil, fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		sql := "SELECT "
-		var sqlSb846 strings.Builder
+		var sqlSb strings.Builder
+		sqlSb.WriteString("SELECT ")
 		for i, c := range selectColumns {
-			sqlSb846.WriteString(pgx.Identifier{c}.Sanitize())
+			sqlSb.WriteString(pgx.Identifier{c}.Sanitize())
 			if i < len(selectColumns)-1 {
-				sqlSb846.WriteString(", ")
+				sqlSb.WriteString(", ")
 			}
 		}
-		sql += sqlSb846.String()
-
-		sql += " FROM " + table.getDBTableName()
+		sqlSb.WriteString(" FROM " + table.getDBTableName())
 		queryArgs := make([]any, 0)
 		if r.Search != "" {
-			sql += " WHERE "
+			sqlSb.WriteString(" WHERE ")
 			queryArgs = append(queryArgs, r.Search)
-			var sqlSb858 strings.Builder
 			for i, col := range searchBy {
-				sqlSb858.WriteString(pgx.Identifier{col}.Sanitize() + " ~ $" + strconv.Itoa(len(queryArgs)))
+				sqlSb.WriteString(pgx.Identifier{col}.Sanitize() + " ~ $" + strconv.Itoa(len(queryArgs)))
 				if i < len(searchBy)-1 {
-					sqlSb858.WriteString(" OR ")
+					sqlSb.WriteString(" OR ")
 				}
 			}
-			sql += sqlSb858.String()
 		}
 
-		rows, err := pgPool.Query(ctx, sql, queryArgs...)
+		rows, err := pgPool.Query(ctx, sqlSb.String(), queryArgs...)
 		if err != nil {
 			return nil, err
 		}
@@ -1028,8 +1022,8 @@ func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, 
 	columnsWithID := make([]string, len(job.ColumnConfigs)*sqlColumnsForCsvColumn+1)
 	columnsWithID[0] = externaldata.IDColumnName
 
-	sql := "SELECT " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + ", "
-	var sqlSb1024 strings.Builder
+	sqlSb := strings.Builder{}
+	sqlSb.WriteString("SELECT " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + ", ")
 	for i, cfg := range job.ColumnConfigs {
 		initialName := cfg.Name + "_initial_value"
 		transformedName := cfg.Name + "_transformed_value"
@@ -1039,14 +1033,13 @@ func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, 
 		columnsWithID[i*sqlColumnsForCsvColumn+2] = transformedName
 		columnsWithID[i*sqlColumnsForCsvColumn+3] = errorsName
 
-		sqlSb1024.WriteString(pgx.Identifier{initialName}.Sanitize() + ", " +
+		sqlSb.WriteString(pgx.Identifier{initialName}.Sanitize() + ", " +
 			pgx.Identifier{transformedName}.Sanitize() + ", " +
 			pgx.Identifier{errorsName}.Sanitize())
 		if i < len(job.ColumnConfigs)-1 {
-			sqlSb1024.WriteString(", ")
+			sqlSb.WriteString(", ")
 		}
 	}
-	sql += sqlSb1024.String()
 
 	tableName := job.getDBTableName()
 
@@ -1054,13 +1047,13 @@ func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, 
 	// Adding a comment forces Postgres to execute the query without using a cached plan.
 	comment := "/*" + strconv.Itoa(int(time.Now().UnixMicro())) + "*/"
 
-	sql += " FROM " + tableName + " " + "ORDER BY " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + " " + limitStmt + comment
+	sqlSb.WriteString(" FROM " + tableName + " " + "ORDER BY " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + " " + limitStmt + comment)
 	countSql := "SELECT count(*) FROM " + tableName
 	result := &AggregationDataResult{
 		Data: make([]map[string]any, 0, r.Limit),
 	}
 
-	rows, err := pgPool.Query(ctx, sql)
+	rows, err := pgPool.Query(ctx, sqlSb.String())
 	if err != nil {
 		return result, err
 	}
@@ -1129,27 +1122,26 @@ func (s *store) findDataFromPostgres(ctx context.Context, tableName string, colu
 	columnsWithID := make([]string, len(columns)+1)
 	columnsWithID[0] = externaldata.IDColumnName
 	copy(columnsWithID[1:], columns)
-	sql := "SELECT "
-	var sqlSb1123 strings.Builder
+	sqlSb := strings.Builder{}
+	sqlSb.WriteString("SELECT ")
 	for i, col := range columnsWithID {
-		sqlSb1123.WriteString(pgx.Identifier{col}.Sanitize())
+		sqlSb.WriteString(pgx.Identifier{col}.Sanitize())
 		if i < len(columnsWithID)-1 {
-			sqlSb1123.WriteString(", ")
+			sqlSb.WriteString(", ")
 		}
 	}
-	sql += sqlSb1123.String()
 
 	// A hack to avoid the "cached plan must not change result type (SQLSTATE 0A000)" error when column types have been changed.
 	// Adding a comment forces Postgres to execute the query without using a cached plan.
 	comment := "/*" + strconv.Itoa(int(time.Now().UnixMicro())) + "*/"
 
-	sql += " FROM " + tableName + " " + whereStmt + " " + orderStmt + " " + limitStmt + comment
+	sqlSb.WriteString(" FROM " + tableName + " " + whereStmt + " " + orderStmt + " " + limitStmt + comment)
 	countSql := "SELECT count(*) FROM " + tableName + " " + whereStmt
 	result := &AggregationDataResult{
 		Data: make([]map[string]any, 0, r.Limit),
 	}
 
-	rows, err := pgPool.Query(ctx, sql, queryArgs...)
+	rows, err := pgPool.Query(ctx, sqlSb.String(), queryArgs...)
 	if err != nil {
 		return result, err
 	}
