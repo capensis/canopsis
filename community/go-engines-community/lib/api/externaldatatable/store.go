@@ -509,7 +509,7 @@ func (s *store) FindOneData(ctx context.Context, tableID, id string) (map[string
 				sqlSb.WriteString(", ")
 			}
 		}
-		sqlSb.WriteString(" FROM " + pgx.Identifier{table.getDBTableName()}.Sanitize() + " WHERE " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + " = $1")
+		sqlSb.WriteString(" FROM " + table.getDBTableName() + " WHERE " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + " = $1")
 
 		rows, err := pgPool.Query(ctx, sqlSb.String(), id)
 		if err != nil {
