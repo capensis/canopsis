@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -135,21 +136,26 @@ func (a *api) ImportPartial(c *gin.Context) {
 }
 
 func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (string, error) {
-	err := a.reporter.ReportCreate(ctx, &job)
+	err := os.MkdirAll(a.dir, os.ModeDir|dirPerm)
 	if err != nil {
 		return "", err
 	}
 
-	err = os.MkdirAll(a.dir, os.ModeDir|dirPerm)
+	job.ID = utils.NewID()
+	filename := filepath.Join(a.dir, fmt.Sprintf(a.filePattern, job.ID))
+	err = os.WriteFile(filename, raw, filePerm)
 	if err != nil {
 		return "", err
 	}
 
-	err = os.WriteFile(filepath.Join(a.dir, fmt.Sprintf(a.filePattern, job.ID)), raw, filePerm)
+	err = a.reporter.ReportCreate(ctx, &job)
 	if err != nil {
+		_ = os.Remove(filename)
+
 		return "", err
 	}
 
+	a.logger.Debug().Str("job_id", job.ID).Str("filename", filename).Msg("context graph import job created")
 	err = a.jobPublisher.Publish(ctx, "")
 	if err != nil {
 		return "", err
