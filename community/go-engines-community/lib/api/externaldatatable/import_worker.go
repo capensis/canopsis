@@ -600,7 +600,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 			case externaldata.ColumnTypeStringArray:
 				columnType = "VARCHAR(" + MaxStringLenStr + ")[]"
 			default:
-				return false, fmt.Errorf("unsupported column type %q", c.Type)
+				return false, fmt.Errorf("unsupported column type %d", c.Type)
 			}
 
 			sql := ""
@@ -646,7 +646,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 			return false, fmt.Errorf("failed to copy to postgres table: %w", err)
 		}
 	default:
-		return false, fmt.Errorf("invalid table type: %q", table.Type)
+		return false, fmt.Errorf("invalid table type: %d", table.Type)
 	}
 
 	err = w.deleteTable(ctx, job)
@@ -1286,22 +1286,23 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 
 		return nil
 	case externaldata.TypePostgreSQL:
-		sql := "CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
-			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, "
+		sqlSb := strings.Builder{}
+		sqlSb.WriteString("CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
+			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, ")
 		for i, field := range columns {
-			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") "
+			sqlSb.WriteString(pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") ")
 			if i != len(columns)-1 {
-				sql += ","
+				sqlSb.WriteString(",")
 			}
 		}
+		sqlSb.WriteString(")")
 
-		sql += ")"
 		pgPool, err := w.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		_, err = pgPool.Exec(ctx, sql)
+		_, err = pgPool.Exec(ctx, sqlSb.String())
 		if err != nil {
 			return fmt.Errorf("failed to create postgres table: %w", err)
 		}
@@ -1314,7 +1315,7 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 
 		return nil
 	default:
-		return fmt.Errorf("invalid job type: %q", job.Type)
+		return fmt.Errorf("invalid job type: %d", job.Type)
 	}
 }
 
@@ -1335,11 +1336,11 @@ func (w *importWorker) deleteTable(ctx context.Context, job ImportJob) error {
 
 		_, err = pgPool.Exec(ctx, "DROP TABLE IF EXISTS "+job.getDBTableName())
 		if err != nil {
-			return fmt.Errorf("failed to create postgres table: %w", err)
+			return fmt.Errorf("failed to drop postgres table: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid job type: %q", job.Type)
+		return fmt.Errorf("invalid job type: %d", job.Type)
 	}
 }
