@@ -1,6 +1,7 @@
 package idlerule
 
 import (
+	"slices"
 	"strconv"
 	"strings"
 
@@ -51,17 +52,9 @@ func (v *Validator) validateType(sl validator.StructLevel, t string) {
 		idlerule.RuleTypeAlarm,
 		idlerule.RuleTypeEntity,
 	}
-	param := strings.Join(validTypes, " ")
-	found := false
-	for _, v := range validTypes {
-		if v == t {
-			found = true
-			break
-		}
-	}
 
-	if !found {
-		sl.ReportError(t, "Type", "Type", "oneof", param)
+	if !slices.Contains(validTypes, t) {
+		sl.ReportError(t, "Type", "Type", "oneof", strings.Join(validTypes, " "))
 	}
 }
 
@@ -79,17 +72,8 @@ func (v *Validator) validateAlarmRule(sl validator.StructLevel, r EditRequest) {
 			idlerule.RuleAlarmConditionLastEvent,
 			idlerule.RuleAlarmConditionLastUpdate,
 		}
-		param := strings.Join(validValues, " ")
-		found := false
-		for _, v := range validValues {
-			if v == r.AlarmCondition {
-				found = true
-				break
-			}
-		}
-
-		if !found {
-			sl.ReportError(r.AlarmCondition, "AlarmCondition", "AlarmCondition", "oneof", param)
+		if !slices.Contains(validValues, r.AlarmCondition) {
+			sl.ReportError(r.AlarmCondition, "AlarmCondition", "AlarmCondition", "oneof", strings.Join(validValues, " "))
 		}
 	}
 
@@ -105,17 +89,9 @@ func (v *Validator) validateAlarmRule(sl validator.StructLevel, r EditRequest) {
 			types.ActionTypeSnooze,
 			types.ActionTypePbehavior,
 		}
-		param := strings.Join(validOperationTypes, " ")
-		found := false
-		for _, v := range validOperationTypes {
-			if v == r.Operation.Type {
-				found = true
-				break
-			}
-		}
 
-		if !found {
-			sl.ReportError(r.Operation.Type, "Operation.Type", "Type", "oneof", param)
+		if !slices.Contains(validOperationTypes, r.Operation.Type) {
+			sl.ReportError(r.Operation.Type, "Operation.Type", "Type", "oneof", strings.Join(validOperationTypes, " "))
 		}
 
 		v.validateOperationParametersRequest(sl, r.Operation.Type, r.Operation.Parameters)
@@ -149,15 +125,8 @@ func (v *Validator) validateDisableDuringPeriods(sl validator.StructLevel, disab
 	}
 	param := strings.Join(validPeriods, " ")
 	for _, period := range disableDuringPeriods {
-		found := false
-		for _, v := range validPeriods {
-			if v == period {
-				found = true
-				break
-			}
-		}
 
-		if !found {
+		if !slices.Contains(validPeriods, period) {
 			sl.ReportError(disableDuringPeriods, "DisableDuringPeriods", "disableDuringPeriods", "oneof", param)
 		}
 	}
@@ -179,24 +148,17 @@ func (v *Validator) validateOperationParametersRequest(sl validator.StructLevel,
 				types.AlarmStateMajor,
 				types.AlarmStateCritical,
 			}
-			param := ""
-			for i := range validTypes {
-				param += strconv.Itoa(int(validTypes[i]))
-				if i < len(validTypes)-1 {
-					param += " "
-				}
-			}
 
-			found := false
-			for _, v := range validTypes {
-				if v == *params.State {
-					found = true
-					break
+			if !slices.Contains(validTypes, *params.State) {
+				var param strings.Builder
+				for i := range validTypes {
+					param.WriteString(strconv.Itoa(int(validTypes[i])))
+					if i < len(validTypes)-1 {
+						param.WriteString(" ")
+					}
 				}
-			}
 
-			if !found {
-				sl.ReportError(params.State, "Operation.Parameters.State", "State", "oneof", param)
+				sl.ReportError(params.State, "Operation.Parameters.State", "State", "oneof", param.String())
 			}
 		}
 	case types.ActionTypeSnooze:
