@@ -1,6 +1,8 @@
 import { PATTERN_OPERATORS, PATTERN_STRING_OPERATORS, PATTERNS_FIELDS } from '@/constants/pattern';
 import { ALARM_ADVANCED_SEARCH_GROUPS, ALARM_FIELDS } from '@/constants/alarm';
 
+export const MAX_SAVED_ADVANCED_SEARCHES = 100;
+
 export const ADVANCED_SEARCH_ITEM_TYPES = {
   field: 'field',
   condition: 'condition',
