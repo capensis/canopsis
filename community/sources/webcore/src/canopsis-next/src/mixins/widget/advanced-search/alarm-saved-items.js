@@ -7,7 +7,7 @@ import {
 } from '@/constants';
 
 import { uuid } from '@/helpers/uuid';
-import { sortPinnedSearches } from '@/helpers/search/sorting';
+import { sortPinnedSearches, sliceSavedSearches } from '@/helpers/search/sorting';
 import { advancedSearchToForm, isEmptyAlarmSearch, isEqualAlarmSearches } from '@/helpers/search/alarm-advanced-search';
 
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
@@ -37,7 +37,11 @@ export const widgetAlarmAdvancedSearchSavedItemsMixin = {
   mixins: [entitiesUserPreferenceMixin],
   computed: {
     searches() {
-      return this.userPreference?.content?.searches ?? [];
+      return (this.userPreference?.content?.searches ?? []).map(search => (search?._id ? search : {
+        ...search,
+
+        _id: uuid(),
+      }));
     },
 
     searchesById() {
@@ -84,7 +88,7 @@ export const widgetAlarmAdvancedSearchSavedItemsMixin = {
       }
 
       this.updateContentInUserPreference({
-        searches: sortPinnedSearches(searches, search._id, '_id'),
+        searches: sliceSavedSearches(sortPinnedSearches(searches, search._id, '_id')),
       });
     },
 
@@ -106,13 +110,13 @@ export const widgetAlarmAdvancedSearchSavedItemsMixin = {
       ));
 
       this.updateContentInUserPreference({
-        searches: sortPinnedSearches(searches, id, '_id'),
+        searches: sliceSavedSearches(sortPinnedSearches(searches, id, '_id')),
       });
     },
 
     removeSearch(id) {
       this.updateContentInUserPreference({
-        searches: this.searches.filter(search => search._id !== id),
+        searches: sliceSavedSearches(this.searches.filter(search => search._id !== id)),
       });
     },
   },
