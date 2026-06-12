@@ -11,7 +11,7 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
       class="flex"
     >
       <c-alarm-advanced-search-field-stub
-        searches="item 1,item 2"
+        searches="[object Object],[object Object]"
       />
     </div>
     <!---->
