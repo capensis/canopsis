@@ -1,6 +1,6 @@
 <template>
   <v-menu
-    :min-width="listMinWidth || undefined"
+    :min-width="listMinWidth"
     :nudge-bottom="1"
     :transition="false"
     content-class="c-alarm-advanced-search__history-menu"
@@ -152,20 +152,13 @@ export default {
 
 <style lang="scss">
 .c-alarm-advanced-search__history-menu {
-  overflow-y: hidden !important;
+  overflow-y: auto !important;
   width: max-content;
   min-width: max-content;
 
   @media (min-width: 1264px) {
     max-width: 95vw;
   }
-}
-
-.c-alarm-advanced-search__history-list {
-  max-height: 95vh;
-  overflow-y: auto;
-  width: max-content;
-  min-width: 100%;
 }
 
 .c-alarm-advanced-search__history-item {

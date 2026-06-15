@@ -41,7 +41,7 @@ export const useIntersectionVirtualScroll = ({
   const visibilityById = ref({});
   const itemHeights = ref({});
   const itemWidths = ref({});
-  const listMinWidth = ref(0);
+  const listMinWidth = ref(350);
 
   const observedElements = new Map();
   const itemRefSetters = new Map();
