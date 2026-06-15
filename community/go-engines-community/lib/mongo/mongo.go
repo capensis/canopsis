@@ -6,7 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -378,9 +380,12 @@ func NewClient(ctx context.Context, opts ...ClientOptions) (DbClient, error) {
 		return nil, errors.New("only one ClientOptions is allowed")
 	}
 
-	mongoURL, err := getURL()
+	mongoURL, dbName, err := getURL()
 	if err != nil {
 		return nil, err
+	}
+	if dbName == "*" {
+		dbName = DB
 	}
 
 	bsonOpts := &options.BSONOptions{
@@ -437,7 +442,7 @@ func NewClient(ctx context.Context, opts ...ClientOptions) (DbClient, error) {
 
 	return &dbClient{
 		Client:          mongoClient,
-		Database:        mongoClient.Database(DB),
+		Database:        mongoClient.Database(dbName),
 		RetryCount:      clientOptions.RetryCount,
 		MinRetryTimeout: clientOptions.MinRetryTimeout,
 	}, nil
@@ -583,13 +588,17 @@ func isMongoReplicaSetEnabled(ctx context.Context, clientOptions *options.Client
 }
 
 // getURL parses URL value in EnvURL environment variable
-func getURL() (string, error) {
-	mongoURL := os.Getenv(EnvURL)
+func getURL() (mongoURL, dbName string, err error) {
+	mongoURL = os.Getenv(EnvURL)
 	if mongoURL == "" {
-		return "", fmt.Errorf("environment variable %s empty", EnvURL)
+		return "", "", fmt.Errorf("environment variable %s empty", EnvURL)
 	}
-
-	return mongoURL, nil
+	parsed, err := url.ParseRequestURI(mongoURL)
+	if err != nil {
+		return "", "", err
+	}
+	dbName = strings.TrimPrefix(parsed.EscapedPath(), "/")
+	return mongoURL, dbName, nil
 }
 
 func retry(ctx context.Context, retryCount int, retryTimeout time.Duration, f func(context.Context) error) {
