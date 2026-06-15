@@ -1,7 +1,12 @@
 import { onBeforeUnmount, ref, unref, watch } from 'vue';
 
-/** Root margin applied when observing list item visibility. */
-export const INTERSECTION_VIRTUAL_SCROLL_ITEM_ROOT_MARGIN = '100px 0px';
+/**
+ * Root margin applied when observing list item visibility.
+ *
+ * A large vertical buffer pre-renders rows well before they enter the viewport so fast scrolling
+ * does not outrun the asynchronous IntersectionObserver callbacks (which would flash placeholders).
+ */
+export const INTERSECTION_VIRTUAL_SCROLL_ITEM_ROOT_MARGIN = '600px 0px';
 
 /** Default placeholder height in pixels when an item height has not been measured yet. */
 export const INTERSECTION_VIRTUAL_SCROLL_DEFAULT_ITEM_MIN_HEIGHT = 48;
@@ -36,9 +41,10 @@ export const useIntersectionVirtualScroll = ({
   const visibilityById = ref({});
   const itemHeights = ref({});
   const itemWidths = ref({});
-  const listMinWidth = ref(0);
+  const listMinWidth = ref(350);
 
   const observedElements = new Map();
+  const itemRefSetters = new Map();
   let itemObserver = null;
 
   /**
@@ -61,6 +67,7 @@ export const useIntersectionVirtualScroll = ({
       itemObserver?.unobserve(element);
     });
     observedElements.clear();
+    itemRefSetters.clear();
   };
 
   /**
@@ -173,27 +180,35 @@ export const useIntersectionVirtualScroll = ({
   };
 
   /**
-   * Returns a ref callback that registers an item element with the item intersection observer.
+   * Returns a stable ref callback that registers an item element with the item intersection
+   * observer. The callback is memoized per id so Vue keeps the same ref identity across re-renders
+   * and does not unobserve/re-observe every element on each visibility change.
    *
    * @param {string|number} id
    * @returns {function(HTMLElement|undefined)}
    */
-  const setItemRef = id => (element) => {
-    const previousElement = observedElements.get(id);
+  const setItemRef = (id) => {
+    if (!itemRefSetters.has(id)) {
+      itemRefSetters.set(id, (element) => {
+        const previousElement = observedElements.get(id);
 
-    if (previousElement && previousElement !== element) {
-      itemObserver?.unobserve(previousElement);
-      observedElements.delete(id);
+        if (previousElement && previousElement !== element) {
+          itemObserver?.unobserve(previousElement);
+          observedElements.delete(id);
+        }
+
+        if (!element) {
+          return;
+        }
+
+        // eslint-disable-next-line no-param-reassign
+        element.dataset.virtualScrollId = String(id);
+        observedElements.set(id, element);
+        itemObserver?.observe(element);
+      });
     }
 
-    if (!element) {
-      return;
-    }
-
-    // eslint-disable-next-line no-param-reassign
-    element.dataset.virtualScrollId = String(id);
-    observedElements.set(id, element);
-    itemObserver?.observe(element);
+    return itemRefSetters.get(id);
   };
 
   /**
