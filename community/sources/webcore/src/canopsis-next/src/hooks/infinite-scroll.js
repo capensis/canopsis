@@ -1,5 +1,6 @@
 import {
   computed,
+  nextTick,
   onBeforeUnmount,
   ref,
   unref,
@@ -94,6 +95,22 @@ export const useInfiniteScroll = ({
   };
 
   /**
+   * Re-observes the append item to force a fresh intersection check.
+   *
+   * IntersectionObserver only emits on a state change, so when a short page (e.g. the last one)
+   * is appended without pushing the sentinel out of the root margin, no new entry is delivered.
+   * Re-observing after the DOM updates re-triggers loading while the sentinel stays in the zone.
+   */
+  const reobserveAppendItem = () => {
+    if (!appendObserver || !appendItemElement.value || !hasMore.value) {
+      return;
+    }
+
+    appendObserver.unobserve(appendItemElement.value);
+    appendObserver.observe(appendItemElement.value);
+  };
+
+  /**
    * Handles append item intersection and loads the next page when needed.
    *
    * @param {IntersectionObserverEntry[]} entries
@@ -106,6 +123,7 @@ export const useInfiniteScroll = ({
     }
 
     loadMore();
+    nextTick(reobserveAppendItem);
   };
 
   /**
