@@ -80,7 +80,7 @@ export const useIntersectionVirtualScroll = ({
       return;
     }
 
-    const containerWidth = Math.max(element.scrollWidth, element.offsetWidth);
+    const containerWidth = element.scrollWidth;
 
     if (containerWidth > listMinWidth.value) {
       listMinWidth.value = containerWidth;
