@@ -12,7 +12,7 @@ export const ALARM_ADVANCED_SEARCH_HISTORY_ITEM_MIN_HEIGHT = 48;
  *
  * @param {import('vue').Ref<Array>|Array} searches - Raw saved search items from the parent.
  * @returns {{
- *   items: import('vue').Ref<Array>,
+ *   items: import('vue').ComputedRef<Array>,
  *   scrollContainerElement: import('vue').Ref<HTMLElement|undefined>,
  *   appendItemElement: import('vue').Ref<HTMLElement|undefined>,
  *   setItemRef: function(string|number): function(HTMLElement|undefined),
@@ -29,19 +29,15 @@ export const useAlarmAdvancedSearchHistory = (searches) => {
     rules: advancedSearchToForm(search),
   })));
 
-  let resetVirtualScroll = () => {};
-
   const {
     items,
     scrollContainerElement,
     appendItemElement,
   } = useInfiniteScroll({
     sourceItems: preparedSearches,
-    onReset: () => resetVirtualScroll(),
   });
 
   const {
-    resetVirtualScroll: resetVirtualScrollHandler,
     setItemRef,
     isItemVisible,
     getItemPlaceholderStyle,
@@ -51,8 +47,6 @@ export const useAlarmAdvancedSearchHistory = (searches) => {
     scrollContainerElement,
     itemMinHeight: ALARM_ADVANCED_SEARCH_HISTORY_ITEM_MIN_HEIGHT,
   });
-
-  resetVirtualScroll = resetVirtualScrollHandler;
 
   return {
     items,
