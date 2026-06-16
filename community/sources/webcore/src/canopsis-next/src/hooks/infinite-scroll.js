@@ -1,6 +1,5 @@
 import {
   computed,
-  nextTick,
   onBeforeUnmount,
   ref,
   unref,
@@ -14,19 +13,12 @@ export const INFINITE_SCROLL_DEFAULT_LIMIT = 20;
 export const INFINITE_SCROLL_APPEND_ITEM_ROOT_MARGIN = '50px 0px';
 
 /**
- * Builds a stable signature from source item ids to detect list changes without a deep watch.
+ * Client-side infinite scroll that exposes a growing window over a source list.
  *
- * @param {Array<{ _id?: string|number, id?: string|number }>} [source]
- * @returns {string}
- */
-const getSourceSignature = (source = []) => source.map(({ _id, id }) => _id ?? id).join(',');
-
-/**
- * Client-side infinite scroll that appends items from a source list page by page.
- *
- * Keeps a local `items` ref and pushes the next slice from `sourceItems` on each `loadMore` call.
+ * `items` is a computed slice `source.slice(0, loadedCount)`, so it reacts to source mutations
+ * (e.g. removing an item) without resetting pagination or scroll position: only the changed rows
+ * are re-rendered while the loaded window size is preserved.
  * Observes an append item element at the bottom of the scroll container to load more automatically.
- * Resets and reloads the first page when the source list signature changes.
  *
  * @param {Object} [options]
  * @param {import('vue').Ref<Array>|Array} options.sourceItems - Full source list to paginate.
@@ -34,12 +26,10 @@ const getSourceSignature = (source = []) => source.map(({ _id, id }) => _id ?? i
  * @param {import('vue').Ref<boolean>|boolean} [options.isLoading] - Blocks loading more while pending.
  * @param {string} [options.appendItemRootMargin=INFINITE_SCROLL_APPEND_ITEM_ROOT_MARGIN]
  * Root margin for append item observation.
- * @param {function} [options.onReset] - Called before the list is cleared on source change.
  * @returns {{
- *   items: import('vue').Ref<Array>,
+ *   items: import('vue').ComputedRef<Array>,
  *   hasMore: import('vue').ComputedRef<boolean>,
  *   loadMore: function,
- *   resetItems: function,
  *   scrollContainerElement: import('vue').Ref<HTMLElement|undefined>,
  *   appendItemElement: import('vue').Ref<HTMLElement|undefined>,
  * }}
@@ -49,41 +39,25 @@ export const useInfiniteScroll = ({
   limit = INFINITE_SCROLL_DEFAULT_LIMIT,
   isLoading,
   appendItemRootMargin = INFINITE_SCROLL_APPEND_ITEM_ROOT_MARGIN,
-  onReset,
 } = {}) => {
-  const items = ref([]);
-  const page = ref(0);
+  const loadedCount = ref(unref(limit));
   const scrollContainerElement = ref(null);
   const appendItemElement = ref(null);
 
   let appendObserver = null;
 
+  const items = computed(() => (unref(sourceItems) ?? []).slice(0, loadedCount.value));
   const hasMore = computed(() => (unref(sourceItems) ?? []).length > items.value.length);
 
   /**
-   * Appends the next page of items from the source list.
+   * Grows the loaded window by one page.
    */
   const loadMore = () => {
     if (!hasMore.value) {
       return;
     }
 
-    const source = unref(sourceItems) ?? [];
-    const nextPage = page.value + 1;
-    const start = page.value * unref(limit);
-
-    items.value.push(...source.slice(start, nextPage * unref(limit)));
-    page.value = nextPage;
-  };
-
-  /**
-   * Clears appended items, resets pagination and reloads the first page.
-   */
-  const resetItems = () => {
-    onReset?.();
-    items.value = [];
-    page.value = 0;
-    loadMore();
+    loadedCount.value += unref(limit);
   };
 
   /**
@@ -92,22 +66,6 @@ export const useInfiniteScroll = ({
   const disconnectAppendObserver = () => {
     appendObserver?.disconnect();
     appendObserver = null;
-  };
-
-  /**
-   * Re-observes the append item to force a fresh intersection check.
-   *
-   * IntersectionObserver only emits on a state change, so when a short page (e.g. the last one)
-   * is appended without pushing the sentinel out of the root margin, no new entry is delivered.
-   * Re-observing after the DOM updates re-triggers loading while the sentinel stays in the zone.
-   */
-  const reobserveAppendItem = () => {
-    if (!appendObserver || !appendItemElement.value || !hasMore.value) {
-      return;
-    }
-
-    appendObserver.unobserve(appendItemElement.value);
-    appendObserver.observe(appendItemElement.value);
   };
 
   /**
@@ -123,7 +81,6 @@ export const useInfiniteScroll = ({
     }
 
     loadMore();
-    nextTick(reobserveAppendItem);
   };
 
   /**
@@ -155,15 +112,12 @@ export const useInfiniteScroll = ({
     }
   });
 
-  watch(() => getSourceSignature(unref(sourceItems)), resetItems, { immediate: true });
-
   onBeforeUnmount(disconnectAppendObserver);
 
   return {
     items,
     hasMore,
     loadMore,
-    resetItems,
     scrollContainerElement,
     appendItemElement,
   };
