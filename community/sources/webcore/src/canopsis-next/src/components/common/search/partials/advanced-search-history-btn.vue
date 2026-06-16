@@ -152,13 +152,21 @@ export default {
 
 <style lang="scss">
 .c-advanced-search__history-menu {
-  overflow-y: auto !important;
+  max-height: none !important;
+  overflow-y: hidden !important;
   width: max-content;
   min-width: max-content;
 
   @media (min-width: 1264px) {
     max-width: 95vw;
   }
+}
+
+.c-advanced-search__history-list {
+  max-height: 95vh;
+  overflow-y: auto;
+  width: max-content;
+  min-width: 100%;
 }
 
 .c-advanced-search__history-item {

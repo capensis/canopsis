@@ -29,19 +29,15 @@ export const useAdvancedSearchHistory = (searches) => {
     rules: advancedSearchToForm(search),
   })));
 
-  let resetVirtualScroll = () => {};
-
   const {
     items,
     scrollContainerElement,
     appendItemElement,
   } = useInfiniteScroll({
     sourceItems: preparedSearches,
-    onReset: () => resetVirtualScroll(),
   });
 
   const {
-    resetVirtualScroll: resetVirtualScrollHandler,
     setItemRef,
     isItemVisible,
     getItemPlaceholderStyle,
@@ -51,8 +47,6 @@ export const useAdvancedSearchHistory = (searches) => {
     scrollContainerElement,
     itemMinHeight: ADVANCED_SEARCH_HISTORY_ITEM_MIN_HEIGHT,
   });
-
-  resetVirtualScroll = resetVirtualScrollHandler;
 
   return {
     items,
