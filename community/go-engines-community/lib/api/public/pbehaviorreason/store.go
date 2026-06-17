@@ -100,7 +100,10 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (Response, error) {
 }
 
 func (s *store) GetByID(ctx context.Context, id string) (Response, error) {
-	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
+	pipeline := []bson.M{{"$match": bson.M{
+		"_id":    id,
+		"hidden": bson.M{"$in": bson.A{false, nil}},
+	}}}
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	return db.AggregateOne[Response](ctx, s.dbCollection, pipeline)

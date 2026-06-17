@@ -36,7 +36,7 @@ func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 		},
 	}
 	noAuthorEncodedBody, _ := json.Marshal(noAuthorBody)
-	req := httptest.NewRequest(http.MethodPost, okURL, bytes.NewReader(noAuthorEncodedBody))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, okURL, bytes.NewReader(noAuthorEncodedBody))
 	mockResponder := mock_response.NewMockResponder(ctrl)
 	r := chi.NewRouter()
 	r.Use(func(next http.Handler) http.Handler {
@@ -108,7 +108,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 		},
 	}
 	body, _ := json.Marshal(valid)
-	req := httptest.NewRequest(http.MethodPost, okURL, bytes.NewReader(body))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, okURL, bytes.NewReader(body))
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
@@ -130,7 +130,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 		},
 	}
 	body, _ = json.Marshal(invalid)
-	req = httptest.NewRequest(http.MethodPost, okURL, bytes.NewReader(body))
+	req = httptest.NewRequestWithContext(t.Context(), http.MethodPost, okURL, bytes.NewReader(body))
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusRequestEntityTooLarge {
