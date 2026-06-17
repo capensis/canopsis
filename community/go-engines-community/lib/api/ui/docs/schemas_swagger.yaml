@@ -3724,14 +3724,14 @@ definitions:
     - freq_limit
     - name
     type: object
-  git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_idlerule.Operation:
+  git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_ui_idlerule.Operation:
     properties:
       parameters:
-        $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_idlerule.Parameters'
+        $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_ui_idlerule.Parameters'
       type:
         type: string
     type: object
-  git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_idlerule.Parameters:
+  git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_ui_idlerule.Parameters:
     properties:
       duration:
         allOf:
@@ -4161,7 +4161,7 @@ definitions:
       name:
         type: string
       operation:
-        $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_idlerule.Operation'
+        $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_ui_idlerule.Operation'
       priority:
         type: integer
       type:

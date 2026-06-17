@@ -14,7 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	mock_patternfields "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/patternfields"
+	mock_patternfields "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/ui/patternfields"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"

@@ -448,7 +448,7 @@ func (v ExportFetchParameters) MarshalEasyJSON(w *jwriter.Writer) {
 func (v *ExportFetchParameters) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm(l, v)
 }
-func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(in *jlexer.Lexer, out *DetailsRequest) {
+func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm1(in *jlexer.Lexer, out *DetailsRequest) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -541,7 +541,7 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.Steps == nil {
 					out.Steps = new(StepsRequest)
 				}
-				easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm2(in, out.Steps)
+				easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm2(in, out.Steps)
 			}
 		case "children":
 			if in.IsNull() {
@@ -551,7 +551,7 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.Children == nil {
 					out.Children = new(ChildDetailsRequest)
 				}
-				easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm3(in, out.Children)
+				easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm3(in, out.Children)
 			}
 		case "perf_data":
 			if in.IsNull() {
@@ -590,7 +590,7 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(out *jwriter.Writer, in DetailsRequest) {
+func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm1(out *jwriter.Writer, in DetailsRequest) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -650,7 +650,7 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		if in.Steps == nil {
 			out.RawString("null")
 		} else {
-			easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm2(out, *in.Steps)
+			easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm2(out, *in.Steps)
 		}
 	}
 	{
@@ -659,7 +659,7 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		if in.Children == nil {
 			out.RawString("null")
 		} else {
-			easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm3(out, *in.Children)
+			easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm3(out, *in.Children)
 		}
 	}
 	{
@@ -683,14 +683,14 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v DetailsRequest) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(w, v)
+	easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm1(w, v)
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *DetailsRequest) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(l, v)
+	easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm1(l, v)
 }
-func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm3(in *jlexer.Lexer, out *ChildDetailsRequest) {
+func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm3(in *jlexer.Lexer, out *ChildDetailsRequest) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -771,7 +771,7 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm3(out *jwriter.Writer, in ChildDetailsRequest) {
+func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm3(out *jwriter.Writer, in ChildDetailsRequest) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -818,7 +818,7 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	}
 	out.RawByte('}')
 }
-func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm2(in *jlexer.Lexer, out *StepsRequest) {
+func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm2(in *jlexer.Lexer, out *StepsRequest) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -878,7 +878,7 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm2(out *jwriter.Writer, in StepsRequest) {
+func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiAlarm2(out *jwriter.Writer, in StepsRequest) {
 	out.RawByte('{')
 	first := true
 	_ = first
