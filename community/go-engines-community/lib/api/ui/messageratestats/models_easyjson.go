@@ -17,7 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiMessageratestats(in *jlexer.Lexer, out *SearchRequest) {
+func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiMessageratestats(in *jlexer.Lexer, out *SearchRequest) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -95,7 +95,7 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiMessageratestats(out *jwriter.Writer, in SearchRequest) {
+func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiMessageratestats(out *jwriter.Writer, in SearchRequest) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -136,10 +136,10 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v SearchRequest) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiMessageratestats(w, v)
+	easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiMessageratestats(w, v)
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *SearchRequest) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiMessageratestats(l, v)
+	easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiMessageratestats(l, v)
 }

@@ -17,7 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson66c1e240DecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiWebsocket(in *jlexer.Lexer, out *ServerMessage) {
+func easyjson66c1e240DecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiWebsocket(in *jlexer.Lexer, out *ServerMessage) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -67,7 +67,7 @@ func easyjson66c1e240DecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		in.Consumed()
 	}
 }
-func easyjson66c1e240EncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiWebsocket(out *jwriter.Writer, in ServerMessage) {
+func easyjson66c1e240EncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiWebsocket(out *jwriter.Writer, in ServerMessage) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -102,14 +102,14 @@ func easyjson66c1e240EncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ServerMessage) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson66c1e240EncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiWebsocket(w, v)
+	easyjson66c1e240EncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiWebsocket(w, v)
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ServerMessage) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson66c1e240DecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiWebsocket(l, v)
+	easyjson66c1e240DecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiWebsocket(l, v)
 }
-func easyjson66c1e240DecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiWebsocket1(in *jlexer.Lexer, out *ClientMessage) {
+func easyjson66c1e240DecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiWebsocket1(in *jlexer.Lexer, out *ClientMessage) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -159,7 +159,7 @@ func easyjson66c1e240DecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		in.Consumed()
 	}
 }
-func easyjson66c1e240EncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiWebsocket1(out *jwriter.Writer, in ClientMessage) {
+func easyjson66c1e240EncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiWebsocket1(out *jwriter.Writer, in ClientMessage) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -194,10 +194,10 @@ func easyjson66c1e240EncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ClientMessage) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson66c1e240EncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiWebsocket1(w, v)
+	easyjson66c1e240EncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiWebsocket1(w, v)
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ClientMessage) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson66c1e240DecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiWebsocket1(l, v)
+	easyjson66c1e240DecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiUiWebsocket1(l, v)
 }
