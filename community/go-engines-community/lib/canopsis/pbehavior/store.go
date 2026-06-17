@@ -80,7 +80,7 @@ func (s *store) GetSpan(ctx context.Context) (timespan.Span, error) {
 }
 
 func (s *store) SetComputed(ctx context.Context, computed ComputeResult) error {
-	data := make(map[string]interface{}, len(computed.ComputedPbehaviors)+2)
+	data := make(map[string]any, len(computed.ComputedPbehaviors)+2)
 	var err error
 	types := Types{T: computed.TypesByID}
 	data[libredis.PbehaviorTypesKey], err = s.encoder.Encode(types)

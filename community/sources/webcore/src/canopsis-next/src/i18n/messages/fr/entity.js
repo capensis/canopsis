@@ -24,6 +24,7 @@ export default {
     componentInfos: 'Informations sur les composants',
     alarmDisplayName: 'Nom d\'affichage de l\'alarme',
     alarmCreationDate: 'Date de création de l\'alarme',
+    lastAlarmUpdateDate: 'Date de dernière mise à jour de l\'alarme',
     alarmLastComment: 'Dernier commentaire d\'alarme',
     importSource: 'Source d\'import',
     imported: 'Date d\'import',

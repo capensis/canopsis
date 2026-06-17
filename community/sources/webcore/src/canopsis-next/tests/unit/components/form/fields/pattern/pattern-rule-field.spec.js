@@ -164,11 +164,11 @@ describe('pattern-rule-field', () => {
 
     const patternOperatorField = selectPatternOperatorField(wrapper);
 
-    patternOperatorField.triggerCustomEvent('input', PATTERN_OPERATORS.beginsWith);
+    patternOperatorField.triggerCustomEvent('input', PATTERN_OPERATORS.beginWith);
 
     expect(wrapper).toEmitInput({
       ...rule,
-      operator: PATTERN_OPERATORS.beginsWith,
+      operator: PATTERN_OPERATORS.beginWith,
     });
   });
 

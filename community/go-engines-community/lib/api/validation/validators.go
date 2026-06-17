@@ -9,7 +9,6 @@ import (
 )
 
 func ValidateOneOfOrEmpty(fl validator.FieldLevel) bool {
-	vals := strings.Split(fl.Param(), " ")
 	field := fl.Field()
 
 	var v string
@@ -28,13 +27,13 @@ func ValidateOneOfOrEmpty(fl validator.FieldLevel) bool {
 		return true
 	}
 
-	for i := 0; i < len(vals); i++ {
-		prefix := strings.TrimSuffix(vals[i], "*")
-		if prefix != "" && prefix != vals[i] {
+	for val := range strings.SplitSeq(fl.Param(), " ") {
+		prefix := strings.TrimSuffix(val, "*")
+		if prefix != "" && prefix != val {
 			if strings.HasPrefix(v, prefix) {
 				return true
 			}
-		} else if vals[i] == v {
+		} else if val == v {
 			return true
 		}
 	}

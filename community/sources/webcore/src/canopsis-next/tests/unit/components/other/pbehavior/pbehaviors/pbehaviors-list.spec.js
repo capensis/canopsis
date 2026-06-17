@@ -3,7 +3,14 @@ import { range } from 'lodash';
 import { generateRenderer } from '@unit/utils/vue';
 import { selectRowExpandButtonByIndex } from '@unit/utils/table';
 import { mockRouter } from '@unit/utils/mock-hooks';
-import { createInfoModule, createMockedStoreModules } from '@unit/utils/store';
+import {
+  createInfoModule,
+  createMockedStoreModules,
+  createPbehaviorCommentModule,
+  createPbehaviorModule,
+  createPbehaviorReasonModule,
+  createPbehaviorTypesModule,
+} from '@unit/utils/store';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import PbehaviorsList from '@/components/other/pbehavior/pbehaviors/pbehaviors-list.vue';
@@ -23,10 +30,37 @@ const stubs = {
   'pbehaviors-list-alarm-filtering-btn': true,
 };
 
+const createUserModule = () => ({
+  name: 'user',
+  getters: {
+    items: () => [],
+    pending: () => false,
+    meta: () => ({}),
+  },
+  actions: {
+    fetchListWithoutStore: jest.fn().mockResolvedValue({ data: [], meta: {} }),
+  },
+});
+
 describe('pbehaviors-list', () => {
   const $router = mockRouter();
 
   const totalItems = 11;
+
+  const { pbehaviorModule } = createPbehaviorModule();
+  const pbehaviorModuleWithAdvancedSearch = {
+    ...pbehaviorModule,
+    getters: {
+      items: () => [],
+      getItem: () => () => null,
+      pending: () => false,
+      meta: () => ({}),
+    },
+    actions: {
+      ...pbehaviorModule.actions,
+      fetchListWithoutStore: jest.fn().mockResolvedValue({ data: [], meta: {} }),
+    },
+  };
 
   const pbehaviorsItems = range(totalItems).map(index => ({
     _id: `id-pbehavior-${index}`,
@@ -49,7 +83,18 @@ describe('pbehaviors-list', () => {
   }));
 
   const { infoModule, shownUserTimezone } = createInfoModule();
-  const store = createMockedStoreModules([infoModule]);
+  const { pbehaviorCommentModule } = createPbehaviorCommentModule();
+  const { pbehaviorReasonModule } = createPbehaviorReasonModule();
+  const { pbehaviorTypesModule } = createPbehaviorTypesModule();
+
+  const store = createMockedStoreModules([
+    infoModule,
+    pbehaviorModuleWithAdvancedSearch,
+    pbehaviorCommentModule,
+    pbehaviorReasonModule,
+    pbehaviorTypesModule,
+    createUserModule(),
+  ]);
 
   const snapshotFactory = generateRenderer(PbehaviorsList, {
     stubs,
@@ -104,7 +149,14 @@ describe('pbehaviors-list', () => {
     shownUserTimezone.mockReturnValueOnce(true);
 
     const wrapper = snapshotFactory({
-      store: createMockedStoreModules([infoModule]),
+      store: createMockedStoreModules([
+        infoModule,
+        pbehaviorModuleWithAdvancedSearch,
+        pbehaviorCommentModule,
+        pbehaviorReasonModule,
+        pbehaviorTypesModule,
+        createUserModule(),
+      ]),
       propsData: {
         pbehaviors: pbehaviorsItems,
         options: {

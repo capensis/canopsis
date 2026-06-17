@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 export default {
   inject: ['$validator'],
   model: {
@@ -83,12 +85,14 @@ export default {
       default: false,
     },
   },
-  computed: {
-    titleRules() {
-      return {
-        required: this.withTitle,
-      };
-    },
+  setup(props) {
+    const titleRules = computed(() => ({
+      required: props.withTitle,
+    }));
+
+    return {
+      titleRules,
+    };
   },
 };
 </script>

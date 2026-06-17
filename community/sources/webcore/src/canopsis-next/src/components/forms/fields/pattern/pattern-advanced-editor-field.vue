@@ -7,7 +7,13 @@
     validate-on="button"
     rows="10"
     @input="updatePatternsFromJSON"
-  />
+  >
+    <template #append="{ jsonString }">
+      <v-fade-transition>
+        <pattern-fix-with-ai-btn v-if="errors.has(name)" :json-string="jsonString" />
+      </v-fade-transition>
+    </template>
+  </c-json-field>
 </template>
 
 <script>
@@ -22,8 +28,13 @@ import {
 
 import { formMixin } from '@/mixins/form';
 
+import PatternFixWithAiBtn from './pattern-fix-with-ai-btn.vue';
+
 export default {
   inject: ['$validator'],
+  components: {
+    PatternFixWithAiBtn,
+  },
   mixins: [formMixin],
   model: {
     prop: 'value',

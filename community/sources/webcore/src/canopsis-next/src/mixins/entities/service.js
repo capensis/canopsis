@@ -34,6 +34,7 @@ export const entitiesServiceMixin = {
       createService: 'create',
       editService: 'update',
       removeService: 'remove',
+      bulkRemoveServices: 'bulkRemove',
     }),
   },
 };

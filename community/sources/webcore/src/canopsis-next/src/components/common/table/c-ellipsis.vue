@@ -1,22 +1,41 @@
 <template>
   <div>
-    <span @click.stop="textClicked">{{ shortenedText }}</span>
-    <v-menu
-      v-if="!isShort"
-      :close-on-content-click="false"
+    <c-simple-tooltip
+      v-if="hover"
+      :content="preparedText"
+      :disabled="isShort"
+      top
     >
       <template #activator="{ on }">
         <span
-          class="ml-1"
+          class="c-ellipsis__activator"
+          @click.stop="textClicked"
           v-on="on"
-        >...</span>
+        >
+          <span>{{ shortenedText }}</span>
+          <span v-if="!isShort">...</span>
+        </span>
       </template>
-      <v-card>
-        <v-card-title class="pre-wrap">
-          {{ text }}
-        </v-card-title>
-      </v-card>
-    </v-menu>
+    </c-simple-tooltip>
+    <template v-else>
+      <span @click.stop="textClicked">{{ shortenedText }}</span>
+      <v-menu
+        v-if="!isShort"
+        :close-on-content-click="false"
+      >
+        <template #activator="{ on }">
+          <span
+            class="ml-1"
+            v-on="on"
+          >...</span>
+        </template>
+        <v-card>
+          <v-card-title class="pre-wrap">
+            {{ text }}
+          </v-card-title>
+        </v-card>
+      </v-menu>
+    </template>
   </div>
 </template>
 
@@ -34,6 +53,10 @@ export default {
     text: {
       type: [String, Number, Array],
       default: '',
+    },
+    hover: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit, listeners }) {

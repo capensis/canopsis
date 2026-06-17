@@ -58,7 +58,7 @@ Left mouse click + drag - pan the area"
         latlng="1,1"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub
@@ -90,7 +90,7 @@ Left mouse click + drag - pan the area"
         latlng="2,2"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub
@@ -114,7 +114,7 @@ Left mouse click + drag - pan the area"
         latlng="4,4"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub
@@ -145,7 +145,7 @@ Left mouse click + drag - pan the area"
         latlng="3,3"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub
@@ -227,7 +227,7 @@ Left mouse click + drag - pan the area"
         latlng="4,4"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub
@@ -259,7 +259,7 @@ Left mouse click + drag - pan the area"
         latlng="1,1"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub
@@ -291,7 +291,7 @@ Left mouse click + drag - pan the area"
         latlng="2,2"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub
@@ -322,7 +322,7 @@ Left mouse click + drag - pan the area"
         latlng="3,3"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub
@@ -404,7 +404,7 @@ Left mouse click + drag - pan the area"
         latlng="1,1"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub
@@ -436,7 +436,7 @@ Left mouse click + drag - pan the area"
         latlng="2,2"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub
@@ -467,7 +467,7 @@ Left mouse click + drag - pan the area"
         latlng="3,3"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub
@@ -497,7 +497,7 @@ Left mouse click + drag - pan the area"
         latlng="4,4"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub
@@ -582,7 +582,7 @@ Left mouse click + drag - pan the area"
         latlng="0,0"
         opacity="1"
         options="[object Object]"
-        pane="markerPane"
+        pane="geomapMarkersPane"
         visible="true"
       >
         <geomap-icon-stub

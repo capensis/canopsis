@@ -97,7 +97,7 @@ describe('kpi-rating', () => {
     await flushPromises();
 
     expect(fetchRatingMetrics).toBeCalledTimes(1);
-    expect(fetchRatingMetrics).toBeCalledWith(
+    expect(fetchRatingMetrics).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {
@@ -205,7 +205,7 @@ describe('kpi-rating', () => {
     await flushPromises();
 
     expect(fetchRatingMetrics).toBeCalledTimes(1);
-    expect(fetchRatingMetrics).toBeCalledWith(
+    expect(fetchRatingMetrics).toHaveBeenCalledWith(
       expect.any(Object),
       { params: expectedParamsAfterUpdate },
     );
@@ -255,7 +255,7 @@ describe('kpi-rating', () => {
     await flushPromises();
 
     expect(fetchRatingMetrics).toBeCalledTimes(1);
-    expect(fetchRatingMetrics).toBeCalledWith(
+    expect(fetchRatingMetrics).toHaveBeenCalledWith(
       expect.any(Object),
       { params: expectedParamsAfterUpdate },
     );

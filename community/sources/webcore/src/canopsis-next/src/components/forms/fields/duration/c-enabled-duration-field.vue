@@ -1,6 +1,6 @@
 <template>
   <v-layout wrap>
-    <v-flex xs5>
+    <v-flex xs7>
       <component
         :is="component"
         v-field="duration.enabled"
@@ -11,7 +11,7 @@
         class="pb-2"
       >
         <template #label="">
-          <span class="full-width">
+          <v-layout class="full-width">
             {{ label }}
             <c-help-icon
               v-if="helpText"
@@ -22,9 +22,9 @@
               top
             />
             <v-fade-transition>
-              <span v-if="suffix && !hideDuration" class="pr-6 float-right text-lowercase">{{ suffix }}</span>
+              <span v-if="suffix && !hideDuration" class="pr-2 pl-1 float-right text-lowercase">{{ suffix }}</span>
             </v-fade-transition>
-          </span>
+          </v-layout>
         </template>
       </component>
     </v-flex>

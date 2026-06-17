@@ -29,17 +29,22 @@
       :title="$t('settings.limit')"
     />
     <field-color-indicator v-model="form.parameters.colorIndicator" />
-    <field-columns
-      v-model="form.parameters.serviceDependenciesColumns"
-      :template="form.parameters.serviceDependenciesColumnsTemplate"
-      :templates="entityColumnsWidgetTemplates"
-      :templates-pending="widgetTemplatesPending"
-      :label="$t('settings.treeOfDependenciesColumnNames')"
-      :type="$constants.ENTITIES_TYPES.entity"
-      with-color-indicator
-      @input="updateWidgetColumnsTemplate"
-    />
-    <field-tree-of-dependencies-settings v-model="form.parameters.treeOfDependenciesShowType" />
+    <widget-settings-group :title="$t('context.treeOfDependencies')">
+      <field-columns
+        v-model="form.parameters.serviceDependenciesColumns"
+        :template="form.parameters.serviceDependenciesColumnsTemplate"
+        :templates="entityColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.columnNames')"
+        :type="$constants.ENTITIES_TYPES.entity"
+        with-color-indicator
+        @input="updateWidgetColumnsTemplate"
+      />
+      <field-tree-of-dependencies-settings
+        v-model="form.parameters.treeOfDependenciesShowType"
+        :label="$t('common.settings')"
+      />
+    </widget-settings-group>
     <widget-settings-group :title="$t('settings.advancedSettings')">
       <field-sort-column
         v-model="form.parameters.sort"

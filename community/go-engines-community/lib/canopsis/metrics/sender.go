@@ -16,6 +16,7 @@ type Sender interface {
 	SendAck(alarm types.Alarm, userID string, timestamp time.Time)
 	SendCancelAck(alarm types.Alarm, timestamp time.Time)
 	SendTicket(alarm types.Alarm, userID string, timestamp time.Time)
+	SendTicketRemove(alarm types.Alarm, timestamp time.Time)
 	SendResolve(alarm types.Alarm, entity types.Entity, timestamp time.Time)
 	SendCreate(alarm types.Alarm, timestamp time.Time)
 	SendCreateAndPbhEnter(alarm types.Alarm, timestamp time.Time)
@@ -52,6 +53,19 @@ type Sender interface {
 	SendSliMetric(timestamp time.Time, alarm types.Alarm, entity types.Entity)
 
 	SendMessageRate(timestamp time.Time, eventType, connectorName string)
-
-	SendEntityInfosUpdate(timestamp time.Time, entityID, ruleID, name string, val any)
 }
+
+type EntityInfosUpdateSender interface {
+	Run(ctx context.Context)
+	Send(timestamp time.Time, entityID, ruleID, name string, val any)
+}
+
+func NewNullEntityInfosUpdateSender() EntityInfosUpdateSender {
+	return &nullEntityInfosUpdateSender{}
+}
+
+type nullEntityInfosUpdateSender struct{}
+
+func (*nullEntityInfosUpdateSender) Run(_ context.Context) {}
+
+func (*nullEntityInfosUpdateSender) Send(_ time.Time, _, _, _ string, _ any) {}

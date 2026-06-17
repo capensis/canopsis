@@ -28,15 +28,15 @@
 </template>
 
 <script>
-import { computed, watch } from 'vue';
+import { computed, watch, toRef } from 'vue';
 
 import { PATTERN_OPERATORS, PATTERN_QUICK_RANGES_WITHOUT_CUSTOM, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
-import { convertDateToTimestamp } from '@/helpers/date/date';
-import { getDefaultDateFormRange } from '@/helpers/entities/pattern/form';
+import { getDefaultDateFormRange, isIntervalDateOperator } from '@/helpers/entities/pattern/form';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
+import { useDateRangeAllowedDates } from '@/hooks/form/date-range-allowed-dates';
 
 export default {
   model: {
@@ -71,10 +71,7 @@ export default {
 
     const isDateRange = computed(() => (props.operator === PATTERN_OPERATORS.inRangeDates));
     const isIntervalRange = computed(() => (props.operator === PATTERN_OPERATORS.inRangePeriod));
-    const isInterval = computed(() => [
-      PATTERN_OPERATORS.within,
-      PATTERN_OPERATORS.olderThan,
-    ].includes(props.operator));
+    const isInterval = computed(() => isIntervalDateOperator(props.operator));
 
     /**
      * Creates a custom range item object based on the provided duration
@@ -101,6 +98,7 @@ export default {
 
     /**
      * Returns quick ranges array, optionally including a custom range item
+     * We need it to support advanced editor values.
      *
      * @param {string} key - The key to check for custom range (default: 'type')
      * @returns {Array} Array of quick range objects. If the current value[key] is custom,
@@ -121,26 +119,7 @@ export default {
     const fromQuickRanges = computed(() => getQuickRangesWithCustom('from'));
     const toQuickRanges = computed(() => getQuickRangesWithCustom('to'));
 
-    const fromTimestamp = computed(() => (props.value.from ? convertDateToTimestamp(props.value.from) : null));
-    const toTimestamp = computed(() => (props.value.to ? convertDateToTimestamp(props.value.to) : null));
-
-    /**
-     * Validates if a given date is allowed as a "from" date.
-     * A date is allowed if there's no upper bound (toTimestamp) or if the date is before the upper bound.
-     *
-     * @param {Date|string|number} date - The date to validate
-     * @returns {boolean} True if the date is allowed as a "from" date, false otherwise
-     */
-    const isAllowedFromDate = date => !toTimestamp.value || convertDateToTimestamp(date) < toTimestamp.value;
-
-    /**
-     * Validates if a given date is allowed as a "to" date.
-     * A date is allowed if there's no lower bound (fromTimestamp) or if the date is after the lower bound.
-     *
-     * @param {Date|string|number} date - The date to validate
-     * @returns {boolean} True if the date is allowed as a "to" date, false otherwise
-     */
-    const isAllowedToDate = date => !fromTimestamp.value || convertDateToTimestamp(date) > fromTimestamp.value;
+    const { isAllowedFromDate, isAllowedToDate } = useDateRangeAllowedDates(toRef(props, 'value'));
 
     /**
      * Clears the current range by resetting the model to default date form range

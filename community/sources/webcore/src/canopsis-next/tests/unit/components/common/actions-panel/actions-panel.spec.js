@@ -1,18 +1,44 @@
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { ackAction, deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
-import { createButtonStub } from '@unit/stubs/button';
+import {
+  ackAction,
+  deleteAction,
+  editAction,
+  fakeAction,
+  fastPbehaviorAddAction,
+  fastPbehaviorRemoveAction,
+} from '@unit/data/actions-panel';
 
 import { MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP } from '@/constants';
 
 import ActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
+const actionsPanelBtnStub = {
+  props: { action: { type: Object, required: true } },
+  template: '<button class="actions-panel-btn" @click="action.method && action.method()"><slot /></button>',
+};
+
+const actionsPanelMenuStub = {
+  props: { actions: { type: Array, default: () => [] } },
+  template: `
+    <div class="actions-panel-menu">
+      <button
+        v-for="(action, i) in actions"
+        :key="i"
+        class="actions-panel-menu-item"
+        @click="action.method && action.method()"
+      />
+    </div>
+  `,
+};
+
 const stubs = {
-  'c-action-btn': createButtonStub('c-action-btn'),
-  'v-list-item': createButtonStub('v-list-item'),
+  'actions-panel-btn': actionsPanelBtnStub,
+  'actions-panel-menu': actionsPanelMenuStub,
 };
 
 const snapshotStubs = {
   'c-action-btn': true,
+  'c-list': true,
 };
 
 describe('actions-panel', () => {
@@ -35,7 +61,7 @@ describe('actions-panel', () => {
     });
 
     await flushPromises();
-    const actionElements = wrapper.findAll('.c-action-btn');
+    const actionElements = wrapper.findAll('button.actions-panel-btn');
 
     expect(actionElements).toHaveLength(actions.length);
 
@@ -45,6 +71,46 @@ describe('actions-panel', () => {
 
     const [, secondAction] = actions;
     expect(secondAction.method).toBeCalledTimes(1);
+  });
+
+  it('Fast pbehavior add action method called after trigger click', async () => {
+    const actions = [fastPbehaviorAddAction];
+
+    const wrapper = factory({
+      propsData: {
+        actions,
+      },
+      mocks: {
+        $mq: 'xl',
+      },
+    });
+
+    await flushPromises();
+
+    const addButton = wrapper.find('button.actions-panel-btn');
+    addButton.trigger('click');
+
+    expect(fastPbehaviorAddAction.method).toHaveBeenCalledTimes(1);
+  });
+
+  it('Fast pbehavior remove action method called after trigger click', async () => {
+    const actions = [fastPbehaviorRemoveAction];
+
+    const wrapper = factory({
+      propsData: {
+        actions,
+      },
+      mocks: {
+        $mq: 'xl',
+      },
+    });
+
+    await flushPromises();
+
+    const removeButton = wrapper.find('button.actions-panel-btn');
+    removeButton.trigger('click');
+
+    expect(fastPbehaviorRemoveAction.method).toHaveBeenCalledTimes(1);
   });
 
   it('Method into dropdown called after trigger click on action item button. Size \'xl\'', async () => {
@@ -66,7 +132,7 @@ describe('actions-panel', () => {
 
     await flushPromises();
 
-    const dropdownActionElements = wrapper.findAll('v-menu-stub .v-list-item');
+    const dropdownActionElements = wrapper.findAll('button.actions-panel-menu-item');
 
     expect(dropdownActionElements).toHaveLength(actions.length - inlineCount + 1);
 

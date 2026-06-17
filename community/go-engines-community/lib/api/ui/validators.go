@@ -6,7 +6,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmaction"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/commenttemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/eventfilter"
@@ -28,6 +30,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/user"
 	uivalidation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/view"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/webhook"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/widgettemplate"
@@ -36,6 +39,7 @@ import (
 	libdatastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
+	libwebhook "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	"github.com/gin-gonic/gin/binding"
@@ -108,7 +112,6 @@ func registerStructValidations(
 	v.RegisterStructValidation(pbhValidator.ValidateEditRequest, pbehavior.EditRequest{})
 	v.RegisterStructValidation(pbhValidator.ValidatePatchRequest, pbehavior.PatchRequest{})
 	v.RegisterStructValidation(pbhValidator.ValidateCalendarRequest, pbehavior.CalendarByEntityIDRequest{})
-	v.RegisterStructValidation(pbhValidator.ValidateEntityCreateRequest, pbehavior.BulkEntityCreateRequestItem{})
 	v.RegisterStructValidation(pbhValidator.ValidateConnectorCreateRequest, pbehavior.BulkConnectorCreateRequestItem{})
 	v.RegisterStructValidation(pbhValidator.ValidateConnectorEditRequest, pbehavior.BulkConnectorEditRequestItem{})
 
@@ -200,4 +203,10 @@ func registerStructValidations(
 
 	v.RegisterStructValidation(template.ValidateEditDataRequest, template.EditDataRequest{})
 	v.RegisterStructValidation(template.ValidateEditTestRequest, template.EditTestRequest{})
+
+	checkTicketStatusValidator := webhook.NewCheckTicketStatusValidator(tplExecutor)
+	v.RegisterStructValidation(checkTicketStatusValidator.ValidateCheckTicketStatus, libwebhook.CheckTicketStatus{})
+
+	v.RegisterStructValidation(commenttemplate.ValidateEditRequest, commenttemplate.EditRequest{})
+	v.RegisterStructValidation(alarmaction.ValidateCommentRequest, alarmaction.CommentRequest{})
 }

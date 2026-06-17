@@ -1,7 +1,7 @@
 import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { mockModals } from '@unit/utils/mock-hooks';
+import { mockModals, mockSidebar } from '@unit/utils/mock-hooks';
 
 import { MODALS } from '@/constants';
 
@@ -19,6 +19,12 @@ const selectFiltersList = wrapper => wrapper.vm.$children[0];
 
 describe('filters-list', () => {
   const $modals = mockModals();
+  const $sidebar = {
+    ...mockSidebar(),
+    config: {
+      widget: {},
+    },
+  };
   const filters = [
     {
       _id: 'filter-id-1',
@@ -31,11 +37,22 @@ describe('filters-list', () => {
   ];
 
   const factory = generateShallowRenderer(FieldFiltersList, {
-
     stubs,
     mocks: { $modals },
+    parentComponent: {
+      provide: {
+        $sidebar,
+      },
+    },
   });
-  const snapshotFactory = generateRenderer(FieldFiltersList, { stubs });
+  const snapshotFactory = generateRenderer(FieldFiltersList, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $sidebar,
+      },
+    },
+  });
 
   it('Filters updated after trigger input event on filters list', () => {
     const wrapper = factory();
@@ -58,7 +75,7 @@ describe('filters-list', () => {
 
     selectFiltersList(wrapper).$emit('add');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createFilter,
         config: {
@@ -69,7 +86,9 @@ describe('filters-list', () => {
           withPbehavior: false,
           withServiceWeather: false,
           entityCountersType: false,
+          widgetType: undefined,
           withTitle: true,
+          withoutLink: true,
           action: expect.any(Function),
         },
       },
@@ -110,7 +129,7 @@ describe('filters-list', () => {
 
     selectFiltersList(wrapper).$emit('edit', updatedFilter, 1);
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createFilter,
         config: {
@@ -122,7 +141,9 @@ describe('filters-list', () => {
           withPbehavior: false,
           withServiceWeather: false,
           entityCountersType: false,
+          widgetType: undefined,
           withTitle: true,
+          withoutLink: true,
           action: expect.any(Function),
         },
       },
@@ -156,7 +177,7 @@ describe('filters-list', () => {
 
     selectFiltersList(wrapper).$emit('delete', deletedFilter, 1);
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {
@@ -185,7 +206,7 @@ describe('filters-list', () => {
 
     selectFiltersList(wrapper).$emit('delete', deletedFilter, 1);
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {

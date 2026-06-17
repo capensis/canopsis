@@ -49,7 +49,7 @@ describe('pbehavior-entities', () => {
 
     await flushPromises();
 
-    expect(fetchPbehaviorEntitiesListWithoutStore).toBeCalledWith(
+    expect(fetchPbehaviorEntitiesListWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: pbehaviorId,

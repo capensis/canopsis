@@ -8,14 +8,15 @@
     :required="required"
     :attributes="availableAlarmAttributes"
     :with-type="withType"
-    :counter="counter"
+    :alarm-counter="alarmCounter"
+    class="c-alarm-patterns-field"
   >
     <template #append-count="">
       <v-btn
-        v-if="counter && counter.count"
+        v-if="alarmCounter && alarmCounter.count"
         text
         small
-        @click="showPatternAlarms"
+        @click="showPatternAlarmsModal()"
       >
         {{ $t('common.seeAlarms') }}
       </v-btn>
@@ -24,13 +25,7 @@
 </template>
 
 <script>
-import {
-  isArray,
-  keyBy,
-  merge,
-  omit,
-  map,
-} from 'lodash';
+import { isArray, keyBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -49,10 +44,9 @@ import {
   PATTERN_ALARM_TAG_LABEL_OPERATORS,
 } from '@/constants';
 
-import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
+import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
-import { patternCountAlarmsModalMixin } from '@/mixins/pattern/pattern-count-alarms-modal';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
@@ -60,7 +54,7 @@ const { mapActions: dynamicInfoMapActions } = createNamespacedHelpers('dynamicIn
 
 export default {
   components: { PatternEditorField },
-  mixins: [entitiesInfoMixin, patternCountAlarmsModalMixin],
+  mixins: [entitiesInfoMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -71,10 +65,6 @@ export default {
       required: true,
     },
     attributes: {
-      type: Array,
-      default: () => [],
-    },
-    excludedAttributes: {
       type: Array,
       default: () => [],
     },
@@ -98,7 +88,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    counter: {
+    alarmCounter: {
       type: Object,
       required: false,
     },
@@ -128,6 +118,8 @@ export default {
         PATTERN_OPERATORS.isNotOneOf,
         PATTERN_OPERATORS.contains,
         PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.beginWith,
+        PATTERN_OPERATORS.notBeginWith,
         PATTERN_OPERATORS.regexp,
       ];
     },
@@ -287,6 +279,7 @@ export default {
         operators: [
           PATTERN_OPERATORS.with,
           PATTERN_OPERATORS.without,
+          PATTERN_OPERATORS.hasEvery,
           PATTERN_OPERATORS.withLabel,
           PATTERN_OPERATORS.withoutLabel,
         ],
@@ -590,13 +583,7 @@ export default {
     },
 
     availableAlarmAttributes() {
-      const mergedAttributes = omit(merge(
-        {},
-        this.availableAttributesByValue,
-        this.externalAttributesByValue,
-      ), map(this.excludedAttributes, 'value'));
-
-      return Object.values(mergedAttributes);
+      return mergePatternAttributes(this.alarmAttributes, this.attributes);
     },
   },
   mounted() {
@@ -607,10 +594,8 @@ export default {
   methods: {
     ...dynamicInfoMapActions({ fetchDynamicInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
 
-    showPatternAlarms() {
-      this.showAlarmsModalByPatterns({
-        alarm_pattern: formGroupsToPatternRulesQuery(this.patterns.groups),
-      });
+    showPatternAlarmsModal() {
+      this.$emit('show:alarms');
     },
 
     async fetchInfos() {

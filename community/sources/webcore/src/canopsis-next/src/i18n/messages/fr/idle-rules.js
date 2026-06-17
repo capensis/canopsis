@@ -3,6 +3,9 @@ import { IDLE_RULE_ALARM_CONDITIONS, IDLE_RULE_TYPES } from '@/constants';
 export default {
   timeAwaiting: 'Temps d\'attente',
   timeRangeAwaiting: 'Plage de temps en attente',
+  massRemove: 'Supprimer les règles d\'inactivité',
+  massEnable: 'Activer les règles d\'inactivité',
+  massDisable: 'Désactiver les règles d\'inactivité',
   types: {
     [IDLE_RULE_TYPES.alarm]: 'Règle d\'inactivité d\'alarme',
     [IDLE_RULE_TYPES.entity]: 'Règle d\'inactivité d\'entité',

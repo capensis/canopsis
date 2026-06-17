@@ -10,7 +10,9 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
     <!---->
   </div>
@@ -412,7 +414,9 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
     <!---->
   </div>

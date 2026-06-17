@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/entitycategory"
@@ -175,8 +176,7 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 	return stats, nil
 }
 
-func (w *worker) parseFile(ctx context.Context, filename, source string, withEvents bool) (_ parseResult, resErr error) {
-	res := parseResult{}
+func (w *worker) parseFile(ctx context.Context, filename, source string, withEvents bool) (res parseResult, resErr error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return res, err
@@ -188,15 +188,22 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 			if resErr == nil {
 				resErr = err
 			}
-		} else {
-			err = os.Remove(filename)
-			if err != nil && resErr == nil {
+
+			return
+		}
+
+		err = os.Remove(filename)
+		if err != nil {
+			if resErr == nil {
 				resErr = err
 			}
+
+			return
 		}
+
+		w.logger.Debug().Str("filename", filename).Msg("context graph import file removed")
 	}()
 
-	writeModels := make([]mongo.WriteModel, 0)
 	var entityParseRes parseEntityResult
 	decoder := json.NewDecoder(file)
 
@@ -218,9 +225,7 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 		return res, err
 	}
 
-	writeModels = append(writeModels, entityParseRes.writeModels...)
-
-	res.writeModels = writeModels
+	res.writeModels = slices.Clone(entityParseRes.writeModels)
 	res.updatedIds = entityParseRes.updatedIds
 	res.removedIds = entityParseRes.removedIds
 	res.serviceEvents = entityParseRes.serviceEvents

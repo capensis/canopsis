@@ -37,7 +37,7 @@ type api struct {
 }
 
 // Create
-// @Success 200 {array} File
+// @Success 200 {array} Response
 func (a *api) Create(c *gin.Context) {
 	form, err := c.MultipartForm()
 	if err != nil {
@@ -105,7 +105,7 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // List
-// @Success 200 {object} []File
+// @Success 200 {array} Response
 func (a *api) List(c *gin.Context) {
 	ids := c.QueryArray("id")
 	if len(ids) == 0 {

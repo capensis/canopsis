@@ -1,43 +1,37 @@
 package encoding
 
-type DecodingError interface {
-	error
-	IsDecoding()
+type DecodingError struct {
+	Err error
 }
 
-type decodingError struct {
-	error
+func (e DecodingError) Unwrap() error {
+	return e.Err
 }
 
-func (e decodingError) IsDecoding() {
+func (e DecodingError) Error() string {
+	return e.Err.Error()
 }
 
 func NewDecodingError(err error) DecodingError {
-	if err == nil {
-		return nil
-	}
-	return decodingError{
-		error: err,
+	return DecodingError{
+		Err: err,
 	}
 }
 
-type EncodingError interface {
-	error
-	IsEncoding()
+type EncodingError struct {
+	Err error
 }
 
-type encodingError struct {
-	error
+func (e EncodingError) Unwrap() error {
+	return e.Err
 }
 
-func (e encodingError) IsEncoding() {
+func (e EncodingError) Error() string {
+	return e.Err.Error()
 }
 
 func NewEncodingError(err error) EncodingError {
-	if err == nil {
-		return nil
-	}
-	return encodingError{
-		error: err,
+	return EncodingError{
+		Err: err,
 	}
 }

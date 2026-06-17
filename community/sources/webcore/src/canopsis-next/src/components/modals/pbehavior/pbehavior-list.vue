@@ -169,7 +169,11 @@ export default {
           pbehavior,
           noPattern: true,
           timezone: this.$system.timezone,
-          action: data => this.updatePbehavior({ data, id: pbehavior._id }),
+          action: async (data) => {
+            const result = await this.updatePbehavior({ data, id: pbehavior._id });
+
+            return result;
+          },
         },
       });
     },

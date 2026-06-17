@@ -59,7 +59,7 @@ func EntityPatternToSql(p pattern.Entity, prefix string) (string, error) {
 				case "":
 					condQueries[j], err = cond.Condition.RefToSqlJson("infos", infoName)
 				default:
-					err = fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
+					err = fmt.Errorf("invalid field type for %q field: %w", cond.Field, pattern.ErrUnsupportedFieldType)
 				}
 
 				if err != nil {
@@ -84,7 +84,7 @@ func EntityPatternToSql(p pattern.Entity, prefix string) (string, error) {
 				case "":
 					condQueries[j], err = cond.Condition.RefToSqlJson("component_infos", infoName)
 				default:
-					err = fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
+					err = fmt.Errorf("invalid field type for %q field: %w", cond.Field, pattern.ErrUnsupportedFieldType)
 				}
 				if err != nil {
 					return "", err
@@ -150,7 +150,7 @@ func getEntityPatternGroupMongoQueries(p pattern.Entity, prefix string) ([]bson.
 				case "":
 					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
 				default:
-					err = fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
+					err = fmt.Errorf("invalid field type for %q field: %w", cond.Field, pattern.ErrUnsupportedFieldType)
 				}
 
 				if err != nil {
@@ -177,7 +177,7 @@ func getEntityPatternGroupMongoQueries(p pattern.Entity, prefix string) ([]bson.
 				case "":
 					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
 				default:
-					err = fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
+					err = fmt.Errorf("invalid field type for %q field: %w", cond.Field, pattern.ErrUnsupportedFieldType)
 				}
 
 				if err != nil {
