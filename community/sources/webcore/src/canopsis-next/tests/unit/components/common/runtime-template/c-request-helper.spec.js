@@ -20,8 +20,11 @@ describe('c-request-helper', () => {
   const axiosMockAdapter = new AxiosMockAdapter(axios);
   const helperId = Faker.datatype.uuid();
   const mockFn = jest.fn(context => Promise.resolve(`<div>${JSON.stringify(context)}</div>`));
+  let consoleErrorSpy;
 
   beforeEach(() => {
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
     global.window = global.window || {
       addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
@@ -50,6 +53,7 @@ describe('c-request-helper', () => {
     if (global.window && global.window._handlebarsRequestHelper) {
       delete global.window._handlebarsRequestHelper[helperId];
     }
+    consoleErrorSpy.mockRestore();
     jest.clearAllMocks();
   });
 
@@ -82,7 +86,7 @@ describe('c-request-helper', () => {
 
     expect(axiosMockAdapter.history.get).toHaveLength(1);
     expect(mockFn).toHaveBeenCalledWith(responseData);
-    expect(wrapper.vm.template).toContain('<fragment>');
+    expect(wrapper.vm.template).toContain('<div class="all-inherit">');
   });
 
   test('Sends request with custom method and options', async () => {
@@ -162,6 +166,8 @@ describe('c-request-helper', () => {
   });
 
   test('Renders `c-request-helper` with default props', () => {
+    axiosMockAdapter.onGet('https://api.example.com/data').reply(200, {});
+
     const wrapper = snapshotFactory({
       propsData: { helperId },
     });

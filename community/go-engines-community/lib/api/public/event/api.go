@@ -22,20 +22,20 @@ import (
 )
 
 type API struct {
-	publisher libamqp.Publisher
-	responder libresponse.Responder
-	logger    zerolog.Logger
+	channelPool libamqp.ChannelPool
+	responder   libresponse.Responder
+	logger      zerolog.Logger
 }
 
 func NewAPI(
-	publisher libamqp.Publisher,
+	channelPool libamqp.ChannelPool,
 	responder libresponse.Responder,
 	logger zerolog.Logger,
 ) *API {
 	return &API{
-		publisher: publisher,
-		responder: responder,
-		logger:    logger,
+		channelPool: channelPool,
+		responder:   responder,
+		logger:      logger,
 	}
 }
 
@@ -113,9 +113,18 @@ func (a *API) Send(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	publisher, err := a.channelPool.Get(ctx)
+	if err != nil {
+		a.responder.RespondError(w, r, err)
+
+		return
+	}
+
+	defer a.channelPool.Put(publisher)
+
 	switch jsonValue.Type() {
 	case fastjson.TypeObject:
-		if !a.processValue(ctx, jsonValue, contextUser, contextAuthor, roles) {
+		if !a.processValue(ctx, jsonValue, contextUser, contextAuthor, roles, publisher) {
 			failedEvents.SetArrayItem(0, jsonValue)
 			break
 		}
@@ -132,7 +141,7 @@ func (a *API) Send(w http.ResponseWriter, r *http.Request) {
 		var sentIdx, failedIdx int
 
 		for _, value := range values {
-			if !a.processValue(ctx, value, contextUser, contextAuthor, roles) {
+			if !a.processValue(ctx, value, contextUser, contextAuthor, roles, publisher) {
 				failedEvents.SetArrayItem(failedIdx, value)
 				failedIdx++
 
@@ -156,7 +165,7 @@ func (a *API) Send(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *API) processValue(ctx context.Context, value *fastjson.Value, contextUser, contextAuthor string, roles []string) bool {
+func (a *API) processValue(ctx context.Context, value *fastjson.Value, contextUser, contextAuthor string, roles []string, publisher libamqp.Publisher) bool {
 	eventType, err := getStringField(value, "event_type")
 	if err != nil {
 		a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg(err.Error())
@@ -277,7 +286,7 @@ func (a *API) processValue(ctx context.Context, value *fastjson.Value, contextUs
 			Msgf("SourceType changed in the event")
 	}
 
-	err = a.publisher.PublishWithContext(
+	err = publisher.PublishWithContext(
 		ctx,
 		canopsis.EventsExchangeName,
 		"",

@@ -8,7 +8,13 @@ exports[`pattern-advanced-editor-field Renders \`pattern-advanced-editor-field\`
   rows="10"
   validate-on="button"
   value="[object Object]"
-/>
+>
+  <transition-stub
+    name="fade-transition"
+  >
+    <!---->
+  </transition-stub>
+</c-json-field-stub>
 `;
 
 exports[`pattern-advanced-editor-field Renders \`pattern-advanced-editor-field\` with default props 1`] = `
@@ -17,5 +23,11 @@ exports[`pattern-advanced-editor-field Renders \`pattern-advanced-editor-field\`
   rows="10"
   validate-on="button"
   value=""
-/>
+>
+  <transition-stub
+    name="fade-transition"
+  >
+    <!---->
+  </transition-stub>
+</c-json-field-stub>
 `;

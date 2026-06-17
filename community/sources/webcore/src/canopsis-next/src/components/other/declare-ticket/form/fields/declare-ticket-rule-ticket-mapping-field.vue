@@ -19,15 +19,6 @@
             :disabled="isDeclareTicketExist"
           />
         </v-flex>
-        <v-flex
-          v-if="form.declare_ticket.enabled"
-          xs6
-        >
-          <c-enabled-field
-            v-field="form.declare_ticket.is_regexp"
-            :label="$t('declareTicket.isRegexp')"
-          />
-        </v-flex>
       </v-layout>
       <template v-if="form.declare_ticket.enabled">
         <c-enabled-field
@@ -36,7 +27,7 @@
           :label="$t('declareTicket.emptyResponse')"
         />
         <declare-ticket-rule-ticket-id-field
-          v-field="form.declare_ticket.ticket_id"
+          v-field="form.declare_ticket"
           :disabled="disabled"
           :name="ticketIdFieldName"
           :required="ticketIdRequired"
@@ -48,14 +39,16 @@
           :name="ticketUrlFieldName"
           :variables="variables"
         />
-        <v-flex offset-xs6>
-          <declare-ticket-rule-ticket-url-title-field v-field="form.declare_ticket.ticket_url_title" />
-          <v-text-field
-            v-if="withTicketSystemName"
-            v-field="form.ticket_system_name"
-            :label="$t('declareTicket.ticketSystemName')"
-          />
-        </v-flex>
+        <v-layout>
+          <v-flex xs6>
+            <declare-ticket-rule-ticket-url-title-field v-field="form.declare_ticket.ticket_url_title" />
+            <v-text-field
+              v-if="withTicketSystemName"
+              v-field="form.ticket_system_name"
+              :label="$t('declareTicket.ticketSystemName')"
+            />
+          </v-flex>
+        </v-layout>
         <declare-ticket-rule-ticket-custom-fields-field
           v-field="form.declare_ticket.mapping"
           :name="name"

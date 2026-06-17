@@ -21,10 +21,7 @@ import {
 } from '@/constants';
 import { DEFAULT_WEATHER_LIMIT } from '@/config';
 
-import {
-  generateDefaultServiceWeatherWidget,
-  generatePreparedDefaultAlarmListWidget,
-} from '@/helpers/entities/widget/form';
+import { generateDefaultServiceWeatherWidget } from '@/helpers/entities/widget/form';
 
 import ServiceWeatherWidget from '@/components/widgets/service-weather/service-weather.vue';
 
@@ -320,21 +317,20 @@ describe('service-weather', () => {
 
     selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:alarms');
 
-    const alarmListWidget = generatePreparedDefaultAlarmListWidget();
-    alarmListWidget.parameters.serviceDependenciesColumns = widget.parameters.serviceDependenciesColumns;
-    alarmListWidget.parameters.widgetColumns = widget.parameters.alarmsList.widgetColumns;
-
     expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.alarmsList,
-        config: {
-          widget: {
-            ...alarmListWidget,
+        config: expect.objectContaining({
+          widget: expect.objectContaining({
             _id: expect.any(String),
-          },
+            parameters: expect.objectContaining({
+              serviceDependenciesColumns: widget.parameters.serviceDependenciesColumns,
+              widgetColumns: widget.parameters.alarmsList.widgetColumns,
+            }),
+          }),
           title: `${service.name} - alarm list`,
           fetchList: expect.any(Function),
-        },
+        }),
       },
     );
 

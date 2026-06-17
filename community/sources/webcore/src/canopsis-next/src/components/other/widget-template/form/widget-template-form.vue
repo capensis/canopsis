@@ -17,6 +17,11 @@
       v-field="form"
       :massive="isMassiveQuickActionsType"
     />
+    <widget-template-sort-columns-form
+      v-else-if="isAlarmSortColumnsType"
+      v-field="form.sort_columns"
+      required
+    />
     <widget-template-text-form
       v-else
       v-field="form"
@@ -39,6 +44,7 @@ import { useEntityInfos } from '@/hooks/store/modules/entity-infos';
 import WidgetTemplateColumnsForm from './widget-template-columns-form.vue';
 import WidgetTemplateTextForm from './widget-template-text-form.vue';
 import WidgetTemplateQuickActionsForm from './widget-template-quick-actions-form.vue';
+import WidgetTemplateSortColumnsForm from './widget-template-sort-columns-form.vue';
 
 export default {
   inject: ['$validator'],
@@ -46,6 +52,7 @@ export default {
     WidgetTemplateColumnsForm,
     WidgetTemplateTextForm,
     WidgetTemplateQuickActionsForm,
+    WidgetTemplateSortColumnsForm,
   },
   model: {
     prop: 'form',
@@ -63,6 +70,7 @@ export default {
     const isColumnsType = computed(() => COLUMNS_WIDGET_TEMPLATES_TYPES.includes(props.form.type));
     const isAlarmQuickActionsType = computed(() => ALARM_QUICK_ACTIONS_WIDGET_TEMPLATE_TYPES.includes(props.form.type));
     const isMassiveQuickActionsType = computed(() => props.form.type === WIDGET_TEMPLATES_TYPES.alarmMassQuickActions);
+    const isAlarmSortColumnsType = computed(() => props.form.type === WIDGET_TEMPLATES_TYPES.alarmSortColumns);
 
     onMounted(() => fetchInfos({ withRules: true }));
 
@@ -71,6 +79,7 @@ export default {
       isColumnsType,
       isAlarmQuickActionsType,
       isMassiveQuickActionsType,
+      isAlarmSortColumnsType,
     };
   },
 };

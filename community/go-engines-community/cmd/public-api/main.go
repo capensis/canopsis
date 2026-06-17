@@ -73,31 +73,27 @@ func main() {
 	// Set mongodb setting.
 	config.SetDbClientRetry(s.PrimaryDbClient, s.Config)
 	// Connect to rmq.
-	amqpConn, err := libamqp.NewConnection(s.Logger, -1, s.Config.Global.GetReconnectTimeout())
+	amqpPubConn, err := libamqp.New(-1, s.Config.Global.GetReconnectTimeout(), s.Logger)
 	if err != nil {
 		s.Logger.Fatal().Err(err).Msg("cannot connect to rabbitmq")
 	}
 
 	defer func() {
-		err = amqpConn.Close()
+		err = amqpPubConn.Close()
 		if err != nil {
 			s.Logger.Err(err).Msg("cannot disconnect from rabbitmq")
 		}
 	}()
 
-	s.AMQPPublisher, err = amqpConn.Channel()
-	if err != nil {
-		s.Logger.Fatal().Err(err).Msg("cannot connect to rabbitmq")
-	}
-
+	s.AMQPPubChPool = libamqp.NewChannelPool(amqpPubConn, canopsis.DefaultAMQPPublishPoolSize)
 	defer func() {
-		err = s.AMQPPublisher.Close()
+		err = s.AMQPPubChPool.Close()
 		if err != nil {
 			s.Logger.Err(err).Msg("cannot disconnect from rabbitmq")
 		}
 	}()
 
-	s.SecurityConfig, err = libsecurity.LoadConfig(opts.ConfigDir)
+	s.SecurityConfig, err = libsecurity.LoadConfig(opts.ConfigDir, s.Logger)
 	if err != nil {
 		s.Logger.Fatal().Err(err).Msg("cannot load security config")
 	}

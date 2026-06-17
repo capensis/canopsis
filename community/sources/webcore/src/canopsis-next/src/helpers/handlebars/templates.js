@@ -48,7 +48,7 @@ export function unregisterTemplate(id, instance = Handlebars) {
  */
 export async function runTemplate(id, context, instance = Handlebars) {
   const preparedContext = {
-    env: store.getters['templateVars/items'] ?? {},
+    env: store.getters['template/vars/items'] ?? {},
     user: store.getters['auth/currentUser'] ?? {},
 
     ...context,

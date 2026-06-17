@@ -1,7 +1,9 @@
 import Faker from 'faker';
+import { merge } from 'lodash';
 
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { createAuthModule, createLlmModule, createMockedStoreModules, createUserModule } from '@unit/utils/store';
+import { mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -14,6 +16,7 @@ import CreateTag from '@/components/modals/tag/create-tag.vue';
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pattern-progress': true,
   'tag-form': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
@@ -21,6 +24,7 @@ const stubs = {
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pattern-progress': true,
   'tag-form': true,
 };
 
@@ -30,27 +34,50 @@ const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectTagForm = wrapper => wrapper
   .find('tag-form-stub');
 
-describe('create-tag', () => {
-  const $modals = mockModals();
-  const $popups = mockPopups();
+const withModalInject = (options = {}) => {
+  const rawModal = options.propsData?.modal ?? { config: {} };
+  const modal = rawModal.id ? rawModal : { id: 'test-modal-id', ...rawModal };
 
-  const factory = generateShallowRenderer(CreateTag, {
+  return merge({}, options, {
+    propsData: {
+      ...options.propsData,
+      modal,
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $modal: modal,
+      },
+    },
+  });
+};
+
+describe('create-tag', () => {
+  const $modals = {
+    ...mockModals(),
+    updateModalConfig: jest.fn(),
+    updateDialogProps: jest.fn(),
+  };
+  const $popups = mockPopups();
+  const $sidebar = mockSidebar();
+
+  const { authModule } = createAuthModule();
+  const { userModule } = createUserModule();
+  const { llmModule } = createLlmModule();
+  const store = createMockedStoreModules([authModule, userModule, llmModule]);
+
+  const shallowCreateTag = generateShallowRenderer(CreateTag, {
     stubs,
+    store,
     attachTo: document.body,
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
   });
-  const snapshotFactory = generateRenderer(CreateTag, {
+  const factory = (options = {}) => shallowCreateTag(withModalInject(options));
+
+  const renderCreateTag = generateRenderer(CreateTag, {
     stubs: snapshotStubs,
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
+    store,
   });
+  const snapshotFactory = (options = {}) => renderCreateTag(withModalInject(options));
 
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();
@@ -64,6 +91,7 @@ describe('create-tag', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -77,7 +105,7 @@ describe('create-tag', () => {
       entity_pattern: [],
       color: COLORS.secondary,
     });
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -92,6 +120,7 @@ describe('create-tag', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -124,6 +153,7 @@ describe('create-tag', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -131,7 +161,7 @@ describe('create-tag', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -151,6 +181,7 @@ describe('create-tag', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -167,7 +198,7 @@ describe('create-tag', () => {
       alarm_pattern: [],
       entity_pattern: [],
     });
-    expect($modals.hide).not.toHaveBeenCalledWith();
+    expect($modals.hide).not.toHaveBeenCalled();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -196,6 +227,7 @@ describe('create-tag', () => {
       mocks: {
         $modals,
         $popups,
+        $sidebar,
       },
     });
 
@@ -213,7 +245,7 @@ describe('create-tag', () => {
       color: customTag.color,
       value: customTag.value,
     });
-    expect($modals.hide).not.toHaveBeenCalledWith();
+    expect($modals.hide).not.toHaveBeenCalled();
 
     consoleErrorSpy.mockClear();
   });
@@ -230,6 +262,7 @@ describe('create-tag', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -244,7 +277,7 @@ describe('create-tag', () => {
     await flushPromises();
 
     expect(action).toHaveBeenCalledWith(newForm);
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -256,6 +289,7 @@ describe('create-tag', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -263,7 +297,7 @@ describe('create-tag', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Renders `create-tag` with empty modal', () => {
@@ -275,6 +309,7 @@ describe('create-tag', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -299,6 +334,7 @@ describe('create-tag', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 

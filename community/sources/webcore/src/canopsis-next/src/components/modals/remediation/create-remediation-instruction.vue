@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <modal-wrapper text-class="position-relative" close>
       <template #title="">
         {{ title }}
       </template>
@@ -19,9 +19,15 @@
           :required-approve="requiredInstructionApprove"
           :rule-id="config.remediationInstruction?._id"
         />
+        <ai-chat-sidebar
+          v-if="chatShown"
+          v-bind="chatOptions.bind"
+          v-on="chatOptions.on"
+        />
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
           @click="$modals.hide"
@@ -29,7 +35,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -43,10 +49,10 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref, toRef } from 'vue';
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import {
   formToRemediationInstructionRequest,
@@ -54,12 +60,14 @@ import {
   remediationInstructionToFullForm,
 } from '@/helpers/entities/remediation/instruction/form';
 
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
+import { useAuth } from '@/hooks/auth';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
-import { useAuth } from '@/hooks/auth';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 import RemediationInstructionApprovalAlert from '@/components/other/remediation/instructions/partials/approval-alert.vue';
 
@@ -75,6 +83,7 @@ export default {
   },
   components: {
     ModalWrapper,
+    AiChatSidebar,
     RemediationInstructionForm,
     RemediationInstructionApprovalAlert,
   },
@@ -92,6 +101,17 @@ export default {
     const { currentUser } = useAuth();
 
     const form = ref(remediationInstructionToFullForm(config.value.remediationInstruction));
+
+    const {
+      shown: chatShown,
+      options: chatOptions,
+    } = useAiChatForm({
+      form,
+
+      modal: toRef(props, 'modal'),
+      ruleId: props.modal.config?.remediationInstruction?._id,
+      context: LLM_SOCKET_CONTEXTS.instruction,
+    });
 
     const title = computed(() => config.value.title || t('modals.createRemediationInstruction.create.title'));
     const disabled = computed(() => config.value.disabled);
@@ -111,11 +131,13 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        const data = await config.value.action?.(formToRemediationInstructionRequest(form.value));
+        const result = await config.value.action?.(formToRemediationInstructionRequest(form.value));
+
+        await config.value.afterSubmit?.(result);
 
         close();
 
-        return data;
+        return result;
       },
       errorsToValidation: err => remediationInstructionErrorsToForm(err, form.value),
     });
@@ -137,6 +159,8 @@ export default {
       alertComment,
       isDisabled,
       submitting,
+      chatShown,
+      chatOptions,
       submit,
     };
   },

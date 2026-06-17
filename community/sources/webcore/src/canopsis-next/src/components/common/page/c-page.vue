@@ -1,6 +1,8 @@
 <template>
   <div>
-    <c-page-header />
+    <c-page-header>
+      <slot v-if="$slots.header" name="header" />
+    </c-page-header>
     <v-card class="ma-4 mt-0">
       <slot />
     </v-card>

@@ -5,6 +5,7 @@
     <field-main-parameter
       v-field="form.parameters.mainParameter"
       :type="type"
+      :widget-id="widget._id"
     />
     <field-statistics-columns
       v-field="form.parameters.widgetColumns"

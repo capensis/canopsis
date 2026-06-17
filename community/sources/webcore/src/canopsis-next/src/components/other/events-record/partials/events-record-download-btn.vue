@@ -10,9 +10,10 @@
     v-else
     :loading="downloading"
     color="primary"
+    outlined
     @click="exportJson"
   >
-    <v-icon class="mr-2" color="white">
+    <v-icon class="mr-2">
       file_download
     </v-icon>
     <span>{{ $t('common.exportToJson') }}</span>
@@ -41,12 +42,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    eventPattern: {
+      type: Array,
+      required: false,
+    },
   },
   setup(props) {
     const eventIds = computed(() => (props.eventId ? [props.eventId] : props.eventIds));
 
     const { downloading, exportJson } = useEventsRecordExportJson({
       eventIds,
+      eventPattern: toRef(props, 'eventPattern'),
       eventsRecordId: toRef(props, 'eventsRecordId'),
     });
 

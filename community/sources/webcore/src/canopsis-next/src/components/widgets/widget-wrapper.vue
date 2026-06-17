@@ -65,6 +65,11 @@ import ExternalDataTableWidget from './external-data-table/external-data-table-w
 const { mapGetters } = createNamespacedHelpers('info');
 
 export default {
+  provide() {
+    return {
+      $widget: this.widget,
+    };
+  },
   components: {
     AlarmsListWidget,
     EntitiesListWidget,

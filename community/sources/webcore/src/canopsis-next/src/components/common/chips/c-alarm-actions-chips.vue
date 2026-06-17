@@ -82,6 +82,8 @@
 </template>
 
 <script>
+import { computed, ref, watch } from 'vue';
+
 import { uid } from '@/helpers/uid';
 
 export default {
@@ -139,61 +141,76 @@ export default {
       default: 'white',
     },
   },
-  data() {
-    return {
-      wrapperKey: uid(),
-    };
-  },
-  computed: {
-    sortedItems() {
-      return [...this.items].sort((first, second) => {
-        if (first[this.itemValue] === this.activeItem || this.activeItems.includes(first[this.itemValue])) {
-          return -1;
-        }
+  setup(props, { emit }) {
+    const wrapperKey = ref(uid());
 
-        if (second[this.itemValue] === this.activeItem || this.activeItems.includes(second[this.itemValue])) {
-          return 0;
-        }
+    const sortedItems = computed(() => [...props.items].sort((first, second) => {
+      if (first[props.itemValue] === props.activeItem || props.activeItems.includes(first[props.itemValue])) {
+        return -1;
+      }
 
-        if (first[this.itemText] < second[this.itemText]) {
-          return -1;
-        }
-
-        if (first[this.itemText] > second[this.itemText]) {
-          return 1;
-        }
-
+      if (second[props.itemValue] === props.activeItem || props.activeItems.includes(second[props.itemValue])) {
         return 0;
-      });
-    },
+      }
 
-    inlineItems() {
-      return this.sortedItems.slice(0, this.inlineCount);
-    },
+      if (first[props.itemText] < second[props.itemText]) {
+        return -1;
+      }
 
-    dropDownItems() {
-      return this.sortedItems.slice(this.inlineCount);
-    },
-  },
-  watch: {
-    inlineItems() {
-      this.wrapperKey = uid();
-    },
-  },
-  methods: {
-    selectItem(item) {
-      this.$emit('select', this.returnObject ? item : item[this.itemValue]);
-    },
+      if (first[props.itemText] > second[props.itemText]) {
+        return 1;
+      }
 
-    closeItem(item) {
-      this.$emit('close', this.returnObject ? item : item[this.itemValue]);
-    },
+      return 0;
+    }));
 
-    isClosableItem(item) {
-      const isActive = this.activeItem === item[this.itemValue] || this.activeItems.includes(item[this.itemValue]);
+    const inlineItems = computed(() => sortedItems.value.slice(0, props.inlineCount));
 
-      return this.closable || (this.closableActive && isActive);
-    },
+    const dropDownItems = computed(() => sortedItems.value.slice(props.inlineCount));
+
+    watch(inlineItems, () => wrapperKey.value = uid());
+
+    /**
+     * Emits `select` with the full item or its value (per `returnObject`), unless the item is already in `activeItems`.
+
+     * @param {Object} item - Chip item; value key is `itemValue`.
+     */
+    const selectItem = (item) => {
+      if (props.activeItems.includes(item[props.itemValue])) {
+        return;
+      }
+
+      emit('select', props.returnObject ? item : item[props.itemValue]);
+    };
+
+    /**
+     * Emits `close` with the full item or its value (per `returnObject`).
+
+     * @param {Object} item - Chip item; value key is `itemValue`.
+     */
+    const closeItem = item => emit('close', props.returnObject ? item : item[props.itemValue]);
+
+    /**
+     * Whether the chip should show a close control: when `closable`, or when `closableActive` and the item is active.
+
+     * @param {Object} item - Chip item; compared using `itemValue` and `activeItem` / `activeItems`.
+     * @returns {boolean}
+     */
+    const isClosableItem = (item) => {
+      const isActive = props.activeItem === item[props.itemValue]
+        || props.activeItems.includes(item[props.itemValue]);
+
+      return props.closable || (props.closableActive && isActive);
+    };
+
+    return {
+      wrapperKey,
+      inlineItems,
+      dropDownItems,
+      selectItem,
+      closeItem,
+      isClosableItem,
+    };
   },
 };
 </script>

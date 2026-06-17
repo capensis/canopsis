@@ -87,7 +87,7 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     await flushPromises();
 
-    expect(fetchTimespansListWithoutStore).toBeCalledWith(
+    expect(fetchTimespansListWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: {
@@ -133,7 +133,7 @@ describe('pbehavior-recurrence-rule-periods', () => {
     await selectField.triggerCustomEvent('input', PBEHAVIOR_RRULE_PERIODS_RANGES.nextWeek);
     await selectField.triggerCustomEvent('change');
 
-    expect(fetchTimespansListWithoutStore).toBeCalledWith(
+    expect(fetchTimespansListWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: {
@@ -162,7 +162,7 @@ describe('pbehavior-recurrence-rule-periods', () => {
     await selectField.triggerCustomEvent('input', PBEHAVIOR_RRULE_PERIODS_RANGES.next2Weeks);
     await selectField.triggerCustomEvent('change');
 
-    expect(fetchTimespansListWithoutStore).toBeCalledWith(
+    expect(fetchTimespansListWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: {
@@ -191,7 +191,7 @@ describe('pbehavior-recurrence-rule-periods', () => {
     await selectField.triggerCustomEvent('input', PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth);
     await selectField.triggerCustomEvent('change');
 
-    expect(fetchTimespansListWithoutStore).toBeCalledWith(
+    expect(fetchTimespansListWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: {
@@ -220,7 +220,7 @@ describe('pbehavior-recurrence-rule-periods', () => {
     await selectField.triggerCustomEvent('input', PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth);
     await selectField.triggerCustomEvent('change');
 
-    expect(fetchTimespansListWithoutStore).toBeCalledWith(
+    expect(fetchTimespansListWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: {
@@ -243,7 +243,7 @@ describe('pbehavior-recurrence-rule-periods', () => {
     const actionButton = selectActionButton(wrapper);
     actionButton.triggerCustomEvent('click');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.pbehaviorRecurrenceRule,
         config: {

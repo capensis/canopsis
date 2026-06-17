@@ -16,6 +16,9 @@ export const entitiesResolveRulesMixin = {
       createResolveRule: 'create',
       updateResolveRule: 'update',
       removeResolveRule: 'remove',
+      bulkEnableResolveRules: 'bulkEnable',
+      bulkDisableResolveRules: 'bulkDisable',
+      bulkRemoveResolveRules: 'bulkRemove',
     }),
   },
 };

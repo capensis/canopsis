@@ -30,8 +30,8 @@ export const TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS = {
   [TEMPLATE_TESTING_TEST_TYPES.widget]: USER_PERMISSIONS.technical.view,
   [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: USER_PERMISSIONS.technical.exploitation.declareTicketRule,
   [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: USER_PERMISSIONS.technical.exploitation.dynamicInfo,
-  [TEMPLATE_TESTING_TEST_TYPES.instruction]: USER_PERMISSIONS.technical.remediationInstruction,
-  [TEMPLATE_TESTING_TEST_TYPES.job]: USER_PERMISSIONS.technical.remediationJob,
+  [TEMPLATE_TESTING_TEST_TYPES.instruction]: USER_PERMISSIONS.technical.exploitation.remediationInstruction,
+  [TEMPLATE_TESTING_TEST_TYPES.job]: USER_PERMISSIONS.technical.exploitation.remediationJob,
   [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: USER_PERMISSIONS.technical.exploitation.metaAlarmRule,
 };
 
@@ -50,6 +50,7 @@ export const TEMPLATE_TESTING_DATA_EVENT_PRE_FILLED_TEMPLATE = JSON.stringify({
 export const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES = {
   event: 'event',
   response: 'response',
+  ticketStatusResponse: 'ticket_status_response',
   alarm: 'alarm',
   user: 'user',
   entity: 'entity',
@@ -58,6 +59,12 @@ export const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES = {
 export const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_DATA_TYPE = {
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event]: TEMPLATE_TESTING_DATA_TYPES.event,
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: TEMPLATE_TESTING_DATA_TYPES.response,
+  [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse]: TEMPLATE_TESTING_DATA_TYPES.response,
+};
+
+export const TEMPLATE_TESTING_TEST_VARIABLES_TABS = {
+  general: 0,
+  testVariables: 1,
 };
 
 export const TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT = 19;

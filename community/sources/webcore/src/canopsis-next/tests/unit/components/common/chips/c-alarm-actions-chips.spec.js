@@ -32,7 +32,7 @@ describe('c-alarm-actions-chips', () => {
     const chip = selectChip(wrapper);
     chip.trigger('click');
 
-    expect(wrapper).toEmit('select', items[0].text);
+    expect(wrapper).toHaveBeenEmitWith('select', items[0].text);
   });
 
   test('Should emit `select` event on `click` with custom itemValue', () => {
@@ -46,7 +46,7 @@ describe('c-alarm-actions-chips', () => {
     const chip = selectChip(wrapper);
     chip.trigger('click');
 
-    expect(wrapper).toEmit('select', items[0].color);
+    expect(wrapper).toHaveBeenEmitWith('select', items[0].color);
   });
 
   test('Should emit `select` event on `click` with returnObject', () => {
@@ -60,7 +60,20 @@ describe('c-alarm-actions-chips', () => {
     const chip = selectChip(wrapper);
     chip.trigger('click');
 
-    expect(wrapper).toEmit('select', items[0]);
+    expect(wrapper).toHaveBeenEmitWith('select', items[0]);
+  });
+
+  test('Should not emit `select` when clicking an already active item', () => {
+    const wrapper = factory({
+      propsData: {
+        items,
+        activeItems: [items[0].text],
+      },
+    });
+
+    selectChip(wrapper).trigger('click');
+
+    expect(wrapper).not.toHaveBeenEmit('select');
   });
 
   test('Renders `c-alarm-actions-chips` without selected tag and dropdown', () => {

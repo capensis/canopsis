@@ -30,7 +30,7 @@ type Services struct {
 	Binder                 binding.Binder
 	Responder              response.Responder
 	PrimaryDbClient        mongo.DbClient
-	AMQPPublisher          amqp.Channel
+	AMQPPubChPool          amqp.ChannelPool
 	Config                 config.CanopsisConf
 	SecurityConfig         security.Config
 	Enforcer               security.Enforcer
@@ -62,7 +62,7 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 			r.Use(middleware.Auth(s.AuthProviders, s.Responder))
 			authorize := s.authorize
 			{
-				eventAPI := event.NewAPI(s.AMQPPublisher, s.Responder, s.Logger)
+				eventAPI := event.NewAPI(s.AMQPPubChPool, s.Responder, s.Logger)
 				r.With(authorize(apisecurity.PermEvent, model.PermissionCan)).
 					Post("/event", eventAPI.Send)
 			}

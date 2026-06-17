@@ -2,8 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"regexp"
 	"time"
 
@@ -11,7 +9,6 @@ import (
 )
 
 const (
-	Regexp2MatchTimeout       = "REGEXP2_MATCH_TIMEOUT"
 	DefaultRegex2MatchTimeout = time.Second
 )
 
@@ -36,19 +33,6 @@ func (r WrapperRegex2) Match(content []byte) bool {
 	return m
 }
 
-func regexp2MatchTimeout() time.Duration {
-	value := os.Getenv(Regexp2MatchTimeout)
-	if value != "" {
-		duration, err := time.ParseDuration(value)
-		if err != nil {
-			log.Println("Invalid regexp2 timeout duration: ", value)
-			return DefaultRegex2MatchTimeout
-		}
-		return duration
-	}
-	return DefaultRegex2MatchTimeout
-}
-
 // NewRegexExpression
 // todo move to separate package
 func NewRegexExpression(expr string) (RegexExpression, error) {
@@ -56,7 +40,7 @@ func NewRegexExpression(expr string) (RegexExpression, error) {
 		if re2, err := regexp2.Compile(expr, regexp2.RE2); err != nil {
 			return nil, fmt.Errorf("unable to parse regex: %w", err)
 		} else {
-			re2.MatchTimeout = regexp2MatchTimeout()
+			re2.MatchTimeout = DefaultRegex2MatchTimeout
 			return WrapperRegex2{re2}, nil
 		}
 	} else {

@@ -9,6 +9,7 @@ const stubs = {
   'c-alarm-state-chip': true,
   'c-alarm-pbehavior-chip': true,
   'c-alarm-extra-details-chip': true,
+  'declare-ticket-rule-ticket-status-chip': true,
   'v-icon': true,
 };
 
@@ -36,6 +37,21 @@ describe('alarm-timeline-step-icon', () => {
         step: {
           _t: ALARM_LIST_STEPS.statusinc,
           val: status,
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `alarm-timeline-step-icon` for step `ticketRemove` correctly', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        step: {
+          _t: ALARM_LIST_STEPS.ticketRemove,
+          val: 1,
+          color: 'color',
+          icon_name: 'icon_name',
         },
       },
     });

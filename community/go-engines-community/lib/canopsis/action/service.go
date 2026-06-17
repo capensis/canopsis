@@ -24,7 +24,7 @@ type service struct {
 	executionStorage        ScenarioExecutionStorage
 	encoder                 encoding.Encoder
 	decoder                 encoding.Decoder
-	fifoChan                libamqp.Channel
+	amqpPublisher           libamqp.Publisher
 	fifoExchange, fifoQueue string
 	activationService       libalarm.ActivationService
 	techMetricsSender       techmetrics.Sender
@@ -39,7 +39,7 @@ func NewService(
 	storage ScenarioExecutionStorage,
 	encoder encoding.Encoder,
 	decoder encoding.Decoder,
-	fifoChan libamqp.Channel,
+	amqpPublisher libamqp.Publisher,
 	fifoExchange string,
 	fifoQueue string,
 	activationService libalarm.ActivationService,
@@ -51,7 +51,7 @@ func NewService(
 		scenarioInputChannel:   scenarioInputChan,
 		delayedScenarioManager: delayedScenarioManager,
 		executionStorage:       storage,
-		fifoChan:               fifoChan,
+		amqpPublisher:          amqpPublisher,
 		encoder:                encoder,
 		decoder:                decoder,
 		fifoExchange:           fifoExchange,
@@ -311,7 +311,7 @@ func (s *service) sendEventToFifoAck(ctx context.Context, event types.Event) {
 		return
 	}
 
-	err = s.fifoChan.PublishWithContext(
+	err = s.amqpPublisher.PublishWithContext(
 		ctx,
 		s.fifoExchange,
 		s.fifoQueue,

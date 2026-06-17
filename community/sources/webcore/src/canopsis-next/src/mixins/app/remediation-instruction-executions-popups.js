@@ -16,6 +16,10 @@ const EXECUTION_STATUSES_TO_POPUPS = {
     messageKey: 'remediation.instructionExecute.popups.wasPaused',
     type: 'info',
   },
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.waitingResult]: {
+    messageKey: 'remediation.instructionExecute.popups.wasWaitingResult',
+    type: 'info',
+  },
 };
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
