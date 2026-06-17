@@ -42,42 +42,36 @@ func NewForbiddenError(msg string) *ForbiddenError {
 }
 
 func MapError(err error) (httpCode int, httpMsg string, logLvl zerolog.Level) {
-	var invalidReqErr *validation.InvalidRequestBodyError
-	var forbiddenErr *ForbiddenError
-	var conflictErr *ConflictError
-	logLvl = zerolog.DebugLevel
-	if errors.Is(err, ErrNotFound) {
-		httpCode = http.StatusNotFound
-	} else if errors.Is(err, ErrUnauthorized) {
-		httpCode = http.StatusUnauthorized
-	} else if errors.Is(err, ErrMethodNotAllowed) {
-		httpCode = http.StatusMethodNotAllowed
-	} else if errors.Is(err, ErrServiceUnavailable) {
-		httpCode = http.StatusServiceUnavailable
-	} else if errors.Is(err, ErrMaintenance) {
-		httpCode = http.StatusServiceUnavailable
-		httpMsg = "The service is under maintenance. Please try again later."
-	} else if errors.Is(err, ErrRequestEntityTooLarge) {
-		httpCode = http.StatusRequestEntityTooLarge
-	} else if errors.As(err, &forbiddenErr) {
-		httpCode = http.StatusForbidden
-		httpMsg = forbiddenErr.Message
-	} else if errors.As(err, &conflictErr) {
-		httpCode = http.StatusConflict
-		httpMsg = conflictErr.Message
-	} else if errors.As(err, &invalidReqErr) {
-		httpCode = http.StatusBadRequest
-		logLvl = zerolog.WarnLevel
-	} else if errors.Is(err, context.Canceled) {
-		httpCode = http.StatusRequestTimeout
-		logLvl = zerolog.WarnLevel
-	} else if errors.Is(err, context.DeadlineExceeded) || mongodriver.IsTimeout(err) {
-		httpCode = http.StatusRequestTimeout
-		logLvl = zerolog.ErrorLevel
-	} else {
-		httpCode = http.StatusInternalServerError
-		logLvl = zerolog.ErrorLevel
+	if fe, ok := errors.AsType[*ForbiddenError](err); ok {
+		return http.StatusForbidden, fe.Message, zerolog.DebugLevel
 	}
 
-	return httpCode, httpMsg, logLvl
+	if ce, ok := errors.AsType[*ConflictError](err); ok {
+		return http.StatusConflict, ce.Message, zerolog.DebugLevel
+	}
+
+	if _, ok := errors.AsType[*validation.InvalidRequestBodyError](err); ok {
+		return http.StatusBadRequest, "", zerolog.WarnLevel
+	}
+
+	switch {
+	case errors.Is(err, ErrNotFound):
+		return http.StatusNotFound, "", zerolog.DebugLevel
+	case errors.Is(err, ErrUnauthorized):
+		return http.StatusUnauthorized, "", zerolog.DebugLevel
+	case errors.Is(err, ErrMethodNotAllowed):
+		return http.StatusMethodNotAllowed, "", zerolog.DebugLevel
+	case errors.Is(err, ErrServiceUnavailable):
+		return http.StatusServiceUnavailable, "", zerolog.DebugLevel
+	case errors.Is(err, ErrMaintenance):
+		return http.StatusServiceUnavailable, "The service is under maintenance. Please try again later.", zerolog.DebugLevel
+	case errors.Is(err, ErrRequestEntityTooLarge):
+		return http.StatusRequestEntityTooLarge, "", zerolog.DebugLevel
+	case errors.Is(err, context.Canceled):
+		return http.StatusRequestTimeout, "", zerolog.WarnLevel
+	case errors.Is(err, context.DeadlineExceeded) || mongodriver.IsTimeout(err):
+		return http.StatusRequestTimeout, "", zerolog.ErrorLevel
+	default:
+		return http.StatusInternalServerError, "", zerolog.ErrorLevel
+	}
 }
