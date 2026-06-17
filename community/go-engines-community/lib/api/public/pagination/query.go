@@ -1,6 +1,8 @@
 package pagination
 
-import "go.mongodb.org/mongo-driver/v2/bson"
+import (
+	"go.mongodb.org/mongo-driver/v2/bson"
+)
 
 const (
 	SortAsc  = "asc"
@@ -19,9 +21,6 @@ func CreateAggregationPipeline(
 	sort bson.M,
 	afterLimit ...[]bson.M,
 ) []bson.M {
-	result := make([]bson.M, len(beforeLimit))
-	copy(result, beforeLimit)
-
 	pipeline := make([]bson.M, 0, 4)
 	if len(sort) == 1 {
 		pipeline = append(pipeline, sort)
@@ -42,6 +41,8 @@ func CreateAggregationPipeline(
 		{"$count": "count"},
 	}
 
+	result := make([]bson.M, len(beforeLimit), len(beforeLimit)+2)
+	copy(result, beforeLimit)
 	result = append(result,
 		bson.M{"$facet": bson.M{
 			"data":        pipeline,

@@ -3,6 +3,7 @@ package pbehaviortype
 import (
 	"context"
 	"errors"
+	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/db"
@@ -107,7 +108,10 @@ func (s *store) GetByID(ctx context.Context, id string) (Response, error) {
 	}
 
 	pipeline := []bson.M{
-		{"$match": bson.M{"_id": id}},
+		{"$match": bson.M{
+			"_id":    id,
+			"hidden": bson.M{"$in": bson.A{false, nil}},
+		}},
 		{"$addFields": bson.M{
 			"default": bson.M{"$in": bson.A{"$priority", prioritiesOfDefaultTypes}},
 		}},
@@ -125,15 +129,14 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (Response, error) {
 	doc.IconName = r.IconName
 	doc.Created = &now
 	doc.Updated = &now
+
 	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes(ctx)
 	if err != nil {
 		return res, err
 	}
 
-	for _, p := range prioritiesOfDefaultTypes {
-		if p == doc.Priority {
-			return res, validation.NewSingleError("not_applicable", "Priority", "Priority", r)
-		}
+	if slices.Contains(prioritiesOfDefaultTypes, doc.Priority) {
+		return res, validation.NewSingleError("not_applicable", "Priority", "Priority", r)
 	}
 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
@@ -299,7 +302,7 @@ func (s *store) validateDeleteRequest(ctx context.Context, id string) error {
 
 	err = dbvalidation.ValidateLinkedReference(ctx, s.dbPbhCollection, bson.M{
 		"$or": []bson.M{
-			{"type_": id},
+			{"type": id},
 			{"exdates.type": id},
 		},
 	}, "type", "a pbehavior")
@@ -339,10 +342,8 @@ func (s *store) isDefault(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
-	for _, priority := range prioritiesOfDefaultTypes {
-		if pbhType.Priority == priority {
-			return true, nil
-		}
+	if slices.Contains(prioritiesOfDefaultTypes, pbhType.Priority) {
+		return true, nil
 	}
 
 	return false, nil

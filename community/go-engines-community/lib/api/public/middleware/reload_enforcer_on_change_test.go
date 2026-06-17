@@ -20,7 +20,7 @@ func TestReloadEnforcerPolicyOnChange_GivenOkResponse_ShouldLoadPolicy(t *testin
 	r := chi.NewRouter()
 	r.Use(ReloadEnforcerPolicyOnChange(mockEnforcer, zerolog.Nop()))
 	r.Get(okURL, okHandler)
-	_ = performRequest(r, "GET", okURL)
+	_ = performRequest(t.Context(), r, "GET", okURL)
 }
 
 func TestReloadEnforcerPolicyOnChange_GivenNotOkResponse_ShouldNotLoadPolicy(t *testing.T) {
@@ -35,5 +35,5 @@ func TestReloadEnforcerPolicyOnChange_GivenNotOkResponse_ShouldNotLoadPolicy(t *
 	r.Get(okURL, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	})
-	_ = performRequest(r, "GET", okURL)
+	_ = performRequest(t.Context(), r, "GET", okURL)
 }
