@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/binding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
@@ -21,6 +22,9 @@ import (
 type API interface {
 	crud.API
 	Import(c *gin.Context)
+	BulkDelete(c *gin.Context)
+	BulkHide(c *gin.Context)
+	BulkUnhide(c *gin.Context)
 }
 
 func NewApi(
@@ -238,4 +242,48 @@ func (a *api) Import(c *gin.Context) {
 
 func (a *api) sendComputeTask() {
 	a.computeChan <- rpc.PbehaviorRecomputeEvent{}
+}
+
+// BulkDelete
+// @Param body body []BulkDeleteRequestItem true "body"
+func (a *api) BulkDelete(c *gin.Context) {
+	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
+		ok, err := a.store.Delete(c, request.ID, request.Author)
+		if err != nil {
+			return "", err
+		}
+
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
+		return request.ID, nil
+	}, a.errorResponder)
+}
+
+// BulkHide
+// @Param body body []BulkToggleHiddenRequestItem true "body"
+func (a *api) BulkHide(c *gin.Context) {
+	a.toggleHidden(c, true)
+}
+
+// BulkUnhide
+// @Param body body []BulkToggleHiddenRequestItem true "body"
+func (a *api) BulkUnhide(c *gin.Context) {
+	a.toggleHidden(c, false)
+}
+
+func (a *api) toggleHidden(c *gin.Context, hidden bool) {
+	bulk.Handler(c, func(request BulkToggleHiddenRequestItem) (string, error) {
+		found, err := a.store.ToggleHidden(c, request, hidden)
+		if err != nil {
+			return "", err
+		}
+
+		if !found {
+			return "", httperror.ErrNotFound
+		}
+
+		return request.ID, nil
+	}, a.errorResponder)
 }

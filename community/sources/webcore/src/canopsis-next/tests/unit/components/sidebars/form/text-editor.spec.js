@@ -52,7 +52,7 @@ describe('text-editor', () => {
     createButton.trigger('click');
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.textEditor,
         config: {
@@ -87,7 +87,7 @@ describe('text-editor', () => {
     editButton.trigger('click');
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.textEditor,
         config: {
@@ -118,7 +118,7 @@ describe('text-editor', () => {
     deleteButton.trigger('click');
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {

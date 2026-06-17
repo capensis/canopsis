@@ -7,6 +7,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
 
 /**
  * @typedef {FilterPatterns} AlarmStatusRule
+ * @property {boolean} enabled
  * @property {string} name
  * @property {string} description
  * @property {Duration} duration
@@ -16,6 +17,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
 
 /**
  * @typedef {Object} AlarmStatusRuleForm
+ * @property {boolean} enabled
  * @property {string} name
  * @property {string} description
  * @property {Duration} duration
@@ -38,6 +40,7 @@ export const alarmStatusRuleToForm = (rule = {}, flapping = false) => {
       : { value: 1, unit: TIME_UNITS.minute },
     priority: rule.priority,
     description: rule.description ?? '',
+    enabled: rule.enabled ?? true,
     patterns: filterPatternsToForm(rule, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
   };
 

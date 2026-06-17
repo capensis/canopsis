@@ -18,6 +18,8 @@ type API interface {
 	crud.BulkAPI
 	Patch(c *gin.Context)
 	BulkPatch(c *gin.Context)
+	BulkEnable(c *gin.Context)
+	BulkDisable(c *gin.Context)
 }
 
 type api struct {
@@ -238,7 +240,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Delete(c, BulkDeleteRequestItem{ID: id}, userID, roleIDs)
+	ok, err := a.store.Delete(c, BulkDeleteRequestItem{ID: id, Author: userID}, roleIDs)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
@@ -316,21 +318,17 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID, err := authctx.GetUserKey(c)
-	if err != nil {
-		a.errorResponder.Respond(c, err)
-
-		return
-	}
 	roles, err := authctx.GetRoles(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	userIDs := make([]string, 0)
+
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request, userID, roles)
+		ok, err := a.store.Delete(c, request, roles)
 		if err != nil {
 			return "", err
 		}
@@ -377,5 +375,45 @@ func (a *api) BulkPatch(c *gin.Context) {
 
 		return user.ID, nil
 	}, a.errorResponder)
+	a.metricMetaUpdater.UpdateById(c, userIDs...)
+}
+
+// BulkEnable
+// @Param body body []BulkToggleRequestItem true "body"
+func (a *api) BulkEnable(c *gin.Context) {
+	a.toggle(c, true)
+}
+
+// BulkDisable
+// @Param body body []BulkToggleRequestItem true "body"
+func (a *api) BulkDisable(c *gin.Context) {
+	a.toggle(c, false)
+}
+
+func (a *api) toggle(c *gin.Context, enabled bool) {
+	userRoles, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	userIDs := make([]string, 0)
+
+	bulk.Handler(c, func(request BulkToggleRequestItem) (string, error) {
+		found, err := a.store.Toggle(c, request, enabled, userRoles)
+		if err != nil {
+			return "", err
+		}
+
+		if !found {
+			return "", httperror.ErrNotFound
+		}
+
+		userIDs = append(userIDs, request.ID)
+
+		return request.ID, nil
+	}, a.errorResponder)
+
 	a.metricMetaUpdater.UpdateById(c, userIDs...)
 }

@@ -21,6 +21,9 @@ export const entitiesUserMixin = {
       updateUser: 'update',
       updateCurrentUser: 'updateCurrentUser',
       removeUser: 'remove',
+      bulkEnableUsers: 'bulkEnable',
+      bulkDisableUsers: 'bulkDisable',
+      bulkRemoveUsers: 'bulkRemove',
     }),
 
     async createUserWithPopup({ data }) {

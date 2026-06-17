@@ -43,7 +43,7 @@ describe('groups-side-bar-group-view', () => {
 
     selectGroupViewPanel(wrapper).triggerCustomEvent('duplicate');
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.createView,
       config: {
         title: `Duplicate the view - ${view.title}`,
@@ -75,7 +75,7 @@ describe('groups-side-bar-group-view', () => {
 
     selectGroupViewPanel(wrapper).triggerCustomEvent('change');
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.createView,
       config: {
         title: 'Edit the view',

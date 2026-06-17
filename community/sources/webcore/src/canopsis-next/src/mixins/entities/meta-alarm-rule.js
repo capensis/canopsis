@@ -16,6 +16,8 @@ export const entitiesMetaAlarmRuleMixin = {
       createMetaAlarmRule: 'create',
       updateMetaAlarmRule: 'update',
       removeMetaAlarmRule: 'remove',
+      bulkEnableMetaAlarmRules: 'bulkEnable',
+      bulkDisableMetaAlarmRules: 'bulkDisable',
     }),
   },
 };

@@ -159,6 +159,13 @@ export default {
       return isAutoMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
 
+    isAckAndChangeStateAvailable() {
+      return (this.isAlarmStatusClosed && this.isActionsAllowWithOkState)
+        || this.isAlarmStatusOngoing
+        || this.isAlarmStatusNoEvents
+        || this.isAlarmStatusFlapping;
+    },
+
     hasBookmark() {
       return !!this.item.bookmark;
     },
@@ -232,6 +239,20 @@ export default {
         assigned_declare_ticket_rules: assignedDeclareTicketRules = [],
       } = this.item;
 
+      const hasAssociatedTickets = this.item.v?.tickets?.length > 0;
+
+      if (hasAssociatedTickets) {
+        actions.unshift({
+          type: ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket,
+          title: this.$t('alarm.actions.titles.removeAssociatedTicket'),
+          method: this.showRemoveAssociatedTicketModal,
+        });
+      }
+
+      if (this.isResolvedAlarm || !this.isAckAndChangeStateAvailable || !this.item.v.ack) {
+        return actions;
+      }
+
       if (!this.item.v?.ticket || this.widget.parameters.isMultiDeclareTicketEnabled) {
         actions.unshift({
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
@@ -251,13 +272,38 @@ export default {
       return actions;
     },
 
+    fastPbehaviorAction() {
+      /**
+       * If we have `pbh_origin_icon` it means that the alarm has a fast pbehavior and
+       * we should have possibility to remove it
+       */
+      if (this.item.pbh_origin_icon) {
+        return {
+          type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove,
+          title: this.$t('alarm.actions.titles.fastPbehaviorRemove'),
+          method: this.fastRemovePbehavior,
+        };
+      }
+
+      const fastPbehaviorsParameters = this.widget.parameters.fast_pbehaviors ?? [];
+      const fastPbehaviorAction = {
+        type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
+        title: this.$t('alarm.actions.titles.fastPbehaviorAdd'),
+      };
+
+      if (fastPbehaviorsParameters.length > 1) {
+        fastPbehaviorAction.items = fastPbehaviorsParameters.map(pbehaviorParameters => ({
+          title: pbehaviorParameters.name_prefix,
+          method: () => this.fastAddPbehavior(pbehaviorParameters),
+        }));
+      } else {
+        fastPbehaviorAction.method = () => this.fastAddPbehavior(fastPbehaviorsParameters[0]);
+      }
+
+      return fastPbehaviorAction;
+    },
     actions() {
       const actions = [];
-
-      const isAckAndChangeStateAvailable = (this.isAlarmStatusClosed && this.isActionsAllowWithOkState)
-        || this.isAlarmStatusOngoing
-        || this.isAlarmStatusNoEvents
-        || this.isAlarmStatusFlapping;
 
       const isNotResolvedOpenedAlarm = !this.isResolvedAlarm && this.isOpenedAlarm;
 
@@ -282,7 +328,7 @@ export default {
         method: this.createFastAckEvent,
       };
 
-      if (!this.isResolvedAlarm && isAckAndChangeStateAvailable) {
+      if (!this.isResolvedAlarm && this.isAckAndChangeStateAvailable) {
         if (this.item.v.ack) {
           actions.push(
             {
@@ -311,7 +357,7 @@ export default {
           /**
            * Save previous behavior
            */
-          isAckAndChangeStateAvailable
+          this.isAckAndChangeStateAvailable
           /**
            * Add behavior like in mass actions
            */
@@ -356,9 +402,7 @@ export default {
         );
       }
 
-      if (!this.isResolvedAlarm && isAckAndChangeStateAvailable && this.item.v.ack) {
-        actions.push(...this.ticketsActions);
-      }
+      actions.push(...this.ticketsActions);
 
       if (isNotResolvedOpenedAlarm) {
         actions.push(
@@ -367,11 +411,7 @@ export default {
             title: this.$t('alarm.actions.titles.snooze'),
             method: this.showSnoozeModal,
           },
-          {
-            type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
-            title: this.$t('alarm.actions.titles.fastPbehaviorAdd'),
-            method: this.fastAddPbehavior,
-          },
+          this.fastPbehaviorAction,
           {
             type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
             title: this.$t('alarm.actions.titles.pbehavior'),
@@ -509,6 +549,10 @@ export default {
       this.showAssociateTicketModalByAlarms([this.item]);
     },
 
+    showRemoveAssociatedTicketModal() {
+      this.showRemoveAssociatedTicketModalByAlarms([this.item]);
+    },
+
     showDeclareTicketModal() {
       this.showDeclareTicketModalByAlarms([this.item]);
     },
@@ -549,8 +593,12 @@ export default {
       this.showAddPbehaviorModalByAlarms([this.item]);
     },
 
-    fastAddPbehavior() {
-      this.addFastPbehaviorByAlarms([this.item]);
+    fastAddPbehavior(pbehaviorParameters = {}) {
+      this.addFastPbehaviorByAlarms([this.item], pbehaviorParameters);
+    },
+
+    fastRemovePbehavior() {
+      this.removeFastPbehaviorByAlarms([this.item]);
     },
 
     showHistoryModal() {

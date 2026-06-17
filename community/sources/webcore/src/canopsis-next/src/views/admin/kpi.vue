@@ -170,9 +170,11 @@ export default {
         name: MODALS.createKpiFilter,
         config: {
           action: async (data) => {
-            await this.createFilter({ data });
+            const result = await this.createFilter({ data });
 
             this.fetchFiltersListWithPreviousParams();
+
+            return result;
           },
         },
       });

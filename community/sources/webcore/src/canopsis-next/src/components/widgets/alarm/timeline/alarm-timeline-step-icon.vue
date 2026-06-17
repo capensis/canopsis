@@ -28,6 +28,10 @@
     >
       <span class="white--text">{{ $t('alarm.timeline.junit') }}</span>
     </c-alarm-extra-details-chip>
+    <declare-ticket-rule-ticket-status-chip
+      v-else-if="isDeclareTicketChangeStatus"
+      :value="step.val"
+    />
   </div>
 </template>
 
@@ -51,11 +55,18 @@ import {
   isInstructionStepType,
   isAutoInstructionStepType,
   isDeclareTicketStepType,
+  isDeclareTicketChangeTicketStatusStepType,
   isWebhookStepType,
   isMetaAlarmStepType,
+  isTicketRemoveStepType,
 } from '@/helpers/entities/alarm/step/entity';
 
+import DeclareTicketRuleTicketStatusChip from '@/components/other/declare-ticket/declare-ticket-rule-ticket-status-chip.vue';
+
 export default {
+  components: {
+    DeclareTicketRuleTicketStatusChip,
+  },
   props: {
     step: {
       type: Object,
@@ -68,6 +79,7 @@ export default {
     const isChangeStatus = computed(() => isChangeStatusStepType(props.step._t));
     const isJunit = computed(() => isJunitStepType(props.step._t));
     const isPbehavior = computed(() => isPbehaviorStepType(props.step._t));
+    const isDeclareTicketChangeStatus = computed(() => isDeclareTicketChangeTicketStatusStepType(props.step._t));
 
     const isDefaultStepIcon = computed(() => (
       isResolveStepType(props.step._t)
@@ -81,6 +93,7 @@ export default {
       || isDeclareTicketStepType(props.step._t)
       || isInstructionStepType(props.step._t)
       || isAutoInstructionStepType(props.step._t)
+      || isTicketRemoveStepType(props.step._t)
     ));
 
     const status = computed(() => formatAlarmStatus(props.step.val));
@@ -93,6 +106,7 @@ export default {
       isChangeStatus,
       isJunit,
       isPbehavior,
+      isDeclareTicketChangeStatus,
       isDefaultStepIcon,
       status,
       stepIcon,

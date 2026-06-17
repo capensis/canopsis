@@ -55,7 +55,7 @@ describe('charts-form', () => {
     button.trigger('click');
 
     expect($modals.show).toBeCalledTimes(1);
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createAlarmChart,
         config: {

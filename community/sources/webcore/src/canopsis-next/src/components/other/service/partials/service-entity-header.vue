@@ -38,6 +38,29 @@
             {{ icon.icon }}
           </v-icon>
         </v-btn>
+        <c-simple-tooltip
+          v-for="link in entityLinks"
+          :key="link.rule_id"
+          :content="link.label"
+          top
+        >
+          <template #activator="{ on }">
+            <v-btn
+              :style="{ backgroundColor: linkIconBackgroundColor }"
+              :aria-label="link.label"
+              class="service-entity-header__extra-icon mx-1"
+              small
+              dark
+              icon
+              v-on="on"
+              @click.stop="linkClick(link)"
+            >
+              <v-icon small>
+                {{ link.icon_name }}
+              </v-icon>
+            </v-btn>
+          </template>
+        </c-simple-tooltip>
         <c-no-events-icon
           :value="entity.idle_since"
           color="white"
@@ -61,12 +84,25 @@
 </template>
 
 <script>
+import { computed } from 'vue';
 import { get } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
-import { ALARM_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
+import {
+  ALARM_STATUSES,
+  BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
+  EVENT_ENTITY_TYPES,
+  LINK_RULE_ACTIONS,
+  WEATHER_ACTIONS_TYPES,
+} from '@/constants';
 
+import { writeTextToClipboard } from '@/helpers/clipboard';
 import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
+import { harmonizeLinks } from '@/helpers/entities/link/list';
+
+import { useCurrentUserPermissions } from '@/hooks/auth';
+import { useI18n } from '@/hooks/i18n';
+import { usePopups } from '@/hooks/popups';
 
 export default {
   props: {
@@ -91,49 +127,99 @@ export default {
       default: 'name',
     },
   },
-  computed: {
-    entityName() {
-      return get({ entity: this.entity }, this.entityNameField, this.entityNameField);
-    },
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const popups = usePopups();
+    const { checkAccess } = useCurrentUserPermissions();
 
-    extraIcons() {
-      const extraIcons = [];
+    const entityLinksPermission = BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.weather[
+      WEATHER_ACTIONS_TYPES.entityLinks
+    ];
 
-      if (this.entity.ack) {
-        extraIcons.push({
+    const linkIconBackgroundColor = CSS_COLORS_VARS.secondary;
+
+    const entityName = computed(() => (
+      get({ entity: props.entity }, props.entityNameField, props.entityNameField)
+    ));
+
+    const extraIcons = computed(() => {
+      const icons = [];
+
+      if (props.entity.ack) {
+        icons.push({
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.fastAck),
           color: 'purple',
         });
       }
 
-      if (this.entity.ticket) {
-        extraIcons.push({
+      if (props.entity.ticket) {
+        icons.push({
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.assocTicket),
           color: 'blue',
         });
       }
 
-      if (this.entity.status?.val === ALARM_STATUSES.cancelled) {
-        extraIcons.push({
+      if (props.entity.status?.val === ALARM_STATUSES.cancelled) {
+        icons.push({
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.delete),
           color: 'grey darken-1',
         });
       }
 
-      if (this.entity.pbh_origin_icon) {
-        extraIcons.push({
-          icon: this.entity.pbh_origin_icon,
+      if (props.entity.pbh_origin_icon) {
+        icons.push({
+          icon: props.entity.pbh_origin_icon,
           color: CSS_COLORS_VARS.secondary,
         });
       }
 
-      return extraIcons;
-    },
-  },
-  methods: {
-    hideAlert() {
-      this.$emit('remove:unavailable');
-    },
+      return icons;
+    });
+
+    const entityLinks = computed(() => (
+      checkAccess(entityLinksPermission)
+        ? harmonizeLinks(props.entity.links)
+        : []
+    ));
+
+    /**
+     * Runs link rule action: clipboard copy with popup feedback, otherwise opens URL in a new tab.
+     *
+     * @param {Object} link
+     */
+    const linkClick = async (link) => {
+      const action = link.action ?? LINK_RULE_ACTIONS.open;
+
+      if (action === LINK_RULE_ACTIONS.copy) {
+        try {
+          await writeTextToClipboard(link.url);
+
+          popups.success({ text: t('popups.copySuccess') });
+        } catch (err) {
+          console.error(err);
+
+          popups.error({ text: t('popups.copyError') });
+        }
+
+        return;
+      }
+
+      window.open(link.url, '_blank');
+    };
+
+    /**
+     * Notifies parent to dismiss the last-action-unavailable alert.
+     */
+    const hideAlert = () => emit('remove:unavailable');
+
+    return {
+      entityName,
+      extraIcons,
+      entityLinks,
+      linkIconBackgroundColor,
+      linkClick,
+      hideAlert,
+    };
   },
 };
 </script>

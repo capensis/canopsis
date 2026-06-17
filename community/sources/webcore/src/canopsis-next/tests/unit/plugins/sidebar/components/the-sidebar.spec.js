@@ -1,4 +1,6 @@
-import { flushPromises, generateRenderer } from '@unit/utils/vue';
+import VueRouter from 'vue-router';
+
+import { createVueInstance, flushPromises, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockSidebar } from '@unit/utils/mock-hooks';
 
@@ -13,13 +15,23 @@ const snapshotStubs = {
   },
 };
 
+const localVue = createVueInstance();
+
+localVue.use(VueRouter);
+
+const router = new VueRouter({
+  mode: 'abstract',
+  routes: [{ path: '/', component: { template: '<div />' } }],
+});
+
 describe('the-sidebar', () => {
   const $sidebar = mockSidebar();
 
-  const snapshotFactory = generateRenderer(TheSidebar, { stubs: snapshotStubs });
+  const snapshotFactory = generateRenderer(TheSidebar, { stubs: snapshotStubs, localVue, router });
 
   it('Renders `the-sidebars` with type: alarmSettings', async () => {
     const sidebar = {
+      id: 'test-sidebar-id',
       name: SIDE_BARS.alarmSettings,
       config: {},
       hidden: false,
@@ -30,7 +42,7 @@ describe('the-sidebar', () => {
         {
           name: $sidebar.moduleName,
           getters: {
-            sidebar,
+            sidebars: [sidebar],
           },
         },
       ]),

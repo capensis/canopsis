@@ -10,7 +10,9 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
     <div
       class="flex xs12"
@@ -1088,7 +1090,9 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
     <div
       class="flex xs12"

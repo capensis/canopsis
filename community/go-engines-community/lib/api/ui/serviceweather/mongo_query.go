@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 	"strconv"
 	"time"
 
@@ -158,7 +159,7 @@ func (q *MongoQueryBuilder) createPaginationAggregationPipeline(query pagination
 
 func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	addedLookups := make(map[string]bool)
-	beforeLimit := make([]bson.M, len(q.entityMatch))
+	beforeLimit := make([]bson.M, len(q.entityMatch), len(q.entityMatch)+len(q.additionalMatch))
 	copy(beforeLimit, q.entityMatch)
 
 	q.addLookupsToPipeline(q.lookupsForAdditionalMatch, addedLookups, &beforeLimit)
@@ -174,9 +175,7 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	}
 
 	addFields := bson.M{}
-	for field, v := range q.computedFields {
-		addFields[field] = v
-	}
+	maps.Copy(addFields, q.computedFields)
 
 	if len(addFields) > 0 {
 		afterLimit = append(afterLimit, bson.M{"$addFields": addFields})
@@ -411,7 +410,7 @@ func getPbehaviorLookup(authorProvider author.Provider) []bson.M {
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
 			"foreignField": "_id",
-			"localField":   "pbehavior.type_",
+			"localField":   "pbehavior.type",
 			"as":           "pbehavior.type",
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior.type", "preserveNullAndEmptyArrays": true}},
@@ -629,10 +628,6 @@ func getPbhOriginLookup(origin string, now datetime.CpsTime) []bson.M {
 				{"$match": bson.M{
 					"origin": origin,
 					"tstart": bson.M{"$lte": now},
-					"$or": bson.A{
-						bson.M{"tstop": nil},
-						bson.M{"tstop": bson.M{"$gte": now}},
-					},
 				}},
 				{"$limit": 1},
 			},
@@ -641,7 +636,7 @@ func getPbhOriginLookup(origin string, now datetime.CpsTime) []bson.M {
 		{"$unwind": bson.M{"path": "$pbh_origin", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
-			"localField":   "pbh_origin.type_",
+			"localField":   "pbh_origin.type",
 			"foreignField": "_id",
 			"as":           "pbh_origin.type",
 		}},

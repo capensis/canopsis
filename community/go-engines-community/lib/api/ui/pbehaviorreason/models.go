@@ -8,9 +8,9 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	WithHidden bool   `form:"with_hidden"`
-	SortBy     string `form:"sort_by" binding:"oneoforempty=name created"`
-	IDs        []int  `form:"ids[]"`
+	WithHidden bool     `form:"with_hidden"`
+	SortBy     string   `form:"sort_by" binding:"oneoforempty=name created"`
+	IDs        []string `form:"ids[]"`
 }
 
 type EditRequest struct {
@@ -50,10 +50,20 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 
 func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
+}
+
+type BulkToggleHiddenRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
+}
+
+type BulkDeleteRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
 }

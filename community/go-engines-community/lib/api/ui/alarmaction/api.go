@@ -3,7 +3,6 @@ package alarmaction
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/binding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/bulk"
@@ -18,6 +17,7 @@ type API interface {
 	Cancel(c *gin.Context)
 	Uncancel(c *gin.Context)
 	AssocTicket(c *gin.Context)
+	TicketRemove(c *gin.Context)
 	Comment(c *gin.Context)
 	ChangeState(c *gin.Context)
 	BulkAck(c *gin.Context)
@@ -26,6 +26,7 @@ type API interface {
 	BulkCancel(c *gin.Context)
 	BulkUncancel(c *gin.Context)
 	BulkAssocTicket(c *gin.Context)
+	BulkTicketRemove(c *gin.Context)
 	BulkComment(c *gin.Context)
 	BulkChangeState(c *gin.Context)
 	AddBookmark(c *gin.Context)
@@ -62,20 +63,15 @@ func (a *api) Ack(c *gin.Context) {
 	}
 
 	request := AckRequest{}
-	if err := binding.Bind(c, &request); err != nil {
+	if err = binding.Bind(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
-	ok, err := a.store.Ack(c, c.Param("id"), request, userID, username)
+	err = a.store.Ack(c, c.Param("id"), request, userID, username)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
-
-		return
-	}
-	if !ok {
-		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -92,27 +88,24 @@ func (a *api) AckRemove(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	request := Request{}
-	if err := binding.Bind(c, &request); err != nil {
+	if err = binding.Bind(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
-	ok, err := a.store.AckRemove(c, c.Param("id"), request, userID, username)
+	err = a.store.AckRemove(c, c.Param("id"), request, userID, username)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
-
-		return
-	}
-	if !ok {
-		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -129,27 +122,24 @@ func (a *api) Snooze(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	request := SnoozeRequest{}
-	if err := binding.Bind(c, &request); err != nil {
+	if err = binding.Bind(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
-	ok, err := a.store.Snooze(c, c.Param("id"), request, userID, username)
+	err = a.store.Snooze(c, c.Param("id"), request, userID, username)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
-
-		return
-	}
-	if !ok {
-		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -166,27 +156,24 @@ func (a *api) Cancel(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	request := Request{}
-	if err := binding.Bind(c, &request); err != nil {
+	if err = binding.Bind(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
-	ok, err := a.store.Cancel(c, c.Param("id"), request, userID, username)
+	err = a.store.Cancel(c, c.Param("id"), request, userID, username)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
-
-		return
-	}
-	if !ok {
-		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -203,27 +190,24 @@ func (a *api) Uncancel(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	request := Request{}
-	if err := binding.Bind(c, &request); err != nil {
+	if err = binding.Bind(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
-	ok, err := a.store.Uncancel(c, c.Param("id"), request, userID, username)
+	err = a.store.Uncancel(c, c.Param("id"), request, userID, username)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
-
-		return
-	}
-	if !ok {
-		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -240,27 +224,58 @@ func (a *api) AssocTicket(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	request := AssocTicketRequest{}
-	if err := binding.Bind(c, &request); err != nil {
+	if err = binding.Bind(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
-	ok, err := a.store.AssocTicket(c, c.Param("id"), request, userID, username)
+	err = a.store.AssocTicket(c, c.Param("id"), request, userID, username)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
-	if !ok {
-		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
+	c.Status(http.StatusNoContent)
+}
+
+// TicketRemove
+// @Param body body TicketRemoveRequest true "body"
+func (a *api) TicketRemove(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	request := TicketRemoveRequest{}
+	if err = binding.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	err = a.store.TicketRemove(c, c.Param("id"), request, userID, username)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -277,27 +292,24 @@ func (a *api) Comment(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	request := CommentRequest{}
-	if err := binding.Bind(c, &request); err != nil {
+	if err = binding.Bind(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
-	ok, err := a.store.Comment(c, c.Param("id"), request, userID, username)
+	err = a.store.Comment(c, c.Param("id"), request, userID, username)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
-
-		return
-	}
-	if !ok {
-		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -314,12 +326,14 @@ func (a *api) ChangeState(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	request := ChangeStateRequest{}
 	if err := binding.Bind(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
@@ -327,14 +341,9 @@ func (a *api) ChangeState(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.ChangeState(c, c.Param("id"), request, userID, username)
+	err = a.store.ChangeState(c, c.Param("id"), request, userID, username)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
-
-		return
-	}
-	if !ok {
-		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -351,23 +360,16 @@ func (a *api) BulkAck(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	bulk.Handler(c, func(request BulkAckRequestItem) (string, error) {
-		ok, err := a.store.Ack(c, request.ID, request.AckRequest, userID, username)
-		if err != nil {
-			return "", err
-		}
-
-		if !ok {
-			return "", httperror.ErrNotFound
-		}
-
-		return request.ID, nil
+		return request.ID, a.store.Ack(c, request.ID, request.AckRequest, userID, username)
 	}, a.errorResponder)
 }
 
@@ -380,23 +382,16 @@ func (a *api) BulkAckRemove(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
-		ok, err := a.store.AckRemove(c, request.ID, request.Request, userID, username)
-		if err != nil {
-			return "", err
-		}
-
-		if !ok {
-			return "", httperror.ErrNotFound
-		}
-
-		return request.ID, nil
+		return request.ID, a.store.AckRemove(c, request.ID, request.Request, userID, username)
 	}, a.errorResponder)
 }
 
@@ -409,23 +404,16 @@ func (a *api) BulkSnooze(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	bulk.Handler(c, func(request BulkSnoozeRequestItem) (string, error) {
-		ok, err := a.store.Snooze(c, request.ID, request.SnoozeRequest, userID, username)
-		if err != nil {
-			return "", err
-		}
-
-		if !ok {
-			return "", httperror.ErrNotFound
-		}
-
-		return request.ID, nil
+		return request.ID, a.store.Snooze(c, request.ID, request.SnoozeRequest, userID, username)
 	}, a.errorResponder)
 }
 
@@ -438,23 +426,16 @@ func (a *api) BulkCancel(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
-		ok, err := a.store.Cancel(c, request.ID, request.Request, userID, username)
-		if err != nil {
-			return "", err
-		}
-
-		if !ok {
-			return "", httperror.ErrNotFound
-		}
-
-		return request.ID, nil
+		return request.ID, a.store.Cancel(c, request.ID, request.Request, userID, username)
 	}, a.errorResponder)
 }
 
@@ -467,23 +448,16 @@ func (a *api) BulkUncancel(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
-		ok, err := a.store.Uncancel(c, request.ID, request.Request, userID, username)
-		if err != nil {
-			return "", err
-		}
-
-		if !ok {
-			return "", httperror.ErrNotFound
-		}
-
-		return request.ID, nil
+		return request.ID, a.store.Uncancel(c, request.ID, request.Request, userID, username)
 	}, a.errorResponder)
 }
 
@@ -496,23 +470,38 @@ func (a *api) BulkAssocTicket(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	bulk.Handler(c, func(request BulkAssocTicketRequestItem) (string, error) {
-		ok, err := a.store.AssocTicket(c, request.ID, request.AssocTicketRequest, userID, username)
-		if err != nil {
-			return "", err
-		}
+		return request.ID, a.store.AssocTicket(c, request.ID, request.AssocTicketRequest, userID, username)
+	}, a.errorResponder)
+}
 
-		if !ok {
-			return "", httperror.ErrNotFound
-		}
+// BulkTicketRemove
+// @Param body body []BulkTicketRemoveRequestItem true "body"
+func (a *api) BulkTicketRemove(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
 
-		return request.ID, nil
+		return
+	}
+
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	bulk.Handler(c, func(request BulkTicketRemoveRequestItem) (string, error) {
+		return request.ID, a.store.TicketRemove(c, request.ID, request.TicketRemoveRequest, userID, username)
 	}, a.errorResponder)
 }
 
@@ -525,23 +514,16 @@ func (a *api) BulkComment(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	bulk.Handler(c, func(request BulkCommentRequestItem) (string, error) {
-		ok, err := a.store.Comment(c, request.ID, request.CommentRequest, userID, username)
-		if err != nil {
-			return "", err
-		}
-
-		if !ok {
-			return "", httperror.ErrNotFound
-		}
-
-		return request.ID, nil
+		return request.ID, a.store.Comment(c, request.ID, request.CommentRequest, userID, username)
 	}, a.errorResponder)
 }
 
@@ -554,23 +536,16 @@ func (a *api) BulkChangeState(c *gin.Context) {
 
 		return
 	}
+
 	username, err := authctx.GetUsername(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
+
 	bulk.Handler(c, func(request BulkChangeStateRequestItem) (string, error) {
-		ok, err := a.store.ChangeState(c, request.ID, request.ChangeStateRequest, userID, username)
-		if err != nil {
-			return "", err
-		}
-
-		if !ok {
-			return "", httperror.ErrNotFound
-		}
-
-		return request.ID, nil
+		return request.ID, a.store.ChangeState(c, request.ID, request.ChangeStateRequest, userID, username)
 	}, a.errorResponder)
 }
 
@@ -582,15 +557,9 @@ func (a *api) AddBookmark(c *gin.Context) {
 		return
 	}
 
-	found, err := a.store.AddBookmark(c, c.Param("id"), userID)
+	err = a.store.AddBookmark(c, c.Param("id"), userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
-
-		return
-	}
-
-	if !found {
-		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -606,15 +575,9 @@ func (a *api) RemoveBookmark(c *gin.Context) {
 		return
 	}
 
-	found, err := a.store.RemoveBookmark(c, c.Param("id"), userID)
+	err = a.store.RemoveBookmark(c, c.Param("id"), userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
-
-		return
-	}
-
-	if !found {
-		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}

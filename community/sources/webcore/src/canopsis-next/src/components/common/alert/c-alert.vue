@@ -3,6 +3,7 @@
     v-bind="$attrs"
     :value="value"
     class="c-alert"
+    v-on="$listeners"
   >
     <slot />
   </v-alert>

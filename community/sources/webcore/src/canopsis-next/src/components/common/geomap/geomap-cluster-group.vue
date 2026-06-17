@@ -9,6 +9,8 @@ import { MarkerClusterGroup } from 'leaflet.markercluster';
 import { LayerGroupMixin, optionsMerger, findRealParent, propsBinder } from 'vue2-leaflet';
 import { DivIcon, Point, DomEvent } from 'leaflet';
 
+import { GEOMAP_PANES } from '@/constants';
+
 const CustomDivIcon = DivIcon.extend({
   createIcon(oldIcon) {
     const div = DivIcon.prototype.createIcon.apply(this, oldIcon);
@@ -57,6 +59,7 @@ export default {
       {
         iconCreateFunction: this.createIcon,
         showCoverageOnHover: this.showCoverageOnHover,
+        clusterPane: GEOMAP_PANES.clusters,
       },
       this,
     );

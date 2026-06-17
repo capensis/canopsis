@@ -3,6 +3,7 @@ package resolverule
 import (
 	"cmp"
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
@@ -25,6 +26,7 @@ type Store interface {
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
+	Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error)
 }
 
 type store struct {
@@ -144,6 +146,10 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, error) {
+	if request.ID == resolverule.DefaultRule && request.Enabled != nil && !*request.Enabled {
+		return nil, httperror.NewForbiddenError("The default rule cannot be disabled.")
+	}
+
 	model := s.transformRequestToDocument(request.EditRequest)
 	model.Updated = datetime.NewCpsTime()
 	var res *Response
@@ -209,6 +215,7 @@ func (s *store) transformRequestToDocument(r EditRequest) resolverule.Rule {
 	return resolverule.Rule{
 		Name:        r.Name,
 		Description: r.Description,
+		Enabled:     *r.Enabled,
 		Duration:    r.Duration,
 		Priority:    r.Priority,
 		Author:      r.Author,
@@ -219,4 +226,25 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditReque
 	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.dbCollection.Name())
 
 	return err
+}
+
+func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error) {
+	if r.ID == resolverule.DefaultRule {
+		return false, httperror.NewForbiddenError("The default rule cannot be toggled.")
+	}
+
+	res, err := s.dbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"enabled": enabled,
+			"author":  r.Author,
+			"updated": datetime.NewCpsTime(),
+		}},
+	)
+	if err != nil {
+		return false, fmt.Errorf("failed to toggle resolve rule: %w", err)
+	}
+
+	return res.MatchedCount != 0, nil
 }

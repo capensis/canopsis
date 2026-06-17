@@ -1,5 +1,7 @@
 package messageratestats
 
+//go:generate go tool github.com/mailru/easyjson/easyjson -no_std_marshalers
+
 import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 
 const (
@@ -7,6 +9,9 @@ const (
 	IntervalHour   = "hour"
 )
 
+// SearchRequest
+//
+// easyjson:json
 type SearchRequest struct {
 	EventTypes     []string `form:"event_types[]" json:"event_types"`
 	ConnectorNames []string `form:"connector_names[]" json:"connector_names"`

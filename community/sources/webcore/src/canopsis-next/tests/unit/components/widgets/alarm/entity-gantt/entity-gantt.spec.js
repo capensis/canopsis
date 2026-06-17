@@ -63,7 +63,7 @@ describe('entity-gantt', () => {
 
     await flushPromises();
 
-    expect(fetchItemGanttIntervalsWithoutStore).toBeCalledWith(
+    expect(fetchItemGanttIntervalsWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: alarm.entity._id,
@@ -89,7 +89,7 @@ describe('entity-gantt', () => {
 
     await flushPromises();
 
-    expect(fetchItemGanttIntervalsWithoutStore).toBeCalledWith(
+    expect(fetchItemGanttIntervalsWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: alarm.entity._id,
@@ -120,7 +120,7 @@ describe('entity-gantt', () => {
 
     await flushPromises();
 
-    expect($popups.error).toBeCalledWith({ text: error.message });
+    expect($popups.error).toHaveBeenCalledWith({ text: error.message });
     consoleErrorSpy.mockClear();
   });
 
@@ -143,7 +143,7 @@ describe('entity-gantt', () => {
 
     await flushPromises();
 
-    expect($popups.error).toBeCalledWith({ text: error.description });
+    expect($popups.error).toHaveBeenCalledWith({ text: error.description });
     consoleErrorSpy.mockClear();
   });
 
@@ -163,7 +163,7 @@ describe('entity-gantt', () => {
 
     await flushPromises();
 
-    expect($popups.error).toBeCalledWith({ text: 'Something went wrong...' });
+    expect($popups.error).toHaveBeenCalledWith({ text: 'Something went wrong...' });
     consoleErrorSpy.mockClear();
   });
 

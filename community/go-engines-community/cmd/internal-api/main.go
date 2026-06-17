@@ -1,6 +1,6 @@
 package main
 
-//go:generate go tool github.com/swaggo/swag/cmd/swag init -d ../../lib -g ../cmd/internal-api/$GOFILE -o ../../lib/api/ui/docs --outputTypes yaml --instanceName schemas
+//go:generate go tool github.com/swaggo/swag/cmd/swag init -parseDependency -d ../../lib/api/ui -g ../../../cmd/internal-api/$GOFILE -o ../../lib/api/ui/docs --outputTypes yaml --instanceName schemas
 
 import (
 	"context"

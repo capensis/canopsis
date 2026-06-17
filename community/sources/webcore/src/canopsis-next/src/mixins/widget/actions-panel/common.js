@@ -9,13 +9,20 @@ import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 export const widgetActionsPanelCommonMixin = {
   mixins: [entitiesPbehaviorMixin],
   methods: {
-    showPbehaviorResponseErrorPopups(response) {
+    showPbehaviorResponsePopups(response, remove = false) {
       if (response?.length) {
+        let hasErrors;
+
         response.forEach(({ error, errors }) => {
           if (error || !isEmpty(errors)) {
+            hasErrors = true;
             this.$popups.error({ text: error || Object.values(errors).join('\n') });
           }
         });
+
+        if (!hasErrors) {
+          this.$popups.success({ text: this.$t(`modals.createPbehavior.success.${remove ? 'remove' : 'create'}`) });
+        }
       }
     },
 
@@ -27,18 +34,19 @@ export const widgetActionsPanelCommonMixin = {
         }), []),
       });
 
-      this.showPbehaviorResponseErrorPopups(response);
+      this.showPbehaviorResponsePopups(response);
     },
 
-    async removeDowntimePbehavior(entities) {
+    async removeDowntimePbehavior(entities, origin = PBEHAVIOR_ORIGINS.serviceWeather) {
       const response = await this.removeEntityPbehaviors({
         data: entities.map(({ _id: id }) => ({
+          origin,
+
           entity: id,
-          origin: PBEHAVIOR_ORIGINS.serviceWeather,
         })),
       });
 
-      this.showPbehaviorResponseErrorPopups(response);
+      this.showPbehaviorResponsePopups(response, true);
     },
   },
 };

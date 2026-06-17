@@ -1,41 +1,22 @@
 <template>
-  <v-layout column>
-    <c-card-iterator-field
-      :data="actions"
-      :handle="`.${dragItemHandleClass}`"
-      :class="{ empty: isActionsEmpty }"
-      @input="$emit('input', $event)"
-    >
-      <template #item="{ item: action, index }">
-        <quick-alarm-actions-form-item
-          v-field="actions[index].value"
-          :key="action.key"
-          :drag-handle-class="dragItemHandleClass"
-          :name="action.key"
-          :selected-actions="actions"
-          :massive="massive"
-          @remove="remove(index)"
-        />
-      </template>
-    </c-card-iterator-field>
-    <v-layout justify-end>
-      <v-tooltip left>
-        <template #activator="{ on }">
-          <v-btn
-            class="mt-3"
-            color="primary"
-            fab
-            small
-            v-on="on"
-            @click.prevent="add"
-          >
-            <v-icon>add</v-icon>
-          </v-btn>
-        </template>
-        <span>{{ $t('common.add') }}</span>
-      </v-tooltip>
-    </v-layout>
-  </v-layout>
+  <c-card-iterator-form
+    v-field="actions"
+    :handle="`.${dragItemHandleClass}`"
+    :iterator-class="{ empty: isActionsEmpty }"
+    @add="add"
+  >
+    <template #item="{ item: action, index }">
+      <quick-alarm-actions-form-item
+        v-field="actions[index].value"
+        :key="action.key"
+        :drag-handle-class="dragItemHandleClass"
+        :name="action.key"
+        :selected-actions="actions"
+        :massive="massive"
+        @remove="remove(index)"
+      />
+    </template>
+  </c-card-iterator-form>
 </template>
 
 <script>

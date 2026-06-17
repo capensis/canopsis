@@ -1,5 +1,6 @@
 <template>
   <c-card-iterator-item
+    ref="cardIteratorItemElement"
     :item-number="actionNumber"
     @remove="removeAction"
   >
@@ -100,6 +101,8 @@
 </template>
 
 <script>
+import { Validator } from 'vee-validate';
+
 import { isPbehaviorRemoveActionType, isWebhookActionType } from '@/helpers/entities/action';
 
 import { formMixin } from '@/mixins/form';
@@ -110,8 +113,20 @@ import ActionAuthorField from '@/components/other/action/form/fields/action-auth
 
 import ScenarioActionPatternsForm from '../scenario-action-patterns-form.vue';
 
+const SCENARIO_ACTION_TABS = {
+  general: 0,
+  patterns: 1,
+};
+
 export default {
-  inject: ['$validator'],
+  inject: {
+    $validator: {
+      default: () => new Validator(),
+    },
+    $aiChat: {
+      default: () => ({}),
+    },
+  },
   components: {
     ActionAuthorField,
     ActionParametersForm,
@@ -153,8 +168,8 @@ export default {
   },
   data() {
     return {
-      activeTab: 0,
-      expanded: true,
+      activeTab: SCENARIO_ACTION_TABS.general,
+      cardIteratorItemElement: null,
       hasGeneralError: false,
       hasPatternsError: false,
     };
@@ -179,6 +194,9 @@ export default {
       },
     },
   },
+  created() {
+    this.$aiChat?.registerExpandFunction?.(this.showPatternsForAiChat);
+  },
   mounted() {
     this.$watch(() => this.$refs.general?.hasAnyError, (value) => {
       this.hasGeneralError = value;
@@ -188,6 +206,9 @@ export default {
       this.hasPatternsError = value;
     });
   },
+  beforeUnmount() {
+    this.aiChat?.unregisterExpandFunction?.(this.showPatternsForAiChat);
+  },
   methods: {
     removeAction() {
       this.$emit('remove');
@@ -195,6 +216,32 @@ export default {
 
     duplicateAction() {
       this.$emit('duplicate');
+    },
+
+    goToPatternsTab() {
+      if (this.activeTab !== SCENARIO_ACTION_TABS.patterns) {
+        this.activeTab = SCENARIO_ACTION_TABS.patterns;
+      }
+    },
+
+    toggleOnExpanded() {
+      if (!this.$refs.cardIteratorItemElement.expanded) {
+        this.$refs.cardIteratorItemElement.expanded = true;
+      }
+    },
+
+    async showPatternsForAiChat({ key } = {}) {
+      if (this.action.key !== key) {
+        return;
+      }
+
+      this.goToPatternsTab();
+
+      await this.$nextTick();
+
+      this.toggleOnExpanded();
+
+      await this.$nextTick();
     },
   },
 };

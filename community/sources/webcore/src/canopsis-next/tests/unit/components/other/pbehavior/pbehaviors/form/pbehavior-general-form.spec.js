@@ -48,8 +48,6 @@ const selectReasonField = wrapper => wrapper.find('c-pbehavior-reason-field-stub
 const selectTypeField = wrapper => wrapper.find('c-pbehavior-type-field-stub');
 const selectEnabledField = wrapper => selectEnabledFields(wrapper)
   .at(0);
-const selectSecondEnabledField = wrapper => selectEnabledFields(wrapper)
-  .at(1);
 const selectCheckboxFields = wrapper => wrapper.findAll('.v-checkbox');
 const selectFullDayCheckbox = wrapper => selectCheckboxFields(wrapper)
   .at(0);
@@ -111,20 +109,6 @@ describe('pbehavior-general-form', () => {
     expect(wrapper).toEmitInput({ ...form, name: newName });
   });
 
-  test('Enabled changed after trigger enabled field', () => {
-    const wrapper = factory({
-      propsData: {
-        form,
-      },
-    });
-
-    const newEnabled = !form.enabled;
-
-    selectEnabledField(wrapper).triggerCustomEvent('input', newEnabled);
-
-    expect(wrapper).toEmitInput({ ...form, enabled: newEnabled });
-  });
-
   test('Inherited changed after trigger enabled field', () => {
     const wrapper = factory({
       propsData: {
@@ -135,7 +119,7 @@ describe('pbehavior-general-form', () => {
 
     const newInherited = !form.inherited;
 
-    selectSecondEnabledField(wrapper).triggerCustomEvent('input', newInherited);
+    selectEnabledField(wrapper).triggerCustomEvent('input', newInherited);
 
     expect(wrapper).toEmitInput({ ...form, inherited: newInherited });
   });
@@ -151,7 +135,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectSecondEnabledField(wrapper).triggerCustomEvent('input', true);
+    selectEnabledField(wrapper).triggerCustomEvent('input', true);
 
     expect(wrapper).toEmitInput({
       ...form,
@@ -173,7 +157,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectSecondEnabledField(wrapper).triggerCustomEvent('input', false);
+    selectEnabledField(wrapper).triggerCustomEvent('input', false);
 
     expect(wrapper).toEmitInput({
       ...form,

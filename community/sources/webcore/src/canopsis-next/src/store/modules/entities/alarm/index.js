@@ -156,6 +156,10 @@ export default {
       return request.put(`${API_ROUTES.alarms.bulkList}/assocticket`, data);
     },
 
+    bulkCreateAlarmTicketremoveEvent(context, { data }) {
+      return request.put(`${API_ROUTES.alarms.bulkList}/ticketremove`, data);
+    },
+
     createAlarmCommentEvent(context, { id, data }) {
       return request.put(`${API_ROUTES.alarms.list}/${id}/comment`, data);
     },

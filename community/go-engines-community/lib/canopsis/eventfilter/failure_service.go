@@ -152,10 +152,7 @@ func (s *failureService) insertFailures(ctx context.Context, inserts []any, bulk
 	bulkCount := int(math.Ceil(float64(l) / float64(bulkSize)))
 	for i := 0; i < bulkCount; i++ {
 		begin := i * bulkSize
-		end := begin + bulkSize
-		if end > l {
-			end = l
-		}
+		end := min(begin+bulkSize, l)
 
 		_, err := s.collection.InsertMany(ctx, inserts[begin:end])
 		if err != nil {

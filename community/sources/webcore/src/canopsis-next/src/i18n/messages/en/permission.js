@@ -6,7 +6,7 @@ export default {
      * VIEWS PERMISSIONS
      */
     [USER_VIEWS_PERMISSIONS.viewActions]: 'View: actions',
-    [USER_VIEWS_PERMISSIONS.viewGeneral]: 'View: general',
+    [USER_VIEWS_PERMISSIONS.viewGeneral]: 'View: other',
 
     /**
      * GROUPS
@@ -61,11 +61,15 @@ export default {
     [USER_PERMISSIONS_GROUPS.apiRules]: 'Rules',
     [USER_PERMISSIONS_GROUPS.apiRemediation]: 'Remediation',
     [USER_PERMISSIONS_GROUPS.apiPlanning]: 'Planning',
+    [USER_PERMISSIONS_GROUPS.apiLlmChat]: 'LLM chat',
     [USER_PERMISSIONS_GROUPS.technical]: 'Technical',
     [USER_PERMISSIONS_GROUPS.technicalAdmin]: 'Admin',
     [USER_PERMISSIONS_GROUPS.technicalAdminCommunication]: 'Communication',
-    [USER_PERMISSIONS_GROUPS.technicalAdminGeneral]: 'General',
+    [USER_PERMISSIONS_GROUPS.technicalAdminGeneral]: 'Other',
     [USER_PERMISSIONS_GROUPS.technicalAdminAccess]: 'Access',
+    [USER_PERMISSIONS_GROUPS.technicalAdminMaintenance]: '@:common.maintenance',
+    [USER_PERMISSIONS_GROUPS.technicalAdminCustomObjects]: '@:layout.topbar.customObjects',
+    [USER_PERMISSIONS_GROUPS.technicalAdminSettings]: '@:common.settings',
     [USER_PERMISSIONS_GROUPS.technicalExploitation]: 'Exploitation',
     [USER_PERMISSIONS_GROUPS.technicalNotification]: 'Notifications',
     [USER_PERMISSIONS_GROUPS.technicalViewsandwidgets]: 'Views and widgets',
@@ -89,6 +93,7 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.snooze]: 'Snooze alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.declareTicket]: 'Declare ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.associateTicket]: 'Associate ticket',
+    [USER_PERMISSIONS.business.alarmsList.actions.removeAssociatedTicket]: 'Remove associated ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.cancel]: 'Remove alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.unCancel]: 'Uncalcel alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.fastCancel]: 'Fast remove alarm',
@@ -231,31 +236,32 @@ export default {
     [USER_PERMISSIONS.technical.eventsRecord]: 'Events records',
     [USER_PERMISSIONS.technical.healthcheck]: 'Healthcheck',
     [USER_PERMISSIONS.technical.healthcheckStatus]: 'Healthcheck status',
-    [USER_PERMISSIONS.technical.icon]: 'Parameters - icons',
+    [USER_PERMISSIONS.technical.icon]: 'Icons',
     [USER_PERMISSIONS.technical.kpi]: 'KPI Graphs',
     [USER_PERMISSIONS.technical.kpiCollectionSettings]: 'KPI Collection settings',
     [USER_PERMISSIONS.technical.kpiFilters]: 'KPI Filters',
     [USER_PERMISSIONS.technical.kpiRatingSettings]: 'KPI Rating settings',
     [USER_PERMISSIONS.technical.maintenance]: 'Maintenance mode',
     [USER_PERMISSIONS.technical.map]: 'Maps',
-    [USER_PERMISSIONS.technical.parameters]: 'Parameters - parameters tab',
+    [USER_PERMISSIONS.technical.parameters]: 'User interface',
     [USER_PERMISSIONS.technical.planningExceptions]: 'Planning exceptions dates (Pbehavior)',
     [USER_PERMISSIONS.technical.planningReason]: 'Planning reason (Pbehavior)',
     [USER_PERMISSIONS.technical.planningType]: 'Planning type (Pbehavior)',
-    [USER_PERMISSIONS.technical.remediationConfiguration]: 'Instructions - configurations tab',
-    [USER_PERMISSIONS.technical.remediationInstruction]: 'Instructions - instructions tab',
-    [USER_PERMISSIONS.technical.remediationInstructionApprove]: 'Instructions - approve',
-    [USER_PERMISSIONS.technical.remediationJob]: 'Instructions - jobs tab',
-    [USER_PERMISSIONS.technical.remediationStatistic]: 'Instructions - remediation statistics tab',
-    [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Instructions - instructions stats tab',
-    [USER_PERMISSIONS.technical.stateSetting]: 'State settings',
-    [USER_PERMISSIONS.technical.storageSettings]: 'Storage settings',
+    [USER_PERMISSIONS.technical.stateSetting]: 'State',
+    [USER_PERMISSIONS.technical.storageSettings]: 'Storage',
     [USER_PERMISSIONS.technical.tag]: 'Tags management',
     [USER_PERMISSIONS.technical.techmetrics]: 'Healthcheck - engines\' metrics',
-    [USER_PERMISSIONS.technical.widgetTemplate]: 'Parameters - widget templates',
-    [USER_PERMISSIONS.technical.viewImportExport]: 'Parameters - import / export',
+    [USER_PERMISSIONS.technical.widgetTemplate]: 'Widget templates',
+    [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Template testing',
+    [USER_PERMISSIONS.technical.templateData]: 'Template data',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'External auth tokens',
+    [USER_PERMISSIONS.technical.jobManagement]: 'Jobs',
+    [USER_PERMISSIONS.technical.commentTemplate]: 'Comment templates',
+    [USER_PERMISSIONS.technical.externalDataTable]: 'External data',
+    [USER_PERMISSIONS.technical.entityInfoProperty]: 'Entity infos',
+    [USER_PERMISSIONS.technical.llm]: 'LLMs',
+    [USER_PERMISSIONS.technical.anomalyMonitoredConnector]: 'Anomaly monitored connectors',
 
     /**
      * Technical Admin Access
@@ -267,6 +273,12 @@ export default {
     /**
      * Technical Admin Exploitation
      */
+    [USER_PERMISSIONS.technical.exploitation.remediationConfiguration]: 'Instructions - configurations tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstruction]: 'Instructions - instructions tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove]: 'Instructions - approve',
+    [USER_PERMISSIONS.technical.exploitation.remediationJob]: 'Instructions - jobs tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationStatistic]: 'Instructions - remediation statistics tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationinstructionStats]: 'Instructions - instructions stats tab',
     [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: 'Ticket declaration rules',
     [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: 'Dynamic information rules',
     [USER_PERMISSIONS.technical.exploitation.eventFilter]: 'Event filters',
@@ -278,13 +290,11 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.resolveRules]: 'Resolve rules',
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scenarios',
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Snmp rules',
-    [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'External data',
-    [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: 'Entity infos',
 
     /**
     * Technical Admin Notification
     */
-    [USER_PERMISSIONS.technical.notification.common]: 'Parameters - notification settings ',
+    [USER_PERMISSIONS.technical.notification.common]: 'Notifications',
 
     /**
      * Technical Admin Views and widgets
@@ -312,6 +322,7 @@ export default {
     [USER_PERMISSIONS.api.general.alarmUpdate]: 'Update alarms',
     [USER_PERMISSIONS.api.general.associativeTable]: 'Associative tables',
     [USER_PERMISSIONS.api.general.broadcastMessage]: 'Broadcast Message',
+    [USER_PERMISSIONS.api.general.commentTemplate]: 'Comment templates',
     [USER_PERMISSIONS.api.general.theme]: 'Theme colors',
     [USER_PERMISSIONS.api.general.contextgraph]: 'Context graph import',
     [USER_PERMISSIONS.api.general.corporatePattern]: 'Corporate patterns',
@@ -323,11 +334,13 @@ export default {
     [USER_PERMISSIONS.api.general.entityservice]: 'Entity services',
     [USER_PERMISSIONS.api.general.entityInfoProperty]: 'Entity infos properties',
     [USER_PERMISSIONS.api.general.event]: 'Events',
+    [USER_PERMISSIONS.api.general.externalDataTable]: 'External data tables',
     [USER_PERMISSIONS.api.general.exportConfigurations]: 'Export configurations',
     [USER_PERMISSIONS.api.general.files]: 'Files',
     [USER_PERMISSIONS.api.general.healthcheck]: 'Healthcheck',
     [USER_PERMISSIONS.api.general.icon]: 'Icons',
     [USER_PERMISSIONS.api.general.junit]: 'JUnit',
+    [USER_PERMISSIONS.api.general.llmConfig]: 'LLM configuration',
     [USER_PERMISSIONS.api.general.kpiFilter]: 'KPI Filters',
     [USER_PERMISSIONS.api.general.launchEventRecording]: 'Launch events recording',
     [USER_PERMISSIONS.api.general.maintenance]: 'Maintenance mode',
@@ -343,6 +356,7 @@ export default {
     [USER_PERMISSIONS.api.general.shareToken]: 'Share tokens',
     [USER_PERMISSIONS.api.general.stateSettings]: 'State settings',
     [USER_PERMISSIONS.api.general.techmetrics]: 'Tech metrics',
+    [USER_PERMISSIONS.api.general.ticketStatusJobManagement]: 'Ticket status job management',
     [USER_PERMISSIONS.api.general.techmetricsSettings]: 'Tech metrics settings',
     [USER_PERMISSIONS.api.general.userInterfaceDelete]: 'Delete user interface',
     [USER_PERMISSIONS.api.general.userInterfaceUpdate]: 'Update user interface',
@@ -350,6 +364,7 @@ export default {
     [USER_PERMISSIONS.api.general.viewgroup]: 'View groups',
     [USER_PERMISSIONS.api.general.widgetTemplate]: 'Widget templates',
     [USER_PERMISSIONS.api.general.templateData]: 'Template data',
+    [USER_PERMISSIONS.api.general.anomalyMonitoredConnector]: 'Anomaly monitored connectors',
 
     /**
      * API Permissions Rules
@@ -366,6 +381,7 @@ export default {
     [USER_PERMISSIONS.api.rules.resolveRule]: 'Resolve rules',
     [USER_PERMISSIONS.api.rules.snmpRule]: 'SNMP rules',
     [USER_PERMISSIONS.api.rules.snmpMib]: 'SNMP MIB',
+    [USER_PERMISSIONS.api.rules.webhookTokenRule]: 'Webhook token rules',
 
     /**
      * API Permissions Remediation

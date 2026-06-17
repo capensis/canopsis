@@ -15,6 +15,9 @@ export default {
 
   instruction: {
     name: 'Nom de l\'instruction',
+    massRemove: 'Supprimer les consignes sélectionnées',
+    massEnable: 'Activer les consignes sélectionnées',
+    massDisable: 'Désactiver les consignes sélectionnées',
     manualInstructionsProgress: 'Progression des consignes manuelles',
     usingInstruction: 'Ne peut pas être supprimée, car en cours d\'utilisation',
     addStep: 'Ajouter une étape',
@@ -89,6 +92,7 @@ export default {
       wasPaused: 'La consigne {instructionName} a été mise en pause.',
       wasFinished: 'La consigne {instructionName} s\'est terminée.',
       wasFailed: 'La consigne {instructionName} a échoué.',
+      wasWaitingResult: 'La consigne {instructionName} attend un résultat.',
       wasRemovedOrDisabled: 'La consigne {instructionName} a été supprimée ou désactivée.',
     },
     jobs: {

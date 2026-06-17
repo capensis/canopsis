@@ -31,7 +31,7 @@ func (a *mongoAdapter) UpdateBulk(ctx context.Context, models []mongodriver.Writ
 	return err
 }
 
-func (a *mongoAdapter) find(ctx context.Context, filter interface{}) ([]EntityService, error) {
+func (a *mongoAdapter) find(ctx context.Context, filter any) ([]EntityService, error) {
 	cursor, err := a.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err

@@ -4,10 +4,17 @@ exports[`alarm-timeline Renders \`alarm-timeline\` correctly 1`] = `
 <div
   class="layout column"
 >
-  <c-enabled-field-stub
-    label="Group elements"
-    value="true"
-  />
+  <div
+    class="layout gap-5"
+  >
+    <c-enabled-field-stub
+      label="Group elements"
+      value="true"
+    />
+    <c-enabled-field-stub
+      label="Only comments"
+    />
+  </div>
   <alarm-timeline-days-stub
     days="[object Object]"
   />

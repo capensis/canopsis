@@ -20,6 +20,9 @@
         centered
       >
         <v-tab>{{ $t('common.systemStatus') }}</v-tab>
+        <v-tab v-if="hasAccessToAnomalyMonitoredConnectors">
+          {{ $t('healthcheck.connectors') }}
+        </v-tab>
         <v-tab>{{ $tc('common.graph', 2) }}</v-tab>
         <v-tab>{{ $tc('common.parameter', 2) }}</v-tab>
         <v-tab v-if="hasAccessToTechMetrics">
@@ -48,6 +51,9 @@
             {{ $t('healthcheck.systemStatusServerError') }}
           </h2>
         </v-tab-item>
+        <v-tab-item v-if="hasAccessToAnomalyMonitoredConnectors">
+          <healthcheck-connectors />
+        </v-tab-item>
         <v-tab-item>
           <healthcheck-graphs :max-messages-per-minute="maxMessagesLength" />
         </v-tab-item>
@@ -72,6 +78,7 @@ import { USER_PERMISSIONS } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 
 import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-network-graph.vue';
+import HealthcheckConnectors from '@/components/other/healthcheck/healthcheck-connectors.vue';
 import HealthcheckGraphs from '@/components/other/healthcheck/healthcheck-graphs.vue';
 import HealthcheckParameters from '@/components/other/healthcheck/healthcheck-parameters.vue';
 import HealthcheckEnginesMetrics from '@/components/other/healthcheck/healthcheck-engines-metrics.vue';
@@ -82,6 +89,7 @@ export default {
   components: {
     HealthcheckParameters,
     HealthcheckNetworkGraph,
+    HealthcheckConnectors,
     HealthcheckGraphs,
     HealthcheckEnginesMetrics,
   },
@@ -106,6 +114,10 @@ export default {
 
     hasAccessToTechMetrics() {
       return this.checkAccess(USER_PERMISSIONS.technical.techmetrics);
+    },
+
+    hasAccessToAnomalyMonitoredConnectors() {
+      return this.checkAccess(USER_PERMISSIONS.technical.anomalyMonitoredConnector);
     },
   },
   mounted() {

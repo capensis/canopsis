@@ -2,7 +2,7 @@ import { MODALS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 
 /**
  * Hook for rating remediation instructions by a modal dialog.
@@ -13,7 +13,7 @@ import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-inst
 export const useRemediationInstructionStatsRate = (refresh = () => {}) => {
   const { t } = useI18n();
   const modals = useModals();
-  const { rateRemediationInstruction } = useRemdeitionInstruction();
+  const { rateRemediationInstruction } = useRemediationInstruction();
 
   /**
    * Shows the modal for rating a remediation instruction.
