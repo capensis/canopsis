@@ -7,7 +7,7 @@ import {
   prepareQueryWithoutAdvancedSearch,
   isEmptyAdvancedSearch,
 } from '@/helpers/search/advanced-search';
-import { sortPinnedSearches } from '@/helpers/search/sorting';
+import { sortPinnedSearches, sliceSavedSearches } from '@/helpers/search/sorting';
 import { uuid } from '@/helpers/uuid';
 
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
@@ -55,7 +55,9 @@ export const widgetAdvancedSearchSavedItemsMixin = {
       this.query = prepareQueryWithAdvancedSearch(this.query, search);
 
       this.updateContentInUserPreference({
-        searches: sortPinnedSearches(mergeSearchIntoSavedSearches(this.searches, search), search._id, '_id'),
+        searches: sliceSavedSearches(
+          sortPinnedSearches(mergeSearchIntoSavedSearches(this.searches, search), search._id, '_id'),
+        ),
       });
     },
 
@@ -73,13 +75,13 @@ export const widgetAdvancedSearchSavedItemsMixin = {
       ));
 
       this.updateContentInUserPreference({
-        searches: sortPinnedSearches(searches, id, '_id'),
+        searches: sliceSavedSearches(sortPinnedSearches(searches, id, '_id')),
       });
     },
 
     removeSearch(id) {
       this.updateContentInUserPreference({
-        searches: this.searches.filter(search => search._id !== id),
+        searches: sliceSavedSearches(this.searches.filter(search => search._id !== id)),
       });
     },
   },
