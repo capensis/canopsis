@@ -87,7 +87,7 @@ func (c *component) addProperty(p serializable) {
 }
 
 // AddProperty adds simple property.
-func (c *component) AddProperty(name string, val interface{}) {
+func (c *component) AddProperty(name string, val any) {
 	c.addProperty(&property{
 		propertyName: name,
 		value:        val,
@@ -114,7 +114,7 @@ func (c *component) serialize(w io.Writer) {
 // property represents ICS calendar simple property.
 type property struct {
 	propertyName string
-	value        interface{}
+	value        any
 }
 
 // serialize saves property value.

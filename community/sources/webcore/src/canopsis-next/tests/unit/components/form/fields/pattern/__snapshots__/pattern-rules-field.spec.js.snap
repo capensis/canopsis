@@ -17,7 +17,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
         infos=""
         inputtypes="[object Object],[object Object],[object Object],[object Object]"
         name="key 1"
-        operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp,is_one_of,is_not_one_of"
+        operators="equal,not_equal,contains,not_contains,begin_with,not_begin_with,ends_with,not_end_with,regexp,is_one_of,is_not_one_of"
         rule="[object Object]"
         type="string"
       />
@@ -40,7 +40,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
         infos=""
         inputtypes="[object Object],[object Object],[object Object],[object Object]"
         name="key 2"
-        operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp,is_one_of,is_not_one_of"
+        operators="equal,not_equal,contains,not_contains,begin_with,not_begin_with,ends_with,not_end_with,regexp,is_one_of,is_not_one_of"
         rule="[object Object]"
         type="string"
       />
@@ -63,7 +63,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
         infos=""
         inputtypes="[object Object],[object Object],[object Object],[object Object]"
         name="key 3"
-        operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp,is_one_of,is_not_one_of"
+        operators="equal,not_equal,contains,not_contains,begin_with,not_begin_with,ends_with,not_end_with,regexp,is_one_of,is_not_one_of"
         rule="[object Object]"
         type="string"
       />

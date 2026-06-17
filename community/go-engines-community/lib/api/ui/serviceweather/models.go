@@ -67,8 +67,8 @@ type Service struct {
 }
 
 type Info struct {
-	Description string      `bson:"description,omitempty" json:"description"`
-	Value       interface{} `bson:"value" json:"value"`
+	Description string `bson:"description,omitempty" json:"description"`
+	Value       any    `bson:"value" json:"value"`
 }
 
 type Counters struct {
@@ -98,7 +98,7 @@ type AggregationResult struct {
 	TotalCount int64     `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 
@@ -165,7 +165,7 @@ type EntityAggregationResult struct {
 	TotalCount int64    `bson:"total_count" json:"total_count"`
 }
 
-func (r *EntityAggregationResult) GetData() interface{} {
+func (r *EntityAggregationResult) GetData() any {
 	return r.Data
 }
 

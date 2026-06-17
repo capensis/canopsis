@@ -89,7 +89,6 @@
     "vue-cli-plugin-test-attrs": "^0.1.5",
     "vue-clipboard2": "^0.3.0",
     "vue-color": "^2.6.0",
-    "vue-fragment": "^1.6.0",
     "vue-fullscreen": "^2.6.2",
     "vue-i18n": "^7.6.0",
     "vue-loader": "^17.2.2",

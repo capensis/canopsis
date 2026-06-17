@@ -108,8 +108,8 @@ describe('create-service-pause-event', () => {
     await flushPromises();
 
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith(newData);
-    expect($modals.hide).toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(newData);
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -128,7 +128,7 @@ describe('create-service-pause-event', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -194,8 +194,8 @@ describe('create-service-pause-event', () => {
 
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith({ comment: '', reason: '' });
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith({ comment: '', reason: '' });
+    expect($modals.hide).not.toHaveBeenCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -223,13 +223,13 @@ describe('create-service-pause-event', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith({ reason: '', comment: '' });
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith({ reason: '', comment: '' });
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     consoleErrorSpy.mockClear();
   });

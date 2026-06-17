@@ -12,8 +12,8 @@ type B struct {
 	IntPtrField    *int
 	StringField    string
 	StringPtrField *string
-	MapField       map[string]interface{}
-	MapPtrField    *map[string]interface{}
+	MapField       map[string]any
+	MapPtrField    *map[string]any
 	NilPtrField    *int
 }
 
@@ -22,8 +22,8 @@ type A struct {
 	IntPtrField    *int
 	StringField    string
 	StringPtrField *string
-	MapField       map[string]interface{}
-	MapPtrField    *map[string]interface{}
+	MapField       map[string]any
+	MapPtrField    *map[string]any
 	NilPtrField    *int
 	BField         B
 	BPtrField      *B
@@ -35,8 +35,8 @@ func TestGetField(t *testing.T) {
 		int2 := 1
 		string1 := "testptr"
 		string2 := "abcde"
-		map1 := make(map[string]interface{})
-		map2 := make(map[string]interface{})
+		map1 := make(map[string]any)
+		map2 := make(map[string]any)
 
 		map1["int"] = 5
 		map1["string"] = "klmno"

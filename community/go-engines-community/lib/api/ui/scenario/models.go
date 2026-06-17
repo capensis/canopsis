@@ -13,9 +13,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/x/bsonx/bsoncore"
 )
@@ -123,12 +123,18 @@ type BulkUpdateRequestItem struct {
 }
 
 type BulkDeleteRequestItem struct {
-	ID string `json:"_id" binding:"required"`
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
+}
+
+type BulkToggleRequestItem struct {
+	ID     string `json:"_id" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
 }
 
 type ActionRequest struct {
 	Type                     string            `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior pbehaviorremove snooze unsnooze webhook"`
-	Parameters               action.Parameters `json:"parameters,omitempty"`
+	Parameters               action.Parameters `json:"parameters"`
 	Comment                  string            `json:"comment"`
 	DropScenarioIfNotMatched *bool             `json:"drop_scenario_if_not_matched" binding:"required"`
 	EmitTrigger              *bool             `json:"emit_trigger" binding:"required"`
@@ -147,14 +153,14 @@ type Scenario struct {
 	Actions              []Action                   `bson:"actions" json:"actions"`
 	Priority             int64                      `bson:"priority" json:"priority"`
 	Delay                *datetime.DurationWithUnit `bson:"delay" json:"delay"`
-	Created              datetime.CpsTime           `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created              datetime.CpsTime           `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 }
 
 type Action struct {
 	Type                     string     `bson:"type" json:"type"`
 	Comment                  string     `bson:"comment" json:"comment"`
-	Parameters               Parameters `bson:"parameters,omitempty" json:"parameters,omitempty"`
+	Parameters               Parameters `bson:"parameters,omitempty" json:"parameters"`
 	DropScenarioIfNotMatched bool       `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
 	EmitTrigger              bool       `bson:"emit_trigger" json:"emit_trigger"`
 
@@ -188,14 +194,9 @@ type Parameters struct {
 	Tstop          *int64            `json:"tstop,omitempty" bson:"tstop"`
 	StartOnTrigger *bool             `json:"start_on_trigger,omitempty" bson:"start_on_trigger"`
 	// Webhook
-	Request            *request.Parameters           `json:"request,omitempty" bson:"request"`
-	AuthToken          *request.WebhookAuthToken     `json:"auth_token,omitempty" bson:"auth_token,omitempty"`
-	SkipForChild       *bool                         `json:"skip_for_child,omitempty" bson:"skip_for_child"`
-	SkipForInstruction *bool                         `json:"skip_for_instruction,omitempty" bson:"skip_for_instruction,omitempty"`
-	DeclareTicket      *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket"`
-	StopOnFail         *bool                         `json:"stop_on_fail,omitempty" bson:"stop_on_fail,omitempty"`
-	StopOnSuccess      *bool                         `json:"stop_on_success,omitempty" bson:"stop_on_success,omitempty"`
-	MultipleURLs       *bool                         `json:"multiple_urls,omitempty" bson:"multiple_urls,omitempty"`
+	webhook.Webhook    `bson:",inline"`
+	SkipForChild       *bool `json:"skip_for_child,omitempty" bson:"skip_for_child"`
+	SkipForInstruction *bool `json:"skip_for_instruction,omitempty" bson:"skip_for_instruction,omitempty"`
 }
 
 type AggregationResult struct {
@@ -207,7 +208,7 @@ func (r AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
 
-func (r AggregationResult) GetData() interface{} {
+func (r AggregationResult) GetData() any {
 	return r.Data
 }
 
@@ -220,7 +221,8 @@ type TemplateRequest struct {
 		Test  string `json:"test"`
 		Event string `json:"event"`
 		// TestData.Responses keys correspond with Rule.Actions keys
-		Responses map[int]string `json:"responses"`
+		Responses             map[int]string `json:"responses"`
+		TicketStatusResponses map[int]string `json:"ticket_status_responses"`
 	} `json:"testdata"`
 }
 
@@ -249,4 +251,5 @@ type TemplateVarsResponse struct {
 	FirstWebhook []template.VarResponse `json:"first_webhook"`
 	Webhook      []template.VarResponse `json:"webhook"`
 	Ticket       []template.VarResponse `json:"ticket"`
+	TicketStatus []template.VarResponse `json:"ticket_status"`
 }

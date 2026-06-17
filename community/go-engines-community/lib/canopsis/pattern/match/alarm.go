@@ -97,32 +97,41 @@ func MatchAlarmPattern(p pattern.Alarm, alarm *types.Alarm) (bool, error) {
 }
 
 func ValidateAlarmPattern(p pattern.Alarm, forbiddenFields, onlyTimeAbsoluteFields []string) bool {
+	return len(AlarmPatternErrors(p, forbiddenFields, onlyTimeAbsoluteFields)) == 0
+}
+
+func AlarmPatternErrors(p pattern.Alarm, forbiddenFields, onlyTimeAbsoluteFields []string) []ConditionError {
 	emptyAlarm := types.Alarm{}
 	forbiddenFieldsMap := make(map[string]bool, len(forbiddenFields))
 	for _, field := range forbiddenFields {
 		forbiddenFieldsMap[field] = true
 	}
+
 	timeAbsoluteFieldsMap := make(map[string]bool, len(onlyTimeAbsoluteFields))
 	for _, field := range onlyTimeAbsoluteFields {
 		timeAbsoluteFieldsMap[field] = true
 	}
-	now := time.Now() // to compute relative time values
 
-	for idx := range p {
-		if len(p[idx]) == 0 {
-			return false
+	now := time.Now() // to compute relative time values
+	var errs []ConditionError
+
+	for gidx := range p {
+		if len(p[gidx]) == 0 {
+			errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: -1, Err: pattern.ErrEmptyGroup})
+			continue
 		}
 
-		for _, v := range p[idx] {
+		for cidx, v := range p[gidx] {
 			f := v.Field
 
 			if pattern.IsForbiddenAlarmField(v, forbiddenFieldsMap, timeAbsoluteFieldsMap) {
-				return false
+				errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: cidx, Err: pattern.ErrForbiddenField})
+				continue
 			}
 
 			if infoName := pattern.GetAlarmInfoName(f); infoName != "" {
-				if !v.ValidateInfoCondition() {
-					return false
+				if err := v.InfoConditionError(); err != nil {
+					errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: cidx, Err: err})
 				}
 
 				continue
@@ -170,10 +179,10 @@ func ValidateAlarmPattern(p pattern.Alarm, forbiddenFields, onlyTimeAbsoluteFiel
 			}
 
 			if err != nil {
-				return false
+				errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: cidx, Err: err})
 			}
 		}
 	}
 
-	return true
+	return errs
 }

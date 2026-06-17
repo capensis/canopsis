@@ -8,12 +8,15 @@
     :columns="widget.parameters.widgetGroupColumns"
     :loading="pending"
     :refresh-alarms-list="refreshAlarmsList"
+    :columns-settings="columnsSettings"
     expandable
     v-on="$listeners"
   />
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import AlarmsListTableWithPagination from '../partials/alarms-list-table-with-pagination.vue';
 
 /**
@@ -49,15 +52,19 @@ export default {
       type: Function,
       default: () => () => {},
     },
+    columnsSettings: {
+      type: Object,
+      default: () => ({}),
+    },
   },
-  computed: {
-    alarms() {
-      return this.children?.data ?? [];
-    },
+  setup(props) {
+    const alarms = computed(() => props.children?.data ?? []);
+    const meta = computed(() => props.children?.meta ?? {});
 
-    meta() {
-      return this.children?.meta ?? {};
-    },
+    return {
+      alarms,
+      meta,
+    };
   },
 };
 </script>

@@ -2,6 +2,7 @@
   <v-expansion-panels
     v-model="localExpanded"
     :style="panelStyle"
+    :disabled="disabled"
     class="c-collapse-panel elevation-2"
     accordion
   >
@@ -69,6 +70,10 @@ export default {
       default: false,
     },
     expanded: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

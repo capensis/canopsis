@@ -60,7 +60,7 @@ describe('kpi-rating-criteria-field', () => {
     await flushPromises();
 
     expect(fetchRatingSettings).toBeCalledTimes(1);
-    expect(fetchRatingSettings).toBeCalledWith(
+    expect(fetchRatingSettings).toHaveBeenCalledWith(
       expect.any(Object),
       { params: { limit: MAX_LIMIT, enabled: true } },
     );

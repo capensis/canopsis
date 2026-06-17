@@ -18,11 +18,11 @@ type AssociativeTable struct {
 }
 
 type Content struct {
-	value interface{}
+	value any
 }
 
 func (c *Content) UnmarshalJSON(b []byte) error {
-	var v interface{}
+	var v any
 	err := json.Unmarshal(b, &v)
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func (c Content) MarshalBSONValue() (byte, []byte, error) {
 }
 
 func (c *Content) UnmarshalBSONValue(_ byte, b []byte) error {
-	var v map[string]interface{}
+	var v map[string]any
 	err := bson.Unmarshal(b, &v)
 	if err != nil {
 		return err

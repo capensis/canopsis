@@ -1,22 +1,17 @@
 <template>
-  <div>
-    <v-layout>
-      <v-flex xs3>
-        <c-instruction-type-field
-          v-field="form.type"
-          :disabled="disabled || !isNew"
-          class="mb-2"
-        />
-      </v-flex>
-      <v-flex>
-        <c-enabled-field
-          v-field="form.enabled"
-          :disabled="disabledCommon"
-          class="mt-0"
-          hide-details
-        />
-      </v-flex>
-    </v-layout>
+  <v-layout column>
+    <c-enabled-field
+      v-field="form.enabled"
+      :disabled="disabledCommon"
+      class="mt-0"
+      hide-details
+      with-background
+    />
+    <c-instruction-type-field
+      v-field="form.type"
+      :disabled="disabled || !isNew"
+      class="mb-2"
+    />
     <c-name-field
       v-field="form.name"
       :disabled="disabledCommon"
@@ -134,7 +129,7 @@
       :disabled="disabled"
       :required="requiredApprove"
     />
-  </div>
+  </v-layout>
 </template>
 
 <script>

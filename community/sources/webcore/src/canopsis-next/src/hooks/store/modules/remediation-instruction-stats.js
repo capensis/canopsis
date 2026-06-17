@@ -5,7 +5,7 @@ import { useStoreModuleHooks } from '@/hooks/store';
  *
  * @returns {Object} An object containing getters and actions for the remediation instruction stats.
  */
-const useRemdeitionInstructionStatsStoreModule = () => useStoreModuleHooks('remediationInstructionStats');
+const useRemediationInstructionStatsStoreModule = () => useStoreModuleHooks('remediationInstructionStats');
 
 /**
  * Hook to access remediation instruction stats.
@@ -14,8 +14,8 @@ const useRemdeitionInstructionStatsStoreModule = () => useStoreModuleHooks('reme
  * - Getters for remediation instruction stats, pending status, and metadata.
  * - Actions to fetch lists and summaries without using the store.
  */
-export const useRemdeitionInstructionStats = () => {
-  const { useGetters, useActions } = useRemdeitionInstructionStatsStoreModule();
+export const useRemediationInstructionStats = () => {
+  const { useGetters, useActions } = useRemediationInstructionStatsStoreModule();
 
   const getters = useGetters({
     remediationInstructionStats: 'items',

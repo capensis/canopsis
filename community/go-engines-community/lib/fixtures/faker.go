@@ -33,11 +33,11 @@ func NewFaker(passwordEncoder password.Encoder) *Faker {
 	}
 }
 
-func (*Faker) NowUnix() interface{} {
+func (*Faker) NowUnix() any {
 	return time.Now().Unix()
 }
 
-func (*Faker) NowUnixAdd(dStr string) (interface{}, error) {
+func (*Faker) NowUnixAdd(dStr string) (any, error) {
 	d, err := time.ParseDuration(dStr)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (*Faker) NowUnixAdd(dStr string) (interface{}, error) {
 	return time.Now().Add(d).Unix(), nil
 }
 
-func (f *Faker) DateUnix() interface{} {
+func (f *Faker) DateUnix() any {
 	return f.Number(1, int(time.Now().Unix()))
 }
 
@@ -98,7 +98,7 @@ func (f *Faker) JWT() (string, error) {
 // GenerateExdates
 //
 //nolint:gosec
-func (*Faker) GenerateExdates(count int) interface{} {
+func (*Faker) GenerateExdates(count int) any {
 	exdates := make([]types.Exdate, count)
 	now := time.Now()
 
@@ -127,7 +127,7 @@ func (*Faker) GenerateBookmarks(prefix string, count int) []string {
 }
 
 // ToObjectID converts a string of hex digits to a MongoDB ObjectId
-func (*Faker) ToObjectID(s string) interface{} {
+func (*Faker) ToObjectID(s string) any {
 	s = utils.ToObjectIDHex(s)
 	objectID, err := bson.ObjectIDFromHex(s)
 	if err != nil {
@@ -136,7 +136,7 @@ func (*Faker) ToObjectID(s string) interface{} {
 	return objectID
 }
 
-func (*Faker) ObjectID() interface{} {
+func (*Faker) ObjectID() any {
 	return bson.NewObjectID()
 }
 

@@ -53,7 +53,6 @@ exports[`map Renders flowchart \`map\` with state 1`] = `
           private="true"
           widgetid="map-widget-id"
           withentity="true"
-          withserviceweather="true"
         />
       </div>
     </div>
@@ -104,7 +103,6 @@ exports[`map Renders geo \`map\` with state 1`] = `
           private="true"
           widgetid="map-widget-id"
           withentity="true"
-          withserviceweather="true"
         />
       </div>
     </div>
@@ -155,7 +153,6 @@ exports[`map Renders mermaid \`map\` with state 1`] = `
           private="true"
           widgetid="map-widget-id"
           withentity="true"
-          withserviceweather="true"
         />
       </div>
     </div>
@@ -206,7 +203,6 @@ exports[`map Renders treeofdeps \`map\` with state 1`] = `
           private="true"
           widgetid="map-widget-id"
           withentity="true"
-          withserviceweather="true"
         />
       </div>
     </div>

@@ -19,6 +19,12 @@ export class AsyncBooting {
    * @param {Function} onFinishCallback - The callback function to execute on finish phase.
    */
   register(key, bootCallback, onFinishCallback) {
+    if (this.wasCalled) {
+      bootCallback();
+
+      return;
+    }
+
     this.registered.push({ key, bootCallback, onFinishCallback });
   }
 

@@ -13,6 +13,7 @@ type Rule struct {
 	ID          string                    `bson:"_id,omitempty"`
 	Name        string                    `bson:"name"`
 	Description string                    `bson:"description"`
+	Enabled     bool                      `bson:"enabled"`
 	Duration    datetime.DurationWithUnit `bson:"duration"`
 	Priority    int64                     `bson:"priority"`
 	Author      string                    `bson:"author"`
@@ -22,7 +23,6 @@ type Rule struct {
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
 
-	// Aliases is used to ease find by entity info property api.
 	Aliases []string `bson:"aliases" json:"-"`
 }
 

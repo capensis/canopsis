@@ -116,6 +116,7 @@ describe('service-weather', () => {
   };
 
   const sidebar = {
+    id: 'test-sidebar-id',
     name: SIDE_BARS.serviceWeatherSettings,
     config: {
       widget,
@@ -334,6 +335,7 @@ describe('service-weather', () => {
       moreInfoTemplate: Faker.datatype.string(),
       infoPopups: [],
       widgetColumns: [],
+      sort: [],
     };
 
     selectAlarmsListModalForm(wrapper).triggerCustomEvent('input', newAlarmsList);

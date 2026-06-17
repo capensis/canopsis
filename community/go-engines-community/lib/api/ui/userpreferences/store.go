@@ -39,7 +39,7 @@ func NewStore(
 func (s *store) Find(ctx context.Context, userID, widgetId string) (*Response, error) {
 	res := Response{
 		Widget:  widgetId,
-		Content: map[string]interface{}{},
+		Content: map[string]any{},
 		Filters: make([]widgetfilter.Response, 0),
 	}
 	pipeline := []bson.M{

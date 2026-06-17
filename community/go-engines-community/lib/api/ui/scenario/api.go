@@ -16,10 +16,12 @@ import (
 )
 
 type API interface {
+	crud.BulkAPI
 	DBExport(c *gin.Context)
 	ValidateTemplates(c *gin.Context)
 	GetTemplateVars(c *gin.Context)
-	crud.BulkAPI
+	BulkEnable(c *gin.Context)
+	BulkDisable(c *gin.Context)
 }
 
 type api struct {
@@ -151,21 +153,6 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	id := c.Param("id")
-
-	scenario, err := a.store.GetOneBy(c, id)
-	if err != nil {
-		a.errorResponder.Respond(c, err)
-
-		return
-	}
-
-	if scenario == nil {
-		a.errorResponder.Respond(c, httperror.ErrNotFound)
-
-		return
-	}
-
 	userID, err := authctx.GetUserKey(c)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
@@ -173,7 +160,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Delete(c, id, userID)
+	ok, err := a.store.Delete(c, c.Param("id"), userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
@@ -222,15 +209,8 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID, err := authctx.GetUserKey(c)
-	if err != nil {
-		a.errorResponder.Respond(c, err)
-
-		return
-	}
-
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID, userID)
+		ok, err := a.store.Delete(c, request.ID, request.Author)
 		if err != nil {
 			return "", err
 		}
@@ -295,4 +275,31 @@ func (a *api) GetTemplateVars(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, vars)
+}
+
+// BulkEnable
+// @Param body body []BulkToggleRequestItem true "body"
+func (a *api) BulkEnable(c *gin.Context) {
+	a.toggle(c, true)
+}
+
+// BulkDisable
+// @Param body body []BulkToggleRequestItem true "body"
+func (a *api) BulkDisable(c *gin.Context) {
+	a.toggle(c, false)
+}
+
+func (a *api) toggle(c *gin.Context, enabled bool) {
+	bulk.Handler(c, func(request BulkToggleRequestItem) (string, error) {
+		found, err := a.store.Toggle(c, request, enabled)
+		if err != nil {
+			return "", err
+		}
+
+		if !found {
+			return "", httperror.ErrNotFound
+		}
+
+		return request.ID, nil
+	}, a.errorResponder)
 }

@@ -23,6 +23,7 @@
       v-field="value"
       :label="label"
       :round-hours="roundHours"
+      :allowed-dates="allowedDates"
       @close="close"
     />
   </v-menu>
@@ -49,6 +50,10 @@ export default {
     roundHours: {
       type: Boolean,
       default: false,
+    },
+    allowedDates: {
+      type: Function,
+      required: false,
     },
   },
   data() {

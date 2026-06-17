@@ -57,6 +57,7 @@ import {
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
 import { useTemplateVarsList } from '@/hooks/vars/template';
+import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 
 import {
   useTestVariablesTabData,
@@ -67,6 +68,12 @@ import TemplateTestingTestVariablesTab from '@/components/other/template-testing
 
 import RemediationInstructionGeneralForm from './remediation-instruction-general-form.vue';
 import RemediationInstructionPatternsForm from './remediation-instruction-patterns-form.vue';
+
+const REMEDIATION_INSTRUCTION_FORM_TABS = {
+  general: 0,
+  patterns: 1,
+  testing: 2,
+};
 
 export default {
   inject: ['$validator'],
@@ -108,7 +115,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const activeTab = ref(0);
+    const activeTab = ref(REMEDIATION_INSTRUCTION_FORM_TABS.general);
 
     const hasGeneralError = ref(false);
     const hasPatternsError = ref(false);
@@ -118,7 +125,7 @@ export default {
 
     const type = ref(TEMPLATE_TESTING_TEST_TYPES.instruction);
 
-    const isActiveTestingTab = computed(() => activeTab.value === 2);
+    const isActiveTestingTab = computed(() => activeTab.value === REMEDIATION_INSTRUCTION_FORM_TABS.testing);
 
     const { vars: templateVars, fetchList } = useTemplateVarsList({
       type,
@@ -149,6 +156,8 @@ export default {
       unwatchGeneralTabErrors?.();
       unwatchPatternsTabErrors?.();
     };
+
+    useAiChatExpand({ activeTab, neededTab: REMEDIATION_INSTRUCTION_FORM_TABS.patterns });
 
     onMounted(() => {
       watchTabsErrors();

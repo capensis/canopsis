@@ -2,6 +2,7 @@ import { MODALS, SINGLE_EVENT_RESEND_DELAY, TIME_UNITS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
 import { useEventsRecord } from '@/hooks/store/modules/events-record';
 import { useEventsRecordCurrent } from '@/hooks/store/modules/events-record-current';
 
@@ -14,12 +15,13 @@ import { useEventsRecordCurrent } from '@/hooks/store/modules/events-record-curr
 export const useEventsRecordResending = () => {
   const { t, tc } = useI18n();
   const modals = useModals();
+  const popups = usePopups();
 
   /**
    * STORE
    */
   const { playbackEventsRecordEvents, stopPlaybackEventsRecordEvents } = useEventsRecord();
-  const { current, fetchEventsRecordCurrent } = useEventsRecordCurrent();
+  const { fetchEventsRecordCurrent } = useEventsRecordCurrent();
 
   /**
    * Resend events with a specified delay.
@@ -34,6 +36,8 @@ export const useEventsRecordResending = () => {
       id: eventsRecordId,
       data: { delay, event_ids: eventIds },
     });
+
+    popups.info({ text: t('eventsRecord.selectedEventsAreResent') });
 
     return fetchEventsRecordCurrent();
   };
@@ -67,13 +71,14 @@ export const useEventsRecordResending = () => {
   /**
    * Stop resending events and confirm the action.
    *
+   * @param {string} [eventsRecordId] - ID of the events record to stop. If omitted, stops the first one in resendings.
    * @returns {Promise}
    */
-  const stopResending = () => modals.show({
+  const stopResending = eventsRecordId => modals.show({
     name: MODALS.confirmation,
     config: {
       action: async () => {
-        await stopPlaybackEventsRecordEvents({ id: current.value._id });
+        await stopPlaybackEventsRecordEvents({ id: eventsRecordId });
 
         return fetchEventsRecordCurrent();
       },

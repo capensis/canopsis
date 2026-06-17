@@ -3,6 +3,7 @@ package pbehavior
 import (
 	"context"
 	"fmt"
+	"slices"
 	"sort"
 	"sync/atomic"
 	"time"
@@ -134,13 +135,7 @@ func (r *typeResolver) GetPbehaviors(
 	}
 
 	return r.getPbehaviorIntervals(ctx, t, func(id string, _ ComputedPbehavior) bool {
-		for i := range pbehaviorIDs {
-			if pbehaviorIDs[i] == id {
-				return true
-			}
-		}
-
-		return false
+		return slices.Contains(pbehaviorIDs, id)
 	})
 }
 

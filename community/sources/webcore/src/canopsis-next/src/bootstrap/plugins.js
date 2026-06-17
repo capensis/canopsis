@@ -2,7 +2,6 @@ import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
 import VueClipboard from 'vue-clipboard2';
 import PortalVue from 'portal-vue';
-import { Plugin as VueFragment } from 'vue-fragment';
 
 import { MODALS } from '@/constants';
 import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
@@ -32,7 +31,6 @@ import * as sidebarsComponents from '@/components/sidebars';
 export const bootstrapApplicationPlugins = (Vue) => {
   Vue.use(PortalVue);
   Vue.use(Filters);
-  Vue.use(VueFragment);
   Vue.use(VueFullScreen);
 
   Vue.use(VueMq, {
@@ -72,6 +70,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.pbehaviorRecurrenceRule]: { maxWidth: '95%', persistent: true },
       [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
       [MODALS.createRemediationInstruction]: { maxWidth: 960 },
+      [MODALS.createTicketStatusJob]: { maxWidth: 1200 },
       [MODALS.remediationInstructionApproval]: { maxWidth: 960 },
       [MODALS.executeRemediationInstruction]: { maxWidth: 960 },
       [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
@@ -99,6 +98,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
       [MODALS.executeDeclareTickets]: { maxWidth: 920 },
       [MODALS.createLinkRule]: { maxWidth: 920 },
+      [MODALS.anomalyMonitoredConnectorHistory]: { maxWidth: 1400 },
       [MODALS.createAlarmChart]: { maxWidth: 500 },
       [MODALS.createTag]: { maxWidth: 920 },
       [MODALS.createStateSetting]: { maxWidth: 960 },
@@ -110,6 +110,8 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.importExternalDataTableRecords]: { maxWidth: 1200, persistent: true },
       [MODALS.createTheme]: { maxWidth: 500 },
       [MODALS.createExternalAuthToken]: { maxWidth: 1100 },
+      [MODALS.createLlm]: { maxWidth: 920 },
+      [MODALS.aiChatHistory]: { maxWidth: 700 },
 
       ...featuresService.get('components.modals.dialogPropsMap'),
     },

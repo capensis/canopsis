@@ -13,7 +13,9 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
     <div
       class="flex xs12"
@@ -877,7 +879,9 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
     <div
       class="flex xs12"

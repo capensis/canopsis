@@ -6,6 +6,7 @@
     :pending="usersPending"
     :removable="hasDeleteAnyUserAccess"
     :updatable="hasUpdateAnyUserAccess"
+    @refresh="fetchList"
     @edit="showEditUserModal"
     @remove="showRemoveUserModal"
     @remove-selected="showRemoveSelectedUsersModal"

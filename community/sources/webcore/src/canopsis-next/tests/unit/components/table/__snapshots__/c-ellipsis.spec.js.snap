@@ -19,7 +19,7 @@ exports[`c-ellipsis Renders \`c-ellipsis\` correctly 1`] = `
       <div
         class="v-card__title pre-wrap"
       >
-        omnis esse recusandae magni similique porro quaerat alias vel deserunt porro voluptate
+          omnis esse recusandae magni similique porro quaerat alias vel deserunt porro voluptate
       voluptatibus commodi sequi et qui fugiat exercitationem et et eligendi ad officia quis suscipit earum soluta
       minima architecto numquam et voluptatibus quia officiis nulla veritatis soluta optio assumenda est fugiat est
       suscipit inventore temporibus dolores quos dolorem doloremque autem qui sit ipsam praesentium esse sunt ut
@@ -33,3 +33,24 @@ exports[`c-ellipsis Renders \`c-ellipsis\` correctly 1`] = `
 `;
 
 exports[`c-ellipsis Renders \`c-ellipsis\` correctly 2`] = `undefined`;
+
+exports[`c-ellipsis Renders \`c-ellipsis\` with hover correctly 1`] = `
+<div>
+  <div
+    class="c-simple-tooltip"
+  >
+    <span
+      class="c-ellipsis__activator"
+    >
+      <span>
+        omnis esse recusandae magni similique porro quaera
+      </span>
+      <span>
+        ...
+      </span>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`c-ellipsis Renders \`c-ellipsis\` with hover correctly 2`] = `undefined`;

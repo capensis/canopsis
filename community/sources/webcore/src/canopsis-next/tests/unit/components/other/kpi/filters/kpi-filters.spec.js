@@ -62,7 +62,7 @@ describe('kpi-filters', () => {
     await flushPromises();
 
     expect(fetchFilters).toBeCalledTimes(1);
-    expect(fetchFilters).toBeCalledWith(
+    expect(fetchFilters).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {
@@ -121,7 +121,7 @@ describe('kpi-filters', () => {
     await flushPromises();
 
     expect(fetchFilters).toBeCalledTimes(1);
-    expect(fetchFilters).toBeCalledWith(
+    expect(fetchFilters).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {
@@ -176,7 +176,7 @@ describe('kpi-filters', () => {
     kpiFiltersListElement.triggerCustomEvent('edit', filter);
 
     expect(showModal).toBeCalledTimes(1);
-    expect(showModal).toBeCalledWith(
+    expect(showModal).toHaveBeenCalledWith(
       {
         name: MODALS.createKpiFilter,
         config: {
@@ -198,7 +198,7 @@ describe('kpi-filters', () => {
 
     expect(updateFilter).toBeCalledTimes(1);
     expect(fetchWithPrevious).toBeCalledTimes(1);
-    expect(updateFilter).toBeCalledWith(
+    expect(updateFilter).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: newFilterData,
@@ -251,7 +251,7 @@ describe('kpi-filters', () => {
     kpiFiltersListElement.triggerCustomEvent('duplicate', filter);
 
     expect(showModal).toBeCalledTimes(1);
-    expect(showModal).toBeCalledWith(
+    expect(showModal).toHaveBeenCalledWith(
       {
         name: MODALS.createKpiFilter,
         config: {
@@ -276,7 +276,7 @@ describe('kpi-filters', () => {
 
     expect(createFilter).toBeCalledTimes(1);
     expect(fetchWithPrevious).toBeCalledTimes(1);
-    expect(createFilter).toBeCalledWith(
+    expect(createFilter).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: newFilterData,
@@ -328,7 +328,7 @@ describe('kpi-filters', () => {
     kpiFiltersListElement.triggerCustomEvent('remove', filter._id);
 
     expect(showModal).toBeCalledTimes(1);
-    expect(showModal).toBeCalledWith(
+    expect(showModal).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: {
@@ -343,7 +343,7 @@ describe('kpi-filters', () => {
 
     expect(removeFilter).toBeCalledTimes(1);
     expect(fetchWithPrevious).toBeCalledTimes(1);
-    expect(removeFilter).toBeCalledWith(
+    expect(removeFilter).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: filter._id,
