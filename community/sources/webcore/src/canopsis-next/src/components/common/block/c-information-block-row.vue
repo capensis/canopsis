@@ -5,7 +5,7 @@
         {{ label }}
       </h4>
     </v-flex>
-    <v-flex>
+    <v-flex class="text-break">
       <slot>{{ value }}</slot>
     </v-flex>
   </v-layout>
@@ -19,7 +19,7 @@ export default {
       required: true,
     },
     value: {
-      type: [String, Number],
+      type: [String, Number, Array, Object],
       required: false,
     },
     width: {

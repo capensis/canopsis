@@ -87,7 +87,7 @@ func (a *mongoAdapter) GetOpenedAlarmsByIDs(ctx context.Context, ids []string, a
 	var err error
 	*alarms, err = a.getAlarms(ctx, bson.M{
 		"d":          bson.M{"$in": ids},
-		"v.resolved": bson.M{"$in": []interface{}{"", nil}},
+		"v.resolved": bson.M{"$in": []any{"", nil}},
 	})
 
 	return err
@@ -117,7 +117,7 @@ func (a *mongoAdapter) GetOpenedOffAlarmsWithEntity(ctx context.Context) (libmon
 func (a *mongoAdapter) GetCountOpenedAlarmsByIDs(ctx context.Context, ids []string) (int64, error) {
 	return a.getAlarmsCount(ctx, bson.M{
 		"d":          bson.M{"$in": ids},
-		"v.resolved": bson.M{"$in": []interface{}{"", nil}},
+		"v.resolved": bson.M{"$in": []any{"", nil}},
 	})
 }
 
@@ -214,10 +214,10 @@ func (a *mongoAdapter) GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) 
 	return alarms, nil
 }
 
-func (a *mongoAdapter) CountResolvedAlarm(ctx context.Context, entityIDs []string) (int, error) {
+func (a *mongoAdapter) CountOpenedChildrenAlarmsByParent(ctx context.Context, parentID string) (int, error) {
 	res, err := a.getAlarmsCount(ctx, bson.M{
-		"d":          bson.M{"$in": entityIDs},
-		"v.resolved": bson.M{"$exists": true},
+		"v.parents":  parentID,
+		"v.resolved": nil,
 	})
 
 	return int(res), err

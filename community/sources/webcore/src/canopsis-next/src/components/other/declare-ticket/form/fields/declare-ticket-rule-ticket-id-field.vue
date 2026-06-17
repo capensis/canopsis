@@ -1,25 +1,30 @@
 <template>
-  <v-layout>
+  <v-layout class="gap-3">
     <v-flex xs6>
-      <c-enabled-field
-        v-field="value.template"
-        :label="$t('declareTicket.allowTicketIdTemplate')"
+      <declare-ticket-rule-ticket-id-payload-text-field
+        v-if="value.ticket_id.template"
+        v-field="value.ticket_id.value"
+        :name="name"
+        :disabled="disabled"
+        :variables="variables"
+        :required="required"
+      />
+      <declare-ticket-rule-ticket-id-text-field
+        v-else
+        v-field="value.ticket_id.value"
+        :name="name"
+        :disabled="disabled"
+        :required="required"
       />
     </v-flex>
-    <declare-ticket-rule-ticket-id-payload-text-field
-      v-if="value.template"
-      v-field="value.value"
-      :name="name"
-      :disabled="disabled"
-      :variables="variables"
-      :required="required"
+    <c-enabled-field
+      v-field="value.ticket_id.template"
+      :label="$t('declareTicket.allowTicketIdTemplate')"
     />
-    <declare-ticket-rule-ticket-id-text-field
-      v-else
-      v-field="value.value"
-      :name="name"
-      :disabled="disabled"
-      :required="required"
+    <c-enabled-field
+      v-field="value.is_regexp"
+      :label="$t('declareTicket.isRegexp')"
+      class="ml-4"
     />
   </v-layout>
 </template>

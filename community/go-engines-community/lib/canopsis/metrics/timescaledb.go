@@ -65,6 +65,9 @@ func (s *timescaleDBSender) SendCancelAck(_ types.Alarm, _ time.Time) {
 func (s *timescaleDBSender) SendTicket(_ types.Alarm, _ string, _ time.Time) {
 }
 
+func (s *timescaleDBSender) SendTicketRemove(_ types.Alarm, _ time.Time) {
+}
+
 func (s *timescaleDBSender) SendResolve(_ types.Alarm, _ types.Entity, _ time.Time) {
 }
 

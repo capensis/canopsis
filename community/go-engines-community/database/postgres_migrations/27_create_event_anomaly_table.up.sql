@@ -29,5 +29,6 @@ SELECT add_retention_policy('event_anomaly', INTERVAL '24 hours');
 
 ALTER MATERIALIZED VIEW event_anomaly_hourly SET (timescaledb.compress = true);
 SELECT add_compression_policy('event_anomaly_hourly', compress_after=>'1 day'::interval);
+SELECT add_retention_policy('event_anomaly_hourly', INTERVAL '14 days');
 
 END;

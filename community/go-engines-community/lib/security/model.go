@@ -31,7 +31,7 @@ type User struct {
 		Name    string `bson:"name"`
 		Address string `bson:"address"`
 	} `bson:"contact"`
-	IsEnabled  bool   `bson:"enable"`
+	IsEnabled  bool   `bson:"enabled"`
 	ExternalID string `bson:"external_id"`
 	Source     string `bson:"source"`
 	Language   string `bson:"language"`

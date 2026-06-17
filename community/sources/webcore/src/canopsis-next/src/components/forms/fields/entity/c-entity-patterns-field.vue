@@ -8,14 +8,24 @@
     :required="required"
     :attributes="availableEntityAttributes"
     :with-type="withType"
-    :counter="counter"
+    :alarm-counter="alarmCounter"
+    :entity-counter="entityCounter"
+    class="c-entity-patterns-field"
   >
     <template #append-count="">
       <v-btn
-        v-if="counter && counter.count"
+        v-if="alarmCounter && alarmCounter.count"
         text
         small
-        @click="showPatternEntitiesModal"
+        @click="showPatternAlarmsModal()"
+      >
+        {{ $t('common.seeAlarms') }}
+      </v-btn>
+      <v-btn
+        v-if="entityCounter && entityCounter.count"
+        text
+        small
+        @click="showPatternEntitiesModal()"
       >
         {{ $t('common.seeEntities') }}
       </v-btn>
@@ -24,7 +34,7 @@
 </template>
 
 <script>
-import { isArray, isUndefined, mergeWith } from 'lodash';
+import { isArray } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -36,15 +46,13 @@ import {
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
-  ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
+  ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
   ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
 
-import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
+import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
 import { getMapEntityText } from '@/helpers/entities/map/list';
-import { indexesByKey } from '@/helpers/array';
 
-import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
 import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
@@ -54,7 +62,7 @@ const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
 
 export default {
   components: { PatternEditorField },
-  mixins: [patternCountEntitiesModalMixin, entitiesEntityInfoPropertyMixin],
+  mixins: [entitiesEntityInfoPropertyMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -96,7 +104,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    counter: {
+    alarmCounter: {
+      type: Object,
+      required: false,
+    },
+    entityCounter: {
       type: Object,
       required: false,
     },
@@ -117,6 +129,8 @@ export default {
         PATTERN_OPERATORS.isNotOneOf,
         PATTERN_OPERATORS.contains,
         PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.beginWith,
+        PATTERN_OPERATORS.notBeginWith,
         PATTERN_OPERATORS.regexp,
       ];
     },
@@ -160,6 +174,8 @@ export default {
           PATTERN_OPERATORS.notEqual,
           PATTERN_OPERATORS.contains,
           PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.beginWith,
+          PATTERN_OPERATORS.notBeginWith,
           PATTERN_OPERATORS.regexp,
         ],
         defaultValue: [],
@@ -182,6 +198,8 @@ export default {
           PATTERN_OPERATORS.notEqual,
           PATTERN_OPERATORS.contains,
           PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.beginWith,
+          PATTERN_OPERATORS.notBeginWith,
           PATTERN_OPERATORS.regexp,
         ],
         defaultValue: [],
@@ -198,7 +216,7 @@ export default {
     infosWithDefinedTypes() {
       return this.infos.map(({ type, ...info }) => ({
         ...info,
-        definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type],
+        definedType: ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type],
       }));
     },
 
@@ -253,7 +271,8 @@ export default {
               loading: this.categoriesPending,
               itemValue: '_id',
               itemText: 'name',
-              ellipsis: true,
+              ellipsis: !isMultiple,
+              chips: isMultiple,
               multiple: isMultiple,
               deletableChips: isMultiple,
               smallChips: isMultiple,
@@ -286,7 +305,7 @@ export default {
         value: item.alias,
         alias: true,
         originalValue: item.name,
-        definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
+        definedType: ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
         options: {
           inputTypes: ENTITY_PATTERN_FIELD_TYPES,
         },
@@ -350,27 +369,7 @@ export default {
     },
 
     availableEntityAttributes() {
-      const mergedAttributes = [...this.entityAttributes];
-      const mergedAttributesIndexesByValue = indexesByKey(this.entityAttributes, 'value');
-
-      this.attributes.forEach((attribute) => {
-        const index = mergedAttributesIndexesByValue[attribute.value];
-
-        if (isUndefined(index)) {
-          mergedAttributes.push(attribute);
-
-          return;
-        }
-
-        mergedAttributes[index] = mergeWith(
-          {},
-          mergedAttributes[index],
-          attribute,
-          (a, b) => (isArray(b) ? b : undefined),
-        );
-      });
-
-      return mergedAttributes;
+      return mergePatternAttributes(this.entityAttributes, this.attributes);
     },
   },
   mounted() {
@@ -382,10 +381,12 @@ export default {
     ...mapEntityCategoryActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
     ...mapServiceActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
 
+    showPatternAlarmsModal() {
+      this.$emit('show:alarms');
+    },
+
     showPatternEntitiesModal() {
-      this.showEntitiesModalByPatterns({
-        entity_pattern: formGroupsToPatternRulesQuery(this.patterns.groups),
-      });
+      this.$emit('show:entities');
     },
 
     async fetchCategories() {

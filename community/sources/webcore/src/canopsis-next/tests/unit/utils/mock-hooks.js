@@ -114,12 +114,14 @@ export const mockSidebar = () => {
   const sidebar = {
     show: jest.fn(),
     hide: jest.fn(),
+    updateConfig: jest.fn(),
     moduleName: 'sidebar',
   };
 
   afterEach(() => {
     sidebar.show.mockReset();
     sidebar.hide.mockReset();
+    sidebar.updateConfig.mockReset();
   });
 
   return sidebar;

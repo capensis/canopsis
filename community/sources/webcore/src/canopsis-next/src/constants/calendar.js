@@ -5,3 +5,5 @@ export const CALENDAR_TYPES = {
 };
 
 export const CALENDAR_START_DRAG_DELAY = 200;
+
+export const CALENDAR_POPOVER_WIDTH = 980;

@@ -39,7 +39,7 @@ describe('field-template', () => {
 
     selectButton(wrapper).triggerCustomEvent('click');
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.textEditor,
       config: {
         title,

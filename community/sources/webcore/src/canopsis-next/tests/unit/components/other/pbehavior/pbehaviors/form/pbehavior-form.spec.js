@@ -5,6 +5,7 @@ import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 
 const stubs = {
+  'c-enabled-field': true,
   'pbehavior-general-form': true,
   'pbehavior-patterns-form': true,
 };

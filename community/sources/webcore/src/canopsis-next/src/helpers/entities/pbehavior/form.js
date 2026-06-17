@@ -448,7 +448,6 @@ export const createDowntimePbehavior = ({
   reason,
   type,
   origin,
-  color: COLORS.secondary,
   name: `${prefix}-${entity.name}-${uid()}`,
   tstart: getNowTimestamp(),
   comment,

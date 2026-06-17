@@ -1,6 +1,7 @@
 <template>
   <v-flex
     v-resize="resizeHandler"
+    ref="tableWrapper"
     v-on="wrapperListeners"
   >
     <c-empty-data-table-columns v-if="!columns.length" />
@@ -27,15 +28,26 @@
             />
             <v-fade-transition v-if="selectable">
               <v-flex
-                v-show="unresolvedSelected.length"
+                v-if="unresolvedSelected.length"
                 class="px-1"
               >
-                <mass-actions-panel
-                  :items="unresolvedSelected"
-                  :widget="widget"
-                  :refresh-alarms-list="refreshAlarmsList"
-                  @clear:items="clearSelected"
-                />
+                <c-mass-actions-panel
+                  v-model="keepSelectedAfterAction"
+                  v-bind="widgetCurrentGridParameters"
+                  :selected="unresolvedSelected"
+                  :default-value="defaultKeepSelectedAfterAction"
+                  @clear:selected="clearSelected(true)"
+                >
+                  <template #actions>
+                    <mass-actions-panel
+                      :items="unresolvedSelected"
+                      :widget="widget"
+                      :refresh-alarms-list="refreshAlarmsList"
+                      small
+                      @clear:items="clearSelected"
+                    />
+                  </template>
+                </c-mass-actions-panel>
               </v-flex>
             </v-fade-transition>
           </v-layout>
@@ -196,6 +208,7 @@ import {
   RESIZING_CELLS_CONTENTS_BEHAVIORS,
   DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
   MODALS,
+  MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP,
 } from '@/constants';
 
 import { featuresService } from '@/services/features';
@@ -351,9 +364,19 @@ export default {
     return {
       bootedRows: {},
       expanded: [],
+      visibleMassActionsPanel: false,
+      keepSelectedAfterAction: this.widget.parameters.keepSelectedAfterAction ?? false,
     };
   },
   computed: {
+    widgetCurrentGridParameters() {
+      return this.widget.grid_parameters[MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq]];
+    },
+
+    defaultKeepSelectedAfterAction() {
+      return this.widget.parameters.keepSelectedAfterAction ?? false;
+    },
+
     shownTopPagination() {
       return this.totalItems && (this.densable || this.selectable || !this.hidePagination);
     },
@@ -576,6 +599,15 @@ export default {
       },
     },
 
+    resizableColumn: {
+      immediate: true,
+      handler(newResizableColumn) {
+        if (newResizableColumn && this.isEmptyColumnsWidthByField) {
+          this.$nextTick(() => this.calculateColumnsWidths());
+        }
+      },
+    },
+
     dense() {
       if (!this.resizableColumn) {
         this.$nextTick(() => this.calculateColumnsWidths());
@@ -619,6 +651,12 @@ export default {
   },
 
   methods: {
+    clearSelected(force = false) {
+      if (force || !this.keepSelectedAfterAction) {
+        this.selected = [];
+      }
+    },
+
     setBootedRows(items, itemsPerRender = 10) {
       if (!this.$tbodyEl || !items.length) {
         return;
@@ -733,6 +771,10 @@ export default {
 
     updatePaginationOptions(query) {
       this.$emit('update:pagination-options', query);
+    },
+
+    updateKeepSelectedAfterAction(value) {
+      this.keepSelectedAfterAction = value;
     },
 
     openRootCauseDiagram(entity) {
@@ -914,6 +956,7 @@ export default {
     }
 
     .alarm-list-row__cell {
+      .alarm-column-cell__text,
       .alarm-column-cell__text > span,
       .alarm-column-value {
         overflow: hidden;

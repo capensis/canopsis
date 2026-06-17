@@ -445,7 +445,7 @@ func (p *noEventsProcessor) newAlarm(
 			Parents:                     []string{},
 			Children:                    []string{},
 			UnlinkedParents:             []string{},
-			Infos:                       map[string]map[string]interface{}{},
+			Infos:                       map[string]map[string]any{},
 		},
 	}
 

@@ -38,8 +38,9 @@
           v-for="item in items"
           :key="item[itemValue]"
           :disabled="item.disabled"
-          :input-value="item[itemValue] === value"
-          @click="selectItem(item[itemValue])"
+          :input-value="item[itemValue] === (value?.[itemValue] ?? value)"
+          :active-class="activeListItemClass"
+          @click="selectItem(returnObject ? item : item[itemValue])"
         >
           <v-list-item-content>
             <div>{{ item[itemText] }}</div>
@@ -71,7 +72,7 @@ export default {
   inheritAttrs: false,
   props: {
     value: {
-      type: [String, Number],
+      type: [String, Number, Object],
       required: false,
     },
     emptyLabel: {
@@ -111,6 +112,14 @@ export default {
       default: false,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    activeListItemClass: {
+      type: String,
+      default: '',
+    },
+    returnObject: {
       type: Boolean,
       default: false,
     },

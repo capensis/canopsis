@@ -22,22 +22,12 @@
         />
       </v-flex>
     </v-layout>
-    <v-layout align-center>
-      <v-flex xs5>
-        <c-enabled-field
-          v-field="form.enabled"
-          class="ml-2"
-        />
-      </v-flex>
-      <v-flex xs7>
-        <c-entity-type-field
-          v-field="form.type"
-          :label="$t('stateSetting.appliedForEntityType')"
-          :types="availableEntityTypes"
-          required
-        />
-      </v-flex>
-    </v-layout>
+    <c-entity-type-field
+      v-field="form.type"
+      :label="$t('stateSetting.appliedForEntityType')"
+      :types="availableEntityTypes"
+      required
+    />
     <state-setting-method-field v-field="form.method" />
   </v-layout>
 </template>

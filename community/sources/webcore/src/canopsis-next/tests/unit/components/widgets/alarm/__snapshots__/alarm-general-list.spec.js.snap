@@ -1,38 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
-<div>
-  <div
-    class="v-subheader theme--light"
-  >
-    General
-  </div>
+<c-collapse-panel-stub
+  class="c-alternative-bg-panel"
+  expanded=""
+>
   <div
     class="v-data-table v-data-table--has-bottom theme--light"
   >
     <div
       class="v-data-table__wrapper"
     >
-      <transition-group-stub
-        class="v-data-table__expanded__col"
-        colspan="4"
-        tag="td"
-      />
-      <transition-group-stub
-        class="v-data-table__expanded__col"
-        colspan="4"
-        tag="td"
-      />
-      <transition-group-stub
-        class="v-data-table__expanded__col"
-        colspan="4"
-        tag="td"
-      />
-      <transition-group-stub
-        class="v-data-table__expanded__col"
-        colspan="4"
-        tag="td"
-      />
       <table>
         <colgroup>
           <col
@@ -55,6 +33,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
             <th
               aria-label="Author"
               class="text-start"
+              data-value="v.state.a"
               role="columnheader"
               scope="col"
             >
@@ -71,6 +50,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
             <th
               aria-label="Connector"
               class="text-start"
+              data-value="v.connector"
               role="columnheader"
               scope="col"
             >
@@ -87,6 +67,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
             <th
               aria-label="Component"
               class="text-start"
+              data-value="v.component"
               role="columnheader"
               scope="col"
             >
@@ -103,6 +84,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
             <th
               aria-label="Resource"
               class="text-start"
+              data-value="v.resource"
               role="columnheader"
               scope="col"
             >
@@ -119,106 +101,102 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr
+            class=""
+          >
             <td
-              class="text-left"
+              class="text-start"
             >
-          author-0
+              author-0
             </td>
             <td
-              class="text-left"
+              class="text-start"
             >
-          connector-0
+              connector-0
             </td>
             <td
-              class="text-left"
+              class="text-start"
             >
-          component-0
+              component-0
             </td>
             <td
-              class="text-left"
+              class="text-start"
             >
-          resource-0
+              resource-0
             </td>
           </tr>
           <tr
-            class="v-data-table__expanded v-data-table__expanded__row"
-          />
-          <tr>
+            class=""
+          >
             <td
-              class="text-left"
+              class="text-start"
             >
-          author-1
+              author-1
             </td>
             <td
-              class="text-left"
+              class="text-start"
             >
-          connector-1
+              connector-1
             </td>
             <td
-              class="text-left"
+              class="text-start"
             >
-          component-1
+              component-1
             </td>
             <td
-              class="text-left"
+              class="text-start"
             >
-          resource-1
-            </td>
-          </tr>
-          <tr
-            class="v-data-table__expanded v-data-table__expanded__row"
-          />
-          <tr>
-            <td
-              class="text-left"
-            >
-          author-2
-            </td>
-            <td
-              class="text-left"
-            >
-          connector-2
-            </td>
-            <td
-              class="text-left"
-            >
-          component-2
-            </td>
-            <td
-              class="text-left"
-            >
-          resource-2
+              resource-1
             </td>
           </tr>
           <tr
-            class="v-data-table__expanded v-data-table__expanded__row"
-          />
-          <tr>
+            class=""
+          >
             <td
-              class="text-left"
+              class="text-start"
             >
-          author-3
+              author-2
             </td>
             <td
-              class="text-left"
+              class="text-start"
             >
-          connector-3
+              connector-2
             </td>
             <td
-              class="text-left"
+              class="text-start"
             >
-          component-3
+              component-2
             </td>
             <td
-              class="text-left"
+              class="text-start"
             >
-          resource-3
+              resource-2
             </td>
           </tr>
           <tr
-            class="v-data-table__expanded v-data-table__expanded__row"
-          />
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              author-3
+            </td>
+            <td
+              class="text-start"
+            >
+              connector-3
+            </td>
+            <td
+              class="text-start"
+            >
+              component-3
+            </td>
+            <td
+              class="text-start"
+            >
+              resource-3
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -337,16 +315,14 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
       </div>
     </div>
   </div>
-</div>
+</c-collapse-panel-stub>
 `;
 
 exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] = `
-<div>
-  <div
-    class="v-subheader theme--light"
-  >
-    General
-  </div>
+<c-collapse-panel-stub
+  class="c-alternative-bg-panel"
+  expanded=""
+>
   <div
     class="v-data-table v-data-table--has-bottom theme--light"
   >
@@ -375,6 +351,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
             <th
               aria-label="Author"
               class="text-start"
+              data-value="v.state.a"
               role="columnheader"
               scope="col"
             >
@@ -391,6 +368,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
             <th
               aria-label="Connector"
               class="text-start"
+              data-value="v.connector"
               role="columnheader"
               scope="col"
             >
@@ -407,6 +385,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
             <th
               aria-label="Component"
               class="text-start"
+              data-value="v.component"
               role="columnheader"
               scope="col"
             >
@@ -423,6 +402,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
             <th
               aria-label="Resource"
               class="text-start"
+              data-value="v.resource"
               role="columnheader"
               scope="col"
             >
@@ -566,5 +546,5 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
       </div>
     </div>
   </div>
-</div>
+</c-collapse-panel-stub>
 `;

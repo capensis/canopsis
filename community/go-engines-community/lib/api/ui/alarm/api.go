@@ -1,7 +1,6 @@
 package alarm
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
@@ -39,6 +38,7 @@ type api struct {
 	defaultExportFields export.Fields
 	exportSeparators    map[string]rune
 	encoder             encoding.Encoder
+	decoder             encoding.Decoder
 	errorResponder      response.ErrorResponder
 	logger              zerolog.Logger
 }
@@ -47,6 +47,7 @@ func NewApi(
 	store Store,
 	taskCreator export.TaskCreator,
 	encoder encoding.Encoder,
+	decoder encoding.Decoder,
 	errorResponder response.ErrorResponder,
 	logger zerolog.Logger,
 ) API {
@@ -67,6 +68,7 @@ func NewApi(
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
 		encoder:        encoder,
+		decoder:        decoder,
 		errorResponder: errorResponder,
 		logger:         logger,
 	}
@@ -204,7 +206,7 @@ func (a *api) GetDetails(c *gin.Context) {
 		}
 
 		var request DetailsRequest
-		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		err = a.decoder.Decode(object.MarshalTo(nil), &request)
 		if err != nil {
 			response[idx] = a.getDetailErrRes(c, err)
 			continue
@@ -222,7 +224,6 @@ func (a *api) GetDetails(c *gin.Context) {
 		if err != nil {
 			response[idx] = a.getDetailErrRes(c, err)
 			response[idx].ID = request.ID
-			a.logger.Err(err).Str("ID", request.ID).Msg("cannot fetch alarm details")
 			continue
 		}
 

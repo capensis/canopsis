@@ -26,7 +26,7 @@ const (
 )
 
 type Parser interface {
-	Parse(content []byte) (map[string][]interface{}, error)
+	Parse(content []byte) (map[string][]any, error)
 }
 
 func NewParser(faker *Faker) Parser {
@@ -49,7 +49,7 @@ type parser struct {
 	keyRangeRe, referenceRe, referenceFullObjRe, methodRe, methodTplRe, tplRe *regexp.Regexp
 }
 
-func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
+func (p *parser) Parse(content []byte) (map[string][]any, error) {
 	var dataByCollection yaml.MapSlice
 	decoder := yaml.NewDecoder(bytes.NewBuffer(content), yaml.UseOrderedMap())
 	err := decoder.Decode(&dataByCollection)
@@ -57,9 +57,9 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 		return nil, fmt.Errorf("cannot decode content: %w", err)
 	}
 
-	docsByCollection := make(map[string][]interface{}, len(dataByCollection))
-	referenceIDs := make(map[string]interface{})
-	references := make(map[string]interface{})
+	docsByCollection := make(map[string][]any, len(dataByCollection))
+	referenceIDs := make(map[string]any)
+	references := make(map[string]any)
 
 	for _, collV := range dataByCollection {
 		collectionName, ok := collV.Key.(string)
@@ -76,7 +76,7 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 			return nil, fmt.Errorf("cannot decode content: %q must be object", collectionName)
 		}
 
-		docs := make([]interface{}, 0, len(data))
+		docs := make([]any, 0, len(data))
 		index := 0
 
 		for _, v := range data {
@@ -111,7 +111,7 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 					return nil, fmt.Errorf("from %q must be less than to %q in range %s", fromStr, toStr, key)
 				}
 
-				ids := make([]interface{}, 0, to-from+1)
+				ids := make([]any, 0, to-from+1)
 				for i := from; i <= to; i++ {
 					doc, err := p.processItem(index, &i, val, referenceIDs, references)
 					index++
@@ -152,9 +152,9 @@ func (p *parser) processItem(
 	index int,
 	rangeIndex *int,
 	data yaml.MapSlice,
-	referenceIDs, references map[string]interface{},
-) (map[string]interface{}, error) {
-	doc := make(map[string]interface{}, len(data))
+	referenceIDs, references map[string]any,
+) (map[string]any, error) {
+	doc := make(map[string]any, len(data))
 	var err error
 
 	for _, v := range data {
@@ -187,18 +187,18 @@ func (p *parser) processItem(
 }
 
 func (p *parser) processValue(
-	fieldVal interface{},
+	fieldVal any,
 	index int,
 	rangeIndex *int,
-	doc map[string]interface{},
-	referenceIDs, references map[string]interface{},
-) (interface{}, error) {
+	doc map[string]any,
+	referenceIDs, references map[string]any,
+) (any, error) {
 	switch val := fieldVal.(type) {
 	case yaml.MapSlice:
 		return p.processItem(index, rangeIndex, val, referenceIDs, references)
-	case []interface{}:
+	case []any:
 		var err error
-		newVal := make([]interface{}, len(val))
+		newVal := make([]any, len(val))
 		for i := range val {
 			newVal[i], err = p.processValue(val[i], index, rangeIndex, doc, referenceIDs, references)
 			if err != nil {
@@ -235,7 +235,7 @@ func (p *parser) processValue(
 	}
 }
 
-func (p *parser) processMethod(val string, fieldVal interface{}, index int, rangeIndex *int, doc map[string]interface{}) (interface{}, error) {
+func (p *parser) processMethod(val string, fieldVal any, index int, rangeIndex *int, doc map[string]any) (any, error) {
 	matches := p.methodRe.FindStringSubmatch(val)
 	if len(matches) == 0 {
 		matches := p.tplRe.FindStringSubmatch(val)
@@ -293,7 +293,7 @@ func (p *parser) processMethod(val string, fieldVal interface{}, index int, rang
 	}
 }
 
-func callReflectMethod(rv reflect.Value, method, args string) (interface{}, error) {
+func callReflectMethod(rv reflect.Value, method, args string) (any, error) {
 	methodReflect := rv.MethodByName(method)
 	if !methodReflect.IsValid() {
 		return nil, fmt.Errorf("unexpected method %q", method)

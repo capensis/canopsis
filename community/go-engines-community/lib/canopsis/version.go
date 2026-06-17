@@ -26,11 +26,14 @@ type BuildInfo struct {
 	Os          string
 }
 
+func (bi BuildInfo) String() string {
+	return fmt.Sprintf("%s version %s %s build %s %s %s %s", bi.Name, bi.Edition, bi.Version, bi.VcsRevision,
+		bi.Date.Format(time.RFC3339), bi.GoVersion, bi.Os)
+}
+
 func PrintVersionInfo() {
 	bi := GetBuildInfo()
-
-	fmt.Printf("%s version %s %s build %s %s %s %s\n", bi.Name, bi.Edition, bi.Version, bi.VcsRevision,
-		bi.Date.Format(time.RFC3339), bi.GoVersion, bi.Os)
+	fmt.Println(bi.String())
 }
 
 func GetBuildInfo() BuildInfo {

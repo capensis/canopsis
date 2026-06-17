@@ -41,7 +41,7 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 		event *types.Event,
 		_ map[string]eventfilter.UpdatedValue,
 		_ eventfilter.RegexMatch,
-		_ map[string]interface{},
+		_ map[string]any,
 	) (bool, error) {
 		event.Resource = "updated"
 		return false, nil
@@ -93,7 +93,7 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 		_ *types.Event,
 		_ map[string]eventfilter.UpdatedValue,
 		_ eventfilter.RegexMatch,
-		_ map[string]interface{},
+		_ map[string]any,
 	) (map[string]eventfilter.UpdatedValue, error) {
 		return nil, errors.New("error")
 	})

@@ -201,7 +201,7 @@ export const widgetStickyAlarmMixin = {
     },
 
     setHorizontalScrollbarWidth() {
-      this.$refs.horizontalScrollbar.setContentWidth(this.tableWrapper?.scrollWidth ?? 0);
+      this.$refs.horizontalScrollbar?.setContentWidth?.(this.tableWrapper?.scrollWidth ?? 0);
     },
 
     calculateStickyPositions() {

@@ -8,6 +8,8 @@ import (
 	"github.com/rs/zerolog"
 )
 
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/api/validation/validation.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation ErrorTranslator
+
 type ErrorTranslator interface {
 	Translate(locale string, err *Error) (ErrorsTranslations, error)
 }

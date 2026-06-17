@@ -26,7 +26,7 @@ import { useModals } from '@/hooks/modals';
 import { useAlarmFiltering } from '@/components/other/pbehavior/pbehaviors/hooks/alarm-filtering';
 
 export default {
-  setup(_, { emit }) {
+  setup(props, { emit }) {
     const { t } = useI18n();
     const modals = useModals();
 

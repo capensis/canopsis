@@ -1,64 +1,57 @@
 <template>
-  <div>
+  <v-layout class="pa-4 gap-4" column>
     <v-layout>
-      <v-flex
-        class="export-views-block ma-6"
-        xs6
-      >
-        <v-checkbox
-          v-model="isAllSelected"
-          :label="$t('view.selectAll')"
+      <v-checkbox
+        :input-value="isAllSelected"
+        :label="$t('view.selectAll')"
+        color="primary"
+        hide-details
+        @change="allSelectedChange"
+      />
+      <v-layout class="gap-2" justify-end align-center>
+        <v-btn
+          :disabled="selectedEmpty"
           color="primary"
-        />
-        <views-export-expansion-panel
-          v-model="selected"
-          :groups="availableGroups"
-        />
-      </v-flex>
-      <v-flex xs2>
-        <v-layout
-          column
-          justify-center
-          fill-height
+          depressed
+          @click="exportViews"
         >
-          <v-btn
-            :disabled="selectedEmpty"
-            color="primary"
-            @click="exportViews"
-          >
-            <v-icon left>
-              file_upload
-            </v-icon>
-            <span>{{ $t('common.export') }}</span>
-          </v-btn>
-          <file-selector
-            ref="fileSelector"
-            class="my-2 view-import-selector"
-            multiple
-            hide-details
-            @change="importViews"
-          >
-            <template #activator="{ on, ...attrs }">
-              <v-btn
-                class="import-btn ma-0"
-                v-bind="attrs"
-                color="primary"
-                v-on="on"
-              >
-                <v-icon left>
-                  file_download
-                </v-icon>
-                <span>{{ $t('common.import') }}</span>
-              </v-btn>
-            </template>
-          </file-selector>
-        </v-layout>
-      </v-flex>
+          <v-icon left>
+            file_upload
+          </v-icon>
+          <span>{{ $t('common.export') }}</span>
+        </v-btn>
+        <file-selector
+          ref="fileSelector"
+          multiple
+          hide-details
+          @change="importViews"
+        >
+          <template #activator="{ on, ...attrs }">
+            <v-btn
+              v-bind="attrs"
+              color="primary"
+              outlined
+              v-on="on"
+            >
+              <v-icon left>
+                file_download
+              </v-icon>
+              <span>{{ $t('common.import') }}</span>
+            </v-btn>
+          </template>
+        </file-selector>
+      </v-layout>
     </v-layout>
-  </div>
+    <views-export-expansion-panel
+      v-model="selected"
+      :groups="availableGroups"
+    />
+  </v-layout>
 </template>
 
 <script>
+import { ref, computed } from 'vue';
+
 import { EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX } from '@/config';
 import { MODALS } from '@/constants';
 
@@ -66,8 +59,10 @@ import { saveJsonFile } from '@/helpers/file/files';
 import { getFileTextContent } from '@/helpers/file/file-select';
 import { getAllViewsFromGroups, exportedGroupsAndViewsToRequest } from '@/helpers/entities/view/form';
 
-import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-import { entitiesViewMixin } from '@/mixins/entities/view';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
+import { useView } from '@/hooks/store/modules/view';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import ViewsExportExpansionPanel from '@/components/other/view/partials/views-export-expansion-panel.vue';
@@ -77,119 +72,120 @@ export default {
     FileSelector,
     ViewsExportExpansionPanel,
   },
-  mixins: [
-    entitiesViewMixin,
-    entitiesViewGroupMixin,
-  ],
-  data() {
-    return {
-      selected: {
+  setup() {
+    const { t } = useI18n();
+    const modals = useModals();
+    const popups = usePopups();
+
+    const {
+      groups,
+      getGroupById,
+      getViewById,
+      exportViewsWithoutStore,
+    } = useView();
+
+    const selected = ref({
+      groups: [],
+      views: [],
+    });
+
+    const fileSelector = ref(null);
+
+    const selectedEmpty = computed(() => !selected.value.groups.length && !selected.value.views.length);
+
+    const availableGroups = computed(() => groups.value.filter(group => !group.is_private));
+    const groupIds = computed(() => availableGroups.value.map(({ _id }) => _id));
+    const viewIds = computed(() => getAllViewsFromGroups(availableGroups.value).map(({ _id }) => _id));
+    const isAllSelected = computed(() => groupIds.value.every(id => selected.value.groups.includes(id))
+      && viewIds.value.every(id => selected.value.views.includes(id)));
+
+    /**
+     * Resets the selected groups and views to empty arrays.
+     */
+    const resetSelected = () => {
+      selected.value = {
         groups: [],
         views: [],
-      },
+      };
     };
-  },
-  computed: {
-    selectedEmpty() {
-      return !this.selected.groups.length && !this.selected.views.length;
-    },
 
-    availableGroups() {
-      return this.groups.filter(group => !group.is_private);
-    },
+    /**
+     * Handles the change event when the "select all" checkbox is toggled.
+     * If checked, selects all available groups and views. Otherwise, resets the selection.
+     *
+     * @param {boolean} checked - Whether the checkbox is checked or not.
+     */
+    const allSelectedChange = (checked) => {
+      if (checked) {
+        selected.value = {
+          groups: [...groupIds.value],
+          views: [...viewIds.value],
+        };
 
-    groupIds() {
-      return this.availableGroups.map(({ _id }) => _id);
-    },
+        return;
+      }
 
-    viewIds() {
-      return getAllViewsFromGroups(this.availableGroups).map(({ _id }) => _id);
-    },
+      resetSelected();
+    };
 
-    isAllSelected: {
-      get() {
-        return this.groupIds.every(id => this.selected.groups.includes(id))
-          && this.viewIds.every(id => this.selected.views.includes(id));
-      },
-      set(checked) {
-        if (checked) {
-          this.selected = {
-            groups: [...this.groupIds],
-            views: [...this.viewIds],
-          };
-        } else {
-          this.resetSelected();
-        }
-      },
-    },
-  },
-  methods: {
-    async importViews([file]) {
+    /**
+     * Imports views and groups from a JSON file.
+     * Parses the file content and opens a modal to handle the import process.
+     * Shows an error popup if the file parsing fails.
+     *
+     * @param {File[]} files - Array containing the file to import.
+     */
+    const importViews = async ([file]) => {
       try {
         const content = await getFileTextContent(file);
-        const { groups = [], views = [] } = JSON.parse(content);
+        const { groups: importedGroups = [], views: importedViews = [] } = JSON.parse(content);
 
-        this.$modals.show({
+        modals.show({
           name: MODALS.importExportViews,
           config: {
-            importedGroups: groups,
-            importedViews: views,
+            importedGroups,
+            importedViews,
           },
         });
       } catch (err) {
         console.error(err);
 
-        this.$popups.error({ text: this.$t('errors.default') });
+        popups.error({ text: t('errors.default') });
       }
 
-      this.$refs.fileSelector.clear();
-    },
+      if (fileSelector.value) {
+        fileSelector.value.clear();
+      }
+    };
 
-    async exportViews() {
+    /**
+     * Exports the selected views and groups to a JSON file.
+     * Converts the selected items to the export format, fetches the data from the server,
+     * and saves it as a JSON file with a timestamp in the filename.
+     */
+    const exportViews = async () => {
       const data = exportedGroupsAndViewsToRequest({
-        groups: this.selected.groups.map(this.getGroupById),
-        views: this.selected.views.map(this.getViewById),
+        groups: selected.value.groups.map(getGroupById.value),
+        views: selected.value.views.map(getViewById.value),
       });
 
-      const result = await this.exportViewsWithoutStore({ data });
+      const result = await exportViewsWithoutStore({ data });
 
       saveJsonFile(result, `${EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX}${new Date().toLocaleString()}`);
 
-      this.resetSelected();
-    },
+      resetSelected();
+    };
 
-    resetSelected() {
-      this.selected = {
-        groups: [],
-        views: [],
-      };
-    },
+    return {
+      selected,
+      fileSelector,
+      selectedEmpty,
+      availableGroups,
+      isAllSelected,
+      allSelectedChange,
+      importViews,
+      exportViews,
+    };
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .view-import-selector {
-    display: inline-flex;
-
-    & ::v-deep .file-selector-button-wrapper {
-      width: 100%;
-    }
-
-    .import-btn {
-      cursor: pointer;
-      width: 100%;
-    }
-  }
-
-  .group-title {
-    overflow: auto;
-  }
-  .export-views-block {
-    & ::v-deep .panel-header {
-      display: flex;
-      flex: inherit;
-      align-items: center;
-    }
-  }
-</style>

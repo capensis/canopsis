@@ -155,9 +155,11 @@ export default {
           title: this.createAlarmTitle,
           type: PATTERN_TYPES.alarm,
           action: async (pattern) => {
-            await this.createPattern({ data: pattern });
+            const result = await this.createPattern({ data: pattern });
 
-            return this.refresh();
+            this.refresh();
+
+            return result;
           },
         },
       });
@@ -171,9 +173,11 @@ export default {
           title: this.createEntityTitle,
           type: PATTERN_TYPES.entity,
           action: async (pattern) => {
-            await this.createPattern({ data: pattern });
+            const result = await this.createPattern({ data: pattern });
 
-            return this.refresh();
+            this.refresh();
+
+            return result;
           },
         },
       });
@@ -187,9 +191,11 @@ export default {
           title: this.createPbehaviorTitle,
           type: PATTERN_TYPES.pbehavior,
           action: async (pattern) => {
-            await this.createPattern({ data: pattern });
+            const result = await this.createPattern({ data: pattern });
 
-            return this.refresh();
+            this.refresh();
+
+            return result;
           },
         },
       });
@@ -203,9 +209,11 @@ export default {
           title: this.createServiceWeatherTitle,
           type: PATTERN_TYPES.serviceWeather,
           action: async (pattern) => {
-            await this.createPattern({ data: pattern });
+            const result = await this.createPattern({ data: pattern });
 
-            return this.refresh();
+            this.refresh();
+
+            return result;
           },
         },
       });
@@ -237,9 +245,11 @@ export default {
           type: editablePattern.type,
           title: this.getEditPatternModalTitle(editablePattern),
           action: async (pattern) => {
-            await this.updatePattern({ id: editablePattern._id, data: pattern });
+            const result = await this.updatePattern({ id: editablePattern._id, data: pattern });
 
-            return this.refresh();
+            this.refresh();
+
+            return result;
           },
         },
       });

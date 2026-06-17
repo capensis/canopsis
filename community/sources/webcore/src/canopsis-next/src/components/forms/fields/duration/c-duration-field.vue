@@ -33,7 +33,7 @@
 <script>
 import { isNumber } from 'lodash';
 
-import { AVAILABLE_TIME_UNITS, SHORT_AVAILABLE_TIME_UNITS } from '@/constants';
+import { AVAILABLE_TIME_UNITS, SHORT_AVAILABLE_TIME_UNITS, MEDIUM_AVAILABLE_TIME_UNITS } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -92,6 +92,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    medium: {
+      type: Boolean,
+      default: false,
+    },
     hideDetails: {
       type: Boolean,
       default: false,
@@ -119,9 +123,11 @@ export default {
         return this.units;
       }
 
-      const units = this.long
-        ? AVAILABLE_TIME_UNITS
-        : SHORT_AVAILABLE_TIME_UNITS;
+      const units = {
+        true: SHORT_AVAILABLE_TIME_UNITS,
+        [this.long]: AVAILABLE_TIME_UNITS,
+        [this.medium]: MEDIUM_AVAILABLE_TIME_UNITS,
+      }.true;
 
       return Object.values(units).map(({ value, text }) => ({
         value,
