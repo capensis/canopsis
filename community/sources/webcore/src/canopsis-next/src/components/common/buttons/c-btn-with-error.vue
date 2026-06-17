@@ -3,7 +3,7 @@
     <v-btn
       :color="error ? 'error' : 'primary'"
       v-bind="$attrs"
-      @click="$emit('click', $event)"
+      @click.prevent="$emit('click', $event)"
     >
       <slot>
         {{ $t('common.add') }}

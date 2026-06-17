@@ -210,7 +210,7 @@ func (a *api) Read(c *gin.Context) {
 		return
 	}
 
-	a.websocketHub.SendToUser(userID, websocket.RoomBroadcastMessages, msgs)
+	a.websocketHub.SendMessage(c, msgs, websocket.ToUser(websocket.RoomBroadcastMessages, userID))
 
 	c.Status(http.StatusNoContent)
 }

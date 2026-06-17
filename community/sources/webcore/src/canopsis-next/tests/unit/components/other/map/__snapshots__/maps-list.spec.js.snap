@@ -10,7 +10,9 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
     <div
       class="flex xs12"
@@ -1113,7 +1115,9 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
     <div
       class="flex xs12"

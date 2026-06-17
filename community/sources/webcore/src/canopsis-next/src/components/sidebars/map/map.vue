@@ -23,9 +23,7 @@
         :widget-id="widget._id"
         addable
         editable
-        with-alarm
         with-entity
-        with-pbehavior
       />
       <field-text-editor
         v-model="form.parameters.entity_info_template"

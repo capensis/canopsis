@@ -7,6 +7,7 @@ import {
 
 import { widgetColumnsToForm, formToWidgetColumns } from '../column/form';
 import { widgetQuickActionsToForm, formToWidgetQuickActions } from '../quick-action/form';
+import { widgetSortColumnsToForm, formToWidgetSortColumns } from '../sort-column/form';
 /**
  * @typedef {
  *  'alarm_columns'
@@ -15,6 +16,7 @@ import { widgetQuickActionsToForm, formToWidgetQuickActions } from '../quick-act
  *  | 'alarm_export_to_pdf'
  *  | 'alarm_quick_actions'
  *  | 'alarm_mass_quick_actions'
+ *  | 'alarm_sort_columns'
  *  | 'weather_item'
  *  | 'weather_modal'
  *  | 'weather_entity'
@@ -27,12 +29,14 @@ import { widgetQuickActionsToForm, formToWidgetQuickActions } from '../quick-act
  * @property {WidgetTemplateType} type
  * @property {WidgetColumn[]} [columns]
  * @property {WidgetQuickAction[]} [actions]
+ * @property {Object[]} [sort_columns]
  * @property {string} [content]
  */
 
 /**
  * @typedef {WidgetTemplate} WidgetTemplateForm
  * @property {WidgetColumnForm[]} columns
+ * @property {Object[]} sort_columns
  */
 
 /**
@@ -46,6 +50,7 @@ export const widgetTemplateToForm = (widgetTemplate = {}) => ({
   type: widgetTemplate.type ?? WIDGET_TEMPLATES_TYPES.alarmMoreInfos,
   columns: widgetColumnsToForm(widgetTemplate.columns),
   actions: widgetQuickActionsToForm(widgetTemplate.actions),
+  sort_columns: widgetSortColumnsToForm(widgetTemplate.sort_columns),
   content: widgetTemplate.content ?? '',
 });
 
@@ -57,13 +62,15 @@ export const widgetTemplateToForm = (widgetTemplate = {}) => ({
  * @param {string} content
  * @returns {WidgetTemplate}
  */
-export const formToWidgetTemplate = ({ columns, content, actions, ...form }) => {
+export const formToWidgetTemplate = ({ columns, content, actions, sort_columns: sortColumns, ...form }) => {
   const widgetTemplate = form;
 
   if (COLUMNS_WIDGET_TEMPLATES_TYPES.includes(form.type)) {
     widgetTemplate.columns = formToWidgetColumns(columns);
   } else if (QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES.includes(form.type)) {
     widgetTemplate.actions = formToWidgetQuickActions(actions);
+  } else if (form.type === WIDGET_TEMPLATES_TYPES.alarmSortColumns) {
+    widgetTemplate.sort_columns = formToWidgetSortColumns(sortColumns ?? []);
   } else {
     widgetTemplate.content = content;
   }

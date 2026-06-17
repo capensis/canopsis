@@ -1,11 +1,18 @@
 import Faker from 'faker';
+import { merge } from 'lodash';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { mockConsole, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import {
+  createAuthModule,
+  createLlmModule,
+  createMockedStoreModules,
+  createTemplateVarsModule,
+  createUserModule,
+} from '@unit/utils/store';
+import { mockConsole, mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
-import { createMockedStoreModules, createTemplateVarsModule } from '@unit/utils/store';
 
 import ClickOutside from '@/services/click-outside';
 
@@ -15,6 +22,7 @@ import CreateService from '@/components/modals/service/create-service.vue';
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pattern-progress': true,
   'service-form': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
@@ -22,6 +30,7 @@ const stubs = {
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pattern-progress': true,
   'service-form': true,
 };
 
@@ -30,38 +39,57 @@ const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectServiceForm = wrapper => wrapper.find('service-form-stub');
 
+const withModalInject = (options = {}) => {
+  const rawModal = options.propsData?.modal ?? { config: {} };
+  const modal = rawModal.id ? rawModal : { id: 'test-modal-id', ...rawModal };
+
+  return merge({}, options, {
+    propsData: {
+      ...options.propsData,
+      modal,
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $modal: modal,
+      },
+    },
+  });
+};
+
 describe('create-service', () => {
-  const $modals = mockModals();
+  const $modals = {
+    ...mockModals(),
+    updateModalConfig: jest.fn(),
+    updateDialogProps: jest.fn(),
+  };
   const $popups = mockPopups();
+  const $sidebar = mockSidebar();
   const consoleMock = mockConsole();
 
   const { templateVarsModule } = createTemplateVarsModule();
-  const store = createMockedStoreModules([templateVarsModule]);
+  const { authModule } = createAuthModule();
+  const { userModule } = createUserModule();
+  const { llmModule } = createLlmModule();
+  const store = createMockedStoreModules([templateVarsModule, authModule, userModule, llmModule]);
 
   const defaultServiceForm = serviceToForm();
   const defaultService = formToService(defaultServiceForm);
 
-  const factory = generateShallowRenderer(CreateService, {
+  const shallowCreateService = generateShallowRenderer(CreateService, {
     stubs,
     attachTo: document.body,
     store,
-    mocks: { $modals, $popups },
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
+    mocks: { $modals, $popups, $sidebar },
   });
-  const snapshotFactory = generateRenderer(CreateService, {
+  const factory = (options = {}) => shallowCreateService(withModalInject(options));
+
+  const renderCreateService = generateRenderer(CreateService, {
     stubs: snapshotStubs,
     store,
-    mocks: { $modals, $popups },
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
+    mocks: { $modals, $popups, $sidebar },
   });
+  const snapshotFactory = (options = {}) => renderCreateService(withModalInject(options));
 
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();
@@ -80,8 +108,8 @@ describe('create-service', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(defaultService);
-    expect($modals.hide).toHaveBeenCalledWith(modal);
+    expect(action).toHaveBeenCalledWith(defaultService);
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -115,12 +143,11 @@ describe('create-service', () => {
   });
 
   test('Form submitted after trigger submit button without action', async () => {
-    const modal = {
-      config: {},
-    };
     const wrapper = factory({
       propsData: {
-        modal,
+        modal: {
+          config: {},
+        },
       },
     });
 
@@ -128,7 +155,7 @@ describe('create-service', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith(modal);
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -157,7 +184,7 @@ describe('create-service', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledWith(defaultService);
+    expect(action).toHaveBeenCalledWith(defaultService);
     expect($modals.hide).not.toHaveBeenCalled();
   });
 
@@ -189,11 +216,11 @@ describe('create-service', () => {
 
     await flushPromises();
 
-    expect(consoleMock.error).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleMock.error).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       ...defaultService,
       name: customService.name,
       category: customService.category._id,
@@ -226,12 +253,12 @@ describe('create-service', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       ...defaultService,
       name: newForm.name,
       category: newForm.category._id,
     });
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toBeCalledWith(wrapper.props().modal);
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -247,7 +274,7 @@ describe('create-service', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toBeCalledWith(wrapper.props().modal);
   });
 
   test('Renders `create-service` with empty modal', () => {

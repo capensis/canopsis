@@ -63,7 +63,7 @@ func (s *jwtGenerator) Generate(userID string, expiresAt time.Time) (string, err
 }
 
 func (s *jwtGenerator) Validate(tokenString string) (string, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &tokenClaims{}, func(token *jwt.Token) (any, error) {
 		cfg := s.apiConfigProvider.Get()
 
 		if token.Method.Alg() != cfg.TokenSigningMethod.Alg() {

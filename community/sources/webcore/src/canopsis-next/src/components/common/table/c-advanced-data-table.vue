@@ -4,17 +4,22 @@
       <v-flex v-if="shownSearch" xs4>
         <c-search
           v-if="search"
-          @submit="updateSearchHandler"
+          :label="searchLabel"
+          @submit="updateSearch"
         />
         <c-advanced-search
           v-else-if="advancedSearch"
-          :fields="preparedAdvancedSearchFields"
-          @submit="updateSearchHandler"
+          :attributes="advancedSearchAttributes"
+          :pending="advancedSearchLoading"
+          @submit="updateAdvancedSearch"
+          @reset="resetSearch"
         />
       </v-flex>
       <slot
         :selected="selected"
-        :update-search="updateSearchHandler"
+        :update-search="updateSearch"
+        :update-advanced-search="updateAdvancedSearch"
+        :reset-search="resetSearch"
         name="toolbar"
       />
       <v-flex
@@ -45,7 +50,7 @@
       :loading="loading"
       :server-items-length="totalItems"
       :no-data-text="noDataText"
-      :options="options"
+      :options="vDataTableOptions"
       :header-text="headerText"
       :footer-props="{ itemsPerPageOptions: itemsPerPageItems }"
       :item-key="itemKey"
@@ -60,8 +65,12 @@
       :ellipsis-headers="ellipsisHeaders"
       :expand-icon="expandIcon"
       checkbox-color="primary"
-      @update:options="updateOptions"
+      @update:options="updateDataTableOptions"
     >
+      <template v-if="hasHeaderSelectSlot" #header.data-table-select="props">
+        <slot name="header.data-table-select" v-bind="props" />
+      </template>
+
       <template v-if="hasItemSlot" #item="props">
         <slot name="item" v-bind="props" />
       </template>
@@ -151,7 +160,10 @@
 </template>
 
 <script>
+import { pick } from 'lodash';
+
 import { mapIds } from '@/helpers/array';
+import { prepareQueryWithAdvancedSearch, prepareQueryWithoutAdvancedSearch } from '@/helpers/search/advanced-search';
 
 export default {
   model: {
@@ -235,6 +247,10 @@ export default {
       type: Object,
       required: false,
     },
+    searchLabel: {
+      type: String,
+      default: '',
+    },
     tableClass: {
       type: [String, Object],
       required: false,
@@ -259,9 +275,13 @@ export default {
       type: String,
       default: '$expand',
     },
-    advancedSearchFields: {
+    advancedSearchAttributes: {
       type: Array,
       default: () => [],
+    },
+    advancedSearchLoading: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -270,6 +290,10 @@ export default {
     };
   },
   computed: {
+    vDataTableOptions() {
+      return pick(this.options, ['page', 'itemsPerPage', 'sortBy', 'sortDesc', 'groupBy', 'groupDesc', 'mustSort', 'multiSort']);
+    },
+
     preparedHeaders() {
       const headers = [];
 
@@ -318,6 +342,10 @@ export default {
       return this.options?.itemsPerPage ? this.items.slice(0, this.options?.itemsPerPage) : this.items;
     },
 
+    hasHeaderSelectSlot() {
+      return this.$slots['header.data-table-select'] || this.$scopedSlots['header.data-table-select'];
+    },
+
     hasItemSlot() {
       return this.$slots.item || this.$scopedSlots.item;
     },
@@ -332,12 +360,6 @@ export default {
 
     shownSearch() {
       return this.search || this.advancedSearch;
-    },
-
-    preparedAdvancedSearchFields() {
-      return this.advancedSearchFields?.length
-        ? this.advancedSearchFields
-        : this.headers;
     },
   },
   watch: {
@@ -360,8 +382,23 @@ export default {
       this.$emit('update:options', options);
     },
 
-    updateSearchHandler(search) {
+    updateDataTableOptions(options) {
+      return this.updateOptions({
+        ...this.options,
+        ...pick(options, ['page', 'itemsPerPage', 'sortBy', 'sortDesc', 'groupBy', 'groupDesc', 'mustSort', 'multiSort']),
+      });
+    },
+
+    updateSearch(search) {
       this.updateOptions({ ...this.options, search, page: 1 });
+    },
+
+    updateAdvancedSearch(search) {
+      this.updateOptions(prepareQueryWithAdvancedSearch(this.options, search));
+    },
+
+    resetSearch() {
+      this.updateOptions(prepareQueryWithoutAdvancedSearch(this.options));
     },
 
     updateItemsPerPage(itemsPerPage) {

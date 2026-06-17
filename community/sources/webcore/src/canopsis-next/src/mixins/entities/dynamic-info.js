@@ -16,6 +16,8 @@ export const entitiesDynamicInfoMixin = {
       updateDynamicInfo: 'update',
       createDynamicInfo: 'create',
       removeDynamicInfo: 'remove',
+      bulkEnableDynamicInfos: 'bulkEnable',
+      bulkDisableDynamicInfos: 'bulkDisable',
     }),
   },
 };

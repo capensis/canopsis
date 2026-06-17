@@ -59,9 +59,6 @@ func (r *responder) buildResponse(c *gin.Context, err error) (int, *fastjson.Val
 
 	var code int
 	var msg string
-	var invalidReqErr *validation.InvalidRequestBodyError
-	var forbiddenErr *httperror.ForbiddenError
-	var conflictErr *httperror.ConflictError
 	logLvl := zerolog.DebugLevel
 	if errors.Is(err, httperror.ErrNotFound) {
 		code = http.StatusNotFound
@@ -76,13 +73,13 @@ func (r *responder) buildResponse(c *gin.Context, err error) (int, *fastjson.Val
 		msg = "The service is under maintenance. Please try again later."
 	} else if errors.Is(err, httperror.ErrRequestEntityTooLarge) {
 		code = http.StatusRequestEntityTooLarge
-	} else if errors.As(err, &forbiddenErr) {
+	} else if ferr, ok := errors.AsType[*httperror.ForbiddenError](err); ok {
 		code = http.StatusForbidden
-		msg = forbiddenErr.Message
-	} else if errors.As(err, &conflictErr) {
+		msg = ferr.Message
+	} else if cerr, ok := errors.AsType[*httperror.ConflictError](err); ok {
 		code = http.StatusConflict
-		msg = conflictErr.Message
-	} else if errors.As(err, &invalidReqErr) {
+		msg = cerr.Message
+	} else if _, ok := errors.AsType[*validation.InvalidRequestBodyError](err); ok {
 		code = http.StatusBadRequest
 		logLvl = zerolog.WarnLevel
 	} else if errors.Is(err, authctx.ErrNotFound) {

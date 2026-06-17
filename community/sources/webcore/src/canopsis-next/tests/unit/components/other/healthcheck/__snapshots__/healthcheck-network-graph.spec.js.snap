@@ -170,9 +170,13 @@ exports[`healthcheck-network-graph Renders \`healthcheck-network-graph\` with cu
           style="position: absolute; webkit-transform: translate(-100%,0%) translate(-105.50px,-57.50px) ; transform: translate(-100%,0%) translate(-105.50px,-57.50px) ;"
         >
           <div
-            class="subtitle-1"
+            class="ml-2"
           >
-            RabbitMQ
+            <div
+              class="subtitle-1"
+            >
+              RabbitMQ
+            </div>
           </div>
         </div>
         <div
@@ -416,9 +420,13 @@ exports[`healthcheck-network-graph Renders \`healthcheck-network-graph\` with cu
           style="position: absolute; webkit-transform: translate(-100%,0%) translate(-105.50px,112.00px) ; transform: translate(-100%,0%) translate(-105.50px,112.00px) ;"
         >
           <div
-            class="subtitle-1"
+            class="ml-2"
           >
-            RabbitMQ
+            <div
+              class="subtitle-1"
+            >
+              RabbitMQ
+            </div>
           </div>
         </div>
         <div

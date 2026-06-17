@@ -261,10 +261,16 @@ export const convertDateToString = (date, format = DATETIME_FORMATS.long, defaul
  * @param {LocalDate} date
  * @param {string} [format]
  * @param {string} [defaultValue]
+ * @param {string} [timeFormat = DATETIME_FORMATS.time]
  */
-export const convertDateToStringWithFormatForToday = (date, format, defaultValue) => {
+export const convertDateToStringWithFormatForToday = (
+  date,
+  format,
+  defaultValue,
+  timeFormat = DATETIME_FORMATS.time,
+) => {
   const dateObject = convertDateToMoment(date);
-  const resultFormat = dateObject.isSame(Date.now(), 'day') ? DATETIME_FORMATS.time : format;
+  const resultFormat = dateObject.isSame(Date.now(), 'day') ? timeFormat : format;
 
   return convertDateToString(date, resultFormat, defaultValue);
 };

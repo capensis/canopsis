@@ -32,7 +32,6 @@
             addable
             editable
             with-entity
-            with-service-weather
             private
           />
         </v-layout>

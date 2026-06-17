@@ -3,6 +3,7 @@ package entityservice
 import (
 	"cmp"
 	"context"
+	"encoding/json"
 	"errors"
 	"reflect"
 	"slices"
@@ -207,7 +208,21 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 		}
 	}
 
-	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
+	searchPatternQuery := bson.M{}
+	if r.SearchPattern != "" {
+		var p searchPattern
+		err := json.Unmarshal([]byte(r.SearchPattern), &p)
+		if err != nil {
+			return nil, validation.NewSingleError("search_pattern", "SearchPattern", "SearchPattern", r)
+		}
+
+		searchPatternQuery, err = p.ToMongoQuery()
+		if err != nil {
+			return nil, validation.NewSingleError("search_pattern", "SearchPattern", "SearchPattern", r)
+		}
+	}
+
+	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search, searchPatternQuery,
 		r.WithFlags, r.DefineState, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -291,7 +306,7 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userID st
 	}
 
 	now := datetime.NewCpsTime()
-	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(bson.M{"$or": match}, r.Query, r.SortRequest, r.Category, r.Search,
+	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(bson.M{"$or": match}, r.Query, r.SortRequest, r.Category, r.Search, nil,
 		r.WithFlags, false, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {

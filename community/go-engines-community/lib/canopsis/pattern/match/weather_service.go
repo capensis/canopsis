@@ -1,14 +1,22 @@
 package match
 
-import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+)
 
 func ValidateWeatherServicePattern(p pattern.WeatherServicePattern) bool {
-	for _, group := range p {
+	return len(WeatherServicePatternErrors(p)) == 0
+}
+
+func WeatherServicePatternErrors(p pattern.WeatherServicePattern) []ConditionError {
+	var errs []ConditionError
+	for gidx, group := range p {
 		if len(group) == 0 {
-			return false
+			errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: -1, Err: pattern.ErrEmptyGroup})
+			continue
 		}
 
-		for _, v := range group {
+		for cidx, v := range group {
 			f := v.Field
 			cond := v.Condition
 			var err error
@@ -25,10 +33,10 @@ func ValidateWeatherServicePattern(p pattern.WeatherServicePattern) bool {
 			}
 
 			if err != nil {
-				return false
+				errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: cidx, Err: err})
 			}
 		}
 	}
 
-	return true
+	return errs
 }

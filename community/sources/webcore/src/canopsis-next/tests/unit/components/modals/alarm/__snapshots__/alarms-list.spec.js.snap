@@ -18,6 +18,7 @@ exports[`alarms-list Renders \`alarms-list\` 1`] = `
     <alarms-list-table-with-pagination-stub
       alarms=""
       columns=""
+      columnssettings="[object Object]"
       expandable="true"
       meta="[object Object]"
       query="[object Object]"

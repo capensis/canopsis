@@ -1,5 +1,5 @@
 import { isEqual, upperFirst, camelCase } from 'lodash';
-import { ref, unref, set } from 'vue';
+import { ref, unref, set, del } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 
@@ -37,7 +37,13 @@ import { PAGINATION_LIMIT } from '@/config';
  * };
  */
 export const useLocalQuery = ({
-  initialQuery = { page: 1, itemsPerPage: PAGINATION_LIMIT },
+  initialQuery = {
+    page: 1,
+    itemsPerPage: PAGINATION_LIMIT,
+    search: '',
+    sortBy: [],
+    sortDesc: [],
+  },
   onUpdate,
   comparator = isEqual,
 } = {}) => {
@@ -77,6 +83,24 @@ export const useLocalQuery = ({
   };
 
   /**
+   * Removes a specific field from the query object.
+   * Triggers the onUpdate callback if the field existed.
+   *
+   * @param {string} field - The field name to remove from the query object.
+   */
+  const removeQueryField = (field) => {
+    const hadField = Object.prototype.hasOwnProperty.call(query.value, field);
+
+    if (hadField) {
+      del(query.value, field);
+
+      if (onUpdate) {
+        onUpdate(query.value);
+      }
+    }
+  };
+
+  /**
    * Resets the query to its initial state.
    */
   const resetQuery = () => query.value = { ...unref(initialQuery) };
@@ -100,6 +124,7 @@ export const useLocalQuery = ({
     query,
     updateQuery,
     updateQueryField,
+    removeQueryField,
     resetQuery,
     handler,
   };

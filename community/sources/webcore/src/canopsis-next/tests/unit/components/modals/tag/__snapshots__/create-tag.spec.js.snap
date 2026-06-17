@@ -8,6 +8,7 @@ exports[`create-tag Renders \`create-tag\` with empty modal 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -24,6 +25,7 @@ exports[`create-tag Renders \`create-tag\` with empty modal 1`] = `
         isnew="true"
         maxtagnamelength="20"
       />
+      <!---->
     </div>
     <div
       class="actions"
@@ -61,6 +63,7 @@ exports[`create-tag Renders \`create-tag\` with tag 1`] = `
   <div
     class="modal-wrapper"
     close=""
+    text-class="position-relative"
   >
     <div
       class="title"
@@ -77,6 +80,7 @@ exports[`create-tag Renders \`create-tag\` with tag 1`] = `
         isnew="true"
         maxtagnamelength="20"
       />
+      <!---->
     </div>
     <div
       class="actions"

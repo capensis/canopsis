@@ -8,6 +8,8 @@ import { API_HOST, API_ROUTES } from '@/config';
 
 import TextEditor from '@/components/common/text-editor/text-editor.vue';
 
+jest.mock('@/plugins/vuetify/components/icons', () => ({}));
+
 const stubs = {
   'variables-menu': true,
 };

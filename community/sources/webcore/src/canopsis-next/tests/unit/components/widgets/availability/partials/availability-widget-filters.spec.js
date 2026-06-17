@@ -2,18 +2,23 @@ import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { randomArrayItem } from '@unit/utils/array';
+import { createMockedStoreModules, createUserPreferenceModule } from '@unit/utils/store';
 
 import {
+  ADVANCED_SEARCH_FIELDS,
   AVAILABILITY_DISPLAY_PARAMETERS,
   AVAILABILITY_SHOW_TYPE,
   AVAILABILITY_VALUE_FILTER_METHODS,
   QUICK_RANGES,
 } from '@/constants';
 
+import { formToAdvancedSearch } from '@/helpers/search/advanced-search';
+import { uuid } from '@/helpers/uuid';
+
 import AvailabilityWidgetFilters from '@/components/widgets/availability/partials/availability-widget-filters.vue';
 
 const stubs = {
-  'c-advanced-search': true,
+  'c-availability-advanced-search': true,
   'c-quick-date-interval-field': true,
   'filter-selector': true,
   'filters-list-btn': true,
@@ -24,7 +29,7 @@ const stubs = {
   'c-action-btn': true,
 };
 
-const selectSearch = wrapper => wrapper.find('c-advanced-search-stub');
+const selectSearch = wrapper => wrapper.find('c-availability-advanced-search-stub');
 const selectQuickDateIntervalField = wrapper => wrapper.find('c-quick-date-interval-field-stub');
 const selectAvailabilityShowTypeField = wrapper => wrapper.find('availability-show-type-field-stub');
 const selectAvailabilityDisplayParameterField = wrapper => wrapper.find('availability-display-parameter-field-stub');
@@ -38,20 +43,27 @@ describe('availability-widget-filters', () => {
 
   const widgetId = 'widget-id';
 
+  const { userPreferenceModule } = createUserPreferenceModule();
+  const store = createMockedStoreModules([userPreferenceModule]);
+
   const factory = generateShallowRenderer(AvailabilityWidgetFilters, {
     stubs,
+    store,
   });
   const snapshotFactory = generateRenderer(AvailabilityWidgetFilters, {
     stubs,
+    store,
   });
 
   test('Interval changed after trigger quick date interval field', async () => {
     const wrapper = factory({
       propsData: {
         widgetId,
-        interval: {
-          from: QUICK_RANGES.today.start,
-          to: QUICK_RANGES.today.stop,
+        query: {
+          interval: {
+            from: QUICK_RANGES.today.start,
+            to: QUICK_RANGES.today.stop,
+          },
         },
         showInterval: true,
       },
@@ -71,16 +83,22 @@ describe('availability-widget-filters', () => {
     const wrapper = factory({
       propsData: {
         widgetId,
-        search: '',
+        query: {},
         showInterval: true,
       },
     });
 
     const newSearch = Faker.lorem.word();
+    const advancedSearch = {
+      ...formToAdvancedSearch([], ADVANCED_SEARCH_FIELDS.entity),
+      search: newSearch,
+      _id: uuid(),
+      pinned: false,
+    };
 
-    await selectSearch(wrapper).triggerCustomEvent('submit', newSearch);
+    await selectSearch(wrapper).triggerCustomEvent('submit', advancedSearch);
 
-    expect(wrapper).toEmit('update:search', newSearch);
+    expect(wrapper).toEmit('update:query', expect.objectContaining({ search: newSearch, page: 1 }));
   });
 
   test('Filters changed after trigger filters field', async () => {
@@ -177,7 +195,7 @@ describe('availability-widget-filters', () => {
     const wrapper = factory({
       propsData: {
         widgetId,
-        valueFilter,
+        query: { valueFilter },
       },
     });
 
@@ -189,7 +207,7 @@ describe('availability-widget-filters', () => {
     };
 
     await wrapper.setProps({
-      valueFilter: newValueFilter,
+      query: { valueFilter: newValueFilter },
     });
 
     expect({ ...wrapper.vm.localValueFilter }).toEqual(newValueFilter);
@@ -224,28 +242,28 @@ describe('availability-widget-filters', () => {
     const wrapper = snapshotFactory({
       propsData: {
         widgetId,
-        search: 'Custom search',
-        interval: {
-          from: QUICK_RANGES.yesterday.start,
-          to: QUICK_RANGES.yesterday.stop,
+        query: {
+          search: 'Custom search',
+          interval: {
+            from: QUICK_RANGES.yesterday.start,
+            to: QUICK_RANGES.yesterday.stop,
+          },
+          filter: 'test-filter',
+          lockedFilter: 'locked-filter',
+          displayParameter: AVAILABILITY_DISPLAY_PARAMETERS.downtime,
+          showType: AVAILABILITY_SHOW_TYPE.percent,
+          showTrend: true,
+          valueFilter: {
+            method: AVAILABILITY_VALUE_FILTER_METHODS.less,
+            value: 80,
+          },
         },
-        filters: 'test-filter',
-        lockedFilter: 'locked-filter',
         userFilters: [{}],
         widgetFilters: [{}, {}],
         showInterval: true,
         showFilter: true,
-        filterAddable: true,
-        filterEditable: true,
         filterDisabled: true,
-        displayParameter: AVAILABILITY_DISPLAY_PARAMETERS.downtime,
-        type: AVAILABILITY_SHOW_TYPE.percent,
-        trend: true,
         exporting: true,
-        valueFilter: {
-          method: AVAILABILITY_VALUE_FILTER_METHODS.less,
-          value: 80,
-        },
         maxValueFilterSeconds: 123,
         showExport: true,
       },

@@ -16,9 +16,11 @@ const VIEW_ENTITIES = {
 };
 
 export const viewTabSchema = new schema.Entity(VIEW_ENTITIES.viewTab, {}, { idAttribute: '_id' });
+
 export const viewSchema = new schema.Entity(VIEW_ENTITIES.view, {
   tabs: [viewTabSchema],
 }, { idAttribute: '_id' });
+
 export const groupSchema = new schema.Entity(VIEW_ENTITIES.group, {
   views: [viewSchema],
 }, { idAttribute: '_id' });
@@ -125,6 +127,8 @@ export default createCRUDModule({
         const { entities } = normalize(view, viewSchema);
 
         commit(types.MERGE_VIEW_ENTITIES, { entities });
+
+        return view;
       }, `view_${id}`);
     },
 
