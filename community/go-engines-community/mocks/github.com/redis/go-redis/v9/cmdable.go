@@ -206,6 +206,419 @@ func (mr *MockCmdableMockRecorder) ACLWhoAmI(ctx any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ACLWhoAmI", reflect.TypeOf((*MockCmdable)(nil).ACLWhoAmI), ctx)
 }
 
+// ARCount mocks base method.
+func (m *MockCmdable) ARCount(ctx context.Context, key string) *redis.UintCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARCount", ctx, key)
+	ret0, _ := ret[0].(*redis.UintCmd)
+	return ret0
+}
+
+// ARCount indicates an expected call of ARCount.
+func (mr *MockCmdableMockRecorder) ARCount(ctx, key any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARCount", reflect.TypeOf((*MockCmdable)(nil).ARCount), ctx, key)
+}
+
+// ARDel mocks base method.
+func (m *MockCmdable) ARDel(ctx context.Context, key string, indexes ...uint64) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key}
+	for _, a := range indexes {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARDel", varargs...)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// ARDel indicates an expected call of ARDel.
+func (mr *MockCmdableMockRecorder) ARDel(ctx, key any, indexes ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key}, indexes...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARDel", reflect.TypeOf((*MockCmdable)(nil).ARDel), varargs...)
+}
+
+// ARDelRange mocks base method.
+func (m *MockCmdable) ARDelRange(ctx context.Context, key string, ranges ...redis.ARRange) *redis.UintCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key}
+	for _, a := range ranges {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARDelRange", varargs...)
+	ret0, _ := ret[0].(*redis.UintCmd)
+	return ret0
+}
+
+// ARDelRange indicates an expected call of ARDelRange.
+func (mr *MockCmdableMockRecorder) ARDelRange(ctx, key any, ranges ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key}, ranges...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARDelRange", reflect.TypeOf((*MockCmdable)(nil).ARDelRange), varargs...)
+}
+
+// ARGet mocks base method.
+func (m *MockCmdable) ARGet(ctx context.Context, key string, index uint64) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARGet", ctx, key, index)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// ARGet indicates an expected call of ARGet.
+func (mr *MockCmdableMockRecorder) ARGet(ctx, key, index any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARGet", reflect.TypeOf((*MockCmdable)(nil).ARGet), ctx, key, index)
+}
+
+// ARGetRange mocks base method.
+func (m *MockCmdable) ARGetRange(ctx context.Context, key string, start, end uint64) *redis.SliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARGetRange", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.SliceCmd)
+	return ret0
+}
+
+// ARGetRange indicates an expected call of ARGetRange.
+func (mr *MockCmdableMockRecorder) ARGetRange(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARGetRange", reflect.TypeOf((*MockCmdable)(nil).ARGetRange), ctx, key, start, end)
+}
+
+// ARGrep mocks base method.
+func (m *MockCmdable) ARGrep(ctx context.Context, key, start, end string, args *redis.ARGrepArgs) *redis.UintSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARGrep", ctx, key, start, end, args)
+	ret0, _ := ret[0].(*redis.UintSliceCmd)
+	return ret0
+}
+
+// ARGrep indicates an expected call of ARGrep.
+func (mr *MockCmdableMockRecorder) ARGrep(ctx, key, start, end, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARGrep", reflect.TypeOf((*MockCmdable)(nil).ARGrep), ctx, key, start, end, args)
+}
+
+// ARGrepWithValues mocks base method.
+func (m *MockCmdable) ARGrepWithValues(ctx context.Context, key, start, end string, args *redis.ARGrepArgs) *redis.AREntrySliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARGrepWithValues", ctx, key, start, end, args)
+	ret0, _ := ret[0].(*redis.AREntrySliceCmd)
+	return ret0
+}
+
+// ARGrepWithValues indicates an expected call of ARGrepWithValues.
+func (mr *MockCmdableMockRecorder) ARGrepWithValues(ctx, key, start, end, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARGrepWithValues", reflect.TypeOf((*MockCmdable)(nil).ARGrepWithValues), ctx, key, start, end, args)
+}
+
+// ARInfo mocks base method.
+func (m *MockCmdable) ARInfo(ctx context.Context, key string) *redis.MapStringInterfaceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARInfo", ctx, key)
+	ret0, _ := ret[0].(*redis.MapStringInterfaceCmd)
+	return ret0
+}
+
+// ARInfo indicates an expected call of ARInfo.
+func (mr *MockCmdableMockRecorder) ARInfo(ctx, key any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARInfo", reflect.TypeOf((*MockCmdable)(nil).ARInfo), ctx, key)
+}
+
+// ARInfoFull mocks base method.
+func (m *MockCmdable) ARInfoFull(ctx context.Context, key string) *redis.MapStringInterfaceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARInfoFull", ctx, key)
+	ret0, _ := ret[0].(*redis.MapStringInterfaceCmd)
+	return ret0
+}
+
+// ARInfoFull indicates an expected call of ARInfoFull.
+func (mr *MockCmdableMockRecorder) ARInfoFull(ctx, key any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARInfoFull", reflect.TypeOf((*MockCmdable)(nil).ARInfoFull), ctx, key)
+}
+
+// ARInsert mocks base method.
+func (m *MockCmdable) ARInsert(ctx context.Context, key string, values ...string) *redis.UintCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key}
+	for _, a := range values {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARInsert", varargs...)
+	ret0, _ := ret[0].(*redis.UintCmd)
+	return ret0
+}
+
+// ARInsert indicates an expected call of ARInsert.
+func (mr *MockCmdableMockRecorder) ARInsert(ctx, key any, values ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key}, values...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARInsert", reflect.TypeOf((*MockCmdable)(nil).ARInsert), varargs...)
+}
+
+// ARLastItems mocks base method.
+func (m *MockCmdable) ARLastItems(ctx context.Context, key string, count uint64, rev bool) *redis.SliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARLastItems", ctx, key, count, rev)
+	ret0, _ := ret[0].(*redis.SliceCmd)
+	return ret0
+}
+
+// ARLastItems indicates an expected call of ARLastItems.
+func (mr *MockCmdableMockRecorder) ARLastItems(ctx, key, count, rev any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARLastItems", reflect.TypeOf((*MockCmdable)(nil).ARLastItems), ctx, key, count, rev)
+}
+
+// ARLen mocks base method.
+func (m *MockCmdable) ARLen(ctx context.Context, key string) *redis.UintCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARLen", ctx, key)
+	ret0, _ := ret[0].(*redis.UintCmd)
+	return ret0
+}
+
+// ARLen indicates an expected call of ARLen.
+func (mr *MockCmdableMockRecorder) ARLen(ctx, key any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARLen", reflect.TypeOf((*MockCmdable)(nil).ARLen), ctx, key)
+}
+
+// ARMGet mocks base method.
+func (m *MockCmdable) ARMGet(ctx context.Context, key string, indexes ...uint64) *redis.SliceCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key}
+	for _, a := range indexes {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARMGet", varargs...)
+	ret0, _ := ret[0].(*redis.SliceCmd)
+	return ret0
+}
+
+// ARMGet indicates an expected call of ARMGet.
+func (mr *MockCmdableMockRecorder) ARMGet(ctx, key any, indexes ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key}, indexes...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARMGet", reflect.TypeOf((*MockCmdable)(nil).ARMGet), varargs...)
+}
+
+// ARMSet mocks base method.
+func (m *MockCmdable) ARMSet(ctx context.Context, key string, members ...redis.AREntry) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key}
+	for _, a := range members {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARMSet", varargs...)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// ARMSet indicates an expected call of ARMSet.
+func (mr *MockCmdableMockRecorder) ARMSet(ctx, key any, members ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key}, members...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARMSet", reflect.TypeOf((*MockCmdable)(nil).ARMSet), varargs...)
+}
+
+// ARNext mocks base method.
+func (m *MockCmdable) ARNext(ctx context.Context, key string) *redis.UintCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARNext", ctx, key)
+	ret0, _ := ret[0].(*redis.UintCmd)
+	return ret0
+}
+
+// ARNext indicates an expected call of ARNext.
+func (mr *MockCmdableMockRecorder) ARNext(ctx, key any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARNext", reflect.TypeOf((*MockCmdable)(nil).ARNext), ctx, key)
+}
+
+// AROpAnd mocks base method.
+func (m *MockCmdable) AROpAnd(ctx context.Context, key string, start, end uint64) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpAnd", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// AROpAnd indicates an expected call of AROpAnd.
+func (mr *MockCmdableMockRecorder) AROpAnd(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpAnd", reflect.TypeOf((*MockCmdable)(nil).AROpAnd), ctx, key, start, end)
+}
+
+// AROpMatch mocks base method.
+func (m *MockCmdable) AROpMatch(ctx context.Context, key string, start, end uint64, value string) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpMatch", ctx, key, start, end, value)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// AROpMatch indicates an expected call of AROpMatch.
+func (mr *MockCmdableMockRecorder) AROpMatch(ctx, key, start, end, value any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpMatch", reflect.TypeOf((*MockCmdable)(nil).AROpMatch), ctx, key, start, end, value)
+}
+
+// AROpMax mocks base method.
+func (m *MockCmdable) AROpMax(ctx context.Context, key string, start, end uint64) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpMax", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// AROpMax indicates an expected call of AROpMax.
+func (mr *MockCmdableMockRecorder) AROpMax(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpMax", reflect.TypeOf((*MockCmdable)(nil).AROpMax), ctx, key, start, end)
+}
+
+// AROpMin mocks base method.
+func (m *MockCmdable) AROpMin(ctx context.Context, key string, start, end uint64) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpMin", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// AROpMin indicates an expected call of AROpMin.
+func (mr *MockCmdableMockRecorder) AROpMin(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpMin", reflect.TypeOf((*MockCmdable)(nil).AROpMin), ctx, key, start, end)
+}
+
+// AROpOr mocks base method.
+func (m *MockCmdable) AROpOr(ctx context.Context, key string, start, end uint64) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpOr", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// AROpOr indicates an expected call of AROpOr.
+func (mr *MockCmdableMockRecorder) AROpOr(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpOr", reflect.TypeOf((*MockCmdable)(nil).AROpOr), ctx, key, start, end)
+}
+
+// AROpSum mocks base method.
+func (m *MockCmdable) AROpSum(ctx context.Context, key string, start, end uint64) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpSum", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// AROpSum indicates an expected call of AROpSum.
+func (mr *MockCmdableMockRecorder) AROpSum(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpSum", reflect.TypeOf((*MockCmdable)(nil).AROpSum), ctx, key, start, end)
+}
+
+// AROpUsed mocks base method.
+func (m *MockCmdable) AROpUsed(ctx context.Context, key string, start, end uint64) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpUsed", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// AROpUsed indicates an expected call of AROpUsed.
+func (mr *MockCmdableMockRecorder) AROpUsed(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpUsed", reflect.TypeOf((*MockCmdable)(nil).AROpUsed), ctx, key, start, end)
+}
+
+// AROpXor mocks base method.
+func (m *MockCmdable) AROpXor(ctx context.Context, key string, start, end uint64) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpXor", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// AROpXor indicates an expected call of AROpXor.
+func (mr *MockCmdableMockRecorder) AROpXor(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpXor", reflect.TypeOf((*MockCmdable)(nil).AROpXor), ctx, key, start, end)
+}
+
+// ARRing mocks base method.
+func (m *MockCmdable) ARRing(ctx context.Context, key string, size uint64, values ...string) *redis.UintCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key, size}
+	for _, a := range values {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARRing", varargs...)
+	ret0, _ := ret[0].(*redis.UintCmd)
+	return ret0
+}
+
+// ARRing indicates an expected call of ARRing.
+func (mr *MockCmdableMockRecorder) ARRing(ctx, key, size any, values ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key, size}, values...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARRing", reflect.TypeOf((*MockCmdable)(nil).ARRing), varargs...)
+}
+
+// ARScan mocks base method.
+func (m *MockCmdable) ARScan(ctx context.Context, key string, start, end uint64, args *redis.ARScanArgs) *redis.AREntrySliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARScan", ctx, key, start, end, args)
+	ret0, _ := ret[0].(*redis.AREntrySliceCmd)
+	return ret0
+}
+
+// ARScan indicates an expected call of ARScan.
+func (mr *MockCmdableMockRecorder) ARScan(ctx, key, start, end, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARScan", reflect.TypeOf((*MockCmdable)(nil).ARScan), ctx, key, start, end, args)
+}
+
+// ARSeek mocks base method.
+func (m *MockCmdable) ARSeek(ctx context.Context, key string, index uint64) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARSeek", ctx, key, index)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// ARSeek indicates an expected call of ARSeek.
+func (mr *MockCmdableMockRecorder) ARSeek(ctx, key, index any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARSeek", reflect.TypeOf((*MockCmdable)(nil).ARSeek), ctx, key, index)
+}
+
+// ARSet mocks base method.
+func (m *MockCmdable) ARSet(ctx context.Context, key string, index uint64, values ...string) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key, index}
+	for _, a := range values {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARSet", varargs...)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// ARSet indicates an expected call of ARSet.
+func (mr *MockCmdableMockRecorder) ARSet(ctx, key, index any, values ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key, index}, values...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARSet", reflect.TypeOf((*MockCmdable)(nil).ARSet), varargs...)
+}
+
 // Append mocks base method.
 func (m *MockCmdable) Append(ctx context.Context, key, value string) *redis.IntCmd {
 	m.ctrl.T.Helper()
@@ -3803,6 +4216,34 @@ func (mr *MockCmdableMockRecorder) IncrByFloat(ctx, key, value any) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncrByFloat", reflect.TypeOf((*MockCmdable)(nil).IncrByFloat), ctx, key, value)
 }
 
+// IncrEXFloat mocks base method.
+func (m *MockCmdable) IncrEXFloat(ctx context.Context, key string, args redis.IncrEXFloatArgs) *redis.IncrEXFloatCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IncrEXFloat", ctx, key, args)
+	ret0, _ := ret[0].(*redis.IncrEXFloatCmd)
+	return ret0
+}
+
+// IncrEXFloat indicates an expected call of IncrEXFloat.
+func (mr *MockCmdableMockRecorder) IncrEXFloat(ctx, key, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncrEXFloat", reflect.TypeOf((*MockCmdable)(nil).IncrEXFloat), ctx, key, args)
+}
+
+// IncrEXInt mocks base method.
+func (m *MockCmdable) IncrEXInt(ctx context.Context, key string, args redis.IncrEXIntArgs) *redis.IncrEXIntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IncrEXInt", ctx, key, args)
+	ret0, _ := ret[0].(*redis.IncrEXIntCmd)
+	return ret0
+}
+
+// IncrEXInt indicates an expected call of IncrEXInt.
+func (mr *MockCmdableMockRecorder) IncrEXInt(ctx, key, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncrEXInt", reflect.TypeOf((*MockCmdable)(nil).IncrEXInt), ctx, key, args)
+}
+
 // Info mocks base method.
 func (m *MockCmdable) Info(ctx context.Context, section ...string) *redis.StringCmd {
 	m.ctrl.T.Helper()
@@ -4182,6 +4623,20 @@ func (m *MockCmdable) JSONSetMode(ctx context.Context, key, path string, value a
 func (mr *MockCmdableMockRecorder) JSONSetMode(ctx, key, path, value, mode any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "JSONSetMode", reflect.TypeOf((*MockCmdable)(nil).JSONSetMode), ctx, key, path, value, mode)
+}
+
+// JSONSetWithArgs mocks base method.
+func (m *MockCmdable) JSONSetWithArgs(ctx context.Context, key, path string, value any, options *redis.JSONSetArgsOptions) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "JSONSetWithArgs", ctx, key, path, value, options)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// JSONSetWithArgs indicates an expected call of JSONSetWithArgs.
+func (mr *MockCmdableMockRecorder) JSONSetWithArgs(ctx, key, path, value, options any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "JSONSetWithArgs", reflect.TypeOf((*MockCmdable)(nil).JSONSetWithArgs), ctx, key, path, value, options)
 }
 
 // JSONStrAppend mocks base method.
@@ -7094,10 +7549,10 @@ func (mr *MockCmdableMockRecorder) VIsMember(ctx, key, element any) *gomock.Call
 }
 
 // VLinks mocks base method.
-func (m *MockCmdable) VLinks(ctx context.Context, key, element string) *redis.StringSliceCmd {
+func (m *MockCmdable) VLinks(ctx context.Context, key, element string) *redis.StringSliceSliceCmd {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "VLinks", ctx, key, element)
-	ret0, _ := ret[0].(*redis.StringSliceCmd)
+	ret0, _ := ret[0].(*redis.StringSliceSliceCmd)
 	return ret0
 }
 
@@ -7108,10 +7563,10 @@ func (mr *MockCmdableMockRecorder) VLinks(ctx, key, element any) *gomock.Call {
 }
 
 // VLinksWithScores mocks base method.
-func (m *MockCmdable) VLinksWithScores(ctx context.Context, key, element string) *redis.VectorScoreSliceCmd {
+func (m *MockCmdable) VLinksWithScores(ctx context.Context, key, element string) *redis.VectorScoreSliceSliceCmd {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "VLinksWithScores", ctx, key, element)
-	ret0, _ := ret[0].(*redis.VectorScoreSliceCmd)
+	ret0, _ := ret[0].(*redis.VectorScoreSliceSliceCmd)
 	return ret0
 }
 
@@ -7355,6 +7810,20 @@ func (mr *MockCmdableMockRecorder) XAutoClaimJustID(ctx, a any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "XAutoClaimJustID", reflect.TypeOf((*MockCmdable)(nil).XAutoClaimJustID), ctx, a)
 }
 
+// XAutoClaimWithDeleted mocks base method.
+func (m *MockCmdable) XAutoClaimWithDeleted(ctx context.Context, a *redis.XAutoClaimArgs) *redis.XAutoClaimWithDeletedCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "XAutoClaimWithDeleted", ctx, a)
+	ret0, _ := ret[0].(*redis.XAutoClaimWithDeletedCmd)
+	return ret0
+}
+
+// XAutoClaimWithDeleted indicates an expected call of XAutoClaimWithDeleted.
+func (mr *MockCmdableMockRecorder) XAutoClaimWithDeleted(ctx, a any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "XAutoClaimWithDeleted", reflect.TypeOf((*MockCmdable)(nil).XAutoClaimWithDeleted), ctx, a)
+}
+
 // XCfgSet mocks base method.
 func (m *MockCmdable) XCfgSet(ctx context.Context, a *redis.XCfgSetArgs) *redis.StatusCmd {
 	m.ctrl.T.Helper()
@@ -7587,6 +8056,20 @@ func (m *MockCmdable) XLen(ctx context.Context, stream string) *redis.IntCmd {
 func (mr *MockCmdableMockRecorder) XLen(ctx, stream any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "XLen", reflect.TypeOf((*MockCmdable)(nil).XLen), ctx, stream)
+}
+
+// XNack mocks base method.
+func (m *MockCmdable) XNack(ctx context.Context, a *redis.XNackArgs) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "XNack", ctx, a)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// XNack indicates an expected call of XNack.
+func (mr *MockCmdableMockRecorder) XNack(ctx, a any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "XNack", reflect.TypeOf((*MockCmdable)(nil).XNack), ctx, a)
 }
 
 // XPending mocks base method.
@@ -8788,6 +9271,419 @@ func (m *MockUniversalClient) ACLWhoAmI(ctx context.Context) *redis.StringCmd {
 func (mr *MockUniversalClientMockRecorder) ACLWhoAmI(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ACLWhoAmI", reflect.TypeOf((*MockUniversalClient)(nil).ACLWhoAmI), ctx)
+}
+
+// ARCount mocks base method.
+func (m *MockUniversalClient) ARCount(ctx context.Context, key string) *redis.UintCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARCount", ctx, key)
+	ret0, _ := ret[0].(*redis.UintCmd)
+	return ret0
+}
+
+// ARCount indicates an expected call of ARCount.
+func (mr *MockUniversalClientMockRecorder) ARCount(ctx, key any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARCount", reflect.TypeOf((*MockUniversalClient)(nil).ARCount), ctx, key)
+}
+
+// ARDel mocks base method.
+func (m *MockUniversalClient) ARDel(ctx context.Context, key string, indexes ...uint64) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key}
+	for _, a := range indexes {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARDel", varargs...)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// ARDel indicates an expected call of ARDel.
+func (mr *MockUniversalClientMockRecorder) ARDel(ctx, key any, indexes ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key}, indexes...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARDel", reflect.TypeOf((*MockUniversalClient)(nil).ARDel), varargs...)
+}
+
+// ARDelRange mocks base method.
+func (m *MockUniversalClient) ARDelRange(ctx context.Context, key string, ranges ...redis.ARRange) *redis.UintCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key}
+	for _, a := range ranges {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARDelRange", varargs...)
+	ret0, _ := ret[0].(*redis.UintCmd)
+	return ret0
+}
+
+// ARDelRange indicates an expected call of ARDelRange.
+func (mr *MockUniversalClientMockRecorder) ARDelRange(ctx, key any, ranges ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key}, ranges...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARDelRange", reflect.TypeOf((*MockUniversalClient)(nil).ARDelRange), varargs...)
+}
+
+// ARGet mocks base method.
+func (m *MockUniversalClient) ARGet(ctx context.Context, key string, index uint64) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARGet", ctx, key, index)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// ARGet indicates an expected call of ARGet.
+func (mr *MockUniversalClientMockRecorder) ARGet(ctx, key, index any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARGet", reflect.TypeOf((*MockUniversalClient)(nil).ARGet), ctx, key, index)
+}
+
+// ARGetRange mocks base method.
+func (m *MockUniversalClient) ARGetRange(ctx context.Context, key string, start, end uint64) *redis.SliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARGetRange", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.SliceCmd)
+	return ret0
+}
+
+// ARGetRange indicates an expected call of ARGetRange.
+func (mr *MockUniversalClientMockRecorder) ARGetRange(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARGetRange", reflect.TypeOf((*MockUniversalClient)(nil).ARGetRange), ctx, key, start, end)
+}
+
+// ARGrep mocks base method.
+func (m *MockUniversalClient) ARGrep(ctx context.Context, key, start, end string, args *redis.ARGrepArgs) *redis.UintSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARGrep", ctx, key, start, end, args)
+	ret0, _ := ret[0].(*redis.UintSliceCmd)
+	return ret0
+}
+
+// ARGrep indicates an expected call of ARGrep.
+func (mr *MockUniversalClientMockRecorder) ARGrep(ctx, key, start, end, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARGrep", reflect.TypeOf((*MockUniversalClient)(nil).ARGrep), ctx, key, start, end, args)
+}
+
+// ARGrepWithValues mocks base method.
+func (m *MockUniversalClient) ARGrepWithValues(ctx context.Context, key, start, end string, args *redis.ARGrepArgs) *redis.AREntrySliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARGrepWithValues", ctx, key, start, end, args)
+	ret0, _ := ret[0].(*redis.AREntrySliceCmd)
+	return ret0
+}
+
+// ARGrepWithValues indicates an expected call of ARGrepWithValues.
+func (mr *MockUniversalClientMockRecorder) ARGrepWithValues(ctx, key, start, end, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARGrepWithValues", reflect.TypeOf((*MockUniversalClient)(nil).ARGrepWithValues), ctx, key, start, end, args)
+}
+
+// ARInfo mocks base method.
+func (m *MockUniversalClient) ARInfo(ctx context.Context, key string) *redis.MapStringInterfaceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARInfo", ctx, key)
+	ret0, _ := ret[0].(*redis.MapStringInterfaceCmd)
+	return ret0
+}
+
+// ARInfo indicates an expected call of ARInfo.
+func (mr *MockUniversalClientMockRecorder) ARInfo(ctx, key any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARInfo", reflect.TypeOf((*MockUniversalClient)(nil).ARInfo), ctx, key)
+}
+
+// ARInfoFull mocks base method.
+func (m *MockUniversalClient) ARInfoFull(ctx context.Context, key string) *redis.MapStringInterfaceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARInfoFull", ctx, key)
+	ret0, _ := ret[0].(*redis.MapStringInterfaceCmd)
+	return ret0
+}
+
+// ARInfoFull indicates an expected call of ARInfoFull.
+func (mr *MockUniversalClientMockRecorder) ARInfoFull(ctx, key any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARInfoFull", reflect.TypeOf((*MockUniversalClient)(nil).ARInfoFull), ctx, key)
+}
+
+// ARInsert mocks base method.
+func (m *MockUniversalClient) ARInsert(ctx context.Context, key string, values ...string) *redis.UintCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key}
+	for _, a := range values {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARInsert", varargs...)
+	ret0, _ := ret[0].(*redis.UintCmd)
+	return ret0
+}
+
+// ARInsert indicates an expected call of ARInsert.
+func (mr *MockUniversalClientMockRecorder) ARInsert(ctx, key any, values ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key}, values...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARInsert", reflect.TypeOf((*MockUniversalClient)(nil).ARInsert), varargs...)
+}
+
+// ARLastItems mocks base method.
+func (m *MockUniversalClient) ARLastItems(ctx context.Context, key string, count uint64, rev bool) *redis.SliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARLastItems", ctx, key, count, rev)
+	ret0, _ := ret[0].(*redis.SliceCmd)
+	return ret0
+}
+
+// ARLastItems indicates an expected call of ARLastItems.
+func (mr *MockUniversalClientMockRecorder) ARLastItems(ctx, key, count, rev any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARLastItems", reflect.TypeOf((*MockUniversalClient)(nil).ARLastItems), ctx, key, count, rev)
+}
+
+// ARLen mocks base method.
+func (m *MockUniversalClient) ARLen(ctx context.Context, key string) *redis.UintCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARLen", ctx, key)
+	ret0, _ := ret[0].(*redis.UintCmd)
+	return ret0
+}
+
+// ARLen indicates an expected call of ARLen.
+func (mr *MockUniversalClientMockRecorder) ARLen(ctx, key any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARLen", reflect.TypeOf((*MockUniversalClient)(nil).ARLen), ctx, key)
+}
+
+// ARMGet mocks base method.
+func (m *MockUniversalClient) ARMGet(ctx context.Context, key string, indexes ...uint64) *redis.SliceCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key}
+	for _, a := range indexes {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARMGet", varargs...)
+	ret0, _ := ret[0].(*redis.SliceCmd)
+	return ret0
+}
+
+// ARMGet indicates an expected call of ARMGet.
+func (mr *MockUniversalClientMockRecorder) ARMGet(ctx, key any, indexes ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key}, indexes...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARMGet", reflect.TypeOf((*MockUniversalClient)(nil).ARMGet), varargs...)
+}
+
+// ARMSet mocks base method.
+func (m *MockUniversalClient) ARMSet(ctx context.Context, key string, members ...redis.AREntry) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key}
+	for _, a := range members {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARMSet", varargs...)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// ARMSet indicates an expected call of ARMSet.
+func (mr *MockUniversalClientMockRecorder) ARMSet(ctx, key any, members ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key}, members...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARMSet", reflect.TypeOf((*MockUniversalClient)(nil).ARMSet), varargs...)
+}
+
+// ARNext mocks base method.
+func (m *MockUniversalClient) ARNext(ctx context.Context, key string) *redis.UintCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARNext", ctx, key)
+	ret0, _ := ret[0].(*redis.UintCmd)
+	return ret0
+}
+
+// ARNext indicates an expected call of ARNext.
+func (mr *MockUniversalClientMockRecorder) ARNext(ctx, key any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARNext", reflect.TypeOf((*MockUniversalClient)(nil).ARNext), ctx, key)
+}
+
+// AROpAnd mocks base method.
+func (m *MockUniversalClient) AROpAnd(ctx context.Context, key string, start, end uint64) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpAnd", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// AROpAnd indicates an expected call of AROpAnd.
+func (mr *MockUniversalClientMockRecorder) AROpAnd(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpAnd", reflect.TypeOf((*MockUniversalClient)(nil).AROpAnd), ctx, key, start, end)
+}
+
+// AROpMatch mocks base method.
+func (m *MockUniversalClient) AROpMatch(ctx context.Context, key string, start, end uint64, value string) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpMatch", ctx, key, start, end, value)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// AROpMatch indicates an expected call of AROpMatch.
+func (mr *MockUniversalClientMockRecorder) AROpMatch(ctx, key, start, end, value any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpMatch", reflect.TypeOf((*MockUniversalClient)(nil).AROpMatch), ctx, key, start, end, value)
+}
+
+// AROpMax mocks base method.
+func (m *MockUniversalClient) AROpMax(ctx context.Context, key string, start, end uint64) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpMax", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// AROpMax indicates an expected call of AROpMax.
+func (mr *MockUniversalClientMockRecorder) AROpMax(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpMax", reflect.TypeOf((*MockUniversalClient)(nil).AROpMax), ctx, key, start, end)
+}
+
+// AROpMin mocks base method.
+func (m *MockUniversalClient) AROpMin(ctx context.Context, key string, start, end uint64) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpMin", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// AROpMin indicates an expected call of AROpMin.
+func (mr *MockUniversalClientMockRecorder) AROpMin(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpMin", reflect.TypeOf((*MockUniversalClient)(nil).AROpMin), ctx, key, start, end)
+}
+
+// AROpOr mocks base method.
+func (m *MockUniversalClient) AROpOr(ctx context.Context, key string, start, end uint64) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpOr", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// AROpOr indicates an expected call of AROpOr.
+func (mr *MockUniversalClientMockRecorder) AROpOr(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpOr", reflect.TypeOf((*MockUniversalClient)(nil).AROpOr), ctx, key, start, end)
+}
+
+// AROpSum mocks base method.
+func (m *MockUniversalClient) AROpSum(ctx context.Context, key string, start, end uint64) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpSum", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// AROpSum indicates an expected call of AROpSum.
+func (mr *MockUniversalClientMockRecorder) AROpSum(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpSum", reflect.TypeOf((*MockUniversalClient)(nil).AROpSum), ctx, key, start, end)
+}
+
+// AROpUsed mocks base method.
+func (m *MockUniversalClient) AROpUsed(ctx context.Context, key string, start, end uint64) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpUsed", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// AROpUsed indicates an expected call of AROpUsed.
+func (mr *MockUniversalClientMockRecorder) AROpUsed(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpUsed", reflect.TypeOf((*MockUniversalClient)(nil).AROpUsed), ctx, key, start, end)
+}
+
+// AROpXor mocks base method.
+func (m *MockUniversalClient) AROpXor(ctx context.Context, key string, start, end uint64) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AROpXor", ctx, key, start, end)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// AROpXor indicates an expected call of AROpXor.
+func (mr *MockUniversalClientMockRecorder) AROpXor(ctx, key, start, end any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AROpXor", reflect.TypeOf((*MockUniversalClient)(nil).AROpXor), ctx, key, start, end)
+}
+
+// ARRing mocks base method.
+func (m *MockUniversalClient) ARRing(ctx context.Context, key string, size uint64, values ...string) *redis.UintCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key, size}
+	for _, a := range values {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARRing", varargs...)
+	ret0, _ := ret[0].(*redis.UintCmd)
+	return ret0
+}
+
+// ARRing indicates an expected call of ARRing.
+func (mr *MockUniversalClientMockRecorder) ARRing(ctx, key, size any, values ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key, size}, values...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARRing", reflect.TypeOf((*MockUniversalClient)(nil).ARRing), varargs...)
+}
+
+// ARScan mocks base method.
+func (m *MockUniversalClient) ARScan(ctx context.Context, key string, start, end uint64, args *redis.ARScanArgs) *redis.AREntrySliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARScan", ctx, key, start, end, args)
+	ret0, _ := ret[0].(*redis.AREntrySliceCmd)
+	return ret0
+}
+
+// ARScan indicates an expected call of ARScan.
+func (mr *MockUniversalClientMockRecorder) ARScan(ctx, key, start, end, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARScan", reflect.TypeOf((*MockUniversalClient)(nil).ARScan), ctx, key, start, end, args)
+}
+
+// ARSeek mocks base method.
+func (m *MockUniversalClient) ARSeek(ctx context.Context, key string, index uint64) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ARSeek", ctx, key, index)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// ARSeek indicates an expected call of ARSeek.
+func (mr *MockUniversalClientMockRecorder) ARSeek(ctx, key, index any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARSeek", reflect.TypeOf((*MockUniversalClient)(nil).ARSeek), ctx, key, index)
+}
+
+// ARSet mocks base method.
+func (m *MockUniversalClient) ARSet(ctx context.Context, key string, index uint64, values ...string) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, key, index}
+	for _, a := range values {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ARSet", varargs...)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// ARSet indicates an expected call of ARSet.
+func (mr *MockUniversalClientMockRecorder) ARSet(ctx, key, index any, values ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, key, index}, values...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ARSet", reflect.TypeOf((*MockUniversalClient)(nil).ARSet), varargs...)
 }
 
 // AddHook mocks base method.
@@ -12432,6 +13328,34 @@ func (mr *MockUniversalClientMockRecorder) IncrByFloat(ctx, key, value any) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncrByFloat", reflect.TypeOf((*MockUniversalClient)(nil).IncrByFloat), ctx, key, value)
 }
 
+// IncrEXFloat mocks base method.
+func (m *MockUniversalClient) IncrEXFloat(ctx context.Context, key string, args redis.IncrEXFloatArgs) *redis.IncrEXFloatCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IncrEXFloat", ctx, key, args)
+	ret0, _ := ret[0].(*redis.IncrEXFloatCmd)
+	return ret0
+}
+
+// IncrEXFloat indicates an expected call of IncrEXFloat.
+func (mr *MockUniversalClientMockRecorder) IncrEXFloat(ctx, key, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncrEXFloat", reflect.TypeOf((*MockUniversalClient)(nil).IncrEXFloat), ctx, key, args)
+}
+
+// IncrEXInt mocks base method.
+func (m *MockUniversalClient) IncrEXInt(ctx context.Context, key string, args redis.IncrEXIntArgs) *redis.IncrEXIntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IncrEXInt", ctx, key, args)
+	ret0, _ := ret[0].(*redis.IncrEXIntCmd)
+	return ret0
+}
+
+// IncrEXInt indicates an expected call of IncrEXInt.
+func (mr *MockUniversalClientMockRecorder) IncrEXInt(ctx, key, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncrEXInt", reflect.TypeOf((*MockUniversalClient)(nil).IncrEXInt), ctx, key, args)
+}
+
 // Info mocks base method.
 func (m *MockUniversalClient) Info(ctx context.Context, section ...string) *redis.StringCmd {
 	m.ctrl.T.Helper()
@@ -12811,6 +13735,20 @@ func (m *MockUniversalClient) JSONSetMode(ctx context.Context, key, path string,
 func (mr *MockUniversalClientMockRecorder) JSONSetMode(ctx, key, path, value, mode any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "JSONSetMode", reflect.TypeOf((*MockUniversalClient)(nil).JSONSetMode), ctx, key, path, value, mode)
+}
+
+// JSONSetWithArgs mocks base method.
+func (m *MockUniversalClient) JSONSetWithArgs(ctx context.Context, key, path string, value any, options *redis.JSONSetArgsOptions) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "JSONSetWithArgs", ctx, key, path, value, options)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// JSONSetWithArgs indicates an expected call of JSONSetWithArgs.
+func (mr *MockUniversalClientMockRecorder) JSONSetWithArgs(ctx, key, path, value, options any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "JSONSetWithArgs", reflect.TypeOf((*MockUniversalClient)(nil).JSONSetWithArgs), ctx, key, path, value, options)
 }
 
 // JSONStrAppend mocks base method.
@@ -15808,10 +16746,10 @@ func (mr *MockUniversalClientMockRecorder) VIsMember(ctx, key, element any) *gom
 }
 
 // VLinks mocks base method.
-func (m *MockUniversalClient) VLinks(ctx context.Context, key, element string) *redis.StringSliceCmd {
+func (m *MockUniversalClient) VLinks(ctx context.Context, key, element string) *redis.StringSliceSliceCmd {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "VLinks", ctx, key, element)
-	ret0, _ := ret[0].(*redis.StringSliceCmd)
+	ret0, _ := ret[0].(*redis.StringSliceSliceCmd)
 	return ret0
 }
 
@@ -15822,10 +16760,10 @@ func (mr *MockUniversalClientMockRecorder) VLinks(ctx, key, element any) *gomock
 }
 
 // VLinksWithScores mocks base method.
-func (m *MockUniversalClient) VLinksWithScores(ctx context.Context, key, element string) *redis.VectorScoreSliceCmd {
+func (m *MockUniversalClient) VLinksWithScores(ctx context.Context, key, element string) *redis.VectorScoreSliceSliceCmd {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "VLinksWithScores", ctx, key, element)
-	ret0, _ := ret[0].(*redis.VectorScoreSliceCmd)
+	ret0, _ := ret[0].(*redis.VectorScoreSliceSliceCmd)
 	return ret0
 }
 
@@ -16088,6 +17026,20 @@ func (mr *MockUniversalClientMockRecorder) XAutoClaimJustID(ctx, a any) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "XAutoClaimJustID", reflect.TypeOf((*MockUniversalClient)(nil).XAutoClaimJustID), ctx, a)
 }
 
+// XAutoClaimWithDeleted mocks base method.
+func (m *MockUniversalClient) XAutoClaimWithDeleted(ctx context.Context, a *redis.XAutoClaimArgs) *redis.XAutoClaimWithDeletedCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "XAutoClaimWithDeleted", ctx, a)
+	ret0, _ := ret[0].(*redis.XAutoClaimWithDeletedCmd)
+	return ret0
+}
+
+// XAutoClaimWithDeleted indicates an expected call of XAutoClaimWithDeleted.
+func (mr *MockUniversalClientMockRecorder) XAutoClaimWithDeleted(ctx, a any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "XAutoClaimWithDeleted", reflect.TypeOf((*MockUniversalClient)(nil).XAutoClaimWithDeleted), ctx, a)
+}
+
 // XCfgSet mocks base method.
 func (m *MockUniversalClient) XCfgSet(ctx context.Context, a *redis.XCfgSetArgs) *redis.StatusCmd {
 	m.ctrl.T.Helper()
@@ -16320,6 +17272,20 @@ func (m *MockUniversalClient) XLen(ctx context.Context, stream string) *redis.In
 func (mr *MockUniversalClientMockRecorder) XLen(ctx, stream any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "XLen", reflect.TypeOf((*MockUniversalClient)(nil).XLen), ctx, stream)
+}
+
+// XNack mocks base method.
+func (m *MockUniversalClient) XNack(ctx context.Context, a *redis.XNackArgs) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "XNack", ctx, a)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// XNack indicates an expected call of XNack.
+func (mr *MockUniversalClientMockRecorder) XNack(ctx, a any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "XNack", reflect.TypeOf((*MockUniversalClient)(nil).XNack), ctx, a)
 }
 
 // XPending mocks base method.
