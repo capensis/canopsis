@@ -233,6 +233,10 @@
         :title="$t('settings.isHtmlEnabledOnTimeLine')"
       />
       <field-switcher
+        v-model="form.parameters.openExpandPanelByDoubleClick"
+        :title="$t('settings.openExpandPanelByDoubleClick')"
+      />
+      <field-switcher
         v-model="form.parameters.pausePeriodicRefreshOnExpandPanel"
         :title="$t('settings.pausePeriodicRefreshOnExpandPanel')"
       />

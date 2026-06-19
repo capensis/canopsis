@@ -72,6 +72,7 @@ export default {
     description: 'Le premier modèle de la liste sera par défaut.',
   },
   isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie',
+  openExpandPanelByDoubleClick: 'Ouvrir le panneau extensible au double clic sur l\'alarme',
   isCorrelationEnabled: 'Corrélation activée ?',
   fastPbehavior: 'Comportement périodique rapide',
   fastPbehaviorDescription: 'L\'utilisateur pourra sélectionner parmi ces types en cliquant sur Comportement périodique rapide',
