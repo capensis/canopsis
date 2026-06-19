@@ -15,7 +15,6 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
-	"go.mongodb.org/mongo-driver/v2/x/mongo/driver/description"
 	"go.mongodb.org/mongo-driver/v2/x/mongo/driver/topology"
 )
 
@@ -24,8 +23,6 @@ const (
 	DefaultServerSelectionTimeout = 30 * time.Second
 
 	disableRetries contextKey = "disable_retries"
-
-	topologyCheckTimeout = 1 * time.Second
 
 	ChangeStreamTypeInsert = "insert"
 	ChangeStreamTypeUpdate = "update"
@@ -372,7 +369,7 @@ func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update
 	return res, nil
 }
 
-func NewClient(ctx context.Context, opts ...ClientOptions) (DbClient, error) {
+func NewClient(ctx context.Context, opts ...ClientOptions) (_ DbClient, err error) {
 	var clientOptions ClientOptions
 	if len(opts) == 1 {
 		clientOptions = opts[0]
@@ -421,24 +418,29 @@ func NewClient(ctx context.Context, opts ...ClientOptions) (DbClient, error) {
 		mongoClientOptions.SetReadPreference(clientOptions.ReadPreference)
 	}
 
-	isDistributed, err := isMongoReplicaSetEnabled(ctx, mongoClientOptions)
-	if err != nil {
-		return nil, fmt.Errorf("failed to check if replica set is enabled: %w", err)
-	}
-
-	if !isDistributed {
-		return nil, errors.New("replica set is required")
-	}
-
 	mongoClient, err := mongo.Connect(mongoClientOptions)
 	if err != nil {
 		return nil, err
 	}
 
+	defer func() {
+		if err != nil {
+			_ = mongoClient.Disconnect(ctx)
+		}
+	}()
+
 	err = mongoClient.Ping(ctx, nil)
 	if err != nil {
-		_ = mongoClient.Disconnect(ctx)
 		return nil, err
+	}
+
+	isDistributed, err := isMongoDistributed(ctx, mongoClient)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check mongo deployment type: %w", err)
+	}
+
+	if !isDistributed {
+		return nil, errors.New("a distributed deployment (replica set or sharded cluster) is required")
 	}
 
 	return &dbClient{
@@ -533,59 +535,38 @@ func (c *dbClient) BulkWrite(ctx context.Context, writes []mongo.ClientBulkWrite
 	return res, err
 }
 
-func isMongoReplicaSetEnabled(ctx context.Context, clientOptions *options.ClientOptions) (bool, error) {
-	cfg, err := topology.NewConfig(clientOptions, nil)
+// isMongoDistributed reports whether the connected deployment is a distributed one (replica set or sharded cluster)
+// rather than a standalone server.
+// Canopsis requires a distributed deployment because it relies on transactions and change streams,
+// which standalone servers don't support.
+//
+// It uses the "hello" command, which is exempt from access control:
+// it requires no authentication and no privileges, so it works regardless of the roles granted to the connection user.
+// The reply's "ok" field reports command success (1) or failure (0); on failure "code"/"errmsg" carry the reason.
+// On success the remaining fields identify the deployment type:
+//   - replica set      -> non-empty "setName"
+//   - sharded (mongos) -> "msg" == "isdbgrid"
+//   - standalone       -> neither field is set
+func isMongoDistributed(ctx context.Context, client *mongo.Client) (bool, error) {
+	db := client.Database(DB)
+	cmd := bson.D{{Key: "hello", Value: 1}}
+	var r struct {
+		OK      float64 `bson:"ok"`
+		Msg     string  `bson:"msg"`
+		SetName string  `bson:"setName"`
+		Code    int     `bson:"code"`
+		ErrMsg  string  `bson:"errmsg"`
+	}
+	err := db.RunCommand(ctx, cmd).Decode(&r)
 	if err != nil {
-		return false, fmt.Errorf("could not create topology config: %w", err)
+		return false, fmt.Errorf("failed to execute hello command: %w", err)
 	}
 
-	top, err := topology.New(cfg)
-	if err != nil {
-		return false, fmt.Errorf("could not create topology: %w", err)
+	if r.OK != 1 {
+		return false, fmt.Errorf("hello command failed: code=%d errmsg=%q", r.Code, r.ErrMsg)
 	}
 
-	defer func() {
-		_ = top.Disconnect(ctx)
-	}()
-
-	err = top.Connect()
-	if err != nil {
-		return false, fmt.Errorf("could not connect to topology: %w", err)
-	}
-
-	sub, err := top.Subscribe()
-	if err != nil {
-		return false, fmt.Errorf("could not subscribe to topology: %w", err)
-	}
-
-	defer func() {
-		_ = top.Unsubscribe(sub)
-	}()
-
-	for {
-		select {
-		case <-ctx.Done():
-			return false, nil
-		case <-time.After(topologyCheckTimeout):
-			return false, nil
-		case desc, ok := <-sub.Updates:
-			if !ok {
-				return false, fmt.Errorf("topology subscription was closed: %w", err)
-			}
-
-			switch desc.Kind {
-			case description.Unknown:
-				continue
-			case description.TopologyKindSharded,
-				description.TopologyKindReplicaSet,
-				description.TopologyKindReplicaSetNoPrimary,
-				description.TopologyKindReplicaSetWithPrimary:
-				return true, nil
-			default:
-				return false, nil
-			}
-		}
-	}
+	return r.SetName != "" || r.Msg == "isdbgrid", nil
 }
 
 // getURL parses URL value in EnvURL environment variable
