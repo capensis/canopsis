@@ -1974,12 +1974,12 @@ func RegisterRoutes(
 			)
 			colorThemeRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer, errorResponder),
+				middleware.OnlyAuth(errorResponder),
 				colorThemeApi.List,
 			)
 			colorThemeRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer, errorResponder),
+				middleware.OnlyAuth(errorResponder),
 				colorThemeApi.Get,
 			)
 			colorThemeRouter.PUT(
