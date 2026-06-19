@@ -23,6 +23,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/rs/zerolog"
@@ -437,8 +438,6 @@ func syncColumnConfigsOrder(oldConfigs, newConfigs []ColumnConfig) error {
 	uniqueNewConfigColumns := make(map[string]bool, len(newConfigs))
 	newConfigsIndexMap := make(map[string]int, len(newConfigs))
 	oldConfigsIndexMap := make(map[string]int, len(newConfigs))
-	priorityNameExists := false
-	regexpColumnName := ""
 
 	for i := range oldConfigs {
 		oldName := oldConfigs[i].Name
@@ -453,18 +452,6 @@ func syncColumnConfigsOrder(oldConfigs, newConfigs []ColumnConfig) error {
 		if oldName != newName {
 			oldConfigsIndexMap[oldName] = i
 			newConfigsIndexMap[newName] = i
-		}
-
-		if oldName == priorityColumnName {
-			priorityNameExists = true
-		}
-
-		if newConfigs[i].IsRegexp() {
-			regexpColumnName = newName
-		}
-
-		if priorityNameExists && regexpColumnName != "" {
-			return fmt.Errorf("column %q is regexp, but priority column already exists", regexpColumnName)
 		}
 	}
 
@@ -1330,15 +1317,21 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 
 	invalidCols := make([]string, 0)
 	existColumns := make(map[string]bool, len(columns))
+	hasPriority := false
 	for _, c := range columns {
 		existColumns[c] = true
 		if !validation.IsTableName(c) || c == externaldata.IDColumnName {
 			invalidCols = append(invalidCols, strconv.Quote(c))
 		}
+
+		if c == priorityColumnName {
+			hasPriority = true
+		}
 	}
 
+	valErrs := validator.ValidationErrors{}
 	if len(invalidCols) > 0 {
-		return validation.NewSingleErrorWithParam("invalidcols", "file", "file", strings.Join(invalidCols, " "), nil)
+		valErrs = append(valErrs, validation.NewFieldErrorWithParam("invalidcols", "file", "file", strings.Join(invalidCols, " ")))
 	}
 
 	missingCols := make([]string, 0)
@@ -1351,7 +1344,15 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	}
 
 	if len(missingCols) > 0 {
-		return validation.NewSingleErrorWithParam("missingcols", "file", "file", strings.Join(missingCols, " "), nil)
+		valErrs = append(valErrs, validation.NewFieldErrorWithParam("missingcols", "file", "file", strings.Join(missingCols, " ")))
+	}
+
+	if hasPriority {
+		valErrs = append(valErrs, validation.NewFieldErrorWithParam("reservedcols", "file", "file", priorityColumnName))
+	}
+
+	if len(valErrs) > 0 {
+		return validation.NewError(valErrs, nil)
 	}
 
 	_, err = f.Seek(0, io.SeekStart)
