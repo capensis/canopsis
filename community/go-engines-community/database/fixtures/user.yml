@@ -2457,6 +2457,9 @@ permission:
       - "@group_widgets_alarmslist_alarmactions"
     api_permissions:
       "@permission_api_pbehavior": 8
+      "@permission_api_pbehaviortype": 4
+      "@permission_api_pbehaviorreason": 4
+      "@permission_api_pbehaviorexception": 4
   permission_listalarm_fastPbehavior:
     <<: *permission
     _id: listalarm_fastPbehavior
@@ -2467,7 +2470,9 @@ permission:
       - "@group_widgets_alarmslist"
       - "@group_widgets_alarmslist_alarmactions"
     api_permissions:
-      "@permission_api_pbehavior": 8
+      "@permission_api_pbehavior": 9
+      "@permission_api_pbehaviortype": 4
+      "@permission_api_pbehaviorreason": 4
   permission_listalarm_snoozeAlarm:
     <<: *permission
     _id: listalarm_snoozeAlarm
