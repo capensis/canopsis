@@ -308,6 +308,19 @@ func TestScanMigrationDirectory(t *testing.T) {
 			wantVersionFound: true,
 		},
 		{
+			name: "transition-artifact-excluded-from-buckets",
+			files: []string{
+				"26_last_old.up.sql",
+				"2000_transition_artifact.up.sql",
+				"250406001_first_canonical_new.up.sql",
+			},
+			currentVersion:   transitionArtifactVersion,
+			wantMaxOld:       26,
+			wantMinNew:       250406001,
+			wantMaxAll:       250406001,
+			wantVersionFound: true,
+		},
+		{
 			name:             "files-without-underscore-ignored",
 			files:            []string{"README.up.sql", "26_valid.up.sql"},
 			currentVersion:   28,
