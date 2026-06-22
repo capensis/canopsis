@@ -31,6 +31,15 @@ const (
 	// newVersionThreshold is the smallest possible MMmmppsss value with MM=10, mm=00, pp=00, sss=000.
 	newVersionThreshold uint = 10_00_00_000
 
+	// transitionArtifactVersion is the special migration 2000 from release-25.04.
+	// It was the first new-format attempt before the MMmmppsss standard was established.
+	// Excluded from maxOld/minNew directory classification and direct-upgrade guard checks.
+	transitionArtifactVersion uint = 2000
+	// transitionArtifactForceVersion is the old-format checkpoint equivalent for transitionArtifactVersion.
+	transitionArtifactForceVersion uint = 26
+	// transitionArtifactReleaseLine is the canonical release line for transitionArtifactVersion.
+	transitionArtifactReleaseLine = "25.04.x"
+
 	versionFormatOldLabel = "old-sequential"
 	versionFormatNewLabel = "new-MMmmppsss"
 	versionFormatUnknown  = "unknown"
@@ -195,13 +204,20 @@ func scanMigrationDirectory(dirPath string, findVersion uint) (dirInfo, error) {
 		}
 		v := uint(n)
 		info.maxAvailable = max(info.maxAvailable, v)
+		if v == findVersion {
+			info.versionFound = true
+		}
+
+		// Transitional artifact (migration 2000) is tracked for max/versionFound
+		// but excluded from old/new classification buckets.
+		if v == transitionArtifactVersion {
+			continue
+		}
+
 		if v < newVersionThreshold {
 			info.maxOldAvailable = max(info.maxOldAvailable, v)
 		} else if info.minNewAvailable == 0 || v < info.minNewAvailable {
 			info.minNewAvailable = v
-		}
-		if v == findVersion {
-			info.versionFound = true
 		}
 	}
 
@@ -266,10 +282,10 @@ func LoadLatestTransitionHistory(ctx context.Context, pool *pgxpool.Pool) (*Tran
 // Returns an error only when the input combination is logically inconsistent
 // (e.g. new-format source but no matching registry row).
 func decideTransitionPlan(state MigrationState, dir dirInfo, registry *registryRow) (TransitionPlan, error) {
-	// special case for version 2000: it was the first new-format version but the registry was introduced later.
+	// special case for transitionArtifactVersion: it was the first new-format version but the registry was introduced later.
 	// It's effectively equivalent to an old-format version for transition planning purposes, so treat it as such.
-	if state.HasVersion && state.Version == 2000 {
-		return TransitionPlan{NeedsForce: true, ForceVersion: 26, SourceReleaseLine: "25.04.x"}, nil
+	if state.HasVersion && state.Version == transitionArtifactVersion {
+		return TransitionPlan{NeedsForce: true, ForceVersion: transitionArtifactForceVersion, SourceReleaseLine: transitionArtifactReleaseLine}, nil
 	}
 	// only Up(), no force needed.
 	if !state.HasVersion || state.parsed.format == versionFormatOld {
