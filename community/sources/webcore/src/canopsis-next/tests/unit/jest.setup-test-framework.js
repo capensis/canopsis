@@ -171,7 +171,25 @@ function toBeDispatchedWith(received, expected) {
   }
 }
 
+function toMatchCleanSnapshot(received, hint) {
+  const html = received && typeof received.html === 'function'
+    ? received.html()
+    : received;
+
+  const cleaned = String(html).replace(
+    /\s([\w-]+)="\(\.\.\.args\)\s*=>[\s\S]*?"/g,
+    ' $1="[Function]"',
+  );
+
+  if (typeof hint === 'string') {
+    return toMatchSnapshot.call(this, cleaned, hint);
+  }
+
+  return toMatchSnapshot.call(this, cleaned);
+}
+
 expect.extend({
+  toMatchCleanSnapshot,
   toMatchImageSnapshot,
   toMatchCanvasSnapshot,
   toMatchTooltipSnapshot,

@@ -104,7 +104,7 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
 
       await flushPromises();
 
-      expect(wrapper).toMatchSnapshot();
+      expect(wrapper).toMatchCleanSnapshot();
     });
 
     test(`Renders \`${name}\` with custom props`, async () => {
@@ -120,7 +120,7 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
 
       await flushPromises();
 
-      expect(wrapper).toMatchSnapshot();
+      expect(wrapper).toMatchCleanSnapshot();
     });
   });
 };
