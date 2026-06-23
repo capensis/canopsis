@@ -6,6 +6,7 @@
     :total-items="totalItems"
     :options="options"
     :select-all="removable"
+    :hide-mass-actions="!active"
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
@@ -117,6 +118,10 @@ export default {
     duplicable: {
       type: Boolean,
       default: false,
+    },
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {
