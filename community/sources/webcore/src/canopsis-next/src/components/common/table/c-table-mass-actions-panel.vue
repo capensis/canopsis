@@ -78,6 +78,8 @@ import { useMaps } from '@/hooks/store/modules/maps';
 import { useUser } from '@/hooks/store/modules/user';
 import { useRole } from '@/hooks/store/modules/role';
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useRemediationConfiguration } from '@/hooks/store/modules/remediation-configuration';
+import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
 
 export default {
   props: {
@@ -177,7 +179,19 @@ export default {
       type: Boolean,
       default: false,
     },
+    role: {
+      type: Boolean,
+      default: false,
+    },
     instruction: {
+      type: Boolean,
+      default: false,
+    },
+    remediationConfiguration: {
+      type: Boolean,
+      default: false,
+    },
+    remediationJob: {
       type: Boolean,
       default: false,
     },
@@ -296,6 +310,14 @@ export default {
       bulkDisableRemediationInstructions,
       bulkRemoveRemediationInstructions,
     } = useRemediationInstruction();
+
+    const {
+      bulkRemoveRemediationConfigurations,
+    } = useRemediationConfiguration();
+
+    const {
+      bulkRemoveRemediationJobs,
+    } = useRemediationJob();
 
     const itemsIds = computed(() => mapIds(props.items));
     const enablableItems = computed(() => (
@@ -436,6 +458,16 @@ export default {
           tooltipPrefix: 'remediation.instruction',
           exportProps: { instruction: true },
         },
+        [props.remediationConfiguration]: {
+          remove: bulkRemoveRemediationConfigurations,
+          tooltipPrefix: 'remediation.configuration',
+          exportProps: { jobConfig: true },
+        },
+        [props.remediationJob]: {
+          remove: bulkRemoveRemediationJobs,
+          tooltipPrefix: 'remediation.job',
+          exportProps: { job: true },
+        },
       }.true ?? {};
 
       const massRemoveTooltipKey = `${activeConfig.tooltipPrefix}.massRemove`;
@@ -463,7 +495,7 @@ export default {
      * @param {string} messageKey
      */
     const showErrorPopups = (response = [], messageKey) => (
-      response.forEach(({ status, message, error }, index) => {
+      response.forEach(({ status = RESPONSE_STATUSES.success, message, error }, index) => {
         if (status !== RESPONSE_STATUSES.success) {
           const ruleName = props.items[index]?.name;
           const text = te(messageKey) ? t(messageKey, { name: ruleName }) : message || error;

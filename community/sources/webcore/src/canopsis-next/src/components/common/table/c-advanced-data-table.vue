@@ -23,7 +23,7 @@
         name="toolbar"
       />
       <c-mass-actions-panel
-        v-if="selectAll && selected.length && hasMassActionsSlot"
+        v-if="selectAll && selected.length && hasMassActionsSlot && !hideMassActions"
         v-model="keepSelectedAfterAction"
         v-bind="massActionsGridParameters"
         :selected="selected"
@@ -287,6 +287,10 @@ export default {
       required: false,
     },
     defaultKeepSelectedAfterAction: {
+      type: Boolean,
+      default: false,
+    },
+    hideMassActions: {
       type: Boolean,
       default: false,
     },

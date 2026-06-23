@@ -16,6 +16,7 @@
         :items="selected"
         :removable="removable"
         small
+        role
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
