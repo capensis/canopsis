@@ -5903,6 +5903,13 @@ definitions:
     - enabled
     - name
     type: object
+  role.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   role.BulkUpdatePermissionsRequestItem:
     properties:
       _id:
