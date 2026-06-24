@@ -3,7 +3,7 @@
 exports[`meta-alarm-rule-patterns-form Renders \`meta-alarm-rule-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
   alarm-attributes="[object Object],[object Object],[object Object],[object Object]"
-  counter-method="(...args) => module.context.dispatch.apply(store, [value, ...args])"
+  counter-method="[Function]"
   disabled="true"
   entity-attributes="[object Object],[object Object],[object Object]"
   value="[object Object]"
@@ -17,7 +17,7 @@ exports[`meta-alarm-rule-patterns-form Renders \`meta-alarm-rule-patterns-form\`
 exports[`meta-alarm-rule-patterns-form Renders \`meta-alarm-rule-patterns-form\` with default props 1`] = `
 <c-patterns-field-stub
   alarm-attributes="[object Object],[object Object],[object Object],[object Object]"
-  counter-method="(...args) => module.context.dispatch.apply(store, [value, ...args])"
+  counter-method="[Function]"
   entity-attributes="[object Object],[object Object],[object Object]"
   value="[object Object]"
   with-alarm=""

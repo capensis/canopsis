@@ -38,6 +38,7 @@ export const PATTERN_OPERATORS = {
 
   ticketAssociated: 'ticket_associated',
   ticketNotAssociated: 'ticket_not_associated',
+  ticketCreationFailed: 'ticket_creation_failed',
 
   canceled: 'canceled',
   notCanceled: 'not_canceled',
@@ -135,6 +136,7 @@ export const PATTERN_OPERATORS_WITHOUT_VALUE = [
   PATTERN_OPERATORS.isNotEmpty,
   PATTERN_OPERATORS.ticketAssociated,
   PATTERN_OPERATORS.ticketNotAssociated,
+  PATTERN_OPERATORS.ticketCreationFailed,
   PATTERN_OPERATORS.acked,
   PATTERN_OPERATORS.notAcked,
   PATTERN_OPERATORS.snoozed,

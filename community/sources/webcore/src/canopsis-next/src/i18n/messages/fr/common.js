@@ -307,6 +307,8 @@ export default {
   theme: 'Thème | Thèmes',
   systemName: 'Nom du système',
   emitTrigger: 'Émettre un déclencheur',
+  emitTriggerSuccess: 'Émettre un déclencheur en cas de succès',
+  emitTriggerFail: 'Émettre un déclencheur en cas d\'échec',
   header: 'En-tête | En-têtes',
   headerKey: 'Clé d\'en-tête',
   headerValue: 'Valeur d\'en-tête',
@@ -497,6 +499,7 @@ export default {
 
     [PATTERN_OPERATORS.ticketAssociated]: 'Un ticket est associé',
     [PATTERN_OPERATORS.ticketNotAssociated]: 'Un ticket n\'est pas associé',
+    [PATTERN_OPERATORS.ticketCreationFailed]: 'Échec de la création du ticket',
 
     [PATTERN_OPERATORS.canceled]: 'Annulé',
     [PATTERN_OPERATORS.notCanceled]: 'Non annulé',
@@ -570,6 +573,9 @@ export default {
     },
     [TRIGGERS_TYPES.declareticketwebhook]: {
       text: 'Ticket déclaré par le webhook',
+    },
+    [TRIGGERS_TYPES.declareticketwebhookfail]: {
+      text: 'La déclaration du ticket par le webhook a échoué',
     },
     [TRIGGERS_TYPES.assocticket]: {
       text: 'Ticket associé à une alarme',

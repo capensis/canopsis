@@ -307,6 +307,8 @@ export default {
   theme: 'Theme | Themes',
   systemName: 'System name',
   emitTrigger: 'Emit trigger',
+  emitTriggerSuccess: 'Emit trigger on success',
+  emitTriggerFail: 'Emit trigger on failure',
   header: 'Header | Headers',
   headerKey: 'Header key',
   headerValue: 'Header value',
@@ -497,6 +499,7 @@ export default {
 
     [PATTERN_OPERATORS.ticketAssociated]: 'Ticket is associated',
     [PATTERN_OPERATORS.ticketNotAssociated]: 'Ticket is not associated',
+    [PATTERN_OPERATORS.ticketCreationFailed]: 'Ticket creation failed',
 
     [PATTERN_OPERATORS.canceled]: 'Canceled',
     [PATTERN_OPERATORS.notCanceled]: 'Not canceled',
@@ -570,6 +573,9 @@ export default {
     },
     [TRIGGERS_TYPES.declareticketwebhook]: {
       text: 'Ticket declared by the webhook',
+    },
+    [TRIGGERS_TYPES.declareticketwebhookfail]: {
+      text: 'Ticket declaration by the webhook has failed',
     },
     [TRIGGERS_TYPES.assocticket]: {
       text: 'Ticket associated with an alarm',
