@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"fmt"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -533,7 +532,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	mockDbClient := createMockDbClient(ctrl)
 	search := "test-search"
 	searchRegexp := bson.Regex{
-		Pattern: fmt.Sprintf(".*%s.*", search),
+		Pattern: search,
 		Options: "i",
 	}
 	request := ListRequestWithPagination{
