@@ -296,7 +296,10 @@ export default {
   },
   computed: {
     hasAlarmsListPbehaviorAccess() {
-      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd);
+      return (
+        this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd)
+        || this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd)
+      );
     },
 
     cardFlexClass() {
