@@ -4,10 +4,12 @@ import (
 	"context"
 	"crypto/tls"
 	"net/http"
+	"net/url"
 	"os"
 	"reflect"
 	"slices"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -205,19 +207,21 @@ func (s *store) GetStatus() Status {
 	}
 
 	for _, service := range services {
-		if !service.IsRunning {
-			status.Services = append(status.Services, service)
+		if service.Status != StatusHealthy {
+			status.Services = append(status.Services, Service{
+				Name:   service.Name,
+				Status: service.Status,
+				Issues: service.Issues,
+			})
 		}
 	}
 
 	for name, e := range engines.Parameters {
-		if !e.IsRunning || e.IsQueueOverflown || e.IsTooFewInstances || e.IsDiffInstancesConfig {
+		if e.Status != StatusHealthy {
 			status.Engines = append(status.Engines, Engine{
-				Name:                  name,
-				IsRunning:             e.IsRunning,
-				IsQueueOverflown:      e.IsQueueOverflown,
-				IsTooFewInstances:     e.IsTooFewInstances,
-				IsDiffInstancesConfig: e.IsDiffInstancesConfig,
+				Name:   name,
+				Status: e.Status,
+				Issues: e.Issues,
 			})
 		}
 	}
@@ -345,9 +349,7 @@ func (s *store) getServices() []Service {
 }
 
 func (s *store) checkMongoDB(ctx context.Context) Service {
-	res := Service{
-		Name: ServiceMongoDB,
-	}
+	name := ServiceMongoDB
 	if s.mongoClient == nil {
 		var err error
 		s.mongoClient, err = mongo.NewClient(ctx, mongo.ClientOptions{
@@ -357,51 +359,42 @@ func (s *store) checkMongoDB(ctx context.Context) Service {
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to mongo")
 
-			return res
+			return s.unhealthyService(name)
 		}
 	}
 
 	if err := s.mongoClient.Ping(ctx, nil); err != nil {
 		s.logger.Err(err).Msg("cannot ping mongo")
 
-		return res
+		return s.unhealthyService(name)
 	}
 
-	res.IsRunning = true
-
-	return res
+	return s.healthyService(name)
 }
 
 func (s *store) checkRedis(ctx context.Context) Service {
-	res := Service{
-		Name: ServiceRedis,
-	}
-
+	name := ServiceRedis
 	if s.redisClient == nil {
 		var err error
 		s.redisClient, err = redis.NewSession(ctx, 0, s.logger, -1, -1)
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to redis")
 
-			return res
+			return s.unhealthyService(name)
 		}
 	}
 
 	if err := s.redisClient.Ping(ctx).Err(); err != nil {
 		s.logger.Err(err).Msg("cannot ping redis")
 
-		return res
+		return s.unhealthyService(name)
 	}
 
-	res.IsRunning = true
-
-	return res
+	return s.healthyService(name)
 }
 
 func (s *store) checkRabbitMQ() Service {
-	res := Service{
-		Name: ServiceRabbitMQ,
-	}
+	name := ServiceRabbitMQ
 	if s.rmqClient == nil {
 		var err error
 		url := os.Getenv(amqp.EnvHTTPURL)
@@ -413,7 +406,7 @@ func (s *store) checkRabbitMQ() Service {
 			if !ok {
 				s.logger.Error().Msg("unknown type of http.DefaultTransport")
 
-				return res
+				return s.unhealthyService(name)
 			}
 
 			tr := dt.Clone()
@@ -426,7 +419,7 @@ func (s *store) checkRabbitMQ() Service {
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to rabbitmq api")
 
-			return res
+			return s.unhealthyService(name)
 		}
 
 		s.rmqClient.SetTimeout(timeout)
@@ -436,9 +429,11 @@ func (s *store) checkRabbitMQ() Service {
 	if err != nil {
 		s.logger.Err(err).Msg("cannot get list of rabbitmq nodes")
 
-		return res
+		return s.unhealthyService(name)
 	}
 
+	status := StatusHealthy
+	issue := ""
 	runningCount := 0
 	for _, node := range nodes {
 		if node.IsRunning {
@@ -446,42 +441,129 @@ func (s *store) checkRabbitMQ() Service {
 		}
 	}
 
-	res.IsRunning = runningCount > 0
-	res.Nodes = new(len(nodes))
-	res.RunningNodes = new(runningCount)
+	// No node running means the broker is down; a partial outage is only degraded.
+	if runningCount == 0 {
+		status = StatusUnhealthy
+	} else if runningCount < len(nodes) {
+		status = StatusDegraded
+		issue = ServiceIssueNodeDown
+	}
 
-	return res
+	// Quorum queues can still lose their majority while nodes are up,
+	// so inspect them unless the broker is already unhealthy.
+	if status != StatusUnhealthy {
+		statusByQueue, issueByQueue, err := s.checkRMQQueues(s.rmqClient)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot get list of rabbitmq queues")
+
+			return s.unhealthyService(name)
+		}
+
+		if statusByQueue != "" {
+			status = statusByQueue
+			issue = issueByQueue
+		}
+	}
+
+	var issues []string
+	if issue != "" {
+		issues = append(issues, issue)
+	}
+
+	return Service{
+		Name:         name,
+		Status:       status,
+		Issues:       issues,
+		Nodes:        new(len(nodes)),
+		RunningNodes: new(runningCount),
+	}
+}
+
+func (s *store) checkRMQQueues(c *rabbithole.Client) (status string, issue string, err error) {
+	page := 1
+	for {
+		params := url.Values{}
+		params.Set("page", strconv.Itoa(page))
+		// Fetch only the fields we need and skip per-queue stats computation
+		// to keep the call cheap on clusters with many queues.
+		params.Set("columns", "name,type,members,online")
+		params.Set("disable_stats", "true")
+		params.Set("enable_queue_totals", "true")
+		queues, err := c.PagedListQueuesWithParameters(params)
+		if err != nil {
+			return "", "", err
+		}
+
+		if queues.ItemCount == 0 {
+			break
+		}
+
+		for _, queue := range queues.Items {
+			if queue.Type != rmqQueueTypeQuorum {
+				continue
+			}
+
+			// A quorum queue accepts writes only while a strict majority of its Raft members is online.
+			// Without majority it is blocked: unhealthy.
+			if len(queue.Online) <= len(queue.Members)/2 {
+				return StatusUnhealthy, ServiceIssueNoQuorum, nil
+			}
+
+			// Majority is held but at least one replica is offline: degraded.
+			if len(queue.Online) < len(queue.Members) {
+				status = StatusDegraded
+				issue = ServiceIssueQuorumDegraded
+			}
+		}
+
+		page++
+		if page > queues.PageCount {
+			break
+		}
+	}
+
+	return status, issue, nil
 }
 
 func (s *store) checkTimescaleDB(ctx context.Context) Service {
-	res := Service{
-		Name: ServiceTimescaleDB,
-	}
+	name := ServiceTimescaleDB
 	if s.pgConn == nil || s.pgConn.IsClosed() {
 		connStr, err := postgres.GetConnStr()
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to postgres")
 
-			return res
+			return s.unhealthyService(name)
 		}
 
 		s.pgConn, err = pgx.Connect(ctx, connStr)
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to postgres")
 
-			return res
+			return s.unhealthyService(name)
 		}
 	}
 
 	if err := s.pgConn.Ping(ctx); err != nil {
 		s.logger.Err(err).Msg("cannot ping postgres")
 
-		return res
+		return s.unhealthyService(name)
 	}
 
-	res.IsRunning = true
+	return s.healthyService(name)
+}
 
-	return res
+func (s *store) healthyService(name string) Service {
+	return Service{
+		Name:   name,
+		Status: StatusHealthy,
+	}
+}
+
+func (s *store) unhealthyService(name string) Service {
+	return Service{
+		Name:   name,
+		Status: StatusUnhealthy,
+	}
 }
 
 func transformEngineInfoToGraph(engines map[string]engine.RunInfo, order []string, parameters config.HealthCheckParameters) Engines {
@@ -499,22 +581,38 @@ func transformEngineInfoToGraph(engines map[string]engine.RunInfo, order []strin
 				optimalInstances = 1
 			}
 
+			var issues []string
+			if parameters.Queue.Enabled && info.QueueLength > parameters.Queue.Limit {
+				issues = append(issues, EngineIssueQueueOverflowed)
+			}
+
+			if info.Instances < minInstances {
+				issues = append(issues, EngineIssueTooFewInstances)
+			}
+
+			if info.HasDiffConfig {
+				issues = append(issues, EngineIssueInstancesConfigMismatch)
+			}
+
+			status := StatusHealthy
+			if len(issues) > 0 {
+				status = StatusDegraded
+			}
+
 			graph.Nodes[i] = name
 			enginesParams[name] = Engine{
-				Instances:             &info.Instances,
-				MinInstances:          &minInstances,
-				OptimalInstances:      &optimalInstances,
-				QueueLength:           &info.QueueLength,
-				Time:                  &info.Time,
-				IsRunning:             true,
-				IsQueueOverflown:      parameters.Queue.Enabled && info.QueueLength > parameters.Queue.Limit,
-				IsTooFewInstances:     info.Instances < minInstances,
-				IsDiffInstancesConfig: info.HasDiffConfig,
+				Instances:        &info.Instances,
+				MinInstances:     &minInstances,
+				OptimalInstances: &optimalInstances,
+				QueueLength:      &info.QueueLength,
+				Time:             &info.Time,
+				Status:           status,
+				Issues:           issues,
 			}
 		} else {
 			graph.Nodes[i] = name
 			enginesParams[name] = Engine{
-				IsRunning: false,
+				Status: StatusUnhealthy,
 			}
 		}
 	}
