@@ -1,0 +1,747 @@
+# Canopsis Next Migration Inventory
+
+Source project: `/Users/verokhov/Workspace/canopsis-pro/community/sources/webcore/src/canopsis-next`
+
+This file tracks migration progress for top-level route pages and widget types from `canopsis-next`.
+
+Status legend:
+
+- `[x]` migrated
+- `[~]` partially migrated
+- `[ ]` not migrated
+
+## Immediate Tasks
+
+- `[ ]` Remove `normalizr` from the old store migration path before porting larger entity modules. Prefer plain normalized-by-id state, Pinia stores and explicit mapper helpers instead of carrying over the old Vuex/normalizr shape.
+
+## Cross-Cutting Migration Rules
+
+- `[x]` Replace `v-field` and `@input` on Vue components with explicit Vue 3 bindings:
+  - remove `v-field="..."`;
+  - use `:prop` + `@update:prop`, or `v-model:prop` when a form model field already exists;
+  - replace `model: { prop: 'X', event: 'input' }` with `emits: ['update:X']`;
+  - replace `emit('input', ...)` with `emit('update:X', ...)`.
+  - use `useModelField()` / `useArrayModelField()` for object and array subforms.
+  - details: `docs/ai/coding-standards.md` (`Replace v-field And @input`).
+- `[x]` Use `c-*` Vuetify wrappers instead of raw `v-*` form controls in app templates (`c-select` instead of `v-select`, etc.); details: `docs/ai/coding-standards.md` (`Use c-* Field Wrappers`).
+- `[x]` Removed `c-select-field` compat wrapper; bind `c-select` directly with `:model-value` / `@update:model-value` and `item-title` / `item-value`.
+- `[x]` Merge project-component listener objects into a single `v-bind` object; rename `update:<prop>` listeners to `onUpdate:<prop>` instead of using paired `v-bind` + `v-on`; details: `docs/ai/coding-standards.md` (`v-bind` And Listener Objects For Project Components`).
+
+## Shared Components
+
+- `[x]` `c-fab-btn`: migrated to `src/components/common/buttons/c-fab-btn.vue`.
+- `[x]` `c-refresh-btn`: migrated to `src/components/common/buttons/c-refresh-btn.vue` because `c-fab-btn` depends on it.
+- `[x]` Modal base dependencies for maintenance mode: `c-modal-wrapper`, `c-form-block`, `c-form-block-row`, `text-editor-field`, `c-color-picker-field`.
+- `[x]` Common modals: `confirmation`, `create-maintenance`.
+- `[~]` Text editor stack: `text-editor`, `text-editor-field`, `text-editor-with-template`, `c-widget-template-field`, variables menu/list, upload hook, template-vars hook, image/images viewer modals and sidebar text-editor fields are migrated. Remaining: connect full vee-validate form validation inside editor modals when related pages/widgets start using complex rules.
+- `[x]` `c-draggable-list-field`: migrated with Vue 3 `vuedraggable` API; emits `update:value` / `update:model-value` matching its `value` / `modelValue` props.
+- `[~]` `c-advanced-data-table` migration plan:
+  - `[x]` Inventory old dependencies and current target gaps.
+  - `[x]` Leaf table placeholder: `c-empty-data-table-columns`.
+  - `[~]` Pagination base: `c-pagination`, `c-table-pagination`, `c-items-per-page-field`, `helpers/pagination`.
+  - `[~]` Search base: `c-search`, `c-search-field`, advanced-search public wrappers, rule/chip/history components and query helpers are migrated; remaining work is deep old parity for date/duration-specific editors and store-backed attribute value fetching.
+  - `[~]` Vuetify table compatibility: initial mapping for old Vuetify 2 `headers.text/value`, `server-items-length`, `options`, `sortDesc`, `show-select`, `show-expand`, expanded slot and selectable API onto Vuetify 4 `v-data-table-server` is in place; verify against first real consumer.
+  - `[~]` Main component: `components/common/table/c-advanced-data-table.vue` is ported without changing Options API; remaining work is runtime verification and consumer-specific slot fixes.
+  - `[ ]` Large nested table component: port `c-treeview-data-table` after confirming Vuetify 4 treeview availability/API or adding a small compatibility wrapper.
+  - `[~]` First real consumer: `users-list` is switched to `c-advanced-data-table`; remaining users-table work is `c-table-mass-actions-panel` and bulk user actions UI.
+- `[~]` `c-patterns-field` migration strategy:
+  - `[x]` Scope rule: old component tree is ported without rewriting the main logic; Options API components stay Options API and Composition API hooks stay hooks.
+  - `[x]` Phase 1, shared model/helpers: `helpers/entities/pattern/form.js`, `helpers/entities/filter/form.js`, `helpers/entities/pattern/fields/form.js` and required constants are available.
+  - `[x]` Phase 2, Pinia stores/hooks: migrated `pattern`, `pbehavior-patterns`, `patterns-fields`, `pattern-entities-optimize`, entity-category and pbehavior dictionary facades. Hooks wrap stores; components do not call request directly.
+  - `[x]` Phase 3, base rule editor leaves: migrated `pattern-attribute-field`, `pattern-operator-field`, `pattern-rule-field-date-value`, `pattern-rule-field`, `pattern-group-field`, `pattern-groups-field`, `pattern-editor-field`, `pattern-advanced-editor-field`, `c-pattern-field`, `c-filter-field`.
+  - `[x]` Phase 4, domain pattern fields: migrated `c-alarm-patterns-field`, `c-entity-patterns-field`, `c-pbehavior-patterns-field`, `c-event-filter-patterns-field`, `c-service-weather-patterns-field`; added lightweight compatibility fields needed by their dynamic `valueField` configs.
+  - `[~]` Phase 5, counters and preview modals: migrated `pattern-counters`, `pattern-count-message`, `pattern-count-alarms-modal`, `pattern-count-entities-modal`. Remaining: real `alarms-list`, `entities-list`, `entities-comparison` modal bodies still depend on porting alarm/entity list stacks.
+  - `[x]` Phase 6, optimization/suggestions: migrated `pattern-optimization`, `pattern-progress`, `pattern-try-optimization`, `pattern-field-suggestions-wrapper`, `pattern-suggestions`, `pattern-suggestions-list`, `pattern-suggestions-header`, `pattern-suggestion-tab`, `pattern-suggestion-content`, `pattern-fix-with-ai-btn`; API calls go through pattern-entities-optimize store/hook.
+  - `[x]` Phase 7, `c-patterns-field` wrapper: migrated `c-patterns-field.vue`; old `v-field` usage is replaced with explicit `:value` / `@update:value` bindings.
+  - `[ ]` Phase 8, consumers: integrate first in read-only scenario action pattern tab, then in forms that already depend on patterns: scenario modal, event-filter, dynamic-info, meta-alarm-rule, declare-ticket-rule, pbehavior/remediation/storage settings as they are migrated.
+  - `[~]` Verification checklist: build and lint pass. Remaining runtime checks: read-only rendering, add/remove groups/rules, date and duration values, infos fields, required/someRequired validation, counters, see alarms/entities modals, optimization cancel/retry/apply/reject, and existing query payload parity.
+- `[~]` Remaining common button components from old `components/common/buttons`: `c-expand-btn` is migrated for scenarios expand cards, `c-btn-with-error` is migrated for patterns. Pending: `c-action-fab-btn`, `c-fab-expand-btn`, `c-download-btn`, `c-copy-btn`, `c-speed-dial`, `c-db-export-btn`, `c-grid-btns`, density toggle dependencies.
+
+## Shared Hooks And Mixins
+
+- `[x]` Query hooks: `hooks/query/local-query.js`, `hooks/query/options.js`, `hooks/query/shared.js`.
+- `[x]` Query pending hook: `hooks/query/pending.js`; extended with `initialPending`.
+- `[x]` Query mixins: `mixins/query/query.js`, `mixins/query/interval.js`.
+- `[x]` Query helper dependencies: `helpers/query.js`, `helpers/entities/shared/query.js`, `helpers/collection.js`, `helpers/date/date-intervals.js`.
+- `[~]` Groups side bar stack: `groups-side-bar`, nested group/view/playlists/draggable components, navigation editing mode, view/group/playlist/active-view Pinia stores and related mixins are migrated. Remaining: wire create/edit/duplicate group/view modals after those modals are migrated.
+- `[ ]` Remaining query-related entity helpers from old `helpers/entities/*/query.js`: migrate when corresponding pages/widgets need them.
+
+## Pages
+
+Pages are taken from `src/router.js` in the source project.
+
+| Status | Route name | Path | Source component | Target component | Notes |
+| --- | --- | --- | --- | --- | --- |
+| `[~]` | `login` | `/login` | `src/views/login.vue` | `src/views/login-page.vue` | Main login page and form are migrated; messages will be moved later. |
+| `[~]` | `home` | `/` | `src/views/home.vue` | `src/views/home-page.vue` | Stub/basic page exists. |
+| `[ ]` | `view` | `/view/:id` | `src/views/view.vue` | - |  |
+| `[ ]` | `view-kiosk` | `/kiosk-views/:id/:tabId` | `src/views/view-kiosk.vue` | - |  |
+| `[ ]` | `alarms` | `/alarms/:id` | `src/views/alarm.vue` | - |  |
+| `[~]` | `admin-rights` | `/admin/rights` | `src/views/admin/permissions.vue` | `src/views/admin/rights-page.vue` | Main rights table migrated with lightweight checkbox; final visual parity pass pending. |
+| `[~]` | `admin-users` | `/admin/users` | `src/views/admin/users.vue` | `src/views/admin/users.vue` | Main users tab/table and create/edit user form modal are migrated; shared tokens pending. |
+| `[~]` | `admin-roles` | `/admin/roles` | `src/views/admin/roles.vue` | `src/views/admin/roles-page.vue` | Main list and create/edit/duplicate form are migrated. Remaining: role mass actions and deeper permissions editor parity. |
+| `[~]` | `admin-broadcast-messages` | `/admin/broadcast-messages` | `src/views/admin/broadcast-messages.vue` | `src/views/admin/broadcast-messages-page.vue` | Main list, active messages and create/edit form are migrated; runtime parity pass pending. |
+| `[ ]` | `admin-playlists` | `/admin/playlists` | `src/views/admin/playlists.vue` | - |  |
+| `[ ]` | `admin-planning-administration` | `/admin/planning` | `src/views/admin/planning.vue` | - |  |
+| `[ ]` | `admin-healthcheck` | `/admin/healthcheck` | `src/views/admin/healthcheck.vue` | - |  |
+| `[ ]` | `admin-kpi` | `/admin/kpi` | `src/views/admin/kpi.vue` | - |  |
+| `[ ]` | `admin-events-records` | `/admin/events-records` | `src/views/admin/events-records.vue` | - |  |
+| `[ ]` | `admin-anomaly-monitored-connectors` | `/admin/anomaly-monitored-connectors` | `src/views/admin/anomaly-monitored-connectors.vue` | - |  |
+| `[~]` | `admin-template-testing` | `/admin/template-testing` | `src/views/admin/template-testing.vue` | `src/views/admin/template-testing-page.vue` | Main data/tests tabs, lists, create/edit data modal and edit/remove test modals are migrated; test-variables sidebar stack remains pending for other forms. |
+| `[ ]` | `admin-jobs-management` | `/admin/jobs` | `src/views/admin/jobs.vue` | - |  |
+| `[ ]` | `admin-custom-objects-external-auth-tokens` | `/admin/external-auth-tokens` | `src/views/admin/custom-objects/external-auth-tokens.vue` | - |  |
+| `[ ]` | `admin-custom-objects-external-data-tables` | `/admin/external-data-tables` | `src/views/admin/custom-objects/external-data-tables.vue` | - |  |
+| `[ ]` | `admin-custom-objects-entity-infos-properties` | `/admin/entity-infos-properties` | `src/views/admin/custom-objects/entity-infos-properties.vue` | - |  |
+| `[ ]` | `admin-custom-objects-icons` | `/admin/icons` | `src/views/admin/custom-objects/icons.vue` | - |  |
+| `[ ]` | `admin-custom-objects-maps` | `/admin/maps` | `src/views/admin/custom-objects/maps.vue` | - |  |
+| `[ ]` | `admin-custom-objects-tags` | `/admin/tags` | `src/views/admin/custom-objects/tags.vue` | - |  |
+| `[ ]` | `admin-custom-objects-llms` | `/admin/llms` | `src/views/admin/custom-objects/llms.vue` | - |  |
+| `[ ]` | `admin-settings-views-import-export` | `/admin/views-import-export` | `src/views/admin/settings/views-import-export.vue` | - |  |
+| `[ ]` | `admin-settings-notifications` | `/admin/notifications` | `src/views/admin/settings/notifications-settings.vue` | - |  |
+| `[ ]` | `admin-settings-comment-templates` | `/admin/comment-templates` | `src/views/admin/settings/comment-templates.vue` | - |  |
+| `[ ]` | `admin-settings-widget-templates` | `/admin/widget-templates` | `src/views/admin/settings/widget-templates.vue` | - |  |
+| `[ ]` | `admin-settings-storage-settings` | `/admin/storage-settings` | `src/views/admin/settings/storage-settings.vue` | - |  |
+| `[ ]` | `admin-settings-state-settings` | `/admin/state-settings` | `src/views/admin/settings/state-settings.vue` | - |  |
+| `[ ]` | `exploitation-pbehaviors` | `/exploitation/pbehaviors` | `src/views/exploitation/pbehaviors.vue` | - |  |
+| `[~]` | `exploitation-event-filters` | `/exploitation/event-filters` | `src/views/exploitation/event-filters.vue` | `src/views/exploitation/event-filters-page.vue` | Main list, expand content, failures tab, remove/export, bulk actions and store hooks are migrated; create/edit/duplicate modal form remains pending and actions are hidden until it is adapted. |
+| `[ ]` | `exploitation-snmp-rules` | `/exploitation/snmp-rules` | `src/views/exploitation/snmp-rules.vue` | - |  |
+| `[~]` | `exploitation-dynamic-infos` | `/exploitation/dynamic-infos` | `src/views/exploitation/dynamic-infos.vue` | `src/views/exploitation/dynamic-infos-page.vue` | Page shell, dynamic infos list with advanced search, templates list, stores and create/edit modal are migrated. |
+| `[ ]` | `exploitation-meta-alarm-rules` | `/exploitation/meta-alarm-rule` | `src/views/exploitation/meta-alarm-rules.vue` | - |  |
+| `[~]` | `exploitation-scenarios` | `/exploitation/scenarios` | `src/views/exploitation/scenarios.vue` | `src/views/exploitation/scenarios-page.vue` | Main list/read-only expand content and scenario store are migrated; create/edit modal is not migrated yet. |
+| `[~]` | `exploitation-idle-rules` | `/exploitation/idle-rules` | `src/views/exploitation/idle-rules.vue` | `src/views/exploitation/idle-rules-page.vue` | Main list, expand, delete/bulk actions and create/edit/duplicate form are migrated; pbehavior action parameters depend on future pbehavior stack migration. |
+| `[~]` | `exploitation-flapping-rules` | `/exploitation/flapping-rules` | `src/views/exploitation/flapping-rules.vue` | `src/views/exploitation/flapping-rules-page.vue` | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending. |
+| `[~]` | `exploitation-resolve-rules` | `/exploitation/resolve-rules` | `src/views/exploitation/resolve-rules.vue` | `src/views/exploitation/resolve-rules-page.vue` | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending. |
+| `[ ]` | `exploitation-declare-ticket-rules` | `/exploitation/declare-ticket-rules` | `src/views/exploitation/declare-ticket-rules.vue` | - |  |
+| `[ ]` | `exploitation-link-rules` | `/exploitation/link-rules` | `src/views/exploitation/link-rules.vue` | - |  |
+| `[ ]` | `exploitation-remediation` | `/exploitation/remediation` | `src/views/exploitation/remediation.vue` | - |  |
+| `[ ]` | `playlist` | `/playlist/:id` | `src/views/playlist.vue` | - |  |
+| `[ ]` | `profile-patterns` | `/filters` | `src/views/profile/patterns.vue` | - |  |
+| `[ ]` | `profile-themes` | `/themes` | `src/views/profile/themes.vue` | - |  |
+| `[ ]` | `notifications` | `/notifications/:tabId` | `src/views/notification/notifications.vue` | - |  |
+| `[x]` | `error` | `/error` | `src/views/error.vue` | `src/views/error-page.vue` | Migrated with polling and redirect logic. |
+
+## Page Blocks
+
+Each page is tracked by functional blocks. Add concrete component/file names inside the block as we start migrating that page.
+
+### `login`
+
+- `[~]` Main content: `src/views/login.vue` -> `src/views/login-page.vue`; login card, auth variants and footer are started.
+- `[ ]` Modal windows: none found directly on route page; verify nested login components later.
+- `[ ]` Sidebars/drawers: none expected.
+- `[~]` State/API/socket: app-info polling and auth flow are started.
+- `[~]` Routing/access: `/login`, `hideHeader`, anonymous access.
+- `[ ]` Messages/i18n: user asked to move messages later.
+
+### `home`
+
+- `[~]` Main content: `src/views/home.vue` -> `src/views/home-page.vue`; target is currently a stub.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[~]` Routing/access: `/` route exists.
+- `[ ]` Messages/i18n: not migrated.
+
+### `view`
+
+- `[ ]` Main content: `src/views/view.vue`.
+- `[ ]` Tabs: migrate view tabs loading, active tab selection, tab permissions and tab navigation.
+- `[ ]` Grid system: migrate layout shell, breakpoint handling, drag/resize rules, edit mode and widget grid parameters.
+- `[ ]` Grid system content: migrate widget rendering inside grid cells, widget wrapper, widget edit controls, widget loading/error states and widget component resolution.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/view/:id`, view permission by route id.
+- `[ ]` Messages/i18n: not migrated.
+
+### `view-kiosk`
+
+- `[ ]` Main content: `src/views/view-kiosk.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/kiosk-views/:id/:tabId`, simple navigation, view permission by route id.
+- `[ ]` Messages/i18n: not migrated.
+
+### `alarms`
+
+- `[ ]` Main content: `src/views/alarm.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: alarm fetch, widget fetch and alarm widget integration not migrated.
+- `[ ]` Routing/access: `/alarms/:id`, technical view permission.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-rights`
+
+- `[~]` Main content: `src/views/admin/permissions.vue` -> `src/views/admin/rights-page.vue`; tabs, search, expand/collapse, roles matrix and sticky submit/cancel are migrated.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: permission and role Pinia stores/hooks are migrated for rights page; broader role CRUD page reuse remains pending.
+- `[x]` Routing/access: `/admin/rights`, permission management access.
+- `[~]` Messages/i18n: existing permission messages are wired; final copy parity verification pending.
+
+### `admin-users`
+
+- `[~]` Main content: `src/views/admin/users.vue`; users tab and users table are migrated.
+- `[~]` Modal windows: confirmation modal and create/edit user form modal are migrated; shared token actions are not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: user CRUD store integration is migrated for list/remove/update hooks and create/edit modal submit action; shared token flow is pending.
+- `[x]` Routing/access: `/admin/users`, user management access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-roles`
+
+- `[~]` Main content: `src/views/admin/roles.vue` -> `src/views/admin/roles-page.vue`; roles table with search, pagination, edit, duplicate and remove actions is migrated. Remaining: role mass actions parity.
+- `[~]` Modal windows: `create-role` modal and role form are migrated; remaining: deeper permissions editor parity if needed.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[x]` State/API/socket: role Pinia store/hook is reused and extended with previous-params fetching.
+- `[x]` Routing/access: `/admin/roles`, role management access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-broadcast-messages`
+
+- `[~]` Main content: `src/views/admin/broadcast-messages.vue` -> `src/views/admin/broadcast-messages-page.vue`; table, search, pagination, status and actions are migrated.
+- `[~]` Modal windows: `create-broadcast-message` modal and form are migrated with new `useForm`; remaining runtime parity check for date-time picker behavior and views tree selection.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: broadcast message Pinia store/hook, active broadcast messages, mark-as-read and maintenance edit integration are migrated; runtime socket verification pending.
+- `[x]` Routing/access: `/admin/broadcast-messages`, broadcast message access.
+- `[~]` Messages/i18n: existing broadcast message and modal messages are wired; final copy parity verification pending.
+
+### `admin-playlists`
+
+- `[ ]` Main content: `src/views/admin/playlists.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/playlists`, playlist management access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-planning-administration`
+
+- `[ ]` Main content: `src/views/admin/planning.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/planning`, grouped planning permission.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-healthcheck`
+
+- `[ ]` Main content: `src/views/admin/healthcheck.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: top-bar healthcheck chips are migrated; admin page is not.
+- `[ ]` Routing/access: `/admin/healthcheck`, healthcheck `can` access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-kpi`
+
+- `[ ]` Main content: `src/views/admin/kpi.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/kpi`, KPI `can` access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-events-records`
+
+- `[ ]` Main content: `src/views/admin/events-records.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/events-records`, events record `can` access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-anomaly-monitored-connectors`
+
+- `[ ]` Main content: `src/views/admin/anomaly-monitored-connectors.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/anomaly-monitored-connectors`, anomaly monitored connector access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-template-testing`
+
+- `[~]` Main content: `src/views/admin/template-testing.vue` -> `src/views/admin/template-testing-page.vue`; data and tests tabs with search, pagination, type filters and row actions are migrated.
+- `[~]` Modal windows: `create-template-testing-data` and `create-template-testing-test` are migrated with `useForm`; remaining runtime parity pass for JSON field parse/reset behavior.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: template testing Pinia store/hook reused for data/tests CRUD and list fetching.
+- `[x]` Routing/access: `/admin/template-testing`, template testing `can` access.
+- `[~]` Messages/i18n: existing template testing and modal messages are wired; final copy parity verification pending.
+
+### `admin-jobs-management`
+
+- `[ ]` Main content: `src/views/admin/jobs.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/jobs`, job management `can` access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-custom-objects-external-auth-tokens`
+
+- `[ ]` Main content: `src/views/admin/custom-objects/external-auth-tokens.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/external-auth-tokens`, external auth token access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-custom-objects-external-data-tables`
+
+- `[ ]` Main content: `src/views/admin/custom-objects/external-data-tables.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/external-data-tables`, external data table access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-custom-objects-entity-infos-properties`
+
+- `[ ]` Main content: `src/views/admin/custom-objects/entity-infos-properties.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/entity-infos-properties`, entity info property access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-custom-objects-icons`
+
+- `[ ]` Main content: `src/views/admin/custom-objects/icons.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: material icon font/list generator is migrated; icon CRUD page is not.
+- `[ ]` Routing/access: `/admin/icons`, icon access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-custom-objects-maps`
+
+- `[ ]` Main content: `src/views/admin/custom-objects/maps.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/maps`, map access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-custom-objects-tags`
+
+- `[ ]` Main content: `src/views/admin/custom-objects/tags.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/tags`, tag access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-custom-objects-llms`
+
+- `[ ]` Main content: `src/views/admin/custom-objects/llms.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/llms`, LLM access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-settings-views-import-export`
+
+- `[ ]` Main content: `src/views/admin/settings/views-import-export.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/views-import-export`, view import/export `can` access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-settings-notifications`
+
+- `[ ]` Main content: `src/views/admin/settings/notifications-settings.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/notifications`, notification settings `can` access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-settings-comment-templates`
+
+- `[ ]` Main content: `src/views/admin/settings/comment-templates.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/comment-templates`, comment template access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-settings-widget-templates`
+
+- `[ ]` Main content: `src/views/admin/settings/widget-templates.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/widget-templates`, widget template access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-settings-storage-settings`
+
+- `[ ]` Main content: `src/views/admin/settings/storage-settings.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/storage-settings`, storage settings access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `admin-settings-state-settings`
+
+- `[ ]` Main content: `src/views/admin/settings/state-settings.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/admin/state-settings`, state setting access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `exploitation-pbehaviors`
+
+- `[ ]` Main content: `src/views/exploitation/pbehaviors.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/exploitation/pbehaviors`, pbehavior access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `exploitation-event-filters`
+
+- `[~]` Main content: `src/views/exploitation/event-filters.vue` -> `src/views/exploitation/event-filters-page.vue`; list, search, pagination, remove/export actions, DB export button, expand tabs, summary, patterns, external data and failures tab are migrated. Create/edit/duplicate actions are hidden until the modal form is adapted.
+- `[ ]` Modal windows: `create-event-filter` source files are copied but not registered yet; adapt form to the new `useForm` layer, wrappers and validation before enabling create/edit/duplicate. `event-filter-general-form`, `event-filter-enrichment-form` and `event-filter-change-entity-form` use `useFormModels` (no `:form` / `update:form` bridging).
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: event-filter Pinia store/hook, failures API, bulk actions, DB export facade and supporting external-data/pbehavior lookup facades are migrated for the page.
+- `[x]` Routing/access: `/exploitation/event-filters`, event filter access.
+- `[~]` Messages/i18n: existing event-filter messages are wired; final copy parity verification pending.
+
+### `exploitation-snmp-rules`
+
+- `[ ]` Main content: `src/views/exploitation/snmp-rules.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/exploitation/snmp-rules`, SNMP rule access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `exploitation-dynamic-infos`
+
+- `[~]` Main content: `src/views/exploitation/dynamic-infos.vue` -> `src/views/exploitation/dynamic-infos-page.vue`; tabs, dynamic infos list with `c-advanced-data-table`/advanced-search, expand item and templates list are migrated.
+- `[~]` Modal windows: `create-dynamic-info` and `create-dynamic-info-template` are migrated for create/edit with `vee-validate` form; `add-dynamic-info-infos-from-template` is migrated for selecting names from templates; remaining work is final visual/behavior parity pass.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: dynamic info Pinia CRUD store/hook and dynamic info templates hook are migrated; bulk/mass action UI is pending.
+- `[x]` Routing/access: `/exploitation/dynamic-infos`, dynamic info access.
+- `[~]` Messages/i18n: existing `dynamic-info` and dynamic info template modal/form messages are wired; remaining work is final copy parity verification.
+
+### `exploitation-meta-alarm-rules`
+
+- `[ ]` Main content: `src/views/exploitation/meta-alarm-rules.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/exploitation/meta-alarm-rule`, meta alarm rule access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `exploitation-scenarios`
+
+- `[~]` Main content: `src/views/exploitation/scenarios.vue` -> `src/views/exploitation/scenarios-page.vue`; table, search, pagination, row expand and action general tab are migrated. Remaining: full pattern tab rendering depends on porting `c-patterns-field`; row db export button depends on porting `c-db-export-btn` and db-export store.
+- `[ ]` Modal windows: `create-scenario` intentionally not migrated yet; page create/edit/duplicate actions are hidden until that modal is ported. Confirmation modal is reused for remove.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: scenario Pinia store and hook are migrated for list/remove/bulk enable/bulk disable/bulk remove/test execution API wrappers; test execution UI is not migrated.
+- `[x]` Routing/access: `/exploitation/scenarios`, scenario access.
+- `[~]` Messages/i18n: existing `scenario` and `modals.createScenario` messages are wired; modal/form messages will be verified with modal migration.
+
+### `exploitation-idle-rules`
+
+- `[~]` Main content: `src/views/exploitation/idle-rules.vue` -> `src/views/exploitation/idle-rules-page.vue`; list, search, pagination, summary/patterns expand, delete/bulk actions and create/edit/duplicate entry points are migrated.
+- `[~]` Modal windows: `create-idle-rule` form is migrated; pbehavior action parameters still require pbehavior stack migration.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[x]` State/API/socket: idle rules Pinia store/hook are migrated for list/create/update/delete/bulk actions.
+- `[x]` Routing/access: `/exploitation/idle-rules`, idle rules access.
+- `[~]` Messages/i18n: existing `idle-rules` messages are wired; final copy parity verification pending.
+
+### `exploitation-flapping-rules`
+
+- `[~]` Main content: `src/views/exploitation/flapping-rules.vue` -> `src/views/exploitation/flapping-rules-page.vue`; shared alarm-status rules list, search, pagination, expand, delete/bulk actions and create/edit/duplicate entry points are migrated.
+- `[~]` Modal windows: `create-alarm-status-rule` modal and form are migrated with general/patterns tabs; remaining parity: old AI chat sidebar.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: flapping rules Pinia store/hook are migrated for list/delete/bulk actions.
+- `[x]` Routing/access: `/exploitation/flapping-rules`, flapping rules access.
+- `[~]` Messages/i18n: existing `flapping-rule` and page header messages are wired; final copy parity verification pending.
+
+### `exploitation-resolve-rules`
+
+- `[~]` Main content: `src/views/exploitation/resolve-rules.vue` -> `src/views/exploitation/resolve-rules-page.vue`; shared alarm-status rules list, search, pagination, expand, delete/bulk actions and create/edit/duplicate entry points are migrated.
+- `[~]` Modal windows: `create-alarm-status-rule` modal and form are migrated with general/patterns tabs; remaining parity: old AI chat sidebar.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: resolve rules Pinia store/hook are migrated for list/delete/bulk actions.
+- `[x]` Routing/access: `/exploitation/resolve-rules`, resolve rules access.
+- `[~]` Messages/i18n: existing `resolve-rule` and page header messages are wired; final copy parity verification pending.
+
+### `exploitation-declare-ticket-rules`
+
+- `[ ]` Main content: `src/views/exploitation/declare-ticket-rules.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/exploitation/declare-ticket-rules`, declare ticket rule access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `exploitation-link-rules`
+
+- `[ ]` Main content: `src/views/exploitation/link-rules.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/exploitation/link-rules`, link rule access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `exploitation-remediation`
+
+- `[ ]` Main content: `src/views/exploitation/remediation.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/exploitation/remediation`, grouped remediation permission.
+- `[ ]` Messages/i18n: not migrated.
+
+### `playlist`
+
+- `[ ]` Main content: `src/views/playlist.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/playlist/:id`, playlist read permission by route id.
+- `[ ]` Messages/i18n: not migrated.
+
+### `profile-patterns`
+
+- `[ ]` Main content: `src/views/profile/patterns.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[ ]` State/API/socket: not migrated.
+- `[ ]` Routing/access: `/filters`, authenticated access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `profile-themes`
+
+- `[ ]` Main content: `src/views/profile/themes.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: base Vuetify theme runtime was migrated; profile theme page is not.
+- `[ ]` Routing/access: `/themes`, profile theme permission.
+- `[ ]` Messages/i18n: not migrated.
+
+### `notifications`
+
+- `[ ]` Main content: `src/views/notification/notifications.vue`.
+- `[ ]` Modal windows: not migrated.
+- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` State/API/socket: top-bar notification menu shell exists; notifications page is not.
+- `[ ]` Routing/access: `/notifications/:tabId`, authenticated access.
+- `[ ]` Messages/i18n: not migrated.
+
+### `error`
+
+- `[x]` Main content: `src/views/error.vue` -> `src/views/error-page.vue`.
+- `[x]` Modal windows: none expected.
+- `[x]` Sidebars/drawers: none expected.
+- `[x]` State/API/socket: app-info polling and redirect logic migrated.
+- `[x]` Routing/access: `/error`, `hideHeader`, query props.
+- `[ ]` Messages/i18n: not fully audited.
+
+## Router
+
+Router rules are taken from `src/router.js`, `src/constants/common.js`, `src/config.js` and `src/helpers/router.js` in the source project.
+
+### Base Setup
+
+- `[x]` Router mode/history: source uses `ROUTER_MODE = 'history'`; target uses `createWebHistory`.
+- `[x]` Routes table: all source routes are registered; not-yet-migrated pages use `src/views/placeholder-page.vue`.
+- `[x]` Route constants: `ROUTES_NAMES`, `ROUTES` and `OLD_ROUTES` are available in target constants.
+- `[x]` Async route components: real pages and placeholders are lazy-loaded.
+- `[x]` `replaceAsync`: source compatibility helper is available as `router.replaceAsync`.
+
+### Auth Redirect Rules
+
+- `[x]` `access_token` query rule: if route query contains `access_token`, call auth token application logic, then replace the route with the same target and query without `access_token`.
+- `[x]` Anonymous to protected redirect: if user is not logged in and route requires login, redirect to `login` with `redirect: to.fullPath` and pass through `errorMessage`.
+- `[x]` Logged user to anonymous page redirect: if user is logged in and route has `requiresLogin: false`, redirect to `home`.
+- `[x]` Public/neutral route support: preserve source behavior where routes without `requiresLogin` can be visited both anonymously and authenticated.
+
+### Access Rules
+
+- `[x]` App-info access guard: `checkAppInfoAccessForRoute(to)` checks edition-based page availability through `USER_PERMISSIONS_TO_PAGES_RULES`; on failure shows `common.notFound` and redirects to `home`.
+- `[x]` User access guard: `checkUserAccessForRoute(to)` checks `requiresPermission` with default action `read`; supports permission id functions and grouped permission arrays.
+- `[~]` Permission waiting: current implementation fetches current user when needed; `info/popupTimeout` waiting is not required yet because popup defaults already exist.
+- `[x]` Permission algorithm: target uses `checkUserAnyAccess`, grouped permissions and CRUD action behavior.
+- `[x]` Guard failure redirect: source redirects failed `beforeResolve` checks to `home`.
+
+### Post-navigation Rules
+
+- `[~]` Entity sweep: after route change hook exists; actual `entities/sweep` call will be wired when entity store is migrated.
+- `[x]` Initial error popup: on router ready, if initial route has `errorMessage`, show persistent error popup.
+- `[ ]` Scroll/restoration behavior: not explicit in source router; verify if any page-level logic depends on old Vue Router behavior.
+
+## Legacy Redirects
+
+Redirects are taken from the bottom of `src/router.js`.
+
+| Status | Old path | Target route | Notes |
+| --- | --- | --- | --- |
+| `[x]` | `/admin/remediation` | `exploitation-remediation` |  |
+| `[x]` | `/admin/external-data-tables` | `admin-custom-objects-external-data-tables` |  |
+| `[x]` | `/admin/entity-infos-properties` | `admin-custom-objects-entity-infos-properties` |  |
+| `[x]` | `*` | `home` | Catch-all redirect. |
+
+## Widgets
+
+Widgets are taken from `WIDGET_TYPES` and `COMPONENTS_BY_WIDGET_TYPES` in `src/constants/widget.js`.
+
+| Status | Widget type | Source component name | Source file | Icon | Edition / scope | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `[ ]` | `AlarmsList` | `alarms-list-widget` | `src/components/widgets/alarm/alarms-list.vue` | `view_list` | Core, top-level |  |
+| `[ ]` | `Context` | `entities-list-widget` | `src/components/widgets/context/entities-list.vue` | `view_list` | Core, top-level |  |
+| `[ ]` | `ServiceWeather` | `service-weather-widget` | `src/components/widgets/service-weather/service-weather.vue` | `view_module` | Core, top-level |  |
+| `[ ]` | `StatsCalendar` | `stats-calendar-widget` | `src/components/widgets/stats/calendar/stats-calendar.vue` | `calendar_today` | Pro, top-level |  |
+| `[ ]` | `Text` | `text-widget` | `src/components/widgets/text/text.vue` | `view_headline` | Core, top-level |  |
+| `[ ]` | `Counter` | `counter-widget` | `src/components/widgets/counter/counter.vue` | `numbers` | Core, top-level |  |
+| `[ ]` | `Junit` | `testing-weather-widget` | `src/components/widgets/testing-weather/testing-weather.vue` | `view_module` | Pro, top-level |  |
+| `[ ]` | `Map` | `map-widget` | `src/components/widgets/map/map.vue` | `location_on` | Pro, top-level |  |
+| `[ ]` | `BarChart` | `bar-chart-widget` | `src/components/widgets/chart/bar-chart-widget.vue` | `stacked_bar_chart` | KPI/chart child widget |  |
+| `[ ]` | `LineChart` | `line-chart-widget` | `src/components/widgets/chart/line-chart-widget.vue` | `show_chart` | KPI/chart child widget |  |
+| `[ ]` | `PieChart` | `pie-chart-widget` | `src/components/widgets/chart/pie-chart-widget.vue` | `donut_small` | KPI/chart child widget |  |
+| `[ ]` | `Numbers` | `numbers-widget` | `src/components/widgets/chart/numbers-widget.vue` | `functions` | KPI/chart child widget |  |
+| `[ ]` | `UserStatistics` | `user-statistics-widget` | `src/components/widgets/statistics/user-statistics-widget.vue` | `perm_identity` | Pro, statistics child widget |  |
+| `[ ]` | `AlarmStatistics` | `alarm-statistics-widget` | `src/components/widgets/statistics/alarm-statistics-widget.vue` | `notification_important` | Pro, statistics child widget |  |
+| `[ ]` | `Availability` | `availability-widget` | `src/components/widgets/availability/availability-widget.vue` | `published_with_changes` | Pro, top-level |  |
+| `[ ]` | `ExternalDataTable` | `external-data-table-widget` | `src/components/widgets/external-data-table/external-data-table-widget.vue` | `database` | Core, top-level |  |
+
+## Widget Blocks
+
+Each widget is tracked by main rendering logic and settings/sidebar logic. Source setting sidebars are mapped from `SIDE_BARS_BY_WIDGET_TYPES` in `src/constants/widget.js`.
+
+### `AlarmsList`
+
+- `[ ]` Main content: `src/components/widgets/alarm/alarms-list.vue`.
+- `[ ]` Settings: `alarm-settings`; migrate widget parameters forms, columns, filters, actions, export, expand panel settings and remediation-related settings.
+- `[ ]` Store/API/socket: alarm list queries, periodic refresh, alarm socket rooms, user preferences and export.
+- `[ ]` Messages/i18n: not migrated.
+
+### `Context`
+
+- `[ ]` Main content: `src/components/widgets/context/entities-list.vue`.
+- `[ ]` Settings: `context-settings`; migrate columns, filters, category/action settings and export settings.
+- `[ ]` Store/API/socket: entity list queries, advanced search, user preferences and export.
+- `[ ]` Messages/i18n: not migrated.
+
+### `ServiceWeather`
+
+- `[ ]` Main content: `src/components/widgets/service-weather/service-weather.vue`.
+- `[ ]` Settings: `service-weather-settings`; migrate service display, counters, pause/event settings and linked alarm list settings.
+- `[ ]` Store/API/socket: service weather queries, counters and actions.
+- `[ ]` Messages/i18n: not migrated.
+
+### `StatsCalendar`
+
+- `[ ]` Main content: `src/components/widgets/stats/calendar/stats-calendar.vue`.
+- `[ ]` Settings: `stats-calendar-settings`; migrate calendar parameters, criticity levels, time range and linked alarm list settings.
+- `[ ]` Store/API/socket: stats calendar queries and drilldown alarm list handoff.
+- `[ ]` Messages/i18n: not migrated.
+
+### `Text`
+
+- `[ ]` Main content: `src/components/widgets/text/text.vue`.
+- `[ ]` Settings: `text-settings`; migrate template editor and display options.
+- `[ ]` Store/API/socket: runtime template variables and refresh behavior.
+- `[ ]` Messages/i18n: not migrated.
+
+### `Counter`
+
+- `[ ]` Main content: `src/components/widgets/counter/counter.vue`.
+- `[ ]` Settings: `counter-settings`; migrate levels, margins, columns, height, block template and linked alarm list settings.
+- `[ ]` Store/API/socket: counter queries and alarm list handoff.
+- `[ ]` Messages/i18n: not migrated.
+
+### `Junit`
+
+- `[ ]` Main content: `src/components/widgets/testing-weather/testing-weather.vue`.
+- `[ ]` Settings: `testing-weather-settings`; migrate test suite parameters and display options.
+- `[ ]` Store/API/socket: testing weather queries and statistics.
+- `[ ]` Messages/i18n: not migrated.
+
+### `Map`
+
+- `[ ]` Main content: `src/components/widgets/map/map.vue`.
+- `[ ]` Settings: `map-settings`; migrate map source, layers, breadcrumbs, marker options and filters.
+- `[ ]` Store/API/socket: map queries and navigation state.
+- `[ ]` Messages/i18n: not migrated.
+
+### `BarChart`
+
+- `[ ]` Main content: `src/components/widgets/chart/bar-chart-widget.vue`.
+- `[ ]` Settings: `bar-chart-settings`; migrate chart metrics, sampling, time range, filters and display options.
+- `[ ]` Store/API/socket: KPI metric queries.
+- `[ ]` Messages/i18n: not migrated.
+
+### `LineChart`
+
+- `[ ]` Main content: `src/components/widgets/chart/line-chart-widget.vue`.
+- `[ ]` Settings: `line-chart-settings`; migrate chart metrics, sampling, time range, filters and display options.
+- `[ ]` Store/API/socket: KPI metric queries.
+- `[ ]` Messages/i18n: not migrated.
+
+### `PieChart`
+
+- `[ ]` Main content: `src/components/widgets/chart/pie-chart-widget.vue`.
+- `[ ]` Settings: `pie-chart-settings`; migrate chart metrics, show mode, time range, filters and display options.
+- `[ ]` Store/API/socket: KPI metric queries.
+- `[ ]` Messages/i18n: not migrated.
+
+### `Numbers`
+
+- `[ ]` Main content: `src/components/widgets/chart/numbers-widget.vue`.
+- `[ ]` Settings: `numbers-settings`; migrate number metrics, time range, filters and display options.
+- `[ ]` Store/API/socket: KPI metric queries.
+- `[ ]` Messages/i18n: not migrated.
+
+### `UserStatistics`
+
+- `[ ]` Main content: `src/components/widgets/statistics/user-statistics-widget.vue`.
+- `[ ]` Settings: `user-statistics-settings`; migrate user statistics parameters, filters and display options.
+- `[ ]` Store/API/socket: user statistics queries.
+- `[ ]` Messages/i18n: not migrated.
+
+### `AlarmStatistics`
+
+- `[ ]` Main content: `src/components/widgets/statistics/alarm-statistics-widget.vue`.
+- `[ ]` Settings: `alarm-statistics-settings`; migrate alarm statistics parameters, filters and display options.
+- `[ ]` Store/API/socket: alarm statistics queries.
+- `[ ]` Messages/i18n: not migrated.
+
+### `Availability`
+
+- `[ ]` Main content: `src/components/widgets/availability/availability-widget.vue`.
+- `[ ]` Settings: `availability-settings`; migrate availability parameters, time range, filters and display options.
+- `[ ]` Store/API/socket: availability queries.
+- `[ ]` Messages/i18n: not migrated.
+
+### `ExternalDataTable`
+
+- `[ ]` Main content: `src/components/widgets/external-data-table/external-data-table-widget.vue`.
+- `[ ]` Settings: `external-data-table-settings`; migrate table selection, columns, filters and display options.
+- `[ ]` Store/API/socket: external data table queries.
+- `[ ]` Messages/i18n: not migrated.
+
+## Dynamic Feature Extensions
+
+The source project allows additional routes/widgets through `featuresService.get(...)`. The checked-in community source has `src/features/.gitignore`, so no extra feature files are present in this source tree.
+
+Relevant extension points:
+
+- `constants.WIDGET_TYPES`
+- `constants.COMPONENTS_BY_WIDGET_TYPES`
+- `constants.WIDGET_ICONS`
+- `constants.SIDE_BARS`
+- `constants.SIDE_BARS_BY_WIDGET_TYPES`
+- `constants.WIDGET_TYPES_RULES`

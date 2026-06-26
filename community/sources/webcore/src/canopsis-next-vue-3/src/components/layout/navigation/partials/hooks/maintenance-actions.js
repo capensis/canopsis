@@ -1,0 +1,80 @@
+import { useModals } from '@/hooks/modals'
+import { useI18n } from '@/hooks/i18n'
+import { useInfo } from '@/hooks/store/modules/info'
+import { MODALS } from '@/constants'
+
+export const useMaintenanceActions = () => {
+  const modals = useModals()
+  const { t } = useI18n()
+  const { maintenance, updateMaintenanceMode, fetchAppInfo } = useInfo()
+
+  /**
+   * Enable maintenance mode.
+   *
+   * @param {Object} form - Form data for maintenance mode.
+   */
+  const enableMaintenanceMode = async (form) => {
+    await updateMaintenanceMode({
+      data: {
+        ...form,
+        enabled: true,
+      },
+    })
+
+    await fetchAppInfo()
+  }
+
+  /**
+   * Disable maintenance mode.
+   */
+  const disableMaintenanceMode = async () => {
+    await updateMaintenanceMode({
+      data: {
+        enabled: false,
+      },
+    })
+
+    await fetchAppInfo()
+  }
+
+  /**
+   * Show modal to create maintenance mode.
+   */
+  const showCreateMaintenanceModeModal = () => modals.show({
+    name: MODALS.createMaintenance,
+    config: {
+      action: enableMaintenanceMode,
+      warningText: t('maintenance.logoutWarning'),
+    },
+  })
+
+  /**
+   * Show confirmation modal to leave maintenance mode.
+   */
+  const showConfirmationLeaveMaintenanceMode = () => modals.show({
+    name: MODALS.confirmation,
+    config: {
+      title: t('modals.confirmationLeaveMaintenance.title'),
+      text: t('modals.confirmationLeaveMaintenance.text'),
+      action: disableMaintenanceMode,
+    },
+  })
+
+  /**
+   * Toggle maintenance mode.
+   */
+  const showToggleMaintenanceModeModal = () => (
+    maintenance.value
+      ? showConfirmationLeaveMaintenanceMode()
+      : showCreateMaintenanceModeModal()
+  )
+
+  return {
+    maintenance,
+    enableMaintenanceMode,
+    disableMaintenanceMode,
+    showCreateMaintenanceModeModal,
+    showConfirmationLeaveMaintenanceMode,
+    showToggleMaintenanceModeModal,
+  }
+}
