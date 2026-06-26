@@ -1,0 +1,988 @@
+
+import { removeTrailingSlashes } from '@/helpers/url';
+
+export const {
+  BASE_URL = '',
+  VITE_API_HOST = '',
+  VITE_LOCAL_STORAGE_ACCESS_TOKEN_KEY = '',
+  VITE_PAGINATION_LIMIT = '',
+  VITE_OPEN_STREET_LAYER_URL = '',
+  VITE_LINKIFY_PROTOCOLS = '',
+} = import.meta.env;
+
+export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
+
+export const API_HOST = VITE_API_HOST || window.location.origin;
+
+export const SOCKET_HOST = API_HOST.replace(/^http(s?)/, 'wss');
+
+export const SOCKET_ROUTE = '/api/v4/ws';
+
+export const SOCKET_URL = removeTrailingSlashes(`${SOCKET_HOST}${SOCKET_ROUTE}`);
+
+export const OPEN_STREET_LAYER_URL = VITE_OPEN_STREET_LAYER_URL;
+
+export const ROUTER_MODE = 'history';
+
+export const ROUTER_ACCESS_TOKEN_KEY = 'access_token';
+
+export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = VITE_LOCAL_STORAGE_ACCESS_TOKEN_KEY || 'accessToken';
+
+export const LOCAL_STORAGE_WARNING_POPUP_KEY = 'warningPopup';
+
+export const PAGINATION_LIMIT = parseInt(VITE_PAGINATION_LIMIT, 10) || 10;
+
+export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
+
+export const PAGINATION_TOTAL_VISIBLE = 7;
+
+export const DEFAULT_SANITIZE_OPTIONS = {
+  ADD_TAGS: [
+    'h1',
+    'h2',
+    'u',
+    'nl',
+    'font',
+    'img',
+    'video',
+    'audio',
+    'area',
+    'map',
+    'strike',
+    'button',
+    'span',
+    'address',
+    'bdo',
+    'cite',
+    'q',
+    'dfn',
+    'var',
+    'dl',
+    'dt',
+    'dd',
+    'section',
+    'article',
+    'colgroup',
+    'col',
+    'center',
+
+    'router-link',
+    'c-alarm-chip',
+    'c-alarm-tags-chips',
+    'c-entity-tags-chips',
+    'c-copy-wrapper',
+    'c-links-list',
+    'service-entities-list',
+    'v-icon',
+    'v-row',
+    'v-chip',
+    'c-remediation-instruction-execution-see-details',
+    'c-request-helper',
+
+    'div',
+  ],
+
+  ADD_ATTR: [
+    'style',
+    'title',
+    'class',
+    'id',
+    'v-if',
+    'name',
+    'autoplay',
+    'colspan',
+    'controls',
+    'dir',
+    'align',
+    'width',
+    'height',
+    'role',
+
+    'href',
+    'target',
+    'src',
+    'alt',
+    'color',
+    'size',
+    'face',
+    'direction',
+    'to',
+
+    'data-id',
+    'data-c',
+
+    ':alarm',
+    ':selected-tags',
+    ':entity',
+    ':links',
+    ':category',
+    ':service',
+    ':service-entities',
+    ':widget-parameters',
+    ':options',
+    ':total-items',
+    ':actions-requests',
+    ':execution',
+
+    '@select',
+    '@close',
+    '@refresh',
+    '@update:options',
+    '@add:action',
+
+    'value',
+    'name-filter',
+    'regex-filter',
+    'regex-filter-flags',
+    'closable-active',
+    'inline-count',
+    'entity-name-field',
+    'helper-id',
+    'key',
+
+    'dark',
+    'dense',
+    'disabled',
+    'large',
+    'light',
+    'right',
+    'small',
+    'tag',
+    'x-large',
+    'x-small',
+    'text-color',
+  ],
+
+  ALLOW_DATA_ATTR: true,
+
+  ADD_DATA_URI_TAGS: [
+    'img',
+    'video',
+    'audio',
+  ],
+};
+
+export const DEFAULT_LINKIFY_OPTIONS = {
+  target: '_blank',
+  ignoreTags: ['script', 'style'],
+  validate: (str, type, token) => token?.hasProtocol?.(),
+};
+
+export const LINKIFY_PROTOCOLS = [
+  ...import.meta.env.VITE_LINKIFY_PROTOCOLS.split(',').map(protocol => protocol.trim()).filter(Boolean),
+
+  'ssh',
+];
+
+export const DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT = 3;
+
+export const DEFAULT_WEATHER_LIMIT = 120;
+
+export const DEFAULT_LOCALE = 'en';
+
+export const LOCALES = {
+  en: 'en',
+  fr: 'fr',
+};
+
+export const DEFAULT_VIEW_STATS_INTERVAL = 120000;
+
+export const LOCALE_PRIORITIES = {
+  default: 1,
+  global: 2,
+  personal: 3,
+};
+
+export const POPUP_AUTO_CLOSE_DELAY = 3000;
+
+export const ZOOM_OVERLAY_DELAY = 1500;
+
+export const VUETIFY_ANIMATION_DELAY = 300;
+
+export const POPUP_TICK_DELAY = 100;
+
+export const SIDE_BAR_WIDTH = 250;
+
+/** Default width (px) for plugin sidebars when `config.width` is omitted */
+export const DEFAULT_SIDEBAR_DRAWER_WIDTH = 450;
+
+export const TOP_BAR_HEIGHT = 48;
+
+export const EXPAND_DEFAULT_MAX_LETTERS = 50;
+
+export const SCHEMA_EMBEDDED_KEY = '_embedded';
+
+export const MEDIA_QUERIES_BREAKPOINTS = {
+  m: 450,
+  t: 900,
+  l: 1400,
+  xl: 'Infinity',
+};
+
+export const MAX_LOGO_SIZE_IN_KB = 16384;
+
+export const DEFAULT_APP_TITLE = 'Canopsis';
+
+export const EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX = 'canopsis_groups_views-';
+
+export const SOCKET_ROOMS = {
+  healthcheck: 'healthcheck',
+  healthcheckStatus: 'healthcheck-status',
+  messageRates: 'message-rates',
+  loggedUserCount: 'logged-user-count',
+  broadcastMessages: 'broadcast-messages',
+  execution: 'execution',
+  declareticket: 'declareticket',
+  alarms: 'alarms',
+  alarmDetails: 'alarm-details',
+  icons: 'icons',
+  testscenario: 'testscenario',
+  notifications: 'notifications',
+  executions: 'executions',
+  simplifiedManualExecutions: 'simplified-manual-executions',
+  pbehaviorPatterns: 'pbehavior-patterns',
+  llmChat: 'llmchat',
+  anomalyMonitoredConnectorStates: 'anomaly-monitored-connector-states',
+};
+
+export const API_ROUTES = {
+  login: '/api/v4/login',
+  logout: '/api/v4/logout',
+  loggedUserCount: '/api/v4/logged-user-count',
+  currentUser: '/api/v4/account/me',
+  maintenance: '/api/v4/maintenance',
+  alarms: {
+    list: '/api/v4/alarms',
+    bulkList: '/api/v4/bulk/alarms',
+  },
+  componentAlarms: '/api/v4/component-alarms',
+  resolvedAlarms: '/api/v4/resolved-alarms',
+  alarmDetails: '/api/v4/alarm-details',
+  openAlarms: '/api/v4/open-alarms',
+  alarmLinks: '/api/v4/alarm-links',
+  alarmDisplayNames: '/api/v4/alarm-display-names',
+  alarmExecutions: '/api/v4/cat/alarm-executions',
+  entity: '/api/v4/entities',
+  entityComments: '/api/v4/entity-comments',
+  entityContextGraph: '/api/v4/entities/context-graph',
+  entityCheckStateSetting: '/api/v4/entities/check-state-setting',
+  entityStateSetting: '/api/v4/entities/state-setting',
+  bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
+  bulkEntitiesDisable: '/api/v4/bulk/entities/disable',
+  entityBasics: '/api/v4/entitybasics',
+  service: '/api/v4/entityservices',
+  bulkService: '/api/v4/bulk/entityservices',
+  serviceDependencies: '/api/v4/entityservice-dependencies',
+  serviceImpacts: '/api/v4/entityservice-impacts',
+  serviceAlarms: '/api/v4/entityservice-alarms',
+  entityUpstream: '/api/v4/entity-upstream',
+  entityDownstreams: '/api/v4/entity-downstreams',
+  entityInfosDictionaryKeys: '/api/v4/entity-infos-dictionary/keys',
+  entityInfosProperties: '/api/v4/entity-infos-properties',
+  bulkEntityInfosProperties: '/api/v4/bulk/entity-infos-properties',
+  weatherService: '/api/v4/weather-services',
+  alarmListExport: '/api/v4/alarm-export',
+  alarmTag: {
+    list: '/api/v4/alarm-tags',
+    bulkList: '/api/v4/bulk/alarm-tags',
+    label: '/api/v4/alarm-tag-labels',
+  },
+  contextExport: '/api/v4/entity-export',
+  event: '/api/v4/event',
+  userPreferences: '/api/v4/user-preferences',
+  view: {
+    list: '/api/v4/views',
+    copy: '/api/v4/view-copy',
+    export: '/api/v4/view-export',
+    import: '/api/v4/view-import',
+    positions: '/api/v4/view-positions',
+    groups: '/api/v4/view-groups',
+    tabs: '/api/v4/view-tabs',
+    tabCopy: '/api/v4/view-tab-copy',
+    tabPositions: '/api/v4/view-tab-positions',
+  },
+  widget: {
+    list: '/api/v4/widgets',
+    gridPositions: '/api/v4/widget-grid-positions',
+    filters: '/api/v4/widget-filters',
+    filterPositions: '/api/v4/widget-filter-positions',
+  },
+  widgetTemplate: '/api/v4/widget-templates',
+  permissions: '/api/v4/permissions',
+  users: '/api/v4/users',
+  bulkUsersEnable: '/api/v4/bulk/users/enable',
+  bulkUsersDisable: '/api/v4/bulk/users/disable',
+  bulkUsers: '/api/v4/bulk/users',
+  roles: {
+    list: '/api/v4/roles',
+    templates: '/api/v4/role-templates',
+    bulkPermissions: '/api/v4/bulk/role-permissions',
+  },
+  eventFilter: {
+    list: '/api/v4/eventfilter',
+    rules: '/api/v4/eventfilter/rules',
+    bulk: '/api/v4/bulk/eventfilters',
+    bulkEnable: '/api/v4/bulk/eventfilters/enable',
+    bulkDisable: '/api/v4/bulk/eventfilters/disable',
+  },
+  file: '/api/v4/file',
+  fileAccess: '/api/v4/file-access',
+  infos: {
+    app: '/api/v4/app-info',
+    userInterface: '/api/v4/internal/user_interface',
+  },
+  associativeTable: '/api/v4/associativetable',
+  sessionsCount: '/api/v4/sessions-count',
+  broadcastMessage: {
+    list: '/api/v4/broadcast-message',
+    activeList: '/api/v4/active-broadcast-message',
+  },
+  commentTemplate: '/api/v4/comment-templates',
+  counter: '/api/v4/alarm-counters',
+  playlist: '/api/v4/playlists',
+  bulkPlaylist: '/api/v4/bulk/playlists',
+  bulkPlaylistEnable: '/api/v4/bulk/playlists/enable',
+  bulkPlaylistDisable: '/api/v4/bulk/playlists/disable',
+  pbehavior: {
+    timespan: '/api/v4/pbehavior-timespans',
+    exceptions: '/api/v4/pbehavior-exceptions',
+    exceptionImport: '/api/v4/pbehavior-exception-import',
+    bulkExceptions: '/api/v4/bulk/pbehavior-exceptions',
+    bulkExceptionsHide: '/api/v4/bulk/pbehavior-exceptions/hide',
+    bulkExceptionsUnhide: '/api/v4/bulk/pbehavior-exceptions/unhide',
+    types: '/api/v4/pbehavior-types',
+    nextTypesPriority: '/api/v4/pbehavior-types/next-priority',
+    bulkTypes: '/api/v4/bulk/pbehavior-types',
+    bulkTypesHide: '/api/v4/bulk/pbehavior-types/hide',
+    bulkTypesUnhide: '/api/v4/bulk/pbehavior-types/unhide',
+    pbehaviors: '/api/v4/pbehaviors',
+    bulkPbehaviors: '/api/v4/bulk/pbehaviors',
+    bulkPbehaviorsEnable: '/api/v4/bulk/pbehaviors/enable',
+    bulkPbehaviorsDisable: '/api/v4/bulk/pbehaviors/disable',
+    pbehaviorComments: '/api/v4/pbehavior-comments',
+    entities: '/api/v4/entities/pbehaviors',
+    entitiesCalendar: '/api/v4/entities/pbehavior-calendar',
+    reasons: '/api/v4/pbehavior-reasons',
+    bulkReasons: '/api/v4/bulk/pbehavior-reasons',
+    bulkReasonsHide: '/api/v4/bulk/pbehavior-reasons/hide',
+    bulkReasonsUnhide: '/api/v4/bulk/pbehavior-reasons/unhide',
+    calendar: '/api/v4/pbehavior-calendar',
+    bulkEntityPbehaviors: '/api/v4/bulk/entity-pbehaviors',
+    patterns: '/api/v4/pbehavior-patterns',
+    allPatterns: '/api/v4/all-pbehavior-patterns',
+  },
+  engineRunInfo: '/api/v4/engine-runinfo',
+  cas: {
+    login: '/api/v4/cas/login',
+    loggedin: '/api/v4/cas/loggedin',
+  },
+  saml: {
+    auth: '/api/v4/saml/auth',
+  },
+  oauth: {
+    login: '/api/v4/oauth/',
+  },
+  scenario: {
+    scenarios: '/api/v4/scenarios',
+    testExecution: '/api/v4/cat/test-scenario-executions',
+    testExecutionWebhooks: '/api/v4/cat/test-scenario-webhooks',
+    bulk: '/api/v4/bulk/scenarios',
+    bulkEnable: '/api/v4/bulk/scenarios/enable',
+    bulkDisable: '/api/v4/bulk/scenarios/disable',
+  },
+  entityCategories: '/api/v4/entity-categories',
+  stateSetting: '/api/v4/state-settings',
+  dataStorage: '/api/v4/data-storage',
+  notificationSettings: '/api/v4/notification-settings',
+  notifications: '/api/v4/notifications',
+  idleRules: '/api/v4/idle-rules',
+  bulkIdleRules: '/api/v4/bulk/idle-rules',
+  bulkIdleRulesEnable: '/api/v4/bulk/idle-rules/enable',
+  bulkIdleRulesDisable: '/api/v4/bulk/idle-rules/disable',
+  flappingRules: '/api/v4/flapping-rules',
+  bulkFlappingRules: '/api/v4/bulk/flapping-rules',
+  bulkFlappingRulesEnable: '/api/v4/bulk/flapping-rules/enable',
+  bulkFlappingRulesDisable: '/api/v4/bulk/flapping-rules/disable',
+  resolveRules: '/api/v4/resolve-rules',
+  bulkResolveRules: '/api/v4/bulk/resolve-rules',
+  bulkResolveRulesEnable: '/api/v4/bulk/resolve-rules/enable',
+  bulkResolveRulesDisable: '/api/v4/bulk/resolve-rules/disable',
+  messageRateStats: '/api/v4/message-rate-stats',
+  pattern: {
+    list: '/api/v4/patterns',
+    bulkList: '/api/v4/bulk/patterns',
+    entitiesCount: '/api/v4/patterns-entities-count',
+    alarmsCount: '/api/v4/patterns-alarms-count',
+    entitiesOptimize: '/api/v4/patterns-entities-optimize',
+  },
+  shareTokens: '/api/v4/share-tokens',
+  techMetrics: '/api/v4/tech-metrics-export',
+  techMetricsSettings: '/api/v4/tech-metrics-settings',
+  templateVars: '/api/v4/template-vars',
+  templateData: '/api/v4/template-data',
+  templateTests: '/api/v4/template-test',
+  templateVarsSpecific: {
+    entityServices: '/api/v4/entityservice-template-vars',
+    eventFilters: '/api/v4/eventfilter-template-vars',
+    scenarios: '/api/v4/scenario-template-vars',
+    linkRules: '/api/v4/link-rule-template-vars',
+    widgets: '/api/v4/widget-template-vars',
+  },
+  templateValidation: {
+    entityServices: '/api/v4/entityservice-template-validate',
+    eventFilters: '/api/v4/eventfilter-template-validate',
+    scenarios: '/api/v4/scenario-template-validate',
+    linkRules: '/api/v4/link-rule-template-validate',
+    widgets: '/api/v4/widget-template-validate',
+  },
+  copyVars: {
+    eventFilters: '/api/v4/eventfilter-copy-vars',
+  },
+  linkRule: '/api/v4/link-rules',
+  bulkLinkRule: '/api/v4/bulk/link-rules',
+  bulkLinkRuleEnable: '/api/v4/bulk/link-rules/enable',
+  bulkLinkRuleDisable: '/api/v4/bulk/link-rules/disable',
+  linkCategories: '/api/v4/link-categories',
+  icons: '/api/v4/icons',
+  externalDataTables: '/api/v4/external-data-tables',
+  bulkExternalDataTables: '/api/v4/bulk/external-data-tables',
+  externalDataImport: '/api/v4/external-data-import',
+  externalDataExport: '/api/v4/external-data-export',
+  themes: {
+    list: '/api/v4/color-themes',
+    bulkList: '/api/v4/bulk/color-themes',
+  },
+  healthcheck: {
+    engines: '/api/v4/healthcheck',
+    status: '/api/v4/healthcheck/status',
+    enginesOrder: '/api/v4/healthcheck/engines-order',
+    parameters: '/api/v4/healthcheck/parameters',
+  },
+  dbExport: {
+    pbehaviors: '/api/v4/pbehaviors-db-export',
+    eventFilters: '/api/v4/eventfilter-db-export',
+    linkRules: '/api/v4/link-rules-db-export',
+    idleRules: '/api/v4/idle-rules-db-export',
+    flappingRules: '/api/v4/flapping-rules-db-export',
+    scenarios: '/api/v4/scenarios-db-export',
+
+    /**
+     * Cat routes for export
+     */
+    dynamicInfos: '/api/v4/cat/dynamic-infos-db-export',
+    declareTickets: '/api/v4/cat/declare-ticket-rules-db-export',
+    metaAlarmRules: '/api/v4/cat/metaalarmrules-db-export',
+    instructions: '/api/v4/cat/instructions-db-export',
+    jobs: '/api/v4/cat/jobs-db-export',
+    jobConfigs: '/api/v4/cat/job-configs-db-export',
+  },
+
+  patternFields: {
+    flappingRule: '/api/v4/flapping-rule-pattern-fields',
+    idleRule: '/api/v4/idle-rule-pattern-fields',
+    linkRule: '/api/v4/link-rule-pattern-fields',
+    resolveRule: '/api/v4/resolve-rule-pattern-fields',
+    pbehavior: '/api/v4/pbehavior-pattern-fields',
+    alarmTag: '/api/v4/alarm-tag-pattern-fields',
+    widgetFilter: '/api/v4/widget-filter-pattern-fields',
+    service: '/api/v4/entityservice-pattern-fields',
+    stateSetting: '/api/v4/state-setting-pattern-fields',
+    eventFilter: '/api/v4/eventfilter-pattern-fields',
+    scenario: '/api/v4/scenario-pattern-fields',
+
+    /**
+     * Cat routes for pattern fields
+     */
+    metaalarmrule: '/api/v4/cat/metaalarmrule-pattern-fields',
+    declareTicketRule: '/api/v4/cat/declare-ticket-rule-pattern-fields',
+    instruction: '/api/v4/cat/instruction-pattern-fields',
+    kpiFilter: '/api/v4/cat/kpi-filter-pattern-fields',
+    dynamicInfos: '/api/v4/cat/dynamic-infos-pattern-fields',
+    eventRecord: '/api/v4/cat/event-record-pattern-fields',
+  },
+
+  /**
+   * Cat routes
+   */
+  filters: '/api/v4/cat/kpi-filters',
+  ratingSettings: '/api/v4/cat/rating-settings',
+  bulkRatingSettings: '/api/v4/cat/rating-settings/bulk',
+  dynamicInfo: '/api/v4/cat/dynamic-infos',
+  bulkDynamicInfo: '/api/v4/cat/bulk/dynamic-infos',
+  bulkDynamicInfoEnable: '/api/v4/cat/bulk/dynamic-infos/enable',
+  bulkDynamicInfoDisable: '/api/v4/cat/bulk/dynamic-infos/disable',
+  dynamicInfosDictionaryKeys: '/api/v4/cat/dynamic-infos-dictionary/keys',
+  metaAlarmRule: '/api/v4/cat/metaalarmrules',
+  metaAlarmRuleAlarmCount: '/api/v4/cat/metaalarmrule-alarm-count',
+  bulkMetaAlarmRule: '/api/v4/cat/bulk/metaalarmrules',
+  bulkMetaAlarmRuleEnable: '/api/v4/cat/bulk/metaalarmrules/enable',
+  bulkMetaAlarmRuleDisable: '/api/v4/cat/bulk/metaalarmrules/disable',
+  remediation: {
+    instructions: '/api/v4/cat/instructions',
+    bulkInstructions: '/api/v4/cat/bulk/instructions',
+    bulkInstructionsEnable: '/api/v4/cat/bulk/instructions/enable',
+    bulkInstructionsDisable: '/api/v4/cat/bulk/instructions/disable',
+    instructionStats: '/api/v4/cat/instruction-stats',
+    jobs: '/api/v4/cat/jobs',
+    configurations: '/api/v4/cat/job-configs',
+    executions: '/api/v4/cat/executions',
+    jobExecutions: '/api/v4/cat/job-executions',
+    alarmExecutions: '/api/v4/cat/alarm-executions',
+    pausedExecutions: '/api/v4/cat/account/executions',
+    instructionComments: '/api/v4/cat/instruction-comments',
+    executionStatuses: '/api/v4/cat/execution-statuses',
+    readExecution: '/api/v4/cat/executions',
+  },
+  junit: {
+    directory: '/api/v4/cat/junit/directory',
+    testSuites: '/api/v4/cat/junit/test-suites',
+    entityGantt: '/api/v4/cat/junit/test-suites-entity-gantt',
+    history: '/api/v4/cat/junit/test-suites-history',
+    widget: '/api/v4/cat/junit/test-suites-widget',
+    file: '/api/v4/cat/junit/test-cases-file',
+  },
+  metrics: {
+    settings: '/api/v4/cat/metrics-settings',
+    alarm: '/api/v4/cat/metrics/alarm',
+    exportAlarm: '/api/v4/cat/metrics-export/alarm',
+    exportRating: '/api/v4/cat/metrics-export/rating',
+    exportSli: '/api/v4/cat/metrics-export/sli',
+    exportAggregate: '/api/v4/cat/metrics-export/aggregate',
+    exportRemediation: '/api/v4/cat/metrics-export/remediation',
+    exportMetric: '/api/v4/cat/metrics-export',
+    exportAvailabilityByEntity: '/api/v4/cat/metrics-export/availability-by-entity',
+    exportAvailability: '/api/v4/cat/metrics-export/availability',
+    sli: '/api/v4/cat/metrics/sli',
+    rating: '/api/v4/cat/metrics/rating',
+    remediation: '/api/v4/cat/metrics/remediation',
+    aggregate: '/api/v4/cat/metrics/aggregate',
+    perfDataMetrics: '/api/v4/cat/perf-data-metrics',
+    entityAlarmMetrics: '/api/v4/cat/entity-metrics/alarm',
+    entityAggregateMetrics: '/api/v4/cat/entity-metrics/aggregate',
+    entityAvailability: '/api/v4/cat/entity-metrics/availability',
+    entityAggregateAvailability: '/api/v4/cat/entity-metrics/aggregate-availability',
+    group: '/api/v4/cat/metrics/group',
+    exportGroup: '/api/v4/cat/metrics-export/group',
+    availability: '/api/v4/cat/metrics/availability',
+  },
+  maps: '/api/v4/cat/maps',
+  bulkMaps: '/api/v4/cat/bulk/maps',
+  mapState: '/api/v4/cat/map-state',
+  metaAlarm: '/api/v4/cat/meta-alarms',
+  snmpRule: '/api/v4/cat/snmprules',
+  bulkSnmpRule: '/api/v4/cat/bulk/snmprules',
+  bulkSnmpRuleEnable: '/api/v4/cat/bulk/snmprules/enable',
+  bulkSnmpRuleDisable: '/api/v4/cat/bulk/snmprules/disable',
+  snmpMib: '/api/v4/cat/snmpmibs',
+  webhookTokenRule: '/api/v4/cat/webhook-token-rules',
+  anomalyMonitoredConnector: '/api/v4/cat/anomalies/monitored-connectors',
+  anomalyMonitoredConnectorStates: '/api/v4/cat/anomalies/monitored-connectors/states',
+  bulkAnomalyMonitoredConnector: '/api/v4/cat/bulk/anomalies/monitored-connectors',
+  ticketStatusJobs: '/api/v4/cat/ticket-status-jobs',
+  bulkTicketStatusJobs: {
+    play: '/api/v4/cat/bulk/ticket-status-jobs/sync',
+    pause: '/api/v4/cat/bulk/ticket-status-jobs/pause',
+  },
+  declareTicket: {
+    rules: '/api/v4/cat/declare-ticket-rules',
+    bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
+    bulkRulesEnable: '/api/v4/cat/bulk/declare-ticket-rules/enable',
+    bulkRulesDisable: '/api/v4/cat/bulk/declare-ticket-rules/disable',
+    alarmsAssigned: '/api/v4/cat/declare-ticket-assigned',
+    testExecution: '/api/v4/cat/test-declare-ticket-executions',
+    testExecutionWebhooks: '/api/v4/cat/test-declare-ticket-webhooks',
+    declareTicketExecution: '/api/v4/cat/declare-ticket-executions',
+    bulkDeclareTicket: '/api/v4/cat/bulk/declare-ticket-executions',
+  },
+  tags: '/api/v4/cat/tags',
+  privateView: {
+    groups: '/api/v4/cat/private-view-groups',
+  },
+  eventsRecord: {
+    list: '/api/v4/cat/event-records',
+    export: '/api/v4/cat/event-records/exports',
+    current: '/api/v4/cat/event-records-current',
+    event: '/api/v4/cat/event-records/events',
+    bulkEvent: '/api/v4/cat/event-records/events/bulk',
+  },
+  entityInfosLog: '/api/v4/cat/entity-infos-log',
+  templateVarsSpecificCat: {
+    declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-vars',
+    dynamicInfos: '/api/v4/cat/dynamic-infos-template-vars',
+    instructions: '/api/v4/cat/instruction-template-vars',
+    jobs: '/api/v4/cat/job-template-vars',
+    metaAlarmRules: '/api/v4/cat/metaalarmrule-template-vars',
+    webhookTokenRules: '/api/v4/cat/webhook-token-rule-template-vars',
+  },
+  templateValidationCat: {
+    declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-validate',
+    dynamicInfos: '/api/v4/cat/dynamic-infos-template-validate',
+    instructions: '/api/v4/cat/instruction-template-validate',
+    jobs: '/api/v4/cat/job-template-validate',
+    metaAlarmRules: '/api/v4/cat/metaalarmrule-template-validate',
+    webhookTokenRules: '/api/v4/cat/webhook-token-rule-template-validate',
+  },
+  copyVarsCat: {
+    dynamicInfos: '/api/v4/cat/dynamic-infos-copy-vars',
+  },
+  llms: {
+    list: '/api/v4/cat/llm-configs',
+    bulk: '/api/v4/cat/bulk/llm-configs',
+    bulkEnable: '/api/v4/cat/bulk/llm-configs/enable',
+    bulkDisable: '/api/v4/cat/bulk/llm-configs/disable',
+    bulkHistoryLink: '/api/v4/cat/bulk/llm-history/link',
+    models: '/api/v4/cat/llm-config-models',
+  },
+};
+
+export const COLORS = {
+  primary: '#2DAC61',
+  secondary: '#2B3E4F',
+  accent: '#678CCA',
+  error: '#D22E2E',
+  errorBackground: '#FFCABE',
+  warning: '#FB8C00',
+  warningBackground: '#FFD27A',
+  success: '#22874C',
+  successBackground: '#90DFB1',
+  info: '#0A6EBD',
+  infoBackground: '#A6D9FF',
+  background: '#ffffff',
+  activeColor: '#000000',
+  table: {
+    background: '#FFFFFF',
+    rowColor: '#FFFFFF',
+    shiftRowColor: '#F5F5F5',
+    shiftRowDarkColor: '#616161',
+    hoverRowColor: '#F5F5F5',
+    hoverRowDarkColor: '#616161',
+  },
+  state: {
+    ok: '#24834C',
+    minor: '#FFF176',
+    major: '#FFA800',
+    critical: '#C62828',
+    pause: '#808080',
+  },
+  status: {
+    closed: '#2FAB63',
+    stealthy: '#6A6A6A',
+    flapping: '#2B3E4F',
+    ongoing: '#F9A825',
+    cancelled: '#757575',
+    noEvents: '#FF5252',
+    unknown: '#808080',
+  },
+  alarmSteps: {
+    ack: '#35485D',
+    ackRemove: '#35485D',
+    declareTicket: '#6A6A6A',
+    snooze: '#FF5252',
+    comment: '#5B6E7F',
+    metaalarmattach: '#8C1D18',
+    junitTestCaseUpdate: '#979797',
+    activate: '#01579B',
+    resolve: '#2FAB63',
+    instruction: '#6A6A6A',
+  },
+  alarmExtraDetails: {
+    ack: '#9c27b0',
+    canceled: '#607d8b',
+    children: '#6d4c41',
+    parent: '#6d4c41',
+    comment: '#ba68c8',
+    snooze: '#e91e63',
+    ticket: '#2196F3',
+    closeDelay: '#808080',
+  },
+  entitiesEvents: {
+    ack: '#9c27b0',
+    ackRemove: '#9c27b0',
+    declareTicket: '#2196f3',
+    snooze: '#e91e63',
+    pbhenter: '#18ffff',
+    pbhleave: '#18ffff',
+    comment: '#ba68c8',
+    metaalarmattach: '#6d4c41',
+  },
+  testSuiteStatuses: {
+    passed: '#2fab63',
+    error: '#ffa800',
+    failed: '#ff5252',
+    skipped: '#5a6D80',
+  },
+  healthcheck: {
+    error: '#FF5252',
+    warning: '#FFA800',
+    unknown: '#C4C4C4',
+    edgeGray: '#979797',
+    edgeBlack: '#000000',
+  },
+  declareTicketRuleTicketStatusChip: {
+    unknown: '#E0E0E0',
+    open: '#BBDEFB',
+    assigned: '#FFC107',
+    inProgress: '#FFECB3',
+    closed: '#4CAF50',
+  },
+  aiChat: {
+    chipBackground: 'grey lighten-2',
+    chipText: 'grey darken-2',
+  },
+  impactState: [
+    '#2FAB63',
+    '#7CB342',
+    '#CDDC39',
+    '#DCE775',
+    '#FFF59D',
+    '#FFF176',
+    '#FFEB3B',
+    '#FDD835',
+    '#FBC02D',
+    '#FFB300',
+    '#F9A825',
+    '#FF8F00',
+    '#F57C00',
+    '#FF6F00',
+    '#EF6C00',
+    '#FF6A3C',
+    '#FF5722',
+    '#F4511E',
+    '#F94C16',
+    '#F44336',
+    '#E64A19',
+    '#D84315',
+    '#E53935',
+    '#D32F2F',
+    '#C62828',
+    '#BF360C',
+    '#B71C1C',
+    '#C51162',
+    '#C2185B',
+    '#AD1457',
+    '#880E4F',
+  ],
+  impactStateGrouped: [
+    '#568822',
+    '#b0e37b',
+    '#fff176',
+    '#ffb7b8',
+    '#c50711',
+  ],
+  kpi: {
+    downtime: '#c4c4c4',
+    maintenance: '#ffa800',
+    uptime: '#5b6E7f',
+  },
+  metrics: {
+    activeAlarms: '#5a6d7e',
+    createdAlarms: '#fda701',
+    nonDisplayedAlarms: '#fd693b',
+    instructionAlarms: '#7bb242',
+    pbehaviorAlarms: '#d64315',
+    correlationAlarms: '#fdef75',
+    ackAlarms: '#fd5252',
+    cancelAckAlarms: '#9b27af',
+    ackActiveAlarms: '#81b0fd',
+    ticketActiveAlarms: '#2faa63',
+    withoutTicketActiveAlarms: '#747474',
+    ratioCorrelation: '#c31162',
+    ratioInstructions: '#cbda39',
+    ratioTickets: '#2195f1',
+    ratioNonDisplayed: '#f9bf2d',
+    averageAck: '#f5c6ab',
+    averageResolve: '#1afd01',
+    totalUserActivity: '#1fbbd1',
+    manualInstructionExecutedAlarms: '#2FAB63',
+    ratioRemediatedAlarms: '#FFA800',
+    remediationStatisticAssignedRemediations: '#FFA800',
+    remediationStatisticExecutedRemediations: '#5B6E7F',
+    remediationStatisticRatioRemediations: '#5B6E7F',
+    notAckedAlarms: '#dce775',
+    notAckedInHourAlarms: '#1fbcd3',
+    notAckedInFourHoursAlarms: '#afb42b',
+    notAckedInDayAlarms: '#fff176',
+  },
+  mermaid: {
+    primaryColor: '#bfe4ce',
+    primaryBorderColor: '#2faa62',
+    textColor: '#323232',
+    lineColor: '#323232',
+    noteBkgColor: '#75818c',
+    noteTextColor: '#fdfdfd',
+  },
+  remediation: {
+    executionStatus: {
+      running: '#5A6D80',
+      paused: '#323232',
+      completed: '#2FAB63',
+      aborted: '#979797',
+      failed: '#FF5252',
+      skipped: '#BDBDBD',
+    },
+  },
+  flowchart: {
+    selection: '#5b6e7f',
+    shapes: [
+      '#fd897f',
+      '#fd7faa',
+      '#e87ffa',
+      '#b287fd',
+      '#8b9dfd',
+      '#7fd6fd',
+      '#83fdfd',
+      '#a6fde9',
+      '#b8f4c8',
+      '#cafd8f',
+      '#f2fd80',
+      '#fdfd8c',
+      '#fde37e',
+      '#fdcf7f',
+      '#fd9d7f',
+      '#d5cac6',
+      '#f3f3f3',
+      '#cdd6da',
+    ],
+    border: [
+      '#fd1743',
+      '#f30056',
+      '#d300f7',
+      '#641ffd',
+      '#2978fd',
+      '#00affd',
+      '#00b7d2',
+      '#1de7b5',
+      '#00e475',
+      '#75fd03',
+      '#c4fd00',
+      '#fde800',
+      '#fdc200',
+      '#fd9000',
+      '#fd3d00',
+      '#8c6d62',
+      '#9d9d9d',
+      '#5f7c8a',
+    ],
+    text: [
+      '#b61c1c',
+      '#870e4e',
+      '#49148b',
+      '#311b91',
+      '#0d46a0',
+      '#01569a',
+      '#005f63',
+      '#004c3f',
+      '#1b5d20',
+      '#33681e',
+      '#9d9c24',
+      '#f37e17',
+      '#fd6e00',
+      '#e45000',
+      '#be360c',
+      '#4d342e',
+      '#414141',
+      '#37464e',
+    ],
+    background: [
+      '#ffffff',
+      '#eceff1',
+      '#fafafa',
+      '#efebe9',
+      '#fbe9e7',
+      '#f9fbe7',
+      '#fff8e1',
+      '#fffde7',
+      '#fff3e0',
+      '#f1f8e9',
+      '#e0f2f1',
+      '#e0f7fa',
+      '#e8f5e9',
+      '#f3e5f5',
+      '#ede7f6',
+      '#e8eaf6',
+      '#e3f2fd',
+      '#fce4ec',
+      '#ffebee',
+    ],
+  },
+};
+
+export const CSS_COLORS_VARS = {
+  background: 'var(--v-application-background-base)',
+  primary: 'var(--v-primary-base)',
+  secondary: 'var(--v-secondary-base)',
+  error: 'var(--v-error-base)',
+  success: 'var(--v-success-base)',
+
+  state: {
+    ok: 'var(--v-state-ok-base)',
+    minor: 'var(--v-state-minor-base)',
+    major: 'var(--v-state-major-base)',
+    critical: 'var(--v-state-critical-base)',
+    pause: 'var(--v-state-pause-base)',
+  },
+
+  status: {
+    closed: 'var(--v-success-base)',
+    stealthy: 'var(--v-status-stealthy-base)',
+    flapping: 'var(--v-status-flapping-base)',
+    ongoing: 'var(--v-status-ongoing-base)',
+    cancelled: 'var(--v-status-cancelled-base)',
+    noEvents: 'var(--v-error-base)',
+    unknown: 'var(--v-status-unknown-base)',
+  },
+};
+
+export const DEFAULT_THEME_COLORS = {
+  primary: COLORS.primary,
+  secondary: COLORS.secondary,
+  accent: COLORS.accent,
+  error: COLORS.error,
+  error_background: COLORS.errorBackground,
+  warning: COLORS.warning,
+  warning_background: COLORS.warningBackground,
+  success: COLORS.success,
+  success_background: COLORS.successBackground,
+  info: COLORS.info,
+  info_background: COLORS.infoBackground,
+  background: COLORS.background,
+  active_color: COLORS.activeColor,
+
+  state: COLORS.state,
+  status: COLORS.status,
+  table: {
+    background: COLORS.table.background,
+    row_color: COLORS.table.rowColor,
+    hover_row_color: COLORS.table.hoverRowColor,
+  },
+};
+
+export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
+
+export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
+
+export const GEMINI_AI_CONSOLE_BILLING_URL = 'https://ai.studio/spend';
+
+export const EXPORT_FETCHING_INTERVAL = 2000;
+
+export const IMPORT_FETCHING_INTERVAL = 500;
+
+export const MAX_PBEHAVIOR_DATES_DIFF_YEARS = 5;
+
+export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
+
+export const HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX = 'healthcheck_last_hour-';
+
+export const KPI_ALARM_METRICS_FILENAME_PREFIX = 'kpi_alarm_metrics';
+
+export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics';
+
+export const KPI_SLI_METRICS_FILENAME_PREFIX = 'kpi_sli_metrics';
+
+export const REMEDIATION_STATISTICS_FILENAME_PREFIX = 'remediation_statistics';
+
+export const AVAILABILITY_FILENAME_PREFIX = 'availability';
+
+export const APP_INFO_FETCHING_INTERVAL = 10000;
+
+export const MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED = 100;
