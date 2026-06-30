@@ -14,6 +14,8 @@ import (
 const (
 	maxReconnectTimeout             = time.Minute
 	waitReconnectionTimeoutOverhead = 500 * time.Millisecond
+
+	defaultConnectionTimeout = 30 * time.Second
 )
 
 // Dial accepts a string in the AMQP URI format and returns a new amqp connection.
@@ -26,7 +28,7 @@ func Dial(url string, logger zerolog.Logger,
 	}
 
 	if reconnectCount < -1 {
-		return nil, fmt.Errorf("invalid reconnectCount %v, can be -1 or possitive int", reconnectCount)
+		return nil, fmt.Errorf("invalid reconnectCount %v, can be -1 or positive int", reconnectCount)
 	}
 
 	isReconnectable := reconnectCount != 0 && minReconnectTimeout > 0
@@ -474,6 +476,11 @@ func reconnect(url string, c *baseConnection) {
 		c.notifyListeners(false)
 	}()
 
+	connectionTimeout := defaultConnectionTimeout
+	if uri, err := amqp.ParseURI(url); err == nil && uri.ConnectionTimeout != 0 {
+		connectionTimeout = time.Duration(uri.ConnectionTimeout) * time.Millisecond
+	}
+
 	for {
 		closeErr, ok := <-c.amqpConn.NotifyClose(make(chan *amqp.Error))
 		if !ok {
@@ -481,29 +488,79 @@ func reconnect(url string, c *baseConnection) {
 			break
 		}
 
+		start := time.Now()
 		c.logger.Err(closeErr).Msgf("connection closed, try to reconnect")
 		timeout := c.minReconnectTimeout
 		var amqpConn *amqp.Connection
 		var err error
+		ctx := context.Background()
+		var cancel context.CancelFunc
+		if c.waitReconnectionTimeout > 0 {
+			ctx, cancel = context.WithTimeout(ctx, c.waitReconnectionTimeout)
+		}
 
 		for try := 0; c.reconnectCount == -1 || try < c.reconnectCount; try++ {
-			time.Sleep(timeout)
-			timeout = minTimeDuration(timeout<<1, maxReconnectTimeout)
+			t := time.NewTimer(timeout)
+			select {
+			case <-ctx.Done():
+				c.logger.Debug().
+					Str("duration", time.Since(start).String()).
+					Msgf("connection reconnect failed, timeout exceeded")
 
-			amqpConn, err = amqp.Dial(url)
+				t.Stop()
+				if cancel != nil {
+					cancel()
+				}
+
+				return
+			case <-t.C:
+			}
+
+			timeout = minTimeDuration(timeout<<1, maxReconnectTimeout)
+			cfg := amqp.Config{}
+			if deadline, ok := ctx.Deadline(); ok {
+				d := time.Until(deadline)
+				if d <= 0 {
+					c.logger.Debug().
+						Str("duration", time.Since(start).String()).
+						Msgf("connection reconnect failed, timeout exceeded")
+
+					if cancel != nil {
+						cancel()
+					}
+
+					return
+				}
+
+				cfg.Dial = amqp.DefaultDial(min(d, connectionTimeout))
+			}
+
+			amqpConn, err = amqp.DialConfig(url, cfg)
 			if err == nil {
 				break
 			}
 
-			c.logger.Debug().Err(err).Msgf("%d try to reconnect failed", try+1)
+			c.logger.Debug().
+				Err(err).
+				Str("duration", time.Since(start).String()).
+				Msgf("%d try to reconnect failed", try+1)
+		}
+
+		if cancel != nil {
+			cancel()
 		}
 
 		if err != nil {
-			c.logger.Debug().Err(err).Msgf("connection reconnect failed")
+			c.logger.Debug().
+				Err(err).
+				Str("duration", time.Since(start).String()).
+				Msgf("connection reconnect failed")
 			break
 		}
 
-		c.logger.Info().Msgf("connection reconnected")
+		c.logger.Info().
+			Str("duration", time.Since(start).String()).
+			Msgf("connection reconnected")
 		c.amqpConn = amqpConn
 		c.notifyListeners(true)
 	}
@@ -528,6 +585,7 @@ func reconnectChannel(conn *baseConnection, ch *baseChannel, reconnectListener c
 			break
 		}
 
+		start := time.Now()
 		conn.logger.Err(closeErr).Msgf("channel closed, try to reconnect")
 		// Check real connection
 		if conn.amqpConn.IsClosed() {
@@ -546,6 +604,10 @@ func reconnectChannel(conn *baseConnection, ch *baseChannel, reconnectListener c
 					}
 				case <-time.After(conn.waitReconnectionTimeout):
 					/* add timeout to prevent infinity waiting on bug */
+					ch.logger.Debug().
+						Str("duration", time.Since(start).String()).
+						Msgf("reconnect channel failed, timeout exceeded")
+
 					return
 				}
 			}
@@ -553,11 +615,16 @@ func reconnectChannel(conn *baseConnection, ch *baseChannel, reconnectListener c
 
 		amqpCh, err := conn.amqpConn.Channel()
 		if err != nil {
-			ch.logger.Debug().Err(err).Msgf("reconnect channel failed")
+			ch.logger.Debug().
+				Err(err).
+				Str("duration", time.Since(start).String()).
+				Msgf("reconnect channel failed")
 			break
 		}
 
-		conn.logger.Info().Msgf("channel reconnected")
+		conn.logger.Info().
+			Str("duration", time.Since(start).String()).
+			Msgf("channel reconnected")
 		ch.amqpCh = amqpCh
 		ch.notifyListeners(true)
 	}
