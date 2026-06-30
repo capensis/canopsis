@@ -337,7 +337,12 @@ func Default(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(apitechmetrics.NewStore(primaryDbClient), filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
+	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(
+		apitechmetrics.NewStore(primaryDbClient),
+		filepath.Join(cfg.File.Dir, canopsis.SubDirExport),
+		flags.PeriodicalWaitTime,
+		logger,
+	)
 
 	healthCheckConfigAdapter := config.NewHealthCheckAdapter(primaryDbClient)
 	healthCheckCfg, err := healthCheckConfigAdapter.GetConfig(ctx)
