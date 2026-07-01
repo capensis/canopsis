@@ -27,8 +27,6 @@ const (
 	ServiceIssueQuorumDegraded = "quorum_degraded"
 )
 
-const rmqQueueTypeQuorum = "quorum"
-
 type Info struct {
 	Services []Service `json:"services"`
 	Engines  Engines   `json:"engines"`

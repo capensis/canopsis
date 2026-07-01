@@ -2,19 +2,12 @@ package healthcheck
 
 import (
 	"context"
-	"crypto/tls"
-	"net/http"
-	"net/url"
-	"os"
 	"reflect"
 	"slices"
 	"sort"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -22,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/jackc/pgx/v5"
-	rabbithole "github.com/michaelklishin/rabbit-hole/v3"
 	libredis "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -73,7 +65,7 @@ type store struct {
 	mxConn      sync.Mutex
 	mongoClient mongo.DbClient
 	redisClient *libredis.Client
-	rmqClient   *rabbithole.Client
+	rmqClient   *rabbitClient
 	pgConn      *pgx.Conn
 
 	mxChangedParamsCh sync.RWMutex
@@ -289,7 +281,7 @@ func (s *store) loadServices(ctx context.Context) {
 	services := []Service{
 		s.checkMongoDB(ctx),
 		s.checkRedis(ctx),
-		s.checkRabbitMQ(),
+		s.checkRabbitMQ(ctx),
 		s.checkTimescaleDB(ctx),
 	}
 	s.mxConn.Unlock()
@@ -393,39 +385,19 @@ func (s *store) checkRedis(ctx context.Context) Service {
 	return s.healthyService(name)
 }
 
-func (s *store) checkRabbitMQ() Service {
+func (s *store) checkRabbitMQ(ctx context.Context) Service {
 	name := ServiceRabbitMQ
 	if s.rmqClient == nil {
 		var err error
-		url := os.Getenv(amqp.EnvHTTPURL)
-		username := os.Getenv(amqp.EnvHTTPUser)
-		pwd := os.Getenv(amqp.EnvHTTPPassword)
-		skipVerify := strings.ToLower(os.Getenv(amqp.EnvHTTPInsecureSkipVerify))
-		if skipVerify == "true" {
-			dt, ok := http.DefaultTransport.(*http.Transport)
-			if !ok {
-				s.logger.Error().Msg("unknown type of http.DefaultTransport")
-
-				return s.unhealthyService(name)
-			}
-
-			tr := dt.Clone()
-			tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} //nolint:gosec
-			s.rmqClient, err = rabbithole.NewTLSClient(url, username, pwd, tr)
-		} else {
-			s.rmqClient, err = rabbithole.NewClient(url, username, pwd)
-		}
-
+		s.rmqClient, err = newRabbitClient()
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to rabbitmq api")
 
 			return s.unhealthyService(name)
 		}
-
-		s.rmqClient.SetTimeout(timeout)
 	}
 
-	nodes, err := s.rmqClient.ListNodes()
+	nodes, runningNodes, err := s.rmqClient.checkNodes(ctx)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot get list of rabbitmq nodes")
 
@@ -434,17 +406,11 @@ func (s *store) checkRabbitMQ() Service {
 
 	status := StatusHealthy
 	issue := ""
-	runningCount := 0
-	for _, node := range nodes {
-		if node.IsRunning {
-			runningCount++
-		}
-	}
 
 	// No node running means the broker is down; a partial outage is only degraded.
-	if runningCount == 0 {
+	if runningNodes == 0 {
 		status = StatusUnhealthy
-	} else if runningCount < len(nodes) {
+	} else if runningNodes < nodes {
 		status = StatusDegraded
 		issue = ServiceIssueNodeDown
 	}
@@ -452,16 +418,23 @@ func (s *store) checkRabbitMQ() Service {
 	// Quorum queues can still lose their majority while nodes are up,
 	// so inspect them unless the broker is already unhealthy.
 	if status != StatusUnhealthy {
-		statusByQueue, issueByQueue, err := s.checkRMQQueues(s.rmqClient)
+		queueStatus, err := s.rmqClient.checkQueues(ctx)
 		if err != nil {
 			s.logger.Err(err).Msg("cannot get list of rabbitmq queues")
 
 			return s.unhealthyService(name)
 		}
 
-		if statusByQueue != "" {
-			status = statusByQueue
-			issue = issueByQueue
+		switch queueStatus {
+		case queueQuorumLost:
+			// A quorum queue accepts writes only while a strict majority of its Raft members is online.
+			// Without majority it is blocked: unhealthy.
+			status = StatusUnhealthy
+			issue = ServiceIssueNoQuorum
+		case queueDegraded:
+			// Majority is held but at least one replica is offline: degraded.
+			status = StatusDegraded
+			issue = ServiceIssueQuorumDegraded
 		}
 	}
 
@@ -474,55 +447,9 @@ func (s *store) checkRabbitMQ() Service {
 		Name:         name,
 		Status:       status,
 		Issues:       issues,
-		Nodes:        new(len(nodes)),
-		RunningNodes: new(runningCount),
+		Nodes:        new(nodes),
+		RunningNodes: new(runningNodes),
 	}
-}
-
-func (s *store) checkRMQQueues(c *rabbithole.Client) (status string, issue string, err error) {
-	page := 1
-	for {
-		params := url.Values{}
-		params.Set("page", strconv.Itoa(page))
-		// Fetch only the fields we need and skip per-queue stats computation
-		// to keep the call cheap on clusters with many queues.
-		params.Set("columns", "name,type,members,online")
-		params.Set("disable_stats", "true")
-		params.Set("enable_queue_totals", "true")
-		queues, err := c.PagedListQueuesWithParameters(params)
-		if err != nil {
-			return "", "", err
-		}
-
-		if queues.ItemCount == 0 {
-			break
-		}
-
-		for _, queue := range queues.Items {
-			if queue.Type != rmqQueueTypeQuorum {
-				continue
-			}
-
-			// A quorum queue accepts writes only while a strict majority of its Raft members is online.
-			// Without majority it is blocked: unhealthy.
-			if len(queue.Online) <= len(queue.Members)/2 {
-				return StatusUnhealthy, ServiceIssueNoQuorum, nil
-			}
-
-			// Majority is held but at least one replica is offline: degraded.
-			if len(queue.Online) < len(queue.Members) {
-				status = StatusDegraded
-				issue = ServiceIssueQuorumDegraded
-			}
-		}
-
-		page++
-		if page > queues.PageCount {
-			break
-		}
-	}
-
-	return status, issue, nil
 }
 
 func (s *store) checkTimescaleDB(ctx context.Context) Service {
