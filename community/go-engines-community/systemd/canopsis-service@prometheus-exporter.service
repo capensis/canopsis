@@ -1,0 +1,21 @@
+[Unit]
+Description=Canopsis prometheus-exporter
+PartOf=canopsis.service
+After=canopsis.service network.target
+ReloadPropagatedFrom=canopsis.service
+Documentation=https://doc.canopsis.net
+
+[Service]
+User=canopsis
+Group=canopsis
+WorkingDirectory=/opt/canopsis
+Environment=HOME=/opt/canopsis
+EnvironmentFile=/opt/canopsis/etc/go-engines-vars.conf
+Restart=always
+Type=simple
+RestartSec=1
+StartLimitBurst=300
+ExecStart=/opt/canopsis/bin/prometheus-exporter
+
+[Install]
+WantedBy=canopsis.service
