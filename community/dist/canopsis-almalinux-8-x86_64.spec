@@ -32,7 +32,7 @@ make -C community/sources/webcore/src/canopsis-next VERSION=%{version_upstream}
 
 %install
 make -C community/go-engines-community DESTDIR=%{buildroot} install
-make -C community/go-engines-community DESTDIR=%{buildroot} systemd_install SYSTEMD_UNITS="engine-action engine-axe engine-che engine-fifo engine-pbehavior" SERVICES="canopsis-api"
+make -C community/go-engines-community DESTDIR=%{buildroot} systemd_install SYSTEMD_UNITS="engine-action engine-axe engine-che engine-fifo engine-pbehavior" SERVICES="canopsis-api prometheus-exporter"
 make -C community/sources/webcore/src/canopsis-next DESTDIR=%{buildroot} install
 make -C community/sources/webcore/src/canopsis-next DESTDIR=%{buildroot} nginx_config
 
