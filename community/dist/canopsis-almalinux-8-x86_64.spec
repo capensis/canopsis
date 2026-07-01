@@ -54,15 +54,16 @@ make -C community/sources/webcore/src/canopsis-next DESTDIR=%{buildroot} install
 make -C community/sources/webcore/src/canopsis-next DESTDIR=%{buildroot} nginx_config
 
 %preun
-%systemd_preun canopsis-engine-go@.service
 if [ $1 -eq 0 ]; then
-  systemctl disable canopsis-engine-go@
-  systemctl stop canopsis-engine-go@
-fi
-%systemd_preun canopsis-service@canopsis-api.service
-if [ $1 -eq 0 ]; then
-  systemctl disable canopsis-service@canopsis-api.service
-  systemctl stop canopsis-service@canopsis-api.service
+  for unit in $(systemctl list-unit-files | grep "canopsis-engine-go" | awk '{print $1}'); do
+    systemctl stop "$unit" >/dev/null 2>&1
+    systemctl disable "$unit" >/dev/null 2>&1
+  done
+
+  for unit in $(systemctl list-unit-files | grep "canopsis-service" | awk '{print $1}'); do
+    systemctl stop "$unit" >/dev/null 2>&1
+    systemctl disable "$unit" >/dev/null 2>&1
+  done
 fi
 
 %files
