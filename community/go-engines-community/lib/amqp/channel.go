@@ -267,6 +267,7 @@ func (c *channel) handleReconnect(amqpConn amqp091Conn) {
 		default:
 		}
 
+		start := time.Now()
 		ch, err := amqpConn.Channel()
 		if err != nil {
 			// Underlying connection died between us being handed it and trying to open a channel on it.
@@ -287,7 +288,7 @@ func (c *channel) handleReconnect(amqpConn amqp091Conn) {
 
 			attempt++
 
-			le := c.logger.Err(err)
+			le := c.logger.Err(err).Str("duration", time.Since(start).String())
 			if c.conn.reconnectCount > 0 {
 				le = le.Str("retries", strconv.Itoa(attempt)+"/"+strconv.Itoa(c.conn.reconnectCount))
 			}
@@ -335,6 +336,7 @@ func (c *channel) handleReconnect(amqpConn amqp091Conn) {
 			return
 		}
 
+		c.logger.Debug().Str("duration", time.Since(start).String()).Msg("connected to amqp channel")
 		close(prevReconnNotify)
 
 		notifyConnClose := make(chan *amqp.Error, 1)
@@ -373,6 +375,8 @@ func (c *channel) handleReconnect(amqpConn amqp091Conn) {
 				return
 			}
 		}
+
+		c.logger.Debug().Msg("amqp channel disconnected")
 	}
 }
 
