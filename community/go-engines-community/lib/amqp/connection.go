@@ -133,11 +133,12 @@ func (c *connection) handleReconnect() {
 		default:
 		}
 
+		start := time.Now()
 		conn, err := c.dialer.Dial()
 		if err != nil {
 			attempt++
 
-			le := c.logger.Err(err)
+			le := c.logger.Err(err).Str("duration", time.Since(start).String())
 			if c.reconnectCount > 0 {
 				le = le.Str("retries", strconv.Itoa(attempt)+"/"+strconv.Itoa(c.reconnectCount))
 			}
@@ -191,6 +192,7 @@ func (c *connection) handleReconnect() {
 			return
 		}
 
+		c.logger.Debug().Str("duration", time.Since(start).String()).Msg("connected to amqp connection")
 		close(prevReconnNotify)
 
 		notifyClose := make(chan *amqp.Error, 1)
@@ -211,6 +213,8 @@ func (c *connection) handleReconnect() {
 
 			return
 		}
+
+		c.logger.Debug().Msg("amqp connection disconnected")
 	}
 }
 
