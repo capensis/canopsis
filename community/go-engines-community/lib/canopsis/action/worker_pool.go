@@ -349,7 +349,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		Execution: task.ExecutionID,
 		Alarms:    []string{task.Alarm.ID},
 		Rule:      task.ScenarioID,
-		RuleKind:  libwebhook.RuleKindScenario,
+		RuleType:  libwebhook.RuleTypeScenario,
 		Name:      types.RuleNameScenarioPrefix + task.ScenarioName,
 
 		Index:         int64(task.Step),
@@ -374,7 +374,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		bson.M{
 			"execution": history.Execution,
 			"rule":      history.Rule,
-			"rule_kind": libwebhook.RuleKindScenario,
+			"rule_type": libwebhook.RuleTypeScenario,
 			"index":     history.Index,
 		},
 		bson.M{

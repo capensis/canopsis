@@ -1,18 +1,20 @@
+db.webhook_history.dropIndex("rule_1_rule_type_1");
+
 db.webhook_history.updateMany(
     {
-        scenario: {$ne: null},
+        rule_type: 0,
         status: {$in: [0, 1]}
     },
     [
         {
             $set: {
-                rule: "$scenario",
-                rule_kind: 0,
+                scenario: "$rule",
             }
         },
         {
             $unset: [
-                "scenario"
+                "rule",
+                "rule_type"
             ]
         },
     ],
@@ -20,21 +22,20 @@ db.webhook_history.updateMany(
 
 db.webhook_history.updateMany(
     {
-        declare_ticket_rule: {$ne: null},
+        rule_type: 1,
         status: {$in: [0, 1]}
     },
     [
         {
             $set: {
-                rule: "$declare_ticket_rule",
-                rule_kind: 1
+                declare_ticket_rule: "$rule",
             }
         },
         {
             $unset: [
-                "declare_ticket_rule"
+                "rule",
+                "rule_type"
             ]
         },
     ],
 );
-

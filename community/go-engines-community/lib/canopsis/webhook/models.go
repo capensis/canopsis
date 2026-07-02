@@ -22,19 +22,19 @@ const (
 )
 
 const (
-	RuleKindScenario RuleKind = iota
-	RuleKindDeclareTicket
+	RuleTypeScenario RuleType = iota
+	RuleTypeDeclareTicket
 )
 
 const MultipleURLsDelimiter = ","
 
-type RuleKind int
+type RuleType int
 
-func (rk RuleKind) String() string {
+func (rk RuleType) String() string {
 	switch rk {
-	case RuleKindScenario:
+	case RuleTypeScenario:
 		return "scenario"
-	case RuleKindDeclareTicket:
+	case RuleTypeDeclareTicket:
 		return "declare_ticket_rule"
 	default:
 		return "unknown"
@@ -47,7 +47,7 @@ type History struct {
 	Execution string   `bson:"execution" json:"execution"`
 	Alarms    []string `bson:"alarms,omitempty" json:"alarms,omitempty"`
 	Rule      string   `bson:"rule" json:"rule"`
-	RuleKind  RuleKind `bson:"rule_kind" json:"rule_kind"`
+	RuleType  RuleType `bson:"rule_type" json:"rule_type"`
 	Name      string   `bson:"name" json:"name"`
 
 	Index              int64  `bson:"index" json:"index"`
@@ -91,7 +91,7 @@ func (h History) CloneForURL(url string) History {
 		Execution: h.Execution,
 		Alarms:    h.Alarms,
 		Rule:      h.Rule,
-		RuleKind:  h.RuleKind,
+		RuleType:  h.RuleType,
 		Name:      h.Name,
 		IsTest:    h.IsTest,
 
@@ -378,7 +378,7 @@ type CheckTicketStatus struct {
 
 type CheckTicketStatusJob struct {
 	ID                     string            `bson:"_id"`
-	RuleType               int               `bson:"rule_type"`
+	RuleType               RuleType          `bson:"rule_type"`
 	RuleName               string            `bson:"rule_name"`
 	Status                 int               `bson:"status"`
 	HistoryID              string            `bson:"history_id"`
