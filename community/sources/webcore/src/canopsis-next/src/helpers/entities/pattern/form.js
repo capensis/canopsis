@@ -555,6 +555,41 @@ export const isValidRuleValue = rule => (
 );
 
 /**
+ * Whether a pattern rule field uses a generic string-array editor, as opposed to fields that bind
+ * primitives or dedicated pickers (tags, context entities, event filter entities, user/initiator fields, etc.).
+ *
+ * @param {string} field Rule field id (alarm, entity, or event-filter pattern field constant).
+ * @return {boolean} True when the field is not one of the excluded primitive / specialized array fields.
+ */
+export const isArrayPatternRuleFieldWithoutPrimitive = field => (
+  field !== ALARM_PATTERN_FIELDS.tags
+    && field !== ALARM_PATTERN_FIELDS.component
+    && field !== ALARM_PATTERN_FIELDS.connector
+    && field !== ALARM_PATTERN_FIELDS.connectorName
+    && field !== ALARM_PATTERN_FIELDS.resource
+    && field !== ALARM_PATTERN_FIELDS.ackBy
+    && field !== ALARM_PATTERN_FIELDS.ackInitiator
+    && field !== ALARM_PATTERN_FIELDS.ticketInitiator
+    && field !== ALARM_PATTERN_FIELDS.snoozeAuthor
+    && field !== ALARM_PATTERN_FIELDS.snoozeInitiator
+    && field !== ALARM_PATTERN_FIELDS.canceledInitiator
+    && field !== ALARM_PATTERN_FIELDS.lastCommentAuthor
+    && field !== ALARM_PATTERN_FIELDS.lastCommentInitiator
+    && field !== ALARM_PATTERN_FIELDS.stateInitiator
+    && field !== ENTITY_PATTERN_FIELDS.id
+    && field !== ENTITY_PATTERN_FIELDS.component
+    && field !== ENTITY_PATTERN_FIELDS.connector
+    && field !== ENTITY_PATTERN_FIELDS.category
+    && field !== EVENT_FILTER_PATTERN_FIELDS.eventType
+    && field !== EVENT_FILTER_PATTERN_FIELDS.component
+    && field !== EVENT_FILTER_PATTERN_FIELDS.connector
+    && field !== EVENT_FILTER_PATTERN_FIELDS.connectorName
+    && field !== EVENT_FILTER_PATTERN_FIELDS.resource
+    && field !== EVENT_FILTER_PATTERN_FIELDS.initiator
+    && field !== EVENT_FILTER_PATTERN_FIELDS.author
+);
+
+/**
  * Check pattern rule is valid
  *
  * @param {PatternRule | *} rule
@@ -944,7 +979,7 @@ export const patternRuleToForm = (rule = {}) => {
     (form.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(form.operator))
     && isArray(form.value)
     && (!form.value.length || !form.value[0]?.key)
-    && rule.field !== ALARM_PATTERN_FIELDS.tags
+    && !isArrayPatternRuleFieldWithoutPrimitive(form.field)
   ) {
     form.value = primitiveArrayToForm(form.value);
   }
