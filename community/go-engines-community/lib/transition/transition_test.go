@@ -26,9 +26,9 @@ func TestParseMigrationVersion(t *testing.T) {
 		{"just-below-threshold", newVersionThreshold - 1, versionFormatOld, newVersionThreshold - 1, ""},
 		{"at-threshold", newVersionThreshold, versionFormatNew, newVersionThreshold, "10.00.x"},
 		{"25.04.x", 250499001, versionFormatNew, 250499001, "25.04.x"},
-		{"25.04.6-first", 250406001, versionFormatNew, 250406001, "25.04.x"},
+		{"25.04.8-first", 250408001, versionFormatNew, 250408001, "25.04.x"},
 		{"25.10.x", 251003001, versionFormatNew, 251003001, "25.10.x"},
-		{"26.04.x", 260401001, versionFormatNew, 260401001, "26.04.x"},
+		{"26.04.x", 260402001, versionFormatNew, 260402001, "26.04.x"},
 		{"26.10.x", 261000001, versionFormatNew, 261000001, "26.10.x"},
 	}
 
@@ -86,7 +86,7 @@ func TestDecideTransitionPlan(t *testing.T) {
 		{
 			name:      "no-version-mixed-dir",
 			state:     MigrationState{HasVersion: false},
-			dir:       dirInfo{maxOldAvailable: 26, minNewAvailable: 250406001},
+			dir:       dirInfo{maxOldAvailable: 26, minNewAvailable: 250408001},
 			wantForce: false,
 		},
 		// --- old-sequential source: always plain Up() ---
@@ -106,7 +106,7 @@ func TestDecideTransitionPlan(t *testing.T) {
 		{
 			name:      "old-seq-mixed-dir",
 			state:     stateOld(24),
-			dir:       dirInfo{maxOldAvailable: 26, minNewAvailable: 250406001},
+			dir:       dirInfo{maxOldAvailable: 26, minNewAvailable: 250408001},
 			wantForce: false,
 		},
 		// --- new-format source, registry missing: error ---
@@ -147,7 +147,7 @@ func TestDecideTransitionPlan(t *testing.T) {
 		{
 			// pure new-format directory: no old sequential migrations at all
 			name:      "new-format-pure-new-dir",
-			state:     stateNew(260401001),
+			state:     stateNew(260402001),
 			dir:       dirInfo{maxOldAvailable: 0, minNewAvailable: 261000001, versionFound: true},
 			registry:  reg(30),
 			wantForce: false,
@@ -175,7 +175,7 @@ func TestDecideTransitionPlan(t *testing.T) {
 			// 25.10.x -> 26.04.x: checkpoint 28, maxOld 30 -> replay 29..30
 			name:        "new-format-25.10-to-26.04",
 			state:       stateNew(251099001),
-			dir:         dirInfo{maxOldAvailable: 30, minNewAvailable: 260401001},
+			dir:         dirInfo{maxOldAvailable: 30, minNewAvailable: 260402001},
 			registry:    reg(28),
 			wantForce:   true,
 			wantForceTo: 28,
@@ -185,7 +185,7 @@ func TestDecideTransitionPlan(t *testing.T) {
 			// 25.04.x -> 26.04.x (skipped 25.10): checkpoint 26, maxOld 30 -> replay 27..30
 			name:        "new-format-25.04-to-26.04-wide-window",
 			state:       stateNew(250499001),
-			dir:         dirInfo{maxOldAvailable: 30, minNewAvailable: 260401001},
+			dir:         dirInfo{maxOldAvailable: 30, minNewAvailable: 260402001},
 			registry:    reg(26),
 			wantForce:   true,
 			wantForceTo: 26,
@@ -277,12 +277,12 @@ func TestScanMigrationDirectory(t *testing.T) {
 			name: "mixed-old-and-new",
 			files: []string{
 				"28_alter.up.sql", "30_add_index.up.sql",
-				"260401001_transition.up.sql", "260401002_other.up.sql",
+				"260402001_transition.up.sql", "260402002_other.up.sql",
 			},
-			currentVersion:   260401001,
+			currentVersion:   260402001,
 			wantMaxOld:       30,
-			wantMinNew:       260401001,
-			wantMaxAll:       260401002,
+			wantMinNew:       260402001,
+			wantMaxAll:       260402002,
 			wantVersionFound: true,
 		},
 		{
@@ -312,12 +312,12 @@ func TestScanMigrationDirectory(t *testing.T) {
 			files: []string{
 				"26_last_old.up.sql",
 				"2000_transition_artifact.up.sql",
-				"250406001_first_canonical_new.up.sql",
+				"250408001_first_canonical_new.up.sql",
 			},
 			currentVersion:   transitionArtifactVersion,
 			wantMaxOld:       26,
-			wantMinNew:       250406001,
-			wantMaxAll:       250406001,
+			wantMinNew:       250408001,
+			wantMaxAll:       250408001,
 			wantVersionFound: true,
 		},
 		{
@@ -473,7 +473,7 @@ func TestValidateDirectUpgradePath(t *testing.T) {
 		{
 			name:    "block-direct-24-to-26.04",
 			state:   stateOld(24),
-			dir:     dirInfo{maxOldAvailable: 30, minNewAvailable: 260401001},
+			dir:     dirInfo{maxOldAvailable: 30, minNewAvailable: 260402001},
 			wantErr: true,
 		},
 		{
@@ -485,7 +485,7 @@ func TestValidateDirectUpgradePath(t *testing.T) {
 		{
 			name:    "allow-24.10-to-25.04",
 			state:   stateOld(24),
-			dir:     dirInfo{maxOldAvailable: 26, minNewAvailable: 250406001},
+			dir:     dirInfo{maxOldAvailable: 26, minNewAvailable: 250408001},
 			wantErr: false,
 		},
 		{
