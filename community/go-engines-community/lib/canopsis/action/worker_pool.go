@@ -348,7 +348,8 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		},
 		Execution: task.ExecutionID,
 		Alarms:    []string{task.Alarm.ID},
-		Scenario:  task.ScenarioID,
+		Rule:      task.ScenarioID,
+		RuleType:  libwebhook.RuleTypeScenario,
 		Name:      types.RuleNameScenarioPrefix + task.ScenarioName,
 
 		Index:         int64(task.Step),
@@ -372,7 +373,8 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 	err = s.webhookHistoryCollection.FindOneAndUpdate(ctx,
 		bson.M{
 			"execution": history.Execution,
-			"scenario":  history.Scenario,
+			"rule":      history.Rule,
+			"rule_type": libwebhook.RuleTypeScenario,
 			"index":     history.Index,
 		},
 		bson.M{
