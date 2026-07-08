@@ -628,6 +628,43 @@ func TestAlarmPatternToMongoQuery(t *testing.T) {
 		pattern.Alarm{
 			{
 				{
+					Field:     "v.failed_ticket",
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.failed_ticket": bson.M{"$exists": true, "$ne": nil}},
+			}},
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
+					Field:     "v.failed_ticket",
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"$or": []bson.M{
+					{"alarm.v.failed_ticket": bson.M{"$exists": false}},
+					{"alarm.v.failed_ticket": bson.M{"$eq": nil}},
+				}},
+			}},
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
 					Field:     "v.last_comment.a",
 					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test author"),
 				},
