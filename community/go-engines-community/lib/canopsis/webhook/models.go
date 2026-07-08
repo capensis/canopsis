@@ -38,18 +38,19 @@ type History struct {
 	MultipleURLs       bool   `bson:"multiple_urls,omitempty" json:"multiple_urls,omitempty"`
 	ResolvedRequestURL string `bson:"resolved_request_url,omitempty" json:"resolved_request_url,omitempty"`
 
-	SystemName      string                    `bson:"system_name,omitempty" json:"system_name,omitempty"`
-	EmitTrigger     bool                      `bson:"emit_trigger,omitempty" json:"emit_trigger,omitempty"`
-	Comment         string                    `bson:"comment,omitempty" json:"comment,omitempty"`
-	AuthToken       *request.WebhookAuthToken `bson:"auth_token,omitempty" json:"auth_token,omitempty"`
-	DeclareTicket   *DeclareTicket            `bson:"declare_ticket,omitempty" json:"declare_ticket,omitempty"`
-	TicketResources bool                      `bson:"ticket_resources,omitempty" json:"ticket_resources,omitempty"`
-	UserID          string                    `bson:"user,omitempty" json:"user,omitempty"`
-	Username        string                    `bson:"username,omitempty" json:"username,omitempty"`
-	Initiator       string                    `bson:"initiator,omitempty" json:"initiator,omitempty"`
-	EventInitiator  string                    `bson:"event_initiator,omitempty" json:"event_initiator,omitempty"`
-	EventOutput     string                    `bson:"event_output,omitempty" json:"event_output,omitempty"`
-	Trigger         string                    `bson:"trigger,omitempty" json:"trigger,omitempty"`
+	SystemName         string                    `bson:"system_name,omitempty" json:"system_name,omitempty"`
+	EmitTriggerSuccess bool                      `bson:"emit_trigger_success,omitempty" json:"emit_trigger_success,omitempty"`
+	EmitTriggerFail    bool                      `bson:"emit_trigger_fail,omitempty" json:"emit_trigger_fail,omitempty"`
+	Comment            string                    `bson:"comment,omitempty" json:"comment,omitempty"`
+	AuthToken          *request.WebhookAuthToken `bson:"auth_token,omitempty" json:"auth_token,omitempty"`
+	DeclareTicket      *DeclareTicket            `bson:"declare_ticket,omitempty" json:"declare_ticket,omitempty"`
+	TicketResources    bool                      `bson:"ticket_resources,omitempty" json:"ticket_resources,omitempty"`
+	UserID             string                    `bson:"user,omitempty" json:"user,omitempty"`
+	Username           string                    `bson:"username,omitempty" json:"username,omitempty"`
+	Initiator          string                    `bson:"initiator,omitempty" json:"initiator,omitempty"`
+	EventInitiator     string                    `bson:"event_initiator,omitempty" json:"event_initiator,omitempty"`
+	EventOutput        string                    `bson:"event_output,omitempty" json:"event_output,omitempty"`
+	Trigger            string                    `bson:"trigger,omitempty" json:"trigger,omitempty"`
 
 	ResponseCode   int64             `bson:"response_code,omitempty" json:"response_code,omitempty"`
 	ResponseHeader map[string]string `bson:"response_header,omitempty" json:"response_header,omitempty"`
