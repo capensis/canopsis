@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -20,16 +21,34 @@ const (
 	StatusAborted
 )
 
+const (
+	RuleTypeScenario RuleType = iota
+	RuleTypeDeclareTicket
+)
+
 const MultipleURLsDelimiter = ","
+
+type RuleType int
+
+func (rk RuleType) String() string {
+	switch rk {
+	case RuleTypeScenario:
+		return "scenario"
+	case RuleTypeDeclareTicket:
+		return "declare_ticket_rule"
+	default:
+		return "unknown"
+	}
+}
 
 type History struct {
 	BaseHistory `bson:",inline"`
 
-	Execution         string   `bson:"execution" json:"execution"`
-	Alarms            []string `bson:"alarms,omitempty" json:"alarms,omitempty"`
-	Scenario          string   `bson:"scenario,omitempty" json:"scenario,omitempty"`
-	DeclareTicketRule string   `bson:"declare_ticket_rule,omitempty" json:"declare_ticket_rule,omitempty"`
-	Name              string   `bson:"name" json:"name"`
+	Execution string   `bson:"execution" json:"execution"`
+	Alarms    []string `bson:"alarms,omitempty" json:"alarms,omitempty"`
+	Rule      string   `bson:"rule" json:"rule"`
+	RuleType  RuleType `bson:"rule_type" json:"rule_type"`
+	Name      string   `bson:"name" json:"name"`
 
 	Index              int64  `bson:"index" json:"index"`
 	NextExec           string `bson:"next_exec,omitempty" json:"next_exec,omitempty"`
@@ -61,6 +80,60 @@ type History struct {
 	TicketData map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 
 	IsTest bool `bson:"is_test,omitempty" json:"is_test,omitempty"`
+}
+
+func (h History) CloneForURL(url string) History {
+	return History{
+		BaseHistory: BaseHistory{
+			ID:      utils.NewID(),
+			Status:  StatusCreated,
+			Request: h.Request,
+		},
+		Execution: h.Execution,
+		Alarms:    h.Alarms,
+		Rule:      h.Rule,
+		RuleType:  h.RuleType,
+		Name:      h.Name,
+		IsTest:    h.IsTest,
+
+		Index:              h.Index,
+		StopOnFail:         h.StopOnFail,
+		StopOnSuccess:      h.StopOnSuccess,
+		MultipleURLs:       h.MultipleURLs,
+		ResolvedRequestURL: url,
+
+		SystemName:         h.SystemName,
+		EmitTriggerSuccess: h.EmitTriggerSuccess,
+		EmitTriggerFail:    h.EmitTriggerFail,
+		Comment:            h.Comment,
+		AuthToken:          h.AuthToken,
+		DeclareTicket:      h.DeclareTicket,
+		TicketResources:    h.TicketResources,
+		UserID:             h.UserID,
+		Username:           h.Username,
+		Initiator:          h.Initiator,
+		EventInitiator:     h.EventInitiator,
+		EventOutput:        h.EventOutput,
+		Trigger:            h.Trigger,
+	}
+}
+
+func (h History) TicketInfo() types.TicketInfo {
+	ticketInfo := types.TicketInfo{
+		Ticket:           h.TicketID,
+		TicketURL:        h.TicketURL,
+		TicketData:       h.TicketData,
+		TicketComment:    h.Comment,
+		TicketSystemName: h.SystemName,
+		TicketRuleName:   h.Name,
+		TicketRuleID:     h.Rule,
+	}
+
+	if h.DeclareTicket != nil {
+		ticketInfo.TicketURLTitle = h.DeclareTicket.TicketURLTitle
+	}
+
+	return ticketInfo
 }
 
 type TplAlarm struct {
@@ -307,7 +380,7 @@ type CheckTicketStatus struct {
 
 type CheckTicketStatusJob struct {
 	ID                     string            `bson:"_id"`
-	RuleType               int               `bson:"rule_type"`
+	RuleType               RuleType          `bson:"rule_type"`
 	RuleName               string            `bson:"rule_name"`
 	Status                 int               `bson:"status"`
 	HistoryID              string            `bson:"history_id"`
