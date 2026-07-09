@@ -47,7 +47,7 @@ func TestProvideAuthorizedIds_GivenAuthorizedUser_ShouldReturnIds(t *testing.T) 
 		},
 	)
 
-	w := performRequest(router, "GET", okURL)
+	w := performRequest(t.Context(), router, "GET", okURL)
 
 	if w.Code != expectedCode {
 		t.Errorf("expected code: %v but got %v", expectedCode, w.Code)
@@ -80,7 +80,7 @@ func TestProvideAuthorizedIds_GivenNoUser_ShouldReturnUnauthorizedError(t *testi
 		okHandler,
 	)
 
-	w := performRequest(router, "GET", okURL)
+	w := performRequest(t.Context(), router, "GET", okURL)
 
 	if w.Code != expectedCode {
 		t.Errorf("expected code: %v but got %v", expectedCode, w.Code)
@@ -114,7 +114,7 @@ func TestProvideAuthorizedIds_GivenNotAuthorizedUser_ShouldReturnEmpty(t *testin
 		},
 	)
 
-	w := performRequest(router, "GET", okURL)
+	w := performRequest(t.Context(), router, "GET", okURL)
 
 	if w.Code != expectedCode {
 		t.Errorf("expected code: %v but got %v", expectedCode, w.Code)

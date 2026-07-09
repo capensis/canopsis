@@ -41,7 +41,7 @@ func regexp2MatchTimeout() time.Duration {
 	if value != "" {
 		duration, err := time.ParseDuration(value)
 		if err != nil {
-			log.Println("Invalid regexp2 timeout duration: ", value)
+			log.Println("Invalid regexp2 timeout duration in " + Regexp2MatchTimeout)
 			return DefaultRegex2MatchTimeout
 		}
 		return duration

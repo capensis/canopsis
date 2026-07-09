@@ -177,7 +177,7 @@ loop:
 		k := val.Kind()
 
 		switch k {
-		case reflect.Interface, reflect.Ptr:
+		case reflect.Interface, reflect.Pointer:
 			val = val.Elem()
 			k = val.Kind()
 		}
