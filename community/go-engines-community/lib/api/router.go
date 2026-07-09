@@ -150,7 +150,7 @@ func RegisterRoutes(
 	exdataImportWorker externaldatatable.ImportWorker,
 	patternOptimizeWorker pattern.OptimizeWorker,
 	notifStore usernotification.Store,
-	externalDataContainer *externaldata.GetterContainer,
+	externalDataGetter externaldata.Getter,
 	tplTestTypePermMapping map[int][]any,
 	logger zerolog.Logger,
 ) error {
@@ -519,7 +519,7 @@ func RegisterRoutes(
 		// event-filter API
 		eventFilterApi := eventfilter.NewApi(
 			eventfilter.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient),
-				notifStore, validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer,
+				notifStore, validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataGetter,
 				json.NewEncoder(), json.NewDecoder()),
 			dbexport.NewExporter(primaryDbClient),
 			errorResponder,
@@ -1856,7 +1856,7 @@ func RegisterRoutes(
 
 		linkRuleAPI := linkrule.NewApi(
 			linkrule.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient),
-				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer, enforcer),
+				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataGetter, enforcer),
 			dbexport.NewExporter(primaryDbClient),
 			errorResponder,
 		)
