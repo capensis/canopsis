@@ -288,7 +288,7 @@ func (s *sender) send(ctx context.Context) {
 			end := min((i+1)*bulkSize, rowsCount)
 			_, err := pool.CopyFrom(ctx, pgx.Identifier{metricName}, columns, pgx.CopyFromRows(rows[begin:end]))
 			if err != nil {
-				s.logger.Err(err).Msg("cannot send tech metrics")
+				s.logger.Err(err).Str("metric", metricName).Msg("cannot send tech metrics")
 				return
 			}
 		}
