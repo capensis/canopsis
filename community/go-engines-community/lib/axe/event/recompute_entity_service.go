@@ -174,7 +174,7 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 	}
 
 	go postProcessResolve(
-		context.Background(),
+		context.WithoutCancel(ctx),
 		event,
 		result,
 		updatedServiceStates,

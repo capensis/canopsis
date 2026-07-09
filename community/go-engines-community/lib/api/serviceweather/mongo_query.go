@@ -158,7 +158,7 @@ func (q *MongoQueryBuilder) createPaginationAggregationPipeline(query pagination
 
 func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	addedLookups := make(map[string]bool)
-	beforeLimit := make([]bson.M, len(q.entityMatch))
+	beforeLimit := make([]bson.M, len(q.entityMatch), len(q.entityMatch)+len(q.lookupsForAdditionalMatch)+len(q.lookupsForSort)+len(q.additionalMatch))
 	copy(beforeLimit, q.entityMatch)
 
 	q.addLookupsToPipeline(q.lookupsForAdditionalMatch, addedLookups, &beforeLimit)

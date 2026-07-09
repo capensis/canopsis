@@ -180,12 +180,14 @@ func (v *Validator) validateOperationParametersRequest(sl validator.StructLevel,
 				types.AlarmStateCritical,
 			}
 			param := ""
+			var paramSb183 strings.Builder
 			for i := range validTypes {
-				param += strconv.Itoa(int(validTypes[i]))
+				paramSb183.WriteString(strconv.Itoa(int(validTypes[i])))
 				if i < len(validTypes)-1 {
-					param += " "
+					paramSb183.WriteString(" ")
 				}
 			}
+			param += paramSb183.String()
 
 			found := false
 			for _, v := range validTypes {

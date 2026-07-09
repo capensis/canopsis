@@ -66,7 +66,7 @@ func runHttpServer(
 
 	go func() {
 		<-ctx.Done()
-		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), serverShutdownInterval)
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.WithoutCancel(ctx), serverShutdownInterval)
 		defer shutdownCancel()
 
 		if err := server.Shutdown(shutdownCtx); err != nil {
