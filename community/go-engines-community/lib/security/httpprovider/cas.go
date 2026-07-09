@@ -63,7 +63,7 @@ func (p *casProvider) Auth(request *http.Request) (*security.User, error, bool) 
 	// Add request query (except ticket) to service
 	serviceUrl, err := url.Parse(service)
 	if err != nil {
-		return nil, nil, false
+		return nil, nil, false // nolint: nilerr
 	}
 	serviceQuery := serviceUrl.Query()
 	query := request.URL.Query()

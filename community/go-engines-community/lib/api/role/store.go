@@ -542,7 +542,7 @@ func transformPermissionsToDoc(rolePermissions map[string][]string, permissions 
 }
 
 func getPermissions(ctx context.Context, permissionCollection mongo.DbCollection, rolePermissions map[string][]string) (map[string]Permission, map[string][]Permission, error) {
-	ids := make([]string, 0)
+	ids := make([]string, 0, len(rolePermissions))
 	for id := range rolePermissions {
 		ids = append(ids, id)
 	}

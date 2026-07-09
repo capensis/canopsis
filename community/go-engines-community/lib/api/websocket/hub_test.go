@@ -30,7 +30,7 @@ func TestHub_Send_GivenNotJoinedToRoomConnection_ShouldNotSendMessageToConnectio
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
+	r := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/test-ws", nil)
 	mockConnection := mock_websocket.NewMockConnection(ctrl)
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
@@ -69,7 +69,7 @@ func TestHub_Send_GivenJoinedToRoomConnection_ShouldSendMessageToConnection(t *t
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
+	r := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/test-ws", nil)
 	mockConnection := mock_websocket.NewMockConnection(ctrl)
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
@@ -123,7 +123,7 @@ func TestHub_Send_GivenLeftRoomConnection_ShouldNotSendMessageToConnection(t *te
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
+	r := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/test-ws", nil)
 	mockConnection := mock_websocket.NewMockConnection(ctrl)
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
@@ -181,7 +181,7 @@ func TestHub_Send_GivenDisconnectedConnection_ShouldNotSendMessageToConnection(t
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
+	r := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/test-ws", nil)
 	mockConnection := mock_websocket.NewMockConnection(ctrl)
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
@@ -241,7 +241,7 @@ func TestHub_Send_GivenErrOnWriteMessage_ShouldCloseConnection(t *testing.T) {
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
+	r := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/test-ws", nil)
 	mockConnection := mock_websocket.NewMockConnection(ctrl)
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
@@ -293,7 +293,7 @@ func TestHub_Send_GivenErrOnWriteError_ShouldCloseConnection(t *testing.T) {
 	done := make(chan struct{})
 	room := "test-room"
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
+	r := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/test-ws", nil)
 	mockConnection := mock_websocket.NewMockConnection(ctrl)
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
@@ -336,7 +336,7 @@ func TestHub_Connect_GivenUnauthUser_ShouldNotJoinToRoom(t *testing.T) {
 	done := make(chan struct{})
 	room := "test-room"
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
+	r := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/test-ws", nil)
 	mockConnection := mock_websocket.NewMockConnection(ctrl)
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
@@ -388,7 +388,7 @@ func TestHub_Connect_GivenInvalidRMessage_ShouldSendError(t *testing.T) {
 	done := make(chan struct{})
 	room := "test-room"
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
+	r := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/test-ws", nil)
 	mockConnection := mock_websocket.NewMockConnection(ctrl)
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)

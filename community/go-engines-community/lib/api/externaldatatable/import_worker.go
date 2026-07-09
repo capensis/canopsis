@@ -639,7 +639,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 			case externaldata.ColumnTypeStringArray:
 				columnType = "VARCHAR(" + MaxStringLenStr + ")[]"
 			default:
-				return false, fmt.Errorf("unsupported column type %q", c.Type)
+				return false, fmt.Errorf("unsupported column type %d", c.Type)
 			}
 
 			sql := ""
@@ -705,7 +705,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 			return false, fmt.Errorf("failed to copy to postgres table: %w", err)
 		}
 	default:
-		return false, fmt.Errorf("invalid table type: %q", table.Type)
+		return false, fmt.Errorf("invalid table type: %d", table.Type)
 	}
 
 	err = w.deleteTable(ctx, job)
@@ -1376,12 +1376,14 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 	case externaldata.TypePostgreSQL:
 		sql := "CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
 			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, "
+		var sqlSb1379 strings.Builder
 		for i, field := range columns {
-			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") "
+			sqlSb1379.WriteString(pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") ")
 			if i != len(columns)-1 {
-				sql += ","
+				sqlSb1379.WriteString(",")
 			}
 		}
+		sql += sqlSb1379.String()
 
 		sql += ")"
 		pgPool, err := w.pgPoolProvider.Get(ctx)
@@ -1402,7 +1404,7 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 
 		return nil
 	default:
-		return fmt.Errorf("invalid job type: %q", job.Type)
+		return fmt.Errorf("invalid job type: %d", job.Type)
 	}
 }
 
@@ -1428,6 +1430,6 @@ func (w *importWorker) deleteTable(ctx context.Context, job ImportJob) error {
 
 		return nil
 	default:
-		return fmt.Errorf("invalid job type: %q", job.Type)
+		return fmt.Errorf("invalid job type: %d", job.Type)
 	}
 }

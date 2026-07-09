@@ -56,7 +56,7 @@ func TestSessionAuth_GivenAuthUser_ShouldReturnResponseAndSetUserDataToContext(t
 		},
 	)
 
-	w := performRequest(router, "GET", okURL)
+	w := performRequest(t.Context(), router, "GET", okURL)
 
 	if w.Code != expectedCode {
 		t.Errorf("expected code: %v but got %v", expectedCode, w.Code)
@@ -91,7 +91,7 @@ func TestSessionAuth_GivenNoSession_ShouldReturnResponse(t *testing.T) {
 		okHandler,
 	)
 
-	w := performRequest(router, "GET", okURL)
+	w := performRequest(t.Context(), router, "GET", okURL)
 
 	if w.Code != expectedCode {
 		t.Errorf("expected code: %v but got %v", expectedCode, w.Code)
@@ -126,7 +126,7 @@ func TestSessionAuth_GivenInvalidUserSession_ShouldReturnUnauthorizedError(t *te
 		okHandler,
 	)
 
-	w := performRequest(router, "GET", okURL)
+	w := performRequest(t.Context(), router, "GET", okURL)
 
 	if w.Code != expectedCode {
 		t.Errorf("expected code: %v but got %v", expectedCode, w.Code)
