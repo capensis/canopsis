@@ -364,7 +364,7 @@ func (g *generator) getAlarms(ctx context.Context, ids []string) ([]AlarmWithDat
 		return nil, err
 	}
 
-	var openAlarms []AlarmWithData
+	openAlarms := make([]AlarmWithData, 0, len(ids))
 	err = openCursor.All(ctx, &openAlarms)
 	if err != nil {
 		return nil, err

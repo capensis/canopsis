@@ -119,7 +119,7 @@ func (a *api) Run(ctx context.Context) error {
 
 	go func() {
 		<-ctx.Done()
-		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), shutdownTimout)
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.WithoutCancel(ctx), shutdownTimout)
 		defer shutdownCancel()
 
 		if err := server.Shutdown(shutdownCtx); err != nil {
@@ -127,9 +127,9 @@ func (a *api) Run(ctx context.Context) error {
 		}
 	}()
 
-	defer func() { // nolint:contextcheck
+	defer func() {
 		if a.deferFunc != nil {
-			deferCtx, deferCancel := context.WithTimeout(context.Background(), shutdownTimout)
+			deferCtx, deferCancel := context.WithTimeout(context.WithoutCancel(ctx), shutdownTimout)
 			defer deferCancel()
 			a.deferFunc(deferCtx)
 		}
