@@ -1731,6 +1731,8 @@ definitions:
             $ref: '#/definitions/datetime.DurationWithEnabled'
           delete_stats_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
+          log_credentials:
+            type: boolean
         type: object
       webhook:
         properties:
@@ -6049,9 +6051,6 @@ definitions:
       drop_scenario_if_not_matched:
         type: boolean
       emit_trigger_fail:
-        description: |-
-          Whether to emit a `declareticketwebhookfail` trigger when the action
-          fails. Only set for webhook actions that declare a ticket.
         type: boolean
       emit_trigger_success:
         type: boolean
@@ -6083,10 +6082,6 @@ definitions:
       drop_scenario_if_not_matched:
         type: boolean
       emit_trigger_fail:
-        description: |-
-          Whether to emit a `declareticketwebhookfail` trigger when the action
-          fails. Required when `type` is `webhook` and `parameters.declare_ticket`
-          is set; must be omitted otherwise.
         type: boolean
       emit_trigger_success:
         type: boolean

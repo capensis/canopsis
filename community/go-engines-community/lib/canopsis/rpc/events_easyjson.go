@@ -5276,6 +5276,12 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					}
 				}
 			}
+		case "stop_scenario":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.StopScenario = bool(in.Bool())
+			}
 		case "origin":
 			if in.IsNull() {
 				in.Skip()
@@ -5326,6 +5332,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		} else {
 			out.Raw((*in.Error).MarshalJSON())
 		}
+	}
+	if in.StopScenario {
+		const prefix string = ",\"stop_scenario\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.StopScenario))
 	}
 	if in.Origin != nil {
 		const prefix string = ",\"origin\":"
@@ -5621,6 +5632,12 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 						in.AddError((*out.WebhookError).UnmarshalJSON(data))
 					}
 				}
+			}
+		case "webhook_stop_scenario":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.WebhookStopScenario = bool(in.Bool())
 			}
 		case "emit_trigger_success":
 			if in.IsNull() {
@@ -6195,6 +6212,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"webhook_error\":"
 		out.RawString(prefix)
 		out.Raw((*in.WebhookError).MarshalJSON())
+	}
+	if in.WebhookStopScenario {
+		const prefix string = ",\"webhook_stop_scenario\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.WebhookStopScenario))
 	}
 	if in.EmitTriggerSuccess {
 		const prefix string = ",\"emit_trigger_success\":"

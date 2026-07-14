@@ -48,6 +48,7 @@ type History struct {
 	Alarms    []string `bson:"alarms,omitempty" json:"alarms,omitempty"`
 	Rule      string   `bson:"rule" json:"rule"`
 	RuleType  RuleType `bson:"rule_type" json:"rule_type"`
+	RuleName  string   `bson:"rule_name" json:"rule_name"`
 	Name      string   `bson:"name" json:"name"`
 
 	Index              int64  `bson:"index" json:"index"`
@@ -80,6 +81,12 @@ type History struct {
 	TicketData map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 
 	IsTest bool `bson:"is_test,omitempty" json:"is_test,omitempty"`
+
+	// Cmd, CmdByUsername, CmdByUserID, CmdStopPendingJobs fields are required for the job management feature, don't use it in other places.
+	Cmd                int    `bson:"cmd,omitempty"`
+	CmdByUsername      string `bson:"cmd_by_username,omitempty"`
+	CmdByUserID        string `bson:"cmd_by_user_id,omitempty"`
+	CmdStopPendingJobs bool   `bson:"cmd_stop_pending_jobs,omitempty"`
 }
 
 func (h History) CloneForURL(url string) History {
@@ -93,6 +100,7 @@ func (h History) CloneForURL(url string) History {
 		Alarms:    h.Alarms,
 		Rule:      h.Rule,
 		RuleType:  h.RuleType,
+		RuleName:  h.RuleName,
 		Name:      h.Name,
 		IsTest:    h.IsTest,
 
@@ -232,11 +240,17 @@ func NewTplData(
 type TokenHistory struct {
 	BaseHistory        `bson:",inline"`
 	Rule               string                    `bson:"rule" json:"rule"`
+	RuleName           string                    `bson:"rule_name" json:"rule_name"`
 	ResponseField      string                    `bson:"response_field,omitempty" json:"response_field,omitempty"`
 	Template           string                    `bson:"template,omitempty" json:"template,omitempty"`
 	ExpirationDuration datetime.DurationWithUnit `bson:"expiration_duration" json:"expiration_duration"`
 	Token              string                    `bson:"token,omitempty" json:"token,omitempty"`
 	ExpiredAt          datetime.MicroTime        `bson:"expired_at,omitempty" json:"expired_at,omitzero"`
+
+	// Cmd, CmdByUsername, CmdByUserID fields are required for the job management feature, don't use it in other places.
+	Cmd           int    `bson:"cmd,omitempty"`
+	CmdByUsername string `bson:"cmd_by_username"`
+	CmdByUserID   string `bson:"cmd_by_user_id"`
 }
 
 type BaseHistory struct {

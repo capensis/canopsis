@@ -1199,6 +1199,30 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_general"
+  permission_api_webhook_job_management:
+    <<: *permission
+    _id: api_webhook_job_management
+    name: <Current()._id>
+    description: Webhook job management
+    groups:
+      - "@group_api"
+      - "@group_api_general"
+  permission_api_webhook_token_job_management:
+    <<: *permission
+    _id: api_webhook_token_job_management
+    name: <Current()._id>
+    description: Webhook token job management
+    groups:
+      - "@group_api"
+      - "@group_api_general"
+  permission_api_remediation_job_management:
+    <<: *permission
+    _id: api_remediation_job_management
+    name: <Current()._id>
+    description: Remediation job management
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_llm_config:
     <<: *permission_crud
     _id: api_llm_config
@@ -2007,6 +2031,9 @@ permission:
       - "@group_technical_admin_general"
     api_permissions:
       "@permission_api_ticket_status_job_management": 1
+      "@permission_api_webhook_job_management": 1
+      "@permission_api_webhook_token_job_management": 1
+      "@permission_api_remediation_job_management": 1
 
   # technical -> viewsandwidgets
   permission_models_privateView:
@@ -3963,6 +3990,9 @@ role:
       "@permission_api_entity_info_property": 15
       "@permission_api_comment_template": 15
       "@permission_api_ticket_status_job_management": 1
+      "@permission_api_webhook_job_management": 1
+      "@permission_api_webhook_token_job_management": 1
+      "@permission_api_remediation_job_management": 1
       "@permission_api_llm_config": 15
       # Views permissions
       "@permission_view_open_alarms_general": 7

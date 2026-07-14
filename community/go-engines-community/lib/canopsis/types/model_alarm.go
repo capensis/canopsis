@@ -79,6 +79,7 @@ const (
 	AlarmStepWebhookStart      = "webhookstart"
 	AlarmStepWebhookComplete   = "webhookcomplete"
 	AlarmStepWebhookFail       = "webhookfail"
+	AlarmStepWebhookStop       = "webhookstop"
 
 	// Following alarm steps are used for manual instruction execution.
 	AlarmStepInstructionStart    = "instructionstart"
@@ -126,6 +127,7 @@ func GetAlarmStepTypes() []string {
 		AlarmStepWebhookStart,
 		AlarmStepWebhookComplete,
 		AlarmStepWebhookFail,
+		AlarmStepWebhookStop,
 		AlarmStepInstructionStart,
 		AlarmStepInstructionPause,
 		AlarmStepInstructionResume,
