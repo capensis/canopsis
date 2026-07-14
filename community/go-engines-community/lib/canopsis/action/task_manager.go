@@ -330,6 +330,7 @@ func (e *redisBasedManager) listenRPCResultChannel(ctx context.Context, wg *sync
 				if r.Error != nil {
 					taskRes.Status = TaskRpcError
 					taskRes.Err = r.Error
+					taskRes.Stop = r.StopScenario
 				}
 
 				e.processTaskResult(ctx, taskRes)
@@ -417,7 +418,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			}
 		}
 
-		if executedAction.Parameters.StopOnFail != nil && *executedAction.Parameters.StopOnFail {
+		if taskRes.Stop || executedAction.Parameters.StopOnFail != nil && *executedAction.Parameters.StopOnFail {
 			e.logger.Debug().
 				Str("source", taskRes.Source).
 				Str("alarm", taskRes.Alarm.ID).
@@ -452,7 +453,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 		return
 	}
 
-	if executedAction.Type == types.ActionTypeWebhook {
+	if executedAction.Type == types.ActionTypeWebhook && taskRes.Status != TaskNotMatched {
 		_, err = e.executionStorage.IncExecutedWebhookCount(ctx, taskRes.Alarm.ID, 1, false)
 		if err != nil {
 			e.logger.Err(err).Str("execution", scenarioExecution.GetCacheKey()).Msg("cannot update counter")

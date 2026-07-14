@@ -1752,6 +1752,7 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 					"if": bson.M{"$or": []bson.M{
 						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookComplete}},
 						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookFail}},
+						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookStop}},
 					}},
 					"then": "$steps",
 					"else": "$$REMOVE",
@@ -1765,6 +1766,7 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 					"if": bson.M{"$or": []bson.M{
 						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookComplete}},
 						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookFail}},
+						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookStop}},
 					}},
 					"then": 1,
 					"else": 0,
@@ -1806,7 +1808,7 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 								{
 									"case": bson.M{"$and": []bson.M{
 										{"$eq": bson.A{"$start_step_count", "$complete_step_count"}},
-										{"$eq": bson.A{"$ticket_step._t", types.AlarmStepDeclareTicketFail}},
+										{"$in": bson.A{"$ticket_step._t", bson.A{types.AlarmStepDeclareTicketFail, types.AlarmStepWebhookStop}}},
 									}},
 									"then": bson.M{"$mergeObjects": bson.A{
 										"$ticket_step",
