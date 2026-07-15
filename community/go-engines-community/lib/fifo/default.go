@@ -19,6 +19,7 @@ import (
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
+	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libprometheus "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics/prometheus"
@@ -28,7 +29,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
@@ -41,14 +42,13 @@ import (
 
 type Options struct {
 	log.Options
-	Version                bool
-	PrintEventOnError      bool
-	LockTtl                int
-	PeriodicalWaitTime     time.Duration
-	ExternalDataApiTimeout time.Duration
-	Workers                int
-	RpcWorkers             int
-	DataStorageCleanUp     bool
+	Version            bool
+	PrintEventOnError  bool
+	LockTtl            int
+	PeriodicalWaitTime time.Duration
+	Workers            int
+	RpcWorkers         int
+	DataStorageCleanUp bool
 
 	PrometheusExporterPort   int
 	EnablePrometheusExporter bool
@@ -82,7 +82,6 @@ func ParseOptions() (Options, []string) {
 	flag.BoolVar(&opts.PrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.IntVar(&opts.LockTtl, "lockTtl", 10, "Redis lock ttl time in seconds")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
-	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.IntVar(&opts.Workers, "workers", canopsis.DefaultEventWorkers, "Amount of workers to process fifo_ack events flow")
 	flag.IntVar(&opts.RpcWorkers, "rpcWorkers", canopsis.DefaultRpcWorkers, "Amount of workers to process rpc event flow.")
@@ -90,31 +89,41 @@ func ParseOptions() (Options, []string) {
 	flag.BoolVar(&opts.EnablePrometheusExporter, "enablePrometheusExporter", false, "Enable prometheus exporter")
 	flag.IntVar(&opts.PrometheusExporterPort, "prometheusExporterPort", libprometheus.DefaultExporterPort, "Prometheus exporter port")
 
+	flag.Duration("externalDataApiTimeout", 30*time.Second, "Deprecated: External API HTTP Request Timeout.")
+
 	flag.Parse()
 
-	return opts, nil
+	return opts, libflag.FindDeprecatedFlags("externalDataApiTimeout")
 }
 
 func Default(
 	ctx context.Context,
 	deps Dependencies,
 	options Options,
+	dp depprovider.Provider,
 	logger zerolog.Logger,
-) (libengine.Engine, Services) {
-	var m depmake.DependencyMaker
-	s := Services{}
+) (e libengine.Engine, s Services, err error) {
+	dbClient, err := dp.MongoClient(ctx, mongo.ClientOptions{})
+	if err != nil {
+		return e, s, err
+	}
 
-	dbClient := m.DepMongoClient(ctx, mongo.ClientOptions{})
+	cfg, err := dp.Config(ctx, dbClient)
+	if err != nil {
+		return e, s, err
+	}
 
-	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
 
 	// noTimeoutClient should be used by change stream watchers only.
-	noTimeoutClient := m.DepMongoClient(ctx, mongo.ClientOptions{
+	noTimeoutClient, err := dp.MongoClient(ctx, mongo.ClientOptions{
 		RetryCount:      cfg.Global.ReconnectRetries,
 		MinRetryTimeout: cfg.Global.GetReconnectTimeout(),
 		NoClientTimeout: true,
 	})
+	if err != nil {
+		return e, s, err
+	}
 
 	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
@@ -122,15 +131,39 @@ func Default(
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
-	amqpPubConn := m.DepAmqpConnection(logger, cfg)
-	amqpConsumeConn := m.DepAmqpConnection(logger, cfg)
-	amqpPubChPool := m.DepAMQPPubChannelPool(amqpPubConn)
+	amqpPubConn, err := dp.AMQPConnection(logger, cfg)
+	if err != nil {
+		return e, s, err
+	}
+
+	amqpConsumeConn, err := dp.AMQPConnection(logger, cfg)
+	if err != nil {
+		return e, s, err
+	}
+
+	amqpPubChPool := dp.AMQPPubChannelPool(amqpPubConn)
 	amqpPublisher := amqp.NewPooledPublisher(amqpPubChPool)
-	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn)
-	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
-	engineLockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
-	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
-	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
+	amqpConsumeChPool := dp.AMQPConsumeChannelPool(amqpConsumeConn)
+	lockRedisClient, err := dp.RedisClient(ctx, redis.LockStorage, logger, cfg)
+	if err != nil {
+		return e, s, err
+	}
+
+	engineLockRedisClient, err := dp.RedisClient(ctx, redis.EngineLockStorage, logger, cfg)
+	if err != nil {
+		return e, s, err
+	}
+
+	queueRedisClient, err := dp.RedisClient(ctx, redis.QueueStorage, logger, cfg)
+	if err != nil {
+		return e, s, err
+	}
+
+	runInfoRedisClient, err := dp.RedisClient(ctx, redis.EngineRunInfo, logger, cfg)
+	if err != nil {
+		return e, s, err
+	}
+
 	s.Scheduler = libscheduler.NewSchedulerService(
 		lockRedisClient,
 		queueRedisClient,
@@ -159,7 +192,7 @@ func Default(
 
 	healthCheckCfg, err := config.NewHealthCheckAdapter(dbClient).GetConfig(ctx)
 	if err != nil {
-		panic(fmt.Errorf("cannot load healthcheck config: %w", err))
+		return e, s, fmt.Errorf("cannot load healthcheck config: %w", err)
 	}
 
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
@@ -430,5 +463,5 @@ func Default(
 		false,
 	), logger)
 
-	return engine, s
+	return engine, s, nil
 }

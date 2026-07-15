@@ -25,7 +25,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -34,10 +34,6 @@ import (
 	goredis "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
-
-type DependencyMaker struct {
-	depmake.DependencyMaker
-}
 
 type Services struct {
 	EventProcessorContainer event.ProcessorContainer
@@ -65,25 +61,39 @@ func NewEngine(
 	ctx context.Context,
 	options Options,
 	deps Dependencies,
+	dp depprovider.Provider,
 	logger zerolog.Logger,
-) (libengine.Engine, Services) {
-	defer depmake.Catch(logger)
+) (e libengine.Engine, s Services, err error) {
+	primaryDbClient, err := dp.MongoClient(ctx, mongo.ClientOptions{})
+	if err != nil {
+		return e, s, err
+	}
 
-	m := DependencyMaker{}
-	primaryDbClient := m.DepMongoClient(ctx, mongo.ClientOptions{})
-	cfg := m.DepConfig(ctx, primaryDbClient)
+	cfg, err := dp.Config(ctx, primaryDbClient)
+	if err != nil {
+		return e, s, err
+	}
+
 	config.SetDbClientRetry(primaryDbClient, cfg)
-	secondaryDbClient := m.DepMongoClient(ctx, mongo.ClientOptions{
+	secondaryDbClient, err := dp.MongoClient(ctx, mongo.ClientOptions{
 		RetryCount:      cfg.Global.ReconnectRetries,
 		MinRetryTimeout: cfg.Global.GetReconnectTimeout(),
 		ReadPreference:  mongo.SecondaryPreferred(),
 	})
+	if err != nil {
+		return e, s, err
+	}
+
 	// noTimeoutClient should be used by change stream watchers only.
-	noTimeoutClient := m.DepMongoClient(ctx, mongo.ClientOptions{
+	noTimeoutClient, err := dp.MongoClient(ctx, mongo.ClientOptions{
 		RetryCount:      cfg.Global.ReconnectRetries,
 		MinRetryTimeout: cfg.Global.GetReconnectTimeout(),
 		NoClientTimeout: true,
 	})
+	if err != nil {
+		return e, s, err
+	}
+
 	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
@@ -92,17 +102,41 @@ func NewEngine(
 	entityInfosUpdateSender := deps.NewEntityInfosUpdateSender(primaryDbClient, pgPoolProvider, cfg, logger)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	amqpPubConn := m.DepAmqpConnection(logger, cfg)
-	amqpConsumeConn := m.DepAmqpConnection(logger, cfg)
-	amqpPubChPool := m.DepAMQPPubChannelPool(amqpPubConn)
+	amqpPubConn, err := dp.AMQPConnection(logger, cfg)
+	if err != nil {
+		return e, s, err
+	}
+
+	amqpConsumeConn, err := dp.AMQPConnection(logger, cfg)
+	if err != nil {
+		return e, s, err
+	}
+
+	amqpPubChPool := dp.AMQPPubChannelPool(amqpPubConn)
 	amqpPublisher := amqp.NewPooledPublisher(amqpPubChPool)
-	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn)
+	amqpConsumeChPool := dp.AMQPConsumeChannelPool(amqpConsumeConn)
 	entityAdapter := entity.NewAdapter(primaryDbClient)
-	redisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
-	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
-	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
-	suspendedEventRedis := m.DepRedisSession(ctx, redis.CheSuspendedEventStorage, logger, cfg)
-	periodicalLockClient := redis.NewLockClient(redisSession)
+	engineLockRedis, err := dp.RedisClient(ctx, redis.EngineLockStorage, logger, cfg)
+	if err != nil {
+		return e, s, err
+	}
+
+	runInfoRedis, err := dp.RedisClient(ctx, redis.EngineRunInfo, logger, cfg)
+	if err != nil {
+		return e, s, err
+	}
+
+	serviceRedis, err := dp.RedisClient(ctx, redis.EntityServiceStorage, logger, cfg)
+	if err != nil {
+		return e, s, err
+	}
+
+	suspendedEventRedis, err := dp.RedisClient(ctx, redis.CheSuspendedEventStorage, logger, cfg)
+	if err != nil {
+		return e, s, err
+	}
+
+	periodicalLockClient := redis.NewLockClient(engineLockRedis)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	externalDataGetter := deps.NewExternalDataGetter(primaryDbClient, pgPoolProvider, templateExecutor)
 	stateSettingsService := statesetting.NewService(primaryDbClient, logger)
@@ -140,7 +174,7 @@ func NewEngine(
 
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
 		healthCheckCfg.ParseUpdateInterval(logger),
-		libengine.NewRunInfoManager(runInfoRedisSession),
+		libengine.NewRunInfoManager(runInfoRedis),
 		libengine.NewInstanceRunInfo(canopsis.CheEngineName, canopsis.CheQueuePrefix, canopsis.AxeQueuePrefix, []string{
 			canopsis.CheExternalQueueName,
 			canopsis.CheSystemQueueName,
@@ -215,17 +249,17 @@ func NewEngine(
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
 
-			err = redisSession.Close()
+			err = engineLockRedis.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
 
-			err = serviceRedisSession.Close()
+			err = serviceRedis.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
 
-			err = runInfoRedisSession.Close()
+			err = runInfoRedis.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
@@ -286,7 +320,7 @@ func NewEngine(
 		return nil
 	})
 
-	s := Services{
+	s = Services{
 		TechMetricsSender:   techMetricsSender,
 		Cfg:                 cfg,
 		DbClient:            primaryDbClient,
@@ -413,7 +447,7 @@ func NewEngine(
 	engine.AddRoutine(func(ctx context.Context) error {
 		w := eventfilter.NewRulesChangesWatcher(noTimeoutClient, eventFilterService)
 
-		logger.Debug().Msg("Loading event filter rules")
+		logger.Debug().Msg("start loading event filter rules watcher")
 
 		for {
 			select {
@@ -449,5 +483,5 @@ func NewEngine(
 		false,
 	), logger)
 
-	return engine, s
+	return engine, s, nil
 }
