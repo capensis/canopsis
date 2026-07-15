@@ -26,13 +26,14 @@ func main() {
 	logger := log.NewLogger(ctx, opts.Options)
 	trace := debug.Start(logger)
 	libflag.LogDeprecatedFlags(logger, deprecatedFlags)
-	engine, services := NewEngine(ctx, opts, logger)
-	var err error
-	if opts.DataStorageCleanUp {
-		services.DataStoragePeriodicalWorker.OnSchedule(false)
-		services.DataStoragePeriodicalWorker.Work(ctx)
-	} else {
-		err = engine.Run(ctx)
+	engine, services, err := NewEngine(ctx, opts, logger)
+	if err == nil {
+		if opts.DataStorageCleanUp {
+			services.DataStoragePeriodicalWorker.OnSchedule(false)
+			services.DataStoragePeriodicalWorker.Work(ctx)
+		} else {
+			err = engine.Run(ctx)
+		}
 	}
 
 	exitStatus := 0
