@@ -140,7 +140,7 @@ func NewEngine(
 	internalTagAlarmMatcher := alarmtag.NewInternalTagAlarmMatcher(dbClient)
 
 	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.DefaultExchangeName, canopsis.FIFOQueueName, canopsis.AxeConnector, alarmConfigProvider)
-	entityServiceCountersCalculator := calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, timezoneConfigProvider), eventsSender)
+	entityServiceCountersCalculator := calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, timezoneConfigProvider), eventsSender, logger)
 	componentCountersCalculator := calculator.NewComponentCountersCalculator(dbClient, eventsSender)
 
 	eventProcessor := m.EventProcessor(

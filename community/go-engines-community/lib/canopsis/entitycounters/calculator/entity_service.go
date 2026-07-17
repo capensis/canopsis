@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -23,16 +24,18 @@ type entityServiceCountersCalculator struct {
 	entityCollection          mongo.DbCollection
 	templateExecutor          template.Executor
 	eventsSender              entitycounters.EventsSender
+	logger                    zerolog.Logger
 
 	options *options.FindOneOptionsBuilder
 }
 
-func NewEntityServiceCountersCalculator(dbClient mongo.DbClient, executor template.Executor, eventsSender entitycounters.EventsSender) EntityServiceCountersCalculator {
+func NewEntityServiceCountersCalculator(dbClient mongo.DbClient, executor template.Executor, eventsSender entitycounters.EventsSender, logger zerolog.Logger) EntityServiceCountersCalculator {
 	return &entityServiceCountersCalculator{
 		serviceCountersCollection: dbClient.Collection(mongo.EntityCountersCollection),
 		entityCollection:          dbClient.Collection(mongo.EntityMongoCollection),
 		templateExecutor:          executor,
 		eventsSender:              eventsSender,
+		logger:                    logger,
 
 		options: options.FindOne().SetProjection(
 			bson.M{
@@ -160,7 +163,8 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 
 	counters.Output, err = s.templateExecutor.Execute(counters.OutputTemplate, counters)
 	if err != nil {
-		return nil, err
+		s.logger.Warn().Err(err).Msg("unable to execute service output template, service output is set to empty string")
+		counters.Output = ""
 	}
 
 	_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": service.ID}, bson.M{"$set": counters}, options.UpdateOne().SetUpsert(true))
@@ -391,7 +395,8 @@ func (s *entityServiceCountersCalculator) calculateCounters(
 
 		newOutput, err := s.templateExecutor.Execute(newCounters.OutputTemplate, newCounters)
 		if err != nil {
-			return false, nil, err
+			s.logger.Warn().Err(err).Msg("unable to execute service output template, service output is set to empty string")
+			newOutput = ""
 		}
 
 		update := bson.M{}
