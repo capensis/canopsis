@@ -17,6 +17,7 @@ import (
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_entitycounters "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/entitycounters"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -14081,5 +14082,5 @@ func prepareEntityServiceTest(ctrl *gomock.Controller) (
 
 	eventSender := mock_entitycounters.NewMockEventsSender(ctrl)
 
-	return calculator.NewEntityServiceCountersCalculator(dbClient, templateExecutor, eventSender), entityHelper, countersCollection, entityCollection
+	return calculator.NewEntityServiceCountersCalculator(dbClient, templateExecutor, eventSender, zerolog.Nop()), entityHelper, countersCollection, entityCollection
 }
