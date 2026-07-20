@@ -97,7 +97,7 @@ export default {
   createChangeStateEvent: {
     title: 'Changer la сriticité',
     states: {
-      ok: 'Info',
+      ok: 'Ok',
       minor: 'Mineur',
       major: 'Majeur',
       critical: 'Critique',

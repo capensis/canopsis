@@ -9,9 +9,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
     with-background=""
   />
   <div
-    form="[object Object]"
     reverse=""
     type="0"
+    value="[object Object]"
   >
     <event-filter-general-form-stub
       copyvars="[object Object]"
@@ -35,9 +35,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
     with-background=""
   />
   <div
-    form="[object Object]"
     reverse=""
     type="0"
+    value="[object Object]"
   >
     <event-filter-general-form-stub
       copyvars="[object Object]"
@@ -61,9 +61,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
     with-background=""
   />
   <div
-    form="[object Object]"
     reverse=""
     type="0"
+    value="[object Object]"
   >
     <event-filter-general-form-stub
       copyvars="[object Object]"
@@ -87,9 +87,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
     with-background=""
   />
   <div
-    form="[object Object]"
     reverse=""
     type="0"
+    value="[object Object]"
   >
     <event-filter-general-form-stub
       copyvars="[object Object]"
@@ -113,9 +113,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
     with-background=""
   />
   <div
-    form="[object Object]"
     reverse=""
     type="0"
+    value="[object Object]"
   >
     <event-filter-general-form-stub
       copyvars="[object Object]"
@@ -138,9 +138,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
     with-background=""
   />
   <div
-    form="[object Object]"
     reverse=""
     type="0"
+    value="[object Object]"
   >
     <event-filter-general-form-stub
       copyvars="[object Object]"

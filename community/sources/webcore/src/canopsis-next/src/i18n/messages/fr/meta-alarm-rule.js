@@ -24,6 +24,7 @@ export default {
   childInactiveDelay: 'Délai d\'inactivité de l\'enfant',
   childInactiveDelayHelpText: 'L\'alarme correspondant à cette règle n\'est activée qu\'après le délai d\'inactivité',
   valuePath: 'Chemin de valeur | Chemins de valeur',
+  addValuePath: 'Ajouter un chemin de valeur',
   autoResolve: 'Résolution automatique',
   idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
   corelId: 'Identifiant de corrélation',

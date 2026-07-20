@@ -7,6 +7,7 @@ import { EVENT_FILTER_TYPES } from '@/constants';
 import EventFilterGeneralForm from '@/components/other/event-filter/form/event-filter-general-form.vue';
 
 const stubs = {
+  'c-name-field': true,
   'c-form-block': true,
   'c-form-block-row': true,
   'c-event-filter-type-field': true,

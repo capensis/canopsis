@@ -12,7 +12,11 @@
               :items="eventFilterActionTypes"
               :label="$t('common.type')"
               @change="changeActionType"
-            />
+            >
+              <template #selection="{ item }">
+                {{ item.groupTitle }} {{ item.text }}
+              </template>
+            </v-select>
             <v-btn
               class="mr-0"
               icon
@@ -111,6 +115,7 @@ import { computed } from 'vue';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_GROUPS,
   EVENT_FILTER_EVENT_EXTRA_PREFIX,
   PATTERN_FIELD_TYPES,
 } from '@/constants';
@@ -175,10 +180,22 @@ export default {
     const nameFieldName = computed(() => `${props.name}.name`);
     const valueFieldName = computed(() => `${props.name}.value`);
 
-    const eventFilterActionTypes = computed(() => Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
-      value,
-      text: t(`eventFilter.actionsTypes.${value}.text`),
-    })));
+    const eventFilterActionTypes = computed(() => (
+      Object.entries(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_GROUPS).reduce((acc, [group, groupItems]) => {
+        const groupTitle = t(`eventFilter.actionsTypesGroups.${group}`);
+
+        acc.push(
+          { header: groupTitle },
+          ...groupItems.map(value => ({
+            value,
+            text: t(`eventFilter.actionsTypes.${value}.text`),
+            groupTitle,
+          })),
+        );
+
+        return acc;
+      }, [])
+    ));
 
     const isStringCopyValueType = computed(() => [
       EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy,

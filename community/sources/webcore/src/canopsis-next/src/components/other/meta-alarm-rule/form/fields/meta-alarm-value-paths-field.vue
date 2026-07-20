@@ -25,7 +25,9 @@
         :error="hasValuePathsErrors ? $t('metaAlarmRule.errors.noValuePaths'): ''"
         outlined
         @click="addNewItem"
-      />
+      >
+        {{ $t('metaAlarmRule.addValuePath') }}
+      </c-btn-with-error>
     </v-layout>
   </c-form-block-row>
 </template>

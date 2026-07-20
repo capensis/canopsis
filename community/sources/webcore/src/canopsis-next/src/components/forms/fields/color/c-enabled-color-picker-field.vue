@@ -11,13 +11,16 @@
         @input="updateColor"
       />
     </v-flex>
-    <c-color-picker-field
-      v-field="color"
-      :disabled="!enabled"
-      :required="enabled"
-      :name="name"
-      :justify-end="justifyEnd"
-    />
+    <v-fade-transition>
+      <c-color-picker-field
+        v-if="enabled"
+        v-field="color"
+        :disabled="!enabled"
+        :required="enabled"
+        :name="name"
+        :justify-end="justifyEnd"
+      />
+    </v-fade-transition>
   </v-layout>
 </template>
 

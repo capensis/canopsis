@@ -1,6 +1,6 @@
 <template>
   <c-form-general-patterns-tabs
-    :form="form"
+    v-field="form"
     :rule-id="ruleId"
     :type="type"
   >

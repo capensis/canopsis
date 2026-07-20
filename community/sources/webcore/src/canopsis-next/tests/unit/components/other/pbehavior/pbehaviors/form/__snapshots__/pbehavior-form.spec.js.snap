@@ -11,6 +11,7 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with custom props 1`] = `
     <pbehavior-general-form-stub
       depth="0"
       form="[object Object]"
+      name=""
       nocomments="true"
       noenabled="true"
       withstartontrigger="true"
@@ -36,6 +37,7 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
     <pbehavior-general-form-stub
       depth="0"
       form="[object Object]"
+      name=""
     />
     <pbehavior-patterns-form-stub
       form="[object Object]"

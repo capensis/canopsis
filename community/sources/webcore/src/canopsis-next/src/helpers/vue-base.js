@@ -10,7 +10,7 @@ import Vue from 'vue';
  */
 export function isParent(child, parent) {
   if (child) {
-    if (child === parent || child._original === parent || parent.$el?.contains(child?.$el ?? child)) {
+    if (child === parent || child._original === parent || parent?.$el?.contains(child?.$el ?? child)) {
       return true;
     }
 

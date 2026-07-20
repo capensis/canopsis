@@ -3,6 +3,7 @@
     v-field="infos"
     :item-to-form="metaAlarmRuleInfosItemToForm"
     :label="$t('common.infos')"
+    :add-button-label="$t('entity.addInfos')"
   >
     <template #item="{ item, index, remove }">
       <meta-alarm-rule-infos-item-form
