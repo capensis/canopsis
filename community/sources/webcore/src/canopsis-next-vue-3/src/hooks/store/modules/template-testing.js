@@ -1,4 +1,4 @@
-import { useTemplateTestingStore } from '@/stores/modules/template-testing';
+import { useTemplateTestingStore } from '@/stores/modules/template-testing'
 
 /**
  * Template testing store facade.
@@ -6,16 +6,19 @@ import { useTemplateTestingStore } from '@/stores/modules/template-testing';
  * @returns {Object}
  */
 export const useTemplateTesting = () => {
-  const templateTestingStore = useTemplateTestingStore();
+  const templateTestingStore = useTemplateTestingStore()
 
   return {
-    fetchTemplateTestingDataListWithoutStore: templateTestingStore.fetchTemplateTestingDataListWithoutStore,
-    fetchTemplateTestingDataItemWithoutStore: templateTestingStore.fetchTemplateTestingDataItemWithoutStore,
+    fetchTemplateTestingDataListWithoutStore:
+      templateTestingStore.fetchTemplateTestingDataListWithoutStore,
+    fetchTemplateTestingDataItemWithoutStore:
+      templateTestingStore.fetchTemplateTestingDataItemWithoutStore,
     createTemplateTestingData: templateTestingStore.createTemplateTestingData,
     updateTemplateTestingData: templateTestingStore.updateTemplateTestingData,
     removeTemplateTestingData: templateTestingStore.removeTemplateTestingData,
 
-    fetchTemplateTestingTestsListWithoutStore: templateTestingStore.fetchTemplateTestingTestsListWithoutStore,
+    fetchTemplateTestingTestsListWithoutStore:
+      templateTestingStore.fetchTemplateTestingTestsListWithoutStore,
     fetchTemplateTestingTestWithoutStore: templateTestingStore.fetchTemplateTestingTestWithoutStore,
     createTemplateTestingTest: templateTestingStore.createTemplateTestingTest,
     updateTemplateTestingTest: templateTestingStore.updateTemplateTestingTest,
@@ -33,7 +36,9 @@ export const useTemplateTesting = () => {
     validateMetaAlarmRulesVariables: templateTestingStore.validateMetaAlarmRulesVariables,
     validateWebhookTokenRulesVariables: templateTestingStore.validateWebhookTokenRulesVariables,
 
+    fetchEventFiltersCopyVarsWithoutStore: templateTestingStore.fetchEventFiltersVarsWithoutStore,
+    fetchDynamicInfosCopyVarsWithoutStore: templateTestingStore.fetchDynamicInfosVarsWithoutStore,
     copyEventFiltersVariables: templateTestingStore.copyEventFiltersVariables,
     copyDynamicInfosVariables: templateTestingStore.copyDynamicInfosVariables,
-  };
-};
+  }
+}

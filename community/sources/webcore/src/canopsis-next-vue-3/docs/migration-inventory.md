@@ -13,6 +13,13 @@ Status legend:
 ## Immediate Tasks
 
 - `[ ]` Remove `normalizr` from the old store migration path before porting larger entity modules. Prefer plain normalized-by-id state, Pinia stores and explicit mapper helpers instead of carrying over the old Vuex/normalizr shape.
+  - Do not port the old `SCHEMA_EMBEDDED_KEY` / `entities/removeFromStore` mechanism. Embedded metadata was only used internally by the normalizr plugin for mark-and-sweep and parent cleanup.
+  - Single pbehavior delete reaches `entities/removeFromStore` from `pbehavior-actions`, but the affected tables refresh themselves. Revisit only when migrating `AlarmsList`, `Context` and `ServiceWeather` pbehavior tabs; if needed, add explicit local refresh/parent update there instead of restoring global embedded cleanup.
+- `[x]` Port remaining old entity store modules to Pinia facades.
+  - Simple list/detail/bulk modules are wrapped with `createCRUDStore` where the old Vuex module was only CRUD around an API route.
+  - Request-only or widget-scoped modules stay as explicit Pinia stores: `metrics` keeps per-widget buckets for aggregated/group/vector/availability data and meta, `template-testing` also covers old `copy/vars`, `snmp` is split into `snmp-rule` and `snmp-mib`, and `info` remains covered by `app-info` plus `infos`.
+  - Empty old namespace folders `auth-token-job`, `instruction-job` and `webhook-job` do not require Pinia modules.
+  - Consumer runtime parity still belongs to the page/widget migration where those hooks become used.
 
 ## Cross-Cutting Migration Rules
 
@@ -70,55 +77,55 @@ Status legend:
 
 Pages are taken from `src/router.js` in the source project.
 
-| Status | Route name | Path | Source component | Target component | Notes |
-| --- | --- | --- | --- | --- | --- |
-| `[~]` | `login` | `/login` | `src/views/login.vue` | `src/views/login-page.vue` | Main login page and form are migrated; messages will be moved later. |
-| `[~]` | `home` | `/` | `src/views/home.vue` | `src/views/home-page.vue` | Stub/basic page exists. |
-| `[ ]` | `view` | `/view/:id` | `src/views/view.vue` | - |  |
-| `[ ]` | `view-kiosk` | `/kiosk-views/:id/:tabId` | `src/views/view-kiosk.vue` | - |  |
-| `[ ]` | `alarms` | `/alarms/:id` | `src/views/alarm.vue` | - |  |
-| `[~]` | `admin-rights` | `/admin/rights` | `src/views/admin/permissions.vue` | `src/views/admin/rights-page.vue` | Main rights table migrated with lightweight checkbox; final visual parity pass pending. |
-| `[~]` | `admin-users` | `/admin/users` | `src/views/admin/users.vue` | `src/views/admin/users.vue` | Main users tab/table and create/edit user form modal are migrated; shared tokens pending. |
-| `[~]` | `admin-roles` | `/admin/roles` | `src/views/admin/roles.vue` | `src/views/admin/roles-page.vue` | Main list and create/edit/duplicate form are migrated. Remaining: role mass actions and deeper permissions editor parity. |
-| `[~]` | `admin-broadcast-messages` | `/admin/broadcast-messages` | `src/views/admin/broadcast-messages.vue` | `src/views/admin/broadcast-messages-page.vue` | Main list, active messages and create/edit form are migrated; runtime parity pass pending. |
-| `[ ]` | `admin-playlists` | `/admin/playlists` | `src/views/admin/playlists.vue` | - |  |
-| `[ ]` | `admin-planning-administration` | `/admin/planning` | `src/views/admin/planning.vue` | - |  |
-| `[ ]` | `admin-healthcheck` | `/admin/healthcheck` | `src/views/admin/healthcheck.vue` | - |  |
-| `[ ]` | `admin-kpi` | `/admin/kpi` | `src/views/admin/kpi.vue` | - |  |
-| `[ ]` | `admin-events-records` | `/admin/events-records` | `src/views/admin/events-records.vue` | - |  |
-| `[ ]` | `admin-anomaly-monitored-connectors` | `/admin/anomaly-monitored-connectors` | `src/views/admin/anomaly-monitored-connectors.vue` | - |  |
-| `[~]` | `admin-template-testing` | `/admin/template-testing` | `src/views/admin/template-testing.vue` | `src/views/admin/template-testing-page.vue` | Main data/tests tabs, lists, create/edit data modal and edit/remove test modals are migrated; test-variables sidebar stack remains pending for other forms. |
-| `[ ]` | `admin-jobs-management` | `/admin/jobs` | `src/views/admin/jobs.vue` | - |  |
-| `[ ]` | `admin-custom-objects-external-auth-tokens` | `/admin/external-auth-tokens` | `src/views/admin/custom-objects/external-auth-tokens.vue` | - |  |
-| `[ ]` | `admin-custom-objects-external-data-tables` | `/admin/external-data-tables` | `src/views/admin/custom-objects/external-data-tables.vue` | - |  |
-| `[ ]` | `admin-custom-objects-entity-infos-properties` | `/admin/entity-infos-properties` | `src/views/admin/custom-objects/entity-infos-properties.vue` | - |  |
-| `[ ]` | `admin-custom-objects-icons` | `/admin/icons` | `src/views/admin/custom-objects/icons.vue` | - |  |
-| `[ ]` | `admin-custom-objects-maps` | `/admin/maps` | `src/views/admin/custom-objects/maps.vue` | - |  |
-| `[ ]` | `admin-custom-objects-tags` | `/admin/tags` | `src/views/admin/custom-objects/tags.vue` | - |  |
-| `[ ]` | `admin-custom-objects-llms` | `/admin/llms` | `src/views/admin/custom-objects/llms.vue` | - |  |
-| `[ ]` | `admin-settings-views-import-export` | `/admin/views-import-export` | `src/views/admin/settings/views-import-export.vue` | - |  |
-| `[ ]` | `admin-settings-notifications` | `/admin/notifications` | `src/views/admin/settings/notifications-settings.vue` | - |  |
-| `[ ]` | `admin-settings-comment-templates` | `/admin/comment-templates` | `src/views/admin/settings/comment-templates.vue` | - |  |
-| `[ ]` | `admin-settings-widget-templates` | `/admin/widget-templates` | `src/views/admin/settings/widget-templates.vue` | - |  |
-| `[ ]` | `admin-settings-storage-settings` | `/admin/storage-settings` | `src/views/admin/settings/storage-settings.vue` | - |  |
-| `[ ]` | `admin-settings-state-settings` | `/admin/state-settings` | `src/views/admin/settings/state-settings.vue` | - |  |
-| `[ ]` | `exploitation-pbehaviors` | `/exploitation/pbehaviors` | `src/views/exploitation/pbehaviors.vue` | - |  |
-| `[~]` | `exploitation-event-filters` | `/exploitation/event-filters` | `src/views/exploitation/event-filters.vue` | `src/views/exploitation/event-filters-page.vue` | Main list, expand content, failures tab, remove/export, bulk actions and store hooks are migrated; create/edit/duplicate modal form remains pending and actions are hidden until it is adapted. |
-| `[ ]` | `exploitation-snmp-rules` | `/exploitation/snmp-rules` | `src/views/exploitation/snmp-rules.vue` | - |  |
-| `[~]` | `exploitation-dynamic-infos` | `/exploitation/dynamic-infos` | `src/views/exploitation/dynamic-infos.vue` | `src/views/exploitation/dynamic-infos-page.vue` | Page shell, dynamic infos list with advanced search, templates list, stores and create/edit modal are migrated. |
-| `[ ]` | `exploitation-meta-alarm-rules` | `/exploitation/meta-alarm-rule` | `src/views/exploitation/meta-alarm-rules.vue` | - |  |
-| `[~]` | `exploitation-scenarios` | `/exploitation/scenarios` | `src/views/exploitation/scenarios.vue` | `src/views/exploitation/scenarios-page.vue` | Main list/read-only expand content and scenario store are migrated; create/edit modal is not migrated yet. |
-| `[~]` | `exploitation-idle-rules` | `/exploitation/idle-rules` | `src/views/exploitation/idle-rules.vue` | `src/views/exploitation/idle-rules-page.vue` | Main list, expand, delete/bulk actions and create/edit/duplicate form are migrated; pbehavior action parameters depend on future pbehavior stack migration. |
-| `[~]` | `exploitation-flapping-rules` | `/exploitation/flapping-rules` | `src/views/exploitation/flapping-rules.vue` | `src/views/exploitation/flapping-rules-page.vue` | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending. |
-| `[~]` | `exploitation-resolve-rules` | `/exploitation/resolve-rules` | `src/views/exploitation/resolve-rules.vue` | `src/views/exploitation/resolve-rules-page.vue` | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending. |
-| `[ ]` | `exploitation-declare-ticket-rules` | `/exploitation/declare-ticket-rules` | `src/views/exploitation/declare-ticket-rules.vue` | - |  |
-| `[ ]` | `exploitation-link-rules` | `/exploitation/link-rules` | `src/views/exploitation/link-rules.vue` | - |  |
-| `[ ]` | `exploitation-remediation` | `/exploitation/remediation` | `src/views/exploitation/remediation.vue` | - |  |
-| `[ ]` | `playlist` | `/playlist/:id` | `src/views/playlist.vue` | - |  |
-| `[ ]` | `profile-patterns` | `/filters` | `src/views/profile/patterns.vue` | - |  |
-| `[ ]` | `profile-themes` | `/themes` | `src/views/profile/themes.vue` | - |  |
-| `[ ]` | `notifications` | `/notifications/:tabId` | `src/views/notification/notifications.vue` | - |  |
-| `[x]` | `error` | `/error` | `src/views/error.vue` | `src/views/error-page.vue` | Migrated with polling and redirect logic. |
+| Status | Route name                                     | Path                                  | Source component                                             | Target component                                 | Notes                                                                                                                                                                                           |
+| ------ | ---------------------------------------------- | ------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[~]`  | `login`                                        | `/login`                              | `src/views/login.vue`                                        | `src/views/login-page.vue`                       | Main login page and form are migrated; messages will be moved later.                                                                                                                            |
+| `[~]`  | `home`                                         | `/`                                   | `src/views/home.vue`                                         | `src/views/home-page.vue`                        | Stub/basic page exists.                                                                                                                                                                         |
+| `[ ]`  | `view`                                         | `/view/:id`                           | `src/views/view.vue`                                         | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `view-kiosk`                                   | `/kiosk-views/:id/:tabId`             | `src/views/view-kiosk.vue`                                   | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `alarms`                                       | `/alarms/:id`                         | `src/views/alarm.vue`                                        | -                                                |                                                                                                                                                                                                 |
+| `[~]`  | `admin-rights`                                 | `/admin/rights`                       | `src/views/admin/permissions.vue`                            | `src/views/admin/rights-page.vue`                | Main rights table migrated with lightweight checkbox; final visual parity pass pending.                                                                                                         |
+| `[~]`  | `admin-users`                                  | `/admin/users`                        | `src/views/admin/users.vue`                                  | `src/views/admin/users.vue`                      | Main users tab/table and create/edit user form modal are migrated; shared tokens pending.                                                                                                       |
+| `[~]`  | `admin-roles`                                  | `/admin/roles`                        | `src/views/admin/roles.vue`                                  | `src/views/admin/roles-page.vue`                 | Main list and create/edit/duplicate form are migrated. Remaining: role mass actions and deeper permissions editor parity.                                                                       |
+| `[~]`  | `admin-broadcast-messages`                     | `/admin/broadcast-messages`           | `src/views/admin/broadcast-messages.vue`                     | `src/views/admin/broadcast-messages-page.vue`    | Main list, active messages and create/edit form are migrated; runtime parity pass pending.                                                                                                      |
+| `[ ]`  | `admin-playlists`                              | `/admin/playlists`                    | `src/views/admin/playlists.vue`                              | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-planning-administration`                | `/admin/planning`                     | `src/views/admin/planning.vue`                               | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-healthcheck`                            | `/admin/healthcheck`                  | `src/views/admin/healthcheck.vue`                            | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-kpi`                                    | `/admin/kpi`                          | `src/views/admin/kpi.vue`                                    | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-events-records`                         | `/admin/events-records`               | `src/views/admin/events-records.vue`                         | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-anomaly-monitored-connectors`           | `/admin/anomaly-monitored-connectors` | `src/views/admin/anomaly-monitored-connectors.vue`           | -                                                |                                                                                                                                                                                                 |
+| `[~]`  | `admin-template-testing`                       | `/admin/template-testing`             | `src/views/admin/template-testing.vue`                       | `src/views/admin/template-testing-page.vue`      | Main data/tests tabs, lists, create/edit data modal and edit/remove test modals are migrated; test-variables sidebar stack remains pending for other forms.                                     |
+| `[ ]`  | `admin-jobs-management`                        | `/admin/jobs`                         | `src/views/admin/jobs.vue`                                   | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-custom-objects-external-auth-tokens`    | `/admin/external-auth-tokens`         | `src/views/admin/custom-objects/external-auth-tokens.vue`    | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-custom-objects-external-data-tables`    | `/admin/external-data-tables`         | `src/views/admin/custom-objects/external-data-tables.vue`    | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-custom-objects-entity-infos-properties` | `/admin/entity-infos-properties`      | `src/views/admin/custom-objects/entity-infos-properties.vue` | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-custom-objects-icons`                   | `/admin/icons`                        | `src/views/admin/custom-objects/icons.vue`                   | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-custom-objects-maps`                    | `/admin/maps`                         | `src/views/admin/custom-objects/maps.vue`                    | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-custom-objects-tags`                    | `/admin/tags`                         | `src/views/admin/custom-objects/tags.vue`                    | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-custom-objects-llms`                    | `/admin/llms`                         | `src/views/admin/custom-objects/llms.vue`                    | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-settings-views-import-export`           | `/admin/views-import-export`          | `src/views/admin/settings/views-import-export.vue`           | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-settings-notifications`                 | `/admin/notifications`                | `src/views/admin/settings/notifications-settings.vue`        | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-settings-comment-templates`             | `/admin/comment-templates`            | `src/views/admin/settings/comment-templates.vue`             | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-settings-widget-templates`              | `/admin/widget-templates`             | `src/views/admin/settings/widget-templates.vue`              | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-settings-storage-settings`              | `/admin/storage-settings`             | `src/views/admin/settings/storage-settings.vue`              | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `admin-settings-state-settings`                | `/admin/state-settings`               | `src/views/admin/settings/state-settings.vue`                | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `exploitation-pbehaviors`                      | `/exploitation/pbehaviors`            | `src/views/exploitation/pbehaviors.vue`                      | -                                                |                                                                                                                                                                                                 |
+| `[~]`  | `exploitation-event-filters`                   | `/exploitation/event-filters`         | `src/views/exploitation/event-filters.vue`                   | `src/views/exploitation/event-filters-page.vue`  | Main list, expand content, failures tab, remove/export, bulk actions and store hooks are migrated; create/edit/duplicate modal form remains pending and actions are hidden until it is adapted. |
+| `[ ]`  | `exploitation-snmp-rules`                      | `/exploitation/snmp-rules`            | `src/views/exploitation/snmp-rules.vue`                      | -                                                |                                                                                                                                                                                                 |
+| `[~]`  | `exploitation-dynamic-infos`                   | `/exploitation/dynamic-infos`         | `src/views/exploitation/dynamic-infos.vue`                   | `src/views/exploitation/dynamic-infos-page.vue`  | Page shell, dynamic infos list with advanced search, templates list, stores and create/edit modal are migrated.                                                                                 |
+| `[ ]`  | `exploitation-meta-alarm-rules`                | `/exploitation/meta-alarm-rule`       | `src/views/exploitation/meta-alarm-rules.vue`                | -                                                |                                                                                                                                                                                                 |
+| `[~]`  | `exploitation-scenarios`                       | `/exploitation/scenarios`             | `src/views/exploitation/scenarios.vue`                       | `src/views/exploitation/scenarios-page.vue`      | Main list/read-only expand content and scenario store are migrated; create/edit modal is not migrated yet.                                                                                      |
+| `[~]`  | `exploitation-idle-rules`                      | `/exploitation/idle-rules`            | `src/views/exploitation/idle-rules.vue`                      | `src/views/exploitation/idle-rules-page.vue`     | Main list, expand, delete/bulk actions and create/edit/duplicate form are migrated; pbehavior action parameters depend on future pbehavior stack migration.                                     |
+| `[~]`  | `exploitation-flapping-rules`                  | `/exploitation/flapping-rules`        | `src/views/exploitation/flapping-rules.vue`                  | `src/views/exploitation/flapping-rules-page.vue` | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending.                                                                        |
+| `[~]`  | `exploitation-resolve-rules`                   | `/exploitation/resolve-rules`         | `src/views/exploitation/resolve-rules.vue`                   | `src/views/exploitation/resolve-rules-page.vue`  | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending.                                                                        |
+| `[ ]`  | `exploitation-declare-ticket-rules`            | `/exploitation/declare-ticket-rules`  | `src/views/exploitation/declare-ticket-rules.vue`            | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `exploitation-link-rules`                      | `/exploitation/link-rules`            | `src/views/exploitation/link-rules.vue`                      | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `exploitation-remediation`                     | `/exploitation/remediation`           | `src/views/exploitation/remediation.vue`                     | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `playlist`                                     | `/playlist/:id`                       | `src/views/playlist.vue`                                     | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `profile-patterns`                             | `/filters`                            | `src/views/profile/patterns.vue`                             | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `profile-themes`                               | `/themes`                             | `src/views/profile/themes.vue`                               | -                                                |                                                                                                                                                                                                 |
+| `[ ]`  | `notifications`                                | `/notifications/:tabId`               | `src/views/notification/notifications.vue`                   | -                                                |                                                                                                                                                                                                 |
+| `[x]`  | `error`                                        | `/error`                              | `src/views/error.vue`                                        | `src/views/error-page.vue`                       | Migrated with polling and redirect logic.                                                                                                                                                       |
 
 ## Page Blocks
 
@@ -402,7 +409,7 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[ ]` Main content: `src/views/exploitation/pbehaviors.vue`.
 - `[ ]` Modal windows: not migrated.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
+- `[ ]` State/API/socket: not migrated. Do not port old `entities/removeFromStore` for single pbehavior delete; use API delete plus list refresh.
 - `[ ]` Routing/access: `/exploitation/pbehaviors`, pbehavior access.
 - `[ ]` Messages/i18n: not migrated.
 
@@ -587,35 +594,35 @@ Router rules are taken from `src/router.js`, `src/constants/common.js`, `src/con
 
 Redirects are taken from the bottom of `src/router.js`.
 
-| Status | Old path | Target route | Notes |
-| --- | --- | --- | --- |
-| `[x]` | `/admin/remediation` | `exploitation-remediation` |  |
-| `[x]` | `/admin/external-data-tables` | `admin-custom-objects-external-data-tables` |  |
-| `[x]` | `/admin/entity-infos-properties` | `admin-custom-objects-entity-infos-properties` |  |
-| `[x]` | `*` | `home` | Catch-all redirect. |
+| Status | Old path                         | Target route                                   | Notes               |
+| ------ | -------------------------------- | ---------------------------------------------- | ------------------- |
+| `[x]`  | `/admin/remediation`             | `exploitation-remediation`                     |                     |
+| `[x]`  | `/admin/external-data-tables`    | `admin-custom-objects-external-data-tables`    |                     |
+| `[x]`  | `/admin/entity-infos-properties` | `admin-custom-objects-entity-infos-properties` |                     |
+| `[x]`  | `*`                              | `home`                                         | Catch-all redirect. |
 
 ## Widgets
 
 Widgets are taken from `WIDGET_TYPES` and `COMPONENTS_BY_WIDGET_TYPES` in `src/constants/widget.js`.
 
-| Status | Widget type | Source component name | Source file | Icon | Edition / scope | Notes |
-| --- | --- | --- | --- | --- | --- | --- |
-| `[ ]` | `AlarmsList` | `alarms-list-widget` | `src/components/widgets/alarm/alarms-list.vue` | `view_list` | Core, top-level |  |
-| `[ ]` | `Context` | `entities-list-widget` | `src/components/widgets/context/entities-list.vue` | `view_list` | Core, top-level |  |
-| `[ ]` | `ServiceWeather` | `service-weather-widget` | `src/components/widgets/service-weather/service-weather.vue` | `view_module` | Core, top-level |  |
-| `[ ]` | `StatsCalendar` | `stats-calendar-widget` | `src/components/widgets/stats/calendar/stats-calendar.vue` | `calendar_today` | Pro, top-level |  |
-| `[ ]` | `Text` | `text-widget` | `src/components/widgets/text/text.vue` | `view_headline` | Core, top-level |  |
-| `[ ]` | `Counter` | `counter-widget` | `src/components/widgets/counter/counter.vue` | `numbers` | Core, top-level |  |
-| `[ ]` | `Junit` | `testing-weather-widget` | `src/components/widgets/testing-weather/testing-weather.vue` | `view_module` | Pro, top-level |  |
-| `[ ]` | `Map` | `map-widget` | `src/components/widgets/map/map.vue` | `location_on` | Pro, top-level |  |
-| `[ ]` | `BarChart` | `bar-chart-widget` | `src/components/widgets/chart/bar-chart-widget.vue` | `stacked_bar_chart` | KPI/chart child widget |  |
-| `[ ]` | `LineChart` | `line-chart-widget` | `src/components/widgets/chart/line-chart-widget.vue` | `show_chart` | KPI/chart child widget |  |
-| `[ ]` | `PieChart` | `pie-chart-widget` | `src/components/widgets/chart/pie-chart-widget.vue` | `donut_small` | KPI/chart child widget |  |
-| `[ ]` | `Numbers` | `numbers-widget` | `src/components/widgets/chart/numbers-widget.vue` | `functions` | KPI/chart child widget |  |
-| `[ ]` | `UserStatistics` | `user-statistics-widget` | `src/components/widgets/statistics/user-statistics-widget.vue` | `perm_identity` | Pro, statistics child widget |  |
-| `[ ]` | `AlarmStatistics` | `alarm-statistics-widget` | `src/components/widgets/statistics/alarm-statistics-widget.vue` | `notification_important` | Pro, statistics child widget |  |
-| `[ ]` | `Availability` | `availability-widget` | `src/components/widgets/availability/availability-widget.vue` | `published_with_changes` | Pro, top-level |  |
-| `[ ]` | `ExternalDataTable` | `external-data-table-widget` | `src/components/widgets/external-data-table/external-data-table-widget.vue` | `database` | Core, top-level |  |
+| Status | Widget type         | Source component name        | Source file                                                                 | Icon                     | Edition / scope              | Notes |
+| ------ | ------------------- | ---------------------------- | --------------------------------------------------------------------------- | ------------------------ | ---------------------------- | ----- |
+| `[ ]`  | `AlarmsList`        | `alarms-list-widget`         | `src/components/widgets/alarm/alarms-list.vue`                              | `view_list`              | Core, top-level              |       |
+| `[ ]`  | `Context`           | `entities-list-widget`       | `src/components/widgets/context/entities-list.vue`                          | `view_list`              | Core, top-level              |       |
+| `[ ]`  | `ServiceWeather`    | `service-weather-widget`     | `src/components/widgets/service-weather/service-weather.vue`                | `view_module`            | Core, top-level              |       |
+| `[ ]`  | `StatsCalendar`     | `stats-calendar-widget`      | `src/components/widgets/stats/calendar/stats-calendar.vue`                  | `calendar_today`         | Pro, top-level               |       |
+| `[ ]`  | `Text`              | `text-widget`                | `src/components/widgets/text/text.vue`                                      | `view_headline`          | Core, top-level              |       |
+| `[ ]`  | `Counter`           | `counter-widget`             | `src/components/widgets/counter/counter.vue`                                | `numbers`                | Core, top-level              |       |
+| `[ ]`  | `Junit`             | `testing-weather-widget`     | `src/components/widgets/testing-weather/testing-weather.vue`                | `view_module`            | Pro, top-level               |       |
+| `[ ]`  | `Map`               | `map-widget`                 | `src/components/widgets/map/map.vue`                                        | `location_on`            | Pro, top-level               |       |
+| `[ ]`  | `BarChart`          | `bar-chart-widget`           | `src/components/widgets/chart/bar-chart-widget.vue`                         | `stacked_bar_chart`      | KPI/chart child widget       |       |
+| `[ ]`  | `LineChart`         | `line-chart-widget`          | `src/components/widgets/chart/line-chart-widget.vue`                        | `show_chart`             | KPI/chart child widget       |       |
+| `[ ]`  | `PieChart`          | `pie-chart-widget`           | `src/components/widgets/chart/pie-chart-widget.vue`                         | `donut_small`            | KPI/chart child widget       |       |
+| `[ ]`  | `Numbers`           | `numbers-widget`             | `src/components/widgets/chart/numbers-widget.vue`                           | `functions`              | KPI/chart child widget       |       |
+| `[ ]`  | `UserStatistics`    | `user-statistics-widget`     | `src/components/widgets/statistics/user-statistics-widget.vue`              | `perm_identity`          | Pro, statistics child widget |       |
+| `[ ]`  | `AlarmStatistics`   | `alarm-statistics-widget`    | `src/components/widgets/statistics/alarm-statistics-widget.vue`             | `notification_important` | Pro, statistics child widget |       |
+| `[ ]`  | `Availability`      | `availability-widget`        | `src/components/widgets/availability/availability-widget.vue`               | `published_with_changes` | Pro, top-level               |       |
+| `[ ]`  | `ExternalDataTable` | `external-data-table-widget` | `src/components/widgets/external-data-table/external-data-table-widget.vue` | `database`               | Core, top-level              |       |
 
 ## Widget Blocks
 
@@ -625,21 +632,21 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 
 - `[ ]` Main content: `src/components/widgets/alarm/alarms-list.vue`.
 - `[ ]` Settings: `alarm-settings`; migrate widget parameters forms, columns, filters, actions, export, expand panel settings and remediation-related settings.
-- `[ ]` Store/API/socket: alarm list queries, periodic refresh, alarm socket rooms, user preferences and export.
+- `[ ]` Store/API/socket: alarm list queries, periodic refresh, alarm socket rooms, user preferences and export. When migrating the alarm expand pbehavior tab, do not rely on old embedded entity cleanup; `pbehaviors-simple-list` should refresh its own list after pbehavior delete.
 - `[ ]` Messages/i18n: not migrated.
 
 ### `Context`
 
 - `[ ]` Main content: `src/components/widgets/context/entities-list.vue`.
 - `[ ]` Settings: `context-settings`; migrate columns, filters, category/action settings and export settings.
-- `[ ]` Store/API/socket: entity list queries, advanced search, user preferences and export.
+- `[ ]` Store/API/socket: entity list queries, advanced search, user preferences and export. When migrating the entity expand pbehavior tab, use local pbehavior list refresh after delete instead of porting old `entities/removeFromStore`.
 - `[ ]` Messages/i18n: not migrated.
 
 ### `ServiceWeather`
 
 - `[ ]` Main content: `src/components/widgets/service-weather/service-weather.vue`.
 - `[ ]` Settings: `service-weather-settings`; migrate service display, counters, pause/event settings and linked alarm list settings.
-- `[ ]` Store/API/socket: service weather queries, counters and actions.
+- `[ ]` Store/API/socket: service weather queries, counters and actions. `service-entity` uses `entity.pbehaviors?.length` to show the pbehavior tab; handle any stale-parent UX explicitly during widget migration, not by restoring normalizr embedded cleanup.
 - `[ ]` Messages/i18n: not migrated.
 
 ### `StatsCalendar`
