@@ -16,7 +16,7 @@ const (
 )
 
 type Loader interface {
-	Load(ctx context.Context) error
+	Load(ctx context.Context, collections ...string) error
 	Clean(ctx context.Context) error
 }
 
@@ -60,8 +60,12 @@ type loader struct {
 	collections []string
 }
 
-func (l *loader) Load(ctx context.Context) error {
+func (l *loader) Load(ctx context.Context, collections ...string) error {
 	deleted := make(map[string]bool)
+	onlyCollections := make(map[string]bool, len(collections))
+	for _, collection := range collections {
+		onlyCollections[collection] = true
+	}
 
 	for _, dir := range l.dirs {
 		files, err := getFiles(dir)
@@ -81,6 +85,10 @@ func (l *loader) Load(ctx context.Context) error {
 			}
 
 			for collectionName, docs := range docsByCollection {
+				if len(onlyCollections) > 0 && !onlyCollections[collectionName] {
+					continue
+				}
+
 				if !l.keepData {
 					if !deleted[collectionName] {
 						_, err := l.client.Collection(collectionName).DeleteMany(ctx, bson.M{})
