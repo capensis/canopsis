@@ -8,7 +8,7 @@
     />
 
     <c-form-block>
-      <c-form-block-row :label="$t('remediation.instruction.type')">
+      <c-form-block-row :label="$t('remediation.instruction.type')" indented>
         <c-instruction-type-field
           v-field="form.type"
           :disabled="disabled || !isNew"
@@ -16,13 +16,10 @@
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.description')">
-        <v-text-field
+        <c-description-field
           v-field="form.description"
-          v-validate="'required'"
-          :label="$t('common.description')"
-          :error-messages="errors.collect('description')"
           :disabled="disabledCommon"
-          name="description"
+          required
         />
       </c-form-block-row>
 

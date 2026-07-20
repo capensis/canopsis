@@ -12,6 +12,7 @@
         v-field="form.name"
         :label="nameLabel"
         :tooltip="nameTooltip"
+        :name="nameFieldName"
         autofocus
         required
       />
@@ -46,6 +47,7 @@
         <c-duration-field
           v-if="form.start_on_trigger"
           v-field="form.duration"
+          :name="durationFieldName"
           required
         />
         <template v-else>
@@ -79,6 +81,7 @@
                 :end-max="tstopMax"
                 :no-ending="noEnding"
                 :full-day="fullDay"
+                :name="dateTimeSplittedRangePickerFieldName"
                 @update:start="updateField('tstart', $event)"
                 @update:end="updateField('tstop', $event)"
               />
@@ -106,6 +109,7 @@
           <v-flex xs6>
             <c-pbehavior-type-field
               v-field="form.type"
+              :name="pbehaviorTypeFieldName"
               class="ml-2"
               required
               return-object
@@ -208,6 +212,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      default: '',
+    },
     nameLabel: {
       type: String,
       required: false,
@@ -228,6 +236,13 @@ export default {
   setup(props, { emit }) {
     const { updateModel, updateField } = useModelField(props, emit);
     const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
+
+    const getFieldName = field => (props.name ? `${props.name}.${field}` : field);
+
+    const nameFieldName = computed(() => getFieldName('name'));
+    const durationFieldName = computed(() => getFieldName('duration'));
+    const pbehaviorTypeFieldName = computed(() => getFieldName('type'));
+    const dateTimeSplittedRangePickerFieldName = computed(() => getFieldName('tstart'));
 
     const initialNoEnding = Boolean(props.form.tstart && !props.form.tstop);
     const noEnding = ref(initialNoEnding);
@@ -339,6 +354,10 @@ export default {
       noEnding,
       fullDay,
       hasPauseType,
+      nameFieldName,
+      durationFieldName,
+      pbehaviorTypeFieldName,
+      dateTimeSplittedRangePickerFieldName,
       tstartRules,
       tstopRules,
       tstopMin,

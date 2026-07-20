@@ -58,6 +58,11 @@ html {
     color: var(--v-text-light-disabled, rgba(0, 0, 0, 0.38));
     pointer-events: none;
   }
+
+  .v-subheader {
+    font-size: 1.1428571429rem;
+    color: inherit;
+  }
 }
 
 .v-tabs__div {

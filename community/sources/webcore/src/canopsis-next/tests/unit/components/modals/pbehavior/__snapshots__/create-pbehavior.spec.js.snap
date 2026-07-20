@@ -82,6 +82,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with pbehavior 1`] = `
         <pbehavior-general-form-stub
           depth="0"
           form="[object Object]"
+          name=""
           withenabled="true"
         />
       </v-layout-stub>

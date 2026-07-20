@@ -54,13 +54,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
               class="v-messages__wrapper"
               name="message-transition"
               tag="div"
-            >
-              <div
-                class="v-messages__message"
-              >
-                The field is required
-              </div>
-            </transition-group-stub>
+            />
           </div>
         </div>
       </div>

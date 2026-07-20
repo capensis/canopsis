@@ -4,8 +4,8 @@
       <c-name-field
         v-field="form.name"
         v-validate="nameRules"
-        :error-messages="errors.collect('name')"
-        name="name"
+        :error-messages="errors.collect(nameFieldName)"
+        :name="nameFieldName"
         required
       />
       <v-flex v-if="removable" shrink>
@@ -20,7 +20,7 @@
       v-field="form.value"
       :label="$t('common.value')"
       :types="mixedFieldTypes"
-      name="value"
+      :name="valueFieldName"
       required
     />
 
@@ -29,7 +29,7 @@
       v-field="form.value"
       :label="$t('common.value')"
       :variables="isTemplateType ? variables : copyVariables"
-      name="value"
+      :name="valueFieldName"
       required
     />
 
@@ -38,10 +38,10 @@
       v-field="form.value"
       :label="$t('common.value')"
       :items="copyVariables"
+      :name="valueFieldName"
       :menu-props="comboboxMenuProps"
       :return-object="false"
       children-key="variables"
-      name="value"
       required
       combobox
     />
@@ -71,6 +71,10 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+    name: {
+      type: String,
+      default: '',
     },
     existingNames: {
       type: Array,
@@ -105,6 +109,11 @@ export default {
 
     const { updateModel } = useModelField(props, emit);
 
+    const getFieldName = field => `${props.name}.${field}`;
+
+    const nameFieldName = computed(() => getFieldName('name'));
+    const valueFieldName = computed(() => getFieldName('value'));
+
     const nameRules = computed(() => ({
       required: true,
       unique: {
@@ -128,7 +137,7 @@ export default {
         value: '',
       });
 
-      validator.errors.remove('value');
+      validator.errors.remove(valueFieldName.value);
     };
 
     const remove = () => emit('remove', props.form);
@@ -136,6 +145,8 @@ export default {
     return {
       mixedFieldTypes,
 
+      nameFieldName,
+      valueFieldName,
       nameRules,
       isDefaultType,
       isTemplateType,

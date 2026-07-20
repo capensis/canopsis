@@ -10,6 +10,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
   >
     <c-name-field-stub
       autofocus=""
+      name="name"
       required=""
       value="pbehavior"
     />
@@ -35,6 +36,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
         value="true"
       />
       <c-duration-field-stub
+        name="duration"
         required=""
         value="[object Object]"
       />
@@ -61,6 +63,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
         >
           <c-pbehavior-type-field-stub
             class="ml-2"
+            name="type"
             required=""
             return-object=""
             value="[object Object]"
@@ -112,6 +115,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
   >
     <c-name-field-stub
       autofocus=""
+      name="name"
       required=""
       value="pbehavior"
     />
@@ -152,7 +156,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
             endmax="2026-03-04"
             endmin="2021-03-04"
             endrules="[object Object]"
-            name="date-range"
+            name="tstart"
             start="Thu Mar 04 2021 13:30:00 GMT+0100 (Central European Standard Time)"
             startlabel="Start"
             startrules="[object Object]"
@@ -189,6 +193,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
         >
           <c-pbehavior-type-field-stub
             class="ml-2"
+            name="type"
             required=""
             return-object=""
             value="[object Object]"

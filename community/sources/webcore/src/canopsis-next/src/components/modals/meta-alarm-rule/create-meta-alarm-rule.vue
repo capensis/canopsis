@@ -8,7 +8,7 @@
         <meta-alarm-rule-form
           v-model="form"
           :rule-id="ruleId"
-          :disabled-id-field="config.submittingIdField"
+          :disabled-id-field="!isNew"
         />
         <ai-chat-sidebar
           v-if="chatShown"
@@ -96,7 +96,7 @@ export default {
 
     const title = computed(() => config.value.title ?? t('modals.metaAlarmRule.create.title'));
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
+    const { submit, submitting, submitLabel, isNew } = useSubmittableForm({
       form,
       item: config.value.rule,
       method: async () => {
@@ -127,6 +127,7 @@ export default {
       alarmInfos,
       entityInfos,
 
+      isNew,
       submitting,
       submitLabel,
       submit,

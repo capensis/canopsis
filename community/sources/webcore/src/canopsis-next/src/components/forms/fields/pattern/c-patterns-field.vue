@@ -14,7 +14,7 @@
     >
       <c-label
         :label="$tc('common.pattern', 2)"
-        :required="isPatternRequired"
+        :required="someRequired || required"
       />
       <c-collapse-panel
         v-if="withAlarm"

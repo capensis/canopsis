@@ -1,6 +1,9 @@
+import { isArray } from 'lodash';
+
 import { DYNAMIC_INFO_INFORMATION_TYPES } from '@/constants';
 
 import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/array';
+import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef {Object} DynamicInfoInformation
@@ -27,7 +30,7 @@ import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/array';
 export const dynamicInfoInformationToForm = (info = {}) => addKeyInEntity({
   name: info.name ?? '',
   type: info.type ?? DYNAMIC_INFO_INFORMATION_TYPES.setToInfo,
-  value: info.value ?? '',
+  value: isArray(info.value) ? primitiveArrayToForm(info.value) : info.value ?? '',
 });
 
 /**
@@ -36,4 +39,7 @@ export const dynamicInfoInformationToForm = (info = {}) => addKeyInEntity({
  * @param {DynamicInfoInformationForm} [form={}] - The dynamic info information form object
  * @returns {DynamicInfoInformation} The dynamic info information object
  */
-export const formToDynamicInfoInformation = (form = {}) => removeKeyFromEntity(form);
+export const formToDynamicInfoInformation = (form = {}) => removeKeyFromEntity({
+  ...form,
+  value: isArray(form.value) ? formToPrimitiveArray(form.value) : form.value ?? '',
+});

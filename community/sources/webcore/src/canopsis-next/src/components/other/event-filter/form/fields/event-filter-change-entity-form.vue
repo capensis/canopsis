@@ -97,11 +97,11 @@ export default {
   },
   setup(props) {
     const someRequired = computed(() => !(
-      props.form.resource
-       || props.form.component
-       || props.form.connector
-       || props.form.connector_name
-       || props.form.upstream
+      props.form.config.resource
+       || props.form.config.component
+       || props.form.config.connector
+       || props.form.config.connector_name
+       || props.form.config.upstream
     ));
 
     return {

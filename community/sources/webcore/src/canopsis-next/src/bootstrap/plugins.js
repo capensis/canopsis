@@ -146,7 +146,11 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.linkToMetaAlarm]: { maxWidth: 920, autoHeight: true },
       [MODALS.managePlaylistTabs]: { autoHeight: true },
       [MODALS.payloadTextareaEditor]: { autoHeight: true },
-      [MODALS.pbehaviorPlanning]: { maxWidth: '95%', persistent: true, autoHeight: true },
+      [MODALS.pbehaviorPlanning]: {
+        maxWidth: '95%',
+        persistent: true,
+        contentClass: 'v-dialog__pbehavior-planning',
+      },
       [MODALS.pbehaviorRecurrenceRule]: { maxWidth: '95%', persistent: true, autoHeight: true },
       [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true, autoHeight: true },
       [MODALS.pbehaviorsCalendar]: { maxWidth: '95%', persistent: true, autoHeight: true },
