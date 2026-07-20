@@ -1101,7 +1101,7 @@ export const patternRuleToForm = (rule = {}) => {
     (form.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(form.operator))
     && isArray(form.value)
     && (!form.value.length || !form.value[0]?.key)
-    && !isArrayPatternRuleFieldWithoutPrimitive(form.field)
+    && (!isArrayPatternRuleFieldWithoutPrimitive(form.field) || isInfos)
   ) {
     form.value = primitiveArrayToForm(form.value);
   }
