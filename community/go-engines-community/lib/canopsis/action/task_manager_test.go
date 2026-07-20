@@ -2,6 +2,7 @@ package action_test
 
 import (
 	"context"
+	"sync"
 	"testing"
 	"time"
 
@@ -237,8 +238,16 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 	mockExecutionStorage.EXPECT().Get(gomock.Any(), firstExecution.GetCacheKey()).Return(&firstExecution, nil)
 	mockExecutionStorage.EXPECT().Get(gomock.Any(), secondExecution.GetCacheKey()).Return(&secondExecution, nil)
 	mockExecutionStorage.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil).Times(2)
-	mockExecutionStorage.EXPECT().Del(gomock.Any(), firstExecution.GetCacheKey()).Return(nil)
-	mockExecutionStorage.EXPECT().Del(gomock.Any(), secondExecution.GetCacheKey()).Return(nil)
+	var delWg sync.WaitGroup
+	delWg.Add(2)
+	mockExecutionStorage.EXPECT().Del(gomock.Any(), firstExecution.GetCacheKey()).DoAndReturn(func(context.Context, string) error {
+		delWg.Done()
+		return nil
+	})
+	mockExecutionStorage.EXPECT().Del(gomock.Any(), secondExecution.GetCacheKey()).DoAndReturn(func(context.Context, string) error {
+		delWg.Done()
+		return nil
+	})
 	mockScenarioStorage := mock_action.NewMockScenarioStorage(ctrl)
 	mockScenarioStorage.EXPECT().
 		GetTriggeredScenarios(gomock.Eq(task.Triggers), gomock.Eq(task.Alarm)).
@@ -272,6 +281,18 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 		}
 	case <-time.After(100 * time.Millisecond):
 		t.Errorf("expected result but got nothing")
+	}
+
+	delDone := make(chan struct{})
+	go func() {
+		delWg.Wait()
+		close(delDone)
+	}()
+
+	select {
+	case <-delDone:
+	case <-time.After(100 * time.Millisecond):
+		t.Errorf("expected both executions to be deleted")
 	}
 }
 
