@@ -45,11 +45,27 @@ Status legend:
 - `[~]` `c-advanced-data-table` migration plan:
   - `[x]` Inventory old dependencies and current target gaps.
   - `[x]` Leaf table placeholder: `c-empty-data-table-columns`.
+  - `[~]` Table-focused completion plan, excluding CRUD page migration:
+    - `[~]` Freeze supported Vue 3 API/compat surface: props, events and slots for `headers.text/value`, `headers.title/key`, `options`, `sortBy/sortDesc`, `item.<field>`, `header.*`, `toolbar`, `expand` and `mass-actions`.
+    - `[~]` Verify and harden core `v-data-table-server` behavior: server-side pagination, sorting, loading/no-data/footer states and whether local item slicing is still needed. Local item slicing is removed; Vuetify 4 sort updates are converted back to canonical `sortBy/sortDesc` before emitting `update:options`.
+    - `[ ]` Verify and harden selection behavior: disabled rows, select all, selected objects/keys, clear on options/data changes and mass-actions slot contract.
+    - `[ ]` Verify and harden expand rows: expandable predicate, transition cleanup, colspan with select/expand columns and expanded state reset.
+    - `[~]` Verify slot compatibility: `item`, `item.<field>`, `header`, `header.<field>`, `body.prepend`, `progress`, `toolbar`, `expand`, `mass-actions`. `item.<field>` now accepts both legacy `header.value` and Vuetify 4 `header.key`.
+    - `[ ]` Verify table-owned search integration: simple search and advanced-search submit/reset/loading event flow. Deep advanced-search editors remain tracked under the search stack.
+    - `[ ]` Verify pagination components: empty totals, last page after deletions, page reset when `itemsPerPage` grows and no-options mode.
+    - `[ ]` Keep `c-table-mass-actions-panel` outside the core table scope. It is a consumer of the `mass-actions` slot with domain actions, not an internal dependency of `c-advanced-data-table`.
+    - `[ ]` Runtime checklist against existing table consumers: users, roles, broadcast messages, template-testing, dynamic-info, event-filter, idle-rules, scenarios.
+  - `[~]` Direct helper components used by `c-advanced-data-table`:
+    - `[x]` Foundation helpers: `c-layout` and `c-icon` are migrated enough for table usage.
+    - `[~]` Simple search: `c-search` and `c-search-field` are migrated; table now passes `options.search` into `c-search`, local search value syncs with external reset, submit/clear emit `update:modelValue`, and combobox history remove/pin controls are restored. Remaining table-specific pass is runtime focus/keyboard verification inside the toolbar.
+    - `[~]` Advanced search shell: `c-advanced-search` and `c-advanced-search-field` are migrated; remaining table-specific pass is submit/reset/loading event flow.
+    - `[~]` Advanced search internals: `advanced-search-rules`, `advanced-search-rule`, chips, duration/range chips and history button are migrated but need parity checks for keyboard flow, lazy values, date/duration editors and disabled/pending states.
+    - `[~]` Pagination helpers: `c-table-pagination` and `c-pagination` are migrated; remaining table-specific pass is edge cases for zero totals, page recalculation after `itemsPerPage` changes and out-of-range pages after deletion.
+    - `[x]` `c-empty-data-table-columns` exists as a leaf placeholder; it is not part of the runtime path for ordinary `c-advanced-data-table` lists.
   - `[~]` Pagination base: `c-pagination`, `c-table-pagination`, `c-items-per-page-field`, `helpers/pagination`.
   - `[~]` Search base: `c-search`, `c-search-field`, advanced-search public wrappers, rule/chip/history components and query helpers are migrated; remaining work is deep old parity for date/duration-specific editors and store-backed attribute value fetching.
   - `[~]` Vuetify table compatibility: initial mapping for old Vuetify 2 `headers.text/value`, `server-items-length`, `options`, `sortDesc`, `show-select`, `show-expand`, expanded slot and selectable API onto Vuetify 4 `v-data-table-server` is in place; verify against first real consumer.
   - `[~]` Main component: `components/common/table/c-advanced-data-table.vue` is ported without changing Options API; remaining work is runtime verification and consumer-specific slot fixes.
-  - `[ ]` Large nested table component: port `c-treeview-data-table` after confirming Vuetify 4 treeview availability/API or adding a small compatibility wrapper.
   - `[~]` First real consumer: `users-list` is switched to `c-advanced-data-table`; remaining users-table work is `c-table-mass-actions-panel` and bulk user actions UI.
 - `[~]` `c-patterns-field` migration strategy:
   - `[x]` Scope rule: old component tree is ported without rewriting the main logic; Options API components stay Options API and Composition API hooks stay hooks.
