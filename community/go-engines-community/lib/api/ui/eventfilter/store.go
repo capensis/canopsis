@@ -56,29 +56,28 @@ type Store interface {
 }
 
 type store struct {
-	dbClient                mongo.DbClient
-	dbCollection            mongo.DbCollection
-	dbFailureCollection     mongo.DbCollection
-	dbExdataTableCollection mongo.DbCollection
-	dbEntityCollection      mongo.DbCollection
-	dbTplDataCollection     mongo.DbCollection
-	dbTplTestCollection     mongo.DbCollection
-	dbExceptionCollection   mongo.DbCollection
-	transformer             patternfields.Transformer
-	authorProvider          author.Provider
-	notificationStore       usernotification.Store
-	tplValidator            tplvalidator.Validator
-	tplExecutor             libtemplate.Executor
-	tplConfigProvider       config.TemplateConfigProvider
-	externalDataGetter      externaldata.Getter
-	encoder                 encoding.Encoder
-	decoder                 encoding.Decoder
-	defaultSearchByFields   []string
-	defaultSortBy           string
-	exdataTplVars           []template.VarResponse
-	configTplVars           []template.VarResponse
-	configCopyVars          []template.VarResponse
-	dupErrorParser          validation.DuplicateErrorParser
+	dbClient              mongo.DbClient
+	dbCollection          mongo.DbCollection
+	dbFailureCollection   mongo.DbCollection
+	dbEntityCollection    mongo.DbCollection
+	dbTplDataCollection   mongo.DbCollection
+	dbTplTestCollection   mongo.DbCollection
+	dbExceptionCollection mongo.DbCollection
+	transformer           patternfields.Transformer
+	authorProvider        author.Provider
+	notificationStore     usernotification.Store
+	tplValidator          tplvalidator.Validator
+	tplExecutor           libtemplate.Executor
+	tplConfigProvider     config.TemplateConfigProvider
+	externalDataGetter    externaldata.Getter
+	encoder               encoding.Encoder
+	decoder               encoding.Decoder
+	defaultSearchByFields []string
+	defaultSortBy         string
+	exdataTplVars         []template.VarResponse
+	configTplVars         []template.VarResponse
+	configCopyVars        []template.VarResponse
+	dupErrorParser        validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -107,29 +106,28 @@ func NewStore(
 	)
 
 	return &store{
-		dbClient:                dbClient,
-		dbCollection:            dbClient.Collection(mongo.EventFilterRuleCollection),
-		dbFailureCollection:     dbClient.Collection(mongo.EventFilterFailureCollection),
-		dbExdataTableCollection: dbClient.Collection(mongo.ExternalDataTableCollection),
-		dbEntityCollection:      dbClient.Collection(mongo.EntityMongoCollection),
-		dbTplDataCollection:     dbClient.Collection(mongo.TemplateTestDataCollection),
-		dbTplTestCollection:     dbClient.Collection(mongo.TemplateTestCollection),
-		dbExceptionCollection:   dbClient.Collection(mongo.PbehaviorExceptionMongoCollection),
-		transformer:             transformer,
-		authorProvider:          authorProvider,
-		notificationStore:       notificationStore,
-		tplValidator:            tplValidator,
-		tplConfigProvider:       tplConfigProvider,
-		tplExecutor:             tplExecutor,
-		externalDataGetter:      externalDataGetter,
-		encoder:                 encoder,
-		decoder:                 decoder,
-		defaultSearchByFields:   []string{"_id", "name", "author.name", "description", "type"},
-		defaultSortBy:           "created",
-		exdataTplVars:           exdataTplVars,
-		configTplVars:           configTplVars,
-		configCopyVars:          configCopyVars,
-		dupErrorParser:          validation.NewDuplicateErrorParser(),
+		dbClient:              dbClient,
+		dbCollection:          dbClient.Collection(mongo.EventFilterRuleCollection),
+		dbFailureCollection:   dbClient.Collection(mongo.EventFilterFailureCollection),
+		dbEntityCollection:    dbClient.Collection(mongo.EntityMongoCollection),
+		dbTplDataCollection:   dbClient.Collection(mongo.TemplateTestDataCollection),
+		dbTplTestCollection:   dbClient.Collection(mongo.TemplateTestCollection),
+		dbExceptionCollection: dbClient.Collection(mongo.PbehaviorExceptionMongoCollection),
+		transformer:           transformer,
+		authorProvider:        authorProvider,
+		notificationStore:     notificationStore,
+		tplValidator:          tplValidator,
+		tplConfigProvider:     tplConfigProvider,
+		tplExecutor:           tplExecutor,
+		externalDataGetter:    externalDataGetter,
+		encoder:               encoder,
+		decoder:               decoder,
+		defaultSearchByFields: []string{"_id", "name", "author.name", "description", "type"},
+		defaultSortBy:         "created",
+		exdataTplVars:         exdataTplVars,
+		configTplVars:         configTplVars,
+		configCopyVars:        configCopyVars,
+		dupErrorParser:        validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -540,7 +538,7 @@ func (s *store) transformRequestToDocument(ctx context.Context, r EditRequest) (
 		exdates[i].End = r.Exdates[i].End
 	}
 
-	transformedRefParameters, err := apiexternaldata.TransformRefParameters(ctx, toRefParameters(r.ExternalData), s.dbExdataTableCollection)
+	transformedRefParameters, err := apiexternaldata.TransformRefParameters(ctx, toRefParameters(r.ExternalData), s.dbClient)
 	if err != nil {
 		return eventfilter.Rule{}, err
 	}
@@ -918,7 +916,7 @@ func (s *store) processTableExdata(
 		}
 	}
 
-	params, err := apiexternaldata.TransformRefParameters(ctx, []externaldata.RefParameters{refParam}, s.dbExdataTableCollection)
+	params, err := apiexternaldata.TransformRefParameters(ctx, []externaldata.RefParameters{refParam}, s.dbClient)
 	if err != nil {
 		return nil, err
 	}

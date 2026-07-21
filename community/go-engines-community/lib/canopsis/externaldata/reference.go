@@ -34,7 +34,8 @@ type RefParameters struct {
 	Optional bool `bson:"optional,omitempty" json:"optional,omitempty"`
 
 	// are used in api external data
-	Request *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
+	Request   *request.Parameters       `bson:"request,omitempty" json:"request,omitempty"`
+	AuthToken *request.WebhookAuthToken `bson:"auth_token,omitempty" json:"auth_token,omitempty"`
 }
 
 type ParsedRefParameters struct {
@@ -50,7 +51,8 @@ type ParsedRefParameters struct {
 	Sort         string
 	Optional     bool
 
-	Request *request.ParsedParameters
+	Request   *request.ParsedParameters
+	AuthToken *request.WebhookAuthToken
 }
 
 func ParseRefParameters(data []RefParameters, tplExecutor libtemplate.Executor) []ParsedRefParameters {
@@ -93,6 +95,7 @@ func ParseRefParameters(data []RefParameters, tplExecutor libtemplate.Executor) 
 			Sort:         params.Sort,
 			Optional:     params.Optional,
 			Request:      parsedRequestParameters,
+			AuthToken:    params.AuthToken,
 		}
 	}
 

@@ -1362,39 +1362,39 @@ func (s *store) updateLinkedModels(ctx context.Context, tableID, tableName strin
 	return nil
 }
 
-func TransformRefParameters(ctx context.Context, r []externaldata.RefParameters, dbCollection mongo.DbCollection) ([]externaldata.RefParameters, error) {
-	ids := make([]string, 0, len(r))
+func TransformRefParameters(ctx context.Context, r []externaldata.RefParameters, dbClient mongo.DbClient) ([]externaldata.RefParameters, error) {
+	tableIDs := make([]string, 0, len(r))
+	tokenRuleIDs := make([]string, 0)
 	for _, params := range r {
-		if params.Type == externaldata.RefTypeTable {
-			ids = append(ids, params.Table)
+		switch params.Type {
+		case externaldata.RefTypeTable:
+			tableIDs = append(tableIDs, params.Table)
+		case externaldata.RefTypeAPI:
+			if params.AuthToken != nil {
+				tokenRuleIDs = append(tokenRuleIDs, params.AuthToken.Rule)
+			}
 		}
 	}
 
-	cursor, err := dbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
+	tables, err := fetchTables(ctx, dbClient.Collection(mongo.ExternalDataTableCollection), tableIDs)
 	if err != nil {
 		return nil, err
 	}
 
-	defer cursor.Close(ctx)
-	tables := make(map[string]externaldata.Table, len(ids))
-	for cursor.Next(ctx) {
-		t := externaldata.Table{}
-		err = cursor.Decode(&t)
-		if err != nil {
-			return nil, err
-		}
-
-		tables[t.ID] = t
-	}
-
-	if err = cursor.Err(); err != nil {
+	foundTokens, err := fetchIDs(ctx, dbClient.Collection(mongo.WebhookTokenRuleCollection), tokenRuleIDs)
+	if err != nil {
 		return nil, err
 	}
 
 	res := make([]externaldata.RefParameters, len(r))
 	valErrs := make(validator.ValidationErrors, 0)
 	for i, params := range r {
-		if params.Type != externaldata.RefTypeTable {
+		if params.Type == externaldata.RefTypeAPI {
+			if params.AuthToken != nil && !foundTokens[params.AuthToken.Rule] {
+				valErrs = append(valErrs, validation.NewFieldError("not_exist", "rule", "external_data."+strconv.Itoa(i)+".auth_token.rule"))
+				continue
+			}
+
 			res[i] = params
 			continue
 		}
@@ -1635,4 +1635,56 @@ func getIntValue(v any) (int64, bool) {
 	}
 
 	return 0, false
+}
+
+func fetchTables(ctx context.Context, dbCollection mongo.DbCollection, tableIDs []string) (map[string]externaldata.Table, error) {
+	cursor, err := dbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": tableIDs}})
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+	tables := make(map[string]externaldata.Table, len(tableIDs))
+	for cursor.Next(ctx) {
+		t := externaldata.Table{}
+		err = cursor.Decode(&t)
+		if err != nil {
+			return nil, err
+		}
+
+		tables[t.ID] = t
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return tables, nil
+}
+
+func fetchIDs(ctx context.Context, dbCollection mongo.DbCollection, ids []string) (map[string]bool, error) {
+	cursor, err := dbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}}, options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		return nil, err
+	}
+
+	found := make(map[string]bool)
+	defer cursor.Close(ctx)
+	for cursor.Next(ctx) {
+		v := struct {
+			ID string `bson:"_id"`
+		}{}
+		err := cursor.Decode(&v)
+		if err != nil {
+			return nil, err
+		}
+
+		found[v.ID] = true
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return found, nil
 }

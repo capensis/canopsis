@@ -242,7 +242,8 @@ type RefResponse struct {
 	Optional bool              `json:"optional,omitempty" bson:"optional,omitempty"`
 
 	// are used in api external data
-	Request *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
+	Request   *request.Parameters       `bson:"request,omitempty" json:"request,omitempty"`
+	AuthToken *request.WebhookAuthToken `bson:"auth_token,omitempty" json:"auth_token,omitempty"`
 }
 
 type PreviewRequest struct {
