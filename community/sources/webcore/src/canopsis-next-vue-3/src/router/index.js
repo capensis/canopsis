@@ -13,16 +13,15 @@ import { ROUTER_ACCESS_TOKEN_KEY } from '@/config'
 import { usePopupsStore } from '@/plugins/popups/stores'
 import { useAuthStore } from '@/stores/modules/auth'
 
-import {
-  checkAppInfoAccessForRoute,
-  checkUserAccessForRoute,
-} from '@/helpers/router'
+import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router'
 
 const PlaceholderPage = () => import('@/views/placeholder-page.vue')
 const AdminRights = () => import('@/views/admin/rights-page.vue')
 const AdminUsers = () => import('@/views/admin/users-page.vue')
 const AdminRoles = () => import('@/views/admin/roles-page.vue')
 const AdminBroadcastMessages = () => import('@/views/admin/broadcast-messages-page.vue')
+const AdminPlaylists = () => import('@/views/admin/playlists-page.vue')
+const AdminPlanning = () => import('@/views/admin/planning-page.vue')
 const DynamicInfosPage = () => import('@/views/exploitation/dynamic-infos-page.vue')
 const EventFiltersPage = () => import('@/views/exploitation/event-filters-page.vue')
 const FlappingRulesPage = () => import('@/views/exploitation/flapping-rules-page.vue')
@@ -30,7 +29,7 @@ const IdleRulesPage = () => import('@/views/exploitation/idle-rules-page.vue')
 const ResolveRulesPage = () => import('@/views/exploitation/resolve-rules-page.vue')
 const ScenariosPage = () => import('@/views/exploitation/scenarios-page.vue')
 
-const  protectedRoute = (meta = {}) => ({
+const protectedRoute = (meta = {}) => ({
   requiresLogin: true,
   ...meta,
 })
@@ -56,7 +55,7 @@ const routes = [
     name: ROUTES_NAMES.view,
     meta: protectedRoute(),
     component: PlaceholderPage,
-    props: route => ({ id: route.params.id }),
+    props: (route) => ({ id: route.params.id }),
   },
   {
     path: ROUTES.viewKiosk,
@@ -64,11 +63,11 @@ const routes = [
     meta: protectedRoute({
       simpleNavigation: true,
       requiresPermission: {
-        id: route => route.params.id,
+        id: (route) => route.params.id,
       },
     }),
     component: PlaceholderPage,
-    props: route => ({ id: route.params.id, tabId: route.params.tabId }),
+    props: (route) => ({ id: route.params.id, tabId: route.params.tabId }),
   },
   {
     path: ROUTES.alarms,
@@ -79,7 +78,7 @@ const routes = [
       },
     }),
     component: PlaceholderPage,
-    props: route => ({ id: route.params.id }),
+    props: (route) => ({ id: route.params.id }),
   },
   {
     path: ROUTES.adminRights,
@@ -129,7 +128,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.playlist,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminPlaylists,
   },
   {
     path: ROUTES.adminPlanning,
@@ -139,7 +138,7 @@ const routes = [
         id: GROUPED_USER_PERMISSIONS.planning,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminPlanning,
   },
   {
     path: ROUTES.adminHealthcheck,
@@ -464,11 +463,11 @@ const routes = [
     meta: protectedRoute({
       requiresPermission: {
         action: CRUD_ACTIONS.read,
-        id: route => route.params.id,
+        id: (route) => route.params.id,
       },
     }),
     component: PlaceholderPage,
-    props: route => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
+    props: (route) => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
   },
   {
     path: ROUTES.profilePatterns,
@@ -491,7 +490,7 @@ const routes = [
     name: ROUTES_NAMES.notifications,
     meta: protectedRoute(),
     component: PlaceholderPage,
-    props: route => ({ tabId: route.params.tabId, activeId: route.query.id }),
+    props: (route) => ({ tabId: route.params.tabId, activeId: route.query.id }),
   },
   {
     path: ROUTES.error,
@@ -500,7 +499,7 @@ const routes = [
       hideHeader: true,
     },
     component: () => import('@/views/error-page.vue'),
-    props: route => ({
+    props: (route) => ({
       message: route.query.message,
       redirect: route.query.redirect,
     }),
@@ -530,12 +529,9 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const authStore = useAuthStore()
-  const isRequiresAuth = to.matched.some(route => route.meta.requiresLogin)
-  const isDontRequiresAuth = to.matched.some(route => route.meta.requiresLogin === false)
-  const {
-    [ROUTER_ACCESS_TOKEN_KEY]: accessToken,
-    ...restQuery
-  } = to.query
+  const isRequiresAuth = to.matched.some((route) => route.meta.requiresLogin)
+  const isDontRequiresAuth = to.matched.some((route) => route.meta.requiresLogin === false)
+  const { [ROUTER_ACCESS_TOKEN_KEY]: accessToken, ...restQuery } = to.query
 
   if (accessToken) {
     await authStore.applyAccessToken(accessToken)
@@ -593,6 +589,6 @@ router.isReady().then(() => {
   }
 })
 
-router.replaceAsync = route => router.replace(route)
+router.replaceAsync = (route) => router.replace(route)
 
 export default router
