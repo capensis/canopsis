@@ -417,13 +417,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with valida
           class="v-messages__wrapper"
           name="message-transition"
           tag="div"
-        >
-          <div
-            class="v-messages__message"
-          >
-            The field is required
-          </div>
-        </transition-group-stub>
+        />
       </div>
     </div>
   </div>

@@ -49,7 +49,7 @@ exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-fo
       value="[object Object]"
     />
     <meta-alarm-rule-time-based-field-stub />
-    <!---->
+    <meta-alarm-rule-child-inactive-delay-field-stub />
     <!---->
     <!---->
   </c-form-block-stub>
@@ -214,7 +214,7 @@ exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-fo
       value="[object Object]"
     />
     <meta-alarm-rule-time-based-field-stub />
-    <!---->
+    <meta-alarm-rule-child-inactive-delay-field-stub />
     <!---->
     <!---->
   </c-form-block-stub>
@@ -248,7 +248,7 @@ exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-fo
       value="[object Object]"
     />
     <meta-alarm-rule-time-based-field-stub />
-    <!---->
+    <meta-alarm-rule-child-inactive-delay-field-stub />
     <!---->
     <!---->
   </c-form-block-stub>

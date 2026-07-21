@@ -106,6 +106,10 @@ export default {
 .v-dialog {
   height: 70vh;
 
+  &.v-dialog__pbehavior-planning {
+    height: 90vh;
+  }
+
   &:not(.v-dialog--auto-height) > {
     .v-form, .v-card {
       min-height: 100%;

@@ -9,25 +9,6 @@
     clearable
     ellipsis
   >
-    <template #item="{ item, attrs, on }">
-      <v-subheader
-        v-if="item.header"
-        :key="item.header"
-        class="view-selector__header"
-      >
-        {{ item.header }}
-      </v-subheader>
-      <v-list-item
-        v-else
-        v-bind="attrs"
-        class="view-selector__item"
-        v-on="on"
-      >
-        <v-list-item-content>
-          <v-list-item-title>{{ item.text }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-    </template>
     <template #selection="">
       <span class="text-truncate">
         {{ selectedViewLabel }}
@@ -69,9 +50,7 @@ export default {
       fetchAllGroupsListWithWidgets,
     } = useViewGroup();
 
-    const menuProps = {
-      contentClass: 'view-selector-menu',
-    };
+    const menuProps = { offsetY: true };
 
     const viewItems = computed(() => (
       (groups.value ?? []).reduce((acc, group) => {
@@ -128,17 +107,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.view-selector-menu {
-  .view-selector__header {
-    font-weight: 700;
-    height: auto;
-    min-height: 32px;
-  }
-
-  .view-selector__item {
-    padding-left: 32px !important;
-  }
-}
-</style>

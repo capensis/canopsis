@@ -5,5 +5,5 @@ export default {
   inactivityIntervalHelpText: 'Définit quand l\'utilisateur est compté comme inactif',
   expirationIntervalHelpText: 'Définit la période d\'inactivité après laquelle le jeton d\'authentification expire',
   defaultView: 'Vue par défaut',
-  selectTemplate: 'Sélectionnez le modèle',
+  selectTemplate: 'Modèle',
 };

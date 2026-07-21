@@ -1,36 +1,40 @@
 <template>
   <v-layout class="gap-3" align-center>
-    <v-text-field
-      v-field="item[itemText]"
-      v-validate="textValidationRules"
-      :label="textLabel"
-      :disabled="disabled"
-      :name="textFieldName"
-      :error-messages="errors.collect(textFieldName)"
-    />
+    <v-flex xs6>
+      <v-text-field
+        v-field="item[itemText]"
+        v-validate="textValidationRules"
+        :label="textLabel"
+        :disabled="disabled"
+        :name="textFieldName"
+        :error-messages="errors.collect(textFieldName)"
+      />
+    </v-flex>
 
-    <c-select-field
-      v-if="items.length"
-      v-field="item[itemValue]"
-      :label="valueLabel"
-      :disabled="disabled"
-      :items="items"
-      :name="valueFieldName"
-      :required="valueRequired"
-    />
-    <c-payload-text-field
-      v-else
-      v-field="item[itemValue]"
-      :label="valueLabel"
-      :disabled="disabled"
-      :name="valueFieldName"
-      :variables="variables"
-      :required="valueRequired"
-    >
-      <template #append="">
-        <slot name="append-value" />
-      </template>
-    </c-payload-text-field>
+    <v-flex xs6>
+      <c-select-field
+        v-if="items.length"
+        v-field="item[itemValue]"
+        :label="valueLabel"
+        :disabled="disabled"
+        :items="items"
+        :name="valueFieldName"
+        :required="valueRequired"
+      />
+      <c-payload-text-field
+        v-else
+        v-field="item[itemValue]"
+        :label="valueLabel"
+        :disabled="disabled"
+        :name="valueFieldName"
+        :variables="variables"
+        :required="valueRequired"
+      >
+        <template #append="">
+          <slot name="append-value" />
+        </template>
+      </c-payload-text-field>
+    </v-flex>
 
     <c-action-btn
       v-if="!disabled"

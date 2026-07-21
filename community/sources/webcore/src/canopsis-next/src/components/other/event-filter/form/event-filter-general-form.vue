@@ -1,5 +1,7 @@
 <template>
   <v-layout class="gap-3" column>
+    <c-name-field v-field="form.name" />
+
     <c-form-block>
       <c-form-block-row :label="$t('common.type')">
         <c-event-filter-type-field v-field="form.type" />

@@ -3,11 +3,12 @@
     v-model="localExpanded"
     :style="panelStyle"
     :disabled="disabled"
+    :class="panelClass"
     class="c-collapse-panel elevation-2"
     accordion
   >
     <v-expansion-panel class="c-collapse-panel__panel">
-      <v-expansion-panel-header :color="headerColor">
+      <v-expansion-panel-header :color="color">
         <slot name="header">
           <span class="white--text">
             {{ title }}
@@ -88,16 +89,19 @@ export default {
     const panelStyle = computed(() => ({ outlineColor: props.outlineColor }));
     const panelContentStyle = computed(() => ({ backgroundColor: props.color }));
     const hasError = computed(() => props.error || hasChildrenError.value);
-    const headerColor = computed(() => (hasError.value ? 'error' : props.color));
+
+    const panelClass = computed(() => ({
+      'c-collapse-panel--error': hasError.value,
+    }));
 
     watch(() => props.expanded, expanded => localExpanded.value = expanded ? 0 : null);
 
     return {
       localExpanded,
       panelStyle,
-      headerColor,
       panelContentStyle,
       hasError,
+      panelClass,
     };
   },
 };
@@ -107,8 +111,12 @@ export default {
 .c-collapse-panel {
   --c-collapse-panel-border-radius: 5px;
 
-  outline: 3px solid transparent;
+  outline: 2px solid transparent;
   border-radius: var(--c-collapse-panel-border-radius) !important;
+
+  &--error {
+    outline-color: var(--v-error-base);
+  }
 
   &__panel {
     overflow: hidden;

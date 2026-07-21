@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <c-form-block v-if="isThresholdFormShown || isTimeBasedFormShown || isValuePathsFormShown || isCorelFormShown">
+    <c-form-block v-if="isFormBlockShown">
       <meta-alarm-rule-threshold-field
         v-if="isThresholdFormShown"
         v-field="form.config"
@@ -106,8 +106,13 @@ export default {
     const isTimeBasedFormShown = computed(() => isComplexType.value
       || isValueGroupType.value
       || isTimeBasedType.value);
-    const isChildInactiveDelayFormShown = computed(() => isValueGroupType.value);
+    const isChildInactiveDelayFormShown = computed(() => isComplexType.value || isValueGroupType.value);
     const isCorelFormShown = computed(() => isCorelType.value);
+    const isFormBlockShown = computed(() => isThresholdFormShown.value
+      || isTimeBasedFormShown.value
+      || isChildInactiveDelayFormShown.value
+      || isValuePathsFormShown.value
+      || isCorelFormShown.value);
     const withTotalEntityPattern = computed(() => isMetaAlarmRuleTypeHasTotalEntityPatterns(props.form.type));
 
     return {
@@ -118,6 +123,7 @@ export default {
       isTimeBasedFormShown,
       isChildInactiveDelayFormShown,
       isCorelFormShown,
+      isFormBlockShown,
       withTotalEntityPattern,
     };
   },
