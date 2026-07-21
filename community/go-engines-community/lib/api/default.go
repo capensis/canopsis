@@ -578,10 +578,12 @@ func Default(
 		services.ErrorResponder.Respond(c, httperror.ErrMethodNotAllowed)
 	})
 
-	actionLogger := apilogger.NewActionLogger(noTimeoutClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-	api.AddWorker("action_log", func(ctx context.Context) error {
-		return actionLogger.Watch(ctx)
-	})
+	if services.ApiConfigProvider.Get().ActionLogger.Enabled {
+		actionLogger := apilogger.NewActionLogger(noTimeoutClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+		api.AddWorker("action_log", func(ctx context.Context) error {
+			return actionLogger.Watch(ctx)
+		})
+	}
 
 	api.AddWorker("amqp_workers", func(ctx context.Context) error {
 		err = workersRunner.Run(ctx)
