@@ -23,6 +23,7 @@ Status legend:
 
 ## Cross-Cutting Migration Rules
 
+- `[x]` Target dependency baseline for UI migration is Vuetify `^4.1.2` from `package.json`. Do not describe the target as Vuetify 3; adapt old Vuetify 2 markup against the actual Vuetify 4 API and the compatibility wrappers already present in this project.
 - `[x]` Replace `v-field` and `@input` on Vue components with explicit Vue 3 bindings:
   - remove `v-field="..."`;
   - use `:prop` + `@update:prop`, or `v-model:prop` when a form model field already exists;
@@ -101,11 +102,11 @@ Pages are taken from `src/router.js` in the source project.
 | `[ ]`  | `view-kiosk`                                   | `/kiosk-views/:id/:tabId`             | `src/views/view-kiosk.vue`                                   | -                                                |                                                                                                                                                                                                 |
 | `[ ]`  | `alarms`                                       | `/alarms/:id`                         | `src/views/alarm.vue`                                        | -                                                |                                                                                                                                                                                                 |
 | `[~]`  | `admin-rights`                                 | `/admin/rights`                       | `src/views/admin/permissions.vue`                            | `src/views/admin/rights-page.vue`                | Main rights table migrated with lightweight checkbox; final visual parity pass pending.                                                                                                         |
-| `[~]`  | `admin-users`                                  | `/admin/users`                        | `src/views/admin/users.vue`                                  | `src/views/admin/users.vue`                      | Main users tab/table and create/edit user form modal are migrated; shared tokens pending.                                                                                                       |
+| `[~]`  | `admin-users`                                  | `/admin/users`                        | `src/views/admin/users.vue`                                  | `src/views/admin/users-page.vue`                 | Main users tab/table and create/edit user form modal are migrated; shared tokens pending.                                                                                                       |
 | `[~]`  | `admin-roles`                                  | `/admin/roles`                        | `src/views/admin/roles.vue`                                  | `src/views/admin/roles-page.vue`                 | Main list and create/edit/duplicate form are migrated. Remaining: role mass actions and deeper permissions editor parity.                                                                       |
 | `[~]`  | `admin-broadcast-messages`                     | `/admin/broadcast-messages`           | `src/views/admin/broadcast-messages.vue`                     | `src/views/admin/broadcast-messages-page.vue`    | Main list, active messages and create/edit form are migrated; runtime parity pass pending.                                                                                                      |
-| `[ ]`  | `admin-playlists`                              | `/admin/playlists`                    | `src/views/admin/playlists.vue`                              | -                                                |                                                                                                                                                                                                 |
-| `[ ]`  | `admin-planning-administration`                | `/admin/planning`                     | `src/views/admin/planning.vue`                               | -                                                |                                                                                                                                                                                                 |
+| `[~]`  | `admin-playlists`                              | `/admin/playlists`                    | `src/views/admin/playlists.vue`                              | `src/views/admin/playlists-page.vue`             | Main list, refresh, copy/play actions, delete and bulk playlist actions are migrated. Remaining: create/edit/duplicate playlist modal and full group/view/tab expand labels.                    |
+| `[~]`  | `admin-planning-administration`                | `/admin/planning`                     | `src/views/admin/planning.vue`                               | `src/views/admin/planning-page.vue`              | Tabs, lists, expand panels, create buttons and pbehavior type/reason/exception create/import modal forms are migrated. Remaining: edit/duplicate action wiring and runtime parity pass.         |
 | `[ ]`  | `admin-healthcheck`                            | `/admin/healthcheck`                  | `src/views/admin/healthcheck.vue`                            | -                                                |                                                                                                                                                                                                 |
 | `[ ]`  | `admin-kpi`                                    | `/admin/kpi`                          | `src/views/admin/kpi.vue`                                    | -                                                |                                                                                                                                                                                                 |
 | `[ ]`  | `admin-events-records`                         | `/admin/events-records`               | `src/views/admin/events-records.vue`                         | -                                                |                                                                                                                                                                                                 |
@@ -233,21 +234,21 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `admin-playlists`
 
-- `[ ]` Main content: `src/views/admin/playlists.vue`.
-- `[ ]` Modal windows: not migrated.
+- `[~]` Main content: `src/views/admin/playlists.vue` -> `src/views/admin/playlists-page.vue`; route is wired to a real page and the playlists table is migrated with search, pagination, play link, copy link, delete and bulk actions.
+- `[ ]` Modal windows: `create-playlist` and `manage-playlist-tabs` are not migrated; create/edit/duplicate actions are intentionally disabled/hidden until those forms are ported.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/admin/playlists`, playlist management access.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` State/API/socket: playlist Pinia CRUD store/hook is reused; current user refresh runs after single delete. Remaining: refresh current user after create/update once playlist form is migrated.
+- `[x]` Routing/access: `/admin/playlists`, playlist management access.
+- `[~]` Messages/i18n: existing playlist/common modal messages are wired; final copy parity pending.
 
 ### `admin-planning-administration`
 
-- `[ ]` Main content: `src/views/admin/planning.vue`.
-- `[ ]` Modal windows: not migrated.
+- `[~]` Main content: `src/views/admin/planning.vue` -> `src/views/admin/planning-page.vue`; route is wired to a real page with pbehavior type/reason/exception tabs, migrated list tables, read-only expand panels and create/import FAB actions. Type expand shows description/type tabs with icon/color, reason expand shows description, exception expand shows description/periods tabs with formatted dates and type metadata.
+- `[~]` Modal windows: `create-pbehavior-type`, `create-pbehavior-reason`, `create-pbehavior-exception` and `import-pbehavior-exception` are migrated and registered with `useForm`; remaining: wire table row edit/duplicate actions where needed and do a runtime parity pass for exception date editing.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/admin/planning`, grouped planning permission.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` State/API/socket: pbehavior type/reason/exception Pinia CRUD stores/hooks are reused for list, delete and bulk hide/unhide/remove.
+- `[x]` Routing/access: `/admin/planning`, grouped planning permission and per-tab read permissions.
+- `[~]` Messages/i18n: existing pbehavior/common/modal messages are wired; final copy parity pending.
 
 ### `admin-healthcheck`
 

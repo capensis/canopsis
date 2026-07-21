@@ -107,7 +107,7 @@
               }"
               class="c-advanced-data-table__expand"
             >
-              <div class="secondary lighten-2 pa-4">
+              <div :class="expandContentClass">
                 <slot v-bind="getItemsProps(props)" name="expand" />
               </div>
             </div>
@@ -147,6 +147,7 @@
 
 <script>
 import get from 'lodash/get'
+import isEqual from 'lodash/isEqual'
 import pick from 'lodash/pick'
 
 import { mapIds } from '@/helpers/array'
@@ -263,6 +264,10 @@ export default {
     expandIcon: {
       type: String,
       default: '$expand',
+    },
+    expandContentClass: {
+      type: [String, Array, Object],
+      default: 'secondary lighten-2 pa-4',
     },
     advancedSearchAttributes: {
       type: Array,
@@ -411,21 +416,23 @@ export default {
 
   watch: {
     items(items) {
-      if (this.selectAll) {
-        const itemKeys = items.map((item) => item[this.itemKey])
+      const itemKeys = new Set(items.map((item) => this.getItemKey(item)))
 
-        this.selectedItems = this.selectedItems.filter((selectedItem) =>
-          itemKeys.includes(selectedItem[this.itemKey]),
+      if (this.selectAll) {
+        const selectedKeys = new Set(this.selectedItems.map((item) => this.getItemKey(item)))
+
+        this.selectedItems = items.filter(
+          (item) => selectedKeys.has(this.getItemKey(item)) && !this.isDisabledItem(item),
         )
       }
 
-      const itemKeys = items.map((item) => item[this.itemKey])
+      const expandedKeys = new Set(this.expandedItems.map((item) => this.getItemKey(item)))
 
-      this.expandedItems = this.expandedItems.filter((item) =>
-        itemKeys.includes(this.getItemKey(item)),
+      this.expandedItems = items.filter(
+        (item) => expandedKeys.has(this.getItemKey(item)) && this.checkIsExpandableItem(item),
       )
-      this.openingExpandedKeys = this.openingExpandedKeys.filter((key) => itemKeys.includes(key))
-      this.closingExpandedKeys = this.closingExpandedKeys.filter((key) => itemKeys.includes(key))
+      this.openingExpandedKeys = this.openingExpandedKeys.filter((key) => itemKeys.has(key))
+      this.closingExpandedKeys = this.closingExpandedKeys.filter((key) => itemKeys.has(key))
     },
   },
 
@@ -564,6 +571,10 @@ export default {
     },
 
     updateOptions(options) {
+      if (isEqual(this.options, options)) {
+        return
+      }
+
       this.selected = []
       this.expandedItems = []
       this.openingExpandedKeys = []

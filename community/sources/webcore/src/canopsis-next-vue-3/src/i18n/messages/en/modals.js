@@ -553,6 +553,7 @@ export default {
       title: 'Edit type',
     },
     iconNameHint: 'Enter a name of an icon from material.io',
+    iconNamePlaceholder: 'Icon name in material.io',
     errors: {
       iconName: 'The name is invalid',
     },

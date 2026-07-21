@@ -555,6 +555,7 @@ export default {
       title: 'Modifier un type',
     },
     iconNameHint: "Entrez le nom d'une icône à partir de material.io",
+    iconNamePlaceholder: "Nom de l'icône sur material.io",
     errors: {
       iconName: 'Le nom est invalide',
     },
