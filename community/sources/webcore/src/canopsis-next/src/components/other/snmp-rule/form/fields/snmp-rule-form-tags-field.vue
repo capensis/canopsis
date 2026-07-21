@@ -3,6 +3,7 @@
     v-field="form"
     :item-to-form="snmpRuleTagToForm"
     :label="$tc('common.tag', 2)"
+    :add-button-label="$t('common.addTag')"
   >
     <template #item="{ index, remove }">
       <v-layout align-center>

@@ -24,6 +24,7 @@
 
       <c-form-block-row
         :label="$t('pbehavior.exdates.title')"
+        :align-center="!form.exdates.length"
         indented
       >
         <pbehavior-exceptions-field

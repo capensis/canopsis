@@ -5,5 +5,5 @@ export default {
   inactivityIntervalHelpText: 'Defines when the user is counted as inactive',
   expirationIntervalHelpText: 'Defines the inactivity time period after which the auth token is expired',
   defaultView: 'Default view',
-  selectTemplate: 'Select template',
+  selectTemplate: 'Template',
 };

@@ -8,6 +8,10 @@
         required
       />
 
+      <span class="text-subtitle-2 grey--text">
+        {{ $t('declareTicket.ticketStatusMappingUnmappedToOpen') }}
+      </span>
+
       <c-text-pairs-field
         v-field="value"
         :name="name"

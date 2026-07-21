@@ -65,7 +65,7 @@ export default {
   }
 
   .v-text-field {
-    margin-top: 0;
+    margin-top: 6px;
     padding-top: 0;
   }
 }

@@ -33,12 +33,17 @@
         v-field="form.timeout"
         :disabled="disabled"
         :units-label="$t('common.unit')"
+        same-width
         clearable
       />
     </c-form-block-row>
 
-    <c-form-block-row :label="$t('common.request.repeatRequest')" :depth="depth">
-      <span v-if="hideRepeat" class="font-italic mt-4">
+    <c-form-block-row
+      :label="$t('common.request.repeatRequest')"
+      :depth="depth"
+      :align-center="hideRepeat"
+    >
+      <span v-if="hideRepeat" class="font-italic">
         {{ $t('common.request.repeatRequestInTomlFile') }}
       </span>
       <c-retry-field

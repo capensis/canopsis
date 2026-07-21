@@ -31,7 +31,7 @@
           class="primary white--text"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ $t('common.save') }}
         </v-btn>
       </template>
     </modal-wrapper>

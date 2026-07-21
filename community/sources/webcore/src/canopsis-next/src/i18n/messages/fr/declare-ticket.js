@@ -43,7 +43,7 @@ export default {
   ticketStatusEndpoint: 'Point de terminaison du statut du ticket',
   ticketStatusMapping: 'Correspondance des statuts de ticket',
   ticketStatusMappingHelpText: 'Au moins une valeur source doit être mappée vers la valeur Canopsis « Fermé ».',
-  ticketStatusMappingUnmappedToOpen: 'Toutes les valeurs sources non mappées seront mappées au statut Canopsis « Inconnu ».',
+  ticketStatusMappingUnmappedToOpen: 'Toutes les valeurs sources non mappées seront mappées au statut Canopsis « Ouvert ».',
   sourceValue: 'Valeur source',
   canopsisValue: 'Valeur Canopsis',
   addMappingPair: 'Ajouter une paire de correspondance',

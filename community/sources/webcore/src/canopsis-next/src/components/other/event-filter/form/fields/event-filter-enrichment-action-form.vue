@@ -7,7 +7,7 @@
         </v-icon>
         <v-layout column>
           <v-layout>
-            <v-select
+            <c-select-field
               :value="form.type"
               :items="eventFilterActionTypes"
               :label="$t('common.type')"
@@ -16,7 +16,7 @@
               <template #selection="{ item }">
                 {{ item.groupTitle }} {{ item.text }}
               </template>
-            </v-select>
+            </c-select-field>
             <v-btn
               class="mr-0"
               icon

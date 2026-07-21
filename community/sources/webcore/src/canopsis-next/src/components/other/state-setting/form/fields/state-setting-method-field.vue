@@ -19,6 +19,7 @@
           </span>
           <c-help-icon
             :text="$t(`stateSetting.methods.${method}.tooltip`)"
+            icon="help"
             top
           />
         </template>

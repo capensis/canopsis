@@ -14,7 +14,7 @@ export default {
       title: 'Créer une entité',
     },
     edit: {
-      title: 'Éditer une entité',
+      title: 'Éditer l\'entité',
     },
     duplicate: {
       title: 'Dupliquer une entité',
@@ -43,7 +43,7 @@ export default {
   },
   createEntityInfo: {
     create: {
-      title: 'Ajouter une information',
+      title: 'Ajouter des infos',
     },
     edit: {
       title: 'Éditer une information',
@@ -549,7 +549,7 @@ export default {
     edit: {
       title: 'Modifier un type',
     },
-    iconNameHint: 'Entrez le nom d\'une icône à partir de material.io',
+    iconNamePlaceholder: 'Nom de l\'icône sur material.io',
     errors: {
       iconName: 'Le nom est invalide',
     },
@@ -588,10 +588,10 @@ export default {
   },
   createPbehaviorException: {
     create: {
-      title: 'Créer une liste d\'exceptions',
+      title: 'Créer des dates d\'exception',
     },
     edit: {
-      title: 'Modifier une liste d\'exceptions',
+      title: 'Modifier des dates d\'exception',
     },
     addDate: 'Ajouter une date',
     fields: {

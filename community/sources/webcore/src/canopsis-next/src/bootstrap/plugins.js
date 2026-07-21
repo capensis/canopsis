@@ -119,7 +119,6 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createTheme]: { maxWidth: 500, autoHeight: true },
       [MODALS.createTicketStatusJob]: { maxWidth: 1200, autoHeight: true },
       [MODALS.createTreeOfDependenciesMap]: { maxWidth: 1334, autoHeight: true },
-      [MODALS.createUser]: { autoHeight: true },
       [MODALS.createView]: { autoHeight: true },
       [MODALS.createWidget]: { maxWidth: 500, autoHeight: true },
       [MODALS.createWidgetTemplate]: { maxWidth: 920, autoHeight: true },
