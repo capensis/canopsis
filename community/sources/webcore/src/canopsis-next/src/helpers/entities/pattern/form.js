@@ -563,9 +563,21 @@ export const isValidRuleValue = rule => (
  * @return {boolean} True when the field is not one of the excluded primitive / specialized array fields.
  */
 export const isArrayPatternRuleFieldWithoutPrimitive = field => ![
-  ALARM_PATTERN_FIELDS.tags,
-  ALARM_PATTERN_FIELDS.snoozeAuthor,
   ALARM_PATTERN_FIELDS.lastCommentAuthor,
+  ALARM_PATTERN_FIELDS.displayName,
+  ALARM_PATTERN_FIELDS.output,
+  ALARM_PATTERN_FIELDS.ackMessage,
+  ALARM_PATTERN_FIELDS.ticketValue,
+  ALARM_PATTERN_FIELDS.ticketMessage,
+  ALARM_PATTERN_FIELDS.ticketData,
+  ALARM_PATTERN_FIELDS.snoozeAuthor,
+  ALARM_PATTERN_FIELDS.lastComment,
+  ALARM_PATTERN_FIELDS.lastCommentAuthor,
+  ALARM_PATTERN_FIELDS.longOutput,
+  ALARM_PATTERN_FIELDS.initialOutput,
+
+  ENTITY_PATTERN_FIELDS.name,
+
   EVENT_FILTER_PATTERN_FIELDS.author,
 ].includes(field);
 
