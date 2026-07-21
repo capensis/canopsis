@@ -34,16 +34,17 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 import { MODALS } from '@/constants';
 
-import { userToForm, formToUserRequest } from '@/helpers/entities/user/form';
+import { userToForm, formToUserRequest, findDefaultViewId } from '@/helpers/entities/user/form';
 
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useViewGroup } from '@/hooks/store/modules/view';
 
 import UserForm from '@/components/other/users/form/user-form.vue';
 
@@ -68,6 +69,7 @@ export default {
   setup(props) {
     const { t } = useI18n();
     const { config, close } = useInnerModal(props);
+    const { groups, fetchAllGroupsListWithWidgets } = useViewGroup();
 
     const form = ref(userToForm(config.value.user));
 
@@ -84,7 +86,33 @@ export default {
       },
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    const { updateOriginalForm } = useFormConfirmableCloseModal({ form, submit, close });
+
+    onMounted(async () => {
+      if (!isNew.value || form.value.defaultview) {
+        return;
+      }
+
+      try {
+        if (!groups.value?.length) {
+          await fetchAllGroupsListWithWidgets();
+        }
+
+        const defaultViewId = findDefaultViewId(groups.value);
+
+        if (!defaultViewId) {
+          return;
+        }
+
+        form.value = {
+          ...form.value,
+          defaultview: defaultViewId,
+        };
+        updateOriginalForm();
+      } catch (err) {
+        console.error(err);
+      }
+    });
 
     return {
       form,

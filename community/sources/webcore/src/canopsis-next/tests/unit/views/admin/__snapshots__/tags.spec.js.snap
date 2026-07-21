@@ -3,7 +3,7 @@
 exports[`tags Renders \`tags\` with permissions 1`] = `
 <c-page-stub
   creatable="true"
-  create-tooltip="Create a tag"
+  create-tooltip="Create tag"
 >
   <tags-list-stub
     duplicable="true"
@@ -19,7 +19,7 @@ exports[`tags Renders \`tags\` with permissions 1`] = `
 
 exports[`tags Renders \`tags\` without permissions 1`] = `
 <c-page-stub
-  create-tooltip="Create a tag"
+  create-tooltip="Create tag"
 >
   <tags-list-stub
     options="[object Object]"

@@ -12,6 +12,7 @@
       v-field="form.name"
       :disabled="onlyColor"
       autofocus
+      required
     />
     <c-form-block>
       <c-form-block-row :label="$t('modals.createPbehaviorType.fields.description')">
@@ -44,7 +45,7 @@
       <c-form-block-row :label="$t('modals.createPbehaviorType.fields.iconName')">
         <c-icon-field
           v-field="form.icon_name"
-          :hint="$t('modals.createPbehaviorType.iconNameHint')"
+          :placeholder="$t('modals.createPbehaviorType.iconNamePlaceholder')"
           :disabled="onlyColor"
           :required="!onlyColor"
         >

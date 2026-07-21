@@ -4,11 +4,12 @@
     v-validate="rules"
     :label="label"
     :hint="hint"
+    :placeholder="placeholder"
     :items="allIcons"
     :name="name"
     :error-messages="errors.collect(name)"
     :disabled="disabled"
-    persistent-hint
+    :persistent-hint="!!hint"
   >
     <template #selection="{ item }">
       <v-icon>{{ item.value }}</v-icon>
@@ -52,6 +53,10 @@ export default {
       default: '',
     },
     hint: {
+      type: String,
+      default: '',
+    },
+    placeholder: {
       type: String,
       default: '',
     },

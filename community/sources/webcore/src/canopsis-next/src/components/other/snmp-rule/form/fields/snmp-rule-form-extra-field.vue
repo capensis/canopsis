@@ -3,6 +3,7 @@
     v-field="form"
     :item-to-form="snmpRuleExtraItemToForm"
     :label="$tc('common.customField', 2)"
+    :add-button-label="$t('common.addCustomField')"
   >
     <template #item="{ item, index, remove }">
       <v-card>

@@ -23,6 +23,24 @@
     />
 
     <c-form-block>
+      <c-form-block-row :label="$t('user.firstName')">
+        <c-name-field
+          v-field="form.firstname"
+          :label="$t('user.firstName')"
+          :disabled="onlyUserPrefs || idpFieldsMap['firstname']"
+          name="firstname"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('user.lastName')">
+        <c-name-field
+          v-field="form.lastname"
+          :label="$t('user.lastName')"
+          :disabled="onlyUserPrefs || idpFieldsMap['lastname']"
+          name="lastname"
+        />
+      </c-form-block-row>
+
       <c-form-block-row :label="$t('user.email')">
         <v-text-field
           v-field="form.email"
@@ -75,7 +93,7 @@
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="$tc('common.theme', 2)">
+      <c-form-block-row :label="$tc('common.theme', 1)">
         <c-theme-field v-if="hasReadThemeAccess" v-field="form.ui_theme" clearable />
       </c-form-block-row>
 

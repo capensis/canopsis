@@ -22,12 +22,12 @@
         <c-description-field v-field="form.description" />
       </c-form-block-row>
 
-      <c-form-block-row v-if="isUiType" :label="$tc('common.theme', 2)">
+      <c-form-block-row v-if="isUiType" :label="$tc('common.theme', 1)">
         <c-theme-field v-field="form.ui_theme" clearable />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('role.expirationSettings')">
-        <c-enabled-field v-field="form.auth_config.intervals_enabled" :label="$t('role.expirationSettings')" />
+        <c-enabled-field v-field="form.auth_config.intervals_enabled" />
       </c-form-block-row>
 
       <v-expand-transition>

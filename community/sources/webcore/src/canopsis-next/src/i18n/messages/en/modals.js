@@ -14,7 +14,7 @@ export default {
       title: 'Create an entity',
     },
     edit: {
-      title: 'Edit an entity',
+      title: 'Edit entity',
     },
     duplicate: {
       title: 'Duplicate an entity',
@@ -27,13 +27,13 @@ export default {
   },
   createService: {
     create: {
-      title: 'Create a service',
+      title: 'Create service',
     },
     edit: {
-      title: 'Edit a service',
+      title: 'Edit service',
     },
     duplicate: {
-      title: 'Duplicate a service',
+      title: 'Duplicate service',
     },
     success: {
       create: 'Service successfully created!',
@@ -43,7 +43,7 @@ export default {
   },
   createEntityInfo: {
     create: {
-      title: 'Add an information',
+      title: 'Add infos',
     },
     edit: {
       title: 'Edit an information',
@@ -549,7 +549,7 @@ export default {
     edit: {
       title: 'Edit type',
     },
-    iconNameHint: 'Enter a name of an icon from material.io',
+    iconNamePlaceholder: 'Icon name in material.io',
     errors: {
       iconName: 'The name is invalid',
     },
@@ -588,10 +588,10 @@ export default {
   },
   createPbehaviorException: {
     create: {
-      title: 'Create date of exception',
+      title: 'Create exception dates',
     },
     edit: {
-      title: 'Edit date of exception',
+      title: 'Edit exception dates',
     },
     addDate: 'Add date',
     fields: {
@@ -1168,10 +1168,10 @@ export default {
   },
   createTag: {
     create: {
-      title: 'Create a tag',
+      title: 'Create tag',
     },
     edit: {
-      title: 'Edit a tag',
+      title: 'Edit tag',
     },
     duplicate: {
       title: 'Duplicate a tag',

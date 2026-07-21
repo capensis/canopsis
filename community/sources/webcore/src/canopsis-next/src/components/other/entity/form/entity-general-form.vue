@@ -1,9 +1,20 @@
 <template>
   <v-layout class="gap-3" column>
-    <c-name-field
-      v-field="form.name"
-      disabled
-    />
+    <v-layout class="gap-2">
+      <v-flex xs6>
+        <c-name-field
+          v-field="form.name"
+          disabled
+        />
+      </v-flex>
+
+      <v-flex xs6>
+        <c-entity-type-field
+          v-field="form.type"
+          disabled
+        />
+      </v-flex>
+    </v-layout>
     <c-form-block>
       <c-form-block-row :label="$t('common.description')">
         <c-description-field v-field="form.description" autofocus />
@@ -25,14 +36,6 @@
         <c-impact-level-field
           v-field="form.impact_level"
           required
-        />
-      </c-form-block-row>
-
-      <c-form-block-row :label="$t('common.type')">
-        <c-entity-type-field
-          v-field="form.type"
-          required
-          disabled
         />
       </c-form-block-row>
 
