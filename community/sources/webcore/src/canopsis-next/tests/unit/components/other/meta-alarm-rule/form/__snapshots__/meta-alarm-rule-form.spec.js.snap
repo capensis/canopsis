@@ -10,9 +10,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
     with-background=""
   />
   <div
-    form="[object Object]"
     patterns-label="Pattern and params"
     type="8"
+    value="[object Object]"
   >
     <meta-alarm-rule-general-form-stub
       disabledidfield="true"
@@ -36,9 +36,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default prop
     with-background=""
   />
   <div
-    form="[object Object]"
     patterns-label="Pattern and params"
     type="8"
+    value="[object Object]"
   >
     <meta-alarm-rule-general-form-stub
       form="[object Object]"

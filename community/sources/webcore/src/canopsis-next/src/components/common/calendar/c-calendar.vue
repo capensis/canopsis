@@ -42,7 +42,7 @@
       </v-flex>
     </v-layout>
 
-    <div class="fill-height position-relative">
+    <div class="position-relative">
       <v-calendar
         ref="calendar"
         v-bind="$attrs"
@@ -147,16 +147,17 @@
       attach=".pbehavior-calendar-event-menu"
       content-class="c-calendar__popover-wrapper"
     >
-      <v-card v-if="popoverOpen">
-        <v-card-text>
-          <slot
-            :close="clearPlaceholder"
-            :event="newEvent || editEvent || popoverEvent"
-            :timezone="localTimezone"
-            :no-timezone="noTimezone"
-            name="form-event"
-          />
-        </v-card-text>
+      <v-card
+        v-if="popoverOpen"
+        class="c-calendar__popover-card"
+      >
+        <slot
+          :close="clearPlaceholder"
+          :event="newEvent || editEvent || popoverEvent"
+          :timezone="localTimezone"
+          :no-timezone="noTimezone"
+          name="form-event"
+        />
       </v-card>
     </v-menu>
   </v-layout>
@@ -836,6 +837,18 @@ export default {
     bottom: unset !important;
     contain: none !important;
     position: relative !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden !important;
+  }
+
+  &__popover-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
   }
 
   &__week-day-label-btn {

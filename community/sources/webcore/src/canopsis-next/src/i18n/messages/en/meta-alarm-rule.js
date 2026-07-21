@@ -24,6 +24,7 @@ export default {
   childInactiveDelay: 'Child inactive delay',
   childInactiveDelayHelpText: 'The alarm matched with this rule is activated only after the inactivity delay',
   valuePath: 'Value path | Value paths',
+  addValuePath: 'Add value path',
   autoResolve: 'Auto resolve',
   idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
   corelId: 'Corel ID',

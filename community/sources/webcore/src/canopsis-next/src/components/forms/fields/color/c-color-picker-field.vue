@@ -30,18 +30,11 @@
         {{ displayLabel }}
       </v-btn>
     </v-layout>
-
-    <v-messages
-      v-if="errors.has(name)"
-      :value="errors.collect(name)"
-      color="error"
-    />
   </v-layout>
 </template>
 
 <script>
 import { computed, watch, nextTick, onBeforeUnmount } from 'vue';
-import { Validator } from 'vee-validate';
 
 import { MODALS } from '@/constants';
 
@@ -54,11 +47,6 @@ import { useValidationAttachRequired } from '@/hooks/validator/validation-attach
 import { useValidator } from '@/hooks/validator/validator';
 
 export default {
-  inject: {
-    $validator: {
-      default: new Validator(),
-    },
-  },
   model: {
     prop: 'color',
     event: 'input',
@@ -110,6 +98,7 @@ export default {
     const style = computed(() => ({
       backgroundColor: props.color,
       color: getMostReadableTextColor(props.color, { level: 'AA', size: 'large' }),
+      ...(errors.has(props.name) && { outline: '2px solid var(--v-error-base)' }),
     }));
 
     /**
@@ -148,7 +137,6 @@ export default {
     return {
       displayLabel,
       style,
-      errors,
       showColorPickerModal,
     };
   },

@@ -9,8 +9,8 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with cust
     with-background=""
   />
   <div
-    form="[object Object]"
     type="4"
+    value="[object Object]"
   >
     <declare-ticket-rule-general-form-stub
       form="[object Object]"
@@ -34,8 +34,8 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with defa
     with-background=""
   />
   <div
-    form="[object Object]"
     type="4"
+    value="[object Object]"
   >
     <declare-ticket-rule-general-form-stub
       form="[object Object]"
@@ -59,8 +59,8 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with erro
     with-background=""
   />
   <div
-    form="[object Object]"
     type="4"
+    value="[object Object]"
   >
     <declare-ticket-rule-general-form-stub
       form="[object Object]"
@@ -84,8 +84,8 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with temp
     with-background=""
   />
   <div
-    form="[object Object]"
     type="4"
+    value="[object Object]"
   >
     <declare-ticket-rule-general-form-stub
       form="[object Object]"

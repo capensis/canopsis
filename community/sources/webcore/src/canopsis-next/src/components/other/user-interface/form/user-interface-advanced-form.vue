@@ -8,6 +8,7 @@
         :disabled="disabled"
         :min="1"
         name="popup_timeout.info"
+        same-width
       />
     </c-form-block-row>
 
@@ -19,11 +20,12 @@
         :disabled="disabled"
         :min="1"
         name="popup_timeout.error"
+        same-width
       />
     </c-form-block-row>
 
     <c-form-block-row :label="$t('userInterface.matchedItems')">
-      <v-layout class="gap-4">
+      <v-layout class="gap-2">
         <v-flex xs6>
           <c-number-field
             v-field="form.max_matched_items"

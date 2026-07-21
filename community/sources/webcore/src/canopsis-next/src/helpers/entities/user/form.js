@@ -1,4 +1,5 @@
-import { GROUPS_NAVIGATION_TYPES } from '@/constants';
+import { DEFAULT_LOCALE } from '@/config';
+import { DEFAULT_COLOR_THEME, GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
 
@@ -34,6 +35,27 @@ import { mapIds } from '@/helpers/array';
  * @property {string[]} roles
  */
 
+const DEFAULT_VIEW_TITLE = 'En cours';
+const DEFAULT_VIEW_GROUP_TITLES = ['alarms', 'alarmes'];
+
+/**
+ * Find default view id for Alarms / En cours
+ *
+ * @param {Array} [groupsList = []]
+ * @returns {string}
+ */
+export const findDefaultViewId = (groupsList = []) => {
+  const group = groupsList.find(({ title, name }) => (
+    DEFAULT_VIEW_GROUP_TITLES.includes((title || name || '').toLowerCase())
+  ));
+
+  const view = group?.views?.find(
+    ({ title, name }) => (title || name) === DEFAULT_VIEW_TITLE,
+  );
+
+  return view?._id ?? '';
+};
+
 /**
  * Convert user to form object
  *
@@ -50,10 +72,10 @@ export const userToForm = (user = {}) => ({
   roles: user.roles || [],
   enabled: user.enabled ?? true,
   defaultview: user.defaultview ? user.defaultview._id : '',
-  ui_language: user.ui_language ?? '',
+  ui_language: user.ui_language ?? DEFAULT_LOCALE,
   ui_tours: user.ui_tours ?? {},
   ui_groups_navigation_type: user.ui_groups_navigation_type ?? GROUPS_NAVIGATION_TYPES.sideBar,
-  ui_theme: user.ui_theme ?? '',
+  ui_theme: user.ui_theme ?? DEFAULT_COLOR_THEME,
 });
 
 /**

@@ -28,20 +28,14 @@
           @change="changeFiles"
         >
           <template #activator="{ on, disabled }">
-            <v-tooltip top>
-              <template #activator="{ on: tooltipOn }">
-                <v-btn
-                  :color="errors.has('file') ? 'error' : 'primary'"
-                  :disabled="disabled"
-                  small
-                  outlined
-                  v-on="{ ...on, ...tooltipOn }"
-                >
-                  <v-icon>cloud_upload</v-icon>
-                </v-btn>
-              </template>
-              <span>{{ $t('common.chooseFile') }}</span>
-            </v-tooltip>
+            <v-btn
+              :color="errors.has('file') ? 'error' : 'primary'"
+              :disabled="disabled"
+              outlined
+              v-on="on"
+            >
+              {{ $t('common.chooseFile') }}
+            </v-btn>
           </template>
         </file-selector>
       </c-form-block-row>
@@ -54,6 +48,7 @@ import { onMounted } from 'vue';
 
 import { useModelField } from '@/hooks/form/model-field';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
+import { useValidator } from '@/hooks/validator/validator';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 
@@ -73,6 +68,7 @@ export default {
   setup(props, { emit }) {
     const { updateField } = useModelField(props, emit);
     const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
+    const validator = useValidator();
 
     /**
      * Stores the first selected file in the import form.
@@ -84,6 +80,7 @@ export default {
     onMounted(fetchPbehaviorTypesFieldList);
 
     return {
+      errors: validator.errors,
       changeFiles,
     };
   },

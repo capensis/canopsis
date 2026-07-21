@@ -4,6 +4,7 @@
       <v-card-text>
         <dynamic-info-infos-item-form
           v-field="items[index]"
+          :name="`items.${index}`"
           :variables="variables"
           :copy-variables="copyVariables"
           :removable="items.length > 1"

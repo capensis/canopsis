@@ -1,6 +1,7 @@
 <template>
   <pbehavior-general-form
     v-field="value"
+    :name="name"
     :name-label="$t('common.namePrefix')"
     :name-tooltip="$t('scenario.tooltips.pbehaviorActionsNamePrefix')"
     :depth="depth"
@@ -23,6 +24,10 @@ export default {
     value: {
       type: Object,
       required: true,
+    },
+    name: {
+      type: String,
+      default: 'parameters',
     },
     depth: {
       type: Number,
