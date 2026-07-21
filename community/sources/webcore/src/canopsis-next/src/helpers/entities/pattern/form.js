@@ -574,6 +574,7 @@ export const isArrayPatternRuleFieldWithoutPrimitive = field => ![
   ALARM_PATTERN_FIELDS.lastCommentAuthor,
   ALARM_PATTERN_FIELDS.longOutput,
   ALARM_PATTERN_FIELDS.initialOutput,
+  ALARM_PATTERN_FIELDS.initialLongOutput,
 
   ENTITY_PATTERN_FIELDS.name,
 
