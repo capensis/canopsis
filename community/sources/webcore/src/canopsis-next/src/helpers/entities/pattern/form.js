@@ -382,6 +382,7 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.ticketValue,
   ALARM_PATTERN_FIELDS.ticketInitiator,
   ALARM_PATTERN_FIELDS.ticketData,
+  ALARM_PATTERN_FIELDS.snoozeAuthor,
   ALARM_PATTERN_FIELDS.ackBy,
   ALARM_PATTERN_FIELDS.ackMessage,
   ALARM_PATTERN_FIELDS.ackInitiator,
@@ -602,6 +603,33 @@ export const isValidRuleValue = rule => (
     ? isValidRuleValueWithFieldType(rule)
     : isValidRuleValueWithoutFieldType(rule)
 );
+
+/**
+ * Whether a pattern rule field uses a generic string-array editor, as opposed to fields that bind
+ * primitives or dedicated pickers (tags, context entities, event filter entities, user/initiator fields, etc.).
+ *
+ * @param {string} field Rule field id (alarm, entity, or event-filter pattern field constant).
+ * @return {boolean} True when the field is not one of the excluded primitive / specialized array fields.
+ */
+export const isArrayPatternRuleFieldWithoutPrimitive = field => ![
+  ALARM_PATTERN_FIELDS.lastCommentAuthor,
+  ALARM_PATTERN_FIELDS.displayName,
+  ALARM_PATTERN_FIELDS.output,
+  ALARM_PATTERN_FIELDS.ackMessage,
+  ALARM_PATTERN_FIELDS.ticketValue,
+  ALARM_PATTERN_FIELDS.ticketMessage,
+  ALARM_PATTERN_FIELDS.ticketData,
+  ALARM_PATTERN_FIELDS.snoozeAuthor,
+  ALARM_PATTERN_FIELDS.lastComment,
+  ALARM_PATTERN_FIELDS.lastCommentAuthor,
+  ALARM_PATTERN_FIELDS.longOutput,
+  ALARM_PATTERN_FIELDS.initialOutput,
+  ALARM_PATTERN_FIELDS.initialLongOutput,
+
+  ENTITY_PATTERN_FIELDS.name,
+
+  EVENT_FILTER_PATTERN_FIELDS.author,
+].includes(field);
 
 /**
  * Check pattern rule is valid
@@ -1033,8 +1061,8 @@ export const patternRuleToForm = (rule = {}) => {
       form.operator = PATTERN_OPERATORS.notContains;
       form.value = rule.cond.value;
       break;
-    case PATTERN_CONDITIONS.beginsWith:
-      form.operator = PATTERN_OPERATORS.beginsWith;
+    case PATTERN_CONDITIONS.beginWith:
+      form.operator = PATTERN_OPERATORS.beginWith;
       form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.notBeginWith:
@@ -1108,7 +1136,7 @@ export const patternRuleToForm = (rule = {}) => {
     (form.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(form.operator))
     && isArray(form.value)
     && (!form.value.length || !form.value[0]?.key)
-    && rule.field !== ALARM_PATTERN_FIELDS.tags
+    && (!isArrayPatternRuleFieldWithoutPrimitive(form.attribute) || isInfos)
   ) {
     form.value = primitiveArrayToForm(form.value);
   }
@@ -1165,6 +1193,22 @@ export const patternToForm = (pattern = {}) => ({
     || pattern.weather_service_pattern,
   ),
 });
+
+/**
+ * Returns pattern field keys (e.g. `alarm_pattern`) whose blocks differ between two forms that carry
+ * the same pattern-* shape as filter forms.
+ * Each block is compared with `isOmitEqual`, omitting `id` for the check.
+ *
+ * @param {Object} [newForm={}]
+ * @param {Object} [oldForm={}]
+ * @param {PatternsFields} [fields=Object.values(PATTERNS_FIELDS)]
+ * @returns {string[]}
+ */
+export const getChangedPatternsFields = (
+  newForm = {},
+  oldForm = {},
+  fields = Object.values(PATTERNS_FIELDS),
+) => fields.filter(fieldKey => !isEqual(newForm?.[fieldKey] ?? [], oldForm?.[fieldKey] ?? []));
 
 /**
  * Get duration from rule range by specified keys
@@ -1290,8 +1334,8 @@ export const formRuleToPatternRule = (rule) => {
       pattern.cond.type = PATTERN_CONDITIONS.notContains;
       break;
 
-    case PATTERN_OPERATORS.beginsWith:
-      pattern.cond.type = PATTERN_CONDITIONS.beginsWith;
+    case PATTERN_OPERATORS.beginWith:
+      pattern.cond.type = PATTERN_CONDITIONS.beginWith;
       break;
     case PATTERN_OPERATORS.notBeginWith:
       pattern.cond.type = PATTERN_CONDITIONS.notBeginWith;

@@ -5,10 +5,6 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
   class="layout gap-2 column"
 >
   <c-enabled-field-stub
-    value="true"
-    with-background=""
-  />
-  <c-enabled-field-stub
     class="pa-2"
     hide-details=""
     label="Emit trigger"
@@ -51,10 +47,6 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
 <div
   class="layout gap-2 column"
 >
-  <c-enabled-field-stub
-    value="true"
-    with-background=""
-  />
   <c-enabled-field-stub
     class="pa-2"
     hide-details=""

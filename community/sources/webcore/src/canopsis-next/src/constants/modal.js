@@ -36,6 +36,8 @@ export const MODALS = {
   createRole: 'create-role',
   createBroadcastMessage: 'create-broadcast-message',
   createCommentTemplate: 'create-comment-template',
+  createAnomalyMonitoredConnector: 'create-anomaly-monitored-connector',
+  anomalyMonitoredConnectorHistory: 'anomaly-monitored-connector-history',
   createEventFilter: 'create-event-filter',
   createMetaAlarmRule: 'create-meta-alarm-rule',
   createPattern: 'create-pattern',
@@ -99,6 +101,9 @@ export const MODALS = {
   executeDeclareTickets: 'execute-declare-tickets',
 
   createLinkRule: 'create-link-rule',
+
+  createLlm: 'create-llm',
+  aiChatHistory: 'ai-chat-history',
 
   createMaintenance: 'create-maintenance',
 

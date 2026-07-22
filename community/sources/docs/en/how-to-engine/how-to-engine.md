@@ -419,7 +419,8 @@ To get canopsis config and create connections, you may use `DependencyMaker` too
 m := depmake.DependencyMaker{}
 dbClient := m.DepMongoClient(ctx)
 cfg := m.DepConfig(ctx, dbClient)
-amqpConnection := m.DepAmqpConnection(logger, cfg)
+amqpPubConn := m.DepAmqpConnection(logger, cfg)
+	amqpConsumeConn := m.DepAmqpConnection(logger, cfg)
 ```
 
 Complete main file looks like this:
@@ -448,7 +449,8 @@ func main() {
 	m := depmake.DependencyMaker{}
 	dbClient := m.DepMongoClient(ctx)
 	cfg := m.DepConfig(ctx, dbClient)
-	amqpConnection := m.DepAmqpConnection(logger, cfg)
+	amqpPubConn := m.DepAmqpConnection(logger, cfg)
+	amqpConsumeConn := m.DepAmqpConnection(logger, cfg)
 
 	engineLogger := engine.New(
 		func(ctx context.Context) error {

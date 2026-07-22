@@ -320,6 +320,9 @@ export default {
       isNotEmpty: 'The group is not empty',
     },
   },
+  aiChatHistory: {
+    title: 'Chat history',
+  },
   alarmsList: {
     title: 'Alarm list',
     prefixTitle: '{prefix} - alarm list',
@@ -488,6 +491,20 @@ export default {
     edit: {
       title: 'Edit comment template',
     },
+  },
+  createAnomalyMonitoredConnector: {
+    create: {
+      title: 'Create anomaly monitored connector',
+    },
+    edit: {
+      title: 'Edit anomaly monitored connector',
+    },
+    remove: {
+      text: 'Delete <strong>{connectorName}</strong> from the list of anomalies monitoring connectors?',
+    },
+  },
+  anomalyMonitoredConnectorHistory: {
+    disableConfirm: 'Disable anomalies monitoring for <strong>{connectorName}</strong>?',
   },
   createCommentEvent: {
     title: 'Add comment',
@@ -840,6 +857,20 @@ export default {
         + '<strong>Deletion operation won’t be cancellable.</strong>',
       phraseText: 'Please type the token name to confirm:',
     },
+    deleteLlm: {
+      title: 'Delete LLM',
+      text: 'You are about to delete LLM connection.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type LLM name to confirm:',
+    },
+    deleteSelectedLlms: {
+      title: 'Delete {count} model? | Delete {count} models?',
+      text: 'You are about to delete {count} model.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong> | You are about to delete {count} models.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type the following to confirm <strong>delete operation</strong> :',
+      phrase: 'delete',
+    },
     templateTestingData: {
       title: 'Delete test data',
       text: 'You are about to delete test data.\n'
@@ -1165,6 +1196,14 @@ export default {
     },
     edit: {
       title: 'Edit external auth token',
+    },
+  },
+  createLlm: {
+    create: {
+      title: 'Add LLM model',
+    },
+    edit: {
+      title: 'Edit LLM model',
     },
   },
   createTemplateTestingData: {

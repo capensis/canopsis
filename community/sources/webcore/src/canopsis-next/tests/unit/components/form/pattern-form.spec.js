@@ -11,6 +11,8 @@ const stubs = {
   'c-alarm-patterns-field': true,
   'c-entity-patterns-field': true,
   'c-pbehavior-patterns-field': true,
+  'c-service-weather-patterns-field': true,
+  'pattern-progress': true,
 };
 
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
@@ -142,7 +144,7 @@ describe('pattern-form', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `pattern-form` with entity type', () => {
+  test('Renders `pattern-form` with pbehavior type', () => {
     const wrapper = snapshotFactory({
       propsData: {
         form: {

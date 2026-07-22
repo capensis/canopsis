@@ -8,6 +8,7 @@
       :disabled="disabled"
       :readonly="readonly"
       :hide-details="hideDetails || withBackground"
+      v-bind="$attrs"
       v-on="listenersWithoutInput"
     >
       <template #label="">
@@ -25,6 +26,7 @@ import { omit } from 'lodash';
 import { computed } from 'vue';
 
 export default {
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'input',

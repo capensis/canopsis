@@ -412,7 +412,7 @@ noWait = false
 PrefetchCount = 10000
 PrefetchSize = 0
 ReconnectTimeoutMilliseconds = 8
-ReconnectRetries = 3
+ReconnectRetries = 12
 # MaxExternalResponseSize limits reading of a response of external API.
 MaxExternalResponseSize = 10485760 # 10Mb
 # Infos dictionary options enable or disable infos dictionary building.
@@ -460,7 +460,10 @@ AllowDoubleAck = false
 ActivateAlarmAfterAutoRemediation = false
 # EnableArraySortingInEntityInfos enables sorting string array infos before saving to an entity.
 EnableArraySortingInEntityInfos = true
-# CropStepsNumber defines how many sequential stateinc and statedec steps after the current status should be replaced with a statecounter step.
+# CropStepsNumber defines how many most recent stateinc/statedec steps after the current status are kept.
+# Older stateinc/statedec steps are aggregated into a statecounter step right after the current status.
+# If CropStepsNumber = 0, no stateinc/statedec step is kept after current status:
+# all such steps are aggregated into statecounter (non-state steps are kept as-is).
 CropStepsNumber = 0
 # CheckTicketStatusInterval defines how often ticket status should be checked.
 CheckTicketStatusInterval = "1h"
@@ -503,6 +506,31 @@ MetricsCacheExpiration = "24h"
 WebsocketPingInterval = "5s"
 NotificationDisplayCount = 3
 
+[Canopsis.api.llm]
+# off_topic_errors defines error messages returned by the LLM when the user's prompt
+# is outside the LLM's scope (e.g. not related to Canopsis pattern generation).
+# If an LLM response error contains one of these strings, the message is marked as off-topic in history.
+off_topic_errors = [
+  "designed solely to generate Canopsis patterns",
+  "conçu uniquement pour générer des modèles (patterns) Canopsis",
+]
+
+# suggested_models defines the list of LLM models shown in the UI configuration form.
+# name: model identifier passed to the LLM provider.
+# thinking_levels: optional list of thinking budget levels supported by the model.
+# recommended: optional flag to highlight the model as recommended in the UI.
+[[Canopsis.api.llm.suggested_models]]
+name = "gemini-2.5-flash"
+[[Canopsis.api.llm.suggested_models]]
+name = "gemini-2.5-pro"
+[[Canopsis.api.llm.suggested_models]]
+name = "gemini-3.1-flash-lite-preview"
+thinking_levels = ["minimal", "low", "medium", "high"]
+[[Canopsis.api.llm.suggested_models]]
+name = "gemini-3.1-pro-preview"
+thinking_levels = ["low", "medium", "high"]
+recommended = true
+
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.external_data]
 # Collections specifies existed collections which is used in enrichment by external data.
@@ -523,6 +551,11 @@ Enabled = true
 NoColor = false
 TimeFormat = "2006-01-02T15:04:05Z07:00"
 PartsOrder = ["time", "level", "caller", "message"]
+
+[Canopsis.entity_infos_logs]
+Enabled = true
+# FlushInterval defines how often metrics are flushed from memory to TimescaleDB.
+FlushInterval = "10s"
 
 [Canopsis.metrics]
 Enabled = false

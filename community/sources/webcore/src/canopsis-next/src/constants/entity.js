@@ -243,6 +243,8 @@ export const STATE_SETTING_METHODS = {
   dependencies: 'dependencies',
 };
 
+export const STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD = 'inherited_entity_pattern';
+
 export const STATE_SETTING_THRESHOLDS_METHODS = {
   share: 'share',
   number: 'number',

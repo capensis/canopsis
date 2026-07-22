@@ -69,7 +69,8 @@ export default {
       fetchUserPreferenceItem,
     } = useUserPreference();
 
-    const widgetId = computed(() => config.value.widgetId);
+    const widgetId = computed(() => config.value.widget?._id);
+    const widgetType = computed(() => config.value.widget?.type);
 
     const userPreference = computed(() => getUserPreferenceByWidgetId.value(widgetId.value));
 
@@ -98,6 +99,7 @@ export default {
       entityAttributes: entityAttributes.value,
       pbehaviorAttributes: pbehaviorAttributes.value,
       weatherServiceAttributes: weatherServiceAttributes.value,
+      widgetType: widgetType.value,
     }));
 
     /**
@@ -114,7 +116,7 @@ export default {
       pending,
       handler: refreshFilters,
     } = usePendingHandler(async () => Promise.all([
-      fetchUserPreferenceItem({ id: config.value.widgetId }),
+      fetchUserPreferenceItem({ id: widgetId.value }),
       fetchPatternsFields(),
     ]), true);
 
@@ -131,7 +133,7 @@ export default {
         title: t('modals.createFilter.create.title'),
         corporate: true,
         action: async (newFilter) => {
-          await createWidgetFilter({
+          const result = await createWidgetFilter({
             data: {
               ...newFilter,
 
@@ -140,7 +142,9 @@ export default {
             },
           });
 
-          return refreshFilters();
+          refreshFilters();
+
+          return result;
         },
       },
     });
@@ -159,7 +163,7 @@ export default {
         title: t('modals.createFilter.edit.title'),
         corporate: true,
         action: async (newFilter) => {
-          await updateWidgetFilter({
+          const result = await updateWidgetFilter({
             id: filter._id,
             data: {
               ...newFilter,
@@ -168,7 +172,9 @@ export default {
             },
           });
 
-          return refreshFilters();
+          refreshFilters();
+
+          return result;
         },
       },
     });
@@ -206,7 +212,7 @@ export default {
           data: mapIds(newFilters),
         });
 
-        await fetchUserPreferenceItem({ id: config.value.widgetId });
+        await fetchUserPreferenceItem({ id: widgetId.value });
       } catch (err) {
         console.error(err);
 

@@ -7,6 +7,7 @@
     :required="required"
     :attributes="availableEventFilterAttributes"
     :counter="counter"
+    class="c-event-filter-patterns-field"
   />
 </template>
 
@@ -74,6 +75,8 @@ export default {
         PATTERN_OPERATORS.isNotOneOf,
         PATTERN_OPERATORS.contains,
         PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.beginWith,
+        PATTERN_OPERATORS.notBeginWith,
         PATTERN_OPERATORS.regexp,
       ];
     },
@@ -153,6 +156,8 @@ export default {
           PATTERN_OPERATORS.notEqual,
           PATTERN_OPERATORS.contains,
           PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.beginWith,
+          PATTERN_OPERATORS.notBeginWith,
           PATTERN_OPERATORS.regexp,
           PATTERN_OPERATORS.isOneOf,
           PATTERN_OPERATORS.isNotOneOf,
@@ -192,6 +197,8 @@ export default {
           PATTERN_OPERATORS.notEqual,
           PATTERN_OPERATORS.contains,
           PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.beginWith,
+          PATTERN_OPERATORS.notBeginWith,
           PATTERN_OPERATORS.regexp,
           PATTERN_OPERATORS.isOneOf,
           PATTERN_OPERATORS.isNotOneOf,
@@ -219,14 +226,23 @@ export default {
           PATTERN_OPERATORS.notEqual,
           PATTERN_OPERATORS.contains,
           PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.beginWith,
+          PATTERN_OPERATORS.notBeginWith,
           PATTERN_OPERATORS.regexp,
           PATTERN_OPERATORS.isOneOf,
           PATTERN_OPERATORS.isNotOneOf,
         ],
         valueField: {
           is: 'c-select-field',
-          props: {
-            items: Object.values(ALARM_EVENT_INITIATORS),
+          props: (rule) => {
+            const isMultiple = isArray(rule?.value);
+
+            return {
+              multiple: isMultiple,
+              deletableChips: isMultiple,
+              smallChips: isMultiple,
+              items: Object.values(ALARM_EVENT_INITIATORS),
+            };
           },
         },
       };

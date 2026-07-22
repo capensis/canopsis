@@ -168,6 +168,11 @@ export default {
     title: 'Events records',
     message: 'Allows you to define and trigger the recording of events as soon as they arrive in the Canopsis data bus.',
   },
+  [USER_PERMISSIONS.technical.anomalyMonitoredConnector]: {
+    title: 'Anomaly monitored connectors',
+    topbarTitle: 'Anomaly monitored connectors',
+    message: 'Anomaly monitored connectors is a module to manage the list of such connectors. Anomalies data for these connectors is shown on Healthcheck page.',
+  },
   [USER_PERMISSIONS.technical.templateTesting]: {
     title: 'Templates studio',
   },
@@ -176,7 +181,7 @@ export default {
   },
   [USER_PERMISSIONS.technical.jobManagement]: {
     title: 'Jobs',
-    message: 'Manage jobs for ticket status.',
+    message: 'Job module is used to view jobs, stop retries of jobs in progress in case if server is down, edit and retry ticket status jobs in case of errors in their configuration.',
   },
   [USER_PERMISSIONS.technical.widgetTemplate]: {
     title: 'Widget templates',
@@ -186,6 +191,10 @@ export default {
   },
   [USER_PERMISSIONS.technical.entityInfoProperty]: {
     title: 'Entity infos',
+  },
+  [USER_PERMISSIONS.technical.llm]: {
+    title: 'LLMs',
+    message: 'LLM module is used to manage LLMs for Canopsis AI assistant.',
   },
 
   /**

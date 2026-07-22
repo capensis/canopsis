@@ -104,6 +104,11 @@ export default {
         permission: USER_PERMISSIONS.technical.templateTesting,
       },
       {
+        route: { name: ROUTES_NAMES.adminAnomalyMonitoredConnectors },
+        icon: 'steppers',
+        permission: USER_PERMISSIONS.technical.anomalyMonitoredConnector,
+      },
+      {
         route: { name: ROUTES_NAMES.adminJobsManagement },
         icon: '$vuetify.icons.ticket_status_job',
         permission: USER_PERMISSIONS.technical.jobManagement,
@@ -141,6 +146,11 @@ export default {
         route: { name: ROUTES_NAMES.adminCustomObjectsTags },
         icon: 'local_offer',
         permission: USER_PERMISSIONS.technical.tag,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsLlms },
+        icon: '$vuetify.icons.robot',
+        permission: USER_PERMISSIONS.technical.llm,
       },
     ]);
 

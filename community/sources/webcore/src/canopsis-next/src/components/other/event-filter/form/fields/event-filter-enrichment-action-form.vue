@@ -49,9 +49,21 @@
           </v-layout>
           <v-layout v-else>
             <v-flex xs5>
-              <c-name-field
+              <v-combobox
+                v-if="isSetFieldValueType"
                 v-field="form.name"
-                key="name"
+                v-validate="'required'"
+                key="name-set-field"
+                :label="$t('common.name')"
+                :name="nameFieldName"
+                :error-messages="errors.collect(nameFieldName)"
+                :items="EVENT_FILTER_SET_FIELD_ITEMS"
+                class="mr-2"
+              />
+              <c-name-field
+                v-else
+                v-field="form.name"
+                key="name-not-set-field"
                 :name="nameFieldName"
                 class="mr-2"
                 required
@@ -85,14 +97,14 @@
               <event-filter-enrichment-action-form-select-tags-value
                 v-else-if="isSelectValueType"
                 v-field="form.value"
-                key="value"
+                key="value-select-tags"
                 :items="setTagsItems"
                 :name="valueFieldName"
               />
               <c-mixed-field
                 v-else
                 v-field="form.value"
-                key="value"
+                key="value-mixed-field"
                 :label="$t('common.value')"
                 :name="valueFieldName"
                 :types="mixedFieldTypes"
@@ -112,6 +124,7 @@ import { computed } from 'vue';
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   EVENT_FILTER_EVENT_EXTRA_PREFIX,
+  EVENT_FILTER_SET_FIELD_ITEMS,
   PATTERN_FIELD_TYPES,
 } from '@/constants';
 
@@ -180,6 +193,8 @@ export default {
       text: t(`eventFilter.actionsTypes.${value}.text`),
     })));
 
+    const isSetFieldValueType = computed(() => EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField === props.form.type);
+
     const isStringCopyValueType = computed(() => [
       EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy,
       EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo,
@@ -233,12 +248,15 @@ export default {
     const remove = () => emit('remove', props.form);
 
     return {
+      EVENT_FILTER_SET_FIELD_ITEMS,
+
       eventExtraPrefix,
       mixedFieldTypes,
 
       nameFieldName,
       valueFieldName,
       eventFilterActionTypes,
+      isSetFieldValueType,
       isStringCopyValueType,
       isStringTemplateValueType,
       isStringDictionaryValueType,

@@ -77,7 +77,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
         disabled: wasRequestedByAnotherUser,
         title: t('modals.createRemediationInstruction.edit.title'),
         action: async (instruction) => {
-          await updateRemediationInstruction({ id: remediationInstruction._id, data: instruction });
+          const result = await updateRemediationInstruction({ id: remediationInstruction._id, data: instruction });
 
           popups.success({
             text: t('modals.createRemediationInstruction.edit.popups.success', {
@@ -86,6 +86,8 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
           });
 
           refresh();
+
+          return result;
         },
       },
     });

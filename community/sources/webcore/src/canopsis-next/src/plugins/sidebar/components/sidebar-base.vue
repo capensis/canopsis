@@ -9,17 +9,16 @@
 </template>
 
 <script>
+import { provide } from 'vue';
+
 import ClickOutside from '@/services/click-outside';
 
 import SidebarWrapper from './sidebar-wrapper.vue';
 
+/**
+ * Root for one sidebar instance (click-outside scope + dynamic panel component).
+ */
 export default {
-  provide() {
-    return {
-      $clickOutside: this.$clickOutside,
-      $sidebar: this.sidebar,
-    };
-  },
   components: { SidebarWrapper },
   props: {
     sidebar: {
@@ -27,8 +26,11 @@ export default {
       required: true,
     },
   },
-  beforeCreate() {
-    this.$clickOutside = new ClickOutside();
+  setup(props) {
+    const clickOutsideService = new ClickOutside();
+
+    provide('$clickOutside', clickOutsideService);
+    provide('$sidebar', props.sidebar);
   },
 };
 </script>

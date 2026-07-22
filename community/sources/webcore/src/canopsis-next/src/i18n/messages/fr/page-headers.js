@@ -161,6 +161,11 @@ export default {
     title: 'Enregistrements d\'événements',
     message: 'Permet de définir et de déclencher l\'enregistrement des événements dès leur arrivée dans le bus de données Canopsis.',
   },
+  [USER_PERMISSIONS.technical.anomalyMonitoredConnector]: {
+    title: 'Connecteurs surveillés pour anomalies',
+    topbarTitle: 'Connecteurs surveillés pour anomalies',
+    message: 'Le module Connecteurs surveillés pour anomalies permet de gérer la liste de ces connecteurs. Les données d\'anomalies de ces connecteurs sont affichées sur la page Bilan de santé.',
+  },
   [USER_PERMISSIONS.technical.templateTesting]: {
     title: 'Studio templates',
   },
@@ -169,7 +174,7 @@ export default {
   },
   [USER_PERMISSIONS.technical.jobManagement]: {
     title: 'Jobs',
-    message: 'Gérer les jobs pour le statut des tickets.',
+    message: 'Le module Jobs permet de consulter les jobs, d\'arrêter les nouvelles tentatives des jobs en cours si le serveur est indisponible, et de modifier et relancer les jobs de statut de ticket en cas d\'erreurs dans leur configuration.',
   },
   [USER_PERMISSIONS.technical.widgetTemplate]: {
     title: 'Modèles de widget',
@@ -179,6 +184,10 @@ export default {
   },
   [USER_PERMISSIONS.technical.entityInfoProperty]: {
     title: 'Informations d\'entité',
+  },
+  [USER_PERMISSIONS.technical.llm]: {
+    title: 'LLMs',
+    message: 'Le module LLM permet de gérer les modèles de langage pour l\'assistant IA Canopsis.',
   },
 
   /**

@@ -80,6 +80,8 @@ import { useRole } from '@/hooks/store/modules/role';
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 import { useRemediationConfiguration } from '@/hooks/store/modules/remediation-configuration';
 import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
+import { useLlm } from '@/hooks/store/modules/llm';
+import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
 
 export default {
   props: {
@@ -110,6 +112,10 @@ export default {
     unhideable: {
       type: Boolean,
       default: false,
+    },
+    itemId: {
+      type: String,
+      default: '_id',
     },
     pbehavior: {
       type: Boolean,
@@ -195,9 +201,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    llm: {
+      type: Boolean,
+      default: false,
+    },
+    anomalyMonitoredConnector: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
-    const { te, t } = useI18n();
+    const { te, tc, t } = useI18n();
     const modals = useModals();
     const popups = usePopups();
 
@@ -319,19 +333,32 @@ export default {
       bulkRemoveRemediationJobs,
     } = useRemediationJob();
 
-    const itemsIds = computed(() => mapIds(props.items));
+    const {
+      bulkRemoveLlms,
+      bulkEnableLlms,
+      bulkDisableLlms,
+    } = useLlm();
+
+    const {
+      bulkRemoveAnomalyMonitoredConnectors,
+      bulkEnableAnomalyMonitoredConnectors,
+      bulkDisableAnomalyMonitoredConnectors,
+    } = useAnomalyMonitoredConnector();
+
+    const itemsIds = computed(() => mapIds(props.items, props.itemId));
+
     const enablableItems = computed(() => (
       props.pbehavior ? props.items.filter(({ editable }) => editable) : props.items
     ));
 
-    const enablableItemsIds = computed(() => pickIds(enablableItems.value));
+    const enablableItemsIds = computed(() => pickIds(enablableItems.value, props.itemId));
 
     const someOneEnable = computed(() => enablableItems.value.some(({ enabled }) => enabled));
     const someOneDisable = computed(() => enablableItems.value.some(({ enabled }) => !enabled));
     const someOneRemovable = computed(() => props.items.some(({ deletable = true }) => deletable));
 
     const hideableItems = computed(() => props.items);
-    const hideableItemsIds = computed(() => pickIds(hideableItems.value));
+    const hideableItemsIds = computed(() => pickIds(hideableItems.value, props.itemId));
     const someOneVisible = computed(() => hideableItems.value.some(({ hidden }) => !hidden));
     const someOneHidden = computed(() => hideableItems.value.some(({ hidden }) => hidden));
 
@@ -468,6 +495,19 @@ export default {
           tooltipPrefix: 'remediation.job',
           exportProps: { job: true },
         },
+        [props.llm]: {
+          remove: bulkRemoveLlms,
+          enable: bulkEnableLlms,
+          disable: bulkDisableLlms,
+          tooltipPrefix: 'llm',
+          removePhraseMessagesKey: 'modals.confirmationPhrase.deleteSelectedLlms',
+        },
+        [props.anomalyMonitoredConnector]: {
+          remove: bulkRemoveAnomalyMonitoredConnectors,
+          enable: bulkEnableAnomalyMonitoredConnectors,
+          disable: bulkDisableAnomalyMonitoredConnectors,
+          tooltipPrefix: 'anomalyMonitoredConnector',
+        },
       }.true ?? {};
 
       const massRemoveTooltipKey = `${activeConfig.tooltipPrefix}.massRemove`;
@@ -509,18 +549,41 @@ export default {
      * Shows a confirmation modal for bulk remove operation.
      * On confirmation, removes selected items and refreshes the list.
      */
-    const showRemoveModal = () => modals.show({
-      name: MODALS.confirmation,
-      config: {
-        action: async () => {
-          const response = await config.value.remove({ data: pickIds(props.items) });
+    const showRemoveModal = () => {
+      if (config.value.removePhraseMessagesKey) {
+        const { removePhraseMessagesKey: keyPrefix } = config.value;
+        const count = props.items.length;
+        const countValues = { count };
 
-          showErrorPopups(response, `${config.value.tooltipPrefix}.removeForbidden`);
+        modals.show({
+          name: MODALS.confirmationPhrase,
+          config: {
+            title: tc(`${keyPrefix}.title`, count, countValues),
+            text: tc(`${keyPrefix}.text`, count, countValues),
+            phraseText: t(`${keyPrefix}.phraseText`),
+            phrase: t(`${keyPrefix}.phrase`),
+            action: async () => {
+              await config.value.remove({ data: pickIds(props.items, props.itemId) });
+            },
+          },
+        });
 
-          return afterSubmit();
+        return;
+      }
+
+      modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            const response = await config.value.remove({ data: pickIds(props.items, props.itemId) });
+
+            showErrorPopups(response, `${config.value.tooltipPrefix}.removeForbidden`);
+
+            return afterSubmit();
+          },
         },
-      },
-    });
+      });
+    };
 
     /**
      * Shows a confirmation modal for bulk enable operation.

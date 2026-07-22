@@ -152,6 +152,7 @@ export const USER_PERMISSIONS_GROUPS = {
   apiRules: 'api_rules',
   apiRemediation: 'api_remediation',
   apiPlanning: 'api_planning',
+  apiLlmChat: 'api_llm_chat',
 
   technical: 'technical',
 
@@ -207,10 +208,13 @@ export const USER_PERMISSIONS = {
     externalAuthTokens: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalAuthTokens`,
     viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
     templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateTesting`,
+    templateData: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateData`,
     jobManagement: `${USER_PERMISSIONS_PREFIXES.technical.admin}_job_management`,
     commentTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_commentTemplate`,
     externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalData`,
     entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.technical.admin}_entityInfoProperty`,
+    anomalyMonitoredConnector: `${USER_PERMISSIONS_PREFIXES.technical.admin}_anomalyMonitoredConnector`,
+    llm: `${USER_PERMISSIONS_PREFIXES.technical.admin}_llm`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -484,7 +488,11 @@ export const USER_PERMISSIONS = {
       launchEventRecording: `${USER_PERMISSIONS_PREFIXES.api}_launch_event_recording`,
       resendEvents: `${USER_PERMISSIONS_PREFIXES.api}_resend_events`,
       externalDataTable: `${USER_PERMISSIONS_PREFIXES.api}_external_data_table`,
+      commentTemplate: `${USER_PERMISSIONS_PREFIXES.api}_comment_template`,
+      llmConfig: `${USER_PERMISSIONS_PREFIXES.api}_llm_config`,
+      ticketStatusJobManagement: `${USER_PERMISSIONS_PREFIXES.api}_ticket_status_job_management`,
       templateData: `${USER_PERMISSIONS_PREFIXES.api}_template_data`,
+      anomalyMonitoredConnector: `${USER_PERMISSIONS_PREFIXES.api}_anomaly_monitored_connector`,
 
       ...featuresService.get('constants.USER_PERMISSIONS.api.general'),
     },

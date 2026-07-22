@@ -5189,6 +5189,20 @@ func (mr *MockCmdableMockRecorder) RenameNX(ctx, key, newkey any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RenameNX", reflect.TypeOf((*MockCmdable)(nil).RenameNX), ctx, key, newkey)
 }
 
+// ReplicaOf mocks base method.
+func (m *MockCmdable) ReplicaOf(ctx context.Context, host, port string) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReplicaOf", ctx, host, port)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// ReplicaOf indicates an expected call of ReplicaOf.
+func (mr *MockCmdableMockRecorder) ReplicaOf(ctx, host, port any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReplicaOf", reflect.TypeOf((*MockCmdable)(nil).ReplicaOf), ctx, host, port)
+}
+
 // Restore mocks base method.
 func (m *MockCmdable) Restore(ctx context.Context, key string, ttl time.Duration, value string) *redis.StatusCmd {
 	m.ctrl.T.Helper()
@@ -7065,6 +7079,20 @@ func (mr *MockCmdableMockRecorder) VInfo(ctx, key any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VInfo", reflect.TypeOf((*MockCmdable)(nil).VInfo), ctx, key)
 }
 
+// VIsMember mocks base method.
+func (m *MockCmdable) VIsMember(ctx context.Context, key, element string) *redis.BoolCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "VIsMember", ctx, key, element)
+	ret0, _ := ret[0].(*redis.BoolCmd)
+	return ret0
+}
+
+// VIsMember indicates an expected call of VIsMember.
+func (mr *MockCmdableMockRecorder) VIsMember(ctx, key, element any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VIsMember", reflect.TypeOf((*MockCmdable)(nil).VIsMember), ctx, key, element)
+}
+
 // VLinks mocks base method.
 func (m *MockCmdable) VLinks(ctx context.Context, key, element string) *redis.StringSliceCmd {
 	m.ctrl.T.Helper()
@@ -7191,6 +7219,20 @@ func (mr *MockCmdableMockRecorder) VSimWithArgs(ctx, key, val, args any) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VSimWithArgs", reflect.TypeOf((*MockCmdable)(nil).VSimWithArgs), ctx, key, val, args)
 }
 
+// VSimWithArgsWithAttribs mocks base method.
+func (m *MockCmdable) VSimWithArgsWithAttribs(ctx context.Context, key string, val redis.Vector, args *redis.VSimArgs) *redis.VectorAttribSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "VSimWithArgsWithAttribs", ctx, key, val, args)
+	ret0, _ := ret[0].(*redis.VectorAttribSliceCmd)
+	return ret0
+}
+
+// VSimWithArgsWithAttribs indicates an expected call of VSimWithArgsWithAttribs.
+func (mr *MockCmdableMockRecorder) VSimWithArgsWithAttribs(ctx, key, val, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VSimWithArgsWithAttribs", reflect.TypeOf((*MockCmdable)(nil).VSimWithArgsWithAttribs), ctx, key, val, args)
+}
+
 // VSimWithArgsWithScores mocks base method.
 func (m *MockCmdable) VSimWithArgsWithScores(ctx context.Context, key string, val redis.Vector, args *redis.VSimArgs) *redis.VectorScoreSliceCmd {
 	m.ctrl.T.Helper()
@@ -7203,6 +7245,20 @@ func (m *MockCmdable) VSimWithArgsWithScores(ctx context.Context, key string, va
 func (mr *MockCmdableMockRecorder) VSimWithArgsWithScores(ctx, key, val, args any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VSimWithArgsWithScores", reflect.TypeOf((*MockCmdable)(nil).VSimWithArgsWithScores), ctx, key, val, args)
+}
+
+// VSimWithArgsWithScoresWithAttribs mocks base method.
+func (m *MockCmdable) VSimWithArgsWithScoresWithAttribs(ctx context.Context, key string, val redis.Vector, args *redis.VSimArgs) *redis.VectorScoreAttribSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "VSimWithArgsWithScoresWithAttribs", ctx, key, val, args)
+	ret0, _ := ret[0].(*redis.VectorScoreAttribSliceCmd)
+	return ret0
+}
+
+// VSimWithArgsWithScoresWithAttribs indicates an expected call of VSimWithArgsWithScoresWithAttribs.
+func (mr *MockCmdableMockRecorder) VSimWithArgsWithScoresWithAttribs(ctx, key, val, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VSimWithArgsWithScoresWithAttribs", reflect.TypeOf((*MockCmdable)(nil).VSimWithArgsWithScoresWithAttribs), ctx, key, val, args)
 }
 
 // VSimWithScores mocks base method.
@@ -13809,6 +13865,20 @@ func (mr *MockUniversalClientMockRecorder) RenameNX(ctx, key, newkey any) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RenameNX", reflect.TypeOf((*MockUniversalClient)(nil).RenameNX), ctx, key, newkey)
 }
 
+// ReplicaOf mocks base method.
+func (m *MockUniversalClient) ReplicaOf(ctx context.Context, host, port string) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReplicaOf", ctx, host, port)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// ReplicaOf indicates an expected call of ReplicaOf.
+func (mr *MockUniversalClientMockRecorder) ReplicaOf(ctx, host, port any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReplicaOf", reflect.TypeOf((*MockUniversalClient)(nil).ReplicaOf), ctx, host, port)
+}
+
 // Restore mocks base method.
 func (m *MockUniversalClient) Restore(ctx context.Context, key string, ttl time.Duration, value string) *redis.StatusCmd {
 	m.ctrl.T.Helper()
@@ -15723,6 +15793,20 @@ func (mr *MockUniversalClientMockRecorder) VInfo(ctx, key any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VInfo", reflect.TypeOf((*MockUniversalClient)(nil).VInfo), ctx, key)
 }
 
+// VIsMember mocks base method.
+func (m *MockUniversalClient) VIsMember(ctx context.Context, key, element string) *redis.BoolCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "VIsMember", ctx, key, element)
+	ret0, _ := ret[0].(*redis.BoolCmd)
+	return ret0
+}
+
+// VIsMember indicates an expected call of VIsMember.
+func (mr *MockUniversalClientMockRecorder) VIsMember(ctx, key, element any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VIsMember", reflect.TypeOf((*MockUniversalClient)(nil).VIsMember), ctx, key, element)
+}
+
 // VLinks mocks base method.
 func (m *MockUniversalClient) VLinks(ctx context.Context, key, element string) *redis.StringSliceCmd {
 	m.ctrl.T.Helper()
@@ -15849,6 +15933,20 @@ func (mr *MockUniversalClientMockRecorder) VSimWithArgs(ctx, key, val, args any)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VSimWithArgs", reflect.TypeOf((*MockUniversalClient)(nil).VSimWithArgs), ctx, key, val, args)
 }
 
+// VSimWithArgsWithAttribs mocks base method.
+func (m *MockUniversalClient) VSimWithArgsWithAttribs(ctx context.Context, key string, val redis.Vector, args *redis.VSimArgs) *redis.VectorAttribSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "VSimWithArgsWithAttribs", ctx, key, val, args)
+	ret0, _ := ret[0].(*redis.VectorAttribSliceCmd)
+	return ret0
+}
+
+// VSimWithArgsWithAttribs indicates an expected call of VSimWithArgsWithAttribs.
+func (mr *MockUniversalClientMockRecorder) VSimWithArgsWithAttribs(ctx, key, val, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VSimWithArgsWithAttribs", reflect.TypeOf((*MockUniversalClient)(nil).VSimWithArgsWithAttribs), ctx, key, val, args)
+}
+
 // VSimWithArgsWithScores mocks base method.
 func (m *MockUniversalClient) VSimWithArgsWithScores(ctx context.Context, key string, val redis.Vector, args *redis.VSimArgs) *redis.VectorScoreSliceCmd {
 	m.ctrl.T.Helper()
@@ -15861,6 +15959,20 @@ func (m *MockUniversalClient) VSimWithArgsWithScores(ctx context.Context, key st
 func (mr *MockUniversalClientMockRecorder) VSimWithArgsWithScores(ctx, key, val, args any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VSimWithArgsWithScores", reflect.TypeOf((*MockUniversalClient)(nil).VSimWithArgsWithScores), ctx, key, val, args)
+}
+
+// VSimWithArgsWithScoresWithAttribs mocks base method.
+func (m *MockUniversalClient) VSimWithArgsWithScoresWithAttribs(ctx context.Context, key string, val redis.Vector, args *redis.VSimArgs) *redis.VectorScoreAttribSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "VSimWithArgsWithScoresWithAttribs", ctx, key, val, args)
+	ret0, _ := ret[0].(*redis.VectorScoreAttribSliceCmd)
+	return ret0
+}
+
+// VSimWithArgsWithScoresWithAttribs indicates an expected call of VSimWithArgsWithScoresWithAttribs.
+func (mr *MockUniversalClientMockRecorder) VSimWithArgsWithScoresWithAttribs(ctx, key, val, args any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VSimWithArgsWithScoresWithAttribs", reflect.TypeOf((*MockUniversalClient)(nil).VSimWithArgsWithScoresWithAttribs), ctx, key, val, args)
 }
 
 // VSimWithScores mocks base method.

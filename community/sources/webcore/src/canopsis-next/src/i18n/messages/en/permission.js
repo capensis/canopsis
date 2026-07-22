@@ -61,6 +61,7 @@ export default {
     [USER_PERMISSIONS_GROUPS.apiRules]: 'Rules',
     [USER_PERMISSIONS_GROUPS.apiRemediation]: 'Remediation',
     [USER_PERMISSIONS_GROUPS.apiPlanning]: 'Planning',
+    [USER_PERMISSIONS_GROUPS.apiLlmChat]: 'LLM chat',
     [USER_PERMISSIONS_GROUPS.technical]: 'Technical',
     [USER_PERMISSIONS_GROUPS.technicalAdmin]: 'Admin',
     [USER_PERMISSIONS_GROUPS.technicalAdminCommunication]: 'Communication',
@@ -253,11 +254,14 @@ export default {
     [USER_PERMISSIONS.technical.widgetTemplate]: 'Widget templates',
     [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Template testing',
+    [USER_PERMISSIONS.technical.templateData]: 'Template data',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'External auth tokens',
     [USER_PERMISSIONS.technical.jobManagement]: 'Jobs',
     [USER_PERMISSIONS.technical.commentTemplate]: 'Comment templates',
     [USER_PERMISSIONS.technical.externalDataTable]: 'External data',
     [USER_PERMISSIONS.technical.entityInfoProperty]: 'Entity infos',
+    [USER_PERMISSIONS.technical.llm]: 'LLMs',
+    [USER_PERMISSIONS.technical.anomalyMonitoredConnector]: 'Anomaly monitored connectors',
 
     /**
      * Technical Admin Access
@@ -318,6 +322,7 @@ export default {
     [USER_PERMISSIONS.api.general.alarmUpdate]: 'Update alarms',
     [USER_PERMISSIONS.api.general.associativeTable]: 'Associative tables',
     [USER_PERMISSIONS.api.general.broadcastMessage]: 'Broadcast Message',
+    [USER_PERMISSIONS.api.general.commentTemplate]: 'Comment templates',
     [USER_PERMISSIONS.api.general.theme]: 'Theme colors',
     [USER_PERMISSIONS.api.general.contextgraph]: 'Context graph import',
     [USER_PERMISSIONS.api.general.corporatePattern]: 'Corporate patterns',
@@ -329,11 +334,13 @@ export default {
     [USER_PERMISSIONS.api.general.entityservice]: 'Entity services',
     [USER_PERMISSIONS.api.general.entityInfoProperty]: 'Entity infos properties',
     [USER_PERMISSIONS.api.general.event]: 'Events',
+    [USER_PERMISSIONS.api.general.externalDataTable]: 'External data tables',
     [USER_PERMISSIONS.api.general.exportConfigurations]: 'Export configurations',
     [USER_PERMISSIONS.api.general.files]: 'Files',
     [USER_PERMISSIONS.api.general.healthcheck]: 'Healthcheck',
     [USER_PERMISSIONS.api.general.icon]: 'Icons',
     [USER_PERMISSIONS.api.general.junit]: 'JUnit',
+    [USER_PERMISSIONS.api.general.llmConfig]: 'LLM configuration',
     [USER_PERMISSIONS.api.general.kpiFilter]: 'KPI Filters',
     [USER_PERMISSIONS.api.general.launchEventRecording]: 'Launch events recording',
     [USER_PERMISSIONS.api.general.maintenance]: 'Maintenance mode',
@@ -349,6 +356,7 @@ export default {
     [USER_PERMISSIONS.api.general.shareToken]: 'Share tokens',
     [USER_PERMISSIONS.api.general.stateSettings]: 'State settings',
     [USER_PERMISSIONS.api.general.techmetrics]: 'Tech metrics',
+    [USER_PERMISSIONS.api.general.ticketStatusJobManagement]: 'Ticket status job management',
     [USER_PERMISSIONS.api.general.techmetricsSettings]: 'Tech metrics settings',
     [USER_PERMISSIONS.api.general.userInterfaceDelete]: 'Delete user interface',
     [USER_PERMISSIONS.api.general.userInterfaceUpdate]: 'Update user interface',
@@ -356,6 +364,7 @@ export default {
     [USER_PERMISSIONS.api.general.viewgroup]: 'View groups',
     [USER_PERMISSIONS.api.general.widgetTemplate]: 'Widget templates',
     [USER_PERMISSIONS.api.general.templateData]: 'Template data',
+    [USER_PERMISSIONS.api.general.anomalyMonitoredConnector]: 'Anomaly monitored connectors',
 
     /**
      * API Permissions Rules
@@ -372,6 +381,7 @@ export default {
     [USER_PERMISSIONS.api.rules.resolveRule]: 'Resolve rules',
     [USER_PERMISSIONS.api.rules.snmpRule]: 'SNMP rules',
     [USER_PERMISSIONS.api.rules.snmpMib]: 'SNMP MIB',
+    [USER_PERMISSIONS.api.rules.webhookTokenRule]: 'Webhook token rules',
 
     /**
      * API Permissions Remediation

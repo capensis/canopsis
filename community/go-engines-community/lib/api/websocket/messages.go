@@ -1,5 +1,7 @@
 package websocket
 
+//go:generate go tool github.com/mailru/easyjson/easyjson -no_std_marshalers
+
 const (
 	ClientMessageClientPing = iota
 	ClientMessageJoin
@@ -14,8 +16,13 @@ const (
 	ServerMessageError
 	ServerMessageCloseRoom
 	ServerMessageAuthSuccess
+	ServerMessageJoined
+	ServerMessageLeft
 )
 
+// ClientMessage
+//
+// easyjson:json
 type ClientMessage struct {
 	Type    int    `json:"type"`
 	Room    string `json:"room"`
@@ -23,11 +30,19 @@ type ClientMessage struct {
 	Payload any    `json:"payload"`
 }
 
+// ServerMessage
+//
+// easyjson:json
 type ServerMessage struct {
 	Type    int    `json:"type"`
 	Room    string `json:"room,omitempty"`
 	Payload any    `json:"payload,omitempty"`
 	Error   int    `json:"error,omitempty"`
+}
+
+type User struct {
+	ID     string
+	Locale string
 }
 
 type ConnectionInfo struct {

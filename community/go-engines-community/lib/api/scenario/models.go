@@ -49,6 +49,7 @@ type Trigger struct {
 	//   * `uncancel` - Alarm has been uncancelled
 	//   * `comment` - Alarm has been commented
 	//   * `declareticketwebhook` - Ticket has been declared by the webhook
+	//   * `declareticketwebhookfail` - Ticket is failed to be declared by the webhook
 	//   * `assocticket` - Ticket has been associated with an alarm
 	//   * `snooze` - Alarm has been snoozed
 	//   * `unsnooze` - Alarm has been unsnoozed
@@ -65,7 +66,7 @@ type Trigger struct {
 	//   * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
 	//   * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
 	//   * `eventscount` - Alarm check events count
-	Type      string `json:"type" binding:"required,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete autoinstructionresultok autoinstructionresultfail eventscount"`
+	Type      string `json:"type" binding:"required,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticketwebhook declareticketwebhookfail assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete autoinstructionresultok autoinstructionresultfail eventscount"`
 	Threshold int    `json:"threshold,omitempty" binding:"required_if=Type eventscount,excluded_unless=Type eventscount,omitempty,gt=1"`
 }
 
@@ -137,7 +138,8 @@ type ActionRequest struct {
 	Parameters               action.Parameters `json:"parameters"`
 	Comment                  string            `json:"comment"`
 	DropScenarioIfNotMatched *bool             `json:"drop_scenario_if_not_matched" binding:"required"`
-	EmitTrigger              *bool             `json:"emit_trigger" binding:"required"`
+	EmitTriggerSuccess       *bool             `json:"emit_trigger_success" binding:"required"`
+	EmitTriggerFail          *bool             `json:"emit_trigger_fail"`
 
 	patternfields.EntityRequest `bson:",inline"`
 	patternfields.AlarmRequest  `bson:",inline"`
@@ -162,7 +164,8 @@ type Action struct {
 	Comment                  string     `bson:"comment" json:"comment"`
 	Parameters               Parameters `bson:"parameters,omitempty" json:"parameters"`
 	DropScenarioIfNotMatched bool       `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
-	EmitTrigger              bool       `bson:"emit_trigger" json:"emit_trigger"`
+	EmitTriggerSuccess       bool       `bson:"emit_trigger_success" json:"emit_trigger_success"`
+	EmitTriggerFail          bool       `bson:"emit_trigger_fail" json:"emit_trigger_fail"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`

@@ -49,7 +49,7 @@
       :loading="loading"
       :server-items-length="totalItems"
       :no-data-text="noDataText"
-      :options="options"
+      :options="vDataTableOptions"
       :header-text="headerText"
       :footer-props="{ itemsPerPageOptions: itemsPerPageItems }"
       :item-key="itemKey"
@@ -64,7 +64,7 @@
       :ellipsis-headers="ellipsisHeaders"
       :expand-icon="expandIcon"
       checkbox-color="primary"
-      @update:options="updateOptions"
+      @update:options="updateDataTableOptions"
     >
       <template v-if="hasHeaderSelectSlot" #header.data-table-select="props">
         <slot name="header.data-table-select" v-bind="props" />
@@ -159,7 +159,7 @@
 </template>
 
 <script>
-import { keyBy } from 'lodash';
+import { keyBy, pick } from 'lodash';
 
 import { mapIds } from '@/helpers/array';
 import { prepareQueryWithAdvancedSearch, prepareQueryWithoutAdvancedSearch } from '@/helpers/search/advanced-search';
@@ -246,6 +246,10 @@ export default {
       type: Object,
       required: false,
     },
+    searchLabel: {
+      type: String,
+      default: '',
+    },
     tableClass: {
       type: [String, Object],
       required: false,
@@ -269,10 +273,6 @@ export default {
     expandIcon: {
       type: String,
       default: '$expand',
-    },
-    searchLabel: {
-      type: String,
-      default: '',
     },
     advancedSearchAttributes: {
       type: Array,
@@ -302,6 +302,10 @@ export default {
     };
   },
   computed: {
+    vDataTableOptions() {
+      return pick(this.options, ['page', 'itemsPerPage', 'sortBy', 'sortDesc', 'groupBy', 'groupDesc', 'mustSort', 'multiSort']);
+    },
+
     preparedHeaders() {
       const headers = [];
 
@@ -390,6 +394,13 @@ export default {
       this.selected = [];
 
       this.$emit('update:options', options);
+    },
+
+    updateDataTableOptions(options) {
+      return this.updateOptions({
+        ...this.options,
+        ...pick(options, ['page', 'itemsPerPage', 'sortBy', 'sortDesc', 'groupBy', 'groupDesc', 'mustSort', 'multiSort']),
+      });
     },
 
     updateSearch(search) {

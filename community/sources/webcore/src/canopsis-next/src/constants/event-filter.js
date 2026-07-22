@@ -1,3 +1,6 @@
+import { PATTERN_CONDITIONS, PATTERNS_FIELDS } from './pattern';
+import { EVENT_TYPES } from './event';
+
 export const EVENT_FILTER_TYPES = {
   drop: 'drop',
   break: 'break',
@@ -53,6 +56,11 @@ export const EVENT_FILTER_FAILURE_TYPES = {
   other: 4,
 };
 
+export const EVENT_FILTER_SET_FIELD_ITEMS = [
+  'Output',
+  'LongOutput',
+];
+
 export const EVENT_FILTER_SET_TAGS_FIELDS = [
   EVENT_FILTER_PATTERN_FIELDS.output,
   EVENT_FILTER_PATTERN_FIELDS.extraInfos,
@@ -73,4 +81,16 @@ export const EVENT_FILTER_EXPAND_PANEL_TABS = {
   action: 'action',
   externalData: 'externalData',
   errors: 'errors',
+};
+
+export const EVENT_FILTER_DEFAULT_PATTERN = {
+  [PATTERNS_FIELDS.event]: [[
+    {
+      field: EVENT_FILTER_PATTERN_FIELDS.eventType,
+      cond: {
+        value: EVENT_TYPES.check,
+        type: PATTERN_CONDITIONS.equal,
+      },
+    },
+  ]],
 };

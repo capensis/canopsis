@@ -69,10 +69,12 @@ import availabilityModule from './availability';
 import eventsRecordModule from './events-record';
 import dbExportModule from './db-export';
 import externalDataTableModule from './external-data-table';
+import llmModule from './llm';
 import templateModule from './template';
 import copyModule from './copy';
 import webhookTokenRuleModule from './webhook-token-rule';
 import ticketStatusJobModule from './ticket-status-job';
+import anomalyMonitoredConnectorModule from './anomaly-monitored-connector';
 
 export default {
   alarm: alarmModule,
@@ -146,8 +148,10 @@ export default {
   eventsRecord: eventsRecordModule,
   dbExport: dbExportModule,
   externalDataTable: externalDataTableModule,
+  llm: llmModule,
   template: templateModule,
   copy: copyModule,
   webhookTokenRule: webhookTokenRuleModule,
   ticketStatusJob: ticketStatusJobModule,
+  anomalyMonitoredConnector: anomalyMonitoredConnectorModule,
 };

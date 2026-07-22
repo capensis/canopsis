@@ -44,6 +44,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
   />
   <c-patterns-field-stub
     entity-counters-type=""
+    expanded-event=""
     some-required="true"
     value="[object Object]"
     with-entity="true"
@@ -97,6 +98,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
   />
   <c-patterns-field-stub
     entity-counters-type=""
+    expanded-event=""
     required="true"
     value="[object Object]"
     with-event=""
@@ -174,6 +176,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
   />
   <c-patterns-field-stub
     entity-counters-type=""
+    expanded-event=""
     some-required="true"
     value="[object Object]"
     with-entity="true"
@@ -227,6 +230,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
   />
   <c-patterns-field-stub
     entity-counters-type=""
+    expanded-event=""
     some-required="true"
     value="[object Object]"
     with-entity="true"
@@ -307,6 +311,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
   />
   <c-patterns-field-stub
     entity-counters-type=""
+    expanded-event=""
     some-required="true"
     value="[object Object]"
     with-entity="true"
@@ -355,6 +360,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
   />
   <c-patterns-field-stub
     entity-counters-type=""
+    expanded-event=""
     some-required="true"
     with-entity="true"
     with-event=""

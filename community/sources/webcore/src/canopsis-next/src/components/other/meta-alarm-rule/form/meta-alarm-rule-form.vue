@@ -1,5 +1,5 @@
 <template>
-  <v-stepper :value="activeStep" @change="$emit('update:active-step', $event)">
+  <v-stepper v-model="activeStepComputed">
     <v-stepper-header>
       <v-stepper-step
         :complete="activeStep > META_ALARMS_FORM_STEPS.general"
@@ -78,11 +78,12 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { META_ALARMS_FORM_STEPS, META_ALARMS_RULE_TYPES } from '@/constants';
 
 import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
+import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
 import MetaAlarmRuleTypeForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-type-form.vue';
@@ -111,7 +112,7 @@ export default {
     },
     activeStep: {
       type: Number,
-      default: 0,
+      default: META_ALARMS_FORM_STEPS.general,
     },
     alarmInfos: {
       type: Array,
@@ -126,7 +127,7 @@ export default {
       default: () => ({}),
     },
   },
-  setup(props, { expose }) {
+  setup(props, { expose, emit }) {
     const generalStepElement = ref(null);
     const typeStepElement = ref(null);
     const parametersStepElement = ref(null);
@@ -146,6 +147,13 @@ export default {
       validateChildren: validateParametersChildren,
     } = useValidationElementChildren(parametersStepElement);
 
+    const activeStepComputed = computed({
+      get: () => props.activeStep,
+      set: value => emit('update:active-step', value),
+    });
+
+    useAiChatExpand({ activeTab: activeStepComputed, neededTab: META_ALARMS_FORM_STEPS.parameters });
+
     expose({
       hasGeneralError,
       hasTypeError,
@@ -157,6 +165,8 @@ export default {
 
     return {
       META_ALARMS_FORM_STEPS,
+
+      activeStepComputed,
 
       generalStepElement,
       typeStepElement,

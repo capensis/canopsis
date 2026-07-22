@@ -69,6 +69,7 @@ func NewStore(
 		commentTemplateCollection: dbClient.Collection(mongo.CommentTemplateMongoCollection),
 		pbhTypeCollection:         dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
 		pbhReasonCollection:       dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
+		llmChatCollection:         dbClient.Collection(mongo.LLMChatHistoryCollection),
 		authorProvider:            authorProvider,
 		transformer:               transformer,
 		enforcer:                  enforcer,
@@ -100,6 +101,7 @@ type store struct {
 	commentTemplateCollection mongo.DbCollection
 	pbhTypeCollection         mongo.DbCollection
 	pbhReasonCollection       mongo.DbCollection
+	llmChatCollection         mongo.DbCollection
 	authorProvider            author.Provider
 	transformer               patternfields.Transformer
 	enforcer                  security.Enforcer
@@ -325,6 +327,8 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			}
 
 			filters[i] = doc
+			// Propagate generated ID back to the request so updateLLMChats can link the chat to this filter.
+			r.Filters[i].ID = doc.ID
 		}
 
 		if len(valErrs) > 0 {
@@ -343,7 +347,13 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			}
 		}
 
+		err = s.updateLLMChats(ctx, r.EditRequest)
+		if err != nil {
+			return err
+		}
+
 		response, err = s.GetOneBy(ctx, widget.ID)
+
 		return err
 	})
 
@@ -429,7 +439,32 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			valErrs = append(valErrs, pbhValErrs...)
 		}
 
-		filters := make(map[string]view.WidgetFilter, len(r.Filters))
+		cursor, err := s.filterCollection.Find(ctx, bson.M{"widget": widget.ID, "is_user_preference": false},
+			options.Find().SetProjection(bson.M{"_id": 1}))
+		if err != nil {
+			return err
+		}
+
+		defer cursor.Close(ctx)
+		existedFilters := make(map[string]bool, len(r.Filters))
+		for cursor.Next(ctx) {
+			d := struct {
+				ID string `bson:"_id"`
+			}{}
+			err = cursor.Decode(&d)
+			if err != nil {
+				return err
+			}
+
+			existedFilters[d.ID] = true
+		}
+
+		if err = cursor.Err(); err != nil {
+			return err
+		}
+
+		filterWriteModels := make([]mongodriver.WriteModel, 0, len(r.Filters))
+		updateFilterIds := make([]string, 0, len(r.Filters))
 		for i, filterRequest := range r.Filters {
 			doc := view.WidgetFilter{
 				Title:            filterRequest.Title,
@@ -447,45 +482,28 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 				continue
 			}
 
-			filters[filterRequest.ID] = doc
+			if existedFilters[filterRequest.ID] {
+				filterWriteModels = append(filterWriteModels, mongodriver.NewUpdateOneModel().
+					SetFilter(bson.M{"_id": filterRequest.ID}).
+					SetUpdate(bson.M{"$set": doc}))
+				updateFilterIds = append(updateFilterIds, filterRequest.ID)
+			} else {
+				doc.ID = utils.NewID()
+				doc.Created = now
+				// Use id from request only to set main filter.
+				if filterRequest.ID == widget.Parameters.MainFilter {
+					widget.Parameters.MainFilter = doc.ID
+				}
+
+				filterWriteModels = append(filterWriteModels, mongodriver.NewInsertOneModel().SetDocument(doc))
+				updateFilterIds = append(updateFilterIds, doc.ID)
+				// Propagate generated ID back to the request so updateLLMChats can link the chat to this filter.
+				r.Filters[i].ID = doc.ID
+			}
 		}
 
 		if len(valErrs) > 0 {
 			return validation.NewError(valErrs, r)
-		}
-
-		cursor, err := s.filterCollection.Find(ctx, bson.M{"widget": widget.ID, "is_user_preference": false})
-		if err != nil {
-			return err
-		}
-		defer cursor.Close(ctx)
-		filterWriteModels := make([]mongodriver.WriteModel, 0, len(filters))
-		updateFilterIds := make([]string, 0, len(filters))
-		for cursor.Next(ctx) {
-			idModel := struct {
-				ID string `bson:"_id"`
-			}{}
-			err := cursor.Decode(&idModel)
-			if err != nil {
-				return err
-			}
-			if doc, ok := filters[idModel.ID]; ok {
-				updateFilterIds = append(updateFilterIds, idModel.ID)
-				filterWriteModels = append(filterWriteModels, mongodriver.NewUpdateOneModel().
-					SetFilter(bson.M{"_id": idModel.ID}).
-					SetUpdate(bson.M{"$set": doc}))
-				delete(filters, idModel.ID)
-			}
-		}
-		for id, doc := range filters {
-			doc.ID = utils.NewID()
-			doc.Created = now
-			updateFilterIds = append(updateFilterIds, doc.ID)
-			// Use id from request only to set main filter.
-			if id == widget.Parameters.MainFilter {
-				widget.Parameters.MainFilter = doc.ID
-			}
-			filterWriteModels = append(filterWriteModels, mongodriver.NewInsertOneModel().SetDocument(doc))
 		}
 
 		update := bson.M{"$set": widget}
@@ -538,6 +556,11 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		_, err = s.tplTestCollection.UpdateMany(ctx, bson.M{"rule._id": widget.ID, "type": template.TypeTestWidget}, bson.M{
 			"$set": bson.M{"rule.name": widget.Title},
 		})
+		if err != nil {
+			return err
+		}
+
+		err = s.updateLLMChats(ctx, r.EditRequest)
 		if err != nil {
 			return err
 		}
@@ -1043,6 +1066,95 @@ func (s *store) fetchPatterns(ctx context.Context, filters []FilterRequest) (pat
 	}
 
 	return patterns, aliasProps, nil
+}
+
+func (s *store) updateLLMChats(ctx context.Context, r EditRequest) error {
+	chatIDs := make([]string, 0, len(r.Filters))
+	found := make(map[string]bool, len(r.Filters))
+	valErrs := make(validator.ValidationErrors, 0)
+	for i, f := range r.Filters {
+		if f.LLMChat != "" {
+			if found[f.LLMChat] {
+				valErrs = append(valErrs, validation.NewFieldError("exist", "LLMChat", "Filters."+strconv.Itoa(i)+".LLMChat"))
+				continue
+			}
+
+			chatIDs = append(chatIDs, f.LLMChat)
+			found[f.LLMChat] = true
+		}
+	}
+
+	if len(valErrs) > 0 {
+		return validation.NewError(valErrs, r)
+	}
+
+	if len(chatIDs) == 0 {
+		return nil
+	}
+
+	cursor, err := s.llmChatCollection.Find(ctx,
+		bson.M{
+			"_id":     bson.M{"$in": chatIDs},
+			"user":    r.Author,
+			"rule":    nil,
+			"context": view.LLMContextPrefixWidgetFilter + r.Type,
+		},
+		options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		return fmt.Errorf("failed to find llm chats: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+	existChats := make(map[string]bool, len(chatIDs))
+	for cursor.Next(ctx) {
+		var d struct {
+			ID string `bson:"_id"`
+		}
+
+		err = cursor.Decode(&d)
+		if err != nil {
+			return fmt.Errorf("failed to decode llm chat: %w", err)
+		}
+
+		existChats[d.ID] = true
+	}
+
+	if err = cursor.Err(); err != nil {
+		return fmt.Errorf("failed to process llm chat mongodb cursor correctly: %w", err)
+	}
+
+	writeModels := make([]mongodriver.WriteModel, 0, len(r.Filters))
+	for i, f := range r.Filters {
+		if f.LLMChat == "" {
+			continue
+		}
+
+		if !existChats[f.LLMChat] {
+			valErrs = append(valErrs, validation.NewFieldError("not_exist", "LLMChat", "Filters."+strconv.Itoa(i)+".LLMChat"))
+			continue
+		}
+
+		writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+			SetFilter(bson.M{
+				"_id":     f.LLMChat,
+				"user":    r.Author,
+				"rule":    nil,
+				"context": view.LLMContextPrefixWidgetFilter + r.Type,
+			}).
+			SetUpdate(bson.M{"$set": bson.M{"rule": bson.M{
+				"_id":  f.ID,
+				"name": f.Title,
+			}}}),
+		)
+	}
+
+	if len(valErrs) > 0 {
+		return validation.NewError(valErrs, r)
+	}
+
+	_, err = s.llmChatCollection.BulkWrite(ctx, writeModels)
+
+	return err
 }
 
 func transformEditRequestToModel(r EditRequest) view.Widget {
