@@ -1,31 +1,25 @@
 <template>
-  <div>
-    <c-page-header />
+  <c-page @refresh="fetchList">
+    <v-expand-transition>
+      <events-records-header
+        :recordings="eventsRecordRecordings"
+        :resendings="eventsRecordResendings"
+        :limit="eventsRecordLimit"
+        @start:recording="startRecording"
+      />
+    </v-expand-transition>
 
-    <v-card class="ma-4 mt-0">
-      <v-card-text>
-        <v-expand-transition>
-          <events-records-header
-            :recordings="eventsRecordRecordings"
-            :resendings="eventsRecordResendings"
-            :limit="eventsRecordLimit"
-            @start:recording="startRecording"
-          />
-        </v-expand-transition>
-
-        <events-records-list
-          :events-records="eventsRecords"
-          :pending="pending"
-          :options="options"
-          :total-items="meta.total_count"
-          @stop="stopRecording"
-          @show="showEventsRecordModal"
-          @remove="showRemoveEventsRecordModal"
-          @update:options="updateOptions"
-        />
-      </v-card-text>
-    </v-card>
-  </div>
+    <events-records-list
+      :events-records="eventsRecords"
+      :pending="pending"
+      :options="options"
+      :total-items="meta.total_count"
+      @stop="stopRecording"
+      @show="showEventsRecordModal"
+      @remove="showRemoveEventsRecordModal"
+      @update:options="updateOptions"
+    />
+  </c-page>
 </template>
 
 <script>

@@ -1,18 +1,12 @@
 <template>
-  <div>
-    <c-page-header />
-
-    <v-tabs
-      v-model="activeTab"
-      bg-color="transparent"
-      class="ma-4 mt-0"
-      color="primary"
-      align-tabs="center"
-    >
-      <v-tab
-        v-if="hasReadAccessForTemplateData"
-        :value="TEMPLATE_TESTING_TABS.data"
-      >
+  <c-page
+    :creatable="creatable"
+    :create-tooltip="t('modals.createTemplateData.title')"
+    @refresh="refresh"
+    @create="showCreateTemplateTestingDataModal"
+  >
+    <v-tabs v-model="activeTab" bg-color="transparent" color="primary" align-tabs="center">
+      <v-tab v-if="hasReadAccessForTemplateData" :value="TEMPLATE_TESTING_TABS.data">
         {{ t('templateTesting.tabs.data') }}
       </v-tab>
       <v-tab :value="TEMPLATE_TESTING_TABS.tests">
@@ -20,42 +14,33 @@
       </v-tab>
     </v-tabs>
 
-    <v-card class="mx-4 mb-4 mt-0">
-      <v-window v-model="activeTab">
-        <v-window-item
-          v-if="hasReadAccessForTemplateData"
-          :value="TEMPLATE_TESTING_TABS.data"
-        >
+    <v-window v-model="activeTab">
+      <v-window-item v-if="hasReadAccessForTemplateData" :value="TEMPLATE_TESTING_TABS.data">
+        <v-card-text>
           <template-testing-data ref="templateTestingDataElement" />
-        </v-window-item>
+        </v-card-text>
+      </v-window-item>
 
-        <v-window-item :value="TEMPLATE_TESTING_TABS.tests">
+      <v-window-item :value="TEMPLATE_TESTING_TABS.tests">
+        <v-card-text>
           <template-testing-tests ref="templateTestingTestsElement" />
-        </v-window-item>
-      </v-window>
-    </v-card>
-
-    <c-fab-btn
-      :has-access="creatable"
-      @refresh="refresh"
-      @create="showCreateTemplateTestingDataModal"
-    >
-      <span>{{ t('modals.createTemplateData.title') }}</span>
-    </c-fab-btn>
-  </div>
+        </v-card-text>
+      </v-window-item>
+    </v-window>
+  </c-page>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref } from 'vue'
 
-import { TEMPLATE_TESTING_TABS, USER_PERMISSIONS } from '@/constants';
+import { TEMPLATE_TESTING_TABS, USER_PERMISSIONS } from '@/constants'
 
-import { useCRUDPermissions } from '@/hooks/auth';
-import { useI18n } from '@/hooks/i18n';
+import { useCRUDPermissions } from '@/hooks/auth'
+import { useI18n } from '@/hooks/i18n'
 
-import { useTemplateDataModals } from '@/components/other/template-testing/hooks/template-testing-data';
-import TemplateTestingData from '@/components/other/template-testing/template-testing-data.vue';
-import TemplateTestingTests from '@/components/other/template-testing/template-testing-tests.vue';
+import { useTemplateDataModals } from '@/components/other/template-testing/hooks/template-testing-data'
+import TemplateTestingData from '@/components/other/template-testing/template-testing-data.vue'
+import TemplateTestingTests from '@/components/other/template-testing/template-testing-tests.vue'
 
 export default {
   components: {
@@ -64,27 +49,28 @@ export default {
   },
 
   setup() {
-    const { t } = useI18n();
-    const templateTestingDataElement = ref(null);
-    const templateTestingTestsElement = ref(null);
+    const { t } = useI18n()
+    const templateTestingDataElement = ref(null)
+    const templateTestingTestsElement = ref(null)
 
     const {
       hasCreateAccess: hasCreateAccessForTemplateData,
       hasReadAccess: hasReadAccessForTemplateData,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.templateData);
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.templateData)
 
-    const activeTab = ref(TEMPLATE_TESTING_TABS.data);
+    const activeTab = ref(TEMPLATE_TESTING_TABS.data)
 
-    const creatable = computed(() => (
-      activeTab.value === TEMPLATE_TESTING_TABS.data && hasCreateAccessForTemplateData.value
-    ));
+    const creatable = computed(
+      () => activeTab.value === TEMPLATE_TESTING_TABS.data && hasCreateAccessForTemplateData.value,
+    )
 
-    const refresh = () => ({
-      [TEMPLATE_TESTING_TABS.data]: templateTestingDataElement.value?.fetchList,
-      [TEMPLATE_TESTING_TABS.tests]: templateTestingTestsElement.value?.fetchList,
-    }[activeTab.value]?.());
+    const refresh = () =>
+      ({
+        [TEMPLATE_TESTING_TABS.data]: templateTestingDataElement.value?.fetchList,
+        [TEMPLATE_TESTING_TABS.tests]: templateTestingTestsElement.value?.fetchList,
+      })[activeTab.value]?.()
 
-    const { showCreateTemplateTestingDataModal } = useTemplateDataModals({ refresh });
+    const { showCreateTemplateTestingDataModal } = useTemplateDataModals({ refresh })
 
     return {
       t,
@@ -100,7 +86,7 @@ export default {
 
       refresh,
       showCreateTemplateTestingDataModal,
-    };
+    }
   },
-};
+}
 </script>
