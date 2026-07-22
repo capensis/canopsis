@@ -24,7 +24,7 @@ import (
 type rpcPBehaviorClientMessageProcessor struct {
 	DbClient                 mongo.DbClient
 	MetricsSender            metrics.Sender
-	PublishCh                libamqp.Channel
+	PublishCh                libamqp.Publisher
 	RemediationRpc           engine.RPCClient
 	EventProcessor           libevent.Processor
 	EntityAdapter            libentity.Adapter

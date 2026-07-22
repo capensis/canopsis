@@ -20,6 +20,7 @@
         :enablable="updatable"
         :disablable="updatable"
         dynamic-info
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />

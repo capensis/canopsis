@@ -22,7 +22,7 @@ import (
 
 type periodicalWorker struct {
 	TechMetricsSender        techmetrics.Sender
-	ChannelPub               libamqp.Channel
+	Publisher                libamqp.Publisher
 	PeriodicalInterval       time.Duration
 	PbhService               pbehavior.Service
 	AlarmAdapter             libalarm.Adapter
@@ -265,7 +265,7 @@ func (w *periodicalWorker) publishTo(ctx context.Context, event types.Event, que
 		return fmt.Errorf("publishTo(): error while encoding event %w", err)
 	}
 
-	return w.ChannelPub.PublishWithContext(
+	return w.Publisher.PublishWithContext(
 		ctx,
 		"",
 		queue,

@@ -732,7 +732,7 @@ describe('pattern form converters', () => {
       operator: PATTERN_OPERATORS.hasNot,
       dictionary,
     });
-    expect(form.value).toEqual(value);
+    expect(form.value).toEqual(value.map(item => ({ key: expect.any(String), value: item })));
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 

@@ -5,22 +5,20 @@ import { useStoreModuleHooks } from '@/hooks/store';
  *
  * @returns {Object} An object containing getters and actions for the remediation job.
  */
-const useRemediationJobStore = () => useStoreModuleHooks('remediationJob');
+const useRemediationJobStoreModule = () => useStoreModuleHooks('remediationJob');
 
 /**
  * Hook to access remediation job store.
  *
- * @returns {Object} An object containing:
- * - Getters for remediation jobs, pending status, and metadata.
- * - Actions to fetch lists and manage remediation jobs.
+ * @returns {Object} An object containing getters and actions for remediation jobs.
  */
 export const useRemediationJob = () => {
-  const { useGetters, useActions } = useRemediationJobStore();
+  const { useGetters, useActions } = useRemediationJobStoreModule();
 
   const getters = useGetters({
     remediationJobs: 'items',
-    remediationJobsMeta: 'meta',
     remediationJobsPending: 'pending',
+    remediationJobsMeta: 'meta',
   });
 
   const actions = useActions({
@@ -30,6 +28,7 @@ export const useRemediationJob = () => {
     createRemediationJob: 'create',
     updateRemediationJob: 'update',
     removeRemediationJob: 'remove',
+    bulkRemoveRemediationJobs: 'bulkRemove',
   });
 
   return {
