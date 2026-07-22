@@ -1,13 +1,7 @@
 <template>
-  <c-layout
-    class="pbehavior-exception-field"
-    column
-  >
+  <c-layout class="pbehavior-exception-field" column>
     <c-layout gap="2" justify="space-between">
-      <div
-        class="pbehavior-exception-field__interval"
-        :style="gridFlexStyle(7)"
-      >
+      <div :style="gridFlexStyle(7)" class="pbehavior-exception-field__interval">
         <date-time-splitted-range-picker-field
           v-if="editing"
           :start="value.begin"
@@ -19,6 +13,7 @@
           :name="datesName"
           :full-day="fullDay"
           :disabled="disabled"
+          control-variant="modal"
           @update:start="updateField('begin', $event)"
           @update:end="updateField('end', $event)"
         />
@@ -31,10 +26,7 @@
           :full-day="fullDay"
         />
       </div>
-      <div
-        v-if="withType"
-        :style="gridFlexStyle(5)"
-      >
+      <div v-if="withType" :style="gridFlexStyle(5)">
         <c-pbehavior-type-field
           v-if="editing"
           :model-value="value.type"
@@ -44,38 +36,14 @@
           return-object
           @update:model-value="updateField('type', $event)"
         />
-        <c-pbehavior-type-text
-          v-else
-          :value="value.type"
-        />
+        <c-pbehavior-type-text v-else :value="value.type" />
       </div>
-      <div
-        v-if="!disabled"
-        class="pbehavior-exception-field__actions"
-      >
-        <v-btn
-          :input-value="editing"
-          class="btn--editing"
-          icon
-          fab
-          @click="toggleEditing"
-        >
-          <v-icon
-            v-if="editing"
-            color="primary"
-          >
-            check
-          </v-icon>
-          <v-icon v-else>
-            edit
-          </v-icon>
+      <div v-if="!disabled" class="pbehavior-exception-field__actions">
+        <v-btn :input-value="editing" class="btn--editing" icon fab @click="toggleEditing">
+          <v-icon v-if="editing" color="primary"> check </v-icon>
+          <v-icon v-else> edit </v-icon>
         </v-btn>
-        <v-btn
-          class="v-btn-legacy-m--y"
-          color="error"
-          icon
-          @click="$emit('delete')"
-        >
+        <v-btn class="v-btn-legacy-m--y" color="error" icon @click="$emit('delete')">
           <v-icon>delete</v-icon>
         </v-btn>
       </div>
@@ -94,9 +62,9 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch } from 'vue'
 
-import { DATETIME_FORMATS } from '@/constants';
+import { DATETIME_FORMATS } from '@/constants'
 
 import {
   convertDateToEndOfDayDateObject,
@@ -104,15 +72,15 @@ import {
   convertDateToString,
   isEndOfDay,
   isStartOfDay,
-} from '@/helpers/date/date';
+} from '@/helpers/date/date'
 
-import { gridFlexStyle } from '@/helpers/layout';
+import { gridFlexStyle } from '@/helpers/layout'
 
-import { useModelField } from '@/hooks/form/model-field';
-import { useValidationChildren } from '@/hooks/validator/validation-children';
+import { useModelField } from '@/hooks/form/model-field'
+import { useValidationChildren } from '@/hooks/validator/validation-children'
 
-import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
-import DateTimeSplittedRangePickerText from '@/components/forms/fields/date-time-picker/date-time-splitted-range-picker-text.vue';
+import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue'
+import DateTimeSplittedRangePickerText from '@/components/forms/fields/date-time-picker/date-time-splitted-range-picker-text.vue'
 
 export default {
   emits: ['update:value'],
@@ -136,30 +104,31 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { updateField, updateModel } = useModelField(props, emit);
-    const { hasChildrenError, validateChildren } = useValidationChildren();
+    const { updateField, updateModel } = useModelField(props, emit)
+    const { hasChildrenError, validateChildren } = useValidationChildren()
 
-    const editing = ref(!props.value.type);
+    const editing = ref(!props.value.type)
     const fullDay = ref(
-      isStartOfDay(props.value.begin) && (isEndOfDay(props.value.end) || isStartOfDay(props.value.end)),
-    );
+      isStartOfDay(props.value.begin) &&
+        (isEndOfDay(props.value.end) || isStartOfDay(props.value.end)),
+    )
 
     const beginRules = computed(() => ({
       required: true,
       date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-    }));
+    }))
 
     const endRules = computed(() => ({
       required: true,
       after: [convertDateToString(props.value.begin, DATETIME_FORMATS.dateTimePicker)],
       date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-    }));
+    }))
 
-    const nameSuffix = computed(() => (props.value.key ? `-${props.value.key}` : ''));
+    const nameSuffix = computed(() => (props.value.key ? `-${props.value.key}` : ''))
 
-    const datesName = computed(() => `dates${nameSuffix.value}`);
+    const datesName = computed(() => `dates${nameSuffix.value}`)
 
-    const typeName = computed(() => `type${nameSuffix.value}`);
+    const typeName = computed(() => `type${nameSuffix.value}`)
 
     watch(fullDay, () => {
       updateModel({
@@ -167,18 +136,18 @@ export default {
 
         begin: convertDateToStartOfDayDateObject(props.value.begin),
         end: convertDateToEndOfDayDateObject(props.value.end),
-      });
-    });
+      })
+    })
 
     const toggleEditing = async () => {
       if (editing.value) {
-        await validateChildren();
+        await validateChildren()
       }
 
       if (!hasChildrenError.value) {
-        editing.value = !editing.value;
+        editing.value = !editing.value
       }
-    };
+    }
 
     return {
       gridFlexStyle,
@@ -190,9 +159,9 @@ export default {
       typeName,
       updateField,
       toggleEditing,
-    };
+    }
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

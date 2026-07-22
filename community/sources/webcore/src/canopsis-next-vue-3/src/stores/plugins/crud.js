@@ -40,7 +40,7 @@ export const createCRUDStore = ({
   dataPreparer = (response) => response?.data,
   metaPreparer = (response) => response?.meta,
   withFetchingParams = false,
-  withMeta = false,
+  withMeta = true,
   withWithoutStore = false,
   bulkRoute,
   setup: additionalSetup,

@@ -11,13 +11,19 @@
         :updatable="hasUpdateAccess"
         :removable="hasDeleteAccess"
         :duplicable="hasCreateAccess"
+        @edit="showEditPlaylistModal"
+        @duplicate="showDuplicatePlaylistModal"
         @remove="showRemovePlaylistModal"
         @refresh="fetchList"
         @update:options="updateOptions"
       />
     </v-card>
 
-    <c-fab-btn :has-access="false" :has-create-listener="false" @refresh="fetchList" />
+    <c-fab-btn
+      :has-access="hasCreateAccess"
+      @create="showCreatePlaylistModal"
+      @refresh="fetchList"
+    />
   </div>
 </template>
 
@@ -43,8 +49,15 @@ export default {
   },
 
   setup() {
-    const { playlists, playlistsPending, playlistsMeta, fetchPlaylistsList, removePlaylist } =
-      usePlaylist()
+    const {
+      playlists,
+      playlistsPending,
+      playlistsMeta,
+      fetchPlaylistsList,
+      createPlaylist,
+      updatePlaylist,
+      removePlaylist,
+    } = usePlaylist()
 
     const { hasCreateAccess, hasUpdateAccess, hasDeleteAccess } = useCRUDPermissions(
       USER_PERMISSIONS.technical.playlist,
@@ -85,6 +98,46 @@ export default {
         },
       })
 
+    const refreshPlaylists = async () => {
+      await Promise.all([fetchCurrentUser(), fetchList()])
+    }
+
+    const showCreatePlaylistModal = () =>
+      modals.show({
+        name: MODALS.createPlaylist,
+        config: {
+          action: async (data) => {
+            await createPlaylist({ data })
+            await refreshPlaylists()
+          },
+        },
+      })
+
+    const showEditPlaylistModal = (playlist) =>
+      modals.show({
+        name: MODALS.createPlaylist,
+        config: {
+          playlist,
+          action: async (data) => {
+            await updatePlaylist({ id: playlist._id, data })
+            await refreshPlaylists()
+          },
+        },
+      })
+
+    const showDuplicatePlaylistModal = (playlist) =>
+      modals.show({
+        name: MODALS.createPlaylist,
+        config: {
+          playlist,
+          duplicating: true,
+          action: async (data) => {
+            await createPlaylist({ data })
+            await refreshPlaylists()
+          },
+        },
+      })
+
     onMounted(fetchList)
 
     return {
@@ -98,6 +151,9 @@ export default {
       fetchList,
       updateOptions,
       showRemovePlaylistModal,
+      showCreatePlaylistModal,
+      showEditPlaylistModal,
+      showDuplicatePlaylistModal,
     }
   },
 }

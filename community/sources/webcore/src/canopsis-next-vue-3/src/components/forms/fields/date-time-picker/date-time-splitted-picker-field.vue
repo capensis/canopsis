@@ -1,8 +1,5 @@
 <template>
-  <c-layout
-    class="date-time-splitted-field"
-    column
-  >
+  <c-layout class="date-time-splitted-field" column>
     <c-layout :style="rowStyle">
       <div class="date-time-splitted-field__date">
         <c-date-picker-field
@@ -11,8 +8,10 @@
           :placeholder="placeholder"
           :error="!!errorMessage"
           :disabled="disabled"
+          :control-variant="controlVariant"
           :min="min"
           :max="max"
+          header-color="primary"
           hide-details
           @update:value="updateDate"
         />
@@ -28,32 +27,23 @@
         @update:value="updateTime"
       />
     </c-layout>
-    <div
-      v-if="errorMessage"
-      class="v-text-field__details mt-2"
-    >
-      <v-messages
-        :messages="[errorMessage]"
-        color="error"
-      />
+    <div v-if="errorMessage" class="v-text-field__details mt-2">
+      <v-messages :messages="[errorMessage]" color="error" active />
     </div>
   </c-layout>
 </template>
 
 <script>
-import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
+import { DATETIME_FORMATS, TIME_UNITS } from '@/constants'
 
-import {
-  convertDateToStartOfUnitDateObject,
-  convertDateToString,
-} from '@/helpers/date/date';
-import { getDateObjectByTime, getDateObjectByDate } from '@/helpers/date/date-time-picker';
+import { convertDateToStartOfUnitDateObject, convertDateToString } from '@/helpers/date/date'
+import { getDateObjectByTime, getDateObjectByDate } from '@/helpers/date/date-time-picker'
 
-import { formBaseMixin } from '@/mixins/form';
+import { formBaseMixin } from '@/mixins/form'
 
-import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';
+import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue'
 
-import { createDateTimeValidationRules } from './validation-rules';
+import { createDateTimeValidationRules } from './validation-rules'
 
 export default {
   emits: ['update:value'],
@@ -100,57 +90,61 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    controlVariant: {
+      type: String,
+      default: undefined,
+    },
   },
   computed: {
     dateValue() {
-      return convertDateToString(this.value, DATETIME_FORMATS.vuetifyDatePicker, null);
+      return convertDateToString(this.value, DATETIME_FORMATS.vuetifyDatePicker, null)
     },
 
     timeValue() {
-      return convertDateToString(this.value, DATETIME_FORMATS.timePicker, null);
+      return convertDateToString(this.value, DATETIME_FORMATS.timePicker, null)
     },
 
     errorMessage() {
       if (this.rules.required && !this.value) {
-        return 'Field is required';
+        return 'Field is required'
       }
 
       const rule = createDateTimeValidationRules(this.rules).find((validationRule) => {
-        const result = validationRule(this.validatedValue);
+        const result = validationRule(this.validatedValue)
 
-        return result !== true;
-      });
+        return result !== true
+      })
 
-      return rule ? rule(this.validatedValue) : '';
+      return rule ? rule(this.validatedValue) : ''
     },
 
     rowStyle() {
       return {
         flexDirection: this.reverse ? 'row-reverse' : undefined,
-      };
+      }
     },
 
     validatedValue() {
       if (!this.value) {
-        return this.value;
+        return this.value
       }
 
       return convertDateToString(
         convertDateToStartOfUnitDateObject(this.value, TIME_UNITS.minute),
         DATETIME_FORMATS.dateTimePicker,
-      );
+      )
     },
   },
   methods: {
     updateTime(time) {
-      this.updateModel(getDateObjectByTime(this.value, time));
+      this.updateModel(getDateObjectByTime(this.value, time))
     },
 
     updateDate(date) {
-      this.updateModel(getDateObjectByDate(this.value, date));
+      this.updateModel(getDateObjectByDate(this.value, date))
     },
   },
-};
+}
 </script>
 
 <style lang="scss">

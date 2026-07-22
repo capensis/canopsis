@@ -18,24 +18,25 @@
     "generate-icons-json": "node ./tools/generate-icons-json.js",
     "prepare": "husky"
   },
-  "lint-staged": {
-    "*.{js,cjs,mjs,jsx,ts,mts,cts,tsx,vue}": [
-      "eslint --fix --cache",
-      "oxlint --fix",
-      "oxfmt --write --no-error-on-unmatched-pattern"
-    ],
-    "*.{json,jsonc,css,scss,html,md}": [
-      "oxfmt --write --no-error-on-unmatched-pattern"
-    ]
-  },
   "dependencies": {
     "@vee-validate/i18n": "^4.15.1",
     "@vee-validate/rules": "^4.15.1",
     "axios": "^1.18.0",
+    "chart.js": "^4.5.1",
+    "chartjs-adapter-moment": "^1.0.1",
+    "chartjs-plugin-annotation": "^3.1.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "chartjs-plugin-zoom": "^2.2.0",
+    "cytoscape": "^3.34.0",
+    "cytoscape-cise": "^2.0.1",
+    "cytoscape-dagre": "^4.0.0",
+    "cytoscape-node-html-label": "^1.2.2",
     "dompurify": "^3.4.11",
+    "file-saver": "^2.0.5",
     "flat": "^6.0.1",
     "handlebars": "^4.7.9",
     "jodit": "^4.12.27",
+    "jspdf": "^4.2.1",
     "linkify-html": "^4.3.3",
     "linkifyjs": "^4.3.3",
     "lodash": "^4.18.1",
@@ -85,6 +86,16 @@
     "vite-plugin-vue-devtools": "^8.1.1",
     "vitest": "^4.1.4",
     "vue-tsc": "^3.2.6"
+  },
+  "lint-staged": {
+    "*.{js,cjs,mjs,jsx,ts,mts,cts,tsx,vue}": [
+      "eslint --fix --cache",
+      "oxlint --fix",
+      "oxfmt --write --no-error-on-unmatched-pattern"
+    ],
+    "*.{json,jsonc,css,scss,html,md}": [
+      "oxfmt --write --no-error-on-unmatched-pattern"
+    ]
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

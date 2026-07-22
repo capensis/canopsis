@@ -9,10 +9,7 @@
     location="bottom end"
   >
     <template #activator="{ props: activatorProps }">
-      <div
-        v-bind="activatorProps"
-        :aria-required="fieldRequired"
-      >
+      <div v-bind="activatorProps" :aria-required="fieldRequired">
         <c-text-field
           :label="label"
           :name="name"
@@ -39,6 +36,7 @@
       :label="label"
       :round-hours="roundHours"
       :allowed-dates="allowedDates"
+      :control-variant="controlVariant"
       @close="close"
       @update:value="updateValue"
     />
@@ -46,12 +44,12 @@
 </template>
 
 <script>
-import { DATETIME_FORMATS } from '@/constants';
+import { DATETIME_FORMATS } from '@/constants'
 
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDateToString } from '@/helpers/date/date'
 
-import DateTimePicker from './date-time-picker.vue';
-import { createDateTimeValidationRules, isRequiredRule } from './validation-rules';
+import DateTimePicker from './date-time-picker.vue'
+import { createDateTimeValidationRules, isRequiredRule } from './validation-rules'
 
 export default {
   components: { DateTimePicker },
@@ -77,6 +75,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    controlVariant: {
+      type: String,
+      default: undefined,
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -101,33 +103,33 @@ export default {
   data() {
     return {
       opened: false,
-    };
+    }
   },
   computed: {
     dateTextValue() {
-      return convertDateToString(this.value, DATETIME_FORMATS.dateTimePicker);
+      return convertDateToString(this.value, DATETIME_FORMATS.dateTimePicker)
     },
 
     fieldRequired() {
-      return this.required || isRequiredRule(this.rules);
+      return this.required || isRequiredRule(this.rules)
     },
 
     validationRules() {
-      return createDateTimeValidationRules(this.rules);
+      return createDateTimeValidationRules(this.rules)
     },
   },
   methods: {
     close() {
-      this.opened = false;
+      this.opened = false
     },
 
     updateValue(value) {
-      this.$emit('update:value', value);
+      this.$emit('update:value', value)
     },
 
     clear() {
-      this.updateValue(null);
+      this.updateValue(null)
     },
   },
-};
+}
 </script>

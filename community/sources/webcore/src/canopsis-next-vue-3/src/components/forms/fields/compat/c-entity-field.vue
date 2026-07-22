@@ -21,38 +21,26 @@
     @fetch:more="fetchMoreEntities"
     @update:search="updateSearch"
   >
-    <template
-      v-if="$slots.selection"
-      #selection="slotProps"
-    >
-      <slot
-        name="selection"
-        v-bind="slotProps"
-      />
+    <template v-if="$slots.selection" #selection="slotProps">
+      <slot name="selection" v-bind="slotProps" />
     </template>
-    <template
-      v-if="$slots.item"
-      #item="slotProps"
-    >
-      <slot
-        name="item"
-        v-bind="slotProps"
-      />
+    <template v-if="$slots.item" #item="slotProps">
+      <slot name="item" v-bind="slotProps" />
     </template>
   </c-lazy-search-field>
 </template>
 
 <script>
-import { isArray, keyBy, pick, isEqual } from 'lodash';
+import { isArray, keyBy, pick, isEqual } from 'lodash'
 
-import { BASIC_ENTITY_TYPES } from '@/constants';
-import { PAGINATION_LIMIT } from '@/config';
+import { BASIC_ENTITY_TYPES } from '@/constants'
+import { PAGINATION_LIMIT } from '@/config'
 
-import { useEntity } from '@/hooks/store/modules/entity';
+import { useEntity } from '@/hooks/store/modules/entity'
 
 export default {
   inheritAttrs: false,
-  emits: ['update:value', 'update:modelValue'],
+  emits: ['input', 'update:value', 'update:modelValue'],
   props: {
     value: {
       type: [Array, String, Object],
@@ -116,43 +104,44 @@ export default {
         page: 1,
         search: null,
       },
-    };
+    }
   },
   computed: {
     entities() {
-      return Object.values(this.entitiesById);
+      return Object.values(this.entitiesById)
     },
 
     hasMoreEntities() {
-      return this.pageCount > this.query.page;
+      return this.pageCount > this.query.page
     },
 
     selectLabel() {
       if (this.label) {
-        return this.label;
+        return this.label
       }
 
       if (isArray(this.value)) {
-        return this.$tc('common.entity', this.value.length);
+        return this.$tc('common.entity', this.value.length)
       }
 
-      return this.$tc('common.entity');
+      return this.$tc('common.entity')
     },
   },
   watch: {
     entityTypes(entityTypes, oldEntityTypes) {
       if (!isEqual(entityTypes, oldEntityTypes)) {
-        this.query.page = 1;
+        this.query.page = 1
 
-        this.updateValue(isArray(this.value) ? [] : '');
-        this.fetchEntities();
+        this.updateValue(isArray(this.value) ? [] : '')
+        this.fetchEntities()
       }
     },
   },
   methods: {
     updateValue(value) {
-      this.$emit('update:value', value);
-      this.$emit('update:modelValue', value);
+      this.$emit('input', value)
+      this.$emit('update:value', value)
+      this.$emit('update:modelValue', value)
     },
 
     getQuery() {
@@ -161,49 +150,49 @@ export default {
         page: this.query.page,
         search: this.query.search,
         type: this.entityTypes,
-      };
+      }
     },
 
     async fetchEntities() {
-      const { fetchContextEntitiesListWithoutStore } = useEntity();
+      const { fetchContextEntitiesListWithoutStore } = useEntity()
 
       try {
-        this.pending = true;
+        this.pending = true
 
         const { data: entities, meta } = await fetchContextEntitiesListWithoutStore({
           params: this.getQuery(),
-        });
+        })
 
-        this.pageCount = meta.page_count;
+        this.pageCount = meta.page_count
 
         const currentEntities = this.returnObject
           ? keyBy(this.value, '_id')
-          : pick(this.entitiesById, isArray(this.value) ? this.value : [this.value]);
+          : pick(this.entitiesById, isArray(this.value) ? this.value : [this.value])
 
         this.entitiesById = {
           ...(this.query.page !== 1 ? this.entitiesById : {}),
           ...keyBy(entities, '_id'),
           ...currentEntities,
-        };
+        }
       } catch (err) {
-        console.error(err);
+        console.error(err)
       } finally {
-        this.pending = false;
+        this.pending = false
       }
     },
 
     fetchMoreEntities() {
-      this.query.page += 1;
+      this.query.page += 1
 
-      this.fetchEntities();
+      this.fetchEntities()
     },
 
     updateSearch(search) {
-      this.query.search = search;
-      this.query.page = 1;
+      this.query.search = search
+      this.query.page = 1
 
-      this.fetchEntities();
+      this.fetchEntities()
     },
   },
-};
+}
 </script>

@@ -50,8 +50,8 @@
           @success="onSuccessCopied"
           @error="onErrorCopied"
         />
-        <c-action-btn v-if="duplicable" type="duplicate" disabled />
-        <c-action-btn v-if="updatable" type="edit" disabled />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
         <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
       </c-layout>
     </template>
@@ -113,7 +113,7 @@ export default {
     },
   },
 
-  emits: ['update:options', 'remove', 'refresh'],
+  emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
 
   setup() {
     const router = useRouter()

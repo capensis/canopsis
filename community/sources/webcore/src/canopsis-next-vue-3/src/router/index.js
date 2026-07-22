@@ -22,6 +22,9 @@ const AdminRoles = () => import('@/views/admin/roles-page.vue')
 const AdminBroadcastMessages = () => import('@/views/admin/broadcast-messages-page.vue')
 const AdminPlaylists = () => import('@/views/admin/playlists-page.vue')
 const AdminPlanning = () => import('@/views/admin/planning-page.vue')
+const AdminHealthcheck = () => import('@/views/admin/healthcheck-page.vue')
+const AdminKPI = () => import('@/views/admin/kpi-page.vue')
+const AdminEventsRecords = () => import('@/views/admin/events-records-page.vue')
 const DynamicInfosPage = () => import('@/views/exploitation/dynamic-infos-page.vue')
 const EventFiltersPage = () => import('@/views/exploitation/event-filters-page.vue')
 const FlappingRulesPage = () => import('@/views/exploitation/flapping-rules-page.vue')
@@ -149,7 +152,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.healthcheck,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminHealthcheck,
   },
   {
     path: ROUTES.adminKPI,
@@ -160,7 +163,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.kpi,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminKPI,
   },
   {
     path: ROUTES.adminEventsRecords,
@@ -171,7 +174,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.eventsRecord,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminEventsRecords,
   },
   {
     path: ROUTES.adminAnomalyMonitoredConnectors,

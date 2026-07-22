@@ -9,6 +9,10 @@ export default {
   ),
   [MODALS.createUser]: defineAsyncComponent(() => import('./admin/create-user.vue')),
   [MODALS.createRole]: defineAsyncComponent(() => import('./admin/create-role.vue')),
+  [MODALS.createPlaylist]: defineAsyncComponent(() => import('./admin/create-playlist.vue')),
+  [MODALS.managePlaylistTabs]: defineAsyncComponent(
+    () => import('./admin/manage-playlist-tabs.vue'),
+  ),
   [MODALS.createBroadcastMessage]: defineAsyncComponent(
     () => import('./admin/create-broadcast-message.vue'),
   ),
@@ -49,6 +53,17 @@ export default {
     () => import('./alarm-status-rule/create-alarm-status-rule.vue'),
   ),
   [MODALS.createIdleRule]: defineAsyncComponent(() => import('./idle-rule/create-idle-rule.vue')),
+  [MODALS.healthcheckEngine]: defineAsyncComponent(
+    () => import('./healthcheck/healthcheck-engine.vue'),
+  ),
+  [MODALS.healthcheckEnginesChainReference]: defineAsyncComponent(
+    () => import('./healthcheck/healthcheck-engines-chain-reference.vue'),
+  ),
+  [MODALS.createKpiFilter]: defineAsyncComponent(() => import('./kpi/create-kpi-filter.vue')),
+  [MODALS.eventsRecord]: defineAsyncComponent(() => import('./events-record/events-record.vue')),
+  [MODALS.applyEventFilter]: defineAsyncComponent(
+    () => import('./events-record/apply-event-filter.vue'),
+  ),
   [MODALS.createTemplateTestingData]: defineAsyncComponent(
     () => import('./template-testing/create-template-testing-data.vue'),
   ),
