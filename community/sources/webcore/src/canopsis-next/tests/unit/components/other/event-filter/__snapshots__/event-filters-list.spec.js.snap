@@ -14,15 +14,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
         label=""
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand v-data-table--selectable"
@@ -1658,15 +1650,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
         label=""
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand"
@@ -2015,15 +1999,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
         label=""
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand"
@@ -3247,15 +3223,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
         label=""
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand v-data-table--selectable"

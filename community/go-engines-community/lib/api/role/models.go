@@ -38,6 +38,10 @@ type BulkUpdatePermissionsRequestItem struct {
 	Permissions map[string][]string `json:"permissions"`
 }
 
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
 type Response struct {
 	ID          string       `bson:"_id" json:"_id"`
 	Name        string       `bson:"name" json:"name"`

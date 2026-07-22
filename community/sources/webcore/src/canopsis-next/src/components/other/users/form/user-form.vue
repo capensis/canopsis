@@ -156,8 +156,7 @@ export default {
 
     const { t } = useI18n();
     const { currentUser } = useAuth();
-
-    const { hasReadAccess: hasReadThemeAccess } = useCRUDPermissions(USER_PERMISSIONS.technical.profile.theme);
+    const { hasReadThemeAccess } = useCRUDPermissions(USER_PERMISSIONS.profile.theme);
 
     const hasPassword = computed(() => (
       Object.values(AUTH_SOURCES_WITH_PASSWORD_CHANGING).includes(props.user?.source ?? '')

@@ -18,6 +18,7 @@
         :enablable="updatable"
         :disablable="updatable"
         idle-rule
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />

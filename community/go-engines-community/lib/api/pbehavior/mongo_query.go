@@ -3,7 +3,6 @@ package pbehavior
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -157,7 +156,7 @@ func (q *MongoQuery) getSearchFilter(ctx context.Context, search string) (bson.M
 	}
 
 	searchRegexp := bson.Regex{
-		Pattern: fmt.Sprintf(".*%s.*", search),
+		Pattern: mongoquery.GetSearchPattern(search),
 		Options: "i",
 	}
 

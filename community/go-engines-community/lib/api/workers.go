@@ -29,8 +29,8 @@ func updateConfig(
 	userInterfaceAdapter config.UserInterfaceAdapter,
 	interval time.Duration,
 	logger zerolog.Logger,
-) func(context.Context) {
-	return func(ctx context.Context) {
+) func(context.Context) error {
+	return func(ctx context.Context) error {
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 
@@ -57,7 +57,7 @@ func updateConfig(
 				}
 				userInterfaceConfigProvider.Update(userInterfaceConfig)
 			case <-ctx.Done():
-				return
+				return nil
 			}
 		}
 	}
@@ -69,15 +69,15 @@ func updateTokenActivity(
 	shareTokenStore *sharetoken.MongoStore,
 	websocketHub websocket.Hub,
 	logger zerolog.Logger,
-) func(context.Context) {
-	return func(ctx context.Context) {
+) func(context.Context) error {
+	return func(ctx context.Context) error {
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 
 		for {
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case <-ticker.C:
 				conns := websocketHub.Connections()
 				seen := make(map[string]bool, len(conns))
@@ -107,15 +107,15 @@ func removeExpiredTokens(
 	tokenStore *token.MongoStore,
 	shareTokenStore *sharetoken.MongoStore,
 	logger zerolog.Logger,
-) func(context.Context) {
-	return func(ctx context.Context) {
+) func(context.Context) error {
+	return func(ctx context.Context) error {
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 
 		for {
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case <-ticker.C:
 				err := tokenStore.DeleteExpired(ctx)
 				if err != nil {
@@ -135,15 +135,15 @@ func updateWebsocketConns(
 	websocketHub websocket.Hub,
 	websocketStore wsconn.Store,
 	logger zerolog.Logger,
-) func(context.Context) {
-	return func(ctx context.Context) {
+) func(context.Context) error {
+	return func(ctx context.Context) error {
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 
 		for {
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case <-ticker.C:
 				err := websocketStore.SyncConnections(ctx, websocketHub.Connections())
 				if err != nil {
@@ -168,15 +168,15 @@ func sendPbhRecomputeEvents(
 	encoder encoding.Encoder,
 	publisher libamqp.Publisher,
 	logger zerolog.Logger,
-) func(context.Context) {
-	return func(ctx context.Context) {
+) func(context.Context) error {
+	return func(ctx context.Context) error {
 		for {
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case event, ok := <-pbhComputeChan:
 				if !ok {
-					return
+					return nil
 				}
 
 				body, err := encoder.Encode(event)
@@ -184,6 +184,7 @@ func sendPbhRecomputeEvents(
 					logger.Err(err).Msg("cannot encode event")
 					continue
 				}
+
 				err = publisher.PublishWithContext(
 					ctx,
 					canopsis.DefaultExchangeName,

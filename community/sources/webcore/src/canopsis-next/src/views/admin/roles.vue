@@ -10,6 +10,7 @@
         :removable="hasDeleteAnyRoleAccess"
         :duplicable="hasCreateAnyRoleAccess"
         :updatable="hasUpdateAnyRoleAccess"
+        @refresh="fetchList"
         @edit="showEditRoleModal"
         @remove="showRemoveRoleModal"
         @duplicate="showDuplicateRoleModal"
@@ -28,139 +29,198 @@
 
 <script>
 import { omit } from 'lodash';
+import { inject, onMounted } from 'vue';
 
-import { MODALS } from '@/constants';
+import { MODALS, USER_PERMISSIONS } from '@/constants';
 
-import { authMixin } from '@/mixins/auth';
-import { entitiesRoleMixin } from '@/mixins/entities/role';
-import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';
-import { localQueryMixin } from '@/mixins/query/query';
+import { convertQueryToRequest } from '@/helpers/query';
+
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
+import { useAuth, useCRUDPermissions } from '@/hooks/auth';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
+import { useRole } from '@/hooks/store/modules/role';
 
 import RolesList from '@/components/other/role/roles-list.vue';
 
 export default {
-  inject: ['$system'],
   components: {
     RolesList,
   },
-  mixins: [
-    authMixin,
-    localQueryMixin,
-    entitiesRoleMixin,
-    permissionsTechnicalRoleMixin,
-  ],
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    showRemoveRoleModal(id) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            try {
-              await this.removeRole({ id });
-              await this.fetchList();
+  setup() {
+    const {
+      roles,
+      rolesPending,
+      rolesMeta,
+      fetchRolesList,
+      removeRole,
+      createRole,
+      updateRole,
+    } = useRole();
 
-              this.$popups.success({ text: this.$t('success.default') });
-            } catch (err) {
-              console.error(err);
+    const {
+      hasCreateAccess: hasCreateAnyRoleAccess,
+      hasUpdateAccess: hasUpdateAnyRoleAccess,
+      hasDeleteAccess: hasDeleteAnyRoleAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.role);
 
-              this.$popups.error({ text: err.error ?? this.$t('errors.default') });
-            }
-          },
+    const { currentUser, fetchCurrentUser } = useAuth();
+    const modals = useModals();
+    const popups = usePopups();
+    const { t } = useI18n();
+    const system = inject('$system');
+
+    const {
+      options,
+      handler: fetchList,
+    } = useLocalQueryWithOptions({
+      onUpdate: fetchQuery => fetchRolesList({
+        params: {
+          ...convertQueryToRequest(fetchQuery),
+          with_flags: true,
         },
-      });
-    },
+      }),
+    });
 
-    showRemoveSelectedRolesModal(selected) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            try {
-              await Promise.all(selected.map(({ _id }) => this.removeRole({ id: _id })));
+    /**
+     * Shows the confirmation modal for deleting a role.
+     * After successful deletion, refreshes the roles list and shows a success popup.
+     *
+     * @param {string} id - The unique identifier of the role to delete.
+     */
+    const showRemoveRoleModal = id => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: async () => {
+          try {
+            await removeRole({ id });
+            await fetchList();
 
-              await this.fetchList();
+            popups.success({ text: t('success.default') });
+          } catch (err) {
+            console.error(err);
 
-              this.$popups.success({ text: this.$t('success.default') });
-            } catch (err) {
-              console.error(err);
-
-              this.$popups.error({ text: err.error ?? this.$t('errors.default') });
-            }
-          },
+            popups.error({ text: err.error ?? t('errors.default') });
+          }
         },
-      });
-    },
+      },
+    });
 
-    showEditRoleModal(role) {
-      this.$modals.show({
-        name: MODALS.createRole,
-        config: {
-          title: this.$t('modals.createRole.edit.title'),
-          role,
-          action: async (data) => {
-            await this.updateRole({ data, id: role._id });
+    /**
+     * Shows the confirmation modal for deleting multiple selected roles.
+     * After successful deletion, refreshes the roles list and shows a success popup.
+     *
+     * @param {Object[]} selected - The list of roles to delete.
+     * @param {string} selected[]._id - The unique identifier of each role.
+     */
+    const showRemoveSelectedRolesModal = selected => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: async () => {
+          try {
+            await Promise.all(selected.map(({ _id }) => removeRole({ id: _id })));
 
-            const requests = [this.fetchList()];
+            await fetchList();
 
-            if (this.currentUser.roles.find(currentRole => currentRole._id === role._id)) {
-              requests.push(this.fetchCurrentUser());
-            }
+            popups.success({ text: t('success.default') });
+          } catch (err) {
+            console.error(err);
 
-            this.$popups.success({ text: this.$t('success.default') });
-
-            await Promise.all(requests);
-
-            if (requests.length > 1) {
-              this.$system.setTheme(this.currentUser.ui_theme_colors);
-            }
-          },
+            popups.error({ text: err.error ?? t('errors.default') });
+          }
         },
-      });
-    },
+      },
+    });
 
-    showDuplicateRoleModal(role) {
-      this.$modals.show({
-        name: MODALS.createRole,
-        config: {
-          role: omit(role, ['_id']),
-          title: this.$t('modals.createRole.duplicate.title'),
-          action: async (data) => {
-            await this.createRole({ data });
+    /**
+     * Shows the modal for editing an existing role.
+     * Refreshes the current user and UI theme when the edited role belongs to the current user.
+     *
+     * @param {Object} role - The role object to edit.
+     * @param {string} role._id - The unique identifier of the role.
+     */
+    const showEditRoleModal = role => modals.show({
+      name: MODALS.createRole,
+      config: {
+        title: t('modals.createRole.edit.title'),
+        role,
+        action: async (data) => {
+          await updateRole({ data, id: role._id });
 
-            this.$popups.success({ text: this.$t('success.default') });
+          const requests = [fetchList()];
 
-            return this.fetchList();
-          },
+          if (currentUser.value.roles.find(currentRole => currentRole._id === role._id)) {
+            requests.push(fetchCurrentUser());
+          }
+
+          popups.success({ text: t('success.default') });
+
+          await Promise.all(requests);
+
+          if (requests.length > 1) {
+            system.setTheme(currentUser.value.ui_theme_colors);
+          }
         },
-      });
-    },
+      },
+    });
 
-    showCreateRoleModal() {
-      this.$modals.show({
-        name: MODALS.createRole,
-        config: {
-          withTemplate: true,
-          action: async (data) => {
-            await this.createRole({ data });
+    /**
+     * Shows the modal for duplicating an existing role.
+     * Creates a new role based on the provided role and refreshes the roles list.
+     *
+     * @param {Object} role - The role object to duplicate.
+     */
+    const showDuplicateRoleModal = role => modals.show({
+      name: MODALS.createRole,
+      config: {
+        role: omit(role, ['_id']),
+        title: t('modals.createRole.duplicate.title'),
+        action: async (data) => {
+          await createRole({ data });
 
-            this.$popups.success({ text: this.$t('success.default') });
+          popups.success({ text: t('success.default') });
 
-            return this.fetchList();
-          },
+          return fetchList();
         },
-      });
-    },
+      },
+    });
 
-    fetchList() {
-      const params = this.getQuery();
+    /**
+     * Shows the modal for creating a new role.
+     * Supports role templates and refreshes the roles list after successful creation.
+     */
+    const showCreateRoleModal = () => modals.show({
+      name: MODALS.createRole,
+      config: {
+        withTemplate: true,
+        action: async (data) => {
+          await createRole({ data });
 
-      params.with_flags = true;
+          popups.success({ text: t('success.default') });
 
-      return this.fetchRolesList({ params });
-    },
+          return fetchList();
+        },
+      },
+    });
+
+    onMounted(fetchList);
+
+    return {
+      roles,
+      rolesPending,
+      rolesMeta,
+      options,
+      hasCreateAnyRoleAccess,
+      hasUpdateAnyRoleAccess,
+      hasDeleteAnyRoleAccess,
+      fetchList,
+      showRemoveRoleModal,
+      showRemoveSelectedRolesModal,
+      showEditRoleModal,
+      showDuplicateRoleModal,
+      showCreateRoleModal,
+    };
   },
 };
 </script>

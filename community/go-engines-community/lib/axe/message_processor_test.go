@@ -280,7 +280,7 @@ func benchmarkMessageProcessor(
 		}
 	})
 
-	amqpConnection, err := libamqp.NewConnection(zerolog.Nop(), 0, 0)
+	amqpConnection, err := libamqp.New(0, 0, zerolog.Nop())
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}
@@ -291,7 +291,7 @@ func benchmarkMessageProcessor(
 		}
 	})
 
-	amqpChannel, err := amqpConnection.Channel()
+	amqpChannel, err := amqpConnection.Channel(ctx)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}

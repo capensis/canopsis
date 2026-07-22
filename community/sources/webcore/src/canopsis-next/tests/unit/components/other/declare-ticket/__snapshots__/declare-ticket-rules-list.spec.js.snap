@@ -14,15 +14,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
         label=""
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--selectable"
@@ -1094,15 +1086,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
         label=""
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light"

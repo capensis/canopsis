@@ -5,9 +5,13 @@ import (
 	"errors"
 	"strings"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -15,16 +19,28 @@ import (
 
 func NewWebhookFailProcessor(
 	client mongo.DbClient,
+	amqpPublisher libamqp.Publisher,
+	eventGenerator event.Generator,
+	encoder encoding.Encoder,
+	logger zerolog.Logger,
 ) Processor {
 	return &webhookFailProcessor{
 		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmCollection: client.Collection(mongo.ResolvedAlarmMongoCollection),
+		amqpPublisher:           amqpPublisher,
+		eventGenerator:          eventGenerator,
+		encoder:                 encoder,
+		logger:                  logger,
 	}
 }
 
 type webhookFailProcessor struct {
 	alarmCollection         mongo.DbCollection
 	resolvedAlarmCollection mongo.DbCollection
+	amqpPublisher           libamqp.Publisher
+	eventGenerator          event.Generator
+	encoder                 encoding.Encoder
+	logger                  zerolog.Logger
 }
 
 func (p *webhookFailProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -107,6 +123,10 @@ func (p *webhookFailProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	result.Forward = true
 	result.Alarm = alarm
 	result.AlarmChange = alarmChange
+
+	if alarmChange.Type == types.AlarmChangeTypeDeclareTicketWebhookFail {
+		go sendTriggerEvent(context.WithoutCancel(ctx), event, result, p.amqpPublisher, p.encoder, p.eventGenerator, p.logger)
+	}
 
 	return result, nil
 }

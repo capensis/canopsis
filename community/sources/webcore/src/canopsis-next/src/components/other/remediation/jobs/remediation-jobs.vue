@@ -8,10 +8,11 @@
       :removable="hasDeleteAnyRemediationJobAccess"
       :updatable="hasUpdateAnyRemediationJobAccess"
       :duplicable="hasCreateAnyRemediationJobAccess"
-      @remove-selected="showRemoveSelectedRemediationJobsModal"
+      :active="active"
       @remove="showRemoveRemediationJobModal"
       @duplicate="showDuplicateRemediationJobModal"
       @edit="showEditRemediationJobModal"
+      @refresh="fetchList"
     />
   </v-card-text>
 </template>
@@ -34,6 +35,12 @@ export default {
     entitiesRemediationJobMixin,
     permissionsTechnicalRemediationJobMixin,
   ],
+  props: {
+    active: {
+      type: Boolean,
+      default: true,
+    },
+  },
   mounted() {
     this.fetchList();
   },
@@ -95,18 +102,6 @@ export default {
         config: {
           action: async () => {
             await this.removeRemediationJob({ id: remediationJob._id });
-            await this.fetchList();
-          },
-        },
-      });
-    },
-
-    showRemoveSelectedRemediationJobsModal(selected) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await Promise.all(selected.map(({ _id: id }) => this.removeRemediationJob({ id })));
             await this.fetchList();
           },
         },

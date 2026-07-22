@@ -5622,11 +5622,17 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					}
 				}
 			}
-		case "emit_trigger":
+		case "emit_trigger_success":
 			if in.IsNull() {
 				in.Skip()
 			} else {
-				out.EmitTrigger = bool(in.Bool())
+				out.EmitTriggerSuccess = bool(in.Bool())
+			}
+		case "emit_trigger_fail":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.EmitTriggerFail = bool(in.Bool())
 			}
 		case "rule_execution":
 			if in.IsNull() {
@@ -6190,10 +6196,15 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.Raw((*in.WebhookError).MarshalJSON())
 	}
-	if in.EmitTrigger {
-		const prefix string = ",\"emit_trigger\":"
+	if in.EmitTriggerSuccess {
+		const prefix string = ",\"emit_trigger_success\":"
 		out.RawString(prefix)
-		out.Bool(bool(in.EmitTrigger))
+		out.Bool(bool(in.EmitTriggerSuccess))
+	}
+	if in.EmitTriggerFail {
+		const prefix string = ",\"emit_trigger_fail\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.EmitTriggerFail))
 	}
 	if in.RuleExecution != "" {
 		const prefix string = ",\"rule_execution\":"

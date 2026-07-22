@@ -24,6 +24,7 @@
         :tooltip="$t('common.bulkDelete')"
         icon="delete"
         type="delete"
+        small
         @click="$emit('remove-selected', selected)"
       />
     </template>

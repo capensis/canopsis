@@ -8,10 +8,11 @@
       :removable="hasDeleteAnyRemediationConfigurationAccess"
       :duplicable="hasCreateAnyRemediationConfigurationAccess"
       :updatable="hasUpdateAnyRemediationConfigurationAccess"
-      @remove-selected="showRemoveSelectedRemediationConfigurationsModal"
+      :active="active"
       @remove="showRemoveRemediationConfigurationModal"
       @duplicate="showDuplicateRemediationConfigurationModal"
       @edit="showEditRemediationConfigurationModal"
+      @refresh="fetchList"
     />
   </v-card-text>
 </template>
@@ -36,6 +37,12 @@ export default {
     entitiesRemediationConfigurationMixin,
     permissionsTechnicalRemediationConfigurationMixin,
   ],
+  props: {
+    active: {
+      type: Boolean,
+      default: true,
+    },
+  },
   mounted() {
     this.fetchList();
   },
@@ -101,17 +108,6 @@ export default {
       });
     },
 
-    showRemoveSelectedRemediationConfigurationsModal(selected) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await Promise.all(selected.map(({ _id: id }) => this.removeRemediationConfiguration({ id })));
-            await this.fetchList();
-          },
-        },
-      });
-    },
   },
 };
 </script>

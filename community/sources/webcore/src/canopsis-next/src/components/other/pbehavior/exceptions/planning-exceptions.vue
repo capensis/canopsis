@@ -7,6 +7,7 @@
       :options.sync="options"
       :removable="hasDeleteAnyPbehaviorExceptionAccess"
       :updatable="hasUpdateAnyPbehaviorExceptionAccess"
+      :active="active"
       @remove-selected="showRemoveSelectedPbehaviorExceptionModal"
       @remove="showRemovePbehaviorExceptionModal"
       @edit="showEditPbehaviorExceptionModal"
@@ -31,6 +32,12 @@ export default {
     entitiesPbehaviorExceptionMixin,
     permissionsTechnicalPbehaviorExceptionsMixin,
   ],
+  props: {
+    active: {
+      type: Boolean,
+      default: true,
+    },
+  },
   mounted() {
     this.fetchList();
   },

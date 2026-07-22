@@ -28,6 +28,8 @@ const useRoleStoreModule = () => useStoreModuleHooks('role');
  * @returns {Function} removeRole - Remove a role
  * @returns {Function} createRole - Create a new role
  * @returns {Function} updateRole - Update an existing role
+ * @returns {Function} bulkRemoveRoles - Bulk remove roles
+ * @returns {Function} bulkUpdateRolePermissions - Bulk update role permissions
  */
 export const useRole = () => {
   const { t } = useI18n();
@@ -50,6 +52,7 @@ export const useRole = () => {
     updateRole: 'update',
     fetchRoleTemplatesListWithoutStore: 'fetchTemplatesListWithoutStore',
     bulkUpdateRolePermissions: 'bulkUpdatePermissions',
+    bulkRemoveRoles: 'bulkRemove',
   });
 
   /**

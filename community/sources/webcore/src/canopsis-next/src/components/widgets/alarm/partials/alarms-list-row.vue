@@ -279,7 +279,7 @@ export default {
     listeners() {
       let listeners = {};
 
-      if (this.expandable) {
+      if (this.expandable && this.widget.parameters?.openExpandPanelByDoubleClick) {
         listeners.dblclick = () => this.$refs.expandPanelBtn?.showExpandPanel?.();
       }
 

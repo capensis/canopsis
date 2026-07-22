@@ -51,7 +51,7 @@
         <v-list-item-action v-if="multiple">
           <v-checkbox
             :input-value="attrs.inputValue"
-            :color="parent.color"
+            :color="parent?.color"
           />
         </v-list-item-action>
         <v-list-item-content class="c-word-break-all">

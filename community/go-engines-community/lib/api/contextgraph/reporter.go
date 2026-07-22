@@ -7,7 +7,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -28,9 +27,8 @@ func NewMongoStatusReporter(client libmongo.DbClient) StatusReporter {
 }
 
 func (r *mongoReporter) ReportCreate(ctx context.Context, job *ImportJob) error {
-	job.ID = utils.NewID()
-
 	_, err := r.collection.InsertOne(ctx, job)
+
 	return err
 }
 

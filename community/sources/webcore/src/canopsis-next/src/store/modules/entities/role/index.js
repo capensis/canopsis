@@ -8,6 +8,7 @@ import { createCRUDModule } from '@/store/plugins/entities';
 
 export default createCRUDModule({
   route: API_ROUTES.roles.list,
+  bulkRoute: API_ROUTES.roles.bulk,
   withWithoutStore: true,
 }, {
   getters: {
