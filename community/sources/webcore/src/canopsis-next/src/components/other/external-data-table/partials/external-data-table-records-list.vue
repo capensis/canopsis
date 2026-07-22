@@ -103,6 +103,7 @@
       <template #mass-actions="{ selected }">
         <c-action-btn
           type="delete"
+          small
           @click="$emit('remove-selected', selected)"
         />
       </template>

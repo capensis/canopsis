@@ -19,6 +19,7 @@
         :enablable="updatable"
         :disablable="updatable"
         meta-alarm-rule
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />

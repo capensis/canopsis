@@ -22,25 +22,24 @@
         :reset-search="resetSearch"
         name="toolbar"
       />
-      <v-flex
-        v-if="hasMassActionsSlot"
-        xs12
+      <c-mass-actions-panel
+        v-if="selectAll && selected.length && hasMassActionsSlot && !hideMassActions"
+        v-model="keepSelectedAfterAction"
+        v-bind="massActionsGridParameters"
+        :selected="selected"
+        :default-value="defaultKeepSelectedAfterAction"
+        @clear:selected="clearSelected(keepSelectedAfterAction, true)"
       >
-        <v-expand-transition>
-          <v-layout
-            v-if="selected.length"
-            class="px-2 mt-1"
-          >
-            <slot
-              :selected="selected"
-              :selected-keys="selectedKeys"
-              :count="selected.length"
-              :clear-selected="clearSelected"
-              name="mass-actions"
-            />
-          </v-layout>
-        </v-expand-transition>
-      </v-flex>
+        <template #actions>
+          <slot
+            :selected="selected"
+            :selected-keys="selectedKeys"
+            :count="selected.length"
+            :clear-selected="clearSelected"
+            name="mass-actions"
+          />
+        </template>
+      </c-mass-actions-panel>
     </v-layout>
     <v-data-table
       v-model="selected"
@@ -160,7 +159,7 @@
 </template>
 
 <script>
-import { pick } from 'lodash';
+import { keyBy, pick } from 'lodash';
 
 import { mapIds } from '@/helpers/array';
 import { prepareQueryWithAdvancedSearch, prepareQueryWithoutAdvancedSearch } from '@/helpers/search/advanced-search';
@@ -283,10 +282,23 @@ export default {
       type: Boolean,
       default: false,
     },
+    massActionsGridParameters: {
+      type: Object,
+      required: false,
+    },
+    defaultKeepSelectedAfterAction: {
+      type: Boolean,
+      default: false,
+    },
+    hideMassActions: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       selectedItems: [],
+      keepSelectedAfterAction: this.defaultKeepSelectedAfterAction ?? false,
     };
   },
   computed: {
@@ -361,13 +373,15 @@ export default {
     shownSearch() {
       return this.search || this.advancedSearch;
     },
+
+    selectedItemsByKeys() {
+      return keyBy(this.selectedItems, this.itemKey);
+    },
   },
   watch: {
     items(items) {
       if (this.selectAll) {
-        const itemKeys = items.map(item => item[this.itemKey]);
-
-        this.selectedItems = this.selectedItems.filter(selectedItem => itemKeys.includes(selectedItem[this.itemKey]));
+        this.selectedItems = items.filter(item => this.selectedItemsByKeys[item[this.itemKey]]);
       }
     },
   },
@@ -413,7 +427,11 @@ export default {
       this.updateOptions({ ...this.options, page, itemsPerPage });
     },
 
-    clearSelected() {
+    clearSelected(keepSelected = this.keepSelectedAfterAction, force = false) {
+      if (keepSelected && !force) {
+        return;
+      }
+
       this.selectedItems = [];
     },
 

@@ -7,17 +7,20 @@
     :options="options"
     :is-disabled-item="isDisabledJob"
     :select-all="removable"
+    :hide-mass-actions="!active"
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected, selectedKeys }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        small
+        remediation-job
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
-      <c-db-export-btn :ids="selectedKeys" job />
     </template>
     <template #actions="{ item, disabled }">
       <c-action-btn
@@ -72,6 +75,10 @@ export default {
     duplicable: {
       type: Boolean,
       default: false,
+    },
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {

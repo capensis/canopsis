@@ -33,7 +33,7 @@ jest.mock('@/helpers/async', () => ({
 }));
 
 const stubs = {
-  'new-mass-actions-panel': {
+  'mass-actions-panel': {
     props: ['actions'],
     template: `
       <div class="shared-actions-panel">

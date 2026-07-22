@@ -49,6 +49,7 @@ import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
  * @property {AlarmChart[]} charts
  * @property {boolean} showRootCauseByStateClick
  * @property {boolean} defaultInheritedPbehavior
+ * @property {boolean} keepSelectedAfterAction
  * @property {ColorIndicator} rootCauseColorIndicator
  * @property {number} treeOfDependenciesShowType
  * @property {AvailabilityField} availability
@@ -105,6 +106,7 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
   charts: addKeyInEntities(parameters.charts),
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
   defaultInheritedPbehavior: parameters.defaultInheritedPbehavior ?? false,
+  keepSelectedAfterAction: parameters.keepSelectedAfterAction ?? false,
   rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
   treeOfDependenciesShowType: parameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
   availability: availabilityFieldToForm(parameters.availability),
