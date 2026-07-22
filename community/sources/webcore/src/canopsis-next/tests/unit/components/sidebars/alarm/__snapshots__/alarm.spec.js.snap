@@ -655,6 +655,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       value="true"
     />
     <field-switcher-stub
+      title="Open expandable panel on double click alarm"
+    />
+    <field-switcher-stub
       title="Pause periodic refresh when expand panel is open"
     />
   </widget-settings-group-stub>
@@ -1324,6 +1327,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       value="true"
     />
     <field-switcher-stub
+      title="Open expandable panel on double click alarm"
+    />
+    <field-switcher-stub
       title="Pause periodic refresh when expand panel is open"
     />
   </widget-settings-group-stub>
@@ -1987,6 +1993,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <field-switcher-stub
       title="HTML enabled on timeline"
       value="true"
+    />
+    <field-switcher-stub
+      title="Open expandable panel on double click alarm"
     />
     <field-switcher-stub
       title="Pause periodic refresh when expand panel is open"
@@ -2653,6 +2662,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     <field-switcher-stub
       title="HTML enabled on timeline"
       value="true"
+    />
+    <field-switcher-stub
+      title="Open expandable panel on double click alarm"
     />
     <field-switcher-stub
       title="Pause periodic refresh when expand panel is open"

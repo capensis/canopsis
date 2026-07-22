@@ -249,6 +249,14 @@ export const CreateCommentTemplate = () => ({
   component: import(/* webpackChunkName: "CommentTemplate" */ './comment-template/create-comment-template.vue'),
   loading: LoaderOverlay,
 });
+export const CreateAnomalyMonitoredConnector = () => ({
+  component: import(/* webpackChunkName: "AnomalyMonitoredConnector" */ './anomaly-monitored-connector/create-anomaly-monitored-connector.vue'),
+  loading: LoaderOverlay,
+});
+export const AnomalyMonitoredConnectorHistory = () => ({
+  component: import(/* webpackChunkName: "AnomalyMonitoredConnector" */ './anomaly-monitored-connector/anomaly-monitored-connector-history.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateEventFilter = () => ({
   component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter.vue'),
   loading: LoaderOverlay,
@@ -413,6 +421,16 @@ export const RemoveAssociatedTicketEvent = () => ({
 
 export const CreateLinkRule = () => ({
   component: import(/* webpackChunkName: "LinkRule" */ './link-rule/create-link-rule.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateLlm = () => ({
+  component: import(/* webpackChunkName: "Llm" */ './llm/create-llm.vue'),
+  loading: LoaderOverlay,
+});
+
+export const AiChatHistory = () => ({
+  component: import(/* webpackChunkName: "Llm" */ './llm/ai-chat-history.vue'),
   loading: LoaderOverlay,
 });
 

@@ -7,6 +7,8 @@ import { uid } from '@/helpers/uid';
 export const types = {
   SHOW: 'SHOW',
   HIDE: 'HIDE',
+  UPDATE_DIALOG_PROPS: 'UPDATE_DIALOG_PROPS',
+  UPDATE_MODAL_CONFIG: 'UPDATE_MODAL_CONFIG',
   HIDE_COMPLETED: 'HIDE_COMPLETED',
   MINIMIZE: 'MINIMIZE',
   MAXIMIZE: 'MAXIMIZE',
@@ -26,12 +28,14 @@ export default {
     [types.SHOW](state, {
       id,
       name,
+      onHide,
       config = {},
       dialogProps = {},
     }) {
       Vue.set(state.byId, id, {
         id,
         name,
+        onHide,
         config,
         dialogProps,
         hidden: false,
@@ -47,6 +51,16 @@ export default {
       state.allIds = state.allIds.filter(value => value !== id);
 
       Vue.delete(state.byId, id);
+    },
+    [types.UPDATE_DIALOG_PROPS](state, { id, dialogProps }) {
+      Vue.set(state.byId[id], 'dialogProps', dialogProps);
+    },
+    [types.UPDATE_MODAL_CONFIG](state, { id, config = {} }) {
+      if (!state.byId[id]) {
+        return;
+      }
+
+      Vue.set(state.byId[id], 'config', config);
     },
     [types.MINIMIZE](state, { id }) {
       Vue.set(state.byId[id], 'minimized', true);
@@ -68,6 +82,7 @@ export default {
      */
     show({ commit, state }, {
       name,
+      onHide,
       config = {},
       dialogProps = {},
       id = uid('modal'),
@@ -79,9 +94,33 @@ export default {
       return commit(types.SHOW, {
         id,
         name,
+        onHide,
         config,
         dialogProps,
       });
+    },
+
+    updateDialogProps({ commit }, { id, dialogProps } = {}) {
+      if (!id) {
+        throw new Error('Missed required parameter');
+      }
+
+      commit(types.UPDATE_DIALOG_PROPS, { id, dialogProps });
+    },
+
+    /**
+     * Shallow-merge payload into the modal's `config` (same modal id).
+     *
+     * @param {Function} commit
+     * @param {string} id
+     * @param {Object} [config={}]
+     */
+    updateModalConfig({ commit }, { id, config = {} } = {}) {
+      if (!id) {
+        throw new Error('Missed required parameter');
+      }
+
+      commit(types.UPDATE_MODAL_CONFIG, { id, config });
     },
 
     /**
@@ -91,7 +130,7 @@ export default {
      * @param {Object} state
      * @param {string} [id]
      */
-    hide({ commit, state }, { id } = {}) {
+    async hide({ commit, state }, { id } = {}) {
       if (!id) {
         throw new Error('Missed required parameter');
       }
@@ -102,6 +141,8 @@ export default {
 
       commit(types.HIDE, { id });
 
+      await state.byId[id].onHide?.();
+
       /**
        * This function added for vuetify animation waiting
        */
@@ -111,6 +152,7 @@ export default {
         }
       }, VUETIFY_ANIMATION_DELAY);
     },
+
     /**
      * Minimize modal by id
      *

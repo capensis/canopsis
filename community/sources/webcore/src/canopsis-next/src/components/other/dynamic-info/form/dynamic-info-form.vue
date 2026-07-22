@@ -5,8 +5,8 @@
   >
     <v-stepper-header>
       <v-stepper-step
-        :complete="stepper > steps.GENERAL"
-        :step="steps.GENERAL"
+        :complete="stepper > DYNAMIC_INFO_FORM_STEPS.general"
+        :step="DYNAMIC_INFO_FORM_STEPS.general"
         :rules="[() => !hasGeneralFormAnyError]"
         class="py-0"
         editable
@@ -16,8 +16,8 @@
       </v-stepper-step>
       <v-divider />
       <v-stepper-step
-        :complete="stepper > steps.INFOS"
-        :step="steps.INFOS"
+        :complete="stepper > DYNAMIC_INFO_FORM_STEPS.infos"
+        :step="DYNAMIC_INFO_FORM_STEPS.infos"
         :rules="[() => !hasInfosFormAnyError]"
         class="py-0"
         editable
@@ -27,8 +27,8 @@
       </v-stepper-step>
       <v-divider />
       <v-stepper-step
-        :complete="stepper > steps.PATTERNS"
-        :step="steps.PATTERNS"
+        :complete="stepper > DYNAMIC_INFO_FORM_STEPS.patterns"
+        :step="DYNAMIC_INFO_FORM_STEPS.patterns"
         :rules="[() => !hasPatternsFormAnyError]"
         class="py-0"
         editable
@@ -39,35 +39,35 @@
     </v-stepper-header>
     <v-stepper-items>
       <v-stepper-content
-        :step="steps.GENERAL"
+        :step="DYNAMIC_INFO_FORM_STEPS.general"
         class="pa-0"
       >
         <dynamic-info-general-form
           v-field="form"
-          ref="generalForm"
+          ref="generalFormElement"
           :is-disabled-id-field="isDisabledIdField"
           class="pa-4"
         />
       </v-stepper-content>
       <v-stepper-content
-        :step="steps.INFOS"
+        :step="DYNAMIC_INFO_FORM_STEPS.infos"
         class="pa-0"
       >
         <dynamic-info-infos-form
           v-field="form.infos"
-          ref="infosForm"
+          ref="infosFormElement"
           :variables="templateVars.value"
           :copy-variables="copyVars.value"
           class="pa-4"
         />
       </v-stepper-content>
       <v-stepper-content
-        :step="steps.PATTERNS"
+        :step="DYNAMIC_INFO_FORM_STEPS.patterns"
         class="pa-0"
       >
         <dynamic-info-patterns-form
           v-field="form.patterns"
-          ref="patternsForm"
+          ref="patternsFormElement"
           class="pa-4"
         />
       </v-stepper-content>
@@ -76,12 +76,21 @@
 </template>
 
 <script>
+import { inject, ref, watch } from 'vue';
+
+import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
+
 import DynamicInfoGeneralForm from './fields/dynamic-info-general-form.vue';
 import DynamicInfoInfosForm from './fields/dynamic-info-infos-form.vue';
 import DynamicInfoPatternsForm from './fields/dynamic-info-patterns-form.vue';
 
+const DYNAMIC_INFO_FORM_STEPS = {
+  general: 1,
+  infos: 2,
+  patterns: 3,
+};
+
 export default {
-  inject: ['$validator'],
   components: {
     DynamicInfoGeneralForm,
     DynamicInfoInfosForm,
@@ -109,35 +118,42 @@ export default {
       default: () => ({}),
     },
   },
-  data() {
+  setup() {
+    inject('$validator');
+
+    const stepper = ref(1);
+    const hasGeneralFormAnyError = ref(false);
+    const hasInfosFormAnyError = ref(false);
+    const hasPatternsFormAnyError = ref(false);
+
+    const generalFormElement = ref(null);
+    const infosFormElement = ref(null);
+    const patternsFormElement = ref(null);
+
+    useAiChatExpand({ activeTab: stepper, neededTab: DYNAMIC_INFO_FORM_STEPS.patterns });
+
+    watch(() => generalFormElement.value?.hasAnyError, (value) => {
+      hasGeneralFormAnyError.value = value ?? false;
+    });
+
+    watch(() => infosFormElement.value?.hasAnyError, (value) => {
+      hasInfosFormAnyError.value = value ?? false;
+    });
+
+    watch(() => patternsFormElement.value?.hasAnyError, (value) => {
+      hasPatternsFormAnyError.value = value ?? false;
+    });
+
     return {
-      stepper: 1,
-      hasGeneralFormAnyError: false,
-      hasInfosFormAnyError: false,
-      hasPatternsFormAnyError: false,
+      DYNAMIC_INFO_FORM_STEPS,
+      stepper,
+      hasGeneralFormAnyError,
+      hasInfosFormAnyError,
+      hasPatternsFormAnyError,
+      generalFormElement,
+      infosFormElement,
+      patternsFormElement,
     };
-  },
-  computed: {
-    steps() {
-      return {
-        GENERAL: 1,
-        INFOS: 2,
-        PATTERNS: 3,
-      };
-    },
-  },
-  mounted() {
-    this.$watch(() => this.$refs.generalForm.hasAnyError, (value) => {
-      this.hasGeneralFormAnyError = value;
-    });
-
-    this.$watch(() => this.$refs.infosForm.hasAnyError, (value) => {
-      this.hasInfosFormAnyError = value;
-    });
-
-    this.$watch(() => this.$refs.patternsForm.hasAnyError, (value) => {
-      this.hasPatternsFormAnyError = value;
-    });
   },
 };
 </script>

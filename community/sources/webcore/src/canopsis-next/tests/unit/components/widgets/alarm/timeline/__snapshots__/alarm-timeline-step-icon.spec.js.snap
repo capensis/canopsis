@@ -323,7 +323,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`0\` correctly 1`] = `
 <div>
   <v-icon-stub
-    color="var(--v-status-closed-base)"
+    color="var(--v-success-base)"
   >
     $vuetify.icons.delayed_check
   </v-icon-stub>
@@ -373,7 +373,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`5\` correctly 1`] = `
 <div>
   <v-icon-stub
-    color="var(--v-status-noEvents-base)"
+    color="var(--v-error-base)"
   >
     sync_problem
   </v-icon-stub>

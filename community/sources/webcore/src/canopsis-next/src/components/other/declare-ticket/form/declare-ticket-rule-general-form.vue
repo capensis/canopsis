@@ -1,6 +1,5 @@
 <template>
   <v-layout class="gap-2" column>
-    <c-enabled-field v-field="form.enabled" with-background />
     <c-enabled-field
       v-field="form.emit_trigger"
       :label="$t('common.emitTrigger')"

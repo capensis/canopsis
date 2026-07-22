@@ -4,6 +4,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { SOCKET_ROOMS } from '@/config';
 
 import { mapIds } from '@/helpers/array';
+import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 
 const { mapActions: mapAlarmsActions } = createNamespacedHelpers('alarm');
 const { mapGetters: mapAlarmDetailsGetters, mapActions: mapAlarmDetailsActions } = createNamespacedHelpers('alarm/details');
@@ -32,6 +33,10 @@ export const widgetAlarmsSocketMixin = {
       return this.getAlarmDetailsQueries(this.widget._id);
     },
 
+    alarmDetailsSocketPayload() {
+      return this.allAlarmDetailsQueries.map(convertAlarmDetailsQueryToRequest);
+    },
+
     liveWatching() {
       return this.widget.parameters.liveWatching;
     },
@@ -48,18 +53,23 @@ export const widgetAlarmsSocketMixin = {
       }
     },
 
-    allAlarmDetailsQueries(queries, prevQueries) {
+    alarmDetailsSocketPayload(payload, prevPayload) {
       if (!this.liveWatching || this.editing) {
         return;
       }
 
-      if (!isEqual(mapIds(queries), mapIds(prevQueries))) {
+      if (isEqual(payload, prevPayload)) {
+        return;
+      }
+
+      if (!payload.length) {
         this.leaveAlarmDetailsSocketRoom();
 
-        if (queries.length) {
-          this.joinToAlarmDetailsSocketRoom(queries);
-        }
+        return;
       }
+
+      this.leaveAlarmDetailsSocketRoom();
+      this.joinToAlarmDetailsSocketRoom(payload);
     },
 
     liveWatching: 'toggleSubscription',
@@ -67,6 +77,7 @@ export const widgetAlarmsSocketMixin = {
   },
   beforeDestroy() {
     this.leaveAlarmsSocketRoom();
+    this.leaveAlarmDetailsSocketRoom();
   },
   methods: {
     ...mapAlarmsActions({
@@ -89,9 +100,13 @@ export const widgetAlarmsSocketMixin = {
         .removeListener(this.updateAlarmInStore);
     },
 
-    joinToAlarmDetailsSocketRoom(queries) {
+    joinToAlarmDetailsSocketRoom(payload) {
+      if (!payload?.length) {
+        return;
+      }
+
       this.$socket
-        .join(this.alarmDetailsSocketRoom, queries)
+        .join(this.alarmDetailsSocketRoom, payload)
         .addListener(this.updateAlarmDetailsInStore);
     },
 
@@ -104,7 +119,12 @@ export const widgetAlarmsSocketMixin = {
     toggleSubscription() {
       if (this.visible && this.liveWatching) {
         this.joinToAlarmsSocketRoom(this.alarms);
-        this.joinToAlarmDetailsSocketRoom(this.allAlarmDetailsQueries);
+
+        if (this.alarmDetailsSocketPayload.length) {
+          this.joinToAlarmDetailsSocketRoom(this.alarmDetailsSocketPayload);
+        } else {
+          this.leaveAlarmDetailsSocketRoom();
+        }
 
         return;
       }

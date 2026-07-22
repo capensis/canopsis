@@ -97,6 +97,10 @@ type TechMetricsConfigProvider interface {
 	Get() TechMetricsConfig
 }
 
+type EntityInfosLogsConfigProvider interface {
+	Get() EntityInfosLogsConfig
+}
+
 type MetricsConfigProvider interface {
 	Get() MetricsConfig
 }
@@ -140,6 +144,10 @@ type ApiConfig struct {
 	MetricsCacheExpiration   time.Duration
 	WebsocketPingInterval    time.Duration
 	NotificationDisplayCount int
+	LLM                      struct {
+		OffTopicErrors  []string
+		SuggestedModels []LLMModelConf
+	}
 }
 
 type RemediationConfig struct {
@@ -162,6 +170,11 @@ type DataStorageConfig struct {
 	MaxUpdates         int
 	MongoClientTimeout time.Duration
 	Timeout            time.Duration
+}
+
+type EntityInfosLogsConfig struct {
+	Enabled       bool
+	FlushInterval time.Duration
 }
 
 type MetricsConfig struct {
@@ -476,6 +489,12 @@ func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfi
 			Msgf("AuthorScheme of %s config section is used", sectionName)
 	}
 
+	conf.LLM.SuggestedModels = cfg.API.LLM.SuggestedModels
+	conf.LLM.OffTopicErrors = cfg.API.LLM.OffTopicErrors
+	for i := range conf.LLM.OffTopicErrors {
+		conf.LLM.OffTopicErrors[i] = strings.ToLower(conf.LLM.OffTopicErrors[i])
+	}
+
 	return &BaseApiConfigProvider{
 		conf:   conf,
 		logger: logger,
@@ -533,6 +552,12 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	i, ok = parseUpdatedInt(cfg.API.NotificationDisplayCount, p.conf.NotificationDisplayCount, "NotificationDisplayCount", sectionName, p.logger)
 	if ok {
 		p.conf.NotificationDisplayCount = i
+	}
+
+	p.conf.LLM.SuggestedModels = cfg.API.LLM.SuggestedModels
+	p.conf.LLM.OffTopicErrors = cfg.API.LLM.OffTopicErrors
+	for i := range p.conf.LLM.OffTopicErrors {
+		p.conf.LLM.OffTopicErrors[i] = strings.ToLower(p.conf.LLM.OffTopicErrors[i])
 	}
 }
 
@@ -1559,6 +1584,48 @@ func parseUpdatedJwtSigningMethod(
 	logInfoNewValue(logger, name, sectionName, oldVal.Alg(), v)
 
 	return m, true
+}
+
+type BaseEntityInfosLogsSettingsConfigProvider struct {
+	conf   EntityInfosLogsConfig
+	mx     sync.RWMutex
+	logger zerolog.Logger
+}
+
+func NewEntityInfosLogsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseEntityInfosLogsSettingsConfigProvider {
+	sectionName := "entity_infos_logs"
+
+	return &BaseEntityInfosLogsSettingsConfigProvider{
+		conf: EntityInfosLogsConfig{
+			Enabled:       parseBool(cfg.EntityInfosLogs.Enabled, "Enabled", sectionName, logger),
+			FlushInterval: parseTimeDurationByStr(cfg.EntityInfosLogs.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
+		},
+		logger: logger,
+	}
+}
+
+func (p *BaseEntityInfosLogsSettingsConfigProvider) Update(cfg CanopsisConf) {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	sectionName := "entity_infos_logs"
+
+	b, ok := parseUpdatedBool(cfg.EntityInfosLogs.Enabled, p.conf.Enabled, "Enabled", sectionName, p.logger)
+	if ok {
+		p.conf.Enabled = b
+	}
+
+	d, ok := parseUpdatedTimeDurationByStr(cfg.EntityInfosLogs.FlushInterval, p.conf.FlushInterval, "FlushInterval", sectionName, p.logger)
+	if ok {
+		p.conf.FlushInterval = d
+	}
+}
+
+func (p *BaseEntityInfosLogsSettingsConfigProvider) Get() EntityInfosLogsConfig {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+
+	return p.conf
 }
 
 type BaseMetricsSettingsConfigProvider struct {

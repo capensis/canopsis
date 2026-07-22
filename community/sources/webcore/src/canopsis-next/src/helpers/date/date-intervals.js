@@ -451,3 +451,7 @@ export const convertQueryIntervalToTimestamp = ({
     to: convertDateToTimestampByTimezone(to, timezone),
   };
 };
+
+export const getNowIntervalValueForHours = (hours, roundUnit) => (
+  `now${hours ? `-${hours}h` : ''}${roundUnit ? `/${roundUnit}` : ''}`
+);

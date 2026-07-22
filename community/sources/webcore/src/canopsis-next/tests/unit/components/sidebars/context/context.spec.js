@@ -141,6 +141,7 @@ describe('context', () => {
   };
 
   const sidebar = {
+    id: 'test-sidebar-id',
     name: SIDE_BARS.contextSettings,
     config: {
       widget,

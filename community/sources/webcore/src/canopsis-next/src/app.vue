@@ -24,7 +24,7 @@
 <script>
 import { isEmpty } from 'lodash';
 
-import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY, LOCAL_STORAGE_WARNING_POPUP_KEY } from '@/config';
+import { SOCKET_URL, SOCKET_ROOMS, LOCAL_STORAGE_ACCESS_TOKEN_KEY, LOCAL_STORAGE_WARNING_POPUP_KEY } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
@@ -149,7 +149,7 @@ export default {
       try {
         this.$socket
           .connect(SOCKET_URL)
-          .on('error', this.socketErrorHandler)
+          .on(Socket.EVENTS_TYPES.error, this.socketErrorHandler)
           .on(Socket.EVENTS_TYPES.networkError, this.socketConnectionFailureHandler);
       } catch (err) {
         this.$popups.error({
@@ -161,14 +161,19 @@ export default {
       }
     },
 
-    socketErrorHandler({ message } = {}) {
+    socketErrorHandler({ message, error } = {}) {
       if (message) {
+        const { room } = error ?? {};
         const statusCode = +message;
 
         if (statusCode === RESPONSE_STATUSES.unauthorized || message === Socket.ERROR_MESSAGES.authenticationFailed) {
           localStorageService.set(LOCAL_STORAGE_WARNING_POPUP_KEY, this.$t('warnings.authTokenExpired'));
           this.logout();
 
+          return;
+        }
+
+        if (room === SOCKET_ROOMS.llmChat) {
           return;
         }
 

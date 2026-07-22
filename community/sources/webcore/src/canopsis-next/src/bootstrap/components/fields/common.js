@@ -33,6 +33,7 @@ export { default as CArrayTextField } from '@/components/forms/fields/c-array-te
 export { default as CStoragesField } from '@/components/forms/fields/c-storages-field.vue';
 export { default as CStorageField } from '@/components/forms/fields/c-storage-field.vue';
 export { default as CFileNameMaskField } from '@/components/forms/fields/c-file-name-mask-field.vue';
+export { default as CHoursIntervalField } from '@/components/forms/fields/c-hours-interval-field.vue';
 export { default as CPercentsField } from '@/components/forms/fields/c-percents-field.vue';
 export { default as CColumnsField } from '@/components/forms/fields/column/c-columns-field.vue';
 export { default as CColumnsWithTemplateField } from '@/components/forms/fields/column/c-columns-with-template-field.vue';

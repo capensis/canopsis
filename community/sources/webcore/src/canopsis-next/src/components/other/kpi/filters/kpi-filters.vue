@@ -45,9 +45,11 @@ export default {
           filter,
           title: this.$t('modals.createFilter.edit.title'),
           action: async (data) => {
-            await this.updateFilter({ id: filter._id, data });
+            const result = await this.updateFilter({ id: filter._id, data });
 
             this.fetchFiltersListWithPreviousParams();
+
+            return result;
           },
         },
       });
@@ -60,9 +62,11 @@ export default {
           filter: omit(filter, ['_id']),
           title: this.$t('modals.createFilter.duplicate.title'),
           action: async (data) => {
-            await this.createFilter({ data });
+            const result = await this.createFilter({ data });
 
             this.fetchFiltersListWithPreviousParams();
+
+            return result;
           },
         },
       });

@@ -98,6 +98,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
       [MODALS.executeDeclareTickets]: { maxWidth: 920 },
       [MODALS.createLinkRule]: { maxWidth: 920 },
+      [MODALS.anomalyMonitoredConnectorHistory]: { maxWidth: 1400 },
       [MODALS.createAlarmChart]: { maxWidth: 500 },
       [MODALS.createTag]: { maxWidth: 920 },
       [MODALS.createStateSetting]: { maxWidth: 960 },
@@ -109,6 +110,8 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.importExternalDataTableRecords]: { maxWidth: 1200, persistent: true },
       [MODALS.createTheme]: { maxWidth: 500 },
       [MODALS.createExternalAuthToken]: { maxWidth: 1100 },
+      [MODALS.createLlm]: { maxWidth: 920 },
+      [MODALS.aiChatHistory]: { maxWidth: 700 },
 
       ...featuresService.get('components.modals.dialogPropsMap'),
     },

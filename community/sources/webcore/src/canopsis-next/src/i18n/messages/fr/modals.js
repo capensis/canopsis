@@ -304,6 +304,9 @@ export default {
       isNotEmpty: 'Ce groupe n\'est pas vide',
     },
   },
+  aiChatHistory: {
+    title: 'Historique du chat',
+  },
   alarmsList: {
     title: 'Bac à alarmes',
     prefixTitle: '{prefix} - bac à alarmes',
@@ -488,6 +491,20 @@ export default {
     edit: {
       title: 'Modifier le modèle de commentaire',
     },
+  },
+  createAnomalyMonitoredConnector: {
+    create: {
+      title: 'Créer un connecteur surveillé pour anomalies',
+    },
+    edit: {
+      title: 'Modifier le connecteur surveillé pour anomalies',
+    },
+    remove: {
+      text: 'Supprimer <strong>{connectorName}</strong> de la liste des connecteurs de surveillance d\'anomalies ?',
+    },
+  },
+  anomalyMonitoredConnectorHistory: {
+    disableConfirm: 'Désactiver la surveillance des anomalies pour <strong>{connectorName}</strong> ?',
   },
   createCommentEvent: {
     title: 'Ajouter un commentaire',
@@ -840,6 +857,20 @@ export default {
         + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText: 'Veuillez saisir le nom du jeton pour confirmer :',
     },
+    deleteLlm: {
+      title: 'Supprimer le LLM',
+      text: 'Vous êtes sur le point de supprimer la connexion LLM.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez saisir le nom du LLM pour confirmer :',
+    },
+    deleteSelectedLlms: {
+      title: 'Supprimer {count} modèle ? | Supprimer {count} modèles ?',
+      text: 'Vous êtes sur le point de supprimer {count} modèle.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong> | Vous êtes sur le point de supprimer {count} modèles.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez taper ce qui suit pour confirmer <strong>l\'opération de suppression</strong> :',
+      phrase: 'supprimer',
+    },
     templateTestingData: {
       title: 'Supprimer les données de test',
       text: 'Vous êtes sur le point de supprimer les données de test.\n'
@@ -1165,6 +1196,14 @@ export default {
     },
     edit: {
       title: 'Modifier le jeton d\'authentification externe',
+    },
+  },
+  createLlm: {
+    create: {
+      title: 'Ajouter un modèle LLM',
+    },
+    edit: {
+      title: 'Modifier le modèle LLM',
     },
   },
   createTemplateTestingData: {

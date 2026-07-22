@@ -228,6 +228,43 @@ describe('alarms-list-row', () => {
     expect(wrapper).toHaveBeenEmit('click:state');
   });
 
+  it('Expand panel opened after double click on row when openExpandPanelByDoubleClick enabled', async () => {
+    const showExpandPanel = jest.fn();
+    const hasFeatureSpy = jest.spyOn(featuresService, 'has').mockReturnValue(false);
+
+    const alarm = {
+      _id: 'alarm-id',
+      v: {
+        status: {},
+      },
+    };
+
+    const wrapper = factory({
+      propsData: {
+        alarm,
+        booted: true,
+        expanded: false,
+        widget: {
+          parameters: {
+            openExpandPanelByDoubleClick: true,
+          },
+        },
+        headers: [{ value: 'first' }],
+        expandable: true,
+      },
+    });
+
+    await flushPromises();
+
+    wrapper.vm.$refs.expandPanelBtn = { showExpandPanel };
+
+    selectTableRow(wrapper).trigger('dblclick');
+
+    expect(showExpandPanel).toHaveBeenCalledTimes(1);
+
+    hasFeatureSpy.mockRestore();
+  });
+
   it('Renders `alarms-list-row` with default and required props', () => {
     const wrapper = snapshotFactory({
       propsData: {

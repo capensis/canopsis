@@ -184,6 +184,7 @@ export const convertWidgetQueryToRequest = (query) => {
  */
 export const getQueryForList = ({
   page = 1,
+  category,
   search,
   itemsPerPage,
   sortBy = [],
@@ -203,6 +204,10 @@ export const getQueryForList = ({
 
   if (searchPattern) {
     query[ADVANCED_SEARCH_FIELDS.search] = searchPattern;
+  }
+
+  if (category) {
+    query.category = category;
   }
 
   return query;

@@ -1,6 +1,6 @@
 <template>
   <v-layout class="gap-2" column>
-    <c-enabled-field v-field="form.enabled" />
+    <c-enabled-field v-field="form.enabled" with-background />
     <v-tabs
       v-model="activeTab"
       slider-color="primary"
@@ -70,6 +70,7 @@ import {
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
 import { useTemplateVarsList } from '@/hooks/vars/template';
+import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 
 import {
   useTestVariablesTabData,
@@ -82,6 +83,13 @@ import DeclareTicketRuleTestQuery from '../partials/declare-ticket-rule-test-que
 
 import DeclareTicketRuleGeneralForm from './declare-ticket-rule-general-form.vue';
 import DeclareTicketRulePatternsForm from './declare-ticket-rule-patterns-form.vue';
+
+const DECLARE_TICKET_RULE_FORM_TABS = {
+  general: 0,
+  patterns: 1,
+  testQuery: 2,
+  testVariables: 3,
+};
 
 export default {
   components: {
@@ -107,7 +115,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const activeTab = ref(0);
+    const activeTab = ref(DECLARE_TICKET_RULE_FORM_TABS.general);
 
     const type = TEMPLATE_TESTING_TEST_TYPES.declareTicketRule;
 
@@ -117,7 +125,7 @@ export default {
     const general = ref(null);
     const patterns = ref(null);
 
-    const isActiveTestingTab = computed(() => activeTab.value === 3);
+    const isActiveTestingTab = computed(() => activeTab.value === DECLARE_TICKET_RULE_FORM_TABS.testVariables);
 
     const {
       vars: templateVars,
@@ -134,6 +142,8 @@ export default {
       items: variablesFields,
       isEmptyItems: isEmptyVariablesFields,
     } = useTestVariablesTabData(props, type, emit);
+
+    useAiChatExpand({ activeTab, neededTab: DECLARE_TICKET_RULE_FORM_TABS.patterns });
 
     watch(() => general.value?.hasAnyError, value => hasGeneralError.value = value);
     watch(() => patterns.value?.hasAnyError, value => hasPatternsError.value = value);

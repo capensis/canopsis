@@ -146,6 +146,10 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, error) {
+	if request.ID == resolverule.DefaultRule && request.Enabled != nil && !*request.Enabled {
+		return nil, httperror.NewForbiddenError("The default rule cannot be disabled.")
+	}
+
 	model := s.transformRequestToDocument(request.EditRequest)
 	model.Updated = datetime.NewCpsTime()
 	var res *Response

@@ -83,9 +83,12 @@ export const useEventFilterActions = (refresh = () => {}) => {
         title: t('modals.createEventFilter.edit.title'),
         isDisabledIdField: true,
         action: async (data) => {
-          await updateEventFilter({ id: rule._id, data });
+          const result = await updateEventFilter({ id: rule._id, data });
+
           popups.success({ text: t('modals.createEventFilter.edit.success') });
           refresh();
+
+          return result;
         },
       },
     });

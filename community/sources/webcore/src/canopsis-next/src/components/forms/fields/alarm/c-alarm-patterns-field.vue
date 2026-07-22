@@ -9,6 +9,7 @@
     :attributes="availableAlarmAttributes"
     :with-type="withType"
     :alarm-counter="alarmCounter"
+    class="c-alarm-patterns-field"
   >
     <template #append-count="">
       <v-btn
@@ -117,6 +118,8 @@ export default {
         PATTERN_OPERATORS.isNotOneOf,
         PATTERN_OPERATORS.contains,
         PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.beginWith,
+        PATTERN_OPERATORS.notBeginWith,
         PATTERN_OPERATORS.regexp,
       ];
     },
@@ -276,6 +279,7 @@ export default {
         operators: [
           PATTERN_OPERATORS.with,
           PATTERN_OPERATORS.without,
+          PATTERN_OPERATORS.hasEvery,
           PATTERN_OPERATORS.withLabel,
           PATTERN_OPERATORS.withoutLabel,
         ],

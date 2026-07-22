@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -106,8 +107,11 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	templateConfigProvider := config.NewTemplateConfigProvider(s.Cfg, logger)
 	s.TemplateConfigProvider = templateConfigProvider
 	dataStorageConfigProvider := config.NewDataStorageConfigProvider(s.Cfg, logger)
-	amqpConnection := m.DepAmqpConnection(logger, s.Cfg)
-	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
+	amqpPubConn := m.DepAmqpConnection(logger, s.Cfg)
+	amqpConsumeConn := m.DepAmqpConnection(logger, s.Cfg)
+	amqpPubChPool := m.DepAMQPPubChannelPool(amqpPubConn)
+	amqpPublisher := amqp.NewPooledPublisher(amqpPubChPool)
+	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, s.Cfg)
 	engineLockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, s.Cfg)
 	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, s.Cfg)
@@ -115,7 +119,7 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	scheduler := libscheduler.NewSchedulerService(
 		lockRedisClient,
 		queueRedisClient,
-		m.DepAMQPChannelPub(m.DepAmqpConnection(logger, s.Cfg)),
+		amqpPublisher,
 		canopsis.CheQueuePrefix,
 		logger,
 		options.LockTtl,
@@ -124,7 +128,7 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	)
 	eventFilterEventCounter := eventfilter.NewEventCounter(s.DbClient,
 		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), logger)
-	notifStore := usernotification.NewStore(s.DbClient, amqpChannel, json.NewEncoder(),
+	notifStore := usernotification.NewStore(s.DbClient, amqpPublisher, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
 	s.EventFilterFailureService = eventfilter.NewFailureService(s.DbClient, notifStore,
 		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilterRule, logger)
@@ -146,13 +150,13 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 		healthCheckCfg.ParseUpdateInterval(logger),
 		libengine.NewRunInfoManager(runInfoRedisClient),
 		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, canopsis.FIFOQueueName, canopsis.CheQueuePrefix, []string{canopsis.FIFOQueueName}),
-		amqpChannel,
+		amqpConsumeChPool,
 		logger,
 	)
 
 	queueMetricsPeriodicalWorker := libengine.NewQueueMetricsPeriodicalWorker(
 		options.PeriodicalWaitTime,
-		amqpChannel,
+		amqpConsumeChPool,
 		techMetricsSender,
 		[]string{canopsis.FIFOQueueName},
 		techmetrics.FIFOQueue,
@@ -203,7 +207,22 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 				logger.Error().Err(err).Msg("failed to close mongo connection without timeout")
 			}
 
-			err = amqpConnection.Close()
+			err = amqpPubChPool.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp publish channels")
+			}
+
+			err = amqpConsumeChPool.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp consumer channels")
+			}
+
+			err = amqpPubConn.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = amqpConsumeConn.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
@@ -264,7 +283,8 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 		"",
 		1, // TODO: 1 worker for now, to think about making fifo concurrent
 		false,
-		amqpConnection,
+		amqpPublisher,
+		amqpConsumeChPool,
 		mainMessageProcessor,
 		logger,
 	))
@@ -280,7 +300,8 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 		"",
 		options.Workers,
 		false,
-		amqpConnection,
+		amqpPublisher,
+		amqpConsumeChPool,
 		&ackMessageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,
 
@@ -319,7 +340,7 @@ func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, 
 	s.DataStoragePeriodicalWorker.AddCleaner("alarm", alarm.NewCleaner(logger))
 	s.DataStoragePeriodicalWorker.AddCleaner("alarm_external_tag", axe.NewExternalTagCleaner(logger))
 	s.DataStoragePeriodicalWorker.AddCleaner("pbehavior", pbehavior.NewCleaner(logger))
-	s.DataStoragePeriodicalWorker.AddCleaner("event_filter_failure", che.NewEventFailureCleaner(amqpChannel, json.NewEncoder(),
+	s.DataStoragePeriodicalWorker.AddCleaner("event_filter_failure", che.NewEventFailureCleaner(amqpPublisher, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType, logger))
 	engine.AddPeriodicalWorker("datastorage", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(engineLockRedisClient),

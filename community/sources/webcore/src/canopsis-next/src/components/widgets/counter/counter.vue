@@ -88,7 +88,9 @@ export default {
     countersWithFilters() {
       const { filters } = this.widget;
 
-      return this.counters.map((counter, index) => ({ ...counter, filter: filters[index] }));
+      return this.counters
+        .filter((counter, index) => filters[index])
+        .map((counter, index) => ({ ...counter, filter: filters[index] }));
     },
 
     queryWithoutFilters() {

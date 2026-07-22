@@ -4,7 +4,10 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with cust
 <div
   class="layout gap-2 column"
 >
-  <c-enabled-field />
+  <c-enabled-field-stub
+    value="true"
+    with-background=""
+  />
   <div
     class="v-tabs v-tabs--centered theme--light"
   >
@@ -116,7 +119,9 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with defa
 <div
   class="layout gap-2 column"
 >
-  <c-enabled-field />
+  <c-enabled-field-stub
+    with-background=""
+  />
   <div
     class="v-tabs v-tabs--centered theme--light"
   >
@@ -228,7 +233,9 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with erro
 <div
   class="layout gap-2 column"
 >
-  <c-enabled-field />
+  <c-enabled-field-stub
+    with-background=""
+  />
   <div
     class="v-tabs v-tabs--centered theme--light"
   >
@@ -356,7 +363,9 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with temp
 <div
   class="layout gap-2 column"
 >
-  <c-enabled-field />
+  <c-enabled-field-stub
+    with-background=""
+  />
   <div
     class="v-tabs v-tabs--centered theme--light"
   >

@@ -54,7 +54,7 @@ func main() {
 		logger.Fatal().Err(err).Msg("failed to open one of required sessions")
 	}
 
-	err = initRabbitMQ(conf, logger)
+	err = initRabbitMQ(ctx, conf, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to initialize rabbitmq")
 	}
@@ -123,8 +123,8 @@ type Conf struct {
 	HealthCheck config.HealthCheckConf `toml:"HealthCheck"`
 }
 
-func initRabbitMQ(conf Conf, logger zerolog.Logger) error {
-	amqpConn, err := amqp.NewConnection(logger, 0, 0)
+func initRabbitMQ(ctx context.Context, conf Conf, logger zerolog.Logger) error {
+	amqpConn, err := amqp.New(0, 0, logger)
 	if err != nil {
 		return fmt.Errorf("failed to open amqp: %w", err)
 	}
@@ -136,15 +136,23 @@ func initRabbitMQ(conf Conf, logger zerolog.Logger) error {
 		}
 	}()
 
-	ch, err := amqpConn.Channel()
+	ch, err := amqpConn.Channel(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to open amqp channel: %w", err)
 	}
+
+	defer func() {
+		err = ch.Close()
+		if err != nil {
+			logger.Err(err).Msg("cannot close amqp channel")
+		}
+	}()
 
 	logger.Info().Msg("initialising rabbitmq exchanges")
 
 	for _, exchange := range conf.RabbitMQ.Exchanges {
 		err := ch.ExchangeDeclare(
+			ctx,
 			exchange.Name,
 			exchange.Kind,
 			exchange.Durable,
@@ -162,6 +170,7 @@ func initRabbitMQ(conf Conf, logger zerolog.Logger) error {
 	logger.Info().Msg("initialising rabbitmq queues")
 	for _, queue := range conf.RabbitMQ.Queues {
 		_, err := ch.QueueDeclare(
+			ctx,
 			queue.Name,
 			queue.Durable,
 			queue.AutoDelete,
@@ -176,6 +185,7 @@ func initRabbitMQ(conf Conf, logger zerolog.Logger) error {
 
 		if queue.Bind != nil {
 			err := ch.QueueBind(
+				ctx,
 				queue.Name,
 				queue.Bind.Key,
 				queue.Bind.Exchange,

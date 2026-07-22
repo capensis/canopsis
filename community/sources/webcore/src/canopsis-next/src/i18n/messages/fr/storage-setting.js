@@ -75,9 +75,17 @@ export default {
     title: 'Enregistrements d\'événements',
     deleteAfter: 'Supprimer les enregistrements d\'événements',
   },
+  connectorAnomalies: {
+    title: 'Anomalies d\'événements',
+    deleteHourlyData: 'Supprimer les données horaires des anomalies',
+  },
   entityInfosLog: {
     title: 'Filtre d\'événements : journaux d\'enrichissement d\'entité',
     deleteAfter: 'Supprimer les journaux de filtre d\'événements antérieurs à',
+  },
+  llmChat: {
+    title: 'Discussions IA',
+    deleteHistory: 'Supprimer l\'historique des discussions IA',
   },
   history: {
     scriptLaunched: 'Script lancé à {launchedAt}.',
