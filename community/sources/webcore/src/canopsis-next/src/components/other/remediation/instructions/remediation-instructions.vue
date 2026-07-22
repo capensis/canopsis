@@ -8,6 +8,7 @@
       :updatable="hasUpdateAnyRemediationInstructionAccess"
       :removable="hasDeleteAnyRemediationInstructionAccess"
       :duplicable="hasCreateAnyRemediationInstructionAccess"
+      :active="active"
       @refresh="fetchList"
       @remove-selected="showRemoveSelectedRemediationInstructionModal"
       @duplicate="showDuplicateRemediationInstructionModal"
@@ -33,6 +34,12 @@ import RemediationInstructionsList from './remediation-instructions-list.vue';
 
 export default {
   components: { RemediationInstructionsList },
+  props: {
+    active: {
+      type: Boolean,
+      default: true,
+    },
+  },
   setup() {
     const {
       remediationInstructions,
