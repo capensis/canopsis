@@ -13,17 +13,10 @@
       @click="$emit('toggle:sideBar')"
     />
 
-    <c-layout
-      v-else
-      class="top-bar__brand fill-height"
-      align="center"
-    >
+    <c-layout v-else class="top-bar__brand fill-height" align="center">
       <app-logo class="canopsis-logo mr-2" />
 
-      <c-layout
-        class="version ml-1 fill-height"
-        align="end"
-      >
+      <c-layout class="version ml-1 fill-height" align="end">
         <logged-users-count badge-color="secondary" />
         <app-version />
       </c-layout>
@@ -38,6 +31,9 @@
 
     <v-spacer />
 
+    <div :data-teleport-target="TELEPORTS_NAMES.additionalTopBarItems" />
+    <the-mass-actions-panels />
+
     <c-layout
       v-if="!$route.meta.simpleNavigation"
       class="top-bar__menus fill-height"
@@ -50,10 +46,7 @@
       <top-bar-user-menu />
     </c-layout>
 
-    <template
-      v-if="isShownGroupsTopBar"
-      #extension
-    >
+    <template v-if="isShownGroupsTopBar" #extension>
       <groups-top-bar />
     </template>
   </v-app-bar>
@@ -64,7 +57,7 @@ import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
 
 import { MEDIA_QUERIES_BREAKPOINTS, SIDE_BAR_WIDTH, TOP_BAR_HEIGHT } from '@/config'
-import { USER_PERMISSIONS } from '@/constants'
+import { TELEPORTS_NAMES, USER_PERMISSIONS } from '@/constants'
 
 import { useAuth, useCanPermission } from '@/hooks/auth'
 import { useInfo } from '@/hooks/store/modules/info'
@@ -107,7 +100,9 @@ export default {
   setup(props) {
     const { isShownGroupsTopBar, isShownGroupsSideBar } = useAuth()
     const { isProVersion, appTitle } = useInfo()
-    const { hasAccess: hasAccessToHealthcheckStatus } = useCanPermission(USER_PERMISSIONS.technical.healthcheckStatus)
+    const { hasAccess: hasAccessToHealthcheckStatus } = useCanPermission(
+      USER_PERMISSIONS.technical.healthcheckStatus,
+    )
     const { width } = useDisplay()
 
     const topBarStyle = computed(() => {
@@ -123,6 +118,7 @@ export default {
 
     return {
       TOP_BAR_HEIGHT,
+      TELEPORTS_NAMES,
       appTitle,
       hasAccessToHealthcheckStatus,
       isProVersion,
@@ -158,6 +154,7 @@ export default {
   :deep(.v-toolbar__content),
   :deep(.v-toolbar__extension) {
     padding: 0;
+    overflow: visible;
   }
 
   :deep(.v-toolbar__content) {

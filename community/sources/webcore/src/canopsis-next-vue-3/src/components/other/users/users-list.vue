@@ -5,10 +5,23 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
+    :select-all="removable"
     advanced-pagination
     search
     @update:options="$emit('update:options', $event)"
   >
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :enablable="updatable"
+        :disablable="updatable"
+        :removable="removable"
+        user
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
+      />
+    </template>
+
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
@@ -25,10 +38,7 @@
 
     <template #roles="{ item }">
       <c-layout wrap>
-        <v-chip
-          v-for="role in item.roles"
-          :key="role._id"
-        >
+        <v-chip v-for="role in item.roles" :key="role._id">
           {{ role.name }}
         </v-chip>
       </c-layout>
@@ -36,11 +46,7 @@
 
     <template #actions="{ item }">
       <c-layout gap="1">
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click.stop="$emit('edit', item)"
-        />
+        <c-action-btn v-if="updatable" type="edit" @click.stop="$emit('edit', item)" />
         <c-action-btn
           v-if="removable"
           :disabled-button="!item.deletable"
@@ -87,7 +93,7 @@ export default {
     },
   },
 
-  emits: ['update:options', 'edit', 'remove'],
+  emits: ['update:options', 'edit', 'remove', 'refresh'],
 
   setup() {
     const { t } = useI18n()

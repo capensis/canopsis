@@ -31,7 +31,7 @@
     <template #mass-actions="{ selected, selectedKeys, count }">
       <c-layout align="center">
         <c-action-btn
-          :tooltip="tc('eventsRecord.resendEvents', count)"
+          :tooltip="t('eventsRecord.resendEvents', count)"
           :disabled="resendingDisabled || resending"
           icon="play_arrow"
           color="primary"
@@ -53,7 +53,7 @@
     <template #actions="{ item }">
       <c-layout align="center">
         <c-action-btn
-          :tooltip="tc('eventsRecord.resendEvents', 1)"
+          :tooltip="t('eventsRecord.resendEvents', 1)"
           :disabled="resendingDisabled || resending"
           icon="play_arrow"
           color="primary"
@@ -127,7 +127,7 @@ export default {
   emits: ['update:options', 'remove', 'remove:selected', 'start:resending', 'stop:resending'],
 
   setup() {
-    const { t, tc } = useI18n()
+    const { t } = useI18n()
     const popups = usePopups()
 
     const headers = computed(() => [
@@ -148,7 +148,6 @@ export default {
 
     return {
       t,
-      tc,
       headers,
       formatDate,
       stringify,

@@ -5,10 +5,22 @@
     :loading="pending"
     :options="options"
     :total-items="totalItems"
+    :select-all="removable"
+    :is-disabled-item="isDisabledRole"
     advanced-pagination
     search
     @update:options="$emit('update:options', $event)"
   >
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        role
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
+      />
+    </template>
+
     <template #auth_config.inactivity_interval="{ item }">
       {{ durationToString(item.auth_config?.inactivity_interval) }}
     </template>
@@ -25,11 +37,7 @@
           type="edit"
           @click.stop="$emit('edit', item)"
         />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click.stop="$emit('duplicate', item)"
-        />
+        <c-action-btn v-if="duplicable" type="duplicate" @click.stop="$emit('duplicate', item)" />
         <c-action-btn
           v-if="removable"
           :disabled-button="!item.deletable"
@@ -42,11 +50,11 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed } from 'vue'
 
-import { convertDurationToString } from '@/helpers/date/duration';
+import { convertDurationToString } from '@/helpers/date/duration'
 
-import { useI18n } from '@/hooks/i18n';
+import { useI18n } from '@/hooks/i18n'
 
 export default {
   props: {
@@ -80,10 +88,10 @@ export default {
     },
   },
 
-  emits: ['update:options', 'edit', 'duplicate', 'remove'],
+  emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
 
   setup() {
-    const { t } = useI18n();
+    const { t } = useI18n()
 
     const headers = computed(() => [
       {
@@ -105,16 +113,17 @@ export default {
         value: 'actions',
         sortable: false,
       },
-    ]);
+    ])
 
-    const durationToString = duration => (
+    const durationToString = (duration) =>
       duration ? convertDurationToString(duration) : t('common.notAvailable')
-    );
+    const isDisabledRole = ({ deletable = true }) => !deletable
 
     return {
       headers,
       durationToString,
-    };
+      isDisabledRole,
+    }
   },
-};
+}
 </script>

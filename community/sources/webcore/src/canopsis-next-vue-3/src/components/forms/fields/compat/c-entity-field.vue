@@ -121,10 +121,10 @@ export default {
       }
 
       if (isArray(this.value)) {
-        return this.$tc('common.entity', this.value.length)
+        return this.$t('common.entity', this.value.length)
       }
 
-      return this.$tc('common.entity')
+      return this.$t('common.entity')
     },
   },
   watch: {

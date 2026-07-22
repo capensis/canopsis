@@ -1,8 +1,8 @@
-import { storeToRefs } from 'pinia';
+import { storeToRefs } from 'pinia'
 
-import { useRoleStore } from '@/stores/modules/role';
-import { useI18n } from '@/hooks/i18n';
-import { usePopups } from '@/hooks/popups';
+import { useRoleStore } from '@/stores/modules/role'
+import { useI18n } from '@/hooks/i18n'
+import { usePopups } from '@/hooks/popups'
 
 /**
  * Creates hooks for accessing role-related store operations.
@@ -10,15 +10,10 @@ import { usePopups } from '@/hooks/popups';
  * @returns {Object} Role refs and actions.
  */
 export const useRole = () => {
-  const { t } = useI18n();
-  const popups = usePopups();
-  const roleStore = useRoleStore();
-  const {
-    items,
-    meta,
-    pending,
-    fetchingParams,
-  } = storeToRefs(roleStore);
+  const { t } = useI18n()
+  const popups = usePopups()
+  const roleStore = useRoleStore()
+  const { items, meta, pending, fetchingParams } = storeToRefs(roleStore)
 
   /**
    * Creates a new role and shows a success popup message.
@@ -28,10 +23,10 @@ export const useRole = () => {
    * @returns {Promise<void>}
    */
   const createRoleWithPopup = async ({ data }) => {
-    await roleStore.create({ data });
+    await roleStore.create({ data })
 
-    popups.success({ text: t('success.default') });
-  };
+    popups.success({ text: t('success.default') })
+  }
 
   /**
    * Updates an existing role and shows a success popup message.
@@ -42,10 +37,10 @@ export const useRole = () => {
    * @returns {Promise<void>}
    */
   const updateRoleWithPopup = async ({ id, data }) => {
-    await roleStore.update({ id, data });
+    await roleStore.update({ id, data })
 
-    popups.success({ text: t('success.default') });
-  };
+    popups.success({ text: t('success.default') })
+  }
 
   /**
    * Removes a role and shows a success/error popup message.
@@ -56,14 +51,14 @@ export const useRole = () => {
    */
   const removeRoleWithPopup = async ({ id }) => {
     try {
-      await roleStore.remove({ id });
-      popups.success({ text: t('success.default') });
+      await roleStore.remove({ id })
+      popups.success({ text: t('success.default') })
     } catch (err) {
-      console.error(err);
+      console.error(err)
 
-      popups.error({ text: t('errors.default') });
+      popups.error({ text: t('errors.default') })
     }
-  };
+  }
 
   return {
     roles: items,
@@ -79,10 +74,11 @@ export const useRole = () => {
     createRole: roleStore.create,
     updateRole: roleStore.update,
     fetchRoleTemplatesListWithoutStore: roleStore.fetchTemplatesListWithoutStore,
+    bulkRemoveRoles: roleStore.bulkRemove,
     bulkUpdateRolePermissions: roleStore.bulkUpdatePermissions,
 
     createRoleWithPopup,
     updateRoleWithPopup,
     removeRoleWithPopup,
-  };
-};
+  }
+}

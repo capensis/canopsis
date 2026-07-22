@@ -25,19 +25,24 @@
         name="toolbar"
       />
 
-      <div v-if="hasMassActionsSlot" class="c-advanced-data-table__mass-actions">
-        <v-expand-transition>
-          <c-layout v-if="selected.length" class="px-2 mt-1">
-            <slot
-              :selected="selected"
-              :selected-keys="selectedKeys"
-              :count="selected.length"
-              :clear-selected="clearSelected"
-              name="mass-actions"
-            />
-          </c-layout>
-        </v-expand-transition>
-      </div>
+      <c-mass-actions-panel
+        v-if="selectAll && selected.length && hasMassActionsSlot && !hideMassActions"
+        v-model="keepSelectedAfterAction"
+        v-bind="massActionsGridParameters"
+        :selected="selected"
+        :default-value="defaultKeepSelectedAfterAction"
+        @clear:selected="clearSelected(keepSelectedAfterAction, true)"
+      >
+        <template #actions>
+          <slot
+            :selected="selected"
+            :selected-keys="selectedKeys"
+            :count="selected.length"
+            :clear-selected="clearSelected"
+            name="mass-actions"
+          />
+        </template>
+      </c-mass-actions-panel>
     </v-row>
 
     <v-data-table-server
@@ -277,6 +282,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    massActionsGridParameters: {
+      type: Object,
+      required: false,
+    },
+    defaultKeepSelectedAfterAction: {
+      type: Boolean,
+      default: false,
+    },
+    hideMassActions: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: ['update:options'],
@@ -289,6 +306,7 @@ export default {
       closingExpandedKeys: [],
       expandElements: {},
       expandTimeouts: {},
+      keepSelectedAfterAction: this.defaultKeepSelectedAfterAction ?? false,
     }
   },
 
@@ -621,7 +639,11 @@ export default {
       this.updateOptions({ ...this.options, page, itemsPerPage })
     },
 
-    clearSelected() {
+    clearSelected(keepSelected = this.keepSelectedAfterAction, force = false) {
+      if (keepSelected && !force) {
+        return
+      }
+
       this.selectedItems = []
     },
 
@@ -673,11 +695,6 @@ export default {
     display: flex;
     flex: 0 0 33.333333%;
     max-width: 33.333333%;
-  }
-
-  &__mass-actions {
-    flex: 0 0 100%;
-    max-width: 100%;
   }
 
   &__expand {

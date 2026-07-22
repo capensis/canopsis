@@ -18,13 +18,13 @@
       <v-card-text>
         <v-window v-model="activeTab" class="planning-page__tabs-window">
           <v-window-item :value="PLANNING_TABS.types">
-            <planning-types />
+            <planning-types :active="activeTab === PLANNING_TABS.types" />
           </v-window-item>
           <v-window-item :value="PLANNING_TABS.reasons">
-            <planning-reasons />
+            <planning-reasons :active="activeTab === PLANNING_TABS.reasons" />
           </v-window-item>
           <v-window-item :value="PLANNING_TABS.exceptions">
-            <planning-exceptions />
+            <planning-exceptions :active="activeTab === PLANNING_TABS.exceptions" />
           </v-window-item>
         </v-window>
       </v-card-text>

@@ -2,7 +2,7 @@
   <c-lazy-search-field
     :value="selectedItems"
     :items="items"
-    :label="label || $tc('common.tag')"
+    :label="label || $t('common.tag')"
     :loading="wholePending"
     :disabled="disabled"
     :name="name"
@@ -42,39 +42,26 @@
       <span v-else />
     </template>
     <template #item="{ props: itemProps }">
-      <v-list-item
-        class="c-alarm-tag-field__list-item text-break"
-        v-bind="itemProps"
-      >
-        <template
-          v-if="multiple"
-          #prepend
-        >
-          <v-checkbox
-            :model-value="itemProps.active"
-            density="compact"
-            hide-details
-          />
+      <v-list-item class="c-alarm-tag-field__list-item text-break" v-bind="itemProps">
+        <template v-if="multiple" #prepend>
+          <v-checkbox :model-value="itemProps.active" density="compact" hide-details />
         </template>
       </v-list-item>
     </template>
-    <template
-      v-if="$slots['no-data']"
-      #no-data=""
-    >
+    <template v-if="$slots['no-data']" #no-data="">
       <slot name="no-data" />
     </template>
   </c-lazy-search-field>
 </template>
 
 <script>
-import { computed, toRef, watch } from 'vue';
+import { computed, toRef, watch } from 'vue'
 
-import { PAGINATION_LIMIT } from '@/config';
+import { PAGINATION_LIMIT } from '@/config'
 
-import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
-import { useLazySearch } from '@/hooks/form/lazy-search';
-import { useAlarmTagLabel } from '@/hooks/store/modules/alarm-tag-label';
+import { useAlarmTag } from '@/hooks/store/modules/alarm-tag'
+import { useLazySearch } from '@/hooks/form/lazy-search'
+import { useAlarmTagLabel } from '@/hooks/store/modules/alarm-tag-label'
 
 export default {
   emits: ['update:value'],
@@ -129,15 +116,15 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { fetchAlarmTagsListWithoutStore } = useAlarmTag();
-    const { fetchAlarmTagsLabelsListWithoutStore } = useAlarmTagLabel();
+    const { fetchAlarmTagsListWithoutStore } = useAlarmTag()
+    const { fetchAlarmTagsLabelsListWithoutStore } = useAlarmTagLabel()
 
-    const itemText = computed(() => (props.onlyLabels ? '_id' : 'value'));
-    const itemValue = computed(() => (props.onlyLabels ? '_id' : 'value'));
-    const idParamsKey = computed(() => (props.onlyLabels ? 'ids' : 'values'));
-    const fetchHandler = computed(() => (
-      props.onlyLabels ? fetchAlarmTagsLabelsListWithoutStore : fetchAlarmTagsListWithoutStore
-    ));
+    const itemText = computed(() => (props.onlyLabels ? '_id' : 'value'))
+    const itemValue = computed(() => (props.onlyLabels ? '_id' : 'value'))
+    const idParamsKey = computed(() => (props.onlyLabels ? 'ids' : 'values'))
+    const fetchHandler = computed(() =>
+      props.onlyLabels ? fetchAlarmTagsLabelsListWithoutStore : fetchAlarmTagsListWithoutStore,
+    )
 
     const {
       selectedItems,
@@ -149,17 +136,20 @@ export default {
       changeSelectedItems,
       removeItemFromSelectedItemsByIndex,
       updateSearch,
-    } = useLazySearch({
-      idParamsKey,
-      fetchHandler,
-      idKey: itemValue,
-      value: toRef(props, 'value'),
-      addable: toRef(props, 'addable'),
-      multiple: true,
-      attachValue: true,
-    }, emit);
+    } = useLazySearch(
+      {
+        idParamsKey,
+        fetchHandler,
+        idKey: itemValue,
+        value: toRef(props, 'value'),
+        addable: toRef(props, 'addable'),
+        multiple: true,
+        attachValue: true,
+      },
+      emit,
+    )
 
-    watch(() => props.onlyLabels, fetchItems);
+    watch(() => props.onlyLabels, fetchItems)
 
     return {
       selectedItems,
@@ -173,9 +163,9 @@ export default {
       changeSelectedItems,
       updateSearch,
       removeItemFromSelectedItemsByIndex,
-    };
+    }
   },
-};
+}
 </script>
 
 <style lang="scss">

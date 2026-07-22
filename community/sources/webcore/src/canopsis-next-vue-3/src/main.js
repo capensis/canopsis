@@ -7,6 +7,7 @@ import CCircleBadge from '@/components/common/badge/c-circle-badge.vue'
 import CProgressOverlay from '@/components/common/progress/c-progress-overlay.vue'
 
 import * as BlockComponents from '@/components/common/block'
+import * as ActionsPanelComponents from '@/components/common/actions-panel'
 import * as ButtonComponents from '@/components/common/buttons'
 import * as ChipComponents from '@/components/common/chips'
 import * as IconComponents from '@/components/common/icon'
@@ -33,99 +34,102 @@ import { i18n } from './i18n'
 import vuetify, { registerVuetifyComponentAliases } from './plugins/vuetify'
 import { customIconsRegistry } from './plugins/vuetify/icons'
 
-
-import modalsPlugin from './plugins/modals';
-import popupsPlugin from './plugins/popups';
-import socketPlugin from './plugins/socket';
-import veeValidatePlugin from './plugins/vee-validate';
+import modalsPlugin from './plugins/modals'
+import popupsPlugin from './plugins/popups'
+import socketPlugin from './plugins/socket'
+import veeValidatePlugin from './plugins/vee-validate'
 
 import 'vuetify/styles'
 
 const app = createApp(App)
 
-app.use(createPinia());
-app.use(router);
-app.use(vuetify);
-const vuetifyGlobalProperties = app.config.globalProperties.$vuetify ?? {};
+app.use(createPinia())
+app.use(router)
+app.use(vuetify)
+const vuetifyGlobalProperties = app.config.globalProperties.$vuetify ?? {}
 vuetifyGlobalProperties.icons = {
   values: customIconsRegistry,
-};
-app.config.globalProperties.$vuetify = vuetifyGlobalProperties;
-app.config.globalProperties.$constants = constants;
-registerVuetifyComponentAliases(app);
-app.use(i18n);
-app.use(veeValidatePlugin, { i18n });
-app.use(socketPlugin);
+}
+app.config.globalProperties.$vuetify = vuetifyGlobalProperties
+app.config.globalProperties.$constants = constants
+registerVuetifyComponentAliases(app)
+app.use(i18n)
+app.use(veeValidatePlugin, { i18n })
+app.use(socketPlugin)
 
-app.component('c-runtime-template', CRuntimeTemplate);
-app.component('c-compiled-template', CCompiledTemplate);
-app.component('c-circle-badge', CCircleBadge);
-app.component('c-progress-overlay', CProgressOverlay);
-app.component('c-layout', CLayout);
+app.component('c-runtime-template', CRuntimeTemplate)
+app.component('c-compiled-template', CCompiledTemplate)
+app.component('c-circle-badge', CCircleBadge)
+app.component('c-progress-overlay', CProgressOverlay)
+app.component('c-layout', CLayout)
 
 Object.entries(BlockComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
+
+Object.entries(ActionsPanelComponents).forEach(([name, component]) => {
+  app.component(name, component)
+})
 
 Object.entries(ButtonComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(ChipComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(IconComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(InputComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(LayoutComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(ModalComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(PageComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(PaginationComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(ResponsiveListComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(RequestComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(SearchComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(TableComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(TooltipComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(VuetifyCommonComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 Object.entries(FormFieldComponents).forEach(([name, component]) => {
-  app.component(name, component);
-});
+  app.component(name, component)
+})
 
 app.use(modalsPlugin, {
   components: RegisteredModals,
@@ -215,8 +219,16 @@ app.use(modalsPlugin, {
     [MODALS.filtersList]: { autoHeight: true },
     [MODALS.healthcheckEngine]: { autoHeight: true },
     [MODALS.healthcheckEnginesChainReference]: { autoHeight: true },
-    [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer', autoHeight: true },
-    [MODALS.imagesViewer]: { maxWidth: '100%', contentClass: 'v-dialog__images-viewer', autoHeight: true },
+    [MODALS.imageViewer]: {
+      maxWidth: '90%',
+      contentClass: 'v-dialog__image-viewer',
+      autoHeight: true,
+    },
+    [MODALS.imagesViewer]: {
+      maxWidth: '100%',
+      contentClass: 'v-dialog__images-viewer',
+      autoHeight: true,
+    },
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true, autoHeight: true },
     [MODALS.importExternalDataTableRecords]: { maxWidth: 1200, persistent: true, autoHeight: true },
     [MODALS.importPbehaviorException]: { autoHeight: true },
@@ -227,7 +239,11 @@ app.use(modalsPlugin, {
     [MODALS.payloadTextareaEditor]: { autoHeight: true },
     [MODALS.pbehaviorPlanning]: { maxWidth: '95%', persistent: true, autoHeight: true },
     [MODALS.pbehaviorRecurrenceRule]: { maxWidth: '95%', persistent: true, autoHeight: true },
-    [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true, autoHeight: true },
+    [MODALS.pbehaviorRecurrentChangesConfirmation]: {
+      maxWidth: 400,
+      persistent: true,
+      autoHeight: true,
+    },
     [MODALS.pbehaviorsCalendar]: { maxWidth: '95%', persistent: true, autoHeight: true },
     [MODALS.rate]: { maxWidth: 500, autoHeight: true },
     [MODALS.remediationInstructionApproval]: { maxWidth: 960 },
@@ -246,7 +262,7 @@ app.use(modalsPlugin, {
     [MODALS.userInterface]: { maxWidth: 1000 },
     [MODALS.variablesHelp]: { autoHeight: true },
   },
-});
-app.use(popupsPlugin);
+})
+app.use(popupsPlugin)
 
 app.mount('#app')

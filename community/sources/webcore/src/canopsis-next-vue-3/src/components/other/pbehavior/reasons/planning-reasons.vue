@@ -6,6 +6,7 @@
     :options="options"
     :removable="hasDeleteAccess"
     :updatable="hasUpdateAccess"
+    :active="active"
     @remove="showRemovePbehaviorReasonModal"
     @refresh="fetchList"
     @update:options="updateOptions"
@@ -31,6 +32,13 @@ import PbehaviorReasonsList from './pbehavior-reasons-list.vue'
 export default {
   components: {
     PbehaviorReasonsList,
+  },
+
+  props: {
+    active: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   setup() {

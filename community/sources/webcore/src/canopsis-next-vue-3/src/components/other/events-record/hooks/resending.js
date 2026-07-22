@@ -6,7 +6,7 @@ import { usePopups } from '@/hooks/popups'
 import { useEventsRecord } from '@/hooks/store/modules/events-record'
 
 export const useEventsRecordResending = () => {
-  const { t, tc } = useI18n()
+  const { t } = useI18n()
   const modals = useModals()
   const popups = usePopups()
 
@@ -32,7 +32,7 @@ export const useEventsRecordResending = () => {
     return modals.show({
       name: MODALS.duration,
       config: {
-        title: tc('eventsRecord.resendEvents', 1),
+        title: t('eventsRecord.resendEvents', 1),
         label: t('eventsRecord.delayBetweenEvents'),
         units: [
           { value: TIME_UNITS.millisecond, text: 'common.times.millisecond' },
