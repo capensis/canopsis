@@ -1,6 +1,6 @@
 <template>
   <v-form>
-    <c-modal-wrapper close>
+    <c-modal-wrapper text-class="events-record-modal__text" close>
       <template #title>
         <span>{{ title }}</span>
       </template>
@@ -13,7 +13,7 @@
           @stop:recording="stopRecording(eventsRecordId)"
         />
 
-        <v-tabs v-model="activeTab" align-tabs="center">
+        <v-tabs v-model="activeTab" color="primary" align-tabs="center">
           <v-tab :value="TABS.events" :disabled="isRecording" class="v-tab--tooltip">
             <v-tooltip :disabled="!isRecording" location="bottom">
               <template #activator="{ props: tooltipProps }">
@@ -29,7 +29,7 @@
           </v-tab>
         </v-tabs>
 
-        <v-window v-model="activeTab">
+        <v-window v-model="activeTab" class="events-record-modal__window">
           <v-window-item :value="TABS.events">
             <div>
               <events-record-events-filter
@@ -268,3 +268,20 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+:deep(.events-record-modal__text) {
+  overflow-x: hidden;
+}
+
+.events-record-modal__window {
+  max-width: 100%;
+  overflow: hidden;
+
+  :deep(.v-window__container),
+  :deep(.v-window-item) {
+    max-width: 100%;
+    overflow: hidden;
+  }
+}
+</style>

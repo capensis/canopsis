@@ -4,6 +4,7 @@ import { MODALS } from '@/constants'
 
 export default {
   [MODALS.confirmation]: defineAsyncComponent(() => import('./common/confirmation.vue')),
+  [MODALS.duration]: defineAsyncComponent(() => import('./common/duration.vue')),
   [MODALS.clickOutsideConfirmation]: defineAsyncComponent(
     () => import('./common/click-outside-confirmation.vue'),
   ),

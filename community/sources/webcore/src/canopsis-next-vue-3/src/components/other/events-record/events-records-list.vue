@@ -37,7 +37,7 @@
     <template #count="{ item }"> {{ item.count }}{{ item.is_recording ? '...' : '' }} </template>
 
     <template #author="{ item }">
-      {{ item.author || '-' }}
+      {{ item.author?.display_name || '-' }}
     </template>
 
     <template #actions="{ item }">
@@ -46,7 +46,8 @@
           :tooltip="
             t(item.is_recording ? 'eventsRecord.viewPattern' : 'eventsRecord.viewEventsAndPattern')
           "
-          type="view"
+          icon="pageview"
+          color="#6A6A6A"
           @click="$emit('show', item)"
         />
         <c-action-btn
@@ -110,7 +111,7 @@ export default {
       { text: t('eventsRecord.recordingEnd'), value: 'e', sortable: false },
       { text: t('eventsRecord.duration'), value: 'd', sortable: false },
       { text: t('eventsRecord.eventsCount'), value: 'count', sortable: false },
-      { text: t('eventsRecord.launchedBy'), value: 'author', sortable: false },
+      { text: t('eventsRecord.launchedBy'), value: 'author.display_name', sortable: false },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ])
 
