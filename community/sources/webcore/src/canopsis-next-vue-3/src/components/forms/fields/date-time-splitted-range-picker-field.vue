@@ -5,6 +5,7 @@
         :value="start"
         :full-day="fullDay"
         :disabled="disabled"
+        :control-variant="controlVariant"
         :label="startLabel"
         :name="`${name}_start`"
         :rules="startRules"
@@ -12,14 +13,13 @@
       />
     </div>
     <template v-if="!noEnding">
-      <div class="date-time-splitted-range-picker-field__time-dash">
-        -
-      </div>
+      <div class="date-time-splitted-range-picker-field__time-dash">-</div>
       <div class="date-time-splitted-range-picker-field__end">
         <date-time-splitted-picker-field
           :value="end"
           :full-day="fullDay"
           :disabled="disabled"
+          :control-variant="controlVariant"
           :label="endLabel"
           :name="`${name}_end`"
           :min="endMin"
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import DateTimeSplittedPickerField from '@/components/forms/fields/date-time-picker/date-time-splitted-picker-field.vue';
+import DateTimeSplittedPickerField from '@/components/forms/fields/date-time-picker/date-time-splitted-picker-field.vue'
 
 export default {
   components: {
@@ -81,6 +81,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    controlVariant: {
+      type: String,
+      default: undefined,
+    },
     endMin: {
       type: String,
       required: false,
@@ -90,7 +94,7 @@ export default {
       required: false,
     },
   },
-};
+}
 </script>
 
 <style lang="scss">

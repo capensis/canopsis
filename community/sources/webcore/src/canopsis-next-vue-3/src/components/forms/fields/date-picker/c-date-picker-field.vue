@@ -32,20 +32,22 @@
     <v-date-picker
       :model-value="pickerValue"
       :color="color"
+      :header-color="headerColor"
+      :control-variant="controlVariant"
       :min="min"
       :max="max"
       :allowed-dates="allowedDates"
+      :hide-header="hideHeader"
       class="date-picker"
-      hide-header
       @update:model-value="updateDate"
     />
   </v-menu>
 </template>
 
 <script>
-import { DATETIME_FORMATS } from '@/constants';
-import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
-import { formBaseMixin } from '@/mixins/form';
+import { DATETIME_FORMATS } from '@/constants'
+import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date'
+import { formBaseMixin } from '@/mixins/form'
 
 export default {
   emits: ['update:value'],
@@ -70,6 +72,14 @@ export default {
     color: {
       type: String,
       default: 'primary',
+    },
+    headerColor: {
+      type: String,
+      default: 'primary',
+    },
+    controlVariant: {
+      type: String,
+      default: undefined,
     },
     format: {
       type: String,
@@ -111,38 +121,53 @@ export default {
   data() {
     return {
       opened: false,
-    };
+    }
   },
   computed: {
+    hideHeader() {
+      return this.controlVariant !== 'modal'
+    },
+
     textValue() {
-      return convertDateToString(this.value, this.format);
+      return convertDateToString(this.value, this.format)
     },
 
     pickerValue() {
-      return this.value ? convertDateToDateObject(this.value, DATETIME_FORMATS.datePicker) : null;
+      return this.value ? convertDateToDateObject(this.value, DATETIME_FORMATS.datePicker) : null
     },
   },
   methods: {
     clear() {
-      this.updateModel(null);
+      this.updateModel(null)
     },
 
     updateDate(value) {
-      const date = value instanceof Date
-        ? value
-        : convertDateToDateObject(value);
-      const preparedValue = convertDateToString(date, DATETIME_FORMATS.datePicker, null);
+      const date = value instanceof Date ? value : convertDateToDateObject(value)
+      const preparedValue = convertDateToString(date, DATETIME_FORMATS.datePicker, null)
 
-      this.updateModel(preparedValue);
-      this.$emit('change', preparedValue);
-      this.opened = false;
+      this.updateModel(preparedValue)
+      this.$emit('change', preparedValue)
+      this.opened = false
     },
   },
-};
+}
 </script>
 
 <style lang="scss">
 .date-picker {
+  .v-date-picker-month__day {
+    height: 36px;
+  }
+
+  .v-date-picker-month__day .v-btn.v-date-picker-month__day-btn {
+    --v-btn-height: 32px;
+    --v-btn-size: 0.875rem;
+
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+  }
+
   .v-picker__body,
   .v-time-picker-clock__item,
   .v-time-picker-clock__item span,

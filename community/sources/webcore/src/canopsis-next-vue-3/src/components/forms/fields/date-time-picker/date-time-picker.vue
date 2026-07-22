@@ -1,24 +1,18 @@
 <template>
   <v-sheet>
-    <div
-      v-if="label"
-      class="v-picker__title bg-primary text-center"
-    >
+    <div v-if="label" class="v-picker__title bg-primary text-center">
       <span class="text-h5">
         {{ label }}
       </span>
     </div>
     <div class="date-time-picker__body">
-      <c-layout
-        class="py-2"
-        align="center"
-        justify="center"
-      >
+      <c-layout class="py-2" align="start" justify="space-around">
         <div class="v-date-time-picker__subtitle-wrapper">
           <span
             :class="{ 'text-medium-emphasis': !localValue }"
             class="v-date-time-picker__subtitle"
-          >{{ valueString }}</span>
+            >{{ valueString }}</span
+          >
         </div>
         <div class="v-date-time-picker__subtitle-wrapper">
           <time-picker-field
@@ -34,6 +28,7 @@
         <v-date-picker
           :model-value="dateValue"
           :allowed-dates="allowedDates"
+          :control-variant="controlVariant"
           color="primary"
           first-day-of-week="1"
           hide-header
@@ -43,22 +38,11 @@
     </div>
     <slot name="footer">
       <v-divider />
-      <c-layout
-        class="mt-1 py-2"
-        justify="space-around"
-      >
-        <v-btn
-          type="button"
-          variant="text"
-          @click="$emit('close')"
-        >
+      <c-layout class="mt-1 py-2" justify="space-around">
+        <v-btn type="button" variant="text" @click="$emit('close')">
           {{ $t('common.cancel') }}
         </v-btn>
-        <v-btn
-          type="button"
-          color="primary"
-          @click="submit"
-        >
+        <v-btn type="button" color="primary" @click="submit">
           {{ $t('common.apply') }}
         </v-btn>
       </c-layout>
@@ -67,14 +51,18 @@
 </template>
 
 <script>
-import { DATETIME_FORMATS } from '@/constants';
+import { DATETIME_FORMATS } from '@/constants'
 
-import { getDateObjectByDate, getDateObjectByTime, normalizeTimeString } from '@/helpers/date/date-time-picker';
-import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
+import {
+  getDateObjectByDate,
+  getDateObjectByTime,
+  normalizeTimeString,
+} from '@/helpers/date/date-time-picker'
+import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date'
 
-import { formBaseMixin } from '@/mixins/form';
+import { formBaseMixin } from '@/mixins/form'
 
-import TimePickerField from '../time-picker/time-picker-field.vue';
+import TimePickerField from '../time-picker/time-picker-field.vue'
 
 export default {
   components: { TimePickerField },
@@ -97,6 +85,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    controlVariant: {
+      type: String,
+      default: undefined,
+    },
     allowedDates: {
       type: Function,
       required: false,
@@ -105,69 +97,81 @@ export default {
   data() {
     return {
       localValue: this.value ? convertDateToDateObject(this.value) : null,
-    };
+    }
   },
   computed: {
     valueString() {
-      return convertDateToString(this.localValue, this.dateFormat, '--/--/----');
+      return convertDateToString(this.localValue, this.dateFormat, '--/--/----')
     },
 
     timeString() {
-      return convertDateToString(this.localValue, DATETIME_FORMATS.timePicker, null);
+      return convertDateToString(this.localValue, DATETIME_FORMATS.timePicker, null)
     },
 
     dateValue() {
-      return this.localValue ? convertDateToDateObject(this.localValue) : null;
+      return this.localValue ? convertDateToDateObject(this.localValue) : null
     },
 
     allowedTime() {
       if (!this.allowedDates || !this.value) {
-        return () => true;
+        return () => true
       }
 
       return (time) => {
-        const [hours, minutes] = normalizeTimeString(time).split(':');
-        const currentDate = convertDateToDateObject(this.value);
+        const [hours, minutes] = normalizeTimeString(time).split(':')
+        const currentDate = convertDateToDateObject(this.value)
 
-        currentDate.setHours(hours, minutes);
+        currentDate.setHours(hours, minutes)
 
-        return this.allowedDates?.(currentDate);
-      };
+        return this.allowedDates?.(currentDate)
+      }
     },
   },
   watch: {
     value() {
       if (this.value !== this.localValue) {
-        this.localValue = this.value ? convertDateToDateObject(this.value) : null;
+        this.localValue = this.value ? convertDateToDateObject(this.value) : null
       }
     },
   },
   methods: {
     updateTime(time) {
-      this.localValue = getDateObjectByTime(this.localValue, time);
+      this.localValue = getDateObjectByTime(this.localValue, time)
     },
 
     updateDate(date) {
-      const preparedDate = date instanceof Date
-        ? convertDateToString(date, DATETIME_FORMATS.datePicker)
-        : date;
+      const preparedDate =
+        date instanceof Date ? convertDateToString(date, DATETIME_FORMATS.datePicker) : date
 
-      this.localValue = getDateObjectByDate(this.localValue, preparedDate);
+      this.localValue = getDateObjectByDate(this.localValue, preparedDate)
     },
 
     submit() {
-      this.updateModel(this.localValue);
+      this.updateModel(this.localValue)
 
-      this.$emit('close');
+      this.$emit('close')
     },
   },
-};
+}
 </script>
 
 <style lang="scss">
 .date-time-picker {
   .v-date-picker {
     width: 360px;
+  }
+
+  .v-date-picker-month__day {
+    height: 36px;
+  }
+
+  .v-date-picker-month__day .v-btn.v-date-picker-month__day-btn {
+    --v-btn-height: 32px;
+    --v-btn-size: 0.875rem;
+
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
   }
 
   .v-picker__title {

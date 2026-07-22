@@ -16,7 +16,7 @@
       </v-tabs>
 
       <v-card-text>
-        <v-window v-model="activeTab">
+        <v-window v-model="activeTab" class="planning-page__tabs-window">
           <v-window-item :value="PLANNING_TABS.types">
             <planning-types />
           </v-window-item>
@@ -220,3 +220,11 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.planning-page__tabs-window {
+  :deep(.v-window__container) {
+    transition: none !important;
+  }
+}
+</style>

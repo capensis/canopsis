@@ -3,6 +3,7 @@ import moment from 'moment-timezone'
 import {
   DATETIME_FORMATS,
   DATETIME_INTERVAL_TYPES,
+  QUICK_RANGES,
   SAMPLINGS,
   TIME_UNITS,
 } from '@/constants'
@@ -35,9 +36,10 @@ export const convertStringToDateInterval = (string, type) => {
     let result = moment()
 
     if (isToday) {
-      result = isStart || deltaValue
-        ? convertDateToStartOfUnitMoment(getNowTimestamp(), TIME_UNITS.day)
-        : convertDateToEndOfUnitMoment(getNowTimestamp(), TIME_UNITS.day)
+      result =
+        isStart || deltaValue
+          ? convertDateToStartOfUnitMoment(getNowTimestamp(), TIME_UNITS.day)
+          : convertDateToEndOfUnitMoment(getNowTimestamp(), TIME_UNITS.day)
     }
 
     if (preparedRoundUnit) {
@@ -77,9 +79,7 @@ export const convertDateIntervalToMoment = (
   format = DATETIME_FORMATS.datePicker,
   unit,
 ) => {
-  const momentDate = Number.isFinite(date)
-    ? moment.unix(date)
-    : moment(date, format, true)
+  const momentDate = Number.isFinite(date) ? moment.unix(date) : moment(date, format, true)
 
   if (!momentDate.isValid()) {
     return convertStringToDateInterval(date, type)
@@ -110,13 +110,12 @@ export const convertDateIntervalToMomentByTimezone = (
   format = DATETIME_FORMATS.datePicker,
   unit = SAMPLINGS.hour,
   timezone = getLocalTimezone(),
-) => (
+) =>
   convertDateToMomentByTimezone(
     convertDateIntervalToMoment(date, type, format, unit),
     getLocalTimezone(),
     timezone,
   )
-)
 
 /**
  * Convert date interval to unix timestamp.
@@ -127,9 +126,8 @@ export const convertDateIntervalToMomentByTimezone = (
  * @param {string} unit
  * @returns {number}
  */
-export const convertDateIntervalToTimestamp = (date, type, format, unit) => (
+export const convertDateIntervalToTimestamp = (date, type, format, unit) =>
   convertDateIntervalToMoment(date, type, format, unit).unix()
-)
 
 /**
  * Convert date interval to unix timestamp by timezone.
@@ -141,9 +139,13 @@ export const convertDateIntervalToTimestamp = (date, type, format, unit) => (
  * @param {string} [timezone=getLocalTimezone()]
  * @returns {number}
  */
-export const convertDateIntervalToTimestampByTimezone = (date, type, format, unit, timezone = getLocalTimezone()) => (
-  convertDateIntervalToMomentByTimezone(date, type, format, unit, timezone).unix()
-)
+export const convertDateIntervalToTimestampByTimezone = (
+  date,
+  type,
+  format,
+  unit,
+  timezone = getLocalTimezone(),
+) => convertDateIntervalToMomentByTimezone(date, type, format, unit, timezone).unix()
 
 /**
  * Convert from value to timestamp.
@@ -157,12 +159,7 @@ export const convertStartDateIntervalToTimestamp = (
   date,
   format = DATETIME_FORMATS.datePicker,
   unit,
-) => convertDateIntervalToTimestamp(
-  date,
-  DATETIME_INTERVAL_TYPES.start,
-  format,
-  unit,
-)
+) => convertDateIntervalToTimestamp(date, DATETIME_INTERVAL_TYPES.start, format, unit)
 
 /**
  * Convert to value to timestamp.
@@ -176,12 +173,7 @@ export const convertStopDateIntervalToTimestamp = (
   date,
   format = DATETIME_FORMATS.datePicker,
   unit,
-) => convertDateIntervalToTimestamp(
-  date,
-  DATETIME_INTERVAL_TYPES.stop,
-  format,
-  unit,
-)
+) => convertDateIntervalToTimestamp(date, DATETIME_INTERVAL_TYPES.stop, format, unit)
 
 /**
  * Convert metric interval form to timestamp interval.
@@ -198,7 +190,37 @@ export const convertMetricIntervalToTimestamp = ({
   const { from, to } = interval
 
   return {
-    from: convertDateIntervalToTimestampByTimezone(from, DATETIME_INTERVAL_TYPES.start, DATETIME_FORMATS.dateTimePicker, undefined, timezone),
-    to: convertDateIntervalToTimestampByTimezone(to, DATETIME_INTERVAL_TYPES.stop, DATETIME_FORMATS.dateTimePicker, undefined, timezone),
+    from: convertDateIntervalToTimestampByTimezone(
+      from,
+      DATETIME_INTERVAL_TYPES.start,
+      DATETIME_FORMATS.dateTimePicker,
+      undefined,
+      timezone,
+    ),
+    to: convertDateIntervalToTimestampByTimezone(
+      to,
+      DATETIME_INTERVAL_TYPES.stop,
+      DATETIME_FORMATS.dateTimePicker,
+      undefined,
+      timezone,
+    ),
   }
 }
+
+/**
+ * Find range object.
+ *
+ * @param {string|number} start
+ * @param {string|number} stop
+ * @param {Object|Array} ranges
+ * @param {Object} defaultValue
+ * @returns {Object}
+ */
+export const findQuickRangeValue = (
+  start,
+  stop,
+  ranges = QUICK_RANGES,
+  defaultValue = QUICK_RANGES.custom,
+) =>
+  Object.values(ranges).find((range) => start === range.start && stop === range.stop) ??
+  defaultValue

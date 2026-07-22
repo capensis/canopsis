@@ -105,7 +105,7 @@ Pages are taken from `src/router.js` in the source project.
 | `[~]`  | `admin-users`                                  | `/admin/users`                        | `src/views/admin/users.vue`                                  | `src/views/admin/users-page.vue`                 | Main users tab/table and create/edit user form modal are migrated; shared tokens pending.                                                                                                       |
 | `[~]`  | `admin-roles`                                  | `/admin/roles`                        | `src/views/admin/roles.vue`                                  | `src/views/admin/roles-page.vue`                 | Main list and create/edit/duplicate form are migrated. Remaining: role mass actions and deeper permissions editor parity.                                                                       |
 | `[~]`  | `admin-broadcast-messages`                     | `/admin/broadcast-messages`           | `src/views/admin/broadcast-messages.vue`                     | `src/views/admin/broadcast-messages-page.vue`    | Main list, active messages and create/edit form are migrated; runtime parity pass pending.                                                                                                      |
-| `[~]`  | `admin-playlists`                              | `/admin/playlists`                    | `src/views/admin/playlists.vue`                              | `src/views/admin/playlists-page.vue`             | Main list, refresh, copy/play actions, delete and bulk playlist actions are migrated. Remaining: create/edit/duplicate playlist modal and full group/view/tab expand labels.                    |
+| `[x]`  | `admin-playlists`                              | `/admin/playlists`                    | `src/views/admin/playlists.vue`                              | `src/views/admin/playlists-page.vue`             | Main list, refresh, copy/play actions, delete/bulk actions, create/edit/duplicate playlist modal, manage tabs modal and expand panel are migrated.                                              |
 | `[~]`  | `admin-planning-administration`                | `/admin/planning`                     | `src/views/admin/planning.vue`                               | `src/views/admin/planning-page.vue`              | Tabs, lists, expand panels, create buttons and pbehavior type/reason/exception create/import modal forms are migrated. Remaining: edit/duplicate action wiring and runtime parity pass.         |
 | `[ ]`  | `admin-healthcheck`                            | `/admin/healthcheck`                  | `src/views/admin/healthcheck.vue`                            | -                                                |                                                                                                                                                                                                 |
 | `[ ]`  | `admin-kpi`                                    | `/admin/kpi`                          | `src/views/admin/kpi.vue`                                    | -                                                |                                                                                                                                                                                                 |
@@ -234,17 +234,17 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `admin-playlists`
 
-- `[~]` Main content: `src/views/admin/playlists.vue` -> `src/views/admin/playlists-page.vue`; route is wired to a real page and the playlists table is migrated with search, pagination, play link, copy link, delete and bulk actions.
-- `[ ]` Modal windows: `create-playlist` and `manage-playlist-tabs` are not migrated; create/edit/duplicate actions are intentionally disabled/hidden until those forms are ported.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: playlist Pinia CRUD store/hook is reused; current user refresh runs after single delete. Remaining: refresh current user after create/update once playlist form is migrated.
+- `[x]` Main content: `src/views/admin/playlists.vue` -> `src/views/admin/playlists-page.vue`; route is wired to a real page and the playlists table is migrated with search, pagination, play link, copy link, create/edit/duplicate, delete, bulk actions and read-only expand panel.
+- `[x]` Modal windows: `create-playlist` and `manage-playlist-tabs` are migrated with `useForm`; selected tabs are stored as tab objects in form state and converted to `_id` list for API submit.
+- `[x]` Sidebars/drawers: no playlist sidebars/drawers are required for this page.
+- `[x]` State/API/socket: playlist Pinia CRUD store/hook is reused; current user refresh runs after single delete and create/update.
 - `[x]` Routing/access: `/admin/playlists`, playlist management access.
-- `[~]` Messages/i18n: existing playlist/common modal messages are wired; final copy parity pending.
+- `[x]` Messages/i18n: existing playlist/common modal messages are wired.
 
 ### `admin-planning-administration`
 
 - `[~]` Main content: `src/views/admin/planning.vue` -> `src/views/admin/planning-page.vue`; route is wired to a real page with pbehavior type/reason/exception tabs, migrated list tables, read-only expand panels and create/import FAB actions. Type expand shows description/type tabs with icon/color, reason expand shows description, exception expand shows description/periods tabs with formatted dates and type metadata.
-- `[~]` Modal windows: `create-pbehavior-type`, `create-pbehavior-reason`, `create-pbehavior-exception` and `import-pbehavior-exception` are migrated and registered with `useForm`; remaining: wire table row edit/duplicate actions where needed and do a runtime parity pass for exception date editing.
+- `[~]` Modal windows: `create-pbehavior-type`, `create-pbehavior-reason`, `create-pbehavior-exception` and `import-pbehavior-exception` are migrated and registered with `useForm`. The forms keep the old `c-form-block` layout, modal date picker variant, primary date header, adjacent months, and no premature validation on open. Remaining: wire table row edit/duplicate actions where needed and do a runtime parity pass for exception date editing.
 - `[ ]` Sidebars/drawers: not migrated.
 - `[~]` State/API/socket: pbehavior type/reason/exception Pinia CRUD stores/hooks are reused for list, delete and bulk hide/unhide/remove.
 - `[x]` Routing/access: `/admin/planning`, grouped planning permission and per-tab read permissions.
@@ -261,21 +261,22 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `admin-kpi`
 
-- `[ ]` Main content: `src/views/admin/kpi.vue`.
-- `[ ]` Modal windows: not migrated.
+- `[~]` Main content: `src/views/admin/kpi-page.vue` is wired; Graphs tab has SLI, alarm metrics and rating metrics fetch/render/export paths; KPI filters, rating settings and collection settings tabs are migrated; runtime parity checks are still pending.
+- `[~]` Modal windows: `create-kpi-filter` is migrated; rating/collection related modals are not migrated.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/admin/kpi`, KPI `can` access.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` State/API/socket: filter/rating/metrics stores already exist; page healthcheck socket and KPI graph metric fetch/export paths are wired.
+- `[x]` Routing/access: `/admin/kpi`, KPI `can` access.
+- `[~]` Messages/i18n: KPI messages already exist; runtime parity still pending.
 
 ### `admin-events-records`
 
-- `[ ]` Main content: `src/views/admin/events-records.vue`.
-- `[ ]` Modal windows: not migrated.
+- Working plan: `docs/ai/admin-events-records-migration-plan.md`.
+- `[x]` Main content: `src/views/admin/events-records-page.vue`.
+- `[x]` Modal windows: `events-record`, `apply-event-filter`.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/admin/events-records`, events record `can` access.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` State/API/socket: events-record Pinia store/hook, current status polling, recording/resending/export flows.
+- `[x]` Routing/access: `/admin/events-records`, events record `can` access.
+- `[x]` Messages/i18n: base events-record/modal/page-header messages already present.
 
 ### `admin-anomaly-monitored-connectors`
 

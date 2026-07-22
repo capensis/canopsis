@@ -6,7 +6,7 @@
     :loading="filtersPending"
     :disabled="disabled"
     :name="name"
-    item-text="name"
+    item-title="name"
     item-value="_id"
     hide-details
     clearable
@@ -15,12 +15,11 @@
 </template>
 
 <script>
-import { MAX_LIMIT } from '@/constants';
+import { MAX_LIMIT } from '@/constants'
 
-import { entitiesFilterMixin } from '@/mixins/entities/filter';
+import { useFilter } from '@/hooks/store/modules/filter'
 
 export default {
-  mixins: [entitiesFilterMixin],
   props: {
     value: {
       type: [Object, String],
@@ -39,15 +38,25 @@ export default {
       default: false,
     },
   },
+  emits: ['update:value'],
+  setup() {
+    const { filters, filtersPending, fetchFiltersList } = useFilter()
+
+    return {
+      filters,
+      filtersPending,
+      fetchFiltersList,
+    }
+  },
   mounted() {
-    this.fetchList();
+    this.fetchList()
   },
   methods: {
     fetchList() {
       if (!this.filtersPending) {
-        this.fetchFiltersList({ params: { limit: MAX_LIMIT } });
+        this.fetchFiltersList({ params: { limit: MAX_LIMIT } })
       }
     },
   },
-};
+}
 </script>
