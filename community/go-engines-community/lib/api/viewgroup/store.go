@@ -65,7 +65,15 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds, owne
 	if r.WithFlags || r.WithViews {
 		project = append(project,
 			bson.M{"$addFields": bson.M{
-				"group": "$$ROOT",
+				"group": bson.M{
+					"_id":        "$_id",
+					"title":      "$title",
+					"author":     "$author",
+					"created":    "$created",
+					"updated":    "$updated",
+					"is_private": "$is_private",
+					"position":   "$position",
+				},
 			}},
 			bson.M{"$lookup": bson.M{
 				"from":         mongo.ViewMongoCollection,

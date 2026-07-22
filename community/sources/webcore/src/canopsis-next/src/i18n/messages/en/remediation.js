@@ -70,6 +70,7 @@ export default {
   configuration: {
     host: 'Host',
     usingConfiguration: 'Cannot be deleted since it is in use',
+    massRemove: 'Delete selected configurations',
   },
 
   instructionExecute: {
@@ -204,6 +205,7 @@ export default {
     jobId: 'Job ID',
     addJobs: 'Add {count} job | Add {count} jobs',
     usingJob: 'Cannot be deleted since it is in use',
+    massRemove: 'Delete selected jobs',
     query: 'Query',
     multipleExecutions: 'Allow parallel execution',
     jobWaitInterval: 'Job wait interval',

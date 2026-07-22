@@ -26,18 +26,18 @@ type API interface {
 }
 
 type api struct {
-	publisher      libamqp.Publisher
+	channelPool    libamqp.ChannelPool
 	errorResponder httperror.Responder
 	logger         zerolog.Logger
 }
 
 func NewApi(
-	publisher libamqp.Publisher,
+	channelPool libamqp.ChannelPool,
 	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		publisher:      publisher,
+		channelPool:    channelPool,
 		errorResponder: errorResponder,
 		logger:         logger,
 	}
@@ -115,9 +115,18 @@ func (a *api) Send(c *gin.Context) {
 		return
 	}
 
+	publisher, err := a.channelPool.Get(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	defer a.channelPool.Put(publisher)
+
 	switch jsonValue.Type() {
 	case fastjson.TypeObject:
-		if !a.processValue(c, jsonValue, contextUser, contextAuthor, roles) {
+		if !a.processValue(c, jsonValue, contextUser, contextAuthor, roles, publisher) {
 			failedEvents.SetArrayItem(0, jsonValue)
 			break
 		}
@@ -134,7 +143,7 @@ func (a *api) Send(c *gin.Context) {
 		var sentIdx, failedIdx int
 
 		for _, value := range values {
-			if !a.processValue(c, value, contextUser, contextAuthor, roles) {
+			if !a.processValue(c, value, contextUser, contextAuthor, roles, publisher) {
 				failedEvents.SetArrayItem(failedIdx, value)
 				failedIdx++
 
@@ -153,7 +162,7 @@ func (a *api) Send(c *gin.Context) {
 	c.Data(http.StatusOK, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-func (a *api) processValue(c *gin.Context, value *fastjson.Value, contextUser, contextAuthor string, roles []string) bool {
+func (a *api) processValue(c *gin.Context, value *fastjson.Value, contextUser, contextAuthor string, roles []string, publisher libamqp.Publisher) bool {
 	eventType, err := getStringField(value, "event_type")
 	if err != nil {
 		a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg(err.Error())
@@ -275,7 +284,7 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value, contextUser, c
 			Msgf("SourceType changed in the event")
 	}
 
-	err = a.publisher.PublishWithContext(
+	err = publisher.PublishWithContext(
 		c,
 		canopsis.EventsExchangeName,
 		"",

@@ -18,6 +18,7 @@
         :enablable="updatable"
         :disablable="updatable"
         playlist
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />

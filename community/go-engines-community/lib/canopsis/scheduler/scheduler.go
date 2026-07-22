@@ -33,7 +33,7 @@ type Scheduler interface {
 
 type scheduler struct {
 	redisConn            redismod.UniversalClient
-	channelPub           libamqp.Channel
+	publisher            libamqp.Publisher
 	publishToQueuePrefix string
 
 	decoder encoding.Decoder
@@ -51,7 +51,7 @@ type scheduler struct {
 func NewSchedulerService(
 	redisLockStorage redismod.UniversalClient,
 	redisQueueStorage redismod.UniversalClient,
-	channelPub libamqp.Channel,
+	publisher libamqp.Publisher,
 	publishToQueuePrefix string,
 	logger zerolog.Logger,
 	lockTtl int,
@@ -60,7 +60,7 @@ func NewSchedulerService(
 ) Scheduler {
 	return &scheduler{
 		redisConn:            redisLockStorage,
-		channelPub:           channelPub,
+		publisher:            publisher,
 		publishToQueuePrefix: publishToQueuePrefix,
 		logger:               logger,
 
@@ -160,7 +160,7 @@ func (s *scheduler) AckEvent(ctx context.Context, event types.Event) error {
 }
 
 func (s *scheduler) publishToNext(ctx context.Context, eventByte []byte, initiator string) error {
-	return s.channelPub.PublishWithContext(
+	return s.publisher.PublishWithContext(
 		ctx,
 		canopsis.EngineExchangeName,
 		libamqp.BuildRoutingKey(s.publishToQueuePrefix, initiator),
