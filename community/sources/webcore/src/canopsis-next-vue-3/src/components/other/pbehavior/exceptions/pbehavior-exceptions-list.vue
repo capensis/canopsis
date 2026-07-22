@@ -7,6 +7,7 @@
     :options="options"
     :is-disabled-item="isDisabledException"
     :select-all="removable || updatable"
+    :hide-mass-actions="!active"
     expand-content-class="secondary lighten-2"
     expand
     search
@@ -17,8 +18,8 @@
       <c-table-mass-actions-panel
         :items="selected"
         :removable="removable"
-        :enablable="updatable"
-        :disablable="updatable"
+        :hideable="updatable"
+        :unhideable="updatable"
         pbehavior-exception
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
@@ -84,6 +85,10 @@ export default {
     updatable: {
       type: Boolean,
       required: true,
+    },
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
 

@@ -1,7 +1,7 @@
 <template>
   <c-layout gap="1">
     <c-action-btn
-      v-if="removable && activeConfig.remove"
+      v-if="removable && someOneRemovable && activeConfig.remove"
       :tooltip="removeTooltip"
       type="delete"
       @click="showRemoveModal"
@@ -19,6 +19,20 @@
       icon="cancel"
       color="error"
       @click="showDisableModal"
+    />
+    <c-action-btn
+      v-if="unhideable && someOneHidden && activeConfig.unhide"
+      :tooltip="t(`${activeConfig.tooltipPrefix}.massUnhide`)"
+      icon="check_circle"
+      color="primary"
+      @click="showUnhideModal"
+    />
+    <c-action-btn
+      v-if="hideable && someOneVisible && activeConfig.hide"
+      :tooltip="t(`${activeConfig.tooltipPrefix}.massHide`)"
+      icon="cancel"
+      color="error"
+      @click="showHideModal"
     />
   </c-layout>
 </template>
@@ -42,8 +56,10 @@ import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason'
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type'
 import { usePlaylist } from '@/hooks/store/modules/playlist'
+import { useRole } from '@/hooks/store/modules/role'
 import { useResolveRules } from '@/hooks/store/modules/resolve-rules'
 import { useScenario } from '@/hooks/store/modules/scenario'
+import { useUser } from '@/hooks/store/modules/user'
 
 export default {
   props: {
@@ -60,6 +76,14 @@ export default {
       default: false,
     },
     disablable: {
+      type: Boolean,
+      default: false,
+    },
+    hideable: {
+      type: Boolean,
+      default: false,
+    },
+    unhideable: {
       type: Boolean,
       default: false,
     },
@@ -111,6 +135,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    user: {
+      type: Boolean,
+      default: false,
+    },
+    role: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: ['clear:items', 'refresh'],
@@ -143,13 +175,14 @@ export default {
       bulkUnhidePbehaviorExceptions,
       bulkRemovePbehaviorExceptions,
     } = usePbehaviorException()
+    const { bulkRemoveUsers, bulkEnableUsers, bulkDisableUsers } = useUser()
+    const { bulkRemoveRoles } = useRole()
 
-    const someOneEnable = computed(() =>
-      props.items.some(({ enabled, hidden }) => enabled || hidden === false),
-    )
-    const someOneDisable = computed(() =>
-      props.items.some(({ enabled, hidden }) => enabled === false || hidden === true),
-    )
+    const someOneEnable = computed(() => props.items.some(({ enabled }) => enabled))
+    const someOneDisable = computed(() => props.items.some(({ enabled }) => !enabled))
+    const someOneRemovable = computed(() => props.items.some(({ deletable = true }) => deletable))
+    const someOneVisible = computed(() => props.items.some(({ hidden }) => !hidden))
+    const someOneHidden = computed(() => props.items.some(({ hidden }) => hidden))
 
     const activeConfig = computed(() => {
       if (props.dynamicInfo) {
@@ -225,8 +258,8 @@ export default {
       if (props.pbehaviorType) {
         return {
           remove: bulkRemovePbehaviorTypes,
-          enable: bulkUnhidePbehaviorTypes,
-          disable: bulkHidePbehaviorTypes,
+          hide: bulkHidePbehaviorTypes,
+          unhide: bulkUnhidePbehaviorTypes,
           tooltipPrefix: 'pbehavior',
         }
       }
@@ -234,8 +267,8 @@ export default {
       if (props.pbehaviorReason) {
         return {
           remove: bulkRemovePbehaviorReasons,
-          enable: bulkUnhidePbehaviorReasons,
-          disable: bulkHidePbehaviorReasons,
+          hide: bulkHidePbehaviorReasons,
+          unhide: bulkUnhidePbehaviorReasons,
           tooltipPrefix: 'pbehavior',
         }
       }
@@ -243,9 +276,25 @@ export default {
       if (props.pbehaviorException) {
         return {
           remove: bulkRemovePbehaviorExceptions,
-          enable: bulkUnhidePbehaviorExceptions,
-          disable: bulkHidePbehaviorExceptions,
+          hide: bulkHidePbehaviorExceptions,
+          unhide: bulkUnhidePbehaviorExceptions,
           tooltipPrefix: 'pbehavior',
+        }
+      }
+
+      if (props.user) {
+        return {
+          remove: bulkRemoveUsers,
+          enable: bulkEnableUsers,
+          disable: bulkDisableUsers,
+          tooltipPrefix: 'user',
+        }
+      }
+
+      if (props.role) {
+        return {
+          remove: bulkRemoveRoles,
+          tooltipPrefix: 'role',
         }
       }
 
@@ -319,15 +368,48 @@ export default {
         },
       })
 
+    const showUnhideModal = () =>
+      modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await activeConfig.value.unhide({ data: pickIds(props.items, props.itemId) })
+
+            return afterSubmit()
+          },
+        },
+      })
+
+    const showHideModal = () =>
+      modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            const response = await activeConfig.value.hide({
+              data: pickIds(props.items, props.itemId),
+            })
+
+            showErrorPopups(response, `${activeConfig.value.tooltipPrefix}.hideForbidden`)
+
+            return afterSubmit()
+          },
+        },
+      })
+
     return {
       t,
       activeConfig,
       removeTooltip,
       someOneEnable,
       someOneDisable,
+      someOneRemovable,
+      someOneVisible,
+      someOneHidden,
       showRemoveModal,
       showEnableModal,
       showDisableModal,
+      showUnhideModal,
+      showHideModal,
     }
   },
 }

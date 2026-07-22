@@ -6,6 +6,7 @@
     :options="options"
     :removable="hasDeleteAccess"
     :updatable="hasUpdateAccess"
+    :active="active"
     @remove="showRemovePbehaviorTypeModal"
     @refresh="fetchList"
     @update:options="updateOptions"
@@ -31,6 +32,13 @@ import PbehaviorTypesList from './pbehavior-types-list.vue'
 export default {
   components: {
     PbehaviorTypesList,
+  },
+
+  props: {
+    active: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   setup() {

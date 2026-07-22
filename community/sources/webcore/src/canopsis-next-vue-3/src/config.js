@@ -1,5 +1,4 @@
-
-import { removeTrailingSlashes } from '@/helpers/url';
+import { removeTrailingSlashes } from '@/helpers/url'
 
 export const {
   BASE_URL = '',
@@ -8,33 +7,33 @@ export const {
   VITE_PAGINATION_LIMIT = '',
   VITE_OPEN_STREET_LAYER_URL = '',
   VITE_LINKIFY_PROTOCOLS = '',
-} = import.meta.env;
+} = import.meta.env
 
-export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
+export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`)
 
-export const API_HOST = VITE_API_HOST || window.location.origin;
+export const API_HOST = VITE_API_HOST || window.location.origin
 
-export const SOCKET_HOST = API_HOST.replace(/^http(s?)/, 'wss');
+export const SOCKET_HOST = API_HOST.replace(/^http(s?)/, 'wss')
 
-export const SOCKET_ROUTE = '/api/v4/ws';
+export const SOCKET_ROUTE = '/api/v4/ws'
 
-export const SOCKET_URL = removeTrailingSlashes(`${SOCKET_HOST}${SOCKET_ROUTE}`);
+export const SOCKET_URL = removeTrailingSlashes(`${SOCKET_HOST}${SOCKET_ROUTE}`)
 
-export const OPEN_STREET_LAYER_URL = VITE_OPEN_STREET_LAYER_URL;
+export const OPEN_STREET_LAYER_URL = VITE_OPEN_STREET_LAYER_URL
 
-export const ROUTER_MODE = 'history';
+export const ROUTER_MODE = 'history'
 
-export const ROUTER_ACCESS_TOKEN_KEY = 'access_token';
+export const ROUTER_ACCESS_TOKEN_KEY = 'access_token'
 
-export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = VITE_LOCAL_STORAGE_ACCESS_TOKEN_KEY || 'accessToken';
+export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = VITE_LOCAL_STORAGE_ACCESS_TOKEN_KEY || 'accessToken'
 
-export const LOCAL_STORAGE_WARNING_POPUP_KEY = 'warningPopup';
+export const LOCAL_STORAGE_WARNING_POPUP_KEY = 'warningPopup'
 
-export const PAGINATION_LIMIT = parseInt(VITE_PAGINATION_LIMIT, 10) || 10;
+export const PAGINATION_LIMIT = parseInt(VITE_PAGINATION_LIMIT, 10) || 10
 
-export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
+export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100]
 
-export const PAGINATION_TOTAL_VISIBLE = 7;
+export const PAGINATION_TOTAL_VISIBLE = 7
 
 export const DEFAULT_SANITIZE_OPTIONS = {
   ADD_TAGS: [
@@ -155,75 +154,73 @@ export const DEFAULT_SANITIZE_OPTIONS = {
 
   ALLOW_DATA_ATTR: true,
 
-  ADD_DATA_URI_TAGS: [
-    'img',
-    'video',
-    'audio',
-  ],
-};
+  ADD_DATA_URI_TAGS: ['img', 'video', 'audio'],
+}
 
 export const DEFAULT_LINKIFY_OPTIONS = {
   target: '_blank',
   ignoreTags: ['script', 'style'],
   validate: (str, type, token) => token?.hasProtocol?.(),
-};
+}
 
 export const LINKIFY_PROTOCOLS = [
-  ...import.meta.env.VITE_LINKIFY_PROTOCOLS.split(',').map(protocol => protocol.trim()).filter(Boolean),
+  ...import.meta.env.VITE_LINKIFY_PROTOCOLS.split(',')
+    .map((protocol) => protocol.trim())
+    .filter(Boolean),
 
   'ssh',
-];
+]
 
-export const DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT = 3;
+export const DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT = 3
 
-export const DEFAULT_WEATHER_LIMIT = 120;
+export const DEFAULT_WEATHER_LIMIT = 120
 
-export const DEFAULT_LOCALE = 'en';
+export const DEFAULT_LOCALE = 'en'
 
 export const LOCALES = {
   en: 'en',
   fr: 'fr',
-};
+}
 
-export const DEFAULT_VIEW_STATS_INTERVAL = 120000;
+export const DEFAULT_VIEW_STATS_INTERVAL = 120000
 
 export const LOCALE_PRIORITIES = {
   default: 1,
   global: 2,
   personal: 3,
-};
+}
 
-export const POPUP_AUTO_CLOSE_DELAY = 3000;
+export const POPUP_AUTO_CLOSE_DELAY = 3000
 
-export const ZOOM_OVERLAY_DELAY = 1500;
+export const ZOOM_OVERLAY_DELAY = 1500
 
-export const VUETIFY_ANIMATION_DELAY = 300;
+export const VUETIFY_ANIMATION_DELAY = 300
 
-export const POPUP_TICK_DELAY = 100;
+export const POPUP_TICK_DELAY = 100
 
-export const SIDE_BAR_WIDTH = 250;
+export const SIDE_BAR_WIDTH = 250
 
 /** Default width (px) for plugin sidebars when `config.width` is omitted */
-export const DEFAULT_SIDEBAR_DRAWER_WIDTH = 450;
+export const DEFAULT_SIDEBAR_DRAWER_WIDTH = 450
 
-export const TOP_BAR_HEIGHT = 48;
+export const TOP_BAR_HEIGHT = 48
 
-export const EXPAND_DEFAULT_MAX_LETTERS = 50;
+export const EXPAND_DEFAULT_MAX_LETTERS = 50
 
-export const SCHEMA_EMBEDDED_KEY = '_embedded';
+export const SCHEMA_EMBEDDED_KEY = '_embedded'
 
 export const MEDIA_QUERIES_BREAKPOINTS = {
   m: 450,
   t: 900,
   l: 1400,
   xl: 'Infinity',
-};
+}
 
-export const MAX_LOGO_SIZE_IN_KB = 16384;
+export const MAX_LOGO_SIZE_IN_KB = 16384
 
-export const DEFAULT_APP_TITLE = 'Canopsis';
+export const DEFAULT_APP_TITLE = 'Canopsis'
 
-export const EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX = 'canopsis_groups_views-';
+export const EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX = 'canopsis_groups_views-'
 
 export const SOCKET_ROOMS = {
   healthcheck: 'healthcheck',
@@ -243,7 +240,7 @@ export const SOCKET_ROOMS = {
   pbehaviorPatterns: 'pbehavior-patterns',
   llmChat: 'llmchat',
   anomalyMonitoredConnectorStates: 'anomaly-monitored-connector-states',
-};
+}
 
 export const API_ROUTES = {
   login: '/api/v4/login',
@@ -316,6 +313,7 @@ export const API_ROUTES = {
   roles: {
     list: '/api/v4/roles',
     templates: '/api/v4/role-templates',
+    bulk: '/api/v4/bulk/roles',
     bulkPermissions: '/api/v4/bulk/role-permissions',
   },
   eventFilter: {
@@ -633,7 +631,7 @@ export const API_ROUTES = {
     bulkHistoryLink: '/api/v4/cat/bulk/llm-history/link',
     models: '/api/v4/cat/llm-config-models',
   },
-};
+}
 
 export const COLORS = {
   primary: '#2DAC61',
@@ -762,13 +760,7 @@ export const COLORS = {
     '#AD1457',
     '#880E4F',
   ],
-  impactStateGrouped: [
-    '#568822',
-    '#b0e37b',
-    '#fff176',
-    '#ffb7b8',
-    '#c50711',
-  ],
+  impactStateGrouped: ['#568822', '#b0e37b', '#fff176', '#ffb7b8', '#c50711'],
   kpi: {
     downtime: '#c4c4c4',
     maintenance: '#ffa800',
@@ -905,7 +897,7 @@ export const COLORS = {
       '#ffebee',
     ],
   },
-};
+}
 
 export const CSS_COLORS_VARS = {
   background: 'var(--v-application-background-base)',
@@ -931,7 +923,7 @@ export const CSS_COLORS_VARS = {
     noEvents: 'var(--v-error-base)',
     unknown: 'var(--v-status-unknown-base)',
   },
-};
+}
 
 export const DEFAULT_THEME_COLORS = {
   primary: COLORS.primary,
@@ -955,34 +947,34 @@ export const DEFAULT_THEME_COLORS = {
     row_color: COLORS.table.rowColor,
     hover_row_color: COLORS.table.hoverRowColor,
   },
-};
+}
 
-export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
+export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`
 
-export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
+export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/'
 
-export const GEMINI_AI_CONSOLE_BILLING_URL = 'https://ai.studio/spend';
+export const GEMINI_AI_CONSOLE_BILLING_URL = 'https://ai.studio/spend'
 
-export const EXPORT_FETCHING_INTERVAL = 2000;
+export const EXPORT_FETCHING_INTERVAL = 2000
 
-export const IMPORT_FETCHING_INTERVAL = 500;
+export const IMPORT_FETCHING_INTERVAL = 500
 
-export const MAX_PBEHAVIOR_DATES_DIFF_YEARS = 5;
+export const MAX_PBEHAVIOR_DATES_DIFF_YEARS = 5
 
-export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
+export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-'
 
-export const HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX = 'healthcheck_last_hour-';
+export const HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX = 'healthcheck_last_hour-'
 
-export const KPI_ALARM_METRICS_FILENAME_PREFIX = 'kpi_alarm_metrics';
+export const KPI_ALARM_METRICS_FILENAME_PREFIX = 'kpi_alarm_metrics'
 
-export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics';
+export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics'
 
-export const KPI_SLI_METRICS_FILENAME_PREFIX = 'kpi_sli_metrics';
+export const KPI_SLI_METRICS_FILENAME_PREFIX = 'kpi_sli_metrics'
 
-export const REMEDIATION_STATISTICS_FILENAME_PREFIX = 'remediation_statistics';
+export const REMEDIATION_STATISTICS_FILENAME_PREFIX = 'remediation_statistics'
 
-export const AVAILABILITY_FILENAME_PREFIX = 'availability';
+export const AVAILABILITY_FILENAME_PREFIX = 'availability'
 
-export const APP_INFO_FETCHING_INTERVAL = 10000;
+export const APP_INFO_FETCHING_INTERVAL = 10000
 
-export const MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED = 100;
+export const MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED = 100

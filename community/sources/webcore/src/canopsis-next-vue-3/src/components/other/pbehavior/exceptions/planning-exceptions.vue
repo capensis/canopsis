@@ -6,6 +6,7 @@
     :options="options"
     :removable="hasDeleteAccess"
     :updatable="hasUpdateAccess"
+    :active="active"
     @remove="showRemovePbehaviorExceptionModal"
     @refresh="fetchList"
     @update:options="updateOptions"
@@ -31,6 +32,13 @@ import PbehaviorExceptionsList from './pbehavior-exceptions-list.vue'
 export default {
   components: {
     PbehaviorExceptionsList,
+  },
+
+  props: {
+    active: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   setup() {
