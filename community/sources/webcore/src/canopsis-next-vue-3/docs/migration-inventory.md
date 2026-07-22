@@ -112,7 +112,7 @@ Pages are taken from `src/router.js` in the source project.
 | `[ ]`  | `admin-events-records`                         | `/admin/events-records`               | `src/views/admin/events-records.vue`                         | -                                                |                                                                                                                                                                                                 |
 | `[ ]`  | `admin-anomaly-monitored-connectors`           | `/admin/anomaly-monitored-connectors` | `src/views/admin/anomaly-monitored-connectors.vue`           | -                                                |                                                                                                                                                                                                 |
 | `[~]`  | `admin-template-testing`                       | `/admin/template-testing`             | `src/views/admin/template-testing.vue`                       | `src/views/admin/template-testing-page.vue`      | Main data/tests tabs, lists, create/edit data modal and edit/remove test modals are migrated; test-variables sidebar stack remains pending for other forms.                                     |
-| `[ ]`  | `admin-jobs-management`                        | `/admin/jobs`                         | `src/views/admin/jobs.vue`                                   | -                                                |                                                                                                                                                                                                 |
+| `[~]`  | `admin-jobs-management`                        | `/admin/jobs`                         | `src/views/admin/jobs.vue`                                   | `src/views/admin/jobs-page.vue`                  | Main jobs tabs/table, filters, expand panel, play/pause/repeat actions and routing are migrated. Remaining: edit modal/form after declare-ticket check-status field layer is ported.            |
 | `[ ]`  | `admin-custom-objects-external-auth-tokens`    | `/admin/external-auth-tokens`         | `src/views/admin/custom-objects/external-auth-tokens.vue`    | -                                                |                                                                                                                                                                                                 |
 | `[ ]`  | `admin-custom-objects-external-data-tables`    | `/admin/external-data-tables`         | `src/views/admin/custom-objects/external-data-tables.vue`    | -                                                |                                                                                                                                                                                                 |
 | `[ ]`  | `admin-custom-objects-entity-infos-properties` | `/admin/entity-infos-properties`      | `src/views/admin/custom-objects/entity-infos-properties.vue` | -                                                |                                                                                                                                                                                                 |
@@ -298,12 +298,12 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `admin-jobs-management`
 
-- `[ ]` Main content: `src/views/admin/jobs.vue`.
-- `[ ]` Modal windows: not migrated.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/admin/jobs`, job management `can` access.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` Main content: `src/views/admin/jobs.vue`; migrated to `src/views/admin/jobs-page.vue` with tabs, table, filters, row expansion and play/pause/repeat actions.
+- `[ ]` Modal windows: edit modal/form is deferred until the shared declare-ticket check-status field and form mappers are ported.
+- `[x]` Sidebars/drawers: none in the migrated jobs page.
+- `[x]` State/API/socket: existing ticket status job Pinia store/hook and bulk play/pause endpoints are reused.
+- `[x]` Routing/access: `/admin/jobs`, job management `can` access.
+- `[~]` Messages/i18n: existing jobs/modal messages are reused; final runtime copy parity pass pending after modal/form migration.
 
 ### `admin-custom-objects-external-auth-tokens`
 

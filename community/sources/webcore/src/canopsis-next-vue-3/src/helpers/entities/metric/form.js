@@ -5,6 +5,53 @@ import {
 } from '@/constants'
 
 /**
+ * @typedef { 'sum' | 'avg' | 'min' | 'max' } MetricAggregateFunctions
+ */
+
+/**
+ * @typedef { 'hour' | 'day' | 'week' | 'month' } Sampling
+ */
+
+/**
+ * @typedef { 'ms' | 'us' | 's' } ExternalMetricTimeUnit
+ */
+
+/**
+ * @typedef { 'c' | 'B' | 'KB' | 'MB' | 'GB' | 'TB' } ExternalMetricDataSizeUnit
+ */
+
+/**
+ * @typedef { ExternalMetricTimeUnit | ExternalMetricDataSizeUnit | '%' } ExternalMetricUnit
+ */
+
+/**
+ * @typedef {Object} MetricPreset
+ * @property {string} metric
+ * @property {string} [color]
+ * @property {string} [label]
+ * @property {boolean} [auto]
+ * @property {boolean} [external]
+ * @property {MetricAggregateFunctions} [aggregate_func]
+ */
+
+/**
+ * @typedef {MetricPreset[]} MetricPresets
+ */
+
+/**
+ * @typedef {MetricPreset & ObjectKey} MetricPresetForm
+ */
+
+/**
+ * @typedef {MetricPresetForm[]} MetricPresetsForm
+ */
+
+/**
+ * @typedef {Object} Metric
+ * @property {number} timestamp
+ */
+
+/**
  * Check metric is time-based.
  *
  * @param {string} metric

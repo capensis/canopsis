@@ -2,6 +2,44 @@ import { GROUPS_NAVIGATION_TYPES } from '@/constants'
 
 import { mapIds } from '@/helpers/array'
 
+/**
+ * @typedef {Object} DefaultView
+ * @property {string} _id
+ * @property {string} name
+ */
+
+/**
+ * @typedef {Object} User
+ * @property {string} name
+ * @property {string} firstname
+ * @property {string} lastname
+ * @property {string} password
+ * @property {Role[]} roles
+ * @property {string} email
+ * @property {boolean} enabled
+ * @property {Object} ui_tours
+ * @property {DefaultView} defaultview
+ * @property {string} ui_groups_navigation_type
+ * @property {string} ui_language
+ * @property {string} ui_theme
+ */
+
+/**
+ * @typedef {User} UserForm
+ * @property {string} defaultview
+ */
+
+/**
+ * @typedef {UserForm} UserRequest
+ * @property {string[]} roles
+ */
+
+/**
+ * Convert user to form object
+ *
+ * @param {User} [user = {}]
+ * @returns {UserForm}
+ */
 export const userToForm = (user = {}) => ({
   _id: user._id ?? '',
   name: user.name ?? '',
@@ -18,7 +56,13 @@ export const userToForm = (user = {}) => ({
   ui_theme: user.ui_theme ?? '',
 })
 
-export const formToUserRequest = form => ({
+/**
+ * Convert user form to user object
+ *
+ * @param {UserForm} form
+ * @returns {User}
+ */
+export const formToUserRequest = (form) => ({
   ...form,
 
   roles: mapIds(form.roles),

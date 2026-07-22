@@ -1,4 +1,15 @@
 /**
+ * @typedef {Object} MetricsSettings
+ * @property {boolean} enabled_instructions
+ * @property {boolean} enabled_not_acked_metrics
+ * @property {boolean} enabled_sli_metrics
+ */
+
+/**
+ * @typedef {MetricsSettings} MetricsSettingsForm
+ */
+
+/**
  * Convert metrics settings object to form.
  *
  * @param {Object} [metricsSettings={}]

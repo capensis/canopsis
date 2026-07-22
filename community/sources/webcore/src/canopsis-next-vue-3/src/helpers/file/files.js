@@ -1,10 +1,16 @@
+/**
+ * Save data in file
+ *
+ * @param {Blob} blob
+ * @param {string} name
+ */
 export const saveFile = (data, filename) => {
-  const blob = data instanceof Blob ? data : new Blob([data]);
-  const link = document.createElement('a');
+  const blob = data instanceof Blob ? data : new Blob([data])
+  const link = document.createElement('a')
 
-  link.href = URL.createObjectURL(blob);
-  link.download = filename;
-  link.click();
+  link.href = URL.createObjectURL(blob)
+  link.download = filename
+  link.click()
 
-  URL.revokeObjectURL(link.href);
-};
+  URL.revokeObjectURL(link.href)
+}
