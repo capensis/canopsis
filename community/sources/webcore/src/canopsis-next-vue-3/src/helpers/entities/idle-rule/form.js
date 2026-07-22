@@ -1,4 +1,4 @@
-import { omit, pick } from 'lodash';
+import { omit, pick } from 'lodash'
 
 import {
   ACTION_TYPES,
@@ -6,11 +6,43 @@ import {
   IDLE_RULE_TYPES,
   PATTERNS_FIELDS,
   TIME_UNITS,
-} from '@/constants';
+} from '@/constants'
 
-import { durationToForm } from '@/helpers/date/duration';
-import { actionParametersToForm, formToAction, isAssociateTicketActionType } from '@/helpers/entities/action';
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
+import { durationToForm } from '@/helpers/date/duration'
+import {
+  actionParametersToForm,
+  formToAction,
+  isAssociateTicketActionType,
+} from '@/helpers/entities/action'
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form'
+
+/**
+ * @typedef { 'alarm' | 'entity' } IdleRuleType
+ */
+
+/**
+ * @typedef { 'last_event' | 'last_update' } IdleRuleAlarmCondition
+ */
+
+/**
+ * @typedef {FilterPatterns} IdleRule
+ * @property {boolean} enabled
+ * @property {string} name
+ * @property {string} comment
+ * @property {string} description
+ * @property {IdleRuleType} type
+ * @property {Duration} duration
+ * @property {number} priority
+ * @property {DisableDuringPeriods[]} disable_during_periods
+ * @property {IdleRuleAlarmCondition} alarm_condition
+ * @property {Action} operation
+ */
+
+/**
+ * @typedef {IdleRule} IdleRuleForm
+ * @property {ActionForm} operation
+ * @property {FilterPatternsForm} patterns
+ */
 
 /**
  * Check is idle rule entity type.
@@ -18,7 +50,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  * @param {string} type
  * @returns {boolean}
  */
-export const isIdleRuleEntityType = type => type === IDLE_RULE_TYPES.entity;
+export const isIdleRuleEntityType = (type) => type === IDLE_RULE_TYPES.entity
 
 /**
  * Convert idle rule object to form compatible object.
@@ -27,11 +59,11 @@ export const isIdleRuleEntityType = type => type === IDLE_RULE_TYPES.entity;
  * @returns {Object} Idle rule form.
  */
 export const idleRuleToForm = (idleRule = {}) => {
-  const type = idleRule.operation?.type ?? ACTION_TYPES.snooze;
+  const type = idleRule.operation?.type ?? ACTION_TYPES.snooze
   const parameters = actionParametersToForm({
     type,
     parameters: idleRule.operation?.parameters,
-  });
+  })
 
   return {
     enabled: idleRule.enabled ?? true,
@@ -50,8 +82,8 @@ export const idleRuleToForm = (idleRule = {}) => {
       parameters,
     },
     patterns: filterPatternsToForm(idleRule, [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm]),
-  };
-};
+  }
+}
 
 /**
  * Convert form object to idle rule API compatible object.
@@ -60,15 +92,15 @@ export const idleRuleToForm = (idleRule = {}) => {
  * @returns {Object} Idle rule entity.
  */
 export const formToIdleRule = (form) => {
-  const isEntityType = form.type === IDLE_RULE_TYPES.entity;
-  const idleRule = omit(form, ['alarm_condition', 'operation', 'patterns', 'comment']);
+  const isEntityType = form.type === IDLE_RULE_TYPES.entity
+  const idleRule = omit(form, ['alarm_condition', 'operation', 'patterns', 'comment'])
 
   if (!isEntityType) {
-    idleRule.alarm_condition = form.alarm_condition;
-    idleRule.operation = pick(formToAction(form.operation), ['type', 'parameters']);
+    idleRule.alarm_condition = form.alarm_condition
+    idleRule.operation = pick(formToAction(form.operation), ['type', 'parameters'])
 
     if (isAssociateTicketActionType(idleRule.operation.type)) {
-      idleRule.comment = form.comment;
+      idleRule.comment = form.comment
     }
   }
 
@@ -78,5 +110,5 @@ export const formToIdleRule = (form) => {
       form.patterns,
       isEntityType ? [PATTERNS_FIELDS.entity] : [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm],
     ),
-  };
-};
+  }
+}

@@ -693,8 +693,13 @@ export default {
 
   &__search {
     display: flex;
+    align-items: center;
     flex: 0 0 33.333333%;
     max-width: 33.333333%;
+
+    :deep(.c-action-btn) {
+      align-self: center;
+    }
   }
 
   &__expand {

@@ -206,7 +206,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.jobManagement,
       },
     }),
-    component: PlaceholderPage,
+    component: () => import('@/views/admin/jobs-page.vue'),
   },
   {
     path: ROUTES.adminCustomObjectsExternalAuthTokens,

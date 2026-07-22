@@ -3,7 +3,16 @@ import { isArray, isEqual, omit, pick } from 'lodash'
 import { ADVANCED_SEARCH_FIELDS, DATETIME_FORMATS, SORT_ORDERS } from '@/constants'
 import { PAGINATION_LIMIT } from '@/config'
 
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals'
+import {
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from '@/helpers/date/date-intervals'
+
+/**
+ * @typedef {Object} DataTableSortOptions
+ * @property {string[]} sortBy
+ * @property {boolean[]} sortDesc
+ */
 
 /**
  * Convert widget.parameters.sort to query object.
@@ -68,9 +77,10 @@ export const convertSortToRequest = (sortBy = [], sortDesc = []) => {
   }
 
   return {
-    multi_sort: sortBy.map((property, index) => (
-      `${property},${(sortDesc?.[index] ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`
-    )),
+    multi_sort: sortBy.map(
+      (property, index) =>
+        `${property},${(sortDesc?.[index] ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`,
+    ),
   }
 }
 
@@ -81,10 +91,11 @@ export const convertSortToRequest = (sortBy = [], sortDesc = []) => {
  * @param {boolean[]} [sortDesc=[]]
  * @returns {{ key: string, order: string }[]}
  */
-export const convertQuerySortToDataTableSort = (sortBy = [], sortDesc = []) => sortBy.map((key, index) => ({
-  key,
-  order: sortDesc?.[index] ? SORT_ORDERS.desc.toLowerCase() : SORT_ORDERS.asc.toLowerCase(),
-}))
+export const convertQuerySortToDataTableSort = (sortBy = [], sortDesc = []) =>
+  sortBy.map((key, index) => ({
+    key,
+    order: sortDesc?.[index] ? SORT_ORDERS.desc.toLowerCase() : SORT_ORDERS.asc.toLowerCase(),
+  }))
 
 /**
  * Convert Vuetify 4 data table sort options to canonical query sort.
@@ -93,8 +104,8 @@ export const convertQuerySortToDataTableSort = (sortBy = [], sortDesc = []) => s
  * @returns {{ sortBy: string[], sortDesc: boolean[] }}
  */
 export const convertDataTableSortToQuery = (sortBy = []) => ({
-  sortBy: sortBy.map(sortItem => sortItem.key ?? sortItem),
-  sortDesc: sortBy.map(sortItem => sortItem.order === SORT_ORDERS.desc.toLowerCase()),
+  sortBy: sortBy.map((sortItem) => sortItem.key ?? sortItem),
+  sortDesc: sortBy.map((sortItem) => sortItem.order === SORT_ORDERS.desc.toLowerCase()),
 })
 
 /**
@@ -103,7 +114,8 @@ export const convertDataTableSortToQuery = (sortBy = []) => ({
  * @param {string | string[]} filter
  * @returns {string[]}
  */
-export const convertFilterToQuery = filter => (isArray(filter) ? filter : [filter]).filter(Boolean)
+export const convertFilterToQuery = (filter) =>
+  (isArray(filter) ? filter : [filter]).filter(Boolean)
 
 /**
  * Convert locked filter and main filter to query filters.

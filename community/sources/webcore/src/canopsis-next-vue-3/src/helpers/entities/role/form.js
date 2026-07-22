@@ -1,11 +1,59 @@
-import { omit } from 'lodash';
+import { omit } from 'lodash'
 
-import { CRUD_ACTIONS, ROLE_TYPES, TIME_UNITS } from '@/constants';
+import { CRUD_ACTIONS, ROLE_TYPES, TIME_UNITS } from '@/constants'
 
-import { durationToForm } from '@/helpers/date/duration';
-import { isApiPermission } from '@/helpers/entities/permissions/list';
+import { durationToForm } from '@/helpers/date/duration'
+import { isApiPermission } from '@/helpers/entities/permissions/list'
 
-export const isApiRole = (role = {}) => role.type === ROLE_TYPES.api;
+/**
+ * @typedef {'create' | 'update' | 'reed' | 'delete'} Action
+ */
+
+/**
+ * @typedef {'ui' | 'api'} RoleType
+ */
+
+/**
+ * @typedef {Object} Permission
+ * @property {Action[]} actions
+ * @property {string} name
+ * @property {string} type
+ * @property {string} _id
+ */
+
+/**
+ * @typedef {Object.<string, Action[]>}  PermissionsForm
+ */
+
+/**
+ * @typedef {Object} AuthConfig
+ * @property {Duration} [inactivity_interval]
+ * @property {Duration} [expiration_interval]
+ */
+
+/**
+ * @typedef {AuthConfig} AuthConfigForm
+ * @property {Boolean} intervals_enabled
+ */
+
+/**
+ * @typedef {Object} Role
+ * @property {string} _id
+ * @property {string} name
+ * @property {RoleType} type
+ * @property {string} description
+ * @property {string} ui_theme
+ * @property {boolean} [editable]
+ * @property {Permission[]} permissions
+ * @property {DefaultView} defaultview
+ * @property {AuthConfig} auth_config
+ */
+
+/**
+ * @typedef {Role} RoleRequest
+ * @property {string} defaultview
+ */
+export const isApiRole = (role = {}) => role.type === ROLE_TYPES.api
 
 /**
  * Convert role permissions to form permissions object.
@@ -13,21 +61,26 @@ export const isApiRole = (role = {}) => role.type === ROLE_TYPES.api;
  * @param {Array} [permissions=[]]
  * @returns {Object}
  */
-export const rolePermissionsToForm = (permissions = []) => permissions.reduce((acc, { _id: id, actions }) => {
-  if (actions.length === 0) {
-    acc[id] = [CRUD_ACTIONS.can];
-  } else {
-    acc[id] = actions;
-  }
+export const rolePermissionsToForm = (permissions = []) =>
+  permissions.reduce((acc, { _id: id, actions }) => {
+    if (actions.length === 0) {
+      acc[id] = [CRUD_ACTIONS.can]
+    } else {
+      acc[id] = actions
+    }
 
-  return acc;
-}, {});
+    return acc
+  }, {})
 
 const roleAuthConfigToForm = (authConfig = {}) => ({
   intervals_enabled: Boolean(authConfig.inactivity_interval || authConfig.expiration_interval),
-  inactivity_interval: durationToForm(authConfig.inactivity_interval ?? { value: 1, unit: TIME_UNITS.hour }),
-  expiration_interval: durationToForm(authConfig.expiration_interval ?? { value: 1, unit: TIME_UNITS.day }),
-});
+  inactivity_interval: durationToForm(
+    authConfig.inactivity_interval ?? { value: 1, unit: TIME_UNITS.hour },
+  ),
+  expiration_interval: durationToForm(
+    authConfig.expiration_interval ?? { value: 1, unit: TIME_UNITS.day },
+  ),
+})
 
 /**
  * Convert role to form object.
@@ -45,7 +98,7 @@ export const roleToForm = (role = {}) => ({
   ui_theme: role.ui_theme ?? '',
   permissions: rolePermissionsToForm(role.permissions ?? []),
   auth_config: roleAuthConfigToForm(role.auth_config),
-});
+})
 
 /**
  * Convert role to permission form object.
@@ -57,31 +110,31 @@ export const roleToPermissionForm = (role = {}) => ({
   ...roleToForm(role),
 
   permissions: rolePermissionsToForm(role.permissions),
-});
+})
 
-const permissionsFormToRolePermissions = (form = {}, isApi = false) => Object.entries(form ?? {})
-  .reduce((acc, [id, actions]) => {
+const permissionsFormToRolePermissions = (form = {}, isApi = false) =>
+  Object.entries(form ?? {}).reduce((acc, [id, actions]) => {
     if (isApiPermission(id) !== isApi) {
-      return acc;
+      return acc
     }
 
-    const [firstAction] = actions;
+    const [firstAction] = actions
 
     if (firstAction === CRUD_ACTIONS.can) {
-      acc[id] = [];
+      acc[id] = []
     } else if (!firstAction) {
-      acc[id] = undefined;
+      acc[id] = undefined
     } else {
-      acc[id] = actions;
+      acc[id] = actions
     }
 
-    return acc;
-  }, {});
+    return acc
+  }, {})
 
 const authConfigFormToRolePermissions = (form = {}) => ({
   inactivity_interval: form.intervals_enabled ? form.inactivity_interval : null,
   expiration_interval: form.intervals_enabled ? form.expiration_interval : null,
-});
+})
 
 /**
  * Convert role form to role object.
@@ -95,7 +148,7 @@ export const formToRole = (form = {}) => ({
   defaultview: form.defaultview,
   permissions: permissionsFormToRolePermissions(form.permissions, isApiRole(form)),
   auth_config: authConfigFormToRolePermissions(form.auth_config),
-});
+})
 
 /**
  * Convert role form to role permissions object.
@@ -106,4 +159,4 @@ export const formToRole = (form = {}) => ({
 export const formToRolePermissions = (form = {}) => ({
   _id: form._id,
   permissions: permissionsFormToRolePermissions(form.permissions, isApiRole(form)),
-});
+})

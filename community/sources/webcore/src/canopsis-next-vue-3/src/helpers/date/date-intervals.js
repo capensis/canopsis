@@ -17,6 +17,12 @@ import {
 } from './date'
 
 /**
+ * @typedef {Object} IntervalForm
+ * @property {number | string} from
+ * @property {number | string} to
+ */
+
+/**
  * Convert a date interval string to moment date object.
  *
  * @param {string} string

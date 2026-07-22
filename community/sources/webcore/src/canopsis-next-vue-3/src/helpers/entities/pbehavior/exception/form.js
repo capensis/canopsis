@@ -7,6 +7,24 @@ import {
 
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array'
 
+/**
+ * @typedef {ObjectKey} PbehaviorExceptionForm
+ * @property {string} _id
+ * @property {number} created
+ * @property {boolean} deletable
+ * @property {string} description
+ * @property {string} name
+ * @property {boolean} visible
+ * @property {PbehaviorExdate[]} exdates
+ */
+
+/**
+ * Convert pbehavior exception data to date exception form
+ *
+ * @param {PbehaviorException} [exception = {}]
+ * @param {string} [timezone = getLocalTimezone()]
+ * @return {PbehaviorExceptionForm}
+ */
 export const pbehaviorExceptionToForm = (exception = {}, timezone = getLocalTimezone()) => ({
   name: exception.name ?? '',
   description: exception.description ?? '',
@@ -23,12 +41,25 @@ export const pbehaviorExceptionToForm = (exception = {}, timezone = getLocalTime
   _id: exception._id,
 })
 
+/**
+ * Convert pbehavior exception data to date exception form
+ *
+ * @param {Object} [exceptionImport = {}]
+ * @return {Object}
+ */
 export const pbehaviorExceptionImportToForm = (exceptionImport = {}) => ({
   name: exceptionImport.name ?? '',
   type: exceptionImport.type ?? '',
   file: exceptionImport.file,
 })
 
+/**
+ * Convert exception form to pbehavior exception data
+ *
+ * @param {PbehaviorExceptionForm} [exceptionForm = {}]
+ * @param {string} [timezone = getLocalTimezone()]
+ * @return {PbehaviorException}
+ */
 export const formToPbehaviorException = (exceptionForm = {}, timezone = getLocalTimezone()) => {
   const { exdates, visible, ...form } = exceptionForm
 
