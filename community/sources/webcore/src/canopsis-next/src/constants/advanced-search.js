@@ -6,6 +6,8 @@ import { DYNAMIC_INFO_FIELDS } from './dynamic-info';
 
 export const REGISTER_LAST_INPUT_FOCUS_KEY = '$registerLastInputFocus';
 
+export const MAX_SAVED_ADVANCED_SEARCHES = 100;
+
 export const ADVANCED_SEARCH_FIELDS = {
   ...PATTERNS_FIELDS,
 

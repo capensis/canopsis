@@ -382,7 +382,7 @@ export default {
     },
 
     onConnectMove({ x, y }) {
-      this.$flowchart.fire({ type: 'mousemove' }, { cursor: { x, y } });
+      this.$flowchart.fire({ type: 'mousemove', clientX: x, clientY: y }, { cursor: { x, y } });
     },
 
     onConnectFinish(shape, { side }) {

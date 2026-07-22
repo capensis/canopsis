@@ -477,6 +477,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 				types.LocaleFr: "{0} doit contenir toutes les colonnes [{1}]",
 			},
 		},
+		"reservedcols": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} contains reserved columns [{1}]",
+				types.LocaleFr: "{0} contient des colonnes réservées [{1}]",
+			},
+		},
 		"invalidpayload": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} contains a payload that cannot be executed",

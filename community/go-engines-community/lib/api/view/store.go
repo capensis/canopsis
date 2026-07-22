@@ -533,7 +533,13 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			{"$unwind": bson.M{"path": "$views", "preserveNullAndEmptyArrays": true}},
 			{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$views",
-				bson.M{"group_obj": "$$ROOT"},
+				bson.M{"group_obj": bson.M{
+					"_id":     "$_id",
+					"title":   "$title",
+					"author":  "$author",
+					"created": "$created",
+					"updated": "$updated",
+				}},
 			}}}},
 		}...)
 		pipeline = append(pipeline, nestedObjectsPipeline...)

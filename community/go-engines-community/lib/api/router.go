@@ -122,7 +122,8 @@ func RegisterRoutes(
 	secondaryDbClient mongo.DbClient,
 	dbExportClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
-	amqpPublisher amqp.Channel,
+	amqpPubPool amqp.ChannelPool,
+	amqpPublisher amqp.Publisher,
 	lockRedisSession redis.Cmdable,
 	apiConfigProvider config.ApiConfigProvider,
 	timezoneConfigProvider config.TimezoneConfigProvider,
@@ -986,7 +987,7 @@ func RegisterRoutes(
 			)
 		}
 
-		eventApi := event.NewApi(amqpPublisher, errorResponder, logger)
+		eventApi := event.NewApi(amqpPubPool, errorResponder, logger)
 		eventRouter := protected.Group("/event")
 		{
 			eventRouter.POST(
@@ -1974,12 +1975,12 @@ func RegisterRoutes(
 			)
 			colorThemeRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer, errorResponder),
+				middleware.OnlyAuth(errorResponder),
 				colorThemeApi.List,
 			)
 			colorThemeRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer, errorResponder),
+				middleware.OnlyAuth(errorResponder),
 				colorThemeApi.Get,
 			)
 			colorThemeRouter.PUT(
@@ -2442,6 +2443,12 @@ func RegisterRoutes(
 				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
 				roleApi.BulkUpdatePermissions,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
+			)
+			bulkRouter.DELETE(
+				"/roles",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer, errorResponder),
+				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+				roleApi.BulkDelete,
 			)
 
 			userBulkRouter := bulkRouter.Group("/users")

@@ -70,7 +70,7 @@ type store struct {
 
 	mxConn      sync.Mutex
 	mongoClient mongo.DbClient
-	redisClient libredis.UniversalClient
+	redisClient *libredis.Client
 	rmqClient   *rabbithole.Client
 	pgConn      *pgx.Conn
 
@@ -446,10 +446,9 @@ func (s *store) checkRabbitMQ() Service {
 		}
 	}
 
-	count := len(nodes)
 	res.IsRunning = runningCount > 0
-	res.Nodes = &count
-	res.RunningNodes = &runningCount
+	res.Nodes = new(len(nodes))
+	res.RunningNodes = new(runningCount)
 
 	return res
 }
