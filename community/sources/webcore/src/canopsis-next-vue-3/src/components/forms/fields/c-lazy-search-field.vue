@@ -34,23 +34,11 @@
         :item="slotProps.item?.raw ?? slotProps.item"
         name="item"
       >
-        <v-list-item
-          class="c-lazy-search-field--tile"
-          v-bind="slotProps.props"
-        >
-          <template
-            v-if="$slots.icon"
-            #prepend
-          >
-            <slot
-              :item="slotProps.item?.raw ?? slotProps.item"
-              name="icon"
-            />
+        <v-list-item class="c-lazy-search-field--tile" v-bind="slotProps.props">
+          <template v-if="$slots.icon" #prepend>
+            <slot :item="slotProps.item?.raw ?? slotProps.item" name="icon" />
           </template>
-          <template
-            v-if="withType"
-            #append
-          >
+          <template v-if="withType" #append>
             <span class="ml-4 text-medium-emphasis">
               {{ (slotProps.item?.raw ?? slotProps.item).type }}
             </span>
@@ -59,59 +47,27 @@
       </slot>
     </template>
     <template #append-item="">
-      <div
-        ref="appendElement"
-        class="c-lazy-search-field__append"
-      />
+      <div ref="appendElement" class="c-lazy-search-field__append" />
     </template>
-    <template
-      v-if="$slots.selection"
-      #selection="slotProps"
-    >
-      <slot
-        name="selection"
-        v-bind="slotProps"
-      />
+    <template v-if="$slots.selection" #selection="slotProps">
+      <slot name="selection" v-bind="slotProps" />
     </template>
-    <template
-      v-else-if="isMultiple"
-      #selection="{ item, props: selectionProps }"
-    >
-      <v-chip
-        v-bind="selectionProps"
-        class="c-lazy-search-field__chip"
-        size="small"
-        closable
-      >
+    <template v-else-if="isMultiple" #selection="{ item, props: selectionProps }">
+      <v-chip v-bind="selectionProps" class="c-lazy-search-field__chip" size="small" closable>
         <span class="text-truncate">
           {{ getItemText(item.raw ?? item) }}
         </span>
       </v-chip>
     </template>
-    <template
-      v-if="$slots['no-data']"
-      #no-data=""
-    >
+    <template v-if="$slots['no-data']" #no-data="">
       <slot name="no-data" />
     </template>
   </component>
 </template>
 
 <script>
-import {
-  debounce,
-  isArray,
-  isString,
-  isFunction,
-  get,
-} from 'lodash';
-import {
-  computed,
-  ref,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
+import { debounce, isArray, isString, isFunction, get } from 'lodash';
+import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
   inheritAttrs: false,
@@ -214,7 +170,7 @@ export default {
 
     const resolvedItemTitle = computed(() => props.itemTitle || props.itemText);
 
-    const getItemValue = item => {
+    const getItemValue = (item) => {
       if (isString(item)) {
         return item;
       }
@@ -222,7 +178,7 @@ export default {
       return isFunction(props.itemValue) ? props.itemValue(item) : get(item, props.itemValue);
     };
 
-    const getItemText = item => {
+    const getItemText = (item) => {
       if (isString(item)) {
         return item;
       }
@@ -234,7 +190,7 @@ export default {
       return text ?? getItemValue(item);
     };
 
-    const getItemProps = item => {
+    const getItemProps = (item) => {
       const rawItem = item?.raw ?? item;
 
       if (isFunction(props.itemDisabled)) {
@@ -244,7 +200,7 @@ export default {
       return {};
     };
 
-    const emitUpdateSearch = value => emit('update:search', value);
+    const emitUpdateSearch = (value) => emit('update:search', value);
     const debouncedEmitUpdateSearch = debounce(emitUpdateSearch, props.debounce);
 
     const updateSearch = (value, force = false) => {
@@ -257,7 +213,7 @@ export default {
       }
     };
 
-    const updateValue = value => {
+    const updateValue = (value) => {
       emit('update:value', value);
       emit('update:modelValue', value);
     };
@@ -284,9 +240,12 @@ export default {
 
     const observer = new IntersectionObserver(intersectionHandler);
 
-    watch(() => props.search, value => {
-      internalSearch.value = value;
-    });
+    watch(
+      () => props.search,
+      (value) => {
+        internalSearch.value = value;
+      },
+    );
 
     watch(isMultiple, () => updateSearch(null, true));
 

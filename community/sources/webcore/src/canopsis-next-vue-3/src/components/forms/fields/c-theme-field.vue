@@ -80,7 +80,7 @@ export default {
       }
     };
 
-    const updateModel = value => {
+    const updateModel = (value) => {
       emit('update:modelValue', value);
     };
 

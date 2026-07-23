@@ -6,7 +6,7 @@ export const useModals = () => {
   const store = useModalsStore();
   const modalContext = inject('$modals', null);
 
-  const getCurrentModalId = payload => {
+  const getCurrentModalId = (payload) => {
     if (payload?.id) {
       return payload.id;
     }
@@ -17,33 +17,38 @@ export const useModals = () => {
   return {
     dialogPropsMap: {},
 
-    isModalOpenedById: id => Boolean(store.byId[id]),
+    isModalOpenedById: (id) => Boolean(store.byId[id]),
 
-    show: modal => store.show(modal),
+    show: (modal) => store.show(modal),
 
-    hide: (payload = {}) => store.hide({
-      ...payload,
-      id: getCurrentModalId(payload),
-    }),
+    hide: (payload = {}) =>
+      store.hide({
+        ...payload,
+        id: getCurrentModalId(payload),
+      }),
 
-    updateDialogProps: (payload = {}) => store.updateDialogProps({
-      ...payload,
-      id: getCurrentModalId(payload),
-    }),
+    updateDialogProps: (payload = {}) =>
+      store.updateDialogProps({
+        ...payload,
+        id: getCurrentModalId(payload),
+      }),
 
-    updateModalConfig: (payload = {}) => store.updateModalConfig({
-      ...payload,
-      id: getCurrentModalId(payload),
-    }),
+    updateModalConfig: (payload = {}) =>
+      store.updateModalConfig({
+        ...payload,
+        id: getCurrentModalId(payload),
+      }),
 
-    minimize: (payload = {}) => store.minimize({
-      ...payload,
-      id: getCurrentModalId(payload),
-    }),
+    minimize: (payload = {}) =>
+      store.minimize({
+        ...payload,
+        id: getCurrentModalId(payload),
+      }),
 
-    maximize: (payload = {}) => store.maximize({
-      ...payload,
-      id: getCurrentModalId(payload),
-    }),
+    maximize: (payload = {}) =>
+      store.maximize({
+        ...payload,
+        id: getCurrentModalId(payload),
+      }),
   };
 };

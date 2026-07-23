@@ -16,7 +16,10 @@
 import { computed } from 'vue';
 
 import { useFormModel } from '@/hooks/form';
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
+import {
+  usePatternsFields,
+  usePatternsFieldsFetching,
+} from '@/hooks/store/modules/patterns-fields';
 
 export default {
   props: {
@@ -41,17 +44,14 @@ export default {
 
     const { fetchFlappingRulePatternFields, fetchResolveRulePatternFields } = usePatternsFields();
 
-    const fetchAction = computed(() => (
-      props.flapping
-        ? fetchFlappingRulePatternFields
-        : fetchResolveRulePatternFields
-    ));
+    const fetchAction = computed(() =>
+      props.flapping ? fetchFlappingRulePatternFields : fetchResolveRulePatternFields,
+    );
 
-    const {
-      pending,
-      alarmAttributes,
-      entityAttributes,
-    } = usePatternsFieldsFetching(fetchAction, props.readonly);
+    const { pending, alarmAttributes, entityAttributes } = usePatternsFieldsFetching(
+      fetchAction,
+      props.readonly,
+    );
 
     const updateForm = (value) => emit('update:form', value);
 

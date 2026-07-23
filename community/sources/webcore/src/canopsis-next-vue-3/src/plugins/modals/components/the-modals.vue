@@ -16,7 +16,7 @@ const zIndex = computed(() => modals.value.length * 1010);
  * Hide all non-minimized modals.
  */
 const hideOpenedModals = () => {
-  modals.value.forEach(modal => {
+  modals.value.forEach((modal) => {
     if (!modal.minimized) {
       modalsStore.hide({ id: modal.id });
     }
@@ -41,11 +41,7 @@ watch(
     :style="{ zIndex }"
     class="modals-wrapper"
   >
-    <modal-base
-      v-for="modal in modals"
-      :key="modal.id"
-      :modal="modal"
-    />
+    <modal-base v-for="modal in modals" :key="modal.id" :modal="modal" />
 
     <div class="pbehavior-calendar-event-menu" />
   </div>

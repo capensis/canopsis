@@ -19,7 +19,7 @@ const hasClickOutsideHandlers = computed(() => Boolean(clickOutside?.handlersCou
 
 const isOpen = computed({
   get: () => !props.modal.hidden && ready.value,
-  set: value => {
+  set: (value) => {
     if (!value) {
       modals.hide({ id: props.modal.id });
     }
@@ -48,7 +48,9 @@ const dialogProps = computed(() => {
     merged.contentClass,
     autoHeight && 'v-dialog__content--auto-height',
     minimized && 'v-dialog__content--minimized',
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return {
     ...merged,
@@ -66,7 +68,7 @@ const dialogProps = computed(() => {
  *
  * @param {PointerEvent} event
  */
-const handleClickOutside = event => {
+const handleClickOutside = (event) => {
   if (props.modal.minimized) {
     return;
   }
@@ -78,15 +80,11 @@ const handleClickOutside = event => {
   modals.hide({ id: props.modal.id });
 };
 
-onMounted(() => ready.value = true);
+onMounted(() => (ready.value = true));
 </script>
 
 <template>
-  <v-dialog
-    v-model="isOpen"
-    v-bind="dialogProps"
-    @click:outside="handleClickOutside"
-  >
+  <v-dialog v-model="isOpen" v-bind="dialogProps" @click:outside="handleClickOutside">
     <slot />
   </v-dialog>
 </template>

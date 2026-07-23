@@ -12,17 +12,11 @@
     @update:model-value="updateModel"
   >
     <template #subheader="{ props: subheaderProps }">
-      <v-list-subheader
-        v-bind="subheaderProps"
-        class="view-selector-menu__subheader"
-      />
+      <v-list-subheader v-bind="subheaderProps" class="view-selector-menu__subheader" />
     </template>
 
     <template #item="{ props: itemProps }">
-      <v-list-item
-        v-bind="itemProps"
-        class="view-selector-menu__item"
-      />
+      <v-list-item v-bind="itemProps" class="view-selector-menu__item" />
     </template>
   </c-select>
 </template>
@@ -55,16 +49,12 @@ export default {
 
   setup(props, { emit }) {
     const { t } = useI18n();
-    const {
-      viewGroups,
-      viewGroupsPending,
-      fetchViewGroupsList,
-    } = useView();
+    const { viewGroups, viewGroupsPending, fetchViewGroupsList } = useView();
     const menuProps = {
       contentClass: 'view-selector-menu',
     };
 
-    const viewItems = computed(() => (
+    const viewItems = computed(() =>
       (viewGroups.value ?? []).reduce((acc, group) => {
         const views = group.views ?? [];
         const groupTitle = group.title || group.name;
@@ -82,24 +72,26 @@ export default {
         });
 
         return acc;
-      }, [])
-    ));
+      }, []),
+    );
 
-    const updateModel = value => {
+    const updateModel = (value) => {
       emit('update:modelValue', value);
     };
 
-    onMounted(() => fetchViewGroupsList({
-      params: {
-        limit: MAX_LIMIT,
-        page: 1,
-        with_views: true,
-        with_tabs: true,
-        with_widgets: true,
-        with_flags: true,
-        with_private: true,
-      },
-    }));
+    onMounted(() =>
+      fetchViewGroupsList({
+        params: {
+          limit: MAX_LIMIT,
+          page: 1,
+          with_views: true,
+          with_tabs: true,
+          with_widgets: true,
+          with_flags: true,
+          with_private: true,
+        },
+      }),
+    );
 
     return {
       t,

@@ -76,7 +76,7 @@ export default {
       items.value = data;
     });
 
-    const updateValue = value => {
+    const updateValue = (value) => {
       emit('update:value', value);
       emit('update:modelValue', value);
     };

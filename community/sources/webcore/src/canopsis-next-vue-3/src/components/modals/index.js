@@ -38,6 +38,7 @@ export default {
   [MODALS.textEditorWithTemplate]: defineAsyncComponent(
     () => import('./common/text-editor-with-template.vue'),
   ),
+  [MODALS.textFieldEditor]: defineAsyncComponent(() => import('./common/text-field-editor.vue')),
   [MODALS.createMaintenance]: defineAsyncComponent(
     () => import('./maintenance/create-maintenance.vue'),
   ),
@@ -85,5 +86,11 @@ export default {
   ),
   [MODALS.importExternalDataTableRecords]: defineAsyncComponent(
     () => import('./external-data-table/import-external-data-table-records.vue'),
+  ),
+  [MODALS.createRemediationConfiguration]: defineAsyncComponent(
+    () => import('./remediation/create-remediation-configuration.vue'),
+  ),
+  [MODALS.createRemediationJob]: defineAsyncComponent(
+    () => import('./remediation/create-remediation-job.vue'),
   ),
 };

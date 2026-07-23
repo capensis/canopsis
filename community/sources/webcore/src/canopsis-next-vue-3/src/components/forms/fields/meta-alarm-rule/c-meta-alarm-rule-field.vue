@@ -67,9 +67,7 @@ export default {
 
     const rules = computed(() => Object.values(rulesById.value));
 
-    const {
-      fetchMetaAlarmRulesListWithoutStore,
-    } = useMetaAlarmRule();
+    const { fetchMetaAlarmRulesListWithoutStore } = useMetaAlarmRule();
 
     const {
       pending,
@@ -99,7 +97,7 @@ export default {
 
     const fetchMoreRules = () => updateQueryPage(query.value.page + 1);
 
-    const clearQuerySearch = value => {
+    const clearQuerySearch = (value) => {
       emit('update:value', value);
       emit('update:modelValue', value);
 

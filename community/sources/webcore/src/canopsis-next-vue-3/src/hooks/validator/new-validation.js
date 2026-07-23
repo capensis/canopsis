@@ -83,7 +83,7 @@ export const useFieldValidation = (props, attrs = {}) => {
 
   watch(
     () => props.modelValue,
-    value => {
+    (value) => {
       field.setValue(value, false);
 
       if (props.validateOnValueUpdate) {
@@ -112,7 +112,7 @@ export const useVuetifyFieldValidation = (props, emit, attrs = {}) => {
 
   const inputValue = computed({
     get: () => props.modelValue,
-    set: value => {
+    set: (value) => {
       field.setValue(value, false);
       emit('update:modelValue', value);
 
@@ -144,12 +144,17 @@ export const useVuetifyFieldValidation = (props, emit, attrs = {}) => {
  * @param {Object} attrs
  * @returns {Object}
  */
-export const useArrayFieldValidation = (props, attrs = {}) => useFieldValidation({
-  ...props,
-  rules: props.rules || (value => (
-    !props.required || (Array.isArray(value) && value.length > 0)
-      ? true
-      : unref(props.message) || false
-  )),
-  validateOnValueUpdate: false,
-}, attrs);
+export const useArrayFieldValidation = (props, attrs = {}) =>
+  useFieldValidation(
+    {
+      ...props,
+      rules:
+        props.rules ||
+        ((value) =>
+          !props.required || (Array.isArray(value) && value.length > 0)
+            ? true
+            : unref(props.message) || false),
+      validateOnValueUpdate: false,
+    },
+    attrs,
+  );

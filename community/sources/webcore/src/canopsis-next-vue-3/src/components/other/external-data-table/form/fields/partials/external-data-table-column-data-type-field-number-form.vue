@@ -10,17 +10,15 @@
       text-color="blue darken-1"
       outlined
     >
-        <template #selection-empty>
-          <span class="grey--text">
-            {{ chip.selectionEmpty }}
-          </span>
-        </template>
-        <template #selection-prefix>
-          <span class="grey--text">
-            {{ chip.selectionPrefix }}:
-          </span>
-        </template>
-      </c-select-chip>
+      <template #selection-empty>
+        <span class="grey--text">
+          {{ chip.selectionEmpty }}
+        </span>
+      </template>
+      <template #selection-prefix>
+        <span class="grey--text"> {{ chip.selectionPrefix }}: </span>
+      </template>
+    </c-select-chip>
   </c-layout>
 </template>
 
@@ -57,7 +55,9 @@ export default {
 
     const getDisabledMessage = (separator, competingSeparator, messageKey) => {
       if (separator === props.tableSeparator) {
-        return t('externalData.tableColumnDataTypesAdditionalChips.number.separatorDisabledByTableSeparator');
+        return t(
+          'externalData.tableColumnDataTypesAdditionalChips.number.separatorDisabledByTableSeparator',
+        );
       }
 
       if (separator === competingSeparator) {
@@ -67,27 +67,43 @@ export default {
       return null;
     };
 
-    const decimalSeparators = computed(() => Object.values(EXTERNAL_DATA_TABLE_COLUMN_NUMBER_DATA_TYPE_DECIMAL_SEPARATOR).map((separator) => {
-        const disabledMessage = getDisabledMessage(separator, props.value.thousands_separator, 'decimalSeparatorDisabled');
+    const decimalSeparators = computed(() =>
+      Object.values(EXTERNAL_DATA_TABLE_COLUMN_NUMBER_DATA_TYPE_DECIMAL_SEPARATOR).map(
+        (separator) => {
+          const disabledMessage = getDisabledMessage(
+            separator,
+            props.value.thousands_separator,
+            'decimalSeparatorDisabled',
+          );
 
-        return {
-          disabledMessage,
-          disabled: !!disabledMessage,
-          value: separator,
-          text: separator,
-        };
-      }));
+          return {
+            disabledMessage,
+            disabled: !!disabledMessage,
+            value: separator,
+            text: separator,
+          };
+        },
+      ),
+    );
 
-    const thousandsSeparators = computed(() => Object.values(EXTERNAL_DATA_TABLE_COLUMN_NUMBER_DATA_TYPE_THOUSANDS_SEPARATOR).map((separator) => {
-        const disabledMessage = getDisabledMessage(separator, props.value.decimal_separator, 'thousandsSeparatorDisabled');
+    const thousandsSeparators = computed(() =>
+      Object.values(EXTERNAL_DATA_TABLE_COLUMN_NUMBER_DATA_TYPE_THOUSANDS_SEPARATOR).map(
+        (separator) => {
+          const disabledMessage = getDisabledMessage(
+            separator,
+            props.value.decimal_separator,
+            'thousandsSeparatorDisabled',
+          );
 
-        return {
-          disabledMessage,
-          disabled: !!disabledMessage,
-          value: separator,
-          text: separator,
-        };
-      }));
+          return {
+            disabledMessage,
+            disabled: !!disabledMessage,
+            value: separator,
+            text: separator,
+          };
+        },
+      ),
+    );
 
     const chips = computed(() => {
       const result = [];
@@ -95,13 +111,17 @@ export default {
       if (!props.disabled || (props.disabled && props.value.decimal_separator)) {
         result.push({
           key: 'decimal_separator',
-          selectionEmpty: t('externalData.tableColumnDataTypesAdditionalChips.number.selectDecimalSeparator'),
-          selectionPrefix: t('externalData.tableColumnDataTypesAdditionalChips.number.decimalSeparator'),
+          selectionEmpty: t(
+            'externalData.tableColumnDataTypesAdditionalChips.number.selectDecimalSeparator',
+          ),
+          selectionPrefix: t(
+            'externalData.tableColumnDataTypesAdditionalChips.number.decimalSeparator',
+          ),
           bind: {
             value: props.value.decimal_separator,
             items: decimalSeparators.value,
             clearable: true,
-            'onUpdate:value': separator => updateField('decimal_separator', separator),
+            'onUpdate:value': (separator) => updateField('decimal_separator', separator),
           },
         });
       }
@@ -109,13 +129,17 @@ export default {
       if (!props.disabled || (props.disabled && props.value.thousands_separator)) {
         result.push({
           key: 'thousands_separator',
-          selectionEmpty: t('externalData.tableColumnDataTypesAdditionalChips.number.selectThousandsSeparator'),
-          selectionPrefix: t('externalData.tableColumnDataTypesAdditionalChips.number.thousandsSeparator'),
+          selectionEmpty: t(
+            'externalData.tableColumnDataTypesAdditionalChips.number.selectThousandsSeparator',
+          ),
+          selectionPrefix: t(
+            'externalData.tableColumnDataTypesAdditionalChips.number.thousandsSeparator',
+          ),
           bind: {
             value: props.value.thousands_separator,
             items: thousandsSeparators.value,
             clearable: true,
-            'onUpdate:value': separator => updateField('thousands_separator', separator),
+            'onUpdate:value': (separator) => updateField('thousands_separator', separator),
           },
         });
       }

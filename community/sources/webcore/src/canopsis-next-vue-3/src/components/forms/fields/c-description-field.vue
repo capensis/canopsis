@@ -9,15 +9,8 @@
     :max-length="maxLength"
     @update:model-value="updateModel"
   >
-    <template
-      v-if="helpText"
-      #append
-    >
-      <c-help-icon
-        :text="helpText"
-        icon="help"
-        left
-      />
+    <template v-if="helpText" #append>
+      <c-help-icon :text="helpText" icon="help" left />
     </template>
   </c-textarea>
 </template>
@@ -64,7 +57,7 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const updateModel = value => {
+    const updateModel = (value) => {
       emit('update:modelValue', value);
     };
 

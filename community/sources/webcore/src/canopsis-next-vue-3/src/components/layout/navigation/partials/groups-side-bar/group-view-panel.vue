@@ -1,10 +1,6 @@
 <template>
   <v-card
-    :class="[
-      'group-view-panel',
-      'secondary',
-      isViewActive ? 'lighten-3' : 'lighten-1',
-    ]"
+    :class="['group-view-panel', 'secondary', isViewActive ? 'lighten-3' : 'lighten-1']"
     elevation="0"
   >
     <v-card-text class="panel-item-content">
@@ -15,12 +11,7 @@
       </div>
 
       <div class="panel-item-content__actions">
-        <c-icon
-          v-if="view.is_private"
-          size="18"
-        >
-          lock
-        </c-icon>
+        <c-icon v-if="view.is_private" size="18"> lock </c-icon>
         <template v-if="editable || duplicable">
           <v-btn
             v-if="editable"
@@ -30,7 +21,7 @@
             icon
             @click.prevent="$emit('change')"
           >
-            <c-icon size="18">edit</c-icon>
+            <c-icon size="18"> edit </c-icon>
           </v-btn>
           <v-btn
             v-if="duplicable"
@@ -40,7 +31,7 @@
             icon
             @click.prevent="$emit('duplicate')"
           >
-            <c-icon size="18">file_copy</c-icon>
+            <c-icon size="18"> file_copy </c-icon>
           </v-btn>
         </template>
       </div>
@@ -89,7 +80,7 @@ export default {
   border-radius: 0;
 
   &__divider {
-    border-color: rgba(0, 0, 0, .12) !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
     opacity: 1;
   }
 }

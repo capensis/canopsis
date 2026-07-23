@@ -56,6 +56,9 @@ import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 import { usePlaylist } from '@/hooks/store/modules/playlist';
+import { useRemediationConfiguration } from '@/hooks/store/modules/remediation-configuration';
+import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
 import { useRole } from '@/hooks/store/modules/role';
 import { useResolveRules } from '@/hooks/store/modules/resolve-rules';
 import { useScenario } from '@/hooks/store/modules/scenario';
@@ -143,6 +146,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    instruction: {
+      type: Boolean,
+      default: false,
+    },
+    remediationConfiguration: {
+      type: Boolean,
+      default: false,
+    },
+    remediationJob: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: ['clear:items', 'refresh'],
@@ -177,6 +192,13 @@ export default {
     } = usePbehaviorException();
     const { bulkRemoveUsers, bulkEnableUsers, bulkDisableUsers } = useUser();
     const { bulkRemoveRoles } = useRole();
+    const {
+      bulkRemoveRemediationInstructions,
+      bulkEnableRemediationInstructions,
+      bulkDisableRemediationInstructions,
+    } = useRemediationInstruction();
+    const { bulkRemoveRemediationConfigurations } = useRemediationConfiguration();
+    const { bulkRemoveRemediationJobs } = useRemediationJob();
 
     const someOneEnable = computed(() => props.items.some(({ enabled }) => enabled));
     const someOneDisable = computed(() => props.items.some(({ enabled }) => !enabled));
@@ -295,6 +317,29 @@ export default {
         return {
           remove: bulkRemoveRoles,
           tooltipPrefix: 'role',
+        };
+      }
+
+      if (props.instruction) {
+        return {
+          remove: bulkRemoveRemediationInstructions,
+          enable: bulkEnableRemediationInstructions,
+          disable: bulkDisableRemediationInstructions,
+          tooltipPrefix: 'remediation.instruction',
+        };
+      }
+
+      if (props.remediationConfiguration) {
+        return {
+          remove: bulkRemoveRemediationConfigurations,
+          tooltipPrefix: 'remediation.configuration',
+        };
+      }
+
+      if (props.remediationJob) {
+        return {
+          remove: bulkRemoveRemediationJobs,
+          tooltipPrefix: 'remediation.job',
         };
       }
 

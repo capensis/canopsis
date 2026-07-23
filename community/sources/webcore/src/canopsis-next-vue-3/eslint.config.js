@@ -37,6 +37,8 @@ export default defineConfigWithVueTs(
 
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 
+  skipFormatting,
+
   {
     name: 'app/legacy-canopsis-rules',
     languageOptions: {
@@ -46,7 +48,7 @@ export default defineConfigWithVueTs(
     },
     rules: {
       'object-curly-newline': 'off',
-      'arrow-parens': ['warn', 'as-needed', { requireForBlockBody: true }],
+      'arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
       semi: ['error', 'always'],
       'default-case': 'off',
       'max-len': [
@@ -231,8 +233,6 @@ export default defineConfigWithVueTs(
       'no-console': 'off',
     },
   },
-
-  skipFormatting,
 
   {
     name: 'app/required-semicolons',

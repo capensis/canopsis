@@ -93,7 +93,7 @@ export default {
   setup(props, { emit }) {
     const { fileUploadMaxSize } = useInfo();
 
-    const validateValue = value => {
+    const validateValue = (value) => {
       if (props.required && !value) {
         return `${props.label || props.name} is required`;
       }
@@ -101,13 +101,7 @@ export default {
       return true;
     };
 
-    const {
-      value,
-      errorMessage,
-      handleBlur,
-      setValue,
-      validate,
-    } = useField(
+    const { value, errorMessage, handleBlur, setValue, validate } = useField(
       computed(() => props.name),
       validateValue,
       {
@@ -132,19 +126,25 @@ export default {
       ...(errorMessage.value ? [errorMessage.value] : []),
     ]);
 
-    watch(() => props.modelValue, nextValue => {
-      if (nextValue !== undefined && nextValue !== value.value) {
-        setValue(nextValue, false);
-        validate();
-      }
-    });
+    watch(
+      () => props.modelValue,
+      (nextValue) => {
+        if (nextValue !== undefined && nextValue !== value.value) {
+          setValue(nextValue, false);
+          validate();
+        }
+      },
+    );
 
-    watch(() => props.value, nextValue => {
-      if (nextValue !== undefined && nextValue !== value.value) {
-        setValue(nextValue, false);
-        validate();
-      }
-    });
+    watch(
+      () => props.value,
+      (nextValue) => {
+        if (nextValue !== undefined && nextValue !== value.value) {
+          setValue(nextValue, false);
+          validate();
+        }
+      },
+    );
 
     return {
       fieldValue,
