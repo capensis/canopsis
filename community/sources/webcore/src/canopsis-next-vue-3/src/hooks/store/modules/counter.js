@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useCounterStore } from '@/stores/modules/counter'
+import { useCounterStore } from '@/stores/modules/counter';
 
 /**
  * Counter widget store facade.
@@ -8,13 +8,13 @@ import { useCounterStore } from '@/stores/modules/counter'
  * @returns {Object}
  */
 export const useCounter = () => {
-  const counterStore = useCounterStore()
-  const { widgets, getListByWidgetId, getPendingByWidgetId } = storeToRefs(counterStore)
+  const counterStore = useCounterStore();
+  const { widgets, getListByWidgetId, getPendingByWidgetId } = storeToRefs(counterStore);
 
   return {
     countersByWidget: widgets,
     getCountersListByWidgetId: getListByWidgetId,
     getCountersPendingByWidgetId: getPendingByWidgetId,
     fetchCountersList: counterStore.fetchList,
-  }
-}
+  };
+};

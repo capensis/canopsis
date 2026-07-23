@@ -31,13 +31,13 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { convertDateToString } from '@/helpers/date/date'
+import { convertDateToString } from '@/helpers/date/date';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
-import KpiFiltersExpandItem from './partials/kpi-filters-expand-item.vue'
+import KpiFiltersExpandItem from './partials/kpi-filters-expand-item.vue';
 
 export default {
   components: { KpiFiltersExpandItem },
@@ -76,19 +76,19 @@ export default {
   emits: ['update:options', 'edit', 'duplicate', 'remove'],
 
   setup() {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
     const headers = computed(() => [
       { text: t('common.name'), value: 'name' },
       { text: t('common.created'), value: 'created' },
       { text: t('common.lastModifiedOn'), value: 'updated' },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
-    ])
+    ]);
 
     return {
       headers,
       convertDateToString,
-    }
+    };
   },
-}
+};
 </script>

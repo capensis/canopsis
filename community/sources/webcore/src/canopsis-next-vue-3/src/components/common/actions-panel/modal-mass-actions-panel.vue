@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { TELEPORTS_NAMES } from '@/constants'
+import { TELEPORTS_NAMES } from '@/constants';
 
 export default {
   props: {
@@ -16,11 +16,11 @@ export default {
   },
 
   setup(props) {
-    const name = computed(() => `${TELEPORTS_NAMES.massActionsPanel}-${props.id}`)
+    const name = computed(() => `${TELEPORTS_NAMES.massActionsPanel}-${props.id}`);
 
-    return { name }
+    return { name };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

@@ -1,5 +1,5 @@
-import process from 'node:process'
-import { defineConfig, devices } from '@playwright/test'
+import process from 'node:process';
+import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Read environment variables from file.
@@ -107,4 +107,4 @@ export default defineConfig({
     port: process.env.CI ? 4173 : 5173,
     reuseExistingServer: !process.env.CI,
   },
-})
+});

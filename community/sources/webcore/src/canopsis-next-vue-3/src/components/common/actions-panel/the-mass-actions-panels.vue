@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { TELEPORTS_NAMES } from '@/constants'
+import { TELEPORTS_NAMES } from '@/constants';
 
 export default {
   props: {
@@ -19,14 +19,14 @@ export default {
     const targetClass = computed(() => ({
       'the-mass-actions-panels__teleport-target': true,
       'the-mass-actions-panels__teleport-target--fixed': props.fixed,
-    }))
+    }));
 
     return {
       TELEPORTS_NAMES,
       targetClass,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss">

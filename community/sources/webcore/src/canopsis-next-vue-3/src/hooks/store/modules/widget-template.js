@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useWidgetTemplateStore } from '@/stores/modules/widget-template'
+import { useWidgetTemplateStore } from '@/stores/modules/widget-template';
 
 /**
  * Widget template store facade.
@@ -8,8 +8,8 @@ import { useWidgetTemplateStore } from '@/stores/modules/widget-template'
  * @returns {Object}
  */
 export const useWidgetTemplate = () => {
-  const widgetTemplateStore = useWidgetTemplateStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(widgetTemplateStore)
+  const widgetTemplateStore = useWidgetTemplateStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(widgetTemplateStore);
 
   return {
     widgetTemplates: items,
@@ -23,5 +23,5 @@ export const useWidgetTemplate = () => {
     createWidgetTemplate: widgetTemplateStore.create,
     updateWidgetTemplate: widgetTemplateStore.update,
     removeWidgetTemplate: widgetTemplateStore.remove,
-  }
-}
+  };
+};

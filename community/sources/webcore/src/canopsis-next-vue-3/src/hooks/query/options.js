@@ -1,13 +1,13 @@
-import { omit, pick } from 'lodash'
-import { computed, unref } from 'vue'
+import { omit, pick } from 'lodash';
+import { computed, unref } from 'vue';
 
-import { PAGINATION_LIMIT } from '@/config'
+import { PAGINATION_LIMIT } from '@/config';
 
-import { isSeveralEqual } from '@/helpers/collection'
+import { isSeveralEqual } from '@/helpers/collection';
 import {
   convertDataTableSortToQuery,
   convertQuerySortToDataTableSort,
-} from '@/helpers/entities/shared/query'
+} from '@/helpers/entities/shared/query';
 
 /**
  * Custom hook to manage query options for pagination and sorting.
@@ -18,15 +18,21 @@ import {
  */
 export const useQueryOptions = (query, updateQuery) => {
   const options = computed(() => {
-    const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [], ...restQuery } = unref(query)
+    const {
+      page = 1,
+      itemsPerPage = PAGINATION_LIMIT,
+      sortBy = [],
+      sortDesc = [],
+      ...restQuery
+    } = unref(query);
 
     return {
       page,
       itemsPerPage,
       sortBy: convertQuerySortToDataTableSort(sortBy, sortDesc),
       ...restQuery,
-    }
-  })
+    };
+  });
 
   /**
    * Update options based on the provided value.
@@ -34,7 +40,7 @@ export const useQueryOptions = (query, updateQuery) => {
    * @param {Object} value - The new options values to update.
    */
   const updateOptions = (value) => {
-    const unwrappedQuery = unref(query)
+    const unwrappedQuery = unref(query);
     const otherValues = omit(value, [
       'search',
       'page',
@@ -46,20 +52,23 @@ export const useQueryOptions = (query, updateQuery) => {
       'groupDesc',
       'multiSort',
       'mustSort',
-    ])
+    ]);
 
-    const isEqualOptions = isSeveralEqual(
-      options.value,
-      value,
-      ['search', 'page', 'itemsPerPage', 'sortBy', 'sortDesc', ...Object.keys(otherValues)],
-    )
+    const isEqualOptions = isSeveralEqual(options.value, value, [
+      'search',
+      'page',
+      'itemsPerPage',
+      'sortBy',
+      'sortDesc',
+      ...Object.keys(otherValues),
+    ]);
 
     if (isEqualOptions) {
-      return
+      return;
     }
 
-    const oldItemsPerPage = unwrappedQuery.itemsPerPage ?? PAGINATION_LIMIT
-    const sort = convertDataTableSortToQuery(value.sortBy)
+    const oldItemsPerPage = unwrappedQuery.itemsPerPage ?? PAGINATION_LIMIT;
+    const sort = convertDataTableSortToQuery(value.sortBy);
 
     updateQuery({
       ...pick(unwrappedQuery, Object.keys(value)),
@@ -71,8 +80,8 @@ export const useQueryOptions = (query, updateQuery) => {
       sortDesc: sort.sortDesc,
 
       ...otherValues,
-    })
-  }
+    });
+  };
 
   const optionsWithSet = computed({
     /**
@@ -88,7 +97,7 @@ export const useQueryOptions = (query, updateQuery) => {
      * @param {Object} value - New options object for pagination and sorting.
      */
     set: updateOptions,
-  })
+  });
 
-  return { options: optionsWithSet, updateOptions }
-}
+  return { options: optionsWithSet, updateOptions };
+};

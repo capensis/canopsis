@@ -66,20 +66,20 @@
 </template>
 
 <script>
-import { isUndefined } from 'lodash'
-import { computed, ref } from 'vue'
+import { isUndefined } from 'lodash';
+import { computed, ref } from 'vue';
 
-import { JOB_STATUS } from '@/constants'
+import { JOB_STATUS } from '@/constants';
 
-import { convertDateToString } from '@/helpers/date/date'
+import { convertDateToString } from '@/helpers/date/date';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
-import TicketStatusJobTableActions from './partials/ticket-status-job-table-actions.vue'
-import TicketStatusJobsActiveStateIcon from './partials/ticket-status-jobs-active-state-icon.vue'
-import TicketStatusJobsDetailsExpandPanel from './partials/ticket-status-jobs-details-expand-panel.vue'
-import TicketStatusJobsLastRunStatusIcon from './partials/ticket-status-jobs-last-run-status-icon.vue'
-import TicketStatusJobsTableFilters from './partials/ticket-status-jobs-table-filters.vue'
+import TicketStatusJobTableActions from './partials/ticket-status-job-table-actions.vue';
+import TicketStatusJobsActiveStateIcon from './partials/ticket-status-jobs-active-state-icon.vue';
+import TicketStatusJobsDetailsExpandPanel from './partials/ticket-status-jobs-details-expand-panel.vue';
+import TicketStatusJobsLastRunStatusIcon from './partials/ticket-status-jobs-last-run-status-icon.vue';
+import TicketStatusJobsTableFilters from './partials/ticket-status-jobs-table-filters.vue';
 
 export default {
   components: {
@@ -116,16 +116,16 @@ export default {
   emits: ['update:options'],
 
   setup(props, { emit }) {
-    const { t } = useI18n()
-    const tableElement = ref(null)
-    const firstSelectedStatus = computed(() => tableElement.value?.selectedItems?.[0]?.status)
+    const { t } = useI18n();
+    const tableElement = ref(null);
+    const firstSelectedStatus = computed(() => tableElement.value?.selectedItems?.[0]?.status);
 
     const isDisabledItem = (item) =>
       item.status === JOB_STATUS.stopped ||
-      (!isUndefined(firstSelectedStatus.value) && item.status !== firstSelectedStatus.value)
-    const updateOptions = (newOptions) => emit('update:options', newOptions)
+      (!isUndefined(firstSelectedStatus.value) && item.status !== firstSelectedStatus.value);
+    const updateOptions = (newOptions) => emit('update:options', newOptions);
     const formatDate = (date, defaultValue = '') =>
-      convertDateToString(date, undefined, defaultValue)
+      convertDateToString(date, undefined, defaultValue);
 
     return {
       t,
@@ -133,9 +133,9 @@ export default {
       isDisabledItem,
       updateOptions,
       formatDate,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

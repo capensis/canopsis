@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useEntityInfoPropertyStore } from '@/stores/modules/entity-info-property'
+import { useEntityInfoPropertyStore } from '@/stores/modules/entity-info-property';
 
 /**
  * Entity info property store facade.
@@ -8,9 +8,9 @@ import { useEntityInfoPropertyStore } from '@/stores/modules/entity-info-propert
  * @returns {Object}
  */
 export const useEntityInfoProperty = () => {
-  const entityInfoPropertyStore = useEntityInfoPropertyStore()
+  const entityInfoPropertyStore = useEntityInfoPropertyStore();
   const { items, meta, pending, fetchingParams, itemsWithAlias, itemsWithoutAlias } =
-    storeToRefs(entityInfoPropertyStore)
+    storeToRefs(entityInfoPropertyStore);
 
   return {
     entityInfoProperties: items,
@@ -28,5 +28,5 @@ export const useEntityInfoProperty = () => {
     updateEntityInfoProperty: entityInfoPropertyStore.update,
     removeEntityInfoProperty: entityInfoPropertyStore.remove,
     bulkRemoveEntityInfoProperties: entityInfoPropertyStore.bulkRemove,
-  }
-}
+  };
+};

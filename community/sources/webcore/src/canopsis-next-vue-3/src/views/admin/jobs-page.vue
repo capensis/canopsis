@@ -5,9 +5,9 @@
 </template>
 
 <script>
-import { useTicketStatusJob } from '@/hooks/store/modules/ticket-status-job'
+import { useTicketStatusJob } from '@/hooks/store/modules/ticket-status-job';
 
-import TicketStatusJobsTabs from '@/components/other/ticket-status-job/ticket-status-jobs-tabs.vue'
+import TicketStatusJobsTabs from '@/components/other/ticket-status-job/ticket-status-jobs-tabs.vue';
 
 export default {
   components: {
@@ -15,11 +15,11 @@ export default {
   },
 
   setup() {
-    const { fetchTicketStatusJobsListWithPreviousParams } = useTicketStatusJob()
+    const { fetchTicketStatusJobsListWithPreviousParams } = useTicketStatusJob();
 
     return {
       refresh: fetchTicketStatusJobsListWithPreviousParams,
-    }
+    };
   },
-}
+};
 </script>

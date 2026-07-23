@@ -1,9 +1,6 @@
 <template>
-  <v-row>
-    <v-col
-      class="mr-3"
-      cols="6"
-    >
+  <v-row class="request-header-field ga-3 flex-nowrap flex-grow-1" no-gutters>
+    <v-col class="request-header-field__column" cols="6">
       <c-combobox
         :model-value="header.text"
         :label="$t('common.headerKey')"
@@ -14,7 +11,8 @@
         @update:model-value="updateField('text', $event)"
       />
     </v-col>
-    <v-col cols="6">
+
+    <v-col class="request-header-field__column" cols="6">
       <c-combobox
         v-if="valueHints"
         :model-value="header.value"
@@ -45,7 +43,6 @@ import { formMixin } from '@/mixins/form';
 
 export default {
   emits: ['update:header'],
-  inject: ['$validator'],
   mixins: [formMixin],
   props: {
     header: {
@@ -88,3 +85,15 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.request-header-field {
+  min-width: 0;
+
+  &__column {
+    flex: 0 0 calc(50% - 6px);
+    max-width: calc(50% - 6px);
+    min-width: 0;
+  }
+}
+</style>

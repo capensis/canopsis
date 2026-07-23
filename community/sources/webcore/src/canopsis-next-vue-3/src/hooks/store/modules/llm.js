@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useLlmStore } from '@/stores/modules/llm'
+import { useLlmStore } from '@/stores/modules/llm';
 
 /**
  * LLM store facade.
@@ -8,8 +8,8 @@ import { useLlmStore } from '@/stores/modules/llm'
  * @returns {Object}
  */
 export const useLlm = () => {
-  const llmStore = useLlmStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(llmStore)
+  const llmStore = useLlmStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(llmStore);
 
   return {
     llms: items,
@@ -32,5 +32,5 @@ export const useLlm = () => {
     fetchLlmUsersWithoutStore: llmStore.fetchLlmUsersWithoutStore,
     fetchLlmMessagesWithoutStore: llmStore.fetchLlmMessagesWithoutStore,
     bulkLinkLlmHistory: llmStore.bulkLinkLlmHistory,
-  }
-}
+  };
+};

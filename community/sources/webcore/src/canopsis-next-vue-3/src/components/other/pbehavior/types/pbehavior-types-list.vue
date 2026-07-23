@@ -60,13 +60,13 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { getMostReadableTextColor } from '@/helpers/color'
+import { getMostReadableTextColor } from '@/helpers/color';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
-import PbehaviorTypesListExpandPanel from './partials/pbehavior-types-list-expand-panel.vue'
+import PbehaviorTypesListExpandPanel from './partials/pbehavior-types-list-expand-panel.vue';
 
 export default {
   components: {
@@ -107,7 +107,7 @@ export default {
   emits: ['update:options', 'remove', 'refresh'],
 
   setup() {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
     const headers = computed(() => [
       { text: t('common.name'), value: 'name' },
@@ -115,19 +115,19 @@ export default {
       { text: t('common.priority'), value: 'priority' },
       { text: t('pbehavior.visible'), value: 'visible', sortable: false },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
-    ])
+    ]);
 
-    const isDisabledType = ({ deletable }) => !deletable
-    const getIconColor = (color) => getMostReadableTextColor(color, { level: 'AA', size: 'large' })
+    const isDisabledType = ({ deletable }) => !deletable;
+    const getIconColor = (color) => getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
     return {
       headers,
       isDisabledType,
       getIconColor,
       t,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

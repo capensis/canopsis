@@ -28,20 +28,20 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
+import { onMounted } from 'vue';
 
-import { USER_PERMISSIONS, MODALS } from '@/constants'
-import { PAGINATION_LIMIT } from '@/config'
+import { USER_PERMISSIONS, MODALS } from '@/constants';
+import { PAGINATION_LIMIT } from '@/config';
 
-import { convertQueryToRequest } from '@/helpers/query'
+import { convertQueryToRequest } from '@/helpers/query';
 
-import { useCRUDPermissions, useAuth } from '@/hooks/auth'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { useLocalQueryWithOptions } from '@/hooks/query/shared'
-import { usePlaylist } from '@/hooks/store/modules/playlist'
+import { useCRUDPermissions, useAuth } from '@/hooks/auth';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
+import { usePlaylist } from '@/hooks/store/modules/playlist';
 
-import PlaylistsList from '@/components/other/playlists/playlists-list.vue'
+import PlaylistsList from '@/components/other/playlists/playlists-list.vue';
 
 export default {
   components: {
@@ -57,15 +57,15 @@ export default {
       createPlaylist,
       updatePlaylist,
       removePlaylist,
-    } = usePlaylist()
+    } = usePlaylist();
 
     const { hasCreateAccess, hasUpdateAccess, hasDeleteAccess } = useCRUDPermissions(
       USER_PERMISSIONS.technical.playlist,
-    )
+    );
 
-    const modals = useModals()
-    const { fetchCurrentUser } = useAuth()
-    const { t } = useI18n()
+    const modals = useModals();
+    const { fetchCurrentUser } = useAuth();
+    const { t } = useI18n();
 
     const {
       options,
@@ -83,7 +83,7 @@ export default {
         fetchPlaylistsList({
           params: convertQueryToRequest(fetchQuery),
         }),
-    })
+    });
 
     const showRemovePlaylistModal = (id) =>
       modals.show({
@@ -91,27 +91,27 @@ export default {
         config: {
           text: t('modals.confirmation.text'),
           action: async () => {
-            await removePlaylist({ id })
+            await removePlaylist({ id });
 
-            await Promise.all([fetchCurrentUser(), fetchList()])
+            await Promise.all([fetchCurrentUser(), fetchList()]);
           },
         },
-      })
+      });
 
     const refreshPlaylists = async () => {
-      await Promise.all([fetchCurrentUser(), fetchList()])
-    }
+      await Promise.all([fetchCurrentUser(), fetchList()]);
+    };
 
     const showCreatePlaylistModal = () =>
       modals.show({
         name: MODALS.createPlaylist,
         config: {
           action: async (data) => {
-            await createPlaylist({ data })
-            await refreshPlaylists()
+            await createPlaylist({ data });
+            await refreshPlaylists();
           },
         },
-      })
+      });
 
     const showEditPlaylistModal = (playlist) =>
       modals.show({
@@ -119,11 +119,11 @@ export default {
         config: {
           playlist,
           action: async (data) => {
-            await updatePlaylist({ id: playlist._id, data })
-            await refreshPlaylists()
+            await updatePlaylist({ id: playlist._id, data });
+            await refreshPlaylists();
           },
         },
-      })
+      });
 
     const showDuplicatePlaylistModal = (playlist) =>
       modals.show({
@@ -132,13 +132,13 @@ export default {
           playlist,
           duplicating: true,
           action: async (data) => {
-            await createPlaylist({ data })
-            await refreshPlaylists()
+            await createPlaylist({ data });
+            await refreshPlaylists();
           },
         },
-      })
+      });
 
-    onMounted(fetchList)
+    onMounted(fetchList);
 
     return {
       playlists,
@@ -154,7 +154,7 @@ export default {
       showCreatePlaylistModal,
       showEditPlaylistModal,
       showDuplicatePlaylistModal,
-    }
+    };
   },
-}
+};
 </script>

@@ -1,7 +1,7 @@
-import { COLORS } from '@/config'
-import { THEME_FONT_SIZES } from '@/constants'
+import { COLORS } from '@/config';
+import { THEME_FONT_SIZES } from '@/constants';
 
-import { getLightenOrDarkenColor, isDarkColor } from '@/helpers/color'
+import { getLightenOrDarkenColor, isDarkColor } from '@/helpers/color';
 
 /**
  * @typedef {Object} ThemeEnabledColor
@@ -74,7 +74,7 @@ export const convertTypeColors = (main = {}, amount) => ({
     !main.info && !main.info_background
       ? COLORS.infoBackground
       : main.info_background || getLightenOrDarkenColor(main.info, amount),
-})
+});
 
 /**
  * Convert theme main colors to form object
@@ -90,7 +90,7 @@ export const themeMainColorsToForm = (main = {}) => ({
   active_color: main.active_color ?? COLORS.activeColor,
 
   ...convertTypeColors(main),
-})
+});
 
 /**
  * Convert theme main colors to form object
@@ -99,13 +99,13 @@ export const themeMainColorsToForm = (main = {}) => ({
  * @returns {ThemeTableColorsForm}
  */
 export const themeTableColorsToForm = (table = {}) => {
-  const isDarkRowColor = table.row_color && isDarkColor(table.row_color)
+  const isDarkRowColor = table.row_color && isDarkColor(table.row_color);
   const shiftRowColor =
     table.shift_row_color ??
-    (isDarkRowColor ? COLORS.table.shiftRowDarkColor : COLORS.table.shiftRowColor)
+    (isDarkRowColor ? COLORS.table.shiftRowDarkColor : COLORS.table.shiftRowColor);
   const hoverRowColor =
     table.hover_row_color ??
-    (isDarkRowColor ? COLORS.table.hoverRowDarkColor : COLORS.table.hoverRowColor)
+    (isDarkRowColor ? COLORS.table.hoverRowDarkColor : COLORS.table.hoverRowColor);
 
   return {
     background: table.background ?? COLORS.table.background,
@@ -118,8 +118,8 @@ export const themeTableColorsToForm = (table = {}) => {
       enabled: Boolean(table.hover_row),
       color: hoverRowColor,
     },
-  }
-}
+  };
+};
 
 /**
  * Convert theme main colors to form object
@@ -133,7 +133,7 @@ export const themeStatesColorsToForm = (states = {}) => ({
   major: states.major ?? COLORS.state.major,
   critical: states.critical ?? COLORS.state.critical,
   pause: states.pause ?? COLORS.state.pause,
-})
+});
 
 /**
  * Convert theme colors to form object
@@ -146,7 +146,7 @@ export const themeColorsToForm = (colors = {}) => ({
   table: themeTableColorsToForm(colors.table),
   state: themeStatesColorsToForm(colors.state),
   status: colors.status ?? COLORS.status,
-})
+});
 
 /**
  * Convert theme to form object
@@ -158,4 +158,4 @@ export const themeToForm = (theme = {}) => ({
   name: theme.name ?? '',
   font_size: theme.font_size ?? THEME_FONT_SIZES.medium,
   colors: themeColorsToForm(theme.colors),
-})
+});

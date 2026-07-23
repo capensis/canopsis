@@ -11,7 +11,10 @@
 </template>
 
 <script>
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields'
+import {
+  usePatternsFields,
+  usePatternsFieldsFetching,
+} from '@/hooks/store/modules/patterns-fields';
 
 export default {
   props: {
@@ -28,17 +31,17 @@ export default {
   emits: ['update:form'],
 
   setup(props) {
-    const { fetchKpiFilterPatternFields } = usePatternsFields()
+    const { fetchKpiFilterPatternFields } = usePatternsFields();
 
     const { pending, entityAttributes } = usePatternsFieldsFetching(
       fetchKpiFilterPatternFields,
       props.readonly,
-    )
+    );
 
     return {
       pending,
       entityAttributes,
-    }
+    };
   },
-}
+};
 </script>

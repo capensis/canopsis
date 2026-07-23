@@ -20,30 +20,30 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
-import { omit } from 'lodash'
+import { onMounted } from 'vue';
+import { omit } from 'lodash';
 
-import { PAGINATION_LIMIT } from '@/config'
-import { MODALS, USER_PERMISSIONS } from '@/constants'
+import { PAGINATION_LIMIT } from '@/config';
+import { MODALS, USER_PERMISSIONS } from '@/constants';
 
-import { getQueryForList } from '@/helpers/entities/shared/query'
+import { getQueryForList } from '@/helpers/entities/shared/query';
 
-import { useCRUDPermissions } from '@/hooks/auth'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { usePopups } from '@/hooks/popups'
-import { useLocalQueryWithOptions } from '@/hooks/query/shared'
-import { useFilter } from '@/hooks/store/modules/filter'
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
+import { useFilter } from '@/hooks/store/modules/filter';
 
-import KpiFiltersList from './kpi-filters-list.vue'
+import KpiFiltersList from './kpi-filters-list.vue';
 
 export default {
   components: { KpiFiltersList },
 
   setup() {
-    const { t } = useI18n()
-    const modals = useModals()
-    const popups = usePopups()
+    const { t } = useI18n();
+    const modals = useModals();
+    const popups = usePopups();
     const {
       filters,
       filtersMeta,
@@ -52,10 +52,10 @@ export default {
       createFilter,
       updateFilter,
       removeFilter,
-    } = useFilter()
+    } = useFilter();
     const { hasCreateAccess, hasUpdateAccess, hasDeleteAccess } = useCRUDPermissions(
       USER_PERMISSIONS.technical.kpiFilters,
-    )
+    );
 
     const {
       options,
@@ -73,7 +73,7 @@ export default {
         fetchFiltersList({
           params: getQueryForList(fetchQuery),
         }),
-    })
+    });
 
     const showEditFilterModal = (filter) =>
       modals.show({
@@ -82,15 +82,15 @@ export default {
           filter,
           title: t('modals.createFilter.edit.title'),
           action: async (data) => {
-            const result = await updateFilter({ id: filter._id, data })
+            const result = await updateFilter({ id: filter._id, data });
 
-            popups.success({ text: t('success.default') })
-            await fetchList()
+            popups.success({ text: t('success.default') });
+            await fetchList();
 
-            return result
+            return result;
           },
         },
-      })
+      });
 
     const showDuplicateFilterModal = (filter) =>
       modals.show({
@@ -99,30 +99,30 @@ export default {
           filter: omit(filter, ['_id']),
           title: t('modals.createFilter.duplicate.title'),
           action: async (data) => {
-            const result = await createFilter({ data })
+            const result = await createFilter({ data });
 
-            popups.success({ text: t('success.default') })
-            await fetchList()
+            popups.success({ text: t('success.default') });
+            await fetchList();
 
-            return result
+            return result;
           },
         },
-      })
+      });
 
     const showDeleteFilterModal = (id) =>
       modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await removeFilter({ id })
+            await removeFilter({ id });
 
-            popups.success({ text: t('success.default') })
-            await fetchList()
+            popups.success({ text: t('success.default') });
+            await fetchList();
           },
         },
-      })
+      });
 
-    onMounted(fetchList)
+    onMounted(fetchList);
 
     return {
       t,
@@ -138,7 +138,7 @@ export default {
       showEditFilterModal,
       showDuplicateFilterModal,
       showDeleteFilterModal,
-    }
+    };
   },
-}
+};
 </script>

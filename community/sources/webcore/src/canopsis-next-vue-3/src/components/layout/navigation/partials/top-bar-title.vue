@@ -1,14 +1,8 @@
 <template>
   <v-toolbar-title class="text-white font-weight-regular top-bar-title">
-    <c-compiled-template
-      :template="title"
-      parent-element="span"
-    />
+    <c-compiled-template :template="title" parent-element="span" />
 
-    <div
-      v-if="showBadge"
-      class="badge-wrapper"
-    >
+    <div v-if="showBadge" class="badge-wrapper">
       <v-tooltip location="right">
         <template #activator="{ props }">
           <v-btn
@@ -19,12 +13,7 @@
             v-bind="props"
             @click="showInfoModal"
           >
-            <v-icon
-              color="white"
-              size="12px"
-            >
-              priority_high
-            </v-icon>
+            <v-icon color="white" size="12px"> priority_high </v-icon>
           </v-btn>
         </template>
 
@@ -35,11 +24,11 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants'
+import { MODALS } from '@/constants';
 
-import Socket from '@/plugins/socket/services/socket'
+import Socket from '@/plugins/socket/services/socket';
 
-import { entitiesInfoMixin } from '@/mixins/entities/info'
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
   mixins: [entitiesInfoMixin],
@@ -54,20 +43,20 @@ export default {
   data() {
     return {
       showBadge: false,
-    }
+    };
   },
 
   created() {
-    this.$socket.on(Socket.EVENTS_TYPES.networkError, this.socketNetworkErrorHandler)
+    this.$socket.on(Socket.EVENTS_TYPES.networkError, this.socketNetworkErrorHandler);
   },
 
   beforeUnmount() {
-    this.$socket.off(Socket.EVENTS_TYPES.networkError, this.socketNetworkErrorHandler)
+    this.$socket.off(Socket.EVENTS_TYPES.networkError, this.socketNetworkErrorHandler);
   },
 
   methods: {
     socketNetworkErrorHandler() {
-      this.showBadge = true
+      this.showBadge = true;
     },
 
     showInfoModal() {
@@ -79,10 +68,10 @@ export default {
             ? this.$t('modals.webSocketError.text')
             : this.$t('modals.webSocketError.shortText'),
         },
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

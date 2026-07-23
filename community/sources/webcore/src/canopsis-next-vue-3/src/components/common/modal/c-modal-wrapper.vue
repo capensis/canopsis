@@ -72,10 +72,10 @@
 </template>
 
 <script>
-import { computed, inject } from 'vue'
+import { computed, inject } from 'vue';
 
-import { useModals } from '@/hooks/modals'
-import { useI18n } from '@/hooks/i18n'
+import { useModals } from '@/hooks/modals';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -106,45 +106,45 @@ export default {
   },
 
   setup(props) {
-    const modal = inject('$modal')
-    const injectedCloseModal = inject('$closeModal', null)
-    const { dialogPropsMap = {} } = inject('$modalsOptions', {})
-    const modals = useModals()
-    const { t } = useI18n()
+    const modal = inject('$modal');
+    const injectedCloseModal = inject('$closeModal', null);
+    const { dialogPropsMap = {} } = inject('$modalsOptions', {});
+    const modals = useModals();
+    const { t } = useI18n();
 
-    const isAutoHeight = computed(() => Boolean(dialogPropsMap[modal.name]?.autoHeight))
+    const isAutoHeight = computed(() => Boolean(dialogPropsMap[modal.name]?.autoHeight));
 
     const titleStyle = computed(() => ({
       backgroundColor: props.titleColor,
-    }))
+    }));
 
     const wrapperClasses = computed(() => ({
       'fill-min-height': props.fillHeight,
       'modal-wrapper--auto-height': isAutoHeight.value,
-    }))
+    }));
 
     const actionButtonDefaults = {
       VBtn: {
         variant: 'elevated',
       },
-    }
+    };
 
     const closeModal = () => {
       if (props.close !== true) {
-        return props.close()
+        return props.close();
       }
 
-      return injectedCloseModal ? injectedCloseModal() : modals.hide({ id: modal.id })
-    }
+      return injectedCloseModal ? injectedCloseModal() : modals.hide({ id: modal.id });
+    };
 
-    const minimizeModal = () => modals.minimize({ id: modal.id })
+    const minimizeModal = () => modals.minimize({ id: modal.id });
 
-    const maximizeModal = () => modals.maximize({ id: modal.id })
+    const maximizeModal = () => modals.maximize({ id: modal.id });
 
     const titleButtonsClasses = computed(() => ({
       close: props.close,
       minimize: props.minimize,
-    }))
+    }));
 
     return {
       actionButtonDefaults,
@@ -156,9 +156,9 @@ export default {
       minimizeModal,
       maximizeModal,
       titleButtonsClasses,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

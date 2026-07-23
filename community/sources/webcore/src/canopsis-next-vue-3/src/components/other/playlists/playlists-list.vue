@@ -63,19 +63,19 @@
 </template>
 
 <script>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
-import { APP_HOST } from '@/config'
-import { ROUTES_NAMES } from '@/constants'
+import { APP_HOST } from '@/config';
+import { ROUTES_NAMES } from '@/constants';
 
-import { convertDurationToString } from '@/helpers/date/duration'
-import { removeTrailingSlashes } from '@/helpers/url'
+import { convertDurationToString } from '@/helpers/date/duration';
+import { removeTrailingSlashes } from '@/helpers/url';
 
-import { useI18n } from '@/hooks/i18n'
-import { usePopups } from '@/hooks/popups'
+import { useI18n } from '@/hooks/i18n';
+import { usePopups } from '@/hooks/popups';
 
-import PlaylistsListExpandItem from './partials/playlists-list-expand-item.vue'
+import PlaylistsListExpandItem from './partials/playlists-list-expand-item.vue';
 
 export default {
   components: {
@@ -116,9 +116,9 @@ export default {
   emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
 
   setup() {
-    const router = useRouter()
-    const popups = usePopups()
-    const { t } = useI18n()
+    const router = useRouter();
+    const popups = usePopups();
+    const { t } = useI18n();
 
     const headers = computed(() => [
       { text: t('common.name'), value: 'name' },
@@ -126,22 +126,22 @@ export default {
       { text: t('common.enabled'), value: 'enabled' },
       { text: t('common.interval'), value: 'interval', sortable: false },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
-    ])
+    ]);
 
     const getPlaylistRouteById = (id) => ({
       name: ROUTES_NAMES.playlist,
       params: { id },
       query: { autoplay: true },
-    })
+    });
 
     const getPlaylistRouteFullUrlById = (id) => {
-      const { href } = router.resolve(getPlaylistRouteById(id))
+      const { href } = router.resolve(getPlaylistRouteById(id));
 
-      return removeTrailingSlashes(`${APP_HOST}${href}`)
-    }
+      return removeTrailingSlashes(`${APP_HOST}${href}`);
+    };
 
-    const onSuccessCopied = () => popups.success({ text: t('success.linkCopied') })
-    const onErrorCopied = () => popups.error({ text: t('errors.default') })
+    const onSuccessCopied = () => popups.success({ text: t('success.linkCopied') });
+    const onErrorCopied = () => popups.error({ text: t('errors.default') });
 
     return {
       headers,
@@ -151,7 +151,7 @@ export default {
       getPlaylistRouteFullUrlById,
       onSuccessCopied,
       onErrorCopied,
-    }
+    };
   },
-}
+};
 </script>

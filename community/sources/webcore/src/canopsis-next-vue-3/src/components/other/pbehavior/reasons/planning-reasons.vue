@@ -14,20 +14,20 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
+import { onMounted } from 'vue';
 
-import { MODALS, USER_PERMISSIONS } from '@/constants'
+import { MODALS, USER_PERMISSIONS } from '@/constants';
 
-import { convertQueryToRequest } from '@/helpers/query'
+import { convertQueryToRequest } from '@/helpers/query';
 
-import { useCRUDPermissions } from '@/hooks/auth'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { usePopups } from '@/hooks/popups'
-import { useLocalQueryWithOptions } from '@/hooks/query/shared'
-import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason'
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
+import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 
-import PbehaviorReasonsList from './pbehavior-reasons-list.vue'
+import PbehaviorReasonsList from './pbehavior-reasons-list.vue';
 
 export default {
   components: {
@@ -48,15 +48,15 @@ export default {
       pbehaviorReasonsMeta,
       fetchPbehaviorReasonsList,
       removePbehaviorReason,
-    } = usePbehaviorReason()
+    } = usePbehaviorReason();
 
     const { hasUpdateAccess, hasDeleteAccess } = useCRUDPermissions(
       USER_PERMISSIONS.technical.planningReason,
-    )
+    );
 
-    const modals = useModals()
-    const popups = usePopups()
-    const { t } = useI18n()
+    const modals = useModals();
+    const popups = usePopups();
+    const { t } = useI18n();
 
     const {
       options,
@@ -71,28 +71,28 @@ export default {
             with_hidden: true,
           },
         }),
-    })
+    });
 
     const tryRemovePbehaviorReason = async (id) => {
       try {
-        await removePbehaviorReason({ id })
+        await removePbehaviorReason({ id });
       } catch (err) {
-        popups.error({ text: err.error || t('errors.default') })
+        popups.error({ text: err.error || t('errors.default') });
       }
-    }
+    };
 
     const showRemovePbehaviorReasonModal = (id) =>
       modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await tryRemovePbehaviorReason(id)
-            await fetchList()
+            await tryRemovePbehaviorReason(id);
+            await fetchList();
           },
         },
-      })
+      });
 
-    onMounted(fetchList)
+    onMounted(fetchList);
 
     return {
       pbehaviorReasons,
@@ -104,7 +104,7 @@ export default {
       fetchList,
       updateOptions,
       showRemovePbehaviorReasonModal,
-    }
+    };
   },
-}
+};
 </script>

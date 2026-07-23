@@ -1,14 +1,10 @@
 <template>
-  <c-runtime-template
-    v-bind="$attrs"
-    :template="compiledTemplate"
-    :parent="$parent"
-  />
+  <c-runtime-template v-bind="$attrs" :template="compiledTemplate" :parent="$parent" />
 </template>
 
 <script>
-import { sanitizeHtml, linkifyHtml, normalizeHtml } from '@/helpers/html'
-import { compile, runTemplate, hasTemplate } from '@/helpers/handlebars'
+import { sanitizeHtml, linkifyHtml, normalizeHtml } from '@/helpers/html';
+import { compile, runTemplate, hasTemplate } from '@/helpers/handlebars';
 
 export default {
   inject: ['$system'],
@@ -45,7 +41,7 @@ export default {
   data() {
     return {
       compiledTemplate: '',
-    }
+    };
   },
 
   watch: {
@@ -69,7 +65,7 @@ export default {
   },
 
   created() {
-    this.compileTemplate()
+    this.compileTemplate();
   },
 
   methods: {
@@ -82,25 +78,22 @@ export default {
           },
 
           ...this.context,
-        }
+        };
 
         const compiledTemplate = hasTemplate(this.templateId)
           ? await runTemplate(this.templateId, context)
-          : await compile(this.template, context)
+          : await compile(this.template, context);
 
-          const html = normalizeHtml(
-          sanitizeHtml(
-            linkifyHtml(compiledTemplate, this.linkifyOptions),
-            this.sanitizeOptions,
-          ),
-        )
-        this.compiledTemplate = `<${this.parentElement}>${html}</${this.parentElement}>`
+        const html = normalizeHtml(
+          sanitizeHtml(linkifyHtml(compiledTemplate, this.linkifyOptions), this.sanitizeOptions),
+        );
+        this.compiledTemplate = `<${this.parentElement}>${html}</${this.parentElement}>`;
       } catch (err) {
-        console.error(err)
+        console.error(err);
 
-        this.compiledTemplate = ''
+        this.compiledTemplate = '';
       }
     },
   },
-}
+};
 </script>

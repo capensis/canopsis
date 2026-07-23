@@ -1,4 +1,4 @@
-import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals'
+import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 /**
  * Mixin for components that keep metric interval filters in `query`.
@@ -13,28 +13,28 @@ export const queryIntervalFilterMixin = {
      * @returns {Object}
      */
     getIntervalQuery() {
-      const { interval, with_history: withHistory } = this.query
+      const { interval, with_history: withHistory } = this.query;
 
       if (!interval) {
-        return {}
+        return {};
       }
 
       const result = convertMetricIntervalToTimestamp({
         interval,
         timezone: this.$system.timezone,
-      })
+      });
 
       if (withHistory) {
         const { from: prevFrom, to: prevTo } = convertMetricIntervalToTimestamp({
           interval: result,
           timezone: this.$system.timezone,
-        })
+        });
 
-        result.prev_from = prevFrom
-        result.prev_to = prevTo
+        result.prev_from = prevFrom;
+        result.prev_to = prevTo;
       }
 
-      return result
+      return result;
     },
 
     /**
@@ -46,7 +46,7 @@ export const queryIntervalFilterMixin = {
       this.query = {
         ...this.query,
         interval,
-      }
+      };
     },
   },
-}
+};

@@ -1,4 +1,4 @@
-import { PBEHAVIOR_TYPE_TYPES } from '@/constants'
+import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 /**
  * @typedef {Object} PbehaviorType
@@ -31,7 +31,7 @@ export const pbehaviorTypeToForm = (type = {}) => ({
   icon_name: type.icon_name ?? '',
   color: type.color ?? '',
   visible: !(type.hidden ?? false),
-})
+});
 
 /**
  * Convert pbehavior type form to pbehavior type
@@ -43,4 +43,4 @@ export const formToPbehaviorType = (form = {}) => ({
   ...form,
 
   hidden: !form.visible,
-})
+});

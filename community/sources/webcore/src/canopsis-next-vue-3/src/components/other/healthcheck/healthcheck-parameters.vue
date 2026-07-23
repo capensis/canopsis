@@ -17,13 +17,13 @@
 </template>
 
 <script>
-import { HEALTHCHECK_ENGINES_NAMES } from '@/constants'
+import { HEALTHCHECK_ENGINES_NAMES } from '@/constants';
 
-import { healthcheckParametersToForm } from '@/helpers/entities/healthcheck/form'
+import { healthcheckParametersToForm } from '@/helpers/entities/healthcheck/form';
 
-import { useHealthcheckParametersStore } from '@/stores/modules/healthcheck-parameters'
+import { useHealthcheckParametersStore } from '@/stores/modules/healthcheck-parameters';
 
-import HealthcheckForm from '@/components/other/healthcheck/form/healthcheck-form.vue'
+import HealthcheckForm from '@/components/other/healthcheck/form/healthcheck-form.vue';
 
 export default {
   components: { HealthcheckForm },
@@ -33,95 +33,95 @@ export default {
       form: null,
       errors: {},
       submitting: false,
-    }
+    };
   },
 
   computed: {
     isDisabled() {
-      return this.submitting
+      return this.submitting;
     },
 
     engineNames() {
-      return Object.values(HEALTHCHECK_ENGINES_NAMES)
+      return Object.values(HEALTHCHECK_ENGINES_NAMES);
     },
   },
 
   async mounted() {
-    const healthcheckParameters = await useHealthcheckParametersStore().fetchItemWithoutStore()
+    const healthcheckParameters = await useHealthcheckParametersStore().fetchItemWithoutStore();
 
-    this.form = healthcheckParametersToForm(healthcheckParameters)
+    this.form = healthcheckParametersToForm(healthcheckParameters);
   },
 
   methods: {
     addError(field, message) {
       if (!this.errors[field]) {
-        this.errors[field] = []
+        this.errors[field] = [];
       }
 
-      this.errors[field].push(message)
+      this.errors[field].push(message);
     },
 
     validateLimit(path, value) {
       if (!value.enabled) {
-        return
+        return;
       }
 
       if (!Number.isFinite(Number(value.limit)) || Number(value.limit) < 1) {
-        this.addError(`${path}.limit`, this.$t('validation.min_value', [1]))
+        this.addError(`${path}.limit`, this.$t('validation.min_value', [1]));
       }
     },
 
     validateEngine(engineName, value) {
       if (!value.enabled) {
-        return
+        return;
       }
 
-      const minimal = Number(value.minimal)
-      const optimal = Number(value.optimal)
+      const minimal = Number(value.minimal);
+      const optimal = Number(value.optimal);
 
       if (!Number.isFinite(minimal) || minimal < 0) {
-        this.addError(`${engineName}.minimal`, this.$t('validation.min_value', [0]))
+        this.addError(`${engineName}.minimal`, this.$t('validation.min_value', [0]));
       }
 
       if (!Number.isFinite(optimal) || optimal < 0) {
-        this.addError(`${engineName}.optimal`, this.$t('validation.min_value', [0]))
+        this.addError(`${engineName}.optimal`, this.$t('validation.min_value', [0]));
       }
 
       if (Number.isFinite(minimal) && Number.isFinite(optimal) && minimal > optimal) {
-        this.addError(`${engineName}.minimal`, this.$t('healthcheck.validation.max_value'))
-        this.addError(`${engineName}.optimal`, this.$t('healthcheck.validation.min_value'))
+        this.addError(`${engineName}.minimal`, this.$t('healthcheck.validation.max_value'));
+        this.addError(`${engineName}.optimal`, this.$t('healthcheck.validation.min_value'));
       }
     },
 
     validate() {
-      this.errors = {}
+      this.errors = {};
 
-      this.validateLimit('queue', this.form.queue)
-      this.validateLimit('messages', this.form.messages)
+      this.validateLimit('queue', this.form.queue);
+      this.validateLimit('messages', this.form.messages);
       this.engineNames.forEach((engineName) =>
         this.validateEngine(engineName, this.form[engineName]),
-      )
+      );
 
-      return !Object.keys(this.errors).length
+      return !Object.keys(this.errors).length;
     },
 
     async submit() {
       if (!this.validate()) {
-        return
+        return;
       }
 
       try {
-        this.submitting = true
+        this.submitting = true;
 
-        await useHealthcheckParametersStore().update({ data: this.form })
+        await useHealthcheckParametersStore().update({ data: this.form });
 
-        this.$popups.success({ text: this.$t('success.default') })
+        this.$popups.success({ text: this.$t('success.default') });
       } finally {
-        this.submitting = false
+        this.submitting = false;
       }
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

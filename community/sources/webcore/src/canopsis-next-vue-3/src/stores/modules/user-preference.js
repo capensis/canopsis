@@ -1,69 +1,69 @@
-import { computed, ref } from 'vue'
-import { defineStore } from 'pinia'
+import { computed, ref } from 'vue';
+import { defineStore } from 'pinia';
 
-import { API_ROUTES } from '@/config'
+import { API_ROUTES } from '@/config';
 
-import request from '@/services/request'
+import request from '@/services/request';
 
 export const useUserPreferenceStore = defineStore('userPreference', () => {
-  const itemsByWidget = ref({})
-  const pending = ref(false)
+  const itemsByWidget = ref({});
+  const pending = ref(false);
 
-  const items = computed(() => Object.values(itemsByWidget.value))
+  const items = computed(() => Object.values(itemsByWidget.value));
   const getItemByWidgetId = computed(
     () => (widgetId) =>
       itemsByWidget.value[widgetId] ?? {
         widget: widgetId,
         content: {},
       },
-  )
+  );
 
   const setPreference = (preference = {}) => {
     if (!preference.widget) {
-      return
+      return;
     }
 
     itemsByWidget.value = {
       ...itemsByWidget.value,
       [preference.widget]: preference,
-    }
-  }
+    };
+  };
 
   const fetchItem = async ({ id } = {}) => {
     try {
-      pending.value = true
+      pending.value = true;
 
-      const preference = await request.get(`${API_ROUTES.userPreferences}/${id}`)
+      const preference = await request.get(`${API_ROUTES.userPreferences}/${id}`);
 
-      setPreference(preference)
+      setPreference(preference);
 
-      return preference
+      return preference;
     } catch (err) {
-      console.warn(err)
+      console.warn(err);
 
-      return undefined
+      return undefined;
     } finally {
-      pending.value = false
+      pending.value = false;
     }
-  }
+  };
 
-  const fetchItemWithoutStore = ({ id } = {}) => request.get(`${API_ROUTES.userPreferences}/${id}`)
+  const fetchItemWithoutStore = ({ id } = {}) => request.get(`${API_ROUTES.userPreferences}/${id}`);
 
   const update = async ({ data } = {}) => {
     try {
-      const preference = await request.put(API_ROUTES.userPreferences, data)
+      const preference = await request.put(API_ROUTES.userPreferences, data);
 
-      setPreference(preference ?? data)
+      setPreference(preference ?? data);
 
-      return preference
+      return preference;
     } catch (err) {
-      console.warn(err)
+      console.warn(err);
 
-      return undefined
+      return undefined;
     }
-  }
+  };
 
-  const updateLocal = ({ data } = {}) => setPreference(data)
+  const updateLocal = ({ data } = {}) => setPreference(data);
 
   return {
     itemsByWidget,
@@ -74,5 +74,5 @@ export const useUserPreferenceStore = defineStore('userPreference', () => {
     fetchItemWithoutStore,
     update,
     updateLocal,
-  }
-})
+  };
+});

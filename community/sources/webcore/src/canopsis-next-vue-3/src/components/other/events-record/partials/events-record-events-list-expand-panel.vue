@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 export default {
   props: {
@@ -21,26 +21,26 @@ export default {
 
   setup(props) {
     const preparedEvent = computed(() => {
-      let decodedEvent = props.event.event
+      let decodedEvent = props.event.event;
 
       try {
-        decodedEvent = atob(decodedEvent)
-        decodedEvent = JSON.parse(decodedEvent)
+        decodedEvent = atob(decodedEvent);
+        decodedEvent = JSON.parse(decodedEvent);
       } catch (err) {
-        console.warn(err)
+        console.warn(err);
       }
 
       return {
         ...props.event,
         event: decodedEvent,
-      }
-    })
+      };
+    });
 
-    const preparedEventString = computed(() => JSON.stringify(preparedEvent.value))
+    const preparedEventString = computed(() => JSON.stringify(preparedEvent.value));
 
     return {
       preparedEventString,
-    }
+    };
   },
-}
+};
 </script>

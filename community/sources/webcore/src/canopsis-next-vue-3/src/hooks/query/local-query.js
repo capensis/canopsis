@@ -1,7 +1,7 @@
-import { camelCase, isEqual, upperFirst } from 'lodash'
-import { ref, unref } from 'vue'
+import { camelCase, isEqual, upperFirst } from 'lodash';
+import { ref, unref } from 'vue';
 
-import { PAGINATION_LIMIT } from '@/config'
+import { PAGINATION_LIMIT } from '@/config';
 
 /**
  * Custom hook for managing local query state with Vue.
@@ -23,7 +23,7 @@ export const useLocalQuery = ({
   onUpdate,
   comparator = isEqual,
 } = {}) => {
-  const query = ref({ ...unref(initialQuery) })
+  const query = ref({ ...unref(initialQuery) });
 
   /**
    * Updates the entire query object with a new query.
@@ -32,14 +32,14 @@ export const useLocalQuery = ({
    * @param {Object} newQuery - The new query object to replace the current query.
    */
   const updateQuery = (newQuery) => {
-    const oldQuery = query.value
+    const oldQuery = query.value;
 
-    query.value = newQuery
+    query.value = newQuery;
 
     if (onUpdate && !comparator(oldQuery, newQuery)) {
-      onUpdate(newQuery)
+      onUpdate(newQuery);
     }
-  }
+  };
 
   /**
    * Updates a specific field in the query object.
@@ -49,14 +49,14 @@ export const useLocalQuery = ({
    * @param {*} value - The new value for the specified field.
    */
   const updateQueryField = (field, value) => {
-    const oldValue = query.value?.[field]
+    const oldValue = query.value?.[field];
 
-    query.value[field] = value
+    query.value[field] = value;
 
     if (onUpdate && !isEqual(oldValue, value)) {
-      onUpdate(query.value)
+      onUpdate(query.value);
     }
-  }
+  };
 
   /**
    * Removes a specific field from the query object.
@@ -65,34 +65,34 @@ export const useLocalQuery = ({
    * @param {string} field - The field name to remove from the query object.
    */
   const removeQueryField = (field) => {
-    const hadField = Object.prototype.hasOwnProperty.call(query.value, field)
+    const hadField = Object.prototype.hasOwnProperty.call(query.value, field);
 
     if (hadField) {
-      delete query.value[field]
+      delete query.value[field];
 
       if (onUpdate) {
-        onUpdate(query.value)
+        onUpdate(query.value);
       }
     }
-  }
+  };
 
   /**
    * Resets the query to its initial state.
    */
-  const resetQuery = () => query.value = { ...unref(initialQuery) }
+  const resetQuery = () => (query.value = { ...unref(initialQuery) });
 
   /**
    * Calls the onUpdate callback with the provided query or the current query value.
    *
    * @param {Object} [handlerQuery=query.value] - The query object to pass to the onUpdate callback.
    */
-  const handler = (handlerQuery = query.value) => onUpdate(handlerQuery)
+  const handler = (handlerQuery = query.value) => onUpdate(handlerQuery);
 
   const updateQueryFieldsMethods = Object.keys(unref(initialQuery)).reduce((acc, field) => {
-    acc[`updateQuery${upperFirst(camelCase(field))}`] = value => updateQueryField(field, value)
+    acc[`updateQuery${upperFirst(camelCase(field))}`] = (value) => updateQueryField(field, value);
 
-    return acc
-  }, {})
+    return acc;
+  }, {});
 
   return {
     ...updateQueryFieldsMethods,
@@ -103,5 +103,5 @@ export const useLocalQuery = ({
     removeQueryField,
     resetQuery,
     handler,
-  }
-}
+  };
+};

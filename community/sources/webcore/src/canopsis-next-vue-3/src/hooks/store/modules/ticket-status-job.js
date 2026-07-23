@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useTicketStatusJobStore } from '@/stores/modules/ticket-status-job'
+import { useTicketStatusJobStore } from '@/stores/modules/ticket-status-job';
 
 /**
  * Ticket status job store facade.
@@ -8,8 +8,8 @@ import { useTicketStatusJobStore } from '@/stores/modules/ticket-status-job'
  * @returns {Object}
  */
 export const useTicketStatusJob = () => {
-  const ticketStatusJobStore = useTicketStatusJobStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(ticketStatusJobStore)
+  const ticketStatusJobStore = useTicketStatusJobStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(ticketStatusJobStore);
 
   return {
     ticketStatusJobs: items,
@@ -24,5 +24,5 @@ export const useTicketStatusJob = () => {
     removeTicketStatusJob: ticketStatusJobStore.remove,
     playTicketStatusJobs: ticketStatusJobStore.play,
     pauseTicketStatusJobs: ticketStatusJobStore.pause,
-  }
-}
+  };
+};

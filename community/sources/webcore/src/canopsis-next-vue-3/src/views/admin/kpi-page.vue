@@ -63,18 +63,18 @@
 </template>
 
 <script>
-import { SOCKET_ROOMS } from '@/config'
-import { HEALTHCHECK_SERVICES_NAMES, KPI_TABS, MODALS, USER_PERMISSIONS } from '@/constants'
+import { SOCKET_ROOMS } from '@/config';
+import { HEALTHCHECK_SERVICES_NAMES, KPI_TABS, MODALS, USER_PERMISSIONS } from '@/constants';
 
-import { useCRUDPermissions } from '@/hooks/auth'
-import { useFilter } from '@/hooks/store/modules/filter'
-import { useHealthcheck } from '@/hooks/store/modules/healthcheck'
-import { useRatingSettings } from '@/hooks/store/modules/rating-settings'
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useFilter } from '@/hooks/store/modules/filter';
+import { useHealthcheck } from '@/hooks/store/modules/healthcheck';
+import { useRatingSettings } from '@/hooks/store/modules/rating-settings';
 
-import KpiCharts from '@/components/other/kpi/charts/kpi-charts.vue'
-import KpiCollectionSettings from '@/components/other/kpi/collection-settings/kpi-collection-settings.vue'
-import KpiFilters from '@/components/other/kpi/filters/kpi-filters.vue'
-import KpiRatingSettings from '@/components/other/kpi/rating-settings/kpi-rating-settings.vue'
+import KpiCharts from '@/components/other/kpi/charts/kpi-charts.vue';
+import KpiCollectionSettings from '@/components/other/kpi/collection-settings/kpi-collection-settings.vue';
+import KpiFilters from '@/components/other/kpi/filters/kpi-filters.vue';
+import KpiRatingSettings from '@/components/other/kpi/rating-settings/kpi-rating-settings.vue';
 
 export default {
   components: {
@@ -88,18 +88,18 @@ export default {
     const {
       hasCreateAccess: hasCreateAnyKpiFiltersAccess,
       hasReadAccess: hasReadAnyKpiFiltersAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.kpiFilters)
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.kpiFilters);
     const { hasReadAccess: hasReadAnyKpiRatingSettingsAccess } = useCRUDPermissions(
       USER_PERMISSIONS.technical.kpiRatingSettings,
-    )
+    );
     const { hasReadAccess: hasReadAnyKpiCollectionSettingsAccess } = useCRUDPermissions(
       USER_PERMISSIONS.technical.kpiCollectionSettings,
-    )
+    );
 
-    const { fetchFiltersListWithPreviousParams } = useFilter()
-    const { createFilter } = useFilter()
-    const { fetchRatingSettingsListWithPreviousParams } = useRatingSettings()
-    const { fetchHealthcheckEnginesWithoutStore } = useHealthcheck()
+    const { fetchFiltersListWithPreviousParams } = useFilter();
+    const { createFilter } = useFilter();
+    const { fetchRatingSettingsListWithPreviousParams } = useRatingSettings();
+    const { fetchHealthcheckEnginesWithoutStore } = useHealthcheck();
 
     return {
       fetchFiltersListWithPreviousParams,
@@ -110,7 +110,7 @@ export default {
       hasReadAnyKpiCollectionSettingsAccess,
       hasReadAnyKpiFiltersAccess,
       hasReadAnyKpiRatingSettingsAccess,
-    }
+    };
   },
 
   data() {
@@ -120,7 +120,7 @@ export default {
       activeTab: KPI_TABS.graphs,
       pending: false,
       timescaleAvailable: false,
-    }
+    };
   },
 
   computed: {
@@ -130,54 +130,54 @@ export default {
         this.hasReadAnyKpiFiltersAccess && KPI_TABS.filters,
         this.hasReadAnyKpiRatingSettingsAccess && KPI_TABS.ratingSettings,
         this.hasReadAnyKpiCollectionSettingsAccess && KPI_TABS.collectionSettings,
-      ].filter(Boolean)
+      ].filter(Boolean);
     },
 
     hasFabButton() {
-      return [KPI_TABS.filters, KPI_TABS.ratingSettings].includes(this.activeTab)
+      return [KPI_TABS.filters, KPI_TABS.ratingSettings].includes(this.activeTab);
     },
 
     hasAccessToCreate() {
-      return this.activeTab === KPI_TABS.filters && this.hasCreateAnyKpiFiltersAccess
+      return this.activeTab === KPI_TABS.filters && this.hasCreateAnyKpiFiltersAccess;
     },
   },
 
   watch: {
     availableTabs(tabs) {
       if (!tabs.includes(this.activeTab)) {
-        this.activeTab = tabs[0] || KPI_TABS.graphs
+        this.activeTab = tabs[0] || KPI_TABS.graphs;
       }
     },
   },
 
   mounted() {
-    this.fetchHealthcheck()
+    this.fetchHealthcheck();
 
-    this.$socket.join(SOCKET_ROOMS.healthcheck).addListener(this.setTimescaleIsAvailable)
+    this.$socket.join(SOCKET_ROOMS.healthcheck).addListener(this.setTimescaleIsAvailable);
   },
 
   beforeUnmount() {
-    this.$socket.leave(SOCKET_ROOMS.healthcheck).removeListener(this.setTimescaleIsAvailable)
+    this.$socket.leave(SOCKET_ROOMS.healthcheck).removeListener(this.setTimescaleIsAvailable);
   },
 
   methods: {
     refresh() {
       switch (this.activeTab) {
         case KPI_TABS.filters:
-          this.fetchFiltersListWithPreviousParams()
-          break
+          this.fetchFiltersListWithPreviousParams();
+          break;
         case KPI_TABS.ratingSettings:
-          this.fetchRatingSettingsListWithPreviousParams()
-          break
+          this.fetchRatingSettingsListWithPreviousParams();
+          break;
       }
     },
 
     create() {
       if (this.activeTab !== KPI_TABS.filters) {
-        return
+        return;
       }
 
-      this.showCreateFilterModal()
+      this.showCreateFilterModal();
     },
 
     showCreateFilterModal() {
@@ -185,41 +185,41 @@ export default {
         name: MODALS.createKpiFilter,
         config: {
           action: async (data) => {
-            const result = await this.createFilter({ data })
+            const result = await this.createFilter({ data });
 
-            this.fetchFiltersListWithPreviousParams()
+            this.fetchFiltersListWithPreviousParams();
 
-            return result
+            return result;
           },
         },
-      })
+      });
     },
 
     setTimescaleIsAvailable({ services = [] } = {}) {
       const timeScaleService = services.find(
         ({ name }) => name === HEALTHCHECK_SERVICES_NAMES.timescaleDB,
-      )
+      );
 
-      this.timescaleAvailable = !!timeScaleService?.is_running
+      this.timescaleAvailable = !!timeScaleService?.is_running;
     },
 
     async fetchHealthcheck() {
       try {
-        this.pending = true
+        this.pending = true;
 
-        const data = await this.fetchHealthcheckEnginesWithoutStore()
+        const data = await this.fetchHealthcheckEnginesWithoutStore();
 
-        this.setTimescaleIsAvailable(data)
+        this.setTimescaleIsAvailable(data);
       } catch (err) {
-        console.error(err)
+        console.error(err);
 
-        this.timescaleAvailable = false
+        this.timescaleAvailable = false;
       } finally {
-        this.pending = false
+        this.pending = false;
       }
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

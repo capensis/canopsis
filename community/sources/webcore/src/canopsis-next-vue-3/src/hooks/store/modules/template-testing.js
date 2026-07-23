@@ -1,4 +1,4 @@
-import { useTemplateTestingStore } from '@/stores/modules/template-testing'
+import { useTemplateTestingStore } from '@/stores/modules/template-testing';
 
 /**
  * Template testing store facade.
@@ -6,7 +6,7 @@ import { useTemplateTestingStore } from '@/stores/modules/template-testing'
  * @returns {Object}
  */
 export const useTemplateTesting = () => {
-  const templateTestingStore = useTemplateTestingStore()
+  const templateTestingStore = useTemplateTestingStore();
 
   return {
     fetchTemplateTestingDataListWithoutStore:
@@ -40,5 +40,5 @@ export const useTemplateTesting = () => {
     fetchDynamicInfosCopyVarsWithoutStore: templateTestingStore.fetchDynamicInfosVarsWithoutStore,
     copyEventFiltersVariables: templateTestingStore.copyEventFiltersVariables,
     copyDynamicInfosVariables: templateTestingStore.copyDynamicInfosVariables,
-  }
-}
+  };
+};

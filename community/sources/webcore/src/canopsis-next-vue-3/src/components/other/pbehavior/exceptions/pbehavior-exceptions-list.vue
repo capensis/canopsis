@@ -50,11 +50,11 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
-import PbehaviorExceptionsListExpandPanel from './partials/pbehavior-exceptions-list-expand-panel.vue'
+import PbehaviorExceptionsListExpandPanel from './partials/pbehavior-exceptions-list-expand-panel.vue';
 
 export default {
   components: {
@@ -95,21 +95,21 @@ export default {
   emits: ['update:options', 'remove', 'refresh'],
 
   setup() {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
     const headers = computed(() => [
       { text: t('common.name'), value: 'name' },
       { text: t('pbehavior.visible'), value: 'visible', sortable: false },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
-    ])
+    ]);
 
-    const isDisabledException = ({ deletable }) => !deletable
+    const isDisabledException = ({ deletable }) => !deletable;
 
     return {
       headers,
       isDisabledException,
       t,
-    }
+    };
   },
-}
+};
 </script>

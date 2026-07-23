@@ -1,8 +1,8 @@
-import { API_ROUTES } from '@/config'
+import { API_ROUTES } from '@/config';
 
-import request from '@/services/request'
+import request from '@/services/request';
 
-import { createCRUDStore } from '@/stores/plugins/crud'
+import { createCRUDStore } from '@/stores/plugins/crud';
 
 export const useLlmStore = createCRUDStore({
   id: 'llm',
@@ -12,35 +12,35 @@ export const useLlmStore = createCRUDStore({
   withWithoutStore: true,
   actions: {
     bulkEnable({ data } = {}) {
-      return request.put(API_ROUTES.llms.bulkEnable, data)
+      return request.put(API_ROUTES.llms.bulkEnable, data);
     },
 
     bulkDisable({ data } = {}) {
-      return request.put(API_ROUTES.llms.bulkDisable, data)
+      return request.put(API_ROUTES.llms.bulkDisable, data);
     },
 
     fetchModelsListWithoutStore({ params } = {}) {
-      return request.get(API_ROUTES.llms.models, { params })
+      return request.get(API_ROUTES.llms.models, { params });
     },
 
     fetchLlmHistoryWithoutStore({ id, params } = {}) {
-      return request.get(`${API_ROUTES.llms.list}/${id}/history`, { params })
+      return request.get(`${API_ROUTES.llms.list}/${id}/history`, { params });
     },
 
     fetchLlmChatsWithoutStore({ id, params } = {}) {
-      return request.get(`${API_ROUTES.llms.list}/${id}/chats`, { params })
+      return request.get(`${API_ROUTES.llms.list}/${id}/chats`, { params });
     },
 
     fetchLlmUsersWithoutStore({ id, params } = {}) {
-      return request.get(`${API_ROUTES.llms.list}/${id}/users`, { params })
+      return request.get(`${API_ROUTES.llms.list}/${id}/users`, { params });
     },
 
     fetchLlmMessagesWithoutStore({ id, params } = {}) {
-      return request.get(`${API_ROUTES.llms.list}/${id}/messages`, { params })
+      return request.get(`${API_ROUTES.llms.list}/${id}/messages`, { params });
     },
 
     bulkLinkLlmHistory({ data } = {}) {
-      return request.put(API_ROUTES.llms.bulkHistoryLink, data)
+      return request.put(API_ROUTES.llms.bulkHistoryLink, data);
     },
   },
-})
+});

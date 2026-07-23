@@ -59,11 +59,11 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { AUTH_METHODS } from '@/constants'
+import { AUTH_METHODS } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -96,7 +96,7 @@ export default {
   emits: ['update:options', 'edit', 'remove', 'refresh'],
 
   setup() {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
     const headers = computed(() => [
       {
@@ -143,12 +143,12 @@ export default {
         value: 'actions',
         sortable: false,
       },
-    ])
+    ]);
 
     return {
       AUTH_METHODS,
       headers,
-    }
+    };
   },
-}
+};
 </script>

@@ -1,15 +1,10 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useUserStore } from '@/stores/modules/user'
+import { useUserStore } from '@/stores/modules/user';
 
 export const useUser = () => {
-  const userStore = useUserStore()
-  const {
-    items,
-    meta,
-    pending,
-    fetchingParams,
-  } = storeToRefs(userStore)
+  const userStore = useUserStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(userStore);
 
   return {
     users: items,
@@ -28,5 +23,5 @@ export const useUser = () => {
     bulkEnableUsers: userStore.bulkEnable,
     bulkDisableUsers: userStore.bulkDisable,
     bulkRemoveUsers: userStore.bulkRemove,
-  }
-}
+  };
+};

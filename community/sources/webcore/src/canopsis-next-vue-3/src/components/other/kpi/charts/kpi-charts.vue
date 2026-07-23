@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import KpiAlarms from './kpi-alarms.vue'
-import KpiRating from './kpi-rating.vue'
-import KpiSli from './kpi-sli.vue'
+import KpiAlarms from './kpi-alarms.vue';
+import KpiRating from './kpi-rating.vue';
+import KpiSli from './kpi-sli.vue';
 
 export default {
   components: {
@@ -32,7 +32,7 @@ export default {
       default: false,
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

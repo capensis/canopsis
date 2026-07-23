@@ -1,14 +1,14 @@
-import { createI18n } from 'vue-i18n'
-import { merge } from 'lodash'
+import { createI18n } from 'vue-i18n';
+import { merge } from 'lodash';
 
-import { DEFAULT_LOCALE } from '@/config'
+import { DEFAULT_LOCALE } from '@/config';
 
-import { updateDateLocaleMessages } from '@/helpers/date/date'
+import { updateDateLocaleMessages } from '@/helpers/date/date';
 
-import durationFrMessages from './duration-fr'
-import messages from './messages'
+import durationFrMessages from './duration-fr';
+import messages from './messages';
 
-updateDateLocaleMessages('fr', durationFrMessages)
+updateDateLocaleMessages('fr', durationFrMessages);
 
 export const i18n = createI18n({
   legacy: true,
@@ -21,4 +21,4 @@ export const i18n = createI18n({
     // TODO: Uncomment this when we have a features service
     // featuresService.get('i18n')
   ),
-})
+});

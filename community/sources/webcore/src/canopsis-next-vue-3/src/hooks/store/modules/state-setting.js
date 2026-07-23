@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useStateSettingStore } from '@/stores/modules/state-setting'
+import { useStateSettingStore } from '@/stores/modules/state-setting';
 
 /**
  * State setting store facade.
@@ -8,8 +8,8 @@ import { useStateSettingStore } from '@/stores/modules/state-setting'
  * @returns {Object}
  */
 export const useStateSetting = () => {
-  const stateSettingStore = useStateSettingStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(stateSettingStore)
+  const stateSettingStore = useStateSettingStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(stateSettingStore);
 
   return {
     stateSettings: items,
@@ -22,5 +22,5 @@ export const useStateSetting = () => {
     createStateSetting: stateSettingStore.create,
     updateStateSetting: stateSettingStore.update,
     removeStateSetting: stateSettingStore.remove,
-  }
-}
+  };
+};

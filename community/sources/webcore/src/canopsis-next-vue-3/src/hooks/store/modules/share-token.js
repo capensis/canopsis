@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useShareTokenStore } from '@/stores/modules/share-token'
+import { useShareTokenStore } from '@/stores/modules/share-token';
 
 /**
  * Share token store facade.
@@ -8,8 +8,8 @@ import { useShareTokenStore } from '@/stores/modules/share-token'
  * @returns {Object}
  */
 export const useShareToken = () => {
-  const shareTokenStore = useShareTokenStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(shareTokenStore)
+  const shareTokenStore = useShareTokenStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(shareTokenStore);
 
   return {
     shareTokens: items,
@@ -22,5 +22,5 @@ export const useShareToken = () => {
     createShareToken: shareTokenStore.create,
     updateShareToken: shareTokenStore.update,
     removeShareToken: shareTokenStore.remove,
-  }
-}
+  };
+};

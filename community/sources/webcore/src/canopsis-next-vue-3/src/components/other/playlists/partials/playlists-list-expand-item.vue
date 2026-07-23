@@ -20,16 +20,16 @@
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue';
 
-import { MAX_LIMIT } from '@/constants'
+import { MAX_LIMIT } from '@/constants';
 
-import { getTabsFromGroupsByIds } from '@/helpers/entities/playlist/form'
+import { getTabsFromGroupsByIds } from '@/helpers/entities/playlist/form';
 
-import { useI18n } from '@/hooks/i18n'
-import { useView } from '@/hooks/store/modules/view'
+import { useI18n } from '@/hooks/i18n';
+import { useView } from '@/hooks/store/modules/view';
 
-import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue'
+import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue';
 
 export default {
   components: { DraggablePlaylistTabs },
@@ -42,20 +42,20 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const { fetchViewGroupsListWithoutStore } = useView()
+    const { t } = useI18n();
+    const { fetchViewGroupsListWithoutStore } = useView();
 
-    const activeTab = ref(0)
-    const groups = ref([])
-    const pending = ref(false)
+    const activeTab = ref(0);
+    const groups = ref([]);
+    const pending = ref(false);
 
     const availableTabs = computed(() =>
       getTabsFromGroupsByIds(groups.value, props.playlist.tabs_list ?? []),
-    )
+    );
 
     const fetchGroups = async () => {
       try {
-        pending.value = true
+        pending.value = true;
 
         const { data = [] } = await fetchViewGroupsListWithoutStore({
           params: {
@@ -63,15 +63,15 @@ export default {
             with_views: true,
             with_tabs: true,
           },
-        })
+        });
 
-        groups.value = data
+        groups.value = data;
       } finally {
-        pending.value = false
+        pending.value = false;
       }
-    }
+    };
 
-    onMounted(fetchGroups)
+    onMounted(fetchGroups);
 
     return {
       t,
@@ -79,7 +79,7 @@ export default {
       groups,
       pending,
       availableTabs,
-    }
+    };
   },
-}
+};
 </script>

@@ -1,4 +1,4 @@
-import { HEALTHCHECK_ENGINES_NAMES } from '@/constants'
+import { HEALTHCHECK_ENGINES_NAMES } from '@/constants';
 
 /**
  * @typedef {Object} EngineParameters
@@ -44,14 +44,14 @@ export const healthcheckParametersToForm = (healthcheckParameters = {}) => ({
     enabled: false,
   },
   ...Object.values(HEALTHCHECK_ENGINES_NAMES).reduce((acc, engineName) => {
-    const engineParameters = healthcheckParameters[engineName] || {}
+    const engineParameters = healthcheckParameters[engineName] || {};
 
     acc[engineName] = {
       enabled: !!engineParameters.enabled,
       minimal: engineParameters.minimal,
       optimal: engineParameters.optimal,
-    }
+    };
 
-    return acc
+    return acc;
   }, {}),
-})
+});

@@ -25,16 +25,14 @@ export default {
 
   computed: {
     badgeStyle() {
-      const color = this.color === 'white'
-        ? 'white'
-        : `rgb(var(--v-theme-${this.color}))`
+      const color = this.color === 'white' ? 'white' : `rgb(var(--v-theme-${this.color}))`;
 
       return {
         '--c-circle-badge-color': color,
-      }
+      };
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useFilterStore } from '@/stores/modules/filter'
+import { useFilterStore } from '@/stores/modules/filter';
 
 /**
  * Filter store facade.
@@ -8,8 +8,8 @@ import { useFilterStore } from '@/stores/modules/filter'
  * @returns {Object}
  */
 export const useFilter = () => {
-  const filterStore = useFilterStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(filterStore)
+  const filterStore = useFilterStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(filterStore);
 
   return {
     filters: items,
@@ -23,5 +23,5 @@ export const useFilter = () => {
     createFilter: filterStore.create,
     updateFilter: filterStore.update,
     removeFilter: filterStore.remove,
-  }
-}
+  };
+};

@@ -40,13 +40,13 @@ import {
   KPI_RATING_SETTINGS_TYPES,
   METRICS_QUICK_RANGES,
   USER_METRIC_PARAMETERS,
-} from '@/constants'
+} from '@/constants';
 
-import { isUserCriteria } from '@/helpers/entities/metric/form'
-import { getAvailableMetricByCriteria } from '@/helpers/entities/metric/list'
+import { isUserCriteria } from '@/helpers/entities/metric/form';
+import { getAvailableMetricByCriteria } from '@/helpers/entities/metric/list';
 
-import KpiRatingCriteriaField from '../form/fields/kpi-rating-criteria-field.vue'
-import KpiRatingMetricField from '../form/fields/kpi-rating-metric-field.vue'
+import KpiRatingCriteriaField from '../form/fields/kpi-rating-criteria-field.vue';
+import KpiRatingMetricField from '../form/fields/kpi-rating-metric-field.vue';
 
 export default {
   components: {
@@ -69,17 +69,17 @@ export default {
 
   computed: {
     quickRanges() {
-      return Object.values(METRICS_QUICK_RANGES)
+      return Object.values(METRICS_QUICK_RANGES);
     },
 
     isUserMetric() {
-      return this.query.metric === USER_METRIC_PARAMETERS.totalUserActivity
+      return this.query.metric === USER_METRIC_PARAMETERS.totalUserActivity;
     },
 
     criteriaType() {
       return isUserCriteria(this.query.criteria?.label)
         ? KPI_RATING_SETTINGS_TYPES.user
-        : KPI_RATING_SETTINGS_TYPES.entity
+        : KPI_RATING_SETTINGS_TYPES.entity;
     },
   },
 
@@ -88,7 +88,7 @@ export default {
       this.$emit('update:query', {
         ...this.query,
         [field]: value,
-      })
+      });
     },
 
     updateCriteria(criteria) {
@@ -96,10 +96,10 @@ export default {
         ...this.query,
         metric: getAvailableMetricByCriteria(this.query.metric, criteria?.label),
         criteria,
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

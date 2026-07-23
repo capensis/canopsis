@@ -1,7 +1,7 @@
-import { computed, ref } from 'vue'
-import { defineStore } from 'pinia'
+import { computed, ref } from 'vue';
+import { defineStore } from 'pinia';
 
-import request from '@/services/request'
+import request from '@/services/request';
 
 export const DEFAULT_ENTITY_STORE_TYPES = {
   fetchList: 'fetchList',
@@ -10,29 +10,29 @@ export const DEFAULT_ENTITY_STORE_TYPES = {
   create: 'create',
   update: 'update',
   remove: 'remove',
-}
+};
 
 export const createBasicCRUDActions = ({ route, withWithoutStore = false } = {}) => {
   const actions = {
     create({ data } = {}) {
-      return request.post(route, data)
+      return request.post(route, data);
     },
 
     update({ id, data } = {}) {
-      return request.put(`${route}/${encodeURIComponent(id)}`, data)
+      return request.put(`${route}/${encodeURIComponent(id)}`, data);
     },
 
     remove({ id } = {}) {
-      return request.delete(`${route}/${encodeURIComponent(id)}`)
+      return request.delete(`${route}/${encodeURIComponent(id)}`);
     },
-  }
+  };
 
   if (withWithoutStore) {
-    actions.fetchListWithoutStore = ({ params } = {}) => request.get(route, { params })
+    actions.fetchListWithoutStore = ({ params } = {}) => request.get(route, { params });
   }
 
-  return actions
-}
+  return actions;
+};
 
 export const createCRUDStore = ({
   id,
@@ -47,51 +47,51 @@ export const createCRUDStore = ({
   actions: additionalActions = {},
 } = {}) =>
   defineStore(id, () => {
-    const items = ref([])
-    const meta = ref({})
-    const pending = ref(false)
-    const fetchingParams = ref()
+    const items = ref([]);
+    const meta = ref({});
+    const pending = ref(false);
+    const fetchingParams = ref();
 
-    const hasItems = computed(() => items.value.length > 0)
+    const hasItems = computed(() => items.value.length > 0);
 
     const fetchList = async ({ params } = {}) => {
       try {
-        pending.value = true
+        pending.value = true;
 
         if (withFetchingParams) {
-          fetchingParams.value = params
+          fetchingParams.value = params;
         }
 
-        const response = await request.get(route, { params })
+        const response = await request.get(route, { params });
 
-        items.value = dataPreparer(response) ?? []
+        items.value = dataPreparer(response) ?? [];
 
         if (withMeta) {
-          meta.value = metaPreparer(response) ?? {}
+          meta.value = metaPreparer(response) ?? {};
         }
 
-        return response
+        return response;
       } catch (err) {
-        console.error(err)
+        console.error(err);
 
-        throw err
+        throw err;
       } finally {
-        pending.value = false
+        pending.value = false;
       }
-    }
+    };
 
-    const fetchListWithPreviousParams = () => fetchList({ params: fetchingParams.value })
+    const fetchListWithPreviousParams = () => fetchList({ params: fetchingParams.value });
 
-    const fetchListWithoutStore = (options) => request.get(route, options)
+    const fetchListWithoutStore = (options) => request.get(route, options);
 
-    const bulkRemove = ({ data } = {}) => request.delete(bulkRoute, { data })
+    const bulkRemove = ({ data } = {}) => request.delete(bulkRoute, { data });
     const additionalState =
       additionalSetup?.({
         items,
         meta,
         pending,
         fetchingParams,
-      }) ?? {}
+      }) ?? {};
 
     return {
       items,
@@ -108,5 +108,5 @@ export const createCRUDStore = ({
 
       ...createBasicCRUDActions({ route }),
       ...additionalActions,
-    }
-  })
+    };
+  });

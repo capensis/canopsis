@@ -20,7 +20,8 @@ export default {
   refresh: 'Refresh',
   restart: 'Restart',
   toggleEditView: 'Toggle view edition mode',
-  toggleEditViewSubtitle: 'If you want to save widget positions you should toggle off the editing mode for that',
+  toggleEditViewSubtitle:
+    'If you want to save widget positions you should toggle off the editing mode for that',
   name: 'Name',
   alias: 'Alias',
   namePrefix: 'Name prefix',
@@ -560,7 +561,8 @@ export default {
     },
     [TRIGGERS_TYPES.uncancel]: {
       text: 'Alarm uncancelled',
-      helpText: 'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
+      helpText:
+        "Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it's possible to send an uncancel event via API",
     },
     [TRIGGERS_TYPES.comment]: {
       text: 'Alarm commented',
@@ -602,10 +604,10 @@ export default {
       text: 'Auto instruction has failed',
     },
     [TRIGGERS_TYPES.instructionjobfail]: {
-      text: 'Manual or auto instruction\'s job is failed',
+      text: "Manual or auto instruction's job is failed",
     },
     [TRIGGERS_TYPES.instructionjobcomplete]: {
-      text: 'Manual or auto instruction\'s job is completed',
+      text: "Manual or auto instruction's job is completed",
     },
     [TRIGGERS_TYPES.instructioncomplete]: {
       text: 'Manual instruction is completed',
@@ -639,12 +641,13 @@ export default {
     skipVerify: 'Ignore HTTPS certificate verification',
     headersHelpText: 'Select header key and value or type them manually',
     addHeader: 'Add header',
-    urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
-      + '<i>For example:</i>'
-      + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
-      + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
-      + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
-      + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
+    urlHelp:
+      '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>' +
+      '<i>For example:</i>' +
+      '<pre>"https://exampleurl.com?resource={\'{{ .Alarm.Value.Resource }}\'}"</pre>' +
+      '<pre>"https://exampleurl.com?entity_id={\'{{ .Entity.ID }}\'}"</pre>' +
+      '<pre>"https://exampleurl.com?children_count={\'{{ len .Children }}\'}"</pre>' +
+      "<pre>\"https://exampleurl.com?children={'{{ range .Children }}'}{'{{ .ID }}'}{'{{ end }}'}\"</pre>",
   },
 
   fileSelector: {

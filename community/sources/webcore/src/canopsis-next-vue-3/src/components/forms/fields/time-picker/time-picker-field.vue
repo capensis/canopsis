@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import { normalizeTimeString } from '@/helpers/date/date-time-picker'
-import { formBaseMixin } from '@/mixins/form'
+import { normalizeTimeString } from '@/helpers/date/date-time-picker';
+import { formBaseMixin } from '@/mixins/form';
 
 export default {
   mixins: [formBaseMixin],
@@ -59,82 +59,85 @@ export default {
   data() {
     return {
       search: this.value,
-    }
+    };
   },
   computed: {
     menuProps() {
       return {
         minWidth: 90,
         maxHeight: 200,
-      }
+      };
     },
 
     items() {
       if (this.roundHours) {
-        return Array.from({ length: 24 }, (item, index) => `${index < 10 ? `0${index}` : index}:00`)
+        return Array.from(
+          { length: 24 },
+          (item, index) => `${index < 10 ? `0${index}` : index}:00`,
+        );
       }
 
-      const { stepsInHours } = this
-      const minutesStep = Math.floor(60 / stepsInHours)
+      const { stepsInHours } = this;
+      const minutesStep = Math.floor(60 / stepsInHours);
 
       return Array.from({ length: 24 * stepsInHours }, (item, index) => {
-        const hoursIndex = Math.floor(index / stepsInHours)
-        const minutesIndex = index - hoursIndex * stepsInHours
+        const hoursIndex = Math.floor(index / stepsInHours);
+        const minutesIndex = index - hoursIndex * stepsInHours;
 
-        const hours = hoursIndex < 10 ? `0${hoursIndex}` : hoursIndex
-        const minutes = minutesIndex === 0 ? '00' : minutesIndex * minutesStep
+        const hours = hoursIndex < 10 ? `0${hoursIndex}` : hoursIndex;
+        const minutes = minutesIndex === 0 ? '00' : minutesIndex * minutesStep;
 
-        return `${hours}:${minutes}`
-      })
+        return `${hours}:${minutes}`;
+      });
     },
 
     filteredItems() {
-      return this.allowedTime ? this.items.filter(this.allowedTime) : this.items
+      return this.allowedTime ? this.items.filter(this.allowedTime) : this.items;
     },
   },
   watch: {
     value(value) {
       if (value !== this.search) {
-        this.search = value
+        this.search = value;
       }
     },
 
     search(value) {
-      this.change(value)
+      this.change(value);
     },
   },
   methods: {
     isValidTime(value) {
-      return /^(([01][0-9])|(2[0-3])):([0-5][0-9])$/.test(value)
+      return /^(([01][0-9])|(2[0-3])):([0-5][0-9])$/.test(value);
     },
 
     filter(item, queryText, itemText) {
-      const text = normalizeTimeString(itemText ?? item, '')
+      const text = normalizeTimeString(itemText ?? item, '');
 
-      return text.toLocaleLowerCase().startsWith(String(queryText ?? '').toLocaleLowerCase())
+      return text.toLocaleLowerCase().startsWith(String(queryText ?? '').toLocaleLowerCase());
     },
 
     change(value) {
-      const nextValue = normalizeTimeString(value, '')
+      const nextValue = normalizeTimeString(value, '');
 
       if (!this.isValidTime(nextValue)) {
-        return
+        return;
       }
 
-      let preparedValue = nextValue
+      let preparedValue = nextValue;
 
       if (this.roundHours) {
-        const [hours] = nextValue.split(':')
+        const [hours] = nextValue.split(':');
 
-        preparedValue = `${hours}:00`
+        preparedValue = `${hours}:00`;
       }
 
       if (this.value !== preparedValue) {
-        this.updateModel(preparedValue)
+        this.updateModel(preparedValue);
       }
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

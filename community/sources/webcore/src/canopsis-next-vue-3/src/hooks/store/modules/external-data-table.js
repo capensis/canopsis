@@ -1,4 +1,4 @@
-import { useExternalDataTableStore } from '@/stores/modules/external-data-table'
+import { useExternalDataTableStore } from '@/stores/modules/external-data-table';
 
 /**
  * External data table store hook.
@@ -6,12 +6,17 @@ import { useExternalDataTableStore } from '@/stores/modules/external-data-table'
  * @returns {Object}
  */
 export const useExternalDataTable = () => {
-  const externalDataTableStore = useExternalDataTableStore()
+  const externalDataTableStore = useExternalDataTableStore();
 
   return {
+    createExternalDataTable: externalDataTableStore.create,
+    updateExternalDataTable: externalDataTableStore.update,
+    removeExternalDataTable: externalDataTableStore.remove,
     fetchExternalDataTablesListWithoutStore: externalDataTableStore.fetchListWithoutStore,
-    fetchExternalDataTableWithoutStore: externalDataTableStore.fetchWithoutStore,
+    fetchExternalDataTableWithoutStore: externalDataTableStore.fetchItemWithoutStore,
     fetchExternalDataTableSchema: externalDataTableStore.fetchSchema,
+    createExternalDataTableExport: externalDataTableStore.createExport,
+    fetchExternalDataTableExportStatus: externalDataTableStore.fetchExportStatus,
     createExternalDataTableImport: externalDataTableStore.createImport,
     fetchExternalDataTableImportData: externalDataTableStore.fetchImportData,
     fetchExternalDataTableImportStatus: externalDataTableStore.fetchImportStatus,
@@ -23,5 +28,5 @@ export const useExternalDataTable = () => {
     updateExternalDataTableRecord: externalDataTableStore.updateRecord,
     removeExternalDataTableRecord: externalDataTableStore.removeRecord,
     bulkRemoveExternalDataTableRecords: externalDataTableStore.bulkRemoveRecords,
-  }
-}
+  };
+};

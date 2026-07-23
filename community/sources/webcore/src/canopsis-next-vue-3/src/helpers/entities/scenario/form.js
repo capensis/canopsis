@@ -1,4 +1,4 @@
-import { DEPRECATED_TRIGGERS } from '@/constants'
+import { DEPRECATED_TRIGGERS } from '@/constants';
 
 /**
  * @typedef {Object} Trigger
@@ -17,4 +17,4 @@ import { DEPRECATED_TRIGGERS } from '@/constants'
  * @param {string} type
  * @returns {boolean}
  */
-export const isDeprecatedTrigger = (type) => DEPRECATED_TRIGGERS.includes(type)
+export const isDeprecatedTrigger = (type) => DEPRECATED_TRIGGERS.includes(type);

@@ -1,4 +1,4 @@
-import { useHealthcheckParametersStore } from '@/stores/modules/healthcheck-parameters'
+import { useHealthcheckParametersStore } from '@/stores/modules/healthcheck-parameters';
 
 /**
  * Healthcheck parameters store facade.
@@ -6,10 +6,10 @@ import { useHealthcheckParametersStore } from '@/stores/modules/healthcheck-para
  * @returns {Object}
  */
 export const useHealthcheckParameters = () => {
-  const healthcheckParametersStore = useHealthcheckParametersStore()
+  const healthcheckParametersStore = useHealthcheckParametersStore();
 
   return {
     fetchHealthcheckParametersWithoutStore: healthcheckParametersStore.fetchItemWithoutStore,
     updateHealthcheckParameters: healthcheckParametersStore.update,
-  }
-}
+  };
+};

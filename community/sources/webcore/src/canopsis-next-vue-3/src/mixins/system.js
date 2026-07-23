@@ -1,6 +1,6 @@
-import { DEFAULT_TIMEZONE } from '@/constants'
+import { DEFAULT_TIMEZONE } from '@/constants';
 
-import { systemThemeMixin } from '@/mixins/system-theme'
+import { systemThemeMixin } from '@/mixins/system-theme';
 
 export const systemMixin = {
   mixins: [systemThemeMixin],
@@ -8,7 +8,7 @@ export const systemMixin = {
   provide() {
     return {
       $system: this.system,
-    }
+    };
   },
 
   data() {
@@ -19,18 +19,18 @@ export const systemMixin = {
         theme: {},
         setTheme: this.setTheme,
       },
-    }
+    };
   },
 
   methods: {
     setSystemData(options = {}) {
       Object.entries(options).forEach(([key, value]) => {
         if (value !== undefined) {
-          this.system[key] = value
+          this.system[key] = value;
         }
-      })
+      });
     },
   },
-}
+};
 
-export default systemMixin
+export default systemMixin;

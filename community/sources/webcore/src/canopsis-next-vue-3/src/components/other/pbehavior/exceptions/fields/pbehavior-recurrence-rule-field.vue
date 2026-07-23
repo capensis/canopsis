@@ -1,12 +1,8 @@
 <template>
-  <c-layout gap="3" column justify="center">
+  <c-layout gap="3" justify="center" column>
     <c-label :label="$t('common.recurrence')" />
     <div v-if="!hasRecurrenceRule">
-      <v-btn
-        color="primary"
-        variant="outlined"
-        @click="showCreateRecurrenceRuleModal"
-      >
+      <v-btn color="primary" variant="outlined" @click="showCreateRecurrenceRuleModal">
         {{ $t('pbehavior.buttons.addRRule') }}
       </v-btn>
     </div>
@@ -23,10 +19,7 @@
           type="edit"
           @click="showCreateRecurrenceRuleModal"
         />
-        <c-action-btn
-          type="delete"
-          @click="showConfirmRemoveRecurrenceRuleModal"
-        />
+        <c-action-btn type="delete" @click="showConfirmRemoveRecurrenceRuleModal" />
       </c-layout>
     </template>
   </c-layout>

@@ -1,17 +1,12 @@
 <template>
-  <c-layout
-    class="pattern-field-suggestions-wrapper gap-3"
-    column
-  >
+  <c-layout class="pattern-field-suggestions-wrapper" gap="3" column>
     <div
-      :class="{ 'pattern-field-suggestions-wrapper__content--has-suggestions': !!suggestions.length }"
+      :class="{
+        'pattern-field-suggestions-wrapper__content--has-suggestions': !!suggestions.length,
+      }"
       class="pattern-field-suggestions-wrapper__content"
     >
-      <c-layout
-        v-if="suggestions.length"
-        class="mb-3"
-        align-center
-      >
+      <c-layout v-if="suggestions.length" class="mb-3" align-center>
         <v-chip class="pattern-field-suggestions-wrapper__current" small>
           <strong>{{ $t('common.current') }}</strong>
         </v-chip>
@@ -61,9 +56,10 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const applySuggestion = index => emit('apply:suggestion', index);
+    const applySuggestion = (index) => emit('apply:suggestion', index);
     const rejectAllSuggestions = () => emit('reject:all');
-    const showEntitiesComparisonModal = suggestion => emit('show:entities-comparison', suggestion);
+    const showEntitiesComparisonModal = (suggestion) =>
+      emit('show:entities-comparison', suggestion);
 
     return {
       applySuggestion,
@@ -92,7 +88,7 @@ export default {
 
   &__current {
     background-color: var(--pattern-suggestions-border-color) !important;
-    color: var(--v-text-dark-primary, #FFFFFF) !important;
+    color: var(--v-text-dark-primary, #ffffff) !important;
   }
 }
 </style>

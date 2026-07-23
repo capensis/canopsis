@@ -1,10 +1,10 @@
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-import { convertQueryToRequest as convertQueryToRequestHelper } from '@/helpers/query'
+import { convertQueryToRequest as convertQueryToRequestHelper } from '@/helpers/query';
 
-import { usePendingHandler } from './pending'
-import { useLocalQuery } from './local-query'
-import { useQueryOptions } from './options'
+import { usePendingHandler } from './pending';
+import { useLocalQuery } from './local-query';
+import { useQueryOptions } from './options';
 
 /**
  * Custom hook that combines the functionalities of tracking pending state of an asynchronous operation and managing a
@@ -27,18 +27,19 @@ export const usePendingWithLocalQuery = ({
   comparator,
   fetchHandler,
 } = {}) => {
-  const {
-    pending,
-    handler: fetchHandlerWithPending,
-  } = usePendingHandler(fetchHandler, initialPending)
+  const { pending, handler: fetchHandlerWithPending } = usePendingHandler(
+    fetchHandler,
+    initialPending,
+  );
 
   const queryData = useLocalQuery({
     initialQuery,
     comparator,
     onUpdate: fetchHandlerWithPending,
-  })
+  });
 
-  const fetchHandlerWithQuery = (requestQuery = queryData.query.value) => fetchHandlerWithPending(requestQuery)
+  const fetchHandlerWithQuery = (requestQuery = queryData.query.value) =>
+    fetchHandlerWithPending(requestQuery);
 
   return {
     ...queryData,
@@ -46,8 +47,8 @@ export const usePendingWithLocalQuery = ({
     pending,
 
     fetchHandlerWithQuery,
-  }
-}
+  };
+};
 
 /**
  * Custom hook to manage local query state with options handling.
@@ -63,16 +64,16 @@ export const useLocalQueryWithOptions = ({ initialQuery, comparator, onUpdate })
     initialQuery,
     comparator,
     onUpdate,
-  })
+  });
 
-  const { options, updateOptions } = useQueryOptions(queryData.query, queryData.updateQuery)
+  const { options, updateOptions } = useQueryOptions(queryData.query, queryData.updateQuery);
 
   return {
     ...queryData,
     options,
     updateOptions,
-  }
-}
+  };
+};
 
 /**
  * Custom hook to fetch a list of data with local query and options management.
@@ -85,10 +86,11 @@ export const useLocalQueryWithOptions = ({ initialQuery, comparator, onUpdate })
  * @param {Object} [options.initialQuery] - The initial state of the query object.
  * @returns {Object} An object containing query state, options, and update functions.
  */
-export const useFetchListWithOptions = ({ fetchListHandler, initialQuery }) => useLocalQueryWithOptions({
-  initialQuery,
-  onUpdate: fetchQuery => fetchListHandler({ params: convertQueryToRequestHelper(fetchQuery) }),
-})
+export const useFetchListWithOptions = ({ fetchListHandler, initialQuery }) =>
+  useLocalQueryWithOptions({
+    initialQuery,
+    onUpdate: (fetchQuery) => fetchListHandler({ params: convertQueryToRequestHelper(fetchQuery) }),
+  });
 
 /**
  * Custom hook to fetch a list of data with query options management.
@@ -108,8 +110,8 @@ export const useFetchListWithoutStoreWithOptions = ({
   initialQuery,
   convertQueryToRequest = convertQueryToRequestHelper,
 }) => {
-  const data = ref([])
-  const meta = ref({})
+  const data = ref([]);
+  const meta = ref({});
 
   const {
     pending,
@@ -120,14 +122,14 @@ export const useFetchListWithoutStoreWithOptions = ({
   } = usePendingWithLocalQuery({
     initialQuery,
     fetchHandler: async (fetchQuery) => {
-      const response = await fetchListHandler({ params: convertQueryToRequest(fetchQuery) })
+      const response = await fetchListHandler({ params: convertQueryToRequest(fetchQuery) });
 
-      data.value = response.data
-      meta.value = response.meta
+      data.value = response.data;
+      meta.value = response.meta;
     },
-  })
+  });
 
-  const { options, updateOptions } = useQueryOptions(query, updateQuery)
+  const { options, updateOptions } = useQueryOptions(query, updateQuery);
 
   return {
     data,
@@ -141,5 +143,5 @@ export const useFetchListWithoutStoreWithOptions = ({
 
     options,
     updateOptions,
-  }
-}
+  };
+};

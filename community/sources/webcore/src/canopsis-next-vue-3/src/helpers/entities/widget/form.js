@@ -144,11 +144,11 @@
  *
  * @returns {Object}
  */
-export const generatePreparedDefaultAlarmListWidget = () => ({})
+export const generatePreparedDefaultAlarmListWidget = () => ({});
 
 /**
  * Build minimal context widget config used by pattern preview modals.
  *
  * @returns {Object}
  */
-export const generatePreparedDefaultContextWidget = () => ({})
+export const generatePreparedDefaultContextWidget = () => ({});

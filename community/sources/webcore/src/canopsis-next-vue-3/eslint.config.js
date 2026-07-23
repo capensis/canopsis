@@ -1,18 +1,18 @@
-import { globalIgnores } from 'eslint/config'
+import { globalIgnores } from 'eslint/config';
 import {
   configureVueProject,
   defineConfigWithVueTs,
   vueTsConfigs,
-} from '@vue/eslint-config-typescript'
-import pluginVue from 'eslint-plugin-vue'
-import pluginPlaywright from 'eslint-plugin-playwright'
-import pluginVitest from '@vitest/eslint-plugin'
-import pluginOxlint from 'eslint-plugin-oxlint'
-import skipFormatting from 'eslint-config-prettier/flat'
+} from '@vue/eslint-config-typescript';
+import pluginVue from 'eslint-plugin-vue';
+import pluginPlaywright from 'eslint-plugin-playwright';
+import pluginVitest from '@vitest/eslint-plugin';
+import pluginOxlint from 'eslint-plugin-oxlint';
+import skipFormatting from 'eslint-config-prettier/flat';
 
 configureVueProject({
   scriptLangs: ['js', 'jsx', 'ts', 'tsx'],
-})
+});
 
 export default defineConfigWithVueTs(
   {
@@ -49,30 +49,48 @@ export default defineConfigWithVueTs(
       'arrow-parens': ['warn', 'as-needed', { requireForBlockBody: true }],
       semi: ['error', 'always'],
       'default-case': 'off',
-      'max-len': ['warn', {
-        code: 120,
-        ignoreStrings: true,
-        ignoreTemplateLiterals: true,
-        ignoreRegExpLiterals: true,
-      }],
-      'no-param-reassign': ['error', {
-        props: true,
-        ignorePropertyModificationsFor: ['state', 'config', 'acc', 'Vue', 'browser', 'wrapper', 'app', 'instance'],
-      }],
+      'max-len': [
+        'warn',
+        {
+          code: 120,
+          ignoreStrings: true,
+          ignoreTemplateLiterals: true,
+          ignoreRegExpLiterals: true,
+        },
+      ],
+      'no-param-reassign': [
+        'error',
+        {
+          props: true,
+          ignorePropertyModificationsFor: [
+            'state',
+            'config',
+            'acc',
+            'Vue',
+            'browser',
+            'wrapper',
+            'app',
+            'instance',
+          ],
+        },
+      ],
       'no-console': ['error', { allow: ['warn', 'error'] }],
       'no-return-assign': 'off',
-      'no-underscore-dangle': ['error', {
-        allow: [
-          '_id',
-          '_embedded',
-          '_t',
-          '_filter',
-          'type_',
-          '_original',
-          '_modulesNamespaceMap',
-          '_handlebarsRequestHelper',
-        ],
-      }],
+      'no-underscore-dangle': [
+        'error',
+        {
+          allow: [
+            '_id',
+            '_embedded',
+            '_t',
+            '_filter',
+            'type_',
+            '_original',
+            '_modulesNamespaceMap',
+            '_handlebarsRequestHelper',
+          ],
+        },
+      ],
       'no-bitwise': ['error', { allow: ['&', '>>'] }],
       'no-continue': 'off',
       'no-cond-assign': 'off',
@@ -82,22 +100,25 @@ export default defineConfigWithVueTs(
       'prefer-regex-literals': ['error', { disallowRedundantWrapping: true }],
       'no-unused-expressions': 'off',
       'no-restricted-syntax': 'off',
-      'no-restricted-imports': ['error', {
-        patterns: [
-          {
-            group: ['**/form/partials/**', '**/form/partial/**'],
-            message: 'All fields should be moved inside `/form/fields/`.',
-          },
-          {
-            group: ['**/field/**'],
-            message: '`field` folder deprecated. Please, rename to `fields`.',
-          },
-          {
-            group: ['**/partial/**'],
-            message: '`partial` folder deprecated. Please, rename to `partials`.',
-          },
-        ],
-      }],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/form/partials/**', '**/form/partial/**'],
+              message: 'All fields should be moved inside `/form/fields/`.',
+            },
+            {
+              group: ['**/field/**'],
+              message: '`field` folder deprecated. Please, rename to `fields`.',
+            },
+            {
+              group: ['**/partial/**'],
+              message: '`partial` folder deprecated. Please, rename to `partials`.',
+            },
+          ],
+        },
+      ],
       'vue/valid-next-tick': 'off',
       'vue/no-deprecated-model-definition': 'off',
       'vue/multi-word-component-names': 'off',
@@ -105,69 +126,91 @@ export default defineConfigWithVueTs(
       'vue/component-definition-name-casing': 'off',
       'vue/require-default-prop': 'off',
       'vue/require-prop-types': 'error',
-      'vue/no-unused-components': ['error', {
-        ignoreWhenBindingPresent: true,
-      }],
-      'vue/order-in-components': ['warn', {
-        order: [
-          'el',
-          'name',
-          'parent',
-          'functional',
-          '$_veeValidate',
-          ['provide', 'inject'],
-          ['delimiters', 'comments'],
-          ['components', 'directives', 'filters'],
-          'extends',
-          'mixins',
-          'inheritAttrs',
-          'model',
-          ['props', 'propsData'],
-          'data',
-          'computed',
-          'watch',
-          'LIFECYCLE_HOOKS',
-          'methods',
-          ['template', 'render'],
-          'renderError',
-        ],
-      }],
+      'vue/no-unused-components': [
+        'error',
+        {
+          ignoreWhenBindingPresent: true,
+        },
+      ],
+      'vue/order-in-components': [
+        'warn',
+        {
+          order: [
+            'el',
+            'name',
+            'parent',
+            'functional',
+            '$_veeValidate',
+            ['provide', 'inject'],
+            ['delimiters', 'comments'],
+            ['components', 'directives', 'filters'],
+            'extends',
+            'mixins',
+            'inheritAttrs',
+            'model',
+            ['props', 'propsData'],
+            'data',
+            'computed',
+            'watch',
+            'LIFECYCLE_HOOKS',
+            'methods',
+            ['template', 'render'],
+            'renderError',
+          ],
+        },
+      ],
       'vue/no-v-text-v-html-on-component': 'off',
       'vue/require-component-is': 'off',
-      'vue/max-attributes-per-line': ['warn', {
-        singleline: 3,
-        multiline: 1,
-      }],
-      'vue/first-attribute-linebreak': ['warn', {
-        singleline: 'beside',
-      }],
-      'vue/singleline-html-element-content-newline': ['warn', {
-        ignoreWhenNoAttributes: true,
-        ignoreWhenEmpty: true,
-        ignores: ['c-label', 'v-label', 'span', 'v-tab'],
-      }],
-      'vue/component-name-in-template-casing': ['warn', 'kebab-case', {
-        registeredComponentsOnly: true,
-      }],
-      'vue/attributes-order': ['warn', {
-        order: [
-          'GLOBAL',
-          'CONDITIONALS',
-          'LIST_RENDERING',
-          'DEFINITION',
-          'TWO_WAY_BINDING',
-          'CONTENT',
-          'OTHER_DIRECTIVES',
-          'RENDER_MODIFIERS',
-          'UNIQUE',
-          'SLOT',
-          'ATTR_DYNAMIC',
-          'ATTR_STATIC',
-          'ATTR_SHORTHAND_BOOL',
-          'EVENTS',
-        ],
-        alphabetical: false,
-      }],
+      'vue/max-attributes-per-line': [
+        'warn',
+        {
+          singleline: 3,
+          multiline: 1,
+        },
+      ],
+      'vue/first-attribute-linebreak': [
+        'warn',
+        {
+          singleline: 'beside',
+        },
+      ],
+      'vue/singleline-html-element-content-newline': [
+        'warn',
+        {
+          ignoreWhenNoAttributes: true,
+          ignoreWhenEmpty: true,
+          ignores: ['c-label', 'v-label', 'span', 'v-tab'],
+        },
+      ],
+      'vue/component-name-in-template-casing': [
+        'warn',
+        'kebab-case',
+        {
+          registeredComponentsOnly: true,
+        },
+      ],
+      'vue/attributes-order': [
+        'warn',
+        {
+          order: [
+            'GLOBAL',
+            'CONDITIONALS',
+            'LIST_RENDERING',
+            'DEFINITION',
+            'TWO_WAY_BINDING',
+            'CONTENT',
+            'OTHER_DIRECTIVES',
+            'RENDER_MODIFIERS',
+            'UNIQUE',
+            'SLOT',
+            'ATTR_DYNAMIC',
+            'ATTR_STATIC',
+            'ATTR_SHORTHAND_BOOL',
+            'EVENTS',
+          ],
+          alphabetical: false,
+        },
+      ],
       'vue/valid-v-slot': ['error', { allowModifiers: true }],
     },
   },
@@ -190,4 +233,11 @@ export default defineConfigWithVueTs(
   },
 
   skipFormatting,
-)
+
+  {
+    name: 'app/required-semicolons',
+    rules: {
+      semi: ['error', 'always'],
+    },
+  },
+);

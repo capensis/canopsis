@@ -11,4 +11,4 @@
  * @returns {string}
  */
 export const getMapEntityText = (entity) =>
-  entity?.type === 'resource' ? entity._id : entity?.name
+  entity?.type === 'resource' ? entity._id : entity?.name;

@@ -4,7 +4,7 @@ export const REQUEST_MESSAGES_TYPES = {
   leave: 2,
   authenticate: 3,
   send: 4,
-}
+};
 
 export const RESPONSE_MESSAGES_TYPES = {
   pong: 0,
@@ -14,27 +14,27 @@ export const RESPONSE_MESSAGES_TYPES = {
   authenticated: 4,
   joined: 5,
   left: 6,
-}
+};
 
 export const ICONS_RESPONSE_MESSAGES_TYPES = {
   create: 0,
   update: 1,
   delete: 2,
-}
+};
 
-export const MAX_RECONNECTS_COUNT = 10
+export const MAX_RECONNECTS_COUNT = 10;
 
-export const PING_INTERVAL = 5000
+export const PING_INTERVAL = 5000;
 
-export const RECONNECT_INTERVAL = 5000
+export const RECONNECT_INTERVAL = 5000;
 
 export const EVENTS_TYPES = {
   customClose: 'custom-close',
   closeRoom: 'close-room',
   networkError: 'network-error',
   error: 'error',
-}
+};
 
 export const ERROR_MESSAGES = {
   authenticationFailed: 'authentication failed',
-}
+};

@@ -71,32 +71,32 @@
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue';
 
-import { TECH_METRICS_EXPORT_STATUSES } from '@/constants'
+import { TECH_METRICS_EXPORT_STATUSES } from '@/constants';
 
-import { convertDateToString } from '@/helpers/date/date'
-import { convertDurationToString } from '@/helpers/date/duration'
-import { getTechMetricsDownloadFileUrl } from '@/helpers/entities/metric/url'
-import { openUrlInNewTab } from '@/helpers/url'
+import { convertDateToString } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
+import { getTechMetricsDownloadFileUrl } from '@/helpers/entities/metric/url';
+import { openUrlInNewTab } from '@/helpers/url';
 
-import { useI18n } from '@/hooks/i18n'
-import { useFilePolling } from '@/hooks/polling'
-import { usePendingHandler } from '@/hooks/query/pending'
-import { useTechMetrics } from '@/hooks/store/modules/tech-metrics'
+import { useI18n } from '@/hooks/i18n';
+import { useFilePolling } from '@/hooks/polling';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { useTechMetrics } from '@/hooks/store/modules/tech-metrics';
 
 export default {
   setup() {
-    const settings = ref({ enabled: false })
-    const metric = ref(null)
+    const settings = ref({ enabled: false });
+    const metric = ref(null);
 
-    const { t } = useI18n()
+    const { t } = useI18n();
     const {
       createTechMetricsExport,
       fetchTechMetricsExport,
       fetchTechMetricsSettings,
       updateTechMetricsSettings,
-    } = useTechMetrics()
+    } = useTechMetrics();
 
     const metrics = computed(() =>
       (metric.value ? [metric.value] : []).map((item) => ({
@@ -105,57 +105,57 @@ export default {
         readyToDownload: item.status === TECH_METRICS_EXPORT_STATUSES.success,
         notCreated: item.status === TECH_METRICS_EXPORT_STATUSES.none,
       })),
-    )
+    );
 
     const headers = computed(() => [
       { title: t('common.created'), key: 'created', width: '33%', sortable: false },
       { title: t('common.timeTaken'), key: 'duration', width: '33%', sortable: false },
       { title: t('common.actionsLabel'), key: 'actions', width: '33%', sortable: false },
-    ])
+    ]);
 
     const { pending, handler: fetchTechMetrics } = usePendingHandler(async () => {
-      metric.value = await fetchTechMetricsExport()
+      metric.value = await fetchTechMetricsExport();
 
-      return metric.value
-    })
+      return metric.value;
+    });
 
     const { pending: settingsPending, handler: fetchSettings } = usePendingHandler(async () => {
-      settings.value = await fetchTechMetricsSettings()
-    })
+      settings.value = await fetchTechMetricsSettings();
+    });
 
     const { poll: generateFile } = useFilePolling({
       createHandler: createTechMetricsExport,
       fetchHandler: fetchTechMetrics,
       completedStatus: TECH_METRICS_EXPORT_STATUSES.success,
       failedStatus: TECH_METRICS_EXPORT_STATUSES.failed,
-    })
+    });
 
-    const downloadTechMetrics = () => openUrlInNewTab(getTechMetricsDownloadFileUrl())
-    const getMetricItem = (item) => item.raw ?? item
+    const downloadTechMetrics = () => openUrlInNewTab(getTechMetricsDownloadFileUrl());
+    const getMetricItem = (item) => item.raw ?? item;
 
-    const { pending: exporting, handler: exportTechMetrics } = usePendingHandler(generateFile)
+    const { pending: exporting, handler: exportTechMetrics } = usePendingHandler(generateFile);
 
     const changeTechMetricsEnabled = async (enabled) => {
       try {
-        settingsPending.value = true
+        settingsPending.value = true;
 
         settings.value = await updateTechMetricsSettings({
           data: {
             ...settings.value,
             enabled,
           },
-        })
+        });
       } finally {
-        settingsPending.value = false
+        settingsPending.value = false;
       }
 
-      return fetchTechMetrics()
-    }
+      return fetchTechMetrics();
+    };
 
     onMounted(() => {
-      fetchTechMetrics()
-      fetchSettings()
-    })
+      fetchTechMetrics();
+      fetchSettings();
+    });
 
     return {
       settings,
@@ -170,7 +170,7 @@ export default {
       getMetricItem,
       formatDate: convertDateToString,
       formatDuration: convertDurationToString,
-    }
+    };
   },
-}
+};
 </script>

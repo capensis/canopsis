@@ -1,6 +1,6 @@
-import { isOmitEqual } from '@/helpers/collection'
-import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES } from '@/constants'
-import { convertDateIntervalToTimestampByTimezone } from '@/helpers/date/date-intervals'
+import { isOmitEqual } from '@/helpers/collection';
+import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES } from '@/constants';
+import { convertDateIntervalToTimestampByTimezone } from '@/helpers/date/date-intervals';
 
 /**
  * Check query is changed with interval.
@@ -11,13 +11,13 @@ import { convertDateIntervalToTimestampByTimezone } from '@/helpers/date/date-in
  * @returns {boolean}
  */
 export const isMetricsQueryChanged = (query, oldQuery, minDate) => {
-  const isFromChanged = query.interval?.from !== oldQuery.interval?.from
-  const isFromEqualMinDate = query.interval?.from === minDate
-  const isToChanged = query.interval?.to !== oldQuery.interval?.to
-  const isQueryWithoutIntervalChanged = !isOmitEqual(query, oldQuery, ['interval'])
+  const isFromChanged = query.interval?.from !== oldQuery.interval?.from;
+  const isFromEqualMinDate = query.interval?.from === minDate;
+  const isToChanged = query.interval?.to !== oldQuery.interval?.to;
+  const isQueryWithoutIntervalChanged = !isOmitEqual(query, oldQuery, ['interval']);
 
-  return isQueryWithoutIntervalChanged || (isFromChanged && !isFromEqualMinDate) || isToChanged
-}
+  return isQueryWithoutIntervalChanged || (isFromChanged && !isFromEqualMinDate) || isToChanged;
+};
 
 /**
  * Convert KPI metrics interval to API timestamps.
@@ -43,4 +43,4 @@ export const convertMetricsIntervalToTimestamp = (interval, timezone) => ({
     undefined,
     timezone,
   ),
-})
+});

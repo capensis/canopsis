@@ -23,19 +23,19 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { ref, watch } from 'vue';
 
-import { MODALS } from '@/constants'
+import { MODALS } from '@/constants';
 
-import { useModals } from '@/hooks/modals'
-import { usePendingWithLocalQuery } from '@/hooks/query/shared'
-import { useQueryOptions } from '@/hooks/query/options'
-import { useEventsRecord } from '@/hooks/store/modules/events-record'
+import { useModals } from '@/hooks/modals';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
+import { useQueryOptions } from '@/hooks/query/options';
+import { useEventsRecord } from '@/hooks/store/modules/events-record';
 
-import { useEventRecordCurrentPolling } from '@/components/other/events-record/hooks/current-polling'
-import { useEventsRecordRecording } from '@/components/other/events-record/hooks/recording'
-import EventsRecordsHeader from '@/components/other/events-record/events-records-header.vue'
-import EventsRecordsList from '@/components/other/events-record/events-records-list.vue'
+import { useEventRecordCurrentPolling } from '@/components/other/events-record/hooks/current-polling';
+import { useEventsRecordRecording } from '@/components/other/events-record/hooks/recording';
+import EventsRecordsHeader from '@/components/other/events-record/events-records-header.vue';
+import EventsRecordsList from '@/components/other/events-record/events-records-list.vue';
 
 export default {
   components: {
@@ -44,9 +44,9 @@ export default {
   },
 
   setup() {
-    const eventsRecords = ref([])
-    const meta = ref({})
-    const modals = useModals()
+    const eventsRecords = ref([]);
+    const meta = ref({});
+    const modals = useModals();
 
     const {
       removeEventsRecord,
@@ -56,12 +56,12 @@ export default {
       eventsRecordLimit,
       eventsRecordRecordingsById,
       eventsRecordResendingsById,
-    } = useEventsRecord()
+    } = useEventsRecord();
 
     const prepareEventsRecords = () => {
       eventsRecords.value = eventsRecords.value.map((eventsRecord) => {
-        const recording = eventsRecordRecordingsById.value[eventsRecord._id]
-        const resending = eventsRecordResendingsById.value[eventsRecord._id]
+        const recording = eventsRecordRecordingsById.value[eventsRecord._id];
+        const resending = eventsRecordResendingsById.value[eventsRecord._id];
 
         return {
           ...eventsRecord,
@@ -70,9 +70,9 @@ export default {
           progress: recording
             ? `${recording.n ?? 0}${recording.n && eventsRecord.count ? `/${eventsRecord.count}` : ''}`
             : undefined,
-        }
-      })
-    }
+        };
+      });
+    };
 
     const {
       pending,
@@ -86,31 +86,31 @@ export default {
             limit: fetchQuery.itemsPerPage,
             page: fetchQuery.page,
           },
-        })
+        });
 
-        eventsRecords.value = response.data
-        meta.value = response.meta
-        prepareEventsRecords()
+        eventsRecords.value = response.data;
+        meta.value = response.meta;
+        prepareEventsRecords();
       },
-    })
+    });
 
-    const { options, updateOptions } = useQueryOptions(query, updateQuery)
-    const { startRecording, stopRecording } = useEventsRecordRecording(fetchList)
-    useEventRecordCurrentPolling()
+    const { options, updateOptions } = useQueryOptions(query, updateQuery);
+    const { startRecording, stopRecording } = useEventsRecordRecording(fetchList);
+    useEventRecordCurrentPolling();
 
-    watch([eventsRecordRecordingsById, eventsRecordResendingsById], prepareEventsRecords)
+    watch([eventsRecordRecordingsById, eventsRecordResendingsById], prepareEventsRecords);
 
     const showRemoveEventsRecordModal = (id) =>
       modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await removeEventsRecord({ id })
+            await removeEventsRecord({ id });
 
-            return fetchList()
+            return fetchList();
           },
         },
-      })
+      });
 
     const showEventsRecordModal = (eventsRecord) =>
       modals.show({
@@ -120,9 +120,9 @@ export default {
           fetchList,
           removeAction: showRemoveEventsRecordModal,
         },
-      })
+      });
 
-    fetchList()
+    fetchList();
 
     return {
       eventsRecords,
@@ -138,7 +138,7 @@ export default {
       stopRecording,
       showEventsRecordModal,
       showRemoveEventsRecordModal,
-    }
+    };
   },
-}
+};
 </script>

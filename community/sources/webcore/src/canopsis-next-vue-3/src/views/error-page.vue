@@ -1,26 +1,13 @@
 <template>
-  <c-layout
-    class="error-page__wrapper"
-    align="center"
-    justify="center"
-  >
-    <c-layout
-      align="center"
-      column
-    >
-      <img
-        src="@/assets/canopsis-green.png"
-        alt=""
-      >
+  <c-layout class="error-page__wrapper" align="center" justify="center">
+    <c-layout align="center" column>
+      <img src="@/assets/canopsis-green.png" alt="" />
 
       <span class="text-subtitle-1 pt-4">
         {{ $t('errors.default') }}
       </span>
 
-      <span
-        v-if="message"
-        class="text-subtitle-1"
-      >
+      <span v-if="message" class="text-subtitle-1">
         {{ message }}
       </span>
     </c-layout>
@@ -28,21 +15,18 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash';
 
-import { APP_INFO_FETCHING_INTERVAL } from '@/config'
-import { ROUTES_NAMES } from '@/constants'
+import { APP_INFO_FETCHING_INTERVAL } from '@/config';
+import { ROUTES_NAMES } from '@/constants';
 
-import { authMixin } from '@/mixins/auth'
-import { entitiesInfoMixin } from '@/mixins/entities/info'
+import { authMixin } from '@/mixins/auth';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
   name: 'ErrorPage',
 
-  mixins: [
-    authMixin,
-    entitiesInfoMixin,
-  ],
+  mixins: [authMixin, entitiesInfoMixin],
 
   props: {
     message: {
@@ -57,62 +41,62 @@ export default {
 
   computed: {
     pollingDelay() {
-      return APP_INFO_FETCHING_INTERVAL
+      return APP_INFO_FETCHING_INTERVAL;
     },
   },
 
   mounted() {
-    this.fetchInfo()
-    this.startPolling()
+    this.fetchInfo();
+    this.startPolling();
   },
 
   beforeUnmount() {
-    this.stopPolling()
+    this.stopPolling();
   },
 
   methods: {
     async fetchInfo() {
       try {
-        await this.fetchAppInfo()
+        await this.fetchAppInfo();
 
         if (!isEmpty(this.currentUser)) {
           this.$router.replace({
             name: this.redirect || ROUTES_NAMES.home,
-          })
+          });
         } else {
           this.$router.replace({
             name: ROUTES_NAMES.login,
             query: {
               redirect: this.redirect,
             },
-          })
+          });
         }
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
     },
 
     async polling() {
-      await this.fetchInfo()
+      await this.fetchInfo();
 
-      this.startPolling()
+      this.startPolling();
     },
 
     startPolling() {
       if (!this.pollingDelay) {
-        return
+        return;
       }
 
-      this.stopPolling()
-      this.timeout = setTimeout(this.polling, this.pollingDelay)
+      this.stopPolling();
+      this.timeout = setTimeout(this.polling, this.pollingDelay);
     },
 
     stopPolling() {
-      clearTimeout(this.timeout)
-      this.timeout = null
+      clearTimeout(this.timeout);
+      this.timeout = null;
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

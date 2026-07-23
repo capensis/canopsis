@@ -49,13 +49,13 @@ export const ROUTES_NAMES = {
   notificationInstructionStats: 'notification-instruction-stats',
   profilePatterns: 'profile-patterns',
   profileThemes: 'profile-themes',
-}
+};
 
 export const OLD_ROUTES = {
   remediation: '/admin/remediation', // Is using for rederect to exploitationRemediation
   externalDataTables: '/admin/external-data-tables', // Is using for rederect to adminCustomObjectsExternalDataTables
   entityInfosProperties: '/admin/entity-infos-properties', // Is using for rederect to adminCustomObjectsEntityInfosProperties
-}
+};
 
 export const ROUTES = {
   home: '/',
@@ -106,31 +106,31 @@ export const ROUTES = {
   notificationInstructionStats: '/notification/instruction-stats',
   profilePatterns: '/filters',
   profileThemes: '/themes',
-}
+};
 
 export const GROUPS_NAVIGATION_TYPES = {
   sideBar: 'side-bar',
   topBar: 'top-bar',
-}
+};
 
 export const SORT_ORDERS = {
   asc: 'ASC',
   desc: 'DESC',
-}
+};
 
 export const POPUP_TYPES = {
   success: 'success',
   info: 'info',
   warning: 'warning',
   error: 'error',
-}
+};
 
 export const TELEPORTS_NAMES = {
   additionalTopBarItems: 'additional-top-bar-items',
   massActionsPanel: 'mass-actions-panel',
-}
+};
 
-export const MAX_LIMIT = 10000
+export const MAX_LIMIT = 10000;
 
 export const REQUEST_METHODS = {
   post: 'POST',
@@ -142,21 +142,21 @@ export const REQUEST_METHODS = {
   connect: 'CONNECT',
   options: 'OPTIONS',
   trace: 'TRACE',
-}
+};
 
-export const DAYS_IN_YEAR = 365
+export const DAYS_IN_YEAR = 365;
 
-export const DAYS_IN_MONTH = 30
+export const DAYS_IN_MONTH = 30;
 
-export const MONTHS_IN_YEAR = 12
+export const MONTHS_IN_YEAR = 12;
 
-export const DAYS_IN_WEEK = 7
+export const DAYS_IN_WEEK = 7;
 
-export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net'
+export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 
-export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/'
+export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 
-export const CANOPSIS_FORUM = 'https://community.capensis.org/'
+export const CANOPSIS_FORUM = 'https://community.capensis.org/';
 
 export const QUICK_RANGES = {
   last15Minutes: {
@@ -281,7 +281,7 @@ export const QUICK_RANGES = {
   custom: {
     value: 'custom',
   },
-}
+};
 
 export const LIVE_REPORTING_QUICK_RANGES = {
   ...QUICK_RANGES,
@@ -302,7 +302,7 @@ export const LIVE_REPORTING_QUICK_RANGES = {
     ...QUICK_RANGES.last1Year,
     stop: 'now',
   },
-}
+};
 
 export const METRICS_QUICK_RANGES = {
   [QUICK_RANGES.last2Days.value]: QUICK_RANGES.last2Days,
@@ -318,7 +318,7 @@ export const METRICS_QUICK_RANGES = {
   [QUICK_RANGES.thisMonth.value]: QUICK_RANGES.thisMonth,
   [QUICK_RANGES.thisMonthSoFar.value]: QUICK_RANGES.thisMonthSoFar,
   [QUICK_RANGES.custom.value]: QUICK_RANGES.custom,
-}
+};
 
 export const HEALTHCHECK_QUICK_RANGES = {
   [QUICK_RANGES.last3Hour.value]: QUICK_RANGES.last3Hour,
@@ -327,52 +327,52 @@ export const HEALTHCHECK_QUICK_RANGES = {
   [QUICK_RANGES.last24Hour.value]: QUICK_RANGES.last24Hour,
 
   ...METRICS_QUICK_RANGES,
-}
+};
 
 export const GRID_SIZES = {
   min: 0,
   max: 12,
   step: 1,
-}
+};
 
-export const DEFAULT_TIMEZONE = 'Europe/Paris'
+export const DEFAULT_TIMEZONE = 'Europe/Paris';
 
 export const WORKFLOW_TYPES = {
   stop: true,
   continue: false,
-}
+};
 
-export const PAYLOAD_VARIABLE_REGEXP = /({{(.){2,}?}})/g
+export const PAYLOAD_VARIABLE_REGEXP = /({{(.){2,}?}})/g;
 
-export const PAYLOAD_OPERATORS = ['range', 'end']
+export const PAYLOAD_OPERATORS = ['range', 'end'];
 
 export const PATTERNS_TYPES = {
   alarm: 'alarm',
   event: 'event',
   entity: 'entity',
   totalEntity: 'totalEntity',
-}
+};
 
 export const AUTH_METHODS = {
   local: 'local',
-}
+};
 
 export const AUTH_SOURCES_WITH_PASSWORD_CHANGING = {
   basic: '',
   ldap: 'ldap',
   cas: 'cas',
   saml: 'saml',
-}
+};
 
 export const ASSOCIATIVE_TABLES_NAMES = {
   alarmColumnsFilters: 'alarm-column-filters',
   dynamicInfoTemplates: 'dynamic-info-templates',
   filterHints: 'filterhints',
-}
+};
 
-export const DEFAULT_COLUMN_TEMPLATE_VALUE = '{{ value }}'
+export const DEFAULT_COLUMN_TEMPLATE_VALUE = '{{ value }}';
 
-export const VALIDATION_DELAY = 300 // TODO: remove it
+export const VALIDATION_DELAY = 300; // TODO: remove it
 
 export const TRIGGERS_TYPES = {
   create: 'create',
@@ -404,7 +404,7 @@ export const TRIGGERS_TYPES = {
   autoinstructionresultok: 'autoinstructionresultok',
   autoinstructionresultfail: 'autoinstructionresultfail',
   eventscount: 'eventscount',
-}
+};
 
 export const PRO_TRIGGERS = [
   TRIGGERS_TYPES.declareticket,
@@ -417,22 +417,22 @@ export const PRO_TRIGGERS = [
   TRIGGERS_TYPES.autoinstructioncomplete,
   TRIGGERS_TYPES.autoinstructionresultok,
   TRIGGERS_TYPES.autoinstructionresultfail,
-]
+];
 
-export const DEPRECATED_TRIGGERS = [TRIGGERS_TYPES.declareticket]
+export const DEPRECATED_TRIGGERS = [TRIGGERS_TYPES.declareticket];
 
 export const HEADERS = {
   authorization: 'Authorization',
   contentType: 'Content-Type',
-}
+};
 
 export const CONTENT_TYPES = {
   json: 'application/json',
   javascript: 'application/javascript',
   xWwwFormUrlencoded: 'application/x-www-form-urlencoded',
-}
+};
 
-export const LOGIN_APP_INFO_POLLING_DELAY = 5000
+export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
 
 export const RESPONSE_STATUSES = {
   success: 200,
@@ -446,27 +446,27 @@ export const RESPONSE_STATUSES = {
   internalServerError: 500,
   badGateway: 502,
   serviceUnavailable: 503,
-}
+};
 
 export const LOGOUT_RESPONSE_STATUSES = [
   RESPONSE_STATUSES.unauthorized,
   RESPONSE_STATUSES.badGateway,
   RESPONSE_STATUSES.serviceUnavailable,
-]
+];
 
-export const EXCLUDED_SERVER_ERROR_STATUSES = [RESPONSE_STATUSES.forbidden]
+export const EXCLUDED_SERVER_ERROR_STATUSES = [RESPONSE_STATUSES.forbidden];
 
 export const PAYLOADS_INFO_VARIABLES = {
   value: '.Value',
   description: '.Description',
-}
+};
 
 export const WEBHOOK_EXECUTION_STATUSES = {
   waiting: 0,
   running: 1,
   succeeded: 2,
   failed: 3,
-}
+};
 
 /**
  * @todo change event.keyCode to event.key
@@ -485,14 +485,14 @@ export const KEY_CODES = {
   delete: 46,
   c: 67,
   v: 86,
-}
+};
 
 export const VARIABLES_STEP_FIELDS = {
   timestamp: 't',
   value: 'val',
   message: 'm',
   author: 'a',
-}
+};
 
 export const WIDGET_COLUMNS_GROUPS = {
   basic: 'basic',
@@ -503,35 +503,35 @@ export const WIDGET_COLUMNS_GROUPS = {
 
   entityParameters: 'entityParameters',
   ticketParameters: 'ticketParameters',
-}
+};
 
 export const CSV_SEPARATORS = {
   comma: 'comma',
   semicolon: 'semicolon',
   tab: 'tab',
   space: 'space',
-}
+};
 
 export const CSV_SEPARATORS_TO_SYMBOLS = {
   [CSV_SEPARATORS.comma]: ',',
   [CSV_SEPARATORS.semicolon]: ';',
   [CSV_SEPARATORS.tab]: '\t',
   [CSV_SEPARATORS.space]: ' ',
-}
+};
 
-export const VIEW_PERIODIC_REFRESH_KEY = '$periodicRefresh'
-export const WIDGET_PERIODIC_REFRESH_KEY = '$periodicRefresh'
+export const VIEW_PERIODIC_REFRESH_KEY = '$periodicRefresh';
+export const WIDGET_PERIODIC_REFRESH_KEY = '$periodicRefresh';
 
 export const RESIZING_CELLS_CONTENTS_BEHAVIORS = {
   wrap: 'wrap',
   truncate: 'truncate',
-}
+};
 
 export const DENSE_TYPES = {
   large: 0,
   medium: 1,
   small: 2,
-}
+};
 
 export const LINKED_RULES_TYPES = [
   'widget',
@@ -539,13 +539,13 @@ export const LINKED_RULES_TYPES = [
   'linkrule',
   'scenario',
   'declareticketrule',
-]
+];
 
-export const LINKED_RULES_COUNT = 5
+export const LINKED_RULES_COUNT = 5;
 
-export const INFOS_NAME_VARIABLE = '%infos_name%'
+export const INFOS_NAME_VARIABLE = '%infos_name%';
 
-export const INFOS_VARIABLE_PREFIX = '(index '
+export const INFOS_VARIABLE_PREFIX = '(index ';
 
 export const FORM_GENERAL_PATTERNS_TABS = {
   general: 'general',
@@ -553,4 +553,4 @@ export const FORM_GENERAL_PATTERNS_TABS = {
   testQuery: 'test-query',
   testing: 'testing',
   additional: 'additional',
-}
+};

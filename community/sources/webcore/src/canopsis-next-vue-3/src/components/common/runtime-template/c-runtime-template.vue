@@ -1,5 +1,5 @@
 <script lang="ts">
-import { h } from 'vue'
+import { h } from 'vue';
 
 export default {
   inheritAttrs: false,
@@ -21,19 +21,19 @@ export default {
 
   computed: {
     parentNode() {
-      return this.parent || this.$parent
+      return this.parent || this.$parent;
     },
 
     parentOptions() {
-      return this.parentNode?.$options ?? {}
+      return this.parentNode?.$options ?? {};
     },
 
     methodProps() {
       return Object.entries(this.parentOptions.methods ?? {}).reduce((acc, [key]) => {
-        acc[key] = this.parentNode[key]
+        acc[key] = this.parentNode[key];
 
-        return acc
-      }, {})
+        return acc;
+      }, {});
     },
 
     props() {
@@ -44,11 +44,11 @@ export default {
         ...this.templateProps,
       }).reduce((acc, [key, value]) => {
         if (!this.isDeclaredByCurrentComponent(key)) {
-          acc[key] = value
+          acc[key] = value;
         }
 
-        return acc
-      }, {})
+        return acc;
+      }, {});
     },
 
     propsTypes() {
@@ -57,7 +57,7 @@ export default {
         ...this.parentOptions.props,
         ...this.parentOptions.methods,
         ...this.templateProps,
-      }).filter(key => !this.isDeclaredByCurrentComponent(key))
+      }).filter((key) => !this.isDeclaredByCurrentComponent(key));
     },
 
     component() {
@@ -73,30 +73,30 @@ export default {
         setup: () => ({
           ...this.parentNode?.$.provides,
         }),
-      }
+      };
     },
   },
 
   methods: {
     isDeclaredByCurrentComponent(key) {
       return (
-        key in (this.$data ?? {})
-        || key in (this.$props ?? {})
-        || key in (this.$options.computed ?? {})
-        || key in (this.$options.methods ?? {})
-      )
+        key in (this.$data ?? {}) ||
+        key in (this.$props ?? {}) ||
+        key in (this.$options.computed ?? {}) ||
+        key in (this.$options.methods ?? {})
+      );
     },
   },
 
   render() {
     if (!this.template) {
-      return null
+      return null;
     }
 
     return h(this.component, {
       ...this.props,
       ...this.$attrs,
-    })
+    });
   },
-}
+};
 </script>

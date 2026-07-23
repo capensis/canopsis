@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useLinkRuleStore } from '@/stores/modules/link-rule'
+import { useLinkRuleStore } from '@/stores/modules/link-rule';
 
 /**
  * Link rule store facade.
@@ -8,8 +8,8 @@ import { useLinkRuleStore } from '@/stores/modules/link-rule'
  * @returns {Object}
  */
 export const useLinkRule = () => {
-  const linkRuleStore = useLinkRuleStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(linkRuleStore)
+  const linkRuleStore = useLinkRuleStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(linkRuleStore);
 
   return {
     linkRules: items,
@@ -27,5 +27,5 @@ export const useLinkRule = () => {
     bulkRemoveLinkRules: linkRuleStore.bulkRemove,
     bulkEnableLinkRules: linkRuleStore.bulkEnable,
     bulkDisableLinkRules: linkRuleStore.bulkDisable,
-  }
-}
+  };
+};

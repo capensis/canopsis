@@ -1,4 +1,4 @@
-import { useMetricsSettingsStore } from '@/stores/modules/metrics-settings'
+import { useMetricsSettingsStore } from '@/stores/modules/metrics-settings';
 
 /**
  * Metrics settings store facade.
@@ -6,10 +6,10 @@ import { useMetricsSettingsStore } from '@/stores/modules/metrics-settings'
  * @returns {Object}
  */
 export const useMetricsSettings = () => {
-  const metricsSettingsStore = useMetricsSettingsStore()
+  const metricsSettingsStore = useMetricsSettingsStore();
 
   return {
     fetchMetricsSettingsWithoutStore: metricsSettingsStore.fetchItemWithoutStore,
     updateMetricsSettings: metricsSettingsStore.update,
-  }
-}
+  };
+};

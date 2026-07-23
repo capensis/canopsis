@@ -1,14 +1,14 @@
-import { MODALS } from '@/constants'
+import { MODALS } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { useEventsRecord } from '@/hooks/store/modules/events-record'
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useEventsRecord } from '@/hooks/store/modules/events-record';
 
 export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
-  const { t } = useI18n()
-  const modals = useModals()
+  const { t } = useI18n();
+  const modals = useModals();
 
-  const { startCurrentEventsRecord, stopCurrentEventsRecord } = useEventsRecord()
+  const { startCurrentEventsRecord, stopCurrentEventsRecord } = useEventsRecord();
 
   const startRecording = () =>
     modals.show({
@@ -20,22 +20,22 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
           startCurrentEventsRecord({ data: { event_pattern: eventPattern } }),
         afterSubmit: fetchListHandler,
       },
-    })
+    });
 
   const stopRecording = (recordingId) =>
     modals.show({
       name: MODALS.confirmation,
       config: {
         action: async () => {
-          await stopCurrentEventsRecord({ id: recordingId })
+          await stopCurrentEventsRecord({ id: recordingId });
 
-          return fetchListHandler()
+          return fetchListHandler();
         },
       },
-    })
+    });
 
   return {
     startRecording,
     stopRecording,
-  }
-}
+  };
+};

@@ -36,8 +36,7 @@ const props = defineProps({
 
 const localExpanded = ref(props.expanded ? 0 : undefined);
 
-// const { hasChildrenError } = useValidationChildren();
-const hasChildrenError = ref(false);
+const { hasChildrenError } = useValidationChildren();
 
 const panelStyle = computed(() => ({
   outlineColor: props.outlineColor,
@@ -59,7 +58,7 @@ const headerStyle = computed(() => {
 
 watch(
   () => props.expanded,
-  expanded => {
+  (expanded) => {
     localExpanded.value = expanded ? 0 : undefined;
   },
 );
@@ -73,10 +72,7 @@ watch(
     class="c-collapse-panel"
   >
     <v-expansion-panel class="c-collapse-panel__panel">
-      <v-expansion-panel-title
-        :color="headerColor"
-        :style="headerStyle"
-      >
+      <v-expansion-panel-title :color="headerColor" :style="headerStyle">
         <slot name="header">
           <span class="text-white">
             {{ title }}
@@ -85,19 +81,13 @@ watch(
 
         <template #actions>
           <slot name="actions">
-            <v-icon
-              :icon="icon"
-              color="white"
-            />
+            <v-icon :icon="icon" color="white" />
           </slot>
         </template>
       </v-expansion-panel-title>
 
       <v-expansion-panel-text eager>
-        <v-card
-          class="c-collapse-panel__card"
-          elevation="0"
-        >
+        <v-card class="c-collapse-panel__card" elevation="0">
           <v-card-text>
             <slot />
           </v-card-text>

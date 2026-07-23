@@ -1,80 +1,78 @@
-import { isArray, isEmpty, isFunction, pick } from 'lodash'
+import { isArray, isEmpty, isFunction, pick } from 'lodash';
 
-import {
-  CRUD_ACTIONS,
-  POPUP_TYPES,
-} from '@/constants'
+import { CRUD_ACTIONS, POPUP_TYPES } from '@/constants';
 
-import { i18n } from '@/i18n'
-import { usePopupsStore } from '@/plugins/popups/stores'
-import { useAuthStore } from '@/stores/modules/auth'
-import { useInfo } from '@/hooks/store/modules/info'
+import { i18n } from '@/i18n';
+import { usePopupsStore } from '@/plugins/popups/stores';
+import { useAuthStore } from '@/stores/modules/auth';
+import { useInfo } from '@/hooks/store/modules/info';
 
-import { checkUserAnyAccess, groupedPermissionToPermission } from '@/helpers/permission'
+import { checkUserAnyAccess, groupedPermissionToPermission } from '@/helpers/permission';
 
-const resolvePermissionId = (requiresPermission, route) => (
-  isFunction(requiresPermission.id)
-    ? requiresPermission.id(route)
-    : requiresPermission.id
-)
+const resolvePermissionId = (requiresPermission, route) =>
+  isFunction(requiresPermission.id) ? requiresPermission.id(route) : requiresPermission.id;
 
 export const checkAppInfoAccessForRoute = async (route = {}) => {
-  const { requiresPermission } = route.meta
+  const { requiresPermission } = route.meta;
 
   if (!requiresPermission) {
-    return true
+    return true;
   }
 
-  const popupsStore = usePopupsStore()
-  const { edition, fetchAppInfo, checkAppInfoAccessByPermission } = useInfo()
+  const popupsStore = usePopupsStore();
+  const { edition, fetchAppInfo, checkAppInfoAccessByPermission } = useInfo();
 
-  let permissionId = resolvePermissionId(requiresPermission, route)
+  let permissionId = resolvePermissionId(requiresPermission, route);
 
   if (isArray(permissionId)) {
-    permissionId = groupedPermissionToPermission(permissionId)
+    permissionId = groupedPermissionToPermission(permissionId);
   }
 
   if (!edition.value) {
-    await fetchAppInfo()
+    await fetchAppInfo();
   }
 
   if (checkAppInfoAccessByPermission(permissionId)) {
-    return true
+    return true;
   }
 
-  popupsStore.error({ text: i18n.t('common.notFound') })
+  popupsStore.error({ text: i18n.t('common.notFound') });
 
-  throw new Error('Application does not have access to the page')
-}
+  throw new Error('Application does not have access to the page');
+};
 
 export const checkUserAccessForRoute = async (route = {}) => {
-  const { requiresPermission, requiresLogin } = route.meta
+  const { requiresPermission, requiresLogin } = route.meta;
 
   if (!requiresLogin || !requiresPermission) {
-    return true
+    return true;
   }
 
-  const authStore = useAuthStore()
-  const popupsStore = usePopupsStore()
-  const permissionAction = requiresPermission.action || CRUD_ACTIONS.read
-  let permissionId = resolvePermissionId(requiresPermission, route)
+  const authStore = useAuthStore();
+  const popupsStore = usePopupsStore();
+  const permissionAction = requiresPermission.action || CRUD_ACTIONS.read;
+  let permissionId = resolvePermissionId(requiresPermission, route);
 
   if (isEmpty(authStore.currentUser) && authStore.isLoggedIn) {
-    await authStore.fetchCurrentUser()
+    await authStore.fetchCurrentUser();
   }
 
   if (!isArray(permissionId)) {
-    permissionId = [permissionId]
+    permissionId = [permissionId];
   }
 
-  if (checkUserAnyAccess(pick(authStore.currentUserPermissionsById, permissionId), permissionAction)) {
-    return true
+  if (
+    checkUserAnyAccess(pick(authStore.currentUserPermissionsById, permissionId), permissionAction)
+  ) {
+    return true;
   }
 
   popupsStore.add({
     text: i18n.t('common.forbidden'),
     type: POPUP_TYPES.error,
-  })
+  });
 
-  throw new Error(`User does not have access to page '${route.path}' with permission id '${permissionId}'`)
-}
+  throw new Error(
+    `User does not have access to page '${route.path}' with permission id '${permissionId}'`,
+  );
+};

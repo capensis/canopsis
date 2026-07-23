@@ -2,7 +2,7 @@ import {
   ALARM_METRIC_PARAMETERS,
   KPI_RATING_USER_CRITERIA,
   USER_METRIC_PARAMETERS,
-} from '@/constants'
+} from '@/constants';
 
 /**
  * @typedef { 'sum' | 'avg' | 'min' | 'max' } MetricAggregateFunctions
@@ -71,7 +71,7 @@ export const isTimeMetric = (metric) =>
     ALARM_METRIC_PARAMETERS.maxAck,
     ALARM_METRIC_PARAMETERS.minResolve,
     ALARM_METRIC_PARAMETERS.maxResolve,
-  ].includes(metric)
+  ].includes(metric);
 
 /**
  * Check metric is percentage/ratio-based.
@@ -86,7 +86,7 @@ export const isRatioMetric = (metric) =>
     ALARM_METRIC_PARAMETERS.ratioTickets,
     ALARM_METRIC_PARAMETERS.ratioNonDisplayed,
     ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms,
-  ].includes(metric)
+  ].includes(metric);
 
 /**
  * Check criteria belongs to user rating.
@@ -94,4 +94,4 @@ export const isRatioMetric = (metric) =>
  * @param {string} criteria
  * @returns {boolean}
  */
-export const isUserCriteria = (criteria) => KPI_RATING_USER_CRITERIA.includes(criteria)
+export const isUserCriteria = (criteria) => KPI_RATING_USER_CRITERIA.includes(criteria);

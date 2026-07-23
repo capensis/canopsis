@@ -1,4 +1,4 @@
-import { useNotificationSettingsStore } from '@/stores/modules/notification-settings'
+import { useNotificationSettingsStore } from '@/stores/modules/notification-settings';
 
 /**
  * Notification settings store facade.
@@ -6,10 +6,10 @@ import { useNotificationSettingsStore } from '@/stores/modules/notification-sett
  * @returns {Object}
  */
 export const useNotificationSettings = () => {
-  const notificationSettingsStore = useNotificationSettingsStore()
+  const notificationSettingsStore = useNotificationSettingsStore();
 
   return {
     fetchNotificationSettingsWithoutStore: notificationSettingsStore.fetchItemWithoutStore,
     updateNotificationSettings: notificationSettingsStore.update,
-  }
-}
+  };
+};

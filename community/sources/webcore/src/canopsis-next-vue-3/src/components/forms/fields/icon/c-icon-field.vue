@@ -41,11 +41,11 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import materialIcons from '@/assets/material-icons/MaterialIcons.json'
+import materialIcons from '@/assets/material-icons/MaterialIcons.json';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -78,25 +78,25 @@ export default {
   emits: ['update:modelValue'],
 
   setup() {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
     const items = computed(() =>
       materialIcons.map((icon) => ({
         text: icon,
         value: icon,
       })),
-    )
+    );
 
-    const getRawItem = (item) => item?.raw ?? item
-    const getItemValue = (item) => getRawItem(item)?.value ?? ''
-    const getItemText = (item) => getRawItem(item)?.text ?? getItemValue(item)
+    const getRawItem = (item) => item?.raw ?? item;
+    const getItemValue = (item) => getRawItem(item)?.value ?? '';
+    const getItemText = (item) => getRawItem(item)?.text ?? getItemValue(item);
 
     return {
       t,
       items,
       getItemValue,
       getItemText,
-    }
+    };
   },
-}
+};
 </script>

@@ -1,12 +1,6 @@
 <template>
-  <c-layout
-    gap="3"
-    column
-  >
-    <slot
-      v-if="!exdates.length"
-      name="no-data"
-    />
+  <c-layout gap="3" column>
+    <slot v-if="!exdates.length" name="no-data" />
     <c-form-block-array-field
       :form="exdates"
       :item-to-form="pbehaviorExdateItemToForm"
@@ -31,13 +25,7 @@
 </template>
 
 <script>
-import {
-  computed,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  watch,
-} from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, watch } from 'vue';
 
 import { pbehaviorExdateItemToForm } from '@/helpers/entities/pbehavior/form';
 
@@ -50,7 +38,6 @@ import PbehaviorExceptionField from '@/components/other/pbehavior/exceptions/fie
 
 export default {
   emits: ['update:exdates'],
-  inject: ['$validator'],
   components: { PbehaviorExceptionField },
   props: {
     exdates: {
@@ -87,12 +74,8 @@ export default {
     const { updateModel, updateItemInArray } = useArrayModelField(props, emit);
     const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
 
-    const {
-      validator,
-      attachMinValueRule,
-      detachMinValueRule,
-      validateMinValueRule,
-    } = useValidationAttachMinValue(props.name);
+    const { validator, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
+      useValidationAttachMinValue(props.name);
 
     const resolvedRequiredErrorMessage = computed(
       () => props.requiredErrorMessage || t('common.addAtLeastOneItem'),
@@ -110,11 +93,14 @@ export default {
      */
     const asyncValidateMinValueRule = () => nextTick(validateMinValueRule);
 
-    watch(() => props.exdates, () => {
-      if (props.required) {
-        asyncValidateMinValueRule();
-      }
-    });
+    watch(
+      () => props.exdates,
+      () => {
+        if (props.required) {
+          asyncValidateMinValueRule();
+        }
+      },
+    );
 
     onMounted(() => {
       fetchPbehaviorTypesFieldList();

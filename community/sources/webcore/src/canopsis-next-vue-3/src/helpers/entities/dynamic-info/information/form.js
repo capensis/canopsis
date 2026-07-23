@@ -1,6 +1,6 @@
-import { DYNAMIC_INFO_INFORMATION_TYPES } from '@/constants'
+import { DYNAMIC_INFO_INFORMATION_TYPES } from '@/constants';
 
-import { uid } from '@/helpers/uid'
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {Object} DynamicInfoInformation
@@ -29,7 +29,7 @@ export const dynamicInfoInformationToForm = (info = {}) => ({
   name: info.name ?? '',
   type: info.type ?? DYNAMIC_INFO_INFORMATION_TYPES.setToInfo,
   value: info.value ?? '',
-})
+});
 
 /**
  * Converts a dynamic info information form object to a dynamic info information object
@@ -38,9 +38,9 @@ export const dynamicInfoInformationToForm = (info = {}) => ({
  * @returns {Object} The dynamic info information object
  */
 export const formToDynamicInfoInformation = (form = {}) => {
-  const dynamicInfo = { ...form }
+  const dynamicInfo = { ...form };
 
-  delete dynamicInfo.key
+  delete dynamicInfo.key;
 
-  return dynamicInfo
-}
+  return dynamicInfo;
+};

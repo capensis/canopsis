@@ -1,4 +1,4 @@
-import { uid } from '@/helpers/uid'
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {Object & ObjectKey} KeyValue
@@ -19,7 +19,7 @@ import { uid } from '@/helpers/uid'
 export const generateTemplateFormName = (name = '') => ({
   key: uid('dynamic-info-template-name'),
   value: name,
-})
+});
 
 /**
  * Convert a dynamic info template object to a form object.
@@ -31,7 +31,7 @@ export const templateToForm = (template = {}) => ({
   _id: template._id ?? uid('dynamic-info-template'),
   title: template.title ?? '',
   names: (template.names ?? []).map(generateTemplateFormName),
-})
+});
 
 /**
  * Convert a dynamic info template form object to an API compatible object.
@@ -43,7 +43,7 @@ export const formToTemplate = (form = {}) => ({
   _id: form._id ?? uid('dynamic-info-template'),
   title: form.title ?? '',
   names: (form.names ?? []).map(({ value }) => value),
-})
+});
 
 /**
  * Convert a dynamic info template to dynamic info information form items.
@@ -52,4 +52,4 @@ export const formToTemplate = (form = {}) => ({
  * @returns {Array<{ name: string, value: string }>}
  */
 export const templateToDynamicInfoInfos = (template = {}) =>
-  (template.names ?? []).map((name) => ({ name, value: '' }))
+  (template.names ?? []).map((name) => ({ name, value: '' }));

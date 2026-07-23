@@ -1,14 +1,7 @@
 <template>
   <v-list class="py-0">
-    <template
-      v-for="link in links"
-      :key="link.key || link.title || link.route?.name"
-    >
-      <v-list-subheader
-        v-if="link.header"
-        class="text-subtitle-1"
-        @click.stop=""
-      >
+    <template v-for="link in links" :key="link.key || link.title || link.route?.name">
+      <v-list-subheader v-if="link.header" class="text-subtitle-1" @click.stop="">
         {{ link.title }}
       </v-list-subheader>
 
@@ -42,9 +35,9 @@
 </template>
 
 <script>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick } from 'vue';
 
-import TopBarMenuListLink from './top-bar-menu-list-link.vue'
+import TopBarMenuListLink from './top-bar-menu-list-link.vue';
 
 export default {
   name: 'TopBarMenuList',
@@ -69,33 +62,33 @@ export default {
   emits: ['click'],
 
   setup(props, { emit }) {
-    const subItemsShown = ref(false)
-    const parentItem = ref(undefined)
-    const subItemsTarget = ref(undefined)
+    const subItemsShown = ref(false);
+    const parentItem = ref(undefined);
+    const subItemsTarget = ref(undefined);
 
     const handleMouseEnter = async (link, event) => {
       if (link.links) {
         if (subItemsShown.value) {
           if (link.title === parentItem.value?.title) {
-            return
+            return;
           }
 
-          subItemsShown.value = false
+          subItemsShown.value = false;
 
-          await nextTick()
+          await nextTick();
         }
 
-        subItemsTarget.value = event.currentTarget
-        parentItem.value = link
-        subItemsShown.value = true
+        subItemsTarget.value = event.currentTarget;
+        parentItem.value = link;
+        subItemsShown.value = true;
       } else {
-        parentItem.value = undefined
-        subItemsTarget.value = undefined
-        subItemsShown.value = false
+        parentItem.value = undefined;
+        subItemsTarget.value = undefined;
+        subItemsShown.value = false;
       }
-    }
+    };
 
-    const handleClick = () => emit('click')
+    const handleClick = () => emit('click');
 
     return {
       subItemsShown,
@@ -103,7 +96,7 @@ export default {
       subItemsTarget,
       handleMouseEnter,
       handleClick,
-    }
+    };
   },
-}
+};
 </script>

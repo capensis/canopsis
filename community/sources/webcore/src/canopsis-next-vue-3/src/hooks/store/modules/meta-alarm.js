@@ -1,4 +1,4 @@
-import { useMetaAlarmStore } from '@/stores/modules/meta-alarm'
+import { useMetaAlarmStore } from '@/stores/modules/meta-alarm';
 
 /**
  * Meta alarm store facade.
@@ -6,12 +6,12 @@ import { useMetaAlarmStore } from '@/stores/modules/meta-alarm'
  * @returns {Object}
  */
 export const useMetaAlarm = () => {
-  const metaAlarmStore = useMetaAlarmStore()
+  const metaAlarmStore = useMetaAlarmStore();
 
   return {
     fetchMetaAlarmsListWithoutStore: metaAlarmStore.fetchListWithoutStore,
     createMetaAlarm: metaAlarmStore.create,
     addMetaAlarmAlarms: metaAlarmStore.addAlarms,
     removeMetaAlarmAlarms: metaAlarmStore.removeAlarms,
-  }
-}
+  };
+};

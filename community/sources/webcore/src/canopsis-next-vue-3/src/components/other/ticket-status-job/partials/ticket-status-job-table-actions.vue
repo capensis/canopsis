@@ -28,18 +28,18 @@
 </template>
 
 <script>
-import { keyBy } from 'lodash'
-import { computed } from 'vue'
+import { keyBy } from 'lodash';
+import { computed } from 'vue';
 
-import { JOB_ACTION_REFETCH_DELAY, JOB_STATUS } from '@/constants'
+import { JOB_ACTION_REFETCH_DELAY, JOB_STATUS } from '@/constants';
 
-import { pickIds } from '@/helpers/array'
-import { promisedWait } from '@/helpers/async'
+import { pickIds } from '@/helpers/array';
+import { promisedWait } from '@/helpers/async';
 
-import { useI18n } from '@/hooks/i18n'
-import { usePendingHandler } from '@/hooks/query/pending'
-import { usePopups } from '@/hooks/popups'
-import { useTicketStatusJob } from '@/hooks/store/modules/ticket-status-job'
+import { useI18n } from '@/hooks/i18n';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { usePopups } from '@/hooks/popups';
+import { useTicketStatusJob } from '@/hooks/store/modules/ticket-status-job';
 
 export default {
   props: {
@@ -56,25 +56,25 @@ export default {
   emits: ['clear:items'],
 
   setup(props, { emit }) {
-    const { t } = useI18n()
-    const popups = usePopups()
+    const { t } = useI18n();
+    const popups = usePopups();
     const {
       playTicketStatusJobs,
       pauseTicketStatusJobs,
       fetchTicketStatusJobsListWithPreviousParams,
-    } = useTicketStatusJob()
-    const preparedItems = computed(() => (props.item ? [props.item] : props.items))
-    const preparedItemsById = computed(() => keyBy(preparedItems.value, '_id'))
+    } = useTicketStatusJob();
+    const preparedItems = computed(() => (props.item ? [props.item] : props.items));
+    const preparedItemsById = computed(() => keyBy(preparedItems.value, '_id'));
     const isRunning = computed(() =>
       preparedItems.value.some((item) => item.status === JOB_STATUS.running),
-    )
+    );
     const isStopped = computed(() =>
       preparedItems.value.every((item) => item.status === JOB_STATUS.stopped),
-    )
+    );
 
     const showTicketStatusJobActionPopup = (items = [], textKey, popupType = 'info') => {
-      const firstItem = preparedItemsById.value[items[0]?.item?._id] ?? {}
-      const { rule_name: ruleName, ticket_id: ticketNumber } = firstItem
+      const firstItem = preparedItemsById.value[items[0]?.item?._id] ?? {};
+      const { rule_name: ruleName, ticket_id: ticketNumber } = firstItem;
 
       popups[popupType]({
         text: `<span class="font-weight-regular">${t(textKey, items.length, {
@@ -82,8 +82,8 @@ export default {
           ticketNumber,
           count: items.length,
         })}</span>`,
-      })
-    }
+      });
+    };
 
     const callTicketStatusJobActionWithPopups = async ({
       action,
@@ -91,35 +91,35 @@ export default {
       errorTextKey,
     }) => {
       try {
-        const result = await action()
+        const result = await action();
 
-        await promisedWait(JOB_ACTION_REFETCH_DELAY)
+        await promisedWait(JOB_ACTION_REFETCH_DELAY);
 
         const { successItems, failedItems } = result.reduce(
           (acc, item) => {
-            acc[item.error ? 'failedItems' : 'successItems'].push(item)
+            acc[item.error ? 'failedItems' : 'successItems'].push(item);
 
-            return acc
+            return acc;
           },
           { successItems: [], failedItems: [] },
-        )
+        );
 
         if (failedItems.length) {
-          showTicketStatusJobActionPopup(failedItems, errorTextKey, 'error')
+          showTicketStatusJobActionPopup(failedItems, errorTextKey, 'error');
         }
 
         if (successItems.length) {
-          showTicketStatusJobActionPopup(successItems, successTextKey, 'info')
+          showTicketStatusJobActionPopup(successItems, successTextKey, 'info');
         }
       } catch (error) {
-        console.error(error)
+        console.error(error);
 
-        popups.error({ text: t('errors.default') })
+        popups.error({ text: t('errors.default') });
       } finally {
-        fetchTicketStatusJobsListWithPreviousParams()
-        emit('clear:items')
+        fetchTicketStatusJobsListWithPreviousParams();
+        emit('clear:items');
       }
-    }
+    };
 
     const { pending: playPending, handler: play } = usePendingHandler(() =>
       callTicketStatusJobActionWithPopups({
@@ -127,21 +127,21 @@ export default {
         successTextKey: 'jobs.popups.restarted',
         errorTextKey: 'jobs.popups.restartFailed',
       }),
-    )
+    );
     const { pending: repeatPending, handler: repeat } = usePendingHandler(() =>
       callTicketStatusJobActionWithPopups({
         action: () => playTicketStatusJobs({ data: pickIds(preparedItems.value) }),
         successTextKey: 'jobs.popups.repeated',
         errorTextKey: 'jobs.popups.repeatFailed',
       }),
-    )
+    );
     const { pending: pausePending, handler: pause } = usePendingHandler(() =>
       callTicketStatusJobActionWithPopups({
         action: () => pauseTicketStatusJobs({ data: pickIds(preparedItems.value) }),
         successTextKey: 'jobs.popups.paused',
         errorTextKey: 'jobs.popups.pauseFailed',
       }),
-    )
+    );
 
     return {
       t,
@@ -153,7 +153,7 @@ export default {
       play,
       repeat,
       pause,
-    }
+    };
   },
-}
+};
 </script>

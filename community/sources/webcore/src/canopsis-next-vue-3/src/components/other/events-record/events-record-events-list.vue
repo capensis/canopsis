@@ -13,7 +13,7 @@
   >
     <template #toolbar>
       <v-expand-transition>
-        <c-layout v-if="resending" class="gap-4" align="center">
+        <c-layout v-if="resending" gap="4" align="center">
           <span class="font-italic">
             {{ t('eventsRecord.resendingInProgress') }}
           </span>
@@ -77,15 +77,15 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { convertDateToString } from '@/helpers/date/date'
+import { convertDateToString } from '@/helpers/date/date';
 
-import { useI18n } from '@/hooks/i18n'
-import { usePopups } from '@/hooks/popups'
+import { useI18n } from '@/hooks/i18n';
+import { usePopups } from '@/hooks/popups';
 
-import EventsRecordEventsListExpandPanel from './partials/events-record-events-list-expand-panel.vue'
-import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue'
+import EventsRecordEventsListExpandPanel from './partials/events-record-events-list-expand-panel.vue';
+import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';
 
 export default {
   components: {
@@ -127,8 +127,8 @@ export default {
   emits: ['update:options', 'remove', 'remove:selected', 'start:resending', 'stop:resending'],
 
   setup() {
-    const { t } = useI18n()
-    const popups = usePopups()
+    const { t } = useI18n();
+    const popups = usePopups();
 
     const headers = computed(() => [
       { text: t('common.timestamp'), value: 'timestamp', sortable: false },
@@ -139,12 +139,12 @@ export default {
       { text: t('common.component'), value: 'component', sortable: false },
       { text: t('common.resource'), value: 'resource', sortable: false },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
-    ])
+    ]);
 
-    const formatDate = (date) => convertDateToString(date)
-    const stringify = (item) => JSON.stringify(item)
-    const showCopySuccessPopup = () => popups.success({ text: t('eventsRecord.eventCopied') })
-    const showCopyErrorPopup = () => popups.error({ text: t('errors.default') })
+    const formatDate = (date) => convertDateToString(date);
+    const stringify = (item) => JSON.stringify(item);
+    const showCopySuccessPopup = () => popups.success({ text: t('eventsRecord.eventCopied') });
+    const showCopyErrorPopup = () => popups.error({ text: t('errors.default') });
 
     return {
       t,
@@ -153,9 +153,9 @@ export default {
       stringify,
       showCopySuccessPopup,
       showCopyErrorPopup,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss">

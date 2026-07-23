@@ -1,6 +1,6 @@
-import { API_ROUTES } from '@/config'
+import { API_ROUTES } from '@/config';
 
-import { createCRUDStore } from '@/stores/plugins/crud'
+import { createCRUDStore } from '@/stores/plugins/crud';
 
 export const useThemeStore = createCRUDStore({
   id: 'theme',
@@ -8,4 +8,4 @@ export const useThemeStore = createCRUDStore({
   bulkRoute: API_ROUTES.themes.bulkList,
   withFetchingParams: true,
   withWithoutStore: true,
-})
+});

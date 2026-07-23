@@ -151,18 +151,18 @@
 </template>
 
 <script>
-import get from 'lodash/get'
-import isEqual from 'lodash/isEqual'
-import pick from 'lodash/pick'
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import pick from 'lodash/pick';
 
-import { mapIds } from '@/helpers/array'
-import { convertDataTableSortToQuery } from '@/helpers/entities/shared/query'
+import { mapIds } from '@/helpers/array';
+import { convertDataTableSortToQuery } from '@/helpers/entities/shared/query';
 import {
   prepareQueryWithAdvancedSearch,
   prepareQueryWithoutAdvancedSearch,
-} from '@/helpers/search/advanced-search'
+} from '@/helpers/search/advanced-search';
 
-const EXPAND_TRANSITION_DURATION = 260
+const EXPAND_TRANSITION_DURATION = 260;
 
 export default {
   props: {
@@ -307,7 +307,7 @@ export default {
       expandElements: {},
       expandTimeouts: {},
       keepSelectedAfterAction: this.defaultKeepSelectedAfterAction ?? false,
-    }
+    };
   },
 
   computed: {
@@ -321,12 +321,12 @@ export default {
         'groupDesc',
         'mustSort',
         'multiSort',
-      ])
+      ]);
     },
 
     vuetifySortBy() {
-      const sortBy = this.vDataTableOptions.sortBy ?? []
-      const sortDesc = this.vDataTableOptions.sortDesc ?? []
+      const sortBy = this.vDataTableOptions.sortBy ?? [];
+      const sortDesc = this.vDataTableOptions.sortDesc ?? [];
 
       return sortBy.map((item, index) =>
         item.key
@@ -335,11 +335,11 @@ export default {
               key: item,
               order: sortDesc[index] ? 'desc' : 'asc',
             },
-      )
+      );
     },
 
     preparedHeaders() {
-      const headers = []
+      const headers = [];
 
       if (this.selectAll) {
         headers.push({
@@ -347,7 +347,7 @@ export default {
           title: '',
           sortable: false,
           width: '1px',
-        })
+        });
       }
 
       if (this.expand) {
@@ -356,7 +356,7 @@ export default {
           title: '',
           sortable: false,
           width: '1px',
-        })
+        });
       }
 
       return [
@@ -366,285 +366,287 @@ export default {
           key: header.key ?? header.value,
           title: header.title ?? header[this.headerText],
         })),
-      ]
+      ];
     },
 
     headerScopedSlots() {
       return Object.keys(this.$slots ?? {}).filter(
         (name) => name.startsWith('header.') && name !== 'header.data-table-select',
-      )
+      );
     },
 
     selected: {
       get() {
-        return this.selectedItems.filter((item) => !this.isDisabledItem(item))
+        return this.selectedItems.filter((item) => !this.isDisabledItem(item));
       },
       set(selected) {
-        this.selectedItems = selected
+        this.selectedItems = selected;
       },
     },
 
     selectedKeys() {
-      return mapIds(this.selected, this.itemKey)
+      return mapIds(this.selected, this.itemKey);
     },
 
     hasHeaderSelectSlot() {
-      return this.$slots['header.data-table-select']
+      return this.$slots['header.data-table-select'];
     },
 
     hasItemSlot() {
-      return this.$slots.item
+      return this.$slots.item;
     },
 
     hasExpandSlot() {
-      return this.$slots.expand
+      return this.$slots.expand;
     },
 
     hasHeaderSlot() {
-      return this.$slots.header
+      return this.$slots.header;
     },
 
     hasProgressSlot() {
-      return this.$slots.progress
+      return this.$slots.progress;
     },
 
     hasBodyPrependSlot() {
-      return this.$slots['body.prepend']
+      return this.$slots['body.prepend'];
     },
 
     hasMassActionsSlot() {
-      return this.$slots['mass-actions']
+      return this.$slots['mass-actions'];
     },
 
     shownSearch() {
-      return this.search || this.advancedSearch
+      return this.search || this.advancedSearch;
     },
 
     density() {
       return {
         [this.ultraDense]: 'compact',
         [this.dense]: 'comfortable',
-      }.true
+      }.true;
     },
 
     itemsLength() {
-      return this.totalItems || this.items.length
+      return this.totalItems || this.items.length;
     },
   },
 
   watch: {
     items(items) {
-      const itemKeys = new Set(items.map((item) => this.getItemKey(item)))
+      const itemKeys = new Set(items.map((item) => this.getItemKey(item)));
 
       if (this.selectAll) {
-        const selectedKeys = new Set(this.selectedItems.map((item) => this.getItemKey(item)))
+        const selectedKeys = new Set(this.selectedItems.map((item) => this.getItemKey(item)));
 
         this.selectedItems = items.filter(
           (item) => selectedKeys.has(this.getItemKey(item)) && !this.isDisabledItem(item),
-        )
+        );
       }
 
-      const expandedKeys = new Set(this.expandedItems.map((item) => this.getItemKey(item)))
+      const expandedKeys = new Set(this.expandedItems.map((item) => this.getItemKey(item)));
 
       this.expandedItems = items.filter(
         (item) => expandedKeys.has(this.getItemKey(item)) && this.checkIsExpandableItem(item),
-      )
-      this.openingExpandedKeys = this.openingExpandedKeys.filter((key) => itemKeys.has(key))
-      this.closingExpandedKeys = this.closingExpandedKeys.filter((key) => itemKeys.has(key))
+      );
+      this.openingExpandedKeys = this.openingExpandedKeys.filter((key) => itemKeys.has(key));
+      this.closingExpandedKeys = this.closingExpandedKeys.filter((key) => itemKeys.has(key));
     },
   },
 
   beforeUnmount() {
-    Object.values(this.expandTimeouts).forEach(clearTimeout)
+    Object.values(this.expandTimeouts).forEach(clearTimeout);
   },
 
   methods: {
     getItemKey(item) {
-      return item?.[this.itemKey]
+      return item?.[this.itemKey];
     },
 
     checkIsExpandableItem(item) {
-      return this.isExpandableItem ? this.isExpandableItem(item) : true
+      return this.isExpandableItem ? this.isExpandableItem(item) : true;
     },
 
     setExpandElementRef(element, item) {
-      const key = this.getItemKey(item)
+      const key = this.getItemKey(item);
 
       if (!key) {
-        return
+        return;
       }
 
       if (!element) {
-        delete this.expandElements[key]
+        delete this.expandElements[key];
 
-        return
+        return;
       }
 
-      this.expandElements[key] = element
+      this.expandElements[key] = element;
 
       if (this.openingExpandedKeys.includes(key)) {
-        this.$nextTick(() => this.openExpandElement(key))
+        this.$nextTick(() => this.openExpandElement(key));
       }
     },
 
     openExpandElement(key) {
-      const element = this.expandElements[key]
+      const element = this.expandElements[key];
 
       if (!element) {
-        return
+        return;
       }
 
-      element.style.height = '0px'
+      element.style.height = '0px';
 
       requestAnimationFrame(() => {
-        element.style.height = `${element.scrollHeight}px`
-      })
+        element.style.height = `${element.scrollHeight}px`;
+      });
     },
 
     closeExpandElement(key) {
-      const element = this.expandElements[key]
+      const element = this.expandElements[key];
 
       if (!element) {
-        return
+        return;
       }
 
-      element.style.height = `${element.scrollHeight}px`
+      element.style.height = `${element.scrollHeight}px`;
 
       requestAnimationFrame(() => {
-        element.style.height = '0px'
-      })
+        element.style.height = '0px';
+      });
     },
 
     isItemExpanded(item) {
-      const key = this.getItemKey(item)
+      const key = this.getItemKey(item);
 
       return (
         this.expandedItems.some((expandedItem) => this.getItemKey(expandedItem) === key) &&
         !this.closingExpandedKeys.includes(key)
-      )
+      );
     },
 
     isItemOpening(item) {
-      return this.openingExpandedKeys.includes(this.getItemKey(item))
+      return this.openingExpandedKeys.includes(this.getItemKey(item));
     },
 
     isItemClosing(item) {
-      return this.closingExpandedKeys.includes(this.getItemKey(item))
+      return this.closingExpandedKeys.includes(this.getItemKey(item));
     },
 
     toggleExpand(item) {
       if (!this.checkIsExpandableItem(item)) {
-        return
+        return;
       }
 
-      const key = this.getItemKey(item)
+      const key = this.getItemKey(item);
 
       if (this.expandTimeouts[key]) {
-        clearTimeout(this.expandTimeouts[key])
-        delete this.expandTimeouts[key]
+        clearTimeout(this.expandTimeouts[key]);
+        delete this.expandTimeouts[key];
       }
 
       if (this.isItemExpanded(item)) {
         this.openingExpandedKeys = this.openingExpandedKeys.filter(
           (openingKey) => openingKey !== key,
-        )
-        this.closingExpandedKeys = [...this.closingExpandedKeys, key]
+        );
+        this.closingExpandedKeys = [...this.closingExpandedKeys, key];
 
-        this.$nextTick(() => this.closeExpandElement(key))
+        this.$nextTick(() => this.closeExpandElement(key));
 
         this.expandTimeouts[key] = window.setTimeout(() => {
           this.expandedItems = this.expandedItems.filter(
             (expandedItem) => this.getItemKey(expandedItem) !== key,
-          )
+          );
           this.closingExpandedKeys = this.closingExpandedKeys.filter(
             (closingKey) => closingKey !== key,
-          )
+          );
 
-          delete this.expandTimeouts[key]
-        }, EXPAND_TRANSITION_DURATION)
+          delete this.expandTimeouts[key];
+        }, EXPAND_TRANSITION_DURATION);
 
-        return
+        return;
       }
 
-      this.closingExpandedKeys = this.closingExpandedKeys.filter((closingKey) => closingKey !== key)
-      this.openingExpandedKeys = [...this.openingExpandedKeys, key]
+      this.closingExpandedKeys = this.closingExpandedKeys.filter(
+        (closingKey) => closingKey !== key,
+      );
+      this.openingExpandedKeys = [...this.openingExpandedKeys, key];
 
       if (!this.expandedItems.some((expandedItem) => this.getItemKey(expandedItem) === key)) {
-        this.expandedItems = [...this.expandedItems, item]
+        this.expandedItems = [...this.expandedItems, item];
       }
 
       this.expandTimeouts[key] = window.setTimeout(() => {
-        const element = this.expandElements[key]
+        const element = this.expandElements[key];
 
         if (element) {
-          element.style.height = 'auto'
+          element.style.height = 'auto';
         }
 
         this.openingExpandedKeys = this.openingExpandedKeys.filter(
           (openingKey) => openingKey !== key,
-        )
+        );
 
-        delete this.expandTimeouts[key]
-      }, EXPAND_TRANSITION_DURATION)
+        delete this.expandTimeouts[key];
+      }, EXPAND_TRANSITION_DURATION);
     },
 
     updateOptions(options) {
       if (isEqual(this.options, options)) {
-        return
+        return;
       }
 
-      this.selected = []
-      this.expandedItems = []
-      this.openingExpandedKeys = []
-      this.closingExpandedKeys = []
+      this.selected = [];
+      this.expandedItems = [];
+      this.openingExpandedKeys = [];
+      this.closingExpandedKeys = [];
 
-      Object.values(this.expandTimeouts).forEach(clearTimeout)
-      this.expandTimeouts = {}
+      Object.values(this.expandTimeouts).forEach(clearTimeout);
+      this.expandTimeouts = {};
 
-      this.$emit('update:options', options)
+      this.$emit('update:options', options);
     },
 
     updateDataTableOptions(options) {
-      const sort = convertDataTableSortToQuery(options.sortBy)
+      const sort = convertDataTableSortToQuery(options.sortBy);
 
       return this.updateOptions({
         ...this.options,
         ...pick(options, ['page', 'itemsPerPage', 'groupBy', 'mustSort', 'multiSort']),
         sortBy: sort.sortBy,
         sortDesc: sort.sortDesc,
-      })
+      });
     },
 
     updateSearch(search) {
-      this.updateOptions({ ...this.options, search, page: 1 })
+      this.updateOptions({ ...this.options, search, page: 1 });
     },
 
     updateAdvancedSearch(search) {
-      this.updateOptions(prepareQueryWithAdvancedSearch(this.options, search))
+      this.updateOptions(prepareQueryWithAdvancedSearch(this.options, search));
     },
 
     resetSearch() {
-      this.updateOptions(prepareQueryWithoutAdvancedSearch(this.options))
+      this.updateOptions(prepareQueryWithoutAdvancedSearch(this.options));
     },
 
     updateItemsPerPage(itemsPerPage) {
-      this.updateOptions({ ...this.options, itemsPerPage })
+      this.updateOptions({ ...this.options, itemsPerPage });
     },
 
     updatePage(page) {
-      this.updateOptions({ ...this.options, page })
+      this.updateOptions({ ...this.options, page });
     },
 
     updatePaginationOptions({ page, itemsPerPage }) {
-      this.updateOptions({ ...this.options, page, itemsPerPage })
+      this.updateOptions({ ...this.options, page, itemsPerPage });
     },
 
     clearSelected(keepSelected = this.keepSelectedAfterAction, force = false) {
       if (keepSelected && !force) {
-        return
+        return;
       }
 
-      this.selectedItems = []
+      this.selectedItems = [];
     },
 
     getItemsProps(state) {
@@ -656,26 +658,26 @@ export default {
         expanded: this.isItemExpanded(state.item),
         select: state.toggleSelect,
         expand: this.toggleExpand,
-      }
+      };
     },
 
     getHeaderKey(header) {
-      return header.value ?? header.key
+      return header.value ?? header.key;
     },
 
     getItemSlotName(header) {
-      return `item.${this.getHeaderKey(header)}`
+      return `item.${this.getHeaderKey(header)}`;
     },
 
     getItemValue(item, value) {
-      return get(item, value)
+      return get(item, value);
     },
 
     isItemSelectable(item) {
-      return !this.isDisabledItem(item)
+      return !this.isDisabledItem(item);
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

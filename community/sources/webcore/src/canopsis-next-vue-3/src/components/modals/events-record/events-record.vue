@@ -72,30 +72,30 @@
 </template>
 
 <script>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue';
 
-import { MODALS } from '@/constants'
+import { MODALS } from '@/constants';
 
-import { pickIds } from '@/helpers/array'
-import { convertDateToString } from '@/helpers/date/date'
-import { patternToForm } from '@/helpers/entities/pattern/form'
+import { pickIds } from '@/helpers/array';
+import { convertDateToString } from '@/helpers/date/date';
+import { patternToForm } from '@/helpers/entities/pattern/form';
 
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { usePendingWithLocalQuery } from '@/hooks/query/shared'
-import { useQueryOptions } from '@/hooks/query/options'
-import { useEventsRecord } from '@/hooks/store/modules/events-record'
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
+import { useQueryOptions } from '@/hooks/query/options';
+import { useEventsRecord } from '@/hooks/store/modules/events-record';
 
-import { useEventsRecordRecording } from '@/components/other/events-record/hooks/recording'
-import { useEventsRecordResending } from '@/components/other/events-record/hooks/resending'
-import EventsRecordEventsFilter from '@/components/other/events-record/events-record-events-filter.vue'
-import EventsRecordEventsHeader from '@/components/other/events-record/events-record-events-header.vue'
-import EventsRecordEventsList from '@/components/other/events-record/events-record-events-list.vue'
+import { useEventsRecordRecording } from '@/components/other/events-record/hooks/recording';
+import { useEventsRecordResending } from '@/components/other/events-record/hooks/resending';
+import EventsRecordEventsFilter from '@/components/other/events-record/events-record-events-filter.vue';
+import EventsRecordEventsHeader from '@/components/other/events-record/events-record-events-header.vue';
+import EventsRecordEventsList from '@/components/other/events-record/events-record-events-list.vue';
 
 const TABS = {
   events: 'events',
   pattern: 'pattern',
-}
+};
 
 export default {
   name: MODALS.eventsRecord,
@@ -114,15 +114,15 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const modals = useModals()
-    const config = computed(() => props.modal.config ?? {})
-    const events = ref([])
-    const meta = ref({})
-    const activeTab = ref(TABS.events)
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const events = ref([]);
+    const meta = ref({});
+    const activeTab = ref(TABS.events);
 
-    const eventsRecord = computed(() => config.value.eventsRecord ?? {})
-    const eventsRecordId = computed(() => eventsRecord.value._id)
+    const eventsRecord = computed(() => config.value.eventsRecord ?? {});
+    const eventsRecordId = computed(() => eventsRecord.value._id);
 
     const {
       removeEventsRecord,
@@ -131,20 +131,22 @@ export default {
       fetchEventsRecordEventsListWithoutStore,
       eventsRecordRecordingsById,
       eventsRecordResendingsById,
-    } = useEventsRecord()
+    } = useEventsRecord();
 
-    const { stopRecording } = useEventsRecordRecording(config.value.fetchList)
-    const { startResending, stopResending } = useEventsRecordResending()
+    const { stopRecording } = useEventsRecordRecording(config.value.fetchList);
+    const { startResending, stopResending } = useEventsRecordResending();
 
-    const recording = computed(() => eventsRecordRecordingsById.value[eventsRecordId.value])
-    const count = computed(() => recording.value?.n ?? eventsRecord.value.count ?? 0)
-    const isRecording = computed(() => !!recording.value)
-    const isResending = computed(() => !!eventsRecordResendingsById.value[eventsRecordId.value])
-    const resendingDisabled = computed(() => isRecording.value || isResending.value)
-    const patternForm = computed(() => patternToForm({ event_pattern: eventsRecord.value.pattern }))
+    const recording = computed(() => eventsRecordRecordingsById.value[eventsRecordId.value]);
+    const count = computed(() => recording.value?.n ?? eventsRecord.value.count ?? 0);
+    const isRecording = computed(() => !!recording.value);
+    const isResending = computed(() => !!eventsRecordResendingsById.value[eventsRecordId.value]);
+    const resendingDisabled = computed(() => isRecording.value || isResending.value);
+    const patternForm = computed(() =>
+      patternToForm({ event_pattern: eventsRecord.value.pattern }),
+    );
     const title = computed(() =>
       t('modals.eventsRecord.title', { date: convertDateToString(eventsRecord.value.t) }),
-    )
+    );
 
     const {
       pending,
@@ -162,54 +164,54 @@ export default {
             limit: fetchQuery.itemsPerPage,
             event_pattern: JSON.stringify(fetchQuery.event_pattern),
           },
-        })
+        });
 
-        events.value = response.data
-        meta.value = response.meta
+        events.value = response.data;
+        meta.value = response.meta;
       },
-    })
+    });
 
-    const { options, updateOptions } = useQueryOptions(query, updateQuery)
+    const { options, updateOptions } = useQueryOptions(query, updateQuery);
 
-    const closeModal = () => modals.hide({ id: props.modal.id })
-    const resetFilter = () => removeQueryField('event_pattern')
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const resetFilter = () => removeQueryField('event_pattern');
 
     const remove = () =>
       modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await removeEventsRecord({ id: eventsRecordId.value })
-            await config.value.fetchList?.()
+            await removeEventsRecord({ id: eventsRecordId.value });
+            await config.value.fetchList?.();
 
-            return closeModal()
+            return closeModal();
           },
         },
-      })
+      });
 
     const removeEvent = (event) =>
       modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await removeEventsRecordEvent({ id: event._id })
+            await removeEventsRecordEvent({ id: event._id });
 
-            return fetchList()
+            return fetchList();
           },
         },
-      })
+      });
 
     const removeEvents = (eventsForRemove) =>
       modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await bulkRemoveEventsRecordEvents({ data: pickIds(eventsForRemove) })
+            await bulkRemoveEventsRecordEvents({ data: pickIds(eventsForRemove) });
 
-            return fetchList()
+            return fetchList();
           },
         },
-      })
+      });
 
     const applyEventFilter = () =>
       modals.show({
@@ -219,24 +221,24 @@ export default {
           eventsRecordId: eventsRecordId.value,
           eventPattern: query.value.event_pattern,
           action: (eventPattern) => {
-            updateQueryField('event_pattern', eventPattern)
+            updateQueryField('event_pattern', eventPattern);
 
-            return fetchList()
+            return fetchList();
           },
         },
-      })
+      });
 
     watch(
       isRecording,
       (newIsRecording) => {
         if (newIsRecording && activeTab.value === TABS.events) {
-          activeTab.value = TABS.pattern
+          activeTab.value = TABS.pattern;
         }
       },
       { immediate: true },
-    )
+    );
 
-    onMounted(() => fetchList(query.value))
+    onMounted(() => fetchList(query.value));
 
     return {
       TABS,
@@ -264,9 +266,9 @@ export default {
       startResending,
       stopResending,
       stopRecording,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

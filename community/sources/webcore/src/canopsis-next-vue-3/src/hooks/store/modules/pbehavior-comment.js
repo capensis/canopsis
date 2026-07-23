@@ -1,4 +1,4 @@
-import { usePbehaviorCommentStore } from '@/stores/modules/pbehavior-comment'
+import { usePbehaviorCommentStore } from '@/stores/modules/pbehavior-comment';
 
 /**
  * Pbehavior comment store facade.
@@ -6,7 +6,7 @@ import { usePbehaviorCommentStore } from '@/stores/modules/pbehavior-comment'
  * @returns {Object}
  */
 export const usePbehaviorComment = () => {
-  const pbehaviorCommentStore = usePbehaviorCommentStore()
+  const pbehaviorCommentStore = usePbehaviorCommentStore();
 
   const updateSeveralPbehaviorComments = ({ comments = [], pbehavior } = {}) =>
     Promise.all(
@@ -19,14 +19,14 @@ export const usePbehaviorComment = () => {
             })
           : pbehaviorCommentStore.create({ data: comment, pbehaviorId: pbehavior._id }),
       ),
-    )
+    );
 
   const removeComments = ({ comments = [] } = {}) =>
     comments.map((comment) =>
       pbehaviorCommentStore.remove({
         id: comment._id,
       }),
-    )
+    );
 
   return {
     createPbehaviorComment: pbehaviorCommentStore.create,
@@ -34,5 +34,5 @@ export const usePbehaviorComment = () => {
     removePbehaviorComment: pbehaviorCommentStore.remove,
     updateSeveralPbehaviorComments,
     removeComments,
-  }
-}
+  };
+};

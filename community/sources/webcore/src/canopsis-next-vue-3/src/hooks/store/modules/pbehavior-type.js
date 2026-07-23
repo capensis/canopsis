@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { usePbehaviorTypeStore } from '@/stores/modules/pbehavior-type'
+import { usePbehaviorTypeStore } from '@/stores/modules/pbehavior-type';
 
 /**
  * Pbehavior type store hook.
@@ -8,8 +8,8 @@ import { usePbehaviorTypeStore } from '@/stores/modules/pbehavior-type'
  * @returns {Object}
  */
 export const usePbehaviorType = () => {
-  const pbehaviorTypeStore = usePbehaviorTypeStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorTypeStore)
+  const pbehaviorTypeStore = usePbehaviorTypeStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorTypeStore);
 
   return {
     pbehaviorTypes: items,
@@ -28,5 +28,5 @@ export const usePbehaviorType = () => {
     bulkHidePbehaviorTypes: pbehaviorTypeStore.bulkHide,
     bulkUnhidePbehaviorTypes: pbehaviorTypeStore.bulkUnhide,
     bulkRemovePbehaviorTypes: pbehaviorTypeStore.bulkRemove,
-  }
-}
+  };
+};

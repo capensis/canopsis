@@ -1,8 +1,8 @@
-import { cloneDeep, isBoolean } from 'lodash'
+import { cloneDeep, isBoolean } from 'lodash';
 
-import { TIME_UNITS } from '@/constants'
+import { TIME_UNITS } from '@/constants';
 
-import { durationToForm } from '@/helpers/date/duration'
+import { durationToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Array<string>} TabsList
@@ -32,7 +32,7 @@ export const playlistToForm = (playlist = {}) => ({
   fullscreen: isBoolean(playlist.fullscreen) ? playlist.fullscreen : true,
   enabled: isBoolean(playlist.enabled) ? playlist.enabled : true,
   tabs_list: playlist.tabs_list ? cloneDeep(playlist.tabs_list) : [],
-})
+});
 
 /**
  * Convert playlist form to playlist
@@ -44,20 +44,20 @@ export const formToPlaylist = (form = {}) => ({
   ...form,
 
   tabs_list: form.tabs_list.map((tab) => tab._id),
-})
+});
 
 export const getTabsFromGroupsByIds = (groups = [], tabIds = []) => {
-  const tabIdsSet = new Set(tabIds)
+  const tabIdsSet = new Set(tabIds);
 
   return groups.reduce((acc, group) => {
     group.views?.forEach((view) => {
       view.tabs?.forEach((tab) => {
         if (tabIdsSet.has(tab._id)) {
-          acc.push(tab)
+          acc.push(tab);
         }
-      })
-    })
+      });
+    });
 
-    return acc
-  }, [])
-}
+    return acc;
+  }, []);
+};

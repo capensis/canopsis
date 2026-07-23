@@ -12,7 +12,7 @@
           <div class="ticket-status-jobs-details-expand-panel__content">
             <v-card>
               <v-card-text>
-                <c-layout class="gap-3" column>
+                <c-layout gap="3" column>
                   <span v-if="item.fail_reason">
                     <strong>{{ t('jobs.data.webhookFailedPrefix') }} : </strong>
                     {{ item.fail_reason }}
@@ -39,15 +39,15 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
-import TicketStatusJobsHttpDataCollapsePanel from './ticket-status-jobs-http-data-collapse-panel.vue'
+import TicketStatusJobsHttpDataCollapsePanel from './ticket-status-jobs-http-data-collapse-panel.vue';
 
 const TABS = {
   data: 'data',
-}
+};
 
 export default {
   components: {
@@ -62,16 +62,16 @@ export default {
   },
 
   setup() {
-    const { t } = useI18n()
-    const activeTab = ref(TABS.data)
+    const { t } = useI18n();
+    const activeTab = ref(TABS.data);
 
     return {
       t,
       TABS,
       activeTab,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

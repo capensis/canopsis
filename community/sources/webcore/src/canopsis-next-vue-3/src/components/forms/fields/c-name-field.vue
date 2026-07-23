@@ -9,18 +9,11 @@
     :regex="regex"
     @update:model-value="updateModel"
   >
-    <template
-      v-if="tooltip"
-      #append
-    >
-      <c-help-icon
-        :text="tooltip"
-        icon="help"
-        left
-      />
+    <template v-if="tooltip" #append-inner>
+      <c-help-icon :text="tooltip" icon="help" left />
     </template>
 
-    <template #append-outer>
+    <template v-if="$slots['append-outer']" #append>
       <slot name="append-outer" />
     </template>
   </c-text-field>
@@ -68,7 +61,7 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const updateModel = value => {
+    const updateModel = (value) => {
       emit('update:modelValue', value);
     };
 

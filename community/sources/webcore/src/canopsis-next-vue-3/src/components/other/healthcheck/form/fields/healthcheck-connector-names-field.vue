@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { BASIC_ENTITY_TYPES } from '@/constants'
+import { BASIC_ENTITY_TYPES } from '@/constants';
 
 export default {
   props: {
@@ -56,13 +56,13 @@ export default {
   emits: ['input'],
 
   setup() {
-    const entityTypes = [BASIC_ENTITY_TYPES.connector]
+    const entityTypes = [BASIC_ENTITY_TYPES.connector];
 
     return {
       entityTypes,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss">

@@ -1,5 +1,5 @@
 <template>
-  <c-layout class="gap-3" column>
+  <c-layout gap="3" column>
     <c-enabled-field v-model="visible" :label="t('pbehavior.visible')" with-background />
 
     <c-name-field
@@ -18,20 +18,20 @@
 </template>
 
 <script>
-import { useFormModels } from '@/hooks/form'
-import { useI18n } from '@/hooks/i18n'
+import { useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   setup() {
-    const { t } = useI18n()
-    const { name, description, visible } = useFormModels(['name', 'description', 'visible'])
+    const { t } = useI18n();
+    const { name, description, visible } = useFormModels(['name', 'description', 'visible']);
 
     return {
       t,
       name,
       description,
       visible,
-    }
+    };
   },
-}
+};
 </script>

@@ -10,11 +10,11 @@
       outlined
       @update:value="updateField('type', $event)"
     >
-        <template #selection-empty>
-          <span class="grey--text">
-            {{ $t('externalData.selectDataType') }}
-          </span>
-        </template>
+      <template #selection-empty>
+        <span class="grey--text">
+          {{ $t('externalData.selectDataType') }}
+        </span>
+      </template>
     </c-select-chip>
     <template v-if="isNumber || isStringArray">
       <external-data-table-column-data-type-field-number-form
@@ -40,7 +40,9 @@
             v-on="on"
           >
             <span v-if="!value.string_array_type" :class="stringArrayChip.prefixColorClass">
-              {{ $t('externalData.tableColumnDataTypesAdditionalChips.stringArray.selectSeparator') }}
+              {{
+                $t('externalData.tableColumnDataTypesAdditionalChips.stringArray.selectSeparator')
+              }}
             </span>
             <span v-else-if="isCustomValueTypeSelected">
               <span :class="stringArrayChip.prefixColorClass" class="mr-2">
@@ -65,7 +67,6 @@
 <script>
 import { mapValues } from 'lodash';
 import { computed, onBeforeMount, onBeforeUnmount } from 'vue';
-import { Validator } from 'vee-validate';
 
 import {
   EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES,
@@ -78,16 +79,10 @@ import { useValidator } from '@/hooks/validator/validator';
 import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
 
 import ExternalDataTableColumnDataTypeFieldNumberForm from './partials/external-data-table-column-data-type-field-number-form.vue';
-import ExternalDataTableColumnDataTypeFieldStringArrayMenu
-  from './partials/external-data-table-column-data-type-field-string-array-menu.vue';
+import ExternalDataTableColumnDataTypeFieldStringArrayMenu from './partials/external-data-table-column-data-type-field-string-array-menu.vue';
 
 export default {
   emits: ['update:value'],
-  inject: {
-    $validator: {
-      default: new Validator(),
-    },
-  },
   components: {
     ExternalDataTableColumnDataTypeFieldNumberForm,
     ExternalDataTableColumnDataTypeFieldStringArrayMenu,
@@ -111,27 +106,35 @@ export default {
     const validator = useValidator();
     const { updateField, updateModel } = useModelField(props, emit);
 
-    const typesMap = computed(() => mapValues(EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES, (type) => {
-      const key = `externalData.tableColumnDataTypes.${type}`;
-      const item = {
-        value: type,
-        text: t(`${key}.text`),
-      };
+    const typesMap = computed(() =>
+      mapValues(EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES, (type) => {
+        const key = `externalData.tableColumnDataTypes.${type}`;
+        const item = {
+          value: type,
+          text: t(`${key}.text`),
+        };
 
-      if (te(`${key}.tooltip`)) {
-        item.tooltip = t(`${key}.tooltip`);
-      }
+        if (te(`${key}.tooltip`)) {
+          item.tooltip = t(`${key}.tooltip`);
+        }
 
-      return item;
-    }));
+        return item;
+      }),
+    );
 
     const types = computed(() => Object.values(typesMap.value));
-    const isNumber = computed(() => props.value.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number);
-    const isStringArray = computed(() => props.value.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray);
+    const isNumber = computed(
+      () => props.value.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number,
+    );
+    const isStringArray = computed(
+      () => props.value.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray,
+    );
 
-    const isCustomValueTypeSelected = computed(() => (
-      props.value.string_array_type === EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES.custom
-    ));
+    const isCustomValueTypeSelected = computed(
+      () =>
+        props.value.string_array_type ===
+        EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES.custom,
+    );
 
     const stringArrayChip = computed(() => {
       const result = {
@@ -144,7 +147,9 @@ export default {
       if (isCustomValueTypeSelected.value) {
         result.prefix = t('externalData.tableColumnDataTypesAdditionalChips.stringArray.separator');
       } else if (props.value.string_array_type) {
-        result.prefix = t(`externalData.tableColumnDataTypesAdditionalChips.stringArray.types.${props.value.string_array_type}.text`);
+        result.prefix = t(
+          `externalData.tableColumnDataTypesAdditionalChips.stringArray.types.${props.value.string_array_type}.text`,
+        );
       }
 
       if (validator.errors.has(props.value.name)) {
@@ -156,12 +161,13 @@ export default {
       return result;
     });
 
-    const {
-      attachRequiredRule,
-      detachRequiredRule,
-    } = useValidationAttachRequired(props.value.name);
+    const { attachRequiredRule, detachRequiredRule } = useValidationAttachRequired(
+      props.value.name,
+    );
 
-    onBeforeMount(() => attachRequiredRule(() => !isStringArray.value || !!props.value.string_array_type));
+    onBeforeMount(() =>
+      attachRequiredRule(() => !isStringArray.value || !!props.value.string_array_type),
+    );
     onBeforeUnmount(detachRequiredRule);
 
     return {

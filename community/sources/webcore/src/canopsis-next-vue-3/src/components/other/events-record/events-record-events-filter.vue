@@ -1,6 +1,6 @@
 <template>
-  <c-layout class="gap-3 my-4" justify="space-between" align="center">
-    <c-layout class="gap-2" align="center">
+  <c-layout class="my-4" gap="3" justify="space-between" align="center">
+    <c-layout gap="2" align="center">
       <v-btn v-if="hasFilterApplied" color="secondary" @click="$emit('apply:filter')">
         <v-icon class="mr-2"> filter_list </v-icon>
         {{ t('eventsRecord.eventFilterApplied') }}
@@ -29,11 +29,11 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
-import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue'
+import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';
 
 export default {
   components: { EventsRecordDownloadBtn },
@@ -52,13 +52,13 @@ export default {
   emits: ['apply:filter', 'reset:filter'],
 
   setup(props) {
-    const { t } = useI18n()
-    const hasFilterApplied = computed(() => props.query.event_pattern !== undefined)
+    const { t } = useI18n();
+    const hasFilterApplied = computed(() => props.query.event_pattern !== undefined);
 
     return {
       t,
       hasFilterApplied,
-    }
+    };
   },
-}
+};
 </script>

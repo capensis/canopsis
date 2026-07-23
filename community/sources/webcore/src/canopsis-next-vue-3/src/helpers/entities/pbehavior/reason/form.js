@@ -22,7 +22,7 @@ export const pbehaviorReasonToForm = (reason = {}) => ({
   name: reason.name ?? '',
   description: reason.description ?? '',
   visible: !(reason.hidden ?? false),
-})
+});
 
 /**
  * Convert pbehavior reason form to pbehavior reason
@@ -34,4 +34,4 @@ export const formToPbehaviorReason = (form = {}) => ({
   ...form,
 
   hidden: !form.visible,
-})
+});

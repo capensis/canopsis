@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { KPI_SLI_GRAPH_DATA_TYPE } from '@/constants'
+import { KPI_SLI_GRAPH_DATA_TYPE } from '@/constants';
 
 export default {
   props: {
@@ -34,8 +34,8 @@ export default {
           value: KPI_SLI_GRAPH_DATA_TYPE.time,
           text: this.$t('common.time'),
         },
-      ]
+      ];
     },
   },
-}
+};
 </script>

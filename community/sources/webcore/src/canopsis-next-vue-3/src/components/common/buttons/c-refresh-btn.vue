@@ -16,17 +16,17 @@
 </template>
 
 <script>
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   emits: ['click'],
 
   setup() {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
     return {
       t,
-    }
+    };
   },
-}
+};
 </script>

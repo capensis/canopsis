@@ -11,38 +11,21 @@
         icon
         @click="toggleMessageVisibility"
       >
-        <c-icon color="info" no-fill>
-          help
-        </c-icon>
+        <c-icon color="info" no-fill> help </c-icon>
       </v-btn>
     </h1>
 
     <v-expand-transition>
-      <div
-        v-if="hasMessage"
-        v-show="shownMessage"
-      >
-        <c-layout
-          class="pb-2"
-          justify="center"
-        >
+      <div v-if="hasMessage" v-show="shownMessage">
+        <c-layout class="pb-2" justify="center">
           <c-compiled-template
             :template="message"
             class="text-subtitle-1 page-header__message pre-wrap"
           />
         </c-layout>
 
-        <c-layout
-          v-if="!messageWasHidden"
-          class="pb-2"
-          justify="center"
-        >
-          <v-btn
-            :loading="isHidePending"
-            class="my-2"
-            color="primary"
-            @click="hideMessage"
-          >
+        <c-layout v-if="!messageWasHidden" class="pb-2" justify="center">
+          <v-btn :loading="isHidePending" class="my-2" color="primary" @click="hideMessage">
             {{ $t('pageHeaders.hideMessage') }}
           </v-btn>
         </c-layout>
@@ -52,17 +35,17 @@
 </template>
 
 <script>
-import { isFunction } from 'lodash'
-import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { isFunction } from 'lodash';
+import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
-import { DOCUMENTATION_BASE_URL } from '@/config'
-import { DOCUMENTATION_LINKS } from '@/constants'
+import { DOCUMENTATION_BASE_URL } from '@/config';
+import { DOCUMENTATION_LINKS } from '@/constants';
 
-import { removeTrailingSlashes } from '@/helpers/url'
+import { removeTrailingSlashes } from '@/helpers/url';
 
-import { useI18n } from '@/hooks/i18n'
-import { useTourBase } from '@/hooks/tour-base'
+import { useI18n } from '@/hooks/i18n';
+import { useTourBase } from '@/hooks/tour-base';
 
 export default {
   props: {
@@ -73,70 +56,68 @@ export default {
   },
 
   setup(props) {
-    const route = useRoute()
-    const { t, te } = useI18n()
-    const { currentUser, finishTourByName } = useTourBase()
+    const route = useRoute();
+    const { t, te } = useI18n();
+    const { currentUser, finishTourByName } = useTourBase();
 
-    const shownMessage = ref(false)
-    const isHidePending = ref(false)
+    const shownMessage = ref(false);
+    const isHidePending = ref(false);
 
     const pageName = computed(() => {
       if (props.name) {
-        return props.name
+        return props.name;
       }
 
-      const id = route.meta?.requiresPermission?.id
+      const id = route.meta?.requiresPermission?.id;
 
-      return isFunction(id) ? id(route) : id
-    })
+      return isFunction(id) ? id(route) : id;
+    });
 
     const hasMessage = computed(() => {
-      const key = pageName.value
+      const key = pageName.value;
 
-      return !key || te(`pageHeaders.${key}.message`)
-    })
+      return !key || te(`pageHeaders.${key}.message`);
+    });
 
-    const messageWasHidden = computed(() => !!currentUser.value?.ui_tours?.[pageName.value])
+    const messageWasHidden = computed(() => !!currentUser.value?.ui_tours?.[pageName.value]);
 
     const learMoreMessage = computed(() => {
-      const key = pageName.value
+      const key = pageName.value;
 
       if (!key || !DOCUMENTATION_LINKS[key]) {
-        return ''
+        return '';
       }
 
-      const link = removeTrailingSlashes(`${DOCUMENTATION_BASE_URL}${DOCUMENTATION_LINKS[key]}`)
-      const linkMessage = `<a href="${link}" target="_blank"><strong>${link}</strong></a>`
+      const link = removeTrailingSlashes(`${DOCUMENTATION_BASE_URL}${DOCUMENTATION_LINKS[key]}`);
+      const linkMessage = `<a href="${link}" target="_blank"><strong>${link}</strong></a>`;
 
-      return t('pageHeaders.learnMore', { link: linkMessage })
-    })
+      return t('pageHeaders.learnMore', { link: linkMessage });
+    });
 
     const message = computed(() => {
-      const key = pageName.value
+      const key = pageName.value;
 
-      const baseMessage = hasMessage.value && key
-        ? t(`pageHeaders.${key}.message`)
-        : ''
+      const baseMessage = hasMessage.value && key ? t(`pageHeaders.${key}.message`) : '';
 
-      return learMoreMessage.value ? `${baseMessage}\n${learMoreMessage.value}` : baseMessage
-    })
+      return learMoreMessage.value ? `${baseMessage}\n${learMoreMessage.value}` : baseMessage;
+    });
 
     if (!messageWasHidden.value) {
-      shownMessage.value = true
+      shownMessage.value = true;
     }
 
-    const toggleMessageVisibility = () => shownMessage.value = !shownMessage.value
+    const toggleMessageVisibility = () => (shownMessage.value = !shownMessage.value);
 
     const hideMessage = async () => {
-      isHidePending.value = true
+      isHidePending.value = true;
 
       if (!messageWasHidden.value) {
-        await finishTourByName(pageName.value)
+        await finishTourByName(pageName.value);
       }
 
-      isHidePending.value = false
-      shownMessage.value = false
-    }
+      isHidePending.value = false;
+      shownMessage.value = false;
+    };
 
     return {
       pageName,
@@ -147,9 +128,9 @@ export default {
       message,
       toggleMessageVisibility,
       hideMessage,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

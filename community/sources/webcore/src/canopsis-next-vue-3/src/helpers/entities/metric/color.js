@@ -1,6 +1,6 @@
-import { camelCase } from 'lodash'
+import { camelCase } from 'lodash';
 
-import { COLORS } from '@/config'
+import { COLORS } from '@/config';
 
 /**
  * Get color for metric.
@@ -8,4 +8,4 @@ import { COLORS } from '@/config'
  * @param {string} metric
  * @returns {string}
  */
-export const getMetricColor = (metric) => COLORS.metrics[camelCase(metric)] || COLORS.secondary
+export const getMetricColor = (metric) => COLORS.metrics[camelCase(metric)] || COLORS.secondary;

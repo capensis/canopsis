@@ -1,6 +1,13 @@
 <template>
   <div>
-    <slot :on="{ click: selectFile }" :attrs="{ disabled }" :disabled="disabled" name="activator">
+    <slot
+      :on="{ click: selectFile }"
+      :attrs="{ disabled }"
+      :disabled="disabled"
+      :files="selectedFiles"
+      :clear="clear"
+      name="activator"
+    >
       <v-btn :disabled="disabled" @click="selectFile">
         {{ label || t('common.import') }}
       </v-btn>
@@ -21,10 +28,10 @@
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue'
-import { useField } from 'vee-validate'
+import { computed, ref, watch } from 'vue';
+import { useField } from 'vee-validate';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -61,43 +68,68 @@ export default {
   emits: ['update:modelValue', 'change'],
 
   setup(props, { emit }) {
-    const { t } = useI18n()
-    const inputElement = ref(null)
-    const fieldName = computed(() => props.name || 'file')
+    const { t } = useI18n();
+    const inputElement = ref(null);
+    const selectedFiles = ref([]);
+    const fieldName = computed(() => props.name || 'file');
     const fieldRules = computed(() => ({
       required: props.required,
-    }))
+    }));
     const { errors, setValue } = useField(fieldName, fieldRules, {
       initialValue: props.modelValue,
       validateOnMount: false,
       validateOnValueUpdate: false,
-    })
+    });
 
     const selectFile = () => {
-      inputElement.value?.click()
-    }
+      inputElement.value?.click();
+    };
+
+    const updateFiles = (files) => {
+      const value = props.multiple ? files : files[0];
+
+      selectedFiles.value = files;
+      setValue(value, false);
+      emit('update:modelValue', value);
+      emit('change', value);
+    };
 
     const change = ({ target }) => {
-      const files = Array.from(target.files ?? [])
-      const value = props.multiple ? files : files[0]
+      const files = Array.from(target.files ?? []);
 
-      setValue(value, false)
-      emit('update:modelValue', value)
-      emit('change', value)
-    }
+      updateFiles(files);
+    };
+
+    const dropFiles = (event) => {
+      updateFiles(Array.from(event.dataTransfer?.files ?? []));
+    };
+
+    const clear = () => {
+      if (inputElement.value) {
+        inputElement.value.value = '';
+      }
+
+      updateFiles([]);
+    };
 
     watch(
       () => props.modelValue,
-      (nextValue) => setValue(nextValue, false),
-    )
+      (nextValue) => {
+        selectedFiles.value = Array.isArray(nextValue) ? nextValue : [nextValue].filter(Boolean);
+        setValue(nextValue, false);
+      },
+    );
 
     return {
       t,
       inputElement,
+      selectedFiles,
       errorMessages: errors,
       selectFile,
       change,
-    }
+      dropFiles,
+      clear,
+    };
   },
-}
+};
 </script>

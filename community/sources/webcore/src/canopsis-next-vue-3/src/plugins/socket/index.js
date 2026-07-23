@@ -1,10 +1,10 @@
-import Socket from './services/socket'
+import Socket from './services/socket';
 
 export default {
   install(app) {
-    const socket = new Socket()
+    const socket = new Socket();
 
-    app.config.globalProperties.$socket = socket
-    app.provide('$socket', socket)
+    app.config.globalProperties.$socket = socket;
+    app.provide('$socket', socket);
   },
-}
+};

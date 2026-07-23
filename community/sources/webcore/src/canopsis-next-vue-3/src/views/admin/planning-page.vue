@@ -51,20 +51,25 @@
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue';
 
-import { GROUPED_USER_PERMISSIONS_KEYS, MODALS, PLANNING_TABS, USER_PERMISSIONS } from '@/constants'
+import {
+  GROUPED_USER_PERMISSIONS_KEYS,
+  MODALS,
+  PLANNING_TABS,
+  USER_PERMISSIONS,
+} from '@/constants';
 
-import { useCRUDPermissions } from '@/hooks/auth'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception'
-import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason'
-import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type'
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
+import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
-import PlanningExceptions from '@/components/other/pbehavior/exceptions/planning-exceptions.vue'
-import PlanningReasons from '@/components/other/pbehavior/reasons/planning-reasons.vue'
-import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue'
+import PlanningExceptions from '@/components/other/pbehavior/exceptions/planning-exceptions.vue';
+import PlanningReasons from '@/components/other/pbehavior/reasons/planning-reasons.vue';
+import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
 
 export default {
   components: {
@@ -74,30 +79,30 @@ export default {
   },
 
   setup() {
-    const { t } = useI18n()
-    const modals = useModals()
+    const { t } = useI18n();
+    const modals = useModals();
 
     const {
       hasCreateAccess: hasCreateAnyPbehaviorTypeAccess,
       hasReadAccess: hasReadAnyPbehaviorTypeAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.planningType)
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.planningType);
     const {
       hasCreateAccess: hasCreateAnyPbehaviorReasonAccess,
       hasReadAccess: hasReadAnyPbehaviorReasonAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.planningReason)
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.planningReason);
     const {
       hasCreateAccess: hasCreateAnyPbehaviorExceptionAccess,
       hasReadAccess: hasReadAnyPbehaviorExceptionAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.planningExceptions)
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.planningExceptions);
 
-    const { fetchPbehaviorTypesListWithPreviousParams, createPbehaviorType } = usePbehaviorType()
+    const { fetchPbehaviorTypesListWithPreviousParams, createPbehaviorType } = usePbehaviorType();
     const { fetchPbehaviorReasonsListWithPreviousParams, createPbehaviorReason } =
-      usePbehaviorReason()
+      usePbehaviorReason();
     const {
       fetchPbehaviorExceptionsListWithPreviousParams,
       createPbehaviorException,
       importPbehaviorException,
-    } = usePbehaviorException()
+    } = usePbehaviorException();
 
     const availableTabs = computed(() =>
       [
@@ -105,9 +110,9 @@ export default {
         hasReadAnyPbehaviorReasonAccess.value && PLANNING_TABS.reasons,
         hasReadAnyPbehaviorExceptionAccess.value && PLANNING_TABS.exceptions,
       ].filter(Boolean),
-    )
+    );
 
-    const activeTab = ref(availableTabs.value[0] || PLANNING_TABS.types)
+    const activeTab = ref(availableTabs.value[0] || PLANNING_TABS.types);
     const tooltipText = computed(
       () =>
         ({
@@ -115,7 +120,7 @@ export default {
           [PLANNING_TABS.reasons]: t('modals.createPbehaviorReason.create.title'),
           [PLANNING_TABS.exceptions]: t('modals.createPbehaviorException.create.title'),
         })[activeTab.value],
-    )
+    );
     const hasCreateAccess = computed(
       () =>
         ({
@@ -123,83 +128,83 @@ export default {
           [PLANNING_TABS.reasons]: hasCreateAnyPbehaviorReasonAccess.value,
           [PLANNING_TABS.exceptions]: hasCreateAnyPbehaviorExceptionAccess.value,
         })[activeTab.value],
-    )
-    const isExceptionTab = computed(() => activeTab.value === PLANNING_TABS.exceptions)
+    );
+    const isExceptionTab = computed(() => activeTab.value === PLANNING_TABS.exceptions);
 
     watch(availableTabs, (tabs) => {
       if (!tabs.includes(activeTab.value)) {
-        activeTab.value = tabs[0] || PLANNING_TABS.types
+        activeTab.value = tabs[0] || PLANNING_TABS.types;
       }
-    })
+    });
 
     const refresh = () => {
       switch (activeTab.value) {
         case PLANNING_TABS.types:
-          fetchPbehaviorTypesListWithPreviousParams()
-          break
+          fetchPbehaviorTypesListWithPreviousParams();
+          break;
         case PLANNING_TABS.reasons:
-          fetchPbehaviorReasonsListWithPreviousParams()
-          break
+          fetchPbehaviorReasonsListWithPreviousParams();
+          break;
         case PLANNING_TABS.exceptions:
-          fetchPbehaviorExceptionsListWithPreviousParams()
-          break
+          fetchPbehaviorExceptionsListWithPreviousParams();
+          break;
       }
-    }
+    };
 
     const showCreateTypeModal = () =>
       modals.show({
         name: MODALS.createPbehaviorType,
         config: {
           action: async (data) => {
-            await createPbehaviorType({ data })
-            await fetchPbehaviorTypesListWithPreviousParams()
+            await createPbehaviorType({ data });
+            await fetchPbehaviorTypesListWithPreviousParams();
           },
         },
-      })
+      });
 
     const showCreateReasonModal = () =>
       modals.show({
         name: MODALS.createPbehaviorReason,
         config: {
           action: async (data) => {
-            await createPbehaviorReason({ data })
-            await fetchPbehaviorReasonsListWithPreviousParams()
+            await createPbehaviorReason({ data });
+            await fetchPbehaviorReasonsListWithPreviousParams();
           },
         },
-      })
+      });
 
     const showCreateExceptionModal = () =>
       modals.show({
         name: MODALS.createPbehaviorException,
         config: {
           action: async (data) => {
-            await createPbehaviorException({ data })
-            await fetchPbehaviorExceptionsListWithPreviousParams()
+            await createPbehaviorException({ data });
+            await fetchPbehaviorExceptionsListWithPreviousParams();
           },
         },
-      })
+      });
 
     const showImportExceptionsModal = () =>
       modals.show({
         name: MODALS.importPbehaviorException,
         config: {
           action: async (data) => {
-            await importPbehaviorException({ data })
-            await fetchPbehaviorExceptionsListWithPreviousParams()
+            await importPbehaviorException({ data });
+            await fetchPbehaviorExceptionsListWithPreviousParams();
           },
         },
-      })
+      });
 
     const create = () => {
       switch (activeTab.value) {
         case PLANNING_TABS.types:
-          showCreateTypeModal()
-          break
+          showCreateTypeModal();
+          break;
         case PLANNING_TABS.reasons:
-          showCreateReasonModal()
-          break
+          showCreateReasonModal();
+          break;
       }
-    }
+    };
 
     return {
       GROUPED_USER_PERMISSIONS_KEYS,
@@ -216,9 +221,9 @@ export default {
       showCreateExceptionModal,
       showImportExceptionsModal,
       t,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

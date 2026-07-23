@@ -24,9 +24,9 @@ export default {
   defaultTheme: 'Default theme',
   versionDescriptionTooltip: 'Tooltip popup on version banner',
   defaultVersionDescription: `<div>
-  <div>Edition:<strong> {{ edition }}</strong></div>
-  <div>Serial name:<strong> {{ serialName }}</strong></div>
-  <div>Version updated:<strong> {{ timestamp versionUpdated }}</strong></div>
+  <div>Edition:<strong> {'{{ edition }}'}</strong></div>
+  <div>Serial name:<strong> {'{{ serialName }}'}</strong></div>
+  <div>Version updated:<strong> {'{{ timestamp versionUpdated }}'}</strong></div>
 </div>`,
   tooltips: {
     maxMatchedItems:
@@ -34,4 +34,4 @@ export default {
     checkCountRequestTimeout:
       'it need to define request timeout value for max matched items checking',
   },
-}
+};

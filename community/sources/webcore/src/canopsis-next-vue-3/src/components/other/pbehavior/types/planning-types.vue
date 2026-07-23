@@ -14,20 +14,20 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
+import { onMounted } from 'vue';
 
-import { MODALS, USER_PERMISSIONS } from '@/constants'
+import { MODALS, USER_PERMISSIONS } from '@/constants';
 
-import { convertQueryToRequest } from '@/helpers/query'
+import { convertQueryToRequest } from '@/helpers/query';
 
-import { useCRUDPermissions } from '@/hooks/auth'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { usePopups } from '@/hooks/popups'
-import { useLocalQueryWithOptions } from '@/hooks/query/shared'
-import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type'
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
-import PbehaviorTypesList from './pbehavior-types-list.vue'
+import PbehaviorTypesList from './pbehavior-types-list.vue';
 
 export default {
   components: {
@@ -48,15 +48,15 @@ export default {
       pbehaviorTypesMeta,
       fetchPbehaviorTypesList,
       removePbehaviorType,
-    } = usePbehaviorType()
+    } = usePbehaviorType();
 
     const { hasUpdateAccess, hasDeleteAccess } = useCRUDPermissions(
       USER_PERMISSIONS.technical.planningType,
-    )
+    );
 
-    const modals = useModals()
-    const popups = usePopups()
-    const { t } = useI18n()
+    const modals = useModals();
+    const popups = usePopups();
+    const { t } = useI18n();
 
     const {
       options,
@@ -71,28 +71,28 @@ export default {
             with_hidden: true,
           },
         }),
-    })
+    });
 
     const tryRemovePbehaviorType = async (id) => {
       try {
-        await removePbehaviorType({ id })
+        await removePbehaviorType({ id });
       } catch (err) {
-        popups.error({ text: err.error || t('errors.default') })
+        popups.error({ text: err.error || t('errors.default') });
       }
-    }
+    };
 
     const showRemovePbehaviorTypeModal = (id) =>
       modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await tryRemovePbehaviorType(id)
-            await fetchList()
+            await tryRemovePbehaviorType(id);
+            await fetchList();
           },
         },
-      })
+      });
 
-    onMounted(fetchList)
+    onMounted(fetchList);
 
     return {
       pbehaviorTypes,
@@ -104,7 +104,7 @@ export default {
       fetchList,
       updateOptions,
       showRemovePbehaviorTypeModal,
-    }
+    };
   },
-}
+};
 </script>

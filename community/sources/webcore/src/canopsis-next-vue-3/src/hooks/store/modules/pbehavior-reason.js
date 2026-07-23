@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { usePbehaviorReasonStore } from '@/stores/modules/pbehavior-reason'
+import { usePbehaviorReasonStore } from '@/stores/modules/pbehavior-reason';
 
 /**
  * Pbehavior reason store hook.
@@ -8,8 +8,8 @@ import { usePbehaviorReasonStore } from '@/stores/modules/pbehavior-reason'
  * @returns {Object}
  */
 export const usePbehaviorReason = () => {
-  const pbehaviorReasonStore = usePbehaviorReasonStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorReasonStore)
+  const pbehaviorReasonStore = usePbehaviorReasonStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorReasonStore);
 
   return {
     pbehaviorReasons: items,
@@ -26,5 +26,5 @@ export const usePbehaviorReason = () => {
     bulkHidePbehaviorReasons: pbehaviorReasonStore.bulkHide,
     bulkUnhidePbehaviorReasons: pbehaviorReasonStore.bulkUnhide,
     bulkRemovePbehaviorReasons: pbehaviorReasonStore.bulkRemove,
-  }
-}
+  };
+};

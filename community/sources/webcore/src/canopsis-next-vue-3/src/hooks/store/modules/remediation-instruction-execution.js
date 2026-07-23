@@ -1,4 +1,4 @@
-import { useRemediationInstructionExecutionStore } from '@/stores/modules/remediation-instruction-execution'
+import { useRemediationInstructionExecutionStore } from '@/stores/modules/remediation-instruction-execution';
 
 /**
  * Remediation instruction execution store facade.
@@ -6,7 +6,7 @@ import { useRemediationInstructionExecutionStore } from '@/stores/modules/remedi
  * @returns {Object}
  */
 export const useRemediationInstructionExecution = () => {
-  const store = useRemediationInstructionExecutionStore()
+  const store = useRemediationInstructionExecutionStore();
 
   return {
     fetchRemediationInstructionExecutionWithoutStore: store.fetchItemWithoutStore,
@@ -23,5 +23,5 @@ export const useRemediationInstructionExecution = () => {
     resumeRemediationInstructionExecution: store.resume,
     fetchAlarmRemediationInstructionExecutionsWithoutStore: store.fetchAlarmExecutionsWithoutStore,
     readRemediationInstructionExecution: store.read,
-  }
-}
+  };
+};

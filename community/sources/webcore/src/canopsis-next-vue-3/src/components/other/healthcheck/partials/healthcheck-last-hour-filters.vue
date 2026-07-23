@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import HealthcheckConnectorNamesField from '../form/fields/healthcheck-connector-names-field.vue'
-import HealthcheckEventTypesField from '../form/fields/healthcheck-event-types-field.vue'
+import HealthcheckConnectorNamesField from '../form/fields/healthcheck-connector-names-field.vue';
+import HealthcheckEventTypesField from '../form/fields/healthcheck-event-types-field.vue';
 
 export default {
   components: {
@@ -34,7 +34,7 @@ export default {
   },
 
   emits: ['update:event-types', 'update:connector-names'],
-}
+};
 </script>
 
 <style lang="scss">

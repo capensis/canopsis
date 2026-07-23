@@ -30,10 +30,7 @@
           @update:model-value="updateField('sort_by', $event)"
         />
       </v-col>
-      <v-col
-        class="ml-3"
-        cols="6"
-      >
+      <v-col class="ml-3" cols="6">
         <c-select
           :model-value="form.sort"
           :items="sortOrders"
@@ -57,13 +54,7 @@
       @update:condition="updateCondition(index, $event)"
       @remove="removeCondition(index)"
     />
-    <v-btn
-      v-if="!disabled"
-      class="ml-0 mb-0"
-      color="primary"
-      outlined
-      @click="addCondition"
-    >
+    <v-btn v-if="!disabled" class="ml-0 mb-0" color="primary" outlined @click="addCondition">
       {{ $t('common.addMore') }}
     </v-btn>
   </c-layout>
@@ -79,14 +70,12 @@ import { externalDataItemConditionAttributeToForm } from '@/helpers/entities/sha
 
 import { useModelField } from '@/hooks/form/model-field';
 
-import ExternalDataTableTableField
-  from '@/components/other/external-data-table/form/fields/external-data-table-table-field.vue';
+import ExternalDataTableTableField from '@/components/other/external-data-table/form/fields/external-data-table-table-field.vue';
 
 import ExternalDataTableConditionForm from './external-data-table-condition-form.vue';
 
 export default {
   emits: ['update:form'],
-  inject: ['$validator'],
   components: { ExternalDataTableTableField, ExternalDataTableConditionForm },
   props: {
     form: {
@@ -103,7 +92,7 @@ export default {
     },
     variables: {
       type: Array,
-      default: () => ([]),
+      default: () => [],
     },
     optionally: {
       type: Boolean,
@@ -113,7 +102,7 @@ export default {
   setup(props, { emit }) {
     const { updateField } = useModelField(props, emit);
 
-    const sortOrders = Object.values(SORT_ORDERS).map(order => order.toLowerCase());
+    const sortOrders = Object.values(SORT_ORDERS).map((order) => order.toLowerCase());
     const columns = ref([]);
 
     const hasOnlyOneCondition = computed(() => props.form.conditions.length === 1);
@@ -140,21 +129,23 @@ export default {
     /**
      * Adds a new condition to the external data table form.
      */
-    const addCondition = () => updateField('conditions', [
-      ...props.form.conditions,
+    const addCondition = () =>
+      updateField('conditions', [
+        ...props.form.conditions,
 
-      externalDataItemConditionAttributeToForm(),
-    ]);
+        externalDataItemConditionAttributeToForm(),
+      ]);
 
     /**
      * Removes a condition from the external data table form by index.
      *
      * @param {number} index - The index of the condition to remove from the conditions array
      */
-    const removeCondition = index => updateField(
-      'conditions',
-      props.form.conditions.filter((condition, conditionIndex) => index !== conditionIndex),
-    );
+    const removeCondition = (index) =>
+      updateField(
+        'conditions',
+        props.form.conditions.filter((condition, conditionIndex) => index !== conditionIndex),
+      );
 
     /**
      * Updates the available columns based on selected external data table.
@@ -165,7 +156,8 @@ export default {
      * @param {string} tables[0].column_configs[].type - Column data type
      * @param {string} tables[0].column_configs[].name - Column name identifier
      */
-    const updateSelectedItems = ([table = {}] = []) => columns.value = table?.column_configs ?? [];
+    const updateSelectedItems = ([table = {}] = []) =>
+      (columns.value = table?.column_configs ?? []);
 
     return {
       columns,

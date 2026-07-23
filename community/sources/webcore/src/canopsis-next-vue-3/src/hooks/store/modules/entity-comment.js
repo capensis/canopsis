@@ -1,4 +1,4 @@
-import { useEntityCommentStore } from '@/stores/modules/entity-comment'
+import { useEntityCommentStore } from '@/stores/modules/entity-comment';
 
 /**
  * Entity comment store facade.
@@ -6,11 +6,11 @@ import { useEntityCommentStore } from '@/stores/modules/entity-comment'
  * @returns {Object}
  */
 export const useEntityComment = () => {
-  const entityCommentStore = useEntityCommentStore()
+  const entityCommentStore = useEntityCommentStore();
 
   return {
     createEntityComment: entityCommentStore.create,
     updateEntityComment: entityCommentStore.update,
     fetchEntityCommentsListWithoutStore: entityCommentStore.fetchListWithoutStore,
-  }
-}
+  };
+};

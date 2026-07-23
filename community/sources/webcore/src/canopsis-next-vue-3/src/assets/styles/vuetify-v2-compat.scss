@@ -164,7 +164,11 @@ $v2-spacer: 4px;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   font-feature-settings: 'liga';
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
 }
 
 .v-icon.material-symbols-outlined,
@@ -203,7 +207,11 @@ $v2-spacer: 4px;
 }
 
 .v-icon--no-fill {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24 !important;
 }
 
 .v-btn--size-default {
@@ -218,6 +226,24 @@ $v2-spacer: 4px;
   --v-field-label-scale: 0.75rem;
 }
 
+.c-field {
+  .v-field {
+    min-height: 48px;
+    height: 48px;
+  }
+
+  .v-field__field,
+  .v-field__input,
+  .v-field__append-inner,
+  .v-field__prepend-inner {
+    min-height: 48px;
+  }
+
+  .v-field__input {
+    align-items: center;
+  }
+}
+
 .v-application table {
   th,
   td {
@@ -226,23 +252,23 @@ $v2-spacer: 4px;
 
   tbody tr {
     &:hover {
-      background: rgba(var(--v-theme-on-surface), .04) !important;
+      background: rgba(var(--v-theme-on-surface), 0.04) !important;
     }
   }
 }
 
-.v-btn.v-btn--variant-elevated:not([class*="bg-"]) {
+.v-btn.v-btn--variant-elevated:not([class*='bg-']) {
   color: rgb(var(--v-theme-on-surface));
 }
 
-.v-btn:not(.v-btn--round).v-btn--size-default{
+.v-btn:not(.v-btn--round).v-btn--size-default {
   padding: 0 16px;
 }
 
 .v-application .text-subtitle-1 {
   font-size: 1.1428571429rem !important;
   font-weight: 400;
-  letter-spacing: .009375em !important;
+  letter-spacing: 0.009375em !important;
 }
 
 .v-application .text-h4 {

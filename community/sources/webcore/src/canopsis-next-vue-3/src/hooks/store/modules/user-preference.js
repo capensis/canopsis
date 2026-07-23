@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useUserPreferenceStore } from '@/stores/modules/user-preference'
+import { useUserPreferenceStore } from '@/stores/modules/user-preference';
 
 /**
  * User preference store facade.
@@ -8,8 +8,8 @@ import { useUserPreferenceStore } from '@/stores/modules/user-preference'
  * @returns {Object}
  */
 export const useUserPreference = () => {
-  const userPreferenceStore = useUserPreferenceStore()
-  const { items, itemsByWidget, pending, getItemByWidgetId } = storeToRefs(userPreferenceStore)
+  const userPreferenceStore = useUserPreferenceStore();
+  const { items, itemsByWidget, pending, getItemByWidgetId } = storeToRefs(userPreferenceStore);
 
   return {
     userPreferences: items,
@@ -21,5 +21,5 @@ export const useUserPreference = () => {
     fetchUserPreferenceWithoutStore: userPreferenceStore.fetchItemWithoutStore,
     updateUserPreference: userPreferenceStore.update,
     updateLocalUserPreference: userPreferenceStore.updateLocal,
-  }
-}
+  };
+};

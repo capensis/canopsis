@@ -12,7 +12,7 @@ export const isBroadcastMessageViewMatchingRoute = (
   routeView,
   routeId,
   currentView,
-) => [routeView, routeId, currentView?.group?._id].includes(activeMessageView)
+) => [routeView, routeId, currentView?.group?._id].includes(activeMessageView);
 
 /**
  * Checks if an active broadcast message should be visible on the current route
@@ -34,4 +34,4 @@ export const isActiveBroadcastMessageVisibleOnRoute = (
   maintenance ||
   (messageViews || []).some((messageView) =>
     isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
-  )
+  );

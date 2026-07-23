@@ -1,12 +1,6 @@
 <template>
-  <v-row
-    justify="space-between"
-    align="start"
-  >
-    <v-col
-      class="pr-2"
-      cols="6"
-    >
+  <v-row class="request-url-field ga-2 flex-nowrap" align="start" no-gutters>
+    <v-col class="request-url-field__column" cols="6">
       <c-select
         :model-value="method"
         :items="availableMethods"
@@ -17,10 +11,8 @@
         @update:model-value="$emit('update:method', $event)"
       />
     </v-col>
-    <v-col
-      class="pl-2"
-      cols="6"
-    >
+
+    <v-col class="request-url-field__column" cols="6">
       <c-payload-text-field
         :value="url"
         :label="urlLabel || $t('common.url')"
@@ -30,16 +22,8 @@
         required
         @update:value="$emit('update:url', $event)"
       >
-        <template
-          v-if="helpText"
-          #append=""
-        >
-          <c-help-icon
-            :text="helpText"
-            icon="help"
-            color="grey darken-1"
-            left
-          />
+        <template v-if="helpText" #append="">
+          <c-help-icon :text="helpText" icon="help" color="grey darken-1" left />
         </template>
       </c-payload-text-field>
     </v-col>
@@ -53,7 +37,6 @@ import { REQUEST_METHODS } from '@/constants';
 
 export default {
   emits: ['update:method', 'update:url'],
-  inject: ['$validator'],
   props: {
     method: {
       type: String,
@@ -88,7 +71,6 @@ export default {
       default: () => [],
     },
   },
-
   setup(props) {
     const availableMethods = Object.values(REQUEST_METHODS);
     const methodFieldName = computed(() => `${props.name}.method`);
@@ -102,3 +84,13 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.request-url-field {
+  &__column {
+    flex: 0 0 calc(50% - 4px);
+    max-width: calc(50% - 4px);
+    min-width: 0;
+  }
+}
+</style>

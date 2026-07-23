@@ -14,20 +14,20 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
+import { onMounted } from 'vue';
 
-import { MODALS, USER_PERMISSIONS } from '@/constants'
+import { MODALS, USER_PERMISSIONS } from '@/constants';
 
-import { convertQueryToRequest } from '@/helpers/query'
+import { convertQueryToRequest } from '@/helpers/query';
 
-import { useCRUDPermissions } from '@/hooks/auth'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { usePopups } from '@/hooks/popups'
-import { useLocalQueryWithOptions } from '@/hooks/query/shared'
-import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception'
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
+import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
 
-import PbehaviorExceptionsList from './pbehavior-exceptions-list.vue'
+import PbehaviorExceptionsList from './pbehavior-exceptions-list.vue';
 
 export default {
   components: {
@@ -48,15 +48,15 @@ export default {
       pbehaviorExceptionsMeta,
       fetchPbehaviorExceptionsList,
       removePbehaviorException,
-    } = usePbehaviorException()
+    } = usePbehaviorException();
 
     const { hasUpdateAccess, hasDeleteAccess } = useCRUDPermissions(
       USER_PERMISSIONS.technical.planningExceptions,
-    )
+    );
 
-    const modals = useModals()
-    const popups = usePopups()
-    const { t } = useI18n()
+    const modals = useModals();
+    const popups = usePopups();
+    const { t } = useI18n();
 
     const {
       options,
@@ -71,28 +71,28 @@ export default {
             with_hidden: true,
           },
         }),
-    })
+    });
 
     const tryRemovePbehaviorException = async (id) => {
       try {
-        await removePbehaviorException({ id })
+        await removePbehaviorException({ id });
       } catch (err) {
-        popups.error({ text: err.error || t('errors.default') })
+        popups.error({ text: err.error || t('errors.default') });
       }
-    }
+    };
 
     const showRemovePbehaviorExceptionModal = (id) =>
       modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await tryRemovePbehaviorException(id)
-            await fetchList()
+            await tryRemovePbehaviorException(id);
+            await fetchList();
           },
         },
-      })
+      });
 
-    onMounted(fetchList)
+    onMounted(fetchList);
 
     return {
       pbehaviorExceptions,
@@ -104,7 +104,7 @@ export default {
       fetchList,
       updateOptions,
       showRemovePbehaviorExceptionModal,
-    }
+    };
   },
-}
+};
 </script>

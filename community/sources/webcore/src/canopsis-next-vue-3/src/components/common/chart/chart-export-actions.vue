@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { canvasToBlob } from '@/helpers/charts/canvas'
+import { canvasToBlob } from '@/helpers/charts/canvas';
 
 export default {
   props: {
@@ -42,11 +42,11 @@ export default {
   methods: {
     async exportChartAsPng() {
       if (!this.chart) {
-        return
+        return;
       }
 
-      this.$emit('export:png', await canvasToBlob(this.chart.canvas))
+      this.$emit('export:png', await canvasToBlob(this.chart.canvas));
     },
   },
-}
+};
 </script>

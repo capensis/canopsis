@@ -25,9 +25,9 @@
 </template>
 
 <script>
-import { isArray, omit } from 'lodash'
+import { isArray, omit } from 'lodash';
 
-import { ALARM_METRIC_PARAMETERS } from '@/constants'
+import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
   props: {
@@ -65,11 +65,11 @@ export default {
 
   computed: {
     isMultiple() {
-      return isArray(this.value)
+      return isArray(this.value);
     },
 
     isMinValueLength() {
-      return this.value?.length === this.min
+      return this.value?.length === this.min;
     },
 
     availableParameters() {
@@ -79,32 +79,32 @@ export default {
           (this.disabledParameters.includes(value) && !this.isActiveValue(value)) ||
           (this.isMinValueLength && this.isActiveValue(value)),
         text: this.$t(`alarm.metrics.${value}`),
-      }))
+      }));
     },
   },
 
   methods: {
     isActiveValue(value) {
-      return this.isMultiple ? this.value.includes(value) : this.value === value
+      return this.isMultiple ? this.value.includes(value) : this.value === value;
     },
 
     getSelectionLabel(item) {
       if (this.isMinValueLength) {
-        return this.getItemText(item)
+        return this.getItemText(item);
       }
 
-      return this.$t('common.parametersToDisplay', { count: this.value.length })
+      return this.$t('common.parametersToDisplay', { count: this.value.length });
     },
 
     getItemText(item) {
-      const preparedItem = item?.raw ?? item
-      const value = preparedItem?.value ?? preparedItem?.props?.value ?? preparedItem
+      const preparedItem = item?.raw ?? item;
+      const value = preparedItem?.value ?? preparedItem?.props?.value ?? preparedItem;
       const parameter = this.availableParameters.find(
         ({ value: parameterValue }) => parameterValue === value,
-      )
+      );
 
-      return parameter?.text ?? preparedItem?.text ?? preparedItem?.title ?? ''
+      return parameter?.text ?? preparedItem?.text ?? preparedItem?.title ?? '';
     },
   },
-}
+};
 </script>

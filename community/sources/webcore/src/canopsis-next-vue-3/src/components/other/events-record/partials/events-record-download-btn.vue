@@ -13,11 +13,11 @@
 </template>
 
 <script>
-import { computed, toRef } from 'vue'
+import { computed, toRef } from 'vue';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
-import { useEventsRecordExportJson } from '../hooks/export-json'
+import { useEventsRecordExportJson } from '../hooks/export-json';
 
 export default {
   props: {
@@ -44,20 +44,20 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const eventIds = computed(() => (props.eventId ? [props.eventId] : props.eventIds))
+    const { t } = useI18n();
+    const eventIds = computed(() => (props.eventId ? [props.eventId] : props.eventIds));
 
     const { downloading, exportJson } = useEventsRecordExportJson({
       eventIds,
       eventPattern: toRef(props, 'eventPattern'),
       eventsRecordId: toRef(props, 'eventsRecordId'),
-    })
+    });
 
     return {
       t,
       downloading,
       exportJson,
-    }
+    };
   },
-}
+};
 </script>

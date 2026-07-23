@@ -51,18 +51,18 @@
 </template>
 
 <script>
-import { DATETIME_FORMATS } from '@/constants'
+import { DATETIME_FORMATS } from '@/constants';
 
 import {
   getDateObjectByDate,
   getDateObjectByTime,
   normalizeTimeString,
-} from '@/helpers/date/date-time-picker'
-import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date'
+} from '@/helpers/date/date-time-picker';
+import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
 
-import { formBaseMixin } from '@/mixins/form'
+import { formBaseMixin } from '@/mixins/form';
 
-import TimePickerField from '../time-picker/time-picker-field.vue'
+import TimePickerField from '../time-picker/time-picker-field.vue';
 
 export default {
   components: { TimePickerField },
@@ -97,62 +97,62 @@ export default {
   data() {
     return {
       localValue: this.value ? convertDateToDateObject(this.value) : null,
-    }
+    };
   },
   computed: {
     valueString() {
-      return convertDateToString(this.localValue, this.dateFormat, '--/--/----')
+      return convertDateToString(this.localValue, this.dateFormat, '--/--/----');
     },
 
     timeString() {
-      return convertDateToString(this.localValue, DATETIME_FORMATS.timePicker, null)
+      return convertDateToString(this.localValue, DATETIME_FORMATS.timePicker, null);
     },
 
     dateValue() {
-      return this.localValue ? convertDateToDateObject(this.localValue) : null
+      return this.localValue ? convertDateToDateObject(this.localValue) : null;
     },
 
     allowedTime() {
       if (!this.allowedDates || !this.value) {
-        return () => true
+        return () => true;
       }
 
       return (time) => {
-        const [hours, minutes] = normalizeTimeString(time).split(':')
-        const currentDate = convertDateToDateObject(this.value)
+        const [hours, minutes] = normalizeTimeString(time).split(':');
+        const currentDate = convertDateToDateObject(this.value);
 
-        currentDate.setHours(hours, minutes)
+        currentDate.setHours(hours, minutes);
 
-        return this.allowedDates?.(currentDate)
-      }
+        return this.allowedDates?.(currentDate);
+      };
     },
   },
   watch: {
     value() {
       if (this.value !== this.localValue) {
-        this.localValue = this.value ? convertDateToDateObject(this.value) : null
+        this.localValue = this.value ? convertDateToDateObject(this.value) : null;
       }
     },
   },
   methods: {
     updateTime(time) {
-      this.localValue = getDateObjectByTime(this.localValue, time)
+      this.localValue = getDateObjectByTime(this.localValue, time);
     },
 
     updateDate(date) {
       const preparedDate =
-        date instanceof Date ? convertDateToString(date, DATETIME_FORMATS.datePicker) : date
+        date instanceof Date ? convertDateToString(date, DATETIME_FORMATS.datePicker) : date;
 
-      this.localValue = getDateObjectByDate(this.localValue, preparedDate)
+      this.localValue = getDateObjectByDate(this.localValue, preparedDate);
     },
 
     submit() {
-      this.updateModel(this.localValue)
+      this.updateModel(this.localValue);
 
-      this.$emit('close')
+      this.$emit('close');
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

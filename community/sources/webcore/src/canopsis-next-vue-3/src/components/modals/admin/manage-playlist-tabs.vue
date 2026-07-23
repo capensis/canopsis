@@ -23,14 +23,14 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref } from 'vue';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { usePendingHandler } from '@/hooks/query/pending'
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePendingHandler } from '@/hooks/query/pending';
 
-import ManagePlaylistTabsForm from '@/components/other/playlists/form/manage-playlist-tabs-form.vue'
+import ManagePlaylistTabsForm from '@/components/other/playlists/form/manage-playlist-tabs-form.vue';
 
 export default {
   components: { ManagePlaylistTabsForm },
@@ -43,23 +43,23 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const modals = useModals()
-    const config = computed(() => props.modal.config ?? {})
-    const selectedTabs = ref(config.value.selectedTabs ?? [])
-    const groups = computed(() => config.value.groups ?? [])
-    const closeModal = () => modals.hide({ id: props.modal.id })
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const selectedTabs = ref(config.value.selectedTabs ?? []);
+    const groups = computed(() => config.value.groups ?? []);
+    const closeModal = () => modals.hide({ id: props.modal.id });
     const { pending: submitting, handler: submit } = usePendingHandler(async () => {
-      await config.value.action?.(selectedTabs.value)
+      await config.value.action?.(selectedTabs.value);
 
-      closeModal()
-    })
+      closeModal();
+    });
 
     useFormConfirmableCloseModal({
       form: selectedTabs,
       submit,
       close: closeModal,
-    })
+    });
 
     return {
       t,
@@ -68,7 +68,7 @@ export default {
       submitting,
       closeModal,
       submit,
-    }
+    };
   },
-}
+};
 </script>

@@ -23,23 +23,23 @@
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue';
 
-import { MAX_LIMIT } from '@/constants'
+import { MAX_LIMIT } from '@/constants';
 
 import {
   formToPlaylist,
   getTabsFromGroupsByIds,
   playlistToForm,
-} from '@/helpers/entities/playlist/form'
+} from '@/helpers/entities/playlist/form';
 
-import { useForm } from '@/hooks/form'
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { useView } from '@/hooks/store/modules/view'
+import { useForm } from '@/hooks/form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useView } from '@/hooks/store/modules/view';
 
-import PlaylistForm from '@/components/other/playlists/form/playlist-form.vue'
+import PlaylistForm from '@/components/other/playlists/form/playlist-form.vue';
 
 export default {
   components: { PlaylistForm },
@@ -52,53 +52,53 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const modals = useModals()
-    const { fetchViewGroupsListWithoutStore } = useView()
-    const config = computed(() => props.modal.config ?? {})
-    const playlist = computed(() => config.value.playlist)
-    const isNew = computed(() => !playlist.value?._id || config.value.duplicating)
+    const { t } = useI18n();
+    const modals = useModals();
+    const { fetchViewGroupsListWithoutStore } = useView();
+    const config = computed(() => props.modal.config ?? {});
+    const playlist = computed(() => config.value.playlist);
+    const isNew = computed(() => !playlist.value?._id || config.value.duplicating);
     const title = computed(() => {
-      const mode = config.value.duplicating ? 'duplicate' : isNew.value ? 'create' : 'edit'
+      const mode = config.value.duplicating ? 'duplicate' : isNew.value ? 'create' : 'edit';
 
-      return config.value.title || t(`modals.createPlaylist.${mode}.title`)
-    })
-    const playlistGroups = ref([])
-    const tabsPending = ref(false)
+      return config.value.title || t(`modals.createPlaylist.${mode}.title`);
+    });
+    const playlistGroups = ref([]);
+    const tabsPending = ref(false);
 
     const form = useForm({
       initialValues: playlistToForm(playlist.value),
-    })
-    const { values, handleSubmit, submitting, reset, setFieldError, setFieldTouched } = form
+    });
+    const { values, handleSubmit, submitting, reset, setFieldError, setFieldTouched } = form;
 
-    const closeModal = () => modals.hide({ id: props.modal.id })
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
     const submit = handleSubmit(async () => {
       if (!values.value.tabs_list.length) {
-        setFieldTouched('tabs', true)
-        setFieldError('tabs', t('modals.createPlaylist.errors.emptyTabs'))
+        setFieldTouched('tabs', true);
+        setFieldError('tabs', t('modals.createPlaylist.errors.emptyTabs'));
 
-        return
+        return;
       }
 
-      const result = await config.value.action?.(formToPlaylist(values.value))
+      const result = await config.value.action?.(formToPlaylist(values.value));
 
-      await config.value.afterSubmit?.(result)
+      await config.value.afterSubmit?.(result);
 
-      closeModal()
+      closeModal();
 
-      return result
-    })
+      return result;
+    });
 
     const { updateOriginalForm } = useFormConfirmableCloseModal({
       form: values,
       submit,
       close: closeModal,
-    })
+    });
 
     const fetchGroups = async () => {
       try {
-        tabsPending.value = true
+        tabsPending.value = true;
 
         const { data = [] } = await fetchViewGroupsListWithoutStore({
           params: {
@@ -106,24 +106,24 @@ export default {
             with_views: true,
             with_tabs: true,
           },
-        })
+        });
 
-        playlistGroups.value = data
+        playlistGroups.value = data;
 
         if (playlist.value?.tabs_list?.length) {
           reset({
             ...values.value,
 
             tabs_list: getTabsFromGroupsByIds(data, playlist.value.tabs_list),
-          })
-          updateOriginalForm()
+          });
+          updateOriginalForm();
         }
       } finally {
-        tabsPending.value = false
+        tabsPending.value = false;
       }
-    }
+    };
 
-    onMounted(fetchGroups)
+    onMounted(fetchGroups);
 
     return {
       t,
@@ -133,7 +133,7 @@ export default {
       submitting,
       closeModal,
       submit,
-    }
+    };
   },
-}
+};
 </script>

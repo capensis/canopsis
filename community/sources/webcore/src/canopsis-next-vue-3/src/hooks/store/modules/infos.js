@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useInfosStore } from '@/stores/modules/infos'
+import { useInfosStore } from '@/stores/modules/infos';
 
 /**
  * Infos store facade.
@@ -8,8 +8,8 @@ import { useInfosStore } from '@/stores/modules/infos'
  * @returns {Object}
  */
 export const useInfos = () => {
-  const infosStore = useInfosStore()
-  const { alarmInfos, alarmInfosRules, entityInfos, pending } = storeToRefs(infosStore)
+  const infosStore = useInfosStore();
+  const { alarmInfos, alarmInfosRules, entityInfos, pending } = storeToRefs(infosStore);
 
   return {
     alarmInfos,
@@ -17,5 +17,5 @@ export const useInfos = () => {
     entityInfos,
     infosPending: pending,
     fetchInfos: infosStore.fetch,
-  }
-}
+  };
+};

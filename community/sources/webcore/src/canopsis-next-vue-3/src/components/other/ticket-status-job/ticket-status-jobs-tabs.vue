@@ -15,13 +15,13 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref } from 'vue';
 
-import { JOBS_TABS } from '@/constants'
+import { JOBS_TABS } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
-import TicketStatusJobsTabItem from './ticket-status-jobs-tab-item.vue'
+import TicketStatusJobsTabItem from './ticket-status-jobs-tab-item.vue';
 
 export default {
   components: {
@@ -29,19 +29,19 @@ export default {
   },
 
   setup() {
-    const { t } = useI18n()
+    const { t } = useI18n();
     const tabs = computed(() =>
       Object.values(JOBS_TABS).map((tab) => ({
         id: tab,
         label: t(`jobs.tabs.${tab}`),
       })),
-    )
-    const activeTab = ref(tabs.value[0]?.id ?? JOBS_TABS.ticketStatus)
+    );
+    const activeTab = ref(tabs.value[0]?.id ?? JOBS_TABS.ticketStatus);
 
     return {
       activeTab,
       tabs,
-    }
+    };
   },
-}
+};
 </script>

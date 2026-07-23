@@ -1,8 +1,8 @@
-import { API_ROUTES } from '@/config'
+import { API_ROUTES } from '@/config';
 
-import request from '@/services/request'
+import request from '@/services/request';
 
-import { createCRUDStore } from '@/stores/plugins/crud'
+import { createCRUDStore } from '@/stores/plugins/crud';
 
 export const useSnmpRuleStore = createCRUDStore({
   id: 'snmpRule',
@@ -13,15 +13,15 @@ export const useSnmpRuleStore = createCRUDStore({
   withWithoutStore: true,
   actions: {
     bulkEnable({ data } = {}) {
-      return request.put(API_ROUTES.bulkSnmpRuleEnable, data)
+      return request.put(API_ROUTES.bulkSnmpRuleEnable, data);
     },
 
     bulkDisable({ data } = {}) {
-      return request.put(API_ROUTES.bulkSnmpRuleDisable, data)
+      return request.put(API_ROUTES.bulkSnmpRuleDisable, data);
     },
 
     bulkRemove({ data } = {}) {
-      return request.delete(API_ROUTES.bulkSnmpRule, { data })
+      return request.delete(API_ROUTES.bulkSnmpRule, { data });
     },
   },
-})
+});

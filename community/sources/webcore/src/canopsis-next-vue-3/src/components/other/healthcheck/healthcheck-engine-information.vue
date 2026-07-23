@@ -24,9 +24,9 @@
 </template>
 
 <script>
-import { HEALTHCHECK_ENGINES_NAMES, HEALTHCHECK_SERVICES_NAMES, PRO_ENGINES } from '@/constants'
+import { HEALTHCHECK_ENGINES_NAMES, HEALTHCHECK_SERVICES_NAMES, PRO_ENGINES } from '@/constants';
 
-import HealthcheckEngineInstanceDiagram from './partials/healthcheck-engine-instance-diagram.vue'
+import HealthcheckEngineInstanceDiagram from './partials/healthcheck-engine-instance-diagram.vue';
 
 export default {
   components: { HealthcheckEngineInstanceDiagram },
@@ -44,27 +44,27 @@ export default {
 
   computed: {
     name() {
-      return this.getNodeName(this.engine.name)
+      return this.getNodeName(this.engine.name);
     },
 
     isProEngine() {
-      return PRO_ENGINES.includes(this.engine.name)
+      return PRO_ENGINES.includes(this.engine.name);
     },
 
     queueLength() {
-      return this.engine.queue_length
+      return this.engine.queue_length;
     },
 
     instances() {
-      return this.engine.instances
+      return this.engine.instances;
     },
 
     minInstances() {
-      return this.engine.min_instances
+      return this.engine.min_instances;
     },
 
     optimalInstances() {
-      return this.engine.optimal_instances
+      return this.engine.optimal_instances;
     },
 
     systemDownMessage() {
@@ -72,18 +72,18 @@ export default {
         {
           [HEALTHCHECK_ENGINES_NAMES.fifo]: 'healthcheck.engineDown',
           [HEALTHCHECK_SERVICES_NAMES.timescaleDB]: 'healthcheck.timescaleDown',
-        }[this.engine.name] || 'healthcheck.engineDownOrSlow'
+        }[this.engine.name] || 'healthcheck.engineDownOrSlow';
 
-      return this.$t(messageKey, { name: this.name })
+      return this.$t(messageKey, { name: this.name });
     },
   },
 
   methods: {
     getNodeName(name) {
-      const nodeLabelKey = `healthcheck.nodes.${name}.name`
+      const nodeLabelKey = `healthcheck.nodes.${name}.name`;
 
-      return this.$te(nodeLabelKey) ? this.$t(nodeLabelKey) : name
+      return this.$te(nodeLabelKey) ? this.$t(nodeLabelKey) : name;
     },
   },
-}
+};
 </script>

@@ -1,6 +1,6 @@
-import { mapActions, mapState, mapStores } from 'pinia'
+import { mapActions, mapState, mapStores } from 'pinia';
 
-import { useTemplateVarsStore } from '@/stores/modules/template-vars'
+import { useTemplateVarsStore } from '@/stores/modules/template-vars';
 
 export const entitiesTemplateVarsMixin = {
   computed: {
@@ -16,6 +16,6 @@ export const entitiesTemplateVarsMixin = {
       fetchTemplateVars: 'fetchList',
     }),
   },
-}
+};
 
-export default entitiesTemplateVarsMixin
+export default entitiesTemplateVarsMixin;

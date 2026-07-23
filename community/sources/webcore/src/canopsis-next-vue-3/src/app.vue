@@ -1,15 +1,9 @@
 <template>
-  <v-app
-    id="app"
-    :class="appClass"
-  >
+  <v-app id="app" :class="appClass">
     <c-progress-overlay :pending="wholePending" />
 
     <c-layout v-if="!wholePending">
-      <the-navigation
-        id="main-navigation"
-        v-if="shownAppShell"
-      />
+      <the-navigation id="main-navigation" v-if="shownAppShell" />
 
       <v-main id="main-content">
         <active-broadcast-message />
@@ -24,37 +18,37 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash';
 
 import {
   LOCAL_STORAGE_ACCESS_TOKEN_KEY,
   LOCAL_STORAGE_WARNING_POPUP_KEY,
   SOCKET_ROOMS,
   SOCKET_URL,
-} from '@/config'
-import { EXCLUDED_SERVER_ERROR_STATUSES, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants'
+} from '@/config';
+import { EXCLUDED_SERVER_ERROR_STATUSES, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
 
-import Socket from '@/plugins/socket/services/socket'
+import Socket from '@/plugins/socket/services/socket';
 
-import localStorageService from '@/services/local-storage'
+import localStorageService from '@/services/local-storage';
 
-import { reloadPageWithTrailingSlashes } from '@/helpers/url'
+import { reloadPageWithTrailingSlashes } from '@/helpers/url';
 
-import { appRemediationInstructionExecutionsPopupsMixin } from '@/mixins/app/remediation-instruction-executions-popups'
-import { authMixin } from '@/mixins/auth'
-import { entitiesInfoMixin } from '@/mixins/entities/info'
-import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars'
-import { entitiesUserMixin } from '@/mixins/entities/user'
-import { shownHeaderMixin } from '@/mixins/shown-header'
-import { systemMixin } from '@/mixins/system'
-import { vuetifyCustomIconsRegisterMixin } from '@/mixins/vuetify/custom-icons/register'
+import { appRemediationInstructionExecutionsPopupsMixin } from '@/mixins/app/remediation-instruction-executions-popups';
+import { authMixin } from '@/mixins/auth';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars';
+import { entitiesUserMixin } from '@/mixins/entities/user';
+import { shownHeaderMixin } from '@/mixins/shown-header';
+import { systemMixin } from '@/mixins/system';
+import { vuetifyCustomIconsRegisterMixin } from '@/mixins/vuetify/custom-icons/register';
 
-import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue'
-import TheNavigation from '@/components/layout/navigation/the-navigation.vue'
-import TheSidebar from '@/components/layout/sidebar/the-sidebar.vue'
+import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
+import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
+import TheSidebar from '@/components/layout/sidebar/the-sidebar.vue';
 
-import '@/assets/styles/main.scss'
-import '@/assets/styles/vuetify-v2-compat.scss'
+import '@/assets/styles/main.scss';
+import '@/assets/styles/vuetify-v2-compat.scss';
 
 export default {
   name: 'App',
@@ -80,7 +74,7 @@ export default {
     return {
       currentUserLocalPending: true,
       appInfoLocalPending: true,
-    }
+    };
   },
 
   computed: {
@@ -88,27 +82,27 @@ export default {
       return {
         'v-app--side-bar-groups': this.isShownGroupsSideBar,
         'v-app--disabled-transitions': this.disabledTransitions,
-      }
+      };
     },
 
     wholePending() {
-      return this.currentUserLocalPending || this.appInfoLocalPending || this.templateVarsPending
+      return this.currentUserLocalPending || this.appInfoLocalPending || this.templateVarsPending;
     },
 
     shownAppShell() {
-      return !!this.currentUser && this.shownHeader
+      return !!this.currentUser && this.shownHeader;
     },
 
     routeViewKey() {
       switch (this.$route.name) {
         case ROUTES_NAMES.view:
-          return this.$route.path
+          return this.$route.path;
 
         case ROUTES_NAMES.notifications:
-          return this.$route.name
+          return this.$route.name;
 
         default:
-          return this.$route.fullPath
+          return this.$route.fullPath;
       }
     },
   },
@@ -119,55 +113,55 @@ export default {
   },
 
   beforeCreate() {
-    reloadPageWithTrailingSlashes()
+    reloadPageWithTrailingSlashes();
   },
 
   created() {
-    this.socketConnectWithErrorHandling()
+    this.socketConnectWithErrorHandling();
   },
 
   async mounted() {
-    this.showLocalStorageWarningPopupMessage()
+    this.showLocalStorageWarningPopupMessage();
 
     await Promise.all([
       this.fetchCurrentUserWithErrorHandling(),
       this.fetchTemplateVarsWithErrorHandling(),
       this.fetchIconsWithRegistering(),
-    ])
+    ]);
 
-    await this.fetchAppInfoWithErrorHandling()
+    await this.fetchAppInfoWithErrorHandling();
 
-    this.registerCurrentUserOnceWatcher()
+    this.registerCurrentUserOnceWatcher();
 
     if (!this.isLoggedIn) {
-      this.setTheme(this.defaultColorTheme)
+      this.setTheme(this.defaultColorTheme);
     }
   },
 
   methods: {
     showLocalStorageWarningPopupMessage() {
-      const text = localStorageService.pop(LOCAL_STORAGE_WARNING_POPUP_KEY)
+      const text = localStorageService.pop(LOCAL_STORAGE_WARNING_POPUP_KEY);
 
       if (text) {
-        this.$popups.warning({ text, autoClose: false })
+        this.$popups.warning({ text, autoClose: false });
       }
     },
 
     registerCurrentUserOnceWatcher() {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
-          this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY))
+          this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
 
-          this.setTheme(currentUser.ui_theme_colors)
-          this.filesAccess()
+          this.setTheme(currentUser.ui_theme_colors);
+          this.filesAccess();
 
           if (this.isProVersion) {
-            this.runExecutionsPopups()
+            this.runExecutionsPopups();
           }
 
-          unwatch()
+          unwatch();
         }
-      })
+      });
     },
 
     socketConnectWithErrorHandling() {
@@ -175,34 +169,40 @@ export default {
         this.$socket
           .connect(SOCKET_URL)
           .on(Socket.EVENTS_TYPES.error, this.socketErrorHandler)
-          .on(Socket.EVENTS_TYPES.networkError, this.socketConnectionFailureHandler)
+          .on(Socket.EVENTS_TYPES.networkError, this.socketConnectionFailureHandler);
       } catch (err) {
         this.$popups.error({
           text: this.$t('errors.socketConnectionProblem'),
           autoClose: false,
-        })
+        });
 
-        console.error(err)
+        console.error(err);
       }
     },
 
     socketErrorHandler({ message, error } = {}) {
       if (!message) {
-        return
+        return;
       }
 
-      const { room } = error ?? {}
-      const statusCode = +message
+      const { room } = error ?? {};
+      const statusCode = +message;
 
-      if (statusCode === RESPONSE_STATUSES.unauthorized || message === Socket.ERROR_MESSAGES.authenticationFailed) {
-        localStorageService.set(LOCAL_STORAGE_WARNING_POPUP_KEY, this.$t('warnings.authTokenExpired'))
-        this.logout()
+      if (
+        statusCode === RESPONSE_STATUSES.unauthorized ||
+        message === Socket.ERROR_MESSAGES.authenticationFailed
+      ) {
+        localStorageService.set(
+          LOCAL_STORAGE_WARNING_POPUP_KEY,
+          this.$t('warnings.authTokenExpired'),
+        );
+        this.logout();
 
-        return
+        return;
       }
 
       if (room === SOCKET_ROOMS.llmChat) {
-        return
+        return;
       }
 
       const textKey = {
@@ -210,66 +210,66 @@ export default {
         [RESPONSE_STATUSES.forbidden]: 'errors.socketConnectionRoomForbidden',
         [RESPONSE_STATUSES.badRequest]: 'errors.socketConnectionRoomBadRequest',
         [RESPONSE_STATUSES.internalServerError]: 'errors.socketConnectionRoomInternalServerError',
-      }[statusCode]
+      }[statusCode];
 
-      const text = textKey && this.$te?.(textKey) ? this.$t(textKey) : message
+      const text = textKey && this.$te?.(textKey) ? this.$t(textKey) : message;
 
-      this.$popups.error({ text })
+      this.$popups.error({ text });
     },
 
     socketConnectionFailureHandler() {
       this.$popups.error({
         text: this.$t('errors.socketConnectionProblem'),
         autoClose: false,
-      })
+      });
     },
 
     async fetchCurrentUserWithErrorHandling() {
       try {
-        this.currentUserLocalPending = true
+        this.currentUserLocalPending = true;
 
-        await this.fetchCurrentUser()
+        await this.fetchCurrentUser();
       } catch (err) {
         if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
-          this.$router.push({ name: ROUTES_NAMES.error })
+          this.$router.push({ name: ROUTES_NAMES.error });
         }
 
-        console.error(err)
+        console.error(err);
       } finally {
-        this.currentUserLocalPending = false
+        this.currentUserLocalPending = false;
       }
     },
 
     async fetchAppInfoWithErrorHandling() {
       try {
-        this.appInfoLocalPending = true
-        await this.fetchAppInfo()
+        this.appInfoLocalPending = true;
+        await this.fetchAppInfo();
 
         this.setSystemData({
           timezone: this.timezone,
-        })
+        });
 
-        this.setTitle()
+        this.setTitle();
       } catch (err) {
         if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
-          this.$router.push({ name: ROUTES_NAMES.error })
+          this.$router.push({ name: ROUTES_NAMES.error });
         }
 
-        console.error(err)
+        console.error(err);
       } finally {
-        this.appInfoLocalPending = false
+        this.appInfoLocalPending = false;
       }
     },
 
     async fetchTemplateVarsWithErrorHandling() {
       try {
-        await this.fetchTemplateVars()
+        await this.fetchTemplateVars();
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

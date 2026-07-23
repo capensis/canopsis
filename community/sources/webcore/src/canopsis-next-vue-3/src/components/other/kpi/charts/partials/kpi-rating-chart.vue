@@ -18,24 +18,24 @@
 </template>
 
 <script>
-import { COLORS } from '@/config'
+import { COLORS } from '@/config';
 import {
   DATETIME_FORMATS,
   KPI_SLI_GRAPH_BAR_PERCENTAGE,
   TIME_UNITS,
   USER_METRIC_PARAMETERS,
-} from '@/constants'
+} from '@/constants';
 
-import { colorToRgba } from '@/helpers/color'
+import { colorToRgba } from '@/helpers/color';
 import {
   convertDurationToMaxUnitDuration,
   convertDurationToString,
   fromSeconds,
-} from '@/helpers/date/duration'
-import { isRatioMetric, isTimeMetric } from '@/helpers/entities/metric/form'
+} from '@/helpers/date/duration';
+import { isRatioMetric, isTimeMetric } from '@/helpers/entities/metric/form';
 
-import BarChart from '@/components/common/chart/bar-chart.vue'
-import ChartExportActions from '@/components/common/chart/chart-export-actions.vue'
+import BarChart from '@/components/common/chart/bar-chart.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 export default {
   inject: ['$system'],
@@ -68,18 +68,18 @@ export default {
 
   computed: {
     labels() {
-      return this.metrics.map(({ label }) => label)
+      return this.metrics.map(({ label }) => label);
     },
 
     maxValue() {
-      return Math.max(...this.metrics.map(({ value }) => value), 0)
+      return Math.max(...this.metrics.map(({ value }) => value), 0);
     },
 
     maxDuration() {
       return convertDurationToMaxUnitDuration({
         value: this.maxValue,
         unit: TIME_UNITS.second,
-      })
+      });
     },
 
     datasets() {
@@ -89,23 +89,23 @@ export default {
           barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
           data: this.metrics.map(({ value }) => this.convertValueByMetric(value)),
         },
-      ]
+      ];
     },
 
     isTimeMetric() {
-      return isTimeMetric(this.metric)
+      return isTimeMetric(this.metric);
     },
 
     isRatioMetric() {
-      return isRatioMetric(this.metric)
+      return isRatioMetric(this.metric);
     },
 
     maxValueByMetric() {
       if (this.isRatioMetric) {
-        return 100
+        return 100;
       }
 
-      return undefined
+      return undefined;
     },
 
     ratingChartOptions() {
@@ -148,38 +148,38 @@ export default {
             },
           },
         },
-      }
+      };
     },
   },
 
   methods: {
     convertValueByMetric(value) {
       if (!this.isTimeMetric) {
-        return value
+        return value;
       }
 
-      return fromSeconds(value, this.maxDuration.unit)
+      return fromSeconds(value, this.maxDuration.unit);
     },
 
     getChartYTick(value) {
       if (this.isTimeMetric) {
-        return `${value}${this.maxDuration.unit}`
+        return `${value}${this.maxDuration.unit}`;
       }
 
       if (this.isRatioMetric) {
-        return `${value}%`
+        return `${value}%`;
       }
 
-      return value
+      return value;
     },
 
     getChartTooltipLabel({ raw }) {
       const value = this.isTimeMetric
         ? convertDurationToString(raw, DATETIME_FORMATS.refreshFieldFormat, this.maxDuration.unit)
-        : raw
+        : raw;
 
-      return this.$t(`kpi.metrics.tooltip.${this.metric}`, { value })
+      return this.$t(`kpi.metrics.tooltip.${this.metric}`, { value });
     },
   },
-}
+};
 </script>

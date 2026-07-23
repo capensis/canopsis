@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useAlarmStore } from '@/stores/modules/alarm'
+import { useAlarmStore } from '@/stores/modules/alarm';
 
 /**
  * Alarm store facade.
@@ -8,11 +8,11 @@ import { useAlarmStore } from '@/stores/modules/alarm'
  * @returns {Object}
  */
 export const useAlarm = () => {
-  const alarmStore = useAlarmStore()
-  const refs = storeToRefs(alarmStore)
+  const alarmStore = useAlarmStore();
+  const refs = storeToRefs(alarmStore);
 
   return {
     ...refs,
     ...alarmStore,
-  }
-}
+  };
+};

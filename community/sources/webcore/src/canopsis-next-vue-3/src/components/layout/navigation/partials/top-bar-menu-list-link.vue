@@ -7,35 +7,26 @@
     @mouseenter="handleMouseEnter"
   >
     <template #prepend>
-      <v-icon
-        :color="link.color || undefined"
-        size="24"
-      >
+      <v-icon :color="link.color || undefined" size="24">
         {{ link.icon }}
       </v-icon>
     </template>
 
     <v-list-item-title :class="{ [`text-${link.color}`]: link.color }">
-      <c-layout
-        align="center"
-        justify="space-between"
-      >
+      <c-layout align="center" justify="space-between">
         <span>{{ link.title }}</span>
       </c-layout>
     </v-list-item-title>
 
-    <template
-      v-if="link.links"
-      #append
-    >
+    <template v-if="link.links" #append>
       <v-icon>arrow_right</v-icon>
     </template>
   </v-list-item>
 </template>
 
 <script>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
   props: {
@@ -48,39 +39,39 @@ export default {
   emits: ['click', 'mouseenter'],
 
   setup(props, { emit }) {
-    const router = useRouter()
+    const router = useRouter();
 
-    const disabled = computed(() => (
-      props.link.route?.name && !router.hasRoute(props.link.route.name)
-    ))
+    const disabled = computed(
+      () => props.link.route?.name && !router.hasRoute(props.link.route.name),
+    );
 
     const click = async () => {
       if (props.link.links?.length) {
-        return
+        return;
       }
 
       if (props.link.handler) {
-        await props.link.handler()
-        emit('click')
+        await props.link.handler();
+        emit('click');
 
-        return
+        return;
       }
 
       if (props.link.route && !disabled.value) {
-        await router.push(props.link.route)
-        emit('click')
+        await router.push(props.link.route);
+        emit('click');
       }
-    }
+    };
 
-    const handleMouseEnter = event => emit('mouseenter', event)
+    const handleMouseEnter = (event) => emit('mouseenter', event);
 
     return {
       disabled,
       click,
       handleMouseEnter,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

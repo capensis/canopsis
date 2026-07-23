@@ -1,5 +1,5 @@
 <template>
-  <c-layout class="gap-3" column>
+  <c-layout gap="3" column>
     <c-enabled-field v-model="enabled" with-background />
 
     <c-name-field v-model="name" autofocus required />
@@ -43,15 +43,15 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { MODALS } from '@/constants'
+import { MODALS } from '@/constants';
 
-import { useFormContext, useFormModels } from '@/hooks/form'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
+import { useFormContext, useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
-import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue'
+import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue';
 
 export default {
   components: { DraggablePlaylistTabs },
@@ -68,25 +68,25 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const modals = useModals()
-    const form = useFormContext()
+    const { t } = useI18n();
+    const modals = useModals();
+    const form = useFormContext();
     const { name, enabled, fullscreen, tabsList } = useFormModels({
       name: 'name',
       enabled: 'enabled',
       fullscreen: 'fullscreen',
       tabsList: 'tabs_list',
-    })
+    });
 
-    const hasTabsError = computed(() => !!form.errors.value.tabs)
+    const hasTabsError = computed(() => !!form.errors.value.tabs);
 
     const updateTabsList = (tabs) => {
-      form.setValue('tabs_list', tabs)
+      form.setValue('tabs_list', tabs);
 
       if (tabs.length) {
-        form.setFieldError('tabs', undefined)
+        form.setFieldError('tabs', undefined);
       }
-    }
+    };
 
     const showManageTabsModal = () =>
       modals.show({
@@ -96,7 +96,7 @@ export default {
           selectedTabs: tabsList.value,
           action: updateTabsList,
         },
-      })
+      });
 
     return {
       t,
@@ -107,7 +107,7 @@ export default {
       hasTabsError,
       updateTabsList,
       showManageTabsModal,
-    }
+    };
   },
-}
+};
 </script>

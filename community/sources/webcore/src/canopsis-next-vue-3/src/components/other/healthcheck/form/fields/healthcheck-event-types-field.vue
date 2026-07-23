@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { HEALTHCHECK_EVENT_TYPES } from '@/constants'
+import { HEALTHCHECK_EVENT_TYPES } from '@/constants';
 
 export default {
   props: {
@@ -36,10 +36,10 @@ export default {
       return Object.values(HEALTHCHECK_EVENT_TYPES).map((value) => ({
         value,
         text: value,
-      }))
+      }));
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

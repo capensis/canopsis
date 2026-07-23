@@ -1,18 +1,18 @@
 export const appRemediationInstructionExecutionsPopupsMixin = {
   beforeUnmount() {
-    this.leaveFromSimpleManualExecutions()
+    this.leaveFromSimpleManualExecutions();
   },
 
   computed: {
     hasExecuteInstructionAccess() {
-      return false
+      return false;
     },
   },
 
   methods: {
     runExecutionsPopups() {
-      this.joinToSimpleManualExecutions()
-      this.showPausedExecutionsPopup()
+      this.joinToSimpleManualExecutions();
+      this.showPausedExecutionsPopup();
     },
 
     showInstructionPopup() {},
@@ -22,9 +22,9 @@ export const appRemediationInstructionExecutionsPopupsMixin = {
     leaveFromSimpleManualExecutions() {},
 
     showPausedExecutionsPopup() {
-      return Promise.resolve()
+      return Promise.resolve();
     },
   },
-}
+};
 
-export default appRemediationInstructionExecutionsPopupsMixin
+export default appRemediationInstructionExecutionsPopupsMixin;

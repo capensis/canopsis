@@ -64,7 +64,7 @@
 export const groupWithViewsToPositions = (group = {}) => ({
   _id: group._id,
   views: group.views.map((view) => view._id),
-})
+});
 
 /**
  * Convert view groups with views to view group with view positions
@@ -72,4 +72,4 @@ export const groupWithViewsToPositions = (group = {}) => ({
  * @param {ViewGroupWithViews[]} [groups = []]
  * @return {ViewGroupWithViewsPosition[]}
  */
-export const groupsWithViewsToPositions = (groups = []) => groups.map(groupWithViewsToPositions)
+export const groupsWithViewsToPositions = (groups = []) => groups.map(groupWithViewsToPositions);

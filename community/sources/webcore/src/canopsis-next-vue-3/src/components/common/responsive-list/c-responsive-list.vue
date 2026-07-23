@@ -1,18 +1,10 @@
 <template>
-  <c-layout
-    class="c-responsive-list"
-    align="center"
-    gap="0"
-  >
-    <div
-      ref="listContainer"
-      :class="layoutClass"
-      class="c-responsive-list__container"
-    >
+  <c-layout class="c-responsive-list" align="center" gap="0">
+    <div ref="listContainer" :class="layoutClass" class="c-responsive-list__container">
       <div
         v-for="item in visibleItems"
         :key="item.key"
-        :ref="element => setItemRef(item.key, element)"
+        :ref="(element) => setItemRef(item.key, element)"
       >
         <slot :item="item">
           {{ getValue(item) }}
@@ -20,11 +12,7 @@
       </div>
     </div>
 
-    <v-menu
-      v-if="shownMenu"
-      location="bottom end"
-      origin="top end"
-    >
+    <v-menu v-if="shownMenu" location="bottom end" origin="top end">
       <template #activator="{ props: activatorProps }">
         <v-btn
           class="c-responsive-list__menu-button text-white"
@@ -38,11 +26,7 @@
       </template>
 
       <v-list class="py-0">
-        <div
-          v-for="item in hiddenItems"
-          :key="item.key"
-          class="bg-white"
-        >
+        <div v-for="item in hiddenItems" :key="item.key" class="bg-white">
           <slot :item="item">
             {{ getValue(item) }}
           </slot>
@@ -78,128 +62,126 @@ export default {
       itemsWidthByKey: {},
       itemRefsByKey: {},
       resizeObserver: null,
-    }
+    };
   },
 
   computed: {
     itemsWithKey() {
-      return this.items.map(item => ({
+      return this.items.map((item) => ({
         ...item,
         key: this.getKey(item),
-      }))
+      }));
     },
 
     shownMenu() {
-      return this.itemsWithKey.length !== this.visibleItems.length
+      return this.itemsWithKey.length !== this.visibleItems.length;
     },
 
     visibleItems() {
-      return this.visible
-        ? this.getVisibleItems(this.itemsWithKey)
-        : this.itemsWithKey
+      return this.visible ? this.getVisibleItems(this.itemsWithKey) : this.itemsWithKey;
     },
 
     hiddenItems() {
-      return this.itemsWithKey.slice(this.visibleItems.length)
+      return this.itemsWithKey.slice(this.visibleItems.length);
     },
 
     layoutClass() {
-      return { 'c-responsive-list__container--hidden': !this.visible }
+      return { 'c-responsive-list__container--hidden': !this.visible };
     },
   },
 
   watch: {
     items: {
       handler() {
-        this.setItemsWidth()
+        this.setItemsWidth();
       },
       deep: true,
     },
 
     $route() {
-      this.setItemsWidth()
+      this.setItemsWidth();
     },
   },
 
   mounted() {
-    this.resizeObserver = new ResizeObserver(this.setItemsWidth)
-    this.resizeObserver.observe(this.$refs.listContainer)
+    this.resizeObserver = new ResizeObserver(this.setItemsWidth);
+    this.resizeObserver.observe(this.$refs.listContainer);
 
-    this.setItemsWidth()
+    this.setItemsWidth();
   },
 
   beforeUnmount() {
-    this.resizeObserver?.disconnect()
+    this.resizeObserver?.disconnect();
   },
 
   methods: {
     getKey(item) {
-      return item[this.itemKey]
+      return item[this.itemKey];
     },
 
     getValue(item) {
-      return item[this.itemValue]
+      return item[this.itemValue];
     },
 
     setItemRef(key, element) {
       if (element) {
-        this.itemRefsByKey[key] = element
+        this.itemRefsByKey[key] = element;
       } else {
-        delete this.itemRefsByKey[key]
+        delete this.itemRefsByKey[key];
       }
     },
 
     getVisibleItems(items = []) {
-      let availableWidth = this.containerWidth
-      const results = []
+      let availableWidth = this.containerWidth;
+      const results = [];
 
       for (const item of items) {
-        const key = this.getKey(item)
+        const key = this.getKey(item);
 
-        availableWidth -= this.itemsWidthByKey[key] || 0
+        availableWidth -= this.itemsWidthByKey[key] || 0;
 
         if (availableWidth <= 0) {
-          break
+          break;
         }
 
-        results.push(item)
+        results.push(item);
       }
 
-      return results
+      return results;
     },
 
     getItemsWidthByKey(items = []) {
       return items.reduce((acc, item) => {
-        const key = this.getKey(item)
-        const element = this.itemRefsByKey[key]
+        const key = this.getKey(item);
+        const element = this.itemRefsByKey[key];
 
         if (element) {
-          const { width } = element.getBoundingClientRect()
+          const { width } = element.getBoundingClientRect();
 
-          acc[key] = width
+          acc[key] = width;
         }
 
-        return acc
-      }, {})
+        return acc;
+      }, {});
     },
 
     setItemsWidth() {
-      this.setContainerWidth()
-      this.visible = false
+      this.setContainerWidth();
+      this.visible = false;
 
       this.$nextTick(() => {
-        this.itemsWidthByKey = this.getItemsWidthByKey(this.itemsWithKey)
-        this.visible = true
-      })
+        this.itemsWidthByKey = this.getItemsWidthByKey(this.itemsWithKey);
+        this.visible = true;
+      });
     },
 
     setContainerWidth() {
-      const { width: availableWidth } = this.$refs.listContainer.getBoundingClientRect()
+      const { width: availableWidth } = this.$refs.listContainer.getBoundingClientRect();
 
-      this.containerWidth = availableWidth
+      this.containerWidth = availableWidth;
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

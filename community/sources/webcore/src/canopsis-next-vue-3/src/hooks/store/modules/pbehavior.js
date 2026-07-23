@@ -1,9 +1,9 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { pickIds } from '@/helpers/array'
+import { pickIds } from '@/helpers/array';
 
-import { usePbehaviorStore } from '@/stores/modules/pbehavior'
-import { usePbehaviorComment } from '@/hooks/store/modules/pbehavior-comment'
+import { usePbehaviorStore } from '@/stores/modules/pbehavior';
+import { usePbehaviorComment } from '@/hooks/store/modules/pbehavior-comment';
 
 /**
  * Pbehavior store facade.
@@ -11,12 +11,12 @@ import { usePbehaviorComment } from '@/hooks/store/modules/pbehavior-comment'
  * @returns {Object}
  */
 export const usePbehavior = () => {
-  const pbehaviorStore = usePbehaviorStore()
-  const pbehaviorCommentModule = usePbehaviorComment()
-  const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorStore)
+  const pbehaviorStore = usePbehaviorStore();
+  const pbehaviorCommentModule = usePbehaviorComment();
+  const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorStore);
 
   const removePbehaviors = (pbehaviors = []) =>
-    pbehaviorStore.bulkRemove({ data: pickIds(pbehaviors) })
+    pbehaviorStore.bulkRemove({ data: pickIds(pbehaviors) });
 
   return {
     pbehaviors: items,
@@ -51,5 +51,5 @@ export const usePbehavior = () => {
     ...pbehaviorCommentModule,
 
     removePbehaviors,
-  }
-}
+  };
+};

@@ -17,11 +17,7 @@
         @update:action="updateItemInArray(index, $event)"
         @remove="removeItemFromArray(index)"
       />
-      <v-btn
-        :color="errors.has(name) ? 'error' : 'primary'"
-        outlined
-        @click="addAction"
-      >
+      <v-btn :color="errors.has(name) ? 'error' : 'primary'" outlined @click="addAction">
         {{ $t('eventFilter.addAction') }}
       </v-btn>
     </c-draggable-list-field>
@@ -38,7 +34,6 @@ import { useArrayModelField } from '@/hooks/form/array-model-field';
 import EventFilterEnrichmentActionField from './event-filter-enrichment-action-field.vue';
 
 export default {
-  inject: ['$validator'],
   emits: ['update:actions'],
   components: { EventFilterEnrichmentActionField },
   props: {
@@ -64,21 +59,19 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const {
-      updateModel,
-      addItemIntoArray,
-      updateItemInArray,
-      removeItemFromArray,
-    } = useArrayModelField(props, emit);
+    const { updateModel, addItemIntoArray, updateItemInArray, removeItemFromArray } =
+      useArrayModelField(props, emit);
 
     const addAction = () => addItemIntoArray(eventFilterActionToForm());
-
-    useArrayFieldValidation({
+    const field = useArrayFieldValidation({
       modelValue: props.actions,
       name: props.name,
     });
 
     return {
+      errors: {
+        has: () => field.errors.value.length > 0,
+      },
       updateModel,
       updateItemInArray,
       removeItemFromArray,

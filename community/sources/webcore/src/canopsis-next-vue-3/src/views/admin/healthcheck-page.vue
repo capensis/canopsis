@@ -73,20 +73,20 @@
 </template>
 
 <script>
-import isEqual from 'lodash/isEqual'
+import isEqual from 'lodash/isEqual';
 
-import { SOCKET_ROOMS } from '@/config'
-import { CRUD_ACTIONS, USER_PERMISSIONS } from '@/constants'
+import { SOCKET_ROOMS } from '@/config';
+import { CRUD_ACTIONS, USER_PERMISSIONS } from '@/constants';
 
-import { checkUserAccess } from '@/helpers/permission'
+import { checkUserAccess } from '@/helpers/permission';
 
-import { useAuthStore } from '@/stores/modules/auth'
-import { useHealthcheckStore } from '@/stores/modules/healthcheck'
+import { useAuthStore } from '@/stores/modules/auth';
+import { useHealthcheckStore } from '@/stores/modules/healthcheck';
 
-import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-network-graph.vue'
-import HealthcheckEnginesMetrics from '@/components/other/healthcheck/healthcheck-engines-metrics.vue'
-import HealthcheckGraphs from '@/components/other/healthcheck/healthcheck-graphs.vue'
-import HealthcheckParameters from '@/components/other/healthcheck/healthcheck-parameters.vue'
+import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-network-graph.vue';
+import HealthcheckEnginesMetrics from '@/components/other/healthcheck/healthcheck-engines-metrics.vue';
+import HealthcheckGraphs from '@/components/other/healthcheck/healthcheck-graphs.vue';
+import HealthcheckParameters from '@/components/other/healthcheck/healthcheck-parameters.vue';
 
 const HEALTHCHECK_TABS = {
   systemStatus: 'system-status',
@@ -94,7 +94,7 @@ const HEALTHCHECK_TABS = {
   graphs: 'graphs',
   parameters: 'parameters',
   enginesMetrics: 'engines-metrics',
-}
+};
 
 export default {
   components: {
@@ -117,26 +117,26 @@ export default {
       maxQueueLength: Infinity,
       maxMessagesLength: Infinity,
       hasServerError: false,
-    }
+    };
   },
 
   computed: {
     currentUserPermissionsById() {
-      return useAuthStore().currentUserPermissionsById
+      return useAuthStore().currentUserPermissionsById;
     },
 
     hasAccessToTechMetrics() {
       return checkUserAccess(
         this.currentUserPermissionsById[USER_PERMISSIONS.technical.techmetrics],
         CRUD_ACTIONS.can,
-      )
+      );
     },
 
     hasAccessToAnomalyMonitoredConnectors() {
       return checkUserAccess(
         this.currentUserPermissionsById[USER_PERMISSIONS.technical.anomalyMonitoredConnector],
         CRUD_ACTIONS.can,
-      )
+      );
     },
 
     availableTabs() {
@@ -146,35 +146,35 @@ export default {
         HEALTHCHECK_TABS.graphs,
         HEALTHCHECK_TABS.parameters,
         this.hasAccessToTechMetrics && HEALTHCHECK_TABS.enginesMetrics,
-      ].filter(Boolean)
+      ].filter(Boolean);
     },
 
     hasAnyError() {
-      return this.hasServerError || this.hasInvalidEnginesOrder
+      return this.hasServerError || this.hasInvalidEnginesOrder;
     },
   },
 
   watch: {
     availableTabs(tabs) {
       if (!tabs.includes(this.activeTab)) {
-        this.activeTab = tabs[0] || HEALTHCHECK_TABS.systemStatus
+        this.activeTab = tabs[0] || HEALTHCHECK_TABS.systemStatus;
       }
     },
   },
 
   mounted() {
-    this.fetchList()
-    this.$socket.join(SOCKET_ROOMS.healthcheck).addListener(this.setData)
+    this.fetchList();
+    this.$socket.join(SOCKET_ROOMS.healthcheck).addListener(this.setData);
   },
 
   beforeUnmount() {
-    this.$socket.leave(SOCKET_ROOMS.healthcheck).removeListener(this.setData)
+    this.$socket.leave(SOCKET_ROOMS.healthcheck).removeListener(this.setData);
   },
 
   methods: {
     updateIfChanged(currentValue, updateValue, nextValue) {
       if (!isEqual(currentValue, nextValue)) {
-        updateValue(nextValue)
+        updateValue(nextValue);
       }
     },
 
@@ -185,68 +185,68 @@ export default {
         has_invalid_engines_order: nextHasInvalidEnginesOrder = false,
         max_queue_length: nextMaxQueueLength,
         max_messages_length: nextMaxMessagesLength,
-      } = data
+      } = data;
 
       this.updateIfChanged(
         this.services,
         (value) => {
-          this.services = value
+          this.services = value;
         },
         nextServices,
-      )
+      );
       this.updateIfChanged(
         this.enginesGraph,
         (value) => {
-          this.enginesGraph = value
+          this.enginesGraph = value;
         },
         nextEnginesGraph,
-      )
+      );
       this.updateIfChanged(
         this.enginesParameters,
         (value) => {
-          this.enginesParameters = value
+          this.enginesParameters = value;
         },
         nextEnginesParameters,
-      )
+      );
       this.updateIfChanged(
         this.hasInvalidEnginesOrder,
         (value) => {
-          this.hasInvalidEnginesOrder = value
+          this.hasInvalidEnginesOrder = value;
         },
         nextHasInvalidEnginesOrder,
-      )
+      );
       this.updateIfChanged(
         this.maxQueueLength,
         (value) => {
-          this.maxQueueLength = value
+          this.maxQueueLength = value;
         },
         nextMaxQueueLength || Infinity,
-      )
+      );
       this.updateIfChanged(
         this.maxMessagesLength,
         (value) => {
-          this.maxMessagesLength = value
+          this.maxMessagesLength = value;
         },
         nextMaxMessagesLength || Infinity,
-      )
+      );
     },
 
     async fetchList() {
       try {
-        this.hasServerError = false
-        this.pending = true
+        this.hasServerError = false;
+        this.pending = true;
 
-        const data = await useHealthcheckStore().fetchHealthcheckEnginesWithoutStore()
+        const data = await useHealthcheckStore().fetchHealthcheckEnginesWithoutStore();
 
-        this.setData(data)
+        this.setData(data);
       } catch {
-        this.hasServerError = true
+        this.hasServerError = true;
       } finally {
-        this.pending = false
+        this.pending = false;
       }
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

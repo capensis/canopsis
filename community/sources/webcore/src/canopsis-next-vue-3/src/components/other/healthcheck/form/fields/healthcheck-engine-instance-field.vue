@@ -88,15 +88,15 @@ export default {
 
   computed: {
     enabledFieldName() {
-      return `${this.name}.enabled`
+      return `${this.name}.enabled`;
     },
 
     minimalFieldName() {
-      return `${this.name}.minimal`
+      return `${this.name}.minimal`;
     },
 
     optimalFieldName() {
-      return `${this.name}.optimal`
+      return `${this.name}.optimal`;
     },
   },
 
@@ -105,10 +105,10 @@ export default {
       this.$emit('input', {
         ...this.value,
         [field]: value,
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

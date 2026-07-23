@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useTagStore } from '@/stores/modules/tag'
+import { useTagStore } from '@/stores/modules/tag';
 
 /**
  * Tag store facade.
@@ -8,8 +8,8 @@ import { useTagStore } from '@/stores/modules/tag'
  * @returns {Object}
  */
 export const useTag = () => {
-  const tagStore = useTagStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(tagStore)
+  const tagStore = useTagStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(tagStore);
 
   return {
     tags: items,
@@ -23,5 +23,5 @@ export const useTag = () => {
     createTag: tagStore.create,
     updateTag: tagStore.update,
     removeTag: tagStore.remove,
-  }
-}
+  };
+};

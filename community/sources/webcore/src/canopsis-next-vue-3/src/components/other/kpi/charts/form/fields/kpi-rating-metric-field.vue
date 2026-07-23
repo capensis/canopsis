@@ -17,7 +17,7 @@ import {
   KPI_RATING_ENTITY_METRICS,
   KPI_RATING_SETTINGS_TYPES,
   KPI_RATING_USER_METRICS,
-} from '@/constants'
+} from '@/constants';
 
 export default {
   props: {
@@ -56,23 +56,23 @@ export default {
   computed: {
     availableMetrics() {
       if (this.metrics) {
-        return this.metrics
+        return this.metrics;
       }
 
       const metrics =
         this.type === KPI_RATING_SETTINGS_TYPES.entity
           ? KPI_RATING_ENTITY_METRICS
-          : KPI_RATING_USER_METRICS
+          : KPI_RATING_USER_METRICS;
 
       return metrics.map((value) => {
-        const alarmKey = `alarm.metrics.${value}`
+        const alarmKey = `alarm.metrics.${value}`;
 
         return {
           value,
           text: this.$te(alarmKey) ? this.$t(alarmKey) : this.$t(`user.metrics.${value}`),
-        }
-      })
+        };
+      });
     },
   },
-}
+};
 </script>

@@ -10,18 +10,18 @@
 </template>
 
 <script>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue';
 
-import { PAGINATION_LIMIT } from '@/config'
-import { JOBS_TABS } from '@/constants'
+import { PAGINATION_LIMIT } from '@/config';
+import { JOBS_TABS } from '@/constants';
 
-import { convertQueryToRequest } from '@/helpers/query'
+import { convertQueryToRequest } from '@/helpers/query';
 
-import { useI18n } from '@/hooks/i18n'
-import { useLocalQueryWithOptions } from '@/hooks/query/shared'
-import { useTicketStatusJob } from '@/hooks/store/modules/ticket-status-job'
+import { useI18n } from '@/hooks/i18n';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
+import { useTicketStatusJob } from '@/hooks/store/modules/ticket-status-job';
 
-import TicketStatusJobsTable from './ticket-status-jobs-table.vue'
+import TicketStatusJobsTable from './ticket-status-jobs-table.vue';
 
 export default {
   components: {
@@ -36,16 +36,16 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
+    const { t } = useI18n();
     const {
       ticketStatusJobs,
       ticketStatusJobsMeta,
       ticketStatusJobsPending,
       fetchTicketStatusJobsList,
-    } = useTicketStatusJob()
+    } = useTicketStatusJob();
 
     const headers = computed(() => {
-      const isTicketStatusTab = props.tabId === JOBS_TABS.ticketStatus
+      const isTicketStatusTab = props.tabId === JOBS_TABS.ticketStatus;
 
       return [
         { value: 'rule_name', text: t('jobs.ruleName'), sortable: true },
@@ -70,8 +70,8 @@ export default {
         { value: 'checked_at', text: t('jobs.finishDate'), sortable: true },
         { value: 'fail_reason', text: t('jobs.failReason'), sortable: false },
         { value: 'actions', text: t('common.actionsLabel'), sortable: false },
-      ].filter(Boolean)
-    })
+      ].filter(Boolean);
+    });
 
     const initialQuery = {
       page: 1,
@@ -79,19 +79,19 @@ export default {
       search: '',
       sortBy: [],
       sortDesc: [],
-    }
+    };
 
     const fetchList = (fetchQuery = initialQuery) =>
       fetchTicketStatusJobsList({
         params: convertQueryToRequest(fetchQuery),
-      })
+      });
 
     const { options, updateOptions } = useLocalQueryWithOptions({
       initialQuery,
       onUpdate: fetchList,
-    })
+    });
 
-    onMounted(fetchList)
+    onMounted(fetchList);
 
     return {
       ticketStatusJobs,
@@ -100,7 +100,7 @@ export default {
       headers,
       options,
       updateOptions,
-    }
+    };
   },
-}
+};
 </script>
