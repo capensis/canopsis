@@ -1,8 +1,8 @@
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { API_ROUTES } from '@/config'
+import { API_ROUTES } from '@/config';
 
-import { createCRUDStore } from '@/stores/plugins/crud'
+import { createCRUDStore } from '@/stores/plugins/crud';
 
 export const useEntityInfoPropertyStore = createCRUDStore({
   id: 'entityInfoProperty',
@@ -12,12 +12,12 @@ export const useEntityInfoPropertyStore = createCRUDStore({
   withMeta: true,
   withWithoutStore: true,
   setup({ items }) {
-    const itemsWithAlias = computed(() => items.value.filter((item) => !!item.alias))
-    const itemsWithoutAlias = computed(() => items.value.filter((item) => !item.alias))
+    const itemsWithAlias = computed(() => items.value.filter((item) => !!item.alias));
+    const itemsWithoutAlias = computed(() => items.value.filter((item) => !item.alias));
 
     return {
       itemsWithAlias,
       itemsWithoutAlias,
-    }
+    };
   },
-})
+});

@@ -20,13 +20,13 @@
 </template>
 
 <script>
-import { COLORS } from '@/config'
-import { DATETIME_FORMATS, HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR } from '@/constants'
+import { COLORS } from '@/config';
+import { DATETIME_FORMATS, HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR } from '@/constants';
 
-import { colorToRgba } from '@/helpers/color'
+import { colorToRgba } from '@/helpers/color';
 
-import ChartExportActions from '@/components/common/chart/chart-export-actions.vue'
-import LimitedTimeLineChart from '@/components/common/chart/limited-time-line-chart.vue'
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
+import LimitedTimeLineChart from '@/components/common/chart/limited-time-line-chart.vue';
 
 export default {
   components: {
@@ -55,7 +55,7 @@ export default {
       return (
         Math.max(0, ...this.messagesRates.map(({ rate }) => rate)) *
         HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR
-      )
+      );
     },
 
     datasets() {
@@ -68,7 +68,7 @@ export default {
             y: rate,
           })),
         },
-      ]
+      ];
     },
 
     lastHourChartOptions() {
@@ -104,8 +104,8 @@ export default {
             borderWidth: 1,
           },
         },
-      }
+      };
     },
   },
-}
+};
 </script>

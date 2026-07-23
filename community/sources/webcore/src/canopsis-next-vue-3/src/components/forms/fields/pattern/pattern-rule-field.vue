@@ -1,8 +1,8 @@
 <template>
-  <c-layout class="gap-3" column>
-    <c-layout class="gap-3">
+  <c-layout gap="3" column>
+    <c-layout gap="3">
       <div :style="firstColumnFlexStyle">
-        <c-layout class="gap-3">
+        <c-layout gap="3">
           <div :style="attributeColumnFlexStyle">
             <pattern-attribute-field
               :value="rule.attribute"
@@ -14,10 +14,7 @@
               @update:value="updateAttribute"
             />
           </div>
-          <div
-            v-if="isAnyInfosRule"
-            :style="gridFlexStyle(8)"
-          >
+          <div v-if="isAnyInfosRule" :style="gridFlexStyle(8)">
             <c-infos-attribute-field
               :value="rule"
               :items="infos"
@@ -28,10 +25,7 @@
               @update:value="updateModel"
             />
           </div>
-          <div
-            v-else-if="isObjectRule"
-            :style="gridFlexStyle(6)"
-          >
+          <div v-else-if="isObjectRule" :style="gridFlexStyle(6)">
             <c-text-field
               :model-value="rule.dictionary"
               :name="objectDictionaryName"
@@ -43,15 +37,9 @@
           </div>
         </c-layout>
       </div>
-      <div
-        v-if="rule.attribute"
-        :style="secondColumnFlexStyle"
-      >
-        <c-layout class="gap-3">
-          <div
-            v-if="isInfosValueField"
-            :style="gridFlexStyle(1)"
-          >
+      <div v-if="rule.attribute" :style="secondColumnFlexStyle">
+        <c-layout gap="3">
+          <div v-if="isInfosValueField" :style="gridFlexStyle(1)">
             <c-input-type-field
               :value="rule.fieldType"
               :label="$t('common.type')"
@@ -61,10 +49,7 @@
               @update:value="updateField('fieldType', $event)"
             />
           </div>
-          <div
-            v-if="shownOperatorField"
-            :style="operatorFlexStyle"
-          >
+          <div v-if="shownOperatorField" :style="operatorFlexStyle">
             <pattern-operator-field
               :value="rule.operator"
               :operators="operators"
@@ -74,23 +59,14 @@
               @update:value="updateField('operator', $event)"
             />
           </div>
-          <div
-            v-if="rule.operator && operatorHasValue"
-            :style="valueFlexStyle"
-          >
-            <component
-              :is="valueComponent.is"
-              v-bind="valueComponent.props"
-            />
+          <div v-if="rule.operator && operatorHasValue" :style="valueFlexStyle">
+            <component :is="valueComponent.is" v-bind="valueComponent.props" />
           </div>
         </c-layout>
       </div>
     </c-layout>
     <c-layout>
-      <c-alert
-        v-if="notDefinedType && !disabled"
-        type="warning"
-      >
+      <c-alert v-if="notDefinedType && !disabled" type="warning">
         {{ $t('pattern.notDefinedType') }}
       </c-alert>
     </c-layout>
@@ -238,14 +214,14 @@ export default {
 
     inputTypesWithDefinedType() {
       const item = this.isInfosRule
-        ? this.infos.find(info => info.value === this.rule.dictionary)
-        : this.attributes.find(attribute => attribute.value === this.rule.attribute);
+        ? this.infos.find((info) => info.value === this.rule.dictionary)
+        : this.attributes.find((attribute) => attribute.value === this.rule.attribute);
 
       if (!item?.definedType) {
         return this.inputTypes;
       }
 
-      return this.inputTypes.map(type => ({
+      return this.inputTypes.map((type) => ({
         ...type,
         defined: type.value === item.definedType,
       }));
@@ -385,11 +361,13 @@ export default {
     },
 
     definedType() {
-      return this.inputTypesWithDefinedType.find(type => type.defined);
+      return this.inputTypesWithDefinedType.find((type) => type.defined);
     },
 
     notDefinedType() {
-      return this.rule.fieldType && this.definedType && this.definedType.value !== this.rule.fieldType;
+      return (
+        this.rule.fieldType && this.definedType && this.definedType.value !== this.rule.fieldType
+      );
     },
   },
   methods: {

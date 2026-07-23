@@ -1,8 +1,8 @@
-import { isEqual, omit } from 'lodash'
+import { isEqual, omit } from 'lodash';
 
-import { PAGINATION_LIMIT } from '@/config'
+import { PAGINATION_LIMIT } from '@/config';
 
-import { getQueryForList } from '@/helpers/entities/shared/query'
+import { getQueryForList } from '@/helpers/entities/shared/query';
 
 /**
  * Mixin for local list query state.
@@ -19,13 +19,13 @@ export const localQueryMixin = {
         sortBy: [],
         sortDesc: [],
       },
-    }
+    };
   },
 
   watch: {
     query(query, oldQuery) {
       if (this.customQueryCondition(query, oldQuery)) {
-        this.fetchList()
+        this.fetchList();
       }
     },
   },
@@ -33,9 +33,15 @@ export const localQueryMixin = {
   computed: {
     options: {
       get() {
-        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [], ...restQuery } = this.query
+        const {
+          page = 1,
+          itemsPerPage = PAGINATION_LIMIT,
+          sortBy = [],
+          sortDesc = [],
+          ...restQuery
+        } = this.query;
 
-        return { page, itemsPerPage, sortBy, sortDesc, ...restQuery }
+        return { page, itemsPerPage, sortBy, sortDesc, ...restQuery };
       },
       set(value) {
         this.query = {
@@ -55,7 +61,7 @@ export const localQueryMixin = {
             'multiSort',
             'mustSort',
           ]),
-        }
+        };
       },
     },
   },
@@ -71,7 +77,7 @@ export const localQueryMixin = {
       this.query = {
         ...this.query,
         [field]: value,
-      }
+      };
     },
 
     /**
@@ -82,7 +88,7 @@ export const localQueryMixin = {
      * @returns {boolean}
      */
     customQueryCondition(query, oldQuery) {
-      return !isEqual(query, oldQuery)
+      return !isEqual(query, oldQuery);
     },
 
     /**
@@ -92,9 +98,9 @@ export const localQueryMixin = {
      * @returns {Object}
      */
     getQuery(queryParams = this.query) {
-      return getQueryForList(queryParams)
+      return getQueryForList(queryParams);
     },
   },
 
   fetchList() {},
-}
+};

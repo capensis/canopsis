@@ -8,19 +8,9 @@
       @try-again="tryOptimization"
     />
     <c-progress-overlay :pending="pending" />
-    <c-layout
-      class="c-patterns-field"
-      column
-    >
-      <c-label
-        :label="$t('common.pattern', 2)"
-        :required="isPatternRequired"
-      />
-      <c-alert
-        v-if="errorMessage"
-        type="error"
-        density="compact"
-      >
+    <c-layout class="c-patterns-field" column>
+      <c-label :label="$t('common.pattern', 2)" :required="isPatternRequired" />
+      <c-alert v-if="errorMessage" type="error" density="compact">
         {{ errorMessage }}
       </c-alert>
       <c-collapse-panel
@@ -66,7 +56,9 @@
             :attributes="entityAttributes"
             :entity-types="entityTypes"
             with-type
-            @update:value="updatePatternAndClear(PATTERNS_FIELDS.entity, preparedEntityName, $event)"
+            @update:value="
+              updatePatternAndClear(PATTERNS_FIELDS.entity, preparedEntityName, $event)
+            "
             @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.entity])"
             @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.entity])"
           />
@@ -86,7 +78,9 @@
           :name="preparedPbehaviorName"
           :attributes="pbehaviorAttributes"
           with-type
-          @update:value="updatePatternAndClear(PATTERNS_FIELDS.pbehavior, preparedPbehaviorName, $event)"
+          @update:value="
+            updatePatternAndClear(PATTERNS_FIELDS.pbehavior, preparedPbehaviorName, $event)
+          "
           @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.pbehavior])"
           @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.pbehavior])"
         />
@@ -121,7 +115,9 @@
           :name="preparedTotalEntityName"
           :attributes="totalEntityAttributes"
           with-type
-          @update:value="updatePatternAndClear(PATTERNS_FIELDS.totalEntity, preparedTotalEntityName, $event)"
+          @update:value="
+            updatePatternAndClear(PATTERNS_FIELDS.totalEntity, preparedTotalEntityName, $event)
+          "
         />
       </c-collapse-panel>
       <c-collapse-panel
@@ -136,7 +132,13 @@
           :name="preparedServiceWeatherName"
           :attributes="weatherServiceAttributes"
           with-type
-          @update:value="updatePatternAndClear(PATTERNS_FIELDS.serviceWeather, preparedServiceWeatherName, $event)"
+          @update:value="
+            updatePatternAndClear(
+              PATTERNS_FIELDS.serviceWeather,
+              preparedServiceWeatherName,
+              $event,
+            )
+          "
         />
       </c-collapse-panel>
 
@@ -146,35 +148,21 @@
       />
 
       <c-alert v-if="!optimizationSuggestions.length && optimizationSuccessful" type="warning">
-        <span v-html="$t('pattern.optimizationSuggestionsWasntFound')" class="font-weight-regular" />
+        <span
+          v-html="$t('pattern.optimizationSuggestionsWasntFound')"
+          class="font-weight-regular"
+        />
       </c-alert>
-      <c-alert
-        v-if="allOverLimit"
-        type="warning"
-      >
+      <c-alert v-if="allOverLimit" type="warning">
         <span>{{ $t('pattern.errors.countOverLimit', { count: allCount }) }}</span>
       </c-alert>
-      <c-layout
-        class="gap-2"
-        justify-end
-        align-center
-      >
+      <c-layout gap="2" justify-end align-center>
         <pattern-count-message v-bind="patternsCountMessageBind" />
         <template v-if="hasAllInCounter">
-          <v-btn
-            v-if="entityCountersType"
-            text
-            small
-            @click="showPatternEntitiesModal()"
-          >
+          <v-btn v-if="entityCountersType" text small @click="showPatternEntitiesModal()">
             {{ $t('common.seeEntities') }}
           </v-btn>
-          <v-btn
-            v-else
-            text
-            small
-            @click="showPatternAlarmsModal()"
-          >
+          <v-btn v-else text small @click="showPatternAlarmsModal()">
             {{ $t('common.seeAlarms') }}
           </v-btn>
         </template>
@@ -222,7 +210,8 @@ import PatternFieldSuggestionsWrapper from './pattern-field-suggestions-wrapper.
  * @param {string} fieldName - The field name
  * @returns {string} Combined field pattern name
  */
-const getFieldPatternName = (componentName, fieldName) => [componentName, fieldName].filter(Boolean).join('.');
+const getFieldPatternName = (componentName, fieldName) =>
+  [componentName, fieldName].filter(Boolean).join('.');
 
 export { PATTERNS_FIELDS_TO_EXPANDED_KEYS } from './hooks/patterns-field-expand';
 
@@ -396,37 +385,38 @@ export default {
       serviceWeather: false,
     });
 
-    const preparedAlarmName = computed(() => (
-      props.alarmName || getFieldPatternName(props.name, PATTERNS_FIELDS.alarm)
-    ));
+    const preparedAlarmName = computed(
+      () => props.alarmName || getFieldPatternName(props.name, PATTERNS_FIELDS.alarm),
+    );
 
-    const preparedEntityName = computed(() => (
-      props.entityName || getFieldPatternName(props.name, PATTERNS_FIELDS.entity)
-    ));
+    const preparedEntityName = computed(
+      () => props.entityName || getFieldPatternName(props.name, PATTERNS_FIELDS.entity),
+    );
 
-    const preparedPbehaviorName = computed(() => (
-      props.pbehaviorName || getFieldPatternName(props.name, PATTERNS_FIELDS.pbehavior)
-    ));
+    const preparedPbehaviorName = computed(
+      () => props.pbehaviorName || getFieldPatternName(props.name, PATTERNS_FIELDS.pbehavior),
+    );
 
-    const preparedEventName = computed(() => (
-      props.eventName || getFieldPatternName(props.name, PATTERNS_FIELDS.event)
-    ));
+    const preparedEventName = computed(
+      () => props.eventName || getFieldPatternName(props.name, PATTERNS_FIELDS.event),
+    );
 
-    const preparedTotalEntityName = computed(() => (
-      props.totalEntityName || getFieldPatternName(props.name, PATTERNS_FIELDS.totalEntity)
-    ));
+    const preparedTotalEntityName = computed(
+      () => props.totalEntityName || getFieldPatternName(props.name, PATTERNS_FIELDS.totalEntity),
+    );
 
-    const preparedServiceWeatherName = computed(() => (
-      props.serviceWeatherName || getFieldPatternName(props.name, PATTERNS_FIELDS.serviceWeather)
-    ));
+    const preparedServiceWeatherName = computed(
+      () =>
+        props.serviceWeatherName || getFieldPatternName(props.name, PATTERNS_FIELDS.serviceWeather),
+    );
 
-    const hasPatterns = computed(() => (
-      Object.values(PATTERNS_FIELDS).some(key => props.value[key]?.groups?.length)
-    ));
+    const hasPatterns = computed(() =>
+      Object.values(PATTERNS_FIELDS).some((key) => props.value[key]?.groups?.length),
+    );
 
-    const isPatternRequired = computed(() => (
-      props.someRequired ? !hasPatterns.value : props.required
-    ));
+    const isPatternRequired = computed(() =>
+      props.someRequired ? !hasPatterns.value : props.required,
+    );
 
     const patternNamesToFields = computed(() => ({
       [PATTERNS_FIELDS.alarm]: preparedAlarmName.value,
@@ -453,19 +443,17 @@ export default {
     });
 
     const patterns = computed(() => formFilterToPatterns(props.value, patternsFields.value));
-    const hasError = computed(() => (isPatternRequired.value && !hasPatterns.value));
+    const hasError = computed(() => isPatternRequired.value && !hasPatterns.value);
 
     const fieldName = computed(() => props.name || 'patterns');
     const validatePatterns = () => (hasError.value ? t('pattern.errors.required') : true);
-    const {
-      errorMessage,
-      setValue,
-      validate,
-      setErrors,
-      setTouched,
-    } = useField(fieldName, validatePatterns, {
-      validateOnValueUpdate: false,
-    });
+    const { errorMessage, setValue, validate, setErrors, setTouched } = useField(
+      fieldName,
+      validatePatterns,
+      {
+        validateOnValueUpdate: false,
+      },
+    );
 
     const {
       counters,
@@ -483,17 +471,17 @@ export default {
       patterns,
     });
 
-    const alarmPatternCounter = computed(() => (
+    const alarmPatternCounter = computed(() =>
       props.entityCountersType
         ? counters.value?.alarm_pattern
-        : counters.value?.alarms?.alarm_pattern
-    ));
+        : counters.value?.alarms?.alarm_pattern,
+    );
 
-    const entityPatternEntitiesCounter = computed(() => (
+    const entityPatternEntitiesCounter = computed(() =>
       props.entityCountersType
         ? counters.value?.entity_pattern
-        : counters.value?.entities?.entity_pattern
-    ));
+        : counters.value?.entities?.entity_pattern,
+    );
 
     const entityPatternsCounters = computed(() => {
       if (props.entityCountersType) {
@@ -520,9 +508,10 @@ export default {
      * @param {Array} rules - Array of pattern rule groups
      * @returns {boolean} True if all rules are valid
      */
-    const isValidPatternRules = rules => (
-      !!rules.length && rules.every(
-        group => group.every((rule) => {
+    const isValidPatternRules = (rules) =>
+      !!rules.length &&
+      rules.every((group) =>
+        group.every((rule) => {
           if (!isValidPatternRule(rule)) {
             return false;
           }
@@ -533,24 +522,25 @@ export default {
 
           return true;
         }),
-      )
-    );
+      );
 
     /**
      * Shows alarms modal filtered by current patterns
      */
-    const showPatternAlarms = () => showPatternAlarmsModal({
-      alarm_pattern: formGroupsToPatternRulesQuery(props.value.alarm_pattern?.groups),
-      entity_pattern: formGroupsToPatternRulesQuery(props.value.entity_pattern?.groups),
-      pbehavior_pattern: formGroupsToPatternRulesQuery(props.value.pbehavior_pattern?.groups),
-    });
+    const showPatternAlarms = () =>
+      showPatternAlarmsModal({
+        alarm_pattern: formGroupsToPatternRulesQuery(props.value.alarm_pattern?.groups),
+        entity_pattern: formGroupsToPatternRulesQuery(props.value.entity_pattern?.groups),
+        pbehavior_pattern: formGroupsToPatternRulesQuery(props.value.pbehavior_pattern?.groups),
+      });
 
     /**
      * Shows entities modal filtered by current patterns
      */
-    const showPatternEntities = () => showPatternEntitiesModal({
-      search_pattern: formGroupsToPatternRulesQuery(props.value.entity_pattern.groups),
-    });
+    const showPatternEntities = () =>
+      showPatternEntitiesModal({
+        search_pattern: formGroupsToPatternRulesQuery(props.value.entity_pattern.groups),
+      });
 
     const {
       pending: optimizationPending,
@@ -564,15 +554,19 @@ export default {
       applySuggestion,
       rejectAllSuggestions,
       showEntitiesComparisonModal,
-    } = usePatternOptimization({
-      wrapperElement,
-      value: toRef(props, 'value'),
-    }, emit);
+    } = usePatternOptimization(
+      {
+        wrapperElement,
+        value: toRef(props, 'value'),
+      },
+      emit,
+    );
 
-    const updatePattern = (field, pattern) => emit('update:value', {
-      ...props.value,
-      [field]: pattern,
-    });
+    const updatePattern = (field, pattern) =>
+      emit('update:value', {
+        ...props.value,
+        [field]: pattern,
+      });
 
     const updatePatternAndClear = (field, name, pattern) => {
       setFieldError(name, undefined);
@@ -581,9 +575,12 @@ export default {
       updatePattern(field, pattern);
     };
 
-    watch(() => props.value, (value) => {
-      setValue(value, false);
-    });
+    watch(
+      () => props.value,
+      (value) => {
+        setValue(value, false);
+      },
+    );
 
     watch(hasError, (value) => {
       if (!value) {

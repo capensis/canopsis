@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useCorporatePatternStore } from '@/stores/modules/pattern-corporate'
+import { useCorporatePatternStore } from '@/stores/modules/pattern-corporate';
 
 /**
  * Corporate pattern store facade.
@@ -8,8 +8,8 @@ import { useCorporatePatternStore } from '@/stores/modules/pattern-corporate'
  * @returns {Object}
  */
 export const useCorporatePattern = () => {
-  const corporatePatternStore = useCorporatePatternStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(corporatePatternStore)
+  const corporatePatternStore = useCorporatePatternStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(corporatePatternStore);
 
   return {
     corporatePatterns: items,
@@ -22,5 +22,5 @@ export const useCorporatePattern = () => {
     createCorporatePattern: corporatePatternStore.create,
     updateCorporatePattern: corporatePatternStore.update,
     removeCorporatePattern: corporatePatternStore.remove,
-  }
-}
+  };
+};

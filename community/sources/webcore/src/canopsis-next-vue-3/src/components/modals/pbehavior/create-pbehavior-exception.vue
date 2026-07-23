@@ -23,19 +23,19 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 import {
   formToPbehaviorException,
   pbehaviorExceptionToForm,
-} from '@/helpers/entities/pbehavior/exception/form'
+} from '@/helpers/entities/pbehavior/exception/form';
 
-import { useForm } from '@/hooks/form'
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
+import { useForm } from '@/hooks/form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
-import PbehaviorExceptionForm from '@/components/other/pbehavior/exceptions/form/pbehavior-exception-form.vue'
+import PbehaviorExceptionForm from '@/components/other/pbehavior/exceptions/form/pbehavior-exception-form.vue';
 
 export default {
   components: { PbehaviorExceptionForm },
@@ -48,40 +48,40 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const modals = useModals()
-    const config = computed(() => props.modal.config ?? {})
-    const exception = computed(() => config.value.pbehaviorException ?? config.value.exception)
-    const isNew = computed(() => !exception.value?._id)
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const exception = computed(() => config.value.pbehaviorException ?? config.value.exception);
+    const isNew = computed(() => !exception.value?._id);
     const title = computed(
       () =>
         config.value.title ||
         t(`modals.createPbehaviorException.${isNew.value ? 'create' : 'edit'}.title`),
-    )
-    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'))
+    );
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
 
     const form = useForm({
       initialValues: pbehaviorExceptionToForm(exception.value),
-    })
-    const { values, handleSubmit, submitting } = form
+    });
+    const { values, handleSubmit, submitting } = form;
 
-    const closeModal = () => modals.hide({ id: props.modal.id })
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
     const submit = handleSubmit(async () => {
-      const result = await config.value.action?.(formToPbehaviorException(values.value))
+      const result = await config.value.action?.(formToPbehaviorException(values.value));
 
-      await config.value.afterSubmit?.(result)
+      await config.value.afterSubmit?.(result);
 
-      closeModal()
+      closeModal();
 
-      return result
-    })
+      return result;
+    });
 
     useFormConfirmableCloseModal({
       form: values,
       submit,
       close: closeModal,
-    })
+    });
 
     return {
       t,
@@ -90,7 +90,7 @@ export default {
       submitting,
       closeModal,
       submit,
-    }
+    };
   },
-}
+};
 </script>

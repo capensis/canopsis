@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useRatingSettingsStore } from '@/stores/modules/rating-settings'
+import { useRatingSettingsStore } from '@/stores/modules/rating-settings';
 
 /**
  * Rating settings store facade.
@@ -8,8 +8,8 @@ import { useRatingSettingsStore } from '@/stores/modules/rating-settings'
  * @returns {Object}
  */
 export const useRatingSettings = () => {
-  const ratingSettingsStore = useRatingSettingsStore()
-  const { items, meta, pending, fetchingParams, updatedAt } = storeToRefs(ratingSettingsStore)
+  const ratingSettingsStore = useRatingSettingsStore();
+  const { items, meta, pending, fetchingParams, updatedAt } = storeToRefs(ratingSettingsStore);
 
   return {
     ratingSettings: items,
@@ -25,5 +25,5 @@ export const useRatingSettings = () => {
     updateRatingSetting: ratingSettingsStore.update,
     removeRatingSetting: ratingSettingsStore.remove,
     bulkUpdateRatingSettings: ratingSettingsStore.bulkUpdate,
-  }
-}
+  };
+};

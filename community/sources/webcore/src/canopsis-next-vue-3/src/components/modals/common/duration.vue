@@ -6,25 +6,13 @@
       </template>
 
       <template #text>
-        <c-layout class="gap-3" align="start">
-          <c-duration-field
-            v-model:duration="form"
-            :label="label"
-            name="duration.value"
-            autofocus
-            required
-          />
-          <c-select
-            v-model="form.unit"
-            :items="units"
-            :label="t('common.unit')"
-            class="duration-modal__unit"
-            item-title="text"
-            item-value="value"
-            name="duration.unit"
-            required
-          />
-        </c-layout>
+        <c-duration-field
+          v-model:duration="form"
+          :label="label"
+          :units="units"
+          autofocus
+          required
+        />
       </template>
 
       <template #actions>
@@ -40,15 +28,15 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref } from 'vue';
 
-import { MODALS } from '@/constants'
+import { MODALS } from '@/constants';
 
-import { durationToForm } from '@/helpers/date/duration'
+import { durationToForm } from '@/helpers/date/duration';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 export default {
   name: MODALS.duration,
@@ -61,36 +49,36 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const modals = useModals()
-    const config = computed(() => props.modal.config ?? {})
-    const form = ref(durationToForm(config.value.duration))
-    const submitting = ref(false)
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const form = ref(durationToForm(config.value.duration));
+    const submitting = ref(false);
 
-    const title = computed(() => config.value.title ?? t('common.duration'))
-    const label = computed(() => config.value.label ?? t('common.duration'))
+    const title = computed(() => config.value.title ?? t('common.duration'));
+    const label = computed(() => config.value.label ?? t('common.duration'));
     const units = computed(() =>
       config.value.units?.map((unit) => ({ ...unit, text: t(unit.text, form.value.value) })),
-    )
+    );
 
-    const closeModal = () => modals.hide({ id: props.modal.id })
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
     const submit = async () => {
       try {
-        submitting.value = true
+        submitting.value = true;
 
-        await config.value.action?.(form.value)
-        closeModal()
+        await config.value.action?.(form.value);
+        closeModal();
       } finally {
-        submitting.value = false
+        submitting.value = false;
       }
-    }
+    };
 
     useFormConfirmableCloseModal({
       form,
       submit,
       close: closeModal,
-    })
+    });
 
     return {
       t,
@@ -101,13 +89,7 @@ export default {
       submitting,
       closeModal,
       submit,
-    }
+    };
   },
-}
+};
 </script>
-
-<style lang="scss" scoped>
-.duration-modal__unit {
-  min-width: 160px;
-}
-</style>

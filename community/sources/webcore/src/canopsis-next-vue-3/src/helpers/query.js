@@ -1,8 +1,14 @@
-import { isNil } from 'lodash'
+import { isNil } from 'lodash';
 
-import { convertSortToRequest } from '@/helpers/entities/shared/query'
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals'
-import { convertDateToEndOfDayTimestamp, convertDateToStartOfDayTimestamp } from '@/helpers/date/date'
+import { convertSortToRequest } from '@/helpers/entities/shared/query';
+import {
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from '@/helpers/date/date-intervals';
+import {
+  convertDateToEndOfDayTimestamp,
+  convertDateToStartOfDayTimestamp,
+} from '@/helpers/date/date';
 
 /**
  * Converts query parameters into a request object.
@@ -37,35 +43,37 @@ export const convertQueryToRequest = ({
     limit: itemsPerPage,
 
     ...convertSortToRequest(sortBy, sortDesc),
-  }
+  };
 
   if (search) {
-    query.search = search
+    query.search = search;
   }
 
   if (!isNil(type)) {
-    query.type = type
+    query.type = type;
   }
 
   if (!isNil(status)) {
-    query.status = status
+    query.status = status;
   }
 
   if (!isNil(lastRunStatus)) {
-    query.last_run_status = lastRunStatus
+    query.last_run_status = lastRunStatus;
   }
 
   if (interval?.from) {
-    query.from = convertDateToStartOfDayTimestamp(convertStartDateIntervalToTimestamp(interval.from))
+    query.from = convertDateToStartOfDayTimestamp(
+      convertStartDateIntervalToTimestamp(interval.from),
+    );
   }
 
   if (interval?.to) {
-    query.to = convertDateToEndOfDayTimestamp(convertStopDateIntervalToTimestamp(interval.to))
+    query.to = convertDateToEndOfDayTimestamp(convertStopDateIntervalToTimestamp(interval.to));
   }
 
   if (searchPattern) {
-    query.search_pattern = searchPattern
+    query.search_pattern = searchPattern;
   }
 
-  return query
-}
+  return query;
+};

@@ -13,11 +13,11 @@
 </template>
 
 <script>
-import { isUndefined } from 'lodash'
+import { isUndefined } from 'lodash';
 
-import { MAX_LIMIT } from '@/constants'
+import { MAX_LIMIT } from '@/constants';
 
-import { useRatingSettings } from '@/hooks/store/modules/rating-settings'
+import { useRatingSettings } from '@/hooks/store/modules/rating-settings';
 
 export default {
   props: {
@@ -34,19 +34,19 @@ export default {
   emits: ['update:value'],
 
   setup() {
-    const { ratingSettingsUpdatedAt, fetchRatingSettingsListWithoutStore } = useRatingSettings()
+    const { ratingSettingsUpdatedAt, fetchRatingSettingsListWithoutStore } = useRatingSettings();
 
     return {
       ratingSettingsUpdatedAt,
       fetchRatingSettingsListWithoutStore,
-    }
+    };
   },
 
   data() {
     return {
       pending: false,
       items: [],
-    }
+    };
   },
 
   watch: {
@@ -54,40 +54,40 @@ export default {
   },
 
   mounted() {
-    this.fetchList()
+    this.fetchList();
   },
 
   methods: {
     async fetchList() {
       try {
-        this.pending = true
+        this.pending = true;
 
         const { data: items } = await this.fetchRatingSettingsListWithoutStore({
           params: {
             limit: MAX_LIMIT,
             enabled: true,
           },
-        })
+        });
 
-        this.items = items
+        this.items = items;
 
         if (this.mandatory) {
-          this.setAvailableValue()
+          this.setAvailableValue();
         }
       } finally {
-        this.pending = false
+        this.pending = false;
       }
     },
 
     setAvailableValue() {
-      const [firstRatingSetting] = this.items
+      const [firstRatingSetting] = this.items;
 
       if (!this.items.length) {
-        this.$emit('update:value', undefined)
+        this.$emit('update:value', undefined);
       } else if (isUndefined(this.value) || !this.items.some(({ id }) => id === this.value.id)) {
-        this.$emit('update:value', firstRatingSetting)
+        this.$emit('update:value', firstRatingSetting);
       }
     },
   },
-}
+};
 </script>

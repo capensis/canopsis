@@ -1,135 +1,135 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 
-import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue'
-import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue'
-import CCircleBadge from '@/components/common/badge/c-circle-badge.vue'
-import CProgressOverlay from '@/components/common/progress/c-progress-overlay.vue'
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
+import CCircleBadge from '@/components/common/badge/c-circle-badge.vue';
+import CProgressOverlay from '@/components/common/progress/c-progress-overlay.vue';
 
-import * as BlockComponents from '@/components/common/block'
-import * as ActionsPanelComponents from '@/components/common/actions-panel'
-import * as ButtonComponents from '@/components/common/buttons'
-import * as ChipComponents from '@/components/common/chips'
-import * as IconComponents from '@/components/common/icon'
-import * as InputComponents from '@/components/common/inputs'
-import * as LayoutComponents from '@/components/common/layout'
-import * as ModalComponents from '@/components/common/modal'
-import * as PageComponents from '@/components/common/page'
-import * as PaginationComponents from '@/components/common/pagination'
-import * as ResponsiveListComponents from '@/components/common/responsive-list'
-import * as RequestComponents from '@/components/common/request'
-import * as SearchComponents from '@/components/common/search'
-import * as TableComponents from '@/components/common/table'
-import * as TooltipComponents from '@/components/common/tooltip'
-import * as VuetifyCommonComponents from '@/components/common/vuetify'
-import * as FormFieldComponents from '@/components/forms/fields'
-import CLayout from '@/components/common/layout/c-layout.vue'
-import RegisteredModals from '@/components/modals'
-import { MODALS } from '@/constants'
-import * as constants from '@/constants'
+import * as BlockComponents from '@/components/common/block';
+import * as ActionsPanelComponents from '@/components/common/actions-panel';
+import * as ButtonComponents from '@/components/common/buttons';
+import * as ChipComponents from '@/components/common/chips';
+import * as IconComponents from '@/components/common/icon';
+import * as InputComponents from '@/components/common/inputs';
+import * as LayoutComponents from '@/components/common/layout';
+import * as ModalComponents from '@/components/common/modal';
+import * as PageComponents from '@/components/common/page';
+import * as PaginationComponents from '@/components/common/pagination';
+import * as ResponsiveListComponents from '@/components/common/responsive-list';
+import * as RequestComponents from '@/components/common/request';
+import * as SearchComponents from '@/components/common/search';
+import * as TableComponents from '@/components/common/table';
+import * as TooltipComponents from '@/components/common/tooltip';
+import * as VuetifyCommonComponents from '@/components/common/vuetify';
+import * as FormFieldComponents from '@/components/forms/fields';
+import CLayout from '@/components/common/layout/c-layout.vue';
+import RegisteredModals from '@/components/modals';
+import { MODALS } from '@/constants';
+import * as constants from '@/constants';
 
-import App from './app.vue'
-import router from './router'
-import { i18n } from './i18n'
-import vuetify, { registerVuetifyComponentAliases } from './plugins/vuetify'
-import { customIconsRegistry } from './plugins/vuetify/icons'
+import App from './app.vue';
+import router from './router';
+import { i18n } from './i18n';
+import vuetify, { registerVuetifyComponentAliases } from './plugins/vuetify';
+import { customIconsRegistry } from './plugins/vuetify/icons';
 
-import modalsPlugin from './plugins/modals'
-import popupsPlugin from './plugins/popups'
-import socketPlugin from './plugins/socket'
-import veeValidatePlugin from './plugins/vee-validate'
+import modalsPlugin from './plugins/modals';
+import popupsPlugin from './plugins/popups';
+import socketPlugin from './plugins/socket';
+import veeValidatePlugin from './plugins/vee-validate';
 
-import 'vuetify/styles'
+import 'vuetify/styles';
 
-const app = createApp(App)
+const app = createApp(App);
 
-app.use(createPinia())
-app.use(router)
-app.use(vuetify)
-const vuetifyGlobalProperties = app.config.globalProperties.$vuetify ?? {}
+app.use(createPinia());
+app.use(router);
+app.use(vuetify);
+const vuetifyGlobalProperties = app.config.globalProperties.$vuetify ?? {};
 vuetifyGlobalProperties.icons = {
   values: customIconsRegistry,
-}
-app.config.globalProperties.$vuetify = vuetifyGlobalProperties
-app.config.globalProperties.$constants = constants
-registerVuetifyComponentAliases(app)
-app.use(i18n)
-app.use(veeValidatePlugin, { i18n })
-app.use(socketPlugin)
+};
+app.config.globalProperties.$vuetify = vuetifyGlobalProperties;
+app.config.globalProperties.$constants = constants;
+registerVuetifyComponentAliases(app);
+app.use(i18n);
+app.use(veeValidatePlugin, { i18n });
+app.use(socketPlugin);
 
-app.component('c-runtime-template', CRuntimeTemplate)
-app.component('c-compiled-template', CCompiledTemplate)
-app.component('c-circle-badge', CCircleBadge)
-app.component('c-progress-overlay', CProgressOverlay)
-app.component('c-layout', CLayout)
+app.component('c-runtime-template', CRuntimeTemplate);
+app.component('c-compiled-template', CCompiledTemplate);
+app.component('c-circle-badge', CCircleBadge);
+app.component('c-progress-overlay', CProgressOverlay);
+app.component('c-layout', CLayout);
 
 Object.entries(BlockComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(ActionsPanelComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(ButtonComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(ChipComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(IconComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(InputComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(LayoutComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(ModalComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(PageComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(PaginationComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(ResponsiveListComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(RequestComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(SearchComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(TableComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(TooltipComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(VuetifyCommonComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 Object.entries(FormFieldComponents).forEach(([name, component]) => {
-  app.component(name, component)
-})
+  app.component(name, component);
+});
 
 app.use(modalsPlugin, {
   components: RegisteredModals,
@@ -262,7 +262,7 @@ app.use(modalsPlugin, {
     [MODALS.userInterface]: { maxWidth: 1000 },
     [MODALS.variablesHelp]: { autoHeight: true },
   },
-})
-app.use(popupsPlugin)
+});
+app.use(popupsPlugin);
 
-app.mount('#app')
+app.mount('#app');

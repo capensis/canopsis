@@ -41,10 +41,10 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref } from 'vue';
 
-import { useSearchSavedItems } from './hooks/search'
-import AdvancedSearchHistoryItemBtns from './partials/advanced-search-history-item-btns.vue'
+import { useSearchSavedItems } from './hooks/search';
+import AdvancedSearchHistoryItemBtns from './partials/advanced-search-history-item-btns.vue';
 
 export default {
   components: { AdvancedSearchHistoryItemBtns },
@@ -71,17 +71,17 @@ export default {
   emits: ['update:modelValue', 'submit', 'remove:item', 'toggle-pin:item'],
 
   setup(props, { emit }) {
-    const comboboxElement = ref()
-    const { removeItem, togglePinItem } = useSearchSavedItems(emit)
+    const comboboxElement = ref();
+    const { removeItem, togglePinItem } = useSearchSavedItems(emit);
 
-    const comboboxMenuProps = computed(() => ({ contentClass: 'c-search-field__menu' }))
+    const comboboxMenuProps = computed(() => ({ contentClass: 'c-search-field__menu' }));
 
-    const updateModel = (value) => emit('update:modelValue', value ?? '')
-    const submit = () => emit('submit', props.modelValue)
+    const updateModel = (value) => emit('update:modelValue', value ?? '');
+    const submit = () => emit('submit', props.modelValue);
     const keydownEnterCombobox = () => {
-      submit()
-      comboboxElement.value?.blur()
-    }
+      submit();
+      comboboxElement.value?.blur();
+    };
 
     return {
       comboboxElement,
@@ -93,9 +93,9 @@ export default {
       removeItem,
       togglePinItem,
       keydownEnterCombobox,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss">

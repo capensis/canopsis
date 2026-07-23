@@ -1,8 +1,5 @@
 <template>
-  <c-layout
-    class="pattern-suggestions__wrapper gap-2 pa-3"
-    column
-  >
+  <c-layout class="pattern-suggestions__wrapper pa-3" gap="2" column>
     <pattern-suggestions-header @reject:all="rejectAll" />
 
     <pattern-suggestions-list
@@ -40,8 +37,9 @@ export default {
   },
   setup(props, { emit }) {
     const rejectAll = () => emit('reject:all');
-    const applySuggestion = index => emit('apply:suggestion', index);
-    const showEntitiesComparisonModal = suggestion => emit('show:entities-comparison', suggestion);
+    const applySuggestion = (index) => emit('apply:suggestion', index);
+    const showEntitiesComparisonModal = (suggestion) =>
+      emit('show:entities-comparison', suggestion);
 
     return {
       rejectAll,

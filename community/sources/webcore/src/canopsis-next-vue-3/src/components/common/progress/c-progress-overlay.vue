@@ -5,11 +5,7 @@
     :transition="transitionValue"
     class="align-center justify-center"
   >
-    <v-progress-circular
-      :color="color"
-      :size="size"
-      indeterminate
-    />
+    <v-progress-circular :color="color" :size="size" indeterminate />
   </v-overlay>
 </template>
 
@@ -42,8 +38,8 @@ export default {
 
   computed: {
     transitionValue() {
-      return this.transition || false
+      return this.transition || false;
     },
   },
-}
+};
 </script>

@@ -10,12 +10,7 @@
       required
       @update:value="updatePattern"
     />
-    <v-tabs
-      v-if="!withType || patterns.id"
-      v-model="activeTab"
-      align-tabs="center"
-      color="primary"
-    >
+    <v-tabs v-if="!withType || patterns.id" v-model="activeTab" align-tabs="center" color="primary">
       <v-tab
         :disabled="!isSimpleTab && hasJsonError"
         :value="$constants.PATTERN_EDITOR_TABS.simple"
@@ -28,10 +23,7 @@
       </v-tab>
     </v-tabs>
 
-    <v-window
-      v-if="!withType || patterns.id"
-      v-model="activeTab"
-    >
+    <v-window v-if="!withType || patterns.id" v-model="activeTab">
       <v-window-item :value="$constants.PATTERN_EDITOR_TABS.simple">
         <pattern-groups-field
           :groups="patterns.groups"
@@ -56,10 +48,7 @@
       </v-window-item>
     </v-window>
     <template v-if="!readonly">
-      <c-layout
-        align-center
-        justify-end
-      >
+      <c-layout align-center justify-end>
         <v-btn
           v-if="withType && !isCustomPattern"
           :disabled="disabled"
@@ -69,31 +58,16 @@
         >
           {{ $t('common.edit') }}
         </v-btn>
-        <c-layout
-          v-if="checked"
-          class="gap-2"
-          align-center
-          justify-end
-        >
-          <pattern-count-message
-            :alarm-counter="alarmCounter"
-            :entity-counter="entityCounter"
-          />
+        <c-layout v-if="checked" gap="2" align-center justify-end>
+          <pattern-count-message :alarm-counter="alarmCounter" :entity-counter="entityCounter" />
           <slot name="append-count" />
         </c-layout>
       </c-layout>
       <div class="mt-2">
-        <v-alert
-          v-if="errorMessage"
-          class="pre-wrap"
-          type="error"
-        >
+        <v-alert v-if="errorMessage" class="pre-wrap" type="error">
           {{ errorMessage }}
         </v-alert>
-        <v-alert
-          v-if="overLimit"
-          type="warning"
-        >
+        <v-alert v-if="overLimit" type="warning">
           <span>{{ $t('pattern.errors.countOverLimit', { count }) }}</span>
         </v-alert>
       </div>
@@ -102,17 +76,17 @@
 </template>
 
 <script>
-import {
-  ref,
-  computed,
-  watch,
-} from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useFieldError, useSetFieldError } from 'vee-validate';
 import { isEqual, isEmpty } from 'lodash';
 
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS } from '@/constants';
 
-import { formGroupsToPatternRules, patternsToGroups, patternToForm } from '@/helpers/entities/pattern/form';
+import {
+  formGroupsToPatternRules,
+  patternsToGroups,
+  patternToForm,
+} from '@/helpers/entities/pattern/form';
 
 import { useModelField } from '@/hooks/form/model-field';
 
@@ -189,11 +163,15 @@ export default {
 
     const isSimpleTab = computed(() => activeTab.value === PATTERN_EDITOR_TABS.simple);
     const isCustomPattern = computed(() => props.patterns.id === PATTERN_CUSTOM_ITEM_VALUE);
-    const formDisabled = computed(() => props.disabled || (props.withType && !isCustomPattern.value));
+    const formDisabled = computed(
+      () => props.disabled || (props.withType && !isCustomPattern.value),
+    );
 
     const checked = computed(() => !isEmpty(props.alarmCounter) || !isEmpty(props.entityCounter));
     const count = computed(() => props.alarmCounter?.count ?? props.entityCounter?.count ?? 0);
-    const overLimit = computed(() => props.alarmCounter?.over_limit || props.entityCounter?.over_limit || false);
+    const overLimit = computed(
+      () => props.alarmCounter?.over_limit || props.entityCounter?.over_limit || false,
+    );
 
     /**
      * Watches for changes in pattern groups and removes validation errors when groups change.

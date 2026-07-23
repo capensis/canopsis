@@ -13,22 +13,22 @@
 </template>
 
 <script>
-import { debounce } from 'lodash'
+import { debounce } from 'lodash';
 
-import { KPI_ALARMS_GRAPH_BAR_PERCENTAGE, SAMPLINGS, TIME_UNITS } from '@/constants'
+import { KPI_ALARMS_GRAPH_BAR_PERCENTAGE, SAMPLINGS, TIME_UNITS } from '@/constants';
 
-import { convertDateToStartOfUnitTimestamp, getNowTimestamp } from '@/helpers/date/date'
+import { convertDateToStartOfUnitTimestamp, getNowTimestamp } from '@/helpers/date/date';
 import {
   convertDurationToMaxUnitDuration,
   convertDurationToString,
   fromSeconds,
-} from '@/helpers/date/duration'
-import { getMetricColor } from '@/helpers/entities/metric/color'
-import { getDateLabelBySampling } from '@/helpers/entities/metric/list'
-import { isRatioMetric, isTimeMetric } from '@/helpers/entities/metric/form'
+} from '@/helpers/date/duration';
+import { getMetricColor } from '@/helpers/entities/metric/color';
+import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
+import { isRatioMetric, isTimeMetric } from '@/helpers/entities/metric/form';
 
-import BarChart from '@/components/common/chart/bar-chart.vue'
-import ChartExportActions from '@/components/common/chart/chart-export-actions.vue'
+import BarChart from '@/components/common/chart/bar-chart.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 export default {
   inject: ['$system'],
@@ -75,23 +75,23 @@ export default {
       return {
         size: 11,
         family: 'Arial, sans-serif',
-      }
+      };
     },
 
     maxDurationsByMetric() {
       return this.metrics.reduce((acc, { title, data }) => {
         if (isTimeMetric(title)) {
-          const values = data.map(({ value }) => value)
-          const maxValue = Math.max(...values, 0)
+          const values = data.map(({ value }) => value);
+          const maxValue = Math.max(...values, 0);
 
           acc[title] = convertDurationToMaxUnitDuration({
             value: maxValue,
             unit: TIME_UNITS.second,
-          })
+          });
         }
 
-        return acc
-      }, {})
+        return acc;
+      }, {});
     },
 
     datasets() {
@@ -105,15 +105,15 @@ export default {
           x: timestamp * 1000,
           y: this.convertValueByMetric(metric, value),
         })),
-      }))
+      }));
     },
 
     yAxes() {
       return this.metrics.reduce((acc, { title: metric }, index) => {
-        const yAxisID = this.getMetricYAxisId(metric)
+        const yAxisID = this.getMetricYAxisId(metric);
 
         if (acc[yAxisID]) {
-          return acc
+          return acc;
         }
 
         acc[yAxisID] = {
@@ -126,10 +126,10 @@ export default {
             font: this.labelsFont,
             callback: (value) => this.getChartYTick(metric, value),
           },
-        }
+        };
 
-        return acc
-      }, {})
+        return acc;
+      }, {});
     },
 
     alarmsChartOptions() {
@@ -201,81 +201,81 @@ export default {
             },
           },
         },
-      }
+      };
     },
   },
 
   created() {
-    this.debouncedUpdateInterval = debounce(this.updateInterval, 300)
+    this.debouncedUpdateInterval = debounce(this.updateInterval, 300);
   },
 
   methods: {
     getMetricYAxisId(metric) {
       if (isTimeMetric(metric)) {
-        return 'time'
+        return 'time';
       }
 
       if (isRatioMetric(metric)) {
-        return 'ratio'
+        return 'ratio';
       }
 
-      return 'count'
+      return 'count';
     },
 
     convertValueByMetric(metric, value) {
       if (!isTimeMetric(metric)) {
-        return value
+        return value;
       }
 
-      return fromSeconds(value, this.maxDurationsByMetric[metric]?.unit)
+      return fromSeconds(value, this.maxDurationsByMetric[metric]?.unit);
     },
 
     getChartYTick(metric, value) {
       if (isTimeMetric(metric)) {
-        return `${value}${this.maxDurationsByMetric[metric]?.unit}`
+        return `${value}${this.maxDurationsByMetric[metric]?.unit}`;
       }
 
       if (isRatioMetric(metric)) {
-        return `${value}%`
+        return `${value}%`;
       }
 
-      return value
+      return value;
     },
 
     getChartTimeTickLabel(_, index, data) {
-      const { value } = data[index] ?? {}
+      const { value } = data[index] ?? {};
 
-      return getDateLabelBySampling(value, this.sampling).split('\n')
+      return getDateLabelBySampling(value, this.sampling).split('\n');
     },
 
     getChartTooltipTitle(data) {
-      const [dataset] = data
-      const { x: timestamp } = dataset.raw
+      const [dataset] = data;
+      const { x: timestamp } = dataset.raw;
 
-      return getDateLabelBySampling(timestamp, this.sampling)
+      return getDateLabelBySampling(timestamp, this.sampling);
     },
 
     getChartTooltipLabel({ raw, dataset }) {
-      const { metric } = dataset
+      const { metric } = dataset;
       const value = isTimeMetric(metric)
         ? convertDurationToString(raw.y, undefined, this.maxDurationsByMetric[metric]?.unit)
-        : raw.y
+        : raw.y;
 
-      return this.$t(`kpi.metrics.tooltip.${metric}`, { value })
+      return this.$t(`kpi.metrics.tooltip.${metric}`, { value });
     },
 
     updateChartInterval({ chart }) {
-      const { min, max } = chart.scales.x
+      const { min, max } = chart.scales.x;
 
       this.debouncedUpdateInterval({
         from: Math.floor(min / 1000),
         to: Math.ceil(max / 1000),
-      })
+      });
     },
 
     updateInterval(interval) {
-      this.$emit('zoom', interval)
+      this.$emit('zoom', interval);
     },
   },
-}
+};
 </script>

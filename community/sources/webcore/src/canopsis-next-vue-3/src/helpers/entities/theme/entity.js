@@ -1,4 +1,4 @@
-import { isString, kebabCase } from 'lodash'
+import { isString, kebabCase } from 'lodash';
 
 /**
  * @typedef {Object} ThemeMainColors
@@ -52,20 +52,20 @@ import { isString, kebabCase } from 'lodash'
 const themeObjectColorsToCSSVariables = (colors, prefix = '') =>
   Object.entries(colors).reduce((acc, [key, value]) => {
     if (!value) {
-      return acc
+      return acc;
     }
 
     if (isString(value) || typeof value === 'number') {
-      acc[`${prefix}${kebabCase(key)}`] = value
+      acc[`${prefix}${kebabCase(key)}`] = value;
 
-      return acc
+      return acc;
     }
 
     return {
       ...acc,
       ...themeObjectColorsToCSSVariables(value, `${key}-`),
-    }
-  }, {})
+    };
+  }, {});
 
 /**
  * Convert theme to form object
@@ -74,7 +74,7 @@ const themeObjectColorsToCSSVariables = (colors, prefix = '') =>
  * @returns {Object}
  */
 export const themePropertiesToCSSVariables = (colors = {}) =>
-  themeObjectColorsToCSSVariables(colors)
+  themeObjectColorsToCSSVariables(colors);
 
 /**
  * Extracts the theme variable key from a CSS variable string.
@@ -83,4 +83,4 @@ export const themePropertiesToCSSVariables = (colors = {}) =>
  * @returns {string} The extracted theme variable key.
  */
 export const getThemeVariableKeyFromCssVariable = (cssVariable = '') =>
-  cssVariable.replace('var(--v-', '').replace('-base)', '')
+  cssVariable.replace('var(--v-', '').replace('-base)', '');

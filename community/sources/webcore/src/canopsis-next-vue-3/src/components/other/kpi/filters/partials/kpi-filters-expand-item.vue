@@ -23,11 +23,11 @@
 </template>
 
 <script>
-import { PATTERNS_FIELDS } from '@/constants'
+import { PATTERNS_FIELDS } from '@/constants';
 
-import { filterPatternsToForm } from '@/helpers/entities/filter/form'
+import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
-import KpiFilterPatternsForm from '../form/kpi-filter-patterns-form.vue'
+import KpiFilterPatternsForm from '../form/kpi-filter-patterns-form.vue';
 
 export default {
   components: { KpiFilterPatternsForm },
@@ -42,13 +42,13 @@ export default {
   data() {
     return {
       activeTab: 0,
-    }
+    };
   },
 
   computed: {
     patterns() {
-      return filterPatternsToForm(this.filter, [PATTERNS_FIELDS.entity])
+      return filterPatternsToForm(this.filter, [PATTERNS_FIELDS.entity]);
     },
   },
-}
+};
 </script>

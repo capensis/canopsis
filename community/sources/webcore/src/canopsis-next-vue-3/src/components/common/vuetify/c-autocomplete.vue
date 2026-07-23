@@ -1,11 +1,7 @@
 <script setup>
 import { useAttrs } from 'vue';
 
-import {
-  useVuetifyFieldValidation,
-  validationEmits,
-  validationProps,
-} from './validation';
+import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
 
 const props = defineProps(validationProps);
 const emit = defineEmits(validationEmits);
@@ -20,24 +16,17 @@ const { inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, e
     v-model="inputValue"
     :name="name"
     :error-messages="errorMessages"
+    class="c-field c-autocomplete"
     @blur="onBlur"
   >
-    <template #label>
-      <span v-if="required" class="text-error">
-        *
-      </span>
+    <template v-if="label" #label>
+      <span v-if="required && label" class="text-error"> * </span>
 
       {{ label }}
     </template>
 
-    <template
-      v-for="(_, slot) in $slots"
-      #[slot]="slotProps"
-    >
-      <slot
-        :name="slot"
-        v-bind="slotProps || {}"
-      />
+    <template v-for="(_, slot) in $slots" #[slot]="slotProps">
+      <slot :name="slot" v-bind="slotProps || {}" />
     </template>
   </v-autocomplete>
 </template>

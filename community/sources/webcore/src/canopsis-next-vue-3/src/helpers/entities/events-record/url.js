@@ -1,4 +1,4 @@
-import { API_HOST, API_ROUTES } from '@/config'
+import { API_HOST, API_ROUTES } from '@/config';
 
 /**
  * Get tech events record download file url
@@ -6,4 +6,4 @@ import { API_HOST, API_ROUTES } from '@/config'
  * @return {string}
  */
 export const getEventsRecordFileUrl = (id = '') =>
-  `${API_HOST}${API_ROUTES.eventsRecord.export}/${id}/download`
+  `${API_HOST}${API_ROUTES.eventsRecord.export}/${id}/download`;

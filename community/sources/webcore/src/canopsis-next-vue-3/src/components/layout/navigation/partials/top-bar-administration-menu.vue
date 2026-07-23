@@ -9,30 +9,30 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 import {
   GROUPED_USER_PERMISSIONS,
   GROUPED_USER_PERMISSIONS_KEYS,
   ROUTES_NAMES,
   USER_PERMISSIONS,
-} from '@/constants'
+} from '@/constants';
 
-import { uid } from '@/helpers/uid'
+import { uid } from '@/helpers/uid';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
-import { useUserInterfaceActions } from './hooks/user-interface-actions'
-import { useMaintenanceActions } from './hooks/maintenance-actions'
-import TopBarMenu from './top-bar-menu.vue'
+import { useUserInterfaceActions } from './hooks/user-interface-actions';
+import { useMaintenanceActions } from './hooks/maintenance-actions';
+import TopBarMenu from './top-bar-menu.vue';
 
 export default {
   components: { TopBarMenu },
 
   setup() {
-    const { t } = useI18n()
-    const { showToggleMaintenanceModeModal } = useMaintenanceActions()
-    const { showUserInterfaceModal } = useUserInterfaceActions()
+    const { t } = useI18n();
+    const { showToggleMaintenanceModeModal } = useMaintenanceActions();
+    const { showUserInterfaceModal } = useUserInterfaceActions();
 
     const permissionsWithDefaultType = [
       USER_PERMISSIONS.technical.engine,
@@ -44,67 +44,172 @@ export default {
       USER_PERMISSIONS.technical.viewImportExport,
       USER_PERMISSIONS.technical.notification.common,
       USER_PERMISSIONS.technical.jobManagement,
-    ].filter(Boolean)
+    ].filter(Boolean);
 
     const accessLinks = [
-      { route: { name: ROUTES_NAMES.adminRights }, icon: 'verified_user', permission: USER_PERMISSIONS.technical.permission },
-      { route: { name: ROUTES_NAMES.adminRoles }, icon: 'supervised_user_circle', permission: USER_PERMISSIONS.technical.role },
-      { route: { name: ROUTES_NAMES.adminUsers }, icon: 'people', permission: USER_PERMISSIONS.technical.user },
-    ]
+      {
+        route: { name: ROUTES_NAMES.adminRights },
+        icon: 'verified_user',
+        permission: USER_PERMISSIONS.technical.permission,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminRoles },
+        icon: 'supervised_user_circle',
+        permission: USER_PERMISSIONS.technical.role,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminUsers },
+        icon: 'people',
+        permission: USER_PERMISSIONS.technical.user,
+      },
+    ];
 
     const maintenanceLinks = [
-      { icon: 'build_circle', permission: USER_PERMISSIONS.technical.maintenance, handler: showToggleMaintenanceModeModal },
+      {
+        icon: 'build_circle',
+        permission: USER_PERMISSIONS.technical.maintenance,
+        handler: showToggleMaintenanceModeModal,
+      },
       {
         route: { name: ROUTES_NAMES.adminPlanning },
         icon: 'event_note',
         title: t(`pageHeaders.${GROUPED_USER_PERMISSIONS_KEYS.planning}.title`),
         permission: GROUPED_USER_PERMISSIONS.planning,
       },
-    ]
+    ];
 
     const communicationsLinks = [
-      { route: { name: ROUTES_NAMES.adminBroadcastMessages }, icon: 'campaign', permission: USER_PERMISSIONS.technical.broadcastMessage },
-      { route: { name: ROUTES_NAMES.adminPlaylists }, icon: 'playlist_play', permission: USER_PERMISSIONS.technical.playlist },
-    ]
+      {
+        route: { name: ROUTES_NAMES.adminBroadcastMessages },
+        icon: 'campaign',
+        permission: USER_PERMISSIONS.technical.broadcastMessage,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminPlaylists },
+        icon: 'playlist_play',
+        permission: USER_PERMISSIONS.technical.playlist,
+      },
+    ];
 
     const otherLinks = [
-      { route: { name: ROUTES_NAMES.adminHealthcheck }, icon: 'alt_route', permission: USER_PERMISSIONS.technical.healthcheck },
-      { route: { name: ROUTES_NAMES.adminKPI }, icon: 'stacked_bar_chart', permission: USER_PERMISSIONS.technical.kpi },
-      { route: { name: ROUTES_NAMES.adminEventsRecords }, icon: 'mark_unread_chat_alt', permission: USER_PERMISSIONS.technical.eventsRecord },
-      { route: { name: ROUTES_NAMES.adminTemplateTesting }, icon: 'play_circle', permission: USER_PERMISSIONS.technical.templateTesting },
+      {
+        route: { name: ROUTES_NAMES.adminHealthcheck },
+        icon: 'alt_route',
+        permission: USER_PERMISSIONS.technical.healthcheck,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminKPI },
+        icon: 'stacked_bar_chart',
+        permission: USER_PERMISSIONS.technical.kpi,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminEventsRecords },
+        icon: 'mark_unread_chat_alt',
+        permission: USER_PERMISSIONS.technical.eventsRecord,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminTemplateTesting },
+        icon: 'play_circle',
+        permission: USER_PERMISSIONS.technical.templateTesting,
+      },
       {
         route: { name: ROUTES_NAMES.adminAnomalyMonitoredConnectors },
         icon: 'account_tree',
         permission: USER_PERMISSIONS.technical.anomalyMonitoredConnector,
       },
-      { route: { name: ROUTES_NAMES.adminJobsManagement }, icon: 'confirmation_number', permission: USER_PERMISSIONS.technical.jobManagement },
-    ]
+      {
+        route: { name: ROUTES_NAMES.adminJobsManagement },
+        icon: 'confirmation_number',
+        permission: USER_PERMISSIONS.technical.jobManagement,
+      },
+    ];
 
     const customObjectsLinks = computed(() => [
-      { route: { name: ROUTES_NAMES.adminCustomObjectsExternalAuthTokens }, icon: 'security', permission: USER_PERMISSIONS.technical.externalAuthTokens },
-      { route: { name: ROUTES_NAMES.adminCustomObjectsExternalDataTables }, icon: 'storage', permission: USER_PERMISSIONS.technical.externalDataTable },
-      { route: { name: ROUTES_NAMES.adminCustomObjectsEntityInfosProperties }, icon: 'info', permission: USER_PERMISSIONS.technical.entityInfoProperty },
-      { route: { name: ROUTES_NAMES.adminCustomObjectsIcons }, icon: 'category', title: t('common.icon', 2), permission: USER_PERMISSIONS.technical.icon },
-      { route: { name: ROUTES_NAMES.adminCustomObjectsMaps }, icon: 'edit_location', permission: USER_PERMISSIONS.technical.map },
-      { route: { name: ROUTES_NAMES.adminCustomObjectsTags }, icon: 'local_offer', permission: USER_PERMISSIONS.technical.tag },
-      { route: { name: ROUTES_NAMES.adminCustomObjectsLlms }, icon: 'smart_toy', permission: USER_PERMISSIONS.technical.llm },
-    ])
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsExternalAuthTokens },
+        icon: 'security',
+        permission: USER_PERMISSIONS.technical.externalAuthTokens,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsExternalDataTables },
+        icon: 'storage',
+        permission: USER_PERMISSIONS.technical.externalDataTable,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsEntityInfosProperties },
+        icon: 'info',
+        permission: USER_PERMISSIONS.technical.entityInfoProperty,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsIcons },
+        icon: 'category',
+        title: t('common.icon', 2),
+        permission: USER_PERMISSIONS.technical.icon,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsMaps },
+        icon: 'edit_location',
+        permission: USER_PERMISSIONS.technical.map,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsTags },
+        icon: 'local_offer',
+        permission: USER_PERMISSIONS.technical.tag,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsLlms },
+        icon: 'smart_toy',
+        permission: USER_PERMISSIONS.technical.llm,
+      },
+    ]);
 
     const settingsLinks = computed(() => [
-      { icon: 'computer', permission: USER_PERMISSIONS.technical.parameters, handler: showUserInterfaceModal },
-      { route: { name: ROUTES_NAMES.adminSettingsViewsImportExport }, icon: 'import_export', permission: USER_PERMISSIONS.technical.viewImportExport },
-      { route: { name: ROUTES_NAMES.adminSettingsNotifications }, icon: 'notifications', permission: USER_PERMISSIONS.technical.notification.common },
-      { route: { name: ROUTES_NAMES.adminSettingsCommentTemplates }, icon: 'comment', permission: USER_PERMISSIONS.technical.commentTemplate },
-      { route: { name: ROUTES_NAMES.adminSettingsWidgetTemplates }, icon: 'widgets', permission: USER_PERMISSIONS.technical.widgetTemplate },
-      { route: { name: ROUTES_NAMES.adminSettingsStateSettings }, icon: 'add_alert', permission: USER_PERMISSIONS.technical.stateSetting },
-      { route: { name: ROUTES_NAMES.adminSettingsStorageSettings }, icon: 'storage', permission: USER_PERMISSIONS.technical.storageSettings },
-    ])
+      {
+        icon: 'computer',
+        permission: USER_PERMISSIONS.technical.parameters,
+        handler: showUserInterfaceModal,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsViewsImportExport },
+        icon: 'import_export',
+        permission: USER_PERMISSIONS.technical.viewImportExport,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsNotifications },
+        icon: 'notifications',
+        permission: USER_PERMISSIONS.technical.notification.common,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsCommentTemplates },
+        icon: 'comment',
+        permission: USER_PERMISSIONS.technical.commentTemplate,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsWidgetTemplates },
+        icon: 'widgets',
+        permission: USER_PERMISSIONS.technical.widgetTemplate,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsStateSettings },
+        icon: 'add_alert',
+        permission: USER_PERMISSIONS.technical.stateSetting,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsStorageSettings },
+        icon: 'storage',
+        permission: USER_PERMISSIONS.technical.storageSettings,
+      },
+    ]);
 
     const administrationLinks = computed(() => {
       const otherLinksWithChildren = [
-        { icon: 'local_offer', title: t('layout.topbar.customObjects'), links: customObjectsLinks.value },
+        {
+          icon: 'local_offer',
+          title: t('layout.topbar.customObjects'),
+          links: customObjectsLinks.value,
+        },
         { icon: 'settings', title: t('common.settings'), links: settingsLinks.value },
-      ]
+      ];
 
       return [
         { title: t('common.access'), links: accessLinks },
@@ -114,25 +219,25 @@ export default {
         { links: otherLinksWithChildren },
       ].reduce((acc, group) => {
         if (!group.links.length) {
-          return acc
+          return acc;
         }
 
         if (group.title) {
-          acc.push({ title: group.title, header: true })
+          acc.push({ title: group.title, header: true });
         }
 
-        acc.push(...group.links, { divider: true, key: uid() })
+        acc.push(...group.links, { divider: true, key: uid() });
 
-        return acc
-      }, [])
-    })
+        return acc;
+      }, []);
+    });
 
     return {
       permissionsWithDefaultType,
       administrationLinks,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss">

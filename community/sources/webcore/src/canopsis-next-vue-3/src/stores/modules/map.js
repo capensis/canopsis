@@ -1,8 +1,8 @@
-import { API_ROUTES } from '@/config'
+import { API_ROUTES } from '@/config';
 
-import request from '@/services/request'
+import request from '@/services/request';
 
-import { createCRUDStore } from '@/stores/plugins/crud'
+import { createCRUDStore } from '@/stores/plugins/crud';
 
 export const useMapStore = createCRUDStore({
   id: 'map',
@@ -12,11 +12,11 @@ export const useMapStore = createCRUDStore({
   withWithoutStore: true,
   actions: {
     fetchItemWithoutStore({ id, params } = {}) {
-      return request.get(`${API_ROUTES.maps}/${id}`, { params })
+      return request.get(`${API_ROUTES.maps}/${id}`, { params });
     },
 
     fetchItemStateWithoutStore({ id, params } = {}) {
-      return request.get(`${API_ROUTES.mapState}/${id}`, { params })
+      return request.get(`${API_ROUTES.mapState}/${id}`, { params });
     },
   },
-})
+});

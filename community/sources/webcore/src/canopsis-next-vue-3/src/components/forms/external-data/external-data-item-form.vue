@@ -13,11 +13,7 @@
             @update:model-value="updateField('reference', $event)"
           >
             <template #append="">
-              <c-help-icon
-                :text="$t('externalData.tooltips.reference')"
-                icon="help"
-                left
-              />
+              <c-help-icon :text="$t('externalData.tooltips.reference')" icon="help" left />
             </template>
           </c-text-field>
           <c-select
@@ -30,15 +26,8 @@
             item-value="value"
             @update:model-value="updateField('type', $event)"
           />
-          <v-btn
-            v-if="!disabled"
-            class="mr-0"
-            icon
-            @click="remove"
-          >
-            <v-icon color="error">
-              delete
-            </v-icon>
+          <v-btn v-if="!disabled" class="mr-0" icon @click="remove">
+            <v-icon color="error"> delete </v-icon>
           </v-btn>
         </c-layout>
         <external-data-table-form
@@ -84,7 +73,6 @@ import ExternalDataTableForm from './external-data-table-form.vue';
 
 export default {
   emits: ['update:form'],
-  inject: ['$validator'],
   components: { RequestForm, ExternalDataTableForm },
   props: {
     form: {
@@ -109,7 +97,7 @@ export default {
     },
     variables: {
       type: Array,
-      default: () => ([]),
+      default: () => [],
     },
     optionally: {
       type: Boolean,
@@ -121,17 +109,18 @@ export default {
     const validator = useValidator();
     const { updateField, updateModel } = useModelField(props, emit);
 
-    const availableTypes = computed(() => (
+    const availableTypes = computed(() =>
       props.types.length
         ? props.types
-        : Object.values(EXTERNAL_DATA_TYPES)
-          .map(type => ({ text: t(`externalData.types.${type}`), value: type }))
-    ));
+        : Object.values(EXTERNAL_DATA_TYPES).map((type) => ({
+            text: t(`externalData.types.${type}`),
+            value: type,
+          })),
+    );
 
     const isTableType = computed(() => isTableExternalDataType(props.form.type));
     const referenceFieldName = computed(() => `${props.name}.reference`);
     const serverErrorMessages = computed(() => validator.errors.collect(props.serverErrorName));
-
     const remove = () => emit('remove', props.form);
 
     onMounted(() => {

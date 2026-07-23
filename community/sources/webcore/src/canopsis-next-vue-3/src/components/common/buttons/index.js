@@ -7,3 +7,5 @@ export { default as CFabExpandBtn } from './c-fab-expand-btn.vue';
 export { default as CFabBtn } from './c-fab-btn.vue';
 export { default as CRefreshBtn } from './c-refresh-btn.vue';
 export { default as CBtnWithError } from './c-btn-with-error.vue';
+export { default as CGridBtns } from './c-grid-btns.vue';
+export { default as CDensityBtnToggle } from './c-density-btn-toggle.vue';

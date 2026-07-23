@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useThemeStore } from '@/stores/modules/theme'
+import { useThemeStore } from '@/stores/modules/theme';
 
 /**
  * Theme store facade.
@@ -8,8 +8,8 @@ import { useThemeStore } from '@/stores/modules/theme'
  * @returns {Object}
  */
 export const useTheme = () => {
-  const themeStore = useThemeStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(themeStore)
+  const themeStore = useThemeStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(themeStore);
 
   return {
     themes: items,
@@ -24,5 +24,5 @@ export const useTheme = () => {
     updateTheme: themeStore.update,
     removeTheme: themeStore.remove,
     bulkRemoveThemes: themeStore.bulkRemove,
-  }
-}
+  };
+};

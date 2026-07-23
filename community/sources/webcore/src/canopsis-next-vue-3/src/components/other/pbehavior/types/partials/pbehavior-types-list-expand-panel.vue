@@ -39,16 +39,16 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref } from 'vue';
 
-import { getMostReadableTextColor } from '@/helpers/color'
+import { getMostReadableTextColor } from '@/helpers/color';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
 const TABS = {
   description: 'description',
   type: 'type',
-}
+};
 
 export default {
   props: {
@@ -59,15 +59,15 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
-    const activeTab = ref(TABS.description)
+    const activeTab = ref(TABS.description);
     const iconColor = computed(() =>
       getMostReadableTextColor(props.pbehaviorType.color, { level: 'AA', size: 'large' }),
-    )
+    );
     const typeLabel = computed(() =>
       props.pbehaviorType.type ? t(`pbehavior.types.types.${props.pbehaviorType.type}`) : '-',
-    )
+    );
 
     return {
       TABS,
@@ -75,9 +75,9 @@ export default {
       iconColor,
       typeLabel,
       t,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

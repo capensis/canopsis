@@ -5,10 +5,7 @@
 
       <slot name="additional" />
 
-      <v-tooltip
-        v-if="hasAccess && hasCreateListener"
-        location="left"
-      >
+      <v-tooltip v-if="hasAccess && hasCreateListener" location="left">
         <template #activator="{ props: activatorProps }">
           <v-btn
             :theme="dark ? 'dark' : undefined"
@@ -45,5 +42,5 @@ export default {
   },
 
   emits: ['refresh', 'create'],
-}
+};
 </script>

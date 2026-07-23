@@ -4,15 +4,15 @@ import {
   KPI_RATING_USER_METRICS,
   SAMPLINGS,
   TIME_UNITS,
-} from '@/constants'
+} from '@/constants';
 
 import {
   addUnitToDate,
   convertDateToString,
   convertDateToTimestampByTimezone,
-} from '@/helpers/date/date'
+} from '@/helpers/date/date';
 
-import { isUserCriteria } from './form'
+import { isUserCriteria } from './form';
 
 /**
  * Convert metrics timestamps to local timezone.
@@ -25,7 +25,7 @@ export const convertMetricsToTimezone = (metrics, timezone) =>
   metrics.map((metric) => ({
     ...metric,
     timestamp: convertDateToTimestampByTimezone(metric.timestamp, timezone),
-  }))
+  }));
 
 /**
  * Return label by sampling.
@@ -37,18 +37,18 @@ export const convertMetricsToTimezone = (metrics, timezone) =>
 export const getDateLabelBySampling = (value, sampling) => {
   switch (sampling) {
     case SAMPLINGS.hour:
-      return convertDateToString(value, DATETIME_FORMATS.dateTimePicker)
+      return convertDateToString(value, DATETIME_FORMATS.dateTimePicker);
     case SAMPLINGS.day:
-      return convertDateToString(value, DATETIME_FORMATS.short)
+      return convertDateToString(value, DATETIME_FORMATS.short);
     case SAMPLINGS.week:
       return [
         convertDateToString(value, DATETIME_FORMATS.short),
         convertDateToString(addUnitToDate(value, 1, TIME_UNITS.week), DATETIME_FORMATS.short),
-      ].join(' - \n')
+      ].join(' - \n');
   }
 
-  return convertDateToString(value, DATETIME_FORMATS.yearWithMonth)
-}
+  return convertDateToString(value, DATETIME_FORMATS.yearWithMonth);
+};
 
 /**
  * Get all metrics available for a rating criteria.
@@ -57,7 +57,7 @@ export const getDateLabelBySampling = (value, sampling) => {
  * @returns {string[]}
  */
 export const getAvailableMetricsByCriteria = (criteria) =>
-  isUserCriteria(criteria) ? KPI_RATING_USER_METRICS : KPI_RATING_ENTITY_METRICS
+  isUserCriteria(criteria) ? KPI_RATING_USER_METRICS : KPI_RATING_ENTITY_METRICS;
 
 /**
  * Return selected metric if it is available for criteria, otherwise first available metric.
@@ -67,13 +67,13 @@ export const getAvailableMetricsByCriteria = (criteria) =>
  * @returns {string}
  */
 export const getAvailableMetricByCriteria = (metric, criteria) => {
-  const metrics = getAvailableMetricsByCriteria(criteria)
+  const metrics = getAvailableMetricsByCriteria(criteria);
 
   if (criteria && metrics.includes(metric)) {
-    return metric
+    return metric;
   }
 
-  const [firstMetric] = metrics
+  const [firstMetric] = metrics;
 
-  return firstMetric
-}
+  return firstMetric;
+};

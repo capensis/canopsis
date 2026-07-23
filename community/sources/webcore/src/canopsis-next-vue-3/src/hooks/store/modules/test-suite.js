@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useTestSuiteStore } from '@/stores/modules/test-suite'
+import { useTestSuiteStore } from '@/stores/modules/test-suite';
 
 /**
  * Test suite store facade.
@@ -8,8 +8,8 @@ import { useTestSuiteStore } from '@/stores/modules/test-suite'
  * @returns {Object}
  */
 export const useTestSuite = () => {
-  const testSuiteStore = useTestSuiteStore()
-  const refs = storeToRefs(testSuiteStore)
+  const testSuiteStore = useTestSuiteStore();
+  const refs = storeToRefs(testSuiteStore);
 
   return {
     ...refs,
@@ -21,5 +21,5 @@ export const useTestSuite = () => {
     fetchTestSuiteEntityGanttIntervalsWithoutStore:
       testSuiteStore.fetchEntityGanttIntervalsWithoutStore,
     fetchTestSuiteHistoryList: testSuiteStore.fetchHistoryList,
-  }
-}
+  };
+};

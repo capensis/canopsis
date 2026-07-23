@@ -16,35 +16,35 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
+import { onMounted } from 'vue';
 
-import { PAGINATION_LIMIT } from '@/config'
-import { USER_PERMISSIONS } from '@/constants'
+import { PAGINATION_LIMIT } from '@/config';
+import { USER_PERMISSIONS } from '@/constants';
 
-import { getQueryForList } from '@/helpers/entities/shared/query'
+import { getQueryForList } from '@/helpers/entities/shared/query';
 
-import { useCRUDPermissions } from '@/hooks/auth'
-import { useI18n } from '@/hooks/i18n'
-import { usePopups } from '@/hooks/popups'
-import { useLocalQueryWithOptions } from '@/hooks/query/shared'
-import { useRatingSettings } from '@/hooks/store/modules/rating-settings'
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useI18n } from '@/hooks/i18n';
+import { usePopups } from '@/hooks/popups';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
+import { useRatingSettings } from '@/hooks/store/modules/rating-settings';
 
-import KpiRatingSettingsList from './kpi-rating-settings-list.vue'
+import KpiRatingSettingsList from './kpi-rating-settings-list.vue';
 
 export default {
   components: { KpiRatingSettingsList },
 
   setup() {
-    const { t } = useI18n()
-    const popups = usePopups()
+    const { t } = useI18n();
+    const popups = usePopups();
     const {
       ratingSettings,
       ratingSettingsMeta,
       ratingSettingsPending,
       fetchRatingSettingsList,
       bulkUpdateRatingSettings,
-    } = useRatingSettings()
-    const { hasUpdateAccess } = useCRUDPermissions(USER_PERMISSIONS.technical.kpiRatingSettings)
+    } = useRatingSettings();
+    const { hasUpdateAccess } = useCRUDPermissions(USER_PERMISSIONS.technical.kpiRatingSettings);
 
     const {
       options,
@@ -62,7 +62,7 @@ export default {
         fetchRatingSettingsList({
           params: getQueryForList(fetchQuery),
         }),
-    })
+    });
 
     const changeSelectedRatingSettings = async (changedRatingSettings) => {
       await bulkUpdateRatingSettings({
@@ -70,13 +70,13 @@ export default {
           id: ratingSetting.id,
           enabled: ratingSetting.enabled,
         })),
-      })
+      });
 
-      popups.success({ text: t('success.default') })
-      await fetchList()
-    }
+      popups.success({ text: t('success.default') });
+      await fetchList();
+    };
 
-    onMounted(fetchList)
+    onMounted(fetchList);
 
     return {
       t,
@@ -88,7 +88,7 @@ export default {
       updateOptions,
       fetchList,
       changeSelectedRatingSettings,
-    }
+    };
   },
-}
+};
 </script>

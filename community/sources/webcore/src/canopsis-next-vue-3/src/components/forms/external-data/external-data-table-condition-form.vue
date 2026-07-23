@@ -1,9 +1,6 @@
 <template>
   <v-row>
-    <v-col
-      class="pr-2"
-      cols="3"
-    >
+    <v-col class="pr-2" cols="3">
       <c-select
         :model-value="condition.type"
         :items="conditionTypes"
@@ -14,10 +11,7 @@
         @update:model-value="updateField('type', $event)"
       />
     </v-col>
-    <v-col
-      class="px-2"
-      cols="4"
-    >
+    <v-col class="px-2" cols="4">
       <c-select
         :model-value="condition.attribute"
         :items="columnsForSelectedConditionType"
@@ -30,10 +24,7 @@
         @update:model-value="updateField('attribute', $event)"
       />
     </v-col>
-    <v-col
-      class="pl-2"
-      cols="5"
-    >
+    <v-col class="pl-2" cols="5">
       <c-layout align="center">
         <c-payload-text-field
           :value="condition.value"
@@ -44,19 +35,8 @@
           clearable
           @update:value="updateField('value', $event)"
         />
-        <v-btn
-          v-if="!disabled"
-          :disabled="disabledRemove"
-          icon
-          small
-          @click="removeCondition"
-        >
-          <v-icon
-            color="error"
-            small
-          >
-            delete
-          </v-icon>
+        <v-btn v-if="!disabled" :disabled="disabledRemove" icon small @click="removeCondition">
+          <v-icon color="error" small> delete </v-icon>
         </v-btn>
       </c-layout>
     </v-col>
@@ -73,7 +53,6 @@ import { useModelField } from '@/hooks/form/model-field';
 
 export default {
   emits: ['update:condition'],
-  inject: ['$validator'],
   props: {
     condition: {
       type: Object,
@@ -104,19 +83,23 @@ export default {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
-    const conditionTypes = computed(() => Object.values(EXTERNAL_DATA_CONDITION_TYPES)
-      .map(type => ({ text: t(`externalData.conditionTypes.${type}`), value: type })));
+    const conditionTypes = computed(() =>
+      Object.values(EXTERNAL_DATA_CONDITION_TYPES).map((type) => ({
+        text: t(`externalData.conditionTypes.${type}`),
+        value: type,
+      })),
+    );
 
-    const columnsForSelectedConditionType = computed(() => (
+    const columnsForSelectedConditionType = computed(() =>
       props.condition.type === EXTERNAL_DATA_CONDITION_TYPES.regexp
-        ? props.columns.filter(column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp)
-        : props.columns
-    ));
+        ? props.columns.filter(
+            (column) => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp,
+          )
+        : props.columns,
+    );
 
     const conditionFieldName = computed(() => `${props.name}.condition`);
-
     const valueFieldName = computed(() => `${props.name}.value`);
-
     const removeCondition = () => emit('remove', props.condition);
 
     return {

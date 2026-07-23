@@ -16,11 +16,11 @@ import { find, isEqual } from 'lodash';
 import { EVENT_FILTER_SET_TAGS_REGEX } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
+import { validatorMixin } from '@/mixins/validator';
 
 export default {
   emits: ['update:value'],
-  inject: ['$validator'],
-  mixins: [formMixin],
+  mixins: [formMixin, validatorMixin],
   props: {
     value: {
       type: String,
@@ -60,9 +60,9 @@ export default {
       immediate: true,
       handler(items, oldItems) {
         if (
-          this.value
-          && !isEqual(items, oldItems)
-          && items.every(({ value }) => value !== this.value)
+          this.value &&
+          !isEqual(items, oldItems) &&
+          items.every(({ value }) => value !== this.value)
         ) {
           this.updateField('value', '');
         }

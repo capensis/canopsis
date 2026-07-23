@@ -1,5 +1,5 @@
 <template>
-  <c-layout class="gap-3" column>
+  <c-layout gap="3" column>
     <c-name-field v-model="name" autofocus required />
 
     <c-form-block>
@@ -21,20 +21,20 @@
 </template>
 
 <script>
-import { useFormModels } from '@/hooks/form'
-import { useI18n } from '@/hooks/i18n'
+import { useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   setup() {
-    const { t } = useI18n()
-    const { name, type, file } = useFormModels(['name', 'type', 'file'])
+    const { t } = useI18n();
+    const { name, type, file } = useFormModels(['name', 'type', 'file']);
 
     return {
       t,
       name,
       type,
       file,
-    }
+    };
   },
-}
+};
 </script>

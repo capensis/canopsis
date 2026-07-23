@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import { merge } from 'lodash'
-import { markRaw } from 'vue'
+import { merge } from 'lodash';
+import { markRaw } from 'vue';
 import {
   BarController,
   BarElement,
@@ -19,9 +19,9 @@ import {
   LinearScale,
   TimeScale,
   Tooltip,
-} from 'chart.js'
-import 'chartjs-adapter-moment'
-import zoomPlugin from 'chartjs-plugin-zoom'
+} from 'chart.js';
+import 'chartjs-adapter-moment';
+import zoomPlugin from 'chartjs-plugin-zoom';
 
 Chart.register(
   BarController,
@@ -32,7 +32,7 @@ Chart.register(
   TimeScale,
   Tooltip,
   zoomPlugin,
-)
+);
 
 export default {
   props: {
@@ -57,7 +57,7 @@ export default {
   data() {
     return {
       chart: null,
-    }
+    };
   },
 
   computed: {
@@ -65,7 +65,7 @@ export default {
       return {
         labels: this.labels,
         datasets: this.datasets,
-      }
+      };
     },
 
     mergedOptions() {
@@ -94,7 +94,7 @@ export default {
           },
         },
         this.options,
-      )
+      );
     },
   },
 
@@ -102,25 +102,25 @@ export default {
     chartData: {
       deep: true,
       handler() {
-        this.updateChart()
+        this.updateChart();
       },
     },
 
     mergedOptions: {
       deep: true,
       handler() {
-        this.updateChart()
+        this.updateChart();
       },
     },
   },
 
   mounted() {
-    this.renderChart()
+    this.renderChart();
   },
 
   beforeUnmount() {
-    this.chart?.destroy()
-    this.chart = null
+    this.chart?.destroy();
+    this.chart = null;
   },
 
   methods: {
@@ -131,20 +131,20 @@ export default {
           data: this.chartData,
           options: this.mergedOptions,
         }),
-      )
+      );
     },
 
     updateChart() {
       if (!this.chart) {
-        return
+        return;
       }
 
-      this.chart.data = this.chartData
-      this.chart.options = this.mergedOptions
-      this.chart.update()
+      this.chart.data = this.chartData;
+      this.chart.options = this.mergedOptions;
+      this.chart.update();
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

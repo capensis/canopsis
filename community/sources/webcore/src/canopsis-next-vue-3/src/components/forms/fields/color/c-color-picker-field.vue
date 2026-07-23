@@ -33,12 +33,12 @@
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue'
-import { useField } from 'vee-validate'
+import { computed, ref, watch } from 'vue';
+import { useField } from 'vee-validate';
 
-import { getMostReadableTextColor } from '@/helpers/color'
+import { getMostReadableTextColor } from '@/helpers/color';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -83,51 +83,51 @@ export default {
   emits: ['update:modelValue', 'update:color'],
 
   setup(props, { emit }) {
-    const { t } = useI18n()
-    const shown = ref(false)
-    const fieldName = computed(() => props.name || props.label || 'color')
+    const { t } = useI18n();
+    const shown = ref(false);
+    const fieldName = computed(() => props.name || props.label || 'color');
     const fieldRules = computed(() => ({
       required: props.required,
-    }))
+    }));
     const { value, errors, setValue, validate } = useField(fieldName, fieldRules, {
       initialValue: props.modelValue ?? props.color,
       validateOnMount: false,
       validateOnValueUpdate: false,
-    })
+    });
 
     const colorValue = computed({
       get: () => props.modelValue ?? props.color ?? value.value,
       set: (value) => {
-        setValue(value, false)
-        emit('update:modelValue', value)
-        emit('update:color', value)
+        setValue(value, false);
+        emit('update:modelValue', value);
+        emit('update:color', value);
       },
-    })
+    });
 
-    const displayLabel = computed(() => props.label ?? t('common.selectColor'))
+    const displayLabel = computed(() => props.label ?? t('common.selectColor'));
 
     const style = computed(() => ({
       backgroundColor: colorValue.value,
       color: getMostReadableTextColor(colorValue.value),
-    }))
+    }));
 
     watch(
       () => props.modelValue,
       (nextValue) => {
         if (nextValue !== undefined) {
-          setValue(nextValue, false)
+          setValue(nextValue, false);
         }
       },
-    )
+    );
 
     watch(
       () => props.color,
       (nextValue) => {
         if (props.modelValue === undefined) {
-          setValue(nextValue, false)
+          setValue(nextValue, false);
         }
       },
-    )
+    );
 
     return {
       shown,
@@ -136,7 +136,7 @@ export default {
       style,
       errorMessages: errors,
       validate,
-    }
+    };
   },
-}
+};
 </script>

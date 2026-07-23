@@ -1,7 +1,7 @@
-import { map, omit, pick } from 'lodash'
-import { isArray } from 'lodash'
+import { map, omit, pick } from 'lodash';
+import { isArray } from 'lodash';
 
-import { uid } from './uid'
+import { uid } from './uid';
 
 /**
  * Add uniq key field in entity object.
@@ -9,7 +9,7 @@ import { uid } from './uid'
  * @param {Object} entity
  * @return {Object}
  */
-export const addKeyInEntity = (entity = {}) => ({ ...entity, key: uid() })
+export const addKeyInEntity = (entity = {}) => ({ ...entity, key: uid() });
 
 /**
  * Add uniq key field in each entity.
@@ -17,7 +17,7 @@ export const addKeyInEntity = (entity = {}) => ({ ...entity, key: uid() })
  * @param {Array} entities
  * @return {Array}
  */
-export const addKeyInEntities = (entities = []) => entities.map(addKeyInEntity)
+export const addKeyInEntities = (entities = []) => entities.map(addKeyInEntity);
 
 /**
  * Remove key field from each entity.
@@ -25,7 +25,7 @@ export const addKeyInEntities = (entities = []) => entities.map(addKeyInEntity)
  * @param {Object} entity
  * @return {Object}
  */
-export const removeKeyFromEntity = (entity = {}) => omit(entity, ['key'])
+export const removeKeyFromEntity = (entity = {}) => omit(entity, ['key']);
 
 /**
  * Remove key field from each entity.
@@ -33,7 +33,7 @@ export const removeKeyFromEntity = (entity = {}) => omit(entity, ['key'])
  * @param {Array} entities
  * @return {Array}
  */
-export const removeKeyFromEntities = (entities = []) => entities.map(removeKeyFromEntity)
+export const removeKeyFromEntities = (entities = []) => entities.map(removeKeyFromEntity);
 
 /**
  * Get id from entity
@@ -43,7 +43,7 @@ export const removeKeyFromEntities = (entities = []) => entities.map(removeKeyFr
  * @return {string}
  */
 export const getIdFromEntity = (entity, idField = '_id') =>
-  typeof entity === 'object' && entity !== null ? entity[idField] : entity
+  typeof entity === 'object' && entity !== null ? entity[idField] : entity;
 
 /**
  * Return entities ids
@@ -52,7 +52,7 @@ export const getIdFromEntity = (entity, idField = '_id') =>
  * @param {string} [idKey = '_id']
  * @return Array
  */
-export const mapIds = (entities, idKey = '_id') => map(entities, idKey)
+export const mapIds = (entities, idKey = '_id') => map(entities, idKey);
 
 /**
  * Pick id field from entities
@@ -62,7 +62,7 @@ export const mapIds = (entities, idKey = '_id') => map(entities, idKey)
  * @returns {PartialObject<U>[]}
  */
 export const pickIds = (entities = [], idKey = '_id') =>
-  entities.map((entity) => pick(entity, [idKey]))
+  entities.map((entity) => pick(entity, [idKey]));
 
 /**
  * Filter entities by ids
@@ -72,7 +72,7 @@ export const pickIds = (entities = [], idKey = '_id') =>
  * @param {string} [idKey = '_id']
  */
 export const filterById = (items, item, idKey = '_id') =>
-  items.filter(({ [idKey]: itemId }) => item[idKey] !== itemId)
+  items.filter(({ [idKey]: itemId }) => item[idKey] !== itemId);
 
 /**
  * Filter entities by value
@@ -80,7 +80,7 @@ export const filterById = (items, item, idKey = '_id') =>
  * @param {string[] | number[]} items
  * @param {string | number} removingValue
  */
-export const filterValue = (items, removingValue) => items.filter((item) => item !== removingValue)
+export const filterValue = (items, removingValue) => items.filter((item) => item !== removingValue);
 
 /**
  * Create range number array
@@ -90,7 +90,7 @@ export const filterValue = (items, removingValue) => items.filter((item) => item
  * @return {number[]}
  */
 export const createRangeArray = (length, start = 0) =>
-  Array.from({ length }, (_, index) => start + index)
+  Array.from({ length }, (_, index) => start + index);
 
 /**
  * Recursively transforms an array into an object keyed by a specified property.
@@ -104,16 +104,16 @@ export const createRangeArray = (length, start = 0) =>
 export const deepKeyBy = (array, idKey = '_id', childrenKey = 'items', prefix = '') =>
   array.reduce((acc, item) => {
     const key =
-      prefix && !String(item[idKey]).startsWith(prefix) ? `${prefix}${item[idKey]}` : item[idKey]
+      prefix && !String(item[idKey]).startsWith(prefix) ? `${prefix}${item[idKey]}` : item[idKey];
 
-    acc[key] = item
+    acc[key] = item;
 
     if (isArray(item[childrenKey])) {
-      Object.assign(acc, deepKeyBy(item[childrenKey], idKey, childrenKey, `${key}.`))
+      Object.assign(acc, deepKeyBy(item[childrenKey], idKey, childrenKey, `${key}.`));
     }
 
-    return acc
-  }, {})
+    return acc;
+  }, {});
 
 /**
  * Creates an object mapping each array element key to its index.
@@ -124,7 +124,7 @@ export const deepKeyBy = (array, idKey = '_id', childrenKey = 'items', prefix = 
  */
 export const indexesByKey = (items = [], key = 'value') =>
   items.reduce((acc, item, index) => {
-    acc[item[key]] = index
+    acc[item[key]] = index;
 
-    return acc
-  }, {})
+    return acc;
+  }, {});

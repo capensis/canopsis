@@ -1,7 +1,7 @@
-import { unref } from 'vue'
-import axios from 'axios'
+import { unref } from 'vue';
+import axios from 'axios';
 
-import { usePendingHandler } from '@/hooks/query/pending'
+import { usePendingHandler } from '@/hooks/query/pending';
 
 /**
  * Creates a polling runner with cancel support.
@@ -19,73 +19,73 @@ export const usePolling = ({
   endHandler = (v) => v,
   interval = 2000,
 }) => {
-  let cancelWait = () => {}
-  let finished = false
-  let cancelled = false
+  let cancelWait = () => {};
+  let finished = false;
+  let cancelled = false;
 
   const wait = (options, cancelToken) =>
     new Promise((resolve, reject) => {
       const customResolve = (...args) => {
-        finished = true
+        finished = true;
 
-        return resolve(...args)
-      }
+        return resolve(...args);
+      };
 
       const customReject = (err) => {
-        finished = true
+        finished = true;
 
-        return reject(err)
-      }
+        return reject(err);
+      };
 
       const callTimeout = async () => {
         try {
-          await processHandler(options, customResolve, customReject, cancelToken)
+          await processHandler(options, customResolve, customReject, cancelToken);
         } catch (err) {
-          customReject(err)
+          customReject(err);
 
-          return
+          return;
         }
 
         if (cancelled) {
-          reject()
+          reject();
         }
 
         if (!finished) {
-          setTimeout(callTimeout, unref(interval))
+          setTimeout(callTimeout, unref(interval));
         }
-      }
+      };
 
-      return callTimeout()
-    })
+      return callTimeout();
+    });
 
   const poll = async (...args) => {
-    const source = axios.CancelToken.source()
-    const { token: cancelToken } = source
+    const source = axios.CancelToken.source();
+    const { token: cancelToken } = source;
 
-    finished = false
-    cancelled = false
+    finished = false;
+    cancelled = false;
 
     cancelWait = () => {
-      cancelled = true
-      source.cancel()
-    }
+      cancelled = true;
+      source.cancel();
+    };
 
-    const startResponse = await startHandler(...args, cancelToken)
+    const startResponse = await startHandler(...args, cancelToken);
 
     if (cancelled) {
-      return startResponse
+      return startResponse;
     }
 
-    const waitResponse = await wait({ ...startResponse, ...args }, cancelToken)
+    const waitResponse = await wait({ ...startResponse, ...args }, cancelToken);
 
-    return endHandler(waitResponse)
-  }
+    return endHandler(waitResponse);
+  };
 
   return {
     poll,
     cancel: () => cancelWait(),
-  }
-}
+  };
+};
 
 /**
  * Creates polling runner with pending state.
@@ -105,15 +105,15 @@ export const usePollingWithPending = ({
     processHandler,
     endHandler,
     interval,
-  })
-  const { pending, handler: poll } = usePendingHandler(basicPoll, initialPending)
+  });
+  const { pending, handler: poll } = usePendingHandler(basicPoll, initialPending);
 
   return {
     pending,
     poll,
     cancel,
-  }
-}
+  };
+};
 
 export const useFilePolling = ({
   createHandler,
@@ -125,17 +125,17 @@ export const useFilePolling = ({
   usePolling({
     startHandler: createHandler,
     processHandler: async (options, resolve, reject) => {
-      const file = await fetchHandler(options)
+      const file = await fetchHandler(options);
 
       if (file?.status === completedStatus) {
-        resolve(file)
+        resolve(file);
 
-        return
+        return;
       }
 
       if (file?.status === failedStatus) {
-        reject(file)
+        reject(file);
       }
     },
     interval,
-  })
+  });

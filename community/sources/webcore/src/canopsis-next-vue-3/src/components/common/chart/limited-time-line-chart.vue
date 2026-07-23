@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import { merge } from 'lodash'
-import { markRaw } from 'vue'
+import { merge } from 'lodash';
+import { markRaw } from 'vue';
 import {
   CategoryScale,
   Chart,
@@ -21,12 +21,12 @@ import {
   PointElement,
   TimeScale,
   Tooltip,
-} from 'chart.js'
-import 'chartjs-adapter-moment'
-import annotationPlugin from 'chartjs-plugin-annotation'
-import zoomPlugin from 'chartjs-plugin-zoom'
+} from 'chart.js';
+import 'chartjs-adapter-moment';
+import annotationPlugin from 'chartjs-plugin-annotation';
+import zoomPlugin from 'chartjs-plugin-zoom';
 
-import { DATETIME_FORMATS } from '@/constants'
+import { DATETIME_FORMATS } from '@/constants';
 
 Chart.register(
   CategoryScale,
@@ -40,7 +40,7 @@ Chart.register(
   Tooltip,
   annotationPlugin,
   zoomPlugin,
-)
+);
 
 const defaultDatasetOptions = {
   backgroundColor: 'green',
@@ -50,7 +50,7 @@ const defaultDatasetOptions = {
   radius: 0,
   hoverRadius: 5,
   tension: 0.2,
-}
+};
 
 export default {
   props: {
@@ -75,7 +75,7 @@ export default {
   data() {
     return {
       chart: null,
-    }
+    };
   },
 
   computed: {
@@ -86,11 +86,11 @@ export default {
           ...defaultDatasetOptions,
           ...dataset,
         })),
-      }
+      };
     },
 
     mergedOptions() {
-      const limit = this.options.plugins?.limit ?? {}
+      const limit = this.options.plugins?.limit ?? {};
 
       return merge(
         {
@@ -184,7 +184,7 @@ export default {
           },
         },
         this.options,
-      )
+      );
     },
   },
 
@@ -192,25 +192,25 @@ export default {
     chartData: {
       deep: true,
       handler() {
-        this.updateChart()
+        this.updateChart();
       },
     },
 
     mergedOptions: {
       deep: true,
       handler() {
-        this.updateChart()
+        this.updateChart();
       },
     },
   },
 
   mounted() {
-    this.renderChart()
+    this.renderChart();
   },
 
   beforeUnmount() {
-    this.chart?.destroy()
-    this.chart = null
+    this.chart?.destroy();
+    this.chart = null;
   },
 
   methods: {
@@ -221,20 +221,20 @@ export default {
           data: this.chartData,
           options: this.mergedOptions,
         }),
-      )
+      );
     },
 
     updateChart() {
       if (!this.chart) {
-        return
+        return;
       }
 
-      this.chart.data = this.chartData
-      this.chart.options = this.mergedOptions
-      this.chart.update()
+      this.chart.data = this.chartData;
+      this.chart.options = this.mergedOptions;
+      this.chart.update();
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

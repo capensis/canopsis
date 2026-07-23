@@ -8,11 +8,11 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { JOB_LAST_RUN_STATUS } from '@/constants'
+import { JOB_LAST_RUN_STATUS } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -23,8 +23,8 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const label = computed(() => t(`jobs.lastRunStatus.${props.status}`))
+    const { t } = useI18n();
+    const label = computed(() => t(`jobs.lastRunStatus.${props.status}`));
     const statusColor = computed(
       () =>
         ({
@@ -32,7 +32,7 @@ export default {
           [JOB_LAST_RUN_STATUS.failed]: 'error',
           [JOB_LAST_RUN_STATUS.aborted]: 'grey',
         })[props.status] ?? 'grey',
-    )
+    );
     const statusIcon = computed(
       () =>
         ({
@@ -40,13 +40,13 @@ export default {
           [JOB_LAST_RUN_STATUS.failed]: 'cancel',
           [JOB_LAST_RUN_STATUS.aborted]: 'cancel',
         })[props.status] ?? 'help_outline',
-    )
+    );
 
     return {
       label,
       statusColor,
       statusIcon,
-    }
+    };
   },
-}
+};
 </script>

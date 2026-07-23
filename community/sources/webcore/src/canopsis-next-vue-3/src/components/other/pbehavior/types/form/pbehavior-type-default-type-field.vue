@@ -15,13 +15,13 @@
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue'
-import { find } from 'lodash'
+import { computed, onMounted, ref } from 'vue';
+import { find } from 'lodash';
 
-import { PBEHAVIOR_TYPE_TYPES } from '@/constants'
+import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n'
-import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type'
+import { useI18n } from '@/hooks/i18n';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
 export default {
   props: {
@@ -38,45 +38,45 @@ export default {
   emits: ['update:modelValue', 'update:color', 'sync:color'],
 
   setup(props, { emit }) {
-    const { t } = useI18n()
-    const { fetchPbehaviorTypesListWithoutStore } = usePbehaviorType()
+    const { t } = useI18n();
+    const { fetchPbehaviorTypesListWithoutStore } = usePbehaviorType();
 
-    const pending = ref(false)
-    const defaultTypes = ref([])
+    const pending = ref(false);
+    const defaultTypes = ref([]);
 
     const selectedType = computed(
       () => find(defaultTypes.value, { type: props.modelValue }) ?? props.modelValue,
-    )
+    );
 
     const fetchDefaultTypes = async () => {
       try {
-        pending.value = true
+        pending.value = true;
 
         const { data = [] } = await fetchPbehaviorTypesListWithoutStore({
           params: { default: true },
-        })
+        });
 
         defaultTypes.value = data.map((type) => ({
           ...type,
           text: t(`modals.createPbehaviorType.canonicalTypes.${type.type}`),
-        }))
+        }));
 
-        const activeType = find(data, { type: props.modelValue })
+        const activeType = find(data, { type: props.modelValue });
 
         if (activeType) {
-          emit('sync:color', activeType.color)
+          emit('sync:color', activeType.color);
         }
       } finally {
-        pending.value = false
+        pending.value = false;
       }
-    }
+    };
 
     const updateModel = (value = {}) => {
-      emit('update:modelValue', value.type)
-      emit('update:color', value.color)
-    }
+      emit('update:modelValue', value.type);
+      emit('update:color', value.color);
+    };
 
-    onMounted(fetchDefaultTypes)
+    onMounted(fetchDefaultTypes);
 
     return {
       t,
@@ -84,7 +84,7 @@ export default {
       defaultTypes,
       selectedType,
       updateModel,
-    }
+    };
   },
-}
+};
 </script>

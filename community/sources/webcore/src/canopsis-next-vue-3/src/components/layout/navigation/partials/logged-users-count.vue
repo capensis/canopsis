@@ -1,23 +1,9 @@
 <template>
   <v-tooltip location="left">
     <template #activator="{ props }">
-      <v-badge
-        :color="badgeColor"
-        :content="count"
-        class="logged-users-count"
-      >
-        <v-btn
-          size="x-small"
-          variant="text"
-          icon
-          v-bind="props"
-        >
-          <c-icon
-            color="white"
-            size="small"
-          >
-            people
-          </c-icon>
+      <v-badge :color="badgeColor" :content="count" class="logged-users-count">
+        <v-btn size="x-small" variant="text" icon v-bind="props">
+          <c-icon color="white" size="small"> people </c-icon>
         </v-btn>
       </v-badge>
     </template>
@@ -27,10 +13,10 @@
 </template>
 
 <script>
-import { mapActions } from 'pinia'
+import { mapActions } from 'pinia';
 
-import { SOCKET_ROOMS } from '@/config'
-import { useAuthStore } from '@/stores/modules/auth'
+import { SOCKET_ROOMS } from '@/config';
+import { useAuthStore } from '@/stores/modules/auth';
 
 export default {
   props: {
@@ -43,37 +29,33 @@ export default {
   data() {
     return {
       count: '',
-    }
+    };
   },
 
   mounted() {
-    this.fetchData()
+    this.fetchData();
 
-    this.$socket
-      .join(SOCKET_ROOMS.loggedUserCount)
-      .addListener(this.setCount)
+    this.$socket.join(SOCKET_ROOMS.loggedUserCount).addListener(this.setCount);
   },
 
   beforeUnmount() {
-    this.$socket
-      .leave(SOCKET_ROOMS.loggedUserCount)
-      .removeListener(this.setCount)
+    this.$socket.leave(SOCKET_ROOMS.loggedUserCount).removeListener(this.setCount);
   },
 
   methods: {
     ...mapActions(useAuthStore, ['fetchLoggedUsersCountWithoutStore']),
 
     setCount(count) {
-      this.count = count
+      this.count = count;
     },
 
     async fetchData() {
-      const { count = 0 } = await this.fetchLoggedUsersCountWithoutStore()
+      const { count = 0 } = await this.fetchLoggedUsersCountWithoutStore();
 
-      this.setCount(count)
+      this.setCount(count);
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

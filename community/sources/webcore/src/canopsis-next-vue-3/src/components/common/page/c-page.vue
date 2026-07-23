@@ -46,5 +46,5 @@ export default {
   },
 
   emits: ['refresh', 'create'],
-}
+};
 </script>

@@ -24,9 +24,9 @@ export default {
   defaultTheme: 'Thème par défaut',
   versionDescriptionTooltip: 'Info-bulle contextuelle sur la bannière de version',
   defaultVersionDescription: `<div>
-  <div>Édition:<strong> {{ edition }}</strong></div>
-  <div>Nom de série:<strong> {{ serialName }}</strong></div>
-  <div>Version mise à jour:<strong> {{ timestamp versionUpdated }}</strong></div>
+  <div>Édition:<strong> {'{{ edition }}'}</strong></div>
+  <div>Nom de série:<strong> {'{{ serialName }}'}</strong></div>
+  <div>Version mise à jour:<strong> {'{{ timestamp versionUpdated }}'}</strong></div>
 </div>`,
   tooltips: {
     maxMatchedItems:
@@ -34,4 +34,4 @@ export default {
     checkCountRequestTimeout:
       "Définit le délai d'expiration (en secondes) de la demande d'éléments correspondants",
   },
-}
+};

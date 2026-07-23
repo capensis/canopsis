@@ -1,18 +1,9 @@
 <template>
   <span class="c-action-btn">
-    <v-tooltip
-      :location="location"
-      :disabled="disabled"
-    >
+    <v-tooltip :location="location" :disabled="disabled">
       <template #activator="{ props: activatorProps }">
-        <slot
-          :props="activatorProps"
-          name="button"
-        >
-          <div
-            class="c-action-btn__button-wrapper"
-            v-bind="{ ...activatorProps, ...$attrs }"
-          >
+        <slot :props="activatorProps" name="button">
+          <div class="c-action-btn__button-wrapper" v-bind="{ ...activatorProps, ...$attrs }">
             <v-btn
               :disabled="isButtonDisabled"
               :loading="loading"
@@ -25,10 +16,7 @@
               icon
               @click.stop.prevent="$emit('click', $event)"
             >
-              <c-icon
-                :color="preparedProps.color"
-                :small="iconSmall"
-              >
+              <c-icon :color="preparedProps.color" :small="iconSmall">
                 {{ preparedProps.icon }}
               </c-icon>
             </v-btn>
@@ -53,7 +41,7 @@ export default {
     type: {
       type: String,
       default: null,
-      validator: value => ['edit', 'duplicate', 'delete'].includes(value),
+      validator: (value) => ['edit', 'duplicate', 'delete'].includes(value),
     },
     icon: {
       type: String,
@@ -122,12 +110,15 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
-    const location = computed(() => ({
-      [props.top]: 'top',
-      [props.right]: 'right',
-      [props.left]: 'left',
-      [props.bottom || (!props.top && !props.right && !props.left)]: 'bottom',
-    }.true));
+    const location = computed(
+      () =>
+        ({
+          [props.top]: 'top',
+          [props.right]: 'right',
+          [props.left]: 'left',
+          [props.bottom || (!props.top && !props.right && !props.left)]: 'bottom',
+        }).true,
+    );
 
     const isButtonDisabled = computed(() => props.disabled || props.disabledButton);
 
@@ -170,7 +161,6 @@ export default {
 .c-action-btn {
   display: inline-flex;
   flex: 0 0 auto;
-  align-self: start;
   justify-self: start;
   width: fit-content;
   height: fit-content;

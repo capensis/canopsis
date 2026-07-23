@@ -24,9 +24,9 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { parseRawHttp } from '@/helpers/request'
+import { parseRawHttp } from '@/helpers/request';
 
 export default {
   props: {
@@ -47,29 +47,29 @@ export default {
   setup(props) {
     const parsedRaw = computed(() => {
       try {
-        return parseRawHttp(props.raw)
+        return parseRawHttp(props.raw);
       } catch (error) {
-        console.error(error)
+        console.error(error);
 
         return {
           startLine: props.raw,
           headers: null,
           body: '',
-        }
+        };
       }
-    })
+    });
     const bodyJsonObject = computed(() => {
       try {
-        return JSON.parse(parsedRaw.value.body)
+        return JSON.parse(parsedRaw.value.body);
       } catch {
-        return null
+        return null;
       }
-    })
+    });
 
     return {
       parsedRaw,
       bodyJsonObject,
-    }
+    };
   },
-}
+};
 </script>

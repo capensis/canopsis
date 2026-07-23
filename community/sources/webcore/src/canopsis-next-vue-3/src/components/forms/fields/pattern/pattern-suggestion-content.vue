@@ -1,27 +1,23 @@
 <template>
   <c-layout
     :class="{ 'pattern-suggestions__content--difference': hasDifference }"
-    class="pattern-suggestions__content gap-4"
+    class="pattern-suggestions__content"
+    gap="4"
     column
   >
     <c-alert type="info">
       <c-layout justify-space-between align-center>
-        <c-layout class="gap-2 font-weight-regular" column>
+        <c-layout class="font-weight-regular" gap="2" column>
           <div v-html="$t('pattern.conditionsOptimized')" />
           <ul class="pl-4">
-            <li
-              v-for="{ field, regexp } in optimizedFieldsRegexps"
-              :key="field"
-            >
+            <li v-for="{ field, regexp } in optimizedFieldsRegexps" :key="field">
               Infos.{{ field }}.Value ({{ regexp }})
             </li>
           </ul>
         </c-layout>
         <c-layout justify-end>
           <v-btn color="success" @click="apply">
-            <v-icon class="mr-2" color="white">
-              check
-            </v-icon>
+            <v-icon class="mr-2" color="white"> check </v-icon>
             {{ $t('pattern.applyThisSuggestion') }}
           </v-btn>
         </c-layout>
@@ -64,10 +60,12 @@ export default {
   },
   setup(props, { emit }) {
     const hasDifference = computed(() => !!props.suggestion.difference);
-    const suggestionPatternsForm = computed(() => patternToForm({
-      type: PATTERN_TYPES.entity,
-      [PATTERNS_FIELDS.entity]: props.suggestion[PATTERNS_FIELDS.entity],
-    }));
+    const suggestionPatternsForm = computed(() =>
+      patternToForm({
+        type: PATTERN_TYPES.entity,
+        [PATTERNS_FIELDS.entity]: props.suggestion[PATTERNS_FIELDS.entity],
+      }),
+    );
 
     const apply = () => emit('apply');
 

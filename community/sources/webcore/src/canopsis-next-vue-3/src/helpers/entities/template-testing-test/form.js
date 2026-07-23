@@ -1,6 +1,6 @@
-import { isArray, mapValues } from 'lodash'
+import { isArray, mapValues } from 'lodash';
 
-import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants'
+import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
 /**
  * @typedef {0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 } TemplateTestingTestType
@@ -99,11 +99,11 @@ import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants'
 export const templateTestingDataToForm = (templateTestingData = {}) =>
   mapValues(templateTestingData, (dataItem) => {
     if (isArray(dataItem)) {
-      return dataItem.map((item) => item?._id || item)
+      return dataItem.map((item) => item?._id || item);
     }
 
-    return dataItem?._id
-  })
+    return dataItem?._id;
+  });
 
 /**
  * Convert template testing test object to form
@@ -117,7 +117,7 @@ export const templateTestingTestToForm = (templateTestingTest = {}) => ({
   type: templateTestingTest.type ?? TEMPLATE_TESTING_TEST_TYPES.scenario,
   rule: templateTestingTest.rule ?? { name: '' },
   data: templateTestingDataToForm(templateTestingTest.data),
-})
+});
 
 /**
  * Converts a template testing test form object to a template testing test object
@@ -129,4 +129,4 @@ export const formToTemplateTestingTest = (form = {}) => ({
   ...form,
 
   rule: form.rule?._id,
-})
+});

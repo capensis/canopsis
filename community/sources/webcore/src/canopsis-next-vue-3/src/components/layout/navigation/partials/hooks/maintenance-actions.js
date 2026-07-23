@@ -1,12 +1,12 @@
-import { useModals } from '@/hooks/modals'
-import { useI18n } from '@/hooks/i18n'
-import { useInfo } from '@/hooks/store/modules/info'
-import { MODALS } from '@/constants'
+import { useModals } from '@/hooks/modals';
+import { useI18n } from '@/hooks/i18n';
+import { useInfo } from '@/hooks/store/modules/info';
+import { MODALS } from '@/constants';
 
 export const useMaintenanceActions = () => {
-  const modals = useModals()
-  const { t } = useI18n()
-  const { maintenance, updateMaintenanceMode, fetchAppInfo } = useInfo()
+  const modals = useModals();
+  const { t } = useI18n();
+  const { maintenance, updateMaintenanceMode, fetchAppInfo } = useInfo();
 
   /**
    * Enable maintenance mode.
@@ -19,10 +19,10 @@ export const useMaintenanceActions = () => {
         ...form,
         enabled: true,
       },
-    })
+    });
 
-    await fetchAppInfo()
-  }
+    await fetchAppInfo();
+  };
 
   /**
    * Disable maintenance mode.
@@ -32,42 +32,41 @@ export const useMaintenanceActions = () => {
       data: {
         enabled: false,
       },
-    })
+    });
 
-    await fetchAppInfo()
-  }
+    await fetchAppInfo();
+  };
 
   /**
    * Show modal to create maintenance mode.
    */
-  const showCreateMaintenanceModeModal = () => modals.show({
-    name: MODALS.createMaintenance,
-    config: {
-      action: enableMaintenanceMode,
-      warningText: t('maintenance.logoutWarning'),
-    },
-  })
+  const showCreateMaintenanceModeModal = () =>
+    modals.show({
+      name: MODALS.createMaintenance,
+      config: {
+        action: enableMaintenanceMode,
+        warningText: t('maintenance.logoutWarning'),
+      },
+    });
 
   /**
    * Show confirmation modal to leave maintenance mode.
    */
-  const showConfirmationLeaveMaintenanceMode = () => modals.show({
-    name: MODALS.confirmation,
-    config: {
-      title: t('modals.confirmationLeaveMaintenance.title'),
-      text: t('modals.confirmationLeaveMaintenance.text'),
-      action: disableMaintenanceMode,
-    },
-  })
+  const showConfirmationLeaveMaintenanceMode = () =>
+    modals.show({
+      name: MODALS.confirmation,
+      config: {
+        title: t('modals.confirmationLeaveMaintenance.title'),
+        text: t('modals.confirmationLeaveMaintenance.text'),
+        action: disableMaintenanceMode,
+      },
+    });
 
   /**
    * Toggle maintenance mode.
    */
-  const showToggleMaintenanceModeModal = () => (
-    maintenance.value
-      ? showConfirmationLeaveMaintenanceMode()
-      : showCreateMaintenanceModeModal()
-  )
+  const showToggleMaintenanceModeModal = () =>
+    maintenance.value ? showConfirmationLeaveMaintenanceMode() : showCreateMaintenanceModeModal();
 
   return {
     maintenance,
@@ -76,5 +75,5 @@ export const useMaintenanceActions = () => {
     showCreateMaintenanceModeModal,
     showConfirmationLeaveMaintenanceMode,
     showToggleMaintenanceModeModal,
-  }
-}
+  };
+};

@@ -20,9 +20,9 @@
 </template>
 
 <script>
-import { METRICS_QUICK_RANGES } from '@/constants'
+import { METRICS_QUICK_RANGES } from '@/constants';
 
-import KpiSliShowModeField from '../form/fields/kpi-sli-show-mode-field.vue'
+import KpiSliShowModeField from '../form/fields/kpi-sli-show-mode-field.vue';
 
 export default {
   components: {
@@ -44,7 +44,7 @@ export default {
 
   computed: {
     quickRanges() {
-      return Object.values(METRICS_QUICK_RANGES)
+      return Object.values(METRICS_QUICK_RANGES);
     },
   },
 
@@ -53,10 +53,10 @@ export default {
       this.$emit('update:query', {
         ...this.query,
         [field]: value,
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

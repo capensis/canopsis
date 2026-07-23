@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useMetricsStore } from '@/stores/modules/metrics'
+import { useMetricsStore } from '@/stores/modules/metrics';
 
 /**
  * Metrics store facade.
@@ -8,7 +8,7 @@ import { useMetricsStore } from '@/stores/modules/metrics'
  * @returns {Object}
  */
 export const useMetrics = () => {
-  const metricsStore = useMetricsStore()
+  const metricsStore = useMetricsStore();
   const {
     widgetMetrics,
     groupMetrics,
@@ -25,7 +25,7 @@ export const useMetrics = () => {
     getAvailabilityListByWidgetId,
     getAvailabilityPendingByWidgetId,
     getAvailabilityMetaByWidgetId,
-  } = storeToRefs(metricsStore)
+  } = storeToRefs(metricsStore);
 
   return {
     metricsByWidget: widgetMetrics,
@@ -72,5 +72,5 @@ export const useMetrics = () => {
     fetchAvailabilityHistoryExport: metricsStore.fetchAvailabilityHistoryExport,
     createAvailabilityExport: metricsStore.createAvailabilityExport,
     fetchAvailabilityExport: metricsStore.fetchAvailabilityExport,
-  }
-}
+  };
+};

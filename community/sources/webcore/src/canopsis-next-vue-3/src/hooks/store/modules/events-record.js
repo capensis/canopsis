@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useEventsRecordStore } from '@/stores/modules/events-record'
+import { useEventsRecordStore } from '@/stores/modules/events-record';
 
 /**
  * Events record store facade.
@@ -8,7 +8,7 @@ import { useEventsRecordStore } from '@/stores/modules/events-record'
  * @returns {Object}
  */
 export const useEventsRecord = () => {
-  const eventsRecordStore = useEventsRecordStore()
+  const eventsRecordStore = useEventsRecordStore();
   const {
     currentPending,
     currentStatus,
@@ -17,7 +17,7 @@ export const useEventsRecord = () => {
     limit,
     recordingsById,
     resendingsById,
-  } = storeToRefs(eventsRecordStore)
+  } = storeToRefs(eventsRecordStore);
 
   return {
     eventsRecordCurrentPending: currentPending,
@@ -41,5 +41,5 @@ export const useEventsRecord = () => {
     fetchCurrentEventsRecord: eventsRecordStore.fetchCurrent,
     startCurrentEventsRecord: eventsRecordStore.startCurrent,
     stopCurrentEventsRecord: eventsRecordStore.stopCurrent,
-  }
-}
+  };
+};

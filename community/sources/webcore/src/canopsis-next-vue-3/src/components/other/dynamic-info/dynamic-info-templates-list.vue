@@ -51,13 +51,13 @@
 </template>
 
 <script>
-import { get, orderBy } from 'lodash'
-import { computed, watch } from 'vue'
+import { get, orderBy } from 'lodash';
+import { computed, watch } from 'vue';
 
-import { getMaxPageForItemsCount } from '@/helpers/pagination'
+import { getMaxPageForItemsCount } from '@/helpers/pagination';
 
-import { useI18n } from '@/hooks/i18n'
-import { useLocalQueryWithOptions } from '@/hooks/query/shared'
+import { useI18n } from '@/hooks/i18n';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 
 export default {
   props: {
@@ -86,9 +86,9 @@ export default {
   emits: ['use', 'edit', 'remove', 'refresh'],
 
   setup(props) {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
-    const itemsPerPageItems = [5, 10, 25, 50, 100]
+    const itemsPerPageItems = [5, 10, 25, 50, 100];
 
     const { options, updateOptions } = useLocalQueryWithOptions({
       initialQuery: {
@@ -99,19 +99,19 @@ export default {
         sortDesc: [],
       },
       onUpdate: () => {},
-    })
+    });
 
     watch(
       () => props.templates.length,
       (length) => {
-        const opts = options.value
-        const maxPage = getMaxPageForItemsCount(length, opts.itemsPerPage)
+        const opts = options.value;
+        const maxPage = getMaxPageForItemsCount(length, opts.itemsPerPage);
 
         if (opts.page > maxPage) {
-          updateOptions({ ...opts, page: maxPage })
+          updateOptions({ ...opts, page: maxPage });
         }
       },
-    )
+    );
 
     const headers = computed(() => [
       {
@@ -125,34 +125,34 @@ export default {
         sortable: false,
         width: '1%',
       },
-    ])
+    ]);
 
     const sortedTemplates = computed(() => {
-      const { sortBy = [], sortDesc = [] } = options.value
+      const { sortBy = [], sortDesc = [] } = options.value;
 
       if (!sortBy.length) {
-        return props.templates
+        return props.templates;
       }
 
-      const [sortItem] = sortBy
-      const sortKey = sortItem.key ?? sortItem
-      const isDesc = sortItem.order === 'desc' || sortDesc[0]
+      const [sortItem] = sortBy;
+      const sortKey = sortItem.key ?? sortItem;
+      const isDesc = sortItem.order === 'desc' || sortDesc[0];
 
       return orderBy(
         props.templates,
         [(item) => String(get(item, sortKey, '') ?? '')],
         [isDesc ? 'desc' : 'asc'],
-      )
-    })
+      );
+    });
 
-    const totalItems = computed(() => props.templates.length)
+    const totalItems = computed(() => props.templates.length);
 
     const paginatedTemplates = computed(() => {
-      const { page = 1, itemsPerPage = 10 } = options.value
-      const start = (page - 1) * itemsPerPage
+      const { page = 1, itemsPerPage = 10 } = options.value;
+      const start = (page - 1) * itemsPerPage;
 
-      return sortedTemplates.value.slice(start, start + itemsPerPage)
-    })
+      return sortedTemplates.value.slice(start, start + itemsPerPage);
+    });
 
     return {
       options,
@@ -161,9 +161,9 @@ export default {
       itemsPerPageItems,
       totalItems,
       paginatedTemplates,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

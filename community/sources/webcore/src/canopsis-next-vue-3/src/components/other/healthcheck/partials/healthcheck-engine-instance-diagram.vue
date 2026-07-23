@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { COLORS } from '@/config'
+import { COLORS } from '@/config';
 
 export default {
   props: {
@@ -36,21 +36,21 @@ export default {
   methods: {
     getInstanceColor(instanceNumber) {
       if (instanceNumber <= this.instances) {
-        return this.isProEngine ? COLORS.secondary : COLORS.primary
+        return this.isProEngine ? COLORS.secondary : COLORS.primary;
       }
 
       if (instanceNumber <= this.minInstances) {
-        return COLORS.healthcheck.error
+        return COLORS.healthcheck.error;
       }
 
-      return COLORS.healthcheck.edgeGray
+      return COLORS.healthcheck.edgeGray;
     },
 
     getInstanceStyle(instanceNumber) {
-      return { background: this.getInstanceColor(instanceNumber) }
+      return { background: this.getInstanceColor(instanceNumber) };
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

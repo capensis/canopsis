@@ -1,46 +1,46 @@
-import { computed, ref } from 'vue'
-import { defineStore } from 'pinia'
+import { computed, ref } from 'vue';
+import { defineStore } from 'pinia';
 
-import { API_ROUTES } from '@/config'
+import { API_ROUTES } from '@/config';
 
-import request from '@/services/request'
+import request from '@/services/request';
 
-import { createBasicCRUDActions } from '@/stores/plugins/crud'
+import { createBasicCRUDActions } from '@/stores/plugins/crud';
 
 export const useCorporatePatternStore = defineStore('corporatePattern', () => {
-  const items = ref([])
-  const meta = ref({})
-  const pending = ref(false)
-  const fetchingParams = ref()
+  const items = ref([]);
+  const meta = ref({});
+  const pending = ref(false);
+  const fetchingParams = ref();
 
-  const hasItems = computed(() => items.value.length > 0)
+  const hasItems = computed(() => items.value.length > 0);
 
   const fetchList = async ({ params } = {}) => {
     try {
       const preparedParams = {
         ...params,
         corporate: true,
-      }
+      };
 
-      pending.value = true
-      fetchingParams.value = preparedParams
+      pending.value = true;
+      fetchingParams.value = preparedParams;
 
-      const response = await request.get(API_ROUTES.pattern.list, { params: preparedParams })
+      const response = await request.get(API_ROUTES.pattern.list, { params: preparedParams });
 
-      items.value = response?.data ?? []
-      meta.value = response?.meta ?? {}
+      items.value = response?.data ?? [];
+      meta.value = response?.meta ?? {};
 
-      return response
+      return response;
     } catch (err) {
-      console.error(err)
+      console.error(err);
 
-      throw err
+      throw err;
     } finally {
-      pending.value = false
+      pending.value = false;
     }
-  }
+  };
 
-  const fetchListWithPreviousParams = () => fetchList({ params: fetchingParams.value })
+  const fetchListWithPreviousParams = () => fetchList({ params: fetchingParams.value });
 
   return {
     items,
@@ -51,5 +51,5 @@ export const useCorporatePatternStore = defineStore('corporatePattern', () => {
     fetchList,
     fetchListWithPreviousParams,
     ...createBasicCRUDActions({ route: API_ROUTES.pattern.list }),
-  }
-})
+  };
+});

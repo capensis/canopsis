@@ -27,17 +27,17 @@
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue';
 
-import { formToPbehaviorType, pbehaviorTypeToForm } from '@/helpers/entities/pbehavior/type/form'
+import { formToPbehaviorType, pbehaviorTypeToForm } from '@/helpers/entities/pbehavior/type/form';
 
-import { useForm } from '@/hooks/form'
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type'
+import { useForm } from '@/hooks/form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
-import PbehaviorTypeForm from '@/components/other/pbehavior/types/form/pbehavior-type-form.vue'
+import PbehaviorTypeForm from '@/components/other/pbehavior/types/form/pbehavior-type-form.vue';
 
 export default {
   components: { PbehaviorTypeForm },
@@ -50,64 +50,64 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const modals = useModals()
-    const { fetchNextPbehaviorTypePriority } = usePbehaviorType()
-    const config = computed(() => props.modal.config ?? {})
-    const pbehaviorType = computed(() => config.value.pbehaviorType ?? config.value.type)
-    const isNew = computed(() => !pbehaviorType.value?._id)
-    const onlyColor = computed(() => !!pbehaviorType.value?.default)
+    const { t } = useI18n();
+    const modals = useModals();
+    const { fetchNextPbehaviorTypePriority } = usePbehaviorType();
+    const config = computed(() => props.modal.config ?? {});
+    const pbehaviorType = computed(() => config.value.pbehaviorType ?? config.value.type);
+    const isNew = computed(() => !pbehaviorType.value?._id);
+    const onlyColor = computed(() => !!pbehaviorType.value?.default);
     const title = computed(
       () =>
         config.value.title ||
         t(`modals.createPbehaviorType.${isNew.value ? 'create' : 'edit'}.title`),
-    )
-    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'))
-    const pendingPriority = ref(false)
+    );
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
+    const pendingPriority = ref(false);
 
     const form = useForm({
       initialValues: pbehaviorTypeToForm(pbehaviorType.value),
-    })
-    const { values, handleSubmit, submitting, reset } = form
+    });
+    const { values, handleSubmit, submitting, reset } = form;
 
-    const closeModal = () => modals.hide({ id: props.modal.id })
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
     const submit = handleSubmit(async () => {
-      const result = await config.value.action?.(formToPbehaviorType(values.value))
+      const result = await config.value.action?.(formToPbehaviorType(values.value));
 
-      await config.value.afterSubmit?.(result)
+      await config.value.afterSubmit?.(result);
 
-      closeModal()
+      closeModal();
 
-      return result
-    })
+      return result;
+    });
 
     const { updateOriginalForm } = useFormConfirmableCloseModal({
       form: values,
       submit,
       close: closeModal,
-    })
+    });
 
     onMounted(async () => {
       if (!isNew.value) {
-        return
+        return;
       }
 
       try {
-        pendingPriority.value = true
+        pendingPriority.value = true;
 
-        const { data } = await fetchNextPbehaviorTypePriority()
+        const { data } = await fetchNextPbehaviorTypePriority();
 
         reset({
           ...values.value,
 
           priority: data,
-        })
-        updateOriginalForm()
+        });
+        updateOriginalForm();
       } finally {
-        pendingPriority.value = false
+        pendingPriority.value = false;
       }
-    })
+    });
 
     return {
       t,
@@ -119,7 +119,7 @@ export default {
       updateOriginalForm,
       closeModal,
       submit,
-    }
+    };
   },
-}
+};
 </script>

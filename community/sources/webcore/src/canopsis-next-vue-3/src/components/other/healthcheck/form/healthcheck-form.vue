@@ -55,10 +55,10 @@
 </template>
 
 <script>
-import { HEALTHCHECK_ENGINES_NAMES } from '@/constants'
+import { HEALTHCHECK_ENGINES_NAMES } from '@/constants';
 
-import HealthcheckEnabledLimitField from './fields/healthcheck-enabled-limit-field.vue'
-import HealthcheckEngineInstanceField from './fields/healthcheck-engine-instance-field.vue'
+import HealthcheckEnabledLimitField from './fields/healthcheck-enabled-limit-field.vue';
+import HealthcheckEngineInstanceField from './fields/healthcheck-engine-instance-field.vue';
 
 export default {
   components: {
@@ -86,7 +86,7 @@ export default {
 
   computed: {
     engineNames() {
-      return Object.values(HEALTHCHECK_ENGINES_NAMES)
+      return Object.values(HEALTHCHECK_ENGINES_NAMES);
     },
   },
 
@@ -95,12 +95,12 @@ export default {
       this.$emit('input', {
         ...this.form,
         [field]: value,
-      })
+      });
     },
 
     getErrors(field) {
-      return this.errors[field] || []
+      return this.errors[field] || [];
     },
   },
-}
+};
 </script>

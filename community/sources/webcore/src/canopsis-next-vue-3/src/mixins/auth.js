@@ -1,11 +1,16 @@
-import { mapActions, mapState, mapStores } from 'pinia'
+import { mapActions, mapState, mapStores } from 'pinia';
 
-import { MEDIA_QUERIES_BREAKPOINTS } from '@/config'
-import { GROUPS_NAVIGATION_TYPES, CRUD_ACTIONS, ROUTES_NAMES, VIEW_USER_PERMISSIONS_NAMES } from '@/constants'
+import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
+import {
+  GROUPS_NAVIGATION_TYPES,
+  CRUD_ACTIONS,
+  ROUTES_NAMES,
+  VIEW_USER_PERMISSIONS_NAMES,
+} from '@/constants';
 
-import { checkUserAccess } from '@/helpers/permission'
+import { checkUserAccess } from '@/helpers/permission';
 
-import { useAuthStore } from '@/stores/modules/auth'
+import { useAuthStore } from '@/stores/modules/auth';
 
 export const authMixin = {
   computed: {
@@ -19,28 +24,28 @@ export const authMixin = {
     }),
 
     isShownGroupsTopBar() {
-      return this.currentUser?.ui_groups_navigation_type === GROUPS_NAVIGATION_TYPES.topBar
+      return this.currentUser?.ui_groups_navigation_type === GROUPS_NAVIGATION_TYPES.topBar;
     },
 
     isShownGroupsSideBar() {
-      const groupsNavigationType = this.currentUser?.ui_groups_navigation_type
-      const isSelectedSideBar = groupsNavigationType === GROUPS_NAVIGATION_TYPES.sideBar
-      const isMobileOrTablet = this.$vuetify.display.width < MEDIA_QUERIES_BREAKPOINTS.t
+      const groupsNavigationType = this.currentUser?.ui_groups_navigation_type;
+      const isSelectedSideBar = groupsNavigationType === GROUPS_NAVIGATION_TYPES.sideBar;
+      const isMobileOrTablet = this.$vuetify.display.width < MEDIA_QUERIES_BREAKPOINTS.t;
 
-      return isSelectedSideBar || isMobileOrTablet || !this.isShownGroupsTopBar
+      return isSelectedSideBar || isMobileOrTablet || !this.isShownGroupsTopBar;
     },
 
     hasCurrentViewActionsAccess() {
-      const { name, params } = this.$route
+      const { name, params } = this.$route;
 
       if (![ROUTES_NAMES.view, ROUTES_NAMES.viewKiosk].includes(name)) {
-        return false
+        return false;
       }
 
       return checkUserAccess(
         this.currentUserViewPermissionsByViewId[params.id]?.[VIEW_USER_PERMISSIONS_NAMES.actions],
         CRUD_ACTIONS.can,
-      )
+      );
     },
   },
 
@@ -54,25 +59,25 @@ export const authMixin = {
     ]),
 
     checkAccess(permissionId, action = CRUD_ACTIONS.can) {
-      return checkUserAccess(this.currentUserPermissionsById[permissionId], action)
+      return checkUserAccess(this.currentUserPermissionsById[permissionId], action);
     },
 
     checkCreateAccess(permissionId) {
-      return this.checkAccess(permissionId, CRUD_ACTIONS.create)
+      return this.checkAccess(permissionId, CRUD_ACTIONS.create);
     },
 
     checkReadAccess(permissionId) {
-      return this.checkAccess(permissionId, CRUD_ACTIONS.read)
+      return this.checkAccess(permissionId, CRUD_ACTIONS.read);
     },
 
     checkUpdateAccess(permissionId) {
-      return this.checkAccess(permissionId, CRUD_ACTIONS.update)
+      return this.checkAccess(permissionId, CRUD_ACTIONS.update);
     },
 
     checkDeleteAccess(permissionId) {
-      return this.checkAccess(permissionId, CRUD_ACTIONS.delete)
+      return this.checkAccess(permissionId, CRUD_ACTIONS.delete);
     },
   },
-}
+};
 
-export default authMixin
+export default authMixin;

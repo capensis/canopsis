@@ -1,6 +1,6 @@
-import { mapActions, mapState, mapStores } from 'pinia'
+import { mapActions, mapState, mapStores } from 'pinia';
 
-import { useUserStore } from '@/stores/modules/user'
+import { useUserStore } from '@/stores/modules/user';
 
 export const entitiesUserMixin = {
   computed: {
@@ -26,28 +26,28 @@ export const entitiesUserMixin = {
     }),
 
     async createUserWithPopup({ data }) {
-      await this.createUser({ data })
+      await this.createUser({ data });
 
-      this.$popups.success({ text: this.$t('success.default') })
+      this.$popups.success({ text: this.$t('success.default') });
     },
 
     async updateUserWithPopup({ data, id }) {
-      await this.updateUser({ data, id })
+      await this.updateUser({ data, id });
 
-      this.$popups.success({ text: this.$t('success.default') })
+      this.$popups.success({ text: this.$t('success.default') });
     },
 
     async removeUserWithPopup({ id }) {
       try {
-        await this.removeUser({ id })
-        this.$popups.success({ text: this.$t('success.default') })
+        await this.removeUser({ id });
+        this.$popups.success({ text: this.$t('success.default') });
       } catch (err) {
-        console.error(err)
+        console.error(err);
 
-        this.$popups.error({ text: this.$t('errors.default') })
+        this.$popups.error({ text: this.$t('errors.default') });
       }
     },
   },
-}
+};
 
-export default entitiesUserMixin
+export default entitiesUserMixin;

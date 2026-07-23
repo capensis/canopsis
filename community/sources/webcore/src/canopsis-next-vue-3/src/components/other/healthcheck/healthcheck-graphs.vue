@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import HealthcheckLastHour from './partials/healthcheck-last-hour.vue'
-import HealthcheckHistoryGraph from './partials/healthcheck-history-graph.vue'
+import HealthcheckLastHour from './partials/healthcheck-last-hour.vue';
+import HealthcheckHistoryGraph from './partials/healthcheck-history-graph.vue';
 
 export default {
   components: {
@@ -27,5 +27,5 @@ export default {
       required: true,
     },
   },
-}
+};
 </script>

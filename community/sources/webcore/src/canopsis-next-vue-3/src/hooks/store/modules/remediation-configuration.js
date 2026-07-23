@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useRemediationConfigurationStore } from '@/stores/modules/remediation-configuration'
+import { useRemediationConfigurationStore } from '@/stores/modules/remediation-configuration';
 
 /**
  * Remediation configuration store facade.
@@ -8,8 +8,8 @@ import { useRemediationConfigurationStore } from '@/stores/modules/remediation-c
  * @returns {Object}
  */
 export const useRemediationConfiguration = () => {
-  const remediationConfigurationStore = useRemediationConfigurationStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(remediationConfigurationStore)
+  const remediationConfigurationStore = useRemediationConfigurationStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(remediationConfigurationStore);
 
   return {
     remediationConfigurations: items,
@@ -25,5 +25,5 @@ export const useRemediationConfiguration = () => {
     createRemediationConfiguration: remediationConfigurationStore.create,
     updateRemediationConfiguration: remediationConfigurationStore.update,
     removeRemediationConfiguration: remediationConfigurationStore.remove,
-  }
-}
+  };
+};

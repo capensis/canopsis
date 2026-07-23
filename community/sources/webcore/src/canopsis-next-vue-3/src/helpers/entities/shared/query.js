@@ -1,12 +1,12 @@
-import { isArray, isEqual, omit, pick } from 'lodash'
+import { isArray, isEqual, omit, pick } from 'lodash';
 
-import { ADVANCED_SEARCH_FIELDS, DATETIME_FORMATS, SORT_ORDERS } from '@/constants'
-import { PAGINATION_LIMIT } from '@/config'
+import { ADVANCED_SEARCH_FIELDS, DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
+import { PAGINATION_LIMIT } from '@/config';
 
 import {
   convertStartDateIntervalToTimestamp,
   convertStopDateIntervalToTimestamp,
-} from '@/helpers/date/date-intervals'
+} from '@/helpers/date/date-intervals';
 
 /**
  * @typedef {Object} DataTableSortOptions
@@ -21,16 +21,16 @@ import {
  * @returns {{ sortBy: string[], sortDesc: boolean[] }}
  */
 export const convertSortToQuery = ({ parameters }) => {
-  const { sort } = parameters
-  const query = { sortBy: [], sortDesc: [] }
+  const { sort } = parameters;
+  const query = { sortBy: [], sortDesc: [] };
 
   if (sort && sort.column && sort.order) {
-    query.sortBy = [sort.column]
-    query.sortDesc = [sort.order === SORT_ORDERS.desc]
+    query.sortBy = [sort.column];
+    query.sortDesc = [sort.order === SORT_ORDERS.desc];
   }
 
-  return query
-}
+  return query;
+};
 
 /**
  * Convert Vuetify data table sort options to query options with comparison.
@@ -45,17 +45,17 @@ export const convertDataTableOptionsToQuery = (
   oldOptions = {},
   optionsKeys = ['page', 'itemsPerPage', 'sortBy', 'sortDesc'],
 ) => {
-  const newOptionsToCompare = pick(newOptions, optionsKeys)
-  const oldOptionsToCompare = pick(oldOptions, optionsKeys)
+  const newOptionsToCompare = pick(newOptions, optionsKeys);
+  const oldOptionsToCompare = pick(oldOptions, optionsKeys);
 
   if (isEqual(newOptionsToCompare, oldOptionsToCompare)) {
-    return oldOptions
+    return oldOptions;
   }
 
-  const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = newOptions
+  const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = newOptions;
 
-  return { page, itemsPerPage, sortBy, sortDesc }
-}
+  return { page, itemsPerPage, sortBy, sortDesc };
+};
 
 /**
  * Convert sortBy and sortDesc query parameters to request.
@@ -66,14 +66,14 @@ export const convertDataTableOptionsToQuery = (
  */
 export const convertSortToRequest = (sortBy = [], sortDesc = []) => {
   if (!sortBy?.length) {
-    return {}
+    return {};
   }
 
   if (sortBy.length === 1) {
     return {
       sort_by: sortBy[0],
       sort: (sortDesc?.[0] ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase(),
-    }
+    };
   }
 
   return {
@@ -81,8 +81,8 @@ export const convertSortToRequest = (sortBy = [], sortDesc = []) => {
       (property, index) =>
         `${property},${(sortDesc?.[index] ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`,
     ),
-  }
-}
+  };
+};
 
 /**
  * Convert canonical query sort to Vuetify 4 data table sort options.
@@ -95,7 +95,7 @@ export const convertQuerySortToDataTableSort = (sortBy = [], sortDesc = []) =>
   sortBy.map((key, index) => ({
     key,
     order: sortDesc?.[index] ? SORT_ORDERS.desc.toLowerCase() : SORT_ORDERS.asc.toLowerCase(),
-  }))
+  }));
 
 /**
  * Convert Vuetify 4 data table sort options to canonical query sort.
@@ -106,7 +106,7 @@ export const convertQuerySortToDataTableSort = (sortBy = [], sortDesc = []) =>
 export const convertDataTableSortToQuery = (sortBy = []) => ({
   sortBy: sortBy.map((sortItem) => sortItem.key ?? sortItem),
   sortDesc: sortBy.map((sortItem) => sortItem.order === SORT_ORDERS.desc.toLowerCase()),
-})
+});
 
 /**
  * Convert filter to query filters.
@@ -115,7 +115,7 @@ export const convertDataTableSortToQuery = (sortBy = []) => ({
  * @returns {string[]}
  */
 export const convertFilterToQuery = (filter) =>
-  (isArray(filter) ? filter : [filter]).filter(Boolean)
+  (isArray(filter) ? filter : [filter]).filter(Boolean);
 
 /**
  * Convert locked filter and main filter to query filters.
@@ -127,7 +127,7 @@ export const convertFilterToQuery = (filter) =>
 export const convertFiltersToQuery = (filter, lockedFilter) => [
   ...convertFilterToQuery(filter),
   ...convertFilterToQuery(lockedFilter),
-]
+];
 
 /**
  * Convert widget query to request parameters.
@@ -147,7 +147,7 @@ export const convertWidgetQueryToRequest = (query) => {
     lockedFilter,
     instructionsFilter,
     search,
-  } = query
+  } = query;
 
   let result = {
     ...omit(query, [
@@ -166,37 +166,37 @@ export const convertWidgetQueryToRequest = (query) => {
     ...convertSortToRequest(sortBy, sortDesc),
 
     limit: itemsPerPage,
-  }
+  };
 
   if (lockedFilter || filter) {
-    result.filters = convertFiltersToQuery(filter, lockedFilter)
+    result.filters = convertFiltersToQuery(filter, lockedFilter);
   }
 
   if (instructionsFilter) {
     result = {
       ...result,
       ...instructionsFilter,
-    }
+    };
   }
 
   if (tstart) {
-    result.tstart = convertStartDateIntervalToTimestamp(tstart, DATETIME_FORMATS.dateTimePicker)
+    result.tstart = convertStartDateIntervalToTimestamp(tstart, DATETIME_FORMATS.dateTimePicker);
   }
 
   if (tstop) {
-    result.tstop = convertStopDateIntervalToTimestamp(tstop, DATETIME_FORMATS.dateTimePicker)
+    result.tstop = convertStopDateIntervalToTimestamp(tstop, DATETIME_FORMATS.dateTimePicker);
   }
 
   if (category) {
-    result.category = category
+    result.category = category;
   }
 
   if (search) {
-    result.search = search
+    result.search = search;
   }
 
-  return result
-}
+  return result;
+};
 
 /**
  * Constructs a query object for list data retrieval.
@@ -223,19 +223,19 @@ export const getQueryForList = ({
     limit: itemsPerPage,
 
     ...convertSortToRequest(sortBy, sortDesc),
-  }
+  };
 
   if (search) {
-    query.search = search
+    query.search = search;
   }
 
   if (searchPattern) {
-    query[ADVANCED_SEARCH_FIELDS.search] = searchPattern
+    query[ADVANCED_SEARCH_FIELDS.search] = searchPattern;
   }
 
   if (category) {
-    query.category = category
+    query.category = category;
   }
 
-  return query
-}
+  return query;
+};

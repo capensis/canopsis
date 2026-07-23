@@ -14,6 +14,7 @@
       :value="value"
       :dense="dense"
       :show-value="showValue"
+      :hide-empty-value="hideEmptyValue"
       :clickable-parent="clickableParent"
       @update:value="$emit('update:value', $event)"
     />
@@ -48,6 +49,10 @@ export default {
       default: () => [],
     },
     showValue: {
+      type: Boolean,
+      default: false,
+    },
+    hideEmptyValue: {
       type: Boolean,
       default: false,
     },

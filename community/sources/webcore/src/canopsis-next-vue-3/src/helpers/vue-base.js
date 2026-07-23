@@ -15,11 +15,7 @@ export function isParent(child, parent) {
   const childElement = child.$el ?? child;
   const parentElement = parent.$el ?? parent;
 
-  if (
-    child === parent ||
-    child._original === parent ||
-    parentElement?.contains?.(childElement)
-  ) {
+  if (child === parent || child._original === parent || parentElement?.contains?.(childElement)) {
     return true;
   }
 
@@ -46,6 +42,7 @@ export const mergeReactiveChangedProperties = (oldData, newData) => {
     }
 
     for (let index = 0; index < newData.length; index += 1) {
+      // eslint-disable-next-line no-param-reassign
       oldData[index] = mergeReactiveChangedProperties(oldData[index], newData[index]);
     }
 
@@ -59,11 +56,13 @@ export const mergeReactiveChangedProperties = (oldData, newData) => {
   const oldKeys = Object.keys(oldData);
   const newKeys = Object.keys(newData);
 
-  difference(oldKeys, newKeys).forEach(key => {
+  difference(oldKeys, newKeys).forEach((key) => {
+    // eslint-disable-next-line no-param-reassign
     delete oldData[key];
   });
 
-  newKeys.forEach(key => {
+  newKeys.forEach((key) => {
+    // eslint-disable-next-line no-param-reassign
     oldData[key] = mergeReactiveChangedProperties(oldData[key], newData[key]);
   });
 

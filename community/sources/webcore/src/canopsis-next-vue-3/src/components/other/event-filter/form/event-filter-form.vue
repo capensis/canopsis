@@ -1,9 +1,6 @@
 <template>
   <c-layout gap="3" column>
-    <c-enabled-field
-      v-model="enabledField"
-      with-background
-    />
+    <c-enabled-field v-model="enabledField" with-background />
     <event-filter-general-form
       :ref="setRef"
       :template-vars="templateVars"
@@ -19,12 +16,10 @@ import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 import { useFormContext } from '@/hooks/form';
 
 import EventFilterGeneralForm from './event-filter-general-form.vue';
-import EventFilterPatternsForm from './event-filter-patterns-form.vue';
 
 export default {
   components: {
     EventFilterGeneralForm,
-    EventFilterPatternsForm,
   },
   props: {
     ruleId: {

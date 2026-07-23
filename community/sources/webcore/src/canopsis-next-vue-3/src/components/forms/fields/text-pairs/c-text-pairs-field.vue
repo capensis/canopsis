@@ -1,13 +1,6 @@
 <template>
-  <c-layout
-    :class="{ 'text-pairs__disabled': disabled }"
-    class="text-pairs"
-    column
-  >
-    <slot
-      v-if="!items.length"
-      name="no-data"
-    />
+  <c-layout :class="{ 'text-pairs__disabled': disabled }" class="text-pairs" column>
+    <slot v-if="!items.length" name="no-data" />
     <c-form-block-array-field
       :form="items"
       :add-button-label="addButtonLabel"
@@ -36,10 +29,7 @@
           @remove="remove"
         >
           <template #append-value="">
-            <slot
-              :item="items[index]"
-              name="append-value"
-            />
+            <slot :item="items[index]" name="append-value" />
           </template>
         </c-text-pair-field>
       </template>
@@ -51,10 +41,10 @@
 import { textPairToForm } from '@/helpers/text-pairs';
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useValidator } from '@/hooks/validator/validator';
 
 export default {
   emits: ['update:items'],
-  inject: ['$validator'],
   props: {
     title: {
       type: String,
@@ -119,8 +109,10 @@ export default {
   },
   setup(props, { emit }) {
     const { updateModel, updateItemInArray } = useArrayModelField(props, emit);
+    const validator = useValidator();
 
     return {
+      errors: validator.errors,
       textPairToForm,
       updateModel,
       updateItemInArray,

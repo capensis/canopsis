@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { DATETIME_FORMATS, QUICK_RANGES, TIME_UNITS } from '@/constants'
+import { DATETIME_FORMATS, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
 import {
   convertDateToEndOfUnitTimestamp,
@@ -81,12 +81,12 @@ import {
   convertDateToTimestamp,
   getNowTimestamp,
   getWeekdayNumber,
-} from '@/helpers/date/date'
+} from '@/helpers/date/date';
 import {
   convertStartDateIntervalToTimestamp,
   convertStopDateIntervalToTimestamp,
   findQuickRangeValue,
-} from '@/helpers/date/date-intervals'
+} from '@/helpers/date/date-intervals';
 
 export default {
   emits: ['input', 'update:interval'],
@@ -137,39 +137,39 @@ export default {
         this.range.start,
         this.range.stop,
         this.availableQuickRanges,
-      )
+      );
 
       if (range.value === QUICK_RANGES.custom.value) {
-        return `${this.intervalFromString} - ${this.intervalToString}`
+        return `${this.intervalFromString} - ${this.intervalToString}`;
       }
 
-      return this.$t(`quickRanges.types.${range.value}`)
+      return this.$t(`quickRanges.types.${range.value}`);
     },
 
     availableQuickRanges() {
-      return this.quickRanges.filter(this.isAllowedQuickRange)
+      return this.quickRanges.filter(this.isAllowedQuickRange);
     },
 
     intervalFromAsTimestamp() {
-      return convertStartDateIntervalToTimestamp(this.interval.from)
+      return convertStartDateIntervalToTimestamp(this.interval.from);
     },
 
     intervalToAsTimestamp() {
-      return !this.interval.to ? 0 : convertStopDateIntervalToTimestamp(this.interval.to)
+      return !this.interval.to ? 0 : convertStopDateIntervalToTimestamp(this.interval.to);
     },
 
     intervalFromString() {
       return convertDateToString(
         this.intervalFromAsTimestamp,
         this.withHours ? DATETIME_FORMATS.dateTimePicker : DATETIME_FORMATS.datePicker,
-      )
+      );
     },
 
     intervalToString() {
       return convertDateToString(
         this.intervalToAsTimestamp,
         this.withHours ? DATETIME_FORMATS.dateTimePicker : DATETIME_FORMATS.datePicker,
-      )
+      );
     },
 
     intervalObject() {
@@ -177,56 +177,56 @@ export default {
         return {
           from: this.intervalFromAsTimestamp,
           to: this.intervalToAsTimestamp,
-        }
+        };
       }
 
       return {
         from: this.intervalFromString,
         to: this.intervalToString,
-      }
+      };
     },
 
     range() {
       return {
         start: this.interval.from,
         stop: this.interval.to,
-      }
+      };
     },
   },
   methods: {
     updateModel(value) {
-      this.$emit('input', value)
-      this.$emit('update:interval', value)
+      this.$emit('input', value);
+      this.$emit('update:interval', value);
 
-      return value
+      return value;
     },
 
     isGreaterMinDate(dateTimestamp) {
       if (this.min) {
-        return dateTimestamp >= this.min
+        return dateTimestamp >= this.min;
       }
 
-      return true
+      return true;
     },
 
     isLessToDate(dateTimestamp) {
       if (!this.interval.to) {
-        return true
+        return true;
       }
 
-      return dateTimestamp < this.intervalToAsTimestamp
+      return dateTimestamp < this.intervalToAsTimestamp;
     },
 
     isLessNowDate(dateTimestamp) {
-      return dateTimestamp <= getNowTimestamp()
+      return dateTimestamp <= getNowTimestamp();
     },
 
     isLessFutureDay(dateTimestamp) {
-      return dateTimestamp <= convertDateToEndOfUnitTimestamp(Date.now(), TIME_UNITS.day)
+      return dateTimestamp <= convertDateToEndOfUnitTimestamp(Date.now(), TIME_UNITS.day);
     },
 
     isGreaterFromDate(dateTimestamp) {
-      return dateTimestamp > this.intervalFromAsTimestamp
+      return dateTimestamp > this.intervalFromAsTimestamp;
     },
 
     isAllowedAccumulatedFromDate(dateTimestamp) {
@@ -236,7 +236,7 @@ export default {
            * In this case, we can only select Monday.
            */
           getWeekdayNumber(dateTimestamp) === 1
-        : true
+        : true;
     },
 
     isAllowedAccumulatedToDate(dateTimestamp) {
@@ -246,43 +246,43 @@ export default {
            * In this case, we can only select Sunday.
            */
           getWeekdayNumber(dateTimestamp) === 7
-        : true
+        : true;
     },
 
     isAllowedFromDate(date) {
-      const dateTimestamp = convertDateToTimestamp(date)
+      const dateTimestamp = convertDateToTimestamp(date);
 
       return (
         this.isLessToDate(dateTimestamp) &&
         this.isGreaterMinDate(dateTimestamp) &&
         this.isAllowedAccumulatedFromDate(dateTimestamp)
-      )
+      );
     },
 
     isAllowedToDate(date) {
-      const dateTimestamp = convertDateToTimestamp(date)
+      const dateTimestamp = convertDateToTimestamp(date);
 
       return (
         this.isGreaterFromDate(dateTimestamp) &&
         this.isLessNowDate(dateTimestamp) &&
         this.isAllowedAccumulatedToDate(dateTimestamp)
-      )
+      );
     },
 
     isAllowedQuickRange({ start, stop }) {
       if (!start || !stop) {
-        return true
+        return true;
       }
 
-      const startTimestamp = convertStartDateIntervalToTimestamp(start)
-      const stopTimestamp = convertStopDateIntervalToTimestamp(stop)
+      const startTimestamp = convertStartDateIntervalToTimestamp(start);
+      const stopTimestamp = convertStopDateIntervalToTimestamp(stop);
 
       return (
         this.isGreaterMinDate(startTimestamp) &&
         this.isAllowedAccumulatedFromDate(startTimestamp) &&
         (this.allowFuture || this.isLessFutureDay(stopTimestamp)) &&
         this.isAllowedAccumulatedToDate(stopTimestamp)
-      )
+      );
     },
 
     updateIntervalRange({ start, stop }) {
@@ -291,11 +291,11 @@ export default {
           ...this.interval,
           from: start,
           to: stop,
-        })
+        });
       }
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

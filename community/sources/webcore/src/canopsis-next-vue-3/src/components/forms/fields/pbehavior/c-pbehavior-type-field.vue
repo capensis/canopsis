@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue';
 
-import { useI18n } from '@/hooks/i18n'
-import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type'
+import { useI18n } from '@/hooks/i18n';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
 export default {
   props: {
@@ -67,36 +67,36 @@ export default {
   emits: ['update:modelValue'],
 
   setup() {
-    const { t } = useI18n()
-    const { fetchPbehaviorTypesFieldList } = usePbehaviorType()
+    const { t } = useI18n();
+    const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
 
-    const items = ref([])
-    const pending = ref(false)
+    const items = ref([]);
+    const pending = ref(false);
 
     const fetchList = async () => {
       try {
-        pending.value = true
+        pending.value = true;
 
         const { data = [] } = await fetchPbehaviorTypesFieldList({
           params: {
             paginate: false,
             with_hidden: true,
           },
-        })
+        });
 
-        items.value = data
+        items.value = data;
       } finally {
-        pending.value = false
+        pending.value = false;
       }
-    }
+    };
 
-    onMounted(fetchList)
+    onMounted(fetchList);
 
     return {
       t,
       items,
       pending,
-    }
+    };
   },
-}
+};
 </script>

@@ -1,8 +1,8 @@
-import { API_ROUTES } from '@/config'
+import { API_ROUTES } from '@/config';
 
-import request from '@/services/request'
+import request from '@/services/request';
 
-import { createCRUDStore } from '@/stores/plugins/crud'
+import { createCRUDStore } from '@/stores/plugins/crud';
 
 export const usePbehaviorReasonStore = createCRUDStore({
   id: 'pbehaviorReason',
@@ -11,15 +11,15 @@ export const usePbehaviorReasonStore = createCRUDStore({
   withWithoutStore: true,
   actions: {
     bulkHide({ data } = {}) {
-      return request.put(API_ROUTES.pbehavior.bulkReasonsHide, data)
+      return request.put(API_ROUTES.pbehavior.bulkReasonsHide, data);
     },
 
     bulkUnhide({ data } = {}) {
-      return request.put(API_ROUTES.pbehavior.bulkReasonsUnhide, data)
+      return request.put(API_ROUTES.pbehavior.bulkReasonsUnhide, data);
     },
 
     bulkRemove({ data } = {}) {
-      return request.delete(API_ROUTES.pbehavior.bulkReasons, { data })
+      return request.delete(API_ROUTES.pbehavior.bulkReasons, { data });
     },
   },
-})
+});

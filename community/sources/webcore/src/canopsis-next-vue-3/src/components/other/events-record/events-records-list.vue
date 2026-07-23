@@ -67,14 +67,14 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { convertDateToString } from '@/helpers/date/date'
-import { convertDurationToString } from '@/helpers/date/duration'
+import { convertDateToString } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
-import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue'
+import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';
 
 export default {
   components: {
@@ -103,7 +103,7 @@ export default {
   emits: ['update:options', 'stop', 'show', 'remove'],
 
   setup() {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
     const headers = computed(() => [
       { text: '', value: 'loader', sortable: false },
@@ -113,18 +113,18 @@ export default {
       { text: t('eventsRecord.eventsCount'), value: 'count', sortable: false },
       { text: t('eventsRecord.launchedBy'), value: 'author.display_name', sortable: false },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
-    ])
+    ]);
 
     const formatDate = (date, defaultValue = '') =>
-      convertDateToString(date, undefined, defaultValue)
-    const formatDuration = (duration) => convertDurationToString(duration)
+      convertDateToString(date, undefined, defaultValue);
+    const formatDuration = (duration) => convertDurationToString(duration);
 
     return {
       t,
       headers,
       formatDate,
       formatDuration,
-    }
+    };
   },
-}
+};
 </script>

@@ -1,3 +1,3 @@
-import materialIcons from '@/assets/material-icons/MaterialIcons.json'
+import materialIcons from '@/assets/material-icons/MaterialIcons.json';
 
-export const MATERIAL_ICONS = materialIcons
+export const MATERIAL_ICONS = materialIcons;

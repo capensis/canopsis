@@ -24,7 +24,11 @@ import { computed, watch } from 'vue';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import { convertDateToDateObject, convertDateToString, convertDateToTimestamp } from '@/helpers/date/date';
+import {
+  convertDateToDateObject,
+  convertDateToString,
+  convertDateToTimestamp,
+} from '@/helpers/date/date';
 
 import { useValidator } from '@/hooks/validator/validator';
 
@@ -32,7 +36,6 @@ import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/
 
 export default {
   emits: ['update:start', 'update:stop'],
-  inject: ['$validator'],
   components: { DateTimePickerTextField },
   props: {
     start: {
@@ -80,28 +83,32 @@ export default {
      * @param {string|null|undefined} date - Raw value from the date-time picker
      * @returns {number|null}
      */
-    const prepareDate = date => (
-      date ? convertDateToTimestamp(convertDateToDateObject(date, DATETIME_FORMATS.dateTimePicker)) : null
-    );
+    const prepareDate = (date) =>
+      date
+        ? convertDateToTimestamp(convertDateToDateObject(date, DATETIME_FORMATS.dateTimePicker))
+        : null;
 
     /**
      * Writes the interval start timestamp and emits `update:start`
      *
      * @param {string|null|undefined} value - Raw value from the start date-time picker
      */
-    const updateStartDate = value => emit('update:start', prepareDate(value));
+    const updateStartDate = (value) => emit('update:start', prepareDate(value));
 
     /**
      * Writes the interval end timestamp and emits `update:stop`
      *
      * @param {string|null|undefined} value - Raw value from the stop date-time picker
      */
-    const updateStopDate = value => emit('update:stop', prepareDate(value));
+    const updateStopDate = (value) => emit('update:stop', prepareDate(value));
 
-    watch(() => props.rrule, () => {
-      validator.errors.remove('start');
-      validator.errors.remove('stop');
-    });
+    watch(
+      () => props.rrule,
+      () => {
+        validator.errors.remove('start');
+        validator.errors.remove('stop');
+      },
+    );
 
     return {
       validator,

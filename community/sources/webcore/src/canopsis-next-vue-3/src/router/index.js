@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 
 import {
   CRUD_ACTIONS,
@@ -7,35 +7,35 @@ import {
   ROUTES,
   ROUTES_NAMES,
   USER_PERMISSIONS,
-} from '@/constants'
-import { ROUTER_ACCESS_TOKEN_KEY } from '@/config'
+} from '@/constants';
+import { ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 
-import { usePopupsStore } from '@/plugins/popups/stores'
-import { useAuthStore } from '@/stores/modules/auth'
+import { usePopupsStore } from '@/plugins/popups/stores';
+import { useAuthStore } from '@/stores/modules/auth';
 
-import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router'
+import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
 
-const PlaceholderPage = () => import('@/views/placeholder-page.vue')
-const AdminRights = () => import('@/views/admin/rights-page.vue')
-const AdminUsers = () => import('@/views/admin/users-page.vue')
-const AdminRoles = () => import('@/views/admin/roles-page.vue')
-const AdminBroadcastMessages = () => import('@/views/admin/broadcast-messages-page.vue')
-const AdminPlaylists = () => import('@/views/admin/playlists-page.vue')
-const AdminPlanning = () => import('@/views/admin/planning-page.vue')
-const AdminHealthcheck = () => import('@/views/admin/healthcheck-page.vue')
-const AdminKPI = () => import('@/views/admin/kpi-page.vue')
-const AdminEventsRecords = () => import('@/views/admin/events-records-page.vue')
-const DynamicInfosPage = () => import('@/views/exploitation/dynamic-infos-page.vue')
-const EventFiltersPage = () => import('@/views/exploitation/event-filters-page.vue')
-const FlappingRulesPage = () => import('@/views/exploitation/flapping-rules-page.vue')
-const IdleRulesPage = () => import('@/views/exploitation/idle-rules-page.vue')
-const ResolveRulesPage = () => import('@/views/exploitation/resolve-rules-page.vue')
-const ScenariosPage = () => import('@/views/exploitation/scenarios-page.vue')
+const PlaceholderPage = () => import('@/views/placeholder-page.vue');
+const AdminRights = () => import('@/views/admin/rights-page.vue');
+const AdminUsers = () => import('@/views/admin/users-page.vue');
+const AdminRoles = () => import('@/views/admin/roles-page.vue');
+const AdminBroadcastMessages = () => import('@/views/admin/broadcast-messages-page.vue');
+const AdminPlaylists = () => import('@/views/admin/playlists-page.vue');
+const AdminPlanning = () => import('@/views/admin/planning-page.vue');
+const AdminHealthcheck = () => import('@/views/admin/healthcheck-page.vue');
+const AdminKPI = () => import('@/views/admin/kpi-page.vue');
+const AdminEventsRecords = () => import('@/views/admin/events-records-page.vue');
+const DynamicInfosPage = () => import('@/views/exploitation/dynamic-infos-page.vue');
+const EventFiltersPage = () => import('@/views/exploitation/event-filters-page.vue');
+const FlappingRulesPage = () => import('@/views/exploitation/flapping-rules-page.vue');
+const IdleRulesPage = () => import('@/views/exploitation/idle-rules-page.vue');
+const ResolveRulesPage = () => import('@/views/exploitation/resolve-rules-page.vue');
+const ScenariosPage = () => import('@/views/exploitation/scenarios-page.vue');
 
 const protectedRoute = (meta = {}) => ({
   requiresLogin: true,
   ...meta,
-})
+});
 
 const routes = [
   {
@@ -216,7 +216,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.externalAuthTokens,
       },
     }),
-    component: PlaceholderPage,
+    component: () => import('@/views/admin/custom-objects/external-auth-tokens-page.vue'),
   },
   {
     path: ROUTES.adminCustomObjectsExternalDataTables,
@@ -226,7 +226,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.externalDataTable,
       },
     }),
-    component: PlaceholderPage,
+    component: () => import('@/views/admin/custom-objects/external-data-tables-page.vue'),
   },
   {
     path: ROUTES.adminCustomObjectsEntityInfosProperties,
@@ -523,27 +523,27 @@ const routes = [
     path: '/:pathMatch(.*)*',
     redirect: { name: ROUTES_NAMES.home },
   },
-]
+];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-})
+});
 
 router.beforeEach(async (to) => {
-  const authStore = useAuthStore()
-  const isRequiresAuth = to.matched.some((route) => route.meta.requiresLogin)
-  const isDontRequiresAuth = to.matched.some((route) => route.meta.requiresLogin === false)
-  const { [ROUTER_ACCESS_TOKEN_KEY]: accessToken, ...restQuery } = to.query
+  const authStore = useAuthStore();
+  const isRequiresAuth = to.matched.some((route) => route.meta.requiresLogin);
+  const isDontRequiresAuth = to.matched.some((route) => route.meta.requiresLogin === false);
+  const { [ROUTER_ACCESS_TOKEN_KEY]: accessToken, ...restQuery } = to.query;
 
   if (accessToken) {
-    await authStore.applyAccessToken(accessToken)
+    await authStore.applyAccessToken(accessToken);
 
     return {
       ...to,
       query: restQuery,
       replace: true,
-    }
+    };
   }
 
   if (!authStore.isLoggedIn && isRequiresAuth) {
@@ -553,45 +553,45 @@ router.beforeEach(async (to) => {
         redirect: to.fullPath,
         errorMessage: to.query.errorMessage,
       },
-    }
+    };
   }
 
   if (authStore.isLoggedIn && isDontRequiresAuth) {
-    return { name: ROUTES_NAMES.home }
+    return { name: ROUTES_NAMES.home };
   }
 
-  return true
-})
+  return true;
+});
 
 router.beforeResolve(async (to) => {
   try {
-    await checkAppInfoAccessForRoute(to)
-    await checkUserAccessForRoute(to)
+    await checkAppInfoAccessForRoute(to);
+    await checkUserAccessForRoute(to);
 
-    return true
+    return true;
   } catch (err) {
-    console.error(err)
+    console.error(err);
 
-    return { name: ROUTES_NAMES.home }
+    return { name: ROUTES_NAMES.home };
   }
-})
+});
 
 router.afterEach((to, from) => {
   if (to.path === from.path) {
-    return
+    return;
   }
 
   // Entities sweep will be wired when the entity store is migrated.
-})
+});
 
 router.isReady().then(() => {
-  const { errorMessage } = router.currentRoute.value.query
+  const { errorMessage } = router.currentRoute.value.query;
 
   if (errorMessage) {
-    usePopupsStore().error({ text: errorMessage, autoClose: false })
+    usePopupsStore().error({ text: errorMessage, autoClose: false });
   }
-})
+});
 
-router.replaceAsync = (route) => router.replace(route)
+router.replaceAsync = (route) => router.replace(route);
 
-export default router
+export default router;

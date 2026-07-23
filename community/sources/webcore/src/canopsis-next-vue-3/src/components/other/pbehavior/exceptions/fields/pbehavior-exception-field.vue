@@ -62,9 +62,9 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch } from 'vue';
 
-import { DATETIME_FORMATS } from '@/constants'
+import { DATETIME_FORMATS } from '@/constants';
 
 import {
   convertDateToEndOfDayDateObject,
@@ -72,19 +72,18 @@ import {
   convertDateToString,
   isEndOfDay,
   isStartOfDay,
-} from '@/helpers/date/date'
+} from '@/helpers/date/date';
 
-import { gridFlexStyle } from '@/helpers/layout'
+import { gridFlexStyle } from '@/helpers/layout';
 
-import { useModelField } from '@/hooks/form/model-field'
-import { useValidationChildren } from '@/hooks/validator/validation-children'
+import { useModelField } from '@/hooks/form/model-field';
+import { useValidationChildren } from '@/hooks/validator/validation-children';
 
-import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue'
-import DateTimeSplittedRangePickerText from '@/components/forms/fields/date-time-picker/date-time-splitted-range-picker-text.vue'
+import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
+import DateTimeSplittedRangePickerText from '@/components/forms/fields/date-time-picker/date-time-splitted-range-picker-text.vue';
 
 export default {
   emits: ['update:value'],
-  inject: ['$validator'],
   components: {
     DateTimeSplittedRangePickerField,
     DateTimeSplittedRangePickerText,
@@ -104,31 +103,29 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { updateField, updateModel } = useModelField(props, emit)
-    const { hasChildrenError, validateChildren } = useValidationChildren()
+    const { updateField, updateModel } = useModelField(props, emit);
+    const { hasChildrenError, validateChildren } = useValidationChildren();
 
-    const editing = ref(!props.value.type)
+    const editing = ref(!props.value.type);
     const fullDay = ref(
       isStartOfDay(props.value.begin) &&
         (isEndOfDay(props.value.end) || isStartOfDay(props.value.end)),
-    )
+    );
 
     const beginRules = computed(() => ({
       required: true,
       date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-    }))
+    }));
 
     const endRules = computed(() => ({
       required: true,
       after: [convertDateToString(props.value.begin, DATETIME_FORMATS.dateTimePicker)],
       date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-    }))
+    }));
 
-    const nameSuffix = computed(() => (props.value.key ? `-${props.value.key}` : ''))
-
-    const datesName = computed(() => `dates${nameSuffix.value}`)
-
-    const typeName = computed(() => `type${nameSuffix.value}`)
+    const nameSuffix = computed(() => (props.value.key ? `-${props.value.key}` : ''));
+    const datesName = computed(() => `dates${nameSuffix.value}`);
+    const typeName = computed(() => `type${nameSuffix.value}`);
 
     watch(fullDay, () => {
       updateModel({
@@ -136,18 +133,18 @@ export default {
 
         begin: convertDateToStartOfDayDateObject(props.value.begin),
         end: convertDateToEndOfDayDateObject(props.value.end),
-      })
-    })
+      });
+    });
 
     const toggleEditing = async () => {
       if (editing.value) {
-        await validateChildren()
+        await validateChildren();
       }
 
       if (!hasChildrenError.value) {
-        editing.value = !editing.value
+        editing.value = !editing.value;
       }
-    }
+    };
 
     return {
       gridFlexStyle,
@@ -159,9 +156,9 @@ export default {
       typeName,
       updateField,
       toggleEditing,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

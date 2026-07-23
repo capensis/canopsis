@@ -23,16 +23,16 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { pbehaviorExceptionImportToForm } from '@/helpers/entities/pbehavior/exception/form'
+import { pbehaviorExceptionImportToForm } from '@/helpers/entities/pbehavior/exception/form';
 
-import { useForm } from '@/hooks/form'
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
+import { useForm } from '@/hooks/form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
-import PbehaviorExceptionImportForm from '@/components/other/pbehavior/exceptions/form/pbehavior-exception-import-form.vue'
+import PbehaviorExceptionImportForm from '@/components/other/pbehavior/exceptions/form/pbehavior-exception-import-form.vue';
 
 export default {
   components: { PbehaviorExceptionImportForm },
@@ -45,39 +45,39 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const modals = useModals()
-    const config = computed(() => props.modal.config ?? {})
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
 
     const form = useForm({
       initialValues: pbehaviorExceptionImportToForm(config.value.exceptionImport),
-    })
-    const { values, handleSubmit, submitting } = form
+    });
+    const { values, handleSubmit, submitting } = form;
 
-    const closeModal = () => modals.hide({ id: props.modal.id })
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
     const submit = handleSubmit(async () => {
-      const result = await config.value.action?.(values.value)
+      const result = await config.value.action?.(values.value);
 
-      await config.value.afterSubmit?.(result)
+      await config.value.afterSubmit?.(result);
 
-      closeModal()
+      closeModal();
 
-      return result
-    })
+      return result;
+    });
 
     useFormConfirmableCloseModal({
       form: values,
       submit,
       close: closeModal,
-    })
+    });
 
     return {
       t,
       submitting,
       closeModal,
       submit,
-    }
+    };
   },
-}
+};
 </script>

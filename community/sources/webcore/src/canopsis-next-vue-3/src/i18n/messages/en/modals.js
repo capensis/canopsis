@@ -1,4 +1,4 @@
-import { PBEHAVIOR_TYPE_TYPES, WIDGET_TEMPLATES_TYPES, WIDGET_TYPES } from '@/constants'
+import { PBEHAVIOR_TYPE_TYPES, WIDGET_TEMPLATES_TYPES, WIDGET_TYPES } from '@/constants';
 
 export default {
   common: {
@@ -1281,4 +1281,4 @@ export default {
     foundInCurrent: 'FOUND IN CURRENT, NOT FOUND IN SUGGESTION PATTERN',
     foundInSuggestion: 'FOUND IN SUGGESTION, NOT FOUND IN CURRENT PATTERN',
   },
-}
+};

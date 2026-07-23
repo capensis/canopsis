@@ -1,9 +1,6 @@
 <template>
   <c-layout gap="3" column>
-    <c-label
-      :label="$t('common.header', 2)"
-      :help-text="$t('common.request.headersHelpText')"
-    />
+    <c-label :label="$t('common.header', 2)" :help-text="$t('common.request.headersHelpText')" />
 
     <c-layout
       v-for="(item, index) in headers"
@@ -17,21 +14,13 @@
         :name="`${name}.${item.key}`"
         :headers-hints="headersHints"
         :headers-variables="headersVariables"
-        @update:headers="updateItemInArray(index, $event)"
+        @update:header="updateItemInArray(index, $event)"
       />
-      <c-action-btn
-        v-if="!disabled"
-        type="delete"
-        @click="removeItemFromArray(index)"
-      />
+      <c-action-btn v-if="!disabled" type="delete" @click="removeItemFromArray(index)" />
     </c-layout>
 
     <div>
-      <v-btn
-        color="primary"
-        outlined
-        @click="addItem"
-      >
+      <v-btn color="primary" outlined @click="addItem">
         {{ $t('common.request.addHeader') }}
       </v-btn>
     </div>
@@ -51,7 +40,6 @@ import RequestHeaderField from './request-header-field.vue';
 
 export default {
   emits: ['update:headers'],
-  inject: ['$validator'],
   components: { RequestHeaderField },
   props: {
     title: {
@@ -76,7 +64,10 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { addItemIntoArray, removeItemFromArray, updateItemInArray } = useArrayModelField(props, emit);
+    const { addItemIntoArray, removeItemFromArray, updateItemInArray } = useArrayModelField(
+      props,
+      emit,
+    );
 
     const headersHints = computed(() => [
       {

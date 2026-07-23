@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useAnomalyMonitoredConnectorStore } from '@/stores/modules/anomaly-monitored-connector'
+import { useAnomalyMonitoredConnectorStore } from '@/stores/modules/anomaly-monitored-connector';
 
 /**
  * Anomaly monitored connector store facade.
@@ -8,8 +8,8 @@ import { useAnomalyMonitoredConnectorStore } from '@/stores/modules/anomaly-moni
  * @returns {Object}
  */
 export const useAnomalyMonitoredConnector = () => {
-  const anomalyMonitoredConnectorStore = useAnomalyMonitoredConnectorStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(anomalyMonitoredConnectorStore)
+  const anomalyMonitoredConnectorStore = useAnomalyMonitoredConnectorStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(anomalyMonitoredConnectorStore);
 
   return {
     anomalyMonitoredConnectors: items,
@@ -32,5 +32,5 @@ export const useAnomalyMonitoredConnector = () => {
       anomalyMonitoredConnectorStore.fetchStatesListWithoutStore,
     fetchAnomalyMonitoredConnectorHistoryWithoutStore:
       anomalyMonitoredConnectorStore.fetchConnectorHistoryWithoutStore,
-  }
-}
+  };
+};

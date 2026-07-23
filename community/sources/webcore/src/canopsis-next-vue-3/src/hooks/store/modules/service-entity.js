@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useServiceEntityStore } from '@/stores/modules/service-entity'
+import { useServiceEntityStore } from '@/stores/modules/service-entity';
 
 /**
  * Service entity store facade.
@@ -8,9 +8,9 @@ import { useServiceEntityStore } from '@/stores/modules/service-entity'
  * @returns {Object}
  */
 export const useServiceEntity = () => {
-  const serviceEntityStore = useServiceEntityStore()
+  const serviceEntityStore = useServiceEntityStore();
   const { services, getListByServiceId, getPendingByServiceId, getMetaByServiceId } =
-    storeToRefs(serviceEntityStore)
+    storeToRefs(serviceEntityStore);
 
   return {
     serviceEntitiesByService: services,
@@ -18,5 +18,5 @@ export const useServiceEntity = () => {
     getServiceEntitiesPendingByServiceId: getPendingByServiceId,
     getServiceEntitiesMetaByServiceId: getMetaByServiceId,
     fetchServiceEntitiesList: serviceEntityStore.fetchList,
-  }
-}
+  };
+};

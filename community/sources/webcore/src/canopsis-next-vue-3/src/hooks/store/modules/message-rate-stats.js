@@ -1,4 +1,4 @@
-import { useMessageRateStatsStore } from '@/stores/modules/message-rate-stats'
+import { useMessageRateStatsStore } from '@/stores/modules/message-rate-stats';
 
 /**
  * Message rate stats store facade.
@@ -6,9 +6,9 @@ import { useMessageRateStatsStore } from '@/stores/modules/message-rate-stats'
  * @returns {Object}
  */
 export const useMessageRateStats = () => {
-  const messageRateStatsStore = useMessageRateStatsStore()
+  const messageRateStatsStore = useMessageRateStatsStore();
 
   return {
     fetchMessageRateStatsWithoutStore: messageRateStatsStore.fetchMessageRateStatsWithoutStore,
-  }
-}
+  };
+};

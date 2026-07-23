@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { COLORS } from '@/config'
+import { COLORS } from '@/config';
 import {
   DATETIME_FORMATS,
   KPI_SLI_GRAPH_BAR_PERCENTAGE,
@@ -21,14 +21,14 @@ import {
   MAX_TIME_VALUE_BY_SAMPLING,
   SAMPLINGS,
   TIME_UNITS_BY_SAMPLING,
-} from '@/constants'
+} from '@/constants';
 
-import { colorToRgba } from '@/helpers/color'
-import { convertDurationToString, fromSeconds } from '@/helpers/date/duration'
-import { getDateLabelBySampling } from '@/helpers/entities/metric/list'
+import { colorToRgba } from '@/helpers/color';
+import { convertDurationToString, fromSeconds } from '@/helpers/date/duration';
+import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
 
-import BarChart from '@/components/common/chart/bar-chart.vue'
-import ChartExportActions from '@/components/common/chart/chart-export-actions.vue'
+import BarChart from '@/components/common/chart/bar-chart.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 export default {
   inject: ['$system'],
@@ -69,46 +69,46 @@ export default {
 
   computed: {
     maxValueBySampling() {
-      return MAX_TIME_VALUE_BY_SAMPLING[this.sampling]
+      return MAX_TIME_VALUE_BY_SAMPLING[this.sampling];
     },
 
     maxValueByType() {
       if (this.dataType === KPI_SLI_GRAPH_DATA_TYPE.percent) {
-        return 100
+        return 100;
       }
 
-      return this.maxValueBySampling
+      return this.maxValueBySampling;
     },
 
     samplingUnit() {
-      return TIME_UNITS_BY_SAMPLING[this.sampling]
+      return TIME_UNITS_BY_SAMPLING[this.sampling];
     },
 
     unit() {
       if (this.dataType === KPI_SLI_GRAPH_DATA_TYPE.percent) {
-        return '%'
+        return '%';
       }
 
-      return this.samplingUnit
+      return this.samplingUnit;
     },
 
     datasets() {
       const { downtime, maintenance, uptime } = this.metrics.reduce(
         (acc, metric) => {
-          const x = metric.timestamp * 1000
+          const x = metric.timestamp * 1000;
 
-          acc.downtime.push({ x, y: this.convertValueBySamplingUnit(metric.downtime) })
-          acc.maintenance.push({ x, y: this.convertValueBySamplingUnit(metric.maintenance) })
-          acc.uptime.push({ x, y: this.convertValueBySamplingUnit(metric.uptime) })
+          acc.downtime.push({ x, y: this.convertValueBySamplingUnit(metric.downtime) });
+          acc.maintenance.push({ x, y: this.convertValueBySamplingUnit(metric.maintenance) });
+          acc.uptime.push({ x, y: this.convertValueBySamplingUnit(metric.uptime) });
 
-          return acc
+          return acc;
         },
         {
           downtime: [],
           maintenance: [],
           uptime: [],
         },
-      )
+      );
 
       return [
         {
@@ -132,7 +132,7 @@ export default {
           order: 3,
           data: maintenance,
         },
-      ]
+      ];
     },
 
     sliChartOptions() {
@@ -188,52 +188,52 @@ export default {
             },
           },
         },
-      }
+      };
     },
   },
 
   methods: {
     getChartValueTickLabel(value) {
-      return `${value}${this.unit}`
+      return `${value}${this.unit}`;
     },
 
     getChartTimeTickLabel(_, index, data) {
-      const { value } = data[index] ?? {}
+      const { value } = data[index] ?? {};
 
-      return getDateLabelBySampling(value, this.sampling).split('\n')
+      return getDateLabelBySampling(value, this.sampling).split('\n');
     },
 
     getChartTooltipTitle(data) {
-      const [dataset] = data
-      const { x: timestamp } = dataset.raw
+      const [dataset] = data;
+      const { x: timestamp } = dataset.raw;
 
-      return getDateLabelBySampling(timestamp, this.sampling)
+      return getDateLabelBySampling(timestamp, this.sampling);
     },
 
     getChartTooltipLabel(tooltip) {
-      const { raw, dataset } = tooltip
-      const label = dataset.label.toLowerCase()
+      const { raw, dataset } = tooltip;
+      const label = dataset.label.toLowerCase();
 
       if (this.dataType === KPI_SLI_GRAPH_DATA_TYPE.percent) {
-        return `${raw.y}${this.unit} ${label}`
+        return `${raw.y}${this.unit} ${label}`;
       }
 
       const duration = convertDurationToString(
         raw.y,
         DATETIME_FORMATS.refreshFieldFormat,
         this.samplingUnit,
-      )
+      );
 
-      return `${duration} ${label}`
+      return `${duration} ${label}`;
     },
 
     convertValueBySamplingUnit(value) {
       if (this.dataType === KPI_SLI_GRAPH_DATA_TYPE.percent) {
-        return value
+        return value;
       }
 
-      return fromSeconds(value, this.samplingUnit)
+      return fromSeconds(value, this.samplingUnit);
     },
   },
-}
+};
 </script>

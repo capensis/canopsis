@@ -1,13 +1,13 @@
-import { createVuetify } from 'vuetify'
-import { VExpansionPanels } from 'vuetify/components'
+import { createVuetify } from 'vuetify';
+import { VExpansionPanels } from 'vuetify/components';
 
-import { DEFAULT_THEME_COLORS } from '@/config'
-import { createCanopsisVuetifyTheme } from '@/helpers/entities/theme/vuetify'
-import { customIconAliases, iconSets } from './icons'
+import { DEFAULT_THEME_COLORS } from '@/config';
+import { createCanopsisVuetifyTheme } from '@/helpers/entities/theme/vuetify';
+import { customIconAliases, iconSets } from './icons';
 
-const { definition } = createCanopsisVuetifyTheme(DEFAULT_THEME_COLORS)
+const { definition } = createCanopsisVuetifyTheme(DEFAULT_THEME_COLORS);
 
-export const CANOPSIS_THEME_NAME = 'canopsis'
+export const CANOPSIS_THEME_NAME = 'canopsis';
 
 export const vuetify = createVuetify({
   defaults: {
@@ -45,11 +45,11 @@ export const vuetify = createVuetify({
       density: 'default',
     },
     VCard: {
-      elevation: 2.
+      elevation: 2,
     },
     VExpansionPanels: {
       elevation: 2,
-    }
+    },
   },
   icons: {
     defaultSet: 'md',
@@ -62,14 +62,14 @@ export const vuetify = createVuetify({
       [CANOPSIS_THEME_NAME]: definition,
     },
   },
-})
+});
 
 /**
  * Kebab-case aliases for Vuetify components used as dynamic tags in vuedraggable.
  * vuedraggable resolves `tag` via resolveComponent(string), which requires global registration.
  */
 export const registerVuetifyComponentAliases = (app) => {
-  app.component('v-expansion-panels', VExpansionPanels)
-}
+  app.component('v-expansion-panels', VExpansionPanels);
+};
 
-export default vuetify
+export default vuetify;

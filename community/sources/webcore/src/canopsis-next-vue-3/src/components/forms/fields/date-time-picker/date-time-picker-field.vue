@@ -22,10 +22,10 @@
           readonly
           @click:append-inner="clear"
         >
-          <template #append>
+          <template v-if="$slots.append" #append>
             <slot name="append" />
           </template>
-          <template #append-outer>
+          <template v-if="$slots['append-outer']" #append-outer>
             <slot name="append-outer" />
           </template>
         </c-text-field>
@@ -44,12 +44,12 @@
 </template>
 
 <script>
-import { DATETIME_FORMATS } from '@/constants'
+import { DATETIME_FORMATS } from '@/constants';
 
-import { convertDateToString } from '@/helpers/date/date'
+import { convertDateToString } from '@/helpers/date/date';
 
-import DateTimePicker from './date-time-picker.vue'
-import { createDateTimeValidationRules, isRequiredRule } from './validation-rules'
+import DateTimePicker from './date-time-picker.vue';
+import { createDateTimeValidationRules, isRequiredRule } from './validation-rules';
 
 export default {
   components: { DateTimePicker },
@@ -103,33 +103,33 @@ export default {
   data() {
     return {
       opened: false,
-    }
+    };
   },
   computed: {
     dateTextValue() {
-      return convertDateToString(this.value, DATETIME_FORMATS.dateTimePicker)
+      return convertDateToString(this.value, DATETIME_FORMATS.dateTimePicker);
     },
 
     fieldRequired() {
-      return this.required || isRequiredRule(this.rules)
+      return this.required || isRequiredRule(this.rules);
     },
 
     validationRules() {
-      return createDateTimeValidationRules(this.rules)
+      return createDateTimeValidationRules(this.rules);
     },
   },
   methods: {
     close() {
-      this.opened = false
+      this.opened = false;
     },
 
     updateValue(value) {
-      this.$emit('update:value', value)
+      this.$emit('update:value', value);
     },
 
     clear() {
-      this.updateValue(null)
+      this.updateValue(null);
     },
   },
-}
+};
 </script>

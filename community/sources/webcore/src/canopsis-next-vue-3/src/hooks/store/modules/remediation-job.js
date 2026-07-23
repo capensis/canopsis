@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useRemediationJobStore } from '@/stores/modules/remediation-job'
+import { useRemediationJobStore } from '@/stores/modules/remediation-job';
 
 /**
  * Remediation job store facade.
@@ -8,8 +8,8 @@ import { useRemediationJobStore } from '@/stores/modules/remediation-job'
  * @returns {Object}
  */
 export const useRemediationJob = () => {
-  const remediationJobStore = useRemediationJobStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(remediationJobStore)
+  const remediationJobStore = useRemediationJobStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(remediationJobStore);
 
   return {
     remediationJobs: items,
@@ -23,5 +23,5 @@ export const useRemediationJob = () => {
     createRemediationJob: remediationJobStore.create,
     updateRemediationJob: remediationJobStore.update,
     removeRemediationJob: remediationJobStore.remove,
-  }
-}
+  };
+};

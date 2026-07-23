@@ -1,10 +1,10 @@
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-import { API_ROUTES } from '@/config'
+import { API_ROUTES } from '@/config';
 
-import request from '@/services/request'
+import request from '@/services/request';
 
-import { createCRUDStore } from '@/stores/plugins/crud'
+import { createCRUDStore } from '@/stores/plugins/crud';
 
 export const useRatingSettingsStore = createCRUDStore({
   id: 'ratingSettings',
@@ -12,17 +12,17 @@ export const useRatingSettingsStore = createCRUDStore({
   withFetchingParams: true,
   withWithoutStore: true,
   setup() {
-    const updatedAt = ref(null)
+    const updatedAt = ref(null);
 
     const bulkUpdate = async ({ data } = {}) => {
-      await request.put(API_ROUTES.bulkRatingSettings, data)
+      await request.put(API_ROUTES.bulkRatingSettings, data);
 
-      updatedAt.value = Date.now()
-    }
+      updatedAt.value = Date.now();
+    };
 
     return {
       updatedAt,
       bulkUpdate,
-    }
+    };
   },
-})
+});

@@ -33,16 +33,16 @@ import {
   METRICS_QUICK_RANGES,
   SAMPLINGS,
   TIME_UNITS,
-} from '@/constants'
+} from '@/constants';
 
-import { getDiffBetweenDates, subtractUnitFromDate } from '@/helpers/date/date'
+import { getDiffBetweenDates, subtractUnitFromDate } from '@/helpers/date/date';
 import {
   convertStartDateIntervalToTimestamp,
   convertStopDateIntervalToTimestamp,
-} from '@/helpers/date/date-intervals'
-import { fromSeconds } from '@/helpers/date/duration'
+} from '@/helpers/date/date-intervals';
+import { fromSeconds } from '@/helpers/date/duration';
 
-import KpiAlarmMetricParametersField from '../form/fields/kpi-alarm-metric-parameters-field.vue'
+import KpiAlarmMetricParametersField from '../form/fields/kpi-alarm-metric-parameters-field.vue';
 
 export default {
   components: { KpiAlarmMetricParametersField },
@@ -62,25 +62,25 @@ export default {
 
   computed: {
     quickRanges() {
-      return Object.values(METRICS_QUICK_RANGES)
+      return Object.values(METRICS_QUICK_RANGES);
     },
 
     minFromTimestamp() {
       if (this.isHourSampling(this.query.sampling)) {
         const yearAgoDate = this.getDateWithMaxIntervalDiff(
           convertStopDateIntervalToTimestamp(this.query.interval.to),
-        )
+        );
 
-        return this.minDate > yearAgoDate ? this.minDate : yearAgoDate
+        return this.minDate > yearAgoDate ? this.minDate : yearAgoDate;
       }
 
-      return this.minDate
+      return this.minDate;
     },
   },
 
   methods: {
     isHourSampling(sampling) {
-      return sampling === SAMPLINGS.hour
+      return sampling === SAMPLINGS.hour;
     },
 
     getDateWithMaxIntervalDiff(to) {
@@ -88,30 +88,32 @@ export default {
         to,
         KPI_METRICS_MAX_ALARM_YEAR_INTERVAL_DIFF_IN_YEARS,
         TIME_UNITS.year,
-      )
+      );
     },
 
     getIntervalWithMaxYearRange(interval) {
-      const { from, to } = interval
+      const { from, to } = interval;
 
-      const toTimestamp = convertStopDateIntervalToTimestamp(to)
-      const fromTimestamp = convertStartDateIntervalToTimestamp(from)
+      const toTimestamp = convertStopDateIntervalToTimestamp(to);
+      const fromTimestamp = convertStartDateIntervalToTimestamp(from);
 
-      const secondsDiff = getDiffBetweenDates(toTimestamp, fromTimestamp)
-      const diffInYears = fromSeconds(secondsDiff, TIME_UNITS.year)
+      const secondsDiff = getDiffBetweenDates(toTimestamp, fromTimestamp);
+      const diffInYears = fromSeconds(secondsDiff, TIME_UNITS.year);
 
-      return diffInYears > 1 ? { to, from: this.getDateWithMaxIntervalDiff(toTimestamp) } : interval
+      return diffInYears > 1
+        ? { to, from: this.getDateWithMaxIntervalDiff(toTimestamp) }
+        : interval;
     },
 
     updateQueryField(field, value) {
       this.$emit('update:query', {
         ...this.query,
         [field]: value,
-      })
+      });
     },
 
     updateSampling(sampling) {
-      const { interval } = this.query
+      const { interval } = this.query;
 
       this.$emit('update:query', {
         ...this.query,
@@ -119,10 +121,10 @@ export default {
           ? this.getIntervalWithMaxYearRange(interval)
           : interval,
         sampling,
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

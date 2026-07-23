@@ -1,29 +1,205 @@
 <template>
-  <c-number-field
-    :value="duration.value"
-    v-bind="$attrs"
-    @update:value="updateValue"
-  />
+  <c-layout gap="2">
+    <div :class="valueColumnClass">
+      <c-number-field
+        :value="duration.value"
+        :label="label || $t('common.duration')"
+        :disabled="disabled"
+        :name="valueFieldName"
+        :required="isRequired"
+        :min="min"
+        :max="max"
+        :hide-details="hideDetails"
+        :autofocus="autofocus"
+        @update:value="updateValue"
+      >
+        <template v-if="$slots.append" #append>
+          <slot name="append" />
+        </template>
+      </c-number-field>
+    </div>
+
+    <div :class="unitColumnClass">
+      <c-select
+        :model-value="duration.unit"
+        :items="availableUnits"
+        :disabled="disabled"
+        :label="unitsLabel"
+        :name="unitFieldName"
+        :required="isRequired"
+        :clearable="clearable"
+        :hide-details="hideDetails"
+        item-title="text"
+        item-value="value"
+        @update:model-value="updateUnit"
+      />
+    </div>
+  </c-layout>
 </template>
 
 <script>
+import { isNumber } from 'lodash';
+
+import {
+  AVAILABLE_TIME_UNITS,
+  MEDIUM_AVAILABLE_TIME_UNITS,
+  SHORT_AVAILABLE_TIME_UNITS,
+} from '@/constants';
+
 export default {
   props: {
     duration: {
       type: Object,
-      default: () => ({ value: 0, unit: 's' }),
+      default: () => ({
+        value: 1,
+        unit: AVAILABLE_TIME_UNITS.minute.value,
+      }),
+    },
+    label: {
+      type: String,
+      default: null,
+    },
+    unitsLabel: {
+      type: String,
+      default: null,
+    },
+    units: {
+      type: Array,
+      default: null,
+    },
+    name: {
+      type: String,
+      default: 'duration',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
+    min: {
+      type: Number,
+      default: 1,
+    },
+    max: {
+      type: Number,
+      required: false,
+    },
+    long: {
+      type: Boolean,
+      default: false,
+    },
+    medium: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
+    sameWidth: {
+      type: Boolean,
+      default: false,
     },
   },
 
   emits: ['update:duration'],
 
-  methods: {
-    updateValue(value) {
-      this.$emit('update:duration', {
-        ...this.duration,
+  computed: {
+    valueFieldName() {
+      return `${this.name}.value`;
+    },
+
+    unitFieldName() {
+      return `${this.name}.unit`;
+    },
+
+    availableUnits() {
+      if (this.units) {
+        return this.units;
+      }
+
+      const units = {
+        true: SHORT_AVAILABLE_TIME_UNITS,
+        [this.long]: AVAILABLE_TIME_UNITS,
+        [this.medium]: MEDIUM_AVAILABLE_TIME_UNITS,
+      }.true;
+
+      return Object.values(units).map(({ value, text }) => ({
         value,
+        text: this.$t(text, this.duration.value || 0),
+      }));
+    },
+
+    isRequired() {
+      return this.required || isNumber(this.duration.value) || Boolean(this.duration.unit);
+    },
+
+    valueColumnClass() {
+      return this.sameWidth ? 'flex-1-1-0' : 'flex-1-1-58';
+    },
+
+    unitColumnClass() {
+      return this.sameWidth ? 'flex-1-1-0' : 'flex-1-1-42';
+    },
+  },
+
+  methods: {
+    updateModel(duration) {
+      this.$emit('update:duration', duration);
+    },
+
+    updateField(field, value) {
+      this.updateModel({
+        ...this.duration,
+        [field]: value,
+      });
+    },
+
+    updateValue(value) {
+      this.updateField('value', value);
+    },
+
+    updateUnit(unit) {
+      if (unit) {
+        this.updateField('unit', unit);
+
+        return;
+      }
+
+      this.updateModel({
+        ...this.duration,
+        unit: undefined,
+        value: undefined,
       });
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.flex-1-1-0 {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.flex-1-1-58 {
+  flex: 1 1 58%;
+  min-width: 0;
+}
+
+.flex-1-1-42 {
+  flex: 1 1 42%;
+  min-width: 0;
+}
+</style>

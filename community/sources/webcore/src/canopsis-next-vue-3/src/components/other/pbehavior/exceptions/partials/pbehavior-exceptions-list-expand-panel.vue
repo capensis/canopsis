@@ -62,19 +62,19 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref } from 'vue';
 
-import { DATETIME_FORMATS } from '@/constants'
+import { DATETIME_FORMATS } from '@/constants';
 
-import { getMostReadableTextColor } from '@/helpers/color'
-import { convertDateToString } from '@/helpers/date/date'
+import { getMostReadableTextColor } from '@/helpers/color';
+import { convertDateToString } from '@/helpers/date/date';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
 const TABS = {
   description: 'description',
   periods: 'periods',
-}
+};
 
 export default {
   props: {
@@ -85,16 +85,16 @@ export default {
   },
 
   setup() {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
-    const activeTab = ref(TABS.description)
+    const activeTab = ref(TABS.description);
     const headers = computed(() => [
       { value: 'begin', text: t('common.begin'), sortable: false },
       { value: 'end', text: t('common.end'), sortable: false },
       { value: 'type', text: t('common.type'), sortable: false },
-    ])
-    const formatDate = (value) => convertDateToString(value, DATETIME_FORMATS.long)
-    const getIconColor = (color) => getMostReadableTextColor(color, { level: 'AA', size: 'large' })
+    ]);
+    const formatDate = (value) => convertDateToString(value, DATETIME_FORMATS.long);
+    const getIconColor = (color) => getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
     return {
       TABS,
@@ -103,9 +103,9 @@ export default {
       formatDate,
       getIconColor,
       t,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

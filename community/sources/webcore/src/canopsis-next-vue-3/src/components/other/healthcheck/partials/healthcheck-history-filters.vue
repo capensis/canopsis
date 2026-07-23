@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import { HEALTHCHECK_QUICK_RANGES } from '@/constants'
+import { HEALTHCHECK_QUICK_RANGES } from '@/constants';
 
-import HealthcheckConnectorNamesField from '../form/fields/healthcheck-connector-names-field.vue'
-import HealthcheckEventTypesField from '../form/fields/healthcheck-event-types-field.vue'
+import HealthcheckConnectorNamesField from '../form/fields/healthcheck-connector-names-field.vue';
+import HealthcheckEventTypesField from '../form/fields/healthcheck-event-types-field.vue';
 
 export default {
   components: {
@@ -55,10 +55,10 @@ export default {
 
   computed: {
     quickRanges() {
-      return Object.values(HEALTHCHECK_QUICK_RANGES)
+      return Object.values(HEALTHCHECK_QUICK_RANGES);
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

@@ -1,4 +1,4 @@
-import { useSnmpMibStore } from '@/stores/modules/snmp-mib'
+import { useSnmpMibStore } from '@/stores/modules/snmp-mib';
 
 /**
  * SNMP MIB store facade.
@@ -6,10 +6,10 @@ import { useSnmpMibStore } from '@/stores/modules/snmp-mib'
  * @returns {Object}
  */
 export const useSnmpMib = () => {
-  const snmpMibStore = useSnmpMibStore()
+  const snmpMibStore = useSnmpMibStore();
 
   return {
     fetchSnmpMibsList: snmpMibStore.fetchList,
     uploadSnmpMib: snmpMibStore.upload,
-  }
-}
+  };
+};

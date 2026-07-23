@@ -1,6 +1,7 @@
 import {
   useFormErrors,
   useSetFieldError,
+  useSetFormErrors,
   useValidateField,
   useValidateForm,
 } from 'vee-validate';
@@ -13,22 +14,34 @@ import {
 export const useValidator = () => {
   const formErrors = useFormErrors();
   const setFieldError = useSetFieldError();
+  const setFormErrors = useSetFormErrors();
   const validateField = useValidateField();
   const validateForm = useValidateForm();
 
-  const getFieldError = name => formErrors.value[name];
+  const getFieldError = (name) => formErrors.value[name];
 
   return {
     errors: {
-      has: name => !!getFieldError(name),
-      collect: name => {
+      any: () => Object.keys(formErrors.value).length > 0,
+      has: (name) => !!getFieldError(name),
+      collect: (name) => {
         const error = getFieldError(name);
 
         return error ? [error] : [];
       },
-      remove: name => setFieldError(name, undefined),
+      add: ({ field, msg }) => setFieldError(field, msg),
+      clear: () => setFormErrors({}),
+      remove: (name) => setFieldError(name, undefined),
     },
-    validate: async name => {
+    fields: {
+      find: () => null,
+      items: [],
+    },
+    attach: () => {},
+    detach: () => {},
+    extend: () => {},
+    reset: ({ name } = {}) => (name ? setFieldError(name, undefined) : setFormErrors({})),
+    validate: async (name) => {
       const { valid } = await validateField(name);
 
       return valid;

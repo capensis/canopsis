@@ -1,8 +1,8 @@
-import { API_ROUTES } from '@/config'
+import { API_ROUTES } from '@/config';
 
-import request from '@/services/request'
+import request from '@/services/request';
 
-import { createCRUDStore } from '@/stores/plugins/crud'
+import { createCRUDStore } from '@/stores/plugins/crud';
 
 export const useDeclareTicketRuleStore = createCRUDStore({
   id: 'declareTicketRule',
@@ -12,31 +12,31 @@ export const useDeclareTicketRuleStore = createCRUDStore({
   withWithoutStore: true,
   actions: {
     createTestDeclareTicketExecution({ data } = {}) {
-      return request.post(API_ROUTES.declareTicket.testExecution, data)
+      return request.post(API_ROUTES.declareTicket.testExecution, data);
     },
 
     fetchDeclareTicketExecutionWithoutStore({ id } = {}) {
-      return request.get(`${API_ROUTES.declareTicket.declareTicketExecution}/${id}`)
+      return request.get(`${API_ROUTES.declareTicket.declareTicketExecution}/${id}`);
     },
 
     fetchTestDeclareTicketExecutionWebhooksResponse({ id } = {}) {
-      return request.get(`${API_ROUTES.declareTicket.testExecutionWebhooks}/${id}/response`)
+      return request.get(`${API_ROUTES.declareTicket.testExecutionWebhooks}/${id}/response`);
     },
 
     bulkCreateDeclareTicketExecution({ data } = {}) {
-      return request.post(API_ROUTES.declareTicket.bulkDeclareTicket, data)
+      return request.post(API_ROUTES.declareTicket.bulkDeclareTicket, data);
     },
 
     fetchAssignedTicketsWithoutStore({ params } = {}) {
-      return request.get(API_ROUTES.declareTicket.alarmsAssigned, { params })
+      return request.get(API_ROUTES.declareTicket.alarmsAssigned, { params });
     },
 
     bulkEnable({ data } = {}) {
-      return request.put(API_ROUTES.declareTicket.bulkRulesEnable, data)
+      return request.put(API_ROUTES.declareTicket.bulkRulesEnable, data);
     },
 
     bulkDisable({ data } = {}) {
-      return request.put(API_ROUTES.declareTicket.bulkRulesDisable, data)
+      return request.put(API_ROUTES.declareTicket.bulkRulesDisable, data);
     },
   },
-})
+});

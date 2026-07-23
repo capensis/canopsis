@@ -4,7 +4,7 @@
       <request-url-field
         :method="form.method"
         :url="form.url"
-        :help-text="urlHelpText ||$t('common.request.urlHelp')"
+        :help-text="urlHelpText || $t('common.request.urlHelp')"
         :name="name"
         :disabled="disabled"
         :url-variables="urlVariables"
@@ -13,7 +13,11 @@
       />
     </c-form-block-row>
 
-    <c-form-block-row v-if="withMultipleUrls" :label="$t('scenario.allowMultipleUrls')" :depth="depth">
+    <c-form-block-row
+      v-if="withMultipleUrls"
+      :label="$t('scenario.allowMultipleUrls')"
+      :depth="depth"
+    >
       <c-enabled-field
         :value="multiple"
         :label="$t('scenario.allowMultipleUrls')"
@@ -40,16 +44,15 @@
       />
     </c-form-block-row>
 
-    <c-form-block-row :label="$t('common.request.repeatRequest')" :depth="depth">
-      <span v-if="hideRepeat" class="font-italic mt-4">
+    <c-form-block-row
+      :label="$t('common.request.repeatRequest')"
+      :depth="depth"
+      :align-center="hideRepeat"
+    >
+      <span v-if="hideRepeat" class="font-italic">
         {{ $t('common.request.repeatRequestInTomlFile') }}
       </span>
-      <c-retry-field
-        v-else
-        :value="form"
-        :disabled="disabled"
-        @update:value="updateModel"
-      />
+      <c-retry-field v-else :value="form" :disabled="disabled" @update:value="updateModel" />
     </c-form-block-row>
 
     <c-form-block-row :label="$t('common.request.skipVerify')" :depth="depth">
@@ -76,12 +79,7 @@
       />
     </c-form-block-row>
 
-    <c-form-block-row
-      v-if="!hideHeaders"
-      :label="$t('common.header', 2)"
-      :depth="depth"
-      indented
-    >
+    <c-form-block-row v-if="!hideHeaders" :label="$t('common.header', 2)" :depth="depth" indented>
       <request-headers-field
         :headers="form.headers"
         :name="`${name}.headers`"
@@ -115,8 +113,7 @@ import RequestHeadersField from './fields/request-headers-field.vue';
 import RequestAuthWithTokenField from './fields/request-auth-with-token-field.vue';
 
 export default {
-  emits: ['update:form'],
-  inject: ['$validator'],
+  emits: ['update:form', 'update:multiple', 'update:auth-token'],
   components: {
     RequestUrlField,
     RequestHeadersField,
@@ -196,11 +193,11 @@ export default {
   setup(props, { emit }) {
     const { updateModel, updateField } = useModelField(props, emit);
 
-    const updateMultiple = multiple => emit('update:multiple', multiple);
-    const updateAuthToken = authToken => emit('update:auth-token', authToken);
+    const updateMultiple = (multiple) => emit('update:multiple', multiple);
+    const updateAuthToken = (authToken) => emit('update:auth-token', authToken);
     const timeout = computed({
       get: () => props.form.timeout,
-      set: value => updateField('timeout', value),
+      set: (value) => updateField('timeout', value),
     });
 
     return {

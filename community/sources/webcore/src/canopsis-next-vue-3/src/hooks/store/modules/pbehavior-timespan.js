@@ -1,4 +1,4 @@
-import { usePbehaviorTimespanStore } from '@/stores/modules/pbehavior-timespan'
+import { usePbehaviorTimespanStore } from '@/stores/modules/pbehavior-timespan';
 
 /**
  * Pbehavior timespan store facade.
@@ -6,9 +6,9 @@ import { usePbehaviorTimespanStore } from '@/stores/modules/pbehavior-timespan'
  * @returns {Object}
  */
 export const usePbehaviorTimespan = () => {
-  const pbehaviorTimespanStore = usePbehaviorTimespanStore()
+  const pbehaviorTimespanStore = usePbehaviorTimespanStore();
 
   return {
     fetchPbehaviorTimespansListWithoutStore: pbehaviorTimespanStore.fetchListWithoutStore,
-  }
-}
+  };
+};

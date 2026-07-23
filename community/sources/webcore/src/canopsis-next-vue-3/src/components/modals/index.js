@@ -1,9 +1,12 @@
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent } from 'vue';
 
-import { MODALS } from '@/constants'
+import { MODALS } from '@/constants';
 
 export default {
   [MODALS.confirmation]: defineAsyncComponent(() => import('./common/confirmation.vue')),
+  [MODALS.confirmationPhrase]: defineAsyncComponent(
+    () => import('./common/confirmation-phrase.vue'),
+  ),
   [MODALS.duration]: defineAsyncComponent(() => import('./common/duration.vue')),
   [MODALS.clickOutsideConfirmation]: defineAsyncComponent(
     () => import('./common/click-outside-confirmation.vue'),
@@ -71,4 +74,16 @@ export default {
   [MODALS.createTemplateTestingTest]: defineAsyncComponent(
     () => import('./template-testing/create-template-testing-test.vue'),
   ),
-}
+  [MODALS.createExternalAuthToken]: defineAsyncComponent(
+    () => import('./external-auth-token/create-external-auth-token.vue'),
+  ),
+  [MODALS.createExternalDataTable]: defineAsyncComponent(
+    () => import('./external-data-table/create-external-data-table.vue'),
+  ),
+  [MODALS.createExternalDataTableRecord]: defineAsyncComponent(
+    () => import('./external-data-table/create-external-data-table-record.vue'),
+  ),
+  [MODALS.importExternalDataTableRecords]: defineAsyncComponent(
+    () => import('./external-data-table/import-external-data-table-records.vue'),
+  ),
+};

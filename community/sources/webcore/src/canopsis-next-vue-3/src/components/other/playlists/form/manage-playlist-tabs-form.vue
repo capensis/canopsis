@@ -86,14 +86,14 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { createRangeArray } from '@/helpers/array'
+import { createRangeArray } from '@/helpers/array';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
-import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue'
-import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue'
+import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
+import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
 
 export default {
   components: {
@@ -115,37 +115,40 @@ export default {
   emits: ['update:selectedTabs'],
 
   setup(props, { emit }) {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
-    const openedPanels = computed(() => createRangeArray(props.groups.length))
-    const selectedTabsIds = computed(() => props.selectedTabs.map(({ _id }) => _id))
+    const openedPanels = computed(() => createRangeArray(props.groups.length));
+    const selectedTabsIds = computed(() => props.selectedTabs.map(({ _id }) => _id));
 
-    const getPanelValueFromArray = (values) => createRangeArray(values?.length ?? 0)
-    const isDisabledView = (view) => !view.tabs?.length
-    const isDisabledGroup = (group) => !group.views?.length || group.views.every(isDisabledView)
+    const getPanelValueFromArray = (values) => createRangeArray(values?.length ?? 0);
+    const isDisabledView = (view) => !view.tabs?.length;
+    const isDisabledGroup = (group) => !group.views?.length || group.views.every(isDisabledView);
     const isViewSelected = (view) =>
-      !!view.tabs?.length && view.tabs.every(({ _id }) => selectedTabsIds.value.includes(_id))
-    const isGroupSelected = (group) => !!group.views?.length && group.views.every(isViewSelected)
+      !!view.tabs?.length && view.tabs.every(({ _id }) => selectedTabsIds.value.includes(_id));
+    const isGroupSelected = (group) => !!group.views?.length && group.views.every(isViewSelected);
 
     const updateSelectedTabs = (tabs, checked) => {
-      const tabIds = tabs.map(({ _id }) => _id)
-      const tabsWithoutSelected = props.selectedTabs.filter(({ _id }) => !tabIds.includes(_id))
+      const tabIds = tabs.map(({ _id }) => _id);
+      const tabsWithoutSelected = props.selectedTabs.filter(({ _id }) => !tabIds.includes(_id));
 
-      emit('update:selectedTabs', checked ? [...tabsWithoutSelected, ...tabs] : tabsWithoutSelected)
-    }
+      emit(
+        'update:selectedTabs',
+        checked ? [...tabsWithoutSelected, ...tabs] : tabsWithoutSelected,
+      );
+    };
 
-    const selectTabHandler = (tab, checked) => updateSelectedTabs([tab], checked)
-    const selectViewHandler = (view, checked) => updateSelectedTabs(view.tabs ?? [], checked)
+    const selectTabHandler = (tab, checked) => updateSelectedTabs([tab], checked);
+    const selectViewHandler = (view, checked) => updateSelectedTabs(view.tabs ?? [], checked);
     const selectGroupHandler = (group, checked) => {
       const groupTabs =
         group.views?.reduce((acc, view) => {
-          acc.push(...(view.tabs ?? []))
+          acc.push(...(view.tabs ?? []));
 
-          return acc
-        }, []) ?? []
+          return acc;
+        }, []) ?? [];
 
-      updateSelectedTabs(groupTabs, checked)
-    }
+      updateSelectedTabs(groupTabs, checked);
+    };
 
     return {
       t,
@@ -159,9 +162,9 @@ export default {
       selectTabHandler,
       selectViewHandler,
       selectGroupHandler,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

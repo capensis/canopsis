@@ -1,6 +1,6 @@
-import { GROUPS_NAVIGATION_TYPES } from '@/constants'
+import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
-import { mapIds } from '@/helpers/array'
+import { mapIds } from '@/helpers/array';
 
 /**
  * @typedef {Object} DefaultView
@@ -54,7 +54,7 @@ export const userToForm = (user = {}) => ({
   ui_tours: user.ui_tours ?? {},
   ui_groups_navigation_type: user.ui_groups_navigation_type ?? GROUPS_NAVIGATION_TYPES.sideBar,
   ui_theme: user.ui_theme ?? '',
-})
+});
 
 /**
  * Convert user form to user object
@@ -66,4 +66,4 @@ export const formToUserRequest = (form) => ({
   ...form,
 
   roles: mapIds(form.roles),
-})
+});

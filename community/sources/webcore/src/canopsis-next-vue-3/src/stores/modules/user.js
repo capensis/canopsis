@@ -1,12 +1,12 @@
-import { API_ROUTES } from '@/config'
+import { API_ROUTES } from '@/config';
 
-import request from '@/services/request'
+import request from '@/services/request';
 
-import { userToForm, formToUserRequest } from '@/helpers/entities/user/form'
+import { userToForm, formToUserRequest } from '@/helpers/entities/user/form';
 
-import { createCRUDStore } from '@/stores/plugins/crud'
+import { createCRUDStore } from '@/stores/plugins/crud';
 
-import { useAuthStore } from './auth'
+import { useAuthStore } from './auth';
 
 export const useUserStore = createCRUDStore({
   id: 'user',
@@ -16,48 +16,53 @@ export const useUserStore = createCRUDStore({
   withWithoutStore: true,
   actions: {
     remove({ id } = {}) {
-      return request.delete(`${API_ROUTES.users}/${encodeURIComponent(id)}`)
+      return request.delete(`${API_ROUTES.users}/${encodeURIComponent(id)}`);
     },
 
     async updateCurrentUser({ data } = {}) {
-      const authStore = useAuthStore()
-      const newCurrentUser = await request.put(API_ROUTES.currentUser, data)
+      const authStore = useAuthStore();
+      const newCurrentUser = await request.put(API_ROUTES.currentUser, data);
 
-      authStore.setCurrentUser(newCurrentUser)
-      await authStore.afterFetchCurrentUser(newCurrentUser)
+      authStore.setCurrentUser(newCurrentUser);
+      await authStore.afterFetchCurrentUser(newCurrentUser);
 
-      return newCurrentUser
+      return newCurrentUser;
     },
 
     updateCurrentUserTours({ data } = {}) {
-      const authStore = useAuthStore()
-      const userForm = userToForm(authStore.currentUser)
+      const authStore = useAuthStore();
+      const userForm = userToForm(authStore.currentUser);
 
-      return request.put(API_ROUTES.currentUser, formToUserRequest({
-        ...userForm,
+      return request
+        .put(
+          API_ROUTES.currentUser,
+          formToUserRequest({
+            ...userForm,
 
-        ui_tours: {
-          ...userForm.ui_tours,
-          ...data,
-        },
-      })).then(async (newCurrentUser) => {
-        authStore.setCurrentUser(newCurrentUser)
-        await authStore.afterFetchCurrentUser(newCurrentUser)
+            ui_tours: {
+              ...userForm.ui_tours,
+              ...data,
+            },
+          }),
+        )
+        .then(async (newCurrentUser) => {
+          authStore.setCurrentUser(newCurrentUser);
+          await authStore.afterFetchCurrentUser(newCurrentUser);
 
-        return newCurrentUser
-      })
+          return newCurrentUser;
+        });
     },
 
     bulkEnable({ data } = {}) {
-      return request.put(API_ROUTES.bulkUsersEnable, data)
+      return request.put(API_ROUTES.bulkUsersEnable, data);
     },
 
     bulkDisable({ data } = {}) {
-      return request.put(API_ROUTES.bulkUsersDisable, data)
+      return request.put(API_ROUTES.bulkUsersDisable, data);
     },
 
     bulkRemove({ data } = {}) {
-      return request.delete(API_ROUTES.bulkUsers, { data })
+      return request.delete(API_ROUTES.bulkUsers, { data });
     },
   },
-})
+});

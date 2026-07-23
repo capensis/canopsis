@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 
-const template = computed(() => '<router-link :to="{ path: \'/login\' }">Login</router-link>')
+const template = computed(() => '<router-link :to="{ path: \'/login\' }">Login</router-link>');
 </script>
 
 <template>

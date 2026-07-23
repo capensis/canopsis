@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { usePbehaviorExceptionStore } from '@/stores/modules/pbehavior-exception'
+import { usePbehaviorExceptionStore } from '@/stores/modules/pbehavior-exception';
 
 /**
  * Pbehavior exception store hook.
@@ -8,8 +8,8 @@ import { usePbehaviorExceptionStore } from '@/stores/modules/pbehavior-exception
  * @returns {Object}
  */
 export const usePbehaviorException = () => {
-  const pbehaviorExceptionStore = usePbehaviorExceptionStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorExceptionStore)
+  const pbehaviorExceptionStore = usePbehaviorExceptionStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorExceptionStore);
 
   return {
     pbehaviorExceptions: items,
@@ -28,5 +28,5 @@ export const usePbehaviorException = () => {
     bulkHidePbehaviorExceptions: pbehaviorExceptionStore.bulkHide,
     bulkUnhidePbehaviorExceptions: pbehaviorExceptionStore.bulkUnhide,
     bulkRemovePbehaviorExceptions: pbehaviorExceptionStore.bulkRemove,
-  }
-}
+  };
+};

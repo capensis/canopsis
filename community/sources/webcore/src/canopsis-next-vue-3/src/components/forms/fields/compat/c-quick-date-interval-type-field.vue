@@ -14,11 +14,11 @@
 </template>
 
 <script>
-import { isObject } from 'lodash'
+import { isObject } from 'lodash';
 
-import { QUICK_RANGES } from '@/constants'
+import { QUICK_RANGES } from '@/constants';
 
-import { findQuickRangeValue } from '@/helpers/date/date-intervals'
+import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 export default {
   inheritAttrs: false,
@@ -51,29 +51,29 @@ export default {
   },
   computed: {
     quickRanges() {
-      const ranges = this.ranges ?? Object.values(QUICK_RANGES)
+      const ranges = this.ranges ?? Object.values(QUICK_RANGES);
 
       return ranges.map((range) => ({
         ...range,
         text: range.text ?? this.$t(`quickRanges.types.${range.value}`),
-      }))
+      }));
     },
 
     range() {
       if (!isObject(this.value)) {
-        return this.value
+        return this.value;
       }
 
-      const localRange = findQuickRangeValue(this.value.start, this.value.stop, this.ranges)
+      const localRange = findQuickRangeValue(this.value.start, this.value.stop, this.ranges);
 
-      return this.quickRanges.find(({ value }) => value === localRange.value)
+      return this.quickRanges.find(({ value }) => value === localRange.value);
     },
   },
   methods: {
     updateModel(value) {
-      this.$emit('input', value)
-      this.$emit('update:value', value)
+      this.$emit('input', value);
+      this.$emit('update:value', value);
     },
   },
-}
+};
 </script>

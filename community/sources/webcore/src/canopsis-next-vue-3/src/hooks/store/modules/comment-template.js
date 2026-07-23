@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useCommentTemplateStore } from '@/stores/modules/comment-template'
+import { useCommentTemplateStore } from '@/stores/modules/comment-template';
 
 /**
  * Comment template store facade.
@@ -8,8 +8,8 @@ import { useCommentTemplateStore } from '@/stores/modules/comment-template'
  * @returns {Object}
  */
 export const useCommentTemplate = () => {
-  const commentTemplateStore = useCommentTemplateStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(commentTemplateStore)
+  const commentTemplateStore = useCommentTemplateStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(commentTemplateStore);
 
   return {
     commentTemplates: items,
@@ -23,5 +23,5 @@ export const useCommentTemplate = () => {
     createCommentTemplate: commentTemplateStore.create,
     updateCommentTemplate: commentTemplateStore.update,
     removeCommentTemplate: commentTemplateStore.remove,
-  }
-}
+  };
+};

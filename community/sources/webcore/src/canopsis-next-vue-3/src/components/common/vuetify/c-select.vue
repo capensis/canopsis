@@ -1,11 +1,7 @@
 <script setup>
 import { computed, nextTick, ref, useAttrs } from 'vue';
 
-import {
-  useVuetifyFieldValidation,
-  validationEmits,
-  validationProps,
-} from './validation';
+import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
 
 const props = defineProps(validationProps);
 const emit = defineEmits(validationEmits);
@@ -18,12 +14,12 @@ const pendingBlurEvent = ref(null);
 // TODO: We add it for label floating solving. Fix in the future
 const selectValue = computed({
   get: () => (inputValue.value === '' ? (attrs.multiple ? [] : null) : inputValue.value),
-  set: value => {
+  set: (value) => {
     inputValue.value = value;
   },
 });
 
-const onSelectBlur = async event => {
+const onSelectBlur = async (event) => {
   await nextTick();
 
   if (menuShown.value) {
@@ -36,7 +32,7 @@ const onSelectBlur = async event => {
   onBlur(event);
 };
 
-const onMenuUpdate = value => {
+const onMenuUpdate = (value) => {
   menuShown.value = value;
 
   if (!value && pendingBlurEvent.value) {
@@ -52,25 +48,18 @@ const onMenuUpdate = value => {
     v-model="selectValue"
     :name="name"
     :error-messages="errorMessages"
+    class="c-field c-select"
     @blur="onSelectBlur"
     @update:menu="onMenuUpdate"
   >
-    <template #label>
-      <span v-if="required" class="text-error">
-        *
-      </span>
+    <template v-if="label" #label>
+      <span v-if="required && label" class="text-error"> * </span>
 
       {{ label }}
     </template>
 
-    <template
-      v-for="(_, slot) in $slots"
-      #[slot]="slotProps"
-    >
-      <slot
-        :name="slot"
-        v-bind="slotProps || {}"
-      />
+    <template v-for="(_, slot) in $slots" #[slot]="slotProps">
+      <slot :name="slot" v-bind="slotProps || {}" />
     </template>
   </v-select>
 </template>

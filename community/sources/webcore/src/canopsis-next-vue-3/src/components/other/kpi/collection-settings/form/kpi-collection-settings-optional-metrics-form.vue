@@ -61,10 +61,10 @@ export default {
       this.$emit('update:value', {
         ...this.value,
         [field]: value,
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

@@ -1,5 +1,5 @@
 <template>
-  <c-layout class="gap-3" column>
+  <c-layout gap="3" column>
     <c-enabled-field v-model="visible" :label="t('pbehavior.visible')" with-background />
 
     <c-name-field
@@ -31,18 +31,18 @@
 </template>
 
 <script>
-import { useFormArray, useFormModels } from '@/hooks/form'
-import { useI18n } from '@/hooks/i18n'
+import { useFormArray, useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
-import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exceptions-field.vue'
+import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exceptions-field.vue';
 
 export default {
   components: { PbehaviorExceptionsField },
 
   setup() {
-    const { t } = useI18n()
-    const { name, description, visible } = useFormModels(['name', 'description', 'visible'])
-    const exdates = useFormArray('exdates')
+    const { t } = useI18n();
+    const { name, description, visible } = useFormModels(['name', 'description', 'visible']);
+    const exdates = useFormArray('exdates');
 
     return {
       t,
@@ -50,7 +50,7 @@ export default {
       description,
       visible,
       exdates,
-    }
+    };
   },
-}
+};
 </script>

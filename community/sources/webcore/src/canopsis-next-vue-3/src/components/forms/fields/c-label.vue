@@ -1,16 +1,9 @@
 <template>
   <!-- eslint-disable-next-line vue/multiline-html-element-content-newline -->
-  <v-label
-    :class="labelClasses"
-    class="c-label"
-  >
-    <span v-if="required" class="text-error mr-1">*</span>{{ label ?? '' }}<slot />
+  <v-label :class="labelClasses" class="c-label">
+    <span v-if="required && label" class="text-error mr-1">*</span>{{ label ?? '' }}<slot />
     <span v-if="helpText" class="ml-1">
-      <c-help-icon
-        :text="helpText"
-        icon="help"
-        left
-      />
+      <c-help-icon :text="helpText" icon="help" left />
     </span>
   </v-label>
 </template>
@@ -53,6 +46,6 @@ export default {
 
 <style lang="scss" scoped>
 .c-label {
-  font-size: .75em;
+  font-size: 0.75em;
 }
 </style>

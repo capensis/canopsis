@@ -1,8 +1,8 @@
-import { omit } from 'lodash'
+import { omit } from 'lodash';
 
-import { ACTION_TYPES, ALARM_STATES, TIME_UNITS } from '@/constants'
+import { ACTION_TYPES, ALARM_STATES, TIME_UNITS } from '@/constants';
 
-import { durationToForm } from '@/helpers/date/duration'
+import { durationToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {
@@ -119,7 +119,7 @@ export const defaultActionParametersToForm = (parameters = {}) => ({
   output: parameters.output ?? '',
   forward_author: parameters.forward_author ?? true,
   author: parameters.author ?? '',
-})
+});
 
 /**
  * Creates snooze action parameters form.
@@ -132,7 +132,7 @@ export const snoozeActionParametersToForm = (parameters = {}) => ({
   duration: parameters.duration
     ? durationToForm(parameters.duration)
     : { value: 1, unit: TIME_UNITS.hour },
-})
+});
 
 /**
  * Creates change state action parameters form.
@@ -143,7 +143,7 @@ export const snoozeActionParametersToForm = (parameters = {}) => ({
 export const changeStateActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
   state: parameters.state ?? ALARM_STATES.critical,
-})
+});
 
 /**
  * Creates associate ticket action parameters form.
@@ -158,7 +158,7 @@ export const associateTicketActionParametersToForm = (parameters = {}) => ({
   ticket_url_title: parameters.ticket_url_title ?? '',
   ticket_system_name: parameters.ticket_system_name ?? '',
   ticket_resources: parameters.ticket_resources ?? [],
-})
+});
 
 /**
  * Check if action type is associate ticket
@@ -166,7 +166,7 @@ export const associateTicketActionParametersToForm = (parameters = {}) => ({
  * @param {ActionType} type
  * @returns {boolean}
  */
-export const isAssociateTicketActionType = (type) => type === ACTION_TYPES.assocticket
+export const isAssociateTicketActionType = (type) => type === ACTION_TYPES.assocticket;
 
 /**
  * Check action type is pbehavior
@@ -174,7 +174,7 @@ export const isAssociateTicketActionType = (type) => type === ACTION_TYPES.assoc
  * @param {ActionType} type
  * @return {boolean}
  */
-export const isPbehaviorActionType = (type) => type === ACTION_TYPES.pbehavior
+export const isPbehaviorActionType = (type) => type === ACTION_TYPES.pbehavior;
 
 /**
  * Converts action parameters to form for all supported idle-rule actions.
@@ -204,17 +204,17 @@ export const actionParametersToForm = (action = {}) => ({
   [ACTION_TYPES.pbehavior]: defaultActionParametersToForm(
     action.type === ACTION_TYPES.pbehavior ? action.parameters : undefined,
   ),
-})
+});
 
 const actionParametersToEntity = (parameters = {}) => {
-  const preparedParameters = omit(parameters, ['mapping'])
+  const preparedParameters = omit(parameters, ['mapping']);
 
   if (!preparedParameters.forward_author) {
-    return preparedParameters
+    return preparedParameters;
   }
 
-  return omit(preparedParameters, ['author'])
-}
+  return omit(preparedParameters, ['author']);
+};
 
 /**
  * Converts action form to API entity.
@@ -223,10 +223,10 @@ const actionParametersToEntity = (parameters = {}) => {
  * @returns {Object}
  */
 export const formToAction = (form = {}) => {
-  const parameters = form.parameters?.[form.type] ?? {}
+  const parameters = form.parameters?.[form.type] ?? {};
 
   return {
     type: form.type,
     parameters: actionParametersToEntity(parameters),
-  }
-}
+  };
+};

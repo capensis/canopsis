@@ -30,11 +30,11 @@
 </template>
 
 <script>
-import { HEALTHCHECK_SERVICES_NAMES } from '@/constants'
+import { HEALTHCHECK_SERVICES_NAMES } from '@/constants';
 
-import { useHealthcheckStore } from '@/stores/modules/healthcheck'
+import { useHealthcheckStore } from '@/stores/modules/healthcheck';
 
-import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-network-graph.vue'
+import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-network-graph.vue';
 
 export default {
   components: { HealthcheckNetworkGraph },
@@ -53,50 +53,50 @@ export default {
         edges: [],
         nodes: [],
       },
-    }
+    };
   },
 
   computed: {
     enginesParameters() {
       return this.enginesGraph.nodes.reduce((acc, name) => {
-        acc[name] = { name, is_running: true }
+        acc[name] = { name, is_running: true };
 
-        return acc
-      }, {})
+        return acc;
+      }, {});
     },
 
     title() {
-      return this.getNodeName(HEALTHCHECK_SERVICES_NAMES.enginesChain)
+      return this.getNodeName(HEALTHCHECK_SERVICES_NAMES.enginesChain);
     },
   },
 
   mounted() {
-    this.fetchList()
+    this.fetchList();
   },
 
   methods: {
     closeModal() {
-      this.$modals.hide({ id: this.modal.id })
+      this.$modals.hide({ id: this.modal.id });
     },
 
     getNodeName(name) {
-      const nodeLabelKey = `healthcheck.nodes.${name}.name`
+      const nodeLabelKey = `healthcheck.nodes.${name}.name`;
 
-      return this.$te(nodeLabelKey) ? this.$t(nodeLabelKey) : name
+      return this.$te(nodeLabelKey) ? this.$t(nodeLabelKey) : name;
     },
 
     async fetchList() {
       try {
-        this.pending = true
-        this.enginesGraph = await useHealthcheckStore().fetchHealthcheckEnginesOrderWithoutStore()
+        this.pending = true;
+        this.enginesGraph = await useHealthcheckStore().fetchHealthcheckEnginesOrderWithoutStore();
       } catch (err) {
-        console.error(err)
+        console.error(err);
       } finally {
-        this.pending = false
+        this.pending = false;
       }
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

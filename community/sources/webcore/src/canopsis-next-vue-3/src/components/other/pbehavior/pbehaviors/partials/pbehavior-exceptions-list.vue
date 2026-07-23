@@ -1,26 +1,17 @@
 <template>
-  <v-data-iterator
-    :items="exceptions"
-    hide-default-footer
-  >
+  <v-data-iterator :items="exceptions" hide-default-footer>
     <template #item="{ item, index }">
       <c-layout column>
         <c-layout align="center">
           <h4>{{ item.name }}</h4>
-          <c-action-btn
-            type="delete"
-            @click="removeItem(index)"
-          />
+          <c-action-btn type="delete" @click="removeItem(index)" />
         </c-layout>
-        <c-advanced-data-table
-          :items="item.exdates"
-          :headers="exdatesHeaders"
-        >
+        <c-advanced-data-table :items="item.exdates" :headers="exdatesHeaders">
           <template #begin="{ item: exdate }">
-            {{ exdate.begin | date }}
+            {{ convertDateToString(exdate.begin) }}
           </template>
           <template #end="{ item: exdate }">
-            {{ exdate.end | date }}
+            {{ convertDateToString(exdate.end) }}
           </template>
           <template #type="{ item: exdate }">
             {{ exdate.type.name }}
@@ -33,6 +24,8 @@
 
 <script>
 import { computed } from 'vue';
+
+import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
@@ -58,6 +51,7 @@ export default {
 
     return {
       exdatesHeaders,
+      convertDateToString,
       removeItem: removeItemFromArray,
     };
   },

@@ -53,26 +53,26 @@
 </template>
 
 <script>
-import { computed } from 'vue'
-import { useDisplay } from 'vuetify'
+import { computed } from 'vue';
+import { useDisplay } from 'vuetify';
 
-import { MEDIA_QUERIES_BREAKPOINTS, SIDE_BAR_WIDTH, TOP_BAR_HEIGHT } from '@/config'
-import { TELEPORTS_NAMES, USER_PERMISSIONS } from '@/constants'
+import { MEDIA_QUERIES_BREAKPOINTS, SIDE_BAR_WIDTH, TOP_BAR_HEIGHT } from '@/config';
+import { TELEPORTS_NAMES, USER_PERMISSIONS } from '@/constants';
 
-import { useAuth, useCanPermission } from '@/hooks/auth'
-import { useInfo } from '@/hooks/store/modules/info'
+import { useAuth, useCanPermission } from '@/hooks/auth';
+import { useInfo } from '@/hooks/store/modules/info';
 
-import HealthcheckChipsList from '@/components/other/healthcheck/partials/healthcheck-chips-list.vue'
+import HealthcheckChipsList from '@/components/other/healthcheck/partials/healthcheck-chips-list.vue';
 
-import AppLogo from './app-logo.vue'
-import AppVersion from './app-version.vue'
-import LoggedUsersCount from './logged-users-count.vue'
-import GroupsTopBar from './groups-top-bar/groups-top-bar.vue'
-import TopBarExploitationMenu from './top-bar-exploitation-menu.vue'
-import TopBarAdministrationMenu from './top-bar-administration-menu.vue'
-import TopBarNotificationsMenu from './top-bar-notifications-menu.vue'
-import TopBarUserMenu from './top-bar-user-menu.vue'
-import TopBarTitle from './top-bar-title.vue'
+import AppLogo from './app-logo.vue';
+import AppVersion from './app-version.vue';
+import LoggedUsersCount from './logged-users-count.vue';
+import GroupsTopBar from './groups-top-bar/groups-top-bar.vue';
+import TopBarExploitationMenu from './top-bar-exploitation-menu.vue';
+import TopBarAdministrationMenu from './top-bar-administration-menu.vue';
+import TopBarNotificationsMenu from './top-bar-notifications-menu.vue';
+import TopBarUserMenu from './top-bar-user-menu.vue';
+import TopBarTitle from './top-bar-title.vue';
 
 export default {
   components: {
@@ -98,23 +98,23 @@ export default {
   emits: ['toggle:sideBar'],
 
   setup(props) {
-    const { isShownGroupsTopBar, isShownGroupsSideBar } = useAuth()
-    const { isProVersion, appTitle } = useInfo()
+    const { isShownGroupsTopBar, isShownGroupsSideBar } = useAuth();
+    const { isProVersion, appTitle } = useInfo();
     const { hasAccess: hasAccessToHealthcheckStatus } = useCanPermission(
       USER_PERMISSIONS.technical.healthcheckStatus,
-    )
-    const { width } = useDisplay()
+    );
+    const { width } = useDisplay();
 
     const topBarStyle = computed(() => {
       if (!props.sideBarOpen || width.value < MEDIA_QUERIES_BREAKPOINTS.t) {
-        return undefined
+        return undefined;
       }
 
       return {
         left: `${SIDE_BAR_WIDTH}px`,
         width: `calc(100% - ${SIDE_BAR_WIDTH}px)`,
-      }
-    })
+      };
+    });
 
     return {
       TOP_BAR_HEIGHT,
@@ -125,9 +125,9 @@ export default {
       isShownGroupsSideBar,
       isShownGroupsTopBar,
       topBarStyle,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

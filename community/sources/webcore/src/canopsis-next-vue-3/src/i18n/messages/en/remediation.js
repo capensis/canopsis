@@ -27,7 +27,7 @@ export default {
     endpoint: 'Endpoint',
     job: 'Job | Jobs',
     endpointAvatar: 'EP',
-    workflow: 'If this action didn\'t match',
+    workflow: "If this action didn't match",
     jobWorkflow: 'Workflow if this job fails:',
     remainingStep: 'Continue with remaining steps',
     remainingJob: 'Continue with remaining job',
@@ -42,7 +42,7 @@ export default {
     resumeInstruction: 'Resume {instructionName}',
     inProgressInstruction: '{instructionName} in progress...',
     retryEnabled: 'Retry for unsuccessful executions',
-    retryEnabledTooltip: 'Where execution result - Alarm state isn\'t OK',
+    retryEnabledTooltip: "Where execution result - Alarm state isn't OK",
     retryCount: 'Number of attempts',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manual simplified',
@@ -53,7 +53,8 @@ export default {
     repeatTriggers: 'Repeat triggers',
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',
-      enabledRepeatTriggerTooltip: 'Repeat on trigger in case if previous execution\nfailed (result - alarm state not OK)',
+      enabledRepeatTriggerTooltip:
+        'Repeat on trigger in case if previous execution\nfailed (result - alarm state not OK)',
     },
     table: {
       rating: 'Rating',
@@ -84,7 +85,8 @@ export default {
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
-      connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
+      connectionError:
+        'There is a problem with connection. Please click on refresh button or reload the page.',
       wasAborted: '{instructionName} has been aborted',
       wasPaused: '{instructionName} instruction paused.',
       wasFinished: '{instructionName} instruction finished.',
@@ -209,9 +211,10 @@ export default {
     jobWaitInterval: 'Job wait interval',
     addPayload: 'Add payload',
     deletePayload: 'Delete payload',
-    payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
-      + '<i>For example:</i>'
-      + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+    payloadHelp:
+      '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
+      '<i>For example:</i>' +
+      '<pre>{\n  resource: "{\'{{ .Alarm.Value.Resource }}\'}",\n  entity: "{\'{{ .Entity.ID }}\'}"\n}</pre>',
     errors: {
       invalidJSON: 'Invalid JSON',
     },

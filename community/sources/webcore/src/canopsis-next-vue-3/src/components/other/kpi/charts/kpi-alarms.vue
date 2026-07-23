@@ -18,36 +18,36 @@
 </template>
 
 <script>
-import { EXPORT_FETCHING_INTERVAL, KPI_ALARM_METRICS_FILENAME_PREFIX } from '@/config'
+import { EXPORT_FETCHING_INTERVAL, KPI_ALARM_METRICS_FILENAME_PREFIX } from '@/config';
 import {
   ALARM_METRIC_PARAMETERS,
   DATETIME_FORMATS,
   EXPORT_STATUSES,
   QUICK_RANGES,
   SAMPLINGS,
-} from '@/constants'
+} from '@/constants';
 
 import {
   convertDateToStartOfDayTimestampByTimezone,
   convertDateToString,
-} from '@/helpers/date/date'
-import { convertMetricsToTimezone } from '@/helpers/entities/metric/list'
+} from '@/helpers/date/date';
+import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 import {
   convertMetricsIntervalToTimestamp,
   isMetricsQueryChanged,
-} from '@/helpers/entities/metric/query'
-import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url'
-import { saveFile } from '@/helpers/file/files'
-import { openUrlInNewTab } from '@/helpers/url'
+} from '@/helpers/entities/metric/query';
+import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
+import { saveFile } from '@/helpers/file/files';
+import { openUrlInNewTab } from '@/helpers/url';
 
-import { useFilePolling } from '@/hooks/polling'
-import { useMetrics } from '@/hooks/store/modules/metrics'
-import { localQueryMixin } from '@/mixins/query/query'
-import { queryIntervalFilterMixin } from '@/mixins/query/interval'
+import { useFilePolling } from '@/hooks/polling';
+import { useMetrics } from '@/hooks/store/modules/metrics';
+import { localQueryMixin } from '@/mixins/query/query';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 
-import KpiAlarmsChart from './partials/kpi-alarms-chart.vue'
-import KpiAlarmsFilters from './partials/kpi-alarms-filters.vue'
-import KpiErrorOverlay from './partials/kpi-error-overlay.vue'
+import KpiAlarmsChart from './partials/kpi-alarms-chart.vue';
+import KpiAlarmsFilters from './partials/kpi-alarms-filters.vue';
+import KpiErrorOverlay from './partials/kpi-error-overlay.vue';
 
 export default {
   inject: ['$system'],
@@ -68,24 +68,25 @@ export default {
   },
 
   setup() {
-    const { createKpiAlarmExport, fetchAlarmsMetricsWithoutStore, fetchMetricExport } = useMetrics()
+    const { createKpiAlarmExport, fetchAlarmsMetricsWithoutStore, fetchMetricExport } =
+      useMetrics();
 
     const { poll: generateFile } = useFilePolling({
       createHandler: async (...args) => {
-        const { _id: id } = await createKpiAlarmExport(...args)
+        const { _id: id } = await createKpiAlarmExport(...args);
 
-        return { id }
+        return { id };
       },
       fetchHandler: fetchMetricExport,
       completedStatus: EXPORT_STATUSES.completed,
       failedStatus: EXPORT_STATUSES.failed,
       interval: EXPORT_FETCHING_INTERVAL,
-    })
+    });
 
     return {
       fetchAlarmsMetricsWithoutStore,
       generateFile,
-    }
+    };
   },
 
   data() {
@@ -104,12 +105,12 @@ export default {
           to: QUICK_RANGES.last7Days.stop,
         },
       },
-    }
+    };
   },
 
   computed: {
     interval() {
-      return this.getPreparedIntervalQuery()
+      return this.getPreparedIntervalQuery();
     },
   },
 
@@ -118,7 +119,7 @@ export default {
       immediate: true,
       handler(unavailable) {
         if (!unavailable) {
-          this.fetchList()
+          this.fetchList();
         }
       },
     },
@@ -126,16 +127,16 @@ export default {
 
   methods: {
     customQueryCondition(query, oldQuery) {
-      return isMetricsQueryChanged(query, oldQuery, this.minDate)
+      return isMetricsQueryChanged(query, oldQuery, this.minDate);
     },
 
     getFileName() {
-      const { from, to } = this.getPreparedIntervalQuery()
+      const { from, to } = this.getPreparedIntervalQuery();
 
-      const fromTime = convertDateToString(from, DATETIME_FORMATS.short)
-      const toTime = convertDateToString(to, DATETIME_FORMATS.short)
+      const fromTime = convertDateToString(from, DATETIME_FORMATS.short);
+      const toTime = convertDateToString(to, DATETIME_FORMATS.short);
 
-      return [KPI_ALARM_METRICS_FILENAME_PREFIX, fromTime, toTime, this.query.sampling].join('-')
+      return [KPI_ALARM_METRICS_FILENAME_PREFIX, fromTime, toTime, this.query.sampling].join('-');
     },
 
     getQuery() {
@@ -144,65 +145,65 @@ export default {
         parameters: this.query.parameters.map((metric) => ({ metric })),
         sampling: this.query.sampling,
         filter: this.query.filter,
-      }
+      };
     },
 
     getPreparedIntervalQuery() {
-      return convertMetricsIntervalToTimestamp(this.query.interval, this.$system.timezone)
+      return convertMetricsIntervalToTimestamp(this.query.interval, this.$system.timezone);
     },
 
     async fetchList() {
       try {
-        this.pending = true
+        this.pending = true;
 
-        const params = this.getQuery()
+        const params = this.getQuery();
         const {
           data: alarmsMetrics,
           meta: { min_date: minDate },
-        } = await this.fetchAlarmsMetricsWithoutStore({ params })
+        } = await this.fetchAlarmsMetricsWithoutStore({ params });
 
-        this.alarmsMetrics = convertMetricsToTimezone(alarmsMetrics, this.$system.timezone)
-        this.minDate = convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone)
-        this.fetchError = false
+        this.alarmsMetrics = convertMetricsToTimezone(alarmsMetrics, this.$system.timezone);
+        this.minDate = convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone);
+        this.fetchError = false;
 
         if (params.from < this.minDate) {
-          this.updateQueryField('interval', { ...this.query.interval, from: this.minDate })
+          this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
         }
       } catch (err) {
-        console.error(err)
+        console.error(err);
 
-        this.fetchError = true
+        this.fetchError = true;
       } finally {
-        this.pending = false
+        this.pending = false;
       }
     },
 
     async exportMetricsAsPng(blob) {
       try {
-        await saveFile(blob, this.getFileName())
+        await saveFile(blob, this.getFileName());
       } catch (err) {
-        console.error(err)
-        this.$popups.error({ text: err.message || this.$t('errors.default') })
+        console.error(err);
+        this.$popups.error({ text: err.message || this.$t('errors.default') });
       }
     },
 
     async exportMetricsAsCsv() {
       try {
-        this.downloading = true
+        this.downloading = true;
 
         const fileData = await this.generateFile({
           data: this.getQuery(),
-        })
+        });
 
-        openUrlInNewTab(getExportMetricDownloadFileUrl(fileData._id ?? fileData.id))
+        openUrlInNewTab(getExportMetricDownloadFileUrl(fileData._id ?? fileData.id));
       } catch (err) {
-        console.error(err)
+        console.error(err);
 
-        this.$popups.error({ text: this.$t('kpi.popups.exportFailed') })
+        this.$popups.error({ text: this.$t('kpi.popups.exportFailed') });
       } finally {
-        this.downloading = false
+        this.downloading = false;
       }
     },
   },
-}
+};
 </script>

@@ -55,13 +55,13 @@
 </template>
 
 <script>
-import { computed, toRef, watch } from 'vue'
+import { computed, toRef, watch } from 'vue';
 
-import { PAGINATION_LIMIT } from '@/config'
+import { PAGINATION_LIMIT } from '@/config';
 
-import { useAlarmTag } from '@/hooks/store/modules/alarm-tag'
-import { useLazySearch } from '@/hooks/form/lazy-search'
-import { useAlarmTagLabel } from '@/hooks/store/modules/alarm-tag-label'
+import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
+import { useLazySearch } from '@/hooks/form/lazy-search';
+import { useAlarmTagLabel } from '@/hooks/store/modules/alarm-tag-label';
 
 export default {
   emits: ['update:value'],
@@ -116,15 +116,15 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { fetchAlarmTagsListWithoutStore } = useAlarmTag()
-    const { fetchAlarmTagsLabelsListWithoutStore } = useAlarmTagLabel()
+    const { fetchAlarmTagsListWithoutStore } = useAlarmTag();
+    const { fetchAlarmTagsLabelsListWithoutStore } = useAlarmTagLabel();
 
-    const itemText = computed(() => (props.onlyLabels ? '_id' : 'value'))
-    const itemValue = computed(() => (props.onlyLabels ? '_id' : 'value'))
-    const idParamsKey = computed(() => (props.onlyLabels ? 'ids' : 'values'))
+    const itemText = computed(() => (props.onlyLabels ? '_id' : 'value'));
+    const itemValue = computed(() => (props.onlyLabels ? '_id' : 'value'));
+    const idParamsKey = computed(() => (props.onlyLabels ? 'ids' : 'values'));
     const fetchHandler = computed(() =>
       props.onlyLabels ? fetchAlarmTagsLabelsListWithoutStore : fetchAlarmTagsListWithoutStore,
-    )
+    );
 
     const {
       selectedItems,
@@ -147,9 +147,9 @@ export default {
         attachValue: true,
       },
       emit,
-    )
+    );
 
-    watch(() => props.onlyLabels, fetchItems)
+    watch(() => props.onlyLabels, fetchItems);
 
     return {
       selectedItems,
@@ -163,9 +163,9 @@ export default {
       changeSelectedItems,
       updateSearch,
       removeItemFromSelectedItemsByIndex,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss">

@@ -34,19 +34,22 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { MODALS } from '@/constants'
+import { MODALS } from '@/constants';
 
-import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/pattern/form'
+import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/pattern/form';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal'
-import { useForm } from '@/hooks/form'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields'
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import {
+  usePatternsFields,
+  usePatternsFieldsFetching,
+} from '@/hooks/store/modules/patterns-fields';
 
-const promisedWait = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+const promisedWait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 export default {
   name: MODALS.applyEventFilter,
@@ -59,42 +62,42 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const modals = useModals()
-    const config = computed(() => props.modal.config ?? {})
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
 
     const form = useForm({
       initialValues: {
         patterns: patternToForm({ event_pattern: config.value.eventPattern }),
       },
-    })
-    const { values, handleSubmit, isSubmitting } = form
+    });
+    const { values, handleSubmit, isSubmitting } = form;
 
-    const { fetchEventRecordPatternFields } = usePatternsFields()
+    const { fetchEventRecordPatternFields } = usePatternsFields();
 
     const { pending: eventPatternAttributesPending, eventPatternAttributes } =
-      usePatternsFieldsFetching(fetchEventRecordPatternFields)
+      usePatternsFieldsFetching(fetchEventRecordPatternFields);
 
-    const closeModal = () => modals.hide({ id: props.modal.id })
-    const updatePatterns = (value) => form.setValue('patterns', value)
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const updatePatterns = (value) => form.setValue('patterns', value);
 
     const submit = handleSubmit(async () => {
       const result = await config.value.action?.(
         formGroupsToPatternRules(values.value.patterns?.groups ?? []),
-      )
+      );
 
-      await promisedWait(3000)
-      await config.value.afterSubmit?.(result)
-      closeModal()
+      await promisedWait(3000);
+      await config.value.afterSubmit?.(result);
+      closeModal();
 
-      return result
-    })
+      return result;
+    });
 
     useFormConfirmableCloseModal({
       form: values,
       submit,
       close: closeModal,
-    })
+    });
 
     return {
       t,
@@ -106,7 +109,7 @@ export default {
       updatePatterns,
       submit,
       closeModal,
-    }
+    };
   },
-}
+};
 </script>

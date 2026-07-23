@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import { MAX_LIMIT } from '@/constants'
+import { MAX_LIMIT } from '@/constants';
 
-import { useFilter } from '@/hooks/store/modules/filter'
+import { useFilter } from '@/hooks/store/modules/filter';
 
 export default {
   props: {
@@ -40,23 +40,23 @@ export default {
   },
   emits: ['update:value'],
   setup() {
-    const { filters, filtersPending, fetchFiltersList } = useFilter()
+    const { filters, filtersPending, fetchFiltersList } = useFilter();
 
     return {
       filters,
       filtersPending,
       fetchFiltersList,
-    }
+    };
   },
   mounted() {
-    this.fetchList()
+    this.fetchList();
   },
   methods: {
     fetchList() {
       if (!this.filtersPending) {
-        this.fetchFiltersList({ params: { limit: MAX_LIMIT } })
+        this.fetchFiltersList({ params: { limit: MAX_LIMIT } });
       }
     },
   },
-}
+};
 </script>

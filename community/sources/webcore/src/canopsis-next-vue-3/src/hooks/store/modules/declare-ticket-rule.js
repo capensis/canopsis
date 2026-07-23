@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useDeclareTicketRuleStore } from '@/stores/modules/declare-ticket-rule'
+import { useDeclareTicketRuleStore } from '@/stores/modules/declare-ticket-rule';
 
 /**
  * Declare ticket rule store facade.
@@ -8,8 +8,8 @@ import { useDeclareTicketRuleStore } from '@/stores/modules/declare-ticket-rule'
  * @returns {Object}
  */
 export const useDeclareTicketRule = () => {
-  const declareTicketRuleStore = useDeclareTicketRuleStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(declareTicketRuleStore)
+  const declareTicketRuleStore = useDeclareTicketRuleStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(declareTicketRuleStore);
 
   return {
     declareTicketRules: items,
@@ -34,5 +34,5 @@ export const useDeclareTicketRule = () => {
       declareTicketRuleStore.fetchTestDeclareTicketExecutionWebhooksResponse,
     bulkCreateDeclareTicketExecution: declareTicketRuleStore.bulkCreateDeclareTicketExecution,
     fetchAssignedTicketsWithoutStore: declareTicketRuleStore.fetchAssignedTicketsWithoutStore,
-  }
-}
+  };
+};

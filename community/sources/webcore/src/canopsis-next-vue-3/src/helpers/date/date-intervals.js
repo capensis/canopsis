@@ -1,4 +1,4 @@
-import moment from 'moment-timezone'
+import moment from 'moment-timezone';
 
 import {
   DATETIME_FORMATS,
@@ -6,7 +6,7 @@ import {
   QUICK_RANGES,
   SAMPLINGS,
   TIME_UNITS,
-} from '@/constants'
+} from '@/constants';
 
 import {
   convertDateToEndOfUnitMoment,
@@ -14,7 +14,7 @@ import {
   convertDateToStartOfUnitMoment,
   getLocalTimezone,
   getNowTimestamp,
-} from './date'
+} from './date';
 
 /**
  * @typedef {Object} IntervalForm
@@ -32,43 +32,43 @@ import {
 export const convertStringToDateInterval = (string, type) => {
   const matches = string.match(
     /^(?<initial>now|today)((?<operator>[+--])(?<deltaValue>\d+)(?<deltaUnit>[hdwmMy]{1}))?(\/(?<roundUnit>[hdwmMy]{1}))?$/,
-  )
+  );
 
   if (matches?.groups) {
-    const { initial, operator, deltaValue, deltaUnit, roundUnit } = matches.groups
-    const preparedRoundUnit = roundUnit === TIME_UNITS.week ? 'isoWeek' : roundUnit
-    const isToday = initial === 'today'
-    const isStart = type === DATETIME_INTERVAL_TYPES.start
-    let result = moment()
+    const { initial, operator, deltaValue, deltaUnit, roundUnit } = matches.groups;
+    const preparedRoundUnit = roundUnit === TIME_UNITS.week ? 'isoWeek' : roundUnit;
+    const isToday = initial === 'today';
+    const isStart = type === DATETIME_INTERVAL_TYPES.start;
+    let result = moment();
 
     if (isToday) {
       result =
         isStart || deltaValue
           ? convertDateToStartOfUnitMoment(getNowTimestamp(), TIME_UNITS.day)
-          : convertDateToEndOfUnitMoment(getNowTimestamp(), TIME_UNITS.day)
+          : convertDateToEndOfUnitMoment(getNowTimestamp(), TIME_UNITS.day);
     }
 
     if (preparedRoundUnit) {
       if (isStart) {
-        result.startOf(preparedRoundUnit)
+        result.startOf(preparedRoundUnit);
       } else {
-        result.endOf(preparedRoundUnit)
+        result.endOf(preparedRoundUnit);
       }
     }
 
     if (deltaValue && deltaUnit) {
       if (operator === '+') {
-        result.add(deltaValue, deltaUnit)
+        result.add(deltaValue, deltaUnit);
       } else {
-        result.subtract(deltaValue, deltaUnit)
+        result.subtract(deltaValue, deltaUnit);
       }
     }
 
-    return result
+    return result;
   }
 
-  throw new Error('Date string pattern not recognized')
-}
+  throw new Error('Date string pattern not recognized');
+};
 
 /**
  * Parse date in every format to moment object.
@@ -85,20 +85,20 @@ export const convertDateIntervalToMoment = (
   format = DATETIME_FORMATS.datePicker,
   unit,
 ) => {
-  const momentDate = Number.isFinite(date) ? moment.unix(date) : moment(date, format, true)
+  const momentDate = Number.isFinite(date) ? moment.unix(date) : moment(date, format, true);
 
   if (!momentDate.isValid()) {
-    return convertStringToDateInterval(date, type)
+    return convertStringToDateInterval(date, type);
   }
 
   if (unit) {
-    const method = type === DATETIME_INTERVAL_TYPES.start ? 'startOf' : 'endOf'
+    const method = type === DATETIME_INTERVAL_TYPES.start ? 'startOf' : 'endOf';
 
-    return momentDate[method](unit)
+    return momentDate[method](unit);
   }
 
-  return momentDate
-}
+  return momentDate;
+};
 
 /**
  * Parse date in every format to moment object by timezone.
@@ -121,7 +121,7 @@ export const convertDateIntervalToMomentByTimezone = (
     convertDateIntervalToMoment(date, type, format, unit),
     getLocalTimezone(),
     timezone,
-  )
+  );
 
 /**
  * Convert date interval to unix timestamp.
@@ -133,7 +133,7 @@ export const convertDateIntervalToMomentByTimezone = (
  * @returns {number}
  */
 export const convertDateIntervalToTimestamp = (date, type, format, unit) =>
-  convertDateIntervalToMoment(date, type, format, unit).unix()
+  convertDateIntervalToMoment(date, type, format, unit).unix();
 
 /**
  * Convert date interval to unix timestamp by timezone.
@@ -151,7 +151,7 @@ export const convertDateIntervalToTimestampByTimezone = (
   format,
   unit,
   timezone = getLocalTimezone(),
-) => convertDateIntervalToMomentByTimezone(date, type, format, unit, timezone).unix()
+) => convertDateIntervalToMomentByTimezone(date, type, format, unit, timezone).unix();
 
 /**
  * Convert from value to timestamp.
@@ -165,7 +165,7 @@ export const convertStartDateIntervalToTimestamp = (
   date,
   format = DATETIME_FORMATS.datePicker,
   unit,
-) => convertDateIntervalToTimestamp(date, DATETIME_INTERVAL_TYPES.start, format, unit)
+) => convertDateIntervalToTimestamp(date, DATETIME_INTERVAL_TYPES.start, format, unit);
 
 /**
  * Convert to value to timestamp.
@@ -179,7 +179,7 @@ export const convertStopDateIntervalToTimestamp = (
   date,
   format = DATETIME_FORMATS.datePicker,
   unit,
-) => convertDateIntervalToTimestamp(date, DATETIME_INTERVAL_TYPES.stop, format, unit)
+) => convertDateIntervalToTimestamp(date, DATETIME_INTERVAL_TYPES.stop, format, unit);
 
 /**
  * Convert metric interval form to timestamp interval.
@@ -193,7 +193,7 @@ export const convertMetricIntervalToTimestamp = ({
   interval,
   timezone = getLocalTimezone(),
 } = {}) => {
-  const { from, to } = interval
+  const { from, to } = interval;
 
   return {
     from: convertDateIntervalToTimestampByTimezone(
@@ -210,8 +210,8 @@ export const convertMetricIntervalToTimestamp = ({
       undefined,
       timezone,
     ),
-  }
-}
+  };
+};
 
 /**
  * Find range object.
@@ -229,4 +229,4 @@ export const findQuickRangeValue = (
   defaultValue = QUICK_RANGES.custom,
 ) =>
   Object.values(ranges).find((range) => start === range.start && stop === range.stop) ??
-  defaultValue
+  defaultValue;

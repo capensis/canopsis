@@ -31,15 +31,15 @@
 </template>
 
 <script>
-import { cloneDeep, isEqual } from 'lodash'
+import { cloneDeep, isEqual } from 'lodash';
 
-import { metricsSettingsToForm } from '@/helpers/entities/metrics-settings/form'
+import { metricsSettingsToForm } from '@/helpers/entities/metrics-settings/form';
 
-import { usePendingHandler } from '@/hooks/query/pending'
-import { useMetricsSettings } from '@/hooks/store/modules/metrics-settings'
+import { usePendingHandler } from '@/hooks/query/pending';
+import { useMetricsSettings } from '@/hooks/store/modules/metrics-settings';
 
-import KpiCollectionSettingsBasicMetricsList from './partials/kpi-collection-settings-basic-metrics-list.vue'
-import KpiCollectionSettingsOptionalMetricsForm from './form/kpi-collection-settings-optional-metrics-form.vue'
+import KpiCollectionSettingsBasicMetricsList from './partials/kpi-collection-settings-basic-metrics-list.vue';
+import KpiCollectionSettingsOptionalMetricsForm from './form/kpi-collection-settings-optional-metrics-form.vue';
 
 export default {
   components: {
@@ -48,58 +48,58 @@ export default {
   },
 
   setup() {
-    const { fetchMetricsSettingsWithoutStore, updateMetricsSettings } = useMetricsSettings()
+    const { fetchMetricsSettingsWithoutStore, updateMetricsSettings } = useMetricsSettings();
 
     const { pending: submitting, handler: submitWithPending } = usePendingHandler((handler) =>
       handler(),
-    )
+    );
 
     return {
       fetchMetricsSettingsWithoutStore,
       updateMetricsSettings,
       submitting,
       submitWithPending,
-    }
+    };
   },
 
   data() {
     return {
       initialForm: null,
       form: null,
-    }
+    };
   },
 
   computed: {
     isFormNotChanged() {
-      return isEqual(this.form, this.initialForm)
+      return isEqual(this.form, this.initialForm);
     },
   },
 
   mounted() {
-    this.fetchMetricsSettings()
+    this.fetchMetricsSettings();
   },
 
   methods: {
     setInitialForm() {
-      this.initialForm = cloneDeep(this.form)
+      this.initialForm = cloneDeep(this.form);
     },
 
     async fetchMetricsSettings() {
-      const metricsSettings = await this.fetchMetricsSettingsWithoutStore()
+      const metricsSettings = await this.fetchMetricsSettingsWithoutStore();
 
-      this.form = metricsSettingsToForm(metricsSettings)
-      this.setInitialForm()
+      this.form = metricsSettingsToForm(metricsSettings);
+      this.setInitialForm();
     },
 
     async submit() {
       await this.submitWithPending(async () => {
-        await this.updateMetricsSettings({ data: this.form })
+        await this.updateMetricsSettings({ data: this.form });
 
-        this.setInitialForm()
+        this.setInitialForm();
 
-        this.$popups.success({ text: this.$t('success.default') })
-      })
+        this.$popups.success({ text: this.$t('success.default') });
+      });
     },
   },
-}
+};
 </script>

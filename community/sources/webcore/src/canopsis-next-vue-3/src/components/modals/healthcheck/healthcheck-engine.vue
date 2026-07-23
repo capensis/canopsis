@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import HealthcheckEngineInformation from '@/components/other/healthcheck/healthcheck-engine-information.vue'
+import HealthcheckEngineInformation from '@/components/other/healthcheck/healthcheck-engine-information.vue';
 
 export default {
   components: { HealthcheckEngineInformation },
@@ -31,32 +31,32 @@ export default {
 
   computed: {
     config() {
-      return this.modal.config ?? {}
+      return this.modal.config ?? {};
     },
 
     engine() {
-      return this.config.engine ?? {}
+      return this.config.engine ?? {};
     },
 
     maxQueueLength() {
-      return this.config.maxQueueLength
+      return this.config.maxQueueLength;
     },
 
     title() {
-      return this.getNodeName(this.engine.name)
+      return this.getNodeName(this.engine.name);
     },
   },
 
   methods: {
     closeModal() {
-      this.$modals.hide({ id: this.modal.id })
+      this.$modals.hide({ id: this.modal.id });
     },
 
     getNodeName(name) {
-      const nodeLabelKey = `healthcheck.nodes.${name}.name`
+      const nodeLabelKey = `healthcheck.nodes.${name}.name`;
 
-      return this.$te(nodeLabelKey) ? this.$t(nodeLabelKey) : name
+      return this.$te(nodeLabelKey) ? this.$t(nodeLabelKey) : name;
     },
   },
-}
+};
 </script>

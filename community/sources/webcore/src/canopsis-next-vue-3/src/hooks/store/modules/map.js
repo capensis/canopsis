@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useMapStore } from '@/stores/modules/map'
+import { useMapStore } from '@/stores/modules/map';
 
 /**
  * Map store facade.
@@ -8,8 +8,8 @@ import { useMapStore } from '@/stores/modules/map'
  * @returns {Object}
  */
 export const useMap = () => {
-  const mapStore = useMapStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(mapStore)
+  const mapStore = useMapStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(mapStore);
 
   return {
     maps: items,
@@ -26,5 +26,5 @@ export const useMap = () => {
     updateMap: mapStore.update,
     removeMap: mapStore.remove,
     bulkRemoveMaps: mapStore.bulkRemove,
-  }
-}
+  };
+};

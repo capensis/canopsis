@@ -1,26 +1,26 @@
-import { onBeforeUnmount, onMounted, unref } from 'vue'
+import { onBeforeUnmount, onMounted, unref } from 'vue';
 
-import { useEventsRecord } from '@/hooks/store/modules/events-record'
+import { useEventsRecord } from '@/hooks/store/modules/events-record';
 
 export const useEventRecordCurrentPolling = (interval = 10000) => {
-  let timer = null
+  let timer = null;
 
-  const { fetchCurrentEventsRecord } = useEventsRecord()
+  const { fetchCurrentEventsRecord } = useEventsRecord();
 
   const startPolling = async () => {
-    clearTimeout(timer)
+    clearTimeout(timer);
 
-    await fetchCurrentEventsRecord()
+    await fetchCurrentEventsRecord();
 
-    timer = setTimeout(startPolling, unref(interval))
-  }
+    timer = setTimeout(startPolling, unref(interval));
+  };
 
-  const stopPolling = () => clearTimeout(timer)
+  const stopPolling = () => clearTimeout(timer);
 
-  onMounted(startPolling)
-  onBeforeUnmount(stopPolling)
+  onMounted(startPolling);
+  onBeforeUnmount(stopPolling);
 
   return {
     fetchCurrentEventsRecord,
-  }
-}
+  };
+};

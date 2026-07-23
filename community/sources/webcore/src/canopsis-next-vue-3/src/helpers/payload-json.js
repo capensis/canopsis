@@ -9,8 +9,24 @@ import { PAYLOAD_OPERATORS } from '@/constants';
 export const matchPayloadVariables = (text) => {
   const match = text?.matchAll(/({{([^{}]*)}})/g);
 
-  return (match ? Array.from(match) : [])
-    .filter(([, , variable]) => !PAYLOAD_OPERATORS.some(operator => String(variable).trim().startsWith(operator)));
+  return (match ? Array.from(match) : []).filter(
+    ([, , variable]) =>
+      !PAYLOAD_OPERATORS.some((operator) => String(variable).trim().startsWith(operator)),
+  );
+};
+
+/**
+ * Find all operators in string.
+ *
+ * @param {string} text
+ * @returns {RegExpMatchArray[]}
+ */
+export const matchPayloadOperators = (text) => {
+  const match = text?.matchAll(
+    /(?<variable>(?<open>{{\s?range\s?((?!}).)+?}})(?<content>((?!range|end).)+?)(?<close>{{\s?end\s?}}))/g,
+  );
+
+  return match ? Array.from(match) : [];
 };
 
 /**
@@ -27,10 +43,12 @@ export const isSelectionIntersectWithVariable = (group, selectionStart, selectio
   const startIndex = group.index;
   const endIndex = group.index + value.length;
 
-  return selectionStart >= startIndex
-    && selectionEnd > startIndex
-    && selectionStart < endIndex
-    && selectionEnd <= endIndex;
+  return (
+    selectionStart >= startIndex &&
+    selectionEnd > startIndex &&
+    selectionStart < endIndex &&
+    selectionEnd <= endIndex
+  );
 };
 
 /**
@@ -41,8 +59,8 @@ export const isSelectionIntersectWithVariable = (group, selectionStart, selectio
  * @param {Number} selectionEnd
  * @returns {RegExpMatchArray | undefined}
  */
-export const findSelectedVariable = (variables = [], selectionStart, selectionEnd) => variables
-  .find(group => isSelectionIntersectWithVariable(group, selectionStart, selectionEnd));
+export const findSelectedVariable = (variables = [], selectionStart, selectionEnd) =>
+  variables.find((group) => isSelectionIntersectWithVariable(group, selectionStart, selectionEnd));
 
 /**
  * Match variable by selection.
@@ -52,8 +70,5 @@ export const findSelectedVariable = (variables = [], selectionStart, selectionEn
  * @param {number} selectionEnd
  * @returns {Object}
  */
-export const matchPayloadVariableBySelection = (text, selectionStart, selectionEnd) => findSelectedVariable(
-  matchPayloadVariables(text),
-  selectionStart,
-  selectionEnd,
-);
+export const matchPayloadVariableBySelection = (text, selectionStart, selectionEnd) =>
+  findSelectedVariable(matchPayloadVariables(text), selectionStart, selectionEnd);

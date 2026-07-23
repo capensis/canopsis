@@ -3,21 +3,11 @@
     <c-page-header />
 
     <v-card class="ma-4 mt-0">
-      <v-tabs
-        v-model="activeTab"
-        align-tabs="center"
-        color="primary"
-      >
-        <v-tab
-          v-if="hasReadAnyUserAccess"
-          :value="USERS_TABS.users"
-        >
+      <v-tabs v-model="activeTab" align-tabs="center" color="primary">
+        <v-tab v-if="hasReadAnyUserAccess" :value="USERS_TABS.users">
           {{ t('common.user', 2) }}
         </v-tab>
-        <v-tab
-          v-if="hasReadAnyShareTokenAccess"
-          :value="USERS_TABS.shareTokens"
-        >
+        <v-tab v-if="hasReadAnyShareTokenAccess" :value="USERS_TABS.shareTokens">
           {{ t('common.sharedTokens') }}
         </v-tab>
       </v-tabs>
@@ -36,27 +26,23 @@
       </v-card-text>
     </v-card>
 
-    <c-fab-btn
-      :has-access="hasCreateAccess"
-      @refresh="refresh"
-      @create="create"
-    >
+    <c-fab-btn :has-access="hasCreateAccess" @refresh="refresh" @create="create">
       <span>{{ t('modals.createUser.create.title') }}</span>
     </c-fab-btn>
   </div>
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref } from 'vue';
 
-import { MODALS, USERS_TABS, USER_PERMISSIONS } from '@/constants'
+import { MODALS, USERS_TABS, USER_PERMISSIONS } from '@/constants';
 
-import { useCRUDPermissions } from '@/hooks/auth'
-import { useI18n } from '@/hooks/i18n'
-import { useModals } from '@/hooks/modals'
-import { useUser } from '@/hooks/store/modules/user'
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useUser } from '@/hooks/store/modules/user';
 
-import Users from '@/components/other/users/users.vue'
+import Users from '@/components/other/users/users.vue';
 
 export default {
   components: {
@@ -64,57 +50,55 @@ export default {
   },
 
   setup() {
-    const modals = useModals()
-    const { t } = useI18n()
-    const {
-      fetchUsersListWithPreviousParams,
-      createUser,
-    } = useUser()
+    const modals = useModals();
+    const { t } = useI18n();
+    const { fetchUsersListWithPreviousParams, createUser } = useUser();
 
-    const {
-      hasCreateAccess: hasCreateAnyUserAccess,
-      hasReadAccess: hasReadAnyUserAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.user)
+    const { hasCreateAccess: hasCreateAnyUserAccess, hasReadAccess: hasReadAnyUserAccess } =
+      useCRUDPermissions(USER_PERMISSIONS.technical.user);
 
-    const {
-      hasReadAccess: hasReadAnyShareTokenAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.shareToken)
+    const { hasReadAccess: hasReadAnyShareTokenAccess } = useCRUDPermissions(
+      USER_PERMISSIONS.technical.shareToken,
+    );
 
-    const activeTab = ref(USERS_TABS.users)
+    const activeTab = ref(USERS_TABS.users);
 
-    const hasCreateAccess = computed(() => ({
-      [USERS_TABS.users]: hasCreateAnyUserAccess.value,
-      [USERS_TABS.shareTokens]: false,
-    }[activeTab.value]))
+    const hasCreateAccess = computed(
+      () =>
+        ({
+          [USERS_TABS.users]: hasCreateAnyUserAccess.value,
+          [USERS_TABS.shareTokens]: false,
+        })[activeTab.value],
+    );
 
     const showCreateUserModal = () => {
       modals.show({
         name: MODALS.createUser,
         config: {
           action: async (data) => {
-            await createUser({ data })
+            await createUser({ data });
 
-            await fetchUsersListWithPreviousParams()
+            await fetchUsersListWithPreviousParams();
           },
         },
-      })
-    }
+      });
+    };
 
     const refresh = () => {
       switch (activeTab.value) {
         case USERS_TABS.users:
-          fetchUsersListWithPreviousParams()
-          break
+          fetchUsersListWithPreviousParams();
+          break;
       }
-    }
+    };
 
     const createByActiveTab = () => {
       switch (activeTab.value) {
         case USERS_TABS.users:
-          showCreateUserModal()
-          break
+          showCreateUserModal();
+          break;
       }
-    }
+    };
 
     return {
       USERS_TABS,
@@ -125,7 +109,7 @@ export default {
       t,
       create: createByActiveTab,
       refresh,
-    }
+    };
   },
-}
+};
 </script>

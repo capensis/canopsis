@@ -1,4 +1,4 @@
-import { isEqual, isMatch, omit, pick } from 'lodash'
+import { isEqual, isMatch, omit, pick } from 'lodash';
 
 /**
  * Is equal objects without keys.
@@ -8,7 +8,7 @@ import { isEqual, isMatch, omit, pick } from 'lodash'
  * @param {String|Array} [paths]
  * @returns {boolean}
  */
-export const isOmitEqual = (value, other, paths) => isEqual(omit(value, paths), omit(other, paths))
+export const isOmitEqual = (value, other, paths) => isEqual(omit(value, paths), omit(other, paths));
 
 /**
  * Is equal objects with special keys.
@@ -18,7 +18,7 @@ export const isOmitEqual = (value, other, paths) => isEqual(omit(value, paths), 
  * @param {String|Array} [paths]
  * @returns {boolean}
  */
-export const isPickEqual = (value, other, paths) => isMatch(value, pick(other, paths))
+export const isPickEqual = (value, other, paths) => isMatch(value, pick(other, paths));
 
 /**
  * Check is some fields in objects equal.
@@ -28,7 +28,8 @@ export const isPickEqual = (value, other, paths) => isMatch(value, pick(other, p
  * @param {string[]} keys
  * @returns {boolean}
  */
-export const isSeveralEqual = (value, other, keys = []) => keys.every(key => isEqual(value[key], other[key]))
+export const isSeveralEqual = (value, other, keys = []) =>
+  keys.every((key) => isEqual(value[key], other[key]));
 
 /**
  * Revert grouped values by key.
@@ -36,14 +37,15 @@ export const isSeveralEqual = (value, other, keys = []) => keys.every(key => isE
  * @param {Object.<string, string[]>} obj
  * @returns {Object.<string, string[]>}
  */
-export const revertGroupBy = obj => Object.entries(obj).reduce((acc, [id, values]) => {
-  values.forEach((value) => {
-    if (acc[value]) {
-      acc[value].push(id)
-    } else {
-      acc[value] = [id]
-    }
-  })
+export const revertGroupBy = (obj) =>
+  Object.entries(obj).reduce((acc, [id, values]) => {
+    values.forEach((value) => {
+      if (acc[value]) {
+        acc[value].push(id);
+      } else {
+        acc[value] = [id];
+      }
+    });
 
-  return acc
-}, {})
+    return acc;
+  }, {});

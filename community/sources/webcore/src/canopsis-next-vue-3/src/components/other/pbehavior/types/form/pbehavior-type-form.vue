@@ -1,5 +1,5 @@
 <template>
-  <c-layout class="gap-3" column>
+  <c-layout gap="3" column>
     <c-enabled-field v-model="visible" :label="t('pbehavior.visible')" with-background />
 
     <c-name-field v-model="name" :disabled="onlyColor" autofocus required />
@@ -49,7 +49,7 @@
       </c-form-block-row>
 
       <c-form-block-row :label="t('common.color')" align-center>
-        <c-layout class="gap-2" align-center justify-start>
+        <c-layout gap="2" align-center justify-start>
           <span v-if="onlyColor" class="text-medium-emphasis">
             {{ t('pbehavior.types.defaultType') }}
           </span>
@@ -67,12 +67,12 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-import { useFormContext, useFormModels } from '@/hooks/form'
-import { useI18n } from '@/hooks/i18n'
+import { useFormContext, useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
-import PbehaviorTypeDefaultTypeField from './pbehavior-type-default-type-field.vue'
+import PbehaviorTypeDefaultTypeField from './pbehavior-type-default-type-field.vue';
 
 export default {
   components: { PbehaviorTypeDefaultTypeField },
@@ -93,8 +93,8 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n()
-    const form = useFormContext()
+    const { t } = useI18n();
+    const form = useFormContext();
     const { name, description, type, priority, color, visible, iconName } = useFormModels({
       name: 'name',
       description: 'description',
@@ -103,42 +103,42 @@ export default {
       color: 'color',
       visible: 'visible',
       iconName: 'icon_name',
-    })
+    });
 
-    const colorWasChanged = ref(false)
+    const colorWasChanged = ref(false);
 
     const setColorWasChanged = () => {
-      colorWasChanged.value = true
-    }
+      colorWasChanged.value = true;
+    };
 
     const syncColor = (nextColor) => {
       if (color.value) {
-        return
+        return;
       }
 
       form.reset({
         ...form.values.value,
 
         color: nextColor,
-      })
-      props.syncOriginalForm?.()
-    }
+      });
+      props.syncOriginalForm?.();
+    };
 
     const updateColor = (nextColor) => {
       if (color.value) {
         if (colorWasChanged.value) {
-          return
+          return;
         }
 
         if (color.value !== nextColor) {
-          colorWasChanged.value = true
+          colorWasChanged.value = true;
 
-          return
+          return;
         }
       }
 
-      color.value = nextColor
-    }
+      color.value = nextColor;
+    };
 
     return {
       t,
@@ -152,7 +152,7 @@ export default {
       setColorWasChanged,
       syncColor,
       updateColor,
-    }
+    };
   },
-}
+};
 </script>

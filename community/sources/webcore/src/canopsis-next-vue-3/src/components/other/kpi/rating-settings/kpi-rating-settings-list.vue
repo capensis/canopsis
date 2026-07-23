@@ -40,9 +40,9 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -71,27 +71,27 @@ export default {
   emits: ['update:options', 'change-selected'],
 
   setup() {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
     const headers = computed(() => [
       { value: 'enabled', width: 100, sortable: false },
       { text: t('common.criteria'), value: 'label', sortable: false },
-    ])
+    ]);
 
     return {
       headers,
-    }
+    };
   },
 
   data() {
     return {
       changed: [],
-    }
+    };
   },
 
   computed: {
     changedIds() {
-      return this.changed.map(({ id }) => id)
+      return this.changed.map(({ id }) => id);
     },
   },
 
@@ -107,30 +107,30 @@ export default {
           ...ratingSetting,
           enabled: !ratingSetting.enabled,
         })),
-      )
+      );
     },
 
     isRatingSettingChanged(ratingSetting) {
-      return this.changedIds.includes(ratingSetting.id)
+      return this.changedIds.includes(ratingSetting.id);
     },
 
     resetEnabledRatingSettings() {
-      this.changed = []
+      this.changed = [];
     },
 
     enableRatingSetting(ratingSetting) {
       if (!this.isRatingSettingChanged(ratingSetting)) {
-        this.changed.push(ratingSetting)
+        this.changed.push(ratingSetting);
       } else {
-        this.changed = this.changed.filter((item) => item.id !== ratingSetting.id)
+        this.changed = this.changed.filter((item) => item.id !== ratingSetting.id);
       }
     },
 
     isEnabledRatingSetting(ratingSetting) {
       return this.isRatingSettingChanged(ratingSetting)
         ? !ratingSetting.enabled
-        : ratingSetting.enabled
+        : ratingSetting.enabled;
     },
   },
-}
+};
 </script>

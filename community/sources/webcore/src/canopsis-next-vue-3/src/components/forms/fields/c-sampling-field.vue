@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { SAMPLINGS } from '@/constants'
+import { SAMPLINGS } from '@/constants';
 
 export default {
   props: {
@@ -46,8 +46,8 @@ export default {
       return this.samplings.map((value) => ({
         value,
         text: this.$t(`common.times.${value}`, 2),
-      }))
+      }));
     },
   },
-}
+};
 </script>

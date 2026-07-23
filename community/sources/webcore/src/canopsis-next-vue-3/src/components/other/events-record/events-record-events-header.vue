@@ -1,5 +1,5 @@
 <template>
-  <c-layout class="gap-3 my-4" justify="center" align="center">
+  <c-layout class="my-4" gap="3" justify="center" align="center">
     <v-progress-circular v-if="isRecording" size="24" width="2" indeterminate />
     <span class="text-subtitle-2">
       {{ t('modals.eventsRecord.subtitle', { count }) }}
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -39,9 +39,9 @@ export default {
   emits: ['remove', 'stop:recording'],
 
   setup() {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
-    return { t }
+    return { t };
   },
-}
+};
 </script>

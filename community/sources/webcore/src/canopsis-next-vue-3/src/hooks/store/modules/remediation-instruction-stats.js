@@ -1,6 +1,6 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
-import { useRemediationInstructionStatsStore } from '@/stores/modules/remediation-instruction-stats'
+import { useRemediationInstructionStatsStore } from '@/stores/modules/remediation-instruction-stats';
 
 /**
  * Remediation instruction stats store facade.
@@ -8,8 +8,8 @@ import { useRemediationInstructionStatsStore } from '@/stores/modules/remediatio
  * @returns {Object}
  */
 export const useRemediationInstructionStats = () => {
-  const remediationInstructionStatsStore = useRemediationInstructionStatsStore()
-  const { items, meta, pending, fetchingParams } = storeToRefs(remediationInstructionStatsStore)
+  const remediationInstructionStatsStore = useRemediationInstructionStatsStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(remediationInstructionStatsStore);
 
   return {
     remediationInstructionStats: items,
@@ -30,5 +30,5 @@ export const useRemediationInstructionStats = () => {
       remediationInstructionStatsStore.fetchExecutionsWithoutStore,
     fetchRemediationInstructionStatsCommentsWithoutStore:
       remediationInstructionStatsStore.fetchCommentsWithoutStore,
-  }
-}
+  };
+};

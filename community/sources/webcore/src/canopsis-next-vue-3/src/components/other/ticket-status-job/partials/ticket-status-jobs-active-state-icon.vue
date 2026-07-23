@@ -8,11 +8,11 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { JOB_STATUS } from '@/constants'
+import { JOB_STATUS } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -23,15 +23,15 @@ export default {
   },
 
   setup(props) {
-    const { t, te } = useI18n()
+    const { t, te } = useI18n();
     const label = computed(() => {
-      const statusTooltipKey = `jobs.statusTooltip.${props.status}`
+      const statusTooltipKey = `jobs.statusTooltip.${props.status}`;
 
-      return te(statusTooltipKey) ? t(statusTooltipKey) : t(`jobs.status.${props.status}`)
-    })
+      return te(statusTooltipKey) ? t(statusTooltipKey) : t(`jobs.status.${props.status}`);
+    });
     const statusColor = computed(() =>
       props.status === JOB_STATUS.running ? 'success' : 'grey-darken-1',
-    )
+    );
     const statusIcon = computed(
       () =>
         ({
@@ -39,13 +39,13 @@ export default {
           [JOB_STATUS.paused]: 'pause_circle',
           [JOB_STATUS.stopped]: 'stop_circle',
         })[props.status] ?? 'stop_circle',
-    )
+    );
 
     return {
       label,
       statusColor,
       statusIcon,
-    }
+    };
   },
-}
+};
 </script>

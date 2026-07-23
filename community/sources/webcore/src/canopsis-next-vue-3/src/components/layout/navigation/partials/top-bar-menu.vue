@@ -1,16 +1,7 @@
 <template>
-  <v-menu
-    v-if="preparedLinks.length"
-    v-model="openedMenu"
-    origin="top center"
-    v-bind="$attrs"
-  >
+  <v-menu v-if="preparedLinks.length" v-model="openedMenu" origin="top center" v-bind="$attrs">
     <template #activator="{ props: activatorProps }">
-      <v-btn
-        class="top-bar-menu__button text-white"
-        variant="text"
-        v-bind="activatorProps"
-      >
+      <v-btn class="top-bar-menu__button text-white" variant="text" v-bind="activatorProps">
         <slot name="title">
           {{ title }}
         </slot>
@@ -27,10 +18,10 @@
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue';
 
-import { useTopBarMenu } from './hooks/top-bar-menu'
-import TopBarMenuList from './top-bar-menu-list.vue'
+import { useTopBarMenu } from './hooks/top-bar-menu';
+import TopBarMenuList from './top-bar-menu-list.vue';
 
 export default {
   components: { TopBarMenuList },
@@ -57,22 +48,22 @@ export default {
   },
 
   setup(props) {
-    const openedMenu = ref(false)
+    const openedMenu = ref(false);
     const { prepareLinks } = useTopBarMenu({
       withoutSort: toRef(props, 'withoutSort'),
       permissionsWithDefaultType: toRef(props, 'permissionsWithDefaultType'),
-    })
+    });
 
-    const preparedLinks = computed(() => prepareLinks(props.links))
-    const handleClick = () => openedMenu.value = false
+    const preparedLinks = computed(() => prepareLinks(props.links));
+    const handleClick = () => (openedMenu.value = false);
 
     return {
       openedMenu,
       preparedLinks,
       handleClick,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

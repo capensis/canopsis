@@ -59,10 +59,10 @@ export default {
       this.$emit('input', {
         ...this.value,
         [field]: value,
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

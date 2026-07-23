@@ -10,15 +10,15 @@
 </template>
 
 <script>
-import { ALARM_BASIC_METRIC_PARAMETERS } from '@/constants'
+import { ALARM_BASIC_METRIC_PARAMETERS } from '@/constants';
 
 export default {
   computed: {
     basicMetrics() {
       return Object.values(ALARM_BASIC_METRIC_PARAMETERS).map((value) =>
         this.$t(`alarm.metrics.${value}`),
-      )
+      );
     },
   },
-}
+};
 </script>

@@ -1,6 +1,6 @@
-import { computed, ref } from 'vue'
-import { defineStore } from 'pinia'
-import { keyBy } from 'lodash'
+import { computed, ref } from 'vue';
+import { defineStore } from 'pinia';
+import { keyBy } from 'lodash';
 
 import {
   API_ROUTES,
@@ -8,139 +8,132 @@ import {
   LOCAL_STORAGE_ACCESS_TOKEN_KEY,
   LOCAL_STORAGE_WARNING_POPUP_KEY,
   DEFAULT_LOCALE,
-} from '@/config'
-import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants'
+} from '@/config';
+import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants';
 
-import request from '@/services/request'
-import localStorageService from '@/services/local-storage'
+import request from '@/services/request';
+import localStorageService from '@/services/local-storage';
 
-import { i18n } from '@/i18n'
+import { i18n } from '@/i18n';
 
-import { viewPermissionsGroupedPermissions } from '@/helpers/permission'
-import { isUserHasOnlyApiRole } from '@/helpers/entities/user/entity'
+import { viewPermissionsGroupedPermissions } from '@/helpers/permission';
+import { isUserHasOnlyApiRole } from '@/helpers/entities/user/entity';
 
-import { useI18nStore } from './i18n'
+import { useI18nStore } from './i18n';
 
 export const useAuthStore = defineStore('auth', () => {
-  const i18nStore = useI18nStore()
+  const i18nStore = useI18nStore();
 
-  const isLoggedIn = ref(localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY))
-  const currentUser = ref({})
-  const pending = ref(true)
+  const isLoggedIn = ref(localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
+  const currentUser = ref({});
+  const pending = ref(true);
 
-  const currentUserPermissionsById = computed(() => (
-    keyBy(currentUser.value.permissions, '_id')
-  ))
+  const currentUserPermissionsById = computed(() => keyBy(currentUser.value.permissions, '_id'));
 
-  const currentUserViewPermissionsByViewId = computed(() => (
-    viewPermissionsGroupedPermissions(currentUser.value.permissions)
-  ))
+  const currentUserViewPermissionsByViewId = computed(() =>
+    viewPermissionsGroupedPermissions(currentUser.value.permissions),
+  );
 
   const localLogout = () => {
-    isLoggedIn.value = false
-    currentUser.value = {}
-    pending.value = false
-  }
+    isLoggedIn.value = false;
+    currentUser.value = {};
+    pending.value = false;
+  };
 
   const applyAccessToken = (accessToken, afterFetchCallback) => {
-    localStorageService.set(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken)
+    localStorageService.set(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
 
-    isLoggedIn.value = true
+    isLoggedIn.value = true;
 
-    return Promise.all([
-      fetchCurrentUser(afterFetchCallback),
-      filesAccess(),
-    ])
-  }
+    return Promise.all([fetchCurrentUser(afterFetchCallback), filesAccess()]);
+  };
 
   const login = async (credentials, afterFetchCallback) => {
     try {
-      const { access_token: accessToken } = await request.post(
-        API_ROUTES.login,
-        credentials,
-        { fullResponse: true },
-      )
+      const { access_token: accessToken } = await request.post(API_ROUTES.login, credentials, {
+        fullResponse: true,
+      });
 
-      await applyAccessToken(accessToken, afterFetchCallback)
+      await applyAccessToken(accessToken, afterFetchCallback);
     } catch (err) {
-      console.error(err)
+      console.error(err);
 
-      localLogout()
+      localLogout();
 
-      throw err
+      throw err;
     }
-  }
+  };
 
-  const filesAccess = () => request.get(API_ROUTES.fileAccess)
+  const filesAccess = () => request.get(API_ROUTES.fileAccess);
 
   const fetchCurrentUser = async () => {
     if (!isLoggedIn.value) {
-      localLogout()
+      localLogout();
 
-      return
+      return;
     }
 
     try {
-      pending.value = true
+      pending.value = true;
 
       const user = await request.get(API_ROUTES.currentUser, {
         fullResponse: true,
-      })
+      });
 
-      currentUser.value = user
-      pending.value = false
+      currentUser.value = user;
+      pending.value = false;
 
-      await afterFetchCurrentUser(user)
+      await afterFetchCurrentUser(user);
     } catch (err) {
       if (EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
-        logout()
+        logout();
       }
 
-      throw err
+      throw err;
     }
-  }
+  };
 
   const afterFetchCurrentUser = async (user) => {
     if (isUserHasOnlyApiRole(user)) {
       localStorageService.set(
         LOCAL_STORAGE_WARNING_POPUP_KEY,
         i18n.t('warnings.userDoesNotHaveUiRole'),
-      )
+      );
 
-      logout()
+      logout();
 
-      return
+      return;
     }
 
     if (currentUser.value.ui_language) {
-      i18nStore.setPersonalLocale(currentUser.value.ui_language)
+      i18nStore.setPersonalLocale(currentUser.value.ui_language);
     } else {
-      i18nStore.setDefaultLocale(DEFAULT_LOCALE)
+      i18nStore.setDefaultLocale(DEFAULT_LOCALE);
     }
-  }
+  };
 
   const setCurrentUser = (user = {}) => {
-    currentUser.value = user
-  }
+    currentUser.value = user;
+  };
 
   const logout = async ({ redirect } = {}) => {
     try {
-      await request.post(API_ROUTES.logout)
+      await request.post(API_ROUTES.logout);
 
-      localLogout()
-      localStorageService.remove(LOCAL_STORAGE_ACCESS_TOKEN_KEY)
+      localLogout();
+      localStorageService.remove(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
 
       if (redirect) {
-        await redirect()
+        await redirect();
       }
     } catch (err) {
-      console.error(err)
+      console.error(err);
     } finally {
-      setTimeout(() => window.location.reload(), VUETIFY_ANIMATION_DELAY)
+      setTimeout(() => window.location.reload(), VUETIFY_ANIMATION_DELAY);
     }
-  }
+  };
 
-  const setTours = tours => currentUser.value.ui_tours = tours
+  const setTours = (tours) => (currentUser.value.ui_tours = tours);
 
   const fetchLoggedUsersCountWithoutStore = () => request.get(API_ROUTES.loggedUserCount);
 
@@ -162,5 +155,5 @@ export const useAuthStore = defineStore('auth', () => {
     filesAccess,
     setTours,
     fetchLoggedUsersCountWithoutStore,
-  }
-})
+  };
+});

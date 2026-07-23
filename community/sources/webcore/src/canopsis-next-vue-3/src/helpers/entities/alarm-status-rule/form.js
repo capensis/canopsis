@@ -1,9 +1,9 @@
-import { omit } from 'lodash'
+import { omit } from 'lodash';
 
-import { PATTERNS_FIELDS, TIME_UNITS } from '@/constants'
+import { PATTERNS_FIELDS, TIME_UNITS } from '@/constants';
 
-import { durationToForm } from '@/helpers/date/duration'
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form'
+import { durationToForm } from '@/helpers/date/duration';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 /**
  * @typedef {FilterPatterns} AlarmStatusRule
@@ -40,14 +40,14 @@ export const alarmStatusRuleToForm = (rule = {}, flapping = false) => {
     description: rule.description ?? '',
     enabled: rule.enabled ?? true,
     patterns: filterPatternsToForm(rule, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
-  }
+  };
 
   if (flapping) {
-    form.freq_limit = rule.freq_limit ?? 1
+    form.freq_limit = rule.freq_limit ?? 1;
   }
 
-  return form
-}
+  return form;
+};
 
 /**
  * Convert form compatible object to alarm status rule object.
@@ -58,4 +58,4 @@ export const alarmStatusRuleToForm = (rule = {}, flapping = false) => {
 export const formToAlarmStatusRule = (form) => ({
   ...omit(form, ['patterns']),
   ...formFilterToPatterns(form.patterns),
-})
+});

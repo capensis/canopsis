@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import DateTimeSplittedPickerField from '@/components/forms/fields/date-time-picker/date-time-splitted-picker-field.vue'
+import DateTimeSplittedPickerField from '@/components/forms/fields/date-time-picker/date-time-splitted-picker-field.vue';
 
 export default {
   components: {
@@ -94,7 +94,7 @@ export default {
       required: false,
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

@@ -1,4 +1,4 @@
-import { useWidgetStore } from '@/stores/modules/widget'
+import { useWidgetStore } from '@/stores/modules/widget';
 
 /**
  * Widget store facade.
@@ -6,7 +6,7 @@ import { useWidgetStore } from '@/stores/modules/widget'
  * @returns {Object}
  */
 export const useWidget = () => {
-  const widgetStore = useWidgetStore()
+  const widgetStore = useWidgetStore();
 
   return {
     fetchWidgetWithoutStore: widgetStore.fetchItemWithoutStore,
@@ -21,5 +21,5 @@ export const useWidget = () => {
     removeWidgetFilter: widgetStore.removeWidgetFilter,
     fetchWidgetFilter: widgetStore.fetchWidgetFilter,
     updateWidgetFiltersPositions: widgetStore.updateWidgetFiltersPositions,
-  }
-}
+  };
+};

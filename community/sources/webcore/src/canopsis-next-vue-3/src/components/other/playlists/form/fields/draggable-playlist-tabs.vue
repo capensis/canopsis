@@ -38,11 +38,11 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-import { useI18n } from '@/hooks/i18n'
+import { useI18n } from '@/hooks/i18n';
 
-import PlaylistTabItem from '@/components/other/playlists/partials/playlist-tab-item.vue'
+import PlaylistTabItem from '@/components/other/playlists/partials/playlist-tab-item.vue';
 
 export default {
   components: { PlaylistTabItem },
@@ -65,29 +65,29 @@ export default {
   emits: ['update:tabs'],
 
   setup(props) {
-    const { t } = useI18n()
+    const { t } = useI18n();
 
     const tabsDetailsById = computed(() =>
       props.groups.reduce((acc, group) => {
         group.views?.forEach((view) => {
           view.tabs?.forEach((tab) => {
-            acc[tab._id] = { tab, group, view }
-          })
-        })
+            acc[tab._id] = { tab, group, view };
+          });
+        });
 
-        return acc
+        return acc;
       }, {}),
-    )
+    );
 
-    const isTabsEmpty = computed(() => props.tabs.length === 0)
+    const isTabsEmpty = computed(() => props.tabs.length === 0);
 
     return {
       t,
       tabsDetailsById,
       isTabsEmpty,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>
