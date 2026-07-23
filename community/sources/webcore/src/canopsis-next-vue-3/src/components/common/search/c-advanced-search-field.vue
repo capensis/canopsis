@@ -1,18 +1,12 @@
 <template>
-  <c-layout
-    class="c-advanced-search__wrapper"
-    align="end"
-  >
+  <c-layout class="c-advanced-search__wrapper" align="end">
     <div
       :class="{ 'v-input--is-loading': pending }"
       class="c-advanced-search mt-0 pt-2 v-input v-input--hide-details v-text-field v-text-field--single-line v-select v-autocomplete"
     >
       <div class="v-input__control">
         <div class="v-input__slot pb-1">
-          <div
-            class="v-text-field__slot"
-            @mouseup="focusSearchInput"
-          >
+          <div class="v-text-field__slot" @mouseup="focusSearchInput">
             <advanced-search-rules
               ref="rulesElement"
               :rules="rules"
@@ -24,12 +18,7 @@
             />
           </div>
         </div>
-        <v-progress-linear
-          v-if="pending"
-          height="2"
-          color="primary"
-          indeterminate
-        />
+        <v-progress-linear v-if="pending" height="2" color="primary" indeterminate />
       </div>
     </div>
     <c-layout>
@@ -41,31 +30,20 @@
         @remove="removeSearch"
         @toggle-pin="togglePinForSearch"
       />
-      <c-action-btn
-        :tooltip="$t('common.search')"
-        icon="search"
-        @click="submit"
-      />
-      <c-action-btn
-        :tooltip="$t('common.clearSearch')"
-        icon="clear"
-        @click="reset"
-      />
+      <c-action-btn :tooltip="$t('common.search')" icon="search" @click="submit" />
+      <c-action-btn :tooltip="$t('common.clearSearch')" icon="clear" @click="reset" />
     </c-layout>
   </c-layout>
 </template>
 
 <script>
-import {
-  ref,
-  toRef,
-  inject,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
+import { ref, toRef, inject, onMounted, onBeforeUnmount } from 'vue';
 
 import { uid } from '@/helpers/uid';
-import { advancedSearchRuleItemToFormItem, formToAdvancedSearch } from '@/helpers/search/advanced-search';
+import {
+  advancedSearchRuleItemToFormItem,
+  formToAdvancedSearch,
+} from '@/helpers/search/advanced-search';
 
 import { useAdvancedSearchValidator } from './hooks/advanced-search';
 import AdvancedSearchRules from './partials/advanced-search-rules.vue';
@@ -113,13 +91,7 @@ export default {
     },
   },
 
-  emits: [
-    'update:rules',
-    'submit',
-    'reset',
-    'remove:search',
-    'toggle-pin:search',
-  ],
+  emits: ['update:rules', 'submit', 'reset', 'remove:search', 'toggle-pin:search'],
 
   setup(props, { emit }) {
     const { validateAll, errors } = useAdvancedSearchValidator({
@@ -138,7 +110,7 @@ export default {
     const runToggleAllowFocusOnMount = () => {
       allowFocusOnMount.value = false;
 
-      setTimeout(() => allowFocusOnMount.value = true, 1000);
+      setTimeout(() => (allowFocusOnMount.value = true), 1000);
     };
 
     const updateModel = (rules) => {
@@ -162,7 +134,7 @@ export default {
       }
     };
 
-    const resetActiveSearch = () => activeSearch = null;
+    const resetActiveSearch = () => (activeSearch = null);
 
     const inputSearch = (newRules) => {
       resetActiveSearch();
@@ -187,13 +159,10 @@ export default {
       submit();
     };
 
-    const removeSearch = id => emit('remove:search', id);
-    const togglePinForSearch = id => emit('toggle-pin:search', id);
+    const removeSearch = (id) => emit('remove:search', id);
+    const togglePinForSearch = (id) => emit('toggle-pin:search', id);
     const focusSearchInput = (event) => {
-      if (
-        props.disabled
-        || event.target.closest('button, input, .v-chip, .v-list-item')
-      ) {
+      if (props.disabled || event.target.closest('button, input, .v-chip, .v-list-item')) {
         return;
       }
 
@@ -248,7 +217,7 @@ export default {
     align-items: flex-end;
     min-height: 40px;
     cursor: text;
-    border-bottom: 1px solid rgba(var(--v-theme-on-surface), .42);
+    border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.42);
   }
 
   .v-text-field__slot {
@@ -268,7 +237,7 @@ export default {
       color: currentColor;
 
       &::placeholder {
-        color: rgba(var(--v-theme-on-surface), .6);
+        color: rgba(var(--v-theme-on-surface), 0.6);
         opacity: 1;
       }
     }
@@ -279,7 +248,9 @@ export default {
   }
 
   &__groups-wrapper {
-    &, .layout, .c-layout {
+    &,
+    .layout,
+    .c-layout {
       gap: var(--advanced-search-chip-gap);
     }
   }

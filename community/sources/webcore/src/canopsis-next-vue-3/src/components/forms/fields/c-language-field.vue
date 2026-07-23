@@ -45,7 +45,7 @@ export default {
     const menuProps = { offsetY: true };
     const languages = computed(() => Object.values(LOCALES));
 
-    const updateModel = value => {
+    const updateModel = (value) => {
       emit('update:modelValue', value);
     };
 

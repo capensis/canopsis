@@ -1,6 +1,11 @@
-import { isArray, mapValues } from 'lodash';
+import { differenceBy, isArray, isNil, mapValues } from 'lodash';
 
-import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+import {
+  ACTION_TYPES,
+  LINK_RULE_TYPES,
+  TEMPLATE_TESTING_TEST_TYPES,
+  TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES,
+} from '@/constants';
 
 /**
  * @typedef {0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 } TemplateTestingTestType
@@ -130,3 +135,217 @@ export const formToTemplateTestingTest = (form = {}) => ({
 
   rule: form.rule?._id,
 });
+
+/**
+ * Creates a template testing test validate form item
+ *
+ * @param {TemplateTestingTestValidateFormItemConfig} config - Configuration object
+ * @returns {TemplateTestingTestValidateFormItem} The created form item
+ */
+export const getTemplateTestingTestValidateFormItem = ({
+  type,
+  params = {},
+  required = false,
+  someRequired = false,
+  index,
+  key,
+}) => ({
+  type,
+  params,
+  index,
+  required,
+  someRequired,
+  key: key ?? type,
+  value: '',
+});
+
+/**
+ * Converts a form object to template testing test validate form based on the type
+ *
+ * @param {TemplateTestingTestMainForm} [form] - The form object containing rule configuration
+ * @param {TemplateTestingTestType} type - The type of template testing test
+ * @returns {TemplateTestingTestValidateFormItem[]} Array of validate form items
+ */
+export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
+  if (type === TEMPLATE_TESTING_TEST_TYPES.scenario) {
+    return [
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
+        required: true,
+      }),
+
+      ...(form.actions ?? []).reduce((acc, action, index) => {
+        if (action.type === ACTION_TYPES.webhook) {
+          acc.push(
+            getTemplateTestingTestValidateFormItem({
+              index,
+              required: true,
+              key: action.key,
+              type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+            }),
+          );
+
+          if (action.parameters?.webhook?.declare_ticket?.check_ticket_status?.enabled) {
+            acc.push(
+              getTemplateTestingTestValidateFormItem({
+                index,
+                required: true,
+                key: `${action.key}.check_ticket_status.ticket_status_tpl`,
+                type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+              }),
+            );
+          }
+        }
+
+        return acc;
+      }, []),
+    ];
+  }
+
+  if (type === TEMPLATE_TESTING_TEST_TYPES.linkRule) {
+    return [
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user,
+      }),
+
+      form.type === LINK_RULE_TYPES.alarm
+        ? getTemplateTestingTestValidateFormItem({
+            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+            required: true,
+            params: { opened: true },
+          })
+        : getTemplateTestingTestValidateFormItem({
+            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity,
+            required: true,
+          }),
+    ];
+  }
+
+  if (
+    [
+      TEMPLATE_TESTING_TEST_TYPES.widget,
+      TEMPLATE_TESTING_TEST_TYPES.instruction,
+      TEMPLATE_TESTING_TEST_TYPES.job,
+      TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule,
+    ].includes(type)
+  ) {
+    return [
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        required: true,
+        params: { opened: true },
+      }),
+    ];
+  }
+
+  if (type === TEMPLATE_TESTING_TEST_TYPES.dynamicInfo) {
+    return [
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        someRequired: true,
+        params: { opened: true },
+      }),
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
+        someRequired: true,
+      }),
+    ];
+  }
+
+  if (type === TEMPLATE_TESTING_TEST_TYPES.externalAuthToken) {
+    return [
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+        required: true,
+      }),
+    ];
+  }
+
+  return [];
+};
+
+/**
+ * Gets the changes between two validate forms by comparing their keys
+ *
+ * @param {TemplateTestingTestValidateFormItem[]} [form] - The new form array
+ * @param {TemplateTestingTestValidateFormItem[]} [oldForm] - The old form array
+ * @returns {ValidateFormChanges} Changes between the two forms
+ */
+export const getChangesForValidateForm = (form = [], oldForm = []) => ({
+  added: differenceBy(form, oldForm, 'key'),
+  removed: differenceBy(oldForm, form, 'key'),
+});
+
+/**
+ * Converts a form array to template testing test validate object
+ *
+ * @param {TemplateTestingTestValidateFormItem[]} [form] - Array of form items
+ * @returns {TemplateTestingTestValidate} The validate object with entity values and responses
+ */
+export const formToTemplateTestingTestValidate = (form = []) =>
+  form.reduce((acc, item) => {
+    const isResponse = [
+      TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+      TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+    ].includes(item.type);
+
+    if (isResponse) {
+      if (isNil(item.index)) {
+        acc.response = item.value;
+
+        return acc;
+      }
+
+      const responsesField =
+        item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse
+          ? 'ticket_status_responses'
+          : 'responses';
+
+      if (!acc[responsesField]) {
+        acc[responsesField] = {};
+      }
+
+      acc[responsesField][item.index] = item.value;
+
+      return acc;
+    }
+
+    acc[item.type] = item.value;
+
+    return acc;
+  }, {});
+
+/**
+ * Converts template testing test validate object back to form array
+ *
+ * @param {TemplateTestingTestValidateFormItem[]} [originalForm] - The original form structure
+ * @param {TemplateTestingTestValidate} [validate] - The validate object with entity values
+ * @returns {TemplateTestingTestValidateFormItem[]} Updated form array with populated values
+ */
+export const templateTestingTestValidateToForm = (originalForm = [], validate = {}) => {
+  const responses = Object.values(validate.responses || {});
+  const ticketStatusResponses = Object.values(validate.ticket_status_responses || {});
+
+  return originalForm.map((item) => {
+    const isResponse = [
+      TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+      TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+    ].includes(item.type);
+
+    if (isResponse) {
+      const response = ticketStatusResponses.length ? ticketStatusResponses.pop() : responses.pop();
+
+      return {
+        ...item,
+        value: response?._id ?? '',
+      };
+    }
+
+    const entityValue = validate[item.type]?._id ?? validate[item.type] ?? item.value;
+
+    return {
+      ...item,
+      value: entityValue,
+    };
+  });
+};

@@ -10,8 +10,8 @@ export const useViewStore = defineStore('view', () => {
   const meta = ref({});
   const pending = ref(false);
 
-  const getGroupById = computed(() => id => items.value.find(group => group._id === id));
-  const getViewById = computed(() => id => {
+  const getGroupById = computed(() => (id) => items.value.find((group) => group._id === id));
+  const getViewById = computed(() => (id) => {
     let view;
 
     items.value.some((group) => {
@@ -22,7 +22,7 @@ export const useViewStore = defineStore('view', () => {
 
     return view;
   });
-  const getViewTabById = computed(() => id => {
+  const getViewTabById = computed(() => (id) => {
     let tab;
 
     items.value.some((group) => {
@@ -45,7 +45,7 @@ export const useViewStore = defineStore('view', () => {
       return;
     }
 
-    const groupIndex = items.value.findIndex(group => group._id === groupId);
+    const groupIndex = items.value.findIndex((group) => group._id === groupId);
 
     if (groupIndex === -1) {
       return;
@@ -82,32 +82,39 @@ export const useViewStore = defineStore('view', () => {
     }
   };
 
-  const fetchListWithoutStore = ({ params } = {}) => request.get(API_ROUTES.view.groups, { params });
+  const fetchListWithoutStore = ({ params } = {}) =>
+    request.get(API_ROUTES.view.groups, { params });
 
   const create = ({ data } = {}) => request.post(API_ROUTES.view.groups, data);
   const update = ({ id, data } = {}) => request.put(`${API_ROUTES.view.groups}/${id}`, data);
   const remove = ({ id } = {}) => request.delete(`${API_ROUTES.view.groups}/${id}`);
 
   const createPrivateGroup = ({ data } = {}) => request.post(API_ROUTES.privateView.groups, data);
-  const updatePrivateGroup = ({ id, data } = {}) => request.put(`${API_ROUTES.privateView.groups}/${id}`, data);
-  const removePrivateGroup = ({ id } = {}) => request.delete(`${API_ROUTES.privateView.groups}/${id}`);
+  const updatePrivateGroup = ({ id, data } = {}) =>
+    request.put(`${API_ROUTES.privateView.groups}/${id}`, data);
+  const removePrivateGroup = ({ id } = {}) =>
+    request.delete(`${API_ROUTES.privateView.groups}/${id}`);
 
   const createView = ({ data } = {}) => request.post(API_ROUTES.view.list, data);
   const updateView = ({ id, data } = {}) => request.put(`${API_ROUTES.view.list}/${id}`, data);
-  const updateWithoutStoreView = ({ id, data } = {}) => request.put(`${API_ROUTES.view.list}/${id}`, data);
+  const updateWithoutStoreView = ({ id, data } = {}) =>
+    request.put(`${API_ROUTES.view.list}/${id}`, data);
   const updateViewPositions = ({ data } = {}) => request.put(API_ROUTES.view.positions, data);
   const removeView = ({ id } = {}) => request.delete(`${API_ROUTES.view.list}/${id}`);
   const copyView = ({ id, data } = {}) => request.post(`${API_ROUTES.view.copy}/${id}`, data);
   const exportViewWithoutStore = ({ data } = {}) => request.post(API_ROUTES.view.export, data);
   const importViewWithoutStore = ({ data } = {}) => request.post(API_ROUTES.view.import, data);
 
-  const fetchView = ({ id }) => useRequestCancelling(async (source) => {
-    const view = await request.get(`${API_ROUTES.view.list}/${id}`, { cancelToken: source.token });
+  const fetchView = ({ id }) =>
+    useRequestCancelling(async (source) => {
+      const view = await request.get(`${API_ROUTES.view.list}/${id}`, {
+        cancelToken: source.token,
+      });
 
-    mergeViewEntities(view);
+      mergeViewEntities(view);
 
-    return view;
-  }, `view_${id}`);
+      return view;
+    }, `view_${id}`);
 
   return {
     items,

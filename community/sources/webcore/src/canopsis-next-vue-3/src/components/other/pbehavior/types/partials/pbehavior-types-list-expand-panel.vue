@@ -13,7 +13,10 @@
       <v-window-item :value="TABS.description" class="planning-expand-panel__tab-item">
         <v-card>
           <v-card-text>
-            <pre class="planning-expand-panel__pre">{{ pbehaviorType.description || '-' }}</pre>
+            <pre class="planning-expand-panel__pre"
+              >{{ pbehaviorType.description || '-' }}
+</pre
+            >
           </v-card-text>
         </v-card>
       </v-window-item>

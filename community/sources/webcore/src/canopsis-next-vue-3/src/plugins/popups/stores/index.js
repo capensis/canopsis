@@ -62,7 +62,7 @@ export const usePopupsStore = defineStore('popups', () => {
    * @param {{ id: string }} payload
    */
   const remove = ({ id }) => {
-    popups.value = popups.value.filter(popup => popup.id !== id);
+    popups.value = popups.value.filter((popup) => popup.id !== id);
   };
 
   /**
@@ -79,7 +79,7 @@ export const usePopupsStore = defineStore('popups', () => {
    *
    * @param {Omit<AddPopupPayload, 'type'>} popup
    */
-  const success = popup => {
+  const success = (popup) => {
     add({ ...popup, type: POPUP_TYPES.success });
   };
 
@@ -88,7 +88,7 @@ export const usePopupsStore = defineStore('popups', () => {
    *
    * @param {Omit<AddPopupPayload, 'type'>} popup
    */
-  const info = popup => {
+  const info = (popup) => {
     add({ ...popup, type: POPUP_TYPES.info });
   };
 
@@ -97,7 +97,7 @@ export const usePopupsStore = defineStore('popups', () => {
    *
    * @param {Omit<AddPopupPayload, 'type'>} popup
    */
-  const warning = popup => {
+  const warning = (popup) => {
     add({ ...popup, type: POPUP_TYPES.warning });
   };
 
@@ -106,7 +106,7 @@ export const usePopupsStore = defineStore('popups', () => {
    *
    * @param {Omit<AddPopupPayload, 'type'>} popup
    */
-  const error = popup => {
+  const error = (popup) => {
     add({ ...popup, type: POPUP_TYPES.error });
   };
 

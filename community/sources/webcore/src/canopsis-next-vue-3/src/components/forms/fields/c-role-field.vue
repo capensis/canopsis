@@ -104,19 +104,22 @@ export default {
       }
     };
 
-    const getItemProps = item => ({
+    const getItemProps = (item) => ({
       disabled: props.isDisabledItems?.(item.raw ?? item),
     });
 
-    const updateModel = value => {
+    const updateModel = (value) => {
       emit('update:modelValue', value);
     };
 
-    watch(() => props.disabled, (disabled) => {
-      if (!disabled && !items.value.length) {
-        fetchList();
-      }
-    });
+    watch(
+      () => props.disabled,
+      (disabled) => {
+        if (!disabled && !items.value.length) {
+          fetchList();
+        }
+      },
+    );
 
     onMounted(() => {
       if (!props.disabled) {

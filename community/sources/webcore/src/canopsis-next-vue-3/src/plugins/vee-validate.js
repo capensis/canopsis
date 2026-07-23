@@ -14,7 +14,7 @@ import { veeValidateLocales } from './vee-validate/locales';
  * @param {import('vee-validate').FieldValidationMetaInfo} ctx
  * @returns {string | undefined}
  */
-const getCustomRuleMessage = ctx => {
+const getCustomRuleMessage = (ctx) => {
   const params = ctx.rule?.params;
 
   if (params && !Array.isArray(params) && params.message) {
@@ -33,19 +33,22 @@ const getCustomRuleMessage = ctx => {
  * @param {import('vue-i18n').I18n} i18n
  * @returns {import('@vee-validate/i18n').ValidationMessageGenerator}
  */
-const createGenerateMessage = i18n => {
+const createGenerateMessage = (i18n) => {
   const localizedGenerateMessage = localize(veeValidateLocales);
 
   setFallbackLocale(DEFAULT_LOCALE);
   setLocale(unref(i18n.global.locale) || DEFAULT_LOCALE);
 
-  watch(() => unref(i18n.global.locale), locale => {
-    if (locale) {
-      setLocale(locale);
-    }
-  });
+  watch(
+    () => unref(i18n.global.locale),
+    (locale) => {
+      if (locale) {
+        setLocale(locale);
+      }
+    },
+  );
 
-  return ctx => getCustomRuleMessage(ctx) ?? localizedGenerateMessage(ctx);
+  return (ctx) => getCustomRuleMessage(ctx) ?? localizedGenerateMessage(ctx);
 };
 
 /**
@@ -54,7 +57,7 @@ const createGenerateMessage = i18n => {
  * Accepts integer and decimal numbers with `.` or `,` as separator.
  */
 const defineDecimalRule = () => {
-  defineRule('decimal', value => {
+  defineRule('decimal', (value) => {
     if (isEmpty(value)) {
       return true;
     }

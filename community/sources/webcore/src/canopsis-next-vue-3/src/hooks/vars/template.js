@@ -10,10 +10,10 @@ import { useVarsPrepare } from './shared';
 /**
  * Hook for managing template variables list based on test type.
  *
- * @param {Object} options - Configuration options
- * @param {import('vue').Ref<string>|string} [options.type] - The type of template testing
- * @param {import('vue').Ref<Object>|Object} [options.form] - The form object
- * @returns {Object} Hook return object
+ * @param {Object} options - Configuration options.
+ * @param {import('vue').Ref<string>|string} [options.type] - The type of template testing.
+ * @param {import('vue').Ref<Object>|Object} [options.form] - The form object.
+ * @returns {Object} Hook return object.
  */
 export const useTemplateVarsList = ({ type, form = {} } = {}) => {
   const vars = ref({});

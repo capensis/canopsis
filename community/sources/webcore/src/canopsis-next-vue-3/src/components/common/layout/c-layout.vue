@@ -54,7 +54,7 @@ const props = defineProps({
 
 const attrs = useAttrs();
 
-const classList = value => {
+const classList = (value) => {
   if (!value) {
     return [];
   }
@@ -72,12 +72,10 @@ const classList = value => {
   return String(value).split(/\s+/).filter(Boolean);
 };
 
-const normalizeGapClass = className => className.replace(/^gap-/, 'ga-');
+const normalizeGapClass = (className) => className.replace(/^gap-/, 'ga-');
 const toGapClass = (prefix, value) => `${prefix}-${value}`;
 
-const normalizedAttrClasses = computed(() => (
-  classList(attrs.class).map(normalizeGapClass)
-));
+const normalizedAttrClasses = computed(() => classList(attrs.class).map(normalizeGapClass));
 
 const layoutClasses = computed(() => [
   normalizedAttrClasses.value,
@@ -104,11 +102,7 @@ const layoutAttrs = computed(() => {
 </script>
 
 <template>
-  <component
-    :is="tag"
-    v-bind="layoutAttrs"
-    :class="layoutClasses"
-  >
+  <component :is="tag" v-bind="layoutAttrs" :class="layoutClasses">
     <slot />
   </component>
 </template>

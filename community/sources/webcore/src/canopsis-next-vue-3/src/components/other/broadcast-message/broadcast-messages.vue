@@ -46,10 +46,9 @@ export default {
       updateBroadcastMessage,
       removeBroadcastMessage,
     } = useBroadcastMessages();
-    const {
-      hasUpdateAccess,
-      hasDeleteAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.broadcastMessage);
+    const { hasUpdateAccess, hasDeleteAccess } = useCRUDPermissions(
+      USER_PERMISSIONS.technical.broadcastMessage,
+    );
 
     const {
       options,
@@ -63,36 +62,39 @@ export default {
         sortDesc: [],
         search: '',
       },
-      onUpdate: fetchQuery => fetchBroadcastMessagesList({
-        params: getQueryForList(fetchQuery),
-      }),
+      onUpdate: (fetchQuery) =>
+        fetchBroadcastMessagesList({
+          params: getQueryForList(fetchQuery),
+        }),
     });
 
-    const showEditBroadcastMessageModal = (message) => modals.show({
-      name: MODALS.createBroadcastMessage,
-      config: {
-        message,
-        title: t('modals.createBroadcastMessage.edit.title'),
-        action: async (data) => {
-          await updateBroadcastMessage({ id: message._id, data });
-          popups.success({ text: t('success.default') });
+    const showEditBroadcastMessageModal = (message) =>
+      modals.show({
+        name: MODALS.createBroadcastMessage,
+        config: {
+          message,
+          title: t('modals.createBroadcastMessage.edit.title'),
+          action: async (data) => {
+            await updateBroadcastMessage({ id: message._id, data });
+            popups.success({ text: t('success.default') });
 
-          await fetchList();
+            await fetchList();
+          },
         },
-      },
-    });
+      });
 
-    const showRemoveBroadcastMessageModal = (id) => modals.show({
-      name: MODALS.confirmation,
-      config: {
-        action: async () => {
-          await removeBroadcastMessage({ id });
-          popups.success({ text: t('success.default') });
+    const showRemoveBroadcastMessageModal = (id) =>
+      modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await removeBroadcastMessage({ id });
+            popups.success({ text: t('success.default') });
 
-          await fetchList();
+            await fetchList();
+          },
         },
-      },
-    });
+      });
 
     onMounted(fetchList);
 

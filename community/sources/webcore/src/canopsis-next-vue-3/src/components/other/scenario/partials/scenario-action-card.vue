@@ -3,11 +3,7 @@
     <v-card-text>
       <c-layout wrap>
         <div class="scenario-action-card__number pt-2">
-          <v-avatar
-            class="text-white mr-2"
-            color="primary"
-            size="32"
-          >
+          <v-avatar class="text-white mr-2" color="primary" size="32">
             {{ actionNumber }}
           </v-avatar>
           <c-expand-btn v-model="expanded" />
@@ -20,17 +16,8 @@
             hide-icon
           />
           <v-expand-transition mode="out-in">
-            <c-layout
-              v-if="expanded"
-              class="px-2"
-              column
-            >
-              <v-tabs
-                v-model="activeTab"
-                color="primary"
-                align-tabs="center"
-                fixed-tabs
-              >
+            <c-layout v-if="expanded" class="px-2" column>
+              <v-tabs v-model="activeTab" color="primary" align-tabs="center" fixed-tabs>
                 <v-tab :value="0">
                   {{ $t('common.general') }}
                 </v-tab>
@@ -39,15 +26,15 @@
                 </v-tab>
               </v-tabs>
               <v-divider />
-              <v-window
-                v-model="activeTab"
-                class="pt-2"
-              >
+              <v-window v-model="activeTab" class="pt-2">
                 <v-window-item :value="0">
                   <scenario-action-card-general-tab :action="action" />
                 </v-window-item>
                 <v-window-item :value="1">
-                  <pre class="scenario-action-card__patterns">{{ patterns }}</pre>
+                  <pre class="scenario-action-card__patterns"
+                    >{{ patterns }}
+</pre
+                  >
                 </v-window-item>
               </v-window>
             </c-layout>
@@ -85,10 +72,14 @@ export default {
 
   computed: {
     patterns() {
-      return JSON.stringify({
-        alarm_pattern: this.action.alarm_pattern,
-        entity_pattern: this.action.entity_pattern,
-      }, null, 2);
+      return JSON.stringify(
+        {
+          alarm_pattern: this.action.alarm_pattern,
+          entity_pattern: this.action.entity_pattern,
+        },
+        null,
+        2,
+      );
     },
   },
 };

@@ -39,7 +39,7 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const updateModel = value => {
+    const updateModel = (value) => {
       emit('update:modelValue', value);
     };
 

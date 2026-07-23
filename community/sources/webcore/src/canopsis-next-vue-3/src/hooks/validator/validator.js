@@ -29,7 +29,11 @@ export const useValidator = () => {
 
         return error ? [error] : [];
       },
-      add: ({ field, msg }) => setFieldError(field, msg),
+      add: (errors) => {
+        const normalizedErrors = Array.isArray(errors) ? errors : [errors];
+
+        normalizedErrors.forEach(({ field, msg }) => setFieldError(field, msg));
+      },
       clear: () => setFormErrors({}),
       remove: (name) => setFieldError(name, undefined),
     },

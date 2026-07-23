@@ -4,7 +4,7 @@ import { isNotNestedPath, useField, validate } from 'vee-validate';
 
 import { VALIDATION_DELAY } from '@/constants/common';
 
-const toNumber = value => {
+const toNumber = (value) => {
   if (typeof value === 'symbol') {
     return NaN;
   }
@@ -12,18 +12,12 @@ const toNumber = value => {
   return Number(value);
 };
 
-const formatMessage = (message, params) => (
-  message.replace(/\{(\w+)}/g, (_, key) => params[key] ?? '')
-);
+const formatMessage = (message, params) =>
+  message.replace(/\{(\w+)}/g, (_, key) => params[key] ?? '');
 
-const getFieldLabel = props => (
-  props.validationLabel
-  || props.label
-  || props.name
-  || 'Field'
-);
+const getFieldLabel = (props) => props.validationLabel || props.label || props.name || 'Field';
 
-const normalizeValidationResult = result => {
+const normalizeValidationResult = (result) => {
   if (result === true || result === undefined) {
     return true;
   }
@@ -35,7 +29,7 @@ const normalizeValidationResult = result => {
   return result;
 };
 
-const isRuleDefined = value => !isNil(value) && value !== '';
+const isRuleDefined = (value) => !isNil(value) && value !== '';
 
 const getFieldMessage = (props, messageProp, params = {}) => {
   const message = props[messageProp];
@@ -66,7 +60,7 @@ const withMessage = (params, message, paramKey) => {
   return { ...params, message };
 };
 
-const buildFieldRules = props => {
+const buildFieldRules = (props) => {
   const rules = {};
 
   if (props.required) {
@@ -96,11 +90,7 @@ const buildFieldRules = props => {
     const min = toNumber(minNumericValue);
     const messageProp = isRuleDefined(props.minValue) ? 'minValueMessage' : 'minMessage';
 
-    rules.min_value = withMessage(
-      min,
-      getFieldMessage(props, messageProp, { min }),
-      'min',
-    );
+    rules.min_value = withMessage(min, getFieldMessage(props, messageProp, { min }), 'min');
   }
 
   const maxNumericValue = isRuleDefined(props.maxValue) ? props.maxValue : props.max;
@@ -108,11 +98,7 @@ const buildFieldRules = props => {
     const max = toNumber(maxNumericValue);
     const messageProp = isRuleDefined(props.maxValue) ? 'maxValueMessage' : 'maxMessage';
 
-    rules.max_value = withMessage(
-      max,
-      getFieldMessage(props, messageProp, { max }),
-      'max',
-    );
+    rules.max_value = withMessage(max, getFieldMessage(props, messageProp, { max }), 'max');
   }
 
   if (props.decimal) {
@@ -131,22 +117,13 @@ const buildFieldRules = props => {
   if (patternSource) {
     const messageProp = props.regex == null ? 'patternMessage' : 'regexMessage';
 
-    rules.regex = withMessage(
-      { regex: patternSource },
-      getFieldMessage(props, messageProp),
-    );
+    rules.regex = withMessage({ regex: patternSource }, getFieldMessage(props, messageProp));
   }
 
   if (typeof props.unique === 'function') {
-    rules.unique = withMessage(
-      { validate: props.unique },
-      getFieldMessage(props, 'uniqueMessage'),
-    );
+    rules.unique = withMessage({ validate: props.unique }, getFieldMessage(props, 'uniqueMessage'));
   } else if (Array.isArray(props.unique)) {
-    rules.unique = withMessage(
-      { values: props.unique },
-      getFieldMessage(props, 'uniqueMessage'),
-    );
+    rules.unique = withMessage({ values: props.unique }, getFieldMessage(props, 'uniqueMessage'));
   }
 
   return rules;
@@ -162,11 +139,11 @@ const createBuiltInRulesValidator = (rules, props) => async (value, ctx) => {
   return valid ? true : (errors[0] ?? true);
 };
 
-const createValidationRulesPipeline = props => {
+const createValidationRulesPipeline = (props) => {
   const builtInRules = buildFieldRules(props);
-  const customRules = props.validationRules.map(rule => async value => (
-    normalizeValidationResult(await rule(value, props))
-  ));
+  const customRules = props.validationRules.map(
+    (rule) => async (value) => normalizeValidationResult(await rule(value, props)),
+  );
 
   if (!customRules.length) {
     return builtInRules;
@@ -335,7 +312,7 @@ export const validationProps = {
 
 export const validationEmits = ['update:modelValue', 'blur'];
 
-const normalizeFlatFieldName = name => {
+const normalizeFlatFieldName = (name) => {
   if (!name || isNotNestedPath(name)) {
     return name;
   }
@@ -344,13 +321,9 @@ const normalizeFlatFieldName = name => {
 };
 
 export function useVuetifyFieldValidation(props, emit, attrs = {}) {
-  const fieldName = computed(() => normalizeFlatFieldName(
-    props.name
-    || attrs.name
-    || attrs.id
-    || props.label
-    || 'field',
-  ));
+  const fieldName = computed(() =>
+    normalizeFlatFieldName(props.name || attrs.name || attrs.id || props.label || 'field'),
+  );
 
   const fieldLabel = computed(() => getFieldLabel(props));
 
@@ -374,11 +347,12 @@ export function useVuetifyFieldValidation(props, emit, attrs = {}) {
 
   const debouncedValidate = computed(() => debounce(validateField, props.validationDelay));
 
-  const internalValidate = () => props.validationDelay ? debouncedValidate.value() : validateField();
+  const internalValidate = () =>
+    props.validationDelay ? debouncedValidate.value() : validateField();
 
   const inputValue = computed({
     get: () => (props.modelValue !== undefined ? props.modelValue : value.value),
-    set: nextValue => {
+    set: (nextValue) => {
       setValue(nextValue, false);
       emit('update:modelValue', nextValue);
 

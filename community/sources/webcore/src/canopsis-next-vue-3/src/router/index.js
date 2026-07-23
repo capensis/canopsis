@@ -30,6 +30,7 @@ const EventFiltersPage = () => import('@/views/exploitation/event-filters-page.v
 const FlappingRulesPage = () => import('@/views/exploitation/flapping-rules-page.vue');
 const IdleRulesPage = () => import('@/views/exploitation/idle-rules-page.vue');
 const ResolveRulesPage = () => import('@/views/exploitation/resolve-rules-page.vue');
+const RemediationPage = () => import('@/views/exploitation/remediation-page.vue');
 const ScenariosPage = () => import('@/views/exploitation/scenarios-page.vue');
 
 const protectedRoute = (meta = {}) => ({
@@ -458,7 +459,7 @@ const routes = [
         id: GROUPED_USER_PERMISSIONS.remediation,
       },
     }),
-    component: PlaceholderPage,
+    component: RemediationPage,
   },
   {
     path: ROUTES.playlist,

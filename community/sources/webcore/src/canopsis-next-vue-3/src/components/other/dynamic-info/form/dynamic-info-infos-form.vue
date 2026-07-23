@@ -1,33 +1,16 @@
 <template>
-  <c-layout
-    class="py-3"
-    gap="3"
-    column
-  >
-    <v-card
-      v-for="(field, index) in infosField"
-      :key="field.key"
-    >
+  <c-layout class="py-3" gap="3" column>
+    <v-card v-for="(field, index) in infosField" :key="field.key">
       <v-card-text>
-        <c-layout
-          gap="2"
-          column
-        >
-          <c-layout
-            align="center"
-            gap="2"
-          >
+        <c-layout gap="2" column>
+          <c-layout align="center" gap="2">
             <c-name-field
               v-model="field.name"
               :label="$t('common.name')"
               :name="`infos[${index}].name`"
               required
             />
-            <c-action-btn
-              v-if="infosField.length > 1"
-              type="delete"
-              @click="remove(index)"
-            />
+            <c-action-btn v-if="infosField.length > 1" type="delete" @click="remove(index)" />
           </c-layout>
 
           <c-select
@@ -49,19 +32,11 @@
     </v-card>
 
     <c-layout gap="2">
-      <v-btn
-        color="primary"
-        variant="outlined"
-        @click="addItem"
-      >
+      <v-btn color="primary" variant="outlined" @click="addItem">
         {{ $t('modals.createDynamicInfo.infosSection.addInfos') }}
       </v-btn>
 
-      <v-btn
-        color="primary"
-        variant="outlined"
-        @click="showAddInfosFromTemplateModal"
-      >
+      <v-btn color="primary" variant="outlined" @click="showAddInfosFromTemplateModal">
         {{ $t('modals.createDynamicInfo.infosSection.addInfosFromTemplate') }}
       </v-btn>
     </c-layout>
@@ -85,19 +60,25 @@ export default {
     const form = useFormContext();
     const infosField = form.array('infos');
 
-    const typeItems = computed(() => Object.values(DYNAMIC_INFO_INFORMATION_TYPES).map(type => ({
-      title: t(`dynamicInfo.informationTypes.${type}`),
-      value: type,
-    })));
+    const typeItems = computed(() =>
+      Object.values(DYNAMIC_INFO_INFORMATION_TYPES).map((type) => ({
+        title: t(`dynamicInfo.informationTypes.${type}`),
+        value: type,
+      })),
+    );
 
     const addItem = () => infosField.value.push(dynamicInfoInformationToForm());
-    const remove = index => infosField.value.splice(index, 1);
-    const showAddInfosFromTemplateModal = () => modals.show({
-      name: MODALS.addDynamicInfoInfosFromTemplate,
-      config: {
-        action: template => template.names.forEach(name => infosField.value.push(dynamicInfoInformationToForm({ name }))),
-      },
-    });
+    const remove = (index) => infosField.value.splice(index, 1);
+    const showAddInfosFromTemplateModal = () =>
+      modals.show({
+        name: MODALS.addDynamicInfoInfosFromTemplate,
+        config: {
+          action: (template) =>
+            template.names.forEach((name) =>
+              infosField.value.push(dynamicInfoInformationToForm({ name })),
+            ),
+        },
+      });
 
     return {
       infosField,

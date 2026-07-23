@@ -1,31 +1,34 @@
-import { storeToRefs } from 'pinia';
-
 import { useTemplateVarsStore } from '@/stores/modules/template-vars';
 
 /**
- * Custom hook for accessing and interacting with the template variables store module.
+ * Custom hook for accessing and interacting with template variables.
  *
- * @returns {Object} An object containing mapped state and actions for template vars.
+ * @returns {Object} Template vars actions.
  */
 export const useTemplateVars = () => {
   const templateVarsStore = useTemplateVarsStore();
-  const { items, pending } = storeToRefs(templateVarsStore);
 
   return {
-    templateVars: items,
-    templateVarsPending: pending,
-
-    fetchTemplateVarsList: templateVarsStore.fetchList,
-    fetchEntityServicesTemplateVarsWithoutStore: templateVarsStore.fetchEntityServicesVarsWithoutStore,
-    fetchEventFiltersTemplateVarsWithoutStore: templateVarsStore.fetchEventFiltersVarsWithoutStore,
-    fetchScenariosTemplateVarsWithoutStore: templateVarsStore.fetchScenariosVarsWithoutStore,
-    fetchLinkRulesTemplateVarsWithoutStore: templateVarsStore.fetchLinkRulesVarsWithoutStore,
-    fetchWidgetsTemplateVarsWithoutStore: templateVarsStore.fetchWidgetsVarsWithoutStore,
-    fetchDeclareTicketRulesTemplateVarsWithoutStore: templateVarsStore.fetchDeclareTicketRulesVarsWithoutStore,
-    fetchDynamicInfosTemplateVarsWithoutStore: templateVarsStore.fetchDynamicInfosVarsWithoutStore,
-    fetchInstructionsTemplateVarsWithoutStore: templateVarsStore.fetchInstructionsVarsWithoutStore,
-    fetchJobsTemplateVarsWithoutStore: templateVarsStore.fetchJobsVarsWithoutStore,
-    fetchMetaAlarmRulesTemplateVarsWithoutStore: templateVarsStore.fetchMetaAlarmRulesVarsWithoutStore,
-    fetchWebhookTokenRulesTemplateVarsWithoutStore: templateVarsStore.fetchWebhookTokenRulesVarsWithoutStore,
+    fetchTemplateVarsList: templateVarsStore.fetchTemplateVarsList,
+    fetchEntityServicesTemplateVarsWithoutStore:
+      templateVarsStore.fetchEntityServicesTemplateVarsWithoutStore,
+    fetchEventFiltersTemplateVarsWithoutStore:
+      templateVarsStore.fetchEventFiltersTemplateVarsWithoutStore,
+    fetchScenariosTemplateVarsWithoutStore:
+      templateVarsStore.fetchScenariosTemplateVarsWithoutStore,
+    fetchLinkRulesTemplateVarsWithoutStore:
+      templateVarsStore.fetchLinkRulesTemplateVarsWithoutStore,
+    fetchWidgetsTemplateVarsWithoutStore: templateVarsStore.fetchWidgetsTemplateVarsWithoutStore,
+    fetchDeclareTicketRulesTemplateVarsWithoutStore:
+      templateVarsStore.fetchDeclareTicketRulesTemplateVarsWithoutStore,
+    fetchDynamicInfosTemplateVarsWithoutStore:
+      templateVarsStore.fetchDynamicInfosTemplateVarsWithoutStore,
+    fetchInstructionsTemplateVarsWithoutStore:
+      templateVarsStore.fetchInstructionsTemplateVarsWithoutStore,
+    fetchJobsTemplateVarsWithoutStore: templateVarsStore.fetchJobsTemplateVarsWithoutStore,
+    fetchMetaAlarmRulesTemplateVarsWithoutStore:
+      templateVarsStore.fetchMetaAlarmRulesTemplateVarsWithoutStore,
+    fetchWebhookTokenRulesTemplateVarsWithoutStore:
+      templateVarsStore.fetchWebhookTokenRulesTemplateVarsWithoutStore,
   };
 };

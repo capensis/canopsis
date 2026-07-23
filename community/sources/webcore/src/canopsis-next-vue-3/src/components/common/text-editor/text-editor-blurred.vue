@@ -3,19 +3,10 @@
     :class="['v-input--is-dirty', { 'v-input--is-disabled': disabled }]"
     class="v-input v-textarea v-text-field v-text-field--box v-text-field--enclosed v-input--is-label-active text-editor-blurred"
   >
-    <div
-      class="v-input__control"
-      @click="$emit('click', $event)"
-    >
+    <div class="v-input__control" @click="$emit('click', $event)">
       <div class="v-input__slot">
-        <div
-          class="v-text-field__slot"
-          @click="wrapperClickHandler"
-        >
-          <label
-            :class="{ 'v-label--active': value }"
-            class="v-label"
-          >
+        <div class="v-text-field__slot" @click="wrapperClickHandler">
+          <label :class="{ 'v-label--active': value }" class="v-label">
             {{ label }}
           </label>
 
@@ -26,14 +17,8 @@
         </div>
       </div>
 
-      <div
-        v-if="!hideDetails"
-        class="v-text-field__details"
-      >
-        <v-messages
-          :messages="errorMessages"
-          color="error"
-        />
+      <div v-if="!hideDetails" class="v-text-field__details">
+        <v-messages :messages="errorMessages" color="error" />
       </div>
     </div>
   </div>

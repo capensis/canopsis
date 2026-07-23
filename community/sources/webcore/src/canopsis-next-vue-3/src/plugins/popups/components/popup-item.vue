@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  watch,
-} from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY, POPUP_TICK_DELAY } from '@/config';
 
@@ -109,7 +103,7 @@ const removeWithTimeout = () => {
   }, VUETIFY_ANIMATION_DELAY);
 };
 
-watch(visible, value => {
+watch(visible, (value) => {
   if (!value) {
     removeWithTimeout();
   }
@@ -140,23 +134,16 @@ onBeforeUnmount(() => {
       @mouseenter="pauseProgress"
       @mouseleave="playProgress"
     >
-    <div
-      v-if="hasAutoClose"
-      class="progress"
-    >
-      <div
-        :style="progressLineStyle"
-        :class="progressLineClass"
-        class="progress-line"
-      />
-    </div>
+      <div v-if="hasAutoClose" class="progress">
+        <div :style="progressLineStyle" :class="progressLineClass" class="progress-line" />
+      </div>
 
-    <c-compiled-template
-      :template="text"
-      :context="context"
-      :template-props="context"
-      class="pre-line"
-    />
+      <c-compiled-template
+        :template="text"
+        :context="context"
+        :template-props="context"
+        class="pre-line"
+      />
     </v-alert>
   </v-fade-transition>
 </template>
