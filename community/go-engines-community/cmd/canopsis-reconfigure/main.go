@@ -20,11 +20,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo/mongosh"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/transition"
 	petname "github.com/dustinkirkland/golang-petname"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	pgxdriver "github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -36,7 +38,10 @@ func main() {
 	defer stop()
 
 	f := flags{}
-	f.Parse()
+	if err := f.Parse(); err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, err)
+		os.Exit(2)
+	}
 
 	if f.version {
 		canopsis.PrintVersionInfo()
@@ -49,53 +54,41 @@ func main() {
 		logger.Fatal().Err(err).Msg("failed to parse config")
 	}
 
-	err = GracefulStart(ctx, f.modeMigratePostgres, f.modeMigrateTechPostgres, logger)
+	err = GracefulStart(ctx, f.diagnoseMigrations, f.modeMigratePostgres, f.modeMigrateTechPostgres, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to open one of required sessions")
 	}
 
-	err = initRabbitMQ(conf, logger)
-	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to initialize rabbitmq")
-	}
+	var client mongo.DbClient
 
-	// remove timeout to not limit long migrations
-	client, err := mongo.NewClient(ctx, mongo.ClientOptions{
-		NoClientTimeout: true,
-	})
-	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to connect to mongo")
-	}
-	defer func() {
-		err = client.Disconnect(context.Background())
+	if !f.diagnoseMigrations {
+		err = initRabbitMQ(conf, logger)
 		if err != nil {
-			logger.Err(err).Msg("failed to close mongo")
+			logger.Fatal().Err(err).Msg("failed to initialize rabbitmq")
 		}
-	}()
 
-	err = applyMongoFixtures(ctx, f, client, logger)
-	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to run mongo fixtures")
+		var deferFunc func()
+		client, deferFunc, err = bootstrapMongo(ctx, conf, f, logger)
+		if deferFunc != nil {
+			defer deferFunc()
+		}
+		if err != nil {
+			logger.Fatal().Err(err).Msg("failed to prepare mongo before migrations")
+		}
 	}
 
-	err = updateMongoConfig(ctx, conf, client)
-	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to update config in mongo")
-	}
-
-	err = migrateMongo(ctx, f, client, logger)
-	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to run mongo migrations")
-	}
-
-	err = migratePostgres(f, logger)
+	err = migratePostgres(ctx, f, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to run postgres migrations")
 	}
 
-	err = migrateTechPostgres(f, logger)
+	err = migrateTechPostgres(ctx, f, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to run tech postgres migrations")
+	}
+
+	if f.diagnoseMigrations {
+		return
 	}
 
 	err = generateSerialName(ctx, logger, f.forceGenerateSerialName)
@@ -313,12 +306,45 @@ func migrateMongo(ctx context.Context, f flags, dbClient mongo.DbClient, logger 
 	return nil
 }
 
-func migratePostgres(f flags, logger zerolog.Logger) error {
+func bootstrapMongo(ctx context.Context, conf Conf, f flags, logger zerolog.Logger) (mongo.DbClient, func(), error) {
+	// remove timeout to not limit long migrations
+	client, err := mongo.NewClient(ctx, mongo.ClientOptions{
+		NoClientTimeout: true,
+	})
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
+	}
+
+	deferFunc := func() {
+		err = client.Disconnect(context.WithoutCancel(ctx))
+		if err != nil {
+			logger.Err(err).Msg("failed to close MongoDB client")
+		}
+	}
+	err = applyMongoFixtures(ctx, f, client, logger)
+	if err != nil {
+		return nil, deferFunc, fmt.Errorf("failed to run MongoDB fixtures: %w", err)
+	}
+
+	err = updateMongoConfig(ctx, conf, client)
+	if err != nil {
+		return nil, deferFunc, fmt.Errorf("failed to update MongoDB config: %w", err)
+	}
+
+	err = migrateMongo(ctx, f, client, logger)
+	if err != nil {
+		return nil, deferFunc, fmt.Errorf("failed to run MongoDB migrations: %w", err)
+	}
+
+	return client, deferFunc, nil
+}
+
+func migratePostgres(ctx context.Context, f flags, logger zerolog.Logger) error {
 	if !f.modeMigratePostgres {
 		return nil
 	}
 	if f.postgresMigrationDirectory == "" {
-		return errors.New("-postgres-migration-directory is not set")
+		return errors.New(flagRef(flagPostgresMigrationDirectory) + " is not set")
 	}
 
 	logger.Info().Msg("start postgres migrations")
@@ -328,7 +354,22 @@ func migratePostgres(f flags, logger zerolog.Logger) error {
 		return err
 	}
 
-	err = runPostgresMigrations(f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps, connStr)
+	err = runPostgresMigrations(ctx, postgresMigrationConfig{
+		dbLabel:            "postgres",
+		unsafeFlag:         flagPostgresMigrationUnsafe,
+		stepsFlag:          flagPostgresMigrationSteps,
+		migrationDirectory: f.postgresMigrationDirectory,
+		mode:               f.postgresMigrationMode,
+		steps:              f.postgresMigrationSteps,
+		connStr:            connStr,
+		unsafe:             f.postgresUnsafeMigrations,
+		diagnose:           f.diagnoseMigrations,
+		recovery: recoveryRequest{
+			forceVersion:    f.postgresMigrationForceVersion,
+			forceClearDirty: f.postgresMigrationForceClearDirty,
+		},
+		directUpgradeGuard: transition.PostgresDirectUpgradeGuard,
+	}, logger)
 	if err != nil {
 		return err
 	}
@@ -337,12 +378,12 @@ func migratePostgres(f flags, logger zerolog.Logger) error {
 	return nil
 }
 
-func migrateTechPostgres(f flags, logger zerolog.Logger) error {
+func migrateTechPostgres(ctx context.Context, f flags, logger zerolog.Logger) error {
 	if !f.modeMigrateTechPostgres {
 		return nil
 	}
 	if f.techPostgresMigrationDirectory == "" {
-		return errors.New("-tech-postgres-migration-directory is not set")
+		return errors.New(flagRef(flagTechPostgresMigrationDirectory) + " is not set")
 	}
 
 	logger.Info().Msg("start tech postgres migrations")
@@ -352,7 +393,22 @@ func migrateTechPostgres(f flags, logger zerolog.Logger) error {
 		return err
 	}
 
-	err = runPostgresMigrations(f.techPostgresMigrationDirectory, f.techPostgresMigrationMode, f.techPostgresMigrationSteps, connStr)
+	err = runPostgresMigrations(ctx, postgresMigrationConfig{
+		dbLabel:            "tech postgres",
+		unsafeFlag:         flagTechPostgresMigrationUnsafe,
+		stepsFlag:          flagTechPostgresMigrationSteps,
+		migrationDirectory: f.techPostgresMigrationDirectory,
+		mode:               f.techPostgresMigrationMode,
+		steps:              f.techPostgresMigrationSteps,
+		connStr:            connStr,
+		unsafe:             f.techPostgresUnsafeMigrations,
+		diagnose:           f.diagnoseMigrations,
+		recovery: recoveryRequest{
+			forceVersion:    f.techPostgresMigrationForceVersion,
+			forceClearDirty: f.techPostgresMigrationForceClearDirty,
+		},
+		directUpgradeGuard: transition.TechPostgresDirectUpgradeGuard,
+	}, logger)
 	if err != nil {
 		return err
 	}
@@ -370,6 +426,7 @@ func generateSerialName(ctx context.Context, logger zerolog.Logger, forceUpdate 
 	if err != nil {
 		return err
 	}
+	defer pool.Close()
 
 	serialName := ""
 
@@ -401,41 +458,180 @@ func generateSerialName(ctx context.Context, logger zerolog.Logger, forceUpdate 
 	return nil
 }
 
-func runPostgresMigrations(migrationDirectory, mode string, steps int, connStr string) error {
-	p := &pgx.Postgres{}
-	driver, err := p.Open(connStr)
-	if err != nil {
-		return err
+type recoveryRequest struct {
+	forceVersion    int
+	forceClearDirty bool
+}
+
+func (r recoveryRequest) requested() bool {
+	return r.forceVersion >= 0 || r.forceClearDirty
+}
+
+type postgresMigrationConfig struct {
+	dbLabel            string
+	unsafeFlag         string
+	stepsFlag          string
+	migrationDirectory string
+	mode               string
+	steps              int
+	connStr            string
+	unsafe             bool
+	diagnose           bool
+	recovery           recoveryRequest
+	directUpgradeGuard transition.DirectUpgradeGuard
+}
+
+func runPostgresMigrationRecovery(m *migrate.Migrate, state transition.MigrationState, request recoveryRequest, dbLabel string, logger zerolog.Logger) error {
+	if !state.HasVersion || !state.Dirty {
+		return fmt.Errorf("%s recovery requires a dirty schema_migrations state", dbLabel)
+	}
+	if request.forceVersion < 0 {
+		return fmt.Errorf("%s recovery requires a non-negative forced version", dbLabel)
 	}
 
-	m, err := migrate.NewWithDatabaseInstance("file://"+migrationDirectory, "pgx", driver)
-	if err != nil {
-		return err
+	logger.Warn().
+		Str("database", dbLabel).
+		Uint("current_version", state.Version).
+		Bool("dirty", state.Dirty).
+		Int("force_version", request.forceVersion).
+		Msg("running migration recovery: force-set version and clear dirty state")
+
+	if err := m.Force(request.forceVersion); err != nil {
+		return fmt.Errorf("forcing %s migration state to %d and clearing dirty flag: %w", dbLabel, request.forceVersion, err)
 	}
 
-	if steps < 0 {
+	after, err := transition.LoadMigrationState(m)
+	if err != nil {
+		return fmt.Errorf("reading %s migration state after recovery: %w", dbLabel, err)
+	}
+	if !after.HasVersion {
+		return fmt.Errorf("%s recovery post-check failed: no migration version recorded after Force()", dbLabel)
+	}
+	if after.Version != uint(request.forceVersion) || after.Dirty {
+		return fmt.Errorf(
+			"%s recovery post-check failed: got version=%d dirty=%v, want version=%d dirty=false",
+			dbLabel,
+			after.Version,
+			after.Dirty,
+			request.forceVersion,
+		)
+	}
+
+	logger.Info().
+		Str("database", dbLabel).
+		Uint("current_version", after.Version).
+		Bool("dirty", after.Dirty).
+		Msg("migration recovery completed; rerun " + flagRef(flagDiagnoseMigrations) + " before normal migration execution")
+
+	return nil
+}
+
+func runPostgresMigrations(ctx context.Context, cfg postgresMigrationConfig, logger zerolog.Logger) error {
+	if cfg.steps < 0 {
 		return errors.New("postgres migration steps should be >= 0")
 	}
 
-	switch mode {
+	p := &pgx.Postgres{}
+	driver, err := p.Open(cfg.connStr)
+	if err != nil {
+		return err
+	}
+
+	m, err := migrate.NewWithDatabaseInstance("file://"+cfg.migrationDirectory, "pgx", driver)
+	if err != nil {
+		return err
+	}
+
+	// Read the current schema_migrations state before any operation.
+	state, err := transition.LoadMigrationState(m)
+	if err != nil {
+		return err
+	}
+
+	if cfg.recovery.requested() {
+		return runPostgresMigrationRecovery(m, state, cfg.recovery, cfg.dbLabel, logger)
+	}
+
+	// Open a dedicated pool for transition registry/history queries.
+	pool, poolErr := pgxpool.New(ctx, cfg.connStr)
+	if poolErr != nil {
+		return fmt.Errorf("opening transition pool: %w", poolErr)
+	}
+	defer pool.Close()
+
+	if cfg.diagnose {
+		return transition.DiagnoseMigrationState(ctx, pool, state, cfg.migrationDirectory, cfg.directUpgradeGuard, cfg.unsafe, logger)
+	}
+
+	// Condition 1: dirty state blocks all mutating migration operations.
+	if state.HasVersion && state.Dirty {
+		return fmt.Errorf("postgres migration state is dirty at version %d: manual recovery required before re-running", state.Version)
+	}
+
+	switch cfg.mode {
 	case "up":
-		if steps != 0 {
-			err = m.Steps(steps)
+		// wrapper function computing transition plan and printing diagnostics
+		plan, dir, err := transition.UpTransitionPreflight(ctx, pool, state, cfg.migrationDirectory, cfg.unsafe, cfg.directUpgradeGuard, logger)
+		if err != nil {
+			return err
+		}
+		// Apply Force() if the plan requires it.
+		if plan.NeedsForce {
+			if cfg.steps != 0 {
+				return fmt.Errorf(
+					"step-based migration cannot be used when a cross-line Force() transition is required"+
+						" (source line %q, checkpoint %d): omit %s to proceed",
+					plan.SourceReleaseLine, plan.ForceVersion,
+					flagRef(cfg.stepsFlag),
+				)
+			}
+			if err = m.Force(int(plan.ForceVersion)); err != nil {
+				return fmt.Errorf("forcing migration state to checkpoint %d: %w", plan.ForceVersion, err)
+			}
+		}
+
+		// execute the requested migration steps.
+		if cfg.steps != 0 {
+			err = m.Steps(cfg.steps)
 		} else {
 			err = m.Up()
 		}
+		if err != nil && !errors.Is(err, migrate.ErrNoChange) {
+			return err
+		}
+
+		// Record the cross-line transition after a successful Force() + Up().
+		if plan.NeedsForce {
+			if recordErr := transition.RecordTransitionHistory(ctx, pool, state, plan, dir); recordErr != nil {
+				// intentionally log and continue rather than rolling back a completed migration.
+				logger.Err(recordErr).Msg("transition history write failed; upgrade succeeded but Down() will not be blocked by history check")
+			}
+		}
+
 	case "down":
-		if steps != 0 {
-			err = m.Steps(-steps)
+		// block Down() if a cross-line transition has found
+		// unsafe flag bypasses this check for recovery purposes
+		if !cfg.unsafe {
+			history, histErr := transition.LoadLatestTransitionHistory(ctx, pool)
+			if histErr != nil {
+				return histErr
+			}
+			if history != nil {
+				return history.NewDownMigrationBlockedError(flagRef(cfg.unsafeFlag))
+			}
+		}
+
+		if cfg.steps != 0 {
+			err = m.Steps(-cfg.steps)
 		} else {
 			err = m.Down()
 		}
+		if err != nil && !errors.Is(err, migrate.ErrNoChange) {
+			return err
+		}
+
 	default:
 		return errors.New("postgres migration mode should be up or down")
-	}
-
-	if !errors.Is(err, migrate.ErrNoChange) {
-		return err
 	}
 
 	return nil
