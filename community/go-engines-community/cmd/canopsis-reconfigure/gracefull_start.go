@@ -20,7 +20,7 @@ const (
 	DefaultWaitFirstAttempt = 10
 )
 
-func GracefulStart(ctx context.Context, withPostgres, withTechPostgres bool, logger zerolog.Logger) error {
+func GracefulStart(ctx context.Context, diagnosePostgresMigration, withPostgres, withTechPostgres bool, logger zerolog.Logger) error {
 	maxRetry := getEnv(EnvCpsStartMaxRetry, DefaultMaxRetry, logger)
 	retryDelay := time.Second * time.Duration(getEnv(EnvCpsStartRetryDelay, DefaultRetryDelay, logger))
 	waitFirstAttempt := time.Second * time.Duration(getEnv(EnvCpsStartWaitFirst, DefaultWaitFirstAttempt, logger))
@@ -35,7 +35,7 @@ func GracefulStart(ctx context.Context, withPostgres, withTechPostgres bool, log
 	case <-t.C:
 	}
 
-	return ready.CheckAll(ctx, retryDelay, maxRetry, withPostgres, withTechPostgres, logger)
+	return ready.CheckAll(ctx, retryDelay, maxRetry, diagnosePostgresMigration, withPostgres, withTechPostgres, logger)
 }
 
 func getEnv(paramName string, defaultValue int, logger zerolog.Logger) int {
