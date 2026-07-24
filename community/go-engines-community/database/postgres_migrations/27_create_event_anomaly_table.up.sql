@@ -24,10 +24,17 @@ FROM event_anomaly
 GROUP BY time_bucket('1 hour', time), connector_name
     WITH NO DATA;
 
-SELECT add_continuous_aggregate_policy('event_anomaly_hourly', '3 hours', '1 hour', '1 hour');
-SELECT add_retention_policy('event_anomaly', INTERVAL '24 hours');
+SELECT add_continuous_aggregate_policy(
+           'event_anomaly_hourly',
+           start_offset => INTERVAL '3 hours',
+           end_offset => INTERVAL '1 hour',
+           schedule_interval => INTERVAL '1 hour',
+           if_not_exists => TRUE
+       );
+SELECT add_retention_policy('event_anomaly', drop_after => INTERVAL '24 hours', if_not_exists => TRUE);
 
 ALTER MATERIALIZED VIEW event_anomaly_hourly SET (timescaledb.compress = true);
-SELECT add_compression_policy('event_anomaly_hourly', compress_after=>'1 day'::interval);
+SELECT add_compression_policy('event_anomaly_hourly', compress_after => '1 day'::interval, if_not_exists => TRUE);
+SELECT add_retention_policy('event_anomaly_hourly', drop_after => INTERVAL '14 days', if_not_exists => TRUE);
 
 END;
