@@ -5,6 +5,7 @@
       v-field="value"
       :text-label="$t('declareTicket.alarmFieldName')"
       :value-label="$t('declareTicket.responseField')"
+      :add-button-label="$t('common.addCustomField')"
       :name="name"
       :disabled="disabled"
       text-required

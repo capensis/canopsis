@@ -1,15 +1,13 @@
 <template>
-  <v-layout column>
+  <v-layout class="gap-3" column>
     <c-name-field
       v-field="form.name"
       autofocus
       required
     />
-    <v-layout>
-      <v-flex
-        class="pr-3"
-        xs6
-      >
+
+    <c-form-block>
+      <c-form-block-row :label="$t('common.type')">
         <v-select
           v-validate="'required'"
           :value="form.type"
@@ -22,8 +20,9 @@
           return-object
           @input="updateType"
         />
-      </v-flex>
-      <v-flex xs6>
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('modals.createRemediationConfiguration.fields.host')">
         <v-text-field
           v-field="form.host"
           v-validate="'required|url'"
@@ -31,40 +30,54 @@
           :error-messages="errors.collect('host')"
           name="host"
         />
-      </v-flex>
-    </v-layout>
-    <v-text-field
-      v-field="form.auth_token"
-      v-validate="'required'"
-      :label="$t('modals.createRemediationConfiguration.fields.token')"
-      :error-messages="errors.collect('token')"
-      name="token"
-    />
-    <c-name-field
-      v-if="isShownUserNameField"
-      v-field="form.auth_username"
-      :label="$t('common.username')"
-      name="username"
-    />
-    <c-enabled-field
-      v-field="form.skip_verify"
-      :label="$t('common.request.skipVerify')"
-    />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('modals.createRemediationConfiguration.fields.token')">
+        <v-text-field
+          v-field="form.auth_token"
+          v-validate="'required'"
+          :label="$t('modals.createRemediationConfiguration.fields.token')"
+          :error-messages="errors.collect('token')"
+          name="token"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row
+        v-if="isShownUserNameField"
+        :label="$t('common.username')"
+      >
+        <c-name-field
+          v-field="form.auth_username"
+          :label="$t('common.username')"
+          name="username"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row
+        :label="$t('common.request.skipVerify')"
+        align-center
+      >
+        <c-enabled-field
+          v-field="form.skip_verify"
+          :label="$t('common.request.skipVerify')"
+          hide-details
+          no-margin
+        />
+      </c-form-block-row>
+    </c-form-block>
   </v-layout>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { computed } from 'vue';
 
 import { isJobTypeIncludesUserName } from '@/helpers/entities/remediation/configuration/form';
 
-import { formMixin } from '@/mixins/form';
-
-const { mapGetters } = createNamespacedHelpers('info');
+import { useInfo } from '@/hooks/store/modules/info';
+import { useModelField } from '@/hooks/form/model-field';
 
 export default {
   inject: ['$validator'],
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -75,28 +88,31 @@ export default {
       default: () => ({}),
     },
   },
-  computed: {
-    ...mapGetters(['remediationJobConfigTypes']),
+  setup(props, { emit }) {
+    const { remediationJobConfigTypes } = useInfo();
+    const { updateModel } = useModelField(props, emit);
 
-    typeObject() {
-      return this.remediationJobConfigTypes.find(({ name }) => name === this.form.type);
-    },
+    const typeObject = computed(() => remediationJobConfigTypes.value.find(
+      ({ name }) => name === props.form.type,
+    ));
 
-    isShownUserNameField() {
-      return isJobTypeIncludesUserName(this.typeObject);
-    },
-  },
+    const isShownUserNameField = computed(() => isJobTypeIncludesUserName(typeObject.value));
 
-  methods: {
-    updateType(type) {
+    const updateType = (type) => {
       const hasUserName = isJobTypeIncludesUserName(type);
 
-      this.updateModel({
-        ...this.form,
+      updateModel({
+        ...props.form,
         type: type.name,
-        auth_username: hasUserName ? this.form.auth_username : '',
+        auth_username: hasUserName ? props.form.auth_username : '',
       });
-    },
+    };
+
+    return {
+      remediationJobConfigTypes,
+      isShownUserNameField,
+      updateType,
+    };
   },
 };
 </script>
