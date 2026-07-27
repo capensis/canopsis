@@ -6,7 +6,6 @@
         v-validate="nameRules"
         :error-messages="errors.collect(nameFieldName)"
         :name="nameFieldName"
-        required
       />
       <v-flex v-if="removable" shrink>
         <div>

@@ -3,6 +3,7 @@
     v-field="patterns"
     :entity-attributes="entityAttributes"
     :pending="pending"
+    some-required
     with-entity
     entity-counters-type
   />

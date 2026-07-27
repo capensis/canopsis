@@ -25,21 +25,21 @@
       </template>
 
       <template #additional="{ setRef, templateVars }">
-        <remediation-instruction-steps-form
-          v-if="isManualType"
-          v-field="form.steps"
-          :ref="setRef"
-          :disabled="disabled"
-          :template-vars="templateVars"
-          class="mt-3"
-        />
-        <remediation-instruction-jobs-form
-          v-else
-          v-field="form.jobs"
-          :ref="setRef"
-          :disabled="disabled"
-          class="mt-3"
-        />
+        <div :ref="setRef">
+          <remediation-instruction-steps-form
+            v-if="isManualType"
+            v-field="form.steps"
+            :disabled="disabled"
+            :template-vars="templateVars"
+            class="mt-3"
+          />
+          <remediation-instruction-jobs-form
+            v-else
+            v-field="form.jobs"
+            :disabled="disabled"
+            class="mt-3"
+          />
+        </div>
       </template>
 
       <template #patterns="{ setRef }">

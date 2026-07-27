@@ -1,7 +1,7 @@
 <template>
   <div class="position-relative">
     <c-progress-overlay :pending="pending" />
-    <v-tabs v-model="activeTab" fixed-tabs>
+    <v-tabs v-model="activeTab" centered>
       <v-tab>{{ $t('common.general') }}</v-tab>
       <template-testing-test-variables-tab v-if="hasAccess" :disabled="isEmptyVariablesFields" />
 
