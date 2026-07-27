@@ -25,6 +25,7 @@
           name="file"
           required
           with-files-list
+          hide-details
           @change="changeFiles"
         >
           <template #activator="{ on, disabled }">

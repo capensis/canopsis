@@ -24,7 +24,7 @@ export const useValidationElementChildrenFields = (parent) => {
     }
 
     const node = unref(parent);
-    const nodeEl = node?.$el;
+    const nodeEl = node?.$el || node;
 
     return validator.fields.items.filter(({ vm, el }) => (
       (nodeEl && nodeEl === el) || nodeEl?.contains?.(el) || isParent(vm, node)
