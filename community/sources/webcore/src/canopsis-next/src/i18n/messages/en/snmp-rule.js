@@ -23,7 +23,7 @@ export default {
   massEnable: 'Enable SNMP rules',
   massDisable: 'Disable SNMP rules',
   states: {
-    [SNMP_TEMPLATE_STATE_STATES.info]: 'Info',
+    [SNMP_TEMPLATE_STATE_STATES.info]: 'OK',
     [SNMP_TEMPLATE_STATE_STATES.minor]: 'Minor',
     [SNMP_TEMPLATE_STATE_STATES.major]: 'Major',
     [SNMP_TEMPLATE_STATE_STATES.critical]: 'Critical',

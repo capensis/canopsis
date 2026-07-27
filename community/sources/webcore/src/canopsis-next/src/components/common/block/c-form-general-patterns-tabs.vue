@@ -192,7 +192,7 @@ export default {
 
     const setGeneralRef = refElement => generalElement.value = refElement;
     const setPatternsRef = refElement => patternsElement.value = refElement;
-    const setAdditionalRef = refElement => additionalElement.value = refElement;
+    const setAdditionalRef = refElement => (additionalElement.value = refElement);
 
     const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
     const { hasChildrenError: hasPatternsError } = useValidationElementChildren(patternsElement);

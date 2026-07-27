@@ -20,6 +20,7 @@
         v-if="withAlarm"
         :expanded="expanded.alarm"
         :title="alarmTitle || $t('common.alarmPatterns')"
+        :outline-color="alarmPatternOutlineColor"
       >
         <c-alarm-patterns-field
           v-field="value.alarm_pattern"
@@ -38,6 +39,7 @@
         v-if="withEntity"
         :expanded="expanded.entity"
         :title="entityTitle || $t('common.entityPatterns')"
+        :outline-color="entityPatternOutlineColor"
       >
         <pattern-field-suggestions-wrapper
           :suggestions="optimizationSuggestions"
@@ -69,6 +71,7 @@
         v-if="withPbehavior"
         :expanded="expanded.pbehavior"
         :title="pbehaviorTitle || $t('common.pbehaviorPatterns')"
+        :outline-color="pbehaviorPatternOutlineColor"
       >
         <c-pbehavior-patterns-field
           v-field="value.pbehavior_pattern"
@@ -88,6 +91,7 @@
         v-if="withEvent"
         :expanded="expanded.event"
         :title="eventTitle || $t('common.eventPatterns')"
+        :outline-color="eventPatternOutlineColor"
       >
         <c-event-filter-patterns-field
           v-field="value.event_pattern"
@@ -105,6 +109,7 @@
         v-if="withTotalEntity"
         :expanded="expanded.totalEntity"
         :title="totalEntityTitle || $t('common.totalEntityPatterns')"
+        :outline-color="totalEntityPatternOutlineColor"
       >
         <c-entity-patterns-field
           v-field="value.total_entity_pattern"
@@ -123,6 +128,7 @@
         v-if="withServiceWeather"
         :expanded="expanded.serviceWeather"
         :title="serviceWeatherTitle || $t('common.serviceWeatherPatterns')"
+        :outline-color="serviceWeatherPatternOutlineColor"
       >
         <c-service-weather-patterns-field
           v-field="value.weather_service_pattern"
@@ -194,9 +200,14 @@
 import { computed, ref, toRef, watch } from 'vue';
 import { isString } from 'lodash';
 
+import { CSS_COLORS_VARS } from '@/config';
 import { PATTERNS_FIELDS } from '@/constants';
 
-import { isValidPatternRule, formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
+import {
+  isValidPatternRule,
+  formGroupsToPatternRules,
+  formGroupsToPatternRulesQuery,
+} from '@/helpers/entities/pattern/form';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 import { usePatternCountAlarmsModal } from './hooks/pattern-count-alarms-modal';
@@ -527,6 +538,29 @@ export default {
     );
 
     /**
+     * Gets the outline color for a pattern field based on validation state
+     *
+     * @param {string} name - Pattern field name
+     * @returns {string|undefined} CSS color variable or undefined
+     */
+    const getPatternOutlineColor = (name) => {
+      const rules = formGroupsToPatternRules(props.value[name]?.groups ?? []);
+
+      if (!rules.length) {
+        return undefined;
+      }
+
+      return isValidPatternRules(rules) ? 'var(--v-success-lighten1)' : CSS_COLORS_VARS.error;
+    };
+
+    const alarmPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.alarm));
+    const entityPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.entity));
+    const eventPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.event));
+    const totalEntityPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.totalEntity));
+    const pbehaviorPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.pbehavior));
+    const serviceWeatherPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.serviceWeather));
+
+    /**
      * Shows alarms modal filtered by current patterns
      */
     const showPatternAlarms = () => showPatternAlarmsModal({
@@ -590,7 +624,12 @@ export default {
       patterns,
       allOverLimit,
       allCount,
-      isValidPatternRules,
+      alarmPatternOutlineColor,
+      entityPatternOutlineColor,
+      pbehaviorPatternOutlineColor,
+      eventPatternOutlineColor,
+      totalEntityPatternOutlineColor,
+      serviceWeatherPatternOutlineColor,
       showPatternAlarms,
       showPatternEntities,
       checkFilter,

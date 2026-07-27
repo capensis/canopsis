@@ -3,7 +3,6 @@
     v-model="localExpanded"
     :style="panelStyle"
     :disabled="disabled"
-    :class="panelClass"
     class="c-collapse-panel elevation-2"
     accordion
   >
@@ -42,6 +41,8 @@
 <script>
 import { ref, computed, watch } from 'vue';
 import { Validator } from 'vee-validate';
+
+import { CSS_COLORS_VARS } from '@/config';
 
 import { useValidationChildren } from '@/hooks/validator/validation-children';
 
@@ -86,13 +87,10 @@ export default {
 
     const { hasChildrenError } = useValidationChildren();
 
-    const panelStyle = computed(() => ({ outlineColor: props.outlineColor }));
     const panelContentStyle = computed(() => ({ backgroundColor: props.color }));
     const hasError = computed(() => props.error || hasChildrenError.value);
 
-    const panelClass = computed(() => ({
-      'c-collapse-panel--error': hasError.value,
-    }));
+    const panelStyle = computed(() => ({ outlineColor: hasError.value ? CSS_COLORS_VARS.error : props.outlineColor }));
 
     watch(() => props.expanded, expanded => localExpanded.value = expanded ? 0 : null);
 
@@ -101,7 +99,6 @@ export default {
       panelStyle,
       panelContentStyle,
       hasError,
-      panelClass,
     };
   },
 };
@@ -113,10 +110,6 @@ export default {
 
   outline: 2px solid transparent;
   border-radius: var(--c-collapse-panel-border-radius) !important;
-
-  &--error {
-    outline-color: var(--v-error-base);
-  }
 
   &__panel {
     overflow: hidden;

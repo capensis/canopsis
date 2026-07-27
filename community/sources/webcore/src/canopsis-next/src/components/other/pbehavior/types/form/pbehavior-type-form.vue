@@ -45,7 +45,7 @@
       <c-form-block-row :label="$t('modals.createPbehaviorType.fields.iconName')">
         <c-icon-field
           v-field="form.icon_name"
-          :placeholder="$t('modals.createPbehaviorType.iconNamePlaceholder')"
+          :label="$t('modals.createPbehaviorType.iconNamePlaceholder')"
           :disabled="onlyColor"
           :required="!onlyColor"
         >

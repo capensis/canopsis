@@ -173,7 +173,7 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with default props 1`] = 
 
 exports[`c-collapse-panel Renders \`c-collapse-panel\` with errors 1`] = `
 <div
-  class="c-collapse-panel elevation-2 v-item-group theme--light v-expansion-panels v-expansion-panels--accordion c-collapse-panel--error"
+  class="c-collapse-panel elevation-2 v-item-group theme--light v-expansion-panels v-expansion-panels--accordion"
 >
   <div
     aria-expanded="false"
