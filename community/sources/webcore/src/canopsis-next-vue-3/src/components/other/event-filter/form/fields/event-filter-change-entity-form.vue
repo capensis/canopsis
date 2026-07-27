@@ -7,7 +7,7 @@
     <c-form-block>
       <c-form-block-row :label="$t('externalData.title')" indented>
         <external-data-field
-          v-model:form="externalDataField"
+          v-model:external-data="externalDataField"
           :variables="templateVars.external_data"
           optionally
         />
@@ -69,6 +69,8 @@
 <script>
 import { computed } from 'vue';
 
+import { useFormModels } from '@/hooks/form';
+
 import ExternalDataField from '@/components/forms/external-data/external-data-field.vue';
 
 export default {
@@ -86,21 +88,21 @@ export default {
     },
   },
   setup() {
-    const {
-      externalDataField,
-      configField,
-    } = useFormModels({
+    const { externalDataField, configField } = useFormModels({
       externalDataField: 'external_data',
-      resourceField: 'config',
+      configField: 'config',
     });
 
-    const someRequired = computed(() => !(
-      resourceField.value
-      || componentField.value
-      || connectorField.value
-      || connectorNameField.value
-      || upstreamField.value
-    ));
+    const someRequired = computed(
+      () =>
+        !(
+          configField.value?.resource ||
+          configField.value?.component ||
+          configField.value?.connector ||
+          configField.value?.connector_name ||
+          configField.value?.upstream
+        ),
+    );
 
     return {
       someRequired,

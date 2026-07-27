@@ -16,3 +16,19 @@ export const useValidationAttachMinValue = (name) => {
     validateMinValueRule: () => validator.validate(name),
   };
 };
+
+/**
+ * Compatibility helper for old dynamic min_value validation by field value getter.
+ *
+ * @param {string} name Field name.
+ * @param {Function} getValue Field value getter.
+ * @returns {Object}
+ */
+export const useValidationAttachMinValueForField = (name, getValue) => {
+  const validator = useValidator();
+
+  return {
+    validator,
+    asyncValidateMinValueRule: () => validator.validate(name, getValue?.()),
+  };
+};

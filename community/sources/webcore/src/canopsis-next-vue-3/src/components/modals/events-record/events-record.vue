@@ -270,20 +270,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-:deep(.events-record-modal__text) {
-  overflow-x: hidden;
-}
-
-.events-record-modal__window {
-  max-width: 100%;
-  overflow: hidden;
-
-  :deep(.v-window__container),
-  :deep(.v-window-item) {
-    max-width: 100%;
-    overflow: hidden;
-  }
-}
-</style>

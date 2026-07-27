@@ -54,10 +54,17 @@ export default {
   [MODALS.importPbehaviorException]: defineAsyncComponent(
     () => import('./pbehavior/import-pbehavior-exception.vue'),
   ),
+  [MODALS.pbehaviorPlanning]: defineAsyncComponent(
+    () => import('./pbehavior/pbehavior-planning.vue'),
+  ),
+  [MODALS.pbehaviorRecurrentChangesConfirmation]: defineAsyncComponent(
+    () => import('./pbehavior/pbehavior-recurrent-changes-confirmation.vue'),
+  ),
   [MODALS.createAlarmStatusRule]: defineAsyncComponent(
     () => import('./alarm-status-rule/create-alarm-status-rule.vue'),
   ),
   [MODALS.createIdleRule]: defineAsyncComponent(() => import('./idle-rule/create-idle-rule.vue')),
+  [MODALS.createLinkRule]: defineAsyncComponent(() => import('./link-rule/create-link-rule.vue')),
   [MODALS.healthcheckEngine]: defineAsyncComponent(
     () => import('./healthcheck/healthcheck-engine.vue'),
   ),
@@ -89,6 +96,9 @@ export default {
   ),
   [MODALS.createRemediationConfiguration]: defineAsyncComponent(
     () => import('./remediation/create-remediation-configuration.vue'),
+  ),
+  [MODALS.createRemediationInstruction]: defineAsyncComponent(
+    () => import('./remediation/create-remediation-instruction.vue'),
   ),
   [MODALS.createRemediationJob]: defineAsyncComponent(
     () => import('./remediation/create-remediation-job.vue'),

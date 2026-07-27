@@ -29,6 +29,9 @@ const DynamicInfosPage = () => import('@/views/exploitation/dynamic-infos-page.v
 const EventFiltersPage = () => import('@/views/exploitation/event-filters-page.vue');
 const FlappingRulesPage = () => import('@/views/exploitation/flapping-rules-page.vue');
 const IdleRulesPage = () => import('@/views/exploitation/idle-rules-page.vue');
+const LinkRulesPage = () => import('@/views/exploitation/link-rules-page.vue');
+const MetaAlarmRulesPage = () => import('@/views/exploitation/meta-alarm-rules-page.vue');
+const PbehaviorsPage = () => import('@/views/exploitation/pbehaviors-page.vue');
 const ResolveRulesPage = () => import('@/views/exploitation/resolve-rules-page.vue');
 const RemediationPage = () => import('@/views/exploitation/remediation-page.vue');
 const ScenariosPage = () => import('@/views/exploitation/scenarios-page.vue');
@@ -349,7 +352,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.exploitation.pbehavior,
       },
     }),
-    component: PlaceholderPage,
+    component: PbehaviorsPage,
   },
   {
     path: ROUTES.exploitationEventFilters,
@@ -389,7 +392,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.exploitation.metaAlarmRule,
       },
     }),
-    component: PlaceholderPage,
+    component: MetaAlarmRulesPage,
   },
   {
     path: ROUTES.exploitationScenarios,
@@ -449,7 +452,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.exploitation.linkRule,
       },
     }),
-    component: PlaceholderPage,
+    component: LinkRulesPage,
   },
   {
     path: ROUTES.exploitationRemediation,

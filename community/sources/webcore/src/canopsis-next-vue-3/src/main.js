@@ -10,6 +10,8 @@ import * as BlockComponents from '@/components/common/block';
 import * as ActionsPanelComponents from '@/components/common/actions-panel';
 import * as ButtonComponents from '@/components/common/buttons';
 import * as ChipComponents from '@/components/common/chips';
+import * as CalendarComponents from '@/components/common/calendar';
+import * as DragDropComponents from '@/components/common/drag-drop';
 import * as IconComponents from '@/components/common/icon';
 import * as InputComponents from '@/components/common/inputs';
 import * as LayoutComponents from '@/components/common/layout';
@@ -76,6 +78,14 @@ Object.entries(ButtonComponents).forEach(([name, component]) => {
 });
 
 Object.entries(ChipComponents).forEach(([name, component]) => {
+  app.component(name, component);
+});
+
+Object.entries(CalendarComponents).forEach(([name, component]) => {
+  app.component(name, component);
+});
+
+Object.entries(DragDropComponents).forEach(([name, component]) => {
   app.component(name, component);
 });
 
