@@ -36,7 +36,7 @@ export const checkAppInfoAccessForRoute = async (route = {}) => {
     return true;
   }
 
-  popupsStore.error({ text: i18n.t('common.notFound') });
+  popupsStore.error({ text: i18n.global.t('common.notFound') });
 
   throw new Error('Application does not have access to the page');
 };
@@ -68,7 +68,7 @@ export const checkUserAccessForRoute = async (route = {}) => {
   }
 
   popupsStore.add({
-    text: i18n.t('common.forbidden'),
+    text: i18n.global.t('common.forbidden'),
     type: POPUP_TYPES.error,
   });
 

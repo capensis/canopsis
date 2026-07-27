@@ -22,6 +22,7 @@ export const useAnomalyMonitoredConnector = () => {
       anomalyMonitoredConnectorStore.fetchListWithPreviousParams,
     fetchAnomalyMonitoredConnectorsListWithoutStore:
       anomalyMonitoredConnectorStore.fetchListWithoutStore,
+    createAnomalyMonitoredConnector: anomalyMonitoredConnectorStore.create,
     updateAnomalyMonitoredConnector: anomalyMonitoredConnectorStore.update,
     updateAnomalyMonitoredConnectorEnabled: anomalyMonitoredConnectorStore.updateEnabled,
     removeAnomalyMonitoredConnector: anomalyMonitoredConnectorStore.remove,

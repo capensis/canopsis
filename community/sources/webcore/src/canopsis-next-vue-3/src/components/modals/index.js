@@ -76,6 +76,9 @@ export default {
   [MODALS.applyEventFilter]: defineAsyncComponent(
     () => import('./events-record/apply-event-filter.vue'),
   ),
+  [MODALS.createAnomalyMonitoredConnector]: defineAsyncComponent(
+    () => import('./anomaly-monitored-connector/create-anomaly-monitored-connector.vue'),
+  ),
   [MODALS.createTemplateTestingData]: defineAsyncComponent(
     () => import('./template-testing/create-template-testing-data.vue'),
   ),

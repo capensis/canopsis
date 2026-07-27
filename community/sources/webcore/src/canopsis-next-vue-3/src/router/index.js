@@ -25,6 +25,8 @@ const AdminPlanning = () => import('@/views/admin/planning-page.vue');
 const AdminHealthcheck = () => import('@/views/admin/healthcheck-page.vue');
 const AdminKPI = () => import('@/views/admin/kpi-page.vue');
 const AdminEventsRecords = () => import('@/views/admin/events-records-page.vue');
+const AdminAnomalyMonitoredConnectors = () =>
+  import('@/views/admin/anomaly-monitored-connectors-page.vue');
 const DynamicInfosPage = () => import('@/views/exploitation/dynamic-infos-page.vue');
 const EventFiltersPage = () => import('@/views/exploitation/event-filters-page.vue');
 const FlappingRulesPage = () => import('@/views/exploitation/flapping-rules-page.vue');
@@ -188,7 +190,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.anomalyMonitoredConnector,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminAnomalyMonitoredConnectors,
   },
   {
     path: ROUTES.adminTemplateTesting,
