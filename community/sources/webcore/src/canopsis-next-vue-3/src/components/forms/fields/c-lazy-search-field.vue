@@ -3,6 +3,7 @@
     :is="fieldComponent"
     :model-value="value"
     v-bind="fieldAttrs"
+    :search="internalSearch"
     :label="label"
     :loading="loading"
     :items="items"

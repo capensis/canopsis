@@ -234,6 +234,41 @@ onMounted(() => (ready.value = true));
       flex: 1 1 auto;
       min-height: 0;
       overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .v-window,
+    .v-window__container {
+      max-width: 100%;
+      min-width: 0;
+      overflow: visible;
+    }
+
+    .v-window-item {
+      max-width: 100%;
+      min-width: 0;
+      overflow: visible;
+    }
+
+    .v-window__container {
+      height: auto !important;
+    }
+
+    .v-window__container--is-active {
+      height: auto !important;
+    }
+
+    .v-window:has(
+      .v-window-x-transition-enter-active,
+      .v-window-x-transition-leave-active,
+      .v-window-x-reverse-transition-enter-active,
+      .v-window-x-reverse-transition-leave-active,
+      .v-window-y-transition-enter-active,
+      .v-window-y-transition-leave-active,
+      .v-window-y-reverse-transition-enter-active,
+      .v-window-y-reverse-transition-leave-active
+    ) {
+      overflow: hidden;
     }
 
     .headline {

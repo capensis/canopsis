@@ -52,6 +52,9 @@ import { useDynamicInfoTemplates } from '@/hooks/store/modules/dynamic-info-temp
 import { useEventFilter } from '@/hooks/store/modules/event-filter';
 import { useFlappingRules } from '@/hooks/store/modules/flapping-rules';
 import { useIdleRules } from '@/hooks/store/modules/idle-rules';
+import { useLinkRule } from '@/hooks/store/modules/link-rule';
+import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
+import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
@@ -118,6 +121,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    linkRule: {
+      type: Boolean,
+      default: false,
+    },
+    metaAlarmRule: {
+      type: Boolean,
+      default: false,
+    },
+    pbehavior: {
+      type: Boolean,
+      default: false,
+    },
     eventFilter: {
       type: Boolean,
       default: false,
@@ -180,6 +195,10 @@ export default {
     const { bulkEnableResolveRules, bulkDisableResolveRules, bulkRemoveResolveRules } =
       useResolveRules();
     const { bulkEnableIdleRules, bulkDisableIdleRules, bulkRemoveIdleRules } = useIdleRules();
+    const { bulkEnableLinkRules, bulkDisableLinkRules, bulkRemoveLinkRules } = useLinkRule();
+    const { bulkEnableMetaAlarmRules, bulkDisableMetaAlarmRules, bulkRemoveMetaAlarmRules } =
+      useMetaAlarmRule();
+    const { bulkEnablePbehaviors, bulkDisablePbehaviors, bulkRemovePbehaviors } = usePbehavior();
     const { bulkEnablePlaylist, bulkDisablePlaylist, bulkRemovePlaylist } = usePlaylist();
     const { bulkHidePbehaviorTypes, bulkUnhidePbehaviorTypes, bulkRemovePbehaviorTypes } =
       usePbehaviorType();
@@ -265,6 +284,33 @@ export default {
           enable: bulkEnableIdleRules,
           disable: bulkDisableIdleRules,
           tooltipPrefix: 'idleRules',
+        };
+      }
+
+      if (props.linkRule) {
+        return {
+          remove: bulkRemoveLinkRules,
+          enable: bulkEnableLinkRules,
+          disable: bulkDisableLinkRules,
+          tooltipPrefix: 'linkRule',
+        };
+      }
+
+      if (props.metaAlarmRule) {
+        return {
+          remove: bulkRemoveMetaAlarmRules,
+          enable: bulkEnableMetaAlarmRules,
+          disable: bulkDisableMetaAlarmRules,
+          tooltipPrefix: 'metaAlarmRule',
+        };
+      }
+
+      if (props.pbehavior) {
+        return {
+          remove: bulkRemovePbehaviors,
+          enable: bulkEnablePbehaviors,
+          disable: bulkDisablePbehaviors,
+          tooltipPrefix: 'pbehavior',
         };
       }
 

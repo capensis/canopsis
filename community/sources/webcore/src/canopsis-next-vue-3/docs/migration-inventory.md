@@ -127,17 +127,17 @@ Pages are taken from `src/router.js` in the source project.
 | `[ ]`  | `admin-settings-widget-templates`              | `/admin/widget-templates`             | `src/views/admin/settings/widget-templates.vue`              | -                                                              |                                                                                                                                                                                                                                                                                         |
 | `[ ]`  | `admin-settings-storage-settings`              | `/admin/storage-settings`             | `src/views/admin/settings/storage-settings.vue`              | -                                                              |                                                                                                                                                                                                                                                                                         |
 | `[ ]`  | `admin-settings-state-settings`                | `/admin/state-settings`               | `src/views/admin/settings/state-settings.vue`                | -                                                              |                                                                                                                                                                                                                                                                                         |
-| `[ ]`  | `exploitation-pbehaviors`                      | `/exploitation/pbehaviors`            | `src/views/exploitation/pbehaviors.vue`                      | -                                                              |                                                                                                                                                                                                                                                                                         |
+| `[~]`  | `exploitation-pbehaviors`                      | `/exploitation/pbehaviors`            | `src/views/exploitation/pbehaviors.vue`                      | `src/views/exploitation/pbehaviors-page.vue`                   | Main page, list table, expand tabs, advanced search, delete/export, bulk actions, alarm filtering and pbehavior planning calendar modal are migrated. Create/edit/duplicate list actions and recurrence calendar modal remain pending.                                                  |
 | `[~]`  | `exploitation-event-filters`                   | `/exploitation/event-filters`         | `src/views/exploitation/event-filters.vue`                   | `src/views/exploitation/event-filters-page.vue`                | Main list, expand content, failures tab, remove/export, bulk actions and store hooks are migrated; create/edit/duplicate modal form remains pending and actions are hidden until it is adapted.                                                                                         |
 | `[ ]`  | `exploitation-snmp-rules`                      | `/exploitation/snmp-rules`            | `src/views/exploitation/snmp-rules.vue`                      | -                                                              |                                                                                                                                                                                                                                                                                         |
 | `[~]`  | `exploitation-dynamic-infos`                   | `/exploitation/dynamic-infos`         | `src/views/exploitation/dynamic-infos.vue`                   | `src/views/exploitation/dynamic-infos-page.vue`                | Page shell, dynamic infos list with advanced search, templates list, stores and create/edit modal are migrated.                                                                                                                                                                         |
-| `[ ]`  | `exploitation-meta-alarm-rules`                | `/exploitation/meta-alarm-rule`       | `src/views/exploitation/meta-alarm-rules.vue`                | -                                                              |                                                                                                                                                                                                                                                                                         |
+| `[~]`  | `exploitation-meta-alarm-rules`                | `/exploitation/meta-alarm-rule`       | `src/views/exploitation/meta-alarm-rules.vue`                | `src/views/exploitation/meta-alarm-rules-page.vue`             | Main list, read-only expand patterns, route, helper and bulk/delete actions are migrated. Create/edit/duplicate modal form remains pending for the forms pass.                                                                                                                          |
 | `[~]`  | `exploitation-scenarios`                       | `/exploitation/scenarios`             | `src/views/exploitation/scenarios.vue`                       | `src/views/exploitation/scenarios-page.vue`                    | Main list/read-only expand content and scenario store are migrated; create/edit modal is not migrated yet.                                                                                                                                                                              |
 | `[~]`  | `exploitation-idle-rules`                      | `/exploitation/idle-rules`            | `src/views/exploitation/idle-rules.vue`                      | `src/views/exploitation/idle-rules-page.vue`                   | Main list, expand, delete/bulk actions and create/edit/duplicate form are migrated; pbehavior action parameters depend on future pbehavior stack migration.                                                                                                                             |
 | `[~]`  | `exploitation-flapping-rules`                  | `/exploitation/flapping-rules`        | `src/views/exploitation/flapping-rules.vue`                  | `src/views/exploitation/flapping-rules-page.vue`               | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending.                                                                                                                                                                |
 | `[~]`  | `exploitation-resolve-rules`                   | `/exploitation/resolve-rules`         | `src/views/exploitation/resolve-rules.vue`                   | `src/views/exploitation/resolve-rules-page.vue`                | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending.                                                                                                                                                                |
 | `[ ]`  | `exploitation-declare-ticket-rules`            | `/exploitation/declare-ticket-rules`  | `src/views/exploitation/declare-ticket-rules.vue`            | -                                                              |                                                                                                                                                                                                                                                                                         |
-| `[ ]`  | `exploitation-link-rules`                      | `/exploitation/link-rules`            | `src/views/exploitation/link-rules.vue`                      | -                                                              |                                                                                                                                                                                                                                                                                         |
+| `[~]`  | `exploitation-link-rules`                      | `/exploitation/link-rules`            | `src/views/exploitation/link-rules.vue`                      | `src/views/exploitation/link-rules-page.vue`                   | Page, list, mass actions, DB export, create/edit/duplicate modal, link rule form and Monaco-based advanced editor are migrated. AI chat remains a deferred stub per `docs/ai/architecture.md`.                                                                                          |
 | `[ ]`  | `exploitation-remediation`                     | `/exploitation/remediation`           | `src/views/exploitation/remediation.vue`                     | -                                                              |                                                                                                                                                                                                                                                                                         |
 | `[ ]`  | `playlist`                                     | `/playlist/:id`                       | `src/views/playlist.vue`                                     | -                                                              |                                                                                                                                                                                                                                                                                         |
 | `[ ]`  | `profile-patterns`                             | `/filters`                            | `src/views/profile/patterns.vue`                             | -                                                              |                                                                                                                                                                                                                                                                                         |
@@ -429,12 +429,12 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `exploitation-pbehaviors`
 
-- `[ ]` Main content: `src/views/exploitation/pbehaviors.vue`.
-- `[ ]` Modal windows: not migrated.
+- `[~]` Main content: `src/views/exploitation/pbehaviors.vue` -> `src/views/exploitation/pbehaviors-page.vue`; list table, advanced search, pagination, expand tabs (patterns, entities, comments, recurrence), delete/export action, bulk enable/disable/remove, and alarm filtering button are migrated.
+- `[~]` Modal windows: `pbehaviorPlanning` and recurrent changes confirmation are migrated and registered. `create-pbehavior`, recurrence rule editor modal and recurrence calendar modal are not migrated yet; list edit/duplicate actions stay disabled until the remaining forms/calendar pass.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated. Do not port old `entities/removeFromStore` for single pbehavior delete; use API delete plus list refresh.
-- `[ ]` Routing/access: `/exploitation/pbehaviors`, pbehavior access.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` State/API/socket: pbehavior store/hooks are reused for list fetch, delete, DB export, bulk actions and alarm filtering socket room. Do not port old `entities/removeFromStore` for single pbehavior delete; use API delete plus list refresh.
+- `[x]` Routing/access: `/exploitation/pbehaviors`, pbehavior access.
+- `[x]` Messages/i18n: reused existing pbehavior messages.
 
 ### `exploitation-event-filters`
 
@@ -465,12 +465,12 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `exploitation-meta-alarm-rules`
 
-- `[ ]` Main content: `src/views/exploitation/meta-alarm-rules.vue`.
-- `[ ]` Modal windows: not migrated.
+- `[~]` Main content: `src/views/exploitation/meta-alarm-rules.vue` -> `src/views/exploitation/meta-alarm-rules-page.vue`; list, search, pagination, read-only pattern expand panel, DB export and delete/bulk actions are migrated. Create/edit/duplicate actions are hidden until the form/modal layer is ported.
+- `[ ]` Modal windows: `src/components/modals/meta-alarm-rule/create-meta-alarm-rule.vue` and related form stack are not migrated yet.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/exploitation/meta-alarm-rule`, meta alarm rule access.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` State/API/socket: Pinia CRUD store/hook and meta alarm rule form helper are migrated; AI chat/socket support remains deferred.
+- `[x]` Routing/access: `/exploitation/meta-alarm-rule`, meta alarm rule access.
+- `[x]` Messages/i18n: existing meta alarm rule messages are wired.
 
 ### `exploitation-scenarios`
 
@@ -519,12 +519,12 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `exploitation-link-rules`
 
-- `[ ]` Main content: `src/views/exploitation/link-rules.vue`.
-- `[ ]` Modal windows: not migrated.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/exploitation/link-rules`, link rule access.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Main content: `src/views/exploitation/link-rules-page.vue`, `src/components/other/link-rule/link-rules-list.vue`.
+- `[x]` Modal windows: `src/components/modals/link-rule/create-link-rule.vue`.
+- `[~]` Sidebars/drawers: AI chat sidebar is intentionally stubbed until the deferred AI migration pass.
+- `[x]` State/API/socket: Pinia store/hook already available in `src/stores/modules/link-rule.js` and `src/hooks/store/modules/link-rule.js`.
+- `[x]` Routing/access: `/exploitation/link-rules`, link rule access.
+- `[x]` Messages/i18n: link rule and modal messages already present.
 
 ### `exploitation-remediation`
 

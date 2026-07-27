@@ -1,7 +1,9 @@
 import { inject, onBeforeUnmount, onMounted } from 'vue';
 
+export const useSocket = () => inject('$socket', null);
+
 export const useSocketRoom = ({ room, payload, authNeeded, listener } = {}) => {
-  const socket = inject('$socket', null);
+  const socket = useSocket();
   let socketRoom;
 
   onMounted(() => {

@@ -1,3 +1,4 @@
+import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useEntityInfoPropertyStore } from '@/stores/modules/entity-info-property';
@@ -28,5 +29,20 @@ export const useEntityInfoProperty = () => {
     updateEntityInfoProperty: entityInfoPropertyStore.update,
     removeEntityInfoProperty: entityInfoPropertyStore.remove,
     bulkRemoveEntityInfoProperties: entityInfoPropertyStore.bulkRemove,
+
+    fetchAllEntityInfoPropertiesList: () =>
+      entityInfoPropertyStore.fetchList({ params: { paginate: false } }),
   };
+};
+
+/**
+ * Hook for automatically fetching entity info properties on component mount.
+ * This hook combines entity info property functionality with automatic data fetching
+ * when the component is mounted, ensuring that entity info properties are always
+ * available when the component initializes.
+ */
+export const useEntityInfoPropertyFetching = () => {
+  const { fetchAllEntityInfoPropertiesList } = useEntityInfoProperty();
+
+  onMounted(fetchAllEntityInfoPropertiesList);
 };
