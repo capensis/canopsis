@@ -97,7 +97,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (isUserHasOnlyApiRole(user)) {
       localStorageService.set(
         LOCAL_STORAGE_WARNING_POPUP_KEY,
-        i18n.t('warnings.userDoesNotHaveUiRole'),
+        i18n.global.t('warnings.userDoesNotHaveUiRole'),
       );
 
       logout();

@@ -54,6 +54,7 @@ import { useFlappingRules } from '@/hooks/store/modules/flapping-rules';
 import { useIdleRules } from '@/hooks/store/modules/idle-rules';
 import { useLinkRule } from '@/hooks/store/modules/link-rule';
 import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
+import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
 import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
@@ -173,6 +174,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    anomalyMonitoredConnector: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: ['clear:items', 'refresh'],
@@ -198,6 +203,11 @@ export default {
     const { bulkEnableLinkRules, bulkDisableLinkRules, bulkRemoveLinkRules } = useLinkRule();
     const { bulkEnableMetaAlarmRules, bulkDisableMetaAlarmRules, bulkRemoveMetaAlarmRules } =
       useMetaAlarmRule();
+    const {
+      bulkEnableAnomalyMonitoredConnectors,
+      bulkDisableAnomalyMonitoredConnectors,
+      bulkRemoveAnomalyMonitoredConnectors,
+    } = useAnomalyMonitoredConnector();
     const { bulkEnablePbehaviors, bulkDisablePbehaviors, bulkRemovePbehaviors } = usePbehavior();
     const { bulkEnablePlaylist, bulkDisablePlaylist, bulkRemovePlaylist } = usePlaylist();
     const { bulkHidePbehaviorTypes, bulkUnhidePbehaviorTypes, bulkRemovePbehaviorTypes } =
@@ -386,6 +396,15 @@ export default {
         return {
           remove: bulkRemoveRemediationJobs,
           tooltipPrefix: 'remediation.job',
+        };
+      }
+
+      if (props.anomalyMonitoredConnector) {
+        return {
+          remove: bulkRemoveAnomalyMonitoredConnectors,
+          enable: bulkEnableAnomalyMonitoredConnectors,
+          disable: bulkDisableAnomalyMonitoredConnectors,
+          tooltipPrefix: 'anomalyMonitoredConnector',
         };
       }
 
