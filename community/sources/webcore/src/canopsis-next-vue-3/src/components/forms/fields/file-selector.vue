@@ -55,6 +55,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * File size in kilobytes (KB)
+     */
+    maxFileSize: {
+      type: [Number, String],
+      required: false,
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -74,6 +81,7 @@ export default {
     const fieldName = computed(() => props.name || 'file');
     const fieldRules = computed(() => ({
       required: props.required,
+      size: props.maxFileSize ? Number(props.maxFileSize) : false,
     }));
     const { errors, setValue } = useField(fieldName, fieldRules, {
       initialValue: props.modelValue,

@@ -91,6 +91,17 @@ export default {
   [MODALS.createExternalDataTable]: defineAsyncComponent(
     () => import('./external-data-table/create-external-data-table.vue'),
   ),
+  [MODALS.createEntityInfoProperty]: defineAsyncComponent(
+    () => import('./entity-info-property/create-entity-info-property.vue'),
+  ),
+  [MODALS.createIcon]: defineAsyncComponent(() => import('./icon/create-icon.vue')),
+  [MODALS.createMap]: defineAsyncComponent(() => import('./map/create-map.vue')),
+  [MODALS.createGeoMap]: defineAsyncComponent(() => import('./map/create-geo-map.vue')),
+  [MODALS.createFlowchartMap]: defineAsyncComponent(() => import('./map/create-flowchart-map.vue')),
+  [MODALS.createMermaidMap]: defineAsyncComponent(() => import('./map/create-mermaid-map.vue')),
+  [MODALS.createTreeOfDependenciesMap]: defineAsyncComponent(
+    () => import('./map/create-tree-of-dependencies-map.vue'),
+  ),
   [MODALS.createExternalDataTableRecord]: defineAsyncComponent(
     () => import('./external-data-table/create-external-data-table-record.vue'),
   ),
