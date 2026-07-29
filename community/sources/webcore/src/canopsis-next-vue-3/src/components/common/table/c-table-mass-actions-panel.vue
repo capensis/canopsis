@@ -53,6 +53,7 @@ import { useEventFilter } from '@/hooks/store/modules/event-filter';
 import { useFlappingRules } from '@/hooks/store/modules/flapping-rules';
 import { useIdleRules } from '@/hooks/store/modules/idle-rules';
 import { useLinkRule } from '@/hooks/store/modules/link-rule';
+import { useMap } from '@/hooks/store/modules/map';
 import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
 import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
 import { usePbehavior } from '@/hooks/store/modules/pbehavior';
@@ -123,6 +124,10 @@ export default {
       default: false,
     },
     linkRule: {
+      type: Boolean,
+      default: false,
+    },
+    map: {
       type: Boolean,
       default: false,
     },
@@ -201,6 +206,7 @@ export default {
       useResolveRules();
     const { bulkEnableIdleRules, bulkDisableIdleRules, bulkRemoveIdleRules } = useIdleRules();
     const { bulkEnableLinkRules, bulkDisableLinkRules, bulkRemoveLinkRules } = useLinkRule();
+    const { bulkRemoveMaps } = useMap();
     const { bulkEnableMetaAlarmRules, bulkDisableMetaAlarmRules, bulkRemoveMetaAlarmRules } =
       useMetaAlarmRule();
     const {
@@ -303,6 +309,13 @@ export default {
           enable: bulkEnableLinkRules,
           disable: bulkDisableLinkRules,
           tooltipPrefix: 'linkRule',
+        };
+      }
+
+      if (props.map) {
+        return {
+          remove: bulkRemoveMaps,
+          tooltipPrefix: 'map',
         };
       }
 

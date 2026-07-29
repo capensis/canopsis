@@ -27,6 +27,10 @@ const AdminKPI = () => import('@/views/admin/kpi-page.vue');
 const AdminEventsRecords = () => import('@/views/admin/events-records-page.vue');
 const AdminAnomalyMonitoredConnectors = () =>
   import('@/views/admin/anomaly-monitored-connectors-page.vue');
+const AdminEntityInfosProperties = () =>
+  import('@/views/admin/custom-objects/entity-infos-properties-page.vue');
+const AdminIcons = () => import('@/views/admin/custom-objects/icons-page.vue');
+const AdminMaps = () => import('@/views/admin/custom-objects/maps-page.vue');
 const DynamicInfosPage = () => import('@/views/exploitation/dynamic-infos-page.vue');
 const EventFiltersPage = () => import('@/views/exploitation/event-filters-page.vue');
 const FlappingRulesPage = () => import('@/views/exploitation/flapping-rules-page.vue');
@@ -242,7 +246,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.entityInfoProperty,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminEntityInfosProperties,
   },
   {
     path: ROUTES.adminCustomObjectsIcons,
@@ -252,7 +256,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.icon,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminIcons,
   },
   {
     path: ROUTES.adminCustomObjectsMaps,
@@ -262,7 +266,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.map,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminMaps,
   },
   {
     path: ROUTES.adminCustomObjectsTags,

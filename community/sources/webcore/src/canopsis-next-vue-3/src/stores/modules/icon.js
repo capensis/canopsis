@@ -23,17 +23,22 @@ export const useIconStore = defineStore('icon', () => {
 
   const fetchListWithoutStore = ({ params } = {}) => request.get(API_ROUTES.icons, { params });
 
-  const fetchItemWithoutStore = ({ id } = {}) => request.get(`${API_ROUTES.icons}/${id}`, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const fetchItemWithoutStore = ({ id } = {}) =>
+    request.get(`${API_ROUTES.icons}/${id}`, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
 
-  const create = ({ data } = {}) => request.post(API_ROUTES.icons, convertObjectToFormData(data), {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const create = ({ data } = {}) =>
+    request.post(API_ROUTES.icons, convertObjectToFormData(data), {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
 
-  const update = ({ id, data } = {}) => request.patch(`${API_ROUTES.icons}/${id}`, convertObjectToFormData(data), {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const update = ({ id, data } = {}) =>
+    request.patch(`${API_ROUTES.icons}/${id}`, convertObjectToFormData(data), {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+  const remove = ({ id } = {}) => request.delete(`${API_ROUTES.icons}/${id}`);
 
   const addRegisteredIcon = ({ id, icon } = {}) => {
     registeredIconsById.value[id] = icon;
@@ -54,6 +59,7 @@ export const useIconStore = defineStore('icon', () => {
     fetchItemWithoutStore,
     create,
     update,
+    remove,
     addRegisteredIcon,
     removeRegisteredIcon,
     setRegisteredIcons,
