@@ -16,6 +16,18 @@ export const saveFile = (data, filename) => {
 };
 
 /**
+ * Save file as json
+ *
+ * @param {Object|string|number} data
+ * @param {string} name
+ */
+export const saveJsonFile = (data, name) => {
+  const blob = new Blob([JSON.stringify(data)], { type: 'application/json;charset=utf-8' });
+
+  return saveFile(blob, `${name}.json`);
+};
+
+/**
  * Save file as csv
  *
  * @param {string|Blob} data
