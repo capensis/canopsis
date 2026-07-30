@@ -95,8 +95,12 @@
     "vue-tsc": "^3.2.6"
   },
   "lint-staged": {
-    "*.{js,cjs,mjs,jsx,ts,mts,cts,tsx,vue}": [
+    "*.{js,cjs,mjs,jsx,ts,mts,cts,tsx}": [
       "oxfmt --write --no-error-on-unmatched-pattern",
+      "oxlint --fix",
+      "eslint --fix --cache"
+    ],
+    "*.vue": [
       "oxlint --fix",
       "eslint --fix --cache"
     ],

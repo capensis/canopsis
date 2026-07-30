@@ -70,10 +70,11 @@
 
         <template v-if="item.raw.helpText" #append>
           <c-help-icon
-:text="item.raw.helpText"
-color="info"
-size="20"
-location="top" />
+            :text="item.raw.helpText"
+            color="info"
+            size="20"
+            location="top"
+          />
         </template>
       </v-list-item>
     </template>
