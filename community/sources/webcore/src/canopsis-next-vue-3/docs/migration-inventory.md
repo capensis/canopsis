@@ -120,10 +120,10 @@ Pages are taken from `src/router.js` in the source project.
 | `[~]`  | `admin-custom-objects-entity-infos-properties` | `/admin/entity-infos-properties`      | `src/views/admin/custom-objects/entity-infos-properties.vue` | `src/views/admin/custom-objects/entity-infos-properties-page.vue` | Main page, list, type filter, create/edit/duplicate form modal, delete and bulk delete actions are migrated. Remaining: runtime visual parity pass.                                                                                                                                                                    |
 | `[~]`  | `admin-custom-objects-icons`                   | `/admin/icons`                        | `src/views/admin/custom-objects/icons.vue`                   | `src/views/admin/custom-objects/icons-page.vue`                   | Main page, icons list, custom icon preview/registration, create/edit upload modal and delete action are migrated. Remaining: runtime visual parity pass.                                                                                                                                                               |
 | `[~]`  | `admin-custom-objects-maps`                    | `/admin/maps`                         | `src/views/admin/custom-objects/maps.vue`                    | `src/views/admin/custom-objects/maps-page.vue`                    | Main page, CRUD table, search/pagination, single delete, mass delete wiring, expand panel shell, geo/Mermaid/tree/flowchart expand previews, create/edit/duplicate map modals and map form/editor stack are migrated. Remaining: runtime visual parity pass and new-validator parity for nested editor required rules. |
-| `[ ]`  | `admin-custom-objects-tags`                    | `/admin/tags`                         | `src/views/admin/custom-objects/tags.vue`                    | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
-| `[ ]`  | `admin-custom-objects-llms`                    | `/admin/llms`                         | `src/views/admin/custom-objects/llms.vue`                    | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
-| `[ ]`  | `admin-settings-views-import-export`           | `/admin/views-import-export`          | `src/views/admin/settings/views-import-export.vue`           | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
-| `[ ]`  | `admin-settings-notifications`                 | `/admin/notifications`                | `src/views/admin/settings/notifications-settings.vue`        | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
+| `[~]`  | `admin-custom-objects-tags`                    | `/admin/tags`                         | `src/views/admin/custom-objects/tags.vue`                    | `src/views/admin/custom-objects/tags-page.vue`                    | Main page, list, expand panel, create/edit modal and tag form with pattern tabs are migrated. Remaining: final runtime parity pass for patterns validation and table behavior.                                                                                                                                         |
+| `[~]`  | `admin-custom-objects-llms`                    | `/admin/llms`                         | `src/views/admin/custom-objects/llms.vue`                    | `src/views/admin/custom-objects/llms-page.vue`                    | Main page, list, important notes banner and create/edit form are migrated. AI chat/sidebar behavior is intentionally deferred until the final AI chat migration pass.                                                                                                                                                  |
+| `[~]`  | `admin-settings-views-import-export`           | `/admin/views-import-export`          | `src/views/admin/settings/views-import-export.vue`           | `src/views/admin/settings/views-import-export-page.vue`           | Main page, group/view selection, JSON export, JSON import parsing and import modal with draggable groups/views are migrated. Remaining: runtime parity pass for drag/drop import layout and API payloads.                                                                                                              |
+| `[~]`  | `admin-settings-notifications`                 | `/admin/notifications`                | `src/views/admin/settings/notifications-settings.vue`        | `src/views/admin/settings/notifications-settings-page.vue`        | Main page, notification settings form, fetch/update flow and routing are migrated. Remaining: runtime visual parity and validation behavior check.                                                                                                                                                                     |
 | `[ ]`  | `admin-settings-comment-templates`             | `/admin/comment-templates`            | `src/views/admin/settings/comment-templates.vue`             | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
 | `[ ]`  | `admin-settings-widget-templates`              | `/admin/widget-templates`             | `src/views/admin/settings/widget-templates.vue`              | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
 | `[ ]`  | `admin-settings-storage-settings`              | `/admin/storage-settings`             | `src/views/admin/settings/storage-settings.vue`              | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
@@ -358,38 +358,39 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `admin-custom-objects-tags`
 
-- `[ ]` Main content: `src/views/admin/custom-objects/tags.vue`.
-- `[ ]` Modal windows: not migrated.
+- `[~]` Main content: `src/views/admin/custom-objects/tags.vue` -> `src/views/admin/custom-objects/tags-page.vue`; tags list, search/pagination, expand panel and delete/bulk actions are migrated.
+- `[~]` Modal windows: `create-tag` modal and general/patterns tag form are migrated. Remaining: runtime parity pass for pattern validation and advanced editor behavior.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/admin/tags`, tag access.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` State/API/socket: tag Pinia CRUD store/hook are used for list/create/update/delete and bulk actions.
+- `[x]` Routing/access: `/admin/tags`, tag access.
+- `[~]` Messages/i18n: existing tag/pattern messages are wired; final copy parity verification pending.
 
 ### `admin-custom-objects-llms`
 
-- `[ ]` Main content: `src/views/admin/custom-objects/llms.vue`.
-- `[ ]` Modal windows: not migrated.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/admin/llms`, LLM access.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` Main content: `src/views/admin/custom-objects/llms.vue` -> `src/views/admin/custom-objects/llms-page.vue`; LLM list and important notes banner are migrated.
+- `[~]` Modal windows: `create-llm` modal and form are migrated. Remaining: runtime parity pass for model list loading and save behavior.
+- `[~]` Sidebars/drawers: AI chat UI is intentionally stubbed/deferred until the final AI chat migration pass.
+- `[~]` State/API/socket: LLM Pinia store/hook and form helper are migrated for page CRUD; chat-specific state remains deferred.
+- `[x]` Routing/access: `/admin/llms`, LLM access.
+- `[~]` Messages/i18n: existing LLM messages are wired; final copy parity verification pending.
 
 ### `admin-settings-views-import-export`
 
-- `[ ]` Main content: `src/views/admin/settings/views-import-export.vue`.
-- `[ ]` Modal windows: not migrated.
+- `[~]` Main content: `src/views/admin/settings/views-import-export.vue` -> `src/views/admin/settings/views-import-export-page.vue`; page shell, select all, group/view selection panel, JSON export and JSON import file selection are migrated.
+- `[~]` Modal windows: `import-groups-and-views` modal is migrated with draggable imported groups, imported views and result groups. Remaining: runtime drag/drop parity check.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/admin/views-import-export`, view import/export `can` access.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` State/API/socket: existing view Pinia store/hook is used for fetching groups, export and import API calls; final payload parity check pending.
+- `[x]` Routing/access: `/admin/views-import-export`, view import/export `can` access.
+- `[x]` Messages/i18n: existing import/export modal and page header messages are wired.
 
 ### `admin-settings-notifications`
 
-- `[ ]` Main content: `src/views/admin/settings/notifications-settings.vue`.
-- `[ ]` Modal windows: not migrated.
+- `[~]` Main content: `src/views/admin/settings/notifications-settings.vue` -> `src/views/admin/settings/notifications-settings-page.vue`; page shell, loading state, form and submit flow are migrated.
+- `[x]` Modal windows: not used by this page.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/admin/notifications`, notification settings `can` access.
+- `[~]` State/API/socket: existing notification settings Pinia store/hook is used for fetch/update; runtime payload parity check pending.
+- `[x]` Routing/access: `/admin/notifications`, notification settings `can` access.
+- `[x]` Messages/i18n: existing notification settings messages are wired.
 - `[ ]` Messages/i18n: not migrated.
 
 ### `admin-settings-comment-templates`

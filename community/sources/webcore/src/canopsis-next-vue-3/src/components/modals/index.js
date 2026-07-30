@@ -105,6 +105,9 @@ export default {
   ),
   [MODALS.createTag]: defineAsyncComponent(() => import('./tag/create-tag.vue')),
   [MODALS.createLlm]: defineAsyncComponent(() => import('./llm/create-llm.vue')),
+  [MODALS.importExportViews]: defineAsyncComponent(
+    () => import('./view/import-groups-and-views.vue'),
+  ),
   [MODALS.createExternalDataTableRecord]: defineAsyncComponent(
     () => import('./external-data-table/create-external-data-table-record.vue'),
   ),
