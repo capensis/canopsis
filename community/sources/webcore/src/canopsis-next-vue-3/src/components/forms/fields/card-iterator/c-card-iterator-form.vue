@@ -57,7 +57,7 @@
 <script>
 import { computed, watch, onMounted, onBeforeUnmount } from 'vue';
 
-import { useValidator } from '@/hooks/validator/validator';
+import { useValidationAttachMinValue } from '@/hooks/validator/validation-attach-min-value';
 import { useComponentInstance } from '@/hooks/vue';
 
 export default {
@@ -99,8 +99,9 @@ export default {
     },
   },
   setup(props) {
-    const validator = useValidator();
     const instance = useComponentInstance();
+    const { validator, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
+      useValidationAttachMinValue(props.name);
 
     const isEmpty = computed(() => !props.value?.length);
     const hasErrors = computed(() => validator?.errors?.has(props.name) ?? false);
@@ -108,32 +109,22 @@ export default {
     /**
      * Attaches min_value:1 validation rule to require at least one item when required prop is true
      */
-    const attachMinValueRule = () => {
-      if (validator?.attach && props.required) {
-        validator.attach({
-          name: props.name,
-          rules: 'min_value:1',
-          getter: () => props.value?.length ?? 0,
-          vm: instance,
-        });
+    const attachRequiredMinValueRule = () => {
+      if (props.required) {
+        attachMinValueRule(() => props.value?.length ?? 0);
       }
     };
-
-    /**
-     * Detaches the min_value validation rule from the validator
-     */
-    const detachMinValueRule = () => validator?.detach?.(props.name);
 
     watch(
       () => props.value,
       () => {
-        if (validator?.validate && props.required) {
-          instance.$nextTick(() => validator.validate(props.name));
+        if (props.required) {
+          instance.$nextTick(validateMinValueRule);
         }
       },
     );
 
-    onMounted(() => props.required && attachMinValueRule());
+    onMounted(() => props.required && attachRequiredMinValueRule());
 
     onBeforeUnmount(() => detachMinValueRule());
 

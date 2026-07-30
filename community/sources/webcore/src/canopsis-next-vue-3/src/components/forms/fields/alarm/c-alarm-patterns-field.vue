@@ -13,12 +13,7 @@
     @update:patterns="updatePatterns"
   >
     <template #append-count="">
-      <v-btn
-        v-if="alarmCounter && alarmCounter.count"
-        text
-        small
-        @click="showPatternAlarmsModal"
-      >
+      <v-btn v-if="alarmCounter && alarmCounter.count" text small @click="showPatternAlarmsModal">
         {{ $t('common.seeAlarms') }}
       </v-btn>
     </template>
@@ -209,10 +204,7 @@ export default {
 
     statusOptions() {
       return {
-        operators: [
-          PATTERN_OPERATORS.equal,
-          PATTERN_OPERATORS.notEqual,
-        ],
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
         defaultValue: ALARM_STATUSES.ongoing,
         valueField: {
           is: 'c-alarm-status-field',
@@ -237,36 +229,25 @@ export default {
 
     ticketOptions() {
       return {
-        operators: [
-          PATTERN_OPERATORS.ticketAssociated,
-          PATTERN_OPERATORS.ticketNotAssociated,
-        ],
+        operators: [PATTERN_OPERATORS.ticketAssociated, PATTERN_OPERATORS.ticketNotAssociated],
       };
     },
 
     ackOptions() {
       return {
-        operators: [
-          PATTERN_OPERATORS.acked,
-          PATTERN_OPERATORS.notAcked,
-        ],
+        operators: [PATTERN_OPERATORS.acked, PATTERN_OPERATORS.notAcked],
       };
     },
 
     existsOptions() {
       return {
-        operators: [
-          ...PATTERN_EXISTS_OPERATORS,
-        ],
+        operators: [...PATTERN_EXISTS_OPERATORS],
       };
     },
 
     canceledOptions() {
       return {
-        operators: [
-          PATTERN_OPERATORS.canceled,
-          PATTERN_OPERATORS.notCanceled,
-        ],
+        operators: [PATTERN_OPERATORS.canceled, PATTERN_OPERATORS.notCanceled],
       };
     },
 
@@ -281,7 +262,7 @@ export default {
         ],
         valueField: {
           is: 'c-alarm-tag-field',
-          props: rule => ({
+          props: (rule) => ({
             onlyLabels: PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(rule.operator),
             multiple: true,
           }),
@@ -291,10 +272,7 @@ export default {
 
     snoozeOptions() {
       return {
-        operators: [
-          PATTERN_OPERATORS.snoozed,
-          PATTERN_OPERATORS.notSnoozed,
-        ],
+        operators: [PATTERN_OPERATORS.snoozed, PATTERN_OPERATORS.notSnoozed],
       };
     },
 
@@ -334,10 +312,7 @@ export default {
 
     activatedOptions() {
       return {
-        operators: [
-          PATTERN_OPERATORS.activated,
-          PATTERN_OPERATORS.inactive,
-        ],
+        operators: [PATTERN_OPERATORS.activated, PATTERN_OPERATORS.inactive],
       };
     },
 
@@ -492,10 +467,6 @@ export default {
           options: this.snoozeOptions,
         },
         {
-          value: ALARM_PATTERN_FIELDS.snooze,
-          options: this.snoozeOptions,
-        },
-        {
           value: ALARM_PATTERN_FIELDS.snoozeAuthor,
           options: this.stringWithOneOfOptions,
         },
@@ -563,7 +534,7 @@ export default {
           value: ALARM_PATTERN_FIELDS.meta,
           options: this.metaAlarmOptions,
         },
-      ].map(variable => ({
+      ].map((variable) => ({
         ...variable,
 
         text: this.$t(ALARM_FIELDS_TO_LABELS_KEYS[variable.value], 2),

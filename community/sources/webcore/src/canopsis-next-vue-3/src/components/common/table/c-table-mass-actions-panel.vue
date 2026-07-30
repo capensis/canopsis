@@ -53,6 +53,7 @@ import { useEventFilter } from '@/hooks/store/modules/event-filter';
 import { useFlappingRules } from '@/hooks/store/modules/flapping-rules';
 import { useIdleRules } from '@/hooks/store/modules/idle-rules';
 import { useLinkRule } from '@/hooks/store/modules/link-rule';
+import { useLlm } from '@/hooks/store/modules/llm';
 import { useMap } from '@/hooks/store/modules/map';
 import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
 import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
@@ -124,6 +125,10 @@ export default {
       default: false,
     },
     linkRule: {
+      type: Boolean,
+      default: false,
+    },
+    llm: {
       type: Boolean,
       default: false,
     },
@@ -206,6 +211,7 @@ export default {
       useResolveRules();
     const { bulkEnableIdleRules, bulkDisableIdleRules, bulkRemoveIdleRules } = useIdleRules();
     const { bulkEnableLinkRules, bulkDisableLinkRules, bulkRemoveLinkRules } = useLinkRule();
+    const { bulkRemoveLlms, bulkEnableLlms, bulkDisableLlms } = useLlm();
     const { bulkRemoveMaps } = useMap();
     const { bulkEnableMetaAlarmRules, bulkDisableMetaAlarmRules, bulkRemoveMetaAlarmRules } =
       useMetaAlarmRule();
@@ -309,6 +315,16 @@ export default {
           enable: bulkEnableLinkRules,
           disable: bulkDisableLinkRules,
           tooltipPrefix: 'linkRule',
+        };
+      }
+
+      if (props.llm) {
+        return {
+          remove: bulkRemoveLlms,
+          enable: bulkEnableLlms,
+          disable: bulkDisableLlms,
+          tooltipPrefix: 'llm',
+          removeConfirmation: 'modals.confirmationPhrase.deleteSelectedLlms',
         };
       }
 
@@ -447,6 +463,32 @@ export default {
     };
 
     const showRemoveModal = () => {
+      if (activeConfig.value.removeConfirmation) {
+        const confirmationKey = activeConfig.value.removeConfirmation;
+        const count = props.items.length;
+
+        modals.show({
+          name: MODALS.confirmationPhrase,
+          config: {
+            title: t(`${confirmationKey}.title`, count, { count }),
+            text: t(`${confirmationKey}.text`, count, { count }),
+            phraseText: t(`${confirmationKey}.phraseText`),
+            phrase: t(`${confirmationKey}.phrase`),
+            action: async () => {
+              const response = await activeConfig.value.remove({
+                data: pickIds(props.items, props.itemId),
+              });
+
+              showErrorPopups(response, `${activeConfig.value.tooltipPrefix}.removeForbidden`);
+
+              return afterSubmit();
+            },
+          },
+        });
+
+        return;
+      }
+
       modals.show({
         name: MODALS.confirmation,
         config: {

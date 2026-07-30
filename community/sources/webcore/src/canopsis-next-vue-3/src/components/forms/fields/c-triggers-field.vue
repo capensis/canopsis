@@ -85,11 +85,10 @@ import { TRIGGERS_TYPES, PRO_TRIGGERS } from '@/constants';
 import { setSeveralFields } from '@/helpers/immutable';
 import { isDeprecatedTrigger } from '@/helpers/entities/scenario/form';
 
-import { useValidator } from '@/hooks/validator/validator';
 import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';
-import { useComponentInstance } from '@/hooks/vue';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useValidationAttachRule } from '@/hooks/validator/validation-attach-rule';
 
 const DEFAULT_TRANSLATION_PREFIX = 'common.triggers';
 
@@ -131,17 +130,22 @@ export default {
       [TRIGGERS_TYPES.eventscount]: 'threshold',
     };
 
-    const validator = useValidator();
-    const { t, tc, te } = useI18n();
+    const { t, te } = useI18n();
     const { updateModel, removeItemFromArray } = useArrayModelField(props, emit);
     const { isProVersion, eventsCountTriggerDefaultThreshold } = useInfo();
-    const vm = useComponentInstance();
 
     const preparedTriggersByTypes = ref({});
 
     const deprecatedValues = computed(() =>
       props.modelValue.filter(({ type }) => isDeprecatedTrigger(type)),
     );
+
+    const {
+      validator,
+      attachRule: attachMaxValueRule,
+      detachRule: detachRules,
+      validateRule: validateMaxValueRule,
+    } = useValidationAttachRule(props.name, 'max_value:0', () => deprecatedValues.value.length);
 
     const defaultAdditionalValuesByTriggers = computed(() => ({
       [TRIGGERS_TYPES.eventscount]: eventsCountTriggerDefaultThreshold.value ?? '',
@@ -169,17 +173,17 @@ export default {
       }, []),
     );
 
-    const errorMessages = computed(() =>
-      validator.errors.collect(props.name, null, false).map((item) => {
-        const messageMap = {
-          max_value: tc('errors.triggerMustNotUsed', deprecatedValues.value.length, {
-            field: deprecatedValues.value.join(', '),
-          }),
-        };
+    const errorMessages = computed(() => {
+      if (!validator.errors.has(props.name)) {
+        return [];
+      }
 
-        return messageMap[item.rule] ?? item.msg;
-      }),
-    );
+      return [
+        t('errors.triggerMustNotUsed', deprecatedValues.value.length, {
+          field: deprecatedValues.value.map(({ type }) => type).join(', '),
+        }),
+      ];
+    });
 
     /**
      * Get name property for chip field
@@ -268,7 +272,7 @@ export default {
     const changeValue = (value = []) => {
       updateModel(value.map(({ type }) => preparedTriggersByTypes.value[type]));
 
-      nextTick(() => validator.validate(props.name));
+      nextTick(validateMaxValueRule);
     };
 
     /**
@@ -285,25 +289,6 @@ export default {
           trigger.type === type ? preparedTriggersByTypes.value[type] : trigger,
         ),
       );
-    };
-
-    /**
-     * Attach rule for deprecatedValues checking into validator
-     */
-    const attachMaxValueRule = () => {
-      validator.attach({
-        name: props.name,
-        rules: 'max_value:0',
-        getter: () => deprecatedValues.value.length,
-        vm,
-      });
-    };
-
-    /**
-     * Detach rule for deprecatedValues checking from validator
-     */
-    const detachRules = () => {
-      validator.detach(props.name);
     };
 
     const additionalValuesComponentsByTypes = computed(() => {

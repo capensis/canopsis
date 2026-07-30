@@ -10,6 +10,10 @@ import { useLlmStore } from '@/stores/modules/llm';
 export const useLlm = () => {
   const llmStore = useLlmStore();
   const { items, meta, pending, fetchingParams } = storeToRefs(llmStore);
+  const fetchDefaultLlmWithoutStore = () =>
+    llmStore.fetchListWithoutStore({
+      params: { only_default: true, enabled: true },
+    });
 
   return {
     llms: items,
@@ -26,6 +30,7 @@ export const useLlm = () => {
     bulkRemoveLlms: llmStore.bulkRemove,
     bulkEnableLlms: llmStore.bulkEnable,
     bulkDisableLlms: llmStore.bulkDisable,
+    fetchDefaultLlmWithoutStore,
     fetchModelsListWithoutStore: llmStore.fetchModelsListWithoutStore,
     fetchLlmHistoryWithoutStore: llmStore.fetchLlmHistoryWithoutStore,
     fetchLlmChatsWithoutStore: llmStore.fetchLlmChatsWithoutStore,

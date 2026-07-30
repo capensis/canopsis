@@ -1,17 +1,16 @@
 <template>
-  <c-layout
-    class="pattern-operator-information"
-    align-center
-  >
+  <div class="pattern-operator-information">
     <c-pattern-operator-chip class="mr-4">
       <slot />
     </c-pattern-operator-chip>
     <div class="pattern-operator-information__bracket" />
-  </c-layout>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 .pattern-operator-information {
+  display: flex;
+  align-items: center;
   height: 100%;
   position: relative;
 

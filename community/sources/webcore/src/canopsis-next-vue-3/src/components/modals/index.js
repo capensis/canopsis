@@ -20,6 +20,7 @@ export default {
   [MODALS.createBroadcastMessage]: defineAsyncComponent(
     () => import('./admin/create-broadcast-message.vue'),
   ),
+  [MODALS.userInterface]: defineAsyncComponent(() => import('./admin/user-interface.vue')),
   [MODALS.createDynamicInfo]: defineAsyncComponent(
     () => import('./dynamic-info/create-dynamic-info.vue'),
   ),
@@ -103,6 +104,7 @@ export default {
     () => import('./map/create-tree-of-dependencies-map.vue'),
   ),
   [MODALS.createTag]: defineAsyncComponent(() => import('./tag/create-tag.vue')),
+  [MODALS.createLlm]: defineAsyncComponent(() => import('./llm/create-llm.vue')),
   [MODALS.createExternalDataTableRecord]: defineAsyncComponent(
     () => import('./external-data-table/create-external-data-table-record.vue'),
   ),

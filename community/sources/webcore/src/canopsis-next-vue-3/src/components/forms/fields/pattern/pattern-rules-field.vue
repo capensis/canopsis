@@ -1,27 +1,31 @@
 <template>
-  <c-layout column>
+  <div class="pattern-rules-field">
     <v-row
       v-for="(rule, index) in rules"
       :key="rule.key"
-      gap="3"
-      justify-space-between
-      align-center
+      align="center"
+      class="pattern-rules-field__row my-0"
+      density="compact"
     >
-      <pattern-rule-field
-        v-bind="getRuleProps(rule)"
-        :rule="rule"
-        :name="rule.key"
-        :attributes="attributes"
-        :disabled-field="rule.disabled?.field"
-        :disabled-operator="rule.disabled?.operator"
-        @update:rule="updateRule(index, $event)"
-      />
-      <c-action-btn
-        :tooltip="$t('pattern.removeRule')"
-        :disabled="readonly || disabled || rule.disabled?.remove"
-        type="delete"
-        @click="removeItemFromArray(index)"
-      />
+      <v-col class="pattern-rules-field__rule py-0">
+        <pattern-rule-field
+          v-bind="getRuleProps(rule)"
+          :rule="rule"
+          :name="rule.key"
+          :attributes="attributes"
+          :disabled-field="rule.disabled?.field"
+          :disabled-operator="rule.disabled?.operator"
+          @update:rule="updateRule(index, $event)"
+        />
+      </v-col>
+      <v-col class="pattern-rules-field__action py-0">
+        <c-action-btn
+          :tooltip="$t('pattern.removeRule')"
+          :disabled="readonly || disabled || rule.disabled?.remove"
+          type="delete"
+          @click="removeItemFromArray(index)"
+        />
+      </v-col>
     </v-row>
 
     <c-btn-with-error
@@ -34,7 +38,7 @@
     >
       {{ $t('pattern.addRule') }}
     </c-btn-with-error>
-  </c-layout>
+  </div>
 </template>
 
 <script>
@@ -80,15 +84,13 @@ export default {
   },
   setup(props) {
     const fieldName = computed(() => props.name);
-    const enabledRulesCount = () => props.rules.filter((rule) => {
-      const attribute = props.attributes.find(({ value }) => value === rule.attribute);
+    const enabledRulesCount = () =>
+      props.rules.filter((rule) => {
+        const attribute = props.attributes.find(({ value }) => value === rule.attribute);
 
-      return !attribute?.options?.disabled;
-    }).length;
-    const {
-      errorMessage,
-      validate,
-    } = useField(
+        return !attribute?.options?.disabled;
+      }).length;
+    const { errorMessage, validate } = useField(
       fieldName,
       () => (enabledRulesCount() ? true : 'Required'),
       {
@@ -179,3 +181,30 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.pattern-rules-field {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+  min-width: 0;
+  width: 100%;
+
+  &__row {
+    width: 100%;
+  }
+
+  &__rule {
+    flex: 1 1 0;
+    max-width: none;
+  }
+
+  &__action {
+    display: flex;
+    flex: 0 0 40px;
+    justify-content: center;
+    max-width: 40px;
+    width: 40px;
+  }
+}
+</style>

@@ -1,12 +1,26 @@
 <template>
   <c-layout gap="3" column>
     <c-enabled-field v-model="enabledField" with-background />
-    <event-filter-general-form
-      :ref="setRef"
-      :template-vars="templateVars"
-      :copy-vars="copyVars"
-      :is-disabled-id-field="isDisabledIdField"
-    />
+
+    <c-form-general-patterns-tabs :form="values" :rule-id="ruleId" :type="type" reverse>
+      <template #general="{ setRef, templateVars, copyVars }">
+        <event-filter-general-form
+          :ref="setRef"
+          :template-vars="templateVars"
+          :copy-vars="copyVars"
+          :is-disabled-id-field="isDisabledIdField"
+        />
+      </template>
+
+      <template #patterns="{ setRef }">
+        <event-filter-patterns-form
+          :ref="setRef"
+          :form="values"
+          :event-attributes="eventAttributes"
+          :attributes-pending="attributesPending"
+        />
+      </template>
+    </c-form-general-patterns-tabs>
   </c-layout>
 </template>
 
@@ -16,10 +30,12 @@ import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 import { useFormContext } from '@/hooks/form';
 
 import EventFilterGeneralForm from './event-filter-general-form.vue';
+import EventFilterPatternsForm from './event-filter-patterns-form.vue';
 
 export default {
   components: {
     EventFilterGeneralForm,
+    EventFilterPatternsForm,
   },
   props: {
     ruleId: {

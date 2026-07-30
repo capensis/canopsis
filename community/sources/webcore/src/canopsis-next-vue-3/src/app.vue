@@ -74,6 +74,7 @@ export default {
     return {
       currentUserLocalPending: true,
       appInfoLocalPending: true,
+      templateVarsLocalPending: true,
     };
   },
 
@@ -86,7 +87,9 @@ export default {
     },
 
     wholePending() {
-      return this.currentUserLocalPending || this.appInfoLocalPending || this.templateVarsPending;
+      return (
+        this.currentUserLocalPending || this.appInfoLocalPending || this.templateVarsLocalPending
+      );
     },
 
     shownAppShell() {
@@ -263,9 +266,12 @@ export default {
 
     async fetchTemplateVarsWithErrorHandling() {
       try {
+        this.templateVarsLocalPending = true;
         await this.fetchTemplateVars();
       } catch (err) {
         console.error(err);
+      } finally {
+        this.templateVarsLocalPending = false;
       }
     },
   },

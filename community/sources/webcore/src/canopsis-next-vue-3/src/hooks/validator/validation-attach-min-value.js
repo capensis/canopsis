@@ -1,4 +1,6 @@
-import { useValidator } from './validator';
+import { useValidationAttachRule } from './validation-attach-rule';
+
+const MIN_VALUE_RULE = 'min_value:1';
 
 /**
  * Compatibility helper for old dynamic min_value validation.
@@ -7,13 +9,17 @@ import { useValidator } from './validator';
  * @returns {Object}
  */
 export const useValidationAttachMinValue = (name) => {
-  const validator = useValidator();
+  const { validator, attachRule, detachRule, validateRule } = useValidationAttachRule(
+    name,
+    MIN_VALUE_RULE,
+    () => 0,
+  );
 
   return {
     validator,
-    attachMinValueRule: () => {},
-    detachMinValueRule: () => {},
-    validateMinValueRule: () => validator.validate(name),
+    attachMinValueRule: attachRule,
+    detachMinValueRule: detachRule,
+    validateMinValueRule: validateRule,
   };
 };
 
@@ -25,10 +31,16 @@ export const useValidationAttachMinValue = (name) => {
  * @returns {Object}
  */
 export const useValidationAttachMinValueForField = (name, getValue) => {
-  const validator = useValidator();
+  const { validator, attachRule, validateRule } = useValidationAttachRule(
+    name,
+    MIN_VALUE_RULE,
+    () => getValue?.() ?? 0,
+  );
+
+  attachRule();
 
   return {
     validator,
-    asyncValidateMinValueRule: () => validator.validate(name, getValue?.()),
+    asyncValidateMinValueRule: validateRule,
   };
 };

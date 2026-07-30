@@ -1,3 +1,5 @@
+import { storeToRefs } from 'pinia';
+
 import { useTemplateVarsStore } from '@/stores/modules/template-vars';
 
 /**
@@ -7,8 +9,12 @@ import { useTemplateVarsStore } from '@/stores/modules/template-vars';
  */
 export const useTemplateVars = () => {
   const templateVarsStore = useTemplateVarsStore();
+  const refs = storeToRefs(templateVarsStore);
 
   return {
+    templateVars: refs.items,
+    templateVarsPending: refs.pending,
+
     fetchTemplateVarsList: templateVarsStore.fetchTemplateVarsList,
     fetchEntityServicesTemplateVarsWithoutStore:
       templateVarsStore.fetchEntityServicesTemplateVarsWithoutStore,

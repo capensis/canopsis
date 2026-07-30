@@ -18,7 +18,7 @@
 
 <script>
 import { computed } from 'vue';
-import { useFieldError, useSetFieldError } from 'vee-validate';
+import { useField } from 'vee-validate';
 import { isArray } from 'lodash';
 
 import {
@@ -69,10 +69,11 @@ export default {
   },
   setup(props) {
     const fieldName = computed(() => props.name);
-    const errorMessage = useFieldError(fieldName);
-    const setFieldError = useSetFieldError();
+    const { errorMessage, setErrors } = useField(fieldName, undefined, {
+      validateOnValueUpdate: false,
+    });
 
-    const setErrorMessage = message => setFieldError(fieldName.value, message);
+    const setErrorMessage = (message) => setErrors(message ? [message] : []);
 
     return {
       errorMessage,
@@ -91,9 +92,9 @@ export default {
         }
 
         if (
-          isInfosRuleType(options?.type)
-          || isExtraInfosRuleType(options?.type)
-          || isObjectRuleType(options?.type)
+          isInfosRuleType(options?.type) ||
+          isExtraInfosRuleType(options?.type) ||
+          isObjectRuleType(options?.type)
         ) {
           return field.startsWith(`${value}.`);
         }
@@ -107,9 +108,7 @@ export default {
     },
 
     isValidPatternRules(rules) {
-      return isArray(rules)
-        && rules.length > 0
-        && rules.every(this.isValidPatternRule);
+      return isArray(rules) && rules.length > 0 && rules.every(this.isValidPatternRule);
     },
 
     isValidPatterns(patterns) {

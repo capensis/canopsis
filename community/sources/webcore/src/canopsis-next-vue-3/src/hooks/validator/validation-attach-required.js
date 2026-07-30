@@ -1,6 +1,8 @@
-import { nextTick, onBeforeUnmount, onMounted } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, unref } from 'vue';
 
-import { useValidator } from './validator';
+import { useValidationAttachRule } from './validation-attach-rule';
+
+const REQUIRED_RULE = 'required';
 
 /**
  * Hook for add and remove validation rule for field
@@ -9,22 +11,19 @@ import { useValidator } from './validator';
  * @return {Object}
  */
 export const useValidationAttachRequired = (name) => {
-  const validator = useValidator();
+  const { validator, attachRule, detachRule, validateRule } = useValidationAttachRule(
+    name,
+    REQUIRED_RULE,
+  );
 
-  const attachRequiredRule = () => {};
-
-  const validateRequiredRule = () => validator?.validate?.(name);
-
-  const resetRequiredRule = () => validator?.reset?.({ name });
-
-  const detachRequiredRule = () => {};
+  const resetRequiredRule = () => validator?.reset?.({ name: unref(name) });
 
   return {
     validator,
-    attachRequiredRule,
-    validateRequiredRule,
+    attachRequiredRule: attachRule,
+    validateRequiredRule: validateRule,
     resetRequiredRule,
-    detachRequiredRule,
+    detachRequiredRule: detachRule,
   };
 };
 

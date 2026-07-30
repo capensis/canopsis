@@ -12,12 +12,14 @@
     :sanitize-options="sanitizeOptions"
     :autofocus="autofocus"
     :required="required"
+    :dark="dark"
     @blur="handleBlur"
   />
 </template>
 
 <script>
 import { computed, watch } from 'vue';
+import { useTheme } from 'vuetify';
 import { useField } from 'vee-validate';
 
 import { useInfo } from '@/hooks/store/modules/info';
@@ -91,6 +93,7 @@ export default {
   emits: ['update:modelValue'],
 
   setup(props, { emit }) {
+    const theme = useTheme();
     const { fileUploadMaxSize } = useInfo();
 
     const validateValue = (value) => {
@@ -120,6 +123,7 @@ export default {
     });
 
     const isPublic = computed(() => props.public);
+    const dark = computed(() => theme.current.value.dark);
     const preparedMaxFileSize = computed(() => props.maxFileSize || fileUploadMaxSize.value);
     const fieldErrorMessages = computed(() => [
       ...props.errorMessages,
@@ -150,6 +154,7 @@ export default {
       fieldValue,
       fieldErrorMessages,
       isPublic,
+      dark,
       preparedMaxFileSize,
       handleBlur,
     };
