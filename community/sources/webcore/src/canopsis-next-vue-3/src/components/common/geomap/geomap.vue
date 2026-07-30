@@ -66,7 +66,13 @@ export default {
       type: Array,
       default: () => [0, 0],
     },
+    options: {
+      type: Object,
+      default: () => ({}),
+    },
   },
+
+  emits: ['click', 'dblclick', 'update:center'],
 
   data() {
     return {
@@ -103,7 +109,12 @@ export default {
       zoom: this.zoom,
       minZoom: this.minZoom,
       maxZoom: this.maxZoom,
+      ...this.options,
     });
+
+    this.mapObject.on('click', this.emitClick);
+    this.mapObject.on('dblclick', this.emitDblClick);
+    this.mapObject.on('moveend', this.updateCenter);
 
     Object.values(GEOMAP_PANES).forEach((pane) => {
       this.mapObject.createPane(pane).style.zIndex = GEOMAP_PANE_Z_INDEXES[pane];
@@ -122,10 +133,32 @@ export default {
 
     this.cleanupInvalidateSize();
     this.disconnectResizeObserver();
+
+    this.mapObject?.off('click', this.emitClick);
+    this.mapObject?.off('dblclick', this.emitDblClick);
+    this.mapObject?.off('moveend', this.updateCenter);
     this.mapObject?.remove();
   },
 
   methods: {
+    emitClick(event) {
+      this.$emit('click', event);
+    },
+
+    emitDblClick(event) {
+      this.$emit('dblclick', event);
+    },
+
+    updateCenter() {
+      const center = this.mapObject.getCenter();
+
+      this.$emit('update:center', [center.lat, center.lng]);
+    },
+
+    isControlLayer(layer) {
+      return layer.name && (layer.layerType === 'base' || layer.layerType === 'overlay');
+    },
+
     addLayer(layer) {
       this.layers.push(layer);
 
@@ -133,12 +166,17 @@ export default {
         this.mapObject.addLayer(layer.mapObject);
       }
 
-      this.layerControls.forEach((control) => control.addLayerDescriptor(layer));
+      if (this.isControlLayer(layer)) {
+        this.layerControls.forEach((control) => control.addLayerDescriptor(layer));
+      }
     },
 
     removeLayer(layer) {
       this.layers = this.layers.filter((item) => item !== layer);
-      this.layerControls.forEach((control) => control.removeLayerDescriptor(layer));
+
+      if (this.isControlLayer(layer)) {
+        this.layerControls.forEach((control) => control.removeLayerDescriptor(layer));
+      }
 
       if (this.mapObject.hasLayer(layer.mapObject)) {
         this.mapObject.removeLayer(layer.mapObject);
@@ -147,7 +185,7 @@ export default {
 
     registerLayerControl(control) {
       this.layerControls.push(control);
-      this.layers.forEach((layer) => control.addLayerDescriptor(layer));
+      this.layers.filter(this.isControlLayer).forEach((layer) => control.addLayerDescriptor(layer));
     },
 
     unregisterLayerControl(control) {

@@ -1,5 +1,5 @@
 <template>
-  <span :style="pointStyles" class="point-icon">
+  <span v-bind="$attrs" :style="pointStyles" class="point-icon">
     <v-icon :size="icon.size || size" :color="icon.color">
       {{ icon.name }}
     </v-icon>
@@ -17,6 +17,8 @@ import { getEntityColor } from '@/helpers/entities/entity/color';
 import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';
 
 export default {
+  inheritAttrs: false,
+
   props: {
     entity: {
       type: [String, Object],

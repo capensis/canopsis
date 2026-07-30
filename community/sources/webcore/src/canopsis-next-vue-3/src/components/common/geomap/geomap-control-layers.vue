@@ -12,7 +12,7 @@
             <v-divider />
             <c-layout class="pa-2" column>
               <c-radio-group
-                :model-value="activeLayerName"
+                :model-value="activeLayerId"
                 class="mt-0"
                 color="primary"
                 hide-details
@@ -23,7 +23,7 @@
                   v-for="layer in layers"
                   :key="layer.name"
                   :label="layer.name"
-                  :value="layer.name"
+                  :value="getLayerId(layer.mapObject)"
                   color="primary"
                 />
               </c-radio-group>
@@ -79,15 +79,17 @@ export default {
     },
 
     layers() {
-      return this.allLayers.filter(({ layerType }) => layerType !== 'overlay');
+      return this.allLayers.filter(({ layerType, name }) => name && layerType === 'base');
     },
 
     overlays() {
-      return this.allLayers.filter(({ layerType }) => layerType === 'overlay');
+      return this.allLayers.filter(({ layerType, name }) => name && layerType === 'overlay');
     },
 
-    activeLayerName() {
-      return this.layers.find(({ mapObject }) => this.isLayerActive(mapObject))?.name;
+    activeLayerId() {
+      const activeLayer = this.layers.find(({ mapObject }) => this.isLayerActive(mapObject));
+
+      return activeLayer ? this.getLayerId(activeLayer.mapObject) : undefined;
     },
   },
 
@@ -120,15 +122,18 @@ export default {
     },
 
     isLayerActive(layer) {
+      return this.activeLayersIds.includes(this.getLayerId(layer));
+    },
+
+    getLayerId(layer) {
       // eslint-disable-next-line no-underscore-dangle
-      return this.activeLayersIds.includes(layer._leaflet_id);
+      return layer._leaflet_id;
     },
 
     setActiveLayers() {
       this.activeLayersIds = this.allLayers.reduce((acc, { mapObject }) => {
         if (this.map.hasLayer(mapObject)) {
-          // eslint-disable-next-line no-underscore-dangle
-          acc.push(mapObject._leaflet_id);
+          acc.push(this.getLayerId(mapObject));
         }
 
         return acc;
@@ -151,8 +156,8 @@ export default {
       });
     },
 
-    enableLayer(name) {
-      const layer = this.layers.find((item) => item.name === name);
+    enableLayer(layerId) {
+      const layer = this.layers.find(({ mapObject }) => this.getLayerId(mapObject) === layerId);
 
       if (!layer) {
         return;

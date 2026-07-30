@@ -42,12 +42,10 @@ import {
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
-import CZoomOverlay from '@/components/common/overlay/c-zoom-overlay.vue';
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
 export default {
   components: {
-    CZoomOverlay,
     NetworkGraph,
   },
   mixins: [entitiesEntityDependenciesMixin],

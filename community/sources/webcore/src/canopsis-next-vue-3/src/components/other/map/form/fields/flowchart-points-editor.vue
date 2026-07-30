@@ -14,7 +14,7 @@
       @dblclick.stop="openEditPointByClick($event, point)"
       @mousedown.stop="startMoving(point)"
     >
-      <point-icon :size="iconSize" :entity="point.entity" />
+      <point-icon :size="iconSize" :entity="getPointIconEntity(point)" />
     </component>
     <component
       v-for="{ point, x, y } in shapesIcons"
@@ -31,7 +31,7 @@
       @dblclick.stop="openEditPointByClick($event, point)"
       @contextmenu.stop.prevent="handleEditContextmenu($event, point)"
     >
-      <point-icon :size="iconSize" :entity="point.entity" />
+      <point-icon :size="iconSize" :entity="getPointIconEntity(point)" />
     </component>
     <component :is="'foreignObject'" style="overflow: visible">
       <point-form-dialog-menu
@@ -108,7 +108,7 @@ export default {
   },
   computed: {
     existsEntities() {
-      return this.points.map(({ entity }) => entity);
+      return this.points.map(({ entity }) => entity?._id ?? entity);
     },
 
     isDialogOpened() {
@@ -178,6 +178,10 @@ export default {
 
     removePointFromModel(data) {
       this.updateModel(this.points.filter((point) => data._id !== point._id));
+    },
+
+    getPointIconEntity(point) {
+      return point.entity?._id ?? point.entity;
     },
 
     openContextmenu() {

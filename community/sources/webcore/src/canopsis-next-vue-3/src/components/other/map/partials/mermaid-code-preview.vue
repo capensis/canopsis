@@ -72,9 +72,25 @@ export default {
   },
 
   methods: {
+    normalizeSvgHeight(svg) {
+      const wrapper = document.createElement('div');
+
+      wrapper.innerHTML = svg;
+
+      const svgElement = wrapper.querySelector('svg');
+      const [, , , height] = svgElement?.getAttribute('viewBox')?.split(/\s+/).map(Number) ?? [];
+
+      if (height) {
+        svgElement.setAttribute('height', height);
+        svgElement.style.height = `${height}px`;
+      }
+
+      return wrapper.innerHTML;
+    },
+
     renderMermaid() {
       try {
-        this.svg = renderMermaid(this.value, this.resultConfig);
+        this.svg = this.normalizeSvgHeight(renderMermaid(this.value, this.resultConfig));
 
         this.parsed = true;
       } catch (err) {
