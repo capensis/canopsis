@@ -14,7 +14,7 @@ export const useEventsRecordExportJson = ({ eventsRecordId, eventIds = [], event
   const { poll: generateFile } = useFilePolling({
     createHandler: createEventsRecordExport,
     fetchHandler: fetchEventsRecordExport,
-    endHandler: (fileData) =>
+    endHandler: fileData =>
       openUrlInNewTab(getEventsRecordFileUrl(fileData?._id ?? fileData?.id)),
   });
 

@@ -48,7 +48,7 @@ const createGenerateMessage = (i18n) => {
     },
   );
 
-  return (ctx) => getCustomRuleMessage(ctx) ?? localizedGenerateMessage(ctx);
+  return ctx => getCustomRuleMessage(ctx) ?? localizedGenerateMessage(ctx);
 };
 
 /**

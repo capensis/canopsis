@@ -44,7 +44,11 @@
         @click="showCreateExceptionModal"
       />
     </c-fab-expand-btn>
-    <c-fab-btn v-else :has-access="hasCreateAccess" @create="create" @refresh="refresh">
+    <c-fab-btn
+v-else
+:has-access="hasCreateAccess"
+@create="create"
+@refresh="refresh">
       <span>{{ tooltipText }}</span>
     </c-fab-btn>
   </div>

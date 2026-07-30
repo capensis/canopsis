@@ -52,4 +52,4 @@ export const formToTemplate = (form = {}) => ({
  * @returns {Array<{ name: string, value: string }>}
  */
 export const templateToDynamicInfoInfos = (template = {}) =>
-  (template.names ?? []).map((name) => ({ name, value: '' }));
+  (template.names ?? []).map(name => ({ name, value: '' }));

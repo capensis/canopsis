@@ -9,7 +9,11 @@
 
     <remediation-job-configuration-field v-model="config" />
 
-    <c-id-field v-model="jobId" :label="$t('remediation.job.jobId')" name="job_id" required />
+    <c-id-field
+v-model="jobId"
+:label="$t('remediation.job.jobId')"
+name="job_id"
+required />
 
     <c-layout>
       <c-enabled-duration-field
@@ -22,7 +26,12 @@
     </c-layout>
 
     <c-layout v-if="withPayload">
-      <v-btn v-if="!payload" class="ml-0" color="primary" variant="outlined" @click="addPayload">
+      <v-btn
+v-if="!payload"
+class="ml-0"
+color="primary"
+variant="outlined"
+@click="addPayload">
         {{ $t('remediation.job.addPayload') }}
       </v-btn>
       <template v-else>
@@ -114,9 +123,9 @@ export default {
       AVAILABLE_TIME_UNITS.day,
     ];
 
-    const updateJobWaitInterval = (duration) => (jobWaitInterval.value = duration);
-    const updatePayload = (value) => (payload.value = value);
-    const updateQuery = (items) => (query.value = items);
+    const updateJobWaitInterval = duration => (jobWaitInterval.value = duration);
+    const updatePayload = value => (payload.value = value);
+    const updateQuery = items => (query.value = items);
     const addPayload = () => (payload.value = '{}');
     const removePayload = () => (payload.value = '');
 

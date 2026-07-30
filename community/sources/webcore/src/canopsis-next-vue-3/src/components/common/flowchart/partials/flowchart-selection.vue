@@ -1,5 +1,10 @@
 <template>
-  <path :d="path" :fill="color" :stroke="color" fill-opacity="0.1" stroke-width="1" />
+  <path
+:d="path"
+:fill="color"
+:stroke="color"
+fill-opacity="0.1"
+stroke-width="1" />
 </template>
 
 <script>

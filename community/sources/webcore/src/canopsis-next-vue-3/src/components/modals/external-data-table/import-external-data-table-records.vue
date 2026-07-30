@@ -40,7 +40,11 @@
           type="submit"
         >
           {{ submitButton.text }}
-          <v-progress-circular v-if="submitButton.loading" class="ml-2" size="24" indeterminate />
+          <v-progress-circular
+v-if="submitButton.loading"
+class="ml-2"
+size="24"
+indeterminate />
         </v-btn>
       </template>
     </c-modal-wrapper>

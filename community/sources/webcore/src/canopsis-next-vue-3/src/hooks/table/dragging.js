@@ -38,7 +38,7 @@ export const useTableDragging = ({
    *
    * @param {Object} columnsPosition - The columns position object.
    */
-  const setColumnsPosition = (columnsPosition) =>
+  const setColumnsPosition = columnsPosition =>
     (columnsPositionByFields.value = { ...columnsPosition });
 
   /**
@@ -46,7 +46,7 @@ export const useTableDragging = ({
    *
    * @param {Object[]} headersForCalculation - The array of headers to calculate the sorting order.
    */
-  const calculateColumnsSortingOrderByHeaders = (headersForCalculation) =>
+  const calculateColumnsSortingOrderByHeaders = headersForCalculation =>
     setColumnsPosition(
       headersForCalculation.reduce((acc, { value }, index) => {
         acc[value] = index;

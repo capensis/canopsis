@@ -12,17 +12,17 @@ export const useAlarmStore = defineStore('alarm', () => {
   const widgets = ref({});
   const detailsByWidget = ref({});
 
-  const getItem = computed(() => (id) => alarmsById.value[id]);
-  const getList = computed(() => (ids) => ids.map((id) => alarmsById.value[id]).filter(Boolean));
+  const getItem = computed(() => id => alarmsById.value[id]);
+  const getList = computed(() => ids => ids.map(id => alarmsById.value[id]).filter(Boolean));
   const getListByWidgetId = computed(
-    () => (widgetId) => getList.value(widgets.value[widgetId]?.allIds ?? []),
+    () => widgetId => getList.value(widgets.value[widgetId]?.allIds ?? []),
   );
-  const getMetaByWidgetId = computed(() => (widgetId) => widgets.value[widgetId]?.meta ?? {});
+  const getMetaByWidgetId = computed(() => widgetId => widgets.value[widgetId]?.meta ?? {});
   const getPendingByWidgetId = computed(
-    () => (widgetId) => widgets.value[widgetId]?.pending ?? false,
+    () => widgetId => widgets.value[widgetId]?.pending ?? false,
   );
   const getFetchingParamsByWidgetId = computed(
-    () => (widgetId) => widgets.value[widgetId]?.fetchingParams,
+    () => widgetId => widgets.value[widgetId]?.fetchingParams,
   );
 
   const setWidgetState = (widgetId, patch) => {
@@ -167,23 +167,23 @@ export const useAlarmStore = defineStore('alarm', () => {
     fetchItemWithoutStore,
     fetchAlarmsListExport,
     createAlarmsListExport,
-    createAlarmAckEvent: (payload) => createAlarmEvent('ack', payload),
-    bulkCreateAlarmAckEvent: (payload) => bulkCreateAlarmEvent('ack', payload),
-    createAlarmAckremoveEvent: (payload) => createAlarmEvent('ackremove', payload),
-    bulkCreateAlarmAckremoveEvent: (payload) => bulkCreateAlarmEvent('ackremove', payload),
-    createAlarmSnoozeEvent: (payload) => createAlarmEvent('snooze', payload),
-    bulkCreateAlarmSnoozeEvent: (payload) => bulkCreateAlarmEvent('snooze', payload),
-    createAlarmAssocticketEvent: (payload) => createAlarmEvent('assocticket', payload),
-    bulkCreateAlarmAssocticketEvent: (payload) => bulkCreateAlarmEvent('assocticket', payload),
-    bulkCreateAlarmTicketremoveEvent: (payload) => bulkCreateAlarmEvent('ticketremove', payload),
-    createAlarmCommentEvent: (payload) => createAlarmEvent('comment', payload),
-    bulkCreateAlarmCommentEvent: (payload) => bulkCreateAlarmEvent('comment', payload),
-    createAlarmCancelEvent: (payload) => createAlarmEvent('cancel', payload),
-    bulkCreateAlarmCancelEvent: (payload) => bulkCreateAlarmEvent('cancel', payload),
-    createAlarmUncancelEvent: (payload) => createAlarmEvent('uncancel', payload),
-    bulkCreateAlarmUnCancelEvent: (payload) => bulkCreateAlarmEvent('uncancel', payload),
-    createAlarmChangestateEvent: (payload) => createAlarmEvent('changestate', payload),
-    bulkCreateAlarmChangestateEvent: (payload) => bulkCreateAlarmEvent('changestate', payload),
+    createAlarmAckEvent: payload => createAlarmEvent('ack', payload),
+    bulkCreateAlarmAckEvent: payload => bulkCreateAlarmEvent('ack', payload),
+    createAlarmAckremoveEvent: payload => createAlarmEvent('ackremove', payload),
+    bulkCreateAlarmAckremoveEvent: payload => bulkCreateAlarmEvent('ackremove', payload),
+    createAlarmSnoozeEvent: payload => createAlarmEvent('snooze', payload),
+    bulkCreateAlarmSnoozeEvent: payload => bulkCreateAlarmEvent('snooze', payload),
+    createAlarmAssocticketEvent: payload => createAlarmEvent('assocticket', payload),
+    bulkCreateAlarmAssocticketEvent: payload => bulkCreateAlarmEvent('assocticket', payload),
+    bulkCreateAlarmTicketremoveEvent: payload => bulkCreateAlarmEvent('ticketremove', payload),
+    createAlarmCommentEvent: payload => createAlarmEvent('comment', payload),
+    bulkCreateAlarmCommentEvent: payload => bulkCreateAlarmEvent('comment', payload),
+    createAlarmCancelEvent: payload => createAlarmEvent('cancel', payload),
+    bulkCreateAlarmCancelEvent: payload => bulkCreateAlarmEvent('cancel', payload),
+    createAlarmUncancelEvent: payload => createAlarmEvent('uncancel', payload),
+    bulkCreateAlarmUnCancelEvent: payload => bulkCreateAlarmEvent('uncancel', payload),
+    createAlarmChangestateEvent: payload => createAlarmEvent('changestate', payload),
+    bulkCreateAlarmChangestateEvent: payload => bulkCreateAlarmEvent('changestate', payload),
     addBookmarkToAlarm,
     removeBookmarkFromAlarm,
     fetchDisplayNamesWithoutStore,

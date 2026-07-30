@@ -189,7 +189,7 @@ export default {
         },
       });
 
-    const removeEvent = (event) =>
+    const removeEvent = event =>
       modals.show({
         name: MODALS.confirmation,
         config: {
@@ -201,7 +201,7 @@ export default {
         },
       });
 
-    const removeEvents = (eventsForRemove) =>
+    const removeEvents = eventsForRemove =>
       modals.show({
         name: MODALS.confirmation,
         config: {

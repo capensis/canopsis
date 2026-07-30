@@ -1,6 +1,10 @@
 <template>
   <c-layout gap="3" column>
-    <c-name-field v-model="nameField" :max-length="255" autofocus required />
+    <c-name-field
+v-model="nameField"
+:max-length="255"
+autofocus
+required />
 
     <c-form-block>
       <c-form-block-row :label="$t('linkRule.type')">
@@ -64,7 +68,7 @@ export default {
     const isAlarmType = computed(() => typeField.value === LINK_RULE_TYPES.alarm);
 
     const types = computed(() =>
-      Object.values(LINK_RULE_TYPES).map((type) => ({
+      Object.values(LINK_RULE_TYPES).map(type => ({
         value: type,
         label: t(`linkRule.types.${type}`),
       })),

@@ -94,7 +94,7 @@ export default {
      *
      * @param {Object} entityInfoProperty - The entity info to be edited.
      */
-    const showEditEntityInfoPropertyModal = (entityInfoProperty) =>
+    const showEditEntityInfoPropertyModal = entityInfoProperty =>
       modals.show({
         name: MODALS.createEntityInfoProperty,
         config: {
@@ -113,7 +113,7 @@ export default {
      *
      * @param {Object} entityInfoProperty - The entity info to be duplicated.
      */
-    const showDuplicateEntityInfoPropertyModal = (entityInfoProperty) =>
+    const showDuplicateEntityInfoPropertyModal = entityInfoProperty =>
       modals.show({
         name: MODALS.createEntityInfoProperty,
         config: {
@@ -132,7 +132,7 @@ export default {
      *
      * @param {Object} entityInfoProperty - The entity info to be removed.
      */
-    const showRemoveEntityInfoPropertyModal = (entityInfoProperty) =>
+    const showRemoveEntityInfoPropertyModal = entityInfoProperty =>
       modals.show({
         name: MODALS.confirmation,
         config: {

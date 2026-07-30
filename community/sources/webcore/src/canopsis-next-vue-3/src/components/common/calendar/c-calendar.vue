@@ -88,13 +88,21 @@
         </template>
 
         <template #event="{ event, start, end }">
-          <slot :event="event" :start="start" :end="end" name="event">
+          <slot
+:event="event"
+:start="start"
+:end="end"
+name="event">
             <c-layout
               :class="['c-calendar__event-content pl-1', getMenuClassByCalendarEvent(event.id)]"
               :style="getEventStyle(event)"
               align-center
             >
-              <v-icon v-if="event.icon" :color="event.iconColor" size="14" class="pr-1">
+              <v-icon
+v-if="event.icon"
+:color="event.iconColor"
+size="14"
+class="pr-1">
                 {{ event.icon }}
               </v-icon>
 
@@ -263,7 +271,7 @@ export default {
 
     availableEvents() {
       if (this.editEvent) {
-        return this.events.map((event) =>
+        return this.events.map(event =>
           event.id === this.editEvent.id ? this.editEvent : event,
         );
       }

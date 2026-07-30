@@ -20,7 +20,7 @@ export const useRemediationJobsActions = (refresh = () => {}) => {
 
   const { createRemediationJob, updateRemediationJob, removeRemediationJob } = useRemediationJob();
 
-  const showEditRemediationJobModal = (remediationJob) =>
+  const showEditRemediationJobModal = remediationJob =>
     modals.show({
       name: MODALS.createRemediationJob,
       config: {
@@ -40,7 +40,7 @@ export const useRemediationJobsActions = (refresh = () => {}) => {
       },
     });
 
-  const showDuplicateRemediationJobModal = (remediationJob) =>
+  const showDuplicateRemediationJobModal = remediationJob =>
     modals.show({
       name: MODALS.createRemediationJob,
       config: {
@@ -62,7 +62,7 @@ export const useRemediationJobsActions = (refresh = () => {}) => {
       },
     });
 
-  const showRemoveRemediationJobModal = (remediationJob) =>
+  const showRemoveRemediationJobModal = remediationJob =>
     modals.show({
       name: MODALS.confirmation,
       config: {

@@ -16,7 +16,11 @@
         <template v-if="item.raw?.alias" #append>
           <c-simple-tooltip :content="`infos.${item.raw.originalValue}.value`" top>
             <template #activator="{ props: activatorProps }">
-              <v-icon class="ml-1" color="primary" size="small" v-bind="activatorProps">
+              <v-icon
+class="ml-1"
+color="primary"
+size="small"
+v-bind="activatorProps">
                 alternate_email
               </v-icon>
             </template>
@@ -25,7 +29,9 @@
       </v-list-item>
     </template>
     <template #selection="{ item }">
-      <v-icon v-if="selectionItem(item)?.alias" class="mr-1" size="small"> alternate_email </v-icon>
+      <v-icon v-if="selectionItem(item)?.alias" class="mr-1" size="small">
+alternate_email
+</v-icon>
       <span class="text-truncate">{{ selectionTitle(item) }}</span>
     </template>
   </c-autocomplete>
@@ -66,7 +72,7 @@ export default {
   },
   computed: {
     itemsByValue() {
-      return Object.fromEntries(this.items.map((item) => [item.value, item]));
+      return Object.fromEntries(this.items.map(item => [item.value, item]));
     },
 
     itemValue() {

@@ -85,10 +85,10 @@ export default {
     const { t } = useI18n();
     const validator = useValidator();
     // TODO: fix that
-    const createFieldModel = (field) =>
+    const createFieldModel = field =>
       computed({
         get: () => props.approval[field],
-        set: (value) =>
+        set: value =>
           emit('update:approval', {
             ...props.approval,
             [field]: value,

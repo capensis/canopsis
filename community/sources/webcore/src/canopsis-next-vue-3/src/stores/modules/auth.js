@@ -133,7 +133,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
-  const setTours = (tours) => (currentUser.value.ui_tours = tours);
+  const setTours = tours => (currentUser.value.ui_tours = tours);
 
   const fetchLoggedUsersCountWithoutStore = () => request.get(API_ROUTES.loggedUserCount);
 

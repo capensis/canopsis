@@ -169,7 +169,7 @@ export default {
       return props.result.result;
     });
 
-    const updateTemplate = (value) => emit('update:template', value);
+    const updateTemplate = value => emit('update:template', value);
 
     watch(formattedOutput, (value = '') => {
       editorHeight.value = Math.max(

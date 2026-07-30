@@ -35,8 +35,15 @@
           clearable
           @update:value="updateField('value', $event)"
         />
-        <v-btn v-if="!disabled" :disabled="disabledRemove" icon small @click="removeCondition">
-          <v-icon color="error" small> delete </v-icon>
+        <v-btn
+v-if="!disabled"
+:disabled="disabledRemove"
+icon
+small
+@click="removeCondition">
+          <v-icon color="error" small>
+delete
+</v-icon>
         </v-btn>
       </c-layout>
     </v-col>
@@ -84,7 +91,7 @@ export default {
     const { updateField } = useModelField(props, emit);
 
     const conditionTypes = computed(() =>
-      Object.values(EXTERNAL_DATA_CONDITION_TYPES).map((type) => ({
+      Object.values(EXTERNAL_DATA_CONDITION_TYPES).map(type => ({
         text: t(`externalData.conditionTypes.${type}`),
         value: type,
       })),
@@ -93,7 +100,7 @@ export default {
     const columnsForSelectedConditionType = computed(() =>
       props.condition.type === EXTERNAL_DATA_CONDITION_TYPES.regexp
         ? props.columns.filter(
-            (column) => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp,
+            column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp,
           )
         : props.columns,
     );

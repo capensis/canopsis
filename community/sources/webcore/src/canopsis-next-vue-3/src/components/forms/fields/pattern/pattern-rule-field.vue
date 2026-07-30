@@ -218,14 +218,14 @@ export default {
 
     inputTypesWithDefinedType() {
       const item = this.isInfosRule
-        ? this.infos.find((info) => info.value === this.rule.dictionary)
-        : this.attributes.find((attribute) => attribute.value === this.rule.attribute);
+        ? this.infos.find(info => info.value === this.rule.dictionary)
+        : this.attributes.find(attribute => attribute.value === this.rule.attribute);
 
       if (!item?.definedType) {
         return this.inputTypes;
       }
 
-      return this.inputTypes.map((type) => ({
+      return this.inputTypes.map(type => ({
         ...type,
         defined: type.value === item.definedType,
       }));
@@ -375,7 +375,7 @@ export default {
     },
 
     definedType() {
-      return this.inputTypesWithDefinedType.find((type) => type.defined);
+      return this.inputTypesWithDefinedType.find(type => type.defined);
     },
 
     notDefinedType() {

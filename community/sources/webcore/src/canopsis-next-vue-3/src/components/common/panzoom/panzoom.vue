@@ -1,5 +1,9 @@
 <template>
-  <c-layout class="panzoom" justify="center" @wheel="handleScale" @mousemove="handleMove">
+  <c-layout
+class="panzoom"
+justify="center"
+@wheel="handleScale"
+@mousemove="handleMove">
     <div :style="containerStyles">
       <slot />
     </div>
@@ -23,7 +27,11 @@
     <c-layout v-if="helpText" class="panzoom__bottom-right-actions" column>
       <v-tooltip location="top">
         <template #activator="{ props }">
-          <v-icon v-bind="props" class="panzoom__help-icon" color="secondary" size="32">
+          <v-icon
+v-bind="props"
+class="panzoom__help-icon"
+color="secondary"
+size="32">
             help
           </v-icon>
         </template>
@@ -47,7 +55,7 @@ export default {
     minZoom: {
       type: Number,
       default: 0.1,
-      validator: (value) => value >= 0,
+      validator: value => value >= 0,
     },
     moveStep: {
       type: Number,

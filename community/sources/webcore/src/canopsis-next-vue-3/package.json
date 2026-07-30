@@ -96,9 +96,9 @@
   },
   "lint-staged": {
     "*.{js,cjs,mjs,jsx,ts,mts,cts,tsx,vue}": [
-      "eslint --fix --cache",
+      "oxfmt --write --no-error-on-unmatched-pattern",
       "oxlint --fix",
-      "oxfmt --write --no-error-on-unmatched-pattern"
+      "eslint --fix --cache"
     ],
     "*.{json,jsonc,css,scss,html,md}": [
       "oxfmt --write --no-error-on-unmatched-pattern"

@@ -8,4 +8,4 @@ import { COLORS } from '@/config';
  * @param {string} metric
  * @returns {string}
  */
-export const getMetricColor = (metric) => COLORS.metrics[camelCase(metric)] || COLORS.secondary;
+export const getMetricColor = metric => COLORS.metrics[camelCase(metric)] || COLORS.secondary;

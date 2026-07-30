@@ -37,8 +37,8 @@ export const createBasicCRUDActions = ({ route, withWithoutStore = false } = {})
 export const createCRUDStore = ({
   id,
   route,
-  dataPreparer = (response) => response?.data,
-  metaPreparer = (response) => response?.meta,
+  dataPreparer = response => response?.data,
+  metaPreparer = response => response?.meta,
   withFetchingParams = false,
   withMeta = true,
   withWithoutStore = false,
@@ -82,7 +82,7 @@ export const createCRUDStore = ({
 
     const fetchListWithPreviousParams = () => fetchList({ params: fetchingParams.value });
 
-    const fetchListWithoutStore = (options) => request.get(route, options);
+    const fetchListWithoutStore = options => request.get(route, options);
 
     const bulkRemove = ({ data } = {}) => request.delete(bulkRoute, { data });
     const additionalState =

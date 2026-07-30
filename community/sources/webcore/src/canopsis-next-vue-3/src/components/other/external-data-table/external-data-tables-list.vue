@@ -13,7 +13,9 @@
       <span>{{ item.name }}</span>
       <v-tooltip v-if="item.removed_from_config" location="bottom">
         <template #activator="{ props: tooltipProps }">
-          <v-icon v-bind="tooltipProps" class="ml-2" color="error"> warning </v-icon>
+          <v-icon v-bind="tooltipProps" class="ml-2" color="error">
+warning
+</v-icon>
         </template>
         <span
           v-html="t('externalData.tableRemovedFromConfig', { rules: item.linkedRulesTooltip })"
@@ -147,14 +149,14 @@ export default {
      *
      * @param {Object} externalDataTable - The external data table object to be removed
      */
-    const remove = (externalDataTable) => emit('remove', externalDataTable);
+    const remove = externalDataTable => emit('remove', externalDataTable);
 
     /**
      * Updates the table options and emits the changes to the parent component
      *
      * @param {Object} newOptions - The updated options object
      */
-    const updateOptions = (newOptions) => emit('update:options', newOptions);
+    const updateOptions = newOptions => emit('update:options', newOptions);
 
     return {
       t,

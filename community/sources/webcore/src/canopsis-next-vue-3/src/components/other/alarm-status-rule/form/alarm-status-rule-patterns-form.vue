@@ -53,7 +53,7 @@ export default {
       props.readonly,
     );
 
-    const updateForm = (value) => emit('update:form', value);
+    const updateForm = value => emit('update:form', value);
 
     return {
       patternsField,

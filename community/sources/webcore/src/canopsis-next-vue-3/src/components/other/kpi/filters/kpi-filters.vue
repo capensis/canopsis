@@ -69,13 +69,13 @@ export default {
         sortDesc: [],
         search: '',
       },
-      onUpdate: (fetchQuery) =>
+      onUpdate: fetchQuery =>
         fetchFiltersList({
           params: getQueryForList(fetchQuery),
         }),
     });
 
-    const showEditFilterModal = (filter) =>
+    const showEditFilterModal = filter =>
       modals.show({
         name: MODALS.createKpiFilter,
         config: {
@@ -92,7 +92,7 @@ export default {
         },
       });
 
-    const showDuplicateFilterModal = (filter) =>
+    const showDuplicateFilterModal = filter =>
       modals.show({
         name: MODALS.createKpiFilter,
         config: {
@@ -109,7 +109,7 @@ export default {
         },
       });
 
-    const showDeleteFilterModal = (id) =>
+    const showDeleteFilterModal = id =>
       modals.show({
         name: MODALS.confirmation,
         config: {

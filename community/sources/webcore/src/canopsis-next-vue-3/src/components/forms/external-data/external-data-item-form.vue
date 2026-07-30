@@ -26,8 +26,14 @@
             item-value="value"
             @update:model-value="updateField('type', $event)"
           />
-          <v-btn v-if="!disabled" class="mr-0" icon @click="remove">
-            <v-icon color="error"> delete </v-icon>
+          <v-btn
+v-if="!disabled"
+class="mr-0"
+icon
+@click="remove">
+            <v-icon color="error">
+delete
+</v-icon>
           </v-btn>
         </c-layout>
         <external-data-table-form
@@ -112,7 +118,7 @@ export default {
     const availableTypes = computed(() =>
       props.types.length
         ? props.types
-        : Object.values(EXTERNAL_DATA_TYPES).map((type) => ({
+        : Object.values(EXTERNAL_DATA_TYPES).map(type => ({
             text: t(`externalData.types.${type}`),
             value: type,
           })),

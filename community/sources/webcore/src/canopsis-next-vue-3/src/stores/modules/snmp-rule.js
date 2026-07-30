@@ -7,7 +7,7 @@ import { createCRUDStore } from '@/stores/plugins/crud';
 export const useSnmpRuleStore = createCRUDStore({
   id: 'snmpRule',
   route: API_ROUTES.snmpRule,
-  dataPreparer: (response) => response?.data,
+  dataPreparer: response => response?.data,
   withFetchingParams: true,
   withMeta: true,
   withWithoutStore: true,

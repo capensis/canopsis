@@ -110,7 +110,7 @@ export default {
     const isManualType = computed(() => props.form.type === REMEDIATION_INSTRUCTION_TYPES.manual);
     const enabledField = computed({
       get: () => props.form.enabled,
-      set: (value) => updateField('enabled', value),
+      set: value => updateField('enabled', value),
     });
 
     const additionalLabel = computed(() =>

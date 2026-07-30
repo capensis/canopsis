@@ -79,13 +79,13 @@ export default {
         sortDesc: [],
         search: '',
       },
-      onUpdate: (fetchQuery) =>
+      onUpdate: fetchQuery =>
         fetchPlaylistsList({
           params: convertQueryToRequest(fetchQuery),
         }),
     });
 
-    const showRemovePlaylistModal = (id) =>
+    const showRemovePlaylistModal = id =>
       modals.show({
         name: MODALS.confirmation,
         config: {
@@ -113,7 +113,7 @@ export default {
         },
       });
 
-    const showEditPlaylistModal = (playlist) =>
+    const showEditPlaylistModal = playlist =>
       modals.show({
         name: MODALS.createPlaylist,
         config: {
@@ -125,7 +125,7 @@ export default {
         },
       });
 
-    const showDuplicatePlaylistModal = (playlist) =>
+    const showDuplicatePlaylistModal = playlist =>
       modals.show({
         name: MODALS.createPlaylist,
         config: {

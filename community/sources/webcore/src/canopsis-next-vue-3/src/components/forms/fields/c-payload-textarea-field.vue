@@ -271,7 +271,7 @@ export default {
         const nextMessage =
           currentMessage
             .split('\n')
-            .filter((part) => part !== oldMessage)
+            .filter(part => part !== oldMessage)
             .join('\n') || undefined;
 
         this.formContext?.setFieldError(this.name, nextMessage);

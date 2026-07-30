@@ -11,7 +11,7 @@ import { promisedWait } from '@/helpers/async';
  */
 export const waitVuetifyAnimation = () => promisedWait(VUETIFY_ANIMATION_DELAY);
 
-const getElementZIndex = (element) => Number(window.getComputedStyle(element).zIndex) || 0;
+const getElementZIndex = element => Number(window.getComputedStyle(element).zIndex) || 0;
 
 /**
  * Get the maximum z-index among active overlay elements.
@@ -85,7 +85,7 @@ export const getSelectionText = (items, selectionItem, itemValue = 'value', item
   }
 
   const value = getPropertyFromItem(selectionItem, itemValue, text);
-  const selectionItemObject = items.find((item) => getPropertyFromItem(item, itemValue) === value);
+  const selectionItemObject = items.find(item => getPropertyFromItem(item, itemValue) === value);
 
   return selectionItemObject ? getPropertyFromItem(selectionItemObject, itemText, text) : text;
 };

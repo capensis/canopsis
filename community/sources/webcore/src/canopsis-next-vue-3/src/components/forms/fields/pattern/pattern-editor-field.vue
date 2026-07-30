@@ -10,7 +10,11 @@
       required
       @update:value="updatePattern"
     />
-    <v-tabs v-if="!withType || patterns.id" v-model="activeTab" align-tabs="center" color="primary">
+    <v-tabs
+v-if="!withType || patterns.id"
+v-model="activeTab"
+align-tabs="center"
+color="primary">
       <v-tab
         :disabled="!isSimpleTab && hasJsonError"
         :value="$constants.PATTERN_EDITOR_TABS.simple"
@@ -58,7 +62,11 @@
         >
           {{ $t('common.edit') }}
         </v-btn>
-        <c-layout v-if="checked" gap="2" align="center" justify="end">
+        <c-layout
+v-if="checked"
+gap="2"
+align="center"
+justify="end">
           <pattern-count-message :alarm-counter="alarmCounter" :entity-counter="entityCounter" />
           <slot name="append-count" />
         </c-layout>

@@ -70,7 +70,7 @@ export default {
     servicesNodes() {
       return this.services.length
         ? [
-            ...this.services.map((node) => ({
+            ...this.services.map(node => ({
               classes:
                 node.name === HEALTHCHECK_SERVICES_NAMES.rabbit ? [] : ['service-title--bottom'],
               data: {
@@ -189,8 +189,8 @@ export default {
 
     servicesElements() {
       return [
-        ...this.servicesNodes.map((node) => ({ group: 'nodes', ...node })),
-        ...this.servicesEdges.map((edge) => ({ group: 'edges', ...edge })),
+        ...this.servicesNodes.map(node => ({ group: 'nodes', ...node })),
+        ...this.servicesEdges.map(edge => ({ group: 'edges', ...edge })),
       ];
     },
 
@@ -244,7 +244,7 @@ export default {
     },
 
     enginesEdges() {
-      return this.enginesGraphEdges.map((edge) => ({
+      return this.enginesGraphEdges.map(edge => ({
         data: {
           source: edge.from,
           target: edge.to,
@@ -255,8 +255,8 @@ export default {
 
     enginesElements() {
       return [
-        ...this.enginesNodes.map((node) => ({ group: 'nodes', ...node })),
-        ...this.enginesEdges.map((edge) => ({ group: 'edges', ...edge })),
+        ...this.enginesNodes.map(node => ({ group: 'nodes', ...node })),
+        ...this.enginesEdges.map(edge => ({ group: 'edges', ...edge })),
       ];
     },
 
@@ -268,7 +268,7 @@ export default {
           halign: 'right',
           valignBox: 'top',
           halignBox: 'right',
-          tpl: (data) => `<div class="text-subtitle-1">${this.getNodeName(data.id)}</div>`,
+          tpl: data => `<div class="text-subtitle-1">${this.getNodeName(data.id)}</div>`,
         },
         {
           query: '.service-title--bottom',
@@ -276,7 +276,7 @@ export default {
           halign: 'center',
           valignBox: 'bottom',
           halignBox: 'center',
-          tpl: (data) => `<div class="text-subtitle-1">${this.getNodeName(data.id)}</div>`,
+          tpl: data => `<div class="text-subtitle-1">${this.getNodeName(data.id)}</div>`,
         },
         {
           query: `node[id="${HEALTHCHECK_SERVICES_NAMES.rabbit}"]`,
@@ -290,12 +290,12 @@ export default {
           query: '.service-node--without-node',
           valign: 'center',
           halign: 'center',
-          tpl: (data) => `<div class="text-h5">${this.getNodeName(data.id)}</div>`,
+          tpl: data => `<div class="text-h5">${this.getNodeName(data.id)}</div>`,
         },
         {
           query: `node[id="${HEALTHCHECK_SERVICES_NAMES.events}"]`,
           halign: 'center',
-          tpl: (data) => `<div class="text-h5">${this.getNodeName(data.id)}</div>`,
+          tpl: data => `<div class="text-h5">${this.getNodeName(data.id)}</div>`,
         },
         {
           query: '.engine',
@@ -572,7 +572,7 @@ export default {
       }
 
       return statusKeys
-        .map((stateKey) => this.$t(stateKey, { name: this.getNodeName(data.name) }))
+        .map(stateKey => this.$t(stateKey, { name: this.getNodeName(data.name) }))
         .join('\n');
     },
 

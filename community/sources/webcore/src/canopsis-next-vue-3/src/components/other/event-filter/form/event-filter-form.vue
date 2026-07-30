@@ -2,7 +2,11 @@
   <c-layout gap="3" column>
     <c-enabled-field v-model="enabledField" with-background />
 
-    <c-form-general-patterns-tabs :form="values" :rule-id="ruleId" :type="type" reverse>
+    <c-form-general-patterns-tabs
+:form="values"
+:rule-id="ruleId"
+:type="type"
+reverse>
       <template #general="{ setRef, templateVars, copyVars }">
         <event-filter-general-form
           :ref="setRef"

@@ -10,10 +10,10 @@ export const copyPasteShapesMixin = {
         const shape = this.data[id];
 
         /* Clear connections */
-        const connections = shape.connections.filter((connection) =>
+        const connections = shape.connections.filter(connection =>
           this.selectedIds.includes(connection.shapeId),
         );
-        const connectedTo = shape.connectedTo.filter((shapeId) =>
+        const connectedTo = shape.connectedTo.filter(shapeId =>
           this.selectedIds.includes(shapeId),
         );
 
@@ -54,7 +54,7 @@ export const copyPasteShapesMixin = {
         shape.connectedTo.forEach((connectedShapeId) => {
           const connectedShape = shapes[connectedShapeId];
 
-          connectedShape.connections = connectedShape.connections.map((connection) => ({
+          connectedShape.connections = connectedShape.connections.map(connection => ({
             ...connection,
             shapeId: connection.shapeId === id ? newId : connection.shapeId,
           }));
@@ -64,7 +64,7 @@ export const copyPasteShapesMixin = {
         shape.connections.forEach(({ shapeId: connectingShapeId }) => {
           const connectingShape = shapes[connectingShapeId];
 
-          connectingShape.connectedTo = connectingShape.connectedTo.map((shapeId) =>
+          connectingShape.connectedTo = connectingShape.connectedTo.map(shapeId =>
             shapeId === id ? newId : shapeId,
           );
         });

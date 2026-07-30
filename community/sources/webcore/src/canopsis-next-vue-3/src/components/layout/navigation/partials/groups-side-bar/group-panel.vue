@@ -25,7 +25,9 @@
           icon
           @click.stop="handleChange"
         >
-          <c-icon size="18"> edit </c-icon>
+          <c-icon size="18">
+edit
+</c-icon>
         </v-btn>
       </div>
     </v-expansion-panel-title>

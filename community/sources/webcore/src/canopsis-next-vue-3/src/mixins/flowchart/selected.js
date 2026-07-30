@@ -58,7 +58,7 @@ export const selectedShapesMixin = {
     },
 
     removeSelectedShape(shape) {
-      this.selectedIds = this.selectedIds.filter((id) => id !== shape._id);
+      this.selectedIds = this.selectedIds.filter(id => id !== shape._id);
 
       this.updateSelected();
     },
@@ -86,7 +86,7 @@ export const selectedShapesMixin = {
            * Selection area include already selected shape and shift pressed.
            */
           if (shiftKey && acc.includes(shape._id)) {
-            return acc.filter((id) => id !== shape._id);
+            return acc.filter(id => id !== shape._id);
           }
 
           /**

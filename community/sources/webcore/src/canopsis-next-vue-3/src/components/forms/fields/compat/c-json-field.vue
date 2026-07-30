@@ -16,7 +16,11 @@
         @blur="handleBlur"
       >
         <template v-if="helpText || $slots.append" #append>
-          <c-help-icon v-if="helpText" :text="helpText" icon="help" left />
+          <c-help-icon
+v-if="helpText"
+:text="helpText"
+icon="help"
+left />
         </template>
       </c-payload-textarea-field>
       <c-textarea
@@ -93,7 +97,7 @@ export default {
     validateOn: {
       type: String,
       default: 'blur',
-      validator: (value) => ['blur', 'button'].includes(value),
+      validator: value => ['blur', 'button'].includes(value),
     },
     helpText: {
       type: String,
@@ -130,7 +134,7 @@ export default {
       validateOnValueUpdate: false,
     });
 
-    const setErrorMessage = (message) => setErrors(message ? [message] : []);
+    const setErrorMessage = message => setErrors(message ? [message] : []);
 
     return {
       errorMessage,

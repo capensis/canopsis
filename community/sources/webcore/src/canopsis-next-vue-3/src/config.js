@@ -165,7 +165,7 @@ export const DEFAULT_LINKIFY_OPTIONS = {
 
 export const LINKIFY_PROTOCOLS = [
   ...import.meta.env.VITE_LINKIFY_PROTOCOLS.split(',')
-    .map((protocol) => protocol.trim())
+    .map(protocol => protocol.trim())
     .filter(Boolean),
 
   'ssh',

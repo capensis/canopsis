@@ -105,7 +105,7 @@ export default {
     };
 
     const hasFilledSomeRequiredField = computed(() =>
-      props.form.some((item) => item.someRequired && item.value),
+      props.form.some(item => item.someRequired && item.value),
     );
 
     const fields = computed(() =>
@@ -127,7 +127,7 @@ export default {
           clearable: true,
         },
         on: {
-          'update:value': (value) => updateFieldInArrayItem(index, 'value', value),
+          'update:value': value => updateFieldInArrayItem(index, 'value', value),
         },
       })),
     );

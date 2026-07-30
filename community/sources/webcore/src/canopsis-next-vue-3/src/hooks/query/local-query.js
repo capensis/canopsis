@@ -89,7 +89,7 @@ export const useLocalQuery = ({
   const handler = (handlerQuery = query.value) => onUpdate(handlerQuery);
 
   const updateQueryFieldsMethods = Object.keys(unref(initialQuery)).reduce((acc, field) => {
-    acc[`updateQuery${upperFirst(camelCase(field))}`] = (value) => updateQueryField(field, value);
+    acc[`updateQuery${upperFirst(camelCase(field))}`] = value => updateQueryField(field, value);
 
     return acc;
   }, {});

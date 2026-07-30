@@ -22,7 +22,7 @@ import { isUserCriteria } from './form';
  * @returns {Array}
  */
 export const convertMetricsToTimezone = (metrics, timezone) =>
-  metrics.map((metric) => ({
+  metrics.map(metric => ({
     ...metric,
     timestamp: convertDateToTimestampByTimezone(metric.timestamp, timezone),
   }));
@@ -56,7 +56,7 @@ export const getDateLabelBySampling = (value, sampling) => {
  * @param {string} criteria
  * @returns {string[]}
  */
-export const getAvailableMetricsByCriteria = (criteria) =>
+export const getAvailableMetricsByCriteria = criteria =>
   isUserCriteria(criteria) ? KPI_RATING_USER_METRICS : KPI_RATING_ENTITY_METRICS;
 
 /**

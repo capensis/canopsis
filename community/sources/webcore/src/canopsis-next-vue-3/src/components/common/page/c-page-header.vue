@@ -11,7 +11,9 @@
         icon
         @click="toggleMessageVisibility"
       >
-        <c-icon color="info" no-fill> help </c-icon>
+        <c-icon color="info" no-fill>
+help
+</c-icon>
       </v-btn>
     </h1>
 
@@ -25,7 +27,11 @@
         </c-layout>
 
         <c-layout v-if="!messageWasHidden" class="pb-2" justify="center">
-          <v-btn :loading="isHidePending" class="my-2" color="primary" @click="hideMessage">
+          <v-btn
+:loading="isHidePending"
+class="my-2"
+color="primary"
+@click="hideMessage">
             {{ $t('pageHeaders.hideMessage') }}
           </v-btn>
         </c-layout>

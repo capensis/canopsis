@@ -29,7 +29,7 @@ export const isPickEqual = (value, other, paths) => isMatch(value, pick(other, p
  * @returns {boolean}
  */
 export const isSeveralEqual = (value, other, keys = []) =>
-  keys.every((key) => isEqual(value[key], other[key]));
+  keys.every(key => isEqual(value[key], other[key]));
 
 /**
  * Revert grouped values by key.
@@ -37,7 +37,7 @@ export const isSeveralEqual = (value, other, keys = []) =>
  * @param {Object.<string, string[]>} obj
  * @returns {Object.<string, string[]>}
  */
-export const revertGroupBy = (obj) =>
+export const revertGroupBy = obj =>
   Object.entries(obj).reduce((acc, [id, values]) => {
     values.forEach((value) => {
       if (acc[value]) {

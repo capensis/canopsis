@@ -143,7 +143,7 @@ export const formToLinkRule = ({
   };
 
   if (isDefaultSourceCode(sourceCode)) {
-    linkRule.links = links.map((link) => formToLinkRuleLink(link, form.type));
+    linkRule.links = links.map(link => formToLinkRuleLink(link, form.type));
   } else {
     linkRule.source_code = sourceCode;
   }

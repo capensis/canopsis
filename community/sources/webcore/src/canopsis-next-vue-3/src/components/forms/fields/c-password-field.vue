@@ -57,7 +57,7 @@ const appendInnerIcon = computed(() => {
 
 const inputType = computed(() => (shownPassword.value ? 'text' : 'password'));
 
-const updateModel = (value) => emit('update:modelValue', value);
+const updateModel = value => emit('update:modelValue', value);
 const toggleShownPassword = () => (shownPassword.value = !shownPassword.value);
 const toggleShownField = () => {
   shownField.value = !shownField.value;
@@ -89,7 +89,11 @@ const toggleShownField = () => {
         @click:append-inner="toggleShownPassword"
       />
 
-      <v-btn icon="delete" size="small" variant="text" @click="toggleShownField" />
+      <v-btn
+icon="delete"
+size="small"
+variant="text"
+@click="toggleShownField" />
     </c-layout>
 
     <div v-else>

@@ -232,7 +232,7 @@ export default {
     },
     isDisabledItem: {
       type: Function,
-      default: (item) => !item,
+      default: item => !item,
     },
     isExpandableItem: {
       type: Function,
@@ -361,7 +361,7 @@ export default {
 
       return [
         ...headers,
-        ...this.headers.map((header) => ({
+        ...this.headers.map(header => ({
           ...header,
           key: header.key ?? header.value,
           title: header.title ?? header[this.headerText],
@@ -371,13 +371,13 @@ export default {
 
     headerScopedSlots() {
       return Object.keys(this.$slots ?? {}).filter(
-        (name) => name.startsWith('header.') && name !== 'header.data-table-select',
+        name => name.startsWith('header.') && name !== 'header.data-table-select',
       );
     },
 
     selected: {
       get() {
-        return this.selectedItems.filter((item) => !this.isDisabledItem(item));
+        return this.selectedItems.filter(item => !this.isDisabledItem(item));
       },
       set(selected) {
         this.selectedItems = selected;
@@ -434,23 +434,23 @@ export default {
 
   watch: {
     items(items) {
-      const itemKeys = new Set(items.map((item) => this.getItemKey(item)));
+      const itemKeys = new Set(items.map(item => this.getItemKey(item)));
 
       if (this.selectAll) {
-        const selectedKeys = new Set(this.selectedItems.map((item) => this.getItemKey(item)));
+        const selectedKeys = new Set(this.selectedItems.map(item => this.getItemKey(item)));
 
         this.selectedItems = items.filter(
-          (item) => selectedKeys.has(this.getItemKey(item)) && !this.isDisabledItem(item),
+          item => selectedKeys.has(this.getItemKey(item)) && !this.isDisabledItem(item),
         );
       }
 
-      const expandedKeys = new Set(this.expandedItems.map((item) => this.getItemKey(item)));
+      const expandedKeys = new Set(this.expandedItems.map(item => this.getItemKey(item)));
 
       this.expandedItems = items.filter(
-        (item) => expandedKeys.has(this.getItemKey(item)) && this.checkIsExpandableItem(item),
+        item => expandedKeys.has(this.getItemKey(item)) && this.checkIsExpandableItem(item),
       );
-      this.openingExpandedKeys = this.openingExpandedKeys.filter((key) => itemKeys.has(key));
-      this.closingExpandedKeys = this.closingExpandedKeys.filter((key) => itemKeys.has(key));
+      this.openingExpandedKeys = this.openingExpandedKeys.filter(key => itemKeys.has(key));
+      this.closingExpandedKeys = this.closingExpandedKeys.filter(key => itemKeys.has(key));
     },
   },
 
@@ -519,7 +519,7 @@ export default {
       const key = this.getItemKey(item);
 
       return (
-        this.expandedItems.some((expandedItem) => this.getItemKey(expandedItem) === key) &&
+        this.expandedItems.some(expandedItem => this.getItemKey(expandedItem) === key) &&
         !this.closingExpandedKeys.includes(key)
       );
     },
@@ -546,7 +546,7 @@ export default {
 
       if (this.isItemExpanded(item)) {
         this.openingExpandedKeys = this.openingExpandedKeys.filter(
-          (openingKey) => openingKey !== key,
+          openingKey => openingKey !== key,
         );
         this.closingExpandedKeys = [...this.closingExpandedKeys, key];
 
@@ -554,10 +554,10 @@ export default {
 
         this.expandTimeouts[key] = window.setTimeout(() => {
           this.expandedItems = this.expandedItems.filter(
-            (expandedItem) => this.getItemKey(expandedItem) !== key,
+            expandedItem => this.getItemKey(expandedItem) !== key,
           );
           this.closingExpandedKeys = this.closingExpandedKeys.filter(
-            (closingKey) => closingKey !== key,
+            closingKey => closingKey !== key,
           );
 
           delete this.expandTimeouts[key];
@@ -567,11 +567,11 @@ export default {
       }
 
       this.closingExpandedKeys = this.closingExpandedKeys.filter(
-        (closingKey) => closingKey !== key,
+        closingKey => closingKey !== key,
       );
       this.openingExpandedKeys = [...this.openingExpandedKeys, key];
 
-      if (!this.expandedItems.some((expandedItem) => this.getItemKey(expandedItem) === key)) {
+      if (!this.expandedItems.some(expandedItem => this.getItemKey(expandedItem) === key)) {
         this.expandedItems = [...this.expandedItems, item];
       }
 
@@ -583,7 +583,7 @@ export default {
         }
 
         this.openingExpandedKeys = this.openingExpandedKeys.filter(
-          (openingKey) => openingKey !== key,
+          openingKey => openingKey !== key,
         );
 
         delete this.expandTimeouts[key];

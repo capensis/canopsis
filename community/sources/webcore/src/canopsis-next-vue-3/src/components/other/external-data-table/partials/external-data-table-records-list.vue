@@ -39,11 +39,23 @@
       <template v-if="withToolbar" #toolbar="{ selected }">
         <div class="flex-grow-1">
           <c-layout gap="1" justify="end">
-            <v-btn color="blue" size="small" icon @click="$emit('import')">
-              <v-icon color="white"> upload_file </v-icon>
+            <v-btn
+color="blue"
+size="small"
+icon
+@click="$emit('import')">
+              <v-icon color="white">
+upload_file
+</v-icon>
             </v-btn>
-            <v-btn color="primary" size="small" icon @click="$emit('add')">
-              <v-icon color="white"> add </v-icon>
+            <v-btn
+color="primary"
+size="small"
+icon
+@click="$emit('add')">
+              <v-icon color="white">
+add
+</v-icon>
             </v-btn>
           </c-layout>
         </div>
@@ -235,7 +247,7 @@ const DRAGGABLE_CLASS = 'external-data-table-records__draggable-column';
 
 const EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS = {
   [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.datetime]: convertDateToString,
-  [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.timestamp]: (value) => convertDateToString(Number(value)),
+  [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.timestamp]: value => convertDateToString(Number(value)),
 };
 
 export default {
@@ -370,7 +382,7 @@ export default {
     const columnsForTableDisplaying = computed(() => props.originalColumns || props.columns);
 
     const preparedRecords = computed(() =>
-      props.records.map((record) =>
+      props.records.map(record =>
         Object.entries(record).reduce((acc, [key, value]) => {
           const filter =
             EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS[
@@ -426,7 +438,7 @@ export default {
     const isSmallDense = computed(() => props.dense === DENSE_TYPES.small);
     const isMediumDense = computed(() => props.dense === DENSE_TYPES.medium);
 
-    const updatePage = (page) => emit('update:options', { ...props.options, page });
+    const updatePage = page => emit('update:options', { ...props.options, page });
 
     const updateColumn = (name, value) =>
       emit('update:columns', {

@@ -19,10 +19,10 @@ export const useEventsRecordStore = defineStore('eventsRecord', () => {
   const resendings = computed(() => currentStatus.value?.resending ?? []);
   const limit = computed(() => currentStatus.value?.limit ?? 1);
   const recordingsById = computed(() =>
-    Object.fromEntries(recordings.value.map((item) => [item._id, item])),
+    Object.fromEntries(recordings.value.map(item => [item._id, item])),
   );
   const resendingsById = computed(() =>
-    Object.fromEntries(resendings.value.map((item) => [item._id, item])),
+    Object.fromEntries(resendings.value.map(item => [item._id, item])),
   );
 
   const setCurrentStatus = (status) => {

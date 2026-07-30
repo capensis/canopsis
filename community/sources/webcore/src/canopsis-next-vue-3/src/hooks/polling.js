@@ -16,7 +16,7 @@ import { usePendingHandler } from '@/hooks/query/pending';
 export const usePolling = ({
   startHandler,
   processHandler,
-  endHandler = (v) => v,
+  endHandler = v => v,
   interval = 2000,
 }) => {
   let cancelWait = () => {};

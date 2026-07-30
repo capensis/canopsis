@@ -7,7 +7,11 @@
       required
       @update:model-value="updateField('selectedType', $event)"
     >
-      <v-radio v-for="type in types" :key="type.value" :value="type.value" color="success">
+      <v-radio
+v-for="type in types"
+:key="type.value"
+:value="type.value"
+color="success">
         <template #label>
           <c-layout justify="space-between">
             <span>
@@ -92,7 +96,7 @@ export default {
     );
 
     const types = computed(() =>
-      Object.values(EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES).map((type) => ({
+      Object.values(EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES).map(type => ({
         value: type,
         text: t(`externalData.tableColumnDataTypesAdditionalChips.stringArray.types.${type}.text`),
         description: t(
@@ -103,11 +107,11 @@ export default {
 
     const separatorsWithCustom = computed(() => [
       ...Object.values(EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS)
-        .map((separator) => ({
+        .map(separator => ({
           value: separator,
           label: separator,
         }))
-        .filter((separator) => separator.value !== CSV_SEPARATORS_TO_SYMBOLS[props.tableSeparator]),
+        .filter(separator => separator.value !== CSV_SEPARATORS_TO_SYMBOLS[props.tableSeparator]),
 
       { value: CUSTOM_SEPARATOR_VALUE, class: 'radio-string-array-separator-custom' },
     ]);

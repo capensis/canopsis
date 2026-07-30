@@ -223,7 +223,7 @@ export default {
 
     submitPointForm(data) {
       if (this.editing) {
-        this.updateModel(this.value.map((point) => (point._id === data._id ? data : point)));
+        this.updateModel(this.value.map(point => (point._id === data._id ? data : point)));
       } else if (this.adding) {
         this.updateModel([...this.value, data]);
       }
@@ -238,7 +238,7 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: () => {
-            this.updateModel(this.value.filter((point) => this.editingPoint._id !== point._id));
+            this.updateModel(this.value.filter(point => this.editingPoint._id !== point._id));
 
             this.clearMenuData();
           },

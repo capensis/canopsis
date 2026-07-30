@@ -46,7 +46,7 @@ export const useTestVariablesTabData = (props = {}, type, emit) => {
         return {
           ...newItem,
           value: get(newForm, key),
-          updateField: (value) => updateField(key, value),
+          updateField: value => updateField(key, value),
         };
       });
     },

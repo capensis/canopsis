@@ -111,7 +111,7 @@ import { generatePoint } from './points';
  * @param {DefaultShape} shape
  * @returns {DefaultShape}
  */
-const defaultShapeToForm = (shape) => ({
+const defaultShapeToForm = shape => ({
   _id: shape._id ?? uid(),
   connections: shape.connections ?? [],
   connectedTo: shape.connectedTo ?? [],
@@ -131,7 +131,7 @@ const defaultShapeToForm = (shape) => ({
  * @param {RectShape} shape
  * @returns {RectShape}
  */
-export const rectShapeToForm = (shape) => ({
+export const rectShapeToForm = shape => ({
   ...defaultShapeToForm(shape),
 
   type: SHAPES.rect,
@@ -147,7 +147,7 @@ export const rectShapeToForm = (shape) => ({
  * @param {LineShape} shape
  * @returns {LineShape}
  */
-export const lineShapeToForm = (shape) => ({
+export const lineShapeToForm = shape => ({
   ...defaultShapeToForm(shape),
 
   type: SHAPES.line,
@@ -170,7 +170,7 @@ export const lineShapeToForm = (shape) => ({
  * @param {ArrowLineShape} shape
  * @returns {ArrowLineShape}
  */
-export const arrowLineShapeToForm = (shape) => ({
+export const arrowLineShapeToForm = shape => ({
   ...lineShapeToForm(shape),
 
   type: SHAPES.arrowLine,
@@ -182,7 +182,7 @@ export const arrowLineShapeToForm = (shape) => ({
  * @param {BidirectionalArrowLineShape} shape
  * @returns {BidirectionalArrowLineShape}
  */
-export const bidirectionalArrowLineShapeToForm = (shape) => ({
+export const bidirectionalArrowLineShapeToForm = shape => ({
   ...lineShapeToForm(shape),
 
   type: SHAPES.bidirectionalArrowLine,
@@ -194,7 +194,7 @@ export const bidirectionalArrowLineShapeToForm = (shape) => ({
  * @param {CircleShape} shape
  * @returns {CircleShape}
  */
-export const circleShapeToForm = (shape) => ({
+export const circleShapeToForm = shape => ({
   ...defaultShapeToForm(shape),
 
   type: SHAPES.circle,
@@ -209,7 +209,7 @@ export const circleShapeToForm = (shape) => ({
  * @param {EllipseShape} shape
  * @returns {EllipseShape}
  */
-export const ellipseShapeToForm = (shape) => ({
+export const ellipseShapeToForm = shape => ({
   ...rectShapeToForm(shape),
 
   type: SHAPES.ellipse,
@@ -221,7 +221,7 @@ export const ellipseShapeToForm = (shape) => ({
  * @param {RhombusShape} shape
  * @returns {RhombusShape}
  */
-export const rhombusShapeToForm = (shape) => ({
+export const rhombusShapeToForm = shape => ({
   ...rectShapeToForm(shape),
 
   type: SHAPES.rhombus,
@@ -233,7 +233,7 @@ export const rhombusShapeToForm = (shape) => ({
  * @param {ParallelogramShape} shape
  * @returns {ParallelogramShape}
  */
-export const parallelogramShapeToForm = (shape) => ({
+export const parallelogramShapeToForm = shape => ({
   ...rectShapeToForm(shape),
 
   type: SHAPES.parallelogram,
@@ -246,7 +246,7 @@ export const parallelogramShapeToForm = (shape) => ({
  * @param {ProcessShape} shape
  * @returns {ProcessShape}
  */
-export const processShapeToForm = (shape) => ({
+export const processShapeToForm = shape => ({
   ...rectShapeToForm(shape),
 
   type: SHAPES.process,
@@ -259,7 +259,7 @@ export const processShapeToForm = (shape) => ({
  * @param {DocumentShape} shape
  * @returns {DocumentShape}
  */
-export const documentShapeToForm = (shape) => ({
+export const documentShapeToForm = shape => ({
   ...rectShapeToForm(shape),
 
   type: SHAPES.document,
@@ -272,7 +272,7 @@ export const documentShapeToForm = (shape) => ({
  * @param {StorageShape} shape
  * @returns {StorageShape}
  */
-export const storageShapeToForm = (shape) => ({
+export const storageShapeToForm = shape => ({
   ...rectShapeToForm(shape),
 
   type: SHAPES.storage,
@@ -285,7 +285,7 @@ export const storageShapeToForm = (shape) => ({
  * @param {ImageShape} shape
  * @returns {ImageShape}
  */
-export const imageShapeToForm = (shape) => ({
+export const imageShapeToForm = shape => ({
   ...rectShapeToForm(shape),
 
   width: shape.width ?? 40,
@@ -458,5 +458,5 @@ export const getPropertyValueByShapes = (shapes, path) => {
   const [firstShape] = shapes;
   const value = get(firstShape, path);
 
-  return shapes?.every((shape) => get(shape, path) === value) ? value : undefined;
+  return shapes?.every(shape => get(shape, path) === value) ? value : undefined;
 };

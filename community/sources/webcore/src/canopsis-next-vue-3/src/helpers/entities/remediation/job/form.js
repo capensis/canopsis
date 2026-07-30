@@ -44,7 +44,7 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobExecutionRunning = (job) =>
+export const isJobExecutionRunning = job =>
   job.status === REMEDIATION_JOB_EXECUTION_STATUSES.running;
 
 /**
@@ -53,7 +53,7 @@ export const isJobExecutionRunning = (job) =>
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobExecutionSucceeded = (job) =>
+export const isJobExecutionSucceeded = job =>
   job.status === REMEDIATION_JOB_EXECUTION_STATUSES.succeeded;
 
 /**
@@ -62,7 +62,7 @@ export const isJobExecutionSucceeded = (job) =>
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobExecutionFailed = (job) =>
+export const isJobExecutionFailed = job =>
   job.status === REMEDIATION_JOB_EXECUTION_STATUSES.failed;
 
 /**
@@ -71,7 +71,7 @@ export const isJobExecutionFailed = (job) =>
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobExecutionCancelled = (job) =>
+export const isJobExecutionCancelled = job =>
   job.status === REMEDIATION_JOB_EXECUTION_STATUSES.canceled;
 
 /**
@@ -80,7 +80,7 @@ export const isJobExecutionCancelled = (job) =>
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobFinished = (job) =>
+export const isJobFinished = job =>
   [
     REMEDIATION_JOB_EXECUTION_STATUSES.canceled,
     REMEDIATION_JOB_EXECUTION_STATUSES.failed,

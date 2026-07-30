@@ -86,7 +86,7 @@ export default {
         props.values.map((item, itemIndex) => (itemIndex === index ? { ...item, value } : item)),
       );
 
-    const removeItemFromArray = (index) =>
+    const removeItemFromArray = index =>
       updateValues(props.values.filter((item, itemIndex) => itemIndex !== index));
 
     /**

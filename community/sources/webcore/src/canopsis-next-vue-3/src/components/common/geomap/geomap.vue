@@ -167,15 +167,15 @@ export default {
       }
 
       if (this.isControlLayer(layer)) {
-        this.layerControls.forEach((control) => control.addLayerDescriptor(layer));
+        this.layerControls.forEach(control => control.addLayerDescriptor(layer));
       }
     },
 
     removeLayer(layer) {
-      this.layers = this.layers.filter((item) => item !== layer);
+      this.layers = this.layers.filter(item => item !== layer);
 
       if (this.isControlLayer(layer)) {
-        this.layerControls.forEach((control) => control.removeLayerDescriptor(layer));
+        this.layerControls.forEach(control => control.removeLayerDescriptor(layer));
       }
 
       if (this.mapObject.hasLayer(layer.mapObject)) {
@@ -185,11 +185,11 @@ export default {
 
     registerLayerControl(control) {
       this.layerControls.push(control);
-      this.layers.filter(this.isControlLayer).forEach((layer) => control.addLayerDescriptor(layer));
+      this.layers.filter(this.isControlLayer).forEach(layer => control.addLayerDescriptor(layer));
     },
 
     unregisterLayerControl(control) {
-      this.layerControls = this.layerControls.filter((item) => item !== control);
+      this.layerControls = this.layerControls.filter(item => item !== control);
     },
 
     cleanupInvalidateSize() {

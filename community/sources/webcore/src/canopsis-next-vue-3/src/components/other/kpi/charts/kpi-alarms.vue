@@ -142,7 +142,7 @@ export default {
     getQuery() {
       return {
         ...this.getPreparedIntervalQuery(),
-        parameters: this.query.parameters.map((metric) => ({ metric })),
+        parameters: this.query.parameters.map(metric => ({ metric })),
         sampling: this.query.sampling,
         filter: this.query.filter,
       };

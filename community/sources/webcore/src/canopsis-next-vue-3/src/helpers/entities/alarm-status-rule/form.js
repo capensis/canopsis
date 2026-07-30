@@ -55,7 +55,7 @@ export const alarmStatusRuleToForm = (rule = {}, flapping = false) => {
  * @param {Object} form
  * @return {Object}
  */
-export const formToAlarmStatusRule = (form) => ({
+export const formToAlarmStatusRule = form => ({
   ...omit(form, ['patterns']),
   ...formFilterToPatterns(form.patterns),
 });

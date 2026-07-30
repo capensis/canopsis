@@ -31,7 +31,7 @@ export default {
   setup() {
     const { t } = useI18n();
     const tabs = computed(() =>
-      Object.values(JOBS_TABS).map((tab) => ({
+      Object.values(JOBS_TABS).map(tab => ({
         id: tab,
         label: t(`jobs.tabs.${tab}`),
       })),

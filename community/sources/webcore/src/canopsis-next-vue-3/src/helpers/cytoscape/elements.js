@@ -4,7 +4,7 @@
  * @param {string} entityId - The entity ID
  * @returns {string} The show-more node ID
  */
-export const getShowMoreNodeId = (entityId) => `show-more-${entityId}`;
+export const getShowMoreNodeId = entityId => `show-more-${entityId}`;
 
 /**
  * Get show-more edge ID for an entity
@@ -12,7 +12,7 @@ export const getShowMoreNodeId = (entityId) => `show-more-${entityId}`;
  * @param {string} entityId - The entity ID
  * @returns {string} The show-more edge ID
  */
-export const getShowMoreEdgeId = (entityId) => `show-more-edge-${entityId}`;
+export const getShowMoreEdgeId = entityId => `show-more-edge-${entityId}`;
 
 /**
  * Get show-all node ID for an entity
@@ -20,7 +20,7 @@ export const getShowMoreEdgeId = (entityId) => `show-more-edge-${entityId}`;
  * @param {string} entityId - The entity ID
  * @returns {string} The show-all node ID
  */
-export const getShowAllNodeId = (entityId) => `show-all-${entityId}`;
+export const getShowAllNodeId = entityId => `show-all-${entityId}`;
 
 /**
  * Get show-all edge ID for an entity
@@ -28,7 +28,7 @@ export const getShowAllNodeId = (entityId) => `show-all-${entityId}`;
  * @param {string} entityId - The entity ID
  * @returns {string} The show-all edge ID
  */
-export const getShowAllEdgeId = (entityId) => `show-all-edge-${entityId}`;
+export const getShowAllEdgeId = entityId => `show-all-edge-${entityId}`;
 
 /**
  * Create cytoscape node element

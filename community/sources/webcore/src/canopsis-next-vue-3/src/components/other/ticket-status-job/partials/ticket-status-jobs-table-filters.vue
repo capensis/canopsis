@@ -47,25 +47,25 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
     const statusItems = computed(() =>
-      Object.values(JOB_LAST_RUN_STATUS).map((value) => ({
+      Object.values(JOB_LAST_RUN_STATUS).map(value => ({
         value,
         text: t(`jobs.lastRunStatus.${value}`),
       })),
     );
     const activeStateItems = computed(() =>
-      Object.values(JOB_STATUS).map((value) => ({
+      Object.values(JOB_STATUS).map(value => ({
         value,
         text: t(`jobs.status.${value}`),
       })),
     );
-    const updateOptions = (newOptions) => emit('update:options', newOptions);
-    const updateLastRunStatus = (lastRunStatus) =>
+    const updateOptions = newOptions => emit('update:options', newOptions);
+    const updateLastRunStatus = lastRunStatus =>
       updateOptions({
         ...props.options,
         last_run_status: lastRunStatus ?? undefined,
         page: 1,
       });
-    const updateStatus = (status) =>
+    const updateStatus = status =>
       updateOptions({
         ...props.options,
         status: status ?? undefined,

@@ -43,7 +43,7 @@ export default {
 
   computed: {
     availableSamplings() {
-      return this.samplings.map((value) => ({
+      return this.samplings.map(value => ({
         value,
         text: this.$t(`common.times.${value}`, 2),
       }));

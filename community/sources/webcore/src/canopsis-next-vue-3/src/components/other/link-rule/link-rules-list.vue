@@ -94,7 +94,7 @@ export default {
       },
     ]);
 
-    const dateToString = (date) => convertDateToString(date);
+    const dateToString = date => convertDateToString(date);
 
     return {
       headers,

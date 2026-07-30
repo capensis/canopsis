@@ -412,7 +412,7 @@ export default {
        */
       await this.$nextTick();
 
-      const newEntities = this.form.entities.map((entity) => ({
+      const newEntities = this.form.entities.map(entity => ({
         ...entity,
 
         pinned: [],

@@ -15,7 +15,7 @@ export const useTourBase = () => {
    *
    * @param {string} tourName - Key stored under `ui_tours` (e.g. page header `name`).
    */
-  const finishTourByName = (tourName) => updateCurrentUserTours({ data: { [tourName]: true } });
+  const finishTourByName = tourName => updateCurrentUserTours({ data: { [tourName]: true } });
 
   return {
     currentUser,

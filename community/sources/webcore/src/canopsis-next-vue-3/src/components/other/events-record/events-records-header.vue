@@ -2,7 +2,11 @@
   <div class="events-records-header pa-3 ga-3 d-flex flex-column align-center">
     <h3>{{ t('eventsRecord.subheader') }}</h3>
 
-    <c-layout v-for="message in messages" :key="message" gap="4" align="center">
+    <c-layout
+v-for="message in messages"
+:key="message"
+gap="4"
+align="center">
       <span class="font-italic">
         {{ message }}
       </span>

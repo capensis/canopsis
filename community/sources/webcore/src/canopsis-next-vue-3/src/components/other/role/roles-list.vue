@@ -115,7 +115,7 @@ export default {
       },
     ]);
 
-    const durationToString = (duration) =>
+    const durationToString = duration =>
       duration ? convertDurationToString(duration) : t('common.notAvailable');
     const isDisabledRole = ({ deletable = true }) => !deletable;
 

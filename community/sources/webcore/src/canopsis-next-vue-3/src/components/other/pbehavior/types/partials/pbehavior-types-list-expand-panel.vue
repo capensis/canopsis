@@ -1,6 +1,10 @@
 <template>
   <div class="planning-expand-panel">
-    <v-tabs v-model="activeTab" color="primary" class="secondary lighten-1" align-tabs="center">
+    <v-tabs
+v-model="activeTab"
+color="primary"
+class="secondary lighten-1"
+align-tabs="center">
       <v-tab :value="TABS.description">
         {{ t('common.description') }}
       </v-tab>

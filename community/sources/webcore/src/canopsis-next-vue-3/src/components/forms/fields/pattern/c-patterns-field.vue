@@ -156,13 +156,25 @@
       <c-alert v-if="allOverLimit" type="warning">
         <span>{{ $t('pattern.errors.countOverLimit', { count: allCount }) }}</span>
       </c-alert>
-      <c-layout class="w-100" gap="2" justify="end" align="center">
+      <c-layout
+class="w-100"
+gap="2"
+justify="end"
+align="center">
         <pattern-count-message v-bind="patternsCountMessageBind" />
         <template v-if="hasAllInCounter">
-          <v-btn v-if="entityCountersType" text small @click="showPatternEntitiesModal()">
+          <v-btn
+v-if="entityCountersType"
+text
+small
+@click="showPatternEntitiesModal()">
             {{ $t('common.seeEntities') }}
           </v-btn>
-          <v-btn v-else text small @click="showPatternAlarmsModal()">
+          <v-btn
+v-else
+text
+small
+@click="showPatternAlarmsModal()">
             {{ $t('common.seeAlarms') }}
           </v-btn>
         </template>
@@ -411,7 +423,7 @@ export default {
     );
 
     const hasPatterns = computed(() =>
-      Object.values(PATTERNS_FIELDS).some((key) => props.value[key]?.groups?.length),
+      Object.values(PATTERNS_FIELDS).some(key => props.value[key]?.groups?.length),
     );
 
     const isPatternRequired = computed(() =>
@@ -508,9 +520,9 @@ export default {
      * @param {Array} rules - Array of pattern rule groups
      * @returns {boolean} True if all rules are valid
      */
-    const isValidPatternRules = (rules) =>
+    const isValidPatternRules = rules =>
       !!rules.length &&
-      rules.every((group) =>
+      rules.every(group =>
         group.every((rule) => {
           if (!isValidPatternRule(rule)) {
             return false;

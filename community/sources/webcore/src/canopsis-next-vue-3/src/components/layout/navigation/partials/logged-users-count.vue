@@ -2,8 +2,14 @@
   <v-tooltip location="left">
     <template #activator="{ props }">
       <v-badge :color="badgeColor" :content="count" class="logged-users-count">
-        <v-btn size="x-small" variant="text" icon v-bind="props">
-          <c-icon color="white" size="small"> people </c-icon>
+        <v-btn
+size="x-small"
+variant="text"
+icon
+v-bind="props">
+          <c-icon color="white" size="small">
+people
+</c-icon>
         </v-btn>
       </v-badge>
     </template>

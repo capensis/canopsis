@@ -19,7 +19,11 @@
         <v-btn :disabled="submitting" variant="text" @click="closeModal">
           {{ t('common.cancel') }}
         </v-btn>
-        <v-btn :disabled="submitting" :loading="submitting" color="primary" type="submit">
+        <v-btn
+:disabled="submitting"
+:loading="submitting"
+color="primary"
+type="submit">
           {{ t('common.submit') }}
         </v-btn>
       </template>
@@ -58,7 +62,7 @@ export default {
     const title = computed(() => config.value.title ?? t('common.duration'));
     const label = computed(() => config.value.label ?? t('common.duration'));
     const units = computed(() =>
-      config.value.units?.map((unit) => ({ ...unit, text: t(unit.text, form.value.value) })),
+      config.value.units?.map(unit => ({ ...unit, text: t(unit.text, form.value.value) })),
     );
 
     const closeModal = () => modals.hide({ id: props.modal.id });

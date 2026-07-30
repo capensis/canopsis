@@ -16,13 +16,13 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
       config: {
         title: t('eventsRecord.launchEventRecording'),
         required: false,
-        action: (eventPattern) =>
+        action: eventPattern =>
           startCurrentEventsRecord({ data: { event_pattern: eventPattern } }),
         afterSubmit: fetchListHandler,
       },
     });
 
-  const stopRecording = (recordingId) =>
+  const stopRecording = recordingId =>
     modals.show({
       name: MODALS.confirmation,
       config: {

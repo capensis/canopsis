@@ -62,7 +62,7 @@ export const mapIds = (entities, idKey = '_id') => map(entities, idKey);
  * @returns {PartialObject<U>[]}
  */
 export const pickIds = (entities = [], idKey = '_id') =>
-  entities.map((entity) => pick(entity, [idKey]));
+  entities.map(entity => pick(entity, [idKey]));
 
 /**
  * Filter entities by ids
@@ -80,7 +80,7 @@ export const filterById = (items, item, idKey = '_id') =>
  * @param {string[] | number[]} items
  * @param {string | number} removingValue
  */
-export const filterValue = (items, removingValue) => items.filter((item) => item !== removingValue);
+export const filterValue = (items, removingValue) => items.filter(item => item !== removingValue);
 
 /**
  * Create range number array

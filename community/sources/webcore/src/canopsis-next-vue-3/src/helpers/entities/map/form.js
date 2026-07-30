@@ -353,8 +353,8 @@ export const formToMapTreeOfDependenciesParameters = ({ impact, ...form }) => ({
  * @param {MapFlowchartPointForm[]} points
  * @returns {MapFlowchartPoint[]}
  */
-export const formPointsToMapFlowchartPoints = (points) =>
-  points.map((point) => ({
+export const formPointsToMapFlowchartPoints = points =>
+  points.map(point => ({
     ...omit(point, point.shape ? ['x', 'y'] : ['shape']),
     entity: point.entity?._id ?? point.entity,
   }));
@@ -365,7 +365,7 @@ export const formPointsToMapFlowchartPoints = (points) =>
  * @param {MapFlowchartParametersForm} form
  * @returns {MapFlowchartParameters}
  */
-export const formToMapFlowchartParameters = (form) => ({
+export const formToMapFlowchartParameters = form => ({
   ...form,
 
   points: formPointsToMapFlowchartPoints(form.points),
@@ -378,10 +378,10 @@ export const formToMapFlowchartParameters = (form) => ({
  * @param {MapGeoParametersForm} form
  * @returns {MapGeoParameters}
  */
-export const formToMapGeomapParameters = (form) => ({
+export const formToMapGeomapParameters = form => ({
   ...form,
 
-  points: form.points.map((point) => ({
+  points: form.points.map(point => ({
     ...omit(point, ['is_entity_coordinates']),
     entity: point.entity?._id ?? point.entity,
   })),
@@ -393,10 +393,10 @@ export const formToMapGeomapParameters = (form) => ({
  * @param {MapMermaidParametersForm} form
  * @returns {MapMermaidParameters}
  */
-export const formToMapMermaidParameters = (form) => ({
+export const formToMapMermaidParameters = form => ({
   ...form,
 
-  points: form.points.map((point) => ({
+  points: form.points.map(point => ({
     ...point,
     entity: point.entity?._id ?? point.entity,
   })),

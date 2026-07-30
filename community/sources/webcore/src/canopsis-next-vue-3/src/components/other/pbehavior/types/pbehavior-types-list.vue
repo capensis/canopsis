@@ -118,7 +118,7 @@ export default {
     ]);
 
     const isDisabledType = ({ deletable }) => !deletable;
-    const getIconColor = (color) => getMostReadableTextColor(color, { level: 'AA', size: 'large' });
+    const getIconColor = color => getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
     return {
       headers,

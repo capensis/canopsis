@@ -51,7 +51,7 @@ export default {
     },
 
     themes() {
-      return Object.values(MERMAID_THEMES).map((value) => ({
+      return Object.values(MERMAID_THEMES).map(value => ({
         value,
         text: this.$t(`mermaid.themes.${value}`),
       }));

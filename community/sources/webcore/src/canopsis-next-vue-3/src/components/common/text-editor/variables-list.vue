@@ -19,7 +19,11 @@
             <c-layout v-if="item[itemText] || item.alias" align="center">
               <span>{{ item[itemText] }}</span>
 
-              <c-icon v-if="item.alias" class="ml-1" color="primary" size="small">
+              <c-icon
+v-if="item.alias"
+class="ml-1"
+color="primary"
+size="small">
                 alternate_email
               </c-icon>
             </c-layout>
@@ -135,13 +139,13 @@ export default {
 
     const parentItemChildren = computed(() => getChildren(parentItem.value) ?? []);
 
-    const getChildren = (item) =>
+    const getChildren = item =>
       item?.[props.childrenKey] ??
       (isArray(item?.[props.itemValue]) ? item[props.itemValue] : undefined);
 
-    const hasChildren = (item) => !!getChildren(item);
-    const hasAvailableChildren = (item) => !!getChildren(item)?.length;
-    const isDisabled = (item) => item.disabled || item.loading || getChildren(item)?.length === 0;
+    const hasChildren = item => !!getChildren(item);
+    const hasAvailableChildren = item => !!getChildren(item)?.length;
+    const isDisabled = item => item.disabled || item.loading || getChildren(item)?.length === 0;
 
     const prepareItem = (item) => {
       if (props.returnObject) {
@@ -151,8 +155,8 @@ export default {
       return isObject(item) ? item?.[props.itemValue] : item;
     };
 
-    const getValue = (value) => (props.returnObject ? value?.[props.itemValue] : value);
-    const isActive = (item) => props.value === item[props.itemValue];
+    const getValue = value => (props.returnObject ? value?.[props.itemValue] : value);
+    const isActive = item => props.value === item[props.itemValue];
 
     const selectItem = (item) => {
       if (hasAvailableChildren(item)) {

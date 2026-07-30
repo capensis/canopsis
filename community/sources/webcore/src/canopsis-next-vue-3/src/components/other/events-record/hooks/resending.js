@@ -38,12 +38,12 @@ export const useEventsRecordResending = () => {
           { value: TIME_UNITS.millisecond, text: 'common.times.millisecond' },
           { value: TIME_UNITS.second, text: 'common.times.second' },
         ],
-        action: (delay) => resend(eventsRecordId, eventIds, delay),
+        action: delay => resend(eventsRecordId, eventIds, delay),
       },
     });
   };
 
-  const stopResending = (eventsRecordId) =>
+  const stopResending = eventsRecordId =>
     modals.show({
       name: MODALS.confirmation,
       config: {

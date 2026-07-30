@@ -49,7 +49,7 @@ export default {
     );
     const formModel = computed({
       get: () => props.form,
-      set: (value) => emit('update:form', value),
+      set: value => emit('update:form', value),
     });
 
     return {

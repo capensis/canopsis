@@ -50,7 +50,7 @@ export default {
   setup() {
     const { fetchMetricsSettingsWithoutStore, updateMetricsSettings } = useMetricsSettings();
 
-    const { pending: submitting, handler: submitWithPending } = usePendingHandler((handler) =>
+    const { pending: submitting, handler: submitWithPending } = usePendingHandler(handler =>
       handler(),
     );
 

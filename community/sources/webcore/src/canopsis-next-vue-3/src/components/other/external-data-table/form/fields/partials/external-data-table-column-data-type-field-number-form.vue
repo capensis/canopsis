@@ -121,7 +121,7 @@ export default {
             value: props.value.decimal_separator,
             items: decimalSeparators.value,
             clearable: true,
-            'onUpdate:value': (separator) => updateField('decimal_separator', separator),
+            'onUpdate:value': separator => updateField('decimal_separator', separator),
           },
         });
       }
@@ -139,7 +139,7 @@ export default {
             value: props.value.thousands_separator,
             items: thousandsSeparators.value,
             clearable: true,
-            'onUpdate:value': (separator) => updateField('thousands_separator', separator),
+            'onUpdate:value': separator => updateField('thousands_separator', separator),
           },
         });
       }

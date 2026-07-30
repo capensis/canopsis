@@ -13,7 +13,9 @@
       @input="updateEntity"
     >
       <template v-if="coordinates" #icon="{ item }">
-        <v-icon v-if="item.coordinates" class="mr-2"> pin_drop </v-icon>
+        <v-icon v-if="item.coordinates" class="mr-2">
+pin_drop
+</v-icon>
       </template>
     </c-entity-field>
     <c-coordinates-field
@@ -106,7 +108,7 @@ export default {
     },
 
     isEntityExist(entity) {
-      return this.existsEntities.some((id) => id === entity._id);
+      return this.existsEntities.some(id => id === entity._id);
     },
   },
 };

@@ -24,7 +24,7 @@ export const useRemediationConfigurationsActions = (refresh = () => {}) => {
     removeRemediationConfiguration,
   } = useRemediationConfiguration();
 
-  const showEditRemediationConfigurationModal = (remediationConfiguration) =>
+  const showEditRemediationConfigurationModal = remediationConfiguration =>
     modals.show({
       name: MODALS.createRemediationConfiguration,
       config: {
@@ -47,7 +47,7 @@ export const useRemediationConfigurationsActions = (refresh = () => {}) => {
       },
     });
 
-  const showRemoveRemediationConfigurationModal = (remediationConfiguration) =>
+  const showRemoveRemediationConfigurationModal = remediationConfiguration =>
     modals.show({
       name: MODALS.confirmation,
       config: {
@@ -58,7 +58,7 @@ export const useRemediationConfigurationsActions = (refresh = () => {}) => {
       },
     });
 
-  const showDuplicateRemediationConfigurationModal = (remediationConfiguration) =>
+  const showDuplicateRemediationConfigurationModal = remediationConfiguration =>
     modals.show({
       name: MODALS.createRemediationConfiguration,
       config: {

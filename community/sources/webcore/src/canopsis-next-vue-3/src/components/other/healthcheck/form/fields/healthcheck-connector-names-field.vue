@@ -25,7 +25,11 @@
       </v-list-item>
     </template>
     <template #selection="{ item, index, props }">
-      <v-chip v-if="index < showCount" v-bind="props" size="small" closable>
+      <v-chip
+v-if="index < showCount"
+v-bind="props"
+size="small"
+closable>
         <span class="text-truncate">
           {{ item }}
         </span>

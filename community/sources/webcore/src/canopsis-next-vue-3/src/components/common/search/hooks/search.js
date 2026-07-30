@@ -48,9 +48,9 @@ export const useSearchLocalValue = ({ value, fields, onSubmit }, emit) => {
  * @returns {Object} An object containing methods to add, remove, and toggle pinning of search items.
  */
 export const useSearchSavedItems = (emit) => {
-  const addItem = (search) => emit('add:item', search);
-  const removeItem = (search) => emit('remove:item', search);
-  const togglePinItem = (search) => emit('toggle-pin:item', search);
+  const addItem = search => emit('add:item', search);
+  const removeItem = search => emit('remove:item', search);
+  const togglePinItem = search => emit('toggle-pin:item', search);
 
   return {
     addItem,

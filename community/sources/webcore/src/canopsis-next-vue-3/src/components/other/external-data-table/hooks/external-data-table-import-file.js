@@ -28,7 +28,7 @@ const useExternalDataTableImportForm = () => {
   const needPreview = ref(true);
 
   const hasErrors = computed(() =>
-    Object.values(form.value).some((value) => value?.messages?.length),
+    Object.values(form.value).some(value => value?.messages?.length),
   );
 
   const toggleOnNeedPreview = () => (needPreview.value = true);
@@ -45,7 +45,7 @@ const useExternalDataTableImportForm = () => {
 
   const clearErrors = () => {
     setForm(
-      mapValues(form.value, (value) => ({ ...value, messages: [], rows: [] })),
+      mapValues(form.value, value => ({ ...value, messages: [], rows: [] })),
       true,
     );
     validator.errors.clear();
@@ -174,7 +174,7 @@ const useExternalDataTableImportPreview = ({
   const updatePreview = async () => {
     clearErrors();
 
-    let newForm = mapValues(form.value, (value) => ({ ...value }));
+    let newForm = mapValues(form.value, value => ({ ...value }));
 
     try {
       const { error_info: errorInfo = {} } = await pollPreview();
@@ -269,14 +269,14 @@ export const useExternalDataTableImportFile = ({ config }) => {
     updateOptions,
     fetchList,
   } = useFetchListWithoutStoreWithOptions({
-    fetchListHandler: (rest) =>
+    fetchListHandler: rest =>
       fetchExternalDataTableImportData({
         ...rest,
         id: activeImportFileId.value,
       }),
   });
 
-  const chooseFile = (files) => chooseFileBase(files, resetQuery, fetchList);
+  const chooseFile = files => chooseFileBase(files, resetQuery, fetchList);
 
   const { updatePreview } = useExternalDataTableImportPreview({
     activeImportFileId,

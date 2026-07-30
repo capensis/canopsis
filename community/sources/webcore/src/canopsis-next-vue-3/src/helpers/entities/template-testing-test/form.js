@@ -104,7 +104,7 @@ import {
 export const templateTestingDataToForm = (templateTestingData = {}) =>
   mapValues(templateTestingData, (dataItem) => {
     if (isArray(dataItem)) {
-      return dataItem.map((item) => item?._id || item);
+      return dataItem.map(item => item?._id || item);
     }
 
     return dataItem?._id;

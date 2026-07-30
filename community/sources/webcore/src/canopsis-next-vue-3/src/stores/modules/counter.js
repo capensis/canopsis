@@ -8,9 +8,9 @@ import request from '@/services/request';
 export const useCounterStore = defineStore('counterWidget', () => {
   const widgets = ref({});
 
-  const getListByWidgetId = computed(() => (widgetId) => widgets.value[widgetId]?.counters ?? []);
+  const getListByWidgetId = computed(() => widgetId => widgets.value[widgetId]?.counters ?? []);
   const getPendingByWidgetId = computed(
-    () => (widgetId) => widgets.value[widgetId]?.pending ?? false,
+    () => widgetId => widgets.value[widgetId]?.pending ?? false,
   );
 
   const setWidgetState = (widgetId, patch) => {
@@ -28,7 +28,7 @@ export const useCounterStore = defineStore('counterWidget', () => {
       setWidgetState(widgetId, { pending: true });
 
       const counters = await Promise.all(
-        filters.map((filter) =>
+        filters.map(filter =>
           request.get(API_ROUTES.counter, {
             params: {
               ...params,

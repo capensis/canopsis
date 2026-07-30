@@ -18,7 +18,9 @@
 
     <div v-if="parsedRaw.body" class="mt-2">
       <c-json-treeview v-if="bodyJsonObject" :json-object="bodyJsonObject" />
-      <pre v-else class="text-break pre-wrap"
+      <pre
+v-else
+class="text-break pre-wrap"
         >{{ parsedRaw.body }}
 </pre
       >

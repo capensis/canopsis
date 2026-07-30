@@ -39,11 +39,24 @@
         <c-pbehavior-type-text v-else :value="value.type" />
       </div>
       <div v-if="!disabled" class="pbehavior-exception-field__actions">
-        <v-btn :input-value="editing" class="btn--editing" icon fab @click="toggleEditing">
-          <v-icon v-if="editing" color="primary"> check </v-icon>
-          <v-icon v-else> edit </v-icon>
+        <v-btn
+:input-value="editing"
+class="btn--editing"
+icon
+fab
+@click="toggleEditing">
+          <v-icon v-if="editing" color="primary">
+check
+</v-icon>
+          <v-icon v-else>
+edit
+</v-icon>
         </v-btn>
-        <v-btn class="v-btn-legacy-m--y" color="error" icon @click="$emit('delete')">
+        <v-btn
+class="v-btn-legacy-m--y"
+color="error"
+icon
+@click="$emit('delete')">
           <v-icon>delete</v-icon>
         </v-btn>
       </div>

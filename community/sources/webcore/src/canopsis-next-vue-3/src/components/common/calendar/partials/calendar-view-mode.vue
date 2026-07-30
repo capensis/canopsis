@@ -44,7 +44,7 @@ export default {
     },
 
     types() {
-      return ['day', 'week', 'month'].map((type) => ({
+      return ['day', 'week', 'month'].map(type => ({
         text: this.t(`calendar.${type}`),
         value: type,
       }));

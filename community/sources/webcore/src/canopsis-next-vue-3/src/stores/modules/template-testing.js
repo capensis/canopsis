@@ -11,26 +11,26 @@ const updateItem = (route, { id, data } = {}) =>
   request.put(`${route}/${encodeURIComponent(id)}`, data);
 const removeItem = (route, { id } = {}) => request.delete(`${route}/${encodeURIComponent(id)}`);
 const validateTemplate =
-  (route) =>
+  route =>
   ({ data } = {}) =>
     request.post(route, data);
 
 export const useTemplateTestingStore = defineStore('templateTesting', () => {
-  const fetchTemplateTestingDataListWithoutStore = (payload) =>
+  const fetchTemplateTestingDataListWithoutStore = payload =>
     requestList(API_ROUTES.templateData, payload);
-  const fetchTemplateTestingDataItemWithoutStore = (payload) =>
+  const fetchTemplateTestingDataItemWithoutStore = payload =>
     requestItem(API_ROUTES.templateData, payload);
-  const createTemplateTestingData = (payload) => createItem(API_ROUTES.templateData, payload);
-  const updateTemplateTestingData = (payload) => updateItem(API_ROUTES.templateData, payload);
-  const removeTemplateTestingData = (payload) => removeItem(API_ROUTES.templateData, payload);
+  const createTemplateTestingData = payload => createItem(API_ROUTES.templateData, payload);
+  const updateTemplateTestingData = payload => updateItem(API_ROUTES.templateData, payload);
+  const removeTemplateTestingData = payload => removeItem(API_ROUTES.templateData, payload);
 
-  const fetchTemplateTestingTestsListWithoutStore = (payload) =>
+  const fetchTemplateTestingTestsListWithoutStore = payload =>
     requestList(API_ROUTES.templateTests, payload);
-  const fetchTemplateTestingTestWithoutStore = (payload) =>
+  const fetchTemplateTestingTestWithoutStore = payload =>
     requestItem(API_ROUTES.templateTests, payload);
-  const createTemplateTestingTest = (payload) => createItem(API_ROUTES.templateTests, payload);
-  const updateTemplateTestingTest = (payload) => updateItem(API_ROUTES.templateTests, payload);
-  const removeTemplateTestingTest = (payload) => removeItem(API_ROUTES.templateTests, payload);
+  const createTemplateTestingTest = payload => createItem(API_ROUTES.templateTests, payload);
+  const updateTemplateTestingTest = payload => updateItem(API_ROUTES.templateTests, payload);
+  const removeTemplateTestingTest = payload => removeItem(API_ROUTES.templateTests, payload);
 
   const validateEntityServicesVariables = validateTemplate(
     API_ROUTES.templateValidation.entityServices,

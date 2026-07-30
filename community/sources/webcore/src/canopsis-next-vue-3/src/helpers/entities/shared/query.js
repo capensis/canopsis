@@ -104,8 +104,8 @@ export const convertQuerySortToDataTableSort = (sortBy = [], sortDesc = []) =>
  * @returns {{ sortBy: string[], sortDesc: boolean[] }}
  */
 export const convertDataTableSortToQuery = (sortBy = []) => ({
-  sortBy: sortBy.map((sortItem) => sortItem.key ?? sortItem),
-  sortDesc: sortBy.map((sortItem) => sortItem.order === SORT_ORDERS.desc.toLowerCase()),
+  sortBy: sortBy.map(sortItem => sortItem.key ?? sortItem),
+  sortDesc: sortBy.map(sortItem => sortItem.order === SORT_ORDERS.desc.toLowerCase()),
 });
 
 /**
@@ -114,7 +114,7 @@ export const convertDataTableSortToQuery = (sortBy = []) => ({
  * @param {string | string[]} filter
  * @returns {string[]}
  */
-export const convertFilterToQuery = (filter) =>
+export const convertFilterToQuery = filter =>
   (isArray(filter) ? filter : [filter]).filter(Boolean);
 
 /**

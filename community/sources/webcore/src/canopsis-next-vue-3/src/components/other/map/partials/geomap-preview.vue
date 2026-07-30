@@ -1,6 +1,10 @@
 <template>
   <c-zoom-overlay>
-    <geomap ref="map" :min-zoom="minZoom" :disabled="!!activePoint" class="geomap-preview">
+    <geomap
+ref="map"
+:min-zoom="minZoom"
+:disabled="!!activePoint"
+class="geomap-preview">
       <geomap-control-zoom :disabled="!!activePoint" position="topleft" />
       <geomap-control-layers :disabled="!!activePoint" position="topright" />
       <geomap-tile-layer
@@ -119,7 +123,7 @@ export default {
     },
 
     markers() {
-      return this.map.parameters?.points?.map((point) => ({
+      return this.map.parameters?.points?.map(point => ({
         id: point._id,
         coordinates: [point.coordinates.lat, point.coordinates.lng],
         data: point,

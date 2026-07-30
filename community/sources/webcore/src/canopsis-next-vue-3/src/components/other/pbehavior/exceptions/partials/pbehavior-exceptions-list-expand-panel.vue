@@ -1,6 +1,10 @@
 <template>
   <div class="planning-expand-panel">
-    <v-tabs v-model="activeTab" color="primary" class="secondary lighten-1" align-tabs="center">
+    <v-tabs
+v-model="activeTab"
+color="primary"
+class="secondary lighten-1"
+align-tabs="center">
       <v-tab :value="TABS.description">
         {{ t('common.description') }}
       </v-tab>
@@ -93,8 +97,8 @@ export default {
       { value: 'end', text: t('common.end'), sortable: false },
       { value: 'type', text: t('common.type'), sortable: false },
     ]);
-    const formatDate = (value) => convertDateToString(value, DATETIME_FORMATS.long);
-    const getIconColor = (color) => getMostReadableTextColor(color, { level: 'AA', size: 'large' });
+    const formatDate = value => convertDateToString(value, DATETIME_FORMATS.long);
+    const getIconColor = color => getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
     return {
       TABS,

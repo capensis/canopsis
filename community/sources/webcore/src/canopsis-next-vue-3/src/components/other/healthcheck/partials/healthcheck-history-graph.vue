@@ -19,12 +19,24 @@
         class="text-primary"
       >
         <template #actions="{ chart }">
-          <chart-export-actions :chart="chart" class="mt-4" hide-csv @export:png="exportChart" />
+          <chart-export-actions
+:chart="chart"
+class="mt-4"
+hide-csv
+@export:png="exportChart" />
           <div class="healthcheck-history__zoom">
-            <v-btn :disabled="!chart" size="small" icon @click="zoomIn(chart)">
+            <v-btn
+:disabled="!chart"
+size="small"
+icon
+@click="zoomIn(chart)">
               <v-icon>add</v-icon>
             </v-btn>
-            <v-btn :disabled="!chart" size="small" icon @click="zoomOut(chart)">
+            <v-btn
+:disabled="!chart"
+size="small"
+icon
+@click="zoomOut(chart)">
               <v-icon>remove</v-icon>
             </v-btn>
           </div>

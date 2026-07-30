@@ -103,7 +103,7 @@ export default {
     submit() {
       this.$emit(
         'change-selected',
-        this.changed.map((ratingSetting) => ({
+        this.changed.map(ratingSetting => ({
           ...ratingSetting,
           enabled: !ratingSetting.enabled,
         })),
@@ -122,7 +122,7 @@ export default {
       if (!this.isRatingSettingChanged(ratingSetting)) {
         this.changed.push(ratingSetting);
       } else {
-        this.changed = this.changed.filter((item) => item.id !== ratingSetting.id);
+        this.changed = this.changed.filter(item => item.id !== ratingSetting.id);
       }
     },
 

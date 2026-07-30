@@ -1,6 +1,14 @@
 <template>
-  <c-layout class="my-4" gap="3" justify="center" align="center">
-    <v-progress-circular v-if="isRecording" size="24" width="2" indeterminate />
+  <c-layout
+class="my-4"
+gap="3"
+justify="center"
+align="center">
+    <v-progress-circular
+v-if="isRecording"
+size="24"
+width="2"
+indeterminate />
     <span class="text-subtitle-2">
       {{ t('modals.eventsRecord.subtitle', { count }) }}
     </span>

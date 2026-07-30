@@ -25,14 +25,21 @@
                   v-bind="activatorProps"
                   @click="minimizeModal"
                 >
-                  <c-icon size="large"> minimize </c-icon>
+                  <c-icon size="large">
+minimize
+</c-icon>
                 </v-btn>
               </template>
 
               <span>{{ t('modals.common.titleButtons.minimizeTooltip') }}</span>
             </v-tooltip>
 
-            <v-btn v-else size="x-small" variant="text" icon @click="maximizeModal">
+            <v-btn
+v-else
+size="x-small"
+variant="text"
+icon
+@click="maximizeModal">
               <c-icon> maximize </c-icon>
             </v-btn>
           </div>
@@ -44,7 +51,9 @@
               icon
               @click="closeModal"
             >
-              <c-icon :size="modal.minimized ? undefined : 'large'"> close </c-icon>
+              <c-icon :size="modal.minimized ? undefined : 'large'">
+close
+</c-icon>
             </v-btn>
           </div>
         </div>

@@ -27,7 +27,7 @@ export const useLinkedRulesTooltips = (i18nPrefix = 'common.linkedRulesTooltip')
       result.push({ name: t(`${i18nPrefix}.andMore`) });
     }
 
-    return result.map((item) => `<li>${item.name}</li>`).join('');
+    return result.map(item => `<li>${item.name}</li>`).join('');
   };
 
   /**

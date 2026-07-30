@@ -140,7 +140,7 @@ export default {
 
       return orderBy(
         props.templates,
-        [(item) => String(get(item, sortKey, '') ?? '')],
+        [item => String(get(item, sortKey, '') ?? '')],
         [isDesc ? 'desc' : 'asc'],
       );
     });

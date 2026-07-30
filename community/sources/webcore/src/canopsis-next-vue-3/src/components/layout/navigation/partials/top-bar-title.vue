@@ -13,7 +13,9 @@
             v-bind="props"
             @click="showInfoModal"
           >
-            <v-icon color="white" size="12px"> priority_high </v-icon>
+            <v-icon color="white" size="12px">
+priority_high
+</v-icon>
           </v-btn>
         </template>
 

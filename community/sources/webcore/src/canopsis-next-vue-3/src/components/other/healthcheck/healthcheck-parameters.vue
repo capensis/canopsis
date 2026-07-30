@@ -7,7 +7,11 @@
       <v-form @submit.prevent="submit">
         <healthcheck-form :form="form" :errors="errors" @input="form = $event" />
         <div class="mt-3 d-flex justify-end">
-          <v-btn :disabled="isDisabled" :loading="submitting" color="primary" type="submit">
+          <v-btn
+:disabled="isDisabled"
+:loading="submitting"
+color="primary"
+type="submit">
             {{ $t('common.submit') }}
           </v-btn>
         </div>
@@ -98,7 +102,7 @@ export default {
 
       this.validateLimit('queue', this.form.queue);
       this.validateLimit('messages', this.form.messages);
-      this.engineNames.forEach((engineName) =>
+      this.engineNames.forEach(engineName =>
         this.validateEngine(engineName, this.form[engineName]),
       );
 

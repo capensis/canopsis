@@ -34,7 +34,7 @@ export default {
     },
 
     removeJob(removingJob) {
-      const updatedEntities = this.jobs.filter((job) => job._id !== removingJob._id);
+      const updatedEntities = this.jobs.filter(job => job._id !== removingJob._id);
 
       this.$emit('update:jobs', updatedEntities);
     },

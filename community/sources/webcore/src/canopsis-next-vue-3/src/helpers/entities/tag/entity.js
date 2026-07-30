@@ -17,7 +17,7 @@ import { TAG_TYPES } from '@/constants';
  * @param {AlarmTag} tag
  * @returns {boolean}
  */
-export const isImportedTag = (tag) => tag?.type === TAG_TYPES.imported;
+export const isImportedTag = tag => tag?.type === TAG_TYPES.imported;
 
 /**
  * Check tag is created
@@ -25,4 +25,4 @@ export const isImportedTag = (tag) => tag?.type === TAG_TYPES.imported;
  * @param {AlarmTag} tag
  * @returns {boolean}
  */
-export const isCreatedTag = (tag) => tag?.type === TAG_TYPES.created;
+export const isCreatedTag = tag => tag?.type === TAG_TYPES.created;

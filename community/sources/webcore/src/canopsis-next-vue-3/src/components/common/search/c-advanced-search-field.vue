@@ -18,7 +18,11 @@
             />
           </div>
         </div>
-        <v-progress-linear v-if="pending" height="2" color="primary" indeterminate />
+        <v-progress-linear
+v-if="pending"
+height="2"
+color="primary"
+indeterminate />
       </div>
     </div>
     <c-layout>
@@ -159,8 +163,8 @@ export default {
       submit();
     };
 
-    const removeSearch = (id) => emit('remove:search', id);
-    const togglePinForSearch = (id) => emit('toggle-pin:search', id);
+    const removeSearch = id => emit('remove:search', id);
+    const togglePinForSearch = id => emit('toggle-pin:search', id);
     const focusSearchInput = (event) => {
       if (props.disabled || event.target.closest('button, input, .v-chip, .v-list-item')) {
         return;

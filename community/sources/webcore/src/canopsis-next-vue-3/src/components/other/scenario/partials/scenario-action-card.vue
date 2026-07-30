@@ -17,7 +17,11 @@
           />
           <v-expand-transition mode="out-in">
             <c-layout v-if="expanded" class="px-2" column>
-              <v-tabs v-model="activeTab" color="primary" align-tabs="center" fixed-tabs>
+              <v-tabs
+v-model="activeTab"
+color="primary"
+align-tabs="center"
+fixed-tabs>
                 <v-tab :value="0">
                   {{ $t('common.general') }}
                 </v-tab>

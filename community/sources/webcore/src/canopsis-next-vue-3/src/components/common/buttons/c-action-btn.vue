@@ -41,7 +41,7 @@ export default {
     type: {
       type: String,
       default: null,
-      validator: (value) => ['edit', 'duplicate', 'delete'].includes(value),
+      validator: value => ['edit', 'duplicate', 'delete'].includes(value),
     },
     icon: {
       type: String,

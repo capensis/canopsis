@@ -131,7 +131,7 @@ export default {
     },
 
     selectedShapes() {
-      return this.selected.map((id) => this.shapes[id]);
+      return this.selected.map(id => this.shapes[id]);
     },
 
     shapesWithFill() {

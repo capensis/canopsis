@@ -10,7 +10,7 @@ export const useViewStore = defineStore('view', () => {
   const meta = ref({});
   const pending = ref(false);
 
-  const getGroupById = computed(() => (id) => items.value.find((group) => group._id === id));
+  const getGroupById = computed(() => id => items.value.find(group => group._id === id));
   const getViewById = computed(() => (id) => {
     let view;
 
@@ -45,7 +45,7 @@ export const useViewStore = defineStore('view', () => {
       return;
     }
 
-    const groupIndex = items.value.findIndex((group) => group._id === groupId);
+    const groupIndex = items.value.findIndex(group => group._id === groupId);
 
     if (groupIndex === -1) {
       return;

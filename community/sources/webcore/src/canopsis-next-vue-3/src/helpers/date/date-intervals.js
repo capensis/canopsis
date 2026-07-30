@@ -228,5 +228,5 @@ export const findQuickRangeValue = (
   ranges = QUICK_RANGES,
   defaultValue = QUICK_RANGES.custom,
 ) =>
-  Object.values(ranges).find((range) => start === range.start && stop === range.stop) ??
+  Object.values(ranges).find(range => start === range.start && stop === range.stop) ??
   defaultValue;

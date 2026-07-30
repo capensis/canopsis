@@ -14,7 +14,11 @@
               v-html="$t('pattern.foundEntities', { count: entitiesCount })"
               class="font-weight-regular"
             />
-            <v-btn v-if="hasDifference" plain small @click="showEntitiesComparisonModal">
+            <v-btn
+v-if="hasDifference"
+plain
+small
+@click="showEntitiesComparisonModal">
               {{ $t('pattern.seeRecordsComparison') }}
             </v-btn>
             <strong v-else class="primary--text">

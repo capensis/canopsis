@@ -54,7 +54,11 @@
       <slot name="selection" v-bind="slotProps" />
     </template>
     <template v-else-if="isMultiple" #selection="{ item, props: selectionProps }">
-      <v-chip v-bind="selectionProps" class="c-lazy-search-field__chip" size="small" closable>
+      <v-chip
+v-bind="selectionProps"
+class="c-lazy-search-field__chip"
+size="small"
+closable>
         <span class="text-truncate">
           {{ getItemText(getSelectionItem(item)) }}
         </span>
@@ -200,7 +204,7 @@ export default {
       const rawItem = item?.raw ?? item;
       const value = getItemValue(rawItem);
 
-      return props.items.find((entity) => getItemValue(entity) === value) ?? rawItem;
+      return props.items.find(entity => getItemValue(entity) === value) ?? rawItem;
     };
 
     const getItemProps = (item) => {
@@ -213,7 +217,7 @@ export default {
       return {};
     };
 
-    const emitUpdateSearch = (value) => emit('update:search', value);
+    const emitUpdateSearch = value => emit('update:search', value);
     const debouncedEmitUpdateSearch = debounce(emitUpdateSearch, props.debounce);
 
     const updateSearch = (value, force = false) => {

@@ -135,7 +135,7 @@ export default {
 
         return result;
       },
-      errorsToValidation: (err) => remediationInstructionErrorsToForm(err, form.value),
+      errorsToValidation: err => remediationInstructionErrorsToForm(err, form.value),
     });
 
     useFormConfirmableCloseModal({ form, submit, close });

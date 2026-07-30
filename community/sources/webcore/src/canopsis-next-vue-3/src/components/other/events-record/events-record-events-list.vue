@@ -141,8 +141,8 @@ export default {
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 
-    const formatDate = (date) => convertDateToString(date);
-    const stringify = (item) => JSON.stringify(item);
+    const formatDate = date => convertDateToString(date);
+    const stringify = item => JSON.stringify(item);
     const showCopySuccessPopup = () => popups.success({ text: t('eventsRecord.eventCopied') });
     const showCopyErrorPopup = () => popups.error({ text: t('errors.default') });
 

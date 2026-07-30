@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     removableEntities() {
-      return this.entities.filter((entity) => this.isDisabledEntity(entity));
+      return this.entities.filter(entity => this.isDisabledEntity(entity));
     },
   },
   methods: {
@@ -62,7 +62,7 @@ export default {
       const key = this.getEntityKey(entity);
 
       return key
-        ? this.disabledEntities.some((disabledEntity) => this.getEntityKey(disabledEntity) === key)
+        ? this.disabledEntities.some(disabledEntity => this.getEntityKey(disabledEntity) === key)
         : this.disabledEntities.includes(entity);
     },
 
@@ -70,7 +70,7 @@ export default {
       const key = this.getEntityKey(entity);
 
       return key
-        ? this.existingEntities.some((existEntity) => this.getEntityKey(existEntity) === key)
+        ? this.existingEntities.some(existEntity => this.getEntityKey(existEntity) === key)
         : this.existingEntities.includes(entity);
     },
 

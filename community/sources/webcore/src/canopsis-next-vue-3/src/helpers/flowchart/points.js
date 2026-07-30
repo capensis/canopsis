@@ -78,7 +78,7 @@ export const isAreaIncludeShape = (start, end, shape) => {
     case SHAPES.arrowLine:
     case SHAPES.bidirectionalArrowLine:
     case SHAPES.line:
-      return shape.points.every((point) => isAreaIncludePoint(start, end, point));
+      return shape.points.every(point => isAreaIncludePoint(start, end, point));
   }
 
   return false;

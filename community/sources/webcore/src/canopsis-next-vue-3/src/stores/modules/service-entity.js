@@ -8,11 +8,11 @@ import request from '@/services/request';
 export const useServiceEntityStore = defineStore('serviceEntity', () => {
   const services = ref({});
 
-  const getListByServiceId = computed(() => (serviceId) => services.value[serviceId]?.items ?? []);
+  const getListByServiceId = computed(() => serviceId => services.value[serviceId]?.items ?? []);
   const getPendingByServiceId = computed(
-    () => (serviceId) => services.value[serviceId]?.pending ?? false,
+    () => serviceId => services.value[serviceId]?.pending ?? false,
   );
-  const getMetaByServiceId = computed(() => (serviceId) => services.value[serviceId]?.meta ?? {});
+  const getMetaByServiceId = computed(() => serviceId => services.value[serviceId]?.meta ?? {});
 
   const setServiceState = (id, patch) => {
     services.value = {

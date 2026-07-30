@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import { DATETIME_FORMATS } from '@/constants';
 import { convertDateToDateObject } from '@/helpers/date/date';
 
-const getRuleValue = (rule) => (Array.isArray(rule) ? rule[0] : rule);
+const getRuleValue = rule => (Array.isArray(rule) ? rule[0] : rule);
 
 /**
  * Returns whether old vee-validate rules require a value.
@@ -11,7 +11,7 @@ const getRuleValue = (rule) => (Array.isArray(rule) ? rule[0] : rule);
  * @param {Object} rules Legacy rules object.
  * @returns {boolean}
  */
-export const isRequiredRule = (rules) => Boolean(rules?.required);
+export const isRequiredRule = rules => Boolean(rules?.required);
 
 /**
  * Converts old date/time picker rules to field wrapper validation rules.
@@ -22,7 +22,7 @@ export const isRequiredRule = (rules) => Boolean(rules?.required);
  */
 export const createDateTimeValidationRules = (
   rules = {},
-  dateObjectPreparer = (value) => convertDateToDateObject(value, DATETIME_FORMATS.dateTimePicker),
+  dateObjectPreparer = value => convertDateToDateObject(value, DATETIME_FORMATS.dateTimePicker),
 ) => {
   const validationRules = [];
 

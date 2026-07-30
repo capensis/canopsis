@@ -128,7 +128,7 @@ export default {
     const hasAnyDeletableMap = computed(() => props.maps.some(({ deletable }) => deletable));
 
     const isDisabledMap = ({ deletable }) => !deletable;
-    const formatDate = (value) => convertDateToString(value);
+    const formatDate = value => convertDateToString(value);
 
     return {
       t,

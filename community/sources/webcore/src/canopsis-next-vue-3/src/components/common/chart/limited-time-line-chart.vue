@@ -82,7 +82,7 @@ export default {
     chartData() {
       return {
         labels: this.labels,
-        datasets: this.datasets.map((dataset) => ({
+        datasets: this.datasets.map(dataset => ({
           ...defaultDatasetOptions,
           ...dataset,
         })),
@@ -135,7 +135,7 @@ export default {
                 font: {
                   size: 11,
                 },
-                callback: (value) => (value >= 1000 ? `${value / 1000} k` : value),
+                callback: value => (value >= 1000 ? `${value / 1000} k` : value),
               },
             },
           },

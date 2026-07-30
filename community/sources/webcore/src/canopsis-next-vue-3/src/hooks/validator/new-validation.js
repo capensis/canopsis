@@ -150,7 +150,7 @@ export const useArrayFieldValidation = (props, attrs = {}) =>
       ...props,
       rules:
         props.rules ||
-        ((value) =>
+        (value =>
           !props.required || (Array.isArray(value) && value.length > 0)
             ? true
             : unref(props.message) || false),

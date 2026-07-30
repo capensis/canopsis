@@ -11,7 +11,11 @@
     <template v-for="(item, index) in data" :key="item[itemKey]">
       <v-card class="lighten-2">
         <v-card-text>
-          <slot :item="item" :index="index" :handle="handle" name="item" />
+          <slot
+:item="item"
+:index="index"
+:handle="handle"
+name="item" />
         </v-card-text>
       </v-card>
     </template>

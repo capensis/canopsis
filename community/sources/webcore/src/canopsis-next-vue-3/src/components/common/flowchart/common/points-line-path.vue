@@ -1,5 +1,10 @@
 <template>
-  <path ref="path" :d="path" :fill="fill" pointer-events="stroke" v-bind="$attrs" />
+  <path
+ref="path"
+:d="path"
+:fill="fill"
+pointer-events="stroke"
+v-bind="$attrs" />
 </template>
 
 <script>

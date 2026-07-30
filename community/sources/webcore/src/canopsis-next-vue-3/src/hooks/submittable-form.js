@@ -12,7 +12,7 @@ import { usePendingHandler } from '@/hooks/query/pending';
  * @param {Function} [options.isNewCheck = value => !value?._id] - The function to check if the item is new.
  * @returns {Object} An object containing methods and properties to manage the form submission.
  */
-export const useSubmittableForm = ({ item, method, isNewCheck = (value) => !value?._id } = {}) => {
+export const useSubmittableForm = ({ item, method, isNewCheck = value => !value?._id } = {}) => {
   const { t } = useI18n();
 
   const { pending: submitting, handler: submit } = usePendingHandler(method);

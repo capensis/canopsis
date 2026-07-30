@@ -15,7 +15,7 @@ const toNumber = (value) => {
 const formatMessage = (message, params) =>
   message.replace(/\{(\w+)}/g, (_, key) => params[key] ?? '');
 
-const getFieldLabel = (props) => props.validationLabel || props.label || props.name || 'Field';
+const getFieldLabel = props => props.validationLabel || props.label || props.name || 'Field';
 
 const normalizeValidationResult = (result) => {
   if (result === true || result === undefined) {
@@ -29,7 +29,7 @@ const normalizeValidationResult = (result) => {
   return result;
 };
 
-const isRuleDefined = (value) => !isNil(value) && value !== '';
+const isRuleDefined = value => !isNil(value) && value !== '';
 
 const getFieldMessage = (props, messageProp, params = {}) => {
   const message = props[messageProp];
@@ -142,7 +142,7 @@ const createBuiltInRulesValidator = (rules, props) => async (value, ctx) => {
 const createValidationRulesPipeline = (props) => {
   const builtInRules = buildFieldRules(props);
   const customRules = props.validationRules.map(
-    (rule) => async (value) => normalizeValidationResult(await rule(value, props)),
+    rule => async value => normalizeValidationResult(await rule(value, props)),
   );
 
   if (!customRules.length) {

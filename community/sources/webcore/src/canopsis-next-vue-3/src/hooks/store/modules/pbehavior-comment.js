@@ -11,10 +11,10 @@ export const usePbehaviorComment = () => {
   const pbehaviorCommentStore = usePbehaviorCommentStore();
 
   const createComments = ({ comments = [], pbehaviorId } = {}) =>
-    comments.map((comment) => pbehaviorCommentStore.create({ data: comment, pbehaviorId }));
+    comments.map(comment => pbehaviorCommentStore.create({ data: comment, pbehaviorId }));
 
   const updateComments = ({ comments = [], pbehaviorId } = {}) =>
-    comments.map((comment) =>
+    comments.map(comment =>
       pbehaviorCommentStore.update({
         data: comment,
         pbehaviorId,
@@ -23,7 +23,7 @@ export const usePbehaviorComment = () => {
     );
 
   const removeComments = ({ comments = [] } = {}) =>
-    comments.map((comment) =>
+    comments.map(comment =>
       pbehaviorCommentStore.remove({
         id: comment._id,
       }),
@@ -31,14 +31,14 @@ export const usePbehaviorComment = () => {
 
   const updateSeveralPbehaviorComments = async ({ comments = [], pbehavior } = {}) => {
     const oldComments = pbehavior?.comments ?? [];
-    const newComments = comments.filter((comment) => !comment._id);
+    const newComments = comments.filter(comment => !comment._id);
     const changedComments = comments.filter((comment) => {
       const oldComment = find(oldComments, { _id: comment._id });
 
       return oldComment && oldComment.message !== comment.message;
     });
     const removedComments = oldComments.filter(
-      (oldComment) => !find(comments, { _id: oldComment._id }),
+      oldComment => !find(comments, { _id: oldComment._id }),
     );
 
     return Promise.all([

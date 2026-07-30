@@ -4,7 +4,7 @@
  * @param {*} data
  * @returns {Promise<void>}
  */
-export const writeTextToClipboard = (data) => navigator.clipboard.writeText(data);
+export const writeTextToClipboard = data => navigator.clipboard.writeText(data);
 
 /**
  * Read text from clipboard

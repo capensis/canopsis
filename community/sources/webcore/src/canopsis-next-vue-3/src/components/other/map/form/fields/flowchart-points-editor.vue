@@ -169,7 +169,7 @@ export default {
   },
   methods: {
     updatePointInModel(data) {
-      this.updateModel(this.points.map((point) => (point._id === data._id ? data : point)));
+      this.updateModel(this.points.map(point => (point._id === data._id ? data : point)));
     },
 
     addPointToModel(data) {
@@ -177,7 +177,7 @@ export default {
     },
 
     removePointFromModel(data) {
-      this.updateModel(this.points.filter((point) => data._id !== point._id));
+      this.updateModel(this.points.filter(point => data._id !== point._id));
     },
 
     getPointIconEntity(point) {
@@ -236,7 +236,7 @@ export default {
       }
 
       if (shape) {
-        const editingPoint = this.points.find((point) => point.shape === shape._id);
+        const editingPoint = this.points.find(point => point.shape === shape._id);
 
         if (editingPoint) {
           this.editingPoint = editingPoint;

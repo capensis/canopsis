@@ -36,10 +36,10 @@ export default {
   emits: ['update:form'],
   setup(props, { emit }) {
     const { t } = useI18n();
-    const createFieldModel = (field) =>
+    const createFieldModel = field =>
       computed({
         get: () => props.form[field],
-        set: (value) =>
+        set: value =>
           emit('update:form', {
             ...props.form,
             [field]: value,
@@ -48,8 +48,8 @@ export default {
     const activeOnPbhField = createFieldModel('active_on_pbh');
     const disabledOnPbhField = createFieldModel('disabled_on_pbh');
 
-    const isActiveItemDisabled = (item) => props.form.disabled_on_pbh.includes(item._id);
-    const isDisabledItemDisabled = (item) => props.form.active_on_pbh.includes(item._id);
+    const isActiveItemDisabled = item => props.form.disabled_on_pbh.includes(item._id);
+    const isDisabledItemDisabled = item => props.form.active_on_pbh.includes(item._id);
 
     return {
       t,

@@ -151,7 +151,7 @@ import { addKeyInEntity, removeKeyFromEntities } from '@/helpers/array';
  * @param {MetaAlarmRuleType} type
  * @return {boolean}
  */
-export const isAttributeMetaAlarmRuleType = (type) => type === META_ALARMS_RULE_TYPES.attribute;
+export const isAttributeMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.attribute;
 
 /**
  * Check meta alarm type is timebased
@@ -159,7 +159,7 @@ export const isAttributeMetaAlarmRuleType = (type) => type === META_ALARMS_RULE_
  * @param {MetaAlarmRuleType} type
  * @return {boolean}
  */
-export const isTimebasedMetaAlarmRuleType = (type) => type === META_ALARMS_RULE_TYPES.timebased;
+export const isTimebasedMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.timebased;
 
 /**
  * Check meta alarm type is complex
@@ -167,7 +167,7 @@ export const isTimebasedMetaAlarmRuleType = (type) => type === META_ALARMS_RULE_
  * @param {MetaAlarmRuleType} type
  * @return {boolean}
  */
-export const isComplexMetaAlarmRuleType = (type) => type === META_ALARMS_RULE_TYPES.complex;
+export const isComplexMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.complex;
 
 /**
  * Check meta alarm type is valuegroup
@@ -175,7 +175,7 @@ export const isComplexMetaAlarmRuleType = (type) => type === META_ALARMS_RULE_TY
  * @param {MetaAlarmRuleType} type
  * @return {boolean}
  */
-export const isValueGroupMetaAlarmRuleType = (type) => type === META_ALARMS_RULE_TYPES.valuegroup;
+export const isValueGroupMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.valuegroup;
 
 /**
  * Check meta alarm type is corel
@@ -183,7 +183,7 @@ export const isValueGroupMetaAlarmRuleType = (type) => type === META_ALARMS_RULE
  * @param {MetaAlarmRuleType} type
  * @return {boolean}
  */
-export const isCorelMetaAlarmRuleType = (type) => type === META_ALARMS_RULE_TYPES.corel;
+export const isCorelMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.corel;
 
 /**
  * Check meta alarm type is manualgroup
@@ -191,7 +191,7 @@ export const isCorelMetaAlarmRuleType = (type) => type === META_ALARMS_RULE_TYPE
  * @param {MetaAlarmRuleType} type
  * @return {boolean}
  */
-export const isManualGroupMetaAlarmRuleType = (type) => type === META_ALARMS_RULE_TYPES.manualgroup;
+export const isManualGroupMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.manualgroup;
 
 /**
  * Check meta alarm type is auto
@@ -199,7 +199,7 @@ export const isManualGroupMetaAlarmRuleType = (type) => type === META_ALARMS_RUL
  * @param {MetaAlarmRuleType} type
  * @return {boolean}
  */
-export const isAutoMetaAlarmRuleType = (type) =>
+export const isAutoMetaAlarmRuleType = type =>
   type && type !== META_ALARMS_RULE_TYPES.manualgroup;
 
 /**
@@ -208,7 +208,7 @@ export const isAutoMetaAlarmRuleType = (type) =>
  * @param {MetaAlarmRuleType} type
  * @return {boolean}
  */
-export const isMetaAlarmRuleTypeHasPatterns = (type) =>
+export const isMetaAlarmRuleTypeHasPatterns = type =>
   isAttributeMetaAlarmRuleType(type) ||
   isComplexMetaAlarmRuleType(type) ||
   isValueGroupMetaAlarmRuleType(type) ||
@@ -220,7 +220,7 @@ export const isMetaAlarmRuleTypeHasPatterns = (type) =>
  * @param {MetaAlarmRuleType} type
  * @return {boolean}
  */
-export const isMetaAlarmRuleTypeHasTotalEntityPatterns = (type) =>
+export const isMetaAlarmRuleTypeHasTotalEntityPatterns = type =>
   isComplexMetaAlarmRuleType(type) || isValueGroupMetaAlarmRuleType(type);
 
 /**
@@ -229,7 +229,7 @@ export const isMetaAlarmRuleTypeHasTotalEntityPatterns = (type) =>
  * @param {MetaAlarmRule} rule
  * @return {FilterPatterns}
  */
-export const metaAlarmFilterPatternsToForm = (rule) =>
+export const metaAlarmFilterPatternsToForm = rule =>
   filterPatternsToForm(rule, [
     PATTERNS_FIELDS.alarm,
     PATTERNS_FIELDS.event,
@@ -311,7 +311,7 @@ export const metaAlarmRuleToForm = (rule = {}) => {
  * @param {string} type - The type of the alarm rule to check.
  * @returns {boolean} Returns `true` if the `type` has template configuration fields, otherwise `false`.
  */
-export const hasTemplateConfigFields = (type) =>
+export const hasTemplateConfigFields = type =>
   [
     META_ALARMS_RULE_TYPES.timebased,
     META_ALARMS_RULE_TYPES.attribute,

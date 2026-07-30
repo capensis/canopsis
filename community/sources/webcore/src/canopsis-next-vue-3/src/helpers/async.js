@@ -22,4 +22,4 @@
  *
  * delayedExecution();
  */
-export const promisedWait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+export const promisedWait = delay => new Promise(resolve => setTimeout(resolve, delay));

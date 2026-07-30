@@ -24,7 +24,7 @@ export const moveShapesMixin = {
         case SHAPES.bidirectionalArrowLine:
         case SHAPES.line: {
           this.updateShape(shape, {
-            points: shape.points.map((point) => ({
+            points: shape.points.map(point => ({
               ...point,
               x: point.x + offset.x,
               y: point.y + offset.y,

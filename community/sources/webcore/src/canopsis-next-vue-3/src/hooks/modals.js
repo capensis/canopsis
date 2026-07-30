@@ -17,9 +17,9 @@ export const useModals = () => {
   return {
     dialogPropsMap: {},
 
-    isModalOpenedById: (id) => Boolean(store.byId[id]),
+    isModalOpenedById: id => Boolean(store.byId[id]),
 
-    show: (modal) => store.show(modal),
+    show: modal => store.show(modal),
 
     hide: (payload = {}) =>
       store.hide({

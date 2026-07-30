@@ -74,7 +74,7 @@ export default {
       modals.show({
         name: MODALS.createAnomalyMonitoredConnector,
         config: {
-          action: (newConnector) =>
+          action: newConnector =>
             callActionWithPopup(
               () => createAnomalyMonitoredConnector({ data: newConnector }),
               fetchList,
@@ -95,7 +95,7 @@ export default {
           connector,
           title: t('modals.createAnomalyMonitoredConnector.edit.title'),
 
-          action: (newConnector) =>
+          action: newConnector =>
             callActionWithPopup(
               () => updateAnomalyMonitoredConnector({ id: connector.id, data: newConnector }),
               fetchList,

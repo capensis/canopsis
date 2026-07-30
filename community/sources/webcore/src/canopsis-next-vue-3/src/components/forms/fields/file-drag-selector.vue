@@ -1,7 +1,15 @@
 <template>
-  <file-selector ref="fileSelector" v-bind="$attrs" :name="name" @change="$emit('change', $event)">
+  <file-selector
+ref="fileSelector"
+v-bind="$attrs"
+:name="name"
+@change="$emit('change', $event)">
     <template #activator="{ clear, on, files }">
-      <slot v-if="$slots.selected && files.length" :clear="clear" :files="files" name="selected" />
+      <slot
+v-if="$slots.selected && files.length"
+:clear="clear"
+:files="files"
+name="selected" />
       <c-layout
         v-else
         :class="{ 'drag-zone--dropping': dropping }"
@@ -11,7 +19,9 @@
         @dragover.prevent="dragover"
         @dragleave.prevent="dragleave"
       >
-        <v-icon class="mr-3" size="large"> upload_file </v-icon>
+        <v-icon class="mr-3" size="large">
+upload_file
+</v-icon>
         <slot :on="on" name="label">
           <span class="text-subtitle-2">
             {{ $t('common.fileSelector.dragAndDrop.label') }}

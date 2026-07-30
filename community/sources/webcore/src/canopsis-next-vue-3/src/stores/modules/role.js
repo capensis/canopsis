@@ -15,7 +15,7 @@ export const useRoleStore = defineStore('role', () => {
   const fetchingParams = ref();
   const hasItems = computed(() => items.value.length > 0);
 
-  const getItemById = (id) => find(items.value, { _id: id });
+  const getItemById = id => find(items.value, { _id: id });
 
   const fetchList = async ({ params } = {}) => {
     try {

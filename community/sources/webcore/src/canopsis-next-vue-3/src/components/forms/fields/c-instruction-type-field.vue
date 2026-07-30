@@ -35,7 +35,7 @@ export default {
   emits: ['update:modelValue'],
   computed: {
     types() {
-      return Object.values(REMEDIATION_INSTRUCTION_TYPES).map((value) => ({
+      return Object.values(REMEDIATION_INSTRUCTION_TYPES).map(value => ({
         value,
         label: this.$t(`remediation.instruction.types.${value}`),
       }));

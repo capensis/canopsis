@@ -11,7 +11,11 @@
       :stroke="stroke"
       :stroke-width="strokeWidth"
     />
-    <path :stroke="stroke" :stroke-width="strokeWidth" :d="linesPath" pointer-events="none" />
+    <path
+:stroke="stroke"
+:stroke-width="strokeWidth"
+:d="linesPath"
+pointer-events="none" />
   </g>
 </template>
 

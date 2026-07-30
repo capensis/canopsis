@@ -1,6 +1,10 @@
 <template>
   <div>
-    <v-tabs v-model="activeTab" class="secondary lighten-1" color="primary" align-tabs="center">
+    <v-tabs
+v-model="activeTab"
+class="secondary lighten-1"
+color="primary"
+align-tabs="center">
       <v-tab>{{ t('common.information', 1) }}</v-tab>
     </v-tabs>
 
