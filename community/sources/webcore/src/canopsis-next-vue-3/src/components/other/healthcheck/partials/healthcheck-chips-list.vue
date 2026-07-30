@@ -86,7 +86,7 @@ export default {
         ];
       }
 
-      return wrongNodes.value.map((engine) => ({
+      return wrongNodes.value.map(engine => ({
         ...engine,
         color: getHealthcheckNodeColor(engine),
         tooltip: getTooltipText(engine),

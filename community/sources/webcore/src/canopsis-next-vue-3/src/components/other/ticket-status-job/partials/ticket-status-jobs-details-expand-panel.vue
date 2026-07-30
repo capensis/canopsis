@@ -1,6 +1,10 @@
 <template>
   <div>
-    <v-tabs v-model="activeTab" color="primary" class="secondary lighten-1" align-tabs="center">
+    <v-tabs
+v-model="activeTab"
+color="primary"
+class="secondary lighten-1"
+align-tabs="center">
       <v-tab :value="TABS.data">
         {{ t('common.data') }}
       </v-tab>

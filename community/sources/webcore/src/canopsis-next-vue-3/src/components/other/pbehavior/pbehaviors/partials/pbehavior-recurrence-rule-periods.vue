@@ -22,7 +22,12 @@
       @update:value="updateSelectedRange"
     />
 
-    <v-progress-linear v-show="pending" :height="3" class="ma-0" color="primary" indeterminate />
+    <v-progress-linear
+v-show="pending"
+:height="3"
+class="ma-0"
+color="primary"
+indeterminate />
 
     <v-row class="mt-2">
       <v-col v-for="timespan in timespans" :key="`${timespan.from}-${timespan.to}`" cols="12">
@@ -94,7 +99,7 @@ export default {
 
   computed: {
     availableRanges() {
-      return Object.values(PBEHAVIOR_RRULE_PERIODS_RANGES).map((value) => ({
+      return Object.values(PBEHAVIOR_RRULE_PERIODS_RANGES).map(value => ({
         value,
         text: this.t(`recurrenceRule.periodsRanges.${value}`),
       }));

@@ -73,7 +73,7 @@ export default {
     },
 
     availableParameters() {
-      return this.parameters.map((value) => ({
+      return this.parameters.map(value => ({
         value,
         disabled:
           (this.disabledParameters.includes(value) && !this.isActiveValue(value)) ||

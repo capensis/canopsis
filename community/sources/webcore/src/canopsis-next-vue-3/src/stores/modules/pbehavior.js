@@ -7,7 +7,7 @@ import { createCRUDStore } from '@/stores/plugins/crud';
 export const usePbehaviorStore = createCRUDStore({
   id: 'pbehavior',
   route: API_ROUTES.pbehavior.pbehaviors,
-  dataPreparer: (response) => response?.data,
+  dataPreparer: response => response?.data,
   withFetchingParams: true,
   withMeta: true,
   withWithoutStore: true,

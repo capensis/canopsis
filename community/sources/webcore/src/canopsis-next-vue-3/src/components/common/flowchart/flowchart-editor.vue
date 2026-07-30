@@ -274,7 +274,7 @@ export default {
 
     removeHandler(event, func) {
       if (this.handlers[event]) {
-        const newHandlers = this.handlers[event].filter((handler) => handler !== func);
+        const newHandlers = this.handlers[event].filter(handler => handler !== func);
 
         this.handlers[event] = newHandlers;
 
@@ -285,7 +285,7 @@ export default {
     },
 
     callHandlers(event, data) {
-      this.handlers[event.type]?.forEach((func) =>
+      this.handlers[event.type]?.forEach(func =>
         func({
           event,
           cursor: this.cursor,
@@ -398,7 +398,7 @@ export default {
       const connectingShape = this.data[shape._id];
 
       connectingShape.connections = connectingShape.connections.filter(
-        (connection) =>
+        connection =>
           connection.shapeId !== this.editingShape._id ||
           connection.pointId !== this.editingLinePoint._id,
       );
@@ -406,7 +406,7 @@ export default {
       const editingShape = this.data[this.editingShape._id];
 
       editingShape.connectedTo = editingShape.connectedTo.filter(
-        (shapeId) => shapeId !== shape._id,
+        shapeId => shapeId !== shape._id,
       );
     },
 
@@ -420,7 +420,7 @@ export default {
           }
 
           const updatingShape = this.data[shapeId];
-          const updatingPoint = updatingShape.points.find((point) => point._id === pointId);
+          const updatingPoint = updatingShape.points.find(point => point._id === pointId);
 
           const { x, y } = calculateConnectorPointBySide(shape, side);
 
@@ -445,7 +445,7 @@ export default {
           }
 
           connectedShape.connections = connectedShape.connections.filter(
-            (connection) => connection.shapeId !== id,
+            connection => connection.shapeId !== id,
           );
         });
 
@@ -530,9 +530,9 @@ export default {
 
         Object.values(shapes).forEach((shape) => {
           shapes[shape._id].connections = shape.connections.filter(
-            (connection) => shapes[connection.shapeId],
+            connection => shapes[connection.shapeId],
           );
-          shapes[shape._id].connectedTo = shape.connectedTo.filter((shapeId) => shapes[shapeId]);
+          shapes[shape._id].connectedTo = shape.connectedTo.filter(shapeId => shapes[shapeId]);
         });
 
         this.updateShapes(shapes);

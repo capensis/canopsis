@@ -86,7 +86,7 @@ export default {
      *
      * @param {Object} llm - LLM entity from the table (must include `_id`).
      */
-    const showEditLlmModal = (llm) =>
+    const showEditLlmModal = llm =>
       modals.show({
         name: MODALS.createLlm,
         config: {

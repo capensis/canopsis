@@ -156,7 +156,7 @@ import { formFilterToPatterns, filterPatternsToForm } from '@/helpers/entities/f
  * @param {RemediationInstruction} instruction
  * @returns {boolean}
  */
-export const isApproveRequested = (instruction) =>
+export const isApproveRequested = instruction =>
   [
     REMEDIATION_INSTRUCTION_STATUSES.createdAndApproveRequested,
     REMEDIATION_INSTRUCTION_STATUSES.updatedAndApproveRequested,
@@ -168,7 +168,7 @@ export const isApproveRequested = (instruction) =>
  * @param {RemediationInstruction} instruction
  * @returns {boolean}
  */
-export const isInstructionApproved = (instruction) =>
+export const isInstructionApproved = instruction =>
   instruction.status === REMEDIATION_INSTRUCTION_STATUSES.approved;
 
 /**
@@ -177,7 +177,7 @@ export const isInstructionApproved = (instruction) =>
  * @param {RemediationInstruction} instruction
  * @returns {boolean}
  */
-export const isInstructionDismissed = (instruction) =>
+export const isInstructionDismissed = instruction =>
   [
     REMEDIATION_INSTRUCTION_STATUSES.createdAndDismissed,
     REMEDIATION_INSTRUCTION_STATUSES.updatedAndDismissed,
@@ -189,7 +189,7 @@ export const isInstructionDismissed = (instruction) =>
  * @param {number} type
  * @returns {boolean}
  */
-export const isInstructionTypeAuto = (type) => type === REMEDIATION_INSTRUCTION_TYPES.auto;
+export const isInstructionTypeAuto = type => type === REMEDIATION_INSTRUCTION_TYPES.auto;
 
 /**
  * Check instruction type is manual
@@ -197,7 +197,7 @@ export const isInstructionTypeAuto = (type) => type === REMEDIATION_INSTRUCTION_
  * @param {number} type
  * @returns {boolean}
  */
-export const isInstructionTypeManual = (type) => type === REMEDIATION_INSTRUCTION_TYPES.manual;
+export const isInstructionTypeManual = type => type === REMEDIATION_INSTRUCTION_TYPES.manual;
 
 /**
  * Check instruction type is simple manual
@@ -205,7 +205,7 @@ export const isInstructionTypeManual = (type) => type === REMEDIATION_INSTRUCTIO
  * @param {number} type
  * @returns {boolean}
  */
-export const isInstructionTypeSimpleManual = (type) =>
+export const isInstructionTypeSimpleManual = type =>
   type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
 
 /**
@@ -214,7 +214,7 @@ export const isInstructionTypeSimpleManual = (type) =>
  * @param {number} type
  * @returns {boolean}
  */
-export const isInstructionTypeAnySimpleManual = (type) =>
+export const isInstructionTypeAnySimpleManual = type =>
   isInstructionTypeManual(type) || isInstructionTypeSimpleManual(type);
 
 /**
@@ -370,7 +370,7 @@ export const remediationInstructionToFullForm = (remediationInstruction = {}) =>
  * @returns {RemediationInstructionJob[]}
  */
 const formJobsToRemediationInstructionJobs = (jobs = []) =>
-  jobs.map((job) => ({
+  jobs.map(job => ({
     ...omit(job, ['key']),
 
     job: job.job._id,
@@ -382,8 +382,8 @@ const formJobsToRemediationInstructionJobs = (jobs = []) =>
  * @param {RemediationInstructionStepOperationForm[]} operations
  * @returns {RemediationInstructionStepOperation[]}
  */
-const formOperationsToRemediationInstructionOperations = (operations) =>
-  operations.map((operation) => ({
+const formOperationsToRemediationInstructionOperations = operations =>
+  operations.map(operation => ({
     ...omit(operation, ['key']),
 
     jobs: operation.jobs.map(({ _id }) => _id),
@@ -395,8 +395,8 @@ const formOperationsToRemediationInstructionOperations = (operations) =>
  * @param {RemediationInstructionStepForm[]} steps
  * @returns {RemediationInstructionStep[]}
  */
-const formStepsToRemediationInstructionSteps = (steps) =>
-  steps.map((step) => ({
+const formStepsToRemediationInstructionSteps = steps =>
+  steps.map(step => ({
     ...omit(step, ['key']),
 
     operations: formOperationsToRemediationInstructionOperations(step.operations),

@@ -1,11 +1,21 @@
 <template>
-  <c-layout class="my-4" gap="3" justify="space-between" align="center">
+  <c-layout
+class="my-4"
+gap="3"
+justify="space-between"
+align="center">
     <c-layout gap="2" align="center">
       <v-btn v-if="hasFilterApplied" color="secondary" @click="$emit('apply:filter')">
-        <v-icon class="mr-2"> filter_list </v-icon>
+        <v-icon class="mr-2">
+filter_list
+</v-icon>
         {{ t('eventsRecord.eventFilterApplied') }}
       </v-btn>
-      <v-btn v-else color="secondary" variant="outlined" @click="$emit('apply:filter')">
+      <v-btn
+v-else
+color="secondary"
+variant="outlined"
+@click="$emit('apply:filter')">
         {{ t('eventsRecord.applyEventFilter') }}
       </v-btn>
 

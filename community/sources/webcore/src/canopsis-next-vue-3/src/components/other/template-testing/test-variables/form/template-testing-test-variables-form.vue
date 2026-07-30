@@ -102,7 +102,7 @@ export default {
      *
      * @param {Object} newSelectedTest - The new selected test object
      */
-    const updateSelectedTest = (newSelectedTest) => emit('update:selected-test', newSelectedTest);
+    const updateSelectedTest = newSelectedTest => emit('update:selected-test', newSelectedTest);
 
     return {
       t,

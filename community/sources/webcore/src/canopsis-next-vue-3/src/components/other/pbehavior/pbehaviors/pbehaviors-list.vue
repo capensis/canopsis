@@ -194,9 +194,9 @@ export default {
       { text: t('common.actionsLabel'), value: PBEHAVIOR_LIST_FIELDS.actions, sortable: false },
     ]);
 
-    const timezoneDateToString = (date) =>
+    const timezoneDateToString = date =>
       convertDateToTimezoneDateString(date, timezone.value, DATETIME_FORMATS.long);
-    const durationToString = (duration) =>
+    const durationToString = duration =>
       convertDurationToString(duration, durationFormat, millisecondUnit);
 
     return {

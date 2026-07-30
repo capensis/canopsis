@@ -91,7 +91,7 @@ export default {
         },
       });
 
-    const showEditTagModal = (tag) =>
+    const showEditTagModal = tag =>
       modals.show({
         name: MODALS.createTag,
         config: {
@@ -108,7 +108,7 @@ export default {
         },
       });
 
-    const showDuplicateTagModal = (tag) =>
+    const showDuplicateTagModal = tag =>
       modals.show({
         name: MODALS.createTag,
         config: {
@@ -124,7 +124,7 @@ export default {
         },
       });
 
-    const showRemoveTagModal = (id) =>
+    const showRemoveTagModal = id =>
       modals.show({
         name: MODALS.confirmation,
         config: {

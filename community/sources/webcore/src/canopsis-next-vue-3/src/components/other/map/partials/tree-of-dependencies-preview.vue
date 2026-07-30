@@ -77,13 +77,13 @@ export default {
     },
 
     rootEntities() {
-      return Object.values(this.entitiesById).filter((entity) => entity.dependencies);
+      return Object.values(this.entitiesById).filter(entity => entity.dependencies);
     },
 
     cytoscapeClusters() {
       return this.rootEntities.map(({ entity, dependencies }) => [
         entity._id,
-        ...dependencies.filter((id) => !this.entitiesById[id].dependencies?.length),
+        ...dependencies.filter(id => !this.entitiesById[id].dependencies?.length),
       ]);
     },
 
@@ -451,24 +451,24 @@ export default {
      * @param {string} sourceId
      */
     removeDependenciesElements(elementsIds, sourceId) {
-      const nodesForRemoveSelectors = elementsIds.map((id) => `node[id = "${id}"]`);
+      const nodesForRemoveSelectors = elementsIds.map(id => `node[id = "${id}"]`);
       nodesForRemoveSelectors.push(`node[id = "${getShowAllNodeId(sourceId)}"]`);
 
       const nodesForRemoveJoinedSelector = nodesForRemoveSelectors.join(',');
       const openedNodesForRemove = this.$refs.networkGraph.$cy
         .elements(nodesForRemoveJoinedSelector)
-        .filter((node) => node.data().opened);
+        .filter(node => node.data().opened);
 
       if (openedNodesForRemove.length) {
-        openedNodesForRemove.forEach((node) => this.hideDependencies(node));
+        openedNodesForRemove.forEach(node => this.hideDependencies(node));
       }
 
       const filteredNodesForRemove = this.$refs.networkGraph.$cy
         .elements(nodesForRemoveJoinedSelector)
-        .filter((node) => node.connectedEdges().size() === 1);
+        .filter(node => node.connectedEdges().size() === 1);
 
       const edgesForRemoveSelectors = elementsIds.map(
-        (id) => `edge[source = "${sourceId}"][target = "${id}"]`,
+        id => `edge[source = "${sourceId}"][target = "${id}"]`,
       );
       edgesForRemoveSelectors.push(`node[id = "${getShowAllEdgeId(sourceId)}"]`);
 

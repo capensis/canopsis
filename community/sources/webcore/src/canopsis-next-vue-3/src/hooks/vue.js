@@ -31,7 +31,7 @@ export const useComponentOptions = () => {
 export const useComponentModel = () => {
   const { emits } = useComponentOptions();
   const componentEmits = Array.isArray(emits) ? emits : Object.keys(emits ?? {});
-  const modelEvent = componentEmits.find((emit) => emit.startsWith('update:'));
+  const modelEvent = componentEmits.find(emit => emit.startsWith('update:'));
   const modelProp = modelEvent?.replace('update:', '');
 
   return {
@@ -48,7 +48,7 @@ export const useComponentModel = () => {
  * @param {import('vue').WatchOptions} [options={}] - Vue watch options (e.g. immediate, deep)
  * @return {Function} Cleanup function that stops the watcher
  */
-export const watchOnce = (value, comparator = (v) => v, options = {}) => {
+export const watchOnce = (value, comparator = v => v, options = {}) => {
   const unwatch = watch(
     value,
     (newValue, oldValue) => {

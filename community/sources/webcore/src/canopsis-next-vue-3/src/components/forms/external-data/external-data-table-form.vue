@@ -54,7 +54,12 @@
       @update:condition="updateCondition(index, $event)"
       @remove="removeCondition(index)"
     />
-    <v-btn v-if="!disabled" class="ml-0 mb-0" color="primary" outlined @click="addCondition">
+    <v-btn
+v-if="!disabled"
+class="ml-0 mb-0"
+color="primary"
+outlined
+@click="addCondition">
       {{ $t('common.addMore') }}
     </v-btn>
   </c-layout>
@@ -102,7 +107,7 @@ export default {
   setup(props, { emit }) {
     const { updateField } = useModelField(props, emit);
 
-    const sortOrders = Object.values(SORT_ORDERS).map((order) => order.toLowerCase());
+    const sortOrders = Object.values(SORT_ORDERS).map(order => order.toLowerCase());
     const columns = ref([]);
 
     const hasOnlyOneCondition = computed(() => props.form.conditions.length === 1);
@@ -141,7 +146,7 @@ export default {
      *
      * @param {number} index - The index of the condition to remove from the conditions array
      */
-    const removeCondition = (index) =>
+    const removeCondition = index =>
       updateField(
         'conditions',
         props.form.conditions.filter((condition, conditionIndex) => index !== conditionIndex),

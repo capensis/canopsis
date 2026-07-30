@@ -1,5 +1,9 @@
 <template>
-  <v-menu :disabled="pending" :min-width="300" :close-on-content-click="false" origin="top center">
+  <v-menu
+:disabled="pending"
+:min-width="300"
+:close-on-content-click="false"
+origin="top center">
     <template #activator="{ props: activatorProps }">
       <v-btn
         class="top-bar-notifications-menu__button text-white"
@@ -9,7 +13,11 @@
         {{ t('common.notification', 2) }}
 
         <c-circle-badge class="top-bar-notifications-menu__badge ml-2 text-primary" color="white">
-          <v-progress-circular v-if="pending" size="12" width="1" indeterminate />
+          <v-progress-circular
+v-if="pending"
+size="12"
+width="1"
+indeterminate />
           <span v-else>
             {{ totalCount }}
           </span>

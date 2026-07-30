@@ -6,7 +6,11 @@
       :disabled="settingsPending"
       @update:model-value="changeTechMetricsEnabled"
     />
-    <v-data-table :headers="headers" :items="metrics" :loading="pending" loader-height="2">
+    <v-data-table
+:headers="headers"
+:items="metrics"
+:loading="pending"
+loader-height="2">
       <template #no-data>
         <tr>
           <td class="text-center" colspan="2">
@@ -99,7 +103,7 @@ export default {
     } = useTechMetrics();
 
     const metrics = computed(() =>
-      (metric.value ? [metric.value] : []).map((item) => ({
+      (metric.value ? [metric.value] : []).map(item => ({
         ...item,
         disabled: item.status === TECH_METRICS_EXPORT_STATUSES.disabled,
         readyToDownload: item.status === TECH_METRICS_EXPORT_STATUSES.success,
@@ -131,7 +135,7 @@ export default {
     });
 
     const downloadTechMetrics = () => openUrlInNewTab(getTechMetricsDownloadFileUrl());
-    const getMetricItem = (item) => item.raw ?? item;
+    const getMetricItem = item => item.raw ?? item;
 
     const { pending: exporting, handler: exportTechMetrics } = usePendingHandler(generateFile);
 

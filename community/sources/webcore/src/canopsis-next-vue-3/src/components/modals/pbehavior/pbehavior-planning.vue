@@ -29,7 +29,11 @@
           {{ $t('common.cancel') }}
         </v-btn>
 
-        <v-btn :disabled="isDisabled" :loading="submitting" color="primary" type="submit">
+        <v-btn
+:disabled="isDisabled"
+:loading="submitting"
+color="primary"
+type="submit">
           {{ $t('common.submit') }}
         </v-btn>
       </template>
@@ -175,7 +179,7 @@ export default {
       const response = await this.bulkUpdatePbehaviors({ data: pbehaviors });
 
       await Promise.all(
-        pbehaviors.map((pbehavior) =>
+        pbehaviors.map(pbehavior =>
           this.updateSeveralPbehaviorComments({
             pbehavior: originalPbehaviors.find(({ _id }) => _id === pbehavior._id),
             comments: pbehavior.comments,
@@ -191,7 +195,7 @@ export default {
 
       try {
         const { pbehaviors: originalPbehaviors = [] } = this.config;
-        const createdPbehaviors = Object.values(this.form.addedPbehaviorsById).map((pbehavior) =>
+        const createdPbehaviors = Object.values(this.form.addedPbehaviorsById).map(pbehavior =>
           pbehaviorToRequest(omit(pbehavior, ['_id'])),
         );
         const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(

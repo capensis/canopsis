@@ -200,19 +200,19 @@ export default {
 
     watch(
       () => generalElement.value?.hasAnyError,
-      (value) => (hasGeneralError.value = value),
+      value => (hasGeneralError.value = value),
     );
     watch(
       () => patternsElement.value?.hasAnyError,
-      (value) => (hasPatternsError.value = value),
+      value => (hasPatternsError.value = value),
     );
     watch(
       () => simpleElement.value?.hasAnyError,
-      (value) => (hasSimpleError.value = value),
+      value => (hasSimpleError.value = value),
     );
     watch(
       () => advancedElement.value?.hasAnyError,
-      (value) => (hasAdvancedError.value = value),
+      value => (hasAdvancedError.value = value),
     );
 
     useAiChatExpand({ activeTab, neededTab: LINK_RULE_FORM_TABS.general });

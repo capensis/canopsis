@@ -62,7 +62,7 @@ export const userToForm = (user = {}) => ({
  * @param {UserForm} form
  * @returns {User}
  */
-export const formToUserRequest = (form) => ({
+export const formToUserRequest = form => ({
   ...form,
 
   roles: mapIds(form.roles),

@@ -39,7 +39,11 @@
       <c-layout gap="1">
         <c-action-btn :tooltip="t('common.play')">
           <template #button="{ props: buttonProps }">
-            <v-btn v-bind="buttonProps" :to="getPlaylistRouteById(item._id)" variant="text" icon>
+            <v-btn
+v-bind="buttonProps"
+:to="getPlaylistRouteById(item._id)"
+variant="text"
+icon>
               <c-icon>play_arrow</c-icon>
             </v-btn>
           </template>
@@ -128,7 +132,7 @@ export default {
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 
-    const getPlaylistRouteById = (id) => ({
+    const getPlaylistRouteById = id => ({
       name: ROUTES_NAMES.playlist,
       params: { id },
       query: { autoplay: true },

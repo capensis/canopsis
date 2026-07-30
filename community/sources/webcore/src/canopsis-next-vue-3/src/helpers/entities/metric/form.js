@@ -57,7 +57,7 @@ import {
  * @param {string} metric
  * @returns {boolean}
  */
-export const isTimeMetric = (metric) =>
+export const isTimeMetric = metric =>
   [
     USER_METRIC_PARAMETERS.totalUserActivity,
     USER_METRIC_PARAMETERS.minUserSession,
@@ -79,7 +79,7 @@ export const isTimeMetric = (metric) =>
  * @param {string} metric
  * @returns {boolean}
  */
-export const isRatioMetric = (metric) =>
+export const isRatioMetric = metric =>
   [
     ALARM_METRIC_PARAMETERS.ratioCorrelation,
     ALARM_METRIC_PARAMETERS.ratioInstructions,
@@ -94,4 +94,4 @@ export const isRatioMetric = (metric) =>
  * @param {string} criteria
  * @returns {boolean}
  */
-export const isUserCriteria = (criteria) => KPI_RATING_USER_CRITERIA.includes(criteria);
+export const isUserCriteria = criteria => KPI_RATING_USER_CRITERIA.includes(criteria);

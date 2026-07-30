@@ -5,7 +5,11 @@
     @refresh="refresh"
     @create="showCreateTemplateTestingDataModal"
   >
-    <v-tabs v-model="activeTab" bg-color="transparent" color="primary" align-tabs="center">
+    <v-tabs
+v-model="activeTab"
+bg-color="transparent"
+color="primary"
+align-tabs="center">
       <v-tab v-if="hasReadAccessForTemplateData" :value="TEMPLATE_TESTING_TABS.data">
         {{ t('templateTesting.tabs.data') }}
       </v-tab>

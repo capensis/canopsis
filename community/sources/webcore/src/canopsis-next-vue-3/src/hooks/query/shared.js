@@ -89,7 +89,7 @@ export const useLocalQueryWithOptions = ({ initialQuery, comparator, onUpdate })
 export const useFetchListWithOptions = ({ fetchListHandler, initialQuery }) =>
   useLocalQueryWithOptions({
     initialQuery,
-    onUpdate: (fetchQuery) => fetchListHandler({ params: convertQueryToRequestHelper(fetchQuery) }),
+    onUpdate: fetchQuery => fetchListHandler({ params: convertQueryToRequestHelper(fetchQuery) }),
   });
 
 /**

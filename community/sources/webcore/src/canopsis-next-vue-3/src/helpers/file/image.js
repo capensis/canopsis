@@ -4,7 +4,7 @@
  * @param {string} src
  * @returns {Promise<{ width: number, height: number }>}
  */
-export const getImageProperties = (src) =>
+export const getImageProperties = src =>
   new Promise((resolve) => {
     const img = document.createElement('img');
 

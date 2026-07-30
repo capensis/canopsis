@@ -124,7 +124,7 @@ export default {
           max: isRatioMetric(metric) ? 100 : undefined,
           ticks: {
             font: this.labelsFont,
-            callback: (value) => this.getChartYTick(metric, value),
+            callback: value => this.getChartYTick(metric, value),
           },
         };
 

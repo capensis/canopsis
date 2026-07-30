@@ -57,7 +57,7 @@ export default {
         ...this.parentOptions.props,
         ...this.parentOptions.methods,
         ...this.templateProps,
-      }).filter((key) => !this.isDeclaredByCurrentComponent(key));
+      }).filter(key => !this.isDeclaredByCurrentComponent(key));
     },
 
     component() {

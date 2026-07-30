@@ -62,7 +62,7 @@ export const usePopupsStore = defineStore('popups', () => {
    * @param {{ id: string }} payload
    */
   const remove = ({ id }) => {
-    popups.value = popups.value.filter((popup) => popup.id !== id);
+    popups.value = popups.value.filter(popup => popup.id !== id);
   };
 
   /**

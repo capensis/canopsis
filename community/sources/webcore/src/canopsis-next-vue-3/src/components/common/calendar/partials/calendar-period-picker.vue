@@ -172,7 +172,7 @@ export default {
     },
 
     weeks() {
-      return range(1, 54).map((week) => ({
+      return range(1, 54).map(week => ({
         text: this.getWeekLabelByNumber(week),
         value: week,
       }));

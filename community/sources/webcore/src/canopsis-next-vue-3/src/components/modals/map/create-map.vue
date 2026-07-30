@@ -57,7 +57,7 @@ export default {
 
     const availableTypes = computed(() => Object.values(MAP_TYPES));
 
-    const getIconByType = (type) => MAP_ICON_BY_TYPES[type];
+    const getIconByType = type => MAP_ICON_BY_TYPES[type];
 
     const selectType = (type) => {
       modals.show({

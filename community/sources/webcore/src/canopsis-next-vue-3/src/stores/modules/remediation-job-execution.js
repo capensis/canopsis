@@ -7,7 +7,7 @@ import request from '@/services/request';
 
 export const useRemediationJobExecutionStore = defineStore('remediationJobExecution', () => {
   const outputs = ref({});
-  const getOutputById = computed(() => (id) => outputs.value[id] ?? '');
+  const getOutputById = computed(() => id => outputs.value[id] ?? '');
 
   const create = ({ data } = {}) => request.post(API_ROUTES.remediation.jobExecutions, data);
   const cancel = ({ id } = {}) =>

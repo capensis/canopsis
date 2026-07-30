@@ -25,7 +25,7 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
   const values = ref(initialValues);
 
   const veeForm = useVeeForm(veeOptions);
-  const { pending: submitting, handler: runSubmit } = usePendingHandler((callback) => callback());
+  const { pending: submitting, handler: runSubmit } = usePendingHandler(callback => callback());
   const isSubmitting = computed(() => veeForm.isSubmitting.value || submitting.value);
 
   /**
@@ -34,7 +34,7 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
    * @param {string|import('vue').Ref<string>} path Value path.
    * @returns {*} Value by path.
    */
-  const getValue = (path) => get(values.value, unref(path));
+  const getValue = path => get(values.value, unref(path));
 
   /**
    * Updates a nested value in local form state.
@@ -54,10 +54,10 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
    * @param {string|import('vue').Ref<string>} path Value path.
    * @returns {import('vue').WritableComputedRef<*>} Writable model.
    */
-  const model = (path) =>
+  const model = path =>
     computed({
       get: () => getValue(path),
-      set: (value) => setValue(path, value),
+      set: value => setValue(path, value),
     });
 
   /**
@@ -128,7 +128,7 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
    * @param {string|import('vue').Ref<string>} path Array path.
    * @returns {import('vue').WritableComputedRef<Array>} Writable array model.
    */
-  const array = (path) =>
+  const array = path =>
     computed({
       get: () => {
         const current = getValue(path);
@@ -143,7 +143,7 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
 
         return nextValue;
       },
-      set: (value) => setValue(path, Array.isArray(value) ? value : []),
+      set: value => setValue(path, Array.isArray(value) ? value : []),
     });
 
   /**
@@ -270,7 +270,7 @@ export const useFormContext = () => {
  * @param {string|import('vue').Ref<string>} path Value path.
  * @returns {import('vue').WritableComputedRef<*>} Writable model.
  */
-export const useFormModel = (path) => useFormContext().model(path);
+export const useFormModel = path => useFormContext().model(path);
 
 /**
  * Creates an object of writable computed models from the current form context.
@@ -290,4 +290,4 @@ export const useFormModels = (fields = []) => {
  * @param {string|import('vue').Ref<string>} path Array path.
  * @returns {import('vue').WritableComputedRef<Array>} Writable array model.
  */
-export const useFormArray = (path) => useFormContext().array(path);
+export const useFormArray = path => useFormContext().array(path);

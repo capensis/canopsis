@@ -10,7 +10,11 @@
       <c-form-block-row :label="t('common.file')" align-center>
         <file-selector v-model="file" name="file" required>
           <template #activator="{ on, disabled }">
-            <v-btn :disabled="disabled" color="primary" variant="outlined" v-on="on">
+            <v-btn
+:disabled="disabled"
+color="primary"
+variant="outlined"
+v-on="on">
               {{ t('common.chooseFile') }}
             </v-btn>
           </template>

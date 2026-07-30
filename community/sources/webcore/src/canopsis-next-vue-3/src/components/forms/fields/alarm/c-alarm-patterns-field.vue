@@ -13,7 +13,11 @@
     @update:patterns="updatePatterns"
   >
     <template #append-count="">
-      <v-btn v-if="alarmCounter && alarmCounter.count" text small @click="showPatternAlarmsModal">
+      <v-btn
+v-if="alarmCounter && alarmCounter.count"
+text
+small
+@click="showPatternAlarmsModal">
         {{ $t('common.seeAlarms') }}
       </v-btn>
     </template>
@@ -262,7 +266,7 @@ export default {
         ],
         valueField: {
           is: 'c-alarm-tag-field',
-          props: (rule) => ({
+          props: rule => ({
             onlyLabels: PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(rule.operator),
             multiple: true,
           }),
@@ -534,7 +538,7 @@ export default {
           value: ALARM_PATTERN_FIELDS.meta,
           options: this.metaAlarmOptions,
         },
-      ].map((variable) => ({
+      ].map(variable => ({
         ...variable,
 
         text: this.$t(ALARM_FIELDS_TO_LABELS_KEYS[variable.value], 2),

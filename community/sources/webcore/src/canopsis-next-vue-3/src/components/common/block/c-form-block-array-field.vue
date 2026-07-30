@@ -88,7 +88,7 @@ export default {
 
     const add = () => addItemIntoArray(props.itemToForm());
 
-    const getRemove = (index) => () => removeItemFromArray(index);
+    const getRemove = index => () => removeItemFromArray(index);
 
     const getItemRowKey = (item, index) => item?.[props.itemKey] ?? index;
 

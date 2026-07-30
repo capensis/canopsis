@@ -63,7 +63,7 @@ export default {
       handler: fetchList,
       updateOptions,
     } = useLocalQueryWithOptions({
-      onUpdate: (fetchQuery) =>
+      onUpdate: fetchQuery =>
         fetchPbehaviorTypesList({
           params: {
             ...convertQueryToRequest(fetchQuery),
@@ -81,7 +81,7 @@ export default {
       }
     };
 
-    const showRemovePbehaviorTypeModal = (id) =>
+    const showRemovePbehaviorTypeModal = id =>
       modals.show({
         name: MODALS.confirmation,
         config: {

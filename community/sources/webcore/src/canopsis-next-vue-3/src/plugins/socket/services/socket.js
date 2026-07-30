@@ -51,7 +51,7 @@ class Socket {
     this.connection.addEventListener('message', this.baseMessageHandler);
 
     Object.entries(this.listeners).forEach(([event, listeners = []]) => {
-      listeners.forEach((listener) => this.connection.addEventListener(event, listener));
+      listeners.forEach(listener => this.connection.addEventListener(event, listener));
     });
 
     return this;
@@ -102,7 +102,7 @@ class Socket {
     this.connection?.removeEventListener(eventType, listener);
 
     if (this.listeners[eventType]) {
-      this.listeners[eventType] = this.listeners[eventType].filter((item) => item !== listener);
+      this.listeners[eventType] = this.listeners[eventType].filter(item => item !== listener);
     }
 
     return this;

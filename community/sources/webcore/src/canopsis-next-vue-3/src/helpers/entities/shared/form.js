@@ -30,7 +30,7 @@ import { uid } from '@/helpers/uid';
  * @param {Function} [map = v => v]
  * @return {FlattenErrors}
  */
-export const flattenErrorMap = (errors = {}, map = (v) => v) => {
+export const flattenErrorMap = (errors = {}, map = v => v) => {
   const errorsKeys = Object.keys(errors);
   const errorsValues = Object.values(errors);
 
@@ -47,7 +47,7 @@ export const flattenErrorMap = (errors = {}, map = (v) => v) => {
  * @returns {{ key: string, [valueKey]: any }[]}
  */
 export const primitiveArrayToForm = (array, valueKey = 'value') =>
-  array.map((value) => ({ [valueKey]: value, key: uid() }));
+  array.map(value => ({ [valueKey]: value, key: uid() }));
 
 /**
  * Convert form object to array with primitive values
@@ -57,7 +57,7 @@ export const primitiveArrayToForm = (array, valueKey = 'value') =>
  * @returns {Array}
  */
 export const formToPrimitiveArray = (array, valueKey = 'value') =>
-  (isArray(array) ? array : [array]).map((item) => (isObject(item) ? item[valueKey] : item));
+  (isArray(array) ? array : [array]).map(item => (isObject(item) ? item[valueKey] : item));
 
 /**
  * Default item creator for primitive array

@@ -40,7 +40,11 @@
         <span>{{ saveButtonTooltip }}</span>
       </v-tooltip>
 
-      <v-btn :loading="running" :disabled="running" color="primary" @click="runTest">
+      <v-btn
+:loading="running"
+:disabled="running"
+color="primary"
+@click="runTest">
         {{ t('templateTesting.runTest') }}
       </v-btn>
     </c-layout>

@@ -58,7 +58,7 @@ export default {
         sortDesc: [],
         search: '',
       },
-      onUpdate: (fetchQuery) =>
+      onUpdate: fetchQuery =>
         fetchRatingSettingsList({
           params: getQueryForList(fetchQuery),
         }),
@@ -66,7 +66,7 @@ export default {
 
     const changeSelectedRatingSettings = async (changedRatingSettings) => {
       await bulkUpdateRatingSettings({
-        data: changedRatingSettings.map((ratingSetting) => ({
+        data: changedRatingSettings.map(ratingSetting => ({
           id: ratingSetting.id,
           enabled: ratingSetting.enabled,
         })),

@@ -73,7 +73,7 @@ export default {
       emit('input', newForm);
     };
 
-    const updateOptions = (newOptions) => emit('update:options', newOptions);
+    const updateOptions = newOptions => emit('update:options', newOptions);
 
     return {
       t,

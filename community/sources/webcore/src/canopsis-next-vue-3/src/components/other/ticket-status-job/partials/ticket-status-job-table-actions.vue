@@ -66,10 +66,10 @@ export default {
     const preparedItems = computed(() => (props.item ? [props.item] : props.items));
     const preparedItemsById = computed(() => keyBy(preparedItems.value, '_id'));
     const isRunning = computed(() =>
-      preparedItems.value.some((item) => item.status === JOB_STATUS.running),
+      preparedItems.value.some(item => item.status === JOB_STATUS.running),
     );
     const isStopped = computed(() =>
-      preparedItems.value.every((item) => item.status === JOB_STATUS.stopped),
+      preparedItems.value.every(item => item.status === JOB_STATUS.stopped),
     );
 
     const showTicketStatusJobActionPopup = (items = [], textKey, popupType = 'info') => {

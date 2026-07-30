@@ -70,7 +70,7 @@ const routes = [
     name: ROUTES_NAMES.view,
     meta: protectedRoute(),
     component: PlaceholderPage,
-    props: (route) => ({ id: route.params.id }),
+    props: route => ({ id: route.params.id }),
   },
   {
     path: ROUTES.viewKiosk,
@@ -78,11 +78,11 @@ const routes = [
     meta: protectedRoute({
       simpleNavigation: true,
       requiresPermission: {
-        id: (route) => route.params.id,
+        id: route => route.params.id,
       },
     }),
     component: PlaceholderPage,
-    props: (route) => ({ id: route.params.id, tabId: route.params.tabId }),
+    props: route => ({ id: route.params.id, tabId: route.params.tabId }),
   },
   {
     path: ROUTES.alarms,
@@ -93,7 +93,7 @@ const routes = [
       },
     }),
     component: PlaceholderPage,
-    props: (route) => ({ id: route.params.id }),
+    props: route => ({ id: route.params.id }),
   },
   {
     path: ROUTES.adminRights,
@@ -478,11 +478,11 @@ const routes = [
     meta: protectedRoute({
       requiresPermission: {
         action: CRUD_ACTIONS.read,
-        id: (route) => route.params.id,
+        id: route => route.params.id,
       },
     }),
     component: PlaceholderPage,
-    props: (route) => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
+    props: route => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
   },
   {
     path: ROUTES.profilePatterns,
@@ -505,7 +505,7 @@ const routes = [
     name: ROUTES_NAMES.notifications,
     meta: protectedRoute(),
     component: PlaceholderPage,
-    props: (route) => ({ tabId: route.params.tabId, activeId: route.query.id }),
+    props: route => ({ tabId: route.params.tabId, activeId: route.query.id }),
   },
   {
     path: ROUTES.error,
@@ -514,7 +514,7 @@ const routes = [
       hideHeader: true,
     },
     component: () => import('@/views/error-page.vue'),
-    props: (route) => ({
+    props: route => ({
       message: route.query.message,
       redirect: route.query.redirect,
     }),
@@ -544,8 +544,8 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const authStore = useAuthStore();
-  const isRequiresAuth = to.matched.some((route) => route.meta.requiresLogin);
-  const isDontRequiresAuth = to.matched.some((route) => route.meta.requiresLogin === false);
+  const isRequiresAuth = to.matched.some(route => route.meta.requiresLogin);
+  const isDontRequiresAuth = to.matched.some(route => route.meta.requiresLogin === false);
   const { [ROUTER_ACCESS_TOKEN_KEY]: accessToken, ...restQuery } = to.query;
 
   if (accessToken) {
@@ -604,6 +604,6 @@ router.isReady().then(() => {
   }
 });
 
-router.replaceAsync = (route) => router.replace(route);
+router.replaceAsync = route => router.replace(route);
 
 export default router;

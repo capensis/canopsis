@@ -144,7 +144,11 @@
         <pbehavior-recurrence-rule-field :form="form" with-exdate-type @update:form="updateModel" />
       </c-form-block-row>
 
-      <c-form-block-row v-if="!noComments" :label="$t('common.comment', 2)" :depth="depth" indented>
+      <c-form-block-row
+v-if="!noComments"
+:label="$t('common.comment', 2)"
+:depth="depth"
+indented>
         <pbehavior-comments-field
           :comments="form.comments"
           @update:comments="updateField('comments', $event)"
@@ -245,7 +249,7 @@ export default {
     const { updateModel, updateField } = useModelField(props, emit);
     const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
 
-    const getFieldName = (field) => (props.name ? `${props.name}.${field}` : field);
+    const getFieldName = field => (props.name ? `${props.name}.${field}` : field);
 
     const nameFieldName = computed(() => getFieldName('name'));
     const durationFieldName = computed(() => getFieldName('duration'));

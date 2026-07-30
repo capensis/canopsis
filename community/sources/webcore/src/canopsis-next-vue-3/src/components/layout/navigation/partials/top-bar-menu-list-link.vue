@@ -63,7 +63,7 @@ export default {
       }
     };
 
-    const handleMouseEnter = (event) => emit('mouseenter', event);
+    const handleMouseEnter = event => emit('mouseenter', event);
 
     return {
       disabled,

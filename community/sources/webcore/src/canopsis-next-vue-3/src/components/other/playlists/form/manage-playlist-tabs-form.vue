@@ -4,8 +4,16 @@
       {{ t('modals.createPlaylist.groups') }}
     </div>
 
-    <v-expansion-panels :model-value="openedPanels" variant="accordion" multiple readonly>
-      <group-panel v-for="group in groups" :key="group._id" :group="group" hide-actions>
+    <v-expansion-panels
+:model-value="openedPanels"
+variant="accordion"
+multiple
+readonly>
+      <group-panel
+v-for="group in groups"
+:key="group._id"
+:group="group"
+hide-actions>
         <template #title>
           <v-checkbox
             :model-value="isGroupSelected(group)"
@@ -120,12 +128,12 @@ export default {
     const openedPanels = computed(() => createRangeArray(props.groups.length));
     const selectedTabsIds = computed(() => props.selectedTabs.map(({ _id }) => _id));
 
-    const getPanelValueFromArray = (values) => createRangeArray(values?.length ?? 0);
-    const isDisabledView = (view) => !view.tabs?.length;
-    const isDisabledGroup = (group) => !group.views?.length || group.views.every(isDisabledView);
-    const isViewSelected = (view) =>
+    const getPanelValueFromArray = values => createRangeArray(values?.length ?? 0);
+    const isDisabledView = view => !view.tabs?.length;
+    const isDisabledGroup = group => !group.views?.length || group.views.every(isDisabledView);
+    const isViewSelected = view =>
       !!view.tabs?.length && view.tabs.every(({ _id }) => selectedTabsIds.value.includes(_id));
-    const isGroupSelected = (group) => !!group.views?.length && group.views.every(isViewSelected);
+    const isGroupSelected = group => !!group.views?.length && group.views.every(isViewSelected);
 
     const updateSelectedTabs = (tabs, checked) => {
       const tabIds = tabs.map(({ _id }) => _id);

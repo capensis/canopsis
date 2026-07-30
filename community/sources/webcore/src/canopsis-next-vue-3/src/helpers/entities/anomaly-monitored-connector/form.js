@@ -15,7 +15,7 @@ export const anomalyMonitoredConnectorToForm = (connector = {}) => ({
  * @param {Object} form - Form object.
  * @returns {Object} Anomaly monitored connector object.
  */
-export const formToAnomalyMonitoredConnector = (form) => ({
+export const formToAnomalyMonitoredConnector = form => ({
   name: form.name,
   enabled: form.enabled,
 });

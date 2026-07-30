@@ -10,22 +10,22 @@ export const useTestSuiteStore = defineStore('testSuite', () => {
   const widgets = ref({});
   const histories = ref({});
 
-  const getItem = computed(() => (id) => itemsById.value[id]);
+  const getItem = computed(() => id => itemsById.value[id]);
   const getListByWidgetId = computed(
-    () => (widgetId) =>
-      (widgets.value[widgetId]?.allIds ?? []).map((id) => itemsById.value[id]).filter(Boolean),
+    () => widgetId =>
+      (widgets.value[widgetId]?.allIds ?? []).map(id => itemsById.value[id]).filter(Boolean),
   );
   const getPendingByWidgetId = computed(
-    () => (widgetId) => widgets.value[widgetId]?.pending ?? false,
+    () => widgetId => widgets.value[widgetId]?.pending ?? false,
   );
   const getHistoryListByTestSuiteId = computed(
-    () => (testSuiteId) => histories.value[testSuiteId]?.items ?? [],
+    () => testSuiteId => histories.value[testSuiteId]?.items ?? [],
   );
   const getHistoryPendingByTestSuiteId = computed(
-    () => (testSuiteId) => histories.value[testSuiteId]?.pending ?? false,
+    () => testSuiteId => histories.value[testSuiteId]?.pending ?? false,
   );
   const getHistoryMetaByTestSuiteId = computed(
-    () => (testSuiteId) => histories.value[testSuiteId]?.meta ?? {},
+    () => testSuiteId => histories.value[testSuiteId]?.meta ?? {},
   );
 
   const setWidgetState = (widgetId, patch) => {

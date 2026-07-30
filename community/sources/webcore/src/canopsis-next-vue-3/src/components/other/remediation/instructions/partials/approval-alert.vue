@@ -3,7 +3,9 @@
     <v-card-text>
       <v-layout class="approval-alert-text">
         <div class="approval-alert-text__icon">
-          <v-icon color="error"> notification_important </v-icon>
+          <v-icon color="error">
+notification_important
+</v-icon>
         </div>
         <v-layout column>
           <v-layout>

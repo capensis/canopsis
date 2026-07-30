@@ -41,7 +41,11 @@
         with-files-list
       >
         <template #activator="{ disabled: activatorDisabled, loading, on }">
-          <v-btn :disabled="activatorDisabled" :loading="loading" color="primary" v-on="on">
+          <v-btn
+:disabled="activatorDisabled"
+:loading="loading"
+color="primary"
+v-on="on">
             <v-icon icon="cloud_upload" />
           </v-btn>
         </template>
@@ -110,7 +114,7 @@ export default {
     const variables = computed(() => objectToVariables({ env: templateVars.value }));
     const versionDescriptionVariables = computed(() => [
       ...variables.value,
-      ...['edition', 'versionUpdated', 'serialName'].map((text) => ({
+      ...['edition', 'versionUpdated', 'serialName'].map(text => ({
         text,
         value: variableTemplatePreparer(text),
       })),

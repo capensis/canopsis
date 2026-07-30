@@ -4,7 +4,11 @@
       <div :style="backgroundStyle" class="c-progress-overlay__background" />
 
       <slot name="progress">
-        <v-progress-circular :color="color" :size="size" :width="width" indeterminate />
+        <v-progress-circular
+:color="color"
+:size="size"
+:width="width"
+indeterminate />
       </slot>
 
       <div v-if="$slots.default" class="c-progress-overlay__content">
@@ -17,7 +21,11 @@
     <div :style="backgroundStyle" class="c-progress-overlay__background" />
 
     <slot name="progress">
-      <v-progress-circular :color="color" :size="size" :width="width" indeterminate />
+      <v-progress-circular
+:color="color"
+:size="size"
+:width="width"
+indeterminate />
     </slot>
 
     <div v-if="$slots.default" class="c-progress-overlay__content">

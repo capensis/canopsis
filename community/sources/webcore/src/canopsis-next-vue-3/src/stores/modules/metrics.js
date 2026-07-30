@@ -12,37 +12,37 @@ export const useMetricsStore = defineStore('metrics', () => {
   const availabilityMetrics = ref({});
 
   const getListByWidgetId = computed(
-    () => (widgetId) => widgetMetrics.value[widgetId]?.items ?? [],
+    () => widgetId => widgetMetrics.value[widgetId]?.items ?? [],
   );
   const getPendingByWidgetId = computed(
-    () => (widgetId) => widgetMetrics.value[widgetId]?.pending ?? false,
+    () => widgetId => widgetMetrics.value[widgetId]?.pending ?? false,
   );
   const getGroupMetricsListByWidgetId = computed(
-    () => (widgetId) => groupMetrics.value[widgetId]?.items ?? [],
+    () => widgetId => groupMetrics.value[widgetId]?.items ?? [],
   );
   const getGroupMetricsPendingByWidgetId = computed(
-    () => (widgetId) => groupMetrics.value[widgetId]?.pending ?? false,
+    () => widgetId => groupMetrics.value[widgetId]?.pending ?? false,
   );
   const getGroupMetricsMetaByWidgetId = computed(
-    () => (widgetId) => groupMetrics.value[widgetId]?.meta ?? {},
+    () => widgetId => groupMetrics.value[widgetId]?.meta ?? {},
   );
   const getVectorMetricsListByWidgetId = computed(
-    () => (widgetId) => vectorMetrics.value[widgetId]?.items ?? [],
+    () => widgetId => vectorMetrics.value[widgetId]?.items ?? [],
   );
   const getVectorMetricsPendingByWidgetId = computed(
-    () => (widgetId) => vectorMetrics.value[widgetId]?.pending ?? false,
+    () => widgetId => vectorMetrics.value[widgetId]?.pending ?? false,
   );
   const getVectorMetricsMetaByWidgetId = computed(
-    () => (widgetId) => vectorMetrics.value[widgetId]?.meta ?? {},
+    () => widgetId => vectorMetrics.value[widgetId]?.meta ?? {},
   );
   const getAvailabilityListByWidgetId = computed(
-    () => (widgetId) => availabilityMetrics.value[widgetId]?.items ?? [],
+    () => widgetId => availabilityMetrics.value[widgetId]?.items ?? [],
   );
   const getAvailabilityPendingByWidgetId = computed(
-    () => (widgetId) => availabilityMetrics.value[widgetId]?.pending ?? false,
+    () => widgetId => availabilityMetrics.value[widgetId]?.pending ?? false,
   );
   const getAvailabilityMetaByWidgetId = computed(
-    () => (widgetId) => availabilityMetrics.value[widgetId]?.meta ?? {},
+    () => widgetId => availabilityMetrics.value[widgetId]?.meta ?? {},
   );
 
   const setWidgetMetrics = (widgetId, patch) => {
@@ -75,7 +75,7 @@ export const useMetricsStore = defineStore('metrics', () => {
     availabilityMetrics.value = patchWidgetBucket(availabilityMetrics.value, widgetId, patch);
   };
 
-  const createBucketSetter = (bucketName) =>
+  const createBucketSetter = bucketName =>
     ({
       group: setGroupMetrics,
       vector: setVectorMetrics,
@@ -88,7 +88,7 @@ export const useMetricsStore = defineStore('metrics', () => {
     setBucket(widgetId, patch);
   };
 
-  const prepareAvailabilityInfos = (infos) =>
+  const prepareAvailabilityInfos = infos =>
     infos
       ? Object.entries(infos).reduce((acc, [name, value]) => {
           acc[name] = { value, name };
@@ -97,8 +97,8 @@ export const useMetricsStore = defineStore('metrics', () => {
         }, {})
       : {};
 
-  const prepareAvailabilitiesResponse = (response) =>
-    response?.data?.map((availability) => ({
+  const prepareAvailabilitiesResponse = response =>
+    response?.data?.map(availability => ({
       ...availability,
       entity: {
         ...availability.entity,
@@ -113,8 +113,8 @@ export const useMetricsStore = defineStore('metrics', () => {
     {
       route,
       method = 'post',
-      dataPreparer = (response) => response?.data ?? [],
-      metaPreparer = (response) => response?.meta ?? {},
+      dataPreparer = response => response?.data ?? [],
+      metaPreparer = response => response?.meta ?? {},
     },
   ) => {
     try {
@@ -210,19 +210,19 @@ export const useMetricsStore = defineStore('metrics', () => {
     return data;
   };
 
-  const fetchGroupMetricsList = (payload) =>
+  const fetchGroupMetricsList = payload =>
     fetchWidgetList('group', payload, {
       route: API_ROUTES.metrics.group,
     });
   const fetchGroupMetrics = fetchGroupMetricsList;
   const createGroupMetricsExport = ({ data } = {}) =>
     request.post(API_ROUTES.metrics.exportGroup, data);
-  const fetchVectorMetricsList = (payload) =>
+  const fetchVectorMetricsList = payload =>
     fetchWidgetList('vector', payload, {
       route: API_ROUTES.metrics.alarm,
     });
   const fetchVectorMetrics = fetchVectorMetricsList;
-  const fetchAvailabilityList = (payload) =>
+  const fetchAvailabilityList = payload =>
     fetchWidgetList('availability', payload, {
       route: API_ROUTES.metrics.availability,
       method: 'get',

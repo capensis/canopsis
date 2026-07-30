@@ -32,6 +32,6 @@ export const isActiveBroadcastMessageVisibleOnRoute = (
   currentView,
 ) =>
   maintenance ||
-  (messageViews || []).some((messageView) =>
+  (messageViews || []).some(messageView =>
     isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
   );

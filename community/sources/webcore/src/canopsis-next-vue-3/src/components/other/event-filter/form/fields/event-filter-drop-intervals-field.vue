@@ -83,7 +83,7 @@ export default {
      * @param {string|null|undefined} date - Raw value from the date-time picker
      * @returns {number|null}
      */
-    const prepareDate = (date) =>
+    const prepareDate = date =>
       date
         ? convertDateToTimestamp(convertDateToDateObject(date, DATETIME_FORMATS.dateTimePicker))
         : null;
@@ -93,14 +93,14 @@ export default {
      *
      * @param {string|null|undefined} value - Raw value from the start date-time picker
      */
-    const updateStartDate = (value) => emit('update:start', prepareDate(value));
+    const updateStartDate = value => emit('update:start', prepareDate(value));
 
     /**
      * Writes the interval end timestamp and emits `update:stop`
      *
      * @param {string|null|undefined} value - Raw value from the stop date-time picker
      */
-    const updateStopDate = (value) => emit('update:stop', prepareDate(value));
+    const updateStopDate = value => emit('update:stop', prepareDate(value));
 
     watch(
       () => props.rrule,

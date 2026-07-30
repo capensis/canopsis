@@ -34,7 +34,7 @@ export const llmToForm = (llm = {}, defaultValue = false) => ({
  * @param {LlmConfig} form
  * @returns {LlmConfig}
  */
-export const formToLlm = (form) => ({
+export const formToLlm = form => ({
   ...form,
 
   thinking_level: form.thinking_level || null,

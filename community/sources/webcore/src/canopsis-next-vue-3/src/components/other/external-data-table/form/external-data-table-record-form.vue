@@ -76,7 +76,7 @@ export default {
               maxLength: 255,
               values: values.value[column.name],
               class: 'mt-3',
-              'onUpdate:values': (value) => setValue(column.name, value),
+              'onUpdate:values': value => setValue(column.name, value),
             },
           };
         }
@@ -101,7 +101,7 @@ export default {
             bind: {
               ...defaultBind,
               modelValue: values.value[column.name],
-              'onUpdate:modelValue': (value) => setValue(column.name, value),
+              'onUpdate:modelValue': value => setValue(column.name, value),
             },
           };
         }
@@ -120,7 +120,7 @@ export default {
               ...defaultBind,
               rules,
               value: values.value[column.name],
-              'onUpdate:value': (value) => setValue(column.name, value),
+              'onUpdate:value': value => setValue(column.name, value),
             },
           };
         }
@@ -132,7 +132,7 @@ export default {
             ...defaultBind,
             validationRules: rules,
             modelValue: values.value[column.name],
-            'onUpdate:modelValue': (value) => setValue(column.name, value),
+            'onUpdate:modelValue': value => setValue(column.name, value),
           },
         };
       }),

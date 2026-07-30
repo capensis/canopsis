@@ -8,9 +8,15 @@
     transition
   >
     <template v-if="failedReason" #progress>
-      <v-icon size="50" color="error"> error_outline </v-icon>
+      <v-icon size="50" color="error">
+error_outline
+</v-icon>
     </template>
-    <c-layout v-if="failedReason" class="mt-3" gap="4" column>
+    <c-layout
+v-if="failedReason"
+class="mt-3"
+gap="4"
+column>
       <span class="error--text text-h6 font-weight-regular">
         {{ failedMessageText || $t('pattern.optimizationFailed', { reason: failedReason }) }}
       </span>
@@ -23,7 +29,12 @@
         </v-btn>
       </c-layout>
     </c-layout>
-    <c-layout v-else class="mt-3" gap="4" justify-center column>
+    <c-layout
+v-else
+class="mt-3"
+gap="4"
+justify-center
+column>
       <span class="primary--text text-h6 font-weight-regular">
         {{ inProgressText || $t('pattern.optimizationInProgress') }}
       </span>

@@ -76,7 +76,7 @@ export default {
 
     const comboboxMenuProps = computed(() => ({ contentClass: 'c-search-field__menu' }));
 
-    const updateModel = (value) => emit('update:modelValue', value ?? '');
+    const updateModel = value => emit('update:modelValue', value ?? '');
     const submit = () => emit('submit', props.modelValue);
     const keydownEnterCombobox = () => {
       submit();

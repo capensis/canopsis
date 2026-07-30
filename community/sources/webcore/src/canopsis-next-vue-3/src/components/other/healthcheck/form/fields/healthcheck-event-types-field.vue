@@ -33,7 +33,7 @@ export default {
 
   computed: {
     types() {
-      return Object.values(HEALTHCHECK_EVENT_TYPES).map((value) => ({
+      return Object.values(HEALTHCHECK_EVENT_TYPES).map(value => ({
         value,
         text: value,
       }));

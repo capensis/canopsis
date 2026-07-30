@@ -208,11 +208,11 @@ export default {
     },
 
     visiblePoints() {
-      return this.form.points.filter((point) => point._id !== this.editingPoint?._id);
+      return this.form.points.filter(point => point._id !== this.editingPoint?._id);
     },
 
     markers() {
-      return this.visiblePoints.map((point) => ({
+      return this.visiblePoints.map(point => ({
         id: point._id,
         coordinates: point.coordinates,
         data: point,
@@ -262,7 +262,7 @@ export default {
     updatePointInModel(data) {
       this.updateField(
         'points',
-        this.form.points.map((point) => (point._id === data._id ? data : point)),
+        this.form.points.map(point => (point._id === data._id ? data : point)),
       );
     },
 
@@ -273,7 +273,7 @@ export default {
     removePointFromModel(data) {
       this.updateField(
         'points',
-        this.form.points.filter((point) => data._id !== point._id),
+        this.form.points.filter(point => data._id !== point._id),
       );
     },
 

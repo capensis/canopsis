@@ -52,7 +52,11 @@
       <span v-if="hideRepeat" class="font-italic">
         {{ $t('common.request.repeatRequestInTomlFile') }}
       </span>
-      <c-retry-field v-else :value="form" :disabled="disabled" @update:value="updateModel" />
+      <c-retry-field
+v-else
+:value="form"
+:disabled="disabled"
+@update:value="updateModel" />
     </c-form-block-row>
 
     <c-form-block-row :label="$t('common.request.skipVerify')" :depth="depth">
@@ -79,7 +83,11 @@
       />
     </c-form-block-row>
 
-    <c-form-block-row v-if="!hideHeaders" :label="$t('common.header', 2)" :depth="depth" indented>
+    <c-form-block-row
+v-if="!hideHeaders"
+:label="$t('common.header', 2)"
+:depth="depth"
+indented>
       <request-headers-field
         :headers="form.headers"
         :name="`${name}.headers`"
@@ -193,11 +201,11 @@ export default {
   setup(props, { emit }) {
     const { updateModel, updateField } = useModelField(props, emit);
 
-    const updateMultiple = (multiple) => emit('update:multiple', multiple);
-    const updateAuthToken = (authToken) => emit('update:auth-token', authToken);
+    const updateMultiple = multiple => emit('update:multiple', multiple);
+    const updateAuthToken = authToken => emit('update:auth-token', authToken);
     const timeout = computed({
       get: () => props.form.timeout,
-      set: (value) => updateField('timeout', value),
+      set: value => updateField('timeout', value),
     });
 
     return {

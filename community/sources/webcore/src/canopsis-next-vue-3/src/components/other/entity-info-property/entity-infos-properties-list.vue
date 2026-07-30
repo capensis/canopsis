@@ -124,7 +124,7 @@ export default {
      *
      * @param {number} type - The new type value to set in the options
      */
-    const updateType = (type) => emit('update:options', { ...props.options, type });
+    const updateType = type => emit('update:options', { ...props.options, type });
 
     return {
       ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS,

@@ -14,7 +14,11 @@
           {{ t('common.cancel') }}
         </v-btn>
 
-        <v-btn :disabled="isSubmitting" :loading="isSubmitting" color="primary" type="submit">
+        <v-btn
+:disabled="isSubmitting"
+:loading="isSubmitting"
+color="primary"
+type="submit">
           {{ submitLabel }}
         </v-btn>
       </template>

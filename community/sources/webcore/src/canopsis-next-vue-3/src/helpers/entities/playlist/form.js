@@ -43,7 +43,7 @@ export const playlistToForm = (playlist = {}) => ({
 export const formToPlaylist = (form = {}) => ({
   ...form,
 
-  tabs_list: form.tabs_list.map((tab) => tab._id),
+  tabs_list: form.tabs_list.map(tab => tab._id),
 });
 
 export const getTabsFromGroupsByIds = (groups = [], tabIds = []) => {

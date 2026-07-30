@@ -47,8 +47,8 @@ import UserInterfaceLoginForm from './user-interface-login-form.vue';
 import UserInterfaceNotificationsForm from './user-interface-notifications-form.vue';
 
 const hasErrorByPrefixes = (errors, prefixes) =>
-  Object.keys(errors).some((name) =>
-    prefixes.some((prefix) => name === prefix || name.startsWith(`${prefix}.`)),
+  Object.keys(errors).some(name =>
+    prefixes.some(prefix => name === prefix || name.startsWith(`${prefix}.`)),
   );
 
 export default {

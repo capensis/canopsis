@@ -23,7 +23,11 @@
         @update:value="$emit('update:url', $event)"
       >
         <template v-if="helpText" #append="">
-          <c-help-icon :text="helpText" icon="help" color="grey darken-1" left />
+          <c-help-icon
+:text="helpText"
+icon="help"
+color="grey darken-1"
+left />
         </template>
       </c-payload-text-field>
     </v-col>

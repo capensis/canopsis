@@ -17,7 +17,9 @@
         </c-layout>
         <c-layout justify-end>
           <v-btn color="success" @click="apply">
-            <v-icon class="mr-2" color="white"> check </v-icon>
+            <v-icon class="mr-2" color="white">
+check
+</v-icon>
             {{ $t('pattern.applyThisSuggestion') }}
           </v-btn>
         </c-layout>

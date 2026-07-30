@@ -3,7 +3,11 @@
     <span class="handler">
       <v-icon v-show="!disabled" :class="dragClass" class="draggable"> drag_indicator </v-icon>
     </span>
-    <v-avatar v-if="!hideNumber" :color="color" class="white--text" size="32">
+    <v-avatar
+v-if="!hideNumber"
+:color="color"
+class="white--text"
+size="32">
       <slot />
     </v-avatar>
   </v-layout>

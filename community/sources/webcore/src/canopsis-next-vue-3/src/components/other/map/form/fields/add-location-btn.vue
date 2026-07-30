@@ -5,8 +5,14 @@
     theme="light"
     @update:model-value="inputHandler"
   >
-    <v-btn :value="true" class="ma-0 text-medium-emphasis" theme="light" block>
-      <v-icon start> add_location </v-icon>
+    <v-btn
+:value="true"
+class="ma-0 text-medium-emphasis"
+theme="light"
+block>
+      <v-icon start>
+add_location
+</v-icon>
       <span>{{ $t('map.addPoint') }}</span>
     </v-btn>
   </v-btn-toggle>

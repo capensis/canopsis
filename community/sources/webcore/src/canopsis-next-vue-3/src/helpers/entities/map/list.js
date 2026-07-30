@@ -37,7 +37,7 @@ export const getGeomapMarkerIconOptions = (point, size) => {
  * @param {Object} entity
  * @returns {string}
  */
-export const getMapEntityText = (entity) =>
+export const getMapEntityText = entity =>
   entity?.type === ENTITY_TYPES.resource ? entity._id : entity?.name;
 
 /**

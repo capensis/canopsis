@@ -49,7 +49,7 @@ export default {
     const { t } = useI18n();
 
     const preparedItems = computed(() =>
-      Object.values(props.items).map((value) => ({
+      Object.values(props.items).map(value => ({
         value,
         text: t(`llm.thinkingLevels.${value}`),
       })),

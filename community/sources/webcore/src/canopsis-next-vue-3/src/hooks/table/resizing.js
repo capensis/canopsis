@@ -79,7 +79,7 @@ export const useTableResizing = ({
    *
    * @param {Object<string, number>} columnsWidth
    */
-  const setColumnsWidth = (columnsWidth) => (columnsWidthByFields.value = { ...columnsWidth });
+  const setColumnsWidth = columnsWidth => (columnsWidthByFields.value = { ...columnsWidth });
 
   /**
    * Function to set column width by key
@@ -111,7 +111,7 @@ export const useTableResizing = ({
    * @param {string} field
    * @returns {*}
    */
-  const getColumnWidthByField = (field) => columnsWidthByFields.value[field];
+  const getColumnWidthByField = field => columnsWidthByFields.value[field];
 
   /**
    * Function to enable resizing mode

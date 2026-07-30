@@ -32,13 +32,13 @@ export const useValidator = () => {
   const validateField = useValidateField();
   const validateForm = useValidateForm();
 
-  const getFieldError = (name) => formErrors.value[name];
-  const clear = (name) => (name ? setFieldError(name, undefined) : setFormErrors({}));
+  const getFieldError = name => formErrors.value[name];
+  const clear = name => (name ? setFieldError(name, undefined) : setFormErrors({}));
 
   return {
     errors: {
       any: () => Object.keys(formErrors.value).length > 0,
-      has: (name) => !!getFieldError(name),
+      has: name => !!getFieldError(name),
       collect: (name) => {
         const error = getFieldError(name);
 
@@ -50,14 +50,14 @@ export const useValidator = () => {
         normalizedErrors.forEach(({ field, msg }) => setFieldError(field, msg));
       },
       clear,
-      remove: (name) => setFieldError(name, undefined),
+      remove: name => setFieldError(name, undefined),
     },
     fields: {
       find: ({ name } = {}) => (getFieldError(name) ? { name } : null),
       items: [],
     },
     attach: () => {},
-    detach: (name) => setFieldError(name, undefined),
+    detach: name => setFieldError(name, undefined),
     extend: (name, rule) => defineRule(name, adaptRule(name, rule)),
     reset: ({ name } = {}) => clear(name),
     validate: async (name) => {

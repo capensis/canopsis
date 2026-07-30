@@ -135,10 +135,10 @@ export default {
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 
-    const hasRulePatterns = (item) => isMetaAlarmRuleTypeHasPatterns(item.type);
-    const percentage = (value) => convertNumberToRoundedPercentString(value);
-    const dateToString = (date) => convertDateToString(date);
-    const durationToString = (duration) => convertDurationToString(duration);
+    const hasRulePatterns = item => isMetaAlarmRuleTypeHasPatterns(item.type);
+    const percentage = value => convertNumberToRoundedPercentString(value);
+    const dateToString = date => convertDateToString(date);
+    const durationToString = duration => convertDurationToString(duration);
 
     return {
       headers,

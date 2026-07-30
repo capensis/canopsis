@@ -110,7 +110,7 @@ export default {
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 
-    const formatDate = (value) => convertDateToString(value, 'long', '-');
+    const formatDate = value => convertDateToString(value, 'long', '-');
 
     return {
       t,

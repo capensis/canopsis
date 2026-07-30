@@ -104,7 +104,7 @@ export default {
       }
     };
 
-    const getItemProps = (item) => ({
+    const getItemProps = item => ({
       disabled: props.isDisabledItems?.(item.raw ?? item),
     });
 

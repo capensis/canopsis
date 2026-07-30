@@ -156,9 +156,9 @@ export default {
       }),
     );
 
-    const isExpandableItem = (item) => item?.failed;
-    const formatDate = (date) => convertDateToString(date);
-    const formatDuration = (duration) => convertDurationToString(duration);
+    const isExpandableItem = item => item?.failed;
+    const formatDate = date => convertDateToString(date);
+    const formatDuration = duration => convertDurationToString(duration);
 
     return {
       headers,

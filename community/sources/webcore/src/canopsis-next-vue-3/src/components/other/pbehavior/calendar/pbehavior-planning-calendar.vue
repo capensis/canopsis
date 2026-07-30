@@ -150,7 +150,7 @@ export default {
 
     allPbehaviorsAvailable() {
       return Object.values(this.allPbehaviorsById).filter(
-        (pbehavior) => !this.removedPbehaviorsById[pbehavior._id],
+        pbehavior => !this.removedPbehaviorsById[pbehavior._id],
       );
     },
   },
@@ -197,7 +197,7 @@ export default {
     async fetchEvents() {
       this.pending = true;
 
-      const promises = this.allPbehaviorsAvailable.map((pbehavior) =>
+      const promises = this.allPbehaviorsAvailable.map(pbehavior =>
         this.fetchEventsForPbehavior(pbehavior),
       );
 
@@ -285,7 +285,7 @@ export default {
 
       this.exceptionTypes = uniqBy(exceptionTypes, '_id');
       this.events = [
-        ...this.events.filter((event) => get(event.data, 'pbehavior._id') !== pbehavior._id),
+        ...this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id),
         ...events,
       ];
     },
@@ -313,7 +313,7 @@ export default {
       }
 
       this.events = this.events.filter(
-        (event) => get(event.data, 'pbehavior._id') !== pbehavior._id,
+        event => get(event.data, 'pbehavior._id') !== pbehavior._id,
       );
     },
 
@@ -514,7 +514,7 @@ export default {
 
       const targetType = TYPES_MAP[pbehaviorType.type];
 
-      return this.defaultTypes.find((defaultType) => defaultType.type === targetType);
+      return this.defaultTypes.find(defaultType => defaultType.type === targetType);
     },
 
     handleUpdateTimezone(newTimezone) {

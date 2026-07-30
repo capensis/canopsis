@@ -162,7 +162,7 @@ export default {
     };
 
     const removeFileFromSelections = (fileName) => {
-      updateFiles(selectedFiles.value.filter((file) => file.name !== fileName));
+      updateFiles(selectedFiles.value.filter(file => file.name !== fileName));
     };
 
     watch(

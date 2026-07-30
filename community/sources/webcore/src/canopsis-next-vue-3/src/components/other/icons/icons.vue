@@ -74,7 +74,7 @@ export default {
         config: {
           icon,
           title: t('modals.createIcon.create.title'),
-          action: (newIcon) =>
+          action: newIcon =>
             callActionWithPopup(
               () => updateIcon({ data: newIcon, id: icon._id }),
               fetchList,

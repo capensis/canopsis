@@ -112,10 +112,10 @@ export default {
         return acc + toSeconds(value, unit);
       }, 0),
     );
-    const createFieldModel = (field) =>
+    const createFieldModel = field =>
       computed({
         get: () => props.step[field],
-        set: (value) =>
+        set: value =>
           emit('update:step', {
             ...props.step,
             [field]: value,
@@ -139,7 +139,7 @@ export default {
       },
     });
 
-    const updateStepOperations = (operations) =>
+    const updateStepOperations = operations =>
       emit('update:step', {
         ...props.step,
         operations,

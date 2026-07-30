@@ -20,7 +20,11 @@
           {{ t('common.cancel') }}
         </v-btn>
 
-        <v-btn :disabled="isSubmitting" :loading="isSubmitting" color="primary" type="submit">
+        <v-btn
+:disabled="isSubmitting"
+:loading="isSubmitting"
+color="primary"
+type="submit">
           {{ submitLabel }}
         </v-btn>
       </template>
@@ -76,7 +80,7 @@ export default {
     const { values, handleSubmit, isSubmitting, reset } = form;
 
     const closeModal = () => modals.hide({ id: props.modal.id });
-    const updateForm = (value) => (values.value = value);
+    const updateForm = value => (values.value = value);
 
     const submit = handleSubmit(async () => {
       await config.value.action?.(formToLlm(values.value));

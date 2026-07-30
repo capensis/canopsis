@@ -1,6 +1,10 @@
 <template>
   <div>
-    <v-tabs v-model="activeTab" bg-color="secondary-lighten-1" color="primary" align-tabs="center">
+    <v-tabs
+v-model="activeTab"
+bg-color="secondary-lighten-1"
+color="primary"
+align-tabs="center">
       <v-tab :value="0">
         {{ $t('common.pattern', 2) }}
       </v-tab>

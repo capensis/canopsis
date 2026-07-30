@@ -53,7 +53,7 @@ export default {
     quickRanges() {
       const ranges = this.ranges ?? Object.values(QUICK_RANGES);
 
-      return ranges.map((range) => ({
+      return ranges.map(range => ({
         ...range,
         text: range.text ?? this.$t(`quickRanges.types.${range.value}`),
       }));

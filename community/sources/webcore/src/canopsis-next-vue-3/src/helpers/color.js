@@ -13,11 +13,11 @@ const NAMED_COLORS = {
 
 const clamp = (value, min = 0, max = 255) => Math.min(max, Math.max(min, value));
 
-const expandHex = (value) =>
+const expandHex = value =>
   value.length === 3
     ? value
         .split('')
-        .map((char) => char + char)
+        .map(char => char + char)
         .join('')
     : value;
 
@@ -68,7 +68,7 @@ export const parseColor = (color) => {
     : parseRgbColor(preparedColor);
 };
 
-const componentToHex = (value) => clamp(Math.round(value)).toString(16).padStart(2, '0');
+const componentToHex = value => clamp(Math.round(value)).toString(16).padStart(2, '0');
 
 const colorToString = ({ r, g, b }) =>
   `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
@@ -188,7 +188,7 @@ export const isReadableColor = (firstColor, secondColor) => {
  * @param {string} color
  * @param {ReadableColorOptions} [options = {}]
  */
-export const getMostReadableTextColor = (color) =>
+export const getMostReadableTextColor = color =>
   isReadableColor(color, 'white') ? 'white' : 'black';
 
 /**
@@ -243,7 +243,7 @@ export const colorToHex8 = (color, alpha = 1) =>
  * @param {string|Object} color
  * @return {boolean}
  */
-export const isValidColor = (color) => Boolean(parseColor(color));
+export const isValidColor = color => Boolean(parseColor(color));
 
 const getRelativeLuminance = ({ r, g, b }) => {
   const channels = [r, g, b].map((value) => {
@@ -299,7 +299,7 @@ export const getLightenOrDarkenColor = (color, amount = BACKGROUND_AND_ICONS_COL
  * @param {string} property
  * @returns {boolean}
  */
-export const isCSSVariable = (property) => /^var\(.+\)$/.test(property);
+export const isCSSVariable = property => /^var\(.+\)$/.test(property);
 
 /**
  * Get css variable name
@@ -307,7 +307,7 @@ export const isCSSVariable = (property) => /^var\(.+\)$/.test(property);
  * @param {string} property
  * @returns {string}
  */
-export const getCSSVariableName = (property) => property.match(/^var\((.+)\)$/)[1];
+export const getCSSVariableName = property => property.match(/^var\((.+)\)$/)[1];
 
 /**
  * Get color from css variable

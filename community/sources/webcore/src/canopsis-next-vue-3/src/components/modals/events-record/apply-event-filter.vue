@@ -25,7 +25,11 @@
         <v-btn :disabled="isSubmitting" variant="text" @click="closeModal">
           {{ t('common.cancel') }}
         </v-btn>
-        <v-btn :disabled="isSubmitting" :loading="isSubmitting" color="primary" type="submit">
+        <v-btn
+:disabled="isSubmitting"
+:loading="isSubmitting"
+color="primary"
+type="submit">
           {{ t('common.submit') }}
         </v-btn>
       </template>
@@ -49,7 +53,7 @@ import {
   usePatternsFieldsFetching,
 } from '@/hooks/store/modules/patterns-fields';
 
-const promisedWait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+const promisedWait = delay => new Promise(resolve => setTimeout(resolve, delay));
 
 export default {
   name: MODALS.applyEventFilter,
@@ -79,7 +83,7 @@ export default {
       usePatternsFieldsFetching(fetchEventRecordPatternFields);
 
     const closeModal = () => modals.hide({ id: props.modal.id });
-    const updatePatterns = (value) => form.setValue('patterns', value);
+    const updatePatterns = value => form.setValue('patterns', value);
 
     const submit = handleSubmit(async () => {
       const result = await config.value.action?.(

@@ -11,7 +11,11 @@
       @update:data="$emit('update:value', $event)"
     >
       <template #item="{ item, index, handle: itemHandle }">
-        <slot :item="item" :index="index" :handle="itemHandle" name="item" />
+        <slot
+:item="item"
+:index="index"
+:handle="itemHandle"
+name="item" />
       </template>
     </c-card-iterator-field>
     <c-layout justify="end">
@@ -29,7 +33,9 @@
           <span v-if="addButtonLabel">
             {{ addButtonLabel }}
           </span>
-          <v-icon v-else> add </v-icon>
+          <v-icon v-else>
+add
+</v-icon>
         </c-btn-with-error>
         <v-tooltip v-else location="left">
           <template #activator="{ props: tooltipProps }">

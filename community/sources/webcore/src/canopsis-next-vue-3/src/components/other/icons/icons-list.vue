@@ -72,7 +72,7 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    const formatDate = (value) => convertDateToString(value);
+    const formatDate = value => convertDateToString(value);
 
     const headers = computed(() => [
       {

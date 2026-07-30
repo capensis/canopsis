@@ -55,7 +55,7 @@ export default {
 
     const timezones = computed(() => {
       if (!props.server) {
-        return getTimezones().map((timezone) => ({ text: timezone, value: timezone }));
+        return getTimezones().map(timezone => ({ text: timezone, value: timezone }));
       }
 
       const serverTimezone = systemTimezone.value || getLocalTimezone();

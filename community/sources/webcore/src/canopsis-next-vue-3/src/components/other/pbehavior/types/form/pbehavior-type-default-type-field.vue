@@ -56,7 +56,7 @@ export default {
           params: { default: true },
         });
 
-        defaultTypes.value = data.map((type) => ({
+        defaultTypes.value = data.map(type => ({
           ...type,
           text: t(`modals.createPbehaviorType.canonicalTypes.${type.type}`),
         }));

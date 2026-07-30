@@ -14,7 +14,11 @@
           {{ t('common.cancel') }}
         </v-btn>
 
-        <v-btn :disabled="submitting" :loading="submitting" color="primary" type="submit">
+        <v-btn
+:disabled="submitting"
+:loading="submitting"
+color="primary"
+type="submit">
           {{ t('common.import') }}
         </v-btn>
       </template>

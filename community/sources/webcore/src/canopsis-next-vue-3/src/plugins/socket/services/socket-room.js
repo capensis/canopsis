@@ -19,7 +19,7 @@ class SocketRoom {
   }
 
   removeListener(listener) {
-    this.listeners = this.listeners.filter((item) => item !== listener);
+    this.listeners = this.listeners.filter(item => item !== listener);
 
     return this;
   }
@@ -41,7 +41,7 @@ class SocketRoom {
   }
 
   call(context, ...restArgs) {
-    this.listeners.forEach((listener) => listener.call(context, ...restArgs));
+    this.listeners.forEach(listener => listener.call(context, ...restArgs));
 
     return this;
   }
@@ -68,7 +68,7 @@ class SocketRoom {
     this.joined = joined;
 
     if (joined) {
-      this.messagesToSend.forEach((message) => this.parentSend?.(message));
+      this.messagesToSend.forEach(message => this.parentSend?.(message));
       this.messagesToSend = [];
     }
   }

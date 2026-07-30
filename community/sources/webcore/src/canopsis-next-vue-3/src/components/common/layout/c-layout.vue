@@ -72,7 +72,7 @@ const classList = (value) => {
   return String(value).split(/\s+/).filter(Boolean);
 };
 
-const normalizeGapClass = (className) => className.replace(/^gap-/, 'ga-');
+const normalizeGapClass = className => className.replace(/^gap-/, 'ga-');
 const toGapClass = (prefix, value) => `${prefix}-${value}`;
 
 const normalizedAttrClasses = computed(() => classList(attrs.class).map(normalizeGapClass));

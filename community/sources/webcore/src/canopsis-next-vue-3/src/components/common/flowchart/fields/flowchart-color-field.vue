@@ -77,7 +77,7 @@ export default {
         config: {
           color: this.value,
           palette: this.palette,
-          action: (color) => this.updateModel(color),
+          action: color => this.updateModel(color),
         },
       });
     },

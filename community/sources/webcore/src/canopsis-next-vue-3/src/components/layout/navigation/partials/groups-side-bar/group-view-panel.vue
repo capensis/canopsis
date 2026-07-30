@@ -11,7 +11,9 @@
       </div>
 
       <div class="panel-item-content__actions">
-        <c-icon v-if="view.is_private" size="18"> lock </c-icon>
+        <c-icon v-if="view.is_private" size="18">
+lock
+</c-icon>
         <template v-if="editable || duplicable">
           <v-btn
             v-if="editable"
@@ -21,7 +23,9 @@
             icon
             @click.prevent="$emit('change')"
           >
-            <c-icon size="18"> edit </c-icon>
+            <c-icon size="18">
+edit
+</c-icon>
           </v-btn>
           <v-btn
             v-if="duplicable"
@@ -31,7 +35,9 @@
             icon
             @click.prevent="$emit('duplicate')"
           >
-            <c-icon size="18"> file_copy </c-icon>
+            <c-icon size="18">
+file_copy
+</c-icon>
           </v-btn>
         </template>
       </div>

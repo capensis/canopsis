@@ -68,7 +68,7 @@ export default {
   },
   methods: {
     updateShapes(shapes) {
-      const points = this.form.points.filter((point) => (point.shape ? shapes[point.shape] : true));
+      const points = this.form.points.filter(point => (point.shape ? shapes[point.shape] : true));
 
       this.updateModel({
         ...this.form,

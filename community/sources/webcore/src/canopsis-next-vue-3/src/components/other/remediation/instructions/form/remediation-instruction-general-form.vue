@@ -1,6 +1,10 @@
 <template>
   <div>
-    <c-name-field v-model="nameField" :disabled="disabledCommon" required autofocus />
+    <c-name-field
+v-model="nameField"
+:disabled="disabledCommon"
+required
+autofocus />
 
     <c-form-block>
       <c-form-block-row :label="$t('remediation.instruction.type')" indented>
@@ -146,10 +150,10 @@ export default {
 
     const { updateModel } = useModelField(props, emit);
     // TODO: fix that
-    const createFieldModel = (field) =>
+    const createFieldModel = field =>
       computed({
         get: () => props.form[field],
-        set: (value) =>
+        set: value =>
           updateModel({
             ...props.form,
             [field]: value,

@@ -41,7 +41,12 @@
             :value="KPI_TABS.collectionSettings"
           >
             <v-row>
-              <v-col cols="12" md="10" offset-md="1" lg="8" offset-lg="2">
+              <v-col
+cols="12"
+md="10"
+offset-md="1"
+lg="8"
+offset-lg="2">
                 <kpi-collection-settings />
               </v-col>
             </v-row>

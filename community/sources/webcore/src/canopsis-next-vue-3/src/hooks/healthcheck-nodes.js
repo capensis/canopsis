@@ -39,7 +39,7 @@ export const useHealthcheckNodes = () => {
       statusKeys.push('healthcheck.unknown');
     }
 
-    return statusKeys.map((stateKey) => t(stateKey, { name: getNodeName(data.name) })).join('\n');
+    return statusKeys.map(stateKey => t(stateKey, { name: getNodeName(data.name) })).join('\n');
   };
 
   return {

@@ -1,6 +1,10 @@
 <template>
   <div class="c-form-general-patterns-tabs">
-    <v-tabs v-model="activeTab" :key="visibleTabsKey" slider-color="primary" align-tabs="center">
+    <v-tabs
+v-model="activeTab"
+:key="visibleTabsKey"
+slider-color="primary"
+align-tabs="center">
       <v-tab
         v-if="hasPatternsTab && reverse"
         :value="FORM_GENERAL_PATTERNS_TABS.patterns"
@@ -146,7 +150,7 @@ import TemplateTestingTestVariables from '@/components/other/template-testing/te
  *   additional: boolean,
  * }}
  */
-const createTab = (id) => ({
+const createTab = id => ({
   id,
   [FORM_GENERAL_PATTERNS_TABS.general]: id === FORM_GENERAL_PATTERNS_TABS.general,
   [FORM_GENERAL_PATTERNS_TABS.patterns]: id === FORM_GENERAL_PATTERNS_TABS.patterns,
@@ -214,9 +218,9 @@ export default {
     const patternsElement = ref(null);
     const additionalElement = ref(null);
 
-    const setGeneralRef = (refElement) => (generalElement.value = refElement);
-    const setPatternsRef = (refElement) => (patternsElement.value = refElement);
-    const setAdditionalRef = (refElement) => (additionalElement.value = refElement);
+    const setGeneralRef = refElement => (generalElement.value = refElement);
+    const setPatternsRef = refElement => (patternsElement.value = refElement);
+    const setAdditionalRef = refElement => (additionalElement.value = refElement);
 
     const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
     const { hasChildrenError: hasPatternsError } = useValidationElementChildren(patternsElement);
@@ -263,7 +267,7 @@ export default {
 
     const tabsByIds = computed(() =>
       Object.fromEntries(
-        Object.values(FORM_GENERAL_PATTERNS_TABS).map((tabId) => [tabId, createTab(tabId)]),
+        Object.values(FORM_GENERAL_PATTERNS_TABS).map(tabId => [tabId, createTab(tabId)]),
       ),
     );
 
@@ -286,16 +290,16 @@ export default {
 
       return tabs.filter(Boolean);
     });
-    const visibleTabsKey = computed(() => visibleTabs.value.map((tab) => tab.id).join('|'));
+    const visibleTabsKey = computed(() => visibleTabs.value.map(tab => tab.id).join('|'));
 
     const patternsTabIndex = computed(() =>
-      visibleTabs.value.some((tab) => tab.id === FORM_GENERAL_PATTERNS_TABS.patterns)
+      visibleTabs.value.some(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.patterns)
         ? FORM_GENERAL_PATTERNS_TABS.patterns
         : FORM_GENERAL_PATTERNS_TABS.general,
     );
 
     const testingTabIndex = computed(() =>
-      visibleTabs.value.some((tab) => tab.id === FORM_GENERAL_PATTERNS_TABS.testing)
+      visibleTabs.value.some(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.testing)
         ? FORM_GENERAL_PATTERNS_TABS.testing
         : null,
     );
@@ -304,7 +308,7 @@ export default {
       () => testingTabIndex.value !== null && activeTab.value === testingTabIndex.value,
     );
 
-    const tabTabClass = (tab) => ({
+    const tabTabClass = tab => ({
       'error--text':
         (tab.general && hasGeneralError.value) ||
         (tab.patterns && hasPatternsError.value) ||
@@ -312,14 +316,14 @@ export default {
       'v-tab--tooltip': tab['test-query'],
     });
 
-    const tabItemClass = (tab) => (tab.general || tab.patterns || tab.additional ? 'pt-4' : '');
+    const tabItemClass = tab => (tab.general || tab.patterns || tab.additional ? 'pt-4' : '');
 
     const expandNeededTab = computed(() => {
       if (props.aiChatExpandTabKeys) {
         return Object.fromEntries(
           Object.entries(props.aiChatExpandTabKeys).map(([fieldKey, tabId]) => [
             fieldKey,
-            visibleTabs.value.some((tab) => tab.id === tabId)
+            visibleTabs.value.some(tab => tab.id === tabId)
               ? tabId
               : FORM_GENERAL_PATTERNS_TABS.general,
           ]),
@@ -344,7 +348,7 @@ export default {
     );
 
     watch(visibleTabs, (tabs) => {
-      if (!tabs.some((tab) => tab.id === activeTab.value)) {
+      if (!tabs.some(tab => tab.id === activeTab.value)) {
         activeTab.value = tabs[0]?.id ?? FORM_GENERAL_PATTERNS_TABS.general;
       }
     });

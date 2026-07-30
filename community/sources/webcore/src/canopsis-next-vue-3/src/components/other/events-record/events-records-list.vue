@@ -11,7 +11,11 @@
     <template #loader="{ item }">
       <v-tooltip v-if="item.is_recording" location="right">
         <template #activator="{ props: tooltipProps }">
-          <v-progress-circular v-bind="tooltipProps" color="primary" width="3" indeterminate />
+          <v-progress-circular
+v-bind="tooltipProps"
+color="primary"
+width="3"
+indeterminate />
         </template>
         <span>{{ item.progress }}</span>
       </v-tooltip>
@@ -34,7 +38,9 @@
       <span v-else>{{ formatDuration(item.d) }}</span>
     </template>
 
-    <template #count="{ item }"> {{ item.count }}{{ item.is_recording ? '...' : '' }} </template>
+    <template #count="{ item }">
+{{ item.count }}{{ item.is_recording ? '...' : '' }}
+</template>
 
     <template #author="{ item }">
       {{ item.author?.display_name || '-' }}
@@ -117,7 +123,7 @@ export default {
 
     const formatDate = (date, defaultValue = '') =>
       convertDateToString(date, undefined, defaultValue);
-    const formatDuration = (duration) => convertDurationToString(duration);
+    const formatDuration = duration => convertDurationToString(duration);
 
     return {
       t,

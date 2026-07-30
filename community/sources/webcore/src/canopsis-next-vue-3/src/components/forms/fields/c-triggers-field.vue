@@ -69,7 +69,11 @@
         </v-list-item-title>
 
         <template v-if="item.raw.helpText" #append>
-          <c-help-icon :text="item.raw.helpText" color="info" size="20" location="top" />
+          <c-help-icon
+:text="item.raw.helpText"
+color="info"
+size="20"
+location="top" />
         </template>
       </v-list-item>
     </template>
@@ -191,7 +195,7 @@ export default {
      * @param {number} index
      * @return {string}
      */
-    const getChipName = (index) => `${props.name}.${index}.type`;
+    const getChipName = index => `${props.name}.${index}.type`;
 
     /**
      * Get name property for additional value field
@@ -199,7 +203,7 @@ export default {
      * @param {string} type
      * @return {string}
      */
-    const getAdditionalValueFieldName = (type) => `${props.name}.${type}.additionalValue`;
+    const getAdditionalValueFieldName = type => `${props.name}.${type}.additionalValue`;
 
     /**
      * Check if trigger is selected
@@ -207,7 +211,7 @@ export default {
      * @param {Trigger} trigger
      * @return {boolean}
      */
-    const isTriggerSelected = (trigger) =>
+    const isTriggerSelected = trigger =>
       props.modelValue.some(({ type }) => type === trigger.type);
 
     /**
@@ -285,7 +289,7 @@ export default {
       preparedTriggersByTypes.value[type][additionalValuesKeysByTriggers[type]] = additionalValue;
 
       updateModel(
-        props.modelValue.map((trigger) =>
+        props.modelValue.map(trigger =>
           trigger.type === type ? preparedTriggersByTypes.value[type] : trigger,
         ),
       );
@@ -325,7 +329,7 @@ export default {
             'bind.errorMessages': validator.errors.collect(name),
           }),
           on: {
-            'update:value': (value) => changeAdditionalValue(type, value),
+            'update:value': value => changeAdditionalValue(type, value),
           },
         };
 

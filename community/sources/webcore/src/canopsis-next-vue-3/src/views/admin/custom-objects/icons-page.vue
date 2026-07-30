@@ -46,7 +46,7 @@ export default {
         name: MODALS.createIcon,
         config: {
           title: t('modals.createIcon.create.title'),
-          action: (newIcon) =>
+          action: newIcon =>
             callActionWithPopup(
               () => createIcon({ data: newIcon }),
               refresh,

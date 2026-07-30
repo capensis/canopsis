@@ -1,5 +1,9 @@
 <template>
-  <v-navigation-drawer class="flowchart-sidebar" width="100%" permanent touchless>
+  <v-navigation-drawer
+class="flowchart-sidebar"
+width="100%"
+permanent
+touchless>
     <c-layout column>
       <slot name="prepend" />
       <flowchart-color-field
@@ -21,7 +25,11 @@
         <v-divider />
         <v-expansion-panel-text>
           <c-layout wrap>
-            <v-tooltip v-for="(button, index) in buttons" :key="index" z-index="230" location="top">
+            <v-tooltip
+v-for="(button, index) in buttons"
+:key="index"
+z-index="230"
+location="top">
               <template #activator="{ props: activatorProps }">
                 <v-btn
                   v-bind="activatorProps"

@@ -36,7 +36,7 @@ const getThemeForm = (theme = {}) => {
   });
 };
 
-const createStateTextColors = (state) =>
+const createStateTextColors = state =>
   Object.entries(state).reduce((acc, [key, color]) => {
     acc[`${key}-text`] = getMostReadableTextColor(color);
 
@@ -115,7 +115,7 @@ const createLegacyColorVariations = (key, value) => {
     return [];
   }
 
-  return [1, 2, 3, 4, 5].flatMap((index) => [
+  return [1, 2, 3, 4, 5].flatMap(index => [
     `--v-${key}-darken${index}:${getDarkenColor(value, index * 5)};`,
     `--v-${key}-darken-${index}:${getDarkenColor(value, index * 5)};`,
     `--v-${key}-lighten${index}:${getLightenColor(value, index * 5)};`,

@@ -102,7 +102,7 @@ export default {
      * @param {number} index - Zero-based index of the operation in the list.
      * @returns {string}
      */
-    const getOperationNumberByIndex = (index) => getOperationNumber(props.stepNumber, index);
+    const getOperationNumberByIndex = index => getOperationNumber(props.stepNumber, index);
 
     /**
      * Marks the draggable list as being dragged to apply visual feedback.

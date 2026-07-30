@@ -160,7 +160,7 @@ export default {
      *
      * @param {string} id - The unique identifier of the map to delete.
      */
-    const showRemoveMapModal = (id) =>
+    const showRemoveMapModal = id =>
       modals.show({
         name: MODALS.confirmation,
         config: {

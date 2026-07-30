@@ -82,4 +82,4 @@ export const getEntityColor = (
  *
  * @param {string} type
  */
-export const getEntityEventColor = (type) => EVENT_ENTITY_COLORS_BY_TYPE[type];
+export const getEntityEventColor = type => EVENT_ENTITY_COLORS_BY_TYPE[type];

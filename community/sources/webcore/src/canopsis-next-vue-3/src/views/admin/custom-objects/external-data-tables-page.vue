@@ -95,7 +95,7 @@ export default {
      *
      * @param {Object} externalDataTable - The external data table to be edited.
      */
-    const showEditExternalDataTableModal = (externalDataTable) =>
+    const showEditExternalDataTableModal = externalDataTable =>
       modals.show({
         name: MODALS.createExternalDataTable,
         config: {
@@ -113,7 +113,7 @@ export default {
      *
      * @param {Object} externalDataTable - The external data table to be removed.
      */
-    const showRemoveExternalDataTableModal = (externalDataTable) =>
+    const showRemoveExternalDataTableModal = externalDataTable =>
       modals.show({
         name: MODALS.confirmationPhrase,
         config: {

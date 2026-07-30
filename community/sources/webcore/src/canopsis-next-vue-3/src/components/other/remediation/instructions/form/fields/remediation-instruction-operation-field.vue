@@ -60,7 +60,11 @@
           </v-layout>
         </v-layout>
       </v-flex>
-      <c-action-btn v-if="!disabled" class="mt-2" type="delete" @click="remove" />
+      <c-action-btn
+v-if="!disabled"
+class="mt-2"
+type="delete"
+@click="remove" />
     </v-layout>
   </c-form-block>
 </template>
@@ -114,10 +118,10 @@ export default {
     const { hasChildrenError } = useValidationChildren();
 
     const fieldName = computed(() => (props.operation.key ? props.operation.key : ''));
-    const createFieldModel = (field) =>
+    const createFieldModel = field =>
       computed({
         get: () => props.operation[field],
-        set: (value) =>
+        set: value =>
           emit('update:operation', {
             ...props.operation,
             [field]: value,

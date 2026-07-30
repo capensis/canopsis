@@ -22,7 +22,9 @@
     <template v-if="hasReadAccessForTemplateData && hasCreateAccessForTemplateData" #no-data>
       <c-layout justify="center">
         <v-btn color="primary" variant="outlined" @click="showCreateTemplateTestingDataModal">
-          <v-icon class="mr-2"> add_circle </v-icon>
+          <v-icon class="mr-2">
+add_circle
+</v-icon>
 
           {{ t('templateTesting.addData') }}
         </v-btn>

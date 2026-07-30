@@ -15,10 +15,18 @@
       </c-layout>
     </template>
     <template #actions="{ disabled, item }">
-      <v-btn :disabled="disabled" icon="add" size="small" @click="$emit('select', [item])" />
+      <v-btn
+:disabled="disabled"
+icon="add"
+size="small"
+@click="$emit('select', [item])" />
     </template>
     <template #mass-actions="{ selected, count }">
-      <v-btn class="ma-2" color="primary" variant="outlined" @click="$emit('select', selected)">
+      <v-btn
+class="ma-2"
+color="primary"
+variant="outlined"
+@click="$emit('select', selected)">
         {{ $t('remediation.job.addJobs', count, { count }) }}
       </v-btn>
     </template>

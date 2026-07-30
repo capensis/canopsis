@@ -35,14 +35,14 @@ export default {
       { text: t('common.output'), value: 'fail_reason', sortable: false },
     ]);
     const preparedHeaders = computed(() =>
-      headers.value.map((header) => ({
+      headers.value.map(header => ({
         ...header,
         title: header.text,
         key: header.value,
       })),
     );
     const items = computed(() => [props.token]);
-    const formatDate = (date) => convertDateToString(date);
+    const formatDate = date => convertDateToString(date);
 
     return {
       preparedHeaders,

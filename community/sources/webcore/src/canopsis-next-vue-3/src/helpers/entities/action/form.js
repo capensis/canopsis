@@ -166,7 +166,7 @@ export const associateTicketActionParametersToForm = (parameters = {}) => ({
  * @param {ActionType} type
  * @returns {boolean}
  */
-export const isAssociateTicketActionType = (type) => type === ACTION_TYPES.assocticket;
+export const isAssociateTicketActionType = type => type === ACTION_TYPES.assocticket;
 
 /**
  * Check action type is pbehavior
@@ -174,7 +174,7 @@ export const isAssociateTicketActionType = (type) => type === ACTION_TYPES.assoc
  * @param {ActionType} type
  * @return {boolean}
  */
-export const isPbehaviorActionType = (type) => type === ACTION_TYPES.pbehavior;
+export const isPbehaviorActionType = type => type === ACTION_TYPES.pbehavior;
 
 /**
  * Converts action parameters to form for all supported idle-rule actions.

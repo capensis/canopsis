@@ -38,7 +38,7 @@ export const useTemplateTestingValidationForm = (props) => {
   const modals = useModals();
 
   const hasSelectedTest = computed(() => !isEmpty(selectedTest.value));
-  const isEmptyValidationForm = computed(() => validationForm.value.every((item) => !item.value));
+  const isEmptyValidationForm = computed(() => validationForm.value.every(item => !item.value));
   const isEqualValidationForm = computed(() =>
     isEqual(originalValidationForm.value, validationForm.value),
   );
@@ -60,7 +60,7 @@ export const useTemplateTestingValidationForm = (props) => {
       const { added, removed } = getChangesForValidateForm(newValidationForm, validationForm.value);
 
       validationForm.value = validationForm.value.filter(
-        (item) => !removed.some((removedItem) => removedItem.key === item.key),
+        item => !removed.some(removedItem => removedItem.key === item.key),
       );
       validationForm.value.push(...added);
 
@@ -89,7 +89,7 @@ export const useTemplateTestingValidationForm = (props) => {
    *
    * @param {Object} newSelectedTest - The new selected test object to set
    */
-  const setSelectedTest = (newSelectedTest) => (selectedTest.value = newSelectedTest);
+  const setSelectedTest = newSelectedTest => (selectedTest.value = newSelectedTest);
 
   /**
    * Resets the selected test to a shallow copy of the current selected test
@@ -147,7 +147,7 @@ export const useTemplateTestingValidationForm = (props) => {
    */
   const resetLastRunVariables = () => {
     lastRunVariables.value = Object.fromEntries(
-      Object.keys(lastRunVariables.value).map((key) => [key, Symbol('lastRunVariables')]),
+      Object.keys(lastRunVariables.value).map(key => [key, Symbol('lastRunVariables')]),
     );
   };
 

@@ -6,8 +6,15 @@
           <h4 class="text-subtitle-1 ma-0">
             {{ title }}
           </h4>
-          <v-btn class="ma-0" size="x-small" variant="text" icon @click="close">
-            <v-icon color="white"> close </v-icon>
+          <v-btn
+class="ma-0"
+size="x-small"
+variant="text"
+icon
+@click="close">
+            <v-icon color="white">
+close
+</v-icon>
           </v-btn>
         </c-layout>
       </v-card-title>
@@ -33,7 +40,11 @@
         >
           {{ t('common.delete') }}
         </v-btn>
-        <v-btn :disabled="isDisabled" :loading="isSubmitting" color="primary" type="submit">
+        <v-btn
+:disabled="isDisabled"
+:loading="isSubmitting"
+color="primary"
+type="submit">
           {{ t('common.submit') }}
         </v-btn>
       </v-card-actions>
@@ -90,7 +101,7 @@ export default {
     const title = computed(() => (props.editing ? t('map.editPoint') : t('map.addPoint')));
 
     const close = () => emit('cancel');
-    const updateForm = (value) => (form.value = value);
+    const updateForm = value => (form.value = value);
 
     const submit = handleSubmit(() => {
       if (!isDisabled.value) {
@@ -129,7 +140,7 @@ export default {
 
     watch(
       () => props.point,
-      (point) => reset({ ...point }),
+      point => reset({ ...point }),
     );
 
     return {

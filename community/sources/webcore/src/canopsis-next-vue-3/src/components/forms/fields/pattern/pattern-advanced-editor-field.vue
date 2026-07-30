@@ -73,7 +73,7 @@ export default {
       validateOnValueUpdate: false,
     });
 
-    const setErrorMessage = (message) => setErrors(message ? [message] : []);
+    const setErrorMessage = message => setErrors(message ? [message] : []);
 
     return {
       errorMessage,

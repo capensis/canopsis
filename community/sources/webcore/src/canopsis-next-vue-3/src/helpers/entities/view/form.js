@@ -63,7 +63,7 @@
  */
 export const groupWithViewsToPositions = (group = {}) => ({
   _id: group._id,
-  views: group.views.map((view) => view._id),
+  views: group.views.map(view => view._id),
 });
 
 /**
