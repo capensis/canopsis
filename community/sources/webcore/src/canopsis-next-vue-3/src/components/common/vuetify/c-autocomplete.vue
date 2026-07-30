@@ -1,5 +1,5 @@
 <script setup>
-import { useAttrs } from 'vue';
+import { computed, useAttrs } from 'vue';
 
 import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
 
@@ -8,12 +8,19 @@ const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
 const { inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
+
+const autocompleteValue = computed({
+  get: () => (inputValue.value === '' ? (attrs.multiple ? [] : null) : inputValue.value),
+  set: (value) => {
+    inputValue.value = value;
+  },
+});
 </script>
 
 <template>
   <v-autocomplete
     v-bind="$attrs"
-    v-model="inputValue"
+    v-model="autocompleteValue"
     :name="name"
     :error-messages="errorMessages"
     class="c-field c-autocomplete"

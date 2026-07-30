@@ -56,9 +56,14 @@
     <template v-else-if="isMultiple" #selection="{ item, props: selectionProps }">
       <v-chip v-bind="selectionProps" class="c-lazy-search-field__chip" size="small" closable>
         <span class="text-truncate">
-          {{ getItemText(item.raw ?? item) }}
+          {{ getItemText(getSelectionItem(item)) }}
         </span>
       </v-chip>
+    </template>
+    <template v-else #selection="{ item }">
+      <span class="v-select__selection-text">
+        {{ getItemText(getSelectionItem(item)) }}
+      </span>
     </template>
     <template v-if="$slots['no-data']" #no-data="">
       <slot name="no-data" />
@@ -191,6 +196,13 @@ export default {
       return text ?? getItemValue(item);
     };
 
+    const getSelectionItem = (item) => {
+      const rawItem = item?.raw ?? item;
+      const value = getItemValue(rawItem);
+
+      return props.items.find((entity) => getItemValue(entity) === value) ?? rawItem;
+    };
+
     const getItemProps = (item) => {
       const rawItem = item?.raw ?? item;
 
@@ -265,12 +277,14 @@ export default {
 
     return {
       appendElement,
+      internalSearch,
       fieldComponent,
       fieldAttrs,
       preparedMenuProps,
       isMultiple,
       getItemValue,
       getItemText,
+      getSelectionItem,
       getItemProps,
       updateSearch,
       updateValue,

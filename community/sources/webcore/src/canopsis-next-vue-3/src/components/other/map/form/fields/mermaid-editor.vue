@@ -9,7 +9,7 @@
         />
       </v-col>
       <v-col class="mermaid-editor__content pa-0">
-        <c-layout class="mermaid-editor__toolbar px-2" align-center justify-end>
+        <c-layout class="mermaid-editor__toolbar px-2" align="center" justify="end">
           <add-location-btn :value="addOnClick" class="mr-2" @input="addOnClick = $event" />
           <mermaid-theme-field
             :value="form.theme"

@@ -1,22 +1,12 @@
 <template>
-  <c-layout
-    :class="layoutClasses"
-    class="c-form-block-row"
-    align="start"
-  >
-    <div
-      :style="labelStyle"
-      class="c-form-block-row__label text-break"
-    >
+  <c-layout :class="layoutClasses" class="c-form-block-row" align="start">
+    <div :style="labelStyle" class="c-form-block-row__label text-break">
       <h4 class="c-form-block-row__title text-subtitle-1 text-break">
         {{ label }}
       </h4>
     </div>
 
-    <div
-      :class="fieldClasses"
-      class="text-break"
-    >
+    <div :class="fieldClasses" class="text-break">
       <slot />
     </div>
   </c-layout>
@@ -24,6 +14,7 @@
 
 <script>
 import { computed } from 'vue';
+import { useTheme } from 'vuetify';
 
 export default {
   props: {
@@ -62,11 +53,15 @@ export default {
   },
 
   setup(props) {
+    const theme = useTheme();
+
     const layoutClasses = computed(() => ({
       [`c-form-block-row--depth-${props.depth}`]: !!props.depth,
       'c-form-block-row--top-border': !!props.topBorder,
       'c-form-block-row--bottom-border': !!props.bottomBorder,
       'c-form-block-row--error': props.error,
+      'c-form-block-row--dark': theme.current.value.dark,
+      'c-form-block-row--light': !theme.current.value.dark,
     }));
 
     const fieldClasses = computed(() => ({
@@ -75,9 +70,9 @@ export default {
       'c-form-block-row__field--align-center': props.alignCenter,
     }));
 
-    const labelWidth = computed(() => (
-      Number.isFinite(props.width) ? `${props.width}px` : props.width
-    ));
+    const labelWidth = computed(() =>
+      Number.isFinite(props.width) ? `${props.width}px` : props.width,
+    );
 
     const labelStyle = computed(() => ({
       flex: `0 0 ${labelWidth.value}`,
@@ -96,12 +91,12 @@ export default {
 
 <style lang="scss">
 :root {
-  --c-form-block-row-label-background-color-light: #EAEAEA;
-  --c-form-block-row-label-background-color-light-depth-1: #F0F0F0;
-  --c-form-block-row-label-background-color-light-depth-2: #F5F5F5;
+  --c-form-block-row-label-background-color-light: #eaeaea;
+  --c-form-block-row-label-background-color-light-depth-1: #f0f0f0;
+  --c-form-block-row-label-background-color-light-depth-2: #f5f5f5;
 
   --c-form-block-row-label-background-color-dark: var(--v-application-background-lighten2);
-  --c-form-block-row-label-background-color-dark-depth-1: #3A3A3A;
+  --c-form-block-row-label-background-color-dark-depth-1: #3a3a3a;
   --c-form-block-row-label-background-color-dark-depth-2: #474747;
 }
 
@@ -169,15 +164,30 @@ export default {
   }
 }
 
+.theme--light .c-form-block-row,
+.c-form-block-row--light {
+  .c-form-block-row__label {
+    background-color: var(--c-form-block-row-label-background-color-light);
+  }
+
+  &--depth-1 .c-form-block-row__label {
+    background-color: var(--c-form-block-row-label-background-color-light-depth-1);
+  }
+
+  &--depth-2 .c-form-block-row__label {
+    background-color: var(--c-form-block-row-label-background-color-light-depth-2);
+  }
+}
+
 .theme--dark .c-form-block-row,
-.v-theme--dark .c-form-block-row {
+.c-form-block-row--dark {
   &:not(:last-child) {
-    border-bottom-color: var(--v-application-background-lighten3);
+    border-color: var(--v-application-background-lighten3);
   }
 
   .c-form-block-row__label {
     background-color: var(--c-form-block-row-label-background-color-dark);
-    border-right-color: var(--v-application-background-lighten3);
+    border-color: var(--v-application-background-lighten3);
   }
 
   .c-form-block-row__title {
@@ -190,21 +200,6 @@ export default {
 
   &--depth-2 .c-form-block-row__label {
     background-color: var(--c-form-block-row-label-background-color-dark-depth-2);
-  }
-}
-
-.theme--light .c-form-block-row,
-.v-theme--canopsis:not(:where(.v-theme--dark, .v-theme--dark *)) .c-form-block-row {
-  .c-form-block-row__label {
-    background-color: var(--c-form-block-row-label-background-color-light);
-  }
-
-  &--depth-1 .c-form-block-row__label {
-    background-color: var(--c-form-block-row-label-background-color-light-depth-1);
-  }
-
-  &--depth-2 .c-form-block-row__label {
-    background-color: var(--c-form-block-row-label-background-color-light-depth-2);
   }
 }
 </style>

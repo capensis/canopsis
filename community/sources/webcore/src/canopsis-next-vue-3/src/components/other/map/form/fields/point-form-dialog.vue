@@ -1,10 +1,12 @@
 <template>
-  <v-form v-click-outside.zIndex="showConfirmationModal" @submit.prevent.stop="submit">
+  <v-form v-click-outside.zIndex="clickOutsideDirective" @submit.prevent.stop="submit">
     <v-card width="400">
-      <v-card-title class="bg-primary text-white pa-2">
-        <c-layout align-center justify-space-between>
-          <h4>{{ title }}</h4>
-          <v-btn class="ma-0 ml-3" size="small" variant="text" icon @click="close">
+      <v-card-title class="bg-primary text-white px-3 py-2">
+        <c-layout class="w-100" align="center" justify="space-between">
+          <h4 class="text-subtitle-1 ma-0">
+            {{ title }}
+          </h4>
+          <v-btn class="ma-0" size="x-small" variant="text" icon @click="close">
             <v-icon color="white"> close </v-icon>
           </v-btn>
         </c-layout>
@@ -14,25 +16,25 @@
           :form="form"
           :coordinates="coordinates"
           :exists-entities="existsEntities"
-          @update:form="form = $event"
-          @fly:coordinates="$emit('fly:coordinates', $event)"
+          @update:form="updateForm"
+          @fly:coordinates="emit('fly:coordinates', $event)"
         />
       </v-card-text>
       <v-card-actions class="justify-end">
-        <v-btn :disabled="submitting" variant="text" @click="close">
-          {{ $t('common.cancel') }}
+        <v-btn :disabled="isSubmitting" variant="text" @click="close">
+          {{ t('common.cancel') }}
         </v-btn>
         <v-btn
           v-if="editing"
-          :disabled="submitting"
+          :disabled="isSubmitting"
           color="error"
           variant="text"
-          @click.stop="$emit('remove')"
+          @click.stop="emit('remove')"
         >
-          {{ $t('common.delete') }}
+          {{ t('common.delete') }}
         </v-btn>
-        <v-btn :disabled="isDisabled" :loading="submitting" color="primary" type="submit">
-          {{ $t('common.submit') }}
+        <v-btn :disabled="isDisabled" :loading="isSubmitting" color="primary" type="submit">
+          {{ t('common.submit') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -41,8 +43,13 @@
 
 <script>
 import { isEqual } from 'lodash';
+import { computed, watch } from 'vue';
 
 import { MODALS } from '@/constants';
+
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import PointForm from './point-form.vue';
 
@@ -67,45 +74,34 @@ export default {
     },
   },
   emits: ['cancel', 'submit', 'remove', 'fly:coordinates'],
-  data() {
-    return {
-      form: { ...this.point },
-      submitting: false,
-    };
-  },
-  computed: {
-    isDisabled() {
-      return !this.form.entity;
-    },
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const {
+      values: form,
+      handleSubmit,
+      isSubmitting,
+      reset,
+    } = useForm({
+      initialValues: { ...props.point },
+    });
 
-    title() {
-      if (this.editing) {
-        return this.$t('map.editPoint');
+    const isDisabled = computed(() => !form.value.entity);
+    const title = computed(() => (props.editing ? t('map.editPoint') : t('map.addPoint')));
+
+    const close = () => emit('cancel');
+    const updateForm = (value) => (form.value = value);
+
+    const submit = handleSubmit(() => {
+      if (!isDisabled.value) {
+        emit('submit', form.value);
       }
+    });
 
-      return this.$t('map.addPoint');
-    },
-  },
-  watch: {
-    point(point) {
-      this.form = { ...point };
-    },
-  },
-  methods: {
-    close() {
-      this.$emit('cancel');
-    },
-
-    submit() {
-      if (!this.isDisabled) {
-        this.$emit('submit', this.form);
-      }
-    },
-
-    showConfirmationModal() {
-      if (!isEqual(this.point, this.form)) {
-        this.$modals.show({
-          id: this.point._id,
+    const showConfirmationModal = () => {
+      if (!isEqual(props.point, form.value)) {
+        modals.show({
+          id: props.point._id,
           name: MODALS.clickOutsideConfirmation,
           dialogProps: {
             persistent: true,
@@ -113,17 +109,41 @@ export default {
           config: {
             action: (confirmed) => {
               if (confirmed) {
-                return this.submit();
+                return submit();
               }
 
-              return this.close();
+              return close();
             },
           },
         });
       } else {
-        this.close();
+        close();
       }
-    },
+    };
+
+    const clickOutsideDirective = computed(() => ({
+      handler: showConfirmationModal,
+      include: () => [...document.querySelectorAll('.v-overlay__content')],
+      closeConditional: () => true,
+    }));
+
+    watch(
+      () => props.point,
+      (point) => reset({ ...point }),
+    );
+
+    return {
+      t,
+      emit,
+      form,
+      title,
+      isDisabled,
+      isSubmitting,
+      clickOutsideDirective,
+      close,
+      submit,
+      updateForm,
+    };
   },
 };
 </script>

@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import CZoomOverlay from '@/components/common/overlay/c-zoom-overlay.vue';
 import Panzoom from '@/components/common/panzoom/panzoom.vue';
 
 import MermaidPointsPreview from './mermaid-points-preview.vue';
@@ -30,7 +29,6 @@ import MermaidCodePreview from './mermaid-code-preview.vue';
 
 export default {
   components: {
-    CZoomOverlay,
     Panzoom,
     MermaidPointsPreview,
     MermaidCodePreview,

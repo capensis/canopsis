@@ -1,34 +1,27 @@
 <template>
-  <c-layout
-    class="c-form-block"
-    column
-  >
-    <c-layout
-      v-if="title || helpText"
-      class="c-form-block__header mb-3"
-      align="center"
-    >
+  <c-layout class="c-form-block" column>
+    <c-layout v-if="title || helpText" class="c-form-block__header mb-3" align="center">
       <div class="text-subtitle-1 font-weight-bold">
         {{ title }}
       </div>
     </c-layout>
 
-    <c-layout
-      v-if="$slots.subtitle"
-      class="c-form-block__subtitle mb-2"
-    >
+    <c-layout v-if="$slots.subtitle" class="c-form-block__subtitle mb-2">
       <span class="text-medium-emphasis">
         <slot name="subtitle" />
       </span>
     </c-layout>
 
-    <div class="c-form-block__surface">
+    <div :class="surfaceClasses" class="c-form-block__surface">
       <slot />
     </div>
   </c-layout>
 </template>
 
 <script>
+import { computed } from 'vue';
+import { useTheme } from 'vuetify';
+
 export default {
   props: {
     title: {
@@ -48,6 +41,19 @@ export default {
       required: false,
     },
   },
+
+  setup() {
+    const theme = useTheme();
+
+    const surfaceClasses = computed(() => ({
+      'c-form-block__surface--dark': theme.current.value.dark,
+      'c-form-block__surface--light': !theme.current.value.dark,
+    }));
+
+    return {
+      surfaceClasses,
+    };
+  },
 };
 </script>
 
@@ -58,12 +64,12 @@ export default {
 }
 
 .theme--light .c-form-block__surface,
-.v-theme--canopsis:not(:where(.v-theme--dark, .v-theme--dark *)) .c-form-block__surface {
+.c-form-block__surface--light {
   border: 1px solid var(--v-application-background-darken2);
 }
 
 .theme--dark .c-form-block__surface,
-.v-theme--dark .c-form-block__surface {
+.c-form-block__surface--dark {
   border: 1px solid var(--v-application-background-lighten3);
 }
 </style>

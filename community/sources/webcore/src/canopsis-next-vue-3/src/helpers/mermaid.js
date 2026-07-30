@@ -20,7 +20,11 @@ export const renderMermaid = (value = '', options = {}) => {
   try {
     const svg = mermaid.render(id, value);
 
-    mermaid.mermaidAPI.reinitialize();
+    if (mermaid.mermaidAPI.reinitialize) {
+      mermaid.mermaidAPI.reinitialize();
+    } else {
+      mermaid.mermaidAPI.initialize({ ...options, startOnLoad: false });
+    }
 
     return svg;
   } catch (e) {

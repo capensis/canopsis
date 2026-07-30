@@ -15,12 +15,12 @@
           >
             <v-card>
               <v-card-title class="py-3">
-                <c-layout align-center>
+                <c-layout class="w-100" align="center">
                   <div class="text-subtitle-1">
                     {{ t(`map.types.${type}`) }}
                   </div>
                   <v-spacer />
-                  <v-icon color="secondary">
+                  <v-icon color="grey" size="20">
                     {{ getIconByType(type) }}
                   </v-icon>
                 </c-layout>

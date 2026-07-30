@@ -165,9 +165,7 @@ export default {
 
         this.pageCount = meta.page_count;
 
-        const currentEntities = this.returnObject
-          ? keyBy(this.value, '_id')
-          : pick(this.entitiesById, isArray(this.value) ? this.value : [this.value]);
+        const currentEntities = this.getCurrentEntities();
 
         this.entitiesById = {
           ...(this.query.page !== 1 ? this.entitiesById : {}),
@@ -192,6 +190,14 @@ export default {
       this.query.page = 1;
 
       this.fetchEntities();
+    },
+
+    getCurrentEntities() {
+      if (!this.returnObject || typeof this.value === 'string') {
+        return pick(this.entitiesById, isArray(this.value) ? this.value : [this.value]);
+      }
+
+      return keyBy(this.value, '_id');
     },
   },
 };

@@ -85,14 +85,14 @@ export default {
   methods: {
     updateEntity(entity) {
       if (!this.coordinates) {
-        this.updateField('entity', entity?._id ?? '');
+        this.updateField('entity', entity ?? '');
         return;
       }
 
       if (entity) {
         this.updateModel({
           ...this.form,
-          entity: entity._id,
+          entity,
           is_entity_coordinates: !!entity.coordinates,
           coordinates: entity.coordinates ?? this.form.coordinates,
         });

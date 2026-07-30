@@ -236,7 +236,7 @@ export default {
     },
 
     existsEntities() {
-      return this.form.points.map(({ entity }) => entity);
+      return this.form.points.map(({ entity }) => entity?._id ?? entity);
     },
 
     hasChildrenError() {

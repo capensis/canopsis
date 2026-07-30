@@ -102,6 +102,7 @@ export default {
   [MODALS.createTreeOfDependenciesMap]: defineAsyncComponent(
     () => import('./map/create-tree-of-dependencies-map.vue'),
   ),
+  [MODALS.createTag]: defineAsyncComponent(() => import('./tag/create-tag.vue')),
   [MODALS.createExternalDataTableRecord]: defineAsyncComponent(
     () => import('./external-data-table/create-external-data-table-record.vue'),
   ),

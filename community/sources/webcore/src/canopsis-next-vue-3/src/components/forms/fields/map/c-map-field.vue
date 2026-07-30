@@ -1,5 +1,5 @@
 <template>
-  <v-select
+  <c-select
     :model-value="value"
     :items="items"
     :label="label || $t('common.map')"

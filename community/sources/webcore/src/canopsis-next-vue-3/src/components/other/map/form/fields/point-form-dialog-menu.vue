@@ -1,5 +1,11 @@
 <template>
-  <v-menu :model-value="value" :target="[positionX, positionY]" :close-on-content-click="false">
+  <v-menu
+    :model-value="value"
+    :close-on-content-click="false"
+    :content-props="contentProps"
+    location-strategy="static"
+    scroll-strategy="none"
+  >
     <point-form-dialog
       v-if="value && point"
       :point="point"
@@ -40,6 +46,17 @@ export default {
     existsEntities: {
       type: Array,
       required: false,
+    },
+  },
+  computed: {
+    contentProps() {
+      return {
+        style: {
+          position: 'fixed',
+          left: `${this.positionX}px`,
+          top: `${this.positionY}px`,
+        },
+      };
     },
   },
 };

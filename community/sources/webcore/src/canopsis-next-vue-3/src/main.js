@@ -16,6 +16,7 @@ import * as IconComponents from '@/components/common/icon';
 import * as InputComponents from '@/components/common/inputs';
 import * as LayoutComponents from '@/components/common/layout';
 import * as ModalComponents from '@/components/common/modal';
+import * as OverlayComponents from '@/components/common/overlay';
 import * as PageComponents from '@/components/common/page';
 import * as PaginationComponents from '@/components/common/pagination';
 import * as ResponsiveListComponents from '@/components/common/responsive-list';
@@ -102,6 +103,10 @@ Object.entries(LayoutComponents).forEach(([name, component]) => {
 });
 
 Object.entries(ModalComponents).forEach(([name, component]) => {
+  app.component(name, component);
+});
+
+Object.entries(OverlayComponents).forEach(([name, component]) => {
   app.component(name, component);
 });
 

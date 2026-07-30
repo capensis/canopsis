@@ -70,7 +70,6 @@ import { getGeomapMarkerIconOptions } from '@/helpers/entities/map/list';
 
 import { mapInformationPopupMixin } from '@/mixins/map/map-information-popup-mixin';
 
-import CZoomOverlay from '@/components/common/overlay/c-zoom-overlay.vue';
 import Geomap from '@/components/common/geomap/geomap.vue';
 import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
 import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
@@ -86,7 +85,6 @@ import PointPopupDialog from './point-popup-dialog.vue';
 export default {
   components: {
     PointPopupDialog,
-    CZoomOverlay,
     Geomap,
     GeomapTileLayer,
     GeomapControlZoom,

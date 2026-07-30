@@ -12,7 +12,7 @@
       :key="point._id"
       :x="point.x"
       :y="point.y"
-      :entity="point.entity"
+      :entity="getPointIconEntity(point)"
       :size="markerSize"
       :class="{ 'mermaid-points__point--no-events': moving }"
       class="mermaid-points__point"
@@ -100,7 +100,7 @@ export default {
   },
   computed: {
     existsEntities() {
-      return this.value.map(({ entity }) => entity);
+      return this.value.map(({ entity }) => entity?._id ?? entity);
     },
 
     isFormOpened() {
@@ -215,6 +215,10 @@ export default {
     openEditPointForm() {
       this.shownMenu = false;
       this.editing = true;
+    },
+
+    getPointIconEntity(point) {
+      return point.entity?._id ?? point.entity;
     },
 
     submitPointForm(data) {
