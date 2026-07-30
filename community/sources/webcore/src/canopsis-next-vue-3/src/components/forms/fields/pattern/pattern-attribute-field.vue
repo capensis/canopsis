@@ -13,21 +13,10 @@
   >
     <template #item="{ props: itemProps, item }">
       <v-list-item v-bind="itemProps">
-        <template
-          v-if="item.raw?.alias"
-          #append
-        >
-          <c-simple-tooltip
-            :content="`infos.${item.raw.originalValue}.value`"
-            top
-          >
+        <template v-if="item.raw?.alias" #append>
+          <c-simple-tooltip :content="`infos.${item.raw.originalValue}.value`" top>
             <template #activator="{ props: activatorProps }">
-              <v-icon
-                class="ml-1"
-                color="primary"
-                size="small"
-                v-bind="activatorProps"
-              >
+              <v-icon class="ml-1" color="primary" size="small" v-bind="activatorProps">
                 alternate_email
               </v-icon>
             </template>
@@ -36,21 +25,13 @@
       </v-list-item>
     </template>
     <template #selection="{ item }">
-      <v-icon
-        v-if="selectionItem(item)?.alias"
-        class="mr-1"
-        size="small"
-      >
-        alternate_email
-      </v-icon>
+      <v-icon v-if="selectionItem(item)?.alias" class="mr-1" size="small"> alternate_email </v-icon>
       <span class="text-truncate">{{ selectionTitle(item) }}</span>
     </template>
   </c-autocomplete>
 </template>
 
 <script>
-import { keyBy } from 'lodash';
-
 export default {
   emits: ['update:value'],
   props: {
@@ -85,11 +66,17 @@ export default {
   },
   computed: {
     itemsByValue() {
-      return keyBy(this.items, 'value');
+      return Object.fromEntries(this.items.map((item) => [item.value, item]));
     },
 
     itemValue() {
-      return this.value?.value ?? this.value ?? null;
+      const value = this.value?.value ?? this.value;
+
+      if (value == null || value === '') {
+        return null;
+      }
+
+      return this.itemsByValue[value]?.value ?? value;
     },
 
     selectedItem() {
@@ -116,13 +103,13 @@ export default {
     },
 
     updateValue(value) {
+      const selectedItem = this.itemsByValue[value?.value ?? value] ?? value;
+
       if (!this.returnObject) {
-        this.$emit('update:value', value);
+        this.$emit('update:value', selectedItem?.value ?? selectedItem);
 
         return;
       }
-
-      const selectedItem = this.itemsByValue[value?.value ?? value] ?? value;
 
       this.$emit('update:value', selectedItem);
     },

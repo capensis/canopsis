@@ -1,9 +1,9 @@
 <template>
-  <c-layout gap="3" column>
-    <c-layout gap="3">
-      <div :style="firstColumnFlexStyle">
-        <c-layout gap="3">
-          <div :style="attributeColumnFlexStyle">
+  <div class="pattern-rule-field">
+    <v-row class="pattern-rule-field__row" density="compact">
+      <v-col :cols="firstColumnCols" class="pattern-rule-field__col">
+        <v-row class="pattern-rule-field__row" density="compact">
+          <v-col :cols="attributeColumnCols" class="pattern-rule-field__col">
             <pattern-attribute-field
               :value="rule.attribute"
               :items="attributes"
@@ -13,8 +13,8 @@
               required
               @update:value="updateAttribute"
             />
-          </div>
-          <div v-if="isAnyInfosRule" :style="gridFlexStyle(8)">
+          </v-col>
+          <v-col v-if="isAnyInfosRule" cols="8" class="pattern-rule-field__col">
             <c-infos-attribute-field
               :value="rule"
               :items="infos"
@@ -24,8 +24,8 @@
               row
               @update:value="updateModel"
             />
-          </div>
-          <div v-else-if="isObjectRule" :style="gridFlexStyle(6)">
+          </v-col>
+          <v-col v-else-if="isObjectRule" cols="6" class="pattern-rule-field__col">
             <c-text-field
               :model-value="rule.dictionary"
               :name="objectDictionaryName"
@@ -34,12 +34,12 @@
               required
               @update:model-value="updateField('dictionary', $event)"
             />
-          </div>
-        </c-layout>
-      </div>
-      <div v-if="rule.attribute" :style="secondColumnFlexStyle">
-        <c-layout gap="3">
-          <div v-if="isInfosValueField" :style="gridFlexStyle(1)">
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col v-if="rule.attribute" :cols="secondColumnCols" class="pattern-rule-field__col">
+        <v-row class="pattern-rule-field__row" density="compact">
+          <v-col v-if="isInfosValueField" class="pattern-rule-field__input-type-col">
             <c-input-type-field
               :value="rule.fieldType"
               :label="$t('common.type')"
@@ -48,8 +48,8 @@
               :name="name"
               @update:value="updateField('fieldType', $event)"
             />
-          </div>
-          <div v-if="shownOperatorField" :style="operatorFlexStyle">
+          </v-col>
+          <v-col v-if="shownOperatorField" :cols="operatorCols" class="pattern-rule-field__col">
             <pattern-operator-field
               :value="rule.operator"
               :operators="operators"
@@ -58,19 +58,25 @@
               required
               @update:value="updateField('operator', $event)"
             />
-          </div>
-          <div v-if="rule.operator && operatorHasValue" :style="valueFlexStyle">
+          </v-col>
+          <v-col
+            v-if="rule.operator && operatorHasValue"
+            :cols="valueCols"
+            :class="valueColumnClasses"
+          >
             <component :is="valueComponent.is" v-bind="valueComponent.props" />
-          </div>
-        </c-layout>
-      </div>
-    </c-layout>
-    <c-layout>
-      <c-alert v-if="notDefinedType && !disabled" type="warning">
-        {{ $t('pattern.notDefinedType') }}
-      </c-alert>
-    </c-layout>
-  </c-layout>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-row v-if="notDefinedType && !disabled" class="pattern-rule-field__row" density="compact">
+      <v-col cols="12" class="pattern-rule-field__col">
+        <c-alert type="warning">
+          {{ $t('pattern.notDefinedType') }}
+        </c-alert>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>
@@ -93,8 +99,6 @@ import {
   isOperatorHasValue,
   isNumberRuleType,
 } from '@/helpers/entities/pattern/form';
-
-import { gridFlexStyle } from '@/helpers/layout';
 
 import { formMixin } from '@/mixins/form';
 
@@ -320,44 +324,54 @@ export default {
       return `${this.name}.dictionary`;
     },
 
-    firstColumnFlexStyle() {
-      return gridFlexStyle(this.isAnyInfosRule ? 5 : 4);
+    firstColumnCols() {
+      return this.isAnyInfosRule ? 5 : 4;
     },
 
-    secondColumnFlexStyle() {
-      return gridFlexStyle(this.isAnyInfosRuleOrAlias ? 7 : 8);
+    secondColumnCols() {
+      return this.isAnyInfosRuleOrAlias ? 7 : 8;
     },
 
-    attributeColumnFlexStyle() {
+    attributeColumnCols() {
       if (!this.isObjectRule && this.isAnyInfosRule) {
-        return gridFlexStyle(4);
+        return 4;
       }
 
       if (this.isObjectRule) {
-        return gridFlexStyle(6);
+        return 6;
       }
 
-      return {};
+      return 12;
     },
 
-    operatorFlexStyle() {
+    operatorCols() {
       if (this.isDateRule) {
-        return gridFlexStyle(5);
+        return 5;
       }
 
       if (this.isAnyInfosRule) {
-        return gridFlexStyle(4);
+        return 4;
       }
 
-      return gridFlexStyle(6);
+      return 6;
     },
 
-    valueFlexStyle() {
+    valueCols() {
       if (this.isAnyInfosRule || this.isDateRule) {
-        return gridFlexStyle(7);
+        return 7;
       }
 
-      return gridFlexStyle(6);
+      return 6;
+    },
+
+    valueColumnClasses() {
+      return [
+        'pattern-rule-field__col',
+        {
+          'pattern-rule-field__value-col--with-input-type':
+            this.isAnyInfosRule && this.isInfosValueField,
+        },
+      ];
     },
 
     definedType() {
@@ -371,8 +385,6 @@ export default {
     },
   },
   methods: {
-    gridFlexStyle,
-
     preparedItemDisabled(item) {
       return this.itemDisabled?.(this.rule, item);
     },
@@ -406,3 +418,30 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.pattern-rule-field {
+  min-width: 0;
+  width: 100%;
+
+  &__col {
+    flex-grow: 0;
+    flex-shrink: 0;
+
+    > * {
+      width: 100%;
+    }
+  }
+
+  &__input-type-col {
+    flex: 0 0 40px;
+    max-width: 40px;
+    width: 40px;
+  }
+
+  &__value-col--with-input-type {
+    flex: 1 1 0;
+    max-width: none;
+  }
+}
+</style>

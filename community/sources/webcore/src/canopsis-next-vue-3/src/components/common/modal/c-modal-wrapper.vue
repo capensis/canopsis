@@ -1,5 +1,5 @@
 <template>
-  <v-card :class="wrapperClasses" class="modal-wrapper">
+  <v-card :class="wrapperClasses" class="modal-wrapper position-relative">
     <modal-mass-actions-panel :id="modal.id" />
 
     <v-card-title
@@ -33,7 +33,7 @@
             </v-tooltip>
 
             <v-btn v-else size="x-small" variant="text" icon @click="maximizeModal">
-              <c-icon>maximize</c-icon>
+              <c-icon> maximize </c-icon>
             </v-btn>
           </div>
 

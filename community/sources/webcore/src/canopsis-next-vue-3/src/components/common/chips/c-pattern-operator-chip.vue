@@ -1,9 +1,14 @@
 <template>
-  <v-chip
-    class="c-pattern-operator-chip"
-    color="primary"
-    size="small"
-  >
+  <div class="text-uppercase c-pattern-operator-chip">
     <slot />
-  </v-chip>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+.c-pattern-operator-chip {
+  background: #a6a6a6;
+  padding: 3px 8px;
+  color: white;
+  border-radius: 5px;
+}
+</style>

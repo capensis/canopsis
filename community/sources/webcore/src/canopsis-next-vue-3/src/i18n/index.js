@@ -15,6 +15,7 @@ export const i18n = createI18n({
   locale: DEFAULT_LOCALE,
   fallbackLocale: DEFAULT_LOCALE,
   warnHtmlMessage: false,
+  warnHtmlInMessage: 'off',
   messages: merge(
     {},
     messages,

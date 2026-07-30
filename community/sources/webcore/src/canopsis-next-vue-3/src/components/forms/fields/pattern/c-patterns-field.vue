@@ -156,7 +156,7 @@
       <c-alert v-if="allOverLimit" type="warning">
         <span>{{ $t('pattern.errors.countOverLimit', { count: allCount }) }}</span>
       </c-alert>
-      <c-layout gap="2" justify-end align-center>
+      <c-layout class="w-100" gap="2" justify="end" align="center">
         <pattern-count-message v-bind="patternsCountMessageBind" />
         <template v-if="hasAllInCounter">
           <v-btn v-if="entityCountersType" text small @click="showPatternEntitiesModal()">
@@ -184,7 +184,7 @@
 
 <script>
 import { computed, ref, toRef, watch } from 'vue';
-import { useField, useSetFieldError } from 'vee-validate';
+import { useField, useFormContext } from 'vee-validate';
 import { isString } from 'lodash';
 
 import { PATTERNS_FIELDS } from '@/constants';
@@ -371,7 +371,7 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const setFieldError = useSetFieldError();
+    const { setFieldError } = useFormContext();
     const { showPatternAlarmsModal } = usePatternCountAlarmsModal(props);
     const { showPatternEntitiesModal } = usePatternCountEntitiesModal(props);
 

@@ -41,6 +41,7 @@ Status legend:
 - `[x]` `c-refresh-btn`: migrated to `src/components/common/buttons/c-refresh-btn.vue` because `c-fab-btn` depends on it.
 - `[x]` Modal base dependencies for maintenance mode: `c-modal-wrapper`, `c-form-block`, `c-form-block-row`, `text-editor-field`, `c-color-picker-field`.
 - `[x]` Common modals: `confirmation`, `create-maintenance`.
+- `[~]` User interface settings modal: settings menu action, modal registration, general/notifications/advanced/login tabs, app-info save flow and notification-settings save flow are migrated. Remaining: runtime parity pass for rich text variables, logo upload and app title refresh.
 - `[x]` `c-duration-field`: full old duration value/unit field is migrated in the compat field barrel, with `long`, `medium`, `sameWidth`, custom `units`, clearable unit handling and pluralized unit labels adapted to Vue I18n `t`.
 - `[~]` Text editor stack: `text-editor`, `text-editor-field`, `text-editor-with-template`, `c-widget-template-field`, variables menu/list, upload hook, template-vars hook, image/images viewer modals and sidebar text-editor fields are migrated. Remaining: connect full vee-validate form validation inside editor modals when related pages/widgets start using complex rules.
 - `[x]` `c-draggable-list-field`: migrated with Vue 3 `vuedraggable` API; emits `update:value` / `update:model-value` matching its `value` / `modelValue` props.

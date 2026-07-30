@@ -48,7 +48,7 @@
       </v-window-item>
     </v-window>
     <template v-if="!readonly">
-      <c-layout align-center justify-end>
+      <c-layout align="center" justify="end">
         <v-btn
           v-if="withType && !isCustomPattern"
           :disabled="disabled"
@@ -58,7 +58,7 @@
         >
           {{ $t('common.edit') }}
         </v-btn>
-        <c-layout v-if="checked" gap="2" align-center justify-end>
+        <c-layout v-if="checked" gap="2" align="center" justify="end">
           <pattern-count-message :alarm-counter="alarmCounter" :entity-counter="entityCounter" />
           <slot name="append-count" />
         </c-layout>
@@ -77,7 +77,7 @@
 
 <script>
 import { ref, computed, watch } from 'vue';
-import { useFieldError, useSetFieldError } from 'vee-validate';
+import { useFieldError, useFormContext } from 'vee-validate';
 import { isEqual, isEmpty } from 'lodash';
 
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS } from '@/constants';
@@ -149,7 +149,7 @@ export default {
   },
   setup(props, { emit }) {
     const { updateModel, updateField } = useModelField(props, emit);
-    const setFieldError = useSetFieldError();
+    const { setFieldError } = useFormContext();
 
     const activeTab = ref(PATTERN_EDITOR_TABS.simple);
     const patternsJson = ref([]);

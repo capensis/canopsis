@@ -1,10 +1,24 @@
 import {
+  defineRule,
   useFormErrors,
   useSetFieldError,
   useSetFormErrors,
   useValidateField,
   useValidateForm,
 } from 'vee-validate';
+
+const adaptRule = (name, rule) => {
+  if (typeof rule === 'function') {
+    return rule;
+  }
+
+  return async (value, params, ctx) => {
+    const result = await rule.validate(value, params, ctx);
+    const valid = typeof result === 'object' ? result.valid !== false : !!result;
+
+    return valid || rule.getMessage?.(ctx?.field || name, params, ctx) || false;
+  };
+};
 
 /**
  * Returns a small compatibility facade backed by vee-validate form state.
@@ -19,6 +33,7 @@ export const useValidator = () => {
   const validateForm = useValidateForm();
 
   const getFieldError = (name) => formErrors.value[name];
+  const clear = (name) => (name ? setFieldError(name, undefined) : setFormErrors({}));
 
   return {
     errors: {
@@ -34,17 +49,17 @@ export const useValidator = () => {
 
         normalizedErrors.forEach(({ field, msg }) => setFieldError(field, msg));
       },
-      clear: () => setFormErrors({}),
+      clear,
       remove: (name) => setFieldError(name, undefined),
     },
     fields: {
-      find: () => null,
+      find: ({ name } = {}) => (getFieldError(name) ? { name } : null),
       items: [],
     },
     attach: () => {},
-    detach: () => {},
-    extend: () => {},
-    reset: ({ name } = {}) => (name ? setFieldError(name, undefined) : setFormErrors({})),
+    detach: (name) => setFieldError(name, undefined),
+    extend: (name, rule) => defineRule(name, adaptRule(name, rule)),
+    reset: ({ name } = {}) => clear(name),
     validate: async (name) => {
       const { valid } = await validateField(name);
 

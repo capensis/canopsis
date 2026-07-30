@@ -2,8 +2,11 @@ import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { isArray, isMatch } from 'lodash';
 
+import { DEFAULT_APP_TITLE } from '@/config';
 import { CANOPSIS_EDITION, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
 
+import { compile } from '@/helpers/handlebars';
+import { sanitizeHtml } from '@/helpers/html';
 import { groupedPermissionToPermission } from '@/helpers/permission';
 
 import { useAppInfoStore } from '@/stores/modules/app-info';
@@ -24,7 +27,9 @@ export const useInfo = () => {
   const isProVersion = computed(() => refs.edition.value === CANOPSIS_EDITION.pro);
 
   const checkAppInfoAccessByPermission = (permission) => {
-    const preparedPermission = isArray(permission) ? groupedPermissionToPermission(permission) : permission;
+    const preparedPermission = isArray(permission)
+      ? groupedPermissionToPermission(permission)
+      : permission;
     const permissionAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[preparedPermission];
 
     if (!permissionAppInfoRules) {
@@ -32,6 +37,17 @@ export const useInfo = () => {
     }
 
     return isMatch({ edition: refs.edition.value }, permissionAppInfoRules);
+  };
+
+  const setTitle = async () => {
+    document.title = refs.appTitle.value
+      ? await compile(
+          sanitizeHtml(refs.appTitle.value, {
+            ALLOWED_TAGS: [],
+            ALLOWED_ATTR: [],
+          }),
+        )
+      : DEFAULT_APP_TITLE;
   };
 
   return {
@@ -43,5 +59,6 @@ export const useInfo = () => {
     updateUserInterface: appInfoStore.updateUserInterface,
     updateMaintenanceMode: appInfoStore.updateMaintenanceMode,
     checkAppInfoAccessByPermission,
+    setTitle,
   };
 };

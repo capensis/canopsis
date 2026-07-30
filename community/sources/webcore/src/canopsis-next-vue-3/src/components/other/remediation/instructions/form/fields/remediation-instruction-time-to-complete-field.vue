@@ -66,7 +66,7 @@ export default {
     availableUnits() {
       return Object.values(SHORT_AVAILABLE_TIME_UNITS).map(({ value, text }) => ({
         value,
-        text: this.$tc(text, this.duration.value),
+        text: this.$t(text, this.duration.value),
       }));
     },
   },

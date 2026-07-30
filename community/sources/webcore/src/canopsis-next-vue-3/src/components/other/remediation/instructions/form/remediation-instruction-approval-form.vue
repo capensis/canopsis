@@ -31,7 +31,7 @@
             v-model="userField"
             :required="!isRoleType"
             :name="userFieldName"
-            :label="$tc('common.user')"
+            :label="$t('common.user')"
             :permission="approvePermission"
             return-object
           />
@@ -40,7 +40,7 @@
       <v-textarea
         v-model="commentField"
         v-validate="'required'"
-        :label="$tc('common.comment')"
+        :label="$t('common.comment')"
         :error-messages="errors.collect('comment')"
         :disabled="disabled"
         name="comment"
@@ -82,7 +82,7 @@ export default {
   },
   emits: ['update:approval'],
   setup(props, { emit }) {
-    const { tc } = useI18n();
+    const { t } = useI18n();
     const validator = useValidator();
     // TODO: fix that
     const createFieldModel = (field) =>
@@ -112,7 +112,7 @@ export default {
     const roleFieldName = computed(() => `${props.name}.role`);
     const userFieldName = computed(() => `${props.name}.user`);
 
-    const assignLabel = computed(() => (isRoleType.value ? tc('common.role') : tc('common.user')));
+    const assignLabel = computed(() => (isRoleType.value ? t('common.role') : t('common.user')));
 
     const assignValue = computed(() => {
       if (isRoleType.value) {
