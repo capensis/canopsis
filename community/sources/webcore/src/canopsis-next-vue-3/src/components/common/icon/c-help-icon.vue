@@ -9,6 +9,7 @@
         :color="color"
         :size="preparedSize"
         :class="preparedIconClass"
+        :no-fill="isOutlinedIcon"
       >
         {{ icon }}
       </c-icon>
@@ -88,6 +89,10 @@ export default {
 
     preparedIconClass() {
       return this.iconClass || (this.color ? '' : 'text-medium-emphasis');
+    },
+
+    isOutlinedIcon() {
+      return this.icon.endsWith('_outline');
     },
   },
 };

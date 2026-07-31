@@ -4,18 +4,20 @@
     :disabled="disabled"
     :group="draggableGroup"
     :handle="handle"
+    :item-key="itemKey"
     class="c-card-iterator-field"
     ghost-class="grey"
     @update:model-value="$emit('update:data', $event)"
   >
-    <template v-for="(item, index) in data" :key="item[itemKey]">
+    <template #item="{ element: item, index }">
       <v-card class="lighten-2">
         <v-card-text>
           <slot
-:item="item"
-:index="index"
-:handle="handle"
-name="item" />
+            :item="item"
+            :index="index"
+            :handle="handle"
+            name="item"
+          />
         </v-card-text>
       </v-card>
     </template>

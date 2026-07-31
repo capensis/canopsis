@@ -1,11 +1,7 @@
-import {
-  defineRule,
-  useFormErrors,
-  useSetFieldError,
-  useSetFormErrors,
-  useValidateField,
-  useValidateForm,
-} from 'vee-validate';
+import { defineRule, useFormErrors } from 'vee-validate';
+import { inject } from 'vue';
+
+import { FORM_CONTEXT_KEY } from '@/hooks/form';
 
 const adaptRule = (name, rule) => {
   if (typeof rule === 'function') {
@@ -27,13 +23,11 @@ const adaptRule = (name, rule) => {
  */
 export const useValidator = () => {
   const formErrors = useFormErrors();
-  const setFieldError = useSetFieldError();
-  const setFormErrors = useSetFormErrors();
-  const validateField = useValidateField();
-  const validateForm = useValidateForm();
+  const form = inject(FORM_CONTEXT_KEY, null);
 
   const getFieldError = name => formErrors.value[name];
-  const clear = name => (name ? setFieldError(name, undefined) : setFormErrors({}));
+  const setFieldError = (name, message) => form?.setFieldError?.(name, message);
+  const clear = name => (name ? setFieldError(name, undefined) : form?.setErrors?.({}));
 
   return {
     errors: {
@@ -61,12 +55,12 @@ export const useValidator = () => {
     extend: (name, rule) => defineRule(name, adaptRule(name, rule)),
     reset: ({ name } = {}) => clear(name),
     validate: async (name) => {
-      const { valid } = await validateField(name);
+      const { valid } = (await form?.validateField?.(name)) ?? { valid: true };
 
       return valid;
     },
     validateAll: async () => {
-      const { valid } = await validateForm();
+      const { valid } = (await form?.validate?.()) ?? { valid: true };
 
       return valid;
     },

@@ -234,6 +234,7 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
     validate: veeForm.validate,
     validateField: veeForm.validateField,
     setFieldError: veeForm.setFieldError,
+    setErrors: veeForm.setErrors,
     setFieldTouched: veeForm.setFieldTouched,
     handleSubmit,
     errors: veeForm.errors,

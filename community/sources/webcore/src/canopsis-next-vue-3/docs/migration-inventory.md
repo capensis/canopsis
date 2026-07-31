@@ -124,7 +124,7 @@ Pages are taken from `src/router.js` in the source project.
 | `[~]`  | `admin-custom-objects-llms`                    | `/admin/llms`                         | `src/views/admin/custom-objects/llms.vue`                    | `src/views/admin/custom-objects/llms-page.vue`                    | Main page, list, important notes banner and create/edit form are migrated. AI chat/sidebar behavior is intentionally deferred until the final AI chat migration pass.                                                                                                                                                  |
 | `[~]`  | `admin-settings-views-import-export`           | `/admin/views-import-export`          | `src/views/admin/settings/views-import-export.vue`           | `src/views/admin/settings/views-import-export-page.vue`           | Main page, group/view selection, JSON export, JSON import parsing and import modal with draggable groups/views are migrated. Remaining: runtime parity pass for drag/drop import layout and API payloads.                                                                                                              |
 | `[~]`  | `admin-settings-notifications`                 | `/admin/notifications`                | `src/views/admin/settings/notifications-settings.vue`        | `src/views/admin/settings/notifications-settings-page.vue`        | Main page, notification settings form, fetch/update flow and routing are migrated. Remaining: runtime visual parity and validation behavior check.                                                                                                                                                                     |
-| `[ ]`  | `admin-settings-comment-templates`             | `/admin/comment-templates`            | `src/views/admin/settings/comment-templates.vue`             | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
+| `[~]`  | `admin-settings-comment-templates`             | `/admin/comment-templates`            | `src/views/admin/settings/comment-templates.vue`             | `src/views/admin/settings/comment-templates-page.vue`             | Main page, list table, create/edit modal, fields form, CRUD flow and routing are migrated. Remaining: runtime visual parity and validation behavior check.                                                                                                                                                             |
 | `[ ]`  | `admin-settings-widget-templates`              | `/admin/widget-templates`             | `src/views/admin/settings/widget-templates.vue`              | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
 | `[ ]`  | `admin-settings-storage-settings`              | `/admin/storage-settings`             | `src/views/admin/settings/storage-settings.vue`              | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
 | `[ ]`  | `admin-settings-state-settings`                | `/admin/state-settings`               | `src/views/admin/settings/state-settings.vue`                | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
@@ -391,16 +391,15 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[~]` State/API/socket: existing notification settings Pinia store/hook is used for fetch/update; runtime payload parity check pending.
 - `[x]` Routing/access: `/admin/notifications`, notification settings `can` access.
 - `[x]` Messages/i18n: existing notification settings messages are wired.
-- `[ ]` Messages/i18n: not migrated.
 
 ### `admin-settings-comment-templates`
 
-- `[ ]` Main content: `src/views/admin/settings/comment-templates.vue`.
-- `[ ]` Modal windows: not migrated.
+- `[~]` Main content: `src/views/admin/settings/comment-templates.vue` -> `src/views/admin/settings/comment-templates-page.vue`; page shell, list table, query pagination, create/edit/delete actions are migrated.
+- `[~]` Modal windows: `create-comment-template` modal is migrated with name and fields form. Remaining: runtime validation parity check.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/admin/comment-templates`, comment template access.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` State/API/socket: existing comment template Pinia store/hook is used for list/create/update/remove.
+- `[x]` Routing/access: `/admin/comment-templates`, comment template access.
+- `[x]` Messages/i18n: existing comment template messages are wired.
 
 ### `admin-settings-widget-templates`
 
@@ -422,12 +421,12 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `admin-settings-state-settings`
 
-- `[ ]` Main content: `src/views/admin/settings/state-settings.vue`.
-- `[ ]` Modal windows: not migrated.
+- `[~]` Main content: `src/views/admin/settings/state-settings.vue` -> `src/views/admin/settings/state-settings-page.vue`; list table, pagination, create/edit/duplicate/remove actions are migrated.
+- `[~]` Modal windows: `create-state-setting` and `create-junit-state-setting` are migrated and registered. `state-setting-inherited-entity-pattern` and state-setting summary/root-cause companion modals are not part of the page flow yet.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/admin/state-settings`, state setting access.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` State/API/socket: state-setting CRUD store/hook are reused; AI-chat in state-setting modal stays on the deferred compatibility placeholder until the final AI-chat migration pass.
+- `[x]` Routing/access: `/admin/state-settings`, state setting access.
+- `[x]` Messages/i18n: reused existing state-setting and modal messages.
 
 ### `exploitation-pbehaviors`
 

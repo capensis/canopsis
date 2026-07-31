@@ -20,6 +20,15 @@ export default {
   [MODALS.createBroadcastMessage]: defineAsyncComponent(
     () => import('./admin/create-broadcast-message.vue'),
   ),
+  [MODALS.createCommentTemplate]: defineAsyncComponent(
+    () => import('./comment-template/create-comment-template.vue'),
+  ),
+  [MODALS.createStateSetting]: defineAsyncComponent(
+    () => import('./state-setting/create-state-setting.vue'),
+  ),
+  [MODALS.createJunitStateSetting]: defineAsyncComponent(
+    () => import('./state-setting/create-junit-state-setting.vue'),
+  ),
   [MODALS.userInterface]: defineAsyncComponent(() => import('./admin/user-interface.vue')),
   [MODALS.createDynamicInfo]: defineAsyncComponent(
     () => import('./dynamic-info/create-dynamic-info.vue'),
