@@ -44,7 +44,6 @@ import { ref } from 'vue';
 import { useValidationChildren } from '@/hooks/validator/validation-children';
 
 export default {
-  inject: ['$validator'],
   props: {
     defaultExpanded: {
       type: Boolean,

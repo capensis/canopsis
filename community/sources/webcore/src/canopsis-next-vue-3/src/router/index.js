@@ -34,6 +34,11 @@ const AdminMaps = () => import('@/views/admin/custom-objects/maps-page.vue');
 const AdminTags = () => import('@/views/admin/custom-objects/tags-page.vue');
 const AdminLlms = () => import('@/views/admin/custom-objects/llms-page.vue');
 const AdminViewsImportExport = () => import('@/views/admin/settings/views-import-export-page.vue');
+const AdminSettingsNotifications = () =>
+  import('@/views/admin/settings/notifications-settings-page.vue');
+const AdminSettingsCommentTemplates = () =>
+  import('@/views/admin/settings/comment-templates-page.vue');
+const AdminSettingsStateSettings = () => import('@/views/admin/settings/state-settings-page.vue');
 const DynamicInfosPage = () => import('@/views/exploitation/dynamic-infos-page.vue');
 const EventFiltersPage = () => import('@/views/exploitation/event-filters-page.vue');
 const FlappingRulesPage = () => import('@/views/exploitation/flapping-rules-page.vue');
@@ -311,7 +316,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.notification.common,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminSettingsNotifications,
   },
   {
     path: ROUTES.adminSettingsCommentTemplates,
@@ -321,7 +326,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.commentTemplate,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminSettingsCommentTemplates,
   },
   {
     path: ROUTES.adminSettingsWidgetTemplates,
@@ -351,7 +356,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.stateSetting,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminSettingsStateSettings,
   },
   {
     path: ROUTES.exploitationPbehaviors,

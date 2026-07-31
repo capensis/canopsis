@@ -1,5 +1,5 @@
 <template>
-  <c-layout class="gap-3" column>
+  <c-layout gap="3" column>
     <slot name="header" />
     <c-alert v-if="required && isEmpty && emptyMessage" type="info">
       {{ emptyMessage }}
@@ -12,10 +12,11 @@
     >
       <template #item="{ item, index, handle: itemHandle }">
         <slot
-:item="item"
-:index="index"
-:handle="itemHandle"
-name="item" />
+          :item="item"
+          :index="index"
+          :handle="itemHandle"
+          name="item"
+        />
       </template>
     </c-card-iterator-field>
     <c-layout justify="end">
@@ -34,8 +35,8 @@ name="item" />
             {{ addButtonLabel }}
           </span>
           <v-icon v-else>
-add
-</v-icon>
+            add
+          </v-icon>
         </c-btn-with-error>
         <v-tooltip v-else location="left">
           <template #activator="{ props: tooltipProps }">
@@ -67,7 +68,6 @@ import { useValidationAttachMinValue } from '@/hooks/validator/validation-attach
 import { useComponentInstance } from '@/hooks/vue';
 
 export default {
-  inject: ['$validator'],
   inheritAttrs: false,
   model: {
     prop: 'value',

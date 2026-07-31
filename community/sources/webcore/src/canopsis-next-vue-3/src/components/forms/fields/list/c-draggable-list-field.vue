@@ -20,10 +20,10 @@
     <template #item="{ element, index }">
       <div class="c-draggable-list-field__item">
         <slot
-        :element="element"
-        :index="index"
-        name="item"
-      />
+          :element="element"
+          :index="index"
+          name="item"
+        />
       </div>
     </template>
 

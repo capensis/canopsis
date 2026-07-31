@@ -1,5 +1,6 @@
 import {
   ALARM_STATES,
+  ALARM_STATES_KEYS,
   ALARM_STATUSES,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
@@ -456,6 +457,10 @@ export default {
     [ALARM_STATES.minor]: 'Minor',
     [ALARM_STATES.major]: 'Major',
     [ALARM_STATES.critical]: 'Critical',
+    [ALARM_STATES_KEYS.ok]: 'Ok',
+    [ALARM_STATES_KEYS.minor]: 'Minor',
+    [ALARM_STATES_KEYS.major]: 'Major',
+    [ALARM_STATES_KEYS.critical]: 'Critical',
   },
   statusTypes: {
     [ALARM_STATUSES.closed]: 'Closed',

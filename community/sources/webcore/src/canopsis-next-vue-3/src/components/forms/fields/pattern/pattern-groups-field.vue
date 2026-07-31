@@ -77,44 +77,52 @@ export default {
   watch: {
     groups() {
       this.$nextTick(() => {
-        if (!this.required) {
-          this.clearGroupsErrors();
-
-          return;
-        }
-
-        if (this.groups.length) {
-          this.clearGroupsErrors();
-        } else {
-          this.validateGroupsField();
+        if (this.required) {
+          this.$validator.validate(this.name);
         }
       });
     },
+    required: {
+      immediate: true,
+      handler(value) {
+        if (value) {
+          this.attachMinValueRule();
+        } else {
+          this.detachMinValueRule();
+        }
+      },
+    },
+  },
+  beforeUnmount() {
+    this.detachMinValueRule();
   },
   methods: {
-    clearGroupsErrors() {
-      this.errors.clear(this.name);
+    attachMinValueRule() {
+      this.$validator.attach({
+        name: this.name,
+        rules: 'min_value:1',
+        getter: () => this.groups.length,
+        vm: this,
+      });
     },
 
-    validateGroupsField() {
-      if (!this.required || this.groups.length) {
-        this.clearGroupsErrors();
+    detachMinValueRule() {
+      this.$validator.detach(this.name);
+    },
+
+    async validateGroupsField() {
+      if (!this.required) {
+        this.errors.clear(this.name);
 
         return true;
       }
 
-      this.errors.add({
-        field: this.name,
-        msg: this.$t('pattern.errors.groupRequired'),
-      });
-
-      return false;
+      return await this.$validator.validate(this.name);
     },
 
     addFilterGroup() {
       const [firstAttribute] = this.attributes;
 
-      this.clearGroupsErrors();
       this.addItemIntoArray(patternRulesToGroup([{ field: firstAttribute?.value }]));
     },
   },
