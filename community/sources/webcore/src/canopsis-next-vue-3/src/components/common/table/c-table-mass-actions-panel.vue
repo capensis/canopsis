@@ -68,6 +68,7 @@ import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
 import { useRole } from '@/hooks/store/modules/role';
 import { useResolveRules } from '@/hooks/store/modules/resolve-rules';
 import { useScenario } from '@/hooks/store/modules/scenario';
+import { useSnmpRule } from '@/hooks/store/modules/snmp-rule';
 import { useUser } from '@/hooks/store/modules/user';
 
 export default {
@@ -188,6 +189,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    snmpRule: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: ['clear:items', 'refresh'],
@@ -240,6 +245,7 @@ export default {
     } = useRemediationInstruction();
     const { bulkRemoveRemediationConfigurations } = useRemediationConfiguration();
     const { bulkRemoveRemediationJobs } = useRemediationJob();
+    const { bulkEnableSnmpRules, bulkDisableSnmpRules, bulkRemoveSnmpRules } = useSnmpRule();
 
     const someOneEnable = computed(() => props.items.some(({ enabled }) => enabled));
     const someOneDisable = computed(() => props.items.some(({ enabled }) => !enabled));
@@ -434,6 +440,15 @@ export default {
           enable: bulkEnableAnomalyMonitoredConnectors,
           disable: bulkDisableAnomalyMonitoredConnectors,
           tooltipPrefix: 'anomalyMonitoredConnector',
+        };
+      }
+
+      if (props.snmpRule) {
+        return {
+          remove: bulkRemoveSnmpRules,
+          enable: bulkEnableSnmpRules,
+          disable: bulkDisableSnmpRules,
+          tooltipPrefix: 'snmpRule',
         };
       }
 

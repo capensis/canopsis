@@ -38,6 +38,8 @@ const AdminSettingsNotifications = () =>
   import('@/views/admin/settings/notifications-settings-page.vue');
 const AdminSettingsCommentTemplates = () =>
   import('@/views/admin/settings/comment-templates-page.vue');
+const AdminSettingsStorageSettings = () =>
+  import('@/views/admin/settings/storage-settings-page.vue');
 const AdminSettingsStateSettings = () => import('@/views/admin/settings/state-settings-page.vue');
 const DynamicInfosPage = () => import('@/views/exploitation/dynamic-infos-page.vue');
 const EventFiltersPage = () => import('@/views/exploitation/event-filters-page.vue');
@@ -49,6 +51,7 @@ const PbehaviorsPage = () => import('@/views/exploitation/pbehaviors-page.vue');
 const ResolveRulesPage = () => import('@/views/exploitation/resolve-rules-page.vue');
 const RemediationPage = () => import('@/views/exploitation/remediation-page.vue');
 const ScenariosPage = () => import('@/views/exploitation/scenarios-page.vue');
+const SnmpRulesPage = () => import('@/views/exploitation/snmp-rules-page.vue');
 
 const protectedRoute = (meta = {}) => ({
   requiresLogin: true,
@@ -346,7 +349,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.storageSettings,
       },
     }),
-    component: PlaceholderPage,
+    component: AdminSettingsStorageSettings,
   },
   {
     path: ROUTES.adminSettingsStateSettings,
@@ -386,7 +389,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.exploitation.snmpRule,
       },
     }),
-    component: PlaceholderPage,
+    component: SnmpRulesPage,
   },
   {
     path: ROUTES.exploitationDynamicInfos,

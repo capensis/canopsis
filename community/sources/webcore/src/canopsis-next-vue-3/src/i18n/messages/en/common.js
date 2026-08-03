@@ -86,6 +86,8 @@ export default {
   value: 'Value',
   limit: 'Limit',
   add: 'Add',
+  addTag: 'Add tag',
+  addCustomField: 'Add custom field',
   addAtLeastOneItem: 'Add at least one item.',
   create: 'Create',
   delete: 'Delete',

@@ -12,10 +12,10 @@
 
         <div class="my-3">
           <p v-html="sanitizedPhraseText" class="mb-2" />
-          <pre class="text-black bg-grey-lighten-2 d-inline pa-1"
-            >{{ originalPhrase }}
-</pre
-          >
+          <code
+            v-text="originalPhrase"
+            class="text-black bg-grey-lighten-2 d-inline-block pa-1"
+          />
         </div>
 
         <c-text-field

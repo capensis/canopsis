@@ -9,8 +9,13 @@ import basicSsl from '@vitejs/plugin-basic-ssl';
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    port: 8080,
-    strictPort: false,
+    port: 8081,
+    strictPort: true,
+    hmr: {
+      protocol: 'wss',
+      host: 'localhost',
+      clientPort: 8081,
+    },
   },
   plugins: [vue(), vueDevTools(), vuetify({ autoImport: true }), basicSsl()],
   resolve: {
