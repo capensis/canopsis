@@ -89,6 +89,7 @@ export default {
   [MODALS.createAnomalyMonitoredConnector]: defineAsyncComponent(
     () => import('./anomaly-monitored-connector/create-anomaly-monitored-connector.vue'),
   ),
+  [MODALS.createSnmpRule]: defineAsyncComponent(() => import('./snmp-rule/create-snmp-rule.vue')),
   [MODALS.createTemplateTestingData]: defineAsyncComponent(
     () => import('./template-testing/create-template-testing-data.vue'),
   ),
