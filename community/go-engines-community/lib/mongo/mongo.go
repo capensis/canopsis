@@ -629,8 +629,7 @@ func retry(ctx context.Context, retryCount int, retryTimeout time.Duration, f fu
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	withoutRetries, _ := ctx.Value(disableRetries).(bool)
-	if withoutRetries {
+	if RetriesDisabled(ctx) {
 		_ = f(ctx)
 		return
 	}
@@ -656,6 +655,12 @@ func retry(ctx context.Context, retryCount int, retryTimeout time.Duration, f fu
 			retryTimeout *= 2
 		}
 	}
+}
+
+// RetriesDisabled reports whether the context was marked to disable wrapper retries.
+func RetriesDisabled(ctx context.Context) bool {
+	withoutRetries, _ := ctx.Value(disableRetries).(bool)
+	return withoutRetries
 }
 
 func IsConnectionError(err error) bool {
