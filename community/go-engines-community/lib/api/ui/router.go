@@ -2,11 +2,13 @@ package ui
 
 import (
 	"context"
+	"net/http"
 	"path/filepath"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmaction"
@@ -20,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/dbexport"
+	uidocs "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/entitybasic"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/entitycategory"
@@ -3064,4 +3067,21 @@ func RegisterRoutes(
 	}
 
 	return nil
+}
+
+func RegisterDocsRoutes(router *gin.Engine, errorResponder response.ErrorResponder, generatedSchemasContents [][]byte, contents [][]byte) {
+	router.GET(BaseUrl+"/docs/*path", func(c *gin.Context) {
+		path := c.Param("path")
+		if path == "/swagger.yaml" {
+			uidocs.GetHandler(
+				errorResponder,
+				generatedSchemasContents,
+				contents,
+			)(c)
+
+			return
+		}
+
+		c.FileFromFS("static/"+path, http.FS(docs.UIFiles))
+	})
 }

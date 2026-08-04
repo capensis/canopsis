@@ -1,0 +1,729 @@
+openapi: 3.0.1
+
+info:
+  title: Canopsis Community Public API
+  description: This is a Canopsis Community Public API.
+  version: latest
+  license:
+    name: GNU AGPLv3
+    url: https://www.gnu.org/licenses/agpl-3.0.html
+
+servers:
+  - url: /api/v5
+
+paths:
+  /event:
+    post:
+      tags:
+        - events
+      summary: Send event/events
+      description: |
+        Send event/events.
+
+        - PERMISSIONS: `api_event`
+      operationId: event-send
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/event.Event'
+            examples:
+              check:
+                summary: Check
+                description: Update a state of an alarm.
+                value: {
+                  "event_type": "check",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "state": 3,
+                  "output": "Lorem ipsum dolor sit amet",
+                  "long_output": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                }
+              ack:
+                summary: Ack
+                description: Acknowledge an alarm.
+                value: {
+                  "event_type": "ack",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet"
+                }
+              ackremove:
+                summary: Ack remove
+                description: Unacknowledge an alarm.
+                value: {
+                  "event_type": "ackremove",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet"
+                }
+              cancel:
+                summary: Cancel
+                description: Cancel an alarm.
+                value: {
+                  "event_type": "cancel",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet"
+                }
+              uncancel:
+                summary: Uncancel
+                description: Uncancel an alarm.
+                value: {
+                  "event_type": "uncancel",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet"
+                }
+              comment:
+                summary: Comment
+                description: Add new comment to an alarm.
+                value: {
+                  "event_type": "comment",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet"
+                }
+              snooze:
+                summary: Snooze
+                description: Snooze an alarm for duration (in seconds).
+                value: {
+                  "event_type": "snooze",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet",
+                  "duration": 600
+                }
+              changestate:
+                summary: Change state
+                description: Change a state of an alarm. Following check events won't update the state.
+                value: {
+                  "event_type": "changestate",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet",
+                  "state": 3
+                }
+              assocticket:
+                summary: Associate ticket
+                description: Add new ticket to an alarm.
+                value: {
+                  "event_type": "assocticket",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "ticket": "ENV-116",
+                  "ticket_url": "https://jira.local/ENV-116",
+                  "ticket_system_name": "Jira",
+                  "ticket_data": {
+                    "priority": "high",
+                    "tag": "env"
+                  },
+                  "ticket_comment": "Lorem ipsum dolor sit amet"
+                }
+              declareticket:
+                summary: Declare ticket
+                description: Emit a trigger. A scenario can be started on the trigger.
+                value: {
+                  "event_type": "declareticket",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource"
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event.Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+
+  /pbehavior-reasons:
+    get:
+      tags:
+        - pbehavior-reasons
+      summary: Find pbehavior reasons
+      description: |
+        Get paginated list of behavior reasons.
+
+        -  PERMISSIONS: `api_pbehaviorreason:read`
+      operationId: pbehavior-reasons-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+    post:
+      tags:
+        - pbehavior-reasons
+      summary: Create pbehavior reason
+      description: |
+        Create pbehavior reason.
+
+        -  PERMISSIONS: `api_pbehaviorreason:create`
+      operationId: pbehavior-reasons-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a reason
+                value: {
+                  "name": "Deployment",
+                  "description": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /pbehavior-reasons/{id}:
+    get:
+      tags:
+        - pbehavior-reasons
+      summary: Get pbehavior reason by id
+      description: |
+        Get pbehavior reason by id.
+
+        -  PERMISSIONS: `api_pbehaviorreason:read`
+      operationId: pbehavior-reasons-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - pbehavior-reasons
+      summary: Update behavior reason by id
+      description: |
+        Update behavior reason by id.
+
+        -  PERMISSIONS: `api_pbehaviorreason:update`
+      operationId: pbehavior-reasons-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a reason
+                value: {
+                  "name": "Deployment",
+                  "description": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - pbehavior-reasons
+      summary: Delete pbehavior reason by id
+      description: |
+        Delete pbehavior reason by id.
+
+        -  PERMISSIONS: `api_pbehaviorreason:delete`
+      operationId: pbehavior-reasons-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /pbehavior-types:
+    get:
+      tags:
+        - pbehavior-types
+      summary: Find pbehavior types
+      description: |
+        Get paginated list of behavior types.
+        
+        -  PERMISSIONS: `api_pbehaviortype:read`
+      operationId: pbehavior-types-find-all
+      parameters:
+        - name: types[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: default
+          in: query
+          schema:
+            type: boolean
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+    post:
+      tags:
+        - pbehavior-types
+      summary: Create pbehavior type
+      description: |
+        Create pbehavior type.
+        
+        -  PERMISSIONS: `api_pbehaviortype:create`
+      operationId: pbehavior-types-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.CreateRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a type
+                value: {
+                  "name": "Unplanned maintenance",
+                  "description": "Maintenances which are not on the schedule",
+                  "type": "maintenance",
+                  "priority": 10,
+                  "icon_name": "broken_image"
+                }
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /pbehavior-types/{id}:
+    get:
+      tags:
+        - pbehavior-types
+      summary: Get pbehavior type by id
+      description: |
+        Get pbehavior type by id.
+        
+        -  PERMISSIONS: `api_pbehaviortype:read`
+      operationId: pbehavior-types-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - pbehavior-types
+      summary: Update behavior type by id
+      description: |
+        Update behavior type by id.
+        
+        -  PERMISSIONS: `api_pbehaviortype:update`
+      operationId: pbehavior-types-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.UpdateRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a type
+                value: {
+                  "name": "Unplanned maintenance",
+                  "description": "Maintenances which are not on the schedule",
+                  "type": "maintenance",
+                  "priority": 10,
+                  "icon_name": "broken_image"
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - pbehavior-types
+      summary: Delete pbehavior type by id
+      description: |
+        Delete pbehavior type by id.
+        
+        -  PERMISSIONS: `api_pbehaviortype:delete`
+      operationId: pbehavior-types-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  parameters:
+    id:
+      name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    page:
+      name: page
+      in: query
+      description: current page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    limit:
+      name: limit
+      in: query
+      description: items per page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    search:
+      name: search
+      in: query
+      description: search query
+      schema:
+        type: string
+    sort:
+      name: sort
+      in: query
+      description: sort query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+    sort_by:
+      name: sort_by
+      in: query
+      description: sort by field
+      schema:
+        type: string
+
+  schemas:
+    event.Event:
+      type: object
+      required:
+        - connector
+        - connector_name
+        - component
+        - event_type
+        - source_type
+      properties:
+        component:
+          type: string
+        connector:
+          type: string
+        connector_name:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - check
+            - ack
+            - ackremove
+            - cancel
+            - uncancel
+            - comment
+            - snooze
+            - changestate
+            - assocticket
+            - declareticket
+        resource:
+          type: string
+        source_type:
+          type: string
+          enum:
+            - resource
+            - component
+        state:
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+          description: >
+            State:
+              * `0` - Info
+              * `1` - Minor
+              * `2` - Major
+              * `3` - Critical
+        output:
+          type: string
+        long_output:
+          type: string
+        author:
+          type: string
+        user_id:
+          type: string
+        duration:
+          type: integer
+    event.Response:
+      type: object
+      properties:
+        failed_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/event.Event'
+        retry_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/event.Event'
+        sent_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/event.Event'
+    ListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+        meta:
+          type: object
+          properties:
+            page:
+              type: integer
+            page_count:
+              type: integer
+            per_page:
+              type: integer
+            total_count:
+              type: integer
+    BulkResponseItem:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: integer
+        item:
+          type: object
+        error:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: string
+    ErrorResponse:
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      type: object
+    ValidationErrorResponse:
+      properties:
+        errors:
+          additionalProperties:
+            type: string
+          type: object
+      type: object
+
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: [ ]
+  - BasicAuth: [ ]

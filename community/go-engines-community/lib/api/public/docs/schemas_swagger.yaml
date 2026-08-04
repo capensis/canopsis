@@ -1,0 +1,130 @@
+definitions:
+  author.Author:
+    properties:
+      _id:
+        type: string
+      display_name:
+        type: string
+      name:
+        type: string
+    type: object
+  pbehaviorreason.EditRequest:
+    properties:
+      description:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  pbehaviorreason.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+      updated:
+        type: integer
+    type: object
+  pbehaviortype.CreateRequest:
+    properties:
+      color:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      icon_name:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        minimum: 1
+        type: integer
+      type:
+        enum:
+        - active
+        - inactive
+        - maintenance
+        - pause
+        type: string
+    required:
+    - color
+    - description
+    - icon_name
+    - name
+    - priority
+    - type
+    type: object
+  pbehaviortype.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      color:
+        type: string
+      created:
+        type: integer
+      default:
+        type: boolean
+      description:
+        type: string
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
+      icon_name:
+        type: string
+      name:
+        type: string
+      priority:
+        type: integer
+      type:
+        type: string
+      updated:
+        type: integer
+    type: object
+  pbehaviortype.UpdateRequest:
+    properties:
+      color:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      icon_name:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        minimum: 1
+        type: integer
+      type:
+        enum:
+        - active
+        - inactive
+        - maintenance
+        - pause
+        type: string
+    required:
+    - color
+    - description
+    - name
+    - priority
+    - type
+    type: object
+info:
+  contact: {}
+paths: {}
+swagger: "2.0"

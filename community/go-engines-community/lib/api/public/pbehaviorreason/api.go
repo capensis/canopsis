@@ -6,6 +6,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/response"
 )
 
+// NewAPI
+//
+// @Param body body EditRequest true "body"
+// @Param body body EditRequest true "body"
+// @Success 200 {object} Response
 func NewAPI(store Store, binder binding.Binder, responder response.Responder) crud.API {
 	return crud.NewAPI[ListRequest, EditRequest, EditRequest, Response](store, binder, responder)
 }
