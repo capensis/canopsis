@@ -16,26 +16,26 @@ type API interface {
 	Delete(w http.ResponseWriter, r *http.Request)
 }
 
-func NewAPI[ListRequest, CreateRequest, UpdateRequest, Response any](
-	store Store[ListRequest, CreateRequest, UpdateRequest, Response],
+func NewAPI[TList, TCreate, TUpdate, TResp any](
+	store Store[TList, TCreate, TUpdate, TResp],
 	binder binding.Binder,
 	responder response.Responder,
 ) API {
-	return &api[ListRequest, CreateRequest, UpdateRequest, Response]{
+	return &api[TList, TCreate, TUpdate, TResp]{
 		store:     store,
 		binder:    binder,
 		responder: responder,
 	}
 }
 
-type api[ListRequest, CreateRequest, UpdateRequest, Response any] struct {
-	store     Store[ListRequest, CreateRequest, UpdateRequest, Response]
+type api[TList, TCreate, TUpdate, TResp any] struct {
+	store     Store[TList, TCreate, TUpdate, TResp]
 	binder    binding.Binder
 	responder response.Responder
 }
 
-func (a *api[ListRequest, CreateRequest, UpdateRequest, Response]) List(w http.ResponseWriter, r *http.Request) {
-	var d ListRequest
+func (a *api[TList, TCreate, TUpdate, TResp]) List(w http.ResponseWriter, r *http.Request) {
+	var d TList
 	if err := a.binder.BindForm(r, &d); err != nil {
 		a.responder.RespondError(w, r, err)
 
@@ -52,7 +52,7 @@ func (a *api[ListRequest, CreateRequest, UpdateRequest, Response]) List(w http.R
 	a.responder.Respond(w, r, http.StatusOK, res)
 }
 
-func (a *api[ListRequest, CreateRequest, UpdateRequest, Response]) Get(w http.ResponseWriter, r *http.Request) {
+func (a *api[TList, TCreate, TUpdate, TResp]) Get(w http.ResponseWriter, r *http.Request) {
 	id := a.binder.URLParam(r, "id")
 	res, err := a.store.GetByID(r.Context(), id)
 	if err != nil {
@@ -64,8 +64,8 @@ func (a *api[ListRequest, CreateRequest, UpdateRequest, Response]) Get(w http.Re
 	a.responder.Respond(w, r, http.StatusOK, res)
 }
 
-func (a *api[ListRequest, CreateRequest, UpdateRequest, Response]) Create(w http.ResponseWriter, r *http.Request) {
-	var d CreateRequest
+func (a *api[TList, TCreate, TUpdate, TResp]) Create(w http.ResponseWriter, r *http.Request) {
+	var d TCreate
 	if err := a.binder.Bind(r, &d); err != nil {
 		a.responder.RespondError(w, r, err)
 
@@ -82,8 +82,8 @@ func (a *api[ListRequest, CreateRequest, UpdateRequest, Response]) Create(w http
 	a.responder.Respond(w, r, http.StatusCreated, res)
 }
 
-func (a *api[ListRequest, CreateRequest, UpdateRequest, Response]) Update(w http.ResponseWriter, r *http.Request) {
-	var d UpdateRequest
+func (a *api[TList, TCreate, TUpdate, TResp]) Update(w http.ResponseWriter, r *http.Request) {
+	var d TUpdate
 	if err := a.binder.Bind(r, &d); err != nil {
 		a.responder.RespondError(w, r, err)
 
@@ -101,7 +101,7 @@ func (a *api[ListRequest, CreateRequest, UpdateRequest, Response]) Update(w http
 	a.responder.Respond(w, r, http.StatusOK, res)
 }
 
-func (a *api[ListRequest, CreateRequest, UpdateRequest, Response]) Delete(w http.ResponseWriter, r *http.Request) {
+func (a *api[TList, TCreate, TUpdate, TResp]) Delete(w http.ResponseWriter, r *http.Request) {
 	userID, err := authctx.GetUserKey(r.Context())
 	if err != nil {
 		a.responder.RespondError(w, r, err)

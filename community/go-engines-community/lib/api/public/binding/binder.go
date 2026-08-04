@@ -68,8 +68,7 @@ func (b *binder) Bind(r *http.Request, v any) error {
 func (b *binder) BindForm(r *http.Request, v any) error {
 	err := b.urlDecoder.Decode(v, r.URL.Query())
 	if err != nil {
-		var schemaErr schema.MultiError
-		if errors.As(err, &schemaErr) {
+		if schemaErr, ok := errors.AsType[schema.MultiError](err); ok {
 			return b.transformSchemaErr(schemaErr)
 		}
 
@@ -103,11 +102,12 @@ func (b *binder) transformSchemaErr(schemaErr schema.MultiError) error {
 	valErrs := make(validator.ValidationErrors, 0, len(schemaErr))
 	for f, fe := range schemaErr {
 		var vallErr validator.FieldError
-		if errors.As(fe, &emptyErr) {
+		switch {
+		case errors.As(fe, &emptyErr):
 			vallErr = validation.NewFieldError("required", f, f)
-		} else if errors.As(fe, &unknownErr) {
+		case errors.As(fe, &unknownErr):
 			vallErr = validation.NewFieldError("unsupported_field", f, f)
-		} else {
+		default:
 			vallErr = validation.NewFieldError("invalid", f, f)
 		}
 

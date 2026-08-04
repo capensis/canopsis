@@ -1,8 +1,7 @@
 package mongoquery
 
 import (
-	"regexp"
-
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -26,29 +25,9 @@ func GetSortQuery(sortBy, sort string) bson.M {
 // GetSearchQuery returns search query, it returns parsed search filter if it can be parsed
 // or regex search filter by searchBy otherwise.
 func GetSearchQuery(search string, searchBy []string) bson.M {
-	if search == "" {
-		return nil
-	}
-
-	searchRegexp := bson.Regex{
-		Pattern: GetSearchPattern(search),
-		Options: "i",
-	}
-
-	searchMatch := make([]bson.M, len(searchBy))
-	for i := range searchBy {
-		searchMatch[i] = bson.M{searchBy[i]: searchRegexp}
-	}
-
-	return bson.M{
-		"$or": searchMatch,
-	}
+	return mongoquery.GetSearchQuery(search, searchBy)
 }
 
 func GetSearchPattern(search string) string {
-	if _, err := regexp.Compile(search); err == nil {
-		return search
-	}
-
-	return ".*" + regexp.QuoteMeta(search) + ".*"
+	return mongoquery.GetSearchPattern(search)
 }
