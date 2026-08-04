@@ -257,7 +257,11 @@ func sendTriggerEvent(
 		types.AlarmChangeTypeInstructionJobFail,
 		types.AlarmChangeTypeInstructionJobComplete:
 	case types.AlarmChangeTypeDeclareTicketWebhook:
-		if !event.Parameters.EmitTrigger {
+		if !event.Parameters.EmitTriggerSuccess {
+			return
+		}
+	case types.AlarmChangeTypeDeclareTicketWebhookFail:
+		if !event.Parameters.EmitTriggerFail {
 			return
 		}
 	default:
