@@ -102,7 +102,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-const BaseUrl = "/api/internal"
+const BaseUrl = "/internal"
 
 const mimeTypeSvg = "image/svg+xml"
 
@@ -1561,7 +1561,7 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjBroadcastMessage, model.PermissionUpdate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
 				broadcastMessageApi.Update)
-			// can not make typical format like /api/internal/broadcast-message/active
+			// can not make typical format like /internal/broadcast-message/active
 			// because it would be failed with conflict error apart of get /:id route
 			protected.GET(
 				"/active-broadcast-message",
@@ -1975,12 +1975,12 @@ func RegisterRoutes(
 			)
 			colorThemeRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer, errorResponder),
+				middleware.OnlyAuth(errorResponder),
 				colorThemeApi.List,
 			)
 			colorThemeRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer, errorResponder),
+				middleware.OnlyAuth(errorResponder),
 				colorThemeApi.Get,
 			)
 			colorThemeRouter.PUT(
@@ -2443,6 +2443,12 @@ func RegisterRoutes(
 				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
 				roleApi.BulkUpdatePermissions,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
+			)
+			bulkRouter.DELETE(
+				"/roles",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer, errorResponder),
+				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+				roleApi.BulkDelete,
 			)
 
 			userBulkRouter := bulkRouter.Group("/users")

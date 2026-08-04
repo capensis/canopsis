@@ -17,6 +17,7 @@
         :enablable="updatable"
         :disablable="updatable"
         declare-ticket
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
