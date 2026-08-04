@@ -17,6 +17,7 @@
         :enablable="updatable"
         :disablable="updatable"
         link-rule
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />

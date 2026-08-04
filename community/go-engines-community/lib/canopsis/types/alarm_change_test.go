@@ -91,6 +91,16 @@ func TestGetTriggers(t *testing.T) {
 			alarmChange:      types.AlarmChange{Type: types.AlarmChangeTypeSnooze},
 			expectedTriggers: []string{"snooze"},
 		},
+		{
+			name:             "declare ticket webhook fail trigger",
+			alarmChange:      types.AlarmChange{Type: types.AlarmChangeTypeDeclareTicketWebhookFail},
+			expectedTriggers: []string{"declareticketwebhookfail"},
+		},
+		{
+			name:             "auto declare ticket webhook fail trigger",
+			alarmChange:      types.AlarmChange{Type: types.AlarmChangeTypeAutoDeclareTicketWebhookFail},
+			expectedTriggers: []string{"declareticketwebhookfail"},
+		},
 	}
 
 	for _, tt := range tests {
