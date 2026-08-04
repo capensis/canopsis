@@ -11,12 +11,11 @@ import (
 	"slices"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/entitycategory"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -289,7 +288,7 @@ func (w *worker) parseEntities(
 		}
 
 		if ci.Type == types.EntityTypeService {
-			if !match.ValidateEntityPattern(ci.EntityPattern, patternfields.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
+			if !patternfields.ValidateEntityPattern(ci.EntityPattern, libmongo.EntityMongoCollection) {
 				w.logger.Warn().Str("entity_name", ci.Name).Msg("invalid entity pattern, skip")
 				continue
 			}

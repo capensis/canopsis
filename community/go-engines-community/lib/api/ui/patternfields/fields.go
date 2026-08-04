@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -323,65 +324,6 @@ var weatherServiceFields = []FieldResponse{
 	},
 }
 
-var disabledFieldsInAlarmPattern = map[string][]string{
-	mongo.IdleRuleMongoCollection:          {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.MetaAlarmRulesMongoCollection:    {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.FlappingRuleMongoCollection:      {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.ResolveRuleMongoCollection:       {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.ScenarioCollection:               {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.InstructionMongoCollection:       {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.DeclareTicketRuleCollection:      {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.LinkRuleMongoCollection:          {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.DynamicInfosRulesMongoCollection: {"v.last_event_date", "v.last_update_date", "v.resolved", "v.duration", "v.infos"},
-	mongo.AlarmTagCollection:               {"v.last_event_date", "v.last_update_date", "v.resolved", "v.duration", "tags"},
-	mongo.WidgetFiltersMongoCollection:     {},
-}
-
-var onlyAbsoluteTimeCondFieldsInAlarmPattern = map[string][]string{
-	mongo.IdleRuleMongoCollection:          {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.DynamicInfosRulesMongoCollection: {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.MetaAlarmRulesMongoCollection:    {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.FlappingRuleMongoCollection:      {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.ResolveRuleMongoCollection:       {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.ScenarioCollection:               {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.InstructionMongoCollection:       {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.DeclareTicketRuleCollection:      {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.LinkRuleMongoCollection:          {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.AlarmTagCollection:               {"v.creation_date", "v.ack.t", "v.activation_date"},
-}
-
-var disabledFieldsInEntityPattern = map[string][]string{
-	mongo.StateSettingsMongoCollection:     {"last_event_date", "component", "component_infos"},
-	mongo.EntityMongoCollection:            {"last_event_date", "connector", "component_infos"},
-	mongo.PbehaviorMongoCollection:         {"last_event_date"},
-	mongo.IdleRuleMongoCollection:          {"last_event_date"},
-	mongo.DynamicInfosRulesMongoCollection: {"last_event_date"},
-	mongo.MetaAlarmRulesMongoCollection:    {"last_event_date"},
-	mongo.FlappingRuleMongoCollection:      {"last_event_date"},
-	mongo.ResolveRuleMongoCollection:       {"last_event_date"},
-	mongo.ScenarioCollection:               {"last_event_date"},
-	mongo.InstructionMongoCollection:       {"last_event_date"},
-	mongo.KpiFilterMongoCollection:         {"last_event_date"},
-	mongo.DeclareTicketRuleCollection:      {"last_event_date"},
-	mongo.LinkRuleMongoCollection:          {"last_event_date"},
-	mongo.AlarmTagCollection:               {"last_event_date"},
-	mongo.EventFilterRuleCollection:        {},
-	mongo.WidgetFiltersMongoCollection:     {},
-}
-
-var disabledFieldsInEventPattern = map[string][]string{
-	mongo.EventFilterRuleCollection:   {},
-	mongo.EventRecordsMongoCollection: {},
-}
-
-var disabledFieldsInPbehaviorPattern = map[string][]string{
-	mongo.WidgetFiltersMongoCollection: {},
-}
-
-var disabledFieldsInWeatherServicePattern = map[string][]string{
-	mongo.WidgetFiltersMongoCollection: {},
-}
-
 type FieldGetter interface {
 	Get(ctx context.Context, collection string) (FieldsResponse, error)
 }
@@ -415,49 +357,43 @@ func NewFieldGetter(dbClient mongo.DbClient) FieldGetter {
 		entityPropCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
 	}
 
+	disabledFieldsInAlarmPattern := patternfields.GetDisabledFieldsInAlarmPattern()
 	g.diabledFieldsInAlarmPattern = make(map[string]map[string]bool, len(disabledFieldsInAlarmPattern))
 	for k, v := range disabledFieldsInAlarmPattern {
 		g.diabledFieldsInAlarmPattern[k] = g.sliceToMap(v)
 	}
 
+	onlyAbsoluteTimeCondFieldsInAlarmPattern := patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern()
 	g.onlyAbsoluteTimeCondFieldsInAlarmPattern = make(map[string]map[string]bool, len(onlyAbsoluteTimeCondFieldsInAlarmPattern))
 	for k, v := range onlyAbsoluteTimeCondFieldsInAlarmPattern {
 		g.onlyAbsoluteTimeCondFieldsInAlarmPattern[k] = g.sliceToMap(v)
 	}
 
+	disabledFieldsInEntityPattern := patternfields.GetDisabledFieldsInEntityPattern()
 	g.disabledFieldsInEntityPattern = make(map[string]map[string]bool, len(disabledFieldsInEntityPattern))
 	for k, v := range disabledFieldsInEntityPattern {
 		g.disabledFieldsInEntityPattern[k] = g.sliceToMap(v)
 	}
 
+	disabledFieldsInEventPattern := patternfields.GetDisabledFieldsInEventPattern()
 	g.disabledFieldsInEventPattern = make(map[string]map[string]bool, len(disabledFieldsInEventPattern))
 	for k, v := range disabledFieldsInEventPattern {
 		g.disabledFieldsInEventPattern[k] = g.sliceToMap(v)
 	}
 
+	disabledFieldsInPbehaviorPattern := patternfields.GetDisabledFieldsInPbehaviorPattern()
 	g.disabledFieldsInPbehaviorPattern = make(map[string]map[string]bool, len(disabledFieldsInPbehaviorPattern))
 	for k, v := range disabledFieldsInPbehaviorPattern {
 		g.disabledFieldsInPbehaviorPattern[k] = g.sliceToMap(v)
 	}
 
+	disabledFieldsInWeatherServicePattern := patternfields.GetDisabledFieldsInWeatherServicePattern()
 	g.disabledFieldsInWeatherServicePattern = make(map[string]map[string]bool, len(disabledFieldsInWeatherServicePattern))
 	for k, v := range disabledFieldsInWeatherServicePattern {
 		g.disabledFieldsInWeatherServicePattern[k] = g.sliceToMap(v)
 	}
 
 	return g
-}
-
-func GetForbiddenFieldsInAlarmPattern(collection string) []string {
-	return disabledFieldsInAlarmPattern[collection]
-}
-
-func GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection string) []string {
-	return onlyAbsoluteTimeCondFieldsInAlarmPattern[collection]
-}
-
-func GetForbiddenFieldsInEntityPattern(collection string) []string {
-	return disabledFieldsInEntityPattern[collection]
 }
 
 type fieldGetter struct {

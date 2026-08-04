@@ -1,6 +1,6 @@
 package patternfields
 
-//go:generate go tool go.uber.org/mock/mockgen -destination=../../../../mocks/lib/api/ui/patternfields/transformer.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields Transformer
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/api/patternfields/transformer.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields Transformer
 
 import (
 	"context"
