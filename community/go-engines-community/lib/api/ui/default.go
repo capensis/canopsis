@@ -338,7 +338,12 @@ func Default(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(apitechmetrics.NewStore(primaryDbClient), filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
+	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(
+		apitechmetrics.NewStore(primaryDbClient),
+		filepath.Join(cfg.File.Dir, canopsis.SubDirExport),
+		flags.PeriodicalWaitTime,
+		logger,
+	)
 
 	healthCheckConfigAdapter := config.NewHealthCheckAdapter(primaryDbClient)
 	healthCheckCfg, err := healthCheckConfigAdapter.GetConfig(ctx)
@@ -574,10 +579,12 @@ func Default(
 		services.ErrorResponder.Respond(c, httperror.ErrMethodNotAllowed)
 	})
 
-	actionLogger := apilogger.NewActionLogger(noTimeoutClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-	api.AddWorker("action_log", func(ctx context.Context) error {
-		return actionLogger.Watch(ctx)
-	})
+	if services.ApiConfigProvider.Get().ActionLogger.Enabled {
+		actionLogger := apilogger.NewActionLogger(noTimeoutClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+		api.AddWorker("action_log", func(ctx context.Context) error {
+			return actionLogger.Watch(ctx)
+		})
+	}
 
 	api.AddWorker("amqp_workers", func(ctx context.Context) error {
 		err = workersRunner.Run(ctx)

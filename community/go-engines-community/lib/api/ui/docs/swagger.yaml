@@ -4316,6 +4316,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/roles:
+    delete:
+      tags:
+        - roles
+      summary: Bulk delete roles
+      description: |
+        Bulk delete roles.
+
+        -  PERMISSIONS: `api_acl:delete`
+      operationId: roles-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/role.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete roles.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/role.BulkDeleteRequestItem'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/scenarios:
     put:
       tags:
@@ -4386,7 +4436,7 @@ paths:
                           ]
                         ],
                         "drop_scenario_if_not_matched": false,
-                        "emit_trigger": false
+                        "emit_trigger_success": false
                       }
                     ]
                   }
@@ -4482,7 +4532,7 @@ paths:
                           ]
                         ],
                         "drop_scenario_if_not_matched": false,
-                        "emit_trigger": false
+                        "emit_trigger_success": false
                       }
                     ]
                   }
@@ -13852,7 +13902,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -13905,7 +13955,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -13965,7 +14015,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14018,7 +14068,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14072,7 +14122,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14132,7 +14182,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14189,7 +14239,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14262,7 +14312,8 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false,
+                      "emit_trigger_fail": false
                     }
                   ]
                 }
@@ -14298,7 +14349,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14414,7 +14465,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14467,7 +14518,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14527,7 +14578,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14580,7 +14631,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14634,7 +14685,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14694,7 +14745,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14751,7 +14802,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -14824,7 +14875,8 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false,
+                      "emit_trigger_fail": false
                     }
                   ]
                 }
@@ -14860,7 +14912,7 @@ paths:
                         ]
                       ],
                       "drop_scenario_if_not_matched": false,
-                      "emit_trigger": false
+                      "emit_trigger_success": false
                     }
                   ]
                 }
@@ -15019,7 +15071,7 @@ paths:
                           ]
                         ],
                         "drop_scenario_if_not_matched": false,
-                        "emit_trigger": false
+                        "emit_trigger_success": false
                       },
                       {
                         "type": "webhook",
@@ -15049,7 +15101,8 @@ paths:
                           ]
                         ],
                         "drop_scenario_if_not_matched": false,
-                        "emit_trigger": false
+                        "emit_trigger_success": false,
+                        "emit_trigger_fail": false
                       },
                       {
                         "type": "webhook",
@@ -15085,7 +15138,8 @@ paths:
                           ]
                         ],
                         "drop_scenario_if_not_matched": false,
-                        "emit_trigger": false
+                        "emit_trigger_success": false,
+                        "emit_trigger_fail": false
                       }
                     ]
                   }

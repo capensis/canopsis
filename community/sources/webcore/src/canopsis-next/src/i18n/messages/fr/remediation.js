@@ -73,6 +73,7 @@ export default {
   configuration: {
     usingConfiguration: 'Ne peut pas être supprimée, car en cours d\'utilisation',
     host: 'Hôte',
+    massRemove: 'Supprimer les configurations sélectionnées',
   },
 
   instructionExecute: {
@@ -207,6 +208,7 @@ export default {
     jobId: 'Identifiant de la tâche',
     addJobs: 'Ajouter {count} tâche | Ajouter {count} tâches',
     usingJob: 'La tâche ne peut être supprimée, car elle est en cours d\'utilisation',
+    massRemove: 'Supprimer les tâches sélectionnées',
     query: 'Requête',
     multipleExecutions: 'Autoriser l\'exécution parallèle',
     jobWaitInterval: 'Intervalle d\'attente des tâches',

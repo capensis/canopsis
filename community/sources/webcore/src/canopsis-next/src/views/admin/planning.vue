@@ -15,7 +15,7 @@
               </v-tab>
               <v-tab-item :value="PLANNING_TABS.types">
                 <v-card-text>
-                  <planning-types />
+                  <planning-types :active="activeTab === PLANNING_TABS.types" />
                 </v-card-text>
               </v-tab-item>
             </template>
@@ -25,7 +25,7 @@
               </v-tab>
               <v-tab-item :value="PLANNING_TABS.reasons">
                 <v-card-text>
-                  <planning-reasons />
+                  <planning-reasons :active="activeTab === PLANNING_TABS.reasons" />
                 </v-card-text>
               </v-tab-item>
             </template>
@@ -35,7 +35,7 @@
               </v-tab>
               <v-tab-item :value="PLANNING_TABS.exceptions">
                 <v-card-text>
-                  <planning-exceptions />
+                  <planning-exceptions :active="activeTab === PLANNING_TABS.exceptions" />
                 </v-card-text>
               </v-tab-item>
             </template>
