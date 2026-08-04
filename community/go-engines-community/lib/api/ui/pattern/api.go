@@ -11,7 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
+	uipatternfields "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -472,7 +472,7 @@ func (a *api) OptimizeCancel(c *gin.Context) {
 
 // GetPatternFieldsHandler
 // @Success 200 {array} patternfields.FieldsResponse
-func GetPatternFieldsHandler(patternFieldGetter patternfields.FieldGetter, errorResponder response.ErrorResponder, collection string) func(c *gin.Context) {
+func GetPatternFieldsHandler(patternFieldGetter uipatternfields.FieldGetter, errorResponder response.ErrorResponder, collection string) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		res, err := patternFieldGetter.Get(c, collection)
 		if err != nil {

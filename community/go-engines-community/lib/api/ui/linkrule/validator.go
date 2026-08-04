@@ -1,11 +1,10 @@
 package linkrule
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/externaldatatable"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -25,15 +24,12 @@ func (v *Validator) ValidateEditRequest(sl validator.StructLevel) {
 	var r = sl.Current().Interface().(EditRequest)
 
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
-		!match.ValidateEntityPattern(r.EntityPattern, patternfields.GetForbiddenFieldsInEntityPattern(mongo.LinkRuleMongoCollection)) {
+		!patternfields.ValidateEntityPattern(r.EntityPattern, mongo.LinkRuleMongoCollection) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
 	if r.CorporateAlarmPattern == "" && len(r.AlarmPattern) > 0 &&
-		!match.ValidateAlarmPattern(r.AlarmPattern,
-			patternfields.GetForbiddenFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-			patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-		) {
+		!patternfields.ValidateAlarmPattern(r.AlarmPattern, mongo.LinkRuleMongoCollection) {
 		sl.ReportError(r.EntityPattern, "AlarmPattern", "AlarmPattern", "alarm_pattern", "")
 	}
 

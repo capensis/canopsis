@@ -1,8 +1,7 @@
 package flappingrule
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 )
@@ -26,15 +25,12 @@ func (v *Validator) ValidateUpdateRequest(sl validator.StructLevel) {
 
 func (v *Validator) validatePatterns(sl validator.StructLevel, r EditRequest) {
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
-		!match.ValidateEntityPattern(r.EntityPattern, patternfields.GetForbiddenFieldsInEntityPattern(mongo.FlappingRuleMongoCollection)) {
+		!patternfields.ValidateEntityPattern(r.EntityPattern, mongo.FlappingRuleMongoCollection) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
 	if r.CorporateAlarmPattern == "" && len(r.AlarmPattern) > 0 &&
-		!match.ValidateAlarmPattern(r.AlarmPattern,
-			patternfields.GetForbiddenFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
-			patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
-		) {
+		!patternfields.ValidateAlarmPattern(r.AlarmPattern, mongo.FlappingRuleMongoCollection) {
 		sl.ReportError(r.EntityPattern, "AlarmPattern", "AlarmPattern", "alarm_pattern", "")
 	}
 
