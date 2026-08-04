@@ -150,6 +150,10 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 		}
 	}
 
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
 	counters.Output, err = s.templateExecutor.Execute(counters.OutputTemplate, counters)
 	if err != nil {
 		return nil, err
