@@ -81,14 +81,14 @@ func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			return nil, err
 		}
 
-		p.logError(err, "cannot process event", "", msg)
+		p.logError(err, "cannot process event", event.AlarmID, msg)
 		return nil, nil
 	}
 
 	if event.Healthcheck {
 		_, err := p.AlarmCollection.DeleteMany(ctx, bson.M{"healthcheck": true})
 		if err != nil {
-			p.logError(err, "cannot delete temporary alarm", "", d.Body)
+			p.logError(err, "cannot delete temporary alarm", event.AlarmID, d.Body)
 		}
 	}
 
