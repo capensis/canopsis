@@ -61,6 +61,8 @@ require (
 	golang.org/x/text v0.37.0
 )
 
+require github.com/go-chi/chi/v5 v5.2.4
+
 require (
 	github.com/Azure/go-ntlmssp v0.1.0 // indirect
 	github.com/ChannelMeter/iso8601duration v0.0.0-20150204201828-8da3af7a2a61 // indirect

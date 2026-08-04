@@ -3,7 +3,6 @@ package response
 //go:generate go tool go.uber.org/mock/mockgen -destination=../../../../mocks/lib/api/ui/response/responder.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response ErrorResponder
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -14,7 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/valyala/fastjson"
-	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type ErrorResponder interface {
@@ -59,42 +57,17 @@ func (r *responder) buildResponse(c *gin.Context, err error) (int, *fastjson.Val
 
 	var code int
 	var msg string
-	logLvl := zerolog.DebugLevel
-	if errors.Is(err, httperror.ErrNotFound) {
-		code = http.StatusNotFound
-	} else if errors.Is(err, httperror.ErrUnauthorized) {
+	var logLvl zerolog.Level
+	if errors.Is(err, authctx.ErrNotFound) {
 		code = http.StatusUnauthorized
-	} else if errors.Is(err, httperror.ErrMethodNotAllowed) {
-		code = http.StatusMethodNotAllowed
-	} else if errors.Is(err, httperror.ErrServiceUnavailable) {
-		code = http.StatusServiceUnavailable
-	} else if errors.Is(err, httperror.ErrMaintenance) {
-		code = http.StatusServiceUnavailable
-		msg = "The service is under maintenance. Please try again later."
-	} else if errors.Is(err, httperror.ErrRequestEntityTooLarge) {
-		code = http.StatusRequestEntityTooLarge
-	} else if ferr, ok := errors.AsType[*httperror.ForbiddenError](err); ok {
-		code = http.StatusForbidden
-		msg = ferr.Message
-	} else if cerr, ok := errors.AsType[*httperror.ConflictError](err); ok {
-		code = http.StatusConflict
-		msg = cerr.Message
-	} else if _, ok := errors.AsType[*validation.InvalidRequestBodyError](err); ok {
-		code = http.StatusBadRequest
-		logLvl = zerolog.WarnLevel
-	} else if errors.Is(err, authctx.ErrNotFound) {
-		code = http.StatusUnauthorized
-	} else if errors.Is(err, context.Canceled) {
-		code = http.StatusRequestTimeout
-		logLvl = zerolog.WarnLevel
-	} else if errors.Is(err, context.DeadlineExceeded) || mongodriver.IsTimeout(err) {
-		code = http.StatusRequestTimeout
-		logLvl = zerolog.ErrorLevel
+		logLvl = zerolog.DebugLevel
 	} else {
-		code = http.StatusInternalServerError
+		code, msg, logLvl = httperror.MapError(err)
+	}
+
+	if code == http.StatusInternalServerError {
 		// c.Error panics if a nil error is passed — log stack trace to debug GetResponse call with nil error
 		err = c.Error(err)
-		logLvl = zerolog.ErrorLevel
 	}
 
 	r.logger.WithLevel(logLvl).
