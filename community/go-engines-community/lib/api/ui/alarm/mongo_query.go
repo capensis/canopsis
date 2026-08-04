@@ -453,7 +453,7 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 		for i := range filteredSearchBy {
 			searchMatch[i] = bson.M{"$regexMatch": bson.M{
 				"input":   "$" + filteredSearchBy[i],
-				"regex":   fmt.Sprintf(".*%s.*", search),
+				"regex":   mongoquery.GetSearchPattern(search),
 				"options": "i",
 			}}
 		}

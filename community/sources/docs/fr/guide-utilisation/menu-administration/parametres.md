@@ -64,7 +64,7 @@ Voici un exemple de configuration (`user_interface.json`) :
 Pour soumettre cette configuration, vous pouvez utiliser `curl` comme suit :
 
 ```sh
-curl -u root:root -X POST -H "Content-type: application/json" -d @user_interface.json http://localhost:8082/api/internal/user_interface
+curl -u root:root -X POST -H "Content-type: application/json" -d @user_interface.json http://localhost:8082/internal/user_interface
 ```
 
 Le résultat renvoyé doit être de type :

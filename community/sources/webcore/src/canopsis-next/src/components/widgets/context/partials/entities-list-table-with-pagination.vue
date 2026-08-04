@@ -10,6 +10,8 @@
       :options.sync="options"
       :toolbar-props="toolbarProps"
       :select-all="selectable"
+      :mass-actions-grid-parameters="widgetCurrentGridParameters"
+      :default-keep-selected-after-action="defaultKeepSelectedAfterAction"
       expand
       no-pagination
     >
@@ -69,8 +71,8 @@
         <mass-actions-panel
           :items="selected"
           :default-inherited-pbehavior="widget.parameters.defaultInheritedPbehavior"
-          class="ml-3"
-          @clear:items="clearSelected"
+          small
+          @clear:items="clearSelected(keepSelectedAfterAction)"
         />
       </template>
     </c-advanced-data-table>
@@ -86,7 +88,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetOptionsMixin } from '@/mixins/widget/options';
@@ -150,9 +152,18 @@ export default {
     return {
       columnsFilters: [],
       columnsFiltersPending: false,
+      keepSelectedAfterAction: this.widget.parameters.keepSelectedAfterAction ?? false,
     };
   },
   computed: {
+    widgetCurrentGridParameters() {
+      return this.widget.grid_parameters?.[MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq]] ?? {};
+    },
+
+    defaultKeepSelectedAfterAction() {
+      return this.widget.parameters.keepSelectedAfterAction ?? false;
+    },
+
     toolbarProps() {
       return {
         'justify-space-between': true,
