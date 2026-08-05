@@ -495,6 +495,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 				types.LocaleFr: "{0} doit être de type pause",
 			},
 		},
+		"unsupported_field": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} is unsupported",
+				types.LocaleFr: "{0} n'est pas pris en charge",
+			},
+		},
 	}
 }
 
