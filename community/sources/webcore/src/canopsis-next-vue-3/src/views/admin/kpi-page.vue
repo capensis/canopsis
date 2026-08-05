@@ -57,10 +57,9 @@ offset-lg="2">
 
     <c-fab-btn
       v-if="hasFabButton"
+      :key="activeTab"
       :has-access="hasAccessToCreate"
-      :has-create-listener="activeTab === KPI_TABS.filters"
-      @create="create"
-      @refresh="refresh"
+      v-bind="fabBind"
     >
       <span>{{ $t('modals.createFilter.create.title') }}</span>
     </c-fab-btn>
@@ -144,6 +143,13 @@ export default {
 
     hasAccessToCreate() {
       return this.activeTab === KPI_TABS.filters && this.hasCreateAnyKpiFiltersAccess;
+    },
+
+    fabBind() {
+      return {
+        onRefresh: this.refresh,
+        ...(this.activeTab === KPI_TABS.filters ? { onCreate: this.create } : {}),
+      };
     },
   },
 

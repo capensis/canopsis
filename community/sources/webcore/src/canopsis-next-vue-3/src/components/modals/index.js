@@ -8,6 +8,7 @@ export default {
     () => import('./common/confirmation-phrase.vue'),
   ),
   [MODALS.duration]: defineAsyncComponent(() => import('./common/duration.vue')),
+  [MODALS.rate]: defineAsyncComponent(() => import('./common/rate.vue')),
   [MODALS.clickOutsideConfirmation]: defineAsyncComponent(
     () => import('./common/click-outside-confirmation.vue'),
   ),

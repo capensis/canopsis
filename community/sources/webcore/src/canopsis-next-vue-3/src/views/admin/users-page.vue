@@ -26,7 +26,11 @@
       </v-card-text>
     </v-card>
 
-    <c-fab-btn :has-access="hasCreateAccess" @refresh="refresh" @create="create">
+    <c-fab-btn
+      :has-access="hasCreateAccess"
+      @refresh="refresh"
+      @create="create"
+    >
       <span>{{ t('modals.createUser.create.title') }}</span>
     </c-fab-btn>
   </div>

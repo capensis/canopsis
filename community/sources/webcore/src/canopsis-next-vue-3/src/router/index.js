@@ -55,6 +55,7 @@ const ScenariosPage = () => import('@/views/exploitation/scenarios-page.vue');
 const SnmpRulesPage = () => import('@/views/exploitation/snmp-rules-page.vue');
 const ProfilePatternsPage = () => import('@/views/profile/patterns-page.vue');
 const ProfileThemesPage = () => import('@/views/profile/themes-page.vue');
+const NotificationsPage = () => import('@/views/notification/notifications-page.vue');
 
 const protectedRoute = (meta = {}) => ({
   requiresLogin: true,
@@ -516,7 +517,7 @@ const routes = [
     path: ROUTES.notifications,
     name: ROUTES_NAMES.notifications,
     meta: protectedRoute(),
-    component: PlaceholderPage,
+    component: NotificationsPage,
     props: route => ({ tabId: route.params.tabId, activeId: route.query.id }),
   },
   {

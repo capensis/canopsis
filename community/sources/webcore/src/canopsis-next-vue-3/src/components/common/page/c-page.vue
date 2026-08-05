@@ -10,10 +10,8 @@
 
     <c-fab-btn
       :has-access="creatable"
-      :has-create-listener="hasCreateListener"
       :dark="dark"
-      @refresh="$emit('refresh')"
-      @create="$emit('create')"
+      v-bind="fabBind"
     >
       <span>{{ createTooltip }}</span>
     </c-fab-btn>
@@ -21,6 +19,8 @@
 </template>
 
 <script>
+import { computed, getCurrentInstance } from 'vue';
+
 export default {
   props: {
     name: {
@@ -39,12 +39,20 @@ export default {
       type: String,
       required: false,
     },
-    hasCreateListener: {
-      type: Boolean,
-      default: true,
-    },
   },
 
   emits: ['refresh', 'create'],
+
+  setup(props, { emit }) {
+    const instance = getCurrentInstance();
+    const fabBind = computed(() => ({
+      onRefresh: () => emit('refresh'),
+      ...(instance?.vnode.props?.onCreate ? { onCreate: () => emit('create') } : {}),
+    }));
+
+    return {
+      fabBind,
+    };
+  },
 };
 </script>

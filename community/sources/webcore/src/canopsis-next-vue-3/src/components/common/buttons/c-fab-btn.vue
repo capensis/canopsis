@@ -24,13 +24,11 @@
 </template>
 
 <script>
+import { computed, getCurrentInstance, onBeforeUpdate, ref } from 'vue';
+
 export default {
   props: {
     hasAccess: {
-      type: Boolean,
-      default: true,
-    },
-    hasCreateListener: {
       type: Boolean,
       default: true,
     },
@@ -41,5 +39,22 @@ export default {
   },
 
   emits: ['refresh', 'create'],
+
+  setup() {
+    const instance = getCurrentInstance();
+    const updateTick = ref(0);
+
+    onBeforeUpdate(() => {
+      updateTick.value += 1;
+    });
+
+    const hasCreateListener = computed(() =>
+      Boolean(updateTick.value >= 0 && instance?.vnode.props?.onCreate),
+    );
+
+    return {
+      hasCreateListener,
+    };
+  },
 };
 </script>
