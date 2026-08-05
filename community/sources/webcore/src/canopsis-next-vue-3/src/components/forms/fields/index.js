@@ -24,6 +24,8 @@ export { default as CWorkflowField } from './c-workflow-field.vue';
 export { default as CThemeField } from './c-theme-field.vue';
 export { default as CTimezoneField } from './c-timezone-field.vue';
 export { default as CWidgetTemplateField } from './c-widget-template-field.vue';
+export { default as CTextPairField } from './text-pairs/c-text-pair-field.vue';
+export { default as CTextPairsField } from './text-pairs/c-text-pairs-field.vue';
 export { default as CDraggableListField } from './list/c-draggable-list-field.vue';
 export { default as CCardIteratorField } from './card-iterator/c-card-iterator-field.vue';
 export { default as CCardIteratorForm } from './card-iterator/c-card-iterator-form.vue';

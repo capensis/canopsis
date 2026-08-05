@@ -7,7 +7,7 @@ const props = defineProps(validationProps);
 const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
-const { inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
+const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
 
 const autocompleteValue = computed({
   get: () => (inputValue.value === '' ? (attrs.multiple ? [] : null) : inputValue.value),
@@ -21,7 +21,7 @@ const autocompleteValue = computed({
   <v-autocomplete
     v-bind="$attrs"
     v-model="autocompleteValue"
-    :name="name"
+    :name="inputName"
     :error-messages="errorMessages"
     class="c-field c-autocomplete"
     @blur="onBlur"

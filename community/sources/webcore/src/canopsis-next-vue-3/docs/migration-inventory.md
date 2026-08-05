@@ -138,12 +138,12 @@ Pages are taken from `src/router.js` in the source project.
 | `[~]`  | `exploitation-idle-rules`                      | `/exploitation/idle-rules`            | `src/views/exploitation/idle-rules.vue`                      | `src/views/exploitation/idle-rules-page.vue`                      | Main list, expand, delete/bulk actions and create/edit/duplicate form are migrated; pbehavior action parameters depend on future pbehavior stack migration.                                                                                                                                                            |
 | `[~]`  | `exploitation-flapping-rules`                  | `/exploitation/flapping-rules`        | `src/views/exploitation/flapping-rules.vue`                  | `src/views/exploitation/flapping-rules-page.vue`                  | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending.                                                                                                                                                                                               |
 | `[~]`  | `exploitation-resolve-rules`                   | `/exploitation/resolve-rules`         | `src/views/exploitation/resolve-rules.vue`                   | `src/views/exploitation/resolve-rules-page.vue`                   | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending.                                                                                                                                                                                               |
-| `[ ]`  | `exploitation-declare-ticket-rules`            | `/exploitation/declare-ticket-rules`  | `src/views/exploitation/declare-ticket-rules.vue`            | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
+| `[~]`  | `exploitation-declare-ticket-rules`            | `/exploitation/declare-ticket-rules`  | `src/views/exploitation/declare-ticket-rules.vue`            | `src/views/exploitation/declare-ticket-rules-page.vue`            | Page, list, CRUD actions, mass actions, create/edit/duplicate rule modal, test-query preview, declare/associate/execute ticket modals and required helpers are migrated. Runtime parity on live alarm widget flows is still pending.                                                                                   |
 | `[~]`  | `exploitation-link-rules`                      | `/exploitation/link-rules`            | `src/views/exploitation/link-rules.vue`                      | `src/views/exploitation/link-rules-page.vue`                      | Page, list, mass actions, DB export, create/edit/duplicate modal, link rule form and Monaco-based advanced editor are migrated. AI chat remains a deferred stub per `docs/ai/architecture.md`.                                                                                                                         |
 | `[~]`  | `exploitation-remediation`                     | `/exploitation/remediation`           | `src/views/exploitation/remediation.vue`                     | `src/views/exploitation/remediation-page.vue`                     | Page shell and remediation/instruction flow are partially migrated; AI chat remains deferred and runtime parity pass pending.                                                                                                                                                                                          |
 | `[ ]`  | `playlist`                                     | `/playlist/:id`                       | `src/views/playlist.vue`                                     | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
-| `[ ]`  | `profile-patterns`                             | `/filters`                            | `src/views/profile/patterns.vue`                             | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
-| `[ ]`  | `profile-themes`                               | `/themes`                             | `src/views/profile/themes.vue`                               | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
+| `[~]`  | `profile-patterns`                             | `/filters`                            | `src/views/profile/patterns.vue`                             | `src/views/profile/patterns-page.vue`                             | Page shell, personal/corporate pattern lists, corporate permission tabs, create/edit/delete/bulk-delete flows, route and `create-pattern` modal are migrated. AI chat remains a deferred stub; runtime parity for pattern editor/counters is pending.                                                                  |
+| `[~]`  | `profile-themes`                               | `/themes`                             | `src/views/profile/themes.vue`                               | `src/views/profile/themes-page.vue`                               | Page, list, route, create/edit/duplicate theme modal, theme form, compact color picker menu and theme form helpers are migrated. Remaining: runtime parity checks for save flows, active user theme refresh and color previews.                                                                                        |
 | `[ ]`  | `notifications`                                | `/notifications/:tabId`               | `src/views/notification/notifications.vue`                   | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
 | `[x]`  | `error`                                        | `/error`                              | `src/views/error.vue`                                        | `src/views/error-page.vue`                                        | Migrated with polling and redirect logic.                                                                                                                                                                                                                                                                              |
 
@@ -514,12 +514,12 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `exploitation-declare-ticket-rules`
 
-- `[ ]` Main content: `src/views/exploitation/declare-ticket-rules.vue`.
-- `[ ]` Modal windows: not migrated.
+- `[x]` Main content: `src/views/exploitation/declare-ticket-rules-page.vue`, `src/components/other/declare-ticket/declare-ticket-rules-list.vue`.
+- `[x]` Modal windows: `create-declare-ticket-rule`, `create-declare-ticket-event`, `create-associate-ticket-event`, `execute-declare-tickets`.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/exploitation/declare-ticket-rules`, declare ticket rule access.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` State/API/socket: rule store/hook, bulk actions, test execution and execution sockets are wired; live alarm-widget execution parity remains pending.
+- `[x]` Routing/access: `/exploitation/declare-ticket-rules`, declare ticket rule access.
+- `[~]` Messages/i18n: existing declare-ticket/modal/alarm messages are wired; final copy parity verification pending.
 
 ### `exploitation-link-rules`
 
@@ -550,21 +550,21 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `profile-patterns`
 
-- `[ ]` Main content: `src/views/profile/patterns.vue`.
-- `[ ]` Modal windows: not migrated.
+- `[x]` Main content: `src/views/profile/patterns-page.vue`, `src/components/other/pattern/patterns.vue`, `corporate-patterns.vue`, `patterns-list.vue`.
+- `[x]` Modal windows: `create-pattern` modal is migrated; AI chat sidebar remains the deferred placeholder.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/filters`, authenticated access.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` State/API/socket: pattern and corporate-pattern Pinia stores/hooks are wired.
+- `[x]` Routing/access: `/filters`, authenticated access plus corporate pattern CRUD permission for the corporate tab/create action.
+- `[~]` Messages/i18n: existing pattern/modal messages are reused; final copy/runtime parity pending.
 
 ### `profile-themes`
 
-- `[ ]` Main content: `src/views/profile/themes.vue`.
-- `[ ]` Modal windows: not migrated.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: base Vuetify theme runtime was migrated; profile theme page is not.
-- `[ ]` Routing/access: `/themes`, profile theme permission.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` Main content: `src/views/profile/themes.vue` -> `src/views/profile/themes-page.vue`; themes list, search, pagination, row actions and bulk delete are migrated.
+- `[~]` Modal windows: `create-theme` modal, theme form, compact color picker menu and preview components are migrated; runtime save/visual parity pass pending.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[~]` State/API/socket: existing theme Pinia CRUD store/hook and base Vuetify theme runtime are used; active user theme refresh is wired and needs runtime verification.
+- `[x]` Routing/access: `/themes`, profile theme permission.
+- `[~]` Messages/i18n: existing theme/modal/common messages are reused; final copy/runtime parity pending.
 
 ### `notifications`
 

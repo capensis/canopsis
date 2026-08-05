@@ -311,6 +311,8 @@ export default {
   theme: 'Theme | Themes',
   systemName: 'System name',
   emitTrigger: 'Emit trigger',
+  emitTriggerSuccess: 'Emit trigger on success',
+  emitTriggerFail: 'Emit trigger on failure',
   header: 'Header | Headers',
   headerKey: 'Header key',
   headerValue: 'Header value',

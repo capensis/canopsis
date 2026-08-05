@@ -7,7 +7,7 @@ const props = defineProps(validationProps);
 const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
-const { inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
+const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
 
 const comboboxValue = computed({
   get: () => (inputValue.value === '' ? null : inputValue.value),
@@ -21,7 +21,7 @@ const comboboxValue = computed({
   <v-combobox
     v-bind="$attrs"
     v-model="comboboxValue"
-    :name="name"
+    :name="inputName"
     :error-messages="errorMessages"
     class="c-field c-combobox"
     @blur="onBlur"

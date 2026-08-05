@@ -52,6 +52,8 @@ export default {
   [MODALS.createMaintenance]: defineAsyncComponent(
     () => import('./maintenance/create-maintenance.vue'),
   ),
+  [MODALS.createPattern]: defineAsyncComponent(() => import('./pattern/create-pattern.vue')),
+  [MODALS.createTheme]: defineAsyncComponent(() => import('./theme/create-theme.vue')),
   [MODALS.createPbehaviorType]: defineAsyncComponent(
     () => import('./pbehavior/create-pbehavior-type.vue'),
   ),
@@ -75,6 +77,18 @@ export default {
   ),
   [MODALS.createIdleRule]: defineAsyncComponent(() => import('./idle-rule/create-idle-rule.vue')),
   [MODALS.createLinkRule]: defineAsyncComponent(() => import('./link-rule/create-link-rule.vue')),
+  [MODALS.createDeclareTicketRule]: defineAsyncComponent(
+    () => import('./declare-ticket/create-declare-ticket-rule.vue'),
+  ),
+  [MODALS.createDeclareTicketEvent]: defineAsyncComponent(
+    () => import('./declare-ticket/create-declare-ticket-event.vue'),
+  ),
+  [MODALS.createAssociateTicketEvent]: defineAsyncComponent(
+    () => import('./declare-ticket/create-associate-ticket-event.vue'),
+  ),
+  [MODALS.executeDeclareTickets]: defineAsyncComponent(
+    () => import('./declare-ticket/execute-declare-tickets-rule.vue'),
+  ),
   [MODALS.healthcheckEngine]: defineAsyncComponent(
     () => import('./healthcheck/healthcheck-engine.vue'),
   ),
