@@ -141,10 +141,10 @@ Pages are taken from `src/router.js` in the source project.
 | `[~]`  | `exploitation-declare-ticket-rules`            | `/exploitation/declare-ticket-rules`  | `src/views/exploitation/declare-ticket-rules.vue`            | `src/views/exploitation/declare-ticket-rules-page.vue`            | Page, list, CRUD actions, mass actions, create/edit/duplicate rule modal, test-query preview, declare/associate/execute ticket modals and required helpers are migrated. Runtime parity on live alarm widget flows is still pending.                                                                                   |
 | `[~]`  | `exploitation-link-rules`                      | `/exploitation/link-rules`            | `src/views/exploitation/link-rules.vue`                      | `src/views/exploitation/link-rules-page.vue`                      | Page, list, mass actions, DB export, create/edit/duplicate modal, link rule form and Monaco-based advanced editor are migrated. AI chat remains a deferred stub per `docs/ai/architecture.md`.                                                                                                                         |
 | `[~]`  | `exploitation-remediation`                     | `/exploitation/remediation`           | `src/views/exploitation/remediation.vue`                     | `src/views/exploitation/remediation-page.vue`                     | Page shell and remediation/instruction flow are partially migrated; AI chat remains deferred and runtime parity pass pending.                                                                                                                                                                                          |
-| `[ ]`  | `playlist`                                     | `/playlist/:id`                       | `src/views/playlist.vue`                                     | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
+| `[ ]`  | `playlist`                                     | `/playlist/:id`                       | `src/views/playlist.vue`                                     | -                                                                 | Deferred until the main `view` page is migrated, because playlist playback depends on the migrated view/tab/widget rendering stack.                                                                                                                                                                                    |
 | `[~]`  | `profile-patterns`                             | `/filters`                            | `src/views/profile/patterns.vue`                             | `src/views/profile/patterns-page.vue`                             | Page shell, personal/corporate pattern lists, corporate permission tabs, create/edit/delete/bulk-delete flows, route and `create-pattern` modal are migrated. AI chat remains a deferred stub; runtime parity for pattern editor/counters is pending.                                                                  |
 | `[~]`  | `profile-themes`                               | `/themes`                             | `src/views/profile/themes.vue`                               | `src/views/profile/themes-page.vue`                               | Page, list, route, create/edit/duplicate theme modal, theme form, compact color picker menu and theme form helpers are migrated. Remaining: runtime parity checks for save flows, active user theme refresh and color previews.                                                                                        |
-| `[ ]`  | `notifications`                                | `/notifications/:tabId`               | `src/views/notification/notifications.vue`                   | -                                                                 |                                                                                                                                                                                                                                                                                                                        |
+| `[~]`  | `notifications`                                | `/notifications/:tabId`               | `src/views/notification/notifications.vue`                   | `src/views/notification/notifications-page.vue`                   | Page shell, tab routing, socket refresh, approve/rate/event-filter-failure tabs, active notification handling and rating modal are migrated. Remaining: runtime parity checks and remediation stats alarms timeline tab after the alarm widget stack is migrated.                                                      |
 | `[x]`  | `error`                                        | `/error`                              | `src/views/error.vue`                                        | `src/views/error-page.vue`                                        | Migrated with polling and redirect logic.                                                                                                                                                                                                                                                                              |
 
 ## Page Blocks
@@ -541,6 +541,7 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `playlist`
 
+- Prerequisite: migrate the main `view` page first. Do not start standalone playlist playback before the view/tab/widget rendering stack exists in the target project.
 - `[ ]` Main content: `src/views/playlist.vue`.
 - `[ ]` Modal windows: not migrated.
 - `[ ]` Sidebars/drawers: not migrated.
@@ -568,12 +569,13 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `notifications`
 
-- `[ ]` Main content: `src/views/notification/notifications.vue`.
-- `[ ]` Modal windows: not migrated.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: top-bar notification menu shell exists; notifications page is not.
-- `[ ]` Routing/access: `/notifications/:tabId`, authenticated access.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` Main content: `src/views/notification/notifications.vue` -> `src/views/notification/notifications-page.vue`; route page, tab badges, refresh FAB and approve/rate/event-filter-failure tabs are migrated.
+- `[~]` Modal windows: `rate` modal/form is migrated for instruction rating. Existing remediation instruction approval/edit and event-filter modals are reused from their migrated slices.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[~]` State/API/socket: existing notification socket room and remediation instruction/stats/event-filter Pinia hooks are wired; runtime counter refresh parity pending.
+- `[x]` Routing/access: `/notifications/:tabId`, authenticated access.
+- `[~]` Messages/i18n: existing notifications/remediation/modal/common messages are reused; final copy/runtime parity pending.
+- `[ ]` Deferred dependency: remediation instruction stats alarms timeline expand tab waits for the alarm timeline/widget stack.
 
 ### `error`
 
