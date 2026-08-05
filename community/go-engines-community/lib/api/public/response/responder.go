@@ -59,7 +59,9 @@ func (r *responder) Respond(w http.ResponseWriter, req *http.Request, code int, 
 	w.Header().Set("Content-Type", MIMEJSON)
 	w.WriteHeader(code)
 	if len(b) > 0 {
-		_, err = w.Write(b)
+		// Response is always JSON with Content-Type: application/json, so it cannot be interpreted as HTML by browsers.
+		_, err = w.Write(b) //nolint:gosec
+
 		if err != nil {
 			r.logger.Err(err).Msg("failed to write response")
 		}
@@ -70,7 +72,8 @@ func (r *responder) RespondError(w http.ResponseWriter, req *http.Request, handl
 	code, res := r.buildErrorResponse(req, handlerErr)
 	w.Header().Set("Content-Type", MIMEJSON)
 	w.WriteHeader(code)
-	_, err := w.Write(res.MarshalTo(nil))
+	// Response is always JSON with Content-Type: application/json, so it cannot be interpreted as HTML by browsers.
+	_, err := w.Write(res.MarshalTo(nil)) //nolint:gosec
 	if err != nil {
 		r.logger.Err(err).Msg("failed to write response")
 	}

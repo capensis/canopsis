@@ -16,7 +16,7 @@ func TestRecovery_GivenPanicErr_ShouldReturnInternalErrorResponse(t *testing.T) 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	expectedCode := http.StatusInternalServerError
-	req := httptest.NewRequest(http.MethodGet, okURL, nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, okURL, nil)
 	r := chi.NewRouter()
 	r.Use(Recovery(zerolog.Nop()))
 	r.Get(okURL, func(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +33,7 @@ func TestRecovery_GivenPanicStr_ShouldReturnInternalErrorResponse(t *testing.T) 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	expectedCode := http.StatusInternalServerError
-	req := httptest.NewRequest(http.MethodGet, okURL, nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, okURL, nil)
 	r := chi.NewRouter()
 	r.Use(Recovery(zerolog.Nop()))
 	r.Get(okURL, func(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +50,7 @@ func TestRecovery_GivenPanicSysCallErr_ShouldReturnInternalErrorResponse(t *test
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	expectedCode := http.StatusOK
-	req := httptest.NewRequest(http.MethodGet, okURL, nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, okURL, nil)
 	r := chi.NewRouter()
 	r.Use(Recovery(zerolog.Nop()))
 	r.

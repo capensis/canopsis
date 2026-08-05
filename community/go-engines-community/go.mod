@@ -61,7 +61,10 @@ require (
 	golang.org/x/text v0.37.0
 )
 
-require github.com/go-chi/chi/v5 v5.2.4
+require (
+	github.com/go-chi/chi/v5 v5.2.4
+	github.com/gorilla/schema v1.4.1
+)
 
 require (
 	github.com/Azure/go-ntlmssp v0.1.0 // indirect

@@ -23,7 +23,7 @@ func TestSetAuthor_ShouldUpdateAuthor(t *testing.T) {
 		"test_key": "test_value",
 	}
 	noAuthorEncodedBody, _ := json.Marshal(noAuthorBody)
-	req := httptest.NewRequest(http.MethodPost, okURL, bytes.NewReader(noAuthorEncodedBody))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, okURL, bytes.NewReader(noAuthorEncodedBody))
 	mockResponder := mock_response.NewMockResponder(ctrl)
 	r := chi.NewRouter()
 	r.Use(func(next http.Handler) http.Handler {
