@@ -17,17 +17,14 @@ export const useI18nStore = defineStore('i18n', () => {
    * @param {string} [payload.locale]
    * @param {number} [payload.priority]
    */
-  const setLocale = ({
-    locale = DEFAULT_LOCALE,
-    priority = LOCALE_PRIORITIES.default,
-  } = {}) => {
+  const setLocale = ({ locale = DEFAULT_LOCALE, priority = LOCALE_PRIORITIES.default } = {}) => {
     if (localePriority.value > priority) {
       return;
     }
 
     setDateLocale(locale);
 
-    i18n.global.locale = locale;
+    i18n.global.locale.value = locale;
 
     localePriority.value = priority;
   };
@@ -37,30 +34,33 @@ export const useI18nStore = defineStore('i18n', () => {
    *
    * @param {string} [locale]
    */
-  const setDefaultLocale = (locale = DEFAULT_LOCALE) => setLocale({
-    locale,
-    priority: LOCALE_PRIORITIES.default,
-  });
+  const setDefaultLocale = (locale = DEFAULT_LOCALE) =>
+    setLocale({
+      locale,
+      priority: LOCALE_PRIORITIES.default,
+    });
 
   /**
    * Set global locale.
    *
    * @param {string} locale
    */
-  const setGlobalLocale = locale => setLocale({
-    locale,
-    priority: LOCALE_PRIORITIES.global,
-  });
+  const setGlobalLocale = locale =>
+    setLocale({
+      locale,
+      priority: LOCALE_PRIORITIES.global,
+    });
 
   /**
    * Set personal locale.
    *
    * @param {string} locale
    */
-  const setPersonalLocale = locale => setLocale({
-    locale,
-    priority: LOCALE_PRIORITIES.personal,
-  });
+  const setPersonalLocale = locale =>
+    setLocale({
+      locale,
+      priority: LOCALE_PRIORITIES.personal,
+    });
 
   return {
     localePriority,

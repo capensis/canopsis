@@ -73,6 +73,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    attributes: {
+      type: Array,
+      default: () => [],
+    },
     alarmCounter: {
       type: Object,
       required: false,
@@ -164,6 +168,7 @@ export default {
 
     pbehaviorAttributes() {
       return [
+        ...this.attributes,
         {
           text: this.$t('common.name'),
           value: PBEHAVIOR_PATTERN_FIELDS.id,

@@ -321,6 +321,8 @@ const normalizeFlatFieldName = (name) => {
 };
 
 export function useVuetifyFieldValidation(props, emit, attrs = {}) {
+  const inputName = computed(() => props.name || attrs.name || undefined);
+
   const fieldName = computed(() =>
     normalizeFlatFieldName(props.name || attrs.name || attrs.id || props.label || 'field'),
   );
@@ -391,6 +393,7 @@ export function useVuetifyFieldValidation(props, emit, attrs = {}) {
   });
 
   return {
+    inputName,
     inputValue,
     errorMessage,
     errorMessages,

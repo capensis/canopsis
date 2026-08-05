@@ -7,7 +7,7 @@ const props = defineProps(validationProps);
 const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
-const { inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
+const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
 const menuShown = ref(false);
 const pendingBlurEvent = ref(null);
 
@@ -46,7 +46,7 @@ const onMenuUpdate = (value) => {
   <v-select
     v-bind="$attrs"
     v-model="selectValue"
-    :name="name"
+    :name="inputName"
     :error-messages="errorMessages"
     class="c-field c-select"
     @blur="onSelectBlur"

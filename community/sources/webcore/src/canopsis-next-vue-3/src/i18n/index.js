@@ -11,7 +11,8 @@ import messages from './messages';
 updateDateLocaleMessages('fr', durationFrMessages);
 
 export const i18n = createI18n({
-  legacy: true,
+  legacy: false,
+  globalInjection: true,
   locale: DEFAULT_LOCALE,
   fallbackLocale: DEFAULT_LOCALE,
   warnHtmlMessage: false,

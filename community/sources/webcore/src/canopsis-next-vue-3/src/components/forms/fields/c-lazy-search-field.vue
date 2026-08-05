@@ -20,7 +20,7 @@
     :clearable="clearable"
     :return-object="returnObject"
     :no-data-text="noDataText"
-    class="c-lazy-search-field mt-4"
+    class="c-lazy-search-field"
     density="compact"
     no-filter
     @focus="onFocus"

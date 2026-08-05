@@ -312,6 +312,8 @@ export default {
   theme: 'Thème | Thèmes',
   systemName: 'Nom du système',
   emitTrigger: 'Émettre un déclencheur',
+  emitTriggerSuccess: 'Émettre un déclencheur en cas de succès',
+  emitTriggerFail: "Émettre un déclencheur en cas d'échec",
   header: 'En-tête | En-têtes',
   headerKey: "Clé d'en-tête",
   headerValue: "Valeur d'en-tête",

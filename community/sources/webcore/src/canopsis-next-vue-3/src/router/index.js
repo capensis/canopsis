@@ -42,6 +42,7 @@ const AdminSettingsStorageSettings = () =>
   import('@/views/admin/settings/storage-settings-page.vue');
 const AdminSettingsStateSettings = () => import('@/views/admin/settings/state-settings-page.vue');
 const DynamicInfosPage = () => import('@/views/exploitation/dynamic-infos-page.vue');
+const DeclareTicketRulesPage = () => import('@/views/exploitation/declare-ticket-rules-page.vue');
 const EventFiltersPage = () => import('@/views/exploitation/event-filters-page.vue');
 const FlappingRulesPage = () => import('@/views/exploitation/flapping-rules-page.vue');
 const IdleRulesPage = () => import('@/views/exploitation/idle-rules-page.vue');
@@ -52,6 +53,8 @@ const ResolveRulesPage = () => import('@/views/exploitation/resolve-rules-page.v
 const RemediationPage = () => import('@/views/exploitation/remediation-page.vue');
 const ScenariosPage = () => import('@/views/exploitation/scenarios-page.vue');
 const SnmpRulesPage = () => import('@/views/exploitation/snmp-rules-page.vue');
+const ProfilePatternsPage = () => import('@/views/profile/patterns-page.vue');
+const ProfileThemesPage = () => import('@/views/profile/themes-page.vue');
 
 const protectedRoute = (meta = {}) => ({
   requiresLogin: true,
@@ -339,7 +342,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.widgetTemplate,
       },
     }),
-    component: PlaceholderPage,
+    component: DeclareTicketRulesPage,
   },
   {
     path: ROUTES.adminSettingsStorageSettings,
@@ -459,7 +462,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.exploitation.declareTicketRule,
       },
     }),
-    component: PlaceholderPage,
+    component: DeclareTicketRulesPage,
   },
   {
     path: ROUTES.exploitationLinkRules,
@@ -497,7 +500,7 @@ const routes = [
     path: ROUTES.profilePatterns,
     name: ROUTES_NAMES.profilePatterns,
     meta: protectedRoute(),
-    component: PlaceholderPage,
+    component: ProfilePatternsPage,
   },
   {
     path: ROUTES.profileThemes,
@@ -507,7 +510,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.profile.theme,
       },
     }),
-    component: PlaceholderPage,
+    component: ProfileThemesPage,
   },
   {
     path: ROUTES.notifications,

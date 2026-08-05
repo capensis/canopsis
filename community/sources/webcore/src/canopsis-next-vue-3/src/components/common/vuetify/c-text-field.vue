@@ -7,14 +7,14 @@ const props = defineProps(validationProps);
 const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
-const { inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
+const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
 </script>
 
 <template>
   <v-text-field
     v-bind="$attrs"
     v-model="inputValue"
-    :name="name"
+    :name="inputName"
     :error-messages="errorMessages"
     class="c-field c-text-field"
     @blur="onBlur"

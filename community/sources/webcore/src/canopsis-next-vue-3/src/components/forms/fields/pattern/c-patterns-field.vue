@@ -242,27 +242,27 @@ export default {
     },
     alarmAttributes: {
       type: Array,
-      required: false,
+      default: () => [],
     },
     entityAttributes: {
       type: Array,
-      required: false,
+      default: () => [],
     },
     pbehaviorAttributes: {
       type: Array,
-      required: false,
+      default: () => [],
     },
     eventAttributes: {
       type: Array,
-      required: false,
+      default: () => [],
     },
     totalEntityAttributes: {
       type: Array,
-      required: false,
+      default: () => [],
     },
     weatherServiceAttributes: {
       type: Array,
-      required: false,
+      default: () => [],
     },
     pending: {
       type: Boolean,

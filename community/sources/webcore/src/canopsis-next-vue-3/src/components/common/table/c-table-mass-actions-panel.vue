@@ -49,6 +49,7 @@ import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
 import { useDynamicInfoTemplates } from '@/hooks/store/modules/dynamic-info-templates';
+import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
 import { useEventFilter } from '@/hooks/store/modules/event-filter';
 import { useFlappingRules } from '@/hooks/store/modules/flapping-rules';
 import { useIdleRules } from '@/hooks/store/modules/idle-rules';
@@ -126,6 +127,10 @@ export default {
       default: false,
     },
     linkRule: {
+      type: Boolean,
+      default: false,
+    },
+    declareTicket: {
       type: Boolean,
       default: false,
     },
@@ -216,6 +221,11 @@ export default {
       useResolveRules();
     const { bulkEnableIdleRules, bulkDisableIdleRules, bulkRemoveIdleRules } = useIdleRules();
     const { bulkEnableLinkRules, bulkDisableLinkRules, bulkRemoveLinkRules } = useLinkRule();
+    const {
+      bulkEnableDeclareTicketRules,
+      bulkDisableDeclareTicketRules,
+      bulkRemoveDeclareTicketRules,
+    } = useDeclareTicketRule();
     const { bulkRemoveLlms, bulkEnableLlms, bulkDisableLlms } = useLlm();
     const { bulkRemoveMaps } = useMap();
     const { bulkEnableMetaAlarmRules, bulkDisableMetaAlarmRules, bulkRemoveMetaAlarmRules } =
@@ -321,6 +331,15 @@ export default {
           enable: bulkEnableLinkRules,
           disable: bulkDisableLinkRules,
           tooltipPrefix: 'linkRule',
+        };
+      }
+
+      if (props.declareTicket) {
+        return {
+          remove: bulkRemoveDeclareTicketRules,
+          enable: bulkEnableDeclareTicketRules,
+          disable: bulkDisableDeclareTicketRules,
+          tooltipPrefix: 'declareTicket',
         };
       }
 

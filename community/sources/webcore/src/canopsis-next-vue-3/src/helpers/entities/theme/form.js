@@ -159,3 +159,39 @@ export const themeToForm = (theme = {}) => ({
   font_size: theme.font_size ?? THEME_FONT_SIZES.medium,
   colors: themeColorsToForm(theme.colors),
 });
+
+/**
+ * Convert table colors from form to API object.
+ *
+ * @param {ThemeTableColorsForm} [table = {}]
+ * @returns {ThemeTableColors}
+ */
+export const formTableColorsToTheme = (table = {}) => ({
+  ...table,
+  shift_row: table.shift_row?.enabled ?? false,
+  shift_row_color: table.shift_row?.color ?? null,
+  hover_row: table.hover_row?.enabled ?? false,
+  hover_row_color: table.hover_row?.color ?? null,
+});
+
+/**
+ * Convert colors from form to API object.
+ *
+ * @param {ThemeColorsForm} [colors = {}]
+ * @returns {ThemeColors}
+ */
+export const formColorsToTheme = (colors = {}) => ({
+  ...colors,
+  table: formTableColorsToTheme(colors.table),
+});
+
+/**
+ * Convert theme form to API object.
+ *
+ * @param {ThemeForm} form
+ * @returns {Theme}
+ */
+export const formToTheme = form => ({
+  ...form,
+  colors: formColorsToTheme(form.colors),
+});
