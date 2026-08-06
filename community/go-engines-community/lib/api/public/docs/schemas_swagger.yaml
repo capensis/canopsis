@@ -1,12 +1,310 @@
 definitions:
-  author.Author:
+  bulk.DeleteRequestItem:
     properties:
       _id:
         type: string
-      display_name:
+    required:
+    - _id
+    type: object
+  pattern.Condition:
+    properties:
+      type:
         type: string
+      value:
+        type: object
+    type: object
+  pattern.FieldCondition:
+    properties:
+      alias:
+        description: Alias can only be defined for entity infos.
+        type: string
+      cond:
+        $ref: '#/definitions/pattern.Condition'
+      field:
+        type: string
+      field_type:
+        description: 'FieldType is only defined for custom fields, ex: infos.'
+        type: string
+    type: object
+  pbehavior.BulkConnectorCreateRequestItem:
+    properties:
+      color:
+        type: string
+      comment:
+        type: string
+      entities:
+        items:
+          type: string
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      origin:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - comment
+    - entities
+    - name
+    - origin
+    - reason
+    - tstart
+    - tstop
+    - type
+    type: object
+  pbehavior.BulkConnectorDeleteRequestItem:
+    properties:
+      comment:
+        type: string
+      entities:
+        items:
+          type: string
+        type: array
+      origin:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+    required:
+    - comment
+    - entities
+    - origin
+    - tstart
+    - tstop
+    type: object
+  pbehavior.BulkConnectorEditRequestItem:
+    properties:
+      action:
+        enum:
+        - create
+        - delete
+        type: string
+      color:
+        type: string
+      comment:
+        type: string
+      entities:
+        items:
+          type: string
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      origin:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - comment
+    - entities
+    - origin
+    - tstart
+    - tstop
+    type: object
+  pbehavior.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehavior.ExdateRequest'
+        type: array
+      inherited:
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      timezone:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - _id
+    - enabled
+    - entity_pattern
+    - name
+    - reason
+    - tstart
+    - type
+    type: object
+  pbehavior.EditRequest:
+    properties:
+      color:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehavior.ExdateRequest'
+        type: array
+      inherited:
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      timezone:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - enabled
+    - entity_pattern
+    - name
+    - reason
+    - tstart
+    - type
+    type: object
+  pbehavior.ExdateRequest:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+      type:
+        type: string
+    required:
+    - begin
+    - end
+    - type
+    type: object
+  pbehavior.ExdateResponse:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+      type:
+        $ref: '#/definitions/response.Reference'
+    type: object
+  pbehavior.PatchRequest:
+    properties:
+      color:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehavior.ExdateRequest'
+        type: array
+      inherited:
+        type: boolean
       name:
         type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      timezone:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    type: object
+  pbehavior.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/response.Reference'
+      color:
+        type: string
+      created:
+        type: integer
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exceptions:
+        items:
+          $ref: '#/definitions/response.Reference'
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehavior.ExdateResponse'
+        type: array
+      inherited:
+        type: boolean
+      name:
+        type: string
+      origin:
+        type: string
+      origin_comment:
+        type: string
+      reason:
+        $ref: '#/definitions/response.Reference'
+      rrule:
+        type: string
+      timezone:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/response.Reference'
+      updated:
+        type: integer
     type: object
   pbehaviorreason.EditRequest:
     properties:
@@ -25,7 +323,7 @@ definitions:
       _id:
         type: string
       author:
-        $ref: '#/definitions/author.Author'
+        $ref: '#/definitions/response.Reference'
       created:
         type: integer
       description:
@@ -71,7 +369,7 @@ definitions:
       _id:
         type: string
       author:
-        $ref: '#/definitions/author.Author'
+        $ref: '#/definitions/response.Reference'
       color:
         type: string
       created:
@@ -80,9 +378,6 @@ definitions:
         type: boolean
       description:
         type: string
-      hidden:
-        description: Hidden is used in API to hide documents from the list response
-        type: boolean
       icon_name:
         type: string
       name:
@@ -123,6 +418,13 @@ definitions:
     - name
     - priority
     - type
+    type: object
+  response.Reference:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
     type: object
 info:
   contact: {}

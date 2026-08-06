@@ -1,7 +1,10 @@
 package api
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	ut "github.com/go-playground/universal-translator"
@@ -43,9 +46,16 @@ func registerTagValidations(v *validator.Validate) error {
 	return nil
 }
 
-// todo
 func registerStructValidations(
 	v *validator.Validate,
 	secConfig libsecurity.Config,
 ) {
+	v.RegisterCustomTypeFunc(validation.ValidateCpsTimeType, datetime.CpsTime{})
+
+	v.RegisterStructValidation(exdate.ValidateExdateRequest, exdate.Request{})
+
+	v.RegisterStructValidation(pbehavior.ValidateEditRequest, pbehavior.EditRequest{})
+	v.RegisterStructValidation(pbehavior.ValidatePatchRequest, pbehavior.PatchRequest{})
+	v.RegisterStructValidation(pbehavior.ValidateConnectorCreateRequest, pbehavior.BulkConnectorCreateRequestItem{})
+	v.RegisterStructValidation(pbehavior.ValidateConnectorEditRequest, pbehavior.BulkConnectorEditRequestItem{})
 }

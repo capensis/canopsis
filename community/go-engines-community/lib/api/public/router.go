@@ -6,19 +6,22 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/binding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/crud"
 	publicdocs "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/middleware"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehaviorreason"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehaviortype"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/response"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -26,8 +29,11 @@ import (
 	"github.com/rs/zerolog"
 )
 
-const Version = "v5"
-const Prefix = "/api/" + Version
+const (
+	Version    = "v5"
+	Prefix     = "/api/" + Version
+	bulkPrefix = "/bulk"
+)
 
 //go:embed docs/*.yaml
 var docsFile embed.FS
@@ -44,7 +50,6 @@ type Services struct {
 	AuthProviders          []security.HttpProvider
 	APIConfigProvider      config.ApiConfigProvider
 	TimezoneConfigProvider config.TimezoneConfigProvider
-	AuthorProvider         author.Provider
 }
 
 func (s *Services) authorize(obj, act string) func(next http.Handler) http.Handler {
@@ -86,7 +91,7 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 			}
 			{
 				pbhTypeAPI := pbehaviortype.NewAPI(
-					pbehaviortype.NewStore(s.PrimaryDbClient, s.AuthorProvider),
+					pbehaviortype.NewStore(s.PrimaryDbClient),
 					s.Binder,
 					s.Responder,
 				)
@@ -94,11 +99,44 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 			}
 			{
 				pbhReasonAPI := pbehaviorreason.NewAPI(
-					pbehaviorreason.NewStore(s.PrimaryDbClient, s.AuthorProvider),
+					pbehaviorreason.NewStore(s.PrimaryDbClient),
 					s.Binder,
 					s.Responder,
 				)
 				registerCRUDRoutes(r, "/pbehavior-reasons", apisecurity.ObjPbehaviorReason, pbhReasonAPI, s)
+			}
+			{
+				pbhAPI := pbehavior.NewAPI(
+					pbehavior.NewStore(s.PrimaryDbClient, s.TimezoneConfigProvider, patternfields.NewTransformer(s.PrimaryDbClient)),
+					s.Binder,
+					s.Responder,
+					amqp.NewPooledPublisher(s.AMQPPubChPool),
+					json.NewEncoder(),
+					json.NewDecoder(),
+					s.Logger,
+				)
+				permObj := apisecurity.ObjPbehavior
+
+				registerBulkRoutes(r, "/pbehaviors", permObj, pbhAPI, s)
+
+				r.With(authorize(permObj, model.PermissionUpdate)).
+					With(middleware.SetAuthor(s.Responder)).
+					Patch("/pbehaviors/{id}", pbhAPI.Patch)
+
+				r.Route(bulkPrefix+"/connector-pbehaviors", func(r chi.Router) {
+					r.With(authorize(permObj, model.PermissionCreate)).
+						With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
+						Post("/", pbhAPI.BulkConnectorCreate)
+
+					r.With(authorize(permObj, model.PermissionDelete)).
+						With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
+						Delete("/", pbhAPI.BulkConnectorDelete)
+
+					r.With(authorize(permObj, model.PermissionCreate)).
+						With(authorize(permObj, model.PermissionDelete)).
+						With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
+						Put("/", pbhAPI.BulkConnectorEdit)
+				})
 			}
 		})
 	})
@@ -113,21 +151,57 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 	return r, nil
 }
 
-func registerCRUDRoutes(r chi.Router, pattern, permObj string, a crud.API, s Services) {
+// registerCRUDRoutes registers CRUD routes for the pattern.
+func registerCRUDRoutes(
+	r chi.Router,
+	pattern, permObj string,
+	a crud.API,
+	s Services,
+) {
 	authorize := s.authorize
 	r.Route(pattern, func(r chi.Router) {
 		r.With(authorize(permObj, model.PermissionRead)).
 			Get("/", a.List)
+
 		r.With(authorize(permObj, model.PermissionRead)).
 			Get("/{id}", a.Get)
+
 		r.With(authorize(permObj, model.PermissionCreate)).
 			With(middleware.SetAuthor(s.Responder)).
 			Post("/", a.Create)
+
 		r.With(authorize(permObj, model.PermissionUpdate)).
 			With(middleware.SetAuthor(s.Responder)).
 			Put("/{id}", a.Update)
+
 		r.With(authorize(permObj, model.PermissionDelete)).
 			Delete("/{id}", a.Delete)
+	})
+}
+
+// registerBulkRoutes registers bulk routes for the pattern.
+func registerBulkRoutes(
+	r chi.Router,
+	pattern, permObj string,
+	a bulk.API,
+	s Services,
+) {
+	registerCRUDRoutes(r, pattern, permObj, a, s)
+
+	authorize := s.authorize
+	pattern = bulkPrefix + pattern
+	r.Route(pattern, func(r chi.Router) {
+		r.With(authorize(permObj, model.PermissionCreate)).
+			With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
+			Post("/", a.BulkCreate)
+
+		r.With(authorize(permObj, model.PermissionUpdate)).
+			With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
+			Put("/", a.BulkUpdate)
+
+		r.With(authorize(permObj, model.PermissionDelete)).
+			With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, false)).
+			Delete("/", a.BulkDelete)
 	})
 }
 

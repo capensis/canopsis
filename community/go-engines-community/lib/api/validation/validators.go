@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -47,4 +48,20 @@ func ValidateColorOrEmpty(fl validator.FieldLevel) bool {
 		return true
 	}
 	return validator.New().Var(v, "iscolor") == nil
+}
+
+// ValidateCpsTimeType implements CustomTypeFunc and returns value to validate.
+func ValidateCpsTimeType(field reflect.Value) any {
+	if field.Type() == reflect.TypeFor[datetime.CpsTime]() {
+		if t, ok := field.Interface().(datetime.CpsTime); ok {
+			val := t.Time
+			if val.IsZero() {
+				return nil
+			}
+
+			return val
+		}
+	}
+
+	return nil
 }
