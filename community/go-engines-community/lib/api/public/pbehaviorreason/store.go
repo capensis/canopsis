@@ -3,7 +3,6 @@ package pbehaviorreason
 import (
 	"context"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
@@ -23,42 +22,38 @@ import (
 
 type Store crud.Store[ListRequest, EditRequest, EditRequest, Response]
 
-func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
+func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
-		dbClient:              dbClient,
-		dbCollection:          dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
-		dbPbhCollection:       dbClient.Collection(mongo.PbehaviorMongoCollection),
-		dbScenarioCollection:  dbClient.Collection(mongo.ScenarioCollection),
-		authorProvider:        authorProvider,
-		defaultSearchByFields: []string{"_id", "name", "description"},
-		dupErrorParser:        validation.NewDuplicateErrorParser(),
+		dbClient:             dbClient,
+		dbCollection:         dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
+		dbPbhCollection:      dbClient.Collection(mongo.PbehaviorMongoCollection),
+		dbScenarioCollection: dbClient.Collection(mongo.ScenarioCollection),
+		dupErrorParser:       validation.NewDuplicateErrorParser(),
 	}
 }
 
 type store struct {
-	dbClient              mongo.DbClient
-	dbCollection          mongo.DbCollection
-	dbPbhCollection       mongo.DbCollection
-	dbScenarioCollection  mongo.DbCollection
-	authorProvider        author.Provider
-	defaultSearchByFields []string
-	dupErrorParser        validation.DuplicateErrorParser
+	dbClient             mongo.DbClient
+	dbCollection         mongo.DbCollection
+	dbPbhCollection      mongo.DbCollection
+	dbScenarioCollection mongo.DbCollection
+	dupErrorParser       validation.DuplicateErrorParser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (pagination.ListResponse[Response], error) {
 	beforeLimit := []bson.M{
 		{"$match": bson.M{"hidden": bson.M{"$in": bson.A{false, nil}}}},
 	}
-	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
-	if len(filter) > 0 {
-		beforeLimit = append(beforeLimit, bson.M{"$match": filter})
+
+	if r.Author != "" {
+		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"author": r.Author}})
 	}
 
-	afterLimit := s.authorProvider.Pipeline()
+	afterLimit := mongoquery.AuthorPipeline()
 	pipeline := pagination.CreateAggregationPipeline(
 		r.Query,
 		beforeLimit,
-		mongoquery.GetSortQuery(r.SortBy, r.Sort),
+		mongoquery.SortQuery(r.SortBy, r.Sort),
 		afterLimit,
 	)
 	opts := options.Aggregate().SetCollation(&options.Collation{Locale: "en"})
@@ -104,7 +99,7 @@ func (s *store) GetByID(ctx context.Context, id string) (Response, error) {
 		"_id":    id,
 		"hidden": bson.M{"$in": bson.A{false, nil}},
 	}}}
-	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+	pipeline = append(pipeline, mongoquery.AuthorPipeline()...)
 
 	return db.AggregateOne[Response](ctx, s.dbCollection, pipeline)
 }

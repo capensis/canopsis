@@ -1,12 +1,10 @@
 package validation
 
 import (
-	"reflect"
 	"regexp"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/go-playground/validator/v10"
@@ -31,22 +29,6 @@ var timeFormats = map[string]string{
 }
 
 var tableNameRegex = regexp.MustCompile(tableNameRegexString)
-
-// ValidateCpsTimeType implements CustomTypeFunc and returns value to validate.
-func ValidateCpsTimeType(field reflect.Value) any {
-	if field.Type() == reflect.TypeFor[datetime.CpsTime]() {
-		if t, ok := field.Interface().(datetime.CpsTime); ok {
-			val := t.Time
-			if val.IsZero() {
-				return nil
-			}
-
-			return val
-		}
-	}
-
-	return nil
-}
 
 func ValidateID(fl validator.FieldLevel) bool {
 	v := fl.Field().String()

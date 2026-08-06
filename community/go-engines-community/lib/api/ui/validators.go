@@ -64,7 +64,8 @@ func RegisterValidators(secConfig libsecurity.Config, tplExecutor libtemplate.Ex
 		return nil, err
 	}
 
-	v.RegisterCustomTypeFunc(uivalidation.ValidateCpsTimeType, datetime.CpsTime{})
+	v.RegisterCustomTypeFunc(validation.ValidateCpsTimeType, datetime.CpsTime{})
+
 	registerStructValidations(v, secConfig, tplExecutor)
 
 	return trans, nil

@@ -1,18 +1,18 @@
 package pbehaviortype
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/response"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 type ListRequest struct {
 	pagination.Query
-	Search      string   `form:"search"`
-	Sort        string   `form:"sort" binding:"oneoforempty=asc desc"`
-	SortBy      string   `form:"sort_by,default:name" binding:"oneoforempty=name priority created updated"`
-	OnlyDefault bool     `form:"default"`
-	Types       []string `form:"types[]"`
+	Sort    string   `form:"sort" binding:"oneoforempty=asc desc"`
+	SortBy  string   `form:"sort_by,default:name" binding:"oneoforempty=_id name priority created updated"`
+	Author  string   `form:"author"`
+	Default *bool    `form:"default"`
+	Types   []string `form:"type"`
 }
 
 type EditRequest struct {
@@ -35,7 +35,15 @@ type UpdateRequest struct {
 }
 
 type Response struct {
-	pbehavior.Type `bson:",inline"`
-	Author         *author.Author `bson:"author" json:"author"`
-	Default        *bool          `bson:"default,omitempty" json:"default,omitempty"`
+	ID          string              `bson:"_id" json:"_id"`
+	Name        string              `bson:"name" json:"name"`
+	Description string              `bson:"description" json:"description"`
+	Type        string              `bson:"type" json:"type"`
+	Priority    int64               `bson:"priority" json:"priority"`
+	IconName    string              `bson:"icon_name" json:"icon_name"`
+	Color       string              `bson:"color" json:"color"`
+	Created     *datetime.CpsTime   `bson:"created" json:"created" swaggertype:"integer"`
+	Updated     *datetime.CpsTime   `bson:"updated" json:"updated" swaggertype:"integer"`
+	Author      *response.Reference `bson:"author" json:"author"`
+	Default     *bool               `bson:"default" json:"default"`
 }
