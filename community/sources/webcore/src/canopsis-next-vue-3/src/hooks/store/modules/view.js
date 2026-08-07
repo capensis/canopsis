@@ -9,11 +9,7 @@ import { useViewStore } from '@/stores/modules/view';
  */
 export const useView = () => {
   const viewStore = useViewStore();
-  const {
-    items,
-    meta,
-    pending,
-  } = storeToRefs(viewStore);
+  const { items, meta, pending } = storeToRefs(viewStore);
 
   return {
     viewGroups: items,
@@ -40,6 +36,12 @@ export const useView = () => {
     copyView: viewStore.copyView,
     exportViewWithoutStore: viewStore.exportViewWithoutStore,
     importViewWithoutStore: viewStore.importViewWithoutStore,
+    fetchViewTab: viewStore.fetchViewTab,
+    createViewTab: viewStore.createViewTab,
+    updateViewTab: viewStore.updateViewTab,
+    copyViewTab: viewStore.copyViewTab,
+    removeViewTab: viewStore.removeViewTab,
+    updateViewTabPositions: viewStore.updateViewTabPositions,
     fetchView: viewStore.fetchView,
   };
 };

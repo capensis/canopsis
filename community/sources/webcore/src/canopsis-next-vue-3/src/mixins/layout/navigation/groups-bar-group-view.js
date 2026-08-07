@@ -1,6 +1,4 @@
-import { CRUD_ACTIONS, ROUTES_NAMES, VIEW_USER_PERMISSIONS_NAMES } from '@/constants';
-
-import { checkUserAccess } from '@/helpers/permission';
+import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 import { entitiesViewMixin } from '@/mixins/entities/view';
@@ -39,11 +37,11 @@ export default {
     },
 
     hasUpdateViewAccess() {
-      return this.checkViewAccess(CRUD_ACTIONS.update) && this.hasUpdateAnyViewAccess;
+      return this.checkUpdateAccess(this.view._id) && this.hasUpdateAnyViewAccess;
     },
 
     hasDeleteViewAccess() {
-      return this.checkViewAccess(CRUD_ACTIONS.delete) && this.hasUpdateAnyViewAccess;
+      return this.checkDeleteAccess(this.view._id) && this.hasDeleteAnyViewAccess;
     },
 
     hasViewEditButtonAccess() {
@@ -51,19 +49,50 @@ export default {
     },
   },
   methods: {
-    checkViewAccess(action) {
-      return checkUserAccess(
-        this.currentUserViewPermissionsByViewId[this.view._id]?.[VIEW_USER_PERMISSIONS_NAMES.actions],
-        action,
-      );
-    },
-
     showEditViewModal() {
-      // TODO: Enable after view modals are migrated.
+      this.$modals.show({
+        name: MODALS.createView,
+        config: {
+          title: this.$t('modals.view.edit.title'),
+          view: this.view,
+          deletable: this.view.is_private || this.hasDeleteViewAccess,
+          submittable: this.view.is_private || this.hasUpdateViewAccess,
+          action: async (data) => {
+            await this.updateViewWithPopup({ id: this.view._id, data });
+
+            return this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+          },
+          remove: async () => {
+            await this.removeViewWithPopup({ id: this.view._id });
+            await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+
+            return this.redirectToHomeIfCurrentRoute();
+          },
+        },
+      });
     },
 
     showDuplicateViewModal() {
-      // TODO: Enable after view modals are migrated.
+      this.$modals.show({
+        name: MODALS.createView,
+        config: {
+          title: this.$t('modals.view.duplicate.title', { viewTitle: this.view.title }),
+          duplicate: true,
+          duplicableToAll: this.hasCreateAnyViewAccess,
+          view: {
+            ...this.view,
+
+            name: '',
+            title: '',
+          },
+          submittable: this.view.is_private || this.hasCreateAnyViewAccess,
+          action: async (data) => {
+            await this.copyViewWithPopup({ id: this.view._id, data });
+
+            return this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+          },
+        },
+      });
     },
   },
 };

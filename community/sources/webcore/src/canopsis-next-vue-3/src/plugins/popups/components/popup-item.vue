@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY, POPUP_TICK_DELAY } from '@/config';

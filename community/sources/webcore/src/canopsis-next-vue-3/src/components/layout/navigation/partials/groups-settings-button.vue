@@ -87,6 +87,8 @@ edit
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 import { layoutNavigationEditingModeMixin } from '@/mixins/layout/navigation/editing-mode';
 import { entitiesViewMixin } from '@/mixins/entities/view';
@@ -141,12 +143,32 @@ export default {
   },
 
   methods: {
+    async createViewModalCallback(data) {
+      await this.createViewWithPopup({ data });
+
+      return this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+    },
+
     showCreateViewModal() {
-      // TODO: Enable after view modals are migrated.
+      this.$modals.show({
+        name: MODALS.createView,
+        config: {
+          action: this.createViewModalCallback,
+        },
+      });
     },
 
     showCreatePrivateViewModal() {
-      // TODO: Enable after private view modals are migrated.
+      this.$modals.show({
+        name: MODALS.createView,
+        config: {
+          view: {
+            is_private: true,
+          },
+          title: this.$t('modals.view.create.privateTitle'),
+          action: this.createViewModalCallback,
+        },
+      });
     },
   },
 };

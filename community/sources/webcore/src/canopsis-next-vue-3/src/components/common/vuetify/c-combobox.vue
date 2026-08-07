@@ -1,5 +1,5 @@
 <script setup>
-import { computed, useAttrs } from 'vue';
+import { computed, ref, useAttrs } from 'vue';
 
 import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
 
@@ -8,6 +8,8 @@ const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
 const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
+const menuOpened = ref(false);
+const pendingBlurEvent = ref(null);
 
 const comboboxValue = computed({
   get: () => (inputValue.value === '' ? null : inputValue.value),
@@ -15,6 +17,25 @@ const comboboxValue = computed({
     inputValue.value = value ?? '';
   },
 });
+
+const handleBlur = (event) => {
+  if (menuOpened.value) {
+    pendingBlurEvent.value = event;
+
+    return;
+  }
+
+  onBlur(event);
+};
+
+const handleMenuUpdate = (opened) => {
+  menuOpened.value = opened;
+
+  if (!opened && pendingBlurEvent.value) {
+    onBlur(pendingBlurEvent.value);
+    pendingBlurEvent.value = null;
+  }
+};
 </script>
 
 <template>
@@ -24,7 +45,8 @@ const comboboxValue = computed({
     :name="inputName"
     :error-messages="errorMessages"
     class="c-field c-combobox"
-    @blur="onBlur"
+    @blur="handleBlur"
+    @update:menu="handleMenuUpdate"
   >
     <template v-if="label" #label>
       <span v-if="required && label" class="text-error"> * </span>

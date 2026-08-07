@@ -1,3 +1,9 @@
+import { cloneDeep } from 'lodash';
+
+import { DEFAULT_WIDGET_GRID_PARAMETERS, WIDGET_GRID_SIZES_KEYS, WIDGET_TYPES } from '@/constants';
+
+import { textWidgetParametersToForm } from './forms/text';
+
 /**
  * @typedef {
  *   'AlarmsList' |
@@ -140,6 +146,23 @@
  */
 
 /**
+ * Convert widget parameters to form
+ *
+ * @param {WidgetType} type
+ * @param {WidgetParameters} [parameters = {}]
+ * @return {WidgetParametersForm}
+ */
+export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
+  const widgetsMap = {
+    [WIDGET_TYPES.text]: textWidgetParametersToForm,
+  };
+
+  const preparer = widgetsMap[type];
+
+  return preparer ? preparer(parameters) : cloneDeep(parameters);
+};
+
+/**
  * Build minimal alarm-list widget config used by pattern preview modals.
  *
  * @returns {Object}
@@ -152,3 +175,65 @@ export const generatePreparedDefaultAlarmListWidget = () => ({});
  * @returns {Object}
  */
 export const generatePreparedDefaultContextWidget = () => ({});
+
+/**
+ * Get default widget grid parameters.
+ *
+ * @return {WidgetGridParameters}
+ */
+export const getDefaultGridParameters = () =>
+  Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
+    acc[size] = { ...DEFAULT_WIDGET_GRID_PARAMETERS };
+
+    return acc;
+  }, {});
+
+/**
+ * Get empty widget by widget type.
+ *
+ * @param {WidgetType} type
+ * @return {EmptyWidget}
+ */
+export const getEmptyWidgetByType = type => ({
+  type,
+  title: '',
+  parameters: {},
+  grid_parameters: getDefaultGridParameters(),
+});
+
+/**
+ * Convert widget to form object
+ *
+ * @param {Widget} [widget = {}]
+ * @returns {WidgetForm}
+ */
+export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
+  type: widget.type,
+  title: widget.title ?? '',
+  filters: widget.filters?.length ? [...widget.filters] : [],
+  parameters: widgetParametersToForm(widget),
+  grid_parameters: widget.grid_parameters
+    ? cloneDeep(widget.grid_parameters)
+    : getDefaultGridParameters(),
+});
+
+/**
+ * Convert widget parameters to payload
+ *
+ * @param {WidgetType} type
+ * @param {WidgetParametersForm} parameters
+ * @return {WidgetParameters}
+ */
+export const formToWidgetParameters = ({ parameters }) => cloneDeep(parameters);
+
+/**
+ * Convert form object to widget
+ *
+ * @param {WidgetForm} form
+ * @returns {Widget}
+ */
+export const formToWidget = form => ({
+  ...form,
+
+  parameters: formToWidgetParameters(form),
+});

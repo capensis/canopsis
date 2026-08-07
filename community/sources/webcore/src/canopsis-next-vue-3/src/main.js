@@ -36,6 +36,7 @@ import router from './router';
 import { i18n } from './i18n';
 import vuetify, { registerVuetifyComponentAliases } from './plugins/vuetify';
 import { customIconsRegistry } from './plugins/vuetify/icons';
+import { useSidebarStore } from './stores/modules/sidebar';
 
 import modalsPlugin from './plugins/modals';
 import popupsPlugin from './plugins/popups';
@@ -55,6 +56,11 @@ vuetifyGlobalProperties.icons = {
 };
 app.config.globalProperties.$vuetify = vuetifyGlobalProperties;
 app.config.globalProperties.$constants = constants;
+app.config.globalProperties.$sidebar = {
+  show: payload => useSidebarStore().show(payload),
+  hide: payload => useSidebarStore().hide(payload),
+  updateConfig: payload => useSidebarStore().updateConfig(payload),
+};
 registerVuetifyComponentAliases(app);
 app.use(i18n);
 app.use(veeValidatePlugin, { i18n });

@@ -32,6 +32,7 @@ export { default as CCardIteratorForm } from './card-iterator/c-card-iterator-fo
 export { default as CCardIteratorItem } from './card-iterator/c-card-iterator-item.vue';
 export { default as TextEditorField } from './text-editor-field.vue';
 export { default as ViewSelector } from './view-selector.vue';
+export { default as WindowSizeField } from './window-size.vue';
 export * from './color';
 export * from './date-picker';
 export * from './date-time-picker';

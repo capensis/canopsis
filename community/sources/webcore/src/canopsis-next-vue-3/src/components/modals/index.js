@@ -50,6 +50,13 @@ export default {
     () => import('./common/text-editor-with-template.vue'),
   ),
   [MODALS.textFieldEditor]: defineAsyncComponent(() => import('./common/text-field-editor.vue')),
+  [MODALS.createView]: defineAsyncComponent(() => import('./view/create-view.vue')),
+  [MODALS.selectView]: defineAsyncComponent(() => import('./view/select-view.vue')),
+  [MODALS.shareView]: defineAsyncComponent(() => import('./view/share-view.vue')),
+  [MODALS.createWidget]: defineAsyncComponent(() => import('./view/create-widget.vue')),
+  [MODALS.createShareToken]: defineAsyncComponent(
+    () => import('./share-token/create-share-token.vue'),
+  ),
   [MODALS.createMaintenance]: defineAsyncComponent(
     () => import('./maintenance/create-maintenance.vue'),
   ),
