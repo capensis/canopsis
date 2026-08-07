@@ -23,6 +23,15 @@
         </v-list-item-title>
       </v-list-item>
 
+      <v-list-item
+        v-if="hasSettingsSidebar"
+        @click="showSelectViewTabModal"
+      >
+        <v-list-item-title>
+          {{ $t('common.duplicate') }}
+        </v-list-item-title>
+      </v-list-item>
+
       <v-list-item @click="copyWidgetId">
         <v-list-item-title>
           {{ $t('view.copyWidgetId') }}
@@ -44,13 +53,23 @@ import { mapActions } from 'pinia';
 import { MODALS, SIDE_BARS_BY_WIDGET_TYPES, WIDGET_TYPES } from '@/constants';
 
 import { writeTextToClipboard } from '@/helpers/clipboard';
+import { calculateNewWidgetGridParametersY } from '@/helpers/entities/widget/grid';
+import { setSeveralFields } from '@/helpers/immutable';
 
 import { activeViewMixin } from '@/mixins/active-view';
+import { viewRouterMixin } from '@/mixins/view/router';
+import { useViewStore } from '@/stores/modules/view';
 import { useWidgetStore } from '@/stores/modules/widget';
+
+const MIGRATED_SETTINGS_WIDGET_TYPES = [
+  WIDGET_TYPES.text,
+  WIDGET_TYPES.counter,
+];
 
 export default {
   mixins: [
     activeViewMixin,
+    viewRouterMixin,
   ],
   props: {
     widget: {
@@ -64,12 +83,15 @@ export default {
   },
   computed: {
     hasSettingsSidebar() {
-      return this.widget.type === WIDGET_TYPES.text;
+      return MIGRATED_SETTINGS_WIDGET_TYPES.includes(this.widget.type);
     },
   },
   methods: {
     ...mapActions(useWidgetStore, {
       removeWidget: 'remove',
+    }),
+    ...mapActions(useViewStore, {
+      fetchViewTab: 'fetchViewTab',
     }),
 
     showSettings() {
@@ -80,6 +102,47 @@ export default {
             ...this.widget,
             tab: this.tab._id,
           },
+        },
+      });
+    },
+
+    /**
+     * Copy a widget parameters and open corresponding settings sidebar.
+     *
+     * @param {Object} payload
+     * @param {string} payload.viewId
+     * @param {string} payload.tabId
+     * @returns {Promise<void>}
+     */
+    async cloneWidget({ viewId, tabId }) {
+      const tab = await this.fetchViewTab({ id: tabId });
+      const { mobile, tablet, desktop } = calculateNewWidgetGridParametersY(tab.widgets);
+      const newWidget = setSeveralFields(this.widget, {
+        tab: tabId,
+        'grid_parameters.mobile.y': mobile,
+        'grid_parameters.tablet.y': tablet,
+        'grid_parameters.desktop.y': desktop,
+      });
+
+      await this.redirectToSelectedViewAndTab({ viewId, tabId });
+
+      this.$sidebar.show({
+        name: SIDE_BARS_BY_WIDGET_TYPES[newWidget.type],
+        config: {
+          duplicate: true,
+          widget: newWidget,
+        },
+      });
+    },
+
+    /**
+     * Show select view tab modal window.
+     */
+    showSelectViewTabModal() {
+      this.$modals.show({
+        name: MODALS.selectViewTab,
+        config: {
+          action: ({ tabId, viewId }) => this.cloneWidget({ tabId, viewId }),
         },
       });
     },

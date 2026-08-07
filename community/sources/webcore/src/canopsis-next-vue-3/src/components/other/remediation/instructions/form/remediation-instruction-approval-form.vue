@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <c-layout column>
     <c-enabled-field
       v-model="needApprove"
       :label="$t('remediation.instruction.requestApproval')"
@@ -7,10 +7,10 @@
       hide-details
     />
     <template v-if="needApprove">
-      <v-layout v-if="disabled">
+      <c-layout v-if="disabled">
         <span class="text-subtitle-1 grey--text my-4"> {{ assignLabel }}: {{ assignValue }} </span>
-      </v-layout>
-      <v-layout v-else align-center>
+      </c-layout>
+      <c-layout v-else align="center">
         <v-flex xs6>
           <remediation-instruction-approval-type-field
             v-model="typeField"
@@ -36,7 +36,7 @@
             return-object
           />
         </v-flex>
-      </v-layout>
+      </c-layout>
       <v-textarea
         v-model="commentField"
         v-validate="'required'"
@@ -46,7 +46,7 @@
         name="comment"
       />
     </template>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>

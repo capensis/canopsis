@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="my-2" wrap>
+  <c-layout class="my-2" wrap>
     <v-flex class="pb-2" xs12>
       <span class="text-subtitle-1 font-weight-bold">
         {{ $t('remediation.instruction.job', 2) }}:
@@ -8,7 +8,7 @@
     <c-instruction-job-chip v-for="job in jobs" :key="job._id" class="mr-2">
       {{ job.name }}
     </c-instruction-job-chip>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <v-layout>
+  <c-layout>
     <v-flex xs8>
       <c-number-field
         :value="duration.value"
@@ -27,7 +27,7 @@
         @update:model-value="updateDurationField('unit', $event)"
       />
     </v-flex>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>

@@ -24,6 +24,7 @@ import * as RequestComponents from '@/components/common/request';
 import * as SearchComponents from '@/components/common/search';
 import * as TableComponents from '@/components/common/table';
 import * as TooltipComponents from '@/components/common/tooltip';
+import * as TreeviewComponents from '@/components/common/treeview';
 import * as VuetifyCommonComponents from '@/components/common/vuetify';
 import * as FormFieldComponents from '@/components/forms/fields';
 import CLayout from '@/components/common/layout/c-layout.vue';
@@ -141,6 +142,10 @@ Object.entries(TableComponents).forEach(([name, component]) => {
 });
 
 Object.entries(TooltipComponents).forEach(([name, component]) => {
+  app.component(name, component);
+});
+
+Object.entries(TreeviewComponents).forEach(([name, component]) => {
   app.component(name, component);
 });
 

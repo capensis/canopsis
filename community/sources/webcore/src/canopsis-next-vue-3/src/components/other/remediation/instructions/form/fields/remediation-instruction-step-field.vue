@@ -5,7 +5,7 @@
     @remove="remove"
   >
     <template #header="">
-      <v-layout class="mt-3">
+      <c-layout class="mt-3">
         <v-flex xs9>
           <v-text-field
             v-model="nameField"
@@ -25,7 +25,7 @@
             readonly
           />
         </v-flex>
-      </v-layout>
+      </c-layout>
     </template>
     <c-form-block>
       <c-form-block-row :label="$t('common.workflow')" indented>

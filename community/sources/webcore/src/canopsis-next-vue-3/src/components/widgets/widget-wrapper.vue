@@ -16,8 +16,9 @@
       <v-divider />
     </template>
 
-    <v-card-text v-if="isTextWidget" class="pa-0 position-relative">
-      <text-widget
+    <v-card-text v-if="component" class="pa-0 position-relative">
+      <component
+        :is="component"
         :widget="widget"
         :tab-id="tab._id"
         :visible="visible"
@@ -58,6 +59,7 @@ import { WIDGET_GRID_ROW_HEIGHT, WIDGET_TYPES } from '@/constants';
 
 import { activeViewMixin } from '@/mixins/active-view';
 
+import CounterWidget from './counter/counter.vue';
 import TextWidget from './text/text.vue';
 
 export default {
@@ -67,6 +69,7 @@ export default {
     };
   },
   components: {
+    CounterWidget,
     TextWidget,
   },
   mixins: [activeViewMixin],
@@ -89,8 +92,11 @@ export default {
       return this.widget.title || this.$t('common.widget');
     },
 
-    isTextWidget() {
-      return this.widget.type === WIDGET_TYPES.text;
+    component() {
+      return {
+        [WIDGET_TYPES.text]: TextWidget,
+        [WIDGET_TYPES.counter]: CounterWidget,
+      }[this.widget.type];
     },
 
     /**
