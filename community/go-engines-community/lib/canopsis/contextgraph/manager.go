@@ -118,8 +118,8 @@ func (m *manager) LoadServices(ctx context.Context) error {
 			return nil, err
 		}
 
-		servicesByComponentInfos := make(map[string]map[string]EntityService)
-		servicesByInfos := make(map[string]map[string]EntityService)
+		servicesByComponentInfos := make(map[string]map[string]EntityService, len(m.servicesByComponentInfos))
+		servicesByInfos := make(map[string]map[string]EntityService, len(m.servicesByInfos))
 		servicesMap := make(map[string]EntityService, len(services))
 
 		for _, service := range services {

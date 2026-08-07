@@ -16,7 +16,7 @@ type ProcessorResult struct {
 }
 
 type Processor interface {
-	Process(ctx context.Context, event *types.Event) (ProcessorResult, error)
+	Process(context.Context, *types.Event) (ProcessorResult, error)
 }
 
 type ProcessorContainer interface {

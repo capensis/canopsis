@@ -179,7 +179,7 @@ func (p *messageProcessor) postProcessProcessorResult(
 			false,
 			amqp.Publishing{
 				Body:         body,
-				ContentType:  "application/json",
+				ContentType:  canopsis.JsonContentType,
 				DeliveryMode: amqp.Persistent,
 			},
 		)
@@ -212,7 +212,7 @@ func (p *messageProcessor) postProcessProcessorResult(
 			false,
 			amqp.Publishing{
 				Body:         body,
-				ContentType:  "application/json",
+				ContentType:  canopsis.JsonContentType,
 				DeliveryMode: amqp.Persistent,
 			},
 		)
