@@ -1,6 +1,6 @@
 <template>
-  <v-layout column>
-    <v-layout align-center>
+  <c-layout column>
+    <c-layout align="center">
       <v-flex class="pr-2" xs1>
         <c-draggable-step-number
           :disabled="disabled"
@@ -26,11 +26,11 @@
         />
       </v-flex>
       <v-flex xs1>
-        <v-layout justify-center>
+        <c-layout justify="center">
           <c-action-btn v-if="!disabled" type="delete" @click="$emit('remove')" />
-        </v-layout>
+        </c-layout>
       </v-flex>
-    </v-layout>
+    </c-layout>
     <v-flex offset-xs1 xs11>
       <c-workflow-field
         v-model="stopOnFailField"
@@ -39,7 +39,7 @@
         :continue-label="$t('remediation.instruction.remainingJob')"
       />
     </v-flex>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>

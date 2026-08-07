@@ -49,9 +49,19 @@ export default {
   [MODALS.textEditorWithTemplate]: defineAsyncComponent(
     () => import('./common/text-editor-with-template.vue'),
   ),
+  [MODALS.infoPopupSetting]: defineAsyncComponent(
+    () => import('./alarm/info-popup-setting/info-popup-setting.vue'),
+  ),
+  [MODALS.addInfoPopup]: defineAsyncComponent(
+    () => import('./alarm/info-popup-setting/add-info-popup.vue'),
+  ),
   [MODALS.textFieldEditor]: defineAsyncComponent(() => import('./common/text-field-editor.vue')),
+  [MODALS.createFilter]: defineAsyncComponent(() => import('./common/create-filter.vue')),
+  [MODALS.variablesHelp]: defineAsyncComponent(() => import('./common/variables-help.vue')),
   [MODALS.createView]: defineAsyncComponent(() => import('./view/create-view.vue')),
+  [MODALS.createGroup]: defineAsyncComponent(() => import('./view/create-group.vue')),
   [MODALS.selectView]: defineAsyncComponent(() => import('./view/select-view.vue')),
+  [MODALS.selectViewTab]: defineAsyncComponent(() => import('./view/select-view-tab.vue')),
   [MODALS.shareView]: defineAsyncComponent(() => import('./view/share-view.vue')),
   [MODALS.createWidget]: defineAsyncComponent(() => import('./view/create-widget.vue')),
   [MODALS.createShareToken]: defineAsyncComponent(

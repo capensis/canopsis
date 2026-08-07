@@ -1,7 +1,12 @@
 <template>
   <div :class="{ 'c-card-iterator-item--small': small }" class="c-card-iterator-item">
-    <v-layout class="gap-2" align-center justify-space-between>
-      <v-layout
+    <c-layout
+      class="c-card-iterator-item__row"
+      gap="2"
+      align="center"
+      justify="space-between"
+    >
+      <c-layout
         :class="{ 'c-card-iterator-item__actions--draggable-only': !$slots.default }"
         class="c-card-iterator-item__actions"
       >
@@ -13,7 +18,7 @@
           {{ itemNumber }}
         </c-draggable-step-number>
         <c-expand-btn v-if="$slots.default" v-model="expanded" />
-      </v-layout>
+      </c-layout>
       <slot name="header" />
       <c-action-btn
         v-if="removable"
@@ -24,16 +29,16 @@
         type="delete"
         @click="$emit('remove')"
       />
-    </v-layout>
+    </c-layout>
     <v-expand-transition v-if="$slots.default" mode="out-in">
-      <v-layout
+      <c-layout
         v-show="expanded"
         :class="{ 'c-card-iterator-item__content--offset': offsetLeft }"
         class="c-card-iterator-item__content"
         column
       >
         <slot />
-      </v-layout>
+      </c-layout>
     </v-expand-transition>
   </div>
 </template>
@@ -88,6 +93,25 @@ export default {
   --actions-max-width: 100px;
   --actions-min-width: 60px;
   --one-action-width: 26px;
+
+  &--small {
+    .remove-card-btn {
+      width: 24px;
+      min-width: 24px;
+      height: 24px;
+
+      .v-btn {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        padding: 0;
+      }
+
+      .v-icon {
+        font-size: 16px;
+      }
+    }
+  }
 
   &__actions {
     max-width: var(--actions-max-width);

@@ -4,6 +4,7 @@ import { isEqual } from 'lodash';
 import { MODALS } from '@/constants';
 
 import { formToWidget, widgetToForm } from '@/helpers/entities/widget/form';
+import { uid } from '@/helpers/uid';
 
 import { useForm } from '@/hooks/form';
 import { useModals } from '@/hooks/modals';
@@ -45,6 +46,7 @@ export const useWidgetSettings = ({ sidebar, localWidget = false } = {}) => {
   const originalForm = ref(widgetToForm(sidebarModel.value.config?.widget));
   const hasChanges = ref(false);
   const submitting = ref(false);
+  const confirmationModalId = uid('modal');
 
   const config = computed(() => sidebarModel.value.config ?? {});
   const widget = computed(() => config.value.widget ?? {});
@@ -52,34 +54,6 @@ export const useWidgetSettings = ({ sidebar, localWidget = false } = {}) => {
   const userPreference = computed(() => unref(getUserPreferenceByWidgetId)(widget.value._id));
 
   const hideSettingsSidebar = () => sidebarApi.hide({ id: sidebarModel.value.id });
-
-  const close = () => {
-    if (!hasChanges.value || isEqual(form.value, originalForm.value)) {
-      hideSettingsSidebar();
-
-      return;
-    }
-
-    modals.show({
-      name: MODALS.confirmation,
-      dialogProps: {
-        persistent: true,
-      },
-      config: {
-        action: hideSettingsSidebar,
-      },
-    });
-  };
-
-  const stopFormWatcher = watch(
-    form,
-    () => {
-      hasChanges.value = true;
-
-      nextTick(() => stopFormWatcher());
-    },
-    { deep: true },
-  );
 
   const scrollToFirstError = () => {
     nextTick(() => {
@@ -154,6 +128,39 @@ export const useWidgetSettings = ({ sidebar, localWidget = false } = {}) => {
       submitting.value = false;
     }
   };
+
+  const close = () => {
+    if (!hasChanges.value || isEqual(form.value, originalForm.value)) {
+      hideSettingsSidebar();
+
+      return;
+    }
+
+    if (modals.isModalOpenedById(confirmationModalId)) {
+      return;
+    }
+
+    modals.show({
+      id: confirmationModalId,
+      name: MODALS.clickOutsideConfirmation,
+      dialogProps: {
+        persistent: true,
+      },
+      config: {
+        action: confirmed => (confirmed ? submit() : hideSettingsSidebar()),
+      },
+    });
+  };
+
+  const stopFormWatcher = watch(
+    form,
+    () => {
+      hasChanges.value = true;
+
+      nextTick(() => stopFormWatcher());
+    },
+    { deep: true },
+  );
 
   return {
     form,

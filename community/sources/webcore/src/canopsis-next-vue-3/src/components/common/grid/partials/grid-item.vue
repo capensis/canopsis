@@ -16,8 +16,8 @@
       class="grid-item__resize-handler"
       @pointerdown="resizeStartHandler"
     >
-      <v-icon size="small">
-        resize_right
+      <v-icon class="grid-item__resize-icon" size="small">
+        resize_window
       </v-icon>
     </div>
   </v-card>
@@ -524,6 +524,10 @@ export default {
     right: 3px;
     z-index: 3;
     opacity: .7;
+  }
+
+  &__resize-icon {
+    transform: rotate(-90deg);
   }
 
   &:not(&--disabled) {

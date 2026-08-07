@@ -1,6 +1,6 @@
 <template>
   <c-form-block>
-    <v-layout class="remediation-instruction-operation-field pa-3" align-start>
+    <c-layout class="remediation-instruction-operation-field pa-3" align="start">
       <c-draggable-step-number
         :disabled="disabled"
         :color="hasChildrenError ? 'error' : 'primary'"
@@ -10,14 +10,14 @@
         {{ operationNumber }}
       </c-draggable-step-number>
       <v-flex xs11>
-        <v-layout>
+        <c-layout>
           <c-expand-btn
             v-if="!disabled"
             v-model="expanded"
             :color="!expanded && hasChildrenError ? 'error' : ''"
             class="operation-expand"
           />
-          <v-layout column>
+          <c-layout column>
             <v-text-field
               v-model="nameField"
               v-validate="'required'"
@@ -28,7 +28,7 @@
               filled
             />
             <v-expand-transition mode="out-in">
-              <v-layout v-if="expanded" column>
+              <c-layout v-if="expanded" column>
                 <remediation-instruction-time-to-complete-field
                   v-model:duration="timeToCompleteField"
                   :disabled="disabled"
@@ -55,17 +55,17 @@
                   :jobs="operation.jobs"
                 />
                 <jobs-select v-if="!disabled" v-model:jobs="jobsField" />
-              </v-layout>
+              </c-layout>
             </v-expand-transition>
-          </v-layout>
-        </v-layout>
+          </c-layout>
+        </c-layout>
       </v-flex>
       <c-action-btn
 v-if="!disabled"
 class="mt-2"
 type="delete"
 @click="remove" />
-    </v-layout>
+    </c-layout>
   </c-form-block>
 </template>
 

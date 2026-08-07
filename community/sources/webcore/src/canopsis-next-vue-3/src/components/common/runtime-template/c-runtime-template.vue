@@ -1,5 +1,9 @@
-<script lang="ts">
+<script>
 import { h } from 'vue';
+
+const LEGACY_HTML_TAGS = new Set([
+  'center',
+]);
 
 export default {
   inheritAttrs: false,
@@ -67,7 +71,8 @@ export default {
         computed: this.parentOptions.computed,
         props: this.propsTypes,
         compilerOptions: {
-          whitespace: 'preserve' as const,
+          whitespace: 'preserve',
+          isCustomElement: tag => LEGACY_HTML_TAGS.has(tag),
         },
 
         setup: () => ({

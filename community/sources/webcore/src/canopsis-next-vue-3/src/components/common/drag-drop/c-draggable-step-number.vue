@@ -1,5 +1,5 @@
 <template>
-  <v-layout align-center justify-space-around>
+  <c-layout align="center" justify="space-around">
     <span class="handler">
       <v-icon v-show="!disabled" :class="dragClass" class="draggable"> drag_indicator </v-icon>
     </span>
@@ -10,7 +10,7 @@ class="white--text"
 size="32">
       <slot />
     </v-avatar>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>

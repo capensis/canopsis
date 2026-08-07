@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'pinia';
+import { mapState } from 'pinia';
 
 import {
   MODALS,
@@ -94,8 +94,6 @@ import { calculateNewWidgetGridParametersY } from '@/helpers/entities/widget/gri
 import { getEmptyWidgetByType } from '@/helpers/entities/widget/form';
 
 import { useAppInfoStore } from '@/stores/modules/app-info';
-import { useActiveViewStore } from '@/stores/modules/active-view';
-import { useWidgetStore } from '@/stores/modules/widget';
 
 export default {
   name: MODALS.createWidget,
@@ -175,12 +173,6 @@ export default {
   },
 
   methods: {
-    ...mapActions(useActiveViewStore, ['fetchActiveView']),
-
-    ...mapActions(useWidgetStore, {
-      createWidget: 'create',
-    }),
-
     getWidgetWithUpdatedGridParametersByType(type) {
       const { tab } = this.config;
       const widget = getEmptyWidgetByType(type);
@@ -194,17 +186,10 @@ export default {
       return widget;
     },
 
-    async selectType(type) {
+    selectType(type) {
       const widget = this.getWidgetWithUpdatedGridParametersByType(type);
 
       this.$modals.hide({ id: this.modal.id });
-
-      if (type !== WIDGET_TYPES.text) {
-        await this.createWidget({ data: widget });
-        await this.fetchActiveView();
-
-        return;
-      }
 
       window.requestAnimationFrame(() => {
         this.$sidebar.show({

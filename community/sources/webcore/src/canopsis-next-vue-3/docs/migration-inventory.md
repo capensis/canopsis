@@ -46,6 +46,7 @@ Status legend:
 - `[x]` `c-duration-field`: full old duration value/unit field is migrated in the compat field barrel, with `long`, `medium`, `sameWidth`, custom `units`, clearable unit handling and pluralized unit labels adapted to Vue I18n `t`.
 - `[~]` Text editor stack: `text-editor`, `text-editor-field`, `text-editor-with-template`, `c-widget-template-field`, variables menu/list, upload hook, template-vars hook, image/images viewer modals and sidebar text-editor fields are migrated. Remaining: connect full vee-validate form validation inside editor modals when related pages/widgets start using complex rules.
 - `[x]` `c-draggable-list-field`: migrated with Vue 3 `vuedraggable` API; emits `update:value` / `update:model-value` matching its `value` / `modelValue` props.
+- `[x]` `c-treeview`: migrated as a Vuetify 4 `VTreeview` compatibility wrapper with legacy `item-key` / `item-text` / `open` / `active` / `value` aliases and old `label` slot `leaf` support. `variables-help` now uses this wrapper instead of a local recursive tree.
 - `[~]` `c-advanced-data-table` migration plan:
   - `[x]` Inventory old dependencies and current target gaps.
   - `[x]` Leaf table placeholder: `c-empty-data-table-columns`.
@@ -172,12 +173,12 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 ### `view`
 
 - `[~]` Migration plan: staged plan is tracked in `docs/ai/view-migration-plan.md`.
-- `[~]` Main content: `src/views/view.vue` -> `src/views/view-page.vue`; active view lifecycle, periodic refresh provider, tabs, grid shell, widget wrapper shell, floating controls and basic tab/widget creation entry points are migrated. Remaining: concrete widgets, widget settings sidebar/forms, share/executions controls and runtime parity.
+- `[~]` Main content: `src/views/view.vue` -> `src/views/view-page.vue`; active view lifecycle, periodic refresh provider, tabs, grid shell, widget wrapper shell, floating controls, text widget, counter widget and basic tab/widget creation entry points are migrated. Counter variables-help, filter editing and embedded alarm-list display settings are migrated. Remaining: other concrete widgets, remaining widget settings sidebar/forms, counter alarm-list action, share/executions controls and runtime parity.
 - `[x]` Tabs: view tab navigation, active tab query, tab reorder submit/cancel overlay, create/update/copy/delete tab flows and `select-view` modal are migrated.
 - `[x]` Grid system: layout shell, breakpoint handling, drag/resize rules, edit mode and widget grid position saving are migrated.
-- `[~]` Grid system content: `view-tab-widgets`, `widget-wrapper` shell, `widget-edit-drag-handler`, `c-alert-overlay` and `window-size-field` are migrated. Concrete widget type components and full wrapper menu sidebars remain pending.
-- `[~]` Modal windows: `select-view` modal is migrated for copy tab flow. Widget/tab creation still uses existing `text-field-editor`; widget modals remain pending.
-- `[ ]` Sidebars/drawers: not migrated.
+- `[~]` Grid system content: `view-tab-widgets`, `widget-wrapper` shell, `widget-edit-drag-handler`, `c-alert-overlay`, `window-size-field`, text widget and counter widget are migrated. Remaining concrete widget types and full wrapper menu sidebars remain pending.
+- `[~]` Modal windows: `select-view` modal is migrated for copy tab flow. Widget/tab creation uses existing `text-field-editor` and create-widget modal now opens widget settings sidebars as in Vue 2.
+- `[~]` Sidebars/drawers: text and counter widget settings sidebars are migrated with `useWidgetSettings`; counter filter settings and embedded alarm-list display settings are migrated through shared form stacks. Remaining widget sidebars and the full alarm-list widget settings sidebar are pending.
 - `[~]` State/API/socket: active-view foundation, view tab store actions, widget store action verification and view router helpers are migrated. Page lifecycle, sockets/periodic refresh provider and widget runtime consumers remain pending.
 - `[~]` Routing/access: `/view/:id` now points to `view-page.vue`; old route only required login, so route meta matches the source project.
 - `[ ]` Messages/i18n: not migrated.
@@ -635,24 +636,24 @@ Redirects are taken from the bottom of `src/router.js`.
 
 Widgets are taken from `WIDGET_TYPES` and `COMPONENTS_BY_WIDGET_TYPES` in `src/constants/widget.js`.
 
-| Status | Widget type         | Source component name        | Source file                                                                 | Icon                     | Edition / scope              | Notes |
-| ------ | ------------------- | ---------------------------- | --------------------------------------------------------------------------- | ------------------------ | ---------------------------- | ----- |
-| `[ ]`  | `AlarmsList`        | `alarms-list-widget`         | `src/components/widgets/alarm/alarms-list.vue`                              | `view_list`              | Core, top-level              |       |
-| `[ ]`  | `Context`           | `entities-list-widget`       | `src/components/widgets/context/entities-list.vue`                          | `view_list`              | Core, top-level              |       |
-| `[ ]`  | `ServiceWeather`    | `service-weather-widget`     | `src/components/widgets/service-weather/service-weather.vue`                | `view_module`            | Core, top-level              |       |
-| `[ ]`  | `StatsCalendar`     | `stats-calendar-widget`      | `src/components/widgets/stats/calendar/stats-calendar.vue`                  | `calendar_today`         | Pro, top-level               |       |
-| `[ ]`  | `Text`              | `text-widget`                | `src/components/widgets/text/text.vue`                                      | `view_headline`          | Core, top-level              |       |
-| `[ ]`  | `Counter`           | `counter-widget`             | `src/components/widgets/counter/counter.vue`                                | `numbers`                | Core, top-level              |       |
-| `[ ]`  | `Junit`             | `testing-weather-widget`     | `src/components/widgets/testing-weather/testing-weather.vue`                | `view_module`            | Pro, top-level               |       |
-| `[ ]`  | `Map`               | `map-widget`                 | `src/components/widgets/map/map.vue`                                        | `location_on`            | Pro, top-level               |       |
-| `[ ]`  | `BarChart`          | `bar-chart-widget`           | `src/components/widgets/chart/bar-chart-widget.vue`                         | `stacked_bar_chart`      | KPI/chart child widget       |       |
-| `[ ]`  | `LineChart`         | `line-chart-widget`          | `src/components/widgets/chart/line-chart-widget.vue`                        | `show_chart`             | KPI/chart child widget       |       |
-| `[ ]`  | `PieChart`          | `pie-chart-widget`           | `src/components/widgets/chart/pie-chart-widget.vue`                         | `donut_small`            | KPI/chart child widget       |       |
-| `[ ]`  | `Numbers`           | `numbers-widget`             | `src/components/widgets/chart/numbers-widget.vue`                           | `functions`              | KPI/chart child widget       |       |
-| `[ ]`  | `UserStatistics`    | `user-statistics-widget`     | `src/components/widgets/statistics/user-statistics-widget.vue`              | `perm_identity`          | Pro, statistics child widget |       |
-| `[ ]`  | `AlarmStatistics`   | `alarm-statistics-widget`    | `src/components/widgets/statistics/alarm-statistics-widget.vue`             | `notification_important` | Pro, statistics child widget |       |
-| `[ ]`  | `Availability`      | `availability-widget`        | `src/components/widgets/availability/availability-widget.vue`               | `published_with_changes` | Pro, top-level               |       |
-| `[ ]`  | `ExternalDataTable` | `external-data-table-widget` | `src/components/widgets/external-data-table/external-data-table-widget.vue` | `database`               | Core, top-level              |       |
+| Status | Widget type         | Source component name        | Source file                                                                 | Icon                     | Edition / scope                                                                                                                                            | Notes |
+| ------ | ------------------- | ---------------------------- | --------------------------------------------------------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| `[ ]`  | `AlarmsList`        | `alarms-list-widget`         | `src/components/widgets/alarm/alarms-list.vue`                              | `view_list`              | Core, top-level                                                                                                                                            |       |
+| `[ ]`  | `Context`           | `entities-list-widget`       | `src/components/widgets/context/entities-list.vue`                          | `view_list`              | Core, top-level                                                                                                                                            |       |
+| `[ ]`  | `ServiceWeather`    | `service-weather-widget`     | `src/components/widgets/service-weather/service-weather.vue`                | `view_module`            | Core, top-level                                                                                                                                            |       |
+| `[ ]`  | `StatsCalendar`     | `stats-calendar-widget`      | `src/components/widgets/stats/calendar/stats-calendar.vue`                  | `calendar_today`         | Pro, top-level                                                                                                                                             |       |
+| `[ ]`  | `Text`              | `text-widget`                | `src/components/widgets/text/text.vue`                                      | `view_headline`          | Core, top-level                                                                                                                                            |       |
+| `[~]`  | `Counter`           | `counter-widget`             | `src/components/widgets/counter/counter.vue`                                | `numbers`                | Renderer, settings sidebar, embedded alarm-list display settings, filter editor and variables-help action are migrated; alarm-list action remains pending. |       |
+| `[ ]`  | `Junit`             | `testing-weather-widget`     | `src/components/widgets/testing-weather/testing-weather.vue`                | `view_module`            | Pro, top-level                                                                                                                                             |       |
+| `[ ]`  | `Map`               | `map-widget`                 | `src/components/widgets/map/map.vue`                                        | `location_on`            | Pro, top-level                                                                                                                                             |       |
+| `[ ]`  | `BarChart`          | `bar-chart-widget`           | `src/components/widgets/chart/bar-chart-widget.vue`                         | `stacked_bar_chart`      | KPI/chart child widget                                                                                                                                     |       |
+| `[ ]`  | `LineChart`         | `line-chart-widget`          | `src/components/widgets/chart/line-chart-widget.vue`                        | `show_chart`             | KPI/chart child widget                                                                                                                                     |       |
+| `[ ]`  | `PieChart`          | `pie-chart-widget`           | `src/components/widgets/chart/pie-chart-widget.vue`                         | `donut_small`            | KPI/chart child widget                                                                                                                                     |       |
+| `[ ]`  | `Numbers`           | `numbers-widget`             | `src/components/widgets/chart/numbers-widget.vue`                           | `functions`              | KPI/chart child widget                                                                                                                                     |       |
+| `[ ]`  | `UserStatistics`    | `user-statistics-widget`     | `src/components/widgets/statistics/user-statistics-widget.vue`              | `perm_identity`          | Pro, statistics child widget                                                                                                                               |       |
+| `[ ]`  | `AlarmStatistics`   | `alarm-statistics-widget`    | `src/components/widgets/statistics/alarm-statistics-widget.vue`             | `notification_important` | Pro, statistics child widget                                                                                                                               |       |
+| `[ ]`  | `Availability`      | `availability-widget`        | `src/components/widgets/availability/availability-widget.vue`               | `published_with_changes` | Pro, top-level                                                                                                                                             |       |
+| `[ ]`  | `ExternalDataTable` | `external-data-table-widget` | `src/components/widgets/external-data-table/external-data-table-widget.vue` | `database`               | Core, top-level                                                                                                                                            |       |
 
 ## Widget Blocks
 
@@ -695,9 +696,9 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 
 ### `Counter`
 
-- `[ ]` Main content: `src/components/widgets/counter/counter.vue`.
-- `[ ]` Settings: `counter-settings`; migrate levels, margins, columns, height, block template and linked alarm list settings.
-- `[ ]` Store/API/socket: counter queries and alarm list handoff.
+- `[x]` Main content: `src/components/widgets/counter/counter.vue`; runtime renderer, state color/icon logic, block template context, counter store fetch and variables-help action are migrated.
+- `[~]` Settings: `counter-settings`; levels, margins, columns, height, block template, opened/resolved selector, filter editor, embedded alarm-list display settings and info popup create/edit modals are migrated. Remaining: linked alarm-list runtime action after the alarm-list widget stack is migrated.
+- `[~]` Store/API/socket: counter queries are migrated. Remaining: alarm-list handoff action and modal after alarm-list stack is available.
 - `[ ]` Messages/i18n: not migrated.
 
 ### `Junit`

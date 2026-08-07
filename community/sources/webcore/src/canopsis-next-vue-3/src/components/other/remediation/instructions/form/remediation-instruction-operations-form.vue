@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="gap-2" column>
+  <c-layout gap="2" column>
     <c-draggable-list-field
       :model-value="operations"
       :disabled="disabled"
@@ -31,7 +31,7 @@
     >
       {{ $t('remediation.instruction.addOperation') }}
     </c-btn-with-error>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>

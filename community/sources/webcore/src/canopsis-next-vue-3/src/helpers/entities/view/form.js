@@ -107,6 +107,15 @@ export const viewToRequest = view => ({
 });
 
 /**
+ * Convert view group to request
+ *
+ * @param {ViewGroup} group
+ * @returns {ViewGroupRequest}
+ */
+export const groupToRequest = group =>
+  omit(group, ['_id', 'views', 'created', 'deletable', 'updated']);
+
+/**
  * Convert view groups with views to view group with view positions
  *
  * @param {ViewGroupWithViews | {}} [group = {}]

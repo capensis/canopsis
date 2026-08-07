@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash';
 
 import { DEFAULT_WIDGET_GRID_PARAMETERS, WIDGET_GRID_SIZES_KEYS, WIDGET_TYPES } from '@/constants';
 
+import { counterWidgetParametersToForm, formToCounterWidgetParameters } from './forms/counter';
 import { textWidgetParametersToForm } from './forms/text';
 
 /**
@@ -155,6 +156,7 @@ import { textWidgetParametersToForm } from './forms/text';
 export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
   const widgetsMap = {
     [WIDGET_TYPES.text]: textWidgetParametersToForm,
+    [WIDGET_TYPES.counter]: counterWidgetParametersToForm,
   };
 
   const preparer = widgetsMap[type];
@@ -224,7 +226,15 @@ export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
  * @param {WidgetParametersForm} parameters
  * @return {WidgetParameters}
  */
-export const formToWidgetParameters = ({ parameters }) => cloneDeep(parameters);
+export const formToWidgetParameters = ({ type, parameters }) => {
+  const widgetsMap = {
+    [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
+  };
+
+  const preparer = widgetsMap[type];
+
+  return preparer ? preparer(parameters) : cloneDeep(parameters);
+};
 
 /**
  * Convert form object to widget
