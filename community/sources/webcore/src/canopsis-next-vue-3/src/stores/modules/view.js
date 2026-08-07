@@ -67,6 +67,38 @@ export const useViewStore = defineStore('view', () => {
     };
   };
 
+  const mergeViewTabEntity = (viewTab) => {
+    const tabViewId = viewTab?.view?._id ?? viewTab?.view;
+
+    items.value = items.value.map(group => ({
+      ...group,
+      views: group.views?.map((view) => {
+        if (tabViewId && view._id !== tabViewId) {
+          return view;
+        }
+
+        const tabIndex = view.tabs?.findIndex(({ _id }) => _id === viewTab._id) ?? -1;
+
+        if (tabIndex === -1 && view._id !== tabViewId) {
+          return view;
+        }
+
+        const tabs = [...(view.tabs ?? [])];
+
+        if (tabIndex === -1) {
+          tabs.push(viewTab);
+        } else {
+          tabs[tabIndex] = viewTab;
+        }
+
+        return {
+          ...view,
+          tabs,
+        };
+      }),
+    }));
+  };
+
   const fetchList = async ({ params } = {}) => {
     try {
       pending.value = true;
@@ -104,6 +136,18 @@ export const useViewStore = defineStore('view', () => {
   const copyView = ({ id, data } = {}) => request.post(`${API_ROUTES.view.copy}/${id}`, data);
   const exportViewWithoutStore = ({ data } = {}) => request.post(API_ROUTES.view.export, data);
   const importViewWithoutStore = ({ data } = {}) => request.post(API_ROUTES.view.import, data);
+  const createViewTab = ({ data } = {}) => request.post(API_ROUTES.view.tabs, data);
+  const updateViewTab = ({ id, data } = {}) => request.put(`${API_ROUTES.view.tabs}/${id}`, data);
+  const removeViewTab = ({ id } = {}) => request.delete(`${API_ROUTES.view.tabs}/${id}`);
+  const copyViewTab = ({ id, data } = {}) => request.post(`${API_ROUTES.view.tabCopy}/${id}`, data);
+  const updateViewTabPositions = ({ data } = {}) => request.put(API_ROUTES.view.tabPositions, data);
+  const fetchViewTab = async ({ id, params } = {}) => {
+    const viewTab = await request.get(`${API_ROUTES.view.tabs}/${id}`, { params });
+
+    mergeViewTabEntity(viewTab);
+
+    return viewTab;
+  };
 
   const fetchView = ({ id }) =>
     useRequestCancelling(async (source) => {
@@ -141,6 +185,12 @@ export const useViewStore = defineStore('view', () => {
     copyView,
     exportViewWithoutStore,
     importViewWithoutStore,
+    createViewTab,
+    updateViewTab,
+    removeViewTab,
+    copyViewTab,
+    updateViewTabPositions,
+    fetchViewTab,
     fetchView,
   };
 });

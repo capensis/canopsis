@@ -56,6 +56,7 @@ const SnmpRulesPage = () => import('@/views/exploitation/snmp-rules-page.vue');
 const ProfilePatternsPage = () => import('@/views/profile/patterns-page.vue');
 const ProfileThemesPage = () => import('@/views/profile/themes-page.vue');
 const NotificationsPage = () => import('@/views/notification/notifications-page.vue');
+const ViewPage = () => import('@/views/view-page.vue');
 
 const protectedRoute = (meta = {}) => ({
   requiresLogin: true,
@@ -82,7 +83,7 @@ const routes = [
     path: ROUTES.view,
     name: ROUTES_NAMES.view,
     meta: protectedRoute(),
-    component: PlaceholderPage,
+    component: ViewPage,
     props: route => ({ id: route.params.id }),
   },
   {

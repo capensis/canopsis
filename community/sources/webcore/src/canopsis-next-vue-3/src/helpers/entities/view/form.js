@@ -1,5 +1,8 @@
 import { omit } from 'lodash';
 
+import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
+
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { uid } from '@/helpers/uid';
 
 /**
@@ -74,6 +77,34 @@ import { uid } from '@/helpers/uid';
  * @property {string} _id
  * @property {string[]} views
  */
+
+/**
+ * Convert view to form
+ *
+ * @param {View | {}} [view = {}]
+ * @returns {ViewForm}
+ */
+export const viewToForm = (view = {}) => ({
+  title: view.title ?? '',
+  description: view.description ?? '',
+  is_private: view.is_private ?? false,
+  enabled: view.enabled ?? true,
+  tags: view.tags ? [...view.tags] : [],
+  group: view.group ? { ...view.group } : null,
+  periodic_refresh: durationWithEnabledToForm(view.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
+});
+
+/**
+ * Convert view to request
+ *
+ * @param {View} view
+ * @returns {ViewRequest}
+ */
+export const viewToRequest = view => ({
+  ...omit(view, ['_id', 'group', 'group_id', 'created', 'updated']),
+
+  group: view.group._id,
+});
 
 /**
  * Convert view groups with views to view group with view positions

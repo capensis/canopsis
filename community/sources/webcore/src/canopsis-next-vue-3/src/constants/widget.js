@@ -160,7 +160,7 @@ export const WIDGET_LAYOUT_MAX_WIDTHS = {
 export const WIDGET_GRID_SIZES_STYLES = {
   [WIDGET_GRID_SIZES_KEYS.mobile]: {
     value: WIDGET_GRID_SIZES_KEYS.mobile,
-    icon: 'stay_primary_portrait',
+    icon: 'mobile',
   },
   [WIDGET_GRID_SIZES_KEYS.tablet]: {
     value: WIDGET_GRID_SIZES_KEYS.tablet,
@@ -305,9 +305,7 @@ export const BAR_CHART_WIDGET_PRESET_PARAMETERS_BY_TYPE = {
   [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: {
     stacked: false,
     comparison: true,
-    metrics: [
-      { metric: ALARM_METRIC_PARAMETERS.activeAlarms },
-    ],
+    metrics: [{ metric: ALARM_METRIC_PARAMETERS.activeAlarms }],
     default_time_range: QUICK_RANGES.last7Days.value,
     default_sampling: SAMPLINGS.day,
   },
@@ -420,9 +418,7 @@ export const NUMBERS_CHART_WIDGET_PRESET_PARAMETERS_BY_TYPE = {
   },
   [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: {
     aggregate_func: AGGREGATE_FUNCTIONS.sum,
-    metrics: [
-      { metric: ALARM_METRIC_PARAMETERS.createdAlarms },
-    ],
+    metrics: [{ metric: ALARM_METRIC_PARAMETERS.createdAlarms }],
   },
   [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: {
     aggregate_func: AGGREGATE_FUNCTIONS.avg,

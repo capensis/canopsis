@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 
 import { VIEW_SCREEN_MODES } from '@/constants';
@@ -14,6 +14,35 @@ export const useActiveViewStore = defineStore('activeView', () => {
   const screenMode = ref(VIEW_SCREEN_MODES.default);
   const editingOffHandlers = ref([]);
   const periodicRefreshPaused = ref(false);
+
+  const isKioskScreenMode = computed(() =>
+    [VIEW_SCREEN_MODES.kiosk, VIEW_SCREEN_MODES.kioskFullscreen].includes(screenMode.value),
+  );
+
+  const registerEditingOffHandler = (handler) => {
+    editingOffHandlers.value.push(handler);
+  };
+
+  const unregisterEditingOffHandler = (handler) => {
+    editingOffHandlers.value = editingOffHandlers.value.filter(
+      editingHandler => editingHandler !== handler,
+    );
+  };
+
+  const toggleEditing = async () => {
+    try {
+      editingProcess.value = true;
+
+      if (editingOffHandlers.value.length && editing.value) {
+        await Promise.all(editingOffHandlers.value.map(handler => handler()));
+      }
+
+      editing.value = !editing.value;
+      editingProcess.value = false;
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetch = async ({ id: viewId = id.value } = {}) => {
     try {
@@ -44,11 +73,28 @@ export const useActiveViewStore = defineStore('activeView', () => {
 
   const clear = () => {
     id.value = null;
+    item.value = null;
     pending.value = false;
     editing.value = false;
     screenMode.value = VIEW_SCREEN_MODES.default;
     editingOffHandlers.value = [];
     periodicRefreshPaused.value = false;
+  };
+
+  const resumePeriodicRefresh = () => {
+    periodicRefreshPaused.value = false;
+  };
+
+  const pausePeriodicRefresh = () => {
+    periodicRefreshPaused.value = true;
+  };
+
+  const setScreenMode = (newScreenMode) => {
+    if (screenMode.value === newScreenMode) {
+      return;
+    }
+
+    screenMode.value = newScreenMode;
   };
 
   return {
@@ -60,8 +106,15 @@ export const useActiveViewStore = defineStore('activeView', () => {
     screenMode,
     editingOffHandlers,
     periodicRefreshPaused,
+    isKioskScreenMode,
 
+    registerEditingOffHandler,
+    unregisterEditingOffHandler,
+    toggleEditing,
     fetch,
     clear,
+    resumePeriodicRefresh,
+    pausePeriodicRefresh,
+    setScreenMode,
   };
 });
