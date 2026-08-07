@@ -46,6 +46,7 @@
           </v-layout>
           <alarms-expand-panel-btn
             v-if="expandable"
+            ref="expandPanelBtn"
             :expanded="expanded"
             :alarm="alarm"
             :widget="widget"
@@ -277,6 +278,10 @@ export default {
 
     listeners() {
       let listeners = {};
+
+      if (this.expandable && this.widget.parameters?.openExpandPanelByDoubleClick) {
+        listeners.dblclick = () => this.$refs.expandPanelBtn?.showExpandPanel?.();
+      }
 
       if (featuresService.has('components.alarmListRow.computed.listeners')) {
         listeners = featuresService.call('components.alarmListRow.computed.listeners', this, {});

@@ -1,14 +1,16 @@
 <template>
   <v-layout>
     <c-action-btn
-      v-if="removable && config.remove"
+      v-if="removable && someOneRemovable && config.remove"
       :tooltip="config.removeTooltip"
+      :small="small"
       type="delete"
       @click="showRemoveModal"
     />
     <c-action-btn
       v-if="enablable && someOneDisable && config.enable"
       :tooltip="$t(`${config.tooltipPrefix}.massEnable`)"
+      :small="small"
       icon="check_circle"
       color="primary"
       @click="showEnableModal"
@@ -16,6 +18,7 @@
     <c-action-btn
       v-if="disablable && someOneEnable && config.disable"
       :tooltip="$t(`${config.tooltipPrefix}.massDisable`)"
+      :small="small"
       icon="cancel"
       color="error"
       @click="showDisableModal"
@@ -23,6 +26,7 @@
     <c-action-btn
       v-if="unhideable && someOneHidden && config.unhide"
       :tooltip="$t(`${config.tooltipPrefix}.massUnhide`)"
+      :small="small"
       icon="check_circle"
       color="primary"
       @click="showUnhideModal"
@@ -30,6 +34,7 @@
     <c-action-btn
       v-if="hideable && someOneVisible && config.hide"
       :tooltip="$t(`${config.tooltipPrefix}.massHide`)"
+      :small="small"
       icon="cancel"
       color="error"
       @click="showHideModal"
@@ -37,7 +42,9 @@
     <c-db-export-btn
       v-if="config.exportProps"
       :ids="itemsIds"
+      :small="small"
       v-bind="config.exportProps"
+      @refresh="afterSubmit"
     />
   </v-layout>
 </template>
@@ -69,7 +76,10 @@ import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception
 import { usePlaylist } from '@/hooks/store/modules/playlist';
 import { useMaps } from '@/hooks/store/modules/maps';
 import { useUser } from '@/hooks/store/modules/user';
+import { useRole } from '@/hooks/store/modules/role';
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useRemediationConfiguration } from '@/hooks/store/modules/remediation-configuration';
+import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
 import { useLlm } from '@/hooks/store/modules/llm';
 import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
 
@@ -78,6 +88,10 @@ export default {
     items: {
       type: Array,
       default: () => [],
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
     removable: {
       type: Boolean,
@@ -171,7 +185,19 @@ export default {
       type: Boolean,
       default: false,
     },
+    role: {
+      type: Boolean,
+      default: false,
+    },
     instruction: {
+      type: Boolean,
+      default: false,
+    },
+    remediationConfiguration: {
+      type: Boolean,
+      default: false,
+    },
+    remediationJob: {
       type: Boolean,
       default: false,
     },
@@ -290,10 +316,22 @@ export default {
     } = useUser();
 
     const {
+      bulkRemoveRoles,
+    } = useRole();
+
+    const {
       bulkEnableRemediationInstructions,
       bulkDisableRemediationInstructions,
       bulkRemoveRemediationInstructions,
     } = useRemediationInstruction();
+
+    const {
+      bulkRemoveRemediationConfigurations,
+    } = useRemediationConfiguration();
+
+    const {
+      bulkRemoveRemediationJobs,
+    } = useRemediationJob();
 
     const {
       bulkRemoveLlms,
@@ -308,6 +346,7 @@ export default {
     } = useAnomalyMonitoredConnector();
 
     const itemsIds = computed(() => mapIds(props.items, props.itemId));
+
     const enablableItems = computed(() => (
       props.pbehavior ? props.items.filter(({ editable }) => editable) : props.items
     ));
@@ -316,6 +355,7 @@ export default {
 
     const someOneEnable = computed(() => enablableItems.value.some(({ enabled }) => enabled));
     const someOneDisable = computed(() => enablableItems.value.some(({ enabled }) => !enabled));
+    const someOneRemovable = computed(() => props.items.some(({ deletable = true }) => deletable));
 
     const hideableItems = computed(() => props.items);
     const hideableItemsIds = computed(() => pickIds(hideableItems.value, props.itemId));
@@ -428,6 +468,10 @@ export default {
           remove: bulkRemoveMaps,
           tooltipPrefix: 'map',
         },
+        [props.role]: {
+          remove: bulkRemoveRoles,
+          tooltipPrefix: 'role',
+        },
         [props.user]: {
           remove: bulkRemoveUsers,
           enable: bulkEnableUsers,
@@ -439,6 +483,17 @@ export default {
           enable: bulkEnableRemediationInstructions,
           disable: bulkDisableRemediationInstructions,
           tooltipPrefix: 'remediation.instruction',
+          exportProps: { instruction: true },
+        },
+        [props.remediationConfiguration]: {
+          remove: bulkRemoveRemediationConfigurations,
+          tooltipPrefix: 'remediation.configuration',
+          exportProps: { jobConfig: true },
+        },
+        [props.remediationJob]: {
+          remove: bulkRemoveRemediationJobs,
+          tooltipPrefix: 'remediation.job',
+          exportProps: { job: true },
         },
         [props.llm]: {
           remove: bulkRemoveLlms,
@@ -480,7 +535,7 @@ export default {
      * @param {string} messageKey
      */
     const showErrorPopups = (response = [], messageKey) => (
-      response.forEach(({ status, message, error }, index) => {
+      response.forEach(({ status = RESPONSE_STATUSES.success, message, error }, index) => {
         if (status !== RESPONSE_STATUSES.success) {
           const ruleName = props.items[index]?.name;
           const text = te(messageKey) ? t(messageKey, { name: ruleName }) : message || error;
@@ -601,7 +656,9 @@ export default {
       someOneDisable,
       someOneVisible,
       someOneHidden,
+      someOneRemovable,
 
+      afterSubmit,
       showRemoveModal,
       showEnableModal,
       showDisableModal,

@@ -14,15 +14,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
         label=""
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand v-data-table--selectable"
@@ -1222,15 +1214,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
         label=""
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand"

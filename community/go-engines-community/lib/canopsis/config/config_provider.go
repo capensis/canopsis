@@ -144,7 +144,10 @@ type ApiConfig struct {
 	MetricsCacheExpiration   time.Duration
 	WebsocketPingInterval    time.Duration
 	NotificationDisplayCount int
-	LLM                      struct {
+	ActionLogger             struct {
+		Enabled bool
+	}
+	LLM struct {
 		OffTopicErrors  []string
 		SuggestedModels []LLMModelConf
 	}
@@ -488,6 +491,8 @@ func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfi
 			Strs("value", cfg.API.AuthorScheme).
 			Msgf("AuthorScheme of %s config section is used", sectionName)
 	}
+
+	conf.ActionLogger.Enabled = parseBool(cfg.API.ActionLogger.Enabled, "Enabled", sectionName+".action_logger", logger)
 
 	conf.LLM.SuggestedModels = cfg.API.LLM.SuggestedModels
 	conf.LLM.OffTopicErrors = cfg.API.LLM.OffTopicErrors

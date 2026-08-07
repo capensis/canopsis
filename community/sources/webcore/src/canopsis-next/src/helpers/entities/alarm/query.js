@@ -1,7 +1,6 @@
 import {
   isEmpty,
   isUndefined,
-  omit,
   map,
   uniq,
   isArray,
@@ -233,10 +232,8 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
   };
 
   if (sort && isArray(sort) && sort.length > 0) {
-    query.children.multiSortBy = sort.map(sortColumn => ({
-      sortBy: sortColumn.sort_by,
-      descending: sortColumn.sort === SORT_ORDERS.desc.toLowerCase(),
-    }));
+    query.children.sortBy = sort.map(sortColumn => sortColumn.sort_by);
+    query.children.sortDesc = sort.map(sortColumn => sortColumn.sort === SORT_ORDERS.desc.toLowerCase());
   }
 
   return query;
@@ -248,18 +245,33 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
  * @param {Object} query
  * @returns {Object}
  */
-export const convertAlarmDetailsQueryToRequest = query => ({
-  ...query,
+export const convertAlarmDetailsQueryToRequest = (query) => {
+  const {
+    steps: {
+      itemsPerPage: stepsItemsPerPage,
+      ...steps
+    } = {},
+    children: {
+      itemsPerPage: childrenItemsPerPage,
+      sortBy: childrenSortBy,
+      sortDesc: childrenSortDesc,
+      ...children
+    } = {},
+  } = query;
 
-  steps: {
-    ...query.steps,
+  return {
+    ...query,
 
-    limit: query.steps?.itemsPerPage ?? PAGINATION_LIMIT,
-  },
-  children: {
-    ...omit(query.children, ['sortBy', 'sortDesc', 'itemsPerPage']),
-    ...convertSortToRequest(query.children?.sortBy, query.children?.sortDesc),
+    steps: {
+      ...steps,
 
-    limit: query.children?.itemsPerPage ?? PAGINATION_LIMIT,
-  },
-});
+      limit: stepsItemsPerPage ?? PAGINATION_LIMIT,
+    },
+    children: {
+      ...children,
+      ...convertSortToRequest(childrenSortBy, childrenSortDesc),
+
+      limit: childrenItemsPerPage ?? PAGINATION_LIMIT,
+    },
+  };
+};

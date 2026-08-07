@@ -56,6 +56,11 @@ export const EVENT_FILTER_FAILURE_TYPES = {
   other: 4,
 };
 
+export const EVENT_FILTER_SET_FIELD_ITEMS = [
+  'Output',
+  'LongOutput',
+];
+
 export const EVENT_FILTER_SET_TAGS_FIELDS = [
   EVENT_FILTER_PATTERN_FIELDS.output,
   EVENT_FILTER_PATTERN_FIELDS.extraInfos,
