@@ -19,6 +19,7 @@
           :enablable="updatable"
           :disablable="updatable"
           snmp-rule
+          small
           @clear:items="clearSelected"
           @refresh="$emit('refresh')"
         />

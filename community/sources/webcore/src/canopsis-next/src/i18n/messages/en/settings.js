@@ -72,6 +72,7 @@ export default {
     description: 'First template in the list will be default.',
   },
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline',
+  openExpandPanelByDoubleClick: 'Open expandable panel on double click alarm',
   isCorrelationEnabled: 'Is correlation enabled?',
   fastPbehavior: 'Fast pbehavior',
   fastPbehaviorDescription: 'User will be able to select from these types on click Fast pbehavior',

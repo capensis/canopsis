@@ -434,10 +434,13 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	previousState := alarm.Value.State.Value
 	previousStatus := alarm.Value.Status.Value
 	match := bson.M{"_id": alarm.ID, "v.resolved": nil}
+	alarm.Value.Output = params.Output
+	alarm.Value.LastEventDate = &params.Timestamp
+	alarm.Value.LongOutput = params.LongOutput
 	set := bson.M{
-		"v.output":          params.Output,
-		"v.last_event_date": params.Timestamp,
-		"v.long_output":     params.LongOutput,
+		"v.output":          alarm.Value.Output,
+		"v.last_event_date": alarm.Value.LastEventDate,
+		"v.long_output":     alarm.Value.LongOutput,
 	}
 	push := bson.M{}
 	inc := bson.M{
@@ -571,6 +574,10 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 			push["v.steps"] = bson.M{"$each": bson.A{stateStep, statusStep}}
 		} else {
 			push["v.steps"] = statusStep
+		}
+
+		if alarmChange.Type == types.AlarmChangeTypeNone {
+			alarmChange.Type = types.AlarmChangeTypeUpdateStatus
 		}
 	}
 
@@ -812,8 +819,9 @@ func (p *checkProcessor) postProcess(
 	case types.AlarmChangeTypeStateDecrease:
 		alarmStatus := result.Alarm.Value.Status.Value
 		alarmState := result.Alarm.Value.State.Value
-		if result.AlarmChange.PreviousStatus != alarmStatus && alarmStatus == types.AlarmStatusOff ||
-			result.AlarmChange.PreviousStatus == alarmStatus && alarmStatus == types.AlarmStatusCancelled && alarmState == types.AlarmStateOK {
+		prevStatus := result.AlarmChange.PreviousStatus
+		if prevStatus != alarmStatus && alarmStatus == types.AlarmStatusOff ||
+			prevStatus == alarmStatus && alarmStatus == types.AlarmStatusCancelled && alarmState == types.AlarmStateOK {
 			err = p.upstreamHelper.SendDownstreamEventsOnOK(ctx, entity)
 			if err != nil {
 				p.logger.Err(err).Msg("cannot send downstream events")
@@ -823,6 +831,20 @@ func (p *checkProcessor) postProcess(
 		alarmStatus := result.Alarm.Value.Status.Value
 		prevStatus := result.AlarmChange.PreviousStatus
 		if prevStatus != alarmStatus && prevStatus == types.AlarmStatusOff {
+			err = p.upstreamHelper.SendDownstreamEventsOnKO(ctx, entity)
+			if err != nil {
+				p.logger.Err(err).Msg("cannot send downstream events")
+			}
+		}
+	case types.AlarmChangeTypeUpdateStatus:
+		alarmStatus := result.Alarm.Value.Status.Value
+		prevStatus := result.AlarmChange.PreviousStatus
+		if alarmStatus == types.AlarmStatusOff {
+			err = p.upstreamHelper.SendDownstreamEventsOnOK(ctx, entity)
+			if err != nil {
+				p.logger.Err(err).Msg("cannot send downstream events")
+			}
+		} else if prevStatus == types.AlarmStatusOff {
 			err = p.upstreamHelper.SendDownstreamEventsOnKO(ctx, entity)
 			if err != nil {
 				p.logger.Err(err).Msg("cannot send downstream events")

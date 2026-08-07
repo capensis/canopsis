@@ -33,6 +33,9 @@ export default {
     [JOB_STATUS.paused]: 'Paused',
     [JOB_STATUS.stopped]: 'Stopped',
   },
+  statusTooltip: {
+    [JOB_STATUS.stopped]: 'Stopped\n(Status received from external API)',
+  },
   lastRunStatus: {
     [JOB_LAST_RUN_STATUS.succeed]: 'Succeed',
     [JOB_LAST_RUN_STATUS.failed]: 'Failed',

@@ -5907,6 +5907,13 @@ definitions:
     - enabled
     - name
     type: object
+  role.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   role.BulkUpdatePermissionsRequestItem:
     properties:
       _id:
@@ -6045,7 +6052,12 @@ definitions:
         type: string
       drop_scenario_if_not_matched:
         type: boolean
-      emit_trigger:
+      emit_trigger_fail:
+        description: |-
+          Whether to emit a `declareticketwebhookfail` trigger when the action
+          fails. Only set for webhook actions that declare a ticket.
+        type: boolean
+      emit_trigger_success:
         type: boolean
       entity_pattern:
         items:
@@ -6074,7 +6086,13 @@ definitions:
         type: string
       drop_scenario_if_not_matched:
         type: boolean
-      emit_trigger:
+      emit_trigger_fail:
+        description: |-
+          Whether to emit a `declareticketwebhookfail` trigger when the action
+          fails. Required when `type` is `webhook` and `parameters.declare_ticket`
+          is set; must be omitted otherwise.
+        type: boolean
+      emit_trigger_success:
         type: boolean
       entity_pattern:
         items:
@@ -6099,7 +6117,7 @@ definitions:
         type: string
     required:
     - drop_scenario_if_not_matched
-    - emit_trigger
+    - emit_trigger_success
     - type
     type: object
   scenario.BulkDeleteRequestItem:
@@ -6408,6 +6426,7 @@ definitions:
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
             * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `declareticketwebhookfail` - Ticket is failed to be declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
             * `snooze` - Alarm has been snoozed
             * `unsnooze` - Alarm has been unsnoozed
@@ -6436,6 +6455,7 @@ definitions:
         - uncancel
         - comment
         - declareticketwebhook
+        - declareticketwebhookfail
         - assocticket
         - snooze
         - unsnooze
