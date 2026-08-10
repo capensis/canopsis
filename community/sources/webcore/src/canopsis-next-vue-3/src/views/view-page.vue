@@ -3,10 +3,7 @@
     <c-progress-overlay :pending="activeViewPending" />
 
     <v-fade-transition>
-      <view-tabs-wrapper
-        v-if="isViewTabsReady"
-        :updatable="hasUpdateAccess"
-      />
+      <view-tabs-wrapper v-if="isViewTabsReady" :updatable="hasUpdateAccess" />
     </v-fade-transition>
 
     <view-fab-btns
@@ -19,16 +16,13 @@
 </template>
 
 <script>
-import { ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
-
-import Observer from '@/services/observer';
-
-import { authMixin } from '@/mixins/auth';
-import { activeViewMixin } from '@/mixins/active-view';
-import { viewRouterMixin } from '@/mixins/view/router';
-
 import ViewFabBtns from '@/components/other/view/partials/view-fab-btns.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
+import { ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
+import { activeViewMixin } from '@/mixins/active-view';
+import { authMixin } from '@/mixins/auth';
+import { viewRouterMixin } from '@/mixins/view/router';
+import Observer from '@/services/observer';
 
 export default {
   provide() {
@@ -40,11 +34,7 @@ export default {
     ViewFabBtns,
     ViewTabsWrapper,
   },
-  mixins: [
-    authMixin,
-    activeViewMixin,
-    viewRouterMixin,
-  ],
+  mixins: [authMixin, activeViewMixin, viewRouterMixin],
   props: {
     id: {
       type: [String, Number],

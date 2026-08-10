@@ -55,12 +55,15 @@ export default {
       changeSelectedItems,
       removeItemFromSelectedItemsByIndex,
       updateSearch,
-    } = useLazySearch({
-      value: toRef(props, 'value'),
-      idKey: '_id',
-      idParamsKey: 'ids',
-      fetchHandler: fetchExternalDataTablesListWithoutStore,
-    }, emit);
+    } = useLazySearch(
+      {
+        value: toRef(props, 'value'),
+        idKey: '_id',
+        idParamsKey: 'ids',
+        fetchHandler: fetchExternalDataTablesListWithoutStore,
+      },
+      emit,
+    );
 
     return {
       selectedItem,

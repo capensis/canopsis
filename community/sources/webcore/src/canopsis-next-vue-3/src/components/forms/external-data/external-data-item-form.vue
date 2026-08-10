@@ -27,13 +27,14 @@
             @update:model-value="updateField('type', $event)"
           />
           <v-btn
-v-if="!disabled"
-class="mr-0"
-icon
-@click="remove">
+            v-if="!disabled"
+            class="mr-0"
+            icon
+            @click="remove"
+          >
             <v-icon color="error">
-delete
-</v-icon>
+              delete
+            </v-icon>
           </v-btn>
         </c-layout>
         <external-data-table-form
@@ -65,15 +66,12 @@ delete
 <script>
 import { computed, onMounted } from 'vue';
 
-import { EXTERNAL_DATA_TYPES } from '@/constants';
-
-import { isTableExternalDataType } from '@/helpers/entities/shared/external-data/entity';
-
-import { useI18n } from '@/hooks/i18n';
-import { useModelField } from '@/hooks/form/model-field';
-import { useValidator } from '@/hooks/validator/validator';
-
 import RequestForm from '@/components/forms/request/request-form.vue';
+import { EXTERNAL_DATA_TYPES } from '@/constants';
+import { isTableExternalDataType } from '@/helpers/entities/shared/external-data/entity';
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
+import { useValidator } from '@/hooks/validator/validator';
 
 import ExternalDataTableForm from './external-data-table-form.vue';
 

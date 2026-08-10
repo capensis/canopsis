@@ -6,11 +6,7 @@
 
     <template #text>
       <c-information-block :title="t('view.sharedViewUrl')">
-        <c-text-field
-          :model-value="config.url"
-          class="share-view__url-field"
-          readonly
-        >
+        <c-text-field :model-value="config.url" class="share-view__url-field" readonly>
           <template #append-inner>
             <c-copy-btn
               :value="config.url"

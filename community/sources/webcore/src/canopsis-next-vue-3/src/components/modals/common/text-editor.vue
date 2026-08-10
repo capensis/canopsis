@@ -28,10 +28,7 @@
       </template>
 
       <template #actions>
-        <v-btn
-          variant="text"
-          @click="close"
-        >
+        <v-btn variant="text" @click="close">
           {{ $t('common.cancel') }}
         </v-btn>
 
@@ -49,9 +46,8 @@
 </template>
 
 <script>
-import { normalizeHandlebarsNbsp } from '@/helpers/handlebars/normalize';
-
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
+import { normalizeHandlebarsNbsp } from '@/helpers/handlebars/normalize';
 
 export default {
   components: { TextEditorField },
@@ -92,7 +88,11 @@ export default {
     },
 
     required() {
-      return this.config.rules?.required || this.config.rules?.includes?.('required') || this.config.required;
+      return (
+        this.config.rules?.required ||
+        this.config.rules?.includes?.('required') ||
+        this.config.required
+      );
     },
 
     isDisabled() {

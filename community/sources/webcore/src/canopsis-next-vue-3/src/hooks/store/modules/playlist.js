@@ -9,12 +9,7 @@ import { usePlaylistStore } from '@/stores/modules/playlist';
  */
 export const usePlaylist = () => {
   const playlistStore = usePlaylistStore();
-  const {
-    items,
-    meta,
-    pending,
-    fetchingParams,
-  } = storeToRefs(playlistStore);
+  const { items, meta, pending, fetchingParams } = storeToRefs(playlistStore);
 
   return {
     playlists: items,

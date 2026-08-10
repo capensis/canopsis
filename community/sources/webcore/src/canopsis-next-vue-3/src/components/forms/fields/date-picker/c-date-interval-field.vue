@@ -1,8 +1,5 @@
 <template>
-  <div
-    :class="{ 'c-date-interval--column': column }"
-    class="c-date-interval"
-  >
+  <div :class="{ 'c-date-interval--column': column }" class="c-date-interval">
     <c-date-picker-field
       :value="value.from"
       :label="$t('common.from')"

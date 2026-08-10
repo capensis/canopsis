@@ -10,11 +10,7 @@
       />
 
       <c-layout gap="2" justify="end" align="center">
-        <v-btn
-          :disabled="selectedEmpty"
-          color="primary"
-          @click="exportViews"
-        >
+        <v-btn :disabled="selectedEmpty" color="primary" @click="exportViews">
           <v-icon start>
             file_upload
           </v-icon>
@@ -44,32 +40,26 @@
       </c-layout>
     </c-layout>
 
-    <views-export-expansion-panel
-      v-model:selected="selected"
-      :groups="availableGroups"
-    />
+    <views-export-expansion-panel v-model:selected="selected" :groups="availableGroups" />
   </c-layout>
 </template>
 
 <script>
 import { computed, onMounted, ref } from 'vue';
 
+import FileSelector from '@/components/forms/fields/file-selector.vue';
 import { EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX } from '@/config';
 import { MAX_LIMIT, MODALS } from '@/constants';
-
-import { saveJsonFile } from '@/helpers/file/files';
-import { getFileTextContent } from '@/helpers/file/file-select';
 import {
   exportedGroupsAndViewsToRequest,
   getAllViewsFromGroups,
 } from '@/helpers/entities/view/form';
-
+import { getFileTextContent } from '@/helpers/file/file-select';
+import { saveJsonFile } from '@/helpers/file/files';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useView } from '@/hooks/store/modules/view';
-
-import FileSelector from '@/components/forms/fields/file-selector.vue';
 
 import ViewsExportExpansionPanel from './partials/views-export-expansion-panel.vue';
 
@@ -99,17 +89,20 @@ export default {
 
     const fileSelector = ref(null);
 
-    const selectedEmpty = computed(() => (
-      !selected.value.groups.length && !selected.value.views.length
-    ));
+    const selectedEmpty = computed(
+      () => !selected.value.groups.length && !selected.value.views.length,
+    );
 
     const availableGroups = computed(() => viewGroups.value.filter(group => !group.is_private));
     const groupIds = computed(() => availableGroups.value.map(({ _id }) => _id));
-    const viewIds = computed(() => getAllViewsFromGroups(availableGroups.value).map(({ _id }) => _id));
-    const isAllSelected = computed(() => (
-      groupIds.value.every(id => selected.value.groups.includes(id))
-      && viewIds.value.every(id => selected.value.views.includes(id))
-    ));
+    const viewIds = computed(() =>
+      getAllViewsFromGroups(availableGroups.value).map(({ _id }) => _id),
+    );
+    const isAllSelected = computed(
+      () =>
+        groupIds.value.every(id => selected.value.groups.includes(id)) &&
+        viewIds.value.every(id => selected.value.views.includes(id)),
+    );
 
     /**
      * Resets the selected groups and views to empty arrays.
@@ -185,18 +178,23 @@ export default {
 
       const result = await exportViewWithoutStore({ data });
 
-      saveJsonFile(result, `${EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX}${new Date().toLocaleString()}`);
+      saveJsonFile(
+        result,
+        `${EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX}${new Date().toLocaleString()}`,
+      );
 
       resetSelected();
     };
 
-    onMounted(() => fetchViewGroupsList({
-      params: {
-        limit: MAX_LIMIT,
-        page: 1,
-        with_views: true,
-      },
-    }));
+    onMounted(() =>
+      fetchViewGroupsList({
+        params: {
+          limit: MAX_LIMIT,
+          page: 1,
+          with_views: true,
+        },
+      }),
+    );
 
     return {
       t,

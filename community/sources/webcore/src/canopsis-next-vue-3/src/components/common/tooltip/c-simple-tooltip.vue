@@ -1,11 +1,7 @@
 <template>
   <v-tooltip :location="top ? 'top' : 'bottom'">
     <template #activator="{ props }">
-      <slot
-        :on="props"
-        :props="props"
-        name="activator"
-      />
+      <slot :on="props" :props="props" name="activator" />
     </template>
     <span>{{ content }}</span>
   </v-tooltip>

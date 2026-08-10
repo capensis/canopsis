@@ -7,14 +7,15 @@
             {{ title }}
           </h4>
           <v-btn
-class="ma-0"
-size="x-small"
-variant="text"
-icon
-@click="close">
+            class="ma-0"
+            size="x-small"
+            variant="text"
+            icon
+            @click="close"
+          >
             <v-icon color="white">
-close
-</v-icon>
+              close
+            </v-icon>
           </v-btn>
         </c-layout>
       </v-card-title>
@@ -41,10 +42,11 @@ close
           {{ t('common.delete') }}
         </v-btn>
         <v-btn
-:disabled="isDisabled"
-:loading="isSubmitting"
-color="primary"
-type="submit">
+          :disabled="isDisabled"
+          :loading="isSubmitting"
+          color="primary"
+          type="submit"
+        >
           {{ t('common.submit') }}
         </v-btn>
       </v-card-actions>
@@ -57,7 +59,6 @@ import { isEqual } from 'lodash';
 import { computed, watch } from 'vue';
 
 import { MODALS } from '@/constants';
-
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';

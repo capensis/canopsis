@@ -92,7 +92,9 @@ export default {
         return false;
       }
 
-      return this.groups.some(({ title }) => title?.trim().toLowerCase().includes(this.normalizedSearch));
+      return this.groups.some(({ title }) =>
+        title?.trim().toLowerCase().includes(this.normalizedSearch),
+      );
     },
 
     showCreateHintInAppend() {

@@ -1,14 +1,15 @@
-import { globalIgnores } from 'eslint/config';
+import pluginVitest from '@vitest/eslint-plugin';
 import {
   configureVueProject,
   defineConfigWithVueTs,
   vueTsConfigs,
 } from '@vue/eslint-config-typescript';
-import pluginVue from 'eslint-plugin-vue';
-import pluginPlaywright from 'eslint-plugin-playwright';
-import pluginVitest from '@vitest/eslint-plugin';
-import pluginOxlint from 'eslint-plugin-oxlint';
 import skipFormatting from 'eslint-config-prettier/flat';
+import pluginOxlint from 'eslint-plugin-oxlint';
+import perfectionist from 'eslint-plugin-perfectionist';
+import pluginPlaywright from 'eslint-plugin-playwright';
+import pluginVue from 'eslint-plugin-vue';
+import { globalIgnores } from 'eslint/config';
 
 configureVueProject({
   scriptLangs: ['js', 'jsx', 'ts', 'tsx'],
@@ -41,6 +42,9 @@ export default defineConfigWithVueTs(
 
   {
     name: 'app/legacy-canopsis-rules',
+    plugins: {
+      perfectionist,
+    },
     languageOptions: {
       globals: {
         sel: 'readonly',
@@ -49,7 +53,10 @@ export default defineConfigWithVueTs(
     rules: {
       'object-curly-newline': 'off',
       'arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
+      'brace-style': ['error', '1tbs', { allowSingleLine: false }],
+      curly: ['error', 'all'],
       semi: ['error', 'always'],
+      quotes: ['error', 'single', { avoidEscape: false }],
       'default-case': 'off',
       'max-len': [
         'warn',
@@ -119,6 +126,17 @@ export default defineConfigWithVueTs(
               message: '`partial` folder deprecated. Please, rename to `partials`.',
             },
           ],
+        },
+      ],
+      'perfectionist/sort-imports': [
+        'error',
+        {
+          type: 'natural',
+          order: 'asc',
+          internalPattern: ['^@/.*'],
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          newlinesBetween: 1,
+          sortSideEffects: false,
         },
       ],
       'vue/valid-next-tick': 'off',

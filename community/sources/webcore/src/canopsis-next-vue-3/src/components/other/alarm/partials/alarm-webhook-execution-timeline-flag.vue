@@ -6,11 +6,7 @@
     overlap
   >
     <template #badge="">
-      <v-icon
-        class="time-line-flag__badge-icon"
-        color="error"
-        size="14"
-      >
+      <v-icon class="time-line-flag__badge-icon" color="error" size="14">
         error
       </v-icon>
     </template>
@@ -23,8 +19,8 @@
 <script>
 import { computed } from 'vue';
 
-import { getAlarmStepColor, getAlarmStepIcon } from '@/helpers/entities/alarm/step/formatting';
 import { isFailStepType } from '@/helpers/entities/alarm/step/entity';
+import { getAlarmStepColor, getAlarmStepIcon } from '@/helpers/entities/alarm/step/formatting';
 
 /**
  * Component for the flag on the alarms list's timeline

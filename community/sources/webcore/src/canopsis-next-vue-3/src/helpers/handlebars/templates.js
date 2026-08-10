@@ -18,9 +18,7 @@ export function registerTemplate(id, template, instance = Handlebars) {
     return instance.registerPrecompiledTemplate(id, precompiledTemplate);
   }
 
-
   const compiledTemplateFunc = new Function(`return ${precompiledTemplate}`);
-
 
   instance.partials[id] = instance.template(compiledTemplateFunc());
 
@@ -34,7 +32,6 @@ export function registerTemplate(id, template, instance = Handlebars) {
  * @param {Handlebars} [instance = Handlebars] - The Handlebars instance from which to unregister the template.
  */
 export function unregisterTemplate(id, instance = Handlebars) {
-
   delete instance.partials?.[id];
 }
 

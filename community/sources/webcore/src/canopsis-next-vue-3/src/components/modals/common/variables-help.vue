@@ -5,16 +5,8 @@
     </template>
 
     <template #text>
-      <c-layout
-        v-if="config.exportEntity"
-        justify="end"
-        class="mb-2"
-      >
-        <v-btn
-          color="primary"
-          size="small"
-          @click="exportOriginal"
-        >
+      <c-layout v-if="config.exportEntity" justify="end" class="mb-2">
+        <v-btn color="primary" size="small" @click="exportOriginal">
           <template #prepend>
             <v-icon icon="file_download" />
           </template>
@@ -23,16 +15,9 @@
         </v-btn>
       </c-layout>
 
-      <c-treeview
-        :items="config.variables"
-        :item-key="getVariableItemKey"
-        item-title="name"
-      >
+      <c-treeview :items="config.variables" :item-key="getVariableItemKey" item-title="name">
         <template #prepend="{ item }">
-          <div
-            v-if="item.isArray"
-            class="text-caption font-italic text-medium-emphasis"
-          >
+          <div v-if="item.isArray" class="text-caption font-italic text-medium-emphasis">
             {{ `(${$t('common.variableTypes.array')})` }}
           </div>
         </template>
@@ -73,10 +58,7 @@
             </template>
 
             <v-list density="compact">
-              <v-list-item
-                v-if="leaf"
-                @click="copyPathToClipboard(item.path)"
-              >
+              <v-list-item v-if="leaf" @click="copyPathToClipboard(item.path)">
                 <template #prepend>
                   <v-icon icon="content_copy" />
                 </template>
@@ -84,10 +66,7 @@
                 <v-list-item-title>{{ $t('common.copyPathToClipboard') }}</v-list-item-title>
               </v-list-item>
 
-              <v-list-item
-                v-else
-                @click="exportAsJson(item)"
-              >
+              <v-list-item v-else @click="exportAsJson(item)">
                 <template #prepend>
                   <v-icon icon="$json" />
                 </template>
@@ -104,7 +83,6 @@
 
 <script>
 import { DATETIME_FORMATS, MODALS } from '@/constants';
-
 import { convertDateToString, getNowTimestamp } from '@/helpers/date/date';
 import { saveJsonFile } from '@/helpers/file/files';
 import { convertTreeviewToObject } from '@/helpers/treeview';
@@ -141,7 +119,10 @@ export default {
     },
 
     exportOriginal() {
-      saveJsonFile(this.config.exportEntity, `${this.config.exportEntityName}-${this.getNowDateString()}`);
+      saveJsonFile(
+        this.config.exportEntity,
+        `${this.config.exportEntityName}-${this.getNowDateString()}`,
+      );
     },
 
     async copyPathToClipboard(path) {

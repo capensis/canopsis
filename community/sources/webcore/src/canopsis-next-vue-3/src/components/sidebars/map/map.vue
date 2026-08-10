@@ -11,10 +11,7 @@
 
     <widget-settings-group :title="t('settings.entityDisplaySettings')">
       <widget-settings-item :title="colorIndicatorTitle">
-        <c-color-indicator-field
-          v-model="form.parameters.color_indicator"
-          hide-details
-        />
+        <c-color-indicator-field v-model="form.parameters.color_indicator" hide-details />
       </widget-settings-item>
 
       <field-switcher
@@ -68,13 +65,17 @@
 </template>
 
 <script setup>
-import {
-  computed,
-  onMounted,
-  ref,
-  toRef,
-} from 'vue';
+import { computed, onMounted, ref, toRef } from 'vue';
 
+import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
+import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
+import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
+import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
+import FieldTextEditor from '@/components/sidebars/form/fields/text-editor.vue';
+import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
 import {
   COLUMNS_WIDGET_TEMPLATES_TYPES,
   ENTITIES_TYPES,
@@ -87,7 +88,6 @@ import {
   VARIABLES_STEP_FIELDS,
   WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
-
 import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
 import { widgetSortColumnsToForm } from '@/helpers/entities/widget/sort-column/form';
 import { useCanPermission } from '@/hooks/auth';
@@ -95,16 +95,6 @@ import { useI18n } from '@/hooks/i18n';
 import { useInfos } from '@/hooks/store/modules/infos';
 import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
 import { useWidgetSettings } from '@/hooks/widget/settings';
-
-import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
-import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
-import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
-import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
-import FieldTextEditor from '@/components/sidebars/form/fields/text-editor.vue';
-import FieldTitle from '@/components/sidebars/form/fields/title.vue';
-import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
-import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 import FieldMap from './form/fields/map.vue';
 
@@ -129,14 +119,7 @@ const widgetTemplatesPending = ref(false);
 const { entityInfos, fetchInfos } = useInfos();
 const { fetchWidgetTemplatesListWithoutStore } = useWidgetTemplate();
 
-const {
-  form,
-  widget,
-  hasChanges,
-  submitting,
-  close,
-  submit,
-} = useWidgetSettings({
+const { form, widget, hasChanges, submitting, close, submit } = useWidgetSettings({
   sidebar,
 });
 
@@ -200,27 +183,31 @@ const entityInfoTemplateVariables = computed(() => {
     { value: ENTITY_TEMPLATE_FIELDS.statsKo },
     { value: ENTITY_TEMPLATE_FIELDS.alarmDisplayName },
     { value: ENTITY_TEMPLATE_FIELDS.links },
-  ].filter(({ value }) => !excludedFields.includes(value)).map(variable => ({
-    ...variable,
-    text: t(ENTITY_FIELDS_TO_LABELS_KEYS[variable.value.replace('entity.', '')], 2),
-  }));
+  ]
+    .filter(({ value }) => !excludedFields.includes(value))
+    .map(variable => ({
+      ...variable,
+      text: t(ENTITY_FIELDS_TO_LABELS_KEYS[variable.value.replace('entity.', '')], 2),
+    }));
 });
 
-const preparedWidgetTemplates = computed(() => widgetTemplates.value.map((template) => {
-  if (COLUMNS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
-    return { ...template, columns: widgetColumnsToForm(template.columns) };
-  }
+const preparedWidgetTemplates = computed(() =>
+  widgetTemplates.value.map((template) => {
+    if (COLUMNS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
+      return { ...template, columns: widgetColumnsToForm(template.columns) };
+    }
 
-  if (QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
+    if (QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
+      return template;
+    }
+
+    if (WIDGET_TEMPLATES_TYPES.alarmSortColumns === template.type) {
+      return { ...template, sort_columns: widgetSortColumnsToForm(template.sort_columns) };
+    }
+
     return template;
-  }
-
-  if (WIDGET_TEMPLATES_TYPES.alarmSortColumns === template.type) {
-    return { ...template, sort_columns: widgetSortColumnsToForm(template.sort_columns) };
-  }
-
-  return template;
-}));
+  }),
+);
 
 const updateAlarmsColumnsTemplate = (template, columns) => {
   form.value.parameters.alarmsColumnsTemplate = template;

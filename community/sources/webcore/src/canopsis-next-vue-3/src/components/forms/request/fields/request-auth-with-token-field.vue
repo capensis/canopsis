@@ -41,12 +41,10 @@
 <script>
 import { computed } from 'vue';
 
-import { REQUEST_AUTH_TYPES } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
-import { useModelField } from '@/hooks/form/model-field';
-
 import RequestAuthTokenField from '@/components/forms/request/fields/request-auth-token-field.vue';
+import { REQUEST_AUTH_TYPES } from '@/constants';
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   emits: ['update:value'],
@@ -77,18 +75,20 @@ export default {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
-    const types = computed(() => Object.values(REQUEST_AUTH_TYPES).reduce((acc, type) => {
-      if (props.onlyCredentials && type === REQUEST_AUTH_TYPES.token) {
+    const types = computed(() =>
+      Object.values(REQUEST_AUTH_TYPES).reduce((acc, type) => {
+        if (props.onlyCredentials && type === REQUEST_AUTH_TYPES.token) {
+          return acc;
+        }
+
+        acc.push({
+          value: type,
+          label: t(`request.authTypes.${type}`),
+        });
+
         return acc;
-      }
-
-      acc.push({
-        value: type,
-        label: t(`request.authTypes.${type}`),
-      });
-
-      return acc;
-    }, []));
+      }, []),
+    );
 
     const isCredentialsType = computed(() => props.value.type === REQUEST_AUTH_TYPES.credentials);
     const isTokenType = computed(() => props.value.type === REQUEST_AUTH_TYPES.token);

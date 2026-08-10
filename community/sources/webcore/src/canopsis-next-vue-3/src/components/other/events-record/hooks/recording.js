@@ -1,5 +1,4 @@
 import { MODALS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useEventsRecord } from '@/hooks/store/modules/events-record';
@@ -16,8 +15,7 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
       config: {
         title: t('eventsRecord.launchEventRecording'),
         required: false,
-        action: eventPattern =>
-          startCurrentEventsRecord({ data: { event_pattern: eventPattern } }),
+        action: eventPattern => startCurrentEventsRecord({ data: { event_pattern: eventPattern } }),
         afterSubmit: fetchListHandler,
       },
     });

@@ -24,16 +24,14 @@
 import { isEmpty } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
-
 import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
-
 import { formBaseMixin } from '@/mixins/form';
 
 import DateTimePickerMenu from './date-time-picker-menu.vue';
 import { createDateTimeValidationRules, isRequiredRule } from './validation-rules';
 
 export default {
-  emits: ['update:value'],
+  emits: ['update:value', 'update:objectValue'],
   components: { DateTimePickerMenu },
   mixins: [formBaseMixin],
   props: {
@@ -103,9 +101,7 @@ export default {
   },
   methods: {
     updateObjectField(value) {
-      this.updateModel(
-        convertDateToString(value, DATETIME_FORMATS.dateTimePicker),
-      );
+      this.updateModel(convertDateToString(value, DATETIME_FORMATS.dateTimePicker));
     },
 
     focus() {

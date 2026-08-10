@@ -1,13 +1,6 @@
 <template>
-  <c-form-block-row
-    :label="t('common.output')"
-    :depth="depth"
-  >
-    <c-description-field
-      v-model="output"
-      :name="`${name}.output`"
-      :label="t('common.output')"
-    />
+  <c-form-block-row :label="t('common.output')" :depth="depth">
+    <c-description-field v-model="output" :name="`${name}.output`" :label="t('common.output')" />
   </c-form-block-row>
 </template>
 

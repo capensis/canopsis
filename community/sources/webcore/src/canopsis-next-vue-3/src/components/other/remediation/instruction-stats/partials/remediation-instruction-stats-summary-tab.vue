@@ -28,14 +28,15 @@
       />
     </remediation-instruction-stats-summary-row>
     <remediation-instruction-stats-summary-row :label="t('remediation.instructionStat.okAlarmStates')">
-      <c-state-count-changes-chip>{{ remediationInstruction.ok_alarm_states }}</c-state-count-changes-chip>
+      <c-state-count-changes-chip>{{
+        remediationInstruction.ok_alarm_states
+      }}</c-state-count-changes-chip>
     </remediation-instruction-stats-summary-row>
   </c-layout>
 </template>
 
 <script>
 import { convertDateToString } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 import AffectAlarmStates from './affect-alarm-states.vue';

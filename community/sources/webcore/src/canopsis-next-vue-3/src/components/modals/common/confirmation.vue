@@ -1,28 +1,15 @@
 <template>
   <c-modal-wrapper close>
-    <template
-      v-if="!config.hideTitle"
-      #title
-    >
+    <template v-if="!config.hideTitle" #title>
       <span>{{ title }}</span>
     </template>
 
-    <template
-      v-if="sanitizedText || sanitizedAlertText"
-      #text
-    >
-      <v-alert
-        v-if="sanitizedAlertText"
-        class="mb-2 pre-line"
-        type="warning"
-      >
+    <template v-if="sanitizedText || sanitizedAlertText" #text>
+      <v-alert v-if="sanitizedAlertText" class="mb-2 pre-line" type="warning">
         <span v-html="sanitizedAlertText" />
       </v-alert>
 
-      <span
-        v-html="sanitizedText"
-        class="text-subtitle-1 pre-wrap"
-      />
+      <span v-html="sanitizedText" class="text-subtitle-1 pre-wrap" />
     </template>
 
     <template #actions>
@@ -53,7 +40,6 @@
 import { computed, onBeforeUnmount, ref } from 'vue';
 
 import { sanitizeHtml } from '@/helpers/html';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 
@@ -75,8 +61,12 @@ export default {
 
     const config = computed(() => props.modal.config ?? {});
     const title = computed(() => config.value.title ?? t('common.confirmation'));
-    const sanitizedText = computed(() => (config.value.text ? sanitizeHtml(config.value.text) : ''));
-    const sanitizedAlertText = computed(() => (config.value.alert ? sanitizeHtml(config.value.alert) : ''));
+    const sanitizedText = computed(() =>
+      config.value.text ? sanitizeHtml(config.value.text) : '',
+    );
+    const sanitizedAlertText = computed(() =>
+      config.value.alert ? sanitizeHtml(config.value.alert) : '',
+    );
 
     const close = () => modals.hide({ id: props.modal.id });
 

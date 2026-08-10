@@ -1,8 +1,5 @@
 <template>
-  <v-menu
-    content-class="c-advanced-search__history-menu"
-    location="bottom"
-  >
+  <v-menu content-class="c-advanced-search__history-menu" location="bottom">
     <template #activator="{ props }">
       <c-action-btn
         :tooltip="$t('common.search')"
@@ -12,17 +9,9 @@
       />
     </template>
     <v-list ref="listElement">
-      <v-list-item
-        v-for="search in preparedSearches"
-        :key="search._id"
-        @click="select(search)"
-      >
+      <v-list-item v-for="search in preparedSearches" :key="search._id" @click="select(search)">
         <template #title>
-          <advanced-search-rules
-            :rules="search.rules"
-            :attributes="attributes"
-            disabled
-          />
+          <advanced-search-rules :rules="search.rules" :attributes="attributes" disabled />
         </template>
         <template #append>
           <advanced-search-history-item-btns
@@ -63,11 +52,13 @@ export default {
 
   setup(props, { emit }) {
     const listElement = ref(null);
-    const preparedSearches = computed(() => props.searches.map(search => ({
-      _id: search._id,
-      pinned: search.pinned,
-      rules: search.rules ?? advancedSearchToForm(search),
-    })));
+    const preparedSearches = computed(() =>
+      props.searches.map(search => ({
+        _id: search._id,
+        pinned: search.pinned,
+        rules: search.rules ?? advancedSearchToForm(search),
+      })),
+    );
 
     const select = search => emit('select', search);
     const remove = id => emit('remove', id);

@@ -14,7 +14,10 @@
 </template>
 
 <script>
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
+import {
+  usePatternsFields,
+  usePatternsFieldsFetching,
+} from '@/hooks/store/modules/patterns-fields';
 
 export default {
   props: {
@@ -37,11 +40,10 @@ export default {
   setup(props) {
     const { fetchIdleRulePatternFields } = usePatternsFields();
 
-    const {
-      pending,
-      alarmAttributes,
-      entityAttributes,
-    } = usePatternsFieldsFetching(fetchIdleRulePatternFields, props.readonly);
+    const { pending, alarmAttributes, entityAttributes } = usePatternsFieldsFetching(
+      fetchIdleRulePatternFields,
+      props.readonly,
+    );
 
     return {
       pending,

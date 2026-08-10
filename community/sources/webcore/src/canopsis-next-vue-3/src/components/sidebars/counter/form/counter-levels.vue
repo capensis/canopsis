@@ -13,21 +13,16 @@
 
     <field-criticity-levels v-model="valuesModel" />
 
-    <field-levels-colors-selector
-      v-model="colorsModel"
-      color-type="hex"
-      hide-suffix
-    />
+    <field-levels-colors-selector v-model="colorsModel" color-type="hex" hide-suffix />
   </widget-settings-group>
 </template>
 
 <script>
-import { AVAILABLE_COUNTERS } from '@/constants';
-
-import FieldCriticityLevels from '@/components/sidebars/stats/form/fields/criticity-levels.vue';
-import FieldLevelsColorsSelector from '@/components/sidebars/stats/form/fields/levels-colors-selector.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+import FieldCriticityLevels from '@/components/sidebars/stats/form/fields/criticity-levels.vue';
+import FieldLevelsColorsSelector from '@/components/sidebars/stats/form/fields/levels-colors-selector.vue';
+import { AVAILABLE_COUNTERS } from '@/constants';
 
 export default {
   components: {

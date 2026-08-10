@@ -1,9 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper
-      text-class="position-relative"
-      close
-    >
+    <c-modal-wrapper text-class="position-relative" close>
       <template #title>
         <span>{{ title }}</span>
       </template>
@@ -17,10 +14,7 @@
       </template>
 
       <template #actions>
-        <v-btn
-          variant="text"
-          @click="closeModal"
-        >
+        <v-btn variant="text" @click="closeModal">
           {{ t('common.cancel') }}
         </v-btn>
 
@@ -40,16 +34,16 @@
 <script>
 import { computed } from 'vue';
 
+import AlarmStatusRuleForm from '@/components/other/alarm-status-rule/form/alarm-status-rule-form.vue';
 import { DEFAULT_RESOLVE_RULE_ID } from '@/constants';
-
-import { alarmStatusRuleToForm, formToAlarmStatusRule } from '@/helpers/entities/alarm-status-rule/form';
-
+import {
+  alarmStatusRuleToForm,
+  formToAlarmStatusRule,
+} from '@/helpers/entities/alarm-status-rule/form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useModals } from '@/hooks/modals';
-
-import AlarmStatusRuleForm from '@/components/other/alarm-status-rule/form/alarm-status-rule-form.vue';
 
 export default {
   components: { AlarmStatusRuleForm },
@@ -73,11 +67,7 @@ export default {
     const form = useForm({
       initialValues: alarmStatusRuleToForm(config.value.rule, config.value.flapping),
     });
-    const {
-      values,
-      handleSubmit,
-      submitting,
-    } = form;
+    const { values, handleSubmit, submitting } = form;
 
     const closeModal = () => modals.hide({ id: props.modal.id });
 

@@ -23,21 +23,18 @@
 </template>
 
 <script>
-import { inject, onMounted } from 'vue';
 import { omit } from 'lodash';
+import { inject, onMounted } from 'vue';
 
+import ThemesList from '@/components/other/theme/themes-list.vue';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
-
 import { pickIds } from '@/helpers/array';
 import { convertQueryToRequest } from '@/helpers/query';
-
 import { useAuth, useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { useTheme } from '@/hooks/store/modules/theme';
-
-import ThemesList from '@/components/other/theme/themes-list.vue';
 
 export default {
   components: { ThemesList },
@@ -57,15 +54,14 @@ export default {
       removeTheme,
       bulkRemoveThemes,
     } = useTheme();
-    const {
-      hasCreateAccess,
-      hasUpdateAccess,
-      hasDeleteAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.profile.theme);
+    const { hasCreateAccess, hasUpdateAccess, hasDeleteAccess } = useCRUDPermissions(
+      USER_PERMISSIONS.technical.profile.theme,
+    );
 
-    const fetchList = query => fetchThemesList({
-      params: convertQueryToRequest(query ?? options.value),
-    });
+    const fetchList = query =>
+      fetchThemesList({
+        params: convertQueryToRequest(query ?? options.value),
+      });
     const { options, updateOptions } = useLocalQueryWithOptions({
       onUpdate: fetchList,
     });

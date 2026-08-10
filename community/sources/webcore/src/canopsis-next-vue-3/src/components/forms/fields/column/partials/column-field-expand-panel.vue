@@ -89,11 +89,7 @@
       />
     </template>
 
-    <c-layout
-      v-if="withTemplate || withSimpleTemplate"
-      align="center"
-      justify="space-between"
-    >
+    <c-layout v-if="withTemplate || withSimpleTemplate" align="center" justify="space-between">
       <v-switch
         :model-value="!!formValue.template"
         class="pa-0 my-0"
@@ -171,9 +167,7 @@ import {
   ENTITY_INFOS_FIELDS,
   MODALS,
 } from '@/constants';
-
 import { isLinksWidgetColumn } from '@/helpers/entities/widget/column/form';
-
 import { useInfos } from '@/hooks/store/modules/infos';
 import { formMixin } from '@/mixins/form';
 
@@ -241,12 +235,7 @@ export default {
   emits: ['update:value'],
 
   setup() {
-    const {
-      alarmInfos,
-      alarmInfosRules,
-      entityInfos,
-      infosPending,
-    } = useInfos();
+    const { alarmInfos, alarmInfosRules, entityInfos, infosPending } = useInfos();
 
     return {
       alarmInfos,
@@ -268,10 +257,7 @@ export default {
     },
 
     infosFields() {
-      return [
-        ...ALARM_INFOS_FIELDS,
-        ...ENTITY_INFOS_FIELDS,
-      ];
+      return [...ALARM_INFOS_FIELDS, ...ENTITY_INFOS_FIELDS];
     },
 
     isLinks() {
@@ -296,7 +282,9 @@ export default {
         ALARM_LIST_WIDGET_COLUMNS.entityComponentInfos,
         CONTEXT_WIDGET_COLUMNS.infos,
         CONTEXT_WIDGET_COLUMNS.componentInfos,
-      ].includes(this.formValue?.column) ? this.entityInfos : this.alarmInfos;
+      ].includes(this.formValue?.column)
+        ? this.entityInfos
+        : this.alarmInfos;
     },
 
     templateModalConfig() {
@@ -324,7 +312,10 @@ export default {
     },
 
     filterOnClickAvailable() {
-      return this.withFilterOnClick && !ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK.includes(this.formValue?.column);
+      return (
+        this.withFilterOnClick &&
+        !ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK.includes(this.formValue?.column)
+      );
     },
   },
 
@@ -357,7 +348,8 @@ export default {
         ...this.formValue,
         template,
         isHtml: checked && this.formValue.isHtml ? false : this.formValue.isHtml,
-        colorIndicator: checked && this.formValue.colorIndicator ? null : this.formValue.colorIndicator,
+        colorIndicator:
+          checked && this.formValue.colorIndicator ? null : this.formValue.colorIndicator,
         isFilter: checked && this.formValue.isFilter ? false : this.formValue.isFilter,
       });
     },
@@ -380,7 +372,10 @@ export default {
     },
 
     switchChangeColorIndicator(colorIndicator) {
-      return this.updateField('colorIndicator', colorIndicator ? COLOR_INDICATOR_TYPES.state : null);
+      return this.updateField(
+        'colorIndicator',
+        colorIndicator ? COLOR_INDICATOR_TYPES.state : null,
+      );
     },
 
     showEditTemplateModal() {

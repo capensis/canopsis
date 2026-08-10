@@ -1,10 +1,6 @@
 <template>
   <c-layout class="my-2" justify="center">
-    <v-progress-circular
-      v-if="pending"
-      color="primary"
-      indeterminate
-    />
+    <v-progress-circular v-if="pending" color="primary" indeterminate />
 
     <v-row v-else justify="center" no-gutters>
       <v-col cols="12" md="10">
@@ -33,7 +29,6 @@
 import { onMounted, ref } from 'vue';
 
 import { notificationsSettingsToForm } from '@/helpers/entities/notification/form';
-
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';

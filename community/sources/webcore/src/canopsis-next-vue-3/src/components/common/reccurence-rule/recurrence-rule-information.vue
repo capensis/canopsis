@@ -16,11 +16,10 @@
 </template>
 
 <script>
-import { computed } from 'vue';
 import { rrulestr } from 'rrule';
+import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 const MAX_EXCEPTION_ITEMS = 4;
@@ -60,7 +59,9 @@ export default {
 
     const exceptionItems = computed(() => {
       const result = props.exceptions.map(({ name }) => name);
-      const preparedExdates = props.exdates.map(({ begin, end }) => `${convertDateToString(begin)} - ${convertDateToString(end)}`);
+      const preparedExdates = props.exdates.map(
+        ({ begin, end }) => `${convertDateToString(begin)} - ${convertDateToString(end)}`,
+      );
 
       result.push(...preparedExdates);
 

@@ -5,15 +5,17 @@
     </div>
 
     <v-expansion-panels
-:model-value="openedPanels"
-variant="accordion"
-multiple
-readonly>
+      :model-value="openedPanels"
+      variant="accordion"
+      multiple
+      readonly
+    >
       <group-panel
-v-for="group in groups"
-:key="group._id"
-:group="group"
-hide-actions>
+        v-for="group in groups"
+        :key="group._id"
+        :group="group"
+        hide-actions
+      >
         <template #title>
           <v-checkbox
             :model-value="isGroupSelected(group)"
@@ -96,12 +98,10 @@ hide-actions>
 <script>
 import { computed } from 'vue';
 
-import { createRangeArray } from '@/helpers/array';
-
-import { useI18n } from '@/hooks/i18n';
-
-import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
 import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
+import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
+import { createRangeArray } from '@/helpers/array';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   components: {

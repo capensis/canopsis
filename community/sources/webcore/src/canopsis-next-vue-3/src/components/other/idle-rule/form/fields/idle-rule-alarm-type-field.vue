@@ -18,7 +18,6 @@
 import { computed } from 'vue';
 
 import { IDLE_RULE_ALARM_CONDITIONS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {
@@ -53,10 +52,12 @@ export default {
       },
     });
 
-    const items = computed(() => Object.values(IDLE_RULE_ALARM_CONDITIONS).map(value => ({
-      value,
-      label: t(`idleRules.alarmConditions.${value}`),
-    })));
+    const items = computed(() =>
+      Object.values(IDLE_RULE_ALARM_CONDITIONS).map(value => ({
+        value,
+        label: t(`idleRules.alarmConditions.${value}`),
+      })),
+    );
 
     return {
       currentValue,

@@ -24,11 +24,10 @@
 </template>
 
 <script>
-import { computed } from 'vue';
 import { pick } from 'lodash';
+import { computed } from 'vue';
 
 import { PATTERNS_FIELDS } from '@/constants';
-
 import { useFormContext, useFormModel } from '@/hooks/form';
 import {
   usePatternsFields,
@@ -72,25 +71,23 @@ export default {
     const title = useFormModel('title');
     const { fetchWidgetFilterPatternFields } = usePatternsFields();
 
-    const {
-      pending,
-      alarmAttributes,
-      entityAttributes,
-      pbehaviorAttributes,
-    } = usePatternsFieldsFetching(
-      () => fetchWidgetFilterPatternFields({
-        params: pick(props, ['entityTypes', 'entityCountersType']),
-      }),
-      props.readonly,
-    );
+    const { pending, alarmAttributes, entityAttributes, pbehaviorAttributes } =
+      usePatternsFieldsFetching(
+        () =>
+          fetchWidgetFilterPatternFields({
+            params: pick(props, ['entityTypes', 'entityCountersType']),
+          }),
+        props.readonly,
+      );
 
     const patterns = computed({
-      get: () => pick(form.values.value, [
-        PATTERNS_FIELDS.alarm,
-        PATTERNS_FIELDS.entity,
-        PATTERNS_FIELDS.pbehavior,
-        PATTERNS_FIELDS.serviceWeather,
-      ]),
+      get: () =>
+        pick(form.values.value, [
+          PATTERNS_FIELDS.alarm,
+          PATTERNS_FIELDS.entity,
+          PATTERNS_FIELDS.pbehavior,
+          PATTERNS_FIELDS.serviceWeather,
+        ]),
       set: (value) => {
         form.values.value = {
           ...form.values.value,

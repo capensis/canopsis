@@ -22,9 +22,6 @@ provide('$modal', props.modal);
 
 <template>
   <modal-wrapper :modal="modal">
-    <component
-      :is="modalComponent"
-      :modal="modal"
-    />
+    <component :is="modalComponent" :modal="modal" />
   </modal-wrapper>
 </template>

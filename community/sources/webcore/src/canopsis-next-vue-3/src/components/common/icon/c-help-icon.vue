@@ -1,8 +1,5 @@
 <template>
-  <v-tooltip
-    :max-width="maxWidth"
-    :location="location"
-  >
+  <v-tooltip :max-width="maxWidth" :location="location">
     <template #activator="{ props: activatorProps }">
       <c-icon
         v-bind="activatorProps"
@@ -16,10 +13,7 @@
     </template>
 
     <slot>
-      <div
-        v-html="text"
-        class="pre-wrap"
-      />
+      <div v-html="text" class="pre-wrap" />
     </slot>
   </v-tooltip>
 </template>

@@ -10,10 +10,7 @@
       </template>
 
       <template #actions>
-        <v-btn
-          variant="text"
-          @click="closeModal"
-        >
+        <v-btn variant="text" @click="closeModal">
           {{ $t('common.cancel') }}
         </v-btn>
 
@@ -33,14 +30,12 @@
 <script>
 import { computed } from 'vue';
 
+import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
 import { dynamicInfoToForm, formToDynamicInfo } from '@/helpers/entities/dynamic-info/rule/form';
-
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useModals } from '@/hooks/modals';
-
-import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
 
 export default {
   components: { DynamicInfoForm },
@@ -60,11 +55,7 @@ export default {
     const isNew = computed(() => !config.value.dynamicInfo);
     const title = computed(() => config.value.title || t('modals.createDynamicInfo.create.title'));
     const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
-    const {
-      values,
-      handleSubmit,
-      submitting,
-    } = useForm({
+    const { values, handleSubmit, submitting } = useForm({
       initialValues: dynamicInfoToForm(config.value.dynamicInfo),
     });
 

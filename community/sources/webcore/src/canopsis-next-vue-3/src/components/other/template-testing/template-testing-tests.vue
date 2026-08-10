@@ -16,7 +16,6 @@
 import { onMounted } from 'vue';
 
 import { MODALS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
@@ -46,36 +45,38 @@ export default {
       fetchListHandler: fetchTemplateTestingTestsListWithoutStore,
     });
 
-    const showEditTemplateTestingTestModal = (templateTestingTest = {}) => modals.show({
-      name: MODALS.createTemplateTestingTest,
-      config: {
-        templateTestingTest,
-        title: t('modals.createTemplateTestingTest.edit.title'),
-        action: async (newTemplateTestingTest) => {
-          await updateTemplateTestingTest({
-            id: templateTestingTest._id,
-            data: newTemplateTestingTest,
-          });
+    const showEditTemplateTestingTestModal = (templateTestingTest = {}) =>
+      modals.show({
+        name: MODALS.createTemplateTestingTest,
+        config: {
+          templateTestingTest,
+          title: t('modals.createTemplateTestingTest.edit.title'),
+          action: async (newTemplateTestingTest) => {
+            await updateTemplateTestingTest({
+              id: templateTestingTest._id,
+              data: newTemplateTestingTest,
+            });
 
-          return fetchList();
+            return fetchList();
+          },
         },
-      },
-    });
+      });
 
-    const showRemoveTemplateTestingTestModal = (templateTestingTest = {}) => modals.show({
-      name: MODALS.confirmationPhrase,
-      config: {
-        phrase: templateTestingTest.name,
-        title: t('modals.confirmationPhrase.templateTestingTest.title'),
-        text: t('modals.confirmationPhrase.templateTestingTest.text'),
-        phraseText: t('modals.confirmationPhrase.templateTestingTest.phraseText'),
-        action: async () => {
-          await removeTemplateTestingTest({ id: templateTestingTest._id });
+    const showRemoveTemplateTestingTestModal = (templateTestingTest = {}) =>
+      modals.show({
+        name: MODALS.confirmationPhrase,
+        config: {
+          phrase: templateTestingTest.name,
+          title: t('modals.confirmationPhrase.templateTestingTest.title'),
+          text: t('modals.confirmationPhrase.templateTestingTest.text'),
+          phraseText: t('modals.confirmationPhrase.templateTestingTest.phraseText'),
+          action: async () => {
+            await removeTemplateTestingTest({ id: templateTestingTest._id });
 
-          return fetchList();
+            return fetchList();
+          },
         },
-      },
-    });
+      });
 
     onMounted(fetchList);
 

@@ -1,9 +1,6 @@
 <template>
   <v-list-item class="text-subtitle-1">
-    <template
-      v-if="!hideIcon && !multiline"
-      #prepend
-    >
+    <template v-if="!hideIcon && !multiline" #prepend>
       <c-icon>{{ icon }}</c-icon>
     </template>
 
@@ -12,9 +9,7 @@
         <span class="font-weight-bold">
           {{ label }}
         </span>
-        <span v-if="value">
-          : {{ value }}
-        </span>
+        <span v-if="value"> : {{ value }} </span>
       </div>
     </c-layout>
   </v-list-item>

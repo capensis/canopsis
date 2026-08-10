@@ -1,15 +1,15 @@
 <template>
   <path
-ref="path"
-:d="path"
-:fill="fill"
-pointer-events="stroke"
-v-bind="$attrs" />
+    ref="path"
+    :d="path"
+    :fill="fill"
+    pointer-events="stroke"
+    v-bind="$attrs"
+  />
 </template>
 
 <script>
 import { LINE_TYPES } from '@/constants';
-
 import { calculateCenterBetweenPoint } from '@/helpers/flowchart/points';
 
 export default {

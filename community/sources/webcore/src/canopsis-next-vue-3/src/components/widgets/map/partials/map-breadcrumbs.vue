@@ -1,8 +1,5 @@
 <template>
-  <v-breadcrumbs
-    :items="breadcrumbs"
-    class="pa-0"
-  >
+  <v-breadcrumbs :items="breadcrumbs" class="pa-0">
     <template #item="{ item }">
       <v-btn
         :disabled="item.last"

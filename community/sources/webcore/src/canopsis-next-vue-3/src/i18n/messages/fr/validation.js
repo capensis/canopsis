@@ -1,10 +1,11 @@
 export default {
   messages: {
-    _default: "Le champ n'est pas valide",
+    _default: 'Le champ n\'est pas valide',
     after: 'Le champ doit être postérieur à {1}',
     after_with_inclusion: 'Le champ doit être postérieur ou égal à {1}',
     alpha: 'Le champ ne peut contenir que des lettres',
-    alpha_dash: 'Le champ ne peut contenir que des caractères alpha-numériques, tirets ou soulignés',
+    alpha_dash:
+      'Le champ ne peut contenir que des caractères alpha-numériques, tirets ou soulignés',
     alpha_num: 'Le champ ne peut contenir que des caractères alpha-numériques',
     alpha_spaces: 'Le champ ne peut contenir que des lettres ou des espaces',
     before: 'Le champ doit être antérieur à {1}',

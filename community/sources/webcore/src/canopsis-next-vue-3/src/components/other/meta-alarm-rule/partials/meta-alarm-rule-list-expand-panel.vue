@@ -1,10 +1,11 @@
 <template>
   <div>
     <v-tabs
-v-model="activeTab"
-bg-color="secondary-lighten-1"
-color="primary"
-align-tabs="center">
+      v-model="activeTab"
+      bg-color="secondary-lighten-1"
+      color="primary"
+      align-tabs="center"
+    >
       <v-tab value="patterns">
         {{ t('common.pattern', 2) }}
       </v-tab>
@@ -31,14 +32,12 @@ align-tabs="center">
 <script>
 import { computed, ref } from 'vue';
 
+import MetaAlarmRulePatternsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-patterns-form.vue';
 import {
   isMetaAlarmRuleTypeHasTotalEntityPatterns,
   metaAlarmFilterPatternsToForm,
 } from '@/helpers/entities/meta-alarm/rule/form';
-
 import { useI18n } from '@/hooks/i18n';
-
-import MetaAlarmRulePatternsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-patterns-form.vue';
 
 export default {
   components: { MetaAlarmRulePatternsForm },

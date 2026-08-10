@@ -5,7 +5,8 @@
  * @param {string} [delimiter=''] - The separator to use between permissions
  * @returns {string} - The joined permissions string
  */
-export const groupedPermissionToPermission = (permissions = [], delimiter = '') => permissions.join(delimiter);
+export const groupedPermissionToPermission = (permissions = [], delimiter = '') =>
+  permissions.join(delimiter);
 
 const CAN_ACTION = 'can';
 
@@ -29,9 +30,8 @@ export const checkUserAccess = (permission, action) => {
   return Boolean(permission.actions?.[action] ?? permission.permissions?.[action]);
 };
 
-export const checkUserAnyAccess = (permissions, action) => (
-  Object.values(permissions).some(permission => checkUserAccess(permission, action))
-);
+export const checkUserAnyAccess = (permissions, action) =>
+  Object.values(permissions).some(permission => checkUserAccess(permission, action));
 
 /**
  * Groups permissions by their view property into an object structure.
@@ -57,16 +57,17 @@ export const checkUserAnyAccess = (permissions, action) => (
  * //   posts: { delete: {...} }
  * // }
  */
-export const viewPermissionsGroupedPermissions = (permissions = []) => permissions.reduce((acc, permission) => {
-  if (!permission.view) {
+export const viewPermissionsGroupedPermissions = (permissions = []) =>
+  permissions.reduce((acc, permission) => {
+    if (!permission.view) {
+      return acc;
+    }
+
+    if (!acc[permission.view]) {
+      acc[permission.view] = {};
+    }
+
+    acc[permission.view][permission.name] = permission;
+
     return acc;
-  }
-
-  if (!acc[permission.view]) {
-    acc[permission.view] = {};
-  }
-
-  acc[permission.view][permission.name] = permission;
-
-  return acc;
-}, {});
+  }, {});

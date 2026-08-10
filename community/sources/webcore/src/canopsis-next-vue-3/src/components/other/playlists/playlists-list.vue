@@ -40,10 +40,11 @@
         <c-action-btn :tooltip="t('common.play')">
           <template #button="{ props: buttonProps }">
             <v-btn
-v-bind="buttonProps"
-:to="getPlaylistRouteById(item._id)"
-variant="text"
-icon>
+              v-bind="buttonProps"
+              :to="getPlaylistRouteById(item._id)"
+              variant="text"
+              icon
+            >
               <c-icon>play_arrow</c-icon>
             </v-btn>
           </template>
@@ -72,10 +73,8 @@ import { useRouter } from 'vue-router';
 
 import { APP_HOST } from '@/config';
 import { ROUTES_NAMES } from '@/constants';
-
 import { convertDurationToString } from '@/helpers/date/duration';
 import { removeTrailingSlashes } from '@/helpers/url';
-
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
 

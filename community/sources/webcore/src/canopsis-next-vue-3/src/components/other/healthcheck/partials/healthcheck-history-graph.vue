@@ -20,23 +20,26 @@
       >
         <template #actions="{ chart }">
           <chart-export-actions
-:chart="chart"
-class="mt-4"
-hide-csv
-@export:png="exportChart" />
+            :chart="chart"
+            class="mt-4"
+            hide-csv
+            @export:png="exportChart"
+          />
           <div class="healthcheck-history__zoom">
             <v-btn
-:disabled="!chart"
-size="small"
-icon
-@click="zoomIn(chart)">
+              :disabled="!chart"
+              size="small"
+              icon
+              @click="zoomIn(chart)"
+            >
               <v-icon>add</v-icon>
             </v-btn>
             <v-btn
-:disabled="!chart"
-size="small"
-icon
-@click="zoomOut(chart)">
+              :disabled="!chart"
+              size="small"
+              icon
+              @click="zoomOut(chart)"
+            >
               <v-icon>remove</v-icon>
             </v-btn>
           </div>
@@ -49,6 +52,9 @@ icon
 <script>
 import { debounce } from 'lodash';
 
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
+import LimitedTimeLineChart from '@/components/common/chart/limited-time-line-chart.vue';
+import { COLORS, HEALTHCHECK_HISTORY_FILENAME_PREFIX } from '@/config';
 import {
   DATETIME_FORMATS,
   HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR,
@@ -56,8 +62,7 @@ import {
   QUICK_RANGES,
   TIME_UNITS,
 } from '@/constants';
-import { COLORS, HEALTHCHECK_HISTORY_FILENAME_PREFIX } from '@/config';
-
+import { colorToRgba } from '@/helpers/color';
 import {
   convertDateToStartOfDayTimestamp,
   convertDateToStartOfUnitTimestamp,
@@ -69,13 +74,8 @@ import {
   convertStopDateIntervalToTimestamp,
 } from '@/helpers/date/date-intervals';
 import { convertUnit } from '@/helpers/date/duration';
-import { colorToRgba } from '@/helpers/color';
 import { saveFile } from '@/helpers/file/files';
-
 import { useMessageRateStats } from '@/hooks/store/modules/message-rate-stats';
-
-import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
-import LimitedTimeLineChart from '@/components/common/chart/limited-time-line-chart.vue';
 
 import HealthcheckHistoryFilters from './healthcheck-history-filters.vue';
 

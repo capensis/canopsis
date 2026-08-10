@@ -1,10 +1,6 @@
 <template>
   <div class="sidebars-wrapper position-relative">
-    <sidebar-base
-      v-for="sidebar in sidebars"
-      :key="sidebar.id"
-      :sidebar="sidebar"
-    />
+    <sidebar-base v-for="sidebar in sidebars" :key="sidebar.id" :sidebar="sidebar" />
   </div>
 </template>
 

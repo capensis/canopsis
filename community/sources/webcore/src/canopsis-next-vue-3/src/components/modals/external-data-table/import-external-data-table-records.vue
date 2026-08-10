@@ -41,10 +41,11 @@
         >
           {{ submitButton.text }}
           <v-progress-circular
-v-if="submitButton.loading"
-class="ml-2"
-size="24"
-indeterminate />
+            v-if="submitButton.loading"
+            class="ml-2"
+            size="24"
+            indeterminate
+          />
         </v-btn>
       </template>
     </c-modal-wrapper>
@@ -54,15 +55,13 @@ indeterminate />
 <script>
 import { computed } from 'vue';
 
+import ExternalDataTableGeneralInfoForm from '@/components/other/external-data-table/form/external-data-table-general-info-form.vue';
+import { useExternalDataTableImportFile } from '@/components/other/external-data-table/hooks/external-data-table-import-file';
+import ImportFileUploadSection from '@/components/other/external-data-table/partials/import-file-upload-section.vue';
+import ImportPreviewSection from '@/components/other/external-data-table/partials/import-preview-section.vue';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-
-import { useExternalDataTableImportFile } from '@/components/other/external-data-table/hooks/external-data-table-import-file';
-
-import ExternalDataTableGeneralInfoForm from '@/components/other/external-data-table/form/external-data-table-general-info-form.vue';
-import ImportFileUploadSection from '@/components/other/external-data-table/partials/import-file-upload-section.vue';
-import ImportPreviewSection from '@/components/other/external-data-table/partials/import-preview-section.vue';
 
 export default {
   components: {

@@ -7,7 +7,11 @@ const props = defineProps(validationProps);
 const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
-const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
+const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(
+  props,
+  emit,
+  attrs,
+);
 </script>
 
 <template>
@@ -17,6 +21,7 @@ const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidati
     :color="$attrs.color || 'primary'"
     :name="inputName"
     :error-messages="errorMessages"
+    class="c-radio-group"
     @blur="onBlur"
   >
     <template v-if="label" #label>
@@ -30,3 +35,14 @@ const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidati
     </template>
   </v-radio-group>
 </template>
+
+<style scoped>
+.c-radio-group :deep(> .v-input__control > .v-label) {
+  margin-inline-start: 0;
+}
+
+.c-radio-group :deep(> .v-input__control > .v-selection-control-group) {
+  margin-inline-start: 0;
+  padding-inline-start: 0;
+}
+</style>

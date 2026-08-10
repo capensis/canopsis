@@ -30,20 +30,17 @@
 <script>
 import { computed } from 'vue';
 
+import CommentTemplateForm from '@/components/other/comment-template/form/comment-template-form.vue';
 import { MODALS } from '@/constants';
-
 import {
   commentTemplateToForm,
   formToCommentTemplate,
 } from '@/helpers/entities/comment-template/form';
-
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-
-import CommentTemplateForm from '@/components/other/comment-template/form/comment-template-form.vue';
 
 export default {
   name: MODALS.createCommentTemplate,
@@ -68,9 +65,9 @@ export default {
       initialValues: commentTemplateToForm(config.value.template),
     });
 
-    const title = computed(() => (
-      config.value.title || t('modals.createCommentTemplate.create.title')
-    ));
+    const title = computed(
+      () => config.value.title || t('modals.createCommentTemplate.create.title'),
+    );
 
     const { submitting, submit, submitLabel } = useSubmittableForm({
       item: config.value.template,

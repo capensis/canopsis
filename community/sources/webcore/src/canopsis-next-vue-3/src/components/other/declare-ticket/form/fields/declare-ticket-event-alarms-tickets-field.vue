@@ -1,10 +1,6 @@
 <template>
   <c-layout column>
-    <v-data-table
-      :headers="headers"
-      :items="alarms"
-      hide-default-footer
-    >
+    <v-data-table :headers="headers" :items="alarms" hide-default-footer>
       <template #item="{ item }">
         <tr>
           <td v-if="!hideRowSelect">
@@ -48,7 +44,6 @@ import { difference } from 'lodash';
 
 import { filterValue, mapIds } from '@/helpers/array';
 import { revertGroupBy } from '@/helpers/collection';
-
 import { formMixin } from '@/mixins/form';
 
 import DeclareTicketEventTicketsField from './declare-ticket-event-tickets-field.vue';

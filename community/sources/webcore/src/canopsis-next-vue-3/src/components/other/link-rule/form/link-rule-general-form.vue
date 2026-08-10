@@ -1,10 +1,11 @@
 <template>
   <c-layout gap="3" column>
     <c-name-field
-v-model="nameField"
-:max-length="255"
-autofocus
-required />
+      v-model="nameField"
+      :max-length="255"
+      autofocus
+      required
+    />
 
     <c-form-block>
       <c-form-block-row :label="$t('linkRule.type')">
@@ -33,17 +34,15 @@ required />
 <script>
 import { computed } from 'vue';
 
+import ExternalDataField from '@/components/forms/external-data/external-data-field.vue';
 import {
   EXTERNAL_DATA_TYPES,
   LINK_RULE_TYPES,
   LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES,
 } from '@/constants';
-
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useValidationHeader } from '@/hooks/validator/validation-header';
-
-import ExternalDataField from '@/components/forms/external-data/external-data-field.vue';
 
 export default {
   components: { ExternalDataField },

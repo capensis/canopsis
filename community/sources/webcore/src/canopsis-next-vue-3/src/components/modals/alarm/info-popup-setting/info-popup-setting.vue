@@ -60,21 +60,14 @@
             </v-card-title>
             <v-card-text>
               <p>{{ $t('common.template', 1) }}:</p>
-              <c-textarea
-                :model-value="popup.template"
-                disabled
-              />
+              <c-textarea :model-value="popup.template" disabled />
             </v-card-text>
           </v-card>
         </c-layout>
       </template>
 
       <template #actions>
-        <v-btn
-          :disabled="isSubmitting"
-          variant="text"
-          @click="closeModal"
-        >
+        <v-btn :disabled="isSubmitting" variant="text" @click="closeModal">
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
@@ -95,9 +88,8 @@ import { cloneDeep } from 'lodash';
 import { computed } from 'vue';
 
 import { MODALS } from '@/constants';
-
-import { useForm } from '@/hooks/form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useModals } from '@/hooks/modals';
 
 export default {
@@ -120,12 +112,7 @@ export default {
         },
       },
     });
-    const {
-      handleSubmit,
-      isSubmitting,
-      model,
-      values,
-    } = formContext;
+    const { handleSubmit, isSubmitting, model, values } = formContext;
     const form = model('form');
     const closeModal = () => modals.hide({ id: props.modal.id });
 

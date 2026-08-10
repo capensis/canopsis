@@ -1,10 +1,11 @@
 <template>
   <div>
     <v-tabs
-v-model="activeTab"
-bg-color="secondary-lighten-1"
-color="primary"
-align-tabs="center">
+      v-model="activeTab"
+      bg-color="secondary-lighten-1"
+      color="primary"
+      align-tabs="center"
+    >
       <v-tab :value="0">
         {{ $t('common.pattern', 2) }}
       </v-tab>
@@ -28,7 +29,6 @@ align-tabs="center">
 
 <script>
 import { PATTERNS_FIELDS } from '@/constants';
-
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
 import KpiFilterPatternsForm from '../form/kpi-filter-patterns-form.vue';

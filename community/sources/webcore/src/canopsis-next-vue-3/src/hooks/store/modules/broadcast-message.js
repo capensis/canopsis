@@ -12,12 +12,7 @@ import { useBroadcastMessageStore } from '@/stores/modules/broadcast-message';
  */
 export const useBroadcastMessages = () => {
   const broadcastMessageStore = useBroadcastMessageStore();
-  const {
-    items,
-    meta,
-    pending,
-    fetchingParams,
-  } = storeToRefs(broadcastMessageStore);
+  const { items, meta, pending, fetchingParams } = storeToRefs(broadcastMessageStore);
 
   return {
     broadcastMessages: items,

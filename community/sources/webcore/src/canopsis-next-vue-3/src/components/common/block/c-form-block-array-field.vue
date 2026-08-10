@@ -6,8 +6,7 @@
       :label="label"
       :required="required"
       :error="errorMessages.length > 0"
-      ><slot name="label"
-    /></c-label>
+    ><slot name="label"/></c-label>
     <!-- eslint-enable vue/multiline-html-element-content-newline -->
 
     <div
@@ -39,8 +38,8 @@
 <script>
 import { computed } from 'vue';
 
-import { useI18n } from '@/hooks/i18n';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   emits: ['update:form'],

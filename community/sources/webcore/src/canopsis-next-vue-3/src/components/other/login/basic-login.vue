@@ -1,16 +1,15 @@
 <script setup>
 import { ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 
 import { ROUTES_NAMES, ROUTES, RESPONSE_STATUSES } from '@/constants';
-
 import { useAuth } from '@/hooks/auth';
 import { useForm } from '@/hooks/form';
 import { useInfo } from '@/hooks/store/modules/info';
 
-import LoginForm from './login-form.vue';
 import LdapLoginInformation from './ldap-login-information.vue';
+import LoginForm from './login-form.vue';
 
 const { currentUser, login } = useAuth();
 const { isLDAPAuthEnabled, footer } = useInfo();
@@ -54,9 +53,10 @@ const submit = handleSubmit(async () => {
 
     await router.push({ name: ROUTES_NAMES.home });
   } catch (err) {
-    serverErrorMessage.value = err?.status === RESPONSE_STATUSES.serviceUnavailable
-      ? t('login.errors.underMaintenance')
-      : t('login.errors.incorrectEmailOrPassword');
+    serverErrorMessage.value =
+      err?.status === RESPONSE_STATUSES.serviceUnavailable
+        ? t('login.errors.underMaintenance')
+        : t('login.errors.incorrectEmailOrPassword');
   }
 });
 </script>
@@ -71,20 +71,12 @@ const submit = handleSubmit(async () => {
 
       <div>
         <div class="d-flex justify-space-between align-center">
-          <v-btn
-            :loading="isSubmitting"
-            type="submit"
-            color="primary"
-          >
+          <v-btn :loading="isSubmitting" type="submit" color="primary">
             {{ t('common.connect') }}
           </v-btn>
 
           <div class="flex-grow-1 ml-4">
-            <c-alert
-              v-if="serverErrorMessage"
-              class="py-1 my-0 font-weight-bold"
-              type="error"
-            >
+            <c-alert v-if="serverErrorMessage" class="py-1 my-0 font-weight-bold" type="error">
               {{ serverErrorMessage }}
             </c-alert>
           </div>

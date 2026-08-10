@@ -1,8 +1,5 @@
 <template>
-  <img
-    :src="appLogo"
-    alt=""
-  >
+  <img :src="appLogo" alt="" />
 </template>
 
 <script>

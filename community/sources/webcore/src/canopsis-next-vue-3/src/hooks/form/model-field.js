@@ -41,9 +41,8 @@ export const useModelField = (props, emit) => {
    * @param {...*} rest - Additional arguments to pass to the emit function
    * @returns {*} The updated model value
    */
-  const updateField = (fieldName, value, ...rest) => (
-    updateModel(setField(props[prop], fieldName, value), ...rest)
-  );
+  const updateField = (fieldName, value, ...rest) =>
+    updateModel(setField(props[prop], fieldName, value), ...rest);
 
   return {
     modelEvent: event,

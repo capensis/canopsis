@@ -1,8 +1,7 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
 import { API_ROUTES } from '@/config';
-
 import request from '@/services/request';
 
 export const useMetricsStore = defineStore('metrics', () => {
@@ -11,9 +10,7 @@ export const useMetricsStore = defineStore('metrics', () => {
   const vectorMetrics = ref({});
   const availabilityMetrics = ref({});
 
-  const getListByWidgetId = computed(
-    () => widgetId => widgetMetrics.value[widgetId]?.items ?? [],
-  );
+  const getListByWidgetId = computed(() => widgetId => widgetMetrics.value[widgetId]?.items ?? []);
   const getPendingByWidgetId = computed(
     () => widgetId => widgetMetrics.value[widgetId]?.pending ?? false,
   );

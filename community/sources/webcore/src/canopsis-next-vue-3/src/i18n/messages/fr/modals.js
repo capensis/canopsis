@@ -7,7 +7,7 @@ export default {
     },
   },
   contextInfos: {
-    title: "Infos sur l'entité",
+    title: 'Infos sur l\'entité',
   },
   createEntity: {
     create: {
@@ -70,7 +70,7 @@ export default {
     },
     fail: {
       create: 'Erreur lors de la création de la vue...',
-      edit: "Erreur lors de l'édition de la vue...",
+      edit: 'Erreur lors de l\'édition de la vue...',
       duplicate: 'Échec de la duplication de la vue...',
       delete: 'Erreur lors de la suppression de la vue...',
     },
@@ -131,7 +131,7 @@ export default {
           fullDay: 'Toute la journée',
           noEnding: 'Sans fin',
           startOnTrigger: 'Démarrer sur déclencheur',
-          inherited: "S'applique à toutes les entités dépendantes",
+          inherited: 'S\'applique à toutes les entités dépendantes',
           reasonAndType: 'Raison et type',
         },
       },
@@ -140,9 +140,9 @@ export default {
       },
       rrule: {
         title: 'Règle de récurrence',
-        exdate: "Dates d'exclusion",
+        exdate: 'Dates d\'exclusion',
         buttons: {
-          addExdate: "Ajouter une date d'exclusion",
+          addExdate: 'Ajouter une date d\'exclusion',
         },
       },
       comments: {
@@ -158,7 +158,7 @@ export default {
     success: {
       create: 'Comportement périodique créé avec succès !',
       remove:
-        "Comportement périodique supprimé avec succès ! Vous devrez peut-être attendre 60 s pour le voir dans l'interface.",
+        'Comportement périodique supprimé avec succès ! Vous devrez peut-être attendre 60 s pour le voir dans l\'interface.',
     },
     cancelConfirmation:
       'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
@@ -167,15 +167,15 @@ export default {
     title: 'Mettre en pause',
   },
   createAckRemove: {
-    title: "Annuler l'acquittement",
+    title: 'Annuler l\'acquittement',
   },
   createUnCancel: {
-    title: "Annuler l'annulation",
+    title: 'Annuler l\'annulation',
   },
   liveReporting: {
     editLiveReporting: 'Définir un intervalle de dates',
     dateInterval: 'Intervalle de dates',
-    today: "Aujourd'hui",
+    today: 'Aujourd\'hui',
     yesterday: 'Hier',
     last7Days: '7 derniers jours',
     last30Days: '30 derniers jours',
@@ -190,7 +190,7 @@ export default {
     add: 'Ajouter',
     column: 'Colonne',
     addInfoPopup: {
-      title: "Ajouter une popup d'info",
+      title: 'Ajouter une popup d\'info',
     },
   },
   variablesHelp: {
@@ -200,7 +200,7 @@ export default {
     refreshEntities: 'Rafraîchir la liste des entités',
     editPbehaviors: 'Éditer les comportements périodiques',
     massActionsDescription: 'Vous pouvez choisir des entités pour effectuer des actions',
-    actionInQueue: "action en file d'attente|actions en file d'attente",
+    actionInQueue: 'action en file d\'attente|actions en file d\'attente',
     entity: {
       tabs: {
         info: 'Info',
@@ -305,7 +305,7 @@ export default {
       name: 'Nom',
     },
     errors: {
-      isNotEmpty: "Ce groupe n'est pas vide",
+      isNotEmpty: 'Ce groupe n\'est pas vide',
     },
   },
   aiChatHistory: {
@@ -336,18 +336,18 @@ export default {
   },
   createEntityInfoProperty: {
     create: {
-      title: "Ajouter des propriétés d'infos d'entité",
-      success: "Propriété d'info d'entité créée avec succès",
+      title: 'Ajouter des propriétés d\'infos d\'entité',
+      success: 'Propriété d\'info d\'entité créée avec succès',
     },
     edit: {
-      title: "Modifier des propriétés d'infos d'entité",
-      success: "Propriété d'info d'entité mise à jour avec succès",
+      title: 'Modifier des propriétés d\'infos d\'entité',
+      success: 'Propriété d\'info d\'entité mise à jour avec succès',
     },
     duplicate: {
-      title: "Dupliquer des propriétés d'infos d'entité",
+      title: 'Dupliquer des propriétés d\'infos d\'entité',
     },
     remove: {
-      success: "Propriété d'info d'entité supprimée avec succès",
+      success: 'Propriété d\'info d\'entité supprimée avec succès',
     },
   },
   createEventFilter: {
@@ -391,10 +391,10 @@ export default {
       title: 'Ajouter un onglet',
     },
     edit: {
-      title: "Éditer l'onglet",
+      title: 'Éditer l\'onglet',
     },
     duplicate: {
-      title: "Dupliquer l'onglet",
+      title: 'Dupliquer l\'onglet',
     },
     fields: {
       title: 'Titre',
@@ -415,7 +415,7 @@ export default {
     title: 'Sélectionner une vue',
   },
   selectViewTab: {
-    title: "Sélectionnez l'onglet",
+    title: 'Sélectionnez l\'onglet',
   },
   createDynamicInfo: {
     alarmUpdate: 'La règle mettra à jour les alarmes existantes !',
@@ -450,16 +450,16 @@ export default {
         alarmPatterns: 'Modèles des alarmes',
         entityPatterns: 'Modèles des entités',
         validationError:
-          "Au moins un modèle est requis. Merci d'ajouter un modèle sur les alarmes et/ou un modèle sur les événements",
+          'Au moins un modèle est requis. Merci d\'ajouter un modèle sur les alarmes et/ou un modèle sur les événements',
       },
     },
   },
   createDynamicInfoTemplate: {
     create: {
-      title: "Créer un modèle d'information dynamique",
+      title: 'Créer un modèle d\'information dynamique',
     },
     edit: {
-      title: "Modifier un modèle d'information dynamique",
+      title: 'Modifier un modèle d\'information dynamique',
     },
     fields: {
       names: 'Noms',
@@ -482,7 +482,7 @@ export default {
     },
   },
   importExportViews: {
-    title: "Vues d'importation / exportation",
+    title: 'Vues d\'importation / exportation',
     groups: 'Groupes',
     views: 'Vues',
   },
@@ -511,7 +511,7 @@ export default {
       title: 'Modifier le connecteur surveillé pour anomalies',
     },
     remove: {
-      text: "Supprimer <strong>{connectorName}</strong> de la liste des connecteurs de surveillance d'anomalies ?",
+      text: 'Supprimer <strong>{connectorName}</strong> de la liste des connecteurs de surveillance d\'anomalies ?',
     },
   },
   anomalyMonitoredConnectorHistory: {
@@ -532,7 +532,7 @@ export default {
       title: 'Dupliquer une liste de lecture',
     },
     errors: {
-      emptyTabs: "Merci d'ajouter un onglet",
+      emptyTabs: 'Merci d\'ajouter un onglet',
     },
     fields: {
       interval: 'Période',
@@ -554,8 +554,8 @@ export default {
     edit: {
       title: 'Modifier un type',
     },
-    iconNameHint: "Entrez le nom d'une icône à partir de material.io",
-    iconNamePlaceholder: "Nom de l'icône sur material.io",
+    iconNameHint: 'Entrez le nom d\'une icône à partir de material.io',
+    iconNamePlaceholder: 'Nom de l\'icône sur material.io',
     errors: {
       iconName: 'Le nom est invalide',
     },
@@ -564,7 +564,7 @@ export default {
       description: 'Description',
       type: 'Type',
       priority: 'Priorité',
-      iconName: "Nom de l'icône",
+      iconName: 'Nom de l\'icône',
     },
     canonicalTypes: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
@@ -594,10 +594,10 @@ export default {
   },
   createPbehaviorException: {
     create: {
-      title: "Créer une liste d'exceptions",
+      title: 'Créer une liste d\'exceptions',
     },
     edit: {
-      title: "Modifier une liste d'exceptions",
+      title: 'Modifier une liste d\'exceptions',
     },
     addDate: 'Ajouter une date',
     fields: {
@@ -654,7 +654,7 @@ export default {
     },
     fields: {
       host: 'Hôte',
-      token: "Jeton d'autorisation",
+      token: 'Jeton d\'autorisation',
     },
   },
   createRemediationJob: {
@@ -725,49 +725,49 @@ export default {
   },
   createStateSetting: {
     create: {
-      title: "Créer une méthode de calcul d'état",
-      success: "Méthode de calcul d'état créée !",
+      title: 'Créer une méthode de calcul d\'état',
+      success: 'Méthode de calcul d\'état créée !',
     },
     edit: {
-      title: "Modifier la méthode de calcul de l'état",
-      success: "Méthode de calcul d'état modifiée !",
+      title: 'Modifier la méthode de calcul de l\'état',
+      success: 'Méthode de calcul d\'état modifiée !',
     },
     duplicate: {
-      title: "Méthode de calcul d'état en double",
-      success: "Méthode de calcul d'état dupliquée !",
+      title: 'Méthode de calcul d\'état en double',
+      success: 'Méthode de calcul d\'état dupliquée !',
     },
     remove: {
-      success: "Méthode de calcul d'état supprimée !",
+      success: 'Méthode de calcul d\'état supprimée !',
     },
   },
   createJunitStateSetting: {
     edit: {
-      title: "Paramètres d'état de la suite de tests JUnit",
-      success: "Paramètre d'état de la suite de tests JUnit modifié !",
+      title: 'Paramètres d\'état de la suite de tests JUnit',
+      success: 'Paramètre d\'état de la suite de tests JUnit modifié !',
     },
   },
   defineStorage: {
     title: 'Définir le stockage des résultats',
     field: {
-      placeholder: "Entrez le chemin d'accès au dossier de résultats",
+      placeholder: 'Entrez le chemin d\'accès au dossier de résultats',
     },
   },
   defineXMLStorage: {
     title: 'Définir le stockage XML',
     field: {
-      placeholder: "Saisissez le chemin d'accès au dossier XML",
+      placeholder: 'Saisissez le chemin d\'accès au dossier XML',
     },
   },
   defineScreenshotStorage: {
-    title: "Définir le stockage des captures d'écran",
+    title: 'Définir le stockage des captures d\'écran',
     field: {
-      placeholder: "Saisissez le chemin d'accès au dossier des captures d'écran",
+      placeholder: 'Saisissez le chemin d\'accès au dossier des captures d\'écran',
     },
   },
   defineVideoStorage: {
     title: 'Définir le stockage vidéo',
     field: {
-      placeholder: "Saisissez le chemin d'accès au dossier vidéo",
+      placeholder: 'Saisissez le chemin d\'accès au dossier vidéo',
     },
   },
   remediationInstructionApproval: {
@@ -781,24 +781,24 @@ export default {
   },
   createAlarmIdleRule: {
     create: {
-      title: "Créer une règle d'inactivité d'alarme",
+      title: 'Créer une règle d\'inactivité d\'alarme',
     },
     edit: {
-      title: "Modifier la règle d'inactivité d'alarme",
+      title: 'Modifier la règle d\'inactivité d\'alarme',
     },
     duplicate: {
-      title: "Dupliquer une règle d'inactivité d'alarme",
+      title: 'Dupliquer une règle d\'inactivité d\'alarme',
     },
   },
   createEntityIdleRule: {
     create: {
-      title: "Créer une règle d'inactivité d'entité",
+      title: 'Créer une règle d\'inactivité d\'entité',
     },
     edit: {
-      title: "Modifier la règle d'inactivité d'entité",
+      title: 'Modifier la règle d\'inactivité d\'entité',
     },
     duplicate: {
-      title: "Dupliquer une règle d'inactivité d'entité",
+      title: 'Dupliquer une règle d\'inactivité d\'entité',
     },
   },
   createAlarmStatusRule: {
@@ -834,7 +834,7 @@ export default {
       '<li>En-tête Healthcheck</li>' +
       '<li>Graphique du réseau Healthcheck</li>' +
       '<li>Messages diffusés actifs</li>' +
-      "<li>Sessions d'utilisateurs actifs</li>" +
+      '<li>Sessions d\'utilisateurs actifs</li>' +
       '<li>Exécution de la remédiation</li>' +
       '</ul>' +
       '</p>' +
@@ -844,7 +844,7 @@ export default {
       '<p>' +
       '<ul>' +
       '<li>Messages diffusés actifs</li>' +
-      "<li>Sessions d'utilisateurs actifs</li>" +
+      '<li>Sessions d\'utilisateurs actifs</li>' +
       '</ul>' +
       '</p>' +
       '<p>Veuillez vérifier la configuration de votre serveur.</p>',
@@ -854,18 +854,18 @@ export default {
     updateStorageSettings: {
       title: 'Changement de politique de stockage. Êtes vous sur ?',
       text:
-        "Vous êtes sur le point d'enregistrer une politique d'archivage et/ou de suppression de données.\n" +
+        'Vous êtes sur le point d\'enregistrer une politique d\'archivage et/ou de suppression de données.\n' +
         '<strong>Les opérations qui en découleront, notamment la suppression de données, seront irreversibles.</strong>',
       phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
       phrase: 'modifier la politique de stockage',
     },
     cleanStorage: {
-      title: "Nettoyer l'archive",
+      title: 'Nettoyer l\'archive',
       text:
         '<span class="font-weight-regular">Êtes-vous sûr ?</span>\n' +
         '<strong>Cette opération ne pourra pas être annulée. Toutes les entités archivées (désactivées et non liées) seront supprimées définitivement</strong>',
       phraseText:
-        "Veuillez taper ce qui suit pour confirmer <strong>l'opération de suppression unique</strong> :",
+        'Veuillez taper ce qui suit pour confirmer <strong>l\'opération de suppression unique</strong> :',
       phrase: 'supprimer',
     },
     archiveUnlinkedEntities: {
@@ -874,7 +874,7 @@ export default {
         '<span class="font-weight-regular">Êtes-vous sûr ?</span>\n' +
         '<strong>Cette opération ne pourra pas être annulée.</strong>',
       phraseText:
-        "Veuillez taper ce qui suit pour confirmer <strong>l'opération d'archivage unique</strong> :",
+        'Veuillez taper ce qui suit pour confirmer <strong>l\'opération d\'archivage unique</strong> :',
       phrase: 'archiver',
     },
     archiveDisabledEntities: {
@@ -888,41 +888,41 @@ export default {
       phraseText: 'Veuillez saisir le nom de la Collection / Table pour confirmer:',
     },
     deleteExternalAuthToken: {
-      title: "Supprimer le jeton d'authentification",
+      title: 'Supprimer le jeton d\'authentification',
       text:
         '<span class="font-weight-regular">Vous êtes sur le point de supprimer le jeton.</span>\n' +
-        "<strong>L'opération de suppression ne pourra pas être annulée.</strong>",
+        '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText: 'Veuillez saisir le nom du jeton pour confirmer :',
     },
     deleteLlm: {
       title: 'Supprimer le LLM',
       text:
         'Vous êtes sur le point de supprimer la connexion LLM.\n' +
-        "<strong>L'opération de suppression ne pourra pas être annulée.</strong>",
+        '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText: 'Veuillez saisir le nom du LLM pour confirmer :',
     },
     deleteSelectedLlms: {
       title: 'Supprimer {count} modèle ? | Supprimer {count} modèles ?',
       text:
         'Vous êtes sur le point de supprimer {count} modèle.\n' +
-        "<strong>L'opération de suppression ne pourra pas être annulée.</strong> | Vous êtes sur le point de supprimer {count} modèles.\n" +
-        "<strong>L'opération de suppression ne pourra pas être annulée.</strong>",
+        '<strong>L\'opération de suppression ne pourra pas être annulée.</strong> | Vous êtes sur le point de supprimer {count} modèles.\n' +
+        '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText:
-        "Veuillez taper ce qui suit pour confirmer <strong>l'opération de suppression</strong> :",
+        'Veuillez taper ce qui suit pour confirmer <strong>l\'opération de suppression</strong> :',
       phrase: 'supprimer',
     },
     templateTestingData: {
       title: 'Supprimer les données de test',
       text:
         'Vous êtes sur le point de supprimer les données de test.\n' +
-        "<strong>L'opération de suppression ne pourra pas être annulée.</strong>",
+        '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText: 'Veuillez saisir le nom des données de test pour confirmer :',
     },
     templateTestingTest: {
       title: 'Supprimer le test',
       text:
         'Vous êtes sur le point de supprimer le test.\n' +
-        "<strong>L'opération de suppression ne pourra pas être annulée.</strong>",
+        '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText: 'Veuillez saisir le nom du test pour confirmer :',
     },
   },
@@ -938,34 +938,34 @@ export default {
   },
   createAlarmPattern: {
     create: {
-      title: "Créer un filtre d'alarme",
+      title: 'Créer un filtre d\'alarme',
     },
     edit: {
-      title: "Modifier le filtre d'alarme",
+      title: 'Modifier le filtre d\'alarme',
     },
   },
   createCorporateAlarmPattern: {
     create: {
-      title: "Créer un filtre partagé d'alarme",
+      title: 'Créer un filtre partagé d\'alarme',
     },
     edit: {
-      title: "Modifier le filtre partagé d'alarme",
+      title: 'Modifier le filtre partagé d\'alarme',
     },
   },
   createEntityPattern: {
     create: {
-      title: "Créer un filtre d'entité",
+      title: 'Créer un filtre d\'entité',
     },
     edit: {
-      title: "Modifier le filtre d'entité",
+      title: 'Modifier le filtre d\'entité',
     },
   },
   createCorporateEntityPattern: {
     create: {
-      title: "Créer un filtre partagé d'entité",
+      title: 'Créer un filtre partagé d\'entité',
     },
     edit: {
-      title: "Modifier le filtre partagé d'entité",
+      title: 'Modifier le filtre partagé d\'entité',
     },
   },
   createPbehaviorPattern: {
@@ -1038,13 +1038,13 @@ export default {
   },
   createTreeOfDependenciesMap: {
     create: {
-      title: "Créer une carte d'arbre de dépendances",
+      title: 'Créer une carte d\'arbre de dépendances',
     },
     edit: {
-      title: "Modifier une carte d'arbre de dépendances",
+      title: 'Modifier une carte d\'arbre de dépendances',
     },
     duplicate: {
-      title: "Dupliquer une carte d'arbre de dépendances",
+      title: 'Dupliquer une carte d\'arbre de dépendances',
     },
     addEntity: 'Ajouter une entité',
     pinnedEntities: 'Entités épinglées',
@@ -1065,13 +1065,13 @@ export default {
       [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'Colonnes des alarmes',
       [WIDGET_TEMPLATES_TYPES.alarmSortColumns]: 'Colonnes de tri par défaut des alarmes',
       [WIDGET_TEMPLATES_TYPES.entityColumns]: 'Colonnes des entités',
-      [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: "Plus d'infos",
+      [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'Plus d\'infos',
       [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'Actions rapides (alarme unitaire)',
       [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'Actions rapides (massive)',
       [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'Export PDF',
       [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Modèle de tuile',
       [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Modèle de modale',
-      [WIDGET_TEMPLATES_TYPES.weatherEntity]: "Modèle d'entité",
+      [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Modèle d\'entité',
     },
   },
   selectWidgetTemplateType: {
@@ -1109,7 +1109,7 @@ export default {
   removeAssociatedTicketEvent: {
     title: 'Retirer le ticket associé',
     associatedTicketLabel: 'Ticket associé',
-    associatedTicketHint: "Le ticket associé sélectionné sera retiré de l'alarme sélectionnée",
+    associatedTicketHint: 'Le ticket associé sélectionné sera retiré de l\'alarme sélectionnée',
   },
   createAckEvent: {
     title: 'Acquitter',
@@ -1152,7 +1152,7 @@ export default {
     },
   },
   importPbehaviorException: {
-    title: "Importer des dates d'exception",
+    title: 'Importer des dates d\'exception',
   },
   createMaintenance: {
     enableMaintenance: 'Activer le mode maintenance',
@@ -1180,12 +1180,12 @@ export default {
     text: 'Des tickets existent déjà pour certaines alarmes.\nVoulez-vous en créer de nouveaux pour celles-ci ?',
   },
   confirmationRemoveEntityInfoProperty: {
-    title: "Supprimer la propriété d'info d'entité",
+    title: 'Supprimer la propriété d\'info d\'entité',
     alert:
-      "Vous êtes sur le point de supprimer les propriétés des infos d'entité <strong>{name}</strong>.\n" +
-      "<strong>L'opération de suppression ne sera pas annulable.</strong>",
+      'Vous êtes sur le point de supprimer les propriétés des infos d\'entité <strong>{name}</strong>.\n' +
+      '<strong>L\'opération de suppression ne sera pas annulable.</strong>',
     text:
-      "Dans les endroits suivants, <strong>l'alias</strong> sera changé en <strong>nom d'infos d'entité</strong>," +
+      'Dans les endroits suivants, <strong>l\'alias</strong> sera changé en <strong>nom d\'infos d\'entité</strong>,' +
       ' le <strong>type sélectionné ne sera pas modifié</strong>: ' +
       '<ul><li>modèles</li><li>recherche avancée</li><li>infos ajoutées manuellement</li></ul>',
   },
@@ -1214,10 +1214,10 @@ export default {
   createIcon: {
     create: {
       title: 'Icône de téléchargement',
-      success: "L'icône a été téléchargée",
+      success: 'L\'icône a été téléchargée',
     },
     remove: {
-      success: "L'icône a été supprimée",
+      success: 'L\'icône a été supprimée',
     },
   },
   eventsRecord: {
@@ -1240,7 +1240,7 @@ export default {
       title: 'Importer des enregistrements',
     },
     edit: {
-      title: "Modifier l'enregistrement",
+      title: 'Modifier l\'enregistrement',
     },
     duplicate: {
       title: 'Dupliquer',
@@ -1248,10 +1248,10 @@ export default {
   },
   createExternalAuthToken: {
     create: {
-      title: "Créer un jeton d'authentification externe",
+      title: 'Créer un jeton d\'authentification externe',
     },
     edit: {
-      title: "Modifier le jeton d'authentification externe",
+      title: 'Modifier le jeton d\'authentification externe',
     },
   },
   createLlm: {

@@ -21,9 +21,5 @@ const model = computed({
 </script>
 
 <template>
-  <c-text-field
-    v-bind="$attrs"
-    v-model="model"
-    :type="inputType === 'int' ? 'number' : 'text'"
-  />
+  <c-text-field v-bind="$attrs" v-model="model" :type="inputType === 'int' ? 'number' : 'text'" />
 </template>

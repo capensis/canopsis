@@ -1,25 +1,16 @@
 <template>
-  <table
-    :class="{ 'permissions-table--collapsed-header': indent !== 0 }"
-    class="permissions-table"
-  >
+  <table :class="{ 'permissions-table--collapsed-header': indent !== 0 }" class="permissions-table">
     <thead>
       <tr>
         <th />
-        <th
-          v-for="role in roles"
-          :key="role._id"
-        >
+        <th v-for="role in roles" :key="role._id">
           {{ role.name }}
         </th>
       </tr>
     </thead>
 
     <tbody>
-      <template
-        v-for="item in preparedItems"
-        :key="item._id"
-      >
+      <template v-for="item in preparedItems" :key="item._id">
         <tr class="permissions-table__item-row">
           <td :class="`pl-${indent * 3 + 2}`">
             <c-expand-btn
@@ -48,14 +39,8 @@
           />
         </tr>
 
-        <tr
-          v-if="item.children && isExpanded(item)"
-          class="permissions-table__nested-row"
-        >
-          <td
-            :colspan="roles.length + 1"
-            class="permissions-table__nested-cell"
-          >
+        <tr v-if="item.children && isExpanded(item)" class="permissions-table__nested-row">
+          <td :colspan="roles.length + 1" class="permissions-table__nested-cell">
             <div class="permissions-table__nested-wrapper">
               <permissions-table
                 :disabled="disabled"
@@ -75,12 +60,7 @@
 </template>
 
 <script>
-import {
-  computed,
-  inject,
-  ref,
-  watch,
-} from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 
 import PermissionsTableCell from './permissions-table-cell.vue';
 
@@ -119,12 +99,15 @@ export default {
   emits: ['update:permission'],
 
   setup(props, { emit }) {
-    const preparedItems = computed(() => props.items.map(item => ({
-      ...item,
+    const preparedItems = computed(() =>
+      props.items.map(item => ({
+        ...item,
 
-      hasMask: props.search
-        && (props.searchDepth === props.indent || (!props.searchDepth && !item.children)),
-    })));
+        hasMask:
+          props.search &&
+          (props.searchDepth === props.indent || (!props.searchDepth && !item.children)),
+      })),
+    );
 
     const allExpandedCounter = inject('$allExpandedCounter', ref(0));
     const expandedIds = ref([]);
@@ -136,11 +119,14 @@ export default {
         : [...expandedIds.value, item._id];
     };
     const checkExpanded = () => {
-      expandedIds.value = allExpandedCounter.value > 0 ? preparedItems.value.map(({ _id: id }) => id) : [];
+      expandedIds.value =
+        allExpandedCounter.value > 0 ? preparedItems.value.map(({ _id: id }) => id) : [];
     };
     const forwardInput = (...args) => emit('update:permission', ...args);
 
-    watch(allExpandedCounter, () => window.requestAnimationFrame(checkExpanded), { immediate: true });
+    watch(allExpandedCounter, () => window.requestAnimationFrame(checkExpanded), {
+      immediate: true,
+    });
 
     return {
       preparedItems,
@@ -202,7 +188,7 @@ export default {
   }
 
   mark {
-    background: rgba(var(--v-theme-warning), .24);
+    background: rgba(var(--v-theme-warning), 0.24);
     color: inherit;
   }
 
@@ -211,7 +197,7 @@ export default {
   }
 
   &__nested-wrapper {
-    border-left: 1px solid rgba(var(--v-theme-on-surface), .12);
+    border-left: 1px solid rgba(var(--v-theme-on-surface), 0.12);
     padding-left: 8px;
   }
 

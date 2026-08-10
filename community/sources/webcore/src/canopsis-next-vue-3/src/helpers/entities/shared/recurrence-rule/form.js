@@ -1,5 +1,5 @@
-import { RRule, rrulestr } from 'rrule';
 import { isArray, isNumber, mapValues, pick } from 'lodash';
+import { RRule, rrulestr } from 'rrule';
 
 /**
  * @typedef {Object} Weekday
@@ -51,7 +51,7 @@ import { isArray, isNumber, mapValues, pick } from 'lodash';
  */
 const prepareRecurrenceRuleOption = (value) => {
   if (value) {
-    return (isArray(value) ? value.join(',') : String(value));
+    return isArray(value) ? value.join(',') : String(value);
   }
 
   return '';
@@ -90,10 +90,7 @@ export const recurrenceRuleToFormOptions = recurrenceRule => ({
 export const formOptionsToRecurrenceRuleOptions = (options, advancedFields = []) => {
   const recurrenceRuleOptions = {
     freq: options.freq,
-    ...mapValues(
-      pick(options, advancedFields),
-      o => o.split(',').filter(v => v),
-    ),
+    ...mapValues(pick(options, advancedFields), o => o.split(',').filter(v => v)),
   };
 
   if (isNumber(options.count)) {
@@ -132,9 +129,8 @@ export const formOptionsToRecurrenceRuleOptions = (options, advancedFields = [])
 /**
  * @return {RecurrenceRuleFormOptions}
  */
-export const emptyRecurrenceRuleFormOptions = () => (
-  recurrenceRuleToFormOptions(new RRule().origOptions)
-);
+export const emptyRecurrenceRuleFormOptions = () =>
+  recurrenceRuleToFormOptions(new RRule().origOptions);
 
 /**
  * @param {RecurrenceRuleFormOptions} options

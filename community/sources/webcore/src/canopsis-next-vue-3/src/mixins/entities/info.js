@@ -1,8 +1,6 @@
 import { DEFAULT_APP_TITLE } from '@/config';
-
 import { compile } from '@/helpers/handlebars';
 import { sanitizeHtml } from '@/helpers/html';
-
 import { useInfo } from '@/hooks/store/modules/info';
 
 const infoComputed = [
@@ -68,10 +66,12 @@ export const entitiesInfoMixin = {
 
     async setTitle() {
       document.title = this.appTitle
-        ? await compile(sanitizeHtml(this.appTitle, {
-          ALLOWED_TAGS: [],
-          ALLOWED_ATTR: [],
-        }))
+        ? await compile(
+            sanitizeHtml(this.appTitle, {
+              ALLOWED_TAGS: [],
+              ALLOWED_ATTR: [],
+            }),
+          )
         : DEFAULT_APP_TITLE;
     },
   },

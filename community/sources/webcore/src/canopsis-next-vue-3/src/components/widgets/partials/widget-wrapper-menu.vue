@@ -14,19 +14,13 @@
     </template>
 
     <v-list density="compact">
-      <v-list-item
-        v-if="hasSettingsSidebar"
-        @click="showSettings"
-      >
+      <v-list-item v-if="hasSettingsSidebar" @click="showSettings">
         <v-list-item-title>
           {{ $t('common.edit') }}
         </v-list-item-title>
       </v-list-item>
 
-      <v-list-item
-        v-if="hasSettingsSidebar"
-        @click="showSelectViewTabModal"
-      >
+      <v-list-item v-if="hasSettingsSidebar" @click="showSelectViewTabModal">
         <v-list-item-title>
           {{ $t('common.duplicate') }}
         </v-list-item-title>
@@ -51,27 +45,18 @@
 import { mapActions } from 'pinia';
 
 import { MODALS, SIDE_BARS_BY_WIDGET_TYPES, WIDGET_TYPES } from '@/constants';
-
 import { writeTextToClipboard } from '@/helpers/clipboard';
 import { calculateNewWidgetGridParametersY } from '@/helpers/entities/widget/grid';
 import { setSeveralFields } from '@/helpers/immutable';
-
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
 import { useViewStore } from '@/stores/modules/view';
 import { useWidgetStore } from '@/stores/modules/widget';
 
-const MIGRATED_SETTINGS_WIDGET_TYPES = [
-  WIDGET_TYPES.text,
-  WIDGET_TYPES.counter,
-  WIDGET_TYPES.map,
-];
+const MIGRATED_SETTINGS_WIDGET_TYPES = [WIDGET_TYPES.text, WIDGET_TYPES.counter, WIDGET_TYPES.map];
 
 export default {
-  mixins: [
-    activeViewMixin,
-    viewRouterMixin,
-  ],
+  mixins: [activeViewMixin, viewRouterMixin],
   props: {
     widget: {
       type: Object,

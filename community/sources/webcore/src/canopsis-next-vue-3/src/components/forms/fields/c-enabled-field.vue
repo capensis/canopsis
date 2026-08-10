@@ -1,8 +1,5 @@
 <template>
-  <div
-    :class="wrapperClass"
-    class="c-enabled-field"
-  >
+  <div :class="wrapperClass" class="c-enabled-field">
     <v-switch
       :model-value="currentValue"
       :class="{ 'ma-0': withBackground || noMargin, 'pa-0': noMargin }"
@@ -14,17 +11,11 @@
       v-bind="$attrs"
       @update:model-value="updateModel"
     >
-      <template
-        v-if="$slots.label"
-        #label
-      >
+      <template v-if="$slots.label" #label>
         <slot name="label" />
       </template>
 
-      <template
-        v-if="$slots.append"
-        #append
-      >
+      <template v-if="$slots.append" #append>
         <slot name="append" />
       </template>
     </v-switch>
@@ -85,14 +76,14 @@ export default {
 
     const currentValue = computed(() => props.modelValue ?? props.value);
 
-    const wrapperClass = computed(() => (
+    const wrapperClass = computed(() =>
       props.withBackground
         ? {
-          'c-enabled-field--with-background': true,
-          'c-enabled-field--with-background--disabled': !currentValue.value,
-        }
-        : {}
-    ));
+            'c-enabled-field--with-background': true,
+            'c-enabled-field--with-background--disabled': !currentValue.value,
+          }
+        : {},
+    );
 
     const updateModel = (value) => {
       emit('update:modelValue', value);

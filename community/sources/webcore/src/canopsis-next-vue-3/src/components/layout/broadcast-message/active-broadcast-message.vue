@@ -6,10 +6,7 @@
       :message="activeMessage.message"
       :color="activeMessage.color"
     >
-      <template
-        v-if="isLoggedIn"
-        #actions
-      >
+      <template v-if="isLoggedIn" #actions>
         <template v-if="activeMessage.maintenance">
           <v-btn
             class="mr-2"
@@ -58,20 +55,17 @@ import { pick } from 'lodash';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
+import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
 import { SOCKET_ROOMS } from '@/config';
 import { MODALS, ROUTES_NAMES_TO_BROADCAST_MESSAGES } from '@/constants';
-
 import { isBroadcastMessageViewMatchingRoute } from '@/helpers/entities/broadcast-message/list';
-
 import { useAuth } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSocketRoom } from '@/hooks/socket';
-import { useInfo } from '@/hooks/store/modules/info';
 import { useBroadcastMessages } from '@/hooks/store/modules/broadcast-message';
+import { useInfo } from '@/hooks/store/modules/info';
 import { useView } from '@/hooks/store/modules/view';
-
-import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
 
 export default {
   components: { BroadcastMessage },
@@ -97,12 +91,14 @@ export default {
       const { id: routeId } = route.params;
       const currentView = getViewById(routeId);
 
-      return activeMessages.value.filter(({ views: messageViews }) => (messageViews || []).some(
-        messageView => isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
-      ));
+      return activeMessages.value.filter(({ views: messageViews }) =>
+        (messageViews || []).some(messageView =>
+          isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
+        ),
+      );
     });
 
-    const setActiveMessages = (messages = []) => activeMessages.value = messages;
+    const setActiveMessages = (messages = []) => (activeMessages.value = messages);
 
     const fetchList = async () => {
       const data = await fetchActiveBroadcastMessagesListWithoutStore();
@@ -152,18 +148,19 @@ export default {
       });
     };
 
-    const showConfirmationMarkAsRead = (broadcastMessage = {}) => modals.show({
-      name: MODALS.confirmation,
-      config: {
-        title: t('modals.confirmationMarkAsRead.title'),
-        text: t('modals.confirmationMarkAsRead.text'),
-        action: async () => {
-          await markBroadcastMessageAsRead({ id: broadcastMessage._id });
+    const showConfirmationMarkAsRead = (broadcastMessage = {}) =>
+      modals.show({
+        name: MODALS.confirmation,
+        config: {
+          title: t('modals.confirmationMarkAsRead.title'),
+          text: t('modals.confirmationMarkAsRead.text'),
+          action: async () => {
+            await markBroadcastMessageAsRead({ id: broadcastMessage._id });
 
-          return fetchList();
+            return fetchList();
+          },
         },
-      },
-    });
+      });
 
     useSocketRoom({
       room: SOCKET_ROOMS.broadcastMessages,

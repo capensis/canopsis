@@ -40,22 +40,24 @@
         <div class="flex-grow-1">
           <c-layout gap="1" justify="end">
             <v-btn
-color="blue"
-size="small"
-icon
-@click="$emit('import')">
+              color="blue"
+              size="small"
+              icon
+              @click="$emit('import')"
+            >
               <v-icon color="white">
-upload_file
-</v-icon>
+                upload_file
+              </v-icon>
             </v-btn>
             <v-btn
-color="primary"
-size="small"
-icon
-@click="$emit('add')">
+              color="primary"
+              size="small"
+              icon
+              @click="$emit('add')"
+            >
               <v-icon color="white">
-add
-</v-icon>
+                add
+              </v-icon>
             </v-btn>
           </c-layout>
         </div>
@@ -213,8 +215,7 @@ add
         {{ t('externalData.fieldsHasError', { count: errorsMessages.length }) }}
         <ul>
           <li v-for="error in errorsMessages" :key="error.name">
-            <strong>{{ error.name }}</strong
-            >: {{ error.message }}
+            <strong>{{ error.name }}</strong>: {{ error.message }}
           </li>
         </ul>
       </span>
@@ -231,15 +232,13 @@ import {
   EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES,
   EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
 } from '@/constants';
-
 import { convertDateToString } from '@/helpers/date/date';
-
-import { useI18n } from '@/hooks/i18n';
 import { useHTMLElement } from '@/hooks/html-elements';
+import { useI18n } from '@/hooks/i18n';
 import { useTableColumnsSettings } from '@/hooks/table/columns-settings';
 
-import ExternalDataTableColumnTagField from '../form/fields/external-data-table-column-tag-field.vue';
 import ExternalDataTableColumnDataTypeField from '../form/fields/external-data-table-column-data-type-field.vue';
+import ExternalDataTableColumnTagField from '../form/fields/external-data-table-column-tag-field.vue';
 
 import ExternalDataTableRecordsListExpandPanel from './external-data-table-records-list-expand-panel.vue';
 

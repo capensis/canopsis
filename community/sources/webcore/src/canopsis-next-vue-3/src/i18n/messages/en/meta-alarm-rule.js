@@ -48,9 +48,9 @@ export default {
     '<p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p>' +
     '<p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p>' +
     '<p>For example:</p>' +
-    "<p>Count: <strong>{'{{ .Count }}'};</strong> Children: <strong>{'{{ .Children.Alarm.Value.State.Message }}'};</strong> Rule: <strong>{'{{ .Rule.Name }}'};</strong></p>" +
+    '<p>Count: <strong>{\'{{ .Count }}\'};</strong> Children: <strong>{\'{{ .Children.Alarm.Value.State.Message }}\'};</strong> Rule: <strong>{\'{{ .Rule.Name }}\'};</strong></p>' +
     '<p>A static informative message</p>' +
-    "<p>Correlated by the rule <strong>{'{{ .Rule.Name }}'}</strong></p>",
+    '<p>Correlated by the rule <strong>{\'{{ .Rule.Name }}\'}</strong></p>',
   removeConfirmationText:
     'When deleting a meta alarm rule, all corresponding meta alarms will be deleted as well.\n' +
     'Are you sure to proceed with it?\n',

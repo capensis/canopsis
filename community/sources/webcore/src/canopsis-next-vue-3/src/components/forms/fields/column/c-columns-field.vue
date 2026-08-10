@@ -37,9 +37,7 @@
 import { computed } from 'vue';
 
 import { ENTITIES_TYPES } from '@/constants';
-
 import { widgetColumnToForm } from '@/helpers/entities/widget/column/form';
-
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import ColumnField from './partials/column-field.vue';
@@ -111,7 +109,10 @@ export default {
   setup(props, { emit }) {
     const dragItemHandleClass = 'column-drag-handle';
     const isColumnsEmpty = computed(() => !props.modelValue.length);
-    const { addItemIntoArray, removeItemFromArray, updateItemInArray } = useArrayModelField(props, emit);
+    const { addItemIntoArray, removeItemFromArray, updateItemInArray } = useArrayModelField(
+      props,
+      emit,
+    );
     const add = () => addItemIntoArray(widgetColumnToForm());
 
     return {

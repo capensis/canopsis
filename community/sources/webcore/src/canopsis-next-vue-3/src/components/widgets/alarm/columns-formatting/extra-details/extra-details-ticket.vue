@@ -8,20 +8,12 @@
         offset-y="15px"
       >
         <template #badge>
-          <v-icon
-            class="extra-details-ticket__badge-icon"
-            color="error"
-            size="14"
-          >
+          <v-icon class="extra-details-ticket__badge-icon" color="error" size="14">
             error
           </v-icon>
         </template>
 
-        <c-alarm-extra-details-chip
-          v-bind="activatorProps"
-          :color="color"
-          :icon="icon"
-        />
+        <c-alarm-extra-details-chip v-bind="activatorProps" :color="color" :icon="icon" />
       </v-badge>
     </template>
 
@@ -34,7 +26,6 @@ import { computed } from 'vue';
 
 import { COLORS } from '@/config';
 import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
-
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import { sanitizeHtml } from '@/helpers/html';
 

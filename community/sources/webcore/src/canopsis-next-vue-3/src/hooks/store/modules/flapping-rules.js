@@ -9,12 +9,7 @@ import { useFlappingRulesStore } from '@/stores/modules/flapping-rules';
  */
 export const useFlappingRules = () => {
   const flappingRulesStore = useFlappingRulesStore();
-  const {
-    items,
-    meta,
-    pending,
-    fetchingParams,
-  } = storeToRefs(flappingRulesStore);
+  const { items, meta, pending, fetchingParams } = storeToRefs(flappingRulesStore);
 
   return {
     flappingRules: items,

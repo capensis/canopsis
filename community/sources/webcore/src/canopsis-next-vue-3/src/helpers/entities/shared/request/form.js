@@ -6,9 +6,8 @@ import {
   REQUEST_AUTH_TOKEN_TYPES_TO_HEADERS,
   HEADERS_TO_REQUEST_AUTH_TOKEN_TYPES,
 } from '@/constants';
-
-import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 import { durationToForm, isValidDuration } from '@/helpers/date/duration';
+import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 
 /**
  * @typedef { 'none' | 'credentials' | 'token' } RequestAuthType
@@ -178,12 +177,11 @@ export const formToRequestAuthToken = (form = {}, requestAuthType = REQUEST_AUTH
 export const formToRequest = form => ({
   ...form,
 
-  retry_delay: isValidDuration(form.retry_delay)
-    ? form.retry_delay
-    : undefined,
+  retry_delay: isValidDuration(form.retry_delay) ? form.retry_delay : undefined,
   timeout: isNumber(form.timeout.value) ? form.timeout : null,
-  auth: form.auth.type === REQUEST_AUTH_TYPES.credentials && form.auth?.username
-    ? pick(form.auth, ['username', 'password'])
-    : null,
+  auth:
+    form.auth.type === REQUEST_AUTH_TYPES.credentials && form.auth?.username
+      ? pick(form.auth, ['username', 'password'])
+      : null,
   headers: textPairsToObject(form.headers),
 });

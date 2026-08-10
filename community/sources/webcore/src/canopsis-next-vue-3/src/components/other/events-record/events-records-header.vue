@@ -3,10 +3,11 @@
     <h3>{{ t('eventsRecord.subheader') }}</h3>
 
     <c-layout
-v-for="message in messages"
-:key="message"
-gap="4"
-align="center">
+      v-for="message in messages"
+      :key="message"
+      gap="4"
+      align="center"
+    >
       <span class="font-italic">
         {{ message }}
       </span>

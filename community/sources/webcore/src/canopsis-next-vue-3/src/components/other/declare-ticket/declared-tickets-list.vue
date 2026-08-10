@@ -13,7 +13,9 @@
           :href="item.ticket_url"
           :title="item.ticket_url_title"
           target="_blank"
-        >{{ item.ticket_url_title || item.ticket_url }}</a>
+        >
+          {{ item.ticket_url_title || item.ticket_url }}
+        </a>
         <span v-else>
           {{ item.ticket_url }}
         </span>
@@ -26,10 +28,7 @@
       <declare-ticket-rule-ticket-status-chip :value="item.ticket_status" />
     </template>
     <template #metaalarm="{ item }">
-      <v-icon
-        v-if="item.ticket_meta_alarm_id === parentAlarmId"
-        top
-      >
+      <v-icon v-if="item.ticket_meta_alarm_id === parentAlarmId" top>
         low_priority
       </v-icon>
     </template>
@@ -40,9 +39,8 @@
 import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
-import { isValidUrl } from '@/plugins/validator/helpers/is-valid-url';
-
 import { useI18n } from '@/hooks/i18n';
+import { isValidUrl } from '@/plugins/validator/helpers/is-valid-url';
 
 import DeclareTicketRuleTicketStatusChip from './declare-ticket-rule-ticket-status-chip.vue';
 
@@ -63,17 +61,19 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
-    const headers = computed(() => [
-      { text: t('declareTicket.ticketURL'), value: 'ticket_url' },
-      { text: t('declareTicket.ticketID'), value: 'ticket' },
-      { text: t('common.systemName'), value: 'ticket_system_name' },
-      { text: t('declareTicket.ruleName'), value: 'ticket_rule_name' },
-      { text: t('common.date'), value: 't' },
-      { text: t('common.status'), value: 'ticket_status' },
-      props.parentAlarmId && { text: t('alarm.metaAlarm'), value: 'metaalarm' },
-      { text: t('common.author'), value: 'a' },
-      { text: t('common.comment'), value: 'ticket_comment' },
-    ].filter(Boolean));
+    const headers = computed(() =>
+      [
+        { text: t('declareTicket.ticketURL'), value: 'ticket_url' },
+        { text: t('declareTicket.ticketID'), value: 'ticket' },
+        { text: t('common.systemName'), value: 'ticket_system_name' },
+        { text: t('declareTicket.ruleName'), value: 'ticket_rule_name' },
+        { text: t('common.date'), value: 't' },
+        { text: t('common.status'), value: 'ticket_status' },
+        props.parentAlarmId && { text: t('alarm.metaAlarm'), value: 'metaalarm' },
+        { text: t('common.author'), value: 'a' },
+        { text: t('common.comment'), value: 'ticket_comment' },
+      ].filter(Boolean),
+    );
 
     const dateToString = date => convertDateToString(date);
 

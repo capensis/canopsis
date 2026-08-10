@@ -1,8 +1,11 @@
 <template>
   <c-layout class="c-advanced-search__wrapper" align="end">
     <div
-      :class="{ 'v-input--is-loading': pending }"
-      class="c-advanced-search mt-0 pt-2 v-input v-input--hide-details v-text-field v-text-field--single-line v-select v-autocomplete"
+      :class="[
+        'c-advanced-search mt-0 pt-2 v-input v-input--hide-details',
+        'v-text-field v-text-field--single-line v-select v-autocomplete',
+        { 'v-input--is-loading': pending },
+      ]"
     >
       <div class="v-input__control">
         <div class="v-input__slot pb-1">
@@ -19,10 +22,11 @@
           </div>
         </div>
         <v-progress-linear
-v-if="pending"
-height="2"
-color="primary"
-indeterminate />
+          v-if="pending"
+          height="2"
+          color="primary"
+          indeterminate
+        />
       </div>
     </div>
     <c-layout>
@@ -43,15 +47,15 @@ indeterminate />
 <script>
 import { ref, toRef, inject, onMounted, onBeforeUnmount } from 'vue';
 
-import { uid } from '@/helpers/uid';
 import {
   advancedSearchRuleItemToFormItem,
   formToAdvancedSearch,
 } from '@/helpers/search/advanced-search';
+import { uid } from '@/helpers/uid';
 
 import { useAdvancedSearchValidator } from './hooks/advanced-search';
-import AdvancedSearchRules from './partials/advanced-search-rules.vue';
 import AdvancedSearchHistoryBtn from './partials/advanced-search-history-btn.vue';
+import AdvancedSearchRules from './partials/advanced-search-rules.vue';
 
 export default {
   components: { AdvancedSearchHistoryBtn, AdvancedSearchRules },

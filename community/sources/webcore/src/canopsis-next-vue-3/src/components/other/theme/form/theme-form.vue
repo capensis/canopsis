@@ -77,10 +77,7 @@
         <theme-color-picker-field v-model="stateOkField" :label="t('theme.state.ok')" />
         <theme-color-picker-field v-model="stateMinorField" :label="t('theme.state.minor')" />
         <theme-color-picker-field v-model="stateMajorField" :label="t('theme.state.major')" />
-        <theme-color-picker-field
-          v-model="stateCriticalField"
-          :label="t('theme.state.critical')"
-        />
+        <theme-color-picker-field v-model="stateCriticalField" :label="t('theme.state.critical')" />
         <theme-colors-preview-list :items="stateColors" />
       </c-layout>
     </c-information-block>
@@ -91,16 +88,15 @@
 import { computed } from 'vue';
 
 import { THEME_FONT_PIXEL_SIZES } from '@/constants';
-
 import { getMostReadableTextColor } from '@/helpers/color';
-
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
+
+import ThemeColorsPreviewList from '../partials/theme-colors-preview-list.vue';
 
 import ThemeColorFontSizeField from './fields/theme-color-font-size-field.vue';
 import ThemeColorPickerField from './fields/theme-color-picker-field.vue';
 import ThemeEnabledColorPickerField from './fields/theme-enabled-color-picker-field.vue';
-import ThemeColorsPreviewList from '../partials/theme-colors-preview-list.vue';
 
 export default {
   components: {

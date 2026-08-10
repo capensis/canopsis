@@ -17,10 +17,11 @@
       >
         <template v-if="helpText || $slots.append" #append>
           <c-help-icon
-v-if="helpText"
-:text="helpText"
-icon="help"
-left />
+            v-if="helpText"
+            :text="helpText"
+            icon="help"
+            left
+          />
         </template>
       </c-payload-textarea-field>
       <c-textarea
@@ -67,12 +68,12 @@ left />
 </template>
 
 <script>
-import { computed } from 'vue';
 import { isString } from 'lodash';
 import { useField } from 'vee-validate';
+import { computed } from 'vue';
 
-import { convertPayloadToJson } from '@/helpers/payload-json';
 import { stringifyJson } from '@/helpers/json';
+import { convertPayloadToJson } from '@/helpers/payload-json';
 
 export default {
   inheritAttrs: false,

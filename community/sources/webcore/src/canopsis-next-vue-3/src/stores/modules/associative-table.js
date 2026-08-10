@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 
 import { API_ROUTES } from '@/config';
-
 import request from '@/services/request';
 
 export const useAssociativeTableStore = defineStore('associativeTable', () => {
@@ -52,9 +51,10 @@ export const useAssociativeTableStore = defineStore('associativeTable', () => {
    * @param {string} [params.name] - Associative table name.
    * @returns {Promise<Object>}
    */
-  const remove = ({ name } = {}) => request.delete(API_ROUTES.associativeTable, {
-    params: { name },
-  });
+  const remove = ({ name } = {}) =>
+    request.delete(API_ROUTES.associativeTable, {
+      params: { name },
+    });
 
   return {
     fetch,

@@ -14,9 +14,8 @@
 import { computed } from 'vue';
 
 import { EXTERNAL_DATA_TABLES_TYPES } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   emits: ['update:value'],
@@ -38,9 +37,12 @@ export default {
     const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
 
-    const databases = computed(() => (
-      Object.values(EXTERNAL_DATA_TABLES_TYPES).map(value => ({ value, text: t(`externalData.tableTypes.${value}`) }))
-    ));
+    const databases = computed(() =>
+      Object.values(EXTERNAL_DATA_TABLES_TYPES).map(value => ({
+        value,
+        text: t(`externalData.tableTypes.${value}`),
+      })),
+    );
 
     return {
       databases,

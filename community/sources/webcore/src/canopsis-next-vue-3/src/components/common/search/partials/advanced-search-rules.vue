@@ -32,12 +32,11 @@
 import { ref, nextTick } from 'vue';
 
 import { REGISTER_LAST_INPUT_FOCUS_KEY } from '@/constants';
-
-import { advancedSearchRuleItemToFormItem } from '@/helpers/search/advanced-search';
 import { isArrayOperator } from '@/helpers/entities/pattern/form';
+import { advancedSearchRuleItemToFormItem } from '@/helpers/search/advanced-search';
 
-import { useLastInputFocus } from '../hooks/focus';
 import { useActiveKey } from '../hooks/active-key';
+import { useLastInputFocus } from '../hooks/focus';
 
 import AdvancedSearchRule from './advanced-search-rule.vue';
 
@@ -88,7 +87,8 @@ export default {
 
       updateModel(rules);
     };
-    const removeItemsFromArray = indexes => updateModel(props.rules.filter((rule, index) => !indexes.includes(index)));
+    const removeItemsFromArray = indexes =>
+      updateModel(props.rules.filter((rule, index) => !indexes.includes(index)));
 
     /**
      * Adds a new item into the array using a form item.

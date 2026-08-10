@@ -6,10 +6,7 @@
       </template>
 
       <template #text>
-        <c-alert
-          v-if="duplicate"
-          type="info"
-        >
+        <c-alert v-if="duplicate" type="info">
           {{ t('modals.view.duplicate.infoMessage') }}
         </c-alert>
 
@@ -54,11 +51,10 @@
 import { cloneDeep, find, isEqual, isObject, isString } from 'lodash';
 import { computed, onMounted, provide, ref, watch } from 'vue';
 
+import ViewForm from '@/components/other/view/form/view-form.vue';
 import { MAX_LIMIT, MODALS } from '@/constants';
-
 import { viewToForm, viewToRequest } from '@/helpers/entities/view/form';
 import { uid } from '@/helpers/uid';
-
 import { useAuth } from '@/hooks/auth';
 import { useRegisterClickOutsideHandler } from '@/hooks/click-outside';
 import { useForm } from '@/hooks/form';
@@ -66,8 +62,6 @@ import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useView } from '@/hooks/store/modules/view';
-
-import ViewForm from '@/components/other/view/form/view-form.vue';
 
 /**
  * Modal to create view
@@ -91,12 +85,7 @@ export default {
     const modals = useModals();
     const popups = usePopups();
     const { fetchCurrentUser } = useAuth();
-    const {
-      viewGroups,
-      fetchViewGroupsList,
-      createViewGroup,
-      createPrivateViewGroup,
-    } = useView();
+    const { viewGroups, fetchViewGroupsList, createViewGroup, createPrivateViewGroup } = useView();
 
     const formContext = useForm();
     const initialForm = viewToForm(props.modal.config?.view);
@@ -111,8 +100,8 @@ export default {
     const duplicate = computed(() => !!config.value.duplicate);
     const deletable = computed(() => config.value.deletable);
     const submittable = computed(() => config.value.submittable ?? true);
-    const isDisabled = computed(() =>
-      submitting.value || Object.keys(formContext.errors.value ?? {}).length > 0,
+    const isDisabled = computed(
+      () => submitting.value || Object.keys(formContext.errors.value ?? {}).length > 0,
     );
     const isInitialViewPrivate = computed(() => props.modal.config?.view?.is_private ?? false);
     const availableGroups = computed(() => {
@@ -158,12 +147,14 @@ export default {
           : form.value.group;
 
         if (config.value.action) {
-          await config.value.action(viewToRequest({
-            ...view.value,
-            ...form.value,
+          await config.value.action(
+            viewToRequest({
+              ...view.value,
+              ...form.value,
 
-            group,
-          }));
+              group,
+            }),
+          );
         }
 
         hideModal();
@@ -241,22 +232,25 @@ export default {
     provide('$closeModal', closeModal);
     useRegisterClickOutsideHandler(confirmClose);
 
-    watch(() => form.value.is_private, (isPrivate) => {
-      if (isObject(form.value.group) && form.value.group.is_private !== isPrivate) {
-        form.value.group = undefined;
-      }
-    });
+    watch(
+      () => form.value.is_private,
+      (isPrivate) => {
+        if (isObject(form.value.group) && form.value.group.is_private !== isPrivate) {
+          form.value.group = undefined;
+        }
+      },
+    );
 
-    watch(() => form.value.group, (group) => {
-      if (isObject(group)) {
-        form.value.is_private = group.is_private;
-      }
-    });
+    watch(
+      () => form.value.group,
+      (group) => {
+        if (isObject(group)) {
+          form.value.is_private = group.is_private;
+        }
+      },
+    );
 
-    onMounted(() => Promise.all([
-      fetchAllGroupsListWithWidgets(),
-      fetchCurrentUser(),
-    ]));
+    onMounted(() => Promise.all([fetchAllGroupsListWithWidgets(), fetchCurrentUser()]));
 
     return {
       t,

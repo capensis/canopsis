@@ -19,22 +19,18 @@
 </template>
 
 <script>
-import { SOCKET_ROOMS } from '@/config';
-
-import Socket from '@/plugins/socket/services/socket';
-
-import { formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
-import { isWebhookExecutionFinished } from '@/helpers/entities/webhook-execution/entity';
-import { formFilterToPatterns } from '@/helpers/entities/filter/form';
-
-import { usePopups } from '@/hooks/popups';
-import { useModals } from '@/hooks/modals';
-import { useValidator } from '@/hooks/validator/validator';
-import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
-import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
-
-import AlarmWebhookExecution from '@/components/other/alarm/partials/alarm-webhook-execution.vue';
 import AlarmWebhookExecutionTimeline from '@/components/other/alarm/partials/alarm-webhook-execution-timeline.vue';
+import AlarmWebhookExecution from '@/components/other/alarm/partials/alarm-webhook-execution.vue';
+import { SOCKET_ROOMS } from '@/config';
+import { formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
+import { formFilterToPatterns } from '@/helpers/entities/filter/form';
+import { isWebhookExecutionFinished } from '@/helpers/entities/webhook-execution/entity';
+import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
+import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
+import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
+import { useValidator } from '@/hooks/validator/validator';
+import Socket from '@/plugins/socket/services/socket';
 
 import DeclareTicketRuleExecutionWebhooksTimelineCard from './declare-ticket-rule-execution-webhooks-timeline-card.vue';
 
@@ -55,10 +51,8 @@ export default {
     const modals = useModals();
     const validator = useValidator();
     const { setFormErrors } = useValidationFormErrors(props.form);
-    const {
-      createTestDeclareTicketExecution,
-      fetchDeclareTicketExecutionWithoutStore,
-    } = useDeclareTicketRule();
+    const { createTestDeclareTicketExecution, fetchDeclareTicketExecutionWithoutStore } =
+      useDeclareTicketRule();
 
     return {
       popups,
@@ -86,12 +80,14 @@ export default {
     },
 
     alarmsPatternsParams() {
-      return Object.entries(formFilterToPatterns(this.form.patterns))
-        .reduce((acc, [key, value]) => {
+      return Object.entries(formFilterToPatterns(this.form.patterns)).reduce(
+        (acc, [key, value]) => {
           acc[key] = JSON.stringify(value);
 
           return acc;
-        }, {});
+        },
+        {},
+      );
     },
   },
   watch: {
@@ -136,7 +132,9 @@ export default {
     },
 
     async handleSocketError() {
-      this.executionStatus = await this.fetchDeclareTicketExecutionWithoutStore({ id: this.executionStatus._id });
+      this.executionStatus = await this.fetchDeclareTicketExecutionWithoutStore({
+        id: this.executionStatus._id,
+      });
     },
 
     /**

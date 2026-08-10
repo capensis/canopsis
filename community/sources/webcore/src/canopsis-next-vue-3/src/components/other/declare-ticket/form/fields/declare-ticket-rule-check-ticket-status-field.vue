@@ -1,6 +1,10 @@
 <template>
   <div>
-    <c-form-block-row :depth="depth" :label="$t('declareTicket.checkTicketStatus')" :top-border="topBorder">
+    <c-form-block-row
+      :depth="depth"
+      :label="$t('declareTicket.checkTicketStatus')"
+      :top-border="topBorder"
+    >
       <c-enabled-field
         :model-value="form.enabled"
         @update:model-value="updateField('enabled', $event)"
@@ -71,11 +75,11 @@
 <script>
 import { computed } from 'vue';
 
-import { formMixin } from '@/mixins/form';
 import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
+import { formMixin } from '@/mixins/form';
 
-import DeclareTicketRuleTicketStatusSourceField from './declare-ticket-rule-ticket-status-source-field.vue';
 import DeclareTicketRuleTicketStatusMappingField from './declare-ticket-rule-ticket-status-mapping-field.vue';
+import DeclareTicketRuleTicketStatusSourceField from './declare-ticket-rule-ticket-status-source-field.vue';
 
 export default {
   components: {

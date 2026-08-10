@@ -32,12 +32,10 @@ class Observer {
 
   async notifyInSeries(data) {
     for (const handler of this.handlers) {
-       
       await handler(data);
     }
 
     for (const handler of this.childrenHandlers) {
-       
       await handler(data);
     }
   }

@@ -16,9 +16,8 @@
 <script>
 import { keyBy, merge } from 'lodash';
 
-import { SERVICE_WEATHER_PATTERN_FIELDS, PATTERN_OPERATORS, ALARM_STATES } from '@/constants';
-
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
+import { SERVICE_WEATHER_PATTERN_FIELDS, PATTERN_OPERATORS, ALARM_STATES } from '@/constants';
 
 export default {
   emits: ['update:patterns', 'update:value'],
@@ -56,10 +55,7 @@ export default {
   computed: {
     greyOptions() {
       return {
-        operators: [
-          PATTERN_OPERATORS.isGrey,
-          PATTERN_OPERATORS.isNotGrey,
-        ],
+        operators: [PATTERN_OPERATORS.isGrey, PATTERN_OPERATORS.isNotGrey],
       };
     },
 

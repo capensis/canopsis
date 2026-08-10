@@ -30,9 +30,7 @@
 import { computed, onMounted, ref } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
-
 import { rolePermissionsToForm } from '@/helpers/entities/role/form';
-
 import { useI18n } from '@/hooks/i18n';
 import { useRole } from '@/hooks/store/modules/role';
 
@@ -61,10 +59,12 @@ export default {
     const pending = ref(false);
     const selectedTemplate = ref(null);
 
-    const preparedItems = computed(() => items.value.map(template => ({
-      ...template,
-      permissions: rolePermissionsToForm(template.permissions),
-    })));
+    const preparedItems = computed(() =>
+      items.value.map(template => ({
+        ...template,
+        permissions: rolePermissionsToForm(template.permissions),
+      })),
+    );
 
     const updatePermissions = (template) => {
       selectedTemplate.value = template;

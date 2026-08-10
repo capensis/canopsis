@@ -11,8 +11,9 @@
           <span
             :class="{ 'text-medium-emphasis': !localValue }"
             class="v-date-time-picker__subtitle"
-            >{{ valueString }}</span
           >
+            {{ valueString }}
+          </span>
         </div>
         <div class="v-date-time-picker__subtitle-wrapper">
           <time-picker-field
@@ -52,14 +53,12 @@
 
 <script>
 import { DATETIME_FORMATS } from '@/constants';
-
+import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
 import {
   getDateObjectByDate,
   getDateObjectByTime,
   normalizeTimeString,
 } from '@/helpers/date/date-time-picker';
-import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
-
 import { formBaseMixin } from '@/mixins/form';
 
 import TimePickerField from '../time-picker/time-picker-field.vue';

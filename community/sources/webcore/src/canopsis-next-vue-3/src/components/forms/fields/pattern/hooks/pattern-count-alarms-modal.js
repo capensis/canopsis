@@ -1,10 +1,8 @@
 import { PATTERNS_FIELDS, MODALS } from '@/constants';
-
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
-
-import { useModals } from '@/hooks/modals';
 import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 /**
  * Hook for managing pattern count alarms modal functionality.
@@ -24,11 +22,7 @@ export const usePatternCountAlarmsModal = (props) => {
    * @param {Array<string>} [patternNames=[PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior]]
    */
   const showPatternAlarmsModal = (
-    patternNames = [
-      PATTERNS_FIELDS.alarm,
-      PATTERNS_FIELDS.entity,
-      PATTERNS_FIELDS.pbehavior,
-    ],
+    patternNames = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior],
   ) => {
     const patterns = patternNames.reduce((acc, patternName) => {
       acc[patternName] = formGroupsToPatternRulesQuery(props.value[patternName]?.groups);
@@ -43,12 +37,13 @@ export const usePatternCountAlarmsModal = (props) => {
       config: {
         widget,
         title: t('pattern.patternAlarms'),
-        fetchList: params => fetchAlarmsListWithoutStore({
-          params: {
-            ...params,
-            ...patterns,
-          },
-        }),
+        fetchList: params =>
+          fetchAlarmsListWithoutStore({
+            params: {
+              ...params,
+              ...patterns,
+            },
+          }),
       },
     });
   };

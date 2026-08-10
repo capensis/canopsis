@@ -3,10 +3,11 @@
     <c-enabled-field v-model="visible" :label="t('pbehavior.visible')" with-background />
 
     <c-name-field
-v-model="name"
-:disabled="onlyColor"
-autofocus
-required />
+      v-model="name"
+      :disabled="onlyColor"
+      autofocus
+      required
+    />
 
     <c-form-block>
       <c-form-block-row :label="t('modals.createPbehaviorType.fields.description')">

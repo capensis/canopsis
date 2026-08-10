@@ -27,11 +27,7 @@ import { useI18n } from '@/hooks/i18n';
 export default {
   setup() {
     const { t } = useI18n();
-    const {
-      description,
-      durationEnabled,
-      duration,
-    } = useFormModels({
+    const { description, durationEnabled, duration } = useFormModels({
       description: 'description',
       durationEnabled: 'duration_enabled',
       duration: 'duration',

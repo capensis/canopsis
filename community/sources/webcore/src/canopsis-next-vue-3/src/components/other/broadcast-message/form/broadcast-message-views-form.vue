@@ -1,48 +1,20 @@
 <template>
-  <c-layout
-    class="py-2"
-    gap="3"
-    column
-  >
+  <c-layout class="py-2" gap="3" column>
     <c-form-block>
-      <c-form-block-row
-        :label="t('common.pages')"
-        :error="hasAnyErrors"
-        indented
-      >
-        <broadcast-message-views-treeview-field
-          v-model="pages"
-          :items="treeItems.pages"
-        />
+      <c-form-block-row :label="t('common.pages')" :error="hasAnyErrors" indented>
+        <broadcast-message-views-treeview-field v-model="pages" :items="treeItems.pages" />
       </c-form-block-row>
 
-      <c-form-block-row
-        :label="t('common.views')"
-        :error="hasAnyErrors"
-        indented
-      >
-        <broadcast-message-views-treeview-field
-          v-model="views"
-          :items="treeItems.views"
-        />
+      <c-form-block-row :label="t('common.views')" :error="hasAnyErrors" indented>
+        <broadcast-message-views-treeview-field v-model="views" :items="treeItems.views" />
       </c-form-block-row>
 
-      <c-form-block-row
-        :label="t('common.playlists')"
-        :error="hasAnyErrors"
-        indented
-      >
-        <broadcast-message-views-treeview-field
-          v-model="playlists"
-          :items="treeItems.playlists"
-        />
+      <c-form-block-row :label="t('common.playlists')" :error="hasAnyErrors" indented>
+        <broadcast-message-views-treeview-field v-model="playlists" :items="treeItems.playlists" />
       </c-form-block-row>
     </c-form-block>
 
-    <v-messages
-      :messages="errorMessages"
-      color="error"
-    />
+    <v-messages :messages="errorMessages" color="error" />
   </c-layout>
 </template>
 
@@ -70,20 +42,16 @@ export default {
     const { t } = useI18n();
     const form = useFormContext();
 
-    const {
-      pages,
-      views,
-      playlists,
-    } = form.models({
+    const { pages, views, playlists } = form.models({
       pages: 'views.pages',
       views: 'views.views',
       playlists: 'views.playlists',
     });
 
     const hasAnyErrors = computed(() => Boolean(form.errors.value.views));
-    const errorMessages = computed(() => (
-      hasAnyErrors.value ? [t('broadcastMessage.errors.viewsRequired')] : []
-    ));
+    const errorMessages = computed(() =>
+      hasAnyErrors.value ? [t('broadcastMessage.errors.viewsRequired')] : [],
+    );
 
     return {
       t,

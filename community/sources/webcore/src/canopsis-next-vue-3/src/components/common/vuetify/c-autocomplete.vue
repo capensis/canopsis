@@ -7,7 +7,11 @@ const props = defineProps(validationProps);
 const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
-const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
+const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(
+  props,
+  emit,
+  attrs,
+);
 
 const autocompleteValue = computed({
   get: () => (inputValue.value === '' ? (attrs.multiple ? [] : null) : inputValue.value),

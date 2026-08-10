@@ -1,13 +1,5 @@
-import {
-  computed,
-  provide,
-  inject,
-  ref,
-  unref,
-  watch,
-  onMounted,
-} from 'vue';
 import { useField } from 'vee-validate';
+import { computed, provide, inject, ref, unref, watch, onMounted } from 'vue';
 
 import {
   ADVANCED_SEARCH_GROUPS,
@@ -26,16 +18,14 @@ import {
   DEFAULT_PATTERN_FIELD_TYPES,
   ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
-
 import { deepKeyBy } from '@/helpers/array';
 import { getOperatorsByFieldType } from '@/helpers/entities/pattern/form';
 import { getNextForFormItemType } from '@/helpers/search/advanced-search';
-
 import { useI18n } from '@/hooks/i18n';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
 import { useEntity } from '@/hooks/store/modules/entity';
 import { useService } from '@/hooks/store/modules/service';
-import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
-import { usePendingHandler } from '@/hooks/query/pending';
 
 export const ADVANCED_SEARCH_VALIDATION_CONTEXT = Symbol('advancedSearchValidationContext');
 
@@ -53,10 +43,7 @@ export const useEntityInfosKeys = () => {
 
   const entityInfosKeys = ref([]);
   const dynamicInfosKeys = ref([]);
-  const {
-    pending,
-    handler,
-  } = usePendingHandler(async () => {
+  const { pending, handler } = usePendingHandler(async () => {
     const [{ data: entityInfos }, { data: dynamicInfos }] = await Promise.all([
       fetchEntityInfosKeysWithoutStore({ params: { paginate: false } }),
       fetchDynamicInfosKeysWithoutStore({ params: { paginate: false } }),
@@ -77,26 +64,24 @@ export const useEntityInfosKeys = () => {
    *   - {string} text: The translated text for the item.
    *   - {string} chipText: The complete chip text including the prefix.
    */
-  const getDefaultItemChildren = (chipTextPrefix = '', definedType, inputTypes) => [
-    PATTERN_RULE_INFOS_FIELDS.name,
-    PATTERN_RULE_INFOS_FIELDS.value,
-  ].map((value) => {
-    const text = t(`common.${value}`);
-    const result = { value, text };
+  const getDefaultItemChildren = (chipTextPrefix = '', definedType, inputTypes) =>
+    [PATTERN_RULE_INFOS_FIELDS.name, PATTERN_RULE_INFOS_FIELDS.value].map((value) => {
+      const text = t(`common.${value}`);
+      const result = { value, text };
 
-    if (chipTextPrefix) {
-      result.chipText = `${chipTextPrefix}.${text}`;
-    }
+      if (chipTextPrefix) {
+        result.chipText = `${chipTextPrefix}.${text}`;
+      }
 
-    if (value === PATTERN_RULE_INFOS_FIELDS.name) {
-      result.operators = PATTERN_EXISTS_OPERATORS;
-    } else {
-      result.definedType = definedType;
-      result.inputTypes = inputTypes;
-    }
+      if (value === PATTERN_RULE_INFOS_FIELDS.name) {
+        result.operators = PATTERN_EXISTS_OPERATORS;
+      } else {
+        result.definedType = definedType;
+        result.inputTypes = inputTypes;
+      }
 
-    return result;
-  });
+      return result;
+    });
 
   /**
    * Retrieves items formatted for search configurations, with optional chip text prefix.
@@ -109,34 +94,35 @@ export const useEntityInfosKeys = () => {
    *   - {string} text: The text for the item.
    *   - {Array<Object>} items: The default child items for the chip text.
    */
-  const getItems = (chipTextPrefix, keys, fieldTypes) => keys.map(({ value, type }) => {
-    const chipText = chipTextPrefix ? `${chipTextPrefix}.${value}` : undefined;
-    const definedType = ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type];
+  const getItems = (chipTextPrefix, keys, fieldTypes) =>
+    keys.map(({ value, type }) => {
+      const chipText = chipTextPrefix ? `${chipTextPrefix}.${value}` : undefined;
+      const definedType = ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type];
 
-    return {
-      value,
-      chipText,
-      definedType,
-      text: value,
-      items: getDefaultItemChildren(chipText, definedType, fieldTypes),
-    };
-  });
+      return {
+        value,
+        chipText,
+        definedType,
+        text: value,
+        items: getDefaultItemChildren(chipText, definedType, fieldTypes),
+      };
+    });
 
-  const alarmItems = computed(() => (
+  const alarmItems = computed(() =>
     getItems(
       t(ALARM_FIELDS_TO_LABELS_KEYS[ALARM_FIELDS.infos]),
       dynamicInfosKeys.value,
       DEFAULT_PATTERN_FIELD_TYPES,
-    )
-  ));
+    ),
+  );
 
-  const entityItems = computed(() => (
+  const entityItems = computed(() =>
     getItems(
       t(ALARM_FIELDS_TO_LABELS_KEYS[ALARM_FIELDS.entityInfos]),
       entityInfosKeys.value,
       ENTITY_PATTERN_FIELD_TYPES,
-    )
-  ));
+    ),
+  );
 
   onMounted(handler);
 
@@ -163,9 +149,10 @@ export const useGetEntityOptions = () => {
 
   const getEntityOptions = (type = Object.values(BASIC_ENTITY_TYPES)) => ({
     operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
-    fetchValues: ({ params }) => fetchContextEntitiesListWithoutStore({
-      params: { ...params, type },
-    }),
+    fetchValues: ({ params }) =>
+      fetchContextEntitiesListWithoutStore({
+        params: { ...params, type },
+      }),
     itemText: '_id',
     itemValue: '_id',
   });
@@ -263,7 +250,10 @@ export const useAdvancedSearchGroupedAttributes = ({
       const isDisabled = getDisabled ? getDisabled() : unwrappedDisabled;
 
       result.push(
-        { header: t(`advancedSearch.groups.${headerKey}`), value: t(`advancedSearch.groups.${headerKey}`) },
+        {
+          header: t(`advancedSearch.groups.${headerKey}`),
+          value: t(`advancedSearch.groups.${headerKey}`),
+        },
         ...fields.map(field => prepareFromMap(field, isDisabled, map)).filter(Boolean),
       );
     }
@@ -332,25 +322,21 @@ export const useAdvancedSearchValidator = ({
     return !Object.keys(ruleErrors.value).length || 'Invalid advanced search';
   };
 
-  const {
-    validate,
-    setValue,
-    resetField,
-  } = useField(
-    name,
-    validateRules,
-    {
-      initialValue: unref(rules),
-      validateOnValueUpdate: false,
+  const { validate, setValue, resetField } = useField(name, validateRules, {
+    initialValue: unref(rules),
+    validateOnValueUpdate: false,
+  });
+
+  watch(
+    rules,
+    (newRules) => {
+      ruleErrors.value = {};
+      touched.value = false;
+
+      setValue(newRules, false);
     },
+    { deep: true },
   );
-
-  watch(rules, (newRules) => {
-    ruleErrors.value = {};
-    touched.value = false;
-
-    setValue(newRules, false);
-  }, { deep: true });
 
   const errors = {
     clear: () => {
@@ -418,32 +404,28 @@ export const useAdvancedSearchRuleActiveItems = ({
     let result = getOperatorsByFieldType(unwrappedRule.fieldType);
 
     if (unwrappedRule.fieldType === PATTERN_FIELD_TYPES.string) {
-      result = [
-        ...result,
-        PATTERN_OPERATORS.isOneOf,
-        PATTERN_OPERATORS.isNotOneOf,
-      ];
+      result = [...result, PATTERN_OPERATORS.isOneOf, PATTERN_OPERATORS.isNotOneOf];
     }
 
     return result;
   });
 
-  const preparedOperators = computed(() => (
+  const preparedOperators = computed(() =>
     (currentAttribute.value?.operators ?? operators.value ?? []).map(operator => ({
       text: t(`common.operators.${operator}`),
       value: operator,
-    }))
-  ));
+    })),
+  );
 
   /**
    * INTERVAL ITEMS
    */
-  const preparedIntervalRanges = computed(() => (
+  const preparedIntervalRanges = computed(() =>
     unref(intervalRanges).map(range => ({
       ...range,
       text: t(`quickRanges.types.${range.value}`),
-    }))
-  ));
+    })),
+  );
 
   /**
    * INPUT TYPES ITEMS
@@ -461,29 +443,31 @@ export const useAdvancedSearchRuleActiveItems = ({
   /**
    * UNION ITEMS
    */
-  const preparedUnionItems = computed(() => (
+  const preparedUnionItems = computed(() =>
     Object.values(ADVANCED_SEARCH_UNION_CONDITIONS).map(value => ({
       value,
       text: value,
       disabled: value === ADVANCED_SEARCH_UNION_CONDITIONS.or && !unref(allowOr),
-    }))
-  ));
+    })),
+  );
 
   /**
    * BOOLEAN ITEMS
    */
   const preparedBooleanItems = computed(() => [
-    { text: t('common.true'), value: true }, { text: t('common.false'), value: false },
+    { text: t('common.true'), value: true },
+    { text: t('common.false'), value: false },
   ]);
 
   /**
    * VALUE ITEMS
    */
-  const preparedValueItems = computed(() => (
-    currentAttribute.value?.values
-      ?? { [isBooleanFieldType.value]: preparedBooleanItems.value }.true
-      ?? []
-  ));
+  const preparedValueItems = computed(
+    () =>
+      currentAttribute.value?.values ??
+      { [isBooleanFieldType.value]: preparedBooleanItems.value }.true ??
+      [],
+  );
 
   /**
    * ITEMS BY TYPE

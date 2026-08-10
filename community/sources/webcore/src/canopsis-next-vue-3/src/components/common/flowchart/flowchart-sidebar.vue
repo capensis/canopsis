@@ -1,9 +1,10 @@
 <template>
   <v-navigation-drawer
-class="flowchart-sidebar"
-width="100%"
-permanent
-touchless>
+    class="flowchart-sidebar"
+    width="100%"
+    permanent
+    touchless
+  >
     <c-layout column>
       <slot name="prepend" />
       <flowchart-color-field
@@ -26,10 +27,11 @@ touchless>
         <v-expansion-panel-text>
           <c-layout wrap>
             <v-tooltip
-v-for="(button, index) in buttons"
-:key="index"
-z-index="230"
-location="top">
+              v-for="(button, index) in buttons"
+              :key="index"
+              z-index="230"
+              location="top"
+            >
               <template #activator="{ props: activatorProps }">
                 <v-btn
                   v-bind="activatorProps"
@@ -94,10 +96,12 @@ location="top">
 </template>
 
 <script>
+import FileSelector from '@/components/forms/fields/file-selector.vue';
 import { COLORS } from '@/config';
 import { LINE_TYPES } from '@/constants';
-
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
+import { getImageProperties } from '@/helpers/file/image';
+import { generatePoint } from '@/helpers/flowchart/points';
 import {
   arrowLineShapeToForm,
   bidirectionalArrowLineShapeToForm,
@@ -112,34 +116,29 @@ import {
   rhombusShapeToForm,
   storageShapeToForm,
 } from '@/helpers/flowchart/shapes';
-import { generatePoint } from '@/helpers/flowchart/points';
-import { getImageProperties } from '@/helpers/file/image';
-
 import { formBaseMixin } from '@/mixins/form';
 
-import FileSelector from '@/components/forms/fields/file-selector.vue';
-
+import assetGroups from './assets';
 import FlowchartColorField from './fields/flowchart-color-field.vue';
-import RectShapeIcon from './icons/rect-shape.vue';
-import RoundedRectShapeIcon from './icons/rounded-rect-shape.vue';
-import SquareShapeIcon from './icons/square-shape.vue';
-import RhombusShapeIcon from './icons/rhombus-shape.vue';
-import CircleShapeIcon from './icons/circle-shape.vue';
-import EllipseShapeIcon from './icons/ellipse-shape.vue';
-import ParallelogramShapeIcon from './icons/parallelogram-shape.vue';
-import StorageShapeIcon from './icons/storage-shape.vue';
-import LineShapeIcon from './icons/line-shape.vue';
 import ArrowLineShapeIcon from './icons/arrow-line-shape.vue';
 import BidirectionalArrowLineShapeIcon from './icons/bidirectional-arrow-line-shape.vue';
-import ImageShapeIcon from './icons/image-shape.vue';
-import CurveLineShapeIcon from './icons/curve-line-shape.vue';
-import CurveArrowLineShapeIcon from './icons/curve-arrow-line-shape.vue';
 import BidirectionalCurveArrowLineShape from './icons/bidirectional-curve-arrow-line-shape.vue';
-import ProcessShapeIcon from './icons/process-shape.vue';
+import CircleShapeIcon from './icons/circle-shape.vue';
+import CurveArrowLineShapeIcon from './icons/curve-arrow-line-shape.vue';
+import CurveLineShapeIcon from './icons/curve-line-shape.vue';
 import DocumentShapeIcon from './icons/document-shape.vue';
+import EllipseShapeIcon from './icons/ellipse-shape.vue';
+import ImageShapeIcon from './icons/image-shape.vue';
+import LineShapeIcon from './icons/line-shape.vue';
+import ParallelogramShapeIcon from './icons/parallelogram-shape.vue';
+import ProcessShapeIcon from './icons/process-shape.vue';
+import RectShapeIcon from './icons/rect-shape.vue';
+import RhombusShapeIcon from './icons/rhombus-shape.vue';
+import RoundedRectShapeIcon from './icons/rounded-rect-shape.vue';
+import SquareShapeIcon from './icons/square-shape.vue';
+import StorageShapeIcon from './icons/storage-shape.vue';
 import TextShapeIcon from './icons/text-shape.vue';
 import TextboxShapeIcon from './icons/textbox-shape.vue';
-import assetGroups from './assets';
 
 export default {
   components: { FlowchartColorField, FileSelector, ImageShapeIcon },

@@ -31,19 +31,19 @@
 <script>
 import { computed, toRef } from 'vue';
 
+import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declare-ticket-rule-form.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import { LLM_SOCKET_CONTEXTS, MODALS } from '@/constants';
-
-import { declareTicketRuleToForm, formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
-
+import {
+  declareTicketRuleToForm,
+  formToDeclareTicketRule,
+} from '@/helpers/entities/declare-ticket/rule/form';
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
-import { useForm } from '@/hooks/form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declare-ticket-rule-form.vue';
 
 export default {
   name: MODALS.createDeclareTicketRule,
@@ -71,10 +71,7 @@ export default {
     });
     const { values } = form;
 
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
+    const { shown: chatShown, options: chatOptions } = useAiChatForm({
       form: values,
 
       modal: toRef(props, 'modal'),
@@ -83,7 +80,9 @@ export default {
     });
 
     const isNew = computed(() => !config.value.declareTicketRule?._id);
-    const title = computed(() => config.value.title ?? t('modals.createDeclareTicketRule.create.title'));
+    const title = computed(
+      () => config.value.title ?? t('modals.createDeclareTicketRule.create.title'),
+    );
 
     const { submit, submitting, submitLabel } = useSubmittableForm({
       item: config.value.declareTicketRule,

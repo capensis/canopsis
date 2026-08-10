@@ -15,21 +15,14 @@
               item-value="value"
               @update:model-value="changeActionType"
             />
-            <v-btn
-              class="mr-0"
-              icon
-              @click="remove"
-            >
+            <v-btn class="mr-0" icon @click="remove">
               <v-icon color="error">
                 delete
               </v-icon>
             </v-btn>
           </c-layout>
           <v-expand-transition>
-            <event-filter-enrichment-action-form-type-info
-              v-if="action.type"
-              :type="action.type"
-            />
+            <event-filter-enrichment-action-form-type-info v-if="action.type" :type="action.type" />
           </v-expand-transition>
           <c-text-field
             key="description"
@@ -119,17 +112,15 @@ import {
   EVENT_FILTER_EVENT_EXTRA_PREFIX,
   PATTERN_FIELD_TYPES,
 } from '@/constants';
-
 import {
   eventFilterDictionaryActionValueToForm,
   formToEventFilterDictionaryActionValue,
 } from '@/helpers/entities/event-filter/rule/form';
-
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
-import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
 import EventFilterEnrichmentActionFormSelectTagsValue from './event-filter-enrichment-action-form-select-tags-value.vue';
+import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
 
 export default {
   emits: ['update:action', 'remove'],
@@ -174,27 +165,35 @@ export default {
     const nameFieldName = computed(() => `${props.name}.name`);
     const valueFieldName = computed(() => `${props.name}.value`);
 
-    const eventFilterActionTypes = computed(() => Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
-      value,
-      text: t(`eventFilter.actionsTypes.${value}.text`),
-    })));
+    const eventFilterActionTypes = computed(() =>
+      Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
+        value,
+        text: t(`eventFilter.actionsTypes.${value}.text`),
+      })),
+    );
 
-    const isStringCopyValueType = computed(() => [
-      EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy,
-      EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo,
-    ].includes(props.action.type));
+    const isStringCopyValueType = computed(() =>
+      [
+        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy,
+        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo,
+      ].includes(props.action.type),
+    );
 
-    const isStringTemplateValueType = computed(() => [
-      EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
-      EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
-      EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate,
-    ].includes(props.action.type));
+    const isStringTemplateValueType = computed(() =>
+      [
+        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
+        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
+        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate,
+      ].includes(props.action.type),
+    );
 
-    const isStringDictionaryValueType = computed(() => (
-      EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary === props.action.type
-    ));
+    const isStringDictionaryValueType = computed(
+      () => EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary === props.action.type,
+    );
 
-    const isSelectValueType = computed(() => EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags === props.action.type);
+    const isSelectValueType = computed(
+      () => EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags === props.action.type,
+    );
 
     /**
      * Changes the action type and handles value transformation for dictionary actions

@@ -33,11 +33,7 @@
           type="edit"
           @click.stop="$emit('edit', item)"
         />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click.stop="$emit('duplicate', item)"
-        />
+        <c-action-btn v-if="duplicable" type="duplicate" @click.stop="$emit('duplicate', item)" />
         <c-action-btn
           v-if="removable"
           :tooltip="item.deletable ? t('common.delete') : t('theme.defaultTheme')"
@@ -54,7 +50,6 @@
 import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {

@@ -1,8 +1,6 @@
 <template>
   <c-layout gap="4" column>
-    <span class="text-subtitle-2 font-italic">
-      {{ t('theme.checkColors') }}:
-    </span>
+    <span class="text-subtitle-2 font-italic"> {{ t('theme.checkColors') }}: </span>
     <theme-colors-preview
       v-for="(item, index) in items"
       :key="index"

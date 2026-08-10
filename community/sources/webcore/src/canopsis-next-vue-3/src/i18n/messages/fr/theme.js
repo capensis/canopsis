@@ -15,7 +15,8 @@ export default {
     primaryHelpText: 'Couleur principale de l\'identité visuelle (en-tête Canopsis)',
 
     secondary: 'Marque secondaire',
-    secondaryHelpText: 'Couleur supplémentaire de l\'identité visuelle (pour les panneaux élargis, menus, etc.)',
+    secondaryHelpText:
+      'Couleur supplémentaire de l\'identité visuelle (pour les panneaux élargis, menus, etc.)',
 
     accent: 'Boutons neutres',
 
@@ -53,7 +54,8 @@ export default {
     rowColor: 'Ligne des tableaux',
 
     shiftRowEnable: 'Alterner les couleurs d’arrière-plan des tableaux',
-    shiftRowEnableHelpText: 'Sélecteur pour activer/désactiver les changements de couleur pour les lignes des tableaux',
+    shiftRowEnableHelpText:
+      'Sélecteur pour activer/désactiver les changements de couleur pour les lignes des tableaux',
 
     shiftRowColor: 'Arrière-plan de la deuxième ligne des tableaux',
 

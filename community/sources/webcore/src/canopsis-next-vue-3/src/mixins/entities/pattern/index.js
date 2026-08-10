@@ -1,10 +1,6 @@
 import { usePattern } from '@/hooks/store/modules/pattern';
 
-const patternComputed = [
-  'patternsMeta',
-  'patternsPending',
-  'patterns',
-].reduce((acc, key) => {
+const patternComputed = ['patternsMeta', 'patternsPending', 'patterns'].reduce((acc, key) => {
   acc[key] = () => usePattern()[key].value;
 
   return acc;

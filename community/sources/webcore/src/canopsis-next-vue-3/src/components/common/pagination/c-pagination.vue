@@ -1,13 +1,6 @@
 <template>
-  <div
-    v-if="total"
-    :class="{ 'py-1': isTop }"
-    class="container pa-6 text-center"
-  >
-    <ul
-      v-if="isTop"
-      class="v-pagination"
-    >
+  <div v-if="total" :class="{ 'py-1': isTop }" class="container pa-6 text-center">
+    <ul v-if="isTop" class="v-pagination">
       <li>
         <button
           :disabled="isPreviousPageDisabled"
@@ -34,11 +27,7 @@
         </button>
       </li>
     </ul>
-    <c-layout
-      v-else
-      align="center"
-      justify="center"
-    >
+    <c-layout v-else align="center" justify="center">
       <span class="text-medium-emphasis">
         {{ $t('common.paginationItems', { first, last, total }) }}
       </span>
@@ -107,7 +96,7 @@ export default {
      * Calculate first item nb to display on pagination, in case it's not given by the backend
      */
     first() {
-      return 1 + (this.limit * (this.page - 1));
+      return 1 + this.limit * (this.page - 1);
     },
 
     /**
@@ -146,7 +135,7 @@ export default {
 
 <style scoped>
 .pagination__navigation:disabled {
-  opacity: .6;
+  opacity: 0.6;
   pointer-events: none;
 }
 

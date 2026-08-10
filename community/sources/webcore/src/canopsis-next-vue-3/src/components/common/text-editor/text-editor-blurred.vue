@@ -1,7 +1,11 @@
 <template>
   <div
-    :class="['v-input--is-dirty', { 'v-input--is-disabled': disabled }]"
-    class="v-input v-textarea v-text-field v-text-field--box v-text-field--enclosed v-input--is-label-active text-editor-blurred"
+    :class="[
+      'v-input v-textarea v-text-field v-text-field--box',
+      'v-text-field--enclosed v-input--is-label-active text-editor-blurred',
+      'v-input--is-dirty',
+      { 'v-input--is-disabled': disabled },
+    ]"
   >
     <div class="v-input__control" @click="$emit('click', $event)">
       <div class="v-input__slot">

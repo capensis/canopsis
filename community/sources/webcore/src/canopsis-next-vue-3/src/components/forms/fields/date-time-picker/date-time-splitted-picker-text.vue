@@ -1,8 +1,5 @@
 <template>
-  <c-layout
-    class="date-time-splitted-field"
-    column
-  >
+  <c-layout class="date-time-splitted-field" column>
     <c-layout :style="rowStyle">
       <div class="date-time-splitted-field__date">
         <date-picker-text

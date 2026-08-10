@@ -1,8 +1,5 @@
 <template>
-  <c-card-iterator-item
-    :item-number="webhookNumber"
-    @remove="removeWebhook"
-  >
+  <c-card-iterator-item :item-number="webhookNumber" @remove="removeWebhook">
     <template #header="">
       <request-url-field
         :method="form.request.method"
@@ -61,14 +58,13 @@
 <script>
 import { computed, toRef } from 'vue';
 
-import { useModelField } from '@/hooks/form/model-field';
-import { useConfirmableForm } from '@/hooks/confirmable-form';
-
-import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
 import RequestUrlField from '@/components/forms/request/fields/request-url-field.vue';
+import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
+import { useConfirmableForm } from '@/hooks/confirmable-form';
+import { useModelField } from '@/hooks/form/model-field';
 
-import DeclareTicketRuleTicketMappingField from './declare-ticket-rule-ticket-mapping-field.vue';
 import DeclareTicketRuleCheckTicketStatusField from './declare-ticket-rule-check-ticket-status-field.vue';
+import DeclareTicketRuleTicketMappingField from './declare-ticket-rule-ticket-mapping-field.vue';
 
 export default {
   components: {
@@ -113,7 +109,9 @@ export default {
   setup(props, { emit }) {
     const { updateField } = useModelField(props, emit);
     const requestFormName = computed(() => `${props.name}.request`);
-    const webhookTemplateVarsKey = computed(() => (props.hasPrevious ? 'webhook' : 'first_webhook'));
+    const webhookTemplateVarsKey = computed(() =>
+      props.hasPrevious ? 'webhook' : 'first_webhook',
+    );
 
     const { confirmAction: removeWebhook } = useConfirmableForm({
       form: toRef(props, 'form'),

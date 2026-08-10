@@ -1,8 +1,6 @@
 <template>
-  <pre class="json-treeview"
-    >{{ formattedJson }}
-</pre
-  >
+  <pre class="json-treeview">{{ formattedJson }}
+</pre>
 </template>
 
 <script>

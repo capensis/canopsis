@@ -28,7 +28,8 @@ export default {
     addService: 'Add a new service entity',
   },
   popups: {
-    massDeleteWarning: 'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
+    massDeleteWarning:
+      'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
     exportFailed: 'Failed to export entities in CSV format',
   },
 };

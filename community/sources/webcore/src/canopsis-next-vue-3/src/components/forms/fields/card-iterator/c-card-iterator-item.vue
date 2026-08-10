@@ -25,7 +25,6 @@
         :icon="small ? 'close' : 'delete'"
         :small="small"
         :icon-small="small"
-        :class="{ 'remove-card-btn': small }"
         type="delete"
         @click="$emit('remove')"
       />
@@ -94,8 +93,15 @@ export default {
   --actions-min-width: 60px;
   --one-action-width: 26px;
 
+  &__row > .c-action-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 1;
+  }
+
   &--small {
-    .remove-card-btn {
+    .c-card-iterator-item__row > .c-action-btn {
       width: 24px;
       min-width: 24px;
       height: 24px;

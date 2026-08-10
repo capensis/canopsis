@@ -1,9 +1,6 @@
 <template>
   <div>
-    <c-alert
-      v-if="!pending && !filters.length"
-      :type="required ? 'error' : 'info'"
-    >
+    <c-alert v-if="!pending && !filters.length" :type="required ? 'error' : 'info'">
       {{ $t('modals.createFilter.emptyFilters') }}
     </c-alert>
 

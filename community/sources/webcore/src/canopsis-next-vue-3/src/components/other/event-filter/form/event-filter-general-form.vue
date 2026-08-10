@@ -10,10 +10,7 @@
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.description')">
-        <c-description-field
-          v-model="descriptionField"
-          required
-        />
+        <c-description-field v-model="descriptionField" required />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('eventFilter.duringPeriod')">
@@ -41,28 +38,23 @@
       :copy-vars="copyVars"
     />
 
-    <event-filter-change-entity-form
-      v-else-if="isChangeEntityType"
-      :template-vars="templateVars"
-    />
+    <event-filter-change-entity-form v-else-if="isChangeEntityType" :template-vars="templateVars" />
   </c-layout>
 </template>
 
 <script>
 import { computed } from 'vue';
 
+import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-field.vue';
 import {
   isEnrichmentEventFilterRuleType,
   isChangeEntityEventFilterRuleType,
 } from '@/helpers/entities/event-filter/rule/entity';
-
 import { useFormModels } from '@/hooks/form';
 
-import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-field.vue';
-
-import EventFilterEnrichmentForm from './fields/event-filter-enrichment-form.vue';
 import EventFilterChangeEntityForm from './fields/event-filter-change-entity-form.vue';
 import EventFilterDropIntervalsField from './fields/event-filter-drop-intervals-field.vue';
+import EventFilterEnrichmentForm from './fields/event-filter-enrichment-form.vue';
 
 export default {
   components: {

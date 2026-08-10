@@ -31,7 +31,8 @@ export default {
   },
   treeOfDependenciesShowTypes: {
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies]: 'Afficher toutes les dépendances',
-    [TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState]: 'Afficher les dépendances définissant l\'état',
+    [TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState]:
+      'Afficher les dépendances définissant l\'état',
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.custom]: 'Afficher le sélecteur',
   },
   comments: {

@@ -15,11 +15,7 @@
           large
           @update:form="updateItemInArray(index, $event)"
         />
-        <c-action-btn
-          class="mr-0 ml-0"
-          type="delete"
-          @click="remove"
-        />
+        <c-action-btn class="mr-0 ml-0" type="delete" @click="remove" />
       </c-layout>
     </template>
   </c-form-block-array-field>
@@ -27,9 +23,8 @@
 
 <script>
 import { snmpRuleTagToForm } from '@/helpers/entities/snmp-rule/form';
-
-import { useI18n } from '@/hooks/i18n';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useI18n } from '@/hooks/i18n';
 
 import SnmpRuleFormModuleMibObjectsForm from '../snmp-rule-form-module-mib-objects-form.vue';
 

@@ -1,9 +1,5 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="alarmExecutions"
-    hide-default-footer
-  >
+  <v-data-table :headers="headers" :items="alarmExecutions" hide-default-footer>
     <template #item="{ item }">
       <tr>
         <td class="text-left pre-wrap">
@@ -36,9 +32,11 @@
 </template>
 
 <script>
-import { isWebhookExecutionRunning, isWebhookExecutionSucceeded } from '@/helpers/entities/webhook-execution/entity';
-
 import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
+import {
+  isWebhookExecutionRunning,
+  isWebhookExecutionSucceeded,
+} from '@/helpers/entities/webhook-execution/entity';
 
 export default {
   components: { AlarmWebhookExecutionStatus },
@@ -74,13 +72,16 @@ export default {
       ];
 
       if (!this.isOneExecution) {
-        headers.push({
-          title: this.$t('common.rule'),
-          sortable: false,
-        }, {
-          title: this.$t('common.status'),
-          sortable: false,
-        });
+        headers.push(
+          {
+            title: this.$t('common.rule'),
+            sortable: false,
+          },
+          {
+            title: this.$t('common.status'),
+            sortable: false,
+          },
+        );
       }
 
       return headers;

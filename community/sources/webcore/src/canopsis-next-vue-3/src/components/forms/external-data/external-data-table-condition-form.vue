@@ -36,14 +36,15 @@
           @update:value="updateField('value', $event)"
         />
         <v-btn
-v-if="!disabled"
-:disabled="disabledRemove"
-icon
-small
-@click="removeCondition">
+          v-if="!disabled"
+          :disabled="disabledRemove"
+          icon
+          small
+          @click="removeCondition"
+        >
           <v-icon color="error" small>
-delete
-</v-icon>
+            delete
+          </v-icon>
         </v-btn>
       </c-layout>
     </v-col>
@@ -54,9 +55,8 @@ delete
 import { computed } from 'vue';
 
 import { EXTERNAL_DATA_CONDITION_TYPES, EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   emits: ['update:condition'],

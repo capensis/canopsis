@@ -29,10 +29,7 @@ const emit = defineEmits(['click']);
           icon
           @click.stop="emit('click', $event)"
         >
-          <v-icon
-            :icon="icon"
-            size="small"
-          />
+          <v-icon :icon="icon" size="small" />
         </v-btn>
       </template>
     </c-action-btn>

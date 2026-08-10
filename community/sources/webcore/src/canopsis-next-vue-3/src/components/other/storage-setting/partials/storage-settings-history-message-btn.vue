@@ -1,10 +1,7 @@
 <template>
   <v-tooltip :disabled="!history" location="bottom">
     <template #activator="{ props }">
-      <v-btn
-        v-bind="{ ...$attrs, ...props }"
-        @click="$emit('click')"
-      >
+      <v-btn v-bind="{ ...$attrs, ...props }" @click="$emit('click')">
         <slot />
       </v-btn>
     </template>

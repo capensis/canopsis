@@ -39,10 +39,7 @@
         icon="error"
         top
       />
-      <c-enabled
-        v-else
-        :value="item.enabled"
-      />
+      <c-enabled v-else :value="item.enabled" />
     </template>
 
     <template #created="{ item }">
@@ -55,21 +52,9 @@
 
     <template #actions="{ item }">
       <c-layout gap="1">
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
       </c-layout>
     </template>
 
@@ -85,7 +70,6 @@ import { computed } from 'vue';
 import { convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 import { isDeprecatedTrigger } from '@/helpers/entities/scenario/form';
-
 import { useI18n } from '@/hooks/i18n';
 
 import ScenariosListExpandItem from './partials/scenarios-list-expand-item.vue';
@@ -143,7 +127,8 @@ export default {
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 
-    const hasDeprecatedTrigger = item => item.triggers.some(({ type }) => isDeprecatedTrigger(type));
+    const hasDeprecatedTrigger = item =>
+      item.triggers.some(({ type }) => isDeprecatedTrigger(type));
 
     return {
       headers,

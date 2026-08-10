@@ -18,8 +18,10 @@
 <script>
 import { computed } from 'vue';
 
-import { TEMPLATE_TESTING_TEST_TYPES, TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS } from '@/constants';
-
+import {
+  TEMPLATE_TESTING_TEST_TYPES,
+  TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS,
+} from '@/constants';
 import { useCurrentUserPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 
@@ -59,12 +61,14 @@ export default {
     const { t } = useI18n();
     const { checkReadAccess } = useCurrentUserPermissions();
 
-    const items = computed(() => Object.values(TEMPLATE_TESTING_TEST_TYPES)
-      .filter(type => checkReadAccess(TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS[type]))
-      .map(type => ({
-        value: type,
-        text: t(`templateTesting.testTypes.${type}`),
-      })));
+    const items = computed(() =>
+      Object.values(TEMPLATE_TESTING_TEST_TYPES)
+        .filter(type => checkReadAccess(TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS[type]))
+        .map(type => ({
+          value: type,
+          text: t(`templateTesting.testTypes.${type}`),
+        })),
+    );
 
     return {
       t,

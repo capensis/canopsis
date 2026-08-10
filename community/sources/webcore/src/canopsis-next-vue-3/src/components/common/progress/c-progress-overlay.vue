@@ -5,10 +5,11 @@
 
       <slot name="progress">
         <v-progress-circular
-:color="color"
-:size="size"
-:width="width"
-indeterminate />
+          :color="color"
+          :size="size"
+          :width="width"
+          indeterminate
+        />
       </slot>
 
       <div v-if="$slots.default" class="c-progress-overlay__content">
@@ -22,10 +23,11 @@ indeterminate />
 
     <slot name="progress">
       <v-progress-circular
-:color="color"
-:size="size"
-:width="width"
-indeterminate />
+        :color="color"
+        :size="size"
+        :width="width"
+        indeterminate
+      />
     </slot>
 
     <div v-if="$slots.default" class="c-progress-overlay__content">

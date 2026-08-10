@@ -1,9 +1,5 @@
 <template>
-  <router-link
-    v-slot="{ href, navigate }"
-    :to="viewLink"
-    custom
-  >
+  <router-link v-slot="{ href, navigate }" :to="viewLink" custom>
     <a
       :class="{ editing: isNavigationEditingMode }"
       :href="href"

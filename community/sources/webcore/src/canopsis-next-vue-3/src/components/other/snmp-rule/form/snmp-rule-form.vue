@@ -1,21 +1,10 @@
 <template>
   <c-layout gap="3" column>
-    <c-enabled-field
-      v-model="enabled"
-      hide-details
-      with-background
-    />
+    <c-enabled-field v-model="enabled" hide-details with-background />
 
-    <snmp-rule-form-module-form
-      v-model:form="oid"
-      class="mb-2"
-    />
+    <snmp-rule-form-module-form v-model:form="oid" class="mb-2" />
 
-    <v-alert
-      v-if="selectedModuleMib?.description"
-      class="mt-3"
-      color="grey-darken-1"
-    >
+    <v-alert v-if="selectedModuleMib?.description" class="mt-3" color="grey-darken-1">
       {{ selectedModuleMib?.description }}
     </v-alert>
 
@@ -59,24 +48,15 @@
       </c-form-block-row>
 
       <c-form-block-row :label="t('common.state')" indented>
-        <snmp-rule-form-state-form
-          v-model:form="state"
-          :items="selectedModuleMibObjects"
-        />
+        <snmp-rule-form-state-form v-model:form="state" :items="selectedModuleMibObjects" />
       </c-form-block-row>
 
       <c-form-block-row :label="t('common.tag', 2)" indented>
-        <snmp-rule-form-tags-field
-          v-model:form="tags"
-          :items="selectedModuleMibObjects"
-        />
+        <snmp-rule-form-tags-field v-model:form="tags" :items="selectedModuleMibObjects" />
       </c-form-block-row>
 
       <c-form-block-row :label="t('common.customField', 2)" indented>
-        <snmp-rule-form-extra-field
-          v-model:form="extra"
-          :items="selectedModuleMibObjects"
-        />
+        <snmp-rule-form-extra-field v-model:form="extra" :items="selectedModuleMibObjects" />
       </c-form-block-row>
     </c-form-block>
   </c-layout>
@@ -88,11 +68,11 @@ import { computed } from 'vue';
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
+import SnmpRuleFormExtraField from './fields/snmp-rule-form-extra-field.vue';
+import SnmpRuleFormTagsField from './fields/snmp-rule-form-tags-field.vue';
 import SnmpRuleFormModuleForm from './snmp-rule-form-module-form.vue';
 import SnmpRuleFormModuleMibObjectsForm from './snmp-rule-form-module-mib-objects-form.vue';
 import SnmpRuleFormStateForm from './snmp-rule-form-state-form.vue';
-import SnmpRuleFormTagsField from './fields/snmp-rule-form-tags-field.vue';
-import SnmpRuleFormExtraField from './fields/snmp-rule-form-extra-field.vue';
 
 export default {
   components: {
@@ -105,27 +85,18 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    const {
-      enabled,
-      oid,
-      output,
-      component,
-      resource,
-      connectorName,
-      state,
-      tags,
-      extra,
-    } = useFormModels({
-      enabled: 'enabled',
-      oid: 'oid',
-      output: 'output',
-      component: 'component',
-      resource: 'resource',
-      connectorName: 'connector_name',
-      state: 'state',
-      tags: 'tags',
-      extra: 'extra',
-    });
+    const { enabled, oid, output, component, resource, connectorName, state, tags, extra } =
+      useFormModels({
+        enabled: 'enabled',
+        oid: 'oid',
+        output: 'output',
+        component: 'component',
+        resource: 'resource',
+        connectorName: 'connector_name',
+        state: 'state',
+        tags: 'tags',
+        extra: 'extra',
+      });
 
     const selectedModuleMib = computed(() => oid.value?.mib);
 

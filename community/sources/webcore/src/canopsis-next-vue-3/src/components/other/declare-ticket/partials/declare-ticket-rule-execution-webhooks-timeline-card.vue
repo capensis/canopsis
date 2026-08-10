@@ -10,11 +10,9 @@
 </template>
 
 <script>
-import { EVENT_ENTITY_TYPES } from '@/constants';
-
-import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
-
 import AlarmWebhookExecutionTimelineCard from '@/components/other/alarm/partials/alarm-webhook-execution-timeline-card.vue';
+import { EVENT_ENTITY_TYPES } from '@/constants';
+import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
 
 export default {
   components: { AlarmWebhookExecutionTimelineCard },
@@ -40,7 +38,9 @@ export default {
   },
   computed: {
     expandable() {
-      return [EVENT_ENTITY_TYPES.webhookComplete, EVENT_ENTITY_TYPES.webhookFail].includes(this.step._t);
+      return [EVENT_ENTITY_TYPES.webhookComplete, EVENT_ENTITY_TYPES.webhookFail].includes(
+        this.step._t,
+      );
     },
   },
   methods: {
@@ -50,7 +50,9 @@ export default {
           this.pending = true;
 
           try {
-            this.response = await this.fetchTestDeclareTicketExecutionWebhooksResponse({ id: this.step.webhookId });
+            this.response = await this.fetchTestDeclareTicketExecutionWebhooksResponse({
+              id: this.step.webhookId,
+            });
           } catch (err) {
             console.error(err);
           } finally {

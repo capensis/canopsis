@@ -15,7 +15,6 @@
 import { onMounted } from 'vue';
 
 import { convertQueryToRequest } from '@/helpers/query';
-
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { usePattern } from '@/hooks/store/modules/pattern';
 
@@ -29,24 +28,20 @@ export default {
   emits: ['edit', 'remove', 'remove-selected'],
 
   setup() {
-    const {
-      patternsMeta,
-      patternsPending,
-      patterns,
-      fetchPatternsList,
-    } = usePattern();
+    const { patternsMeta, patternsPending, patterns, fetchPatternsList } = usePattern();
 
     const {
       options,
       updateOptions,
       handler: fetchList,
     } = useLocalQueryWithOptions({
-      onUpdate: fetchQuery => fetchPatternsList({
-        params: {
-          ...convertQueryToRequest(fetchQuery),
-          corporate: false,
-        },
-      }),
+      onUpdate: fetchQuery =>
+        fetchPatternsList({
+          params: {
+            ...convertQueryToRequest(fetchQuery),
+            corporate: false,
+          },
+        }),
     });
 
     onMounted(fetchList);

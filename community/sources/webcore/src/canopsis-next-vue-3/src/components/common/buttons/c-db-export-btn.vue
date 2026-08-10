@@ -12,7 +12,6 @@
 import { computed } from 'vue';
 
 import { saveFile } from '@/helpers/file/files';
-
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useDbExport } from '@/hooks/store/modules/db-export';
 
@@ -95,28 +94,29 @@ export default {
       exportJobConfigsDb,
     } = useDbExport();
 
-    const action = computed(() => ({
-      [props.pbehavior]: exportPbehaviorsDb,
-      [props.eventFilter]: exportEventFiltersDb,
-      [props.linkRule]: exportLinkRulesDb,
-      [props.idleRule]: exportIdleRulesDb,
-      [props.flappingRule]: exportFlappingRulesDb,
-      [props.scenario]: exportScenariosDb,
-      [props.dynamicInfo]: exportDynamicInfosDb,
-      [props.declareTicket]: exportDeclareTicketsDb,
-      [props.metaAlarmRule]: exportMetaAlarmRulesDb,
-      [props.instruction]: exportInstructionsDb,
-      [props.job]: exportJobsDb,
-      [props.jobConfig]: exportJobConfigsDb,
-    }.true));
+    const action = computed(
+      () =>
+        ({
+          [props.pbehavior]: exportPbehaviorsDb,
+          [props.eventFilter]: exportEventFiltersDb,
+          [props.linkRule]: exportLinkRulesDb,
+          [props.idleRule]: exportIdleRulesDb,
+          [props.flappingRule]: exportFlappingRulesDb,
+          [props.scenario]: exportScenariosDb,
+          [props.dynamicInfo]: exportDynamicInfosDb,
+          [props.declareTicket]: exportDeclareTicketsDb,
+          [props.metaAlarmRule]: exportMetaAlarmRulesDb,
+          [props.instruction]: exportInstructionsDb,
+          [props.job]: exportJobsDb,
+          [props.jobConfig]: exportJobConfigsDb,
+        }).true,
+    );
 
-    const {
-      pending,
-      handler: download,
-    } = usePendingHandler(async () => {
-      const { headers = {}, data } = await action.value?.({
-        ids: props.id ? [props.id] : props.ids,
-      }) ?? {};
+    const { pending, handler: download } = usePendingHandler(async () => {
+      const { headers = {}, data } =
+        (await action.value?.({
+          ids: props.id ? [props.id] : props.ids,
+        })) ?? {};
 
       const filename = String(headers['content-disposition']).replace(/^.*filename="?|"$/g, '');
 

@@ -1,21 +1,10 @@
 <template>
-  <v-card
-    :class="cardClass"
-    :style="style"
-    class="grid-item"
-  >
+  <v-card :class="cardClass" :style="style" class="grid-item">
     <div ref="defaultSlotWrapper">
-      <slot
-        :on="slotListeners"
-        :item="item"
-      />
+      <slot :on="slotListeners" :item="item" />
     </div>
 
-    <div
-      v-if="!disabled"
-      class="grid-item__resize-handler"
-      @pointerdown="resizeStartHandler"
-    >
+    <div v-if="!disabled" class="grid-item__resize-handler" @pointerdown="resizeStartHandler">
       <v-icon class="grid-item__resize-icon" size="small">
         resize_window
       </v-icon>
@@ -99,7 +88,7 @@ export default {
     },
 
     columnWidth() {
-      return (this.containerWidth - (this.margin[0] * (this.columnsCount + 1))) / this.columnsCount;
+      return (this.containerWidth - this.margin[0] * (this.columnsCount + 1)) / this.columnsCount;
     },
 
     slotListeners() {
@@ -116,9 +105,7 @@ export default {
     x() {
       const { x = 0, w = 1 } = this.item;
 
-      return x + w > this.columnsCount
-        ? 0
-        : x;
+      return x + w > this.columnsCount ? 0 : x;
     },
 
     y() {
@@ -128,9 +115,7 @@ export default {
     w() {
       const { x = 0, w = 1 } = this.item;
 
-      return (x + w > this.columnsCount) && (w > this.columnsCount)
-        ? this.columnsCount
-        : w;
+      return x + w > this.columnsCount && w > this.columnsCount ? this.columnsCount : w;
     },
 
     h() {
@@ -279,7 +264,7 @@ export default {
     calculateWH(width, height) {
       const [marginX] = this.margin;
       const w = Math.round((width + marginX) / (this.columnWidth + marginX));
-      const h = Math.round((height) / this.rowHeight);
+      const h = Math.round(height / this.rowHeight);
 
       return {
         w: Math.min(Math.max(Math.min(w, this.columnsCount - this.x), this.minW), this.maxW),
@@ -293,7 +278,7 @@ export default {
 
       return {
         left: Math.round(this.columnWidth * x + (x + 1) * marginX),
-        top: Math.round((this.rowHeight * y) + (marginY * marginCount) + marginY),
+        top: Math.round(this.rowHeight * y + marginY * marginCount + marginY),
         width: w === Infinity ? w : Math.round(this.columnWidth * w + Math.max(0, w - 1) * marginX),
         height: h === Infinity ? h : Math.round(this.rowHeight * h),
       };
@@ -395,14 +380,17 @@ export default {
 
       const { height = 0 } = element.getBoundingClientRect();
       const controlPosition = getControlPosition(event, this.layoutElement);
-      const delta = getItemDelta(this.controlX, this.controlY, controlPosition.x, controlPosition.y);
+      const delta = getItemDelta(
+        this.controlX,
+        this.controlY,
+        controlPosition.x,
+        controlPosition.y,
+      );
 
       this.setWHByResizing(
         {
           width: this.resizing.width + delta.deltaX,
-          height: this.autoHeight
-            ? height
-            : this.resizing.height + delta.deltaY,
+          height: this.autoHeight ? height : this.resizing.height + delta.deltaY,
         },
         controlPosition,
       );
@@ -474,7 +462,12 @@ export default {
       }
 
       const controlPosition = getControlPosition(event, this.layoutElement);
-      const delta = getItemDelta(this.controlX, this.controlY, controlPosition.x, controlPosition.y);
+      const delta = getItemDelta(
+        this.controlX,
+        this.controlY,
+        controlPosition.x,
+        controlPosition.y,
+      );
 
       this.setXYByDragging(
         {
@@ -494,7 +487,12 @@ export default {
       window.removeEventListener('pointerup', this.dragEndHandler);
 
       const controlPosition = getControlPosition(event, this.layoutElement);
-      const delta = getItemDelta(this.controlX, this.controlY, controlPosition.x, controlPosition.y);
+      const delta = getItemDelta(
+        this.controlX,
+        this.controlY,
+        controlPosition.x,
+        controlPosition.y,
+      );
       const { x, y } = this.calculateXY(
         this.dragging.top + delta.deltaY,
         this.dragging.left + delta.deltaX,
@@ -523,7 +521,7 @@ export default {
     bottom: 3px;
     right: 3px;
     z-index: 3;
-    opacity: .7;
+    opacity: 0.7;
   }
 
   &__resize-icon {
@@ -539,7 +537,7 @@ export default {
     height: 1000px;
 
     &.grid-item--resizing {
-      opacity: .7;
+      opacity: 0.7;
       z-index: 999;
       user-select: none;
     }

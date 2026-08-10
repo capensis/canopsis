@@ -8,11 +8,7 @@
       <slot />
     </v-card>
 
-    <c-fab-btn
-      :has-access="creatable"
-      :dark="dark"
-      v-bind="fabBind"
-    >
+    <c-fab-btn :has-access="creatable" :dark="dark" v-bind="fabBind">
       <span>{{ createTooltip }}</span>
     </c-fab-btn>
   </div>

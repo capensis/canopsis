@@ -55,13 +55,16 @@ export default {
       changeSelectedItems,
       removeItemFromSelectedItemsByIndex,
       updateSearch,
-    } = useLazySearch({
-      value: toRef(props, 'value'),
-      idKey: '_id',
-      idParamsKey: 'ids',
-      fetchHandler: fetchWebhookTokenRulesListWithoutStore,
-      attachValue: true,
-    }, emit);
+    } = useLazySearch(
+      {
+        value: toRef(props, 'value'),
+        idKey: '_id',
+        idParamsKey: 'ids',
+        fetchHandler: fetchWebhookTokenRulesListWithoutStore,
+        attachValue: true,
+      },
+      emit,
+    );
 
     return {
       selectedItem,

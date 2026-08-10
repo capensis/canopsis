@@ -17,7 +17,6 @@
 import { computed } from 'vue';
 
 import { EVENT_FILTER_TYPES } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {
@@ -57,10 +56,12 @@ export default {
 
     const currentValue = computed(() => props.modelValue ?? props.value);
 
-    const eventFilterTypes = computed(() => Object.values(EVENT_FILTER_TYPES).map(type => ({
-      value: type,
-      text: t(`eventFilter.types.${type}`),
-    })));
+    const eventFilterTypes = computed(() =>
+      Object.values(EVENT_FILTER_TYPES).map(type => ({
+        value: type,
+        text: t(`eventFilter.types.${type}`),
+      })),
+    );
 
     const updateModel = value => emit('update:modelValue', value);
 

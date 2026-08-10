@@ -8,11 +8,7 @@
       class="text-editor__label text-caption"
     />
 
-    <div
-      :class="{ 'error--text': hasError }"
-      class="text-editor"
-      @blur="$emit('blur', $event)"
-    >
+    <div :class="{ 'error--text': hasError }" class="text-editor" @blur="$emit('blur', $event)">
       <div ref="textEditorElement" />
 
       <variables-menu
@@ -29,32 +25,20 @@
       />
 
       <div class="text-editor__details">
-        <v-messages
-          :messages="errorMessages"
-          color="error"
-        />
+        <v-messages :messages="errorMessages" color="error" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  watch,
-} from 'vue';
 import { Jodit } from 'jodit';
-
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import 'jodit/esm/plugins/all';
 import 'jodit/es2021/jodit.min.css';
 
 import { BASE_URL, DEFAULT_SANITIZE_OPTIONS } from '@/config';
-
 import { sanitizeHtml } from '@/helpers/html';
-
 import { useI18n } from '@/hooks/i18n';
 
 import { useTextEditorUpload, useTextEditorVariables } from './hooks/text-editor';
@@ -102,12 +86,29 @@ export default {
     buttons: {
       type: Array,
       default: () => [
-        'source', '|',
-        'bold', 'italic', 'strikethrough', 'underline', '|',
-        'ul', 'ol', '|',
-        'font', 'fontsize', 'brush', 'paragraph', '|',
-        'image', 'table', 'link', '|',
-        'align', 'undo', 'redo', '|',
+        'source',
+        '|',
+        'bold',
+        'italic',
+        'strikethrough',
+        'underline',
+        '|',
+        'ul',
+        'ol',
+        '|',
+        'font',
+        'fontsize',
+        'brush',
+        'paragraph',
+        '|',
+        'image',
+        'table',
+        'link',
+        '|',
+        'align',
+        'undo',
+        'redo',
+        '|',
       ],
     },
     public: {
@@ -162,10 +163,9 @@ export default {
     const sanitized = ref(false);
 
     const currentValue = computed(() => props.modelValue ?? props.value ?? '');
-    const sanitizedValue = computed(() => sanitizeHtml(
-      currentValue.value,
-      props.sanitizeOptions || DEFAULT_SANITIZE_OPTIONS,
-    ));
+    const sanitizedValue = computed(() =>
+      sanitizeHtml(currentValue.value, props.sanitizeOptions || DEFAULT_SANITIZE_OPTIONS),
+    );
     const hasError = computed(() => props.errorMessages.length > 0);
 
     const { controlsOptions, uploaderOptions } = useTextEditorUpload({
@@ -213,9 +213,7 @@ export default {
 
           return '';
         },
-        sourceEditorCDNUrlsJS: [
-          `${BASE_URL}scripts/libs/ace/1.43.3/ace.js`,
-        ],
+        sourceEditorCDNUrlsJS: [`${BASE_URL}scripts/libs/ace/1.43.3/ace.js`],
         ...props.config,
       };
 
@@ -272,18 +270,22 @@ export default {
       makeEditor();
     });
 
-    watch(() => currentValue.value, (newValue) => {
-      if (!editor.value || newValue === editor.value.value) {
-        return;
-      }
+    watch(
+      () => currentValue.value,
+      (newValue) => {
+        if (!editor.value || newValue === editor.value.value) {
+          return;
+        }
 
-      if (newValue && !sanitized.value) {
-        editor.value.value = sanitizedValue.value;
-        sanitized.value = true;
-      } else {
-        editor.value.value = newValue;
-      }
-    }, { immediate: true });
+        if (newValue && !sanitized.value) {
+          editor.value.value = sanitizedValue.value;
+          sanitized.value = true;
+        } else {
+          editor.value.value = newValue;
+        }
+      },
+      { immediate: true },
+    );
 
     onMounted(makeEditor);
     onBeforeUnmount(destructEditor);

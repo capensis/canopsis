@@ -55,11 +55,12 @@
       @remove="removeCondition(index)"
     />
     <v-btn
-v-if="!disabled"
-class="ml-0 mb-0"
-color="primary"
-outlined
-@click="addCondition">
+      v-if="!disabled"
+      class="ml-0 mb-0"
+      color="primary"
+      outlined
+      @click="addCondition"
+    >
       {{ $t('common.addMore') }}
     </v-btn>
   </c-layout>
@@ -68,14 +69,11 @@ outlined
 <script>
 import { computed, ref } from 'vue';
 
+import ExternalDataTableTableField from '@/components/other/external-data-table/form/fields/external-data-table-table-field.vue';
 import { SORT_ORDERS } from '@/constants';
-
 import { addPriorityColumnToColumnsArray } from '@/helpers/entities/external-data-table/form';
 import { externalDataItemConditionAttributeToForm } from '@/helpers/entities/shared/external-data/form';
-
 import { useModelField } from '@/hooks/form/model-field';
-
-import ExternalDataTableTableField from '@/components/other/external-data-table/form/fields/external-data-table-table-field.vue';
 
 import ExternalDataTableConditionForm from './external-data-table-condition-form.vue';
 

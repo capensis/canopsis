@@ -120,7 +120,7 @@ export default {
         '<li><strong>value</strong>: the template used to determine the value of the data item.</li>' +
         '</ul>' +
         '</p>' +
-        "<p>Templates {'{{.Event.Field}}'}, regular expressions or external data can be used</p>",
+        '<p>Templates {\'{{.Event.Field}}\'}, regular expressions or external data can be used</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
       text: 'Set a field of an event to a constant',
@@ -147,7 +147,7 @@ export default {
         '<li><strong>value</strong>: the template used to determine the value of the field.</li>' +
         '</ul>' +
         '</p>' +
-        "<p>Templates {'{{.Event.Field}}'}, regular expressions or external data can be used</p>",
+        '<p>Templates {\'{{.Event.Field}}\'}, regular expressions or external data can be used</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary]: {
       text: 'Set entity info from a dictionary',
@@ -231,7 +231,7 @@ export default {
         '</p>' +
         '<p>' +
         'This action is useful when you want to define a tag whose <strong>value</strong> is calculated from the content of one or more fields ' +
-        "of the event, using Go templating syntax (<code>{'{{.Event.Field}}'}</code>)." +
+        'of the event, using Go templating syntax (<code>{\'{{.Event.Field}}\'}</code>).' +
         '</p>' +
         '<p>' +
         'This action only allows the creation of <strong>one tag at a time</strong>.' +
@@ -241,10 +241,10 @@ export default {
         '<ul>' +
         '<li><strong>description</strong> (optional): a comment or free description of the action.</li>' +
         '<li><strong>name</strong> (required): the name of the tag to create.</li>' +
-        "<li><strong>value</strong> (required): the template used to generate the tag's value." +
+        '<li><strong>value</strong> (required): the template used to generate the tag\'s value.' +
         '<br>It can contain:' +
         '<ul>' +
-        "<li>references to the fields of the event (<code>{'{{.Event.Field}}'}</code>).</li>" +
+        '<li>references to the fields of the event (<code>{\'{{.Event.Field}}\'}</code>).</li>' +
         '<li>regular expressions if the field has been previously filtered.</li>' +
         '<li>or data from an external source if it has been injected into the context.</li>' +
         '</ul>' +

@@ -41,10 +41,7 @@
       </c-layout>
     </c-layout>
 
-    <v-fade-transition
-      v-if="mapState"
-      mode="out-in"
-    >
+    <v-fade-transition v-if="mapState" mode="out-in">
       <v-progress-linear
         v-if="pending"
         key="progress"
@@ -54,15 +51,8 @@
       />
     </v-fade-transition>
 
-    <c-layout
-      v-else-if="pending"
-      class="pa-4"
-      justify="center"
-    >
-      <v-progress-circular
-        color="primary"
-        indeterminate
-      />
+    <c-layout v-else-if="pending" class="pa-4" justify="center">
+      <v-progress-circular color="primary" indeterminate />
     </c-layout>
 
     <map-breadcrumbs
@@ -93,12 +83,16 @@
 import { pick } from 'lodash';
 import { mapActions } from 'pinia';
 
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
+import FlowchartPreview from '@/components/other/map/partials/flowchart-preview.vue';
+import GeomapPreview from '@/components/other/map/partials/geomap-preview.vue';
+import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
+import TreeOfDependenciesPreview from '@/components/other/map/partials/tree-of-dependencies-preview.vue';
 import { ENTITY_TYPES, MAP_TYPES, MODALS } from '@/constants';
-
 import { durationToSeconds } from '@/helpers/date/duration';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { prepareMapWidget } from '@/helpers/entities/widget/forms/map';
-
 import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 import { permissionsWidgetsMapCategory } from '@/mixins/permissions/widgets/map/category';
@@ -106,13 +100,6 @@ import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/f
 import { useAlarmStore } from '@/stores/modules/alarm';
 import { useMapStore } from '@/stores/modules/map';
 import { useServiceStore } from '@/stores/modules/service';
-
-import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
-import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
-import FlowchartPreview from '@/components/other/map/partials/flowchart-preview.vue';
-import GeomapPreview from '@/components/other/map/partials/geomap-preview.vue';
-import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
-import TreeOfDependenciesPreview from '@/components/other/map/partials/tree-of-dependencies-preview.vue';
 
 import MapBreadcrumbs from './partials/map-breadcrumbs.vue';
 
@@ -185,10 +172,7 @@ export default {
     },
 
     queryFilters() {
-      return [
-        this.query.filter,
-        this.query.lockedFilter,
-      ].flat().filter(Boolean);
+      return [this.query.filter, this.query.lockedFilter].flat().filter(Boolean);
     },
 
     periodicRefreshEnabled() {

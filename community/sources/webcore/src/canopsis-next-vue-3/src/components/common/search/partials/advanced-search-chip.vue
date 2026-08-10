@@ -1,14 +1,7 @@
 <template>
-  <v-menu
-    v-bind="menuProps"
-    :model-value="opened"
-    @update:model-value="updateMenuOpened"
-  >
+  <v-menu v-bind="menuProps" :model-value="opened" @update:model-value="updateMenuOpened">
     <template #activator="{ props: activatorProps }">
-      <span
-        v-bind="activatorProps"
-        :title="tooltip"
-      >
+      <span v-bind="activatorProps" :title="tooltip">
         <span v-if="multiple">
           <v-chip
             :closable="closable && !disabled"
@@ -45,7 +38,7 @@
                 @keydown="keydownInput"
                 @focus="focusInput"
                 @input="updateInputValue"
-              >
+              />
             </span>
           </v-chip>
         </span>
@@ -62,7 +55,7 @@
             @keydown="keydownInput"
             @mouseup="focusInput"
             @input="updateInputValue"
-          >
+          />
           <v-chip
             v-if="!active && !alwaysActive"
             :color="color"
@@ -106,10 +99,7 @@
       @update:value="selectItem"
       @fetch:more="showMore"
     />
-    <v-list
-      v-else
-      density="compact"
-    >
+    <v-list v-else density="compact">
       <v-list-item>
         <template #title>
           <span v-html="noDataText" />
@@ -121,25 +111,13 @@
 
 <script>
 import { isArray } from 'lodash';
-import {
-  computed,
-  ref,
-  watch,
-  toRef,
-  inject,
-  nextTick,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
-
-import { KEY_CODES, REGISTER_LAST_INPUT_FOCUS_KEY } from '@/constants';
-
-import { filterAdvancedSearchItems } from '@/helpers/search/advanced-search';
-
-import { useI18n } from '@/hooks/i18n';
-import { useLazySearch } from '@/hooks/form/lazy-search';
+import { computed, ref, watch, toRef, inject, nextTick, onMounted, onBeforeUnmount } from 'vue';
 
 import VariablesList from '@/components/common/text-editor/variables-list.vue';
+import { KEY_CODES, REGISTER_LAST_INPUT_FOCUS_KEY } from '@/constants';
+import { filterAdvancedSearchItems } from '@/helpers/search/advanced-search';
+import { useLazySearch } from '@/hooks/form/lazy-search';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   components: { VariablesList },
@@ -227,7 +205,15 @@ export default {
     },
   },
 
-  emits: ['update:modelValue', 'next', 'focus', 'focusout', 'click', 'close', 'update:selected-items'],
+  emits: [
+    'update:modelValue',
+    'next',
+    'focus',
+    'focusout',
+    'click',
+    'close',
+    'update:selected-items',
+  ],
 
   setup(props, { emit }) {
     const focusRegister = inject(REGISTER_LAST_INPUT_FOCUS_KEY, {});
@@ -237,7 +223,9 @@ export default {
     const inputElement = ref(null);
     const inputValue = ref('');
     const opened = ref(false);
-    const chipValue = computed(() => props.modelValue === undefined ? props.value : props.modelValue);
+    const chipValue = computed(() =>
+      props.modelValue === undefined ? props.value : props.modelValue,
+    );
 
     /**
      * Fetches and filters items based on search parameters, returning the filtered data along with metadata about the
@@ -255,7 +243,9 @@ export default {
       if (params?.search) {
         const lowerSearch = String(params.search).toLowerCase();
 
-        data = filterAdvancedSearchItems(data, item => item[props.itemText]?.toLowerCase().includes(lowerSearch));
+        data = filterAdvancedSearchItems(data, item =>
+          item[props.itemText]?.toLowerCase().includes(lowerSearch),
+        );
       }
 
       return {
@@ -276,21 +266,24 @@ export default {
       fetchItems,
       fetchMoreItems,
       changeSelectedItems,
-    } = useLazySearch({
-      fetchHandler,
+    } = useLazySearch(
+      {
+        fetchHandler,
 
-      idParamsKey: 'ids',
-      value: chipValue,
-      addable: toRef(props, 'allowText'),
-      idKey: toRef(props, 'itemValue'),
-      multiple: toRef(props, 'multiple'),
-    }, (...args) => {
-      emit(...args);
+        idParamsKey: 'ids',
+        value: chipValue,
+        addable: toRef(props, 'allowText'),
+        idKey: toRef(props, 'itemValue'),
+        multiple: toRef(props, 'multiple'),
+      },
+      (...args) => {
+        emit(...args);
 
-      if (args[0] === 'update:modelValue') {
-        emit('update:modelValue', args[1]);
-      }
-    });
+        if (args[0] === 'update:modelValue') {
+          emit('update:modelValue', args[1]);
+        }
+      },
+    );
 
     const itemWithAlias = computed(() => selectedItems.value.find(({ alias } = {}) => alias));
 
@@ -306,7 +299,9 @@ export default {
 
     const inputType = computed(() => (props.number ? 'number' : 'text'));
 
-    const inputPlaceholder = computed(() => (props.first ? t('advancedSearch.inputPlaceholder') : ''));
+    const inputPlaceholder = computed(() =>
+      props.first ? t('advancedSearch.inputPlaceholder') : '',
+    );
 
     const noDataText = computed(() => {
       let messageKey = 'common.noData';
@@ -318,11 +313,15 @@ export default {
       return t(messageKey);
     });
 
-    const chipText = computed(() => selectedItems.value
-      .map(item => item.chipText ?? item[props.itemText] ?? item[props.itemValue])
-      .join(','));
+    const chipText = computed(() =>
+      selectedItems.value
+        .map(item => item.chipText ?? item[props.itemText] ?? item[props.itemValue])
+        .join(','),
+    );
 
-    const hasNoDataFlagInSelectedItems = computed(() => selectedItems.value.some(({ noData }) => noData));
+    const hasNoDataFlagInSelectedItems = computed(() =>
+      selectedItems.value.some(({ noData }) => noData),
+    );
 
     const icon = computed(() => {
       if (itemWithAlias.value) {
@@ -361,9 +360,10 @@ export default {
      *
      * @param {Event} event - The input event triggered by the user.
      */
-    const updateInputValue = event => (
-      setInputValue(props.inputPreparer ? props.inputPreparer(event.target.value) : event.target.value)
-    );
+    const updateInputValue = event =>
+      setInputValue(
+        props.inputPreparer ? props.inputPreparer(event.target.value) : event.target.value,
+      );
 
     /**
      * Updates the state of the menu's open status and handles related actions.
@@ -405,9 +405,8 @@ export default {
      *
      * @param {number} index - The index of the chip to be removed from the selected items.
      */
-    const closeChildChip = index => changeSelectedItems(
-      selectedItems.value.filter((_, itemIndex) => itemIndex !== index),
-    );
+    const closeChildChip = index =>
+      changeSelectedItems(selectedItems.value.filter((_, itemIndex) => itemIndex !== index));
 
     /**
      * Emits a 'close' event to signal that the chip should be closed.
@@ -457,12 +456,15 @@ export default {
 
       if (props.multiple) {
         const prevValue = isArray(chipValue.value) ? chipValue.value : [chipValue.value];
-        const index = prevValue.findIndex(item => (
-          (item?.[props.itemValue] && value?.[props.itemValue] && item?.[props.itemValue] === value?.[props.itemValue])
-          || (item?.[props.itemValue] && item?.[props.itemValue] === value)
-          || (value?.[props.itemValue] && value?.[props.itemValue] === item)
-          || value === item
-        ));
+        const index = prevValue.findIndex(
+          item =>
+            (item?.[props.itemValue] &&
+              value?.[props.itemValue] &&
+              item?.[props.itemValue] === value?.[props.itemValue]) ||
+            (item?.[props.itemValue] && item?.[props.itemValue] === value) ||
+            (value?.[props.itemValue] && value?.[props.itemValue] === item) ||
+            value === item,
+        );
 
         newValue = [...prevValue];
 
@@ -495,7 +497,8 @@ export default {
      * @param {KeyboardEvent} event - The keydown event triggered by the user.
      */
     const keydownInput = (event) => {
-      if (event.keyCode === KEY_CODES.enter) { // TODO: change keyCode in whole application
+      if (event.keyCode === KEY_CODES.enter) {
+        // TODO: change keyCode in whole application
         if (props.allowText) {
           const preparedValue = inputValue.value ?? '';
 
@@ -504,7 +507,9 @@ export default {
         }
 
         const lowerInputValue = inputValue.value.toLowerCase();
-        const selectedItem = props.items.find(item => item[props.itemText]?.toLowerCase().startsWith(lowerInputValue));
+        const selectedItem = props.items.find(item =>
+          item[props.itemText]?.toLowerCase().startsWith(lowerInputValue),
+        );
 
         if (selectedItem) {
           selectItem(selectedItem);
@@ -530,28 +535,38 @@ export default {
      *
      * @todo Analise the solution with setTimeout in the future
      */
-    const callFocus = () => setTimeout(() => (
-      (props.active || props.alwaysActive) && focusInput()
-    ), 100);
+    const callFocus = () =>
+      setTimeout(() => (props.active || props.alwaysActive) && focusInput(), 100);
 
-    watch(() => props.active, (active, prevActive) => {
-      if (active && prevActive !== active) {
-        setInputValue(selectedItems.value[0]?.[props.itemText] ?? selectedItems.value[0]?.[props.itemValue] ?? '', false);
-        focusInput();
-      }
-    });
+    watch(
+      () => props.active,
+      (active, prevActive) => {
+        if (active && prevActive !== active) {
+          setInputValue(
+            selectedItems.value[0]?.[props.itemText] ??
+              selectedItems.value[0]?.[props.itemValue] ??
+              '',
+            false,
+          );
+          focusInput();
+        }
+      },
+    );
 
     /**
      * We need to fetch items when the items list changes after fetching (example: infos)
      */
-    watch(() => props.items, (newItems, oldItems) => {
-      const newItemsWithItemsValue = newItems.filter(item => item?.[props.childrenKey]?.length);
-      const oldItemsWithItemsValue = oldItems.filter(item => item?.[props.childrenKey]?.length);
+    watch(
+      () => props.items,
+      (newItems, oldItems) => {
+        const newItemsWithItemsValue = newItems.filter(item => item?.[props.childrenKey]?.length);
+        const oldItemsWithItemsValue = oldItems.filter(item => item?.[props.childrenKey]?.length);
 
-      if (newItemsWithItemsValue.length !== oldItemsWithItemsValue.length) {
-        fetchItems();
-      }
-    });
+        if (newItemsWithItemsValue.length !== oldItemsWithItemsValue.length) {
+          fetchItems();
+        }
+      },
+    );
 
     onMounted(() => {
       if (props.focusOnMount) {
@@ -597,6 +612,6 @@ export default {
 
 <style lang="scss" scoped>
 .v-chip.error input {
-  color: var(--v-text-dark-primary, #FFFFFF);
+  color: var(--v-text-dark-primary, #ffffff);
 }
 </style>

@@ -1,16 +1,45 @@
+import { cloneDeep, map } from 'lodash';
+
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
 import { PAGINATION_LIMIT } from '@/config';
 import {
+  ALARM_FIELDS,
+  DEFAULT_ALARMS_QUICK_ACTIONS,
+  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
+  DEFAULT_LINKS_INLINE_COUNT,
+  DEFAULT_PERIODIC_REFRESH,
+  DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
+  DENSE_TYPES,
   COLOR_INDICATOR_TYPES,
   DEFAULT_ALARM_MORE_INFO_TEMPLATE,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
+  EXPORT_CSV_DATETIME_FORMATS,
+  CSV_SEPARATORS,
+  GRID_SIZES,
   RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  TIME_UNITS,
 } from '@/constants';
-
-import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
+import { addKeyInEntities, addKeyInEntity, removeKeyFromEntities } from '@/helpers/array';
+import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import {
+  convertDurationToString,
+  durationWithEnabledToForm,
+  isValidUnit,
+} from '@/helpers/date/duration';
+import { convertAlarmWidgetParametersToActiveColumns } from '@/helpers/entities/alarm/query';
+import { hasStateSetting } from '@/helpers/entities/entity/entity';
+import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
+import { availabilityFieldToForm } from '@/helpers/entities/widget/forms/availability';
+import { uid } from '@/helpers/uid';
 
 import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
+import { formToWidgetQuickActions, widgetQuickActionsToForm } from '../quick-action/form';
 import { formToWidgetSortColumns, widgetSortColumnsToForm } from '../sort-column/form';
 import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../template/form';
+
+import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
+import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './line-chart';
+import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './numbers-chart';
 
 /**
  * @typedef { 'wrap' | 'truncate' } AlarmsResizingBehaviors
@@ -60,6 +89,31 @@ import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../templat
  */
 export const openedToForm = opened =>
   typeof opened === 'boolean' || opened === null ? opened : true;
+
+export const alarmListChartToForm = (chart = {}) => {
+  const chartParametersToForm = {
+    BarChart: barChartWidgetParametersToForm,
+    LineChart: lineChartWidgetParametersToForm,
+    Numbers: numbersWidgetParametersToForm,
+  }[chart.type ?? 'BarChart'];
+
+  return {
+    ...cloneDeep(chart),
+    type: chart.type ?? 'BarChart',
+    title: chart.title ?? '',
+    parameters: chartParametersToForm(chart.parameters),
+  };
+};
+
+export const formToAlarmListChart = ({ type, title, parameters }) => {
+  const formToChartParameters = {
+    BarChart: formToBarChartWidgetParameters,
+    LineChart: formToLineChartWidgetParameters,
+    Numbers: formToNumbersWidgetParameters,
+  }[type];
+
+  return { type, title, parameters: formToChartParameters(parameters) };
+};
 
 /**
  * Convert columns parameters field widget.
@@ -124,3 +178,257 @@ export const formToAlarmListBaseParameters = (form = {}) => ({
   sort: formToWidgetSortColumns(form.sort),
   sortTemplate: formToWidgetTemplateValue(form.sortTemplate),
 });
+
+/**
+ * Convert widget periodic refresh to the duration form.
+ *
+ * @param {DurationWithEnabled} [periodicRefresh]
+ * @returns {DurationWithEnabled}
+ */
+export const periodicRefreshToDurationForm = (periodicRefresh = DEFAULT_PERIODIC_REFRESH) => ({
+  ...durationWithEnabledToForm(periodicRefresh),
+  unit: isValidUnit(periodicRefresh.unit) ? periodicRefresh.unit : TIME_UNITS.second,
+});
+
+/**
+ * Convert one fast pbehavior setting to form values.
+ *
+ * @param {Object} [fastPbehavior={}]
+ * @returns {Object}
+ */
+export const alarmListFastPbehaviorParametersItemToForm = (fastPbehavior = {}) =>
+  addKeyInEntity({
+    name_prefix: fastPbehavior.name_prefix ?? '',
+    type: fastPbehavior.type ?? '',
+    reason: fastPbehavior.reason ?? '',
+  });
+
+/**
+ * Convert fast pbehavior settings to form values.
+ *
+ * @param {Object[]} [fastPbehavior=[]]
+ * @returns {Object[]}
+ */
+export const alarmListFastPbehaviorParametersToForm = (fastPbehavior = []) =>
+  fastPbehavior.map(alarmListFastPbehaviorParametersItemToForm);
+
+/**
+ * Convert alarm list widget parameters to form values.
+ *
+ * @param {Object} [parameters={}]
+ * @returns {Object}
+ */
+export const alarmListWidgetParametersToForm = (parameters = {}) => ({
+  ...cloneDeep(parameters),
+  itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
+  infoPopups: infoPopupsToForm(parameters.infoPopups),
+  moreInfoTemplate: parameters.moreInfoTemplate ?? DEFAULT_ALARM_MORE_INFO_TEMPLATE,
+  moreInfoTemplateTemplate: widgetTemplateValueToForm(parameters.moreInfoTemplateTemplate),
+  isAckNoteRequired: !!parameters.isAckNoteRequired,
+  isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
+  isRemoveAlarmsFromMetaAlarmCommentRequired:
+    parameters.isRemoveAlarmsFromMetaAlarmCommentRequired ?? true,
+  isUncancelAlarmsCommentRequired: parameters.isUncancelAlarmsCommentRequired ?? true,
+  isMultiAckEnabled: !!parameters.isMultiAckEnabled,
+  isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
+  isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
+  openExpandPanelByDoubleClick: parameters.openExpandPanelByDoubleClick ?? false,
+  pausePeriodicRefreshOnExpandPanel: parameters.pausePeriodicRefreshOnExpandPanel ?? false,
+  isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
+  keepSelectedAfterAction: !!parameters.keepSelectedAfterAction,
+  isVirtualScrollEnabled: !!parameters.isVirtualScrollEnabled,
+  isCorrelationEnabled: !!parameters.isCorrelationEnabled,
+  fast_pbehaviors: alarmListFastPbehaviorParametersToForm(parameters.fast_pbehaviors),
+  sticky_header: !!parameters.sticky_header,
+  sticky_horizontal_scroll: !!parameters.sticky_horizontal_scroll,
+  dense: parameters.dense ?? DENSE_TYPES.large,
+  fastAckOutput: parameters.fastAckOutput
+    ? { ...parameters.fastAckOutput }
+    : { enabled: false, value: 'auto ack' },
+  fastCancelOutput: parameters.fastCancelOutput
+    ? { ...parameters.fastCancelOutput }
+    : { enabled: false, value: 'auto cancel' },
+  widgetColumnsTemplate: widgetTemplateValueToForm(parameters.widgetColumnsTemplate),
+  widgetGroupColumnsTemplate: widgetTemplateValueToForm(parameters.widgetGroupColumnsTemplate),
+  serviceDependenciesColumnsTemplate: widgetTemplateValueToForm(
+    parameters.serviceDependenciesColumnsTemplate,
+  ),
+  widgetExportColumnsTemplate: widgetTemplateValueToForm(parameters.widgetExportColumnsTemplate),
+  widgetColumns: widgetColumnsToForm(parameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  widgetGroupColumns: widgetColumnsToForm(
+    parameters.widgetGroupColumns ?? DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
+  ),
+  serviceDependenciesColumns: widgetColumnsToForm(
+    parameters.serviceDependenciesColumns ?? DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
+  ),
+  widgetExportColumns: widgetColumnsToForm(
+    parameters.widgetExportColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS,
+  ),
+  inlineLinksCount: parameters.inlineLinksCount ?? DEFAULT_LINKS_INLINE_COUNT,
+  exportPdfTemplate: parameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
+  exportPdfTemplateTemplate: widgetTemplateValueToForm(parameters.exportPdfTemplateTemplate),
+  showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
+  rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
+  availability: availabilityFieldToForm(parameters.availability),
+  quickActionsTemplate: widgetTemplateValueToForm(parameters.quickActionsTemplate),
+  quickMassActionsTemplate: widgetTemplateValueToForm(parameters.quickMassActionsTemplate),
+  quickActions: widgetQuickActionsToForm(parameters.quickActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
+  quickMassActions: widgetQuickActionsToForm(
+    parameters.quickMassActions ?? DEFAULT_ALARMS_QUICK_ACTIONS,
+  ),
+  hideMassActions: parameters.hideMassActions ?? false,
+  comment_templates: (parameters.comment_templates ?? []).map(template => ({
+    template,
+    key: uid(),
+  })),
+  sort: widgetSortColumnsToForm(parameters.sort),
+  sortTemplate: widgetTemplateValueToForm(parameters.sortTemplate),
+  periodic_refresh: periodicRefreshToDurationForm(parameters.periodic_refresh),
+  liveWatching: parameters.liveWatching ?? false,
+  mainFilter: parameters.mainFilter ?? null,
+  clearFilterEnabled: parameters.clearFilterEnabled ?? true,
+  liveReporting: parameters.liveReporting ? cloneDeep(parameters.liveReporting) : {},
+  opened: openedToForm(parameters.opened),
+  expandGridRangeSize: parameters.expandGridRangeSize
+    ? [...parameters.expandGridRangeSize]
+    : [GRID_SIZES.min, GRID_SIZES.max],
+  exportCsvSeparator: parameters.exportCsvSeparator ?? CSV_SEPARATORS.comma,
+  exportCsvDatetimeFormat:
+    parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
+  kiosk: kioskParametersToForm(parameters.kiosk),
+  columns: columnsParametersToForm(parameters.columns),
+  charts: addKeyInEntities(parameters.charts),
+  usedAlarmProperties: [],
+});
+
+/**
+ * Convert alarm list widget form values to widget parameters.
+ *
+ * @param {Object} form
+ * @returns {Object}
+ */
+export const formToAlarmListWidgetParameters = (form = {}) => {
+  const parameters = {
+    ...cloneDeep(form),
+    moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
+    exportPdfTemplateTemplate: formToWidgetTemplateValue(form.exportPdfTemplateTemplate),
+    widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
+    widgetGroupColumnsTemplate: formToWidgetTemplateValue(form.widgetGroupColumnsTemplate),
+    serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(
+      form.serviceDependenciesColumnsTemplate,
+    ),
+    widgetExportColumnsTemplate: formToWidgetTemplateValue(form.widgetExportColumnsTemplate),
+    widgetColumns: formToWidgetColumns(form.widgetColumns),
+    widgetGroupColumns: formToWidgetColumns(form.widgetGroupColumns),
+    widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
+    serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
+    charts: removeKeyFromEntities(form.charts),
+    quickActionsTemplate: formToWidgetTemplateValue(form.quickActionsTemplate),
+    quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
+    quickActions: formToWidgetQuickActions(form.quickActions),
+    quickMassActions: formToWidgetQuickActions(form.quickMassActions),
+    comment_templates: map(form.comment_templates, 'template'),
+    fast_pbehaviors: removeKeyFromEntities(form.fast_pbehaviors),
+    sort: formToWidgetSortColumns(form.sort),
+    sortTemplate: formToWidgetTemplateValue(form.sortTemplate),
+  };
+
+  parameters.usedAlarmProperties = convertAlarmWidgetParametersToActiveColumns(parameters);
+
+  return parameters;
+};
+
+/**
+ * Get a display formatter for an AlarmList column value.
+ *
+ * @param {string} value
+ * @returns {Function|undefined}
+ */
+export const getAlarmsListWidgetColumnValueFilter = (value) => {
+  switch (value) {
+    case ALARM_FIELDS.lastUpdateDate:
+    case ALARM_FIELDS.creationDate:
+    case ALARM_FIELDS.lastEventDate:
+    case ALARM_FIELDS.activationDate:
+    case ALARM_FIELDS.ackAt:
+    case ALARM_FIELDS.stateAt:
+    case ALARM_FIELDS.statusAt:
+    case ALARM_FIELDS.resolved:
+    case ALARM_FIELDS.timestamp:
+      return convertDateToStringWithFormatForToday;
+    case ALARM_FIELDS.duration:
+    case ALARM_FIELDS.currentStateDuration:
+    case ALARM_FIELDS.activeDuration:
+    case ALARM_FIELDS.snoozeDuration:
+    case ALARM_FIELDS.pbhInactiveDuration:
+      return convertDurationToString;
+    default:
+      return undefined;
+  }
+};
+
+/**
+ * Get a component descriptor for a special AlarmList column value.
+ *
+ * @param {Object} column
+ * @param {Object} [options]
+ * @returns {Function}
+ */
+export const getAlarmsListWidgetColumnComponentGetter = (
+  { value, onlyIcon, inlineLinksCount },
+  { showRootCauseByStateClick = true } = {},
+) => {
+  if (value === ALARM_FIELDS.state) {
+    return context => ({
+      bind: {
+        is: 'c-alarm-state-chip',
+        value: context.alarm.v?.state?.val,
+        type: context.alarm.v?.state?._t,
+        badgeValue: context.alarm.v?.events_count,
+        small: context.small,
+        class:
+          showRootCauseByStateClick && hasStateSetting(context.alarm.entity)
+            ? 'cursor-pointer'
+            : undefined,
+      },
+    });
+  }
+
+  if (value === ALARM_FIELDS.status) {
+    return context => ({
+      bind: { is: 'alarm-column-value-status', alarm: context.alarm, small: context.small },
+    });
+  }
+
+  if (value === ALARM_FIELDS.extraDetails) {
+    return context => ({
+      bind: { is: 'alarm-column-value-extra-details', alarm: context.alarm, small: context.small },
+    });
+  }
+
+  if (value === ALARM_FIELDS.tags) {
+    return context => ({
+      bind: {
+        is: 'c-alarm-tags-chips',
+        alarm: context.alarm,
+        selectedTags: context.selectedTags,
+        small: context.small,
+      },
+    });
+  }
+
+  if (value === ALARM_FIELDS.links || value.startsWith('links.')) {
+    return context => ({
+      bind: {
+        is: 'c-alarm-links-chips',
+        alarm: context.alarm,
+        category: value.startsWith('links.') ? value.replace('links.', '') : undefined,
+        onlyIcon,
+        inlineCount: inlineLinksCount,
+        small: context.small,
+      },
+    });
+  }
+
+  return undefined;
+};

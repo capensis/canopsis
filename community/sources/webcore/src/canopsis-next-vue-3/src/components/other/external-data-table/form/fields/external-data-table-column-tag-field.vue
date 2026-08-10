@@ -15,10 +15,12 @@
 <script>
 import { computed } from 'vue';
 
-import { EXTERNAL_DATA_TABLE_COLUMN_TAGS, EXTERNAL_DATA_TABLE_COLUMN_TYPES_COLORS } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
+import {
+  EXTERNAL_DATA_TABLE_COLUMN_TAGS,
+  EXTERNAL_DATA_TABLE_COLUMN_TYPES_COLORS,
+} from '@/constants';
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   emits: ['update:value'],
@@ -36,11 +38,13 @@ export default {
     const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
 
-    const items = computed(() => Object.values(EXTERNAL_DATA_TABLE_COLUMN_TAGS).map(value => ({
-      value,
-      text: t(`externalData.tableColumnTypes.${value}`),
-      color: EXTERNAL_DATA_TABLE_COLUMN_TYPES_COLORS[value],
-    })));
+    const items = computed(() =>
+      Object.values(EXTERNAL_DATA_TABLE_COLUMN_TAGS).map(value => ({
+        value,
+        text: t(`externalData.tableColumnTypes.${value}`),
+        color: EXTERNAL_DATA_TABLE_COLUMN_TYPES_COLORS[value],
+      })),
+    );
 
     const activeChip = computed(() => items.value.find(({ value }) => value === props.value));
 

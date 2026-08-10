@@ -2,11 +2,10 @@ import { cloneDeep, isEqual } from 'lodash';
 import { provide, ref, unref } from 'vue';
 
 import { MODALS } from '@/constants';
-
 import { uid } from '@/helpers/uid';
 
-import { useModals } from './modals';
 import { useRegisterClickOutsideHandler } from './click-outside';
+import { useModals } from './modals';
 
 /**
  * Hook to manage modal confirmation on unsaved form changes when attempting to close the modal.
@@ -70,8 +69,8 @@ export const useFormConfirmableCloseModal = ({
     return equal;
   };
 
-  const updateOriginalForm = () => originalForm.value = cloneDeep(unref(form));
-  const updateOriginalFormField = (field, value) => originalForm.value[field] = value;
+  const updateOriginalForm = () => (originalForm.value = cloneDeep(unref(form)));
+  const updateOriginalFormField = (field, value) => (originalForm.value[field] = value);
 
   provide('$closeModal', () => {
     if (clickOutsideHandlerMethod()) {

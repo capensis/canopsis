@@ -19,11 +19,7 @@
   >
     <template #item="{ element, index }">
       <div class="c-draggable-list-field__item">
-        <slot
-          :element="element"
-          :index="index"
-          name="item"
-        />
+        <slot :element="element" :index="index" name="item" />
       </div>
     </template>
 
@@ -123,7 +119,9 @@ export default {
      * The old Vuetify 2 wrapper default used `>*`, which would become
      * `[data-draggable]>*` and make Sortable drag child DOM nodes instead of items.
      */
-    const sortableDraggable = computed(() => (props.draggable === '>*' ? undefined : props.draggable));
+    const sortableDraggable = computed(() =>
+      props.draggable === '>*' ? undefined : props.draggable,
+    );
 
     /**
      * Handles drag start: set dragging state and re-emit the event.

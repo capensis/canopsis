@@ -1,10 +1,4 @@
-import {
-  computed,
-  onMounted,
-  ref,
-  unref,
-  watch,
-} from 'vue';
+import { computed, onMounted, ref, unref, watch } from 'vue';
 
 import { patternsFieldsToForm } from '@/helpers/entities/pattern/fields/form';
 import { usePendingHandler } from '@/hooks/query/pending';
@@ -49,10 +43,7 @@ export const usePatternsFields = () => {
 export const usePatternsFieldsFetching = (fetchAction, readonly = false) => {
   const patternsFields = ref({});
 
-  const {
-    pending,
-    handler: fetchPatternsFields,
-  } = usePendingHandler(async () => {
+  const { pending, handler: fetchPatternsFields } = usePendingHandler(async () => {
     patternsFields.value = patternsFieldsToForm(await unref(fetchAction)());
   });
 
@@ -60,9 +51,14 @@ export const usePatternsFieldsFetching = (fetchAction, readonly = false) => {
   const entityAttributes = computed(() => patternsFields.value.entity_pattern ?? []);
   const eventAttributes = computed(() => patternsFields.value.event_pattern ?? []);
   const pbehaviorAttributes = computed(() => patternsFields.value.pbehavior_pattern ?? []);
-  const weatherServiceAttributes = computed(() => patternsFields.value.weather_service_pattern ?? []);
+  const weatherServiceAttributes = computed(
+    () => patternsFields.value.weather_service_pattern ?? [],
+  );
 
-  watch(() => unref(fetchAction), () => fetchPatternsFields());
+  watch(
+    () => unref(fetchAction),
+    () => fetchPatternsFields(),
+  );
 
   onMounted(() => {
     if (!readonly) {

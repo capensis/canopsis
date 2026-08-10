@@ -4,8 +4,8 @@
       <c-layout class="approval-alert-text">
         <div class="approval-alert-text__icon">
           <v-icon color="error">
-notification_important
-</v-icon>
+            notification_important
+          </v-icon>
         </div>
         <c-layout column>
           <c-layout>

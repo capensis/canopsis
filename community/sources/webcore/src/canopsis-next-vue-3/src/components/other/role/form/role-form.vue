@@ -12,10 +12,7 @@
 
     <c-form-block>
       <c-form-block-row :label="t('common.type')">
-        <role-type-field
-          v-model="typeField"
-          :disabled="!isNew"
-        />
+        <role-type-field v-model="typeField" :disabled="!isNew" />
       </c-form-block-row>
 
       <c-form-block-row :label="t('common.description')">
@@ -26,21 +23,11 @@
         />
       </c-form-block-row>
 
-      <c-form-block-row
-        v-if="isUiType"
-        :label="t('common.theme', 2)"
-      >
-        <c-theme-field
-          v-model="uiThemeField"
-          name="ui_theme"
-          clearable
-        />
+      <c-form-block-row v-if="isUiType" :label="t('common.theme', 2)">
+        <c-theme-field v-model="uiThemeField" name="ui_theme" clearable />
       </c-form-block-row>
 
-      <c-form-block-row
-        :label="t('role.expirationSettings')"
-        align-center
-      >
+      <c-form-block-row :label="t('role.expirationSettings')" align-center>
         <c-enabled-field
           v-model="intervalsEnabledField"
           :label="t('role.expirationSettings')"
@@ -49,10 +36,7 @@
       </c-form-block-row>
 
       <v-expand-transition>
-        <c-layout
-          v-if="intervalsEnabledField"
-          column
-        >
+        <c-layout v-if="intervalsEnabledField" column>
           <c-form-block-row :label="t('role.inactivityInterval')">
             <c-duration-field
               v-model:duration="inactivityIntervalField"
@@ -70,10 +54,7 @@
       </v-expand-transition>
 
       <c-form-block-row :label="t('role.defaultView')">
-        <view-selector
-          v-model="defaultviewField"
-          name="defaultview"
-        />
+        <view-selector v-model="defaultviewField" name="defaultview" />
       </c-form-block-row>
     </c-form-block>
   </c-layout>
@@ -82,12 +63,10 @@
 <script>
 import { computed } from 'vue';
 
+import ViewSelector from '@/components/forms/fields/view-selector.vue';
 import { ROLE_TYPES } from '@/constants';
-
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-
-import ViewSelector from '@/components/forms/fields/view-selector.vue';
 
 import RoleTemplateField from './fields/role-template-field.vue';
 import RoleTypeField from './fields/role-type-field.vue';

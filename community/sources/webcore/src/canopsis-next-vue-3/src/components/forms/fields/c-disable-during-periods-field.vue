@@ -16,7 +16,6 @@
 import { computed } from 'vue';
 
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 const PERIOD_TYPES = [
@@ -48,10 +47,12 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const items = computed(() => PERIOD_TYPES.map(value => ({
-      value,
-      text: t(`pbehavior.types.${value}`),
-    })));
+    const items = computed(() =>
+      PERIOD_TYPES.map(value => ({
+        value,
+        text: t(`pbehavior.types.${value}`),
+      })),
+    );
 
     const updateModel = (value) => {
       emit('update:modelValue', value);

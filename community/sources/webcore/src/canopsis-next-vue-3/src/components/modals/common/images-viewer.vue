@@ -1,16 +1,8 @@
 <template>
   <div>
-    <c-images-viewer
-      :images="imagesWithKey"
-      :active="config.active"
-      item-key="key"
-    />
+    <c-images-viewer :images="imagesWithKey" :active="config.active" item-key="key" />
 
-    <v-btn
-      class="ma-1 images-viewer__close-btn"
-      icon
-      @click="close"
-    >
+    <v-btn class="ma-1 images-viewer__close-btn" icon @click="close">
       <c-icon color="white">
         close
       </c-icon>
@@ -19,9 +11,8 @@
 </template>
 
 <script>
-import { addKeyInEntities } from '@/helpers/array';
-
 import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
+import { addKeyInEntities } from '@/helpers/array';
 
 export default {
   components: { CImagesViewer },

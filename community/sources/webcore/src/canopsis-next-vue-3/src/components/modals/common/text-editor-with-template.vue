@@ -18,10 +18,7 @@
       </template>
 
       <template #actions>
-        <v-btn
-          variant="text"
-          @click="close"
-        >
+        <v-btn variant="text" @click="close">
           {{ $t('common.cancel') }}
         </v-btn>
 
@@ -39,11 +36,9 @@
 </template>
 
 <script>
-import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
-
-import { normalizeHandlebarsNbsp } from '@/helpers/handlebars/normalize';
-
 import TextEditorWithTemplateField from '@/components/common/text-editor/text-editor-with-template.vue';
+import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
+import { normalizeHandlebarsNbsp } from '@/helpers/handlebars/normalize';
 
 export default {
   components: { TextEditorWithTemplateField },
@@ -56,10 +51,7 @@ export default {
   },
 
   data() {
-    const {
-      text = '',
-      template = CUSTOM_WIDGET_TEMPLATE,
-    } = this.modal.config ?? {};
+    const { text = '', template = CUSTOM_WIDGET_TEMPLATE } = this.modal.config ?? {};
 
     return {
       submitting: false,
@@ -80,7 +72,11 @@ export default {
     },
 
     required() {
-      return this.config.rules?.required || this.config.rules?.includes?.('required') || this.config.required;
+      return (
+        this.config.rules?.required ||
+        this.config.rules?.includes?.('required') ||
+        this.config.required
+      );
     },
 
     isDisabled() {

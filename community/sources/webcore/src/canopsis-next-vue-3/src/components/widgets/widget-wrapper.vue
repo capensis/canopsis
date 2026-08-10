@@ -27,11 +27,7 @@
 
     <v-card-text v-else class="widget-placeholder pa-3">
       <div class="widget-placeholder__content">
-        <v-icon
-          class="widget-placeholder__icon"
-          icon="widgets"
-          size="32"
-        />
+        <v-icon class="widget-placeholder__icon" icon="widgets" size="32" />
 
         <div class="widget-placeholder__body">
           <div class="widget-placeholder__title">
@@ -42,10 +38,7 @@
             {{ widget.type }}
           </div>
 
-          <div
-            v-if="widget._id"
-            class="widget-placeholder__id"
-          >
+          <div v-if="widget._id" class="widget-placeholder__id">
             {{ widget._id }}
           </div>
         </div>
@@ -56,7 +49,6 @@
 
 <script>
 import { WIDGET_GRID_ROW_HEIGHT, WIDGET_TYPES } from '@/constants';
-
 import { activeViewMixin } from '@/mixins/active-view';
 
 import CounterWidget from './counter/counter.vue';

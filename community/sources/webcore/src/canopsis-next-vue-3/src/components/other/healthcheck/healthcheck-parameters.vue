@@ -8,10 +8,11 @@
         <healthcheck-form :form="form" :errors="errors" @input="form = $event" />
         <div class="mt-3 d-flex justify-end">
           <v-btn
-:disabled="isDisabled"
-:loading="submitting"
-color="primary"
-type="submit">
+            :disabled="isDisabled"
+            :loading="submitting"
+            color="primary"
+            type="submit"
+          >
             {{ $t('common.submit') }}
           </v-btn>
         </div>
@@ -21,13 +22,10 @@ type="submit">
 </template>
 
 <script>
-import { HEALTHCHECK_ENGINES_NAMES } from '@/constants';
-
-import { healthcheckParametersToForm } from '@/helpers/entities/healthcheck/form';
-
-import { useHealthcheckParametersStore } from '@/stores/modules/healthcheck-parameters';
-
 import HealthcheckForm from '@/components/other/healthcheck/form/healthcheck-form.vue';
+import { HEALTHCHECK_ENGINES_NAMES } from '@/constants';
+import { healthcheckParametersToForm } from '@/helpers/entities/healthcheck/form';
+import { useHealthcheckParametersStore } from '@/stores/modules/healthcheck-parameters';
 
 export default {
   components: { HealthcheckForm },

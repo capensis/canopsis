@@ -25,16 +25,8 @@
     </template>
 
     <template #actions="{ item }">
-      <c-action-btn
-        v-if="updatable"
-        type="edit"
-        @click="edit(item)"
-      />
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="remove(item)"
-      />
+      <c-action-btn v-if="updatable" type="edit" @click="edit(item)" />
+      <c-action-btn v-if="removable" type="delete" @click="remove(item)" />
     </template>
   </c-advanced-data-table>
 </template>

@@ -1,7 +1,6 @@
 import { mapActions, mapState, mapStores } from 'pinia';
 
 import { MAX_LIMIT } from '@/constants';
-
 import { useAuthStore } from '@/stores/modules/auth';
 import { useViewStore } from '@/stores/modules/view';
 
@@ -49,10 +48,7 @@ export const entitiesViewGroupMixin = {
     },
 
     fetchAllGroupsListWithWidgetsWithCurrentUser() {
-      return Promise.all([
-        this.fetchAllGroupsListWithWidgets(),
-        this.fetchCurrentUser(),
-      ]);
+      return Promise.all([this.fetchAllGroupsListWithWidgets(), this.fetchCurrentUser()]);
     },
   },
 };

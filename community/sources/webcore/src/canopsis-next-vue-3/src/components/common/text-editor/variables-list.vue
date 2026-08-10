@@ -20,10 +20,11 @@
               <span>{{ item[itemText] }}</span>
 
               <c-icon
-v-if="item.alias"
-class="ml-1"
-color="primary"
-size="small">
+                v-if="item.alias"
+                class="ml-1"
+                color="primary"
+                size="small"
+              >
                 alternate_email
               </c-icon>
             </c-layout>

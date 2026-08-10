@@ -15,20 +15,11 @@
     </template>
 
     <template #text>
-      <c-layout
-        v-if="pending"
-        justify="center"
-      >
-        <v-progress-circular
-          color="primary"
-          indeterminate
-        />
+      <c-layout v-if="pending" justify="center">
+        <v-progress-circular color="primary" indeterminate />
       </c-layout>
       <template v-else-if="config.singleMode">
-        <c-layout
-          class="declare-ticket-rule-execute-status__executions"
-          column
-        >
+        <c-layout class="declare-ticket-rule-execute-status__executions" column>
           <declare-ticket-rule-executions-group
             v-for="(executions, ruleName) of alarmExecutionsByTicketName"
             :key="ruleName"
@@ -50,10 +41,7 @@
     </template>
 
     <template #actions>
-      <v-btn
-        variant="text"
-        @click="close"
-      >
+      <v-btn variant="text" @click="close">
         {{ t('common.close') }}
       </v-btn>
     </template>
@@ -63,24 +51,20 @@
 <script>
 import { groupBy, keyBy } from 'lodash';
 
+import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
+import DeclareTicketRuleExecutionsGroup from '@/components/other/declare-ticket/partials/declare-ticket-rule-executions-group.vue';
 import { SOCKET_ROOMS } from '@/config';
 import { WEBHOOK_EXECUTION_STATUSES, MODALS } from '@/constants';
-
-import Socket from '@/plugins/socket/services/socket';
-
 import {
   isWebhookExecutionFinished,
   isWebhookExecutionRunning,
   isWebhookExecutionSucceeded,
 } from '@/helpers/entities/webhook-execution/entity';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
-
-import DeclareTicketRuleExecutionsGroup from '@/components/other/declare-ticket/partials/declare-ticket-rule-executions-group.vue';
-import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
+import Socket from '@/plugins/socket/services/socket';
 
 export default {
   name: MODALS.executeDeclareTickets,
@@ -101,10 +85,8 @@ export default {
     const { t } = useI18n();
     const modals = useModals();
     const popups = usePopups();
-    const {
-      bulkCreateDeclareTicketExecution,
-      fetchDeclareTicketExecutionWithoutStore,
-    } = useDeclareTicketRule();
+    const { bulkCreateDeclareTicketExecution, fetchDeclareTicketExecutionWithoutStore } =
+      useDeclareTicketRule();
 
     const close = () => modals.hide({ id: props.modal.id });
 
@@ -171,7 +153,9 @@ export default {
     },
 
     failReason() {
-      return Object.values(this.executionsStatusesById).map(execution => execution.fail_reason).join('\n');
+      return Object.values(this.executionsStatusesById)
+        .map(execution => execution.fail_reason)
+        .join('\n');
     },
 
     title() {
@@ -298,9 +282,10 @@ export default {
 
     fetchExecutionsStatuses() {
       return Promise.all(
-        this.successExecutions.map(
-          ({ executionId }) => this.fetchDeclareTicketExecutionWithoutStore({ id: executionId })
-            .then(this.setExecutionStatus),
+        this.successExecutions.map(({ executionId }) =>
+          this.fetchDeclareTicketExecutionWithoutStore({ id: executionId }).then(
+            this.setExecutionStatus,
+          ),
         ),
       );
     },

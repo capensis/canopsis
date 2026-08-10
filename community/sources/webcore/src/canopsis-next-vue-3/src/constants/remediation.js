@@ -50,10 +50,12 @@ export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES_ICONS = {
 export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES_COLORS = {
   [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running]: COLORS.remediation.executionStatus.running,
   [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused]: COLORS.remediation.executionStatus.paused,
-  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed]: COLORS.remediation.executionStatus.completed,
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed]:
+    COLORS.remediation.executionStatus.completed,
   [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted]: COLORS.remediation.executionStatus.aborted,
   [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed]: COLORS.remediation.executionStatus.failed,
-  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.waitingResult]: COLORS.remediation.executionStatus.running,
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.waitingResult]:
+    COLORS.remediation.executionStatus.running,
 };
 
 export const REMEDIATION_JOB_EXECUTION_STATUSES = {

@@ -20,10 +20,11 @@
           {{ t('common.cancel') }}
         </v-btn>
         <v-btn
-:disabled="submitting"
-:loading="submitting"
-color="primary"
-type="submit">
+          :disabled="submitting"
+          :loading="submitting"
+          color="primary"
+          type="submit"
+        >
           {{ t('common.submit') }}
         </v-btn>
       </template>
@@ -35,9 +36,7 @@ type="submit">
 import { computed, ref } from 'vue';
 
 import { MODALS } from '@/constants';
-
 import { durationToForm } from '@/helpers/date/duration';
-
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';

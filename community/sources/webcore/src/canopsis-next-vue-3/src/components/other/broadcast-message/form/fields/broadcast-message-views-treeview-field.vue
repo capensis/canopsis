@@ -1,16 +1,7 @@
 <template>
-  <v-list
-    class="broadcast-message-views-treeview-field pa-0"
-    density="compact"
-  >
-    <template
-      v-for="item in items"
-      :key="item.value"
-    >
-      <c-layout
-        class="broadcast-message-views-treeview-field__item"
-        align="center"
-      >
+  <v-list class="broadcast-message-views-treeview-field pa-0" density="compact">
+    <template v-for="item in items" :key="item.value">
+      <c-layout class="broadcast-message-views-treeview-field__item" align="center">
         <v-checkbox-btn
           :model-value="isSelected(item.value)"
           color="primary"

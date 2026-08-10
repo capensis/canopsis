@@ -1,8 +1,7 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-
 import { uid } from '@/helpers/uid';
 
 /**
@@ -28,6 +27,16 @@ export const useSidebarStore = defineStore('sidebar', () => {
    * @param {string} [payload.id=uid()]
    */
   const show = ({ id = uid('sidebar'), name, config = {} } = {}) => {
+    const openedSidebar = sidebars.value.find(sidebar => sidebar && !sidebar.hidden);
+
+    if (openedSidebar) {
+      return openedSidebar.id;
+    }
+
+    allIds.value
+      .filter(sidebarId => byId.value[sidebarId]?.hidden)
+      .forEach(sidebarId => hideCompleted({ id: sidebarId }));
+
     byId.value[id] = {
       id,
       name,
@@ -36,6 +45,8 @@ export const useSidebarStore = defineStore('sidebar', () => {
     };
 
     allIds.value.push(id);
+
+    return id;
   };
 
   /**

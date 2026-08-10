@@ -1,6 +1,5 @@
-import { featuresService } from '@/services/features';
-
 import { groupedPermissionToPermission } from '@/helpers/permission';
+import { featuresService } from '@/services/features';
 
 import { ALARM_LIST_ACTIONS_TYPES } from './alarm';
 import { CONTEXT_ACTIONS_TYPES, WEATHER_ACTIONS_TYPES, COUNTER_ACTIONS_TYPES } from './entity';
@@ -25,11 +24,7 @@ export const PERMISSIONS_TYPES_TO_ACTIONS = {
     CRUD_ACTIONS.update,
     CRUD_ACTIONS.delete,
   ],
-  [USERS_PERMISSIONS_TYPES.rw]: [
-    CRUD_ACTIONS.read,
-    CRUD_ACTIONS.update,
-    CRUD_ACTIONS.delete,
-  ],
+  [USERS_PERMISSIONS_TYPES.rw]: [CRUD_ACTIONS.read, CRUD_ACTIONS.update, CRUD_ACTIONS.delete],
 };
 
 export const CANOPSIS_EDITION = {
@@ -267,10 +262,8 @@ export const USER_PERMISSIONS = {
         filter: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_filter`,
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_userFilter`,
 
-        remediationInstructionsFilter:
-          `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_remediationInstructionsFilter`,
-        userRemediationInstructionsFilter:
-          `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_userRemediationInstructionsFilter`,
+        remediationInstructionsFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_remediationInstructionsFilter`,
+        userRemediationInstructionsFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_userRemediationInstructionsFilter`,
 
         links: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_links`,
 
@@ -552,43 +545,53 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.ack]: USER_PERMISSIONS.business.alarmsList.actions.ack,
     [ALARM_LIST_ACTIONS_TYPES.fastAck]: USER_PERMISSIONS.business.alarmsList.actions.fastAck,
     [ALARM_LIST_ACTIONS_TYPES.ackRemove]: USER_PERMISSIONS.business.alarmsList.actions.ackRemove,
-    [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd,
-    [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd,
-    [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove]: USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd,
+    [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]:
+      USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd,
+    [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]:
+      USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd,
+    [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove]:
+      USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd,
     [ALARM_LIST_ACTIONS_TYPES.snooze]: USER_PERMISSIONS.business.alarmsList.actions.snooze,
-    [ALARM_LIST_ACTIONS_TYPES.declareTicket]: USER_PERMISSIONS.business.alarmsList.actions.declareTicket,
-    [ALARM_LIST_ACTIONS_TYPES.associateTicket]: USER_PERMISSIONS.business.alarmsList.actions.associateTicket,
+    [ALARM_LIST_ACTIONS_TYPES.declareTicket]:
+      USER_PERMISSIONS.business.alarmsList.actions.declareTicket,
+    [ALARM_LIST_ACTIONS_TYPES.associateTicket]:
+      USER_PERMISSIONS.business.alarmsList.actions.associateTicket,
     [ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket]:
       USER_PERMISSIONS.business.alarmsList.actions.removeAssociatedTicket,
     [ALARM_LIST_ACTIONS_TYPES.cancel]: USER_PERMISSIONS.business.alarmsList.actions.cancel,
     [ALARM_LIST_ACTIONS_TYPES.unCancel]: USER_PERMISSIONS.business.alarmsList.actions.unCancel,
     [ALARM_LIST_ACTIONS_TYPES.fastCancel]: USER_PERMISSIONS.business.alarmsList.actions.fastCancel,
-    [ALARM_LIST_ACTIONS_TYPES.changeState]: USER_PERMISSIONS.business.alarmsList.actions.changeState,
+    [ALARM_LIST_ACTIONS_TYPES.changeState]:
+      USER_PERMISSIONS.business.alarmsList.actions.changeState,
     [ALARM_LIST_ACTIONS_TYPES.history]: USER_PERMISSIONS.business.alarmsList.actions.history,
-    [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: USER_PERMISSIONS.business.alarmsList.actions.variablesHelp,
+    [ALARM_LIST_ACTIONS_TYPES.variablesHelp]:
+      USER_PERMISSIONS.business.alarmsList.actions.variablesHelp,
     [ALARM_LIST_ACTIONS_TYPES.comment]: USER_PERMISSIONS.business.alarmsList.actions.comment,
     [ALARM_LIST_ACTIONS_TYPES.exportPdf]: USER_PERMISSIONS.business.alarmsList.actions.exportPdf,
     [ALARM_LIST_ACTIONS_TYPES.linkToMetaAlarm]:
-    USER_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
+      USER_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
     [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]:
-    USER_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
+      USER_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
     [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm]:
-    USER_PERMISSIONS.business.alarmsList.actions.metaAlarmGroup,
+      USER_PERMISSIONS.business.alarmsList.actions.metaAlarmGroup,
 
     [ALARM_LIST_ACTIONS_TYPES.links]: USER_PERMISSIONS.business.alarmsList.actions.links,
-    [ALARM_LIST_ACTIONS_TYPES.correlation]: USER_PERMISSIONS.business.alarmsList.actions.correlation,
+    [ALARM_LIST_ACTIONS_TYPES.correlation]:
+      USER_PERMISSIONS.business.alarmsList.actions.correlation,
 
     [ALARM_LIST_ACTIONS_TYPES.executeInstruction]:
-    USER_PERMISSIONS.business.alarmsList.actions.executeInstruction,
+      USER_PERMISSIONS.business.alarmsList.actions.executeInstruction,
 
     [ALARM_LIST_ACTIONS_TYPES.addBookmark]: USER_PERMISSIONS.business.alarmsList.actions.bookmark,
-    [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: USER_PERMISSIONS.business.alarmsList.actions.bookmark,
+    [ALARM_LIST_ACTIONS_TYPES.removeBookmark]:
+      USER_PERMISSIONS.business.alarmsList.actions.bookmark,
   },
 
   context: {
     [CONTEXT_ACTIONS_TYPES.createEntity]: USER_PERMISSIONS.business.context.actions.createEntity,
     [CONTEXT_ACTIONS_TYPES.editEntity]: USER_PERMISSIONS.business.context.actions.editEntity,
-    [CONTEXT_ACTIONS_TYPES.duplicateEntity]: USER_PERMISSIONS.business.context.actions.duplicateEntity,
+    [CONTEXT_ACTIONS_TYPES.duplicateEntity]:
+      USER_PERMISSIONS.business.context.actions.duplicateEntity,
     [CONTEXT_ACTIONS_TYPES.deleteEntity]: USER_PERMISSIONS.business.context.actions.deleteEntity,
     [CONTEXT_ACTIONS_TYPES.pbehaviorAdd]: USER_PERMISSIONS.business.context.actions.pbehavior,
     [CONTEXT_ACTIONS_TYPES.massEnable]: USER_PERMISSIONS.business.context.actions.massEnable,
@@ -601,21 +604,27 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
       USER_PERMISSIONS.business.serviceWeather.actions.entityAssocTicket,
     [WEATHER_ACTIONS_TYPES.entityDeclareTicket]:
       USER_PERMISSIONS.business.serviceWeather.actions.entityDeclareTicket,
-    [WEATHER_ACTIONS_TYPES.entityValidate]: USER_PERMISSIONS.business.serviceWeather.actions.entityValidate,
+    [WEATHER_ACTIONS_TYPES.entityValidate]:
+      USER_PERMISSIONS.business.serviceWeather.actions.entityValidate,
     [WEATHER_ACTIONS_TYPES.entityInvalidate]:
       USER_PERMISSIONS.business.serviceWeather.actions.entityInvalidate,
-    [WEATHER_ACTIONS_TYPES.entityPause]: USER_PERMISSIONS.business.serviceWeather.actions.entityPause,
+    [WEATHER_ACTIONS_TYPES.entityPause]:
+      USER_PERMISSIONS.business.serviceWeather.actions.entityPause,
     [WEATHER_ACTIONS_TYPES.entityPlay]: USER_PERMISSIONS.business.serviceWeather.actions.entityPlay,
-    [WEATHER_ACTIONS_TYPES.entityCancel]: USER_PERMISSIONS.business.serviceWeather.actions.entityCancel,
+    [WEATHER_ACTIONS_TYPES.entityCancel]:
+      USER_PERMISSIONS.business.serviceWeather.actions.entityCancel,
     [WEATHER_ACTIONS_TYPES.executeInstruction]:
       USER_PERMISSIONS.business.serviceWeather.actions.executeInstruction,
 
-    [WEATHER_ACTIONS_TYPES.entityLinks]: USER_PERMISSIONS.business.serviceWeather.actions.entityLinks,
+    [WEATHER_ACTIONS_TYPES.entityLinks]:
+      USER_PERMISSIONS.business.serviceWeather.actions.entityLinks,
 
     [WEATHER_ACTIONS_TYPES.moreInfos]: USER_PERMISSIONS.business.serviceWeather.actions.moreInfos,
     [WEATHER_ACTIONS_TYPES.alarmsList]: USER_PERMISSIONS.business.serviceWeather.actions.alarmsList,
-    [WEATHER_ACTIONS_TYPES.pbehaviorList]: USER_PERMISSIONS.business.serviceWeather.actions.pbehaviorList,
-    [WEATHER_ACTIONS_TYPES.entityComment]: USER_PERMISSIONS.business.serviceWeather.actions.entityComment,
+    [WEATHER_ACTIONS_TYPES.pbehaviorList]:
+      USER_PERMISSIONS.business.serviceWeather.actions.pbehaviorList,
+    [WEATHER_ACTIONS_TYPES.entityComment]:
+      USER_PERMISSIONS.business.serviceWeather.actions.entityComment,
   },
 
   counter: {
@@ -641,8 +650,8 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USER_PERMISSIONS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
   [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
-  [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: EXPLOITATION_PAGES_RULES.declareTicketRule,
-
+  [USER_PERMISSIONS.technical.exploitation.declareTicketRule]:
+    EXPLOITATION_PAGES_RULES.declareTicketRule,
 };
 
 /**
@@ -682,60 +691,83 @@ export const CONDITIONAL_PERMISSIONS_MAP = {
  *
  * This is automatically generated from CONDITIONAL_PERMISSIONS_MAP for O(1) lookup performance
  */
-export const INVERSE_CONDITIONAL_PERMISSIONS_MAP = Object.entries(CONDITIONAL_PERMISSIONS_MAP)
-  .reduce((acc, [triggerPermission, dependencies]) => {
-    dependencies.forEach(({ dependentPermission, tooltipKey }) => {
-      if (!acc[dependentPermission]) {
-        acc[dependentPermission] = [];
-      }
-      acc[dependentPermission].push({
-        triggerPermission,
-        tooltipKey,
-      });
+export const INVERSE_CONDITIONAL_PERMISSIONS_MAP = Object.entries(
+  CONDITIONAL_PERMISSIONS_MAP,
+).reduce((acc, [triggerPermission, dependencies]) => {
+  dependencies.forEach(({ dependentPermission, tooltipKey }) => {
+    if (!acc[dependentPermission]) {
+      acc[dependentPermission] = [];
+    }
+    acc[dependentPermission].push({
+      triggerPermission,
+      tooltipKey,
     });
+  });
 
-    return acc;
-  }, {});
+  return acc;
+}, {});
 
 export const DOCUMENTATION_LINKS = {
   /**
    * Exploitation
    */
-  [USER_PERMISSIONS.technical.exploitation.eventFilter]: 'latest/guide-utilisation/menu-exploitation/filtres-evenements/',
-  [USER_PERMISSIONS.technical.exploitation.pbehavior]: 'latest/guide-utilisation/cas-d-usage/comportements_periodiques/',
-  [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'latest/guide-utilisation/menu-exploitation/regles-snmp/',
-  [USER_PERMISSIONS.technical.exploitation.idleRules]: 'latest/guide-utilisation/menu-exploitation/regles-inactivite/',
-  [USER_PERMISSIONS.technical.exploitation.resolveRules]: 'latest/guide-utilisation/menu-exploitation/regles-resolution/',
-  [USER_PERMISSIONS.technical.exploitation.flappingRules]: 'latest/guide-utilisation/menu-exploitation/regles-bagot/',
-  [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: 'latest/guide-utilisation/menu-exploitation/informations-dynamiques/',
-  [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'latest/guide-utilisation/menu-exploitation/regles-metaalarme/',
-  [USER_PERMISSIONS.technical.exploitation.scenario]: 'latest/guide-utilisation/menu-exploitation/scenarios/',
-  [USER_PERMISSIONS.technical.exploitation.linkRule]: 'latest/guide-utilisation/menu-exploitation/generateur-liens/',
-  [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: 'latest/guide-utilisation/menu-exploitation/regles-declaration-tickets/',
+  [USER_PERMISSIONS.technical.exploitation.eventFilter]:
+    'latest/guide-utilisation/menu-exploitation/filtres-evenements/',
+  [USER_PERMISSIONS.technical.exploitation.pbehavior]:
+    'latest/guide-utilisation/cas-d-usage/comportements_periodiques/',
+  [USER_PERMISSIONS.technical.exploitation.snmpRule]:
+    'latest/guide-utilisation/menu-exploitation/regles-snmp/',
+  [USER_PERMISSIONS.technical.exploitation.idleRules]:
+    'latest/guide-utilisation/menu-exploitation/regles-inactivite/',
+  [USER_PERMISSIONS.technical.exploitation.resolveRules]:
+    'latest/guide-utilisation/menu-exploitation/regles-resolution/',
+  [USER_PERMISSIONS.technical.exploitation.flappingRules]:
+    'latest/guide-utilisation/menu-exploitation/regles-bagot/',
+  [USER_PERMISSIONS.technical.exploitation.dynamicInfo]:
+    'latest/guide-utilisation/menu-exploitation/informations-dynamiques/',
+  [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]:
+    'latest/guide-utilisation/menu-exploitation/regles-metaalarme/',
+  [USER_PERMISSIONS.technical.exploitation.scenario]:
+    'latest/guide-utilisation/menu-exploitation/scenarios/',
+  [USER_PERMISSIONS.technical.exploitation.linkRule]:
+    'latest/guide-utilisation/menu-exploitation/generateur-liens/',
+  [USER_PERMISSIONS.technical.exploitation.declareTicketRule]:
+    'latest/guide-utilisation/menu-exploitation/regles-declaration-tickets/',
 
   [GROUPED_USER_PERMISSIONS_KEYS.remediation]: 'latest/guide-utilisation/remediation/',
 
   /**
    * Admin
    */
-  [USER_PERMISSIONS.technical.broadcastMessage]: 'latest/guide-utilisation/menu-administration/diffusion-de-messages/',
-  [USER_PERMISSIONS.technical.playlist]: 'latest/guide-utilisation/menu-administration/listes-de-lecture/',
+  [USER_PERMISSIONS.technical.broadcastMessage]:
+    'latest/guide-utilisation/menu-administration/diffusion-de-messages/',
+  [USER_PERMISSIONS.technical.playlist]:
+    'latest/guide-utilisation/menu-administration/listes-de-lecture/',
   [USER_PERMISSIONS.technical.role]: 'latest/guide-utilisation/menu-administration/roles/',
   [USER_PERMISSIONS.technical.user]: 'latest/guide-utilisation/menu-administration/utilisateurs/',
   [USER_PERMISSIONS.technical.permission]: 'latest/guide-utilisation/menu-administration/droits/',
-  [USER_PERMISSIONS.technical.broadcastMessage]: 'latest/guide-utilisation/menu-administration/diffusion-de-messages/',
-  [USER_PERMISSIONS.technical.parameters]: 'latest/guide-utilisation/menu-administration/parametres/',
-  [USER_PERMISSIONS.technical.healthcheck]: 'latest/guide-utilisation/menu-administration/bilan-de-sante/',
+  [USER_PERMISSIONS.technical.broadcastMessage]:
+    'latest/guide-utilisation/menu-administration/diffusion-de-messages/',
+  [USER_PERMISSIONS.technical.parameters]:
+    'latest/guide-utilisation/menu-administration/parametres/',
+  [USER_PERMISSIONS.technical.healthcheck]:
+    'latest/guide-utilisation/menu-administration/bilan-de-sante/',
   [USER_PERMISSIONS.technical.kpi]: 'latest/guide-utilisation/menu-administration/kpi/',
   [USER_PERMISSIONS.technical.map]: 'latest/guide-utilisation/menu-administration/cartographie/',
-  [USER_PERMISSIONS.technical.maintenance]: 'latest/guide-utilisation/menu-administration/mode-maintenance/',
-  [USER_PERMISSIONS.technical.tag]: 'latest/guide-utilisation/menu-administration/gestion-des-tags/',
-  [USER_PERMISSIONS.technical.storageSettings]: 'latest/guide-utilisation/menu-administration/parametres-de-stockage/',
-  [USER_PERMISSIONS.technical.stateSetting]: 'latest/guide-utilisation/menu-administration/parametres-de-calculd-etat-sévérité/',
-  [USER_PERMISSIONS.technical.eventsRecord]: 'latest/guide-utilisation/menu-administration/enregistrements-d-evenements/',
+  [USER_PERMISSIONS.technical.maintenance]:
+    'latest/guide-utilisation/menu-administration/mode-maintenance/',
+  [USER_PERMISSIONS.technical.tag]:
+    'latest/guide-utilisation/menu-administration/gestion-des-tags/',
+  [USER_PERMISSIONS.technical.storageSettings]:
+    'latest/guide-utilisation/menu-administration/parametres-de-stockage/',
+  [USER_PERMISSIONS.technical.stateSetting]:
+    'latest/guide-utilisation/menu-administration/parametres-de-calculd-etat-sévérité/',
+  [USER_PERMISSIONS.technical.eventsRecord]:
+    'latest/guide-utilisation/menu-administration/enregistrements-d-evenements/',
 
   /**
    * Grouped admin
    */
-  [GROUPED_USER_PERMISSIONS_KEYS.planning]: 'latest/guide-utilisation/menu-administration/planification/',
+  [GROUPED_USER_PERMISSIONS_KEYS.planning]:
+    'latest/guide-utilisation/menu-administration/planification/',
 };

@@ -1,9 +1,5 @@
 <template>
-  <v-row
-    v-show="totalItems"
-    align="center"
-    no-gutters
-  >
+  <v-row v-show="totalItems" align="center" no-gutters>
     <v-col cols="10">
       <c-pagination
         :page="page"

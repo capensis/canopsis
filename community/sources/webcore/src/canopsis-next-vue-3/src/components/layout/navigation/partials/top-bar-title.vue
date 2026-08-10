@@ -14,8 +14,8 @@
             @click="showInfoModal"
           >
             <v-icon color="white" size="12px">
-priority_high
-</v-icon>
+              priority_high
+            </v-icon>
           </v-btn>
         </template>
 
@@ -27,10 +27,8 @@ priority_high
 
 <script>
 import { MODALS } from '@/constants';
-
-import Socket from '@/plugins/socket/services/socket';
-
 import { entitiesInfoMixin } from '@/mixins/entities/info';
+import Socket from '@/plugins/socket/services/socket';
 
 export default {
   mixins: [entitiesInfoMixin],

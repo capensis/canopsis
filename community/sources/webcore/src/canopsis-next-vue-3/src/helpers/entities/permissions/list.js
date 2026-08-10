@@ -27,32 +27,36 @@ export const getPermissionActions = (permission) => {
  * @param {Array} [permissions=[]]
  * @returns {Object}
  */
-export const permissionsToTreeview = (permissions = []) => permissions.reduce((acc, permission) => {
-  let activeGroup = acc;
+export const permissionsToTreeview = (permissions = []) =>
+  permissions.reduce((acc, permission) => {
+    let activeGroup = acc;
 
-  permission.groups.forEach((group) => {
-    if (!activeGroup[group._id]) {
-      activeGroup[group._id] = {
-        ...group,
+    permission.groups.forEach((group) => {
+      if (!activeGroup[group._id]) {
+        activeGroup[group._id] = {
+          ...group,
 
-        children: {},
-        allChildren: [],
-        actions: [CRUD_ACTIONS.can],
-      };
-    }
+          children: {},
+          allChildren: [],
+          actions: [CRUD_ACTIONS.can],
+        };
+      }
 
-    activeGroup[group._id].allChildren.push({ _id: permission._id, actions: getPermissionActions(permission) });
-    activeGroup = activeGroup[group._id].children;
-  });
+      activeGroup[group._id].allChildren.push({
+        _id: permission._id,
+        actions: getPermissionActions(permission),
+      });
+      activeGroup = activeGroup[group._id].children;
+    });
 
-  activeGroup[permission._id] = {
-    ...permission,
+    activeGroup[permission._id] = {
+      ...permission,
 
-    actions: getPermissionActions(permission),
-  };
+      actions: getPermissionActions(permission),
+    };
 
-  return acc;
-}, {});
+    return acc;
+  }, {});
 
 /**
  * Checks if a permission should be disabled and provides tooltip key based on conditional dependencies.
@@ -78,10 +82,10 @@ export const getConditionalPermissionState = (role, permissionId) => {
 
   return activeConditional
     ? {
-      disabled: true,
-      tooltipKey: activeConditional.tooltipKey,
-      inputValue: true,
-    }
+        disabled: true,
+        tooltipKey: activeConditional.tooltipKey,
+        inputValue: true,
+      }
     : null;
 };
 
@@ -101,10 +105,13 @@ export const getPermissionCheckboxProps = (role, permission, action) => {
   const conditionalState = getConditionalPermissionState(role, permission._id);
 
   if (permission.allChildren) {
-    const childrenPermissionsDiffs = permission.allChildren
-      .map(({ _id: id, actions }) => difference(actions ?? [], role.permissions?.[id] ?? []).length);
+    const childrenPermissionsDiffs = permission.allChildren.map(
+      ({ _id: id, actions }) => difference(actions ?? [], role.permissions?.[id] ?? []).length,
+    );
     const inputValue = childrenPermissionsDiffs.every(value => !value);
-    const hasCheckedChildren = permission.allChildren.some(({ _id: id }) => !!role.permissions?.[id]?.length);
+    const hasCheckedChildren = permission.allChildren.some(
+      ({ _id: id }) => !!role.permissions?.[id]?.length,
+    );
 
     return {
       inputValue,
@@ -113,9 +120,8 @@ export const getPermissionCheckboxProps = (role, permission, action) => {
     };
   }
 
-  const inputValue = conditionalState?.inputValue
-    ?? role.permissions?.[permission._id]?.includes(action)
-    ?? false;
+  const inputValue =
+    conditionalState?.inputValue ?? role.permissions?.[permission._id]?.includes(action) ?? false;
 
   return {
     inputValue,
@@ -129,7 +135,8 @@ export const getPermissionCheckboxProps = (role, permission, action) => {
  * @param {string} [permissionId='']
  * @returns {boolean}
  */
-export const isApiPermission = (permissionId = '') => permissionId.startsWith(USER_PERMISSIONS_GROUPS.api);
+export const isApiPermission = (permissionId = '') =>
+  permissionId.startsWith(USER_PERMISSIONS_GROUPS.api);
 
 /**
  * Filters treeview permissions by search term recursively.
@@ -164,22 +171,25 @@ export const filterTreeviewPermissions = (items, search = '', searchDepth) => {
     return ids;
   };
 
-  const filterNodesArray = (nodes, filterFn) => nodes.reduce((acc, node) => {
-    const filteredNode = filterFn(node);
+  const filterNodesArray = (nodes, filterFn) =>
+    nodes.reduce((acc, node) => {
+      const filteredNode = filterFn(node);
 
-    if (filteredNode) {
-      acc.push(filteredNode);
-    }
+      if (filteredNode) {
+        acc.push(filteredNode);
+      }
 
-    return acc;
-  }, []);
+      return acc;
+    }, []);
 
   const filterNode = (node, currentDepth = 0) => {
     if (currentDepth === searchDepth || !node.children) {
       return matchesSearch(node) ? node : null;
     }
 
-    const filteredChildren = filterNodesArray(node.children, childNode => filterNode(childNode, currentDepth + 1));
+    const filteredChildren = filterNodesArray(node.children, childNode =>
+      filterNode(childNode, currentDepth + 1),
+    );
 
     if (!filteredChildren.length) {
       return null;

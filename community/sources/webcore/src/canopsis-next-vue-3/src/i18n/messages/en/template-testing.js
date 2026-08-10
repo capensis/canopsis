@@ -28,7 +28,8 @@ export default {
   saveTestAsNew: 'Save as new test',
   errorsInInput: 'Error in input',
   mainFormHasErrors: 'Please fix the errors in the General tab',
-  isNewForm: 'If you save this test and the form won\'t be saved, this test will be deleted after closing the creation modal',
+  isNewForm:
+    'If you save this test and the form won\'t be saved, this test will be deleted after closing the creation modal',
   testSaved: 'Template test saved',
   testWillSaveAfterFormSaving: 'Template test will save after form saving',
   lostCurrentTest: {
@@ -57,7 +58,8 @@ export default {
   dynamicInfoValue: 'Dynamic info value - {number} - {name}',
   instructionWebhookUrl: 'Instruction webhook URL - Step {step}, Operation {operation}',
   instructionWebhookPayload: 'Instruction webhook payload - Step {step}, Operation {operation}',
-  instructionWebhookHeader: 'Instruction webhook header {header} - Step {step}, Operation {operation}',
+  instructionWebhookHeader:
+    'Instruction webhook header {header} - Step {step}, Operation {operation}',
   instructionJobPayload: 'Instruction job payload - {number}',
   operationDescription: 'Operation description - Step {step}, Operation {operation}',
   jobPayload: 'Job payload',
@@ -187,7 +189,9 @@ export default {
     [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: 'Response (Webhook - {index})',
   },
   testDataCheckTicketStatusResponseLabels: {
-    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: 'Check ticket status response (Webhook - {index})',
-    [TEMPLATE_TESTING_TEST_TYPES.scenario]: 'Check ticket status response (Action - {index} webhook)',
+    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]:
+      'Check ticket status response (Webhook - {index})',
+    [TEMPLATE_TESTING_TEST_TYPES.scenario]:
+      'Check ticket status response (Action - {index} webhook)',
   },
 };

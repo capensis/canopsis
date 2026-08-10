@@ -1,5 +1,5 @@
 <template>
-  <v-radio-group
+  <c-radio-group
     :model-value="modelValue"
     :name="name"
     :label="label"
@@ -18,7 +18,7 @@
       :label="$t('settings.colorIndicator.fields.displayAsPriority')"
       color="primary"
     />
-  </v-radio-group>
+  </c-radio-group>
 </template>
 
 <script>

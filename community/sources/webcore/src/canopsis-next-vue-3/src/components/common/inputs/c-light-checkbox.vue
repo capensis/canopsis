@@ -1,8 +1,5 @@
 <template>
-  <label
-    :class="classes"
-    class="c-light-checkbox"
-  >
+  <label :class="classes" class="c-light-checkbox">
     <input
       ref="inputRef"
       :checked="modelValue"
@@ -10,37 +7,21 @@
       class="c-light-checkbox__input"
       type="checkbox"
       @change="updateValue"
-    >
+    />
 
     <span class="c-light-checkbox__control">
-      <c-icon
-        v-if="modelValue"
-        class="c-light-checkbox__icon"
-        size="small"
-      >
-        check
-      </c-icon>
-      <span
-        v-else-if="indeterminate"
-        class="c-light-checkbox__indeterminate"
-      />
+      <c-icon v-if="modelValue" class="c-light-checkbox__icon" size="small"> check </c-icon>
+      <span v-else-if="indeterminate" class="c-light-checkbox__indeterminate" />
     </span>
 
-    <span
-      v-if="label"
-      class="c-light-checkbox__label"
-    >
+    <span v-if="label" class="c-light-checkbox__label">
       {{ label }}
     </span>
   </label>
 </template>
 
 <script>
-import {
-  computed,
-  ref,
-  watch,
-} from 'vue';
+import { computed, ref, watch } from 'vue';
 
 export default {
   props: {
@@ -104,7 +85,7 @@ export default {
 
   &--disabled {
     cursor: default;
-    opacity: .38;
+    opacity: 0.38;
   }
 
   &__input {
@@ -117,13 +98,15 @@ export default {
 
   &__control {
     align-items: center;
-    border: 2px solid rgba(var(--v-theme-on-surface), .54);
+    border: 2px solid rgba(var(--v-theme-on-surface), 0.54);
     border-radius: 2px;
     box-sizing: border-box;
     display: inline-flex;
     height: 18px;
     justify-content: center;
-    transition: background-color .15s ease, border-color .15s ease;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease;
     width: 18px;
   }
 
@@ -146,7 +129,7 @@ export default {
   }
 
   &__label {
-    font-size: .875rem;
+    font-size: 0.875rem;
     line-height: 1;
   }
 }

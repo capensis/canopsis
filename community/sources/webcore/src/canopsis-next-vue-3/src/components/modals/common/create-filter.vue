@@ -10,11 +10,7 @@
       </template>
 
       <template #actions>
-        <v-btn
-          :disabled="isSubmitting"
-          variant="text"
-          @click="closeModal"
-        >
+        <v-btn :disabled="isSubmitting" variant="text" @click="closeModal">
           {{ t('common.cancel') }}
         </v-btn>
 
@@ -32,19 +28,16 @@
 </template>
 
 <script>
-import { computed } from 'vue';
 import { omit } from 'lodash';
-
-import { MODALS, PATTERNS_FIELDS } from '@/constants';
-
-import { filterToForm, formToFilter } from '@/helpers/entities/filter/form';
-
-import { useForm } from '@/hooks/form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { computed } from 'vue';
 
 import FilterForm from '@/components/other/filter/form/filter-form.vue';
+import { MODALS, PATTERNS_FIELDS } from '@/constants';
+import { filterToForm, formToFilter } from '@/helpers/entities/filter/form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 export default {
   name: MODALS.createFilter,
@@ -68,13 +61,7 @@ export default {
     const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.save'));
 
     const patternsFields = computed(() => {
-      const {
-        withAlarm,
-        withEntity,
-        withPbehavior,
-        withEvent,
-        withServiceWeather,
-      } = config.value;
+      const { withAlarm, withEntity, withPbehavior, withEvent, withServiceWeather } = config.value;
 
       return [
         withAlarm && PATTERNS_FIELDS.alarm,
@@ -91,16 +78,18 @@ export default {
     const { handleSubmit, isSubmitting, values } = form;
 
     const closeModal = () => modals.hide({ id: props.modal.id });
-    const patternsProps = computed(() => omit(config.value, [
-      'title',
-      'action',
-      'afterSubmit',
-      'filter',
-      'corporate',
-      'widgetType',
-      'withoutLink',
-      'withTitle',
-    ]));
+    const patternsProps = computed(() =>
+      omit(config.value, [
+        'title',
+        'action',
+        'afterSubmit',
+        'filter',
+        'corporate',
+        'widgetType',
+        'withoutLink',
+        'withTitle',
+      ]),
+    );
 
     const submit = handleSubmit(async () => {
       const newFilter = formToFilter(values.value, patternsFields.value, config.value.corporate);

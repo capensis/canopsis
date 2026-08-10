@@ -2,7 +2,6 @@ import { ref, unref } from 'vue';
 
 import { getEventsRecordFileUrl } from '@/helpers/entities/events-record/url';
 import { openUrlInNewTab } from '@/helpers/url';
-
 import { useFilePolling } from '@/hooks/polling';
 import { useEventsRecord } from '@/hooks/store/modules/events-record';
 
@@ -14,8 +13,7 @@ export const useEventsRecordExportJson = ({ eventsRecordId, eventIds = [], event
   const { poll: generateFile } = useFilePolling({
     createHandler: createEventsRecordExport,
     fetchHandler: fetchEventsRecordExport,
-    endHandler: fileData =>
-      openUrlInNewTab(getEventsRecordFileUrl(fileData?._id ?? fileData?.id)),
+    endHandler: fileData => openUrlInNewTab(getEventsRecordFileUrl(fileData?._id ?? fileData?.id)),
   });
 
   const exportJson = async () => {

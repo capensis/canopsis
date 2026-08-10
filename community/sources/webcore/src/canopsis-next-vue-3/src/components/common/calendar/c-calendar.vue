@@ -89,20 +89,22 @@
 
         <template #event="{ event, start, end }">
           <slot
-:event="event"
-:start="start"
-:end="end"
-name="event">
+            :event="event"
+            :start="start"
+            :end="end"
+            name="event"
+          >
             <c-layout
               :class="['c-calendar__event-content pl-1', getMenuClassByCalendarEvent(event.id)]"
               :style="getEventStyle(event)"
               align-center
             >
               <v-icon
-v-if="event.icon"
-:color="event.iconColor"
-size="14"
-class="pr-1">
+                v-if="event.icon"
+                :color="event.iconColor"
+                size="14"
+                class="pr-1"
+              >
                 {{ event.icon }}
               </v-icon>
 
@@ -154,14 +156,15 @@ class="pr-1">
 </template>
 
 <script>
+import { LOCALES } from '@/config';
 import {
   CALENDAR_POPOVER_WIDTH,
   CALENDAR_START_DRAG_DELAY,
   CALENDAR_TYPES,
   LLM_AI_CHAT_WIDTH,
 } from '@/constants';
-import { LOCALES } from '@/config';
-
+import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
+import { colorToRgba } from '@/helpers/color';
 import {
   convertDateToEndOfDayDateObject,
   convertDateToStartOfDayDateObject,
@@ -169,12 +172,10 @@ import {
   getWeekdayNumber,
   isDateBefore,
 } from '@/helpers/date/date';
-import { colorToRgba } from '@/helpers/color';
-import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
 
+import CalendarPagination from './partials/calendar-pagination.vue';
 import CalendarTodayBtn from './partials/calendar-today-btn.vue';
 import CalendarViewMode from './partials/calendar-view-mode.vue';
-import CalendarPagination from './partials/calendar-pagination.vue';
 
 export default {
   components: { CalendarPagination, CalendarViewMode, CalendarTodayBtn },

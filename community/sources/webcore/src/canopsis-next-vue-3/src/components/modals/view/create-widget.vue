@@ -11,20 +11,10 @@
           :key="type"
           class="my-1 cursor-pointer"
         >
-          <v-menu
-            v-if="children"
-            location="top"
-          >
+          <v-menu v-if="children" location="top">
             <template #activator="{ props: activatorProps }">
-              <v-card-title
-                v-bind="activatorProps"
-                class="py-3"
-              >
-                <v-row
-                  align="center"
-                  justify="space-between"
-                  no-gutters
-                >
+              <v-card-title v-bind="activatorProps" class="py-3">
+                <v-row align="center" justify="space-between" no-gutters>
                   <v-col cols="11">
                     <div class="text-subtitle-1">
                       {{ text }}
@@ -52,16 +42,8 @@
             </v-list>
           </v-menu>
 
-          <v-card-title
-            v-else
-            class="py-3"
-            @click="selectType(type)"
-          >
-            <v-row
-              align="center"
-              justify="space-between"
-              no-gutters
-            >
+          <v-card-title v-else class="py-3" @click="selectType(type)">
+            <v-row align="center" justify="space-between" no-gutters>
               <v-col cols="11">
                 <div class="text-subtitle-1">
                   {{ text }}
@@ -89,10 +71,8 @@ import {
   WIDGET_TYPES,
   WIDGET_TYPES_RULES,
 } from '@/constants';
-
-import { calculateNewWidgetGridParametersY } from '@/helpers/entities/widget/grid';
 import { getEmptyWidgetByType } from '@/helpers/entities/widget/form';
-
+import { calculateNewWidgetGridParametersY } from '@/helpers/entities/widget/grid';
 import { useAppInfoStore } from '@/stores/modules/app-info';
 
 export default {
@@ -136,10 +116,9 @@ export default {
           type: 'report',
           text: this.$t('modals.createWidget.types.report.title'),
           icon: 'table_chart',
-          children: [
-            WIDGET_TYPES.userStatistics,
-            WIDGET_TYPES.alarmStatistics,
-          ].map(widgetTypePreparer),
+          children: [WIDGET_TYPES.userStatistics, WIDGET_TYPES.alarmStatistics].map(
+            widgetTypePreparer,
+          ),
         },
       );
 

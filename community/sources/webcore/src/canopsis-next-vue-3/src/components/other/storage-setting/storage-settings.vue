@@ -1,13 +1,6 @@
 <template>
-  <c-layout
-    v-if="!loaded"
-    class="my-2"
-    justify-center
-  >
-    <v-progress-circular
-      color="primary"
-      indeterminate
-    />
+  <c-layout v-if="!loaded" class="my-2" justify-center>
+    <v-progress-circular color="primary" indeterminate />
   </c-layout>
   <c-layout v-else gap="4" column>
     <c-layout class="storage-settings__top-actions" gap="2" justify="end">
@@ -78,23 +71,20 @@
 import { isEqual, cloneDeep } from 'lodash';
 import { ref, onMounted, computed } from 'vue';
 
+import StorageSettingsArchiveEntityDisabledForm from '@/components/other/storage-setting/form/storage-settings-archive-entity-disabled-form.vue';
+import StorageSettingsArchiveEntityUnlinkedForm from '@/components/other/storage-setting/form/storage-settings-archive-entity-unlinked-form.vue';
+import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form.vue';
+import StorageSettingsHistoryMessageBtn from '@/components/other/storage-setting/partials/storage-settings-history-message-btn.vue';
 import { MODALS, TIME_UNITS } from '@/constants';
-
 import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
-
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useDataStorage } from '@/hooks/store/modules/data-storage';
 import { useEntity } from '@/hooks/store/modules/entity';
-import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-
-import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form.vue';
-import StorageSettingsHistoryMessageBtn from '@/components/other/storage-setting/partials/storage-settings-history-message-btn.vue';
-import StorageSettingsArchiveEntityUnlinkedForm from '@/components/other/storage-setting/form/storage-settings-archive-entity-unlinked-form.vue';
-import StorageSettingsArchiveEntityDisabledForm from '@/components/other/storage-setting/form/storage-settings-archive-entity-disabled-form.vue';
+import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 
 export default {
   components: {
@@ -113,22 +103,16 @@ export default {
     const modals = useModals();
     const popups = usePopups();
 
-    const {
-      fetchDataStorageWithoutStore,
-      updateDataStorage,
-    } = useDataStorage();
+    const { fetchDataStorageWithoutStore, updateDataStorage } = useDataStorage();
 
-    const {
-      archiveDisabledEntitiesData,
-      archiveUnlinkedEntitiesData,
-      cleanArchivedEntitiesData,
-    } = useEntity();
+    const { archiveDisabledEntitiesData, archiveUnlinkedEntitiesData, cleanArchivedEntitiesData } =
+      useEntity();
     const { setFormErrors } = useValidationFormErrors(form.values);
 
     const hasChanges = computed(() => !isEqual(form.values.value, originalForm.value));
 
-    const getConfirmationPhraseMessages = key => ['title', 'text', 'phraseText', 'phrase']
-      .reduce((acc, field) => {
+    const getConfirmationPhraseMessages = key =>
+      ['title', 'text', 'phraseText', 'phrase'].reduce((acc, field) => {
         const messageKey = `${key}.${field}`;
 
         if (te(messageKey)) {
@@ -154,55 +138,59 @@ export default {
      * @param {Function} params.action - The action to execute after confirmation
      * @param {Object} params.config - Additional modal configuration
      */
-    const showConfirmationPhraseModal = ({ action, ...config }) => modals.show({
-      name: MODALS.confirmationPhrase,
-      config: {
-        ...config,
-        action: async (data) => {
-          await action(data);
+    const showConfirmationPhraseModal = ({ action, ...config }) =>
+      modals.show({
+        name: MODALS.confirmationPhrase,
+        config: {
+          ...config,
+          action: async (data) => {
+            await action(data);
 
-          popups.success({ text: t('success.default') });
+            popups.success({ text: t('success.default') });
 
-          return fetchHistory();
+            return fetchHistory();
+          },
         },
-      },
-    });
+      });
 
     /**
      * Initiates the archiving process for disabled entities
      */
-    const archiveDisabledEntities = () => showConfirmationPhraseModal({
-      ...getConfirmationPhraseMessages('modals.confirmationPhrase.archiveUnlinkedEntities'),
-      ...getConfirmationPhraseMessages('modals.confirmationPhrase.archiveDisabledEntities'),
+    const archiveDisabledEntities = () =>
+      showConfirmationPhraseModal({
+        ...getConfirmationPhraseMessages('modals.confirmationPhrase.archiveUnlinkedEntities'),
+        ...getConfirmationPhraseMessages('modals.confirmationPhrase.archiveDisabledEntities'),
 
-      additionalForm: {
-        component: StorageSettingsArchiveEntityDisabledForm,
-        form: { with_dependencies: false },
-      },
-      action: data => archiveDisabledEntitiesData({ data }),
-    });
+        additionalForm: {
+          component: StorageSettingsArchiveEntityDisabledForm,
+          form: { with_dependencies: false },
+        },
+        action: data => archiveDisabledEntitiesData({ data }),
+      });
 
     /**
      * Initiates the archiving process for unlinked entities with duration configuration
      */
-    const archiveUnlinkedEntities = () => showConfirmationPhraseModal({
-      ...getConfirmationPhraseMessages('modals.confirmationPhrase.archiveUnlinkedEntities'),
+    const archiveUnlinkedEntities = () =>
+      showConfirmationPhraseModal({
+        ...getConfirmationPhraseMessages('modals.confirmationPhrase.archiveUnlinkedEntities'),
 
-      additionalForm: {
-        component: StorageSettingsArchiveEntityUnlinkedForm,
-        form: { value: 60, unit: TIME_UNITS.day },
-      },
-      action: duration => archiveUnlinkedEntitiesData({ data: { archive_before: duration } }),
-    });
+        additionalForm: {
+          component: StorageSettingsArchiveEntityUnlinkedForm,
+          form: { value: 60, unit: TIME_UNITS.day },
+        },
+        action: duration => archiveUnlinkedEntitiesData({ data: { archive_before: duration } }),
+      });
 
     /**
      * Initiates the cleaning process for archived entities
      */
-    const cleanArchivedEntities = () => showConfirmationPhraseModal({
-      ...getConfirmationPhraseMessages('modals.confirmationPhrase.cleanStorage'),
+    const cleanArchivedEntities = () =>
+      showConfirmationPhraseModal({
+        ...getConfirmationPhraseMessages('modals.confirmationPhrase.cleanStorage'),
 
-      action: () => cleanArchivedEntitiesData(),
-    });
+        action: () => cleanArchivedEntitiesData(),
+      });
 
     /**
      * Resets the form to its original state from data storage settings
@@ -221,32 +209,35 @@ export default {
     /**
      * Shows a confirmation modal before canceling changes and resetting the form
      */
-    const cancel = () => modals.show({
-      name: MODALS.confirmation,
-      config: {
-        action: resetForm,
-      },
-    });
+    const cancel = () =>
+      modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: resetForm,
+        },
+      });
 
     const { submit, submitting } = useSubmittableForm({
-      method: form.handleSubmit(() => modals.show({
-        name: MODALS.confirmationPhrase,
-        config: {
-          ...getConfirmationPhraseMessages('modals.confirmationPhrase.updateStorageSettings'),
+      method: form.handleSubmit(() =>
+        modals.show({
+          name: MODALS.confirmationPhrase,
+          config: {
+            ...getConfirmationPhraseMessages('modals.confirmationPhrase.updateStorageSettings'),
 
-          action: async () => {
-            try {
-              dataStorageSettings = await updateDataStorage({ data: form.values.value });
+            action: async () => {
+              try {
+                dataStorageSettings = await updateDataStorage({ data: form.values.value });
 
-              popups.success({ text: t('success.default') });
+                popups.success({ text: t('success.default') });
 
-              resetForm();
-            } catch (err) {
-              setFormErrors(err);
-            }
+                resetForm();
+              } catch (err) {
+                setFormErrors(err);
+              }
+            },
           },
-        },
-      })),
+        }),
+      ),
     });
 
     onMounted(async () => {

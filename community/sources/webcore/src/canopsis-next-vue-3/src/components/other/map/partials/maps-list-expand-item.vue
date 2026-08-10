@@ -1,10 +1,11 @@
 <template>
   <div>
     <v-tabs
-:model-value="tab"
-bg-color="secondary-lighten-1"
-color="primary"
-align-tabs="center">
+      :model-value="tab"
+      bg-color="secondary-lighten-1"
+      color="primary"
+      align-tabs="center"
+    >
       <v-tab :value="tab">
         {{ $t(`map.types.${map.type}`) }}
       </v-tab>
@@ -26,7 +27,6 @@ align-tabs="center">
 
 <script>
 import { MAP_TYPES } from '@/constants';
-
 import { useMap } from '@/hooks/store/modules/map';
 
 import MapsListExpandFlowchartItem from './maps-list-expand-flowchart-item.vue';

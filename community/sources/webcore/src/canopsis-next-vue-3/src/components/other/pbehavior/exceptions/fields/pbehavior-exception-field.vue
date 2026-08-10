@@ -40,23 +40,25 @@
       </div>
       <div v-if="!disabled" class="pbehavior-exception-field__actions">
         <v-btn
-:input-value="editing"
-class="btn--editing"
-icon
-fab
-@click="toggleEditing">
+          :input-value="editing"
+          class="btn--editing"
+          icon
+          fab
+          @click="toggleEditing"
+        >
           <v-icon v-if="editing" color="primary">
-check
-</v-icon>
+            check
+          </v-icon>
           <v-icon v-else>
-edit
-</v-icon>
+            edit
+          </v-icon>
         </v-btn>
         <v-btn
-class="v-btn-legacy-m--y"
-color="error"
-icon
-@click="$emit('delete')">
+          class="v-btn-legacy-m--y"
+          color="error"
+          icon
+          @click="$emit('delete')"
+        >
           <v-icon>delete</v-icon>
         </v-btn>
       </div>
@@ -77,8 +79,9 @@ icon
 <script>
 import { ref, computed, watch } from 'vue';
 
+import DateTimeSplittedRangePickerText from '@/components/forms/fields/date-time-picker/date-time-splitted-range-picker-text.vue';
+import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 import { DATETIME_FORMATS } from '@/constants';
-
 import {
   convertDateToEndOfDayDateObject,
   convertDateToStartOfDayDateObject,
@@ -86,14 +89,9 @@ import {
   isEndOfDay,
   isStartOfDay,
 } from '@/helpers/date/date';
-
 import { gridFlexStyle } from '@/helpers/layout';
-
 import { useModelField } from '@/hooks/form/model-field';
 import { useValidationChildren } from '@/hooks/validator/validation-children';
-
-import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
-import DateTimeSplittedRangePickerText from '@/components/forms/fields/date-time-picker/date-time-splitted-range-picker-text.vue';
 
 export default {
   emits: ['update:value'],

@@ -24,11 +24,7 @@
           <div class="text-center mb-2">
             {{ t('modals.importExportViews.views') }}
           </div>
-          <draggable-group-views
-            :views="importedViews"
-            pull
-            @change="importedViews = $event"
-          />
+          <draggable-group-views :views="importedViews" pull @change="importedViews = $event" />
         </div>
 
         <v-divider class="mx-1 secondary align-self-stretch" vertical />
@@ -70,22 +66,19 @@
 import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
+import DraggableGroupViews from '@/components/layout/navigation/partials/groups-side-bar/draggable-group-views.vue';
+import DraggableGroups from '@/components/layout/navigation/partials/groups-side-bar/draggable-groups.vue';
 import { MAX_LIMIT, ROUTES_NAMES } from '@/constants';
-
 import {
   prepareCurrentGroupsForImporting,
   prepareImportedGroups,
   prepareImportedViews,
   prepareViewGroupsForImportRequest,
 } from '@/helpers/entities/view/form';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useView } from '@/hooks/store/modules/view';
-
-import DraggableGroupViews from '@/components/layout/navigation/partials/groups-side-bar/draggable-group-views.vue';
-import DraggableGroups from '@/components/layout/navigation/partials/groups-side-bar/draggable-groups.vue';
 
 export default {
   components: {
@@ -105,11 +98,7 @@ export default {
     const route = useRoute();
     const modals = useModals();
     const popups = usePopups();
-    const {
-      viewGroups,
-      fetchViewGroupsList,
-      importViewWithoutStore,
-    } = useView();
+    const { viewGroups, fetchViewGroupsList, importViewWithoutStore } = useView();
 
     const importedViews = ref([]);
     const importedGroups = ref([]);
@@ -118,15 +107,13 @@ export default {
 
     const config = computed(() => props.modal.config ?? {});
     const close = () => modals.hide({ id: props.modal.id });
-    const isViewsImportExportPage = computed(() =>
-      route.name === ROUTES_NAMES.adminSettingsViewsImportExport,
+    const isViewsImportExportPage = computed(
+      () => route.name === ROUTES_NAMES.adminSettingsViewsImportExport,
     );
 
     const setDefaultValues = () => {
-      const {
-        importedGroups: nextImportedGroups = [],
-        importedViews: nextImportedViews = [],
-      } = config.value;
+      const { importedGroups: nextImportedGroups = [], importedViews: nextImportedViews = [] } =
+        config.value;
 
       importedViews.value = prepareImportedViews(nextImportedViews);
       importedGroups.value = prepareImportedGroups(nextImportedGroups);
@@ -149,9 +136,11 @@ export default {
       });
     };
 
-    const changeImportedGroupHandler = (groupIndex, group) => importedGroups.value.splice(groupIndex, 1, group);
+    const changeImportedGroupHandler = (groupIndex, group) =>
+      importedGroups.value.splice(groupIndex, 1, group);
 
-    const changeCurrentGroupHandler = (groupIndex, group) => currentGroups.value.splice(groupIndex, 1, group);
+    const changeCurrentGroupHandler = (groupIndex, group) =>
+      currentGroups.value.splice(groupIndex, 1, group);
 
     const submit = async () => {
       try {

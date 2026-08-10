@@ -34,8 +34,7 @@ export class AsyncBooting {
    * @param {any} key - The key to unregister.
    */
   unregister(key) {
-    this.registered = this.registered
-      .filter(({ key: registeredKey }) => key !== registeredKey);
+    this.registered = this.registered.filter(({ key: registeredKey }) => key !== registeredKey);
 
     if (this.registeredRAFs.has(key)) {
       window.cancelAnimationFrame(this.registeredRAFs.get(key));
@@ -60,7 +59,9 @@ export class AsyncBooting {
       return;
     }
 
-    const rAFId = window.requestAnimationFrame(() => this.recursiveRAF(bootCallback, depth - 1, key));
+    const rAFId = window.requestAnimationFrame(() =>
+      this.recursiveRAF(bootCallback, depth - 1, key),
+    );
 
     if (key) {
       this.registeredRAFs.set(key, rAFId);

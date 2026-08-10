@@ -106,7 +106,8 @@ export default {
       [ALARM_LIST_STEPS.webhookFail]: 'Webhook is failed',
       [ALARM_LIST_STEPS.declareTicket]: 'Ticket is declared',
       [ALARM_LIST_STEPS.declareTicketFail]: 'Ticket declaration is failed',
-      [ALARM_LIST_STEPS.declareTicketRuleInProgress]: 'Ticket declaration rule launched by {author} in progress',
+      [ALARM_LIST_STEPS.declareTicketRuleInProgress]:
+        'Ticket declaration rule launched by {author} in progress',
       [ALARM_LIST_STEPS.declareTicketRuleComplete]: 'Ticket declaration rule is complete',
       [ALARM_LIST_STEPS.declareTicketRuleFail]: 'Ticket declaration rule is failed',
       [ALARM_LIST_STEPS.changeTicketStatus]: 'Ticket status changed',
@@ -143,14 +144,22 @@ export default {
   },
   infoPopup: 'Info popup',
   tooltips: {
-    priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
-    runningManualInstructions: 'Manual instruction <strong>{title}</strong> in progress | Manual instructions <strong>{title}</strong> in progress',
-    runningAutoInstructions: 'Automatic instruction <strong>{title}</strong> in progress | Automatic instructions <strong>{title}</strong> in progress',
-    successfulManualInstructions: 'Manual instruction <strong>{title}</strong> is successful | Manual instructions <strong>{title}</strong> is successful',
-    successfulAutoInstructions: 'Automatic instruction <strong>{title}</strong> is successful | Automatic instructions <strong>{title}</strong> is successful',
-    failedManualInstructions: 'Manual instruction <strong>{title}</strong> is failed | Manual instructions <strong>{title}</strong> is failed',
-    failedAutoInstructions: 'Automatic instruction <strong>{title}</strong> is failed | Automatic instructions <strong>{title}</strong> is failed',
-    hasManualInstruction: 'There is a manual instruction for this type of an incident | There are a manual instructions for this type of an incident',
+    priority:
+      'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
+    runningManualInstructions:
+      'Manual instruction <strong>{title}</strong> in progress | Manual instructions <strong>{title}</strong> in progress',
+    runningAutoInstructions:
+      'Automatic instruction <strong>{title}</strong> in progress | Automatic instructions <strong>{title}</strong> in progress',
+    successfulManualInstructions:
+      'Manual instruction <strong>{title}</strong> is successful | Manual instructions <strong>{title}</strong> is successful',
+    successfulAutoInstructions:
+      'Automatic instruction <strong>{title}</strong> is successful | Automatic instructions <strong>{title}</strong> is successful',
+    failedManualInstructions:
+      'Manual instruction <strong>{title}</strong> is failed | Manual instructions <strong>{title}</strong> is failed',
+    failedAutoInstructions:
+      'Automatic instruction <strong>{title}</strong> is failed | Automatic instructions <strong>{title}</strong> is failed',
+    hasManualInstruction:
+      'There is a manual instruction for this type of an incident | There are a manual instructions for this type of an incident',
     resetChangeColumns: 'Reset columns ordering/resizing',
     startChangeColumns: 'Start change columns ordering/resizing',
     finishChangeColumns: 'Finish change columns ordering/resizing',
@@ -179,11 +188,14 @@ export default {
     [ALARM_METRIC_PARAMETERS.timeToResolve]: 'Time to resolve alarms',
     [ALARM_METRIC_PARAMETERS.minAck]: 'Minimum time to ack alarms',
     [ALARM_METRIC_PARAMETERS.maxAck]: 'Maximum time to ack alarms',
-    [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Number of manually remediated alarms',
-    [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Number of alarms with manual instructions',
+    [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]:
+      'Number of manually remediated alarms',
+    [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]:
+      'Number of alarms with manual instructions',
     [ALARM_METRIC_PARAMETERS.notAckedAlarms]: 'Number of not acked alarms',
     [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Number of not acked alarms with duration 1-4h',
-    [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Number of not acked alarms with duration 4-24h',
+    [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]:
+      'Number of not acked alarms with duration 4-24h',
     [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Number of not acked alarms older than 24h',
     [ALARM_METRIC_PARAMETERS.minResolve]: 'Min time to resolve alarms',
     [ALARM_METRIC_PARAMETERS.maxResolve]: 'Max time to resolve alarms',
@@ -252,7 +264,8 @@ export default {
     nameSelector: '<strong>Names</strong>:&nbsp;{names}',
     filters: {
       [REMEDIATION_INSTRUCTION_FILTER_TYPES.noInstructions]: 'No instructions',
-      [REMEDIATION_INSTRUCTION_FILTER_TYPES.noInstructionsOrNotInProgress]: 'No instructions or not in progress',
+      [REMEDIATION_INSTRUCTION_FILTER_TYPES.noInstructionsOrNotInProgress]:
+        'No instructions or not in progress',
       [REMEDIATION_INSTRUCTION_FILTER_TYPES.hasInstructions]: 'Has instructions',
     },
     statuses: {

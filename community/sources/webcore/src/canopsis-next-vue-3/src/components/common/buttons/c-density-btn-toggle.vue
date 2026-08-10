@@ -28,11 +28,12 @@
     <v-tooltip v-for="type in types" :key="type.value" location="top">
       <template #activator="{ props: tooltipProps }">
         <v-btn
-v-bind="tooltipProps"
-:value="type.value"
-class="ma-0"
-size="small"
-variant="text">
+          v-bind="tooltipProps"
+          :value="type.value"
+          class="ma-0"
+          size="small"
+          variant="text"
+        >
           <v-icon size="small">
             {{ type.icon }}
           </v-icon>

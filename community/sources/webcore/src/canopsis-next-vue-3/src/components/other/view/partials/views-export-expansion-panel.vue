@@ -26,11 +26,7 @@
         </c-layout>
       </template>
 
-      <group-view-panel
-        v-for="view in group.views"
-        :key="view._id"
-        :view="view"
-      >
+      <group-view-panel v-for="view in group.views" :key="view._id" :view="view">
         <template #title>
           <c-layout align="center" justify="space-between" fill>
             <c-checkbox
@@ -43,9 +39,7 @@
               <template #label>
                 <span class="text-truncate fill-width">
                   {{ view.title }}
-                  <span v-show="view.description" class="ml-1">
-                    ({{ view.description }})
-                  </span>
+                  <span v-show="view.description" class="ml-1"> ({{ view.description }}) </span>
                 </span>
               </template>
             </c-checkbox>
@@ -59,10 +53,9 @@
 <script>
 import { difference } from 'lodash';
 
-import { createRangeArray } from '@/helpers/array';
-
 import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
 import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
+import { createRangeArray } from '@/helpers/array';
 
 export default {
   components: { GroupPanel, GroupViewPanel },

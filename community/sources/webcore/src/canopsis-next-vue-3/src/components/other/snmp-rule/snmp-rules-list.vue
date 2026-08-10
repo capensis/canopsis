@@ -25,52 +25,31 @@
     </template>
 
     <template #oid="{ item }">
-      <snmp-rules-list-item-cell
-        :fields="oidFields"
-        :source="item.oid"
-      />
+      <snmp-rules-list-item-cell :fields="oidFields" :source="item.oid" />
     </template>
 
     <template #output="{ item }">
-      <snmp-rules-list-item-cell
-        :fields="commonFields"
-        :source="item.output"
-      />
+      <snmp-rules-list-item-cell :fields="commonFields" :source="item.output" />
     </template>
 
     <template #resource="{ item }">
-      <snmp-rules-list-item-cell
-        :fields="commonFields"
-        :source="item.resource"
-      />
+      <snmp-rules-list-item-cell :fields="commonFields" :source="item.resource" />
     </template>
 
     <template #component="{ item }">
-      <snmp-rules-list-item-cell
-        :fields="commonFields"
-        :source="item.component"
-      />
+      <snmp-rules-list-item-cell :fields="commonFields" :source="item.component" />
     </template>
 
     <template #state="{ item }">
       <template v-if="isTemplateStateType(item)">
-        <snmp-rules-list-item-cell
-          :fields="templateStateFields"
-          :source="item.state"
-        />
+        <snmp-rules-list-item-cell :fields="templateStateFields" :source="item.state" />
         <snmp-rules-list-item-cell :fields="stateOidField" />
         <div class="pl-3">
-          <snmp-rules-list-item-cell
-            :fields="stateOidFields"
-            :source="item.state.stateoid"
-          />
+          <snmp-rules-list-item-cell :fields="stateOidFields" :source="item.state.stateoid" />
         </div>
       </template>
       <template v-else>
-        <snmp-rules-list-item-cell
-          :fields="stateFields"
-          :source="item.state"
-        />
+        <snmp-rules-list-item-cell :fields="stateFields" :source="item.state" />
       </template>
     </template>
 
@@ -80,21 +59,9 @@
 
     <template #actions="{ item }">
       <c-layout>
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
       </c-layout>
     </template>
   </c-advanced-data-table>
@@ -104,7 +71,6 @@
 import { computed } from 'vue';
 
 import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 import SnmpRulesListItemCell from './partials/snmp-rules-list-item-cell.vue';

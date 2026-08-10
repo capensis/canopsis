@@ -1,9 +1,10 @@
 <template>
   <svg
-height="45"
-viewBox="0 0 45 36"
-fill="none"
-xmlns="http://www.w3.org/2000/svg">
+    height="45"
+    viewBox="0 0 45 36"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <rect
       x="8.15039"
       y="1.17773"

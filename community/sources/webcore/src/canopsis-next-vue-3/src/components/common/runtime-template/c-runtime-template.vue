@@ -1,9 +1,7 @@
 <script>
 import { h } from 'vue';
 
-const LEGACY_HTML_TAGS = new Set([
-  'center',
-]);
+const LEGACY_HTML_TAGS = new Set(['center']);
 
 export default {
   inheritAttrs: false,

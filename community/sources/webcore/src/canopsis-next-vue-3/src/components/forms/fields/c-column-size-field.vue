@@ -1,5 +1,5 @@
 <template>
-  <v-radio-group
+  <c-radio-group
     :model-value="modelValue"
     :class="{ 'c-column-size-field--mobile': mobile }"
     :name="name"
@@ -19,22 +19,22 @@
         <v-img :src="item.src" class="my-2" />
       </template>
     </v-radio>
-  </v-radio-group>
+  </c-radio-group>
 </template>
 
 <script>
-import oneColumnMobileSrc from '@/assets/images/column-mobile-1.svg';
-import twoColumnMobileSrc from '@/assets/images/column-mobile-2.svg';
-import oneColumnTabletSrc from '@/assets/images/column-tablet-1.svg';
-import twoColumnTabletSrc from '@/assets/images/column-tablet-2.svg';
-import threeColumnTabletSrc from '@/assets/images/column-tablet-3.svg';
-import fourColumnTabletSrc from '@/assets/images/column-tablet-4.svg';
 import oneColumnDesktopSrc from '@/assets/images/column-desktop-1.svg';
 import twoColumnDesktopSrc from '@/assets/images/column-desktop-2.svg';
 import threeColumnDesktopSrc from '@/assets/images/column-desktop-3.svg';
 import fourColumnDesktopSrc from '@/assets/images/column-desktop-4.svg';
 import sixColumnDesktopSrc from '@/assets/images/column-desktop-6.svg';
 import twelveColumnDesktopSrc from '@/assets/images/column-desktop-12.svg';
+import oneColumnMobileSrc from '@/assets/images/column-mobile-1.svg';
+import twoColumnMobileSrc from '@/assets/images/column-mobile-2.svg';
+import oneColumnTabletSrc from '@/assets/images/column-tablet-1.svg';
+import twoColumnTabletSrc from '@/assets/images/column-tablet-2.svg';
+import threeColumnTabletSrc from '@/assets/images/column-tablet-3.svg';
+import fourColumnTabletSrc from '@/assets/images/column-tablet-4.svg';
 
 export default {
   props: {

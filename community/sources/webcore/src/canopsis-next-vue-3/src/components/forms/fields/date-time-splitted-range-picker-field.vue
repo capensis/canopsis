@@ -14,8 +14,8 @@
     </div>
     <template v-if="!noEnding">
       <div class="date-time-splitted-range-picker-field__time-dash">
--
-</div>
+        -
+      </div>
       <div class="date-time-splitted-range-picker-field__end">
         <date-time-splitted-picker-field
           :value="end"

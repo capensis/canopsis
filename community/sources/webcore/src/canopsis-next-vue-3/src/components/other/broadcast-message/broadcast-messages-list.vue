@@ -10,14 +10,16 @@
     @update:options="$emit('update:options', $event)"
   >
     <template #message="{ item }">
-      <broadcast-message
-        :message="item.message"
-        :color="item.color"
-      />
+      <broadcast-message :message="item.message" :color="item.color" />
     </template>
 
     <template #status="{ item }">
-      <span :class="{ 'text-success': item.status === activeStatus, 'text-grey': item.status !== activeStatus }">
+      <span
+        :class="{
+          'text-success': item.status === activeStatus,
+          'text-grey': item.status !== activeStatus,
+        }"
+      >
         {{ t(`broadcastMessage.statuses.${item.status}`) }}
       </span>
     </template>
@@ -32,16 +34,8 @@
 
     <template #actions="{ item }">
       <c-layout>
-        <c-action-btn
-          v-if="editable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="deletable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
+        <c-action-btn v-if="editable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="deletable" type="delete" @click="$emit('remove', item._id)" />
       </c-layout>
     </template>
   </c-advanced-data-table>
@@ -51,9 +45,7 @@
 import { computed } from 'vue';
 
 import { BROADCAST_MESSAGES_STATUSES } from '@/constants';
-
 import { convertDateToString, getNowTimestamp } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 import BroadcastMessage from './partials/broadcast-message.vue';
@@ -125,21 +117,24 @@ export default {
       },
     ]);
 
-    const preparedBroadcastMessages = computed(() => props.broadcastMessages.map((message) => {
-      const now = getNowTimestamp();
-      let status = BROADCAST_MESSAGES_STATUSES.pending;
+    const preparedBroadcastMessages = computed(() =>
+      props.broadcastMessages.map((message) => {
+        const now = getNowTimestamp();
+        let status = BROADCAST_MESSAGES_STATUSES.pending;
 
-      if (now >= message.start) {
-        status = now <= message.end
-          ? BROADCAST_MESSAGES_STATUSES.active
-          : BROADCAST_MESSAGES_STATUSES.expired;
-      }
+        if (now >= message.start) {
+          status =
+            now <= message.end
+              ? BROADCAST_MESSAGES_STATUSES.active
+              : BROADCAST_MESSAGES_STATUSES.expired;
+        }
 
-      return {
-        ...message,
-        status,
-      };
-    }));
+        return {
+          ...message,
+          status,
+        };
+      }),
+    );
 
     return {
       t,

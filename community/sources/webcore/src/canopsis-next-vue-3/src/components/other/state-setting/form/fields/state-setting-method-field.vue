@@ -18,11 +18,7 @@
           <span class="mr-2">
             {{ t(`stateSetting.methods.${method}.label`) }}
           </span>
-          <c-help-icon
-            :text="t(`stateSetting.methods.${method}.tooltip`)"
-            icon="help"
-            top
-          />
+          <c-help-icon :text="t(`stateSetting.methods.${method}.tooltip`)" icon="help" top />
         </template>
       </v-radio>
     </c-radio-group>
@@ -31,7 +27,6 @@
 
 <script>
 import { STATE_SETTING_METHODS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {

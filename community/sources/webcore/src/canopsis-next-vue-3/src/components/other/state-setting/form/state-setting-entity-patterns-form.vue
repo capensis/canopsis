@@ -13,9 +13,11 @@
 
 <script>
 import { STATE_SETTING_ENTITY_TYPES } from '@/constants';
-
 import { useFormModel } from '@/hooks/form';
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
+import {
+  usePatternsFields,
+  usePatternsFieldsFetching,
+} from '@/hooks/store/modules/patterns-fields';
 
 export default {
   props: {

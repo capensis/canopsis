@@ -9,8 +9,8 @@
 
           <template #actions>
             <v-icon color="white" icon="keyboard_arrow_down">
-keyboard_arrow_down
-</v-icon>
+              keyboard_arrow_down
+            </v-icon>
           </template>
         </v-expansion-panel-title>
         <v-expansion-panel-text :class="{ error: errors.length }" class="grey-darken-2 text-white">

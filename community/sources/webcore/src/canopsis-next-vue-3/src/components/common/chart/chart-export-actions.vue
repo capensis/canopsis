@@ -9,18 +9,19 @@
       @click="$emit('export:csv')"
     >
       <v-icon class="mr-1" size="small">
-file_download
-</v-icon>
+        file_download
+      </v-icon>
       <span>{{ $t('common.exportAsCsv') }}</span>
     </v-btn>
     <v-btn
-:disabled="!chart"
-color="primary"
-size="small"
-@click="exportChartAsPng">
+      :disabled="!chart"
+      color="primary"
+      size="small"
+      @click="exportChartAsPng"
+    >
       <v-icon class="mr-1" size="small">
-file_download
-</v-icon>
+        file_download
+      </v-icon>
       <span>{{ $t('common.downloadAsPng') }}</span>
     </v-btn>
   </c-layout>

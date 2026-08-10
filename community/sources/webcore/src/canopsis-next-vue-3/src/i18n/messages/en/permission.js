@@ -16,7 +16,8 @@ export default {
     [USER_PERMISSIONS_GROUPS.widgets]: 'Widgets',
     [USER_PERMISSIONS_GROUPS.widgetsCommon]: 'Common',
     [USER_PERMISSIONS_GROUPS.widgetsAlarmstatistics]: 'Alarm statistics',
-    [USER_PERMISSIONS_GROUPS.widgetsAlarmstatisticsWidgetsettings]: 'Alarm statistics widget settings',
+    [USER_PERMISSIONS_GROUPS.widgetsAlarmstatisticsWidgetsettings]:
+      'Alarm statistics widget settings',
     [USER_PERMISSIONS_GROUPS.widgetsAlarmstatisticsViewsettings]: 'Alarm statistics view settings',
     [USER_PERMISSIONS_GROUPS.widgetsAvailability]: 'Availability',
     [USER_PERMISSIONS_GROUPS.widgetsAvailabilityActions]: 'Availability actions',
@@ -51,11 +52,14 @@ export default {
     [USER_PERMISSIONS_GROUPS.widgetsServiceweather]: 'Service weather',
     [USER_PERMISSIONS_GROUPS.widgetsServiceweatherAlarmactions]: 'Service weather alarm actions',
     [USER_PERMISSIONS_GROUPS.widgetsServiceweatherViewsettings]: 'Service weather view settings',
-    [USER_PERMISSIONS_GROUPS.widgetsServiceweatherWidgetsettings]: 'Service weather widget settings',
+    [USER_PERMISSIONS_GROUPS.widgetsServiceweatherWidgetsettings]:
+      'Service weather widget settings',
     [USER_PERMISSIONS_GROUPS.widgetsTestingweather]: 'Testing weather',
     [USER_PERMISSIONS_GROUPS.widgetsUserstatistics]: 'User/Alarm statistics',
-    [USER_PERMISSIONS_GROUPS.widgetsUserstatisticsWidgetsettings]: 'User/Alarm statistics widget settings',
-    [USER_PERMISSIONS_GROUPS.widgetsUserstatisticsViewsettings]: 'User/Alarm statistics view settings',
+    [USER_PERMISSIONS_GROUPS.widgetsUserstatisticsWidgetsettings]:
+      'User/Alarm statistics widget settings',
+    [USER_PERMISSIONS_GROUPS.widgetsUserstatisticsViewsettings]:
+      'User/Alarm statistics view settings',
     [USER_PERMISSIONS_GROUPS.api]: 'API',
     [USER_PERMISSIONS_GROUPS.apiGeneral]: 'General',
     [USER_PERMISSIONS_GROUPS.apiRules]: 'Rules',
@@ -79,8 +83,10 @@ export default {
     /**
      * Business Common Permissions
      */
-    [USER_PERMISSIONS.business.alarmsList.actions.variablesHelp]: 'See the list of variables (in all widgets)',
-    [USER_PERMISSIONS.business.context.actions.entityComment]: 'Manage entity comments (view, create, edit, delete)',
+    [USER_PERMISSIONS.business.alarmsList.actions.variablesHelp]:
+      'See the list of variables (in all widgets)',
+    [USER_PERMISSIONS.business.context.actions.entityComment]:
+      'Manage entity comments (view, create, edit, delete)',
 
     /**
      * Business Alarms List Permissions
@@ -93,25 +99,32 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.snooze]: 'Snooze alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.declareTicket]: 'Declare ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.associateTicket]: 'Associate ticket',
-    [USER_PERMISSIONS.business.alarmsList.actions.removeAssociatedTicket]: 'Remove associated ticket',
+    [USER_PERMISSIONS.business.alarmsList.actions.removeAssociatedTicket]:
+      'Remove associated ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.cancel]: 'Remove alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.unCancel]: 'Uncalcel alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.fastCancel]: 'Fast remove alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.changeState]: 'Check and lock severity',
     [USER_PERMISSIONS.business.alarmsList.actions.history]: 'View alarm history',
-    [USER_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup]: 'Link to manual meta alarm rule / Unlink',
+    [USER_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup]:
+      'Link to manual meta alarm rule / Unlink',
     [USER_PERMISSIONS.business.alarmsList.actions.comment]: 'Comment alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.filter]: 'Set alarm filters',
     [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: 'Filter alarms',
-    [USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter]: 'Set filters by remediation instructions',
-    [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: 'Filter alarms by remediation instructions',
+    [USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter]:
+      'Set filters by remediation instructions',
+    [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]:
+      'Filter alarms by remediation instructions',
     [USER_PERMISSIONS.business.alarmsList.actions.links]: 'Follow link in alarm',
-    [USER_PERMISSIONS.business.alarmsList.actions.correlation]: 'Group correlated alarms (meta alarms)',
-    [USER_PERMISSIONS.business.alarmsList.actions.executeInstruction]: 'Execute manual instructions',
+    [USER_PERMISSIONS.business.alarmsList.actions.correlation]:
+      'Group correlated alarms (meta alarms)',
+    [USER_PERMISSIONS.business.alarmsList.actions.executeInstruction]:
+      'Execute manual instructions',
     [USER_PERMISSIONS.business.alarmsList.actions.category]: 'Filter alarms by category',
     [USER_PERMISSIONS.business.alarmsList.actions.exportPdf]: 'Export in PDF',
     [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: 'Export alarm list as CSV',
-    [USER_PERMISSIONS.business.alarmsList.actions.metaAlarmGroup]: 'Unlink alarm from auto meta alarm',
+    [USER_PERMISSIONS.business.alarmsList.actions.metaAlarmGroup]:
+      'Unlink alarm from auto meta alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.bookmark]: 'Add / remove bookmark',
     [USER_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: 'Filter bookmarked alarms',
 
@@ -122,8 +135,10 @@ export default {
     [USER_PERMISSIONS.business.context.actions.editEntity]: 'Edit entity',
     [USER_PERMISSIONS.business.context.actions.duplicateEntity]: 'Duplicate entity',
     [USER_PERMISSIONS.business.context.actions.deleteEntity]: 'Delete entity',
-    [USER_PERMISSIONS.business.context.actions.massEnable]: 'Mass action to enable selected entities',
-    [USER_PERMISSIONS.business.context.actions.massDisable]: 'Mass action to disable selected entities',
+    [USER_PERMISSIONS.business.context.actions.massEnable]:
+      'Mass action to enable selected entities',
+    [USER_PERMISSIONS.business.context.actions.massDisable]:
+      'Mass action to disable selected entities',
     [USER_PERMISSIONS.business.context.actions.pbehavior]: 'Set PBehavior',
     [USER_PERMISSIONS.business.context.actions.filter]: 'Set entities filters',
     [USER_PERMISSIONS.business.context.actions.userFilter]: 'Filter entities',
@@ -137,17 +152,26 @@ export default {
     [USER_PERMISSIONS.business.serviceWeather.actions.entityAssocTicket]: 'Associate ticket',
     [USER_PERMISSIONS.business.serviceWeather.actions.entityDeclareTicket]: 'Declare ticket',
     [USER_PERMISSIONS.business.serviceWeather.actions.entityComment]: 'Comment alarm',
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityValidate]: 'Validate alarms and change their state to critical',
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityInvalidate]: 'Invalidate alarms and cancel them',
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityPause]: 'Pause alarms (set the PBehavior type "Pause")',
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityPlay]: 'Activate paused alarms (remove the PBehavior type "Pause")',
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityCancel]: 'Access the list of PBehaviors associated to services (in the subtab in the services modal windows)',
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors]: 'View PBehaviors of services (in the subtab in the services modal windows)',
-    [USER_PERMISSIONS.business.serviceWeather.actions.executeInstruction]: 'Execute manual instructions',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityValidate]:
+      'Validate alarms and change their state to critical',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityInvalidate]:
+      'Invalidate alarms and cancel them',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityPause]:
+      'Pause alarms (set the PBehavior type "Pause")',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityPlay]:
+      'Activate paused alarms (remove the PBehavior type "Pause")',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityCancel]:
+      'Access the list of PBehaviors associated to services (in the subtab in the services modal windows)',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors]:
+      'View PBehaviors of services (in the subtab in the services modal windows)',
+    [USER_PERMISSIONS.business.serviceWeather.actions.executeInstruction]:
+      'Execute manual instructions',
     [USER_PERMISSIONS.business.serviceWeather.actions.entityLinks]: 'Follow link in alarm',
     [USER_PERMISSIONS.business.serviceWeather.actions.moreInfos]: 'Open "More infos" modal',
-    [USER_PERMISSIONS.business.serviceWeather.actions.alarmsList]: 'Open the list of alarms available for each service',
-    [USER_PERMISSIONS.business.serviceWeather.actions.pbehaviorList]: 'View PBehaviors of services (in the subtab in the service entities modal windows)',
+    [USER_PERMISSIONS.business.serviceWeather.actions.alarmsList]:
+      'Open the list of alarms available for each service',
+    [USER_PERMISSIONS.business.serviceWeather.actions.pbehaviorList]:
+      'View PBehaviors of services (in the subtab in the service entities modal windows)',
     [USER_PERMISSIONS.business.serviceWeather.actions.filter]: 'Set alarm filters',
     [USER_PERMISSIONS.business.serviceWeather.actions.userFilter]: 'Filter alarms',
     [USER_PERMISSIONS.business.serviceWeather.actions.category]: 'Filter alarms by category',
@@ -155,17 +179,20 @@ export default {
     /**
      * Business Counter Permissions
      */
-    [USER_PERMISSIONS.business.counter.actions.alarmsList]: 'View the alarm list associated with counters',
+    [USER_PERMISSIONS.business.counter.actions.alarmsList]:
+      'View the alarm list associated with counters',
 
     /**
      * Business Testing Weather Permissions
      */
-    [USER_PERMISSIONS.business.testingWeather.actions.alarmsList]: 'Open the list of alarms available',
+    [USER_PERMISSIONS.business.testingWeather.actions.alarmsList]:
+      'Open the list of alarms available',
 
     /**
      * Business Map Permissions
      */
-    [USER_PERMISSIONS.business.map.actions.alarmsList]: 'View the alarm list associated with points on maps',
+    [USER_PERMISSIONS.business.map.actions.alarmsList]:
+      'View the alarm list associated with points on maps',
     [USER_PERMISSIONS.business.map.actions.filter]: 'Set filters for points on maps',
     [USER_PERMISSIONS.business.map.actions.userFilter]: 'Filter points on maps',
     [USER_PERMISSIONS.business.map.actions.category]: 'Filter points on maps by categories',
@@ -173,7 +200,8 @@ export default {
     /**
      * Business Bar Chart Permissions
      */
-    [USER_PERMISSIONS.business.barChart.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.barChart.actions.interval]:
+      'Edit time intervals for the data displayed',
     [USER_PERMISSIONS.business.barChart.actions.sampling]: 'Edit sampling for the data displayed',
     [USER_PERMISSIONS.business.barChart.actions.filter]: 'Set data filters',
     [USER_PERMISSIONS.business.barChart.actions.userFilter]: 'Filter data',
@@ -181,7 +209,8 @@ export default {
     /**
      * Business Line Chart Permissions
      */
-    [USER_PERMISSIONS.business.lineChart.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.lineChart.actions.interval]:
+      'Edit time intervals for the data displayed',
     [USER_PERMISSIONS.business.lineChart.actions.sampling]: 'Edit sampling for the data displayed',
     [USER_PERMISSIONS.business.lineChart.actions.filter]: 'Set data filters',
     [USER_PERMISSIONS.business.lineChart.actions.userFilter]: 'Filter data',
@@ -189,7 +218,8 @@ export default {
     /**
      * Business Pie Chart Permissions
      */
-    [USER_PERMISSIONS.business.pieChart.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.pieChart.actions.interval]:
+      'Edit time intervals for the data displayed',
     [USER_PERMISSIONS.business.pieChart.actions.sampling]: 'Edit sampling for the data displayed',
     [USER_PERMISSIONS.business.pieChart.actions.filter]: 'Set data filters',
     [USER_PERMISSIONS.business.pieChart.actions.userFilter]: 'Filter data',
@@ -197,7 +227,8 @@ export default {
     /**
      * Business Numbers Permissions
      */
-    [USER_PERMISSIONS.business.numbers.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.numbers.actions.interval]:
+      'Edit time intervals for the data displayed',
     [USER_PERMISSIONS.business.numbers.actions.sampling]: 'Edit sampling for the data displayed',
     [USER_PERMISSIONS.business.numbers.actions.filter]: 'Set data filters',
     [USER_PERMISSIONS.business.numbers.actions.userFilter]: 'Filter data',
@@ -205,24 +236,28 @@ export default {
     /**
      * Business User Statistics
      */
-    [USER_PERMISSIONS.business.userStatistics.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.userStatistics.actions.interval]:
+      'Edit time intervals for the data displayed',
     [USER_PERMISSIONS.business.userStatistics.actions.filter]: 'Set data filters',
     [USER_PERMISSIONS.business.userStatistics.actions.userFilter]: 'Filter data',
 
     /**
      * Business Alarm Statistics
      */
-    [USER_PERMISSIONS.business.alarmStatistics.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.alarmStatistics.actions.interval]:
+      'Edit time intervals for the data displayed',
     [USER_PERMISSIONS.business.alarmStatistics.actions.filter]: 'Set data filters',
     [USER_PERMISSIONS.business.alarmStatistics.actions.userFilter]: 'Filter data',
 
     /**
      * Business Availability
      */
-    [USER_PERMISSIONS.business.availability.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.availability.actions.interval]:
+      'Edit time intervals for the data displayed',
     [USER_PERMISSIONS.business.availability.actions.filter]: 'Set data filters',
     [USER_PERMISSIONS.business.availability.actions.userFilter]: 'Filter data',
-    [USER_PERMISSIONS.business.availability.actions.exportAsCsv]: 'Export availabilities as CSV file',
+    [USER_PERMISSIONS.business.availability.actions.exportAsCsv]:
+      'Export availabilities as CSV file',
 
     /**
      * Technical Admin Communication
@@ -273,12 +308,17 @@ export default {
     /**
      * Technical Admin Exploitation
      */
-    [USER_PERMISSIONS.technical.exploitation.remediationConfiguration]: 'Instructions - configurations tab',
-    [USER_PERMISSIONS.technical.exploitation.remediationInstruction]: 'Instructions - instructions tab',
-    [USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove]: 'Instructions - approve',
+    [USER_PERMISSIONS.technical.exploitation.remediationConfiguration]:
+      'Instructions - configurations tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstruction]:
+      'Instructions - instructions tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove]:
+      'Instructions - approve',
     [USER_PERMISSIONS.technical.exploitation.remediationJob]: 'Instructions - jobs tab',
-    [USER_PERMISSIONS.technical.exploitation.remediationStatistic]: 'Instructions - remediation statistics tab',
-    [USER_PERMISSIONS.technical.exploitation.remediationinstructionStats]: 'Instructions - instructions stats tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationStatistic]:
+      'Instructions - remediation statistics tab',
+    [USER_PERMISSIONS.technical.exploitation.remediationinstructionStats]:
+      'Instructions - instructions stats tab',
     [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: 'Ticket declaration rules',
     [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: 'Dynamic information rules',
     [USER_PERMISSIONS.technical.exploitation.eventFilter]: 'Event filters',
@@ -292,8 +332,8 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Snmp rules',
 
     /**
-    * Technical Admin Notification
-    */
+     * Technical Admin Notification
+     */
     [USER_PERMISSIONS.technical.notification.common]: 'Notifications',
 
     /**
@@ -404,6 +444,7 @@ export default {
 
   conditionalTooltips: {
     approveInstructions: 'Enabled because this role has permissions to approve instructions',
-    executeManualInstructions: 'Enabled because this role has permissions to execute manual instructions',
+    executeManualInstructions:
+      'Enabled because this role has permissions to execute manual instructions',
   },
 };

@@ -1,16 +1,10 @@
 <template>
-  <div
-    :id="`view-tab-${tab._id}`"
-    class="view"
-  >
+  <div :id="`view-tab-${tab._id}`" class="view">
     <Teleport
       v-if="activeViewEditing && additionalTopBarItemsTarget"
       :to="additionalTopBarItemsTarget"
     >
-      <window-size-field
-        v-model="size"
-        color="white"
-      />
+      <window-size-field v-model="size" color="white" />
     </Teleport>
 
     <the-mass-actions-panels v-if="!isDefaultMode" fixed />
@@ -32,11 +26,7 @@
           :tab="tab"
         />
 
-        <widget-wrapper
-          :widget="item.widget"
-          :tab="tab"
-          :visible="visible"
-        />
+        <widget-wrapper :widget="item.widget" :tab="tab" :visible="visible" />
       </template>
     </grid-layout>
   </div>
@@ -46,6 +36,11 @@
 import { isEqual } from 'lodash';
 import { mapActions } from 'pinia';
 
+import TheMassActionsPanels from '@/components/common/actions-panel/the-mass-actions-panels.vue';
+import GridLayout from '@/components/common/grid/grid-layout.vue';
+import WindowSizeField from '@/components/forms/fields/window-size.vue';
+import WidgetEditDragHandler from '@/components/widgets/widget-edit-drag-handler.vue';
+import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 import {
   TELEPORTS_NAMES,
   WIDGET_GRID_COLUMNS_COUNT,
@@ -54,17 +49,9 @@ import {
   WIDGET_LAYOUT_MAX_WIDTHS,
   VIEW_SCREEN_MODES,
 } from '@/constants';
-
 import { widgetsToLayoutsWithCompact, layoutsToWidgetsGrid } from '@/helpers/entities/widget/grid';
-
 import { activeViewMixin } from '@/mixins/active-view';
 import { useWidgetStore } from '@/stores/modules/widget';
-
-import GridLayout from '@/components/common/grid/grid-layout.vue';
-import TheMassActionsPanels from '@/components/common/actions-panel/the-mass-actions-panels.vue';
-import WindowSizeField from '@/components/forms/fields/window-size.vue';
-import WidgetEditDragHandler from '@/components/widgets/widget-edit-drag-handler.vue';
-import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
 const DISPLAY_NAME_TO_WIDGET_GRID_SIZE = {
   xs: WIDGET_GRID_SIZES_KEYS.mobile,
@@ -83,9 +70,7 @@ export default {
     WidgetWrapper,
     WindowSizeField,
   },
-  mixins: [
-    activeViewMixin,
-  ],
+  mixins: [activeViewMixin],
   props: {
     tab: {
       type: Object,

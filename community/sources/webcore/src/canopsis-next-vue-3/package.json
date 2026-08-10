@@ -11,10 +11,13 @@
     "test:e2e": "playwright test",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
-    "lint": "run-s lint:*",
-    "lint:oxlint": "oxlint . --fix",
+    "lint": "run-s lint:oxfmt lint:oxlint lint:eslint",
+    "lint:oxfmt": "oxfmt --write \"src/**/*.{js,ts,cjs,mjs,jsx,tsx}\" --no-error-on-unmatched-pattern",
+    "lint:oxlint": "run-s lint:oxlint:fix lint:oxlint:vue",
+    "lint:oxlint:fix": "oxlint src --fix --ignore-pattern \"**/*.vue\" --no-error-on-unmatched-pattern",
+    "lint:oxlint:vue": "oxlint src",
     "lint:eslint": "eslint . --fix --cache",
-    "format": "oxfmt --write src/",
+    "format": "run-s lint:oxfmt lint:eslint",
     "generate-icons-json": "node ./tools/generate-icons-json.js",
     "prepare": "husky"
   },
@@ -77,6 +80,7 @@
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-oxlint": "~1.60.0",
+    "eslint-plugin-perfectionist": "^5.10.1",
     "eslint-plugin-playwright": "^2.10.1",
     "eslint-plugin-vue": "~10.8.0",
     "husky": "^9.1.7",
@@ -101,7 +105,7 @@
       "eslint --fix --cache"
     ],
     "*.vue": [
-      "oxlint --fix",
+      "oxlint",
       "eslint --fix --cache"
     ],
     "*.{json,jsonc,css,scss,html,md}": [

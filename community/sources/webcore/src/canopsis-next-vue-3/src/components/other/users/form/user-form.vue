@@ -91,19 +91,12 @@
         />
       </c-form-block-row>
 
-      <c-form-block-row
-        v-if="!isNew"
-        :label="t('common.authKey')"
-        align-center
-      >
+      <c-form-block-row v-if="!isNew" :label="t('common.authKey')" align-center>
         <user-auth-key-field :value="user.authkey" />
       </c-form-block-row>
 
       <c-form-block-row :label="t('role.defaultView')">
-        <view-selector
-          v-model="defaultviewField"
-          name="defaultview"
-        />
+        <view-selector v-model="defaultviewField" name="defaultview" />
       </c-form-block-row>
     </c-form-block>
   </c-layout>
@@ -112,14 +105,12 @@
 <script>
 import { computed } from 'vue';
 
-import { GROUPS_NAVIGATION_TYPES, USER_PERMISSIONS } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
-import { useAuth, useCRUDPermissions } from '@/hooks/auth';
-import { useFormModels } from '@/hooks/form';
-
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
 import UserAuthKeyField from '@/components/other/users/form/fields/user-auth-key-field.vue';
+import { GROUPS_NAVIGATION_TYPES, USER_PERMISSIONS } from '@/constants';
+import { useAuth, useCRUDPermissions } from '@/hooks/auth';
+import { useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   components: {
@@ -146,7 +137,9 @@ export default {
     const menuProps = { offsetY: true };
     const { t } = useI18n();
     const { currentUser } = useAuth();
-    const { hasReadAccess: hasReadThemeAccess } = useCRUDPermissions(USER_PERMISSIONS.technical.profile.theme);
+    const { hasReadAccess: hasReadThemeAccess } = useCRUDPermissions(
+      USER_PERMISSIONS.technical.profile.theme,
+    );
 
     const {
       enabledField,
@@ -172,16 +165,20 @@ export default {
       defaultviewField: 'defaultview',
     });
 
-    const groupsNavigationItems = computed(() => Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
-      text: t(`user.navigationTypes.${type}`),
-      value: type,
-    })));
+    const groupsNavigationItems = computed(() =>
+      Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
+        text: t(`user.navigationTypes.${type}`),
+        value: type,
+      })),
+    );
 
-    const idpFieldsMap = computed(() => (props.user?.idp_fields ?? []).reduce((acc, field) => {
-      acc[field] = true;
+    const idpFieldsMap = computed(() =>
+      (props.user?.idp_fields ?? []).reduce((acc, field) => {
+        acc[field] = true;
 
-      return acc;
-    }, {}));
+        return acc;
+      }, {}),
+    );
 
     const isSelf = computed(() => props.user._id === currentUser.value?._id);
 

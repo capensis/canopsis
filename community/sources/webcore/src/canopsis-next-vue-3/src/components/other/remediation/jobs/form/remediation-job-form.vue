@@ -10,10 +10,11 @@
     <remediation-job-configuration-field v-model="config" />
 
     <c-id-field
-v-model="jobId"
-:label="$t('remediation.job.jobId')"
-name="job_id"
-required />
+      v-model="jobId"
+      :label="$t('remediation.job.jobId')"
+      name="job_id"
+      required
+    />
 
     <c-layout>
       <c-enabled-duration-field
@@ -27,11 +28,12 @@ required />
 
     <c-layout v-if="withPayload">
       <v-btn
-v-if="!payload"
-class="ml-0"
-color="primary"
-variant="outlined"
-@click="addPayload">
+        v-if="!payload"
+        class="ml-0"
+        color="primary"
+        variant="outlined"
+        @click="addPayload"
+      >
         {{ $t('remediation.job.addPayload') }}
       </v-btn>
       <template v-else>
@@ -72,7 +74,6 @@ variant="outlined"
 
 <script>
 import { AVAILABLE_TIME_UNITS } from '@/constants';
-
 import { useFormModels } from '@/hooks/form';
 
 import RemediationJobConfigurationField from './fields/remediation-job-configuration-field.vue';

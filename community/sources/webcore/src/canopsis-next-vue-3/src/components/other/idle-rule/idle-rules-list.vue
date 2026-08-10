@@ -45,21 +45,9 @@
 
     <template #actions="{ item }">
       <c-layout>
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
       </c-layout>
     </template>
 
@@ -73,7 +61,6 @@
 import { computed } from 'vue';
 
 import { convertDurationToString } from '@/helpers/date/duration';
-
 import { useI18n } from '@/hooks/i18n';
 
 import IdleRulesListExpandItem from './partials/idle-rules-list-expand-item.vue';

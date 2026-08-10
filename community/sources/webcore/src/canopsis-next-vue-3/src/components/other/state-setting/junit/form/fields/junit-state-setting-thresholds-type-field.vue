@@ -9,22 +9,13 @@
     mandatory
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <v-radio
-      :label="t('common.variableTypes.number')"
-      :value="numberValue"
-      color="primary"
-    />
-    <v-radio
-      :label="t('common.percent')"
-      :value="percentValue"
-      color="primary"
-    />
+    <v-radio :label="t('common.variableTypes.number')" :value="numberValue" color="primary" />
+    <v-radio :label="t('common.percent')" :value="percentValue" color="primary" />
   </c-radio-group>
 </template>
 
 <script>
 import { JUNIT_STATE_SETTING_THRESHOLDS_TYPES } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {

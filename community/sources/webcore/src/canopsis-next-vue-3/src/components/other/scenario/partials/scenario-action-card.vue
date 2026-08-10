@@ -18,10 +18,11 @@
           <v-expand-transition mode="out-in">
             <c-layout v-if="expanded" class="px-2" column>
               <v-tabs
-v-model="activeTab"
-color="primary"
-align-tabs="center"
-fixed-tabs>
+                v-model="activeTab"
+                color="primary"
+                align-tabs="center"
+                fixed-tabs
+              >
                 <v-tab :value="0">
                   {{ $t('common.general') }}
                 </v-tab>
@@ -35,10 +36,8 @@ fixed-tabs>
                   <scenario-action-card-general-tab :action="action" />
                 </v-window-item>
                 <v-window-item :value="1">
-                  <pre class="scenario-action-card__patterns"
-                    >{{ patterns }}
-</pre
-                  >
+                  <pre class="scenario-action-card__patterns">{{ patterns }}
+</pre>
                 </v-window-item>
               </v-window>
             </c-layout>
@@ -50,8 +49,8 @@ fixed-tabs>
 </template>
 
 <script>
-import ScenarioInfoItem from './scenario-info-item.vue';
 import ScenarioActionCardGeneralTab from './scenario-action-card-general-tab.vue';
+import ScenarioInfoItem from './scenario-info-item.vue';
 
 export default {
   components: { ScenarioInfoItem, ScenarioActionCardGeneralTab },

@@ -145,10 +145,11 @@
       </c-form-block-row>
 
       <c-form-block-row
-v-if="!noComments"
-:label="$t('common.comment', 2)"
-:depth="depth"
-indented>
+        v-if="!noComments"
+        :label="$t('common.comment', 2)"
+        :depth="depth"
+        indented
+      >
         <pbehavior-comments-field
           :comments="form.comments"
           @update:comments="updateField('comments', $event)"
@@ -161,9 +162,9 @@ indented>
 <script>
 import { computed, onMounted, ref, watch } from 'vue';
 
+import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 import { MAX_PBEHAVIOR_DATES_DIFF_YEARS } from '@/config';
 import { DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
-
 import {
   addUnitToDate,
   convertDateToDateObject,
@@ -176,11 +177,8 @@ import {
   isEndOfDay,
   isStartOfDay,
 } from '@/helpers/date/date';
-
 import { useModelField } from '@/hooks/form/model-field';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
-
-import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 
 import PbehaviorCommentsField from '../fields/pbehavior-comments-field.vue';
 import PbehaviorRecurrenceRuleField from '../fields/pbehavior-recurrence-rule-field.vue';

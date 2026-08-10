@@ -26,10 +26,11 @@
           {{ t('common.cancel') }}
         </v-btn>
         <v-btn
-:disabled="isSubmitting"
-:loading="isSubmitting"
-color="primary"
-type="submit">
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
+          color="primary"
+          type="submit"
+        >
           {{ t('common.submit') }}
         </v-btn>
       </template>
@@ -41,9 +42,7 @@ type="submit">
 import { computed } from 'vue';
 
 import { MODALS } from '@/constants';
-
 import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/pattern/form';
-
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';

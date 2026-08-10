@@ -4,11 +4,7 @@
 
     <v-card class="ma-2">
       <template v-if="hasReadAnyCorporatePatternAccess">
-        <v-tabs
-          v-model="activeTab"
-          color="primary"
-          fixed-tabs
-        >
+        <v-tabs v-model="activeTab" color="primary" fixed-tabs>
           <v-tab :value="PATTERN_TABS.patterns">
             {{ $t('pattern.myPatterns') }}
           </v-tab>
@@ -43,10 +39,7 @@
       />
     </v-card>
 
-    <c-fab-expand-btn
-      :has-access="hasAccessToCreatePattern"
-      @refresh="refresh"
-    >
+    <c-fab-expand-btn :has-access="hasAccessToCreatePattern" @refresh="refresh">
       <c-action-fab-btn
         :tooltip="createPbehaviorTitle"
         icon="pause"
@@ -82,21 +75,14 @@
 <script>
 import { ref, computed } from 'vue';
 
-import {
-  MODALS,
-  PATTERN_TABS,
-  PATTERN_TYPES,
-  USER_PERMISSIONS,
-} from '@/constants';
-
+import CorporatePatterns from '@/components/other/pattern/corporate-patterns.vue';
+import Patterns from '@/components/other/pattern/patterns.vue';
+import { MODALS, PATTERN_TABS, PATTERN_TYPES, USER_PERMISSIONS } from '@/constants';
 import { useCRUDPermissions } from '@/hooks/auth';
-import { useModals } from '@/hooks/modals';
 import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 import { usePattern } from '@/hooks/store/modules/pattern';
 import { useCorporatePattern } from '@/hooks/store/modules/pattern-corporate';
-
-import Patterns from '@/components/other/pattern/patterns.vue';
-import CorporatePatterns from '@/components/other/pattern/corporate-patterns.vue';
 
 export default {
   components: {
@@ -116,45 +102,44 @@ export default {
       bulkRemovePatterns,
       fetchPatternsListWithPreviousParams,
     } = usePattern();
-    const {
-      fetchCorporatePatternsListWithPreviousParams,
-    } = useCorporatePattern();
+    const { fetchCorporatePatternsListWithPreviousParams } = useCorporatePattern();
     const {
       hasReadAccess: hasReadAnyCorporatePatternAccess,
       hasCreateAccess: hasCreateAnyCorporatePatternAccess,
     } = useCRUDPermissions(USER_PERMISSIONS.technical.profile.corporatePattern);
 
-    const isCorporatePatternsTab = computed(() => activeTab.value === PATTERN_TABS.corporatePatterns);
-    const hasAccessToCreatePattern = computed(() => (
-      !isCorporatePatternsTab.value || hasCreateAnyCorporatePatternAccess.value
-    ));
+    const isCorporatePatternsTab = computed(
+      () => activeTab.value === PATTERN_TABS.corporatePatterns,
+    );
+    const hasAccessToCreatePattern = computed(
+      () => !isCorporatePatternsTab.value || hasCreateAnyCorporatePatternAccess.value,
+    );
 
-    const createAlarmTitle = computed(() => (
+    const createAlarmTitle = computed(() =>
       isCorporatePatternsTab.value
         ? t('modals.createCorporateAlarmPattern.create.title')
-        : t('modals.createAlarmPattern.create.title')
-    ));
-    const createEntityTitle = computed(() => (
+        : t('modals.createAlarmPattern.create.title'),
+    );
+    const createEntityTitle = computed(() =>
       isCorporatePatternsTab.value
         ? t('modals.createCorporateEntityPattern.create.title')
-        : t('modals.createEntityPattern.create.title')
-    ));
-    const createPbehaviorTitle = computed(() => (
+        : t('modals.createEntityPattern.create.title'),
+    );
+    const createPbehaviorTitle = computed(() =>
       isCorporatePatternsTab.value
         ? t('modals.createCorporatePbehaviorPattern.create.title')
-        : t('modals.createPbehaviorPattern.create.title')
-    ));
-    const createServiceWeatherTitle = computed(() => (
+        : t('modals.createPbehaviorPattern.create.title'),
+    );
+    const createServiceWeatherTitle = computed(() =>
       isCorporatePatternsTab.value
         ? t('modals.createCorporateServiceWeatherPattern.create.title')
-        : t('modals.createServiceWeatherPattern.create.title')
-    ));
+        : t('modals.createServiceWeatherPattern.create.title'),
+    );
 
-    const refresh = () => (
+    const refresh = () =>
       isCorporatePatternsTab.value
         ? fetchCorporatePatternsListWithPreviousParams()
-        : fetchPatternsListWithPreviousParams()
-    );
+        : fetchPatternsListWithPreviousParams();
 
     const showCreatePatternModal = ({ title, type }) => {
       modals.show({
@@ -174,22 +159,26 @@ export default {
       });
     };
 
-    const showCreateAlarmPatternModal = () => showCreatePatternModal({
-      title: createAlarmTitle.value,
-      type: PATTERN_TYPES.alarm,
-    });
-    const showCreateEntityPatternModal = () => showCreatePatternModal({
-      title: createEntityTitle.value,
-      type: PATTERN_TYPES.entity,
-    });
-    const showCreatePbehaviorPatternModal = () => showCreatePatternModal({
-      title: createPbehaviorTitle.value,
-      type: PATTERN_TYPES.pbehavior,
-    });
-    const showCreateServiceWeatherPatternModal = () => showCreatePatternModal({
-      title: createServiceWeatherTitle.value,
-      type: PATTERN_TYPES.serviceWeather,
-    });
+    const showCreateAlarmPatternModal = () =>
+      showCreatePatternModal({
+        title: createAlarmTitle.value,
+        type: PATTERN_TYPES.alarm,
+      });
+    const showCreateEntityPatternModal = () =>
+      showCreatePatternModal({
+        title: createEntityTitle.value,
+        type: PATTERN_TYPES.entity,
+      });
+    const showCreatePbehaviorPatternModal = () =>
+      showCreatePatternModal({
+        title: createPbehaviorTitle.value,
+        type: PATTERN_TYPES.pbehavior,
+      });
+    const showCreateServiceWeatherPatternModal = () =>
+      showCreatePatternModal({
+        title: createServiceWeatherTitle.value,
+        type: PATTERN_TYPES.serviceWeather,
+      });
 
     const getEditPatternModalTitle = (pattern) => {
       if (pattern.is_corporate) {
@@ -197,7 +186,9 @@ export default {
           [PATTERN_TYPES.alarm]: t('modals.createCorporateAlarmPattern.edit.title'),
           [PATTERN_TYPES.entity]: t('modals.createCorporateEntityPattern.edit.title'),
           [PATTERN_TYPES.pbehavior]: t('modals.createCorporatePbehaviorPattern.edit.title'),
-          [PATTERN_TYPES.serviceWeather]: t('modals.createCorporateServiceWeatherPattern.edit.title'),
+          [PATTERN_TYPES.serviceWeather]: t(
+            'modals.createCorporateServiceWeatherPattern.edit.title',
+          ),
         }[pattern.type];
       }
 

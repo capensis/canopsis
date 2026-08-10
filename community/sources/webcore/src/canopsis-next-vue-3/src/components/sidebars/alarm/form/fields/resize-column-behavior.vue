@@ -14,7 +14,7 @@
         @update:model-value="updateField('resizable', $event)"
       />
       <v-expand-transition>
-        <v-radio-group
+        <c-radio-group
           v-if="modelValue.resizable"
           :model-value="modelValue.cells_content_behavior"
           :label="$t('settings.columnsSettings.cellsContentBehavior')"
@@ -30,7 +30,7 @@
             :value="type.value"
             color="primary"
           />
-        </v-radio-group>
+        </c-radio-group>
       </v-expand-transition>
     </c-layout>
   </widget-settings-item>
@@ -39,12 +39,10 @@
 <script>
 import { computed } from 'vue';
 
-import { RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
-import { useModelField } from '@/hooks/form/model-field';
-
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+import { RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   components: { WidgetSettingsItem },
@@ -69,10 +67,12 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
-    const types = computed(() => Object.values(RESIZING_CELLS_CONTENTS_BEHAVIORS).map(value => ({
-      value,
-      label: t(`settings.columnsSettings.cellsContentBehaviors.${value}`),
-    })));
+    const types = computed(() =>
+      Object.values(RESIZING_CELLS_CONTENTS_BEHAVIORS).map(value => ({
+        value,
+        label: t(`settings.columnsSettings.cellsContentBehaviors.${value}`),
+      })),
+    );
 
     return {
       types,

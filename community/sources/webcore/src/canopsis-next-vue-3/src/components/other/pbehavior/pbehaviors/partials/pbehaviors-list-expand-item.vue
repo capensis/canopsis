@@ -1,10 +1,11 @@
 <template>
   <div>
     <v-tabs
-v-model="activeTab"
-bg-color="secondary-lighten-1"
-color="primary"
-align-tabs="center">
+      v-model="activeTab"
+      bg-color="secondary-lighten-1"
+      color="primary"
+      align-tabs="center"
+    >
       <v-tab value="patterns">
         {{ t('common.pattern', 2) }}
       </v-tab>
@@ -54,16 +55,14 @@ align-tabs="center">
 import { computed, ref } from 'vue';
 
 import { PATTERNS_FIELDS } from '@/constants';
-
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
-
 import { useI18n } from '@/hooks/i18n';
 
 import PbehaviorPatternsForm from '../form/pbehavior-patterns-form.vue';
 
 import PbehaviorComments from './pbehavior-comments.vue';
-import PbehaviorRecurrenceRule from './pbehavior-recurrence-rule.vue';
 import PbehaviorEntities from './pbehavior-entities.vue';
+import PbehaviorRecurrenceRule from './pbehavior-recurrence-rule.vue';
 
 export default {
   components: {

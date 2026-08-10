@@ -1,9 +1,10 @@
 <template>
   <v-menu
-v-if="preparedLinks.length"
-v-model="openedMenu"
-origin="top center"
-v-bind="$attrs">
+    v-if="preparedLinks.length"
+    v-model="openedMenu"
+    origin="top center"
+    v-bind="$attrs"
+  >
     <template #activator="{ props: activatorProps }">
       <v-btn class="top-bar-menu__button text-white" variant="text" v-bind="activatorProps">
         <slot name="title">

@@ -14,11 +14,7 @@
       </template>
 
       <template #actions>
-        <v-btn
-          :disabled="isSubmitting"
-          variant="text"
-          @click="closeModal"
-        >
+        <v-btn :disabled="isSubmitting" variant="text" @click="closeModal">
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
@@ -37,13 +33,11 @@
 <script>
 import { computed } from 'vue';
 
-import { MODALS } from '@/constants';
-
-import { useForm } from '@/hooks/form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useModals } from '@/hooks/modals';
-
 import InfoPopupForm from '@/components/widgets/alarm/forms/info-popup-form.vue';
+import { MODALS } from '@/constants';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useModals } from '@/hooks/modals';
 
 export default {
   name: MODALS.addInfoPopup,
@@ -70,12 +64,7 @@ export default {
         },
       },
     });
-    const {
-      handleSubmit,
-      isSubmitting,
-      model,
-      values,
-    } = formContext;
+    const { handleSubmit, isSubmitting, model, values } = formContext;
     const form = model('form');
     const closeModal = () => modals.hide({ id: props.modal.id });
 

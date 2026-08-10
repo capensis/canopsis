@@ -1,8 +1,5 @@
 <template>
-  <widget-settings-item
-    :title="label"
-    :eager="false"
-  >
+  <widget-settings-item :title="label" :eager="false">
     <c-columns-with-template-field
       :model-value="modelValue"
       :type="type"

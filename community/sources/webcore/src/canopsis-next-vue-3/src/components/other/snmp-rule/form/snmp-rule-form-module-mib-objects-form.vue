@@ -51,11 +51,7 @@
           :name="regexName"
           hide-details
         />
-        <c-text-field
-          v-model="formatter"
-          :label="t('snmpRule.formatter')"
-          :name="formatterName"
-        />
+        <c-text-field v-model="formatter" :label="t('snmpRule.formatter')" :name="formatterName" />
       </v-col>
     </v-expand-transition>
   </v-row>
@@ -64,8 +60,8 @@
 <script>
 import { computed, ref } from 'vue';
 
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {

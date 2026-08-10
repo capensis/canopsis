@@ -1,9 +1,6 @@
 <template>
   <c-information-block :title="$t('storageSetting.pbehavior.title')">
-    <template
-      v-if="history"
-      #subtitle=""
-    >
+    <template v-if="history" #subtitle="">
       <storage-settings-history-message :history="history" />
     </template>
     <c-enabled-duration-field

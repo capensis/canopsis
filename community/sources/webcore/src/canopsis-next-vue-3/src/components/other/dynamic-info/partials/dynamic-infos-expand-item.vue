@@ -1,8 +1,5 @@
 <template>
-  <v-card
-    class="ma-3"
-    variant="flat"
-  >
+  <v-card class="ma-3" variant="flat">
     <v-card-text>
       <v-data-table
         :items="info.infos"

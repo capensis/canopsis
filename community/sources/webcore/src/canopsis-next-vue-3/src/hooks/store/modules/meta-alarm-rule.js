@@ -9,12 +9,7 @@ import { useMetaAlarmRuleStore } from '@/stores/modules/meta-alarm-rule';
  */
 export const useMetaAlarmRule = () => {
   const metaAlarmRuleStore = useMetaAlarmRuleStore();
-  const {
-    items,
-    meta,
-    pending,
-    fetchingParams,
-  } = storeToRefs(metaAlarmRuleStore);
+  const { items, meta, pending, fetchingParams } = storeToRefs(metaAlarmRuleStore);
 
   return {
     metaAlarmRules: items,

@@ -1,10 +1,11 @@
 <template>
   <div class="c-form-general-patterns-tabs">
     <v-tabs
-v-model="activeTab"
-:key="visibleTabsKey"
-slider-color="primary"
-align-tabs="center">
+      v-model="activeTab"
+      :key="visibleTabsKey"
+      slider-color="primary"
+      align-tabs="center"
+    >
       <v-tab
         v-if="hasPatternsTab && reverse"
         :value="FORM_GENERAL_PATTERNS_TABS.patterns"
@@ -124,18 +125,14 @@ align-tabs="center">
 import { isNumber } from 'lodash';
 import { computed, ref, toRef, useSlots, watch, onMounted } from 'vue';
 
+import { useTestVariablesTabData } from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
+import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
 import { FORM_GENERAL_PATTERNS_TABS } from '@/constants';
-
+import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
+import { useI18n } from '@/hooks/i18n';
+import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 import { useCopyVarsList } from '@/hooks/vars/copy';
 import { useTemplateVarsList } from '@/hooks/vars/template';
-import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
-import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
-
-import { useTestVariablesTabData } from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
-
-import { useI18n } from '@/hooks/i18n';
-
-import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
 
 /**
  * Builds a tab descriptor for `c-form-general-patterns-tabs` with a single active type flag.

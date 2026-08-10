@@ -39,7 +39,8 @@ export default {
   columnName: 'Column name',
   defaultSortColumn: 'Default sort column',
   defaultSortColumns: 'Default sort columns',
-  defaultSortColumnsHasAnotherColumns: 'The selected template contains sort columns that are not present in the current table columns. You will not be able to change sorting on these fields.',
+  defaultSortColumnsHasAnotherColumns:
+    'The selected template contains sort columns that are not present in the current table columns. You will not be able to change sorting on these fields.',
   missingColumns: 'Missing columns',
   sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
   columnNames: 'Column names',
@@ -59,7 +60,8 @@ export default {
   filterEditor: 'Filter',
   isAckNoteRequired: 'Ack - note field required',
   isSnoozeNoteRequired: 'Snooze - note field required',
-  isRemoveAlarmsFromMetaAlarmCommentRequired: 'Remove alarms from manual meta alarm - comment field required',
+  isRemoveAlarmsFromMetaAlarmCommentRequired:
+    'Remove alarms from manual meta alarm - comment field required',
   isUncancelAlarmsCommentRequired: 'Uncancel - comment field required',
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
@@ -72,6 +74,7 @@ export default {
     description: 'First template in the list will be default.',
   },
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline',
+  openExpandPanelByDoubleClick: 'Open expandable panel on double click alarm',
   isCorrelationEnabled: 'Is correlation enabled?',
   fastPbehavior: 'Fast pbehavior',
   fastPbehaviorDescription: 'User will be able to select from these types on click Fast pbehavior',
@@ -100,7 +103,8 @@ export default {
   defaultSampling: 'Default sampling',
   defaultTimeRange: 'Default time range',
   liveWatching: 'Live watching',
-  liveWatchingTooltip: 'If enabled, the information about changes in alarms are retrieved using websockets',
+  liveWatchingTooltip:
+    'If enabled, the information about changes in alarms are retrieved using websockets',
   defaultInheritedPbehavior: 'Apply pbehavior on dependencies too',
   expandPanel: {
     title: 'Expandable panel',
@@ -180,7 +184,8 @@ export default {
     onlyIcon: 'Show only links icons',
     inlineLinksCount: 'Inline links count',
     linksInRowCount: 'Count of links in row',
-    linksInRowCountTooltip: 'This count of links always will be displayed in the one row includes more links (`...`) button',
+    linksInRowCountTooltip:
+      'This count of links always will be displayed in the one row includes more links (`...`) button',
     filterOnClick: 'Filter on click',
   },
   liveReporting: {
@@ -214,12 +219,13 @@ export default {
   },
   screenshotMask: {
     title: 'Screenshots filename mask',
-    helpText: '<dl>'
-      + '<dt>Define the filename mask of which screenshots are created using the following variables:<dt>\n'
-      + '<dd>- test case name %test_case%</dd>\n'
-      + '<dd>- date (YYYY, MM, DD)</dd>\n'
-      + '<dd>- time of execution (hh, mm, ss)</dd>'
-      + '</dl>',
+    helpText:
+      '<dl>' +
+      '<dt>Define the filename mask of which screenshots are created using the following variables:<dt>\n' +
+      '<dd>- test case name %test_case%</dd>\n' +
+      '<dd>- date (YYYY, MM, DD)</dd>\n' +
+      '<dd>- time of execution (hh, mm, ss)</dd>' +
+      '</dl>',
   },
   videoDirectories: {
     title: 'Video storage settings',
@@ -227,22 +233,24 @@ export default {
   },
   videoMask: {
     title: 'Videos filename mask',
-    helpText: '<dl>'
-      + '<dt>Define the filename mask of which videos are created using the following variables:<dt>\n'
-      + '<dd>- test case name %test_case%</dd>\n'
-      + '<dd>- date (YYYY, MM, DD)</dd>\n'
-      + '<dd>- time of execution (hh, mm, ss)</dd>'
-      + '</dl>',
+    helpText:
+      '<dl>' +
+      '<dt>Define the filename mask of which videos are created using the following variables:<dt>\n' +
+      '<dd>- test case name %test_case%</dd>\n' +
+      '<dd>- date (YYYY, MM, DD)</dd>\n' +
+      '<dd>- time of execution (hh, mm, ss)</dd>' +
+      '</dl>',
   },
   stickyHeader: 'Sticky header',
   stickyHorizontalScroll: 'Sticky horizontal scroll',
   reportFileRegexp: {
     title: 'Report file mask',
-    helpText: '<dl>'
-      + '<dt>Define the filename regexp of which report:<dt>\n'
-      + '<dd>For example:</dd>\n'
-      + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
-      + '</dl>',
+    helpText:
+      '<dl>' +
+      '<dt>Define the filename regexp of which report:<dt>\n' +
+      '<dd>For example:</dd>\n' +
+      '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n' +
+      '</dl>',
   },
   density: {
     title: 'Default table density',

@@ -14,8 +14,8 @@
     >
       <template v-if="coordinates" #icon="{ item }">
         <v-icon v-if="item.coordinates" class="mr-2">
-pin_drop
-</v-icon>
+          pin_drop
+        </v-icon>
       </template>
     </c-entity-field>
     <c-coordinates-field
@@ -41,9 +41,7 @@ pin_drop
 
 <script>
 import { ENTITY_TYPES } from '@/constants';
-
 import { getMapEntityText } from '@/helpers/entities/map/list';
-
 import { formMixin } from '@/mixins/form';
 
 export default {

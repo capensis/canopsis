@@ -1,13 +1,4 @@
-import {
-  get,
-  flow,
-  uniq,
-  isArray,
-  isFunction,
-  isObject,
-  isUndefined,
-  merge,
-} from 'lodash';
+import { get, flow, uniq, isArray, isFunction, isObject, isUndefined, merge } from 'lodash';
 
 /**
  * Get combined value from features by key
@@ -16,37 +7,40 @@ import {
  * @param {string} key
  * @returns {*}
  */
-const getValue = (features, key) => features.reduce((acc, feature) => {
-  const value = get(feature, key);
+const getValue = (features, key) =>
+  features.reduce((acc, feature) => {
+    const value = get(feature, key);
 
-  if (isUndefined(value)) {
+    if (isUndefined(value)) {
+      return acc;
+    }
+
+    if (isUndefined(acc)) {
+      return value;
+    }
+
+    if (typeof value !== typeof acc) {
+      console.error(
+        `Feature service: Different types of values for '${key}' key: '${acc}', '${value}'`,
+      );
+
+      return acc;
+    }
+
+    if (isFunction(value)) {
+      return flow([acc, value]);
+    }
+
+    if (isArray(value)) {
+      return uniq(value.concat(acc));
+    }
+
+    if (isObject(value)) {
+      return merge(acc, value);
+    }
+
     return acc;
-  }
-
-  if (isUndefined(acc)) {
-    return value;
-  }
-
-  if (typeof value !== typeof acc) {
-    console.error(`Feature service: Different types of values for '${key}' key: '${acc}', '${value}'`);
-
-    return acc;
-  }
-
-  if (isFunction(value)) {
-    return flow([acc, value]);
-  }
-
-  if (isArray(value)) {
-    return uniq(value.concat(acc));
-  }
-
-  if (isObject(value)) {
-    return merge(acc, value);
-  }
-
-  return acc;
-}, undefined);
+  }, undefined);
 
 /**
  * @class Features
@@ -72,8 +66,7 @@ class Features {
       return acc;
     }, {});
 
-    this.features = Object.values(featureMap)
-      .map(({ module }) => module.default);
+    this.features = Object.values(featureMap).map(({ module }) => module.default);
   }
 
   /**

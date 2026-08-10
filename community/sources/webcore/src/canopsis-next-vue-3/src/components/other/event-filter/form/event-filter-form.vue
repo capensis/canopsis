@@ -3,10 +3,11 @@
     <c-enabled-field v-model="enabledField" with-background />
 
     <c-form-general-patterns-tabs
-:form="values"
-:rule-id="ruleId"
-:type="type"
-reverse>
+      :form="values"
+      :rule-id="ruleId"
+      :type="type"
+      reverse
+    >
       <template #general="{ setRef, templateVars, copyVars }">
         <event-filter-general-form
           :ref="setRef"
@@ -30,7 +31,6 @@ reverse>
 
 <script>
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
-
 import { useFormContext } from '@/hooks/form';
 
 import EventFilterGeneralForm from './event-filter-general-form.vue';

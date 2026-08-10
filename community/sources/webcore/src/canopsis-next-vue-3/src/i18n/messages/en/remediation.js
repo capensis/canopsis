@@ -27,7 +27,7 @@ export default {
     endpoint: 'Endpoint',
     job: 'Job | Jobs',
     endpointAvatar: 'EP',
-    workflow: "If this action didn't match",
+    workflow: 'If this action didn\'t match',
     jobWorkflow: 'Workflow if this job fails:',
     remainingStep: 'Continue with remaining steps',
     remainingJob: 'Continue with remaining job',
@@ -42,7 +42,7 @@ export default {
     resumeInstruction: 'Resume {instructionName}',
     inProgressInstruction: '{instructionName} in progress...',
     retryEnabled: 'Retry for unsuccessful executions',
-    retryEnabledTooltip: "Where execution result - Alarm state isn't OK",
+    retryEnabledTooltip: 'Where execution result - Alarm state isn\'t OK',
     retryCount: 'Number of attempts',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manual simplified',

@@ -1,7 +1,7 @@
 <template>
   <widget-settings-item :title="$t('settings.filterOnOpenResolved')">
     <c-layout>
-      <v-radio-group
+      <c-radio-group
         v-model="localValue"
         class="mt-0"
         name="opened"
@@ -15,15 +15,14 @@
           :value="type.value"
           color="primary"
         />
-      </v-radio-group>
+      </c-radio-group>
     </c-layout>
   </widget-settings-item>
 </template>
 
 <script>
-import { ALARMS_OPENED_VALUES } from '@/constants';
-
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+import { ALARMS_OPENED_VALUES } from '@/constants';
 
 export default {
   components: { WidgetSettingsItem },
@@ -43,11 +42,14 @@ export default {
         return String(this.modelValue);
       },
       set(value) {
-        this.$emit('update:modelValue', {
-          true: true,
-          false: false,
-          null: null,
-        }[value]);
+        this.$emit(
+          'update:modelValue',
+          {
+            true: true,
+            false: false,
+            null: null,
+          }[value],
+        );
       },
     },
 
