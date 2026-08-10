@@ -60,6 +60,7 @@ import { WIDGET_GRID_ROW_HEIGHT, WIDGET_TYPES } from '@/constants';
 import { activeViewMixin } from '@/mixins/active-view';
 
 import CounterWidget from './counter/counter.vue';
+import MapWidget from './map/map.vue';
 import TextWidget from './text/text.vue';
 
 export default {
@@ -70,6 +71,7 @@ export default {
   },
   components: {
     CounterWidget,
+    MapWidget,
     TextWidget,
   },
   mixins: [activeViewMixin],
@@ -96,6 +98,7 @@ export default {
       return {
         [WIDGET_TYPES.text]: TextWidget,
         [WIDGET_TYPES.counter]: CounterWidget,
+        [WIDGET_TYPES.map]: MapWidget,
       }[this.widget.type];
     },
 

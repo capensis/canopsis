@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash';
 import { DEFAULT_WIDGET_GRID_PARAMETERS, WIDGET_GRID_SIZES_KEYS, WIDGET_TYPES } from '@/constants';
 
 import { counterWidgetParametersToForm, formToCounterWidgetParameters } from './forms/counter';
+import { formToMapWidgetParameters, mapWidgetParametersToForm } from './forms/map';
 import { textWidgetParametersToForm } from './forms/text';
 
 /**
@@ -157,6 +158,7 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
   const widgetsMap = {
     [WIDGET_TYPES.text]: textWidgetParametersToForm,
     [WIDGET_TYPES.counter]: counterWidgetParametersToForm,
+    [WIDGET_TYPES.map]: mapWidgetParametersToForm,
   };
 
   const preparer = widgetsMap[type];
@@ -229,6 +231,7 @@ export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
 export const formToWidgetParameters = ({ type, parameters }) => {
   const widgetsMap = {
     [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
+    [WIDGET_TYPES.map]: formToMapWidgetParameters,
   };
 
   const preparer = widgetsMap[type];

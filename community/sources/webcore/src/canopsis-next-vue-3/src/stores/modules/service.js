@@ -15,6 +15,10 @@ export const useServiceStore = defineStore('service', () => {
     request.get(API_ROUTES.serviceImpacts, {
       params: { ...params, _id: id },
     });
+  const fetchAlarmsWithoutStore = ({ id, params = {} } = {}) =>
+    request.get(API_ROUTES.serviceAlarms, {
+      params: { ...params, _id: id },
+    });
   const fetchEntityUpstreamWithoutStore = ({ params } = {}) =>
     request.get(API_ROUTES.entityUpstream, { params });
   const fetchEntityDownstreamsWithoutStore = ({ params } = {}) =>
@@ -25,6 +29,7 @@ export const useServiceStore = defineStore('service', () => {
     fetchEntityInfosKeysWithoutStore,
     fetchServiceDependenciesWithoutStore,
     fetchServiceImpactsWithoutStore,
+    fetchAlarmsWithoutStore,
     fetchEntityUpstreamWithoutStore,
     fetchEntityDownstreamsWithoutStore,
     bulkRemoveServices,
