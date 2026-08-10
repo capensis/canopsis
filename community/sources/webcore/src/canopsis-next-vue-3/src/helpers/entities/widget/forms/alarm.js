@@ -4,12 +4,15 @@ import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?
 import { PAGINATION_LIMIT } from '@/config';
 import {
   ALARM_FIELDS,
+  ALARM_FIELDS_TO_LABELS_KEYS,
+  ALARM_UNSORTABLE_FIELDS,
   DEFAULT_ALARMS_QUICK_ACTIONS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   DEFAULT_LINKS_INLINE_COUNT,
   DEFAULT_PERIODIC_REFRESH,
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   DENSE_TYPES,
+  ENTITY_FIELDS_TO_LABELS_KEYS,
   COLOR_INDICATOR_TYPES,
   DEFAULT_ALARM_MORE_INFO_TEMPLATE,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
@@ -30,6 +33,8 @@ import { convertAlarmWidgetParametersToActiveColumns } from '@/helpers/entities/
 import { hasStateSetting } from '@/helpers/entities/entity/entity';
 import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
 import { availabilityFieldToForm } from '@/helpers/entities/widget/forms/availability';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
+import { setSeveralFields } from '@/helpers/immutable';
 import { uid } from '@/helpers/uid';
 
 import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
@@ -337,6 +342,46 @@ export const formToAlarmListWidgetParameters = (form = {}) => {
 
   return parameters;
 };
+
+/**
+ * Prepared alarms list widget for displaying.
+ *
+ * @param {Object} widget
+ * @returns {Object}
+ */
+export const prepareAlarmListWidget = (widget = {}) =>
+  setSeveralFields(widget, {
+    'parameters.widgetColumns': (columns = []) =>
+      columns.map(column => ({
+        ...column,
+
+        sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
+        text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+      })),
+
+    'parameters.widgetGroupColumns': (columns = DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS) =>
+      columns.map(column => ({
+        ...column,
+
+        sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
+        text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+      })),
+
+    'parameters.serviceDependenciesColumns': (columns = DEFAULT_SERVICE_DEPENDENCIES_COLUMNS) =>
+      columns.map(column => ({
+        ...column,
+
+        sortable: false,
+        text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+      })),
+
+    'parameters.widgetExportColumns': (columns = []) =>
+      columns.map(column => ({
+        ...column,
+
+        text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+      })),
+  });
 
 /**
  * Get a display formatter for an AlarmList column value.
