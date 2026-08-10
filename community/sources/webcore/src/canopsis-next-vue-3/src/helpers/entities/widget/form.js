@@ -1,8 +1,13 @@
 import { cloneDeep } from 'lodash';
 
 import { DEFAULT_WIDGET_GRID_PARAMETERS, WIDGET_GRID_SIZES_KEYS, WIDGET_TYPES } from '@/constants';
+import { uid } from '@/helpers/uid';
 
-import { alarmListWidgetParametersToForm, formToAlarmListWidgetParameters } from './forms/alarm';
+import {
+  alarmListWidgetParametersToForm,
+  formToAlarmListWidgetParameters,
+  prepareAlarmListWidget,
+} from './forms/alarm';
 import { counterWidgetParametersToForm, formToCounterWidgetParameters } from './forms/counter';
 import { formToMapWidgetParameters, mapWidgetParametersToForm } from './forms/map';
 import { textWidgetParametersToForm } from './forms/text';
@@ -169,11 +174,31 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
 };
 
 /**
- * Build minimal alarm-list widget config used by pattern preview modals.
+ * Generate alarm list widget form with default parameters.
  *
- * @returns {Object}
+ * @return {WidgetForm}
  */
-export const generatePreparedDefaultAlarmListWidget = () => ({});
+export const generateDefaultAlarmListWidgetForm = () =>
+  widgetToForm({ type: WIDGET_TYPES.alarmList });
+
+/**
+ * Generate alarm list widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultAlarmListWidget = () => ({
+  ...formToWidget(generateDefaultAlarmListWidgetForm()),
+
+  _id: uid(),
+});
+
+/**
+ * Generate prepared default alarm list.
+ *
+ * @returns {Widget}
+ */
+export const generatePreparedDefaultAlarmListWidget = () =>
+  prepareAlarmListWidget(generateDefaultAlarmListWidget());
 
 /**
  * Build minimal context widget config used by pattern preview modals.

@@ -3,7 +3,17 @@ import { computed, nextTick, ref, useAttrs } from 'vue';
 
 import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
 
-const props = defineProps(validationProps);
+const props = defineProps({
+  ...validationProps,
+  items: {
+    type: Array,
+    default: () => [],
+  },
+  menuProps: {
+    type: Object,
+    default: () => ({}),
+  },
+});
 const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
@@ -14,6 +24,58 @@ const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidati
 );
 const menuShown = ref(false);
 const pendingBlurEvent = ref(null);
+
+const normalizeLegacyListItem = (item, index) => {
+  if (!item || typeof item !== 'object') {
+    return item;
+  }
+
+  if ('divider' in item && item.divider) {
+    return {
+      ...item,
+      type: 'divider',
+      title: '',
+      text: '',
+      value: item.value ?? `__divider__${index}`,
+    };
+  }
+
+  if ('header' in item && item.header) {
+    const title = typeof item.header === 'string'
+      ? item.header
+      : item.title ?? item.text ?? '';
+
+    return {
+      ...item,
+      type: 'subheader',
+      title,
+      text: title,
+      value: item.value ?? `__subheader__${index}`,
+    };
+  }
+
+  return item;
+};
+
+const hasLegacyHeaders = computed(() =>
+  props.items.some(item => !!item?.header),
+);
+const selectItems = computed(() => props.items.map(normalizeLegacyListItem));
+const selectMenuProps = computed(() => {
+  if (!hasLegacyHeaders.value) {
+    return props.menuProps;
+  }
+
+  const contentClass = [
+    props.menuProps.contentClass,
+    'c-select-menu--with-headers',
+  ].filter(Boolean).join(' ');
+
+  return {
+    ...props.menuProps,
+    contentClass,
+  };
+});
 
 // TODO: We add it for label floating solving. Fix in the future
 const selectValue = computed({
@@ -50,6 +112,8 @@ const onMenuUpdate = (value) => {
   <v-select
     v-bind="$attrs"
     v-model="selectValue"
+    :items="selectItems"
+    :menu-props="selectMenuProps"
     :name="inputName"
     :error-messages="errorMessages"
     class="c-field c-select"
@@ -67,3 +131,16 @@ const onMenuUpdate = (value) => {
     </template>
   </v-select>
 </template>
+
+<style lang="scss">
+.c-select-menu--with-headers {
+  .v-list-subheader {
+    font-weight: 700;
+    min-height: 32px;
+  }
+
+  .v-list-item {
+    padding-left: 32px;
+  }
+}
+</style>

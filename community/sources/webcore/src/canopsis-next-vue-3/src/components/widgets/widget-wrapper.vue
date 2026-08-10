@@ -51,6 +51,7 @@
 import { WIDGET_GRID_ROW_HEIGHT, WIDGET_TYPES } from '@/constants';
 import { activeViewMixin } from '@/mixins/active-view';
 
+import AlarmsListWidget from './alarm/alarms-list.vue';
 import CounterWidget from './counter/counter.vue';
 import MapWidget from './map/map.vue';
 import TextWidget from './text/text.vue';
@@ -62,6 +63,7 @@ export default {
     };
   },
   components: {
+    AlarmsListWidget,
     CounterWidget,
     MapWidget,
     TextWidget,
@@ -88,6 +90,7 @@ export default {
 
     component() {
       return {
+        [WIDGET_TYPES.alarmList]: AlarmsListWidget,
         [WIDGET_TYPES.text]: TextWidget,
         [WIDGET_TYPES.counter]: CounterWidget,
         [WIDGET_TYPES.map]: MapWidget,

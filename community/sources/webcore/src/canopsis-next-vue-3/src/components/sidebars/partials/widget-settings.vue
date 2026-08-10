@@ -12,7 +12,7 @@
     <c-layout class="widget-settings__submit-btn-wrapper pa-4">
       <v-btn
         :loading="submitting"
-        :disabled="submitting || !dirty"
+        :disabled="submitting"
         type="submit"
         color="primary"
       >
