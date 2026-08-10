@@ -35,7 +35,6 @@
 
 <script>
 import { PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES } from '@/constants';
-
 import { useModals } from '@/hooks/modals';
 
 export default {

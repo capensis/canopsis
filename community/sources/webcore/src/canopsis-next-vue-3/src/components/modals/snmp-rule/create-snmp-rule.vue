@@ -30,17 +30,14 @@
 <script>
 import { computed } from 'vue';
 
+import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
 import { MODALS } from '@/constants';
-
 import { formToSnmpRule, snmpRuleToForm } from '@/helpers/entities/snmp-rule/form';
-
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-
-import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
 
 export default {
   name: MODALS.createSnmpRule,

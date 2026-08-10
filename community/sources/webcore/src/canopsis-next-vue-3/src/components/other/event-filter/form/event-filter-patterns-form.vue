@@ -16,7 +16,6 @@
 import { computed } from 'vue';
 
 import { isChangeEntityEventFilterRuleType } from '@/helpers/entities/event-filter/rule/entity';
-
 import { useFormModel } from '@/hooks/form';
 
 export default {

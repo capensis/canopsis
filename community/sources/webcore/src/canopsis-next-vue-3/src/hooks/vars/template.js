@@ -1,7 +1,6 @@
 import { computed, ref, unref } from 'vue';
 
 import { LINK_RULE_TYPES, TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
-
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useTemplateVars } from '@/hooks/store/modules/template-vars';
 

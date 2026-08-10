@@ -55,7 +55,6 @@ import { get, orderBy } from 'lodash';
 import { computed, watch } from 'vue';
 
 import { getMaxPageForItemsCount } from '@/helpers/pagination';
-
 import { useI18n } from '@/hooks/i18n';
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 

@@ -22,16 +22,14 @@
 <script>
 import { onMounted } from 'vue';
 
+import ExternalDataTablesList from '@/components/other/external-data-table/external-data-tables-list.vue';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
-
+import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useObserver } from '@/hooks/observer';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
-import { useCRUDPermissions } from '@/hooks/auth';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
-
-import ExternalDataTablesList from '@/components/other/external-data-table/external-data-tables-list.vue';
 
 export default {
   components: { ExternalDataTablesList },

@@ -1,6 +1,6 @@
-import { computed, ref } from 'vue';
-import { defineStore } from 'pinia';
 import { keyBy } from 'lodash';
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
 import {
   API_ROUTES,
@@ -10,14 +10,11 @@ import {
   DEFAULT_LOCALE,
 } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants';
-
-import request from '@/services/request';
-import localStorageService from '@/services/local-storage';
-
-import { i18n } from '@/i18n';
-
-import { viewPermissionsGroupedPermissions } from '@/helpers/permission';
 import { isUserHasOnlyApiRole } from '@/helpers/entities/user/entity';
+import { viewPermissionsGroupedPermissions } from '@/helpers/permission';
+import { i18n } from '@/i18n';
+import localStorageService from '@/services/local-storage';
+import request from '@/services/request';
 
 import { useI18nStore } from './i18n';
 

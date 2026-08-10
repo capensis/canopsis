@@ -1,11 +1,10 @@
-import { computed, unref } from 'vue';
 import { isArray, sortBy } from 'lodash';
+import { computed, unref } from 'vue';
 
 import { groupedPermissionToPermission } from '@/helpers/permission';
-
 import { useCurrentUserPermissions } from '@/hooks/auth';
-import { useInfo } from '@/hooks/store/modules/info';
 import { useI18n } from '@/hooks/i18n';
+import { useInfo } from '@/hooks/store/modules/info';
 
 export const useTopBarMenu = ({ permissionsWithDefaultType = [], withoutSort = true } = {}) => {
   const { currentUserPermissionsById, checkAccess, checkReadAccess } = useCurrentUserPermissions();

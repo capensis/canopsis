@@ -87,13 +87,10 @@
 <script>
 import { keyBy } from 'lodash';
 
-import { getStringLinesCount } from '@/helpers/string';
-
-import { payloadFieldMixin } from '@/mixins/payload/payload-field';
-
-import { FORM_CONTEXT_KEY } from '@/hooks/form';
-
 import VariablesMenu from '@/components/common/text-editor/variables-menu.vue';
+import { getStringLinesCount } from '@/helpers/string';
+import { FORM_CONTEXT_KEY } from '@/hooks/form';
+import { payloadFieldMixin } from '@/mixins/payload/payload-field';
 
 export default {
   inject: {

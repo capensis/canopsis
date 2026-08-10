@@ -1,8 +1,8 @@
-import { isEmpty } from 'lodash';
-import { watch, unref } from 'vue';
-import { configure, defineRule } from 'vee-validate';
-import { all as veeValidateRules } from '@vee-validate/rules';
 import { localize, setFallbackLocale, setLocale } from '@vee-validate/i18n';
+import { all as veeValidateRules } from '@vee-validate/rules';
+import { isEmpty } from 'lodash';
+import { configure, defineRule } from 'vee-validate';
+import { watch, unref } from 'vue';
 
 import { DEFAULT_LOCALE } from '@/config';
 

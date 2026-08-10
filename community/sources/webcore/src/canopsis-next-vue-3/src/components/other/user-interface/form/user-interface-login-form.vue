@@ -27,13 +27,11 @@
 <script>
 import { computed } from 'vue';
 
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import { objectToVariables } from '@/helpers/variables';
-
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useTemplateVars } from '@/hooks/store/modules/template-vars';
-
-import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
   components: { TextEditorField },

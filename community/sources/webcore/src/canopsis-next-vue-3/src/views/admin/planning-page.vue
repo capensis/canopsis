@@ -58,23 +58,21 @@
 <script>
 import { computed, ref, watch } from 'vue';
 
+import PlanningExceptions from '@/components/other/pbehavior/exceptions/planning-exceptions.vue';
+import PlanningReasons from '@/components/other/pbehavior/reasons/planning-reasons.vue';
+import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
 import {
   GROUPED_USER_PERMISSIONS_KEYS,
   MODALS,
   PLANNING_TABS,
   USER_PERMISSIONS,
 } from '@/constants';
-
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
-
-import PlanningExceptions from '@/components/other/pbehavior/exceptions/planning-exceptions.vue';
-import PlanningReasons from '@/components/other/pbehavior/reasons/planning-reasons.vue';
-import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
 
 export default {
   components: {

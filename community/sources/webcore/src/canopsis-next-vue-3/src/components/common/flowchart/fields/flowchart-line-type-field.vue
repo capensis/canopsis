@@ -25,11 +25,9 @@
 </template>
 
 <script>
-import { LINE_TYPES } from '@/constants';
-
-import { formBaseMixin } from '@/mixins/form';
-
 import PointsLinePath from '@/components/common/flowchart/common/points-line-path.vue';
+import { LINE_TYPES } from '@/constants';
+import { formBaseMixin } from '@/mixins/form';
 
 export default {
   components: { PointsLinePath },

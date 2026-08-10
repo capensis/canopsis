@@ -2,9 +2,7 @@ import { mapActions, mapState, mapStores } from 'pinia';
 
 import { SOCKET_ROOMS } from '@/config';
 import { MAX_LIMIT } from '@/constants';
-
 import { ICONS_RESPONSE_MESSAGES_TYPES } from '@/plugins/socket/constants';
-
 import { useIconStore } from '@/stores/modules/icon';
 
 import { vuetifyCustomIconsBaseMixin } from './base';

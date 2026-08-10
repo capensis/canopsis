@@ -1,8 +1,7 @@
 import { inject } from 'vue';
 
-import { usePopupsStore } from '@/plugins/popups/stores';
-
 import { createPopupsApi } from '@/plugins/popups';
+import { usePopupsStore } from '@/plugins/popups/stores';
 
 /**
  * Get popups API.

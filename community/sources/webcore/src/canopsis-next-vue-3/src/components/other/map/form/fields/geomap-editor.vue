@@ -102,25 +102,22 @@
 </template>
 
 <script>
+import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
+import GeomapContextmenu from '@/components/common/geomap/geomap-contextmenu.vue';
+import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
+import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
+import GeomapControl from '@/components/common/geomap/geomap-control.vue';
+import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
+import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
+import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
+import Geomap from '@/components/common/geomap/geomap.vue';
+import PointIcon from '@/components/other/map/partials/point-icon.vue';
 import { COLORS, OPEN_STREET_LAYER_URL } from '@/config';
 import { MODALS } from '@/constants';
-
-import { uid } from '@/helpers/uid';
 import { geomapPointToForm } from '@/helpers/entities/map/form';
 import { getGeomapMarkerIconOptions } from '@/helpers/entities/map/list';
-
+import { uid } from '@/helpers/uid';
 import { formMixin } from '@/mixins/form';
-
-import Geomap from '@/components/common/geomap/geomap.vue';
-import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
-import GeomapControl from '@/components/common/geomap/geomap-control.vue';
-import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
-import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
-import GeomapContextmenu from '@/components/common/geomap/geomap-contextmenu.vue';
-import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
-import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
-import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
-import PointIcon from '@/components/other/map/partials/point-icon.vue';
 
 import PointFormDialogMenu from './point-form-dialog-menu.vue';
 

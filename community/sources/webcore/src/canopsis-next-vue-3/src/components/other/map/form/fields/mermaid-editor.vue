@@ -32,14 +32,13 @@
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
-
 import MermaidCodePreview from '@/components/other/map/partials/mermaid-code-preview.vue';
+import { formMixin } from '@/mixins/form';
 
 import AddLocationBtn from './add-location-btn.vue';
 import MermaidCodeEditor from './mermaid-code-editor.vue';
-import MermaidThemeField from './mermaid-theme-field.vue';
 import MermaidPointsEditor from './mermaid-points-editor.vue';
+import MermaidThemeField from './mermaid-theme-field.vue';
 
 export default {
   components: {

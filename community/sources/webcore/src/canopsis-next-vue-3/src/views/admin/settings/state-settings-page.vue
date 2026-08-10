@@ -24,18 +24,15 @@
 <script>
 import { onMounted } from 'vue';
 
+import StateSettingsList from '@/components/other/state-setting/state-settings-list.vue';
 import { JUNIT_STATE_SETTING_ID, MODALS, USER_PERMISSIONS } from '@/constants';
-
 import { convertQueryToRequest } from '@/helpers/query';
-
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { useStateSetting } from '@/hooks/store/modules/state-setting';
-
-import StateSettingsList from '@/components/other/state-setting/state-settings-list.vue';
 
 export default {
   components: { StateSettingsList },

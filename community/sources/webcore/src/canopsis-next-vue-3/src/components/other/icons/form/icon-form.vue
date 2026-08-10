@@ -31,11 +31,11 @@
 import { ref } from 'vue';
 
 import { ICON_TITLE_REGEX, MAX_ICON_SIZE_IN_KB } from '@/constants';
-
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
 import CustomIcon from '../partials/custom-icon.vue';
+
 import IconFileSelector from './fields/icon-file-selector.vue';
 
 export default {

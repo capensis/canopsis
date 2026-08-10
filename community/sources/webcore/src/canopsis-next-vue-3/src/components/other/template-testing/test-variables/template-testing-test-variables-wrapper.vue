@@ -41,14 +41,13 @@
 import { computed, onMounted, ref, toRef } from 'vue';
 
 import { TEMPLATE_TESTING_TEST_VARIABLES_TABS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 import { useCopyVarsList } from '@/hooks/vars/copy';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
 import { useTestVariablesTabData } from './hooks/template-test-variables-wrapper';
-import TemplateTestingTestVariables from './template-testing-test-variables.vue';
 import TemplateTestingTestVariablesTab from './partials/template-testing-test-variables-tab.vue';
+import TemplateTestingTestVariables from './template-testing-test-variables.vue';
 
 export default {
   components: { TemplateTestingTestVariables, TemplateTestingTestVariablesTab },

@@ -1,5 +1,4 @@
 import { normalizeHtml } from '@/helpers/html';
-
 import {
   customIconsRegistry,
   registerCustomIcon,

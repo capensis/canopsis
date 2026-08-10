@@ -1,7 +1,6 @@
 import { debounce } from 'lodash';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-
 import {
   findSelectedVariable,
   matchPayloadOperators,

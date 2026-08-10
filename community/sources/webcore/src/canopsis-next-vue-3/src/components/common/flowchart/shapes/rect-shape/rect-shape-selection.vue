@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import RectSelection from '../../common/rect-selection.vue';
 import RectConnectors from '../../common/rect-connectors.vue';
+import RectSelection from '../../common/rect-selection.vue';
 
 export default {
   components: { RectConnectors, RectSelection },

@@ -75,18 +75,15 @@
 <script>
 import isEqual from 'lodash/isEqual';
 
-import { SOCKET_ROOMS } from '@/config';
-import { CRUD_ACTIONS, USER_PERMISSIONS } from '@/constants';
-
-import { checkUserAccess } from '@/helpers/permission';
-
-import { useAuthStore } from '@/stores/modules/auth';
-import { useHealthcheckStore } from '@/stores/modules/healthcheck';
-
-import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-network-graph.vue';
 import HealthcheckEnginesMetrics from '@/components/other/healthcheck/healthcheck-engines-metrics.vue';
 import HealthcheckGraphs from '@/components/other/healthcheck/healthcheck-graphs.vue';
+import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-network-graph.vue';
 import HealthcheckParameters from '@/components/other/healthcheck/healthcheck-parameters.vue';
+import { SOCKET_ROOMS } from '@/config';
+import { CRUD_ACTIONS, USER_PERMISSIONS } from '@/constants';
+import { checkUserAccess } from '@/helpers/permission';
+import { useAuthStore } from '@/stores/modules/auth';
+import { useHealthcheckStore } from '@/stores/modules/healthcheck';
 
 const HEALTHCHECK_TABS = {
   systemStatus: 'system-status',

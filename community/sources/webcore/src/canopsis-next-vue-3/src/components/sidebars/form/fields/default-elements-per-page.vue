@@ -14,9 +14,8 @@
 </template>
 
 <script>
-import { PAGINATION_LIMIT } from '@/config';
-
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+import { PAGINATION_LIMIT } from '@/config';
 
 export default {
   components: { WidgetSettingsItem },

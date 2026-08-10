@@ -18,10 +18,8 @@
 <script>
 import { HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX, SOCKET_ROOMS } from '@/config';
 import { DATETIME_FORMATS, MESSAGE_STATS_INTERVALS } from '@/constants';
-
 import { convertDateToString } from '@/helpers/date/date';
 import { saveFile } from '@/helpers/file/files';
-
 import { useMessageRateStats } from '@/hooks/store/modules/message-rate-stats';
 
 import HealthcheckLastHourFilters from './healthcheck-last-hour-filters.vue';

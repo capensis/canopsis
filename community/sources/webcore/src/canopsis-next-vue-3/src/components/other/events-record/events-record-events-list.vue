@@ -80,12 +80,11 @@
 import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
 
-import EventsRecordEventsListExpandPanel from './partials/events-record-events-list-expand-panel.vue';
 import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';
+import EventsRecordEventsListExpandPanel from './partials/events-record-events-list-expand-panel.vue';
 
 export default {
   components: {

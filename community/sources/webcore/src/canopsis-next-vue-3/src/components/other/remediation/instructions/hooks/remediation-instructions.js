@@ -1,7 +1,6 @@
 import { omit } from 'lodash';
 
 import { MODALS } from '@/constants';
-
 import { useAuth } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';

@@ -20,7 +20,6 @@
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue';
 
 import { ALARM_STATES } from '@/constants';
-
 import { useFormModel } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';

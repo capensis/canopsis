@@ -42,8 +42,8 @@
 </template>
 
 <script>
-import { computed } from 'vue';
 import { useField } from 'vee-validate';
+import { computed } from 'vue';
 
 import {
   patternRuleToForm,
@@ -51,7 +51,6 @@ import {
   convertValueByType,
   getOperatorsByRule,
 } from '@/helpers/entities/pattern/form';
-
 import { formArrayMixin } from '@/mixins/form';
 
 import PatternRuleField from './pattern-rule-field.vue';

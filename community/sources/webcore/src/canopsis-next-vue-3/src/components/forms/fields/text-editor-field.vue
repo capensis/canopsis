@@ -18,13 +18,12 @@
 </template>
 
 <script>
+import { useField } from 'vee-validate';
 import { computed, watch } from 'vue';
 import { useTheme } from 'vuetify';
-import { useField } from 'vee-validate';
-
-import { useInfo } from '@/hooks/store/modules/info';
 
 import TextEditor from '@/components/common/text-editor/text-editor.vue';
+import { useInfo } from '@/hooks/store/modules/info';
 
 export default {
   components: {

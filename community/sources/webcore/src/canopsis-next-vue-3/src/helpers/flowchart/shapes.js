@@ -1,7 +1,6 @@
 import { get, isArray } from 'lodash';
 
 import { LINE_TYPES, SHAPES } from '@/constants';
-
 import { uid } from '@/helpers/uid';
 
 import { generatePoint } from './points';

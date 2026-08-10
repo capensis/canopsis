@@ -2,10 +2,8 @@ import { get } from 'lodash';
 import { computed, ref, unref, watch } from 'vue';
 
 import { USER_PERMISSIONS } from '@/constants';
-
 import { isOmitEqual } from '@/helpers/collection';
 import { convertRuleToTemplateTestingTestValidateForm } from '@/helpers/entities/template-testing-validate/form';
-
 import { useCanPermission } from '@/hooks/auth';
 import { useModelField } from '@/hooks/form/model-field';
 

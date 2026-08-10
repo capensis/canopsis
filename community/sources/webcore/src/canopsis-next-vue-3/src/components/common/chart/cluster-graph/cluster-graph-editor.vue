@@ -32,19 +32,17 @@
 <script>
 import { keyBy, omit } from 'lodash';
 
+import NetworkGraph from '@/components/common/chart/network-graph.vue';
 import { COLORS } from '@/config';
 import {
   TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
   TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
   ENTITY_TYPES,
 } from '@/constants';
-
 import { formMixin } from '@/mixins/form';
 
-import NetworkGraph from '@/components/common/chart/network-graph.vue';
-
-import ClusterGraphEntitiesType from './partials/cluster-graph-entities-type.vue';
 import ClusterGraphEntitiesList from './partials/cluster-graph-entities-list.vue';
+import ClusterGraphEntitiesType from './partials/cluster-graph-entities-type.vue';
 
 export default {
   components: {

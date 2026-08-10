@@ -29,9 +29,8 @@ import {
   EXTERNAL_DATA_TABLE_COLUMN_NUMBER_DATA_TYPE_DECIMAL_SEPARATOR,
   EXTERNAL_DATA_TABLE_COLUMN_NUMBER_DATA_TYPE_THOUSANDS_SEPARATOR,
 } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   emits: ['update:value'],

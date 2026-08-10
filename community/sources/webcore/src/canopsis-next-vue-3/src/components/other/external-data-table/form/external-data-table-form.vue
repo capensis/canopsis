@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import { useI18n } from '@/hooks/i18n';
 import { useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import ExternalDataTableDatabaseField from './fields/exterrnal-data-table-database-field.vue';
 

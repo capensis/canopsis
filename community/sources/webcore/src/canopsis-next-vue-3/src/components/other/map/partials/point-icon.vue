@@ -11,7 +11,6 @@ import { isNumber } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
 import { ALARM_STATES } from '@/constants';
-
 import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';

@@ -50,7 +50,6 @@
 
 <script>
 import { AVAILABLE_TIME_UNITS } from '@/constants';
-
 import { convertUnit } from '@/helpers/date/duration';
 
 export default {

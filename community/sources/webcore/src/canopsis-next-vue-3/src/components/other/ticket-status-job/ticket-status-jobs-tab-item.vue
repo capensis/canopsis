@@ -14,9 +14,7 @@ import { computed, onMounted } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { JOBS_TABS } from '@/constants';
-
 import { convertQueryToRequest } from '@/helpers/query';
-
 import { useI18n } from '@/hooks/i18n';
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { useTicketStatusJob } from '@/hooks/store/modules/ticket-status-job';

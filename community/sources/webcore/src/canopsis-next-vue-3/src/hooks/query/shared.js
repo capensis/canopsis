@@ -2,9 +2,9 @@ import { ref } from 'vue';
 
 import { convertQueryToRequest as convertQueryToRequestHelper } from '@/helpers/query';
 
-import { usePendingHandler } from './pending';
 import { useLocalQuery } from './local-query';
 import { useQueryOptions } from './options';
+import { usePendingHandler } from './pending';
 
 /**
  * Custom hook that combines the functionalities of tracking pending state of an asynchronous operation and managing a

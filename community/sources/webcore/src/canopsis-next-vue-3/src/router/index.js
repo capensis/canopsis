@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
+import { ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 import {
   CRUD_ACTIONS,
   GROUPED_USER_PERMISSIONS,
@@ -8,12 +9,9 @@ import {
   ROUTES_NAMES,
   USER_PERMISSIONS,
 } from '@/constants';
-import { ROUTER_ACCESS_TOKEN_KEY } from '@/config';
-
+import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
 import { usePopupsStore } from '@/plugins/popups/stores';
 import { useAuthStore } from '@/stores/modules/auth';
-
-import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
 
 const PlaceholderPage = () => import('@/views/placeholder-page.vue');
 const AdminRights = () => import('@/views/admin/rights-page.vue');

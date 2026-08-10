@@ -54,8 +54,8 @@
 </template>
 
 <script>
-import { mapInformationPopupMixin } from '@/mixins/map/map-information-popup-mixin';
 import { mapFlowchartPointsMixin } from '@/mixins/map/map-flowchart-points-mixin';
+import { mapInformationPopupMixin } from '@/mixins/map/map-information-popup-mixin';
 
 import PointIcon from './point-icon.vue';
 import PointPopupDialog from './point-popup-dialog.vue';

@@ -16,7 +16,6 @@
 
 <script>
 import { MAX_LIMIT } from '@/constants';
-
 import { useFilter } from '@/hooks/store/modules/filter';
 
 export default {

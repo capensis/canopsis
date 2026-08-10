@@ -79,16 +79,14 @@ import { merge } from 'lodash';
 
 import { COLORS } from '@/config';
 import { STROKE_TYPES } from '@/constants';
-
-import { getPropertyValueByShapes } from '@/helpers/flowchart/shapes';
 import { calculateCenterBetweenPoint } from '@/helpers/flowchart/points';
-
+import { getPropertyValueByShapes } from '@/helpers/flowchart/shapes';
 import { formBaseMixin } from '@/mixins/form';
 
 import FlowchartColorField from './fields/flowchart-color-field.vue';
+import FlowchartLineTypeField from './fields/flowchart-line-type-field.vue';
 import FlowchartNumberField from './fields/flowchart-number-field.vue';
 import FlowchartStrokeTypeField from './fields/flowchart-stroke-type-field.vue';
-import FlowchartLineTypeField from './fields/flowchart-line-type-field.vue';
 
 export default {
   components: {

@@ -17,15 +17,14 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
+
 import { APP_HOST, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 import { MODALS, ROUTES_NAMES } from '@/constants';
-
 import { removeTrailingSlashes } from '@/helpers/url';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useShareToken } from '@/hooks/store/modules/share-token';
-import { useRouter } from 'vue-router';
 
 export default {
   props: {

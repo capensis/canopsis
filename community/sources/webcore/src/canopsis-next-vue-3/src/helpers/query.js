@@ -1,14 +1,14 @@
 import { isNil } from 'lodash';
 
-import { convertSortToRequest } from '@/helpers/entities/shared/query';
-import {
-  convertStartDateIntervalToTimestamp,
-  convertStopDateIntervalToTimestamp,
-} from '@/helpers/date/date-intervals';
 import {
   convertDateToEndOfDayTimestamp,
   convertDateToStartOfDayTimestamp,
 } from '@/helpers/date/date';
+import {
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from '@/helpers/date/date-intervals';
+import { convertSortToRequest } from '@/helpers/entities/shared/query';
 
 /**
  * Converts query parameters into a request object.

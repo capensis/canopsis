@@ -82,13 +82,13 @@
 <script>
 import { isFunction } from 'lodash';
 
+import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 import {
   PATTERN_FIELD_TYPES,
   PATTERN_RULE_INFOS_FIELDS,
   PATTERN_RULE_TYPES,
   DEFAULT_PATTERN_FIELD_TYPES,
 } from '@/constants';
-
 import {
   getFieldType,
   isDateRuleType,
@@ -99,10 +99,7 @@ import {
   isOperatorHasValue,
   isNumberRuleType,
 } from '@/helpers/entities/pattern/form';
-
 import { formMixin } from '@/mixins/form';
-
-import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 
 import PatternAttributeField from './pattern-attribute-field.vue';
 import PatternOperatorField from './pattern-operator-field.vue';

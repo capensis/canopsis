@@ -38,8 +38,9 @@
 </template>
 
 <script>
-import EventFilterFailuresListExpandPanel from './event-filter-failures-list-expand-panel.vue';
 import { convertDateToString } from '@/helpers/date/date';
+
+import EventFilterFailuresListExpandPanel from './event-filter-failures-list-expand-panel.vue';
 
 export default {
   components: { EventFilterFailuresListExpandPanel },

@@ -41,15 +41,14 @@
 import { computed } from 'vue';
 
 import { MODALS, RESPONSE_STATUSES } from '@/constants';
-
 import { pickIds } from '@/helpers/array';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
+import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
+import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
 import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
 import { useDynamicInfoTemplates } from '@/hooks/store/modules/dynamic-info-templates';
-import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
 import { useEventFilter } from '@/hooks/store/modules/event-filter';
 import { useFlappingRules } from '@/hooks/store/modules/flapping-rules';
 import { useIdleRules } from '@/hooks/store/modules/idle-rules';
@@ -57,7 +56,6 @@ import { useLinkRule } from '@/hooks/store/modules/link-rule';
 import { useLlm } from '@/hooks/store/modules/llm';
 import { useMap } from '@/hooks/store/modules/map';
 import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
-import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
 import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
@@ -66,8 +64,8 @@ import { usePlaylist } from '@/hooks/store/modules/playlist';
 import { useRemediationConfiguration } from '@/hooks/store/modules/remediation-configuration';
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
-import { useRole } from '@/hooks/store/modules/role';
 import { useResolveRules } from '@/hooks/store/modules/resolve-rules';
+import { useRole } from '@/hooks/store/modules/role';
 import { useScenario } from '@/hooks/store/modules/scenario';
 import { useSnmpRule } from '@/hooks/store/modules/snmp-rule';
 import { useUser } from '@/hooks/store/modules/user';

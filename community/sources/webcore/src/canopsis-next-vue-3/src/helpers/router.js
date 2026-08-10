@@ -1,13 +1,11 @@
 import { isArray, isEmpty, isFunction, pick } from 'lodash';
 
 import { CRUD_ACTIONS, POPUP_TYPES } from '@/constants';
-
+import { checkUserAnyAccess, groupedPermissionToPermission } from '@/helpers/permission';
+import { useInfo } from '@/hooks/store/modules/info';
 import { i18n } from '@/i18n';
 import { usePopupsStore } from '@/plugins/popups/stores';
 import { useAuthStore } from '@/stores/modules/auth';
-import { useInfo } from '@/hooks/store/modules/info';
-
-import { checkUserAnyAccess, groupedPermissionToPermission } from '@/helpers/permission';
 
 const resolvePermissionId = (requiresPermission, route) =>
   isFunction(requiresPermission.id) ? requiresPermission.id(route) : requiresPermission.id;

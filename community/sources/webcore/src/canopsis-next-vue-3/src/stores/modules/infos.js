@@ -1,8 +1,7 @@
-import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
-
 import { useDynamicInfoStore } from '@/stores/modules/dynamic-info';
 import { useServiceStore } from '@/stores/modules/service';
 

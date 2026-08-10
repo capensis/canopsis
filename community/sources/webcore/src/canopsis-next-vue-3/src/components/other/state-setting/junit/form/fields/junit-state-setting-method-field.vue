@@ -16,7 +16,6 @@
 import { computed } from 'vue';
 
 import { JUNIT_STATE_SETTING_METHODS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {

@@ -46,7 +46,6 @@
 import { computed } from 'vue';
 
 import { PATTERNS_FIELDS, PATTERN_TYPES } from '@/constants';
-
 import { useFormContext, useFormModels } from '@/hooks/form';
 
 export default {

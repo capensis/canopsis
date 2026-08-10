@@ -1,12 +1,11 @@
 import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
-
 import { featuresService } from '@/services/features';
 
-import { CANOPSIS_EDITION } from './permission';
 import { ALARM_METRIC_PARAMETERS } from './alarm';
 import { QUICK_RANGES } from './common';
 import { SAMPLINGS } from './date';
 import { AGGREGATE_FUNCTIONS, KPI_PIE_CHART_SHOW_MODS } from './kpi';
+import { CANOPSIS_EDITION } from './permission';
 
 export const WIDGET_TYPES = {
   alarmList: 'AlarmsList',

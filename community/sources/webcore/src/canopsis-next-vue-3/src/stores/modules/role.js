@@ -1,11 +1,9 @@
-import { computed, ref } from 'vue';
-import { defineStore } from 'pinia';
 import { find } from 'lodash';
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
 import { API_ROUTES } from '@/config';
-
 import request from '@/services/request';
-
 import { createBasicCRUDActions } from '@/stores/plugins/crud';
 
 export const useRoleStore = defineStore('role', () => {

@@ -44,7 +44,6 @@
 import { computed } from 'vue';
 
 import { isJobTypeIncludesUserName } from '@/helpers/entities/remediation/configuration/form';
-
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';

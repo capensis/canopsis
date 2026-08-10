@@ -16,7 +16,6 @@
 import { computed, watch } from 'vue';
 
 import { LLM_THINKING_LEVELS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {

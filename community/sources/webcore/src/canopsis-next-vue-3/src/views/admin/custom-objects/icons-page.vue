@@ -16,15 +16,13 @@
 <script>
 import { ref } from 'vue';
 
+import Icons from '@/components/other/icons/icons.vue';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
-
+import { useCallActionWithPopup } from '@/hooks/actions/call';
+import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useCRUDPermissions } from '@/hooks/auth';
 import { useIcon } from '@/hooks/store/modules/icon';
-import { useCallActionWithPopup } from '@/hooks/actions/call';
-
-import Icons from '@/components/other/icons/icons.vue';
 
 export default {
   components: { Icons },

@@ -17,13 +17,11 @@ import {
   ROUTES_NAMES,
   USER_PERMISSIONS,
 } from '@/constants';
-
 import { uid } from '@/helpers/uid';
-
 import { useI18n } from '@/hooks/i18n';
 
-import { useUserInterfaceActions } from './hooks/user-interface-actions';
 import { useMaintenanceActions } from './hooks/maintenance-actions';
+import { useUserInterfaceActions } from './hooks/user-interface-actions';
 import TopBarMenu from './top-bar-menu.vue';
 
 export default {

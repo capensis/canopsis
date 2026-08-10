@@ -57,14 +57,13 @@
 import { computed } from 'vue';
 
 import { TEMPLATE_TESTING_TEST_TYPES, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 import RemediationInstructionGeneralForm from './remediation-instruction-general-form.vue';
+import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
 import RemediationInstructionPatternsForm from './remediation-instruction-patterns-form.vue';
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
-import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
 
 export default {
   inject: ['$validator'],

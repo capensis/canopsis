@@ -1,5 +1,4 @@
 import { TEMPLATE_TESTING_DATA_TYPES } from '@/constants';
-
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 
 /**

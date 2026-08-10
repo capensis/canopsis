@@ -17,9 +17,8 @@
 
 <script>
 import { MAX_LIMIT } from '@/constants';
-import { useEntityCategoryStore } from '@/stores/modules/entity-category';
-
 import { formBaseMixin } from '@/mixins/form';
+import { useEntityCategoryStore } from '@/stores/modules/entity-category';
 
 export default {
   mixins: [formBaseMixin],

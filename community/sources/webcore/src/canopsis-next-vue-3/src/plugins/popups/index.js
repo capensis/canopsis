@@ -1,5 +1,5 @@
-import { usePopupsStore } from './stores';
 import ThePopups from './components/the-popups.vue';
+import { usePopupsStore } from './stores';
 
 /**
  * Creates public popups API.

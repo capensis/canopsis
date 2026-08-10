@@ -53,7 +53,6 @@
 import { ref, computed } from 'vue';
 
 import { REMEDIATION_INSTRUCTION_APPROVAL_TYPES, USER_PERMISSIONS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 import { useValidator } from '@/hooks/validator/validator';
 

@@ -1,5 +1,5 @@
-import { isArray, isObject, zipObjectDeep } from 'lodash';
 import { flatten } from 'flat';
+import { isArray, isObject, zipObjectDeep } from 'lodash';
 
 import { uid } from '@/helpers/uid';
 

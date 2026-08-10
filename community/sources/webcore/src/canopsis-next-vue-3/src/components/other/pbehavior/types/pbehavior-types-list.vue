@@ -63,7 +63,6 @@
 import { computed } from 'vue';
 
 import { getMostReadableTextColor } from '@/helpers/color';
-
 import { useI18n } from '@/hooks/i18n';
 
 import PbehaviorTypesListExpandPanel from './partials/pbehavior-types-list-expand-panel.vue';

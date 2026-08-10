@@ -34,14 +34,11 @@
 </template>
 
 <script>
+import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
-
 import { convertDateToStartOfUnitDateObject, convertDateToString } from '@/helpers/date/date';
 import { getDateObjectByTime, getDateObjectByDate } from '@/helpers/date/date-time-picker';
-
 import { formBaseMixin } from '@/mixins/form';
-
-import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';
 
 import { createDateTimeValidationRules } from './validation-rules';
 

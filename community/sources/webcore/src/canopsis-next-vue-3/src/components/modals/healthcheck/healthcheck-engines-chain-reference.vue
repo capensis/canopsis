@@ -30,11 +30,9 @@
 </template>
 
 <script>
-import { HEALTHCHECK_SERVICES_NAMES } from '@/constants';
-
-import { useHealthcheckStore } from '@/stores/modules/healthcheck';
-
 import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-network-graph.vue';
+import { HEALTHCHECK_SERVICES_NAMES } from '@/constants';
+import { useHealthcheckStore } from '@/stores/modules/healthcheck';
 
 export default {
   components: { HealthcheckNetworkGraph },

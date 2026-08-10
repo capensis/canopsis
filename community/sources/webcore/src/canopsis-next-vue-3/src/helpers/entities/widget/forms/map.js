@@ -11,7 +11,6 @@ import {
   ENTITY_FIELDS_TO_LABELS_KEYS,
   ENTITY_UNSORTABLE_FIELDS,
 } from '@/constants';
-
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { setSeveralFields } from '@/helpers/immutable';
 

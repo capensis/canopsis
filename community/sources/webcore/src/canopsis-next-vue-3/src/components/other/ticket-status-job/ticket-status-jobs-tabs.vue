@@ -18,7 +18,6 @@
 import { computed, ref } from 'vue';
 
 import { JOBS_TABS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 import TicketStatusJobsTabItem from './ticket-status-jobs-tab-item.vue';

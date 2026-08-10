@@ -51,15 +51,12 @@
 <script>
 import { computed } from 'vue';
 
-import { DATETIME_FORMATS } from '@/constants';
-
-import { convertDateToString } from '@/helpers/date/date';
-
-import { useFormModels } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
+import { DATETIME_FORMATS } from '@/constants';
+import { convertDateToString } from '@/helpers/date/date';
+import { useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   components: { DateTimePickerField, TextEditorField },

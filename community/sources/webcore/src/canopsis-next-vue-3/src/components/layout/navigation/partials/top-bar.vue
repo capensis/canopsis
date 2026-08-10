@@ -56,23 +56,21 @@
 import { computed } from 'vue';
 import { useDisplay } from 'vuetify';
 
+import HealthcheckChipsList from '@/components/other/healthcheck/partials/healthcheck-chips-list.vue';
 import { MEDIA_QUERIES_BREAKPOINTS, SIDE_BAR_WIDTH, TOP_BAR_HEIGHT } from '@/config';
 import { TELEPORTS_NAMES, USER_PERMISSIONS } from '@/constants';
-
 import { useAuth, useCanPermission } from '@/hooks/auth';
 import { useInfo } from '@/hooks/store/modules/info';
 
-import HealthcheckChipsList from '@/components/other/healthcheck/partials/healthcheck-chips-list.vue';
-
 import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';
-import LoggedUsersCount from './logged-users-count.vue';
 import GroupsTopBar from './groups-top-bar/groups-top-bar.vue';
-import TopBarExploitationMenu from './top-bar-exploitation-menu.vue';
+import LoggedUsersCount from './logged-users-count.vue';
 import TopBarAdministrationMenu from './top-bar-administration-menu.vue';
+import TopBarExploitationMenu from './top-bar-exploitation-menu.vue';
 import TopBarNotificationsMenu from './top-bar-notifications-menu.vue';
-import TopBarUserMenu from './top-bar-user-menu.vue';
 import TopBarTitle from './top-bar-title.vue';
+import TopBarUserMenu from './top-bar-user-menu.vue';
 
 export default {
   components: {

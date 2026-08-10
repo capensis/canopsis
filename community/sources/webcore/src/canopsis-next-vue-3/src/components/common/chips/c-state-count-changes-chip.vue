@@ -8,7 +8,6 @@
 import { computed } from 'vue';
 
 import { ALARM_STATES, ALARM_STATES_CLASSES } from '@/constants';
-
 import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
 
 export default {

@@ -1,11 +1,9 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
 import { API_ROUTES } from '@/config';
-
-import request, { useRequestCancelling } from '@/services/request';
-
 import { mapIds } from '@/helpers/array';
+import request, { useRequestCancelling } from '@/services/request';
 
 export const useAlarmStore = defineStore('alarm', () => {
   const alarmsById = ref({});

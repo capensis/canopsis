@@ -1,7 +1,6 @@
 import { omit } from 'lodash';
 
 import { CRUD_ACTIONS, ROLE_TYPES, TIME_UNITS } from '@/constants';
-
 import { durationToForm } from '@/helpers/date/duration';
 import { isApiPermission } from '@/helpers/entities/permissions/list';
 

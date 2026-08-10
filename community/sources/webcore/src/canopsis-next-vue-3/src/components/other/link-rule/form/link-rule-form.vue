@@ -77,26 +77,22 @@
 <script>
 import { computed, ref, watch, onBeforeUnmount, onMounted } from 'vue';
 
+import { useTestVariablesTabData } from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
+import TemplateTestingTestVariablesTab from '@/components/other/template-testing/test-variables/partials/template-testing-test-variables-tab.vue';
+import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
 import { TEMPLATE_TESTING_TEST_TYPES, LINK_RULE_TYPES } from '@/constants';
-
 import { isDefaultSourceCode } from '@/helpers/entities/link/form';
-
+import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 import { useFormContext, useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
+import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
 import { useValidator } from '@/hooks/validator/validator';
 import { useTemplateVarsList } from '@/hooks/vars/template';
-import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
-import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 
-import { useTestVariablesTabData } from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
-
-import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
-import TemplateTestingTestVariablesTab from '@/components/other/template-testing/test-variables/partials/template-testing-test-variables-tab.vue';
-
-import LinkRuleGeneralForm from './link-rule-general-form.vue';
-import LinkRuleSimpleForm from './link-rule-simple-form.vue';
 import LinkRuleAdvancedForm from './link-rule-advanced-form.vue';
+import LinkRuleGeneralForm from './link-rule-general-form.vue';
 import LinkRulePatternsForm from './link-rule-patterns-form.vue';
+import LinkRuleSimpleForm from './link-rule-simple-form.vue';
 
 const LINK_RULE_FORM_TABS = {
   general: 'general',

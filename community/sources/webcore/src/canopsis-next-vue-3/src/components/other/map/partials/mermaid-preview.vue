@@ -24,8 +24,8 @@
 <script>
 import Panzoom from '@/components/common/panzoom/panzoom.vue';
 
-import MermaidPointsPreview from './mermaid-points-preview.vue';
 import MermaidCodePreview from './mermaid-code-preview.vue';
+import MermaidPointsPreview from './mermaid-points-preview.vue';
 
 export default {
   components: {

@@ -58,9 +58,8 @@
 import { computed, toRef, watch } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
-
-import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
 import { useLazySearch } from '@/hooks/form/lazy-search';
+import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
 import { useAlarmTagLabel } from '@/hooks/store/modules/alarm-tag-label';
 
 export default {

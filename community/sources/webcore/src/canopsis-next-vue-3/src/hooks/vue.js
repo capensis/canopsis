@@ -1,5 +1,5 @@
-import { getCurrentInstance, watch } from 'vue';
 import { camelCase } from 'lodash';
+import { getCurrentInstance, watch } from 'vue';
 
 /**
  * Hook for get current component instance

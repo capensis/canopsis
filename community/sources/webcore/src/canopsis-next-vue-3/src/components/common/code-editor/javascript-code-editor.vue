@@ -12,9 +12,8 @@
 <script>
 import { computed, ref, toRef } from 'vue';
 
-import { useJavaScriptCompletions } from '@/hooks/monaco';
-
 import CodeEditor from '@/components/common/code-editor/code-editor.vue';
+import { useJavaScriptCompletions } from '@/hooks/monaco';
 
 export default {
   components: { CodeEditor },

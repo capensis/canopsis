@@ -74,7 +74,6 @@
 
 <script>
 import { DATETIME_FORMATS, QUICK_RANGES, TIME_UNITS } from '@/constants';
-
 import {
   convertDateToEndOfUnitTimestamp,
   convertDateToString,

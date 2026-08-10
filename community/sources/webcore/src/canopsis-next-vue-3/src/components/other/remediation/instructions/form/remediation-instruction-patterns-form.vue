@@ -18,13 +18,12 @@
 <script>
 import { computed } from 'vue';
 
-import { useValidationHeader } from '@/hooks/validator/validation-header';
+import RemediationPatternsPbehaviorTypesForm from '@/components/other/remediation/patterns/form/remediation-patterns-pbehavior-types-form.vue';
 import {
   usePatternsFields,
   usePatternsFieldsFetching,
 } from '@/hooks/store/modules/patterns-fields';
-
-import RemediationPatternsPbehaviorTypesForm from '@/components/other/remediation/patterns/form/remediation-patterns-pbehavior-types-form.vue';
+import { useValidationHeader } from '@/hooks/validator/validation-header';
 
 export default {
   components: { RemediationPatternsPbehaviorTypesForm },

@@ -17,9 +17,7 @@
 import { onMounted } from 'vue';
 
 import { MODALS, USER_PERMISSIONS } from '@/constants';
-
 import { convertQueryToRequest } from '@/helpers/query';
-
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';

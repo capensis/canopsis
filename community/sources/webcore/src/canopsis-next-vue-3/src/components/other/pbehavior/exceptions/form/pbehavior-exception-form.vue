@@ -31,10 +31,9 @@
 </template>
 
 <script>
+import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exceptions-field.vue';
 import { useFormArray, useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-
-import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exceptions-field.vue';
 
 export default {
   components: { PbehaviorExceptionsField },

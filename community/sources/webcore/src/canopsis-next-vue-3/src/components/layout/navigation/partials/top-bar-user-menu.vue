@@ -12,13 +12,12 @@ import { computed, inject } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { MODALS, ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
-
 import { useAuth } from '@/hooks/auth';
-import { useUser } from '@/hooks/store/modules/user';
-import { useInfo } from '@/hooks/store/modules/info';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
+import { useInfo } from '@/hooks/store/modules/info';
+import { useUser } from '@/hooks/store/modules/user';
 
 import { useTopBarMenu } from './hooks/top-bar-menu';
 import TopBarMenu from './top-bar-menu.vue';

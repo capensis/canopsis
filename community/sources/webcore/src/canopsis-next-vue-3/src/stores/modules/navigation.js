@@ -1,5 +1,5 @@
-import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
 export const useNavigationStore = defineStore('navigation', () => {
   const isEditingMode = ref(false);

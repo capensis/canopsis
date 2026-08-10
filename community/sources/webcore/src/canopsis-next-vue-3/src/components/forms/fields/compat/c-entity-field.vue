@@ -33,9 +33,8 @@
 <script>
 import { isArray, keyBy, pick, isEqual } from 'lodash';
 
-import { BASIC_ENTITY_TYPES } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
-
+import { BASIC_ENTITY_TYPES } from '@/constants';
 import { useEntity } from '@/hooks/store/modules/entity';
 
 export default {

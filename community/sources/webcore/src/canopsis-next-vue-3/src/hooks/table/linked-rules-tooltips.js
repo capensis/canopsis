@@ -1,5 +1,4 @@
 import { LINKED_RULES_COUNT, LINKED_RULES_TYPES } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 /**

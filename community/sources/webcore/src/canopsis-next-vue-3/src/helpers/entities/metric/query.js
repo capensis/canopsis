@@ -1,5 +1,5 @@
-import { isOmitEqual } from '@/helpers/collection';
 import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES } from '@/constants';
+import { isOmitEqual } from '@/helpers/collection';
 import { convertDateIntervalToTimestampByTimezone } from '@/helpers/date/date-intervals';
 
 /**

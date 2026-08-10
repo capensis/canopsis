@@ -22,17 +22,14 @@
 <script>
 import { computed, watch } from 'vue';
 
+import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 import { DATETIME_FORMATS } from '@/constants';
-
 import {
   convertDateToDateObject,
   convertDateToString,
   convertDateToTimestamp,
 } from '@/helpers/date/date';
-
 import { useValidator } from '@/hooks/validator/validator';
-
-import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 
 export default {
   emits: ['update:start', 'update:stop'],

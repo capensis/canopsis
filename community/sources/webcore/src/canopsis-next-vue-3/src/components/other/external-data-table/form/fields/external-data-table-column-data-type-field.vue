@@ -72,11 +72,10 @@ import {
   EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES,
   EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES,
 } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
-import { useValidator } from '@/hooks/validator/validator';
+import { useI18n } from '@/hooks/i18n';
 import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
+import { useValidator } from '@/hooks/validator/validator';
 
 import ExternalDataTableColumnDataTypeFieldNumberForm from './partials/external-data-table-column-data-type-field-number-form.vue';
 import ExternalDataTableColumnDataTypeFieldStringArrayMenu from './partials/external-data-table-column-data-type-field-string-array-menu.vue';

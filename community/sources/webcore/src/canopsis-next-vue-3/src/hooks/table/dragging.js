@@ -1,5 +1,5 @@
-import { computed, ref, unref, onBeforeUnmount } from 'vue';
 import Sortable from 'sortablejs';
+import { computed, ref, unref, onBeforeUnmount } from 'vue';
 
 /**
  * Custom hook for enabling table column dragging functionality.

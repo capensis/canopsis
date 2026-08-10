@@ -12,9 +12,8 @@
 <script>
 import { mapActions } from 'pinia';
 
-import { useSidebarStore } from '@/stores/modules/sidebar';
-
 import * as Sidebars from '@/components/sidebars';
+import { useSidebarStore } from '@/stores/modules/sidebar';
 
 import SidebarWrapper from './sidebar-wrapper.vue';
 

@@ -7,13 +7,12 @@ import {
   LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE,
   LINK_RULE_ACTIONS,
 } from '@/constants';
-
-import { uid } from '@/helpers/uid';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 import {
   externalDataToForm,
   formToExternalData,
 } from '@/helpers/entities/shared/external-data/form';
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {'alarm' | 'entity'} LinkRuleType

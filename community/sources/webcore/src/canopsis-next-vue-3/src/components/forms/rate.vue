@@ -16,10 +16,9 @@
 </template>
 
 <script>
+import RatingField from '@/components/forms/fields/rating-field.vue';
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
-
-import RatingField from '@/components/forms/fields/rating-field.vue';
 
 export default {
   components: { RatingField },

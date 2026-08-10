@@ -42,30 +42,27 @@
 <script>
 import { computed, ref, toRef } from 'vue';
 
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
+import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
+import RemediationInstructionApprovalAlert from '@/components/other/remediation/instructions/partials/approval-alert.vue';
 import {
   LLM_SOCKET_CONTEXTS,
   MODALS,
   TEMPLATE_TESTING_TEST_TYPES,
   VALIDATION_DELAY,
 } from '@/constants';
-
 import {
   formToRemediationInstructionRequest,
   remediationInstructionErrorsToForm,
   remediationInstructionToFullForm,
 } from '@/helpers/entities/remediation/instruction/form';
-
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useAuth } from '@/hooks/auth';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useInfo } from '@/hooks/store/modules/info';
-
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
-import RemediationInstructionApprovalAlert from '@/components/other/remediation/instructions/partials/approval-alert.vue';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
 export default {
   name: MODALS.createRemediationInstruction,

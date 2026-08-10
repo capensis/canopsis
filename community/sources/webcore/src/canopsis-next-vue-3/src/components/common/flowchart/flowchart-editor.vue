@@ -52,31 +52,29 @@ import { cloneDeep, isEqual, omit } from 'lodash';
 
 import { COLORS } from '@/config';
 import { KEY_CODES, SHAPES } from '@/constants';
-
-import { roundByStep } from '@/helpers/flowchart/round';
 import { calculateConnectorPointBySide } from '@/helpers/flowchart/connectors';
-
-import { selectedShapesMixin } from '@/mixins/flowchart/selected';
+import { roundByStep } from '@/helpers/flowchart/round';
 import { copyPasteShapesMixin } from '@/mixins/flowchart/copy-paste';
 import { moveShapesMixin } from '@/mixins/flowchart/move-shape';
+import { selectedShapesMixin } from '@/mixins/flowchart/selected';
 import { viewBoxMixin } from '@/mixins/flowchart/view-box';
 
 import FlowchartSelection from './partials/flowchart-selection.vue';
-import RectShape from './shapes/rect-shape/rect-shape.vue';
-import RhombusShape from './shapes/rhombus-shape/rhombus-shape.vue';
-import CircleShape from './shapes/circle-shape/circle-shape.vue';
-import EllipseShape from './shapes/ellipse-shape/ellipse-shape.vue';
-import ParallelogramShape from './shapes/parallelogram-shape/parallelogram-shape.vue';
-import ProcessShape from './shapes/process-shape/process-shape.vue';
-import DocumentShape from './shapes/document-shape/document-shape.vue';
-import StorageShape from './shapes/storage-shape/storage-shape.vue';
-import LineShape from './shapes/line-shape/line-shape.vue';
 import ArrowLineShape from './shapes/arrow-line-shape/arrow-line-shape.vue';
 import BidirectionalArrowLineShape from './shapes/bidirectional-arrow-line-shape/bidirectional-arrow-line-shape.vue';
-import ImageShape from './shapes/image-shape/image-shape.vue';
-import RectShapeSelection from './shapes/rect-shape/rect-shape-selection.vue';
 import CircleShapeSelection from './shapes/circle-shape/circle-shape-selection.vue';
+import CircleShape from './shapes/circle-shape/circle-shape.vue';
+import DocumentShape from './shapes/document-shape/document-shape.vue';
+import EllipseShape from './shapes/ellipse-shape/ellipse-shape.vue';
+import ImageShape from './shapes/image-shape/image-shape.vue';
 import LineShapeSelection from './shapes/line-shape/line-shape-selection.vue';
+import LineShape from './shapes/line-shape/line-shape.vue';
+import ParallelogramShape from './shapes/parallelogram-shape/parallelogram-shape.vue';
+import ProcessShape from './shapes/process-shape/process-shape.vue';
+import RectShapeSelection from './shapes/rect-shape/rect-shape-selection.vue';
+import RectShape from './shapes/rect-shape/rect-shape.vue';
+import RhombusShape from './shapes/rhombus-shape/rhombus-shape.vue';
+import StorageShape from './shapes/storage-shape/storage-shape.vue';
 
 const DOCUMENT_EVENTS = ['mousemove', 'mouseup', 'keydown'];
 

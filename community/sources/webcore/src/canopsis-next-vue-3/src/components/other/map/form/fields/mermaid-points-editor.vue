@@ -48,14 +48,11 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import { MODALS } from '@/constants';
-
-import { waitVuetifyAnimation } from '@/helpers/vuetify';
-import { mermaidPointToForm } from '@/helpers/entities/map/form';
-
-import { formBaseMixin } from '@/mixins/form';
-
 import MermaidPointMarker from '@/components/other/map/partials/mermaid-point-marker.vue';
+import { MODALS } from '@/constants';
+import { mermaidPointToForm } from '@/helpers/entities/map/form';
+import { waitVuetifyAnimation } from '@/helpers/vuetify';
+import { formBaseMixin } from '@/mixins/form';
 
 import PointContextmenu from './point-contextmenu.vue';
 import PointFormDialogMenu from './point-form-dialog-menu.vue';

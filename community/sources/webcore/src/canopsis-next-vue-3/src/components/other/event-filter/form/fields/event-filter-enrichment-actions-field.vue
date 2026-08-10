@@ -26,10 +26,8 @@
 
 <script>
 import { eventFilterActionToForm } from '@/helpers/entities/event-filter/rule/form';
-
-import { useArrayFieldValidation } from '@/hooks/validator/new-validation';
-
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useArrayFieldValidation } from '@/hooks/validator/new-validation';
 
 import EventFilterEnrichmentActionField from './event-filter-enrichment-action-field.vue';
 

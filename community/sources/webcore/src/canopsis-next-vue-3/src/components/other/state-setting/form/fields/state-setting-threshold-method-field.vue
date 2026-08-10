@@ -20,7 +20,6 @@
 
 <script>
 import { STATE_SETTING_THRESHOLDS_METHODS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {

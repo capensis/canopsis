@@ -1,7 +1,6 @@
 import { groupBy } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
-
 import { convertDateToString } from '@/helpers/date/date';
 
 /**

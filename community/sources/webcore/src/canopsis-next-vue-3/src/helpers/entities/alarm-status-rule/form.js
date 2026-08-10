@@ -1,7 +1,6 @@
 import { omit } from 'lodash';
 
 import { PATTERNS_FIELDS, TIME_UNITS } from '@/constants';
-
 import { durationToForm } from '@/helpers/date/duration';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
