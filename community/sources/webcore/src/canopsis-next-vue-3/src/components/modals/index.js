@@ -57,6 +57,7 @@ export default {
   ),
   [MODALS.textFieldEditor]: defineAsyncComponent(() => import('./common/text-field-editor.vue')),
   [MODALS.createFilter]: defineAsyncComponent(() => import('./common/create-filter.vue')),
+  [MODALS.filtersList]: defineAsyncComponent(() => import('./common/filters-list.vue')),
   [MODALS.variablesHelp]: defineAsyncComponent(() => import('./common/variables-help.vue')),
   [MODALS.createView]: defineAsyncComponent(() => import('./view/create-view.vue')),
   [MODALS.createGroup]: defineAsyncComponent(() => import('./view/create-group.vue')),

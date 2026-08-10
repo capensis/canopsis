@@ -159,7 +159,7 @@ export default {
     const isActive = item => props.value === item[props.itemValue];
 
     const selectItem = (item) => {
-      if (hasAvailableChildren(item)) {
+      if (!props.clickableParent && hasAvailableChildren(item)) {
         subItemsShown.value = true;
         return;
       }

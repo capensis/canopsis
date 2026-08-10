@@ -37,45 +37,49 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
    * @param {Function} showProgress - Callback function that updates upload progress.
    * @returns {Promise<Object>}
    */
-  const customUploadFunction = (request, showProgress) => new Promise((resolve) => {
-    const { uploader } = unref(editor);
-    const { fileValidator: uploaderFileValidator } = uploader.options ?? {};
-    const formData = request instanceof FormData ? request : new FormData();
+  const customUploadFunction = (request, showProgress) =>
+    new Promise((resolve) => {
+      const { uploader } = unref(editor);
+      const { fileValidator: uploaderFileValidator } = uploader.options ?? {};
+      const formData = request instanceof FormData ? request : new FormData();
 
-    if (!(request instanceof FormData)) {
-      request.forEach(file => formData.append('files[]', file));
-    }
-
-    if (uploaderFileValidator) {
-      try {
-        Array.from(formData.values()).forEach(uploaderFileValidator);
-      } catch (err) {
-        resolve({ error: err.message });
-        return;
+      if (!(request instanceof FormData)) {
+        request.forEach(file => formData.append('files[]', file));
       }
-    }
 
-    const xhr = new XMLHttpRequest();
-
-    xhr.upload.addEventListener('progress', (event) => {
-      if (event.lengthComputable) {
-        showProgress((event.loaded / event.total) * 100);
+      if (uploaderFileValidator) {
+        try {
+          Array.from(formData.values()).forEach(uploaderFileValidator);
+        } catch (err) {
+          resolve({ error: err.message });
+          return;
+        }
       }
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          showProgress((event.loaded / event.total) * 100);
+        }
+      });
+
+      xhr.addEventListener('load', () => {
+        try {
+          resolve(JSON.parse(xhr.responseText));
+        } catch (err) {
+          resolve({ error: err.message });
+        }
+      });
+
+      xhr.addEventListener('error', () => resolve({ error: xhr.statusText }));
+      xhr.open('POST', `${FILE_BASE_URL}?public=${unref(isPublic)}`);
+      xhr.setRequestHeader(
+        'Authorization',
+        `Bearer ${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`,
+      );
+      xhr.send(formData);
     });
-
-    xhr.addEventListener('load', () => {
-      try {
-        resolve(JSON.parse(xhr.responseText));
-      } catch (err) {
-        resolve({ error: err.message });
-      }
-    });
-
-    xhr.addEventListener('error', () => resolve({ error: xhr.statusText }));
-    xhr.open('POST', `${FILE_BASE_URL}?public=${unref(isPublic)}`);
-    xhr.setRequestHeader('Authorization', `Bearer ${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`);
-    xhr.send(formData);
-  });
 
   /**
    * Checks if the upload response indicates success.
@@ -91,7 +95,8 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
    * @param {Object|Array} response - Upload response object or array.
    * @returns {string}
    */
-  const getMessage = response => response?.error || response?.filter?.(file => file.error).join(' ');
+  const getMessage = response =>
+    response?.error || response?.filter?.(file => file.error).join(' ');
 
   /**
    * Processes upload response and formats it for the editor.
@@ -135,9 +140,8 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
   const defaultHandlerSuccess = (response) => {
     if (response.files && response.files.length) {
       response.files.forEach((file) => {
-        const [tagName, attr] = file.mediatype && file.mediatype.startsWith('image')
-          ? ['img', 'src']
-          : ['a', 'href'];
+        const [tagName, attr] =
+          file.mediatype && file.mediatype.startsWith('image') ? ['img', 'src'] : ['a', 'href'];
 
         const attrValue = response.baseurl + file._id;
         const unwrappedEditor = unref(editor);
@@ -151,7 +155,11 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
         }
 
         if (tagName === 'img') {
-          unwrappedEditor.selection.insertImage(elm, null, unwrappedEditor.options.imageDefaultWidth);
+          unwrappedEditor.selection.insertImage(
+            elm,
+            null,
+            unwrappedEditor.options.imageDefaultWidth,
+          );
         } else {
           unwrappedEditor.selection.insertNode(elm);
         }
@@ -194,8 +202,21 @@ export const useTextEditorVariables = ({ editor, variables }) => {
     x: 0,
     y: 0,
   });
+  const lastRange = ref(null);
 
   const hasVariables = computed(() => hasAtLeastOneVariable(unref(variables)));
+
+  const isEditorNode = node => node && unref(editor)?.editor?.contains(node);
+
+  const saveSelectionRange = () => {
+    const selection = unref(editor).selection?.sel;
+
+    if (!selection?.rangeCount || !isEditorNode(selection.anchorNode)) {
+      return;
+    }
+
+    lastRange.value = selection.getRangeAt(0).cloneRange();
+  };
 
   /**
    * Extracts variable value from a variable group match result.
@@ -217,15 +238,20 @@ export const useTextEditorVariables = ({ editor, variables }) => {
     const selection = unref(editor).selection?.sel ?? {};
     const { anchorNode, anchorOffset, focusOffset } = selection;
 
-    if (!anchorNode) {
+    if (!isEditorNode(anchorNode)) {
       return;
     }
 
     const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
-    const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selectionStart, selectionEnd);
+    const variableGroup = matchPayloadVariableBySelection(
+      anchorNode.nodeValue,
+      selectionStart,
+      selectionEnd,
+    );
 
     if (!variableGroup) {
       variablesMenuValue.value = undefined;
+      saveSelectionRange();
       return;
     }
 
@@ -244,6 +270,8 @@ export const useTextEditorVariables = ({ editor, variables }) => {
 
       unref(editor).selection.selectRange(range);
     }
+
+    saveSelectionRange();
   };
 
   /**
@@ -283,7 +311,20 @@ export const useTextEditorVariables = ({ editor, variables }) => {
    * @param {string} variableString - Variable string in format "{{ value }}".
    * @returns {string}
    */
-  const extractVariableValue = variableString => variableString.replace('{{ ', '').replace(' }}', '');
+  const extractVariableValue = variableString =>
+    variableString.replace('{{ ', '').replace(' }}', '');
+
+  /**
+   * Wraps bare variable values into template syntax.
+   *
+   * @param {string} variable - Variable string or bare variable name.
+   * @returns {string}
+   */
+  const normalizeVariable = (variable) => {
+    const trimmedVariable = String(variable ?? '').trim();
+
+    return trimmedVariable.startsWith('{{') ? trimmedVariable : `{{ ${trimmedVariable} }}`;
+  };
 
   /**
    * Determines the text to insert.
@@ -326,24 +367,25 @@ export const useTextEditorVariables = ({ editor, variables }) => {
   const pasteVariable = (variable) => {
     selectVariableValueByCursor();
     const selection = unref(editor).selection?.sel ?? {};
-    const { focusNode } = selection;
+    const hasEditorSelection = selection.rangeCount > 0 && isEditorNode(selection.focusNode);
+    const range = hasEditorSelection ? selection.getRangeAt(0) : lastRange.value?.cloneRange();
+    const focusNode = range?.startContainer;
 
-    if (!focusNode) {
+    if (!range || !focusNode) {
       return;
     }
 
-    const { anchorOffset, focusOffset } = selection;
-    const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
-    const variableGroup = matchPayloadVariableBySelection(focusNode.nodeValue, selectionStart, selectionEnd);
-    const textToInsert = getTextToInsert(variable, variableGroup);
-    const range = selection.rangeCount > 0
-      ? selection.getRangeAt(0)
-      : document.createRange();
+    const [selectionStart, selectionEnd] = [range.startOffset, range.endOffset].sort();
+    const variableGroup = focusNode.nodeValue
+      ? matchPayloadVariableBySelection(focusNode.nodeValue, selectionStart, selectionEnd)
+      : null;
+    const textToInsert = getTextToInsert(normalizeVariable(variable), variableGroup);
 
     insertTextNode(range, textToInsert);
     selection.removeAllRanges();
     selection.addRange(range);
     unref(editor).selection.selectRange(range);
+    lastRange.value = range.cloneRange();
 
     closeVariablesMenu();
   };
@@ -355,10 +397,13 @@ export const useTextEditorVariables = ({ editor, variables }) => {
   }));
 
   const variablesExtraIcon = computed(() => ({
-    variables: '<i class="material-icons v-icon v-icon--small" style="width: 18px; height: 18px;">data_object</i>',
+    variables:
+      '<i class="material-icons v-icon v-icon--small" style="width: 14px; height: 14px;">data_object</i>',
   }));
 
-  onBeforeUnmount(() => document.removeEventListener('selectionchange', selectVariableValueByCursor));
+  onBeforeUnmount(() =>
+    document.removeEventListener('selectionchange', selectVariableValueByCursor),
+  );
 
   return {
     hasVariables,

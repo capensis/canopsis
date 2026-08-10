@@ -43,6 +43,8 @@ import { useCounterStore } from '@/stores/modules/counter';
 import CounterItem from './counter-item.vue';
 
 export default {
+  inject: ['$periodicRefresh'],
+
   components: {
     CounterItem,
   },
@@ -138,13 +140,29 @@ export default {
     },
   },
 
+  created() {
+    this.$periodicRefresh.registerChild(this.refresh);
+  },
+
+  beforeUnmount() {
+    this.$periodicRefresh.unregisterChild(this.refresh);
+  },
+
   methods: {
     ...mapActions(useCounterStore, {
-      fetchCountersList: 'fetchList',
-    }),
+    fetchCountersList: 'fetchList',
+  }),
+
+    refresh() {
+      if (this.visible) {
+        return this.fetchList();
+      }
+
+      return Promise.resolve();
+    },
 
     fetchList() {
-      this.fetchCountersList({
+      return this.fetchCountersList({
         widgetId: this.widget._id,
         filters: this.query.filters,
         params: this.queryWithoutFilters,

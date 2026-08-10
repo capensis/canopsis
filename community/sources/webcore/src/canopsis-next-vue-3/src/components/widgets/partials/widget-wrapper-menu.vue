@@ -64,6 +64,7 @@ import { useWidgetStore } from '@/stores/modules/widget';
 const MIGRATED_SETTINGS_WIDGET_TYPES = [
   WIDGET_TYPES.text,
   WIDGET_TYPES.counter,
+  WIDGET_TYPES.map,
 ];
 
 export default {

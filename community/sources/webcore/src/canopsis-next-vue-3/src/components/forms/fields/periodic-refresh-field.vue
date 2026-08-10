@@ -1,6 +1,6 @@
 <template>
   <v-row class="mb-3" align="start" density="compact">
-    <v-col cols="5">
+    <v-col cols="4">
       <c-enabled-field
         :model-value="periodicRefresh.enabled"
         :label="label"
@@ -9,7 +9,7 @@
       />
     </v-col>
 
-    <v-col cols="7">
+    <v-col cols="8">
       <c-duration-field
         :duration="periodicRefresh"
         :disabled="!periodicRefresh.enabled"
