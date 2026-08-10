@@ -15,7 +15,6 @@
 
 <script>
 import { CONNECTOR_SIDES } from '@/constants';
-
 import { calculateConnectorPointBySide } from '@/helpers/flowchart/connectors';
 
 export default {

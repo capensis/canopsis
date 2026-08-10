@@ -20,13 +20,11 @@
 </template>
 
 <script>
-import { COLORS } from '@/config';
-import { DATETIME_FORMATS, HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR } from '@/constants';
-
-import { colorToRgba } from '@/helpers/color';
-
 import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 import LimitedTimeLineChart from '@/components/common/chart/limited-time-line-chart.vue';
+import { COLORS } from '@/config';
+import { DATETIME_FORMATS, HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR } from '@/constants';
+import { colorToRgba } from '@/helpers/color';
 
 export default {
   components: {

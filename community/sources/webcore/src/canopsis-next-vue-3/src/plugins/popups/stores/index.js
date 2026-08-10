@@ -1,9 +1,8 @@
-import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-import { POPUP_TYPES } from '@/constants';
 import { POPUP_AUTO_CLOSE_DELAY } from '@/config';
-
+import { POPUP_TYPES } from '@/constants';
 import { uid } from '@/helpers/uid';
 
 /**

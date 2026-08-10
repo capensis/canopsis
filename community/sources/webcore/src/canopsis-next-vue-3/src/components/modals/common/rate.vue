@@ -29,13 +29,11 @@
 <script>
 import { computed, ref } from 'vue';
 
+import RateForm from '@/components/forms/rate.vue';
 import { MODALS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePendingHandler } from '@/hooks/query/pending';
-
-import RateForm from '@/components/forms/rate.vue';
 
 export default {
   name: MODALS.rate,

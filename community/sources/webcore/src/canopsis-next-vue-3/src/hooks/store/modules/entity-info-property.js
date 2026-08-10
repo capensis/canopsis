@@ -1,5 +1,5 @@
-import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
 
 import { useEntityInfoPropertyStore } from '@/stores/modules/entity-info-property';
 

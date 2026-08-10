@@ -44,7 +44,6 @@
 import { computed } from 'vue';
 
 import materialIcons from '@/assets/material-icons/MaterialIcons.json';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {

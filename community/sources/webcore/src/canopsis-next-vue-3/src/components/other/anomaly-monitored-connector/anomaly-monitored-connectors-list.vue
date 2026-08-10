@@ -48,9 +48,8 @@
 <script>
 import { computed } from 'vue';
 
-import { useI18n } from '@/hooks/i18n';
-
 import { convertDateToString } from '@/helpers/date/date';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {

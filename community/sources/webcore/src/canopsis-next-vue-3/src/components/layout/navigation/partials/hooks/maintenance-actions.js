@@ -1,7 +1,7 @@
-import { useModals } from '@/hooks/modals';
-import { useI18n } from '@/hooks/i18n';
-import { useInfo } from '@/hooks/store/modules/info';
 import { MODALS } from '@/constants';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useInfo } from '@/hooks/store/modules/info';
 
 export const useMaintenanceActions = () => {
   const modals = useModals();

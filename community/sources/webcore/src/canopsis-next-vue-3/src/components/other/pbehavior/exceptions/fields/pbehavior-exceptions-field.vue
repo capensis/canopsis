@@ -27,14 +27,12 @@
 <script>
 import { computed, nextTick, onBeforeUnmount, onMounted, watch } from 'vue';
 
+import PbehaviorExceptionField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exception-field.vue';
 import { pbehaviorExdateItemToForm } from '@/helpers/entities/pbehavior/form';
-
-import { useI18n } from '@/hooks/i18n';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useI18n } from '@/hooks/i18n';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 import { useValidationAttachMinValue } from '@/hooks/validator/validation-attach-min-value';
-
-import PbehaviorExceptionField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exception-field.vue';
 
 export default {
   emits: ['update:exdates'],

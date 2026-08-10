@@ -68,10 +68,9 @@
 </template>
 
 <script>
+import RequestForm from '@/components/forms/request/request-form.vue';
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-
-import RequestForm from '@/components/forms/request/request-form.vue';
 
 export default {
   components: { RequestForm },

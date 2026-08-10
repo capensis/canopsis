@@ -1,5 +1,6 @@
-import Observer from './observer';
 import { ref } from 'vue';
+
+import Observer from './observer';
 
 class ClickOutside extends Observer {
   constructor() {

@@ -2,10 +2,9 @@ import { keyBy, omit } from 'lodash';
 
 import { COLORS } from '@/config';
 import { MAP_TYPES, MERMAID_THEMES, TREE_OF_DEPENDENCIES_TYPES } from '@/constants';
-
-import { uid as uuid } from '@/helpers/uid';
-import { shapeToForm } from '@/helpers/flowchart/shapes';
 import { addKeyInEntities, mapIds, removeKeyFromEntities } from '@/helpers/array';
+import { shapeToForm } from '@/helpers/flowchart/shapes';
+import { uid as uuid } from '@/helpers/uid';
 
 /**
  * @typedef {Object} MapCommonFields

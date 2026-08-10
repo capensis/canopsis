@@ -26,19 +26,17 @@
 </template>
 
 <script>
+import { isEqual, sortBy } from 'lodash';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { isEqual, sortBy } from 'lodash';
 
 import { COLORS, SOCKET_ROOMS } from '@/config';
 import { HEALTHCHECK_SERVICES_NAMES, ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
-
 import { getHealthcheckNodeColor } from '@/helpers/entities/healthcheck/color';
-
-import { useI18n } from '@/hooks/i18n';
-import { useHealthcheckNodes } from '@/hooks/healthcheck-nodes';
-import { useSocketRoom } from '@/hooks/socket';
 import { useCanPermission } from '@/hooks/auth';
+import { useHealthcheckNodes } from '@/hooks/healthcheck-nodes';
+import { useI18n } from '@/hooks/i18n';
+import { useSocketRoom } from '@/hooks/socket';
 import { useHealthcheck } from '@/hooks/store/modules/healthcheck';
 
 export default {

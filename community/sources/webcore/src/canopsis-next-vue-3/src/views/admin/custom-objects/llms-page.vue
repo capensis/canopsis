@@ -27,8 +27,9 @@
 <script>
 import { onMounted } from 'vue';
 
+import LlmsList from '@/components/other/llm/llms-list.vue';
+import LlmsImportantNotesBanner from '@/components/other/llm/partials/llms-important-notes-banner.vue';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
-
 import { useCallActionWithPopup } from '@/hooks/actions/call';
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
@@ -36,9 +37,6 @@ import { useModals } from '@/hooks/modals';
 import { useObserver } from '@/hooks/observer';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useLlm } from '@/hooks/store/modules/llm';
-
-import LlmsImportantNotesBanner from '@/components/other/llm/partials/llms-important-notes-banner.vue';
-import LlmsList from '@/components/other/llm/llms-list.vue';
 
 export default {
   components: {

@@ -45,13 +45,11 @@
 <script>
 import { computed } from 'vue';
 
+import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue';
 import { MODALS } from '@/constants';
-
 import { useFormContext, useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-
-import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue';
 
 export default {
   components: { DraggablePlaylistTabs },

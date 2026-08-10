@@ -40,14 +40,12 @@
 import { ref, computed, watch, onMounted } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
-
 import { remediationInstructionJobToForm } from '@/helpers/entities/remediation/instruction/form';
-
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
-import { useValidator } from '@/hooks/validator/validator';
 import { useValidationAttachMinValueForField } from '@/hooks/validator/validation-attach-min-value';
+import { useValidator } from '@/hooks/validator/validator';
 
 import RemediationInstructionJobField from './fields/remediation-instruction-job-field.vue';
 

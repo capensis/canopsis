@@ -37,7 +37,6 @@
 import { computed } from 'vue';
 
 import { MODALS, MAP_TYPES, MAP_ICON_BY_TYPES, CREATE_MAP_MODAL_NAMES_BY_TYPE } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 

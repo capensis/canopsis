@@ -26,7 +26,6 @@ import {
   QUICK_RANGES,
   USER_METRIC_PARAMETERS,
 } from '@/constants';
-
 import {
   convertDateToStartOfDayTimestampByTimezone,
   convertDateToString,
@@ -39,11 +38,10 @@ import {
 import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
 import { saveFile } from '@/helpers/file/files';
 import { openUrlInNewTab } from '@/helpers/url';
-
 import { useFilePolling } from '@/hooks/polling';
 import { useMetrics } from '@/hooks/store/modules/metrics';
-import { localQueryMixin } from '@/mixins/query/query';
 import { queryIntervalFilterMixin } from '@/mixins/query/interval';
+import { localQueryMixin } from '@/mixins/query/query';
 
 import KpiErrorOverlay from './partials/kpi-error-overlay.vue';
 import KpiRatingChart from './partials/kpi-rating-chart.vue';

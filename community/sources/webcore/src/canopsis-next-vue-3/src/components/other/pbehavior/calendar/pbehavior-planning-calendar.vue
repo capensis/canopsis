@@ -40,7 +40,6 @@ import { debounce, get, omit, uniqBy } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
-
 import { getMostReadableTextColor } from '@/helpers/color';
 import {
   convertDateToDateObject,
@@ -52,12 +51,11 @@ import {
 import { isFullDayEvent } from '@/helpers/entities/pbehavior/form';
 import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
 import { uid } from '@/helpers/uid';
-
-import { useInfo } from '@/hooks/store/modules/info';
 import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
+import { useInfo } from '@/hooks/store/modules/info';
 import { usePbehaviorTimespan } from '@/hooks/store/modules/pbehavior-timespan';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
-import { usePopups } from '@/hooks/popups';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 import PbehaviorPlanningCalendarLegend from './partials/pbehavior-planning-calendar-legend.vue';

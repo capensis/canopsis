@@ -1,8 +1,7 @@
-import { isEmpty } from 'lodash';
 import Handlebars from 'handlebars';
+import { isEmpty } from 'lodash';
 
 import { ALARM_EXPORT_PDF_FIELDS } from '@/constants';
-
 import { harmonizeLinks } from '@/helpers/entities/link/list';
 
 /**

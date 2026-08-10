@@ -31,7 +31,6 @@
 import { computed } from 'vue';
 
 import { JOB_LAST_RUN_STATUS, JOB_STATUS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {

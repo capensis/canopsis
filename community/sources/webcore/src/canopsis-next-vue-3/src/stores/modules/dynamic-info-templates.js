@@ -1,8 +1,7 @@
-import { defineStore } from 'pinia';
 import { get } from 'lodash';
+import { defineStore } from 'pinia';
 
 import { ASSOCIATIVE_TABLES_NAMES } from '@/constants';
-
 import { useAssociativeTableStore } from '@/stores/modules/associative-table';
 
 export const useDynamicInfoTemplatesStore = defineStore('dynamicInfoTemplates', () => {

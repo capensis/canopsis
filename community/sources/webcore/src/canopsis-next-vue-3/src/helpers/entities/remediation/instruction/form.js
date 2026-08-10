@@ -8,12 +8,11 @@ import {
   TIME_UNITS,
   WORKFLOW_TYPES,
 } from '@/constants';
-
-import { uid } from '@/helpers/uid';
-import { getLetterByIndex } from '@/helpers/string';
 import { durationToForm } from '@/helpers/date/duration';
-import { flattenErrorMap } from '@/helpers/entities/shared/form';
 import { formFilterToPatterns, filterPatternsToForm } from '@/helpers/entities/filter/form';
+import { flattenErrorMap } from '@/helpers/entities/shared/form';
+import { getLetterByIndex } from '@/helpers/string';
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {

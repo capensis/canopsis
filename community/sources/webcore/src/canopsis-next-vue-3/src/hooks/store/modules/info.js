@@ -1,14 +1,12 @@
-import { computed } from 'vue';
-import { storeToRefs } from 'pinia';
 import { isArray, isMatch } from 'lodash';
+import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
 
 import { DEFAULT_APP_TITLE } from '@/config';
 import { CANOPSIS_EDITION, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
-
 import { compile } from '@/helpers/handlebars';
 import { sanitizeHtml } from '@/helpers/html';
 import { groupedPermissionToPermission } from '@/helpers/permission';
-
 import { useAppInfoStore } from '@/stores/modules/app-info';
 
 /**

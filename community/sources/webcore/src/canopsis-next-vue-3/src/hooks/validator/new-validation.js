@@ -1,7 +1,7 @@
-// validation.js
-import { computed, watch } from 'vue';
 import { debounce } from 'lodash';
 import { useField } from 'vee-validate';
+// validation.js
+import { computed, watch } from 'vue';
 
 import { VALIDATION_DELAY } from '@/constants/common';
 

@@ -16,9 +16,8 @@
 
 <script>
 import { MAX_LIMIT } from '@/constants';
-import { useMapStore } from '@/stores/modules/map';
-
 import { formBaseMixin } from '@/mixins/form';
+import { useMapStore } from '@/stores/modules/map';
 
 export default {
   mixins: [formBaseMixin],

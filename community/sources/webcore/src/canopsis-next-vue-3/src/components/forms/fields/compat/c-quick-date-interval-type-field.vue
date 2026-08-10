@@ -17,7 +17,6 @@
 import { isObject } from 'lodash';
 
 import { QUICK_RANGES } from '@/constants';
-
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 export default {

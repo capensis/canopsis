@@ -27,6 +27,7 @@
 <script>
 import { keyBy } from 'lodash';
 
+import Flowchart from '@/components/common/flowchart/flowchart.vue';
 import {
   getCSSVariableColor,
   getCSSVariableName,
@@ -35,8 +36,6 @@ import {
 } from '@/helpers/color';
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';
-
-import Flowchart from '@/components/common/flowchart/flowchart.vue';
 
 import FlowchartPointsPreview from './flowchart-points-preview.vue';
 

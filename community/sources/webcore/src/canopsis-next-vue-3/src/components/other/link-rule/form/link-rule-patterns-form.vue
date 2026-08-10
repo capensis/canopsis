@@ -14,11 +14,11 @@
 
 <script>
 import { useFormModel } from '@/hooks/form';
-import { useValidationHeader } from '@/hooks/validator/validation-header';
 import {
   usePatternsFields,
   usePatternsFieldsFetching,
 } from '@/hooks/store/modules/patterns-fields';
+import { useValidationHeader } from '@/hooks/validator/validation-header';
 
 export default {
   props: {

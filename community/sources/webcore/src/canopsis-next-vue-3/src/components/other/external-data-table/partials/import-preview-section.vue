@@ -19,9 +19,8 @@
 </template>
 
 <script>
-import { useI18n } from '@/hooks/i18n';
-
 import ExternalDataTableRecordsList from '@/components/other/external-data-table/partials/external-data-table-records-list.vue';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   components: {

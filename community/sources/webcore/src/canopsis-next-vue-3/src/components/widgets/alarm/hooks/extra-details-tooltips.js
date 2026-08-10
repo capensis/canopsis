@@ -1,10 +1,8 @@
-import { computed } from 'vue';
 import { escape } from 'lodash';
+import { computed } from 'vue';
 
 import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
-
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 /**

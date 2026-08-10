@@ -70,9 +70,7 @@ import { isUndefined } from 'lodash';
 import { computed, ref } from 'vue';
 
 import { JOB_STATUS } from '@/constants';
-
 import { convertDateToString } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 import TicketStatusJobTableActions from './partials/ticket-status-job-table-actions.vue';

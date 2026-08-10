@@ -8,8 +8,6 @@
 </template>
 
 <script>
-import { merge } from 'lodash';
-import { markRaw } from 'vue';
 import {
   BarController,
   BarElement,
@@ -20,8 +18,10 @@ import {
   TimeScale,
   Tooltip,
 } from 'chart.js';
-import 'chartjs-adapter-moment';
 import zoomPlugin from 'chartjs-plugin-zoom';
+import { merge } from 'lodash';
+import 'chartjs-adapter-moment';
+import { markRaw } from 'vue';
 
 Chart.register(
   BarController,

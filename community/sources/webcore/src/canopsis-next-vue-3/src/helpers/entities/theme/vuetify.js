@@ -2,7 +2,6 @@ import { merge } from 'lodash';
 
 import { COLORS, DEFAULT_THEME_COLORS } from '@/config';
 import { THEME_FONT_PIXEL_SIZES, THEME_FONT_SIZES } from '@/constants';
-
 import {
   colorToRgba,
   colorToHex,
@@ -11,8 +10,8 @@ import {
   getMostReadableTextColor,
   isDarkColor,
 } from '@/helpers/color';
-import { convertTypeColors, themeToForm } from '@/helpers/entities/theme/form';
 import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
+import { convertTypeColors, themeToForm } from '@/helpers/entities/theme/form';
 
 const DEFAULT_TEXT_ON_LIGHT = '#000000';
 const DEFAULT_TEXT_ON_DARK = '#FFFFFF';

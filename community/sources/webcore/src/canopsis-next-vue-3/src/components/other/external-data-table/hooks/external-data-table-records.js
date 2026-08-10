@@ -2,14 +2,12 @@ import { omit } from 'lodash';
 import { computed, unref, inject, onMounted } from 'vue';
 
 import { MODALS } from '@/constants';
-
 import { pickIds } from '@/helpers/array';
-
+import { useCallActionWithPopup } from '@/hooks/actions/call';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useCallActionWithPopup } from '@/hooks/actions/call';
-import { useExternalDataTableRecord } from '@/hooks/store/modules/external-data-table-record';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
+import { useExternalDataTableRecord } from '@/hooks/store/modules/external-data-table-record';
 
 /**
  * Provides modal management functions for external data table records.

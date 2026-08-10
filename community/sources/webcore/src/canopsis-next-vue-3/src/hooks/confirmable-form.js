@@ -2,7 +2,6 @@ import { cloneDeep, isEqual } from 'lodash';
 import { onBeforeMount, unref } from 'vue';
 
 import { MODALS } from '@/constants';
-
 import { uid } from '@/helpers/uid';
 
 import { useModals } from './modals';

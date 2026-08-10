@@ -48,7 +48,6 @@
 import { computed } from 'vue';
 
 import { JUNIT_STATE_SETTING_METHODS } from '@/constants';
-
 import { useFormModel } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 

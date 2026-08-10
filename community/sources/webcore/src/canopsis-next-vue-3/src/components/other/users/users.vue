@@ -15,18 +15,16 @@
 <script>
 import { onMounted } from 'vue';
 
+import UsersList from '@/components/other/users/users-list.vue';
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
-
+import { getQueryForList } from '@/helpers/entities/shared/query';
 import { useCRUDPermissions, useAuth } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { useUser } from '@/hooks/store/modules/user';
-import { getQueryForList } from '@/helpers/entities/shared/query';
-
-import UsersList from '@/components/other/users/users-list.vue';
 
 export default {
   components: {

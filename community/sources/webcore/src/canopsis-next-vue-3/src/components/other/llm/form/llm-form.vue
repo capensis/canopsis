@@ -85,9 +85,8 @@
 <script>
 import { computed } from 'vue';
 
-import { useModelField } from '@/hooks/form/model-field';
-
 import { useLlmModelsListForSelect } from '@/components/other/llm/hooks/llm-models-list';
+import { useModelField } from '@/hooks/form/model-field';
 
 import LlmModelField from './fields/llm-model-field.vue';
 import LlmThinkingLevelField from './fields/llm-thinking-level-field.vue';

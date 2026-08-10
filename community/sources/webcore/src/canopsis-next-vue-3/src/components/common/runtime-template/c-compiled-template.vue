@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import { sanitizeHtml, linkifyHtml, normalizeHtml } from '@/helpers/html';
 import { compile, runTemplate, hasTemplate } from '@/helpers/handlebars';
+import { sanitizeHtml, linkifyHtml, normalizeHtml } from '@/helpers/html';
 
 export default {
   inject: ['$system'],

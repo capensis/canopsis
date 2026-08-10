@@ -1,7 +1,6 @@
 import { isEqual, omit } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-
 import { getQueryForList } from '@/helpers/entities/shared/query';
 
 /**

@@ -16,7 +16,6 @@
 
 <script>
 import { MERMAID_THEMES } from '@/constants';
-
 import { formBaseMixin } from '@/mixins/form';
 
 export default {

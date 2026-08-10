@@ -1,5 +1,4 @@
 import { GROUPS_NAVIGATION_TYPES } from '@/constants';
-
 import { mapIds } from '@/helpers/array';
 
 /**

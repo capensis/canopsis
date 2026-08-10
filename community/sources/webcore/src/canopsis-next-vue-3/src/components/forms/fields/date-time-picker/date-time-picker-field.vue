@@ -45,7 +45,6 @@
 
 <script>
 import { DATETIME_FORMATS } from '@/constants';
-
 import { convertDateToString } from '@/helpers/date/date';
 
 import DateTimePicker from './date-time-picker.vue';

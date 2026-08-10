@@ -30,16 +30,13 @@
 </template>
 
 <script>
-import { computed } from 'vue';
 import { isEmpty } from 'lodash';
-
-import { MODALS } from '@/constants';
-
-import { formToRrule } from '@/helpers/entities/shared/recurrence-rule/form';
-
-import { useModals } from '@/hooks/modals';
+import { computed } from 'vue';
 
 import RecurrenceRuleInformation from '@/components/common/reccurence-rule/recurrence-rule-information.vue';
+import { MODALS } from '@/constants';
+import { formToRrule } from '@/helpers/entities/shared/recurrence-rule/form';
+import { useModals } from '@/hooks/modals';
 
 export default {
   components: {

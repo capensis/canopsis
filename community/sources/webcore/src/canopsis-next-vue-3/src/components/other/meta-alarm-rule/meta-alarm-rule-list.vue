@@ -74,7 +74,6 @@ import { convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 import { isMetaAlarmRuleTypeHasPatterns } from '@/helpers/entities/meta-alarm/rule/form';
 import { convertNumberToRoundedPercentString } from '@/helpers/string';
-
 import { useI18n } from '@/hooks/i18n';
 
 import MetaAlarmRuleListExpandPanel from './partials/meta-alarm-rule-list-expand-panel.vue';

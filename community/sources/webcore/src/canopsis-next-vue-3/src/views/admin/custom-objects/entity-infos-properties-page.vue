@@ -24,18 +24,15 @@
 <script>
 import { onMounted } from 'vue';
 
+import EntityInfosPropertiesList from '@/components/other/entity-info-property/entity-infos-properties-list.vue';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
-
 import { pickIds } from '@/helpers/array';
-
+import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useObserver } from '@/hooks/observer';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
-import { useCRUDPermissions } from '@/hooks/auth';
 import { useEntityInfoProperty } from '@/hooks/store/modules/entity-info-property';
-
-import EntityInfosPropertiesList from '@/components/other/entity-info-property/entity-infos-properties-list.vue';
 
 export default {
   components: { EntityInfosPropertiesList },

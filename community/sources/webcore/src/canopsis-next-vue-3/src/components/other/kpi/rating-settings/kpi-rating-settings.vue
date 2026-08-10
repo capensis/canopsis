@@ -20,9 +20,7 @@ import { onMounted } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { USER_PERMISSIONS } from '@/constants';
-
 import { getQueryForList } from '@/helpers/entities/shared/query';
-
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';

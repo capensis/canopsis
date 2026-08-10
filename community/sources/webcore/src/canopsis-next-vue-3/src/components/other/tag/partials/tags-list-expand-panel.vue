@@ -26,9 +26,8 @@
 </template>
 
 <script>
-import { tagFilterPatternsToForm } from '@/helpers/entities/tag/form';
-
 import TagPatternsForm from '@/components/other/tag/form/tag-patterns-form.vue';
+import { tagFilterPatternsToForm } from '@/helpers/entities/tag/form';
 
 const TABS = {
   patterns: 'patterns',

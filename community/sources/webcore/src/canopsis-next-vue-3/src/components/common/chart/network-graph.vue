@@ -9,7 +9,6 @@
 import { debounce, isEqual } from 'lodash';
 
 import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
-
 import cytoscape from '@/services/cytoscape';
 
 export default {

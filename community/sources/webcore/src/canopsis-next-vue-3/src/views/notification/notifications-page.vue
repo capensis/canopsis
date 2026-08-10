@@ -48,6 +48,9 @@
 import { computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+import EventFilterFailuresTab from '@/components/other/notification/event-filter-failures-tab.vue';
+import InstructionsToApproveTab from '@/components/other/notification/instructions-to-approve-tab.vue';
+import InstructionsToRateTab from '@/components/other/notification/instructions-to-rate-tab.vue';
 import { SOCKET_ROOMS } from '@/config';
 import {
   NOTIFICATIONS_PAGE_TABS_KEYS,
@@ -55,9 +58,7 @@ import {
   ROUTES_NAMES,
   USER_PERMISSIONS,
 } from '@/constants';
-
 import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
-
 import { useCanPermission, useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
@@ -65,10 +66,6 @@ import { useSocketRoom } from '@/hooks/socket';
 import { useEventFilter } from '@/hooks/store/modules/event-filter';
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 import { useRemediationInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
-
-import EventFilterFailuresTab from '@/components/other/notification/event-filter-failures-tab.vue';
-import InstructionsToApproveTab from '@/components/other/notification/instructions-to-approve-tab.vue';
-import InstructionsToRateTab from '@/components/other/notification/instructions-to-rate-tab.vue';
 
 export default {
   components: {

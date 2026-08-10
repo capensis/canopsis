@@ -24,8 +24,8 @@
 <script>
 import { pick } from 'lodash';
 
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 import FieldFiltersList from './filters-list.vue';
 

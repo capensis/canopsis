@@ -1,7 +1,6 @@
 import { computed } from 'vue';
 
 import { API_ROUTES } from '@/config';
-
 import { createCRUDStore } from '@/stores/plugins/crud';
 
 export const useEntityInfoPropertyStore = createCRUDStore({

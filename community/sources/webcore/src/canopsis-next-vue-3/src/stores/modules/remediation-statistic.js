@@ -1,8 +1,7 @@
-import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
 import { API_ROUTES } from '@/config';
-
 import request from '@/services/request';
 
 export const useRemediationStatisticStore = defineStore('remediationStatistic', () => {

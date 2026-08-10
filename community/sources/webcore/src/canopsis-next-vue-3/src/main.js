@@ -1,48 +1,46 @@
-import { createApp } from 'vue';
 import { createPinia } from 'pinia';
+import { createApp } from 'vue';
 
-import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
-import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
-import CCircleBadge from '@/components/common/badge/c-circle-badge.vue';
-import CProgressOverlay from '@/components/common/progress/c-progress-overlay.vue';
-
-import * as BlockComponents from '@/components/common/block';
 import * as ActionsPanelComponents from '@/components/common/actions-panel';
+import CCircleBadge from '@/components/common/badge/c-circle-badge.vue';
+import * as BlockComponents from '@/components/common/block';
 import * as ButtonComponents from '@/components/common/buttons';
-import * as ChipComponents from '@/components/common/chips';
 import * as CalendarComponents from '@/components/common/calendar';
+import * as ChipComponents from '@/components/common/chips';
 import * as DragDropComponents from '@/components/common/drag-drop';
 import * as IconComponents from '@/components/common/icon';
 import * as InputComponents from '@/components/common/inputs';
 import * as LayoutComponents from '@/components/common/layout';
+import CLayout from '@/components/common/layout/c-layout.vue';
 import * as ModalComponents from '@/components/common/modal';
 import * as OverlayComponents from '@/components/common/overlay';
 import * as PageComponents from '@/components/common/page';
 import * as PaginationComponents from '@/components/common/pagination';
-import * as ResponsiveListComponents from '@/components/common/responsive-list';
+import CProgressOverlay from '@/components/common/progress/c-progress-overlay.vue';
 import * as RequestComponents from '@/components/common/request';
+import * as ResponsiveListComponents from '@/components/common/responsive-list';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import * as SearchComponents from '@/components/common/search';
 import * as TableComponents from '@/components/common/table';
 import * as TooltipComponents from '@/components/common/tooltip';
 import * as TreeviewComponents from '@/components/common/treeview';
 import * as VuetifyCommonComponents from '@/components/common/vuetify';
 import * as FormFieldComponents from '@/components/forms/fields';
-import CLayout from '@/components/common/layout/c-layout.vue';
 import RegisteredModals from '@/components/modals';
 import { MODALS } from '@/constants';
 import * as constants from '@/constants';
 
 import App from './app.vue';
-import router from './router';
 import { i18n } from './i18n';
-import vuetify, { registerVuetifyComponentAliases } from './plugins/vuetify';
-import { customIconsRegistry } from './plugins/vuetify/icons';
-import { useSidebarStore } from './stores/modules/sidebar';
-
 import modalsPlugin from './plugins/modals';
 import popupsPlugin from './plugins/popups';
 import socketPlugin from './plugins/socket';
 import veeValidatePlugin from './plugins/vee-validate';
+import vuetify, { registerVuetifyComponentAliases } from './plugins/vuetify';
+import { customIconsRegistry } from './plugins/vuetify/icons';
+import router from './router';
+import { useSidebarStore } from './stores/modules/sidebar';
 
 import 'vuetify/styles';
 

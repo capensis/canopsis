@@ -33,11 +33,10 @@
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue';
 import { useField } from 'vee-validate';
+import { computed, ref, watch } from 'vue';
 
 import { getMostReadableTextColor } from '@/helpers/color';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {

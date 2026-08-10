@@ -22,8 +22,8 @@
 import { merge } from 'lodash';
 import { toRef } from 'vue';
 
-import { useI18n } from '@/hooks/i18n';
 import { useLazySearch } from '@/hooks/form/lazy-search';
+import { useI18n } from '@/hooks/i18n';
 import { useTemplateTesting } from '@/hooks/store/modules/template-testing';
 
 export default {

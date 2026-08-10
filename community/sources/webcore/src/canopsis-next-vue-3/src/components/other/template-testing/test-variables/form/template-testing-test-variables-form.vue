@@ -40,12 +40,12 @@
 <script>
 import { computed } from 'vue';
 
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 import TemplateTestingTestField from '../../form/fields/template-testing-test-field.vue';
-import TemplateTestingTestVariablesTestData from '../partials/template-testing-test-variables-test-data.vue';
 import TemplateTestingTestVariablesTemplateItem from '../partials/template-testing-test-variables-template-item.vue';
+import TemplateTestingTestVariablesTestData from '../partials/template-testing-test-variables-test-data.vue';
 
 export default {
   components: {

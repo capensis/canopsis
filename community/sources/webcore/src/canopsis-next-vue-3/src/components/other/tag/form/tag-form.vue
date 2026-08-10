@@ -23,7 +23,6 @@
 
 <script>
 import { MAX_TAG_NAME_LENGTH } from '@/constants';
-
 import { useModelField } from '@/hooks/form/model-field';
 
 import TagGeneralForm from './tag-general-form.vue';

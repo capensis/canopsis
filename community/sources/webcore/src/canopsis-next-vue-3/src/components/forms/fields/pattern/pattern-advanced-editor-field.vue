@@ -17,9 +17,9 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-import { useField } from 'vee-validate';
 import { isArray } from 'lodash';
+import { useField } from 'vee-validate';
+import { computed } from 'vue';
 
 import {
   isExtraInfosRuleType,
@@ -27,7 +27,6 @@ import {
   isValidPatternRule,
   isObjectRuleType,
 } from '@/helpers/entities/pattern/form';
-
 import { formMixin } from '@/mixins/form';
 
 import PatternFixWithAiBtn from './pattern-fix-with-ai-btn.vue';

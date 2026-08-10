@@ -34,12 +34,11 @@
 </template>
 
 <script>
+import Flowchart from '@/components/common/flowchart/flowchart.vue';
 import { formMixin } from '@/mixins/form';
 
-import Flowchart from '@/components/common/flowchart/flowchart.vue';
-
-import FlowchartPointsEditor from './flowchart-points-editor.vue';
 import AddLocationBtn from './add-location-btn.vue';
+import FlowchartPointsEditor from './flowchart-points-editor.vue';
 
 export default {
   components: { Flowchart, FlowchartPointsEditor, AddLocationBtn },

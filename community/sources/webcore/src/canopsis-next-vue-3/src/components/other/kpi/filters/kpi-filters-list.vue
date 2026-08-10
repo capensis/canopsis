@@ -34,7 +34,6 @@
 import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 import KpiFiltersExpandItem from './partials/kpi-filters-expand-item.vue';

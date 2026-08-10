@@ -31,9 +31,7 @@
 import { computed } from 'vue';
 
 import { CONTENT_TYPES, HEADERS } from '@/constants';
-
 import { textPairToForm } from '@/helpers/text-pairs';
-
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import RequestHeaderField from './request-header-field.vue';

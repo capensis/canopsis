@@ -74,23 +74,20 @@
 <script>
 import { computed, onMounted, ref, watch } from 'vue';
 
-import { MODALS } from '@/constants';
-
-import { pickIds } from '@/helpers/array';
-import { convertDateToString } from '@/helpers/date/date';
-import { patternToForm } from '@/helpers/entities/pattern/form';
-
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import { usePendingWithLocalQuery } from '@/hooks/query/shared';
-import { useQueryOptions } from '@/hooks/query/options';
-import { useEventsRecord } from '@/hooks/store/modules/events-record';
-
-import { useEventsRecordRecording } from '@/components/other/events-record/hooks/recording';
-import { useEventsRecordResending } from '@/components/other/events-record/hooks/resending';
 import EventsRecordEventsFilter from '@/components/other/events-record/events-record-events-filter.vue';
 import EventsRecordEventsHeader from '@/components/other/events-record/events-record-events-header.vue';
 import EventsRecordEventsList from '@/components/other/events-record/events-record-events-list.vue';
+import { useEventsRecordRecording } from '@/components/other/events-record/hooks/recording';
+import { useEventsRecordResending } from '@/components/other/events-record/hooks/resending';
+import { MODALS } from '@/constants';
+import { pickIds } from '@/helpers/array';
+import { convertDateToString } from '@/helpers/date/date';
+import { patternToForm } from '@/helpers/entities/pattern/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useQueryOptions } from '@/hooks/query/options';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
+import { useEventsRecord } from '@/hooks/store/modules/events-record';
 
 const TABS = {
   events: 'events',

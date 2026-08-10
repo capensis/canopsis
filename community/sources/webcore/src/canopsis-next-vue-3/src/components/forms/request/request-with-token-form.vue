@@ -21,9 +21,8 @@
 </template>
 
 <script>
-import { useModelField } from '@/hooks/form/model-field';
-
 import RequestForm from '@/components/forms/request/request-form.vue';
+import { useModelField } from '@/hooks/form/model-field';
 
 export default {
   emits: ['update:form'],

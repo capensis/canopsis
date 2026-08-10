@@ -41,10 +41,9 @@ import {
   remediationInstructionStepOperationToForm,
   getOperationNumber,
 } from '@/helpers/entities/remediation/instruction/form';
-
 import { useArrayModelField } from '@/hooks/form/array-model-field';
-import { useValidator } from '@/hooks/validator/validator';
 import { useValidationAttachMinValueForField } from '@/hooks/validator/validation-attach-min-value';
+import { useValidator } from '@/hooks/validator/validator';
 
 import RemediationInstructionOperationField from './fields/remediation-instruction-operation-field.vue';
 

@@ -1,8 +1,7 @@
 import { MODALS, ROUTES_NAMES } from '@/constants';
-
-import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 import { viewRouterMixin } from '@/mixins/view/router';
 
 import { layoutNavigationEditingModeMixin } from './editing-mode';

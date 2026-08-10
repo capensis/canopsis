@@ -18,8 +18,8 @@
 <script>
 import { formMixin } from '@/mixins/form';
 
-import PatternRulesField from './pattern-rules-field.vue';
 import PatternOperatorInformation from './pattern-operator-information.vue';
+import PatternRulesField from './pattern-rules-field.vue';
 
 export default {
   emits: ['update:group', 'remove'],

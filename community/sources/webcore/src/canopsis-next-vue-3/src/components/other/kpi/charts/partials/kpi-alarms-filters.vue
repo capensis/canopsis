@@ -34,7 +34,6 @@ import {
   SAMPLINGS,
   TIME_UNITS,
 } from '@/constants';
-
 import { getDiffBetweenDates, subtractUnitFromDate } from '@/helpers/date/date';
 import {
   convertStartDateIntervalToTimestamp,

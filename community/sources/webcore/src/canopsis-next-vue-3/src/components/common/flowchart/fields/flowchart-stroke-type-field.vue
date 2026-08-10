@@ -32,7 +32,6 @@
 
 <script>
 import { STROKE_TYPES } from '@/constants';
-
 import { formBaseMixin } from '@/mixins/form';
 
 export default {

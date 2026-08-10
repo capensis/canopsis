@@ -15,6 +15,8 @@
 <script>
 import { isArray, keyBy } from 'lodash';
 
+import CAlarmOldStateField from '@/components/forms/fields/alarm/c-alarm-old-state-field.vue';
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 import {
   ALARM_STATES,
   ALARM_EVENT_INITIATORS,
@@ -25,11 +27,7 @@ import {
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
 } from '@/constants';
-
 import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
-
-import CAlarmOldStateField from '@/components/forms/fields/alarm/c-alarm-old-state-field.vue';
-import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 export default {
   emits: ['update:patterns', 'update:value'],

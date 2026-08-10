@@ -1,15 +1,15 @@
 import { isEmpty } from 'lodash';
 
+import { removeKeyFromEntities } from '@/helpers/array';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
+import { flattenErrorMap } from '@/helpers/entities/shared/form';
 import {
   formToRequest,
   formToRequestAuthToken,
   requestAuthTokenToForm,
   requestToForm,
 } from '@/helpers/entities/shared/request/form';
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
-import { removeKeyFromEntities } from '@/helpers/array';
-import { flattenErrorMap } from '@/helpers/entities/shared/form';
 import { uid } from '@/helpers/uid';
 
 /**

@@ -62,11 +62,10 @@
 <script>
 import { computed, toRef } from 'vue';
 
-import { remediationInstructionStepToForm } from '@/helpers/entities/remediation/instruction/form';
+import { DATETIME_FORMATS } from '@/constants';
 import { isOmitEqual } from '@/helpers/collection';
 import { convertDurationToString, toSeconds } from '@/helpers/date/duration';
-import { DATETIME_FORMATS } from '@/constants';
-
+import { remediationInstructionStepToForm } from '@/helpers/entities/remediation/instruction/form';
 import { useConfirmableForm } from '@/hooks/confirmable-form';
 
 import RemediationInstructionOperationsForm from '../remediation-instruction-operations-form.vue';

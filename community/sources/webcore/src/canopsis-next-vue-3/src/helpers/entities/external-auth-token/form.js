@@ -1,5 +1,4 @@
 import { REQUEST_AUTH_TYPES } from '@/constants';
-
 import { durationToForm } from '@/helpers/date/duration';
 import { requestToForm, formToRequest } from '@/helpers/entities/shared/request/form';
 

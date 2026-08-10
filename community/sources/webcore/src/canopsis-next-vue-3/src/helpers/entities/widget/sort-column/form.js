@@ -1,7 +1,6 @@
 import { isArray, isEmpty } from 'lodash';
 
 import { SORT_ORDERS } from '@/constants';
-
 import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/array';
 
 /**

@@ -2,11 +2,10 @@ import {
   DYNAMIC_INFO_FIELDS_TO_LABELS_KEYS,
   DYNAMIC_INFO_GROUPED_ADVANCED_SEARCH_FIELDS,
 } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
-import { useAdvancedSearchGroupedAttributes } from './basic';
 import { useAdvancedSearchDynamicInfoAttributes } from './attributes-map';
+import { useAdvancedSearchGroupedAttributes } from './basic';
 
 export const useDynamicInfoAdvancedSearchAttributes = () => {
   const { t } = useI18n();

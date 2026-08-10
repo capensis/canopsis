@@ -1,5 +1,4 @@
 import { API_ROUTES } from '@/config';
-
 import request from '@/services/request';
 import { createCRUDStore } from '@/stores/plugins/crud';
 

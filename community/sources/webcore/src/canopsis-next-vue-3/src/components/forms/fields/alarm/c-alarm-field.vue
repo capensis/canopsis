@@ -26,8 +26,8 @@
 import { merge } from 'lodash';
 import { toRef, watch } from 'vue';
 
-import { useI18n } from '@/hooks/i18n';
 import { useLazySearch } from '@/hooks/form/lazy-search';
+import { useI18n } from '@/hooks/i18n';
 import { useAlarm } from '@/hooks/store/modules/alarm';
 
 export default {

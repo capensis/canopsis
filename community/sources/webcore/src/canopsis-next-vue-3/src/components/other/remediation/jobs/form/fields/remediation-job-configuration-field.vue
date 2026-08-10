@@ -17,7 +17,6 @@
 import { onMounted, ref } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
-
 import { useRemediationConfiguration } from '@/hooks/store/modules/remediation-configuration';
 
 export default {

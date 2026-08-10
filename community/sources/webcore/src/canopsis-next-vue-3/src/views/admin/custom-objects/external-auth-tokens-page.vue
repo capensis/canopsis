@@ -22,15 +22,13 @@
 <script>
 import { onMounted } from 'vue';
 
+import ExternalAuthTokensList from '@/components/other/external-auth-token/external-auth-tokens-list.vue';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
-
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useWebhookTokenRule } from '@/hooks/store/modules/webhook-token-rule';
-
-import ExternalAuthTokensList from '@/components/other/external-auth-token/external-auth-tokens-list.vue';
 
 export default {
   components: { ExternalAuthTokensList },

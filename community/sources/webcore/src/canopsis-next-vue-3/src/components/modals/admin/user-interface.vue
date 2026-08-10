@@ -33,23 +33,20 @@
 <script>
 import { computed, onMounted, ref } from 'vue';
 
+import UserInterfaceForm from '@/components/other/user-interface/form/user-interface-form.vue';
 import { USER_PERMISSIONS } from '@/constants';
-
-import { getFileDataUrlContent } from '@/helpers/file/file-select';
 import { notificationsSettingsToForm } from '@/helpers/entities/notification/form';
 import { userInterfaceToForm } from '@/helpers/entities/user-interface/form';
-
+import { getFileDataUrlContent } from '@/helpers/file/file-select';
 import { useCRUDPermissions } from '@/hooks/auth';
-import { useForm } from '@/hooks/form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useInfo } from '@/hooks/store/modules/info';
 import { useNotificationSettings } from '@/hooks/store/modules/notification-settings';
 import { useTemplateVars } from '@/hooks/store/modules/template-vars';
-
-import UserInterfaceForm from '@/components/other/user-interface/form/user-interface-form.vue';
 
 export default {
   components: {

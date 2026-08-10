@@ -30,14 +30,12 @@
 <script>
 import { computed } from 'vue';
 
+import ShareTokenForm from '@/components/other/share-token/form/share-token-form.vue';
 import { formToShareToken, shareTokenToForm } from '@/helpers/entities/share-ticket/form';
-
-import { useForm } from '@/hooks/form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-
-import ShareTokenForm from '@/components/other/share-token/form/share-token-form.vue';
 
 export default {
   components: { ShareTokenForm },

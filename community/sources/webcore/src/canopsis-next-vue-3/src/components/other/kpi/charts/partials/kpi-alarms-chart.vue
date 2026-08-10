@@ -15,8 +15,9 @@
 <script>
 import { debounce } from 'lodash';
 
+import BarChart from '@/components/common/chart/bar-chart.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 import { KPI_ALARMS_GRAPH_BAR_PERCENTAGE, SAMPLINGS, TIME_UNITS } from '@/constants';
-
 import { convertDateToStartOfUnitTimestamp, getNowTimestamp } from '@/helpers/date/date';
 import {
   convertDurationToMaxUnitDuration,
@@ -24,11 +25,8 @@ import {
   fromSeconds,
 } from '@/helpers/date/duration';
 import { getMetricColor } from '@/helpers/entities/metric/color';
-import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
 import { isRatioMetric, isTimeMetric } from '@/helpers/entities/metric/form';
-
-import BarChart from '@/components/common/chart/bar-chart.vue';
-import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
+import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
 
 export default {
   inject: ['$system'],

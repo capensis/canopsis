@@ -8,8 +8,6 @@
 </template>
 
 <script>
-import { merge } from 'lodash';
-import { markRaw } from 'vue';
 import {
   CategoryScale,
   Chart,
@@ -22,9 +20,11 @@ import {
   TimeScale,
   Tooltip,
 } from 'chart.js';
-import 'chartjs-adapter-moment';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import zoomPlugin from 'chartjs-plugin-zoom';
+import 'chartjs-adapter-moment';
+import { merge } from 'lodash';
+import { markRaw } from 'vue';
 
 import { DATETIME_FORMATS } from '@/constants';
 

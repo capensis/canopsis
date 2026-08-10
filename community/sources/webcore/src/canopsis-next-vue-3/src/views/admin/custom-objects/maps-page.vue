@@ -26,17 +26,14 @@
 import { omit } from 'lodash';
 import { onMounted } from 'vue';
 
+import MapsList from '@/components/other/map/maps-list.vue';
 import { CREATE_MAP_MODAL_NAMES_BY_TYPE, MAP_TYPES, MODALS, USER_PERMISSIONS } from '@/constants';
-
 import { convertQueryToRequest } from '@/helpers/query';
-
+import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useCRUDPermissions } from '@/hooks/auth';
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { useMap } from '@/hooks/store/modules/map';
-
-import MapsList from '@/components/other/map/maps-list.vue';
 
 export default {
   components: {

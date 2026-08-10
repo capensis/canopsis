@@ -1,6 +1,5 @@
-import { PATTERNS_FIELDS } from '@/constants';
 import { COLORS } from '@/config';
-
+import { PATTERNS_FIELDS } from '@/constants';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 /**

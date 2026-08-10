@@ -16,7 +16,6 @@
 import { isUndefined } from 'lodash';
 
 import { MAX_LIMIT } from '@/constants';
-
 import { useRatingSettings } from '@/hooks/store/modules/rating-settings';
 
 export default {

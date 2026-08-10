@@ -1,13 +1,11 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
 import { API_ROUTES } from '@/config';
 import { POPUP_TYPES } from '@/constants';
-
-import request from '@/services/request';
-
-import { durationToSeconds } from '@/helpers/date/duration';
 import { getLocalTimezone } from '@/helpers/date/date';
+import { durationToSeconds } from '@/helpers/date/duration';
+import request from '@/services/request';
 
 export const useAppInfoStore = defineStore('appInfo', () => {
   const appInfo = ref({});

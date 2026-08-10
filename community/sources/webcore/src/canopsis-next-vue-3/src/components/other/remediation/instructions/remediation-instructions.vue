@@ -24,7 +24,6 @@
 import { onMounted } from 'vue';
 
 import { USER_PERMISSIONS } from '@/constants';
-
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useFetchListWithOptions } from '@/hooks/query/shared';
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';

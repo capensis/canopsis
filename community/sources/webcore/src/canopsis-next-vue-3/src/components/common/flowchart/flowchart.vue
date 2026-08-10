@@ -49,8 +49,8 @@
 
 <script>
 import FlowchartEditor from './flowchart-editor.vue';
-import FlowchartSidebar from './flowchart-sidebar.vue';
 import FlowchartProperties from './flowchart-properties.vue';
+import FlowchartSidebar from './flowchart-sidebar.vue';
 
 export default {
   components: {

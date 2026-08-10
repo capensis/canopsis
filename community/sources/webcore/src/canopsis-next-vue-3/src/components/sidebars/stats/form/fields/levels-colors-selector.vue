@@ -16,9 +16,8 @@
 </template>
 
 <script>
-import { ALARM_LEVELS_COLORS, STATS_CRITICITY } from '@/constants';
-
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+import { ALARM_LEVELS_COLORS, STATS_CRITICITY } from '@/constants';
 
 export default {
   components: { WidgetSettingsItem },

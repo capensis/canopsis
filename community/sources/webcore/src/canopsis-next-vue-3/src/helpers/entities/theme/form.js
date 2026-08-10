@@ -1,6 +1,5 @@
 import { COLORS } from '@/config';
 import { THEME_FONT_SIZES } from '@/constants';
-
 import { getLightenOrDarkenColor, isDarkColor } from '@/helpers/color';
 
 /**

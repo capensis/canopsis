@@ -3,6 +3,7 @@ import { VExpansionPanels } from 'vuetify/components';
 
 import { DEFAULT_THEME_COLORS } from '@/config';
 import { createCanopsisVuetifyTheme } from '@/helpers/entities/theme/vuetify';
+
 import { customIconAliases, iconSets } from './icons';
 
 const { definition } = createCanopsisVuetifyTheme(DEFAULT_THEME_COLORS);

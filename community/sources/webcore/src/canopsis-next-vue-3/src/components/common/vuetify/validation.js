@@ -1,6 +1,6 @@
 import { isNil, debounce } from 'lodash';
-import { computed, watch } from 'vue';
 import { isNotNestedPath, useField, validate } from 'vee-validate';
+import { computed, watch } from 'vue';
 
 import { VALIDATION_DELAY } from '@/constants/common';
 
