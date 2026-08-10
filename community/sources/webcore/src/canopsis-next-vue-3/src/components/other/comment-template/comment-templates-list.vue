@@ -15,16 +15,8 @@
 
     <template #actions="{ item }">
       <c-layout>
-        <c-action-btn
-          v-if="editable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="deletable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
+        <c-action-btn v-if="editable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="deletable" type="delete" @click="$emit('remove', item._id)" />
       </c-layout>
     </template>
   </c-advanced-data-table>
@@ -34,7 +26,6 @@
 import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {

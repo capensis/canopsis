@@ -36,7 +36,6 @@ import {
   moveLayoutItem,
   replaceLayoutItemInLayout,
 } from '@/helpers/grid';
-
 import { formBaseMixin } from '@/mixins/form';
 
 import GridItem from './partials/grid-item.vue';
@@ -148,7 +147,7 @@ export default {
       const bottom = calculateLayoutBottom(this.currentLayout);
 
       return {
-        height: `${(bottom * this.rowHeight) + (marginY * rowCount) + marginY}px`,
+        height: `${bottom * this.rowHeight + marginY * rowCount + marginY}px`,
       };
     },
 
@@ -301,7 +300,7 @@ export default {
 
   &__placeholder {
     background-color: rgb(var(--v-theme-primary)) !important;
-    opacity: .35;
+    opacity: 0.35;
 
     &:after {
       content: none !important;

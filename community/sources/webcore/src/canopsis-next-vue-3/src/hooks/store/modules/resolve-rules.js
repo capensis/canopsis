@@ -9,12 +9,7 @@ import { useResolveRulesStore } from '@/stores/modules/resolve-rules';
  */
 export const useResolveRules = () => {
   const resolveRulesStore = useResolveRulesStore();
-  const {
-    items,
-    meta,
-    pending,
-    fetchingParams,
-  } = storeToRefs(resolveRulesStore);
+  const { items, meta, pending, fetchingParams } = storeToRefs(resolveRulesStore);
 
   return {
     resolveRules: items,

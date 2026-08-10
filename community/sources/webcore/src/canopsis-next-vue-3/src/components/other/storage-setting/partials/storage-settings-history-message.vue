@@ -7,7 +7,6 @@ import { isNumber } from 'lodash';
 import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {
@@ -52,15 +51,19 @@ export default {
       ];
 
       if (!props.hideDeleted && isNumber(deleted)) {
-        result.push(t(props.deletedCountMessageKey, {
-          count: deleted,
-        }));
+        result.push(
+          t(props.deletedCountMessageKey, {
+            count: deleted,
+          }),
+        );
       }
 
       if (!props.hideArchived && isNumber(archived)) {
-        result.push(t(props.archivedCountMessageKey, {
-          count: archived,
-        }));
+        result.push(
+          t(props.archivedCountMessageKey, {
+            count: archived,
+          }),
+        );
       }
 
       return result.join(' ');

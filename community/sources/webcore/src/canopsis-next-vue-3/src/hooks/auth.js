@@ -1,10 +1,8 @@
-import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
 
 import { CRUD_ACTIONS, GROUPS_NAVIGATION_TYPES } from '@/constants';
-
 import { checkUserAccess } from '@/helpers/permission';
-
 import { useAuthStore } from '@/stores/modules/auth';
 
 /**
@@ -24,17 +22,11 @@ export const useAuth = () => {
     pending,
   } = storeToRefs(authStore);
 
-  const {
-    login,
-    applyAccessToken,
-    logout,
-    fetchCurrentUser,
-    filesAccess,
-  } = authStore;
+  const { login, applyAccessToken, logout, fetchCurrentUser, filesAccess } = authStore;
 
-  const isShownGroupsTopBar = computed(() => (
-    currentUser.value?.ui_groups_navigation_type === GROUPS_NAVIGATION_TYPES.topBar
-  ));
+  const isShownGroupsTopBar = computed(
+    () => currentUser.value?.ui_groups_navigation_type === GROUPS_NAVIGATION_TYPES.topBar,
+  );
 
   const isShownGroupsSideBar = computed(() => {
     const groupsNavigationType = currentUser.value?.ui_groups_navigation_type;
@@ -98,25 +90,20 @@ export const useCurrentUserPermissions = () => {
   const authStore = useAuthStore();
   const { currentUserPermissionsById } = storeToRefs(authStore);
 
-  const checkAccess = (permissionId, action = CRUD_ACTIONS.can) => (
-    checkUserAccess(currentUserPermissionsById.value[permissionId], action)
-  );
+  const checkAccess = (permissionId, action = CRUD_ACTIONS.can) =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], action);
 
-  const checkCreateAccess = permissionId => (
-    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.create)
-  );
+  const checkCreateAccess = permissionId =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.create);
 
-  const checkReadAccess = permissionId => (
-    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.read)
-  );
+  const checkReadAccess = permissionId =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.read);
 
-  const checkUpdateAccess = permissionId => (
-    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.update)
-  );
+  const checkUpdateAccess = permissionId =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.update);
 
-  const checkDeleteAccess = permissionId => (
-    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.delete)
-  );
+  const checkDeleteAccess = permissionId =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.delete);
 
   return {
     currentUserPermissionsById,
@@ -187,12 +174,8 @@ export const useCanPermission = (permission) => {
  * }
  */
 export const useCRUDPermissions = (permission) => {
-  const {
-    checkCreateAccess,
-    checkReadAccess,
-    checkUpdateAccess,
-    checkDeleteAccess,
-  } = useCurrentUserPermissions();
+  const { checkCreateAccess, checkReadAccess, checkUpdateAccess, checkDeleteAccess } =
+    useCurrentUserPermissions();
 
   const hasCreateAccess = computed(() => checkCreateAccess(permission));
   const hasReadAccess = computed(() => checkReadAccess(permission));

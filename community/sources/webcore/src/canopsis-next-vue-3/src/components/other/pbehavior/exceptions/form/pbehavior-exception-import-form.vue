@@ -11,10 +11,11 @@
         <file-selector v-model="file" name="file" required>
           <template #activator="{ on, disabled }">
             <v-btn
-:disabled="disabled"
-color="primary"
-variant="outlined"
-v-on="on">
+              :disabled="disabled"
+              color="primary"
+              variant="outlined"
+              v-on="on"
+            >
               {{ t('common.chooseFile') }}
             </v-btn>
           </template>

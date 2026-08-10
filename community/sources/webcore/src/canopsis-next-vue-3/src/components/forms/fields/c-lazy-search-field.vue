@@ -20,8 +20,8 @@
     :clearable="clearable"
     :return-object="returnObject"
     :no-data-text="noDataText"
+    :density="density"
     class="c-lazy-search-field"
-    density="compact"
     no-filter
     @focus="onFocus"
     @blur="onBlur"
@@ -55,10 +55,11 @@
     </template>
     <template v-else-if="isMultiple" #selection="{ item, props: selectionProps }">
       <v-chip
-v-bind="selectionProps"
-class="c-lazy-search-field__chip"
-size="small"
-closable>
+        v-bind="selectionProps"
+        class="c-lazy-search-field__chip"
+        size="small"
+        closable
+      >
         <span class="text-truncate">
           {{ getItemText(getSelectionItem(item)) }}
         </span>
@@ -161,6 +162,10 @@ export default {
     menuProps: {
       type: Object,
       default: () => ({}),
+    },
+    density: {
+      type: String,
+      default: 'compact',
     },
   },
   emits: ['update:value', 'update:modelValue', 'update:search', 'fetch', 'fetch:more'],

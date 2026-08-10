@@ -11,24 +11,13 @@
         color="primary"
         fixed-tabs
       >
-        <v-tab
-          v-for="tab in treeviewPermissions"
-          :key="tab._id"
-          :value="tab._id"
-        >
+        <v-tab v-for="tab in treeviewPermissions" :key="tab._id" :value="tab._id">
           {{ $t(`permission.title.${tab.name}`) }}
         </v-tab>
       </v-tabs>
 
-      <v-window
-        v-model="activeTab"
-        class="admin-rights__window"
-      >
-        <v-window-item
-          v-for="tab in treeviewPermissions"
-          :key="`${tab._id}-item`"
-          :value="tab._id"
-        >
+      <v-window v-model="activeTab" class="admin-rights__window">
+        <v-window-item v-for="tab in treeviewPermissions" :key="`${tab._id}-item`" :value="tab._id">
           <permissions-table-wrapper
             :roles="tab._id === apiTabId ? apiRoles : uiRoles"
             :search-depth="searchDepthByTabId[tab._id]"
@@ -39,16 +28,8 @@
       </v-window>
     </v-card>
 
-    <c-layout
-      v-show="hasChanges"
-      class="sticky-bottom-buttons mt-3"
-      gap="2"
-    >
-      <v-btn
-        class="ml-3"
-        color="primary"
-        @click="submit"
-      >
+    <c-layout v-show="hasChanges" class="sticky-bottom-buttons mt-3" gap="2">
+      <v-btn class="ml-3" color="primary" @click="submit">
         {{ $t('common.submit') }}
       </v-btn>
 
@@ -62,21 +43,15 @@
 </template>
 
 <script>
-import {
-  onMounted,
-  ref,
-  watch,
-} from 'vue';
-
-import { USER_PERMISSIONS_GROUPS } from '@/constants';
+import { onMounted, ref, watch } from 'vue';
 
 import {
   useRolePermissionActions,
   useRolePermissionFetching,
 } from '@/components/other/permission/hooks/role-permission';
-
 import PermissionsFabBtn from '@/components/other/permission/permissions-fab-btn.vue';
 import PermissionsTableWrapper from '@/components/other/permission/permissions-table-wrapper.vue';
+import { USER_PERMISSIONS_GROUPS } from '@/constants';
 
 export default {
   components: { PermissionsTableWrapper, PermissionsFabBtn },

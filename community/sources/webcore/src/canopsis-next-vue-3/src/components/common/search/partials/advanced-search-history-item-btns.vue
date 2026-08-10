@@ -5,10 +5,7 @@
       :tooltip="$t('common.pin')"
       @click="$emit('toggle-pin', id)"
     />
-    <c-action-btn
-      type="delete"
-      @click="$emit('remove', id)"
-    />
+    <c-action-btn type="delete" @click="$emit('remove', id)" />
   </c-layout>
 </template>
 

@@ -15,10 +15,11 @@
         </v-btn>
 
         <v-btn
-:disabled="submitting"
-:loading="submitting"
-color="primary"
-type="submit">
+          :disabled="submitting"
+          :loading="submitting"
+          color="primary"
+          type="submit"
+        >
           {{ submitLabel }}
         </v-btn>
       </template>
@@ -29,17 +30,15 @@ type="submit">
 <script>
 import { computed } from 'vue';
 
+import RemediationConfigurationForm from '@/components/other/remediation/configurations/form/remediation-configuration-form.vue';
 import {
   formToRemediationConfiguration,
   remediationConfigurationToForm,
 } from '@/helpers/entities/remediation/configuration/form';
-
-import { useForm } from '@/hooks/form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-
-import RemediationConfigurationForm from '@/components/other/remediation/configurations/form/remediation-configuration-form.vue';
 
 export default {
   components: {

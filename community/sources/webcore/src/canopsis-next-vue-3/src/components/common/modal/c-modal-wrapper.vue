@@ -26,8 +26,8 @@
                   @click="minimizeModal"
                 >
                   <c-icon size="large">
-minimize
-</c-icon>
+                    minimize
+                  </c-icon>
                 </v-btn>
               </template>
 
@@ -35,11 +35,12 @@ minimize
             </v-tooltip>
 
             <v-btn
-v-else
-size="x-small"
-variant="text"
-icon
-@click="maximizeModal">
+              v-else
+              size="x-small"
+              variant="text"
+              icon
+              @click="maximizeModal"
+            >
               <c-icon> maximize </c-icon>
             </v-btn>
           </div>
@@ -52,8 +53,8 @@ icon
               @click="closeModal"
             >
               <c-icon :size="modal.minimized ? undefined : 'large'">
-close
-</c-icon>
+                close
+              </c-icon>
             </v-btn>
           </div>
         </div>
@@ -83,8 +84,8 @@ close
 <script>
 import { computed, inject } from 'vue';
 
-import { useModals } from '@/hooks/modals';
 import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 export default {
   props: {

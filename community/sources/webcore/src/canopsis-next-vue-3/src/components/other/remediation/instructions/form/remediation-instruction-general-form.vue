@@ -1,10 +1,11 @@
 <template>
   <div>
     <c-name-field
-v-model="nameField"
-:disabled="disabledCommon"
-required
-autofocus />
+      v-model="nameField"
+      :disabled="disabledCommon"
+      required
+      autofocus
+    />
 
     <c-form-block>
       <c-form-block-row :label="$t('remediation.instruction.type')" indented>
@@ -102,12 +103,10 @@ import {
   REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES,
   REMEDIATION_AUTO_INSTRUCTION_REPEAT_TRIGGERS_TYPES,
 } from '@/constants';
-
 import {
   isInstructionTypeAuto,
   isInstructionTypeSimpleManual,
 } from '@/helpers/entities/remediation/instruction/form';
-
 import { useModelField } from '@/hooks/form/model-field';
 
 import RemediationInstructionApprovalForm from './remediation-instruction-approval-form.vue';

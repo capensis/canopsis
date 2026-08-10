@@ -5,8 +5,11 @@ const modules = import.meta.glob('@/assets/event-filter-actions-types-images/*',
 
 export const eventFilterActionsTypesImages = Object.fromEntries(
   Object.entries(modules).map(([path, url]) => {
-    const name = path.split('/').pop().replace(/\.\w+$/, '');
+    const name = path
+      .split('/')
+      .pop()
+      .replace(/\.\w+$/, '');
 
     return [name, url];
-  })
+  }),
 );

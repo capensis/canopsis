@@ -17,10 +17,7 @@
           <c-alert type="info">
             {{ methodMessage }}
           </c-alert>
-          <state-setting-entity-patterns-form
-            :ref="setRef"
-            :entity-types="patternEntityTypes"
-          />
+          <state-setting-entity-patterns-form :ref="setRef" :entity-types="patternEntityTypes" />
         </c-layout>
       </template>
 
@@ -29,10 +26,7 @@
           <c-alert type="info">
             {{ methodMessage }}
           </c-alert>
-          <state-setting-inherited-entity-pattern-step
-            v-if="isInheritedMethod"
-            :ref="setRef"
-          />
+          <state-setting-inherited-entity-pattern-step v-if="isInheritedMethod" :ref="setRef" />
           <state-setting-thresholds-step v-else :ref="setRef" />
         </c-layout>
       </template>
@@ -49,7 +43,6 @@ import {
   STATE_SETTING_METHODS,
   STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD,
 } from '@/constants';
-
 import { useFormContext, useFormModel } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 

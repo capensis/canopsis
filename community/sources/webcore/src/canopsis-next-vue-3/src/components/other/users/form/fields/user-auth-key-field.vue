@@ -1,18 +1,10 @@
 <template>
-  <c-layout
-    class="user-auth-key-field"
-    align="center"
-    justify="space-between"
-  >
+  <c-layout class="user-auth-key-field" align="center" justify="space-between">
     <span class="user-auth-key-field__value">
       {{ displayedValue }}
     </span>
 
-    <c-layout
-      v-if="value"
-      align="center"
-      gap="1"
-    >
+    <c-layout v-if="value" align="center" gap="1">
       <v-tooltip location="top">
         <template #activator="{ props: activatorProps }">
           <v-btn
@@ -78,7 +70,7 @@ export default {
     const visibilityIcon = computed(() => (isShown.value ? 'visibility_off' : 'visibility'));
     const visibilityTooltip = computed(() => t(isShown.value ? 'common.hide' : 'common.show'));
 
-    const toggleVisibility = () => isShown.value = !isShown.value;
+    const toggleVisibility = () => (isShown.value = !isShown.value);
 
     const copy = async () => {
       try {

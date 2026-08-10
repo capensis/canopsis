@@ -78,19 +78,15 @@
 <script>
 import { computed } from 'vue';
 
+import RatingField from '@/components/forms/fields/rating-field.vue';
 import { USER_PERMISSIONS } from '@/constants';
-
 import { convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
-
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 
-import RatingField from '@/components/forms/fields/rating-field.vue';
-
 import AffectAlarmStates from './partials/affect-alarm-states.vue';
-import RemediationInstructionStatsListExpandPanel
-  from './partials/remediation-instruction-stats-list-expand-panel.vue';
+import RemediationInstructionStatsListExpandPanel from './partials/remediation-instruction-stats-list-expand-panel.vue';
 
 export default {
   components: {
@@ -134,59 +130,62 @@ export default {
       USER_PERMISSIONS.technical.exploitation.remediationInstruction,
     );
 
-    const headers = computed(() => [
-      { text: t('common.name'), value: 'name', width: 150 },
-      hasCreateAccess.value && { text: t('common.type'), value: 'type', width: 100 },
-      {
-        text: t('remediation.instructionStat.lastExecutedOn'),
-        value: 'last_executed_on',
-        width: 160,
-      },
-      { text: t('common.lastModifiedOn'), value: 'last_modified', width: 160 },
-      {
-        text: t('remediation.instructionStat.averageCompletionTime'),
-        value: 'avg_complete_time',
-        sortable: false,
-        width: 140,
-      },
-      {
-        text: t('remediation.instructionStat.averageAlarmOkTimeout'),
-        value: 'avg_alarm_ok_timeout',
-        sortable: false,
-        width: 100,
-      },
-      {
-        text: t('remediation.instructionStat.executionCount'),
-        value: 'execution_count',
-        sortable: false,
-        width: 100,
-      },
-      {
-        text: t('remediation.instructionStat.averageSuccessfulAllOk'),
-        value: 'avg_successful',
-        sortable: false,
-        width: 100,
-      },
-      {
-        text: t('remediation.instructionStat.alarmStates'),
-        value: 'alarm_states',
-        sortable: false,
-        width: 300,
-      },
-      {
-        text: t('remediation.instructionStat.okAlarmStates'),
-        value: 'ok_alarm_states',
-        sortable: false,
-        width: 90,
-      },
-      { text: t('common.rating'), value: 'rating', sortable: false, width: 230 },
-      { text: t('common.actionsLabel'), value: 'actions', sortable: false, width: 80 },
-    ].filter(Boolean));
+    const headers = computed(() =>
+      [
+        { text: t('common.name'), value: 'name', width: 150 },
+        hasCreateAccess.value && { text: t('common.type'), value: 'type', width: 100 },
+        {
+          text: t('remediation.instructionStat.lastExecutedOn'),
+          value: 'last_executed_on',
+          width: 160,
+        },
+        { text: t('common.lastModifiedOn'), value: 'last_modified', width: 160 },
+        {
+          text: t('remediation.instructionStat.averageCompletionTime'),
+          value: 'avg_complete_time',
+          sortable: false,
+          width: 140,
+        },
+        {
+          text: t('remediation.instructionStat.averageAlarmOkTimeout'),
+          value: 'avg_alarm_ok_timeout',
+          sortable: false,
+          width: 100,
+        },
+        {
+          text: t('remediation.instructionStat.executionCount'),
+          value: 'execution_count',
+          sortable: false,
+          width: 100,
+        },
+        {
+          text: t('remediation.instructionStat.averageSuccessfulAllOk'),
+          value: 'avg_successful',
+          sortable: false,
+          width: 100,
+        },
+        {
+          text: t('remediation.instructionStat.alarmStates'),
+          value: 'alarm_states',
+          sortable: false,
+          width: 300,
+        },
+        {
+          text: t('remediation.instructionStat.okAlarmStates'),
+          value: 'ok_alarm_states',
+          sortable: false,
+          width: 90,
+        },
+        { text: t('common.rating'), value: 'rating', sortable: false, width: 230 },
+        { text: t('common.actionsLabel'), value: 'actions', sortable: false, width: 80 },
+      ].filter(Boolean),
+    );
 
-    const updateInterval = interval => emit('update:options', {
-      ...props.options,
-      interval,
-    });
+    const updateInterval = interval =>
+      emit('update:options', {
+        ...props.options,
+        interval,
+      });
     const dateToString = value => convertDateToString(value);
     const durationToString = value => convertDurationToString(value) || '-';
 

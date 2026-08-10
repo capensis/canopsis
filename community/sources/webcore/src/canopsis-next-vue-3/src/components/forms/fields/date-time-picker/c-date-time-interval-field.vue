@@ -1,5 +1,11 @@
 <template>
-  <div :class="['c-date-time-interval-field', 'col-gap-3', { 'c-date-time-interval-field--column': column }]">
+  <div
+    :class="[
+      'c-date-time-interval-field',
+      'col-gap-3',
+      { 'c-date-time-interval-field--column': column },
+    ]"
+  >
     <date-time-picker-field
       :value="value.from"
       :label="$t('common.from')"

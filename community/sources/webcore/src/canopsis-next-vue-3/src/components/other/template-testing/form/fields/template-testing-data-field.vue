@@ -23,8 +23,8 @@
       <c-layout justify="center">
         <v-btn color="primary" variant="outlined" @click="showCreateTemplateTestingDataModal">
           <v-icon class="mr-2">
-add_circle
-</v-icon>
+            add_circle
+          </v-icon>
 
           {{ t('templateTesting.addData') }}
         </v-btn>
@@ -38,10 +38,9 @@ import { merge } from 'lodash';
 import { toRef, watch } from 'vue';
 
 import { USER_PERMISSIONS } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useLazySearch } from '@/hooks/form/lazy-search';
+import { useI18n } from '@/hooks/i18n';
 import { useTemplateTesting } from '@/hooks/store/modules/template-testing';
 
 import { useTemplateDataModals } from '../../hooks/template-testing-data';

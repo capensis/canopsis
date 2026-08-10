@@ -1,39 +1,21 @@
 <template>
   <c-layout column>
-    <c-information-block-row
-      :label="$t('common.description')"
-      :width="labelWidth"
-    >
+    <c-information-block-row :label="$t('common.description')" :width="labelWidth">
       {{ eventFilter.description }}
     </c-information-block-row>
-    <c-information-block-row
-      :label="$t('common.type')"
-      :width="labelWidth"
-    >
+    <c-information-block-row :label="$t('common.type')" :width="labelWidth">
       {{ $t(`eventFilter.types.${eventFilter.type}`) }}
     </c-information-block-row>
-    <c-information-block-row
-      :label="$t('common.priority')"
-      :width="labelWidth"
-    >
+    <c-information-block-row :label="$t('common.priority')" :width="labelWidth">
       {{ eventFilter.priority || '-' }}
     </c-information-block-row>
-    <c-information-block-row
-      :label="$t('common.author')"
-      :width="labelWidth"
-    >
+    <c-information-block-row :label="$t('common.author')" :width="labelWidth">
       {{ eventFilter.author?.display_name }}
     </c-information-block-row>
-    <c-information-block-row
-      :label="$t('common.created')"
-      :width="labelWidth"
-    >
+    <c-information-block-row :label="$t('common.created')" :width="labelWidth">
       {{ dateToString(eventFilter.created) }}
     </c-information-block-row>
-    <c-information-block-row
-      :label="$t('common.updated')"
-      :width="labelWidth"
-    >
+    <c-information-block-row :label="$t('common.updated')" :width="labelWidth">
       {{ dateToString(eventFilter.updated) }}
     </c-information-block-row>
     <c-information-block-row
@@ -57,17 +39,10 @@
     >
       {{ dateToString(eventFilter.start) }}
     </c-information-block-row>
-    <c-information-block-row
-      v-if="eventFilter.stop"
-      :label="$t('common.stop')"
-      :width="labelWidth"
-    >
+    <c-information-block-row v-if="eventFilter.stop" :label="$t('common.stop')" :width="labelWidth">
       {{ dateToString(eventFilter.stop) }}
     </c-information-block-row>
-    <recurrence-rule-information
-      v-if="eventFilter.rrule"
-      :rrule="eventFilter.rrule"
-    />
+    <recurrence-rule-information v-if="eventFilter.rrule" :rrule="eventFilter.rrule" />
     <pbehavior-recurrence-rule-exceptions-field
       v-if="hasExdatesOrExceptions"
       :exdates="exdates"
@@ -78,11 +53,10 @@
 </template>
 
 <script>
-import { convertDateToString } from '@/helpers/date/date';
-import { exceptionsToForm, exdatesToForm } from '@/helpers/entities/pbehavior/form';
-
 import RecurrenceRuleInformation from '@/components/common/reccurence-rule/recurrence-rule-information.vue';
 import PbehaviorRecurrenceRuleExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
+import { convertDateToString } from '@/helpers/date/date';
+import { exceptionsToForm, exdatesToForm } from '@/helpers/entities/pbehavior/form';
 
 export default {
   components: {

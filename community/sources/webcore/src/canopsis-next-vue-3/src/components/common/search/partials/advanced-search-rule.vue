@@ -16,20 +16,13 @@
 
 <script>
 import { uniq, pick, isFunction } from 'lodash';
-import {
-  computed,
-  ref,
-  watch,
-  nextTick,
-  toRef,
-} from 'vue';
+import { computed, ref, watch, nextTick, toRef } from 'vue';
 
 import {
   ALARM_ADVANCED_SEARCH_CHIP_TYPES,
   PATTERN_QUICK_RANGES_WITHOUT_CUSTOM,
   PATTERN_OPERATORS_WITHOUT_VALUE,
 } from '@/constants';
-
 import { isArrayOperator, isIntervalDateOperator } from '@/helpers/entities/pattern/form';
 import {
   advancedSearchRuleItemToFormItem,
@@ -41,16 +34,18 @@ import {
   isNumberValueType,
   getRangeValueItemType,
 } from '@/helpers/search/advanced-search';
-
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
-import { useAdvancedSearchRuleActiveItems, useAttachAdvancedSearchRuleValidator } from '../hooks/advanced-search';
+import {
+  useAdvancedSearchRuleActiveItems,
+  useAttachAdvancedSearchRuleValidator,
+} from '../hooks/advanced-search';
 
 import AdvancedSearchChip from './advanced-search-chip.vue';
+import AdvancedSearchDurationChip from './advanced-search-duration-chip.vue';
 import AdvancedSearchRangeValueDateChip from './advanced-search-range-value-date-chip.vue';
 import AdvancedSearchRangeValuePeriodChip from './advanced-search-range-value-period-chip.vue';
-import AdvancedSearchDurationChip from './advanced-search-duration-chip.vue';
 
 export default {
   components: {
@@ -143,7 +138,7 @@ export default {
      *
      * @param {string} type - The type of input to be set (e.g., 'attribute', 'operator').
      */
-    const setInputType = type => inputType.value = type;
+    const setInputType = type => (inputType.value = type);
 
     /**
      * Determines if the given value is considered text based on the current attribute and attributes map.
@@ -151,7 +146,8 @@ export default {
      * @param {string} value - The value to be checked.
      * @returns {boolean} - Returns true if the value is considered text, false otherwise.
      */
-    const isText = value => !props.union && !currentAttribute.value && !attributesMap.value[value];
+    const isText = value =>
+      !props.union && !currentAttribute.value && !attributesMap.value[value];
 
     /**
      * Handles the click event on a chip and sets the active type.
@@ -208,7 +204,10 @@ export default {
 
       updateModel({
         ...preparedRule,
-        ...pick(advancedSearchRuleItemToFormItem(), oldFilled.filter(field => !filled.includes(field))),
+        ...pick(
+          advancedSearchRuleItemToFormItem(),
+          oldFilled.filter(field => !filled.includes(field)),
+        ),
         [type]: value,
         filled: uniq(filled),
       });
@@ -321,12 +320,7 @@ export default {
      * @returns {Object} - An object containing the key, component type, binding attributes,
      *                     and event handlers for the chip.
      */
-    const getChipAttributes = ({
-      input,
-      first,
-      closable,
-      type = inputType.value,
-    }) => {
+    const getChipAttributes = ({ input, first, closable, type = inputType.value }) => {
       const items = itemsByType.value[type];
       const key = `${props.rule.key}.${type}`;
       let multiple = false;
@@ -395,10 +389,8 @@ export default {
         bind.active = isActiveType(type);
         bind.closable = closable;
         bind.multiple = multiple;
-        onUpdateModelValue = newValue => updateChipItem(
-          newValue,
-          isText(newValue) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type,
-        );
+        onUpdateModelValue = newValue =>
+          updateChipItem(newValue, isText(newValue) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type);
         bind['onUpdate:modelValue'] = onUpdateModelValue;
         bind.onClick = () => clickChip(type);
         bind.onFocusout = () => focusOutChip(type);
@@ -426,11 +418,13 @@ export default {
 
     const chips = computed(() => {
       const filled = props.rule.filled ?? [];
-      const result = filled.map((type, index) => getChipAttributes({
-        type,
-        first: props.first && index === 0,
-        closable: index === filled.length - 1,
-      }));
+      const result = filled.map((type, index) =>
+        getChipAttributes({
+          type,
+          first: props.first && index === 0,
+          closable: index === filled.length - 1,
+        }),
+      );
 
       if (!isFinishedRule.value && !filled.includes(inputType.value)) {
         result.push(getChipAttributes({ input: true, first: props.first && !result.length }));
@@ -439,9 +433,13 @@ export default {
       return result;
     });
 
-    watch(() => props.union, union => (
-      inputType.value = union ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.union : ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute
-    ));
+    watch(
+      () => props.union,
+      union =>
+        (inputType.value = union
+          ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.union
+          : ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute),
+    );
 
     return {
       chips,
@@ -467,7 +465,7 @@ export default {
       }
     }
 
-    border: 1px solid rgba(var(--v-theme-on-surface), .87);
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.87);
   }
 }
 </style>

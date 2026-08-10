@@ -12,8 +12,10 @@ import {
   convertDateToEndOfUnitMoment,
   convertDateToMomentByTimezone,
   convertDateToStartOfUnitMoment,
+  convertDateToStartOfUnitString,
   getLocalTimezone,
   getNowTimestamp,
+  subtractUnitFromDate,
 } from './date';
 
 /**
@@ -136,6 +138,22 @@ export const convertDateIntervalToTimestamp = (date, type, format, unit) =>
   convertDateIntervalToMoment(date, type, format, unit).unix();
 
 /**
+ * Prepare a date interval value for a date-time picker.
+ *
+ * @param {number|string} date
+ * @param {string} type
+ * @param {string} [format=DATETIME_FORMATS.dateTimePicker]
+ * @param {string} [unit]
+ * @returns {Date}
+ */
+export const convertDateIntervalToDateObject = (
+  date,
+  type,
+  format = DATETIME_FORMATS.dateTimePicker,
+  unit,
+) => convertDateIntervalToMoment(date, type, format, unit).toDate();
+
+/**
  * Convert date interval to unix timestamp by timezone.
  *
  * @param {number|string} date
@@ -228,5 +246,32 @@ export const findQuickRangeValue = (
   ranges = QUICK_RANGES,
   defaultValue = QUICK_RANGES.custom,
 ) =>
-  Object.values(ranges).find(range => start === range.start && stop === range.stop) ??
-  defaultValue;
+  Object.values(ranges).find(range => start === range.start && stop === range.stop) ?? defaultValue;
+
+/**
+ * Convert a selected quick range to the alarm query interval fields.
+ *
+ * @param {Object} range
+ * @param {string} range.value
+ * @param {string|number} range.start
+ * @param {string|number} range.stop
+ * @returns {Object}
+ */
+export const getValueFromQuickRange = ({ value, start, stop }) => {
+  if (value === QUICK_RANGES.custom.value) {
+    return {
+      tstart: convertDateToStartOfUnitString(
+        subtractUnitFromDate(Date.now(), 1, TIME_UNITS.hour),
+        TIME_UNITS.hour,
+        DATETIME_FORMATS.dateTimePicker,
+      ),
+      tstop: convertDateToStartOfUnitString(
+        Date.now(),
+        TIME_UNITS.hour,
+        DATETIME_FORMATS.dateTimePicker,
+      ),
+    };
+  }
+
+  return { tstart: start, tstop: stop };
+};

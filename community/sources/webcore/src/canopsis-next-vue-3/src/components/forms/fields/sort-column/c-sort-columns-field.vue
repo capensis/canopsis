@@ -46,7 +46,6 @@
 import { computed } from 'vue';
 
 import { widgetSortColumnToForm } from '@/helpers/entities/widget/sort-column/form';
-
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import SortColumnField from './partials/sort-column-field.vue';
@@ -72,7 +71,10 @@ export default {
   setup(props, { emit }) {
     const dragItemHandleClass = 'sort-column-drag-handler';
     const isSortColumnsEmpty = computed(() => !props.modelValue?.length);
-    const { addItemIntoArray, removeItemFromArray, updateItemInArray } = useArrayModelField(props, emit);
+    const { addItemIntoArray, removeItemFromArray, updateItemInArray } = useArrayModelField(
+      props,
+      emit,
+    );
     const add = () => addItemIntoArray(widgetSortColumnToForm());
 
     return {

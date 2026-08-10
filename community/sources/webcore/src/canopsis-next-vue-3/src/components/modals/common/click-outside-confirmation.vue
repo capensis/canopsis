@@ -11,10 +11,7 @@
     </template>
 
     <template #actions>
-      <v-btn
-        variant="text"
-        @click="close"
-      >
+      <v-btn variant="text" @click="close">
         {{ t('modals.clickOutsideConfirmation.buttons.backToForm') }}
       </v-btn>
 

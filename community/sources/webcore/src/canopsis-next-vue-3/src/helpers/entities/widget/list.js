@@ -1,12 +1,10 @@
 import { ALARM_FIELDS } from '@/constants';
-
-import { i18n } from '@/i18n';
-
 import {
   getInfosWidgetColumn,
   isAlarmTicketDataWidgetColumn,
   isLinksWidgetColumn,
 } from '@/helpers/entities/widget/column/form';
+import { i18n } from '@/i18n';
 
 /**
  * Get translated label for widget column.
@@ -23,18 +21,33 @@ export const getWidgetColumnLabel = (column = {}, labelsMap = {}) => {
   const infosColumn = getInfosWidgetColumn(column.value);
 
   if (infosColumn) {
-    return i18n.global.t(labelsMap[infosColumn], 2);
+    return getTranslatedColumnLabel(labelsMap[infosColumn], column.value);
   }
 
   if (isLinksWidgetColumn(column.value)) {
-    return i18n.global.t(labelsMap[ALARM_FIELDS.links], 2);
+    return getTranslatedColumnLabel(labelsMap[ALARM_FIELDS.links], column.value);
   }
 
   if (isAlarmTicketDataWidgetColumn(column.value)) {
-    return i18n.global.t(labelsMap[ALARM_FIELDS.ticketData], 2);
+    return getTranslatedColumnLabel(labelsMap[ALARM_FIELDS.ticketData], column.value);
   }
 
-  return i18n.global.t(labelsMap[column.value], 2);
+  return getTranslatedColumnLabel(labelsMap[column.value], column.value);
+};
+
+/**
+ * Translate a widget column label with the current vue-i18n pluralization API.
+ *
+ * @param {string} key
+ * @param {string} fallback
+ * @returns {string}
+ */
+const getTranslatedColumnLabel = (key, fallback = '') => {
+  if (!key) {
+    return fallback;
+  }
+
+  return i18n.global.t(key, { count: 2 });
 };
 
 /**

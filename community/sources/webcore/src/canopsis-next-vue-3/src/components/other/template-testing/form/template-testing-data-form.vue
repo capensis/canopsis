@@ -1,8 +1,5 @@
 <template>
-  <c-layout
-    gap="2"
-    column
-  >
+  <c-layout gap="2" column>
     <c-name-field
       v-model="nameField"
       :label="t('common.name')"
@@ -31,10 +28,7 @@
         />
       </c-form-block-row>
 
-      <c-form-block-row
-        :label="t('templateTesting.testData')"
-        indented
-      >
+      <c-form-block-row :label="t('templateTesting.testData')" indented>
         <c-json-field
           ref="jsonFieldElement"
           :value="bodyField"
@@ -46,11 +40,7 @@
         >
           <template v-if="isEventType" #append>
             <c-layout justify="end">
-              <v-btn
-                color="primary"
-                variant="outlined"
-                @click="showSetPreFilledTemplateModal"
-              >
+              <v-btn color="primary" variant="outlined" @click="showSetPreFilledTemplateModal">
                 {{ t('templateTesting.usePreFilledTemplate') }}
               </v-btn>
             </c-layout>
@@ -58,11 +48,7 @@
         </c-json-field>
       </c-form-block-row>
 
-      <c-form-block-row
-        v-if="!isEventType"
-        :label="t('common.header', 2)"
-        indented
-      >
+      <c-form-block-row v-if="!isEventType" :label="t('common.header', 2)" indented>
         <request-headers-field
           :headers="headersField"
           name="headers"
@@ -76,17 +62,15 @@
 <script>
 import { computed, ref } from 'vue';
 
+import RequestHeadersField from '@/components/forms/request/fields/request-headers-field.vue';
 import {
   MODALS,
   TEMPLATE_TESTING_DATA_EVENT_PRE_FILLED_TEMPLATE,
   TEMPLATE_TESTING_DATA_TYPES,
 } from '@/constants';
-
 import { useFormModels, useFormContext } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-
-import RequestHeadersField from '@/components/forms/request/fields/request-headers-field.vue';
 
 import TemplateTestingDataTypeField from './fields/template-testing-data-type-field.vue';
 
@@ -107,13 +91,7 @@ export default {
     const form = useFormContext();
     const jsonFieldElement = ref(null);
 
-    const {
-      nameField,
-      descriptionField,
-      typeField,
-      bodyField,
-      headersField,
-    } = useFormModels({
+    const { nameField, descriptionField, typeField, bodyField, headersField } = useFormModels({
       nameField: 'name',
       descriptionField: 'description',
       typeField: 'type',

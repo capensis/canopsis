@@ -24,9 +24,8 @@
 </template>
 
 <script>
-import { STATS_CRITICITY } from '@/constants';
-
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+import { STATS_CRITICITY } from '@/constants';
 
 export default {
   components: { WidgetSettingsItem },
@@ -46,11 +45,7 @@ export default {
 
   computed: {
     levels() {
-      return [
-        STATS_CRITICITY.minor,
-        STATS_CRITICITY.major,
-        STATS_CRITICITY.critical,
-      ];
+      return [STATS_CRITICITY.minor, STATS_CRITICITY.major, STATS_CRITICITY.critical];
     },
 
     mins() {

@@ -1,9 +1,10 @@
 <template>
   <c-layout
-class="panzoom"
-justify="center"
-@wheel="handleScale"
-@mousemove="handleMove">
+    class="panzoom"
+    justify="center"
+    @wheel="handleScale"
+    @mousemove="handleMove"
+  >
     <div :style="containerStyles">
       <slot />
     </div>
@@ -28,10 +29,11 @@ justify="center"
       <v-tooltip location="top">
         <template #activator="{ props }">
           <v-icon
-v-bind="props"
-class="panzoom__help-icon"
-color="secondary"
-size="32">
+            v-bind="props"
+            class="panzoom__help-icon"
+            color="secondary"
+            size="32"
+          >
             help
           </v-icon>
         </template>

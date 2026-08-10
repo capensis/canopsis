@@ -19,7 +19,6 @@
 import { computed } from 'vue';
 
 import { TEMPLATE_TESTING_DATA_TYPES } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {
@@ -57,10 +56,12 @@ export default {
   setup() {
     const { t } = useI18n();
 
-    const items = computed(() => Object.values(TEMPLATE_TESTING_DATA_TYPES).map(value => ({
-      value,
-      text: t(`templateTesting.dataTypes.${value}`),
-    })));
+    const items = computed(() =>
+      Object.values(TEMPLATE_TESTING_DATA_TYPES).map(value => ({
+        value,
+        text: t(`templateTesting.dataTypes.${value}`),
+      })),
+    );
 
     return {
       t,

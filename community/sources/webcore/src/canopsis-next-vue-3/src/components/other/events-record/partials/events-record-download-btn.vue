@@ -7,14 +7,15 @@
     @click="exportJson"
   />
   <v-btn
-v-else
-:loading="downloading"
-color="primary"
-variant="outlined"
-@click="exportJson">
+    v-else
+    :loading="downloading"
+    color="primary"
+    variant="outlined"
+    @click="exportJson"
+  >
     <v-icon class="mr-2">
-file_download
-</v-icon>
+      file_download
+    </v-icon>
     <span>{{ t('common.exportToJson') }}</span>
   </v-btn>
 </template>

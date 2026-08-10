@@ -1,9 +1,6 @@
 <template>
   <c-layout column>
-    <c-layout
-      class="mb-2"
-      align="center"
-    >
+    <c-layout class="mb-2" align="center">
       <c-expand-btn
         v-if="expandable"
         :expanded="expanded"
@@ -14,17 +11,12 @@
       <span class="ml-2">
         {{ $t(`alarm.timeline.steps.${step._t}`) }}
       </span>
-      <span v-if="step.message">
-        : {{ step.message }}
-      </span>
+      <span v-if="step.message"> : {{ step.message }} </span>
     </c-layout>
     <v-expand-transition>
       <v-card v-show="expanded">
         <v-card-text>
-          <c-request-text-information
-            v-if="response"
-            :value="response"
-          />
+          <c-request-text-information v-if="response" :value="response" />
           <span v-else>
             {{ $t('common.noResponse') }}
           </span>

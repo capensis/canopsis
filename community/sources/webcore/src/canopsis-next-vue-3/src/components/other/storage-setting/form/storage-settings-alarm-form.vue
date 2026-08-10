@@ -1,9 +1,6 @@
 <template>
   <c-information-block :title="$t('common.alarm', 2)">
-    <template
-      v-if="history"
-      #subtitle=""
-    >
+    <template v-if="history" #subtitle="">
       <storage-settings-history-message
         :history="history"
         archived-count-message-key="storageSetting.history.alarm.archivedCount"

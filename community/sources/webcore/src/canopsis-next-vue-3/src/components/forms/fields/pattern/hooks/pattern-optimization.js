@@ -1,13 +1,5 @@
 import { cloneDeep } from 'lodash';
-import {
-  computed,
-  ref,
-  unref,
-  inject,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
+import { computed, ref, unref, inject, watch, onMounted, onBeforeUnmount } from 'vue';
 
 import {
   ENTITY_PATTERN_FIELDS,
@@ -18,20 +10,17 @@ import {
   PATTERN_TYPES,
   PATTERN_CUSTOM_ITEM_VALUE,
 } from '@/constants';
-
-import Observer from '@/services/observer';
-
-import { patternToForm } from '@/helpers/entities/pattern/form';
-import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { isOmitEqual } from '@/helpers/collection';
-
+import { formFilterToPatterns } from '@/helpers/entities/filter/form';
+import { patternToForm } from '@/helpers/entities/pattern/form';
+import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { usePopups } from '@/hooks/popups';
 import { usePollingWithPending } from '@/hooks/polling';
-import { useValidator } from '@/hooks/validator/validator';
-import { useModelField } from '@/hooks/form/model-field';
+import { usePopups } from '@/hooks/popups';
 import { usePatternEntitiesOptimize } from '@/hooks/store/modules/pattern-entities-optimize';
+import { useValidator } from '@/hooks/validator/validator';
+import Observer from '@/services/observer';
 
 /**
  * Composable hook for managing pattern optimization functionality
@@ -68,12 +57,8 @@ export const usePatternOptimization = ({ value }, emit) => {
 
   const afterSubmitObserver = inject('$afterSubmitObserver', new Observer());
 
-  const {
-    optimizeEntities,
-    fetchOptimizeEntitiesStatus,
-    updateOptimization,
-    removeOptimization,
-  } = usePatternEntitiesOptimize();
+  const { optimizeEntities, fetchOptimizeEntitiesStatus, updateOptimization, removeOptimization } =
+    usePatternEntitiesOptimize();
 
   const appliedOptimizations = ref([]);
 
@@ -81,26 +66,31 @@ export const usePatternOptimization = ({ value }, emit) => {
   const optimizationPattern = ref(null);
 
   const failedReason = computed(() => optimization.value?.failed_reason);
-  const successful = computed(() => optimization.value?.status === PATTERN_OPTIMIZATION_STATUSES.success);
-  const suggestions = computed(() => (optimization.value?.suggestions ?? []));
-  const currentPattern = computed(() => formFilterToPatterns(unref(value), [PATTERNS_FIELDS.entity], false));
+  const successful = computed(
+    () => optimization.value?.status === PATTERN_OPTIMIZATION_STATUSES.success,
+  );
+  const suggestions = computed(() => optimization.value?.suggestions ?? []);
+  const currentPattern = computed(() =>
+    formFilterToPatterns(unref(value), [PATTERNS_FIELDS.entity], false),
+  );
   const optimizedFieldsRegexps = computed(() => optimization.value?.optimized_field_regexps ?? []);
-  const originalCounter = computed(() => (optimization.value
-    ? ({
-      ms: optimization.value.original_pattern_ms ?? 0,
-      count: optimization.value.original_pattern_count ?? 0,
-    })
-    : null
-  ));
+  const originalCounter = computed(() =>
+    optimization.value
+      ? {
+          ms: optimization.value.original_pattern_ms ?? 0,
+          count: optimization.value.original_pattern_count ?? 0,
+        }
+      : null,
+  );
 
   const originalValue = cloneDeep(unref(value));
 
   const hasChanges = computed(() => {
     const uwrappedValue = unref(value);
 
-    const patternKeysWithTemplates = Object.keys(uwrappedValue).filter(key => (
-      uwrappedValue[key].id !== PATTERN_CUSTOM_ITEM_VALUE
-    ));
+    const patternKeysWithTemplates = Object.keys(uwrappedValue).filter(
+      key => uwrappedValue[key].id !== PATTERN_CUSTOM_ITEM_VALUE,
+    );
 
     return !isOmitEqual(uwrappedValue, originalValue, ['title', ...patternKeysWithTemplates]);
   });
@@ -108,12 +98,13 @@ export const usePatternOptimization = ({ value }, emit) => {
   const hasRegexpInfos = computed(() => {
     const { [PATTERNS_FIELDS.entity]: entityPattern } = unref(value);
 
-    return entityPattern?.groups?.some?.(group => (
-      group.rules.some(rule => (
-        rule.operator === PATTERN_OPERATORS.regexp
-        && rule.attribute === ENTITY_PATTERN_FIELDS.infos
-      ))
-    ));
+    return entityPattern?.groups?.some?.(group =>
+      group.rules.some(
+        rule =>
+          rule.operator === PATTERN_OPERATORS.regexp &&
+          rule.attribute === ENTITY_PATTERN_FIELDS.infos,
+      ),
+    );
   });
 
   const mayHaveOptimizationSuggestions = computed(() => hasRegexpInfos.value && hasChanges.value);
@@ -140,10 +131,9 @@ export const usePatternOptimization = ({ value }, emit) => {
       optimization.value = response;
 
       if (
-        [
-          PATTERN_OPTIMIZATION_STATUSES.success,
-          PATTERN_OPTIMIZATION_STATUSES.failed,
-        ].includes(response.status)
+        [PATTERN_OPTIMIZATION_STATUSES.success, PATTERN_OPTIMIZATION_STATUSES.failed].includes(
+          response.status,
+        )
       ) {
         return resolve(response);
       }
@@ -157,7 +147,7 @@ export const usePatternOptimization = ({ value }, emit) => {
    *
    * Clears the optimization object, effectively dismissing all suggestions.
    */
-  const rejectAllSuggestions = () => optimization.value = null;
+  const rejectAllSuggestions = () => (optimization.value = null);
 
   /**
    * Starts pattern optimization process
@@ -242,13 +232,14 @@ export const usePatternOptimization = ({ value }, emit) => {
    *
    * @param {Object} suggestion - The suggestion object containing pattern groups
    */
-  const showEntitiesComparisonModal = suggestion => modals.show({
-    name: MODALS.entitiesComparison,
-    config: {
-      currentPattern: currentPattern.value[PATTERNS_FIELDS.entity],
-      suggestionPattern: suggestion?.entity_pattern ?? [],
-    },
-  });
+  const showEntitiesComparisonModal = suggestion =>
+    modals.show({
+      name: MODALS.entitiesComparison,
+      config: {
+        currentPattern: currentPattern.value[PATTERNS_FIELDS.entity],
+        suggestionPattern: suggestion?.entity_pattern ?? [],
+      },
+    });
 
   /**
    * Handles form submission callback
@@ -258,15 +249,15 @@ export const usePatternOptimization = ({ value }, emit) => {
    */
   const afterSubmit = () => {
     if (appliedOptimizations.value?.length) {
-      appliedOptimizations.value.forEach(({ id, index }) => (
+      appliedOptimizations.value.forEach(({ id, index }) =>
         updateOptimization({
           id,
           data: {
             accept: true,
             index,
           },
-        })
-      ));
+        }),
+      );
     }
   };
 

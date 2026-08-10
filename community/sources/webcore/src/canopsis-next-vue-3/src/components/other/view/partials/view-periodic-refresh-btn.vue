@@ -10,10 +10,7 @@
         icon
         @click.stop="refreshHandler"
       >
-        <v-icon
-          v-if="!isPeriodicRefreshEnabled"
-          icon="refresh"
-        />
+        <v-icon v-if="!isPeriodicRefreshEnabled" icon="refresh" />
         <v-progress-circular
           v-else
           :model-value="periodicRefreshProgressValue"
@@ -34,19 +31,14 @@
 
 <script>
 import { DATETIME_FORMATS } from '@/constants';
-
-import { uid } from '@/helpers/uid';
 import { convertDurationToString, durationToSeconds } from '@/helpers/date/duration';
-
+import { uid } from '@/helpers/uid';
 import { activeViewMixin } from '@/mixins/active-view';
 import { layoutNavigationEditingModeMixin } from '@/mixins/layout/navigation/editing-mode';
 
 export default {
   inject: ['$periodicRefresh'],
-  mixins: [
-    activeViewMixin,
-    layoutNavigationEditingModeMixin,
-  ],
+  mixins: [activeViewMixin, layoutNavigationEditingModeMixin],
   data() {
     return {
       popupId: null,
@@ -83,9 +75,7 @@ export default {
     },
 
     periodicRefreshDelay() {
-      return this.view?.periodic_refresh
-        ? durationToSeconds(this.view.periodic_refresh)
-        : 0;
+      return this.view?.periodic_refresh ? durationToSeconds(this.view.periodic_refresh) : 0;
     },
 
     refreshHandler() {
@@ -96,7 +86,11 @@ export default {
   },
   watch: {
     isPeriodicRefreshEnabled(value, oldValue) {
-      if (value && (!oldValue || !this.periodicRefreshInterval) && !this.periodicRefreshFullPaused) {
+      if (
+        value &&
+        (!oldValue || !this.periodicRefreshInterval) &&
+        !this.periodicRefreshFullPaused
+      ) {
         this.startPeriodicRefreshInterval();
       } else if (oldValue && !value) {
         this.stopPeriodicRefreshInterval();
@@ -138,7 +132,10 @@ export default {
 
   methods: {
     periodicRefreshPausedWatcher(value, pausedPopup) {
-      if (value !== Boolean(this.periodicRefreshInterval) || value !== this.periodicRefreshFullPaused) {
+      if (
+        value !== Boolean(this.periodicRefreshInterval) ||
+        value !== this.periodicRefreshFullPaused
+      ) {
         return;
       }
 

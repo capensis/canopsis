@@ -16,11 +16,11 @@
               v-bind="{ ...activatorProps, ...tooltipProps }"
             >
               <c-icon v-if="isOpen">
-close
-</c-icon>
+                close
+              </c-icon>
               <c-icon v-else>
-settings
-</c-icon>
+                settings
+              </c-icon>
             </v-btn>
           </template>
           <span>{{ $t('common.settings') }}</span>
@@ -28,10 +28,11 @@ settings
       </template>
 
       <c-layout
-class="groups-settings-button__list"
-align="center"
-gap="2"
-column>
+        class="groups-settings-button__list"
+        align="center"
+        gap="2"
+        column
+      >
         <v-tooltip v-if="hasAccessToPrivateView" :location="tooltipLocation">
           <template #activator="{ props: tooltipProps }">
             <v-btn
@@ -41,8 +42,8 @@ column>
               @click.stop="showCreatePrivateViewModal"
             >
               <c-icon size="40">
-$vuetify.icons.person_lock
-</c-icon>
+                $vuetify.icons.person_lock
+              </c-icon>
             </v-btn>
           </template>
           <span>{{ $t('layout.sideBar.buttons.createPrivateView') }}</span>
@@ -72,11 +73,11 @@ $vuetify.icons.person_lock
               @click.stop="$emit('toggleEditingMode')"
             >
               <c-icon v-if="isNavigationEditingMode">
-done
-</c-icon>
+                done
+              </c-icon>
               <c-icon v-else>
-edit
-</c-icon>
+                edit
+              </c-icon>
             </v-btn>
           </template>
           <span>{{ $t('layout.sideBar.buttons.edit') }}</span>
@@ -88,11 +89,10 @@ edit
 
 <script>
 import { MODALS } from '@/constants';
-
-import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
-import { layoutNavigationEditingModeMixin } from '@/mixins/layout/navigation/editing-mode';
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+import { layoutNavigationEditingModeMixin } from '@/mixins/layout/navigation/editing-mode';
+import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 
 export default {
   mixins: [

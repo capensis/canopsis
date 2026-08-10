@@ -17,10 +17,11 @@
           <c-simple-tooltip :content="`infos.${item.raw.originalValue}.value`" top>
             <template #activator="{ props: activatorProps }">
               <v-icon
-class="ml-1"
-color="primary"
-size="small"
-v-bind="activatorProps">
+                class="ml-1"
+                color="primary"
+                size="small"
+                v-bind="activatorProps"
+              >
                 alternate_email
               </v-icon>
             </template>
@@ -30,8 +31,8 @@ v-bind="activatorProps">
     </template>
     <template #selection="{ item }">
       <v-icon v-if="selectionItem(item)?.alias" class="mr-1" size="small">
-alternate_email
-</v-icon>
+        alternate_email
+      </v-icon>
       <span class="text-truncate">{{ selectionTitle(item) }}</span>
     </template>
   </c-autocomplete>

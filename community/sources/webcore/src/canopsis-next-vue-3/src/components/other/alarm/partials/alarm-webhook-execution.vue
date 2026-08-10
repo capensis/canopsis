@@ -1,10 +1,6 @@
 <template>
   <c-layout column>
-    <v-row
-      align="center"
-      justify="space-between"
-      density="comfortable"
-    >
+    <v-row align="center" justify="space-between" density="comfortable">
       <v-col cols="10">
         <c-alarm-field
           :value="alarm"
@@ -28,17 +24,9 @@
       </v-col>
     </v-row>
     <v-expand-transition>
-      <c-layout
-        v-if="executionStatus"
-        column
-      >
-        <c-layout
-          class="mb-4"
-          align="center"
-        >
-          <span class="text-subtitle-1 mr-5">
-            {{ $t('common.webhookStatus') }}:
-          </span>
+      <c-layout v-if="executionStatus" column>
+        <c-layout class="mb-4" align="center">
+          <span class="text-subtitle-1 mr-5"> {{ $t('common.webhookStatus') }}: </span>
           <alarm-webhook-execution-status
             :running="isExecutionRunning"
             :success="isExecutionSucceeded"
@@ -103,9 +91,9 @@ export default {
     );
     const isExecutionSucceeded = computed(() => isWebhookExecutionSucceeded(props.executionStatus));
     const isExecutionFailed = computed(() => isWebhookExecutionFailed(props.executionStatus));
-    const isSomeOneWebhookStarted = computed(() => props.executionStatus?.webhooks.some(
-      webhook => !isWebhookExecutionWaiting(webhook),
-    ));
+    const isSomeOneWebhookStarted = computed(() =>
+      props.executionStatus?.webhooks.some(webhook => !isWebhookExecutionWaiting(webhook)),
+    );
 
     const runTestExecution = () => emit('run:execution');
     const clearWebhookStatus = () => emit('clear:execution');

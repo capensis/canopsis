@@ -53,7 +53,6 @@
 import { computed } from 'vue';
 
 import { JUNIT_STATE_SETTING_ID, SERVICE_STATE_SETTING_ID } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {
@@ -121,7 +120,8 @@ export default {
       },
     ]);
 
-    const isDuplicable = item => ![JUNIT_STATE_SETTING_ID, SERVICE_STATE_SETTING_ID].includes(item._id);
+    const isDuplicable = item =>
+      ![JUNIT_STATE_SETTING_ID, SERVICE_STATE_SETTING_ID].includes(item._id);
 
     const getMethodLabel = method =>
       te(`stateSetting.methods.${method}.label`)

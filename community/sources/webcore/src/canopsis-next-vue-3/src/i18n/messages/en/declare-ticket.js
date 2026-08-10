@@ -1,13 +1,15 @@
 import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
 
 export default {
-  ticketUrlAndIdHelpText: 'The ticket URL received from the API response can be added to the alarm dynamic infos.',
+  ticketUrlAndIdHelpText:
+    'The ticket URL received from the API response can be added to the alarm dynamic infos.',
   dataFromOneStepAttention: 'Data from the API response can be taken only from one step of a rule.',
   ticketID: 'Ticket ID',
   ticketURL: 'Ticket URL',
   ticketUrlAndId: 'Ticket URL and ID',
   ticketURLTitle: 'Ticket URL title',
-  ticketURLTitleHelp: 'This title will display in the body of link tag: <strong>&lt;a href=&quot;{URL}&quot;&gt;{TITLE}&lt;/a&gt;</strong>',
+  ticketURLTitleHelp:
+    'This title will display in the body of link tag: <strong>&lt;a href=&quot;{URL}&quot;&gt;{TITLE}&lt;/a&gt;</strong>',
   ticketSystemName: 'Ticket system name',
   allowTicketURLTemplate: 'Allow variables in the URL',
   allowTicketIdTemplate: 'Allow variables in the ID',
@@ -30,7 +32,8 @@ export default {
   noRulesForAlarms: 'No rules to apply for the selected alarms',
   oneTicketForAlarms: 'One ticket for all alarms',
   applyRules: 'Apply rules',
-  noAckItems: 'There is {count} item without ack. Ack event for the item will send before. | There is {count} items without ack. Ack events for items will send before.',
+  noAckItems:
+    'There is {count} item without ack. Ack event for the item will send before. | There is {count} items without ack. Ack events for items will send before.',
   ruleName: 'Rule name',
   checkSyntax: 'Check syntax',
   syntaxIsValid: 'Syntax is valid',
@@ -39,17 +42,21 @@ export default {
   massEnable: 'Enable declare ticket rules',
   massDisable: 'Disable declare ticket rules',
   checkTicketStatus: 'Check ticket status',
-  checkTicketStatusHelpText: 'Enable to verify that the ticket exists in the ticket system before performing the next steps.',
+  checkTicketStatusHelpText:
+    'Enable to verify that the ticket exists in the ticket system before performing the next steps.',
   ticketStatusEndpoint: 'Ticket status endpoint',
   ticketStatusMapping: 'Ticket status mapping',
-  ticketStatusMappingHelpText: 'At least one source value must be mapped to Canopsis "Closed" value.',
-  ticketStatusMappingUnmappedToOpen: 'All unmapped source values will be mapped to Canopsis status "Unknown".',
+  ticketStatusMappingHelpText:
+    'At least one source value must be mapped to Canopsis "Closed" value.',
+  ticketStatusMappingUnmappedToOpen:
+    'All unmapped source values will be mapped to Canopsis status "Unknown".',
   sourceValue: 'Source value',
   canopsisValue: 'Canopsis value',
   addMappingPair: 'Add mapping pair',
   ticketStatusSourceField: 'Ticket status source field',
   allowTicketStatusSourceTemplate: 'Allow variables in the Ticket status source field',
-  reuseHeadersAndAuthFromTicketDeclarationRule: 'Reuse headers and auth from ticket declaration rule',
+  reuseHeadersAndAuthFromTicketDeclarationRule:
+    'Reuse headers and auth from ticket declaration rule',
   status: {
     [DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown]: 'Unknown',
     [DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.open]: 'Open',

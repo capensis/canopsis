@@ -72,20 +72,9 @@
       </c-draggable-list-field>
     </v-tabs>
 
-    <v-window
-      v-if="$slots.default"
-      :model-value="$route.query.tabId"
-      touchless
-    >
-      <v-window-item
-        v-for="tab in tabs"
-        :key="tab._id"
-        :value="tab._id"
-      >
-        <slot
-          :tab="tab"
-          :visible="tab._id === $route.query.tabId"
-        />
+    <v-window v-if="$slots.default" :model-value="$route.query.tabId" touchless>
+      <v-window-item v-for="tab in tabs" :key="tab._id" :value="tab._id">
+        <slot :tab="tab" :visible="tab._id === $route.query.tabId" />
       </v-window-item>
     </v-window>
   </div>
@@ -95,17 +84,12 @@
 import { mapActions } from 'pinia';
 
 import { MODALS, ROUTES_NAMES } from '@/constants';
-
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
-
 import { useViewStore } from '@/stores/modules/view';
 
 export default {
-  mixins: [
-    activeViewMixin,
-    viewRouterMixin,
-  ],
+  mixins: [activeViewMixin, viewRouterMixin],
   props: {
     tabs: {
       type: Array,

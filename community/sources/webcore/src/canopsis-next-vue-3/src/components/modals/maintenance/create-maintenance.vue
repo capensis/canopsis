@@ -16,10 +16,7 @@
       </template>
 
       <template #actions>
-        <v-btn
-          variant="text"
-          @click="close"
-        >
+        <v-btn variant="text" @click="close">
           {{ t('common.cancel') }}
         </v-btn>
 
@@ -39,14 +36,12 @@
 <script setup>
 import { computed, inject } from 'vue';
 
+import MaintenanceForm from '@/components/other/maintenance/form/maintenance-form.vue';
 import { maintenanceToForm } from '@/helpers/entities/maintenance/form';
-
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-
-import MaintenanceForm from '@/components/other/maintenance/form/maintenance-form.vue';
 
 const props = defineProps({
   modal: {
@@ -67,9 +62,9 @@ const form = useForm({
 
 const title = computed(() => config.value.title ?? t('modals.createMaintenance.setup.title'));
 
-const submitLabel = computed(() => (
-  config.value.maintenance ? t('common.submit') : t('modals.createMaintenance.enableMaintenance')
-));
+const submitLabel = computed(() =>
+  config.value.maintenance ? t('common.submit') : t('modals.createMaintenance.enableMaintenance'),
+);
 
 const close = () => modals.hide({ id: modalContext.id });
 

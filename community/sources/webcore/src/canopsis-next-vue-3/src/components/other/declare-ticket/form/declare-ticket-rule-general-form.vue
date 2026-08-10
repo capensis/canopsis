@@ -1,16 +1,8 @@
 <template>
   <c-layout gap="5" column>
     <c-layout gap="4">
-      <c-name-field
-        v-model="nameField"
-        autofocus
-        required
-      />
-      <c-name-field
-        v-model="systemNameField"
-        :label="t('common.systemName')"
-        name="system_name"
-      />
+      <c-name-field v-model="nameField" autofocus required />
+      <c-name-field v-model="systemNameField" :label="t('common.systemName')" name="system_name" />
     </c-layout>
 
     <c-enabled-field

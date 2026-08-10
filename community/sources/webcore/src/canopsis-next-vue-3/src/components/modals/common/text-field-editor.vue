@@ -24,10 +24,11 @@
         </v-btn>
 
         <v-btn
-:disabled="isSubmitting"
-:loading="isSubmitting"
-color="primary"
-type="submit">
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
+          color="primary"
+          type="submit"
+        >
           {{ t('common.submit') }}
         </v-btn>
       </template>
@@ -39,9 +40,9 @@ type="submit">
 import { omit } from 'lodash';
 import { computed } from 'vue';
 
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useModals } from '@/hooks/modals';
 
 export default {

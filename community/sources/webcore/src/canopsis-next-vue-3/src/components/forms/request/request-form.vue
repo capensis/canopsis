@@ -53,10 +53,11 @@
         {{ $t('common.request.repeatRequestInTomlFile') }}
       </span>
       <c-retry-field
-v-else
-:value="form"
-:disabled="disabled"
-@update:value="updateModel" />
+        v-else
+        :value="form"
+        :disabled="disabled"
+        @update:value="updateModel"
+      />
     </c-form-block-row>
 
     <c-form-block-row :label="$t('common.request.skipVerify')" :depth="depth">
@@ -84,10 +85,11 @@ v-else
     </c-form-block-row>
 
     <c-form-block-row
-v-if="!hideHeaders"
-:label="$t('common.header', 2)"
-:depth="depth"
-indented>
+      v-if="!hideHeaders"
+      :label="$t('common.header', 2)"
+      :depth="depth"
+      indented
+    >
       <request-headers-field
         :headers="form.headers"
         :name="`${name}.headers`"
@@ -116,9 +118,9 @@ import { computed } from 'vue';
 
 import { useModelField } from '@/hooks/form/model-field';
 
-import RequestUrlField from './fields/request-url-field.vue';
-import RequestHeadersField from './fields/request-headers-field.vue';
 import RequestAuthWithTokenField from './fields/request-auth-with-token-field.vue';
+import RequestHeadersField from './fields/request-headers-field.vue';
+import RequestUrlField from './fields/request-url-field.vue';
 
 export default {
   emits: ['update:form', 'update:multiple', 'update:auth-token'],

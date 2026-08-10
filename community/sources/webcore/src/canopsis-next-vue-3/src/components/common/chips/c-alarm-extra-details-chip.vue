@@ -1,15 +1,7 @@
 <template>
-  <span
-    v-bind="$attrs"
-    :style="style"
-    class="c-alarm-extra-details-chip"
-  >
+  <span v-bind="$attrs" :style="style" class="c-alarm-extra-details-chip">
     <slot>
-      <v-icon
-        v-if="icon"
-        :color="iconColor"
-        size="small"
-      >
+      <v-icon v-if="icon" :color="iconColor" size="small">
         {{ icon }}
       </v-icon>
     </slot>

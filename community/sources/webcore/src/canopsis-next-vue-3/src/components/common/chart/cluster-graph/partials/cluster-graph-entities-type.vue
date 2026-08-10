@@ -4,7 +4,7 @@
       {{ $t('common.type') }}
     </h6>
     <c-layout justify-center>
-      <v-radio-group
+      <c-radio-group
         :model-value="impact"
         class="my-0"
         inline
@@ -13,7 +13,7 @@
       >
         <v-radio :value="false" :label="$t('context.treeOfDependencies')" color="primary" />
         <v-radio :value="true" :label="$t('context.impactChain')" color="primary" />
-      </v-radio-group>
+      </c-radio-group>
     </c-layout>
   </div>
 </template>

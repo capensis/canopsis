@@ -40,11 +40,14 @@ import {
   PBEHAVIOR_FIELDS,
   PBEHAVIOR_PATTERN_FIELDS,
 } from '@/constants';
-
-import { uid } from '@/helpers/uid';
-import { convertDateToDateObject, convertDateToTimestamp, isValidDateInterval } from '@/helpers/date/date';
+import {
+  convertDateToDateObject,
+  convertDateToTimestamp,
+  isValidDateInterval,
+} from '@/helpers/date/date';
 import { durationToForm, isValidDuration, isValidRangeDuration } from '@/helpers/date/duration';
 import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/shared/form';
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef { 'string' | 'number' | 'infos' | 'date' | 'duration' } PatternRuleType
@@ -163,10 +166,8 @@ export const isOperatorForString = operator => PATTERN_STRING_OPERATORS.includes
  * @param {string} operator
  * @return {boolean}
  */
-export const isIntervalDateOperator = operator => [
-  PATTERN_OPERATORS.within,
-  PATTERN_OPERATORS.olderThan,
-].includes(operator);
+export const isIntervalDateOperator = operator =>
+  [PATTERN_OPERATORS.within, PATTERN_OPERATORS.olderThan].includes(operator);
 
 /**
  * Check is operator for number
@@ -262,12 +263,13 @@ export const isValidRuleFieldType = value => Object.values(PATTERN_FIELD_TYPES).
  * @param {string} condition
  * @return {boolean}
  */
-export const isBooleanCondition = condition => [
-  PATTERN_CONDITIONS.equal,
-  PATTERN_CONDITIONS.notEqual,
-  PATTERN_CONDITIONS.exist,
-  PATTERN_CONDITIONS.isEmpty,
-].includes(condition);
+export const isBooleanCondition = condition =>
+  [
+    PATTERN_CONDITIONS.equal,
+    PATTERN_CONDITIONS.notEqual,
+    PATTERN_CONDITIONS.exist,
+    PATTERN_CONDITIONS.isEmpty,
+  ].includes(condition);
 
 /**
  * Check condition is boolean
@@ -277,16 +279,17 @@ export const isBooleanCondition = condition => [
  * @param {string} condition
  * @return {boolean}
  */
-export const isArrayCondition = condition => [
-  PATTERN_CONDITIONS.isEmpty,
-  PATTERN_CONDITIONS.hasNot,
-  PATTERN_CONDITIONS.hasOneOf,
-  PATTERN_CONDITIONS.isOneOf,
-  PATTERN_CONDITIONS.isNotOneOf,
-  PATTERN_CONDITIONS.hasEvery,
-  PATTERN_CONDITIONS.hasLabels,
-  PATTERN_CONDITIONS.hasNotLabels,
-].includes(condition);
+export const isArrayCondition = condition =>
+  [
+    PATTERN_CONDITIONS.isEmpty,
+    PATTERN_CONDITIONS.hasNot,
+    PATTERN_CONDITIONS.hasOneOf,
+    PATTERN_CONDITIONS.isOneOf,
+    PATTERN_CONDITIONS.isNotOneOf,
+    PATTERN_CONDITIONS.hasEvery,
+    PATTERN_CONDITIONS.hasLabels,
+    PATTERN_CONDITIONS.hasNotLabels,
+  ].includes(condition);
 
 /**
  * Check operator is array
@@ -302,7 +305,8 @@ export const isArrayOperator = operator => PATTERN_ARRAY_OPERATORS.includes(oper
  * @param {string} condition
  * @return {boolean}
  */
-export const isValidPatternCondition = condition => Object.values(PATTERN_CONDITIONS).includes(condition);
+export const isValidPatternCondition = condition =>
+  Object.values(PATTERN_CONDITIONS).includes(condition);
 
 /**
  * Check pattern field is date
@@ -310,33 +314,34 @@ export const isValidPatternCondition = condition => Object.values(PATTERN_CONDIT
  * @param {string} value
  * @return {boolean}
  */
-export const isDatePatternRuleField = value => [
-  ALARM_PATTERN_FIELDS.creationDate,
-  ALARM_PATTERN_FIELDS.lastEventDate,
-  ALARM_PATTERN_FIELDS.lastUpdateDate,
-  ALARM_PATTERN_FIELDS.ackAt,
-  ALARM_PATTERN_FIELDS.resolved,
-  ALARM_PATTERN_FIELDS.activationDate,
-  ENTITY_PATTERN_FIELDS.idleSince,
-  ENTITY_PATTERN_FIELDS.imported,
-  ENTITY_PATTERN_FIELDS.lastUpdateDate,
-  ENTITY_PATTERN_FIELDS.lastAlarmUpdateDate,
-  ENTITY_PATTERN_FIELDS.lastPbehaviorDate,
-  ENTITY_PATTERN_FIELDS.lastEventDate,
-  ENTITY_PATTERN_FIELDS.lastEventDate,
-  DYNAMIC_INFO_FIELDS.created,
-  DYNAMIC_INFO_FIELDS.updated,
+export const isDatePatternRuleField = value =>
+  [
+    ALARM_PATTERN_FIELDS.creationDate,
+    ALARM_PATTERN_FIELDS.lastEventDate,
+    ALARM_PATTERN_FIELDS.lastUpdateDate,
+    ALARM_PATTERN_FIELDS.ackAt,
+    ALARM_PATTERN_FIELDS.resolved,
+    ALARM_PATTERN_FIELDS.activationDate,
+    ENTITY_PATTERN_FIELDS.idleSince,
+    ENTITY_PATTERN_FIELDS.imported,
+    ENTITY_PATTERN_FIELDS.lastUpdateDate,
+    ENTITY_PATTERN_FIELDS.lastAlarmUpdateDate,
+    ENTITY_PATTERN_FIELDS.lastPbehaviorDate,
+    ENTITY_PATTERN_FIELDS.lastEventDate,
+    ENTITY_PATTERN_FIELDS.lastEventDate,
+    DYNAMIC_INFO_FIELDS.created,
+    DYNAMIC_INFO_FIELDS.updated,
 
-  /**
-   * Fields for advanced search
-   */
-  PBEHAVIOR_FIELDS.tstart,
-  PBEHAVIOR_FIELDS.tstop,
-  PBEHAVIOR_FIELDS.rruleEnd,
-  PBEHAVIOR_FIELDS.created,
-  PBEHAVIOR_FIELDS.updated,
-  PBEHAVIOR_FIELDS.lastAlarmDate,
-].includes(value);
+    /**
+     * Fields for advanced search
+     */
+    PBEHAVIOR_FIELDS.tstart,
+    PBEHAVIOR_FIELDS.tstop,
+    PBEHAVIOR_FIELDS.rruleEnd,
+    PBEHAVIOR_FIELDS.created,
+    PBEHAVIOR_FIELDS.updated,
+    PBEHAVIOR_FIELDS.lastAlarmDate,
+  ].includes(value);
 
 /**
  * Check pattern field is number
@@ -344,19 +349,20 @@ export const isDatePatternRuleField = value => [
  * @param {string} value
  * @return {boolean}
  */
-export const isNumberPatternRuleField = value => [
-  ALARM_PATTERN_FIELDS.state,
-  ALARM_PATTERN_FIELDS.status,
-  ALARM_PATTERN_FIELDS.totalStateChanges,
-  EVENT_FILTER_PATTERN_FIELDS.state,
-  ENTITY_PATTERN_FIELDS.impactLevel,
-  SERVICE_WEATHER_PATTERN_FIELDS.state,
+export const isNumberPatternRuleField = value =>
+  [
+    ALARM_PATTERN_FIELDS.state,
+    ALARM_PATTERN_FIELDS.status,
+    ALARM_PATTERN_FIELDS.totalStateChanges,
+    EVENT_FILTER_PATTERN_FIELDS.state,
+    ENTITY_PATTERN_FIELDS.impactLevel,
+    SERVICE_WEATHER_PATTERN_FIELDS.state,
 
-  /**
-   * Fields for advanced search
-   */
-  PBEHAVIOR_FIELDS.alarmCount,
-].includes(value);
+    /**
+     * Fields for advanced search
+     */
+    PBEHAVIOR_FIELDS.alarmCount,
+  ].includes(value);
 
 /**
  * Check pattern field is array
@@ -364,64 +370,65 @@ export const isNumberPatternRuleField = value => [
  * @param {string} value
  * @return {boolean}
  */
-export const isArrayPatternRuleField = value => [
-  ALARM_PATTERN_FIELDS.displayName,
-  ALARM_PATTERN_FIELDS.output,
-  ALARM_PATTERN_FIELDS.longOutput,
-  ALARM_PATTERN_FIELDS.initialOutput,
-  ALARM_PATTERN_FIELDS.initialLongOutput,
-  ALARM_PATTERN_FIELDS.component,
-  ALARM_PATTERN_FIELDS.connector,
-  ALARM_PATTERN_FIELDS.connectorName,
-  ALARM_PATTERN_FIELDS.resource,
-  ALARM_PATTERN_FIELDS.tags,
-  ALARM_PATTERN_FIELDS.lastComment,
-  ALARM_PATTERN_FIELDS.lastCommentInitiator,
-  ALARM_PATTERN_FIELDS.lastCommentAuthor,
-  ALARM_PATTERN_FIELDS.ticketMessage,
-  ALARM_PATTERN_FIELDS.ticketValue,
-  ALARM_PATTERN_FIELDS.ticketInitiator,
-  ALARM_PATTERN_FIELDS.ticketData,
-  ALARM_PATTERN_FIELDS.ackBy,
-  ALARM_PATTERN_FIELDS.ackMessage,
-  ALARM_PATTERN_FIELDS.ackInitiator,
-  ALARM_PATTERN_FIELDS.canceledInitiator,
-  ALARM_PATTERN_FIELDS.stateInitiator,
-  ENTITY_PATTERN_FIELDS.id,
-  ENTITY_PATTERN_FIELDS.name,
-  ENTITY_PATTERN_FIELDS.category,
-  ENTITY_PATTERN_FIELDS.type,
-  ENTITY_PATTERN_FIELDS.connector,
-  ENTITY_PATTERN_FIELDS.component,
-  EVENT_FILTER_PATTERN_FIELDS.component,
-  EVENT_FILTER_PATTERN_FIELDS.connector,
-  EVENT_FILTER_PATTERN_FIELDS.connectorName,
-  EVENT_FILTER_PATTERN_FIELDS.resource,
-  EVENT_FILTER_PATTERN_FIELDS.output,
-  EVENT_FILTER_PATTERN_FIELDS.longOutput,
-  EVENT_FILTER_PATTERN_FIELDS.eventType,
-  EVENT_FILTER_PATTERN_FIELDS.sourceType,
-  EVENT_FILTER_PATTERN_FIELDS.initiator,
-  EVENT_FILTER_PATTERN_FIELDS.author,
-  PBEHAVIOR_PATTERN_FIELDS.name,
+export const isArrayPatternRuleField = value =>
+  [
+    ALARM_PATTERN_FIELDS.displayName,
+    ALARM_PATTERN_FIELDS.output,
+    ALARM_PATTERN_FIELDS.longOutput,
+    ALARM_PATTERN_FIELDS.initialOutput,
+    ALARM_PATTERN_FIELDS.initialLongOutput,
+    ALARM_PATTERN_FIELDS.component,
+    ALARM_PATTERN_FIELDS.connector,
+    ALARM_PATTERN_FIELDS.connectorName,
+    ALARM_PATTERN_FIELDS.resource,
+    ALARM_PATTERN_FIELDS.tags,
+    ALARM_PATTERN_FIELDS.lastComment,
+    ALARM_PATTERN_FIELDS.lastCommentInitiator,
+    ALARM_PATTERN_FIELDS.lastCommentAuthor,
+    ALARM_PATTERN_FIELDS.ticketMessage,
+    ALARM_PATTERN_FIELDS.ticketValue,
+    ALARM_PATTERN_FIELDS.ticketInitiator,
+    ALARM_PATTERN_FIELDS.ticketData,
+    ALARM_PATTERN_FIELDS.ackBy,
+    ALARM_PATTERN_FIELDS.ackMessage,
+    ALARM_PATTERN_FIELDS.ackInitiator,
+    ALARM_PATTERN_FIELDS.canceledInitiator,
+    ALARM_PATTERN_FIELDS.stateInitiator,
+    ENTITY_PATTERN_FIELDS.id,
+    ENTITY_PATTERN_FIELDS.name,
+    ENTITY_PATTERN_FIELDS.category,
+    ENTITY_PATTERN_FIELDS.type,
+    ENTITY_PATTERN_FIELDS.connector,
+    ENTITY_PATTERN_FIELDS.component,
+    EVENT_FILTER_PATTERN_FIELDS.component,
+    EVENT_FILTER_PATTERN_FIELDS.connector,
+    EVENT_FILTER_PATTERN_FIELDS.connectorName,
+    EVENT_FILTER_PATTERN_FIELDS.resource,
+    EVENT_FILTER_PATTERN_FIELDS.output,
+    EVENT_FILTER_PATTERN_FIELDS.longOutput,
+    EVENT_FILTER_PATTERN_FIELDS.eventType,
+    EVENT_FILTER_PATTERN_FIELDS.sourceType,
+    EVENT_FILTER_PATTERN_FIELDS.initiator,
+    EVENT_FILTER_PATTERN_FIELDS.author,
+    PBEHAVIOR_PATTERN_FIELDS.name,
 
-  /**
-   * Fields for advanced search
-   */
-  PBEHAVIOR_FIELDS.name,
-  PBEHAVIOR_FIELDS.author,
-  PBEHAVIOR_FIELDS.rrule,
-  PBEHAVIOR_FIELDS.reason,
-  PBEHAVIOR_FIELDS.type,
-  PBEHAVIOR_FIELDS.canonicalType,
-].some((field) => {
-  /**
-   * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
-   */
-  const start = `${field}.`;
+    /**
+     * Fields for advanced search
+     */
+    PBEHAVIOR_FIELDS.name,
+    PBEHAVIOR_FIELDS.author,
+    PBEHAVIOR_FIELDS.rrule,
+    PBEHAVIOR_FIELDS.reason,
+    PBEHAVIOR_FIELDS.type,
+    PBEHAVIOR_FIELDS.canonicalType,
+  ].some((field) => {
+    /**
+     * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+     */
+    const start = `${field}.`;
 
-  return value === field || value?.startsWith(start);
-});
+    return value === field || value?.startsWith(start);
+  });
 
 /**
  * Check pattern field is infos
@@ -429,20 +436,21 @@ export const isArrayPatternRuleField = value => [
  * @param {string} value
  * @return {boolean}
  */
-export const isInfosPatternRuleField = value => [
-  ALARM_PATTERN_FIELDS.infos,
-  ALARM_PATTERN_FIELDS.entityInfos,
-  ALARM_PATTERN_FIELDS.entityComponentInfos,
-  ENTITY_PATTERN_FIELDS.componentInfos,
-  ENTITY_PATTERN_FIELDS.infos,
-].some((field) => {
-  /**
-   * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
-   */
-  const start = `${field}.`;
+export const isInfosPatternRuleField = value =>
+  [
+    ALARM_PATTERN_FIELDS.infos,
+    ALARM_PATTERN_FIELDS.entityInfos,
+    ALARM_PATTERN_FIELDS.entityComponentInfos,
+    ENTITY_PATTERN_FIELDS.componentInfos,
+    ENTITY_PATTERN_FIELDS.infos,
+  ].some((field) => {
+    /**
+     * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+     */
+    const start = `${field}.`;
 
-  return value === field || value?.startsWith?.(start);
-});
+    return value === field || value?.startsWith?.(start);
+  });
 
 /**
  * Check pattern field is infos value
@@ -450,7 +458,8 @@ export const isInfosPatternRuleField = value => [
  * @param {string} [value = '']
  * @return {boolean}
  */
-export const isValueInfosPatternRuleField = value => isInfosPatternRuleField(value) && value?.endsWith?.('.value');
+export const isValueInfosPatternRuleField = value =>
+  isInfosPatternRuleField(value) && value?.endsWith?.('.value');
 
 /**
  * Check pattern field is duration
@@ -472,8 +481,7 @@ export const isExtraInfosPatternRuleField = (value) => {
    */
   const start = `${EVENT_FILTER_PATTERN_FIELDS.extraInfos}.`;
 
-  return value === EVENT_FILTER_PATTERN_FIELDS.extraInfos
-    || value?.startsWith(start);
+  return value === EVENT_FILTER_PATTERN_FIELDS.extraInfos || value?.startsWith(start);
 };
 
 /**
@@ -482,8 +490,8 @@ export const isExtraInfosPatternRuleField = (value) => {
  * @param {string} value
  * @return {string}
  */
-export const getObjectPatternRuleField = value => [ALARM_PATTERN_FIELDS.ticketData]
-  .find((field) => {
+export const getObjectPatternRuleField = value =>
+  [ALARM_PATTERN_FIELDS.ticketData].find((field) => {
     /**
      * @TODO: update babel-eslint for resolving problem with templates inside optional chaining function call
      */
@@ -529,7 +537,9 @@ export const isValidRuleValueWithoutFieldType = (rule) => {
 
   if (isArrayPatternRuleField(field)) {
     if (isArrayCondition(cond.type)) {
-      return isArray(cond.value) || (isBoolean(cond.value) && cond.type === PATTERN_CONDITIONS.isEmpty);
+      return (
+        isArray(cond.value) || (isBoolean(cond.value) && cond.type === PATTERN_CONDITIONS.isEmpty)
+      );
     }
   }
 
@@ -577,8 +587,10 @@ export const isValidRuleValueWithFieldType = (rule) => {
 
   if ([PATTERN_FIELD_TYPES.stringArray, PATTERN_FIELD_TYPES.string].includes(fieldType)) {
     if (isArrayCondition(cond.type)) {
-      return (isArray(cond.value) && cond.value.every(isString))
-        || (isBoolean(cond.value) && cond.type === PATTERN_CONDITIONS.isEmpty);
+      return (
+        (isArray(cond.value) && cond.value.every(isString)) ||
+        (isBoolean(cond.value) && cond.type === PATTERN_CONDITIONS.isEmpty)
+      );
     }
 
     if (fieldType === PATTERN_FIELD_TYPES.stringArray) {
@@ -597,11 +609,8 @@ export const isValidRuleValueWithFieldType = (rule) => {
  * @param {PatternRule | *} rule
  * @return {boolean}
  */
-export const isValidRuleValue = rule => (
-  rule.field_type
-    ? isValidRuleValueWithFieldType(rule)
-    : isValidRuleValueWithoutFieldType(rule)
-);
+export const isValidRuleValue = rule =>
+  rule.field_type ? isValidRuleValueWithFieldType(rule) : isValidRuleValueWithoutFieldType(rule);
 
 /**
  * Whether a pattern rule field uses a generic string-array editor, as opposed to fields that bind
@@ -610,33 +619,32 @@ export const isValidRuleValue = rule => (
  * @param {string} field Rule field id (alarm, entity, or event-filter pattern field constant).
  * @return {boolean} True when the field is not one of the excluded primitive / specialized array fields.
  */
-export const isArrayPatternRuleFieldWithoutPrimitive = field => (
-  field !== ALARM_PATTERN_FIELDS.tags
-    && field !== ALARM_PATTERN_FIELDS.component
-    && field !== ALARM_PATTERN_FIELDS.connector
-    && field !== ALARM_PATTERN_FIELDS.connectorName
-    && field !== ALARM_PATTERN_FIELDS.resource
-    && field !== ALARM_PATTERN_FIELDS.ackBy
-    && field !== ALARM_PATTERN_FIELDS.ackInitiator
-    && field !== ALARM_PATTERN_FIELDS.ticketInitiator
-    && field !== ALARM_PATTERN_FIELDS.snoozeAuthor
-    && field !== ALARM_PATTERN_FIELDS.snoozeInitiator
-    && field !== ALARM_PATTERN_FIELDS.canceledInitiator
-    && field !== ALARM_PATTERN_FIELDS.lastCommentAuthor
-    && field !== ALARM_PATTERN_FIELDS.lastCommentInitiator
-    && field !== ALARM_PATTERN_FIELDS.stateInitiator
-    && field !== ENTITY_PATTERN_FIELDS.id
-    && field !== ENTITY_PATTERN_FIELDS.component
-    && field !== ENTITY_PATTERN_FIELDS.connector
-    && field !== ENTITY_PATTERN_FIELDS.category
-    && field !== EVENT_FILTER_PATTERN_FIELDS.eventType
-    && field !== EVENT_FILTER_PATTERN_FIELDS.component
-    && field !== EVENT_FILTER_PATTERN_FIELDS.connector
-    && field !== EVENT_FILTER_PATTERN_FIELDS.connectorName
-    && field !== EVENT_FILTER_PATTERN_FIELDS.resource
-    && field !== EVENT_FILTER_PATTERN_FIELDS.initiator
-    && field !== EVENT_FILTER_PATTERN_FIELDS.author
-);
+export const isArrayPatternRuleFieldWithoutPrimitive = field =>
+  field !== ALARM_PATTERN_FIELDS.tags &&
+  field !== ALARM_PATTERN_FIELDS.component &&
+  field !== ALARM_PATTERN_FIELDS.connector &&
+  field !== ALARM_PATTERN_FIELDS.connectorName &&
+  field !== ALARM_PATTERN_FIELDS.resource &&
+  field !== ALARM_PATTERN_FIELDS.ackBy &&
+  field !== ALARM_PATTERN_FIELDS.ackInitiator &&
+  field !== ALARM_PATTERN_FIELDS.ticketInitiator &&
+  field !== ALARM_PATTERN_FIELDS.snoozeAuthor &&
+  field !== ALARM_PATTERN_FIELDS.snoozeInitiator &&
+  field !== ALARM_PATTERN_FIELDS.canceledInitiator &&
+  field !== ALARM_PATTERN_FIELDS.lastCommentAuthor &&
+  field !== ALARM_PATTERN_FIELDS.lastCommentInitiator &&
+  field !== ALARM_PATTERN_FIELDS.stateInitiator &&
+  field !== ENTITY_PATTERN_FIELDS.id &&
+  field !== ENTITY_PATTERN_FIELDS.component &&
+  field !== ENTITY_PATTERN_FIELDS.connector &&
+  field !== ENTITY_PATTERN_FIELDS.category &&
+  field !== EVENT_FILTER_PATTERN_FIELDS.eventType &&
+  field !== EVENT_FILTER_PATTERN_FIELDS.component &&
+  field !== EVENT_FILTER_PATTERN_FIELDS.connector &&
+  field !== EVENT_FILTER_PATTERN_FIELDS.connectorName &&
+  field !== EVENT_FILTER_PATTERN_FIELDS.resource &&
+  field !== EVENT_FILTER_PATTERN_FIELDS.initiator &&
+  field !== EVENT_FILTER_PATTERN_FIELDS.author;
 
 /**
  * Check pattern rule is valid
@@ -644,12 +652,13 @@ export const isArrayPatternRuleFieldWithoutPrimitive = field => (
  * @param {PatternRule | *} rule
  * @return {boolean}
  */
-export const isValidPatternRule = rule => !!(rule?.field || rule?.alias)
-  && !isNil(rule.cond?.value)
-  && !isNil(rule.cond?.type)
-  && (!rule.field_type || isValidRuleFieldType(rule.field_type))
-  && isValidPatternCondition(rule.cond.type)
-  && isValidRuleValue(rule);
+export const isValidPatternRule = rule =>
+  !!(rule?.field || rule?.alias) &&
+  !isNil(rule.cond?.value) &&
+  !isNil(rule.cond?.type) &&
+  (!rule.field_type || isValidRuleFieldType(rule.field_type)) &&
+  isValidPatternCondition(rule.cond.type) &&
+  isValidRuleValue(rule);
 
 /**
  * Convert any value to type value
@@ -672,7 +681,7 @@ export const convertValueByType = (value, type, defaultValue) => {
     case PATTERN_FIELD_TYPES.boolean:
       return Boolean(preparedValue);
     case PATTERN_FIELD_TYPES.string:
-      return (isNaN(preparedValue) || isNull(preparedValue) || isUndefined(preparedValue))
+      return isNaN(preparedValue) || isNull(preparedValue) || isUndefined(preparedValue)
         ? ''
         : String(preparedValue);
     case PATTERN_FIELD_TYPES.null:
@@ -736,11 +745,7 @@ export const getOperatorsByRule = (rule, ruleType) => {
   let operators = getOperatorsByFieldType(rule.fieldType);
 
   if (rule.fieldType === PATTERN_FIELD_TYPES.string || isObjectRuleType(ruleType)) {
-    operators = [
-      ...operators,
-      PATTERN_OPERATORS.isOneOf,
-      PATTERN_OPERATORS.isNotOneOf,
-    ];
+    operators = [...operators, PATTERN_OPERATORS.isOneOf, PATTERN_OPERATORS.isNotOneOf];
   }
 
   if (isDateRuleType(ruleType)) {
@@ -807,13 +812,17 @@ export const convertValueByOperator = (value, operator) => {
  * @param {string | string[]} value
  * @returns {PatternGroups}
  */
-export const createEntityIdPatternByValue = value => [[{
-  field: ENTITY_PATTERN_FIELDS.id,
-  cond: {
-    type: isArray(value) ? PATTERN_CONDITIONS.isOneOf : PATTERN_CONDITIONS.equal,
-    value,
-  },
-}]];
+export const createEntityIdPatternByValue = value => [
+  [
+    {
+      field: ENTITY_PATTERN_FIELDS.id,
+      cond: {
+        type: isArray(value) ? PATTERN_CONDITIONS.isOneOf : PATTERN_CONDITIONS.equal,
+        value,
+      },
+    },
+  ],
+];
 
 /**
  * Get default date form range configuration
@@ -836,8 +845,9 @@ export const getDefaultDateFormRange = () => ({
  * @return {string} Quick range key or custom value if no match found
  */
 export const getPatternQuickByDuration = (duration) => {
-  const [quickRangeValue] = Object.entries(PATTERN_QUICK_RANGES_DURATIONS).find(([, value]) => isEqual(value, duration))
-   ?? [];
+  const [quickRangeValue] =
+    Object.entries(PATTERN_QUICK_RANGES_DURATIONS).find(([, value]) => isEqual(value, duration)) ??
+    [];
 
   return quickRangeValue ?? QUICK_RANGES.custom.value;
 };
@@ -892,7 +902,8 @@ export const patternDateRangeToForm = (rule = {}) => {
         operator: PATTERN_OPERATORS.inRangePeriod,
         range,
       };
-    } if (rule.cond.value?.to) {
+    }
+    if (rule.cond.value?.to) {
       range.type = getPatternQuickByDuration(rule.cond.value?.to);
 
       if (range.type === QUICK_RANGES.custom.value) {
@@ -972,9 +983,10 @@ export const patternRuleToForm = (rule = {}) => {
       }
 
       if (!form.operator) {
-        form.operator = {
-          [ALARM_PATTERN_FIELDS.meta]: PATTERN_OPERATORS.ruleIs,
-        }[rule.field] ?? PATTERN_OPERATORS.equal;
+        form.operator =
+          {
+            [ALARM_PATTERN_FIELDS.meta]: PATTERN_OPERATORS.ruleIs,
+          }[rule.field] ?? PATTERN_OPERATORS.equal;
         form.value = rule.cond.value;
       }
       break;
@@ -985,15 +997,11 @@ export const patternRuleToForm = (rule = {}) => {
       break;
 
     case PATTERN_CONDITIONS.greater:
-      form.operator = isDuration
-        ? PATTERN_OPERATORS.longer
-        : PATTERN_OPERATORS.higher;
+      form.operator = isDuration ? PATTERN_OPERATORS.longer : PATTERN_OPERATORS.higher;
       form.value = isDuration ? '' : rule.cond.value;
       break;
     case PATTERN_CONDITIONS.less:
-      form.operator = isDuration
-        ? PATTERN_OPERATORS.shorter
-        : PATTERN_OPERATORS.lower;
+      form.operator = isDuration ? PATTERN_OPERATORS.shorter : PATTERN_OPERATORS.lower;
       form.value = isDuration ? '' : rule.cond.value;
       break;
 
@@ -1019,9 +1027,8 @@ export const patternRuleToForm = (rule = {}) => {
       }
 
       if (!form.operator) {
-        form.operator = rule.cond.value === true
-          ? PATTERN_OPERATORS.exist
-          : PATTERN_OPERATORS.notExist;
+        form.operator =
+          rule.cond.value === true ? PATTERN_OPERATORS.exist : PATTERN_OPERATORS.notExist;
       }
 
       if (rule.field === ALARM_PATTERN_FIELDS.activationDate) {
@@ -1038,15 +1045,17 @@ export const patternRuleToForm = (rule = {}) => {
       form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.hasOneOf:
-      form.operator = rule.field === ALARM_PATTERN_FIELDS.tags
-        ? PATTERN_OPERATORS.with
-        : PATTERN_OPERATORS.hasOneOf;
+      form.operator =
+        rule.field === ALARM_PATTERN_FIELDS.tags
+          ? PATTERN_OPERATORS.with
+          : PATTERN_OPERATORS.hasOneOf;
       form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.hasNot:
-      form.operator = rule.field === ALARM_PATTERN_FIELDS.tags
-        ? PATTERN_OPERATORS.without
-        : PATTERN_OPERATORS.hasNot;
+      form.operator =
+        rule.field === ALARM_PATTERN_FIELDS.tags
+          ? PATTERN_OPERATORS.without
+          : PATTERN_OPERATORS.hasNot;
       form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.isNotOneOf:
@@ -1054,9 +1063,8 @@ export const patternRuleToForm = (rule = {}) => {
       form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.isEmpty:
-      form.operator = rule.cond.value === true
-        ? PATTERN_OPERATORS.isEmpty
-        : PATTERN_OPERATORS.isNotEmpty;
+      form.operator =
+        rule.cond.value === true ? PATTERN_OPERATORS.isEmpty : PATTERN_OPERATORS.isNotEmpty;
       form.value = [];
       break;
 
@@ -1140,10 +1148,10 @@ export const patternRuleToForm = (rule = {}) => {
   }
 
   if (
-    (form.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(form.operator))
-    && isArray(form.value)
-    && (!form.value.length || !form.value[0]?.key)
-    && !isArrayPatternRuleFieldWithoutPrimitive(form.field)
+    (form.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(form.operator)) &&
+    isArray(form.value) &&
+    (!form.value.length || !form.value[0]?.key) &&
+    !isArrayPatternRuleFieldWithoutPrimitive(form.field)
   ) {
     form.value = primitiveArrayToForm(form.value);
   }
@@ -1185,19 +1193,24 @@ export const patternsToGroups = (patterns = []) => patterns.map(patternRulesToGr
  * @return {PatternForm}
  */
 export const patternToForm = (pattern = {}) => ({
-  ...omit(pattern, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.event]),
+  ...omit(pattern, [
+    PATTERNS_FIELDS.alarm,
+    PATTERNS_FIELDS.entity,
+    PATTERNS_FIELDS.pbehavior,
+    PATTERNS_FIELDS.event,
+  ]),
 
   title: pattern.title ?? '',
   id: pattern.id ?? PATTERN_CUSTOM_ITEM_VALUE,
   type: pattern.type ?? PATTERN_TYPES.alarm,
   is_corporate: pattern.is_corporate ?? false,
   groups: patternsToGroups(
-    pattern.alarm_pattern
-    || pattern.entity_pattern
-    || pattern.pbehavior_pattern
-    || pattern.event_pattern
-    || pattern.total_entity_pattern
-    || pattern.weather_service_pattern,
+    pattern.alarm_pattern ||
+      pattern.entity_pattern ||
+      pattern.pbehavior_pattern ||
+      pattern.event_pattern ||
+      pattern.total_entity_pattern ||
+      pattern.weather_service_pattern,
   ),
 });
 
@@ -1287,9 +1300,10 @@ export const formDateIntervalConditionToPatternRuleCondition = (rule) => {
  */
 export const formRuleToPatternRule = (rule) => {
   const pattern = {
-    [rule.alias ? 'alias' : 'field']: rule.attribute === ALARM_PATTERN_FIELDS.activated
-      ? ALARM_PATTERN_FIELDS.activationDate
-      : rule.attribute,
+    [rule.alias ? 'alias' : 'field']:
+      rule.attribute === ALARM_PATTERN_FIELDS.activated
+        ? ALARM_PATTERN_FIELDS.activationDate
+        : rule.attribute,
     cond: {
       value: rule.value,
       type: PATTERN_CONDITIONS.equal,
@@ -1320,8 +1334,8 @@ export const formRuleToPatternRule = (rule) => {
   }
 
   if (
-    (rule.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(rule.operator))
-    && isArray(pattern.cond.value)
+    (rule.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(rule.operator)) &&
+    isArray(pattern.cond.value)
   ) {
     pattern.cond.value = formToPrimitiveArray(pattern.cond.value);
   }
@@ -1474,7 +1488,8 @@ export const formGroupsToPatternRules = groups => groups.map(formGroupToPatternR
  * @param {PatternGroupsForm} [groups = []]
  * @return {string}
  */
-export const formGroupsToPatternRulesQuery = (groups = []) => JSON.stringify(formGroupsToPatternRules(groups));
+export const formGroupsToPatternRulesQuery = (groups = []) =>
+  JSON.stringify(formGroupsToPatternRules(groups));
 
 /**
  * Convert pattern form to pattern

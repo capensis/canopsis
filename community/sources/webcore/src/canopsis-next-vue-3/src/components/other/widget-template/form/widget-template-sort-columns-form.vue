@@ -4,11 +4,7 @@
       {{ $t('common.column', 2) }}
     </span>
 
-    <v-alert
-      v-if="required && !modelValue.length"
-      color="info"
-      variant="tonal"
-    >
+    <v-alert v-if="required && !modelValue.length" color="info" variant="tonal">
       {{ $t('widgetTemplate.errors.sortColumnsRequired') }}
     </v-alert>
 

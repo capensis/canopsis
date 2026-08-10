@@ -37,18 +37,11 @@
 
 <script>
 import { find, sortBy, throttle } from 'lodash';
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  watch,
-} from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useSnmpMib } from '@/hooks/store/modules/snmp-mib';
 
@@ -81,10 +74,7 @@ export default {
       set: value => updateField('mib', value),
     });
 
-    const {
-      pending: modulesPending,
-      handler: fetchModulesList,
-    } = usePendingHandler(async () => {
+    const { pending: modulesPending, handler: fetchModulesList } = usePendingHandler(async () => {
       const { data } = await fetchSnmpMibsList({
         params: {
           search: searchInput.value,
@@ -101,26 +91,25 @@ export default {
 
     const throttledFetchModulesList = throttle(fetchModulesList, 500);
 
-    const {
-      pending: moduleMibsPending,
-      handler: selectModule,
-    } = usePendingHandler(async (module) => {
-      updateField('moduleName', module);
+    const { pending: moduleMibsPending, handler: selectModule } = usePendingHandler(
+      async (module) => {
+        updateField('moduleName', module);
 
-      const { data } = await fetchSnmpMibsList({
-        params: {
-          limit: MAX_LIMIT,
-          nodetype: 'notification',
-          moduleName: module,
-        },
-      });
+        const { data } = await fetchSnmpMibsList({
+          params: {
+            limit: MAX_LIMIT,
+            nodetype: 'notification',
+            moduleName: module,
+          },
+        });
 
-      moduleMibs.value = sortBy(data, 'name');
+        moduleMibs.value = sortBy(data, 'name');
 
-      if (props.form.mib?.name) {
-        updateField('mib', find(data, { name: props.form.mib.name }));
-      }
-    });
+        if (props.form.mib?.name) {
+          updateField('mib', find(data, { name: props.form.mib.name }));
+        }
+      },
+    );
 
     watch(searchInput, throttledFetchModulesList);
 

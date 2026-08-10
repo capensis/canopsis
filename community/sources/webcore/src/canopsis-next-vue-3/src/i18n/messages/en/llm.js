@@ -73,14 +73,14 @@ export default {
   currentDefaultModelLine: 'Current default model:',
   lastUsedDate: 'Last used date',
   importantNotesMessage:
-    '<div class="font-weight-regular">Important notes:</div>'
-    + '<ul>'
-    + '<li>Gemini models can be enabled or disabled through this module; however, '
-    + '<strong>token limits and quota management</strong>'
-    + ' are configured directly within the '
-    + '<strong><a href="{geminiConsoleUrl}" target="_blank">Gemini AI Console</a></strong>.</li>'
-    + '<li><strong>Regular monitoring</strong> of Google Cloud limits is required, as <strong>API policies and usage conditions are subject to change.</strong></li>'
-    + '</ul>',
+    '<div class="font-weight-regular">Important notes:</div>' +
+    '<ul>' +
+    '<li>Gemini models can be enabled or disabled through this module; however, ' +
+    '<strong>token limits and quota management</strong>' +
+    ' are configured directly within the ' +
+    '<strong><a href="{geminiConsoleUrl}" target="_blank">Gemini AI Console</a></strong>.</li>' +
+    '<li><strong>Regular monitoring</strong> of Google Cloud limits is required, as <strong>API policies and usage conditions are subject to change.</strong></li>' +
+    '</ul>',
   thinkingLevels: {
     [LLM_THINKING_LEVELS.minimal]: 'Minimal',
     [LLM_THINKING_LEVELS.low]: 'Low',
@@ -94,7 +94,8 @@ export default {
     ask: 'Ask',
     thinking: 'Thinking…',
     tryLabel: 'Try:',
-    restartConfirmation: 'Restart the chat? <strong>Chat history</strong> and <strong>versions</strong> will be cleared',
+    restartConfirmation:
+      'Restart the chat? <strong>Chat history</strong> and <strong>versions</strong> will be cleared',
     suggestions: {
       createPattern: 'Create pattern',
       editPattern: 'Edit pattern',
@@ -104,7 +105,8 @@ export default {
     patternsEditedMessage: 'You edited {patterns} pattern | You edited {patterns} patterns',
     patternCreatedMessage: 'Patterns created',
     patternUpdatedMessage: 'Patterns updated',
-    emptyPatternsMessage: 'You removed all patterns.\nIf you need to clear the context, restart AI assistant.',
+    emptyPatternsMessage:
+      'You removed all patterns.\nIf you need to clear the context, restart AI assistant.',
     patternCannotBeCreatedReasons: 'Pattern cannot be created for the following reasons:\n',
     fixPatternPrompt: 'Fix pattern:\n{jsonString}',
     suggestionPrompts: {
@@ -124,42 +126,43 @@ export default {
       [LLM_SOCKET_CONTEXTS.stateSettings]: 'Target pattern',
     },
     infoAlerts: {
-      [LLM_SOCKET_CONTEXTS.scenario]: 'Works only with pattern for action <strong>{patternItem}</strong><br />',
-      [LLM_SOCKET_CONTEXTS.stateSettings]: 'Works only with pattern for <strong>{patternItem}</strong><br />',
+      [LLM_SOCKET_CONTEXTS.scenario]:
+        'Works only with pattern for action <strong>{patternItem}</strong><br />',
+      [LLM_SOCKET_CONTEXTS.stateSettings]:
+        'Works only with pattern for <strong>{patternItem}</strong><br />',
     },
     infoAlertEnding: '<strong>Click Restart to run AI assistant for another pattern</strong>',
     patternsItemsError: {
       [LLM_SOCKET_CONTEXTS.scenario]:
-        'Selected action is deleted.<br />'
-        + '<strong>You can restart the chat with another action (the history will be lost).</strong>',
+        'Selected action is deleted.<br />' +
+        '<strong>You can restart the chat with another action (the history will be lost).</strong>',
     },
-    warningAlert: '<div>Please be aware that:</div>'
-      + '<ul>'
-      + '<li>AI-generated output <strong>may contain errors</strong> — always review and validate patterns before use.</li>'
-      + '<li>This chat session is <strong>temporary</strong> and will be <strong>cleared</strong> when the modal is closed.</li>'
-      + '</ul>',
+    warningAlert:
+      '<div>Please be aware that:</div>' +
+      '<ul>' +
+      '<li>AI-generated output <strong>may contain errors</strong> — always review and validate patterns before use.</li>' +
+      '<li>This chat session is <strong>temporary</strong> and will be <strong>cleared</strong> when the modal is closed.</li>' +
+      '</ul>',
     errors: {
       [LLM_AI_CHAT_ERROR_CODES.badRequest]:
-        'The request could not be processed.<br />'
-        + '<strong>Please check your input and try again.</strong>',
+        'The request could not be processed.<br />' +
+        '<strong>Please check your input and try again.</strong>',
       [LLM_AI_CHAT_ERROR_CODES.gone]:
-        'Selected AI model is currently unavailable.<br />'
-        + '<strong>Please contact your administrator. You can restart the chat with another model (the history will be lost).</strong>',
+        'Selected AI model is currently unavailable.<br />' +
+        '<strong>Please contact your administrator. You can restart the chat with another model (the history will be lost).</strong>',
       [LLM_AI_CHAT_ERROR_CODES.tooManyRequests]:
-        'You exceeded your current quota.<br />'
-        + '<strong>Please try again at {retryAt} or restart the chat with another model (the history will be lost).</strong>',
+        'You exceeded your current quota.<br />' +
+        '<strong>Please try again at {retryAt} or restart the chat with another model (the history will be lost).</strong>',
       [LLM_AI_CHAT_ERROR_CODES.internalError]:
-        'Something went wrong.<br />'
-        + '<strong>Please contact your administrator</strong>',
+        'Something went wrong.<br />' + '<strong>Please contact your administrator</strong>',
       [LLM_AI_CHAT_ERROR_CODES.timeout]:
-        'Request timed out.<br />'
-        + '<strong>Please try again later.</strong>',
+        'Request timed out.<br />' + '<strong>Please try again later.</strong>',
       noModels:
-        'No AI models are currently available.<br />'
-        + '<strong>Please contact your administrator.</strong>',
+        'No AI models are currently available.<br />' +
+        '<strong>Please contact your administrator.</strong>',
       serverError:
-        'Problem with socket connection.<br />'
-        + '<strong>Please contact your administrator.</strong>',
+        'Problem with socket connection.<br />' +
+        '<strong>Please contact your administrator.</strong>',
     },
   },
 };

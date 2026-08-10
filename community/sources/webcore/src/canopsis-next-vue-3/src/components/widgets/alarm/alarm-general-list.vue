@@ -6,11 +6,7 @@
       </span>
     </template>
 
-    <v-data-table
-      :headers="headers"
-      :items="items"
-      :row-props="rowProps"
-    />
+    <v-data-table :headers="headers" :items="items" :row-props="rowProps" />
   </c-collapse-panel>
 </template>
 

@@ -74,7 +74,8 @@ export default {
       ticketNumber: 'Numéro de ticket',
       parents: 'Causes',
       children: 'Conséquences',
-      cannotUnsnoozeUntilPbehaviorInProgress: 'Impossible de supprimer la veille tant que le comportement périodique est en cours',
+      cannotUnsnoozeUntilPbehaviorInProgress:
+        'Impossible de supprimer la veille tant que le comportement périodique est en cours',
     },
   },
   timeline: {
@@ -87,7 +88,8 @@ export default {
       [ALARM_LIST_STEPS.statedec]: 'Sévérité diminuée',
       [ALARM_LIST_STEPS.stateinc]: 'Sévérité augmentée',
       [ALARM_LIST_STEPS.changeState]: 'Sévérité modifiée',
-      [ALARM_LIST_STEPS.stateCounter]: 'Changements de sévérité regroupés (depuis le dernier changement de statut)',
+      [ALARM_LIST_STEPS.stateCounter]:
+        'Changements de sévérité regroupés (depuis le dernier changement de statut)',
       [ALARM_LIST_STEPS.statusdec]: 'Statut modifié à {status}',
       [ALARM_LIST_STEPS.statusinc]: 'Statut modifié à {status}',
       [ALARM_LIST_STEPS.resolve]: 'Alarme résolue',
@@ -106,7 +108,8 @@ export default {
       [ALARM_LIST_STEPS.webhookFail]: 'Webhook en échec',
       [ALARM_LIST_STEPS.declareTicket]: 'Ticket déclaré',
       [ALARM_LIST_STEPS.declareTicketFail]: 'Déclaration de ticket en échec',
-      [ALARM_LIST_STEPS.declareTicketRuleInProgress]: 'Règle de déclaration de ticket exécutée par {author} en cours',
+      [ALARM_LIST_STEPS.declareTicketRuleInProgress]:
+        'Règle de déclaration de ticket exécutée par {author} en cours',
       [ALARM_LIST_STEPS.declareTicketRuleComplete]: 'Règle de déclaration du ticket terminée',
       [ALARM_LIST_STEPS.declareTicketRuleFail]: 'Règle de déclaration de ticket en échec',
       [ALARM_LIST_STEPS.changeTicketStatus]: 'Statut du ticket modifié',
@@ -139,18 +142,27 @@ export default {
     entityEnrichments: 'Enrichissements d\'entité',
   },
   moreInfos: {
-    defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
+    defineATemplate:
+      'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
   },
   infoPopup: 'Info popup',
   tooltips: {
-    priority: 'La priorité est égale à la sévérité multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
-    runningManualInstructions: 'Consigne manuelle <strong>{title}</strong> en cours | Consignes manuelles <strong>{title}</strong> en cours',
-    runningAutoInstructions: 'Consigne automatique <strong>{title}</strong> en cours | Consignes automatiques <strong>{title}</strong> en cours',
-    successfulManualInstructions: 'Consigne manuelle <strong>{title}</strong> réussie | Consignes manuelles <strong>{title}</strong> réussies',
-    successfulAutoInstructions: 'Consigne automatique <strong>{title}</strong> réussies | Consignes automatiques <strong>{title}</strong> réussies',
-    failedManualInstructions: 'Consigne manuelle <strong>{title}</strong> en échec | Consignes manuelles <strong>{title}</strong> en échec',
-    failedAutoInstructions: 'Consigne automatique <strong>{title}</strong> en échec | Consignes automatiques <strong>{title}</strong> en échec',
-    hasManualInstruction: 'Il y a une consigne manuelle associée | Il y a des consignes manuelles associées',
+    priority:
+      'La priorité est égale à la sévérité multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
+    runningManualInstructions:
+      'Consigne manuelle <strong>{title}</strong> en cours | Consignes manuelles <strong>{title}</strong> en cours',
+    runningAutoInstructions:
+      'Consigne automatique <strong>{title}</strong> en cours | Consignes automatiques <strong>{title}</strong> en cours',
+    successfulManualInstructions:
+      'Consigne manuelle <strong>{title}</strong> réussie | Consignes manuelles <strong>{title}</strong> réussies',
+    successfulAutoInstructions:
+      'Consigne automatique <strong>{title}</strong> réussies | Consignes automatiques <strong>{title}</strong> réussies',
+    failedManualInstructions:
+      'Consigne manuelle <strong>{title}</strong> en échec | Consignes manuelles <strong>{title}</strong> en échec',
+    failedAutoInstructions:
+      'Consigne automatique <strong>{title}</strong> en échec | Consignes automatiques <strong>{title}</strong> en échec',
+    hasManualInstruction:
+      'Il y a une consigne manuelle associée | Il y a des consignes manuelles associées',
     resetChangeColumns: 'Réinitialiser l\'ordre/le redimensionnement des colonnes',
     startChangeColumns: 'Commencer à modifier l\'ordre/le redimensionnement des colonnes',
     finishChangeColumns: 'Terminer la modification de l\'ordre/du redimensionnement des colonnes',
@@ -160,7 +172,8 @@ export default {
     [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Nombre d\'alarmes créées',
     [ALARM_METRIC_PARAMETERS.activeAlarms]: 'Nombre d\'alarmes actives',
     [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Nombre d\'alarmes non affichées',
-    [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre d\'alarmes en cours de remédiation automatique',
+    [ALARM_METRIC_PARAMETERS.instructionAlarms]:
+      'Nombre d\'alarmes en cours de remédiation automatique',
     [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Nombre d\'alarmes avec comportement périodique',
     [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Nombre d\'alarmes corrélées',
     [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Nombre d\'alarmes avec acquittement',
@@ -179,11 +192,15 @@ export default {
     [ALARM_METRIC_PARAMETERS.timeToResolve]: 'Délai de résolution des alarmes',
     [ALARM_METRIC_PARAMETERS.minAck]: 'Temps minimum pour acquitter les alarmes',
     [ALARM_METRIC_PARAMETERS.maxAck]: 'Délai maximum pour acquitter les alarmes',
-    [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Nombre d\'alarmes remédiées manuellement',
-    [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Nombre d\'alarmes avec remédiation manuelle',
+    [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]:
+      'Nombre d\'alarmes remédiées manuellement',
+    [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]:
+      'Nombre d\'alarmes avec remédiation manuelle',
     [ALARM_METRIC_PARAMETERS.notAckedAlarms]: 'Nombre d\'alarmes non acquittées',
-    [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Nombre d\'alarmes non acquittées avec durée 1-4h',
-    [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Nombre d\'alarmes non acquittées avec durée 4-24h',
+    [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]:
+      'Nombre d\'alarmes non acquittées avec durée 1-4h',
+    [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]:
+      'Nombre d\'alarmes non acquittées avec durée 4-24h',
     [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Nombre d\'alarmes non acquittées de plus de 24h',
     [ALARM_METRIC_PARAMETERS.minResolve]: 'Temps minimum pour résoudre les alarmes',
     [ALARM_METRIC_PARAMETERS.maxResolve]: 'Temps max pour résoudre les alarmes',
@@ -252,7 +269,8 @@ export default {
     nameSelector: '<strong>Noms</strong>&nbsp;: {names}',
     filters: {
       [REMEDIATION_INSTRUCTION_FILTER_TYPES.noInstructions]: 'Aucune consigne',
-      [REMEDIATION_INSTRUCTION_FILTER_TYPES.noInstructionsOrNotInProgress]: 'Aucune consigne ou pas en cours',
+      [REMEDIATION_INSTRUCTION_FILTER_TYPES.noInstructionsOrNotInProgress]:
+        'Aucune consigne ou pas en cours',
       [REMEDIATION_INSTRUCTION_FILTER_TYPES.hasInstructions]: 'Avec consigne',
     },
     statuses: {

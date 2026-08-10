@@ -9,10 +9,7 @@
         icon
         @click.stop="toggleEditing"
       >
-        <v-icon
-          :icon="activeViewEditing ? 'done' : 'edit'"
-          size="small"
-        />
+        <v-icon :icon="activeViewEditing ? 'done' : 'edit'" size="small" />
       </v-btn>
     </template>
 

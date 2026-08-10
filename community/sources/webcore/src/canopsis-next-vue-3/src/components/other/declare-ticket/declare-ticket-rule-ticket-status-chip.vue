@@ -15,7 +15,6 @@ import { computed } from 'vue';
 
 import { COLORS } from '@/config';
 import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 const STATUS_VALUE_TO_KEY = {
@@ -37,10 +36,11 @@ export default {
     const { t } = useI18n();
 
     const statusKey = computed(() => STATUS_VALUE_TO_KEY[props.value] ?? 'unknown');
-    const statusColor = computed(() => (
-      COLORS.declareTicketRuleTicketStatusChip?.[statusKey.value]
-      ?? COLORS.declareTicketRuleTicketStatusChip?.unknown
-    ));
+    const statusColor = computed(
+      () =>
+        COLORS.declareTicketRuleTicketStatusChip?.[statusKey.value] ??
+        COLORS.declareTicketRuleTicketStatusChip?.unknown,
+    );
     const statusText = computed(() => t(`declareTicket.status.${props.value}`));
 
     const textColor = computed(() => {

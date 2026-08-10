@@ -5,9 +5,7 @@
         <span class="font-weight-bold">
           {{ label }}
         </span>
-        <span v-if="value">
-          :
-        </span>
+        <span v-if="value"> : </span>
       </div>
       <c-layout
         v-if="value"
@@ -15,10 +13,7 @@
         align="center"
         gap="2"
       >
-        <c-icon
-          v-if="!hideIcon"
-          color="grey"
-        >
+        <c-icon v-if="!hideIcon" color="grey">
           {{ icon }}
         </c-icon>
         <span>

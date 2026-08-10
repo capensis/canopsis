@@ -11,10 +11,11 @@
       @update:value="updatePattern"
     />
     <v-tabs
-v-if="!withType || patterns.id"
-v-model="activeTab"
-align-tabs="center"
-color="primary">
+      v-if="!withType || patterns.id"
+      v-model="activeTab"
+      align-tabs="center"
+      color="primary"
+    >
       <v-tab
         :disabled="!isSimpleTab && hasJsonError"
         :value="$constants.PATTERN_EDITOR_TABS.simple"
@@ -63,10 +64,11 @@ color="primary">
           {{ $t('common.edit') }}
         </v-btn>
         <c-layout
-v-if="checked"
-gap="2"
-align="center"
-justify="end">
+          v-if="checked"
+          gap="2"
+          align="center"
+          justify="end"
+        >
           <pattern-count-message :alarm-counter="alarmCounter" :entity-counter="entityCounter" />
           <slot name="append-count" />
         </c-layout>
@@ -84,23 +86,21 @@ justify="end">
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue';
-import { useFieldError, useFormContext } from 'vee-validate';
 import { isEqual, isEmpty } from 'lodash';
+import { useFieldError, useFormContext } from 'vee-validate';
+import { ref, computed, watch } from 'vue';
 
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS } from '@/constants';
-
 import {
   formGroupsToPatternRules,
   patternsToGroups,
   patternToForm,
 } from '@/helpers/entities/pattern/form';
-
 import { useModelField } from '@/hooks/form/model-field';
 
 import PatternAdvancedEditorField from './pattern-advanced-editor-field.vue';
-import PatternGroupsField from './pattern-groups-field.vue';
 import PatternCountMessage from './pattern-count-message.vue';
+import PatternGroupsField from './pattern-groups-field.vue';
 
 export default {
   components: { PatternCountMessage, PatternGroupsField, PatternAdvancedEditorField },

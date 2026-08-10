@@ -18,10 +18,12 @@
 import { computed } from 'vue';
 
 import { STATE_SETTING_ENTITY_TYPES } from '@/constants';
-
 import { useFormModel } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
+import {
+  usePatternsFields,
+  usePatternsFieldsFetching,
+} from '@/hooks/store/modules/patterns-fields';
 import { useValidationHeader } from '@/hooks/validator/validation-header';
 
 export default {

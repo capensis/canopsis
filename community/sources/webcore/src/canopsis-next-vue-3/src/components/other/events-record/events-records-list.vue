@@ -12,10 +12,11 @@
       <v-tooltip v-if="item.is_recording" location="right">
         <template #activator="{ props: tooltipProps }">
           <v-progress-circular
-v-bind="tooltipProps"
-color="primary"
-width="3"
-indeterminate />
+            v-bind="tooltipProps"
+            color="primary"
+            width="3"
+            indeterminate
+          />
         </template>
         <span>{{ item.progress }}</span>
       </v-tooltip>
@@ -39,8 +40,8 @@ indeterminate />
     </template>
 
     <template #count="{ item }">
-{{ item.count }}{{ item.is_recording ? '...' : '' }}
-</template>
+      {{ item.count }}{{ item.is_recording ? '...' : '' }}
+    </template>
 
     <template #author="{ item }">
       {{ item.author?.display_name || '-' }}
@@ -77,7 +78,6 @@ import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
-
 import { useI18n } from '@/hooks/i18n';
 
 import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';

@@ -36,11 +36,9 @@
 <script>
 import { computed } from 'vue';
 
-import { getSetTagsItemsFromPattern } from '@/helpers/entities/event-filter/rule/entity';
-
-import { useFormModels } from '@/hooks/form';
-
 import ExternalDataField from '@/components/forms/external-data/external-data-field.vue';
+import { getSetTagsItemsFromPattern } from '@/helpers/entities/event-filter/rule/entity';
+import { useFormModels } from '@/hooks/form';
 
 import EventFilterEnrichmentActionsField from './event-filter-enrichment-actions-field.vue';
 import EventFilterEnrichmentAfterOutcomeFields from './event-filter-enrichment-after-outcome-fields.vue';
@@ -69,7 +67,9 @@ export default {
       patternsField: 'patterns',
     });
 
-    const setTagsItems = computed(() => getSetTagsItemsFromPattern(patternsField.value?.event_pattern));
+    const setTagsItems = computed(() =>
+      getSetTagsItemsFromPattern(patternsField.value?.event_pattern),
+    );
 
     return {
       setTagsItems,

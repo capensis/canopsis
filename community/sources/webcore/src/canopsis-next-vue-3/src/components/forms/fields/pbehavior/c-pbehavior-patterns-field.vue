@@ -35,11 +35,14 @@
 </template>
 
 <script>
-
-import { MAX_LIMIT, PATTERN_OPERATORS, PBEHAVIOR_PATTERN_FIELDS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
-import { usePbehavior } from '@/hooks/store/modules/pbehavior';
-
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
+import {
+  MAX_LIMIT,
+  PATTERN_OPERATORS,
+  PBEHAVIOR_PATTERN_FIELDS,
+  PBEHAVIOR_TYPE_TYPES,
+} from '@/constants';
+import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 
 export default {
   emits: ['update:patterns', 'update:value'],

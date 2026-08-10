@@ -12,11 +12,7 @@
 
         <c-layout v-else>
           <v-expansion-panels>
-            <v-expansion-panel
-              v-for="group in publicGroups"
-              :key="group._id"
-              class="secondary"
-            >
+            <v-expansion-panel v-for="group in publicGroups" :key="group._id" class="secondary">
               <v-expansion-panel-title>
                 {{ group.title }}
               </v-expansion-panel-title>

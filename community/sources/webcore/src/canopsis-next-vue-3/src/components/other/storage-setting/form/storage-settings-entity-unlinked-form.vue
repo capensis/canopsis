@@ -1,9 +1,6 @@
 <template>
   <c-information-block :title="$t('storageSetting.entityUnlinked.title')">
-    <template
-      v-if="history"
-      #subtitle=""
-    >
+    <template v-if="history" #subtitle="">
       <storage-settings-history-message
         :history="history"
         archived-count-message-key="storageSetting.history.entity.archivedCount"
@@ -28,7 +25,6 @@
 import { computed } from 'vue';
 
 import { AVAILABLE_TIME_UNITS } from '@/constants';
-
 import { useModelField } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
@@ -54,15 +50,17 @@ export default {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
-    const timeUnits = computed(() => [
-      AVAILABLE_TIME_UNITS.day,
-      AVAILABLE_TIME_UNITS.week,
-      AVAILABLE_TIME_UNITS.month,
-      AVAILABLE_TIME_UNITS.year,
-    ].map(({ value, text }) => ({
-      value,
-      text: t(text, props.form.archive_after.value),
-    })));
+    const timeUnits = computed(() =>
+      [
+        AVAILABLE_TIME_UNITS.day,
+        AVAILABLE_TIME_UNITS.week,
+        AVAILABLE_TIME_UNITS.month,
+        AVAILABLE_TIME_UNITS.year,
+      ].map(({ value, text }) => ({
+        value,
+        text: t(text, props.form.archive_after.value),
+      })),
+    );
 
     return {
       timeUnits,

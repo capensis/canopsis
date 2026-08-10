@@ -1,19 +1,8 @@
 <template>
-  <c-layout
-    gap="2"
-    column
-  >
-    <c-enabled-field
-      v-model="enabledField"
-      hide-details
-      with-background
-    />
+  <c-layout gap="2" column>
+    <c-enabled-field v-model="enabledField" hide-details with-background />
 
-    <v-tabs
-      v-model="activeTab"
-      align-tabs="center"
-      color="primary"
-    >
+    <v-tabs v-model="activeTab" align-tabs="center" color="primary">
       <v-tab value="general">
         {{ t('common.general') }}
       </v-tab>
@@ -43,7 +32,6 @@
 import { computed, ref } from 'vue';
 
 import { isIdleRuleEntityType } from '@/helpers/entities/idle-rule/form';
-
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
@@ -60,11 +48,7 @@ export default {
     const { t } = useI18n();
     const activeTab = ref('general');
 
-    const {
-      enabledField,
-      typeField,
-      patternsField,
-    } = useFormModels({
+    const { enabledField, typeField, patternsField } = useFormModels({
       enabledField: 'enabled',
       typeField: 'type',
       patternsField: 'patterns',

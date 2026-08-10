@@ -1,10 +1,9 @@
-import { escape, unescape } from 'lodash';
 import DOMPurify from 'dompurify';
-import { registerCustomProtocol } from 'linkifyjs';
 import linkifyHtmlLib from 'linkify-html';
+import { registerCustomProtocol } from 'linkifyjs';
+import { escape, unescape } from 'lodash';
 
 import { DEFAULT_SANITIZE_OPTIONS, DEFAULT_LINKIFY_OPTIONS, LINKIFY_PROTOCOLS } from '@/config';
-
 import { uid } from '@/helpers/uid';
 
 /**
@@ -15,9 +14,10 @@ import { uid } from '@/helpers/uid';
  * @param {string} [html = ''] - HTML string that may contain Vue bindings.
  * @returns {string} HTML with Vue attributes encoded as data attributes.
  */
-export const encodeVueAttributes = (html = '') => html
-  .replace(/(\s):([^\s=>/]+)(?=\s*=)/g, '$1data-v-bind-$2')
-  .replace(/(\s)@([^\s=>/]+)(?=\s*=)/g, '$1data-v-on-$2');
+export const encodeVueAttributes = (html = '') =>
+  html
+    .replace(/(\s):([^\s=>/]+)(?=\s*=)/g, '$1data-v-bind-$2')
+    .replace(/(\s)@([^\s=>/]+)(?=\s*=)/g, '$1data-v-on-$2');
 
 /**
  * Restores Vue template attributes from their encoded data-attribute form.
@@ -28,9 +28,10 @@ export const encodeVueAttributes = (html = '') => html
  * @param {string} [html = ''] - HTML string with encoded Vue attributes.
  * @returns {string} HTML with Vue attributes restored.
  */
-export const decodeVueAttributes = (html = '') => html
-  .replace(/(\s)data-v-bind-([^\s=>/]+)(?=\s*=)/g, '$1:$2')
-  .replace(/(\s)data-v-on-([^\s=>/]+)(?=\s*=)/g, '$1@$2');
+export const decodeVueAttributes = (html = '') =>
+  html
+    .replace(/(\s)data-v-bind-([^\s=>/]+)(?=\s*=)/g, '$1:$2')
+    .replace(/(\s)data-v-on-([^\s=>/]+)(?=\s*=)/g, '$1@$2');
 
 LINKIFY_PROTOCOLS.forEach(registerCustomProtocol);
 
@@ -45,13 +46,14 @@ const COMMENT_DIV_REGEX = /<div class="html-comment"[^>]*data-c="([^"]+)"[^>]*><
  * @param {string} [html = ''] - HTML string that may contain comments.
  * @returns {string} HTML with comments replaced by placeholder divs.
  */
-export const replaceHtmlComments = (html = '') => html.replace(COMMENT_REGEX, (_, content) => {
-  const encoded = btoa(content);
-  const safe = escape(encoded);
-  const id = uid('cmt_');
+export const replaceHtmlComments = (html = '') =>
+  html.replace(COMMENT_REGEX, (_, content) => {
+    const encoded = btoa(content);
+    const safe = escape(encoded);
+    const id = uid('cmt_');
 
-  return `<div class="html-comment" data-id="${id}" data-c="${safe}"></div>`;
-});
+    return `<div class="html-comment" data-id="${id}" data-c="${safe}"></div>`;
+  });
 
 /**
  * Restores HTML comments from placeholder elements created by {@link replaceHtmlComments}.
@@ -59,12 +61,13 @@ export const replaceHtmlComments = (html = '') => html.replace(COMMENT_REGEX, (_
  * @param {string} [html = ''] - HTML string with comment placeholder divs.
  * @returns {string} HTML with original comments restored.
  */
-export const restoreHtmlComments = (html = '') => html.replace(COMMENT_DIV_REGEX, (_, encodedEscaped) => {
-  const encoded = unescape(encodedEscaped);
-  const content = atob(encoded);
+export const restoreHtmlComments = (html = '') =>
+  html.replace(COMMENT_DIV_REGEX, (_, encodedEscaped) => {
+    const encoded = unescape(encodedEscaped);
+    const content = atob(encoded);
 
-  return `<!--${content}-->`;
-});
+    return `<!--${content}-->`;
+  });
 
 /**
  * Sanitizes HTML while preserving Vue attributes and comments.
@@ -75,16 +78,12 @@ export const restoreHtmlComments = (html = '') => html.replace(COMMENT_DIV_REGEX
  * @param {import('dompurify').Config} [options = DEFAULT_SANITIZE_OPTIONS] - DOMPurify configuration.
  * @returns {string} Sanitized HTML safe for rendering.
  */
-export const sanitizeHtml = (html = '', options = DEFAULT_SANITIZE_OPTIONS) => (
+export const sanitizeHtml = (html = '', options = DEFAULT_SANITIZE_OPTIONS) =>
   decodeVueAttributes(
     restoreHtmlComments(
-      DOMPurify.sanitize(
-        replaceHtmlComments(encodeVueAttributes(html)),
-        options,
-      ),
+      DOMPurify.sanitize(replaceHtmlComments(encodeVueAttributes(html)), options),
     ),
-  )
-);
+  );
 
 /**
  * Converts plain-text URLs in HTML into clickable anchor tags.
@@ -95,7 +94,8 @@ export const sanitizeHtml = (html = '', options = DEFAULT_SANITIZE_OPTIONS) => (
  * @param {Object} [options = DEFAULT_LINKIFY_OPTIONS] - linkify-html options.
  * @returns {string} HTML with detected URLs wrapped in anchor tags.
  */
-export const linkifyHtml = (html = '', options = DEFAULT_LINKIFY_OPTIONS) => linkifyHtmlLib(html, options);
+export const linkifyHtml = (html = '', options = DEFAULT_LINKIFY_OPTIONS) =>
+  linkifyHtmlLib(html, options);
 
 /**
  * Normalizes HTML by parsing and re-serializing it through the browser DOM.

@@ -12,10 +12,11 @@
       :stroke-width="strokeWidth"
     />
     <path
-:stroke="stroke"
-:stroke-width="strokeWidth"
-:d="linesPath"
-pointer-events="none" />
+      :stroke="stroke"
+      :stroke-width="strokeWidth"
+      :d="linesPath"
+      pointer-events="none"
+    />
   </g>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-radio-group
+  <c-radio-group
     :model-value="modelValue"
     :label="label"
     :disabled="disabled"
@@ -11,7 +11,7 @@
   >
     <v-radio :label="stopLabel" :value="stopValue" color="primary" />
     <v-radio :label="continueLabel" :value="continueValue" color="primary" />
-  </v-radio-group>
+  </c-radio-group>
 </template>
 
 <script>

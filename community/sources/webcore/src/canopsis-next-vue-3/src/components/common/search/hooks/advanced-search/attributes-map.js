@@ -24,10 +24,7 @@ const dateOptions = {
 };
 
 const booleanOptions = {
-  operators: [
-    PATTERN_OPERATORS.equal,
-    PATTERN_OPERATORS.notEqual,
-  ],
+  operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
   values: [
     { value: true, text: 'true' },
     { value: false, text: 'false' },

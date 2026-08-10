@@ -10,11 +10,7 @@
 
         <c-layout>
           <v-expansion-panels>
-            <v-expansion-panel
-              v-for="group in groups"
-              :key="group._id"
-              class="secondary"
-            >
+            <v-expansion-panel v-for="group in groups" :key="group._id" class="secondary">
               <v-expansion-panel-title>
                 {{ group.title }}
               </v-expansion-panel-title>
@@ -60,7 +56,6 @@
 import { mapActions } from 'pinia';
 
 import { MAX_LIMIT, MODALS } from '@/constants';
-
 import { useAuthStore } from '@/stores/modules/auth';
 import { useViewStore } from '@/stores/modules/view';
 

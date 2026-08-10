@@ -1,9 +1,6 @@
 <template>
   <c-form-block>
-    <c-form-block-row
-      :label="$t('maintenance.message')"
-      indented
-    >
+    <c-form-block-row :label="$t('maintenance.message')" indented>
       <text-editor-field
         v-model="messageField"
         :label="$t('maintenance.message')"
@@ -14,28 +11,21 @@
       />
     </c-form-block-row>
 
-    <c-form-block-row
-      :label="$t('common.color')"
-      align-center
-    >
+    <c-form-block-row :label="$t('common.color')" align-center>
       <c-color-picker-field v-model="colorField" />
     </c-form-block-row>
   </c-form-block>
 </template>
 
 <script>
-import { useFormModels } from '@/hooks/form';
-
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
+import { useFormModels } from '@/hooks/form';
 
 export default {
   components: { TextEditorField },
 
   setup() {
-    const {
-      messageField,
-      colorField,
-    } = useFormModels({
+    const { messageField, colorField } = useFormModels({
       messageField: 'message',
       colorField: 'color',
     });

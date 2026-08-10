@@ -42,8 +42,10 @@ export default {
   },
   computed: {
     availableStateTypes() {
-      return Object.values(ALARM_STATES)
-        .map(value => ({ value, text: this.$t(`common.stateTypes.${value}`) }));
+      return Object.values(ALARM_STATES).map(value => ({
+        value,
+        text: this.$t(`common.stateTypes.${value}`),
+      }));
     },
   },
   methods: {

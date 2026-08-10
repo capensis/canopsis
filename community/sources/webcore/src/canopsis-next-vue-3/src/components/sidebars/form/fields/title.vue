@@ -1,8 +1,5 @@
 <template>
-  <widget-settings-item
-    :title="label || $t('common.title')"
-    :optional="!required"
-  >
+  <widget-settings-item :title="label || $t('common.title')" :optional="!required">
     <c-text-field
       :model-value="modelValue"
       :placeholder="placeholder || $t('settings.widgetTitle')"

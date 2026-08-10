@@ -15,10 +15,7 @@
   >
     <template #item="{ props: itemProps, item }">
       <v-list-item v-bind="itemProps">
-        <template
-          v-if="item.is_corporate"
-          #append
-        >
+        <template v-if="item.is_corporate" #append>
           <v-icon size="20">
             share
           </v-icon>
@@ -30,7 +27,6 @@
 
 <script>
 import { MAX_LIMIT, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
-
 import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
 
 export default {

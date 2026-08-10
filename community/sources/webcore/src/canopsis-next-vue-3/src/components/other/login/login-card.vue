@@ -5,8 +5,8 @@ import logo from '@/assets/canopsis.png';
 
 import BasicLogin from './basic-login.vue';
 import CasLogin from './cas-login.vue';
-import SamlLogin from './saml-login.vue';
 import OauthLogin from './oauth-login.vue';
+import SamlLogin from './saml-login.vue';
 
 const props = defineProps({
   basic: {
@@ -34,15 +34,15 @@ const loginComponents = {
   oauth: OauthLogin,
 };
 
-const components = computed(() => (
+const components = computed(() =>
   Object.entries(loginComponents).reduce((acc, [key, component]) => {
     if (props[key]) {
       acc.push({ key, component });
     }
 
     return acc;
-  }, [])
-));
+  }, []),
+);
 </script>
 
 <template>
@@ -51,11 +51,7 @@ const components = computed(() => (
       <div class="d-flex justify-space-between align-center w-100">
         <h3>{{ $t('common.login') }}</h3>
 
-        <img
-          :src="logo"
-          class="login-card__logo"
-          alt="Canopsis logo"
-        >
+        <img :src="logo" class="login-card__logo" alt="Canopsis logo" />
       </div>
     </v-card-title>
 

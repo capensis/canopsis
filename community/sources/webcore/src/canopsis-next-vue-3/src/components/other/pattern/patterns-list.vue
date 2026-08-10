@@ -11,11 +11,7 @@
     @update:options="$emit('update:options', $event)"
   >
     <template #mass-actions="{ selected }">
-      <c-action-btn
-        type="delete"
-        small
-        @click="$emit('remove-selected', selected)"
-      />
+      <c-action-btn type="delete" small @click="$emit('remove-selected', selected)" />
     </template>
 
     <template #type="{ item }">
@@ -28,14 +24,8 @@
 
     <template #actions="{ item }">
       <c-layout>
-        <c-action-btn
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
+        <c-action-btn type="edit" @click="$emit('edit', item)" />
+        <c-action-btn type="delete" @click="$emit('remove', item._id)" />
       </c-layout>
     </template>
   </c-advanced-data-table>

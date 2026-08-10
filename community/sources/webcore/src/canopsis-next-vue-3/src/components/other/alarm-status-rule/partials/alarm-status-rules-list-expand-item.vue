@@ -31,11 +31,7 @@
         <c-layout class="py-3" justify="center">
           <v-card class="alarm-status-rules-list-expand-item__patterns">
             <v-card-text>
-              <alarm-status-rule-patterns-form
-                :form="patterns"
-                :flapping="flapping"
-                readonly
-              />
+              <alarm-status-rule-patterns-form :form="patterns" :flapping="flapping" readonly />
             </v-card-text>
           </v-card>
         </c-layout>
@@ -48,9 +44,7 @@
 import { computed, ref } from 'vue';
 
 import { PATTERNS_FIELDS } from '@/constants';
-
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
-
 import { useI18n } from '@/hooks/i18n';
 
 import AlarmStatusRulePatternsForm from '../form/alarm-status-rule-patterns-form.vue';
@@ -74,9 +68,9 @@ export default {
   setup(props) {
     const { t } = useI18n();
     const activeTab = ref('description');
-    const patterns = computed(() => (
-      filterPatternsToForm(props.rule, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity])
-    ));
+    const patterns = computed(() =>
+      filterPatternsToForm(props.rule, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+    );
 
     return {
       t,

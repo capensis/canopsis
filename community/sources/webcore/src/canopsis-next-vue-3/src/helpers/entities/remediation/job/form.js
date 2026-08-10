@@ -1,7 +1,6 @@
 import { omit } from 'lodash';
 
 import { REMEDIATION_JOB_EXECUTION_STATUSES } from '@/constants';
-
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 
@@ -62,8 +61,7 @@ export const isJobExecutionSucceeded = job =>
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobExecutionFailed = job =>
-  job.status === REMEDIATION_JOB_EXECUTION_STATUSES.failed;
+export const isJobExecutionFailed = job => job.status === REMEDIATION_JOB_EXECUTION_STATUSES.failed;
 
 /**
  * Check job status is canceled

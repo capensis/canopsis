@@ -33,13 +33,16 @@
 <script>
 import { computed, watch, toRef } from 'vue';
 
-import { PATTERN_OPERATORS, PATTERN_QUICK_RANGES_WITHOUT_CUSTOM, QUICK_RANGES, TIME_UNITS } from '@/constants';
-
+import {
+  PATTERN_OPERATORS,
+  PATTERN_QUICK_RANGES_WITHOUT_CUSTOM,
+  QUICK_RANGES,
+  TIME_UNITS,
+} from '@/constants';
 import { getDefaultDateFormRange, isIntervalDateOperator } from '@/helpers/entities/pattern/form';
-
-import { useI18n } from '@/hooks/i18n';
-import { useModelField } from '@/hooks/form/model-field';
 import { useDateRangeAllowedDates } from '@/hooks/form/date-range-allowed-dates';
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   emits: ['update:value'],
@@ -69,8 +72,8 @@ export default {
     const { t } = useI18n();
     const { updateModel, updateField } = useModelField(props, emit);
 
-    const isDateRange = computed(() => (props.operator === PATTERN_OPERATORS.inRangeDates));
-    const isIntervalRange = computed(() => (props.operator === PATTERN_OPERATORS.inRangePeriod));
+    const isDateRange = computed(() => props.operator === PATTERN_OPERATORS.inRangeDates);
+    const isIntervalRange = computed(() => props.operator === PATTERN_OPERATORS.inRangePeriod);
     const isInterval = computed(() => isIntervalDateOperator(props.operator));
 
     /**
@@ -86,7 +89,8 @@ export default {
     const getCustomRangeItem = (duration = {}) => {
       const { value, unit } = duration;
 
-      const [unitKey] = Object.entries(TIME_UNITS).find(([, unitValue]) => unitValue === unit) ?? [];
+      const [unitKey] =
+        Object.entries(TIME_UNITS).find(([, unitValue]) => unitValue === unit) ?? [];
 
       return {
         value: QUICK_RANGES.custom.value,
@@ -109,10 +113,7 @@ export default {
         return props.intervalRanges;
       }
 
-      return [
-        ...props.intervalRanges,
-        getCustomRangeItem(props.value[`${key}Custom`]),
-      ];
+      return [...props.intervalRanges, getCustomRangeItem(props.value[`${key}Custom`])];
     };
 
     const typeQuickRanges = computed(() => getQuickRangesWithCustom());

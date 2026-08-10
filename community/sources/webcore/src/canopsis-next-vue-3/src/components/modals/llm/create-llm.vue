@@ -21,10 +21,11 @@
         </v-btn>
 
         <v-btn
-:disabled="isSubmitting"
-:loading="isSubmitting"
-color="primary"
-type="submit">
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
+          color="primary"
+          type="submit"
+        >
           {{ submitLabel }}
         </v-btn>
       </template>
@@ -35,16 +36,14 @@ type="submit">
 <script>
 import { computed, onMounted, ref } from 'vue';
 
+import LlmForm from '@/components/other/llm/form/llm-form.vue';
 import { llmToForm, formToLlm } from '@/helpers/entities/llm/form';
-
-import { useForm } from '@/hooks/form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useLlm } from '@/hooks/store/modules/llm';
-
-import LlmForm from '@/components/other/llm/form/llm-form.vue';
 
 export default {
   components: {

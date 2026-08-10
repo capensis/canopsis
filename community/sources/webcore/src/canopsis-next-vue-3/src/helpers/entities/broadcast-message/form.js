@@ -7,7 +7,6 @@ import {
   BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS,
   DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM,
 } from '@/constants';
-
 import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/date';
 
 /**
@@ -37,10 +36,11 @@ import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/
  * @param {Object[]} treeViews
  * @returns {string[]}
  */
-const flattenTreeValues = (treeViews = []) => treeViews.flatMap(({ value, children }) => [
-  value,
-  ...(children ? flattenTreeValues(children) : []),
-]);
+const flattenTreeValues = (treeViews = []) =>
+  treeViews.flatMap(({ value, children }) => [
+    value,
+    ...(children ? flattenTreeValues(children) : []),
+  ]);
 
 /**
  * @param {string[]} views
@@ -99,10 +99,10 @@ export const messageToForm = (broadcastMessage = {}) => ({
   views: broadcastMessage?.views?.length
     ? viewsArrayToViewsForm(broadcastMessage.views)
     : {
-      pages: [...DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM.pages],
-      views: [...DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM.views],
-      playlists: [...DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM.playlists],
-    },
+        pages: [...DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM.pages],
+        views: [...DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM.views],
+        playlists: [...DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM.playlists],
+      },
 });
 
 /**
@@ -134,9 +134,7 @@ export const viewsFormToViews = (viewsMap = {}, treeViews = [], isChildren = fal
     }
   }
 
-  return isChildren && hasAllItemsSelected
-    ? true
-    : result;
+  return isChildren && hasAllItemsSelected ? true : result;
 };
 
 /**
@@ -146,11 +144,10 @@ export const viewsFormToViews = (viewsMap = {}, treeViews = [], isChildren = fal
  * @param {Object} treeItems
  * @returns {string[]}
  */
-export const viewsFormToMessage = (viewsForm = {}, treeItems = {}) => (
-  Object.values(BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS).flatMap(block => (
-    viewsFormToViews(keyBy(viewsForm[block] || []), treeItems[block] || [])
-  ))
-);
+export const viewsFormToMessage = (viewsForm = {}, treeItems = {}) =>
+  Object.values(BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS).flatMap(block =>
+    viewsFormToViews(keyBy(viewsForm[block] || []), treeItems[block] || []),
+  );
 
 /**
  * Convert form data to broadcast message entity.
@@ -197,13 +194,9 @@ export const getViewsWithChildren = (viewsMap = {}, treeViews = []) => {
  * @param {Object} treeItems
  * @return {BroadcastMessageViewsForm}
  */
-export const prepareMessageViews = (viewsForm = {}, treeItems = {}) => (
+export const prepareMessageViews = (viewsForm = {}, treeItems = {}) =>
   Object.values(BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS).reduce((acc, block) => {
-    acc[block] = getViewsWithChildren(
-      keyBy(viewsForm[block] || []),
-      treeItems[block] || [],
-    );
+    acc[block] = getViewsWithChildren(keyBy(viewsForm[block] || []), treeItems[block] || []);
 
     return acc;
-  }, {})
-);
+  }, {});

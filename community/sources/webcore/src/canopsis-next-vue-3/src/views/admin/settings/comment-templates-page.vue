@@ -22,20 +22,17 @@
 <script>
 import { onMounted, ref } from 'vue';
 
+import CommentTemplatesList from '@/components/other/comment-template/comment-templates-list.vue';
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
-
 import { convertQueryToRequest } from '@/helpers/query';
-
 import { useCallActionWithPopup } from '@/hooks/actions/call';
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useQueryOptions } from '@/hooks/query/options';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useCommentTemplate } from '@/hooks/store/modules/comment-template';
-
-import CommentTemplatesList from '@/components/other/comment-template/comment-templates-list.vue';
 
 export default {
   components: { CommentTemplatesList },
@@ -96,10 +93,8 @@ export default {
       modals.show({
         name: MODALS.createCommentTemplate,
         config: {
-          action: newTemplate => callActionWithPopup(
-            () => createCommentTemplate({ data: newTemplate }),
-            fetchList,
-          ),
+          action: newTemplate =>
+            callActionWithPopup(() => createCommentTemplate({ data: newTemplate }), fetchList),
         },
       });
     };
@@ -116,10 +111,11 @@ export default {
           template,
           title: t('modals.createCommentTemplate.edit.title'),
 
-          action: newTemplate => callActionWithPopup(
-            () => updateCommentTemplate({ id: template._id, data: newTemplate }),
-            fetchList,
-          ),
+          action: newTemplate =>
+            callActionWithPopup(
+              () => updateCommentTemplate({ id: template._id, data: newTemplate }),
+              fetchList,
+            ),
         },
       });
     };
@@ -133,10 +129,7 @@ export default {
       modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => callActionWithPopup(
-            () => removeCommentTemplate({ id }),
-            fetchList,
-          ),
+          action: () => callActionWithPopup(() => removeCommentTemplate({ id }), fetchList),
         },
       });
     };

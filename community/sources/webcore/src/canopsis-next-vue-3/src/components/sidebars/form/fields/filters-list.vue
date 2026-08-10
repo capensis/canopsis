@@ -15,11 +15,9 @@
 <script>
 import { pick } from 'lodash';
 
-import { MODALS } from '@/constants';
-
-import { uid } from '@/helpers/uid';
-
 import FiltersList from '@/components/other/filter/filters-list.vue';
+import { MODALS } from '@/constants';
+import { uid } from '@/helpers/uid';
 
 export default {
   components: { FiltersList },
@@ -90,8 +88,8 @@ export default {
           'withPbehavior',
           'withServiceWeather',
           'entityTypes',
-        'entityCountersType',
-      ]),
+          'entityCountersType',
+        ]),
 
         widgetType: this.widgetType,
         withTitle: true,
@@ -112,15 +110,16 @@ export default {
           ...this.modalConfig,
 
           title: this.$t('modals.createFilter.create.title'),
-          action: newFilter => this.updateFilters([
-            ...this.filters,
-            {
-              ...newFilter,
-              _id: uid('filter'),
-              widget: this.widgetId,
-              is_user_preference: false,
-            },
-          ]),
+          action: newFilter =>
+            this.updateFilters([
+              ...this.filters,
+              {
+                ...newFilter,
+                _id: uid('filter'),
+                widget: this.widgetId,
+                is_user_preference: false,
+              },
+            ]),
         },
       });
     },
@@ -152,7 +151,8 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.updateFilters(this.filters.filter((_, filterIndex) => filterIndex !== index)),
+          action: () =>
+            this.updateFilters(this.filters.filter((_, filterIndex) => filterIndex !== index)),
         },
       });
     },

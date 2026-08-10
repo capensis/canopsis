@@ -1,8 +1,5 @@
 <template>
-  <c-layout
-    class="w-100 px-4"
-    align="end"
-  >
+  <c-layout class="w-100 px-4" align="end">
     <c-search-field
       v-model="localValue"
       :combobox="combobox"
@@ -14,16 +11,8 @@
     >
       <slot />
     </c-search-field>
-    <c-action-btn
-      :tooltip="$t('common.search')"
-      icon="search"
-      @click="submit"
-    />
-    <c-action-btn
-      :tooltip="$t('common.clearSearch')"
-      icon="clear"
-      @click="clear"
-    />
+    <c-action-btn :tooltip="$t('common.search')" icon="search" @click="submit" />
+    <c-action-btn :tooltip="$t('common.clearSearch')" icon="clear" @click="clear" />
     <slot />
   </c-layout>
 </template>
@@ -65,15 +54,14 @@ export default {
   setup(props, { emit }) {
     const { addItem, removeItem, togglePinItem } = useSearchSavedItems(emit);
 
-    const {
-      localValue,
-      submit,
-      clear,
-    } = useSearchLocalValue({
-      value: toRef(props, 'modelValue'),
-      fields: toRef(props, 'fields'),
-      onSubmit: addItem,
-    }, emit);
+    const { localValue, submit, clear } = useSearchLocalValue(
+      {
+        value: toRef(props, 'modelValue'),
+        fields: toRef(props, 'fields'),
+        onSubmit: addItem,
+      },
+      emit,
+    );
 
     return {
       localValue,

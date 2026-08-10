@@ -9,12 +9,7 @@ import { useIdleRulesStore } from '@/stores/modules/idle-rules';
  */
 export const useIdleRules = () => {
   const idleRulesStore = useIdleRulesStore();
-  const {
-    items,
-    meta,
-    pending,
-    fetchingParams,
-  } = storeToRefs(idleRulesStore);
+  const { items, meta, pending, fetchingParams } = storeToRefs(idleRulesStore);
 
   return {
     idleRules: items,

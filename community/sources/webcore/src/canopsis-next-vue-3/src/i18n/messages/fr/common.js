@@ -35,7 +35,7 @@ export default {
   stop: 'Fin',
   options: 'Options',
   type: 'Type',
-  actionType: "Type d'action",
+  actionType: 'Type d\'action',
   quitEditing: 'Quitter le mode édition',
   enabled: 'Activé(e)',
   disabled: 'Désactivé(e)',
@@ -71,7 +71,7 @@ export default {
   profile: 'Profil',
   username: 'Identifiant utilisateur',
   password: 'Mot de passe',
-  authKey: "Clé d'authentification",
+  authKey: 'Clé d\'authentification',
   widgetId: 'Identifiant du widget',
   connect: 'Connexion',
   optional: 'Optionnel',
@@ -149,7 +149,7 @@ export default {
   input: 'Entrée',
   created: 'Date de création',
   updated: 'Date de dernière modification',
-  expired: "Date d'expiration",
+  expired: 'Date d\'expiration',
   accessed: 'Consulté à',
   lastEventDate: 'Date du dernier événement',
   lastPbehaviorDate: 'Date du dernier comportement périodique',
@@ -185,8 +185,8 @@ export default {
   category: 'Catégorie',
   coordinates: 'Coordonnées',
   infos: 'Infos',
-  impactLevel: "Niveau d'impact",
-  impactState: "État d'impact",
+  impactLevel: 'Niveau d\'impact',
+  impactState: 'État d\'impact',
   loadMore: 'Charger plus',
   download: 'Télécharger',
   initiator: 'Initiateur',
@@ -227,8 +227,8 @@ export default {
   uptime: 'Uptime',
   maintenance: 'Maintenance',
   downtime: 'Downtime',
-  totalActiveTime: "Temps d'activité total",
-  inactiveTime: "Temps d'inactivité",
+  totalActiveTime: 'Temps d\'activité total',
+  inactiveTime: 'Temps d\'inactivité',
   toTheTop: 'Vers le haut',
   time: 'Temps',
   lastModifiedOn: 'Dernière modification le',
@@ -244,7 +244,7 @@ export default {
   copyToClipboard: 'Copier dans le presse-papier',
   copyPathToClipboard: 'Copier le chemin dans le presse-papiers',
   criteria: 'Critères',
-  ratingSettings: "Paramètres d'évaluation",
+  ratingSettings: 'Paramètres d\'évaluation',
   pbehavior: 'Comportement périodique | Comportements périodiques',
   activePbehavior: 'Activer le comportement périodique | Activer les comportements périodiques',
   searchBy: 'Recherché par',
@@ -266,7 +266,7 @@ export default {
   acked: 'Acquitté',
   extraInfo: 'Extra info | Extra infos',
   custom: 'Personnalisé',
-  eventType: "Type d'événement",
+  eventType: 'Type d\'événement',
   sourceType: 'Type de Source',
   cycleDependency: 'Dépendance au cycle',
   checkPattern: 'Vérification du modèle',
@@ -291,8 +291,8 @@ export default {
   failed: 'Échoué',
   finished: 'Terminé',
   close: 'Fermer',
-  alarmId: "Identifiant de l'alarme",
-  entityId: "ID d'entité",
+  alarmId: 'Identifiant de l\'alarme',
+  entityId: 'ID d\'entité',
   longOutput: 'Sortie longue',
   timestamp: 'Horodatage',
   countOfMax: '{count} sur {total}',
@@ -300,11 +300,11 @@ export default {
   column: 'Colonne | Colonnes',
   sort: 'Tri',
   countOfTotal: '{count} sur {total}',
-  deprecatedTrigger: "Ce déclencheur n'est plus pris en charge",
+  deprecatedTrigger: 'Ce déclencheur n\'est plus pris en charge',
   initialLongOutput: 'Sortie initiale longue',
-  totalStateChanges: "Nombre de changements d'état",
+  totalStateChanges: 'Nombre de changements d\'état',
   noReceivedEvents: 'Aucun événement reçu pendant {duration} par certaines dépendances',
-  frequencyLimit: "Nombre d'oscillations",
+  frequencyLimit: 'Nombre d\'oscillations',
   clearSearch: 'Ne plus appliquer cette recherche',
   noData: 'Aucune donnée',
   noColumns: 'Veuillez sélectionner au moins une colonne',
@@ -313,10 +313,10 @@ export default {
   systemName: 'Nom du système',
   emitTrigger: 'Émettre un déclencheur',
   emitTriggerSuccess: 'Émettre un déclencheur en cas de succès',
-  emitTriggerFail: "Émettre un déclencheur en cas d'échec",
+  emitTriggerFail: 'Émettre un déclencheur en cas d\'échec',
   header: 'En-tête | En-têtes',
-  headerKey: "Clé d'en-tête",
-  headerValue: "Valeur d'en-tête",
+  headerKey: 'Clé d\'en-tête',
+  headerValue: 'Valeur d\'en-tête',
   rule: 'Règle | Règles',
   copyValue: 'Copier la valeur',
   copyProperty: 'Copier la propriété',
@@ -340,7 +340,7 @@ export default {
   webhookStatus: 'Statut du webhook',
   webhookComplete: 'Webhook terminé',
   noResponse: 'Pas de réponse',
-  loadingItems: "Chargement d'éléments...",
+  loadingItems: 'Chargement d\'éléments...',
   lastComment: 'Dernier commentaire',
   serialName: 'Nom de série',
   local: 'Local',
@@ -473,7 +473,7 @@ export default {
     [ALARM_STATUSES.flapping]: 'Bagot',
     [ALARM_STATUSES.stealthy]: 'Furtive',
     [ALARM_STATUSES.cancelled]: 'Annulée',
-    [ALARM_STATUSES.noEvents]: "Pas d'événements",
+    [ALARM_STATUSES.noEvents]: 'Pas d\'événements',
     [ALARM_STATUSES.unknown]: 'Inconnu',
   },
   statusResolvedTypes: {
@@ -483,22 +483,22 @@ export default {
   operators: {
     [PATTERN_OPERATORS.equal]: 'Égal',
     [PATTERN_OPERATORS.contains]: 'Contient',
-    [PATTERN_OPERATORS.notEqual]: "n'est pas égal",
+    [PATTERN_OPERATORS.notEqual]: 'n\'est pas égal',
     [PATTERN_OPERATORS.notContains]: 'Ne contient pas',
     [PATTERN_OPERATORS.beginWith]: 'Commence par',
     [PATTERN_OPERATORS.notBeginWith]: 'Ne commence pas par',
     [PATTERN_OPERATORS.endsWith]: 'Se termine par',
     [PATTERN_OPERATORS.notEndWith]: 'Ne se termine pas par',
     [PATTERN_OPERATORS.exist]: 'Existe',
-    [PATTERN_OPERATORS.notExist]: "N'existe pas",
+    [PATTERN_OPERATORS.notExist]: 'N\'existe pas',
 
     [PATTERN_OPERATORS.hasEvery]: 'Contient chaque',
-    [PATTERN_OPERATORS.hasOneOf]: "Contient l'un des",
-    [PATTERN_OPERATORS.isOneOf]: "Est l'un de",
+    [PATTERN_OPERATORS.hasOneOf]: 'Contient l\'un des',
+    [PATTERN_OPERATORS.isOneOf]: 'Est l\'un de',
     [PATTERN_OPERATORS.hasNot]: 'Ne contient pas',
-    [PATTERN_OPERATORS.isNotOneOf]: "N'est pas l'un des",
+    [PATTERN_OPERATORS.isNotOneOf]: 'N\'est pas l\'un des',
     [PATTERN_OPERATORS.isEmpty]: 'Est vide',
-    [PATTERN_OPERATORS.isNotEmpty]: "N'est pas vide",
+    [PATTERN_OPERATORS.isNotEmpty]: 'N\'est pas vide',
 
     [PATTERN_OPERATORS.higher]: 'Plus haut que',
     [PATTERN_OPERATORS.lower]: 'Plus bas que',
@@ -507,7 +507,7 @@ export default {
     [PATTERN_OPERATORS.shorter]: 'Inférieur à',
 
     [PATTERN_OPERATORS.ticketAssociated]: 'Un ticket est associé',
-    [PATTERN_OPERATORS.ticketNotAssociated]: "Un ticket n'est pas associé",
+    [PATTERN_OPERATORS.ticketNotAssociated]: 'Un ticket n\'est pas associé',
 
     [PATTERN_OPERATORS.canceled]: 'Annulé',
     [PATTERN_OPERATORS.notCanceled]: 'Non annulé',
@@ -534,31 +534,31 @@ export default {
     [PATTERN_OPERATORS.disabled]: 'Faux',
 
     [PATTERN_OPERATORS.isMetaAlarm]: 'Est-ce une méta-alarme',
-    [PATTERN_OPERATORS.isNotMetaAlarm]: "Ce n'est pas une méta-alarme",
+    [PATTERN_OPERATORS.isNotMetaAlarm]: 'Ce n\'est pas une méta-alarme',
     [PATTERN_OPERATORS.ruleIs]: 'La règle est',
 
     [PATTERN_OPERATORS.regexp]: 'Expression régulière',
 
     [PATTERN_OPERATORS.within]: 'Au cours des',
     [PATTERN_OPERATORS.olderThan]: 'Plus ancien que',
-    [PATTERN_OPERATORS.inRangeDates]: "Dans l'intervalle (dates)",
-    [PATTERN_OPERATORS.inRangePeriod]: "Dans l'intervalle (période)",
+    [PATTERN_OPERATORS.inRangeDates]: 'Dans l\'intervalle (dates)',
+    [PATTERN_OPERATORS.inRangePeriod]: 'Dans l\'intervalle (période)',
   },
   triggers: {
     [TRIGGERS_TYPES.create]: {
       text: 'Alarme créée',
     },
     [TRIGGERS_TYPES.statedec]: {
-      text: "Criticité de l'alarme diminuée",
+      text: 'Criticité de l\'alarme diminuée',
     },
     [TRIGGERS_TYPES.changestate]: {
       text: 'Criticité de l\'alarme changée par l\'action "changer de criticité"',
     },
     [TRIGGERS_TYPES.stateinc]: {
-      text: "Criticité de l'alarme augmentée",
+      text: 'Criticité de l\'alarme augmentée',
     },
     [TRIGGERS_TYPES.changestatus]: {
-      text: "Statut de l'alarme changé, par ex. flapping",
+      text: 'Statut de l\'alarme changé, par ex. flapping',
     },
     [TRIGGERS_TYPES.ack]: {
       text: 'Alarme acquittée',
@@ -572,13 +572,13 @@ export default {
     [TRIGGERS_TYPES.uncancel]: {
       text: 'Alarme désannulée',
       helpText:
-        "Probablement un déclencheur hérité, car il n'y a aucun moyen d'annuler l'alarme lorsque vous l'annulez dans l'interface utilisateur, mais il est possible d'envoyer un événement d'annulation via l'API",
+        'Probablement un déclencheur hérité, car il n\'y a aucun moyen d\'annuler l\'alarme lorsque vous l\'annulez dans l\'interface utilisateur, mais il est possible d\'envoyer un événement d\'annulation via l\'API',
     },
     [TRIGGERS_TYPES.comment]: {
       text: 'Alarme commentée',
     },
     [TRIGGERS_TYPES.declareticket]: {
-      text: "Ticket déclaré par l'action de l'interface utilisateur",
+      text: 'Ticket déclaré par l\'action de l\'interface utilisateur',
     },
     [TRIGGERS_TYPES.declareticketwebhook]: {
       text: 'Ticket déclaré par le webhook',
@@ -605,7 +605,7 @@ export default {
       text: 'Alarme entrée dans un pbehavior',
     },
     [TRIGGERS_TYPES.pbhleave]: {
-      text: "Alarme sortie d'un pbehavior",
+      text: 'Alarme sortie d\'un pbehavior',
     },
     [TRIGGERS_TYPES.instructionfail]: {
       text: 'Consigne manuelle en erreur',
@@ -626,30 +626,30 @@ export default {
       text: 'Consigne automatique terminée',
     },
     [TRIGGERS_TYPES.autoinstructionresultok]: {
-      text: "L'alarme est en état OK après toutes les consignes automatiques",
+      text: 'L\'alarme est en état OK après toutes les consignes automatiques',
     },
     [TRIGGERS_TYPES.autoinstructionresultfail]: {
-      text: "L'alarme n'est pas en état OK après toutes les consignes automatiques",
+      text: 'L\'alarme n\'est pas en état OK après toutes les consignes automatiques',
     },
     [TRIGGERS_TYPES.eventscount]: {
-      text: "L'alarme a reçu N événements",
-      selectedText: "L'alarme a reçu {additionalValue} événements",
-      additionalFieldLabel: "Nombre d'événements",
+      text: 'L\'alarme a reçu N événements',
+      selectedText: 'L\'alarme a reçu {additionalValue} événements',
+      additionalFieldLabel: 'Nombre d\'événements',
     },
   },
   repeatTriggers: {
     [TRIGGERS_TYPES.eventscount]: {
-      text: "L'alarme a reçu un nouvel événement check",
-      selectedText: "L'alarme a reçu un nouvel événement check",
+      text: 'L\'alarme a reçu un nouvel événement check',
+      selectedText: 'L\'alarme a reçu un nouvel événement check',
     },
   },
   request: {
     timeout: 'Temps libre',
-    timeoutSettings: "Paramètres de délai d'attente",
+    timeoutSettings: 'Paramètres de délai d\'attente',
     repeatRequest: 'Répéter la demande',
     repeatRequestInTomlFile: 'Les paramètres de répétition sont configurés dans le fichier toml',
     skipVerify: 'Ne pas vérifier les certificats HTTPS',
-    headersHelpText: "Sélectionnez la clé et la valeur de l'en-tête ou saisissez-les manuellement",
+    headersHelpText: 'Sélectionnez la clé et la valeur de l\'en-tête ou saisissez-les manuellement',
     addHeader: 'Ajouter un en-tête',
     urlHelp:
       '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>' +
@@ -657,7 +657,7 @@ export default {
       '<pre>"https://exampleurl.com?resource={\'{{ .Alarm.Value.Resource }}\'}"</pre>' +
       '<pre>"https://exampleurl.com?entity_id={\'{{ .Entity.ID }}\'}"</pre>' +
       '<pre>"https://exampleurl.com?children_count={\'{{ len .Children }}\'}"</pre>' +
-      "<pre>\"https://exampleurl.com?children={'{{ range .Children }}'}{'{{ .ID }}'}{'{{ end }}'}\"</pre>",
+      '<pre>"https://exampleurl.com?children={\'{{ range .Children }}\'}{\'{{ .ID }}\'}{\'{{ end }}\'}"</pre>',
   },
 
   fileSelector: {
@@ -676,7 +676,7 @@ export default {
     andMore: 'et plus...',
     linkedRules: {
       widget: '<strong>Widgets</strong> qui utilisent cet élément<br><ul>{rules}</ul>',
-      eventfilter: "<strong>Filtres d'événements</strong>\n<ul>{rules}</ul>",
+      eventfilter: '<strong>Filtres d\'événements</strong>\n<ul>{rules}</ul>',
       linkrule: '<strong>Liens</strong>\n<ul>{rules}</ul>',
       scenario: '<strong>Scénarios</strong>\n<ul>{rules}</ul>',
       declareticketrule: '<strong>Règles de déclaration de tickets</strong>\n<ul>{rules}</ul>',
@@ -685,7 +685,7 @@ export default {
 
   massActionsPanel: {
     recordsSelected: '{count} enregistrement sélectionné|{count} enregistrements sélectionnés',
-    keepSelectedAfterAction: "Conserver la sélection après l'action",
+    keepSelectedAfterAction: 'Conserver la sélection après l\'action',
     clearSelection: 'Effacer la sélection',
   },
 };

@@ -16,17 +16,18 @@
         </template>
       </c-enabled-field>
 
-      <c-alert
-        v-if="isDeclareTicketExist"
-        type="info"
-      >
+      <c-alert v-if="isDeclareTicketExist" type="info">
         {{ $t('declareTicket.webhookTicketDeclarationExist') }}
       </c-alert>
     </c-form-block-row>
 
     <v-expand-transition>
       <div v-if="form.declare_ticket.enabled">
-        <c-form-block-row v-if="!hideEmptyResponse" :depth="depth + 1" :label="$t('declareTicket.emptyResponse')">
+        <c-form-block-row
+          v-if="!hideEmptyResponse"
+          :depth="depth + 1"
+          :label="$t('declareTicket.emptyResponse')"
+        >
           <c-enabled-field
             :model-value="form.declare_ticket.empty_response"
             :label="$t('declareTicket.emptyResponse')"
@@ -86,8 +87,8 @@ import { computed } from 'vue';
 import { useI18n } from '@/hooks/i18n';
 import { formMixin } from '@/mixins/form';
 
-import DeclareTicketRuleTicketIdField from './declare-ticket-rule-ticket-id-field.vue';
 import DeclareTicketRuleTicketCustomFieldsField from './declare-ticket-rule-ticket-custom-fields-field.vue';
+import DeclareTicketRuleTicketIdField from './declare-ticket-rule-ticket-id-field.vue';
 import DeclareTicketRuleTicketUrlField from './declare-ticket-rule-ticket-url-field.vue';
 import DeclareTicketRuleTicketUrlTitleField from './declare-ticket-rule-ticket-url-title-field.vue';
 
@@ -149,10 +150,14 @@ export default {
 
     const ticketUrlFieldName = computed(() => `${props.name}.ticket_url`);
 
-    const ticketUrlHelpText = computed(() => [
-      t('declareTicket.ticketUrlAndIdHelpText'),
-      props.onlyOneTicketId && t('declareTicket.dataFromOneStepAttention'),
-    ].filter(Boolean).join('\n'));
+    const ticketUrlHelpText = computed(() =>
+      [
+        t('declareTicket.ticketUrlAndIdHelpText'),
+        props.onlyOneTicketId && t('declareTicket.dataFromOneStepAttention'),
+      ]
+        .filter(Boolean)
+        .join('\n'),
+    );
 
     return {
       ticketIdFieldName,

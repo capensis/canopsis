@@ -1,9 +1,10 @@
 <template>
   <circle
-:cx="centerX"
-:cy="centerY"
-:r="radius"
-v-bind="$attrs" />
+    :cx="centerX"
+    :cy="centerY"
+    :r="radius"
+    v-bind="$attrs"
+  />
 </template>
 
 <script>

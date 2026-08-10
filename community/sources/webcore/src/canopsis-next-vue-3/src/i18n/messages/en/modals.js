@@ -76,7 +76,7 @@ export default {
     duplicate: {
       title: 'Duplicate the view - {viewTitle}',
       infoMessage:
-        "You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.",
+        'You\'re duplicating a view. All duplicated view\'s rows/widgets will be copied on the new view.',
     },
     success: {
       create: 'New view created!',
@@ -684,7 +684,7 @@ export default {
     text: 'Changes will not be saved. Are you sure?',
     buttons: {
       save: 'Save',
-      dontSave: "Don't save",
+      dontSave: 'Don\'t save',
       backToForm: 'Back to form',
     },
   },
@@ -852,7 +852,7 @@ export default {
       title: 'Updating storage policy. Are you sure ?',
       text:
         'You are about to change the storage policy.\n' +
-        "<strong>Associated operations, deleting data, won't be cancellable.</strong>",
+        '<strong>Associated operations, deleting data, won\'t be cancellable.</strong>',
       phraseText: 'Please, type the following to confirm:',
       phrase: 'update the storage policy',
     },
@@ -860,7 +860,7 @@ export default {
       title: 'Clean archive',
       text:
         '<span class="font-weight-regular">Are you sure?</span>\n' +
-        "<strong>This operation won't be cancellable. All archived entities (disabled and unlinked) will be deleted forever</strong>",
+        '<strong>This operation won\'t be cancellable. All archived entities (disabled and unlinked) will be deleted forever</strong>',
       phraseText:
         'Please type the following to confirm <strong>one-time delete operation</strong> :',
       phrase: 'delete',
@@ -869,7 +869,7 @@ export default {
       title: 'Archive unlinked entities',
       text:
         '<span class="font-weight-regular">Are you sure ?</span>\n' +
-        "<strong>This operation won't be cancellable.</strong>",
+        '<strong>This operation won\'t be cancellable.</strong>',
       phraseText:
         'Please type the following to confirm <strong>one-time archive operation</strong> :',
       phrase: 'archive',
@@ -881,7 +881,7 @@ export default {
       title: 'Delete Reference table / collection',
       text:
         'You are about to delete data.\n' +
-        "<strong>Deletion operation won't be cancellable.</strong>",
+        '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type table / collection name to confirm:',
     },
     deleteExternalAuthToken: {
@@ -895,15 +895,15 @@ export default {
       title: 'Delete LLM',
       text:
         'You are about to delete LLM connection.\n' +
-        "<strong>Deletion operation won't be cancellable.</strong>",
+        '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type LLM name to confirm:',
     },
     deleteSelectedLlms: {
       title: 'Delete {count} model? | Delete {count} models?',
       text:
         'You are about to delete {count} model.\n' +
-        "<strong>Deletion operation won't be cancellable.</strong> | You are about to delete {count} models.\n" +
-        "<strong>Deletion operation won't be cancellable.</strong>",
+        '<strong>Deletion operation won\'t be cancellable.</strong> | You are about to delete {count} models.\n' +
+        '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type the following to confirm <strong>delete operation</strong> :',
       phrase: 'delete',
     },
@@ -911,14 +911,14 @@ export default {
       title: 'Delete test data',
       text:
         'You are about to delete test data.\n' +
-        "<strong>Deletion operation won't be cancellable.</strong>",
+        '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type test data name to confirm:',
     },
     templateTestingTest: {
       title: 'Delete test',
       text:
         'You are about to delete test.\n' +
-        "<strong>Deletion operation won't be cancellable.</strong>",
+        '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type test name to confirm:',
     },
   },

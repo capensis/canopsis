@@ -6,11 +6,10 @@ import {
   META_ALARMS_THRESHOLD_TYPES,
   PATTERNS_FIELDS,
 } from '@/constants';
-
+import { addKeyInEntity, removeKeyFromEntities } from '@/helpers/array';
 import { durationToForm } from '@/helpers/date/duration';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { formToPrimitiveArray, primitiveArrayToForm } from '@/helpers/entities/shared/form';
-import { addKeyInEntity, removeKeyFromEntities } from '@/helpers/array';
 
 /**
  * @typedef {
@@ -199,8 +198,7 @@ export const isManualGroupMetaAlarmRuleType = type => type === META_ALARMS_RULE_
  * @param {MetaAlarmRuleType} type
  * @return {boolean}
  */
-export const isAutoMetaAlarmRuleType = type =>
-  type && type !== META_ALARMS_RULE_TYPES.manualgroup;
+export const isAutoMetaAlarmRuleType = type => type && type !== META_ALARMS_RULE_TYPES.manualgroup;
 
 /**
  * Check meta alarm type has a patterns

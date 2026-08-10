@@ -6,10 +6,11 @@
     @create="showCreateTemplateTestingDataModal"
   >
     <v-tabs
-v-model="activeTab"
-bg-color="transparent"
-color="primary"
-align-tabs="center">
+      v-model="activeTab"
+      bg-color="transparent"
+      color="primary"
+      align-tabs="center"
+    >
       <v-tab v-if="hasReadAccessForTemplateData" :value="TEMPLATE_TESTING_TABS.data">
         {{ t('templateTesting.tabs.data') }}
       </v-tab>
@@ -37,14 +38,12 @@ align-tabs="center">
 <script>
 import { computed, ref } from 'vue';
 
-import { TEMPLATE_TESTING_TABS, USER_PERMISSIONS } from '@/constants';
-
-import { useCRUDPermissions } from '@/hooks/auth';
-import { useI18n } from '@/hooks/i18n';
-
 import { useTemplateDataModals } from '@/components/other/template-testing/hooks/template-testing-data';
 import TemplateTestingData from '@/components/other/template-testing/template-testing-data.vue';
 import TemplateTestingTests from '@/components/other/template-testing/template-testing-tests.vue';
+import { TEMPLATE_TESTING_TABS, USER_PERMISSIONS } from '@/constants';
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   components: {

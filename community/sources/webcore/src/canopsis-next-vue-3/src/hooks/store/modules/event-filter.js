@@ -9,12 +9,7 @@ import { useEventFilterStore } from '@/stores/modules/event-filter';
  */
 export const useEventFilter = () => {
   const eventFilterStore = useEventFilterStore();
-  const {
-    items,
-    meta,
-    pending,
-    fetchingParams,
-  } = storeToRefs(eventFilterStore);
+  const { items, meta, pending, fetchingParams } = storeToRefs(eventFilterStore);
 
   return {
     eventFilters: items,
@@ -25,7 +20,8 @@ export const useEventFilter = () => {
     fetchEventFiltersList: eventFilterStore.fetchList,
     fetchEventFiltersListWithPreviousParams: eventFilterStore.fetchListWithPreviousParams,
     fetchEventFiltersListWithoutStore: eventFilterStore.fetchListWithoutStore,
-    fetchEventFilterFailuresListWithoutStore: eventFilterStore.fetchEventFilterFailuresListWithoutStore,
+    fetchEventFilterFailuresListWithoutStore:
+      eventFilterStore.fetchEventFilterFailuresListWithoutStore,
     markNewEventFilterFailuresAsRead: eventFilterStore.markNewEventFilterFailuresAsRead,
     createEventFilter: eventFilterStore.create,
     updateEventFilter: eventFilterStore.update,

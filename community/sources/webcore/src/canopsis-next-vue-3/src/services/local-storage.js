@@ -3,7 +3,7 @@ class LocalStorage {
     this.storage = {};
 
     try {
-      Object.entries(window.localStorage).forEach(([key, value]) => this.storage[key] = value);
+      Object.entries(window.localStorage).forEach(([key, value]) => (this.storage[key] = value));
     } catch (err) {
       console.warn(err);
     }

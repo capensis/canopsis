@@ -42,10 +42,11 @@
       >
         <template #activator="{ disabled: activatorDisabled, loading, on }">
           <v-btn
-:disabled="activatorDisabled"
-:loading="loading"
-color="primary"
-v-on="on">
+            :disabled="activatorDisabled"
+            :loading="loading"
+            color="primary"
+            v-on="on"
+          >
             <v-icon icon="cloud_upload" />
           </v-btn>
         </template>
@@ -68,16 +69,13 @@ v-on="on">
 <script>
 import { computed, ref } from 'vue';
 
+import FileSelector from '@/components/forms/fields/file-selector.vue';
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import { MAX_ICON_SIZE_IN_KB } from '@/constants';
-
 import { objectToVariables, variableTemplatePreparer } from '@/helpers/variables';
-
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useTemplateVars } from '@/hooks/store/modules/template-vars';
-
-import FileSelector from '@/components/forms/fields/file-selector.vue';
-import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
   components: {

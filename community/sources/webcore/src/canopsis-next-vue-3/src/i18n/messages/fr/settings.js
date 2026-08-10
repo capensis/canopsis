@@ -39,7 +39,8 @@ export default {
   columnName: 'Nom de la colonne',
   defaultSortColumn: 'Colonne de tri par défaut',
   defaultSortColumns: 'Colonnes de tri par défaut',
-  defaultSortColumnsHasAnotherColumns: 'Le modèle sélectionné contient des colonnes de tri qui ne sont pas présentes dans les colonnes du tableau actuel. Vous ne pourrez pas modifier le tri sur ces champs.',
+  defaultSortColumnsHasAnotherColumns:
+    'Le modèle sélectionné contient des colonnes de tri qui ne sont pas présentes dans les colonnes du tableau actuel. Vous ne pourrez pas modifier le tri sur ces champs.',
   missingColumns: 'Colonnes manquantes',
   sortColumnNoData: 'Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
   columnNames: 'Nom des colonnes',
@@ -50,7 +51,8 @@ export default {
   treeOfDependenciesSettings: 'Paramètres de l\'arborescence des dépendances',
   orderBy: 'Trier par',
   periodicRefresh: 'Rafraichissement périodique',
-  pausePeriodicRefreshOnExpandPanel: 'Suspendre le rafraîchissement périodique lors de l\'ouverture du panneau étendu',
+  pausePeriodicRefreshOnExpandPanel:
+    'Suspendre le rafraîchissement périodique lors de l\'ouverture du panneau étendu',
   defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
   elementsPerPage: 'Élements par page',
   filterOnOpenResolved: 'Filtre sur Ouverte/Résolue',
@@ -59,7 +61,8 @@ export default {
   filterEditor: 'Éditeur de filtre',
   isAckNoteRequired: 'Ack - champ de note obligatoire',
   isSnoozeNoteRequired: 'Snooze - champ de note obligatoire',
-  isRemoveAlarmsFromMetaAlarmCommentRequired: 'Supprimer les alarmes de la méta-alarme manuelle - champ de commentaire requis',
+  isRemoveAlarmsFromMetaAlarmCommentRequired:
+    'Supprimer les alarmes de la méta-alarme manuelle - champ de commentaire requis',
   isUncancelAlarmsCommentRequired: 'Annuler - champ de commentaire obligatoire',
   isMultiAckEnabled: 'Acquittements multiples',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
@@ -72,9 +75,11 @@ export default {
     description: 'Le premier modèle de la liste sera par défaut.',
   },
   isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie',
+  openExpandPanelByDoubleClick: 'Ouvrir le panneau extensible au double clic sur l\'alarme',
   isCorrelationEnabled: 'Corrélation activée ?',
   fastPbehavior: 'Comportement périodique rapide',
-  fastPbehaviorDescription: 'L\'utilisateur pourra sélectionner parmi ces types en cliquant sur Comportement périodique rapide',
+  fastPbehaviorDescription:
+    'L\'utilisateur pourra sélectionner parmi ces types en cliquant sur Comportement périodique rapide',
   duration: 'Durée',
   tstop: 'Date de fin',
   periodsNumber: 'Nombre d\'étapes',
@@ -87,7 +92,8 @@ export default {
   isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
   isSecondaryIconEnabled: 'Afficher l\'icône secondaire',
   clearFilterEnabled: 'Ne pas autoriser l\'effacement des filtres selectionés',
-  showRootCauseByStateClick: 'Afficher le diagramme de cause racine à partir de la colonne Criticité',
+  showRootCauseByStateClick:
+    'Afficher le diagramme de cause racine à partir de la colonne Criticité',
   rootCauseSettings: 'Paramètres du diagramme de cause racine',
   entitiesColorIndicator: 'Indicateur de couleur des entités',
   alarmsColumns: 'Colonnes de la liste des alarmes',
@@ -180,7 +186,8 @@ export default {
     onlyIcon: 'Afficher uniquement les icônes de liens',
     inlineLinksCount: 'Nombre de liens en ligne',
     linksInRowCount: 'Nombre de liens dans la ligne',
-    linksInRowCountTooltip: 'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
+    linksInRowCountTooltip:
+      'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
     filterOnClick: 'Filtrer au clic',
   },
   liveReporting: {
@@ -222,12 +229,13 @@ export default {
   },
   screenshotMask: {
     title: 'Règle de nommage des fichiers capture d\'écran',
-    helpText: '<dl>'
-      + '<dt>Définissez la règle de nommage des fichiers dont les captures d\'écran sont créées à l\'aide des variables suivantes:<dt>\n'
-      + '<dd>- nom du cas de test %test_case%</dd>\n'
-      + '<dd>- date (YYYY, MM, DD)</dd>\n'
-      + '<dd>- temps d\'exécution (hh, mm, ss)</dd>'
-      + '</dl>',
+    helpText:
+      '<dl>' +
+      '<dt>Définissez la règle de nommage des fichiers dont les captures d\'écran sont créées à l\'aide des variables suivantes:<dt>\n' +
+      '<dd>- nom du cas de test %test_case%</dd>\n' +
+      '<dd>- date (YYYY, MM, DD)</dd>\n' +
+      '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
+      '</dl>',
   },
   videoDirectories: {
     title: 'Paramètres de stockage vidéo',
@@ -235,22 +243,24 @@ export default {
   },
   videoMask: {
     title: 'Règle de nommage des fichiers vidéo',
-    helpText: '<dl>'
-      + '<dt>Définissez la règle de nommage des fichiers dont les vidéos sont créées à l\'aide des variables suivantes:<dt>\n'
-      + '<dd>- nom du cas de test %test_case%</dd>\n'
-      + '<dd>- date (YYYY, MM, DD)</dd>\n'
-      + '<dd>- temps d\'exécution (hh, mm, ss)</dd>'
-      + '</dl>',
+    helpText:
+      '<dl>' +
+      '<dt>Définissez la règle de nommage des fichiers dont les vidéos sont créées à l\'aide des variables suivantes:<dt>\n' +
+      '<dd>- nom du cas de test %test_case%</dd>\n' +
+      '<dd>- date (YYYY, MM, DD)</dd>\n' +
+      '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
+      '</dl>',
   },
   stickyHeader: 'En-tête collant',
   stickyHorizontalScroll: 'Défilement horizontal fixe',
   reportFileRegexp: {
     title: 'Masque de fichier de rapport',
-    helpText: '<dl>'
-      + '<dt>Définir le nom de fichier regexp de quel rapport:<dt>\n'
-      + '<dd>Par exemple:</dd>\n'
-      + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
-      + '</dl>',
+    helpText:
+      '<dl>' +
+      '<dt>Définir le nom de fichier regexp de quel rapport:<dt>\n' +
+      '<dd>Par exemple:</dd>\n' +
+      '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n' +
+      '</dl>',
   },
   density: {
     title: 'Densité de table par défaut',

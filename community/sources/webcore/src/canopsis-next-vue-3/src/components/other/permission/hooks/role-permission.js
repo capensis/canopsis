@@ -1,12 +1,4 @@
-import {
-  cloneDeep,
-  filter,
-  isEqual,
-  keyBy,
-  omit,
-  set,
-  sortBy,
-} from 'lodash';
+import { cloneDeep, filter, isEqual, keyBy, omit, set, sortBy } from 'lodash';
 import { computed, ref } from 'vue';
 
 import {
@@ -17,11 +9,9 @@ import {
   ROLE_TYPES,
   USER_PERMISSIONS_GROUPS,
 } from '@/constants';
-
 import { mapIds } from '@/helpers/array';
 import { permissionsToTreeview } from '@/helpers/entities/permissions/list';
 import { formToRolePermissions, roleToPermissionForm } from '@/helpers/entities/role/form';
-
 import { useModals } from '@/hooks/modals';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { usePermissions } from '@/hooks/store/modules/permissions';
@@ -52,28 +42,32 @@ export const useRolePermissionFetching = () => {
       fetchPermissionsListWithoutStore({ params: { limit: MAX_LIMIT } }),
     ]);
 
-    originalRolesById.value = keyBy(Object.values(rolesResponse.data).map(roleToPermissionForm), '_id');
+    originalRolesById.value = keyBy(
+      Object.values(rolesResponse.data).map(roleToPermissionForm),
+      '_id',
+    );
     permissions.value = permissionsResponse.data;
     resetRolesById();
   });
 
-  const treeviewPermissions = computed(() => (
-    sortBy(Object.values(permissionsToTreeview(permissions.value)), 'position')
-  ));
+  const treeviewPermissions = computed(() =>
+    sortBy(Object.values(permissionsToTreeview(permissions.value)), 'position'),
+  );
 
   const uiRoles = computed(() => filter(Object.values(rolesById.value), ['type', ROLE_TYPES.ui]));
   const apiRoles = computed(() => filter(Object.values(rolesById.value), ['type', ROLE_TYPES.api]));
 
-  const hasChanges = computed(() => (
-    Object.entries(changedRoles.value).some(([roleId, rolePermissions]) => (
-      Object.keys(rolePermissions).some(permissionId => (
-        !isEqual(
-          rolesById.value[roleId].permissions[permissionId],
-          originalRolesById.value[roleId].permissions[permissionId],
-        )
-      ))
-    ))
-  ));
+  const hasChanges = computed(() =>
+    Object.entries(changedRoles.value).some(([roleId, rolePermissions]) =>
+      Object.keys(rolePermissions).some(
+        permissionId =>
+          !isEqual(
+            rolesById.value[roleId].permissions[permissionId],
+            originalRolesById.value[roleId].permissions[permissionId],
+          ),
+      ),
+    ),
+  );
 
   const setChangedRolePermission = (roleId, permissionId) => {
     if (!changedRoles.value[roleId]) {
@@ -100,7 +94,12 @@ export const useRolePermissionFetching = () => {
       return;
     }
 
-    const crudActions = [CRUD_ACTIONS.create, CRUD_ACTIONS.read, CRUD_ACTIONS.update, CRUD_ACTIONS.delete];
+    const crudActions = [
+      CRUD_ACTIONS.create,
+      CRUD_ACTIONS.read,
+      CRUD_ACTIONS.update,
+      CRUD_ACTIONS.delete,
+    ];
 
     dependencies.forEach(({ dependentPermission }) => {
       setChangedRolePermission(role._id, dependentPermission);
@@ -115,13 +114,13 @@ export const useRolePermissionFetching = () => {
       const allChildrenIds = mapIds(permission.allChildren);
       const newPermissions = value
         ? {
-          ...role.permissions,
-          ...permission.allChildren.reduce((acc, { _id: id, actions }) => {
-            acc[id] = actions;
+            ...role.permissions,
+            ...permission.allChildren.reduce((acc, { _id: id, actions }) => {
+              acc[id] = actions;
 
-            return acc;
-          }, {}),
-        }
+              return acc;
+            }, {}),
+          }
         : omit(role.permissions, allChildrenIds);
 
       setChangedRolePermissions(role._id, allChildrenIds);
@@ -179,19 +178,21 @@ export const useRolePermissionFetching = () => {
 export const useRolePermissionActions = ({ updateRoles, resetRolesById } = {}) => {
   const modals = useModals();
 
-  const submit = () => modals.show({
-    name: MODALS.confirmation,
-    config: {
-      action: updateRoles,
-    },
-  });
+  const submit = () =>
+    modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: updateRoles,
+      },
+    });
 
-  const cancel = () => modals.show({
-    name: MODALS.confirmation,
-    config: {
-      action: resetRolesById,
-    },
-  });
+  const cancel = () =>
+    modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: resetRolesById,
+      },
+    });
 
   return {
     submit,

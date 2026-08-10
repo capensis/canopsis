@@ -16,10 +16,7 @@
 
     <c-layout class="pa-3 secondary lighten-2">
       <v-card class="pa-3 idle-rules-list-expand-item__card">
-        <v-window
-          v-model="activeTab"
-          class="pt-2"
-        >
+        <v-window v-model="activeTab" class="pt-2">
           <v-window-item value="summary">
             <div class="idle-rules-list-expand-item__content">
               <idle-rules-summary-tab :idle-rule="idleRule" />
@@ -28,11 +25,7 @@
 
           <v-window-item value="patterns">
             <div class="idle-rules-list-expand-item__content">
-              <idle-rule-patterns-form
-                :form="patterns"
-                :is-entity-type="isEntityType"
-                readonly
-              />
+              <idle-rule-patterns-form :form="patterns" :is-entity-type="isEntityType" readonly />
             </div>
           </v-window-item>
         </v-window>
@@ -44,14 +37,11 @@
 <script>
 import { computed, ref } from 'vue';
 
+import IdleRulePatternsForm from '@/components/other/idle-rule/form/idle-rule-patterns-form.vue';
 import { PATTERNS_FIELDS } from '@/constants';
-
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 import { isIdleRuleEntityType } from '@/helpers/entities/idle-rule/form';
-
 import { useI18n } from '@/hooks/i18n';
-
-import IdleRulePatternsForm from '@/components/other/idle-rule/form/idle-rule-patterns-form.vue';
 
 import IdleRulesSummaryTab from './idle-rules-summary-tab.vue';
 
@@ -70,9 +60,9 @@ export default {
     const activeTab = ref('summary');
 
     const isEntityType = computed(() => isIdleRuleEntityType(props.idleRule.type));
-    const patterns = computed(() => (
-      filterPatternsToForm(props.idleRule, [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm])
-    ));
+    const patterns = computed(() =>
+      filterPatternsToForm(props.idleRule, [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm]),
+    );
 
     return {
       t,

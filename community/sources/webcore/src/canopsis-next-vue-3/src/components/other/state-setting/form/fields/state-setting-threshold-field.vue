@@ -83,7 +83,6 @@ import {
   STATE_SETTING_THRESHOLDS_CONDITIONS,
   STATE_SETTING_THRESHOLDS_METHODS,
 } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 import StateSettingThresholdMethodField from './state-setting-threshold-method-field.vue';
@@ -144,12 +143,12 @@ export default {
 
       return hasFieldsForSummary
         ? t('stateSetting.targetEntityThresholdSummary', {
-          state: props.state,
-          method: props.condition.method,
-          condition: t(`stateSetting.thresholdConditions.${props.condition.cond}`).toLowerCase(),
-          dependenciesEntitiesState: props.condition.state,
-          value: `${props.condition.value}${isShareMethod.value ? '%' : ''}`,
-        })
+            state: props.state,
+            method: props.condition.method,
+            condition: t(`stateSetting.thresholdConditions.${props.condition.cond}`).toLowerCase(),
+            dependenciesEntitiesState: props.condition.state,
+            value: `${props.condition.value}${isShareMethod.value ? '%' : ''}`,
+          })
         : '';
     });
 

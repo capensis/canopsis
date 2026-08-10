@@ -16,7 +16,6 @@
 import { computed } from 'vue';
 
 import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {
@@ -68,9 +67,11 @@ export default {
       })),
     ]);
 
-    const selected = computed(() => (
-      templatesWithCustom.value.find(template => template.value === currentValue.value) ?? templatesWithCustom.value[0]
-    ));
+    const selected = computed(
+      () =>
+        templatesWithCustom.value.find(template => template.value === currentValue.value) ??
+        templatesWithCustom.value[0],
+    );
 
     const selectTemplate = (template) => {
       emit('update:modelValue', template);

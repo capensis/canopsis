@@ -61,10 +61,11 @@
         </c-layout>
       </v-flex>
       <c-action-btn
-v-if="!disabled"
-class="mt-2"
-type="delete"
-@click="remove" />
+        v-if="!disabled"
+        class="mt-2"
+        type="delete"
+        @click="remove"
+      />
     </c-layout>
   </c-form-block>
 </template>
@@ -72,16 +73,14 @@ type="delete"
 <script>
 import { computed, ref, toRef } from 'vue';
 
-import { isOmitEqual } from '@/helpers/collection';
-import { remediationInstructionStepOperationToForm } from '@/helpers/entities/remediation/instruction/form';
-
-import { useConfirmableForm } from '@/hooks/confirmable-form';
-import { useValidationChildren } from '@/hooks/validator/validation-children';
-
+import TextEditorBlurred from '@/components/common/text-editor/text-editor-blurred.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import JobsChips from '@/components/other/remediation/instructions/partials/jobs-chips.vue';
 import JobsSelect from '@/components/other/remediation/instructions/partials/jobs-select.vue';
-import TextEditorBlurred from '@/components/common/text-editor/text-editor-blurred.vue';
+import { isOmitEqual } from '@/helpers/collection';
+import { remediationInstructionStepOperationToForm } from '@/helpers/entities/remediation/instruction/form';
+import { useConfirmableForm } from '@/hooks/confirmable-form';
+import { useValidationChildren } from '@/hooks/validator/validation-children';
 
 import RemediationInstructionTimeToCompleteField from './remediation-instruction-time-to-complete-field.vue';
 

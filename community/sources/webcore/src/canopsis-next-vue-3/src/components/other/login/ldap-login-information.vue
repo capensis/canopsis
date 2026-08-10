@@ -1,9 +1,5 @@
 <template>
-  <c-help-icon
-    icon="help"
-    color="secondary"
-    right
-  >
+  <c-help-icon icon="help" color="secondary" right>
     <c-layout wrap>
       {{ $t('login.connectionProtocols') }}
       <ul>

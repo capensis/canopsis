@@ -1,10 +1,11 @@
 <template>
   <c-zoom-overlay>
     <geomap
-ref="map"
-:min-zoom="minZoom"
-:disabled="!!activePoint"
-class="geomap-preview">
+      ref="map"
+      :min-zoom="minZoom"
+      :disabled="!!activePoint"
+      class="geomap-preview"
+    >
       <geomap-control-zoom :disabled="!!activePoint" position="topleft" />
       <geomap-control-layers :disabled="!!activePoint" position="topright" />
       <geomap-tile-layer
@@ -63,25 +64,22 @@ class="geomap-preview">
 </template>
 
 <script>
-import { groupBy } from 'lodash';
 import { LatLng, LatLngBounds } from 'leaflet';
+import { groupBy } from 'lodash';
 
+import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
+import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
+import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
+import GeomapControl from '@/components/common/geomap/geomap-control.vue';
+import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
+import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
+import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
+import Geomap from '@/components/common/geomap/geomap.vue';
 import { OPEN_STREET_LAYER_URL } from '@/config';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
-
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import { getGeomapMarkerIconOptions } from '@/helpers/entities/map/list';
-
 import { mapInformationPopupMixin } from '@/mixins/map/map-information-popup-mixin';
-
-import Geomap from '@/components/common/geomap/geomap.vue';
-import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
-import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
-import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
-import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
-import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
-import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
-import GeomapControl from '@/components/common/geomap/geomap-control.vue';
 
 import PointIcon from './point-icon.vue';
 import PointPopupDialog from './point-popup-dialog.vue';

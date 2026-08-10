@@ -1,9 +1,6 @@
 <template>
   <c-layout column>
-    <c-information-block
-      v-if="!singleMode"
-      :title="$t('declareTicket.applyRules')"
-    >
+    <c-information-block v-if="!singleMode" :title="$t('declareTicket.applyRules')">
       <declare-ticket-event-form
         :form="commonValue"
         :alarms="alarms"
@@ -51,10 +48,7 @@
         />
       </c-information-block>
     </template>
-    <c-alert
-      v-if="hasErrors"
-      type="error"
-    >
+    <c-alert v-if="hasErrors" type="error">
       {{ $t('declareTicket.errors.ticketRequired') }}
     </c-alert>
   </c-layout>
@@ -64,7 +58,6 @@
 import { keyBy, pick } from 'lodash';
 
 import { useValidator } from '@/hooks/validator/validator';
-
 import { formMixin } from '@/mixins/form';
 
 import DeclareTicketEventForm from './declare-ticket-event-form.vue';
@@ -126,11 +119,14 @@ export default {
     },
 
     alarmsByTicketId() {
-      return Object.entries(this.alarmsByTickets).reduce((acc, [ticketId, { alarms: alarmsIds }]) => {
-        acc[ticketId] = alarmsIds.map(id => this.alarmsById[id]);
+      return Object.entries(this.alarmsByTickets).reduce(
+        (acc, [ticketId, { alarms: alarmsIds }]) => {
+          acc[ticketId] = alarmsIds.map(id => this.alarmsById[id]);
 
-        return acc;
-      }, {});
+          return acc;
+        },
+        {},
+      );
     },
 
     alarmsWithoutTickets() {
@@ -199,7 +195,8 @@ export default {
       this.validator.attach({
         name: this.declareTicketFieldName,
         rules: 'min_value:1',
-        getter: () => Object.values(this.form.alarms_by_tickets).filter(alarms => alarms.length).length,
+        getter: () =>
+          Object.values(this.form.alarms_by_tickets).filter(alarms => alarms.length).length,
         vm: this,
       });
     },
@@ -212,49 +209,52 @@ export default {
       const { alarms } = this.alarmsByTickets[ticketId];
       const selectedAlarms = this.form.alarms_by_tickets[ticketId];
 
-      this.updateField(
-        'alarms_by_tickets',
-        {
-          ...this.form.alarms_by_tickets,
-          [ticketId]: selectedAlarms.length === alarms.length ? [] : alarms,
-        },
-      );
+      this.updateField('alarms_by_tickets', {
+        ...this.form.alarms_by_tickets,
+        [ticketId]: selectedAlarms.length === alarms.length ? [] : alarms,
+      });
     },
 
-    updateCommonValue({ comment, alarms_by_tickets: alarmsByTickets, ticket_resources: ticketResources }) {
-      this.updateModel(
-        {
-          alarms_by_tickets: alarmsByTickets,
-          ...Object.keys(this.form.comments_by_tickets).reduce((acc, ticketId) => {
+    updateCommonValue({
+      comment,
+      alarms_by_tickets: alarmsByTickets,
+      ticket_resources: ticketResources,
+    }) {
+      this.updateModel({
+        alarms_by_tickets: alarmsByTickets,
+        ...Object.keys(this.form.comments_by_tickets).reduce(
+          (acc, ticketId) => {
             acc.comments_by_tickets[ticketId] = comment;
             acc.ticket_resources_by_tickets[ticketId] = ticketResources;
 
             return acc;
-          }, {
+          },
+          {
             comments_by_tickets: {},
             ticket_resources_by_tickets: {},
-          }),
-        },
-      );
+          },
+        ),
+      });
     },
 
-    updateGroup(ticketId, { comment, alarms_by_tickets: alarmsByTickets, ticket_resources: ticketResources }) {
-      this.updateModel(
-        {
-          alarms_by_tickets: {
-            ...this.form.alarms_by_tickets,
-            ...alarmsByTickets,
-          },
-          comments_by_tickets: {
-            ...this.form.comments_by_tickets,
-            [ticketId]: comment,
-          },
-          ticket_resources_by_tickets: {
-            ...this.form.ticket_resources_by_tickets,
-            [ticketId]: ticketResources,
-          },
+    updateGroup(
+      ticketId,
+      { comment, alarms_by_tickets: alarmsByTickets, ticket_resources: ticketResources },
+    ) {
+      this.updateModel({
+        alarms_by_tickets: {
+          ...this.form.alarms_by_tickets,
+          ...alarmsByTickets,
         },
-      );
+        comments_by_tickets: {
+          ...this.form.comments_by_tickets,
+          [ticketId]: comment,
+        },
+        ticket_resources_by_tickets: {
+          ...this.form.ticket_resources_by_tickets,
+          [ticketId]: ticketResources,
+        },
+      });
     },
   },
 };

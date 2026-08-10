@@ -1,8 +1,7 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-
 import { uid } from '@/helpers/uid';
 
 /**
@@ -37,13 +36,7 @@ export const useModalsStore = defineStore('modals', () => {
    *
    * @param {ShowModalPayload} payload
    */
-  const show = ({
-    name,
-    onHide,
-    config = {},
-    dialogProps = {},
-    id = uid('modal'),
-  } = {}) => {
+  const show = ({ name, onHide, config = {}, dialogProps = {}, id = uid('modal') } = {}) => {
     if (byId.value[id]) {
       maximize({ id });
       return;

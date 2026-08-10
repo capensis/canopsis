@@ -3,9 +3,7 @@
     <c-state-count-changes-chip :state="state">
       {{ affect.from }}
     </c-state-count-changes-chip>
-    <v-icon size="16">
-      arrow_forward
-    </v-icon>
+    <v-icon size="16"> arrow_forward </v-icon>
     <c-state-count-changes-chip :state="state">
       {{ affect.to }}
     </c-state-count-changes-chip>

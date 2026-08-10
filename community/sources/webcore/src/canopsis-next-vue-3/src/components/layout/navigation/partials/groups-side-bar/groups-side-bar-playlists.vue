@@ -1,13 +1,6 @@
 <template>
-  <v-expansion-panels
-    v-if="availablePlaylists.length"
-    class="groups-side-bar-playlists"
-    multiple
-  >
-    <v-expansion-panel
-      class="secondary lighten-1 groups-side-bar-playlists__panel"
-      elevation="0"
-    >
+  <v-expansion-panels v-if="availablePlaylists.length" class="groups-side-bar-playlists" multiple>
+    <v-expansion-panel class="secondary lighten-1 groups-side-bar-playlists__panel" elevation="0">
       <v-expansion-panel-title>
         <div class="panel-header">
           <span>{{ $t(`pageHeaders.${USER_PERMISSIONS.technical.playlist}.title`) }}</span>
@@ -20,19 +13,10 @@
           :title="playlist.name"
           :to="{ name: ROUTES_NAMES.playlist, params: { id: playlist._id } }"
         >
-          <v-card
-            class="secondary lighten-2 groups-side-bar-playlists__button"
-            elevation="0"
-          >
+          <v-card class="secondary lighten-2 groups-side-bar-playlists__button" elevation="0">
             <div class="pa-4">
-              <c-layout
-                align="center"
-                justify="space-between"
-              >
-                <c-layout
-                  align="center"
-                  class="min-width-0"
-                >
+              <c-layout align="center" justify="space-between">
+                <c-layout align="center" class="min-width-0">
                   <span class="text-truncate pl-3">
                     {{ playlist.name }}
                   </span>
@@ -48,13 +32,10 @@
 
 <script>
 import { ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
-
 import layoutNavigationGroupsBarPlaylistsMixin from '@/mixins/layout/navigation/groups-bar-playlists';
 
 export default {
-  mixins: [
-    layoutNavigationGroupsBarPlaylistsMixin,
-  ],
+  mixins: [layoutNavigationGroupsBarPlaylistsMixin],
 
   data() {
     return {

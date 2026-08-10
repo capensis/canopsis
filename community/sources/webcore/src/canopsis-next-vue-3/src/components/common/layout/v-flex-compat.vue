@@ -6,18 +6,54 @@ defineOptions({
 });
 
 const props = defineProps({
-  xs1: { type: Boolean, default: false },
-  xs2: { type: Boolean, default: false },
-  xs3: { type: Boolean, default: false },
-  xs4: { type: Boolean, default: false },
-  xs5: { type: Boolean, default: false },
-  xs6: { type: Boolean, default: false },
-  xs7: { type: Boolean, default: false },
-  xs8: { type: Boolean, default: false },
-  xs9: { type: Boolean, default: false },
-  xs10: { type: Boolean, default: false },
-  xs11: { type: Boolean, default: false },
-  xs12: { type: Boolean, default: false },
+  xs1: {
+    type: Boolean,
+    default: false,
+  },
+  xs2: {
+    type: Boolean,
+    default: false,
+  },
+  xs3: {
+    type: Boolean,
+    default: false,
+  },
+  xs4: {
+    type: Boolean,
+    default: false,
+  },
+  xs5: {
+    type: Boolean,
+    default: false,
+  },
+  xs6: {
+    type: Boolean,
+    default: false,
+  },
+  xs7: {
+    type: Boolean,
+    default: false,
+  },
+  xs8: {
+    type: Boolean,
+    default: false,
+  },
+  xs9: {
+    type: Boolean,
+    default: false,
+  },
+  xs10: {
+    type: Boolean,
+    default: false,
+  },
+  xs11: {
+    type: Boolean,
+    default: false,
+  },
+  xs12: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const attrs = useAttrs();
@@ -37,18 +73,13 @@ const widthClass = computed(() => {
     [props.xs11]: 11,
     [props.xs12]: 12,
   }.true;
-  
 
   return size ? `v-flex-compat--xs${size}` : '';
 });
 </script>
 
 <template>
-  <div
-    v-bind="attrs"
-    :class="widthClass"
-    class="v-flex-compat"
-  >
+  <div v-bind="attrs" :class="widthClass" class="v-flex-compat">
     <slot />
   </div>
 </template>

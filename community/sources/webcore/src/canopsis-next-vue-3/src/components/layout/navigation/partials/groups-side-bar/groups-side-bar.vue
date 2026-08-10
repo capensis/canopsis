@@ -19,15 +19,8 @@
       </template>
 
       <section :class="['side-bar__links', { 'side-bar__links--ordering': isGroupsOrderChanged }]">
-        <c-layout
-          v-if="!mutatedGroups.length && groupsPending"
-          class="pa-2"
-          justify="center"
-        >
-          <v-progress-circular
-            color="primary"
-            indeterminate
-          />
+        <c-layout v-if="!mutatedGroups.length && groupsPending" class="pa-2" justify="center">
+          <v-progress-circular color="primary" indeterminate />
         </c-layout>
 
         <c-draggable-list-field
@@ -47,10 +40,7 @@
             />
           </template>
 
-          <template
-            v-if="hasAccessToPrivateView"
-            #footer
-          >
+          <template v-if="hasAccessToPrivateView" #footer>
             <groups-side-bar-group
               v-for="privateGroup in privateGroups"
               :key="privateGroup._id"
@@ -65,10 +55,7 @@
         <groups-side-bar-playlists />
       </section>
 
-      <groups-settings-button
-        tooltip-right
-        @toggle-editing-mode="toggleNavigationEditingMode"
-      />
+      <groups-settings-button tooltip-right @toggle-editing-mode="toggleNavigationEditingMode" />
 
       <v-overlay
         :model-value="isGroupsOrderChanged"
@@ -85,21 +72,13 @@
         >
           {{ $t('common.submit') }}
         </v-btn>
-        <v-btn
-          class="ma-2"
-          variant="elevated"
-          @click="resetMutatedGroups"
-        >
+        <v-btn class="ma-2" variant="elevated" @click="resetMutatedGroups">
           {{ $t('common.cancel') }}
         </v-btn>
       </v-overlay>
     </v-navigation-drawer>
 
-    <v-overlay
-      :model-value="isGroupsOrderChanged"
-      class="side-bar__overlay"
-      persistent
-    />
+    <v-overlay :model-value="isGroupsOrderChanged" class="side-bar__overlay" persistent />
   </div>
 </template>
 
@@ -108,19 +87,16 @@ import { uniq } from 'lodash';
 import { mapState } from 'pinia';
 
 import { MEDIA_QUERIES_BREAKPOINTS, SIDE_BAR_WIDTH } from '@/config';
-
 import { isDeepOrderChanged } from '@/helpers/dragdrop';
 import { groupsWithViewsToPositions } from '@/helpers/entities/view/form';
-
+import { activeViewMixin } from '@/mixins/active-view';
+import { entitiesViewMixin } from '@/mixins/entities/view';
+import { layoutNavigationGroupsBarMixin } from '@/mixins/layout/navigation/groups-bar';
 import { useModalsStore } from '@/plugins/modals/stores';
 
-import { entitiesViewMixin } from '@/mixins/entities/view';
-import { activeViewMixin } from '@/mixins/active-view';
-import { layoutNavigationGroupsBarMixin } from '@/mixins/layout/navigation/groups-bar';
-
-import GroupsSettingsButton from '../groups-settings-button.vue';
 import AppLogo from '../app-logo.vue';
 import AppVersion from '../app-version.vue';
+import GroupsSettingsButton from '../groups-settings-button.vue';
 import LoggedUsersCount from '../logged-users-count.vue';
 
 import GroupsSideBarGroup from './groups-side-bar-group.vue';
@@ -142,11 +118,7 @@ export default {
     GroupsSideBarGroup,
     GroupsSideBarPlaylists,
   },
-  mixins: [
-    entitiesViewMixin,
-    activeViewMixin,
-    layoutNavigationGroupsBarMixin,
-  ],
+  mixins: [entitiesViewMixin, activeViewMixin, layoutNavigationGroupsBarMixin],
 
   emits: ['update:modelValue'],
 
@@ -196,7 +168,7 @@ export default {
         flat: true,
         tile: true,
         modelValue: this.draggableComponentDataValue,
-        'onUpdate:modelValue': value => this.draggableComponentDataValue = value,
+        'onUpdate:modelValue': value => (this.draggableComponentDataValue = value),
       };
     },
   },
@@ -294,7 +266,7 @@ export default {
   justify-content: stretch;
 
   &__divider {
-    border-color: rgba(0, 0, 0, .12) !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
     opacity: 1;
   }
 

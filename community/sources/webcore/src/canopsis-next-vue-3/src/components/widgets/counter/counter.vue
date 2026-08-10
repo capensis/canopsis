@@ -150,8 +150,8 @@ export default {
 
   methods: {
     ...mapActions(useCounterStore, {
-    fetchCountersList: 'fetchList',
-  }),
+      fetchCountersList: 'fetchList',
+    }),
 
     refresh() {
       if (this.visible) {

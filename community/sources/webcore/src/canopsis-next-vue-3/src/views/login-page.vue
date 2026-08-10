@@ -1,12 +1,10 @@
 <script setup>
 import { onMounted, onBeforeUnmount } from 'vue';
 
-import { LOGIN_APP_INFO_POLLING_DELAY } from '@/constants';
-
-import { useInfo } from '@/hooks/store/modules/info';
-
 import LoginCard from '@/components/other/login/login-card.vue';
 import LoginFooter from '@/components/other/login/login-footer.vue';
+import { LOGIN_APP_INFO_POLLING_DELAY } from '@/constants';
+import { useInfo } from '@/hooks/store/modules/info';
 
 const {
   maintenance,
@@ -40,18 +38,9 @@ onBeforeUnmount(stopAppInfoPolling);
 </script>
 
 <template>
-  <div
-    :class="{ 'login--maintenance': maintenance }"
-    class="login"
-  >
-    <div
-      v-if="maintenance"
-      class="login__image"
-    >
-      <v-icon
-        size="120"
-        color="white"
-      >
+  <div :class="{ 'login--maintenance': maintenance }" class="login">
+    <div v-if="maintenance" class="login__image">
+      <v-icon size="120" color="white">
         manufacturing
       </v-icon>
     </div>
@@ -66,7 +55,6 @@ onBeforeUnmount(stopAppInfoPolling);
     />
     <login-footer />
   </div>
-
 </template>
 
 <style lang="scss" scoped>
@@ -82,12 +70,12 @@ onBeforeUnmount(stopAppInfoPolling);
   background: var(--v-secondary-base);
 
   grid-template-areas:
-    ". . ."
-    ". image ."
-    ". description ."
-    ". form ."
-    ". . ."
-    "footer footer footer";
+    '. . .'
+    '. image .'
+    '. description .'
+    '. form .'
+    '. . .'
+    'footer footer footer';
 
   &__image {
     grid-area: image;
@@ -125,10 +113,10 @@ onBeforeUnmount(stopAppInfoPolling);
     grid-template-rows: auto auto auto auto;
 
     grid-template-areas:
-      ". . . . ."
-      "image description . form ."
-      ". . . . ."
-      "footer footer footer footer footer";
+      '. . . . .'
+      'image description . form .'
+      '. . . . .'
+      'footer footer footer footer footer';
 
     &__image {
       min-height: 500px;

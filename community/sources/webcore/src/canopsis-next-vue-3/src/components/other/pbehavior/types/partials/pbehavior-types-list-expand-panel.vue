@@ -1,10 +1,11 @@
 <template>
   <div class="planning-expand-panel">
     <v-tabs
-v-model="activeTab"
-color="primary"
-class="secondary lighten-1"
-align-tabs="center">
+      v-model="activeTab"
+      color="primary"
+      class="secondary lighten-1"
+      align-tabs="center"
+    >
       <v-tab :value="TABS.description">
         {{ t('common.description') }}
       </v-tab>
@@ -17,10 +18,8 @@ align-tabs="center">
       <v-window-item :value="TABS.description" class="planning-expand-panel__tab-item">
         <v-card>
           <v-card-text>
-            <pre class="planning-expand-panel__pre"
-              >{{ pbehaviorType.description || '-' }}
-</pre
-            >
+            <pre class="planning-expand-panel__pre">{{ pbehaviorType.description || '-' }}
+</pre>
           </v-card-text>
         </v-card>
       </v-window-item>
@@ -49,7 +48,6 @@ align-tabs="center">
 import { computed, ref } from 'vue';
 
 import { getMostReadableTextColor } from '@/helpers/color';
-
 import { useI18n } from '@/hooks/i18n';
 
 const TABS = {

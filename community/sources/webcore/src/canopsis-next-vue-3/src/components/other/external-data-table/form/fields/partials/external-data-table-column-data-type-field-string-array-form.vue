@@ -8,10 +8,11 @@
       @update:model-value="updateField('selectedType', $event)"
     >
       <v-radio
-v-for="type in types"
-:key="type.value"
-:value="type.value"
-color="success">
+        v-for="type in types"
+        :key="type.value"
+        :value="type.value"
+        color="success"
+      >
         <template #label>
           <c-layout justify="space-between">
             <span>
@@ -62,9 +63,8 @@ import {
   EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS,
   EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES,
 } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 import { useValidator } from '@/hooks/validator/validator';
 
 const CUSTOM_SEPARATOR_VALUE = 'custom';

@@ -15,13 +15,8 @@
               </slot>
             </span>
 
-            <span
-              v-if="optional || subTitle"
-              class="font-italic text-caption text-medium-emphasis"
-            >
-              <span v-if="optional" class="text-lowercase">
-                ({{ $t('common.optional') }})
-              </span>
+            <span v-if="optional || subTitle" class="font-italic text-caption text-medium-emphasis">
+              <span v-if="optional" class="text-lowercase"> ({{ $t('common.optional') }}) </span>
 
               <span v-if="subTitle">
                 {{ subTitle }}

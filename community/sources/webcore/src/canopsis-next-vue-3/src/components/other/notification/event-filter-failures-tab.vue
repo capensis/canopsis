@@ -19,12 +19,10 @@
 <script>
 import { nextTick, ref, toRef } from 'vue';
 
-import { EVENT_FILTER_EXPAND_PANEL_TABS, USER_PERMISSIONS } from '@/constants';
-
-import { useCRUDPermissions } from '@/hooks/auth';
-
-import { useEventFilterActions } from '@/components/other/event-filter/hooks/event-filters';
 import EventFiltersList from '@/components/other/event-filter/event-filters-list.vue';
+import { useEventFilterActions } from '@/components/other/event-filter/hooks/event-filters';
+import { EVENT_FILTER_EXPAND_PANEL_TABS, USER_PERMISSIONS } from '@/constants';
+import { useCRUDPermissions } from '@/hooks/auth';
 
 import { useNotificationActiveId } from './hooks/notifications';
 
@@ -65,11 +63,8 @@ export default {
     } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.eventFilter);
 
     const refresh = () => emit('refresh');
-    const {
-      showDuplicateRuleModal,
-      showEditRuleModal,
-      showDeleteRuleModal,
-    } = useEventFilterActions(refresh);
+    const { showDuplicateRuleModal, showEditRuleModal, showDeleteRuleModal } =
+      useEventFilterActions(refresh);
 
     const showRuleExpandPanelErrorTab = (rule = {}) => {
       nextTick(() => {
@@ -78,9 +73,11 @@ export default {
         nextTick(() => {
           if (
             eventFiltersListEl.value?.$refs?.expandPanel?.activeTab &&
-            eventFiltersListEl.value.$refs.expandPanel.activeTab !== EVENT_FILTER_EXPAND_PANEL_TABS.errors
+            eventFiltersListEl.value.$refs.expandPanel.activeTab !==
+              EVENT_FILTER_EXPAND_PANEL_TABS.errors
           ) {
-            eventFiltersListEl.value.$refs.expandPanel.activeTab = EVENT_FILTER_EXPAND_PANEL_TABS.errors;
+            eventFiltersListEl.value.$refs.expandPanel.activeTab =
+              EVENT_FILTER_EXPAND_PANEL_TABS.errors;
           }
         });
       });

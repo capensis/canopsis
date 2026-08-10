@@ -18,11 +18,7 @@
               @update:model-value="updateFieldInArrayItem(index, 'name', $event)"
             />
 
-            <c-action-btn
-              class="mr-0 ml-0"
-              type="delete"
-              @click="remove"
-            />
+            <c-action-btn class="mr-0 ml-0" type="delete" @click="remove" />
           </c-layout>
           <snmp-rule-form-module-mib-objects-form
             :form="form[index].value"
@@ -39,9 +35,8 @@
 
 <script>
 import { snmpRuleExtraItemToForm } from '@/helpers/entities/snmp-rule/form';
-
-import { useI18n } from '@/hooks/i18n';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useI18n } from '@/hooks/i18n';
 
 import SnmpRuleFormModuleMibObjectsForm from '../snmp-rule-form-module-mib-objects-form.vue';
 
@@ -63,10 +58,7 @@ export default {
 
   setup(props, { emit }) {
     const { t } = useI18n();
-    const {
-      updateModel,
-      updateFieldInArrayItem,
-    } = useArrayModelField(props, emit);
+    const { updateModel, updateFieldInArrayItem } = useArrayModelField(props, emit);
 
     return {
       t,

@@ -21,9 +21,8 @@
 <script>
 import { computed } from 'vue';
 
-import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
-
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
+import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
 
 export default {
   components: { TextEditorField },
@@ -94,7 +93,10 @@ export default {
      * @param {string} text - The new text value.
      */
     const updateText = (text) => {
-      if (currentForm.value.template !== CUSTOM_WIDGET_TEMPLATE && text !== currentForm.value.text) {
+      if (
+        currentForm.value.template !== CUSTOM_WIDGET_TEMPLATE &&
+        text !== currentForm.value.text
+      ) {
         updateModel({
           text,
           template: CUSTOM_WIDGET_TEMPLATE,

@@ -9,10 +9,7 @@
       class="broadcast-message__text"
       parent-element="span"
     />
-    <div
-      class="broadcast-message__actions"
-      title=""
-    >
+    <div class="broadcast-message__actions" title="">
       <slot name="actions" />
     </div>
   </div>
@@ -36,7 +33,9 @@ export default {
   },
 
   setup(props) {
-    const textColor = computed(() => getMostReadableTextColor(props.color, { level: 'AA', size: 'large' }));
+    const textColor = computed(() =>
+      getMostReadableTextColor(props.color, { level: 'AA', size: 'large' }),
+    );
 
     return {
       textColor,

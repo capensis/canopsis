@@ -1,8 +1,5 @@
 <template>
-  <c-layout
-    gap="2"
-    column
-  >
+  <c-layout gap="2" column>
     <c-name-field
       v-model="nameField"
       :label="t('common.testName')"
@@ -54,12 +51,7 @@ export default {
   },
   setup() {
     const { t } = useI18n();
-    const {
-      nameField,
-      typeField,
-      ruleField,
-      descriptionField,
-    } = useFormModels({
+    const { nameField, typeField, ruleField, descriptionField } = useFormModels({
       nameField: 'name',
       typeField: 'type',
       ruleField: 'rule',

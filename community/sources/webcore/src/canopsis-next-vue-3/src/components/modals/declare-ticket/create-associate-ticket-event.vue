@@ -7,10 +7,7 @@
 
       <template #text>
         <c-layout gap="3" column>
-          <alarm-general-table
-            v-if="config.items"
-            :items="config.items"
-          />
+          <alarm-general-table v-if="config.items" :items="config.items" />
           <v-divider />
           <c-checkbox
             v-if="isAllComponentAlarms"
@@ -18,32 +15,21 @@
             :label="t('alarm.associateTicketResources')"
             color="primary"
           />
-          <associate-ticket-event-form
-            :form="values"
-            class="mt-3"
-            @update:form="updateForm"
-          />
+          <associate-ticket-event-form :form="values" class="mt-3" @update:form="updateForm" />
           <c-description-field
             v-model="comment"
             :label="t('common.comment')"
             :max-length="255"
             name="comment"
           />
-          <c-alert
-            v-if="itemsWithoutAck.length"
-            type="info"
-          >
+          <c-alert v-if="itemsWithoutAck.length" type="info">
             {{ alertMessage }}
           </c-alert>
         </c-layout>
       </template>
 
       <template #actions>
-        <v-btn
-          :disabled="submitting"
-          variant="text"
-          @click="close"
-        >
+        <v-btn :disabled="submitting" variant="text" @click="close">
           {{ t('common.cancel') }}
         </v-btn>
         <v-btn
@@ -62,22 +48,19 @@
 <script>
 import { computed } from 'vue';
 
+import AssociateTicketEventForm from '@/components/other/declare-ticket/form/associate-ticket-event-form.vue';
+import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 import { MODALS } from '@/constants';
-
 import {
   eventToAssociateTicketForm,
   formToAssociateTicketEvent,
 } from '@/helpers/entities/associate-ticket/event/form';
 import { isEntityComponentType } from '@/helpers/entities/entity/form';
-
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-
-import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
-import AssociateTicketEventForm from '@/components/other/declare-ticket/form/associate-ticket-event-form.vue';
 
 /**
  * Modal to associate a ticket to an alarm.
@@ -112,17 +95,17 @@ export default {
     const ticketResources = form.model('ticket_resources');
     const comment = form.model('comment');
 
-    const itemsWithoutAck = computed(() => (
-      config.value.ignoreAck ? [] : (config.value.items ?? []).filter(item => !item.v.ack)
-    ));
+    const itemsWithoutAck = computed(() =>
+      config.value.ignoreAck ? [] : (config.value.items ?? []).filter(item => !item.v.ack),
+    );
     const alertMessage = computed(() => {
       const { length: count } = itemsWithoutAck.value;
 
       return t('declareTicket.noAckItems', count, { count });
     });
-    const isAllComponentAlarms = computed(() => (
-      (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type))
-    ));
+    const isAllComponentAlarms = computed(() =>
+      (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type)),
+    );
 
     const { submitting, submit } = useSubmittableForm({
       method: form.handleSubmit(async () => {

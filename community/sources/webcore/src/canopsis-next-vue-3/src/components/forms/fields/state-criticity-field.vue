@@ -26,9 +26,7 @@
 import { computed } from 'vue';
 
 import { ALARM_STATES, ALARM_STATES_TEXTS } from '@/constants';
-
 import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {
@@ -58,25 +56,25 @@ export default {
 
     const selectedValue = computed(() => props.modelValue ?? props.value);
 
-    const availableStates = computed(() => Object.entries(props.stateValues).map(([key, state]) => ({
-      text: t(`modals.createChangeStateEvent.states.${key}`),
-      state,
-      color: getAlarmStateColor(state),
-      textColor: `var(--v-state-${ALARM_STATES_TEXTS[state]}-text-base)`,
-    })));
+    const availableStates = computed(() =>
+      Object.entries(props.stateValues).map(([key, state]) => ({
+        text: t(`modals.createChangeStateEvent.states.${key}`),
+        state,
+        color: getAlarmStateColor(state),
+        textColor: `var(--v-state-${ALARM_STATES_TEXTS[state]}-text-base)`,
+      })),
+    );
 
     const updateValue = (value) => {
       emit('update:modelValue', value);
       emit('update:value', value);
     };
 
-    const getButtonStyle = ({ color, state, textColor }) => (
-      {
-        backgroundColor: color,
-        color: textColor,
-        opacity: selectedValue.value === state ? 1 : 0.45,
-      }
-    );
+    const getButtonStyle = ({ color, state, textColor }) => ({
+      backgroundColor: color,
+      color: textColor,
+      opacity: selectedValue.value === state ? 1 : 0.45,
+    });
 
     return {
       selectedValue,

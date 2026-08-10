@@ -1,10 +1,7 @@
 <template>
   <v-fade-transition>
     <c-layout v-show="value" class="alert">
-      <div
-        :style="{ opacity, backgroundColor }"
-        class="overlay"
-      />
+      <div :style="{ opacity, backgroundColor }" class="overlay" />
 
       <div class="content">
         <slot>

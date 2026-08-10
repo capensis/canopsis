@@ -6,11 +6,7 @@
     @remove="$emit('remove')"
   >
     <template #header>
-      <c-layout
-        class="sort-column-field__inputs"
-        gap="2"
-        column
-      >
+      <c-layout class="sort-column-field__inputs" gap="2" column>
         <c-select
           :model-value="currentSortColumn.sort_by"
           :items="availableColumns"
@@ -36,7 +32,6 @@
 import { computed, toRef } from 'vue';
 
 import { ENTITIES_TYPES, SORT_ORDERS } from '@/constants';
-
 import { useAvailableColumns } from '@/hooks/form/available-columns';
 import { useModelField } from '@/hooks/form/model-field';
 

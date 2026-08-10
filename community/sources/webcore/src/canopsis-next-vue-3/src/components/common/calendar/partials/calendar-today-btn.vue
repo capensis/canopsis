@@ -2,16 +2,17 @@
   <v-tooltip location="bottom">
     <template #activator="{ props: tooltipProps }">
       <v-btn
-v-bind="tooltipProps"
-class="mx-2 my-1"
-variant="text"
-@click="$emit('click')">
+        v-bind="tooltipProps"
+        class="mx-2 my-1"
+        variant="text"
+        @click="$emit('click')"
+      >
         <span class="calendar-today-btn__label">
           {{ t('calendar.today') }}
         </span>
         <v-icon class="calendar-today-btn__icon">
-today
-</v-icon>
+          today
+        </v-icon>
       </v-btn>
     </template>
 
@@ -23,7 +24,6 @@ today
 import { computed } from 'vue';
 
 import { convertDateToString, getNowTimestamp } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {

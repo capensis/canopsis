@@ -1,15 +1,9 @@
 <template>
   <span>
-    <c-icon
-      v-if="value"
-      color="success"
-    >
+    <c-icon v-if="value" color="success">
       {{ iconSuccess }}
     </c-icon>
-    <c-icon
-      v-else
-      color="error"
-    >
+    <c-icon v-else color="error">
       {{ iconFailed }}
     </c-icon>
   </span>

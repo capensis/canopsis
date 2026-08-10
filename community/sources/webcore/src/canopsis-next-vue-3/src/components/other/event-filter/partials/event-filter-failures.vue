@@ -6,10 +6,7 @@
         @update:model-value="updateQueryField('type', $event)"
       />
     </div>
-    <div
-      v-if="eventFilter.unread_failures_count"
-      :style="gridFlexStyle(12)"
-    >
+    <div v-if="eventFilter.unread_failures_count" :style="gridFlexStyle(12)">
       <v-btn
         :loading="markAsReadPending"
         class="v-btn-legacy-m--y"
@@ -38,9 +35,7 @@
 import { onMounted, ref, watch } from 'vue';
 
 import { gridFlexStyle } from '@/helpers/layout';
-
 import { convertQueryToRequest } from '@/helpers/query';
-
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { useEventFilter } from '@/hooks/store/modules/event-filter';
 
@@ -58,10 +53,8 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const {
-      fetchEventFilterFailuresListWithoutStore,
-      markNewEventFilterFailuresAsRead,
-    } = useEventFilter();
+    const { fetchEventFilterFailuresListWithoutStore, markNewEventFilterFailuresAsRead } =
+      useEventFilter();
 
     const eventFilterFailures = ref([]);
     const eventFilterFailuresMeta = ref({});

@@ -25,12 +25,7 @@ import { useDynamicInfoStore } from '@/stores/modules/dynamic-info';
  */
 export const useDynamicInfo = () => {
   const dynamicInfoStore = useDynamicInfoStore();
-  const {
-    items,
-    meta,
-    pending,
-    fetchingParams,
-  } = storeToRefs(dynamicInfoStore);
+  const { items, meta, pending, fetchingParams } = storeToRefs(dynamicInfoStore);
 
   return {
     dynamicInfos: items,

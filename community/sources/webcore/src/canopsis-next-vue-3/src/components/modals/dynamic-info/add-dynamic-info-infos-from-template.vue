@@ -21,10 +21,7 @@
       </template>
 
       <template #actions>
-        <v-btn
-          variant="text"
-          @click="closeModal"
-        >
+        <v-btn variant="text" @click="closeModal">
           {{ t('common.cancel') }}
         </v-btn>
 
@@ -42,18 +39,14 @@
 </template>
 
 <script>
-import {
-  computed,
-  onMounted,
-  ref,
-} from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useModals } from '@/hooks/modals';
-import { useDynamicInfoTemplates } from '@/hooks/store/modules/dynamic-info-templates';
 import { usePendingHandler } from '@/hooks/query/pending';
+import { useDynamicInfoTemplates } from '@/hooks/store/modules/dynamic-info-templates';
 
 export default {
   props: {
@@ -93,12 +86,12 @@ export default {
       close: closeModal,
     });
 
-    const {
-      pending: templatesPending,
-      handler: fetchTemplatesList,
-    } = usePendingHandler(async () => {
-      templates.value = await fetchDynamicInfoTemplatesList();
-    }, true);
+    const { pending: templatesPending, handler: fetchTemplatesList } = usePendingHandler(
+      async () => {
+        templates.value = await fetchDynamicInfoTemplatesList();
+      },
+      true,
+    );
 
     onMounted(fetchTemplatesList);
 

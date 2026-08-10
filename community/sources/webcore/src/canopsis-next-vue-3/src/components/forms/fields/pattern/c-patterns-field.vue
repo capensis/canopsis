@@ -157,24 +157,27 @@
         <span>{{ $t('pattern.errors.countOverLimit', { count: allCount }) }}</span>
       </c-alert>
       <c-layout
-class="w-100"
-gap="2"
-justify="end"
-align="center">
+        class="w-100"
+        gap="2"
+        justify="end"
+        align="center"
+      >
         <pattern-count-message v-bind="patternsCountMessageBind" />
         <template v-if="hasAllInCounter">
           <v-btn
-v-if="entityCountersType"
-text
-small
-@click="showPatternEntitiesModal()">
+            v-if="entityCountersType"
+            text
+            small
+            @click="showPatternEntitiesModal()"
+          >
             {{ $t('common.seeEntities') }}
           </v-btn>
           <v-btn
-v-else
-text
-small
-@click="showPatternAlarmsModal()">
+            v-else
+            text
+            small
+            @click="showPatternAlarmsModal()"
+          >
             {{ $t('common.seeAlarms') }}
           </v-btn>
         </template>
@@ -195,14 +198,13 @@ small
 </template>
 
 <script>
-import { computed, ref, toRef, watch } from 'vue';
-import { useField, useFormContext } from 'vee-validate';
 import { isString } from 'lodash';
+import { useField, useFormContext } from 'vee-validate';
+import { computed, ref, toRef, watch } from 'vue';
 
 import { PATTERNS_FIELDS } from '@/constants';
-
-import { isValidPatternRule, formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
+import { isValidPatternRule, formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { useI18n } from '@/hooks/i18n';
 
 import { usePatternCountAlarmsModal } from './hooks/pattern-count-alarms-modal';
@@ -211,9 +213,9 @@ import { usePatternCounters } from './hooks/pattern-counters';
 import { usePatternOptimization } from './hooks/pattern-optimization';
 import { usePatternsFieldExpand } from './hooks/patterns-field-expand';
 import PatternCountMessage from './pattern-count-message.vue';
-import PatternTryOptimization from './pattern-try-optimization.vue';
-import PatternProgress from './pattern-progress.vue';
 import PatternFieldSuggestionsWrapper from './pattern-field-suggestions-wrapper.vue';
+import PatternProgress from './pattern-progress.vue';
+import PatternTryOptimization from './pattern-try-optimization.vue';
 
 /**
  * Generates a field pattern name by combining component name and field name

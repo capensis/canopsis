@@ -4,10 +4,7 @@
     :class="{ 'pattern-suggestions--active-difference': hasDifference }"
     class="pattern-suggestions"
   >
-    <c-layout
-      align-center
-      wrap
-    >
+    <c-layout align-center wrap>
       <v-tabs
         v-model="activeSuggestionIndex"
         align-tabs="center"
@@ -26,11 +23,7 @@
     </c-layout>
 
     <v-window v-model="activeSuggestionIndex">
-      <v-window-item
-        v-for="(suggestion, index) in suggestions"
-        :key="index"
-        :value="index"
-      >
+      <v-window-item v-for="(suggestion, index) in suggestions" :key="index" :value="index">
         <pattern-suggestion-content
           :suggestion="suggestion"
           :entity-attributes="entityAttributes"
@@ -45,8 +38,8 @@
 <script>
 import { ref, computed } from 'vue';
 
-import PatternSuggestionTab from './pattern-suggestion-tab.vue';
 import PatternSuggestionContent from './pattern-suggestion-content.vue';
+import PatternSuggestionTab from './pattern-suggestion-tab.vue';
 
 export default {
   components: {
@@ -70,10 +63,13 @@ export default {
   setup(props, { emit }) {
     const activeSuggestionIndex = ref(0);
 
-    const hasDifference = computed(() => props.suggestions[activeSuggestionIndex.value]?.difference);
+    const hasDifference = computed(
+      () => props.suggestions[activeSuggestionIndex.value]?.difference,
+    );
 
     const apply = index => emit('apply', index);
-    const showEntitiesComparisonModal = suggestion => emit('show:entities-comparison', suggestion);
+    const showEntitiesComparisonModal = suggestion =>
+      emit('show:entities-comparison', suggestion);
 
     return {
       activeSuggestionIndex,
@@ -96,13 +92,15 @@ export default {
   }
 
   .theme--light & {
-    &__content, &__tab {
+    &__content,
+    &__tab {
       background-color: var(--v-background-darken1);
     }
   }
 
   .theme--dark & {
-    &__content, &__tab {
+    &__content,
+    &__tab {
       background-color: var(--v-background-lighten1);
     }
   }
@@ -111,7 +109,7 @@ export default {
     margin-top: 16px;
   }
 
-  &__tabs  {
+  &__tabs {
     position: relative;
     bottom: -2px;
     z-index: 2;
@@ -120,5 +118,5 @@ export default {
       column-gap: 12px;
     }
   }
-  }
+}
 </style>

@@ -22,8 +22,8 @@
           v-bind="activatorProps"
         >
           <v-icon size="small">
-more_vert
-</v-icon>
+            more_vert
+          </v-icon>
         </v-btn>
       </template>
 

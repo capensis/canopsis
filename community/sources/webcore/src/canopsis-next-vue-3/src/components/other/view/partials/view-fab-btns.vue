@@ -1,8 +1,5 @@
 <template>
-  <div
-    :class="{ 'view-fab-btns__fullscreen': isFullscreen }"
-    class="view-fab-btns fab ma-2"
-  >
+  <div :class="{ 'view-fab-btns__fullscreen': isFullscreen }" class="view-fab-btns fab ma-2">
     <c-layout gap="3">
       <view-scroll-top-btn />
       <view-periodic-refresh-btn />
@@ -37,10 +34,7 @@
           gap="2"
           column
         >
-          <v-tooltip
-            v-if="updatable"
-            location="left"
-          >
+          <v-tooltip v-if="updatable" location="left">
             <template #activator="{ props: tooltipProps }">
               <v-btn
                 v-bind="tooltipProps"
@@ -48,19 +42,13 @@
                 icon
                 @click.stop="showCreateTabModal"
               >
-                <v-icon
-                  icon="add"
-                  size="small"
-                />
+                <v-icon icon="add" size="small" />
               </v-btn>
             </template>
             <span>{{ $t('common.addTab') }}</span>
           </v-tooltip>
 
-          <v-tooltip
-            v-if="updatable"
-            location="left"
-          >
+          <v-tooltip v-if="updatable" location="left">
             <template #activator="{ props: tooltipProps }">
               <v-btn
                 v-bind="tooltipProps"
@@ -68,10 +56,7 @@
                 icon
                 @click.stop="showCreateWidgetModal"
               >
-                <v-icon
-                  icon="add"
-                  size="small"
-                />
+                <v-icon icon="add" size="small" />
               </v-btn>
             </template>
             <span>{{ $t('common.addWidget') }}</span>
@@ -79,17 +64,9 @@
 
           <view-editing-btn v-if="updatable" />
 
-          <view-screen-mode-btn
-            :value="activeViewScreenMode"
-            left
-            @input="changeScreenMode"
-          />
+          <view-screen-mode-btn :value="activeViewScreenMode" left @input="changeScreenMode" />
 
-          <view-share-link-btn
-            v-if="sharable"
-            :view="view"
-            :tab="activeTab"
-          />
+          <view-share-link-btn v-if="sharable" :view="view" :tab="activeTab" />
         </c-layout>
       </v-menu>
     </c-layout>
@@ -105,20 +82,19 @@ import {
   MODALS,
   VIEW_SCREEN_MODES,
 } from '@/constants';
-
-import { useActiveView } from '@/hooks/store/modules/active-view';
 import { useFullscreen } from '@/hooks/fullscreen';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
+import { useActiveView } from '@/hooks/store/modules/active-view';
 import { useView } from '@/hooks/store/modules/view';
 import { useViewRouter } from '@/hooks/view/router';
 
 import ViewEditingBtn from './view-editing-btn.vue';
 import ViewPeriodicRefreshBtn from './view-periodic-refresh-btn.vue';
 import ViewScreenModeBtn from './view-screen-mode-btn.vue';
-import ViewShareLinkBtn from './view-share-link-btn.vue';
 import ViewScrollTopBtn from './view-scroll-top-btn.vue';
+import ViewShareLinkBtn from './view-share-link-btn.vue';
 
 export default {
   components: {
@@ -153,13 +129,8 @@ export default {
     const fullscreen = useFullscreen();
     const { route, redirectToFirstTab } = useViewRouter();
     const { createViewTab } = useView();
-    const {
-      view,
-      activeViewScreenMode,
-      fetchActiveView,
-      toggleEditing,
-      setActiveViewScreenMode,
-    } = useActiveView();
+    const { view, activeViewScreenMode, fetchActiveView, toggleEditing, setActiveViewScreenMode } =
+      useActiveView();
 
     const enterFullscreen = () => {
       if (!props.activeTab) {

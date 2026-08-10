@@ -13,10 +13,7 @@
         @update:model-value="updateField('type', $event)"
       />
     </div>
-    <div
-      v-if="hasParameterField"
-      :style="flexSizeStyle"
-    >
+    <div v-if="hasParameterField" :style="flexSizeStyle">
       <c-text-field
         :model-value="value.parameter"
         :label="$t('request.parameterName')"
@@ -42,14 +39,11 @@
 <script>
 import { computed } from 'vue';
 
-import { REQUEST_AUTH_TOKEN_TYPES } from '@/constants';
-
-import { gridFlexStyle } from '@/helpers/layout';
-
-import { useI18n } from '@/hooks/i18n';
-import { useModelField } from '@/hooks/form/model-field';
-
 import ExternalAuthTokenField from '@/components/other/external-auth-token/form/fields/external-auth-token-field.vue';
+import { REQUEST_AUTH_TOKEN_TYPES } from '@/constants';
+import { gridFlexStyle } from '@/helpers/layout';
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   emits: ['update:value'],
@@ -76,26 +70,30 @@ export default {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
-    const types = computed(() => Object.values(REQUEST_AUTH_TOKEN_TYPES).map(type => ({
-      value: type,
-      text: t(`request.authTokenTypes.${type}`),
-    })));
+    const types = computed(() =>
+      Object.values(REQUEST_AUTH_TOKEN_TYPES).map(type => ({
+        value: type,
+        text: t(`request.authTokenTypes.${type}`),
+      })),
+    );
 
-    const isAnyHeaderAuthorizationType = computed(() => [
-      REQUEST_AUTH_TOKEN_TYPES.headerAuthorization,
-      REQUEST_AUTH_TOKEN_TYPES.headerAuthorizationBearer,
-    ].includes(props.value.type));
+    const isAnyHeaderAuthorizationType = computed(() =>
+      [
+        REQUEST_AUTH_TOKEN_TYPES.headerAuthorization,
+        REQUEST_AUTH_TOKEN_TYPES.headerAuthorizationBearer,
+      ].includes(props.value.type),
+    );
 
-    const isHeaderCustomParameterType = computed(() => (
-      props.value.type === REQUEST_AUTH_TOKEN_TYPES.headerCustomParameter
-    ));
+    const isHeaderCustomParameterType = computed(
+      () => props.value.type === REQUEST_AUTH_TOKEN_TYPES.headerCustomParameter,
+    );
 
     const isPayloadType = computed(() => props.value.type === REQUEST_AUTH_TOKEN_TYPES.payload);
     const isUrlType = computed(() => props.value.type === REQUEST_AUTH_TOKEN_TYPES.url);
 
-    const hasParameterField = computed(() => (
-      isHeaderCustomParameterType.value || isPayloadType.value || isUrlType.value
-    ));
+    const hasParameterField = computed(
+      () => isHeaderCustomParameterType.value || isPayloadType.value || isUrlType.value,
+    );
 
     const flexSizeStyle = computed(() => gridFlexStyle(hasParameterField.value ? 4 : 6));
 

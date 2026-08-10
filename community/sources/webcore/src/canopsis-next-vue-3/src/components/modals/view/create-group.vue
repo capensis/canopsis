@@ -16,11 +16,7 @@
       </template>
 
       <template #actions>
-        <v-btn
-          :disabled="isSubmitting"
-          variant="text"
-          @click="closeModal"
-        >
+        <v-btn :disabled="isSubmitting" variant="text" @click="closeModal">
           {{ t('common.cancel') }}
         </v-btn>
 
@@ -33,16 +29,9 @@
           {{ t('common.submit') }}
         </v-btn>
 
-        <v-tooltip
-          v-if="config.deletable"
-          :disabled="group.deletable"
-          location="top"
-        >
+        <v-tooltip v-if="config.deletable" :disabled="group.deletable" location="top">
           <template #activator="{ props: activatorProps }">
-            <div
-              class="ml-2"
-              v-bind="activatorProps"
-            >
+            <div class="ml-2" v-bind="activatorProps">
               <v-btn
                 :disabled="isSubmitting || !group.deletable"
                 :loading="removing"
@@ -65,9 +54,7 @@
 import { computed, ref } from 'vue';
 
 import { MODALS } from '@/constants';
-
 import { groupToRequest } from '@/helpers/entities/view/form';
-
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';

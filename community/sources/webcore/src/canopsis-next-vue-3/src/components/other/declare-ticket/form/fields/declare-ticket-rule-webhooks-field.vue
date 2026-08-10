@@ -31,7 +31,6 @@
 import { computed } from 'vue';
 
 import { declareTicketRuleWebhookToForm } from '@/helpers/entities/declare-ticket/rule/form';
-
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import DeclareTicketRuleWebhookField from './declare-ticket-rule-webhook-field.vue';
@@ -44,7 +43,7 @@ export default {
   props: {
     webhooks: {
       type: Array,
-      default: () => ([]),
+      default: () => [],
     },
     name: {
       type: String,
@@ -63,16 +62,12 @@ export default {
   emits: ['update:webhooks'],
 
   setup(props, { emit }) {
-    const {
-      updateModel,
-      addItemIntoArray,
-      removeItemFromArray,
-      updateItemInArray,
-    } = useArrayModelField(props, emit, 'webhooks');
+    const { updateModel, addItemIntoArray, removeItemFromArray, updateItemInArray } =
+      useArrayModelField(props, emit, 'webhooks');
 
-    const isSomeOneDeclareTicketEnabled = computed(() => props.webhooks.some(
-      webhook => webhook.declare_ticket.enabled,
-    ));
+    const isSomeOneDeclareTicketEnabled = computed(() =>
+      props.webhooks.some(webhook => webhook.declare_ticket.enabled),
+    );
 
     const draggableGroup = computed(() => ({
       name: 'declare-ticket-steps',

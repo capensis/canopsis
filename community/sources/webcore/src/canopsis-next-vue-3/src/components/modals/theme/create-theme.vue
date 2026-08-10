@@ -10,11 +10,7 @@
       </template>
 
       <template #actions>
-        <v-btn
-          :disabled="submitting"
-          variant="text"
-          @click="closeModal"
-        >
+        <v-btn :disabled="submitting" variant="text" @click="closeModal">
           {{ t('common.cancel') }}
         </v-btn>
         <v-btn
@@ -33,17 +29,14 @@
 <script>
 import { computed } from 'vue';
 
+import ThemeForm from '@/components/other/theme/form/theme-form.vue';
 import { MODALS } from '@/constants';
-
 import { formToTheme, themeToForm } from '@/helpers/entities/theme/form';
-
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-
-import ThemeForm from '@/components/other/theme/form/theme-form.vue';
 
 export default {
   name: MODALS.createTheme,

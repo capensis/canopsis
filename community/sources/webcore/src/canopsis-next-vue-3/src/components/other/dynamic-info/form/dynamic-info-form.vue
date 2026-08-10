@@ -1,13 +1,6 @@
 <template>
-  <c-layout
-    gap="2"
-    column
-  >
-    <c-enabled-field
-      v-model="enabledField"
-      :label="$t('common.enabled')"
-      with-background
-    />
+  <c-layout gap="2" column>
+    <c-enabled-field v-model="enabledField" :label="$t('common.enabled')" with-background />
 
     <c-name-field
       v-model="nameField"
@@ -18,11 +11,7 @@
 
     <c-form-block>
       <c-form-block-row :label="$t('common.description')">
-        <c-description-field
-          v-model="descriptionField"
-          name="description"
-          required
-        />
+        <c-description-field v-model="descriptionField" name="description" required />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('modals.createDynamicInfo.infosSection.title')">
@@ -42,11 +31,7 @@ export default {
     DynamicInfoInfosForm,
   },
   setup() {
-    const {
-      enabledField,
-      nameField,
-      descriptionField,
-    } = useFormModels({
+    const { enabledField, nameField, descriptionField } = useFormModels({
       enabledField: 'enabled',
       nameField: 'name',
       descriptionField: 'description',

@@ -61,7 +61,7 @@ export default {
     groupRequired: 'Please add at least one group',
     invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
     countOverLimit:
-      "The patterns you've defined targets about {count} items. It can affect performance, are you sure ?",
+      'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
     existExcluded: 'The rules include excluded rule.',
     required: 'At least one pattern has to be defined. Please define filter patterns for rule',
   },

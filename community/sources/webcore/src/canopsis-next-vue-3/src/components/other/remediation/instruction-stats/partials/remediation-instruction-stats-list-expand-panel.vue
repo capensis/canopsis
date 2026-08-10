@@ -17,7 +17,7 @@
           <v-window-item value="summary">
             <v-row justify="center">
               <v-col cols="8">
-                <remediation-instruction-stats-summary-tab :remediation-instruction="remediationInstruction" />
+                <remediation-instruction-stats-summary-tab :remediation-instruction="remediationInstruction"/>
               </v-col>
             </v-row>
           </v-window-item>
@@ -77,7 +77,8 @@ export default {
 
   setup(props) {
     const { t } = useI18n();
-    const { fetchRemediationInstructionStatsSummaryWithoutStore } = useRemediationInstructionStats();
+    const { fetchRemediationInstructionStatsSummaryWithoutStore } =
+      useRemediationInstructionStats();
     const activeTab = ref('summary');
     const remediationInstruction = ref({});
 

@@ -33,11 +33,7 @@
       <c-enabled :value="item.enabled ?? true" />
     </template>
     <template #unread_failures_count="{ item }">
-      <c-circle-badge
-        v-if="item.unread_failures_count"
-        color="error"
-        small
-      >
+      <c-circle-badge v-if="item.unread_failures_count" color="error" small>
         {{ item.unread_failures_count }}
       </c-circle-badge>
       <template v-else>
@@ -55,21 +51,9 @@
     </template>
     <template #actions="{ item }">
       <c-layout>
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
         <c-db-export-btn :id="item._id" event-filter />
       </c-layout>
     </template>
@@ -87,7 +71,6 @@
 import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 import EventFiltersListExpandPanel from './partials/event-filters-list-expand-panel.vue';
@@ -153,10 +136,8 @@ export default {
      * @param {Array} [item.exceptions] - Array of exception dates
      * @return {boolean} True if item has any calendar-related properties configured
      */
-    const isCalendarRule = item => item.start
-      || item.rrule
-      || item.exdates?.length
-      || item.exceptions?.length;
+    const isCalendarRule = item =>
+      item.start || item.rrule || item.exdates?.length || item.exceptions?.length;
     const dateToString = value => convertDateToString(value);
 
     return {

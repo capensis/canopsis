@@ -12,10 +12,7 @@
 
         <div class="my-3">
           <p v-html="sanitizedPhraseText" class="mb-2" />
-          <code
-            v-text="originalPhrase"
-            class="text-black bg-grey-lighten-2 d-inline-block pa-1"
-          />
+          <code v-text="originalPhrase" class="text-black bg-grey-lighten-2 d-inline-block pa-1" />
         </div>
 
         <c-text-field
@@ -54,7 +51,6 @@
 import { computed, ref } from 'vue';
 
 import { sanitizeHtml } from '@/helpers/html';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 

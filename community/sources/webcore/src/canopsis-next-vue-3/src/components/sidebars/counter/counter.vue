@@ -70,13 +70,18 @@
 </template>
 
 <script setup>
-import {
-  computed,
-  onMounted,
-  ref,
-  toRef,
-} from 'vue';
+import { computed, onMounted, ref, toRef } from 'vue';
 
+import AlarmsListModalForm from '@/components/sidebars/alarm/form/alarms-list-modal.vue';
+import FieldOpenedResolvedFilter from '@/components/sidebars/alarm/form/fields/opened-resolved-filter.vue';
+import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
+import FieldGridSize from '@/components/sidebars/form/fields/grid-size.vue';
+import FieldSlider from '@/components/sidebars/form/fields/slider.vue';
+import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
+import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import MarginsForm from '@/components/sidebars/form/margins.vue';
+import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
 import {
   COLUMNS_WIDGET_TEMPLATES_TYPES,
   MAX_LIMIT,
@@ -84,24 +89,12 @@ import {
   SIDE_BARS,
   WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
-
 import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
 import { widgetSortColumnsToForm } from '@/helpers/entities/widget/sort-column/form';
+import { useI18n } from '@/hooks/i18n';
 import { useInfos } from '@/hooks/store/modules/infos';
 import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
-import { useI18n } from '@/hooks/i18n';
 import { useWidgetSettings } from '@/hooks/widget/settings';
-
-import AlarmsListModalForm from '@/components/sidebars/alarm/form/alarms-list-modal.vue';
-import FieldOpenedResolvedFilter from '@/components/sidebars/alarm/form/fields/opened-resolved-filter.vue';
-import FieldTitle from '@/components/sidebars/form/fields/title.vue';
-import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
-import FieldGridSize from '@/components/sidebars/form/fields/grid-size.vue';
-import FieldSlider from '@/components/sidebars/form/fields/slider.vue';
-import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
-import MarginsForm from '@/components/sidebars/form/margins.vue';
-import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
-import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 
 import CounterLevelsForm from './form/counter-levels.vue';
 import FieldTemplate from './form/fields/template.vue';
@@ -124,32 +117,27 @@ const widgetTemplatesPending = ref(false);
 const { fetchInfos } = useInfos();
 const { fetchWidgetTemplatesListWithoutStore } = useWidgetTemplate();
 
-const {
-  form,
-  widget,
-  hasChanges,
-  submitting,
-  close,
-  submit,
-} = useWidgetSettings({
+const { form, widget, hasChanges, submitting, close, submit } = useWidgetSettings({
   sidebar,
 });
 
-const preparedWidgetTemplates = computed(() => widgetTemplates.value.map((template) => {
-  if (COLUMNS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
-    return { ...template, columns: widgetColumnsToForm(template.columns) };
-  }
+const preparedWidgetTemplates = computed(() =>
+  widgetTemplates.value.map((template) => {
+    if (COLUMNS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
+      return { ...template, columns: widgetColumnsToForm(template.columns) };
+    }
 
-  if (QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
+    if (QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
+      return template;
+    }
+
+    if (WIDGET_TEMPLATES_TYPES.alarmSortColumns === template.type) {
+      return { ...template, sort_columns: widgetSortColumnsToForm(template.sort_columns) };
+    }
+
     return template;
-  }
-
-  if (WIDGET_TEMPLATES_TYPES.alarmSortColumns === template.type) {
-    return { ...template, sort_columns: widgetSortColumnsToForm(template.sort_columns) };
-  }
-
-  return template;
-}));
+  }),
+);
 
 const fetchWidgetTemplates = async () => {
   try {

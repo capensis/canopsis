@@ -7,8 +7,7 @@
     @update:model-value="$emit('change', $event)"
   >
     <template #item="{ element: view }">
-      <group-view-panel :view="view"
-      />
+      <group-view-panel :view="view" />
     </template>
   </c-draggable-list-field>
 </template>

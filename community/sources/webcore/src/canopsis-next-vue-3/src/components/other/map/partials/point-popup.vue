@@ -4,12 +4,13 @@
       <c-layout justify="space-between" align="center">
         <h4>{{ title }}</h4>
         <v-btn
-class="ml-3"
-color="white"
-icon="close"
-size="small"
-variant="text"
-@click="close" />
+          class="ml-3"
+          color="white"
+          icon="close"
+          size="small"
+          variant="text"
+          @click="close"
+        />
       </c-layout>
     </v-card-title>
     <v-card-text>
@@ -39,8 +40,8 @@ variant="text"
         @click.stop="$emit('show:map')"
       >
         <v-icon start>
-link
-</v-icon>
+          link
+        </v-icon>
         <span class="text-none text-truncate">
           {{ point.map.name }}
         </span>
@@ -54,9 +55,7 @@ import { isNumber } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
 import { USER_PERMISSIONS } from '@/constants';
-
 import { getEntityColor } from '@/helpers/entities/entity/color';
-
 import { authMixin } from '@/mixins/auth';
 
 export default {

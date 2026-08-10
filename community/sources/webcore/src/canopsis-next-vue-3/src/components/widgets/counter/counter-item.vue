@@ -17,15 +17,8 @@
       @click.stop="showVariablesHelpModal"
     />
 
-    <c-layout
-      class="counter-item__content"
-      align="start"
-    >
-      <v-icon
-        :icon="icon"
-        class="counter-item__icon px-3 py-2"
-        size="2em"
-      />
+    <c-layout class="counter-item__content" align="start">
+      <v-icon :icon="icon" class="counter-item__icon px-3 py-2" size="2em" />
 
       <c-compiled-template
         :template="widget.parameters.blockTemplate"
@@ -39,6 +32,7 @@
 <script>
 import { invert } from 'lodash';
 
+import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 import {
   ALARM_STATES,
   COUNTER_EXPORT_FILE_NAME_PREFIX,
@@ -46,12 +40,8 @@ import {
   MODALS,
   USER_PERMISSIONS,
 } from '@/constants';
-
 import { convertObjectToTreeview } from '@/helpers/treeview';
-
 import { authMixin } from '@/mixins/auth';
-
-import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 
 const INVERTED_ALARM_STATES = invert(ALARM_STATES);
 
@@ -84,18 +74,15 @@ export default {
     },
 
     state() {
-      const {
-        counter,
-        values,
-      } = this.widget.parameters.levels;
+      const { counter, values } = this.widget.parameters.levels;
 
       const count = this.counter[counter];
 
-      return [
-        ALARM_STATES.critical,
-        ALARM_STATES.major,
-        ALARM_STATES.minor,
-      ].find(state => count >= values?.[INVERTED_ALARM_STATES[state]]) || ALARM_STATES.ok;
+      return (
+        [ALARM_STATES.critical, ALARM_STATES.major, ALARM_STATES.minor].find(
+          state => count >= values?.[INVERTED_ALARM_STATES[state]],
+        ) || ALARM_STATES.ok
+      );
     },
 
     hasVariablesHelpAccess() {

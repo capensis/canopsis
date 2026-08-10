@@ -31,12 +31,7 @@ import { useScenarioStore } from '@/stores/modules/scenario';
  */
 export const useScenario = () => {
   const scenarioStore = useScenarioStore();
-  const {
-    items,
-    meta,
-    pending,
-    fetchingParams,
-  } = storeToRefs(scenarioStore);
+  const { items, meta, pending, fetchingParams } = storeToRefs(scenarioStore);
 
   return {
     scenariosMeta: meta,
@@ -52,7 +47,8 @@ export const useScenario = () => {
     removeScenario: scenarioStore.remove,
     createTestScenarioExecution: scenarioStore.createTestScenarioExecution,
     fetchTestScenarioExecutionWithoutStore: scenarioStore.fetchTestScenarioExecutionWithoutStore,
-    fetchTestScenarioExecutionWebhooksResponse: scenarioStore.fetchTestScenarioExecutionWebhooksResponse,
+    fetchTestScenarioExecutionWebhooksResponse:
+      scenarioStore.fetchTestScenarioExecutionWebhooksResponse,
     bulkEnableScenarios: scenarioStore.bulkEnable,
     bulkDisableScenarios: scenarioStore.bulkDisable,
     bulkRemoveScenarios: scenarioStore.bulkRemove,

@@ -1,9 +1,10 @@
 <template>
   <v-menu
-:disabled="pending"
-:min-width="300"
-:close-on-content-click="false"
-origin="top center">
+    :disabled="pending"
+    :min-width="300"
+    :close-on-content-click="false"
+    origin="top center"
+  >
     <template #activator="{ props: activatorProps }">
       <v-btn
         class="top-bar-notifications-menu__button text-white"
@@ -14,10 +15,11 @@ origin="top center">
 
         <c-circle-badge class="top-bar-notifications-menu__badge ml-2 text-primary" color="white">
           <v-progress-circular
-v-if="pending"
-size="12"
-width="1"
-indeterminate />
+            v-if="pending"
+            size="12"
+            width="1"
+            indeterminate
+          />
           <span v-else>
             {{ totalCount }}
           </span>
@@ -59,12 +61,11 @@ import {
   NOTIFICATIONS_PAGE_TABS_KEYS,
   ROUTES_NAMES,
 } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
+import { usePendingHandler } from '@/hooks/query/pending';
 import { useSocketRoom } from '@/hooks/socket';
 import { useInfo } from '@/hooks/store/modules/info';
 import { useNotifications } from '@/hooks/store/modules/notification';
-import { usePendingHandler } from '@/hooks/query/pending';
 
 import TopBarNotificationsMenuItem from './top-bar-notifications-menu-item.vue';
 

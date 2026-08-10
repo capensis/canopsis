@@ -90,10 +90,11 @@ const toggleShownField = () => {
       />
 
       <v-btn
-icon="delete"
-size="small"
-variant="text"
-@click="toggleShownField" />
+        icon="delete"
+        size="small"
+        variant="text"
+        @click="toggleShownField"
+      />
     </c-layout>
 
     <div v-else>

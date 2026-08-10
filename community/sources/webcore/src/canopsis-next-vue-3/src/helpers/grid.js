@@ -56,8 +56,7 @@ const collides = (first, second) =>
  * @param {GridLayoutItem} layoutItem
  * @returns {GridLayout}
  */
-const getAllCollisions = (layout, layoutItem) =>
-  layout.filter(item => collides(layoutItem, item));
+const getAllCollisions = (layout, layoutItem) => layout.filter(item => collides(layoutItem, item));
 
 /**
  * Get first collision for the item in the layout

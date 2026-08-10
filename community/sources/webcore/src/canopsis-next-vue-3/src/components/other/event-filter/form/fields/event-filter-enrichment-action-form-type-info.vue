@@ -2,28 +2,21 @@
   <div>
     <c-layout align="center">
       <span>{{ message }}</span>
-      <v-btn
-        icon
-        small
-        @click="toggleDescriptionOpened"
-      >
+      <v-btn icon small @click="toggleDescriptionOpened">
         <v-icon>help</v-icon>
       </v-btn>
     </c-layout>
     <v-expand-transition>
       <v-card v-show="opened" class="mt-2 pa-4 event-filter-enrichment-action-form-type-info-card">
         <c-layout column>
-          <div
-            v-html="description"
-            class="pre-wrap"
-          />
+          <div v-html="description" class="pre-wrap" />
           <img
             v-if="image"
             :src="image"
             class="my-2"
             alt=""
             @click="showImageViewerModal"
-          >
+          />
         </c-layout>
       </v-card>
     </v-expand-transition>
@@ -31,9 +24,8 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
-
 import { eventFilterActionsTypesImages } from '@/assets';
+import { MODALS } from '@/constants';
 
 export default {
   props: {
@@ -98,10 +90,11 @@ img {
     }
 
     td {
-      background-color: var(--v-background-base, #FFFFFF);
+      background-color: var(--v-background-base, #ffffff);
     }
 
-    td, th {
+    td,
+    th {
       border: 1px solid var(--v-background-darken3, #b1b1b1);
     }
   }

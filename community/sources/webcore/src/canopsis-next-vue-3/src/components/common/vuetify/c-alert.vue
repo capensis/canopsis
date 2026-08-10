@@ -5,10 +5,7 @@ defineOptions({
 </script>
 
 <template>
-  <v-alert
-    v-bind="$attrs"
-    class="c-alert"
-  >
+  <v-alert v-bind="$attrs" class="c-alert">
     <slot />
   </v-alert>
 </template>

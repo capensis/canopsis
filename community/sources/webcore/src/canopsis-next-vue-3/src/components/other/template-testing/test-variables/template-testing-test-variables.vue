@@ -41,10 +41,11 @@
       </v-tooltip>
 
       <v-btn
-:loading="running"
-:disabled="running"
-color="primary"
-@click="runTest">
+        :loading="running"
+        :disabled="running"
+        color="primary"
+        @click="runTest"
+      >
         {{ t('templateTesting.runTest') }}
       </v-btn>
     </c-layout>
@@ -56,13 +57,13 @@ import { computed, ref } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
 
+import TemplateTestingTestVariablesForm from './form/template-testing-test-variables-form.vue';
 import {
   useTemplateTestingValidationForm,
   useTemplateTestActions,
   useTemplateTestRunner,
   useTemplateTestAfterSubmit,
 } from './hooks/template-testing-test-variables';
-import TemplateTestingTestVariablesForm from './form/template-testing-test-variables-form.vue';
 
 export default {
   components: {

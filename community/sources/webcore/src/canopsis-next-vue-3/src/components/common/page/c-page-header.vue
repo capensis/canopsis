@@ -12,8 +12,8 @@
         @click="toggleMessageVisibility"
       >
         <c-icon color="info" no-fill>
-help
-</c-icon>
+          help
+        </c-icon>
       </v-btn>
     </h1>
 
@@ -28,10 +28,11 @@ help
 
         <c-layout v-if="!messageWasHidden" class="pb-2" justify="center">
           <v-btn
-:loading="isHidePending"
-class="my-2"
-color="primary"
-@click="hideMessage">
+            :loading="isHidePending"
+            class="my-2"
+            color="primary"
+            @click="hideMessage"
+          >
             {{ $t('pageHeaders.hideMessage') }}
           </v-btn>
         </c-layout>
@@ -47,9 +48,7 @@ import { useRoute } from 'vue-router';
 
 import { DOCUMENTATION_BASE_URL } from '@/config';
 import { DOCUMENTATION_LINKS } from '@/constants';
-
 import { removeTrailingSlashes } from '@/helpers/url';
-
 import { useI18n } from '@/hooks/i18n';
 import { useTourBase } from '@/hooks/tour-base';
 

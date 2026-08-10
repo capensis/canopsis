@@ -51,7 +51,6 @@
 import { onMounted } from 'vue';
 
 import { uid } from '@/helpers/uid';
-
 import { useFormContext } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
@@ -87,11 +86,9 @@ export default {
     };
 
     const updateField = (index, field, value) => {
-      fields.value = fields.value.map((item, itemIndex) => (
-        itemIndex === index
-          ? { ...item, [field]: value }
-          : item
-      ));
+      fields.value = fields.value.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, [field]: value } : item,
+      );
     };
 
     onMounted(() => {

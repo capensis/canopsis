@@ -23,11 +23,12 @@
     />
 
     <v-progress-linear
-v-show="pending"
-:height="3"
-class="ma-0"
-color="primary"
-indeterminate />
+      v-show="pending"
+      :height="3"
+      class="ma-0"
+      color="primary"
+      indeterminate
+    />
 
     <v-row class="mt-2">
       <v-col v-for="timespan in timespans" :key="`${timespan.from}-${timespan.to}`" cols="12">
@@ -49,7 +50,6 @@ indeterminate />
 
 <script>
 import { MODALS, PBEHAVIOR_RRULE_PERIODS_RANGES, TIME_UNITS } from '@/constants';
-
 import {
   addUnitToDate,
   convertDateToEndOfUnitTimestamp,
@@ -58,7 +58,6 @@ import {
   convertDateToTimestampByTimezone,
 } from '@/helpers/date/date';
 import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';

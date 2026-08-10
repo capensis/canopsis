@@ -1,8 +1,5 @@
 <template>
-  <c-layout
-    class="scenario-action-card-general-tab"
-    wrap
-  >
+  <c-layout class="scenario-action-card-general-tab" wrap>
     <div
       v-for="(item, index) in items"
       :key="index"
@@ -21,11 +18,7 @@
         :label="item.label"
         :value="item.value"
       />
-      <component
-        v-if="item.subcomponent"
-        :is="item.subcomponent"
-        v-bind="item.subcomponentProps"
-      />
+      <component v-if="item.subcomponent" :is="item.subcomponent" v-bind="item.subcomponentProps" />
     </div>
   </c-layout>
 </template>
@@ -34,13 +27,12 @@
 import { rrulestr } from 'rrule';
 
 import { ACTION_TYPES } from '@/constants';
-
 import { convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 
-import ScenarioInfoItem from './scenario-info-item.vue';
-import ScenarioInfoItemMultiline from './scenario-info-item-multiline.vue';
 import ScenarioActionCardCompiledTemplate from './scenario-action-card-compiled-template.vue';
+import ScenarioInfoItemMultiline from './scenario-info-item-multiline.vue';
+import ScenarioInfoItem from './scenario-info-item.vue';
 
 export default {
   components: {
@@ -69,22 +61,33 @@ export default {
     },
 
     items() {
-      const getItems = {
-        [ACTION_TYPES.ack]: this.getItemsDefault,
-        [ACTION_TYPES.ackremove]: this.getItemsDefault,
-        [ACTION_TYPES.cancel]: this.getItemsDefault,
-        [ACTION_TYPES.assocticket]: this.getItemsForAssocTicketType,
-        [ACTION_TYPES.changeState]: this.getItemsForChangeStateType,
-        [ACTION_TYPES.snooze]: this.getItemsForSnoozeType,
-        [ACTION_TYPES.pbehavior]: this.getItemsForPbehaviorType,
-        [ACTION_TYPES.webhook]: this.getItemsForWebhookType,
-      }[this.action.type] ?? this.getItemsDefault;
+      const getItems =
+        {
+          [ACTION_TYPES.ack]: this.getItemsDefault,
+          [ACTION_TYPES.ackremove]: this.getItemsDefault,
+          [ACTION_TYPES.cancel]: this.getItemsDefault,
+          [ACTION_TYPES.assocticket]: this.getItemsForAssocTicketType,
+          [ACTION_TYPES.changeState]: this.getItemsForChangeStateType,
+          [ACTION_TYPES.snooze]: this.getItemsForSnoozeType,
+          [ACTION_TYPES.pbehavior]: this.getItemsForPbehaviorType,
+          [ACTION_TYPES.webhook]: this.getItemsForWebhookType,
+        }[this.action.type] ?? this.getItemsDefault;
 
       const items = getItems.call(this);
 
       const dropScenarioItemField = this.action.drop_scenario_if_not_matched
-        ? { icon: 'stop', label: this.$t('scenario.actionDidNotMatch'), value: this.$t('common.stop'), multiline: true }
-        : { icon: 'trending_flat', label: this.$t('scenario.actionDidNotMatch'), value: this.$t('scenario.remainingAction'), multiline: true };
+        ? {
+            icon: 'stop',
+            label: this.$t('scenario.actionDidNotMatch'),
+            value: this.$t('common.stop'),
+            multiline: true,
+          }
+        : {
+            icon: 'trending_flat',
+            label: this.$t('scenario.actionDidNotMatch'),
+            value: this.$t('scenario.remainingAction'),
+            multiline: true,
+          };
 
       const workflowFields = [{ ...dropScenarioItemField, flexClass: 'w-50' }];
 
@@ -370,7 +373,10 @@ export default {
       }
 
       if (declareTicketArray.length) {
-        const declareTicketItems = declareTicketArray.map(([label, value]) => ({ label, value: String(value) }));
+        const declareTicketItems = declareTicketArray.map(([label, value]) => ({
+          label,
+          value: String(value),
+        }));
 
         result.push(
           { icon: 'list', label: this.$t('scenario.declareTicket') },

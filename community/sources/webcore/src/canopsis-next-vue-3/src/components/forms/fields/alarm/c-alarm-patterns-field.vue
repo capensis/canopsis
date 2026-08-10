@@ -14,10 +14,11 @@
   >
     <template #append-count="">
       <v-btn
-v-if="alarmCounter && alarmCounter.count"
-text
-small
-@click="showPatternAlarmsModal">
+        v-if="alarmCounter && alarmCounter.count"
+        text
+        small
+        @click="showPatternAlarmsModal"
+      >
         {{ $t('common.seeAlarms') }}
       </v-btn>
     </template>
@@ -27,6 +28,7 @@ small
 <script>
 import { isArray, keyBy } from 'lodash';
 
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 import {
   ALARM_EVENT_INITIATORS,
   ALARM_PATTERN_FIELDS,
@@ -42,13 +44,9 @@ import {
   PATTERN_EXISTS_OPERATORS,
   PATTERN_ALARM_TAG_LABEL_OPERATORS,
 } from '@/constants';
-
 import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
-
-import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
-
-import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
   components: { PatternEditorField },

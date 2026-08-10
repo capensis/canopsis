@@ -7,7 +7,11 @@ const props = defineProps(validationProps);
 const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
-const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(props, emit, attrs);
+const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(
+  props,
+  emit,
+  attrs,
+);
 const menuOpened = ref(false);
 const pendingBlurEvent = ref(null);
 

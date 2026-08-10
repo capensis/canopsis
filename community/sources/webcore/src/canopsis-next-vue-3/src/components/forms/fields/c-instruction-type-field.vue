@@ -1,5 +1,5 @@
 <template>
-  <v-radio-group
+  <c-radio-group
     :model-value="modelValue"
     :label="$t('remediation.instruction.type')"
     :disabled="disabled"
@@ -15,7 +15,7 @@
       :value="type.value"
       color="primary"
     />
-  </v-radio-group>
+  </c-radio-group>
 </template>
 
 <script>

@@ -6,18 +6,11 @@
       </template>
 
       <template #text>
-        <user-form
-          :is-new="isNew"
-          :user="config.user"
-          :only-user-prefs="config.onlyUserPrefs"
-        />
+        <user-form :is-new="isNew" :user="config.user" :only-user-prefs="config.onlyUserPrefs" />
       </template>
 
       <template #actions>
-        <v-btn
-          variant="text"
-          @click="closeModal"
-        >
+        <v-btn variant="text" @click="closeModal">
           {{ t('common.cancel') }}
         </v-btn>
 
@@ -37,14 +30,12 @@
 <script>
 import { computed } from 'vue';
 
+import UserForm from '@/components/other/users/form/user-form.vue';
 import { userToForm, formToUserRequest } from '@/helpers/entities/user/form';
-
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-
-import UserForm from '@/components/other/users/form/user-form.vue';
 
 export default {
   components: { UserForm },

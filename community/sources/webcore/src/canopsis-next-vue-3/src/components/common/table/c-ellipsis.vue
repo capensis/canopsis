@@ -7,11 +7,7 @@
       top
     >
       <template #activator="{ on }">
-        <span
-          class="c-ellipsis__activator"
-          v-bind="on"
-          @click.stop="textClicked"
-        >
+        <span class="c-ellipsis__activator" v-bind="on" @click.stop="textClicked">
           <span>{{ shortenedText }}</span>
           <span v-if="!isShort">...</span>
         </span>
@@ -21,15 +17,9 @@
     <template v-else>
       <span @click.stop="textClicked">{{ shortenedText }}</span>
 
-      <v-menu
-        v-if="!isShort"
-        :close-on-content-click="false"
-      >
+      <v-menu v-if="!isShort" :close-on-content-click="false">
         <template #activator="{ props }">
-          <span
-            class="ml-1"
-            v-bind="props"
-          >...</span>
+          <span class="ml-1" v-bind="props">...</span>
         </template>
 
         <v-card>

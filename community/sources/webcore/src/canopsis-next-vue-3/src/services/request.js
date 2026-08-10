@@ -2,7 +2,6 @@ import axios from 'axios';
 
 import { API_HOST, LOCAL_STORAGE_ACCESS_TOKEN_KEY, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 import { LOGOUT_RESPONSE_STATUSES } from '@/constants';
-
 import localStorageService from '@/services/local-storage';
 
 /**
@@ -92,8 +91,9 @@ function errorResponseHandler(responseWithError) {
      */
     if (LOGOUT_RESPONSE_STATUSES.includes(response.status)) {
       const queryParams = new URLSearchParams(window.location.search);
-      const hasAccessToken = localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY)
-        || queryParams.has(ROUTER_ACCESS_TOKEN_KEY);
+      const hasAccessToken =
+        localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY) ||
+        queryParams.has(ROUTER_ACCESS_TOKEN_KEY);
 
       queryParams.delete(ROUTER_ACCESS_TOKEN_KEY);
       localStorageService.remove(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
@@ -129,4 +129,3 @@ request.interceptors.request.use(requestHandler);
 request.interceptors.response.use(successResponseHandler, errorResponseHandler);
 
 export default request;
-

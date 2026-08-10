@@ -1,8 +1,7 @@
 import { isArray, isEqual, omit, pick } from 'lodash';
 
-import { ADVANCED_SEARCH_FIELDS, DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
-
+import { ADVANCED_SEARCH_FIELDS, DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
 import {
   convertStartDateIntervalToTimestamp,
   convertStopDateIntervalToTimestamp,
@@ -114,8 +113,7 @@ export const convertDataTableSortToQuery = (sortBy = []) => ({
  * @param {string | string[]} filter
  * @returns {string[]}
  */
-export const convertFilterToQuery = filter =>
-  (isArray(filter) ? filter : [filter]).filter(Boolean);
+export const convertFilterToQuery = filter => (isArray(filter) ? filter : [filter]).filter(Boolean);
 
 /**
  * Convert locked filter and main filter to query filters.

@@ -7,32 +7,15 @@
       @update:model-value="$emit('update:modelValue', $event)"
     />
 
-    <c-form-block-row
-      :label="t('common.ticket')"
-      :depth="depth"
-    >
-      <c-text-field
-        v-model="ticket"
-        :name="`${name}.ticket`"
-        :label="t('common.ticket')"
-      />
+    <c-form-block-row :label="t('common.ticket')" :depth="depth">
+      <c-text-field v-model="ticket" :name="`${name}.ticket`" :label="t('common.ticket')" />
     </c-form-block-row>
 
-    <c-form-block-row
-      :label="t('common.url')"
-      :depth="depth"
-    >
-      <c-text-field
-        v-model="ticketUrl"
-        :name="`${name}.ticket_url`"
-        :label="t('common.url')"
-      />
+    <c-form-block-row :label="t('common.url')" :depth="depth">
+      <c-text-field v-model="ticketUrl" :name="`${name}.ticket_url`" :label="t('common.url')" />
     </c-form-block-row>
 
-    <c-form-block-row
-      :label="t('common.title')"
-      :depth="depth"
-    >
+    <c-form-block-row :label="t('common.title')" :depth="depth">
       <c-text-field
         v-model="ticketUrlTitle"
         :name="`${name}.ticket_url_title`"
@@ -72,13 +55,15 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const model = field => computed({
-      get: () => props.modelValue[field] ?? '',
-      set: value => emit('update:modelValue', {
-        ...props.modelValue,
-        [field]: value,
-      }),
-    });
+    const model = field =>
+      computed({
+        get: () => props.modelValue[field] ?? '',
+        set: value =>
+          emit('update:modelValue', {
+            ...props.modelValue,
+            [field]: value,
+          }),
+      });
 
     return {
       t,

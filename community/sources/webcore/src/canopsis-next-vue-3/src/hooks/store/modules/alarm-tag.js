@@ -9,18 +9,9 @@ import { useAlarmTagStore } from '@/stores/modules/alarm-tag';
  */
 export const useAlarmTag = () => {
   const alarmTagStore = useAlarmTagStore();
-  const {
-    items,
-    meta,
-    pending,
-    fetchingParams,
-  } = storeToRefs(alarmTagStore);
+  const { items, meta, pending, fetchingParams } = storeToRefs(alarmTagStore);
 
-  const getTagColor = tag => (
-    items.value
-      .find(({ value }) => tag === value)
-      ?.color
-  );
+  const getTagColor = tag => items.value.find(({ value }) => tag === value)?.color;
 
   return {
     alarmTags: items,

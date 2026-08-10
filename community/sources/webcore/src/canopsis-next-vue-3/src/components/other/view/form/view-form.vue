@@ -33,10 +33,7 @@
       @update:periodic-refresh="updateField('periodic_refresh', $event)"
     />
 
-    <view-tags-field
-      :value="form.tags"
-      @update:value="updateField('tags', $event)"
-    />
+    <view-tags-field :value="form.tags" @update:value="updateField('tags', $event)" />
 
     <view-group-field
       :value="form.group"
@@ -47,13 +44,12 @@
 </template>
 
 <script>
+import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
 import { useModelField } from '@/hooks/form';
 
-import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
-
-import ViewTagsField from './fields/view-tags-field.vue';
-import ViewGroupField from './fields/view-group-field.vue';
 import ViewDuplicatePrivateField from './fields/view-duplicate-private-field.vue';
+import ViewGroupField from './fields/view-group-field.vue';
+import ViewTagsField from './fields/view-tags-field.vue';
 
 export default {
   components: {

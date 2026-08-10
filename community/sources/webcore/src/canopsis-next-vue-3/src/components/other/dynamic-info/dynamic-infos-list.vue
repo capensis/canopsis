@@ -38,21 +38,9 @@
 
     <template #actions="{ item }">
       <c-layout gap="1">
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
       </c-layout>
     </template>
 
@@ -65,11 +53,9 @@
 <script>
 import { computed } from 'vue';
 
-import { convertDateToString } from '@/helpers/date/date';
-
-import { useI18n } from '@/hooks/i18n';
-
 import { useDynamicInfoAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
+import { convertDateToString } from '@/helpers/date/date';
+import { useI18n } from '@/hooks/i18n';
 
 import DynamicInfosListExpandItem from './partials/dynamic-infos-expand-item.vue';
 

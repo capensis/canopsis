@@ -9,22 +9,31 @@ export default {
   queueLength: 'Queue length {queueLength}/{maxQueueLength}',
   instancesCount: 'Instances {instances}/{minInstances}',
   runningNodes: 'Running nodes {runningNodes}/{nodes}',
-  activeInstances: 'Only {instances} is active out of {minInstances}. The optimal number of instances is {optimalInstances}.',
-  queueOverflowed: 'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
-  engineDown: '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
-  engineDownOrSlow: '{name} is down or responds too slow, the system is not operational.\nPlease check the log or restart the instance.',
-  timescaleDown: '{name} is down, metrics and KPIs are not collecting.\nPlease check the log or restart the instance.',
+  activeInstances:
+    'Only {instances} is active out of {minInstances}. The optimal number of instances is {optimalInstances}.',
+  queueOverflowed:
+    'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
+  engineDown:
+    '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
+  engineDownOrSlow:
+    '{name} is down or responds too slow, the system is not operational.\nPlease check the log or restart the instance.',
+  timescaleDown:
+    '{name} is down, metrics and KPIs are not collecting.\nPlease check the log or restart the instance.',
   invalidEnginesOrder: 'Invalid engines configuration',
-  invalidInstancesConfiguration: 'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
-  chainConfigurationInvalid: 'Engines chain configuration is invalid.\nRefer below for the correct sequence of engines:',
+  invalidInstancesConfiguration:
+    'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
+  chainConfigurationInvalid:
+    'Engines chain configuration is invalid.\nRefer below for the correct sequence of engines:',
   queueLimit: 'Queue length limit',
   defineQueueLimit: 'Define the engines queue length limit',
   notifyUsersQueueLimit: 'Users can be notified when the queue length limit is exceeded',
   messagesLimit: 'Messages processing limit',
   defineMessageLimit: 'Define the FIFO messages processing limit (per minute)',
-  notifyUsersMessagesLimit: 'Users can be notified when the FIFO messages processing limit is exceeded',
+  notifyUsersMessagesLimit:
+    'Users can be notified when the FIFO messages processing limit is exceeded',
   numberOfInstances: 'Number of instances',
-  notifyUsersNumberOfInstances: 'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
+  notifyUsersNumberOfInstances:
+    'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
   messagesHistory: 'FIFO messages processing history',
   messagesLastHour: 'FIFO messages processing for the last hour',
   messagesPerHour: 'messages/hour',

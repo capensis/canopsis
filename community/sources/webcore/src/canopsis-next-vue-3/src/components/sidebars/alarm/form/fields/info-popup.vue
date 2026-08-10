@@ -1,19 +1,14 @@
 <template>
   <widget-settings-item :title="$t('settings.infoPopup.title')">
-    <v-btn
-      color="primary"
-      size="small"
-      @click="edit"
-    >
+    <v-btn color="primary" size="small" @click="edit">
       {{ $t('common.create') }}/{{ $t('common.edit') }}
     </v-btn>
   </widget-settings-item>
 </template>
 
 <script>
-import { MODALS } from '@/constants';
-
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+import { MODALS } from '@/constants';
 
 export default {
   components: { WidgetSettingsItem },

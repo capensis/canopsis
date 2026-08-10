@@ -16,10 +16,7 @@
       @update:model-value="changeViewsOrdering"
     >
       <template #item="{ element: view }">
-        <groups-side-bar-group-view
-          :view="view"
-          :is-groups-order-changed="isGroupsOrderChanged"
-        />
+        <groups-side-bar-group-view :view="view" :is-groups-order-changed="isGroupsOrderChanged" />
       </template>
     </c-draggable-list-field>
   </group-panel>
@@ -28,8 +25,8 @@
 <script>
 import { layoutNavigationGroupsBarGroupMixin } from '@/mixins/layout/navigation/groups-bar-group';
 
-import GroupsSideBarGroupView from './groups-side-bar-group-view.vue';
 import GroupPanel from './group-panel.vue';
+import GroupsSideBarGroupView from './groups-side-bar-group-view.vue';
 
 export default {
   components: { GroupPanel, GroupsSideBarGroupView },
@@ -47,9 +44,7 @@ export default {
     },
 
     hasViewGroupEditAccess() {
-      return this.group.is_private
-        || this.hasDeleteAnyViewAccess
-        || this.hasUpdateAnyViewAccess;
+      return this.group.is_private || this.hasDeleteAnyViewAccess || this.hasUpdateAnyViewAccess;
     },
   },
   methods: {

@@ -31,13 +31,11 @@
 <script>
 import { ref } from 'vue';
 
+import FileSelector from '@/components/forms/fields/file-selector.vue';
 import { getFileTextContent } from '@/helpers/file/file-select';
-
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
 import { useSnmpMib } from '@/hooks/store/modules/snmp-mib';
-
-import FileSelector from '@/components/forms/fields/file-selector.vue';
 
 export default {
   components: { FileSelector },
@@ -49,12 +47,13 @@ export default {
     const popups = usePopups();
     const { uploadSnmpMib } = useSnmpMib();
 
-    const sortFiles = files => [...files].sort((a, b) => {
-      const matchesA = a.name.match(/^(\d+)/) || ['0'];
-      const matchesB = b.name.match(/^(\d+)/) || ['0'];
+    const sortFiles = files =>
+      [...files].sort((a, b) => {
+        const matchesA = a.name.match(/^(\d+)/) || ['0'];
+        const matchesB = b.name.match(/^(\d+)/) || ['0'];
 
-      return parseInt(matchesA[0], 10) - parseInt(matchesB[0], 10);
-    });
+        return parseInt(matchesA[0], 10) - parseInt(matchesB[0], 10);
+      });
 
     const changeFiles = async (files = []) => {
       try {

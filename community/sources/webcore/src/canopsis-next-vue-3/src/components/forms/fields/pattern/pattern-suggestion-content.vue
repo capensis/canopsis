@@ -18,8 +18,8 @@
         <c-layout justify-end>
           <v-btn color="success" @click="apply">
             <v-icon class="mr-2" color="white">
-check
-</v-icon>
+              check
+            </v-icon>
             {{ $t('pattern.applyThisSuggestion') }}
           </v-btn>
         </c-layout>
@@ -42,7 +42,6 @@ check
 import { computed } from 'vue';
 
 import { PATTERNS_FIELDS, PATTERN_TYPES } from '@/constants';
-
 import { patternToForm } from '@/helpers/entities/pattern/form';
 
 export default {

@@ -1,12 +1,10 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
+
 import { useFormModels } from '@/hooks/form';
 
 const { t } = useI18n();
-const {
-  usernameField,
-  passwordField,
-} = useFormModels({
+const { usernameField, passwordField } = useFormModels({
   usernameField: 'username',
   passwordField: 'password',
 });

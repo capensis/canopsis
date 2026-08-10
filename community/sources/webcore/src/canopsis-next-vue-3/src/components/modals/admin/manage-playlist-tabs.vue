@@ -15,10 +15,11 @@
         </v-btn>
 
         <v-btn
-:disabled="submitting"
-:loading="submitting"
-color="primary"
-type="submit">
+          :disabled="submitting"
+          :loading="submitting"
+          color="primary"
+          type="submit"
+        >
           {{ t('common.saveChanges') }}
         </v-btn>
       </template>
@@ -29,12 +30,11 @@ type="submit">
 <script>
 import { computed, ref } from 'vue';
 
+import ManagePlaylistTabsForm from '@/components/other/playlists/form/manage-playlist-tabs-form.vue';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePendingHandler } from '@/hooks/query/pending';
-
-import ManagePlaylistTabsForm from '@/components/other/playlists/form/manage-playlist-tabs-form.vue';
 
 export default {
   components: { ManagePlaylistTabsForm },

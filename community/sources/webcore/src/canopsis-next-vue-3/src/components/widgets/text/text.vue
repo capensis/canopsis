@@ -1,9 +1,6 @@
 <template>
   <div class="position-relative">
-    <c-compiled-template
-      :template="template"
-      :sanitize-options="sanitizeOptions"
-    />
+    <c-compiled-template :template="template" :sanitize-options="sanitizeOptions" />
   </div>
 </template>
 

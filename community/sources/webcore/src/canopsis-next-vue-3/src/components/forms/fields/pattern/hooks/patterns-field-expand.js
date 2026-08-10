@@ -35,7 +35,9 @@ const waitCollapsePanelTransitionEnd = (parentElement) => {
 
   return new Promise((resolve) => {
     const onEnd = (event) => {
-      if (event.target !== element) return;
+      if (event.target !== element) {
+        return;
+      }
 
       element.removeEventListener('transitionend', onEnd);
       resolve();
@@ -85,7 +87,9 @@ export const usePatternsFieldExpand = ({ wrapperElement, expanded }) => {
       }
     });
 
-    scrollToElement(wrapperElement.value.querySelector(`.${firstClass}`).closest('.c-collapse-panel'));
+    scrollToElement(
+      wrapperElement.value.querySelector(`.${firstClass}`).closest('.c-collapse-panel'),
+    );
   };
 
   aiChat?.registerExpandFunction?.(expandPatternsByFields);

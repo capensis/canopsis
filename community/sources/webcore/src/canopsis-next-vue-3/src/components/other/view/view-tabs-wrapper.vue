@@ -9,15 +9,9 @@
       @update:tabs="tabs = $event"
     />
 
-    <div
-      v-if="view && isTabsChanged"
-      class="view-tabs__scrim"
-    />
+    <div v-if="view && isTabsChanged" class="view-tabs__scrim" />
 
-    <div
-      v-if="view && isTabsChanged"
-      class="view-tabs__actions"
-    >
+    <div v-if="view && isTabsChanged" class="view-tabs__actions">
       <v-btn class="ma-2" color="primary" @click="submit">
         {{ $t('common.submit') }}
       </v-btn>
@@ -47,22 +41,18 @@ import { isEqual } from 'lodash';
 import { mapActions } from 'pinia';
 
 import { mapIds } from '@/helpers/array';
-
 import { activeViewMixin } from '@/mixins/active-view';
-
 import { useViewStore } from '@/stores/modules/view';
 
-import ViewTabs from './view-tabs.vue';
 import ViewTabWidgets from './view-tab-widgets.vue';
+import ViewTabs from './view-tabs.vue';
 
 export default {
   components: {
     ViewTabs,
     ViewTabWidgets,
   },
-  mixins: [
-    activeViewMixin,
-  ],
+  mixins: [activeViewMixin],
   props: {
     updatable: {
       type: Boolean,

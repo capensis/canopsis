@@ -16,7 +16,9 @@
       <span v-else>{{ t('common.notAvailable') }}</span>
     </template>
     <template #avg_alarm_ok_timeout="{ item }">
-      <span v-if="item.avg_alarm_ok_timeout">{{ durationToString(item.avg_alarm_ok_timeout) }}</span>
+      <span v-if="item.avg_alarm_ok_timeout">{{
+        durationToString(item.avg_alarm_ok_timeout)
+      }}</span>
       <span v-else>{{ t('common.notAvailable') }}</span>
     </template>
     <template #avg_successful="{ item }">
@@ -26,10 +28,7 @@
       <span>{{ item.avg_successful_state_ok }}%</span>
     </template>
     <template #alarm_states="{ item }">
-      <affect-alarm-states
-        v-if="item.execution_count"
-        :alarm-states="item.alarm_states"
-      />
+      <affect-alarm-states v-if="item.execution_count" :alarm-states="item.alarm_states" />
       <template v-else>
         -
       </template>
@@ -50,7 +49,6 @@ import { computed, onMounted, ref, watch } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
-
 import { useI18n } from '@/hooks/i18n';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useRemediationInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
@@ -69,7 +67,8 @@ export default {
 
   setup(props) {
     const { t } = useI18n();
-    const { fetchRemediationInstructionStatsChangesWithoutStore } = useRemediationInstructionStats();
+    const { fetchRemediationInstructionStatsChangesWithoutStore } =
+      useRemediationInstructionStats();
     const totalItems = ref(0);
 
     const {
@@ -80,10 +79,11 @@ export default {
       updateOptions,
       fetchList,
     } = useFetchListWithoutStoreWithOptions({
-      fetchListHandler: ({ params }) => fetchRemediationInstructionStatsChangesWithoutStore({
-        id: props.remediationInstruction._id,
-        params,
-      }),
+      fetchListHandler: ({ params }) =>
+        fetchRemediationInstructionStatsChangesWithoutStore({
+          id: props.remediationInstruction._id,
+          params,
+        }),
     });
 
     watch(meta, (value) => {
@@ -117,7 +117,11 @@ export default {
         value: 'avg_successful_state_ok',
         sortable: false,
       },
-      { text: t('remediation.instructionStat.alarmStates'), value: 'alarm_states', sortable: false },
+      {
+        text: t('remediation.instructionStat.alarmStates'),
+        value: 'alarm_states',
+        sortable: false,
+      },
       {
         text: t('remediation.instructionStat.okAlarmStates'),
         value: 'ok_alarm_states',

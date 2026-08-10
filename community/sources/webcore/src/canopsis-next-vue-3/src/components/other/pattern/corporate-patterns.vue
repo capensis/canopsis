@@ -16,7 +16,6 @@
 import { onMounted } from 'vue';
 
 import { convertQueryToRequest } from '@/helpers/query';
-
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { useCorporatePattern } from '@/hooks/store/modules/pattern-corporate';
 
@@ -42,9 +41,10 @@ export default {
       updateOptions,
       handler: fetchList,
     } = useLocalQueryWithOptions({
-      onUpdate: fetchQuery => fetchCorporatePatternsList({
-        params: convertQueryToRequest(fetchQuery),
-      }),
+      onUpdate: fetchQuery =>
+        fetchCorporatePatternsList({
+          params: convertQueryToRequest(fetchQuery),
+        }),
     });
 
     onMounted(fetchList);

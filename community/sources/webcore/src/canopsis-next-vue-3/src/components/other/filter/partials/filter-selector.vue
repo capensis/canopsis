@@ -33,24 +33,14 @@
     </template>
 
     <template #item="{ props, item }">
-      <v-list-item
-        v-bind="props"
-        :disabled="isFilterItemDisabled(item.raw)"
-      >
+      <v-list-item v-bind="props" :disabled="isFilterItemDisabled(item.raw)">
         <template v-if="isMultiple" #prepend>
-          <v-checkbox-btn
-            :model-value="isFilterSelected(item.raw)"
-            color="primary"
-          />
+          <v-checkbox-btn :model-value="isFilterSelected(item.raw)" color="primary" />
         </template>
 
         <v-list-item-title>
           <span>{{ getItemText(item.raw) }}</span>
-          <v-icon
-            :color="isFilterSelected(item.raw) ? 'primary' : ''"
-            class="ml-2"
-            size="small"
-          >
+          <v-icon :color="isFilterSelected(item.raw) ? 'primary' : ''" class="ml-2" size="small">
             {{ getItemIcon(item.raw) }}
           </v-icon>
         </v-list-item-title>
@@ -212,9 +202,7 @@ export default {
     isLockedFilter(filter) {
       const value = this.getItemValue(filter);
 
-      return this.isMultiple
-        ? this.lockedValue?.includes(value)
-        : this.lockedValue === value;
+      return this.isMultiple ? this.lockedValue?.includes(value) : this.lockedValue === value;
     },
 
     removeFilter(index) {

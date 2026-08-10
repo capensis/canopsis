@@ -7,10 +7,7 @@
       @update:model-value="$emit('update:modelValue', $event)"
     />
 
-    <c-form-block-row
-      :label="t('common.state')"
-      :depth="depth"
-    >
+    <c-form-block-row :label="t('common.state')" :depth="depth">
       <c-select
         v-model="state"
         :items="states"
@@ -28,7 +25,6 @@
 import { computed } from 'vue';
 
 import { ALARM_STATES } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 import ActionNoteForm from './action-note-form.vue';
@@ -56,17 +52,20 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const states = computed(() => Object.values(ALARM_STATES).map(value => ({
-      value,
-      text: t(`common.stateTypes.${value}`),
-    })));
+    const states = computed(() =>
+      Object.values(ALARM_STATES).map(value => ({
+        value,
+        text: t(`common.stateTypes.${value}`),
+      })),
+    );
 
     const state = computed({
       get: () => props.modelValue.state ?? ALARM_STATES.critical,
-      set: value => emit('update:modelValue', {
-        ...props.modelValue,
-        state: value,
-      }),
+      set: value =>
+        emit('update:modelValue', {
+          ...props.modelValue,
+          state: value,
+        }),
     });
 
     return {

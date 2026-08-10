@@ -17,9 +17,5 @@ const model = computed({
 </script>
 
 <template>
-  <c-text-field
-    v-bind="$attrs"
-    v-model="model"
-    type="number"
-  />
+  <c-text-field v-bind="$attrs" v-model="model" type="number" />
 </template>

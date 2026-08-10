@@ -73,9 +73,7 @@
 import { computed, ref, toRef } from 'vue';
 
 import { ALARM_OUTPUT_FIELDS, ENTITIES_TYPES } from '@/constants';
-
 import { formToWidgetColumn, widgetColumnValueToForm } from '@/helpers/entities/widget/column/form';
-
 import { useAvailableColumns } from '@/hooks/form/available-columns';
 import { useModelField } from '@/hooks/form/model-field';
 
@@ -187,7 +185,9 @@ export default {
 
       if (isCustom.value) {
         const { value } = formToWidgetColumn(props.modelValue);
-        const selectedColumn = availableColumns.value.find(columnItem => columnItem.value === props.modelValue.column);
+        const selectedColumn = availableColumns.value.find(
+          columnItem => columnItem.value === props.modelValue.column,
+        );
         const label = props.modelValue.label || selectedColumn?.text || '';
 
         newColumn.column = value;
@@ -196,8 +196,15 @@ export default {
         newColumn.rule = '';
         newColumn.dictionary = '';
       } else {
-        const { column: value, field, rule, dictionary } = widgetColumnValueToForm(props.modelValue.column);
-        const selectedColumn = availableColumns.value.find(columnItem => columnItem.value === value);
+        const {
+          column: value,
+          field,
+          rule,
+          dictionary,
+        } = widgetColumnValueToForm(props.modelValue.column);
+        const selectedColumn = availableColumns.value.find(
+          columnItem => columnItem.value === value,
+        );
 
         newColumn.column = value === selectedColumn?.value ? value : '';
         newColumn.label = newColumn.label === selectedColumn?.text ? '' : newColumn.label;

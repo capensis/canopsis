@@ -9,11 +9,7 @@
     <span class="text-body-2 my-2">
       {{ $t('common.column', 2) }}
     </span>
-    <c-columns-field
-      v-bind="$attrs"
-      :model-value="modelValue"
-      @update:model-value="updateValue"
-    />
+    <c-columns-field v-bind="$attrs" :model-value="modelValue" @update:model-value="updateValue" />
   </c-layout>
 </template>
 

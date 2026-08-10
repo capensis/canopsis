@@ -12,15 +12,8 @@ const { popups } = storeToRefs(popupsStore);
 
 <template>
   <teleport to="body">
-    <div
-      v-if="popups.length"
-      class="popups"
-    >
-      <popup-item
-        v-for="popup in popups"
-        v-bind="popup"
-        :key="popup.id"
-      />
+    <div v-if="popups.length" class="popups">
+      <popup-item v-for="popup in popups" v-bind="popup" :key="popup.id" />
     </div>
   </teleport>
 </template>

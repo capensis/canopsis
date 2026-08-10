@@ -15,7 +15,6 @@
 import { computed } from 'vue';
 
 import { ACTION_TYPES } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {
@@ -51,10 +50,12 @@ export default {
 
     const currentValue = computed(() => props.modelValue ?? props.value);
 
-    const items = computed(() => props.types.map(type => ({
-      value: type,
-      text: t(`scenario.actions.${type}`),
-    })));
+    const items = computed(() =>
+      props.types.map(type => ({
+        value: type,
+        text: t(`scenario.actions.${type}`),
+      })),
+    );
 
     const updateModel = (value) => {
       emit('update:modelValue', value);

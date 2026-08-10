@@ -1,9 +1,5 @@
 <template>
-  <v-menu
-    :location="location"
-    :offset="10"
-    class="view-screen-mode-btn"
-  >
+  <v-menu :location="location" :offset="10" class="view-screen-mode-btn">
     <template #activator="{ props: activatorProps }">
       <v-btn
         v-bind="activatorProps"
@@ -11,19 +7,12 @@
         class="view-screen-mode-btn__button"
         icon
       >
-        <v-icon
-          :icon="icon"
-          :size="large ? 'default' : 'small'"
-        />
+        <v-icon :icon="icon" :size="large ? 'default' : 'small'" />
       </v-btn>
     </template>
 
     <v-list class="view-screen-mode-btn__list bg-grey-darken-3 pa-0">
-      <v-tooltip
-        v-for="item in availableScreenModes"
-        :key="`tooltip-${item.key}`"
-        location="left"
-      >
+      <v-tooltip v-for="item in availableScreenModes" :key="`tooltip-${item.key}`" location="left">
         <template #activator="{ props }">
           <v-list-item
             v-bind="props"
@@ -85,10 +74,7 @@ export default {
     },
 
     icon() {
-      return [
-        VIEW_SCREEN_MODES.fullscreen,
-        VIEW_SCREEN_MODES.kioskFullscreen,
-      ].includes(this.value)
+      return [VIEW_SCREEN_MODES.fullscreen, VIEW_SCREEN_MODES.kioskFullscreen].includes(this.value)
         ? 'fullscreen_exit'
         : 'fullscreen';
     },

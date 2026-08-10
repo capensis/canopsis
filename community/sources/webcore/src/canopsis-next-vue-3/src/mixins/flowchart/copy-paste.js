@@ -1,7 +1,7 @@
 import { isObject, isString } from 'lodash';
 
-import { uid } from '@/helpers/uid';
 import { readTextFromClipboard, writeTextToClipboard } from '@/helpers/clipboard';
+import { uid } from '@/helpers/uid';
 
 export const copyPasteShapesMixin = {
   methods: {
@@ -13,9 +13,7 @@ export const copyPasteShapesMixin = {
         const connections = shape.connections.filter(connection =>
           this.selectedIds.includes(connection.shapeId),
         );
-        const connectedTo = shape.connectedTo.filter(shapeId =>
-          this.selectedIds.includes(shapeId),
-        );
+        const connectedTo = shape.connectedTo.filter(shapeId => this.selectedIds.includes(shapeId));
 
         acc[id] = {
           ...shape,

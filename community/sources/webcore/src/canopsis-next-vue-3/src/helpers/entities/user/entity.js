@@ -7,7 +7,8 @@ import { ROLE_TYPES } from '@/constants';
  * @param {Role} [role = {}]
  * @return {boolean}
  */
-export const isUserHasRole = (user = {}, role = {}) => user.roles?.some?.(({ _id: id }) => id === role._id);
+export const isUserHasRole = (user = {}, role = {}) =>
+  user.roles?.some?.(({ _id: id }) => id === role._id);
 
 /**
  * Check if user has special role
@@ -15,7 +16,8 @@ export const isUserHasRole = (user = {}, role = {}) => user.roles?.some?.(({ _id
  * @param {User} [user = {}]
  * @return {boolean}
  */
-export const isUserHasOnlyApiRole = (user = {}) => user.roles?.every?.(({ type }) => type === ROLE_TYPES.api);
+export const isUserHasOnlyApiRole = (user = {}) =>
+  user.roles?.every?.(({ type }) => type === ROLE_TYPES.api);
 
 /**
  * Get first role with non empty default view
@@ -23,4 +25,5 @@ export const isUserHasOnlyApiRole = (user = {}) => user.roles?.every?.(({ type }
  * @param {User} user
  * @return {Role | undefined}
  */
-export const getFirstRoleWithDefaultView = (user = {}) => user.roles?.find(role => !!role.defaultview);
+export const getFirstRoleWithDefaultView = (user = {}) =>
+  user.roles?.find(role => !!role.defaultview);

@@ -1,10 +1,7 @@
 <template>
   <v-list-item class="filter-tile pa-0">
     <c-layout class="filter-tile__content" align="center">
-      <c-layout
-        class="filter-tile__title"
-        align="center"
-      >
+      <c-layout class="filter-tile__title" align="center">
         <v-icon
           v-if="editable"
           class="draggable ml-0 mr-3 action-drag-handler"
@@ -16,10 +13,7 @@
       </c-layout>
 
       <template v-if="editable">
-        <c-layout
-          class="filter-tile__actions"
-          align="center"
-        >
+        <c-layout class="filter-tile__actions" align="center">
           <c-action-btn type="edit" @click="$emit('edit')" />
           <c-action-btn type="delete" @click="$emit('delete')" />
         </c-layout>

@@ -15,10 +15,8 @@
       <v-window-item value="description" class="planning-expand-panel__tab-item">
         <v-card>
           <v-card-text>
-            <pre class="planning-expand-panel__pre"
-              >{{ pbehaviorReason.description || '-' }}
-</pre
-            >
+            <pre class="planning-expand-panel__pre">{{ pbehaviorReason.description || '-' }}
+</pre>
           </v-card-text>
         </v-card>
       </v-window-item>

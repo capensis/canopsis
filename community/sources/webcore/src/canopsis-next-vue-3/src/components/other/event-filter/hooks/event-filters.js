@@ -1,7 +1,6 @@
 import { omit } from 'lodash';
 
 import { MODALS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
@@ -22,11 +21,7 @@ export const useEventFilterActions = (refresh = () => {}) => {
   const modals = useModals();
   const popups = usePopups();
 
-  const {
-    createEventFilter,
-    updateEventFilter,
-    removeEventFilter,
-  } = useEventFilter();
+  const { createEventFilter, updateEventFilter, removeEventFilter } = useEventFilter();
 
   /**
    * Show modal to create a new event filter.

@@ -34,12 +34,15 @@ const props = defineProps({
 
 const attrs = useAttrs();
 
-const legacySize = computed(() => ({
-  [props.xSmall]: 'x-small',
-  [props.small]: 'small',
-  [props.large]: 'large',
-  [props.xLarge]: 'x-large',
-}).true);
+const legacySize = computed(
+  () =>
+    ({
+      [props.xSmall]: 'x-small',
+      [props.small]: 'small',
+      [props.large]: 'large',
+      [props.xLarge]: 'x-large',
+    }).true,
+);
 
 const iconAttrs = computed(() => ({
   ...attrs,
@@ -52,10 +55,7 @@ const iconClass = computed(() => ({
 </script>
 
 <template>
-  <v-icon
-    v-bind="iconAttrs"
-    :class="iconClass"
-  >
+  <v-icon v-bind="iconAttrs" :class="iconClass">
     <slot />
   </v-icon>
 </template>

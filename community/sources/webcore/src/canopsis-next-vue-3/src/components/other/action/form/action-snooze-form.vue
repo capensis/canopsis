@@ -7,10 +7,7 @@
       @update:model-value="$emit('update:modelValue', $event)"
     />
 
-    <c-form-block-row
-      :label="t('common.duration')"
-      :depth="depth"
-    >
+    <c-form-block-row :label="t('common.duration')" :depth="depth">
       <c-duration-field
         v-model:duration="duration"
         :name="`${name}.duration`"
@@ -25,7 +22,6 @@
 import { computed } from 'vue';
 
 import { TIME_UNITS } from '@/constants';
-
 import { useI18n } from '@/hooks/i18n';
 
 import ActionNoteForm from './action-note-form.vue';
@@ -55,10 +51,11 @@ export default {
 
     const duration = computed({
       get: () => props.modelValue.duration ?? { value: 1, unit: TIME_UNITS.hour },
-      set: value => emit('update:modelValue', {
-        ...props.modelValue,
-        duration: value,
-      }),
+      set: value =>
+        emit('update:modelValue', {
+          ...props.modelValue,
+          duration: value,
+        }),
     });
 
     return {

@@ -7,18 +7,11 @@
 
       <template #text>
         <pattern-form />
-        <ai-chat-sidebar
-          v-if="chatShown"
-          v-bind="chatOptions.bind"
-        />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.bind" />
       </template>
 
       <template #actions>
-        <v-btn
-          :disabled="submitting"
-          variant="text"
-          @click="closeModal"
-        >
+        <v-btn :disabled="submitting" variant="text" @click="closeModal">
           {{ t('common.cancel') }}
         </v-btn>
         <v-btn
@@ -37,23 +30,20 @@
 <script>
 import { computed, toRef } from 'vue';
 
+import PatternForm from '@/components/forms/pattern-form.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import {
   MODALS,
   PATTERN_TYPES_TO_LLM_SOCKET_CONTEXTS,
   PATTERN_TYPES_TO_PATTERNS_FIELDS,
 } from '@/constants';
-
 import { patternToForm, formToPattern } from '@/helpers/entities/pattern/form';
-
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import PatternForm from '@/components/forms/pattern-form.vue';
 
 export default {
   name: MODALS.createPattern,
@@ -108,10 +98,7 @@ export default {
       close: closeModal,
     });
 
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
+    const { shown: chatShown, options: chatOptions } = useAiChatForm({
       form: values,
       modal: toRef(props, 'modal'),
       ruleId: props.modal.config?.pattern?._id,

@@ -1,10 +1,6 @@
 <template>
   <div>
-    <v-tabs
-      v-model="activeTab"
-      color="primary"
-      align-tabs="center"
-    >
+    <v-tabs v-model="activeTab" color="primary" align-tabs="center">
       <v-tab value="general">
         {{ t('common.general') }}
       </v-tab>

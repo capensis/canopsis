@@ -1,5 +1,5 @@
 <template>
-  <v-radio-group
+  <c-radio-group
     :model-value="modelValue"
     class="mt-0"
     hide-details
@@ -17,7 +17,7 @@
       :value="$constants.REMEDIATION_INSTRUCTION_APPROVAL_TYPES.user"
       color="primary"
     />
-  </v-radio-group>
+  </c-radio-group>
 </template>
 
 <script>

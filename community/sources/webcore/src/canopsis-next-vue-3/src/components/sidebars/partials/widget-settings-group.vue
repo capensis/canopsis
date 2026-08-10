@@ -6,10 +6,7 @@
     eager
   >
     <template #activator="{ props }">
-      <v-list-item
-        v-bind="props"
-        :title="title"
-      />
+      <v-list-item v-bind="props" :title="title" />
     </template>
 
     <v-list class="widget-settings-group__list px-2 py-0">

@@ -29,9 +29,7 @@
 import { ref, computed, onMounted } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
-
 import { mapIds } from '@/helpers/array';
-
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
@@ -52,13 +50,15 @@ export default {
 
     const selectedExceptionsIds = computed(() => mapIds(props.value));
 
-    const availableExceptions = computed(() => exceptions.value.filter(
-      ({ _id: id }) => !selectedExceptionsIds.value.includes(id),
-    ));
+    const availableExceptions = computed(() =>
+      exceptions.value.filter(({ _id: id }) => !selectedExceptionsIds.value.includes(id)),
+    );
 
     const { pending, handler: fetchList } = usePendingHandler(async () => {
       try {
-        const { data } = await fetchPbehaviorExceptionsListWithoutStore({ params: { limit: MAX_LIMIT } });
+        const { data } = await fetchPbehaviorExceptionsListWithoutStore({
+          params: { limit: MAX_LIMIT },
+        });
 
         exceptions.value = data;
       } catch (err) {

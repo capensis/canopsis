@@ -1,8 +1,5 @@
 <template>
-  <c-layout
-    gap="2"
-    column
-  >
+  <c-layout gap="2" column>
     <c-text-field
       v-model="titleField"
       :label="$t('common.title')"

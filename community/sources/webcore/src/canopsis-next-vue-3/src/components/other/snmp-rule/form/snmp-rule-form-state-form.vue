@@ -71,14 +71,11 @@
 <script>
 import { computed } from 'vue';
 
-import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
-
-import { getSnmpRuleStateColor } from '@/helpers/entities/snmp-rule/color';
-
-import { useI18n } from '@/hooks/i18n';
-import { useModelField } from '@/hooks/form/model-field';
-
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
+import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
+import { getSnmpRuleStateColor } from '@/helpers/entities/snmp-rule/color';
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 import SnmpRuleFormModuleMibObjectsForm from './snmp-rule-form-module-mib-objects-form.vue';
 
@@ -111,13 +108,17 @@ export default {
 
     const isTemplate = computed(() => props.form.type === SNMP_STATE_TYPES.template);
 
-    const availableStates = computed(() => Object.entries(props.stateValues).map(([key, state]) => ({
-      key,
-      text: t(`snmpRule.states.${key}`),
-      value: state,
-      color: getSnmpRuleStateColor(state),
-      whiteText: [SNMP_TEMPLATE_STATE_STATES.info, SNMP_TEMPLATE_STATE_STATES.critical].includes(state),
-    })));
+    const availableStates = computed(() =>
+      Object.entries(props.stateValues).map(([key, state]) => ({
+        key,
+        text: t(`snmpRule.states.${key}`),
+        value: state,
+        color: getSnmpRuleStateColor(state),
+        whiteText: [SNMP_TEMPLATE_STATE_STATES.info, SNMP_TEMPLATE_STATE_STATES.critical].includes(
+          state,
+        ),
+      })),
+    );
 
     const updateTypeField = (type) => {
       const state = {

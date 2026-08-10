@@ -1,10 +1,11 @@
 <template>
   <geomap-control :position="position">
     <div
-@contextmenu.stop=""
-@click.stop=""
-@dblclick.stop=""
-@mousemove.stop="">
+      @contextmenu.stop=""
+      @click.stop=""
+      @dblclick.stop=""
+      @mousemove.stop=""
+    >
       <v-expansion-panels>
         <v-expansion-panel class="geomap-layers-control" color="grey">
           <v-expansion-panel-title class="geomap-layers-control__title">

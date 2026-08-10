@@ -1,11 +1,7 @@
 <template>
   <c-layout class="date-time-splitted-range-picker-field">
     <div class="date-time-splitted-range-picker-field__start">
-      <date-time-splitted-picker-text
-        :value="start"
-        :full-day="fullDay"
-        :label="startLabel"
-      />
+      <date-time-splitted-picker-text :value="start" :full-day="fullDay" :label="startLabel" />
     </div>
     <template v-if="!noEnding">
       <div class="date-time-splitted-range-picker-field__time-dash">
