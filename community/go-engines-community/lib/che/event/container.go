@@ -8,13 +8,15 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
+type ProcessorResult struct {
+	UpdatedEntitiesToCountersUpd []types.Entity
+	UpdatedEntityIDsForMetrics   []string
+	ServicesIDsToRecompute       []string
+	EventMetric                  techmetrics.CheEventMetric
+}
+
 type Processor interface {
-	Process(ctx context.Context, event *types.Event) (
-		[]types.Entity,
-		[]string,
-		techmetrics.CheEventMetric,
-		error,
-	)
+	Process(context.Context, *types.Event) (ProcessorResult, error)
 }
 
 type ProcessorContainer interface {

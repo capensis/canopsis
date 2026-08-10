@@ -44,15 +44,12 @@ func NewResourceProcessor(
 	}
 }
 
-func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
-	[]types.Entity,
-	[]string,
-	techmetrics.CheEventMetric,
-	error,
-) {
-	eventMetric := techmetrics.CheEventMetric{
-		EventMetric: techmetrics.EventMetric{
-			EventType: event.EventType,
+func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (ProcessorResult, error) {
+	result := ProcessorResult{
+		EventMetric: techmetrics.CheEventMetric{
+			EventMetric: techmetrics.EventMetric{
+				EventType: event.EventType,
+			},
 		},
 	}
 
@@ -71,26 +68,28 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 		return commRegister.Commit(ctx)
 	})
 	if err != nil {
-		return nil, nil, eventMetric, err
+		return result, err
 	}
 
 	if event.Entity == nil {
-		return nil, nil, eventMetric, errors.New("unexpected empty resource")
+		return result, errors.New("unexpected empty resource")
 	}
 
-	eventMetric.EntityType = event.Entity.Type
-	eventMetric.IsNewEntity = report.IsNew
+	result.EventMetric.EntityType = event.Entity.Type
+	result.EventMetric.IsNewEntity = report.IsNew
 
 	if event.Healthcheck {
-		return nil, nil, eventMetric, nil
+		return result, nil
 	}
+
+	var updatedInfos map[string]eventfilter.UpdatedValue
+	var updatedInfosNames []string
 
 	// Process event by event filters.
 	if event.Entity.Enabled {
-		var updatedInfos map[string]eventfilter.UpdatedValue
-		updatedInfos, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
+		updatedInfos, result.EventMetric.ExecutedEnrichRules, result.EventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
-			return nil, nil, eventMetric, err
+			return result, err
 		}
 
 		if len(updatedInfos) > 0 {
@@ -100,12 +99,17 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 				bson.M{"$set": bson.M{"infos": event.Entity.Infos}},
 			)
 			if err != nil {
-				return nil, nil, eventMetric, fmt.Errorf("cannot update entities: %w", err)
+				return result, fmt.Errorf("cannot update entities: %w", err)
 			}
 
-			eventMetric.IsInfosUpdated = true
-			report.CheckResource = true
+			result.EventMetric.IsInfosUpdated = true
+			report.CheckInfoChanged = true
 			logInfosUpdate(p.entityInfosUpdateSender, event.Entity.ID, updatedInfos)
+
+			updatedInfosNames = make([]string, 0, len(updatedInfos))
+			for k := range updatedInfos {
+				updatedInfosNames = append(updatedInfosNames, k)
+			}
 		}
 	}
 
@@ -113,7 +117,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 	entityIdsToCheck := make([]string, 0, 3)
 	entityIdsToUpdateMetrics := make([]string, 0, 3)
 
-	if report.CheckResource {
+	if report.CheckResource || report.CheckInfoChanged {
 		entityIdsToCheck = append(entityIdsToCheck, event.Entity.ID)
 		entityIdsToUpdateMetrics = append(entityIdsToUpdateMetrics, event.Entity.ID)
 
@@ -134,7 +138,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 
 	// if nothing is changed - leave.
 	if len(entityIdsToCheck) == 0 {
-		return nil, nil, eventMetric, nil
+		return result, nil
 	}
 
 	// cap = 2 for a potential component and connector counter updates.
@@ -144,8 +148,8 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 		commRegister.Clear()
 		toCountersUpdate = toCountersUpdate[:0]
 
-		eventMetric.IsServicesUpdated = false
-		eventMetric.IsStateSettingUpdated = false
+		result.EventMetric.IsServicesUpdated = false
+		result.EventMetric.IsStateSettingUpdated = false
 
 		var resource types.Entity
 		var component types.Entity
@@ -191,8 +195,13 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 			return fmt.Errorf("cannot refresh services: %w", err)
 		}
 
-		p.contextGraphManager.AssignServices(&resource, commRegister)
-		eventMetric.IsServicesUpdated = len(event.Entity.ServicesToAdd) > 0 || len(event.Entity.ServicesToRemove) > 0
+		if report.CheckResource {
+			p.contextGraphManager.AssignServices(&resource, commRegister)
+		} else if report.CheckInfoChanged {
+			p.contextGraphManager.AssignServicesByInfoNames(&resource, updatedInfosNames, commRegister)
+		}
+
+		result.EventMetric.IsServicesUpdated = len(resource.ServicesToAdd) > 0 || len(resource.ServicesToRemove) > 0
 
 		if component.ID != "" && report.CheckComponent {
 			p.contextGraphManager.AssignServices(&component, commRegister)
@@ -200,7 +209,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 				toCountersUpdate = append(toCountersUpdate, component)
 			}
 
-			eventMetric.IsStateSettingUpdated, err = p.contextGraphManager.AssignStateSetting(ctx, &component, commRegister)
+			result.EventMetric.IsStateSettingUpdated, err = p.contextGraphManager.AssignStateSetting(ctx, &component, commRegister)
 			if err != nil {
 				return fmt.Errorf("cannot assign state settings for a component: %w", err)
 			}
@@ -228,10 +237,10 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 		return nil
 	})
 	if err != nil {
-		return nil, nil, eventMetric, err
+		return result, err
 	}
 
-	if eventMetric.IsInfosUpdated {
+	if result.EventMetric.IsInfosUpdated {
 		go func() {
 			err = updateMetaAlarmInfos(ctx, event.Entity.ID, event.Entity.Infos, p.dbAlarmCollection, p.dbEntityCollection)
 			if err != nil {
@@ -240,5 +249,8 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 		}()
 	}
 
-	return toCountersUpdate, entityIdsToUpdateMetrics, eventMetric, nil
+	result.UpdatedEntitiesToCountersUpd = toCountersUpdate
+	result.UpdatedEntityIDsForMetrics = entityIdsToUpdateMetrics
+
+	return result, nil
 }
