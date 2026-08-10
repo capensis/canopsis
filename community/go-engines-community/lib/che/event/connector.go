@@ -39,23 +39,23 @@ func NewConnectorProcessor(
 	}
 }
 
-func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
-	[]types.Entity,
-	[]string,
-	techmetrics.CheEventMetric,
-	error,
-) {
-	eventMetric := techmetrics.CheEventMetric{
-		EventMetric: techmetrics.EventMetric{
-			EventType: event.EventType,
+func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (ProcessorResult, error) {
+	result := ProcessorResult{
+		EventMetric: techmetrics.CheEventMetric{
+			EventMetric: techmetrics.EventMetric{
+				EventType: event.EventType,
+			},
 		},
 	}
 
+	var report contextgraph.Report
 	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
+
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		commRegister.Clear()
 
-		_, err := p.contextGraphManager.HandleConnector(ctx, event, commRegister)
+		var err error
+		report, err = p.contextGraphManager.HandleConnector(ctx, event, commRegister)
 		if err != nil {
 			return fmt.Errorf("cannot update context graph: %w", err)
 		}
@@ -63,26 +63,27 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 		return commRegister.Commit(ctx)
 	})
 	if err != nil {
-		return nil, nil, eventMetric, err
+		return result, err
 	}
 
 	if event.Entity == nil {
-		return nil, nil, eventMetric, errors.New("unexpected empty entity")
+		return result, errors.New("unexpected empty entity")
 	}
 
-	eventMetric.EntityType = event.Entity.Type
-	var checkServices bool
+	result.EventMetric.EntityType = event.Entity.Type
 
 	if event.Healthcheck {
-		return nil, nil, eventMetric, nil
+		return result, nil
 	}
 
 	// Process event by event filters.
+	var updatedInfos map[string]eventfilter.UpdatedValue
+	var updatedInfosNames []string
+
 	if event.Entity.Enabled {
-		var updatedInfos map[string]eventfilter.UpdatedValue
-		updatedInfos, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
+		updatedInfos, result.EventMetric.ExecutedEnrichRules, result.EventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
-			return nil, nil, eventMetric, err
+			return result, err
 		}
 
 		if len(updatedInfos) > 0 {
@@ -92,17 +93,22 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 				bson.M{"$set": bson.M{"infos": event.Entity.Infos}},
 			)
 			if err != nil {
-				return nil, nil, eventMetric, fmt.Errorf("cannot update entities: %w", err)
+				return result, fmt.Errorf("cannot update entities: %w", err)
 			}
 
-			eventMetric.IsInfosUpdated = true
-			checkServices = true
+			result.EventMetric.IsInfosUpdated = true
+			report.CheckInfoChanged = true
 			logInfosUpdate(p.entityInfosUpdateSender, event.Entity.ID, updatedInfos)
+
+			updatedInfosNames = make([]string, 0, len(updatedInfos))
+			for k := range updatedInfos {
+				updatedInfosNames = append(updatedInfosNames, k)
+			}
 		}
 	}
 
-	if !checkServices {
-		return nil, nil, eventMetric, nil
+	if !report.CheckConnector && !report.CheckInfoChanged {
+		return result, nil
 	}
 
 	entityIdsToMetrics := []string{event.Entity.ID}
@@ -110,7 +116,7 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		commRegister.Clear()
 
-		eventMetric.IsServicesUpdated = false
+		result.EventMetric.IsServicesUpdated = false
 
 		var connector types.Entity
 		err := p.dbCollection.FindOne(ctx, bson.M{"_id": event.Entity.ID}).Decode(&connector)
@@ -128,7 +134,11 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 			return fmt.Errorf("cannot refresh services: %w", err)
 		}
 
-		p.contextGraphManager.AssignServices(&connector, commRegister)
+		if report.CheckConnector {
+			p.contextGraphManager.AssignServices(&connector, commRegister)
+		} else if report.CheckInfoChanged {
+			p.contextGraphManager.AssignServicesByInfoNames(&connector, updatedInfosNames, commRegister)
+		}
 
 		err = commRegister.Commit(ctx)
 		if err != nil {
@@ -136,13 +146,15 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 		}
 
 		event.Entity = &connector
-		eventMetric.IsServicesUpdated = len(event.Entity.ServicesToAdd) > 0 || len(event.Entity.ServicesToRemove) > 0
+		result.EventMetric.IsServicesUpdated = len(connector.ServicesToAdd) > 0 || len(connector.ServicesToRemove) > 0
 
 		return nil
 	})
 	if err != nil {
-		return nil, nil, eventMetric, err
+		return result, err
 	}
 
-	return nil, entityIdsToMetrics, eventMetric, nil
+	result.UpdatedEntityIDsForMetrics = entityIdsToMetrics
+
+	return result, nil
 }
