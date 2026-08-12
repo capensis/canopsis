@@ -14,10 +14,10 @@
     <template #item="{ props: itemProps, item }">
       <v-list-item v-bind="itemProps">
         <template #title>
-          {{ item.raw.name }}
+          {{ item.name }}
         </template>
 
-        <template v-if="item.raw.recommended" #append>
+        <template v-if="item.recommended" #append>
           <span class="ml-4 text-medium-emphasis">
             {{ $t('llm.recommendedBadge') }}
           </span>

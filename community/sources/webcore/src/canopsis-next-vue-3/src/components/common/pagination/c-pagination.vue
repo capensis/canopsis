@@ -1,5 +1,5 @@
 <template>
-  <div v-if="total" :class="{ 'py-1': isTop }" class="container pa-6 text-center">
+  <div v-if="total" :class="isTop ? 'py-1' : 'pa-6'" class="container text-center">
     <ul v-if="isTop" class="v-pagination">
       <li>
         <button
@@ -141,6 +141,44 @@ export default {
 
 .container {
   flex-direction: column;
+}
+
+.v-pagination {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.v-pagination li {
+  display: flex;
+  list-style: none;
+}
+
+.v-pagination__navigation {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: rgba(var(--v-theme-on-surface), 0.87);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+}
+
+.v-pagination__navigation--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.pagination-details {
+  display: inline-flex;
+  align-items: center;
 }
 
 span {

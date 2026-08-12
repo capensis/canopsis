@@ -19,7 +19,8 @@
     <v-card-text v-if="component" class="pa-0 position-relative">
       <component
         :is="component"
-        :widget="widget"
+        v-bind="widgetSpecificProps"
+        :widget="preparedWidget"
         :tab-id="tab._id"
         :visible="visible"
       />
@@ -49,7 +50,9 @@
 
 <script>
 import { WIDGET_GRID_ROW_HEIGHT, WIDGET_TYPES } from '@/constants';
+import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 import { activeViewMixin } from '@/mixins/active-view';
+import { authMixin } from '@/mixins/auth';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import CounterWidget from './counter/counter.vue';
@@ -68,7 +71,7 @@ export default {
     MapWidget,
     TextWidget,
   },
-  mixins: [activeViewMixin],
+  mixins: [authMixin, activeViewMixin],
   props: {
     widget: {
       type: Object,
@@ -95,6 +98,34 @@ export default {
         [WIDGET_TYPES.counter]: CounterWidget,
         [WIDGET_TYPES.map]: MapWidget,
       }[this.widget.type];
+    },
+
+    preparedWidget() {
+      if (this.widget.type === WIDGET_TYPES.alarmList) {
+        return prepareAlarmListWidget(this.widget);
+      }
+
+      return this.widget;
+    },
+
+    widgetSpecificProps() {
+      let props = {};
+
+      if (this.activeViewIsKioskScreenMode) {
+        props = {
+          ...this.preparedWidget.parameters?.kiosk,
+        };
+      }
+
+      if (!this.hasCurrentViewActionsAccess) {
+        props = {
+          ...props,
+          hideActions: true,
+          hideMassSelection: true,
+        };
+      }
+
+      return props;
     },
 
     /**

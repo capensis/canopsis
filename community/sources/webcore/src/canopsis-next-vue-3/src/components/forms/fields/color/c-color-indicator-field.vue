@@ -34,7 +34,7 @@ export default {
     },
     name: {
       type: String,
-      default: 'colorIndicator',
+      default: '',
     },
     label: {
       type: String,

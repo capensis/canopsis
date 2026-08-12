@@ -13,8 +13,8 @@
   >
     <template #item="{ props: itemProps, item }">
       <v-list-item v-bind="itemProps">
-        <template v-if="item.raw?.alias" #append>
-          <c-simple-tooltip :content="`infos.${item.raw.originalValue}.value`" top>
+        <template v-if="item?.alias" #append>
+          <c-simple-tooltip :content="`infos.${item.originalValue}.value`" top>
             <template #activator="{ props: activatorProps }">
               <v-icon
                 class="ml-1"
@@ -97,12 +97,12 @@ export default {
   methods: {
     getItemProps(item) {
       return {
-        disabled: item.raw?.options?.disabled,
+        disabled: item?.options?.disabled,
       };
     },
 
     selectionItem(item) {
-      return item?.raw ?? this.selectedItem;
+      return item ?? this.selectedItem;
     },
 
     selectionTitle(item) {

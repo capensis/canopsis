@@ -386,7 +386,7 @@ export const formToAdvancedSearch = (form = [], alarmPattern = false) => {
         return acc;
       }
 
-      let preparedItem = omit(item, ['rangeValueDate', 'rangeValuePeriod']);
+      let preparedItem = omit(item, ['filled', 'rangeValueDate', 'rangeValuePeriod']);
 
       if (range) {
         const rangeValueKey = getRangeValueItemType(item.operator);

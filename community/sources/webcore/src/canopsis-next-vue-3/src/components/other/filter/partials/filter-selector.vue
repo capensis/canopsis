@@ -21,6 +21,23 @@
       <v-divider class="mt-3" />
     </template>
 
+    <template v-if="lockedItems.length" #prepend-inner>
+      <v-chip
+        v-for="lockedItem in lockedItems"
+        :key="getItemValue(lockedItem)"
+        class="filter-selector__locked-chip"
+        size="small"
+      >
+        <v-tooltip activator="parent" location="top">
+          {{ $t('settings.lockedFilter') }}
+        </v-tooltip>
+        <span>{{ getItemText(lockedItem) }}</span>
+        <v-icon class="ml-2" size="small">
+          lock
+        </v-icon>
+      </v-chip>
+    </template>
+
     <template #selection="{ item, index }">
       <v-chip
         v-if="index < 2"
@@ -28,22 +45,28 @@
         size="small"
         @click:close="removeFilter(index)"
       >
-        {{ getItemText(item.raw ?? item) }}
+        {{ getItemText(item) }}
       </v-chip>
     </template>
 
     <template #item="{ props, item }">
-      <v-list-item v-bind="props" :disabled="isFilterItemDisabled(item.raw)">
+      <v-list-item v-bind="props" :disabled="isFilterItemDisabled(item)">
         <template v-if="isMultiple" #prepend>
-          <v-checkbox-btn :model-value="isFilterSelected(item.raw)" color="primary" />
+          <v-checkbox-btn :model-value="isFilterSelected(item)" color="primary" />
         </template>
 
-        <v-list-item-title>
-          <span>{{ getItemText(item.raw) }}</span>
-          <v-icon :color="isFilterSelected(item.raw) ? 'primary' : ''" class="ml-2" size="small">
-            {{ getItemIcon(item.raw) }}
+        <template #title>
+          <span class="filter-selector__item-title">
+          <span class="text-truncate">{{ getItemText(item) }}</span>
+          <v-icon
+            :color="isFilterSelected(item) ? 'primary' : ''"
+            class="ml-2 flex-shrink-0"
+            size="small"
+          >
+            {{ getItemIcon(item) }}
           </v-icon>
-        </v-list-item-title>
+          </span>
+        </template>
       </v-list-item>
     </template>
   </c-select>
@@ -219,5 +242,9 @@ export default {
 <style lang="scss">
 .filter-selector {
   max-width: 500px;
+}
+
+.filter-selector__locked-chip {
+  margin-right: 4px;
 }
 </style>

@@ -40,6 +40,12 @@ const handleMenuUpdate = (opened) => {
     pendingBlurEvent.value = null;
   }
 };
+
+const getLegacySlotProps = slotProps => ({
+  ...slotProps,
+  item: slotProps?.item?.raw ?? slotProps?.item,
+  vuetifyItem: slotProps?.item,
+});
 </script>
 
 <template>
@@ -59,7 +65,7 @@ const handleMenuUpdate = (opened) => {
     </template>
 
     <template v-for="(_, slot) in $slots" #[slot]="slotProps">
-      <slot :name="slot" v-bind="slotProps || {}" />
+      <slot :name="slot" v-bind="getLegacySlotProps(slotProps || {})" />
     </template>
   </v-combobox>
 </template>

@@ -100,6 +100,7 @@ export default {
   replace: 'Remplacer',
   play: 'Lecture',
   pause: 'Pause',
+  pin: 'Épingler',
   copyLink: 'Copier le lien',
   parse: 'Analyser',
   home: 'Accueil',

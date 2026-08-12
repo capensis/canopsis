@@ -1,4 +1,4 @@
-import { isNil, debounce } from 'lodash';
+import { debounce, isNil, isNumber, isString } from 'lodash';
 import { isNotNestedPath, useField, validate } from 'vee-validate';
 import { computed, watch } from 'vue';
 
@@ -53,7 +53,7 @@ const withMessage = (params, message, paramKey) => {
     return { message };
   }
 
-  if (paramKey && (typeof params === 'number' || typeof params === 'string')) {
+  if (paramKey && (isNumber(params) || isString(params))) {
     return { [paramKey]: params, message };
   }
 

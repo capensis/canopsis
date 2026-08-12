@@ -6,3 +6,4 @@ export { default as CRadioGroup } from './c-radio-group.vue';
 export { default as CSelect } from './c-select.vue';
 export { default as CTextField } from './c-text-field.vue';
 export { default as CTextarea } from './c-textarea.vue';
+export { default as VListItemMask } from './v-list-item-mask.vue';

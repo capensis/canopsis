@@ -30,18 +30,17 @@
   >
     <template #item="slotProps">
       <slot
-        v-bind="slotProps"
+        v-bind="getLegacySlotProps(slotProps)"
         :attrs="slotProps.props"
-        :item="slotProps.item?.raw ?? slotProps.item"
         name="item"
       >
         <v-list-item class="c-lazy-search-field--tile" v-bind="slotProps.props">
           <template v-if="$slots.icon" #prepend>
-            <slot :item="slotProps.item?.raw ?? slotProps.item" name="icon" />
+            <slot :item="getSlotItem(slotProps.item)" name="icon" />
           </template>
           <template v-if="withType" #append>
             <span class="ml-4 text-medium-emphasis">
-              {{ (slotProps.item?.raw ?? slotProps.item).type }}
+              {{ getSlotItem(slotProps.item).type }}
             </span>
           </template>
         </v-list-item>
@@ -50,10 +49,13 @@
     <template #append-item="">
       <div ref="appendElement" class="c-lazy-search-field__append" />
     </template>
-    <template v-if="$slots.selection" #selection="slotProps">
-      <slot name="selection" v-bind="slotProps" />
+    <template v-if="$slots.selection && isMultiple" #chip="slotProps">
+      <slot name="selection" v-bind="getLegacySlotProps(slotProps)" />
     </template>
-    <template v-else-if="isMultiple" #selection="{ item, props: selectionProps }">
+    <template v-else-if="$slots.selection" #selection="slotProps">
+      <slot name="selection" v-bind="getLegacySlotProps(slotProps)" />
+    </template>
+    <template v-else-if="isMultiple" #chip="{ item, props: selectionProps }">
       <v-chip
         v-bind="selectionProps"
         class="c-lazy-search-field__chip"
@@ -205,15 +207,23 @@ export default {
       return text ?? getItemValue(item);
     };
 
+    const getSlotItem = item => item?.raw ?? item;
+
+    const getLegacySlotProps = slotProps => ({
+      ...slotProps,
+      item: getSlotItem(slotProps?.item),
+      vuetifyItem: slotProps?.item,
+    });
+
     const getSelectionItem = (item) => {
-      const rawItem = item?.raw ?? item;
+      const rawItem = getSlotItem(item);
       const value = getItemValue(rawItem);
 
       return props.items.find(entity => getItemValue(entity) === value) ?? rawItem;
     };
 
     const getItemProps = (item) => {
-      const rawItem = item?.raw ?? item;
+      const rawItem = getSlotItem(item);
 
       if (isFunction(props.itemDisabled)) {
         return { disabled: props.itemDisabled(rawItem) };
@@ -293,7 +303,9 @@ export default {
       isMultiple,
       getItemValue,
       getItemText,
+      getLegacySlotProps,
       getSelectionItem,
+      getSlotItem,
       getItemProps,
       updateSearch,
       updateValue,

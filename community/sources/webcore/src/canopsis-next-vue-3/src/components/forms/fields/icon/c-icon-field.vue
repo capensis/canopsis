@@ -86,9 +86,8 @@ export default {
       })),
     );
 
-    const getRawItem = item => item?.raw ?? item;
-    const getItemValue = item => getRawItem(item)?.value ?? '';
-    const getItemText = item => getRawItem(item)?.text ?? getItemValue(item);
+    const getItemValue = item => item?.value ?? '';
+    const getItemText = item => item?.text ?? getItemValue(item);
 
     return {
       t,

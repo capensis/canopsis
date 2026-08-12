@@ -1,7 +1,10 @@
 <template>
   <v-menu v-bind="menuProps" :model-value="opened" @update:model-value="updateMenuOpened">
     <template #activator="{ props: activatorProps }">
-      <span v-bind="activatorProps" :title="tooltip">
+      <span v-bind="activatorProps">
+        <v-tooltip v-if="tooltip" activator="parent" location="top">
+          {{ tooltip }}
+        </v-tooltip>
         <span v-if="multiple">
           <v-chip
             :closable="closable && !disabled"
@@ -72,14 +75,17 @@
               indeterminate
             />
             <span v-else>
-              <c-icon
-                v-if="icon"
-                :title="icon.tooltip"
-                class="mr-2"
-                size="small"
-              >
-                {{ icon.icon }}
-              </c-icon>
+              <c-simple-tooltip v-if="icon" :content="icon.tooltip" top>
+                <template #activator="{ props: iconTooltipProps }">
+                  <c-icon
+                    class="mr-2"
+                    size="small"
+                    v-bind="iconTooltipProps"
+                  >
+                    {{ icon.icon }}
+                  </c-icon>
+                </template>
+              </c-simple-tooltip>
               {{ chipText }}
             </span>
           </v-chip>
@@ -87,7 +93,6 @@
       </span>
     </template>
     <variables-list
-      v-if="lazyItems.length"
       :value="selectedItems"
       :items="lazyItems"
       :search="inputValue"
@@ -98,14 +103,23 @@
       return-object
       @update:value="selectItem"
       @fetch:more="showMore"
-    />
-    <v-list v-else density="compact">
-      <v-list-item>
-        <template #title>
-          <span v-html="noDataText" />
-        </template>
-      </v-list-item>
-    </v-list>
+    >
+      <template v-if="hasAnyDisabledItem" #prepend>
+        <v-list-item class="font-italic text-medium-emphasis">
+          <template #title>
+            {{ $t('advancedSearch.listDisabledMessage') }}
+          </template>
+        </v-list-item>
+        <v-divider />
+      </template>
+      <template #no-data>
+        <v-list-item>
+          <template #title>
+            <span v-html="noDataText" />
+          </template>
+        </v-list-item>
+      </template>
+    </variables-list>
   </v-menu>
 </template>
 
@@ -276,13 +290,7 @@ export default {
         idKey: toRef(props, 'itemValue'),
         multiple: toRef(props, 'multiple'),
       },
-      (...args) => {
-        emit(...args);
-
-        if (args[0] === 'update:modelValue') {
-          emit('update:modelValue', args[1]);
-        }
-      },
+      emit,
     );
 
     const itemWithAlias = computed(() => selectedItems.value.find(({ alias } = {}) => alias));
@@ -298,6 +306,8 @@ export default {
     }));
 
     const inputType = computed(() => (props.number ? 'number' : 'text'));
+
+    const hasAnyDisabledItem = computed(() => props.items.some(({ disabled }) => disabled));
 
     const inputPlaceholder = computed(() =>
       props.first ? t('advancedSearch.inputPlaceholder') : '',
@@ -582,6 +592,7 @@ export default {
     return {
       inputPlaceholder,
       noDataText,
+      hasAnyDisabledItem,
       selectedItems,
       opened,
       inputElement,

@@ -21,6 +21,7 @@
     v-else
     :model-value="value"
     :name="name"
+    :density="density"
     class="density__btn-toggle"
     mandatory
     @update:model-value="updateModel"
@@ -30,11 +31,12 @@
         <v-btn
           v-bind="tooltipProps"
           :value="type.value"
+          :density="density"
+          :size="buttonSize"
           class="ma-0"
-          size="small"
           variant="text"
         >
-          <v-icon size="small">
+          <v-icon :size="iconSize">
             {{ type.icon }}
           </v-icon>
         </v-btn>
@@ -60,6 +62,18 @@ export default {
     column: {
       type: Boolean,
       default: false,
+    },
+    buttonSize: {
+      type: String,
+      default: 'small',
+    },
+    iconSize: {
+      type: [String, Number],
+      default: 'small',
+    },
+    density: {
+      type: String,
+      default: 'default',
     },
   },
 

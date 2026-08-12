@@ -650,12 +650,14 @@ export default {
     },
 
     getItemsProps(state) {
+      const item = state.item?.raw ?? state.item;
+
       return {
         index: state.index,
-        item: state.item,
+        item,
         selected: state.selected,
-        disabled: this.isDisabledItem(state.item),
-        expanded: this.isItemExpanded(state.item),
+        disabled: this.isDisabledItem(item),
+        expanded: this.isItemExpanded(item),
         select: state.toggleSelect,
         expand: this.toggleExpand,
       };

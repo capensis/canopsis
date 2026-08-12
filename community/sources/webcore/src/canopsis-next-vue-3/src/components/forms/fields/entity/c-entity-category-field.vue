@@ -1,6 +1,6 @@
 <template>
   <c-select
-    :model-value="category"
+    v-model="selectedCategory"
     :label="$t('common.category')"
     :loading="pending"
     :items="items"
@@ -11,11 +11,12 @@
     item-title="name"
     item-value="_id"
     return-object
-    @update:model-value="updateModel"
   />
 </template>
 
 <script>
+import { isString } from 'lodash';
+
 import { MAX_LIMIT } from '@/constants';
 import { formBaseMixin } from '@/mixins/form';
 import { useEntityCategoryStore } from '@/stores/modules/entity-category';
@@ -53,6 +54,21 @@ export default {
       pending: false,
       items: [],
     };
+  },
+
+  computed: {
+    selectedCategory: {
+      get() {
+        if (!isString(this.category)) {
+          return this.category;
+        }
+
+        return this.items.find(({ _id: id }) => id === this.category) ?? this.category;
+      },
+      set(category) {
+        this.updateModel(category);
+      },
+    },
   },
 
   mounted() {

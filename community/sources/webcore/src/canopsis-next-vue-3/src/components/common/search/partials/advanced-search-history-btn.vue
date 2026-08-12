@@ -1,5 +1,13 @@
 <template>
-  <v-menu content-class="c-advanced-search__history-menu" location="bottom">
+  <v-menu
+    v-model="menu"
+    :min-width="listMinWidth"
+    :transition="false"
+    content-class="c-advanced-search__history-menu"
+    location="bottom"
+    offset="1"
+    @update:model-value="handleMenuToggle"
+  >
     <template #activator="{ props }">
       <c-action-btn
         :tooltip="$t('common.search')"
@@ -8,28 +16,41 @@
         v-bind="props"
       />
     </template>
-    <v-list ref="listElement">
-      <v-list-item v-for="search in preparedSearches" :key="search._id" @click="select(search)">
-        <template #title>
-          <advanced-search-rules :rules="search.rules" :attributes="attributes" disabled />
-        </template>
-        <template #append>
-          <advanced-search-history-item-btns
-            :id="search._id"
-            :pinned="search.pinned"
-            @remove="remove"
-            @toggle-pin="togglePin"
+    <div ref="scrollContainerElement" class="c-advanced-search__history-list">
+      <v-list class="pa-0" density="compact">
+        <div
+          v-for="search in items"
+          :key="search._id"
+          :ref="setItemRef(search._id)"
+          class="c-advanced-search__history-item"
+        >
+          <v-list-item v-if="isItemVisible(search._id)" @click="select(search)">
+            <div class="c-advanced-search__history-item-content">
+              <advanced-search-rules :rules="search.rules" :attributes="attributes" disabled />
+              <advanced-search-history-item-btns
+                :id="search._id"
+                :pinned="search.pinned"
+                @remove="remove"
+                @toggle-pin="togglePin"
+              />
+            </div>
+          </v-list-item>
+          <div
+            v-else
+            :style="getItemPlaceholderStyle(search._id)"
+            class="c-advanced-search__history-item__placeholder"
           />
-        </template>
-      </v-list-item>
-    </v-list>
+        </div>
+        <div ref="appendItemElement" class="c-advanced-search__history-list__append-item" />
+      </v-list>
+    </div>
   </v-menu>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 
-import { advancedSearchToForm } from '@/helpers/search/advanced-search';
+import { useAdvancedSearchHistory } from '../hooks/advanced-search-history';
 
 import AdvancedSearchHistoryItemBtns from './advanced-search-history-item-btns.vue';
 import AdvancedSearchRules from './advanced-search-rules.vue';
@@ -51,22 +72,47 @@ export default {
   emits: ['select', 'remove', 'toggle-pin'],
 
   setup(props, { emit }) {
-    const listElement = ref(null);
-    const preparedSearches = computed(() =>
-      props.searches.map(search => ({
-        _id: search._id,
-        pinned: search.pinned,
-        rules: search.rules ?? advancedSearchToForm(search),
-      })),
-    );
+    const menu = ref(false);
+    const {
+      items,
+      scrollContainerElement,
+      appendItemElement,
+      setItemRef,
+      isItemVisible,
+      getItemPlaceholderStyle,
+      listMinWidth,
+      updateListWidth,
+    } = useAdvancedSearchHistory(computed(() => props.searches));
+
+    /**
+     * Recalculates list width after the menu content is mounted.
+     *
+     * @param {boolean} isOpen
+     */
+    const handleMenuToggle = (isOpen) => {
+      if (!isOpen) {
+        return;
+      }
+
+      nextTick(() => {
+        nextTick(() => updateListWidth());
+      });
+    };
 
     const select = search => emit('select', search);
     const remove = id => emit('remove', id);
     const togglePin = id => emit('toggle-pin', id);
 
     return {
-      listElement,
-      preparedSearches,
+      menu,
+      items,
+      scrollContainerElement,
+      appendItemElement,
+      setItemRef,
+      isItemVisible,
+      getItemPlaceholderStyle,
+      listMinWidth,
+      handleMenuToggle,
       select,
       remove,
       togglePin,
@@ -77,6 +123,49 @@ export default {
 
 <style lang="scss">
 .c-advanced-search__history-menu {
+  max-height: none !important;
+  overflow-y: hidden !important;
+  width: max-content;
+  min-width: max-content;
+  background: rgb(var(--v-theme-surface));
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+  border-radius: 4px;
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+
+  @media (min-width: 1264px) {
+    max-width: 95vw;
+  }
+}
+
+.c-advanced-search__history-list {
   max-height: 95vh;
+  overflow-y: auto;
+  width: max-content;
+  min-width: 100%;
+}
+
+.c-advanced-search__history-item {
+  width: max-content;
+  min-width: 100%;
+}
+
+.c-advanced-search__history-item-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: max-content;
+  min-width: 100%;
+}
+
+.c-advanced-search__history-item__placeholder {
+  width: 100%;
+}
+
+.c-advanced-search__history-list__append-item {
+  height: 1px;
 }
 </style>

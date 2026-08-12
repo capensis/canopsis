@@ -100,6 +100,7 @@ export default {
   replace: 'Replace',
   play: 'Play',
   pause: 'Pause',
+  pin: 'Pin',
   copyLink: 'Copy link',
   parse: 'Parse',
   home: 'Home',

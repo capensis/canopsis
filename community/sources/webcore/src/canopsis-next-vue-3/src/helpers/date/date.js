@@ -1,4 +1,4 @@
-import { isNumber } from 'lodash';
+import { isNumber, isString } from 'lodash';
 import moment from 'moment-timezone';
 
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
@@ -22,7 +22,7 @@ export const convertDateToMoment = (date, format) => {
     return moment.unix(date);
   }
 
-  if (format && typeof date === 'string') {
+  if (format && isString(date)) {
     return moment(date, format);
   }
 

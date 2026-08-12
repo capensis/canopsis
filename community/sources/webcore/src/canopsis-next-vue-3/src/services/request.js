@@ -12,6 +12,14 @@ import localStorageService from '@/services/local-storage';
 const activeSources = {};
 
 /**
+ * Check if error was caused by axios request cancellation
+ *
+ * @param {*} error
+ * @returns {boolean}
+ */
+export const isRequestCanceled = error => axios.isCancel(error);
+
+/**
  * Hook for cancelling of the requests by axios source
  *
  * @param {Function} action
@@ -34,7 +42,7 @@ export async function useRequestCancelling(action, key) {
 
     return result;
   } catch (err) {
-    if (!axios.isCancel(err)) {
+    if (!isRequestCanceled(err)) {
       delete activeSources[key];
 
       throw err;

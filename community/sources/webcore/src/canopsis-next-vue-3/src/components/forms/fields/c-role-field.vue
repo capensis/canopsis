@@ -103,7 +103,7 @@ export default {
     };
 
     const getItemProps = item => ({
-      disabled: props.isDisabledItems?.(item.raw ?? item),
+      disabled: props.isDisabledItems?.(item),
     });
 
     const updateModel = (value) => {
