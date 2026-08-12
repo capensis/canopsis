@@ -1,3 +1,5 @@
+import { isString } from 'lodash';
+
 /**
  * Decodes HTTP chunked transfer-encoding body.
  *
@@ -49,7 +51,7 @@ export const decodeChunkedBody = (body) => {
  * @throws {Error} When header/body separator is not found
  */
 export const parseRawHttp = (raw) => {
-  if (typeof raw !== 'string') {
+  if (!isString(raw)) {
     throw new TypeError('Raw HTTP data must be a string');
   }
 
@@ -86,7 +88,7 @@ export const parseRawHttp = (raw) => {
   });
 
   if (
-    typeof headers['Transfer-Encoding'] === 'string' &&
+    isString(headers['Transfer-Encoding']) &&
     headers['Transfer-Encoding'].toLowerCase().includes('chunked')
   ) {
     body = decodeChunkedBody(body);

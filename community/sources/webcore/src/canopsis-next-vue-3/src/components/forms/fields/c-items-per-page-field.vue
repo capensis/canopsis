@@ -2,9 +2,9 @@
   <c-select
     :items="items"
     :model-value="modelValue"
+    :density="density"
     class="select"
     name="itemsPerPage"
-    density="compact"
     hide-details
     single-line
     @update:model-value="$emit('update:modelValue', $event)"
@@ -31,6 +31,10 @@ export default {
     items: {
       type: Array,
       default: () => [...PAGINATION_PER_PAGE_VALUES],
+    },
+    density: {
+      type: String,
+      default: 'default',
     },
   },
 

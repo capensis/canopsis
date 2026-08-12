@@ -26,7 +26,7 @@
       <v-icon class="mr-2">
         language
       </v-icon>
-      <span>{{ item?.raw?.value ?? item?.value ?? item }}</span>
+      <span>{{ item?.value ?? item }}</span>
     </template>
 
     <template v-if="!addable" #icon>
@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { isString } from 'lodash';
 import { computed, nextTick, ref, toRef } from 'vue';
 
 import { useLazySearch } from '@/hooks/form/lazy-search';
@@ -74,7 +75,7 @@ export default {
       return {
         ...response,
         data: response.data.map(metric =>
-          typeof metric === 'string' ? { value: metric } : metric,
+          isString(metric) ? { value: metric } : metric,
         ),
       };
     };
@@ -101,7 +102,7 @@ export default {
       lazySearch.updateSearch(value);
     };
     const handleSelectedValue = (value) => {
-      if (typeof value === 'string') {
+      if (isString(value)) {
         emit('update:modelValue', value);
         closeMenuAndBlur();
 

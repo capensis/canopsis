@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { isString } from 'lodash';
 import { VTreeview } from 'vuetify/components';
 
 export default {
@@ -174,7 +175,7 @@ export default {
         return true;
       }
 
-      if (typeof this.itemChildren === 'string' && Object.hasOwn(item, this.itemChildren)) {
+      if (isString(this.itemChildren) && Object.hasOwn(item, this.itemChildren)) {
         return false;
       }
 

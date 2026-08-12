@@ -1,7 +1,7 @@
 import { cloneDeep, map } from 'lodash';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
-import { PAGINATION_LIMIT } from '@/config';
+import { EXPAND_DEFAULT_MAX_LETTERS, PAGINATION_LIMIT } from '@/config';
 import {
   ALARM_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
@@ -400,6 +400,7 @@ export const getAlarmsListWidgetColumnValueFilter = (value) => {
     case ALARM_FIELDS.statusAt:
     case ALARM_FIELDS.resolved:
     case ALARM_FIELDS.timestamp:
+    case ALARM_FIELDS.entityLastPbehaviorDate:
       return convertDateToStringWithFormatForToday;
     case ALARM_FIELDS.duration:
     case ALARM_FIELDS.currentStateDuration:
@@ -421,20 +422,49 @@ export const getAlarmsListWidgetColumnValueFilter = (value) => {
  */
 export const getAlarmsListWidgetColumnComponentGetter = (
   { value, onlyIcon, inlineLinksCount },
-  { showRootCauseByStateClick = true } = {},
+  { showRootCauseByStateClick = true, isCellContentTruncated } = {},
 ) => {
   if (value === ALARM_FIELDS.state) {
+    return (context) => {
+      const state = context.alarm.v?.state;
+      const component = {
+        bind: {
+          is: 'c-alarm-state-chip',
+          value: state?.val,
+          type: state?._t,
+          badgeValue: context.alarm.v?.events_count,
+          small: context.small,
+        },
+      };
+
+      if (showRootCauseByStateClick && hasStateSetting(context.alarm.entity)) {
+        component.bind.class = 'cursor-pointer';
+        component.bind.appendIconName = '$vuetify.icons.root_cause';
+        component.on = {
+          click: () => context.$emit('click:state', { ...context.alarm.entity, state: state?.val }),
+        };
+      }
+
+      return component;
+    };
+  }
+
+  if (value === ALARM_FIELDS.maxState) {
     return context => ({
       bind: {
         is: 'c-alarm-state-chip',
-        value: context.alarm.v?.state?.val,
-        type: context.alarm.v?.state?._t,
-        badgeValue: context.alarm.v?.events_count,
+        value: context.alarm.v?.max_state,
         small: context.small,
-        class:
-          showRootCauseByStateClick && hasStateSetting(context.alarm.entity)
-            ? 'cursor-pointer'
-            : undefined,
+      },
+    });
+  }
+
+  if (value === ALARM_FIELDS.initialState) {
+    return context => ({
+      bind: {
+        is: 'c-alarm-state-chip',
+        value: context.alarm.v?.initial_state,
+        small: context.small,
       },
     });
   }
@@ -459,6 +489,20 @@ export const getAlarmsListWidgetColumnComponentGetter = (
         selectedTags: context.selectedTags,
         small: context.small,
       },
+      on: {
+        select: context.$listeners['select:tag'],
+      },
+    });
+  }
+
+  if (value === ALARM_FIELDS.impactState) {
+    return context => ({
+      bind: {
+        is: 'color-indicator-wrapper',
+        type: COLOR_INDICATOR_TYPES.impactState,
+        entity: context.alarm.entity,
+        alarm: context.alarm,
+      },
     });
   }
 
@@ -472,8 +516,21 @@ export const getAlarmsListWidgetColumnComponentGetter = (
         inlineCount: inlineLinksCount,
         small: context.small,
       },
+      on: {
+        activate: context.$listeners.activate,
+      },
     });
   }
 
-  return undefined;
+  const maxLetters = isCellContentTruncated ? Infinity : EXPAND_DEFAULT_MAX_LETTERS;
+
+  return context => ({
+    bind: {
+      is: 'c-ellipsis',
+      class: 'alarm-column-cell__text',
+      title: context.value,
+      text: context.value,
+      maxLetters,
+    },
+  });
 };

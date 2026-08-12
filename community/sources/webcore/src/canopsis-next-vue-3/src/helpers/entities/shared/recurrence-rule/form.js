@@ -1,4 +1,4 @@
-import { isArray, isNumber, mapValues, pick } from 'lodash';
+import { isArray, isNumber, isString, mapValues, pick } from 'lodash';
 import { RRule, rrulestr } from 'rrule';
 
 /**
@@ -169,7 +169,7 @@ export const getRecurrenceAdvancedFieldNames = (options) => {
  * @return {RecurrenceRuleFormOptions}
  */
 export const rruleBodyStringToRecurrenceRuleFormOptions = (rruleBody) => {
-  if (!rruleBody || typeof rruleBody !== 'string') {
+  if (!rruleBody || !isString(rruleBody)) {
     return emptyRecurrenceRuleFormOptions();
   }
 
@@ -191,7 +191,7 @@ export const normalizeRruleFormFieldForForm = (value) => {
     return emptyRecurrenceRuleFormOptions();
   }
 
-  if (typeof value === 'string') {
+  if (isString(value)) {
     return rruleBodyStringToRecurrenceRuleFormOptions(value);
   }
 
@@ -244,7 +244,7 @@ export const formToRrule = (formRrule) => {
     return '';
   }
 
-  if (typeof formRrule === 'string') {
+  if (isString(formRrule)) {
     return formRrule;
   }
 

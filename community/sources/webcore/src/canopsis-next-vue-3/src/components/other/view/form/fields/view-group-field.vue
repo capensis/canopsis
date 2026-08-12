@@ -18,7 +18,7 @@
   >
     <template #item="{ props, item }">
       <v-list-item v-bind="getItemProps(props)">
-        <template v-if="getItem(item).is_private" #prepend>
+        <template v-if="item?.is_private" #prepend>
           <v-avatar class="view-group-field__avatar" size="20">
             <v-icon size="small">
               lock
@@ -27,7 +27,7 @@
         </template>
 
         <v-list-item-title>
-          {{ getItem(item).title }}
+          {{ item?.title }}
         </v-list-item-title>
       </v-list-item>
     </template>
@@ -109,10 +109,6 @@ export default {
   },
 
   methods: {
-    getItem(item) {
-      return item?.raw ?? item ?? {};
-    },
-
     getItemProps(props) {
       const { title, ...listItemProps } = props;
 

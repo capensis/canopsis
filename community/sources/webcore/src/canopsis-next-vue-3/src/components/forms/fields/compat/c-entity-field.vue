@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { isArray, keyBy, pick, isEqual } from 'lodash';
+import { isArray, isEqual, isString, keyBy, pick } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { BASIC_ENTITY_TYPES } from '@/constants';
@@ -192,7 +192,7 @@ export default {
     },
 
     getCurrentEntities() {
-      if (!this.returnObject || typeof this.value === 'string') {
+      if (!this.returnObject || isString(this.value)) {
         return pick(this.entitiesById, isArray(this.value) ? this.value : [this.value]);
       }
 

@@ -109,7 +109,7 @@ export default {
 
   methods: {
     getItem(item) {
-      return item?.raw ?? item ?? {};
+      return item ?? {};
     },
 
     getItemProps(props) {

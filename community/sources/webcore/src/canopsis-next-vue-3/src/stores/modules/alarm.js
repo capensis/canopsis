@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 
 import { API_ROUTES } from '@/config';
 import { mapIds } from '@/helpers/array';
-import request, { useRequestCancelling } from '@/services/request';
+import request, { isRequestCanceled, useRequestCancelling } from '@/services/request';
 
 export const useAlarmStore = defineStore('alarm', () => {
   const alarmsById = ref({});
@@ -75,6 +75,10 @@ export const useAlarmStore = defineStore('alarm', () => {
         setAlarms(data);
         setWidgetState(widgetId, { allIds: mapIds(data), meta, pending: false });
       } catch (err) {
+        if (isRequestCanceled(err)) {
+          throw err;
+        }
+
         console.error(err);
 
         setWidgetState(widgetId, { pending: false });

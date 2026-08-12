@@ -1,61 +1,88 @@
 <template>
-  <advanced-search-chip
-    :model-value="preparedValue"
-    :active="active"
-    :always-active="alwaysActive"
+  <v-chip
     :closable="closable"
-    :disabled="disabled"
-    input-type="date"
-    allow-text
-    @update:model-value="update"
-    @click="$emit('click')"
-    @close="$emit('close')"
-  />
+    :color="color"
+    class="c-advanced-search__chip c-advanced-search__array-chip"
+    size="small"
+    @click.prevent="$emit('click')"
+    @click:close="close"
+    @focusout="$emit('focusout')"
+  >
+    <date-time-picker-menu
+      v-for="chip in chips"
+      :key="chip.key"
+      :value="chipValue[chip.key]"
+      :allowed-dates="chip.allowedDates"
+      @update:value="updateField(chip.key, $event)"
+    >
+      <template #activator="{ props: activatorProps, value }">
+        <v-chip v-bind="activatorProps" size="x-small">
+          <span class="font-italic text-medium-emphasis">
+            {{ $t(`common.${chip.key}`) }}:
+          </span>
+          {{ formatDate(value) }}
+        </v-chip>
+      </template>
+    </date-time-picker-menu>
+  </v-chip>
 </template>
 
 <script>
-import AdvancedSearchChip from './advanced-search-chip.vue';
+import { computed, toRef } from 'vue';
+
+import DateTimePickerMenu from '@/components/forms/fields/date-time-picker/date-time-picker-menu.vue';
+import { convertDateToString } from '@/helpers/date/date';
+import { useDateRangeAllowedDates } from '@/hooks/form/date-range-allowed-dates';
+import { useModelField } from '@/hooks/form/model-field';
 
 export default {
-  components: { AdvancedSearchChip },
+  components: {
+    DateTimePickerMenu,
+  },
+
+  inheritAttrs: false,
 
   props: {
     modelValue: {
       type: Object,
-      default: () => ({ from: '', to: '' }),
-    },
-    active: {
-      type: Boolean,
-      default: false,
-    },
-    alwaysActive: {
-      type: Boolean,
-      default: false,
+      default: () => ({ from: 0, to: 0 }),
     },
     closable: {
       type: Boolean,
       default: false,
     },
-    disabled: {
-      type: Boolean,
-      default: false,
+    color: {
+      type: String,
+      required: false,
     },
   },
 
-  emits: ['update:modelValue', 'click', 'close'],
+  emits: ['update:modelValue', 'click', 'focusout', 'close'],
 
-  computed: {
-    preparedValue() {
-      return this.modelValue.from || this.modelValue.to || '';
-    },
-  },
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
+    const { isAllowedFromDate, isAllowedToDate } = useDateRangeAllowedDates(
+      toRef(props, 'modelValue'),
+    );
 
-  methods: {
-    update(value) {
-      const prepared = { from: value, to: value };
+    const chipValue = computed(() => props.modelValue ?? { from: 0, to: 0 });
 
-      this.$emit('update:modelValue', prepared);
-    },
+    const chips = [
+      { key: 'from', allowedDates: isAllowedFromDate },
+      { key: 'to', allowedDates: isAllowedToDate },
+    ];
+
+    const formatDate = value => convertDateToString(value, 'long', '--.--.---- --:--');
+    const close = () => emit('close');
+
+    return {
+      chipValue,
+      chips,
+
+      updateField,
+      formatDate,
+      close,
+    };
   },
 };
 </script>

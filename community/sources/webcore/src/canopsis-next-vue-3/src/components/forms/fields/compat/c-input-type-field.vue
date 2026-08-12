@@ -19,7 +19,7 @@
         </template>
         <template #title>
           {{ getItemText(item) }}
-          <span v-if="getItemRaw(item)?.defined" class="ml-2 text-medium-emphasis">
+          <span v-if="item?.defined" class="ml-2 text-medium-emphasis">
             ({{ $t('common.defined') }})
           </span>
         </template>
@@ -51,16 +51,12 @@ export default {
     },
   },
   methods: {
-    getItemRaw(item) {
-      return item?.raw ?? item;
-    },
-
     getItemText(item) {
-      return this.getItemRaw(item)?.text ?? '';
+      return item?.text ?? '';
     },
 
     getItemIcon(item) {
-      return this.getInputTypeIcon(this.getItemRaw(item)?.value);
+      return this.getInputTypeIcon(item?.value);
     },
 
     getInputTypeIcon(type) {

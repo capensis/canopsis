@@ -2,7 +2,8 @@
   <v-chip
     :class="chipClass"
     :color="color"
-    :variant="outlined ? 'outlined' : undefined"
+    :variant="outlined ? 'outlined' : 'flat'"
+    :closable="false"
     class="c-chip"
     size="small"
   >
@@ -11,6 +12,7 @@
     </span>
     <v-icon
       v-if="closable"
+      :style="textStyle"
       class="cursor-pointer ml-2"
       size="small"
       @click.stop="$emit('close', $event)"

@@ -2,13 +2,13 @@
   <div :class="wrapperClass" class="c-enabled-field">
     <v-switch
       :model-value="currentValue"
-      :class="{ 'ma-0': withBackground || noMargin, 'pa-0': noMargin }"
+      :class="{ 'ma-0': withBackground || noMargin || inline, 'pa-0': noMargin || inline }"
       :label="label || t('common.enabled')"
       :color="color"
       :disabled="disabled"
       :readonly="readonly"
-      :hide-details="hideDetails || withBackground"
-      v-bind="$attrs"
+      :hide-details="hideDetails || withBackground || inline"
+      v-bind="switchAttrs"
       @update:model-value="updateModel"
     >
       <template v-if="$slots.label" #label>
@@ -67,22 +67,28 @@ export default {
       type: Boolean,
       default: false,
     },
+    inline: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: ['update:modelValue'],
 
-  setup(props, { emit }) {
+  setup(props, { emit, attrs }) {
     const { t } = useI18n();
 
     const currentValue = computed(() => props.modelValue ?? props.value);
+    const switchAttrs = computed(() => ({
+      ...attrs,
+      density: attrs.density ?? (props.inline ? 'compact' : undefined),
+    }));
 
     const wrapperClass = computed(() =>
-      props.withBackground
-        ? {
-            'c-enabled-field--with-background': true,
-            'c-enabled-field--with-background--disabled': !currentValue.value,
-          }
-        : {},
+      ({
+        'c-enabled-field--with-background': props.withBackground,
+        'c-enabled-field--with-background--disabled': props.withBackground && !currentValue.value,
+      }),
     );
 
     const updateModel = (value) => {
@@ -92,6 +98,7 @@ export default {
     return {
       t,
       currentValue,
+      switchAttrs,
       wrapperClass,
       updateModel,
     };

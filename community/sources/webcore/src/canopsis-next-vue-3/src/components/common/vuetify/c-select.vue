@@ -1,4 +1,5 @@
 <script setup>
+import { isString } from 'lodash';
 import { computed, nextTick, ref, useAttrs } from 'vue';
 
 import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
@@ -12,6 +13,10 @@ const props = defineProps({
   menuProps: {
     type: Object,
     default: () => ({}),
+  },
+  itemProps: {
+    type: [Function, Object, String, Array],
+    default: undefined,
   },
 });
 const emit = defineEmits(validationEmits);
@@ -30,7 +35,7 @@ const normalizeLegacyListItem = (item, index) => {
     return item;
   }
 
-  if ('divider' in item && item.divider) {
+  if (item?.divider) {
     return {
       ...item,
       type: 'divider',
@@ -40,8 +45,8 @@ const normalizeLegacyListItem = (item, index) => {
     };
   }
 
-  if ('header' in item && item.header) {
-    const title = typeof item.header === 'string'
+  if (item?.header) {
+    const title = isString(item.header)
       ? item.header
       : item.title ?? item.text ?? '';
 
@@ -106,6 +111,20 @@ const onMenuUpdate = (value) => {
     pendingBlurEvent.value = null;
   }
 };
+
+const getLegacySlotProps = slotProps => ({
+  ...slotProps,
+  item: slotProps?.item?.raw ?? slotProps?.item,
+  vuetifyItem: slotProps?.item,
+});
+
+const getItemProps = (item) => {
+  if (typeof props.itemProps === 'function') {
+    return props.itemProps(item?.raw ?? item);
+  }
+
+  return props.itemProps;
+};
 </script>
 
 <template>
@@ -113,6 +132,7 @@ const onMenuUpdate = (value) => {
     v-bind="$attrs"
     v-model="selectValue"
     :items="selectItems"
+    :item-props="itemProps ? getItemProps : undefined"
     :menu-props="selectMenuProps"
     :name="inputName"
     :error-messages="errorMessages"
@@ -127,7 +147,7 @@ const onMenuUpdate = (value) => {
     </template>
 
     <template v-for="(_, slot) in $slots" #[slot]="slotProps">
-      <slot :name="slot" v-bind="slotProps || {}" />
+      <slot :name="slot" v-bind="getLegacySlotProps(slotProps || {})" />
     </template>
   </v-select>
 </template>

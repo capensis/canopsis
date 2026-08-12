@@ -97,13 +97,12 @@ export default {
     },
 
     getItemText(item) {
-      const preparedItem = item?.raw ?? item;
-      const value = preparedItem?.value ?? preparedItem?.props?.value ?? preparedItem;
+      const value = item?.value ?? item?.props?.value ?? item;
       const parameter = this.availableParameters.find(
         ({ value: parameterValue }) => parameterValue === value,
       );
 
-      return parameter?.text ?? preparedItem?.text ?? preparedItem?.title ?? '';
+      return parameter?.text ?? item?.text ?? item?.title ?? '';
     },
   },
 };

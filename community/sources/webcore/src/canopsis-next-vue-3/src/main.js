@@ -12,6 +12,7 @@ import * as IconComponents from '@/components/common/icon';
 import * as InputComponents from '@/components/common/inputs';
 import * as LayoutComponents from '@/components/common/layout';
 import CLayout from '@/components/common/layout/c-layout.vue';
+import * as ListComponents from '@/components/common/list';
 import * as ModalComponents from '@/components/common/modal';
 import * as OverlayComponents from '@/components/common/overlay';
 import * as PageComponents from '@/components/common/page';
@@ -104,6 +105,10 @@ Object.entries(InputComponents).forEach(([name, component]) => {
 });
 
 Object.entries(LayoutComponents).forEach(([name, component]) => {
+  app.component(name, component);
+});
+
+Object.entries(ListComponents).forEach(([name, component]) => {
   app.component(name, component);
 });
 

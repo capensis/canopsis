@@ -136,7 +136,6 @@ export default {
 
         newSearch._id = activeSearch?._id ?? uid('advanced-search');
         newSearch.pinned = activeSearch?.pinned ?? false;
-        newSearch.rules = props.rules;
 
         emit('submit', newSearch);
       }
@@ -147,6 +146,10 @@ export default {
     const inputSearch = (newRules) => {
       resetActiveSearch();
       updateModel(newRules);
+
+      if (newRules.length === 1 && newRules[0].text) {
+        submit();
+      }
     };
 
     const reset = () => {

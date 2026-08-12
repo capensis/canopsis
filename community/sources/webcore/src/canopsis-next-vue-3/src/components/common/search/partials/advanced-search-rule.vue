@@ -1,6 +1,9 @@
 <template>
   <c-layout
-    :class="{ 'c-advanced-search__rule--union': union }"
+    :class="{
+      'c-advanced-search__rule--union': union,
+      'c-advanced-search__rule--error': hasRuleError,
+    }"
     class="c-advanced-search__rule"
     align="center"
     gap="1"
@@ -10,6 +13,7 @@
       :is="chip.component"
       v-bind="chip.bind"
       :key="chip.key"
+      v-on="chip.on"
     />
   </c-layout>
 </template>
@@ -113,22 +117,23 @@ export default {
     });
 
     const { validator } = useAttachAdvancedSearchRuleValidator();
+    const hasRuleError = computed(() => validator.errors.has(props.rule.key));
 
     /**
      * Navigates to the next form item type, optionally skipping the current type.
      *
      * @param {boolean} [skipType = false] - Whether to skip the current type and move to the next one.
      */
-    const goToNextType = (skipType = false) => {
-      inputType.value = getNextForFormItemType(props.rule, inputType.value);
+    const goToNextType = (skipType = false, rule = props.rule) => {
+      inputType.value = getNextForFormItemType(rule, inputType.value);
 
       if (skipType) {
-        goToNextType();
+        goToNextType(false, rule);
 
         return;
       }
 
-      if (isFinishedRule.value && !props.rule.text) {
+      if (isFinishedRule.value && !rule.text) {
         emit('next');
       }
     };
@@ -202,7 +207,7 @@ export default {
         }
       }
 
-      updateModel({
+      const newRule = {
         ...preparedRule,
         ...pick(
           advancedSearchRuleItemToFormItem(),
@@ -210,7 +215,9 @@ export default {
         ),
         [type]: value,
         filled: uniq(filled),
-      });
+      };
+
+      updateModel(newRule);
 
       if (
         [
@@ -226,7 +233,7 @@ export default {
       setInputType(type);
 
       if (!isFinishedRule.value) {
-        nextTick(() => goToNextType(skipType));
+        nextTick(() => goToNextType(skipType, newRule));
       }
     };
 
@@ -273,13 +280,15 @@ export default {
         }
       }
 
-      updateModel({
+      const newRule = {
         ...preparedRule,
         filled: uniq(filled),
         [inputType.value]: value,
-      });
+      };
 
-      nextTick(() => goToNextType(skipType));
+      updateModel(newRule);
+
+      nextTick(() => goToNextType(skipType, newRule));
     };
 
     /**
@@ -363,11 +372,12 @@ export default {
         focusOnMount: props.focusOnMount,
       };
 
-      let onUpdateModelValue = updateItem;
+      let on = {
+        'update:modelValue': updateItem,
+      };
 
       if (input) {
         bind.alwaysActive = true;
-        bind['onUpdate:modelValue'] = onUpdateModelValue;
       } else {
         const value = props.rule[type];
         const definedItem = (items ?? []).find(({ defined }) => defined);
@@ -380,21 +390,23 @@ export default {
           bind.tooltip = t('advancedSearch.definedDifferent');
         }
 
-        if (validator.errors.has(props.rule.key)) {
+        if (hasRuleError.value) {
           bind.color = 'error';
         }
 
-        bind.value = value;
+        bind.modelValue = value;
         bind.alwaysActive = multiple && !props.rule[type]?.length;
         bind.active = isActiveType(type);
         bind.closable = closable;
         bind.multiple = multiple;
-        onUpdateModelValue = newValue =>
-          updateChipItem(newValue, isText(newValue) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type);
-        bind['onUpdate:modelValue'] = onUpdateModelValue;
-        bind.onClick = () => clickChip(type);
-        bind.onFocusout = () => focusOutChip(type);
-        bind.onClose = remove;
+
+        on = {
+          'update:modelValue': newValue =>
+            updateChipItem(newValue, isText(newValue) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type),
+          click: () => clickChip(type),
+          focusout: () => focusOutChip(type),
+          close: remove,
+        };
       }
 
       let component = 'advanced-search-chip';
@@ -413,6 +425,7 @@ export default {
         key,
         component,
         bind,
+        on,
       };
     };
 
@@ -443,6 +456,7 @@ export default {
 
     return {
       chips,
+      hasRuleError,
       remove,
       clickChip,
     };
@@ -457,15 +471,11 @@ export default {
   }
 
   &--union :deep(.v-chip) {
-    .v-chip {
-      background: var(--v-application-background-base) !important;
-
-      &.error {
-        color: var(--v-error-base, red);
-      }
-    }
-
     border: 1px solid rgba(var(--v-theme-on-surface), 0.87);
+  }
+
+  &--union.c-advanced-search__rule--error :deep(.v-chip) {
+    border-color: rgb(var(--v-theme-error));
   }
 }
 </style>

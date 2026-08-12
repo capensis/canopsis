@@ -14,6 +14,7 @@
     :hide-selected="hideSelected"
     :item-text="itemText"
     :item-value="itemValue"
+    :density="density"
     :multiple="multiple"
     class="c-alarm-tag-field"
     chips
@@ -25,17 +26,16 @@
     @update:search="updateSearch"
   >
     <template #selection="{ item, index }">
-      <v-chip
+      <c-chip
         v-if="!showCount || index < showCount"
-        :color="item.color"
-        :title="item[itemText]"
+        :color="getSelectionColor(item)"
+        :title="getSelectionText(item)"
         class="c-alarm-tag-field__tag px-2"
-        size="small"
         closable
-        @click:close="removeItemFromSelectedItemsByIndex(index)"
+        @close="removeItemFromSelectedItemsByIndex(index)"
       >
-        <span class="text-truncate">{{ item[itemText] }}</span>
-      </v-chip>
+        {{ getSelectionText(item) }}
+      </c-chip>
       <span v-else-if="index === showCount">
         +{{ selectedItems.length - showCount }} {{ $t('common.more') }}
       </span>
@@ -43,8 +43,8 @@
     </template>
     <template #item="{ props: itemProps }">
       <v-list-item class="c-alarm-tag-field__list-item text-break" v-bind="itemProps">
-        <template v-if="multiple" #prepend>
-          <v-checkbox :model-value="itemProps.active" density="compact" hide-details />
+        <template v-if="multiple" #prepend="{ isSelected }">
+          <v-checkbox-btn :model-value="isSelected" color="primary" />
         </template>
       </v-list-item>
     </template>
@@ -63,7 +63,7 @@ import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
 import { useAlarmTagLabel } from '@/hooks/store/modules/alarm-tag-label';
 
 export default {
-  emits: ['update:value'],
+  emits: ['update:value', 'update:selected-items'],
   props: {
     value: {
       type: [Array],
@@ -113,6 +113,10 @@ export default {
       type: Boolean,
       required: false,
     },
+    density: {
+      type: String,
+      default: 'default',
+    },
   },
   setup(props, { emit }) {
     const { fetchAlarmTagsListWithoutStore } = useAlarmTag();
@@ -148,6 +152,12 @@ export default {
       emit,
     );
 
+    const getSelectionText = (item) => {
+      return item?.[itemText.value] ?? item;
+    };
+
+    const getSelectionColor = item => item?.color;
+
     watch(() => props.onlyLabels, fetchItems);
 
     return {
@@ -161,6 +171,8 @@ export default {
       fetchMoreItems,
       changeSelectedItems,
       updateSearch,
+      getSelectionText,
+      getSelectionColor,
       removeItemFromSelectedItemsByIndex,
     };
   },
