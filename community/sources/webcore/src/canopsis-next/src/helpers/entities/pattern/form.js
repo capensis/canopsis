@@ -382,6 +382,7 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.ticketValue,
   ALARM_PATTERN_FIELDS.ticketInitiator,
   ALARM_PATTERN_FIELDS.ticketData,
+  ALARM_PATTERN_FIELDS.snoozeAuthor,
   ALARM_PATTERN_FIELDS.ackBy,
   ALARM_PATTERN_FIELDS.ackMessage,
   ALARM_PATTERN_FIELDS.ackInitiator,
@@ -610,33 +611,25 @@ export const isValidRuleValue = rule => (
  * @param {string} field Rule field id (alarm, entity, or event-filter pattern field constant).
  * @return {boolean} True when the field is not one of the excluded primitive / specialized array fields.
  */
-export const isArrayPatternRuleFieldWithoutPrimitive = field => (
-  field !== ALARM_PATTERN_FIELDS.tags
-    && field !== ALARM_PATTERN_FIELDS.component
-    && field !== ALARM_PATTERN_FIELDS.connector
-    && field !== ALARM_PATTERN_FIELDS.connectorName
-    && field !== ALARM_PATTERN_FIELDS.resource
-    && field !== ALARM_PATTERN_FIELDS.ackBy
-    && field !== ALARM_PATTERN_FIELDS.ackInitiator
-    && field !== ALARM_PATTERN_FIELDS.ticketInitiator
-    && field !== ALARM_PATTERN_FIELDS.snoozeAuthor
-    && field !== ALARM_PATTERN_FIELDS.snoozeInitiator
-    && field !== ALARM_PATTERN_FIELDS.canceledInitiator
-    && field !== ALARM_PATTERN_FIELDS.lastCommentAuthor
-    && field !== ALARM_PATTERN_FIELDS.lastCommentInitiator
-    && field !== ALARM_PATTERN_FIELDS.stateInitiator
-    && field !== ENTITY_PATTERN_FIELDS.id
-    && field !== ENTITY_PATTERN_FIELDS.component
-    && field !== ENTITY_PATTERN_FIELDS.connector
-    && field !== ENTITY_PATTERN_FIELDS.category
-    && field !== EVENT_FILTER_PATTERN_FIELDS.eventType
-    && field !== EVENT_FILTER_PATTERN_FIELDS.component
-    && field !== EVENT_FILTER_PATTERN_FIELDS.connector
-    && field !== EVENT_FILTER_PATTERN_FIELDS.connectorName
-    && field !== EVENT_FILTER_PATTERN_FIELDS.resource
-    && field !== EVENT_FILTER_PATTERN_FIELDS.initiator
-    && field !== EVENT_FILTER_PATTERN_FIELDS.author
-);
+export const isArrayPatternRuleFieldWithoutPrimitive = field => ![
+  ALARM_PATTERN_FIELDS.lastCommentAuthor,
+  ALARM_PATTERN_FIELDS.displayName,
+  ALARM_PATTERN_FIELDS.output,
+  ALARM_PATTERN_FIELDS.ackMessage,
+  ALARM_PATTERN_FIELDS.ticketValue,
+  ALARM_PATTERN_FIELDS.ticketMessage,
+  ALARM_PATTERN_FIELDS.ticketData,
+  ALARM_PATTERN_FIELDS.snoozeAuthor,
+  ALARM_PATTERN_FIELDS.lastComment,
+  ALARM_PATTERN_FIELDS.lastCommentAuthor,
+  ALARM_PATTERN_FIELDS.longOutput,
+  ALARM_PATTERN_FIELDS.initialOutput,
+  ALARM_PATTERN_FIELDS.initialLongOutput,
+
+  ENTITY_PATTERN_FIELDS.name,
+
+  EVENT_FILTER_PATTERN_FIELDS.author,
+].includes(field);
 
 /**
  * Check pattern rule is valid
@@ -1143,7 +1136,7 @@ export const patternRuleToForm = (rule = {}) => {
     (form.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(form.operator))
     && isArray(form.value)
     && (!form.value.length || !form.value[0]?.key)
-    && !isArrayPatternRuleFieldWithoutPrimitive(form.field)
+    && (!isArrayPatternRuleFieldWithoutPrimitive(form.attribute) || isInfos)
   ) {
     form.value = primitiveArrayToForm(form.value);
   }

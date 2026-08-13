@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
+	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -16,6 +17,7 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+	"golang.org/x/sync/singleflight"
 )
 
 type Report struct {
@@ -24,6 +26,9 @@ type Report struct {
 	CheckResource  bool
 	CheckComponent bool
 	CheckConnector bool
+	CheckService   bool
+
+	CheckInfoChanged bool
 
 	// IsNew is used only for event metric
 	IsNew bool
@@ -42,6 +47,8 @@ func NewManager(
 		storage:             storage,
 		stateSettingService: stateSettingService,
 		logger:              logger,
+
+		sfGroup: &singleflight.Group{},
 	}
 }
 
@@ -49,9 +56,14 @@ type manager struct {
 	adapter             libentity.Adapter
 	storage             EntityServiceStorage
 	entityCollection    libmongo.DbCollection
-	services            []entityservice.EntityService
 	stateSettingService statesetting.Assigner
 	logger              zerolog.Logger
+
+	sfGroup                  *singleflight.Group
+	servicesMx               sync.RWMutex
+	services                 map[string]EntityService
+	servicesByComponentInfos map[string]map[string]EntityService
+	servicesByInfos          map[string]map[string]EntityService
 }
 
 func (m *manager) InheritComponentFields(resource, component *types.Entity, commRegister libmongo.CommandsRegister) error {
@@ -100,46 +112,231 @@ func (m *manager) InheritComponentFields(resource, component *types.Entity, comm
 }
 
 func (m *manager) LoadServices(ctx context.Context) error {
-	var err error
+	_, err, _ := m.sfGroup.Do("load_services", func() (any, error) {
+		services, err := m.storage.GetAll(ctx)
+		if err != nil {
+			return nil, err
+		}
 
-	m.services, err = m.storage.GetAll(ctx)
+		servicesByComponentInfos := make(map[string]map[string]EntityService, len(m.servicesByComponentInfos))
+		servicesByInfos := make(map[string]map[string]EntityService, len(m.servicesByInfos))
+		servicesMap := make(map[string]EntityService, len(services))
+
+		for _, service := range services {
+			for _, key := range service.EntityPattern.GetComponentInfosNames() {
+				if servicesByComponentInfos[key] == nil {
+					servicesByComponentInfos[key] = make(map[string]EntityService)
+				}
+
+				servicesByComponentInfos[key][service.ID] = service
+			}
+
+			// here we add keys from inherited pattern only for component infos, because we need to send recompute event
+			// on component info change to recompute also inherited counters.
+			for _, key := range service.InheritedPattern.GetComponentInfosNames() {
+				if servicesByComponentInfos[key] == nil {
+					servicesByComponentInfos[key] = make(map[string]EntityService)
+				}
+
+				servicesByComponentInfos[key][service.ID] = service
+			}
+
+			// for regular infos there is no need to check inherited pattern, because it will be checked in engine-axe
+			// on counters update.
+			for _, key := range service.EntityPattern.GetInfosNames() {
+				if servicesByInfos[key] == nil {
+					servicesByInfos[key] = make(map[string]EntityService)
+				}
+
+				servicesByInfos[key][service.ID] = service
+			}
+
+			servicesMap[service.ID] = service
+		}
+
+		m.servicesMx.Lock()
+		m.servicesByComponentInfos = servicesByComponentInfos
+		m.servicesByInfos = servicesByInfos
+		m.services = servicesMap
+		m.servicesMx.Unlock()
+
+		return nil, nil
+	})
 
 	return err
 }
 
 func (m *manager) AssignServices(entity *types.Entity, commRegister libmongo.CommandsRegister) {
-	servicesMap := make(map[string]struct{}, len(entity.Services))
 	toAddMap := make(map[string]bool)
 	toRemoveMap := make(map[string]bool)
+
+	servicesMap := make(map[string]bool, len(entity.Services))
 	for _, id := range entity.Services {
-		servicesMap[id] = struct{}{}
+		servicesMap[id] = true
 	}
 
-	for _, serv := range m.services {
-		serviceID := serv.ID
-		_, found := servicesMap[serviceID]
-		matched := false
-		if len(serv.EntityPattern) > 0 {
-			var err error
-			matched, err = match.MatchEntityPattern(serv.EntityPattern, entity)
-			if err != nil {
-				m.logger.Err(err).Str("service", serviceID).Msgf("service has invalid pattern")
+	m.assignAllServices(entity, servicesMap, toAddMap, toRemoveMap)
+	m.applyAssignedServices(entity, toAddMap, toRemoveMap, commRegister)
+}
+
+func (m *manager) AssignServicesByInfoNames(entity *types.Entity, infoNames []string, commRegister libmongo.CommandsRegister) {
+	if len(infoNames) == 0 {
+		return
+	}
+
+	toAddMap := make(map[string]bool)
+	toRemoveMap := make(map[string]bool)
+
+	m.assignServicesByInfos(entity, infoNames, toAddMap, toRemoveMap)
+	m.applyAssignedServices(entity, toAddMap, toRemoveMap, commRegister)
+}
+
+func (m *manager) AssignServicesByComponentInfoNames(entity *types.Entity, componentInfoNames []string, commRegister libmongo.CommandsRegister) map[string]bool {
+	if len(componentInfoNames) == 0 {
+		return nil
+	}
+
+	toAddMap := make(map[string]bool)
+	toRemoveMap := make(map[string]bool)
+	inheritedMap := make(map[string]bool)
+
+	m.assignServicesByComponentInfos(entity, componentInfoNames, toAddMap, toRemoveMap, inheritedMap)
+	m.applyAssignedServices(entity, toAddMap, toRemoveMap, commRegister)
+
+	// gather all maps to have map with affected services ids
+	maps.Copy(toAddMap, toRemoveMap)
+	maps.Copy(toAddMap, inheritedMap)
+
+	return toAddMap
+}
+
+func (m *manager) assignAllServices(
+	entity *types.Entity,
+	servicesMap map[string]bool,
+	toAddMap map[string]bool,
+	toRemoveMap map[string]bool,
+) {
+	m.servicesMx.RLock()
+	defer m.servicesMx.RUnlock()
+
+	for _, service := range m.services {
+		m.assignService(entity, service, servicesMap, toAddMap, toRemoveMap)
+	}
+}
+
+func (m *manager) assignServicesByInfos(
+	entity *types.Entity,
+	infoUpdates []string,
+	toAddMap, toRemoveMap map[string]bool,
+) {
+	m.servicesMx.RLock()
+	defer m.servicesMx.RUnlock()
+
+	servicesMap := make(map[string]bool, len(entity.Services))
+	for _, id := range entity.Services {
+		servicesMap[id] = true
+	}
+
+	seen := make(map[string]bool, len(infoUpdates))
+	for _, infoName := range infoUpdates {
+		for _, service := range m.servicesByInfos[infoName] {
+			if seen[service.ID] {
+				continue
+			}
+
+			seen[service.ID] = true
+			m.assignService(entity, service, servicesMap, toAddMap, toRemoveMap)
+		}
+	}
+}
+
+func (m *manager) assignServicesByComponentInfos(
+	entity *types.Entity,
+	componentInfoUpdates []string,
+	toAddMap, toRemoveMap, inheritedMap map[string]bool,
+) {
+	m.servicesMx.RLock()
+	defer m.servicesMx.RUnlock()
+
+	servicesMap := make(map[string]bool, len(entity.Services))
+	for _, id := range entity.Services {
+		servicesMap[id] = true
+	}
+
+	inheritedServicesMap := make(map[string]bool, len(entity.InheritedServices))
+	for _, id := range entity.InheritedServices {
+		inheritedServicesMap[id] = true
+	}
+
+	seen := make(map[string]bool, len(componentInfoUpdates))
+
+	for _, infoName := range componentInfoUpdates {
+		for _, service := range m.servicesByComponentInfos[infoName] {
+			if seen[service.ID] {
+				continue
+			}
+
+			seen[service.ID] = true
+
+			if !m.assignService(entity, service, servicesMap, toAddMap, toRemoveMap) {
+				matched, err := match.MatchEntityPattern(service.InheritedPattern, entity)
+				if err != nil {
+					m.logger.Err(err).Str("service", service.ID).Msgf("service has invalid inherited pattern")
+					continue
+				}
+
+				if inheritedServicesMap[service.ID] != matched {
+					inheritedMap[service.ID] = true
+				}
 			}
 		}
+	}
+}
 
-		if matched {
-			if !found && entity.Enabled {
-				toAddMap[serviceID] = true
-			}
+func (m *manager) assignService(
+	entity *types.Entity,
+	service EntityService,
+	servicesMap map[string]bool,
+	toAddMap map[string]bool,
+	toRemoveMap map[string]bool,
+) bool {
+	serviceChanged := false
+	serviceID := service.ID
 
-			if found && !entity.Enabled {
-				toRemoveMap[serviceID] = true
-			}
-		} else if found {
+	found := servicesMap[serviceID]
+	matched := false
+	if len(service.EntityPattern) > 0 {
+		var err error
+		matched, err = match.MatchEntityPattern(service.EntityPattern, entity)
+		if err != nil {
+			m.logger.Err(err).Str("service", serviceID).Msgf("service has invalid pattern")
+		}
+	}
+
+	if matched {
+		if !found && entity.Enabled {
+			toAddMap[serviceID] = true
+			serviceChanged = true
+		}
+
+		if found && !entity.Enabled {
 			toRemoveMap[serviceID] = true
+			serviceChanged = true
 		}
+	} else if found {
+		toRemoveMap[serviceID] = true
+		serviceChanged = true
 	}
 
+	return serviceChanged
+}
+
+func (m *manager) applyAssignedServices(
+	entity *types.Entity,
+	toAddMap map[string]bool,
+	toRemoveMap map[string]bool,
+	commRegister libmongo.CommandsRegister,
+) {
 	if len(toAddMap) == 0 && len(toRemoveMap) == 0 {
 		return
 	}
@@ -189,14 +386,16 @@ func (m *manager) AssignServices(entity *types.Entity, commRegister libmongo.Com
 		}
 	}
 
-	commRegister.RegisterUpdate(
-		entity.ID,
-		bson.M{
-			"services_to_add":    newServicesToAdd,
-			"services_to_remove": newServicesToRemove,
-			"services":           newServices,
-		},
-	)
+	if commRegister != nil {
+		commRegister.RegisterUpdate(
+			entity.ID,
+			bson.M{
+				"services_to_add":    newServicesToAdd,
+				"services_to_remove": newServicesToRemove,
+				"services":           newServices,
+			},
+		)
+	}
 
 	entity.ServicesToAdd = newServicesToAdd
 	entity.ServicesToRemove = newServicesToRemove
@@ -216,13 +415,13 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 	if !service.Enabled || service.ID == "" {
 		err := m.processDisabledService(ctx, serviceID, commRegister)
 		if err != nil {
-			return types.Entity{}, err
+			return types.Entity{}, fmt.Errorf("recompute service %s: failed to process disabled service: %w", serviceID, err)
 		}
 
 		// todo: should be called to get fresh services from the db, should be removed when we do something with cache
 		err = m.LoadServices(ctx)
 		if err != nil {
-			return types.Entity{}, err
+			return types.Entity{}, fmt.Errorf("recompute service %s: failed to load services: %w", serviceID, err)
 		}
 
 		m.AssignServices(&service.Entity, commRegister)
@@ -232,11 +431,11 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 
 	query, negativeQuery, err := service.GetMongoQueries()
 	if err != nil {
-		return types.Entity{}, err
+		return types.Entity{}, fmt.Errorf("recompute service %s: failed to get mongo queries: %w", serviceID, err)
 	}
 
 	if query == nil || negativeQuery == nil {
-		return types.Entity{}, errors.New("can't get queries from patterns")
+		return types.Entity{}, fmt.Errorf("recompute service %s: can't get queries from patterns", serviceID)
 	}
 
 	var entitiesToRemove []types.Entity
@@ -247,16 +446,25 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 			{
 				"$match": bson.M{
 					"$and": bson.A{
-						bson.M{"services": serviceID},
 						negativeQuery,
+						// here we need to check by service ID not only in services but in all auxiliary fields
+						// to avoid extra counters increments/decrements in the engine axe counters calculator.
+						bson.M{"$or": bson.A{
+							bson.M{"services": serviceID},
+							bson.M{"inherited_services": serviceID},
+							bson.M{"services_to_add": serviceID},
+							bson.M{"services_to_remove": serviceID},
+						}},
 					},
 				},
 			},
 			{
 				"$project": bson.M{
-					"_id":             1,
-					"services":        1,
-					"services_to_add": 1,
+					"_id":                1,
+					"services":           1,
+					"inherited_services": 1,
+					"services_to_add":    1,
+					"services_to_remove": 1,
 				},
 			},
 			{
@@ -264,6 +472,16 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 					"services": bson.M{
 						"$setDifference": bson.A{
 							"$services",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"inherited_services": bson.M{
+						"$setDifference": bson.A{
+							"$inherited_services",
 							bson.A{serviceID},
 						},
 					},
@@ -274,51 +492,6 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 					"services_to_add": bson.M{
 						"$setDifference": bson.A{
 							"$services_to_add",
-							bson.A{serviceID},
-						},
-					},
-				},
-			},
-		},
-	)
-	if err != nil {
-		return types.Entity{}, err
-	}
-
-	err = cursor.All(ctx, &entitiesToRemove)
-	if err != nil {
-		return types.Entity{}, err
-	}
-
-	for _, ent := range entitiesToRemove {
-		commRegister.RegisterUpdate(ent.ID, bson.M{"services": ent.Services, "services_to_add": ent.ServicesToAdd})
-	}
-
-	var entitiesToAdd []types.Entity
-
-	cursor, err = m.entityCollection.Aggregate(
-		ctx,
-		[]bson.M{
-			{
-				"$match": bson.M{
-					"$and": bson.A{
-						bson.M{"services": bson.M{"$ne": serviceID}},
-						query,
-					},
-				},
-			},
-			{
-				"$project": bson.M{
-					"_id":                1,
-					"services":           1,
-					"services_to_remove": 1,
-				},
-			},
-			{
-				"$addFields": bson.M{
-					"services": bson.M{
-						"$setDifference": bson.A{
-							"$services",
 							bson.A{serviceID},
 						},
 					},
@@ -337,22 +510,145 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 		},
 	)
 	if err != nil {
-		return types.Entity{}, err
+		return types.Entity{}, fmt.Errorf("recompute service %s: failed to query entities to remove: %w", serviceID, err)
 	}
 
-	err = cursor.All(ctx, &entitiesToAdd)
+	err = cursor.All(ctx, &entitiesToRemove)
 	if err != nil {
-		return types.Entity{}, err
+		return types.Entity{}, fmt.Errorf("recompute service %s: failed to decode entities to remove: %w", serviceID, err)
 	}
 
-	for _, ent := range entitiesToAdd {
-		ent.Services = append(ent.Services, serviceID)
-		commRegister.RegisterUpdate(ent.ID, bson.M{"services": ent.Services, "services_to_remove": ent.ServicesToRemove})
+	for _, ent := range entitiesToRemove {
+		commRegister.RegisterUpdate(ent.ID, bson.M{
+			"services":           ent.Services,
+			"inherited_services": ent.InheritedServices,
+			"services_to_add":    ent.ServicesToAdd,
+			"services_to_remove": ent.ServicesToRemove,
+		})
 	}
 
 	_, err = m.AssignStateSetting(ctx, &service.Entity, commRegister)
 	if err != nil {
 		return types.Entity{}, err
+	}
+
+	var matchQuery bson.M
+
+	if service.StateInfo != nil && service.StateInfo.InheritedPattern != nil {
+		// here we match all entities regardless of services or inherited_services because we need to check them all.
+		matchQuery = bson.M{
+			"$match": bson.M{
+				"$or": bson.A{
+					query,
+					bson.M{"services_to_add": serviceID},
+					bson.M{"services_to_remove": serviceID},
+				},
+			},
+		}
+	} else {
+		matchQuery = bson.M{
+			"$match": bson.M{
+				"$and": bson.A{
+					query,
+					bson.M{"$or": bson.A{
+						bson.M{"services": bson.M{"$ne": serviceID}},
+						bson.M{"inherited_services": serviceID},
+						bson.M{"services_to_add": serviceID},
+						bson.M{"services_to_remove": serviceID},
+					}},
+				},
+			},
+		}
+	}
+
+	cursor, err = m.entityCollection.Aggregate(
+		ctx,
+		[]bson.M{
+			matchQuery,
+			{
+				"$addFields": bson.M{
+					"services": bson.M{
+						"$setDifference": bson.A{
+							"$services",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"inherited_services": bson.M{
+						"$setDifference": bson.A{
+							"$inherited_services",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services_to_add": bson.M{
+						"$setDifference": bson.A{
+							"$services_to_add",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services_to_remove": bson.M{
+						"$setDifference": bson.A{
+							"$services_to_remove",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+		},
+	)
+	if err != nil {
+		return types.Entity{}, fmt.Errorf("recompute service %s: failed to query entities to add: %w", serviceID, err)
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var ent types.Entity
+		err = cursor.Decode(&ent)
+		if err != nil {
+			return types.Entity{}, fmt.Errorf("recompute service %s: failed to decode entity to add: %w", serviceID, err)
+		}
+
+		matched, err := match.MatchEntityPattern(service.EntityPattern, &ent)
+		if err != nil {
+			return types.Entity{}, fmt.Errorf("recompute service %s: failed to match entity pattern: %w", serviceID, err)
+		}
+
+		if matched {
+			ent.Services = append(ent.Services, serviceID)
+			if service.StateInfo != nil {
+				inheritedMatched, err := match.MatchEntityPattern(service.StateInfo.InheritedPattern, &ent)
+				if err != nil {
+					return types.Entity{}, fmt.Errorf("recompute service %s: failed to match inherited pattern: %w", serviceID, err)
+				}
+
+				if inheritedMatched {
+					ent.InheritedServices = append(ent.InheritedServices, serviceID)
+				}
+			}
+		}
+
+		commRegister.RegisterUpdate(ent.ID, bson.M{
+			"services":           ent.Services,
+			"inherited_services": ent.InheritedServices,
+			"services_to_add":    ent.ServicesToAdd,
+			"services_to_remove": ent.ServicesToRemove,
+		})
+	}
+
+	if err := cursor.Err(); err != nil {
+		return types.Entity{}, fmt.Errorf("recompute service %s: failed to process entities to add cursor: %w", serviceID, err)
 	}
 
 	// todo: should be called to get fresh services from the db, should be removed when we do something with cache
@@ -690,20 +986,22 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 }
 
 func (m *manager) HandleService(ctx context.Context, event *types.Event, commRegister libmongo.CommandsRegister) (Report, error) {
+	report := Report{}
+
 	serviceID := event.Component
 	service, err := m.getEntity(ctx, serviceID)
 	if err != nil {
-		return Report{}, err
+		return report, err
 	}
 
 	if service == nil {
-		return Report{}, fmt.Errorf("service %s doesn't exist", serviceID)
+		return report, fmt.Errorf("service %s doesn't exist", serviceID)
 	}
 
 	if service.SoftDeleted != nil {
 		event.Entity = service
 
-		return Report{}, nil
+		return report, nil
 	}
 
 	if event.IsContextable() && !event.IsOnlyServiceUpdate() && event.EventType == types.EventTypeCheck {
@@ -712,21 +1010,27 @@ func (m *manager) HandleService(ctx context.Context, event *types.Event, commReg
 		service.LastEventDate = &now
 	}
 
+	if event.IsOnlyServiceUpdate() {
+		report.CheckService = true
+	}
+
 	event.Entity = service
 
-	return Report{}, nil
+	return report, nil
 }
 
 func (m *manager) HandleConnector(ctx context.Context, event *types.Event, commRegister libmongo.CommandsRegister) (Report, error) {
+	report := Report{}
+
 	connectorName := event.ConnectorName
 	connectorID := event.Connector + "/" + connectorName
 	connector, err := m.getEntity(ctx, connectorID)
 	if err != nil {
-		return Report{}, err
+		return report, err
 	}
 
 	if connector == nil {
-		return Report{}, fmt.Errorf("connector %s doesn't exist", connectorID)
+		return report, fmt.Errorf("connector %s doesn't exist", connectorID)
 	}
 
 	if event.IsContextable() && !event.IsOnlyServiceUpdate() && event.EventType == types.EventTypeCheck {
@@ -735,9 +1039,13 @@ func (m *manager) HandleConnector(ctx context.Context, event *types.Event, commR
 		connector.LastEventDate = &now
 	}
 
+	if event.IsOnlyServiceUpdate() {
+		report.CheckConnector = true
+	}
+
 	event.Entity = connector
 
-	return Report{}, nil
+	return report, nil
 }
 
 func (m *manager) UpdateImpactedServicesFromDependencies(ctx context.Context) error {
@@ -821,9 +1129,9 @@ func (m *manager) UpdateImpactedServicesFromDependencies(ctx context.Context) er
 	return err
 }
 
-func (m *manager) ProcessComponentDependencies(ctx context.Context, component *types.Entity, commRegister libmongo.CommandsRegister) ([]string, error) {
-	if component.Type != types.EntityTypeComponent {
-		return nil, nil
+func (m *manager) ProcessComponentInfos(ctx context.Context, component *types.Entity, updatedComponentInfos []string, stateSettingUpdated bool, commRegister libmongo.CommandsRegister) ([]string, []string, error) {
+	if component.Type != types.EntityTypeComponent || !stateSettingUpdated && len(updatedComponentInfos) == 0 {
+		return nil, nil, nil
 	}
 
 	cursor, err := m.entityCollection.Find(
@@ -831,51 +1139,64 @@ func (m *manager) ProcessComponentDependencies(ctx context.Context, component *t
 		bson.M{"_id": bson.M{"$ne": component.ID}, "component": component.ID},
 	)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	defer cursor.Close(ctx)
 
-	var ids []string
+	var resourceIDs []string
+	var servicesIDs []string
+	servicesIDsMap := make(map[string]bool)
+
 	for cursor.Next(ctx) {
 		var resource types.Entity
-		update := make(bson.M)
 
 		err = cursor.Decode(&resource)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
-		ids = append(ids, resource.ID)
-		update["component_infos"] = component.Infos
+		update := bson.M{}
 
-		matched := true
-
-		if component.StateInfo != nil {
-			if len(component.StateInfo.InheritedPattern) > 0 {
+		if stateSettingUpdated {
+			matched := component.StateInfo != nil
+			if matched && len(component.StateInfo.InheritedPattern) > 0 {
 				matched, err = match.MatchEntityPattern(component.StateInfo.InheritedPattern, &resource)
 				if err != nil {
-					return nil, err
+					return nil, nil, err
 				}
 			}
-		} else {
-			matched = false
+
+			if matched {
+				update["component_state_settings"] = true
+				update["component_state_settings_to_add"] = false
+				update["component_state_settings_to_remove"] = false
+			} else {
+				update["component_state_settings"] = false
+				update["component_state_settings_to_add"] = false
+				update["component_state_settings_to_remove"] = false
+			}
 		}
 
-		if matched {
-			update["component_state_settings"] = true
-			update["component_state_settings_to_add"] = false
-			update["component_state_settings_to_remove"] = false
-		} else if !matched {
-			update["component_state_settings"] = false
-			update["component_state_settings_to_add"] = false
-			update["component_state_settings_to_remove"] = false
+		if len(updatedComponentInfos) > 0 {
+			resource.ComponentInfos = component.Infos
+			update["component_infos"] = component.Infos
+
+			// do not pass commRegister services will be assigned by service recompute event.
+			affectedServicesIDsMap := m.AssignServicesByComponentInfoNames(&resource, updatedComponentInfos, nil)
+			for serviceID := range affectedServicesIDsMap {
+				if !servicesIDsMap[serviceID] {
+					servicesIDsMap[serviceID] = true
+					servicesIDs = append(servicesIDs, serviceID)
+				}
+			}
 		}
 
 		commRegister.RegisterUpdate(resource.ID, update)
+		resourceIDs = append(resourceIDs, resource.ID)
 	}
 
-	return ids, nil
+	return resourceIDs, servicesIDs, nil
 }
 
 func (m *manager) AssignStateSetting(ctx context.Context, entity *types.Entity, commRegister libmongo.CommandsRegister) (bool, error) {
@@ -971,9 +1292,10 @@ func (m *manager) processDisabledService(ctx context.Context, serviceID string, 
 			},
 			{
 				"$project": bson.M{
-					"_id":             1,
-					"services":        1,
-					"services_to_add": 1,
+					"_id":                1,
+					"services":           1,
+					"inherited_services": 1,
+					"services_to_add":    1,
 				},
 			},
 			{
@@ -981,6 +1303,16 @@ func (m *manager) processDisabledService(ctx context.Context, serviceID string, 
 					"services": bson.M{
 						"$setDifference": bson.A{
 							"$services",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"inherited_services": bson.M{
+						"$setDifference": bson.A{
+							"$inherited_services",
 							bson.A{serviceID},
 						},
 					},
@@ -1008,7 +1340,11 @@ func (m *manager) processDisabledService(ctx context.Context, serviceID string, 
 	}
 
 	for _, ent := range dependedEntities {
-		commRegister.RegisterUpdate(ent.ID, bson.M{"services": ent.Services, "services_to_add": ent.ServicesToAdd})
+		commRegister.RegisterUpdate(ent.ID, bson.M{
+			"services":           ent.Services,
+			"inherited_services": ent.InheritedServices,
+			"services_to_add":    ent.ServicesToAdd,
+		})
 	}
 
 	return nil

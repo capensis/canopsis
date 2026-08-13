@@ -14,7 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
+	libcheevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -35,7 +35,7 @@ type messageProcessor struct {
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
 
-	EventProcessorContainer libevent.ProcessorContainer
+	EventProcessorContainer libcheevent.ProcessorContainer
 }
 
 func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -72,8 +72,6 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 		p.logError(err, "invalid event", d.Body)
 		return nil, nil
 	}
-
-	event.Format()
 
 	isSuspended := false
 	defer func() {
@@ -151,6 +149,101 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 	}
 
 	return body, nil
+}
+
+func (p *messageProcessor) postProcessProcessorResult(
+	ctx context.Context,
+	event types.Event,
+	result libcheevent.ProcessorResult,
+) {
+	now := datetime.NewCpsTime()
+
+	for _, ent := range result.UpdatedEntitiesToCountersUpd {
+		var updateCountersEvent types.Event
+
+		switch ent.Type {
+		case types.EntityTypeComponent:
+			updateCountersEvent = types.Event{
+				EventType:     types.EventTypeUpdateCounters,
+				SourceType:    types.SourceTypeComponent,
+				Connector:     canopsis.CheConnector,
+				ConnectorName: canopsis.CheConnector,
+				Component:     ent.Component,
+				Timestamp:     now,
+				Entity:        &ent,
+				Author:        canopsis.DefaultEventAuthor,
+				Initiator:     types.InitiatorSystem,
+			}
+		case types.EntityTypeConnector:
+			updateCountersEvent = types.Event{
+				EventType:     types.EventTypeUpdateCounters,
+				SourceType:    types.SourceTypeConnector,
+				Connector:     event.Connector,
+				ConnectorName: event.ConnectorName,
+				Timestamp:     now,
+				Entity:        &ent,
+				Author:        canopsis.DefaultEventAuthor,
+				Initiator:     types.InitiatorSystem,
+			}
+		}
+
+		body, err := p.Encoder.Encode(updateCountersEvent)
+		if err != nil {
+			p.Logger.Err(err).Msg("unable to serialize event")
+			continue
+		}
+
+		err = p.AmqpPublisher.PublishWithContext(
+			ctx,
+			canopsis.EngineExchangeName,
+			canopsis.AxeSystemQueueName,
+			false,
+			false,
+			amqp.Publishing{
+				Body:         body,
+				ContentType:  canopsis.JsonContentType,
+				DeliveryMode: amqp.Persistent,
+			},
+		)
+		if err != nil {
+			p.Logger.Err(err).Msg("unable to send service event")
+		}
+	}
+
+	for _, id := range result.ServicesIDsToRecompute {
+		body, err := p.Encoder.Encode(types.Event{
+			EventType:     types.EventTypeRecomputeEntityService,
+			Connector:     canopsis.CheConnector,
+			ConnectorName: canopsis.CheConnector,
+			Component:     id,
+			Timestamp:     datetime.NewCpsTime(),
+			SourceType:    types.SourceTypeService,
+			Author:        canopsis.DefaultEventAuthor,
+			Initiator:     types.InitiatorSystem,
+		})
+		if err != nil {
+			p.Logger.Err(err).Msg("unable to serialize event")
+			continue
+		}
+
+		err = p.AmqpPublisher.PublishWithContext(
+			ctx,
+			canopsis.DefaultExchangeName,
+			canopsis.FIFOQueueName,
+			false,
+			false,
+			amqp.Publishing{
+				Body:         body,
+				ContentType:  canopsis.JsonContentType,
+				DeliveryMode: amqp.Persistent,
+			},
+		)
+		if err != nil {
+			p.Logger.Err(err).Msg("unable to send service event")
+		}
+	}
+
+	p.MetaUpdater.UpdateById(ctx, result.UpdatedEntityIDsForMetrics...)
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {

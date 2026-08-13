@@ -17,6 +17,7 @@
         :disablable="updatable"
         :removable="removable"
         user
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />

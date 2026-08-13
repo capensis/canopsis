@@ -16,6 +16,7 @@ type API interface {
 	crud.API
 	ListTemplates(c *gin.Context)
 	BulkUpdatePermissions(c *gin.Context)
+	BulkDelete(c *gin.Context)
 }
 
 type api struct {
@@ -148,6 +149,30 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// BulkDelete
+// @Param body body []BulkDeleteRequestItem true "body"
+func (a *api) BulkDelete(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
+		ok, err := a.store.Delete(c, request.ID, userID)
+		if err != nil {
+			return "", err
+		}
+
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
+		return request.ID, nil
+	}, a.errorResponder)
 }
 
 // BulkUpdatePermissions
