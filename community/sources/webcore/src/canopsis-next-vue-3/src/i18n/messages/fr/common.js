@@ -283,6 +283,7 @@ export default {
   sharedTokens: 'Jetons partagés',
   notAvailable: 'Indisponible',
   addMore: 'Ajouter plus',
+  moreButton: 'Plus',
   more: 'plus',
   all: 'Tous',
   other: 'Autre',

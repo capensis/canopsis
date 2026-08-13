@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import { computed, unref, nextTick, watch } from 'vue';
 
 import { RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
@@ -23,6 +24,10 @@ import { useTableResizing } from './resizing';
  * @param {Ref<Object>} options.columnsSettings - External column settings (width and position)
  * @param {Ref<string>} options.cellsContentBehavior - How cell content behaves when resized ('wrap' or 'truncate')
  * @param {string} [options.draggableClass='draggable'] - CSS class for draggable elements
+ * @param {string} [options.widthCssVariable='--external-data-table-width']
+ * CSS variable used for the fixed table width
+ * @param {string} [options.fixedTableClass='external-data-table--fixed']
+ * CSS class applied when columns are resizable
  * @param {Function} emit - Vue emit function for emitting events to parent component
  *
  * @returns {Object} Object containing table column settings state and methods
@@ -33,6 +38,7 @@ import { useTableResizing } from './resizing';
  * @property {Ref<boolean>} resizingMode - Whether resizing mode is active
  * @property {ComputedRef<Array>} sortedHeaders - Headers sorted according to dragging positions
  * @property {ComputedRef<Array>} sortedHeadersWithWidth - Headers sorted and with width properties
+ * @property {Ref<Object>} columnsWidthByFields - Map of column field to current width in pixels
  * @property {Function} startColumnResize - Function to start resizing a column
  * @property {Function} toggleColumnEditingMode - Function to toggle column editing mode
  * @property {Function} resetColumnsSettings - Function to reset column settings to defaults
@@ -46,6 +52,8 @@ export const useTableColumnsSettings = (
     columnsSettings,
     cellsContentBehavior,
     draggableClass = 'draggable',
+    widthCssVariable = '--external-data-table-width',
+    fixedTableClass = 'external-data-table--fixed',
   },
   emit,
 ) => {
@@ -92,9 +100,7 @@ export const useTableColumnsSettings = (
   const tableStyle = computed(() =>
     unref(resizable)
       ? {
-          '--external-data-table-width': sumOfColumnsWidth.value
-            ? `${sumOfColumnsWidth.value}px`
-            : '100%',
+          [widthCssVariable]: sumOfColumnsWidth.value ? `${sumOfColumnsWidth.value}px` : '100%',
         }
       : {},
   );
@@ -107,7 +113,7 @@ export const useTableColumnsSettings = (
       'table--wrapped': unwrappedCellsContentBehavior === RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap,
       'table--truncated':
         unwrappedCellsContentBehavior === RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate,
-      'external-data-table--fixed': unref(resizable),
+      [fixedTableClass]: unref(resizable),
     };
   });
 
@@ -182,6 +188,16 @@ export const useTableColumnsSettings = (
     { immediate: true, deep: true },
   );
 
+  watch(
+    [resizable, tableHeaderElement],
+    ([isResizable, headerElement]) => {
+      if (isResizable && headerElement && isEmpty(columnsWidthByFields.value)) {
+        nextTick(calculateColumnsWidths);
+      }
+    },
+    { immediate: true },
+  );
+
   return {
     tableStyle,
     tableClass,
@@ -190,6 +206,7 @@ export const useTableColumnsSettings = (
     resizingMode,
     sortedHeaders,
     sortedHeadersWithWidth,
+    columnsWidthByFields,
 
     startColumnResize,
     toggleColumnEditingMode,

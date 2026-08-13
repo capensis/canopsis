@@ -21,6 +21,9 @@ export const useTableDragging = ({
   const columnsPositionByFields = ref({});
 
   let sortableInstance;
+  let draggingField = null;
+  let lastPointerX = null;
+  let dragDirection = 0;
 
   /**
    * HEADERS SORTED BY DRAGGING POSITIONS
@@ -73,22 +76,78 @@ export const useTableDragging = ({
   };
 
   /**
-   * Handle the sorting of columns when dragging.
+   * Resolve the column field from a header cell or a nested drag handle.
    *
-   * @param {Object} params - The parameters object.
-   * @param {HTMLElement} params.dragged - The dragged column element.
-   * @param {HTMLElement} params.related - The related column element.
+   * @param {HTMLElement} element
+   * @returns {string|null}
    */
-  const handleColumnSort = ({ dragged, related }) => {
+  const getColumnValueFromElement = element =>
+    element?.dataset?.value
+    ?? element?.closest?.('th')?.dataset?.value
+    ?? element?.querySelector?.('[data-value]')?.dataset?.value
+    ?? element?.closest?.('th')?.querySelector?.('[data-value]')?.dataset?.value
+    ?? null;
+
+  /**
+   * Handle the sorting of columns when dragging.
+   * Vue re-renders the whole column (content + width). Sortable must not move DOM.
+   * Only move in the pointer direction so a left/right drag can pass every column
+   * without snapping back or skipping the next one.
+   *
+   * @param {Object} evt - Sortable onMove event.
+   * @param {MouseEvent} originalEvent - Native pointer event.
+   * @returns {false}
+   */
+  const handleColumnSort = (evt, originalEvent) => {
+    const clientX = originalEvent?.clientX;
+
+    if (clientX != null) {
+      if (lastPointerX != null) {
+        const pointerDeltaX = clientX - lastPointerX;
+
+        if (Math.abs(pointerDeltaX) > 1) {
+          dragDirection = pointerDeltaX < 0 ? -1 : 1;
+        }
+      }
+
+      lastPointerX = clientX;
+    }
+
+    const draggedValue = draggingField ?? getColumnValueFromElement(evt.dragged);
+    const relatedValue = getColumnValueFromElement(evt.related);
+
+    if (!draggedValue || !relatedValue || draggedValue === relatedValue) {
+      return false;
+    }
+
     const oldDraggableIndex = sortedHeaders.value.findIndex(
-      ({ value }) => value === dragged.dataset.value,
+      ({ value }) => value === draggedValue,
     );
     const newDraggableIndex = sortedHeaders.value.findIndex(
-      ({ value }) => value === related.dataset.value,
+      ({ value }) => value === relatedValue,
     );
+
+    if (
+      oldDraggableIndex === -1
+      || newDraggableIndex === -1
+      || oldDraggableIndex === newDraggableIndex
+    ) {
+      return false;
+    }
+
+    if (dragDirection < 0 && newDraggableIndex > oldDraggableIndex) {
+      return false;
+    }
+
+    if (dragDirection > 0 && newDraggableIndex < oldDraggableIndex) {
+      return false;
+    }
+
     const copiedHeaders = getHeadersByMovingIndexes(oldDraggableIndex, newDraggableIndex);
 
     calculateColumnsSortingOrderByHeaders(copiedHeaders);
+
+    return false;
   };
 
   /**
@@ -97,10 +156,27 @@ export const useTableDragging = ({
   const startColumnDragging = () => {
     calculateColumnsSortingOrderByHeaders(sortedHeaders.value);
 
-    sortableInstance = Sortable.create(unref(tableHeaderElement), {
-      draggable: `.${unref(draggableClass)}`,
+    const headerRow = unref(tableHeaderElement);
+
+    if (!headerRow) {
+      return;
+    }
+
+    sortableInstance = Sortable.create(headerRow, {
+      draggable: `th:has(.table__dragging-handler), th.${unref(draggableClass)}`,
+      onStart: ({ item }) => {
+        draggingField = getColumnValueFromElement(item);
+        lastPointerX = null;
+        dragDirection = 0;
+      },
       onMove: handleColumnSort,
+      onEnd: () => {
+        draggingField = null;
+        lastPointerX = null;
+        dragDirection = 0;
+      },
       direction: 'horizontal',
+      forceFallback: true,
     });
   };
 
@@ -110,6 +186,9 @@ export const useTableDragging = ({
   const finishColumnDragging = () => {
     sortableInstance?.destroy();
     sortableInstance = null;
+    draggingField = null;
+    lastPointerX = null;
+    dragDirection = 0;
   };
 
   /**

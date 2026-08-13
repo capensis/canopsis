@@ -282,6 +282,7 @@ export default {
   sharedTokens: 'Shared tokens',
   notAvailable: 'N/a',
   addMore: 'Add more',
+  moreButton: 'More',
   more: 'more',
   all: 'All',
   other: 'Other',

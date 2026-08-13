@@ -44,10 +44,12 @@ export const useTableResizing = ({
       ? unref(headers)
       : unref(headers).map((header) => {
           const width = columnsWidthByFields.value[header.value];
+          const columnWidth = width ? `${width}px` : header.width;
 
           return {
             ...header,
-            width: header.width ? header.width : width && `${width}px`,
+            width: columnWidth,
+            minWidth: columnWidth,
           };
         }),
   );
@@ -172,20 +174,44 @@ export const useTableResizing = ({
   };
 
   /**
-   * Function to finish column resize
+   * Swallow the click that browsers fire after mouseup on the same header.
+   * Vuetify 4 sorts on `th` click, so that leftover click would change sort and refetch.
    */
-  const finishColumnResize = () => {
+  const suppressNextClickAfterResize = () => {
+    const suppressNextClick = (clickEvent) => {
+      clickEvent.preventDefault();
+      clickEvent.stopPropagation();
+      clickEvent.stopImmediatePropagation();
+      document.removeEventListener('click', suppressNextClick, true);
+    };
+
+    document.addEventListener('click', suppressNextClick, true);
+    window.setTimeout(() => {
+      document.removeEventListener('click', suppressNextClick, true);
+    }, 0);
+  };
+
+  /**
+   * Function to finish column resize
+   *
+   * @param {Event|{ suppressClick?: boolean }} [event]
+   */
+  const finishColumnResize = (event) => {
     aggregatedMovementDiff = 0;
 
     const body = document.querySelector('body');
 
-    if (!body) {
+    if (body) {
+      body.removeEventListener('mousemove', handleColumnResize);
+      body.removeEventListener('mouseup', finishColumnResize);
+      body.removeEventListener('mouseleave', finishColumnResize);
+    }
+
+    if (event?.suppressClick === false) {
       return;
     }
 
-    body.removeEventListener('mousemove', handleColumnResize);
-    body.removeEventListener('mouseup', finishColumnResize);
-    body.removeEventListener('mouseleave', finishColumnResize);
+    suppressNextClickAfterResize();
   };
 
   /**
@@ -207,7 +233,7 @@ export const useTableResizing = ({
     body.addEventListener('mouseleave', finishColumnResize);
   };
 
-  onBeforeUnmount(finishColumnResize);
+  onBeforeUnmount(() => finishColumnResize({ suppressClick: false }));
 
   return {
     resizingMode,
