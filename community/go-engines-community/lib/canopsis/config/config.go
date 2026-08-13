@@ -96,8 +96,7 @@ type SectionApi struct {
 		Enabled bool `toml:"Enabled"`
 	} `toml:"action_logger"`
 	LLM struct {
-		OffTopicErrors  []string       `toml:"off_topic_errors"`
-		SuggestedModels []LLMModelConf `toml:"suggested_models"`
+		SuggestedModels map[string][]LLMModelConf `toml:"suggested_models"`
 	} `toml:"llm"`
 }
 
