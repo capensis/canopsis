@@ -234,6 +234,18 @@ func (mr *MockSenderMockRecorder) SendInstructionExecutionForInstruction(instruc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionExecutionForInstruction", reflect.TypeOf((*MockSender)(nil).SendInstructionExecutionForInstruction), instructionID, timestamp)
 }
 
+// SendLLMTokenUsage mocks base method.
+func (m *MockSender) SendLLMTokenUsage(timestamp time.Time, model string, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries int64) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendLLMTokenUsage", timestamp, model, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries)
+}
+
+// SendLLMTokenUsage indicates an expected call of SendLLMTokenUsage.
+func (mr *MockSenderMockRecorder) SendLLMTokenUsage(timestamp, model, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendLLMTokenUsage", reflect.TypeOf((*MockSender)(nil).SendLLMTokenUsage), timestamp, model, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries)
+}
+
 // SendMessageRate mocks base method.
 func (m *MockSender) SendMessageRate(timestamp time.Time, eventType, connectorName string) {
 	m.ctrl.T.Helper()
