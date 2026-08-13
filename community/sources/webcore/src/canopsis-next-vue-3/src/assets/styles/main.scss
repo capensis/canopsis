@@ -466,10 +466,12 @@ kbd {
 }
 
 .table {
+  &__grid .v-table__wrapper > table,
   &__grid > .v-data-table__wrapper > table {
     & > tbody > tr > td,
     & > thead > tr > th {
       position: relative;
+      overflow: visible;
 
       &:after {
         content: ' ';
@@ -479,6 +481,16 @@ kbd {
         top: 0;
         width: 1px;
         height: 100%;
+      }
+
+      &:last-of-type {
+        &:after {
+          right: 0;
+        }
+
+        .table__resize-handler {
+          right: 0;
+        }
       }
     }
   }
@@ -525,6 +537,7 @@ kbd {
   }
 
   &--wrapped {
+    .v-table__wrapper > table > tbody > tr > td:not(:last-of-type),
     & > .v-data-table__wrapper > table > tbody > tr > td:not(:last-of-type) {
       word-break: break-all;
       word-wrap: break-word;

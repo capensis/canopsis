@@ -1076,24 +1076,24 @@ export const ALARM_LINK_TD_PADDINGS = {
 
 export const ALARM_EXPORT_FILE_NAME_PREFIX = 'alarm';
 
-export const MASS_ACTIONS_BUTTON_WIDTH = 36;
+export const MASS_ACTIONS_BUTTON_WIDTH = 40;
 
 export const ALARM_ACTION_BUTTON_WIDTHS = {
-  [DENSE_TYPES.large]: 36,
-  [DENSE_TYPES.medium]: 36,
+  [DENSE_TYPES.large]: 40,
+  [DENSE_TYPES.medium]: 40,
   [DENSE_TYPES.small]: 24,
 };
 
 export const ALARM_ACTION_BUTTON_MARGINS = {
-  [DENSE_TYPES.large]: 8,
+  [DENSE_TYPES.large]: 0,
   [DENSE_TYPES.medium]: 0,
   [DENSE_TYPES.small]: 0,
 };
 
 export const ALARM_ACTIONS_PADDINGS = {
-  [DENSE_TYPES.large]: 8,
-  [DENSE_TYPES.medium]: 6,
-  [DENSE_TYPES.small]: 6,
+  [DENSE_TYPES.large]: 16,
+  [DENSE_TYPES.medium]: 16,
+  [DENSE_TYPES.small]: 16,
 };
 
 export const DEFAULT_ALARM_ACTIONS_INLINE_COUNT = 4;

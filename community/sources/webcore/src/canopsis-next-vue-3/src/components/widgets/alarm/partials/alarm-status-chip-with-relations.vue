@@ -10,7 +10,8 @@
       <template #activator="{ props: activatorProps }">
         <v-btn
           v-bind="activatorProps"
-          size="small"
+          size="x-small"
+          variant="text"
           icon
           @click.prevent.stop="showRelationsModal"
         >
