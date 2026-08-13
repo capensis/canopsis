@@ -77,6 +77,8 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event, pa
 		}
 
 		res.EventMetric.EntityType = event.Entity.Type
+	} else {
+		report = partialRes.ContextGraphReport
 	}
 
 	if event.Entity == nil {
