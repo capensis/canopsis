@@ -4807,6 +4807,10 @@ definitions:
         items:
           $ref: '#/definitions/patternfields.FieldResponse'
         type: array
+      inherited_entity_pattern:
+        items:
+          $ref: '#/definitions/patternfields.EntityFieldResponse'
+        type: array
       pbehavior_pattern:
         items:
           $ref: '#/definitions/patternfields.FieldResponse'
@@ -5902,6 +5906,13 @@ definitions:
     - duration
     - enabled
     - name
+    type: object
+  role.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
     type: object
   role.BulkUpdatePermissionsRequestItem:
     properties:

@@ -4316,6 +4316,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/roles:
+    delete:
+      tags:
+        - roles
+      summary: Bulk delete roles
+      description: |
+        Bulk delete roles.
+
+        -  PERMISSIONS: `api_acl:delete`
+      operationId: roles-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/role.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete roles.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/role.BulkDeleteRequestItem'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/scenarios:
     put:
       tags:
@@ -15577,13 +15627,31 @@ paths:
 
         -  PERMISSIONS: `api_state_settings:read`
       operationId: state-settings-pattern-fields
+      parameters:
+        - name: type
+          in: query
+          description: |-
+            State settings rule type. When `service` or `component`, the response also includes
+            `inherited_entity_pattern` with fields enabled/disabled for that type.
+          required: false
+          schema:
+            type: string
+            enum:
+              - service
+              - component
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /tech-metrics-export:
     post:
       tags:

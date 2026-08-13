@@ -522,6 +522,10 @@ MetricsCacheExpiration = "24h"
 WebsocketPingInterval = "5s"
 NotificationDisplayCount = 3
 
+# It's required to restart api after canopsis-reconfigure updates mongodb to catch up following parameters.
+[Canopsis.api.action_logger]
+Enabled = true
+
 [Canopsis.api.llm]
 # off_topic_errors defines error messages returned by the LLM when the user's prompt
 # is outside the LLM's scope (e.g. not related to Canopsis pattern generation).

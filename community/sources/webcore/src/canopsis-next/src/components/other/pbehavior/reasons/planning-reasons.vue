@@ -7,6 +7,7 @@
       :options.sync="options"
       :removable="hasDeleteAnyPbehaviorReasonAccess"
       :updatable="hasUpdateAnyPbehaviorReasonAccess"
+      :active="active"
       @remove-selected="showRemoveSelectedPbehaviorReasonModal"
       @remove="showRemovePbehaviorReasonModal"
       @edit="showEditPbehaviorReasonModal"
@@ -35,6 +36,10 @@ export default {
     params: {
       type: Object,
       default: () => ({}),
+    },
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
   mounted() {
