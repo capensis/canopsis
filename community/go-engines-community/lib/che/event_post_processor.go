@@ -40,7 +40,7 @@ func NewEventPostProcessor(
 
 // Run applies the post-processing for a finished event.
 func (p *EventPostProcessor) Run(ctx context.Context, event types.Event, pr event.ProcessorResult) {
-	go p.postProcessUpdatedEntities(ctx, event, pr.UpdatedEntitiesForEvent, pr.UpdatedEntityIdsForMetrics)
+	go p.postProcessUpdatedEntities(ctx, event, pr.UpdatedEntitiesForEvent, pr.UpdatedEntityIdsForMetrics, pr.ServicesIDsToRecompute)
 }
 
 func (p *EventPostProcessor) postProcessUpdatedEntities(
@@ -48,6 +48,7 @@ func (p *EventPostProcessor) postProcessUpdatedEntities(
 	event types.Event,
 	entitiesForEvent []types.Entity,
 	updatedEntityIdsForMetrics []string,
+	servicesIDsToRecompute []string,
 ) {
 	now := datetime.NewCpsTime()
 
@@ -83,6 +84,7 @@ func (p *EventPostProcessor) postProcessUpdatedEntities(
 		body, err := p.encoder.Encode(updateCountersEvent)
 		if err != nil {
 			p.logger.Err(err).Msg("unable to serialize event")
+			continue
 		}
 
 		err = p.amqpPublisher.PublishWithContext(
@@ -93,7 +95,40 @@ func (p *EventPostProcessor) postProcessUpdatedEntities(
 			false,
 			amqp.Publishing{
 				Body:         body,
-				ContentType:  "application/json",
+				ContentType:  canopsis.JsonContentType,
+				DeliveryMode: amqp.Persistent,
+			},
+		)
+		if err != nil {
+			p.logger.Err(err).Msg("unable to send service event")
+		}
+	}
+
+	for _, id := range servicesIDsToRecompute {
+		body, err := p.encoder.Encode(types.Event{
+			EventType:     types.EventTypeRecomputeEntityService,
+			Connector:     canopsis.CheConnector,
+			ConnectorName: canopsis.CheConnector,
+			Component:     id,
+			Timestamp:     datetime.NewCpsTime(),
+			SourceType:    types.SourceTypeService,
+			Author:        canopsis.DefaultEventAuthor,
+			Initiator:     types.InitiatorSystem,
+		})
+		if err != nil {
+			p.logger.Err(err).Msg("unable to serialize event")
+			continue
+		}
+
+		err = p.amqpPublisher.PublishWithContext(
+			ctx,
+			canopsis.DefaultExchangeName,
+			canopsis.FIFOQueueName,
+			false,
+			false,
+			amqp.Publishing{
+				Body:         body,
+				ContentType:  canopsis.JsonContentType,
 				DeliveryMode: amqp.Persistent,
 			},
 		)
