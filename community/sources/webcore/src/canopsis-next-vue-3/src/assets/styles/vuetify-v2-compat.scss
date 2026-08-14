@@ -227,20 +227,21 @@ $v2-spacer: 4px;
 }
 
 .c-field {
-  .v-field {
+  .v-field--variant-underlined,
+  .v-field--variant-plain {
     min-height: 48px;
     height: 48px;
-  }
 
-  .v-field__field,
-  .v-field__input,
-  .v-field__append-inner,
-  .v-field__prepend-inner {
-    min-height: 48px;
-  }
+    .v-field__field,
+    .v-field__input,
+    .v-field__append-inner,
+    .v-field__prepend-inner {
+      min-height: 48px;
+    }
 
-  .v-field__input {
-    align-items: center;
+    .v-field__input {
+      align-items: center;
+    }
   }
 }
 

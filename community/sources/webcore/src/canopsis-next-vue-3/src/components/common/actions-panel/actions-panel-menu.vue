@@ -29,8 +29,9 @@
             v-else
             :color="item.iconColor"
             :disabled="item.disabled"
+            :size="item.iconSize"
+            :small="!item.iconSize"
             class="ma-0 pa-0"
-            small
           >
             {{ item.icon }}
           </c-icon>

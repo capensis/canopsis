@@ -141,6 +141,8 @@ export const widgetColumnResizingAlarmMixin = {
     },
 
     startColumnResize(columnName) {
+      this.finishColumnResize({ suppressClick: false });
+
       const body = document.querySelector('body');
 
       this.resizingColumnIndex = this.headers.findIndex(({ value }) => value === columnName);
@@ -149,9 +151,11 @@ export const widgetColumnResizingAlarmMixin = {
         return;
       }
 
-      body.addEventListener('mousemove', this.handleColumnResize);
-      body.addEventListener('mouseup', this.finishColumnResize);
-      body.addEventListener('mouseleave', this.finishColumnResize);
+      this.sortableInstance?.option('disabled', true);
+
+      body.addEventListener('pointermove', this.handleColumnResize);
+      body.addEventListener('pointerup', this.finishColumnResize);
+      body.addEventListener('pointercancel', this.finishColumnResize);
     },
 
     finishColumnResize(event) {
@@ -160,9 +164,13 @@ export const widgetColumnResizingAlarmMixin = {
       const body = document.querySelector('body');
 
       if (body) {
-        body.removeEventListener('mousemove', this.handleColumnResize);
-        body.removeEventListener('mouseup', this.finishColumnResize);
-        body.removeEventListener('mouseleave', this.finishColumnResize);
+        body.removeEventListener('pointermove', this.handleColumnResize);
+        body.removeEventListener('pointerup', this.finishColumnResize);
+        body.removeEventListener('pointercancel', this.finishColumnResize);
+      }
+
+      if (this.draggingMode) {
+        this.sortableInstance?.option('disabled', false);
       }
 
       if (event?.suppressClick === false) {

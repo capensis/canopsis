@@ -16,7 +16,7 @@
               icon
               @click.stop.prevent="$emit('click', $event)"
             >
-              <c-icon :color="preparedProps.color" :small="iconSmall">
+              <c-icon :color="preparedProps.color" :size="iconSize" :small="iconSmall">
                 {{ preparedProps.icon }}
               </c-icon>
             </v-btn>
@@ -102,6 +102,10 @@ export default {
     iconSmall: {
       type: Boolean,
       default: false,
+    },
+    iconSize: {
+      type: [Number, String],
+      default: undefined,
     },
   },
 

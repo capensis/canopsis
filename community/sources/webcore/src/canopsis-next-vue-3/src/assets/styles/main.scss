@@ -678,13 +678,26 @@ kbd {
 .c-alternative-bg-panel {
   border-radius: 8px !important;
 
-  .v-expansion-panel-header {
+  .v-expansion-panel-header,
+  .v-expansion-panel-title {
     flex-direction: row-reverse;
-    color: grey;
+
+    .v-expansion-panel-title__overlay {
+      opacity: 0 !important;
+    }
+
+    .v-expansion-panel-title__icon {
+      margin-inline-start: 0;
+      margin-inline-end: 8px;
+    }
 
     .v-icon {
       margin-right: 8px;
     }
+  }
+
+  .c-collapse-panel__header {
+    color: grey;
   }
 
   .theme--light &,
@@ -693,15 +706,22 @@ kbd {
     border: 1px solid var(--v-application-background-darken2) !important;
 
     .v-expansion-panel-header,
+    .v-expansion-panel-title,
+    .v-expansion-panel-text,
     .v-card,
+    .v-table,
     .v-data-table,
+    .v-data-table thead,
+    .v-data-table thead tr,
+    .v-data-table thead th,
     .v-data-table tbody tr,
     .treeview-data-table {
       background-color: var(--v-application-background-darken1) !important;
       border-color: var(--v-application-background-darken1) !important;
     }
 
-    .v-expansion-panel-header,
+    .c-collapse-panel__header,
+    .c-collapse-panel__title .v-icon,
     :not(
         .v-btn__content:has(.v-icon),
         .v-pagination__navigation:has(.v-icon),
@@ -720,8 +740,14 @@ kbd {
     border: 1px solid var(--v-application-background-lighten3) !important;
 
     .v-expansion-panel-header,
+    .v-expansion-panel-title,
+    .v-expansion-panel-text,
     .v-card,
+    .v-table,
     .v-data-table,
+    .v-data-table thead,
+    .v-data-table thead tr,
+    .v-data-table thead th,
     .v-data-table tbody tr,
     .treeview-data-table {
       color: var(--v-active-color-base) !important;
@@ -729,7 +755,8 @@ kbd {
       border-color: var(--v-application-background-lighten2) !important;
     }
 
-    .v-expansion-panel-header,
+    .c-collapse-panel__header,
+    .c-collapse-panel__title .v-icon,
     :not(
         .v-btn__content:has(.v-icon),
         .v-pagination__navigation:has(.v-icon),
@@ -737,7 +764,7 @@ kbd {
         .v-input--selection-controls__input:has(.v-icon)
       )
       > .v-icon:not(button, .success--text, .primary--text, .error--text) {
-      color: var(--v-application-background-lighten5) !important;
+      color: var(--v-application-background-lighten5, #eeeeee) !important;
     }
   }
 }

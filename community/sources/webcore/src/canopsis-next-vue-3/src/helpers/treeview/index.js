@@ -1,6 +1,29 @@
 import { isArray, isObject } from 'lodash';
 
 /**
+ * Build unique treeview path. Empty object keys must stay in the path,
+ * otherwise parent and child share the same id (e.g. alarm.links + "").
+ *
+ * @param {string} basePath
+ * @param {string} key
+ * @param {boolean} isParentArray
+ * @returns {string}
+ */
+const getObjectTreeviewPath = (basePath, key, isParentArray) => {
+  const keySegment = isParentArray ? `[${key}]` : key;
+
+  if (!basePath) {
+    return keySegment;
+  }
+
+  if (!isParentArray && key === '') {
+    return `${basePath}['']`;
+  }
+
+  return `${basePath}.${keySegment}`;
+};
+
+/**
  * Convert object to tree view object
  *
  * @param {Object} parent - Object
@@ -18,7 +41,7 @@ export const convertObjectToTreeview = (
   const basePath = !parentPath ? parentKey : parentPath;
 
   const children = Object.entries(parent).reduce((acc, [key, value]) => {
-    const path = [basePath, isParentArray ? `[${key}]` : key].filter(Boolean).join('.');
+    const path = getObjectTreeviewPath(basePath, key, isParentArray);
 
     if (isArray(value)) {
       acc.push({

@@ -38,8 +38,8 @@
 <script>
 import { debounce, get, omit, uniqBy } from 'lodash';
 
-import { CSS_COLORS_VARS } from '@/config';
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
 import { getMostReadableTextColor } from '@/helpers/color';
 import {
   convertDateToDateObject,
@@ -48,9 +48,10 @@ import {
   getDiffBetweenDates,
   getLocalTimezone,
 } from '@/helpers/date/date';
-import { isFullDayEvent } from '@/helpers/entities/pbehavior/form';
+import { getPbehaviorColor, isFullDayEvent } from '@/helpers/entities/pbehavior/form';
 import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
 import { uid } from '@/helpers/uid';
+
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useInfo } from '@/hooks/store/modules/info';
@@ -240,8 +241,7 @@ export default {
 
       return timespans.map((timespan, index) => {
         const type = timespan.type ?? pbehavior.type;
-        const color =
-          pbehavior.color || type.color || pbehavior.type?.color || CSS_COLORS_VARS.secondary;
+        const color = getPbehaviorColor(pbehavior, type);
         const iconColor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
         const start = convertDateToDateObjectByTimezone(timespan.from, this.timezone);
         const end = convertDateToDateObjectByTimezone(timespan.to, this.timezone);

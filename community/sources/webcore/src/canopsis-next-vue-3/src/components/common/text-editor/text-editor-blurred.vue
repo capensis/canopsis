@@ -1,35 +1,33 @@
 <template>
-  <div
-    :class="[
-      'v-input v-textarea v-text-field v-text-field--box',
-      'v-text-field--enclosed v-input--is-label-active text-editor-blurred',
-      'v-input--is-dirty',
-      { 'v-input--is-disabled': disabled },
-    ]"
-  >
-    <div class="v-input__control" @click="$emit('click', $event)">
-      <div class="v-input__slot">
-        <div class="v-text-field__slot" @click="wrapperClickHandler">
-          <label :class="{ 'v-label--active': value }" class="v-label">
-            {{ label }}
-          </label>
-
+  <div class="text-editor-blurred" @click="$emit('click', $event)">
+    <v-field
+      :label="label"
+      :dirty="Boolean(value)"
+      :disabled="disabled"
+      variant="filled"
+      active
+    >
+      <template #default="{ props: fieldProps }">
+        <div v-bind="fieldProps" @click="wrapperClickHandler">
           <c-compiled-template
             :template="value"
-            :class="{ 'v-text-field--input__disabled': disabled }"
+            :class="{ 'text-editor-blurred__disabled': disabled }"
           />
         </div>
-      </div>
+      </template>
+    </v-field>
 
-      <div v-if="!hideDetails" class="v-text-field__details">
-        <v-messages :messages="errorMessages" color="error" />
-      </div>
-    </div>
+    <v-messages
+      v-if="!hideDetails"
+      :messages="errorMessages"
+      color="error"
+    />
   </div>
 </template>
 
 <script>
 import { MODALS } from '@/constants';
+import { useModals } from '@/hooks/modals';
 
 export default {
   props: {
@@ -57,8 +55,10 @@ export default {
 
   emits: ['click'],
 
-  methods: {
-    wrapperClickHandler(event) {
+  setup() {
+    const modals = useModals();
+
+    const wrapperClickHandler = (event) => {
       if (event.target.tagName !== 'IMG') {
         return;
       }
@@ -66,42 +66,39 @@ export default {
       event.preventDefault();
       event.stopPropagation();
 
-      this.$modals.show({
+      modals.show({
         name: MODALS.imageViewer,
         config: {
           src: event.target.getAttribute('src'),
         },
       });
-    },
+    };
+
+    return {
+      wrapperClickHandler,
+    };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.v-label {
-  left: 0;
-  right: auto;
-  position: absolute;
-}
-
 .text-editor-blurred {
-  padding-top: 28px !important;
-
-  .v-text-field__slot {
+  :deep(.v-field__input) {
     min-height: 150px;
-    max-width: 100%;
-
-    :deep(img) {
-      cursor: pointer !important;
-    }
+    align-items: flex-start;
+    overflow: auto;
   }
 
-  .v-text-field--input__disabled {
-    color: rgba(0, 0, 0, 0.38);
+  :deep(img) {
+    cursor: pointer !important;
+  }
+}
 
-    :deep(img) {
-      pointer-events: all !important;
-    }
+.text-editor-blurred__disabled {
+  color: rgba(var(--v-theme-on-surface), 0.38);
+
+  :deep(img) {
+    pointer-events: all !important;
   }
 }
 </style>

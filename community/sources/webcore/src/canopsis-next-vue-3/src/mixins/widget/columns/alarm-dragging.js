@@ -179,6 +179,9 @@ export const widgetColumnDraggingAlarmMixin = {
 
       this.sortableInstance = Sortable.create(this.tableRow, {
         draggable: `th:has(.table__dragging-handler), th.${this.draggableClass}`,
+        handle: '.table__dragging-handler',
+        filter: '.table__resize-handler',
+        preventOnFilter: true,
         onStart: ({ item }) => {
           this.draggingField = this.getColumnValueFromElement(item);
           this.resetColumnSwapPointerState();

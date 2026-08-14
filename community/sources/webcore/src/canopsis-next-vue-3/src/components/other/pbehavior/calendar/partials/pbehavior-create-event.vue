@@ -30,7 +30,7 @@
     <c-layout class="pbehavior-form__actions" column>
       <v-divider />
 
-      <c-layout class="pa-3" gap="2" justify-end>
+      <c-layout class="pa-3" gap="2" justify="end">
         <v-btn v-show="pbehavior" color="error" @click="remove">
           {{ $t('common.delete') }}
         </v-btn>
@@ -51,10 +51,8 @@
 import { cloneDeep } from 'lodash';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
-import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
 import { LLM_SOCKET_CONTEXTS, MODALS } from '@/constants';
+
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
 import { isOmitEqual } from '@/helpers/collection';
 import { getLocalTimezone } from '@/helpers/date/date';
@@ -62,11 +60,16 @@ import {
   calendarEventToPbehaviorForm,
   formToCalendarEvent,
 } from '@/helpers/entities/pbehavior/form';
+
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useValidator } from '@/hooks/validator/validator';
+
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
+import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
+import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
 
 export default {
   components: { PbehaviorForm, PbehaviorGeneralForm, AiChatSidebar },

@@ -107,8 +107,31 @@ export default {
   [MODALS.createAssociateTicketEvent]: defineAsyncComponent(
     () => import('./declare-ticket/create-associate-ticket-event.vue'),
   ),
+  [MODALS.removeAssociatedTicketEvent]: defineAsyncComponent(
+    () => import('./alarm/create-remove-associated-ticket-event.vue'),
+  ),
   [MODALS.executeDeclareTickets]: defineAsyncComponent(
     () => import('./declare-ticket/execute-declare-tickets-rule.vue'),
+  ),
+  [MODALS.createEvent]: defineAsyncComponent(() => import('./alarm/create-event.vue')),
+  [MODALS.createAckEvent]: defineAsyncComponent(() => import('./alarm/create-ack-event.vue')),
+  [MODALS.createSnoozeEvent]: defineAsyncComponent(() => import('./alarm/create-snooze-event.vue')),
+  [MODALS.createChangeStateEvent]: defineAsyncComponent(
+    () => import('./alarm/create-change-state-event.vue'),
+  ),
+  [MODALS.createCommentEvent]: defineAsyncComponent(
+    () => import('./common/create-comment-event.vue'),
+  ),
+  [MODALS.linkToMetaAlarm]: defineAsyncComponent(() => import('./alarm/link-to-meta-alarm.vue')),
+  [MODALS.removeAlarmsFromMetaAlarm]: defineAsyncComponent(
+    () => import('./alarm/remove-alarms-from-meta-alarm.vue'),
+  ),
+  [MODALS.alarmsList]: defineAsyncComponent(() => import('./alarm/alarms-list.vue')),
+  [MODALS.executeRemediationInstruction]: defineAsyncComponent(
+    () => import('./remediation/execute-remediation-instruction.vue'),
+  ),
+  [MODALS.executeRemediationSimpleInstruction]: defineAsyncComponent(
+    () => import('./remediation/execute-remediation-simple-instruction.vue'),
   ),
   [MODALS.healthcheckEngine]: defineAsyncComponent(
     () => import('./healthcheck/healthcheck-engine.vue'),

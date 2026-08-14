@@ -115,10 +115,10 @@ const createLegacyColorVariations = (key, value) => {
   }
 
   return [1, 2, 3, 4, 5].flatMap(index => [
-    `--v-${key}-darken${index}:${getDarkenColor(value, index * 5)};`,
-    `--v-${key}-darken-${index}:${getDarkenColor(value, index * 5)};`,
-    `--v-${key}-lighten${index}:${getLightenColor(value, index * 5)};`,
-    `--v-${key}-lighten-${index}:${getLightenColor(value, index * 5)};`,
+    `--v-${key}-darken${index}:${getDarkenColor(value, index * 10)};`,
+    `--v-${key}-darken-${index}:${getDarkenColor(value, index * 10)};`,
+    `--v-${key}-lighten${index}:${getLightenColor(value, index * 10)};`,
+    `--v-${key}-lighten-${index}:${getLightenColor(value, index * 10)};`,
   ]);
 };
 

@@ -11,7 +11,6 @@
 import { difference, keyBy } from 'lodash';
 import { mapActions } from 'pinia';
 
-import ActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import {
   ALARM_LIST_ACTIONS_TYPES,
@@ -23,6 +22,16 @@ import {
   PBEHAVIOR_ORIGINS,
   PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
+
+import { featuresService } from '@/services/features';
+
+import { useAlarmStore } from '@/stores/modules/alarm';
+import { useDeclareTicketRuleStore } from '@/stores/modules/declare-ticket-rule';
+import { useMetaAlarmStore } from '@/stores/modules/meta-alarm';
+import { usePbehaviorStore } from '@/stores/modules/pbehavior';
+import { usePbehaviorReasonStore } from '@/stores/modules/pbehavior-reason';
+import { usePbehaviorTypeStore } from '@/stores/modules/pbehavior-type';
+
 import { sortActionsByQuickActions, getActionsInlineCount } from '@/helpers/actions-panel';
 import { mapIds } from '@/helpers/array';
 import { promisedWait } from '@/helpers/async';
@@ -41,14 +50,10 @@ import {
 } from '@/helpers/entities/link/list';
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 import { createDowntimePbehavior } from '@/helpers/entities/pbehavior/form';
+
 import { authMixin } from '@/mixins/auth';
-import { featuresService } from '@/services/features';
-import { useAlarmStore } from '@/stores/modules/alarm';
-import { useDeclareTicketRuleStore } from '@/stores/modules/declare-ticket-rule';
-import { useMetaAlarmStore } from '@/stores/modules/meta-alarm';
-import { usePbehaviorStore } from '@/stores/modules/pbehavior';
-import { usePbehaviorReasonStore } from '@/stores/modules/pbehavior-reason';
-import { usePbehaviorTypeStore } from '@/stores/modules/pbehavior-type';
+
+import ActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
 export default {
   components: { ActionsPanel },
@@ -294,6 +299,7 @@ export default {
       if (this.hasAlarmsWithAssociatedTickets) {
         actions.push({
           type: ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket,
+          iconSize: 20,
           title: this.$t('alarm.actions.titles.removeAssociatedTicket'),
           method: this.showRemoveAssociatedTicketModal,
         });

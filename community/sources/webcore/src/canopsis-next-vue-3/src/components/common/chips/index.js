@@ -1,4 +1,5 @@
 export { default as CChip } from './c-chip.vue';
+export { default as CAlarmActionsChips } from './c-alarm-actions-chips.vue';
 export { default as CAlarmChip } from './c-alarm-chip.vue';
 export { default as CAlarmExtraDetailsChip } from './c-alarm-extra-details-chip.vue';
 export { default as CAlarmLinksChips } from './c-alarm-links-chips.vue';

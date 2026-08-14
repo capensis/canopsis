@@ -72,16 +72,18 @@ watch(
     class="c-collapse-panel"
   >
     <v-expansion-panel class="c-collapse-panel__panel">
-      <v-expansion-panel-title :color="headerColor" :style="headerStyle">
-        <slot name="header">
-          <span class="text-white">
-            {{ title }}
-          </span>
-        </slot>
+      <v-expansion-panel-title :color="headerColor" :style="headerStyle" class="c-collapse-panel__title">
+        <div class="c-collapse-panel__header">
+          <slot name="header">
+            <span class="c-collapse-panel__header-text">
+              {{ title }}
+            </span>
+          </slot>
+        </div>
 
         <template #actions>
           <slot name="actions">
-            <v-icon :icon="icon" color="white" />
+            <v-icon :icon="icon" />
           </slot>
         </template>
       </v-expansion-panel-title>
@@ -110,6 +112,27 @@ watch(
 
   &__card.v-card {
     border-radius: 0;
+  }
+
+  &__title {
+    .v-expansion-panel-title__overlay {
+      pointer-events: none;
+    }
+
+    .v-icon {
+      color: white;
+    }
+  }
+
+  &__header {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__header-text {
+    color: white;
   }
 }
 </style>

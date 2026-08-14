@@ -58,7 +58,12 @@ export default {
       },
     ]);
 
-    const rowProps = computed(() => (props.itemClass ? { class: props.itemClass } : undefined));
+    const rowProps = ({ item }) => {
+      const rowItem = item?.raw ?? item;
+      const itemClass = props.itemClass ? rowItem?.[props.itemClass] : undefined;
+
+      return itemClass ? { class: itemClass } : undefined;
+    };
 
     return {
       title,
