@@ -31,16 +31,19 @@
 <script>
 import { computed, toRef } from 'vue';
 
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
-import StateSettingForm from '@/components/other/state-setting/form/state-setting-form.vue';
 import { LLM_SOCKET_CONTEXTS } from '@/constants';
+
 import { formToStateSetting, stateSettingToForm } from '@/helpers/entities/state-setting/form';
+
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
+
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
+import StateSettingForm from '@/components/other/state-setting/form/state-setting-form.vue';
 
 export default {
   components: {
@@ -74,7 +77,7 @@ export default {
       ruleId: stateSetting.value?._id,
       context: LLM_SOCKET_CONTEXTS.stateSettings,
     });
-    const chatPending = computed(() => chatOptions.bind.pending.value);
+    const chatPending = computed(() => chatOptions.value.bind.pending);
 
     const closeModal = () => modals.hide({ id: props.modal.id });
 

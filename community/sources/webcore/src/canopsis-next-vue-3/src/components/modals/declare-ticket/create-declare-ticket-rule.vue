@@ -96,7 +96,7 @@ export default {
         return result;
       }),
     });
-    const submitDisabled = computed(() => submitting.value || chatOptions.bind.pending.value);
+    const submitDisabled = computed(() => submitting.value || chatOptions.value.bind.pending);
 
     useFormConfirmableCloseModal({ form: values, submit, close });
 

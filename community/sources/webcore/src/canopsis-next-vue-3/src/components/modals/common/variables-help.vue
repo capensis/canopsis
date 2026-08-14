@@ -1,7 +1,7 @@
 <template>
   <c-modal-wrapper close>
     <template #title>
-      <span>{{ $t('modals.variablesHelp.variables') }}</span>
+      <span>{{ t('modals.variablesHelp.variables') }}</span>
     </template>
 
     <template #text>
@@ -11,14 +11,14 @@
             <v-icon icon="file_download" />
           </template>
 
-          <span>{{ $t('common.exportToJson') }}</span>
+          <span>{{ t('common.exportToJson') }}</span>
         </v-btn>
       </c-layout>
 
-      <c-treeview :items="config.variables" :item-key="getVariableItemKey" item-title="name">
+      <c-treeview :items="config.variables" item-key="path" item-title="name">
         <template #prepend="{ item }">
           <div v-if="item.isArray" class="text-caption font-italic text-medium-emphasis">
-            {{ `(${$t('common.variableTypes.array')})` }}
+            {{ `(${t('common.variableTypes.array')})` }}
           </div>
         </template>
 
@@ -39,7 +39,7 @@
               class="pl-1"
             >:
               <div class="pl-1 d-inline-block text-medium-emphasis text-body-1 font-italic">
-                {{ $t('common.emptyObject') }}
+                {{ t('common.emptyObject') }}
               </div>
             </span>
           </div>
@@ -63,7 +63,7 @@
                   <v-icon icon="content_copy" />
                 </template>
 
-                <v-list-item-title>{{ $t('common.copyPathToClipboard') }}</v-list-item-title>
+                <v-list-item-title>{{ t('common.copyPathToClipboard') }}</v-list-item-title>
               </v-list-item>
 
               <v-list-item v-else @click="exportAsJson(item)">
@@ -71,7 +71,18 @@
                   <v-icon icon="$json" />
                 </template>
 
-                <v-list-item-title>{{ $t('common.exportToJson') }}</v-list-item-title>
+                <v-list-item-title>{{ t('common.exportToJson') }}</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item
+                v-if="item.original"
+                @click="exportAlarmToPdf(item.original, config.exportPdfTemplate)"
+              >
+                <template #prepend>
+                  <v-icon icon="$pdf" />
+                </template>
+
+                <v-list-item-title>{{ t('common.exportToPdf') }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -83,9 +94,15 @@
 
 <script>
 import { DATETIME_FORMATS, MODALS } from '@/constants';
+
 import { convertDateToString, getNowTimestamp } from '@/helpers/date/date';
 import { saveJsonFile } from '@/helpers/file/files';
 import { convertTreeviewToObject } from '@/helpers/treeview';
+
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
+import { useAlarmExportPdf } from '@/hooks/widget/alarm-export-pdf';
 
 export default {
   name: MODALS.variablesHelp,
@@ -97,43 +114,45 @@ export default {
     },
   },
 
-  computed: {
-    config() {
-      return this.modal.config ?? {};
-    },
-  },
+  setup(props) {
+    const { t } = useI18n();
+    const { config } = useInnerModal(props);
+    const popups = usePopups();
+    const { exportAlarmToPdf } = useAlarmExportPdf();
 
-  methods: {
-    getNowDateString() {
-      return convertDateToString(getNowTimestamp(), DATETIME_FORMATS.long);
-    },
+    const getNowDateString = () => convertDateToString(getNowTimestamp(), DATETIME_FORMATS.long);
 
-    exportAsJson(item) {
+    const exportAsJson = (item) => {
       const object = convertTreeviewToObject(item);
 
-      saveJsonFile(object, `${item.name}-${this.getNowDateString()}`);
-    },
+      saveJsonFile(object, `${item.name}-${getNowDateString()}`);
+    };
 
-    getVariableItemKey(item) {
-      return item.path || item.name;
-    },
-
-    exportOriginal() {
+    const exportOriginal = () => {
       saveJsonFile(
-        this.config.exportEntity,
-        `${this.config.exportEntityName}-${this.getNowDateString()}`,
+        config.value.exportEntity,
+        `${config.value.exportEntityName}-${getNowDateString()}`,
       );
-    },
+    };
 
-    async copyPathToClipboard(path) {
+    const copyPathToClipboard = async (path) => {
       try {
         await navigator.clipboard.writeText(path);
 
-        this.$popups.success({ text: this.$t('success.pathCopied') });
+        popups.success({ text: t('success.pathCopied') });
       } catch {
-        this.$popups.error({ text: this.$t('errors.default') });
+        popups.error({ text: t('errors.default') });
       }
-    },
+    };
+
+    return {
+      t,
+      config,
+      exportAlarmToPdf,
+      exportAsJson,
+      exportOriginal,
+      copyPathToClipboard,
+    };
   },
 };
 </script>

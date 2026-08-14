@@ -1,4 +1,4 @@
-import { inject, unref } from 'vue';
+import { computed, inject, unref } from 'vue';
 
 import { useModalsStore } from '@/plugins/modals/stores';
 
@@ -50,5 +50,27 @@ export const useModals = () => {
         ...payload,
         id: getCurrentModalId(payload),
       }),
+  };
+};
+
+/**
+ * Custom hook for managing inner modal states and actions within a Vue component.
+ *
+ * @param {Object} props - The properties passed to the inner modal, including the modal object.
+ * @returns {Object} An object containing the modal's computed properties and a method to close the modal.
+ */
+export const useInnerModal = (props) => {
+  const modals = useModals();
+
+  const modal = computed(() => props.modal);
+  const config = computed(() => modal.value?.config ?? {});
+
+  const close = () => modals.hide({ id: props.modal?.id });
+
+  return {
+    modals,
+    close,
+    modal,
+    config,
   };
 };

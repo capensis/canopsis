@@ -164,7 +164,7 @@ import {
   LLM_AI_CHAT_WIDTH,
 } from '@/constants';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
-import { colorToRgba } from '@/helpers/color';
+import { colorToRgba, getColorByHash, isValidColor } from '@/helpers/color';
 import {
   convertDateToEndOfDayDateObject,
   convertDateToStartOfDayDateObject,
@@ -172,6 +172,7 @@ import {
   getWeekdayNumber,
   isDateBefore,
 } from '@/helpers/date/date';
+import { uid } from '@/helpers/uid';
 
 import CalendarPagination from './partials/calendar-pagination.vue';
 import CalendarTodayBtn from './partials/calendar-today-btn.vue';
@@ -427,18 +428,21 @@ export default {
 
     getEventColor(event) {
       const source = this.getEventSource(event);
+      const color = isValidColor(source.color)
+        ? source.color
+        : getColorByHash(source.id);
 
       if (source.id === this.currentEditingEvent?.id) {
-        return colorToRgba(source.color, 0.75);
+        return colorToRgba(color, 0.75);
       }
 
       const past = isDateBefore(source.start, new Date());
 
       if (!past) {
-        return colorToRgba(source.color, 0.5);
+        return colorToRgba(color, 0.5);
       }
 
-      return source.color;
+      return color;
     },
 
     getEventStyle(event) {
@@ -496,6 +500,7 @@ export default {
         start,
         end,
         timed,
+        color: getColorByHash(uid()),
         data: {},
       };
     },
@@ -922,7 +927,12 @@ export default {
     position: relative !important;
     display: flex;
     flex-direction: column;
-    overflow: hidden !important;
+    overflow: visible !important;
+    border-radius: 4px;
+    box-shadow:
+      0 5px 5px -3px rgba(0, 0, 0, 0.2),
+      0 8px 10px 1px rgba(0, 0, 0, 0.14),
+      0 3px 14px 2px rgba(0, 0, 0, 0.12);
   }
 
   &__popover-card {

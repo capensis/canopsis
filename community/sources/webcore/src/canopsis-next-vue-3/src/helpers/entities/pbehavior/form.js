@@ -1,6 +1,5 @@
 import { cloneDeep, isObject, map, omit, uniq } from 'lodash';
 
-import { COLORS } from '@/config';
 import {
   DATETIME_FORMATS,
   ENTITY_TYPES,
@@ -10,6 +9,7 @@ import {
   WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
 } from '@/constants';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/array';
+import { getColorByHash } from '@/helpers/color';
 import {
   convertDateToMoment,
   convertDateToDateObjectByTimezone,
@@ -476,13 +476,17 @@ export const createDowntimePbehavior = ({
   );
 
 /**
- * Get color for pbehavior
+ * Get color for pbehavior calendar event
  *
- * @param pbehavior
+ * @param {Object} [pbehavior={}]
+ * @param {Object} [type=pbehavior.type]
  * @returns {string}
  */
-export const getPbehaviorColor = (pbehavior = {}) =>
-  pbehavior.color || pbehavior.type?.color || COLORS.secondary;
+export const getPbehaviorColor = (pbehavior = {}, type = pbehavior.type) =>
+  pbehavior.color
+  || type?.color
+  || pbehavior.type?.color
+  || getColorByHash(pbehavior._id);
 
 /**
  * Generates a default name for a pbehavior based on the provided entities.

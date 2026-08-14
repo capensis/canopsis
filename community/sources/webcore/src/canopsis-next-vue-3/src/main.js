@@ -245,6 +245,7 @@ app.use(modalsPlugin, {
     [MODALS.eventsRecord]: { maxWidth: 1600, persistent: true },
     [MODALS.executeDeclareTickets]: { maxWidth: 920, autoHeight: true },
     [MODALS.executeRemediationInstruction]: { maxWidth: 960, autoHeight: true },
+    [MODALS.executeRemediationSimpleInstruction]: { maxWidth: 960, autoHeight: true },
     [MODALS.filtersList]: { autoHeight: true },
     [MODALS.healthcheckEngine]: { autoHeight: true },
     [MODALS.healthcheckEnginesChainReference]: { autoHeight: true },

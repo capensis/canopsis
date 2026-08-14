@@ -534,3 +534,24 @@ export const getAlarmsListWidgetColumnComponentGetter = (
     },
   });
 };
+
+/**
+ * Convert comment form to create comment event payload
+ *
+ * @param {Object} form - Comment form data
+ * @returns {Object} Comment event payload with either comment or struct_comment
+ */
+export const createCommentFormToCreateCommentEvent = (form) => {
+  if (!form.template) {
+    return {
+      comment: form.comment,
+    };
+  }
+
+  return {
+    struct_comment: (form.template?.fields ?? []).map(({ name: field }) => ({
+      field,
+      message: form[field],
+    })).filter(({ message }) => message),
+  };
+};

@@ -105,7 +105,7 @@ export default {
       context: PATTERN_TYPES_TO_LLM_SOCKET_CONTEXTS[config.value.type],
       field: PATTERN_TYPES_TO_PATTERNS_FIELDS[config.value.type],
     });
-    const chatPending = computed(() => chatOptions.bind.pending.value);
+    const chatPending = computed(() => chatOptions.value.bind.pending);
 
     return {
       t,

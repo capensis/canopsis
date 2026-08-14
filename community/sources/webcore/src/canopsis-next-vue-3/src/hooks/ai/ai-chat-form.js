@@ -20,10 +20,10 @@ export const useAiChatExpand = () => {};
  * @deprecated Replace with the full AI chat form hook during the final AI chat migration pass.
  * @returns {{
  *   shown: import('vue').ComputedRef<boolean>,
- *   options: {
+ *   options: import('vue').ComputedRef<{
  *     bind: Object,
  *     on: Object,
- *   },
+ *   }>,
  *   llms: import('vue').Ref<Array>,
  *   showChat: Function,
  *   hideChat: Function,
@@ -42,15 +42,17 @@ export const useAiChatForm = () => {
     unregisterExpandFunction: noop,
   });
 
+  const options = computed(() => ({
+    bind: {
+      pending: pending.value,
+      llms: llms.value,
+    },
+    on: {},
+  }));
+
   return {
     shown: computed(() => false),
-    options: {
-      bind: {
-        pending,
-        llms,
-      },
-      on: {},
-    },
+    options,
     llms,
     showChat: noop,
     hideChat: noop,

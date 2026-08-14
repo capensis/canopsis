@@ -24,6 +24,16 @@ import {
   PBEHAVIOR_TYPE_TYPES,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
+
+import { featuresService } from '@/services/features';
+
+import { useAlarmStore } from '@/stores/modules/alarm';
+import { useDeclareTicketRuleStore } from '@/stores/modules/declare-ticket-rule';
+import { useMetaAlarmStore } from '@/stores/modules/meta-alarm';
+import { usePbehaviorStore } from '@/stores/modules/pbehavior';
+import { usePbehaviorReasonStore } from '@/stores/modules/pbehavior-reason';
+import { usePbehaviorTypeStore } from '@/stores/modules/pbehavior-type';
+
 import { sortActionsByQuickActions, getActionsInlineCount } from '@/helpers/actions-panel';
 import { mapIds } from '@/helpers/array';
 import { promisedWait } from '@/helpers/async';
@@ -49,17 +59,14 @@ import { createDowntimePbehavior } from '@/helpers/entities/pbehavior/form';
 import { isInstructionExecutionIconInProgress } from '@/helpers/entities/remediation/instruction-execution/form';
 import { isInstructionTypeManual } from '@/helpers/entities/remediation/instruction/form';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
+import { exportAlarmToPdf as exportAlarmToPdfFile } from '@/helpers/file/pdf';
 import { convertObjectToTreeview } from '@/helpers/treeview';
+
 import { authMixin } from '@/mixins/auth';
-import { featuresService } from '@/services/features';
-import { useAlarmStore } from '@/stores/modules/alarm';
-import { useDeclareTicketRuleStore } from '@/stores/modules/declare-ticket-rule';
-import { useMetaAlarmStore } from '@/stores/modules/meta-alarm';
-import { usePbehaviorStore } from '@/stores/modules/pbehavior';
-import { usePbehaviorReasonStore } from '@/stores/modules/pbehavior-reason';
-import { usePbehaviorTypeStore } from '@/stores/modules/pbehavior-type';
 
 export default {
+  inject: ['$system'],
+
   mixins: [authMixin],
 
   props: {
@@ -245,6 +252,7 @@ export default {
       if (hasAssociatedTickets) {
         actions.unshift({
           type: ALARM_LIST_ACTIONS_TYPES.removeAssociatedTicket,
+          iconSize: 20,
           title: this.$t('alarm.actions.titles.removeAssociatedTicket'),
           method: this.showRemoveAssociatedTicketModal,
         });
@@ -307,6 +315,11 @@ export default {
         type: ALARM_LIST_ACTIONS_TYPES.variablesHelp,
         title: this.$t('alarm.actions.titles.variablesHelp'),
         method: this.showVariablesHelperModal,
+      };
+      const exportPdfAction = {
+        type: ALARM_LIST_ACTIONS_TYPES.exportPdf,
+        title: this.$t('alarm.actions.titles.exportPdf'),
+        method: this.exportPdf,
       };
 
       if (!this.isResolvedAlarm && this.isAckAndChangeStateAvailable) {
@@ -411,7 +424,7 @@ export default {
       }
 
       if (this.isOpenedAlarm) {
-        actions.push(variablesHelpAction);
+        actions.push(variablesHelpAction, exportPdfAction);
       }
 
       if (this.isParentAlarmManualMetaAlarm) {
@@ -445,7 +458,7 @@ export default {
           actions.push(...this.instructionsActions);
         }
       } else {
-        actions.push(variablesHelpAction);
+        actions.push(variablesHelpAction, exportPdfAction);
       }
 
       return actions;
@@ -547,6 +560,30 @@ export default {
         ...this.pendingByActionsTypes,
         [type]: value,
       };
+    },
+
+    async exportAlarmToPdf(alarm, template) {
+      try {
+        const response = await this.fetchAlarmDetailsListWithoutStore({
+          params: [{
+            _id: alarm._id,
+            steps: { type: 'comment' },
+          }],
+        });
+
+        const comments = response?.[0]?.data?.steps?.data ?? [];
+
+        await exportAlarmToPdfFile(template, { ...alarm, comments }, this.$system.timezone);
+      } catch (err) {
+        console.error(err);
+        this.$popups.error({ text: this.$t('errors.default') });
+      }
+    },
+
+    async exportPdf() {
+      this.setActionPending(ALARM_LIST_ACTIONS_TYPES.exportPdf, true);
+      await this.exportAlarmToPdf(this.item, this.widget.parameters.exportPdfTemplate);
+      this.setActionPending(ALARM_LIST_ACTIONS_TYPES.exportPdf, false);
     },
 
     showCreateChangeStateEventModal() {
@@ -748,6 +785,7 @@ export default {
         config: {
           exportEntity: this.item,
           exportEntityName: `${ALARM_EXPORT_FILE_NAME_PREFIX}-${this.item._id}`,
+          exportPdfTemplate: this.widget.parameters.exportPdfTemplate,
           variables,
         },
       });
