@@ -281,24 +281,27 @@ func (s *ruleService) resolveExternalData(
 		return externalData, requestCount, request, nil
 	}
 
-	if resp.Err != nil {
-		failReason := "external data \"" + rule.ExternalData[resp.ErrIndex].Reference + "\" cannot be fetched: " + resp.Err.Error()
-		s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeExternalDataAPI, failReason, event)
-
-		return nil, nil, nil, resp.Err
-	}
-
 	externalData := partialResult.ExternalData
 	if externalData == nil {
 		externalData = make(map[string]any, len(rule.ExternalData))
 	}
 
-	i := 0
+	var i int64
 	for _, d := range rule.ExternalData {
-		if d.Type == externaldata.RefTypeAPI {
-			externalData[d.Reference] = resp.Result[i]
-			i++
+		if d.Type != externaldata.RefTypeAPI {
+			continue
 		}
+
+		if resp.Err == nil {
+			externalData[d.Reference] = resp.Result[i]
+		} else if i == resp.ErrIndex {
+			failReason := "external data \"" + d.Reference + "\" cannot be fetched: " + resp.Err.Error()
+			s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeExternalDataAPI, failReason, event)
+
+			return nil, nil, nil, resp.Err
+		}
+
+		i++
 	}
 
 	return externalData, nil, nil, nil
