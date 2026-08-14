@@ -48,19 +48,15 @@ func NewConnectorProcessor(
 
 func (p *connectorProcessor) Process(ctx context.Context, event *types.Event, partialRes *ProcessorResult) (ProcessorResult, error) {
 	res := ProcessorResult{}
+	var report contextgraph.Report
+	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
 	if partialRes == nil {
 		res.EventMetric = techmetrics.CheEventMetric{
 			EventMetric: techmetrics.EventMetric{
 				EventType: event.EventType,
 			},
 		}
-	} else {
-		res.EventMetric = partialRes.EventMetric
-	}
 
-	var report contextgraph.Report
-	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
-	if partialRes == nil {
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 			commRegister.Clear()
 
@@ -78,6 +74,7 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event, pa
 
 		res.EventMetric.EntityType = event.Entity.Type
 	} else {
+		res.EventMetric = partialRes.EventMetric
 		report = partialRes.ContextGraphReport
 	}
 

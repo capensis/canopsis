@@ -421,6 +421,10 @@ type ResponseTplVars struct {
 	LastResponse map[string]any
 }
 
+// AddResponse adds the response headers and string-keyed response fields from h to the template variables.
+// Non-map response bodies and maps with non-string keys are ignored.
+// Header, Response, and ResponseMap must be initialized before calling AddResponse.
+// LastResponse is replaced on each call.
 func (tv *ResponseTplVars) AddResponse(idx int, h *History) {
 	maps.Copy(tv.Header, h.ResponseHeader)
 
@@ -428,18 +432,15 @@ func (tv *ResponseTplVars) AddResponse(idx int, h *History) {
 
 	responseCountStr := strconv.Itoa(idx)
 	rv := reflect.ValueOf(h.ResponseBody)
-	if rv.Kind() != reflect.Map {
+	if !rv.IsValid() || rv.Kind() != reflect.Map || rv.Type().Key().Kind() != reflect.String {
 		return
 	}
 
-	mi := rv.MapRange()
-	for mi.Next() {
-		if mi.Key().Kind() != reflect.String {
-			continue
-		}
-
-		tv.Response[mi.Key().String()] = mi.Value().Interface()
-		tv.ResponseMap[responseCountStr+"."+mi.Key().String()] = mi.Value().Interface()
-		tv.LastResponse[mi.Key().String()] = mi.Value().Interface()
+	for mi := rv.MapRange(); mi.Next(); {
+		key := mi.Key().String()
+		val := mi.Value().Interface()
+		tv.Response[key] = val
+		tv.ResponseMap[responseCountStr+"."+key] = val
+		tv.LastResponse[key] = val
 	}
 }

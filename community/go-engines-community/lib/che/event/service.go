@@ -48,19 +48,15 @@ func NewServiceProcessor(
 
 func (p *serviceProcessor) Process(ctx context.Context, event *types.Event, partialRes *ProcessorResult) (ProcessorResult, error) {
 	res := ProcessorResult{}
+	var report contextgraph.Report
+	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
 	if partialRes == nil {
 		res.EventMetric = techmetrics.CheEventMetric{
 			EventMetric: techmetrics.EventMetric{
 				EventType: event.EventType,
 			},
 		}
-	} else {
-		res.EventMetric = partialRes.EventMetric
-	}
 
-	var report contextgraph.Report
-	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
-	if partialRes == nil {
 		if event.EventType == types.EventTypeRecomputeEntityService {
 			var eventEntity types.Entity
 
@@ -103,6 +99,9 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event, part
 		}
 
 		res.EventMetric.EntityType = event.Entity.Type
+	} else {
+		res.EventMetric = partialRes.EventMetric
+		report = partialRes.ContextGraphReport
 	}
 
 	if event.Entity == nil {
