@@ -102,6 +102,8 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event, pa
 		}
 
 		if suspended {
+			res.ContextGraphReport = report
+
 			return res, nil
 		}
 

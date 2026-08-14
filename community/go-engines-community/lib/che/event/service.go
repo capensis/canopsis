@@ -122,6 +122,8 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event, part
 		}
 
 		if suspended {
+			res.ContextGraphReport = report
+
 			return res, nil
 		}
 

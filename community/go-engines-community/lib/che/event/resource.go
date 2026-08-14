@@ -103,6 +103,8 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event, par
 		}
 
 		if suspended {
+			res.ContextGraphReport = report
+
 			return res, nil
 		}
 

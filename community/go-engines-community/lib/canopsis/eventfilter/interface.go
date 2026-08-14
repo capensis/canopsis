@@ -16,6 +16,12 @@ const (
 	OutcomeBreak = "break"
 )
 
+// MaxEventFilterRestarts bounds how many times an event parked for external data
+// may be reprocessed from scratch when the ruleset changed while it was parked
+// (see ErrRulesetChanged). Without the bound a ruleset that keeps changing would
+// restart the same event forever.
+const MaxEventFilterRestarts = 3
+
 type ActionProcessor interface {
 	Process(
 		ctx context.Context,
