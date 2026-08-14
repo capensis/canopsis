@@ -2,12 +2,18 @@ package engine
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
+
+// ErrAckWithoutForward is returned by a MessageProcessor to tell the consumer to
+// acknowledge the delivery without forwarding it to the next queue and without retrying it.
+// It is used when a message has been handled but must not propagate downstream.
+var ErrAckWithoutForward = errors.New("ack without forward")
 
 type defaultConsumer struct {
 	// name is consumer name.
@@ -41,6 +47,10 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery) (
 		Msgf("received")
 	msgToNext, err := c.processor.Process(ctx, d)
 	if err != nil {
+		if errors.Is(err, ErrAckWithoutForward) {
+			return libamqp.Ack, nil
+		}
+
 		return libamqp.Nack, fmt.Errorf("cannot process message: %w", err)
 	}
 

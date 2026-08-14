@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -22,6 +23,8 @@ type connectorProcessor struct {
 	contextGraphManager     contextgraph.Manager
 	eventFilterService      eventfilter.Service
 	entityInfosUpdateSender metrics.EntityInfosUpdateSender
+	encoder                 encoding.Encoder
+	decoder                 encoding.Decoder
 }
 
 func NewConnectorProcessor(
@@ -29,6 +32,8 @@ func NewConnectorProcessor(
 	contextGraphManager contextgraph.Manager,
 	eventFilterService eventfilter.Service,
 	entityInfosUpdateSender metrics.EntityInfosUpdateSender,
+	encoder encoding.Encoder,
+	decoder encoding.Decoder,
 ) Processor {
 	return &connectorProcessor{
 		dbClient:                dbClient,
@@ -36,87 +41,97 @@ func NewConnectorProcessor(
 		contextGraphManager:     contextGraphManager,
 		eventFilterService:      eventFilterService,
 		entityInfosUpdateSender: entityInfosUpdateSender,
+		encoder:                 encoder,
+		decoder:                 decoder,
 	}
 }
 
-func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (ProcessorResult, error) {
-	result := ProcessorResult{
-		EventMetric: techmetrics.CheEventMetric{
+func (p *connectorProcessor) Process(ctx context.Context, event *types.Event, partialRes *ProcessorResult) (ProcessorResult, error) {
+	res := ProcessorResult{}
+	var report contextgraph.Report
+	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
+	if partialRes == nil {
+		res.EventMetric = techmetrics.CheEventMetric{
 			EventMetric: techmetrics.EventMetric{
 				EventType: event.EventType,
 			},
-		},
-	}
-
-	var report contextgraph.Report
-	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
-
-	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		commRegister.Clear()
-
-		var err error
-		report, err = p.contextGraphManager.HandleConnector(ctx, event, commRegister)
-		if err != nil {
-			return fmt.Errorf("cannot update context graph: %w", err)
 		}
 
-		return commRegister.Commit(ctx)
-	})
-	if err != nil {
-		return result, err
+		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+			commRegister.Clear()
+
+			var err error
+			report, err = p.contextGraphManager.HandleConnector(ctx, event, commRegister)
+			if err != nil {
+				return fmt.Errorf("cannot update context graph: %w", err)
+			}
+
+			return commRegister.Commit(ctx)
+		})
+		if err != nil {
+			return res, err
+		}
+
+		res.EventMetric.EntityType = event.Entity.Type
+	} else {
+		res.EventMetric = partialRes.EventMetric
+		report = partialRes.ContextGraphReport
 	}
 
 	if event.Entity == nil {
-		return result, errors.New("unexpected empty entity")
+		return res, errors.New("unexpected empty entity")
 	}
-
-	result.EventMetric.EntityType = event.Entity.Type
 
 	if event.Healthcheck {
-		return result, nil
+		return res, nil
 	}
 
-	// Process event by event filters.
-	var updatedInfos map[string]eventfilter.UpdatedValue
 	var updatedInfosNames []string
 
+	// Process event by event filters.
 	if event.Entity.Enabled {
-		updatedInfos, result.EventMetric.ExecutedEnrichRules, result.EventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
+		efr, suspended, err := runEventFilters(ctx, p.eventFilterService, p.encoder, p.decoder, event, &res, partialRes)
 		if err != nil {
-			return result, err
+			return res, err
 		}
 
-		if len(updatedInfos) > 0 {
+		if suspended {
+			res.ContextGraphReport = report
+
+			return res, nil
+		}
+
+		if len(efr.UpdatedEntityInfos) > 0 {
 			_, err = p.dbCollection.UpdateOne(
 				ctx,
 				bson.M{"_id": event.Entity.ID},
 				bson.M{"$set": bson.M{"infos": event.Entity.Infos}},
 			)
 			if err != nil {
-				return result, fmt.Errorf("cannot update entities: %w", err)
+				return res, fmt.Errorf("cannot update entities: %w", err)
 			}
 
-			result.EventMetric.IsInfosUpdated = true
+			res.EventMetric.IsInfosUpdated = true
 			report.CheckInfoChanged = true
-			logInfosUpdate(p.entityInfosUpdateSender, event.Entity.ID, updatedInfos)
+			logInfosUpdate(p.entityInfosUpdateSender, event.Entity.ID, efr.UpdatedEntityInfos)
 
-			updatedInfosNames = make([]string, 0, len(updatedInfos))
-			for k := range updatedInfos {
+			updatedInfosNames = make([]string, 0, len(efr.UpdatedEntityInfos))
+			for k := range efr.UpdatedEntityInfos {
 				updatedInfosNames = append(updatedInfosNames, k)
 			}
 		}
 	}
 
 	if !report.CheckConnector && !report.CheckInfoChanged {
-		return result, nil
+		return res, nil
 	}
 
-	entityIdsToMetrics := []string{event.Entity.ID}
+	res.UpdatedEntityIdsForMetrics = []string{event.Entity.ID}
 
-	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		commRegister.Clear()
 
-		result.EventMetric.IsServicesUpdated = false
+		res.EventMetric.IsServicesUpdated = false
 
 		var connector types.Entity
 		err := p.dbCollection.FindOne(ctx, bson.M{"_id": event.Entity.ID}).Decode(&connector)
@@ -146,15 +161,13 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (P
 		}
 
 		event.Entity = &connector
-		result.EventMetric.IsServicesUpdated = len(connector.ServicesToAdd) > 0 || len(connector.ServicesToRemove) > 0
+		res.EventMetric.IsServicesUpdated = len(connector.ServicesToAdd) > 0 || len(connector.ServicesToRemove) > 0
 
 		return nil
 	})
 	if err != nil {
-		return result, err
+		return res, err
 	}
 
-	result.UpdatedEntityIDsForMetrics = entityIdsToMetrics
-
-	return result, nil
+	return res, nil
 }

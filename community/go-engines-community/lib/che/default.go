@@ -27,9 +27,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/bsm/redislock"
+	goredis "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -37,24 +39,57 @@ type DependencyMaker struct {
 	depmake.DependencyMaker
 }
 
+type Services struct {
+	EventProcessorContainer event.ProcessorContainer
+	TechMetricsSender       techmetrics.Sender
+	Cfg                     config.CanopsisConf
+	DbClient                mongo.DbClient
+	PgPoolProvider          postgres.PoolProvider
+	SuspendedEventRedis     goredis.Cmdable
+	AmqpPublisher           amqp.Publisher
+	AmqpConsumeChPool       amqp.ChannelPool
+	MetaUpdater             metrics.MetaUpdater
+	MessageProcessor        *messageProcessor
+}
+
+// Dependencies injects the engine-flavour-specific collaborators that need the
+// shared infrastructure NewEngine builds.
+type Dependencies struct {
+	NewMetricsSender           func(mongo.DbClient, postgres.PoolProvider, config.CanopsisConf, zerolog.Logger) metrics.Sender
+	NewMetaUpdater             func(mongo.DbClient, postgres.PoolProvider, config.CanopsisConf, zerolog.Logger) metrics.AsyncMetaUpdater
+	NewEntityInfosUpdateSender func(mongo.DbClient, postgres.PoolProvider, config.CanopsisConf, zerolog.Logger) metrics.EntityInfosUpdateSender
+	NewExternalDataGetter      func(mongo.DbClient, postgres.PoolProvider, template.Executor) externaldata.Getter
+}
+
 func NewEngine(
 	ctx context.Context,
 	options Options,
-	primaryDbClient mongo.DbClient,
-	secondaryDbClient mongo.DbClient,
-	noTimeoutClient mongo.DbClient,
-	cfg config.CanopsisConf,
-	metricsSender metrics.Sender,
-	metricsEntityMetaUpdater metrics.MetaUpdater,
-	entityInfosUpdateSender metrics.EntityInfosUpdateSender,
-	externalDataContainer *externaldata.GetterContainer,
-	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
-	templateConfigProvider *config.BaseTemplateConfigProvider,
+	deps Dependencies,
 	logger zerolog.Logger,
-) libengine.Engine {
+) (libengine.Engine, Services) {
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
+	primaryDbClient := m.DepMongoClient(ctx, mongo.ClientOptions{})
+	cfg := m.DepConfig(ctx, primaryDbClient)
+	config.SetDbClientRetry(primaryDbClient, cfg)
+	secondaryDbClient := m.DepMongoClient(ctx, mongo.ClientOptions{
+		RetryCount:      cfg.Global.ReconnectRetries,
+		MinRetryTimeout: cfg.Global.GetReconnectTimeout(),
+		ReadPreference:  mongo.SecondaryPreferred(),
+	})
+	// noTimeoutClient should be used by change stream watchers only.
+	noTimeoutClient := m.DepMongoClient(ctx, mongo.ClientOptions{
+		RetryCount:      cfg.Global.ReconnectRetries,
+		MinRetryTimeout: cfg.Global.GetReconnectTimeout(),
+		NoClientTimeout: true,
+	})
+	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
+	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
+	metricsSender := deps.NewMetricsSender(primaryDbClient, pgPoolProvider, cfg, logger)
+	metricsEntityMetaUpdater := deps.NewMetaUpdater(primaryDbClient, pgPoolProvider, cfg, logger)
+	entityInfosUpdateSender := deps.NewEntityInfosUpdateSender(primaryDbClient, pgPoolProvider, cfg, logger)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
 	amqpPubConn := m.DepAmqpConnection(logger, cfg)
@@ -66,8 +101,10 @@ func NewEngine(
 	redisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
+	suspendedEventRedis := m.DepRedisSession(ctx, redis.CheSuspendedEventStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
+	externalDataGetter := deps.NewExternalDataGetter(primaryDbClient, pgPoolProvider, templateExecutor)
 	stateSettingsService := statesetting.NewService(primaryDbClient, logger)
 	contextGraphManager := contextgraph.NewManager(entityAdapter, primaryDbClient, contextgraph.NewEntityServiceStorage(primaryDbClient), stateSettingsService, logger)
 	eventFilterEventCounter := eventfilter.NewEventCounter(primaryDbClient,
@@ -82,12 +119,10 @@ func NewEngine(
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(
-		externalDataContainer,
 		eventFilterFailureService,
 		templateExecutor,
 	))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(
-		externalDataContainer,
 		eventfilter.NewActionProcessor(alarmConfigProvider, eventFilterFailureService, templateExecutor),
 		eventFilterFailureService,
 	))
@@ -95,8 +130,8 @@ func NewEngine(
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 
 	ruleAdapter := eventfilter.NewRuleAdapter(primaryDbClient)
-	eventFilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, eventFilterEventCounter,
-		eventFilterFailureService, templateExecutor, logger)
+	eventFilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, externalDataGetter,
+		eventFilterEventCounter, eventFilterFailureService, templateExecutor, logger)
 
 	healthCheckCfg, err := config.NewHealthCheckAdapter(primaryDbClient).GetConfig(ctx)
 	if err != nil {
@@ -194,6 +229,28 @@ func NewEngine(
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
+
+			err = suspendedEventRedis.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = primaryDbClient.Disconnect(context.WithoutCancel(ctx))
+			if err != nil {
+				logger.Err(err).Msg("failed to close mongo connection")
+			}
+
+			err = secondaryDbClient.Disconnect(context.WithoutCancel(ctx))
+			if err != nil {
+				logger.Err(err).Msg("failed to close secondary mongo connection")
+			}
+
+			err = noTimeoutClient.Disconnect(context.WithoutCancel(ctx))
+			if err != nil {
+				logger.Err(err).Msg("failed to close mongo connection without timeout")
+			}
+
+			pgPoolProvider.Close()
 		},
 		logger,
 	)
@@ -213,12 +270,38 @@ func NewEngine(
 
 		return nil
 	})
+	engine.AddRoutine(func(ctx context.Context) error {
+		metricsSender.Run(ctx)
 
-	eventProcessor := event.NewProcessorContainer()
-	eventProcessor.Set(types.SourceTypeResource, event.NewResourceProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, logger))
-	eventProcessor.Set(types.SourceTypeComponent, event.NewComponentProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, logger))
-	eventProcessor.Set(types.SourceTypeConnector, event.NewConnectorProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender))
-	eventProcessor.Set(types.SourceTypeService, event.NewServiceProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender))
+		return nil
+	})
+	engine.AddRoutine(func(ctx context.Context) error {
+		metricsEntityMetaUpdater.Run(ctx)
+
+		return nil
+	})
+	engine.AddRoutine(func(ctx context.Context) error {
+		entityInfosUpdateSender.Run(ctx)
+
+		return nil
+	})
+
+	s := Services{
+		TechMetricsSender:   techMetricsSender,
+		Cfg:                 cfg,
+		DbClient:            primaryDbClient,
+		PgPoolProvider:      pgPoolProvider,
+		SuspendedEventRedis: suspendedEventRedis,
+		AmqpPublisher:       amqpPublisher,
+		AmqpConsumeChPool:   amqpConsumeChPool,
+		MetaUpdater:         metricsEntityMetaUpdater,
+	}
+
+	s.EventProcessorContainer = event.NewProcessorContainer()
+	s.EventProcessorContainer.Set(types.SourceTypeResource, event.NewResourceProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder(), logger))
+	s.EventProcessorContainer.Set(types.SourceTypeComponent, event.NewComponentProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder(), logger))
+	s.EventProcessorContainer.Set(types.SourceTypeConnector, event.NewConnectorProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder()))
+	s.EventProcessorContainer.Set(types.SourceTypeService, event.NewServiceProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder()))
 
 	mainMessageProcessor := &messageProcessor{
 		FeaturePrintEventOnError: options.PrintEventOnError,
@@ -226,14 +309,20 @@ func NewEngine(
 		MetricsConfigProvider:    metricsConfigProvider,
 		TechMetricsSender:        techMetricsSender,
 		MetricsSender:            metricsSender,
-		AmqpPublisher:            amqpPublisher,
-		MetaUpdater:              metricsEntityMetaUpdater,
 		EntityCollection:         primaryDbClient.Collection(mongo.EntityMongoCollection),
-		EventProcessorContainer:  eventProcessor,
-		Encoder:                  json.NewEncoder(),
-		Decoder:                  json.NewDecoder(),
-		Logger:                   logger,
+		EventProcessorContainer:  s.EventProcessorContainer,
+		PostProcessor: NewEventPostProcessor(
+			amqpPublisher,
+			metricsEntityMetaUpdater,
+			json.NewEncoder(),
+			logger,
+		),
+		Encoder: json.NewEncoder(),
+		Decoder: json.NewDecoder(),
+		Logger:  logger,
 	}
+	s.MessageProcessor = mainMessageProcessor
+
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.CheExternalConsumerName,
 		canopsis.CheExternalQueueName,
@@ -360,5 +449,5 @@ func NewEngine(
 		false,
 	), logger)
 
-	return engine
+	return engine, s
 }
