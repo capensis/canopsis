@@ -42,7 +42,7 @@ func (s *ruleService) LoadRules(ctx context.Context, types []string) error {
 		parsedRules[i] = ParseRule(rules[i], s.templateExecutor)
 	}
 
-	hash := s.rulesFingerprint(parsedRules)
+	hash := rulesHash(parsedRules)
 
 	s.rulesMutex.Lock()
 	defer s.rulesMutex.Unlock()
@@ -54,33 +54,21 @@ func (s *ruleService) LoadRules(ctx context.Context, types []string) error {
 }
 
 func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event, partialResult ServiceResult) (ServiceResult, error) {
-	s.rulesMutex.RLock()
-	defer s.rulesMutex.RUnlock()
+	rules, hash := s.getRules()
 
 	// When resuming a parked event, the accumulated state only makes sense against the ruleset it was suspended on.
 	// If the ruleset changed in the meantime,
 	// signal a restart from the original event instead of resuming inconsistently.
-	if partialResult.ExternalDataResponse != nil && partialResult.RulesHash != "" && partialResult.RulesHash != s.rulesHash {
+	if partialResult.ExternalDataResponse != nil && partialResult.RulesHash != "" && partialResult.RulesHash != hash {
 		return ServiceResult{}, ErrRulesetChanged
 	}
 
-	res := ServiceResult{
-		UpdatedEntityInfos:      partialResult.UpdatedEntityInfos,
-		ExecutedEnrichRuleCount: partialResult.ExecutedEnrichRuleCount,
-		ExternalRequestCount:    partialResult.ExternalRequestCount,
-		RulesHash:               s.rulesHash,
-	}
-	if res.UpdatedEntityInfos == nil {
-		res.UpdatedEntityInfos = make(map[string]UpdatedValue)
-	}
-	if res.ExternalRequestCount == nil {
-		res.ExternalRequestCount = make(map[string]int64)
-	}
+	res := s.newResult(partialResult, hash)
 
 	outcome := OutcomePass
 	now := datetime.NewCpsTime()
 	foundPrev := false
-	for _, rule := range s.rules {
+	for _, rule := range rules {
 		if outcome != OutcomePass {
 			break
 		}
@@ -93,92 +81,13 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event, part
 			}
 		}
 
-		if rule.ResolvedStart != nil && rule.ResolvedStop != nil {
-			inExDate := false
-			for _, exdate := range rule.ResolvedExdates {
-				if now.After(exdate.Begin) && now.Before(exdate.End) {
-					inExDate = true
-					break
-				}
-			}
-
-			if inExDate {
-				continue
-			}
-
-			if now.Before(*rule.ResolvedStart) {
-				continue
-			}
-
-			if now.After(*rule.ResolvedStop) {
-				if rule.NextResolvedStart == nil || rule.NextResolvedStop == nil {
-					continue
-				}
-
-				if now.Before(*rule.NextResolvedStart) || now.After(*rule.NextResolvedStop) {
-					continue
-				}
-			}
-		}
-
-		var err error
-		var matched bool
-		var eventRegexMatches match.EventRegexMatches
-		var entityRegexMatches match.EntityRegexMatches
-
-		if len(rule.EntityPattern) == 0 && len(rule.EventPattern) == 0 {
-			if event.Debug {
-				s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
-			}
-
-			s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidPattern, "missing entity and event patterns", nil)
+		if !s.isRuleActive(rule, now) {
 			continue
 		}
 
-		if len(rule.EventPattern) > 0 {
-			matched, eventRegexMatches, err = match.MatchEventPatternWithRegexMatches(rule.EventPattern, event)
-			if err != nil {
-				s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid event pattern")
-				s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidPattern, "invalid event pattern: "+err.Error(), nil)
-				continue
-			}
-
-			if !matched {
-				if event.Debug {
-					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
-				}
-
-				continue
-			}
-		}
-
-		if len(rule.EntityPattern) > 0 {
-			if event.Entity == nil {
-				if event.Debug {
-					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: entity is missing")
-				}
-
-				continue
-			}
-
-			matched, entityRegexMatches, err = match.MatchEntityPatternWithRegexMatches(rule.EntityPattern, event.Entity)
-			if err != nil {
-				s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid entity pattern")
-				s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidPattern, "invalid entity pattern: "+err.Error(), nil)
-				continue
-			}
-
-			if !matched {
-				if event.Debug {
-					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
-				}
-
-				continue
-			}
-		}
-
-		if event.Debug {
-			s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is matched")
+		matched, regexMatch := s.matchRule(rule, event)
+		if !matched {
+			continue
 		}
 
 		applicator, found := s.ruleApplicatorContainer.Get(rule.Type)
@@ -187,42 +96,11 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event, part
 			continue
 		}
 
-		regexMatch := RegexMatch{
-			EventRegexMatches: eventRegexMatches,
-			Entity:            entityRegexMatches,
-		}
+		externalData, ruleExternalRequestCount, externalDataRequest, err := s.resolveExternalData(ctx, rule, event, regexMatch, partialResult)
+		if err != nil {
+			outcome = rule.Config.OnFailure
 
-		var externalData map[string]any
-		var ruleExternalRequestCount map[string]int64
-		var externalDataRequest *ExternalDataRequest
-		if resp := partialResult.ExternalDataResponse; resp != nil && resp.RuleID == rule.ID {
-			if resp.Err == nil {
-				externalData = partialResult.ExternalData
-				if externalData == nil {
-					externalData = make(map[string]any, len(rule.ExternalData))
-				}
-				i := 0
-				for _, d := range rule.ExternalData {
-					if d.Type == externaldata.RefTypeAPI {
-						externalData[d.Reference] = resp.Result[i]
-						i++
-					}
-				}
-			} else {
-				failReason := "external data \"" + rule.ExternalData[resp.ErrIndex].Reference + "\" cannot be fetched: " + resp.Err.Error()
-				s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeExternalDataAPI, failReason, event)
-
-				outcome = rule.Config.OnFailure
-				continue
-			}
-		} else {
-			externalData, ruleExternalRequestCount, externalDataRequest, err = s.getExternalData(ctx, rule, event, regexMatch)
-			if err != nil {
-				s.logger.Err(err).Str("rule_id", rule.ID).Str("rule_type", rule.Type).Msg("Event filter rule service: failed to fetch external data")
-				outcome = rule.Config.OnFailure
-
-				continue
-			}
+			continue
 		}
 
 		for k, v := range ruleExternalRequestCount {
@@ -256,6 +134,174 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event, part
 	}
 
 	return res, nil
+}
+
+func (s *ruleService) getRules() ([]ParsedRule, string) {
+	s.rulesMutex.RLock()
+	defer s.rulesMutex.RUnlock()
+
+	return s.rules, s.rulesHash
+}
+
+// newResult creates the result which accumulates the state of the already processed rules.
+func (s *ruleService) newResult(partialResult ServiceResult, rulesHash string) ServiceResult {
+	res := ServiceResult{
+		UpdatedEntityInfos:      partialResult.UpdatedEntityInfos,
+		ExecutedEnrichRuleCount: partialResult.ExecutedEnrichRuleCount,
+		ExternalRequestCount:    partialResult.ExternalRequestCount,
+		RulesHash:               rulesHash,
+	}
+	if res.UpdatedEntityInfos == nil {
+		res.UpdatedEntityInfos = make(map[string]UpdatedValue)
+	}
+	if res.ExternalRequestCount == nil {
+		res.ExternalRequestCount = make(map[string]int64)
+	}
+
+	return res
+}
+
+// isRuleActive checks if now is in one of the resolved active periods of the rule.
+func (s *ruleService) isRuleActive(rule ParsedRule, now datetime.CpsTime) bool {
+	if rule.ResolvedStart == nil || rule.ResolvedStop == nil {
+		return true
+	}
+
+	for _, exdate := range rule.ResolvedExdates {
+		if now.After(exdate.Begin) && now.Before(exdate.End) {
+			return false
+		}
+	}
+
+	if now.Before(*rule.ResolvedStart) {
+		return false
+	}
+
+	if now.After(*rule.ResolvedStop) {
+		if rule.NextResolvedStart == nil || rule.NextResolvedStop == nil {
+			return false
+		}
+
+		if now.Before(*rule.NextResolvedStart) || now.After(*rule.NextResolvedStop) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// matchRule checks if the patterns of the rule match the event and returns the found regex matches.
+func (s *ruleService) matchRule(rule ParsedRule, event *types.Event) (bool, RegexMatch) {
+	if len(rule.EntityPattern) == 0 && len(rule.EventPattern) == 0 {
+		s.logDebug(rule.ID, event, "rule is not matched")
+		s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidPattern, "missing entity and event patterns", nil)
+
+		return false, RegexMatch{}
+	}
+
+	regexMatch := RegexMatch{}
+
+	if len(rule.EventPattern) > 0 {
+		matched, eventRegexMatches, err := match.MatchEventPatternWithRegexMatches(rule.EventPattern, event)
+		if err != nil {
+			s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid event pattern")
+			s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidPattern, "invalid event pattern: "+err.Error(), nil)
+
+			return false, RegexMatch{}
+		}
+
+		if !matched {
+			s.logDebug(rule.ID, event, "rule is not matched")
+
+			return false, RegexMatch{}
+		}
+
+		regexMatch.EventRegexMatches = eventRegexMatches
+	}
+
+	if len(rule.EntityPattern) > 0 {
+		if event.Entity == nil {
+			s.logDebug(rule.ID, event, "entity is missing")
+
+			return false, RegexMatch{}
+		}
+
+		matched, entityRegexMatches, err := match.MatchEntityPatternWithRegexMatches(rule.EntityPattern, event.Entity)
+		if err != nil {
+			s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid entity pattern")
+			s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidPattern, "invalid entity pattern: "+err.Error(), nil)
+
+			return false, RegexMatch{}
+		}
+
+		if !matched {
+			s.logDebug(rule.ID, event, "rule is not matched")
+
+			return false, RegexMatch{}
+		}
+
+		regexMatch.Entity = entityRegexMatches
+	}
+
+	s.logDebug(rule.ID, event, "rule is matched")
+
+	return true, regexMatch
+}
+
+func (s *ruleService) logDebug(ruleID string, event *types.Event, msg string) {
+	if !event.Debug {
+		return
+	}
+
+	s.logger.Info().
+		Str("rule", ruleID).
+		Str("event_type", event.EventType).
+		Str("entity", event.GetEID()).
+		Msg("event filter rule service: " + msg)
+}
+
+// resolveExternalData returns the external data of the rule either from the response of the request
+// on which the event was parked or by fetching it.
+func (s *ruleService) resolveExternalData(
+	ctx context.Context,
+	rule ParsedRule,
+	event *types.Event,
+	regexMatch RegexMatch,
+	partialResult ServiceResult,
+) (map[string]any, map[string]int64, *ExternalDataRequest, error) {
+	resp := partialResult.ExternalDataResponse
+	if resp == nil || resp.RuleID != rule.ID {
+		externalData, requestCount, request, err := s.getExternalData(ctx, rule, event, regexMatch)
+		if err != nil {
+			s.logger.Err(err).Str("rule_id", rule.ID).Str("rule_type", rule.Type).Msg("Event filter rule service: failed to fetch external data")
+
+			return nil, nil, nil, err
+		}
+
+		return externalData, requestCount, request, nil
+	}
+
+	if resp.Err != nil {
+		failReason := "external data \"" + rule.ExternalData[resp.ErrIndex].Reference + "\" cannot be fetched: " + resp.Err.Error()
+		s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeExternalDataAPI, failReason, event)
+
+		return nil, nil, nil, resp.Err
+	}
+
+	externalData := partialResult.ExternalData
+	if externalData == nil {
+		externalData = make(map[string]any, len(rule.ExternalData))
+	}
+
+	i := 0
+	for _, d := range rule.ExternalData {
+		if d.Type == externaldata.RefTypeAPI {
+			externalData[d.Reference] = resp.Result[i]
+			i++
+		}
+	}
+
+	return externalData, nil, nil, nil
 }
 
 func (s *ruleService) getExternalData(
@@ -325,16 +371,13 @@ func (s *ruleService) getExternalData(
 	return er.ExternalData, er.RequestCount, request, nil
 }
 
-// rulesFingerprint builds a stable digest of the ruleset from each rule's id and updated time.
-func (s *ruleService) rulesFingerprint(rules []ParsedRule) string {
-	entries := make([]string, len(rules))
-	for i, r := range rules {
-		entries[i] = r.ID + ":" + strconv.FormatInt(r.Updated.Unix(), 10)
-	}
-
+// rulesHash builds a stable digest of the ruleset from each rule's id and updated time.
+func rulesHash(rules []ParsedRule) string {
 	h := sha256.New()
-	for _, e := range entries {
-		h.Write([]byte(e))
+	for _, r := range rules {
+		h.Write([]byte(r.ID))
+		h.Write([]byte{0})
+		h.Write([]byte(strconv.FormatInt(r.Updated.Unix(), 10)))
 		h.Write([]byte{0})
 	}
 
