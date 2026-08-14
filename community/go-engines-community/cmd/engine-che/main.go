@@ -26,18 +26,6 @@ func main() {
 	logger := log.NewLogger(ctx, opts.Options)
 	trace := debug.Start(logger)
 
-	if opts.FeatureEventProcessing {
-		logger.Info().Msg("Event processing ENABLED")
-	} else {
-		logger.Info().Msg("Event processing DISABLED")
-	}
-
-	if opts.FeatureContextCreation {
-		logger.Info().Msg("Context creation ENABLED")
-	} else {
-		logger.Info().Msg("Context creation DISABLED")
-	}
-
 	libflag.LogDeprecatedFlags(logger, deprecatedFlags)
 
 	engine := NewEngine(ctx, opts, logger)

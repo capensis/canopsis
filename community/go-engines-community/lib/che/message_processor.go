@@ -6,8 +6,6 @@ import (
 	"runtime/trace"
 	"time"
 
-	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -29,10 +27,10 @@ type messageProcessor struct {
 	AlarmConfigProvider      config.AlarmConfigProvider
 	MetricsConfigProvider    config.MetricsConfigProvider
 	MetricsSender            metrics.Sender
-	MetaUpdater              metrics.MetaUpdater
 	TechMetricsSender        techmetrics.Sender
-	AmqpPublisher            libamqp.Publisher
 	EntityCollection         mongo.DbCollection
+	ExternalData             ExternalDataCoordinator
+	PostProcessor            *EventPostProcessor
 	Encoder                  encoding.Encoder
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
@@ -41,6 +39,7 @@ type messageProcessor struct {
 }
 
 func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
+	var eventMetric techmetrics.CheEventMetric
 	start := time.Now()
 
 	ctx, task := trace.NewTask(ctx, "che.WorkerProcess")
@@ -74,13 +73,16 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 		return nil, nil
 	}
 
-	result := libcheevent.ProcessorResult{}
-
+	isSuspended := false
 	defer func() {
-		result.EventMetric.Interval = time.Since(start)
-		result.EventMetric.Timestamp = start
+		if !isSuspended {
+			if eventMetric.Timestamp.IsZero() {
+				eventMetric.Timestamp = start
+			}
 
-		p.TechMetricsSender.SendCheEvent(result.EventMetric)
+			eventMetric.Interval = time.Since(eventMetric.Timestamp)
+			p.TechMetricsSender.SendCheEvent(eventMetric)
+		}
 	}()
 
 	alarmConfig := p.AlarmConfigProvider.Get()
@@ -95,7 +97,9 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 		return nil, nil
 	}
 
-	result, err = proc.Process(ctx, &event)
+	pr, err := proc.Process(ctx, &event, nil)
+	pr.EventMetric.Timestamp = start
+	eventMetric = pr.EventMetric
 	if err != nil {
 		if errors.Is(err, eventfilter.ErrDropOutcome) {
 			return nil, nil
@@ -109,10 +113,28 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 		return nil, nil
 	}
 
-	go p.postProcessProcessorResult(context.WithoutCancel(ctx), event, result)
+	if pr.IsSuspended() {
+		// It parks the partially processed event until the webhook RPC answers.
+		// Processing continues when the RPC response is consumed and the event resumed.
+		err = p.ExternalData.Dispatch(ctx, event, pr, 1)
+		if err != nil {
+			if engine.IsConnectionError(err) {
+				return nil, err
+			}
 
+			p.logError(err, "cannot suspend event for external data", d.Body)
+
+			return nil, nil
+		}
+
+		isSuspended = true
+
+		return nil, engine.ErrAckWithoutForward
+	}
+
+	p.PostProcessor.Run(ctx, event, pr)
 	p.handlePerfData(ctx, &event)
-	event.Format()
+
 	body, err := p.Encoder.Encode(&event)
 	if err != nil {
 		p.logError(err, "cannot encode event", d.Body)
@@ -127,101 +149,6 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 	}
 
 	return body, nil
-}
-
-func (p *messageProcessor) postProcessProcessorResult(
-	ctx context.Context,
-	event types.Event,
-	result libcheevent.ProcessorResult,
-) {
-	now := datetime.NewCpsTime()
-
-	for _, ent := range result.UpdatedEntitiesToCountersUpd {
-		var updateCountersEvent types.Event
-
-		switch ent.Type {
-		case types.EntityTypeComponent:
-			updateCountersEvent = types.Event{
-				EventType:     types.EventTypeUpdateCounters,
-				SourceType:    types.SourceTypeComponent,
-				Connector:     canopsis.CheConnector,
-				ConnectorName: canopsis.CheConnector,
-				Component:     ent.Component,
-				Timestamp:     now,
-				Entity:        &ent,
-				Author:        canopsis.DefaultEventAuthor,
-				Initiator:     types.InitiatorSystem,
-			}
-		case types.EntityTypeConnector:
-			updateCountersEvent = types.Event{
-				EventType:     types.EventTypeUpdateCounters,
-				SourceType:    types.SourceTypeConnector,
-				Connector:     event.Connector,
-				ConnectorName: event.ConnectorName,
-				Timestamp:     now,
-				Entity:        &ent,
-				Author:        canopsis.DefaultEventAuthor,
-				Initiator:     types.InitiatorSystem,
-			}
-		}
-
-		body, err := p.Encoder.Encode(updateCountersEvent)
-		if err != nil {
-			p.Logger.Err(err).Msg("unable to serialize event")
-			continue
-		}
-
-		err = p.AmqpPublisher.PublishWithContext(
-			ctx,
-			canopsis.EngineExchangeName,
-			canopsis.AxeSystemQueueName,
-			false,
-			false,
-			amqp.Publishing{
-				Body:         body,
-				ContentType:  canopsis.JsonContentType,
-				DeliveryMode: amqp.Persistent,
-			},
-		)
-		if err != nil {
-			p.Logger.Err(err).Msg("unable to send service event")
-		}
-	}
-
-	for _, id := range result.ServicesIDsToRecompute {
-		body, err := p.Encoder.Encode(types.Event{
-			EventType:     types.EventTypeRecomputeEntityService,
-			Connector:     canopsis.CheConnector,
-			ConnectorName: canopsis.CheConnector,
-			Component:     id,
-			Timestamp:     datetime.NewCpsTime(),
-			SourceType:    types.SourceTypeService,
-			Author:        canopsis.DefaultEventAuthor,
-			Initiator:     types.InitiatorSystem,
-		})
-		if err != nil {
-			p.Logger.Err(err).Msg("unable to serialize event")
-			continue
-		}
-
-		err = p.AmqpPublisher.PublishWithContext(
-			ctx,
-			canopsis.DefaultExchangeName,
-			canopsis.FIFOQueueName,
-			false,
-			false,
-			amqp.Publishing{
-				Body:         body,
-				ContentType:  canopsis.JsonContentType,
-				DeliveryMode: amqp.Persistent,
-			},
-		)
-		if err != nil {
-			p.Logger.Err(err).Msg("unable to send service event")
-		}
-	}
-
-	p.MetaUpdater.UpdateById(ctx, result.UpdatedEntityIDsForMetrics...)
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {

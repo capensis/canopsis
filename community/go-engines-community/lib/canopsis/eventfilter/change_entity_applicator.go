@@ -3,35 +3,26 @@ package eventfilter
 import (
 	"context"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type changeEntityApplicator struct {
-	externalDataContainer *externaldata.GetterContainer
-	failureService        FailureService
-	templateExecutor      template.Executor
+	failureService   FailureService
+	templateExecutor template.Executor
 }
 
 func NewChangeEntityApplicator(
-	externalDataContainer *externaldata.GetterContainer,
 	failureService FailureService,
 	templateExecutor template.Executor,
 ) RuleApplicator {
 	return &changeEntityApplicator{
-		externalDataContainer: externalDataContainer,
-		failureService:        failureService,
-		templateExecutor:      templateExecutor,
+		failureService:   failureService,
+		templateExecutor: templateExecutor,
 	}
 }
 
-func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, event *types.Event, _ map[string]UpdatedValue, regexMatch RegexMatch) (RuleResult, error) {
-	externalData, externalRequestCount, err := getExternalData(ctx, rule, event, regexMatch, a.externalDataContainer, a.failureService)
-	if err != nil {
-		return RuleResult{Outcome: OutcomeDrop}, err
-	}
-
+func (a *changeEntityApplicator) Apply(_ context.Context, rule ParsedRule, event *types.Event, _ map[string]UpdatedValue, regexMatch RegexMatch, externalData map[string]any) (RuleResult, error) {
 	templateParams := Template{
 		Event:        event,
 		RegexMatch:   regexMatch,
@@ -88,5 +79,5 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		event.Upstream = upstream
 	}
 
-	return RuleResult{Outcome: OutcomePass, ExternalRequestCount: externalRequestCount}, nil
+	return RuleResult{Outcome: OutcomePass}, nil
 }
