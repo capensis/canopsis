@@ -36,31 +36,27 @@
 import { isEqual } from 'lodash';
 import { mapActions } from 'pinia';
 
-import TheMassActionsPanels from '@/components/common/actions-panel/the-mass-actions-panels.vue';
-import GridLayout from '@/components/common/grid/grid-layout.vue';
-import WindowSizeField from '@/components/forms/fields/window-size.vue';
-import WidgetEditDragHandler from '@/components/widgets/widget-edit-drag-handler.vue';
-import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 import {
   TELEPORTS_NAMES,
   WIDGET_GRID_COLUMNS_COUNT,
   WIDGET_GRID_ROW_HEIGHT,
   WIDGET_GRID_SIZES_KEYS,
+  DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP,
   WIDGET_LAYOUT_MAX_WIDTHS,
   VIEW_SCREEN_MODES,
 } from '@/constants';
-import { widgetsToLayoutsWithCompact, layoutsToWidgetsGrid } from '@/helpers/entities/widget/grid';
-import { activeViewMixin } from '@/mixins/active-view';
+
 import { useWidgetStore } from '@/stores/modules/widget';
 
-const DISPLAY_NAME_TO_WIDGET_GRID_SIZE = {
-  xs: WIDGET_GRID_SIZES_KEYS.mobile,
-  sm: WIDGET_GRID_SIZES_KEYS.mobile,
-  md: WIDGET_GRID_SIZES_KEYS.tablet,
-  lg: WIDGET_GRID_SIZES_KEYS.desktop,
-  xl: WIDGET_GRID_SIZES_KEYS.desktop,
-  xxl: WIDGET_GRID_SIZES_KEYS.desktop,
-};
+import { widgetsToLayoutsWithCompact, layoutsToWidgetsGrid } from '@/helpers/entities/widget/grid';
+
+import { activeViewMixin } from '@/mixins/active-view';
+
+import TheMassActionsPanels from '@/components/common/actions-panel/the-mass-actions-panels.vue';
+import GridLayout from '@/components/common/grid/grid-layout.vue';
+import WindowSizeField from '@/components/forms/fields/window-size.vue';
+import WidgetEditDragHandler from '@/components/widgets/widget-edit-drag-handler.vue';
+import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
 export default {
   components: {
@@ -105,7 +101,7 @@ export default {
     },
 
     displayGridSize() {
-      return DISPLAY_NAME_TO_WIDGET_GRID_SIZE[this.displayName] ?? WIDGET_GRID_SIZES_KEYS.desktop;
+      return DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.displayName] ?? WIDGET_GRID_SIZES_KEYS.desktop;
     },
 
     isDefaultMode() {

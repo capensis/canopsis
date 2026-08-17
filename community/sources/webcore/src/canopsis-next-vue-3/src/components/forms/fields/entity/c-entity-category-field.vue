@@ -7,6 +7,7 @@
     :name="name"
     :hide-details="hideDetails"
     :clearable="!required"
+    :required="required"
     class="mt-0"
     item-title="name"
     item-value="_id"
@@ -18,8 +19,10 @@
 import { isString } from 'lodash';
 
 import { MAX_LIMIT } from '@/constants';
-import { formBaseMixin } from '@/mixins/form';
+
 import { useEntityCategoryStore } from '@/stores/modules/entity-category';
+
+import { formBaseMixin } from '@/mixins/form';
 
 export default {
   mixins: [formBaseMixin],

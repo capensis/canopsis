@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash';
 
 import { DEFAULT_WIDGET_GRID_PARAMETERS, WIDGET_GRID_SIZES_KEYS, WIDGET_TYPES } from '@/constants';
+
 import { uid } from '@/helpers/uid';
 
 import {
@@ -8,6 +9,11 @@ import {
   formToAlarmListWidgetParameters,
   prepareAlarmListWidget,
 } from './forms/alarm';
+import {
+  contextWidgetParametersToForm,
+  formToContextWidgetParameters,
+  prepareContextWidget,
+} from './forms/context';
 import { counterWidgetParametersToForm, formToCounterWidgetParameters } from './forms/counter';
 import { formToMapWidgetParameters, mapWidgetParametersToForm } from './forms/map';
 import { textWidgetParametersToForm } from './forms/text';
@@ -163,6 +169,7 @@ import { textWidgetParametersToForm } from './forms/text';
 export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
   const widgetsMap = {
     [WIDGET_TYPES.alarmList]: alarmListWidgetParametersToForm,
+    [WIDGET_TYPES.context]: contextWidgetParametersToForm,
     [WIDGET_TYPES.text]: textWidgetParametersToForm,
     [WIDGET_TYPES.counter]: counterWidgetParametersToForm,
     [WIDGET_TYPES.map]: mapWidgetParametersToForm,
@@ -201,11 +208,31 @@ export const generatePreparedDefaultAlarmListWidget = () =>
   prepareAlarmListWidget(generateDefaultAlarmListWidget());
 
 /**
- * Build minimal context widget config used by pattern preview modals.
+ * Generate context widget form with default parameters.
  *
- * @returns {Object}
+ * @return {WidgetForm}
  */
-export const generatePreparedDefaultContextWidget = () => ({});
+export const generateDefaultContextWidgetForm = () =>
+  widgetToForm({ type: WIDGET_TYPES.context });
+
+/**
+ * Generate context widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultContextWidget = () => ({
+  ...formToWidget(generateDefaultContextWidgetForm()),
+
+  _id: uid(),
+});
+
+/**
+ * Generate prepared default context widget.
+ *
+ * @returns {Widget}
+ */
+export const generatePreparedDefaultContextWidget = () =>
+  prepareContextWidget(generateDefaultContextWidget());
 
 /**
  * Get default widget grid parameters.
@@ -258,6 +285,7 @@ export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
 export const formToWidgetParameters = ({ type, parameters }) => {
   const widgetsMap = {
     [WIDGET_TYPES.alarmList]: formToAlarmListWidgetParameters,
+    [WIDGET_TYPES.context]: formToContextWidgetParameters,
     [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
     [WIDGET_TYPES.map]: formToMapWidgetParameters,
   };

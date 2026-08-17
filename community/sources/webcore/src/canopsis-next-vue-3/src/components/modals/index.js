@@ -30,6 +30,9 @@ export default {
   [MODALS.createJunitStateSetting]: defineAsyncComponent(
     () => import('./state-setting/create-junit-state-setting.vue'),
   ),
+  [MODALS.stateSettingInheritedEntityPattern]: defineAsyncComponent(
+    () => import('./state-setting/state-setting-inherited-entity-pattern.vue'),
+  ),
   [MODALS.userInterface]: defineAsyncComponent(() => import('./admin/user-interface.vue')),
   [MODALS.createDynamicInfo]: defineAsyncComponent(
     () => import('./dynamic-info/create-dynamic-info.vue'),
@@ -169,6 +172,13 @@ export default {
   [MODALS.createEntityInfoProperty]: defineAsyncComponent(
     () => import('./entity-info-property/create-entity-info-property.vue'),
   ),
+  [MODALS.createEntity]: defineAsyncComponent(() => import('./entity/create-entity.vue')),
+  [MODALS.createEntityInfo]: defineAsyncComponent(() => import('./entity/create-entity-info.vue')),
+  [MODALS.entitiesList]: defineAsyncComponent(() => import('./entity/entities-list.vue')),
+  [MODALS.entitiesRootCauseDiagram]: defineAsyncComponent(
+    () => import('./entity/entities-root-cause-diagram.vue'),
+  ),
+  [MODALS.createService]: defineAsyncComponent(() => import('./service/create-service.vue')),
   [MODALS.createIcon]: defineAsyncComponent(() => import('./icon/create-icon.vue')),
   [MODALS.createMap]: defineAsyncComponent(() => import('./map/create-map.vue')),
   [MODALS.createGeoMap]: defineAsyncComponent(() => import('./map/create-geo-map.vue')),

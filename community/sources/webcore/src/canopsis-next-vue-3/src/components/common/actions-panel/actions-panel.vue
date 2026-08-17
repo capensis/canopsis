@@ -86,10 +86,19 @@ export default {
 
 <style lang="scss">
 .actions-panel {
+  &__menu-item {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+  }
+
   &__menu-item-icon {
     display: inline-flex;
-    width: 24px;
+    align-items: center;
     justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
   }
 
   &--small {

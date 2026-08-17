@@ -51,6 +51,8 @@ export { default as CAlarmStateField } from './alarm/c-alarm-state-field.vue';
 export { default as CAlarmStatusField } from './alarm/c-alarm-status-field.vue';
 export { default as CAlarmTagField } from './alarm/c-alarm-tag-field.vue';
 export { default as CEntityCategoryField } from './entity/c-entity-category-field.vue';
+export { default as CEntityTypeField } from './entity/c-entity-type-field.vue';
+export { default as CImpactLevelField } from './entity/c-impact-level-field.vue';
 export { default as CLazySearchField } from './c-lazy-search-field.vue';
 export { default as CUserPickerField } from './c-user-picker-field.vue';
 export { default as CCoordinatesField } from './map/c-coordinates-field.vue';

@@ -6,68 +6,48 @@
       slider-color="primary"
       align-tabs="center"
     >
-      <v-tab
-        v-if="hasPatternsTab && reverse"
-        :value="FORM_GENERAL_PATTERNS_TABS.patterns"
-        :class="tabTabClass(tabsByIds[FORM_GENERAL_PATTERNS_TABS.patterns])"
-      >
-        {{ patternsLabel || t('common.pattern', 2) }}
-      </v-tab>
+      <template v-for="tab in visibleTabs" :key="`tab-head-${tab.id}`">
+        <v-tab
+          v-if="tab.testing"
+          :value="tab.id"
+          :disabled="isEmptyVariablesFields"
+          class="v-tab--tooltip"
+        >
+          <v-tooltip :disabled="!isEmptyVariablesFields" location="top">
+            <template #activator="{ props: tooltipProps }">
+              <span v-bind="tooltipProps" class="test-variables-tab__wrapper">
+                {{ t('templateTesting.testVariables') }}
+              </span>
+            </template>
 
-      <v-tab
-        v-if="hasGeneralTab"
-        :value="FORM_GENERAL_PATTERNS_TABS.general"
-        :class="tabTabClass(tabsByIds[FORM_GENERAL_PATTERNS_TABS.general])"
-      >
-        {{ $t('common.general') }}
-      </v-tab>
-
-      <v-tab
-        v-if="hasPatternsTab && !reverse"
-        :value="FORM_GENERAL_PATTERNS_TABS.patterns"
-        :class="tabTabClass(tabsByIds[FORM_GENERAL_PATTERNS_TABS.patterns])"
-      >
-        {{ patternsLabel || t('common.pattern', 2) }}
-      </v-tab>
-
-      <v-tab
-        v-if="hasAdditionalTab"
-        :value="FORM_GENERAL_PATTERNS_TABS.additional"
-        :class="tabTabClass(tabsByIds[FORM_GENERAL_PATTERNS_TABS.additional])"
-      >
-        {{ additionalLabel || $t('common.additional') }}
-      </v-tab>
-
-      <v-tab
-        v-if="hasTestQueryTab"
-        :value="FORM_GENERAL_PATTERNS_TABS.testQuery"
-        :class="tabTabClass(tabsByIds[FORM_GENERAL_PATTERNS_TABS.testQuery])"
-        :disabled="!!disabledTestQueryTooltip"
-      >
-        <v-tooltip :disabled="!disabledTestQueryTooltip" location="top">
-          <template #activator="{ props: tooltipProps }">
-            <span v-bind="tooltipProps">{{ $t('common.testQuery') }}</span>
+            <span>{{ t('templateTesting.testVariablesDisabledTooltip') }}</span>
+          </v-tooltip>
+        </v-tab>
+        <v-tab
+          v-else
+          :value="tab.id"
+          :class="tabTabClass(tab)"
+          :disabled="tab['test-query'] && !!disabledTestQueryTooltip"
+        >
+          <template v-if="tab.general">
+            {{ $t('common.general') }}
           </template>
-          <span>{{ disabledTestQueryTooltip }}</span>
-        </v-tooltip>
-      </v-tab>
-
-      <v-tab
-        v-if="hasTemplateTestingTab"
-        :value="FORM_GENERAL_PATTERNS_TABS.testing"
-        :disabled="isEmptyVariablesFields"
-        class="v-tab--tooltip"
-      >
-        <v-tooltip :disabled="!isEmptyVariablesFields" location="top">
-          <template #activator="{ props: tooltipProps }">
-            <span v-bind="tooltipProps" class="test-variables-tab__wrapper">
-              {{ t('templateTesting.testVariables') }}
-            </span>
+          <template v-else-if="tab.patterns">
+            {{ patternsLabel || t('common.pattern', 2) }}
           </template>
-
-          <span>{{ t('templateTesting.testVariablesDisabledTooltip') }}</span>
-        </v-tooltip>
-      </v-tab>
+          <template v-else-if="tab.additional">
+            {{ additionalLabel || $t('common.additional') }}
+          </template>
+          <template v-else-if="tab['test-query']">
+            <v-tooltip :disabled="!disabledTestQueryTooltip" location="top">
+              <template #activator="{ props: tooltipProps }">
+                <span v-bind="tooltipProps">{{ $t('common.testQuery') }}</span>
+              </template>
+              <span>{{ disabledTestQueryTooltip }}</span>
+            </v-tooltip>
+          </template>
+        </v-tab>
+      </template>
     </v-tabs>
 
     <v-window v-model="activeTab">
@@ -125,14 +105,18 @@
 import { isNumber } from 'lodash';
 import { computed, ref, toRef, useSlots, watch, onMounted } from 'vue';
 
-import { useTestVariablesTabData } from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
-import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
 import { FORM_GENERAL_PATTERNS_TABS } from '@/constants';
+
 import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 import { useI18n } from '@/hooks/i18n';
 import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 import { useCopyVarsList } from '@/hooks/vars/copy';
 import { useTemplateVarsList } from '@/hooks/vars/template';
+
+import { useTestVariablesTabData } from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
+
+import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
+
 
 /**
  * Builds a tab descriptor for `c-form-general-patterns-tabs` with a single active type flag.
@@ -257,16 +241,6 @@ export default {
     const hasPatternsSlot = computed(() => Boolean(slots.patterns));
     const hasTestQuerySlot = computed(() => Boolean(slots['test-query']));
     const hasAdditionalSlot = computed(() => Boolean(slots.additional));
-    const hasGeneralTab = computed(() => hasGeneralSlot.value && !props.hideGeneral);
-    const hasPatternsTab = computed(() => hasPatternsSlot.value);
-    const hasTestQueryTab = computed(() => hasTestQuerySlot.value);
-    const hasAdditionalTab = computed(() => hasAdditionalSlot.value);
-
-    const tabsByIds = computed(() =>
-      Object.fromEntries(
-        Object.values(FORM_GENERAL_PATTERNS_TABS).map(tabId => [tabId, createTab(tabId)]),
-      ),
-    );
 
     const visibleTabs = computed(() => {
       const generalTab =
@@ -360,15 +334,9 @@ export default {
     return {
       activeTab,
       t,
-      FORM_GENERAL_PATTERNS_TABS,
 
       visibleTabs,
       visibleTabsKey,
-      tabsByIds,
-      hasGeneralTab,
-      hasPatternsTab,
-      hasTestQueryTab,
-      hasAdditionalTab,
 
       hasGeneralError,
       hasPatternsError,
