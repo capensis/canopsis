@@ -1,57 +1,62 @@
 <template>
   <div class="alarms-list-table">
-    <c-layout
+    <div
       v-if="shownTopPagination"
-      class="alarms-list-table__top-pagination px-4 py-2 position-relative"
-      align="center"
+      ref="actions"
+      class="alarms-list-table__top-pagination"
     >
-      <div class="alarms-list-table__top-pagination-left">
-        <c-density-btn-toggle
-          v-if="densable && isTableControlsShown"
-          :value="dense"
-          button-size="x-small"
-          density="compact"
-          icon-size="16"
-          @change="$emit('update:dense', $event)"
+      <c-layout
+        class="px-4 py-2 position-relative"
+        align="center"
+      >
+        <div class="alarms-list-table__top-pagination-left">
+          <c-density-btn-toggle
+            v-if="densable && isTableControlsShown"
+            :value="dense"
+            button-size="x-small"
+            density="compact"
+            icon-size="16"
+            @change="$emit('update:dense', $event)"
+          />
+
+          <c-mass-actions-panel
+            v-if="selectable && unresolvedSelected.length"
+            v-model="keepSelectedAfterAction"
+            v-bind="widgetGridParameters"
+            :selected="unresolvedSelected"
+            :default-value="defaultKeepSelectedAfterAction"
+            @clear:selected="clearSelected"
+          >
+            <template #actions>
+              <mass-actions-panel
+                :items="unresolvedSelected"
+                :widget="preparedWidget"
+                :refresh-alarms-list="refreshAlarmsList"
+                :small="isSmallDensity"
+                @clear:items="clearSelectedAfterAction"
+              />
+            </template>
+          </c-mass-actions-panel>
+        </div>
+
+        <c-pagination
+          :page="options.page"
+          :limit="options.itemsPerPage"
+          :total="totalItems"
+          class="alarms-list-table__top-pagination-center"
+          type="top"
+          @update:page="updatePage"
         />
 
-        <c-mass-actions-panel
-          v-if="selectable && unresolvedSelected.length"
-          v-model="keepSelectedAfterAction"
-          v-bind="widgetGridParameters"
-          :selected="unresolvedSelected"
-          :default-value="defaultKeepSelectedAfterAction"
-          @clear:selected="clearSelected"
-        >
-          <template #actions>
-            <mass-actions-panel
-              :items="unresolvedSelected"
-              :widget="preparedWidget"
-              :refresh-alarms-list="refreshAlarmsList"
-              :small="isSmallDensity"
-              @clear:items="clearSelectedAfterAction"
-            />
-          </template>
-        </c-mass-actions-panel>
-      </div>
-
-      <c-pagination
-        :page="options.page"
-        :limit="options.itemsPerPage"
-        :total="totalItems"
-        class="alarms-list-table__top-pagination-center"
-        type="top"
-        @update:page="updatePage"
-      />
-
-      <c-grid-btns
-        v-if="hasColumnEditButtons"
-        :editing="isColumnsChanging"
-        class="alarms-list-table__top-pagination-right"
-        @toggle="toggleColumnEditingMode"
-        @reset="resetColumnsSettings"
-      />
-    </c-layout>
+        <c-grid-btns
+          v-if="hasColumnEditButtons"
+          :editing="isColumnsChanging"
+          class="alarms-list-table__top-pagination-right"
+          @toggle="toggleColumnEditingMode"
+          @reset="resetColumnsSettings"
+        />
+      </c-layout>
+    </div>
 
     <v-data-table-server
       ref="dataTable"
@@ -145,6 +150,9 @@
             :actions-inline-count="actionsInlineCount"
             :actions-ignore-media-query="resizableColumn"
             :refresh-alarms-list="refreshAlarmsList"
+            :virtual-scroll="preparedWidget.parameters.isVirtualScrollEnabled"
+            :booted="bootedRows[getTableItem(item)._id]"
+            :eager="eager"
             @update:selected="toggleAlarmSelection(getTableItem(item), $event)"
             @update:expanded="toggleAlarmExpanded(getTableItem(item), $event)"
             @start:resize="startColumnResize"
@@ -178,6 +186,7 @@
       </template>
     </v-data-table-server>
 
+    <c-horizontal-scrollbar v-if="stickyHorizontalScroll" ref="horizontalScrollbar" />
   </div>
 </template>
 
@@ -185,7 +194,7 @@
 import { get, isEqual, isNumber } from 'lodash';
 import { mapState } from 'pinia';
 
-import { PAGINATION_LIMIT } from '@/config';
+import { PAGINATION_LIMIT, VUETIFY_ANIMATION_DELAY } from '@/config';
 import {
   ALARM_ACTION_BUTTON_MARGINS,
   ALARM_ACTION_BUTTON_WIDTHS,
@@ -197,9 +206,11 @@ import {
 } from '@/constants';
 
 import { AsyncBooting } from '@/services/async-booting';
+import { TableIntersectionObserver } from '@/services/table-intersection-observer';
 
 import { useAlarmStore } from '@/stores/modules/alarm';
 
+import { mapIds } from '@/helpers/array';
 import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
 import { calculateAlarmLinksColumnWidth } from '@/helpers/entities/alarm/list';
 import {
@@ -211,11 +222,19 @@ import {
   getAlarmsListWidgetColumnValueFilter,
   prepareAlarmListWidget,
 } from '@/helpers/entities/widget/forms/alarm';
+import {
+  getNearestAndFarthestIndexes,
+  getNearestViewportIndexesBound,
+  recursiveRaf,
+  splitIdsToChunk,
+} from '@/helpers/render';
 
+import { activeViewMixin } from '@/mixins/active-view';
 import {
   widgetColumnDraggingAlarmMixin,
   widgetColumnResizingAlarmMixin,
 } from '@/mixins/widget/columns';
+import { widgetStickyAlarmMixin } from '@/mixins/widget/rows/alarm-sticky';
 
 import MassActionsPanel from '../actions/mass-actions-panel.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
@@ -228,6 +247,7 @@ export default {
   provide() {
     return {
       $asyncBootingActionsPanel: this.asyncBootingActionsPanel,
+      $intersectionObserver: this.$intersectionObserver,
     };
   },
 
@@ -240,8 +260,10 @@ export default {
   },
 
   mixins: [
+    activeViewMixin,
     widgetColumnDraggingAlarmMixin,
     widgetColumnResizingAlarmMixin,
+    widgetStickyAlarmMixin,
   ],
 
   props: {
@@ -285,10 +307,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    stickyHeader: {
-      type: Boolean,
-      default: false,
-    },
     hideChildren: {
       type: Boolean,
       default: false,
@@ -325,6 +343,10 @@ export default {
       type: Function,
       default: () => {},
     },
+    eager: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: ['update:query', 'update:columns-settings', 'update:dense', 'select:tag', 'remove:tag'],
@@ -337,6 +359,7 @@ export default {
       selectedAlarmIds: [],
       expandedAlarmIds: [],
       asyncBootingActionsPanel: new AsyncBooting(),
+      bootedRows: {},
     };
   },
 
@@ -543,6 +566,8 @@ export default {
       return {
         table__grid: this.isColumnsChanging,
         'alarms-list-table__table--fixed': this.resizableColumn || this.draggableColumn,
+        'alarms-list-table__table--sticky-header': this.stickyHeader,
+        'alarms-list-table__table--sticky-horizontal-scroll': this.stickyHorizontalScroll,
         'alarms-list-table__table--wrapped': this.isCellContentWrapped,
         'alarms-list-table__table--truncated': this.isCellContentTruncated,
         'alarms-list-table__table--dragging': this.draggingMode,
@@ -667,6 +692,14 @@ export default {
     alarms() {
       this.synchronizeSelectedAlarms();
       this.synchronizeExpandedAlarms();
+      this.scheduleStickyScrollHandler();
+
+      if (!this.eager) {
+        this.setBootedRows(this.alarms);
+
+        return;
+      }
+
       this.scheduleActionsPanelBooting();
     },
 
@@ -729,25 +762,125 @@ export default {
       if (!this.resizableColumn) {
         this.$nextTick(() => this.calculateColumnsWidths());
       }
+
+      this.scheduleStickyScrollHandler();
+    },
+
+    expandedAlarmIds(expandedAlarmIds) {
+      if (this.preparedWidget.parameters.pausePeriodicRefreshOnExpandPanel) {
+        this.checkExpandedForPausePeriodicRefresh(expandedAlarmIds);
+      }
+    },
+
+    'widget.parameters.pausePeriodicRefreshOnExpandPanel': {
+      handler(pausePeriodicRefreshOnExpandPanel) {
+        this.checkExpandedForPausePeriodicRefresh(
+          pausePeriodicRefreshOnExpandPanel ? this.expandedAlarmIds : [],
+        );
+      },
+    },
+
+    'widget.parameters.isVirtualScrollEnabled': {
+      immediate: true,
+      handler(isVirtualScrollEnabled) {
+        if (isVirtualScrollEnabled) {
+          this.$intersectionObserver.connect();
+
+          return;
+        }
+
+        this.$intersectionObserver.disconnect();
+      },
     },
   },
 
+  beforeCreate() {
+    this.$intersectionObserver = new TableIntersectionObserver();
+  },
+
   mounted() {
+    this.$tbodyEl = this.$el.querySelector('tbody');
+
     if (this.resizableColumn && this.isEmptyColumnsWidthByField) {
       this.$nextTick(() => this.calculateColumnsWidths());
     }
 
-    this.scheduleActionsPanelBooting();
+    if (this.eager) {
+      this.scheduleActionsPanelBooting();
+    } else {
+      this.setBootedRows(this.alarms);
+    }
+
+    this.scheduleStickyScrollHandler();
   },
 
   beforeUnmount() {
     this.asyncBootingActionsPanel.clear();
+    this.$intersectionObserver.destroy();
   },
 
   methods: {
     scheduleActionsPanelBooting() {
       this.$nextTick(() => {
         window.requestAnimationFrame(() => this.asyncBootingActionsPanel.run());
+      });
+    },
+
+    setBootedRows(items, itemsPerRender = 10) {
+      if (!this.$tbodyEl || !items.length) {
+        return;
+      }
+
+      const { start, end } = getNearestViewportIndexesBound({
+        wrapperEl: this.$tbodyEl,
+        length: items.length,
+      });
+      const { nearest, farthest } = getNearestAndFarthestIndexes({
+        start,
+        end,
+        ids: mapIds(items),
+      });
+
+      this.bootedRows = nearest.reduce((acc, id) => {
+        acc[id] = true;
+
+        return acc;
+      }, {});
+
+      const chunks = splitIdsToChunk(farthest, itemsPerRender);
+
+      if (!chunks.length) {
+        window.requestAnimationFrame(() => {
+          if (this.stickyHorizontalScroll) {
+            this.setHorizontalScrollbarWidth();
+            this.calculateScrollPosition();
+            this.setHorizontalScrollPosition();
+          }
+
+          this.asyncBootingActionsPanel.run();
+        });
+
+        return;
+      }
+
+      chunks.forEach((idsChunk, index) => {
+        recursiveRaf(() => {
+          idsChunk.forEach((id) => {
+            this.bootedRows[id] = true;
+          });
+
+          if (!index && this.stickyHorizontalScroll) {
+            window.requestAnimationFrame(() => {
+              this.setHorizontalScrollbarWidth();
+              this.calculateScrollPosition();
+              this.setHorizontalScrollPosition();
+            });
+          }
+
+          if (index === chunks.length - 1) {
+            window.requestAnimationFrame(() => this.asyncBootingActionsPanel.run());
+          }
+        }, index + 1);
       });
     },
 
@@ -931,15 +1064,41 @@ export default {
 
       this.expandedAlarmIds = this.expandedAlarmIds.filter(id => alarmIds.has(id));
     },
+
+    checkExpandedForPausePeriodicRefresh(expanded) {
+      if (expanded.length) {
+        this.pausePeriodicRefresh();
+
+        return;
+      }
+
+      this.resumePeriodicRefresh();
+
+      setTimeout(() => this.scheduleStickyScrollHandler(), VUETIFY_ANIMATION_DELAY);
+    },
   },
 };
 </script>
 
 <style lang="scss">
 .alarms-list-table__top-pagination {
+  position: relative;
   min-height: 48px;
   background: rgb(var(--v-theme-surface));
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  transition-property: opacity, background-color;
   z-index: 2;
+
+  &:after {
+    content: ' ';
+    width: 100%;
+    height: 2px;
+    background: inherit;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+  }
 }
 
 .alarms-list-table__top-pagination-left {
@@ -963,6 +1122,44 @@ export default {
 .alarms-list-table__table {
   > .v-table__wrapper {
     overflow-x: auto;
+  }
+
+  &.alarms-list-table__table--sticky-horizontal-scroll {
+    > .v-table__wrapper {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+
+  &.alarms-list-table__table--sticky-header {
+    thead {
+      position: relative;
+      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+      transition-property: opacity, background-color;
+      width: 100%;
+      z-index: 2;
+
+      &.head-shadow {
+        tr:first-child {
+          box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
+        }
+      }
+
+      tr {
+        background: rgb(var(--v-theme-surface));
+        box-shadow: 0 1px 0 rgba(var(--v-border-color), var(--v-border-opacity));
+        transition: background-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+        width: 100%;
+
+        th {
+          border-bottom: none;
+        }
+      }
+    }
   }
 
   tr:not(.v-data-table__expanded) th:first-of-type {

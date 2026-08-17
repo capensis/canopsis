@@ -6,6 +6,7 @@ import { API_ROUTES } from '@/config';
 import request, { isRequestCanceled, useRequestCancelling } from '@/services/request';
 
 import { mapIds } from '@/helpers/array';
+import { getAlarmIdFromDetailsId } from '@/helpers/entities/alarm/list';
 
 export const useAlarmStore = defineStore('alarm', () => {
   const alarmsById = ref({});
@@ -22,6 +23,9 @@ export const useAlarmStore = defineStore('alarm', () => {
     () => widgetId => widgets.value[widgetId]?.pending ?? false,
   );
   const getDetailsByWidgetId = computed(() => widgetId => detailsByWidget.value[widgetId] ?? {});
+  const getQueriesByWidgetId = computed(() => widgetId => (
+    Object.values(detailsByWidget.value[widgetId] ?? {}).map(({ query }) => query)
+  ));
   const getFetchingParamsByWidgetId = computed(
     () => widgetId => widgets.value[widgetId]?.fetchingParams,
   );
@@ -182,6 +186,60 @@ export const useAlarmStore = defineStore('alarm', () => {
     return details;
   };
 
+  /**
+   * Fetch alarm details for all opened expand panels in a widget.
+   *
+   * @param {Object} payload
+   * @param {string} payload.widgetId
+   */
+  const fetchAlarmDetailsList = async ({ widgetId } = {}) => {
+    const queries = getQueriesByWidgetId.value(widgetId).filter(Boolean);
+
+    if (!queries.length) {
+      return;
+    }
+
+    try {
+      const response = await fetchAlarmDetailsListWithoutStore({ params: queries });
+      const responseData = Array.isArray(response) ? response : response?.data;
+      const detailsItems = Array.isArray(responseData) ? responseData : [];
+
+      detailsItems.forEach((item) => {
+        const details = item?.data ?? item ?? {};
+        const id = getAlarmIdFromDetailsId(item?._id ?? details?._id, widgetId);
+
+        if (!id) {
+          return;
+        }
+
+        setDetails({ widgetId, id, details });
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  /**
+   * Update alarm details item in store from a socket payload.
+   *
+   * @param {Object} payload
+   * @param {string} payload.widgetId
+   * @param {Object} payload.details
+   * @returns {Object}
+   */
+  const updateDetailsItemInStore = ({ widgetId, details } = {}) => {
+    const payload = details?.data ?? details ?? {};
+    const id = getAlarmIdFromDetailsId(details?._id ?? payload?._id, widgetId);
+
+    if (!id) {
+      return details;
+    }
+
+    setDetails({ widgetId, id, details: payload });
+
+    return details;
+  };
+
   return {
     alarmsById,
     widgets,
@@ -192,6 +250,7 @@ export const useAlarmStore = defineStore('alarm', () => {
     getMetaByWidgetId,
     getPendingByWidgetId,
     getDetailsByWidgetId,
+    getQueriesByWidgetId,
     getFetchingParamsByWidgetId,
     setAlarms,
     fetchComponentAlarmsListWithoutStore,
@@ -228,6 +287,8 @@ export const useAlarmStore = defineStore('alarm', () => {
     fetchAlarmLinksWithoutStore,
     fetchAlarmDetailsListWithoutStore,
     fetchAlarmDetails,
+    fetchAlarmDetailsList,
+    updateDetailsItemInStore,
     setDetails,
     setDetailsQuery,
     removeDetailsQuery,

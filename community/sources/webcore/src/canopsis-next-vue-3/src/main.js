@@ -21,12 +21,14 @@ import * as OverlayComponents from '@/components/common/overlay';
 import * as PageComponents from '@/components/common/page';
 import * as PaginationComponents from '@/components/common/pagination';
 import * as PlaceholderComponents from '@/components/common/placeholder';
+import * as PopupComponents from '@/components/common/popups';
 import CProgressOverlay from '@/components/common/progress/c-progress-overlay.vue';
 import * as RequestComponents from '@/components/common/request';
 import * as ResponsiveListComponents from '@/components/common/responsive-list';
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 import CCopyWrapper from '@/components/common/runtime-template/c-copy-wrapper.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import * as ScrollbarComponents from '@/components/common/scrollbar';
 import * as SearchComponents from '@/components/common/search';
 import * as TableComponents from '@/components/common/table';
 import * as TooltipComponents from '@/components/common/tooltip';
@@ -136,11 +138,19 @@ Object.entries(PlaceholderComponents).forEach(([name, component]) => {
   app.component(name, component);
 });
 
+Object.entries(PopupComponents).forEach(([name, component]) => {
+  app.component(name, component);
+});
+
 Object.entries(ResponsiveListComponents).forEach(([name, component]) => {
   app.component(name, component);
 });
 
 Object.entries(RequestComponents).forEach(([name, component]) => {
+  app.component(name, component);
+});
+
+Object.entries(ScrollbarComponents).forEach(([name, component]) => {
   app.component(name, component);
 });
 
