@@ -1,5 +1,10 @@
 <template>
-  <div class="alarms-list-table">
+  <div
+    class="alarms-list-table"
+    v-on="wrapperListeners"
+  >
+    <c-empty-data-table-columns v-if="!preparedColumns.length" />
+    <template v-else>
     <div
       v-if="shownTopPagination"
       ref="actions"
@@ -65,7 +70,7 @@
       :items="alarms"
       :items-length="totalItems"
       :items-per-page="options.itemsPerPage"
-      :loading="loading"
+      :loading="loading || columnsFiltersPending || entityInfoPropertyPending"
       :page="options.page"
       :sort-by="options.sortBy"
       :disable-sort="isColumnsChanging"
@@ -132,6 +137,7 @@
           :key="getTableItem(item)._id"
         >
           <alarms-list-row
+            :ref="`row${getTableItem(item)._id}`"
             :alarm="getTableItem(item)"
             :widget="preparedWidget"
             :headers="headersWithWidth"
@@ -141,6 +147,7 @@
             :selectable="selectable"
             :selectable-alarm="isAlarmSelectable(getTableItem(item))"
             :selected="isAlarmSelected(getTableItem(item))"
+            :selecting="selecting"
             :small="isSmallDensity"
             :resizing="resizingMode"
             :hide-actions="hideActions"
@@ -187,6 +194,7 @@
     </v-data-table-server>
 
     <c-horizontal-scrollbar v-if="stickyHorizontalScroll" ref="horizontalScrollbar" />
+    </template>
   </div>
 </template>
 
@@ -199,7 +207,6 @@ import {
   ALARM_ACTION_BUTTON_MARGINS,
   ALARM_ACTION_BUTTON_WIDTHS,
   ALARM_ACTIONS_PADDINGS,
-  COLOR_INDICATOR_TYPES,
   DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
   DENSE_TYPES,
   RESIZING_CELLS_CONTENTS_BEHAVIORS,
@@ -217,11 +224,7 @@ import {
   convertDataTableSortToQuery,
   convertQuerySortToDataTableSort,
 } from '@/helpers/entities/shared/query';
-import {
-  getAlarmsListWidgetColumnComponentGetter,
-  getAlarmsListWidgetColumnValueFilter,
-  prepareAlarmListWidget,
-} from '@/helpers/entities/widget/forms/alarm';
+import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 import {
   getNearestAndFarthestIndexes,
   getNearestViewportIndexesBound,
@@ -233,7 +236,9 @@ import { activeViewMixin } from '@/mixins/active-view';
 import {
   widgetColumnDraggingAlarmMixin,
   widgetColumnResizingAlarmMixin,
+  widgetColumnsAlarmMixin,
 } from '@/mixins/widget/columns';
+import { widgetRowsSelectingAlarmMixin } from '@/mixins/widget/rows/alarm-selecting';
 import { widgetStickyAlarmMixin } from '@/mixins/widget/rows/alarm-sticky';
 
 import MassActionsPanel from '../actions/mass-actions-panel.vue';
@@ -261,8 +266,10 @@ export default {
 
   mixins: [
     activeViewMixin,
+    widgetColumnsAlarmMixin,
     widgetColumnDraggingAlarmMixin,
     widgetColumnResizingAlarmMixin,
+    widgetRowsSelectingAlarmMixin,
     widgetStickyAlarmMixin,
   ],
 
@@ -373,21 +380,6 @@ export default {
         return store.getDetailsByWidgetId(this.preparedWidget._id);
       },
     }),
-
-    preparedColumns() {
-      const { showRootCauseByStateClick = true } = this.preparedWidget.parameters ?? {};
-
-      return (this.columns.length ? this.columns : this.preparedWidget.parameters?.widgetColumns ?? [])
-        .map(column => ({
-          ...column,
-          filter: getAlarmsListWidgetColumnValueFilter(column.value),
-          getComponent: getAlarmsListWidgetColumnComponentGetter(column, {
-            showRootCauseByStateClick,
-            isCellContentTruncated: this.isCellContentTruncated,
-          }),
-          colorIndicatorEnabled: Object.values(COLOR_INDICATOR_TYPES).includes(column.colorIndicator),
-        }));
-    },
 
     widgetColumnValues() {
       return this.preparedColumns.map(({ value }) => value).join('\0');
@@ -571,6 +563,8 @@ export default {
         'alarms-list-table__table--wrapped': this.isCellContentWrapped,
         'alarms-list-table__table--truncated': this.isCellContentTruncated,
         'alarms-list-table__table--dragging': this.draggingMode,
+        'alarms-list-table__table--selecting': this.selecting,
+        'alarms-list-table__table--selecting-text-unselectable': this.selectingMousePressed,
       };
     },
 
@@ -1176,6 +1170,19 @@ export default {
       table-layout: fixed;
       width: var(--alarms-list-table-width);
       min-width: var(--alarms-list-table-width);
+    }
+  }
+
+  &.alarms-list-table__table--selecting {
+    .alarms-list-row:after {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  &.alarms-list-table__table--selecting-text-unselectable {
+    * {
+      user-select: none;
     }
   }
 }

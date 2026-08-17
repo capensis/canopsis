@@ -1,47 +1,74 @@
 <template>
-  <c-layout class="entity-chart-widget py-2 position-relative" column>
-    <c-progress-overlay :pending="pending" />
-    <div class="text-subtitle-1 font-weight-medium px-3">
-      {{ title }}
-    </div>
-    <v-table v-if="metrics.length" density="compact">
-      <thead>
-        <tr>
-          <th>Metric</th>
-          <th>{{ $t('common.value') }}</th>
-          <th>{{ $t('common.date') }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="metric in metrics" :key="`${metric.title}-${metric.timestamp}`">
-          <td>{{ metric.label || metric.title }}</td>
-          <td>{{ metric.value ?? metric.val ?? '-' }}</td>
-          <td>{{ dateToString(metric.timestamp) }}</td>
-        </tr>
-      </tbody>
-    </v-table>
-    <div v-else-if="!pending" class="text-medium-emphasis px-3">
-      {{ $t('common.noData') }}
-    </div>
+  <c-layout class="py-2" column>
+    <kpi-widget-filters
+      :interval="query.interval"
+      :min-interval-date="minAvailableDate"
+      :sampling="query.sampling"
+      class="mx-3"
+      show-interval
+      show-sampling
+      @update:sampling="updateQueryField('sampling', $event)"
+      @update:interval="updateQueryField('interval', $event)"
+    />
+    <c-layout class="pa-3" column>
+      <chart-loader
+        v-if="pending"
+        :has-data="hasMetrics"
+      />
+      <component
+        v-if="hasMetrics"
+        :is="component.is"
+        v-bind="component"
+        @export:png="exportMetricsAsPng"
+        @export:csv="exportMetricsAsCsv"
+      />
+    </c-layout>
   </c-layout>
 </template>
 
 <script>
-import pick from 'lodash/pick';
+import { pick } from 'lodash';
 import { mapActions } from 'pinia';
 
-import { DATETIME_FORMATS, QUICK_RANGES, WIDGET_TYPES } from '@/constants';
+import { WIDGET_TYPES } from '@/constants';
 
 import { useMetricsStore } from '@/stores/modules/metrics';
 
-import { convertDateToString } from '@/helpers/date/date';
-import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
+import { convertWidgetToQuery } from '@/helpers/entities/widget/query';
 
-import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
+import { localQueryMixin } from '@/mixins/query/query';
+import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
+import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
+
+import BarChartMetrics from '@/components/widgets/chart/partials/bar-chart-metrics.vue';
+import ChartLoader from '@/components/widgets/chart/partials/chart-loader.vue';
+import LineChartMetrics from '@/components/widgets/chart/partials/line-chart-metrics.vue';
+import NumbersMetrics from '@/components/widgets/chart/partials/numbers-metrics.vue';
+import KpiWidgetFilters from '@/components/widgets/partials/kpi-widget-filters.vue';
 
 export default {
-  mixins: [entitiesInfoMixin],
+  inject: ['$system'],
+
+  components: {
+    BarChartMetrics,
+    ChartLoader,
+    KpiWidgetFilters,
+    LineChartMetrics,
+    NumbersMetrics,
+  },
+
+  mixins: [
+    localQueryMixin,
+    queryIntervalFilterMixin,
+    widgetChartMetricsMap,
+    widgetChartExportMixinCreator({
+      createExport: 'createKpiAlarmExport',
+      fetchExport: 'fetchMetricExport',
+    }),
+  ],
 
   props: {
     widget: {
@@ -59,64 +86,111 @@ export default {
   },
 
   data() {
-    const range = QUICK_RANGES[this.widget.parameters.default_time_range] ?? QUICK_RANGES.last30Days;
-
     return {
       metrics: [],
+      minDate: null,
       pending: false,
-      query: {
-        interval: {
-          from: range.start,
-          to: range.stop,
-        },
-        sampling: this.widget.parameters.default_sampling,
-        parameters: this.widget.parameters.metrics ?? [],
-        with_history: this.widget.parameters.comparison,
-      },
     };
   },
 
   computed: {
-    title() {
-      return this.widget.parameters.chart_title || this.widget.title;
+    hasMetrics() {
+      return !!this.metrics.length;
     },
 
     isVectorChart() {
       return [WIDGET_TYPES.barChart, WIDGET_TYPES.lineChart].includes(this.widget.type);
     },
+
+    minAvailableDate() {
+      return this.minDate
+        ? convertDateToStartOfDayTimestampByTimezone(this.minDate, this.$system.timezone)
+        : null;
+    },
+
+    preparedMetrics() {
+      return convertMetricsToTimezone(this.metrics, this.$system.timezone).map((metric) => {
+        const parameters = this.widgetMetricsMap[metric.title] ?? {};
+
+        return {
+          ...metric,
+          color: parameters.color,
+          label: parameters.label,
+        };
+      });
+    },
+
+    component() {
+      const props = {
+        metrics: this.preparedMetrics,
+        downloading: this.downloading,
+        title: this.widget.parameters.chart_title || this.widget.title,
+      };
+
+      if (this.widget.type === WIDGET_TYPES.barChart) {
+        return {
+          is: 'bar-chart-metrics',
+          sampling: this.query.sampling,
+          stacked: this.widget.parameters.stacked,
+          height: 400,
+          ...props,
+        };
+      }
+
+      if (this.widget.type === WIDGET_TYPES.lineChart) {
+        return {
+          is: 'line-chart-metrics',
+          sampling: this.query.sampling,
+          height: 400,
+          ...props,
+        };
+      }
+
+      return {
+        is: 'numbers-metrics',
+        showTrend: this.widget.parameters.show_trend,
+        fontSize: this.widget.parameters.font_size,
+        ...props,
+      };
+    },
   },
 
   watch: {
+    minAvailableDate() {
+      const { from } = this.getIntervalQuery();
+
+      if (this.minAvailableDate && from < this.minAvailableDate) {
+        this.query = {
+          ...this.query,
+          interval: {
+            from: this.minAvailableDate,
+            to: this.query.interval.to,
+          },
+        };
+      }
+    },
+
     widget: {
-      deep: true,
+      immediate: true,
       handler() {
-        this.fetchList();
+        this.query = convertWidgetToQuery(this.widget);
       },
     },
   },
 
-  mounted() {
-    this.fetchList();
-  },
-
   methods: {
-    ...mapActions(useMetricsStore, [
-      'fetchEntityAlarmsMetricsWithoutStore',
-      'fetchEntityAggregateMetricsWithoutStore',
-    ]),
-
-    dateToString(value) {
-      return value ? convertDateToString(value, DATETIME_FORMATS.long, '-') : '-';
-    },
+    ...mapActions(useMetricsStore, {
+      createKpiAlarmExport: 'createKpiAlarmExport',
+      fetchMetricExport: 'fetchMetricExport',
+      fetchEntityAlarmsMetricsWithoutStore: 'fetchEntityAlarmsMetricsWithoutStore',
+      fetchEntityAggregateMetricsWithoutStore: 'fetchEntityAggregateMetricsWithoutStore',
+    }),
 
     getQuery() {
       return {
-        ...convertMetricIntervalToTimestamp({
-          interval: this.query.interval,
-          timezone: this.timezone,
-        }),
+        ...this.getIntervalQuery(),
         ...pick(this.query, ['sampling', 'with_history']),
-        parameters: this.query.parameters.filter(({ metric }) =>
+        parameters: (this.query.parameters ?? []).filter(({ metric }) =>
           this.availableMetrics.includes(metric),
         ),
         entity: this.entity._id,
@@ -130,19 +204,14 @@ export default {
         const fetchList = this.isVectorChart
           ? this.fetchEntityAlarmsMetricsWithoutStore
           : this.fetchEntityAggregateMetricsWithoutStore;
-        const { data } = await fetchList({ params: this.getQuery() });
+        const { data, meta: { min_date: minDate } = {} } = await fetchList({ params: this.getQuery() });
 
-        this.metrics = convertMetricsToTimezone(data ?? [], this.timezone).map((metric) => {
-          const parameters = this.widget.parameters.metrics?.find(({ metric: name }) => name === metric.title);
+        this.metrics = data;
+        this.minDate = minDate;
 
-          return {
-            ...metric,
-            color: parameters?.color,
-            label: parameters?.label,
-          };
-        });
-      } catch (err) {
-        console.error(err);
+        this.setWidgetMetricsMap();
+      } catch (error) {
+        console.error(error);
       } finally {
         this.pending = false;
       }
