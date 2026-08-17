@@ -11,6 +11,10 @@ import {
 } from '@/helpers/entities/alarm/query';
 import { convertCounterWidgetToQuery } from '@/helpers/entities/counter/query';
 import {
+  convertContextUserPreferenceToQuery,
+  convertContextWidgetToQuery,
+} from '@/helpers/entities/entity/query';
+import {
   convertChartUserPreferenceToQuery,
   convertChartWidgetToQuery,
   convertNumbersWidgetToQuery,
@@ -26,6 +30,7 @@ import {
 export function convertUserPreferenceToQuery(userPreference, widgetType) {
   const convertersMap = {
     [WIDGET_TYPES.alarmList]: convertAlarmUserPreferenceToQuery,
+    [WIDGET_TYPES.context]: convertContextUserPreferenceToQuery,
     [WIDGET_TYPES.barChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
@@ -47,6 +52,7 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
 export function convertWidgetToQuery(widget) {
   const convertersMap = {
     [WIDGET_TYPES.alarmList]: convertAlarmWidgetToQuery,
+    [WIDGET_TYPES.context]: convertContextWidgetToQuery,
     [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
     [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,

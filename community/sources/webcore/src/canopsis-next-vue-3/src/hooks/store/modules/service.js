@@ -9,11 +9,6 @@ export const useService = () => {
   const serviceStore = useServiceStore();
 
   return {
-    fetchEntityInfosKeysWithoutStore: serviceStore.fetchEntityInfosKeysWithoutStore,
-    fetchServiceDependenciesWithoutStore: serviceStore.fetchServiceDependenciesWithoutStore,
-    fetchServiceImpactsWithoutStore: serviceStore.fetchServiceImpactsWithoutStore,
-    fetchEntityUpstreamWithoutStore: serviceStore.fetchEntityUpstreamWithoutStore,
-    fetchEntityDownstreamsWithoutStore: serviceStore.fetchEntityDownstreamsWithoutStore,
-    bulkRemoveServices: serviceStore.bulkRemoveServices,
+    ...serviceStore,
   };
 };

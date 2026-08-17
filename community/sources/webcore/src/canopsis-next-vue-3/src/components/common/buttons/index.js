@@ -5,6 +5,7 @@ export { default as CDbExportBtn } from './c-db-export-btn.vue';
 export { default as CExpandBtn } from './c-expand-btn.vue';
 export { default as CFabExpandBtn } from './c-fab-expand-btn.vue';
 export { default as CFabBtn } from './c-fab-btn.vue';
+export { default as CSpeedDial } from './c-speed-dial.vue';
 export { default as CRefreshBtn } from './c-refresh-btn.vue';
 export { default as CBtnWithError } from './c-btn-with-error.vue';
 export { default as CGridBtns } from './c-grid-btns.vue';

@@ -50,11 +50,15 @@
 
 <script>
 import { WIDGET_GRID_ROW_HEIGHT, WIDGET_TYPES } from '@/constants';
+
 import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
+import { prepareContextWidget } from '@/helpers/entities/widget/forms/context';
+
 import { activeViewMixin } from '@/mixins/active-view';
 import { authMixin } from '@/mixins/auth';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
+import EntitiesListWidget from './context/entities-list.vue';
 import CounterWidget from './counter/counter.vue';
 import MapWidget from './map/map.vue';
 import TextWidget from './text/text.vue';
@@ -68,6 +72,7 @@ export default {
   components: {
     AlarmsListWidget,
     CounterWidget,
+    EntitiesListWidget,
     MapWidget,
     TextWidget,
   },
@@ -94,6 +99,7 @@ export default {
     component() {
       return {
         [WIDGET_TYPES.alarmList]: AlarmsListWidget,
+        [WIDGET_TYPES.context]: EntitiesListWidget,
         [WIDGET_TYPES.text]: TextWidget,
         [WIDGET_TYPES.counter]: CounterWidget,
         [WIDGET_TYPES.map]: MapWidget,
@@ -103,6 +109,10 @@ export default {
     preparedWidget() {
       if (this.widget.type === WIDGET_TYPES.alarmList) {
         return prepareAlarmListWidget(this.widget);
+      }
+
+      if (this.widget.type === WIDGET_TYPES.context) {
+        return prepareContextWidget(this.widget);
       }
 
       return this.widget;

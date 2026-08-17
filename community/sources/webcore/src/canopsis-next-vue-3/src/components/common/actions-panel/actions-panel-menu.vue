@@ -22,27 +22,29 @@
       @update:value="selectAction"
     >
       <template #item-title="{ item }">
-        <span class="actions-panel__menu-item-icon mr-4">
-          <v-progress-circular
-            v-if="item.loading"
-            :color="item.iconColor"
-            :size="16"
-            :width="2"
-            indeterminate
-          />
-          <c-icon
-            v-else
-            :color="item.iconColor"
-            :disabled="item.disabled"
-            :size="item.iconSize"
-            :small="!item.iconSize"
-            class="ma-0 pa-0"
-          >
-            {{ item.icon }}
-          </c-icon>
-        </span>
-        <span :class="item.cssClass" class="text-body-1">
-          {{ item.title }}
+        <span class="actions-panel__menu-item">
+          <span class="actions-panel__menu-item-icon mr-4">
+            <v-progress-circular
+              v-if="item.loading"
+              :color="item.iconColor"
+              :size="16"
+              :width="2"
+              indeterminate
+            />
+            <c-icon
+              v-else
+              :color="item.iconColor"
+              :disabled="item.disabled"
+              :size="item.iconSize"
+              :small="!item.iconSize"
+              class="ma-0 pa-0"
+            >
+              {{ item.icon }}
+            </c-icon>
+          </span>
+          <span :class="item.cssClass" class="text-body-1">
+            {{ item.title }}
+          </span>
         </span>
       </template>
     </c-list>

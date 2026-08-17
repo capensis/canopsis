@@ -171,6 +171,7 @@ import {
   LIVE_REPORTING_QUICK_RANGES,
   MODALS,
   USER_PERMISSIONS,
+  DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP,
   WIDGET_GRID_SIZES_KEYS,
 } from '@/constants';
 
@@ -202,15 +203,6 @@ import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.
 
 import AlarmsListRemediationInstructionsFilter from './partials/alarms-list-remediation-instructions-filter.vue';
 import AlarmsListTableWithPagination from './partials/alarms-list-table-with-pagination.vue';
-
-const DISPLAY_NAME_TO_WIDGET_GRID_SIZE = {
-  xs: WIDGET_GRID_SIZES_KEYS.mobile,
-  sm: WIDGET_GRID_SIZES_KEYS.mobile,
-  md: WIDGET_GRID_SIZES_KEYS.tablet,
-  lg: WIDGET_GRID_SIZES_KEYS.desktop,
-  xl: WIDGET_GRID_SIZES_KEYS.desktop,
-  xxl: WIDGET_GRID_SIZES_KEYS.desktop,
-};
 
 /**
  * Alarm-list widget runtime foundation.
@@ -322,7 +314,7 @@ export default {
     },
 
     displayGridSize() {
-      return DISPLAY_NAME_TO_WIDGET_GRID_SIZE[this.$vuetify.display.name] ?? WIDGET_GRID_SIZES_KEYS.desktop;
+      return DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$vuetify.display.name] ?? WIDGET_GRID_SIZES_KEYS.desktop;
     },
 
     widgetGridParameters() {

@@ -23,7 +23,6 @@
 <script>
 import { omit } from 'lodash';
 
-import NetworkGraph from '@/components/common/chart/network-graph.vue';
 import { COLORS, PAGINATION_LIMIT } from '@/config';
 import {
   ENTITY_TYPES,
@@ -32,6 +31,7 @@ import {
   TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
   TREE_OF_DEPENDENCIES_TYPES,
 } from '@/constants';
+
 import { getShowAllEdgeId, getShowAllNodeId } from '@/helpers/cytoscape/elements';
 import { getEntityColorClass } from '@/helpers/entities/entity/color';
 import {
@@ -39,7 +39,10 @@ import {
   normalizeTreeOfDependenciesMapEntities,
 } from '@/helpers/entities/map/list';
 import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/form';
+
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
+
+import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
 export default {
   components: {

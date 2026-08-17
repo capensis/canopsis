@@ -45,16 +45,20 @@
 import { mapActions } from 'pinia';
 
 import { MODALS, SIDE_BARS_BY_WIDGET_TYPES, WIDGET_TYPES } from '@/constants';
-import { writeTextToClipboard } from '@/helpers/clipboard';
-import { calculateNewWidgetGridParametersY } from '@/helpers/entities/widget/grid';
-import { setSeveralFields } from '@/helpers/immutable';
-import { activeViewMixin } from '@/mixins/active-view';
-import { viewRouterMixin } from '@/mixins/view/router';
+
 import { useViewStore } from '@/stores/modules/view';
 import { useWidgetStore } from '@/stores/modules/widget';
 
+import { writeTextToClipboard } from '@/helpers/clipboard';
+import { calculateNewWidgetGridParametersY } from '@/helpers/entities/widget/grid';
+import { setSeveralFields } from '@/helpers/immutable';
+
+import { activeViewMixin } from '@/mixins/active-view';
+import { viewRouterMixin } from '@/mixins/view/router';
+
 const MIGRATED_SETTINGS_WIDGET_TYPES = [
   WIDGET_TYPES.alarmList,
+  WIDGET_TYPES.context,
   WIDGET_TYPES.text,
   WIDGET_TYPES.counter,
   WIDGET_TYPES.map,

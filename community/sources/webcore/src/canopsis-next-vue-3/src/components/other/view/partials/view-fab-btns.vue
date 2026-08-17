@@ -10,45 +10,39 @@
         top
         @input="changeScreenMode"
       />
-      <v-menu
+      <c-speed-dial
         v-else
-        v-model="isMenuOpen"
         :close-on-content-click="false"
         location="top center"
-        transition="slide-y-reverse-transition"
       >
-        <template #activator="{ props: activatorProps }">
+        <template #activator="{ props: activatorProps, isActive }">
           <v-btn
             v-bind="activatorProps"
+            :class="{ 'c-speed-dial__btn--active': isActive }"
+            class="c-speed-dial__btn"
             color="primary"
             size="x-large"
             icon
           >
-            <v-icon :icon="isMenuOpen ? 'close' : 'menu'" />
+            <v-icon icon="menu" />
+            <v-icon icon="close" />
           </v-btn>
         </template>
 
-        <c-layout
-          class="view-fab-btns__list"
-          align="center"
-          gap="2"
-          column
-        >
-          <v-tooltip v-if="updatable" location="left">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                color="green"
-                icon
-                @click.stop="showCreateTabModal"
-              >
-                <v-icon icon="add" size="small" />
-              </v-btn>
-            </template>
-            <span>{{ $t('common.addTab') }}</span>
-          </v-tooltip>
+        <div v-if="sharable" key="share">
+          <view-share-link-btn :view="view" :tab="activeTab" />
+        </div>
 
-          <v-tooltip v-if="updatable" location="left">
+        <div key="screen-mode">
+          <view-screen-mode-btn :value="activeViewScreenMode" left @input="changeScreenMode" />
+        </div>
+
+        <div v-if="updatable" key="editing">
+          <view-editing-btn />
+        </div>
+
+        <div v-if="updatable" key="add-widget">
+          <v-tooltip location="left">
             <template #activator="{ props: tooltipProps }">
               <v-btn
                 v-bind="tooltipProps"
@@ -61,14 +55,24 @@
             </template>
             <span>{{ $t('common.addWidget') }}</span>
           </v-tooltip>
+        </div>
 
-          <view-editing-btn v-if="updatable" />
-
-          <view-screen-mode-btn :value="activeViewScreenMode" left @input="changeScreenMode" />
-
-          <view-share-link-btn v-if="sharable" :view="view" :tab="activeTab" />
-        </c-layout>
-      </v-menu>
+        <div v-if="updatable" key="add-tab">
+          <v-tooltip location="left">
+            <template #activator="{ props: tooltipProps }">
+              <v-btn
+                v-bind="tooltipProps"
+                color="green"
+                icon
+                @click.stop="showCreateTabModal"
+              >
+                <v-icon icon="add" size="small" />
+              </v-btn>
+            </template>
+            <span>{{ $t('common.addTab') }}</span>
+          </v-tooltip>
+        </div>
+      </c-speed-dial>
     </c-layout>
   </div>
 </template>
@@ -82,6 +86,7 @@ import {
   MODALS,
   VIEW_SCREEN_MODES,
 } from '@/constants';
+
 import { useFullscreen } from '@/hooks/fullscreen';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
@@ -121,7 +126,6 @@ export default {
   },
   setup(props) {
     const isFullscreen = ref(false);
-    const isMenuOpen = ref(false);
 
     const { t } = useI18n();
     const modals = useModals();
@@ -245,7 +249,6 @@ export default {
 
     return {
       isFullscreen,
-      isMenuOpen,
       view,
       activeViewScreenMode,
       changeScreenMode,
@@ -258,11 +261,6 @@ export default {
 
 <style lang="scss">
 .view-fab-btns {
-  &__list {
-    align-items: center;
-    padding: 8px 0 8px 8px;
-  }
-
   &__add-widget-btn {
     border-color: #3f51b5 !important;
     background-color: #3f51b5 !important;

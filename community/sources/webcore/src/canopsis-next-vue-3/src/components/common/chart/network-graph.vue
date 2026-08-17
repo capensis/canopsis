@@ -9,6 +9,7 @@
 import { debounce, isEqual } from 'lodash';
 
 import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
+
 import cytoscape from '@/services/cytoscape';
 
 export default {
@@ -144,9 +145,7 @@ export default {
         ...options,
       });
 
-      this.$cy.nodeHtmlLabel(this.nodeHtmlLabelOptions, {
-        enablePointerEvents: true,
-      });
+      this.$cy.nodeHtmlLabel(this.nodeHtmlLabelOptions);
       this.$cy.bind('mouseover', 'node', this.nodeMouseoverHandler);
       this.$cy.bind('mouseout', 'node', this.nodeMouseoutHandler);
       this.$cy.bind('tap', 'node', this.nodeTapHandler);

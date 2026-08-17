@@ -16,6 +16,16 @@
             {{ column.text }}
           </th>
         </tr>
+        <tr>
+          <th :colspan="headers.length + 1" class="service-dependencies__loader pa-0">
+            <v-progress-linear
+              :active="hasActivePending"
+              color="primary"
+              height="2"
+              indeterminate
+            />
+          </th>
+        </tr>
       </thead>
       <tbody>
         <service-dependencies-row
@@ -132,6 +142,10 @@ export default {
       return meta.page < meta.page_count;
     },
 
+    hasActivePending() {
+      return Object.values(this.pendingByIds).some(Boolean);
+    },
+
     treeviewRoot() {
       return dependencyToTreeviewDependency(this.root);
     },
@@ -178,6 +192,10 @@ export default {
   },
 
   mounted() {
+    if (this.includeRoot) {
+      this.setRootDependencies();
+    }
+
     this.refresh();
     this.$periodicRefresh?.register?.(this.refresh);
   },
@@ -196,8 +214,7 @@ export default {
     }),
 
     refresh() {
-      this.setRootDependencies();
-      this.fetchRootDependencies();
+      this.fetchRootDependencies({ replace: true });
     },
 
     async fetchEntityStateSetting() {
@@ -219,12 +236,49 @@ export default {
       }
     },
 
-    async fetchRootDependencies() {
+    async fetchRootDependencies({ replace = false } = {}) {
+      if (replace) {
+        const { result, dependencies, meta } = await this.requestDependencies(this.rootId);
+
+        this.replaceRootDependencies(result, dependencies, meta);
+
+        return;
+      }
+
       const ids = await this.fetchDependenciesById(this.rootId);
 
       if (!this.includeRoot) {
         this.rootIds = ids;
       }
+    },
+
+    replaceRootDependencies(result, dependencies, meta) {
+      const dependenciesByIds = {};
+      const rootIds = [];
+      const opened = [];
+
+      if (this.includeRoot) {
+        const treeviewRoot = dependencyToTreeviewDependency(this.root, this.impact);
+
+        dependenciesByIds[treeviewRoot._id] = {
+          ...treeviewRoot,
+          children: result,
+        };
+        rootIds.push(treeviewRoot._id);
+        opened.push(treeviewRoot.key);
+      }
+
+      Object.entries(dependencies).forEach(([dependencyId, dependency]) => {
+        dependenciesByIds[dependencyId] = {
+          ...dependency,
+          children: dependenciesByIds[dependencyId]?.children ?? dependency.children,
+        };
+      });
+
+      this.dependenciesByIds = dependenciesByIds;
+      this.rootIds = this.includeRoot ? rootIds : result;
+      this.metaByIds = { [this.rootId]: meta };
+      this.opened = opened;
     },
 
     setRootDependencies() {
@@ -299,26 +353,39 @@ export default {
       return get(this.dependenciesByIds, [id, 'children']);
     },
 
-    async fetchDependenciesById(id, params = { limit: PAGINATION_LIMIT }) {
+    async requestDependencies(id, params = { limit: PAGINATION_LIMIT }) {
       this.pendingByIds = {
         ...this.pendingByIds,
         [id]: true,
       };
 
-      const selectedType = this.isCustomType ? this.showType : this.type;
-      const fetchList = this.impact
-        ? this.fetchServiceImpactsWithoutStore
-        : this.fetchServiceDependenciesWithoutStore;
-      const { data, meta } = await fetchList({
-        id,
-        params: {
-          ...params,
-          define_state:
-            selectedType === TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState,
-          with_flags: true,
-        },
-      });
-      const { dependencies, result } = normalizeDependencies(data, this.impact);
+      try {
+        const selectedType = this.isCustomType ? this.showType : this.type;
+        const fetchList = this.impact
+          ? this.fetchServiceImpactsWithoutStore
+          : this.fetchServiceDependenciesWithoutStore;
+        const { data, meta } = await fetchList({
+          id,
+          params: {
+            ...params,
+            define_state:
+              selectedType === TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState,
+            with_flags: true,
+          },
+        });
+        const { dependencies, result } = normalizeDependencies(data, this.impact);
+
+        return { meta, dependencies, result };
+      } finally {
+        this.pendingByIds = {
+          ...this.pendingByIds,
+          [id]: false,
+        };
+      }
+    },
+
+    async fetchDependenciesById(id, params = { limit: PAGINATION_LIMIT }) {
+      const { meta, dependencies, result } = await this.requestDependencies(id, params);
 
       Object.entries(dependencies).forEach(([dependencyId, dependency]) => {
         const children = this.getDependencyChildren(dependencyId) ?? dependency.children;
@@ -346,10 +413,6 @@ export default {
         ...this.metaByIds,
         [id]: meta,
       };
-      this.pendingByIds = {
-        ...this.pendingByIds,
-        [id]: false,
-      };
 
       return result;
     },
@@ -363,6 +426,12 @@ export default {
 
   &__icons {
     width: 1%;
+  }
+
+  &__loader {
+    border-bottom: none !important;
+    height: 0;
+    line-height: 0;
   }
 }
 </style>

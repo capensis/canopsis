@@ -1,4 +1,5 @@
 import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
+
 import { featuresService } from '@/services/features';
 
 import { ALARM_METRIC_PARAMETERS } from './alarm';
@@ -148,6 +149,15 @@ export const MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP = {
   t: WIDGET_GRID_SIZES_KEYS.tablet,
   l: WIDGET_GRID_SIZES_KEYS.desktop,
   xl: WIDGET_GRID_SIZES_KEYS.desktop,
+};
+
+export const DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP = {
+  xs: WIDGET_GRID_SIZES_KEYS.mobile,
+  sm: WIDGET_GRID_SIZES_KEYS.mobile,
+  md: WIDGET_GRID_SIZES_KEYS.tablet,
+  lg: WIDGET_GRID_SIZES_KEYS.desktop,
+  xl: WIDGET_GRID_SIZES_KEYS.desktop,
+  xxl: WIDGET_GRID_SIZES_KEYS.desktop,
 };
 
 export const WIDGET_LAYOUT_MAX_WIDTHS = {
