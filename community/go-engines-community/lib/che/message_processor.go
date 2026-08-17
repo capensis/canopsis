@@ -14,7 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
+	libcheevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -35,7 +35,7 @@ type messageProcessor struct {
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
 
-	EventProcessorContainer libevent.ProcessorContainer
+	EventProcessorContainer libcheevent.ProcessorContainer
 }
 
 func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -72,8 +72,6 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 		p.logError(err, "invalid event", d.Body)
 		return nil, nil
 	}
-
-	event.Format()
 
 	isSuspended := false
 	defer func() {

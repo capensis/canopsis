@@ -48,22 +48,20 @@ func NewConnectorProcessor(
 
 func (p *connectorProcessor) Process(ctx context.Context, event *types.Event, partialRes *ProcessorResult) (ProcessorResult, error) {
 	res := ProcessorResult{}
+	var report contextgraph.Report
+	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
 	if partialRes == nil {
 		res.EventMetric = techmetrics.CheEventMetric{
 			EventMetric: techmetrics.EventMetric{
 				EventType: event.EventType,
 			},
 		}
-	} else {
-		res.EventMetric = partialRes.EventMetric
-	}
 
-	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
-	if partialRes == nil {
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 			commRegister.Clear()
 
-			_, err := p.contextGraphManager.HandleConnector(ctx, event, commRegister)
+			var err error
+			report, err = p.contextGraphManager.HandleConnector(ctx, event, commRegister)
 			if err != nil {
 				return fmt.Errorf("cannot update context graph: %w", err)
 			}
@@ -75,17 +73,20 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event, pa
 		}
 
 		res.EventMetric.EntityType = event.Entity.Type
+	} else {
+		res.EventMetric = partialRes.EventMetric
+		report = partialRes.ContextGraphReport
 	}
 
 	if event.Entity == nil {
 		return res, errors.New("unexpected empty entity")
 	}
 
-	var checkServices bool
-
 	if event.Healthcheck {
 		return res, nil
 	}
+
+	var updatedInfosNames []string
 
 	// Process event by event filters.
 	if event.Entity.Enabled {
@@ -95,6 +96,8 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event, pa
 		}
 
 		if suspended {
+			res.ContextGraphReport = report
+
 			return res, nil
 		}
 
@@ -109,12 +112,17 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event, pa
 			}
 
 			res.EventMetric.IsInfosUpdated = true
-			checkServices = true
+			report.CheckInfoChanged = true
 			logInfosUpdate(p.entityInfosUpdateSender, event.Entity.ID, efr.UpdatedEntityInfos)
+
+			updatedInfosNames = make([]string, 0, len(efr.UpdatedEntityInfos))
+			for k := range efr.UpdatedEntityInfos {
+				updatedInfosNames = append(updatedInfosNames, k)
+			}
 		}
 	}
 
-	if !checkServices {
+	if !report.CheckConnector && !report.CheckInfoChanged {
 		return res, nil
 	}
 
@@ -141,7 +149,11 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event, pa
 			return fmt.Errorf("cannot refresh services: %w", err)
 		}
 
-		p.contextGraphManager.AssignServices(&connector, commRegister)
+		if report.CheckConnector {
+			p.contextGraphManager.AssignServices(&connector, commRegister)
+		} else if report.CheckInfoChanged {
+			p.contextGraphManager.AssignServicesByInfoNames(&connector, updatedInfosNames, commRegister)
+		}
 
 		err = commRegister.Commit(ctx)
 		if err != nil {
@@ -149,7 +161,7 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event, pa
 		}
 
 		event.Entity = &connector
-		res.EventMetric.IsServicesUpdated = len(event.Entity.ServicesToAdd) > 0 || len(event.Entity.ServicesToRemove) > 0
+		res.EventMetric.IsServicesUpdated = len(connector.ServicesToAdd) > 0 || len(connector.ServicesToRemove) > 0
 
 		return nil
 	})

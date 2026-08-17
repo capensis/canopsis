@@ -19,6 +19,7 @@
         :enablable="updatable"
         :disablable="updatable"
         event-filter
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />

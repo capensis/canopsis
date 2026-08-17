@@ -17,6 +17,7 @@ type Processor interface {
 type ProcessorResult struct {
 	UpdatedEntitiesForEvent    []types.Entity             `json:"uefe,omitzero"`
 	UpdatedEntityIdsForMetrics []string                   `json:"uefm,omitzero"`
+	ServicesIDsToRecompute     []string                   `json:"sitr,omitempty"`
 	EventMetric                techmetrics.CheEventMetric `json:"em,omitzero"`
 	ContextGraphReport         contextgraph.Report        `json:"cgr,omitzero"`
 

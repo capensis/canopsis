@@ -53,19 +53,15 @@ func NewResourceProcessor(
 
 func (p *resourceProcessor) Process(ctx context.Context, event *types.Event, partialRes *ProcessorResult) (ProcessorResult, error) {
 	res := ProcessorResult{}
+	commRegister := libmongo.NewCommandsRegister(p.dbEntityCollection, canopsis.DefaultBulkSize)
+	var report contextgraph.Report
 	if partialRes == nil {
 		res.EventMetric = techmetrics.CheEventMetric{
 			EventMetric: techmetrics.EventMetric{
 				EventType: event.EventType,
 			},
 		}
-	} else {
-		res.EventMetric = partialRes.EventMetric
-	}
 
-	commRegister := libmongo.NewCommandsRegister(p.dbEntityCollection, canopsis.DefaultBulkSize)
-	var report contextgraph.Report
-	if partialRes == nil {
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 			commRegister.Clear()
 
@@ -84,6 +80,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event, par
 		res.EventMetric.EntityType = event.Entity.Type
 		res.EventMetric.IsNewEntity = report.IsNew
 	} else {
+		res.EventMetric = partialRes.EventMetric
 		report = partialRes.ContextGraphReport
 	}
 
@@ -95,6 +92,8 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event, par
 		return res, nil
 	}
 
+	var updatedInfosNames []string
+
 	// Process event by event filters.
 	var err error
 	if event.Entity.Enabled {
@@ -104,6 +103,8 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event, par
 		}
 
 		if suspended {
+			res.ContextGraphReport = report
+
 			return res, nil
 		}
 
@@ -118,8 +119,13 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event, par
 			}
 
 			res.EventMetric.IsInfosUpdated = true
-			report.CheckResource = true
+			report.CheckInfoChanged = true
 			logInfosUpdate(p.entityInfosUpdateSender, event.Entity.ID, efr.UpdatedEntityInfos)
+
+			updatedInfosNames = make([]string, 0, len(efr.UpdatedEntityInfos))
+			for k := range efr.UpdatedEntityInfos {
+				updatedInfosNames = append(updatedInfosNames, k)
+			}
 		}
 	}
 
@@ -127,7 +133,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event, par
 	entityIdsToCheck := make([]string, 0, 3)
 	res.UpdatedEntityIdsForMetrics = make([]string, 0, 3)
 
-	if report.CheckResource {
+	if report.CheckResource || report.CheckInfoChanged {
 		entityIdsToCheck = append(entityIdsToCheck, event.Entity.ID)
 		res.UpdatedEntityIdsForMetrics = append(res.UpdatedEntityIdsForMetrics, event.Entity.ID)
 
@@ -205,8 +211,13 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event, par
 			return fmt.Errorf("cannot refresh services: %w", err)
 		}
 
-		p.contextGraphManager.AssignServices(&resource, commRegister)
-		res.EventMetric.IsServicesUpdated = len(event.Entity.ServicesToAdd) > 0 || len(event.Entity.ServicesToRemove) > 0
+		if report.CheckResource {
+			p.contextGraphManager.AssignServices(&resource, commRegister)
+		} else if report.CheckInfoChanged {
+			p.contextGraphManager.AssignServicesByInfoNames(&resource, updatedInfosNames, commRegister)
+		}
+
+		res.EventMetric.IsServicesUpdated = len(resource.ServicesToAdd) > 0 || len(resource.ServicesToRemove) > 0
 
 		if component.ID != "" && report.CheckComponent {
 			p.contextGraphManager.AssignServices(&component, commRegister)
