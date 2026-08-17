@@ -1,5 +1,5 @@
 <template>
-  <v-sheet>
+  <v-sheet class="date-time-picker__sheet">
     <div v-if="label" class="v-picker__title bg-primary text-center">
       <span class="text-h5">
         {{ label }}
@@ -53,12 +53,14 @@
 
 <script>
 import { DATETIME_FORMATS } from '@/constants';
+
 import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
 import {
   getDateObjectByDate,
   getDateObjectByTime,
   normalizeTimeString,
 } from '@/helpers/date/date-time-picker';
+
 import { formBaseMixin } from '@/mixins/form';
 
 import TimePickerField from '../time-picker/time-picker-field.vue';
@@ -156,6 +158,10 @@ export default {
 
 <style lang="scss">
 .date-time-picker {
+  &__sheet {
+    overflow-x: hidden;
+  }
+
   .v-date-picker {
     width: 360px;
   }

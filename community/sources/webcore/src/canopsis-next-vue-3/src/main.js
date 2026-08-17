@@ -1,6 +1,9 @@
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 
+import { MODALS } from '@/constants';
+import * as constants from '@/constants';
+
 import * as ActionsPanelComponents from '@/components/common/actions-panel';
 import CCircleBadge from '@/components/common/badge/c-circle-badge.vue';
 import * as BlockComponents from '@/components/common/block';
@@ -17,10 +20,12 @@ import * as ModalComponents from '@/components/common/modal';
 import * as OverlayComponents from '@/components/common/overlay';
 import * as PageComponents from '@/components/common/page';
 import * as PaginationComponents from '@/components/common/pagination';
+import * as PlaceholderComponents from '@/components/common/placeholder';
 import CProgressOverlay from '@/components/common/progress/c-progress-overlay.vue';
 import * as RequestComponents from '@/components/common/request';
 import * as ResponsiveListComponents from '@/components/common/responsive-list';
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
+import CCopyWrapper from '@/components/common/runtime-template/c-copy-wrapper.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import * as SearchComponents from '@/components/common/search';
 import * as TableComponents from '@/components/common/table';
@@ -29,8 +34,6 @@ import * as TreeviewComponents from '@/components/common/treeview';
 import * as VuetifyCommonComponents from '@/components/common/vuetify';
 import * as FormFieldComponents from '@/components/forms/fields';
 import RegisteredModals from '@/components/modals';
-import { MODALS } from '@/constants';
-import * as constants from '@/constants';
 
 import App from './app.vue';
 import { i18n } from './i18n';
@@ -68,6 +71,7 @@ app.use(socketPlugin);
 
 app.component('c-runtime-template', CRuntimeTemplate);
 app.component('c-compiled-template', CCompiledTemplate);
+app.component('c-copy-wrapper', CCopyWrapper);
 app.component('c-circle-badge', CCircleBadge);
 app.component('c-progress-overlay', CProgressOverlay);
 app.component('c-layout', CLayout);
@@ -125,6 +129,10 @@ Object.entries(PageComponents).forEach(([name, component]) => {
 });
 
 Object.entries(PaginationComponents).forEach(([name, component]) => {
+  app.component(name, component);
+});
+
+Object.entries(PlaceholderComponents).forEach(([name, component]) => {
   app.component(name, component);
 });
 

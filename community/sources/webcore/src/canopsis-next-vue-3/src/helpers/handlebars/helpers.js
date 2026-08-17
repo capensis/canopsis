@@ -2,6 +2,7 @@ import Handlebars from 'handlebars';
 import { get, isFunction, isNumber, isObject, isString, pick } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
+
 import { convertDateToStringWithFormatForToday, convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 import { uid } from '@/helpers/uid';
@@ -401,7 +402,7 @@ export function copyHelper(value = '', options = {}) {
   }
 
   return new Handlebars.SafeString(
-    `<c-copy-wrapper ${prepareAttributes({ value })} />${options.fn(this)}</c-copy-wrapper>`,
+    `<c-copy-wrapper ${prepareAttributes({ value })}>${options.fn(this)}</c-copy-wrapper>`,
   );
 }
 

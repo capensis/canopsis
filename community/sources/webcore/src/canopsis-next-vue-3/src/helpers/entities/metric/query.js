@@ -1,4 +1,7 @@
+import { uniq } from 'lodash';
+
 import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES } from '@/constants';
+
 import { isOmitEqual } from '@/helpers/collection';
 import { convertDateIntervalToTimestampByTimezone } from '@/helpers/date/date-intervals';
 
@@ -18,6 +21,22 @@ export const isMetricsQueryChanged = (query, oldQuery, minDate) => {
 
   return isQueryWithoutIntervalChanged || (isFromChanged && !isFromEqualMinDate) || isToChanged;
 };
+
+/**
+ * Convert widget filter to query.
+ *
+ * @param {AlarmChart[]} charts
+ * @returns {string[]}
+ */
+export function convertWidgetChartsToPerfDataQuery(charts = []) {
+  const allMetrics = charts.reduce((acc, chart) => {
+    acc.push(...(chart.parameters?.metrics ?? []).map(({ metric }) => metric));
+
+    return acc;
+  }, []);
+
+  return uniq(allMetrics);
+}
 
 /**
  * Convert KPI metrics interval to API timestamps.

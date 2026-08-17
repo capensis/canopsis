@@ -8,8 +8,10 @@
       hide-details
       @update:value="updateField('from', $event)"
     >
-      <template #append>
-        <v-icon>calendar_today</v-icon>
+      <template #append-inner>
+        <v-icon size="18">
+          calendar_today
+        </v-icon>
       </template>
     </c-date-picker-field>
     <c-date-picker-field
@@ -21,8 +23,10 @@
       hide-details
       @update:value="updateField('to', $event)"
     >
-      <template #append>
-        <v-icon>calendar_today</v-icon>
+      <template #append-inner>
+        <v-icon size="18">
+          calendar_today
+        </v-icon>
       </template>
     </c-date-picker-field>
   </div>

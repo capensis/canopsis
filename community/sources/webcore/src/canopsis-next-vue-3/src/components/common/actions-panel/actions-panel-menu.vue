@@ -1,5 +1,10 @@
 <template>
-  <v-menu v-if="actions.length" location="bottom end" @click.stop="">
+  <v-menu
+    v-if="actions.length"
+    v-model="menu"
+    location="bottom end"
+    @click.stop=""
+  >
     <template #activator="{ props }">
       <c-action-btn
         :tooltip="$t('common.moreButton')"
@@ -57,9 +62,20 @@ export default {
     },
   },
 
+  data() {
+    return {
+      menu: false,
+    };
+  },
+
   methods: {
+    closeMenu() {
+      this.menu = false;
+    },
+
     selectAction(item) {
       item?.method?.();
+      this.closeMenu();
     },
   },
 };

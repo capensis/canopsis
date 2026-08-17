@@ -7,13 +7,13 @@
         :action="action"
         :small="small"
       />
-      <actions-panel-menu :actions="preparedActions.dropDown" :small="small" />
+      <actions-panel-menu ref="menu" :actions="preparedActions.dropDown" :small="small" />
     </c-layout>
   </div>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useDisplay } from 'vuetify';
 
 import { DEFAULT_ALARM_ACTIONS_INLINE_COUNT } from '@/constants';
@@ -48,6 +48,7 @@ export default {
 
   setup(props) {
     const { xl } = useDisplay();
+    const menu = ref(null);
 
     const preparedActions = computed(() => {
       if (!props.ignoreMediaQuery && !xl.value) {
@@ -72,7 +73,11 @@ export default {
       };
     });
 
+    const closeMenu = () => menu.value?.closeMenu?.();
+
     return {
+      closeMenu,
+      menu,
       preparedActions,
     };
   },

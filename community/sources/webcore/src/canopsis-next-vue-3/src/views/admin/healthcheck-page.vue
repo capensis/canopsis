@@ -51,9 +51,7 @@
           v-if="hasAccessToAnomalyMonitoredConnectors"
           :value="HEALTHCHECK_TABS.connectors"
         >
-          <div class="healthcheck__placeholder">
-            {{ $t('healthcheck.connectors') }}
-          </div>
+          <healthcheck-connectors />
         </v-window-item>
 
         <v-window-item :value="HEALTHCHECK_TABS.graphs">
@@ -75,15 +73,19 @@
 <script>
 import isEqual from 'lodash/isEqual';
 
+import { SOCKET_ROOMS } from '@/config';
+import { CRUD_ACTIONS, USER_PERMISSIONS } from '@/constants';
+
+import { useAuthStore } from '@/stores/modules/auth';
+import { useHealthcheckStore } from '@/stores/modules/healthcheck';
+
+import { checkUserAccess } from '@/helpers/permission';
+
+import HealthcheckConnectors from '@/components/other/healthcheck/healthcheck-connectors.vue';
 import HealthcheckEnginesMetrics from '@/components/other/healthcheck/healthcheck-engines-metrics.vue';
 import HealthcheckGraphs from '@/components/other/healthcheck/healthcheck-graphs.vue';
 import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-network-graph.vue';
 import HealthcheckParameters from '@/components/other/healthcheck/healthcheck-parameters.vue';
-import { SOCKET_ROOMS } from '@/config';
-import { CRUD_ACTIONS, USER_PERMISSIONS } from '@/constants';
-import { checkUserAccess } from '@/helpers/permission';
-import { useAuthStore } from '@/stores/modules/auth';
-import { useHealthcheckStore } from '@/stores/modules/healthcheck';
 
 const HEALTHCHECK_TABS = {
   systemStatus: 'system-status',
@@ -95,6 +97,7 @@ const HEALTHCHECK_TABS = {
 
 export default {
   components: {
+    HealthcheckConnectors,
     HealthcheckEnginesMetrics,
     HealthcheckGraphs,
     HealthcheckNetworkGraph,

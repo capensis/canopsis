@@ -70,6 +70,9 @@ export default {
   [MODALS.createShareToken]: defineAsyncComponent(
     () => import('./share-token/create-share-token.vue'),
   ),
+  [MODALS.serviceDependencies]: defineAsyncComponent(
+    () => import('./service/service-dependencies.vue'),
+  ),
   [MODALS.createMaintenance]: defineAsyncComponent(
     () => import('./maintenance/create-maintenance.vue'),
   ),
@@ -89,6 +92,9 @@ export default {
   ),
   [MODALS.pbehaviorPlanning]: defineAsyncComponent(
     () => import('./pbehavior/pbehavior-planning.vue'),
+  ),
+  [MODALS.pbehaviorsCalendar]: defineAsyncComponent(
+    () => import('./pbehavior/pbehaviors-calendar.vue'),
   ),
   [MODALS.pbehaviorRecurrentChangesConfirmation]: defineAsyncComponent(
     () => import('./pbehavior/pbehavior-recurrent-changes-confirmation.vue'),

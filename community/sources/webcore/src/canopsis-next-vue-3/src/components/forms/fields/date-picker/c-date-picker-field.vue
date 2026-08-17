@@ -23,6 +23,9 @@
         :readonly="!disabled"
         @click:append-inner="clear"
       >
+        <template v-if="$slots['append-inner']" #append-inner>
+          <slot name="append-inner" />
+        </template>
         <template v-if="$slots.append" #append>
           <slot name="append" />
         </template>
@@ -46,7 +49,9 @@
 
 <script>
 import { DATETIME_FORMATS } from '@/constants';
+
 import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
+
 import { formBaseMixin } from '@/mixins/form';
 
 export default {

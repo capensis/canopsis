@@ -39,8 +39,9 @@
 import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
+import { isValidUrl } from '@/helpers/url';
+
 import { useI18n } from '@/hooks/i18n';
-import { isValidUrl } from '@/plugins/validator/helpers/is-valid-url';
 
 import DeclareTicketRuleTicketStatusChip from './declare-ticket-rule-ticket-status-chip.vue';
 
