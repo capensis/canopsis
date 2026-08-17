@@ -53,19 +53,15 @@ func NewComponentProcessor(
 
 func (p *componentProcessor) Process(ctx context.Context, event *types.Event, partialRes *ProcessorResult) (ProcessorResult, error) {
 	res := ProcessorResult{}
+	var report contextgraph.Report
+	commRegister := libmongo.NewCommandsRegister(p.dbEntityCollection, canopsis.DefaultBulkSize)
 	if partialRes == nil {
 		res.EventMetric = techmetrics.CheEventMetric{
 			EventMetric: techmetrics.EventMetric{
 				EventType: event.EventType,
 			},
 		}
-	} else {
-		res.EventMetric = partialRes.EventMetric
-	}
 
-	var report contextgraph.Report
-	commRegister := libmongo.NewCommandsRegister(p.dbEntityCollection, canopsis.DefaultBulkSize)
-	if partialRes == nil {
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 			commRegister.Clear()
 
@@ -84,6 +80,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event, pa
 		res.EventMetric.EntityType = event.Entity.Type
 		res.EventMetric.IsNewEntity = report.IsNew
 	} else {
+		res.EventMetric = partialRes.EventMetric
 		report = partialRes.ContextGraphReport
 	}
 
@@ -95,6 +92,8 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event, pa
 		return res, nil
 	}
 
+	var updatedInfosNames []string
+
 	// Process event by event filters.
 	if event.Entity.Enabled {
 		efr, suspended, err := runEventFilters(ctx, p.eventFilterService, p.encoder, p.decoder, event, &res, partialRes)
@@ -103,6 +102,8 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event, pa
 		}
 
 		if suspended {
+			res.ContextGraphReport = report
+
 			return res, nil
 		}
 
@@ -117,15 +118,20 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event, pa
 			}
 
 			res.EventMetric.IsInfosUpdated = true
-			report.CheckComponent = true
+			report.CheckInfoChanged = true
 			logInfosUpdate(p.entityInfosUpdateSender, event.Entity.ID, efr.UpdatedEntityInfos)
+
+			updatedInfosNames = make([]string, 0, len(efr.UpdatedEntityInfos))
+			for k := range efr.UpdatedEntityInfos {
+				updatedInfosNames = append(updatedInfosNames, k)
+			}
 		}
 	}
 
 	// cap = 2: component and connector.
 	entityIdsToCheck := make([]string, 0, 2)
 
-	if report.CheckComponent {
+	if report.CheckComponent || report.CheckInfoChanged {
 		entityIdsToCheck = append(entityIdsToCheck, event.Entity.ID)
 	}
 
@@ -140,12 +146,14 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event, pa
 	// cap = 1 for a potential connector counter update.
 	toCountersUpdate := make([]types.Entity, 0, 1)
 	resourceIDsToUpdateMetrics := make([]string, 0)
+	servicesIDsToRecompute := make([]string, 0)
 
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		commRegister.Clear()
 
 		toCountersUpdate = toCountersUpdate[:0]
 		resourceIDsToUpdateMetrics = resourceIDsToUpdateMetrics[:0]
+		servicesIDsToRecompute = servicesIDsToRecompute[:0]
 
 		res.EventMetric.IsServicesUpdated = false
 		res.EventMetric.IsStateSettingUpdated = false
@@ -185,7 +193,11 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event, pa
 			return fmt.Errorf("cannot refresh services: %w", err)
 		}
 
-		p.contextGraphManager.AssignServices(&component, commRegister)
+		if report.CheckComponent {
+			p.contextGraphManager.AssignServices(&component, commRegister)
+		} else if report.CheckInfoChanged {
+			p.contextGraphManager.AssignServicesByInfoNames(&component, updatedInfosNames, commRegister)
+		}
 
 		if connector.ID != "" && report.CheckConnector {
 			p.contextGraphManager.AssignServices(&connector, commRegister)
@@ -199,12 +211,22 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event, pa
 			return fmt.Errorf("cannot assign state setting: %w", err)
 		}
 
-		resourceIDs, err := p.contextGraphManager.ProcessComponentDependencies(ctx, &component, commRegister)
+		if event.EventType == types.EventTypeEntityUpdated {
+			updatedInfosNames = make([]string, 0, len(component.Infos))
+			for k := range component.Infos {
+				updatedInfosNames = append(updatedInfosNames, k)
+			}
+		}
+
+		resourceIDs, servicesIDs, err := p.contextGraphManager.ProcessComponentInfos(ctx, &component, updatedInfosNames, stateSettingUpdated, commRegister)
 		if err != nil {
 			return fmt.Errorf("cannot process resources: %w", err)
 		}
 
-		resourceIDsToUpdateMetrics = append(resourceIDsToUpdateMetrics, resourceIDs...)
+		if len(resourceIDs) > 0 {
+			resourceIDsToUpdateMetrics = append(resourceIDsToUpdateMetrics, resourceIDs...)
+			servicesIDsToRecompute = append(servicesIDsToRecompute, servicesIDs...)
+		}
 
 		err = commRegister.Commit(ctx)
 		if err != nil {
@@ -231,7 +253,9 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event, pa
 		}()
 	}
 
+	res.UpdatedEntitiesForEvent = toCountersUpdate
 	res.UpdatedEntityIdsForMetrics = append(resourceIDsToUpdateMetrics, entityIdsToCheck...)
+	res.ServicesIDsToRecompute = servicesIDsToRecompute
 
 	return res, nil
 }

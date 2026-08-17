@@ -4807,6 +4807,10 @@ definitions:
         items:
           $ref: '#/definitions/patternfields.FieldResponse'
         type: array
+      inherited_entity_pattern:
+        items:
+          $ref: '#/definitions/patternfields.EntityFieldResponse'
+        type: array
       pbehavior_pattern:
         items:
           $ref: '#/definitions/patternfields.FieldResponse'
@@ -5903,6 +5907,13 @@ definitions:
     - enabled
     - name
     type: object
+  role.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   role.BulkUpdatePermissionsRequestItem:
     properties:
       _id:
@@ -6042,9 +6053,6 @@ definitions:
       drop_scenario_if_not_matched:
         type: boolean
       emit_trigger_fail:
-        description: |-
-          Whether to emit a `declareticketwebhookfail` trigger when the action
-          fails. Only set for webhook actions that declare a ticket.
         type: boolean
       emit_trigger_success:
         type: boolean
@@ -6076,10 +6084,6 @@ definitions:
       drop_scenario_if_not_matched:
         type: boolean
       emit_trigger_fail:
-        description: |-
-          Whether to emit a `declareticketwebhookfail` trigger when the action
-          fails. Required when `type` is `webhook` and `parameters.declare_ticket`
-          is set; must be omitted otherwise.
         type: boolean
       emit_trigger_success:
         type: boolean

@@ -1,7 +1,7 @@
 package mongoquery
 
 import (
-	"fmt"
+	"regexp"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -31,7 +31,7 @@ func GetSearchQuery(search string, searchBy []string) bson.M {
 	}
 
 	searchRegexp := bson.Regex{
-		Pattern: fmt.Sprintf(".*%s.*", search),
+		Pattern: GetSearchPattern(search),
 		Options: "i",
 	}
 
@@ -43,4 +43,12 @@ func GetSearchQuery(search string, searchBy []string) bson.M {
 	return bson.M{
 		"$or": searchMatch,
 	}
+}
+
+func GetSearchPattern(search string) string {
+	if _, err := regexp.Compile(search); err == nil {
+		return search
+	}
+
+	return ".*" + regexp.QuoteMeta(search) + ".*"
 }

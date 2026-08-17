@@ -16,13 +16,18 @@ import (
 
 const suspendedEventTTL = 24 * time.Hour
 
+// ErrNotFound is returned by Get when no event is parked under the given id.
+var ErrNotFound = errors.New("suspended event not found")
+
 // Storage keeps parked events of type T, keyed by id.
 type Storage[T any] interface {
-	// Push parks v under id. It uses set-if-absent semantics, so an existing
+	// Add parks v under id. It uses set-if-absent semantics, so an existing
 	// entry for id is left untouched rather than overwritten.
-	Push(ctx context.Context, id string, v T) error
-	// Pull returns the event parked under id, or an error when no entry exists.
-	Pull(ctx context.Context, id string) (T, error)
+	Add(ctx context.Context, id string, v T) error
+	// Get returns the event parked under id, or an error when no entry exists.
+	Get(ctx context.Context, id string) (T, error)
+	// Delete removes the event parked under id. Deleting a missing entry is not an error.
+	Delete(ctx context.Context, id string) error
 }
 
 func New[T any](
@@ -46,7 +51,7 @@ type storage[T any] struct {
 	client  redis.Cmdable
 }
 
-func (s *storage[T]) Push(ctx context.Context, id string, v T) error {
+func (s *storage[T]) Add(ctx context.Context, id string, v T) error {
 	b, err := s.encoder.Encode(v)
 	if err != nil {
 		return err
@@ -55,13 +60,13 @@ func (s *storage[T]) Push(ctx context.Context, id string, v T) error {
 	return s.client.SetNX(ctx, s.getKey(id), b, suspendedEventTTL).Err()
 }
 
-func (s *storage[T]) Pull(ctx context.Context, id string) (T, error) {
+func (s *storage[T]) Get(ctx context.Context, id string) (T, error) {
 	var v T
 
-	cr := s.client.GetDel(ctx, s.getKey(id))
+	cr := s.client.Get(ctx, s.getKey(id))
 	if err := cr.Err(); err != nil {
 		if errors.Is(err, redis.Nil) {
-			return v, errors.New("suspended event not found")
+			return v, ErrNotFound
 		}
 
 		return v, err
@@ -72,6 +77,10 @@ func (s *storage[T]) Pull(ctx context.Context, id string) (T, error) {
 	}
 
 	return v, nil
+}
+
+func (s *storage[T]) Delete(ctx context.Context, id string) error {
+	return s.client.Del(ctx, s.getKey(id)).Err()
 }
 
 func (s *storage[T]) getKey(id string) string {

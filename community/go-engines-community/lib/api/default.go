@@ -100,6 +100,8 @@ type Services struct {
 	WebsocketAuthorize          func(perms ...string) websocket.Authorize
 	DataStorageConfigProvider   *config.BaseDataStorageConfigProvider
 	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
+	ApiConfigProvider           *config.BaseApiConfigProvider
+	AlarmConfigProvider         *config.BaseAlarmConfigProvider
 	NotificationStore           usernotification.Store
 	ErrorResponder              httperror.Responder
 	Translator                  *ut.UniversalTranslator
@@ -200,8 +202,8 @@ func Default(
 	sessionStore := mongostore.NewStore(primaryDbClient, GetSessionKeyVar(logger))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
-	apiConfigProvider := config.NewApiConfigProvider(cfg, logger)
-	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
+	services.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
+	services.AlarmConfigProvider = config.NewAlarmConfigProvider(cfg, logger)
 	tplExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	services.Translator, err = RegisterValidators(securityConfig, tplExecutor)
 	if err != nil {
@@ -210,7 +212,7 @@ func Default(
 
 	services.ErrorResponder = httperror.NewResponder(validation.NewErrorTranslator(services.Translator, logger), logger)
 	security := NewSecurity(securityConfig, cfg, primaryDbClient, sessionStore, services.Enforcer,
-		apiConfigProvider, config.NewMaintenanceAdapter(primaryDbClient), cookieOptions,
+		services.ApiConfigProvider, config.NewMaintenanceAdapter(primaryDbClient), cookieOptions,
 		services.ErrorResponder, logger)
 
 	if flags.EnableSameServiceNames {
@@ -218,7 +220,7 @@ func Default(
 	}
 
 	dbExportClient, err := mongo.NewClient(ctx, mongo.ClientOptions{
-		ClientTimeout:  apiConfigProvider.Get().ExportMongoClientTimeout,
+		ClientTimeout:  services.ApiConfigProvider.Get().ExportMongoClientTimeout,
 		ReadPreference: mongo.SecondaryPreferred(),
 	})
 	if err != nil {
@@ -300,10 +302,10 @@ func Default(
 		return websocket.User{}, errors.New("invalid token")
 	}
 	services.WebsocketHub = websocket.NewHub(websocketUpgrader, services.WebsocketRoomRegistry, wsRoomAuthenticate,
-		apiConfigProvider, flags.IntegrationPeriodicalWaitTime, validation.NewErrorTranslator(services.Translator, logger),
+		services.ApiConfigProvider, flags.IntegrationPeriodicalWaitTime, validation.NewErrorTranslator(services.Translator, logger),
 		json.NewEncoder(), json.NewDecoder(), logger)
 	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, externalDataGetter, logger)
-	authorProvider := author.NewProvider(apiConfigProvider)
+	authorProvider := author.NewProvider(services.ApiConfigProvider)
 	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, patternfields.NewTransformer(primaryDbClient),
 		timezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
 	alarmWatcher := alarmapi.NewWatcher(noTimeoutClient, services.WebsocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
@@ -332,7 +334,12 @@ func Default(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(apitechmetrics.NewStore(primaryDbClient), filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
+	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(
+		apitechmetrics.NewStore(primaryDbClient),
+		filepath.Join(cfg.File.Dir, canopsis.SubDirExport),
+		flags.PeriodicalWaitTime,
+		logger,
+	)
 
 	healthCheckConfigAdapter := config.NewHealthCheckAdapter(primaryDbClient)
 	healthCheckCfg, err := healthCheckConfigAdapter.GetConfig(ctx)
@@ -376,7 +383,7 @@ func Default(
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
 	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConsumePool,
 		cfg.Global.PrefetchCount, cfg.Global.PrefetchSize, services.WebsocketHub,
-		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), apiConfigProvider, logger)
+		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
 
 	if tplTestTypePermMapping == nil {
 		tplTestTypePermMapping = make(map[int][]any)
@@ -502,7 +509,7 @@ func Default(
 			amqpPubPool,
 			amqpPublisher,
 			lockRedisSession,
-			apiConfigProvider,
+			services.ApiConfigProvider,
 			timezoneConfigProvider,
 			templateConfigProvider,
 			pbhEntityTypeResolver,
@@ -568,10 +575,12 @@ func Default(
 		services.ErrorResponder.Respond(c, httperror.ErrMethodNotAllowed)
 	})
 
-	actionLogger := apilogger.NewActionLogger(noTimeoutClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-	api.AddWorker("action_log", func(ctx context.Context) error {
-		return actionLogger.Watch(ctx)
-	})
+	if services.ApiConfigProvider.Get().ActionLogger.Enabled {
+		actionLogger := apilogger.NewActionLogger(noTimeoutClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+		api.AddWorker("action_log", func(ctx context.Context) error {
+			return actionLogger.Watch(ctx)
+		})
+	}
 
 	api.AddWorker("amqp_workers", func(ctx context.Context) error {
 		err = workersRunner.Run(ctx)
@@ -636,7 +645,7 @@ func Default(
 		return nil
 	})
 	api.AddWorker("config_reload", updateConfig(timezoneConfigProvider, services.DataStorageConfigProvider,
-		apiConfigProvider, templateConfigProvider, techMetricsConfigProvider, alarmConfigProvider,
+		services.ApiConfigProvider, templateConfigProvider, techMetricsConfigProvider, services.AlarmConfigProvider,
 		configAdapter, services.UserInterfaceConfigProvider, userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
 	api.AddWorker("data_export_abandoned", func(ctx context.Context) error {
 		services.ExportTaskExecutor.ProcessAbandonedTasks(ctx)

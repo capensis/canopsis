@@ -19,6 +19,7 @@
         :disablable="updatable"
         :flapping-rule="flapping"
         :resolve-rule="!flapping"
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />

@@ -2444,6 +2444,12 @@ func RegisterRoutes(
 				roleApi.BulkUpdatePermissions,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
+			bulkRouter.DELETE(
+				"/roles",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer, errorResponder),
+				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+				roleApi.BulkDelete,
+			)
 
 			userBulkRouter := bulkRouter.Group("/users")
 			{
