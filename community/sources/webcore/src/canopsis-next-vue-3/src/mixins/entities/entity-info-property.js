@@ -1,18 +1,28 @@
+import { mapActions, mapState } from 'pinia';
+
+import { useEntityInfoPropertyStore } from '@/stores/modules/entity-info-property';
+
 export const entitiesEntityInfoPropertyMixin = {
   computed: {
-    entityInfoProperties: () => [],
-    entityInfoPropertiesWithAlias: () => [],
-    entityInfoPropertiesWithoutAlias: () => [],
-    entityInfoPropertyMeta: () => ({}),
-    entityInfoPropertyPending: () => false,
+    ...mapState(useEntityInfoPropertyStore, {
+      entityInfoProperties: 'items',
+      entityInfoPropertiesWithAlias: 'itemsWithAlias',
+      entityInfoPropertiesWithoutAlias: 'itemsWithoutAlias',
+      entityInfoPropertyMeta: 'meta',
+      entityInfoPropertyPending: 'pending',
+    }),
   },
+
   methods: {
-    fetchEntityInfoPropertiesList: () => Promise.resolve({ data: [] }),
-    createEntityInfoProperty: () => Promise.resolve(),
-    updateEntityInfoProperty: () => Promise.resolve(),
-    removeEntityInfoProperty: () => Promise.resolve(),
-    bulkRemoveEntityInfoProperty: () => Promise.resolve(),
-    fetchEntityInfoPropertiesListWithoutStore: () => Promise.resolve({ data: [] }),
+    ...mapActions(useEntityInfoPropertyStore, {
+      fetchEntityInfoPropertiesList: 'fetchList',
+      createEntityInfoProperty: 'create',
+      updateEntityInfoProperty: 'update',
+      removeEntityInfoProperty: 'remove',
+      bulkRemoveEntityInfoProperty: 'bulkRemove',
+      fetchEntityInfoPropertiesListWithoutStore: 'fetchListWithoutStore',
+    }),
+
     fetchAllEntityInfoPropertiesList() {
       return this.fetchEntityInfoPropertiesList({ params: { paginate: false } });
     },

@@ -1,5 +1,9 @@
 <template>
-  <tr :data-id="alarm._id" class="alarms-list-row">
+  <tr
+    :data-id="alarm._id"
+    class="alarms-list-row"
+    @mousedown="mouseSelecting"
+  >
     <td
       v-if="!preparedVisible"
       :style="emptyTdStyle"
@@ -148,6 +152,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    selecting: {
+      type: Boolean,
+      default: false,
+    },
     small: {
       type: Boolean,
       default: false,
@@ -269,6 +277,16 @@ export default {
       }, { immediate: true });
     },
 
+    mouseSelecting(event) {
+      if (!this.selecting || event.button !== 0) {
+        return;
+      }
+
+      event.preventDefault();
+
+      this.$emit('update:selected', !this.selected);
+    },
+
     getCellStyle(header) {
       const width = header.width ?? header.minWidth;
 
@@ -288,6 +306,20 @@ export default {
 <style lang="scss">
 .alarms-list-row {
   min-height: 24px;
+  position: relative;
+
+  &:after {
+    background: rgba(200, 220, 200, 0.3);
+    content: '';
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    transition: opacity linear 0.3s;
+    width: 100%;
+  }
 }
 
 .alarms-list-row__icons {

@@ -1,13 +1,20 @@
 import { isArray, omit } from 'lodash';
 
 import { WIDGET_TYPES } from '@/constants';
+
+import { featuresService } from '@/services/features';
+
 import { mapIds } from '@/helpers/array';
 import {
   convertAlarmUserPreferenceToQuery,
   convertAlarmWidgetToQuery,
 } from '@/helpers/entities/alarm/query';
 import { convertCounterWidgetToQuery } from '@/helpers/entities/counter/query';
-import { featuresService } from '@/services/features';
+import {
+  convertChartUserPreferenceToQuery,
+  convertChartWidgetToQuery,
+  convertNumbersWidgetToQuery,
+} from '@/helpers/entities/metric/query';
 
 /**
  * This function converts userPreference to query Object
@@ -19,6 +26,9 @@ import { featuresService } from '@/services/features';
 export function convertUserPreferenceToQuery(userPreference, widgetType) {
   const convertersMap = {
     [WIDGET_TYPES.alarmList]: convertAlarmUserPreferenceToQuery,
+    [WIDGET_TYPES.barChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
 
     ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
   };
@@ -38,6 +48,9 @@ export function convertWidgetToQuery(widget) {
   const convertersMap = {
     [WIDGET_TYPES.alarmList]: convertAlarmWidgetToQuery,
     [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
+    [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.numbers]: convertNumbersWidgetToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };
