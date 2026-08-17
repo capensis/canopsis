@@ -36,5 +36,5 @@ func NewEngine(ctx context.Context, opts che.Options, dp depprovider.Provider, l
 
 	s.MessageProcessor.ExternalData = che.NewNullExternalDataCoordinator()
 
-	return e, err
+	return e, nil
 }
