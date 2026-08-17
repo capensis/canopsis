@@ -1,7 +1,8 @@
 <template>
-  <div class="alarms-expand-panel bg-secondary">
+  <div class="alarms-expand-panel">
     <v-tabs
       v-model="activeTab"
+      class="alarms-expand-panel__tabs"
       bg-color="secondary"
       color="primary"
       align-tabs="center"
@@ -78,6 +79,7 @@
       v-model="activeTab"
       :transition="false"
       :reverse-transition="false"
+      class="alarms-expand-panel__content"
     >
       <v-window-item
         v-if="hasMoreInfos"
@@ -602,3 +604,13 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.alarms-expand-panel {
+  background: rgb(var(--v-theme-secondary));
+}
+
+.alarms-expand-panel__content {
+  background: rgb(var(--v-theme-secondary-lighten-1));
+}
+</style>

@@ -14,6 +14,23 @@ import { ALARM_LINK_ICON_CHIP_COLUMN_GAP, ALARM_LINK_ICON_CHIP_WIDTH, ALARM_LINK
 export const generateAlarmDetailsId = (alarmId, widgetId) => `${alarmId}_${widgetId}`;
 
 /**
+ * Get original alarm id from alarm details payload id.
+ * Fetch responses and socket events may use either the alarm id or the
+ * generated `${alarmId}_${widgetId}` details id.
+ *
+ * @param {string} detailsId
+ * @param {string} widgetId
+ * @returns {string}
+ */
+export const getAlarmIdFromDetailsId = (detailsId, widgetId) => {
+  const suffix = `_${widgetId}`;
+
+  return detailsId?.endsWith?.(suffix)
+    ? detailsId.slice(0, -suffix.length)
+    : detailsId;
+};
+
+/**
  * Get dataPreparer for alarmDetails entity
  *
  * @param {string} widgetId

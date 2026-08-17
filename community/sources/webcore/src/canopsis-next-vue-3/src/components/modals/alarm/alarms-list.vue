@@ -15,6 +15,7 @@
         :columns-settings="columnsSettings"
         selectable
         expandable
+        eager
         @update:query="updateQuery"
         @update:columns-settings="updateColumnsSettings"
       />

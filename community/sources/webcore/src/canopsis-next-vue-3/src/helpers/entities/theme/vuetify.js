@@ -42,8 +42,24 @@ const createStateTextColors = state =>
     return acc;
   }, {});
 
-const createVuetifyColors = ({ variables, main, table }) =>
-  Object.entries({
+const COLOR_VARIATION_INDEXES = [1, 2, 3, 4, 5];
+const VUETIFY_PALETTE_VARIATION_KEYS = ['primary', 'secondary'];
+
+const createPaletteColorVariations = (key, value) => {
+  if (!String(value).startsWith('#')) {
+    return {};
+  }
+
+  return COLOR_VARIATION_INDEXES.reduce((acc, index) => {
+    acc[`${key}-darken-${index}`] = colorToHex(getDarkenColor(value, index * 10));
+    acc[`${key}-lighten-${index}`] = colorToHex(getLightenColor(value, index * 10));
+
+    return acc;
+  }, {});
+};
+
+const createVuetifyColors = ({ variables, main, table }) => {
+  const colors = Object.entries({
     ...variables,
     background: variables['application-background'] ?? main.background,
     surface: table.background ?? main.background,
@@ -59,6 +75,12 @@ const createVuetifyColors = ({ variables, main, table }) =>
 
     return acc;
   }, {});
+
+  return VUETIFY_PALETTE_VARIATION_KEYS.reduce((acc, key) => ({
+    ...acc,
+    ...createPaletteColorVariations(key, acc[key]),
+  }), colors);
+};
 
 const createVuetifyRuntimeVariables = ({
   activeColor,

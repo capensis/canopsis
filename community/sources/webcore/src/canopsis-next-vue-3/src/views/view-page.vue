@@ -16,13 +16,17 @@
 </template>
 
 <script>
-import ViewFabBtns from '@/components/other/view/partials/view-fab-btns.vue';
-import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 import { ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
+
+import Observer from '@/services/observer';
+
 import { activeViewMixin } from '@/mixins/active-view';
 import { authMixin } from '@/mixins/auth';
+import { queryMixin } from '@/mixins/query';
 import { viewRouterMixin } from '@/mixins/view/router';
-import Observer from '@/services/observer';
+
+import ViewFabBtns from '@/components/other/view/partials/view-fab-btns.vue';
+import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 export default {
   provide() {
@@ -34,7 +38,7 @@ export default {
     ViewFabBtns,
     ViewTabsWrapper,
   },
-  mixins: [authMixin, activeViewMixin, viewRouterMixin],
+  mixins: [authMixin, queryMixin, activeViewMixin, viewRouterMixin],
   props: {
     id: {
       type: [String, Number],
@@ -116,6 +120,11 @@ export default {
 
     async refreshView() {
       await this.fetchActiveView({ id: this.id });
+
+      if (this.activeTab) {
+        this.forceUpdateQuery({ id: this.activeTab._id });
+      }
+
       await this.ensureActiveTabRoute();
     },
   },

@@ -10,6 +10,7 @@
     :refresh-alarms-list="refreshAlarmsList"
     :columns-settings="columnsSettings"
     expandable
+    eager
     @update:query="$emit('update:query', $event)"
     @select:tag="$emit('select:tag', $event)"
     @remove:tag="$emit('remove:tag', $event)"

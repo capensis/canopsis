@@ -15,7 +15,7 @@
           v-else
           :model-value="periodicRefreshProgressValue"
           :rotate="270"
-          :size="30"
+          :size="40"
           :width="2"
           color="white"
         >
@@ -31,8 +31,10 @@
 
 <script>
 import { DATETIME_FORMATS } from '@/constants';
+
 import { convertDurationToString, durationToSeconds } from '@/helpers/date/duration';
 import { uid } from '@/helpers/uid';
+
 import { activeViewMixin } from '@/mixins/active-view';
 import { layoutNavigationEditingModeMixin } from '@/mixins/layout/navigation/editing-mode';
 

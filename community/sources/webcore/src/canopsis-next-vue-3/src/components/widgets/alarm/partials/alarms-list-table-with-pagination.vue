@@ -12,6 +12,7 @@
       :expandable="expandable"
       :selectable="selectable"
       :sticky-header="stickyHeader"
+      :sticky-horizontal-scroll="stickyHorizontalScroll"
       :hide-children="hideChildren"
       :hide-actions="hideActions"
       :densable="densable"
@@ -20,6 +21,7 @@
       :default-keep-selected-after-action="defaultKeepSelectedAfterAction"
       :refresh-alarms-list="refreshAlarmsList"
       :selected-tags="selectedTags"
+      :eager="eager"
       @update:query="updateQuery"
       @update:columns-settings="updateColumnsSettings"
       @update:dense="$emit('update:dense', $event)"
@@ -98,6 +100,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    stickyHorizontalScroll: {
+      type: Boolean,
+      default: false,
+    },
     hideChildren: {
       type: Boolean,
       default: false,
@@ -133,6 +139,10 @@ export default {
     refreshAlarmsList: {
       type: Function,
       default: () => {},
+    },
+    eager: {
+      type: Boolean,
+      default: false,
     },
   },
 

@@ -146,6 +146,8 @@
       :selected-tags="query.tags"
       :densable="isTableControlsShown"
       :dense="dense"
+      :sticky-header="preparedWidget.parameters.sticky_header"
+      :sticky-horizontal-scroll="preparedWidget.parameters.sticky_horizontal_scroll"
       :widget-grid-parameters="widgetGridParameters"
       :default-keep-selected-after-action="defaultKeepSelectedAfterAction"
       :refresh-alarms-list="fetchList"
@@ -190,8 +192,10 @@ import {
   permissionsWidgetsAlarmsListRemediationInstructionsFilters,
 } from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 import { widgetAdvancedSearchSavedItemsMixin } from '@/mixins/widget/advanced-search/saved-items';
+import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
 import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
+import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
@@ -226,6 +230,8 @@ export default {
   mixins: [
     widgetFetchQueryMixin,
     widgetAdvancedSearchSavedItemsMixin,
+    widgetPeriodicRefreshMixin,
+    widgetAlarmsSocketMixin,
     permissionsWidgetsAlarmsListBookmark,
     permissionsWidgetsAlarmsListCategory,
     permissionsWidgetsAlarmsListCorrelation,
@@ -372,6 +378,7 @@ export default {
   methods: {
     ...mapActions(useAlarmStore, {
       fetchAlarmsList: 'fetchList',
+      fetchAlarmsDetailsList: 'fetchAlarmDetailsList',
       fetchAlarmsListExport: 'fetchAlarmsListExport',
       createAlarmsListExport: 'createAlarmsListExport',
     }),
@@ -385,6 +392,8 @@ export default {
       }
 
       const params = this.getQuery();
+
+      this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
 
       if (this.alarmsPending && isEqual(params, this.alarmsFetchingParams)) {
         return;
