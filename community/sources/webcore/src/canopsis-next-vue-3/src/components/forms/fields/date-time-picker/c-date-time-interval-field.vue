@@ -18,8 +18,10 @@
       :required="required"
       @update:value="updateField('from', $event)"
     >
-      <template v-if="withIcon" #append>
-        <v-icon>calendar_today</v-icon>
+      <template v-if="withIcon" #append-inner>
+        <v-icon size="18">
+          calendar_today
+        </v-icon>
       </template>
     </date-time-picker-field>
     <date-time-picker-field
@@ -34,8 +36,10 @@
       :required="required"
       @update:value="updateField('to', $event)"
     >
-      <template v-if="withIcon" #append>
-        <v-icon>calendar_today</v-icon>
+      <template v-if="withIcon" #append-inner>
+        <v-icon size="18">
+          calendar_today
+        </v-icon>
       </template>
     </date-time-picker-field>
   </div>

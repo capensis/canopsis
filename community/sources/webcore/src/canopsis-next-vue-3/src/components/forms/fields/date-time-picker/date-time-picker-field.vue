@@ -22,6 +22,9 @@
           readonly
           @click:append-inner="clear"
         >
+          <template v-if="$slots['append-inner']" #append-inner>
+            <slot name="append-inner" />
+          </template>
           <template v-if="$slots.append" #append>
             <slot name="append" />
           </template>
@@ -45,6 +48,7 @@
 
 <script>
 import { DATETIME_FORMATS } from '@/constants';
+
 import { convertDateToString } from '@/helpers/date/date';
 
 import DateTimePicker from './date-time-picker.vue';

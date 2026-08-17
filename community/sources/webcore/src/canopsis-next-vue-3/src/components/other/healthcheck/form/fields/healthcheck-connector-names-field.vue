@@ -15,7 +15,7 @@
     @input="$emit('input', $event)"
   >
     <template #item="{ item, props }">
-      <v-list-item v-bind="props">
+      <v-list-item v-bind="getItemProps(props)">
         <template #prepend="{ isSelected }">
           <v-checkbox-btn :model-value="isSelected || value.includes(item.name)" color="primary" />
         </template>
@@ -60,12 +60,18 @@ export default {
 
   emits: ['input'],
 
-  setup() {
-    const entityTypes = [BASIC_ENTITY_TYPES.connector];
-
+  data() {
     return {
-      entityTypes,
+      entityTypes: [BASIC_ENTITY_TYPES.connector],
     };
+  },
+
+  methods: {
+    getItemProps(props) {
+      const { title, ...listItemProps } = props;
+
+      return listItemProps;
+    },
   },
 };
 </script>

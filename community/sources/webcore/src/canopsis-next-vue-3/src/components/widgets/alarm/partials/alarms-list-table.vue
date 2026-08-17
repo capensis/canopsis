@@ -76,7 +76,7 @@
         :key="`header.${header.key}`"
         #[`header.${header.key}`]="{ column, isSorted, sortBy, getSortIcon }"
       >
-        <div v-if="header.key === rowActionsColumnKey" class="alarms-list-table__select-all">
+        <div v-if="header.key === rowIconsColumnKey" class="alarms-list-table__select-all">
           <div class="alarms-list-table__select-all-checkbox">
             <c-light-checkbox
               v-if="selectable"
@@ -107,13 +107,13 @@
           </template>
         </div>
         <span
-          v-if="draggingMode && header.key !== rowActionsColumnKey"
+          v-if="draggingMode && header.key !== rowIconsColumnKey"
           :data-value="header.value"
           class="table__dragging-handler"
           @click.stop=""
         />
         <span
-          v-if="resizingMode && header.key !== rowActionsColumnKey"
+          v-if="resizingMode && header.key !== rowIconsColumnKey"
           class="table__resize-handler"
           @pointerdown.stop.prevent="startColumnResize(header.value)"
           @mousedown.stop.prevent=""
@@ -121,28 +121,52 @@
         />
       </template>
 
-      <template #item="{ item }">
-        <alarms-list-row
-          :alarm="getTableItem(item)"
-          :widget="preparedWidget"
-          :headers="headersWithWidth"
-          :row-actions-column-key="rowActionsColumnKey"
-          :parent-alarm="parentAlarm"
-          :selected-tags="selectedTags"
-          :selectable="selectable"
-          :selectable-alarm="isAlarmSelectable(getTableItem(item))"
-          :selected="isAlarmSelected(getTableItem(item))"
-          :small="isSmallDensity"
-          :resizing="resizingMode"
-          :hide-actions="hideActions"
-          :actions-inline-count="actionsInlineCount"
-          :actions-ignore-media-query="resizableColumn"
-          :refresh-alarms-list="refreshAlarmsList"
-          @update:selected="toggleAlarmSelection(getTableItem(item), $event)"
-          @start:resize="startColumnResize"
-          @select:tag="$emit('select:tag', $event)"
-          @remove:tag="$emit('remove:tag', $event)"
-        />
+      <template #body="{ items }">
+        <template
+          v-for="item in items"
+          :key="getTableItem(item)._id"
+        >
+          <alarms-list-row
+            :alarm="getTableItem(item)"
+            :widget="preparedWidget"
+            :headers="headersWithWidth"
+            :row-icons-column-key="rowIconsColumnKey"
+            :parent-alarm="parentAlarm"
+            :selected-tags="selectedTags"
+            :selectable="selectable"
+            :selectable-alarm="isAlarmSelectable(getTableItem(item))"
+            :selected="isAlarmSelected(getTableItem(item))"
+            :small="isSmallDensity"
+            :resizing="resizingMode"
+            :hide-actions="hideActions"
+            :expandable="expandable"
+            :expanded="isAlarmExpanded(getTableItem(item))"
+            :search="query.search"
+            :actions-inline-count="actionsInlineCount"
+            :actions-ignore-media-query="resizableColumn"
+            :refresh-alarms-list="refreshAlarmsList"
+            @update:selected="toggleAlarmSelection(getTableItem(item), $event)"
+            @update:expanded="toggleAlarmExpanded(getTableItem(item), $event)"
+            @start:resize="startColumnResize"
+            @select:tag="$emit('select:tag', $event)"
+            @remove:tag="$emit('remove:tag', $event)"
+          />
+
+          <alarms-list-expand-row
+            :expanded="isAlarmExpanded(getTableItem(item))"
+            :colspan="headersColspan"
+          >
+            <alarms-expand-panel
+              :alarm="getExpandedAlarm(getTableItem(item))"
+              :widget="preparedWidget"
+              :hide-children="hideChildren"
+              :search="query.search"
+              :selected-tags="selectedTags"
+              @select:tag="$emit('select:tag', $event)"
+              @remove:tag="$emit('remove:tag', $event)"
+            />
+          </alarms-list-expand-row>
+        </template>
       </template>
 
       <template #no-data>
@@ -159,6 +183,7 @@
 
 <script>
 import { get, isEqual, isNumber } from 'lodash';
+import { mapState } from 'pinia';
 
 import { PAGINATION_LIMIT } from '@/config';
 import {
@@ -170,6 +195,11 @@ import {
   DENSE_TYPES,
   RESIZING_CELLS_CONTENTS_BEHAVIORS,
 } from '@/constants';
+
+import { AsyncBooting } from '@/services/async-booting';
+
+import { useAlarmStore } from '@/stores/modules/alarm';
+
 import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
 import { calculateAlarmLinksColumnWidth } from '@/helpers/entities/alarm/list';
 import {
@@ -181,19 +211,30 @@ import {
   getAlarmsListWidgetColumnValueFilter,
   prepareAlarmListWidget,
 } from '@/helpers/entities/widget/forms/alarm';
+
 import {
   widgetColumnDraggingAlarmMixin,
   widgetColumnResizingAlarmMixin,
 } from '@/mixins/widget/columns';
 
 import MassActionsPanel from '../actions/mass-actions-panel.vue';
+import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 
+import AlarmsListExpandRow from './alarms-list-expand-row.vue';
 import AlarmsListRow from './alarms-list-row.vue';
 
 export default {
+  provide() {
+    return {
+      $asyncBootingActionsPanel: this.asyncBootingActionsPanel,
+    };
+  },
+
   components: {
     AlarmHeaderCell,
+    AlarmsExpandPanel,
+    AlarmsListExpandRow,
     AlarmsListRow,
     MassActionsPanel,
   },
@@ -291,8 +332,11 @@ export default {
   data() {
     return {
       keepSelectedAfterAction: this.defaultKeepSelectedAfterAction,
-      rowActionsColumnKey: 'row-icons',
+      rowIconsColumnKey: 'row-icons',
+      rowIconsColumnClass: 'alarms-list-table__row-icons-column',
       selectedAlarmIds: [],
+      expandedAlarmIds: [],
+      asyncBootingActionsPanel: new AsyncBooting(),
     };
   },
 
@@ -300,6 +344,12 @@ export default {
     preparedWidget() {
       return prepareAlarmListWidget(this.widget);
     },
+
+    ...mapState(useAlarmStore, {
+      alarmDetailsById(store) {
+        return store.getDetailsByWidgetId(this.preparedWidget._id);
+      },
+    }),
 
     preparedColumns() {
       const { showRootCauseByStateClick = true } = this.preparedWidget.parameters ?? {};
@@ -325,7 +375,11 @@ export default {
     },
 
     hasRowActions() {
-      return this.selectable || this.alarms.some(alarm => this.hasAlarmInstruction(alarm) || alarm.bookmark);
+      return (
+        this.expandable ||
+        this.selectable ||
+        this.alarms.some(alarm => this.hasAlarmInstruction(alarm) || alarm.bookmark)
+      );
     },
 
     resizableColumn() {
@@ -397,14 +451,15 @@ export default {
 
       if (this.hasRowActions) {
         headers.unshift({
-          key: this.rowActionsColumnKey,
-          value: this.rowActionsColumnKey,
+          key: this.rowIconsColumnKey,
+          value: this.rowIconsColumnKey,
           title: '',
           text: '',
           sortable: false,
           width: 100,
           headerProps: {
-            'data-value': this.rowActionsColumnKey,
+            'data-value': this.rowIconsColumnKey,
+            class: this.rowIconsColumnClass,
           },
         });
       }
@@ -438,10 +493,10 @@ export default {
         this.baseHeaders.map(({ value }, index) => [value, index]),
       );
       const rowActionsHeaders = this.baseHeaders.filter(
-        ({ value }) => value === this.rowActionsColumnKey,
+        ({ value }) => value === this.rowIconsColumnKey,
       );
       const draggableHeaders = this.baseHeaders.filter(
-        ({ value }) => value !== this.rowActionsColumnKey,
+        ({ value }) => value !== this.rowIconsColumnKey,
       );
 
       return [
@@ -611,6 +666,8 @@ export default {
   watch: {
     alarms() {
       this.synchronizeSelectedAlarms();
+      this.synchronizeExpandedAlarms();
+      this.scheduleActionsPanelBooting();
     },
 
     defaultKeepSelectedAfterAction(value) {
@@ -679,9 +736,21 @@ export default {
     if (this.resizableColumn && this.isEmptyColumnsWidthByField) {
       this.$nextTick(() => this.calculateColumnsWidths());
     }
+
+    this.scheduleActionsPanelBooting();
+  },
+
+  beforeUnmount() {
+    this.asyncBootingActionsPanel.clear();
   },
 
   methods: {
+    scheduleActionsPanelBooting() {
+      this.$nextTick(() => {
+        window.requestAnimationFrame(() => this.asyncBootingActionsPanel.run());
+      });
+    },
+
     updateOptions(options) {
       if (this.isColumnsChanging) {
         return;
@@ -794,6 +863,10 @@ export default {
       return this.selectedAlarmIds.includes(alarm._id);
     },
 
+    isAlarmExpanded(alarm) {
+      return this.expandedAlarmIds.includes(alarm._id);
+    },
+
     toggleAlarmSelection(alarm, selected) {
       if (!this.isAlarmSelectable(alarm)) {
         return;
@@ -816,6 +889,27 @@ export default {
       }
     },
 
+    toggleAlarmExpanded(alarm, expanded) {
+      if (expanded && !this.expandedAlarmIds.includes(alarm._id)) {
+        this.expandedAlarmIds = [...this.expandedAlarmIds, alarm._id];
+
+        return;
+      }
+
+      if (!expanded) {
+        this.expandedAlarmIds = this.expandedAlarmIds.filter(id => id !== alarm._id);
+      }
+    },
+
+    getExpandedAlarm(alarm) {
+      const alarmDetails = this.alarmDetailsById[alarm._id] ?? {};
+
+      return {
+        ...alarm,
+        ...(alarmDetails.data ?? alarmDetails),
+      };
+    },
+
     clearSelected() {
       this.selectedAlarmIds = [];
     },
@@ -830,6 +924,12 @@ export default {
       const alarmIds = new Set(this.alarms.map(({ _id }) => _id));
 
       this.selectedAlarmIds = this.selectedAlarmIds.filter(id => alarmIds.has(id));
+    },
+
+    synchronizeExpandedAlarms() {
+      const alarmIds = new Set(this.alarms.map(({ _id }) => _id));
+
+      this.expandedAlarmIds = this.expandedAlarmIds.filter(id => alarmIds.has(id));
     },
   },
 };
@@ -861,12 +961,21 @@ export default {
 }
 
 .alarms-list-table__table {
-  .v-table__wrapper {
+  > .v-table__wrapper {
     overflow-x: auto;
   }
 
+  tr:not(.v-data-table__expanded) th:first-of-type {
+    width: 120px !important;
+  }
+
+  .alarms-list-table__row-icons-column {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
   &.alarms-list-table__table--fixed {
-    table {
+    > .v-table__wrapper > table {
       table-layout: fixed;
       width: var(--alarms-list-table-width);
       min-width: var(--alarms-list-table-width);

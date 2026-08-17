@@ -3,7 +3,7 @@
     <template #activator="{ props }">
       <v-icon
         class="cursor-default"
-        size="22"
+        size="20"
         v-bind="props"
       >
         bookmark

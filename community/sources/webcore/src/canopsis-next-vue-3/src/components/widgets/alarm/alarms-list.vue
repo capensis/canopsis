@@ -1,5 +1,5 @@
 <template>
-  <div class="alarms-list-widget pa-2">
+  <div class="alarms-list-widget">
     <c-layout
       v-if="isToolbarShown"
       :class="['alarms-list-widget__toolbar px-4', { 'mb-4': !dense }]"

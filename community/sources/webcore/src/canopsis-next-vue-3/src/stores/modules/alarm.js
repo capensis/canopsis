@@ -2,8 +2,10 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
 import { API_ROUTES } from '@/config';
-import { mapIds } from '@/helpers/array';
+
 import request, { isRequestCanceled, useRequestCancelling } from '@/services/request';
+
+import { mapIds } from '@/helpers/array';
 
 export const useAlarmStore = defineStore('alarm', () => {
   const alarmsById = ref({});
@@ -19,6 +21,7 @@ export const useAlarmStore = defineStore('alarm', () => {
   const getPendingByWidgetId = computed(
     () => widgetId => widgets.value[widgetId]?.pending ?? false,
   );
+  const getDetailsByWidgetId = computed(() => widgetId => detailsByWidget.value[widgetId] ?? {});
   const getFetchingParamsByWidgetId = computed(
     () => widgetId => widgets.value[widgetId]?.fetchingParams,
   );
@@ -129,6 +132,26 @@ export const useAlarmStore = defineStore('alarm', () => {
 
   const fetchAlarmDetailsListWithoutStore = ({ params } = {}) =>
     request.post(API_ROUTES.alarmDetails, params);
+
+  const getAlarmDetailsFromResponse = (response) => {
+    const responseData = Array.isArray(response) ? response : response?.data;
+    const detailsItem = Array.isArray(responseData) ? responseData[0] : responseData;
+
+    return detailsItem?.data ?? detailsItem ?? {};
+  };
+
+  const setDetails = ({ widgetId, id, details }) => {
+    detailsByWidget.value = {
+      ...detailsByWidget.value,
+      [widgetId]: {
+        ...detailsByWidget.value[widgetId],
+        [id]: {
+          ...detailsByWidget.value[widgetId]?.[id],
+          data: details,
+        },
+      },
+    };
+  };
   const setDetailsQuery = ({ widgetId, id, query }) => {
     detailsByWidget.value = {
       ...detailsByWidget.value,
@@ -148,6 +171,16 @@ export const useAlarmStore = defineStore('alarm', () => {
 
     detailsByWidget.value = { ...detailsByWidget.value, [widgetId]: widgetDetails };
   };
+  const fetchAlarmDetails = async ({ widgetId, id, query } = {}) => {
+    setDetailsQuery({ widgetId, id, query });
+
+    const response = await fetchAlarmDetailsListWithoutStore({ params: [query] });
+    const details = getAlarmDetailsFromResponse(response);
+
+    setDetails({ widgetId, id, details });
+
+    return details;
+  };
 
   return {
     alarmsById,
@@ -158,6 +191,7 @@ export const useAlarmStore = defineStore('alarm', () => {
     getListByWidgetId,
     getMetaByWidgetId,
     getPendingByWidgetId,
+    getDetailsByWidgetId,
     getFetchingParamsByWidgetId,
     setAlarms,
     fetchComponentAlarmsListWithoutStore,
@@ -193,6 +227,8 @@ export const useAlarmStore = defineStore('alarm', () => {
     updateItemInStore,
     fetchAlarmLinksWithoutStore,
     fetchAlarmDetailsListWithoutStore,
+    fetchAlarmDetails,
+    setDetails,
     setDetailsQuery,
     removeDetailsQuery,
   };

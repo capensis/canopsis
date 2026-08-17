@@ -1,64 +1,75 @@
 <template>
-  <div
+  <v-row
     :class="{ 'c-quick-interval--reverse': reverse, 'c-quick-interval--short': short }"
     class="c-quick-interval"
+    align="center"
+    no-gutters
   >
     <template v-if="short">
-      <v-menu :close-on-content-click="false" location="bottom">
-        <template #activator="{ props }">
-          <v-text-field
-            :model-value="shortValue"
-            :label="$t('common.interval')"
-            density="compact"
-            readonly
-            hide-details
-            v-bind="props"
-          />
-        </template>
-        <v-card width="400px">
-          <v-card-text>
-            <c-information-block :title="$t('common.interval')">
-              <v-divider />
-              <c-layout class="mt-2">
-                <component
-                  :is="withHours ? 'c-date-time-interval-field' : 'c-date-interval-field'"
-                  :value="intervalObject"
-                  :disabled="disabled"
-                  :is-allowed-from-date="isAllowedFromDate"
-                  :is-allowed-to-date="isAllowedToDate"
-                  :round-hours="withHours"
-                  hide-details
-                  column
-                  @update:value="updateModel($event)"
-                />
-                <c-quick-date-interval-type-field
-                  :value="range"
-                  :ranges="availableQuickRanges"
-                  :disabled="disabled"
-                  class="c-quick-interval__range ml-4"
-                  hide-details
-                  return-object
-                  @input="updateIntervalRange"
-                />
-              </c-layout>
-            </c-information-block>
-          </v-card-text>
-        </v-card>
-      </v-menu>
+      <v-col>
+        <v-menu :close-on-content-click="false" location="bottom">
+          <template #activator="{ props }">
+            <c-text-field
+              :model-value="shortValue"
+              :label="$t('common.interval')"
+              density="compact"
+              readonly
+              hide-details
+              v-bind="props"
+            />
+          </template>
+          <v-card width="400px">
+            <v-card-text>
+              <c-information-block :title="$t('common.interval')">
+                <v-divider />
+                <v-row class="mt-2" align="start" density="compact">
+                  <v-col cols="6">
+                    <component
+                      :is="withHours ? 'c-date-time-interval-field' : 'c-date-interval-field'"
+                      :value="intervalObject"
+                      :disabled="disabled"
+                      :is-allowed-from-date="isAllowedFromDate"
+                      :is-allowed-to-date="isAllowedToDate"
+                      :round-hours="withHours"
+                      class="w-100"
+                      hide-details
+                      column
+                      @update:value="updateModel($event)"
+                    />
+                  </v-col>
+                  <v-col cols="6">
+                    <c-quick-date-interval-type-field
+                      :value="range"
+                      :ranges="availableQuickRanges"
+                      :disabled="disabled"
+                      class="w-100"
+                      hide-details
+                      return-object
+                      @input="updateIntervalRange"
+                    />
+                  </v-col>
+                </v-row>
+              </c-information-block>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+      </v-col>
     </template>
     <template v-else>
-      <component
-        :is="withHours ? 'c-date-time-interval-field' : 'c-date-interval-field'"
-        :value="intervalObject"
-        :disabled="disabled"
-        :is-allowed-from-date="isAllowedFromDate"
-        :is-allowed-to-date="isAllowedToDate"
-        :round-hours="withHours"
-        :hide-details="withHours"
-        :with-icon="withHours"
-        @update:value="updateModel($event)"
-      />
-      <div class="c-quick-interval__range">
+      <v-col class="c-quick-interval__dates-col">
+        <component
+          :is="withHours ? 'c-date-time-interval-field' : 'c-date-interval-field'"
+          :value="intervalObject"
+          :disabled="disabled"
+          :is-allowed-from-date="isAllowedFromDate"
+          :is-allowed-to-date="isAllowedToDate"
+          :round-hours="withHours"
+          :hide-details="withHours"
+          :with-icon="withHours"
+          @update:value="updateModel($event)"
+        />
+      </v-col>
+      <v-col class="c-quick-interval__range">
         <c-quick-date-interval-type-field
           :value="range"
           :ranges="availableQuickRanges"
@@ -67,13 +78,14 @@
           return-object
           @input="updateIntervalRange"
         />
-      </div>
+      </v-col>
     </template>
-  </div>
+  </v-row>
 </template>
 
 <script>
 import { DATETIME_FORMATS, QUICK_RANGES, TIME_UNITS } from '@/constants';
+
 import {
   convertDateToEndOfUnitTimestamp,
   convertDateToString,
@@ -300,12 +312,38 @@ export default {
 <style scoped lang="scss">
 .c-quick-interval {
   display: inline-flex;
-  flex-wrap: wrap;
-  column-gap: 24px;
+  max-width: 100%;
+  flex: 0 0 auto;
+  gap: 24px;
+
+  &__dates-col {
+    flex: 0 0 auto;
+
+    :deep(.c-date-time-interval-field),
+    :deep(.c-date-interval) {
+      width: auto;
+    }
+
+    :deep(.c-date-time-interval-field > *),
+    :deep(.c-date-interval > *) {
+      min-inline-size: 13.5rem;
+      flex: 1 1 0;
+    }
+
+    :deep(.c-date-time-interval-field > * > .c-field),
+    :deep(.c-date-interval > * > .c-field) {
+      width: 100%;
+    }
+  }
 
   &__range {
     display: flex;
-    max-width: 180px;
+    min-inline-size: 12.75rem;
+    flex: 0 0 auto;
+
+    :deep(.c-field) {
+      width: 100%;
+    }
   }
 
   &--reverse {
@@ -313,7 +351,7 @@ export default {
   }
 
   &--short {
-    column-gap: 0;
+    gap: 0;
   }
 }
 </style>

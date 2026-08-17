@@ -1,12 +1,12 @@
 <template>
   <v-btn
     :loading="loading"
-    size="small"
+    :size="size"
     variant="text"
     icon
     @click="$emit('update:modelValue', !modelValue)"
   >
-    <c-icon :color="color">
+    <c-icon :color="color" :size="iconSize">
       {{ modelValue ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
     </c-icon>
   </v-btn>
@@ -26,6 +26,14 @@ export default {
     loading: {
       type: Boolean,
       default: false,
+    },
+    size: {
+      type: [Number, String],
+      default: 'small',
+    },
+    iconSize: {
+      type: [Number, String],
+      default: undefined,
     },
   },
 

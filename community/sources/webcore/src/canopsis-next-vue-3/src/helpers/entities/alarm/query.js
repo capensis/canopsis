@@ -1,12 +1,23 @@
-import { isArray, isEmpty, isUndefined, uniq } from 'lodash';
+import {
+  isArray,
+  isEmpty,
+  isUndefined,
+  map,
+  uniq,
+} from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import {
   ALARMS_OPENED_VALUES,
+  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   LIVE_REPORTING_QUICK_RANGES,
   PBEHAVIOR_ORIGINS,
   SORT_ORDERS,
 } from '@/constants';
+
+import { isResolvedAlarm } from '@/helpers/entities/alarm/form';
+import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
+import { convertSortToRequest } from '@/helpers/entities/shared/query';
 import { getTemplateVariables } from '@/helpers/handlebars/variables';
 import { sanitizeHtml } from '@/helpers/html';
 
@@ -167,3 +178,90 @@ export function convertAlarmUserPreferenceToQuery({ content = {} } = {}) {
 
   return query;
 }
+
+/**
+ * Prepare query for alarm details fetching.
+ *
+ * @param {Alarm} alarm
+ * @param {Widget} widget
+ * @param {string} search
+ * @returns {Object}
+ */
+export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
+  const {
+    widgetGroupColumns = [],
+    charts = [],
+    sort,
+  } = widget.parameters;
+
+  const columns = widgetGroupColumns.length > 0
+    ? widgetGroupColumns
+    : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
+
+  const query = {
+    search,
+    search_by: map(columns, 'value'),
+    _id: alarm._id,
+    with_instructions: true,
+    with_declare_tickets: true,
+    with_links: true,
+    with_dependencies: true,
+    opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
+    perf_data: convertWidgetChartsToPerfDataQuery(charts),
+    steps: {
+      reversed: true,
+      group: true,
+      page: 1,
+      itemsPerPage: PAGINATION_LIMIT,
+    },
+    children: {
+      page: 1,
+      itemsPerPage: PAGINATION_LIMIT,
+      multiSortBy: [],
+    },
+  };
+
+  if (sort && isArray(sort) && sort.length > 0) {
+    query.children.sortBy = sort.map(sortColumn => sortColumn.sort_by);
+    query.children.sortDesc = sort.map(sortColumn => sortColumn.sort === SORT_ORDERS.desc.toLowerCase());
+  }
+
+  return query;
+};
+
+/**
+ * Convert alarmDetails query to request.
+ *
+ * @param {Object} query
+ * @returns {Object}
+ */
+export const convertAlarmDetailsQueryToRequest = (query = {}) => {
+  const {
+    steps: {
+      itemsPerPage: stepsItemsPerPage,
+      ...steps
+    } = {},
+    children: {
+      itemsPerPage: childrenItemsPerPage,
+      sortBy: childrenSortBy,
+      sortDesc: childrenSortDesc,
+      ...children
+    } = {},
+  } = query;
+
+  return {
+    ...query,
+
+    steps: {
+      ...steps,
+
+      limit: stepsItemsPerPage ?? PAGINATION_LIMIT,
+    },
+    children: {
+      ...children,
+      ...convertSortToRequest(childrenSortBy, childrenSortDesc),
+
+      limit: childrenItemsPerPage ?? PAGINATION_LIMIT,
+    },
+  };
+};
