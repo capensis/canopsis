@@ -17,6 +17,7 @@ import (
 
 type EditRequest struct {
 	Author       string                       `json:"author" swaggerignore:"true"`
+	Name         string                       `json:"name" binding:"required,max=255"`
 	Description  string                       `json:"description" binding:"required,max=255"`
 	Type         string                       `json:"type" binding:"required,oneof=break drop enrichment change_entity"`
 	Priority     int64                        `json:"priority" binding:"min=0"`
@@ -37,6 +38,7 @@ type EditRequest struct {
 type Response struct {
 	ID           string                          `bson:"_id" json:"_id"`
 	Author       *author.Author                  `bson:"author" json:"author" swaggerignore:"true"`
+	Name         string                          `bson:"name" json:"name"`
 	Description  string                          `bson:"description" json:"description"`
 	Type         string                          `bson:"type" json:"type"`
 	Priority     int64                           `bson:"priority" json:"priority"`
@@ -67,11 +69,6 @@ type Exception struct {
 	Created     datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
 }
 
-type CreateRequest struct {
-	EditRequest
-	ID string `json:"_id" binding:"id"`
-}
-
 type UpdateRequest struct {
 	EditRequest
 	ID string `json:"-"`
@@ -89,7 +86,7 @@ type BulkDeleteRequestItem struct {
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy            string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id author.name author.display_name priority created updated on_success on_failure"`
+	SortBy            string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name author.display_name priority created updated on_success on_failure"`
 	OnlyUnreadFailure bool   `json:"only_unread_failure" form:"only_unread_failure"`
 }
 

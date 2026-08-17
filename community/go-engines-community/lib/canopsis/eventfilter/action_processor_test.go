@@ -25,9 +25,9 @@ func TestActionProcessor(t *testing.T) {
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	ruleID := "test"
 	rule := eventfilter.ParsedRule{
-		ID:          ruleID,
-		Description: "test desc",
-		Updated:     datetime.NewCpsTime(),
+		ID:      ruleID,
+		Name:    "test name",
+		Updated: datetime.NewCpsTime(),
 	}
 	dataSets := []struct {
 		testName             string

@@ -47,13 +47,12 @@ func NewApi(
 }
 
 // Create
-// @Param body body CreateRequest true "body"
+// @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	var request CreateRequest
-	var err error
+	var request EditRequest
 
-	if err = validation.Bind(c, &request); err != nil {
+	if err := validation.Bind(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -167,9 +166,9 @@ func (a *api) Delete(c *gin.Context) {
 }
 
 // BulkCreate
-// @Param body body []CreateRequest true "body"
+// @Param body body []EditRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
-	bulk.Handler(c, func(request CreateRequest) (string, error) {
+	bulk.Handler(c, func(request EditRequest) (string, error) {
 		eventfilter, err := a.store.Insert(c, request)
 		if err != nil {
 			return "", err
