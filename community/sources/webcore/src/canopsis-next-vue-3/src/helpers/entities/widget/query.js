@@ -27,6 +27,7 @@ import {
   convertWeatherUserPreferenceToQuery,
   convertWeatherWidgetToQuery,
 } from '@/helpers/entities/service-weather/query';
+import { convertStatsCalendarWidgetToQuery } from '@/helpers/entities/stats/query';
 
 /**
  * This function converts userPreference to query Object
@@ -64,6 +65,7 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.alarmList]: convertAlarmWidgetToQuery,
     [WIDGET_TYPES.context]: convertContextWidgetToQuery,
     [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
+    [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
     [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.numbers]: convertNumbersWidgetToQuery,

@@ -24,6 +24,10 @@ import {
   formToServiceWeatherWidgetParameters,
   serviceWeatherWidgetParametersToForm,
 } from './forms/service-weather';
+import {
+  formToStatsCalendarWidgetParameters,
+  statsCalendarWidgetParametersToForm,
+} from './forms/stats-calendar';
 import { textWidgetParametersToForm } from './forms/text';
 
 /**
@@ -182,6 +186,7 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.counter]: counterWidgetParametersToForm,
     [WIDGET_TYPES.map]: mapWidgetParametersToForm,
     [WIDGET_TYPES.serviceWeather]: serviceWeatherWidgetParametersToForm,
+    [WIDGET_TYPES.statsCalendar]: statsCalendarWidgetParametersToForm,
     [WIDGET_TYPES.externalDataTable]: externalDataTableWidgetParametersToForm,
   };
 
@@ -298,6 +303,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
     [WIDGET_TYPES.map]: formToMapWidgetParameters,
     [WIDGET_TYPES.serviceWeather]: formToServiceWeatherWidgetParameters,
+    [WIDGET_TYPES.statsCalendar]: formToStatsCalendarWidgetParameters,
     [WIDGET_TYPES.externalDataTable]: formToExternalDataTableWidgetParameters,
   };
 
